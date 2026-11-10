@@ -1,10 +1,19 @@
 # Ultrastable (private)
 
-The self-governing development platform: a control loop around coding agents that finds its own work, hands it to the agent that fits,
-proves each change live with automatic revert, and scores its own decisions. Proprietary. QNFO is customer zero (a customer, not the owner of this code path).
+Autonomous development platform: virtual managers and staff, plussing, earned-trust autonomy, bootstrapping from an idea via a seed repo. This repo is the system of record. If it is not here, it does not exist. Keep private until the provisional patent is filed.
 
-- `site/` public site worker for ultrastable.io (.app, .net redirect). Tests: `node site/site.test.mjs`. See HANDOFF.md for state, decisions and blockers.
-- `core-manifest/` which parts of the QNFO fleet are the product (core) vs QNFO applications vs personal; the extraction map (phases P1-P4).
-- `docs/` business documents: product and positioning, market read. Add: pitch, financial model, pilot terms, IP assignment record.
+| Path | What |
+|---|---|
+| [ROADMAP.md](ROADMAP.md) | Launch backlog by milestone (Now, Next, After filing, Later), linked to issues |
+| [PROJECTS.md](PROJECTS.md) | The five project definitions with issue lists (board stand-in) |
+| [ip/](ip/README.md) | Disclosure, evidence log, prior art, bootstrapping embodiment, `provisional/` patent spec v3 (md, pdf, drawings, figures, claim strategy, filing checklist) |
+| [business/](business/README.md) | Business plan, roster, customers, competition, pitch kit, funding, promotion, events |
+| [docs/](docs/README.md) | Concepts, bootstrapping, issue sources, product positioning, extraction plan |
+| [seed/](seed/README.md) | Seed repo and bootstrapper |
+| [site/](site/) | Site worker (unpublished) and `starter/` |
+| [platform/](platform/README.md) | Architecture, core manifest links |
+| [artifacts/](artifacts/) | Funding options, session records, library notes |
+| [agents/](agents/) | Agent protocol, role files, autonomy policy, project instructions |
+| core-manifest/, deploy/, github/, research/, HANDOFF.md, ROADMAP-extraction.md | Earlier QNFO extraction material |
 
-Status: bootstrap copied from QNFO/qnfo-workers on 2026-11-10. Extraction of core workers (P2-P4) is tracked as issues in this repo.
+Issues: https://github.com/ultrastable/ultrastable/issues . Milestones: Now, Next, After filing, Later.
