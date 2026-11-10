@@ -1,12 +1,16 @@
 name: issues
+# budget: ~1 min x 30/month
+# trigger: daily SLA sweep and triage of opened issues
+# free-alternative: Cloudflare cron worker calling the REST API
 # Triage on open and hourly, SLA sweep hourly. See docs/AUTOMATION.md.
 on:
   issues:
-    types: [opened, reopened]
+    types: [opened]
   schedule:
-    - cron: "5 * * * *"
+    - cron: "5 6 * * *"
   workflow_dispatch:
 permissions:
+  actions: write
   contents: read
   issues: write
   pull-requests: write
@@ -21,6 +25,9 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: main
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py issues
       - name: Triage
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}

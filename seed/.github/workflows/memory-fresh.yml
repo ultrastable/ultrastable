@@ -1,13 +1,17 @@
 name: memory-fresh
+# budget: ~1 min per ready PR
+# trigger: PR only, docs paths
+# free-alternative: `scripts/check_memory.py` in agent sessions; folded into checks
 on:
-  schedule:
-    - cron: "17 */6 * * *"
-  push:
-    branches: [main]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths: ["docs/**", "scripts/check_memory.py", ".github/workflows/memory-fresh.yml"]
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: memory-fresh-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   memory-fresh:
     runs-on: ubuntu-24.04

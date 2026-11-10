@@ -1,11 +1,15 @@
 name: social-post
+# budget: ~1 min x 8/month
+# trigger: twice weekly at most; dry-run until live
+# free-alternative: Cloudflare cron worker
 # Publishes at most one guard-clean post per run. Dry-run until social/gate.json mode=live and channel secrets exist.
 # Kill switch: social/gate.json "kill": true. Owner cards: docs/ops/SOCIAL-ACCOUNTS.md.
 on:
   schedule:
-    - cron: "17 15 * * *"
+    - cron: "17 15 * * 2,5"
   workflow_dispatch:
 permissions:
+  actions: write
   contents: write
 concurrency:
   group: social-post
@@ -18,6 +22,9 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: main
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py social-post
       - name: Refill calendar
         working-directory: scripts
         run: python3 social_generate.py

@@ -1,5 +1,8 @@
 name: outreach
 # The funding and outreach loop. Weekly and on demand only (GitHub Actions minutes on private repos are limited; owner directive 2026-11-10).
+# budget: ~1 min x 4/month
+# trigger: weekly and dispatch only
+# free-alternative: Cloudflare cron worker
 # Minute budget: one job, about 1 minute per run, 4-5 runs a month = under 6 minutes a month. No push trigger, no second workflow.
 # Prefer the Cloudflare cron worker for anything more frequent (docs/BOOTSTRAP-GAPS.md BG-34).
 # Dry-run until outreach/gate.json mode=live AND sender.registered AND the OUTREACH_SEND_URL / OUTREACH_SEND_TOKEN secrets exist.

@@ -1,6 +1,10 @@
 name: checks
+# budget: ~3 min per ready PR update, cancel-in-progress
+# trigger: PR gate; drafts skipped
+# free-alternative: none needed; local `scripts/lint_workflows.py` and tests run in agent sessions first
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 permissions:
   contents: read
@@ -9,10 +13,15 @@ concurrency:
   cancel-in-progress: true
 jobs:
   checks:
+    if: github.event.pull_request.draft != true
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Workflow minute-budget lint (cheap, runs first)
+        run: python3 scripts/lint_workflows.py
       - name: Workflow YAML parses
         run: python3 -c "import yaml,glob; [yaml.safe_load(open(f)) for f in glob.glob('.github/workflows/*.yml')]"
       - name: Secret and key scan
@@ -38,6 +47,8 @@ jobs:
         run: |
           sudo apt-get install -y -q poppler-utils >/dev/null
           python3 ip/provisional/tools/preflight.py
+      - name: Project memory is current
+        run: python3 scripts/check_memory.py
       - name: Business index (BIZ-3)
         run: python3 scripts/check_business_index.py
       - name: Product and demo tests, gaplint on this repo (no extra workflow; runs on PRs only)

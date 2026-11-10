@@ -1,4 +1,7 @@
 name: org-manage
+# budget: ~1 min per owner dispatch
+# trigger: dispatch only
+# free-alternative: run from an agent session with the admin token
 # Owner-run housekeeping that needs GraphQL / org scope. Reads a fine-grained token from the
 # ORG_ADMIN_TOKEN repo secret (see docs/ops/ORG-TOKEN.md). Safe to re-run: every step is idempotent.
 on:
@@ -16,6 +19,7 @@ concurrency: {group: org-manage, cancel-in-progress: false}
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN || github.token }}
       ORG: ultrastable

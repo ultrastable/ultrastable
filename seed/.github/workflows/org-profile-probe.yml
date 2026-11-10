@@ -1,14 +1,19 @@
 name: org-profile-probe
+# budget: ~1 min x 4/month
+# trigger: weekly probe
+# free-alternative: curl from the Cloudflare cron worker
 # BG-13: "done" means the public org page renders the profile. Daily + on demand.
 on:
-  schedule: [{ cron: "23 6 * * *" }]
+  schedule: [{ cron: "23 6 * * 1" }]
   workflow_dispatch:
 permissions:
   issues: write
   contents: read
+concurrency: {group: org-profile-probe, cancel-in-progress: true}
 jobs:
   probe:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       ORG: ${{ github.repository_owner }}
       GH_TOKEN: ${{ github.token }}
