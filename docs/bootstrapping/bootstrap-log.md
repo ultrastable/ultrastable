@@ -60,3 +60,7 @@ Failures and fixes:
 - The interim `org-repos/` copy was pushed before the unified layout landed (PR #54), so it duplicates content now under `ip/`, `business/`, `docs/`, `seed/`. Next improvement: a preflight that checks `origin/main` layout before bulk-copying, and a cleanup issue to delete `org-repos/` once the bundles are no longer needed.
 - Issues #14 to #50 were filed through the GitHub MCP tool because the `gh` token was invalid; labels were created on the fly, milestones and Projects were not. Do these through the `org-manage` workflow.
 - "Deploy everything" is held by the disclosure gate (PF-1): no further deploy until the provisional is filed.
+
+## Project memory in a platform store (2026-11-10)
+
+Project memory sat in the chat platform's memory store: hidden local state, unreviewed, unversioned, and one note was overwritten with a wrong disclosure claim. Fix: `docs/PROJECT-MEMORY.md` is canonical, the store is a pointer, `memory-fresh` fails when stale, and the seed ships all three (BG-10).
