@@ -60,3 +60,30 @@ Failures and fixes:
 - The interim `org-repos/` copy was pushed before the unified layout landed (PR #54), so it duplicates content now under `ip/`, `business/`, `docs/`, `seed/`. Next improvement: a preflight that checks `origin/main` layout before bulk-copying, and a cleanup issue to delete `org-repos/` once the bundles are no longer needed.
 - Issues #14 to #50 were filed through the GitHub MCP tool because the `gh` token was invalid; labels were created on the fly, milestones and Projects were not. Do these through the `org-manage` workflow.
 - "Deploy everything" is held by the disclosure gate (PF-1): no further deploy until the provisional is filed.
+
+## First cloud deployment of the seed (2026-11-10, ~09:30 UTC)
+
+What ran: the seed's `bootstrap.py --dry-run` on an `IDEA.md` for Ultrastable itself (slug `ultrastable`), then the same artifacts deployed by hand through the Cloudflare API connector into the owner's Cloudflare account (`quniverse`):
+
+| Resource | Name / id | Notes |
+|---|---|---|
+| D1 database | `ultrastable-org`, `7468898a-b515-495f-9910-e91cb80f5810` | schema `0001_init.sql` applied (12 statements), `seed.sql` content applied: 8 roles, 8 items, 26 trust-ledger rows, 1 prediction, lineage row |
+| Worker | `ultrastable-tick` | modules `index.js`, `tick.js`, `config.js`; D1 binding `DB`; cron `*/10 * * * *`; `workers.dev` route off, so there is no public URL |
+| Google Cloud | not deployed | see failure 2 |
+
+The Worker is private by design (disclosure gate PF-1). Check it with a D1 query: `SELECT * FROM tick_runs ORDER BY id DESC LIMIT 3`.
+
+### Failures and improvements for future initialisation
+
+| # | What went wrong | Cause | Change for next initialisation |
+|---|---|---|---|
+| 10 | `--apply` could not run | It needs `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY` in the environment; the session had none (it had an authenticated Cloudflare connector instead). `detect` also reported `wrangler=no` | Add a second apply path that uses a connected Cloudflare API session instead of tokens. Detect should report "authenticated via connector" and not open a secret gate card for a credential that is not needed. Result: BS-3 (apply on a real account) is still unproven as code, though every artifact it writes was accepted by Cloudflare |
+| 11 | Deploy needed ~34 KB of file content retyped into an API call | The apply path assumes a local shell with wrangler; a connector session has no access to the generated files | Bootstrap should emit one self-contained deploy bundle (multipart manifest plus SQL) that any API client can upload as-is. Add `--emit-api-bundle` |
+| 12 | `config.js` is 7.7 KB, mostly policy prose the tick never reads | The generator copies the whole policy | The tick reads only trust, ladder rungs and promote/demote values, and each surface's `max_permission` and `start_rung`. The generator should emit that slim form; the full policy stays in the repo |
+| 13 | Database name would repeat the slug (`ultrastable-ultrastable`) | Template is `{slug}-ultrastable` | Template should be `{slug}-org` (used by hand here) so a slug equal to the product name does not stutter |
+| 14 | No way to see `/health` | `workers.dev` is off to respect the disclosure gate | Verification must not need a public URL. Add a private health check (Cloudflare Access, or a signed token), and a `verify` step that reads `tick_runs` through the same connector |
+| 15 | Google Cloud deploy not possible | `gcloud` has no credentialed account; no GCP project or billing exists; Docker is present but there is no registry | Owner step: create a GCP project with billing (on a company-domain account), then run `platform/adapters/gcp/deploy.sh`. The preflight should list this as one gate card at the start |
+| 16 | The tick dispatches rows but nothing performs the work | The executor that calls a model for each dispatch (BS-4) is not built | The first live org only proves the heartbeat, claims, predictions and trust ledger. Treat BS-4 as the next blocker for anything an outside person would call "working" |
+| 17 | A stacked PR closed when its base branch merged, and a follow-up commit landed after the merge | Stacking on an unmerged branch; a push raced a merge | Open PRs against `main`, not another PR's branch. After a merge, start the next branch from `main` |
+
+Next verification (owner or the operations role): once `tick_runs` shows six complete ticks in an hour, mark KIT-3 done and close prediction `P-KIT-3`.
