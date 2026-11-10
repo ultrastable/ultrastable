@@ -78,6 +78,19 @@ class GitHubConnector:
             return "pending"
         return "green" if all(r["conclusion"] in ("success", "neutral", "skipped") for r in runs) else "red"
 
+    def verify_pr(self, number: int) -> tuple:
+        """Reviewer verdict for a PR: (True, why) merged or green, (None, why) checks pending, (False, why) red or blocked."""
+        pr = self._req("GET", f"/pulls/{number}")
+        if pr.get("merged"):
+            return True, "already merged"
+        state = self.checks_state(pr["head"]["sha"])
+        if state == "pending":
+            return None, "checks pending"
+        if state == "red":
+            return False, "checks red"
+        merged, why = self.merge_if_green(number)
+        return (True if merged else False), why
+
     def merge_if_green(self, number: int) -> tuple:
         """Returns (merged, reason). Refuses drafts, red or pending checks, and PRs not opened by the bot login."""
         pr = self._req("GET", f"/pulls/{number}")
