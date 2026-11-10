@@ -12,6 +12,7 @@ Company, funding and go-to-market material for Ultrastable.
 
 - Funding routes, decision memo, registry and maintenance: [funding/](funding/README.md); credit programs: [funding/credit-programs.md](funding/credit-programs.md)
 - Pricing hypotheses: [plan/08-pricing-hypotheses.md](plan/08-pricing-hypotheses.md)
+- Google for Startups application kit: [funding/applications/google-for-startups/ANSWERS.md](funding/applications/google-for-startups/ANSWERS.md) and [OWNER-CARD.md](funding/applications/google-for-startups/OWNER-CARD.md)
 - Briefing set (deck, pitches, FAQ, Q&A, competitor map, objections): [briefing/](briefing/README.md)
 
 ## One source per topic (BIZ-3)

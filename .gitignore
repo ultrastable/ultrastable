@@ -3,3 +3,8 @@ node_modules/
 *.bundle
 __pycache__/
 *.pyc
+
+# build artifacts
+platform/core/build/
+*.egg-info/
+__pycache__/
