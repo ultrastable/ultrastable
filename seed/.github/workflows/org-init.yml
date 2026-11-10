@@ -1,4 +1,7 @@
 name: org-init
+# budget: ~1 min per owner dispatch
+# trigger: dispatch only
+# free-alternative: run the same steps locally with the admin token
 # Initializes the GitHub org with no questions: repos, public profile, org details, projects.
 # Needs the ORG_ADMIN_TOKEN secret (the single identity-bound step; see docs/BOOTSTRAP-GAPS.md BG-1/BG-2).
 on:
@@ -6,6 +9,7 @@ on:
 jobs:
   init:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
     steps:

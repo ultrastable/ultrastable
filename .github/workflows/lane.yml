@@ -1,13 +1,14 @@
 name: lane
-# One job: review and merge every PR with no human. Events: PR changes, check completions, every 10 minutes.
+# budget: ~1 min per checks completion
+# trigger: merge lane after checks succeed; no cron
+# free-alternative: Cloudflare cron worker or enable-auto-merge on each PR
+# One job: review and merge every PR with no human. Events: checks completing, plus one daily fallback sweep.
 on:
-  pull_request_target:
-    types: [opened, reopened, synchronize, ready_for_review, labeled, unlabeled]
   workflow_run:
     workflows: [checks]
     types: [completed]
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "11 5 * * *"
   workflow_dispatch:
 permissions:
   contents: write
@@ -20,6 +21,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   lane:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     steps:

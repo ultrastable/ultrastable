@@ -1,4 +1,7 @@
 name: bootstrap
+# budget: ~2 min per push to main
+# trigger: push to main and dispatch; the apply job only provisions when secrets exist
+# free-alternative: run bootstrap.py from an agent session
 on:
   push:
     branches: [main]
@@ -6,6 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,6 +20,7 @@ jobs:
   apply:
     needs: test
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     # Provisions only when the owner has set the secrets; otherwise the dry run above already opened gate cards.
     if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     env:

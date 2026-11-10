@@ -1,15 +1,21 @@
 name: index
+# budget: ~1 min x 4/month
+# trigger: weekly rebuild; dispatch on demand
+# free-alternative: agent sessions run `tools/build_index.py` locally
 on:
-  schedule: [{cron: "17 * * * *"}]
-  issues: {types: [opened, edited, closed, reopened, deleted, assigned, unassigned]}
+  schedule: [{cron: "17 6 * * 1"}]
   workflow_dispatch: {}
-permissions: {contents: write, issues: read}
+permissions: {contents: write, issues: read, actions: write}
 concurrency: {group: index, cancel-in-progress: false}
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py index
       - run: python3 tools/build_index.py
         env: {GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"}
       - run: python3 qnfo-platform-thread/verify.py
