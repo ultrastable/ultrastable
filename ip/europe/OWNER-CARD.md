@@ -10,3 +10,5 @@ Not legal advice.
 - **Done by the fleet:** drawing relabelling, Dutch-format PDFs, Dutch claims draft (unreviewed by a Dutch-speaking professional), abstract, request-form values.
 - **Still open, not identity-bound:** NL procedure fee amount (read at payment), whether Online Filing registers a private person resident abroad and the payment sequence (one e-mail to OCNL).
 - **Closing probe:** the filing receipt (date and application number) is recorded in `ip/evidence-log.md`, and `HANDOFF.md` lists the month-9, 12, 13 and 18 deadlines with real dates.
+
+- **Portal blocked (2026-11-10):** Online Filing showed "not available via this channel". Default in effect: the same package is filed on paper at OCNL in The Hague (`SELF-FILING-WALKTHROUGH.md` section 1b) if Online Filing cannot be opened or registered within a few days. Closing probe: filing receipt in `ip/evidence-log.md`.
