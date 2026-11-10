@@ -4,6 +4,7 @@
 # and the script exits 1 so the run is red and the gap stays open.
 # usage: apply_github_settings.sh [apply|probe]
 set -uo pipefail
+. "$(dirname "$0")/lib-safe.sh"
 MODE="${1:-apply}"
 CFG="${CFG:-github/org-settings.json}"
 ORG="${ORG:-ultrastable}"
@@ -15,7 +16,7 @@ if [ "$MODE" = probe ]; then
   for R in $(jq -r '.repos|keys[]' "$CFG"); do
     gh api "repos/$R" --jq '{full_name,description,homepage,topics,has_wiki,delete_branch_on_merge,allow_squash_merge,allow_merge_commit,security_and_analysis}' || fail=$((fail+1))
   done
-  [ "$fail" -eq 0 ]; exit
+  safe_exit; [ "$fail" -eq 0 ]; exit
 fi
 
 # Org
@@ -41,4 +42,5 @@ for R in $(jq -r '.repos|keys[]' "$CFG"); do
   step "repo $R protect $br" gh api -X PUT "repos/$R/branches/$br/protection" --input - <<<"$prot"
 done
 echo "failures: $fail"
-[ "$fail" -eq 0 ]
+[ "$fail" -eq 0 ] || exit 1
+safe_exit
