@@ -1,0 +1,14 @@
+# Google for Startups Cloud Program: answers (SAFE NOW)
+
+Tier to apply for now: **Start** (up to $2,000). The **Scale AI** tier needs an institutional round and is for later. Verify current terms on cloud.google.com/startup before submitting. Prerequisites the owner must have first: company entity and domain email, live public site, Google Cloud billing account owned by a company-domain user, and no paid Google Workspace on the domain in the previous 31 days.
+
+| Question | Answer |
+|---|---|
+| What does your company do? | Ultrastable is software that runs projects with a team of AI managers and staff, so founders and small teams are not the bottleneck. People set direction and approve only decisions that cannot be undone. |
+| Stage? | Pre-seed, working prototype. It runs the founder's own operation; no outside customers yet; design-partner pilots are next. |
+| Business model? | Subscription per organization plus pass-through usage (planning assumption). |
+| How will you use Google Cloud? | To run the product on Google Cloud as a second deployment target alongside our current one, with Cloud Run, Cloud Scheduler, Cloud Storage and Secret Manager, then Cloud SQL and Vertex AI as we grow. |
+| Why Google? | Customers ask for a choice of cloud. A portable design lets us offer Google Cloud and use Gemini models for the AI work. |
+| Funding raised? | None yet. Planning a pre-seed round. |
+| Team? | One founder and inventor, supported by the product's own virtual management layer. |
+| Website | https://ultrastable.io (outcome-only content) |

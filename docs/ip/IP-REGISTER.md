@@ -3,12 +3,12 @@
 ## Assets
 | Asset | Status | Where |
 |---|---|---|
-| Invention (self-governing development platform) | Provisional patent specification drafted, NOT filed | `local-workspace/ultrastable-patent/provisional-specification.md` (+ claims strategy, 15 figures, filing checklist) |
+| Invention (self-governing development platform) | Provisional patent specification drafted, NOT filed | `ip/provisional/provisional-specification.md` (+ claims strategy, 15 figures, filing checklist) |
 | Core software | Authored inside the QNFO fleet repo; extraction into this repo not done | `core-manifest/boundary.json`; issues P2-P4 |
 | Website code | Standalone, written 2026-11-10 | `site/` |
 | Name "Ultrastable" | No trademark clearance or filing | issue IP-8 |
 | Domains ultrastable.io / .app / .net | Registered 2026-11-10 in the owner's Cloudflare account | `docs/ARTIFACTS.md` |
-| Business documents | Drafts | `local-workspace/ultrastable-repos/business/` |
+| Business documents | Drafts | `business/` |
 
 ## More assets
 | Asset | Status | Where |
