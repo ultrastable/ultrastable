@@ -46,6 +46,9 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE TABLE IF NOT EXISTS amendments (
   id TEXT PRIMARY KEY, target TEXT NOT NULL, pattern TEXT NOT NULL, proposal TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'proposed', evidence TEXT, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS registries (
+  kind TEXT NOT NULL, key TEXT NOT NULL, body TEXT NOT NULL, updated_at TEXT NOT NULL,
+  PRIMARY KEY (kind, key));
 CREATE INDEX IF NOT EXISTS idx_items_status ON items(status, priority);
 CREATE INDEX IF NOT EXISTS idx_events_at ON events(id DESC);
 """
@@ -102,3 +105,13 @@ class Store:
     def backup(self, dest: str):
         with self.lock:
             self.db.execute("VACUUM INTO ?", (dest,))
+
+    def reg_put(self, kind: str, key: str, body: dict, now: str):
+        """Registry rows (failure modes, spofs, beliefs, ...): one table, JSON body, keyed by kind."""
+        self.x("DELETE FROM registries WHERE kind=? AND key=?", kind, key)
+        self.x("INSERT INTO registries (kind, key, body, updated_at) VALUES (?,?,?,?)",
+               kind, key, json.dumps(body, sort_keys=True), now)
+
+    def reg_list(self, kind: str):
+        return [{"key": r["key"], **json.loads(r["body"])} for r in
+                self.q("SELECT key, body FROM registries WHERE kind=? ORDER BY key", kind)]
