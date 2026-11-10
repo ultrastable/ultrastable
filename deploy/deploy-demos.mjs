@@ -1,4 +1,4 @@
-// Manual deploy of the public demos (no workflow on purpose: Actions minutes are capped, see BG-32).
+// Manual deploy of the public demos (no workflow on purpose: Actions minutes are capped, see BG-35).
 //   CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... node deploy/deploy-demos.mjs
 import { build } from "../demos/build-worker.mjs";
 const T = process.env.CLOUDFLARE_API_TOKEN, A = process.env.CLOUDFLARE_ACCOUNT_ID;

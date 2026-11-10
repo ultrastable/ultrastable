@@ -10,4 +10,4 @@ Self-contained, no accounts, no secrets, no network calls.
 
 Engine: `demos/public/engine.js`, deterministic, shared by browser and tests. Tests: `node --test demos/test/*.test.mjs` (16 tests: determinism, no questions asked, every owner card has a default and probe, fallbacks, bundle under 100 KB, banned terms absent, worker routing). The banned-term list is `demos/publish.json`.
 
-Public deploy: `node deploy/deploy-demos.mjs` (route `ultrastable.io/demos*`). There is deliberately no workflow for it: Actions minutes on private repos are capped, so deploys of this kind are manual or run from a machine that holds the credential. Needs the two Cloudflare credentials (BG-32).
+Public deploy: `node deploy/deploy-demos.mjs` (route `ultrastable.io/demos*`). There is deliberately no workflow for it: Actions minutes on private repos are capped, so deploys of this kind are manual or run from a machine that holds the credential. Needs the two Cloudflare credentials (BG-35).
