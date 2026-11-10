@@ -2,6 +2,7 @@
 # RETRIAGE-1: open PRs get merged when green or flagged; open issues without a doer and a probe get a gap issue.
 # Runs from .github/workflows/retriage.yml (every 3 hours). Uses GITHUB_TOKEN permissions only; a denied action is logged, never bypassed.
 set -uo pipefail
+. "$(dirname "$0")/lib-safe.sh"
 repo="${GITHUB_REPOSITORY:?}"
 log() { echo "retriage: $*"; }
 gaps=""
@@ -43,3 +44,5 @@ else
   num=$(gh issue list -R "$repo" --state open --search 'in:title "Retriage gaps"' --json number --jq '.[0].number // empty')
   [ -n "$num" ] && gh issue close "$num" -R "$repo" --reason completed -c "Closed by retriage: the closing probe passed (a run found no gaps at $(date -u +%FT%TZ))." >/dev/null && log "gap issue #$num closed"
 fi
+
+safe_exit
