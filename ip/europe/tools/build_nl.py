@@ -76,6 +76,14 @@ def stamp(src, dst, label):
 nd = stamp(TMP / "desc.pdf", OUT / "beschrijving-en-conclusies.pdf", lambda i, n: str(i))
 na = stamp(TMP / "abs.pdf", OUT / "samenvatting.pdf", lambda i, n: "")
 nr = stamp(TMP / "dr.pdf", OUT / "tekeningen.pdf", lambda i, n: f"{i}/{n}")
+# split description and claims (page numbers stay continuous) for portals that want them as separate attachments
+rd = PdfReader(str(OUT / "beschrijving-en-conclusies.pdf"))
+k = next(i for i, pg in enumerate(rd.pages) if (pg.extract_text() or "").lstrip().startswith("CONCLUSIES"))
+for name, rng in (("beschrijving.pdf", range(0, k)), ("conclusies.pdf", range(k, len(rd.pages)))):
+    w = PdfWriter()
+    for i in rng: w.add_page(rd.pages[i])
+    w.write(str(OUT / name))
+(OUT / "PAGE-COUNTS.txt").write_text(f"description pages 1-{k}\nclaims pages {k+1}-{len(rd.pages)}\nabstract 1\ndrawings {nr}\n")
 import hashlib
 (OUT / "SOURCE.sha256").write_text(hashlib.sha256((PROV / "provisional-specification.md").read_bytes()).hexdigest() + "  provisional-specification.md\n")
 print(f"description+claims {nd} pages, abstract {na}, drawings {nr}")
