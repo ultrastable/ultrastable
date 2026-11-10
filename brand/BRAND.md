@@ -50,4 +50,5 @@ Clear space: half the tile width on all sides. Minimum size: 16 px tile. Do not 
 | Docs | title, one-line summary, status label, owner; `templates/doc-template.md` |
 | Site and dashboards | brand tokens above; add `<link rel="icon" href="/favicon.svg">`, Open Graph image `social-card.png`; shared header uses the tile plus wordmark |
 | Email | `templates/email-template.html`; plain text fallback below it in the same file comment |
-| Org profile | `public-profile/` (see its README) |
+| Org profile | `public-profile/` (see its README); QNFO cross-link draft: `public-profile/qnfo-crosslink.md` |
+| Dashboard | owner dashboard and holding page use the favicon and tile plus wordmark header (`dashboard/worker.js`) |
