@@ -20,10 +20,23 @@ DEFAULT_CONFIG = {
 }
 
 
+# Default model for the Workers AI doer; override per agent with spec["model"] (P3: no model constants outside this file).
+DEFAULT_WORKERS_AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+
+
+def _merge(base: dict, over: dict) -> dict:
+    out = copy.deepcopy(base)
+    for k, v in over.items():
+        out[k] = _merge(out[k], v) if isinstance(v, dict) and isinstance(out.get(k), dict) else v
+    return out
+
+
 def load_policy(path: str | None = None) -> dict:
+    """Default policy pack, with an optional overlay file merged over it (an overlay changes only the keys it names)."""
+    base = json.loads(resources.files("ultrastable").joinpath("data/policy.json").read_text(encoding="utf-8"))
     if path and os.path.exists(path):
-        return json.load(open(path, encoding="utf-8"))
-    return json.loads(resources.files("ultrastable").joinpath("data/policy.json").read_text(encoding="utf-8"))
+        return _merge(base, json.load(open(path, encoding="utf-8")))
+    return base
 
 
 def load_config(path: str | None = None) -> dict:
