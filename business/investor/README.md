@@ -10,6 +10,7 @@ Funding- and investor-facing drafts for Ultrastable. Prepared by the virtual bus
 | [pitch-deck-outline.md](pitch-deck-outline.md) | 12 slides with headline, bullets and repo evidence source |
 | [demo-script.md](demo-script.md) | 5-minute demo using the real CLI and dashboard |
 | [data-room-index.md](data-room-index.md) | Investor data-room checklist with status and owner |
+| [financial-model.md](financial-model.md) | Unit-economics formulas and measured inputs; dollar inputs blank, needs an accountant |
 
 ## Disclosure rule (read first)
 

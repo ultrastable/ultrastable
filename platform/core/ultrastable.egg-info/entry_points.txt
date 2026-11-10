@@ -1,2 +1,0 @@
-[console_scripts]
-ultrastable = ultrastable.cli:main
