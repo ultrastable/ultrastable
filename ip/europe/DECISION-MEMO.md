@@ -25,7 +25,7 @@ Rowan's claim is **substantially right but not absolute**.
 
 | Route | Self-file? | Language | Examined? | Cost to secure date | Verdict |
 |---|---|---|---|---|---|
-| **NL national (OCNL)** | Yes, online (MijnOctrooi / MyPage) | Description Dutch or English; **claims must be Dutch**; abstract same language as description | Search is mandatory for grant but you request it (within 13 months); NL grants even if the search shows the invention is not new or inventive | Procedure fee (amount not published on pages read; see FEE-TABLE) | **Chosen** |
+| **NL national (OCNL)** | Yes, online (OCNL Online Filing, efiling.mijnoctrooi.rvo.nl; no EPO account needed) | Description Dutch or English; **claims must be Dutch**; abstract same language as description | Search is mandatory for grant but you request it (within 13 months); NL grants even if the search shows the invention is not new or inventive | Procedure fee (amount not published on pages read; see FEE-TABLE) | **Chosen** |
 | EPO direct | Yes: Art. 133(1) EPC lets a resident of a contracting state file without a representative | English | Search report issues; examination only on request | EUR 135 filing + EUR 1,595 search + page fees (about EUR 2,800) | Runner-up |
 | PCT at RO | Yes at OCNL, EPO or WIPO | English | International search | EUR 1,885 search + CHF 1,330 + transmittal | Not for a first filing: dearer and not faster |
 | UK IPO | Yes | English | Only on request within 12 months | GBP 120 (2026 schedule) | Needs UK address for service; unverified |

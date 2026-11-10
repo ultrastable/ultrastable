@@ -34,10 +34,10 @@ Built by `python3 ip/europe/tools/build_nl.py` from the unchanged technical text
 
 | Upload | File | Format facts |
 |---|---|---|
-| Description and claims (one numbered PDF) | `filing-nl/beschrijving-en-conclusies.pdf` | A4; margins 2 cm top, right, bottom and 2.5 cm left, writing-free; pages numbered 1 to 91 continuously, the claims (conclusies) carrying on from the description; description in English, claims in Dutch |
+| Description | `filing-nl/beschrijving.pdf` (pages 1 to 90) and Claims `filing-nl/conclusies.pdf` (page 91); the combined `filing-nl/beschrijving-en-conclusies.pdf` is the same 91 pages | A4; margins 2 cm top, right, bottom and 2.5 cm left, writing-free; pages numbered 1 to 91 continuously, the claims (conclusies) carrying on from the description; description in English, claims in Dutch |
 | Abstract | `filing-nl/samenvatting.pdf` | English (same language as the description), 133 words (limit 150), text only |
 | Drawings | `filing-nl/tekeningen.pdf` | 33 sheets, one per figure, A4 portrait or landscape; **no text labels**, only reference numerals and "FIG. n"; the labels moved to the LIST OF REFERENCE SIGNS at the end of the description |
-| Request form | values in section 1 | entered online |
+| Request form | values in section 1 | entered in the Online Filing screens (walkthrough section 3) |
 
 Changes from the US package (technical content unchanged): US-provisional front matter and the sentence "Claims are not required in a provisional application" removed; "claim-style summaries" renamed "numbered statements of aspects"; list of reference signs added (482 signs); abstract trimmed from 152 to 133 words; text labels stripped from the drawings; the 3 Dutch claims added.
 
@@ -48,5 +48,5 @@ Changes from the US package (technical content unchanged): US-provisional front 
 ## 6. Open items that remain (flagged, not hidden)
 
 - NL procedure fee amount: not on any page that could be read (`FEE-TABLE.md`). Read it at payment or ask OCNL.
-- Whether the online portal accepts a foreign resident's login method (DigiD/eHerkenning or other): confirm by phone before the day.
+- Whether Online Filing registers a private person resident abroad; payment sequence; procedure fee shown only in the portal (`SELF-FILING-WALKTHROUGH.md` section 8).
 - UK address-for-service (fallback route only).

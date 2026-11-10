@@ -293,6 +293,21 @@ else:
         fail(f"paragraphs missing from filing-nl description: {missing_par[:5]}")
     else:
         ok("every numbered paragraph is in the Dutch description")
+    pc = (FN / "PAGE-COUNTS.txt").read_text() if (FN / "PAGE-COUNTS.txt").exists() else ""
+    wt = (HERE.parent / "europe" / "SELF-FILING-WALKTHROUGH.md").read_text(encoding="utf-8")
+    m1 = re.search(r"description pages 1-(\d+)\nclaims pages (\d+)-(\d+)", pc)
+    if not m1 or not all((FN / n).exists() for n in ("beschrijving.pdf", "conclusies.pdf")):
+        fail("filing-nl split PDFs or PAGE-COUNTS.txt missing; rerun build_nl.py")
+    else:
+        d, c1, c2 = m1.groups()
+        if f"| `beschrijving.pdf` | 1 to {d} |" not in wt or f"| `conclusies.pdf` | {c1} to {c2}" not in wt:
+            fail("walkthrough page ranges differ from filing-nl/PAGE-COUNTS.txt")
+        else:
+            ok("walkthrough page ranges match the built files")
+    if "UNVERIFIED" not in wt or "Still unverified" not in wt:
+        fail("walkthrough lost its list of unverified items")
+    else:
+        ok("walkthrough lists what is still unverified")
     leg = json.load(open(HERE.parent / "europe" / "drawings" / "legend.json"))
     bad_txt = []
     for f in sorted((HERE.parent / "europe" / "drawings").glob("fig*.svg")):

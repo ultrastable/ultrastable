@@ -8,5 +8,5 @@ Not legal advice.
 - **Why gated:** signature and payment commit the owner's identity and money; a filing date cannot be undone.
 - **Prepared:** decision memo, walkthrough, fee table, form values, package checks in `ip/provisional/tools/preflight.py`.
 - **Done by the fleet:** drawing relabelling, Dutch-format PDFs, Dutch claims draft (unreviewed by a Dutch-speaking professional), abstract, request-form values.
-- **Still open, not identity-bound:** NL procedure fee amount (read at payment), portal login method for a foreign resident (confirm by phone).
+- **Still open, not identity-bound:** NL procedure fee amount (read at payment), whether Online Filing registers a private person resident abroad and the payment sequence (one e-mail to OCNL).
 - **Closing probe:** the filing receipt (date and application number) is recorded in `ip/evidence-log.md`, and `HANDOFF.md` lists the month-9, 12, 13 and 18 deadlines with real dates.
