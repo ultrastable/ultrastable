@@ -21,6 +21,9 @@ Rowan's principle (2026-11-10): creating repos, working out permissions, setting
 - org-manage workflow `probe`: ran and failed, `ORG_ADMIN_TOKEN` is not set.
 - add_repo for `.github`: refused, names starting with `.` cannot be attached.
 - Remote Control on the owner's device: device refused to start the session.
+- Unarchive/publish via workflow GITHUB_TOKEN: not possible, the Actions token is scoped to its own repository only (2026-11-10 09:45Z).
+- GitHub App manifest flow: needs an owner browser click to approve, so it is an identity-bound step; folded into the token card.
+- Public rendering elsewhere: GitHub renders an org page only from `<org>/.github/profile/README.md`; `rwnq8/.github` is Rowan's personal profile and was deliberately not used.
 - Org repos exist now but are private and unreachable for writing, so content and the visibility flip remain.
 
 ## Owner card (identity-bound)
