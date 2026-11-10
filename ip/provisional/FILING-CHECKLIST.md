@@ -4,10 +4,10 @@ Prepared 2026-11-10. This is a working checklist, not legal advice. Have a regis
 
 ## 1. Act first: the public-disclosure clock
 
-The concepts in this draft are already public. `QNFO/qnfo-workers` is a **public** repository that has documented them since it opened on 2026-08-10, including the virtual portfolio and program managers (MANAGEMENT-PERSONAS-1 to 11, from 2026-10-26), plussing (docs/PLUSSING.md, from 2026-10-29), the doctrine, trust ledger and interrupt gate, and the Ultrastable product page (docs/PRODUCT-ULTRASTABLE.md, 2026-11-10). qnfo.org/platform also describes it live.
+The inventive combination in this draft has not been publicly disclosed as a whole. `QNFO/qnfo-workers` has been public since 2026-08-10 under the QNFO User License Agreement v2.1 (commercial use prohibited), and it holds individual components and related pages (manager personas, PLUSSING.md, the Ultrastable product page, qnfo.org/platform). **Question for the patent attorney:** what exactly was public, on which dates, and how does it bear on the claims?
 
-- **United States:** under 35 U.S.C. 102(b)(1)(A), the inventor's own public disclosures are not prior art against the inventor if the application is filed within one year. The earliest relevant disclosure may be as early as 2026-08-10, so the safe outer limit is **before 2026-08-10 + 1 year = 2027-08-10**. Filing now is strongly better, because a third party who builds on the public material could file first on improvements.
-- **Most other countries (Europe, China and others with absolute novelty):** material that was publicly disclosed before the filing date is likely already unpatentable there. Some countries (for example Japan and Korea) have limited grace periods. The attorney should say what foreign rights remain, if any.
+- **United States (question for the attorney):** 35 U.S.C. 102(b)(1)(A) provides a one-year grace period for the inventor's own disclosures. Which, if any, of the dates above start that period? File as early as practical.
+- **Other countries (question for the attorney):** most require novelty at filing. What foreign rights should be preserved, and does anything public affect them?
 - **From now until filing:** avoid publishing further new technical detail (new loops, new claims, numbers) in public repos, posts or pages. Consider making `qnfo-workers` private or moving new design work into private Ultrastable repos. This does not undo past disclosure, but it stops it growing.
 - Keep the dated git history: it is evidence of conception and of the inventor's own disclosure dates.
 
