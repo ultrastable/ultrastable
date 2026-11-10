@@ -1,6 +1,6 @@
 # Dashboard innovations for the provisional (working draft for attorney review, not legal advice)
 
-Rowan's instruction (2026-11-10): the dashboard, email-me-a-code, owner task queue, one-tap fix or delegate-to-fleet buttons and command execution from the dashboard are all inventive features of Ultrastable and must be in the provisional. Source of the reduction to practice: the QNFO fleet dashboard (qnfo-fleet-dashboard, public history in QNFO/qnfo-workers) and this repo's `dashboard/`.
+Rowan's instruction (2026-11-10): the dashboard, email-me-a-code, owner task queue, one-tap fix or delegate-to-fleet buttons and command execution from the dashboard are all inventive features of Ultrastable and must be in the provisional. Source of the reduction to practice: the QNFO fleet dashboard (qnfo-fleet-dashboard in QNFO/qnfo-workers, which carries a non-commercial licence; the attorney should say what overlaps) and this repo's `dashboard/`.
 
 Status: NOT yet in `provisional-specification.md`. The sibling thread owns that file and the repo layout; this note is the insert text and claim proposals to merge, so nothing is lost.
 
