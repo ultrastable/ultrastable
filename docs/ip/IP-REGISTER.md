@@ -17,12 +17,12 @@
 | Product definition, boundary check, live claim checks, platform page source (from QNFO) | Merged in QNFO/qnfo-workers, copies pinned to commits | `qnfo-platform-thread/` (MANIFEST.md) |
 | Owner cards for domain, trademark, GitHub org, entity | D1 `human_actions` 338-341 | fleet.qnfo.org/focus |
 
-Filing deadline to keep in view: the public QNFO repo dates from 2026-08-10, so the US grace period runs out on 2027-08-10 (counsel to confirm).
+Filing: file the provisional as early as practical; timing questions are in `ip/provisional/FILING-CHECKLIST.md` for the attorney.
 
 ## Facts that matter to ownership and patentability
-- **Public disclosure already exists.** The QNFO repo that holds the original code (QNFO/qnfo-workers) is public since 2026-08-10 under the QNFO Unified License Agreement v2.1 (LICENSE), which prohibits commercial use without a written agreement. Owner's position: the key combined system is not publicly disclosed. Counsel to determine exactly what the repo and the product design doc published there show.
-- **The marketing site is public.** ultrastable.io (live 2026-11-10) describes the mechanisms at a high level. This conflicts with the planned disclosure gate (issue PF-1: nothing public until filed). Decision needed from the owner: file the provisional first, or put the site behind a holding page. Not decided here.
-- Time bars (counsel to confirm): US allows a one-year grace period from the first public disclosure; many other jurisdictions do not.
+- **Licensing of the QNFO repo.** `QNFO/qnfo-workers` is public under the QNFO User License Agreement v2.1 (`LicenseRef-QNFO-ULA-2.1`), which prohibits commercial use, including internal for-profit use, without a separate commercial license. The inventive combination has not been publicly disclosed as a whole; what exactly was public, and when, is a question for the patent attorney.
+- **Marketing site.** ultrastable.io is live; keep its copy at outcome level (SAFE NOW) until the provisional is filed (issue PF-1).
+- Timing (question for counsel): which dates, if any, start a grace period in which jurisdictions.
 - **Owner of record:** the author personally. No entity exists yet (issue BIZ-1). The core must be assigned or licensed to the entity in writing once it exists.
 - Evidence of conception and dates: QNFO commit and migration history (issue IP-3).
 

@@ -40,8 +40,8 @@ Rule: write the internal version first; the external version is derived by delet
 3. Do not put the repository, a patent draft or `docs/overview.md` into an application form, a public gist, a pitch-site upload or a public repo.
 4. Accelerators and credit programs rarely sign NDAs; give them `external/` only.
 
-## Known exposure to resolve first
+## Items to settle first
 
-- `QNFO/qnfo-workers` is public (since 2026-08-10) under the QNFO Unified License Agreement v2.1, which bars commercial use without a written agreement. Owner's position: the key combined system is not publicly disclosed. What the repo does show is for counsel to assess **[LAWYER]** (US grace period would end about 2027-08-10 at the latest). File soon.
-- `ultrastable.io` is live and describes mechanisms at a high level (see `docs/ip/IP-REGISTER.md`). Either file first or put it behind a holding page; the owner decides.
+- `QNFO/qnfo-workers` is public under the QNFO User License Agreement v2.1, which prohibits commercial use without a separate commercial license. The key combination has not been publicly disclosed as a whole; the patent attorney is asked what exactly was public and when. File as early as practical.
+- Keep `ultrastable.io` copy at outcome level (SAFE NOW) until filing; review it against this guide before each change.
 - Entity and IP assignment (issue #1) must be done before any application or investor conversation: the author personally owns the code today.

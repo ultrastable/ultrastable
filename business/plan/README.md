@@ -29,13 +29,13 @@ The provisional patent is **not filed**. The public `QNFO/qnfo-workers` reposito
 | **AFTER FILING** | Names a mechanism (trust ledger, scored predictions, plus capacity rule, gate classification, self-amending rules). Use only after filing, with "patent pending". | "Each agent's autonomy is computed from its verified track record." |
 | **NDA ONLY** | Numbers, architecture, schemas, claim language. Counsel only, or under a signed NDA. Most investors will not sign one, so assume it stays private. | QNFO autonomy rates, the priority function |
 
-US law gives the inventor one year from their own first public disclosure (outer limit about 2027-08-10). Most other countries do not, so some foreign rights may already be gone. Filing the provisional is the single step that unlocks everything public in this plan.
+Filing the provisional is the single step that unlocks everything public in this plan, so talk stays at outcome level until then. Timing questions (what exactly has been public, and when) are for the patent attorney; see `ip/provisional/FILING-CHECKLIST.md`.
 
 ## Needs a professional
 
 These are flagged, not decided, in the files:
 
-- **[LAWYER]** Provisional review and filing; which foreign rights remain; whether to make `qnfo-workers` private now.
+- **[LAWYER]** Provisional review and filing; patent timing questions.
 - **[LAWYER]** Which entity owns Ultrastable and its IP; founder IP assignment from Rowan to the entity; "Ultrastable" trademark search (note: "ultrastability" is W. Ross Ashby's 1952 term, and agent.ceo markets "cybernetic organizations").
 - **[LAWYER]** SAFE or note terms, accelerator terms, customer contracts (liability when agents act in a customer's systems), privacy terms.
 - **[ACCOUNTANT]** Entity and tax election (most US investors and accelerators expect a Delaware C-corp), R&D tax credit, SBIR grant accounting, how cloud credits and founder expenses are booked.
