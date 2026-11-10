@@ -10,7 +10,7 @@ Company, funding and go-to-market material for Ultrastable.
 - Marketing strategy: [marketing/strategy.md](marketing/strategy.md)
 - Anything sent outside: use [../external/](../external/README.md) only.
 
-- Funding routes, decision memo, registry and maintenance: [funding/](funding/README.md)
+- Funding routes, decision memo, registry and maintenance: [funding/](funding/README.md); credit programs: [funding/credit-programs.md](funding/credit-programs.md)
 - Briefing set (deck, pitches, FAQ, Q&A, competitor map, objections): [briefing/](briefing/README.md)
 
 ## One source per topic (BIZ-3)
