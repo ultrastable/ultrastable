@@ -28,12 +28,25 @@ NL requires claims in Dutch. File **one** short independent claim in Dutch drawn
 
 Applicant and inventor as above; no representative (Art. 133(1) EPC); language English; no priority; description + drawings; at most 15 claims or none at filing; pay the filing and search fees within one month; designation fee not paid at filing.
 
-## 4. Changes the existing package needs before any European filing
+## 4. The Dutch filing set (built, in `filing-nl/`)
 
-1. **Language:** English is accepted at OCNL for the description, abstract and drawing text; at the EPO English is an official language. No translation of the specification is needed; only the NL claim.
-2. **Page format (NL):** margins 2 cm top/right/bottom, 2.5 cm left; description starts at page 1, claims continue the numbering. The PDF is built by `ip/provisional/tools/build.sh` with `style.css`; produce a separate `europe/` build with these margins and no running headers inside the margins. (Build to follow in a later change.)
-3. **Drawings:** OCNL says text labels in drawings are generally not allowed; the EPO also restricts text (Rule 46). FIGS. 1 to 33 contain labels. Replace labels with reference numerals and add a legend in the description ("List of reference signs"). This is the largest piece of work and is tracked as an open item.
-4. **Claim-style summaries** are in the description and stay there.
-5. **Page counts:** EPO charges page fees above page 35 (estimate in `FEE-TABLE.md`).
-6. **No generative AI tools on the text before filing** (OCNL warning).
-7. **Confidentiality:** the folder `ip/europe/` repeats no specification or claim text; keep it that way.
+Built by `python3 ip/europe/tools/build_nl.py` from the unchanged technical text of `ip/provisional/provisional-specification.md`; `tools/preflight.py` fails if it goes stale.
+
+| Upload | File | Format facts |
+|---|---|---|
+| Description and claims (one numbered PDF) | `filing-nl/beschrijving-en-conclusies.pdf` | A4; margins 2 cm top, right, bottom and 2.5 cm left, writing-free; pages numbered 1 to 91 continuously, the claims (conclusies) carrying on from the description; description in English, claims in Dutch |
+| Abstract | `filing-nl/samenvatting.pdf` | English (same language as the description), 133 words (limit 150), text only |
+| Drawings | `filing-nl/tekeningen.pdf` | 33 sheets, one per figure, A4 portrait or landscape; **no text labels**, only reference numerals and "FIG. n"; the labels moved to the LIST OF REFERENCE SIGNS at the end of the description |
+| Request form | values in section 1 | entered online |
+
+Changes from the US package (technical content unchanged): US-provisional front matter and the sentence "Claims are not required in a provisional application" removed; "claim-style summaries" renamed "numbered statements of aspects"; list of reference signs added (482 signs); abstract trimmed from 152 to 133 words; text labels stripped from the drawings; the 3 Dutch claims added.
+
+## 5. Dutch claims: what they are and the caveat
+
+`conclusies-nl.md` holds three claims, a faithful Dutch rendering of summary claims 1 to 3 (method, system, medium). **The translation was made by an AI agent and has not been checked by a Dutch-speaking patent professional.** Priority rests on the description, not on this wording, so a rough claim does not harm the priority date. Have a Dutch speaker or the attorney read it if you can; the preflight check confirms only that its clause structure mirrors the English.
+
+## 6. Open items that remain (flagged, not hidden)
+
+- NL procedure fee amount: not on any page that could be read (`FEE-TABLE.md`). Read it at payment or ask OCNL.
+- Whether the online portal accepts a foreign resident's login method (DigiD/eHerkenning or other): confirm by phone before the day.
+- UK address-for-service (fallback route only).

@@ -249,6 +249,71 @@ else:
     else:
         ok("ip/europe asserts nothing about prior disclosure")
 
+# 9. Dutch filing set (ip/europe/filing-nl): format, language, drawings, source currency
+import hashlib
+FN = HERE.parent / "europe" / "filing-nl"
+need9 = ["beschrijving-en-conclusies.pdf", "samenvatting.pdf", "tekeningen.pdf", "beschrijving.md", "SOURCE.sha256"]
+if not all((FN / n).exists() for n in need9):
+    fail("ip/europe/filing-nl incomplete: run python3 ip/europe/tools/build_nl.py")
+else:
+    cur = hashlib.sha256(SPEC.read_bytes()).hexdigest()
+    if (FN / "SOURCE.sha256").read_text().split()[0] != cur:
+        fail("filing-nl is stale: the specification changed; rerun ip/europe/tools/build_nl.py")
+    else:
+        ok("filing-nl built from the current specification")
+    for n in ("beschrijving-en-conclusies.pdf", "samenvatting.pdf", "tekeningen.pdf"):
+        info = subprocess.run(["pdfinfo", str(FN / n)], capture_output=True, text=True).stdout
+        if "A4" not in info and "595" not in info:
+            fail(f"{n} is not A4")
+    ok("filing-nl PDFs are A4")
+    dtxt = subprocess.run(["pdftotext", str(FN / "beschrijving-en-conclusies.pdf"), "-"], capture_output=True, text=True).stdout
+    if "CONCLUSIES" not in dtxt or "werkwijze volgens conclusie 1" not in dtxt:
+        fail("Dutch claims not found at the end of the description PDF")
+    else:
+        ok("Dutch claims follow the description in one numbered PDF")
+    cl = (HERE.parent / "europe" / "conclusies-nl.md").read_text(encoding="utf-8")
+    nl1 = re.search(r"^1\. (.*)$", cl, re.M).group(1)
+    en1 = claims[0][1] if claims else ""
+    if abs(nl1.count(";") - en1.count(";")) > 0:
+        fail("Dutch claim 1 does not mirror the clause structure of summary 1")
+    else:
+        ok("Dutch claim 1 mirrors the clause structure of summary 1")
+    ab = (HERE.parent / "europe" / "samenvatting.md").read_text(encoding="utf-8").split("\n", 2)[2]
+    if len(ab.split()) > 150:
+        fail(f"abstract has {len(ab.split())} words (limit 150)")
+    else:
+        ok(f"abstract {len(ab.split())} words (limit 150)")
+    bm = (FN / "beschrijving.md").read_text(encoding="utf-8")
+    if re.search(r"provisional application|United States|35 U\.S\.C", bm, re.I):
+        fail("filing-nl description still carries US-provisional wording")
+    else:
+        ok("filing-nl description has no US-provisional wording")
+    missing_par = [p for p in re.findall(r"^\[(\d{4})\]", text, re.M) if f"[{p}]" not in bm]
+    if missing_par:
+        fail(f"paragraphs missing from filing-nl description: {missing_par[:5]}")
+    else:
+        ok("every numbered paragraph is in the Dutch description")
+    leg = json.load(open(HERE.parent / "europe" / "drawings" / "legend.json"))
+    bad_txt = []
+    for f in sorted((HERE.parent / "europe" / "drawings").glob("fig*.svg")):
+        for t in re.findall(r"<text[^>]*>(.*?)</text>", f.read_text(encoding="utf-8")):
+            if not (re.fullmatch(r"\d+[a-z]?", t) or re.fullmatch(r"FIG\. \d+", t)):
+                bad_txt.append(f.name)
+    if bad_txt or len(leg) != 33:
+        fail(f"drawings carry text labels or lack legend entries: {sorted(set(bad_txt))[:5]}")
+    else:
+        ok("drawings carry only reference numerals and figure numbers; 33 legends")
+    unlisted = [r for k, v in leg.items() for r, _ in v if f"{r}: " not in bm]
+    if unlisted:
+        fail(f"reference signs missing from the list in the description: {unlisted[:5]}")
+    else:
+        ok("every reference sign is in the list of reference signs")
+    dpages = subprocess.run(["pdfinfo", str(FN / "tekeningen.pdf")], capture_output=True, text=True).stdout
+    if "Pages:           33" not in dpages:
+        fail("tekeningen.pdf is not one sheet per figure (33)")
+    else:
+        ok("tekeningen.pdf: 33 sheets, one per figure")
+
 for m in oks: print("PASS ", m)
 for m in warns: print("WARN ", m)
 for m in fails: print("FAIL ", m)

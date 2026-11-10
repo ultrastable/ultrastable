@@ -8,14 +8,14 @@ Not legal advice. About 2 to 3 hours of work. Rowan signs and pays (see `OWNER-C
 2. Attorney questions in `DECISION-MEMO.md` section 7: ask question 1 (where was it made) before filing if there is any doubt. It is a one-hour question.
 3. Create an Octrooicentrum account and confirm the online filing route (MijnOctrooi: https://mijnoctrooi.rvo.nl, linked from the OCNL pages). Check how you identify (eHerkenning or DigiD may be required for foreign residents; confirm by phone, 088 042 40 02, option 2, verlening@octrooicentrum.nl).
 4. Ask OCNL two things, and record the answers in `ip/evidence-log.md`: (a) the procedure fee today; (b) that not requesting the search leaves the filing date and priority intact until the 13-month limit.
-5. Build the Dutch-format files from `FORM-VALUES.md` section 4 (margins 2 cm top, right, bottom, 2.5 cm left; continuous page numbering from the description's first page; drawings with reference numerals, not text labels).
+5. The Dutch-format files already exist in `ip/europe/filing-nl/` (A4, OCNL margins, continuous page numbers, claims in Dutch, drawings with reference numerals only). Open each PDF and look at it once; `FORM-VALUES.md` section 4 says what each is.
 6. Do not run the text through a generative AI tool at this stage: OCNL warns that disclosure there can cost you the patent. Use the files already prepared.
 
 ## B. Filing day
 
 1. Open the online filing portal and start a new Dutch patent application.
 2. Enter the values from `FORM-VALUES.md` section 1 (request form: applicant, inventor, no representative, title, no priority, no search request).
-3. Upload: description (English PDF), claims (one Dutch claim), abstract (English), drawings.
+3. Upload: `beschrijving-en-conclusies.pdf` as description and claims (it is one numbered document; if the portal wants them separately, split at the page headed CONCLUSIES, page 91 of 91 and keep the numbering), `samenvatting.pdf` as abstract, `tekeningen.pdf` as drawings. Title: copy from `filing/ads-data.json`.
 4. Do not tick the search request.
 5. Sign (identity-bound) and pay the procedure fee (identity-bound: money). Payment is your job; OCNL sends no invoice.
 6. Save the filing receipt with date and application number. The date is the priority date. Record it in `ip/evidence-log.md`.

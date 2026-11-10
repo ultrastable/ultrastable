@@ -4,7 +4,7 @@ Date: 2026-11-10. Status: decision made. **Working analysis from primary sources
 
 ## 1. Decision
 
-**File a Dutch national patent application at Octrooicentrum Nederland (OCNL), in English except for one short claim in Dutch, and do not request the search at filing.** This is the closest European thing to a US provisional: you self-file online, the description may be English, nothing is examined for you unless you ask, and the filing date becomes a Paris Convention priority date for 12 months. Within 12 months, file the real application (PCT, or EPO directly) claiming that date.
+**File a Dutch national patent application at Octrooicentrum Nederland (OCNL), with an English description and Dutch claims (three, in `conclusies-nl.md`), and do not request the search at filing.** This is the closest European thing to a US provisional: you self-file online, the description may be English, nothing is examined for you unless you ask, and the filing date becomes a Paris Convention priority date for 12 months. Within 12 months, file the real application (PCT, or EPO directly) claiming that date.
 
 Runner-up (use if OCNL's Dutch-claim or payment steps block you): **direct EPO filing**, English, self-represented, about EUR 2,800 all-in (`FEE-TABLE.md`). Third: UK IPO, cheapest on paper but it needs a UK address for service (unverified here).
 

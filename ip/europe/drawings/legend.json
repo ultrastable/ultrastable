@@ -1,0 +1,1996 @@
+{
+ "1": [
+  [
+   "102",
+   "Principal (owner / board) sets objectives, receives digests"
+  ],
+  [
+   "104",
+   "Governance layer: policy store, interrupt gate, limits, self-amending policy"
+  ],
+  [
+   "106",
+   "Virtual staff hierarchy (portfolio, program, project, product, specialist agents)"
+  ],
+  [
+   "108",
+   "Work ledger (issues, roadmap, claims)"
+  ],
+  [
+   "110",
+   "Decision and prediction ledger"
+  ],
+  [
+   "112",
+   "Executor pool (AI agents, tools, people)"
+  ],
+  [
+   "114",
+   "Verification engine (probes, canary, revert)"
+  ],
+  [
+   "116",
+   "Managed organization systems (software, services, operations, products)"
+  ],
+  [
+   "118",
+   "Signal store: metrics, usage, failures, friction, outcomes"
+  ],
+  [
+   "120",
+   "Trust ledger (surface x action class)"
+  ],
+  [
+   "151",
+   "deploy"
+  ],
+  [
+   "152",
+   "score"
+  ],
+  [
+   "153",
+   "feedback"
+  ],
+  [
+   "154",
+   "scope"
+  ]
+ ],
+ "2": [
+  [
+   "202",
+   "Virtual portfolio manager allocates capacity across programs"
+  ],
+  [
+   "204a",
+   "Virtual program manager (program A: charter, metric)"
+  ],
+  [
+   "204b",
+   "Virtual program manager (program B)"
+  ],
+  [
+   "204n",
+   "Virtual program manager (program N)"
+  ],
+  [
+   "206",
+   "Virtual project manager (milestones, dependencies)"
+  ],
+  [
+   "208",
+   "Virtual product manager (product register, plus loop)"
+  ],
+  [
+   "210",
+   "Quality / review agent (two-family review gate)"
+  ],
+  [
+   "212",
+   "Specialist staff agents (finance, comms, ops, research)"
+  ],
+  [
+   "214",
+   "Executor agents (code, content, analysis)"
+  ],
+  [
+   "216",
+   "Auditor / calibrator agent (scores predictions, trust)"
+  ],
+  [
+   "218",
+   "Persona briefs and digest to principal"
+  ]
+ ],
+ "3": [
+  [
+   "302",
+   "Start tick (schedule)"
+  ],
+  [
+   "304",
+   "Snapshot program risk and quality index once"
+  ],
+  [
+   "306",
+   "Compute allocation: share of focus slots, half even, half by risk"
+  ],
+  [
+   "308",
+   "Classify decision per program (constrain/escalate/accelerate/ maintain/idle)"
+  ],
+  [
+   "310",
+   "Program managers rank candidates (primary metric, guard, severity, age)"
+  ],
+  [
+   "312",
+   "Act: promote, close with evidence, supersede, demote, assign doer"
+  ],
+  [
+   "314",
+   "Originate roadmap items and plusses"
+  ],
+  [
+   "316",
+   "Log actions with prior values and predictions; write briefs"
+  ],
+  [
+   "351",
+   "next tick"
+  ]
+ ],
+ "4": [
+  [
+   "402",
+   "Pick product: oldest last-plus, weighted by usage and friction"
+  ],
+  [
+   "404",
+   "Gather evidence without principal input (usage, errors, asks, peers)"
+  ],
+  [
+   "406",
+   "Write one additive, reversible plus with stated prediction"
+  ],
+  [
+   "408",
+   "Ship via work ledger, executor, canary and automatic revert"
+  ],
+  [
+   "410",
+   "Outcome improved and no guard regressed?"
+  ],
+  [
+   "412",
+   "Keep; seed next plus (\"plus the plus\")"
+  ],
+  [
+   "414",
+   "Revert; try new angle; rest after 3 misses"
+  ],
+  [
+   "416",
+   "Every Nth cycle: simplify pass; weekly digest to principal"
+  ],
+  [
+   "451",
+   "yes"
+  ],
+  [
+   "452",
+   "no"
+  ],
+  [
+   "453",
+   "next cycle"
+  ]
+ ],
+ "5": [
+  [
+   "502",
+   "Decision with logged prediction (metric, operator, value, window)"
+  ],
+  [
+   "504",
+   "Execute through canonical path (claim, change, review gate)"
+  ],
+  [
+   "506",
+   "Declared probes pass after deploy?"
+  ],
+  [
+   "508",
+   "Automatic revert; record failure"
+  ],
+  [
+   "510",
+   "Verified live; close with evidence"
+  ],
+  [
+   "512",
+   "At window end: score prediction against observed metric"
+  ],
+  [
+   "514",
+   "Update calibration and trust for (surface, action class)"
+  ],
+  [
+   "551",
+   "no"
+  ],
+  [
+   "552",
+   "yes"
+  ],
+  [
+   "553",
+   "next decision"
+  ]
+ ],
+ "6": [
+  [
+   "602",
+   "Proposed action"
+  ],
+  [
+   "604",
+   "Irreversible AND identity-bound with no reversible path?"
+  ],
+  [
+   "606",
+   "Principal card with default, reason and closing probe"
+  ],
+  [
+   "608",
+   "Trust for (surface, class) at or above rung threshold?"
+  ],
+  [
+   "610",
+   "Narrow: assisted path or added review"
+  ],
+  [
+   "612",
+   "Execute autonomously within rung scope"
+  ],
+  [
+   "614",
+   "Outcome adjusts trust; rung transition recorded"
+  ],
+  [
+   "651",
+   "yes"
+  ],
+  [
+   "652",
+   "no"
+  ],
+  [
+   "653",
+   "no"
+  ],
+  [
+   "654",
+   "yes"
+  ]
+ ],
+ "7": [
+  [
+   "702",
+   "Scan agent outputs and principal messages for signatures"
+  ],
+  [
+   "704",
+   "Signature repeats past threshold (e.g. 3 in 7 days, one source)"
+  ],
+  [
+   "706",
+   "Generate policy amendment proposal"
+  ],
+  [
+   "708",
+   "Red-team; replay against trailing ticks"
+  ],
+  [
+   "710",
+   "Preserves fixed limits and improves replay?"
+  ],
+  [
+   "712",
+   "Adopt by reviewed change; bump version; record lineage"
+  ],
+  [
+   "714",
+   "Reject; record reason"
+  ],
+  [
+   "751",
+   "yes"
+  ],
+  [
+   "752",
+   "no"
+  ]
+ ],
+ "8": [
+  [
+   "802",
+   "Group issues into families; count reopens and new items"
+  ],
+  [
+   "804",
+   "Family reopened >= K times and still active?"
+  ],
+  [
+   "806",
+   "File one root-cause item at top priority in its program focus"
+  ],
+  [
+   "808",
+   "Diagnostic agent names producer, closing probe, smallest fix"
+  ],
+  [
+   "810",
+   "Close when family quiet for T; reopen on recurrence"
+  ],
+  [
+   "851",
+   "yes"
+  ]
+ ],
+ "9": [
+  [
+   "902",
+   "Organization-independent core: ledgers, ticks, prediction scoring, trust, gate, plus loop"
+  ],
+  [
+   "904",
+   "Tenant configuration: programs, charters, metrics, products, executors, limits"
+  ],
+  [
+   "906a",
+   "Software company (services, releases)"
+  ],
+  [
+   "906b",
+   "Marketing / media (campaigns, channels)"
+  ],
+  [
+   "906c",
+   "Operations / finance (processes, budgets)"
+  ],
+  [
+   "906d",
+   "Research lab (papers, experiments)"
+  ],
+  [
+   "906e",
+   "Nonprofit / public body (programs, grants)"
+  ],
+  [
+   "906f",
+   "Personal or family office (separated plane)"
+  ]
+ ],
+ "10": [
+  [
+   "1002",
+   "Agent requests claim on component (path, intent, holder)"
+  ],
+  [
+   "1004",
+   "Live unexpired claim held by another agent?"
+  ],
+  [
+   "1006",
+   "Do not duplicate: review the claimed change or take next item"
+  ],
+  [
+   "1008",
+   "Grant claim: token, expiry, fence = previous fence + 1"
+  ],
+  [
+   "1010",
+   "Write to component presenting token and fence; renew by heartbeat"
+  ],
+  [
+   "1012",
+   "Resource accepts write only for live token and current fence?"
+  ],
+  [
+   "1014",
+   "Reject stale write"
+  ],
+  [
+   "1016",
+   "Release with outcome; reaper releases expired claims"
+  ],
+  [
+   "1051",
+   "yes"
+  ],
+  [
+   "1052",
+   "no"
+  ],
+  [
+   "1053",
+   "no"
+  ],
+  [
+   "1054",
+   "yes"
+  ]
+ ],
+ "11": [
+  [
+   "1102",
+   "Each tick: diff active work set against previous tick"
+  ],
+  [
+   "1104",
+   "Item left active set without a disposition?"
+  ],
+  [
+   "1106",
+   "Record silent-drop incident; reopen item"
+  ],
+  [
+   "1108",
+   "Step routed to principal?"
+  ],
+  [
+   "1118",
+   "Virtual staff execute step"
+  ],
+  [
+   "1110",
+   "Card has identity-bound line?"
+  ],
+  [
+   "1112",
+   "Reroute card to virtual staff"
+  ],
+  [
+   "1114",
+   "Hold card: default in effect, reason, closing probe"
+  ],
+  [
+   "1116",
+   "Closing probe observes step done: close card automatically"
+  ],
+  [
+   "1151",
+   "yes"
+  ],
+  [
+   "1152",
+   "no"
+  ],
+  [
+   "1153",
+   "no"
+  ],
+  [
+   "1154",
+   "yes"
+  ],
+  [
+   "1155",
+   "no"
+  ],
+  [
+   "1156",
+   "yes"
+  ]
+ ],
+ "12": [
+  [
+   "1202",
+   "Executor produces change under a work claim"
+  ],
+  [
+   "1204",
+   "Change touches a risk class (auth, routes, data, workflow)?"
+  ],
+  [
+   "1206",
+   "Review by models of two disjoint families; hold on verified high finding"
+  ],
+  [
+   "1208",
+   "Checks green: merge; deploy under deploy lock"
+  ],
+  [
+   "1210",
+   "Run declared probes (routes, content, data statements)"
+  ],
+  [
+   "1212",
+   "Probe passed before and fails after?"
+  ],
+  [
+   "1214",
+   "Revert to prior version; file failure item"
+  ],
+  [
+   "1216",
+   "Record deploy ledger row; capture outcome baseline"
+  ],
+  [
+   "1251",
+   "yes"
+  ],
+  [
+   "1252",
+   "no"
+  ],
+  [
+   "1253",
+   "yes"
+  ],
+  [
+   "1254",
+   "no"
+  ]
+ ],
+ "13": [
+  [
+   "1302",
+   "Task with task class"
+  ],
+  [
+   "1304",
+   "Read ladder for class: models ordered by cost, capability"
+  ],
+  [
+   "1306",
+   "Spending cap for class or fleet breached?"
+  ],
+  [
+   "1308",
+   "Step down to cheaper rung; do not stop work"
+  ],
+  [
+   "1310",
+   "Call model; validate output against schema and gates"
+  ],
+  [
+   "1312",
+   "Output invalid?"
+  ],
+  [
+   "1314",
+   "Escalate one rung (bounded retries)"
+  ],
+  [
+   "1316",
+   "Record cost per verified outcome"
+  ],
+  [
+   "1351",
+   "yes"
+  ],
+  [
+   "1352",
+   "no"
+  ],
+  [
+   "1353",
+   "yes"
+  ],
+  [
+   "1354",
+   "no"
+  ]
+ ],
+ "14": [
+  [
+   "1402",
+   "Organization-independent core (persona, tick, ledger, gate, plus, trust modules)"
+  ],
+  [
+   "1404",
+   "Edge embodiment: scheduled serverless workers"
+  ],
+  [
+   "1406",
+   "Portable embodiment: containers with scheduled jobs"
+  ],
+  [
+   "1408",
+   "Relational store (SQLite-class), object store, key-value store"
+  ],
+  [
+   "1410",
+   "Relational database, object store, message queue"
+  ],
+  [
+   "1412",
+   "Executor adapters: open models, hosted coding agents, interactive sessions, people"
+  ],
+  [
+   "1414",
+   "Managed systems as surfaces with probes (repositories, services, channels, processes)"
+  ]
+ ],
+ "15": [
+  [
+   "1502",
+   "Idea file: idea, users, first outcomes, constraints (sole human input)"
+  ],
+  [
+   "1504",
+   "Read and detect: credentials and tools present (presence only), environment"
+  ],
+  [
+   "1506",
+   "Select: model tier from stated budget; reviewer model of another family"
+  ],
+  [
+   "1508",
+   "Plan: roles per outcome, shared staff, backlog, items, predictions, gate cards"
+  ],
+  [
+   "1510",
+   "Write: charter, roles, instruction files, autonomy policy, idempotent seed SQL"
+  ],
+  [
+   "1512",
+   "Provision: database, server worker, scheduled heartbeat"
+  ],
+  [
+   "1514",
+   "Start: first tick; boot success stored as a scored prediction"
+  ],
+  [
+   "1516",
+   "Stage fails: record as work item (owner, blocker, closing probe); continue degraded"
+  ],
+  [
+   "1551",
+   "on failure"
+  ]
+ ],
+ "16": [
+  [
+   "1602",
+   "Draft output forms (report, reply, log line)"
+  ],
+  [
+   "1604",
+   "Match signatures against register and phrases"
+  ],
+  [
+   "1606",
+   "Signature hit?"
+  ],
+  [
+   "1608",
+   "Classify the stop: refusal or limit stated with reason, or interrupt-eligible?"
+  ],
+  [
+   "1610",
+   "Redirect: rewrite by signature class (adopt, decide, choose, first person)"
+  ],
+  [
+   "1612",
+   "Re-execute abandoned path in the same output; verify"
+  ],
+  [
+   "1614",
+   "Emit output as done (four-line report)"
+  ],
+  [
+   "1616",
+   "Report as disposition: card with IDENTITY-BOUND line, claim or issue, closing probe"
+  ],
+  [
+   "1618",
+   "Record hit: false_stop_hits, trust deduction, metric"
+  ],
+  [
+   "1620",
+   "3 hits in 7 days from one source: file doctrine proposal (FIG. 7)"
+  ],
+  [
+   "1651",
+   "hit"
+  ],
+  [
+   "1652",
+   "false stop"
+  ],
+  [
+   "1653",
+   "excluded"
+  ],
+  [
+   "1654",
+   "record"
+  ],
+  [
+   "1655",
+   "no hit"
+  ]
+ ],
+ "17": [
+  [
+   "1702",
+   "Reconcile; recognize and redirect (steps 1-2)"
+  ],
+  [
+   "1704",
+   "Infer direction; pull from driver (steps 3-4)"
+  ],
+  [
+   "1706",
+   "Dispatch or execute; verify (steps 5-6)"
+  ],
+  [
+   "1708",
+   "Compare prediction; log provenance; adoption gate; report (steps 7-10)"
+  ],
+  [
+   "1710",
+   "Accrue trust; probe failure modes; scan gaps; coin; author; refresh; advance horizon; audit (steps 11-18)"
+  ],
+  [
+   "1712",
+   "Evolve doctrine; emit tick evidence (steps 19-20)"
+  ],
+  [
+   "1714",
+   "tick_runs: tick_id, step, ok, evidence, ts"
+  ],
+  [
+   "1716",
+   "Autonomous action"
+  ],
+  [
+   "1718",
+   "Verified outcome"
+  ],
+  [
+   "1720",
+   "Trust deposit (surface, action class)"
+  ],
+  [
+   "1722",
+   "Wider scope (ladder position)"
+  ],
+  [
+   "1751",
+   "more action"
+  ]
+ ],
+ "18": [
+  [
+   "1802",
+   "Scheduler A: platform cron triggers (per-worker, native)"
+  ],
+  [
+   "1804",
+   "Scheduler B: dynamic dispatcher (per-minute, reads cron table)"
+  ],
+  [
+   "1806",
+   "Manager ticks (steps written to tick evidence) portfolio / program / product"
+  ],
+  [
+   "1808",
+   "Work ledger (items, doer lines, claims)"
+  ],
+  [
+   "1810",
+   "Executors (task engine, agents, run ledger)"
+  ],
+  [
+   "1812",
+   "Deploy engine (build, deploy, version poll)"
+  ],
+  [
+   "1814",
+   "Probes (health, content, freshness)"
+  ],
+  [
+   "1816",
+   "Signal store (runs, probe log, metrics, signals)"
+  ],
+  [
+   "1818",
+   "Dead-man check (missing tick slot = failure)"
+  ],
+  [
+   "1851",
+   "run records"
+  ],
+  [
+   "1852",
+   "alert"
+  ],
+  [
+   "1853",
+   "feedback"
+  ]
+ ],
+ "19": [
+  [
+   "1902",
+   "Platform scripts API (enumerate workers, bindings)"
+  ],
+  [
+   "1904",
+   "Wiring sweep (trigger + binding layer)"
+  ],
+  [
+   "1906",
+   "Wiring graph store (workers, edges, resources)"
+  ],
+  [
+   "1908",
+   "Service registry (declared purpose, owner, status)"
+  ],
+  [
+   "1910",
+   "Graph analyzer: islands, sinks, sources, unresolved targets, density, orphan tables"
+  ],
+  [
+   "1912",
+   "Integration score state table"
+  ],
+  [
+   "1914",
+   "Operational state API (probes, 24h requests, errors, drift)"
+  ],
+  [
+   "1916",
+   "Report-card computation: dimension scores, mean, objective-function terms"
+  ],
+  [
+   "1918",
+   "Dashboard pages (auto-refresh)"
+  ],
+  [
+   "1920",
+   "Owner digest (brief, weekly report)"
+  ],
+  [
+   "1922",
+   "Kaizen loop dispositions gap rows -> work ledger"
+  ],
+  [
+   "1951",
+   "re-sweep"
+  ]
+ ],
+ "20": [
+  [
+   "2002",
+   "Gather signals: proposals, questions, score gaps, heal actions, inferred direction"
+  ],
+  [
+   "2004",
+   "Synthesize falsifiable candidate goals with definition of done (model)"
+  ],
+  [
+   "2006",
+   "Would change the objective itself?"
+  ],
+  [
+   "2008",
+   "Ratification queue: status proposed, owner principal; never adopted"
+  ],
+  [
+   "2010",
+   "Score at or above threshold and not a near-duplicate?"
+  ],
+  [
+   "2012",
+   "Reject: reason and score recorded"
+  ],
+  [
+   "2014",
+   "Anchored to a ratified objective?"
+  ],
+  [
+   "2016",
+   "Probation: novel goal, flagged overdue without evidence"
+  ],
+  [
+   "2018",
+   "Adopt derived goal: parent objective, alignment, ledger row"
+  ],
+  [
+   "2020",
+   "Dispatch and drain: research queue, task ledger, managers"
+  ],
+  [
+   "2022",
+   "DoD met, stale past limit, or superseded?"
+  ],
+  [
+   "2024",
+   "Principal ratifies novel goal?"
+  ],
+  [
+   "2026",
+   "Objective space: ratified goal becomes standing, parent for new goals"
+  ],
+  [
+   "2028",
+   "Retire with disposition: retired_at, reason, ledger cancelled"
+  ],
+  [
+   "2051",
+   "yes"
+  ],
+  [
+   "2052",
+   "no"
+  ],
+  [
+   "2053",
+   "no"
+  ],
+  [
+   "2054",
+   "yes"
+  ],
+  [
+   "2055",
+   "yes"
+  ],
+  [
+   "2056",
+   "no"
+  ],
+  [
+   "2057",
+   "yes"
+  ],
+  [
+   "2058",
+   "no"
+  ],
+  [
+   "2059",
+   "yes"
+  ],
+  [
+   "2060",
+   "no or overdue"
+  ],
+  [
+   "2061",
+   "ratified"
+  ]
+ ],
+ "21": [
+  [
+   "2102",
+   "Backlog: ID, owner role, trigger IDs, done check, milestone"
+  ],
+  [
+   "2104",
+   "All trigger IDs done?"
+  ],
+  [
+   "2106",
+   "Ready: visible to the owner role in the queue"
+  ],
+  [
+   "2108",
+   "In progress: claimed by a doer, claim expires if idle"
+  ],
+  [
+   "2110",
+   "Review: hand-off to reviewer role with evidence"
+  ],
+  [
+   "2112",
+   "Closing probe passes?"
+  ],
+  [
+   "2114",
+   "Done: evidence stored, plus proposed"
+  ],
+  [
+   "2116",
+   "Blocked: names the trigger ID or gate it waits on"
+  ],
+  [
+   "2118",
+   "Superseded or cancelled: reason recorded"
+  ],
+  [
+   "2120",
+   "Principal queue: identity-bound step with default and probe"
+  ],
+  [
+   "2122",
+   "Release dependents: items naming this ID as trigger re-evaluated"
+  ],
+  [
+   "2151",
+   "yes"
+  ],
+  [
+   "2152",
+   "no"
+  ],
+  [
+   "2153",
+   "trigger done"
+  ],
+  [
+   "2154",
+   "replaced"
+  ],
+  [
+   "2155",
+   "claim"
+  ],
+  [
+   "2156",
+   "done claimed"
+  ],
+  [
+   "2157",
+   "owner-only"
+  ],
+  [
+   "2158",
+   "principal acts"
+  ],
+  [
+   "2159",
+   "yes"
+  ],
+  [
+   "2160",
+   "no: rework"
+  ],
+  [
+   "2161",
+   "dependents"
+  ]
+ ],
+ "22": [
+  [
+   "2202",
+   "Task arrives with task class"
+  ],
+  [
+   "2204",
+   "Answer computable by rule or query?"
+  ],
+  [
+   "2206",
+   "Run deterministic handler (no model call)"
+  ],
+  [
+   "2208",
+   "Cache hit and not invalidated?"
+  ],
+  [
+   "2210",
+   "Serve cached answer"
+  ],
+  [
+   "2212",
+   "Capability gate: keep rungs whose canary passed for this class"
+  ],
+  [
+   "2214",
+   "Spend cap for class or organization breached?"
+  ],
+  [
+   "2216",
+   "Step down to cheaper rung; free fallback if one exists"
+  ],
+  [
+   "2218",
+   "Execute on cheapest passing rung"
+  ],
+  [
+   "2220",
+   "Output passes schema and deterministic gates?"
+  ],
+  [
+   "2222",
+   "Escalate one rung; bounded retries"
+  ],
+  [
+   "2224",
+   "Record cost per verified outcome and escalation rate"
+  ],
+  [
+   "2251",
+   "yes"
+  ],
+  [
+   "2252",
+   "no"
+  ],
+  [
+   "2253",
+   "yes"
+  ],
+  [
+   "2254",
+   "no"
+  ],
+  [
+   "2255",
+   "yes"
+  ],
+  [
+   "2256",
+   "no"
+  ],
+  [
+   "2257",
+   "no"
+  ],
+  [
+   "2258",
+   "retry"
+  ],
+  [
+   "2259",
+   "yes"
+  ]
+ ],
+ "23": [
+  [
+   "2302",
+   "Candidate model proposed for a task class"
+  ],
+  [
+   "2304",
+   "Floor check: not in banned class; context and output limits met?"
+  ],
+  [
+   "2306",
+   "Reject; record reason"
+  ],
+  [
+   "2308",
+   "Capability canary: tool-call validity, schema conformance, context size"
+  ],
+  [
+   "2310",
+   "Label agreement check: per-question vs organization labels"
+  ],
+  [
+   "2312",
+   "Agreement at or above gate for the class?"
+  ],
+  [
+   "2314",
+   "Reject for that class; record measured agreement"
+  ],
+  [
+   "2316",
+   "Admit: write rung row in model task matrix"
+  ],
+  [
+   "2318",
+   "Monitor: scheduled probes, baselines, shadow agreement, cost per outcome"
+  ],
+  [
+   "2320",
+   "Drift or regression beyond threshold?"
+  ],
+  [
+   "2322",
+   "Demote or remove; revert routing; audit row"
+  ],
+  [
+   "2351",
+   "no"
+  ],
+  [
+   "2352",
+   "yes"
+  ],
+  [
+   "2353",
+   "no"
+  ],
+  [
+   "2354",
+   "yes"
+  ],
+  [
+   "2355",
+   "yes"
+  ],
+  [
+   "2356",
+   "no"
+  ],
+  [
+   "2357",
+   "re-test"
+  ]
+ ],
+ "24": [
+  [
+   "2402",
+   "Read live state with a measured clock (probes, queries)"
+  ],
+  [
+   "2404",
+   "Record numbered finding: evidence, falsifier, state"
+  ],
+  [
+   "2406",
+   "Verification document: re-test finding by an independent path"
+  ],
+  [
+   "2408",
+   "Reproduces?"
+  ],
+  [
+   "2410",
+   "Correction / retraction document supersedes finding, keeps history"
+  ],
+  [
+   "2412",
+   "Act: patch, tombstone, dispatch, flag or register change"
+  ],
+  [
+   "2414",
+   "Realization gate: observed live?"
+  ],
+  [
+   "2416",
+   "Code-only: mark pending; set deciding query, next check"
+  ],
+  [
+   "2418",
+   "Capstone: structural cause across findings, three-way roster check"
+  ],
+  [
+   "2420",
+   "Feed failure mode register and silent-drop reconciliation (FIG. 25)"
+  ],
+  [
+   "2451",
+   "no"
+  ],
+  [
+   "2452",
+   "yes"
+  ],
+  [
+   "2453",
+   "no"
+  ],
+  [
+   "2454",
+   "yes"
+  ],
+  [
+   "2455",
+   "re-test"
+  ],
+  [
+   "2456",
+   "next audit"
+  ]
+ ],
+ "25": [
+  [
+   "2502",
+   "Failure mode register: id, detector query, threshold, severity"
+  ],
+  [
+   "2504",
+   "Hourly detector run, one evidence row per detector"
+  ],
+  [
+   "2506",
+   "Detector fires?"
+  ],
+  [
+   "2508",
+   "Open item with remediation contract: owner, doer, trigger, closing probe"
+  ],
+  [
+   "2510",
+   "Remediation consumer runs step and books outcome bucket"
+  ],
+  [
+   "2512",
+   "Closing probe passes?"
+  ],
+  [
+   "2514",
+   "Close with evidence; score prediction; update register"
+  ],
+  [
+   "2516",
+   "Loop breaker: same signature 3x in 24 h, file root-cause item"
+  ],
+  [
+   "2518",
+   "Silent-drop reconciliation: scanned = sum of buckets?"
+  ],
+  [
+   "2520",
+   "Unaccounted items: incident, reopen, block parent close"
+  ],
+  [
+   "2522",
+   "Roster reconciliation: registry, scan set, probe set, live list"
+  ],
+  [
+   "2551",
+   "yes"
+  ],
+  [
+   "2552",
+   "yes"
+  ],
+  [
+   "2553",
+   "retry"
+  ],
+  [
+   "2554",
+   "repeat"
+  ],
+  [
+   "2555",
+   "no"
+  ],
+  [
+   "2556",
+   "no, next run"
+  ],
+  [
+   "2557",
+   "new detectors"
+  ]
+ ],
+ "26": [
+  [
+   "2602",
+   "IDEA.md (idea, users, first outcomes, constraints)"
+  ],
+  [
+   "2604",
+   "ultrastable.json (roles, model ladder, connectors, capacity)"
+  ],
+  [
+   "2606",
+   "autonomy/policy.json (surfaces, actions, ladder, limits)"
+  ],
+  [
+   "2608",
+   "Portable core, not modified: protocol, role files, schema, tick steps, policy validator"
+  ],
+  [
+   "2610",
+   "Connectors: credential presence by name only"
+  ],
+  [
+   "2612",
+   "Bootstrapper stages: read, detect, select, plan, write, provision, start (each guarded)"
+  ],
+  [
+   "2614",
+   "org/ record: charter, roles, backlog, boot log, report"
+  ],
+  [
+   "2616",
+   "Gate cards: owner-only steps, each with a closing probe"
+  ],
+  [
+   "2618",
+   "Seed SQL and worker config (idempotent INSERT OR IGNORE)"
+  ],
+  [
+   "2620",
+   "Owner sets a secret or answers a card (identity-bound)"
+  ],
+  [
+   "2622",
+   "Runtime: relational database, worker, 10-minute schedule"
+  ],
+  [
+   "2624",
+   "Heartbeat: seven-step tick, four-line report, /health"
+  ],
+  [
+   "2626",
+   "Prediction P-KIT-3 scored: six complete ticks in an hour"
+  ],
+  [
+   "2628",
+   "Boundary check and claim probes (product proof)"
+  ],
+  [
+   "2651",
+   "read"
+  ],
+  [
+   "2652",
+   "detect"
+  ],
+  [
+   "2653",
+   "write"
+  ],
+  [
+   "2654",
+   "detect"
+  ],
+  [
+   "2655",
+   "write"
+  ],
+  [
+   "2656",
+   "provision"
+  ],
+  [
+   "2657",
+   "start"
+  ]
+ ],
+ "27": [
+  [
+   "2702",
+   "Portable core: schema, tick steps, ledgers, policy data, protocol, probes (no platform calls)"
+  ],
+  [
+   "2704",
+   "Adapter interface: six ports (schedule, store, secrets, model, deploy, health) implemented once per platform"
+  ],
+  [
+   "2706",
+   "Edge embodiment (built, QNFO fleet)"
+  ],
+  [
+   "2708",
+   "GCP embodiment (prophetic)"
+  ],
+  [
+   "2710",
+   "Container embodiment (prophetic)"
+  ],
+  [
+   "2712",
+   "Schedule port"
+  ],
+  [
+   "2751",
+   "Cron trigger runs a scheduled worker"
+  ],
+  [
+   "2752",
+   "Cloud Scheduler calls a Cloud Run service or job"
+  ],
+  [
+   "2753",
+   "Cron or CronJob calls the container"
+  ],
+  [
+   "2714",
+   "Store port"
+  ],
+  [
+   "2754",
+   "Edge SQLite-class database (D1), object store, KV"
+  ],
+  [
+   "2755",
+   "Firestore or Cloud SQL, Cloud Storage"
+  ],
+  [
+   "2756",
+   "Relational database, object store, message queue"
+  ],
+  [
+   "2716",
+   "Secrets port"
+  ],
+  [
+   "2757",
+   "Platform secret bindings (presence only to tick)"
+  ],
+  [
+   "2758",
+   "Secret Manager mounted as env, presence only"
+  ],
+  [
+   "2759",
+   "Orchestrator secrets as environment variables"
+  ],
+  [
+   "2718",
+   "Model port"
+  ],
+  [
+   "2760",
+   "Edge inference plus hosted model API"
+  ],
+  [
+   "2761",
+   "Vertex AI endpoint plus hosted model API"
+  ],
+  [
+   "2762",
+   "Any inference endpoint, local or remote"
+  ],
+  [
+   "2720",
+   "Deploy port"
+  ],
+  [
+   "2763",
+   "Versioned deploy, canary, revert on probe failure"
+  ],
+  [
+   "2764",
+   "Cloud Run revision, traffic split, rollback on failure"
+  ],
+  [
+   "2765",
+   "Image tag rollout and rollback by the orchestrator"
+  ],
+  [
+   "2722",
+   "Health port"
+  ],
+  [
+   "2766",
+   "/health route on worker"
+  ],
+  [
+   "2767",
+   "/health on Cloud Run plus uptime check"
+  ],
+  [
+   "2768",
+   "/health on container, liveness probe"
+  ]
+ ],
+ "28": [
+  [
+   "2802",
+   "Owner types login or taps \"Email me a code\""
+  ],
+  [
+   "2804",
+   "Rate check; 6-digit code; hash stored; emailed only to preset address"
+  ],
+  [
+   "2806",
+   "Owner submits code; hash compared, limited tries, 10 minute lifetime"
+  ],
+  [
+   "2808",
+   "Random token stored as hash; cookie set, 12 hour session"
+  ],
+  [
+   "2810",
+   "Command typed or button tapped (same registry, same path)"
+  ],
+  [
+   "2812",
+   "Owner session present?"
+  ],
+  [
+   "2814",
+   "Destructive and last code older than 15 minutes?"
+  ],
+  [
+   "2816",
+   "Registry verb runs; no arbitrary shell"
+  ],
+  [
+   "2818",
+   "Log row with credential; undo recorded where possible"
+  ],
+  [
+   "2820",
+   "Refuse: need code or loop token cannot act"
+  ],
+  [
+   "2822",
+   "Prompt for fresh code in place; repeat tap"
+  ],
+  [
+   "2851",
+   "session"
+  ],
+  [
+   "2852",
+   "yes"
+  ],
+  [
+   "2853",
+   "no"
+  ],
+  [
+   "2854",
+   "no"
+  ],
+  [
+   "2855",
+   "yes"
+  ],
+  [
+   "2856",
+   "verify"
+  ]
+ ],
+ "29": [
+  [
+   "2902",
+   "Step or question arises (detector, manager, session)"
+  ],
+  [
+   "2904",
+   "Reversible form constructible and in scope?"
+  ],
+  [
+   "2906",
+   "Fleet executes it; disposition recorded"
+  ],
+  [
+   "2908",
+   "Identity-bound line present?"
+  ],
+  [
+   "2910",
+   "List as \"fleet is handling\"; not an owner item"
+  ],
+  [
+   "2912",
+   "Open card: title, why, default in effect, action, severity, closing probe"
+  ],
+  [
+   "2914",
+   "Console shows Why, If you wait, To do, with one-tap buttons"
+  ],
+  [
+   "2916",
+   "Owner tap?"
+  ],
+  [
+   "2918",
+   "Approve, Decline, Done run at the tap (fresh code if stale)"
+  ],
+  [
+   "2920",
+   "Fleet: you do it / I did it: claim card, file work item"
+  ],
+  [
+   "2922",
+   "Snooze 7 days or Not needed: card hidden, default stays"
+  ],
+  [
+   "2924",
+   "Closing probe or fleet verification observes done?"
+  ],
+  [
+   "2926",
+   "Close card with resolution, evidence and credential"
+  ],
+  [
+   "2951",
+   "yes"
+  ],
+  [
+   "2952",
+   "no"
+  ],
+  [
+   "2953",
+   "no"
+  ],
+  [
+   "2954",
+   "yes"
+  ],
+  [
+   "2955",
+   "decide"
+  ],
+  [
+   "2956",
+   "hand over"
+  ],
+  [
+   "2957",
+   "defer"
+  ],
+  [
+   "2958",
+   "yes"
+  ],
+  [
+   "2959",
+   "no: keep open"
+  ]
+ ],
+ "30": [
+  [
+   "3002",
+   "Trigger: schedule, merge to default branch, or ledger change event"
+  ],
+  [
+   "3004",
+   "Read live ledgers: capability, belief, vocabulary, objective, SPOF, policy"
+  ],
+  [
+   "3006",
+   "Run each claim probe; record observed result and time"
+  ],
+  [
+   "3008",
+   "Assemble records; render canonical text, presence-only access map"
+  ],
+  [
+   "3010",
+   "Diff against committed copy in the repository"
+  ],
+  [
+   "3012",
+   "Every claim has evidence?"
+  ],
+  [
+   "3014",
+   "Fail check: move claim to honest-gap list or open item with closing probe"
+  ],
+  [
+   "3016",
+   "Diff empty?"
+  ],
+  [
+   "3018",
+   "Open reviewed change with diff and probe evidence; other agent reviews"
+  ],
+  [
+   "3020",
+   "Merge; write doctrine lineage row; repository text now equals system"
+  ],
+  [
+   "3022",
+   "Record clean generation in tick report; stop"
+  ],
+  [
+   "3051",
+   "no"
+  ],
+  [
+   "3052",
+   "yes"
+  ],
+  [
+   "3053",
+   "no"
+  ],
+  [
+   "3054",
+   "yes"
+  ]
+ ],
+ "31": [
+  [
+   "3102",
+   "Fresh session, wiped machine or new account with seed and repository"
+  ],
+  [
+   "3104",
+   "Read protocol, role file, policy, then self-description"
+  ],
+  [
+   "3106",
+   "Derive ceilings, rungs, gates, limits; what exists; what is broken"
+  ],
+  [
+   "3108",
+   "Detect access map: which surfaces and credentials exist (presence only)"
+  ],
+  [
+   "3110",
+   "Required surface missing?"
+  ],
+  [
+   "3112",
+   "Gate card with default in effect and closing probe; degrade"
+  ],
+  [
+   "3114",
+   "Manager tick consults description: item within ceiling and rung?"
+  ],
+  [
+   "3116",
+   "Refuse, record, take next item; no workaround of the check"
+  ],
+  [
+   "3118",
+   "Claim, act, verify, record provenance and prediction"
+  ],
+  [
+   "3120",
+   "Bootstrapper stages 1508 to 1514: emit tenant description from policy"
+  ],
+  [
+   "3122",
+   "Sync job: repository to tenant database and back; platform backlog is tenant one"
+  ],
+  [
+   "3151",
+   "yes"
+  ],
+  [
+   "3152",
+   "no"
+  ],
+  [
+   "3153",
+   "no"
+  ],
+  [
+   "3154",
+   "yes"
+  ]
+ ],
+ "32": [
+  [
+   "3202",
+   "Business function registry function, persona, schema, done check, gate class"
+  ],
+  [
+   "3204",
+   "Artifact registry repo path, status, evidence, reviewer, function"
+  ],
+  [
+   "3206",
+   "Dependency graph needs / gate edges between functions"
+  ],
+  [
+   "3208",
+   "Planner output: backlog rows (owner role, trigger, done check, milestone, label)"
+  ],
+  [
+   "3210",
+   "Ready test: needs done, gate label open, claim free"
+  ],
+  [
+   "3212",
+   "Product development (work items)"
+  ],
+  [
+   "3214",
+   "Intellectual property disclosure, prior art, draft, claims, checklist, log"
+  ],
+  [
+   "3216",
+   "Gate: filed owner signs; card"
+  ],
+  [
+   "3218",
+   "Marketing, promotion, events, public site"
+  ],
+  [
+   "3220",
+   "Funding kits (private); submissions are owner steps"
+  ],
+  [
+   "3222",
+   "Reviewer, other model family checks each artifact"
+  ],
+  [
+   "3224",
+   "Consistency check across artifacts: mismatch list empty"
+  ],
+  [
+   "3226",
+   "Owner task queue identity-bound cards"
+  ],
+  [
+   "3228",
+   "Done check and closing probe pass: status verified, trust updated"
+  ],
+  [
+   "3251",
+   "package"
+  ],
+  [
+   "3252",
+   "open"
+  ],
+  [
+   "3253",
+   "private"
+  ],
+  [
+   "3254",
+   "card"
+  ],
+  [
+   "3255",
+   "mismatch: reopen"
+  ]
+ ],
+ "33": [
+  [
+   "3302",
+   "Idea file: idea, users, outcomes, constraints"
+  ],
+  [
+   "3304",
+   "Read and detect: parse idea, credential presence, tools"
+  ],
+  [
+   "3306",
+   "Select model tier from budget; reviewer of another family"
+  ],
+  [
+   "3308",
+   "Plan: org, KIT items, function backlog, predictions, gate cards"
+  ],
+  [
+   "3310",
+   "Write: charter, registries, role files, seed statements"
+  ],
+  [
+   "3312",
+   "Provision: database, worker, schedule (first run pending)"
+  ],
+  [
+   "3314",
+   "Start: schedule armed; heartbeat prediction scored"
+  ],
+  [
+   "3316",
+   "Tick: manager takes next ready item (needs met, gate open)"
+  ],
+  [
+   "3318",
+   "Predict, then produce the artifact in the repository"
+  ],
+  [
+   "3320",
+   "Independent review and consistency check"
+  ],
+  [
+   "3322",
+   "Identity-bound and irreversible step?"
+  ],
+  [
+   "3324",
+   "Owner card with prepared package and closing probe"
+  ],
+  [
+   "3326",
+   "Close: evidence, trust ledger, registry status, plus proposed"
+  ],
+  [
+   "3351",
+   "ticks"
+  ],
+  [
+   "3352",
+   "yes"
+  ],
+  [
+   "3353",
+   "no"
+  ],
+  [
+   "3354",
+   "probe sees step"
+  ]
+ ]
+}
