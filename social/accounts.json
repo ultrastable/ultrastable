@@ -1,0 +1,7 @@
+{
+  "_doc": "Channels the system can post to. A channel posts live only when mode=live in gate.json AND its secrets exist. Accounts and tokens are owner cards (docs/ops/SOCIAL-ACCOUNTS.md).",
+  "channels": {
+    "bluesky":  {"limit": 300, "secrets": ["BLUESKY_HANDLE", "BLUESKY_APP_PASSWORD"]},
+    "mastodon": {"limit": 500, "secrets": ["MASTODON_INSTANCE", "MASTODON_TOKEN"]}
+  }
+}
