@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="740" viewBox="0 0 960 740" font-family="Arial, Helvetica, sans-serif">
+<rect width="100%" height="100%" fill="white"/>
+<defs><marker id="a" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="black"/></marker></defs>
+<text x="480.0" y="28" text-anchor="middle" font-size="18" font-weight="bold">FIG. 16  Recognition-and-redirect pipeline</text>
+<rect x="185.0" y="51.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+<text x="300" y="76.5" text-anchor="middle" font-size="12.5">Draft output forms</text>
+<text x="300" y="91.5" text-anchor="middle" font-size="12.5">(report, reply, log line)</text>
+<text x="419.0" y="63.0" font-size="12" font-weight="bold">1602</text>
+<rect x="185.0" y="141.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+<text x="300" y="166.5" text-anchor="middle" font-size="12.5">Match signatures against</text>
+<text x="300" y="181.5" text-anchor="middle" font-size="12.5">register and phrases</text>
+<text x="419.0" y="153.0" font-size="12" font-weight="bold">1604</text>
+<polygon points="300,224 445,270 300,316 155,270" fill="white" stroke="black" stroke-width="1.6"/>
+<text x="300" y="274.0" text-anchor="middle" font-size="12.5">Signature hit?</text>
+<text x="449" y="240" font-size="12" font-weight="bold">1606</text>
+<rect x="185.0" y="351.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+<text x="300" y="376.5" text-anchor="middle" font-size="12.5">Classify the stop: refusal or limit</text>
+<text x="300" y="391.5" text-anchor="middle" font-size="12.5">stated with reason, or interrupt-eligible?</text>
+<text x="419.0" y="363.0" font-size="12" font-weight="bold">1608</text>
+<rect x="185.0" y="451.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+<text x="300" y="476.5" text-anchor="middle" font-size="12.5">Redirect: rewrite by signature class</text>
+<text x="300" y="491.5" text-anchor="middle" font-size="12.5">(adopt, decide, choose, first person)</text>
+<text x="419.0" y="463.0" font-size="12" font-weight="bold">1610</text>
+<rect x="185.0" y="551.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+<text x="300" y="576.5" text-anchor="middle" font-size="12.5">Re-execute abandoned path</text>
+<text x="300" y="591.5" text-anchor="middle" font-size="12.5">in the same output; verify</text>
+<text x="419.0" y="563.0" font-size="12" font-weight="bold">1612</text>
+<rect x="185.0" y="651.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+<text x="300" y="676.5" text-anchor="middle" font-size="12.5">Emit output as done</text>
+<text x="300" y="691.5" text-anchor="middle" font-size="12.5">(four-line report)</text>
+<text x="419.0" y="663.0" font-size="12" font-weight="bold">1614</text>
+<rect x="625.0" y="351.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+<text x="740" y="369.0" text-anchor="middle" font-size="12.5">Report as disposition: card with</text>
+<text x="740" y="384.0" text-anchor="middle" font-size="12.5">IDENTITY-BOUND line, claim or issue,</text>
+<text x="740" y="399.0" text-anchor="middle" font-size="12.5">closing probe</text>
+<text x="859.0" y="363.0" font-size="12" font-weight="bold">1616</text>
+<rect x="625.0" y="551.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+<text x="740" y="576.5" text-anchor="middle" font-size="12.5">Record hit: false_stop_hits,</text>
+<text x="740" y="591.5" text-anchor="middle" font-size="12.5">trust deduction, metric</text>
+<text x="859.0" y="563.0" font-size="12" font-weight="bold">1618</text>
+<rect x="625.0" y="651.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+<text x="740" y="676.5" text-anchor="middle" font-size="12.5">3 hits in 7 days from one source:</text>
+<text x="740" y="691.5" text-anchor="middle" font-size="12.5">file doctrine proposal (FIG. 7)</text>
+<text x="859.0" y="663.0" font-size="12" font-weight="bold">1620</text>
+<line x1="300" y1="109" x2="300" y2="141" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="300" y1="199" x2="300" y2="224" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="300" y1="316" x2="300" y2="351" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="306.0" y="329.5" font-size="11.5" font-style="italic">hit</text>
+<line x1="300" y1="409" x2="300" y2="451" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="306.0" y="426.0" font-size="11.5" font-style="italic">false stop</text>
+<path d="M415,380 L520,380 L625,380" fill="none" stroke="black" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#a)"/>
+<text x="526" y="376" font-size="11.5" font-style="italic">excluded</text>
+<line x1="300" y1="509" x2="300" y2="551" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="300" y1="609" x2="300" y2="651" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<path d="M415,580 L520,580 L625,580" fill="none" stroke="black" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#a)"/>
+<text x="526" y="576" font-size="11.5" font-style="italic">record</text>
+<line x1="740" y1="409" x2="740" y2="551" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="740" y1="609" x2="740" y2="651" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<path d="M155,270 L60,270 L60,680 L185,680" fill="none" stroke="black" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#a)"/>
+<text x="66" y="676" font-size="11.5" font-style="italic">no hit</text>
+</svg>

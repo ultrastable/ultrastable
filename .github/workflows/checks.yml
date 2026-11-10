@@ -1,0 +1,27 @@
+name: checks
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Workflow YAML parses
+        run: python3 -c "import yaml,glob; [yaml.safe_load(open(f)) for f in glob.glob('.github/workflows/*.yml')]"
+      - name: Secret and key scan
+        run: |
+          if grep -rEIl --exclude-dir=.git -e '-----BEGIN [A-Z ]*PRIVATE KEY-----' -e 'gh[pousr]_[A-Za-z0-9]{36,}' -e 'AKIA[0-9A-Z]{16}' -e 'sk-ant-[A-Za-z0-9_-]{20,}' .; then echo "secret-like content found"; exit 1; fi
+      - name: No oversize files
+        run: |
+          big=$(find . -path ./.git -prune -o -type f -size +25M -print)
+          [ -z "$big" ] || { echo "files over 25MB: $big"; exit 1; }
+      - name: Repo verify
+        run: |
+          if [ -f qnfo-platform-thread/verify.py ]; then python3 qnfo-platform-thread/verify.py || echo "::warning::verify.py reported drift (advisory)"; fi

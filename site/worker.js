@@ -6,11 +6,11 @@ const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
 
-const BASE = ":root{color-scheme:light dark;--bg:#f7f8fa;--sf:#fff;--sf2:#eef1f5;--ink:#14181f;--ink2:#4a5360;--line:#d9dee6;--ac:#0b5fff;--on:#fff;--soft:#e6efff;--good:#0a7a3d;--bad:#b3261e}@media(prefers-color-scheme:dark){:root{--bg:#0e1116;--sf:#161b22;--sf2:#1d242d;--ink:#eef1f5;--ink2:#a9b3c1;--line:#2c3541;--ac:#6ea0ff;--on:#0e1116;--soft:#1b2a45;--good:#4cc38a;--bad:#ff8a80}}"
-+ "*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}a{color:var(--ac)}h1{font-size:28px;line-height:1.2;margin:0 0 8px}h2{font-size:20px;margin:28px 0 8px}h3{margin:0;font-size:17px}p{margin:0 0 12px}"
+const BASE = ":root{color-scheme:light dark;--bg:#f6f1e7;--sf:#fffdf8;--sf2:#efe8d9;--ink:#14120f;--ink2:#5b574f;--line:#ddd5c5;--ac:#c93d00;--on:#fff;--soft:#fde6d9;--good:#0a7a3d;--bad:#b3261e}@media(prefers-color-scheme:dark){:root{--bg:#0b1a15;--sf:#12342a;--sf2:#0f2b22;--ink:#f6f1e7;--ink2:#c9d4cc;--line:#1f4a3c;--ac:#ff5b1f;--on:#0b1a15;--soft:#1b3d31;--good:#4cc38a;--bad:#ff8a80}}"
++ "*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}a{color:var(--ac)}h1{font-family:Fraunces,Georgia,serif;font-size:28px;line-height:1.2;margin:0 0 8px}h2{font-size:20px;margin:28px 0 8px}h3{margin:0;font-size:17px}p{margin:0 0 12px}"
 + ".top{position:sticky;top:0;background:var(--sf);border-bottom:1px solid var(--line);z-index:5}.top-in{max-width:960px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:8px;min-height:60px}.brand{font-weight:700;font-size:18px;color:var(--ink);text-decoration:none;margin-right:auto}"
-+ ".main{max-width:960px;margin:0 auto;padding:20px 16px 64px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 16px system-ui;text-decoration:none}.btn-primary{background:var(--ac);border-color:var(--ac);color:var(--on)}.btn-quiet{border-color:transparent;background:transparent;color:var(--ac)}"
-+ ".skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:8px;background:var(--sf);padding:8px}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}.card{background:var(--sf);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 12px}.meta,small{color:var(--ink2);font-size:14px}.head p{color:var(--ink2)}"
++ ".main{max-width:960px;margin:0 auto;padding:20px 16px 64px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:10px 18px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 16px system-ui;text-decoration:none}.btn-primary{background:var(--ac);border-color:var(--ac);color:var(--on)}.btn-quiet{border-color:transparent;background:transparent;color:var(--ac)}"
++ ".skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:8px;background:var(--sf);padding:8px}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:16px;margin:0 0 12px}.meta,small{color:var(--ink2);font-size:14px}.head p{color:var(--ink2)}"
 + "@media(max-width:640px){.hide-sm{display:none!important}h1{font-size:24px}}";
 function dsEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 function dsHead(title, description, extraCss) {
@@ -33,9 +33,9 @@ function esc(s) { return dsEsc(s); }
 function shell(opts, body) {
   const url = "https://" + CANON + opts.path;
   return "<!doctype html><html lang=\"en\"><head>" + dsHead(opts.title, opts.description, CSS)
-    + "<link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
+    + "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><meta property=\"og:image\" content=\"https://" + CANON + "/social-card.svg\"><link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
     + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
-    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\">Ultrastable</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a></div></header>"
+    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
     + "<div class=\"us-foot\">Ultrastable runs QNFO, its first customer, in production. Every number on this site is read from that system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/llms.txt\">llms.txt</a></div></main></body></html>";
 }
@@ -128,6 +128,10 @@ function pilot() {
 const ROBOTS = "User-agent: *\nAllow: /\nSitemap: https://" + CANON + "/sitemap.xml\n";
 const LLMS = "# Ultrastable\n\n> Ultrastable is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. QNFO runs on it as customer zero.\n\n- [Live proof](https://" + CANON + "/proof): claims checked against QNFO's records\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n";
 
+const FAVICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"ultrastable\"><title>ultrastable</title><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></svg>";
+const SOCIAL = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1280 640\" width=\"1280\" height=\"640\"><title>ultrastable</title><defs><linearGradient id=\"g\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#12342A\"/><stop offset=\"1\" stop-color=\"#0B1A15\"/></linearGradient></defs><rect width=\"1280\" height=\"640\" fill=\"url(#g)\"/><g transform=\"translate(96 96) scale(2)\"><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></g><text x=\"96\" y=\"340\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#F6F1E7\">Coding agents write code.</text><text x=\"96\" y=\"430\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#FF5B1F\">Ultrastable runs the system.</text><text x=\"96\" y=\"530\" font-family=\"Georgia,serif\" font-size=\"32\" fill=\"#C9D4CC\">From one idea to a business that improves itself.</text><text x=\"1184\" y=\"590\" text-anchor=\"end\" font-family=\"Georgia,serif\" font-size=\"28\" fill=\"#FFC857\">ultrastable.io</text></svg>";
+const SVG = { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff" };
+
 const HTML = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" };
 
 export default {
@@ -135,6 +139,8 @@ export default {
     const u = new URL(request.url);
     const host = u.hostname.replace(/^www\./, "");
     if (u.pathname === "/health") return Response.json({ ok: true, worker: "ultrastable-site", version: VERSION });
+    if (u.pathname === "/favicon.svg") return new Response(FAVICON, { headers: SVG });
+    if (u.pathname === "/social-card.svg") return new Response(SOCIAL, { headers: SVG });
     if (host === "ultrastable.app") return Response.redirect("https://" + CANON + "/pilot", 301);
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/proof", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);

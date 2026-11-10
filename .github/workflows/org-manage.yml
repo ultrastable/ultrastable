@@ -1,0 +1,60 @@
+name: org-manage
+# Owner-run housekeeping that needs GraphQL / org scope. Reads a fine-grained token from the
+# ORG_ADMIN_TOKEN repo secret (see docs/ops/ORG-TOKEN.md). Safe to re-run: every step is idempotent.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "probe | projects | close-superseded"
+        required: true
+        default: probe
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+concurrency: {group: org-manage, cancel-in-progress: false}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN || github.token }}
+      ORG: ultrastable
+      REPO: ultrastable/ultrastable
+    steps:
+      - name: probe
+        if: inputs.action == 'probe'
+        run: |
+          gh api graphql -f query='{viewer{login} organization(login:"ultrastable"){id projectsV2(first:20){nodes{number title}}}}'
+      - name: projects
+        if: inputs.action == 'projects'
+        run: |
+          set -euo pipefail
+          ORGID=$(gh api graphql -f query='{organization(login:"ultrastable"){id}}' -q .data.organization.id)
+          declare -A LABELS=(
+            ["Portfolio: Ultrastable launch"]="*"
+            ["Patent"]="ws:patent"
+            ["GitHub org and web"]="ws:github-org ws:web-and-seo"
+            ["Funding and business"]="ws:funding ws:business"
+            ["Platform"]="ws:platform ws:product-and-marketing")
+          for TITLE in "${!LABELS[@]}"; do
+            PID=$(gh api graphql -f query='query($o:String!){organization(login:$o){projectsV2(first:50){nodes{id title}}}}' -f o=$ORG \
+              -q ".data.organization.projectsV2.nodes[]|select(.title==\"$TITLE\")|.id")
+            if [ -z "$PID" ]; then
+              PID=$(gh api graphql -f query='mutation($o:ID!,$t:String!){createProjectV2(input:{ownerId:$o,title:$t}){projectV2{id}}}' -f o=$ORGID -f t="$TITLE" -q .data.createProjectV2.projectV2.id)
+              echo "created $TITLE"
+            fi
+            if [ "${LABELS[$TITLE]}" = "*" ]; then SETS=("")
+            else read -ra SETS <<< "${LABELS[$TITLE]}"; fi
+            for L in "${SETS[@]}"; do
+              gh api -X GET "repos/$REPO/issues" -f state=all -f per_page=100 ${L:+-f labels="$L"} --paginate -q '.[]|select(.pull_request|not)|.node_id' | while read -r NID; do
+                gh api graphql -f query='mutation($p:ID!,$c:ID!){addProjectV2ItemById(input:{projectId:$p,contentId:$c}){item{id}}}' -f p="$PID" -f c="$NID" >/dev/null || true
+              done
+            done
+          done
+      - name: close-superseded
+        if: inputs.action == 'close-superseded'
+        run: |
+          for N in 13 61; do
+            gh api -X POST "repos/$REPO/issues/$N/comments" -f body="Superseded by the consolidated layout merged in #54."
+            gh api -X PATCH "repos/$REPO/pulls/$N" -f state=closed -q .state
+          done

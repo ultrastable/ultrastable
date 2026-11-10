@@ -1,0 +1,29 @@
+{
+  "source": "Cloudflare D1 qnfo-audit (35e2e573-92f3-46ac-83c6-22f6429fc5e5), read 2026-11-10 ~08:55 UTC by this session",
+  "note": "Full text of every row is in the vendored migrations under vendor/qnfo-workers/migrations/2026-11-10-ultrastable-*.sql; this file records the live state at the time of the copy.",
+  "product_profile": {
+    "name": "Ultrastable", "home_url": "https://qnfo.org/platform", "repo_url": "https://github.com/QNFO/qnfo-workers",
+    "creator_name": "Rowan Brad Quni-Gudzinas", "creator_role": "Directed by", "creator_title": "systems researcher studying autonomous AI systems",
+    "creator_url": "https://rwnq8.github.io/",
+    "creator_same_as": "https://orcid.org/0009-0002-4317-5604 https://github.com/rwnq8 https://www.linkedin.com/in/rowan-quni https://qnfo.org/about",
+    "credit_visible": "1", "source": "migration", "updated_at": "2026-11-10T08:22:50Z"
+  },
+  "product_claims": ["own-work", "predictions-scored", "tick-running", "trust-ledger", "failure-detectors", "no-silent-drop", "decisions-logged"],
+  "owner_asks_unanswered": [
+    {"id": 13, "kind": "product-name", "question": "Call the platform product \"Ultrastable\"?"},
+    {"id": 14, "kind": "product-buyer", "question": "Who should the platform be sold to first?"},
+    {"id": 15, "kind": "product-model", "question": "How should the product leave QNFO?"},
+    {"id": 16, "kind": "product-design-credit", "question": "Did you set the fleet's operating rules yourself, with AI agents writing the code?"},
+    {"id": 17, "kind": "product-prior-sales", "question": "At Empowering Change (2023 to 2024), did the LLM legal-navigation tool have paying users?"},
+    {"id": 23, "kind": "product-home", "question": "Keep qnfo.org/platform as the platform's home page for now?"},
+    {"id": 24, "kind": "product-github", "question": "Where should the platform's code live on GitHub?"},
+    {"id": 25, "kind": "product-credit-public", "question": "Show \"Directed by Rowan Brad Quni-Gudzinas, systems researcher\" on the platform page?"}
+  ],
+  "human_actions_open_at_read": [
+    {"id": 338, "slug": "ultrastable-domain-1", "title": "Buy a domain for the Ultrastable product"},
+    {"id": 339, "slug": "ultrastable-trademark-1", "title": "Run a trademark knockout search for \"Ultrastable\" in software classes"},
+    {"id": 340, "slug": "ultrastable-github-org-1", "title": "Create the GitHub organisation for the Ultrastable core"},
+    {"id": 341, "slug": "ultrastable-entity-1", "title": "Decide whether Ultrastable becomes its own company"}
+  ],
+  "live_urls": ["https://qnfo.org/platform", "https://qnfo.org/api/platform-claims", "https://qnfo.org/about", "https://ultrastable.io", "https://fleet.qnfo.org/focus"]
+}
