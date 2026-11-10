@@ -1,14 +1,13 @@
 name: outreach
-# The funding and outreach loop. Runs daily and whenever the registry, profiles, gate or engine change.
+# The funding and outreach loop. Weekly and on demand only (GitHub Actions minutes on private repos are limited; owner directive 2026-11-10).
+# Minute budget: one job, about 1 minute per run, 4-5 runs a month = under 6 minutes a month. No push trigger, no second workflow.
+# Prefer the Cloudflare cron worker for anything more frequent (docs/BOOTSTRAP-GAPS.md BG-34).
 # Dry-run until outreach/gate.json mode=live AND sender.registered AND the OUTREACH_SEND_URL / OUTREACH_SEND_TOKEN secrets exist.
 # Kill switch: outreach/gate.json "kill": true. Owner cards are written to outreach/cards/. Status: outreach/STATUS.md.
 # To record a reply from a phone: run this workflow with reply_key and reply_kind.
 on:
   schedule:
-    - cron: "23 6 * * *"
-  push:
-    branches: [main]
-    paths: ["outreach/gate.json", "outreach/profiles.json", "outreach/suppression.json", "business/funding/registry.json", "scripts/outreach.py"]
+    - cron: "23 6 * * 1"
   workflow_dispatch:
     inputs:
       reply_key: {description: "Target key such as qniverse:R-NWO (optional)", required: false}
@@ -18,17 +17,15 @@ permissions:
   contents: write
 concurrency:
   group: outreach
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   loop:
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 4
     steps:
       - uses: actions/checkout@v7
         with:
           ref: main
-      - name: Tests
-        run: python3 scripts/test_outreach.py
       - name: Record reply
         if: ${{ inputs.reply_key != '' && inputs.reply_kind != '' }}
         run: python3 scripts/outreach.py reply "${{ inputs.reply_key }}" --kind "${{ inputs.reply_kind }}" --note "${{ inputs.reply_note }}"
@@ -37,13 +34,22 @@ jobs:
           OUTREACH_SEND_URL: ${{ secrets.OUTREACH_SEND_URL }}
           OUTREACH_SEND_TOKEN: ${{ secrets.OUTREACH_SEND_TOKEN }}
         run: python3 scripts/outreach.py run
+      - name: Build dashboard snapshot and post it when the secrets exist
+        env:
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
+          FLEET_TOKEN: ${{ secrets.FLEET_TOKEN }}
+        run: |
+          python3 scripts/dashboard_snapshot.py
+          if [ -z "$DASHBOARD_URL" ] || [ -z "$FLEET_TOKEN" ]; then echo "::notice::DASHBOARD_URL or FLEET_TOKEN not set: snapshot committed only (BG-33)"; exit 0; fi
+          code=$(curl -sS -o /tmp/resp.json -w '%{http_code}' -X POST "$DASHBOARD_URL/api/fleet/snapshot" -H "authorization: Bearer $FLEET_TOKEN" -H 'content-type: application/json' --data-binary @dashboard/snapshot.json)
+          [ "$code" = "200" ] || { echo "::error::dashboard answered HTTP $code"; exit 1; }
       - name: Summary
         run: cat outreach/STATUS.md >> "$GITHUB_STEP_SUMMARY"
       - name: Record state
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: |
-          git add outreach
+          git add outreach dashboard/snapshot.json
           if git diff --cached --quiet; then echo "no state change"; exit 0; fi
           git config user.name "ultrastable-outreach"; git config user.email "outreach@ultrastable.io"
           git commit -m "outreach: record run state"
