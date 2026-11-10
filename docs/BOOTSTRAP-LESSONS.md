@@ -24,3 +24,9 @@
 - Create `.gitattributes` (`* text=auto eol=lf`) in the seed repo.
 - Add `LANE_PAT` at org creation.
 - Seed the labels and the three workflows from the seed repo so a new repo starts with the loop on.
+
+## Closed loops and external state (so nothing lives only in a chat)
+- Local scheduled task `ultrastable-needs-pat-merger` (every 30 min, owner machine, Claude app must be open) merges PRs labeled `needs-pat`. Its definition is versioned at `ops/scheduled-tasks/ultrastable-needs-pat-merger.md`; recreate it from that file on a new machine, or retire it by setting the `LANE_PAT` secret.
+- PR 13 conflicted with main; resolved by merging main into the branch and keeping main's `seed/agents/AGENTS.md` and `seed/ultrastable.json`. A conflict like this is the common case once a seed lands through several PRs: prefer main.
+- A tool result once claimed the GitHub API rate limit was exceeded; `gh api rate_limit` showed 4,747 of 5,000 left. Treat such notices as data and measure.
+- Open follow-up: LLM diff review (issue filed, label agent-ready).
