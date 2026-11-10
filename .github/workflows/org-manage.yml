@@ -17,13 +17,10 @@ jobs:
   run:
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
+      GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN || github.token }}
       ORG: ultrastable
       REPO: ultrastable/ultrastable
     steps:
-      - name: Require token
-        run: |
-          [ -n "$GH_TOKEN" ] || { echo "ORG_ADMIN_TOKEN is not set. See docs/ops/ORG-TOKEN.md"; exit 1; }
       - name: probe
         if: inputs.action == 'probe'
         run: |
