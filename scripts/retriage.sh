@@ -40,4 +40,6 @@ if [ -n "$gaps" ]; then
   else gh issue create -R "$repo" --title "Retriage gaps" --label agent-ready --body "$body" >/dev/null && log "gap issue created"; fi
 else
   log "no gaps"
+  num=$(gh issue list -R "$repo" --state open --search 'in:title "Retriage gaps"' --json number --jq '.[0].number // empty')
+  [ -n "$num" ] && gh issue close "$num" -R "$repo" --reason completed -c "Closed by retriage: the closing probe passed (a run found no gaps at $(date -u +%FT%TZ))." >/dev/null && log "gap issue #$num closed"
 fi
