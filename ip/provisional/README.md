@@ -19,4 +19,4 @@ Draft US provisional patent application for Ultrastable: an organization run by 
 ## Status
 
 - 2026-11-10: draft version 5: expanded with sections 23 to 59 (kernel, fleet, origination, model economics, audit, seed, owner console, self-description, autonomous business chain), FIG. 16 to 33, claims rewritten after own QA review (see QA-STATUS.md). Earlier: version 2 complete. Not filed. Bootstrapping embodiment ([0078a] to [0078j], FIG. 15, claims 47 to 57) added from the seed and AIOS thread. Next steps: attorney review, then Rowan files (identity-bound step).
-- Timing: file as early as practical. Open question for the patent attorney: what exactly in `QNFO/qnfo-workers` (governed by the QNFO-ULA v2.1) has been public, and when, and does it matter for the combination claimed here?
+- Timing: file as early as practical. Open question for the patent attorney (not a finding): what, if anything, in `QNFO/qnfo-workers` (separate effort, governed by the QNFO-ULA v2.1) overlaps with the combination claimed here, and when.

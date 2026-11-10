@@ -34,13 +34,15 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 - Dashboard is live at `/owner` on ultrastable.io, .app and .net (Cloudflare worker `ultrastable-dashboard`, source in `dashboard/`). Public pages are a generic holding page.
 - Public GitHub landing (profile and logo) is staged in `brand/public-profile/` but not live; it needs `ORG_ADMIN_TOKEN` (`docs/ops/ORG-TOKEN.md`), after which the `org-init` workflow runs.
 - Funding: unfunded; dual track (open source vs commercial) in `docs/funding/` and `business/plan/05-funding.md`. Big credit tiers need an institutional round and a live public site; order is file provisional, publish outcome-only site, apply to small tiers, NSF SBIR, raise. No paid Google Workspace on the ultrastable domain within 31 days before the Google AI program application.
+- Provisional: filing-ready package in `ip/provisional/` (spec PDF 137 pages, drawings FIGS. 1-33, `filing/` cover-sheet data, fee notes, Patent Center walkthrough, `tools/preflight.py` run in CI). Not filed; Rowan's act.
+- Cycling: `retriage` workflow (every 3 h) auto-merges green PRs, flags conflicts/idle drafts and files gaps for issues without a doer or probe; `issues` workflow triages hourly.
 - Seed: Python and Worker tests pass; WorkersAIAgent has a first real-model proof (PR #88).
 
 ## 4. Owner-only items (identity-bound; each has a default in effect)
 
 | Item | Default in effect | Closing probe |
 |---|---|---|
-| File the provisional patent (after attorney review) | Drafts stay private | Filing receipt recorded in `ip/evidence-log.md` |
+| File the provisional patent (package ready: `ip/provisional/FILE-THIS-TODAY.md`; `tools/preflight.py` passes; attorney review is optional before filing) | Drafts stay private | Filing receipt recorded in `ip/evidence-log.md` |
 | Legal entity and IP assignment (BIZ-1) | `LICENSE` placeholder, proprietary | Entity name in `LICENSE` |
 | Mint `ORG_ADMIN_TOKEN` | Holding page only | `org-manage` probe passes; `curl -s https://github.com/ultrastable` shows profile |
 | Create/unarchive repos if the fleet cannot | Monorepo is canonical | `gh api repos/ultrastable/<name> --jq .archived` |

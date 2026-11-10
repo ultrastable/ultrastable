@@ -4,7 +4,7 @@ Prepared 2026-11-10. This is a working checklist, not legal advice. Have a regis
 
 ## 1. Act first: the public-disclosure clock
 
-The inventive combination in this draft has not been publicly disclosed as a whole. `QNFO/qnfo-workers` has been public since 2026-08-10 under the QNFO User License Agreement v2.1 (commercial use prohibited), and it holds individual components and related pages (manager personas, PLUSSING.md, the Ultrastable product page, qnfo.org/platform). **Question for the patent attorney:** what exactly was public, on which dates, and how does it bear on the claims?
+The key combination in this specification has **not** been publicly disclosed. The QNFO repository (`QNFO/qnfo-workers`) is a separate effort that has existed since August 2026, under the QNFO User License Agreement v2.1 (commercial use prohibited). **Open question for the patent attorney, not a finding:** inventory what, if anything, in that repository overlaps with the claimed combination, and on which dates.
 
 - **United States (question for the attorney):** 35 U.S.C. 102(b)(1)(A) provides a one-year grace period for the inventor's own disclosures. Which, if any, of the dates above start that period? File as early as practical.
 - **Other countries (question for the attorney):** most require novelty at filing. What foreign rights should be preserved, and does anything public affect them?
@@ -27,7 +27,7 @@ The inventive combination in this draft has not been publicly disclosed as a who
 
 1. **Provisional cover sheet** (PTO/SB/16) or an Application Data Sheet (PTO/AIA/14): inventor legal name, residence, mailing address; title; correspondence address; entity status.
 2. **Specification:** `provisional-specification.pdf` (built from `provisional-specification.md`). Includes the claim-style summaries and abstract, which are optional for a provisional but help later.
-3. **Drawings:** `drawings.pdf` (FIGS. 1 to 15). Provisional drawings may be informal; formal drawings come with the non-provisional.
+3. **Drawings:** `drawings.pdf` (FIGS. 1 to 33). Provisional drawings may be informal; formal drawings come with the non-provisional.
 4. **Micro entity certification** (PTO/SB/15A) if claiming micro status.
 5. **Fee payment.**
 

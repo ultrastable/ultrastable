@@ -1,0 +1,66 @@
+{
+  "note": "Prefilled data for the provisional cover sheet (PTO/SB/16) or Application Data Sheet. Only the fields listed in owner_fields_remaining are unknown to the record. Not legal advice.",
+  "application": {
+    "type": "Provisional application for patent (35 U.S.C. 111(b))",
+    "title": "SYSTEMS AND METHODS FOR OPERATING AN ORGANIZATION THROUGH A HIERARCHY OF VIRTUAL MANAGER AGENTS WITH CLOSED FEEDBACK LOOPS, SCORED PREDICTIONS, EARNED AUTONOMY, AND EVIDENCE-DRIVEN ADDITIVE IMPROVEMENT",
+    "docket_number": "ULTRA-PROV-001",
+    "claims_summary_count": 139,
+    "figure_count": 33,
+    "spec_pages": 137,
+    "drawing_pages": 17,
+    "domestic_benefit_or_foreign_priority": "None",
+    "related_applications": "None",
+    "government_interest": "None. No federally sponsored research.",
+    "assignee_at_filing": "None. Filed in the inventor's own name; assign to the entity later (issue BIZ-1)."
+  },
+  "inventors": [
+    {
+      "given_name": "Rowan",
+      "family_name": "[ROWAN ENTERS]",
+      "role": "sole inventor of record (dated owner directives in the QNFO migrations are the conception evidence)",
+      "residence_city_state_country": "[ROWAN ENTERS]",
+      "mailing_address": "[ROWAN ENTERS]",
+      "citizenship": "[ROWAN ENTERS]"
+    }
+  ],
+  "applicant": "Same as inventor (individual, pro se)",
+  "correspondence": {
+    "name": "Rowan [ROWAN ENTERS]",
+    "email": "[ROWAN ENTERS: the address for the filing receipt]",
+    "representative": "None (pro se); no customer number"
+  },
+  "entity_status": {
+    "claim": "micro entity if the certification in FEES-AND-ENTITY.md is true on the filing day; otherwise small entity",
+    "form_if_micro": "PTO/SB/15A (gross income basis); done in the Patent Center fee step",
+    "expected_fee_usd": {
+      "micro": 65,
+      "small": 130,
+      "undiscounted": 325
+    },
+    "fee_source": "USPTO schedule effective 2025-01-19; confirm at filing"
+  },
+  "documents_to_upload": [
+    {
+      "file": "ip/provisional/provisional-specification.pdf",
+      "document_description": "Specification (includes claim-style summaries and abstract)"
+    },
+    {
+      "file": "ip/provisional/drawings.pdf",
+      "document_description": "Drawings (FIGS. 1 to 33, informal)"
+    },
+    {
+      "file": "ip/provisional/filing/cover-sheet-PTO-SB-16-data.md",
+      "document_description": "Provisional Application Cover Sheet (enter these values into the Patent Center form, or upload the signed PTO/SB/16)"
+    }
+  ],
+  "owner_fields_remaining": [
+    "inventor_family_name",
+    "inventor_residence",
+    "inventor_mailing_address",
+    "inventor_citizenship",
+    "correspondence_email",
+    "entity_status_confirmation",
+    "payment_method",
+    "signature_on_cover_sheet"
+  ]
+}

@@ -25,3 +25,7 @@ jobs:
       - name: Repo verify
         run: |
           if [ -f qnfo-platform-thread/verify.py ]; then python3 qnfo-platform-thread/verify.py || echo "::warning::verify.py reported drift (advisory)"; fi
+      - name: Provisional pre-flight
+        run: |
+          sudo apt-get install -y -q poppler-utils >/dev/null
+          python3 ip/provisional/tools/preflight.py
