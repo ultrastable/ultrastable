@@ -42,7 +42,7 @@ Working platform with passing tests; public site live (ultrastable.io); QNFO run
 People (founder + founding engineer + part-time commercial lead) 60%; model/cloud beyond credits 15%; legal/IP 10%; go-to-market 10%; reserve 5%.
 
 ## Risks (stated plainly)
-1. **IP and ownership:** the QNFO/qnfo-workers repo is public with no licence file (checked 2026-11-10) and holds the product design doc in history. No entity exists yet to own the IP; written assignment/licence from the author to the company is needed. `[LAWYER]`
+1. **IP and ownership:** the QNFO/qnfo-workers repo is public and carries a QNFO licence (QNFO User License Agreement v2.1, no commercial use); counsel to assess what that covers and holds the product design doc in history. No entity exists yet to own the IP; written assignment/licence from the author to the company is needed. `[LAWYER]`
 2. **Provisional patent not yet filed**; public-disclosure clock from 2026-08-10 (file well before 2027-08-10). Drafts are working drafts, not legal advice.
 3. **Solo founder**; execution depends on the platform's own agents plus planned hires.
 4. **Demo is simulated**; real-adapter proof pending; the 73% self-scored prediction rate cited in repo docs has no external audit.

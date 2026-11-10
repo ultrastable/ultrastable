@@ -13,7 +13,7 @@ Funding- and investor-facing drafts for Ultrastable. Prepared by the virtual bus
 
 ## Disclosure rule (read first)
 
-The provisional patent is NOT yet filed. Until it is, these files are internal / NDA-only. Public material (site, public repos, posts, the Google application text) stays outcome-only. Items tagged **SAFE NOW** may be said publicly; **AFTER FILING** items wait for the filing receipt. Never disclose before filing: trust formulas, ladder rungs, prediction-scoring details, the plus-capacity rule, self-amending rules, schemas, QNFO metrics. QNFO/qnfo-workers has been public since 2026-08-10 (no licence file), so file well before 2027-08-10, and sooner is better.
+The provisional patent is NOT yet filed. Until it is, these files are internal / NDA-only. Public material (site, public repos, posts, the Google application text) stays outcome-only. Items tagged **SAFE NOW** may be said publicly; **AFTER FILING** items wait for the filing receipt. Never disclose before filing: trust formulas, ladder rungs, prediction-scoring details, the plus-capacity rule, self-amending rules, schemas, QNFO metrics. QNFO/qnfo-workers has been public since 2026-08-10 (it carries a QNFO licence (QNFO User License Agreement v2.1, no commercial use)), so file well before 2027-08-10, and sooner is better.
 
 ## Sources used (all in the repo)
 

@@ -1,4 +1,6 @@
-# Deck outline (12 slides)
+# Deck outline (12 slides, short form)
+
+Source of record for the internal deck is [../investor/pitch-deck-outline.md](../investor/pitch-deck-outline.md); the SAFE NOW slide text is [../briefing/pitch-deck.md](../briefing/pitch-deck.md). This outline stays only for the Cloudflare/GCP slide-8 variants (FN-5, #20).
 
 Two variants: **external** (SAFE NOW: slides 1-3, 5, 9-12 as written, mechanisms replaced by outcomes) and **internal** (NDA ONLY, adds the bracketed detail). Build in a slide artifact once the owner approves; one story, with a Cloudflare variant and a Google Cloud variant of slide 8 (issue FN-5, #20).
 
