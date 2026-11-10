@@ -48,11 +48,12 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-DATABASES = {"qnfo-audit": "35e2e573-92f3-46ac-83c6-22f6429fc5e5", "living-paper": "70a58cb3-b2cd-498d-877f-ecca86859a22"}
+from tenant import TENANT  # ULTRASTABLE-TENANT-1
+DATABASES = dict(TENANT["databases"])
 # MIGRATION-LIVING-PAPER-1 (2026-10-26): living-paper (papers.qnfo.org) had no CI path, so its guard triggers could only change by hand or
 # from a worker lifting its own guard (migrations/2026-10-20-research-cluster-b.sql recorded that dead end for the publish floor).
 # A file with '-- DB: living-paper' runs its statements there; migration_runs, failure issues and the ledger stay in qnfo-audit.
-LEDGER_DB = "qnfo-audit"
+LEDGER_DB = TENANT["ledger_db"]
 # D1 caps a LIKE/GLOB pattern at 50 bytes and rejects longer ones at run time ("LIKE or GLOB pattern too complex",
 # MIGRATION-APPLY-FAILED-1, issue 2046). --check catches it in the PR; use instr(col, 'text') = 0 / > 0 instead.
 LIKE_MAX_BYTES = 50

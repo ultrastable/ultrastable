@@ -52,9 +52,10 @@ sys.path.insert(0, HERE)
 
 # Hosts the declarations may name: the fleet's own (DOMAIN-PLANE-1: q08.org personal, qnfo.org research and fleet, qwav.org quantum) and
 # the workers.dev account subdomain. A probe is a GET from the runner, so an arbitrary host would make the deploy path a request proxy.
-HOST_SUFFIXES = (".q08.workers.dev", ".qnfo.org", ".q08.org", ".qwav.org", ".qwav.tech")
-HOST_EXACT = ("qnfo.org", "q08.org", "qwav.org", "qwav.tech")
-PRIVATE_DATABASES = ("qnfo-identity", "qnfo-outreach", "personal-life")
+from tenant import TENANT  # ULTRASTABLE-TENANT-1: hosts and private databases come from tenant settings
+HOST_SUFFIXES = tuple(TENANT["host_suffixes"])
+HOST_EXACT = tuple(TENANT["host_exact"])
+PRIVATE_DATABASES = tuple(TENANT["private_databases"])
 MAX_HTTP, MAX_D1_SQL, MAX_MARKERS = 8, 6, 6
 DECL_KEYS = {"_note", "mode", "health", "http", "d1"}
 HTTP_KEYS = {"_note", "url", "status", "contains", "absent"}

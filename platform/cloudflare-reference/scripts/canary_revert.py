@@ -64,14 +64,15 @@ import deploy_probes as DP  # noqa: E402  DEPLOY-PROBES-1: declarations, probe e
 # Control-plane workers with a versioned /health route (read 2026-10-06: every one answered 200 with {"version": ...}).
 # Mirrors CP_CANARY_WORKERS in qnfo-fleet-control (bhControlPlaneDecide); fold-guard parity is the test's job.
 CANARY_WORKERS = ["qnfo-fleet-control", "qnfo-ops", "qnfo-deploy-guard", "qnfo-gateway", "qnfo-ai", "qnfo-observability", "qnfo-code-orchestrator"]
-HEALTH_URL = "https://{worker}.q08.workers.dev/health"
+from tenant import TENANT  # ULTRASTABLE-TENANT-1
+HEALTH_URL = TENANT["health_url"]
 # CANARY-VERSION-REGEX-1 (2026-10-19): a worker whose first line is `var VERSION="..";;` (qnfo-gateway, qnfo-email, qnfo-calendar-intake)
 # has no spaces around '=' and a doubled ';'. The strict pattern missed it, so qnfo-gateway had no canary and no revert protection.
 # Whitespace around '=' is optional; the value stays a quoted literal, and a `var VERSION = OTHER_CONST;` line (no quote) still
 # does not count. Same parse as version-bump-guard.py and canonical_deploy.py (the test pins that).
 VERSION_RE = re.compile(r'^var\s+VERSION\s*=\s*"([^"\n]*)"', re.M)
 VERSION_LINE_RE = re.compile(r'^(var\s+VERSION\s*=\s*")[^"\n]*(")', re.M)
-DB_ID = "35e2e573-92f3-46ac-83c6-22f6429fc5e5"
+DB_ID = TENANT["databases"].get(TENANT["ledger_db"], "")
 
 # CONTROL-PLANE-FUNCTIONAL-CANARY-1 (2026-10-12) kept a table here of the read-only routes that prove each control-plane worker works beyond
 # /health. DEPLOY-PROBES-1 moved those checks into `<worker>/probes.json` next to each worker (scripts/deploy_probes.py), so a worker outside

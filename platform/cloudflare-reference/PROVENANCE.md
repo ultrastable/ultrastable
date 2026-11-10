@@ -29,3 +29,7 @@ Not copied (entangled or duplicated): scripts/remediation_consumer.py (hard-code
 - Copies were made with a byte-identical check (sha256 of source equals sha256 of copy). The qnfo-workers working tree was clean for these paths at copy time (untracked files elsewhere only).
 - The last-commit column is the abbreviated SHA of the last commit touching that path; the repository HEAD is above.
 - qnfo-deploy-guard/worker.js is class core in product/boundary.json and contains no QNFO app logic, but names QNFO workers, hosts and the `qnfo-audit` binding (see leak columns).
+
+## ULTRASTABLE-TENANT-1 (modification after extraction)
+`apply_migrations.py`, `canary_revert.py` and `deploy_probes.py` no longer hard-code QNFO's D1 id, host allow-lists, private-database list or health URL. They read `scripts/tenant.py` (new), which loads the JSON file named by `ULTRASTABLE_TENANT`; with no file it is empty and strict. These three files therefore differ from the sha256 recorded above; the other copies are unchanged. `tenant.qnfo-selftest.json` holds QNFO's values for the self-tests only.
+Self-tests with `ULTRASTABLE_TENANT=platform/cloudflare-reference/tenant.qnfo-selftest.json`: `deploy_probes.py --selftest` 80 checks ok; `canary_revert.py --selftest` 39 ok, 1 FAIL ("every canary worker declares probes.json"), which reads the sibling worker directories that this repo does not contain (the original passes 40/40 inside qnfo-workers). Not yet fixed. Remaining leaks: QNFO seed rows in the migrations, hosts in `review_gate.py`/`worker_release.py` not re-scanned.
