@@ -20,3 +20,14 @@ assert.match(await (await get("https://ultrastable.io/robots.txt")).text(), /Sit
 assert.match(await (await get("https://ultrastable.io/favicon.svg")).text(), /<svg/);
 assert.match(await (await get("https://ultrastable.io/")).text(), /og:image/);
 console.log("ultrastable-site ok");
+
+// Social preview must be a PNG (SVG og:image is ignored by most crawlers).
+for (const path of ["/social-card.png", "/apple-touch-icon.png"]) {
+  r = await get("https://ultrastable.io" + path);
+  assert.equal(r.status, 200, path); assert.equal(r.headers.get("content-type"), "image/png", path);
+  const b = new Uint8Array(await r.arrayBuffer());
+  assert.equal(String.fromCharCode(b[1], b[2], b[3]), "PNG", path);
+}
+const pilot = await (await get("https://ultrastable.io/pilot")).text();
+assert.match(pilot, /og:image" content="https:\/\/ultrastable\.io\/social-card\.png/);
+assert.match(pilot, /twitter:card" content="summary_large_image/);

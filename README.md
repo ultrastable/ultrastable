@@ -2,6 +2,8 @@
 
 # Ultrastable
 
+[![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io) ![visibility](https://img.shields.io/badge/repo-private-12342A) ![stage](https://img.shields.io/badge/stage-pre--filing-FFC857) [![checks](https://github.com/ultrastable/ultrastable/actions/workflows/checks.yml/badge.svg)](https://github.com/ultrastable/ultrastable/actions/workflows/checks.yml)
+
 **An autonomous development platform: an organization of virtual managers and staff that runs your projects, scores its own decisions, earns wider autonomy from its track record, and only interrupts a person for steps that cannot be undone.**
 
 Private repository, system of record. If it is not here, it does not exist. **Nothing here leaves the repo except files in [external/](external/)** (the provisional patent is not yet filed; rules in [docs/CONFIDENTIALITY.md](docs/CONFIDENTIALITY.md)).
@@ -39,6 +41,7 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | [site/](site/) | Site worker and starter |
 | [dashboard/](dashboard/README.md) | Product dashboard (built in a sibling thread; see its README for status) |
 | [brand/](brand/BRAND.md) | Brand guide, logos, social assets |
+| [github/org-settings.json](github/org-settings.json) | GitHub org and repo settings as code ([audit](docs/ops/GITHUB-SETTINGS-AUDIT.md)) |
 | [agents/](agents/) | Agent protocol, roles, autonomy policy |
 | [ROADMAP.md](ROADMAP.md), [PROJECTS.md](PROJECTS.md), [INDEX.md](INDEX.md) | Backlog, projects, index of everything |
 | artifacts/, core-manifest/, deploy/, github/, research/, qnfo-platform-thread/, HANDOFF.md | Records and earlier QNFO extraction material |
