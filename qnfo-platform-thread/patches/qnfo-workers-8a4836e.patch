@@ -1,0 +1,562 @@
+From 8a4836e294c298497232101e102b09c2a41765d9 Mon Sep 17 00:00:00 2001
+From: "github-actions[bot]"
+ <41898282+github-actions[bot]@users.noreply.github.com>
+Date: Tue, 10 Nov 2026 08:40:36 +0100
+Subject: [PATCH] ULTRASTABLE-PRODUCT-1: define the platform as a product,
+ split the repo, ask the owner (#10156)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+<!-- claude-projects-attribution: {"github_login":"rwnq8"} -->
+_Requested by **Rowan** · [project
+thread](https://claude.ai/code/project/chan_01FkbC3Ns4CLQq5Eaaw1fmHk?thread=cmsg_01FkbC3Ns4CLQq5Eaaw1fmHkGud1cg9t5RNsNVDqSSVYj7)_
+
+## Implementation
+
+Issue: Refs #10157. Charter pillar: autonomy.
+
+- `docs/PRODUCT-ULTRASTABLE.md` defines the product: a self-governing
+development platform, working name Ultrastable, with QNFO as customer
+zero. It covers the market position (vibe coding, agentic engineering,
+cloud coding agents, SDLC orchestration, self-driving production),
+evidence measured 2026-11-10 from GitHub search and qnfo-audit, honest
+gaps, buyers, phases P0 to P4 and the name check.
+- `product/boundary.json` and `scripts/product_boundary.mjs`, with
+`scripts/product-boundary.test.mjs`: the 39 live workers are split into
+19 core, 12 app and 8 personal. The check fails when a worker is
+unclassified, when a listed worker is gone, or when a listed core script
+or workflow is missing.
+- `migrations/2026-11-10-ultrastable-product.sql` adds:
+- five prompted-recall questions (owner_asks, plane fleet), shown on
+fleet.qnfo.org/focus;
+- the trigger `owner_asks_product_au`, which turns each answer into a
+PRODUCT-ANSWER-1 issue, plus the view `v_product_decisions`;
+- four IDENTITY-BOUND owner cards (domain, trademark knockout, GitHub
+org, entity), each with a copy box and its default in effect;
+  - ROADMAP-1 issues for P1 to P4, each with a code-task and code-probe.
+- `qnfo-gateway` 3.63.7: the About page names the platform and links its
+product page.
+
+Front: a qnfo.org/about paragraph, five tap questions on /focus, and
+four owner cards. Back: the boundary check, the triggers and the roadmap
+issues.
+
+work-claim: unreachable (curl: (56) CONNECT tunnel failed, response 403
+from the session proxy for qnfo-deploy-guard.q08.workers.dev); no other
+open PR touches product/, docs/PRODUCT-ULTRASTABLE.md or the migration.
+qnfo-gateway/worker.js changes only the About page lede.
+
+probes: none (qnfo-gateway keeps its existing probes.json; the closing
+probe on #10157 checks /about for "self-governing development platform")
+
+## Definition of done (CODE-CHANGE-REQUIRED-1)
+
+- [x] The remedy is in code, a migration and executable configuration.
+- [x] The issue is linked and the changed paths are listed above.
+- [x] Regression checks pass: `node --test
+scripts/product-boundary.test.mjs` (3/3), the qnfo-gateway suites,
+`python3 scripts/pre_push_check.py qnfo-gateway` (ok),
+`apply_migrations.py --check` (ok, 8 statements, 0 destructive), and
+narrative-prompt-guard PASS.
+- [ ] After deploy: qnfo.org/about shows the paragraph, and
+`migration_runs` has an ok row for the file.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+https://claude.ai/code/session_0156nqDuh9bbcWz9YxN1qhUf
+
+---------
+
+Co-authored-by: Claude <noreply@anthropic.com>
+---
+ docs/INDEX.md                                 |   1 +
+ docs/PRODUCT-ULTRASTABLE.md                   |  62 +++++++++
+ docs/agent-catalog.json                       |   5 +
+ migrations/2026-11-10-ultrastable-product.sql | 120 ++++++++++++++++++
+ product/boundary.json                         |  90 +++++++++++++
+ qnfo-gateway/deployed-current.worker.js       |   4 +-
+ qnfo-gateway/releases/3.63.7-codeagent.md     |   3 +
+ qnfo-gateway/worker.js                        |   4 +-
+ scripts/product-boundary.test.mjs             |  34 +++++
+ scripts/product_boundary.mjs                  |  52 ++++++++
+ 10 files changed, 371 insertions(+), 4 deletions(-)
+ create mode 100644 docs/PRODUCT-ULTRASTABLE.md
+ create mode 100644 migrations/2026-11-10-ultrastable-product.sql
+ create mode 100644 product/boundary.json
+ create mode 100644 qnfo-gateway/releases/3.63.7-codeagent.md
+ create mode 100644 scripts/product-boundary.test.mjs
+ create mode 100644 scripts/product_boundary.mjs
+
+diff --git a/docs/INDEX.md b/docs/INDEX.md
+index ecde228..396da85 100644
+--- a/docs/INDEX.md
++++ b/docs/INDEX.md
+@@ -132,6 +132,7 @@ and [the machine-readable catalog](agent-catalog.json).
+ - [PR cycle time, 2026-11 (PR-RETRY-1)](PR-CYCLE-TIME-2026-11.md) - `docs/PR-CYCLE-TIME-2026-11.md`
+ - [PR velocity, 2026-11 (PR-VELOCITY-1)](PR-VELOCITY-2026-11.md) - `docs/PR-VELOCITY-2026-11.md`
+ - [PROBE-WRITE-DEAD-1 — the remediation verifier cannot write evidence](PROBE-WRITE-DEAD-1.md) - `docs/PROBE-WRITE-DEAD-1.md`
++- [Ultrastable: the self-governing development platform QNFO runs on](PRODUCT-ULTRASTABLE.md) - `docs/PRODUCT-ULTRASTABLE.md`
+ - [Prompted recall (PROMPTED-RECALL-1, owner directive 2026-11-09)](PROMPTED-RECALL.md) - `docs/PROMPTED-RECALL.md`
+ - [Q08 publication recovery and preflight procedure](Q08-PUBLICATION-RECOVERY-2026-09-26.md) - `docs/Q08-PUBLICATION-RECOVERY-2026-09-26.md`
+ - [Q08 root cause + remediation record (2026-09-27)](Q08-ROOT-CAUSE-2026-09-27.md) - `docs/Q08-ROOT-CAUSE-2026-09-27.md`
+diff --git a/docs/PRODUCT-ULTRASTABLE.md b/docs/PRODUCT-ULTRASTABLE.md
+new file mode 100644
+index 0000000..49f7b2e
+--- /dev/null
++++ b/docs/PRODUCT-ULTRASTABLE.md
+@@ -0,0 +1,62 @@
++# Ultrastable: the self-governing development platform QNFO runs on
++
++Status: proposed 2026-11-10 (owner question: "what is this actual product called that we might be able to sell ... and how do we spin that off so QNFO and the Quniverse are powered by this product?"). Code that holds this design: `product/boundary.json` and `scripts/product_boundary.mjs` (ULTRASTABLE-BOUNDARY-1); owner questions and owner-only steps: `migrations/2026-11-10-ultrastable-product.sql`. Personal-brand wording: `rwnq8/resume` `docs/BRAND.md` section 9.
++
++## 1. What the product is
++
++Ultrastable is the control loop that sits around coding agents and runs a software system as a self-governing whole. It finds its own work in the system's metrics and failures, hands each task to whichever agent fits (an open model on its own code loop, GitHub Copilot, a Claude Code session), proves every change live with declared probes and an automatic revert, and keeps ledgers a person can audit: every issue accounted for, every decision with a prediction that is later scored, every failure mode with a detector, and a trust score per kind of action that widens or narrows what the loop may do on its own.
++
++One line: **Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live, and keeps score of how often it was right.**
++
++Category: **self-governing development platform** (a kind of autonomous development platform). The name comes from W. Ross Ashby's ultrastable system (Design for a Brain, 1952): a machine that changes its own settings when an essential variable leaves its limits, so it stays viable without an operator. That is what the doctrine amendment, trust ledger and probe-and-revert loops do.
++
++## 2. Where it sits in the market (read 2026-11-10)
++
++| Approach | Who chooses the work | Who checks it | Examples |
++|:--|:--|:--|:--|
++| Vibe coding | a person, prompt by prompt | the person, if at all | chat-to-app builders (term from Karpathy, 2025) |
++| Agentic engineering | a person; the agent multiplies effort | the person reviews | Cursor, Windsurf, Claude Code, Codex CLI |
++| Cloud coding agents | a person assigns a task | CI and a reviewer | Devin, Codex cloud, GitHub Copilot coding agent |
++| SDLC orchestration | events and workflows | CI and a reviewer | Overcut, Factory |
++| Self-driving production | incidents | the agent, for remediation | Traversal |
++| **Self-governing development (Ultrastable)** | **the system, from its own metrics, failures and roadmap** | **declared live probes, canary revert, a two-family review gate, and scored predictions** | QNFO fleet (customer zero) |
++
++Context: Anthropic reported in November 2026 that its models author more than 80% of the code merged into its own codebase, that full autonomous self-improvement has not been reached, and that human control gets harder as it approaches (AI Lounge, 2026-11-03, citing the Anthropic Institute). The open question across the field is oversight of software that steers itself. Ultrastable is a working answer that can be inspected: its decisions, predictions, failures and trust are tables, not claims. Surveys of self-evolving coding agents (Zhou et al., arXiv 2608.03392) list reversibility, feedback reliability and evaluation beyond short benchmarks as open problems; those are the three things the platform records.
++
++## 3. Differentiators, with evidence (measured 2026-11-10)
++
++1. **It originates its own work.** Metrics breach, a trigger files an issue with a `code-task:` line, the code loop opens and merges the pull request. 6,604 issues have passed through the ledger (`qnfo-audit.agent_issues`); 624 merged pull requests in QNFO/qnfo-workers were opened by the code loop (titles `code-task:`).
++2. **It uses any coding agent as an executor.** The code loop runs on open models through Cloudflare Workers AI; GitHub Copilot merged 416 pull requests; interactive sessions the rest, all coordinated through one work-claim ledger (`qnfo-deploy-guard`). 3,880 merged pull requests since the repository opened on 2026-08-10, 1,245 of them in the last seven days.
++3. **Every deploy proves itself.** Workers declare probes (`<worker>/probes.json`); a probe that passed before and fails after reverts the push (`scripts/canary_revert.py`); risky diffs are read by two model families (`scripts/review_gate.py`).
++4. **It measures its own judgment.** 1,056 decision outcomes scored against the prediction logged before the decision; 771 matched (73%) (`decision_outcomes`).
++5. **It governs itself in code, not in a prompt.** The written doctrine is enforced by D1 triggers and CI guards. 634 failure modes with detectors (`failure_modes`), 388 recorded red-teams of claimed blockers (`blocker_redteam`), 2,176 logged decisions (`decision_log`), 7,590 recorded tick steps (`tick_runs`), trust scored per surface and action class (`trust_ledger`), doctrine amendments proposed from its own output (`doctrine_proposals`).
++6. **It runs without a laptop or a chat.** 39 live Cloudflare Workers; state in D1, R2 and KV; a session builds it and is never part of it.
++
++## 4. Honest gaps
++
++- One installation and one customer. Nothing is packaged; there is no installer and no second tenant.
++- The core is entangled with QNFO's applications: one D1 database, and the kernel (`qnfo-fleet-control`, 1.4 MB) carries research-specific steps.
++- 563 issues are open against a target of 0; the 120-minute SLA is not met.
++- The 73% prediction match rate is scored by the system itself; there is no external benchmark or audit yet.
++- The policy text is long and written as owner directives; a buyer needs a short default policy.
++- Development used interactive AI sessions heavily; the runtime does not depend on them, but the build did.
++
++## 5. Who buys it
++
++First buyers: small engineering teams that run many services and want agents to keep them healthy without a person choosing every task; and teams that must show auditors what their coding agents did and why (the ledgers are the evidence). Research groups running autonomous pipelines are a third segment. The owner's answer to the buyer question on fleet.qnfo.org/focus sets the first segment.
++
++## 6. Spin-off plan (QNFO is customer zero)
++
++Phases live in `product/boundary.json` (`phases`) and as ROADMAP-1 issues filed by the migration above.
++
++- **P0 (done in this change):** every live worker is classified core, app or personal; the check fails when one is not.
++- **P1:** a short default policy pack, extracted from CLAUDE.md and the doctrine; QNFO's owner directives become an overlay.
++- **P2:** core tables move to their own D1 database; QNFO tables stay in qnfo-audit.
++- **P3:** tenant settings (account, repository, hosts, model ladder, owner contact) come from configuration.
++- **P4:** a second installation on a repository outside qnfo-workers proves the core runs without QNFO's applications.
++
++Owner-only steps (domain, trademark clearance, GitHub organisation, incorporation) are owner cards with an IDENTITY-BOUND line; until they are done the product stays inside QNFO under its working name.
++
++## 7. Name check (2026-11-10, partial)
++
++Ultrastable: no software trademark found in a web search; the .ai and .dev hosts answer (likely registered); the GitHub name was not checkable from the session. Homeostat (the alternative): a GitHub user of that name exists. A formal USPTO knockout search and the domain purchase are the owner's card.
+diff --git a/docs/agent-catalog.json b/docs/agent-catalog.json
+index 816d700..abca647 100644
+--- a/docs/agent-catalog.json
++++ b/docs/agent-catalog.json
+@@ -680,6 +680,11 @@
+       "title": "PROBE-WRITE-DEAD-1 — the remediation verifier cannot write evidence",
+       "url": "https://raw.githubusercontent.com/QNFO/qnfo-workers/main/docs/PROBE-WRITE-DEAD-1.md"
+     },
++    {
++      "path": "docs/PRODUCT-ULTRASTABLE.md",
++      "title": "Ultrastable: the self-governing development platform QNFO runs on",
++      "url": "https://raw.githubusercontent.com/QNFO/qnfo-workers/main/docs/PRODUCT-ULTRASTABLE.md"
++    },
+     {
+       "path": "docs/PROMPTED-RECALL.md",
+       "title": "Prompted recall (PROMPTED-RECALL-1, owner directive 2026-11-09)",
+diff --git a/migrations/2026-11-10-ultrastable-product.sql b/migrations/2026-11-10-ultrastable-product.sql
+new file mode 100644
+index 0000000..fb318d3
+--- /dev/null
++++ b/migrations/2026-11-10-ultrastable-product.sql
+@@ -0,0 +1,120 @@
++-- ULTRASTABLE-PRODUCT-1 (2026-11-10, charter pillar autonomy; PROMPTED-RECALL-1, RECALL-LOOP-1). Owner, 2026-11-10: "what is this actual product called
++--   that we might be able to sell as a startup ... how do we actually spin that off into a separate idea where QNFO and the Qniverse are powered by this product?"
++-- Design: docs/PRODUCT-ULTRASTABLE.md; split: product/boundary.json, checked by scripts/product_boundary.mjs (ULTRASTABLE-BOUNDARY-1).
++-- WHAT THIS ADDS:
++--  (1) five prompted-recall questions on fleet.qnfo.org/focus (owner_asks, plane fleet, kind product-*), two to four options plus Not sure, no typing.
++--  (2) owner_asks_product_au: an answer files one agent_issues row (PRODUCT-ANSWER-1) that carries it into the record it changes (rwnq8/resume docs/BRAND.md
++--      section 9, docs/PRODUCT-ULTRASTABLE.md), so an answer is never inert. v_product_decisions reads the answers.
++--  (3) four owner cards for the steps only the owner can take (domain purchase, trademark knockout, GitHub organisation, entity), each IDENTITY-BOUND with its default.
++--  (4) ROADMAP-1 issues for spin-off phases P1 to P4 (product/boundary.json phases), each with a doer and a closing probe.
++-- PREDICTION: owner_asks with kind LIKE 'product-%' answered >= 3 within 7 d. Falsifier: 0 answers in 7 days means the questions are not where the owner looks.
++-- APPLY-BY: ci
++-- DB: qnfo-audit
++-- Rollback: DROP TRIGGER IF EXISTS owner_asks_product_au; DROP VIEW IF EXISTS v_product_decisions; UPDATE human_actions SET status = 'dismissed', resolution = 'rolled back' WHERE slug LIKE 'ultrastable-%' AND status = 'open'
++-- Rollback note: owner_asks rows stay as the record of what was asked and answered.
++-- CAUSE-MAPPED: registers no metric.
++-- spof-review: the trigger fires only on an owner_asks answer of a product-* kind and inserts one agent_issues row guarded by NOT EXISTS; a failure fails only that tap.
++
++INSERT OR IGNORE INTO owner_asks (plane, kind, ref, question, cue, options_json, priority, created_at) VALUES
++('fleet', 'product-name', 'ultrastable@2026-11-10',
++ 'Call the platform product "Ultrastable"?',
++ 'After W. Ross Ashby''s ultrastable system (1952): a machine that resets its own settings to stay within limits, as the fleet does with probes, reverts and doctrine amendments. Alternative: "Homeostat" (a GitHub user of that name already exists).',
++ '[{"key":"yes","label":"Yes, Ultrastable"},{"key":"homeostat","label":"Use Homeostat instead"},{"key":"qnfo","label":"Keep a QNFO name for now"},{"key":"unsure","label":"Not sure"}]',
++ 1, strftime('%Y-%m-%dT%H:%M:%SZ','now')),
++('fleet', 'product-buyer', 'first-buyer@2026-11-10',
++ 'Who should the platform be sold to first?',
++ 'Evidence it can show today: 3,880 merged pull requests in three months, 624 opened by its own code loop, 1,056 scored predictions (73% matched).',
++ '[{"key":"eng-teams","label":"Small engineering teams running many services"},{"key":"governance","label":"Teams that must audit what coding agents did"},{"key":"research","label":"Research groups running autonomous pipelines"},{"key":"unsure","label":"Not sure"}]',
++ 2, strftime('%Y-%m-%dT%H:%M:%SZ','now')),
++('fleet', 'product-model', 'spinoff-model@2026-11-10',
++ 'How should the product leave QNFO?',
++ 'QNFO stays customer zero either way. Open core: the core is public, the hosted version is paid.',
++ '[{"key":"open-core","label":"Open core plus a paid hosted version"},{"key":"hosted","label":"Paid hosted only"},{"key":"inside","label":"Keep it inside QNFO for now"},{"key":"unsure","label":"Not sure"}]',
++ 2, strftime('%Y-%m-%dT%H:%M:%SZ','now')),
++('fleet', 'product-design-credit', 'kernel-design@2026-11-10',
++ 'Did you set the fleet''s operating rules yourself (the 10-minute tick, the trust ledger, scored predictions, "no silent drop"), with AI agents writing the code?',
++ 'Your answer decides the wording on your CV and site: "designed and directs" versus "directs".',
++ '[{"key":"yes","label":"Yes, I set the rules; agents wrote the code"},{"key":"partly","label":"Partly: I set goals, agents proposed the rules"},{"key":"no","label":"No"},{"key":"unsure","label":"Not sure"}]',
++ 1, strftime('%Y-%m-%dT%H:%M:%SZ','now')),
++('fleet', 'product-prior-sales', 'empowering-change-revenue@2026-11-10',
++ 'At Empowering Change (2023 to 2024), did the LLM legal-navigation tool have paying users?',
++ 'A yes goes on your founder story as proof you have sold software before; a no keeps it as a built tool only.',
++ '[{"key":"yes","label":"Yes, paying users"},{"key":"pilot","label":"Free users or a pilot only"},{"key":"no","label":"No users"},{"key":"unsure","label":"Not sure"}]',
++ 3, strftime('%Y-%m-%dT%H:%M:%SZ','now'));
++
++CREATE TRIGGER IF NOT EXISTS owner_asks_product_au AFTER UPDATE OF answer ON owner_asks
++WHEN NEW.kind LIKE 'product-%' AND NEW.answer IS NOT NULL AND NEW.answer != 'unsure' AND (OLD.answer IS NULL OR OLD.answer != NEW.answer)
++BEGIN
++  INSERT INTO agent_issues (title, description, source, category, priority, status, created_at, updated_at)
++  SELECT 'PRODUCT-ANSWER-1: ' || NEW.kind || ' answered "' || COALESCE(NEW.answer_label, NEW.answer) || '"',
++    'The owner answered a prompted-recall question on fleet.qnfo.org/focus (owner_asks ' || NEW.id || '): ' || NEW.question || ' Answer: ' || COALESCE(NEW.answer_label, NEW.answer) || '.' || char(10) ||
++    'Apply it, marked "confirmed by owner, ' || substr(COALESCE(NEW.answered_at, strftime('%Y-%m-%dT%H:%M:%SZ','now')), 1, 10) || '": rwnq8/resume docs/BRAND.md section 9 (product-name, product-buyer, product-model, product-design-credit, product-prior-sales), docs/PRODUCT-ULTRASTABLE.md here (product-name, product-buyer, product-model), and for product-design-credit the CV and site wording (rwnq8/resume RESUME.md, rwnq8/rwnq8.github.io index.html). A "no" removes the claim it asked about.' || char(10) ||
++    'code-task: repo=qnfo-workers path=docs/PRODUCT-ULTRASTABLE.md' || char(10) ||
++    'code-probe: {"paths": ["docs/PRODUCT-ULTRASTABLE.md"], "contains": "owner_asks ' || NEW.id || '"}',
++    'owner-asks:product', 'roadmap', 'high', 'open', CAST(strftime('%s','now') AS INTEGER) * 1000, CAST(strftime('%s','now') AS INTEGER) * 1000
++  WHERE NOT EXISTS (SELECT 1 FROM agent_issues WHERE title LIKE 'PRODUCT-ANSWER-1: ' || NEW.kind || ' answered%' AND status = 'open');
++END;
++
++CREATE VIEW IF NOT EXISTS v_product_decisions AS
++SELECT kind, ref, question, answer, answer_label, answered_at, answered_via FROM owner_asks WHERE kind LIKE 'product-%' ORDER BY priority, id;
++
++INSERT OR IGNORE INTO human_actions (slug, title, why, default_in_effect, action, sev, status, source, copy_text) VALUES
++('ultrastable-domain-1',
++ 'Buy a domain for the Ultrastable product',
++ 'IDENTITY-BOUND: buying a domain spends the owner''s money and registers in the owner''s name. The session could not check registration (the RDAP service is not reachable from it); ultrastable.ai and ultrastable.dev answer HTTP, so they are probably taken.',
++ 'The product keeps its working name inside QNFO and links to docs/PRODUCT-ULTRASTABLE.md on GitHub; no domain is bought.',
++ 'In Cloudflare Registrar (the account that already holds qnfo.org), search the names in the copy box in order and buy the first available one. Mark this card done; the next session attaches it as a Worker route.',
++ 'normal', 'open', 'session:ultrastable-product',
++ 'ultrastable.dev, ultrastable.systems, getultrastable.com, ultrastable.io'),
++('ultrastable-trademark-1',
++ 'Run a trademark knockout search for "Ultrastable" in software classes',
++ 'IDENTITY-BOUND: a trademark search and filing is a legal act in the owner''s name. A web search on 2026-11-10 found no software trademark named Ultrastable; no USPTO search was run.',
++ 'The name is used only as a working name in repositories; nothing is filed.',
++ 'Open the USPTO trademark search (tmsearch.uspto.gov), search the term in the copy box in classes 9 and 42, and mark this card done with what you found. A live conflict means the fleet switches to the second name you picked on fleet.qnfo.org/focus.',
++ 'normal', 'open', 'session:ultrastable-product',
++ 'ultrastable'),
++('ultrastable-github-org-1',
++ 'Create the GitHub organisation for the Ultrastable core',
++ 'IDENTITY-BOUND: an organisation is created from the owner''s own GitHub account. It holds the core once phase P2 of docs/PRODUCT-ULTRASTABLE.md moves it out of qnfo-workers.',
++ 'The core stays in QNFO/qnfo-workers, marked by product/boundary.json.',
++ 'On github.com choose New organization, Free plan, and use the name in the copy box (or the first free variant). Add the fleet account as an owner. Mark this card done.',
++ 'low', 'open', 'session:ultrastable-product',
++ 'ultrastable'),
++('ultrastable-entity-1',
++ 'Decide whether Ultrastable becomes its own company',
++ 'IDENTITY-BOUND: incorporating is a legal and financial act only the owner can take. The product needs a second installation (phase P4) before a buyer can see it run outside QNFO.',
++ 'No entity is formed; Ultrastable stays a QNFO product line and QNFO is its first customer.',
++ 'When phase P4 is done, choose a formation service (for example Stripe Atlas or Clerky) and form the entity; mark this card done with the entity name. Until then, leave it open.',
++ 'low', 'open', 'session:ultrastable-product',
++ NULL);
++
++INSERT INTO agent_issues (title, description, source, category, priority, status, created_at, updated_at)
++SELECT 'ROADMAP-1: ULTRASTABLE #P1: a short default policy pack the core ships with',
++  'Charter pillar: autonomy. docs/PRODUCT-ULTRASTABLE.md section 6, product/boundary.json phase P1. A buyer cannot adopt CLAUDE.md (hundreds of owner directives). Write product/policy/DEFAULT-POLICY.md: at most 60 lines, the rules the core enforces in code (work claims, canonical deploy with probes and revert, no silent drop, scored predictions, interrupt gate for irreversible identity-bound steps), each line naming the trigger, guard or script that enforces it. QNFO keeps its directives as an overlay. Definition of done: the file exists, scripts/product-boundary.test.mjs asserts every rule line names an existing path.' || char(10) ||
++  'code-task: repo=qnfo-workers path=product/policy/DEFAULT-POLICY.md' || char(10) ||
++  'code-probe: {"paths": ["product/policy/DEFAULT-POLICY.md"], "contains": "ULTRASTABLE-POLICY-1"}',
++  'claude-session', 'roadmap', 'medium', 'open', CAST(strftime('%s','now') AS INTEGER) * 1000, CAST(strftime('%s','now') AS INTEGER) * 1000
++WHERE NOT EXISTS (SELECT 1 FROM agent_issues WHERE title LIKE 'ROADMAP-1: ULTRASTABLE #P1:%');
++
++INSERT INTO agent_issues (title, description, source, category, priority, status, created_at, updated_at)
++SELECT 'ROADMAP-1: ULTRASTABLE #P2: core tables in their own D1 database',
++  'Charter pillar: autonomy. product/boundary.json core_tables lists the tables the core owns; today they share qnfo-audit with QNFO research tables. Step 1 (this issue): add product/core-schema.sql generated from the live qnfo-audit schema of exactly those tables (scripts/product_boundary.mjs --schema), so a fresh installation can create them. Moving the live tables is a later issue.' || char(10) ||
++  'code-task: repo=qnfo-workers path=scripts/product_boundary.mjs' || char(10) ||
++  'code-probe: {"paths": ["scripts/product_boundary.mjs"], "contains": "--schema"}',
++  'claude-session', 'roadmap', 'medium', 'open', CAST(strftime('%s','now') AS INTEGER) * 1000, CAST(strftime('%s','now') AS INTEGER) * 1000
++WHERE NOT EXISTS (SELECT 1 FROM agent_issues WHERE title LIKE 'ROADMAP-1: ULTRASTABLE #P2:%');
++
++INSERT INTO agent_issues (title, description, source, category, priority, status, created_at, updated_at)
++SELECT 'ROADMAP-1: ULTRASTABLE #P3: tenant settings from configuration',
++  'Charter pillar: autonomy. The core hard-codes QNFO''s account, repository (QNFO/qnfo-workers), hosts (fleet.qnfo.org, q08.workers.dev) and owner. Add product/tenant.example.json naming every setting the core reads, and list in it each place in the core workers (product/boundary.json class core) where the value is a constant today (grep for QNFO/qnfo-workers and q08.workers.dev). Definition of done: the file lists every occurrence; a later issue per worker replaces them.' || char(10) ||
++  'code-task: repo=qnfo-workers path=product/tenant.example.json' || char(10) ||
++  'code-probe: {"paths": ["product/tenant.example.json"], "contains": "\"repository\""}',
++  'claude-session', 'roadmap', 'medium', 'open', CAST(strftime('%s','now') AS INTEGER) * 1000, CAST(strftime('%s','now') AS INTEGER) * 1000
++WHERE NOT EXISTS (SELECT 1 FROM agent_issues WHERE title LIKE 'ROADMAP-1: ULTRASTABLE #P3:%');
++
++INSERT INTO agent_issues (title, description, source, category, priority, status, created_at, updated_at)
++SELECT 'ROADMAP-1: ULTRASTABLE #P4: a second installation outside qnfo-workers',
++  'Charter pillar: autonomy. A buyer must see the core run on a repository that is not QNFO''s. Candidate: rwnq8/personal-life (already uses the issue and handoff rules). Definition of done: one issue there with a code-task line is planned, merged and verified by the code loop, and the run is recorded in decision_log with a prediction. Blocked on P3 (tenant settings).' || char(10) ||
++  'code-probe: {"paths": ["docs/PRODUCT-ULTRASTABLE.md"], "contains": "P4 done"}',
++  'claude-session', 'roadmap', 'low', 'open', CAST(strftime('%s','now') AS INTEGER) * 1000, CAST(strftime('%s','now') AS INTEGER) * 1000
++WHERE NOT EXISTS (SELECT 1 FROM agent_issues WHERE title LIKE 'ROADMAP-1: ULTRASTABLE #P4:%');
+diff --git a/product/boundary.json b/product/boundary.json
+new file mode 100644
+index 0000000..1b7110e
+--- /dev/null
++++ b/product/boundary.json
+@@ -0,0 +1,90 @@
++{
++  "product": "Ultrastable",
++  "id": "ULTRASTABLE-BOUNDARY-1",
++  "doc": "docs/PRODUCT-ULTRASTABLE.md",
++  "updated": "2026-11-10",
++  "summary": "Which parts of qnfo-workers are the self-governing development platform (core), which are QNFO's own applications that run on it (customer zero), and which are the owner's private personal plane that never ships with the product. scripts/product_boundary.mjs fails when a live worker is in no class or in two.",
++  "classes": {
++    "core": "The product: the tick, the issue and claim ledgers, the code loop, the deploy path with probes and revert, the model router, the fleet graph, observability and the operator console.",
++    "app": "QNFO research and reach applications. They are the first customer of the core and leave the repository when the core is extracted.",
++    "personal": "The owner's private plane (DOMAIN-PLANE-1, q08.org). Never part of the product, never copied into it."
++  },
++  "workers": {
++    "qnfo-fleet-control":       { "class": "core", "role": "kernel: the 10-minute tick, metric triggers, loop watch, trust ledger refresh, remediation contracts", "entangled": "charter, portfolio and research-specific steps live in the same 1.4 MB file" },
++    "qnfo-code-orchestrator":   { "class": "core", "role": "code loop: issue with a code-task line to a planned, tested, merged pull request on open models" },
++    "qnfo-deploy-guard":        { "class": "core", "role": "work claims and the secret lease shared by every agent lane" },
++    "qnfo-ops":                 { "class": "core", "role": "canonical deploy (/ops/deploy) with lock, ledger and bindings; the server-side ops agent" },
++    "qnfo-ai":                  { "class": "core", "role": "model router with capability gates, fallbacks and soft budget routing" },
++    "qnfo-ai-calibration":      { "class": "core", "role": "calibrates and stress-tests every routed model endpoint" },
++    "qnfo-ai-yield":            { "class": "core", "role": "AI cost yield measurement" },
++    "qnfo-waste-agent":         { "class": "core", "role": "finds and removes spend that produces nothing" },
++    "qnfo-memory-mcp":          { "class": "core", "role": "fleet code and topology graph (blast radius) and the knowledge graph" },
++    "qnfo-observability":       { "class": "core", "role": "makes the fleet observable to itself (trace ingest into D1)" },
++    "qnfo-cloud-ops":           { "class": "core", "role": "task runner for D1 workflows, owner-step watch and probe cadence" },
++    "qnfo-github-steward":      { "class": "core", "role": "mirrors the issue ledger to GitHub and keeps issue hygiene" },
++    "qnfo-intent-orchestrator": { "class": "core", "role": "turns a request from any client into an issue the loops act on" },
++    "qnfo-tools-mcp":           { "class": "core", "role": "MCP tool server for agent clients" },
++    "qnfo-agents":              { "class": "core", "role": "Cloudflare Agents SDK runtime reachable from the console" },
++    "qnfo-containers-pilot":    { "class": "core", "role": "container executor for Python and workspace jobs" },
++    "qnfo-doc-gate":            { "class": "core", "role": "gate that keeps documents tied to code", "review": true },
++    "qnfo-infra":               { "class": "core", "role": "shared infrastructure routes", "review": true },
++    "qnfo-fleet-dashboard":     { "class": "core", "role": "operator console (fleet.qnfo.org): queue, decisions, prompted-recall questions, owner tasks", "entangled": "research pages and the private owner documents are served from the same worker" },
++
++    "qnfo-research-exec":       { "class": "app", "role": "autonomous research pipeline: ground, draft, referee, revise, publish" },
++    "idea-hub":                 { "class": "app", "role": "research idea intake and scoring" },
++    "radar-hub":                { "class": "app", "role": "research radars" },
++    "qnfo-pdf":                 { "class": "app", "role": "paper PDFs" },
++    "qnfo-ipatent":             { "class": "app", "role": "ipatent research surface" },
++    "qnfo-gateway":             { "class": "app", "role": "qnfo.org and papers.qnfo.org, the home of record" },
++    "qnfo-ai-search":           { "class": "app", "role": "ask the library" },
++    "qnfo-social":              { "class": "app", "role": "outreach posts" },
++    "qnfo-email":               { "class": "app", "role": "inbound and outbound mail" },
++    "qnfo-subscribers":         { "class": "app", "role": "paper subscriptions" },
++    "qnfo-lifecycle":           { "class": "app", "role": "reader lifecycle mail", "review": true },
++    "qnfo-youtube-shorts":      { "class": "app", "role": "research shorts" },
++
++    "personal-api":             { "class": "personal", "role": "personal companion API (me.q08.org)" },
++    "personal-companion":       { "class": "personal", "role": "personal companion" },
++    "personal-watch":           { "class": "personal", "role": "personal watch" },
++    "q08-mind":                 { "class": "personal", "role": "personal notes" },
++    "q08-prediction-markets":   { "class": "personal", "role": "personal markets view" },
++    "q08-signal-engine":        { "class": "personal", "role": "personal signals" },
++    "qnfo-jobsearch":           { "class": "personal", "role": "the owner's job search (jobs.q08.org)" },
++    "qnfo-companion-guard":     { "class": "personal", "role": "guard for the personal companion", "review": true }
++  },
++  "core_scripts": [
++    "scripts/canary_revert.py",
++    "scripts/deploy_probes.py",
++    "scripts/review_gate.py",
++    "scripts/fleet_graph.mjs",
++    "scripts/run-suites.mjs",
++    "scripts/worker_release.py",
++    "scripts/apply_migrations.py",
++    "scripts/remediation_consumer.py",
++    "scripts/worker_outline.py",
++    "scripts/product_boundary.mjs"
++  ],
++  "core_workflows": [
++    ".github/workflows/canonical-deploy.yml",
++    ".github/workflows/pr-checks.yml",
++    ".github/workflows/pr-lane.yml",
++    ".github/workflows/apply-migrations.yml",
++    ".github/workflows/remediation-consumer.yml",
++    ".github/workflows/assign-copilot-on-issue.yml",
++    ".github/workflows/copilot-pr-lifecycle.yml"
++  ],
++  "core_tables": [
++    "agent_issues", "issue_triage", "issue_lifecycle", "remediation_contracts", "work_claims",
++    "metric_registry", "analytics_metric_triggers", "tick_runs", "trust_ledger", "decision_log",
++    "decision_predictions", "decision_outcomes", "failure_modes", "spof_registry", "belief_registry",
++    "blocker_redteam", "capability_ledger", "doctrine_proposals", "false_stop_register",
++    "control_registry", "owner_asks", "human_actions"
++  ],
++  "phases": [
++    { "id": "P0", "what": "This manifest and its check: every live worker is classified, so new code lands on one side.", "state": "done" },
++    { "id": "P1", "what": "A short default policy pack (the agreement every agent lane reads) extracted from CLAUDE.md and the doctrine; QNFO keeps its owner directives as an overlay.", "state": "open" },
++    { "id": "P2", "what": "Core tables move from qnfo-audit into their own D1 database; QNFO tables stay. The kernel reads core tables only.", "state": "open" },
++    { "id": "P3", "what": "Tenant settings (account, repository, hosts, model ladder, owner contact) read from configuration instead of constants.", "state": "open" },
++    { "id": "P4", "what": "A second installation on a repository outside qnfo-workers proves the core runs without QNFO's applications.", "state": "open" }
++  ]
++}
+diff --git a/qnfo-gateway/deployed-current.worker.js b/qnfo-gateway/deployed-current.worker.js
+index 763f375..7e54ac7 100644
+--- a/qnfo-gateway/deployed-current.worker.js
++++ b/qnfo-gateway/deployed-current.worker.js
+@@ -165,7 +165,7 @@ function formatPaper(source, record) {
+ }
+ // PAPER-FORMAT-2:END
+ // 3.48.7 PAPER-REVISION-QUALITY-1 (2026-11-03, pillar reach): recover split revision titles and record abstracts at public rendering, and reject cached refusals from both summary surfaces.
+-var VERSION="3.63.6-codeagent";
++var VERSION="3.63.7-codeagent";
+ /* 3.54.2 SEO-404-PATHS-1 follow-up: the paper page script no longer requests /api/paper-context/undefined when the page data block is missing (first path recorded in seo_404_paths). */ /* 3.54.0 SEO-404-PATHS-1 and INDEXNOW-BACKOFF-1 (merged): see the two notes below. GET /api/seo/crawl also returns notFound, the top 50 crawler 404 paths of the window, so the dashboard UX auditor reads them from the open route. INDEXNOW-BACKOFF-1: an IndexNow endpoint that failed its last 6 logged runs is tried once per 3 hours and a 429 is not retried. */ /* SEO-404-PATHS-1 (2026-11-04, pillar reach): a crawler request that answers 404 records its path in living-paper seo_404_paths (day, host, path, n; 500 paths a day, 14 days kept). seo_crawl_log counted 1,875 crawler 404s on 2026-11-02 (qnfo.org, every bot, kind other) and kept no path to fix. */ // 3.52.0 QWAV-DEMOS-1 (2026-11-04, pillar reach; minor: the QWAV page lists the ten interactive demos that only the retired Pages site linked, with a Demos nav item, a hero action and a footer link; the page is now the whole of qwav.org through a qwav.org/* route, so unknown paths redirect home instead of answering 200). Revert: restore 3.51.0. // 3.51.0 earlier history follows: // 3.51.0 CROSS-LINK-1 (2026-11-04, pillar reach; minor: every QDS page gains a family bar linking QNFO, QWAV and q08, a Keep exploring module (newest and random papers from the open API, the three family sites, topic chips) and a family line in the footer; QDS 1.1.0; visible ask links use ask.qwav.org per DOMAIN-PLANE-1). Prediction: pages per session on qwav.org and qnfo.org rise and clicks between the three sites become non-zero. Revert: restore 3.50.0. // 3.50.0 earlier history follows: // 3.50.0 PAPER-CITATION-ALIASES-1 (#5577, pillar research; minor): expose the documented /papers/<slug>/cite.* routes alongside the existing API exports. /* main 3.53.1 */ // 3.53.1 PAPER-TTFB-1 (2026-11-04, pillar reach; patch): a paper page whose plain summary kept failing the readability gate ran two model generations inside every request (17 to 44 s to first byte for a-minimal-generative-grammar-of-coordination..., 1.2 s for its neighbours); the fill now runs after the response and once per PLAIN_RETRY_MS per paper per colo. Revert: restore 3.53.0. // 3.53.0 earlier history follows: // 3.53.0 CROSS-LINK-2 (2026-11-04, pillar reach; minor: papers.qnfo.org index and paper pages, rendered by lpDoc, gain the family bar and a Keep exploring strip linking QWAV, Ask, ideas and q08, so the pages a search lands on lead to the rest of the family). Revert: restore 3.52.0. // 3.52.0 earlier history follows: // 3.52.0 QWAV-DEMOS-1 (2026-11-04, pillar reach; minor: the QWAV page lists the ten interactive demos that only the retired Pages site linked, with a Demos nav item, a hero action and a footer link; the page is now the whole of qwav.org through a qwav.org/* route, so unknown paths redirect home instead of answering 200). Revert: restore 3.51.0. // 3.51.0 earlier history follows: // 3.51.0 CROSS-LINK-1 (2026-11-04, pillar reach; minor: every QDS page gains a family bar linking QNFO, QWAV and q08, a Keep exploring module (newest and random papers from the open API, the three family sites, topic chips) and a family line in the footer; QDS 1.1.0; visible ask links use ask.qwav.org per DOMAIN-PLANE-1). Prediction: pages per session on qwav.org and qnfo.org rise and clicks between the three sites become non-zero. Revert: restore 3.50.0. // 3.50.0 earlier history follows: // 3.50.0 PAPER-CITATION-ALIASES-1 (#5577, pillar research; minor): expose the documented /papers/<slug>/cite.* routes alongside the existing API exports.
+ // WORKERS-AI-ATTRIBUTION-1 (2026-10-01, #1681): per-worker Workers AI attribution. Returns a shallow env copy whose AI
+ // binding records each .run() (calls, errors, ms, tokens, neurons) into qnfo-audit ai_call_counters (purpose 'binding').
+@@ -3678,7 +3678,7 @@ __name222(handleAbout, "handleAbout");
+ __name2222(handleAbout, "handleAbout");
+ function renderAboutHTML(stats) {
+   const fmt = function(n) { return Number(n || 0).toLocaleString("en-US"); };
+-  const body = '<section class="q-hero" style="padding-bottom:16px"><div class="q-wrap"><p class="q-eyebrow">About</p><h1 class="q-display" style="max-width:18ch">About QNFO</h1><p class="q-lede">QNFO is the independent research imprint of Rowan Brad Quni-Gudzinas: one researcher with an open, auditable, AI-assisted research pipeline. The author is a systems researcher. The work asks how autonomous AI systems behave when nobody is steering: what an autonomous research system actually delivers and where it fails, what an AI-assisted claim is worth (ignorance audits), and what computation costs per correct answer (Joules-per-Solution). The <a href="/#selected-works">selected works</a> are the place to start.</p></div></section>' +
++  const body = '<section class="q-hero" style="padding-bottom:16px"><div class="q-wrap"><p class="q-eyebrow">About</p><h1 class="q-display" style="max-width:18ch">About QNFO</h1><p class="q-lede">QNFO is the independent research imprint of Rowan Brad Quni-Gudzinas: one researcher with an open, auditable, AI-assisted research pipeline. The author is a systems researcher. The work asks how autonomous AI systems behave when nobody is steering: what an autonomous research system actually delivers and where it fails, what an AI-assisted claim is worth (ignorance audits), and what computation costs per correct answer (Joules-per-Solution). The <a href="/#selected-works">selected works</a> are the place to start.</p><p class="q-lede">The fleet that runs QNFO is also a product in its own right: a self-governing development platform, working name Ultrastable. It finds its own work in its own metrics and failures, hands each change to a coding agent, proves the change live with a probe and an automatic revert, and scores every decision against the prediction it logged first. QNFO is its first customer. <a href="https://github.com/QNFO/qnfo-workers/blob/main/docs/PRODUCT-ULTRASTABLE.md">What it is, the evidence, and the open gaps</a>.</p></div></section>' +
+     '<div class="q-wrap"><article class="q-article"><div class="q-prose">' +
+     '<h2>What QNFO is</h2><p>Open research in three lines, in this order: autonomous AI systems and their operation, the epistemics of AI-assisted science, and energy-honest computing (the Joules-per-Solution metric). The corpus is browsable on <a href="https://papers.qnfo.org/papers">papers.qnfo.org</a>, and <a href="https://ask.qwav.org/">Ask the corpus</a> answers questions from it with citations and the knowledge graph around each answer.</p><p class="q-meta">QNFO is not an acronym. The name is the name.</p>' +
+     '<h2>The thesis</h2><p>Computational advantage is measured in joules per solution, not qubit counts or press releases. The <a href="https://github.com/rwnq8/joules-per-compute-benchmark">joules-per-compute benchmark</a> formalizes the questions the industry prefers to defer: the Landauer floor for cryogenic controllers, the Margolus\u2013Levitin bound as a scheduling constraint, and the energy floor of surface-code error correction at a thousand logical qubits.</p>' +
+diff --git a/qnfo-gateway/releases/3.63.7-codeagent.md b/qnfo-gateway/releases/3.63.7-codeagent.md
+new file mode 100644
+index 0000000..5962d4b
+--- /dev/null
++++ b/qnfo-gateway/releases/3.63.7-codeagent.md
+@@ -0,0 +1,3 @@
++# qnfo-gateway 3.63.7-codeagent (2026-11-10)
++
++ULTRASTABLE-PRODUCT-1: the About page names the self-governing development platform that runs QNFO and links its product page
+diff --git a/qnfo-gateway/worker.js b/qnfo-gateway/worker.js
+index 763f375..7e54ac7 100644
+--- a/qnfo-gateway/worker.js
++++ b/qnfo-gateway/worker.js
+@@ -165,7 +165,7 @@ function formatPaper(source, record) {
+ }
+ // PAPER-FORMAT-2:END
+ // 3.48.7 PAPER-REVISION-QUALITY-1 (2026-11-03, pillar reach): recover split revision titles and record abstracts at public rendering, and reject cached refusals from both summary surfaces.
+-var VERSION="3.63.6-codeagent";
++var VERSION="3.63.7-codeagent";
+ /* 3.54.2 SEO-404-PATHS-1 follow-up: the paper page script no longer requests /api/paper-context/undefined when the page data block is missing (first path recorded in seo_404_paths). */ /* 3.54.0 SEO-404-PATHS-1 and INDEXNOW-BACKOFF-1 (merged): see the two notes below. GET /api/seo/crawl also returns notFound, the top 50 crawler 404 paths of the window, so the dashboard UX auditor reads them from the open route. INDEXNOW-BACKOFF-1: an IndexNow endpoint that failed its last 6 logged runs is tried once per 3 hours and a 429 is not retried. */ /* SEO-404-PATHS-1 (2026-11-04, pillar reach): a crawler request that answers 404 records its path in living-paper seo_404_paths (day, host, path, n; 500 paths a day, 14 days kept). seo_crawl_log counted 1,875 crawler 404s on 2026-11-02 (qnfo.org, every bot, kind other) and kept no path to fix. */ // 3.52.0 QWAV-DEMOS-1 (2026-11-04, pillar reach; minor: the QWAV page lists the ten interactive demos that only the retired Pages site linked, with a Demos nav item, a hero action and a footer link; the page is now the whole of qwav.org through a qwav.org/* route, so unknown paths redirect home instead of answering 200). Revert: restore 3.51.0. // 3.51.0 earlier history follows: // 3.51.0 CROSS-LINK-1 (2026-11-04, pillar reach; minor: every QDS page gains a family bar linking QNFO, QWAV and q08, a Keep exploring module (newest and random papers from the open API, the three family sites, topic chips) and a family line in the footer; QDS 1.1.0; visible ask links use ask.qwav.org per DOMAIN-PLANE-1). Prediction: pages per session on qwav.org and qnfo.org rise and clicks between the three sites become non-zero. Revert: restore 3.50.0. // 3.50.0 earlier history follows: // 3.50.0 PAPER-CITATION-ALIASES-1 (#5577, pillar research; minor): expose the documented /papers/<slug>/cite.* routes alongside the existing API exports. /* main 3.53.1 */ // 3.53.1 PAPER-TTFB-1 (2026-11-04, pillar reach; patch): a paper page whose plain summary kept failing the readability gate ran two model generations inside every request (17 to 44 s to first byte for a-minimal-generative-grammar-of-coordination..., 1.2 s for its neighbours); the fill now runs after the response and once per PLAIN_RETRY_MS per paper per colo. Revert: restore 3.53.0. // 3.53.0 earlier history follows: // 3.53.0 CROSS-LINK-2 (2026-11-04, pillar reach; minor: papers.qnfo.org index and paper pages, rendered by lpDoc, gain the family bar and a Keep exploring strip linking QWAV, Ask, ideas and q08, so the pages a search lands on lead to the rest of the family). Revert: restore 3.52.0. // 3.52.0 earlier history follows: // 3.52.0 QWAV-DEMOS-1 (2026-11-04, pillar reach; minor: the QWAV page lists the ten interactive demos that only the retired Pages site linked, with a Demos nav item, a hero action and a footer link; the page is now the whole of qwav.org through a qwav.org/* route, so unknown paths redirect home instead of answering 200). Revert: restore 3.51.0. // 3.51.0 earlier history follows: // 3.51.0 CROSS-LINK-1 (2026-11-04, pillar reach; minor: every QDS page gains a family bar linking QNFO, QWAV and q08, a Keep exploring module (newest and random papers from the open API, the three family sites, topic chips) and a family line in the footer; QDS 1.1.0; visible ask links use ask.qwav.org per DOMAIN-PLANE-1). Prediction: pages per session on qwav.org and qnfo.org rise and clicks between the three sites become non-zero. Revert: restore 3.50.0. // 3.50.0 earlier history follows: // 3.50.0 PAPER-CITATION-ALIASES-1 (#5577, pillar research; minor): expose the documented /papers/<slug>/cite.* routes alongside the existing API exports.
+ // WORKERS-AI-ATTRIBUTION-1 (2026-10-01, #1681): per-worker Workers AI attribution. Returns a shallow env copy whose AI
+ // binding records each .run() (calls, errors, ms, tokens, neurons) into qnfo-audit ai_call_counters (purpose 'binding').
+@@ -3678,7 +3678,7 @@ __name222(handleAbout, "handleAbout");
+ __name2222(handleAbout, "handleAbout");
+ function renderAboutHTML(stats) {
+   const fmt = function(n) { return Number(n || 0).toLocaleString("en-US"); };
+-  const body = '<section class="q-hero" style="padding-bottom:16px"><div class="q-wrap"><p class="q-eyebrow">About</p><h1 class="q-display" style="max-width:18ch">About QNFO</h1><p class="q-lede">QNFO is the independent research imprint of Rowan Brad Quni-Gudzinas: one researcher with an open, auditable, AI-assisted research pipeline. The author is a systems researcher. The work asks how autonomous AI systems behave when nobody is steering: what an autonomous research system actually delivers and where it fails, what an AI-assisted claim is worth (ignorance audits), and what computation costs per correct answer (Joules-per-Solution). The <a href="/#selected-works">selected works</a> are the place to start.</p></div></section>' +
++  const body = '<section class="q-hero" style="padding-bottom:16px"><div class="q-wrap"><p class="q-eyebrow">About</p><h1 class="q-display" style="max-width:18ch">About QNFO</h1><p class="q-lede">QNFO is the independent research imprint of Rowan Brad Quni-Gudzinas: one researcher with an open, auditable, AI-assisted research pipeline. The author is a systems researcher. The work asks how autonomous AI systems behave when nobody is steering: what an autonomous research system actually delivers and where it fails, what an AI-assisted claim is worth (ignorance audits), and what computation costs per correct answer (Joules-per-Solution). The <a href="/#selected-works">selected works</a> are the place to start.</p><p class="q-lede">The fleet that runs QNFO is also a product in its own right: a self-governing development platform, working name Ultrastable. It finds its own work in its own metrics and failures, hands each change to a coding agent, proves the change live with a probe and an automatic revert, and scores every decision against the prediction it logged first. QNFO is its first customer. <a href="https://github.com/QNFO/qnfo-workers/blob/main/docs/PRODUCT-ULTRASTABLE.md">What it is, the evidence, and the open gaps</a>.</p></div></section>' +
+     '<div class="q-wrap"><article class="q-article"><div class="q-prose">' +
+     '<h2>What QNFO is</h2><p>Open research in three lines, in this order: autonomous AI systems and their operation, the epistemics of AI-assisted science, and energy-honest computing (the Joules-per-Solution metric). The corpus is browsable on <a href="https://papers.qnfo.org/papers">papers.qnfo.org</a>, and <a href="https://ask.qwav.org/">Ask the corpus</a> answers questions from it with citations and the knowledge graph around each answer.</p><p class="q-meta">QNFO is not an acronym. The name is the name.</p>' +
+     '<h2>The thesis</h2><p>Computational advantage is measured in joules per solution, not qubit counts or press releases. The <a href="https://github.com/rwnq8/joules-per-compute-benchmark">joules-per-compute benchmark</a> formalizes the questions the industry prefers to defer: the Landauer floor for cryogenic controllers, the Margolus\u2013Levitin bound as a scheduling constraint, and the energy floor of surface-code error correction at a thousand logical qubits.</p>' +
+diff --git a/scripts/product-boundary.test.mjs b/scripts/product-boundary.test.mjs
+new file mode 100644
+index 0000000..f6bde0f
+--- /dev/null
++++ b/scripts/product-boundary.test.mjs
+@@ -0,0 +1,34 @@
++// ULTRASTABLE-BOUNDARY-1: the product split in product/boundary.json covers every live worker exactly once.
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { readFileSync, mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
++import { join, dirname } from "node:path";
++import { tmpdir } from "node:os";
++import { fileURLToPath } from "node:url";
++import { checkBoundary, liveWorkers } from "./product_boundary.mjs";
++
++const root = join(dirname(fileURLToPath(import.meta.url)), "..");
++const manifest = JSON.parse(readFileSync(join(root, "product", "boundary.json"), "utf8"));
++
++test("every live worker is classified and every classified worker is live", () => {
++  const r = checkBoundary(root, manifest);
++  assert.deepEqual(r.violations, []);
++  assert.ok(r.counts.core > 0 && r.counts.app > 0 && r.counts.personal > 0);
++});
++
++test("the personal plane never sits in the core", () => {
++  for (const [w, v] of Object.entries(manifest.workers)) {
++    if (w.startsWith("personal-") || w.startsWith("q08-")) assert.equal(v.class, "personal", w);
++  }
++});
++
++test("an unclassified worker and a retired worker are reported", () => {
++  const dir = mkdtempSync(join(tmpdir(), "boundary-"));
++  for (const w of ["alpha", "beta", "gone"]) { mkdirSync(join(dir, w)); writeFileSync(join(dir, w, "worker.js"), "export default {}"); }
++  writeFileSync(join(dir, "gone", "RETIRED"), "");
++  assert.deepEqual(liveWorkers(dir), ["alpha", "beta"]);
++  const r = checkBoundary(dir, { workers: { alpha: { class: "core", role: "x" }, gone: { class: "app", role: "y" } } });
++  assert.equal(r.ok, false);
++  assert.ok(r.violations.some((v) => v.includes("unclassified live worker: beta")));
++  assert.ok(r.violations.some((v) => v.includes("classified worker is not live: gone")));
++});
+diff --git a/scripts/product_boundary.mjs b/scripts/product_boundary.mjs
+new file mode 100644
+index 0000000..bf73146
+--- /dev/null
++++ b/scripts/product_boundary.mjs
+@@ -0,0 +1,52 @@
++// scripts/product_boundary.mjs: ULTRASTABLE-BOUNDARY-1 (2026-11-10, charter pillar autonomy).
++// WHAT   Reads product/boundary.json, the split of this repository into the Ultrastable core (the self-governing development
++//        platform), QNFO's applications that run on it (customer zero) and the owner's personal plane. Design and spin-off plan:
++//        docs/PRODUCT-ULTRASTABLE.md. It fails when a live worker directory (worker.js, no RETIRED or FOLDED marker) is not
++//        classified, when a classified worker no longer exists, when a class is unknown, or when a listed core script,
++//        workflow or doc is missing. New code therefore lands on a known side of the split.
++// USAGE  node scripts/product_boundary.mjs            # report and exit 1 on a violation
++//        node scripts/product_boundary.mjs --json     # machine-readable report
++import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
++import { join, dirname } from "node:path";
++import { fileURLToPath } from "node:url";
++
++export const CLASSES = ["core", "app", "personal"];
++
++export function liveWorkers(root) {
++  return readdirSync(root).filter((d) => {
++    const p = join(root, d);
++    try { if (!statSync(p).isDirectory()) return false; } catch { return false; }
++    if (d.startsWith(".") || d === "archive") return false;
++    return existsSync(join(p, "worker.js")) && !existsSync(join(p, "RETIRED")) && !existsSync(join(p, "FOLDED"));
++  }).sort();
++}
++
++export function checkBoundary(root, manifest) {
++  const violations = [];
++  const live = liveWorkers(root);
++  const listed = manifest.workers || {};
++  for (const w of live) if (!listed[w]) violations.push(`unclassified live worker: ${w} (add it to product/boundary.json as core, app or personal)`);
++  for (const [w, v] of Object.entries(listed)) {
++    if (!live.includes(w)) violations.push(`classified worker is not live: ${w} (remove it, or restore the worker)`);
++    if (!CLASSES.includes(v.class)) violations.push(`unknown class for ${w}: ${v.class}`);
++    if (!v.role) violations.push(`worker ${w} has no role`);
++  }
++  for (const f of [...(manifest.core_scripts || []), ...(manifest.core_workflows || []), manifest.doc].filter(Boolean)) {
++    if (!existsSync(join(root, f))) violations.push(`listed path is missing: ${f}`);
++  }
++  const counts = Object.fromEntries(CLASSES.map((c) => [c, Object.values(listed).filter((v) => v.class === c).length]));
++  const entangled = Object.entries(listed).filter(([, v]) => v.entangled).map(([w]) => w);
++  return { ok: violations.length === 0, violations, counts, live: live.length, entangled };
++}
++
++if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
++  const root = join(dirname(fileURLToPath(import.meta.url)), "..");
++  const manifest = JSON.parse(readFileSync(join(root, "product", "boundary.json"), "utf8"));
++  const r = checkBoundary(root, manifest);
++  if (process.argv.includes("--json")) console.log(JSON.stringify(r, null, 2));
++  else {
++    console.log(`${manifest.product} boundary: ${r.live} live workers; core ${r.counts.core}, app ${r.counts.app}, personal ${r.counts.personal}; entangled: ${r.entangled.join(", ") || "none"}`);
++    for (const v of r.violations) console.log(`VIOLATION ${v}`);
++  }
++  process.exit(r.ok ? 0 : 1);
++}
+-- 
+2.43.0
+

@@ -4,6 +4,7 @@ Autonomous development platform: virtual managers and staff, plussing, earned-tr
 
 | Path | What |
 |---|---|
+| [INDEX.md](INDEX.md) | Single index incl. QNFO platform thread archive and hourly issues-by-area |
 | [ROADMAP.md](ROADMAP.md) | Launch backlog by milestone (Now, Next, After filing, Later), linked to issues |
 | [PROJECTS.md](PROJECTS.md) | The five project definitions with issue lists (board stand-in) |
 | [ip/](ip/README.md) | Disclosure, evidence log, prior art, bootstrapping embodiment, `provisional/` patent spec v3 (md, pdf, drawings, figures, claim strategy, filing checklist) |
