@@ -15,7 +15,7 @@ Org and repo settings endpoints return "not available: sessions are bound to the
 ## Desired state, by field
 | Field | Value | Why |
 |---|---|---|
-| Org description | Coding agents write code. Ultrastable runs the system. From one idea to a business that improves itself. | headline plus sub-line, under 160 chars |
+| Org description | Coding agents write code. Ultrastable runs the system. From one idea to an organization that improves itself. | headline plus sub-line, under 160 chars |
 | Org URL, email | https://ultrastable.io, pilot@ultrastable.io | canonical domain, pilot contact |
 | Default member permission | read | least privilege |
 | Members creating public repos | off | confidentiality until filing |

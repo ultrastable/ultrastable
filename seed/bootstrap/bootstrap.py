@@ -38,6 +38,8 @@ from pathlib import Path
 
 VERSION = "0.1.0"
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cases as case_library  # noqa: E402  (bootstrap case library, bootstrap/cases.json)
 
 
 # ---------------------------------------------------------------- helpers
@@ -179,6 +181,27 @@ class Boot:
                 "spending money is identity-bound", "free tiers only; the fleet logs cost estimates",
                 "cost estimate per role in org/charter.md", "manual"))
         return "ok", f"tier for {self.budget:g} USD: " + ", ".join(f"{k}={v}" for k, v in self.models.items())
+
+    def cases(self):
+        """Match the starting conditions against the case library: routes around each blocker, at most one owner card per blocker."""
+        facts = {}
+        fp = self.root / "facts.json"
+        if fp.exists():
+            facts.update(json.loads(fp.read_text()))
+        for k, v in self.idea["front"].items():  # IDEA.md front matter may state a fact, e.g. `us_domiciled: false`
+            if k in case_library.load_library()["defaults"]:
+                facts[k] = {"true": True, "false": False}.get(v.lower(), int(v) if v.isdigit() else v)
+        facts.setdefault("budget_usd_per_month", self.budget)
+        if "has_org_admin_token" not in facts:
+            facts["has_org_admin_token"] = "ORG_ADMIN_TOKEN" in os.environ
+        plan = case_library.plan_cases(facts)
+        for c in plan["cards"]:
+            self.state["gate_cards"].append(self.card(
+                f"CASE-{c['id']}", c["what"], c["why"], c["default"],
+                "routes for " + ", ".join(c["cases"]) + " are in org/bootstrap-cases.json", c["probe"]))
+        self.out.mkdir(parents=True, exist_ok=True)
+        (self.out / "bootstrap-cases.json").write_text(json.dumps({"facts": facts, **plan}, indent=2) + "\n")
+        return "ok", f"{len(plan['applicable'])} case(s) matched, {len(plan['cards'])} owner card(s), {len(plan['assumed'])} fact(s) assumed"
 
     def plan(self):
         roles = []
@@ -464,7 +487,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     root = a.root.resolve()
     boot = Boot(root, (a.out or root / "org").resolve(), apply=a.apply)
-    for name in ("read", "detect", "select", "plan", "write", "surfaces", "org", "provision", "start"):
+    for name in ("read", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start"):
         st = boot.guard(name, getattr(boot, name))
         if name == "read" and st == "blocked" and not hasattr(boot, "idea"):
             break  # nothing to plan from; the report says why

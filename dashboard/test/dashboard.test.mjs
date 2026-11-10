@@ -61,3 +61,23 @@ test("unknown command and empty command", async () => {
   assert.equal((await call(e, "/api/owner/run", { cmd: "rm -rf /" }, ck)).status, 404);
   assert.equal((await call(e, "/api/owner/run", { cmd: "" }, ck)).status, 400);
 });
+test("fleet snapshot: token required, stored, shown to the owner, and rendered text is escaped client-side", async () => {
+  const e = { ...env(), FLEET_TOKEN: "tok" };
+  const post = (body, auth) => route(new Request("https://ultrastable.io/api/fleet/snapshot", { method: "POST", headers: auth ? { authorization: auth } : {}, body: typeof body === "string" ? body : JSON.stringify(body) }), e);
+  assert.equal((await post({ panels: [] })).status, 401);
+  assert.equal((await post("not json", "Bearer tok")).status, 400);
+  assert.equal((await post({ nope: 1 }, "Bearer tok")).status, 400);
+  assert.equal((await post({ panels: new Array(1).fill({ title: "x", rows: [["a", "b", "ok"]] }), generated: "2026-11-10", commit: "abc" }, "Bearer tok")).status, 200);
+  const ck = await login(e);
+  const st = await (await call(e, "/api/owner/state", null, ck)).json();
+  assert.equal(st.snapshot.panels[0].title, "x"); assert.equal(st.snapshot.commit, "abc");
+  const r = await (await call(e, "/api/owner/run", { cmd: "snapshot" }, ck)).json(); assert.equal(r.ok, true); assert.match(r.out, /a: b/);
+  const page = await (await call(e, "/owner")).text(); assert.match(page, /Funding, IP, trust and bootstrap/);
+  assert.equal((await post("x".repeat(200001), "Bearer tok")).status, 413);
+});
+test("snapshot built from the repo has the five panels", async () => {
+  const { execFileSync } = await import("node:child_process");
+  const out = execFileSync("python3", ["../scripts/dashboard_snapshot.py", "--today", "2026-11-10", "--out", "/tmp/snap-test.json"], { cwd: new URL("..", import.meta.url).pathname, encoding: "utf8" });
+  const snap = JSON.parse(readFileSync("/tmp/snap-test.json", "utf8"));
+  assert.deepEqual(snap.panels.map(p => p.id), ["funding", "ip", "trust", "cards", "bootstrap"]); assert.deepEqual(snap.problems, []); assert.ok(out.includes("panels"));
+});

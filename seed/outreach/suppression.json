@@ -1,0 +1,4 @@
+{
+ "_doc": "Opt-outs, declines and do-not-contact entries. A target whose registry id, profile:id key or domain appears here is never contacted again. `outreach.py reply <key> --kind opt-out` adds entries automatically. Removing an entry is a reviewed PR and needs the contact's own written request.",
+ "entries": []
+}

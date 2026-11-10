@@ -4,7 +4,7 @@ QNFO is shown only as the test case that proves Ultrastable works; it carries no
 
 ```md
 ## Related: Ultrastable
-**[Ultrastable](https://github.com/ultrastable)** (ultrastable.io) is a separate project: an autonomous system that bootstraps and runs a venture from one idea. QNFO is its first test case.
+**[Ultrastable](https://github.com/ultrastable)** (ultrastable.io) is a separate project: an autonomous system that bootstraps and runs any organized effort from one idea. QNFO is its first test case.
 ```
 
 The reverse link is already in `ultrastable/.github/profile/README.md`.

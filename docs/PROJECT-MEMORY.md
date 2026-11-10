@@ -44,6 +44,8 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 
 - Funding applications (2026-11-10): packets in `business/funding/applications/`, validated and tracked weekly by `scripts/funding_packet.py` (BG-28). Google Cloud Program packet drafted, states honestly that the system is demoed on Cloudflare and would run on GCP if funded; NOT submitted (form needs Google sign-in on a company domain, billing account, live site).
 
+- Funding and outreach loop (2026-11-10, BG-29 to BG-33): roles `funding-manager`, `outreach-manager`, `outreach-coordinator` (`agents/roles/`, mirrored in `seed/`); engine `scripts/outreach.py` + `outreach/` (gate, profiles, suppression, packets, state, `STATUS.md`) run daily by the `outreach` workflow. Two profiles: `ultrastable` (tracks A, B; generic copy, no QNFO or research framing) and `qniverse` (track R plus NLnet and Sloan; the QNFO fleet adopts the engine by config; closing probe for the QNFO side: `outreach/` and `scripts/outreach.py` present in QNFO's repo and a first run logged there). Registry grew to 31 rows with track R research funders, all unverified because the session network blocked the funders; the weekly runner verifies them and nothing is contacted from an unverified row. LIVE now: discovery, packets, guard, queueing, status, owner cards, the daily workflow, tests in CI. DRY-RUN: all contact (no sender identity; forms are the owner's act). Positioning broadened in brand, external, briefing, Google packet and profile copy: any organized effort (company, open-source project, community, lab), for-profit and open source (ultrastable.org) both open, QNFO only as test case. Social card PNG/SVG still carry the old sub-line (re-render pending). Owner dashboard has funding/IP/trust/cards/bootstrap panels from `dashboard/snapshot.json` (`dashboard-snapshot` workflow); worker deploy waits on BG-27 secrets. Bootstrap case library: `seed/bootstrap/cases.json` (13 cases, `docs/BOOTSTRAP-GAPS.md`).
+
 ## 4. Owner-only items (identity-bound; each has a default in effect)
 
 | Item | Default in effect | Closing probe |
@@ -56,6 +58,8 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 | Org avatar upload | Default identicon | Avatar URL is not the identicon |
 | Create Bluesky and Mastodon accounts and add their tokens as repo secrets (SOC-1, SOC-2) | Social posting stays dry-run | Secrets listed; first run logs `posted` |
 | Submit funding applications (Google Cloud Start packet ready to paste: `business/funding/applications/google-for-startups/OWNER-CARD.md`; needs entity, domain email, billing ID, live site with team/product) | Applications prepared, not sent | Submission confirmation filed in `business/funding/applications/<name>/confirmations/` |
+| Register one outreach mailbox and store `OUTREACH_SEND_URL`/`OUTREACH_SEND_TOKEN` (OUT-SENDER, `outreach/cards/OUT-SENDER.md`) | Outreach stays dry-run | A run logs `sent` for an e-mail-route target |
+| Submit the verified application forms in the outreach cards (`outreach/cards/OUT-SEND-<profile>.md`) | Not sent; packets stay ready | `outreach/state.json` shows state `sent` |
 
 ## 5. Workstream map
 

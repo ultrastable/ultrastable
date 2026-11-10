@@ -3,7 +3,7 @@
 One page every Ultrastable surface follows. **Ultrastable is its own brand, separate from QNFO.** QNFO appears only as the test case that shows the system works, never in the look, and Ultrastable is never framed as research.
 
 ## Positioning
-Ultrastable is an autonomous business system. From one idea it bootstraps the building blocks of a company (development, branding, a provisional-patent filing package, a business plan, search and analytics presence, marketing) and then keeps improving itself. It is self-directed, with light, non-burdensome input: you can steer it any time, but it manages itself, so you do not need a development team, a patent lawyer or a marketing firm to get started. Anything can be bootstrapped; the sky is the limit.
+Ultrastable is an autonomous system that sets up and runs any organized effort from one idea: a company, an open-source project, a community, a lab, anything you can describe. From one idea it bootstraps the building blocks the effort needs (development, branding, an IP-protection filing package, a plan, search and analytics presence, funding outreach and promotion) and then keeps improving itself. For-profit and open source (ultrastable.org) both stay open; the choice is the owner's and can be made later. QNFO, an independent research programme, is the research-kind test case and appears only as that. It is self-directed, with light, non-burdensome input: you can steer it any time, but it manages itself, so you do not need a development team, a patent lawyer or a marketing firm to get started. Anything can be bootstrapped; the sky is the limit.
 
 Not claimed: financial back-end (accounting, payments, banking). Out of scope for now. Legal and patent output is a working draft for professional review, not legal advice.
 
@@ -11,7 +11,7 @@ Not claimed: financial back-end (accounting, payments, banking). Out of scope fo
 **ultrastable**, one word, never "ultra-stable". Wordmark is lowercase; in running text use "Ultrastable". Domains and handles lowercase: `ultrastable.io` (canonical), `.app`, `.net`, org `ultrastable`.
 
 **Headline (keep): Coding agents write code. Ultrastable runs the system.**
-Sub-line: *From one idea to a business that improves itself.*
+Sub-line: *From one idea to an organization that improves itself.*
 
 ## Voice
 Confident, plain, practical, a little bold. Speak to builders with ideas, not to researchers. Say what it does for them. No academic or research language, no hype words, no unverifiable numbers. Label what is running versus planned when detail matters.

@@ -1,0 +1,337 @@
+{
+ "generated": "2026-11-10",
+ "mode": "dry-run",
+ "kill": false,
+ "sender_registered": false,
+ "metrics": {
+  "targets": 29,
+  "state_discovered": 0,
+  "state_packet-ready": 18,
+  "state_guard-failed": 0,
+  "state_queued": 0,
+  "state_awaiting-owner": 10,
+  "state_sent": 0,
+  "state_replied": 0,
+  "state_accepted": 0,
+  "state_rejected": 0,
+  "state_suppressed": 0,
+  "state_expired": 1,
+  "state_closed": 0,
+  "outreach_sent_total": 0,
+  "outreach_replies_total": 0,
+  "blocked_source_unverified": 13
+ },
+ "trust": {
+  "ultrastable/draft": {
+   "outcomes": 17,
+   "verified_successes": 17,
+   "reliability": 0.947
+  },
+  "ultrastable/contact": {
+   "outcomes": 0,
+   "verified_successes": 0,
+   "reliability": 0.5
+  },
+  "qniverse/draft": {
+   "outcomes": 11,
+   "verified_successes": 11,
+   "reliability": 0.923
+  },
+  "qniverse/contact": {
+   "outcomes": 0,
+   "verified_successes": 0,
+   "reliability": 0.5
+  }
+ },
+ "owner_cards": [
+  {
+   "id": "OUT-SEND-qniverse",
+   "count": 1,
+   "file": "outreach/cards/OUT-SEND-qniverse.md"
+  },
+  {
+   "id": "OUT-SEND-ultrastable",
+   "count": 9,
+   "file": "outreach/cards/OUT-SEND-ultrastable.md"
+  },
+  {
+   "id": "OUT-SENDER",
+   "count": 1,
+   "file": "outreach/cards/OUT-SENDER.md"
+  }
+ ],
+ "predictions": [
+  {
+   "id": "P-QUEUE",
+   "metric": "state_queued",
+   "op": ">=",
+   "target": 1,
+   "due": "2026-11-24",
+   "logged": "2026-11-10",
+   "text": "state_queued >= 1 within 336 h (a verified source reaches the queue once the weekly verification promotes a registry row)"
+  }
+ ],
+ "targets": [
+  {
+   "key": "qniverse:A-NLNET",
+   "program": "NLnet / NGI Zero Commons Fund",
+   "state": "awaiting-owner",
+   "route": "form",
+   "source": "secondary",
+   "blocked_by": null,
+   "last_event": "awaiting-owner"
+  },
+  {
+   "key": "qniverse:R-AIRESEARCH",
+   "program": "AI lab research-access and credit programmes for independent researchers",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "qniverse:R-ASTERA",
+   "program": "Astera Institute (open science and research tooling)",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "qniverse:R-FORESIGHT",
+   "program": "Foresight Institute grants",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "qniverse:R-HORIZON",
+   "program": "EU Horizon Europe / ERC (research grants)",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "qniverse:R-NWO",
+   "program": "NWO (Dutch Research Council) open competition and Open Science funding",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "qniverse:R-OPENPHIL",
+   "program": "Open Philanthropy (how to apply)",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "qniverse:R-OSF-COS",
+   "program": "Center for Open Science and open-science funds",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "qniverse:R-SCHMIDT",
+   "program": "Schmidt Sciences (science and AI programmes)",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "qniverse:R-SIDN",
+   "program": "SIDN Fonds (Dutch internet fund)",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "qniverse:R-TEMPLETON",
+   "program": "John Templeton Foundation (funding inquiries)",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "ultrastable:A-AAIF",
+   "program": "Agentic AI Foundation (Linux Foundation)",
+   "state": "awaiting-owner",
+   "route": "form",
+   "source": "verified",
+   "blocked_by": null,
+   "last_event": "awaiting-owner"
+  },
+  {
+   "key": "ultrastable:A-ASF",
+   "program": "Apache Software Foundation Incubator",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "ultrastable:A-FORDMELLON",
+   "program": "Ford / Mellon / Sloan digital infrastructure funders",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "ultrastable:A-HUMAI",
+   "program": "Humanity AI pooled fund open call",
+   "state": "awaiting-owner",
+   "route": "form",
+   "source": "secondary",
+   "blocked_by": null,
+   "last_event": "awaiting-owner"
+  },
+  {
+   "key": "ultrastable:A-MOZ",
+   "program": "Mozilla Foundation (Democracy x AI cohort, MOSS)",
+   "state": "awaiting-owner",
+   "route": "form",
+   "source": "secondary",
+   "blocked_by": null,
+   "last_event": "awaiting-owner"
+  },
+  {
+   "key": "ultrastable:A-NLNET",
+   "program": "NLnet / NGI Zero Commons Fund",
+   "state": "awaiting-owner",
+   "route": "form",
+   "source": "secondary",
+   "blocked_by": null,
+   "last_event": "awaiting-owner"
+  },
+  {
+   "key": "ultrastable:A-NSFPOSE",
+   "program": "NSF POSE (Pathways to Enable Open-Source Ecosystems)",
+   "state": "awaiting-owner",
+   "route": "form",
+   "source": "verified",
+   "blocked_by": null,
+   "last_event": "awaiting-owner"
+  },
+  {
+   "key": "ultrastable:A-OSC",
+   "program": "Open Source Collective (fiscal host)",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "unverified",
+   "blocked_by": "source-unverified",
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "ultrastable:A-OTF",
+   "program": "Open Technology Fund (FOSS Sustainability Fund and others)",
+   "state": "awaiting-owner",
+   "route": "form",
+   "source": "verified",
+   "blocked_by": null,
+   "last_event": "awaiting-owner"
+  },
+  {
+   "key": "ultrastable:B-AWS",
+   "program": "AWS Activate",
+   "state": "awaiting-owner",
+   "route": "form",
+   "source": "verified",
+   "blocked_by": null,
+   "last_event": "awaiting-owner"
+  },
+  {
+   "key": "ultrastable:B-CF",
+   "program": "Cloudflare for Startups",
+   "state": "awaiting-owner",
+   "route": "form",
+   "source": "secondary",
+   "blocked_by": null,
+   "last_event": "awaiting-owner"
+  },
+  {
+   "key": "ultrastable:B-EIC",
+   "program": "EIC Accelerator (EU)",
+   "state": "expired",
+   "route": "form",
+   "source": "secondary",
+   "blocked_by": null,
+   "last_event": "expired"
+  },
+  {
+   "key": "ultrastable:B-GSTART",
+   "program": "Google for Startups Cloud Program",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "verified",
+   "blocked_by": null,
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "ultrastable:B-MSFT",
+   "program": "Microsoft for Startups Founders Hub",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "verified",
+   "blocked_by": null,
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "ultrastable:B-NSFSBIR",
+   "program": "NSF SBIR/STTR (America's Seed Fund)",
+   "state": "awaiting-owner",
+   "route": "form",
+   "source": "secondary",
+   "blocked_by": null,
+   "last_event": "awaiting-owner"
+  },
+  {
+   "key": "ultrastable:B-NVIDIA",
+   "program": "NVIDIA Inception",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "verified",
+   "blocked_by": null,
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "ultrastable:B-TECHSTARS",
+   "program": "Techstars",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "secondary",
+   "blocked_by": null,
+   "last_event": "packet-ready"
+  },
+  {
+   "key": "ultrastable:B-YC",
+   "program": "Y Combinator",
+   "state": "packet-ready",
+   "route": "form",
+   "source": "secondary",
+   "blocked_by": null,
+   "last_event": "packet-ready"
+  }
+ ]
+}
