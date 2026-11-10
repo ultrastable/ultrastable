@@ -1,7 +1,8 @@
 // ultrastable-site: the public presence of Ultrastable, the self-governing development platform (ULTRASTABLE-SITE-1, 2026-11-10).
 // Canonical host ultrastable.io; ultrastable.app and ultrastable.net redirect to it (/pilot and /proof). Live proof comes from
 // the platform claims QNFO publishes as customer zero. Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
-var VERSION = "0.1.0";
+import { handleAnalytics, record } from "../seed/analytics/analytics.js";
+var VERSION = "0.2.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -189,7 +190,7 @@ const SVG = { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age
 const HTML = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" };
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const u = new URL(request.url);
     const host = u.hostname.replace(/^www\./, "");
     if (u.pathname === "/health") return Response.json({ ok: true, worker: "ultrastable-site", version: VERSION });
@@ -200,7 +201,10 @@ export default {
     if (host === "ultrastable.app") return Response.redirect("https://" + CANON + "/pilot", 301);
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/proof", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
+    const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
+    const PAGES = ["/", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot"], pth = u.pathname.replace(/\/$/, "") || "/";
+    if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
       case "/how": return new Response(how(), { headers: HTML });
