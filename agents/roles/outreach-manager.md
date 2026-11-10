@@ -16,3 +16,6 @@
 - Send as the owner, submit a form as the owner, or create accounts in the owner's name. These are gate cards.
 - Contact a suppressed, opted-out or paused target, exceed a cap, or pad a message with claims that cannot be checked at a source.
 - Re-word a guard-blocked message to get it past the guard.
+
+## Measure
+Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact, reactions or attention to decide what to build, when to stop or whether it is done. Ship on your own judgment and label impact as a hypothesis until measured.
