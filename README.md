@@ -23,16 +23,17 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | Seed bootstrapper, 7-step tick, schema, policy | **Built**, 12 Python + 9 Worker tests pass; no real cloud `--apply` yet |
 | Google Cloud adapter (Cloud Run, Scheduler) | **Skeleton built**, 2 tests pass, deploy script unrun |
 | Dashboard | **In `dashboard/`**; status per its README, not verified here |
-| Unified CLI, model executor, multi-tenancy | **Planned** |
+| Reference runtime in Python: 11-step loop, CLI, dashboard, Docker, Cloud Run deploy ([platform/core](platform/core/README.md)) | **Built**, 12 tests pass, agents simulated; deploy unrun |
+| Real-agent proof, Postgres store, multi-tenancy | **Planned** |
 | Outside customers, audit, entity, filed patent | **None yet** (owner steps) |
 
 ## Map
 | Path | What |
 |---|---|
 | [docs/](docs/README.md) | Overview, concepts, bootstrapping, customer story, security, confidentiality |
-| [platform/](platform/README.md) | Architecture and cloud adapters (`adapters/gcp`, `adapters/sqlite`) |
+| [platform/](platform/README.md) | Architecture, cloud adapters, and the runnable Python reference runtime ([core/](platform/core/README.md)) |
 | [seed/](seed/README.md) | Idea-to-organization bootstrapper, tick, policy, roles |
-| [business/](business/README.md) | Business plan, funding, [Google for Startups kit](business/google-startups/application-kit.md), [marketing strategy](business/marketing/strategy.md) |
+| [business/](business/README.md) | Business plan, funding, [Google for Startups kit](business/google-startups/application-kit.md), [marketing strategy](business/marketing/strategy.md), detailed [investor pack](business/investor/README.md) |
 | [external/](external/README.md) | **SAFE NOW** versions that may be sent out |
 | [ip/](ip/README.md) | Provisional patent draft, evidence, prior art (NDA ONLY) |
 | [site/](site/) | Site worker and starter |
