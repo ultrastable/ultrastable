@@ -292,6 +292,17 @@ class Boot:
         lines.append(f"INSERT OR IGNORE INTO doctrine_lineage (version, source) VALUES ({sql_str('seed-' + VERSION)}, 'agents/AGENTS.md + autonomy/policy.json');")
         return "\n".join(lines) + "\n"
 
+    @staticmethod
+    def _gh_admin_org() -> bool:
+        """BG-13: a logged-in `gh` with admin:org scope is an org-admin credential."""
+        if not shutil.which("gh"):
+            return False
+        try:
+            r = subprocess.run(["gh", "auth", "status"], capture_output=True, text=True, timeout=20)
+        except Exception:
+            return False
+        return r.returncode == 0 and "admin:org" in (r.stdout + r.stderr)
+
     def surfaces(self):
         """Health-check every route before relying on it (BG-9, BG-12). Recorded, never fatal."""
         free_gb = shutil.disk_usage(self.root).free / 1e9
@@ -301,7 +312,7 @@ class Boot:
             "disk_ok": free_gb >= 2.0,
             "gh_cli": bool(shutil.which("gh")),
             "git": bool(shutil.which("git")),
-            "org_admin_token": bool(env.get("ORG_ADMIN_TOKEN") or env.get("GH_ORG_TOKEN")),
+            "org_admin_token": bool(env.get("ORG_ADMIN_TOKEN") or env.get("GH_ORG_TOKEN")) or self._gh_admin_org(),
             "cloudflare_token": bool(env.get("CLOUDFLARE_API_TOKEN")),
         }
         self.state["surfaces"] = s
