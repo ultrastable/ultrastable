@@ -61,6 +61,12 @@ Failures and fixes:
 - Issues #14 to #50 were filed through the GitHub MCP tool because the `gh` token was invalid; labels were created on the fly, milestones and Projects were not. Do these through the `org-manage` workflow.
 - "Deploy everything" is held by the disclosure gate (PF-1): no further deploy until the provisional is filed.
 
+## 2026-11-10: funding and briefing package thread
+
+- Built business/funding/ (tracks A and B, decision memo, agent-execution view, registry) and business/briefing/ (deck text, elevator pitches, FAQ, Q&A, competitor map, objection handling).
+- Self-maintenance: `scripts/funding_verify.py`, `scripts/funding_file_issues.py`, `.github/workflows/funding-maintenance.yml` (weekly), checklist in business/funding/MAINTENANCE.md.
+- Failures and gaps: BG-15 to BG-19 in docs/BOOTSTRAP-GAPS.md. Fetch failures on nsf.gov and sloan.org left four rows unverified; a research pass with a browser surface is issue FUND-6.
+- Open loops all filed as docs/issues/FUND-*.json (owner cards OC-1 to OC-5 as FUND-1 to FUND-5).
 ## Project memory in a platform store (2026-11-10)
 
 Project memory sat in the chat platform's memory store: hidden local state, unreviewed, unversioned, and one note was overwritten with a wrong disclosure claim. Fix: `docs/PROJECT-MEMORY.md` is canonical, the store is a pointer, `memory-fresh` fails when stale, and the seed ships all three (BG-10).
