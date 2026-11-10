@@ -133,6 +133,26 @@ class SurfaceTests(BootTests):
             self.assertIn(org["status"], ("blocked", "degraded"))
 
 
+class FundingTests(BootTests):
+    """FUND-10 (BG-17): a fresh bootstrap creates the funding registry and the weekly workflow."""
+
+    def test_fresh_boot_creates_registry_and_workflow(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as d:
+            self.boot(Path(d))
+            reg = Path(d) / "funding" / "registry.json"
+            self.assertTrue(reg.exists())
+            self.assertTrue((Path(d) / ".github/workflows/funding-maintenance.yml").exists())
+            data = json.loads(reg.read_text()); data["items"] = [{"id": "X", "status": "unverified", "last_verified": "2020-01-01", "deadline": None, "url": "https://example.invalid"}]
+            reg.write_text(json.dumps(data))
+            bs.main(["--root", d, "--dry-run"])  # idempotent: maintained registry is not overwritten
+            self.assertEqual(len(json.loads(reg.read_text())["items"]), 1)
+            out = subprocess.run([sys.executable, str(Path(d) / "funding/verify.py"), "--today", "2026-11-10"], capture_output=True, text=True)
+            self.assertEqual(out.returncode, 0, out.stderr)
+            kinds = {f["kind"] for f in json.loads(out.stdout)["findings"]}
+            self.assertEqual(kinds, {"stale", "unverified"})
+
+
 class GhAdminOrgTests(unittest.TestCase):
     """BG-13: a local gh login with admin:org counts as the org-admin credential."""
 
