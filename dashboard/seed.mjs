@@ -2,7 +2,7 @@
 const now = Date.now();
 const q = s => "'" + String(s).replace(/'/g, "''") + "'";
 const owner = [
-  ["own-file", "File the provisional patent", "Draft v3 is ready for attorney review. QNFO has been public since 2026-08-10, so file well before 2027-08-10.", "Every week of delay widens the gap between the public record and the filing date.", "https://github.com/ultrastable/ultrastable/issues/30", 1, 1],
+  ["own-file", "File the provisional patent", "Draft v3 is ready for attorney review. File as early as practical; timing questions are for the patent attorney.", "Filing early protects the combination.", "https://github.com/ultrastable/ultrastable/issues/30", 1, 1],
   ["own-google", "Submit the Google for Startups Cloud Program application", "Needs the site and domain email live; the drafts are in the funding docs.", "Credits are needed to keep developing without paying out of pocket.", "https://github.com/ultrastable/ultrastable/issues/17", 1, 1],
   ["own-gate", "Decide: holding page or public site until filing (#52)", "Default in effect: the site serves a generic holding page. Tap Done to confirm, or Not doing to restore the old site.", "The old public text describes mechanisms at a high level.", "https://github.com/ultrastable/ultrastable/issues/52", 1, 0],
   ["own-gh-token", "Give the dashboard a GitHub token so it can sync issues and label fleet work", "A fine-grained token with Issues read/write on the ultrastable repo, stored as the GITHUB_TOKEN secret. Only you can mint it.", "Until then the task list is a seeded copy and Hand to fleet only queues locally.", null, 2, 1],
