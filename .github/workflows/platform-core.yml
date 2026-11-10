@@ -8,7 +8,7 @@ jobs:
     defaults: { run: { working-directory: platform/core } }
     strategy: { matrix: { python: ["3.11", "3.12", "3.13"] } }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with: { python-version: "${{ matrix.python }}" }
       - run: python -m unittest discover -s tests -v
@@ -16,5 +16,5 @@ jobs:
   image:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: docker build -t ultrastable-core:ci platform/core
