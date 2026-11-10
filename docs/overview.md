@@ -1,5 +1,7 @@
 # Ultrastable overview (internal full version)
 
+**Ultrastable is the foundation for any autonomous system.**
+
 Tag: NDA ONLY. External version: [../external/overview.md](../external/overview.md). Status words: **RUNNING** (in production, in QNFO), **BUILT** (code and tests in this repo), **PLANNED**.
 
 ## One sentence

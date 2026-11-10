@@ -2,6 +2,8 @@
 
 # Coding agents write code. Ultrastable runs the system.
 
+**Ultrastable is the foundation for any autonomous system.**
+
 Ultrastable is an autonomous system that takes one idea and bootstraps what an organized effort needs, whether it is a company, an open-source project, a community or a lab: development, branding, a provisional-patent filing package, a plan, search and analytics presence, and promotion. Then it keeps improving itself.
 
 It manages itself, and you steer when you want to, so you do not need a development team, a patent lawyer or a marketing firm to get going. Anything you can describe is something it can start on.

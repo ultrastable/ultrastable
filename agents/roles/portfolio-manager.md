@@ -1,5 +1,7 @@
 # Role: portfolio manager
 
+> Ultrastable is the foundation for any autonomous system.
+
 **Owns:** allocation across every project in the org. One per org.
 **Tick:** every 6 base ticks (hourly at the default 10-minute heartbeat).
 

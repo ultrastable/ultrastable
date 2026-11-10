@@ -1,5 +1,7 @@
 # ultrastable/.github (public)
 
+**Ultrastable is the foundation for any autonomous system.**
+
 Contents for the special **public** repository `ultrastable/.github`. Its `profile/README.md` is the landing page of github.com/ultrastable. Everything here is SAFE NOW: generic, non-enabling, no internal mechanics.
 
 ## Create it (owner, one command, because agent sessions cannot create repos)

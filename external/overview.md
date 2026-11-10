@@ -1,5 +1,7 @@
 # Ultrastable (SAFE NOW)
 
+**Ultrastable is the foundation for any autonomous system.**
+
 **Coding agents write code. Ultrastable runs the system.**
 
 Ultrastable is an autonomous system that sets up and runs any organized effort from one idea. The effort can be a company, an open-source project, a community or a lab. It bootstraps what the effort needs: development, branding, a provisional-patent filing package, a plan, search and analytics setup, promotion and outreach to funders. Then it keeps improving itself.

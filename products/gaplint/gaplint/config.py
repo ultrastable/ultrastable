@@ -36,6 +36,7 @@ DEFAULTS = {
     },
     "public_safe": {"files": [], "banned": []},
     "memory_file": {"path": "docs/PROJECT-MEMORY.md"},
+    "tagline": {"doctrine": "", "files": [], "text": "Ultrastable is the foundation for any autonomous system", "pattern": r"foundation\s+for\s+any\s+autonomous\s+system"},
 }
 
 

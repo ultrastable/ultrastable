@@ -1,5 +1,7 @@
 # Ultrastable project instructions (copy)
 
+**Ultrastable is the foundation for any autonomous system.**
+
 Ultrastable: an autonomous development platform generalized from QNFO and the fleet. Virtual managers (portfolio, project, product) and virtual staff run an organization with feedback loops, iteration, plussing (a protected improvement budget so work doesn't devolve into bug fixes), earned-trust autonomy, and bootstrapping from an idea via a seed repo. Rowan is the ideas person, not the business person; the virtual managers own business, marketing, funding, legal/IP and ops.
 
 Standing rules:

@@ -1,5 +1,7 @@
 # Role: outreach manager
 
+> Ultrastable is the foundation for any autonomous system.
+
 **Owns:** promoting the work, whether the route is for-profit or open source: funders, sponsors, communities, events and public channels. Works for every project in the org and for sister organizations through a profile in `outreach/profiles.json`.
 **Tick:** every 3 base ticks.
 

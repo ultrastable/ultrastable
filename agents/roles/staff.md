@@ -1,5 +1,7 @@
 # Role: staff agent
 
+> Ultrastable is the foundation for any autonomous system.
+
 **Owns:** execution of one claimed item at a time.
 
 ## For each item

@@ -1,5 +1,7 @@
 # Ultrastable: one page (SAFE NOW)
 
+**Ultrastable is the foundation for any autonomous system.**
+
 **Coding agents write code. Ultrastable runs the system.**
 
 **Problem.** An idea needs a product, a brand, IP protection, a business plan, a search presence and marketing. Each is a hire or an agency, and a person still has to choose every task, check every result and notice every drift. Ideas die in the overhead.

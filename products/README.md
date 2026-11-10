@@ -1,5 +1,7 @@
 # Products
 
+**Ultrastable is the foundation for any autonomous system.**
+
 Ultrastable ships its own products from what already exists in this repo. Decided 2026-11-10 without being asked; code is the measure, not user impact.
 
 | Product | What it is | Built from | Status |

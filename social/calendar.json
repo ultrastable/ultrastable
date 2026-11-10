@@ -1,6 +1,13 @@
 {
  "posts": [
   {
+   "id": "a3b22aaa4f8c",
+   "date": "2026-11-11",
+   "text": "Ultrastable is the foundation for any autonomous system.",
+   "source": "external/overview.md",
+   "tag": "SAFE NOW"
+  },
+  {
    "id": "62403d64d806",
    "date": "2026-11-12",
    "text": "Ultrastable is an autonomous system that sets up and runs any organized effort from one idea.",

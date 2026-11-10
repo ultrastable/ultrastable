@@ -1,0 +1,17 @@
+{
+  "name": "Ultrastable",
+  "slug": "ultrastable",
+  "kind": "business",
+  "owner": {"name": "Rowan", "jurisdiction": "NL", "contact_binding": "OWNER_CONTACT"},
+  "brand": {"public_name": "Ultrastable", "tagline": "Ultrastable is the foundation for any autonomous system.", "separate_from": ["QNFO"]},
+  "idea": "The foundation for any autonomous system: virtual managers and staff, closed loops, plussing and earned-trust autonomy, bootstrapped from one idea file.",
+  "goals": ["A public site and demos that state the foundation message", "A repeatable new-system generator any organization can run", "Funding and outreach loops running on their own"],
+  "positioning": "Ultrastable is the foundation for any autonomous system.",
+  "funding": {"routes": [{"id": "open-source"}, {"id": "startup-programmes", "entity_only": true}], "individual_eligible_only": false},
+  "social": {"channels": ["bluesky", "mastodon"], "mode": "dry-run"},
+  "runtime": {"provider": "cloudflare"},
+  "repos": {"org": "ultrastable", "names": ["ultrastable"], "canonical": "ultrastable/ultrastable"},
+  "disclosure": {"public_allowed": false, "gate": "filed", "safe_now_only": true},
+  "ip": {"has_invention": true, "priority_filed": false, "has_practitioner": false},
+  "budget": {"usd_per_month": 0, "actions_minutes_monthly": 2000}
+}
