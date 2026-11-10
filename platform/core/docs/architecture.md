@@ -8,7 +8,7 @@
    CLI ──┐       ▼                                                             │
  dashboard ─► HTTP server ──► Engine.tick()  (11 guarded steps)                │
  Scheduler ─►  POST /tick         │                                            │
-                                  ├─ Store (SQLite today; Postgres/Firestore adapter planned)
+                                  ├─ Store (SQLite default; Postgres via PgStore)
                                   ├─ Policy (autonomy/policy.json: surfaces, actions, ladder, limits)
                                   └─ Agent adapters: doer + reviewer (never the same)
                                        simulated | command (claude -p, codex exec, ...) | anthropic
@@ -24,7 +24,7 @@
 
 * Core: Python 3.11+ stdlib; no network at import; state in one database.
 * Agents: `do(item) -> Result`, `verify(item, Result) -> (ok, evidence)`. Anything that can run a task and a check can be managed.
-* Store: `Store.q/one/x/scalar` over SQL. Replace with a Postgres implementation of the same four methods.
+* Store: `Store.q/one/x/scalar` over SQL. `PgStore` (store.py) implements the same four methods on Postgres; selected by a `postgresql://` URL.
 * Heartbeat: any scheduler POSTs `/tick` (Cloud Scheduler, Cloudflare Cron Trigger, cron, GitHub Actions) or run `serve --auto-tick N`.
 
 ## Safety invariants (tested)

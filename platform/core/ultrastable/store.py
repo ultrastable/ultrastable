@@ -1,6 +1,7 @@
-"""Storage: SQLite behind a thin interface so Postgres/Firestore adapters can replace it."""
+"""Storage behind one thin interface (q/one/x/scalar). SQLite is the default; a postgres:// URL selects PgStore."""
 from __future__ import annotations
-import json, sqlite3, threading
+import json, re, sqlite3, threading
+from decimal import Decimal
 from datetime import datetime, timedelta, timezone
 
 SCHEMA = """
@@ -62,6 +63,11 @@ def parse(s: str) -> datetime:
 
 
 class Store:
+    def __new__(cls, path: str = ":memory:"):
+        if cls is Store and str(path).startswith(("postgres://", "postgresql://")):
+            return object.__new__(PgStore)
+        return object.__new__(cls)
+
     def __init__(self, path: str = ":memory:"):
         self.path = path
         self.lock = threading.RLock()
@@ -102,3 +108,84 @@ class Store:
     def backup(self, dest: str):
         with self.lock:
             self.db.execute("VACUUM INTO ?", (dest,))
+
+
+# --- Postgres adapter -------------------------------------------------------
+_SERIAL_TABLES = {"outcomes", "dispatches", "tick_runs", "events"}
+
+
+def pg_translate(sql: str) -> str:
+    """Rewrite the SQLite-flavoured SQL the engine emits into Postgres: ? -> %s, literal % escaped,
+    INSERT OR IGNORE -> ON CONFLICT DO NOTHING. Quoted string literals are copied verbatim (with % escaped)."""
+    out, i, n = [], 0, len(sql)
+    while i < n:
+        ch = sql[i]
+        if ch == "'":
+            j = i + 1
+            while j < n:
+                if sql[j] == "'":
+                    if j + 1 < n and sql[j + 1] == "'":
+                        j += 2
+                        continue
+                    break
+                j += 1
+            out.append(sql[i:j + 1].replace("%", "%%"))
+            i = j + 1
+            continue
+        out.append("%s" if ch == "?" else "%%" if ch == "%" else ch)
+        i += 1
+    res = "".join(out)
+    if re.match(r"\s*INSERT\s+OR\s+IGNORE\b", res, re.I):
+        res = re.sub(r"INSERT\s+OR\s+IGNORE", "INSERT", res, count=1, flags=re.I).rstrip().rstrip(";") + " ON CONFLICT DO NOTHING"
+    return res
+
+
+def pg_schema() -> str:
+    return SCHEMA.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "BIGSERIAL PRIMARY KEY").replace(" REAL", " DOUBLE PRECISION")
+
+
+class PgStore(Store):
+    """Same contract as Store, over psycopg 3 (pip install 'psycopg[binary]'). One autocommit connection,
+    serialized by an RLock like the SQLite path; run several replicas by giving each its own PgStore."""
+
+    def __init__(self, path: str):
+        try:
+            import psycopg
+            from psycopg.rows import dict_row
+        except ImportError as e:  # pragma: no cover
+            raise RuntimeError("Postgres store needs psycopg: pip install 'psycopg[binary]'") from e
+        self.path = path
+        self.lock = threading.RLock()
+        self.db = psycopg.connect(path, autocommit=True, row_factory=dict_row)
+        with self.lock:
+            for stmt in filter(None, (t.strip() for t in pg_schema().split(";"))):
+                self.db.execute(stmt)
+
+    @staticmethod
+    def _norm(v):
+        return int(v) if isinstance(v, Decimal) and v == v.to_integral_value() else float(v) if isinstance(v, Decimal) else v
+
+    def q(self, sql, *args):
+        with self.lock:
+            rows = self.db.execute(pg_translate(sql), args).fetchall()
+        return [{k: self._norm(v) for k, v in r.items()} for r in rows]
+
+    def x(self, sql, *args):
+        t = pg_translate(sql)
+        m = re.match(r"\s*INSERT\s+INTO\s+(\w+)", t, re.I)
+        with self.lock:
+            if m and m.group(1).lower() in _SERIAL_TABLES:
+                row = self.db.execute(t.rstrip().rstrip(";") + " RETURNING id", args).fetchone()
+                return row["id"] if row else 0
+            return self.db.execute(t, args).rowcount
+
+    def reset(self):
+        """Drop every table (tests only)."""
+        with self.lock:
+            self.db.execute("DROP SCHEMA public CASCADE")
+            self.db.execute("CREATE SCHEMA public")
+            for stmt in filter(None, (t.strip() for t in pg_schema().split(";"))):
+                self.db.execute(stmt)
+
+    def backup(self, dest: str):
+        raise NotImplementedError("Postgres backups: use Cloud SQL automated backups / pg_dump")

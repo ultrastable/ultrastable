@@ -35,13 +35,13 @@ Honest status: the default demo agents are **simulated**; a first real-model pro
 
 ## Cloud-agnostic by construction
 
-Core is Python standard library only: one container, one SQLite file, one HTTP port. Anything can drive the heartbeat (`POST /tick`).
+Core is Python standard library only by default: one container, one SQLite file, one HTTP port. Set `ULTRASTABLE_DB=postgresql://...` (extra: `pip install ".[postgres]"`) to use Postgres/Cloud SQL instead. Anything can drive the heartbeat (`POST /tick`).
 
 | Target | Status |
 |---|---|
 | Google Cloud Run + Cloud Scheduler + Secret Manager | [`deploy/gcp/deploy.sh`](deploy/gcp/deploy.sh) (single-instance, demo-grade storage) |
 | Cloudflare Workers + D1 (original runtime, runs QNFO today) | [`docs/architecture.md`](docs/architecture.md), seed repo |
-| AWS / self-hosted | Container image; Postgres adapter on the roadmap |
+| AWS / self-hosted | Container image; Postgres adapter (`ULTRASTABLE_DB=postgresql://...`) |
 
 Details: [architecture](docs/architecture.md), [deploy on Google Cloud](docs/deploy-gcp.md), [heritage and the QNFO transfer](docs/heritage.md), [security](docs/security.md).
 

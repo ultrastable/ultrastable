@@ -1,4 +1,4 @@
-import json, threading, unittest, urllib.request
+import json, os, threading, unittest, urllib.request
 from datetime import datetime, timedelta, timezone
 
 from ultrastable.config import load_config
@@ -7,10 +7,20 @@ from ultrastable.engine import Engine, STEP_ORDER, reliability
 from ultrastable.store import Store
 
 
+def new_store():
+    """SQLite in-memory by default; set ULTRASTABLE_TEST_DB=postgresql://... to run the suite on Postgres."""
+    url = os.environ.get("ULTRASTABLE_TEST_DB")
+    if not url:
+        return Store(":memory:")
+    s = Store(url)
+    s.reset()
+    return s
+
+
 def engine(**agent_over):
     cfg = load_config()
     cfg["agents"]["doer"].update(agent_over)
-    return Engine(Store(":memory:"), cfg)
+    return Engine(new_store(), cfg)
 
 
 T0 = datetime(2026, 11, 10, 9, 0, tzinfo=timezone.utc)
@@ -107,7 +117,7 @@ class Core(unittest.TestCase):
         self.assertTrue(e.s.one("SELECT 1 FROM events WHERE kind='rung_changed'"))
 
     def test_demo_is_healthy(self):
-        e = Engine(Store(":memory:"), load_config())
+        e = Engine(new_store(), load_config())
         run_demo(e, 40)
         k = e.state()["kpis"]
         self.assertGreaterEqual(k["items_done"], 20)
@@ -120,7 +130,7 @@ class Http(unittest.TestCase):
     def test_server(self):
         from http.server import ThreadingHTTPServer
         from ultrastable.server import make_handler
-        e = Engine(Store(":memory:"), load_config())
+        e = Engine(new_store(), load_config())
         seed_demo(e, T0)
         srv = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(e, "secret"))
         threading.Thread(target=srv.serve_forever, daemon=True).start()

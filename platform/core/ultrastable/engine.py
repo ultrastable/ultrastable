@@ -133,8 +133,8 @@ class Engine:
 
     def accrue_trust(self, c):
         tr, ld = self.policy["trust"], self.policy["ladder"]
-        rows = self.s.q("""SELECT surface, action_class, SUM(result='verified') ok,
-                           SUM(result IN ('hidden_failure','silent_drop')) severe, COUNT(*) n
+        rows = self.s.q("""SELECT surface, action_class, SUM(CASE WHEN result='verified' THEN 1 ELSE 0 END) ok,
+                           SUM(CASE WHEN result IN ('hidden_failure','silent_drop') THEN 1 ELSE 0 END) severe, COUNT(*) n
                            FROM outcomes GROUP BY surface, action_class""")
         for r in rows:
             rel = reliability(r["ok"], r["n"], tr)
@@ -320,7 +320,7 @@ class Engine:
                 c["notes"].append(f"amendment proposed {aid}")
 
     def plus_share(self, c):
-        rows = self.s.q("SELECT kind FROM items WHERE status='done' AND kind IN ('work','fix','plus') ORDER BY updated_at DESC, rowid DESC LIMIT 20")
+        rows = self.s.q("SELECT kind FROM items WHERE status='done' AND kind IN ('work','fix','plus') ORDER BY updated_at DESC, created_at DESC, id DESC LIMIT 20")
         if len(rows) >= 10:
             share = sum(r["kind"] == "plus" for r in rows) / len(rows)
             if share < self.cfg["plus_share"] / 2:
@@ -360,7 +360,7 @@ class Engine:
         preds = s.q("SELECT verdict, COUNT(*) n FROM predictions WHERE verdict IS NOT NULL GROUP BY verdict")
         hit = next((p["n"] for p in preds if p["verdict"] == "hit"), 0)
         scored = sum(p["n"] for p in preds)
-        closed = s.q("SELECT kind FROM items WHERE status='done' AND kind IN ('work','fix','plus') ORDER BY updated_at DESC, rowid DESC LIMIT 20")
+        closed = s.q("SELECT kind FROM items WHERE status='done' AND kind IN ('work','fix','plus') ORDER BY updated_at DESC, created_at DESC, id DESC LIMIT 20")
         return {
             "org": self.cfg["org_name"],
             "kpis": {

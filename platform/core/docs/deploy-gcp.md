@@ -10,6 +10,6 @@ What it does: enables Cloud Run, Cloud Scheduler, Secret Manager and Artifact Re
 
 Operating notes
 * The dashboard is read-only without the token; gate resolution and item creation need it (`?token=` on the dashboard URL).
-* Storage is the instance's SQLite file: demo-grade. Move to Cloud SQL (Postgres) via the store adapter before real customers (roadmap).
+* Default storage is the instance's SQLite file: demo-grade, single instance. For durable, multi-instance use run `USE_CLOUD_SQL=1 ./deploy.sh`: it creates a Cloud SQL Postgres instance (db-f1-micro), database and user, stores the URL in Secret Manager as `ultrastable-db-url` and attaches it to Cloud Run over the Cloud SQL unix socket (`ULTRASTABLE_DB`). Not yet exercised against a live Cloud SQL instance. Backups are Cloud SQL automated backups (`Store.backup` is SQLite-only).
 * To use Gemini via Vertex AI as an additional model adapter: implement `Agent.do/verify` against the Vertex endpoint (roadmap; same contract as `AnthropicAgent`).
 * The Dockerfile is not yet built in this repo's CI environment locally; CI builds it on every push.

@@ -8,6 +8,9 @@ version = "0.2.0"
 description = "A self-governing control loop around the coding agents a team already uses."
 requires-python = ">=3.11"
 dependencies = []
+
+[project.optional-dependencies]
+postgres = ["psycopg[binary]>=3.1"]
 license = { text = "Proprietary" }
 
 [project.scripts]
