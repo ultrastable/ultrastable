@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="560" viewBox="0 0 920 560" font-family="Arial, Helvetica, sans-serif">
+<rect width="100%" height="100%" fill="white"/>
+<defs><marker id="a" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="black"/></marker></defs>
+<text x="460.0" y="28" text-anchor="middle" font-size="18" font-weight="bold" font-size="20">FIG. 14</text>
+<rect x="190.0" y="51.0" width="520" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="714.0" y="63.0" font-size="15" font-weight="bold">1402</text>
+<rect x="85.0" y="171.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="319.0" y="183.0" font-size="15" font-weight="bold">1404</text>
+<rect x="585.0" y="171.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="819.0" y="183.0" font-size="15" font-weight="bold">1406</text>
+<rect x="85.0" y="271.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="319.0" y="283.0" font-size="15" font-weight="bold">1408</text>
+<rect x="585.0" y="271.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="819.0" y="283.0" font-size="15" font-weight="bold">1410</text>
+<rect x="190.0" y="381.0" width="520" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="714.0" y="393.0" font-size="15" font-weight="bold">1412</text>
+<rect x="190.0" y="481.0" width="520" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="714.0" y="493.0" font-size="15" font-weight="bold">1414</text>
+<line x1="390" y1="109" x2="260" y2="171" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="510" y1="109" x2="640" y2="171" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="200" y1="229" x2="200" y2="271" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="700" y1="229" x2="700" y2="271" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="266" y1="329" x2="384" y2="381" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="634" y1="329" x2="516" y2="381" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="450" y1="439" x2="450" y2="481" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+</svg>

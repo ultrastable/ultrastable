@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="830" viewBox="0 0 980 830" font-family="Arial, Helvetica, sans-serif">
+<rect width="100%" height="100%" fill="white"/>
+<defs><marker id="a" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="black"/></marker></defs>
+<text x="490.0" y="28" text-anchor="middle" font-size="18" font-weight="bold" font-size="20">FIG. 21</text>
+<rect x="185.0" y="71.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="419.0" y="83.0" font-size="15" font-weight="bold">2102</text>
+<polygon points="300,164 445,210 300,256 155,210" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="449" y="180" font-size="15" font-weight="bold">2104</text>
+<rect x="185.0" y="291.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="419.0" y="303.0" font-size="15" font-weight="bold">2106</text>
+<rect x="185.0" y="401.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="419.0" y="413.0" font-size="15" font-weight="bold">2108</text>
+<rect x="185.0" y="511.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="419.0" y="523.0" font-size="15" font-weight="bold">2110</text>
+<polygon points="300,614 445,660 300,706 155,660" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="449" y="630" font-size="15" font-weight="bold">2112</text>
+<rect x="185.0" y="741.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="419.0" y="753.0" font-size="15" font-weight="bold">2114</text>
+<rect x="585.0" y="181.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="819.0" y="193.0" font-size="15" font-weight="bold">2116</text>
+<rect x="585.0" y="71.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="819.0" y="83.0" font-size="15" font-weight="bold">2118</text>
+<rect x="585.0" y="401.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="819.0" y="413.0" font-size="15" font-weight="bold">2120</text>
+<rect x="585.0" y="741.0" width="230" height="58" rx="4" fill="white" stroke="black" stroke-width="1.6"/>
+
+
+<text x="819.0" y="753.0" font-size="15" font-weight="bold">2122</text>
+<line x1="300" y1="129" x2="300" y2="164" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="300" y1="256" x2="300" y2="291" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="306.0" y="269.5" font-size="15" font-weight="bold">2151</text>
+<line x1="445" y1="210" x2="585" y2="210" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="521.0" y="206.0" font-size="15" font-weight="bold">2152</text>
+<path d="M700,239 L700,320 L415,320" fill="none" stroke="black" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#a)"/>
+<text x="706" y="316" font-size="15" font-weight="bold">2153</text>
+<line x1="700" y1="181" x2="700" y2="129" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="706.0" y="151.0" font-size="15" font-weight="bold">2154</text>
+<line x1="300" y1="349" x2="300" y2="401" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="306.0" y="371.0" font-size="15" font-weight="bold">2155</text>
+<line x1="300" y1="459" x2="300" y2="511" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="306.0" y="481.0" font-size="15" font-weight="bold">2156</text>
+<line x1="415" y1="430" x2="585" y2="430" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="506.0" y="426.0" font-size="15" font-weight="bold">2157</text>
+<path d="M700,459 L700,660 L445,660" fill="none" stroke="black" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#a)"/>
+<text x="706" y="656" font-size="15" font-weight="bold">2158</text>
+<line x1="300" y1="569" x2="300" y2="614" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<line x1="300" y1="706" x2="300" y2="741" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<text x="306.0" y="719.5" font-size="15" font-weight="bold">2159</text>
+<path d="M155,660 L60,660 L60,545 L60,430 L185,430" fill="none" stroke="black" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#a)"/>
+<text x="66" y="541" font-size="15" font-weight="bold">2160</text>
+<line x1="415" y1="770" x2="585" y2="770" stroke="black" stroke-width="1.4" marker-end="url(#a)"/>
+<path d="M815,770 L900,770 L900,210 L815,210" fill="none" stroke="black" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#a)"/>
+<text x="906" y="206" font-size="15" font-weight="bold">2161</text>
+</svg>
