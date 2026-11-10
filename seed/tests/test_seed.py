@@ -125,7 +125,28 @@ class SurfaceTests(BootTests):
             copy_seed(Path(d))
             for k in ("ORG_ADMIN_TOKEN", "GH_ORG_TOKEN", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"):
                 os.environ.pop(k, None)
-            bs.main(["--apply", "--root", d])
+            from unittest import mock
+            with mock.patch.object(bs.Boot, "_gh_admin_org", staticmethod(lambda: False)):
+                bs.main(["--apply", "--root", d])
             log = json.loads((Path(d) / "org" / "boot-log.json").read_text())
             org = [st for st in log["stages"] if st["stage"] == "org"][0]
             self.assertIn(org["status"], ("blocked", "degraded"))
+
+
+class GhAdminOrgTests(unittest.TestCase):
+    """BG-13: a local gh login with admin:org counts as the org-admin credential."""
+
+    def _run(self, rc, out):
+        from unittest import mock
+        r = mock.Mock(returncode=rc, stdout=out, stderr="")
+        with mock.patch.object(bs.shutil, "which", return_value="gh"),              mock.patch.object(bs.subprocess, "run", return_value=r):
+            return bs.Boot._gh_admin_org()
+
+    def test_admin_org_scope(self):
+        self.assertTrue(self._run(0, "Token scopes: 'admin:org', 'repo'"))
+
+    def test_no_admin_scope(self):
+        self.assertFalse(self._run(0, "Token scopes: 'repo'"))
+
+    def test_not_logged_in(self):
+        self.assertFalse(self._run(1, "not logged in"))
