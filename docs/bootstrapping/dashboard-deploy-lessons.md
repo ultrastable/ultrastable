@@ -30,7 +30,7 @@ Feeds the seed's `provision` step (BS-3). Status: RUNNING. Live on ultrastable.i
 - Live owner login: the code email is sent (confirmed in the notifications table) and the verify path passes offline tests, but the owner has not yet signed in on the real page from a phone.
 - Daily digest at 13:00 UTC has not yet fired.
 - `FLEET_TOKEN` endpoints are off until a secret exists; no agent consumes the fleet queue yet.
-- Search Console, analytics and Cloudflare Web Analytics stay gated until filing.
+- Search Console and Cloudflare Web Analytics (third-party, indexing) stay gated until filing. First-party cookieless analytics (`seed/analytics/`, ANALYTICS-1) is live: it stores no IP and publishes nothing, so it does not touch the disclosure gate.
 
 ## Changes for the next initialization
 - Add `preflight` to `seed/bootstrap/bootstrap.py`: zones, routes, custom domains, DNS, existing workers per hostname; fail loudly on shadowing.

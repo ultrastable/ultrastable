@@ -4,7 +4,8 @@
 // a command line that runs registered commands, step-up codes for changes, an audit log with undo, and owner email notifications.
 // Portable core: every platform touch goes through env.DB (SQL), env.SEND_EMAIL (mail) and fetch, so a Google Cloud adapter only
 // has to supply those three. Cloudflare adapter = this file + wrangler.toml.
-const VERSION = "0.1.0";
+import { handleAnalytics, record, selfcheck, report, summary } from "../seed/analytics/analytics.js";
+const VERSION = "0.2.0";
 const COOKIE = "us_owner";
 const OTP_MS = 10 * 60e3, SESSION_MS = 30 * 864e5, STEPUP_MS = 15 * 60e3;
 const HOSTS = ["ultrastable.io", "ultrastable.app", "ultrastable.net"];
@@ -140,6 +141,7 @@ const COMMANDS = {
   tasks: { mut: false, doc: "tasks [owner|fleet|all]", run: async (c, a) => { const k = a[0] || "all"; const r = (await c.env.DB.prepare("SELECT * FROM tasks WHERE state IN ('open','delegated') AND (?1='all' OR kind=?1) ORDER BY priority,id LIMIT 60").bind(k).all()).results; return { ok: true, out: r.length ? r.map(fmtTask).join("\n") : "Nothing open." }; } },
   task: { mut: false, doc: "task <id>", run: async (c, a) => { const t = await getTask(c.env, a[0]); return t ? { ok: true, out: fmtTask(t) + "\n" + (t.why || "") + "\n" + (t.url || "") } : { ok: false, out: "No task " + a[0] }; } },
   snapshot: { mut: false, doc: "show the repo snapshot panels (funding, IP, trust, cards, bootstrap)", run: async c => { const s = (await stateOf(c.env)).snapshot; return s && s.panels ? { ok: true, out: "generated " + s.generated + " commit " + (s.commit || "?") + "\n" + s.panels.map(p => p.title + "\n" + p.rows.map(r => "  " + r[0] + ": " + r[1]).join("\n")).join("\n") } : { ok: false, out: "No snapshot received yet. The dashboard-snapshot workflow posts one." }; } },
+  analytics: { mut: false, doc: "web analytics: metrics, breaches, top pages", run: async c => { const r = await report(c.env); return { ok: r.breaches === 0, out: summary(r) + "\ncollecting for " + r.age_days + " days; top: " + (r.top.map(t => t.host + t.path + " " + t.views).join(", ") || "none yet") }; } },
   audit: { mut: false, doc: "audit [n]", run: async (c, a) => { const r = (await c.env.DB.prepare("SELECT id,at,cmd,ok FROM audit ORDER BY id DESC LIMIT ?1").bind(Math.min(+a[0] || 10, 50)).all()).results; return { ok: true, out: r.map(x => x.id + " " + new Date(x.at).toISOString().slice(0, 19) + " " + (x.ok ? "ok " : "err") + " " + x.cmd).join("\n") || "Empty." }; } },
   probe: { mut: false, doc: "run all checks now", run: async c => { const r = await runProbes(c.env); return { ok: r.every(x => x.ok), out: r.map(x => (x.ok ? "ok   " : "FAIL ") + x.name + " - " + x.detail).join("\n") }; } },
   done: { mut: true, doc: "done <id>", run: (c, a) => setState(c, a[0], "done") },
@@ -202,19 +204,22 @@ export async function stateOf(env) {
   const notes = await q("SELECT at,subject,sent,error FROM notifications ORDER BY at DESC LIMIT 6");
   const sn = await env.DB.prepare("SELECT body,at FROM snapshots WHERE key='repo'").first();
   let snapshot = null; if (sn) { try { snapshot = { ...JSON.parse(sn.body), received: sn.at }; } catch (e) { snapshot = { error: "stored snapshot is not valid JSON" }; } }
-  return { version: VERSION, snapshot, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
+  let analytics = null; try { analytics = await report(env); } catch (e) { analytics = { error: String(e.message || e) }; }
+  return { version: VERSION, snapshot, analytics, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
 }
 
 // ---------- scheduled tick: probes, notifications, daily digest ----------
 export async function tick(env, cron) {
+  try { await selfcheck(env, HOSTS[0]); } catch (e) { console.error("selfcheck", e && e.message); }
   const res = await runProbes(env); const day = new Date().toISOString().slice(0, 10);
   for (const r of res.filter(x => !x.ok && x.name !== "github")) await notify(env, "fail:" + r.name + ":" + day, "Ultrastable check failing: " + r.name, r.name + " failed: " + r.detail + "\nOpen https://ultrastable.io/owner");
+  try { const a = await report(env); for (const m of a.metrics.filter(x => x.hit)) await notify(env, "metric:" + m.name + ":" + day, "Ultrastable metric breach: " + m.name, m.name + " = " + m.value + " (" + m.why + ")\n" + m.label + "\nOpen https://ultrastable.io/owner"); } catch (e) { console.error("metrics", e && e.message); }
   const fresh = (await env.DB.prepare("SELECT id,title FROM tasks WHERE kind='owner' AND state='open' AND id NOT IN (SELECT substr(key,6) FROM notifications WHERE key LIKE 'task:%') ORDER BY priority LIMIT 50").all()).results;
   if (fresh.length) {
     const sent = await notify(env, "task:" + fresh[0].id, fresh.length + " new item(s) in your Ultrastable queue", fresh.map(t => "- " + t.title).join("\n") + "\nOpen https://ultrastable.io/owner and tap Done, Snooze or Hand to fleet.");
     if (sent) for (const t of fresh.slice(1)) await env.DB.prepare("INSERT OR IGNORE INTO notifications(key,at,subject,sent) VALUES(?1,?2,'(grouped)',1)").bind("task:" + t.id, Date.now()).run();
   }
-  if (cron === "0 13 * * *") { const s = await stateOf(env); await notify(env, "digest:" + day, "Ultrastable daily digest", s.checks.map(k => (k.ok ? "ok   " : "FAIL ") + k.name + " - " + k.detail).join("\n") + "\n\nOwner queue: " + s.counts.owner + " open. Fleet: " + s.counts.fleet + " open, " + s.counts.queued + " queued, " + s.counts.done + " done.\nhttps://ultrastable.io/owner"); }
+  if (cron === "0 13 * * *") { const s = await stateOf(env); await notify(env, "digest:" + day, "Ultrastable daily digest", s.checks.map(k => (k.ok ? "ok   " : "FAIL ") + k.name + " - " + k.detail).join("\n") + "\n\nAnalytics:\n" + (s.analytics && s.analytics.metrics ? summary(s.analytics) : "unavailable") + "\n\nOwner queue: " + s.counts.owner + " open. Fleet: " + s.counts.fleet + " open, " + s.counts.queued + " queued, " + s.counts.done + " done.\nhttps://ultrastable.io/owner"); }
 }
 
 // ---------- pages ----------
@@ -242,6 +247,7 @@ $('#pill').textContent=bad?bad+' check'+(bad>1?'s':'')+' failing':'All checks pa
 $('#checks').innerHTML=s.checks.map(c=>'<div class="card"><span class="'+(c.ok?'ok':'bad')+'">'+(c.ok?'OK':'FAIL')+'</span> <b>'+E(c.name)+'</b><div class="meta">'+E(c.detail)+'</div></div>').join('')||'<p class="meta">No checks yet. Type probe.</p>';
 const sn=s.snapshot;$('#snapmeta').textContent=sn&&sn.panels?('Snapshot of the repo, generated '+sn.generated+(sn.commit?' at '+sn.commit:'')+(sn.problems&&sn.problems.length?'. Problems: '+sn.problems.join('; '):'')):'No snapshot received yet. The dashboard-snapshot workflow posts one after each outreach run.';
 $('#snap').innerHTML=sn&&sn.panels?sn.panels.map(p=>'<div class="card"><h3>'+E(p.title)+'</h3>'+p.rows.map(r=>'<div class="meta"><span class="'+(r[2]=='ok'?'ok':r[2]=='warn'?'bad':'')+'">'+(r[2]=='ok'?'OK ':r[2]=='warn'?'OPEN ':'')+'</span><b>'+E(r[0])+'</b> '+E(r[1])+'</div>').join('')+'</div>').join(''):'';
+const an=s.analytics;$('#an').innerHTML=an&&an.metrics?'<p class="meta">Collecting for '+an.age_days+' days. '+an.breaches+' breach(es).</p><div class="grid">'+an.metrics.map(m=>'<div class="card"><span class="'+(m.hit?'bad':'ok')+'">'+(m.hit?'BREACH':'OK')+'</span> <b>'+E(m.name)+'</b> '+E(m.value)+'<div class="meta">'+E(m.label)+' ('+E(m.kind)+'; '+E(m.why)+')</div></div>').join('')+'</div><div class="meta">Top pages, 7 days: '+(an.top.map(t=>E(t.host+t.path)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Referrers: '+(an.refs.map(t=>E(t.ref)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Daily views: '+(an.daily.map(d=>E(d.day.slice(5))+' '+d.views).join(' · ')||'none yet')+'</div>':'<p class="meta">Analytics unavailable.</p>';
 $('#counts').textContent='Your queue: '+s.counts.owner+' open. Fleet: '+s.counts.fleet+' open, '+s.counts.queued+' queued, '+s.counts.done+' done.';
 $('#owner').innerHTML=s.owner.map(t=>task(t,1)).join('')||'<p class="meta">Nothing waiting on you.</p>';
 $('#fleet').innerHTML=s.fleet.map(t=>'<div class="card"><b>'+E(t.title)+'</b> <span class="meta">'+E(t.area||'')+(t.state=='delegated'?' · with the fleet':'')+'</span><div class="row">'+(t.state=='delegated'?'':'<button data-c="fix '+E(t.id)+'">'+(t.fix_cmd?'Fix it':'Hand to fleet')+'</button>')+'<button data-c="done '+E(t.id)+'">Done</button><button data-c="dismiss '+E(t.id)+'">Not doing</button>'+(t.url?'<a class="btn" href="'+E(t.url)+'" rel="noopener">Open</a>':'')+'</div></div>').join('')||'<p class="meta">No fleet tasks.</p>';
@@ -253,7 +259,7 @@ $('#cmd').onsubmit=e=>{e.preventDefault();const v=$('#line').value.trim();if(v){
 $('#logout').onclick=async()=>{await api('/api/owner/logout',{});location.reload()};
 load();`;
 function ownerPage() {
-  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><h2>Needs you</h2><div id=\"owner\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Command line</h2><form id=\"cmd\"><div class=\"row\"><input id=\"line\" placeholder=\"type help\" aria-label=\"command\" autocapitalize=\"off\" autocomplete=\"off\"><button class=\"p\">Run</button></div></form><pre id=\"out\">Commands marked * ask for a fresh emailed code.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
+  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><h2>Needs you</h2><div id=\"owner\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Command line</h2><form id=\"cmd\"><div class=\"row\"><input id=\"line\" placeholder=\"type help\" aria-label=\"command\" autocapitalize=\"off\" autocomplete=\"off\"><button class=\"p\">Run</button></div></form><pre id=\"out\">Commands marked * ask for a fresh emailed code.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
 }
 
 // ---------- router ----------
@@ -262,7 +268,8 @@ export async function route(req, env) {
   if (p === "/health") return json({ ok: true, worker: "ultrastable-dashboard", version: VERSION });
   if (p === "/robots.txt") return new Response("User-agent: *\nDisallow: /\n", { headers: { "Content-Type": "text/plain" } });
   if (p === "/favicon.svg") return new Response(FAVICON, { headers: { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age=86400" } });
-  if (p === "/") return publicPage();
+  const an = await handleAnalytics(req, env, { hosts: HOSTS }); if (an) return an;
+  if (p === "/") { if (req.method === "GET") { try { await record(env, req, { host: u.hostname, path: "/", ref: req.headers.get("referer") }); } catch (e) { console.error("record", e && e.message); } } return publicPage(); }
   if (p === "/owner") return ownerPage();
   if (p.startsWith("/api/owner/")) {
     if (req.method === "POST" && req.headers.get("x-us-ui") !== "1") return json({ error: "missing x-us-ui header" }, 400);

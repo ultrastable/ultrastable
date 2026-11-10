@@ -143,6 +143,13 @@
       "what is open"
     ]
   },
+  "analytics": {
+    "standard": "analytics/analytics.js",
+    "beacon": "<script defer src=\"https://{public_host}/a.js\"></script>",
+    "privacy": "first-party, cookieless, no IP stored, honors DNT and GPC",
+    "report": "GET /api/analytics (bearer ANALYTICS_TOKEN); dashboard panel; daily digest",
+    "guard": "collector_selfcheck"
+  },
   "org": {
     "repos": [
       "site",

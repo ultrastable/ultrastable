@@ -81,3 +81,18 @@ test("snapshot built from the repo has the five panels", async () => {
   const snap = JSON.parse(readFileSync("/tmp/snap-test.json", "utf8"));
   assert.deepEqual(snap.panels.map(p => p.id), ["funding", "ip", "trust", "cards", "bootstrap"]); assert.deepEqual(snap.problems, []); assert.ok(out.includes("panels"));
 });
+
+test("analytics: holding-page views and beacon hits show on the owner dashboard; breach is emailed", async () => {
+  const e = env();
+  await route(new Request("https://ultrastable.io/", { headers: { "user-agent": "Mozilla/5.0", referer: "https://news.example/x" } }), e);
+  await route(new Request("https://ultrastable.io/a/e", { method: "POST", headers: { "user-agent": "Mozilla/5.0" }, body: JSON.stringify({ h: "ultrastable.io", p: "/", r: "" }) }), e);
+  assert.equal((await route(new Request("https://ultrastable.io/a.js"), e)).status, 200);
+  const cookie = await login(e);
+  const st = await (await call(e, "/api/owner/state", null, cookie)).json();
+  assert.equal(st.analytics.metrics.find(m => m.name === "pageviews_7d").value, 2);
+  assert.equal(st.analytics.refs[0].ref, "news.example");
+  const out = await (await call(e, "/api/owner/run", { cmd: "analytics" }, cookie)).json();
+  assert.match(out.out, /pageviews_7d = 2/);
+  sent.length = 0; await tick(e, "*/10 * * * *");
+  assert.ok(e.db.prepare("SELECT COUNT(*) c FROM hits WHERE name='selfcheck'").get().c >= 1);
+});
