@@ -1,0 +1,25 @@
+name: retriage
+# Every 3 hours: enable auto-merge on green PRs, flag conflicts and idle drafts, file gaps for issues without a doer or probe.
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+concurrency:
+  group: retriage
+  cancel-in-progress: false
+jobs:
+  retriage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Retriage
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: bash scripts/retriage.sh
