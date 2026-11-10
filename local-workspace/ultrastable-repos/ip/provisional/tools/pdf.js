@@ -1,2 +1,0 @@
-const {chromium}=require('playwright');const fs=require('fs');(async()=>{const b=await chromium.launch();const p=await b.newPage();
-for(const [i,o] of [[process.argv[2],process.argv[3]],[process.argv[4],process.argv[5]]]){await p.setContent(fs.readFileSync(i,'utf8'));await p.pdf({path:o,format:'Letter',margin:{top:'1in',bottom:'1in',left:'1in',right:'1in'},displayHeaderFooter:true,headerTemplate:'<span></span>',footerTemplate:'<div style="font-size:9pt;width:100%;text-align:center"><span class="pageNumber"></span></div>'});}await b.close();})();
