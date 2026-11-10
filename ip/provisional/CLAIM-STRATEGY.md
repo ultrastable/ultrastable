@@ -70,3 +70,57 @@ Every element has a paragraph and a figure. Numeric fallbacks (thresholds, caps,
 6. **Customer-zero numbers** ([0079]): these are the system's self-reported figures. Keep them as examples or remove them.
 7. **Trademark** "Ultrastable" for software: a separate search and application.
 8. **Continuations:** consider a provisional per new loop as the platform grows, all rolled into one non-provisional within 12 months of the first.
+
+## Appendix: claim-to-section cross-reference
+
+Moved here from the specification on 2026-11-10 to keep the filed document within 100 sheets (see CUTS.md). Section numbers are those of the specification, which kept its section numbering. Paragraph numbers after [0092] changed in the condensed version; cite sections, not paragraphs, above [0092].
+
+
+This table is not part of the claim-style summaries. Section numbers are those of the detailed description. "Built" means the description states the element is built and operating, or built as tested code, in the reference implementation or the repository; "prophetic" means the description labels the element not yet built. The first claim of each family is independent; the system and medium claims of a family recite the method claim of that family only.
+
+| Claim | Spec sections | Status built/prophetic |
+|---|---|---|
+| Family 1, independent method 1, system 2, medium 3 | 3, 4, 5 (snapshot table, allocation, ranking, execution queue, persona actions, tool-layer denial) | Built |
+| 4-11 (dependents of 1) | 5 (risk, ranking, operations, doer line, queue score) | Built; the stalled-project predicate in 4 is partly prophetic (section 33 status paragraph) |
+| 12-13, 14 (plus loop) | 7 | Built |
+| 15 (experiment) | 34 | Built in part; stop rules (2) to (4) are illustrative |
+| 16 (work-item states) | 32 | Built |
+| 17-20 (goals, inferred direction) | 31, 34 | Built; alternatives prophetic |
+| Family 2, independent method 21, system 22, medium 23 | 9, 10, 43.5 (policy file, validator, mirrored deny test), 19A | Built (count-based trust, policy file, validator, mirror test) |
+| 24-28, 30 | 9, 43 | Built |
+| 29 | 8 | Built |
+| 31, 34 | 5, 16, 48 | Built in part (control authority is built, partially operating) |
+| 32-33 (decay and event weights) | 24 | Prophetic (event weights and decay not built; the decay is per tick in section 9 and per day in the policy file of section 43, and the claim recites a period) |
+| Family 3, independent method 35, system 36, medium 37 | 23 (FIG. 16, embodiments A and B) | Built for hourly scan and prompt-carried recognition; pre-emission filtering prophetic |
+| 38, 40 | 23 (steps 1610-1614) | Built through prompt-carried recognition; pre-emission filter prophetic |
+| 39, 41, 42, 45 | 23 | Built |
+| 43-44 (self-amending governance) | 11, 25 | Built |
+| Family 4, independent method 46, system 47, medium 48 | 12, 13 | Built |
+| 49-53 | 12, 13, 16, 20 | Built |
+| 54, 55-56 | 44 | Built |
+| Family 5, independent method 57, system 58, medium 59 | 41, 42 | Built, partially operating |
+| 60-63 | 41, 42 | Built, partially operating |
+| 64, 65 | 41, 42 | Retry bound and emitter-set detector prophetic |
+| 66-69 | 39, 40, 42 | Built, partially operating |
+| Family 6, independent method 70, system 71, medium 72 | 49, 14 | Built |
+| 73-77 | 49 | Built |
+| 78-80 | 47, 48 | Built; extended command table prophetic |
+| 81 | 48 | Built |
+| Family 7, independent method 82, system 83, medium 84 | 15, 27 | Built (priority rule follows the dead-man check text; the worked example of section 27 states that a slot with one record raises no alert, which the description should reconcile) |
+| 85-90 | 15, 27 | Built |
+| 91, 92 | 29, 30 | Built in part; orphan-table join and census prophetic |
+| Family 8, independent method 93, system 94, medium 95 | 17, 35 | Built, partially operating; the measurement view of cost per verified outcome is prophetic |
+| 96-99 | 35, 36 | Built |
+| 100-101 | 36, 37 | Built |
+| 102-104 | 37, 38 | Prophetic (shadow sampling and demotion, per-executor trust, calibration) |
+| Family 9, independent method 105, system 106, medium 107 | 19A, 43 | Built as code tested offline (dry run); first provisioning of a real account not performed |
+| 108-110 | 19A, 43 | Built as code |
+| 111-113 | 19A, 43 | Built as code with tests |
+| 114-115 | 19, 45, 46 | Prophetic as tenant installation and adapters (section 45 status paragraph); edge embodiment built |
+| Family 10, independent method 116, system 117, medium 118 | 52, 54 (belief registry and probes; policy lookup) | Built for belief registry, probes and policy lookup; single typed view prophetic |
+| 119-122 | 52 | Registers built; rendering and the typed honest-gap table prophetic |
+| 123-126 | 53, 54 | Prophetic (generator, consistency check, new-session load) |
+| Family 11, independent method 127, system 128, medium 129 | 55, 56, 57, 58 | Built (produced by agent sessions under the work-item ledger); unattended execution by the platform tick prophetic |
+| 130-137 | 55, 56, 57 | Built by sessions; automation by tick prophetic |
+| 138 | 57 (web presence) | Built (search and visit data ingest in a related implementation) |
+| 139 | 57 | Prophetic (loops acting on signals) |

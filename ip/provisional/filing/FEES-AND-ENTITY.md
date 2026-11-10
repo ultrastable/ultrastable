@@ -8,7 +8,7 @@ Not legal advice. Fees are from the USPTO schedule effective 2025-01-19 and must
 | Small entity | $130 |
 | Undiscounted | $325 |
 
-No page-count surcharge applies to a provisional. The application size fee does not apply to a provisional. Expect a single charge of $65 to $325.
+The application size fee (37 CFR 1.16(s), MPEP 607) applies to provisionals too: it is charged for each 50 sheets, or part of 50, beyond 100 sheets of specification plus drawings. This package is held at 100 sheets (specification 83 + drawings 17), so no size fee is due; `tools/preflight.py` fails the build if the total ever exceeds 100. Expect a single charge of $65 to $325.
 
 ## Which status
 

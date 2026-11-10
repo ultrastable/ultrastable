@@ -12,3 +12,9 @@ for f in sorted(glob.glob('figures/*.svg')): parts.append('<div>'+open(f).read()
 open('/tmp/drawings.html','w').write(''.join(parts)+'</body></html>')
 PY
 node tools/pdf.js /tmp/spec.html provisional-specification.pdf /tmp/drawings.html drawings.pdf
+# Page limit (owner directive 2026-11-10; USPTO application size fee, 37 CFR 1.16(s)): specification plus drawings <= 100 sheets.
+spec_pages=$(pdfinfo provisional-specification.pdf | awk '/^Pages:/{print $2}')
+draw_pages=$(pdfinfo drawings.pdf | awk '/^Pages:/{print $2}')
+total=$((spec_pages + draw_pages))
+echo "pages: specification $spec_pages + drawings $draw_pages = $total sheets (limit 100)"
+if [ "$total" -gt 100 ]; then echo "FAIL: over the 100-sheet limit; condense the specification (see CUTS.md)" >&2; exit 1; fi
