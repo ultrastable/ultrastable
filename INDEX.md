@@ -13,6 +13,9 @@ All of it lives in this private repository: https://github.com/ultrastable/ultra
 | Website code and deploy | `site/` , `deploy/deploy-site.mjs` |
 | Core extraction map | `core-manifest/boundary.json` |
 | Hand-off and state | `HANDOFF.md` , `docs/ARTIFACTS.md` (live systems inventory) |
-| Chat history of the QNFO platform thread | `qnfo-platform-thread/` |
+| Everything from the QNFO platform thread: product doc, boundary check, claim checks, platform page source, migrations, tests, the 12 merged PRs as patches, D1 snapshot, thread record | `qnfo-platform-thread/` (README, MANIFEST.md with commit for each file, `python qnfo-platform-thread/verify.py`) |
+| Every issue grouped by area, refreshed hourly from GitHub | `docs/ISSUES-BY-AREA.md` (`tools/build_index.py`, `.github/workflows/index.yml`) |
+| Owner's local folder (patent drafts, planned repos, 7 git bundles) | `local-workspace/` |
+| Patent drafting tool | https://github.com/rwnq8/ipatent |
 
 Rule for every session: write results here (code, docs, issues, milestones) and update this index. Nothing is canonical in a chat.
