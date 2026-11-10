@@ -8,7 +8,7 @@ Built in:
   VertexAgent     calls a Gemini model on Vertex AI (VERTEX_ACCESS_TOKEN, VERTEX_PROJECT, VERTEX_LOCATION in env); text-only proposals
 """
 from __future__ import annotations
-import hashlib, json, os, shlex, subprocess, urllib.request
+import hashlib, json, os, shlex, subprocess, urllib.error, urllib.request
 from dataclasses import dataclass, field
 from typing import Callable, Optional
 from .config import DEFAULT_WORKERS_AI_MODEL, DEFAULT_VERTEX_MODEL, workers_ai_vendor
@@ -115,13 +115,27 @@ class VertexAgent:
     kind = "vertex"
 
     def __init__(self, name: str, model: str = DEFAULT_VERTEX_MODEL, project: Optional[str] = None,
-                 location: Optional[str] = None, transport: Optional[Callable[[str], str]] = None):
+                 location: Optional[str] = None, transport: Optional[Callable[[str], str]] = None,
+                 token_source: Optional[Callable[[], str]] = None):
+        self.token_source = token_source
         self.name, self.model = name, model
         self.project, self.location = project, location
         self.transport = transport or self._http
 
+    def _token(self) -> Optional[str]:
+        """Current access token: `token_source()` when given (called again after a 401), else the environment."""
+        return self.token_source() if self.token_source else os.environ.get("VERTEX_ACCESS_TOKEN")
+
     def _http(self, prompt: str) -> str:
-        tok = os.environ.get("VERTEX_ACCESS_TOKEN")
+        try:
+            return self._post(prompt)
+        except urllib.error.HTTPError as e:
+            if e.code != 401:
+                raise
+            return self._post(prompt)  # access tokens expire about hourly: one retry with a freshly read token
+
+    def _post(self, prompt: str) -> str:
+        tok = self._token()
         project = self.project or os.environ.get("VERTEX_PROJECT")
         location = self.location or os.environ.get("VERTEX_LOCATION")
         if not (tok and project and location):

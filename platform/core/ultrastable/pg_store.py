@@ -32,14 +32,29 @@ class PostgresStore(Store):
             except ImportError as e:
                 raise RuntimeError("postgres store needs the psycopg package") from e
             connect = lambda: psycopg.connect(dsn, autocommit=True)
+        self._connect = connect
         self.db = connect()
         for stmt in [s for s in to_pg_schema(SCHEMA).split(";") if s.strip()]:
             self._exec(stmt)
 
     def _exec(self, sql, args=()):
-        cur = self.db.cursor()
-        cur.execute(to_pg_sql(sql), args)
-        return cur
+        try:
+            cur = self.db.cursor()
+            cur.execute(to_pg_sql(sql), args)
+            return cur
+        except Exception as e:  # noqa: BLE001 - only a dropped connection is retried, once
+            if not self._dropped(e):
+                raise
+            self.db = self._connect()  # reconnect after a dropped connection (restart, idle timeout)
+            cur = self.db.cursor()
+            cur.execute(to_pg_sql(sql), args)
+            return cur
+
+    @staticmethod
+    def _dropped(e: Exception) -> bool:
+        name = type(e).__name__
+        return name in ("OperationalError", "InterfaceError", "AdminShutdown", "ConnectionDoesNotExist") or \
+            isinstance(e, (ConnectionError, BrokenPipeError))
 
     def q(self, sql, *args):
         with self.lock:

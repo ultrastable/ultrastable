@@ -7,7 +7,7 @@ from __future__ import annotations
 import json, math
 from datetime import datetime, timedelta, timezone
 
-from .agents import build_agent, check_pairing
+from .agents import Result, build_agent, check_pairing
 from .config import load_config, load_policy
 from .store import Store, iso
 
@@ -254,9 +254,27 @@ class Engine:
                 return True, f"rules v{rules['version']} adopted: {a['proposal'][:120]}"
         return True, "internal item applied"
 
+    def _await(self, it, evidence, c):
+        self.s.x("UPDATE items SET status='verify', evidence=?, updated_at=? WHERE id=?", (evidence or "")[:400], c["nowi"], it["id"])
+        self.s.x("UPDATE claims SET heartbeat_at=? WHERE item_id=?", c["nowi"], it["id"])
+        self.s.event(c["nowi"], "reviewer", "awaiting_verification", it["id"], (evidence or "")[:200])
+        c["notes"].append(f"{it['id']} awaiting verification")
+
+    def _recheck_pending(self, c):
+        """Items waiting on an external check are re-verified each tick; pending stays pending, only a real verdict closes them."""
+        for it in self.s.q("SELECT * FROM items WHERE status='verify' ORDER BY priority, created_at"):
+            ok, ev = self.reviewer.verify(it, Result(True, it["evidence"] or ""))
+            if ok is None:
+                self._await(it, ev, c)
+                continue
+            self.s.event(c["nowi"], "reviewer", "executed", it["id"], f"{'pass' if ok else 'FAIL'} after waiting")
+            self._finish(it, ok, it["evidence"] if ok else ev, c, "doer")
+            c["done" if ok else "failed"] += 1
+
     def execute(self, c):
         s, slots = self.s, self.cfg["slots_per_tick"]
         used_plus, per_project, executed = 0, {}, 0
+        self._recheck_pending(c)
         for it in s.q("SELECT * FROM items WHERE status='ready' ORDER BY priority, created_at"):
             if executed >= slots + 4:
                 break
@@ -297,6 +315,9 @@ class Engine:
                 iso(c["now"] + timedelta(minutes=self.cfg["tick_minutes"])))
             res = self.doer.do(it)
             ok, ev = self.reviewer.verify(it, res)
+            if ok is None:  # verification pending (e.g. checks still running): wait, do not fail or reopen
+                self._await(it, ev, c)
+                continue
             if res.ok and not ok and res.revert:
                 res.revert()
             mode = "pre-approval review" if self.policy["ladder"]["rungs"].index(rung) < 2 else "apply then audit"
