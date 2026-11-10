@@ -40,6 +40,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 - Cycling: `retriage` workflow (every 3 h) auto-merges green PRs, flags conflicts/idle drafts and files gaps for issues without a doer or probe; `issues` workflow triages hourly.
 - Social posting (2026-11-10): `social/` + `scripts/social_*.py` + `social-post` workflow; Bluesky and Mastodon via direct APIs (Buffer skipped, see `social/README.md`); verbatim-excerpt guard over SAFE NOW sources, kill switch in `social/gate.json`; dry-run until owner cards SOC-1/SOC-2 (`docs/ops/SOCIAL-ACCOUNTS.md`) give tokens. Gap BG-25.
 - Seed: Python and Worker tests pass; WorkersAIAgent has a first real-model proof (PR #88).
+- Issue drain (2026-11-10): 7 issues closed with evidence (#2, #4, #36, #95, #111, #112, #117); 56 remain, each with a disposition comment (owner-only, deferred by gate, large engineering, or waiting on the Cloudflare secrets). Site worker deploy (#127, BG-27) waits on repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; the social card is now a 8.6 KB PNG so an inline connector upload is practical. New code: `platform/core/ultrastable/orgchart.py` (PL-2), policy overlay merge, `scripts/check_business_index.py`, `platform/open-core/` drafts. The Cloudflare connector can upload a worker only inline; hand-copying base64 failed, so deploys go through the workflow.
 
 ## 4. Owner-only items (identity-bound; each has a default in effect)
 
