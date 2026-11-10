@@ -22,6 +22,7 @@ DEFAULT_CONFIG = {
 
 # Default model for the Workers AI doer; override per agent with spec["model"] (P3: no model constants outside this file).
 DEFAULT_WORKERS_AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+DEFAULT_VERTEX_MODEL = "gemini-2.5-pro"
 
 
 def _merge(base: dict, over: dict) -> dict:

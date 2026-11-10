@@ -5,12 +5,13 @@ Built in:
   SimulatedAgent  deterministic, seedable; used for demos, tests and CI (never claims to be a real model)
   CommandAgent    runs any CLI agent (claude -p, codex exec, ...) in a work dir; verification by a check command
   AnthropicAgent  calls the Anthropic Messages API (set ANTHROPIC_API_KEY); text-only proposals
+  VertexGeminiAgent  calls Vertex AI generateContent (VERTEX_PROJECT, VERTEX_ACCESS_TOKEN); text-only proposals
 """
 from __future__ import annotations
 import hashlib, json, os, shlex, subprocess, urllib.request
 from dataclasses import dataclass, field
 from typing import Callable, Optional
-from .config import DEFAULT_WORKERS_AI_MODEL
+from .config import DEFAULT_VERTEX_MODEL, DEFAULT_WORKERS_AI_MODEL
 
 
 @dataclass
@@ -161,6 +162,65 @@ class WorkersAIAgent:
         return p.returncode == 0, (p.stdout + p.stderr)[-1500:]
 
 
+class VertexGeminiAgent:
+    """Vertex AI Gemini adapter (text proposals, like AnthropicAgent). `transport(prompt) -> str` is injectable for tests.
+    Live use needs VERTEX_PROJECT and VERTEX_ACCESS_TOKEN (e.g. `gcloud auth print-access-token`); VERTEX_LOCATION defaults to us-central1."""
+    kind = "vertex-gemini"
+
+    def __init__(self, name: str, model: str = DEFAULT_VERTEX_MODEL, transport=None):
+        self.name, self.model = name, model
+        self.transport = transport or self._http
+
+    def _http(self, prompt: str) -> str:
+        proj, tok = os.environ.get("VERTEX_PROJECT"), os.environ.get("VERTEX_ACCESS_TOKEN")
+        if not (proj and tok):
+            raise RuntimeError("VERTEX_PROJECT and VERTEX_ACCESS_TOKEN required")
+        loc = os.environ.get("VERTEX_LOCATION", "us-central1")
+        host = "aiplatform.googleapis.com" if loc == "global" else f"{loc}-aiplatform.googleapis.com"
+        url = f"https://{host}/v1/projects/{proj}/locations/{loc}/publishers/google/models/{self.model}:generateContent"
+        req = urllib.request.Request(
+            url, data=json.dumps({"contents": [{"role": "user", "parts": [{"text": prompt}]}]}).encode(),
+            headers={"authorization": f"Bearer {tok}", "content-type": "application/json"})
+        with urllib.request.urlopen(req, timeout=120) as r:
+            body = json.loads(r.read())
+        return "".join(p.get("text", "") for p in body["candidates"][0]["content"]["parts"])
+
+    def do(self, item: dict) -> Result:
+        try:
+            return Result(True, self.transport(f"Produce a concise plan and change summary for: {item['title']}\nDone when: {item['done_check']}"))
+        except Exception as e:  # noqa: BLE001
+            return Result(False, f"vertex error: {e}")
+
+    def verify(self, item: dict, res: Result):
+        try:
+            out = self.transport(f"Task: {item['title']}\nDone when: {item['done_check']}\nClaimed result:\n{res.evidence}\n"
+                                 "Reply PASS or FAIL then one line why.")
+            return out.strip().upper().startswith("PASS"), out[:500]
+        except Exception as e:  # noqa: BLE001
+            return False, f"verifier error: {e}"
+
+
+def model_family(spec: dict) -> str:
+    """Model family of an agent spec: gemini, claude, workers-ai:<vendor>, or the kind itself (simulated/command)."""
+    k = spec.get("kind", "simulated")
+    if k == "vertex-gemini":
+        return "gemini"
+    if k == "anthropic":
+        return "claude"
+    if k == "workers-ai":
+        parts = (spec.get("model") or DEFAULT_WORKERS_AI_MODEL).lower().split("/")
+        return "workers-ai:" + (parts[1] if len(parts) > 2 else parts[-1])
+    return k
+
+
+def check_pairing(doer: dict, reviewer: dict) -> None:
+    """The reviewer must be a different model family than the doer, so shared blind spots are not shared verdicts.
+    Simulated and command agents are exempt (no model family to differ)."""
+    fd, fr = model_family(doer), model_family(reviewer)
+    if fd == fr and fd not in ("simulated", "command"):
+        raise ValueError(f"reviewer model family '{fr}' must differ from doer family '{fd}'")
+
+
 def build_agent(spec: dict, name: str):
     k = spec.get("kind", "simulated")
     if k == "simulated":
@@ -169,6 +229,8 @@ def build_agent(spec: dict, name: str):
         return CommandAgent(name, spec["command"], spec.get("check"), spec.get("cwd", "."))
     if k == "anthropic":
         return AnthropicAgent(name, spec["model"])
+    if k == "vertex-gemini":
+        return VertexGeminiAgent(name, spec.get("model", DEFAULT_VERTEX_MODEL))
     if k == "workers-ai":
         return WorkersAIAgent(name, spec["files"], spec.get("cwd", "."), spec.get("check"), spec.get("model", DEFAULT_WORKERS_AI_MODEL))
     raise ValueError(f"unknown agent kind {k}")
