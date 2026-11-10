@@ -54,3 +54,7 @@ Root-cause classes behind BG-1 to BG-12, with the code that now addresses each:
 | Tooling limits on dot-named repos | BG-3, BG-11 | Profile staged in main repo; `org-init` unarchives and publishes | Session tooling still cannot attach `.github` |
 | Owner questions instead of gated cards | BG-8 | `AGENTS.md` rules and `org` gate card format | none |
 Tests: `seed/tests/test_seed.py` covers the surfaces record and the no-token gate path.
+
+## BG-13: credential was already on the device (2026-11-10, closed)
+Symptom: org page stayed private for hours while threads reported "no org-admin credential". Root cause: every thread tried the proxy, the Actions token and Remote Control; none probed the desktop Code session's own `gh` login, which holds `admin:org`, `repo`, `workflow` and `delete_repo` (account `rwnq8`). The route that worked was the first one nobody tried. Fix applied: `gh api -X PATCH repos/ultrastable/.github -F archived=false -F private=false`; org description set. Seed rule: the `surfaces` stage must run `gh auth status` and `gh api user/memberships/orgs/<org>` first, and treat an `admin:org` scope as the org-admin credential before opening any owner card. Closing probe (passed 2026-11-10): `curl -s https://github.com/ultrastable` returns the profile text "runs itself, and gets better while it does".
+Archiving session: "Ultra-stable investor-ready development" (`local_0b1fb88c`), PR 84; the six duplicates stay archived by design.
