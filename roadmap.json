@@ -1,0 +1,28 @@
+{
+ "project": "Ultrastable roadmap",
+ "columns": [
+  "Now",
+  "Next",
+  "Later"
+ ],
+ "items": {
+  "Now": [
+   "P0 Entity, IP assignment and trademark",
+   "Private source of truth",
+   "Pilot sign-up flow"
+  ],
+  "Next": [
+   "Recruit 3 design partners",
+   "P1 Short default policy pack",
+   "Claims feed on its own host",
+   "Investor materials"
+  ],
+  "Later": [
+   "P2 Core tables in their own database",
+   "P3 Tenant settings from configuration",
+   "P4 Second installation outside qnfo-workers",
+   "Outside audit of prediction match rate",
+   "Analytics and measurement"
+  ]
+ }
+}

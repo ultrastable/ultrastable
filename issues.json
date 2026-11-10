@@ -1,0 +1,91 @@
+[
+ {
+  "title": "P0 Entity, IP assignment and trademark",
+  "body": "founder: incorporate; assign/license core from author to the entity in writing; USPTO knockout search for Ultrastable. Closing probe: signed assignment on file; entity name set in LICENSE.\n\nsize: M",
+  "labels": [
+   "legal",
+   "blocker"
+  ]
+ },
+ {
+  "title": "P1 Short default policy pack",
+  "body": "Extract a short default policy (agreement every agent lane reads) from QNFO's CLAUDE.md/doctrine; QNFO keeps owner directives as an overlay.\n\nsize: M",
+  "labels": [
+   "core"
+  ]
+ },
+ {
+  "title": "P2 Core tables in their own database",
+  "body": "Move core tables (agent_issues, issue_triage, work_claims, metric_registry, trust_ledger, decision_log, failure_modes, ...) out of qnfo-audit into a product database.\n\nsize: L",
+  "labels": [
+   "core",
+   "architecture"
+  ]
+ },
+ {
+  "title": "P3 Tenant settings from configuration",
+  "body": "Account, repository, hosts, model ladder, owner contact come from configuration, not constants.\n\nsize: L",
+  "labels": [
+   "core"
+  ]
+ },
+ {
+  "title": "P4 Second installation outside qnfo-workers",
+  "body": "Prove the core runs on a repository that is not qnfo-workers (design partner or internal).\n\nsize: L",
+  "labels": [
+   "core",
+   "pilot"
+  ]
+ },
+ {
+  "title": "Pilot sign-up flow",
+  "body": "Replace the mailto link with a form storing requests (D1) plus a confirmation; tap-based, no free text beyond email.\n\nsize: M",
+  "labels": [
+   "site",
+   "pilot"
+  ]
+ },
+ {
+  "title": "Recruit 3 design partners",
+  "body": "Outreach list, pilot terms, success metric (agent-opened PRs merged, probe reverts, scored predictions). Measure: signed pilots.\n\nsize: M",
+  "labels": [
+   "go-to-market"
+  ]
+ },
+ {
+  "title": "Outside audit of prediction match rate",
+  "body": "73% self-scored match; get an external audit or benchmark.\n\nsize: M",
+  "labels": [
+   "credibility"
+  ]
+ },
+ {
+  "title": "Investor materials",
+  "body": "Pitch deck, one-page market read, financial model, demo script from ultrastable.io/proof.\n\nsize: M",
+  "labels": [
+   "fundraising"
+  ]
+ },
+ {
+  "title": "Claims feed on its own host",
+  "body": "Serve platform claims from a product-side endpoint (current feed links the public QNFO repo).\n\nsize: S",
+  "labels": [
+   "site"
+  ]
+ },
+ {
+  "title": "Private source of truth",
+  "body": "Move site code, docs and tests into the private repo; CI deploys to Cloudflare; remove reliance on the deployed worker as the only copy.\n\nsize: S",
+  "labels": [
+   "infra"
+  ]
+ },
+ {
+  "title": "Analytics and measurement",
+  "body": "Visits to /proof from outside, pilot emails, claims passing; weekly digest.\n\nsize: S",
+  "labels": [
+   "site",
+   "metrics"
+  ]
+ }
+]
