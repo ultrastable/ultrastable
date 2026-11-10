@@ -2,6 +2,7 @@
 # LANE-1: one pass over every open PR into main. Idempotent; runs on PR events, check completions and every 10 minutes.
 # Draft -> ready, wait for green checks, auto-review, squash merge. Conflicts are escalated, never left to sit.
 set -uo pipefail
+. "$(dirname "$0")/lib-safe.sh"
 repo="${GITHUB_REPOSITORY:?}"
 for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[].number'); do
   v=$(gh pr view "$n" -R "$repo" --json isDraft,headRefName,headRefOid,labels,mergeable,updatedAt)
@@ -51,3 +52,5 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
     case "$out" in *workflow*) gh pr edit "$n" -R "$repo" --add-label needs-pat >/dev/null 2>&1;; esac
   fi
 done
+
+safe_exit
