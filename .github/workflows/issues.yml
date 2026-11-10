@@ -29,3 +29,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: bash scripts/sla.sh
+      - name: Scoreboard
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: bash scripts/metrics.sh
