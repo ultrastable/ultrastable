@@ -11,10 +11,10 @@ gh repo create ultrastable/.github --public --description "Ultrastable: software
 
 ## Org settings text
 - Name: Ultrastable
-- Description: Software that stays up. Autonomous software development, built to keep running.
+- Description: Coding agents write code. Ultrastable runs the system. From one idea to a business that improves itself.
 - URL: https://ultrastable.io
 - Email: pilot@ultrastable.io
-- Avatar: `profile/ultrastable-icon-512.png`
+- Avatar: `profile/ultrastable-icon-512.png` (orange triangle mark, no tile)
 - Repo social preview: `social-card.png`
 - Verify the three domains on the org (Settings, Verified and approved domains).
 

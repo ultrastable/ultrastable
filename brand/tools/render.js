@@ -5,7 +5,7 @@ const jobs = [
   ['logo/ultrastable-icon.svg', 'logo/ultrastable-icon-512.png', 512, 512],
   ['logo/favicon.svg', 'logo/favicon-32.png', 32, 32],
   ['logo/favicon.svg', 'logo/apple-touch-icon.png', 180, 180],
-  ['logo/ultrastable-primary.svg', 'logo/ultrastable-primary.png', 1440, 256],
+  ['logo/ultrastable-primary.svg', 'logo/ultrastable-primary.png', 1320, 256],
   ['social/social-card.svg', 'social/social-card.png', 1280, 640],
   ['social/readme-banner.svg', 'social/readme-banner.png', 1280, 320],
 ];
