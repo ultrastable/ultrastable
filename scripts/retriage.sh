@@ -24,9 +24,9 @@ done
 
 # 2. Issues: each open issue needs a doer (assignee or agent-ready or owner-card) and a closing probe (the word "probe" in body, or a gate/later label).
 for n in $(gh issue list -R "$repo" --state open --limit 300 --json number --jq '.[].number'); do
-  row=$(gh issue view "$n" -R "$repo" --json labels,assignees,body,title --jq '[([.labels[].name]|join(",")),(.assignees|length),((.body // "")|test("probe";"i")),.title]|@tsv')
+  row=$(gh issue view "$n" -R "$repo" --json labels,assignees,body,title --jq '[([.labels[].name]|join(",")),(.assignees|length),((.body // "")|test("probe|done check|acceptance";"i")),.title]|@tsv')
   IFS=$'\t' read -r labels nassign hasprobe title <<<"$row"
-  doer=false; case ",$labels," in *,agent-ready,*|*,owner-card,*|*,gate:filed,*|*,m:Later,*) doer=true;; esac
+  doer=false; case ",$labels," in *,agent-ready,*|*,owner-card,*|*,gate:filed,*|*,m:Later,*|*,p3,*) doer=true;; esac
   [ "$nassign" != "0" ] && doer=true
   [ "$doer" = false ] && gaps="$gaps\n- issue #$n has no doer: $title"
   [ "$hasprobe" != "true" ] && case ",$labels," in *,gate:filed,*|*,m:Later,*|*,m:After\ filing,*) ;; *) gaps="$gaps\n- issue #$n has no closing probe: $title";; esac
@@ -34,7 +34,7 @@ done
 
 # 3. File one rolling gap issue (idempotent by title).
 if [ -n "$gaps" ]; then
-  body=$(printf "Found by scripts/retriage.sh at %s. Closing probe: this list is empty on the next run. Each line needs a doer or a probe, or a disposition (done, superseded, cancelled, blocked with owner and probe).\n%b\n" "$(date -u +%FT%TZ)" "$gaps")
+  body=$(printf "Found by scripts/retriage.sh at %s. Closing probe: this list is empty on the next run. Each line needs a doer or a probe (a "Closing probe", "Done check" or "Acceptance" line in the body), or a disposition (done, superseded, cancelled, blocked with owner and probe).\n%b\n" "$(date -u +%FT%TZ)" "$gaps")
   num=$(gh issue list -R "$repo" --state open --search 'in:title "Retriage gaps"' --json number --jq '.[0].number // empty')
   if [ -n "$num" ]; then gh issue edit "$num" -R "$repo" --body "$body" >/dev/null; log "gap issue #$num updated"
   else gh issue create -R "$repo" --title "Retriage gaps" --label agent-ready --body "$body" >/dev/null && log "gap issue created"; fi
