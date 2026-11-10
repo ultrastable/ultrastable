@@ -42,6 +42,6 @@ Rule: write the internal version first; the external version is derived by delet
 
 ## Known exposure to resolve first
 
-- `QNFO/qnfo-workers` is public and has no licence file; it has described core mechanisms since 2026-08-10. The US grace period ends about 2027-08-10; foreign rights may already be affected **[LAWYER]**. File sooner.
+- `QNFO/qnfo-workers` is public (since 2026-08-10) under the QNFO Unified License Agreement v2.1, which bars commercial use without a written agreement. Owner's position: the key combined system is not publicly disclosed. What the repo does show is for counsel to assess **[LAWYER]** (US grace period would end about 2027-08-10 at the latest). File soon.
 - `ultrastable.io` is live and describes mechanisms at a high level (see `docs/ip/IP-REGISTER.md`). Either file first or put it behind a holding page; the owner decides.
 - Entity and IP assignment (issue #1) must be done before any application or investor conversation: the author personally owns the code today.
