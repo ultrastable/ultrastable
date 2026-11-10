@@ -44,3 +44,13 @@ Mint `ORG_ADMIN_TOKEN` per docs/ops/ORG-TOKEN.md, adding Administration and Work
 
 ## Archived duplicate repos (2026-11-10)
 Six duplicate repos (`site`, `docs`, `platform`, `ip`, `business`, `seed`) were created in the org and archived as "SUPERSEDED duplicate: system of record is `ultrastable/ultrastable`". A thread session pushed bundles into them before it learned of the consolidation, and its later issue load into `docs` stopped at the archive (33 of 37 items; the canonical issues are in this repo). Cause: threads created the split repos in parallel while the monorepo became the system of record, with no single place saying so. Fix in effect: leave them archived; this repo is canonical. Session tools cannot unarchive (`Repository settings writes are not permitted through this proxy`), which is correct here. Closing probe: `gh api repos/ultrastable/<name> --jq .archived` is true for all six and `ultrastable/ultrastable` is the only repo accepting writes. Lesson for `seed/`: the bootstrap creates one canonical repo first, and any later repo is created only from `ultrastable.json` `org.repos`.
+
+## Failure-mode audit (2026-11-10)
+Root-cause classes behind BG-1 to BG-12, with the code that now addresses each:
+| Class | Gaps | Fix now in code | Still open |
+|---|---|---|---|
+| No org-admin credential at init | BG-1, 2, 5, 6, 7, 12 | `bootstrap.py` `surfaces` stage detects it; `org` stage opens one gate card with default and closing probe; `org-init` workflow does the work once present | Obtaining the credential itself (App manifest flow or browser-minted token) needs a working device or browser route |
+| Surfaces assumed healthy | BG-9 | `surfaces` stage records disk, gh, git, token and Cloudflare readiness in `boot-log.json` | Device Remote Control cause (could not start Claude Code) still unknown |
+| Tooling limits on dot-named repos | BG-3, BG-11 | Profile staged in main repo; `org-init` unarchives and publishes | Session tooling still cannot attach `.github` |
+| Owner questions instead of gated cards | BG-8 | `AGENTS.md` rules and `org` gate card format | none |
+Tests: `seed/tests/test_seed.py` covers the surfaces record and the no-token gate path.

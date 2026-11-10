@@ -292,6 +292,47 @@ class Boot:
         lines.append(f"INSERT OR IGNORE INTO doctrine_lineage (version, source) VALUES ({sql_str('seed-' + VERSION)}, 'agents/AGENTS.md + autonomy/policy.json');")
         return "\n".join(lines) + "\n"
 
+    def surfaces(self):
+        """Health-check every route before relying on it (BG-9, BG-12). Recorded, never fatal."""
+        free_gb = shutil.disk_usage(self.root).free / 1e9
+        env = os.environ
+        s = {
+            "disk_free_gb": round(free_gb, 1),
+            "disk_ok": free_gb >= 2.0,
+            "gh_cli": bool(shutil.which("gh")),
+            "git": bool(shutil.which("git")),
+            "org_admin_token": bool(env.get("ORG_ADMIN_TOKEN") or env.get("GH_ORG_TOKEN")),
+            "cloudflare_token": bool(env.get("CLOUDFLARE_API_TOKEN")),
+        }
+        self.state["surfaces"] = s
+        bad = [k for k in ("disk_ok", "gh_cli", "git") if not s[k]]
+        if bad:
+            return "degraded", "surfaces not ready: " + ", ".join(bad)
+        return "ok", "surfaces: " + ", ".join(k for k, v in s.items() if v is True)
+
+    def org(self):
+        """Org initialization plan (BG-1 to BG-7, BG-11). Applied only with an admin token."""
+        org = self.config.get("org", {})
+        repos = org.get("repos", [])
+        name = org.get("name", "")
+        plan = [f"gh repo create {name}/{r} --private (skip if exists)" for r in repos]
+        plan += [f"gh repo unarchive {name}/{r} --yes (if archived and not superseded)" for r in repos]
+        plan += [f"publish brand/public-profile/profile to {name}/.github/profile and set it public",
+                 "gh api PATCH orgs/%s description/blog/email" % name,
+                 "org-manage projects; close-superseded"]
+        self.state["org_plan"] = plan
+        if not name:
+            return "degraded", "ultrastable.json org.name unset; org plan not applied"
+        if not self.apply:
+            return "degraded", f"dry run: {len(plan)} org steps planned (see boot-log.json org_plan)"
+        if not self.state.get("surfaces", {}).get("org_admin_token"):
+            self.state["gate_cards"].append({
+                "id": "GATE-ORG-TOKEN", "line": "IDENTITY-BOUND: mint ORG_ADMIN_TOKEN (docs/ops/ORG-TOKEN.md)",
+                "default_in_effect": "holding page only; all non-org stages continue",
+                "closing_probe": "org-init workflow succeeds; curl https://github.com/" + name + " shows the profile"})
+            return "blocked", "no org-admin token: gate card opened, run the org-init workflow once it exists"
+        return "ok", "org token present: run the org-init workflow (.github/workflows/org-init.yml)"
+
     def provision(self):
         plan = [
             ["npx", "wrangler", "d1", "create", self.runtime["d1_database"]],
@@ -408,7 +449,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     root = a.root.resolve()
     boot = Boot(root, (a.out or root / "org").resolve(), apply=a.apply)
-    for name in ("read", "detect", "select", "plan", "write", "provision", "start"):
+    for name in ("read", "detect", "select", "plan", "write", "surfaces", "org", "provision", "start"):
         st = boot.guard(name, getattr(boot, name))
         if name == "read" and st == "blocked" and not hasattr(boot, "idea"):
             break  # nothing to plan from; the report says why
@@ -417,7 +458,8 @@ def main(argv=None) -> int:
     boot.out.mkdir(parents=True, exist_ok=True)
     (boot.out / "boot-log.json").write_text(json.dumps(
         {"seed_version": VERSION, "mode": "apply" if a.apply else "dry-run", "stages": boot.log,
-         "provision_plan": boot.state.get("provision_plan", [])}, indent=2) + "\n")
+         "provision_plan": boot.state.get("provision_plan", []),
+         "surfaces": boot.state.get("surfaces", {}), "org_plan": boot.state.get("org_plan", [])}, indent=2) + "\n")
     (boot.out / "boot-report.md").write_text(rep + "\n")
     print(rep)
     return 0 if all(s["status"] != "blocked" for s in boot.log) else 2

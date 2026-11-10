@@ -109,3 +109,23 @@ class BootTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SurfaceTests(BootTests):
+    def test_surfaces_and_org_plan_recorded(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.boot(Path(d))
+            log = json.loads((Path(d) / "org" / "boot-log.json").read_text())
+            self.assertIn("disk_free_gb", log["surfaces"])
+            self.assertTrue(log["org_plan"])
+            self.assertTrue({"surfaces", "org"} <= {st["stage"] for st in log["stages"]})
+
+    def test_apply_without_org_token_is_gate_card_not_crash(self):
+        with tempfile.TemporaryDirectory() as d:
+            copy_seed(Path(d))
+            for k in ("ORG_ADMIN_TOKEN", "GH_ORG_TOKEN", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"):
+                os.environ.pop(k, None)
+            bs.main(["--apply", "--root", d])
+            log = json.loads((Path(d) / "org" / "boot-log.json").read_text())
+            org = [st for st in log["stages"] if st["stage"] == "org"][0]
+            self.assertIn(org["status"], ("blocked", "degraded"))
