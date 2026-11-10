@@ -1,4 +1,6 @@
 name: deploy-site
+# trigger: manual workflow_dispatch only, skipped unless DEPLOY_SITE_ENABLED is true
+# free-alternative: run `node deploy/deploy-site.mjs` locally or from a session with a Cloudflare token (docs/ops/SITE-DEPLOY.md)
 # budget: ~1 min per run, manual only, 5 min timeout
 # Deploys site/worker.js and attaches ultrastable.io/.app/.net (deploy/deploy-site.mjs).
 # Manual only: GitHub Actions minutes on private repos are budgeted (about 1 minute per run). Sessions deploy through the Cloudflare connector (docs/ops/SITE-DEPLOY.md); this workflow is the fallback once repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID exist.
