@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: ultrastable
+Version: 0.2.0
+Summary: A self-governing control loop around the coding agents a team already uses.
+License: Proprietary
+Requires-Python: >=3.11
