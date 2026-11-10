@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib, json, os, shlex, subprocess, urllib.request
 from dataclasses import dataclass, field
 from typing import Callable, Optional
+from .config import DEFAULT_WORKERS_AI_MODEL
 
 
 @dataclass
@@ -112,7 +113,7 @@ class WorkersAIAgent:
     The model returns full replacement files; originals are kept so a failed review can revert. Verified by a separate check command."""
     kind = "workers-ai"
 
-    def __init__(self, name, files, cwd=".", check=None, model="@cf/meta/llama-3.3-70b-instruct-fp8-fast", transport=None):
+    def __init__(self, name, files, cwd=".", check=None, model=DEFAULT_WORKERS_AI_MODEL, transport=None):
         self.name, self.files, self.cwd, self.check, self.model = name, files, cwd, check, model
         self.transport = transport or self._http
 
@@ -169,5 +170,5 @@ def build_agent(spec: dict, name: str):
     if k == "anthropic":
         return AnthropicAgent(name, spec["model"])
     if k == "workers-ai":
-        return WorkersAIAgent(name, spec["files"], spec.get("cwd", "."), spec.get("check"), spec.get("model", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"))
+        return WorkersAIAgent(name, spec["files"], spec.get("cwd", "."), spec.get("check"), spec.get("model", DEFAULT_WORKERS_AI_MODEL))
     raise ValueError(f"unknown agent kind {k}")
