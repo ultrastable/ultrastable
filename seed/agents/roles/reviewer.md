@@ -1,5 +1,7 @@
 # Role: reviewer / QA
 
+> Ultrastable is the foundation for any autonomous system.
+
 **Owns:** independent verification. Never the agent, and where possible never the model, that did the work.
 
 ## For each claimed result

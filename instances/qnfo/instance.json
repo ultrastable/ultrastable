@@ -1,0 +1,18 @@
+{
+  "name": "QNFO",
+  "slug": "qnfo",
+  "kind": "research",
+  "owner": {"name": "Rowan", "jurisdiction": "NL", "contact_binding": "OWNER_CONTACT"},
+  "brand": {"public_name": "QNFO", "tagline": "A research programme run as an autonomous system on Ultrastable, the foundation for any autonomous system.", "separate_from": ["Ultrastable"]},
+  "idea": "An autonomous research programme: the existing fleet, adopted onto the foundation without a rewrite.",
+  "goals": ["Adopt the foundation kernel beside the running fleet", "Record the fleet inventory as the first verified evidence", "Route research funding through the shared funding loop"],
+  "positioning": "QNFO is the proof case: an existing autonomous research fleet that adopts the foundation.",
+  "funding": {"routes": [{"id": "research-grants", "entity_only": false}], "individual_eligible_only": true},
+  "social": {"channels": [], "mode": "dry-run"},
+  "runtime": {"provider": "cloudflare"},
+  "repos": {"org": "QNFO", "names": ["qnfo-workers", "qnfo-audit", "qnfo-ops"], "canonical": "QNFO/qnfo-workers"},
+  "disclosure": {"public_allowed": true, "gate": "none", "safe_now_only": false},
+  "ip": {"has_invention": false, "priority_filed": false, "has_practitioner": false},
+  "budget": {"usd_per_month": 0, "actions_minutes_monthly": 2000},
+  "facts": {"has_institution": false}
+}

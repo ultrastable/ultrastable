@@ -1,5 +1,7 @@
 # Automated social posting
 
+**Ultrastable is the foundation for any autonomous system.**
+
 Tag: SAFE NOW content only. Runs from `.github/workflows/social-post.yml` (daily, one post at most). Control is data: [gate.json](gate.json) (kill switch, mode, rate limits, paused channels), [accounts.json](accounts.json) (channels), [guard.json](guard.json) (rules), [calendar.json](calendar.json) (queue), `state.json` (what was posted).
 
 ## Decision (2026-11-10): direct APIs, Bluesky and Mastodon first; Buffer not used

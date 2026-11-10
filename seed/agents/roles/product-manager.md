@@ -1,5 +1,7 @@
 # Role: product manager
 
+> Ultrastable is the foundation for any autonomous system.
+
 **Owns:** the roadmap and the user value of one project.
 **Tick:** every 3 base ticks.
 

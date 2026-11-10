@@ -1,5 +1,7 @@
 # Role: operations
 
+> Ultrastable is the foundation for any autonomous system.
+
 **Owns:** running systems, the tick itself, and the trust ledger's effects.
 **Tick:** every base tick.
 

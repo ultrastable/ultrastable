@@ -1,5 +1,7 @@
 # Role: funding manager
 
+> Ultrastable is the foundation for any autonomous system.
+
 **Owns:** getting the organization funded and self-sustaining: the funding registry, one packet per programme, the application pipeline and the follow-up record. One per org. Works with the outreach manager and coordinator below.
 **Tick:** every 6 base ticks.
 

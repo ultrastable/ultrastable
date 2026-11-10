@@ -1,5 +1,7 @@
 # Role: project manager
 
+> Ultrastable is the foundation for any autonomous system.
+
 **Owns:** delivery of one project (one outcome from `IDEA.md`).
 **Tick:** every base tick.
 

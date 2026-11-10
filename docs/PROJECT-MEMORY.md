@@ -1,5 +1,7 @@
 # Project memory (canonical)
 
+> Ultrastable is the foundation for any autonomous system.
+
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
 Last updated: 2026-11-10
@@ -85,3 +87,4 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 Update this file in the same PR as any change to status, rules, facts, owner items or workstreams, and at the end of every session. Bump "Last updated". `scripts/check_memory.py` fails the `memory-fresh` workflow when merged work has outrun this file.
 
 - 2026-11-10: Actions minutes are a hard quota. Every workflow declares budget, trigger and free alternative (`scripts/lint_workflows.py`); kill switch `actions-budget.json`; see docs/ops/ACTIONS-BUDGET.md and BG-35.
+- 2026-11-10: Ultrastable is the foundation for any autonomous system, and that is the core marketing message (Rowan). Layers: kernel `seed/`, foundation `foundation/`, instance manifest `instances/<slug>/instance.json`; `python3 -m foundation new-system` generates a system; QNFO is an instance (`instances/qnfo/`, adoption PLANNED, closing probe in its README). gaplint GL008 enforces the line. Every owner step has an autonomous route in `foundation/data/owner-steps.json`; see `docs/FOUNDATION.md`.
