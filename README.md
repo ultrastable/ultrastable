@@ -2,6 +2,8 @@
 
 # Ultrastable
 
+**Ultrastable is the foundation for any autonomous system.**
+
 [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io) ![visibility](https://img.shields.io/badge/repo-private-12342A) ![stage](https://img.shields.io/badge/stage-pre--filing-FFC857) [![checks](https://github.com/ultrastable/ultrastable/actions/workflows/checks.yml/badge.svg)](https://github.com/ultrastable/ultrastable/actions/workflows/checks.yml)
 
 **An autonomous development platform: an organization of virtual managers and staff that runs your projects, scores its own decisions, earns wider autonomy from its track record, and only interrupts a person for steps that cannot be undone.**
@@ -15,6 +17,8 @@ Private repository, system of record. If it is not here, it does not exist. **No
 4. **Earned trust:** a ledger widens autonomy from verified results; one interrupt gate for the irreversible.
 5. **Bootstrap:** from one idea file to a running organization.
 6. **Portable:** one core, Cloudflare and Google Cloud adapters.
+
+Foundation architecture: [docs/FOUNDATION.md](docs/FOUNDATION.md). New system: `python3 -m foundation new-system --manifest instances/<slug>/instance.json --out <dir>`.
 
 Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/architecture.md](platform/docs/architecture.md).
 

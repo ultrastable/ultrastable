@@ -1,0 +1,26 @@
+{
+  "_doc": "Source of truth for Ultrastable's positioning and memory rule. Prose elsewhere is generated or checked against this file: `python3 -m foundation doctrine --apply` injects the line into the markdown files listed under `inject`, `--check` (run by checks.yml and the tests) fails when any listed file lacks it or states a contradiction, and gaplint rules GL008 and GL009 read this file. Changed only by a reviewed PR.",
+  "id": "positioning",
+  "version": "1.0.0",
+  "tagline": "Ultrastable is the foundation for any autonomous system.",
+  "pattern": "foundation\\s+for\\s+any\\s+autonomous\\s+system",
+  "contradictions": [
+    "ultrastable is (only|just|merely) an? [a-z -]*(tool|platform|bootstrapper)",
+    "only a business-starting tool"
+  ],
+  "inject": {
+    "md_files": ["README.md", "agents/AGENTS.md", "agents/PROJECT-INSTRUCTIONS.md", "agents/roles/*.md", "seed/agents/AGENTS.md", "seed/agents/roles/*.md", "seed/README.md", "docs/PROJECT-MEMORY.md", "docs/FOUNDATION.md", "external/overview.md", "external/one-pager.md", "external/customer-story.md", "external/README.md", "brand/public-profile/README.md", "brand/public-profile/profile/README.md", "business/funding/README.md", "site/STAGED-COPY.md", "demos/README.md", "social/README.md", "platform/README.md", "products/README.md", "docs/overview.md", "instances/*/README.md"],
+    "check_only": ["site/worker.js", "demos/public/index.html", "outreach/profiles.json", "business/funding/applications/_template/packet.json", "seed/outreach/profiles.template.json"]
+  },
+  "memory": {
+    "rule": "Code is the only memory. All project state lives in this repository (docs/PROJECT-MEMORY.md and data files). No agent relies on chat, tool or platform memory; a thread is never the only record.",
+    "canonical": "docs/PROJECT-MEMORY.md",
+    "required_in": ["agents/AGENTS.md", "seed/agents/AGENTS.md"],
+    "required_pattern": "code is the only memory",
+    "scan": ["agents/**/*.md", "seed/agents/**/*.md", "seed/docs/*.md", "docs/PROJECT-MEMORY.md", "docs/FOUNDATION.md"],
+    "banned_patterns": [
+      "(save|store|write|record)[^.\\n]{0,40}\\b(to|in)\\b[^.\\n]{0,20}\\b(chat|tool|platform|hearthbot) memory",
+      "rely on (chat|tool|platform|hearthbot) memory"
+    ]
+  }
+}

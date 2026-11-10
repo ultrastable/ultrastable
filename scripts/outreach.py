@@ -34,6 +34,7 @@ def parse_day(s):
     return datetime.date.fromisoformat(s)
 
 
+
 class Engine:
     def __init__(self, today):
         self.today = today
@@ -112,6 +113,7 @@ class Engine:
             f"Target: {key}  |  Route: {t['route']}  |  Source status: {item['status']} (last verified {item['last_verified']})",
             f"Programme page: {item['url']}", f"Programme amount (as published): {item['amount']}", f"Deadline: {deadline}", "",
             "## What we do", prof["summary"], "",
+            "## Positioning", prof["tagline"], "",
             "## Where we are", prof["stage"], "",
             "## Request", prof["ask"], "",
             "## Reply route", prof["contact_route"], "",

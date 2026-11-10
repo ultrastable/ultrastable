@@ -1,0 +1,66 @@
+"""Doctrine as code. Ultrastable is the foundation for any autonomous system, and that sentence exists here first.
+
+`doctrine/positioning.json` is the source of truth. `apply` injects the tagline into listed markdown files; `check` fails on
+any listed file that lacks it or states a contradiction, and on a missing memory rule. The same file feeds gaplint GL008/GL009
+and the new-system generator, so prose never drifts from code.
+"""
+from __future__ import annotations
+import fnmatch, json, re
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+PATH = "doctrine/positioning.json"
+
+
+def load(root=REPO) -> dict:
+    return json.loads((Path(root) / PATH).read_text(encoding="utf-8"))
+
+
+def files(root, globs):
+    root = Path(root)
+    seen = []
+    for g in globs:
+        seen += [p.relative_to(root).as_posix() for p in sorted(root.glob(g)) if p.is_file()]
+    return sorted(set(seen))
+
+
+def apply(root=REPO) -> list[str]:
+    d, root, changed = load(root), Path(root), []
+    pat = re.compile(d["pattern"], re.I | re.S)
+    for rel in files(root, d["inject"]["md_files"]):
+        s = (root / rel).read_text(encoding="utf-8")
+        if pat.search(s):
+            continue
+        lines = s.split("\n")
+        quote = rel.startswith(("agents/", "seed/agents/")) or rel.endswith("PROJECT-MEMORY.md")
+        line = ("> " if quote else "**") + d["tagline"] + ("" if quote else "**")
+        i = next((n for n, l in enumerate(lines) if l.startswith("# ")), None)
+        lines[(i + 1 if i is not None else 0):(i + 1 if i is not None else 0)] = ["", line] if i is not None else [line, ""]
+        (root / rel).write_text("\n".join(lines), encoding="utf-8")
+        changed.append(rel)
+    return changed
+
+
+def check(root=REPO) -> list[str]:
+    d, root, bad = load(root), Path(root), []
+    pat = re.compile(d["pattern"], re.I | re.S)
+    contra = [re.compile(c, re.I) for c in d["contradictions"]]
+    for rel in files(root, d["inject"]["md_files"]) + [r for r in d["inject"]["check_only"] if (root / r).exists()]:
+        s = (root / rel).read_text(encoding="utf-8", errors="replace")
+        if not pat.search(s):
+            bad.append(f"{rel}: lacks the positioning line")
+        for c in contra:
+            if c.search(s):
+                bad.append(f"{rel}: contradicts the positioning ({c.pattern})")
+    for rel in d["memory"]["required_in"]:
+        p = root / rel
+        if p.exists() and not re.search(d["memory"]["required_pattern"], p.read_text(encoding="utf-8"), re.I):
+            bad.append(f"{rel}: lacks the memory rule ('{d['memory']['required_pattern']}')")
+    banned = [re.compile(b, re.I) for b in d["memory"]["banned_patterns"]]
+    for rel in files(root, d["memory"]["scan"]):
+        for n, ln in enumerate((root / rel).read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+            if any(b.search(ln) for b in banned):
+                bad.append(f"{rel}:{n}: relies on external memory")
+    if not (root / d["memory"]["canonical"]).exists():
+        bad.append(f"{d['memory']['canonical']}: canonical memory file missing")
+    return bad

@@ -124,6 +124,45 @@ def memory_file(root, cfg):
         yield Finding("GL007", spec["path"], 1, "memory file has no 'Last updated: YYYY-MM-DD' line")
 
 
+# GL008: positioning. Public copy and agent files carry the tagline "Ultrastable is the foundation for any autonomous system".
+def _doctrine(root, spec):
+    """Spec values from a doctrine file when `doctrine` is set (the file is the source of truth)."""
+    import json
+    if spec.get("doctrine") and (root / spec["doctrine"]).exists():
+        d = json.loads(read(root / spec["doctrine"]))
+        inj = d["inject"]
+        return {"pattern": d["pattern"], "text": d["tagline"], "files": inj["md_files"] + inj["check_only"], "doctrine": d}
+    return spec
+
+
+def tagline(root, cfg):
+    spec = _doctrine(root, cfg["tagline"])
+    pat = re.compile(spec["pattern"], re.I | re.S)
+    for rel, p in iter_files(root, spec["files"]):
+        if not pat.search(read(p)):
+            yield Finding("GL008", rel, 1, "positioning line missing: " + spec["text"])
+
+
+# GL009: code is the only memory. The canonical memory file exists, agent files state the rule, nothing relies on external memory.
+def memory_in_code(root, cfg):
+    spec = cfg["tagline"]
+    if not (spec.get("doctrine") and (root / spec["doctrine"]).exists()):
+        return
+    import json
+    m = json.loads(read(root / spec["doctrine"]))["memory"]
+    if not (root / m["canonical"]).exists():
+        yield Finding("GL009", m["canonical"], 1, "canonical memory file missing")
+    for rel in m["required_in"]:
+        p = root / rel
+        if p.exists() and not re.search(m["required_pattern"], read(p), re.I):
+            yield Finding("GL009", rel, 1, "agent file lacks the rule '" + m["required_pattern"] + "'")
+    pats = [re.compile(x, re.I) for x in m["banned_patterns"]]
+    for rel, p in iter_files(root, m["scan"]):
+        for i, ln in enumerate(read(p).splitlines(), 1):
+            if any(r.search(ln) for r in pats):
+                yield Finding("GL009", rel, i, "relies on external memory: " + ln.strip()[:80])
+
+
 RULES = {
     "GL001": gap_entries,
     "GL002": owner_cards,
@@ -132,4 +171,6 @@ RULES = {
     "GL005": public_safe,
     "GL006": secrets,
     "GL007": memory_file,
+    "GL008": tagline,
+    "GL009": memory_in_code,
 }

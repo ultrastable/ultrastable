@@ -117,3 +117,17 @@ Fix in code: `deploy/deploy-site.mjs` plus the manual `deploy-site` workflow; de
 Default in effect: connector deploy from a session, or `node deploy/deploy-site.mjs` with a Cloudflare token.
 Closing probe: `curl -sI https://ultrastable.io/social-card.png` returns `image/png` (passed 2026-11-10).
 Images moved to KV and the worker split so the connector can upload it inline. Chunked base64 copies of about 12 KB hit the session output limit twice; the working method is chunks of about 3 KB verified by SHA-256 in the sandbox (the two images are in KV). Remaining: upload `site/worker.js` (gzip+base64 about 12 KB, four chunks) with the `ASSETS` binding. Also fixed: `deploy-site` ran red on every push without secrets, burning private-repo Actions minutes; it is now manual-only and variable-gated. Closing probe: `curl -s https://ultrastable.io/team` returns 200.
+
+## BG-36: every owner step was a manual note, not a coded route (2026-11-10)
+Symptom: each new system re-discovered the same blockers (credentials, filing route, accounts) and handed them to the owner as prose; the generic bootstrap had no single instance file and no generator.
+Surfaces tried: seed case library and `org` stage (partial: cards only, no routes run), owner-steps table (documentation only).
+Fix in code: `foundation/` (manifest, `new-system`, credential ladder, owner-step engine, filing planner, minute guard, preflight) with fixture tests in `tests/foundation/`, run in `checks.yml`; instances for Ultrastable and QNFO.
+Default in effect: cards stay open with their defaults; every system boots dry-run.
+Closing probe: `python3 -m unittest discover -s tests/foundation` passes in CI and `python3 -m foundation new-system` on `instances/qnfo/instance.json` reports status ok.
+
+## BG-37: positioning was not enforced (2026-11-10)
+Symptom: copy described Ultrastable as a development platform in places and as a bootstrapper in others; the core message "Ultrastable is the foundation for any autonomous system" appeared nowhere consistently.
+Surfaces tried: manual edits per file (drifted).
+Fix in code: gaplint rule GL008 with the file list in `gaplint.json`; the generator writes the line into every instance; site hero, demos, outreach packets, social calendar and agent files carry it.
+Default in effect: a file missing the line fails `checks.yml`.
+Closing probe: `PYTHONPATH=products/gaplint python3 -m gaplint .` reports 0 findings.

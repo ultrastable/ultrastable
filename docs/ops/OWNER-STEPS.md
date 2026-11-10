@@ -16,3 +16,5 @@ Every other item is done by the fleet. Each row: time estimate, what removes it,
 Merged duplicates: issue cards #103 to #107 and #96 (BIZ-4) are this table. Order: 1, 2, 7, then 5, 6, 8; step 3 and 4 only if automation needs them.
 
 Status 2026-11-10: site live (BG-25 closed), `hello@` live (WEB-5 closed), org Projects board created with all open issues loaded (#53 closed). Remaining rows are identity-bound: 1, 2, 5, 6, 7, 8.
+
+Status 2026-11-10 (foundation): each row above is encoded as an ordered chain of autonomous routes with at most one card in `foundation/data/owner-steps.json` and run by `foundation/ownersteps.py`; see docs/FOUNDATION.md for what remains identity-bound.

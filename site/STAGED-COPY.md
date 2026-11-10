@@ -1,5 +1,7 @@
 # Staged site copy (PRIVATE, NOT PUBLISHED)
 
+**Ultrastable is the foundation for any autonomous system.**
+
 Status: draft for Rowan's review. Do not publish until the provisional is filed (see brand/BRAND.md, "Public versus private"). Voice: plain, calm, no hype, claims labeled RUNNING, BUILT or PLANNED. This is about an autonomous system for any kind of organization, not research. QNFO appears only as the proof case.
 
 ## Headline

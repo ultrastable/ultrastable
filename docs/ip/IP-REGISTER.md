@@ -31,18 +31,19 @@ Provisional draft IP-1, prior art IP-2, evidence log IP-3, counsel IP-4, filing 
 
 ## Live IP issue status
 <!-- IP-LIVE:start -->
-Issue status at 2026-11-10 08:58 UTC:
+Issue status at 2026-11-10 15:28 UTC:
 
 | Issue | Title | State |
 |---|---|---|
-| [#1](https://github.com/ultrastable/ultrastable/issues/1) | P0 Entity, IP assignment and trademark | open |
-| [#26](https://github.com/ultrastable/ultrastable/issues/26) | IP-1: Provisional draft: full spec, claims, figures | open |
-| [#27](https://github.com/ultrastable/ultrastable/issues/27) | IP-2: Prior-art search with differentiators | open |
+| [#1](https://github.com/ultrastable/ultrastable/issues/1) | P0 Entity, IP assignment and trademark | done |
+| [#26](https://github.com/ultrastable/ultrastable/issues/26) | IP-1: Provisional draft: full spec, claims, figures | done |
+| [#27](https://github.com/ultrastable/ultrastable/issues/27) | IP-2: Prior-art search with differentiators | done |
 | [#28](https://github.com/ultrastable/ultrastable/issues/28) | IP-3: Fill the evidence log with dated QNFO commits and migrations | open |
 | [#29](https://github.com/ultrastable/ultrastable/issues/29) | IP-4: Counsel review | open |
-| [#30](https://github.com/ultrastable/ultrastable/issues/30) | IP-5: File provisional | open |
+| [#30](https://github.com/ultrastable/ultrastable/issues/30) | IP-5: File provisional | done |
 | [#31](https://github.com/ultrastable/ultrastable/issues/31) | IP-6: Put the 12-month conversion deadline (non-provisional / PCT) on the calendar with 90/60/30-day reminders | open |
 | [#32](https://github.com/ultrastable/ultrastable/issues/32) | IP-7: Non-provisional and/or PCT filing | open |
-| [#33](https://github.com/ultrastable/ultrastable/issues/33) | IP-8: Trademark clearance and filing decision for "Ultrastable" | open |
+| [#33](https://github.com/ultrastable/ultrastable/issues/33) | IP-8: Trademark clearance and filing decision for "Ultrastable" | done |
 | [#34](https://github.com/ultrastable/ultrastable/issues/34) | PF-1: Hold the disclosure gate: nothing public until filed | open |
+| [#110](https://github.com/ultrastable/ultrastable/issues/110) | FUND-8: Trademark search and registration plan | done |
 <!-- IP-LIVE:end -->

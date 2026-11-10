@@ -1,5 +1,7 @@
 # Funding and strategy package (INTERNAL, NDA ONLY)
 
+**Ultrastable is the foundation for any autonomous system.**
+
 Created 2026-11-10. Two routes, one decision: Ultrastable can be an open-source project that anyone uses, a commercial venture someone else runs, or an open-core hybrid. This folder holds the options, the recommendation and the machinery that keeps them current.
 
 | File | What it is |

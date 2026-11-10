@@ -1,5 +1,7 @@
 # ultrastable/seed
 
+**Ultrastable is the foundation for any autonomous system.**
+
 The spark. One person writes an idea; this repo turns it into a running organization of virtual managers and staff, server-side, on a heartbeat.
 
 ```

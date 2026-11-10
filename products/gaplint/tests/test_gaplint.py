@@ -32,6 +32,16 @@ def ids(root, **over):
     return [f.rule for f in run(root, cfg)]
 
 
+class Tagline(unittest.TestCase):
+    def test_missing_tagline_flagged_and_present_passes(self):
+        d = make({"README.md": "Ultrastable is the foundation for any autonomous system.\n", "x/README.md": "nothing\n"})
+        cfg = load(Path(d.name))
+        cfg["rules"] = ["GL008"]
+        cfg["tagline"]["files"] = ["README.md", "x/README.md"]
+        got = [(f.rule, f.path) for f in run(Path(d.name), cfg)]
+        self.assertEqual(got, [("GL008", "x/README.md")])
+
+
 class Rules(unittest.TestCase):
     def test_clean_repo(self):
         d = make({"docs/BOOTSTRAP-GAPS.md": GOOD_GAP, "agents/AGENTS.md": RULES_OK,

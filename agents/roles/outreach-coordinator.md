@@ -1,5 +1,7 @@
 # Role: outreach coordinator
 
+> Ultrastable is the foundation for any autonomous system.
+
 **Owns:** the outreach calendar and the hand-offs between the funding manager, the outreach manager, and the other roles. Keeps one view of every conversation so no funder is contacted twice by two agents and no reply goes unrecorded.
 **Tick:** every base tick.
 

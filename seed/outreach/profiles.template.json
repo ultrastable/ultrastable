@@ -4,7 +4,7 @@
     "default": {
       "name": "{org_name}",
       "tracks": ["A", "B", "R"],
-      "tagline": "{org_name}",
+      "tagline": "{org_name}: built on Ultrastable, the foundation for any autonomous system.",
       "summary": "{summary}",
       "stage": "Early. {stage}",
       "ask": "We would like to understand whether this programme fits and what it would take to apply. If it does not fit, a pointer to a better programme is just as useful.",
