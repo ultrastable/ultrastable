@@ -22,7 +22,7 @@ import urllib.request
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import remediation_consumer as RC  # noqa: E402
 
-REPO = os.environ.get("GITHUB_REPOSITORY", "QNFO/qnfo-workers")
+REPO = os.environ.get("GITHUB_REPOSITORY") or __import__("tenant").TENANT["repo"]
 GRACE_MIN = int(os.environ.get("CLAIM_REAPER_GRACE_MIN", "30"))
 
 

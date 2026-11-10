@@ -13,8 +13,12 @@ var SNAP_KEY = "deploywatch:snapshot";
 var REPORT_KEY = "deploywatch:report";
 var THR_KEY = "guard:cost_thresholds";
 var DEFAULT_TTL = 900; var MAX_TTL = 7200;
-var FLEET_URLS = ["https://ops.qnfo.org/fleet", "https://qnfo-ops.q08.workers.dev/fleet"];
-var COST_URLS = ["https://ops.qnfo.org/cost", "https://qnfo-ops.q08.workers.dev/cost"];
+// ULTRASTABLE-TENANT-1: tenant values come from the TENANT_JSON binding (a JSON string), never from source. Empty defaults refuse to probe.
+var FLEET_URLS = []; var COST_URLS = []; var WORKER_SUFFIX = "";
+function applyTenant(env) {
+  try { var t = JSON.parse((env && env.TENANT_JSON) || "{}"); FLEET_URLS = t.fleet_urls || []; COST_URLS = t.cost_urls || []; WORKER_SUFFIX = t.worker_suffix || ""; }
+  catch (e) { console.error(JSON.stringify({ evt: "deploy-guard:tenant:caught", error: String((e && e.message) || e) })); }
+}
 function json(o, s) {
   var h = { "content-type": "application/json", "access-control-allow-origin": "*" };
   if (s === 503 && o && o.retry_after_sec) h["retry-after"] = String(o.retry_after_sec); // D1-LOCK-OVERLOAD-1: a refused lock call says when to ask again
@@ -155,7 +159,7 @@ async function readHealthViaBinding(env, w) {
 async function readLiveHealthVersion(w, pauseMs, env) {
   var viaBinding = await readHealthViaBinding(env, w);
   if (viaBinding) return viaBinding;
-  var url = "https://" + w + ".q08.workers.dev/health";
+  var url = "https://" + w + WORKER_SUFFIX + "/health";
   var lastErr = "";
   for (var attempt = 0; attempt < 2; attempt++) {
     var c = new AbortController(); var timerId = setTimeout(function () { c.abort(); }, 6000);
@@ -282,7 +286,7 @@ async function tombstoneBody(name) {
   for (var i = 0; i < paths.length; i++) {
     try {
       var c = new AbortController(); var timerId = setTimeout(function () { c.abort(); }, 8000);
-      var r = await fetch("https://" + name + ".q08.workers.dev" + paths[i], { signal: c.signal, headers: { accept: "application/json" } });
+      var r = await fetch("https://" + name + WORKER_SUFFIX + paths[i], { signal: c.signal, headers: { accept: "application/json" } });
       clearTimeout(timerId);
       if (r.status !== 410) return null;
       var b = await r.text();
@@ -528,7 +532,7 @@ async function capabilitySnapshot(env, force, fleetProbe) {
   async function one(name) {
     try {
       var c = new AbortController(); var timerId = setTimeout(function () { c.abort(); }, 8000);
-      var r = await fetch("https://" + name + ".q08.workers.dev/health", { signal: c.signal, headers: { accept: "application/json", "user-agent": "qnfo-deploy-guard-capability/1.0" } });
+      var r = await fetch("https://" + name + WORKER_SUFFIX + "/health", { signal: c.signal, headers: { accept: "application/json", "user-agent": "qnfo-deploy-guard-capability/1.0" } });
       clearTimeout(timerId);
       out.probed++;
       if (!r.ok) { out.failed.push(name + ":" + r.status); return; }
@@ -1040,8 +1044,9 @@ function aiControlReason(body) {
   return reason && reason.length <= AI_CONTROL_REASON_LIMIT ? reason : null;
 }
 export default {
-  async scheduled(event, env, ctx) { var fleetProbe = getJson(FLEET_URLS, 15000, "scheduled-fleet"); ctx.waitUntil(sweepExpiredClaims(env, Date.now()).catch(function (e) { const msg = String((e && e.message) || e); console.error(JSON.stringify({ evt: "deploy-guard:claim-sweep:caught", error: msg })); })); ctx.waitUntil(scan(env, fleetProbe).catch(function (e) { const msg = String((e && e.message) || e); console.error(JSON.stringify({ evt: "deploy-guard:workList:caught", error: msg })); })); ctx.waitUntil(capabilitySnapshot(env, false, fleetProbe).catch(function (e) { const msg = String((e && e.message) || e); console.error(JSON.stringify({ evt: "deploy-guard:workList:caught", error: msg })); })); },
+  async scheduled(event, env, ctx) { applyTenant(env); var fleetProbe = getJson(FLEET_URLS, 15000, "scheduled-fleet"); ctx.waitUntil(sweepExpiredClaims(env, Date.now()).catch(function (e) { const msg = String((e && e.message) || e); console.error(JSON.stringify({ evt: "deploy-guard:claim-sweep:caught", error: msg })); })); ctx.waitUntil(scan(env, fleetProbe).catch(function (e) { const msg = String((e && e.message) || e); console.error(JSON.stringify({ evt: "deploy-guard:workList:caught", error: msg })); })); ctx.waitUntil(capabilitySnapshot(env, false, fleetProbe).catch(function (e) { const msg = String((e && e.message) || e); console.error(JSON.stringify({ evt: "deploy-guard:workList:caught", error: msg })); })); },
   async fetch(request, env, ctx) {
+    applyTenant(env);
     try { return await routeFetch(request, env, ctx); }
     catch (e) { return fetchFailed(request, e); }
   }

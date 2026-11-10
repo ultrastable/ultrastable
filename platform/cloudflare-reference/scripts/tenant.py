@@ -10,7 +10,7 @@ import json
 import os
 
 _EMPTY = {"host_suffixes": [], "host_exact": [], "private_databases": [],
-          "health_url": "", "ledger_db": "", "databases": {}}
+          "health_url": "", "repo": "", "canary_workers": [], "ledger_db": "", "databases": {}}
 
 
 def load():

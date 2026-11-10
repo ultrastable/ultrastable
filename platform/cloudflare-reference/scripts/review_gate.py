@@ -34,6 +34,10 @@ import sys
 import time
 import urllib.error
 import urllib.request
+import os as _o
+sys.path.insert(0, _o.path.dirname(_o.path.abspath(__file__)))
+from tenant import TENANT  # ULTRASTABLE-TENANT-1
+LEDGER_DB_ID = TENANT["databases"].get(TENANT["ledger_db"], "")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -576,7 +580,7 @@ def record(acct, token, sha, pr, mode, cls, result, verdict, ms):
         from apply_migrations import d1
         meta = {"pr": pr, "sha": sha, "mode": mode, "verdict": verdict, "reasons": cls["reasons"][:6], "models": result["models"], "errors": result["errors"],
                 "findings": {s: sum(1 for f in result["findings"] if f["severity"] == s) for s in ("High", "Medium", "Low")}, "usd": round(result["cost"], 5), "ms": ms}
-        d1(acct, token, "35e2e573-92f3-46ac-83c6-22f6429fc5e5", "INSERT OR REPLACE INTO cloud_ops_events (id, ts, kind, status, text, job, meta) VALUES (?1, strftime('%Y-%m-%dT%H:%M:%SZ', 'now'), 'review-gate', ?2, ?3, 'pr-lane', ?4)",
+        d1(acct, token, LEDGER_DB_ID, "INSERT OR REPLACE INTO cloud_ops_events (id, ts, kind, status, text, job, meta) VALUES (?1, strftime('%Y-%m-%dT%H:%M:%SZ', 'now'), 'review-gate', ?2, ?3, 'pr-lane', ?4)",
            ["review-gate-" + sha[:12], "ok" if not result["errors"] else "partial", ("REVIEW-GATE-1 PR %s %s: %s, %d finding(s)" % (pr, sha[:7], verdict, len(result["findings"])))[:300], json.dumps(meta)[:2000]])
         return True
     except Exception as e:  # noqa: BLE001
@@ -593,7 +597,7 @@ def claim_head(acct, token, sha, pr):
     try:
         from apply_migrations import d1
         meta = {}
-        d1(acct, token, "35e2e573-92f3-46ac-83c6-22f6429fc5e5", "INSERT OR IGNORE INTO cloud_ops_events (id, ts, kind, status, text, job, meta) VALUES (?1, strftime('%Y-%m-%dT%H:%M:%SZ', 'now'), 'review-gate', 'running', ?2, 'pr-lane', '{}')",
+        d1(acct, token, LEDGER_DB_ID, "INSERT OR IGNORE INTO cloud_ops_events (id, ts, kind, status, text, job, meta) VALUES (?1, strftime('%Y-%m-%dT%H:%M:%SZ', 'now'), 'review-gate', 'running', ?2, 'pr-lane', '{}')",
            ["review-gate-" + sha[:12], "REVIEW-GATE-1 PR %s %s: running" % (pr, sha[:7])], meta)
         return int(meta.get("changes", 1)) > 0
     except Exception:  # noqa: BLE001
@@ -605,7 +609,7 @@ def runs_today(acct, token):
         return 0
     try:
         from apply_migrations import d1
-        rows = d1(acct, token, "35e2e573-92f3-46ac-83c6-22f6429fc5e5", "SELECT COUNT(*) AS n FROM cloud_ops_events WHERE kind = 'review-gate' AND ts > strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-1 day')")
+        rows = d1(acct, token, LEDGER_DB_ID, "SELECT COUNT(*) AS n FROM cloud_ops_events WHERE kind = 'review-gate' AND ts > strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '-1 day')")
         return int(rows[0]["n"]) if rows else 0
     except Exception:  # noqa: BLE001
         return 0
@@ -905,7 +909,7 @@ def selftest():
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--pr", type=int)
-    ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY") or "QNFO/qnfo-workers")
+    ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY") or TENANT["repo"])
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--replay")
     ap.add_argument("--expected")

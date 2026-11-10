@@ -26,6 +26,9 @@ import re
 import shutil
 import subprocess
 import sys
+import os as _o
+sys.path.insert(0, _o.path.dirname(_o.path.abspath(__file__)))
+from tenant import TENANT  # ULTRASTABLE-TENANT-1
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.environ.get("WORKER_RELEASE_ROOT") or os.path.dirname(HERE)
@@ -61,7 +64,7 @@ def open_pr_numbers(prs_file=None):
     if prs_file:
         text = open(prs_file, encoding="utf-8").read()
     else:
-        p = subprocess.run(["gh", "api", "repos/QNFO/qnfo-workers/pulls?state=open&per_page=100", "--paginate", "--jq", ".[].number"],
+        p = subprocess.run(["gh", "api", "repos/%s/pulls?state=open&per_page=100" % TENANT["repo"], "--paginate", "--jq", ".[].number"],
                            capture_output=True, text=True)
         if p.returncode != 0:
             print("warning: cannot list the open pull requests (%s); claims cover main only" % (p.stderr or "").strip()[:160], file=sys.stderr)

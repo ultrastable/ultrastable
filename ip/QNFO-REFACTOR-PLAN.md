@@ -70,3 +70,9 @@ Legend: MOVE = source becomes private, qnfo-workers consumes the artifact. STUB 
 - Disclosed material stays disclosed (see DISCLOSURE-INVENTORY.md). Whether the 2026-10-26 to 2026-11-10 public SQL headers and PLUSSING.md damage foreign rights is for the attorney.
 - The product page ultrastable.io and docs/PRODUCT-ULTRASTABLE.md keep describing the product; keep them at benefit level and do not add mechanism.
 - Public worker behaviour is still observable from the deployed Workers (HTTP surfaces such as /api/managers on fleet.qnfo.org). Review those endpoints for claim-revealing output (allocation formulas, trust ladders) before the attorney's filing date.
+
+## Execution status (2026-11-10)
+
+- Step 1 (parameterise) DONE for the reference copies in `platform/cloudflare-reference/scripts`: `tenant.py` supplies hosts, private databases, health URL, repo, canary workers, ledger DB id (`ULTRASTABLE_TENANT` JSON file; empty and strict by default). Verified with `tenant.qnfo-selftest.json`: `deploy_probes.py --selftest` ok (80 checks), `review_gate.py --selftest` ok (41). `canary_revert.py --selftest` passes 39 of 40; the one failure reads each worker's `probes.json` from the fleet repo, which is not part of the reference tree (passes in qnfo-workers, 40 checks). Without a tenant file the defaults deny every host, so 7 deploy_probes checks that assume QNFO hosts fail by design. Remaining QNFO literals sit only inside self-test fixtures and `qnfo-deploy-guard/worker.js` (URLs, lines 3, 16-17), still to parameterise.
+- Step 0 (freeze) NOT executed: a public CI rule that lists the "move" paths would itself publish which files carry claim logic. Implement it as a check shipped inside the private artifact (step 3 mechanism), or as a CODEOWNERS entry using only directory names, after attorney review.
+- Steps 2-8 not started: they change qnfo-workers, which auto-deploys; each needs a work claim and a shadow run first.

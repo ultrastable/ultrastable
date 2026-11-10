@@ -86,9 +86,7 @@ SELECT 'plus_kept_share_30d', 'Product plussing: fewer than half of measured plu
   'qnfo-fleet-control', 'agent_issues', 24, 1, 'PLUSSING-4: kept plus share at least 0.5 in 30 days'
 WHERE NOT EXISTS (SELECT 1 FROM analytics_metric_triggers WHERE metric_key = 'plus_kept_share_30d');
 
-UPDATE roadmap_implementation
-SET status = 'built', evidence = 'migrations/2026-11-01-plussing-4.sql: seven-day outcome/guard check, verified revert path, and plus_shipped_7d plus plus_kept_share_30d triggers'
-WHERE source = 'plussing-2026' AND item = 'PLUS-4';
+-- ULTRASTABLE-TENANT-1: tenant data (QNFO seed/ledger rows) removed from the product copy; seed your own in your tenant repo.
 
 INSERT OR IGNORE INTO capability_ledger
   (capability, provenance, prerequisites, reliability, acquired_at, evidence)

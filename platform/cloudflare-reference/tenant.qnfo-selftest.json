@@ -2,5 +2,6 @@
  "host_exact": ["qnfo.org", "q08.org", "qwav.org", "qwav.tech"],
  "private_databases": ["qnfo-identity", "qnfo-outreach", "personal-life"],
  "health_url": "https://{worker}.q08.workers.dev/health",
+ "repo": "QNFO/qnfo-workers", "fleet_urls": ["https://ops.qnfo.org/fleet", "https://qnfo-ops.q08.workers.dev/fleet"], "cost_urls": ["https://ops.qnfo.org/cost", "https://qnfo-ops.q08.workers.dev/cost"], "worker_suffix": ".q08.workers.dev", "canary_workers": ["qnfo-fleet-control", "qnfo-ops", "qnfo-deploy-guard", "qnfo-gateway", "qnfo-ai", "qnfo-observability", "qnfo-code-orchestrator"],
  "ledger_db": "qnfo-audit",
  "databases": {"qnfo-audit": "35e2e573-92f3-46ac-83c6-22f6429fc5e5"}}

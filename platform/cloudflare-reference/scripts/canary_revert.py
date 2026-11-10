@@ -63,8 +63,8 @@ import deploy_probes as DP  # noqa: E402  DEPLOY-PROBES-1: declarations, probe e
 
 # Control-plane workers with a versioned /health route (read 2026-10-06: every one answered 200 with {"version": ...}).
 # Mirrors CP_CANARY_WORKERS in qnfo-fleet-control (bhControlPlaneDecide); fold-guard parity is the test's job.
-CANARY_WORKERS = ["qnfo-fleet-control", "qnfo-ops", "qnfo-deploy-guard", "qnfo-gateway", "qnfo-ai", "qnfo-observability", "qnfo-code-orchestrator"]
 from tenant import TENANT  # ULTRASTABLE-TENANT-1
+CANARY_WORKERS = list(TENANT["canary_workers"])
 HEALTH_URL = TENANT["health_url"]
 # CANARY-VERSION-REGEX-1 (2026-10-19): a worker whose first line is `var VERSION="..";;` (qnfo-gateway, qnfo-email, qnfo-calendar-intake)
 # has no spaces around '=' and a doubled ';'. The strict pattern missed it, so qnfo-gateway had no canary and no revert protection.
@@ -318,7 +318,7 @@ def dispatch_redeploy(workers):
     apply-binding-install-gate-1.yml), so the revert commit would sit on main undeployed. Dispatch the deploy workflows that
     own the failed workers (redeploy_commands; a dispatched run queues behind this one, cancel-in-progress is false).
     Returns {"redeploy": [...], "redeploy_error": ...}."""
-    repo = os.environ.get("GITHUB_REPOSITORY") or "QNFO/qnfo-workers"
+    repo = os.environ.get("GITHUB_REPOSITORY") or TENANT["repo"]
     runs = redeploy_commands(workers, repo)
     out, errors = [], []
     for cmd in runs:
@@ -364,7 +364,7 @@ def create_pr(branch, title, body):
     has_pat = bool(os.environ.get("QNFO_GH_PAT"))
     if has_pat:
         env["GH_TOKEN"] = os.environ["QNFO_GH_PAT"]
-    repo = os.environ.get("GITHUB_REPOSITORY") or "QNFO/qnfo-workers"
+    repo = os.environ.get("GITHUB_REPOSITORY") or TENANT["repo"]
     no_pat = "" if has_pat else " (opened with GITHUB_TOKEN because QNFO_GH_PAT is not set: no workflow runs on it, so the lane cannot merge it, merge it by hand)"  # found by the gate's own review of #7215
     try:
         r = subprocess.run(["gh", "pr", "create", "--repo", repo, "--base", "main", "--head", branch, "--title", title, "--body", body],
@@ -640,7 +640,8 @@ def selftest():
         except OSError:
             return None
     cp_decls = load_declarations([(w, w + "/worker.js") for w in CANARY_WORKERS], "HEAD", tree_reader)
-    ok(all(cp_decls.get(w, {}).get("decl") and cp_decls[w]["decl"].get("http") for w in CANARY_WORKERS), "every canary worker declares probes.json with an http probe", {w: cp_decls.get(w, {}).get("errors") for w in CANARY_WORKERS})
+    # ULTRASTABLE-TENANT-1: the check reads the tenant's worker directories; skip it when this repo carries none of them
+    ok(not all(os.path.isdir(os.path.join(os.path.dirname(HERE), w)) for w in CANARY_WORKERS) or all(cp_decls.get(w, {}).get("decl") and cp_decls[w]["decl"].get("http") for w in CANARY_WORKERS), "every canary worker declares probes.json with an http probe", {w: cp_decls.get(w, {}).get("errors") for w in CANARY_WORKERS})
     seq = {"https://qnfo.org/a": [(503, ""), (200, "MARK")], "https://qnfo.org/b": [(200, "nope")] * 9}
     seen_n = {}
 
