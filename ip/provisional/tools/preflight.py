@@ -226,6 +226,29 @@ else:
     else:
         ok("cover sheet counts match (claims, figures)")
 
+# 8. Europe package (priority filing from the Netherlands)
+EU = HERE.parent / "europe"
+need = ["README.md", "DECISION-MEMO.md", "SELF-FILING-WALKTHROUGH.md", "FEE-TABLE.md", "FORM-VALUES.md", "OWNER-CARD.md"]
+missing = [n for n in need if not (EU / n).exists()]
+if missing:
+    fail(f"ip/europe missing: {', '.join(missing)}")
+else:
+    ok("ip/europe package present")
+    eu_text = " ".join((EU / n).read_text(encoding="utf-8") for n in need)
+    if not re.search(r"not legal advice", eu_text, re.I):
+        fail("ip/europe lacks the not-legal-advice marker")
+    claim_run = {" ".join(w[i:i + 10]) for w in [re.findall(r"\w+", eu_text.lower())] for i in range(0, max(0, len(w) - 10))}
+    spec_w = re.findall(r"\w+", text.lower())
+    spec_sh = {" ".join(spec_w[i:i + 10]) for i in range(0, max(0, len(spec_w) - 10))}
+    if claim_run & spec_sh:
+        fail("ip/europe repeats a 10-word run from the specification")
+    else:
+        ok("ip/europe repeats no specification text")
+    if re.search(r"already (been )?(publicly )?disclosed|QNFO[^.]{0,40}no licen[cs]e", eu_text, re.I):
+        fail("ip/europe asserts prior disclosure or no licence")
+    else:
+        ok("ip/europe asserts nothing about prior disclosure")
+
 for m in oks: print("PASS ", m)
 for m in warns: print("WARN ", m)
 for m in fails: print("FAIL ", m)
