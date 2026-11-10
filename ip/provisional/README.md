@@ -18,4 +18,4 @@ Draft US provisional patent application for Ultrastable: an organization run by 
 ## Status
 
 - 2026-11-10: draft version 2 complete. Not filed. Bootstrapping embodiment ([0078a] to [0078j], FIG. 15, claims 47 to 57) added from the seed and AIOS thread. Next steps: attorney review, then Rowan files (identity-bound step).
-- Deadline that drives this: the same material is public in QNFO/qnfo-workers since 2026-08-10, so the US filing must be before 2027-08-10 at the latest, and sooner is better.
+- Timing: file early. Whether any earlier publication overlaps the claims is an open question for the attorney (see FILING-CHECKLIST section 1); it is not assumed.

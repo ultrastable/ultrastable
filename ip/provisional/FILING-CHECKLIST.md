@@ -2,14 +2,20 @@
 
 Prepared 2026-11-10. This is a working checklist, not legal advice. Have a registered patent attorney or agent review the specification before filing; the most valuable hour of their time is on the §101 framing and the claim-style summaries.
 
-## 1. Act first: the public-disclosure clock
+## 1. Prior-publication question for the attorney (open, not established)
 
-The concepts in this draft are already public. `QNFO/qnfo-workers` is a **public** repository that has documented them since it opened on 2026-08-10, including the virtual portfolio and program managers (MANAGEMENT-PERSONAS-1 to 11, from 2026-10-26), plussing (docs/PLUSSING.md, from 2026-10-29), the doctrine, trust ledger and interrupt gate, and the Ultrastable product page (docs/PRODUCT-ULTRASTABLE.md, 2026-11-10). qnfo.org/platform also describes it live.
+Open question, not a finding: does anything in the QNFO repositories or pages that is accessible to third parties overlap what the claims cover, and if so what and when? Facts supplied by the inventor (2026-11-10): the QNFO repository is distributed under the QNFO Unified License Agreement v2.1 (non-commercial; a separate written agreement for any use that generates money; derivatives stay under the agreement; patent applications must cite QNFO), it was created in August 2026 as a separate effort, and the key combination claimed here has not been publicly disclosed. This draft does not assert that the invention is already public.
 
-- **United States:** under 35 U.S.C. 102(b)(1)(A), the inventor's own public disclosures are not prior art against the inventor if the application is filed within one year. The earliest relevant disclosure may be as early as 2026-08-10, so the safe outer limit is **before 2026-08-10 + 1 year = 2027-08-10**. Filing now is strongly better, because a third party who builds on the public material could file first on improvements.
-- **Most other countries (Europe, China and others with absolute novelty):** material that was publicly disclosed before the filing date is likely already unpatentable there. Some countries (for example Japan and Korea) have limited grace periods. The attorney should say what foreign rights remain, if any.
-- **From now until filing:** avoid publishing further new technical detail (new loops, new claims, numbers) in public repos, posts or pages. Consider making `qnfo-workers` private or moving new design work into private Ultrastable repos. This does not undo past disclosure, but it stops it growing.
-- Keep the dated git history: it is evidence of conception and of the inventor's own disclosure dates.
+To establish from git history and page archives, not to assume:
+- which files, if any, describe the claimed combinations (scored predictions feeding trust-gated scope; the reserved-capacity plus loop with keep-or-revert; two-family evidence-gated review; claims with a fence; the owner console with emailed-code step-up and one-tap delegate) and the first public date of each;
+- whether a restrictive licence changes the analysis (the attorney decides; public accessibility of a document is generally what matters for a printed publication);
+- what qnfo.org/platform and ultrastable.io showed, and since when.
+
+Cheap steps that do not depend on the answer:
+1. File the provisional early. The US grace period (35 U.S.C. 102(b)(1)(A), one year from the inventor's own disclosure, if any) and foreign absolute-novelty rules are the attorney's call once the inventory exists.
+2. Until filing, add no new technical detail to public repositories, posts or pages (issue 52 covers the public site).
+3. Keep the dated git history as evidence of conception.
+4. Licence term "patent applications must cite QNFO": the attorney decides how to satisfy it (cross-reference or information disclosure) without conceding anything.
 
 ## 2. Inventorship
 
