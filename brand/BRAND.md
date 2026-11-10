@@ -1,54 +1,56 @@
 # Ultrastable brand kit
 
-One page every surface follows: site, repos, docs, dashboards, email, social. Source of truth for the look; change it here by PR.
+One page every Ultrastable surface follows. **Ultrastable is its own brand, separate from QNFO.** QNFO appears only as the test case that shows the system works, never in the look, and Ultrastable is never framed as research.
 
-## Name
-**Ultrastable**, one word, capital U, no space, no hyphen ("ultra-stable" is wrong), never all caps. Domains and handles are lowercase: `ultrastable.io` (canonical), `.app`, `.net`, GitHub org `ultrastable`.
+## Positioning
+Ultrastable is an autonomous business system. From one idea it bootstraps the building blocks of a company (development, branding, a provisional-patent filing package, a business plan, search and analytics presence, marketing) and then keeps improving itself. It is self-directed, with light, non-burdensome input: you can steer it any time, but it manages itself, so you do not need a development team, a patent lawyer or a marketing firm to get started. Anything can be bootstrapped; the sky is the limit.
 
-## Tagline
-**Software that stays up.** Short form for avatars and headers. Descriptor line: *Autonomous software development, built to keep running.*
+Not claimed: financial back-end (accounting, payments, banking). Out of scope for now. Legal and patent output is a working draft for professional review, not legal advice.
+
+## Name and headline
+**ultrastable**, one word, never "ultra-stable". Wordmark is lowercase; in running text use "Ultrastable". Domains and handles lowercase: `ultrastable.io` (canonical), `.app`, `.net`, org `ultrastable`.
+
+**Headline (keep): Coding agents write code. Ultrastable runs the system.**
+Sub-line: *From one idea to a business that improves itself.*
 
 ## Voice
-Plain, precise, calm. Say what is running and what is not. No hype words (revolutionary, game-changing), no exclamation marks, no unverifiable numbers. Short sentences, active verbs. Label claims RUNNING, BUILT or PLANNED when detail matters.
+Confident, plain, practical, a little bold. Speak to builders with ideas, not to researchers. Say what it does for them. No academic or research language, no hype words, no unverifiable numbers. Label what is running versus planned when detail matters.
 
 ## Public versus private (until the provisional patent is filed)
-Public copy stays generic and non-enabling: what Ultrastable is and why, never how the internals work (loops, managers, improvement budgets, trust gating). Only the descriptor line, tagline, domains and the facts in `public-profile/` may be used publicly. Everything else is private. See `docs/CONFIDENTIALITY.md` where present.
+Public copy says what Ultrastable does for people, never how. No mechanisms, thresholds, schemas, architecture or numbers from the system. Only `external/` files and `public-profile/` are public-safe. See `docs/CONFIDENTIALITY.md`.
 
-## Color
-| Token | Light | Dark | Use |
-|---|---|---|---|
-| Ink | `#14181F` | `#EEF1F5` | text |
-| Ink 2 | `#4A5360` | `#A9B3C1` | secondary text |
-| Surface | `#FFFFFF` | `#161B22` | cards |
-| Background | `#F7F8FA` | `#0E1116` | page |
-| Line | `#D9DEE6` | `#2C3541` | borders |
-| **Blue (brand)** | `#0B5FFF` | `#6EA0FF` | accent, links, logo tile |
-| Night | `#0E1116` to `#14264D` | | banners and social card gradient |
-| Good / Bad | `#0A7A3D` / `#B3261E` | `#4CC38A` / `#FF8A80` | status only |
-
-These match the site's CSS variables, so site and brand are already one system. Contrast: Ink on Background and white on Blue pass WCAG AA.
+## Color (deliberately unlike QNFO's blue-on-white)
+| Token | Hex | Use |
+|---|---|---|
+| **Signal** (brand) | `#FF5B1F` | mark, headline accent, primary buttons |
+| Sun | `#FFC857` | highlights, small accents |
+| Moss | `#12342A` | dark brand surface, banners |
+| Night | `#0B1A15` | deepest background |
+| Cream | `#F6F1E7` | page background, text on dark |
+| Ink | `#14120F` | text on light |
+| Mist | `#C9D4CC` | secondary text on dark |
+| Stone | `#5B574F` | secondary text on light |
+Dark mode: Night page, Moss cards, Cream text, Signal accent. Signal on Night and Ink on Cream pass WCAG AA; do not put Signal text on Cream below 24 px (use Ink).
 
 ## Typography
-Inter for brand artwork and headings; fall back to `system-ui, -apple-system, "Segoe UI", Roboto, sans-serif` (what the site uses). Monospace: `ui-monospace, SFMono-Regular, Menlo, Consolas`. Headings 700, body 400, tracking -0.5 to -2 on display sizes.
+Display and headings: **Fraunces** (serif), fall back to Georgia. Body and UI: **IBM Plex Sans**, fall back to `system-ui`. Code: `ui-monospace`. Headings 700 with tight tracking; generous line height on body. The serif is the main visual break from QNFO's all-sans look.
 
 ## Logo
-A U-shaped cradle holding a dot: a system settled in a stable resting point. Files in `logo/`:
-- `ultrastable-primary.svg` (+ `-dark.svg` for dark backgrounds, `.png`): tile plus wordmark. Default.
-- `ultrastable-icon.svg`, `ultrastable-icon-512.png`: tile alone, for avatars. Org avatar uses this.
-- `ultrastable-mono.svg`, `ultrastable-mono-white.svg`: one-color for print, stamps, dark photos.
-- `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`.
-Clear space: half the tile width on all sides. Minimum size: 16 px tile. Do not recolor the tile, stretch, rotate, add shadows or put it on busy photos.
+A solid triangle (stable ground, the thing that stays up) with a sun dot beside the peak (the sky is the limit). No tile, no container. Files in `logo/`: `ultrastable-primary.svg/.png` (mark + lowercase wordmark), `-dark.svg`, `ultrastable-icon.svg` and `-512.png` (avatars), `ultrastable-mono.svg`, `ultrastable-mono-white.svg`, `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`. Clear space: half the triangle's width. Minimum 16 px. Never recolor outside the tokens above, outline, rotate or add effects.
 
-## Social and banners (`social/`)
-`social-card.svg/png` 1280x640 (Open Graph, GitHub social preview). `readme-banner.svg/png` 1280x320 for READMEs. Rebuild PNGs: `node brand/tools/render.js` (needs Playwright).
+## Layout language
+Large serif headlines, wide margins, flat color blocks, square-ish corners (4 to 8 px radius), one orange action per screen. No rounded-card grids with blue accents, no dashboards-as-hero, no charts on the front page.
+
+## Social and banners
+`social/social-card.svg/png` (1280x640, Open Graph and GitHub preview), `social/readme-banner.svg/png` (1280x320). Rebuild PNGs: `node brand/tools/render.js` (Playwright).
 
 ## Applying it
 | Surface | How |
 |---|---|
-| Repo README | banner image first, then one-line descriptor, then a status line. Template: `templates/README-template.md` |
-| Issues and PRs | `.github/ISSUE_TEMPLATE/`, `.github/pull_request_template.md` (applied to this repo) |
-| Docs | title, one-line summary, status label, owner; `templates/doc-template.md` |
-| Site and dashboards | brand tokens above; add `<link rel="icon" href="/favicon.svg">`, Open Graph image `social-card.png`; shared header uses the tile plus wordmark |
-| Email | `templates/email-template.html`; plain text fallback below it in the same file comment |
-| Org profile | `public-profile/` (see its README); QNFO cross-link draft: `public-profile/qnfo-crosslink.md` |
-| Dashboard | owner dashboard and holding page use the favicon and tile plus wordmark header (`dashboard/worker.js`) |
+| Repo README | banner, one-line descriptor, status; `templates/README-template.md` |
+| Issues, PRs | `.github/ISSUE_TEMPLATE/`, `.github/pull_request_template.md` |
+| Docs | `templates/doc-template.md` |
+| Site and dashboard | tokens above, Fraunces headings, favicon, `social-card` as Open Graph image (applied in `dashboard/worker.js` and `site/worker.js`) |
+| Email | `templates/email-template.html` |
+| Org profile | `public-profile/`; QNFO cross-link `public-profile/qnfo-crosslink.md` |
+| External copy | `external/` |

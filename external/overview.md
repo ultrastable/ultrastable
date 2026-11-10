@@ -1,13 +1,17 @@
 # Ultrastable (SAFE NOW)
 
-Ultrastable runs a project like a well-managed team of software agents. Managers decide what matters, staff do the work, reviewers check it, and the whole thing learns how reliable it has been. People set direction and approve only the decisions that cannot be undone.
+**Coding agents write code. Ultrastable runs the system.**
 
-**For whom:** founders and engineering leads who run many projects with AI agents and do not want to be the bottleneck.
+Ultrastable is an autonomous business system. Give it one idea and it bootstraps what a new venture needs: development, branding, a provisional-patent filing package, a business plan, search and analytics setup, and marketing. Then it keeps improving itself.
 
-**What you get:** work that is planned, done and checked without constant prompting; a plain record of what was done and why; room to improve things, not just fix them; and the ability to start from a one-page idea.
+It is self-directed with light input. You can steer whenever you like, and it manages itself the rest of the time, so you do not need a development team, a patent lawyer or a marketing firm to start. Only decisions that cannot be undone come to a person.
 
-**Where it stands:** it already runs the owner's own research and publishing operation. It is early: one installation, no outside customers yet, and we are looking for a few design partners. Figures about its performance are self-reported and not independently audited.
+**Who it is for:** people with ideas, founders and small teams who want to get from idea to running venture without hiring a team for each function.
+
+**What it is not:** it does not handle finances (accounting, payments, banking). Legal and patent outputs are drafts for professional review, not legal advice.
+
+**Where it stands:** early. It runs in production for one first test case; we are looking for a few design partners. Figures about its performance are self-reported and not independently audited.
 
 **Runs on:** the major clouds; built to be portable.
 
-Patent pending status: not yet. Contact: pilot@ultrastable.io
+Patent pending: not yet. Contact: pilot@ultrastable.io
