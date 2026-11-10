@@ -17,4 +17,6 @@ assert.match(await (await get("https://ultrastable.io/")).text(), /loading from 
 assert.equal((await get("https://ultrastable.io/nope")).status, 404);
 assert.equal((await (await get("https://ultrastable.io/health")).json()).worker, "ultrastable-site");
 assert.match(await (await get("https://ultrastable.io/robots.txt")).text(), /Sitemap/);
+assert.match(await (await get("https://ultrastable.io/favicon.svg")).text(), /<svg/);
+assert.match(await (await get("https://ultrastable.io/")).text(), /og:image/);
 console.log("ultrastable-site ok");

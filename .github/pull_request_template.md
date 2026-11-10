@@ -1,6 +1,8 @@
-## What changed
+## What
+<!-- One or two plain sentences. -->
 
-## How it was verified
+## Verified
+<!-- Tests or checks run, and their result. -->
 
-## Plus
-One concrete next step that would make this better.
+## Confidentiality
+- [ ] No private detail added to anything public

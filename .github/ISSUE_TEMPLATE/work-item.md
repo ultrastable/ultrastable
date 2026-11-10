@@ -1,8 +1,15 @@
 ---
 name: Work item
-about: A unit of work with an owner, trigger and closing check
+about: A task with an owner role, a trigger and a way to check it is done
+labels: ''
 ---
-**Owner:**
-**Trigger:**
-**Closing check:**
-**Prediction (metric, op, value, within N h):**
+
+**Summary** (one line):
+
+**Owner role:**
+
+**Why / trigger:**
+
+**Done when** (a check anyone can run):
+
+**Confidentiality:** SAFE NOW | PRIVATE
