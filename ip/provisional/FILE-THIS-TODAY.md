@@ -13,7 +13,7 @@ What is in the package
 
 | File | Role |
 |---|---|
-| `provisional-specification.pdf` / `.md` | The specification: 137 pages, 139 claim-style summaries in 11 families, abstract |
+| `provisional-specification.pdf` / `.md` | The specification: 83 pages (83 + 17 drawing sheets = 100, the size-fee limit), 139 claim-style summaries in 11 families, abstract |
 | `drawings.pdf` | FIGS. 1 to 33 |
 | `filing/ads-data.json`, `filing/cover-sheet-PTO-SB-16-data.md` | Cover sheet values, prefilled |
 | `filing/FEES-AND-ENTITY.md` | Fee and entity notes |

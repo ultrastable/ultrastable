@@ -20,7 +20,7 @@ def warn(m): warns.append(m)
 text = SPEC.read_text(encoding="utf-8")
 
 # 1. Claims
-m = re.search(r"^# CLAIM-STYLE SUMMARIES\s*$(.*?)^# CLAIM-TO-SECTION", text, re.S | re.M)
+m = re.search(r"^# CLAIM-STYLE SUMMARIES\s*$(.*?)^# (?:CLAIM-TO-SECTION|ABSTRACT)", text, re.S | re.M)
 if not m:
     fail("claims section not found")
     claims = []
@@ -43,7 +43,9 @@ else:
 indep = [n for n, b in claims if not re.search(r"\bclaims? \d+", b)]
 ok(f"{len(indep)} independent claims")
 # claim-to-section table must list every claim
-t = re.search(r"^# CLAIM-TO-SECTION CROSS-REFERENCE(.*?)^# ABSTRACT", text, re.S | re.M)
+# The table lives in CLAIM-STRATEGY.md (moved out of the filed text to meet the page limit).
+strategy = (HERE / "CLAIM-STRATEGY.md").read_text(encoding="utf-8") if (HERE / "CLAIM-STRATEGY.md").exists() else ""
+t = re.search(r"^#+ (?:Appendix: claim-to-section cross-reference|CLAIM-TO-SECTION CROSS-REFERENCE)(.*?)(?:\Z|^#+ ABSTRACT)", strategy + "\n" + text, re.S | re.M)
 if t:
     covered = set()
     for row in t.group(1).splitlines():
@@ -59,6 +61,8 @@ if t:
         warn(f"claims not visibly mapped in the cross-reference table: {missing[:10]}")
     else:
         ok("claim-to-section table covers every claim")
+else:
+    warn("claim-to-section cross-reference table not found in CLAIM-STRATEGY.md")
 
 # 2. Figures
 brief = re.search(r"^# BRIEF DESCRIPTION OF THE DRAWINGS(.*?)^# DETAILED", text, re.S | re.M).group(1)
@@ -82,6 +86,20 @@ if files - cited:
     warn(f"figures never cited in the detailed description: {sorted(files - cited)}")
 else:
     ok("every figure is cited in the detailed description")
+# Every reference numeral drawn in a figure must be mentioned in the description (37 CFR 1.84(p)(5)).
+in_range = set()
+for a, b in re.findall(r"\b(\d{3,4}) (?:to|through) (\d{3,4})\b", body):
+    in_range.update(str(x) for x in range(int(a), int(b) + 1))
+unmentioned = []
+for svg in sorted((HERE / "figures").glob("fig*.svg")):
+    n = int(re.match(r"fig(\d+)-", svg.name).group(1))
+    for num in sorted(set(re.findall(r">(%d\d\d)<" % n, svg.read_text(encoding="utf-8")))):
+        if not re.search(r"\b%s\b" % num, body) and num not in in_range:
+            unmentioned.append(num)
+if unmentioned:
+    fail(f"reference numerals drawn but never mentioned in the description: {unmentioned[:12]}")
+else:
+    ok("every reference numeral in the drawings is mentioned in the description")
 
 # 3. Forbidden wording (specification, abstract, and every document in this folder and the confidentiality docs)
 forbid = [
@@ -144,6 +162,14 @@ else:
         fail(f"spec PDF is stale or incomplete (missing {bad}); run tools/build.sh")
     else:
         ok(f"spec PDF current: {pdf_pages(sp)} pages, last paragraph [{lastpara}] and claim {len(claims)} present")
+    # Page limit (owner directive 2026-11-10): the USPTO size fee (37 CFR 1.16(s)) counts the
+    # specification and the drawings together, so the combined sheet count must stay at or under 100.
+    PAGE_LIMIT = 100
+    total_pages = pdf_pages(sp) + pdf_pages(dp)
+    if total_pages <= PAGE_LIMIT:
+        ok(f"page limit: specification {pdf_pages(sp)} + drawings {pdf_pages(dp)} = {total_pages} sheets (limit {PAGE_LIMIT})")
+    else:
+        fail(f"page limit: specification {pdf_pages(sp)} + drawings {pdf_pages(dp)} = {total_pages} sheets, limit {PAGE_LIMIT}; condense the specification (see CUTS.md)")
     for banned in ("DRAFT FOR REVIEW", "[Inventor name]"):
         if banned in t:
             fail(f"spec PDF still contains '{banned}'")
