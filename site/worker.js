@@ -33,9 +33,9 @@ function esc(s) { return dsEsc(s); }
 function shell(opts, body) {
   const url = "https://" + CANON + opts.path;
   return "<!doctype html><html lang=\"en\"><head>" + dsHead(opts.title, opts.description, CSS)
-    + "<link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
+    + "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><meta property=\"og:image\" content=\"https://" + CANON + "/social-card.svg\"><link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
     + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
-    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\">Ultrastable</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a></div></header>"
+    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">Ultrastable</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
     + "<div class=\"us-foot\">Ultrastable runs QNFO, its first customer, in production. Every number on this site is read from that system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/llms.txt\">llms.txt</a></div></main></body></html>";
 }
@@ -128,6 +128,10 @@ function pilot() {
 const ROBOTS = "User-agent: *\nAllow: /\nSitemap: https://" + CANON + "/sitemap.xml\n";
 const LLMS = "# Ultrastable\n\n> Ultrastable is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. QNFO runs on it as customer zero.\n\n- [Live proof](https://" + CANON + "/proof): claims checked against QNFO's records\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n";
 
+const FAVICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\"><rect width=\"64\" height=\"64\" rx=\"14\" fill=\"#0B5FFF\"/><path d=\"M20 13v21a12 12 0 0 0 24 0V13\" fill=\"none\" stroke=\"#fff\" stroke-width=\"7\" stroke-linecap=\"round\"/><circle cx=\"32\" cy=\"27\" r=\"4.5\" fill=\"#9DC1FF\"/></svg>";
+const SOCIAL = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1280 640\" width=\"1280\" height=\"640\"><title>Ultrastable</title><defs><linearGradient id=\"g\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#0E1116\"/><stop offset=\"1\" stop-color=\"#14264D\"/></linearGradient></defs><rect width=\"1280\" height=\"640\" fill=\"url(#g)\"/><g transform=\"translate(96 190) scale(2.5)\"><rect width=\"64\" height=\"64\" rx=\"14\" fill=\"#0B5FFF\"/><path d=\"M20 13v21a12 12 0 0 0 24 0V13\" fill=\"none\" stroke=\"#fff\" stroke-width=\"7\" stroke-linecap=\"round\"/><circle cx=\"32\" cy=\"27\" r=\"4.5\" fill=\"#9DC1FF\"/></g><text x=\"96\" y=\"470\" font-family=\"Inter,'Segoe UI',system-ui,sans-serif\" font-size=\"96\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#EEF1F5\">Ultrastable</text><text x=\"96\" y=\"530\" font-family=\"Inter,'Segoe UI',system-ui,sans-serif\" font-size=\"38\" fill=\"#A9B3C1\">Software that stays up.</text><text x=\"1184\" y=\"580\" text-anchor=\"end\" font-family=\"Inter,'Segoe UI',system-ui,sans-serif\" font-size=\"26\" fill=\"#6EA0FF\">ultrastable.io</text></svg>";
+const SVG = { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff" };
+
 const HTML = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" };
 
 export default {
@@ -135,6 +139,8 @@ export default {
     const u = new URL(request.url);
     const host = u.hostname.replace(/^www\./, "");
     if (u.pathname === "/health") return Response.json({ ok: true, worker: "ultrastable-site", version: VERSION });
+    if (u.pathname === "/favicon.svg") return new Response(FAVICON, { headers: SVG });
+    if (u.pathname === "/social-card.svg") return new Response(SOCIAL, { headers: SVG });
     if (host === "ultrastable.app") return Response.redirect("https://" + CANON + "/pilot", 301);
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/proof", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
