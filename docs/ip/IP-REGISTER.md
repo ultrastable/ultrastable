@@ -20,7 +20,7 @@
 Filing deadline to keep in view: the public QNFO repo dates from 2026-08-10, so the US grace period runs out on 2027-08-10 (counsel to confirm).
 
 ## Facts that matter to ownership and patentability
-- **Public disclosure already exists.** The QNFO repo that holds the original code (QNFO/qnfo-workers) is PUBLIC with no licence file; it has been public since 2026-08-10 and describes the mechanisms (probes with automatic revert, scored predictions, trust ledger, work claims). The product design doc was also published there before 2026-11-10.
+- **Public disclosure already exists.** The QNFO repo that holds the original code (QNFO/qnfo-workers) is public since 2026-08-10 under the QNFO Unified License Agreement v2.1 (LICENSE), which prohibits commercial use without a written agreement. Owner's position: the key combined system is not publicly disclosed. Counsel to determine exactly what the repo and the product design doc published there show.
 - **The marketing site is public.** ultrastable.io (live 2026-11-10) describes the mechanisms at a high level. This conflicts with the planned disclosure gate (issue PF-1: nothing public until filed). Decision needed from the owner: file the provisional first, or put the site behind a holding page. Not decided here.
 - Time bars (counsel to confirm): US allows a one-year grace period from the first public disclosure; many other jurisdictions do not.
 - **Owner of record:** the author personally. No entity exists yet (issue BIZ-1). The core must be assigned or licensed to the entity in writing once it exists.
