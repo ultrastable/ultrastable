@@ -1,3 +1,5 @@
+<p align="center"><img src="brand/social/readme-banner.png" alt="Ultrastable" width="100%"></p>
+
 # Ultrastable (private)
 
 The self-governing development platform: a control loop around coding agents that finds its own work, hands it to the agent that fits,
