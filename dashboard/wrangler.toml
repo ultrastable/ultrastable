@@ -1,0 +1,33 @@
+name = "ultrastable-dashboard"
+main = "worker.js"
+compatibility_date = "2026-11-04"
+
+# Public holding page and /owner dashboard on all three domains (same worker).
+routes = [
+  { pattern = "ultrastable.io", custom_domain = true },
+  { pattern = "www.ultrastable.io", custom_domain = true },
+  { pattern = "ultrastable.app", custom_domain = true },
+  { pattern = "www.ultrastable.app", custom_domain = true },
+  { pattern = "ultrastable.net", custom_domain = true },
+  { pattern = "www.ultrastable.net", custom_domain = true }
+]
+
+[triggers]
+crons = ["*/10 * * * *", "0 13 * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ultrastable-ops"
+database_id = "REPLACED_AT_DEPLOY"
+
+[[send_email]]
+name = "SEND_EMAIL"
+allowed_destination_addresses = ["REPLACED_AT_DEPLOY"]
+
+[vars]
+MAIL_FROM = "owner@ultrastable.io"
+GITHUB_REPO = "ultrastable/ultrastable"
+# Secrets (never in git): OWNER_EMAIL (set as a var at deploy), GITHUB_TOKEN (optional), FLEET_TOKEN (optional).
+
+[observability]
+enabled = true
