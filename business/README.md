@@ -11,6 +11,7 @@ Company, funding and go-to-market material for Ultrastable.
 - Anything sent outside: use [../external/](../external/README.md) only.
 
 - Funding routes, decision memo, registry and maintenance: [funding/](funding/README.md); credit programs: [funding/credit-programs.md](funding/credit-programs.md)
+- Pricing hypotheses: [plan/08-pricing-hypotheses.md](plan/08-pricing-hypotheses.md)
 - Briefing set (deck, pitches, FAQ, Q&A, competitor map, objections): [briefing/](briefing/README.md)
 
 ## One source per topic (BIZ-3)
