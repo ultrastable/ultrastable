@@ -31,7 +31,7 @@ python -m ultrastable serve --seed-demo --auto-tick 5   # control-room dashboard
 
 CLI: `init`, `tick`, `status`, `backlog`, `add`, `trust`, `gates`, `resolve`, `demo`, `serve`.
 
-Honest status: the bundled agents are **simulated** (deterministic, seeded) so the loops can be demonstrated and tested anywhere. `CommandAgent` (any CLI agent such as `claude -p` or `codex exec`, verified by a separate check command) and `AnthropicAgent` are implemented but not yet proven in production. See [docs/roadmap.md](docs/roadmap.md).
+Honest status: the default demo agents are **simulated**; a first real-model proof exists ([docs/proof-real-agent.md](docs/proof-real-agent.md): Workers AI fixed a bug, verified by a separate test run, one toy task) (deterministic, seeded) so the loops can be demonstrated and tested anywhere. `WorkersAIAgent`, `CommandAgent` (any CLI agent) and `AnthropicAgent` are implemented; only the first has been run against a real task. See [docs/roadmap.md](docs/roadmap.md).
 
 ## Cloud-agnostic by construction
 

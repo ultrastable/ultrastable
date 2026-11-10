@@ -107,6 +107,59 @@ class AnthropicAgent:
             return False, f"verifier error: {e}"
 
 
+class WorkersAIAgent:
+    """Edits files in `cwd` using a Cloudflare Workers AI model (needs CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID in env).
+    The model returns full replacement files; originals are kept so a failed review can revert. Verified by a separate check command."""
+    kind = "workers-ai"
+
+    def __init__(self, name, files, cwd=".", check=None, model="@cf/meta/llama-3.3-70b-instruct-fp8-fast", transport=None):
+        self.name, self.files, self.cwd, self.check, self.model = name, files, cwd, check, model
+        self.transport = transport or self._http
+
+    def _http(self, prompt: str) -> str:
+        tok, acct = os.environ.get("CLOUDFLARE_API_TOKEN"), os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+        if not (tok and acct):
+            raise RuntimeError("CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID required")
+        req = urllib.request.Request(
+            f"https://api.cloudflare.com/client/v4/accounts/{acct}/ai/run/{self.model}",
+            data=json.dumps({"messages": [{"role": "user", "content": prompt}], "max_tokens": 2000}).encode(),
+            headers={"authorization": f"Bearer {tok}", "content-type": "application/json"})
+        with urllib.request.urlopen(req, timeout=120) as r:
+            resp = json.loads(r.read())["result"]["response"]
+        return resp if isinstance(resp, str) else json.dumps(resp)  # Workers AI may return pre-parsed JSON
+
+    def do(self, item: dict) -> Result:
+        orig = {f: open(os.path.join(self.cwd, f), encoding="utf-8").read() for f in self.files}
+        NL = chr(10)
+        files = NL.join("--- " + f + " ---" + NL + c for f, c in orig.items())
+        prompt = ("Task: " + item["title"] + NL + "Done when: " + item["done_check"] + NL + NL + "Files:" + NL + files +
+                  NL + NL + "Reply with ONLY a JSON object mapping each file you change to its COMPLETE new content.")
+        try:
+            out = self.transport(prompt)
+            a, b = out.index("{"), out.rindex("}") + 1
+            changes = json.loads(out[a:b])
+            for f, c in changes.items():
+                if f not in orig:
+                    raise ValueError(f"model tried to write unlisted file {f}")
+        except Exception as e:  # noqa: BLE001
+            return Result(False, f"model error: {e}")
+        for f, c in changes.items():
+            open(os.path.join(self.cwd, f), "w", encoding="utf-8").write(c)
+
+        def revert():
+            for f, c in orig.items():
+                open(os.path.join(self.cwd, f), "w", encoding="utf-8").write(c)
+        return Result(True, f"{self.model} rewrote {', '.join(changes)}", revert=revert)
+
+    def verify(self, item, res):
+        if not res.ok:
+            return False, res.evidence
+        if not self.check:
+            return False, "no independent check configured; refusing to self-certify"
+        p = subprocess.run(shlex.split(self.check), capture_output=True, text=True, cwd=self.cwd, timeout=600)
+        return p.returncode == 0, (p.stdout + p.stderr)[-1500:]
+
+
 def build_agent(spec: dict, name: str):
     k = spec.get("kind", "simulated")
     if k == "simulated":
@@ -115,4 +168,6 @@ def build_agent(spec: dict, name: str):
         return CommandAgent(name, spec["command"], spec.get("check"), spec.get("cwd", "."))
     if k == "anthropic":
         return AnthropicAgent(name, spec["model"])
+    if k == "workers-ai":
+        return WorkersAIAgent(name, spec["files"], spec.get("cwd", "."), spec.get("check"), spec.get("model", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"))
     raise ValueError(f"unknown agent kind {k}")
