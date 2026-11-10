@@ -86,4 +86,6 @@ The Worker is private by design (disclosure gate PF-1). Check it with a D1 query
 | 16 | The tick dispatches rows but nothing performs the work | The executor that calls a model for each dispatch (BS-4) is not built | The first live org only proves the heartbeat, claims, predictions and trust ledger. Treat BS-4 as the next blocker for anything an outside person would call "working" |
 | 17 | A stacked PR closed when its base branch merged, and a follow-up commit landed after the merge | Stacking on an unmerged branch; a push raced a merge | Open PRs against `main`, not another PR's branch. After a merge, start the next branch from `main` |
 
+**Result:** tick 1 ran at 09:50:16 UTC with 7 of 7 steps, no errors (it reconciled one item to ready; no role was due, since the portfolio manager ticks every 6th tick). The 09:40 cron did not fire; the first run came about 17 minutes after deploy. A fresh cron schedule can take a cycle or two to start, so KIT-3 should not be judged before the second hour.
+
 Next verification (owner or the operations role): once `tick_runs` shows six complete ticks in an hour, mark KIT-3 done and close prediction `P-KIT-3`.
