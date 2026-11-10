@@ -2,7 +2,7 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-10
+Last updated: 2026-11-10 (issue drain second pass)
 Maintained by: every agent, on every session end. Staleness is checked by `scripts/check_memory.py` (CI `memory-fresh`).
 
 ## 1. Standing rules (from Rowan)
@@ -41,6 +41,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 - Social posting (2026-11-10): `social/` + `scripts/social_*.py` + `social-post` workflow; Bluesky and Mastodon via direct APIs (Buffer skipped, see `social/README.md`); verbatim-excerpt guard over SAFE NOW sources, kill switch in `social/gate.json`; dry-run until owner cards SOC-1/SOC-2 (`docs/ops/SOCIAL-ACCOUNTS.md`) give tokens. Gap BG-25.
 - Seed: Python and Worker tests pass; WorkersAIAgent has a first real-model proof (PR #88).
 - Issue drain (2026-11-10): 7 issues closed with evidence (#2, #4, #36, #95, #111, #112, #117); 56 remain, each with a disposition comment (owner-only, deferred by gate, large engineering, or waiting on the Cloudflare secrets). Site worker deploy (#127, BG-27) waits on repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; the social card is now a 8.6 KB PNG so an inline connector upload is practical. New code: `platform/core/ultrastable/orgchart.py` (PL-2), policy overlay merge, `scripts/check_business_index.py`, `platform/open-core/` drafts. The Cloudflare connector can upload a worker only inline; hand-copying base64 failed, so deploys go through the workflow.
+- Issue drain, second pass (2026-11-10): handoff #157 merged; #158 (credit programs read at primary pages, trademark plan), #159 (core `registries` table, tables map, boundary test, second-installation proof), #160 (tenant isolation design, pricing hypotheses, `platform/core/install.sh`) and #161 (pending verification, Vertex 401 refresh, Postgres reconnect) shipped through the lane; the session's GitHub tools can squash-merge a green PR. Closed: #5, #19, #37, #40, #43, #110, plus #153 to #155 with #161. Disposition comments (blocker, default, probe) on #3, #28, #31, #35, #50. #3's live move waits on Cloud SQL (#90); #28, #35 and #50 need qnfo-workers access outside this session's scope; #31 is anchored to the filing date of the European priority application, not a US provisional.
 
 ## 4. Owner-only items (identity-bound; each has a default in effect)
 
