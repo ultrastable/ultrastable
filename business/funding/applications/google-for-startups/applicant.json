@@ -1,0 +1,8 @@
+{
+  "_doc": "Identity-bound fields. Never invented. Filled by the owner card; the packet reports ready only when these are set.",
+  "entity_name": "",
+  "applicant_name": "",
+  "business_email": "",
+  "website": "https://ultrastable.io",
+  "billing_account_id": ""
+}
