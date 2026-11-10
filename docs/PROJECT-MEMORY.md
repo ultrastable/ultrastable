@@ -37,6 +37,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 - Funding: unfunded; dual track (open source vs commercial) in `docs/funding/` and `business/plan/05-funding.md`. Big credit tiers need an institutional round and a live public site; order is file provisional, publish outcome-only site, apply to small tiers, NSF SBIR, raise. No paid Google Workspace on the ultrastable domain within 31 days before the Google AI program application.
 - Provisional: filing-ready package in `ip/provisional/` (spec PDF 137 pages, drawings FIGS. 1-33, `filing/` cover-sheet data, fee notes, Patent Center walkthrough, `tools/preflight.py` run in CI). Not filed; Rowan's act.
 - Cycling: `retriage` workflow (every 3 h) auto-merges green PRs, flags conflicts/idle drafts and files gaps for issues without a doer or probe; `issues` workflow triages hourly.
+- Social posting (2026-11-10): `social/` + `scripts/social_*.py` + `social-post` workflow; Bluesky and Mastodon via direct APIs (Buffer skipped, see `social/README.md`); verbatim-excerpt guard over SAFE NOW sources, kill switch in `social/gate.json`; dry-run until owner cards SOC-1/SOC-2 (`docs/ops/SOCIAL-ACCOUNTS.md`) give tokens. Gap BG-25.
 - Seed: Python and Worker tests pass; WorkersAIAgent has a first real-model proof (PR #88).
 
 ## 4. Owner-only items (identity-bound; each has a default in effect)
@@ -48,6 +49,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 | Mint `ORG_ADMIN_TOKEN` | Holding page only | `org-manage` probe passes; `curl -s https://github.com/ultrastable` shows profile |
 | Create/unarchive repos if the fleet cannot | Monorepo is canonical | `gh api repos/ultrastable/<name> --jq .archived` |
 | Org avatar upload | Default identicon | Avatar URL is not the identicon |
+| Create Bluesky and Mastodon accounts and add their tokens as repo secrets (SOC-1, SOC-2) | Social posting stays dry-run | Secrets listed; first run logs `posted` |
 | Submit funding applications | Applications prepared, not sent | Submission confirmation filed in `business/` |
 
 ## 5. Workstream map

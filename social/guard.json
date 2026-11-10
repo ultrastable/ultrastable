@@ -1,0 +1,69 @@
+{
+ "_doc": "Guard for every public post. Text must be a verbatim excerpt of an allowlisted SAFE NOW source (no invented claims) and must clear every pattern. Changing this file is a reviewed PR.",
+ "sources": [
+  "external/overview.md",
+  "external/one-pager.md",
+  "external/customer-story.md",
+  "business/briefing/elevator-pitches.md",
+  "business/briefing/faq.md",
+  "business/briefing/pitch-deck.md"
+ ],
+ "blocked_patterns": [
+  "qnfo",
+  "research",
+  "paper",
+  "academic",
+  "patent",
+  "provisional",
+  "filed",
+  "filing",
+  "disclos",
+  "licen[cs]e",
+  "revenue",
+  "profit",
+  "mrr",
+  "arr\\b",
+  "valuation",
+  "raise[sd]?\\b",
+  "funded",
+  "funding",
+  "invest",
+  "customers?\\b",
+  "users?\\b",
+  "ledger",
+  "ladder",
+  "plussing",
+  "predict",
+  "threshold",
+  "schema",
+  "priority function",
+  "interrupt gate",
+  "self-amend",
+  "certif",
+  "soc ?2",
+  "guarantee",
+  "best",
+  "first ever",
+  "only one",
+  "#1",
+  "\\$",
+  "%",
+  "https?://(?!ultrastable\\.(io|app|net|org))"
+ ],
+ "digits_allowed": [
+  "30-day"
+ ],
+ "required_any": [
+  "ultrastable",
+  "idea",
+  "agent",
+  "manage"
+ ],
+ "standalone_exclude": [
+  "^(problem|solution|why now|who it is for|open path|ours|it|they|you steer|how is|is my|is it|local or|what is)\\b",
+  "began",
+  "secret",
+  "safe\\b",
+  "separate product"
+ ]
+}

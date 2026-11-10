@@ -1,0 +1,41 @@
+name: social-post
+# Publishes at most one guard-clean post per run. Dry-run until social/gate.json mode=live and channel secrets exist.
+# Kill switch: social/gate.json "kill": true. Owner cards: docs/ops/SOCIAL-ACCOUNTS.md.
+on:
+  schedule:
+    - cron: "17 15 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: social-post
+  cancel-in-progress: false
+jobs:
+  post:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Refill calendar
+        working-directory: scripts
+        run: python3 social_generate.py
+      - name: Post due item
+        working-directory: scripts
+        env:
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          MASTODON_INSTANCE: ${{ secrets.MASTODON_INSTANCE }}
+          MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
+        run: python3 social_post.py
+      - name: Record state
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          git add social/calendar.json
+          if [ -f social/state.json ]; then git add social/state.json; fi
+          if git diff --cached --quiet; then echo "no state change"; exit 0; fi
+          git config user.name "ultrastable-social"; git config user.email "social@ultrastable.io"
+          git commit -m "social: record post state"
+          git push origin HEAD:main || { echo "::error::state push failed; see docs/BOOTSTRAP-GAPS.md BG-25"; exit 1; }

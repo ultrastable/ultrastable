@@ -1,0 +1,9 @@
+{
+  "_doc": "Posting control as data. Edit by PR (or the owner flips kill). kill=true stops every channel at once. provisional_filed=false keeps AFTER FILING content blocked; set true only when a filing receipt is recorded in ip/evidence-log.md.",
+  "kill": false,
+  "provisional_filed": false,
+  "mode": "dry-run",
+  "max_posts_per_day": 1,
+  "max_posts_per_week": 4,
+  "paused_channels": []
+}
