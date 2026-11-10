@@ -5,10 +5,11 @@ Built in:
   SimulatedAgent  deterministic, seedable; used for demos, tests and CI (never claims to be a real model)
   CommandAgent    runs any CLI agent (claude -p, codex exec, ...) in a work dir; verification by a check command
   AnthropicAgent  calls the Anthropic Messages API (set ANTHROPIC_API_KEY); text-only proposals
+  GitHubConnector / GitHubPRAgent  items from issues; execution as a PR; squash-merge only on green checks (GITHUB_TOKEN)
   VertexGeminiAgent  calls Vertex AI generateContent (VERTEX_PROJECT, VERTEX_ACCESS_TOKEN); text-only proposals
 """
 from __future__ import annotations
-import hashlib, json, os, shlex, subprocess, urllib.request
+import hashlib, json, os, shlex, subprocess, urllib.error, urllib.request
 from dataclasses import dataclass, field
 from typing import Callable, Optional
 from .config import DEFAULT_VERTEX_MODEL, DEFAULT_WORKERS_AI_MODEL
@@ -200,6 +201,103 @@ class VertexGeminiAgent:
             return False, f"verifier error: {e}"
 
 
+class GitHubConnector:
+    """GitHub REST connector. `transport(method, path, body|None) -> (status, json)` is injectable for tests.
+    Live use needs GITHUB_TOKEN in env. Items come from open issues; execution is a PR; merge happens only on green checks."""
+
+    def __init__(self, repo: str, transport=None, token_env: str = "GITHUB_TOKEN"):
+        self.repo, self.token_env = repo, token_env
+        self.transport = transport or self._http
+
+    def _http(self, method: str, path: str, body=None):
+        tok = os.environ.get(self.token_env)
+        if not tok:
+            raise RuntimeError(f"{self.token_env} not set")
+        req = urllib.request.Request(
+            "https://api.github.com" + path, method=method,
+            data=None if body is None else json.dumps(body).encode(),
+            headers={"authorization": f"Bearer {tok}", "accept": "application/vnd.github+json",
+                     "x-github-api-version": "2022-11-28", "content-type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return r.status, json.loads(r.read() or b"null")
+        except urllib.error.HTTPError as e:
+            return e.code, {"message": e.read().decode(errors="replace")[:300]}
+
+    def fetch_items(self, label: str = "agent-ready") -> list:
+        st, issues = self.transport("GET", f"/repos/{self.repo}/issues?state=open&labels={label}&per_page=100", None)
+        if st != 200:
+            raise RuntimeError(f"github issues list failed: {st} {issues}")
+        out = []
+        for i in issues:
+            names = {l["name"] for l in i.get("labels", [])}
+            if "pull_request" in i or "hold" in names:
+                continue
+            body = i.get("body") or ""
+            probe = next((ln.split(":", 1)[1].strip() for ln in body.splitlines()
+                          if ln.lower().startswith("closing probe:")), "")
+            out.append({"id": f"GH-{i['number']}", "title": i["title"],
+                        "done_check": probe or "linked PR merged with green checks",
+                        "closing_probe": probe})
+        return out
+
+    def open_pr(self, head: str, base: str, title: str, body: str) -> int:
+        st, pr = self.transport("POST", f"/repos/{self.repo}/pulls",
+                                {"head": head, "base": base, "title": title, "body": body, "draft": False})
+        if st not in (200, 201):
+            raise RuntimeError(f"open PR failed: {st} {pr.get('message')}")
+        return pr["number"]
+
+    def checks_green(self, pr: int):
+        st, p = self.transport("GET", f"/repos/{self.repo}/pulls/{pr}", None)
+        if st != 200:
+            return False, f"cannot read PR #{pr}: {st}"
+        if any(l["name"] == "hold" for l in p.get("labels", [])):
+            return False, f"PR #{pr} is on hold"
+        st, runs = self.transport("GET", f"/repos/{self.repo}/commits/{p['head']['sha']}/check-runs", None)
+        rs = runs.get("check_runs", []) if st == 200 else []
+        if not rs:
+            return False, f"PR #{pr}: no check runs reported (not treated as green)"
+        bad = [r["name"] for r in rs if r.get("status") != "completed" or r.get("conclusion") not in ("success", "neutral", "skipped")]
+        return (not bad), (f"PR #{pr}: {len(rs)} checks green" if not bad else f"PR #{pr}: not green: {', '.join(bad)}")
+
+    def merge_if_green(self, pr: int):
+        ok, why = self.checks_green(pr)
+        if not ok:
+            return False, why
+        st, m = self.transport("PUT", f"/repos/{self.repo}/pulls/{pr}/merge", {"merge_method": "squash"})
+        return (st == 200 and bool(m.get("merged"))), (f"{why}; squash-merged" if st == 200 else f"merge refused: {st} {m.get('message')}")
+
+
+class GitHubPRAgent:
+    """Execution as a PR: do() opens a PR from the prepared `head` branch that references the issue (Refs, never closes);
+    verify() merges only when every check run is green. Item ids are 'GH-<issue number>'."""
+    kind = "github-pr"
+
+    def __init__(self, name: str, repo: str, head: str, base: str = "main", connector: Optional[GitHubConnector] = None):
+        self.name, self.head, self.base = name, head, base
+        self.gh = connector or GitHubConnector(repo)
+        self.prs: dict = {}
+
+    def do(self, item: dict) -> Result:
+        num = str(item["id"]).removeprefix("GH-")
+        try:
+            pr = self.gh.open_pr(self.head, self.base, item["title"], f"Refs #{num}\n\nDone when: {item['done_check']}")
+        except Exception as e:  # noqa: BLE001
+            return Result(False, f"github error: {e}")
+        self.prs[item["id"]] = pr
+        return Result(True, f"opened PR #{pr} for {item['id']}")
+
+    def verify(self, item: dict, res: Result):
+        pr = self.prs.get(item["id"])
+        if not (res.ok and pr):
+            return False, res.evidence
+        try:
+            return self.gh.merge_if_green(pr)
+        except Exception as e:  # noqa: BLE001
+            return False, f"github error: {e}"
+
+
 def model_family(spec: dict) -> str:
     """Model family of an agent spec: gemini, claude, workers-ai:<vendor>, or the kind itself (simulated/command)."""
     k = spec.get("kind", "simulated")
@@ -231,6 +329,8 @@ def build_agent(spec: dict, name: str):
         return AnthropicAgent(name, spec["model"])
     if k == "vertex-gemini":
         return VertexGeminiAgent(name, spec.get("model", DEFAULT_VERTEX_MODEL))
+    if k == "github-pr":
+        return GitHubPRAgent(name, spec["repo"], spec["head"], spec.get("base", "main"))
     if k == "workers-ai":
         return WorkersAIAgent(name, spec["files"], spec.get("cwd", "."), spec.get("check"), spec.get("model", DEFAULT_WORKERS_AI_MODEL))
     raise ValueError(f"unknown agent kind {k}")
