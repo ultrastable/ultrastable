@@ -20,6 +20,7 @@ Rowan's principle (2026-11-10): creating repos, working out permissions, setting
 | BG-19 | Org repos (business, docs, ip, site, platform, seed) are archived or unreachable for writes; copies of this package cannot be pushed there | Same root cause as BG-1/BG-2 | Main repo is canonical (standing rule); mirror via `org-manage` once the token exists | Mirror workflow run shows files in business repo | Open |
 | BG-10 | Project memory lived in the platform's memory store (hidden local state), and a later note overwrote a fact with a wrong one (prior disclosure) | The store is outside the repo: not reviewed, not versioned, not deployed, editable by any session, and invisible to a fresh org | Seed ships `docs/PROJECT-MEMORY.md`, the rule "memory lives in the repo, chat/tool memory is a read-only pointer", and the `memory-fresh` check (`scripts/check_memory.py`) that fails when merged work outruns the file | `python3 scripts/check_memory.py` passes on main; platform memory holds only a pointer to the file | Fixed in this repo and seed (2026-11-10); platform memory replacement pending the coordinator |
 | BG-11 | `ultrastable/.github` is archived (and private), so even a push is impossible | Repo was archived by whoever/whatever created it; archived repos reject writes and an agent cannot unarchive without admin | `org-init` runs `gh repo unarchive` before pushing; seed rule: never create a repo in archived state and check `archived` on every repo at boot | `gh repo view <org>/.github --json isArchived` is false | Open |
+| BG-12 | No org-admin credential obtained at init; every fallback needed the owner | Onboarding never mints a credential or app with org scope; device routes unhealthy | See seed fix note under Surfaces tried | A fresh bootstrap runs org-init end to end with zero owner steps | Open |
 
 ## Surfaces tried for the public `.github` repo (2026-11-10)
 - GitHub MCP create_repository: not permitted in this session's rules.
@@ -30,6 +31,10 @@ Rowan's principle (2026-11-10): creating repos, working out permissions, setting
 - Unarchive/publish via workflow GITHUB_TOKEN: not possible, the Actions token is scoped to its own repository only (2026-11-10 09:45Z).
 - GitHub App manifest flow: needs an owner browser click to approve, so it is an identity-bound step; folded into the token card.
 - Public rendering elsewhere: GitHub renders an org page only from `<org>/.github/profile/README.md`; `rwnq8/.github` is Rowan's personal profile and was deliberately not used.
+- Remote Control on the owner's device, three starts (09:30, 09:45, 09:46Z, folders `ultrastable` and `qnfo-ops`): device refused each time ("could not start Claude Code in that folder"); cause unconfirmed, low disk suspected.
+- Computer use on the owner's device: needs per-app access grants; browsers are read-only tier and terminals click-only, so it cannot type `gh` commands or drive GitHub settings; no Chrome or built-in browser tools were present in this session.
+- Another thread's unarchive attempts: proxy returned 403 "Repository settings writes are not permitted through this proxy".
+- Seed fix (BG-12): bootstrap must obtain its own org-admin credential at init (GitHub App manifest flow or fine-grained token minted once during onboarding while the owner is present), and run a device-surface health check (disk, Claude Code start) before relying on it.
 - Org repos exist now but are private and unreachable for writing, so content and the visibility flip remain.
 
 ## Owner card (identity-bound)
