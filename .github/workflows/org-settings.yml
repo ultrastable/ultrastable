@@ -18,7 +18,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Require token
         run: '[ -n "$GH_TOKEN" ] || { echo "::error::ORG_ADMIN_TOKEN not set: owner card in docs/BOOTSTRAP-GAPS.md (BG-22)"; exit 1; }'
       - name: Apply or probe
