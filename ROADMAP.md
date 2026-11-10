@@ -1,5 +1,7 @@
 # Ultrastable roadmap
 
+Live roadmap = GitHub milestones: https://github.com/ultrastable/ultrastable/milestones (Now / Next / Later / After filing). Index of everything: INDEX.md
+
 Issues: https://github.com/ultrastable/ultrastable/issues
 
 ## Now
