@@ -54,3 +54,9 @@ Failures and fixes:
 | 12 | Writing to the owner's machine failed twice | The device shell needs up to 17 GB free; the file hand-off tool needs a file ID this session cannot mint | Preflight checks device disk space. Fallback that worked: a zip in the shared library |
 | 13 | Public QNFO repo already disclosed the invention | Work started in a public repo before any filing | Seed rule: a new project's first commit is private, and a disclosure inventory is part of init (`ip/FILING-CHECKLIST.md`) |
 | 14 | Claim numbers drifted across three edits | Renumbering by hand | Generate claim numbers and cross-references from a list, and run a check that every "claim N" reference points to an existing claim |
+## Addendum from the push thread (2026-11-10, 09:30Z)
+
+- Pushing to a shared `main` from a stale clone failed once (non-fast-forward, another thread had pushed): always `git pull --rebase origin main` immediately before pushing.
+- The interim `org-repos/` copy was pushed before the unified layout landed (PR #54), so it duplicates content now under `ip/`, `business/`, `docs/`, `seed/`. Next improvement: a preflight that checks `origin/main` layout before bulk-copying, and a cleanup issue to delete `org-repos/` once the bundles are no longer needed.
+- Issues #14 to #50 were filed through the GitHub MCP tool because the `gh` token was invalid; labels were created on the fly, milestones and Projects were not. Do these through the `org-manage` workflow.
+- "Deploy everything" is held by the disclosure gate (PF-1): no further deploy until the provisional is filed.
