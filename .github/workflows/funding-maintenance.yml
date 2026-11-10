@@ -20,6 +20,8 @@ jobs:
           ref: main
       - name: Verify registry
         run: python3 scripts/funding_verify.py --fetch --out report.json
+      - name: Validate application packets and refresh tracker
+        run: python3 scripts/test_funding_packet.py && python3 scripts/funding_packet.py
       - name: File or update issues
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
