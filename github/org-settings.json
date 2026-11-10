@@ -1,0 +1,54 @@
+{
+  "_doc": "Desired GitHub state for the ultrastable org and its canonical repo. Applied by scripts/apply_github_settings.sh via the org-settings workflow. Everything public here is SAFE NOW (generic). Edit this file, not the GitHub UI.",
+  "org": {
+    "name": "Ultrastable",
+    "description": "Coding agents write code. Ultrastable runs the system. From one idea to a business that improves itself.",
+    "blog": "https://ultrastable.io",
+    "email": "pilot@ultrastable.io",
+    "default_repository_permission": "read",
+    "members_can_create_public_repositories": false,
+    "has_organization_projects": true,
+    "has_repository_projects": true,
+    "web_commit_signoff_required": false
+  },
+  "repos": {
+    "ultrastable/ultrastable": {
+      "description": "Ultrastable: an autonomous system that turns one idea into a business that improves itself. Private system of record.",
+      "homepage": "https://ultrastable.io",
+      "topics": ["autonomous-agents", "ai-agents", "agent-orchestration", "developer-tools", "devops", "automation", "bootstrapping", "cloudflare-workers", "google-cloud"],
+      "settings": {
+        "has_issues": true,
+        "has_projects": true,
+        "has_wiki": false,
+        "has_discussions": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY"
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    }
+  },
+  "manual_ui_only": [
+    {"item": "Org avatar", "file": "brand/logo/ultrastable-icon-512.png", "where": "github.com/organizations/ultrastable/settings/profile", "probe": "avatar URL differs from the identicon"},
+    {"item": "Repo social preview", "file": "brand/social/social-card.png", "where": "repo Settings > General > Social preview (no API exists)", "probe": "opengraph.githubassets.com card shows the custom image"},
+    {"item": "Pinned repositories on the org page", "where": "org page > Customize pins (no REST API)", "probe": "org page lists the pinned repo"},
+    {"item": "Verified domains ultrastable.io, .app, .net", "where": "org Settings > Verified and approved domains (TXT record, then verify)", "probe": "domains show Verified"},
+    {"item": "Org-wide 2FA requirement", "where": "org Settings > Authentication security (no API)", "probe": "setting shows required"}
+  ]
+}
