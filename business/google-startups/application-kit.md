@@ -27,7 +27,7 @@ G0 adapter skeleton and tests (done). G1 7-day live run on GCP, 1,000 ticks, no 
 - **Why will you use Gemini?** Role-based model ladder maps rungs to Gemini tiers; Vertex lets the reviewer be a different family. Honest: not built (PLANNED, G3).
 - **Traction?** One installation (the founder's fleet, self-scored, unaudited). No revenue. Pilots next.
 - **Defensibility?** A drafted, unfiled provisional covering the loop structure; the compounding record of scored outcomes. Do not state claims externally before filing.
-- **Risks?** IP ownership (entity and assignment, issue #1), single customer, public QNFO history, model cost.
+- **Risks?** IP ownership (entity and assignment, issue #1), single customer, model cost. Answer on IP: the founder is assigning the technology to the company, and the related QNFO repository is under a license that prohibits commercial use without a separate grant.
 - **Biggest dependency on Google?** None technical (portable core); credits cut cost during validation.
 
 ## Pre-submit checklist (owner)

@@ -20,4 +20,4 @@ Drafted 2026-11-10. Source code: `seed/` repo (`bootstrap/bootstrap.py`, `autono
 - Dependent: budget-driven model selection with a separate reviewer model; gate cards with self-closing probes; the policy/harness consistency test.
 
 ## Disclosure caution
-The patent is unfiled. Treat QNFO and AIOS public content as the authors own publications under their licences; whether any overlaps the claims is an open question for the attorney. Publish nothing from seed/ before filing.
+The patent is unfiled. Publish nothing from `seed/` before filing. Questions for the attorney: what has been publicly shown from QNFO and AIOS, and how it relates to this embodiment.

@@ -39,7 +39,7 @@ The open-core decision is a Rowan call with a lawyer: it changes what the patent
 
 | Risk | What we do about it |
 |---|---|
-| Public disclosure already happened; foreign rights may be lost | File now; stop adding technical detail to public repos; counsel advises on what remains **[LAWYER]** |
+| Filing not yet done; the key combination is not publicly disclosed | File the provisional promptly; keep technical detail out of public repos and posts; counsel advises on timing **[LAWYER]** |
 | Big platforms add "trust-based autonomy" themselves | Speed, the patent, and the org kit: we sell a way of running work, not a feature |
 | Solo founder | The roster below is the team; first hire is a founding engineer or a commercial co-founder once funded |
 | Agents doing harm in a customer's systems | The narrow gate, full audit log, customer-set limits; contract terms **[LAWYER]** |
