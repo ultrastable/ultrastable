@@ -29,3 +29,11 @@ jobs:
           gh repo edit "$ORG/.github" --visibility public --accept-visibility-change-consequences
       - name: Org details
         run: gh api -X PATCH "orgs/${GITHUB_REPOSITORY_OWNER}" -f description='Coding agents write code. Ultrastable runs the system.' -f blog=https://ultrastable.io -f email=pilot@ultrastable.io
+      - name: Verify live (done = the public org page shows the profile)
+        run: |
+          sleep 10
+          for i in 1 2 3 4 5 6; do
+            curl -fsSL "https://github.com/${GITHUB_REPOSITORY_OWNER}" | grep -qi "runs itself" && { echo "ok: profile live"; exit 0; }
+            sleep 15
+          done
+          echo "::error::org page does not show the profile; org-init is NOT done"; exit 1
