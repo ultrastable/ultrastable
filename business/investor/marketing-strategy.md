@@ -119,4 +119,4 @@ Low $500-1,500 (domains/tools, form, video editing); mid $1,500-5,000 (adds even
 
 ## 12. Risks to the plan
 
-IP/ownership (public repo, no licence, no assignment to an entity yet); solo founder; crowded narrative; demo is simulated; wedge segment unconfirmed.
+IP/ownership (public repo with a licence that bars commercial use, no assignment to an entity yet); solo founder; crowded narrative; demo is simulated; wedge segment unconfirmed.

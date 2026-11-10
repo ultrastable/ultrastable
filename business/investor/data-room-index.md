@@ -19,7 +19,7 @@ Status codes: **HAVE** (exists, path given), **DRAFT** (working draft exists), *
 | 13 | Founder IP assignment / licence of QNFO-origin code to the company | TODO | main investor risk (HANDOFF.md) | Rowan, **NEEDS LAWYER** |
 | 14 | Provisional patent drafts | DRAFT | `Dev/ultrastable/` local-workspace patent drafts (working drafts, not legal advice) | Legal/IP manager, **NEEDS LAWYER** |
 | 15 | Provisional filing receipt | TODO | not filed; file before 2027-08-10, sooner better | Rowan, **NEEDS LAWYER** |
-| 16 | Public-disclosure record of qnfo-workers (public since 2026-08-10, no licence file) | HAVE (fact) | HANDOFF.md; counsel to assess | Legal/IP manager, **NEEDS LAWYER** |
+| 16 | Public-disclosure record of qnfo-workers (public since 2026-08-10, carries a QNFO licence (QNFO User License Agreement v2.1, no commercial use)) | HAVE (fact) | HANDOFF.md; counsel to assess | Legal/IP manager, **NEEDS LAWYER** |
 | 17 | Trademark search (Ultrastable; note "cybernetic organizations" overlap) | TODO | product doc section 7 partial only | Legal/IP manager, **NEEDS LAWYER** |
 | 18 | NDA template | TODO | needed before sharing this folder | Legal/IP manager, **NEEDS LAWYER** |
 | 19 | Domains and site | HAVE | ultrastable.io/.app/.net, worker `ultrastable-site`, `us-remote/site/` (note: registered inside QNFO's Cloudflare account; transfer to the company later) | Operations |

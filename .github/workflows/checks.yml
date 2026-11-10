@@ -32,3 +32,5 @@ jobs:
         run: |
           sudo apt-get install -y -q poppler-utils >/dev/null
           python3 ip/provisional/tools/preflight.py
+      - name: Business index (BIZ-3)
+        run: python3 scripts/check_business_index.py

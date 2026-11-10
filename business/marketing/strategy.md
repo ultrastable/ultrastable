@@ -1,4 +1,6 @@
-# Marketing strategy
+# Marketing strategy (short form)
+
+Source of record for marketing is [../investor/marketing-strategy.md](../investor/marketing-strategy.md). This short form keeps the positioning and the SAFE NOW / AFTER FILING split; if the two differ, the investor file wins and this one is corrected.
 
 Tag: AFTER FILING (Phase 1 wording is SAFE NOW). Builds on [../plan/06-promotion.md](../plan/06-promotion.md), [../plan/07-events.md](../plan/07-events.md), [../plan/03-competition.md](../plan/03-competition.md). Figures and dates are estimates to verify.
 
