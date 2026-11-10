@@ -40,6 +40,9 @@ jobs:
       - name: Outreach engine tests
         working-directory: scripts
         run: python3 test_outreach.py
+      - name: LLM review tests
+        working-directory: scripts
+        run: python3 -m unittest test_llm_review
       - name: Seed tests
         working-directory: seed
         run: python3 -m unittest discover -s tests

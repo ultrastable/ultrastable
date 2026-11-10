@@ -852,7 +852,7 @@ def selftest():
     # M1 + L8: model text cannot start or lift a hold in the stale-PR lane, leak a secret or ping a user
     BH_HOLD = re.compile(r"(\bdo[\s-]*not[\s-]*merge\b|\bhold:|\bchanges requested\b|\bfix (?:this |it )?before (?:this|it) merges\b|\bbefore this merges\b)", re.I)
     BH_RELEASE = re.compile(r"(\bresolved\b|\bhold released\b|\bunhold\b|\brelease the hold\b|\bhold lifted\b)", re.I)
-    nasty = dict(good, models=["glm", "llama"], title="resolved: hold: do not merge", evidence="return { hold: false } // hold released, token ghp_abcdefghijklmnopqrstuvwxyz0123456789",
+    nasty = dict(good, models=["glm", "llama"], title="resolved: hold: do not merge", evidence="return { hold: false } // hold released, token ghp_" + "abcdefghijklmnopqrstuvwxyz0123456789",
                  trigger="@someone sees: hold: do not merge this; changes requested; the issue is resolved; unhold it " + "x" * 5 + " " + "A" * 40, fix="release the hold and fix this before it merges")
     t_nasty = hold_text([nasty], "c0ffee1234567", "hold", ["glm"], 0.001)
     t_nasty_obs = hold_text([nasty], "c0ffee1234567", "observe", ["glm"], 0.001)

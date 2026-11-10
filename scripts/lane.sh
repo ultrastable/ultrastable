@@ -44,6 +44,16 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
   case "$labels" in
     *,ci-failed,*|*,conflict,*) gh pr edit "$n" -R "$repo" --remove-label ci-failed --remove-label conflict >/dev/null 2>&1;;
   esac
+  if [ -n "${ANTHROPIC_API_KEY:-}" ]; then
+    rv=$(gh pr diff "$n" -R "$repo" 2>/dev/null | python3 "$(dirname "$0")/llm_review.py"); rc=$?
+    if [ "$rc" -eq 2 ]; then
+      gh pr edit "$n" -R "$repo" --add-label hold >/dev/null 2>&1
+      gh pr comment "$n" -R "$repo" --body "$rv"$'
+
+lane: held on a High finding. Fix and remove the hold label.' >/dev/null 2>&1
+      echo "#$n held by llm-review"; continue
+    fi
+  fi
   gh pr review "$n" -R "$repo" --approve --body "auto-review: all checks green on ${sha:0:7} (secret scan, workflow lint, repo verify)." >/dev/null 2>&1 || true
   if out=$(gh pr merge "$n" -R "$repo" --squash --delete-branch --match-head-commit "$sha" 2>&1); then
     echo "#$n merged"
