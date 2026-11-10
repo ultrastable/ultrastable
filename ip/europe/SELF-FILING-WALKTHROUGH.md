@@ -19,6 +19,40 @@ One page, the OCNL eOLF page, still shows "Online Filing is tijdelijk niet besch
 3. First login: the portal shows a **QR code**. Scan it with Google Authenticator, Microsoft Authenticator or FreeOTP. From then on you log in with your password and the 6-digit code.
 4. UNVERIFIED: whether a private person living abroad (a US citizen resident in NL) may register, and whether any ID is asked. None of the pages read says so. Ask OCNLservicedesk@octrooicentrum.nl or eolf@rvo.nl in your first e-mail, and ask them to confirm they will accept a natural-person applicant filing without a Dutch patent attorney (the pages recommend, but do not require, one).
 
+## 1a. If the portal answers "This resource is not available via this channel"
+
+What happened: https://efiling.mijnoctrooi.rvo.nl/ redirected to `.../restricted.html` with that text. **The URL is the correct one**: OCNL's own pages link to exactly it ([Go to Online Filing](https://mijnoctrooi.rvo.nl/bpp-portal/en/eFiling-OLF), [Register and login](https://mijnoctrooi.rvo.nl/bpp-portal/en/node/120)). **No OCNL page explains this message, and I could not open the site from here, so the cause is UNVERIFIED.** The wording comes from the site's gateway, not from your account (you have none yet). Likely causes, in order of how cheap they are to test (hypotheses, not findings):
+
+1. A gateway rule by network, country or browser. Try, one at a time: a different network (mobile hotspot instead of home or office Wi-Fi), VPN and ad or tracker blockers off, a private window, a different browser, a different device.
+2. A required entry point. Open https://mijnoctrooi.rvo.nl/bpp-portal/en/eFiling-OLF first and click **Go to Online Filing** there, instead of typing the address.
+3. The service being closed or in maintenance. The BPP portal posts maintenance and disruptions on its [news page](https://mijnoctrooi.rvo.nl/bpp-portal/en/news_page); in the one notice read, Online Filing itself stayed up while MyPage was down.
+4. The portal being for professional filers only. No page says so, and the new Online Filing guide only describes individual accounts, but the pilot was run with patent attorney firms.
+
+**Then ask, with the facts attached (do this the same day):** e-mail OCNLservicedesk@octrooicentrum.nl, cc eolf@rvo.nl (the address for Online Filing problems), or phone 088 042 40 02 (Monday to Friday 08:30 to 17:00; option 2 for Dutch applications). Draft:
+
+> Subject: Cannot open Online Filing (efiling.mijnoctrooi.rvo.nl): "not available via this channel"
+>
+> Hello, I am a private individual resident in the Netherlands and want to file a Dutch patent application myself, without a representative. Opening https://efiling.mijnoctrooi.rvo.nl/ (from the link on mijnoctrooi.rvo.nl) redirects to https://efiling.mijnoctrooi.rvo.nl/restricted.html with the text "efiling.mijnoctrooi.rvo.nl - This resource is not available via this channel." Date and time: [fill in]. Network and country: [fill in]. Browser: [fill in]. Screenshot attached.
+> 1. What causes this, and what is the correct way for a private applicant to register for Online Filing?
+> 2. If Online Filing is not open to me, how do I file on paper, and what is the fee?
+> 3. How is the procedure fee paid, and must payment arrive before or after filing?
+> Thank you.
+
+(Sending it is yours: it goes out under your name. Fill the three bracketed items.)
+
+## 1b. Fallback filing routes (same files, same priority date rule)
+
+The filing date is the day OCNL **receives** the application. The sources are [OCNL "Octrooidocumenten indienen"](https://www.octrooicentrum.nl/octrooien/octrooi-aanvragen-en-verlening/octrooidocumenten-indienen), the [RVO procedure page](https://www.rvo.nl/onderwerpen/octrooien-ofwel-patenten/octrooi-aanvragen/nederland/procedure) and [OCNL contact](https://english.rvo.nl/topics/octrooien-ofwel-patenten/over-ocnl/contact).
+
+| Route | What it takes | Verdict |
+|---|---|---|
+| **In person, on paper** | Print the files on white A4. Sign the request form with an **original wet-ink signature** (the official "Verzoek om octrooi" form is on mijn.rvo.nl; using it is optional but avoids errors). Deliver to the visiting address: **Prinses Beatrixlaan 2, 2595 AL The Hague, Monday to Friday 09:00 to 17:00, bring valid identification** | **Best fallback**: certain filing date, no login. UNVERIFIED: whether the desk accepts a 91-page application without an appointment (phone first, option 2), and the paper fee (an online filing discount exists, so paper costs more) |
+| On paper by post | Same documents, to **Post Office Box 10366, 2501 HJ The Hague**, original signature. The date counts from receipt, and a Saturday delivery counts as the next working day | Works but the date is uncertain; use registered mail with tracking, and do not use it near any deadline |
+| eLoket | A separate OCNL route for urgent filings when Online Filing is down; needs **DigiD or eHerkenning**, and originals must follow by post or hand | Only if you already have DigiD (a resident with a BSN can request one). UNVERIFIED that eLoket accepts a private person's new application |
+| E-mail | **Not accepted** | Do not use |
+
+Paper-route facts the package already meets: A4, margins 2 cm top, right and bottom and 2.5 cm left, continuous page numbers, drawings with reference numerals only, abstract in the description's language. What changes on paper: the form is signed on paper (no `/Name/`), payment is by bank transfer (section 5), and the filing is not instant: the receipt arrives by letter within about a month.
+
 ## 2. Check the files (day before)
 
 `python3 ip/provisional/tools/preflight.py` must end `0 failures`. Files are in `ip/europe/filing-nl/`:
@@ -92,12 +126,13 @@ Use if OCNL cannot onboard you in time. Representation is **not** required for a
 1. Whether OCNL registers a private person resident abroad for Online Filing, and any ID check.
 2. The exact procedure fee (visible only inside the portal).
 3. Whether payment must arrive before sending, and the exact reference to quote.
-4. Whether Online Filing is up today (the OCNL eOLF page says temporarily unavailable; the portal notice says live since 15 Oct 2025).
+4. Whether Online Filing is up today and why it showed "not available via this channel" (section 1a); no source explains that message.
 5. Whether the portal accepts our PDFs and requires the claims in a separate attachment; the claims-in-Dutch rule with English filing language is from OCNL's format page, not tested in the portal.
-6. PCT forms in the new Online Filing; the EPO's current login method.
-7. Everything in `DECISION-MEMO.md` section 7 (attorney questions).
+6. PCT forms in the new Online Filing (an October 2025 notice says not yet; a later maintenance notice mentions PCT follow-up actions in it); the EPO's current login method.
+7. Paper-route fee, desk acceptance without an appointment, eLoket eligibility (section 1b).
+8. Everything in `DECISION-MEMO.md` section 7 (attorney questions).
 
-Fastest way to close 1 to 5: one e-mail to OCNLservicedesk@octrooicentrum.nl (cc eolf@rvo.nl) or a call to 088 042 40 02 (option 2), then record the answers in `ip/evidence-log.md`.
+Fastest way to close 1 to 5 and 7: one e-mail to OCNLservicedesk@octrooicentrum.nl (cc eolf@rvo.nl) or a call to 088 042 40 02 (option 2), then record the answers in `ip/evidence-log.md`.
 
 ## 9. Sources (all read 2026-11-10)
 
