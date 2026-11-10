@@ -42,6 +42,8 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 - Seed: Python and Worker tests pass; WorkersAIAgent has a first real-model proof (PR #88).
 - Issue drain (2026-11-10): 7 issues closed with evidence (#2, #4, #36, #95, #111, #112, #117); 56 remain, each with a disposition comment (owner-only, deferred by gate, large engineering, or waiting on the Cloudflare secrets). Site worker deploy (#127, BG-27) waits on repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; the social card is now a 8.6 KB PNG so an inline connector upload is practical. New code: `platform/core/ultrastable/orgchart.py` (PL-2), policy overlay merge, `scripts/check_business_index.py`, `platform/open-core/` drafts. The Cloudflare connector can upload a worker only inline; hand-copying base64 failed, so deploys go through the workflow.
 
+- Funding applications (2026-11-10): packets in `business/funding/applications/`, validated and tracked weekly by `scripts/funding_packet.py` (BG-28). Google Cloud Program packet drafted, states honestly that the system is demoed on Cloudflare and would run on GCP if funded; NOT submitted (form needs Google sign-in on a company domain, billing account, live site).
+
 ## 4. Owner-only items (identity-bound; each has a default in effect)
 
 | Item | Default in effect | Closing probe |
@@ -53,7 +55,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 | Create/unarchive repos if the fleet cannot | Monorepo is canonical | `gh api repos/ultrastable/<name> --jq .archived` |
 | Org avatar upload | Default identicon | Avatar URL is not the identicon |
 | Create Bluesky and Mastodon accounts and add their tokens as repo secrets (SOC-1, SOC-2) | Social posting stays dry-run | Secrets listed; first run logs `posted` |
-| Submit funding applications | Applications prepared, not sent | Submission confirmation filed in `business/` |
+| Submit funding applications (Google Cloud Start packet ready to paste: `business/funding/applications/google-for-startups/OWNER-CARD.md`; needs entity, domain email, billing ID, live site with team/product) | Applications prepared, not sent | Submission confirmation filed in `business/funding/applications/<name>/confirmations/` |
 
 ## 5. Workstream map
 

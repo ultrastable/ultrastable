@@ -1,0 +1,14 @@
+{
+  "registry_id": "B-XXXX",
+  "program": "",
+  "status": "drafted",
+  "form_url": "",
+  "verified_on": "YYYY-MM-DD",
+  "prerequisites": [{"id": "", "need": "", "met": false, "probe": ""}],
+  "answers": {"What does your company do?": ""},
+  "submit_steps": [""],
+  "blocked_by": [],
+  "owner_card": "",
+  "default_in_effect": "",
+  "closing_probe": ""
+}
