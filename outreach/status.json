@@ -6,10 +6,10 @@
  "metrics": {
   "targets": 29,
   "state_discovered": 0,
-  "state_packet-ready": 18,
+  "state_packet-ready": 13,
   "state_guard-failed": 0,
   "state_queued": 0,
-  "state_awaiting-owner": 10,
+  "state_awaiting-owner": 15,
   "state_sent": 0,
   "state_replied": 0,
   "state_accepted": 0,
@@ -19,7 +19,7 @@
   "state_closed": 0,
   "outreach_sent_total": 0,
   "outreach_replies_total": 0,
-  "blocked_source_unverified": 13
+  "blocked_source_unverified": 11
  },
  "trust": {
   "ultrastable/draft": {
@@ -51,7 +51,7 @@
   },
   {
    "id": "OUT-SEND-ultrastable",
-   "count": 9,
+   "count": 14,
    "file": "outreach/cards/OUT-SEND-ultrastable.md"
   },
   {
@@ -183,11 +183,11 @@
   {
    "key": "ultrastable:A-ASF",
    "program": "Apache Software Foundation Incubator",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
-   "source": "unverified",
+   "source": "verified",
    "blocked_by": "source-unverified",
-   "last_event": "packet-ready"
+   "last_event": "awaiting-owner"
   },
   {
    "key": "ultrastable:A-FORDMELLON",
@@ -237,11 +237,11 @@
   {
    "key": "ultrastable:A-OSC",
    "program": "Open Source Collective (fiscal host)",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
-   "source": "unverified",
+   "source": "verified",
    "blocked_by": "source-unverified",
-   "last_event": "packet-ready"
+   "last_event": "awaiting-owner"
   },
   {
    "key": "ultrastable:A-OTF",
@@ -282,20 +282,20 @@
   {
    "key": "ultrastable:B-GSTART",
    "program": "Google for Startups Cloud Program",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "source": "verified",
    "blocked_by": null,
-   "last_event": "packet-ready"
+   "last_event": "awaiting-owner"
   },
   {
    "key": "ultrastable:B-MSFT",
    "program": "Microsoft for Startups Founders Hub",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "source": "verified",
    "blocked_by": null,
-   "last_event": "packet-ready"
+   "last_event": "awaiting-owner"
   },
   {
    "key": "ultrastable:B-NSFSBIR",
@@ -309,11 +309,11 @@
   {
    "key": "ultrastable:B-NVIDIA",
    "program": "NVIDIA Inception",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "source": "verified",
    "blocked_by": null,
-   "last_event": "packet-ready"
+   "last_event": "awaiting-owner"
   },
   {
    "key": "ultrastable:B-TECHSTARS",

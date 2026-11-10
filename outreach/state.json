@@ -225,7 +225,7 @@
    "profile": "ultrastable",
    "registry_id": "A-ASF",
    "program": "Apache Software Foundation Incubator",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "first_seen": "2026-11-10",
    "events": [
@@ -238,17 +238,28 @@
      "at": "2026-11-10",
      "event": "packet-ready",
      "detail": "outreach/packets/ultrastable/A-ASF.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source verified"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
     }
    ],
-   "source_status": "unverified",
+   "source_status": "verified",
    "guard": [],
-   "blocked_by": "source-unverified"
+   "blocked_by": "source-unverified",
+   "needs": "form-submission"
   },
   "ultrastable:A-OSC": {
    "profile": "ultrastable",
    "registry_id": "A-OSC",
    "program": "Open Source Collective (fiscal host)",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "first_seen": "2026-11-10",
    "events": [
@@ -261,17 +272,28 @@
      "at": "2026-11-10",
      "event": "packet-ready",
      "detail": "outreach/packets/ultrastable/A-OSC.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source verified"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
     }
    ],
-   "source_status": "unverified",
+   "source_status": "verified",
    "guard": [],
-   "blocked_by": "source-unverified"
+   "blocked_by": "source-unverified",
+   "needs": "form-submission"
   },
   "ultrastable:B-GSTART": {
    "profile": "ultrastable",
    "registry_id": "B-GSTART",
    "program": "Google for Startups Cloud Program",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "first_seen": "2026-11-10",
    "events": [
@@ -284,10 +306,21 @@
      "at": "2026-11-10",
      "event": "packet-ready",
      "detail": "outreach/packets/ultrastable/B-GSTART.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source verified"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
     }
    ],
    "source_status": "verified",
-   "guard": []
+   "guard": [],
+   "needs": "form-submission"
   },
   "ultrastable:B-CF": {
    "profile": "ultrastable",
@@ -359,7 +392,7 @@
    "profile": "ultrastable",
    "registry_id": "B-MSFT",
    "program": "Microsoft for Startups Founders Hub",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "first_seen": "2026-11-10",
    "events": [
@@ -372,10 +405,21 @@
      "at": "2026-11-10",
      "event": "packet-ready",
      "detail": "outreach/packets/ultrastable/B-MSFT.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source verified"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
     }
    ],
    "source_status": "verified",
-   "guard": []
+   "guard": [],
+   "needs": "form-submission"
   },
   "ultrastable:B-NSFSBIR": {
    "profile": "ultrastable",
@@ -479,7 +523,7 @@
    "profile": "ultrastable",
    "registry_id": "B-NVIDIA",
    "program": "NVIDIA Inception",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "first_seen": "2026-11-10",
    "events": [
@@ -492,10 +536,21 @@
      "at": "2026-11-10",
      "event": "packet-ready",
      "detail": "outreach/packets/ultrastable/B-NVIDIA.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source verified"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
     }
    ],
    "source_status": "verified",
-   "guard": []
+   "guard": [],
+   "needs": "form-submission"
   },
   "qniverse:A-NLNET": {
    "profile": "qniverse",

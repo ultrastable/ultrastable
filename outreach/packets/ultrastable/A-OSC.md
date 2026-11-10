@@ -1,8 +1,8 @@
 # Ultrastable to Open Source Collective (fiscal host)
 
-Target: ultrastable:A-OSC  |  Route: form  |  Source status: unverified (last verified 2026-11-10)
+Target: ultrastable:A-OSC  |  Route: form  |  Source status: verified (last verified 2026-11-10)
 Programme page: https://opencollective.com/opensource/apply
-Programme amount (as published): fee not stated on page
+Programme amount (as published): fee not stated on the application page or the acceptance criteria
 Deadline: none stated
 
 ## What we do

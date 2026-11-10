@@ -1,8 +1,8 @@
 # Ultrastable to Apache Software Foundation Incubator
 
-Target: ultrastable:A-ASF  |  Route: form  |  Source status: unverified (last verified 2026-11-10)
+Target: ultrastable:A-ASF  |  Route: form  |  Source status: verified (last verified 2026-11-10)
 Programme page: https://incubator.apache.org/
-Programme amount (as published): no funding
+Programme amount (as published): not stated; the page names no funding for podlings
 Deadline: none stated
 
 ## What we do

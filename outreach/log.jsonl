@@ -76,3 +76,13 @@
 {"at": "2026-11-10", "key": "ultrastable:A-NSFPOSE", "event": "awaiting-owner", "detail": "form route: included in the profile's owner card"}
 {"at": "2026-11-10", "key": "ultrastable:B-CF", "event": "awaiting-owner", "detail": "form route: included in the profile's owner card"}
 {"at": "2026-11-10", "key": "ultrastable:B-AWS", "event": "awaiting-owner", "detail": "form route: included in the profile's owner card"}
+{"at": "2026-11-10", "key": "ultrastable:A-ASF", "event": "queued", "detail": "guard clean, source verified"}
+{"at": "2026-11-10", "key": "ultrastable:A-OSC", "event": "queued", "detail": "guard clean, source verified"}
+{"at": "2026-11-10", "key": "ultrastable:B-GSTART", "event": "queued", "detail": "guard clean, source verified"}
+{"at": "2026-11-10", "key": "ultrastable:B-MSFT", "event": "queued", "detail": "guard clean, source verified"}
+{"at": "2026-11-10", "key": "ultrastable:B-NVIDIA", "event": "queued", "detail": "guard clean, source verified"}
+{"at": "2026-11-10", "key": "ultrastable:A-ASF", "event": "awaiting-owner", "detail": "form route: included in the profile's owner card"}
+{"at": "2026-11-10", "key": "ultrastable:A-OSC", "event": "awaiting-owner", "detail": "form route: included in the profile's owner card"}
+{"at": "2026-11-10", "key": "ultrastable:B-GSTART", "event": "awaiting-owner", "detail": "form route: included in the profile's owner card"}
+{"at": "2026-11-10", "key": "ultrastable:B-MSFT", "event": "awaiting-owner", "detail": "form route: included in the profile's owner card"}
+{"at": "2026-11-10", "key": "ultrastable:B-NVIDIA", "event": "awaiting-owner", "detail": "form route: included in the profile's owner card"}
