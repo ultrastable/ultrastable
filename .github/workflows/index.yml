@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: python3 tools/build_index.py
         env: {GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"}
       - run: python3 qnfo-platform-thread/verify.py
