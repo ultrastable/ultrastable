@@ -7,7 +7,7 @@ from __future__ import annotations
 import json, math
 from datetime import datetime, timedelta, timezone
 
-from .agents import build_agent
+from .agents import build_agent, check_pairing
 from .config import load_config, load_policy
 from .store import Store, iso
 
@@ -27,6 +27,7 @@ class Engine:
         self.s = store
         self.cfg = config or load_config()
         self.policy = policy or load_policy()
+        check_pairing(self.cfg["agents"]["doer"], self.cfg["agents"]["reviewer"])
         self.doer = build_agent(self.cfg["agents"]["doer"], "doer")
         self.reviewer = build_agent(self.cfg["agents"]["reviewer"], "reviewer")
 

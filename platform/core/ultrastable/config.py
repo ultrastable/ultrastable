@@ -22,6 +22,13 @@ DEFAULT_CONFIG = {
 
 # Default model for the Workers AI doer; override per agent with spec["model"] (P3: no model constants outside this file).
 DEFAULT_WORKERS_AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+DEFAULT_VERTEX_MODEL = "gemini-2.5-flash"
+
+
+def workers_ai_vendor(model: str) -> str:
+    """Vendor segment of a Workers AI model id ('@cf/<vendor>/<name>'), the model family for pairing checks."""
+    parts = model.split("/")
+    return parts[1] if len(parts) >= 3 else "workers-ai"
 
 
 def _merge(base: dict, over: dict) -> dict:
