@@ -2,7 +2,7 @@
 
 | # | Item | Why | Status |
 |---|---|---|---|
-| 1 | Run `CommandAgent` against a real repo with Claude Code/Codex and a real check command; record results as the first honest case study | Replace "simulated" with evidence | next |
+| 1 | Run `CommandAgent` against a real repo with Claude Code/Codex and a real check command; record results as the first honest case study | Replace "simulated" with evidence | attempted 2026-11-10: CommandAgent drove `claude -p` on a scratch repo with a failing test; the nested agent got `401 Invalid bearer token`, so nothing changed and the loop recorded `failed` and refused to certify (correct safety behavior). Needs a valid agent credential in the runtime environment, then re-run | blocked: credential |
 | 2 | Postgres store adapter + Cloud SQL deploy | Durable, multi-instance | next |
 | 3 | GitHub connector: items from issues, PRs as execution, merge on green | The surface teams use | next |
 | 4 | Vertex AI (Gemini) and Anthropic reviewer/doer pairing, different model per role | Model-agnostic claim, never self-review | next |
