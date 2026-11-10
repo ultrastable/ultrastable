@@ -1,0 +1,3 @@
+{
+  "site/starter/wrangler.jsonc": "static asset starter template with no Worker code; the seed worker or dashboard carries its analytics"
+}

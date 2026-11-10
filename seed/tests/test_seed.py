@@ -171,3 +171,17 @@ class GhAdminOrgTests(unittest.TestCase):
 
     def test_not_logged_in(self):
         self.assertFalse(self._run(1, "not logged in"))
+
+
+class AnalyticsStandardTests(unittest.TestCase):
+    def test_seed_passes_its_own_analytics_gate_and_a_bare_worker_fails(self):
+        import subprocess
+        gate = ROOT / "scripts" / "check_analytics_standard.py"
+        ok = subprocess.run([sys.executable, str(gate)], capture_output=True, text=True)
+        self.assertEqual(ok.returncode, 0, ok.stdout)
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d); (d / "scripts").mkdir(); (d / "analytics").mkdir(); (d / "w").mkdir()
+            shutil.copy(gate, d / "scripts"); shutil.copy(ROOT / "analytics" / "analytics.js", d / "analytics")
+            (d / "w" / "wrangler.toml").write_text('name="x"\nmain="worker.js"\n'); (d / "w" / "worker.js").write_text("export default {}")
+            bad = subprocess.run([sys.executable, str(d / "scripts" / "check_analytics_standard.py")], capture_output=True, text=True)
+            self.assertEqual(bad.returncode, 1)
