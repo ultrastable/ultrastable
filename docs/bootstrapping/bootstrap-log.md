@@ -35,3 +35,10 @@ Procedures that worked, failures that happened, and the changes each one should 
 - Preflight command in the seed: repos reachable, connectors valid, claims present, licences read.
 - A scheduled job that fails CI when an agent-written document contradicts a repository fact (licence, visibility, dates).
 - Automatic cleanup of merged local branches in agent sessions.
+
+## Addendum from the push thread (2026-11-10, 09:30Z)
+
+- Pushing to a shared `main` from a stale clone failed once (non-fast-forward, another thread had pushed): always `git pull --rebase origin main` immediately before pushing.
+- The interim `org-repos/` copy was pushed before the unified layout landed (PR #54), so it duplicates content now under `ip/`, `business/`, `docs/`, `seed/`. Next improvement: a preflight that checks `origin/main` layout before bulk-copying, and a cleanup issue to delete `org-repos/` once the bundles are no longer needed.
+- Issues #14 to #50 were filed through the GitHub MCP tool because the `gh` token was invalid; labels were created on the fly, milestones and Projects were not. Do these through the `org-manage` workflow.
+- "Deploy everything" is held by the disclosure gate (PF-1): no further deploy until the provisional is filed.
