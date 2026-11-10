@@ -97,6 +97,20 @@
    "text": "Coding agents write code; Ultrastable runs the system around the code.",
    "source": "business/briefing/pitch-deck.md",
    "tag": "SAFE NOW"
+  },
+  {
+   "id": "6e46ac0f69be",
+   "date": "2026-12-08",
+   "text": "Ultrastable is the foundation for any autonomous system.",
+   "source": "external/overview.md",
+   "tag": "SAFE NOW"
+  },
+  {
+   "id": "36487338c13f",
+   "date": "2026-12-10",
+   "text": "Ultrastable is an autonomous system that sets up and runs any organized effort from one idea.",
+   "source": "external/overview.md",
+   "tag": "SAFE NOW"
   }
  ]
 }
