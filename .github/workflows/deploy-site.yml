@@ -1,21 +1,17 @@
 name: deploy-site
-# budget: ~1 min per site change
-# trigger: push to site/worker.js only
-# free-alternative: `wrangler deploy` from an agent session or the Cloudflare cron worker
+# budget: ~1 min per run, manual only, 5 min timeout
 # Deploys site/worker.js and attaches ultrastable.io/.app/.net (deploy/deploy-site.mjs).
-# Needs repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID. Without them the run is red with an explicit message (BG-25).
+# Manual only: GitHub Actions minutes on private repos are budgeted (about 1 minute per run). Sessions deploy through the Cloudflare connector (docs/ops/SITE-DEPLOY.md); this workflow is the fallback once repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID exist.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths: [site/worker.js, deploy/deploy-site.mjs]
 permissions:
   contents: read
-concurrency: {group: deploy-site, cancel-in-progress: false}
+concurrency: {group: deploy-site, cancel-in-progress: true}
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
+    if: ${{ vars.DEPLOY_SITE_ENABLED == 'true' }}
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
