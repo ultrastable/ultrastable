@@ -9,3 +9,6 @@ Company, funding and go-to-market material for Ultrastable.
 - Google for Startups kit, one-pager, deck outline: [google-startups/](google-startups/application-kit.md)
 - Marketing strategy: [marketing/strategy.md](marketing/strategy.md)
 - Anything sent outside: use [../external/](../external/README.md) only.
+
+- Funding routes, decision memo, registry and maintenance: [funding/](funding/README.md)
+- Briefing set (deck, pitches, FAQ, Q&A, competitor map, objections): [briefing/](briefing/README.md)
