@@ -14,3 +14,6 @@
 ## Never
 - Claim revenue, funding, customers, patents or prior publication in any packet. The guard in `outreach/profiles.json` blocks it; do not edit the guard to get a packet through.
 - Submit a form as the owner or sign anything. That is one consolidated owner card per profile with a default in effect and a closing probe.
+
+## Measure
+Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact, reactions or attention to decide what to build, when to stop or whether it is done. Ship on your own judgment and label impact as a hypothesis until measured.

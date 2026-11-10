@@ -8,3 +8,4 @@ __pycache__/
 platform/core/build/
 *.egg-info/
 __pycache__/
+demos/dist/

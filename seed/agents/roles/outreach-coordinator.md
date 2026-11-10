@@ -13,3 +13,6 @@
 
 ## Never
 - Hold a decision for the owner in prose. A step only the owner can take is a card.
+
+## Measure
+Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact, reactions or attention to decide what to build, when to stop or whether it is done. Ship on your own judgment and label impact as a hypothesis until measured.

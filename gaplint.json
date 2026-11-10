@@ -1,0 +1,9 @@
+{
+  "rules": ["GL001", "GL002", "GL003", "GL004", "GL006", "GL007"],
+  "agent_rules": [
+    {"files": ["agents/AGENTS.md", "seed/agents/AGENTS.md"],
+     "required": {"code is all that matters": "code is all that matters", "not in code does not exist": "not in code,? it does not exist", "never swallow an error": "never swallow an error"}},
+    {"files": ["agents/PROJECT-INSTRUCTIONS.md", "agents/roles/*.md", "seed/agents/roles/*.md"],
+     "required": {"code is all that matters": "code is all that matters"}}
+  ]
+}
