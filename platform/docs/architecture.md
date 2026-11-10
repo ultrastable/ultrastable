@@ -24,9 +24,9 @@ The loops are the product; the cloud is a detail. The core knows nothing about a
 | Seam | Contract | Cloudflare | Google Cloud | Status |
 |---|---|---|---|---|
 | Scheduler | Call `runTick(db, {config, env, now})` on a cron; one tick at a time | Cron Trigger | Cloud Scheduler -> `POST /tick` on Cloud Run (shared-token header plus Google OIDC) | CF BUILT+RUNNING; GCP BUILT, not deployed |
-| Store | D1-compatible handle over the schema in `seed/worker/migrations` | D1 | SQLite file on a Cloud Storage volume (single instance); Cloud SQL (Postgres) is the scale-out path | CF RUNNING; GCP SQLite BUILT; Postgres PLANNED |
+| Store | D1-compatible handle over the schema in `seed/worker/migrations` | D1 | SQLite file on a Cloud Storage volume (single instance); Cloud SQL (Postgres) is the scale-out path | CF RUNNING; GCP SQLite BUILT; Postgres adapter BUILT and tested against postgres in CI (`platform/core/ultrastable/pg_store.py`); Cloud SQL deploy not yet run (#90) |
 | Secrets | Core sees only whether a secret exists, never the value | Worker secrets | Secret Manager (`TICK_TOKEN`, API keys) | BUILT (presence-only); Secret Manager wiring in `deploy.sh` |
-| Models | Role asks for a rung (small/medium/large); adapter maps rung to a model | Workers AI or API | Vertex AI (Gemini, and Claude on Vertex) or API | PLANNED (executor is roadmap BS-4) |
+| Models | Role asks for a rung (small/medium/large); adapter maps rung to a model | Workers AI or API | Vertex AI (Gemini, and Claude on Vertex) or API | Vertex AI adapter (Gemini) BUILT with different-family doer/reviewer pairing (`platform/core/ultrastable/agents.py`), stub-tested; live run needs GCP identity (#94). Claude on Vertex PLANNED |
 | Role runtime | One instance per manager/staff role | Durable Objects / Agents SDK | Cloud Run jobs or Agent Engine | PLANNED |
 | Queues, events | Work claims, dispatch | D1 table | table now; Pub/Sub later | table BUILT |
 | Approval gate | Open card until a person answers; never auto-closed | Worker + notification | Cloud Run + notification | card table BUILT; notifier PLANNED |

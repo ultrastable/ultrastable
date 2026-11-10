@@ -13,7 +13,7 @@ Status codes: **HAVE** (exists, path given), **DRAFT** (working draft exists), *
 | 7 | Business plan | HAVE | `us-remote/org-repos/business/plan/00-07` | Business manager |
 | 8 | Funding plan | HAVE | `business/funding.md`, `docs/funding/funding-options.md` | Finance manager |
 | 9 | Use of funds / budget | DRAFT | One-pager + plan/05 percentages; 18-month budget model TODO | Finance manager, **NEEDS ACCOUNTANT** |
-| 10 | Financial model and runway | TODO | no model exists | Finance manager, **NEEDS ACCOUNTANT** |
+| 10 | Financial model and runway | STRUCTURE ONLY | [financial-model.md](financial-model.md): formulas and measured inputs, dollar inputs blank | Finance manager, **NEEDS ACCOUNTANT** |
 | 11 | Entity formation documents | TODO | no entity recorded | Rowan, **NEEDS LAWYER** `[LAWYER]` `[ACCOUNTANT]` |
 | 12 | Cap table | TODO | after entity | Rowan, **NEEDS LAWYER** |
 | 13 | Founder IP assignment / licence of QNFO-origin code to the company | TODO | main investor risk (HANDOFF.md) | Rowan, **NEEDS LAWYER** |
