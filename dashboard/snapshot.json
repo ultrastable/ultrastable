@@ -1,0 +1,247 @@
+{
+ "generated": "2026-11-10",
+ "commit": "6b0c4ee",
+ "problems": [],
+ "panels": [
+  {
+   "id": "funding",
+   "title": "Funding and outreach pipeline",
+   "rows": [
+    [
+     "Programmes in registry",
+     "31 (open source 12, startup 9, research 10)",
+     "info"
+    ],
+    [
+     "Source status",
+     "secondary 8, unverified 13, verified 10",
+     "warn"
+    ],
+    [
+     "Outreach mode",
+     "dry-run; kill switch off; sender identity not registered",
+     "warn"
+    ],
+    [
+     "Targets",
+     "29 in pipeline: queued 0, awaiting owner 10, sent 0, replies 0",
+     "info"
+    ],
+    [
+     "Waiting on source verification",
+     "13",
+     "warn"
+    ],
+    [
+     "Application: Google for Startups Cloud Program, Start tier (Scale AI late",
+     "drafted; blocked by entity, domain-email, billing, site",
+     "warn"
+    ]
+   ]
+  },
+  {
+   "id": "ip",
+   "title": "IP status",
+   "rows": [
+    [
+     "Priority application",
+     "not filed (the owner's signature and payment; owner card FILE-PRIORITY)",
+     "warn"
+    ],
+    [
+     "Filing receipts in evidence log",
+     "0",
+     "warn"
+    ],
+    [
+     "Filing package",
+     "ip/provisional (spec, drawings) and ip/europe (Dutch filing set); not legal advice, attorney questions open in ip/europe/DECISION-MEMO.md",
+     "info"
+    ],
+    [
+     "Public content rule",
+     "generic only until a filing receipt is recorded; nothing is asserted about prior publication",
+     "info"
+    ]
+   ]
+  },
+  {
+   "id": "trust",
+   "title": "Trust ledger (from recorded outcomes)",
+   "rows": [
+    [
+     "qniverse/contact",
+     "reliability 0.5 from 0 outcomes",
+     "info"
+    ],
+    [
+     "qniverse/draft",
+     "reliability 0.923 from 11 outcomes",
+     "info"
+    ],
+    [
+     "ultrastable/contact",
+     "reliability 0.5 from 0 outcomes",
+     "info"
+    ],
+    [
+     "ultrastable/draft",
+     "reliability 0.947 from 17 outcomes",
+     "info"
+    ],
+    [
+     "Ladder start rung per surface",
+     "repo: delegated, runtime: assisted, work_tracker: autonomous, internal_chat: autonomous, outreach: observed, dns: assisted, money: observed, legal: observed, secrets: observed",
+     "info"
+    ]
+   ]
+  },
+  {
+   "id": "cards",
+   "title": "Open owner cards (identity-bound)",
+   "rows": [
+    [
+     "File the priority application in Europe (identity-bound: sign and pay): `ip/europe/OWNER-CARD.md`; supersedes the US Patent Center walkthrou",
+     "default: ",
+     "warn"
+    ],
+    [
+     "(superseded route) File the provisional patent (package ready: `ip/provisional/FILE-THIS-TODAY.md`; `tools/preflight.py` passes; attorney re",
+     "default: Drafts stay private | probe: Filing receipt recorded in `ip/evidence-log.md`",
+     "warn"
+    ],
+    [
+     "Legal entity and IP assignment (BIZ-1)",
+     "default: `LICENSE` placeholder, proprietary | probe: Entity name in `LICENSE`",
+     "warn"
+    ],
+    [
+     "Mint `ORG_ADMIN_TOKEN`",
+     "default: Holding page only | probe: `org-manage` probe passes; `curl -s https://github.com/ultrastable` shows profile",
+     "warn"
+    ],
+    [
+     "Create/unarchive repos if the fleet cannot",
+     "default: Monorepo is canonical | probe: `gh api repos/ultrastable/<name> --jq .archived`",
+     "warn"
+    ],
+    [
+     "Org avatar upload",
+     "default: Default identicon | probe: Avatar URL is not the identicon",
+     "warn"
+    ],
+    [
+     "Create Bluesky and Mastodon accounts and add their tokens as repo secrets (SOC-1, SOC-2)",
+     "default: Social posting stays dry-run | probe: Secrets listed; first run logs `posted`",
+     "warn"
+    ],
+    [
+     "Submit funding applications (Google Cloud Start packet ready to paste: `business/funding/applications/google-for-startups/OWNER-CARD.md`; ne",
+     "default: Applications prepared, not sent | probe: Submission confirmation filed in `business/funding/applications/<name>/confirmations/`",
+     "warn"
+    ],
+    [
+     "Register one outreach mailbox and store `OUTREACH_SEND_URL`/`OUTREACH_SEND_TOKEN` (OUT-SENDER, `outreach/cards/OUT-SENDER.md`)",
+     "default: Outreach stays dry-run | probe: A run logs `sent` for an e-mail-route target",
+     "warn"
+    ],
+    [
+     "Submit the verified application forms in the outreach cards (`outreach/cards/OUT-SEND-<profile>.md`)",
+     "default: Not sent; packets stay ready | probe: `outreach/state.json` shows state `sent`",
+     "warn"
+    ],
+    [
+     "OUT-SEND-qniverse (1)",
+     "outreach card; default in effect: not sent. outreach/cards/OUT-SEND-qniverse.md",
+     "warn"
+    ],
+    [
+     "OUT-SEND-ultrastable (9)",
+     "outreach card; default in effect: not sent. outreach/cards/OUT-SEND-ultrastable.md",
+     "warn"
+    ],
+    [
+     "OUT-SENDER (1)",
+     "outreach card; default in effect: not sent. outreach/cards/OUT-SENDER.md",
+     "warn"
+    ]
+   ]
+  },
+  {
+   "id": "bootstrap",
+   "title": "Bootstrap gaps and cases",
+   "rows": [
+    [
+     "Gaps",
+     "6 fixed or built, 18 open (docs/BOOTSTRAP-GAPS.md)",
+     "warn"
+    ],
+    [
+     "Bootstrap case library",
+     "13 starting conditions with routes and at most one owner card each (seed/bootstrap/cases.json)",
+     "info"
+    ],
+    [
+     "BG-1",
+     "Org repos (site, docs, ip, platform, seed, business, .github) were not created by the system; they appeared on | Open: workflow added, token not minted",
+     "warn"
+    ],
+    [
+     "BG-2",
+     "Admin token (`ORG_ADMIN_TOKEN`) was not requested up front | Open",
+     "warn"
+    ],
+    [
+     "BG-3",
+     "`ultrastable/.github` cannot be written from a session even though it exists | Open",
+     "warn"
+    ],
+    [
+     "BG-4",
+     "Public org landing page not live | Open",
+     "warn"
+    ],
+    [
+     "BG-5",
+     "Org avatar and org description/URL/email not set | Open",
+     "warn"
+    ],
+    [
+     "BG-6",
+     "GitHub Projects boards not created | Open",
+     "warn"
+    ],
+    [
+     "BG-7",
+     "Superseded PRs (#13, #61) left open | Open",
+     "warn"
+    ],
+    [
+     "BG-8",
+     "Too many questions asked of the owner | Open",
+     "warn"
+    ],
+    [
+     "BG-9",
+     "Remote Control fallback failed to start on the owner's device | Open",
+     "warn"
+    ],
+    [
+     "BG-15",
+     "Primary-source verification failed for several funders (nsf.gov, sloan.org fetch errors; NLnet page contradict | Open: issues filed by funding-maintenance workflow",
+     "warn"
+    ],
+    [
+     "BG-16",
+     "Funding source of record (`docs/funding/funding-options.md`) lived only in the docs repo and Library, not in t | Open",
+     "warn"
+    ],
+    [
+     "BG-17",
+     "Maintenance of time-sensitive facts (deadlines, terms) had no owner or schedule | Open (FUND-10)",
+     "warn"
+    ]
+   ]
+  }
+ ]
+}

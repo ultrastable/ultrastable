@@ -1,0 +1,74 @@
+{
+ "_doc": "Who is asking. A profile is the config an organization adopts to run outreach: the tracks of business/funding/registry.json it may use, its identity line and the only text its packets may contain. The QNFO fleet adopts this engine by copying outreach/ and scripts/outreach.py and editing the `qniverse` profile. Every text field is checked by the guard before anything is queued. Nothing here claims revenue, funding, customers, patents or prior publication.",
+ "profiles": {
+  "ultrastable": {
+   "name": "Ultrastable",
+   "tracks": [
+    "A",
+    "B"
+   ],
+   "tracks_doc": "A = open-source and open-technology funders, B = startup credits, accelerators and venture programmes. Both stay open: the route (open source under ultrastable.org, or a company) is chosen per programme, never promised in a packet.",
+   "tagline": "Coding agents write code. Ultrastable runs the system.",
+   "summary": "Ultrastable is an autonomous system that sets up and then keeps running and improving an organized effort from one idea. The effort can be a company, an open-source project, a community or a lab. It does the routine work with AI managers and staff, and only steps that cannot be undone come to a person.",
+   "stage": "Early. It is working today on a small number of the founder's own projects. There are no outside customers yet and the team is one founder.",
+   "ask": "We would like to understand whether this programme fits and what it would take to apply. If it does not fit, a pointer to a better programme is just as useful.",
+   "contact_route": "Reply to the address on the application or contact page that was used.",
+   "blocked_patterns": [
+    "qnfo",
+    "research",
+    "patent",
+    "provisional",
+    "filed",
+    "filing",
+    "disclos",
+    "licen[cs]e",
+    "revenue",
+    "profit",
+    "mrr",
+    "arr\\b",
+    "valuation",
+    "raised",
+    "funded",
+    "customers? (signed|paying)",
+    "guarantee",
+    "best ",
+    "first ever",
+    "#1",
+    "soc ?2"
+   ]
+  },
+  "qniverse": {
+   "name": "QNFO research programme (Qniverse)",
+   "tracks": [
+    "R"
+   ],
+   "tracks_doc": "R = research grants and science funders; extra_ids adds open-technology funders that also fund research tooling. Edited by the QNFO fleet when it adopts the engine.",
+   "tagline": "An independent research programme run and documented by an autonomous system.",
+   "summary": "QNFO is an independent research programme that is run, documented and improved by an autonomous agent system, so its decisions and results are recorded and can be inspected. The programme is led by one researcher based in the Netherlands.",
+   "stage": "Ongoing independent work without institutional or grant funding to date.",
+   "ask": "We would like to know whether the programme can apply, what eligibility an independent researcher without an institution has, and which route fits best. A pointer to a better-matched funder or a host institution is just as useful.",
+   "contact_route": "Reply to the address on the application or contact page that was used.",
+   "blocked_patterns": [
+    "patent",
+    "provisional",
+    "filed",
+    "filing",
+    "disclos",
+    "revenue",
+    "profit",
+    "valuation",
+    "raised",
+    "guarantee",
+    "breakthrough",
+    "first ever",
+    "#1",
+    "published first",
+    "prior publication"
+   ],
+   "extra_ids": [
+    "A-NLNET",
+    "A-SLOAN"
+   ]
+  }
+ }
+}

@@ -11,7 +11,7 @@ gh repo create ultrastable/.github --public --description "Ultrastable: software
 
 ## Org settings text
 - Name: Ultrastable
-- Description: Coding agents write code. Ultrastable runs the system. From one idea to a business that improves itself.
+- Description: Coding agents write code. Ultrastable runs the system. From one idea to an organization that improves itself.
 - URL: https://ultrastable.io
 - Email: pilot@ultrastable.io
 - Avatar: `profile/ultrastable-icon-512.png` (orange triangle mark, no tile)

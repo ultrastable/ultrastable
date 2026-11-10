@@ -1,0 +1,15 @@
+{
+  "_doc": "Bootstrap renders outreach/profiles.json from this template and IDEA.md (name, first sentence of the idea) on first boot and never overwrites it afterwards. {tracks}: A open-source funders, B startup credits and accelerators, R research grants; the bootstrap keeps all that fit the idea open. Edit the text by PR; the guard re-checks it on every run.",
+  "profiles": {
+    "default": {
+      "name": "{org_name}",
+      "tracks": ["A", "B", "R"],
+      "tagline": "{org_name}",
+      "summary": "{summary}",
+      "stage": "Early. {stage}",
+      "ask": "We would like to understand whether this programme fits and what it would take to apply. If it does not fit, a pointer to a better programme is just as useful.",
+      "contact_route": "Reply to the address on the application or contact page that was used.",
+      "blocked_patterns": ["patent", "provisional", "filed", "filing", "disclos", "revenue", "profit", "mrr", "arr\\b", "valuation", "raised", "funded", "guarantee", "best ", "first ever", "#1"]
+    }
+  }
+}

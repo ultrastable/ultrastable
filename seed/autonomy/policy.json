@@ -185,7 +185,7 @@
       }
     },
     "outreach": {
-      "doc": "Email, social, anything a person outside the org receives.",
+      "doc": "Email, forms, social, anything a person outside the org receives. Kill switch and caps are data in outreach/gate.json; opt-outs in outreach/suppression.json always win.",
       "max_permission": "propose",
       "start_rung": "observed",
       "actions": {
@@ -200,8 +200,18 @@
         "publish_public": {
           "reversible": false,
           "identity_bound": true
+        },
+        "submit_application": {
+          "reversible": false,
+          "identity_bound": true
+        },
+        "send_from_org_mailbox": {
+          "reversible": false,
+          "identity_bound": false,
+          "reversible_path": "rate caps, suppression list, dry-run default and kill switch bound the blast radius; each message is guard-checked and logged before it leaves"
         }
-      }
+      },
+      "kill_switch": "outreach/gate.json"
     },
     "dns": {
       "doc": "Domains and records.",

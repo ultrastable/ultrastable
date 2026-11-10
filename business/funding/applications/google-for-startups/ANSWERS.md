@@ -3,7 +3,7 @@
 Status: drafted. Terms verified 2026-11-10 at https://cloud.google.com/startup/apply.
 
 ## What does your company do?
-Ultrastable is an autonomous business system. From one idea it sets up and then continuously improves the development, branding, business planning and marketing of a new venture, with AI managers and staff doing the routine work and people approving only the steps that cannot be undone.
+Ultrastable is an autonomous system that sets up and runs any organized effort from one idea, here a company. It sets up and then continuously improves the development, branding, business planning and marketing, with AI managers and staff doing the routine work and people approving only the steps that cannot be undone.
 
 ## Stage
 Early stage with a working prototype. It currently runs the founder's own projects; there are no outside customers yet and design-partner pilots are the next step.

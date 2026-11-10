@@ -1,6 +1,6 @@
 # Briefing set
 
-Everything needed to talk about Ultrastable to investors, grant reviewers, partners and press. Positioning: **an autonomous business system** that takes an idea and runs the work of building and operating it. Separate from QNFO; QNFO is only the first test case. No financial claims. Patent unfiled.
+Everything needed to talk about Ultrastable to investors, grant reviewers, partners and press. Positioning: **an autonomous system that bootstraps any organized effort** (a company, an open-source project, a community, a lab) from one idea and runs the work of building and operating it; for-profit and open source (ultrastable.org) both stay open. Separate from QNFO; QNFO is only the first test case. No financial claims. Patent unfiled.
 
 | File | Audience | Tag |
 |---|---|---|

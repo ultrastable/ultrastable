@@ -2,7 +2,7 @@
   "_doc": "Desired GitHub state for the ultrastable org and its canonical repo. Applied by scripts/apply_github_settings.sh via the org-settings workflow. Everything public here is SAFE NOW (generic). Edit this file, not the GitHub UI.",
   "org": {
     "name": "Ultrastable",
-    "description": "Coding agents write code. Ultrastable runs the system. From one idea to a business that improves itself.",
+    "description": "Coding agents write code. Ultrastable runs the system. From one idea to an organization that improves itself.",
     "blog": "https://ultrastable.io",
     "email": "pilot@ultrastable.io",
     "default_repository_permission": "read",
@@ -13,7 +13,7 @@
   },
   "repos": {
     "ultrastable/ultrastable": {
-      "description": "Ultrastable: an autonomous system that turns one idea into a business that improves itself. Private system of record.",
+      "description": "Ultrastable: an autonomous system that turns one idea into an organization that improves itself. Private system of record.",
       "homepage": "https://ultrastable.io",
       "topics": ["autonomous-agents", "ai-agents", "agent-orchestration", "developer-tools", "devops", "automation", "bootstrapping", "cloudflare-workers", "google-cloud"],
       "settings": {

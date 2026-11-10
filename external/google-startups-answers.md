@@ -4,7 +4,7 @@ Tier to apply for now: **Start** (up to $2,000). The **Scale AI** tier needs an 
 
 | Question | Answer |
 |---|---|
-| What does your company do? | Ultrastable is an autonomous business system: from one idea it bootstraps development, branding, a provisional-patent filing package, a business plan, search and analytics setup and marketing, then keeps improving itself. Founders steer lightly and need no development team, patent lawyer or marketing firm to start. Financial back-end is out of scope. |
+| What does your company do? | Ultrastable is an autonomous system that sets up and runs any organized effort from one idea (a company, an open-source project, a community or a lab): it bootstraps development, branding, a provisional-patent filing package, a plan, search and analytics setup and marketing, then keeps improving itself. Founders steer lightly and need no development team, patent lawyer or marketing firm to start. Financial back-end is out of scope. |
 | Stage? | Pre-seed, working prototype. It runs the founder's own operation as the first test case; no outside customers yet; design-partner pilots are next. |
 | Business model? | Subscription per organization plus pass-through usage (planning assumption). |
 | How will you use Google Cloud? | To run the product on Google Cloud as a second deployment target alongside our current one, with Cloud Run, Cloud Scheduler, Cloud Storage and Secret Manager, then Cloud SQL and Vertex AI as we grow. |

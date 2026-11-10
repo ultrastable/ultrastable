@@ -1,0 +1,764 @@
+{
+ "targets": {
+  "ultrastable:A-NLNET": {
+   "profile": "ultrastable",
+   "registry_id": "A-NLNET",
+   "program": "NLnet / NGI Zero Commons Fund",
+   "state": "awaiting-owner",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://nlnet.nl/news/2026/20260601-call.html"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/A-NLNET.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source secondary"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
+    }
+   ],
+   "source_status": "secondary",
+   "guard": [],
+   "needs": "form-submission"
+  },
+  "ultrastable:A-MOZ": {
+   "profile": "ultrastable",
+   "registry_id": "A-MOZ",
+   "program": "Mozilla Foundation (Democracy x AI cohort, MOSS)",
+   "state": "awaiting-owner",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.mozillafoundation.org/en/participate/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/A-MOZ.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source secondary"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
+    }
+   ],
+   "source_status": "secondary",
+   "guard": [],
+   "needs": "form-submission"
+  },
+  "ultrastable:A-FORDMELLON": {
+   "profile": "ultrastable",
+   "registry_id": "A-FORDMELLON",
+   "program": "Ford / Mellon / Sloan digital infrastructure funders",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://blog.mozilla.org/en/?p=62627"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/A-FORDMELLON.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "ultrastable:A-OTF": {
+   "profile": "ultrastable",
+   "registry_id": "A-OTF",
+   "program": "Open Technology Fund (FOSS Sustainability Fund and others)",
+   "state": "awaiting-owner",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.opentech.fund/funds/foss-sustainability/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/A-OTF.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source verified"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
+    }
+   ],
+   "source_status": "verified",
+   "guard": [],
+   "needs": "form-submission"
+  },
+  "ultrastable:A-HUMAI": {
+   "profile": "ultrastable",
+   "registry_id": "A-HUMAI",
+   "program": "Humanity AI pooled fund open call",
+   "state": "awaiting-owner",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://grantedai.com/blog/humanity-ai-18-million-pooled-fund-ten-foundations-public-good-summer-open-call-strategy-2026"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/A-HUMAI.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source secondary"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
+    }
+   ],
+   "source_status": "secondary",
+   "guard": [],
+   "needs": "form-submission"
+  },
+  "ultrastable:A-NSFPOSE": {
+   "profile": "ultrastable",
+   "registry_id": "A-NSFPOSE",
+   "program": "NSF POSE (Pathways to Enable Open-Source Ecosystems)",
+   "state": "awaiting-owner",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.nsf.gov/funding/opportunities/pose-pathways-enable-open-source-ecosystems/nsf24-606/solicitation"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/A-NSFPOSE.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source verified"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
+    }
+   ],
+   "source_status": "verified",
+   "guard": [],
+   "needs": "form-submission"
+  },
+  "ultrastable:A-AAIF": {
+   "profile": "ultrastable",
+   "registry_id": "A-AAIF",
+   "program": "Agentic AI Foundation (Linux Foundation)",
+   "state": "awaiting-owner",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://aaif.io/blog/how-to-submit-your-project-to-the-aaif"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/A-AAIF.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source verified"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
+    }
+   ],
+   "source_status": "verified",
+   "guard": [],
+   "needs": "form-submission"
+  },
+  "ultrastable:A-ASF": {
+   "profile": "ultrastable",
+   "registry_id": "A-ASF",
+   "program": "Apache Software Foundation Incubator",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://incubator.apache.org/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/A-ASF.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "ultrastable:A-OSC": {
+   "profile": "ultrastable",
+   "registry_id": "A-OSC",
+   "program": "Open Source Collective (fiscal host)",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://opencollective.com/opensource/apply"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/A-OSC.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "ultrastable:B-GSTART": {
+   "profile": "ultrastable",
+   "registry_id": "B-GSTART",
+   "program": "Google for Startups Cloud Program",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://cloud.google.com/startup"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/B-GSTART.md"
+    }
+   ],
+   "source_status": "verified",
+   "guard": []
+  },
+  "ultrastable:B-CF": {
+   "profile": "ultrastable",
+   "registry_id": "B-CF",
+   "program": "Cloudflare for Startups",
+   "state": "awaiting-owner",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://cloudflare.com/startups/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/B-CF.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source secondary"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
+    }
+   ],
+   "source_status": "secondary",
+   "guard": [],
+   "needs": "form-submission"
+  },
+  "ultrastable:B-AWS": {
+   "profile": "ultrastable",
+   "registry_id": "B-AWS",
+   "program": "AWS Activate",
+   "state": "awaiting-owner",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://aws.amazon.com/activate/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/B-AWS.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source verified"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
+    }
+   ],
+   "source_status": "verified",
+   "guard": [],
+   "needs": "form-submission"
+  },
+  "ultrastable:B-MSFT": {
+   "profile": "ultrastable",
+   "registry_id": "B-MSFT",
+   "program": "Microsoft for Startups Founders Hub",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.microsoft.com/startups"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/B-MSFT.md"
+    }
+   ],
+   "source_status": "verified",
+   "guard": []
+  },
+  "ultrastable:B-NSFSBIR": {
+   "profile": "ultrastable",
+   "registry_id": "B-NSFSBIR",
+   "program": "NSF SBIR/STTR (America's Seed Fund)",
+   "state": "awaiting-owner",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://seedfund.nsf.gov/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/B-NSFSBIR.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source secondary"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
+    }
+   ],
+   "source_status": "secondary",
+   "guard": [],
+   "needs": "form-submission"
+  },
+  "ultrastable:B-YC": {
+   "profile": "ultrastable",
+   "registry_id": "B-YC",
+   "program": "Y Combinator",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.ycombinator.com/apply"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/B-YC.md"
+    }
+   ],
+   "source_status": "secondary",
+   "guard": []
+  },
+  "ultrastable:B-TECHSTARS": {
+   "profile": "ultrastable",
+   "registry_id": "B-TECHSTARS",
+   "program": "Techstars",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.techstars.com/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/B-TECHSTARS.md"
+    }
+   ],
+   "source_status": "secondary",
+   "guard": []
+  },
+  "ultrastable:B-EIC": {
+   "profile": "ultrastable",
+   "registry_id": "B-EIC",
+   "program": "EIC Accelerator (EU)",
+   "state": "expired",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://eic.ec.europa.eu/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "expired",
+     "detail": "deadline 2026-11-04 passed"
+    }
+   ],
+   "source_status": "secondary"
+  },
+  "ultrastable:B-NVIDIA": {
+   "profile": "ultrastable",
+   "registry_id": "B-NVIDIA",
+   "program": "NVIDIA Inception",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.nvidia.com/startups/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/ultrastable/B-NVIDIA.md"
+    }
+   ],
+   "source_status": "verified",
+   "guard": []
+  },
+  "qniverse:A-NLNET": {
+   "profile": "qniverse",
+   "registry_id": "A-NLNET",
+   "program": "NLnet / NGI Zero Commons Fund",
+   "state": "awaiting-owner",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://nlnet.nl/news/2026/20260601-call.html"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/A-NLNET.md"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "queued",
+     "detail": "guard clean, source secondary"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
+    }
+   ],
+   "source_status": "secondary",
+   "guard": [],
+   "needs": "form-submission"
+  },
+  "qniverse:R-NWO": {
+   "profile": "qniverse",
+   "registry_id": "R-NWO",
+   "program": "NWO (Dutch Research Council) open competition and Open Science funding",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.nwo.nl/en/calls"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/R-NWO.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "qniverse:R-HORIZON": {
+   "profile": "qniverse",
+   "registry_id": "R-HORIZON",
+   "program": "EU Horizon Europe / ERC (research grants)",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://erc.europa.eu/apply-grant"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/R-HORIZON.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "qniverse:R-SIDN": {
+   "profile": "qniverse",
+   "registry_id": "R-SIDN",
+   "program": "SIDN Fonds (Dutch internet fund)",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.sidnfonds.nl/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/R-SIDN.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "qniverse:R-SCHMIDT": {
+   "profile": "qniverse",
+   "registry_id": "R-SCHMIDT",
+   "program": "Schmidt Sciences (science and AI programmes)",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.schmidtsciences.org/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/R-SCHMIDT.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "qniverse:R-ASTERA": {
+   "profile": "qniverse",
+   "registry_id": "R-ASTERA",
+   "program": "Astera Institute (open science and research tooling)",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://astera.org/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/R-ASTERA.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "qniverse:R-FORESIGHT": {
+   "profile": "qniverse",
+   "registry_id": "R-FORESIGHT",
+   "program": "Foresight Institute grants",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://foresight.org/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/R-FORESIGHT.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "qniverse:R-TEMPLETON": {
+   "profile": "qniverse",
+   "registry_id": "R-TEMPLETON",
+   "program": "John Templeton Foundation (funding inquiries)",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.templeton.org/grants"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/R-TEMPLETON.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "qniverse:R-OPENPHIL": {
+   "profile": "qniverse",
+   "registry_id": "R-OPENPHIL",
+   "program": "Open Philanthropy (how to apply)",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.openphilanthropy.org/how-to-apply-for-funding/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/R-OPENPHIL.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "qniverse:R-AIRESEARCH": {
+   "profile": "qniverse",
+   "registry_id": "R-AIRESEARCH",
+   "program": "AI lab research-access and credit programmes for independent researchers",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.anthropic.com/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/R-AIRESEARCH.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  },
+  "qniverse:R-OSF-COS": {
+   "profile": "qniverse",
+   "registry_id": "R-OSF-COS",
+   "program": "Center for Open Science and open-science funds",
+   "state": "packet-ready",
+   "route": "form",
+   "first_seen": "2026-11-10",
+   "events": [
+    {
+     "at": "2026-11-10",
+     "event": "discovered",
+     "detail": "https://www.cos.io/"
+    },
+    {
+     "at": "2026-11-10",
+     "event": "packet-ready",
+     "detail": "outreach/packets/qniverse/R-OSF-COS.md"
+    }
+   ],
+   "source_status": "unverified",
+   "guard": [],
+   "blocked_by": "source-unverified"
+  }
+ }
+}

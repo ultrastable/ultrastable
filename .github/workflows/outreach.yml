@@ -1,0 +1,50 @@
+name: outreach
+# The funding and outreach loop. Runs daily and whenever the registry, profiles, gate or engine change.
+# Dry-run until outreach/gate.json mode=live AND sender.registered AND the OUTREACH_SEND_URL / OUTREACH_SEND_TOKEN secrets exist.
+# Kill switch: outreach/gate.json "kill": true. Owner cards are written to outreach/cards/. Status: outreach/STATUS.md.
+# To record a reply from a phone: run this workflow with reply_key and reply_kind.
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  push:
+    branches: [main]
+    paths: ["outreach/gate.json", "outreach/profiles.json", "outreach/suppression.json", "business/funding/registry.json", "scripts/outreach.py"]
+  workflow_dispatch:
+    inputs:
+      reply_key: {description: "Target key such as qniverse:R-NWO (optional)", required: false}
+      reply_kind: {description: "ack, question, accepted, rejected, opt-out or bounce", required: false}
+      reply_note: {description: "Short note (optional)", required: false}
+permissions:
+  contents: write
+concurrency:
+  group: outreach
+  cancel-in-progress: false
+jobs:
+  loop:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Tests
+        run: python3 scripts/test_outreach.py
+      - name: Record reply
+        if: ${{ inputs.reply_key != '' && inputs.reply_kind != '' }}
+        run: python3 scripts/outreach.py reply "${{ inputs.reply_key }}" --kind "${{ inputs.reply_kind }}" --note "${{ inputs.reply_note }}"
+      - name: Run the loop
+        env:
+          OUTREACH_SEND_URL: ${{ secrets.OUTREACH_SEND_URL }}
+          OUTREACH_SEND_TOKEN: ${{ secrets.OUTREACH_SEND_TOKEN }}
+        run: python3 scripts/outreach.py run
+      - name: Summary
+        run: cat outreach/STATUS.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Record state
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          git add outreach
+          if git diff --cached --quiet; then echo "no state change"; exit 0; fi
+          git config user.name "ultrastable-outreach"; git config user.email "outreach@ultrastable.io"
+          git commit -m "outreach: record run state"
+          git push origin HEAD:main || { echo "::error::state push failed; see docs/BOOTSTRAP-GAPS.md BG-25 and BG-29"; exit 1; }

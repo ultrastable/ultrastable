@@ -1,0 +1,13 @@
+{
+ "items": [
+  {
+   "id": "P-QUEUE",
+   "metric": "state_queued",
+   "op": ">=",
+   "target": 1,
+   "due": "2026-11-24",
+   "logged": "2026-11-10",
+   "text": "state_queued >= 1 within 336 h (a verified source reaches the queue once the weekly verification promotes a registry row)"
+  }
+ ]
+}

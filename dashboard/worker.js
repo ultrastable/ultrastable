@@ -139,6 +139,7 @@ const COMMANDS = {
   status: { mut: false, doc: "checks and task counts", run: async c => { const s = await stateOf(c.env); return { ok: true, out: s.checks.map(k => (k.ok ? "ok   " : "FAIL ") + k.name + " - " + k.detail).join("\n") + "\nowner tasks open: " + s.counts.owner + ", fleet tasks open: " + s.counts.fleet + ", queued for fleet: " + s.counts.queued }; } },
   tasks: { mut: false, doc: "tasks [owner|fleet|all]", run: async (c, a) => { const k = a[0] || "all"; const r = (await c.env.DB.prepare("SELECT * FROM tasks WHERE state IN ('open','delegated') AND (?1='all' OR kind=?1) ORDER BY priority,id LIMIT 60").bind(k).all()).results; return { ok: true, out: r.length ? r.map(fmtTask).join("\n") : "Nothing open." }; } },
   task: { mut: false, doc: "task <id>", run: async (c, a) => { const t = await getTask(c.env, a[0]); return t ? { ok: true, out: fmtTask(t) + "\n" + (t.why || "") + "\n" + (t.url || "") } : { ok: false, out: "No task " + a[0] }; } },
+  snapshot: { mut: false, doc: "show the repo snapshot panels (funding, IP, trust, cards, bootstrap)", run: async c => { const s = (await stateOf(c.env)).snapshot; return s && s.panels ? { ok: true, out: "generated " + s.generated + " commit " + (s.commit || "?") + "\n" + s.panels.map(p => p.title + "\n" + p.rows.map(r => "  " + r[0] + ": " + r[1]).join("\n")).join("\n") } : { ok: false, out: "No snapshot received yet. The dashboard-snapshot workflow posts one." }; } },
   audit: { mut: false, doc: "audit [n]", run: async (c, a) => { const r = (await c.env.DB.prepare("SELECT id,at,cmd,ok FROM audit ORDER BY id DESC LIMIT ?1").bind(Math.min(+a[0] || 10, 50)).all()).results; return { ok: true, out: r.map(x => x.id + " " + new Date(x.at).toISOString().slice(0, 19) + " " + (x.ok ? "ok " : "err") + " " + x.cmd).join("\n") || "Empty." }; } },
   probe: { mut: false, doc: "run all checks now", run: async c => { const r = await runProbes(c.env); return { ok: r.every(x => x.ok), out: r.map(x => (x.ok ? "ok   " : "FAIL ") + x.name + " - " + x.detail).join("\n") }; } },
   done: { mut: true, doc: "done <id>", run: (c, a) => setState(c, a[0], "done") },
@@ -199,7 +200,9 @@ export async function stateOf(env) {
   const done = (await env.DB.prepare("SELECT COUNT(*) c FROM tasks WHERE state='done'").first()).c;
   const audit = await q("SELECT id,at,cmd,ok FROM audit ORDER BY id DESC LIMIT 8");
   const notes = await q("SELECT at,subject,sent,error FROM notifications ORDER BY at DESC LIMIT 6");
-  return { version: VERSION, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
+  const sn = await env.DB.prepare("SELECT body,at FROM snapshots WHERE key='repo'").first();
+  let snapshot = null; if (sn) { try { snapshot = { ...JSON.parse(sn.body), received: sn.at }; } catch (e) { snapshot = { error: "stored snapshot is not valid JSON" }; } }
+  return { version: VERSION, snapshot, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
 }
 
 // ---------- scheduled tick: probes, notifications, daily digest ----------
@@ -237,6 +240,8 @@ async function load(){const r=await api('/api/owner/state');if(r.s==401){$('#app
 $('#app').hidden=false;const s=r.j;const bad=s.checks.filter(c=>!c.ok).length;
 $('#pill').textContent=bad?bad+' check'+(bad>1?'s':'')+' failing':'All checks passing';$('#pill').className='pill '+(bad?'bad':'ok');
 $('#checks').innerHTML=s.checks.map(c=>'<div class="card"><span class="'+(c.ok?'ok':'bad')+'">'+(c.ok?'OK':'FAIL')+'</span> <b>'+E(c.name)+'</b><div class="meta">'+E(c.detail)+'</div></div>').join('')||'<p class="meta">No checks yet. Type probe.</p>';
+const sn=s.snapshot;$('#snapmeta').textContent=sn&&sn.panels?('Snapshot of the repo, generated '+sn.generated+(sn.commit?' at '+sn.commit:'')+(sn.problems&&sn.problems.length?'. Problems: '+sn.problems.join('; '):'')):'No snapshot received yet. The dashboard-snapshot workflow posts one after each outreach run.';
+$('#snap').innerHTML=sn&&sn.panels?sn.panels.map(p=>'<div class="card"><h3>'+E(p.title)+'</h3>'+p.rows.map(r=>'<div class="meta"><span class="'+(r[2]=='ok'?'ok':r[2]=='warn'?'bad':'')+'">'+(r[2]=='ok'?'OK ':r[2]=='warn'?'OPEN ':'')+'</span><b>'+E(r[0])+'</b> '+E(r[1])+'</div>').join('')+'</div>').join(''):'';
 $('#counts').textContent='Your queue: '+s.counts.owner+' open. Fleet: '+s.counts.fleet+' open, '+s.counts.queued+' queued, '+s.counts.done+' done.';
 $('#owner').innerHTML=s.owner.map(t=>task(t,1)).join('')||'<p class="meta">Nothing waiting on you.</p>';
 $('#fleet').innerHTML=s.fleet.map(t=>'<div class="card"><b>'+E(t.title)+'</b> <span class="meta">'+E(t.area||'')+(t.state=='delegated'?' · with the fleet':'')+'</span><div class="row">'+(t.state=='delegated'?'':'<button data-c="fix '+E(t.id)+'">'+(t.fix_cmd?'Fix it':'Hand to fleet')+'</button>')+'<button data-c="done '+E(t.id)+'">Done</button><button data-c="dismiss '+E(t.id)+'">Not doing</button>'+(t.url?'<a class="btn" href="'+E(t.url)+'" rel="noopener">Open</a>':'')+'</div></div>').join('')||'<p class="meta">No fleet tasks.</p>';
@@ -248,7 +253,7 @@ $('#cmd').onsubmit=e=>{e.preventDefault();const v=$('#line').value.trim();if(v){
 $('#logout').onclick=async()=>{await api('/api/owner/logout',{});location.reload()};
 load();`;
 function ownerPage() {
-  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><h2>Needs you</h2><div id=\"owner\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Command line</h2><form id=\"cmd\"><div class=\"row\"><input id=\"line\" placeholder=\"type help\" aria-label=\"command\" autocapitalize=\"off\" autocomplete=\"off\"><button class=\"p\">Run</button></div></form><pre id=\"out\">Commands marked * ask for a fresh emailed code.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
+  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><h2>Needs you</h2><div id=\"owner\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Command line</h2><form id=\"cmd\"><div class=\"row\"><input id=\"line\" placeholder=\"type help\" aria-label=\"command\" autocapitalize=\"off\" autocomplete=\"off\"><button class=\"p\">Run</button></div></form><pre id=\"out\">Commands marked * ask for a fresh emailed code.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
 }
 
 // ---------- router ----------
@@ -271,6 +276,13 @@ export async function route(req, env) {
   }
   if (p.startsWith("/api/fleet/") && env.FLEET_TOKEN) {
     const ok = constEq(await sha256(req.headers.get("authorization") || ""), await sha256("Bearer " + env.FLEET_TOKEN)); if (!ok) return json({ error: "unauthorized" }, 401);
+    if (p === "/api/fleet/snapshot" && req.method === "POST") {
+      const raw = await req.text(); if (raw.length > 200000) return json({ error: "snapshot too large" }, 413);
+      let b; try { b = JSON.parse(raw); } catch (e) { return json({ error: "not JSON" }, 400); }
+      if (!Array.isArray(b.panels)) return json({ error: "snapshot needs panels" }, 400);
+      await env.DB.prepare("INSERT INTO snapshots(key,body,at) VALUES('repo',?1,?2) ON CONFLICT(key) DO UPDATE SET body=?1,at=?2").bind(raw, Date.now()).run();
+      return json({ ok: true, panels: b.panels.length });
+    }
     if (p === "/api/fleet/queue") return json({ queue: (await env.DB.prepare("SELECT q.id,q.task_id,t.title,t.url,t.why FROM fleet_queue q JOIN tasks t ON t.id=q.task_id WHERE q.status='queued' ORDER BY q.id LIMIT 20").all()).results });
     if (p === "/api/fleet/ack" && req.method === "POST") { const b = await req.json(); await env.DB.prepare("UPDATE fleet_queue SET status=?2,result=?3,done_at=?4 WHERE id=?1").bind(+b.id, b.status === "done" ? "done" : "failed", String(b.result || "").slice(0, 500), Date.now()).run(); if (b.status === "done") await env.DB.prepare("UPDATE tasks SET state='done',updated_at=?2 WHERE id=(SELECT task_id FROM fleet_queue WHERE id=?1)").bind(+b.id, Date.now()).run(); return json({ ok: true }); }
   }
