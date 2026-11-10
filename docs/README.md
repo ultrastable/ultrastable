@@ -15,3 +15,10 @@ Funding: [Funding options](funding/funding-options.md), covering credits, grants
 Business plan and pitch kit: Business-in-a-box in the owner-only `business` repo (`business/plan/README.md`), written by the virtual managers: roster, customers, competition, pitch, funding, promotion, events.
 
 Bootstrapping: [AIOS lessons](bootstrapping/aios-lessons.md) and [idea-to-organization boot sequence](bootstrapping/bootstrapping.md). Code: the `seed` repo.
+
+
+## Added for the shop-around package
+- [overview.md](overview.md): the unified story and honest status
+- [customer-story.md](customer-story.md), [security-overview.md](security-overview.md)
+- [CONFIDENTIALITY.md](CONFIDENTIALITY.md): SAFE NOW / AFTER FILING / NDA ONLY, file register, NDA use
+- [../platform/docs/architecture.md](../platform/docs/architecture.md): portable core and adapters

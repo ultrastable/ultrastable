@@ -5,3 +5,7 @@ The core Ultrastable platform: the tick, the virtual-staff roles, the trust ledg
 Status: the working system runs today inside QNFO on Cloudflare. Extracting and packaging it into this repo is a later step. See [docs/architecture.md](docs/architecture.md) for the target shape.
 
 The boot path (idea to running org) lives in the `seed` repo; this repo is where the tick and roles are generalized for multiple tenants. The seed's `worker/src/tick.js` and `worker/migrations/0001_init.sql` are the first working slice.
+
+
+## Adapters
+The portable core runs on Cloudflare (running for QNFO) and on Google Cloud (Cloud Run skeleton, tested, undeployed). See [adapters/](adapters/README.md) and [docs/architecture.md](docs/architecture.md).
