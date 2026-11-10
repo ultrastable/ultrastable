@@ -12,3 +12,13 @@ routes = [
 [observability]
 enabled = true
 head_sampling_rate = 1
+
+# ANALYTICS-1: first-party analytics share the ops database (seed/analytics/schema.sql).
+[[d1_databases]]
+binding = "DB"
+database_name = "ultrastable-ops"
+database_id = "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"
+
+[[kv_namespaces]]
+binding = "ASSETS"
+id = "c6ca64dddec5489cbcee896113949eba"
