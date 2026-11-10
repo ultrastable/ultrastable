@@ -36,6 +36,24 @@ Procedures that worked, failures that happened, and the changes each one should 
 - A scheduled job that fails CI when an agent-written document contradicts a repository fact (licence, visibility, dates).
 - Automatic cleanup of merged local branches in agent sessions.
 
+## Entries from the patent-drafting thread (2026-11-10)
+
+What worked:
+
+1. **Read the system before drafting.** Claims were written from the fleet's real tables, formulas and thresholds (`trust_ledger`, `v_issue_queue_v2`, `PLUSSING.md`), so every claim element has a paragraph and a figure. A support table (`ip/provisional/CLAIM-STRATEGY.md`) traces each one.
+2. **Claims first, then figures, then text,** with figures generated from code (`figures/figs.py`) so they can be rebuilt (`tools/build.sh`).
+3. **Check output visually.** Rendering each figure to an image found overlapping arrows and clipped labels that source review missed.
+4. **State reduction to practice carefully.** The seed's first real deploy had not run, so the spec words that step as an embodiment and flags it for the inventor.
+
+Failures and fixes:
+
+| # | What went wrong | Cause | Change for next initialisation |
+|---|---|---|---|
+| 10 | The patent package sat in a thread and shared folder for hours | No reachable repo; creating repos is not allowed from agent sessions | Preflight opens one gate card for the repo and installs the GitHub app first; until then commit to a bundle, not chat |
+| 11 | A push to a private QNFO repo as a stand-in was refused | The destination was not the one the owner named | Never substitute a destination; hold the files and say so |
+| 12 | Writing to the owner's machine failed twice | The device shell needs up to 17 GB free; the file hand-off tool needs a file ID this session cannot mint | Preflight checks device disk space. Fallback that worked: a zip in the shared library |
+| 13 | Public QNFO repo already disclosed the invention | Work started in a public repo before any filing | Seed rule: a new project's first commit is private, and a disclosure inventory is part of init (`ip/FILING-CHECKLIST.md`) |
+| 14 | Claim numbers drifted across three edits | Renumbering by hand | Generate claim numbers and cross-references from a list, and run a check that every "claim N" reference points to an existing claim |
 ## Addendum from the push thread (2026-11-10, 09:30Z)
 
 - Pushing to a shared `main` from a stale clone failed once (non-fast-forward, another thread had pushed): always `git pull --rebase origin main` immediately before pushing.
