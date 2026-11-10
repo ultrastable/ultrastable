@@ -1,0 +1,44 @@
+{
+  "_note": "DEPLOY-PROBES-1 (scripts/deploy_probes.py): what canonical-deploy.yml checks from the runner after this worker deploys. A probe that passed before the deploy and fails after it reverts the push (scripts/canary_revert.py); add the routes and D1 statements this worker must keep serving.",
+  "mode": "revert",
+  "http": [
+    {
+      "url": "https://qnfo.org/",
+      "contains": [
+        "data-brand=\"qnfo\"",
+        "<title>QNFO"
+      ]
+    },
+    {
+      "url": "https://qnfo.org/qds-consent.js",
+      "status": 200,
+      "contains": [
+        "BP26-CONSENT-1",
+        "navigator"
+      ]
+    },
+    {
+      "url": "https://papers.qnfo.org/api/paper-videos",
+      "status": 200,
+      "contains": [
+        "\"items\""
+      ]
+    },
+    {
+      "url": "https://qnfo.org/platform",
+      "status": 200,
+      "contains": [
+        "Ultrastable",
+        "claims pass their live check"
+      ]
+    }
+  ],
+  "d1": [
+    {
+      "binding": "AUDIT",
+      "explain": [
+        "SELECT slug, video_id, title, duration_s, uploaded_at FROM youtube_videos WHERE state = 'uploaded' AND video_id IS NOT NULL AND (privacy IS NULL OR privacy = 'public') ORDER BY id"
+      ]
+    }
+  ]
+}
