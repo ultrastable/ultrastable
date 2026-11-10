@@ -232,6 +232,9 @@ class Boot:
              "a tick report is visible in the channel", "channel shows last tick id"),
             ("KIT-5", "First plus accepted into the reserved share", "product-manager", "KIT-3",
              "one item of kind plus is done", "SELECT COUNT(*) FROM items WHERE kind='plus' AND status='done'"),
+            ("KIT-7", "Analytics live: beacon on every site, scoreboard registered (analytics/analytics.js REGISTRY), collector self-check green",
+             "operations", "KIT-2", "GET /api/analytics shows collector_selfcheck = 1 and every metric has a trigger or exemption",
+             "GET /api/analytics with the bearer token returns breaches and metrics"),
         ]
         items = [{"id": i, "title": t, "kind": "work", "project": None, "owner_role": o, "trigger_on": trig,
                   "done_check": d, "closing_probe": p, "priority": 10 + n}

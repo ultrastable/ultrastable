@@ -14,6 +14,8 @@ Modeled on the QNFO fleet dashboard (qnfo-fleet-dashboard), cut down to the part
 - **Owner email notifications**: failing checks, new owner items (grouped) and a daily digest at 13:00 UTC, de-duplicated by key and logged on the page.
 - **Disclosure guard**: a check that fetches the public home page and fails if it contains any mechanism word (list in `worker.js`). Enforces project rule PF-1 until the provisional is filed.
 
+- **Web analytics (ANALYTICS-1)**: first-party, cookieless, counted server-side on the holding page and by `/a.js` + `/a/e` beacon for any registered host. Panel on `/owner`, `analytics` command, daily digest section, owner email on a metric breach (`hit = 1`), 10-minute collector self-check as a guard. Module and metric registry: `seed/analytics/analytics.js` (shared with the seed worker, so every new org inherits it). Test: `seed/worker/test/analytics.test.js`.
+
 ## Public side
 `/` serves a generic holding page, noindex, and `robots.txt` disallows everything. The fuller site stays in `site/` (not deployed).
 
