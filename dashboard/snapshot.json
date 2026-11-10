@@ -1,6 +1,6 @@
 {
  "generated": "2026-11-10",
- "commit": "6b0c4ee",
+ "commit": "6aa9849",
  "problems": [],
  "panels": [
   {
@@ -14,7 +14,7 @@
     ],
     [
      "Source status",
-     "secondary 8, unverified 13, verified 10",
+     "secondary 8, unverified 11, verified 12",
      "warn"
     ],
     [
@@ -24,12 +24,12 @@
     ],
     [
      "Targets",
-     "29 in pipeline: queued 0, awaiting owner 10, sent 0, replies 0",
+     "29 in pipeline: queued 0, awaiting owner 15, sent 0, replies 0",
      "info"
     ],
     [
      "Waiting on source verification",
-     "13",
+     "11",
      "warn"
     ],
     [
@@ -156,7 +156,7 @@
      "warn"
     ],
     [
-     "OUT-SEND-ultrastable (9)",
+     "OUT-SEND-ultrastable (14)",
      "outreach card; default in effect: not sent. outreach/cards/OUT-SEND-ultrastable.md",
      "warn"
     ],
