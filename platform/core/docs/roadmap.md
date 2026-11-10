@@ -2,7 +2,7 @@
 
 | # | Item | Why | Status |
 |---|---|---|---|
-| 1 | Run `CommandAgent` against a real repo with Claude Code/Codex and a real check command; record results as the first honest case study | Replace "simulated" with evidence | next |
+| 1 | Run a real agent against a real repo with a real check command | Replace "simulated" with evidence | **first proof done** ([proof-real-agent.md](proof-real-agent.md)): Workers AI model fixed a bug, verified by `unittest`. Next: Claude Code (needs agent credential), a real repo, more tasks |
 | 2 | Postgres store adapter + Cloud SQL deploy | Durable, multi-instance | next |
 | 3 | GitHub connector: items from issues, PRs as execution, merge on green | The surface teams use | next |
 | 4 | Vertex AI (Gemini) and Anthropic reviewer/doer pairing, different model per role | Model-agnostic claim, never self-review | next |

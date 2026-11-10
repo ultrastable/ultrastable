@@ -23,7 +23,7 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | Seed bootstrapper, 7-step tick, schema, policy | **Built**, 12 Python + 9 Worker tests pass; no real cloud `--apply` yet |
 | Google Cloud adapter (Cloud Run, Scheduler) | **Skeleton built**, 2 tests pass, deploy script unrun |
 | Dashboard | **In `dashboard/`**; status per its README, not verified here |
-| Reference runtime in Python: 11-step loop, CLI, dashboard, Docker, Cloud Run deploy ([platform/core](platform/core/README.md)) | **Built**, 12 tests pass, agents simulated; deploy unrun |
+| Reference runtime in Python: 11-step loop, CLI, dashboard, Docker, Cloud Run deploy ([platform/core](platform/core/README.md)) | **Built**, 12 tests pass, default agents simulated, one real-model proof (Workers AI); deploy unrun |
 | Real-agent proof, Postgres store, multi-tenancy | **Planned** |
 | Outside customers, audit, entity, filed patent | **None yet** (owner steps) |
 

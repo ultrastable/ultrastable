@@ -1,0 +1,23 @@
+name: org-profile-probe
+# BG-13: "done" means the public org page renders the profile. Daily + on demand.
+on:
+  schedule: [{ cron: "23 6 * * *" }]
+  workflow_dispatch:
+permissions:
+  issues: write
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    env:
+      ORG: ${{ github.repository_owner }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Org page shows the profile
+        run: |
+          page=$(curl -fsSL "https://github.com/$ORG") && echo "$page" | grep -qi "runs itself" && echo "ok: profile live" && exit 0
+          echo "::error::https://github.com/$ORG does not show the profile"
+          title="org-profile-probe: public org page missing profile"
+          n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "$title in:title" --json number --jq '.[0].number // empty')
+          [ -n "$n" ] || gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body "Probe failed. Owner: org-init. Check .github is unarchived+public and profile/README.md exists. Closing probe: this workflow passes."
+          exit 1

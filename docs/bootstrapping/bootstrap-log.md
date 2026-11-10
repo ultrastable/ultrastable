@@ -89,3 +89,13 @@ The Worker is private by design (disclosure gate PF-1). Check it with a D1 query
 **Result:** tick 1 ran at 09:50:16 UTC with 7 of 7 steps, no errors (it reconciled one item to ready; no role was due, since the portfolio manager ticks every 6th tick). The 09:40 cron did not fire; the first run came about 17 minutes after deploy. A fresh cron schedule can take a cycle or two to start, so KIT-3 should not be judged before the second hour.
 
 Next verification (owner or the operations role): once `tick_runs` shows six complete ticks in an hour, mark KIT-3 done and close prediction `P-KIT-3`.
+
+## 2026-11-10: funding and briefing package thread
+
+- Built business/funding/ (tracks A and B, decision memo, agent-execution view, registry) and business/briefing/ (deck text, elevator pitches, FAQ, Q&A, competitor map, objection handling).
+- Self-maintenance: `scripts/funding_verify.py`, `scripts/funding_file_issues.py`, `.github/workflows/funding-maintenance.yml` (weekly), checklist in business/funding/MAINTENANCE.md.
+- Failures and gaps: BG-15 to BG-19 in docs/BOOTSTRAP-GAPS.md. Fetch failures on nsf.gov and sloan.org left four rows unverified; a research pass with a browser surface is issue FUND-6.
+- Open loops all filed as docs/issues/FUND-*.json (owner cards OC-1 to OC-5 as FUND-1 to FUND-5).
+## Project memory in a platform store (2026-11-10)
+
+Project memory sat in the chat platform's memory store: hidden local state, unreviewed, unversioned, and one note was overwritten with a wrong disclosure claim. Fix: `docs/PROJECT-MEMORY.md` is canonical, the store is a pointer, `memory-fresh` fails when stale, and the seed ships all three (BG-10).

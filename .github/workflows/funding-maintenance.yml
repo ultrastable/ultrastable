@@ -1,0 +1,26 @@
+name: funding-maintenance
+# Weekly re-verification of business/funding/registry.json. See business/funding/MAINTENANCE.md.
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: funding-maintenance
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Verify registry
+        run: python3 scripts/funding_verify.py --fetch --out report.json
+      - name: File or update issues
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 scripts/funding_file_issues.py report.json

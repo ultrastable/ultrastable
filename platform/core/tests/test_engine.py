@@ -139,3 +139,25 @@ class Http(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PatchAgentTest(unittest.TestCase):
+    def test_workers_ai_agent_edits_verifies_and_reverts(self):
+        import os, sys, tempfile
+        from ultrastable.agents import WorkersAIAgent
+        d = tempfile.mkdtemp()
+        open(os.path.join(d, "calc.py"), "w").write("def add(a, b):\n    return a - b\n")
+        open(os.path.join(d, "t.py"), "w").write("from calc import add\nassert add(2, 3) == 5\n")
+        chk = sys.executable.replace(chr(92), '/') + ' t.py'
+        good = WorkersAIAgent("a", ["calc.py"], d, chk, transport=lambda p: json.dumps({"calc.py": "def add(a, b):\n    return a + b\n"}))
+        it = {"title": "fix add", "done_check": "t passes"}
+        ok, _ = good.verify(it, good.do(it))
+        self.assertTrue(ok)
+        bad = WorkersAIAgent("b", ["calc.py"], d, chk, transport=lambda p: json.dumps({"calc.py": "def add(a, b):\n    return 0\n"}))
+        r = bad.do(it)
+        ok, _ = bad.verify(it, r)
+        self.assertFalse(ok)
+        r.revert()
+        self.assertIn("a + b", open(os.path.join(d, "calc.py")).read())
+        esc = WorkersAIAgent("c", ["calc.py"], d, chk, transport=lambda p: '{"evil.py": "x"}')
+        self.assertFalse(esc.do(it).ok)

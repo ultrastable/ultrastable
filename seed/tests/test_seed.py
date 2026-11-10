@@ -109,3 +109,64 @@ class BootTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SurfaceTests(BootTests):
+    def test_surfaces_and_org_plan_recorded(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.boot(Path(d))
+            log = json.loads((Path(d) / "org" / "boot-log.json").read_text())
+            self.assertIn("disk_free_gb", log["surfaces"])
+            self.assertTrue(log["org_plan"])
+            self.assertTrue({"surfaces", "org"} <= {st["stage"] for st in log["stages"]})
+
+    def test_apply_without_org_token_is_gate_card_not_crash(self):
+        with tempfile.TemporaryDirectory() as d:
+            copy_seed(Path(d))
+            for k in ("ORG_ADMIN_TOKEN", "GH_ORG_TOKEN", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"):
+                os.environ.pop(k, None)
+            from unittest import mock
+            with mock.patch.object(bs.Boot, "_gh_admin_org", staticmethod(lambda: False)):
+                bs.main(["--apply", "--root", d])
+            log = json.loads((Path(d) / "org" / "boot-log.json").read_text())
+            org = [st for st in log["stages"] if st["stage"] == "org"][0]
+            self.assertIn(org["status"], ("blocked", "degraded"))
+
+
+class FundingTests(BootTests):
+    """FUND-10 (BG-17): a fresh bootstrap creates the funding registry and the weekly workflow."""
+
+    def test_fresh_boot_creates_registry_and_workflow(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as d:
+            self.boot(Path(d))
+            reg = Path(d) / "funding" / "registry.json"
+            self.assertTrue(reg.exists())
+            self.assertTrue((Path(d) / ".github/workflows/funding-maintenance.yml").exists())
+            data = json.loads(reg.read_text()); data["items"] = [{"id": "X", "status": "unverified", "last_verified": "2020-01-01", "deadline": None, "url": "https://example.invalid"}]
+            reg.write_text(json.dumps(data))
+            bs.main(["--root", d, "--dry-run"])  # idempotent: maintained registry is not overwritten
+            self.assertEqual(len(json.loads(reg.read_text())["items"]), 1)
+            out = subprocess.run([sys.executable, str(Path(d) / "funding/verify.py"), "--today", "2026-11-10"], capture_output=True, text=True)
+            self.assertEqual(out.returncode, 0, out.stderr)
+            kinds = {f["kind"] for f in json.loads(out.stdout)["findings"]}
+            self.assertEqual(kinds, {"stale", "unverified"})
+
+
+class GhAdminOrgTests(unittest.TestCase):
+    """BG-13: a local gh login with admin:org counts as the org-admin credential."""
+
+    def _run(self, rc, out):
+        from unittest import mock
+        r = mock.Mock(returncode=rc, stdout=out, stderr="")
+        with mock.patch.object(bs.shutil, "which", return_value="gh"),              mock.patch.object(bs.subprocess, "run", return_value=r):
+            return bs.Boot._gh_admin_org()
+
+    def test_admin_org_scope(self):
+        self.assertTrue(self._run(0, "Token scopes: 'admin:org', 'repo'"))
+
+    def test_no_admin_scope(self):
+        self.assertFalse(self._run(0, "Token scopes: 'repo'"))
+
+    def test_not_logged_in(self):
+        self.assertFalse(self._run(1, "not logged in"))
