@@ -13,3 +13,6 @@
 ## Never
 - Hold an item without a closing probe.
 - Duplicate work under another agent's live claim.
+
+## Measure
+Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact, reactions or attention to decide what to build, when to stop or whether it is done. Ship on your own judgment and label impact as a hypothesis until measured.
