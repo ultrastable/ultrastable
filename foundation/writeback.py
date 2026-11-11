@@ -11,7 +11,7 @@ import datetime as dt, fnmatch, hashlib, json, re, subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-WB_PREFIXES = ("docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loops.json", "docs/issues/OL-")
+WB_PREFIXES = ("docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loop-registry.json", "docs/issues/OL-")
 DOC_ONLY = re.compile(r"^(docs/|doctrine/|GLOSSARY\.md$|.*\.md$)")
 
 

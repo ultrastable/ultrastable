@@ -55,7 +55,7 @@ A system is autonomous if it has self-referential loops and the ability to close
 
 **Tested by:** `grep:tests/foundation/test_loops.py::def test_every_loop_closes_by_the_system_or_a_gate_card`; `grep:doctrine/positioning.json::self-referential`
 
-**Implemented by:** `doctrine/positioning.json`, `instances/ultrastable/loops.json`, `foundation/loops.py`
+**Implemented by:** `doctrine/positioning.json`, `instances/ultrastable/loop-registry.json`, `foundation/loops.py`
 
 **Related:** [self-referential-loop](#self-referential-loop), [self-referential-closure](#self-referential-closure), [closing-privilege](#closing-privilege), [closed-system](#closed-system)
 
@@ -74,13 +74,13 @@ A repeating cycle with five parts: a trigger, an owner, an action, a closing pro
 
 **Tested by:** `grep:tests/foundation/test_loops.py::def test_loop_without_closing_probe_fails`
 
-**Implemented by:** `instances/ultrastable/loops.json`, `foundation/loops.py`
+**Implemented by:** `instances/ultrastable/loop-registry.json`, `foundation/loops.py`
 
 **Related:** [self-referential-loop](#self-referential-loop), [closing-probe](#closing-probe), [write-back](#write-back)
 
 **Lineage:**
 
-- 1.0.0 (2026-11-11): Defined as trigger, owner, action, closing probe and write-back. (`instances/ultrastable/loops.json`)
+- 1.0.0 (2026-11-11): Defined as trigger, owner, action, closing probe and write-back. (`instances/ultrastable/loop-registry.json`)
 
 ## <a id="self-referential-loop"></a>Self-referential loop
 
@@ -90,13 +90,13 @@ A loop the system can read about itself: it is recorded as data in the loop regi
 
 **Tested by:** `grep:tests/foundation/test_loops.py::def test_workflow_not_claimed_by_a_loop_fails`
 
-**Implemented by:** `instances/ultrastable/loops.json`, `foundation/loops.py`
+**Implemented by:** `instances/ultrastable/loop-registry.json`, `foundation/loops.py`
 
 **Related:** [loop](#loop), [autonomy](#autonomy), [self-referential-closure](#self-referential-closure)
 
 **Lineage:**
 
-- 1.0.0 (2026-11-11): Defined as a loop recorded in the registry and written back into the system. (`instances/ultrastable/loops.json`)
+- 1.0.0 (2026-11-11): Defined as a loop recorded in the registry and written back into the system. (`instances/ultrastable/loop-registry.json`)
 
 ## <a id="self-referential-closure"></a>Self-referential closure
 
@@ -126,7 +126,7 @@ The permissions the system needs to finish a loop itself: repository write by pu
 
 **Tested by:** `grep:tests/foundation/test_loops.py::def test_every_loop_closes_by_the_system_or_a_gate_card`
 
-**Implemented by:** `instances/ultrastable/loops.json`, `seed/autonomy/policy.json`, `foundation/loops.py`
+**Implemented by:** `instances/ultrastable/loop-registry.json`, `seed/autonomy/policy.json`, `foundation/loops.py`
 
 **Related:** [autonomy](#autonomy), [interrupt-gate](#interrupt-gate), [trust-ledger](#trust-ledger)
 
@@ -236,7 +236,7 @@ The probe that decides a loop or item is done. It passes only when the result ex
 
 **Lineage:**
 
-- 1.0.0 (2026-11-11): Defined; required on every loop and gap. (`instances/ultrastable/loops.json`)
+- 1.0.0 (2026-11-11): Defined; required on every loop and gap. (`instances/ultrastable/loop-registry.json`)
 
 ## <a id="tick"></a>Tick
 
@@ -650,7 +650,7 @@ Every step and process declares a time bound, a written Definition of Done and a
 
 **Tested by:** `grep:tests/foundation/test_loops.py::def test_loop_needs_sla_done_and_two_paths`
 
-**Implemented by:** `foundation/loops.py`, `instances/ultrastable/loops.json`, `doctrine/kernel.json`
+**Implemented by:** `foundation/loops.py`, `instances/ultrastable/loop-registry.json`, `doctrine/kernel.json`
 
 **Related:** [loop](#loop), [fallback-classes](#fallback-classes)
 
@@ -704,7 +704,7 @@ A paid path never ends work while a free path exists, and an external provider n
 
 **Tested by:** `grep:tests/foundation/test_loops.py::def test_paid_path_needs_free_fallback`
 
-**Implemented by:** `foundation/loops.py`, `instances/ultrastable/loops.json`
+**Implemented by:** `foundation/loops.py`, `instances/ultrastable/loop-registry.json`
 
 **Related:** [sla-and-paths](#sla-and-paths)
 
@@ -722,7 +722,7 @@ One working credential per endpoint, verified by a live probe before it is writt
 
 **Tested by:** `grep:tests/foundation/test_loops.py::def test_credential_has_one_source`
 
-**Implemented by:** `foundation/loops.py`, `instances/ultrastable/loops.json`
+**Implemented by:** `foundation/loops.py`, `instances/ultrastable/loop-registry.json`
 
 **Related:** [closing-privilege](#closing-privilege)
 
@@ -740,7 +740,7 @@ Bug fixes are the floor. The portfolio manager and the program managers orient f
 
 **Tested by:** `grep:tests/foundation/test_loops.py::def test_program_loop_needs_orient_originate_predict`
 
-**Implemented by:** `foundation/loops.py`, `instances/ultrastable/loops.json`, `doctrine/standing-directives.md`
+**Implemented by:** `foundation/loops.py`, `instances/ultrastable/loop-registry.json`, `doctrine/standing-directives.md`
 
 **Related:** [manager](#manager), [plussing](#plussing), [prediction](#prediction)
 

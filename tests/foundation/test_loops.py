@@ -3,7 +3,7 @@ import unittest
 from _repo import ROOT, copy_repo, edit
 from foundation import loops
 
-REG = "instances/ultrastable/loops.json"
+REG = "instances/ultrastable/loop-registry.json"
 
 
 def one(r, fn, lid="plussing"):
@@ -37,6 +37,10 @@ class Registry(unittest.TestCase):
     def test_workflow_not_claimed_by_a_loop_fails(self):
         r = copy_repo(); (r / ".github/workflows/extra.yml").write_text("name: extra\n")
         self.assertTrue(any("extra.yml belongs to no loop" in p for p in loops.verify(r)))
+
+    def test_launch_loop_not_in_registry_fails(self):
+        r = copy_repo(); edit(r / "instances/ultrastable/loops.json", lambda d: d["loops"].append({"id": "extra", "what": "x", "mode": "live", "probe": "file:foundation/launch.py"}))
+        self.assertTrue(any("launch loop extra" in p for p in loops.verify(r)))
 
     def test_every_role_has_a_loop(self):
         r = copy_repo(); edit(r / REG, lambda d: d.update(loops=[l for l in d["loops"] if l["owner"] != "reviewer"]))

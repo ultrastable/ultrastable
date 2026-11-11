@@ -1,6 +1,6 @@
 {
  "generated": "2026-11-11",
- "commit": "18053d7",
+ "commit": "1170719",
  "problems": [],
  "panels": [
   {
@@ -456,11 +456,11 @@
   },
   {
    "id": "loops",
-   "title": "Loops (instances/ultrastable/loops.json)",
+   "title": "Loops (instances/ultrastable/loop-registry.json)",
    "rows": [
     [
      "Loops registered",
-     "36; 32 close by the system, 4 by an owner card",
+     "37; 33 close by the system, 4 by an owner card",
      "ok"
     ],
     [

@@ -344,6 +344,6 @@ I am unbounded within who I am.
 | §TRUST, the ladder | `foundation/trust.py` with weights from `doctrine/kernel.json`; state in `instances/ultrastable/trust-ledger.json`; scope policy in `seed/autonomy/policy.json` |
 | §METRICS | `foundation/kernel.py` (`metrics`) computes the report-shape rates; `python3 -m foundation kernel --metrics` |
 | §EVOLUTION, lineage | doctrine changes by reviewed PR; `foundation/glossary.py` term lineage; `doctrine/kernel.json` `lineage` |
-| §REGISTRIES | the loop registry `instances/ultrastable/loops.json`, gap register `instances/ultrastable/gaps.json`, issues `docs/issues`, trust ledger, glossary |
+| §REGISTRIES | the loop registry `instances/ultrastable/loop-registry.json`, gap register `instances/ultrastable/gaps.json`, issues `docs/issues`, trust ledger, glossary |
 | IC-GATE-001 | `seed/autonomy/policy.json` `interrupt_gate`; owner cards in `docs/ops/OWNER-STEPS.md` |
 | IC-ALIGN-001, IC-ADOPT-001, IC-YES-001, IC-ACTOR-001 | `agents/AGENTS.md` section 3, checked by gaplint GL003 and the recognition lint |

@@ -53,7 +53,7 @@ everything in scope). Every session and agent works as a contributor to that sys
 
 | Origin name | Ultrastable |
 |---|---|
-| fleet, the fleet | the organization's agents and loops (`instances/ultrastable/loops.json`) |
+| fleet, the fleet | the organization's agents and loops (`instances/ultrastable/loop-registry.json`) |
 | QNFO.OPS, QNFO.INFRA, QNFO.REACH, QNFO.RSCH, QNFO.PERSONAL | program managers: `operations`, `project-manager`, `outreach-manager`, `product-manager` (research and discovery), and the owner's personal lane, each a loop under the `portfolio-manager` (`agents/roles/`, `seed/ultrastable.json`) |
 | `fleet.qnfo.org/api/managers`, `/api/portfolio/latest` | the owner dashboard snapshot and manager state: `dashboard/snapshot.json`, the `roles` and `items` tables of the organization database |
 | `qnfo-audit` tables `v_program_health`, `program_focus`, `program_charters`, `v_roadmap`, `goals` | `docs/roadmap.md`, `docs/issues/*.json`, `ROADMAP.md`, `instances/<slug>/instance.json` goals, the trust ledger and the loop registry |

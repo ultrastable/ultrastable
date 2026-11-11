@@ -101,7 +101,7 @@ def build(today):
         panels.append(glossary.panel(ROOT))
         lp = loops.load(ROOT)["loops"]
         bad = loops.verify(ROOT)
-        panels.append({"id": "loops", "title": "Loops (instances/ultrastable/loops.json)", "rows": [["Loops registered", f"{len(lp)}; {sum(1 for l in lp if l['closes_by'] == 'system')} close by the system, {sum(1 for l in lp if l['closes_by'] != 'system')} by an owner card", "ok" if not bad else "warn"], ["Open loops", f"{len(bad)} finding(s) from python3 -m foundation loops --verify", "ok" if not bad else "warn"]] + [[b[:60], "", "warn"] for b in bad[:6]]})
+        panels.append({"id": "loops", "title": "Loops (instances/ultrastable/loop-registry.json)", "rows": [["Loops registered", f"{len(lp)}; {sum(1 for l in lp if l['closes_by'] == 'system')} close by the system, {sum(1 for l in lp if l['closes_by'] != 'system')} by an owner card", "ok" if not bad else "warn"], ["Open loops", f"{len(bad)} finding(s) from python3 -m foundation loops --verify", "ok" if not bad else "warn"]] + [[b[:60], "", "warn"] for b in bad[:6]]})
     except (ImportError, OSError, ValueError, KeyError) as e:
         problems.append(f"glossary/loops panels: {type(e).__name__}: {e}")
     try:

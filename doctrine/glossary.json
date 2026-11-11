@@ -17,7 +17,7 @@
       ],
       "implemented_by": [
         "doctrine/positioning.json",
-        "instances/ultrastable/loops.json",
+        "instances/ultrastable/loop-registry.json",
         "foundation/loops.py"
       ],
       "related": [
@@ -54,7 +54,7 @@
         "grep:tests/foundation/test_loops.py::def test_loop_without_closing_probe_fails"
       ],
       "implemented_by": [
-        "instances/ultrastable/loops.json",
+        "instances/ultrastable/loop-registry.json",
         "foundation/loops.py"
       ],
       "related": [
@@ -67,7 +67,7 @@
           "version": "1.0.0",
           "date": "2026-11-11",
           "change": "Defined as trigger, owner, action, closing probe and write-back.",
-          "source": "instances/ultrastable/loops.json"
+          "source": "instances/ultrastable/loop-registry.json"
         }
       ]
     },
@@ -82,7 +82,7 @@
         "grep:tests/foundation/test_loops.py::def test_workflow_not_claimed_by_a_loop_fails"
       ],
       "implemented_by": [
-        "instances/ultrastable/loops.json",
+        "instances/ultrastable/loop-registry.json",
         "foundation/loops.py"
       ],
       "related": [
@@ -95,7 +95,7 @@
           "version": "1.0.0",
           "date": "2026-11-11",
           "change": "Defined as a loop recorded in the registry and written back into the system.",
-          "source": "instances/ultrastable/loops.json"
+          "source": "instances/ultrastable/loop-registry.json"
         }
       ]
     },
@@ -145,7 +145,7 @@
         "grep:tests/foundation/test_loops.py::def test_every_loop_closes_by_the_system_or_a_gate_card"
       ],
       "implemented_by": [
-        "instances/ultrastable/loops.json",
+        "instances/ultrastable/loop-registry.json",
         "seed/autonomy/policy.json",
         "foundation/loops.py"
       ],
@@ -339,7 +339,7 @@
           "version": "1.0.0",
           "date": "2026-11-11",
           "change": "Defined; required on every loop and gap.",
-          "source": "instances/ultrastable/loops.json"
+          "source": "instances/ultrastable/loop-registry.json"
         }
       ]
     },
@@ -1033,7 +1033,7 @@
       ],
       "implemented_by": [
         "foundation/loops.py",
-        "instances/ultrastable/loops.json",
+        "instances/ultrastable/loop-registry.json",
         "doctrine/kernel.json"
       ],
       "related": [
@@ -1118,7 +1118,7 @@
       ],
       "implemented_by": [
         "foundation/loops.py",
-        "instances/ultrastable/loops.json"
+        "instances/ultrastable/loop-registry.json"
       ],
       "related": [
         "sla-and-paths"
@@ -1146,7 +1146,7 @@
       ],
       "implemented_by": [
         "foundation/loops.py",
-        "instances/ultrastable/loops.json"
+        "instances/ultrastable/loop-registry.json"
       ],
       "related": [
         "closing-privilege"
@@ -1174,7 +1174,7 @@
       ],
       "implemented_by": [
         "foundation/loops.py",
-        "instances/ultrastable/loops.json",
+        "instances/ultrastable/loop-registry.json",
         "doctrine/standing-directives.md"
       ],
       "related": [

@@ -171,7 +171,7 @@
       "outreach/profiles.json"
     ],
     "registry": [
-      "instances/ultrastable/loops.json",
+      "instances/ultrastable/loop-registry.json",
       "doctrine/glossary.json"
     ]
   },

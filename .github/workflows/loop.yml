@@ -1,0 +1,31 @@
+name: loop
+# The self-bootstrap loop on GitHub's scheduler. Weekly and on demand only (free private-repo Actions minutes; Rowan 2026-11-10).
+# budget: ~2 min x 4-5 per month
+# trigger: weekly and dispatch only
+# free-alternative: Cloudflare cron worker ultrastable-tick (every 10 minutes) or a local scheduler (deploy/loops/local/)
+# Runs `python3 -m foundation launch`: every loop once, evidence committed to branch loop-evidence. Outreach stays dry-run.
+on:
+  schedule:
+    - cron: "41 5 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: loop
+  cancel-in-progress: true
+jobs:
+  loop:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - run: python3 scripts/actions_guard.py loop
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: pip install pyyaml
+      - run: ULTRASTABLE_HOST=github-actions python3 -m foundation launch --commit --push

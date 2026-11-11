@@ -1,5 +1,5 @@
 """Loop closure as code. Autonomy is self-referential loops plus the privilege to close them, so every loop the system runs is a row in
-`instances/ultrastable/loops.json` with a trigger, an owner, an SLA, a Definition of Done, at least two independent paths, a closing probe
+`instances/ultrastable/loop-registry.json` with a trigger, an owner, an SLA, a Definition of Done, at least two independent paths, a closing probe
 and a write-back target in this repository. `verify` fails when any of that is missing or dead, when a workflow belongs to no loop, when
 a role or process area has no loop, or when a loop's work or knowledge lives only outside the repository.
 
@@ -14,7 +14,7 @@ from pathlib import Path
 from . import selfhost
 
 REPO = Path(__file__).resolve().parent.parent
-PATH = "instances/ultrastable/loops.json"
+PATH = "instances/ultrastable/loop-registry.json"
 KINDS = {"tick", "manager", "staff", "review", "plussing", "probe", "funding", "outreach", "memory", "doctrine", "release", "reporting", "governance", "budget", "trust"}
 CLASSES = {"free", "paid", "local", "external", "degraded"}
 OUTSIDE = re.compile(r"https?://|/mnt/|\bchat\b|\bslack\b|\bnotion\b|\blinear\b|\bjira\b|tool memory|platform memory|\.selfhost", re.I)
@@ -107,6 +107,12 @@ def verify(root=REPO) -> list[str]:
             for rel in list(pr.get("orient", [])) + [pr.get("originate_to"), pr.get("predict_log")]:
                 if rel and not (root / rel).exists():
                     bad.append(f"{lid}: program path {rel} does not exist")
+    lp = root / "instances/ultrastable/loops.json"
+    if lp.exists():
+        claimed = {l.get("launch") for l in loops}
+        for ll in json.loads(lp.read_text(encoding="utf-8")).get("loops", []):
+            if ll["id"] not in claimed:
+                bad.append(f"launch loop {ll['id']} (instances/ultrastable/loops.json) belongs to no registry loop (set its 'launch' field)")
     for wf in sorted((root / ".github/workflows").glob("*.yml")):
         if wf.name not in claimed_wf:
             bad.append(f"workflow {wf.name} belongs to no loop in {PATH}")

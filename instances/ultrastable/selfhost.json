@@ -13,7 +13,7 @@
     "instances/ultrastable/selfhost.json",
     "doctrine/glossary.json",
     "doctrine/kernel.json",
-    "instances/ultrastable/loops.json",
+    "instances/ultrastable/loop-registry.json",
     "instances/ultrastable/trust-ledger.json"
   ],
   "required_areas": [
@@ -66,11 +66,13 @@
       "system_path": [
         "seed/ultrastable.json",
         "agents/roles",
-        "seed/agents/roles"
+        "seed/agents/roles",
+        "foundation/launch.py"
       ],
       "tools": [
         "system",
-        "agent-executor"
+        "agent-executor",
+        "scheduler-host"
       ],
       "note": "Roles are defined in seed/ultrastable.json and booted as rows in roles."
     },
@@ -140,14 +142,18 @@
       "system_path": [
         "seed/worker/src/tick.js",
         "seed/worker/src/index.js",
-        "docs/handoff"
+        "docs/handoff",
+        "foundation/cockpit.py",
+        "foundation/autorun.py",
+        "instances/ultrastable/inbox.json",
+        "demos/public/selfhost-run.html"
       ],
       "tools": [
         "system",
         "sqlite",
         "claude-threads"
       ],
-      "note": "Four-line report is written by the tick and served at /health; threads carry it to the owner."
+      "note": "Four-line report is written by the tick and served at /health; threads carry it to the owner. The owner cockpit (python3 -m foundation cockpit) shows Now, Next and Needs you from the repo; python3 -m foundation autorun runs the organization on its own records."
     },
     {
       "id": "funding-outreach",
@@ -199,7 +205,7 @@
       "id": "loop-closure",
       "area": "memory",
       "system_path": [
-        "instances/ultrastable/loops.json",
+        "instances/ultrastable/loop-registry.json",
         "foundation/loops.py",
         "foundation/writeback.py",
         "foundation/glossary.py",

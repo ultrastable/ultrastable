@@ -129,6 +129,8 @@ def check(root=REPO) -> list[str]:
     for rel in sorted((root / "docs/lessons").glob("*.md")) if (root / "docs/lessons").is_dir() else []:
         if rel.name != "README.md":
             bad += [f"{rel.relative_to(root).as_posix()}:{f['line']}: {f['recognition']} ({f['text'][:50]})" for f in kernel.lint(rel.read_text(encoding="utf-8"))]
+    from . import brandcheck
+    bad += brandcheck.check(root)
     if not (root / d["memory"]["canonical"]).exists():
         bad.append(f"{d['memory']['canonical']}: canonical memory file missing")
     return bad
