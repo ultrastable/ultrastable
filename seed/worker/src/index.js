@@ -3,6 +3,8 @@
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { runTick } from './tick.js';
 import config from './config.js';
+import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
+import { nowScreen, nextScreen, needsScreen, questionScreen, doneScreen } from './ui.js';
 import { handleAnalytics, selfcheck, report } from '../../analytics/analytics.js';
 
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
@@ -28,6 +30,31 @@ export default {
       const ok = Boolean(last && last.steps_completed === last.steps_total);
       return Response.json({ ok, org: config.org_slug, last_tick: last || null }, { status: ok ? 200 : 503 });
     }
+    const db = env.DB;
+    if (url.pathname === '/') return nowScreen({ org: config.org_slug, lastTick: await lastTick(db), answers: await loadAnswers(db) });
+    if (url.pathname === '/next') {
+      const { results } = await db.prepare(`SELECT title, owner_role FROM items WHERE status IN ('open','ready') ORDER BY priority, created_at LIMIT 5`).all();
+      return nextScreen({ items: results });
+    }
+    if (url.pathname === '/needs-you') {
+      const { results } = await db.prepare(`SELECT what, why_gated, default_in_effect FROM gate_cards WHERE status='open' ORDER BY id LIMIT 10`).all();
+      return needsScreen({ cards: results, answers: await loadAnswers(db) });
+    }
+    if (url.pathname === '/start') {
+      if (request.method === 'POST') {
+        const form = await request.formData();
+        const qid = form.get('qid');
+        const all = form.getAll('value');
+        const q = QUESTIONS.find(x => x.id === qid);
+        try { await saveAnswer(db, qid, q && q.kind === 'multi' ? all : all[0]); }
+        catch (e) { return new Response(String(e.message), { status: 400 }); }
+        return Response.redirect(new URL('/start', url).toString(), 303);
+      }
+      const answers = await loadAnswers(db);
+      const q = nextQuestion(answers);
+      return q ? questionScreen(q, answers) : doneScreen();
+    }
+    // Code agents and scripts use the same data: GET /api/answers.
     return new Response('ultrastable seed worker\n', { headers: { 'content-type': 'text/plain' } });
   },
 };
@@ -38,3 +65,6 @@ function presence(env) {
   for (const [k, v] of Object.entries(env)) if (typeof v === 'string' && v) out[k] = true;
   return out;
 }
+
+const lastTick = db => db.prepare(
+  `SELECT id, started_at, finished_at, steps_completed, steps_total, report, errors FROM tick_runs ORDER BY id DESC LIMIT 1`).first();

@@ -48,3 +48,6 @@ A missing credential never stops the boot. The step is recorded as a backlog ite
 - **Trust is computed, not granted.** It rises and falls with recorded outcomes per surface and action class, and widens scope only through a reviewed change to `autonomy/policy.json`.
 - **Never self-review.** A different agent or model verifies each claimed result.
 - **Plussing.** 20% of capacity goes to improvements, and every closed item proposes one.
+
+## Interview and screens (no code needed)
+`python3 bootstrap/interview.py --org-name "My Project"` asks plain questions with hints and numbered choices, then writes `IDEA.md` and `specs/`. The Worker serves the same interview at `/start` and three screens at `/`, `/next`, `/needs-you`. See [SCOPE.md](SCOPE.md) and [LICENSING.md](LICENSING.md).

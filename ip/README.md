@@ -10,3 +10,6 @@ Working file for the provisional patent application. Keep this repo restricted t
 Timing note: a public page, post or demo describing the invention counts as a disclosure, so file the provisional before the site or docs describe the mechanisms. Specific timing questions are for the patent attorney.
 
 This is a working draft prepared with Claude, not legal advice. Have a patent attorney or agent review before filing.
+
+## Status update 2026-11-11
+The patent route is dropped (docs/strategy/licensing-and-ip-pivot.md). These files are to be reworked into architectural specifications under docs/architecture/.
