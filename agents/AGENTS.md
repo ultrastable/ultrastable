@@ -2,6 +2,8 @@
 
 > Ultrastable is the foundation for any autonomous system.
 
+> Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 Read by every agent that works in this org: Claude Code (through `CLAUDE.md`), GitHub Copilot (through `.github/copilot-instructions.md`), OpenAI Codex, and any other. No agent depends on another agent's chat history. The repos and the org database are the shared memory.
 
 Your role file is in `agents/roles/`. Your limits are in `autonomy/policy.json`. Where this file and a role file differ, the role file is more specific and wins; where either differs from `autonomy/policy.json` or your harness's own permission checks, those win.

@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.** A business, a research programme, an open-source project, a community or something new is created from one instance manifest. Nothing else differs between systems.
 
+Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 Status words used here: RUNNING, BUILT, PLANNED. No financial claims. Ultrastable is a separate brand from QNFO.
 
 ## Three layers
@@ -52,6 +54,10 @@ Output (BUILT, tested end to end in CI): `IDEA.md`, `ultrastable.json`, `instanc
 | Domain e-mail alias | Cloudflare Email Routing call (fixture-tested, `--apply`) | none |
 
 The engine never gets past a permission check, never impersonates the owner and never handles a secret value.
+
+## Self-hosting
+
+Ultrastable runs on itself. `python3 -m foundation selfhost` boots `instances/ultrastable/` from the repo alone: roles from `seed/ultrastable.json`, items from `docs/issues/`, a trust ledger row per process, the plus share, and the gap register as tracked items, then runs the seed tick. `selfhost.json` lists every process with its system path and tools; `platform/adapters/registry.json` records every outside tool with a runbook (`docs/runbooks/any-tools/`); `gaps.json` holds the plan and closing probe for each. Minimal path: `python3 -m foundation selfhost --no-node` (Python 3 and a copy of the repo). Tests: `tests/foundation/test_selfhost.py`.
 
 ## Instances
 

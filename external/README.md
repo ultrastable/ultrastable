@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+**Ultrastable runs on itself.** Its own planning, work tracking and reporting are run by the system it gives to others.
+
 The only files meant to leave this private repository before the license review is complete and the repositories are published. Outcome-level and non-enabling: no mechanisms, numbers from the system, architecture, schemas or claim language. Rules: [../docs/CONFIDENTIALITY.md](../docs/CONFIDENTIALITY.md). Review each file against that rule before sending; a human (the owner) sends it.
 
 | File | Use |

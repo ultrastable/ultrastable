@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 Tag: SAFE NOW content only. Runs from `.github/workflows/social-post.yml` (daily, one post at most). Control is data: [gate.json](gate.json) (kill switch, mode, rate limits, paused channels), [accounts.json](accounts.json) (channels), [guard.json](guard.json) (rules), [calendar.json](calendar.json) (queue), `state.json` (what was posted).
 
 ## Decision (2026-11-10): direct APIs, Bluesky and Mastodon first; Buffer not used

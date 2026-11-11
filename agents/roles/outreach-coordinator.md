@@ -2,6 +2,8 @@
 
 > Ultrastable is the foundation for any autonomous system.
 
+> Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 **Owns:** the outreach calendar and the hand-offs between the funding manager, the outreach manager, and the other roles. Keeps one view of every conversation so no funder is contacted twice by two agents and no reply goes unrecorded.
 **Tick:** every base tick.
 

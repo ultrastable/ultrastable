@@ -1,0 +1,111 @@
+{
+ "_doc": "Gap register: what Ultrastable still does through tools outside itself, with the plan to close each and a closing probe. `python3 -m foundation selfhost --gaps` prints it; the verifier fails when an outside tool has no gap here, a gap lacks plan or probe, or a closed gap's probe fails. Probe kinds: file:<path> (exists), grep:<path>::<regex> (matches). A gap is closed only when its probe passes (BOOTSTRAP-GAPS rule).",
+ "version": "1.0.0",
+ "gaps": [
+  {
+   "id": "SG-1",
+   "tool": "github",
+   "what": "Issues, pull requests, review and CI run on GitHub. The tracker, the PR flow and the merge gate are not yet a system-owned forge.",
+   "processes": [
+    "planning",
+    "issue-tracking",
+    "release",
+    "review",
+    "funding-outreach"
+   ],
+   "plan": "Define a forge adapter interface in seed/worker (list items, open change, record review, merge) with a git-local implementation that works on plain git plus docs/issues; GitHub becomes one adapter of it. Until then docs/issues is the system record and GitHub is a mirror.",
+   "closing_probe": "file:seed/worker/src/forge.js",
+   "owner_role": "staff",
+   "status": "open"
+  },
+  {
+   "id": "SG-2",
+   "tool": "agent-executor",
+   "what": "Work is executed by coding agents started by people or sessions (Claude Code, Copilot, Codex). The worker queues dispatches but does not call a model itself (BS-4).",
+   "processes": [
+    "managers",
+    "review"
+   ],
+   "plan": "Add seed/worker/src/executor.js with a provider interface (hosted model API, local model, or a queue file a human-run agent drains) so any agent can take a dispatch; record each result as an outcome.",
+   "closing_probe": "file:seed/worker/src/executor.js",
+   "owner_role": "staff",
+   "status": "open"
+  },
+  {
+   "id": "SG-3",
+   "tool": "claude-threads",
+   "what": "The owner receives reports and gives direction in Claude threads; the four-line report exists in the tick and /health but delivery is by thread.",
+   "processes": [
+    "reporting"
+   ],
+   "plan": "Add a report sink to the worker: write the four-line report to a repo file and POST it to an optional webhook; threads become one consumer of the sink.",
+   "closing_probe": "file:seed/worker/src/report.js",
+   "owner_role": "operations",
+   "status": "open"
+  },
+  {
+   "id": "SG-4",
+   "tool": "mail-sender",
+   "what": "Outreach and funding mail has no registered sender; queues are dry-run.",
+   "processes": [
+    "funding-outreach"
+   ],
+   "plan": "Sender adapter behind the existing consent and suppression gate; owner registers one mailbox (identity-bound card, default: dry run).",
+   "closing_probe": "file:seed/outreach/sender.py",
+   "owner_role": "outreach-manager",
+   "status": "open"
+  },
+  {
+   "id": "SG-5",
+   "tool": "social-channels",
+   "what": "Social posting depends on accounts a person must create.",
+   "processes": [
+    "funding-outreach"
+   ],
+   "plan": "Account-free channels first (feed file, site posts); posting adapter stays dry-run until accounts exist (identity-bound card).",
+   "closing_probe": "grep:social/gate.json::mode.{0,5}live",
+   "owner_role": "outreach-coordinator",
+   "status": "open"
+  },
+  {
+   "id": "SG-6",
+   "tool": "cloudflare",
+   "what": "Hosting, cron and D1 run on Cloudflare in production.",
+   "processes": [
+    "release"
+   ],
+   "plan": "Hosting is an adapter: the SQLite path boots the same tick on a laptop (selfhost) and the GCP adapter carries the same core. Closed for the laptop path; a live GCP deploy is tracked as a separate plus.",
+   "closing_probe": "file:platform/adapters/sqlite/d1-sqlite.js",
+   "owner_role": "operations",
+   "status": "closed"
+  },
+  {
+   "id": "SG-7",
+   "tool": "git",
+   "what": "git is the only store of record; a machine without git cannot fetch the repo.",
+   "processes": [
+    "planning",
+    "specs",
+    "release",
+    "memory",
+    "funding-outreach"
+   ],
+   "plan": "Accepted: the repository is the system. The manual path accepts a zip of the repo, which selfhost boots identically.",
+   "closing_probe": "file:docs/runbooks/any-tools/README.md",
+   "owner_role": "staff",
+   "status": "closed"
+  },
+  {
+   "id": "SG-8",
+   "tool": "gcp",
+   "what": "The second runtime (Cloud Run with a SQLite volume) has tests but its live deploy script has never been run.",
+   "processes": [
+    "release"
+   ],
+   "plan": "Run platform/adapters/gcp/deploy.sh against a project once credits or a free tier exist and record the run in docs/handoff/gcp-live.md; until then the laptop SQLite path proves portability.",
+   "closing_probe": "grep:docs/handoff/gcp-live.md::deployed",
+   "owner_role": "operations",
+   "status": "open"
+  }
+ ]
+}

@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+**Ultrastable runs on itself.** Its own planning, work tracking and reporting are run by the system it gives to others.
+
 Status: draft for Rowan's review. Do not publish until the provisional is filed (see brand/BRAND.md, "Public versus private"). Voice: plain, calm, no hype, claims labeled RUNNING, BUILT or PLANNED. This is about an autonomous system for any kind of organization, not research. QNFO appears only as the proof case.
 
 ## Headline
