@@ -14,10 +14,14 @@ Decision date: 2026-11-11 (owner). Supersedes the patent-first plan in `ip/provi
 |---|---|---|---|
 | `ultrastable/license` | `LICENSE` (USL-1.0), `COMMERCIAL-TERMS.md` (rate card), `FAQ.md`, copy-check script | private | public |
 | `ultrastable/workers` | Code: Cloudflare Worker tick, schema, bootstrapper, template, GCP adapter, Python reference runtime, extraction plan | private | public |
-| `ultrastable/spec` | Architectural specifications (`US-SPEC-*`) and documentation, derived from the former provisional specification | private | public |
+| `ultrastable/spec` | `SCOPE.md`, architectural specifications `US-SPEC-00` to `18` and documentation, derived from the former provisional specification | private | public |
 | `ultrastable/ultrastable` | System of record: roadmap, issues, business, funding, investor, IP history, brand. **Not released.** | private | private |
 | `ultrastable/.github` | Org profile | public | public |
 | `ultrastable/{docs,seed,business,ip,platform,site}` | Superseded duplicates | private | archive |
+
+## Scope
+
+See `ultrastable/spec/SCOPE.md`: the product is for a non-coder who can only say what they want; it elicits what it needs (US-SPEC-16), writes its own specs and charters, manages delivery with full project-management discipline (US-SPEC-15), and is operated by a three-screen buttons-first console (US-SPEC-18). Business plans, patents, legal and marketing work are out of scope by default and exist only as opt-in Capability Packs.
 
 ## Where the code is
 
