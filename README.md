@@ -8,7 +8,7 @@
 
 **An autonomous development platform: an organization of virtual managers and staff that runs your projects, scores its own decisions, earns wider autonomy from its track record, and only interrupts a person for steps that cannot be undone.**
 
-Private repository, system of record. If it is not here, it does not exist. **Nothing here leaves the repo except files in [external/](external/)** (no patent: the code and specifications are protected by the [hybrid license](LICENSE), free for non-commercial use and licensed for commercial use; the repository stays private until counsel reviews it; rules in [docs/CONFIDENTIALITY.md](docs/CONFIDENTIALITY.md)).
+Private repository, system of record. If it is not here, it does not exist. **Nothing here leaves the repo except files in [external/](external/)** (no patent: the code and specifications are protected by the [hybrid license](LICENSE), free for non-commercial use and licensed for commercial use; the repository stays private until the owner publishes; rules in [docs/CONFIDENTIALITY.md](docs/CONFIDENTIALITY.md)).
 
 ## The idea in six lines
 1. **Virtual managers and staff:** portfolio, project and product managers, staff, reviewers, operations.
@@ -41,9 +41,9 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | [seed/](seed/README.md) | Idea-to-organization bootstrapper, tick, policy, roles |
 | [business/](business/README.md) | Business plan, funding, [Google for Startups kit](business/google-startups/application-kit.md), [marketing strategy](business/marketing/strategy.md), detailed [investor pack](business/investor/README.md) |
 | [external/](external/README.md) | **SAFE NOW** versions that may be sent out |
-| [LICENSE](LICENSE), [LICENSING.md](LICENSING.md), [COMMERCIAL-LICENSING.md](COMMERCIAL-LICENSING.md) | Hybrid license (working draft for attorney review) |
-| [specs/](specs/README.md) | Architectural specifications (replace the patent track) |
-| [docs/REPO-SPLIT.md](docs/REPO-SPLIT.md) | Split into code, specs and private operations repos |
+| [LICENSE](LICENSE), [LICENSING.md](LICENSING.md), [COMMERCIAL-TERMS.md](COMMERCIAL-TERMS.md) | Ultrastable License v1.0 (decisions in [docs/legal/LICENSE-DECISIONS.md](docs/legal/LICENSE-DECISIONS.md)) |
+| [specs/](specs/README.md) | Pointer: specifications live in `ultrastable/spec` |
+| `ultrastable/workers`, `spec`, `license` | Code, specifications and canonical license live in their own repos |
 | [ip/](ip/ARCHIVED.md) | ARCHIVED patent drafts (not maintained, not deleted) |
 | [site/](site/) | Site worker and starter |
 | [dashboard/](dashboard/README.md) | Product dashboard (built in a sibling thread; see its README for status) |
@@ -54,6 +54,6 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | artifacts/, core-manifest/, deploy/, github/, research/, qnfo-platform-thread/, HANDOFF.md | Records and earlier QNFO extraction material |
 
 ## Owner-only next steps
-Counsel review of the license, then publish the code and specs repos; form the entity and assign IP (#1); send only `external/` files; set up domain email and a Google billing account; submit applications; run `platform/adapters/gcp/deploy.sh` with a GCP project.
+Publish the code, specs and license repos when ready; form the entity and assign IP (#1); send only `external/` files; set up domain email and a Google billing account; submit applications; run `platform/adapters/gcp/deploy.sh` with a GCP project.
 
 Issues: https://github.com/ultrastable/ultrastable/issues

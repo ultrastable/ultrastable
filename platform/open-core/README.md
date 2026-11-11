@@ -8,4 +8,4 @@ Contents:
 - [CONTRIBUTING.md](CONTRIBUTING.md): how to contribute, with DCO sign-off as the default and a CLA as the alternative.
 - [RELEASE-CHECKLIST.md](RELEASE-CHECKLIST.md): the gated steps, each with a closing probe.
 
-Licence: Apache-2.0 is assumed for planning only; the attorney decides. The QNFO User License Agreement on the public QNFO repository is a separate matter and is not changed by anything here.
+Licence (decided 2026-11-11): not Apache-2.0. The Ultrastable License v1.0 (USL-1.0, source-available, free non-commercial, commercial licensed) applies; see the repo-root `LICENSE`. The gates above that mention the provisional and the attorney are superseded. The QNFO User License Agreement on the public QNFO repository is a separate matter and is not changed by anything here.
