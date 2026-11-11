@@ -61,6 +61,17 @@ def check(root=REPO) -> list[str]:
         for n, ln in enumerate((root / rel).read_text(encoding="utf-8", errors="replace").splitlines(), 1):
             if any(b.search(ln) for b in banned):
                 bad.append(f"{rel}:{n}: relies on external memory")
+    z = d.get("zero_fuss")
+    if z:
+        for rel in z["required_in"]:
+            p = root / rel
+            if p.exists() and not re.search(z["required_pattern"], p.read_text(encoding="utf-8"), re.I):
+                bad.append(f"{rel}: lacks the zero-fuss rule ('{z['required_pattern']}')")
+        zb = [re.compile(b, re.I) for b in z["banned_patterns"]]
+        for rel in files(root, z["scan_user_facing"]):
+            for n, ln in enumerate((root / rel).read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+                if any(b.search(ln) for b in zb):
+                    bad.append(f"{rel}:{n}: makes the user do setup work (zero-fuss rule)")
     if not (root / d["memory"]["canonical"]).exists():
         bad.append(f"{d['memory']['canonical']}: canonical memory file missing")
     return bad
