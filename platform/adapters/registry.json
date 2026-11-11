@@ -101,6 +101,13 @@
    "outside": true,
    "runbook": "docs/runbooks/LAUNCH.md",
    "watch": []
+  },
+  {
+   "id": "cloudflare-credential",
+   "kind": "credential",
+   "outside": true,
+   "runbook": "deploy/first-run/README.md",
+   "watch": []
   }
  ],
  "unregistered_watch": {

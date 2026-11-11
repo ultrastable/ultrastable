@@ -8,7 +8,7 @@
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE]   start the loops on this repo
   python3 -m foundation selfhost [--verify|--gaps|--no-node] [--db PATH]   Ultrastable boots its own organization from this repo
 """
-import argparse, datetime as dt, json, sys
+import argparse, datetime as dt, json, os, sys
 
 from . import standards, doctrine, filing, ladder, manifest as mf, scaffold, selfhost
 
@@ -25,7 +25,7 @@ def main(argv=None) -> int:
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
     r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
-    l = sub.add_parser("launch"); l.add_argument("--commit", action="store_true"); l.add_argument("--push", action="store_true"); l.add_argument("--probe", action="store_true"); l.add_argument("--export-d1"); l.add_argument("--install"); l.add_argument("--skip-outreach", action="store_true")
+    l = sub.add_parser("launch"); l.add_argument("--commit", action="store_true"); l.add_argument("--push", action="store_true"); l.add_argument("--probe", action="store_true"); l.add_argument("--export-d1"); l.add_argument("--install"); l.add_argument("--skip-outreach", action="store_true"); l.add_argument("--failover", action="store_true")
     a = ap.parse_args(argv)
     if a.cmd == "launch":
         from . import launch
@@ -35,6 +35,14 @@ def main(argv=None) -> int:
             print(launch.install_artifact(a.install), end=""); return 0
         if a.export_d1:
             open(a.export_d1, "w", encoding="utf-8").write(launch.export_d1()); print("wrote", a.export_d1); return 0
+        if a.failover:
+            from . import failover
+            host = os.environ.get("ULTRASTABLE_HOST", "unspecified")
+            d = failover.decide(launch.REPO, host)
+            print("failover:", json.dumps(d))
+            if not d["run"]:
+                return 0
+            os.environ["ULTRASTABLE_HOST"] = "failover:" + host
         rec = launch.run_once(skip_outreach=a.skip_outreach)
         paths = launch.write_back(rec)
         print("\n".join(rec["report"])); print("evidence:", paths)

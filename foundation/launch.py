@@ -51,7 +51,7 @@ def probe_surfaces(root=REPO, env=None) -> list[dict]:
     claude = shutil.which("claude")
     out.append({"surface": "claude-routine", "available": bool(claude) or bool(env.get("CLAUDE_CODE_REMOTE")),
                 "detail": "claude CLI on PATH" if claude else ("running inside a Claude Code cloud session (scheduled triggers and in-session loops available)" if env.get("CLAUDE_CODE_REMOTE") else "no claude CLI and not a cloud session"),
-                "how": "scheduled routine or /loop running `python3 -m foundation launch --commit --push` (deploy/loops/claude-routine.md)"})
+                "how": "scheduled routine or /loop running `python3 -m foundation launch --failover --commit --push` (deploy/loops/claude-routine.md)"})
     sched = [n for n in ("crontab", "schtasks", "systemctl", "launchctl") if shutil.which(n)]
     out.append({"surface": "local-scheduler", "available": bool(sched), "detail": f"scheduler tools on PATH: {sched or 'none'} ({platform.system()})",
                 "how": "deploy/loops/local/ (cron line, systemd timer, Windows Task Scheduler)"})
@@ -175,7 +175,7 @@ def export_d1(root=REPO) -> str:
 
 def install_artifact(surface: str, root=REPO) -> str:
     root = Path(root)
-    cmd = "python3 -m foundation launch --commit --push"
+    cmd = "python3 -m foundation launch --failover --commit --push"
     if surface == "cron":
         return f"17 * * * * cd {root} && ULTRASTABLE_HOST=local-cron {cmd} >> .selfhost/loop.log 2>&1\n"
     if surface == "task-scheduler":

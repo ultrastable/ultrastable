@@ -1,0 +1,16 @@
+{
+  "_doc": "Every deploy path has at least two routes, and at least one needs no credential a non-coder would have to mint. scripts/check_routes.py fails the build otherwise (lesson 2026-11-11, doctrine/LESSONS.md).",
+  "targets": [
+    {"id": "tick-worker", "routes": [
+      {"id": "dashboard-button", "credential": "oauth-in-browser", "how": "deploy/first-run/README.md: one click, sign in to Cloudflare in the browser"},
+      {"id": "wrangler-login", "credential": "oauth-in-browser", "how": "deploy/first-run/first-run.sh (wrangler login opens the browser; no token typed)"},
+      {"id": "connector", "credential": "connector", "how": "Cloudflare connector in a Claude session"},
+      {"id": "no-cloudflare", "credential": "none", "how": "local, Claude routine or GitHub hosts run the same loop (deploy/loops/)"}
+    ]},
+    {"id": "loop-host", "routes": [
+      {"id": "local-scheduler", "credential": "none", "how": "deploy/loops/local/"},
+      {"id": "github-actions", "credential": "github-builtin", "how": ".github/workflows/loop.yml"},
+      {"id": "claude-routine", "credential": "claude-session", "how": "deploy/loops/claude-routine.md"}
+    ]}
+  ]
+}

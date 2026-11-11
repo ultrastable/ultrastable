@@ -28,4 +28,4 @@ jobs:
         with:
           node-version: 22
       - run: pip install pyyaml
-      - run: ULTRASTABLE_HOST=github-actions python3 -m foundation launch --commit --push
+      - run: ULTRASTABLE_HOST=github-actions python3 -m foundation launch --failover --commit --push
