@@ -1,0 +1,150 @@
+{
+ "generated": "2026-11-11 09:36 UTC",
+ "commit": "abf566a",
+ "tagline": "Ultrastable is the foundation for any autonomous system.",
+ "selfhost": {
+  "problems": [],
+  "processes": 11,
+  "names": [
+   "planning",
+   "issue-tracking",
+   "managers",
+   "trust-ledger",
+   "plussing",
+   "specs",
+   "release",
+   "reporting",
+   "funding-outreach",
+   "memory",
+   "review"
+  ]
+ },
+ "doctrine": {
+  "problems": []
+ },
+ "gaps": {
+  "total": 8,
+  "closed": 2,
+  "open": [
+   {
+    "id": "SG-1",
+    "tool": "github",
+    "probe": "file:seed/worker/src/forge.js"
+   },
+   {
+    "id": "SG-2",
+    "tool": "agent-executor",
+    "probe": "file:seed/worker/src/executor.js"
+   },
+   {
+    "id": "SG-3",
+    "tool": "claude-threads",
+    "probe": "file:seed/worker/src/report.js"
+   },
+   {
+    "id": "SG-4",
+    "tool": "mail-sender",
+    "probe": "file:seed/outreach/sender.py"
+   },
+   {
+    "id": "SG-5",
+    "tool": "social-channels",
+    "probe": "grep:social/gate.json::mode.{0,5}live"
+   },
+   {
+    "id": "SG-8",
+    "tool": "gcp",
+    "probe": "grep:docs/handoff/gcp-live.md::deployed"
+   }
+  ]
+ },
+ "ticks": {
+  "commits_logged": 50,
+  "per_day": {
+   "2026-11-10": 46,
+   "2026-11-11": 4
+  },
+  "merged_prs": 47,
+  "recent": [
+   {
+    "sha": "abf566a",
+    "when": "2026-11-11 10:27",
+    "subject": "Ultrastable runs on itself: selfhost boot, verifier, gap register, any-tools runbooks (#189)"
+   },
+   {
+    "sha": "6170c8e",
+    "when": "2026-11-11 10:06",
+    "subject": "License: align to USL-1.0, set rates, record decisions (#188)"
+   },
+   {
+    "sha": "785b1b1",
+    "when": "2026-11-11 10:02",
+    "subject": "License and specs: hybrid license replaces the patent track (#187)"
+   },
+   {
+    "sha": "e13fc21",
+    "when": "2026-11-11 10:01",
+    "subject": "Scope, license draft, guided interview and 3-screen UI (#186)"
+   },
+   {
+    "sha": "a18d5e1",
+    "when": "2026-11-10 21:19",
+    "subject": "social: record post state"
+   },
+   {
+    "sha": "2b4d2b2",
+    "when": "2026-11-10 19:14",
+    "subject": "IP-3: dated evidence log entries (refs #28) (#182)"
+   },
+   {
+    "sha": "1250c23",
+    "when": "2026-11-10 19:10",
+    "subject": "Lane: LLM diff review (#89) (#181)"
+   },
+   {
+    "sha": "12203cd",
+    "when": "2026-11-10 19:06",
+    "subject": "IP: claim-to-code map, invention vs implementation split, Cloudflare reference extraction (#178)"
+   },
+   {
+    "sha": "d1ef44f",
+    "when": "2026-11-10 16:30",
+    "subject": "Untrack accidentally committed .wrangler cache (#176)"
+   },
+   {
+    "sha": "ef0bbe5",
+    "when": "2026-11-10 16:30",
+    "subject": "Foundation: layers, new-system generator, owner-step routes, doctrine as code (#177)"
+   }
+  ]
+ },
+ "plussing": {
+  "reserved_share": 0.2,
+  "commits_mentioning_plus": 0
+ },
+ "trust": {
+  "ultrastable/draft": {
+   "outcomes": 17,
+   "reliability": 0.947
+  },
+  "ultrastable/contact": {
+   "outcomes": 0,
+   "reliability": 0.5
+  },
+  "qniverse/draft": {
+   "outcomes": 11,
+   "reliability": 0.923
+  },
+  "qniverse/contact": {
+   "outcomes": 0,
+   "reliability": 0.5
+  }
+ },
+ "gate": {
+  "owner_steps_open": 9,
+  "outreach_mode": "dry-run",
+  "kill_switch": false,
+  "sent_total": 0
+ },
+ "problems": []
+}

@@ -105,6 +105,8 @@ def check(root=REPO) -> list[str]:
         if (root / "instances/ultrastable/selfhost.json").exists():
             from . import selfhost
             bad += [f"selfhost: {x}" for x in selfhost.verify(root)]
+    from . import brandcheck
+    bad += brandcheck.check(root)
     if not (root / d["memory"]["canonical"]).exists():
         bad.append(f"{d['memory']['canonical']}: canonical memory file missing")
     return bad
