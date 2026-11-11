@@ -62,11 +62,13 @@
       "system_path": [
         "seed/ultrastable.json",
         "agents/roles",
-        "seed/agents/roles"
+        "seed/agents/roles",
+        "foundation/launch.py"
       ],
       "tools": [
         "system",
-        "agent-executor"
+        "agent-executor",
+        "scheduler-host"
       ],
       "note": "Roles are defined in seed/ultrastable.json and booted as rows in roles."
     },
