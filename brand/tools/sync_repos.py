@@ -34,6 +34,8 @@ def block(cfg, pos, r):
 
 **{pos['tagline']}**
 
+{pos['autonomy']['tagline']}
+
 {r['line']}
 
 ![visibility](https://img.shields.io/badge/repo-{cfg['visibility']}-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)]({cfg['site']})

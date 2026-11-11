@@ -141,6 +141,12 @@ def tagline(root, cfg):
     for rel, p in iter_files(root, spec["files"]):
         if not pat.search(read(p)):
             yield Finding("GL008", rel, 1, "positioning line missing: " + spec["text"])
+    au = spec.get("doctrine", {}).get("autonomy") if isinstance(spec.get("doctrine"), dict) else None
+    if au:
+        ap = re.compile(au["pattern"], re.I | re.S)
+        for rel, p in iter_files(root, au["md_files"] + au["check_only"]):
+            if not ap.search(read(p)):
+                yield Finding("GL008", rel, 1, "autonomy line missing: " + au["tagline"])
 
 
 # GL009: code is the only memory. The canonical memory file exists, agent files state the rule, nothing relies on external memory.

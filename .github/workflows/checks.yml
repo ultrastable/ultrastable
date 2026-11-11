@@ -55,6 +55,12 @@ jobs:
           node --test plugins/email/worker/sender.test.mjs
       - name: Doctrine check (positioning and code-is-the-only-memory, from doctrine/positioning.json)
         run: python3 -m foundation doctrine --check
+      - name: Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)
+        run: |
+          python3 -m foundation loops --verify
+          python3 -m foundation glossary --check
+          python3 -m foundation kernel --check
+          python3 -m foundation writeback check --base "origin/${{ github.base_ref || 'main' }}"
       - name: Agentic standards (register, surfaces, discovery lint; Worker conformance and contract tests)
         run: |
           python3 -m foundation standards --check

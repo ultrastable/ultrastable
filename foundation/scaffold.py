@@ -16,6 +16,10 @@ KERNEL_PATHS = ["agents", "autonomy", "bootstrap", "worker", ".claude", ".github
 SKIP = shutil.ignore_patterns("__pycache__", "node_modules", "*.pyc", ".wrangler")
 
 
+def _autonomy() -> str:
+    return json.loads((REPO / "doctrine" / "positioning.json").read_text(encoding="utf-8"))["autonomy"]["line"].replace(" (`python3 -m foundation loops --verify`)", "")
+
+
 def _fill(text: str, vals: dict) -> str:
     return re.sub(r"\{(org_name|slug|tagline)\}", lambda m: vals[m.group(1)], text)
 
@@ -38,7 +42,7 @@ def _readme(m: dict) -> str:
     b = m["brand"]
     sep = "".join(f"\n{b['public_name']} is a separate brand from {s}." for s in b["separate_from"])
     return (f"# {b['public_name'] or m['name']}\n\n{b['tagline'] or m['positioning']}\n\n"
-            f"Built on Ultrastable. {TAGLINE}{sep}\n\n"
+            f"Built on Ultrastable. {TAGLINE}{sep}\n\n{_autonomy()}\n\n"
             "Every decision, plan and result is in this repository (docs/PROJECT-MEMORY.md is the memory). Agents read `AGENTS.md` first.\n\n"
             "Boot: `python3 bootstrap/bootstrap.py --root . --dry-run`.\n")
 
@@ -46,7 +50,7 @@ def _readme(m: dict) -> str:
 def _memory(m: dict, date: str) -> str:
     return ("# Project memory (canonical)\n\n"
             f"Last updated: {date}\n\n"
-            f"{TAGLINE} This file is the single source of truth for this system's memory; chat and tool memory only point here. Nothing lives only outside the repository.\n\n"
+            f"{TAGLINE} {_autonomy()} This file is the single source of truth for this system's memory; chat and tool memory only point here. Nothing lives only outside the repository.\n\n"
             "## Standing rules\n- If it is not in code, it does not exist.\n- Never handle secret values.\n- Agents act, verify and report; only identity-bound steps become one card with a default and a closing probe.\n"
             f"- Disclosure: public_allowed={m['disclosure']['public_allowed']}, gate={m['disclosure']['gate']}.\n\n"
             f"## Facts from the owner\n- Name: {m['name']}; kind: {m['kind']}; goals: {'; '.join(m['goals'])}\n\n"

@@ -1,5 +1,7 @@
 <p align="center"><img src="./org-banner.png" alt="ultrastable: Ultrastable is the foundation for any autonomous system." width="100%"></p>
 
+A system is autonomous if it has self-referential loops and the ability to close them. Knowing without being able to act is useless, so the system is privileged to close its own loops (`python3 -m foundation loops --verify`).
+
 # Ultrastable
 
 **Ultrastable is the foundation for any autonomous system.**

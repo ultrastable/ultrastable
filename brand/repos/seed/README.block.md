@@ -5,6 +5,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+A system is autonomous if it has self-referential loops and the ability to close them.
+
 One idea file in, a running organization of virtual managers and staff out.
 
 ![visibility](https://img.shields.io/badge/repo-private-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)

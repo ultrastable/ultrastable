@@ -62,7 +62,7 @@ def check(root=REPO) -> list[str]:
             bad.append(f"{blk.relative_to(root)}: missing, run brand/tools/sync_repos.py")
             continue
         text = blk.read_text(encoding="utf-8")
-        for label, ok in (("tagline", pat.search(text)), ("self-hosting line", rpat.search(text)), ("license summary", cfg["license"]["summary"] in text)):
+        for label, ok in (("tagline", pat.search(text)), ("self-hosting line", rpat.search(text)), ("autonomy line", re.search(pos["autonomy"]["pattern"], text, re.I | re.S)), ("license summary", cfg["license"]["summary"] in text)):
             if not ok:
                 bad.append(f"{blk.relative_to(root)}: lacks the {label}")
         for n in names:

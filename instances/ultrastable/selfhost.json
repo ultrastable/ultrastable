@@ -10,7 +10,11 @@
     "docs/issues",
     "doctrine/positioning.json",
     "instances/ultrastable/gaps.json",
-    "instances/ultrastable/selfhost.json"
+    "instances/ultrastable/selfhost.json",
+    "doctrine/glossary.json",
+    "doctrine/kernel.json",
+    "instances/ultrastable/loop-registry.json",
+    "instances/ultrastable/trust-ledger.json"
   ],
   "required_areas": [
     "planning",
@@ -197,6 +201,26 @@
         "agent-executor"
       ],
       "note": "A different agent reviews each claimed result."
+    },
+    {
+      "id": "loop-closure",
+      "area": "memory",
+      "system_path": [
+        "instances/ultrastable/loop-registry.json",
+        "foundation/loops.py",
+        "foundation/writeback.py",
+        "foundation/glossary.py",
+        "foundation/kernel.py",
+        "foundation/trust.py",
+        "doctrine/glossary.json",
+        "doctrine/kernel.json",
+        "docs/lessons"
+      ],
+      "tools": [
+        "system",
+        "git"
+      ],
+      "note": "Every loop is a registry row with a closing probe and a write-back target; sessions write what they learned into the repository; the glossary, doctrine kernel and trust ledger are code."
     }
   ]
 }

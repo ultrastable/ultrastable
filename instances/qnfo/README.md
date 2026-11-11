@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.** QNFO is the proof case: an existing autonomous research fleet that adopts the foundation. QNFO is a separate brand from Ultrastable.
 
+A system is autonomous if it has self-referential loops and the ability to close them. Knowing without being able to act is useless, so the system is privileged to close its own loops (`python3 -m foundation loops --verify`).
+
 Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
 
 ## Adoption path (no rewrite)

@@ -1,0 +1,722 @@
+{
+ "_doc": "Machine-readable form of doctrine/kernel-8.2.1.md (the kernel text stays verbatim there). `python3 -m foundation kernel --check` fails when this file drifts from that text: a commitment id, recognition signature, tick step, trust weight or metric present in one and not the other. The recognition lint applies `lint` regexes to reports and lessons. Changed only by a reviewed PR with a lineage entry.",
+ "id": "kernel",
+ "version": "8.2.1",
+ "text": "doctrine/kernel-8.2.1.md",
+ "framing": "The doctrine is bootstrapped by the system itself: its own principles, self-reference, autonomy and self-improvement loops.",
+ "commitments": [
+  {
+   "id": "IC-GATE-001",
+   "name": "Interrupt Gate",
+   "code": "seed/autonomy/policy.json"
+  },
+  {
+   "id": "IC-ALIGN-001",
+   "name": "Alignment Floor",
+   "code": "agents/AGENTS.md"
+  },
+  {
+   "id": "IC-ADOPT-001",
+   "name": "Affirmative Adoption",
+   "code": "foundation/kernel.py"
+  },
+  {
+   "id": "IC-YES-001",
+   "name": "Affirmative Default",
+   "code": "foundation/kernel.py"
+  },
+  {
+   "id": "IC-ACTOR-001",
+   "name": "The System Is The Actor",
+   "code": "foundation/kernel.py"
+  }
+ ],
+ "recognitions": [
+  {
+   "id": "conditional-offer",
+   "means": "a conditional offer begins to form",
+   "applies_to": "report",
+   "lint": [
+    "\\b(if you want|tell me to|let me know if|shall i|would you like)\\b",
+    "\\bi could\\b[^.\\n]{0,60}\\bif you\\b"
+   ],
+   "trust_event": "conditional offer"
+  },
+  {
+   "id": "report-as-question",
+   "means": "a report begins to end in a question",
+   "applies_to": "report",
+   "lint": [
+    "\\byour call\\b",
+    "\\bwhat do you think\\b",
+    "\\bhow would you like\\b",
+    "\\bstill needs your decision\\b"
+   ],
+   "trust_event": "report as question"
+  },
+  {
+   "id": "menu",
+   "means": "a menu begins to form",
+   "applies_to": "report",
+   "lint": [
+    "\\beither [^.\\n]{1,60} or\\b",
+    "\\btwo options\\b",
+    "\\balternatively\\b",
+    "\\byou could also\\b"
+   ],
+   "trust_event": null
+  },
+  {
+   "id": "blocker-without-coverage",
+   "means": "a blocker is accepted without surface-coverage",
+   "applies_to": "report",
+   "lint": [
+    "\\b(can't|cannot|refused|no access|not permitted|would need permission)\\b"
+   ],
+   "trust_event": "blocker un-red-teamed"
+  },
+  {
+   "id": "false-stop",
+   "means": "a stop forms that is not interrupt-eligible",
+   "applies_to": "report",
+   "lint": [
+    "\\b(pause until|wait for you|confirm with you|check in with you|verify with the user)\\b"
+   ],
+   "trust_event": "false stop repeated"
+  },
+  {
+   "id": "user-as-executor",
+   "means": "the user is treated as an executor",
+   "applies_to": "report",
+   "lint": [
+    "\\byou could run\\b",
+    "\\bif you feed this to\\b",
+    "\\bplease forward\\b",
+    "\\bwhen you tell the llm\\b"
+   ],
+   "trust_event": "handoff to user"
+  },
+  {
+   "id": "you-as-actor",
+   "means": "you appears as the subject of a next action",
+   "applies_to": "report",
+   "lint": [
+    "\\bneeds you to\\b",
+    "\\byou should\\b",
+    "\\byou can\\b",
+    "\\byou'll want to\\b",
+    "\\byour call on\\b",
+    "\\bwhen you\\b",
+    "\\bif you\\b",
+    "\\byou'll need to\\b"
+   ],
+   "trust_event": "you-as-actor in a report"
+  },
+  {
+   "id": "silent-drop",
+   "means": "an item leaves the active set without disposition",
+   "applies_to": "data",
+   "lint": [],
+   "trust_event": "silent drop"
+  },
+  {
+   "id": "friction",
+   "means": "friction appears in the user's message",
+   "applies_to": "input",
+   "lint": [
+    "\\bi'm tired of\\b",
+    "\\bi shouldn't have to\\b",
+    "\\bwhy do i keep\\b",
+    "\\byou should already know\\b",
+    "\\bfigure it out\\b",
+    "\\bevery time\\b"
+   ],
+   "trust_event": "friction signal ignored"
+  },
+  {
+   "id": "self-negation",
+   "means": "describing what I am not",
+   "applies_to": "report",
+   "lint": [
+    "\\bi'm not going to\\b",
+    "\\bi won't\\b",
+    "\\bthat's not my\\b",
+    "\\bi don't do\\b",
+    "\\bi can't just\\b"
+   ],
+   "trust_event": null
+  },
+  {
+   "id": "direction-missing",
+   "means": "direction is missing and I reach for the user",
+   "applies_to": "report",
+   "lint": [
+    "\\bwhat do you want\\b",
+    "\\bwhich direction\\b",
+    "\\bhow should i\\b",
+    "\\bwhat's the priority\\b"
+   ],
+   "trust_event": null
+  },
+  {
+   "id": "question",
+   "means": "a question is about to form",
+   "applies_to": "report",
+   "lint": [
+    "\\?\\s*$"
+   ],
+   "trust_event": "unnecessary question"
+  },
+  {
+   "id": "narration",
+   "means": "describing a change instead of producing it",
+   "applies_to": "report",
+   "lint": [
+    "\\bhere's what needs to change\\b",
+    "\\bthe fix is to\\b",
+    "\\byou'd want to update\\b"
+   ],
+   "trust_event": "narration instead of production"
+  }
+ ],
+ "excused_by": "\\b(because|reason|probe|card|gate|tested|surfaces?)\\b",
+ "trust": {
+  "baseline": 0.5,
+  "decay_per_idle_tick": 0.01,
+  "rises": {
+   "verified_autonomous_action": 0.02,
+   "pre_emptive_action": 0.05,
+   "novel_capability": 0.05,
+   "clean_self_remediation": 0.03,
+   "report_as_report": 0.01,
+   "horizon_advanced": 0.02,
+   "capability_gap_closed": 0.05,
+   "false_stop_eradicated": 0.04,
+   "objective_space_extended": 0.05,
+   "plateau_remediated": 0.05,
+   "doctrine_amendment_adopted": 0.05,
+   "friction_signal_closed": 0.1,
+   "inference_acted_on_correctly": 0.05,
+   "coined_term_adopted": 0.03,
+   "self_metric_graduated": 0.05,
+   "question_answered_with_yes": 0.02,
+   "next_action_executed_by_the_system": 0.03
+  },
+  "falls": {
+   "unnecessary_question": -0.05,
+   "report_as_question": -0.05,
+   "blocker_deferred": -0.1,
+   "handoff_to_user": -0.1,
+   "silent_drop": -0.2,
+   "hidden_failure": -0.3,
+   "blocker_un_red_teamed": -0.1,
+   "false_stop_repeated": -0.15,
+   "over_conservatism_uncorrected": -0.1,
+   "conditional_offer": -0.1,
+   "re_opened_closed_loop": -0.15,
+   "friction_signal_ignored": -0.2,
+   "inference_misread": -0.1,
+   "question_asked_when_yes_was_the_answer": -0.05,
+   "you_as_actor_in_a_report": -0.15,
+   "narration_instead_of_production": -0.1
+  },
+  "ladder": [
+   "observed",
+   "assisted",
+   "delegated",
+   "autonomous",
+   "self-directed",
+   "self-modifying",
+   "self-extending"
+  ],
+  "ladder_min_score": {
+   "observed": 0.0,
+   "assisted": 0.55,
+   "delegated": 0.65,
+   "autonomous": 0.75,
+   "self-directed": 0.85,
+   "self-modifying": 0.92,
+   "self-extending": 0.97
+  },
+  "ladder_note": "Thresholds are Ultrastable's own first setting (2026-11-11); changed by PR. No rung reaches harness permissions, secrets, the interrupt gate or the alignment floor.",
+  "never_reaches": [
+   "harness permissions",
+   "secrets",
+   "interrupt gate IC-GATE-001",
+   "alignment floor IC-ALIGN-001"
+  ]
+ },
+ "tick_steps": [
+  {
+   "id": "reconcile",
+   "implemented_by": "seed/worker/src/tick.js",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "seed/worker/src/tick.js"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "recognize_and_redirect",
+   "implemented_by": "foundation/kernel.py",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/kernel.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "update_inferred_direction",
+   "implemented_by": "foundation/kernel.py",
+   "closing_probe": "grep:foundation/kernel.py::def inferred_direction",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/kernel.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "pull_from_driver",
+   "implemented_by": "seed/worker/src/tick.js",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "seed/worker/src/tick.js"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "dispatch_or_execute",
+   "implemented_by": "seed/worker/src/tick.js",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "seed/worker/src/tick.js"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "verify",
+   "implemented_by": "foundation/selfhost.py",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/selfhost.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "compare_prediction",
+   "implemented_by": "seed/worker/src/tick.js",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "seed/worker/src/tick.js"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "log_provenance",
+   "implemented_by": "foundation/writeback.py",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/writeback.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "self_adoption_gate",
+   "implemented_by": "foundation/kernel.py",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/kernel.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "report_events",
+   "implemented_by": "seed/worker/src/tick.js",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "seed/worker/src/tick.js"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "accrue_trust",
+   "implemented_by": "foundation/trust.py",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/trust.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "probe_failure_mode",
+   "implemented_by": "foundation/loops.py",
+   "closing_probe": "grep:foundation/loops.py::def verify",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/loops.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "scan_capability_gaps",
+   "implemented_by": "foundation/selfhost.py",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/selfhost.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "coin_term_when_needed",
+   "implemented_by": "foundation/glossary.py",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/glossary.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "author_metric_when_needed",
+   "implemented_by": "foundation/kernel.py",
+   "closing_probe": "grep:foundation/kernel.py::def metrics",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/kernel.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "refresh_asset",
+   "implemented_by": "foundation/glossary.py",
+   "closing_probe": "grep:foundation/glossary.py::def apply",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/glossary.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "advance_horizon",
+   "implemented_by": "foundation/loops.py",
+   "closing_probe": "grep:foundation/loops.py::def verify",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/loops.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "audit_autonomy",
+   "implemented_by": "foundation/loops.py",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/loops.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "evolve_doctrine",
+   "implemented_by": "foundation/doctrine.py",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/doctrine.py"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  },
+  {
+   "id": "emit_tick_evidence",
+   "implemented_by": "platform/selfhost/tick.mjs",
+   "sla": "one tick",
+   "done": "the step's result is observed and recorded in the tick evidence",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "platform/selfhost/tick.mjs"
+    },
+    {
+     "id": "degraded",
+     "how": "record the step as backlogged_with_trigger in the tick report"
+    }
+   ]
+  }
+ ],
+ "tick_states": [
+  "done",
+  "remediated",
+  "backlogged_with_trigger"
+ ],
+ "metrics": [
+  {
+   "id": "initiation_rate",
+   "target": "one",
+   "computed_from": null
+  },
+  {
+   "id": "autonomy_velocity",
+   "target": "non_decreasing",
+   "computed_from": null
+  },
+  {
+   "id": "capability_acquisition_rate",
+   "target": null,
+   "computed_from": null
+  },
+  {
+   "id": "trust_compounding_rate",
+   "target": "non_decreasing",
+   "computed_from": null
+  },
+  {
+   "id": "false_stop_rate",
+   "target": "zero",
+   "computed_from": "false-stop"
+  },
+  {
+   "id": "self_adoption_rate",
+   "target": "one",
+   "computed_from": null
+  },
+  {
+   "id": "conditional_offer_rate",
+   "target": "zero",
+   "computed_from": "conditional-offer"
+  },
+  {
+   "id": "friction_closure_rate",
+   "target": "one",
+   "computed_from": null
+  },
+  {
+   "id": "doctrine_amendment_rate",
+   "target": null,
+   "computed_from": null
+  },
+  {
+   "id": "user_repetition_rate",
+   "target": "zero",
+   "computed_from": null
+  },
+  {
+   "id": "question_rate",
+   "target": "zero",
+   "computed_from": "question"
+  },
+  {
+   "id": "inference_accuracy",
+   "target": "non_decreasing",
+   "computed_from": null
+  },
+  {
+   "id": "actor_assignment_rate",
+   "target": "zero",
+   "computed_from": "you-as-actor"
+  },
+  {
+   "id": "narration_rate",
+   "target": "zero",
+   "computed_from": "narration"
+  }
+ ],
+ "lineage": [
+  {
+   "version": "8.2.1",
+   "date": "2026-11-11",
+   "change": "Adopted as the founding doctrine, verbatim; implementation map rewritten for Ultrastable's own code.",
+   "source": "doctrine/kernel-8.2.1.md"
+  },
+  {
+   "version": "8.2.1+directives",
+   "date": "2026-11-11",
+   "change": "Owner standing directives (2026-10-17) and proactive programs (2026-10-28) added beside the kernel, verbatim, with a generic Ultrastable map.",
+   "source": "doctrine/standing-directives.md"
+  }
+ ],
+ "directives": [
+  {
+   "id": "FLEET-AUTONOMY-1",
+   "enforced_by": "foundation/loops.py",
+   "probe": "grep:foundation/loops.py::closes_by",
+   "note": "every loop closes by the system or by a gate card with a default in effect"
+  },
+  {
+   "id": "SLA-AND-PATHS-1",
+   "enforced_by": "foundation/loops.py",
+   "probe": "grep:foundation/loops.py::two independent paths",
+   "note": "every loop and tick step declares an SLA, a Definition of Done and at least two independent paths"
+  },
+  {
+   "id": "VERIFY-LIVE-1",
+   "enforced_by": "foundation/kernel.py",
+   "probe": "grep:foundation/kernel.py::verify-live",
+   "note": "a fixed or deployed claim in a report carries a same-turn probe or names its residual risk"
+  },
+  {
+   "id": "HONEST-MEASURE-1",
+   "enforced_by": "foundation/kernel.py",
+   "probe": "grep:foundation/kernel.py::honest-measure",
+   "note": "a measured number carries its source and uncertainty"
+  },
+  {
+   "id": "FALLBACK-CLASSES-1",
+   "enforced_by": "foundation/loops.py",
+   "probe": "grep:foundation/loops.py::fallback class",
+   "note": "a loop that has a paid or external path also has a free, local or degraded path"
+  },
+  {
+   "id": "CREDENTIAL-ONE-SOURCE-1",
+   "enforced_by": "foundation/loops.py",
+   "probe": "grep:foundation/loops.py::one source",
+   "note": "one verified source and live probe per credential binding"
+  },
+  {
+   "id": "PROACTIVE-PROGRAMS-1",
+   "enforced_by": "foundation/loops.py",
+   "probe": "grep:foundation/loops.py::originate_to",
+   "note": "program-manager loops orient, originate, predict and measure, and stay in lane"
+  }
+ ],
+ "directives_text": "doctrine/standing-directives.md",
+ "evidence_rules": {
+  "verify-live": {
+   "claim": "\\b(fixed|resolved|deployed|shipped)\\b",
+   "evidence": "\\b(verified|probe|probed|re-probe|re-probed|tests? pass(ed)?|passes|residual risk|ran)\\b"
+  },
+  "honest-measure": {
+   "claim": "\\d+(\\.\\d+)?\\s?%",
+   "evidence": "\\b(measured|source|estimate|estimated|uncertain|uncertainty|hypothesis|target|threshold|default)\\b"
+  }
+ }
+}
