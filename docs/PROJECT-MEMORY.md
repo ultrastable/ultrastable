@@ -4,7 +4,7 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-10
+Last updated: 2026-11-11
 Maintained by: every agent, on every session end. Staleness is checked by `scripts/check_memory.py` (CI `memory-fresh`).
 
 ## 1. Standing rules (from Rowan)
@@ -12,7 +12,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 1. **If it is not in code, it does not exist.** GitHub org `ultrastable` is canonical for code, files, plans, issues, tasks, agents and instructions. Local files, Library copies, thread output and chat or platform memory are ephemeral. Repos are private.
 2. **No open loops.** Autonomy means no open loops, plus iteration. Work ends in completion, not handoff: deployed end to end, verified, recorded. An item leaves the active set only as done, superseded, cancelled, or blocked with owner, blocker and closing probe.
 3. **Autonomy first.** Agents act, verify and report as done. They do not ask questions the record can answer. Test every surface before reporting a blocker and say what each returned. Pauses only at steps both irreversible and identity-bound, after engineering reversibility.
-4. **Confidentiality until the provisional patent is filed.** Site and details stay off public domains, repos and posts. Only talking points tagged SAFE NOW may be used publicly. Patent drafts are working drafts for attorney review, not legal advice. Business figures are estimates until checked.
+4. **SUPERSEDED 2026-11-11: confidentiality until a provisional patent is filed.** The patent track is dropped (see section 2, strategy pivot). Confidentiality now lasts until counsel has reviewed `LICENSE` and the owner has signed the entity and IP assignment; repositories stay private until then. Only talking points tagged SAFE NOW may be used publicly in the meantime. Legal drafts (license, specs notes) are working drafts for attorney review, not legal advice. Business figures are estimates until checked. (Project instruction rule 3 in the Claude project settings is the old wording; this file is canonical.)
 5. **Platform-agnostic.** Portable core with Cloudflare and Google Cloud adapters; the working system runs on Cloudflare today.
 6. **Reporting.** Project-chat posts are a few plain lines, outcome first, threads linked by title.
 7. **Facts are checked at the source** before being stated (licences, disclosures, numbers).
@@ -20,9 +20,12 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 
 ## 2. Facts from Rowan
 
-- The QNFO public repository has a licence: the QNFO User License Agreement v2.1, which prohibits commercial use.
-- The key combination of the invention has NOT been publicly disclosed. The QNFO repository public since August 2026 is a separate effort.
-- Never state in any file that the invention is already disclosed or that QNFO has no licence. What was public and when is only an open question for the patent attorney (`ip/provisional/FILING-CHECKLIST.md`).
+- **Strategy pivot (2026-11-11): no patent; hybrid license.** The system has already been used in public through QNFO, so a patent will not work. Instead: source-available code and specifications, free for non-commercial use, a Commercial License with a revenue share for anything that makes or saves money, adapted from the QNFO User License Agreement v2.1. The code stays public-readable once released (not a private codebase), but licensed. `LICENSE` (Ultrastable Hybrid License v0.9, working draft for attorney review, `LicenseRef-Ultrastable-Hybrid-0.9`), [LICENSING.md](../LICENSING.md), [COMMERCIAL-LICENSING.md](../COMMERCIAL-LICENSING.md), counsel questions in `docs/legal/LICENSE-REVIEW.md`. Repositories stay private until the license is reviewed and the entity exists.
+- **IP is now "architectural specifications"** in `specs/` (scope, architecture, roles, tick, trust, plussing, governance, change path, bootstrapping, interface, project management, models, conformance). The patent drafts are archived, not deleted, in `ip/` (`ip/ARCHIVED.md`) and are no longer maintained or checked in CI.
+- **Code base split** (`repo-split.json`, `docs/REPO-SPLIT.md`): `workers` (first code base, JavaScript on Cloudflare Workers), `portable` (Python reference and Google Cloud adapters), `specs` (documentation), `ultrastable/ultrastable` (private operations). Creating the repos is an org-token step.
+- **Scope (hard boundary, `specs/00-scope.md`):** Ultrastable is a code base that a non-coder can bootstrap into a working system; the bootstrap writes architectural specifications and charters, project management practice (portfolio, program, product, project; agile and traditional) is built in, and the interface is three bite-sized screens with buttons. Business plans, patents and filings are opt-in extensions, not default behavior; QNFO is a demonstration. Platform order: Cloudflare first, Google Cloud second, any platform later.
+- The QNFO public repository has a licence: the QNFO User License Agreement v2.1, which prohibits commercial use. Ultrastable's license reuses that structure.
+- ~~The key combination has NOT been publicly disclosed.~~ Obsolete with the pivot: do not make novelty or non-disclosure claims either way; they no longer matter to the strategy. Never state that QNFO has no licence.
 - Rowan is the ideas person, not the business person. Virtual managers own business, marketing, funding, legal/IP and ops.
 - Working style: judged on results, wants no questions, wants failures logged so the seed improves, wants everything in code and deployed end to end, no open loops.
 - Platform stance (2026-11-10): platform-agnostic, cloud-based for now; Cloudflare first, Google adapter second, pitch both.
@@ -31,7 +34,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 
 ## 3. Current status (2026-11-10)
 
-- Main repo `ultrastable/ultrastable` (private) holds the unified layout, patent package (`ip/provisional/`, draft, unfiled, currently v5), business plan, the separate Ultrastable brand (orange/green/cream, not QNFO-like, no research framing), `agents/SELF-AWARENESS.md`, and bootstrap records (`docs/bootstrapping/`, `docs/BOOTSTRAP-GAPS.md`).
+- Main repo `ultrastable/ultrastable` (private) holds the unified layout, the archived patent package (`ip/`, dropped 2026-11-11), business plan, the separate Ultrastable brand (orange/green/cream, not QNFO-like, no research framing), `agents/SELF-AWARENESS.md`, and bootstrap records (`docs/bootstrapping/`, `docs/BOOTSTRAP-GAPS.md`).
 - Separate org repos (`site`, `docs`, `platform`, `ip`, `business`, `seed`) exist but are archived duplicates; the monorepo is the system of record (see `docs/BOOTSTRAP-GAPS.md`).
 - Dashboard is live at `/owner` on ultrastable.io, .app and .net (Cloudflare worker `ultrastable-dashboard`, source in `dashboard/`). Public pages are a generic holding page.
 - Brand/settings build-out (2026-11-10): settings are code in `github/org-settings.json` (workflow `org-settings`, BG-22), community files in `.github/`, site serves PNG social card (BG-24); UI-only brand items are owner card BG-23; audit in `docs/ops/GITHUB-SETTINGS-AUDIT.md`.
@@ -54,11 +57,15 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 
 ## 4. Owner-only items (identity-bound; each has a default in effect)
 
+**2026-11-11:** the two patent-filing rows below are superseded (patent dropped). New owner-only rows follow them: license counsel sign-off and publication, and creating the split repositories.
+
 | Item | Default in effect | Closing probe |
 |---|---|---|
-| File the priority application in Europe (identity-bound: sign and pay): `ip/europe/OWNER-CARD.md`; supersedes the US Patent Center walkthrough unless a practitioner is engaged. Default: no filing. Probe: receipt in `ip/evidence-log.md`) |
+| (superseded 2026-11-11, patent dropped) File the priority application in Europe (identity-bound: sign and pay): `ip/europe/OWNER-CARD.md`; supersedes the US Patent Center walkthrough unless a practitioner is engaged. Default: no filing. Probe: receipt in `ip/evidence-log.md`) |
 | (superseded route) File the provisional patent (package ready: `ip/provisional/FILE-THIS-TODAY.md`; `tools/preflight.py` passes; attorney review is optional before filing) | Drafts stay private | Filing receipt recorded in `ip/evidence-log.md` |
-| Legal entity and IP assignment (BIZ-1) | `LICENSE` placeholder, proprietary | Entity name in `LICENSE` |
+| Legal entity and IP assignment (BIZ-1) | `LICENSE` names the author as Licensor | Entity name in `LICENSE` (section 14.4 and the copyright line) |
+| Counsel review of `LICENSE`, then publish the `workers`, `portable` and `specs` repos (identity-bound: legal review, changing visibility) | All repos private | `repo-split.json` state `reviewed` and `gh api repos/ultrastable/workers --jq .private` is `false` |
+| Create the split repos (needs `ORG_ADMIN_TOKEN`, `docs/ops/ORG-TOKEN.md`) | Monorepo stays canonical | `gh api repos/ultrastable/workers` returns 200 |
 | Mint `ORG_ADMIN_TOKEN` | Holding page only | `org-manage` probe passes; `curl -s https://github.com/ultrastable` shows profile |
 | Create/unarchive repos if the fleet cannot | Monorepo is canonical | `gh api repos/ultrastable/<name> --jq .archived` |
 | Org avatar upload | Default identicon | Avatar URL is not the identicon |
@@ -72,7 +79,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 | Workstream | Where |
 |---|---|
 | Roadmap and tasks | `ROADMAP.md`, `PROJECTS.md`, GitHub milestones and issues (`docs/ISSUES-BY-AREA.md`) |
-| Intellectual property | `ip/`, `ip/provisional/`, `docs/ip/IP-REGISTER.md` |
+| License and specifications (replaces patent track) | `LICENSE`, `LICENSING.md`, `COMMERCIAL-LICENSING.md`, `specs/`, `docs/legal/`, `repo-split.json`; archived patent drafts in `ip/` |
 | Business, customers, competition, funding | `business/`, `docs/funding/`, `research/` |
 | Brand and public profile | `brand/` |
 | Site and dashboard | `site/`, `dashboard/`, `deploy/` |
@@ -88,3 +95,4 @@ Update this file in the same PR as any change to status, rules, facts, owner ite
 
 - 2026-11-10: Actions minutes are a hard quota. Every workflow declares budget, trigger and free alternative (`scripts/lint_workflows.py`); kill switch `actions-budget.json`; see docs/ops/ACTIONS-BUDGET.md and BG-35.
 - 2026-11-10: Ultrastable is the foundation for any autonomous system, and that is the core marketing message (Rowan). Layers: kernel `seed/`, foundation `foundation/`, instance manifest `instances/<slug>/instance.json`; `python3 -m foundation new-system` generates a system; QNFO is an instance (`instances/qnfo/`, adoption PLANNED, closing probe in its README). gaplint GL008 enforces the line. Every owner step has an autonomous route in `foundation/data/owner-steps.json`; see `docs/FOUNDATION.md`.
+- 2026-11-11: Rowan dropped the patent for the hybrid license plus architectural specs (section 2). `scripts/check_license.py` and the doctrine check enforce the license, specs index and repo split in the existing `checks` workflow; no workflow was added. The European and US filing rows and the provisional pre-flight step are retired.

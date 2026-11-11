@@ -16,4 +16,4 @@ It is self-directed with light input. You can steer whenever you like, and it ma
 
 **Runs on:** the major clouds; built to be portable.
 
-Patent pending: not yet. Contact: pilot@ultrastable.io
+Licensing: source-available, free for non-commercial use, a commercial license for anything that makes money. Contact: pilot@ultrastable.io
