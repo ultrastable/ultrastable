@@ -1,7 +1,7 @@
 {
   "_doc": "Source of truth for Ultrastable's positioning and memory rule. Prose elsewhere is generated or checked against this file: `python3 -m foundation doctrine --apply` injects the line into the markdown files listed under `inject`, `--check` (run by checks.yml and the tests) fails when any listed file lacks it or states a contradiction, and gaplint rules GL008 and GL009 read this file. Changed only by a reviewed PR.",
   "id": "positioning",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "tagline": "Ultrastable is the foundation for any autonomous system.",
   "pattern": "foundation\\s+for\\s+any\\s+autonomous\\s+system",
   "contradictions": [
@@ -9,25 +9,125 @@
     "only a business-starting tool"
   ],
   "inject": {
-    "md_files": ["README.md", "agents/AGENTS.md", "agents/PROJECT-INSTRUCTIONS.md", "agents/roles/*.md", "seed/agents/AGENTS.md", "seed/agents/roles/*.md", "seed/README.md", "docs/PROJECT-MEMORY.md", "docs/FOUNDATION.md", "external/overview.md", "external/one-pager.md", "external/customer-story.md", "external/README.md", "brand/public-profile/README.md", "brand/public-profile/profile/README.md", "business/funding/README.md", "site/STAGED-COPY.md", "demos/README.md", "social/README.md", "platform/README.md", "products/README.md", "docs/overview.md", "instances/*/README.md"],
-    "check_only": ["site/worker.js", "demos/public/index.html", "outreach/profiles.json", "business/funding/applications/_template/packet.json", "seed/outreach/profiles.template.json"]
+    "md_files": [
+      "README.md",
+      "agents/AGENTS.md",
+      "agents/PROJECT-INSTRUCTIONS.md",
+      "agents/roles/*.md",
+      "seed/agents/AGENTS.md",
+      "seed/agents/roles/*.md",
+      "seed/README.md",
+      "docs/PROJECT-MEMORY.md",
+      "docs/FOUNDATION.md",
+      "external/overview.md",
+      "external/one-pager.md",
+      "external/customer-story.md",
+      "external/README.md",
+      "brand/public-profile/README.md",
+      "brand/public-profile/profile/README.md",
+      "business/funding/README.md",
+      "site/STAGED-COPY.md",
+      "demos/README.md",
+      "social/README.md",
+      "platform/README.md",
+      "products/README.md",
+      "docs/overview.md",
+      "instances/*/README.md"
+    ],
+    "check_only": [
+      "site/worker.js",
+      "demos/public/index.html",
+      "outreach/profiles.json",
+      "business/funding/applications/_template/packet.json",
+      "seed/outreach/profiles.template.json"
+    ]
   },
   "licensing": {
     "decision": "2026-11-11 (Rowan): no patent. Source-available hybrid license: free for non-commercial use, a Commercial License with revenue share for any commercial use. Specs live in ultrastable/spec and replace the patent drafts; the patent drafts are archived in ip/.",
     "license_file": "LICENSE",
-    "required_patterns": ["LicenseRef-Ultrastable-USL-1.0", "COMMERCIAL USE REQUIRES A COMMERCIAL LICENSE"],
-    "banned_patterns": ["patent[- ]pending", "provisional (patent )?(is |was |will be )?filed", "file the provisional"],
-    "scan": ["external/*.md", "site/worker.js", "demos/public/index.html", "brand/public-profile/**/*.md", "README.md"]
+    "required_patterns": [
+      "LicenseRef-Ultrastable-USL-1.0",
+      "COMMERCIAL USE REQUIRES A COMMERCIAL LICENSE"
+    ],
+    "banned_patterns": [
+      "patent[- ]pending",
+      "provisional (patent )?(is |was |will be )?filed",
+      "file the provisional"
+    ],
+    "scan": [
+      "external/*.md",
+      "site/worker.js",
+      "demos/public/index.html",
+      "brand/public-profile/**/*.md",
+      "README.md"
+    ]
   },
   "memory": {
     "rule": "Code is the only memory. All project state lives in this repository (docs/PROJECT-MEMORY.md and data files). No agent relies on chat, tool or platform memory; a thread is never the only record.",
     "canonical": "docs/PROJECT-MEMORY.md",
-    "required_in": ["agents/AGENTS.md", "seed/agents/AGENTS.md"],
+    "required_in": [
+      "agents/AGENTS.md",
+      "seed/agents/AGENTS.md"
+    ],
     "required_pattern": "code is the only memory",
-    "scan": ["agents/**/*.md", "seed/agents/**/*.md", "seed/docs/*.md", "docs/PROJECT-MEMORY.md", "docs/FOUNDATION.md"],
+    "scan": [
+      "agents/**/*.md",
+      "seed/agents/**/*.md",
+      "seed/docs/*.md",
+      "docs/PROJECT-MEMORY.md",
+      "docs/FOUNDATION.md"
+    ],
     "banned_patterns": [
       "(save|store|write|record)[^.\\n]{0,40}\\b(to|in)\\b[^.\\n]{0,20}\\b(chat|tool|platform|hearthbot) memory",
       "rely on (chat|tool|platform|hearthbot) memory"
     ]
+  },
+  "runs_on_itself": {
+    "_doc": "Self-reference is the proof. Ultrastable runs its own planning, issues, managers, trust ledger, plussing budget, specs, release and reporting with the code it gives everyone else. `python3 -m foundation selfhost --verify` fails when any of it depends on a tool with no recorded adapter; `foundation doctrine --check` runs that verifier and fails when a listed file lacks the line.",
+    "tagline": "Ultrastable runs on itself.",
+    "pattern": "ultrastable\\s+runs\\s+on\\s+itself",
+    "line": "Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).",
+    "contradictions": [
+      "ultrastable (does not|doesn't|will not|won't) run on itself",
+      "ultrastable (is|was) (built|run) (with|on) (tools|a tool) (that )?(it )?(does not|doesn't) (record|track)"
+    ],
+    "md_files": [
+      "README.md",
+      "agents/AGENTS.md",
+      "agents/PROJECT-INSTRUCTIONS.md",
+      "agents/roles/*.md",
+      "business/funding/README.md",
+      "demos/README.md",
+      "docs/FOUNDATION.md",
+      "docs/PROJECT-MEMORY.md",
+      "docs/overview.md",
+      "docs/runbooks/any-tools/README.md",
+      "instances/*/README.md",
+      "instances/ultrastable/README.md",
+      "platform/README.md",
+      "products/README.md",
+      "seed/README.md",
+      "seed/agents/AGENTS.md",
+      "seed/agents/roles/*.md",
+      "social/README.md",
+      "specs/README.md"
+    ],
+    "check_only": [
+      "site/worker.js",
+      "site/STAGED-COPY.md",
+      "external/overview.md",
+      "external/one-pager.md",
+      "external/customer-story.md",
+      "external/README.md",
+      "brand/public-profile/README.md",
+      "brand/public-profile/profile/README.md"
+    ],
+    "verifier": "python3 -m foundation selfhost --verify",
+    "registry": [
+      "instances/ultrastable/selfhost.json",
+      "instances/ultrastable/gaps.json",
+      "platform/adapters/registry.json"
+    ],
+    "_public_note": "Public and SAFE NOW files carry only the short tagline, never the mechanism line; they are check_only and edited by hand."
   }
 }

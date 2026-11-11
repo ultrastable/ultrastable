@@ -2,6 +2,8 @@
 
 > Ultrastable is the foundation for any autonomous system.
 
+> Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
 Last updated: 2026-11-11
@@ -95,3 +97,4 @@ Update this file in the same PR as any change to status, rules, facts, owner ite
 - 2026-11-10: Actions minutes are a hard quota. Every workflow declares budget, trigger and free alternative (`scripts/lint_workflows.py`); kill switch `actions-budget.json`; see docs/ops/ACTIONS-BUDGET.md and BG-35.
 - 2026-11-10: Ultrastable is the foundation for any autonomous system, and that is the core marketing message (Rowan). Layers: kernel `seed/`, foundation `foundation/`, instance manifest `instances/<slug>/instance.json`; `python3 -m foundation new-system` generates a system; QNFO is an instance (`instances/qnfo/`, adoption PLANNED, closing probe in its README). gaplint GL008 enforces the line. Every owner step has an autonomous route in `foundation/data/owner-steps.json`; see `docs/FOUNDATION.md`.
 - 2026-11-11: Rowan dropped the patent for the hybrid license plus architectural specs (section 2). `scripts/check_license.py` and the doctrine check enforce the license in the existing `checks` workflow; no workflow was added. The European and US filing rows and the provisional pre-flight step are retired.
+- 2026-11-11: Ultrastable runs on itself (Rowan: core positioning, bootstrapped, with any tools). `python3 -m foundation selfhost` boots Ultrastable's own organization (roles, items from docs/issues, trust ledger, plus share, gap register) from this repo into SQLite and runs the seed tick; `--no-node` is the minimal path (Python 3 plus a copy of the repo); `--verify` fails when a process uses a tool with no adapter in `platform/adapters/registry.json` or an outside tool with no gap in `instances/ultrastable/gaps.json`. Doctrine block `runs_on_itself` in `doctrine/positioning.json` is enforced by `foundation doctrine --check` (existing checks workflow, no new workflow). Runbooks: `docs/runbooks/any-tools/`. Open gaps SG-1 forge, SG-2 executor, SG-3 report sink, SG-4 mail sender, SG-5 social, SG-8 GCP live deploy.

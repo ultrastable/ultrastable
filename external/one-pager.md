@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+**Ultrastable runs on itself.** Its own planning, work tracking and reporting are run by the system it gives to others.
+
 **Coding agents write code. Ultrastable runs the system.**
 
 **Problem.** An idea needs a product, a brand, IP protection, a business plan, a search presence and marketing. Each is a hire or an agency, and a person still has to choose every task, check every result and notice every drift. Ideas die in the overhead.

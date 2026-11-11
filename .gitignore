@@ -12,3 +12,4 @@ demos/dist/
 dist/
 
 .wrangler/
+.selfhost/

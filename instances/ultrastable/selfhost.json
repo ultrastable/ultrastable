@@ -1,0 +1,195 @@
+{
+  "_doc": "Ultrastable runs on itself. Every process Ultrastable itself performs is listed here with the files in this repository that hold it (system_path) and every tool it touches (tools). A tool is `system` (this repo's own code) or an id in platform/adapters/registry.json. `python3 -m foundation selfhost --verify` fails on a missing path, an unregistered tool, an outside tool with no gap entry, or an outside tool name found in workflows and scripts that the registry does not record. Changed only by a reviewed PR.",
+  "id": "selfhost",
+  "version": "1.0.0",
+  "instance": "instances/ultrastable/instance.json",
+  "boot_from": [
+    "instances/ultrastable/instance.json",
+    "seed/ultrastable.json",
+    "seed/autonomy/policy.json",
+    "docs/issues",
+    "doctrine/positioning.json",
+    "instances/ultrastable/gaps.json",
+    "instances/ultrastable/selfhost.json"
+  ],
+  "required_areas": [
+    "planning",
+    "issue-tracking",
+    "managers",
+    "trust-ledger",
+    "plussing",
+    "specs",
+    "release",
+    "reporting",
+    "funding-outreach",
+    "memory",
+    "review"
+  ],
+  "processes": [
+    {
+      "id": "planning",
+      "area": "planning",
+      "system_path": [
+        "docs/roadmap-source.md",
+        "ROADMAP.md",
+        "docs/issues"
+      ],
+      "tools": [
+        "system",
+        "git",
+        "github"
+      ],
+      "note": "Roadmap and every item are files; GitHub Issues mirror them."
+    },
+    {
+      "id": "issue-tracking",
+      "area": "issue-tracking",
+      "system_path": [
+        "docs/issues",
+        "seed/worker/migrations/0001_init.sql",
+        "seed/worker/src/tick.js"
+      ],
+      "tools": [
+        "system",
+        "sqlite",
+        "github"
+      ],
+      "note": "The items table is loaded from docs/issues by selfhost; the tick claims and reconciles them."
+    },
+    {
+      "id": "managers",
+      "area": "managers",
+      "system_path": [
+        "seed/ultrastable.json",
+        "agents/roles",
+        "seed/agents/roles"
+      ],
+      "tools": [
+        "system",
+        "agent-executor"
+      ],
+      "note": "Roles are defined in seed/ultrastable.json and booted as rows in roles."
+    },
+    {
+      "id": "trust-ledger",
+      "area": "trust-ledger",
+      "system_path": [
+        "seed/autonomy/policy.json",
+        "seed/worker/src/tick.js",
+        "foundation/ladder.py"
+      ],
+      "tools": [
+        "system",
+        "sqlite"
+      ],
+      "note": "trust_ledger rows per (surface, action class), accrued by the tick_step accrue_trust."
+    },
+    {
+      "id": "plussing",
+      "area": "plussing",
+      "system_path": [
+        "seed/ultrastable.json",
+        "seed/worker/src/tick.js",
+        "docs/concepts/plussing.md"
+      ],
+      "tools": [
+        "system",
+        "sqlite"
+      ],
+      "note": "capacity.plus_share is stored in org and enforced by check_plus_share."
+    },
+    {
+      "id": "specs",
+      "area": "specs",
+      "system_path": [
+        "specs/README.md",
+        "docs/architecture",
+        "doctrine/positioning.json"
+      ],
+      "tools": [
+        "system",
+        "git"
+      ],
+      "note": "Specs are files; doctrine is checked by foundation doctrine --check."
+    },
+    {
+      "id": "release",
+      "area": "release",
+      "system_path": [
+        "scripts/lane.sh",
+        "site/worker.js",
+        "site/wrangler.toml",
+        "actions-budget.json"
+      ],
+      "tools": [
+        "system",
+        "git",
+        "github",
+        "cloudflare",
+        "gcp"
+      ],
+      "note": "Change path: branch, checks, merge, deploy, probe."
+    },
+    {
+      "id": "reporting",
+      "area": "reporting",
+      "system_path": [
+        "seed/worker/src/tick.js",
+        "seed/worker/src/index.js",
+        "docs/handoff"
+      ],
+      "tools": [
+        "system",
+        "sqlite",
+        "claude-threads"
+      ],
+      "note": "Four-line report is written by the tick and served at /health; threads carry it to the owner."
+    },
+    {
+      "id": "funding-outreach",
+      "area": "funding-outreach",
+      "system_path": [
+        "seed/funding",
+        "seed/outreach",
+        "scripts/outreach.py",
+        "scripts/funding_verify.py",
+        "business/funding"
+      ],
+      "tools": [
+        "system",
+        "git",
+        "github",
+        "mail-sender",
+        "social-channels"
+      ],
+      "note": "Dry-run queues and guards are in code; sending needs a sender adapter."
+    },
+    {
+      "id": "memory",
+      "area": "memory",
+      "system_path": [
+        "docs/PROJECT-MEMORY.md",
+        "scripts/check_memory.py"
+      ],
+      "tools": [
+        "system",
+        "git"
+      ],
+      "note": "Code is the only memory."
+    },
+    {
+      "id": "review",
+      "area": "review",
+      "system_path": [
+        "scripts/llm_review.py",
+        "agents/roles/reviewer.md"
+      ],
+      "tools": [
+        "system",
+        "github",
+        "agent-executor"
+      ],
+      "note": "A different agent reviews each claimed result."
+    }
+  ]
+}

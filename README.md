@@ -4,6 +4,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io) ![visibility](https://img.shields.io/badge/repo-private-12342A) ![license](https://img.shields.io/badge/license-hybrid%20(non--commercial%20free)-FFC857) [![checks](https://github.com/ultrastable/ultrastable/actions/workflows/checks.yml/badge.svg)](https://github.com/ultrastable/ultrastable/actions/workflows/checks.yml)
 
 **An autonomous development platform: an organization of virtual managers and staff that runs your projects, scores its own decisions, earns wider autonomy from its track record, and only interrupts a person for steps that cannot be undone.**

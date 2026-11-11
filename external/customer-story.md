@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+**Ultrastable runs on itself.** Its own planning, work tracking and reporting are run by the system it gives to others.
+
 Ultrastable began as the way one person keeps a large operation running without a full-time operator. It decides what needs doing, does much of it, checks it, and reports briefly on what happened and what is next. The founder's own operation, QNFO, is the first test case; it is not an independent customer, and the results are self-reported and have not been independently audited.
 
 What changed for the founder: far less time choosing and checking routine work; a clear record of decisions; and a few decisions kept for a person because they cannot be undone.

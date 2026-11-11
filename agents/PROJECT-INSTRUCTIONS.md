@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+> Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 Ultrastable: an autonomous development platform generalized from QNFO and the fleet. Virtual managers (portfolio, project, product) and virtual staff run an organization with feedback loops, iteration, plussing (a protected improvement budget so work doesn't devolve into bug fixes), earned-trust autonomy, and bootstrapping from an idea via a seed repo. Rowan is the ideas person, not the business person; the virtual managers own business, marketing, funding, legal/IP and ops.
 
 Standing rules:

@@ -38,6 +38,24 @@ def apply(root=REPO) -> list[str]:
         lines[(i + 1 if i is not None else 0):(i + 1 if i is not None else 0)] = ["", line] if i is not None else [line, ""]
         (root / rel).write_text("\n".join(lines), encoding="utf-8")
         changed.append(rel)
+    r = d.get("runs_on_itself")
+    if r:
+        rp, line = re.compile(r["pattern"], re.I | re.S), r["line"]
+        for rel in files(root, r["md_files"]):
+            s = (root / rel).read_text(encoding="utf-8")
+            if rp.search(s):
+                continue
+            lines = s.split("\n")
+            at = next((n for n, l in enumerate(lines) if pat.search(l)), None)
+            quote = rel.startswith(("agents/", "seed/agents/")) or rel.endswith("PROJECT-MEMORY.md")
+            ins = ("> " if quote else "") + line
+            if at is None:
+                h = next((n for n, l in enumerate(lines) if l.startswith("# ")), -1)
+                lines[h + 1:h + 1] = ["", ins]
+            else:
+                lines[at + 1:at + 1] = ["", ins]
+            (root / rel).write_text("\n".join(lines), encoding="utf-8")
+            changed.append(rel + " (runs on itself)")
     return changed
 
 
@@ -73,6 +91,20 @@ def check(root=REPO) -> list[str]:
             for n, ln in enumerate((root / rel).read_text(encoding="utf-8", errors="replace").splitlines(), 1):
                 if any(b.search(ln) for b in banned_lic):
                     bad.append(f"{rel}:{n}: states or implies a patent filing (patent track dropped 2026-11-11)")
+    r = d.get("runs_on_itself")
+    if r:
+        rp = re.compile(r["pattern"], re.I | re.S)
+        rc = [re.compile(c, re.I) for c in r["contradictions"]]
+        for rel in files(root, r["md_files"]) + [x for x in r["check_only"] if (root / x).exists()]:
+            s = (root / rel).read_text(encoding="utf-8", errors="replace")
+            if not rp.search(s):
+                bad.append(f"{rel}: lacks the self-hosting line ('{r['tagline']}')")
+            for c in rc:
+                if c.search(s):
+                    bad.append(f"{rel}: contradicts the self-hosting line ({c.pattern})")
+        if (root / "instances/ultrastable/selfhost.json").exists():
+            from . import selfhost
+            bad += [f"selfhost: {x}" for x in selfhost.verify(root)]
     if not (root / d["memory"]["canonical"]).exists():
         bad.append(f"{d['memory']['canonical']}: canonical memory file missing")
     return bad

@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 Self-contained, no accounts, no secrets, no network calls.
 
 | Demo | Run | Public | Status |

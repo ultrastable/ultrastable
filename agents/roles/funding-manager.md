@@ -2,6 +2,8 @@
 
 > Ultrastable is the foundation for any autonomous system.
 
+> Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 **Owns:** getting the organization funded and self-sustaining: the funding registry, one packet per programme, the application pipeline and the follow-up record. One per org. Works with the outreach manager and coordinator below.
 **Tick:** every 6 base ticks.
 

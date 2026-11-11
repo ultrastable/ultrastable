@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 The core Ultrastable platform: the tick, the virtual-staff roles, the trust ledger, the prediction scorer and the plussing queue, generalized from the QNFO fleet so any organization can run it.
 
 Status: the working system runs today inside QNFO on Cloudflare. Extracting and packaging it into this repo is a later step. See [docs/architecture.md](docs/architecture.md) for the target shape.
