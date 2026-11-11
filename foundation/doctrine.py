@@ -5,7 +5,7 @@ any listed file that lacks it or states a contradiction, and on a missing memory
 and the new-system generator, so prose never drifts from code.
 """
 from __future__ import annotations
-import fnmatch, json, re
+import fnmatch, json, re, subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -38,8 +38,10 @@ def apply(root=REPO) -> list[str]:
         lines[(i + 1 if i is not None else 0):(i + 1 if i is not None else 0)] = ["", line] if i is not None else [line, ""]
         (root / rel).write_text("\n".join(lines), encoding="utf-8")
         changed.append(rel)
-    r = d.get("runs_on_itself")
-    if r:
+    for blk in ("autonomy", "runs_on_itself"):
+        r = d.get(blk)
+        if not r:
+            continue
         rp, line = re.compile(r["pattern"], re.I | re.S), r["line"]
         for rel in files(root, r["md_files"]):
             s = (root / rel).read_text(encoding="utf-8")
@@ -55,7 +57,7 @@ def apply(root=REPO) -> list[str]:
             else:
                 lines[at + 1:at + 1] = ["", ins]
             (root / rel).write_text("\n".join(lines), encoding="utf-8")
-            changed.append(rel + " (runs on itself)")
+            changed.append(f"{rel} ({blk})")
     return changed
 
 
@@ -91,6 +93,17 @@ def check(root=REPO) -> list[str]:
             for n, ln in enumerate((root / rel).read_text(encoding="utf-8", errors="replace").splitlines(), 1):
                 if any(b.search(ln) for b in banned_lic):
                     bad.append(f"{rel}:{n}: states or implies a patent filing (patent track dropped 2026-11-11)")
+    au = d.get("autonomy")
+    if au:
+        ap = re.compile(au["pattern"], re.I | re.S)
+        ac = [re.compile(c, re.I) for c in au["contradictions"]]
+        for rel in files(root, au["md_files"]) + [x for x in au["check_only"] if (root / x).exists()]:
+            s = (root / rel).read_text(encoding="utf-8", errors="replace")
+            if not ap.search(s):
+                bad.append(f"{rel}: lacks the autonomy line ('{au['tagline']}')")
+            for c in ac:
+                if c.search(s):
+                    bad.append(f"{rel}: contradicts the autonomy line ({c.pattern})")
     r = d.get("runs_on_itself")
     if r:
         rp = re.compile(r["pattern"], re.I | re.S)
@@ -105,6 +118,50 @@ def check(root=REPO) -> list[str]:
         if (root / "instances/ultrastable/selfhost.json").exists():
             from . import selfhost
             bad += [f"selfhost: {x}" for x in selfhost.verify(root)]
+    bad += framing_scan(root, d)
+    from . import kernel, loops, glossary
+    if (root / kernel.PATH).exists():
+        bad += [f"kernel: {x}" for x in kernel.check(root)]
+    if (root / loops.PATH).exists():
+        bad += [f"loops: {x}" for x in loops.verify(root)]
+    if (root / glossary.PATH).exists():
+        bad += [f"glossary: {x}" for x in glossary.check(root)]
+    for rel in sorted((root / "docs/lessons").glob("*.md")) if (root / "docs/lessons").is_dir() else []:
+        if rel.name != "README.md":
+            bad += [f"{rel.relative_to(root).as_posix()}:{f['line']}: {f['recognition']} ({f['text'][:50]})" for f in kernel.lint(rel.read_text(encoding="utf-8"))]
     if not (root / d["memory"]["canonical"]).exists():
         bad.append(f"{d['memory']['canonical']}: canonical memory file missing")
+    return bad
+
+
+def banned_framing(text: str) -> bool:
+    """True when text compares the doctrine with an external rule-set approach. Assembled from fragments so the repository never states it."""
+    a, b, c = "constitu", "tion", "al"
+    rx = re.compile(a + b + r"(" + c + r")?[\s-]{0,3}(ai|a\.i\.|model|models|claude|anthropic|principles|training|approach|based)\b|external\s+" + a + b, re.I)
+    return bool(rx.search(text))
+
+
+def framing_scan(root, d=None) -> list[str]:
+    d = d or load(root)
+    root, bad = Path(root), []
+    cfg = d.get("banned_framing", {})
+    try:
+        names = subprocess.run(["git", "-C", str(root), "ls-files"], capture_output=True, text=True, check=True).stdout.splitlines()
+    except (OSError, subprocess.CalledProcessError):
+        names = [p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file() and ".git" not in p.parts]
+    for rel in names:
+        if rel in cfg.get("exclude", []):
+            continue
+        p = root / rel
+        try:
+            if not p.is_file() or p.stat().st_size > cfg.get("max_bytes", 2000000):
+                continue
+            raw = p.read_bytes()
+        except OSError:
+            continue
+        if b"\0" in raw[:4096]:
+            continue
+        for n, ln in enumerate(raw.decode("utf-8", "replace").splitlines(), 1):
+            if banned_framing(ln):
+                bad.append(f"{rel}:{n}: compares the doctrine with an external approach (say only that it is self-bootstrapped)")
     return bad

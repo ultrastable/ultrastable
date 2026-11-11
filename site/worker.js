@@ -62,7 +62,7 @@ function statusLine(d) {
 
 function home(d) {
   return shell({ path: "/", title: "Ultrastable: the foundation for any autonomous system", description: "Ultrastable is the foundation for any autonomous system. Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live and keeps score of how often it was right." },
-    "<section class=\"us-hero\"><h1>Ultrastable is the foundation for any autonomous system.</h1><p class=\"us-tagline\">Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p>"
+    "<section class=\"us-hero\"><h1>Ultrastable is the foundation for any autonomous system.</h1><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p>"
     + "<p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine(d) + "</div></section>"

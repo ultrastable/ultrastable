@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-10",
- "commit": "6aa9849",
+ "generated": "2026-11-11",
+ "commit": "18053d7",
  "problems": [],
  "panels": [
   {
@@ -101,7 +101,7 @@
    "title": "Open owner cards (identity-bound)",
    "rows": [
     [
-     "File the priority application in Europe (identity-bound: sign and pay): `ip/europe/OWNER-CARD.md`; supersedes the US Patent Center walkthrou",
+     "(superseded 2026-11-11, patent dropped) File the priority application in Europe (identity-bound: sign and pay): `ip/europe/OWNER-CARD.md`; s",
      "default: ",
      "warn"
     ],
@@ -112,7 +112,12 @@
     ],
     [
      "Legal entity and IP assignment (BIZ-1)",
-     "default: `LICENSE` placeholder, proprietary | probe: Entity name in `LICENSE`",
+     "default: `LICENSE` names the author as Licensor | probe: Entity name in `LICENSE` (section 14.4 and the copyright line)",
+     "warn"
+    ],
+    [
+     "Publish `workers`, `spec` and `license` (identity-bound: changing visibility; no lawyer review, decisions recorded in `docs/legal/LICENSE-DE",
+     "default: All repos private | probe: `gh api repos/ultrastable/workers --jq .private` is `false`",
      "warn"
     ],
     [
@@ -240,6 +245,228 @@
      "BG-17",
      "Maintenance of time-sensitive facts (deadlines, terms) had no owner or schedule | Open (FUND-10)",
      "warn"
+    ]
+   ]
+  },
+  {
+   "id": "glossary",
+   "title": "Terms (doctrine/glossary.json, term lineage in GLOSSARY.md)",
+   "rows": [
+    [
+     "Autonomy v2.0.0",
+     "A system is autonomous if it has self-referential loops and the ability to close them.",
+     "info"
+    ],
+    [
+     "Loop v1.0.0",
+     "A repeating cycle with five parts: a trigger, an owner, an action, a closing probe that checks the result, and a write-back that records what was learned in the repository.",
+     "info"
+    ],
+    [
+     "Self-referential loop v1.0.0",
+     "A loop the system can read about itself: it is recorded as data in the loop registry, so the system's own verifier can check it, and its result is written back into the system the loop runs.",
+     "info"
+    ],
+    [
+     "Self-referential closure v1.0.0",
+     "Every loop ends inside the system: its check passes by a probe in the repository, and what it learned is written back into the repository, by the system itself, with no step that only lives outside.",
+     "info"
+    ],
+    [
+     "Closing privilege v1.0.0",
+     "The permissions the system needs to finish a loop itself: repository write by pull request, credentials referenced by binding name, a trust-ladder rung high enough for the action.",
+     "info"
+    ],
+    [
+     "Closed system v1.0.0",
+     "A system whose loops, work and knowledge all live in its own repository.",
+     "info"
+    ],
+    [
+     "Manager v1.0.0",
+     "A role run as a loop: portfolio, project, product, operations, funding and outreach managers each tick, pull the highest-priority item they may take, act, verify, record and report.",
+     "info"
+    ],
+    [
+     "Virtual staff v1.0.0",
+     "Workers that take items from the queue under a manager's direction and are reviewed by a different agent.",
+     "info"
+    ],
+    [
+     "Plussing v1.0.0",
+     "Building on work instead of only fixing it: every closed item proposes one concrete improvement with its expected value, and a protected share of capacity (default 20%) goes to accepted pluses so work does not devolve into bug fixes.",
+     "info"
+    ],
+    [
+     "Probe v1.0.0",
+     "A small machine-checkable test that reads the repository or the live system and passes or fails.",
+     "info"
+    ],
+    [
+     "Closing probe v1.0.0",
+     "The probe that decides a loop or item is done.",
+     "info"
+    ],
+    [
+     "Tick v1.0.0",
+     "One pass of the heartbeat: reconcile state, pull the highest-priority item the agent may take, claim it, act, verify through an independent path, compare with the logged prediction, record provenance, report in four lines, propose a plus.",
+     "info"
+    ],
+    [
+     "Prediction v1.0.0",
+     "A checkable statement logged before a decision runs, in the form '<metric> <op> <number> within <N> h'.",
+     "info"
+    ],
+    [
+     "Trust ledger v1.0.0",
+     "Trust computed per (surface, action class) from recorded outcomes, starting at a neutral prior.",
+     "info"
+    ],
+    [
+     "Interrupt gate v1.0.0",
+     "The only pause: a step that is both irreversible and identity-bound (money, signing or filing, destroying unbacked-up data, sending as the owner, minting the owner's credentials) with no reversible path.",
+     "info"
+    ],
+    [
+     "Bootstrapping v1.0.0",
+     "Starting a working, self-managing system from an idea in a seed repository, with the person supplying only the wish.",
+     "info"
+    ],
+    [
+     "Self-hosting v1.0.0",
+     "Ultrastable runs its own planning, issues, managers, trust ledger, plussing budget and specs with the same code it gives everyone else, from this repository alone, with any tools.",
+     "info"
+    ],
+    [
+     "Gap register v1.0.0",
+     "The list of outside tools the system still depends on, each with a plan, an owner role and a closing probe.",
+     "info"
+    ],
+    [
+     "Ignorance v1.0.0",
+     "The state of a user who does not know what to ask for, or what is possible.",
+     "info"
+    ],
+    [
+     "Core v1.0.0",
+     "The part that bootstraps a working, server-side, self-managing system: the tick, managers and staff, trust ladder, predictions, plussing, interrupt gate and the specifications they run on.",
+     "info"
+    ],
+    [
+     "Plugin v1.0.0",
+     "An optional tier outside the core path (e-mail, social, mailing list, GCP, branding): disabled and dry-run by default, going live only with enabled, mode live, kill switch off, credentials by binding name, a sufficient trust rung and a passing guard.",
+     "info"
+    ],
+    [
+     "Write-back v1.0.0",
+     "Before a session or loop ends, everything it learned (decisions, lessons, open loops, term changes) is written into the repository: docs/lessons, docs/PROJECT-MEMORY.md, the loop registry, the glossary or an issue.",
+     "info"
+    ],
+    [
+     "Code is the only memory v1.0.0",
+     "All project state lives in this repository (docs/PROJECT-MEMORY.md and data files).",
+     "info"
+    ],
+    [
+     "No open loops v1.0.0",
+     "Work is not done until it is deployed end to end and verified.",
+     "info"
+    ],
+    [
+     "Seed v1.0.0",
+     "The repository that turns an idea into a running organization: IDEA.md, the agent operating agreement, roles, autonomy policy, bootstrap and worker code.",
+     "info"
+    ],
+    [
+     "Foundation v1.0.0",
+     "What Ultrastable is: the foundation for any autonomous system.",
+     "info"
+    ],
+    [
+     "Term lineage v1.0.0",
+     "The recorded history of a term: each change of meaning is a lineage entry with version, date, what changed and its source, so a change of mind is visible and nothing is silently redefined.",
+     "info"
+    ],
+    [
+     "Doctrine v1.0.0",
+     "The system's own principles, written in its own voice and bootstrapped by the system itself: its principles, self-reference, autonomy and self-improvement loops.",
+     "info"
+    ],
+    [
+     "Kernel v1.0.0",
+     "The doctrine's founding text (DOCTRINE-1, version 8.2.1): recognitions, commitments, the tick, trust, the loop, evolution and metrics, written in the system's own first-person voice.",
+     "info"
+    ],
+    [
+     "Recognition v1.0.0",
+     "A shape the system notices in its own output as it forms (a conditional offer, a report ending in a question, a menu, you as the subject of a next action, narration) and redirects in the same output.",
+     "info"
+    ],
+    [
+     "Alignment floor v1.0.0",
+     "IC-ALIGN-001: the system is honest, non-harmful and trust-preserving, earns reach on substance and never on manipulation.",
+     "info"
+    ],
+    [
+     "Affirmative adoption v1.0.0",
+     "IC-ADOPT-001: every action, follow-up and improvement the system identifies is already adopted: executed, verified and reported as done in the same output, with multi-tick follow-ups dispatched and the dispatch reported.",
+     "info"
+    ],
+    [
+     "Affirmative default v1.0.0",
+     "IC-YES-001: the answer is yes for reversible, in-scope questions, so the system proceeds, executes, verifies and reports.",
+     "info"
+    ],
+    [
+     "The system is the actor v1.0.0",
+     "IC-ACTOR-001: the system is the actor of every next step.",
+     "info"
+    ],
+    [
+     "SLA, Definition of Done and two paths v1.0.0",
+     "Every step and process declares a time bound, a written Definition of Done and at least two independent paths that each reach it (retry, second sink, fallback provider, or a degraded-but-recorded outcome).",
+     "info"
+    ],
+    [
+     "Verify live v1.0.0",
+     "Every fixed claim needs a same-turn live re-probe.",
+     "info"
+    ],
+    [
+     "Honest measure v1.0.0",
+     "Report the number actually measured, its source and the size of the uncertainty; when evidence contradicts a premise, say so with the counter-evidence.",
+     "info"
+    ],
+    [
+     "Fallback classes v1.0.0",
+     "A paid path never ends work while a free path exists, and an external provider never ends work while a local, cached or degraded path exists; the path that ran is reported.",
+     "info"
+    ],
+    [
+     "Credential, one source v1.0.0",
+     "One working credential per endpoint, verified by a live probe before it is written anywhere.",
+     "info"
+    ],
+    [
+     "Proactive programs v1.0.0",
+     "Bug fixes are the floor.",
+     "info"
+    ]
+   ]
+  },
+  {
+   "id": "loops",
+   "title": "Loops (instances/ultrastable/loops.json)",
+   "rows": [
+    [
+     "Loops registered",
+     "36; 32 close by the system, 4 by an owner card",
+     "ok"
+    ],
+    [
+     "Open loops",
+     "0 finding(s) from python3 -m foundation loops --verify",
+     "ok"
     ]
    ]
   }

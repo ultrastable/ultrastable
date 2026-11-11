@@ -2,6 +2,8 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+A system is autonomous if it has self-referential loops and the ability to close them. Knowing without being able to act is useless, so the system is privileged to close its own loops (`python3 -m foundation loops --verify`).
+
 **Ultrastable runs on itself.** Its own planning, work tracking and reporting are run by the system it gives to others.
 
 Contents for the special **public** repository `ultrastable/.github`. Its `profile/README.md` is the landing page of github.com/ultrastable. Everything here is SAFE NOW: generic, non-enabling, no internal mechanics.

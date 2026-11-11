@@ -15,7 +15,7 @@ Status 2026-11-10: web search of non-patent literature only; NO patent-database 
 | 9 | Distributed locks with fencing tokens (Kleppmann, 2016) | Fence values prevent stale writers | Applied to concurrent heterogeneous coding agents with expiry, renewal and orphan metric; we claim the combination, not fencing | E |
 | 10 | Pixar "plussing" (improv/creative practice) | Build on an idea additively | Human practice; ours is a protected-capacity, predicted, measured keep-or-revert loop with guard measures and simplify passes | B |
 | 11 | Self-evolving agent surveys (Zhou et al., arXiv 2608.03392 as cited in product design doc) | Self-modifying coding agents; open problems of reversibility and feedback reliability | We address those with protected limits, replay-tested amendment and recorded outcomes | G |
-| 12 | Constitutional/ policy-as-prompt approaches | Governance in prompt text | Ours is enforced by data, triggers, validators and CI consistency tests; amendments arise from recorded friction | G |
+| 12 | Policy-as-prompt approaches | Governance in prompt text | Ours is enforced by data, triggers, validators and CI consistency tests; amendments arise from recorded friction | G |
 
 ## Risk notes
 - Rows 3 and 4 are the closest: attorney should search granted claims on trust-gated agent autonomy and deploy auto-rollback; independent claims lean on the combinations (predictions scored -> trust -> path; plus-loop reserved share; evidence-gated two-family review).

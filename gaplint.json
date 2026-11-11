@@ -18,7 +18,9 @@
       "required": {
         "code is all that matters": "code is all that matters",
         "not in code does not exist": "not in code,? it does not exist",
-        "never swallow an error": "never swallow an error"
+        "never swallow an error": "never swallow an error",
+        "write back before ending": "[Ww]rite back",
+        "autonomy is self-referential loops": "self-referential loops and the ability to close"
       }
     },
     {
@@ -28,7 +30,8 @@
         "seed/agents/roles/*.md"
       ],
       "required": {
-        "code is all that matters": "code is all that matters"
+        "code is all that matters": "code is all that matters",
+        "write back before ending": "[Ww]rite back"
       }
     }
   ],

@@ -151,6 +151,8 @@ def boot(root=REPO, db_path=None, node=True) -> dict:
     for s, a in surfaces:
         con.execute("INSERT INTO trust_ledger(surface,action_class,rung,reliability,outcomes) VALUES(?,?,?,?,0)", (s, a, "observed", policy["trust"]["baseline"]))
     con.execute("INSERT INTO doctrine_lineage(version,source) VALUES(?,?)", (f"positioning-{doctrine['version']}", "doctrine/positioning.json"))
+    con.execute("INSERT INTO doctrine_lineage(version,source) VALUES(?,?)", (f"kernel-{_j(root, 'doctrine/kernel.json')['version']}", "doctrine/kernel-8.2.1.md"))
+    con.execute("INSERT INTO doctrine_lineage(version,source) VALUES(?,?)", (f"glossary-{_j(root, 'doctrine/glossary.json')['version']}", "doctrine/glossary.json"))
     con.commit()
     config = {"org_slug": inst["slug"], "claim_ttl_minutes": 120, "max_wip_per_role": cap.get("max_wip_per_role", 3), "plus_share": cap.get("plus_share", 0.2), "policy": policy}
     cfg = out.with_suffix(".config.json")

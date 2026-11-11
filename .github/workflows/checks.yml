@@ -55,6 +55,12 @@ jobs:
           node --test plugins/email/worker/sender.test.mjs
       - name: Doctrine check (positioning and code-is-the-only-memory, from doctrine/positioning.json)
         run: python3 -m foundation doctrine --check
+      - name: Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)
+        run: |
+          python3 -m foundation loops --verify
+          python3 -m foundation glossary --check
+          python3 -m foundation kernel --check
+          python3 -m foundation writeback check --base "origin/${{ github.base_ref || 'main' }}"
       - name: Foundation tests, new-system end-to-end (one job, no matrix)
         run: python3 -m unittest discover -s tests/foundation
       - name: License (patent track dropped 2026-11-11; pre-flight retired)

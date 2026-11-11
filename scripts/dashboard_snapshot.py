@@ -96,6 +96,15 @@ def build(today):
         ["Bootstrap case library", f"{len(lib['cases'])} starting conditions with routes and at most one owner card each (seed/bootstrap/cases.json)", "info"]] + open_gaps[:12]})
 
     try:
+        sys.path.insert(0, str(ROOT))
+        from foundation import glossary, loops
+        panels.append(glossary.panel(ROOT))
+        lp = loops.load(ROOT)["loops"]
+        bad = loops.verify(ROOT)
+        panels.append({"id": "loops", "title": "Loops (instances/ultrastable/loops.json)", "rows": [["Loops registered", f"{len(lp)}; {sum(1 for l in lp if l['closes_by'] == 'system')} close by the system, {sum(1 for l in lp if l['closes_by'] != 'system')} by an owner card", "ok" if not bad else "warn"], ["Open loops", f"{len(bad)} finding(s) from python3 -m foundation loops --verify", "ok" if not bad else "warn"]] + [[b[:60], "", "warn"] for b in bad[:6]]})
+    except (ImportError, OSError, ValueError, KeyError) as e:
+        problems.append(f"glossary/loops panels: {type(e).__name__}: {e}")
+    try:
         head = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"], capture_output=True, text=True, timeout=10).stdout.strip()
     except (OSError, subprocess.SubprocessError) as e:
         problems.append(f"git: {e}")
