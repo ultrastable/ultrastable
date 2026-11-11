@@ -1,0 +1,69 @@
+{
+  "contract_version": "1.0.0",
+  "_doc": "Frozen v1 tool contract. Additive changes only; see test/agentic.contract.test.js.",
+  "tools": [
+    {
+      "name": "ultrastable_tick_status",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ultrastable_loop_registry",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "loop_id": {
+            "type": "string",
+            "maxLength": 120
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ultrastable_glossary_lookup",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string",
+            "maxLength": 120
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ultrastable_dashboard_state",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ultrastable_standards_register",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "support": {
+            "enum": [
+              "supported",
+              "partial",
+              "planned",
+              "not_applicable"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

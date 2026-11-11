@@ -55,6 +55,10 @@ jobs:
           node --test plugins/email/worker/sender.test.mjs
       - name: Doctrine check (positioning and code-is-the-only-memory, from doctrine/positioning.json)
         run: python3 -m foundation doctrine --check
+      - name: Agentic standards (register, surfaces, discovery lint; Worker conformance and contract tests)
+        run: |
+          python3 -m foundation standards --check
+          (cd seed/worker && node --test --no-warnings test/*.test.js)
       - name: Foundation tests, new-system end-to-end (one job, no matrix)
         run: python3 -m unittest discover -s tests/foundation
       - name: License (patent track dropped 2026-11-11; pre-flight retired)

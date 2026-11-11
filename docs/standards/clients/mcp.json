@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "ultrastable": {
+      "type": "http",
+      "url": "https://YOUR-ORG.example/mcp",
+      "headers": { "Authorization": "Bearer ${ULTRASTABLE_MCP_TOKEN}" }
+    }
+  }
+}
