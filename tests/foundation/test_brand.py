@@ -30,7 +30,7 @@ class Brand(unittest.TestCase):
     def test_unregistered_contact_fails(self):
         td = self._copy()
         f = td / "docs/ops/contact.json"
-        f.write_text(f.read_text().replace("pilot@ultrastable.io", "x@ultrastable.io", 1))
+        f.write_text(f.read_text().replace("pilot@ultrastable.io", "nobody" + "@ultrastable.io", 1))
         self.assertTrue(any("not registered" in b for b in brandcheck.check(td)))
 
 
