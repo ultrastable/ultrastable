@@ -195,6 +195,18 @@ class Doctrine(unittest.TestCase):
             self.assertTrue(any("makes the user do setup work" in b for b in bad))
         self.assertEqual([b for b in doctrine.check(ROOT) if "zero-fuss" in b], [])
 
+    def test_first_run_needs_only_a_name_and_a_goal(self):
+        """Zero-fuss first-run probe: a manifest of just name + one goal must validate and generate with no prompt, key or config."""
+        import json as _j
+        raw = {"name": "Probe Org", "goals": ["Ship the first thing"]}
+        self.assertEqual(mf.validate(raw), [])
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "m.json"; p.write_text(_j.dumps(raw))
+            r = subprocess.run([sys.executable, "-m", "foundation", "new-system", "--manifest", str(p), "--out", str(Path(d) / "out"), "--date", "2026-01-01"],
+                               cwd=ROOT, input="", capture_output=True, text=True, timeout=120)
+            self.assertIn(r.returncode, (0,), r.stdout + r.stderr)
+            self.assertNotIn("api key", (r.stdout + r.stderr).lower())
+
     def test_gaplint_reads_doctrine(self):
         r = subprocess.run([sys.executable, "-m", "gaplint", str(ROOT), "--rules", "GL008,GL009"], cwd=ROOT / "products/gaplint", capture_output=True, text=True, env={"PYTHONPATH": str(ROOT / "products/gaplint")})
         self.assertEqual(r.returncode, 0, r.stdout)
