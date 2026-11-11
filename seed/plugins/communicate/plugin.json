@@ -1,0 +1,16 @@
+{
+  "name": "communicate",
+  "role": "communications",
+  "classes": [
+    "draft"
+  ],
+  "adapters": [
+    "interview"
+  ],
+  "entry": "communicate/plugin.py",
+  "optional": true,
+  "default": {
+    "enabled": false,
+    "mode": "dry-run"
+  }
+}

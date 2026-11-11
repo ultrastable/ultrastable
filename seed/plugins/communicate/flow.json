@@ -1,0 +1,17 @@
+{
+  "_doc": "Guided 'what do you want to communicate' flow for people who do not write code. Every question is a choice or a short phrase; nothing needs a technical term. Answers become comms/brief.json, which the marketing, outreach, branding and communications loops read.",
+  "questions": [
+    {"id": "goal", "ask": "What do you want people to do after they hear from you?", "choices": ["know it exists", "try it", "reply to me", "join a list", "give feedback", "support or fund it"]},
+    {"id": "audience", "ask": "Who should hear it first?", "choices": ["people with the problem", "people who build things like this", "funders and partners", "press and communities", "people I already know"]},
+    {"id": "tone", "ask": "How should it sound?", "choices": ["plain and calm", "warm and friendly", "precise and technical", "short and punchy"]},
+    {"id": "channels", "ask": "Where? (pick any)", "multi": true, "choices": ["email to people who said yes", "a mailing list", "Mastodon", "Bluesky", "LinkedIn", "YouTube", "nowhere yet, just draft"]},
+    {"id": "cadence", "ask": "How often is comfortable?", "choices": ["only when something real happens", "weekly", "twice a week", "daily"]},
+    {"id": "off_limits", "ask": "Anything that must never be said or done? (a phrase, or press enter for the defaults)", "free": true},
+    {"id": "statement", "ask": "In your own words, one sentence you want said exactly as written (optional)", "free": true}
+  ],
+  "channel_plugins": {
+    "email to people who said yes": ["email"], "a mailing list": ["mailing_list", "email"], "Mastodon": ["social"], "Bluesky": ["social"],
+    "LinkedIn": ["social"], "YouTube": ["youtube"], "nowhere yet, just draft": []
+  },
+  "cadence_per_week": {"only when something real happens": 1, "weekly": 1, "twice a week": 2, "daily": 7}
+}

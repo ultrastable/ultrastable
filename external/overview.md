@@ -10,6 +10,8 @@ Ultrastable is an autonomous system that sets up and runs any organized effort f
 
 It is self-directed with light input. You can steer whenever you like, and it manages itself the rest of the time, so you do not need a development team, a patent lawyer or a marketing firm to start. Only decisions that cannot be undone come to a person.
 
+**Why loops, not a prompt.** Vibe coding gets you a first draft. A system is something else: many agents, each with one job, running in code loops that check and improve their own work, with the rules written as code too. That is how Ultrastable is built: multi-agent, self-referential loops, not a single code agent.
+
 **Who it is for:** people with ideas, founders, maintainers and small teams who want to get from idea to a running effort without hiring a team for each function. Commercial and open-source routes both stay open.
 
 **What it is not:** it does not handle finances (accounting, payments, banking). Legal and patent outputs are drafts for professional review, not legal advice.

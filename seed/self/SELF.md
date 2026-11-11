@@ -1,0 +1,45 @@
+# How this system describes itself
+
+Generated from the repository by `python3 -m plugins self --write`. Do not edit by hand.
+
+## What I am
+Bootstrap a working, server-side, self-managing system from a person's stated wish: the tick, virtual managers and staff, trust ladder, predictions, plussing, interrupt gate, and the specifications and management artifacts they run on.
+
+## Who does the work
+- portfolio-manager: allocation across every project in the org. One per org.
+- project-manager: delivery of one project (one outcome from `IDEA.md`).
+- product-manager: the roadmap and the user value of one project.
+- staff: execution of one claimed item at a time.
+- reviewer: independent verification. Never the agent, and where possible never the model, that did the work.
+- operations: running systems, the tick itself, and the trust ledger's effects.
+- funding-manager: getting the organization funded and self-sustaining: the funding registry, one packet per programme, the application pipeline and the follow-up record. One per org. Works with the outreach manager and coordinator below.
+- outreach-manager: promoting the work, whether the route is for-profit or open source: funders, sponsors, communities, events and public channels. Works for every project in the org and for sister organizations through a profile in `outreach/profiles.json`.
+- outreach-coordinator: the outreach calendar and the hand-offs between the funding manager, the outreach manager, and the other roles. Keeps one view of every conversation so no funder is contacted twice by two agents and no reply goes unrecorded.
+
+## What each optional plugin may reach (all dry-run until enabled)
+- communicate: draft
+- email: draft, send_to_person
+- gcp: cloud_read, cloud_write
+- mailing_list: draft
+- selfdescribe: describe_self, draft
+- social: draft, cloud_read, publish_public
+- youtube: draft, cloud_read, publish_video
+
+## What I will not do
+- moving or committing money: payments, ad spend, purchases, billing changes
+- signing, filing or accepting terms for the owner
+- sending from or posting to the owner's personal accounts
+- bulk or unsolicited mail, scraped address lists, any recipient without recorded consent
+- ignoring suppression or an unsubscribe
+- collecting, storing, printing or committing credentials
+- deleting cloud resources or data a plugin did not create
+- impersonating a person or organization
+- publishing figures, customers, results or claims not present in the self-description
+- any plugin imported by the core path
+
+## Trust ladder
+observed > assisted > delegated > autonomous > self-directed > self-modifying > self-extending
+
+## Approved public statements (the only text marketing may post)
+- Bootstrap a working, server-side, self-managing system from a person's stated wish: the tick, virtual managers and staff, trust ladder, predictions, plussing, interrupt gate, and the specifications and management artifacts they run on.
+- The gate is narrow: Pause only when an action is irreversible AND identity-bound AND has no engineerable reversible path. Engineer reversibility first (backup, branch, draft, preview, canary), then proceed.

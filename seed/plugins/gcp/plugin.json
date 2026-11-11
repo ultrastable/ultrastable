@@ -1,0 +1,17 @@
+{
+  "name": "gcp",
+  "role": "operations",
+  "classes": [
+    "cloud_read",
+    "cloud_write"
+  ],
+  "adapters": [
+    "gcp-rest"
+  ],
+  "entry": "gcp/plugin.py",
+  "optional": true,
+  "default": {
+    "enabled": false,
+    "mode": "dry-run"
+  }
+}

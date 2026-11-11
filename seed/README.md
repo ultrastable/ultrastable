@@ -39,6 +39,7 @@ A missing credential never stops the boot. The step is recorded as a backlog ite
 | [`CLAUDE.md`](CLAUDE.md), [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | Pointers so each agent loads `agents/AGENTS.md`. |
 | [`bootstrap/bootstrap.py`](bootstrap/bootstrap.py) | The bootstrapper: read, detect, select, plan, provision, start, report. Stdlib only, idempotent. |
 | [`worker/`](worker/) | The server-side runtime: Cloudflare Worker with the tick, D1 migrations, tests. |
+| [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided communication flow). Dry-run by default, never in the core path. Spec: `docs/architecture/plugins.md`. |
 | [`tests/`](tests/) | Bootstrapper and policy tests (`python3 -m unittest discover tests`). |
 | [`docs/bootstrapping.md`](docs/bootstrapping.md) | The boot sequence, stage by stage, and what each stage learned from AIOS. |
 

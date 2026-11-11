@@ -1,0 +1,210 @@
+{
+  "_doc": "Machine-readable scope for the core and the optional plugin tier. Read by plugins/scopecheck.py (CI) and by plugins/api.py at run time. Changed only by a reviewed PR; trust never widens it by itself.",
+  "id": "ULTRASTABLE-PLUGIN-SCOPE-1",
+  "version": "1.0.0",
+  "core_mission": "Bootstrap a working, server-side, self-managing system from a person's stated wish: the tick, virtual managers and staff, trust ladder, predictions, plussing, interrupt gate, and the specifications and management artifacts they run on.",
+  "core": {
+    "paths": [
+      "bootstrap",
+      "worker",
+      "autonomy",
+      "agents",
+      "ultrastable.json"
+    ],
+    "may_import_plugins": false,
+    "rule": "Nothing on the core path imports, requires, spawns or names a plugin. A plugin may be removed and the core must still boot and pass its tests."
+  },
+  "plugin_tier": {
+    "path": "plugins",
+    "rule": "optional, never in the core path",
+    "default_enabled": false,
+    "default_mode": "dry-run",
+    "live_requires": [
+      "enabled",
+      "mode=live",
+      "kill=false",
+      "credentials present by binding name",
+      "trust rung at or above the action class minimum",
+      "guard passes",
+      "target not suppressed",
+      "rate limit not reached"
+    ],
+    "credentials": "Adapter config holds environment-binding NAMES only. Values live in the platform secret store and are read at run time. Nothing in this repo holds a secret."
+  },
+  "rungs": [
+    "observed",
+    "assisted",
+    "delegated",
+    "autonomous",
+    "self-directed",
+    "self-modifying",
+    "self-extending"
+  ],
+  "action_classes": {
+    "draft": {
+      "min_rung": "observed",
+      "reach": "writes a file in this repo only",
+      "external": false
+    },
+    "describe_self": {
+      "min_rung": "observed",
+      "reach": "reads this repo, writes self-description files",
+      "external": false
+    },
+    "cloud_read": {
+      "min_rung": "assisted",
+      "reach": "read-only calls to an allowlisted cloud API",
+      "external": true
+    },
+    "send_to_person": {
+      "min_rung": "delegated",
+      "reach": "one email to one consented, unsuppressed recipient",
+      "external": true
+    },
+    "publish_public": {
+      "min_rung": "delegated",
+      "reach": "one public post to a configured channel, text from the guard-approved self-description only",
+      "external": true
+    },
+    "publish_video": {
+      "min_rung": "delegated",
+      "reach": "upload one video as private or unlisted; public release is a gate card",
+      "external": true
+    },
+    "cloud_write": {
+      "min_rung": "autonomous",
+      "reach": "create or update a resource the plugin created, tagged as managed",
+      "external": true
+    }
+  },
+  "out_of_bounds": [
+    "moving or committing money: payments, ad spend, purchases, billing changes",
+    "signing, filing or accepting terms for the owner",
+    "sending from or posting to the owner's personal accounts",
+    "bulk or unsolicited mail, scraped address lists, any recipient without recorded consent",
+    "ignoring suppression or an unsubscribe",
+    "collecting, storing, printing or committing credentials",
+    "deleting cloud resources or data a plugin did not create",
+    "impersonating a person or organization",
+    "publishing figures, customers, results or claims not present in the self-description",
+    "any plugin imported by the core path"
+  ],
+  "plugins": {
+    "email": {
+      "role": "communications",
+      "classes": [
+        "draft",
+        "send_to_person"
+      ],
+      "adapters": [
+        "cloudflare-sender"
+      ],
+      "hosts": [
+        "$ENV:endpoint_env"
+      ],
+      "caps": {
+        "max_sends_per_day": 50,
+        "max_sends_per_week": 150
+      }
+    },
+    "mailing_list": {
+      "role": "outreach",
+      "classes": [
+        "draft"
+      ],
+      "adapters": [
+        "file-store"
+      ],
+      "hosts": [],
+      "caps": {}
+    },
+    "social": {
+      "role": "marketing",
+      "classes": [
+        "draft",
+        "cloud_read",
+        "publish_public"
+      ],
+      "adapters": [
+        "buffer",
+        "bluesky",
+        "mastodon"
+      ],
+      "hosts": [
+        "api.bufferapp.com",
+        "bsky.social",
+        "$ENV:instance_env"
+      ],
+      "caps": {
+        "max_posts_per_day": 3,
+        "max_posts_per_week": 12
+      }
+    },
+    "youtube": {
+      "role": "marketing",
+      "classes": [
+        "draft",
+        "cloud_read",
+        "publish_video"
+      ],
+      "adapters": [
+        "youtube-data-v3"
+      ],
+      "hosts": [
+        "www.googleapis.com",
+        "oauth2.googleapis.com",
+        "youtube.googleapis.com"
+      ],
+      "caps": {
+        "max_uploads_per_week": 2
+      }
+    },
+    "gcp": {
+      "role": "operations",
+      "classes": [
+        "cloud_read",
+        "cloud_write"
+      ],
+      "adapters": [
+        "gcp-rest"
+      ],
+      "hosts": [
+        "*.googleapis.com",
+        "oauth2.googleapis.com"
+      ],
+      "caps": {
+        "max_calls_per_day": 200
+      }
+    },
+    "selfdescribe": {
+      "role": "branding",
+      "classes": [
+        "describe_self",
+        "draft"
+      ],
+      "adapters": [
+        "repo"
+      ],
+      "hosts": [],
+      "caps": {}
+    },
+    "communicate": {
+      "role": "communications",
+      "classes": [
+        "draft"
+      ],
+      "adapters": [
+        "interview"
+      ],
+      "hosts": [],
+      "caps": {}
+    }
+  },
+  "roles": {
+    "outreach": "who we contact, with consent, and what happened",
+    "marketing": "what we say in public and where",
+    "branding": "how the system sees and describes itself",
+    "communications": "what the owner wants to communicate, and the reports that go out",
+    "operations": "cloud resources the system manages for itself, read-first"
+  }
+}

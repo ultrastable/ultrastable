@@ -2,6 +2,9 @@
 
 One page every Ultrastable surface follows. **Ultrastable is its own brand, separate from QNFO.** QNFO appears only as the test case that shows the system works, never in the look, and Ultrastable is never framed as research.
 
+## Thesis (use in long-form copy)
+Vibe coding is a start, not a system. A system is many agents with separate duties running code loops that check, report and improve themselves. Ultrastable is multi-agent, self-referential loops, not a prompt and not a single code agent. Source: `doctrine/positioning.json` (`loops_thesis`), `docs/product/why-multi-agent-loops.md`.
+
 ## Positioning
 Ultrastable is an autonomous system that sets up and runs any organized effort from one idea: a company, an open-source project, a community, a lab, anything you can describe. From one idea it bootstraps the building blocks the effort needs (development, branding, an IP-protection filing package, a plan, search and analytics presence, funding outreach and promotion) and then keeps improving itself. For-profit and open source (ultrastable.org) both stay open; the choice is the owner's and can be made later. QNFO, an independent research programme, is the research-kind test case and appears only as that. It is self-directed, with light, non-burdensome input: you can steer it any time, but it manages itself, so you do not need a development team, a patent lawyer or a marketing firm to get started. Anything can be bootstrapped; the sky is the limit.
 

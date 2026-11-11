@@ -129,5 +129,6 @@
       "platform/adapters/registry.json"
     ],
     "_public_note": "Public and SAFE NOW files carry only the short tagline, never the mechanism line; they are check_only and edited by hand."
-  }
+  },
+  "loops_thesis": "Vibe coding is a start, not a system. A system is many agents with separate duties, running code loops that check, report and improve themselves. Ultrastable is built that way: multi-agent, self-referential loops, not a prompt and not a single code agent."
 }

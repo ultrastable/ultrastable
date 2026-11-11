@@ -1,0 +1,17 @@
+{
+  "name": "email",
+  "role": "communications",
+  "classes": [
+    "draft",
+    "send_to_person"
+  ],
+  "adapters": [
+    "cloudflare-sender"
+  ],
+  "entry": "email/plugin.py",
+  "optional": true,
+  "default": {
+    "enabled": false,
+    "mode": "dry-run"
+  }
+}
