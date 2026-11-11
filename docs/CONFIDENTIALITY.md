@@ -1,6 +1,6 @@
 # Confidentiality: what may leave this repository
 
-**Status 2026-11-10: the provisional patent is NOT filed.** This repository is private and stays private. Treat every file as internal unless it is tagged SAFE NOW and lives in `external/`.
+**Status 2026-11-11: no patent will be filed (see `PUBLIC-RELEASE.md`).** Architecture and code are being released under the Ultrastable License in `ultrastable/spec` and `ultrastable/workers`. This repository is still private and stays private: it holds business, funding, investor and patent-draft material that is not part of the release. Treat every file as internal unless it is tagged SAFE NOW and lives in `external/`.
 
 ## Tags
 
