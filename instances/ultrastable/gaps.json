@@ -106,6 +106,21 @@
    "closing_probe": "grep:docs/handoff/gcp-live.md::deployed",
    "owner_role": "operations",
    "status": "open"
+  },
+  {
+   "id": "SG-9",
+   "tool": "scheduler-host",
+   "what": "Something outside the system has to call the recurring loop (a Cloudflare cron, a Claude routine, a local scheduler or a GitHub schedule). Until now the loops ran only when a person or session started them, and the cron worker ticked an empty seed-template database, not the real records.",
+   "processes": [
+    "managers",
+    "plussing",
+    "funding-outreach",
+    "memory"
+   ],
+   "plan": "One command (python3 -m foundation launch) runs every loop and writes evidence to the repo; four host adapters schedule it (Cloudflare cron worker loaded with the real records, Claude routine, local cron or Task Scheduler, weekly GitHub workflow). Closed when the command, registry, workflow and first evidence exist.",
+   "closing_probe": "file:ops/loop-evidence/LATEST.md",
+   "owner_role": "operations",
+   "status": "closed"
   }
  ]
 }

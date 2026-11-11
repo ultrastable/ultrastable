@@ -4,6 +4,7 @@
   python3 -m foundation validate --manifest FILE
   python3 -m foundation ladder            # credential ladder against this machine
   python3 -m foundation filing --manifest FILE
+  python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE]   start the loops on this repo
   python3 -m foundation selfhost [--verify|--gaps|--no-node] [--db PATH]   Ultrastable boots its own organization from this repo
 """
 import argparse, datetime as dt, json, sys
@@ -22,7 +23,24 @@ def main(argv=None) -> int:
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
     r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
+    l = sub.add_parser("launch"); l.add_argument("--commit", action="store_true"); l.add_argument("--push", action="store_true"); l.add_argument("--probe", action="store_true"); l.add_argument("--export-d1"); l.add_argument("--install"); l.add_argument("--skip-outreach", action="store_true")
     a = ap.parse_args(argv)
+    if a.cmd == "launch":
+        from . import launch
+        if a.probe:
+            print(json.dumps(launch.probe_surfaces(), indent=2)); return 0
+        if a.install:
+            print(launch.install_artifact(a.install), end=""); return 0
+        if a.export_d1:
+            open(a.export_d1, "w", encoding="utf-8").write(launch.export_d1()); print("wrote", a.export_d1); return 0
+        rec = launch.run_once(skip_outreach=a.skip_outreach)
+        paths = launch.write_back(rec)
+        print("\n".join(rec["report"])); print("evidence:", paths)
+        if a.commit or a.push:
+            res = launch.commit(paths, push=a.push); print("write-back:", json.dumps(res))
+            if not res["ok"]:
+                return 1
+        return 0 if all(r["ok"] for r in rec["loops"]) else 1
     if a.cmd == "autorun":
         from . import autorun
         res = autorun.run(ticks=a.ticks, node=not a.no_node)
