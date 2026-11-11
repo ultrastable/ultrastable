@@ -136,14 +136,18 @@
       "system_path": [
         "seed/worker/src/tick.js",
         "seed/worker/src/index.js",
-        "docs/handoff"
+        "docs/handoff",
+        "foundation/cockpit.py",
+        "foundation/autorun.py",
+        "instances/ultrastable/inbox.json",
+        "demos/public/selfhost-run.html"
       ],
       "tools": [
         "system",
         "sqlite",
         "claude-threads"
       ],
-      "note": "Four-line report is written by the tick and served at /health; threads carry it to the owner."
+      "note": "Four-line report is written by the tick and served at /health; threads carry it to the owner. The owner cockpit (python3 -m foundation cockpit) shows Now, Next and Needs you from the repo; python3 -m foundation autorun runs the organization on its own records."
     },
     {
       "id": "funding-outreach",

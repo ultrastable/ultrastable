@@ -20,7 +20,20 @@ def main(argv=None) -> int:
     d = sub.add_parser("doctrine"); g = d.add_mutually_exclusive_group(required=True); g.add_argument("--apply", action="store_true"); g.add_argument("--check", action="store_true")
     h = sub.add_parser("selfhost"); h.add_argument("--verify", action="store_true"); h.add_argument("--gaps", action="store_true"); h.add_argument("--no-node", action="store_true"); h.add_argument("--db")
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
+    r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
+    c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
     a = ap.parse_args(argv)
+    if a.cmd == "autorun":
+        from . import autorun
+        res = autorun.run(ticks=a.ticks, node=not a.no_node)
+        if res["status"] != "ok":
+            print(json.dumps(res, indent=2)); return 1
+        for t in res["log"]["ticks"]:
+            print("\n".join(t["report"]), "\n")
+        print("wrote", [str(a.out + "/" + n) for n in autorun.write(res, a.out, a.public)]); return 0
+    if a.cmd == "cockpit":
+        from . import cockpit
+        print("wrote", cockpit.write(a.out, ticks=a.ticks, node=not a.no_node)); return 0
     if a.cmd == "ladder":
         print(json.dumps(ladder.acquire_all(), indent=2)); return 0
     if a.cmd == "selfhost":
