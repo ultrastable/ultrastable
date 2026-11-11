@@ -1,0 +1,20 @@
+{
+  "name": "social",
+  "role": "marketing",
+  "classes": [
+    "draft",
+    "cloud_read",
+    "publish_public"
+  ],
+  "adapters": [
+    "buffer",
+    "bluesky",
+    "mastodon"
+  ],
+  "entry": "social/plugin.py",
+  "optional": true,
+  "default": {
+    "enabled": false,
+    "mode": "dry-run"
+  }
+}

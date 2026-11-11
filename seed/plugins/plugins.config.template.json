@@ -1,0 +1,72 @@
+{
+  "_doc": "Instance config template. Env NAMES only; values live in the platform secret store. Changed by reviewed PR.",
+  "rung": "observed",
+  "plugins": {
+    "email": {
+      "enabled": false,
+      "mode": "dry-run",
+      "kill": false,
+      "adapter_config": {
+        "endpoint_env": "MAIL_SEND_URL",
+        "token_env": "MAIL_SEND_TOKEN",
+        "from": "",
+        "report_to": ""
+      },
+      "limits": {}
+    },
+    "mailing_list": {
+      "enabled": false,
+      "mode": "dry-run",
+      "kill": false,
+      "adapter_config": {
+        "secret_env": "LIST_TOKEN_SECRET"
+      },
+      "limits": {}
+    },
+    "social": {
+      "enabled": false,
+      "mode": "dry-run",
+      "kill": false,
+      "adapter_config": {
+        "adapter": "mastodon",
+        "instance_env": "MASTODON_URL",
+        "token_env": "MASTODON_TOKEN"
+      },
+      "limits": {}
+    },
+    "youtube": {
+      "enabled": false,
+      "mode": "dry-run",
+      "kill": false,
+      "adapter_config": {
+        "client_id_env": "YT_CLIENT_ID",
+        "client_secret_env": "YT_CLIENT_SECRET",
+        "refresh_token_env": "YT_REFRESH_TOKEN"
+      },
+      "limits": {}
+    },
+    "gcp": {
+      "enabled": false,
+      "mode": "dry-run",
+      "kill": false,
+      "adapter_config": {
+        "token_env": "GCP_ACCESS_TOKEN"
+      },
+      "limits": {}
+    },
+    "selfdescribe": {
+      "enabled": true,
+      "mode": "dry-run",
+      "kill": false,
+      "adapter_config": {},
+      "limits": {}
+    },
+    "communicate": {
+      "enabled": true,
+      "mode": "dry-run",
+      "kill": false,
+      "adapter_config": {},
+      "limits": {}
+    }
+  }
+}

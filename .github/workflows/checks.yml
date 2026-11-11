@@ -46,6 +46,13 @@ jobs:
       - name: Seed tests
         working-directory: seed
         run: python3 -m unittest discover -s tests
+      - name: Plugin tier (boundary lint, self-description drift, plugin and sender tests)
+        working-directory: seed
+        run: |
+          python3 -m plugins check
+          python3 -m plugins self --check
+          python3 -m unittest discover -s plugins/tests -t .
+          node --test plugins/email/worker/sender.test.mjs
       - name: Doctrine check (positioning and code-is-the-only-memory, from doctrine/positioning.json)
         run: python3 -m foundation doctrine --check
       - name: Foundation tests, new-system end-to-end (one job, no matrix)

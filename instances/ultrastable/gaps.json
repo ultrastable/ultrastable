@@ -38,10 +38,10 @@
    "processes": [
     "reporting"
    ],
-   "plan": "Add a report sink to the worker: write the four-line report to a repo file and POST it to an optional webhook; threads become one consumer of the sink.",
-   "closing_probe": "file:seed/worker/src/report.js",
+   "plan": "Closed by the communications plugin (seed/plugins/loops.py communications_tick): the four-line report is delivered to a configured address through the email plugin, behind the scope gate; dry-run until a reviewed PR sets mode live. Threads become one consumer.",
+   "closing_probe": "grep:seed/plugins/loops.py::def communications_tick",
    "owner_role": "operations",
-   "status": "open"
+   "status": "closed"
   },
   {
    "id": "SG-4",
@@ -50,10 +50,10 @@
    "processes": [
     "funding-outreach"
    ],
-   "plan": "Sender adapter behind the existing consent and suppression gate; owner registers one mailbox (identity-bound card, default: dry run).",
-   "closing_probe": "file:seed/outreach/sender.py",
+   "plan": "Closed by seed/plugins/email (Cloudflare sender Worker template plus adapter) and mailing_list (double opt-in, unsubscribe, suppression), behind the consent and suppression gate. Live sending needs the owner to register one mailbox (identity-bound card, default: dry run).",
+   "closing_probe": "file:seed/plugins/email/plugin.py",
    "owner_role": "outreach-manager",
-   "status": "open"
+   "status": "closed"
   },
   {
    "id": "SG-5",
@@ -62,10 +62,10 @@
    "processes": [
     "funding-outreach"
    ],
-   "plan": "Account-free channels first (feed file, site posts); posting adapter stays dry-run until accounts exist (identity-bound card).",
-   "closing_probe": "grep:social/gate.json::mode.{0,5}live",
+   "plan": "Adapters for Bluesky, Mastodon and Buffer exist in seed/plugins/social, text limited to the guard-approved self-description. Accounts are still created by a person; the adapters stay dry-run until a reviewed PR sets mode live.",
+   "closing_probe": "file:seed/plugins/social/plugin.py",
    "owner_role": "outreach-coordinator",
-   "status": "open"
+   "status": "closed"
   },
   {
    "id": "SG-6",
