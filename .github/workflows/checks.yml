@@ -50,10 +50,10 @@ jobs:
         run: python3 -m foundation doctrine --check
       - name: Foundation tests, new-system end-to-end (one job, no matrix)
         run: python3 -m unittest discover -s tests/foundation
-      - name: Provisional pre-flight
+      - name: License, specs and repo split (patent track dropped 2026-11-11; pre-flight retired)
         run: |
-          sudo apt-get install -y -q poppler-utils >/dev/null
-          python3 ip/provisional/tools/preflight.py
+          python3 scripts/check_license.py
+          (cd scripts && python3 test_license.py)
       - name: Project memory is current
         run: python3 scripts/check_memory.py
       - name: Business index (BIZ-3)

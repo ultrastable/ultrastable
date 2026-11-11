@@ -2,7 +2,7 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
-The only files meant to leave this private repository before the provisional patent is filed. Outcome-level and non-enabling: no mechanisms, numbers from the system, architecture, schemas or claim language. Rules: [../docs/CONFIDENTIALITY.md](../docs/CONFIDENTIALITY.md). Review each file against that rule before sending; a human (the owner) sends it.
+The only files meant to leave this private repository before the license review is complete and the repositories are published. Outcome-level and non-enabling: no mechanisms, numbers from the system, architecture, schemas or claim language. Rules: [../docs/CONFIDENTIALITY.md](../docs/CONFIDENTIALITY.md). Review each file against that rule before sending; a human (the owner) sends it.
 
 | File | Use |
 |---|---|

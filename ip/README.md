@@ -1,3 +1,5 @@
+> **ARCHIVED 2026-11-11: the patent track is dropped.** See [ARCHIVED.md](ARCHIVED.md). Active replacement: [../LICENSE](../LICENSE) and [../specs/](../specs/README.md).
+
 # ultrastable/ip (owner only)
 
 Working file for the provisional patent application. Keep this repo restricted to the owner and counsel.

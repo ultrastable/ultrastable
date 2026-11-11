@@ -1,0 +1,40 @@
+{
+  "_doc": "How the monorepo splits into separate repositories: code apart from documentation, private operations apart from both. The monorepo stays the system of record until the target repositories exist; `python3 scripts/split_repos.py build --out DIR` writes each target tree from tracked files, and `check` proves every tracked file lands in exactly one target. Longest path prefix wins. Creating the repositories in the GitHub org is an owner or org-token step (docs/ops/ORG-TOKEN.md). Changed only by a reviewed PR.",
+  "id": "REPO-SPLIT-1",
+  "version": "1.0.0",
+  "updated": "2026-11-11",
+  "license": {"file": "LICENSE", "spdx": "LicenseRef-Ultrastable-Hybrid-0.9"},
+  "state": "private-until-reviewed",
+  "state_doc": "private-until-reviewed: every repository stays private. `reviewed` requires 'COUNSEL SIGN-OFF: <date>' in docs/legal/LICENSE-REVIEW.md and an entity name in LICENSE (scripts/check_license.py).",
+  "shared_files": ["LICENSE", "LICENSING.md", "COMMERCIAL-LICENSING.md", "NOTICE", "CITATION.cff"],
+  "targets": {
+    "workers": {
+      "repo": "ultrastable/workers",
+      "role": "code",
+      "summary": "First code base: JavaScript on Cloudflare Workers. The seed worker and tick, bootstrapper, foundation generator, dashboard, site worker, gaplint, tests.",
+      "after_review": "public-readable under the hybrid license",
+      "paths": ["seed", "foundation", "dashboard", "site", "demos", "products", "tests", "platform/cloudflare-reference", "deploy"]
+    },
+    "portable": {
+      "repo": "ultrastable/portable",
+      "role": "code",
+      "summary": "Second embodiment: the Python reference runtime and the Google Cloud and SQLite adapters. Proves the core is platform-agnostic.",
+      "after_review": "public-readable under the hybrid license, after the first code base",
+      "paths": ["platform/core", "platform/adapters"]
+    },
+    "specs": {
+      "repo": "ultrastable/specs",
+      "role": "documentation",
+      "summary": "Architectural specifications, concepts, bootstrapping guides, legal notes, open-source governance files.",
+      "after_review": "public-readable under the hybrid license",
+      "paths": ["specs", "docs/concepts", "docs/bootstrapping", "docs/legal", "docs/FOUNDATION.md", "platform/docs", "platform/open-core", "external"]
+    },
+    "ops": {
+      "repo": "ultrastable/ultrastable",
+      "role": "private operations hub",
+      "summary": "Everything about running the organization itself: business, funding, outreach, social, memory, agents, scripts, CI, archive of the patent drafts, brand, research, handoffs.",
+      "after_review": "stays private",
+      "paths": [".gitattributes", ".gitignore", ".github", "agents", "artifacts", "brand", "business", "core-manifest", "doctrine", "github", "instances", "ip", "kit", "ops", "outreach", "qnfo-platform-thread", "research", "scripts", "social", "docs", "actions-budget.json", "gaplint.json", "HANDOFF.md", "INDEX.md", "PROJECTS.md", "README.md", "ROADMAP-extraction.md", "ROADMAP.md", "repo-split.json", "tools", "platform"]
+    }
+  }
+}

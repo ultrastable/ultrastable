@@ -61,6 +61,18 @@ def check(root=REPO) -> list[str]:
         for n, ln in enumerate((root / rel).read_text(encoding="utf-8", errors="replace").splitlines(), 1):
             if any(b.search(ln) for b in banned):
                 bad.append(f"{rel}:{n}: relies on external memory")
+    lic = d.get("licensing")
+    if lic:
+        lp = root / lic["license_file"]
+        text = lp.read_text(encoding="utf-8") if lp.exists() else ""
+        for req in lic["required_patterns"]:
+            if req.lower() not in text.lower():
+                bad.append(f"{lic['license_file']}: lacks '{req}'")
+        banned_lic = [re.compile(b, re.I) for b in lic["banned_patterns"]]
+        for rel in files(root, lic["scan"]):
+            for n, ln in enumerate((root / rel).read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+                if any(b.search(ln) for b in banned_lic):
+                    bad.append(f"{rel}:{n}: states or implies a patent filing (patent track dropped 2026-11-11)")
     if not (root / d["memory"]["canonical"]).exists():
         bad.append(f"{d['memory']['canonical']}: canonical memory file missing")
     return bad
