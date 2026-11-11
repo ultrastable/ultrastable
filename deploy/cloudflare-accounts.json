@@ -1,0 +1,5 @@
+{
+  "_doc": "Cloudflare accounts Ultrastable runs on. Account ids are not secrets. The API token is never stored here: bind it as CLOUDFLARE_API_TOKEN (repo secret or env). Changed by reviewed PR.",
+  "target": {"id": "81e3a4efb4eb66e613529b87682911bb", "named_by": "Rowan 2026-11-11", "state": "not yet reachable: the Cloudflare connector is authorized only for the old account; needs CLOUDFLARE_API_TOKEN scoped to this account (Workers Scripts Edit, D1 Edit, Workers KV Storage Edit)", "move": "worker ultrastable-tick, ultrastable-dashboard, ultrastable-site and D1 ultrastable-org"},
+  "current": {"id": "edb167b78c9fb901ea5bca3ce58ccc4b", "name": "quniverse", "state": "running: ultrastable-tick cron, D1 ultrastable-org"}
+}
