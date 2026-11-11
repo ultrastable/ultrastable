@@ -1,0 +1,11 @@
+{
+  "id": "STD-1",
+  "title": "STD-1: Publish MCP server to the registry",
+  "body": "**Owner:** **staff**\n**Trigger:** none\n**Done check:** register entry `mcp-registry` moves from planned to supported with a passing test\n**Status:** open\n\nNamespace verification is owner-only; held until the license review allows public listing.",
+  "labels": [
+    "role:staff",
+    "ws:platform"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}

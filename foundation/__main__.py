@@ -3,13 +3,14 @@
   python3 -m foundation new-system --manifest instances/<slug>/instance.json --out ../<slug> [--apply]
   python3 -m foundation validate --manifest FILE
   python3 -m foundation ladder            # credential ladder against this machine
+  python3 -m foundation standards [--check|--apply]   agentic standards register, surfaces, conformance lint
   python3 -m foundation filing --manifest FILE
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE]   start the loops on this repo
   python3 -m foundation selfhost [--verify|--gaps|--no-node] [--db PATH]   Ultrastable boots its own organization from this repo
 """
 import argparse, datetime as dt, json, sys
 
-from . import doctrine, filing, ladder, manifest as mf, scaffold, selfhost
+from . import standards, doctrine, filing, ladder, manifest as mf, scaffold, selfhost
 
 
 def main(argv=None) -> int:
@@ -20,6 +21,7 @@ def main(argv=None) -> int:
     sub.add_parser("ladder")
     d = sub.add_parser("doctrine"); g = d.add_mutually_exclusive_group(required=True); g.add_argument("--apply", action="store_true"); g.add_argument("--check", action="store_true")
     h = sub.add_parser("selfhost"); h.add_argument("--verify", action="store_true"); h.add_argument("--gaps", action="store_true"); h.add_argument("--no-node", action="store_true"); h.add_argument("--db")
+    st = sub.add_parser("standards"); sg = st.add_mutually_exclusive_group(required=True); sg.add_argument("--apply", action="store_true"); sg.add_argument("--check", action="store_true")
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
     r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
@@ -65,6 +67,11 @@ def main(argv=None) -> int:
         if rep["status"] == "ok":
             print(rep["tick"]["report"])
         return 0 if rep["status"] == "ok" else 1
+    if a.cmd == "standards":
+        if a.apply:
+            print("docs/standards table updated" if standards.apply() else "docs/standards table already current")
+        bad = standards.check()
+        print("\n".join(bad) or "standards ok"); return 1 if bad else 0
     if a.cmd == "doctrine":
         if a.apply:
             print("injected into:", doctrine.apply() or "nothing (already consistent)")

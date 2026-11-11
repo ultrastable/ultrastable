@@ -1,7 +1,7 @@
 {
   "_doc": "Source of truth for Ultrastable's positioning and memory rule. Prose elsewhere is generated or checked against this file: `python3 -m foundation doctrine --apply` injects the line into the markdown files listed under `inject`, `--check` (run by checks.yml and the tests) fails when any listed file lacks it or states a contradiction, and gaplint rules GL008 and GL009 read this file. Changed only by a reviewed PR.",
   "id": "positioning",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "tagline": "Ultrastable is the foundation for any autonomous system.",
   "pattern": "foundation\\s+for\\s+any\\s+autonomous\\s+system",
   "contradictions": [
@@ -32,7 +32,8 @@
       "platform/README.md",
       "products/README.md",
       "docs/overview.md",
-      "instances/*/README.md"
+      "instances/*/README.md",
+      "docs/standards/AGENTIC-STANDARDS.md"
     ],
     "check_only": [
       "site/worker.js",
@@ -130,5 +131,6 @@
     ],
     "_public_note": "Public and SAFE NOW files carry only the short tagline, never the mechanism line; they are check_only and edited by hand."
   },
-  "loops_thesis": "Vibe coding is a start, not a system. A system is many agents with separate duties, running code loops that check, report and improve themselves. Ultrastable is built that way: multi-agent, self-referential loops, not a prompt and not a single code agent."
+  "loops_thesis": "Vibe coding is a start, not a system. A system is many agents with separate duties, running code loops that check, report and improve themselves. Ultrastable is built that way: multi-agent, self-referential loops, not a prompt and not a single code agent.",
+  "stability_line": "Ultra-stable: infrastructure that works so nobody notices."
 }
