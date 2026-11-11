@@ -1,0 +1,9 @@
+{
+ "_doc": "Where Ultrastable's mail goes, as data. The cockpit shows it and the test checks every route has a destination, an owner of the follow-up and a closing probe. Recorded 2026-11-10 from docs/ops/OWNER-STEPS.md and HANDOFF.md; the probe is the live check to run, not one this file can run offline. Addresses of people are never stored here: destinations are named by role.",
+ "routes": [
+  {"address": "pilot@ultrastable.io", "kind": "inbound", "forwards_to": "the owner's verified mailbox (Cloudflare Email Routing rule 'pilot inbox')", "then": "the outreach coordinator reconciles forwarded replies into outreach/state.json and marks each one", "probe": "cockpit probe: send a test mail, see it in the owner's mailbox, see it logged in outreach/log.jsonl"},
+  {"address": "hello@ultrastable.io", "kind": "inbound", "forwards_to": "the owner's Outlook mailbox", "then": "general inquiries: the owner reads them; anything that is a reply to outreach is forwarded to the pilot rule's path", "probe": "same test mail to this address arrives in Outlook"},
+  {"address": "owner dashboard codes and digests", "kind": "outbound", "forwards_to": "the owner's verified mailbox only (no address input exists)", "then": "login codes, failing-check alerts, new owner cards, daily digest at 13:00 UTC (dashboard/README.md)", "probe": "dashboard command notify-test delivers"},
+  {"address": "outreach sender", "kind": "outbound", "forwards_to": "nobody yet: sender identity is not registered, outreach runs dry-run", "then": "owner card OUT-SENDER; until then no outreach mail leaves", "probe": "grep outreach/gate.json for \"registered\": true"}
+ ]
+}
