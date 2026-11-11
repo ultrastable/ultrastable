@@ -2,4 +2,4 @@
 $ErrorActionPreference = "Stop"
 Set-Location (Join-Path $PSScriptRoot "..\..\..")
 $env:ULTRASTABLE_HOST = "windows-task"
-python -m foundation launch --commit --push
+python -m foundation launch --failover --commit --push

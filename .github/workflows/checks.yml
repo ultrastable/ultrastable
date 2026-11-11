@@ -61,12 +61,18 @@ jobs:
           python3 -m foundation glossary --check
           python3 -m foundation kernel --check
           python3 -m foundation writeback check --base "origin/${{ github.base_ref || 'main' }}"
+      - name: Agentic standards (register, surfaces, discovery lint; Worker conformance and contract tests)
+        run: |
+          python3 -m foundation standards --check
+          (cd seed/worker && node --test --no-warnings test/*.test.js)
       - name: Foundation tests, new-system end-to-end (one job, no matrix)
         run: python3 -m unittest discover -s tests/foundation
       - name: License (patent track dropped 2026-11-11; pre-flight retired)
         run: |
           python3 scripts/check_license.py
           (cd scripts && python3 test_license.py)
+      - name: No single route (loops and deploy paths)
+        run: python3 scripts/check_routes.py
       - name: Project memory is current
         run: python3 scripts/check_memory.py
       - name: Business index (BIZ-3)

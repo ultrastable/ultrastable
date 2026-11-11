@@ -72,7 +72,8 @@
       "tools": [
         "system",
         "agent-executor",
-        "scheduler-host"
+        "scheduler-host",
+        "cloudflare-credential"
       ],
       "note": "Roles are defined in seed/ultrastable.json and booted as rows in roles."
     },

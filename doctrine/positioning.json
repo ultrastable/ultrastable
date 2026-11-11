@@ -32,7 +32,8 @@
       "platform/README.md",
       "products/README.md",
       "docs/overview.md",
-      "instances/*/README.md"
+      "instances/*/README.md",
+      "docs/standards/AGENTIC-STANDARDS.md"
     ],
     "check_only": [
       "site/worker.js",
@@ -187,5 +188,6 @@
       "tests/foundation/test_doctrine_lint.py"
     ],
     "max_bytes": 2000000
-  }
+  },
+  "stability_line": "Ultra-stable: infrastructure that works so nobody notices."
 }

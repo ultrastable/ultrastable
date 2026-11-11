@@ -121,6 +121,18 @@
    "closing_probe": "file:ops/loop-evidence/LATEST.md",
    "owner_role": "operations",
    "status": "closed"
+  },
+  {
+   "id": "SG-10",
+   "tool": "cloudflare-credential",
+   "what": "Starting the loops on a new Cloudflare account needed a token or connector re-authorization that a non-coder cannot supply; the loops had one host and one credential kind (failure record docs/failures/2026-11-11-single-route.md).",
+   "processes": [
+    "managers"
+   ],
+   "plan": "Failover chain across hosts (foundation/failover.py), a credential-free route, a browser-sign-in first-run script (deploy/first-run/), and a lint (scripts/check_routes.py). Closed when the live move to the new account runs through the first-run route.",
+   "closing_probe": "grep:deploy/cloudflare-accounts.json::\"state\": \"running\"[^}]*\"move\"",
+   "owner_role": "operations",
+   "status": "open"
   }
  ]
 }

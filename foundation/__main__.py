@@ -3,6 +3,7 @@
   python3 -m foundation new-system --manifest instances/<slug>/instance.json --out ../<slug> [--apply]
   python3 -m foundation validate --manifest FILE
   python3 -m foundation ladder            # credential ladder against this machine
+  python3 -m foundation standards [--check|--apply]   agentic standards register, surfaces, conformance lint
   python3 -m foundation filing --manifest FILE
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE]   start the loops on this repo
   python3 -m foundation selfhost [--verify|--gaps|--no-node] [--db PATH]   Ultrastable boots its own organization from this repo
@@ -12,9 +13,9 @@
   python3 -m foundation trust [--show|--event SURFACE ACTION EVENT|--tick] the trust ledger and ladder
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
 """
-import argparse, datetime as dt, json, sys
+import argparse, datetime as dt, json, os, sys
 
-from . import doctrine, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
+from . import standards, doctrine, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
 
 
 def main(argv=None) -> int:
@@ -35,10 +36,11 @@ def main(argv=None) -> int:
         rc.add_argument("--" + opt, default="")
     ck = ws.add_parser("check"); ck.add_argument("--base", default="origin/main"); ck.add_argument("--head", default="HEAD")
     ou = ws.add_parser("outputs"); ou.add_argument("dirs", nargs="+"); ou.add_argument("--ignore", action="append", default=[])
+    st = sub.add_parser("standards"); sg = st.add_mutually_exclusive_group(required=True); sg.add_argument("--apply", action="store_true"); sg.add_argument("--check", action="store_true")
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
     r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
-    l = sub.add_parser("launch"); l.add_argument("--commit", action="store_true"); l.add_argument("--push", action="store_true"); l.add_argument("--probe", action="store_true"); l.add_argument("--export-d1"); l.add_argument("--install"); l.add_argument("--skip-outreach", action="store_true")
+    l = sub.add_parser("launch"); l.add_argument("--commit", action="store_true"); l.add_argument("--push", action="store_true"); l.add_argument("--probe", action="store_true"); l.add_argument("--export-d1"); l.add_argument("--install"); l.add_argument("--skip-outreach", action="store_true"); l.add_argument("--failover", action="store_true")
     a = ap.parse_args(argv)
     if a.cmd == "launch":
         from . import launch
@@ -48,6 +50,14 @@ def main(argv=None) -> int:
             print(launch.install_artifact(a.install), end=""); return 0
         if a.export_d1:
             open(a.export_d1, "w", encoding="utf-8").write(launch.export_d1()); print("wrote", a.export_d1); return 0
+        if a.failover:
+            from . import failover
+            host = os.environ.get("ULTRASTABLE_HOST", "unspecified")
+            d = failover.decide(launch.REPO, host)
+            print("failover:", json.dumps(d))
+            if not d["run"]:
+                return 0
+            os.environ["ULTRASTABLE_HOST"] = "failover:" + host
         rec = launch.run_once(skip_outreach=a.skip_outreach)
         paths = launch.write_back(rec)
         print("\n".join(rec["report"])); print("evidence:", paths)
@@ -119,6 +129,11 @@ def main(argv=None) -> int:
         except ValueError as e:
             print("refused:", e); return 1
         print("\n".join(bad) or "writeback ok"); return 1 if bad else 0
+    if a.cmd == "standards":
+        if a.apply:
+            print("docs/standards table updated" if standards.apply() else "docs/standards table already current")
+        bad = standards.check()
+        print("\n".join(bad) or "standards ok"); return 1 if bad else 0
     if a.cmd == "doctrine":
         if a.apply:
             print("injected into:", doctrine.apply() or "nothing (already consistent)")

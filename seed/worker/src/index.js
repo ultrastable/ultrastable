@@ -6,6 +6,11 @@ import config from './config.js';
 import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
 import { nowScreen, nextScreen, needsScreen, questionScreen, doneScreen } from './ui.js';
 import { handleAnalytics, selfcheck, report } from '../../analytics/analytics.js';
+import { createAgenticHandler, DEFAULT_IDENTITY } from './agentic/handler.js';
+import { d1Store } from './agentic/adapters/d1-store.js';
+import { staticRegistries } from './agentic/adapters/memory.js';
+import { bearerAuth } from './agentic/adapters/bearer-auth.js';
+import { consoleTelemetry } from './agentic/adapters/console-telemetry.js';
 
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
@@ -17,6 +22,13 @@ export default {
 
   async fetch(request, env) {
     const url = new URL(request.url);
+    // Agent-facing surfaces (MCP, discovery documents) are registered in seed/standards/surfaces.json.
+    const agentic = createAgenticHandler({
+      store: d1Store(env.DB), registries: staticRegistries(config.registries || {}), auth: bearerAuth, telemetry: consoleTelemetry,
+      identity: { ...DEFAULT_IDENTITY, slug: config.org_slug, name: config.org_slug },
+    });
+    const ag = await agentic(request, env);
+    if (ag) return ag;
     const an = await handleAnalytics(request, env, { hosts: hosts(env) });
     if (an) return an;
     if (url.pathname === '/api/analytics') {
