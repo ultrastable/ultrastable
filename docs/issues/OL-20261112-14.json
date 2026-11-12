@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261112-14",
+  "title": "OL-20261112-14: external dependencies X-1 and X-3",
+  "body": "**Owner:** project-manager\n**Trigger:** every executor run\n**Done check:** cmd:python3 scripts/fleet_probe.py ext-x1-x3\n**Status:** open\n**Residual:** ext-deps-x1-x3\n\nTrack the external dependency items X-1 and X-3; replace the probe with the items' own closing probes when read from the dependency-unification record.",
+  "labels": [
+    "role:project-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

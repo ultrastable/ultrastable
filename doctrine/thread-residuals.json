@@ -1,0 +1,25 @@
+{
+ "_doc": "Residuals of finished threads. foundation/queue.py fails when one has no OL queue item.",
+ "residuals": [
+  {
+   "key": "cf-account-transfer",
+   "thread": "finished-thread-residual"
+  },
+  {
+   "key": "workers-release-v0-1-0",
+   "thread": "finished-thread-residual"
+  },
+  {
+   "key": "org-repos-license-archive-profile",
+   "thread": "finished-thread-residual"
+  },
+  {
+   "key": "ext-deps-x1-x3",
+   "thread": "finished-thread-residual"
+  },
+  {
+   "key": "workers-codeowners-replacement",
+   "thread": "finished-thread-residual"
+  }
+ ]
+}

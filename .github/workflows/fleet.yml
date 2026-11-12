@@ -1,0 +1,42 @@
+name: fleet
+# budget: ~3 min per run, once per day plus manual dispatch
+# trigger: daily (never faster); the Cloudflare tick Worker may also dispatch it with repository_dispatch `ultrastable-tick`
+# free-alternative: `python3 -m foundation queue --run --apply && python3 -m foundation fleet --apply` from any host or a scheduled Claude session
+# CLOSED-LOOP-AXIOM: one queue, one merge lane and one drift loop across every org repository; residual items are probed until they pass.
+on:
+  schedule:
+    - cron: "41 5 * * *"
+  repository_dispatch:
+    types: [ultrastable-tick]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+concurrency:
+  group: fleet
+  cancel-in-progress: false
+jobs:
+  fleet:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - run: python3 scripts/actions_guard.py fleet
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Queue probes (close residual items whose probe passes)
+        run: python3 -m foundation queue --run --apply
+        env:
+          GH_TOKEN: ${{ secrets.FLEET_TOKEN || secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+      - name: Cross-repo merge lane and drift loop
+        run: python3 -m foundation fleet --apply
+        env:
+          FLEET_TOKEN: ${{ secrets.FLEET_TOKEN }}
+          LANE_PAT: ${{ secrets.LANE_PAT }}
+          GH_TOKEN: ${{ github.token }}
+      - name: Closed-loop check
+        run: python3 -m foundation closedloop --check
