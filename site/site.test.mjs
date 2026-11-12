@@ -183,3 +183,22 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   rr = await mod.fetch(new Request("https://ultrastable.io/live"), ENV);
   assert.equal(rr.status, 200); assert.match(await rr.text(), /running on Ultrastable/);
 }
+// AGENTIC-1: discovery documents and the read-only MCP endpoint
+{
+  const snap = JSON.stringify({ generated: "g", scoreboard: { a: 1 }, throughput: { changelog: [] }, managers: [], claims: {}, gaps: [] });
+  const db = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: snap }] }) }), first: async () => ({ generated: "g", total: 1 }) }) };
+  const E3 = { ...ENV, DB: db };
+  const g3 = async (p, init) => mod.fetch(new Request("https://ultrastable.io" + p, init), E3);
+  let rr = await g3("/.well-known/api-catalog"); assert.match(rr.headers.get("content-type"), /linkset\+json/); assert.ok((await rr.json()).linkset.length >= 1);
+  rr = await g3("/.well-known/mcp/server-card.json"); assert.equal((await rr.json()).serverInfo.name, "ultrastable-live");
+  rr = await g3("/.well-known/agent-skills/index.json"); const sk = (await rr.json()).skills[0]; assert.match(sk.sha256, /^[0-9a-f]{64}$/);
+  const md = await (await g3("/.well-known/agent-skills/ultrastable-live/SKILL.md")).text();
+  const h = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(md)))).map(x => x.toString(16).padStart(2, "0")).join(""); assert.equal(h, sk.sha256);
+  assert.match(await (await g3("/robots.txt")).text(), /Content-Signal:/);
+  assert.match((await g3("/")).headers.get("link"), /api-catalog/);
+  const rpc = async (m, params) => (await (await g3("/mcp", { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: m, params }) })).json());
+  assert.equal((await rpc("tools/list")).result.tools.length, 6);
+  assert.equal(JSON.parse((await rpc("tools/call", { name: "get_scoreboard" })).result.content[0].text).a, 1);
+  assert.equal((await rpc("nope")).error.code, -32601);
+  assert.equal((await g3("/mcp")).status, 405); assert.equal((await g3("/mcp", { method: "DELETE" })).status, 405);
+}

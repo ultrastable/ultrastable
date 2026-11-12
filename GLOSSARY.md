@@ -50,6 +50,7 @@ Generated from `doctrine/glossary.json` by `python3 -m foundation glossary --app
 | [Guiding directive](#guiding-directive) | Rowan's directive of 2026-11-12 that governs all work: autonomy-first, self-directed and self-improving; no permission requests; the only pause is an action both irreversible and identity-bound after a reversible path was engineered; blockers are never owner issues; no loose ends or silent drops. | 1.0.0 |
 | [Memory is not storage](#memory-is-not-storage) | Project memory, tool memory and chat are not storage (Rowan, 2026-11-12). | 1.0.0 |
 | [Document consumed](#doc-consumed) | A document exists only if code, a check, an agent's loaded instructions or a loop consumes it. | 1.0.0 |
+| [Unattended](#unattended) | The crosswalk for the words the owner and the agents use for the same property. | 1.0.0 |
 
 ## <a id="autonomy"></a>Autonomy
 
@@ -824,3 +825,21 @@ A document exists only if code, a check, an agent's loaded instructions or a loo
 **Lineage:**
 
 - 1.0.0 (2026-11-12): Owner: documents are not the point; this is a code-driven system and he does not read docs. Every document must be consumed by something. (`doctrine/doc-consumers.json`)
+
+## <a id="unattended"></a>Unattended
+
+The crosswalk for the words the owner and the agents use for the same property. Autonomous (owner), automatic (owner) and unattended (agents) all mean: the loop is triggered by a clock or an event on server-side infrastructure, does its work, passes its closing probe and writes back with no person and no open session in the path, and starts again. It does not stop at an error: a failure is recorded and the next run is a different attempt. The measure is shipped work with no session driving it: merged pull requests whose origin is the server-side executor.
+
+**Not:** Not a loop that runs while someone watches a session, not a loop on a person's computer, not a loop that waits for a reply, and not one that stops after an error.
+
+**Also called:** automatic, autonomous operation, self-running, headless, never stops, runs without a person
+
+**Tested by:** `grep:foundation/transparency.py::unattended executor`; `grep:foundation/executor.py::REPAIRS`
+
+**Implemented by:** `.github/workflows/executor.yml`, `foundation/executor.py`, `foundation/transparency.py`, `instances/ultrastable/loop-registry.json`
+
+**Related:** [autonomy](#autonomy), [loop](#loop), [self-referential-loop](#self-referential-loop), [closed-system](#closed-system)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-12): Owner: autonomous means automatic means unattended; none of it stops or terminates, and the vocabulary must not drift between contexts and agents. This entry is the crosswalk and the measure. (`doctrine/glossary.json`)

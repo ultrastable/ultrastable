@@ -6,6 +6,7 @@ import USER_PATH from "./userpath.js";
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
 import { liveResponse } from "./live.js";
+import { agentic, withLinks, CONTENT_SIGNAL } from "./agentic.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
@@ -525,7 +526,7 @@ function contact() {
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");
 }
 
-const ROBOTS = "User-agent: *\nAllow: /\nSitemap: https://" + CANON + "/sitemap.xml\n";
+const ROBOTS = "User-agent: *\n" + CONTENT_SIGNAL + "Allow: /\nSitemap: https://" + CANON + "/sitemap.xml\n";
 const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. Ultrastable runs on itself. QNFO runs on it as customer zero.\n\n- [Live proof](https://" + CANON + "/proof): claims checked against QNFO's records\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n";
 
 const FAVICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"ultrastable\"><title>ultrastable</title><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></svg>";
@@ -535,7 +536,7 @@ const SVG = { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age
 
 const HTML = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" };
 
-export default {
+const handler = {
   async fetch(request, env, ctx) {
     const u = new URL(request.url);
     const host = u.hostname.replace(/^www\./, "");
@@ -584,3 +585,5 @@ export default {
     }
   }
 };
+// AGENTIC-1: machine-readable discovery and a read-only MCP endpoint in front of every page.
+export default { async fetch(request, env, ctx) { const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };
