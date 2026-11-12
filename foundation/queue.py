@@ -25,19 +25,41 @@ def items(root=REPO) -> list[dict]:
     return out
 
 
+def executor_rows(root=REPO) -> list[dict]:
+    """Every executor provenance row, oldest first: the shared evidence branch (a run's checkout holds only its own rows, so parking would never see earlier failures) plus
+    this working copy's rows, de-duplicated. A missing branch or a git failure leaves the local rows, never an error."""
+    root, texts = Path(root), []
+    for ref in ("origin/loop-evidence",):
+        r = subprocess.run(["git", "-C", str(root), "show", f"{ref}:ops/executor-log.jsonl"], capture_output=True, text=True, encoding="utf-8")
+        if r.returncode:
+            subprocess.run(["git", "-C", str(root), "fetch", "-q", "--depth=1", "origin", "loop-evidence:refs/remotes/origin/loop-evidence"], capture_output=True, text=True, timeout=60)
+            r = subprocess.run(["git", "-C", str(root), "show", f"{ref}:ops/executor-log.jsonl"], capture_output=True, text=True, encoding="utf-8")
+        if r.returncode == 0:
+            texts.append(r.stdout)
+    log = root / "ops/executor-log.jsonl"
+    if log.exists():
+        texts.append(log.read_text(encoding="utf-8"))
+    rows, remote = [], set()
+    for n, t in enumerate(texts):            # the evidence branch first; a local row is added unless the branch already holds that exact line
+        for line in t.splitlines():
+            if n == 0 and len(texts) > 1:
+                remote.add(line)
+            elif n > 0 and line in remote:
+                continue
+            try:
+                rows.append(json.loads(line))
+            except ValueError:
+                pass
+    return sorted(rows, key=lambda r: r.get("at") or "")
+
+
 def takeable(root=REPO) -> list[dict]:
     """QUEUE-1: open queue items in the shape the executor's pick() expects. Owner-held items (identity-bound, ROWAN) are not the executor's.
     An item whose last three executor log rows all failed is parked until a row of another result appears, so a bad item cannot starve the rest."""
     root = Path(root); fails: dict[str, int] = {}
-    log = root / "ops/executor-log.jsonl"
-    if log.exists():
-        for line in log.read_text(encoding="utf-8").splitlines():
-            try:
-                r = json.loads(line)
-            except ValueError:
-                continue
-            if r.get("issue") is not None:
-                k = str(r["issue"]); fails[k] = fails.get(k, 0) + 1 if r.get("result") == "failed" else 0
+    for r in executor_rows(root):
+        if r.get("issue") is not None:
+            k = str(r["issue"]); fails[k] = fails.get(k, 0) + 1 if r.get("result") == "failed" else 0
     out = []
     for it in items(root):
         j = it["json"]

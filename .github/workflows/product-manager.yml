@@ -1,0 +1,40 @@
+name: product-manager
+# budget: ~2 min per run, once a day plus manual dispatch = ~60 min per month
+# trigger: daily; the targets, experiments and knobs it reviews move on a day-to-week scale, never faster than daily
+# free-alternative: `python3 -m foundation pm --run --apply --pr` and `python3 -m foundation clock --heal --apply` from any cloud-hosted agent session with the repository
+# GROWTH-2 and CLOCKWORK-2: the product manager pass (targets, experiment verdicts, knob review, growth and repair items filed as a pull request the lane merges) preceded by the
+# heal pass (catch-up ticks for stale stages, settlement of expired changes, escalation).
+on:
+  schedule:
+    - cron: "11 7 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+concurrency:
+  group: product-manager
+  cancel-in-progress: false
+jobs:
+  pass:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - run: python3 scripts/actions_guard.py product-manager
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: pip install pyyaml
+      - name: Heal the clocks (catch-up, settlement, escalation)
+        run: python3 -m foundation clock --heal --apply
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+      - name: Product manager pass
+        run: python3 -m foundation pm --run --apply --pr
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

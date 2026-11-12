@@ -1,0 +1,89 @@
+{
+ "generated": "2026-11-12T15:04:30Z",
+ "targets": [
+  {
+   "id": "pageviews_7d",
+   "baseline": 1310,
+   "target": 1500,
+   "expected_today": 1314.3,
+   "value": 1313,
+   "behind": false,
+   "progress": 0.02
+  },
+  {
+   "id": "visitors_7d",
+   "baseline": 564,
+   "target": 650,
+   "expected_today": 565.9,
+   "value": 567,
+   "behind": false,
+   "progress": 0.03
+  },
+  {
+   "id": "agent_hits_7d",
+   "baseline": 817,
+   "target": 1000,
+   "expected_today": 821.1,
+   "value": 819,
+   "behind": false,
+   "progress": 0.01
+  },
+  {
+   "id": "pilot_page_views_7d",
+   "baseline": 326,
+   "target": 400,
+   "expected_today": 327.7,
+   "value": 326,
+   "behind": false,
+   "progress": 0.0
+  }
+ ],
+ "experiments": [],
+ "knobs": {
+  "values": {
+   "target_growth_share": 0.4,
+   "chain_max_runs_per_day": 4,
+   "window_merges": 20
+  },
+  "last": {
+   "reviewed": null,
+   "changed": null
+  }
+ },
+ "filed": {
+  "growth": [],
+  "repair": []
+ },
+ "stages": [
+  {
+   "id": "heartbeat",
+   "status": "fresh",
+   "missed": 0
+  },
+  {
+   "id": "author",
+   "status": "fresh",
+   "missed": 0
+  },
+  {
+   "id": "pr",
+   "status": "fresh",
+   "missed": 0
+  },
+  {
+   "id": "merge",
+   "status": "fresh",
+   "missed": 0
+  },
+  {
+   "id": "deploy",
+   "status": "fresh",
+   "missed": 0
+  },
+  {
+   "id": "publish",
+   "status": "fresh",
+   "missed": 0
+  }
+ ]
+}

@@ -2309,6 +2309,44 @@
       "workflows": [
         "deploy-system.yml"
       ]
+    },
+    {
+      "id": "product-manager-pass",
+      "kind": "manager",
+      "summary": "The product manager pass: growth targets and trajectory, experiment verdicts, knob review, and growth and repair items filed as a pull request; preceded by the heal pass (catch-up ticks, settlement, escalation).",
+      "trigger": "daily workflow product-manager.yml",
+      "owner": "product-manager",
+      "closes_by": "system",
+      "sla": "10m",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:foundation/pm.py",
+      "writeback": [
+        "instances/ultrastable/gaps.json",
+        "docs/handoff/selfhost.md"
+      ],
+      "system_path": [
+        "foundation/pm.py",
+        "foundation/clockwork.py",
+        "doctrine/growth.json",
+        "doctrine/knobs.json",
+        "doctrine/clocks.json",
+        ".github/workflows/product-manager.yml"
+      ],
+      "workflows": [
+        "product-manager.yml"
+      ]
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

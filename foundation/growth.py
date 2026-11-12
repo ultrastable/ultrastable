@@ -111,6 +111,8 @@ def check(root=REPO) -> list[str]:
         if k not in cfg:
             bad.append(f"{PATH}: missing {k}")
     for m in cfg.get("metrics", []):
+        if m.get("baseline") is None or not cfg.get("bank", {}).get(m.get("id")):
+            bad.append(f"metric {m.get('id')}: needs a baseline and at least one idea in the bank (the product manager files the next experiment from it)")
         if not m.get("trigger"):
             bad.append(f"metric {m.get('id')}: registered without a trigger (a metric is registered together with its trigger)")
     return bad
