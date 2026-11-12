@@ -194,6 +194,7 @@
   "composition",
   "self_modification"
  ],
+ "doc_consumption": {"id": "DOC-CONSUMED-1", "owner_date": "2026-11-12", "registry": "doctrine/doc-consumers.json", "check": "python3 -m foundation docs_audit --check", "rule": "every document has a consumer; a document that tells a person to act is a defect and becomes an automatic backlog item"},
  "lint": [
   {
    "id": "question-to-owner",

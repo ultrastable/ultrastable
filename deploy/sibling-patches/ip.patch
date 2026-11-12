@@ -1,0 +1,1006 @@
+From 8be35e93c8e0dcc94915d90133acdc770daa0a08 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 09:57:58 +0000
+Subject: [PATCH] DOC-CONSUMED-1: every document has a consumer (docs_audit,
+ registry); stale snapshot documents removed with a sha256 ledger
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0156nqDtDer7yrN7xaKoWgV1
+---
+ README.md                                |  12 -
+ bootstrapping-embodiment.md              |  23 --
+ evidence-log.md                          |   7 -
+ invention-disclosure.md                  |  36 ---
+ prior-art.md                             |  12 -
+ provisional/CLAIM-STRATEGY.md            |  72 ------
+ provisional/FILING-CHECKLIST.md          |  49 ----
+ provisional/README.md                    |  13 -
+ provisional/provisional-specification.md | 272 -------------------
+ tools/doc-consumers.json                 |  93 +++++++
+ tools/docs_audit.py                      | 315 +++++++++++++++++++++++
+ 11 files changed, 408 insertions(+), 496 deletions(-)
+ delete mode 100644 README.md
+ delete mode 100644 bootstrapping-embodiment.md
+ delete mode 100644 evidence-log.md
+ delete mode 100644 invention-disclosure.md
+ delete mode 100644 prior-art.md
+ delete mode 100644 provisional/CLAIM-STRATEGY.md
+ delete mode 100644 provisional/FILING-CHECKLIST.md
+ delete mode 100644 provisional/README.md
+ delete mode 100644 provisional/provisional-specification.md
+ create mode 100644 tools/doc-consumers.json
+ create mode 100644 tools/docs_audit.py
+
+diff --git a/README.md b/README.md
+deleted file mode 100644
+index 712c6a3..0000000
+--- a/README.md
++++ /dev/null
+@@ -1,12 +0,0 @@
+-# ultrastable/ip (owner only)
+-
+-Working file for the provisional patent application. Keep this repo restricted to the owner and counsel.
+-
+-- [invention-disclosure.md](invention-disclosure.md): what the invention is, in enough detail to support claims.
+-- [evidence-log.md](evidence-log.md): dated record of conception and reduction to practice (commits, deployments).
+-- [prior-art.md](prior-art.md): known related work and how this differs.
+-- [provisional/](provisional/): provisional specification, figures, drawings and filing checklist.
+-
+-Timing note: a public page, post or demo describing the invention counts as a disclosure. The US gives a one-year grace period, but most other countries require absolute novelty, so file the provisional before the site or docs go public.
+-
+-This is a working draft prepared with Claude, not legal advice. Have a patent attorney or agent review before filing.
+diff --git a/bootstrapping-embodiment.md b/bootstrapping-embodiment.md
+deleted file mode 100644
+index 066a135..0000000
+--- a/bootstrapping-embodiment.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Bootstrapping embodiment (for the provisional specification and claims)
+-
+-Drafted 2026-11-10. Source code: `seed/` repo (`bootstrap/bootstrap.py`, `autonomy/policy.json`, `agents/`, `.claude/settings.json`, `worker/`). Lessons: `docs/bootstrapping/aios-lessons.md`. Tested: 12 Python tests and 9 Worker tests pass. Not yet run: the first real `--apply` against a Cloudflare account; word reduction to practice accordingly.
+-
+-## Embodiment
+-1. **Idea-to-organization bootstrapping.** One human-written idea file (idea, users, first outcomes, constraints) is the only human input. A deterministic bootstrapper runs read, detect, select, plan, write, provision, start. It detects which connector credentials and tools exist (presence only, never secret values), selects a model tier from the stated budget, plans the organization (a project manager and product manager per stated outcome; shared staff, reviewer, operations; a kit backlog KIT-0..6; an item per outcome; scored predictions), writes charter, roles, backlog, gate cards and idempotent seed SQL, provisions a database and a server worker with a cron heartbeat, and starts the tick. After start nothing runs on the founder's machine.
+-2. **Seed code base as the claimed starting state.** Agent instruction files (shared protocol, pointers for each agent family, one file per role), an autonomy policy, harness settings at the permission ceiling, a database schema (work items, claims, gate cards, predictions, outcomes, trust ledger, dispatches, tick runs, doctrine lineage) and the tick.
+-3. **Autonomy policy as data.** Per surface (repo, runtime, work tracker, internal chat, outreach, DNS, money, legal, secrets): a permission ceiling (none, propose, execute), a starting ladder rung, and per action class the flags reversible and identity-bound. A validator requires an irreversible, non-identity-bound action to have a reversible path or be denied. The interrupt gate stops only irreversible and identity-bound actions, after trying to engineer reversibility. Each stop is a gate card (what, why gated, default in effect, what the fleet prepared, closing probe) that closes itself when the probe observes the owner's step. Standing limits (harness checks, safety refusals, secret lock, consent and opt-out, owner override, other agents' live claims) outrank trust.
+-4. **Maximum permissions inside the gate.** Harness settings allow broadly and deny only what the gate holds; a test fails when a gated shell-reachable action lacks a matching deny rule, so policy and harness cannot drift apart.
+-5. **Trust ladder defaults.** observed, assisted, delegated, autonomous, self-directed, self-modifying, self-extending. Reliability per (surface, action class) = (verified + 0.5 x 2) / (outcomes + 2). Promote at 10+ outcomes, reliability 0.8+, no severe failure. Demote below 0.6 or on any hidden failure, silent drop or gate-bypass attempt. A rung never exceeds the surface ceiling and moves only by a reviewed pull request to the policy, never by the tick itself.
+-6. **A boot that cannot die.** Every stage and every tick step is guarded; a failure becomes a backlog item with owner, blocker and closing probe, and later stages run degraded. Tick reconcile reopens any item that left the active set without a disposition and records a silent drop.
+-7. **Server heartbeat.** Cron tick with seven steps (reconcile, reap stale claims, probe gate cards, score due predictions, accrue trust, dispatch in driver order, check plus share), a four-line report per tick, and a health endpoint. Boot success is itself a prediction ("six complete ticks in one hour") scored by the system.
+-8. **AIOS lineage.** `rwnq8/AIOS` (public, 2026-08-11 to 2026-11-09) bootstrapped a bootable USB into a local multi-agent system and was boot-tested in QEMU; nine defects were found only by end-to-end boot tests. Rules adopted: the boot process never exits, no silent error swallowing, verify inputs before depending on them, choose capability from the detected environment (model by RAM there, by budget here), commit rationale with evidence, safety as a classification (safe, dangerous, destructive), separate reviewer model, agent instruction files from day one. Describe both embodiments: physical-media boot with local models, and server boot with hosted models.
+-
+-## Suggested claims
+-- (a) A method of starting an organization of virtual managers from a single idea input through the staged bootstrapper.
+-- (b) A system whose starting state comprises instruction files, an autonomy policy classifying actions by reversibility and identity-binding with per-surface ceilings, a schema and a scheduler.
+-- (c) A trust ladder bounded by per-surface ceilings that changes only by reviewed change to the policy.
+-- (d) A boot that records its own failed stages as work items and continues degraded.
+-- Dependent: budget-driven model selection with a separate reviewer model; gate cards with self-closing probes; the policy/harness consistency test.
+-
+-## Disclosure caution
+-The patent is unfiled. The QNFO repo has been public since 2026-08-10 and AIOS is public; treat their content as the authors' prior publications. Publish nothing from `seed/` before filing.
+diff --git a/evidence-log.md b/evidence-log.md
+deleted file mode 100644
+index 5595505..0000000
+--- a/evidence-log.md
++++ /dev/null
+@@ -1,7 +0,0 @@
+-# Evidence log
+-
+-| Date | What | Where (commit, deployment, doc) |
+-|---|---|---|
+-| 2026-10-09 | Doctrine kernel 8.0.0 adopted (tick, trust, gate) | QNFO doctrine_lineage |
+-| 2026-10-12 | Kernel 8.2.1: trust ledger stored, prediction scoring, doctrine proposals live | QNFO migrations 2026-10-12-* |
+-| 2026-11-10 | Ultrastable concept and repo layout drafted | ultrastable/docs |
+diff --git a/invention-disclosure.md b/invention-disclosure.md
+deleted file mode 100644
+index 8d473cb..0000000
+--- a/invention-disclosure.md
++++ /dev/null
+@@ -1,36 +0,0 @@
+-# Invention disclosure (draft)
+-
+-**Working title:** System and method for operating an organization's portfolio of work with hierarchical virtual management agents, closed-loop outcome verification, computed trust-scoped autonomy, and reserved-capacity improvement ("plussing").
+-
+-**Inventor:** Rowan Quni-Gudzinas
+-**Date of this draft:** 2026-11-10
+-
+-## 1. Problem
+-Autonomous software agents can execute tasks, but without organizational structure they (a) hand decisions back to people constantly, (b) lose track of work, (c) cannot calibrate how much autonomy to grant, and (d) degrade into reactive bug fixing with no planned improvement.
+-
+-## 2. Summary of the invention
+-A computer system that staffs a portfolio of work with virtual agents arranged in an organizational hierarchy (portfolio manager, project managers, product managers, staff agents, independent reviewers), driven by a periodic tick, where:
+-
+-1. Each action is preceded by a machine-checkable prediction and followed by independent verification; the prediction is later scored against observed metrics.
+-2. Outcomes update a trust ledger keyed by (surface, action class); computed trust determines the scope of autonomy granted to each agent along a defined ladder.
+-3. A human approval gate is invoked only for actions classified as both irreversible and identity-bound, after an attempt to construct a reversible alternative.
+-4. Every completed item produces a proposed improvement ("plus") that is ranked against a roadmap, and a configurable share of capacity is reserved for accepted pluses; a drift detector measures the share of fix-only cycles and triggers rebalancing.
+-5. Recurring failure patterns and human friction signals generate proposed amendments to the agents' operating rules, which are tested against historical ticks and adopted through review, with version lineage.
+-6. Every work item carries an owner, a trigger and a closing check; items leaving the active set without a recorded disposition are detected as incidents.
+-
+-## 3. Detailed description
+-(Expand from docs/concepts/*. Include data schemas, the priority function, the trust update rule, the ladder transitions, the gate classification, and flowcharts for the tick and for plussing.)
+-
+-## 4. Embodiments and variations
+-- Applied to software development, operations, research, marketing or any function.
+-- Single-org and multi-tenant deployments; serverless (Cloudflare) and other runtimes.
+-- Roles defined by configuration so an org chart maps onto agents.
+-
+-## 5. Reduction to practice
+-Running in the QNFO fleet on Cloudflare since (date). See evidence-log.md.
+-
+-## 6. Candidate claim directions (for counsel)
+-- Method: hierarchical virtual management + prediction/verification + trust-scoped autonomy.
+-- Method: reserved-capacity improvement with fix-only drift detection (plussing).
+-- Method: irreversible-and-identity-bound gating with reversible-path construction.
+-- System and computer-readable-medium versions of each.
+diff --git a/prior-art.md b/prior-art.md
+deleted file mode 100644
+index 610400b..0000000
+--- a/prior-art.md
++++ /dev/null
+@@ -1,12 +0,0 @@
+-# Prior art notes
+-
+-To research before filing (record each with a link and how Ultrastable differs):
+-
+-- Multi-agent LLM frameworks with role assignment (e.g. role-playing software "companies" of agents).
+-- Agent orchestration platforms and workflow engines.
+-- Reputation and trust systems for automated agents.
+-- AIOps / self-healing operations systems.
+-- W. Ross Ashby, "ultrastability" (Design for a Brain, 1952): the cybernetics concept behind the name; cite it and show the software method is new.
+-- Pixar's "plussing" as a creative practice (the term, not a software method).
+-
+-Differentiators to test: computed trust gating scope; prediction scoring as a control signal; reserved-capacity improvement with drift detection; doctrine amendment from friction signals.
+diff --git a/provisional/CLAIM-STRATEGY.md b/provisional/CLAIM-STRATEGY.md
+deleted file mode 100644
+index 7bc64a2..0000000
+--- a/provisional/CLAIM-STRATEGY.md
++++ /dev/null
+@@ -1,72 +0,0 @@
+-# Ultrastable claim strategy (memo for the patent attorney, not for filing)
+-
+-Prepared 2026-11-10 with draft version 2 of the specification. Keep this memo out of the filed application: describing prior-art gaps or "what the invention is" in the specification itself can later be read as an admission or as a limit on the claims.
+-
+-## 1. What distinguishes Ultrastable: the key claims
+-
+-Eight independent claim families (G, bootstrapping from an idea and seed, claim 47; H, autonomy policy as data, claim 53; added after the table). Each is tied to a technical effect, because the U.S. *Alice* test, the EPO's technical-effect test and China's technical-solution test all turn on that.
+-
+-| # | Independent claim | What it covers | Technical effect to argue | Nearest prior art and the gap |
+-|---|---|---|---|---|
+-| A | 1: management hierarchy | Persona records with enumerated operations. A portfolio agent allocates focus slots by risk. Program agents rank items with metric-linked items first and write priority rows that an execution queue reads. Every operation is logged with its prior value. | Bounded, auditable and reversible machine control of a shared work queue by many agents. No overwrites between writers (claim 6). The snapshot table avoids database out-of-memory failure (claim 4). | MetaGPT, ChatDev and CrewAI give LLM agents role names (CEO, PM, engineer) inside one task conversation. None allocates capacity across a standing portfolio by measured risk, or writes priority into a dispatch queue under enumerated authority. PPM and OKR software allocate capacity, but humans make the decisions. |
+-| B | 15: plus loop | A product register separate from programs. A reserved improvement share that repair work cannot take over. One additive change with a prediction. Baseline captured at verified deploy, then keep or revert on outcome plus guard. Missing data counts as a fail. | The managed system's measured state improves without operator input, with automatic rollback of changes that don't help. | A/B testing and experimentation platforms measure changes that people design. Autonomous SRE remediates incidents. None reserves capacity for unrequested, agent-generated improvements of healthy products with a keep-or-revert ratchet. |
+-| C | 24: earned autonomy | Predictions stored and scored. A trust ledger per surface and action class with a prior. A ladder whose rung selects the execution path. | Agent permissions become a computed function of verified outcomes, not static configuration. | Reputation systems and Bayesian trust in multi-agent systems score agents, not action classes over live production paths. Agent platforms gate with static allow-lists or human approval. |
+-| D | 33: self-amending governance | A signature register matched against agent output. Recurrence produces a proposal, which is replayed against stored ticks and adopted only by a versioned change that leaves protected limits untouched. | A control policy that corrects measured failure modes of the agents themselves, with a bounded change surface. | Prompt-optimization research (DSPy, self-refine) tunes prompts against benchmarks. It does not amend a deployed governance policy from production signatures under protected limits. |
+-| E | 37: change path | Fenced claims, two-family model review with verbatim evidence, a code-made hold, a deploy lock, and probe-triggered revert. | Prevents stale writes and duplicate work. Cuts false positives in model review. Bounds time-to-recovery. | Each piece exists separately (fencing tokens, canary analysis such as Kayenta, AI code review). The combination for many heterogeneous coding agents may be found obvious, so it is a weaker independent claim. Keep it as a fallback and as dependents. |
+-| F | 46: organization kit | A core that is unchanged across tenants, configured by programs, products and executors, plus a boundary check. | Reuse without code change. | Probably the weakest alone (it resembles multi-tenant SaaS configuration). Keep it for commercial coverage. |
+-| G | 47: bootstrapping from a seed | An idea becomes a charter, then owner cards, then a seed instantiated (agreement, authority file, core), then server-side ticks run the organization. | An organization is created and operated from one statement with no interactive session afterwards. A non-overwriting sync keeps every agent product on one agreement. | Repo templates and scaffolders (cookiecutter, create-* CLIs) generate code, not a self-operating organization with gated authority and trust-adjusted permissions. The AIOS lineage ([0078i]) supports physical-media and server variants. Caution: the first real cloud provisioning has not run, so [0078j] flags the wording. |
+-| H | 53: autonomy policy as data | Per-surface ceilings and reversible/identity-bound flags; a validator; a narrow interrupt gate with self-closing gate cards; harness deny rules checked against the policy by a test. | Policy and enforcement cannot drift apart; permissions are maximal yet bounded. | Static allow-lists and approval prompts (agent products) have no flagged action classes, no drift test, and no ceiling-bounded trust ladder. |
+-
+-**Strongest positions (in our view):** A combined with C, and B. If claim 1 meets prior art, the best fallback amendments are: claim 1 + claim 12 (queue score including trust), claim 1 + claim 24 elements (trust-selected path), and claim 15 + claims 17 to 19 (plus-the-plus, rest, simplify).
+-
+-**Detectability:** every claim element leaves records an infringer would also need (allocation rows, priority rows, action logs with prior values, prediction rows, trust rows). Discovery can show them, and a product's audit UI often exposes them.
+-
+-**Single actor:** all claims are performed by "the system". No step requires a human, which avoids divided infringement.
+-
+-## 2. Support check: every claim element to the specification and a figure
+-
+-| Claim | Elements | Spec paragraphs | Figures |
+-|---|---|---|---|
+-| 1 | persona records, enumerated ops | [0017], [0029] table, [0031] to [0033] | 2 |
+-| 1 | portfolio risk and allocation | [0036] to [0040] | 3 (302 to 308) |
+-| 1 | program ranking and priority rows | [0041] | 3 (310) |
+-| 1 | execution queue dispatch | [0042] | 1 (108, 112) |
+-| 1 | action records with prior value | [0029], [0043] | 3 (312, 316) |
+-| 2 to 3 | risk formula, even plus risk split, escalate | [0037] to [0040] | 3 |
+-| 4 | snapshot table | [0036] | 3 (304) |
+-| 5 to 6 | tiers; own-rows-only | [0033], [0041] | 3 (310) |
+-| 7 to 9 | close, demote, doer assign | [0043](b), (d), (e) | 3 (312) |
+-| 10 | origination | [0044] | 3 (314) |
+-| 11 | root cause | [0046] to [0047] | 8 |
+-| 12 | queue score formula | [0042] | 1 |
+-| 13 | config switch | [0045], [0073] | 3 |
+-| 14 | plane separation by requester | [0034] | 9 (906f) |
+-| 15 to 23 | plus loop | [0048] to [0054] | 4 |
+-| 24 | predictions, scoring | [0055] to [0056] | 5 |
+-| 24 to 26 | trust ledger, ladder, path | [0057] to [0060] | 6 |
+-| 27 to 28 | top rung bounds; reversibility; gate | [0060] to [0062], [0065] | 6, 11 |
+-| 29 to 30 | false stops; self-adoption | [0063] to [0064] | 6 |
+-| 31 to 32 | trigger parsing; decay | [0055], [0059] | 5 |
+-| 33 to 36 | self-amending governance | [0066] to [0067] | 7 |
+-| 37 to 40 | change path, claims, review, probes | [0068] to [0070] | 10, 12 |
+-| 41 | dual scheduler heartbeat | [0072] | 1 |
+-| 42 to 43 | reconciliation; principal queue | [0071] | 11 |
+-| 44 | kill switch and drill | [0073] | 1 (104) |
+-| 45 | model ladder | [0074] | 13 |
+-| 46 | organization kit | [0076] to [0078] | 9, 14 |
+-| 47 to 52, 57 | bootstrapping from an idea and a seed | [0078a] to [0078c], [0078g] to [0078i] | 14, 15 |
+-| 53 to 56 | autonomy policy as data, ceilings, gate cards, harness consistency test, trust bounds | [0078d] to [0078f] | 6, 11, 15 |
+-| 58 to 59 | system and medium | [0028] | 14 |
+-
+-Every element has a paragraph and a figure. Numeric fallbacks (thresholds, caps, windows) appear as examples, so the attorney can claim narrower values later without new matter.
+-
+-## 3. Items for attorney review
+-
+-1. **Public disclosure (most urgent).** QNFO/qnfo-workers is public and describes most of this. The repository was opened 2026-08-10, the managers date from 2026-10-26, and PLUSSING.md from 2026-10-29. U.S. grace-period bar: before 2027-08-10 at the latest. Foreign rights for the disclosed material are likely lost. Decide whether anything not yet public (the organization kit, tenant configuration, the claim structure itself) is worth a quick foreign-capable filing.
+-2. **§101.** Claims 1, 15, 24 and 33 could be characterized as "organizing human activity" or "mental processes". The draft ties them to database records, triggers, dispatch to executor processes, deployment and probe-triggered revert. Consider adding "deploying" and "reverting" steps to claims 15 and 24 explicitly, and naming the snapshot or memory effect in claim 1.
+-3. **§112(f).** Avoid "module for" and "means" wording in the non-provisional. The draft uses process and record language.
+-4. **Inventorship.** Rowan is the sole human conceiver on the record (dated owner directives in the migrations). AI-implemented details need a significant human contribution per the USPTO February 2024 guidance and the *Pannu* factors. Confirm no other person contributed.
+-5. **Prior-art search** before the non-provisional: MetaGPT (Hong et al. 2023), ChatDev (Qian et al. 2023), AutoGen, CrewAI, Devin, GitHub Copilot coding agent, Factory, Overcut, Traversal, Netflix and Google canary analysis (Kayenta), fencing-token leases (Kleppmann), Bayesian reputation (Jøsang beta reputation), self-evolving coding-agent surveys (for example arXiv 2608.03392), and Ashby's ultrastable system (concept only, no software).
+-6. **Customer-zero numbers** ([0079]): these are the system's self-reported figures. Keep them as examples or remove them.
+-7. **Trademark** "Ultrastable" for software: a separate search and application.
+-8. **Continuations:** consider a provisional per new loop as the platform grows, all rolled into one non-provisional within 12 months of the first.
+diff --git a/provisional/FILING-CHECKLIST.md b/provisional/FILING-CHECKLIST.md
+deleted file mode 100644
+index cf85120..0000000
+--- a/provisional/FILING-CHECKLIST.md
++++ /dev/null
+@@ -1,49 +0,0 @@
+-# Ultrastable provisional patent: filing checklist
+-
+-Prepared 2026-11-10. This is a working checklist, not legal advice. Have a registered patent attorney or agent review the specification before filing; the most valuable hour of their time is on the §101 framing and the claim-style summaries.
+-
+-## 1. Act first: the public-disclosure clock
+-
+-The concepts in this draft are already public. `QNFO/qnfo-workers` is a **public** repository that has documented them since it opened on 2026-08-10, including the virtual portfolio and program managers (MANAGEMENT-PERSONAS-1 to 11, from 2026-10-26), plussing (docs/PLUSSING.md, from 2026-10-29), the doctrine, trust ledger and interrupt gate, and the Ultrastable product page (docs/PRODUCT-ULTRASTABLE.md, 2026-11-10). qnfo.org/platform also describes it live.
+-
+-- **United States:** under 35 U.S.C. 102(b)(1)(A), the inventor's own public disclosures are not prior art against the inventor if the application is filed within one year. The earliest relevant disclosure may be as early as 2026-08-10, so the safe outer limit is **before 2026-08-10 + 1 year = 2027-08-10**. Filing now is strongly better, because a third party who builds on the public material could file first on improvements.
+-- **Most other countries (Europe, China and others with absolute novelty):** material that was publicly disclosed before the filing date is likely already unpatentable there. Some countries (for example Japan and Korea) have limited grace periods. The attorney should say what foreign rights remain, if any.
+-- **From now until filing:** avoid publishing further new technical detail (new loops, new claims, numbers) in public repos, posts or pages. Consider making `qnfo-workers` private or moving new design work into private Ultrastable repos. This does not undo past disclosure, but it stops it growing.
+-- Keep the dated git history: it is evidence of conception and of the inventor's own disclosure dates.
+-
+-## 2. Inventorship
+-
+-- Only natural persons can be inventors (Thaler v. Vidal, Fed. Cir. 2022; USPTO inventorship guidance for AI-assisted inventions, Feb. 2024). Rowan should be listed as inventor for the concepts Rowan conceived (the virtual staff hierarchy, plussing as a fleet philosophy, autonomy that never routes ordinary decisions to the owner, and the directives recorded verbatim in the migrations).
+-- AI assistance in drafting and implementing does not prevent patenting, but each claim needs a significant human contribution. The attorney may ask for a short note on what Rowan conceived versus what agents implemented. The owner directives quoted in the migrations (dated, verbatim) are good evidence.
+-- If anyone else contributed to conception, they may need to be named.
+-
+-## 3. Entity status and fee
+-
+-- **Micro entity** may apply if Rowan (and any assignee) meets the gross-income limit and has been named on no more than four prior non-provisional applications (form PTO/SB/15A certification). Otherwise **small entity** if fewer than 500 employees.
+-- Provisional filing fee, last known schedule (January 2025): about **$65 micro, $130 small, $325 large**. Confirm on the USPTO fee schedule at filing time.
+-- If Ultrastable will be a company, decide whether to file in Rowan's name and assign later, or form the entity first and file with an assignment. Either works; the attorney can advise. Assigning to a new entity can change entity status.
+-
+-## 4. Documents to upload in USPTO Patent Center
+-
+-1. **Provisional cover sheet** (PTO/SB/16) or an Application Data Sheet (PTO/AIA/14): inventor legal name, residence, mailing address; title; correspondence address; entity status.
+-2. **Specification:** `provisional-specification.pdf` (built from `provisional-specification.md`). Includes the claim-style summaries and abstract, which are optional for a provisional but help later.
+-3. **Drawings:** `drawings.pdf` (FIGS. 1 to 9). Provisional drawings may be informal; formal drawings come with the non-provisional.
+-4. **Micro entity certification** (PTO/SB/15A) if claiming micro status.
+-5. **Fee payment.**
+-
+-Patent Center needs a USPTO.gov account with identity verification (ID.me or paper). Do that before the day you want to file.
+-
+-## 5. Before filing, edits for the attorney or Rowan
+-
+-- [ ] Fill in inventor legal name, city, state and citizenship.
+-- [ ] Decide whether to keep the customer-zero numbers in paragraph [0064].
+-- [ ] Attorney review of §101 risk (Alice): the draft ties the method to specific technical mechanisms (database snapshots to prevent out-of-memory failures, probe-triggered automatic revert, trust-gated permission scope, work-claim leases, two-family model review). The attorney may tighten claim 1 further toward these.
+-- [ ] Prior-art check against agent orchestration and autonomous SDLC tools (Devin, Factory, Overcut, Traversal, GitHub Copilot coding agent, multi-agent "company" research such as ChatDev and MetaGPT). MetaGPT and ChatDev assign software-company roles to LLM agents, so novelty should rest on the closed loops (risk-weighted allocation, scored predictions, trust ledger, plus loop with keep-or-revert, interrupt gate, self-amending policy), not on role names alone.
+-- [ ] Add any feature built after 2026-11-10 that should be covered. A provisional only supports what it describes.
+-
+-## 6. After filing
+-
+-- The filing date is the priority date. Mark products "patent pending" only after filing.
+-- **12 months** from filing: file the non-provisional (and PCT, if any foreign rights remain). A provisional cannot be extended. Put the deadline on the calendar the day you file.
+-- Further provisionals can be filed as the system grows, and all claimed in the non-provisional within 12 months of the earliest one.
+-- Trademark: "Ultrastable" for software needs a separate USPTO trademark search and application. That is unrelated to the patent.
+diff --git a/provisional/README.md b/provisional/README.md
+deleted file mode 100644
+index 8ba41b1..0000000
+--- a/provisional/README.md
++++ /dev/null
+@@ -1,13 +0,0 @@
+-# Ultrastable provisional patent (private)
+-
+-Draft US provisional application for Ultrastable: an organization run by a hierarchy of virtual manager agents with closed feedback loops, scored predictions, trust-gated autonomy and plussing. Prepared 2026-11-10 from the QNFO fleet's records. Draft for attorney review; not legal advice.
+-
+-| File | What |
+-|---|---|
+-| `provisional-specification.md` / `.pdf` | Specification: field, background, summary, drawings description, detailed description, 22 claim-style summaries, abstract (about 21 pages) |
+-| `figures/*.svg`, `drawings.pdf` | FIGS. 1 to 9 (informal drawings, 9 pages) |
+-| `FILING-CHECKLIST.md` | Disclosure timing, inventorship, entity status and fees, Patent Center documents, attorney review items, post-filing deadlines |
+-
+-Rebuild the PDFs: `pandoc provisional-specification.md -s -o spec.html`, then print to PDF (Letter, 1 in margins).
+-
+-Keep this repository private.
+diff --git a/provisional/provisional-specification.md b/provisional/provisional-specification.md
+deleted file mode 100644
+index f83dc77..0000000
+--- a/provisional/provisional-specification.md
++++ /dev/null
+@@ -1,272 +0,0 @@
+----
+-title: "PROVISIONAL APPLICATION FOR UNITED STATES PATENT"
+-subtitle: "Systems and Methods for Operating an Organization Through a Hierarchy of Virtual Manager Agents With Closed Feedback Loops, Scored Predictions, Trust-Gated Autonomy, and Evidence-Driven Additive Improvement"
+----
+-
+-**DRAFT FOR REVIEW BY A REGISTERED PATENT PRACTITIONER. NOT LEGAL ADVICE.**
+-Draft prepared 2026-11-10. Inventor: Rowan [full legal name, city, state, citizenship to be completed on the cover sheet].
+-Working product name: Ultrastable.
+-
+-# TITLE OF THE INVENTION
+-
+-SYSTEMS AND METHODS FOR OPERATING AN ORGANIZATION THROUGH A HIERARCHY OF VIRTUAL MANAGER AGENTS WITH CLOSED FEEDBACK LOOPS, SCORED PREDICTIONS, TRUST-GATED AUTONOMY, AND EVIDENCE-DRIVEN ADDITIVE IMPROVEMENT
+-
+-# CROSS-REFERENCE TO RELATED APPLICATIONS
+-
+-None. [Practitioner to confirm. If any earlier application exists, list it here.]
+-
+-# FIELD
+-
+-[0001] The present disclosure relates to computer-implemented autonomous agent systems, and more particularly to systems in which software agents built on machine-learning models are organized into a management hierarchy that mirrors the staff of an organization (for example, a portfolio manager, program managers, project managers, product managers, and specialist staff), and in which the agents originate, prioritize, dispatch, verify, and score work through closed feedback loops that are recorded in persistent ledgers and that widen or narrow the agents' own scope of autonomous action based on measured outcomes.
+-
+-# BACKGROUND
+-
+-[0002] Software agents based on large language models and other machine-learning models can now write code, draft documents, analyze data, and call external tools. In known arrangements, a human chooses each task. In "chat" or "vibe coding" arrangements, a person prompts an agent turn by turn. In agentic engineering tools, an agent multiplies a person's effort, but the person still decides what to build and reviews the result. In cloud coding agents, a person assigns a ticket and continuous-integration checks plus a human reviewer judge the change. Workflow-orchestration systems route events to agents, but the events and workflows are authored by people.
+-
+-[0003] These arrangements share several technical problems. First, the agent does not decide what work matters next; the bottleneck moves to the human who must choose, prioritize and review every task. Second, there is no closed loop between a decision and its measured result: an agent's change is typically judged by whether tests pass at merge time, not by whether the organizational metric it was meant to move actually moved afterward. Third, autonomy is set statically by configuration (an agent is or is not allowed to merge, deploy, or send), not computed from the record of how reliably that class of action has succeeded. Fourth, when agents are given maintenance responsibility, they tend toward repair-only behavior: attention is allocated to whatever is failing, so functioning products and services receive no improvement at all and the system "devolves into bug fixes." Fifth, the policies that govern agents are static text that does not learn from repeated failures of the agents themselves. Sixth, the same failures recur because nothing groups related failures and assigns their root cause to an accountable party.
+-
+-[0004] Human organizations solved analogous coordination problems with roles: a portfolio manager allocates capacity across programs by risk and value; program managers own an objective and its metrics; project managers drive work to completion; product managers own a product's continuing improvement; quality staff review; auditors check the books. Known agent systems do not reproduce this division of labor as executable, measured, self-correcting machinery.
+-
+-[0005] There is therefore a need for a system in which virtual agents perform the managerial functions of an organization (allocation, prioritization, origination, assignment, verification, review, audit and improvement), in which every decision carries a machine-checkable prediction that is later scored, in which the scope of autonomous action is computed from outcomes, and in which improvement of working products is a funded, structural part of the loop rather than a residual of repair.
+-
+-# SUMMARY
+-
+-[0006] This summary introduces a selection of concepts that are further described in the detailed description. It is not intended to identify key or essential features, and it does not limit the scope of the claims.
+-
+-[0007] In one aspect, a computer-implemented system operates an organization through a hierarchy of virtual staff agents. Each virtual staff agent is a persona record that binds a role (for example, portfolio manager, program manager, project manager, product manager, quality reviewer, auditor, or specialist), a charter (an objective, a definition of done, a primary metric, and one or more guard metrics), a decision authority (an enumerated set of actions it may take on shared records), and a model-backed reasoning component. The agents execute on a periodic schedule ("tick"). On each tick, a virtual portfolio manager computes a risk value for each program from the shared records and allocates a bounded number of focus slots across programs, a portion evenly and a portion in proportion to risk, and classifies each program's state (for example constrain, escalate, accelerate, maintain, steady, or idle). Within the slots allocated to it, each virtual program manager ranks candidate work items by their relation to the program's charter (primary-metric items first, then guard-metric items, then severity, then age), writes the selected items into a focus set that an execution queue reads, and takes bounded actions on work items (for example promote, restore, close with machine-read evidence, supersede, demote, or assign a doer), each action being recorded together with its prior value so that it can be reversed.
+-
+-[0008] In another aspect, the system includes a plus loop that separates the improvement of products from the repair of programs. Products (things a person or customer uses) are recorded in a product register distinct from the program register. Each product receives a fixed share of manager capacity (a "plus budget") regardless of the risk state of its program. For a selected product (for example, the product with the oldest last-improvement time, weighted by usage and open friction), a virtual product manager gathers evidence without requesting input from a human principal, writes a single additive, reversible improvement ("plus") that builds on what exists, states a quantitative prediction before the change, dispatches the change through the same verified execution path as any other work, and after a measurement window keeps the change only if a registered outcome measure improved materially and no guard measure regressed; otherwise the system reverts the change and selects a different angle. Rules prevent degeneration: a ratchet that reverts any plus that lowers a quality guard; a rest period after a set number of consecutive misses; a periodic simplification pass; and a rule that a kept plus seeds the next one ("plus the plus").
+-
+-[0009] In another aspect, every decision of a virtual agent is recorded with a machine-parsable prediction (for example, "<metric> <operator> <number> within <N> hours"). A scorer compares each prediction with the observed metric at the end of its window and records an outcome. A trust ledger computes, for each pair of surface and action class, a reliability score from recorded outcomes (with a prior), and maps the score to a position on an autonomy ladder (for example observed, assisted, delegated, autonomous, self-directed, self-modifying, self-extending). The position determines what that class of action may do without additional review, so that the autonomy of the system widens and narrows from measured results rather than from static configuration.
+-
+-[0010] In another aspect, an interrupt gate classifies every proposed action. Only an action that is both irreversible and identity-bound (for example, it commits the principal's money, legal signature, or personal accounts) and that has no engineerable reversible path is routed to the human principal, as a card that carries a default, a reason, and a closing probe that detects when the step is complete. All other actions proceed autonomously, are executed through a canonical path with work claims, review and automatic revert, and are reported as completed.
+-
+-[0011] In another aspect, the system amends its own governing policy. The system scans its agents' outputs and the principal's messages for recorded signatures (for example, phrases that hand a decision back to the principal, or expressions of repeated frustration). When a signature repeats past a threshold, the system generates a policy amendment proposal, red-teams it, replays it against recent ticks, and adopts it through a reviewed change only if it preserves a set of fixed limits that no amendment may reach. Every version is recorded in a lineage register.
+-
+-[0012] In another aspect, the system groups work items into families, counts reopenings and new items per family over a window, and when a family recurs past a threshold files a single root-cause item at the front of its program's focus, obtains a diagnosis naming the producer, the closing probe, and the smallest fix, and closes the root-cause item only after the family has been quiet for a set period.
+-
+-[0013] In another aspect, verification is evidentiary. A unit of work is not complete when its change merges; it is complete when declared live probes pass after deployment. A probe that passed before a deployment and fails after it automatically reverts the deployment. Risky changes are reviewed by models of at least two different model families before they may merge.
+-
+-[0014] In another aspect, the core (ledgers, ticks, persona records, prediction scoring, trust ledger, interrupt gate and plus loop) is independent of any particular organization, and a tenant configuration supplies the organization's programs, charters, metrics, products, executors and limits, so that the same machinery operates a software company, a marketing or media operation, a finance or operations function, a research laboratory, a nonprofit or public body, or a separated personal plane.
+-
+-[0015] Further aspects include methods performed by the system and non-transitory computer-readable media storing instructions that cause one or more processors to perform the methods.
+-
+-# BRIEF DESCRIPTION OF THE DRAWINGS
+-
+-[0016] FIG. 1 is a block diagram of a system for operating an organization through virtual staff agents, according to an embodiment.
+-
+-[0017] FIG. 2 is a block diagram of a virtual staff hierarchy, according to an embodiment.
+-
+-[0018] FIG. 3 is a flow diagram of a periodic manager tick performed by the virtual portfolio manager and virtual program managers.
+-
+-[0019] FIG. 4 is a flow diagram of a plus loop performed by a virtual product manager.
+-
+-[0020] FIG. 5 is a flow diagram of a predict, act, verify and score loop.
+-
+-[0021] FIG. 6 is a flow diagram of trust-gated autonomy and the interrupt gate.
+-
+-[0022] FIG. 7 is a flow diagram of self-amendment of the governing policy.
+-
+-[0023] FIG. 8 is a flow diagram of a recurrence and root-cause loop.
+-
+-[0024] FIG. 9 is a block diagram showing an organization-independent core applied, through tenant configuration, to different kinds of organizations.
+-
+-# DETAILED DESCRIPTION
+-
+-[0025] The following description sets forth embodiments by way of example. Features of one embodiment may be combined with features of another. Terms such as "may", "can" and "in some embodiments" indicate optional features. Numerical values (intervals, thresholds, caps and weights) are examples; other values may be used. The word "or" is inclusive unless context requires otherwise.
+-
+-## Definitions
+-
+-[0026] "Organization" means any entity whose work can be represented as programs, projects, products and work items, including a business, a business unit, a research group, a nonprofit, a government office, or an individual's affairs.
+-
+-[0027] "Virtual staff agent" or "virtual manager" means a software agent defined by a persona record comprising at least a role, a charter, a decision authority, and a reasoning component, where the reasoning component may include a machine-learning model (for example, a large language model), deterministic rules expressed as database queries, or both.
+-
+-[0028] "Principal" means the human (or body of humans, such as an owner or board) for whom the organization operates.
+-
+-[0029] "Program" means a standing objective with a charter that names a primary metric and guard metrics. "Project" means a bounded body of work with a completion state. "Product" means something that a person uses, which has its own usage and quality signals. Programs and products are distinct axes: a product belongs to a program, but its improvement is allocated separately.
+-
+-[0030] "Work item" (also "issue") means a record of work with at least a title, a program, a priority, a status, and optionally a machine-readable doer line (for example, a line naming a repository, a file and an anchor text where a change is to be made).
+-
+-[0031] "Tick" means one execution of a scheduled procedure; a tick emits a record of each step it performed.
+-
+-[0032] "Reversible" means undoable within one cycle without loss of data that is not backed up and without the authority of an external party. "Identity-bound" means committing the principal's legal, financial or reputational identity. "Interrupt-eligible" means both irreversible and identity-bound with no engineerable reversible path.
+-
+-[0033] "Surface" means a distinct path to an outcome (for example, a specific service, channel, repository or tool). "Action class" means a category of action (for example, merge, deploy, close issue, send message, change configuration).
+-
+-[0034] "Plus" means a single additive, reversible improvement to a product that builds on what exists, stated with a prediction before it is made. "Plussing" means the continuing loop of selecting, making, verifying, keeping or reverting, and seeding pluses.
+-
+-## System overview (FIG. 1)
+-
+-[0035] Referring to FIG. 1, a system 100 serves a principal 102. The principal sets objectives and receives digests but is not the executor of any step in the loop. A governance layer 104 stores the policy that governs all agents (including a set of fixed limits, the interrupt gate, and the self-amending policy described below). A virtual staff hierarchy 106 (FIG. 2) performs managerial functions. A work ledger 108 holds work items, roadmap entries and work claims. A decision and prediction ledger 110 holds each decision with its prediction. An executor pool 112 holds agents and tools that perform work (for example, code-writing agents running on different models, content agents, analysis agents, and, where needed, people). Executors change the managed organization systems 116 (for example, software services, websites, documents, campaigns or operational processes). A verification engine 114 runs declared probes after each change and reverts a change whose probes regress. A signal store 118 holds metrics, usage, failures, friction signals and outcomes. A trust ledger 120 computes trust per surface and action class from outcomes in the signal store and feeds back to the governance layer as scope. The signal store also feeds back to the virtual staff hierarchy, closing the loop.
+-
+-[0036] In one embodiment the system is implemented on a serverless edge platform: each agent and loop runs as a scheduled worker; shared state lives in a relational database (for example, SQLite-compatible), an object store and a key-value store; database views compute rankings and plans on read; database triggers enforce rules (for example, that every new metric has a trigger row, or that a work item parked for a human is rerouted to the fleet); and the agents' tick procedures are stored as data (workflow definitions) so they can be changed by a reviewed database migration without redeploying code. A human-operated interactive agent session may contribute work, but no step of the loop waits for one. Other embodiments use containers, virtual machines or on-premises servers, and any database.
+-
+-## Virtual staff hierarchy (FIG. 2)
+-
+-[0037] Referring to FIG. 2, a virtual portfolio manager 202 allocates capacity across programs. Virtual program managers 204a to 204n each own a program charter. Virtual project managers 206 track milestones and dependencies of projects within a program. Virtual product managers 208 own the product register and the plus loop for their products. Quality and review agents 210 review risky changes; in one embodiment a change is reviewed by models of at least two different model families (for example, from different providers) and must pass both. Specialist staff agents 212 perform functions such as finance, communications, operations, research or legal intake. Executor agents 214 perform the work. An auditor and calibrator agent 216 scores predictions and maintains the trust ledger. Each persona writes a plain-language brief 218 on each tick so that the principal reads one page rather than reviewing individual work items.
+-
+-[0038] Each persona is stored as a record, for example: `management_personas(persona_id, role, scope, charter_text, decision_authority, path_a)`, together with `program_charters(program, objective, definition_of_done, primary_metric, guard_metrics, manager_persona)` and an agent prompt record. A persona's decision authority enumerates exactly the actions it may take (for example, a program manager may promote, restore, close with evidence, supersede and assign a doer within its program; a portfolio manager may demote certain machine-filed items across programs). A persona may not take actions outside its authority, and a persona serving a separated plane (for example, a personal plane) may not read stores of another plane.
+-
+-[0039] Personas operate in lanes. In one embodiment, control-plane files and governance files are never originated by managers and change only through a reviewed change with a work claim; a separated personal program never originates roadmap items and never reads research stores.
+-
+-## Periodic manager tick (FIG. 3)
+-
+-[0040] Referring to FIG. 3, at step 302 a tick starts on a schedule (for example, hourly). At step 304, the system snapshots, once per tick, a risk value and a quality index for each program into a table, so that later steps read the snapshot rather than re-evaluating expensive views (which in one embodiment was necessary to avoid out-of-memory failures in the database). In one embodiment risk = 3 x (high-priority open items) + 0.3 x (open items) + 15 x (guard-metric breaches) + 2 x (stalled projects), and a verdict is RED when a guard or primary metric is in breach, AMBER when high-priority items or stalled projects exist, and GREEN otherwise. The quality index is the share of measured metric triggers that are on target.
+-
+-[0041] At step 306, the portfolio manager computes an allocation of a bounded number of focus slots (for example 25) across programs: a first portion evenly and a second portion in proportion to each program's share of total risk. At step 308 it classifies each program: constrain (highest risk), escalate (risk up more than a threshold in 24 hours, or quality index down by a threshold: slots raised, for example by half), accelerate (risk down more than a threshold), maintain (GREEN: a minimal allocation), steady, or idle (no open work). Each allocation is recorded per program per tick.
+-
+-[0042] At step 310, each program manager ranks its candidate items in tiers: tier 0, items tied to the charter's primary metric; tier 1, items tied to a guard metric; tier 2, critical; tier 3, high; tier 4, other; then by priority and age. The top items up to the program's slot allocation form its focus set. The program manager writes a priority score for each focus item into a scoring table read by the execution queue, so that the execution agents take focus items ahead of others of their tier; when an item leaves focus, the manager removes only the score rows it wrote itself.
+-
+-[0043] At step 312, the managers act on items within their authority, each action being written to an actions table with its prior value: promote (raise a focus item's priority) and restore (return it on leaving focus); close (an item whose metric reading has returned to target on a fresh reading, past a minimum age and with no failing contract, closes with that reading as evidence; the metric's own trigger re-files it if it breaches again); supersede (an older duplicate closes in favor of a newer one); demote (a stale critical item filed by a machine loop, with no doer and no session, becomes high; items filed by the principal or a session are never demoted); assign a doer (for a focus item with no doer for a period, the manager asks a model-backed agent for one target and anchor, validates the answer against lane rules, writes it into the item so an executor can build it, or records a no-fix finding with its reason so that a gap is never silent).
+-
+-[0044] At step 314, managers originate work rather than only repairing. Once per period, each program manager with fewer than a threshold of open roadmap items asks a research agent to propose one new feature or quality improvement from the program's aim, quality index, worsening metrics and the relevant code or documents; an answer in a prescribed form (title, rationale, target, anchor, edit) becomes a roadmap proposal and, after validation, a work item that the execution path builds, merges on green checks, deploys with canary and revert, and verifies live. A daily cap bounds origination. Plus-loop pluses (FIG. 4) are also originated in this step.
+-
+-[0045] At step 316, the tick logs a decision record with a parsed prediction whenever the allocation changes, writes a brief per persona, and updates metrics such as items in focus closed in 24 hours and focus items without a doer (each with its own trigger). Switches stored as configuration rows stop the actions without a redeploy while measurement continues.
+-
+-## Plus loop (FIG. 4)
+-
+-[0046] Repair-weighted allocation alone starves functioning products: a product in a healthy program receives no focus. The plus loop corrects this structurally. Products are recorded in a product register (for example `product_registry(product, program, cadence, usage_value, usage_window, usage_source, quality_signal, last_plus_at)`) distinct from the program register, and each product receives a fixed plus budget that is not taken from repair capacity on a leftover basis; in one embodiment, reducing it requires a configuration row with an expiry.
+-
+-[0047] Referring to FIG. 4, at step 402 the product manager picks a product, for example the one with the oldest last-plus time, weighted by usage and open friction, with at most one plus in flight per product and a fleet-wide daily cap. At step 404 it gathers evidence without asking the principal: usage by section (what is never opened), empty and error states, failing probes, slow routes, reader or user feedback, the principal's earlier requests and owed items, and features of comparable best-in-class products that this one lacks. A product with no usage signal receives a measurement plus first. At step 406 it writes one plus: the smallest reversible addition that builds on what exists (never a removal and never a rewrite), with a prediction (metric, direction, size) stated before the change. At step 408 the plus is filed as an ordinary work item with a doer line, so the same execution, review, merge, canary and automatic revert apply; no separate trust path is created.
+-
+-[0048] At step 410, at verified deployment the system captures a baseline of a registered outcome measure and a separate output-quality guard measure, and after a window (for example seven days) re-reads both. A missing or stale measure counts as unmeasured, never as a pass. At step 412, if the outcome improved materially and no guard regressed, the plus is kept and seeds the next plus for the same product ("what did this make possible?"). At step 414, otherwise the system requests a bounded revert of that addition and selects a different angle; after a set number of consecutive misses (for example three) the product rests for a period and is then reviewed for a fresh angle (a different user, a different surface). At step 416, every Nth cycle for a product (for example every fifth) is a simplification pass, because additions alone grow complexity, and a weekly digest of what got better is written for the principal instead of a notification per change. A plus never becomes a question to the principal.
+-
+-[0049] Counter-measures are part of the loop: against metric gaming, the quality signal is a separate outcome measure and a plus is judged on both; against feature creep, the ratchet and the simplification pass; against starvation under high risk, the fixed share; against absence of data, the measurement plus.
+-
+-[0050] The plus loop is a "yes, and" discipline: review of existing work arrives as a better version rather than as a verdict, so the organization improves continuously instead of only being maintained.
+-
+-## Predict, act, verify and score (FIG. 5)
+-
+-[0051] Referring to FIG. 5, at step 502 every decision is recorded with a prediction in a parsable form, for example "<metric> <operator> <number> within <N> h", or a seeded structured prediction. At step 504 the decision is executed through a canonical path: a work claim prevents two agents from changing the same thing; the change is made; risky changes pass a two-family review gate. At step 506, after deployment, the declared probes of the affected component run. If a probe that passed before fails after, at step 508 the system automatically reverts and records the failure. Otherwise, at step 510, the work item closes only with machine-read evidence that the change is live and effective; a merge alone is not completion. At step 512, at the end of the prediction window, a scorer compares the observed metric to the prediction and records an outcome. At step 514 calibration statistics (for example, the share of predictions matched, by persona, action class and surface) and the trust ledger are updated. Metrics such as the share of decisions logged with a prediction, the prediction miss rate, and predictions left unscored beyond a deadline are themselves registered with triggers.
+-
+-## Trust-gated autonomy and the interrupt gate (FIG. 6)
+-
+-[0052] Referring to FIG. 6, at step 602 an agent proposes an action. At step 604 the interrupt gate determines whether the action is irreversible and identity-bound with no reversible path. The system first attempts to engineer reversibility (for example, by taking a backup, staging a draft, or using a canary). If the action remains interrupt-eligible, at step 606 the system writes a card for the principal that carries an identity-bound line, the default that is in effect until the principal acts, the reason, and a closing probe that detects completion; a card without such a line is automatically rerouted to the fleet. Such cards are limited to steps only the principal can take, such as minting a credential, spending money, signing, or acting in the principal's own accounts.
+-
+-[0053] Otherwise, at step 608, the system reads the trust ledger for the action's surface and action class. Trust may be computed as reliability with a prior (for example (successes + a) / (attempts + a + b), with a baseline of 0.5), optionally decaying when unexercised and optionally weighted by event type (for example, rising on verified autonomous action, clean self-remediation, or closure of a friction signal, and falling on a silent drop of a work item, a hidden failure, an unnecessary question to the principal, or a handoff of an executable step to the principal). If trust is below the threshold for the needed rung, at step 610 the system narrows: it uses an assisted path or adds review. Otherwise, at step 612 it executes autonomously within the rung's scope. At step 614 the outcome adjusts trust and any rung transition is recorded. In one embodiment, rising trust widens only the scope of the agents' own loops and only through the canonical reviewed path; no rung can reach the platform's permission checks, secrets, the interrupt gate, or the fixed alignment limits.
+-
+-[0054] Agents are monitored for "false stops": outputs that pause, ask, offer a menu, or assign the next step to the principal when the action was not interrupt-eligible. The system records recognized signatures in a register, scans agent outputs hourly, excludes outputs that plainly state a refusal or limit with its reason, and counts the hits as a metric with a target of zero. This makes the agents act as accountable staff rather than as assistants waiting for instruction.
+-
+-## Self-amending policy (FIG. 7)
+-
+-[0055] Referring to FIG. 7, at step 702 the system scans agent outputs and principal messages for signatures recorded in registers (for example, conditional offers, report-as-question, a menu of options, an unaccepted blocker, friction phrases from the principal such as an expression that the principal should not have to repeat an instruction). At step 704, when a signature repeats past a threshold (for example three times in seven days from one source), or any friction phrase appears, at step 706 a policy amendment proposal is generated. At step 708 the proposal is red-teamed and replayed against trailing ticks. At step 710, if it preserves the fixed limits and improves the replay, at step 712 it is adopted through a reviewed change, the policy version is bumped, and the version and its source are recorded in a lineage register; otherwise at step 714 it is rejected with its reason. A periodic audit work item reviews open proposals. Classifier or permission refusals are inputs to this process: if the condition is in the system's own text, the text is fixed (for example, by writing a rule's real scope into the rule) and the action is attempted once more; a refusal that stands is stated plainly and the next path is taken, never a rewording to pass the same check.
+-
+-## Recurrence and root cause (FIG. 8)
+-
+-[0056] Referring to FIG. 8, at step 802 the system groups work items into families (for example by title prefix, or per metric trigger) and counts reopenings and new items in the last 7 days and 24 hours. At step 804 a family reopened at least K times (for example 5) and still active triggers, at step 806, a single root-cause item at top priority, which places it in its program's focus at the front of the execution queue and on the roadmap. At step 808 a diagnostic agent names the producer of the failures, the closing probe and the smallest fix, appended to the item. At step 810 the root-cause item closes with evidence once the family has had no reopening and no new item for a period T (for example 24 hours), and reopens automatically on recurrence. A per-program quality trend is recorded each tick, and a program whose quality index falls by a threshold is escalated by the portfolio manager exactly as a risk rise is.
+-
+-[0057] Also part of the loop is an issue accounting rule: every work item that leaves the active set must carry a disposition (done with evidence, remediated, or backlogged with a trigger); an item that leaves without one is a "silent drop", recorded as an incident.
+-
+-## Additional registers
+-
+-[0058] Embodiments maintain some or all of: a failure-mode register, each failure mode having a detector query run periodically; a single-point-of-failure register; a belief register whose entries carry probes that can falsify them; a capability ledger; a blocker red-team register (a claim that work cannot proceed is accepted only after all surfaces are enumerated and tested); an objective space (ratified objectives, derived goals, and probationary novel objectives); an inferred-direction register (categories the principal acted on repeatedly in a window, read by the execution queue as a priority factor); a vocabulary register of defined terms; and a metric-authorship register in which each new metric is on probation until it holds a value.
+-
+-[0059] In one embodiment the execution queue computes priority on read as a function of impact, probability, gains, cost, trust for the relevant surface and action class, and inferred direction, and records each pull.
+-
+-## Tick evidence
+-
+-[0060] Each loop records the steps it performed per time slot (for example: reconcile; recognize and redirect; update inferred direction; pull from queue; dispatch or execute; verify; compare prediction; log provenance; self-adoption gate; report; accrue trust; probe failure modes; scan capability gaps; and evolve policy), and a metric records the share of slots whose steps completed. Reports to the principal are short and declarative: what happened, what was decided, what is next, and what remains open.
+-
+-## Full autonomy as earned authority
+-
+-[0059a] In the embodiments, "full autonomy" means that the virtual staff, not the principal, are the actor of every ordinary step across the whole organization: they find the work, decide, execute, verify, report and improve, with purview over every program, project and product in the tenant configuration. Autonomy is not granted by a static permission setting. It is earned and computed, in the following way.
+-
+-[0059b] Act first, then verify. For any action that is reversible, the agent executes in the same cycle in which it reaches the conclusion, and does not ask the principal. A conclusion that would otherwise be returned as a question, an offer or a menu is instead adopted with its default, executed and reported as done (the "self-adoption gate"). Verification, not prior permission, is the control: live probes, automatic revert and scored predictions.
+-
+-[0059c] Reversibility is engineered before an action is classified. Before an action is treated as irreversible, the system attempts to construct a reversible path, for example by taking and checking a backup, staging the change behind a flag, deploying to a canary, writing a draft instead of sending, or splitting the action into a reversible part and a small irreversible part. Only what remains irreversible after this step is considered by the interrupt gate, so the gate is narrow by construction.
+-
+-[0059d] Scope widens with verified outcomes. Each verified autonomous outcome raises trust for its surface and action class, and rung transitions on the autonomy ladder are automatic and recorded. At the higher rungs the agents change their own loops and rules ("self-modifying") and create new capabilities and loops ("self-extending"), always through the canonical reviewed change path (pull request or database migration, with canary and revert), so that a self-change is itself verified and reversible.
+-
+-[0059e] The only pause. The interrupt gate pauses an action only when it is both irreversible and identity-bound with no engineerable reversible path (for example, spending the principal's money, signing a legal document, or destroying data that has no backup). Even then the system does not stop: it writes a principal card with the default in effect and a closing probe, and continues all other work. An embodiment measures false stops (pauses that were not interrupt-eligible) with a target of zero, so that over-caution is treated as a defect just as an error is.
+-
+-[0059f] Heartbeat with evidence. The system runs as a continuous heartbeat: a scheduled tick executed by at least two independent producers so that one failure does not stop it, each tick recording, per time slot, the steps it executed and their results (reconcile, recognize and redirect, update inferred direction, pull from the queue, dispatch or execute, verify, compare prediction, log provenance, self-adoption gate, report, accrue trust, probe failure modes, scan capability gaps, evolve policy). A slot with no record is itself a detected failure. Because the heartbeat runs on the platform and not in a human-operated session, the organization operates when no person or chat session is present.
+-
+-## Organization kit
+-
+-[0059g] The core is delivered as a reusable organization kit in which only roles and data vary between organizations. The kit comprises: persona templates for each role; charter templates; the ledgers and their views (work, claims, decisions and predictions, outcomes, trust, failure modes, products and pluses, lineage); the tick procedures stored as data; the default policy pack; the probe and revert path; and the principal queue. Installing the kit for a new organization consists of supplying a tenant configuration (programs, charters and metrics, products, executors, model ladder, hosts, principal contact, separated planes) and connecting its systems as surfaces with probes. No code of the core changes between tenants. A boundary check fails if any component is not classified as core, application or personal.
+-
+-## Further principles applicable to any autonomous platform
+-
+-[0060a] Work claims and leases. Before an agent (virtual or human-operated) changes a component, it acquires a claim in a shared claim ledger naming the component, the claimant and an expiry; a second agent that finds a live claim does not duplicate the work and may instead review the claimed change. A periodic reaper releases expired claims. Claims may carry a fencing token so that a stale holder's writes are rejected. Deployment of a component holds a lock and appends to a deploy ledger.
+-
+-[0060b] Reconciliation with no silent drops. On every tick a reconciler compares the set of work items in each state with the previous tick and with the records of each loop that consumes them, and requires that every item that left the active set carries a disposition (done with evidence, remediated, or backlogged with a trigger and a closing probe). An item that disappears without one is a silent drop, recorded as an incident and reopened.
+-
+-[0060c] Principal action queue with defaults. Steps that only the principal can take are kept in a single queue, each as a card with an identity-bound line, the default in effect until the principal acts, the reason and a closing probe that closes the card automatically when the step is observed done; cards for anything else are rerouted to the agents. The principal therefore never acts as the executor of an ordinary step, and the queue is measured (for example, cards open without an identity-bound line, target zero).
+-
+-[0060d] Kill switches as data. Every loop reads an on/off configuration row and stops its actions, but not its measurement, when the row is off, so any behavior can be stopped without a deploy; drills periodically confirm the switches work.
+-
+-[0060e] Blocker red-teaming. A claim by an agent that work cannot proceed is accepted only after the distinct surfaces that could reach the same outcome have been enumerated and tested, each test recorded; an untested blocker counts against trust.
+-
+-[0060f] Capability advertising. Each component publishes a machine-readable description of what it can do, its probes and its owner, so that managers can find a doer for a work item by reading the descriptions rather than by human knowledge of the system.
+-
+-[0060g] Cost-aware model ladders. Each task class has an ordered list of models by cost and capability; a breached spending cap moves tasks down the ladder rather than stopping work, and cost per verified outcome is recorded.
+-
+-[0060h] Separated planes. Data and agents of distinct planes (for example, a personal plane and an organizational plane) are isolated so that an agent of one plane cannot read stores of another, enforced by authorization of the requester rather than by prompt text alone.
+-
+-## Application to any organization (FIG. 9)
+-
+-[0061] Referring to FIG. 9, an organization-independent core 902 comprises the ledgers, the tick machinery, the persona records, prediction scoring, the trust ledger, the interrupt gate and the plus loop. A tenant configuration 904 supplies the organization's programs, charters, primary and guard metrics, products, executors, model ladder, hosts, principal contact and limits. In one embodiment a boundary file classifies each component as core, application or personal, and a check fails when a component is unclassified. A default policy pack is supplied, with the organization's own directives as an overlay.
+-
+-[0062] Examples: in a software company 906a, programs are operations, infrastructure, growth and research; products are services and applications; executors are coding agents; probes are health checks. In a marketing or media operation 906b, programs are channels and audiences; products are a newsletter, a video channel or a website; a plus is one new section or format, judged on engagement with an unsubscribe or complaint guard; outreach is subject to consent, suppression and opt-out rules that no rung can relax. In an operations or finance function 906c, programs are processes (for example, close, collections, procurement); products are reports and dashboards used by staff; probes are reconciliations; spending is interrupt-eligible. In a research laboratory 906d, programs are research lines; products are papers, datasets and demos; a plus is an added figure, an errata response or an explainer. In a nonprofit or public body 906e, programs are service programs and grants; products are public services and pages. In a personal or family office 906f, a separated plane runs its own managers that never read the organization's stores.
+-
+-[0063] Mixed human and virtual staffing is supported: any persona may be filled by a person, in which case the same records, predictions, briefs and trust accounting apply to that person's decisions.
+-
+-## Example implementation and results
+-
+-[0064] In one implementation (the "customer zero" installation), the system ran as approximately 39 scheduled workers on a serverless edge platform with a relational database, object store and key-value store; one virtual portfolio manager and five virtual program managers (operations, infrastructure, reach, research and personal) ran an hourly tick. Over the observation period, more than 6,600 work items passed through the work ledger; more than 3,800 changes were merged into the main repository, of which more than 600 were opened by the system's own code loop from items it filed and others by third-party coding agents coordinated through a single work-claim ledger; more than 1,000 decision predictions were scored, of which about 73% matched; more than 600 failure modes had detectors; and trust was scored per surface and action class. In a seven-day window the managers performed dozens of evidence-based closes, demotions, root-cause filings and lever reviews and originated roadmap items, some of which were deployed and verified live without being requested by the principal. [Practitioner: these figures come from the system's own records as of 2026-11-10; keep or remove.]
+-
+-## Variations
+-
+-[0065] The reasoning component of a persona may be any model or combination of models, including models of different families for proposal and review; models may be selected per task from a ladder by cost and capability, and a breached spending cap steers to cheaper models rather than stopping work. Ticks may be event-driven instead of periodic. The ranking tiers, weights, caps, windows and thresholds may be learned from outcomes. Products may be ranked by a bandit algorithm. Ledgers may be distributed or append-only. Briefs may be delivered by page, message or voice. The managed systems may be physical (for example, a facility or fleet of devices) provided that probes measure them.
+-
+-# CLAIM-STYLE SUMMARIES
+-
+-[0066] Claims are not required in a provisional application. The following statements describe aspects for which protection may be sought in a later non-provisional application; they are not limiting.
+-
+-1. A computer-implemented method of operating an organization, comprising: storing, in a database, a plurality of persona records each defining a virtual staff agent with a role selected from a hierarchy comprising at least a portfolio-manager role and a program-manager role, a charter comprising a primary metric and at least one guard metric, and an enumerated decision authority; on each of a plurality of scheduled ticks, (a) computing by the portfolio-manager agent a risk value for each of a plurality of programs from records of open work items and metric readings, (b) allocating a bounded number of focus slots across the programs, a first portion evenly and a second portion in proportion to the risk values, (c) ranking, by each program-manager agent, candidate work items of its program in tiers in which items tied to the primary metric precede items tied to a guard metric, (d) writing the top-ranked items up to the program's allocation into a focus set read by an execution queue that dispatches work items to executor agents, and (e) recording each action taken on a work item together with its prior value and a machine-parsable prediction; deploying a change produced by an executor agent; running declared probes after deployment and automatically reverting the change when a probe that passed before the deployment fails after it; and scoring the prediction against an observed metric value at the end of a prediction window.
+-
+-2. The method of claim 1, further comprising maintaining a product register distinct from the programs, allocating to each product a fixed improvement budget independent of the risk value of its program, and performing a plus loop comprising selecting a product, gathering evidence without requesting input from a human principal, generating a single additive reversible change with a stated prediction, dispatching it through the execution queue, and after a window keeping the change only if a registered outcome measure improved and no guard measure regressed, and otherwise reverting it.
+-
+-3. The method of claim 2, wherein a kept change seeds generation of a next change for the same product; a set number of consecutive non-improving changes places the product in a rest state; and every Nth cycle for a product is a simplification change.
+-
+-4. The method of claim 1, further comprising computing, for each pair of surface and action class, a trust value from scored outcomes, mapping the trust value to a rung of an autonomy ladder, and permitting a proposed action to execute without added review only when the trust value for its surface and action class meets the threshold of the required rung.
+-
+-5. The method of claim 4, further comprising classifying each proposed action and routing it to a human principal only when it is irreversible and identity-bound and no reversible path can be engineered, the routing comprising a card carrying a default in effect, a reason and a closing probe; and executing all other actions without routing to the principal.
+-
+-6. The method of claim 1, further comprising grouping work items into families, filing a single root-cause work item at top priority when a family's reopenings in a window exceed a threshold, obtaining from a model-backed agent an identification of a producer, a closing probe and a fix, and closing the root-cause work item only after the family has had no reopening for a quiet period.
+-
+-7. The method of claim 1, further comprising scanning agent outputs for recorded signatures of deferring an executable step to a human principal, counting matches as a metric, and, when a signature repeats beyond a threshold, generating, red-teaming and replaying a policy amendment and adopting it only if it preserves a fixed set of limits, recording each adopted version in a lineage register.
+-
+-8. The method of claim 1, wherein the program-manager agent, for a focus item lacking a doer for a period, requests from a model-backed agent a target and anchor for a change, validates the answer against lane rules, and either writes it into the work item for an executor or records a no-fix finding with a reason.
+-
+-9. The method of claim 1, wherein a work item closes only on machine-read evidence that its change is live and its metric is on target, and wherein a work item leaving an active set without a recorded disposition is recorded as an incident.
+-
+-10. The method of claim 1, wherein a change is merged only after review by machine-learning models of at least two different model families.
+-
+-11. The method of claim 1, wherein the persona records, ledgers and tick procedures form an organization-independent core and a tenant configuration supplies the programs, charters, metrics, products, executors and limits of a particular organization.
+-
+-12. A system comprising one or more processors and memory storing instructions that, when executed, cause the one or more processors to perform the method of any of claims 1 to 11 and 15 to 17.
+-
+-13. A non-transitory computer-readable medium storing instructions that, when executed by one or more processors, cause performance of the method of any of claims 1 to 11 and 15 to 17.
+-
+-14. A computer-implemented method of continuously improving a product operated by an organization, comprising the plus loop of claim 2, performed by a virtual product-manager agent, wherein the improvement budget is not reducible without a configuration record carrying an expiry.
+-
+-15. The method of claim 1, further comprising requiring each agent to acquire, before changing a component, a claim with an expiry in a shared claim ledger, and directing a second agent that finds a live claim to review rather than duplicate the change.
+-
+-16. The method of claim 1, further comprising reconciling, on each tick, the work items that left an active set against recorded dispositions, and reopening and recording as an incident each item lacking a disposition.
+-
+-17. The method of claim 5, wherein cards are held in a single principal queue, each card closes automatically when its closing probe observes the step done, and a card lacking an identity-bound line is rerouted to the virtual staff agents.
+-
+-18. A computer-implemented method of governing autonomous agents, comprising: recording every agent decision with a machine-parsable prediction; scoring each prediction at the end of its window; computing trust per surface and action class from the scores; and widening or narrowing the set of actions each agent may take without review according to the trust, wherein no trust level permits changing platform permission checks, secrets, or the classification rule of the interrupt gate.
+-
+-19. A computer-implemented method of autonomous operation, comprising: for each conclusion reached by a virtual staff agent, determining whether a resulting action is reversible; when it is not, attempting to construct a reversible path by at least one of taking a verified backup, staging behind a flag, deploying to a canary, drafting instead of sending, or splitting the action; executing every action that is or has been made reversible in the same cycle without requesting approval from a human principal, and verifying it with live probes and automatic revert; routing to the principal only an action that remains irreversible and identity-bound, as a card carrying a default in effect and a closing probe, while continuing all other work; and recording as a defect each pause or question to the principal for an action that was not so routed.
+-
+-20. The method of claim 19, further comprising raising, from each verified outcome, a trust value for the action's surface and action class and automatically transitioning that pair to a higher rung of an autonomy ladder, wherein at a highest rung the agents modify their own tick procedures and policy and create new loops only through a reviewed, canaried and revertible change.
+-
+-21. The method of claim 1, wherein the ticks are produced by at least two independent schedulers, each tick records per time slot the steps executed and their results, and a slot lacking a record is detected as a failure.
+-
+-22. A computer-implemented method of installing an autonomous organization, comprising providing an organization-independent core comprising persona templates, charter templates, ledgers, tick procedures stored as data, a default policy and a probe-and-revert path; receiving a tenant configuration specifying programs, charters, metrics, products, executors and principal contact; connecting the organization's systems as surfaces with declared probes; and operating the method of claim 1 without modifying the core.
+-
+-# ABSTRACT
+-
+-A system operates an organization through a hierarchy of virtual staff agents (for example, a virtual portfolio manager, virtual program, project and product managers, reviewers, auditors and specialists), each defined by a persona record with a role, a charter of primary and guard metrics, and an enumerated decision authority. On scheduled ticks the portfolio manager allocates bounded focus capacity across programs by risk, and program managers rank, focus, act on and originate work, recording every action with its prior value and a machine-parsable prediction. Changes are executed through a verified path with live probes and automatic revert, and predictions are scored to compute trust per surface and action class, which widens or narrows autonomy. A plus loop funds evidence-driven, additive, reversible improvement of working products separately from repair, keeping only changes that improve an outcome without regressing a guard. An interrupt gate routes to the human principal only irreversible, identity-bound steps; the system amends its own policy from recurring signatures and resolves recurring failures through root-cause items.
+diff --git a/tools/doc-consumers.json b/tools/doc-consumers.json
+new file mode 100644
+index 0000000..3c57198
+--- /dev/null
++++ b/tools/doc-consumers.json
+@@ -0,0 +1,93 @@
++{
++ "_doc": "Doc-consumption registry (owner, 2026-11-12: nobody reads documents; every document is consumed by code). `python3 tools/docs_audit.py --check` fails on a document nothing consumes. Same stdlib file as ultrastable/ultrastable foundation/docs_audit.py; see agents/AGENTS.md rule DOC-CONSUMED-1 there.",
++ "version": "1.0.0",
++ "consumers": [],
++ "verified": {
++  "globs": [
++   "**/*.md"
++  ]
++ },
++ "ignore_references_from": [],
++ "human_action_patterns": [
++  "\\\\b(Rowan|the owner|owner)\\\\s+(should|must|needs? to|has to|will need to)\\\\b",
++  "\\\\b(please|just)\\\\s+(click|open|run|file|sign|submit|paste|upload|email)\\\\b"
++ ],
++ "human_action_exempt": [],
++ "human_action_baseline": {},
++ "converted": [],
++ "removed": [
++  {
++   "path": "README.md",
++   "sha256": "ef46a1a1ce7600a9aac7fa472e971758e0bb2604d4e8628fbafa457fc8e10940",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:ip/ (patent track dropped 2026-11-11, ip/ARCHIVED.md); this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "64769ff5972dcc1ddd50259fbc902a09d5a6434e"
++  },
++  {
++   "path": "bootstrapping-embodiment.md",
++   "sha256": "b0580bf0029b7a8cbe2c79f1b478cf93933085f9641156cdd19e8a7ce65ead91",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:ip/ (patent track dropped 2026-11-11, ip/ARCHIVED.md); this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "64769ff5972dcc1ddd50259fbc902a09d5a6434e"
++  },
++  {
++   "path": "evidence-log.md",
++   "sha256": "68fb99570eddd76301100c5281803c8ee5de48a3d2ef791f02aad59098890b8a",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:ip/ (patent track dropped 2026-11-11, ip/ARCHIVED.md); this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "64769ff5972dcc1ddd50259fbc902a09d5a6434e"
++  },
++  {
++   "path": "invention-disclosure.md",
++   "sha256": "33c3dec9252dd5b08a10652d6697d3994a94715145555fed0e3fc87828072e98",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:ip/invention-disclosure.md",
++   "date": "2026-11-12",
++   "recover": "64769ff5972dcc1ddd50259fbc902a09d5a6434e"
++  },
++  {
++   "path": "prior-art.md",
++   "sha256": "36ed1a6dfcc71bf436cd55742824eb47c12a96542933098dbed46392d6065445",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:ip/ (patent track dropped 2026-11-11, ip/ARCHIVED.md); this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "64769ff5972dcc1ddd50259fbc902a09d5a6434e"
++  },
++  {
++   "path": "provisional/CLAIM-STRATEGY.md",
++   "sha256": "cfab2c27f8040b3c89efc37f9808940e1639f8e07cbbb0b0fb63b8002b5b19ca",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:ip/ (patent track dropped 2026-11-11, ip/ARCHIVED.md); this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "64769ff5972dcc1ddd50259fbc902a09d5a6434e"
++  },
++  {
++   "path": "provisional/FILING-CHECKLIST.md",
++   "sha256": "db5fe0d92f0282d14412b863f01006f274e48a2cff9d53b38fc1151ba23ef138",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:ip/ (patent track dropped 2026-11-11, ip/ARCHIVED.md); this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "64769ff5972dcc1ddd50259fbc902a09d5a6434e"
++  },
++  {
++   "path": "provisional/README.md",
++   "sha256": "64b96a9e46a98734d5de5b5b9507429339a3c2432c7c954b3e0ac1c2fc5c84ea",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:ip/ (patent track dropped 2026-11-11, ip/ARCHIVED.md); this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "64769ff5972dcc1ddd50259fbc902a09d5a6434e"
++  },
++  {
++   "path": "provisional/provisional-specification.md",
++   "sha256": "44bb4695f9f8c20575712cc3ccf6661b72a7c36d938c41205beb3690812b48e1",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:ip/ (patent track dropped 2026-11-11, ip/ARCHIVED.md); this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "64769ff5972dcc1ddd50259fbc902a09d5a6434e"
++  }
++ ],
++ "superseded_by_repo": "ultrastable/ultrastable:ip/ (patent track dropped 2026-11-11, ip/ARCHIVED.md)"
++}
+diff --git a/tools/docs_audit.py b/tools/docs_audit.py
+new file mode 100644
+index 0000000..e967517
+--- /dev/null
++++ b/tools/docs_audit.py
+@@ -0,0 +1,315 @@
++"""Doc-consumption audit. Ultrastable is the foundation for any autonomous system. (owner, 2026-11-12)
++
++Nobody reads documents here; the system runs on code. So a document may exist only if something consumes it: an agent instruction
++import, code or data that names it, a check that reads it, or a generator that writes it. A document with no consumer is a CI failure.
++
++  python3 -m foundation docs_audit --check     (or: python3 foundation/docs_audit.py --root DIR --check, the file is stdlib-only and is copied into sibling repos)  fail on orphans, broken registry rows, bad removal ledger, human-action regressions
++  python3 -m foundation docs_audit --report    counts per consumption tier (docs found, wired, generated, converted, removed)
++  python3 -m foundation docs_audit --orphans   list the documents nothing consumes
++  python3 -m foundation docs_audit --humans    list documents that tell a person to act (a defect: file a backlog item instead)
++
++Consumption tiers, strongest first (the registry is `doctrine/doc-consumers.json`):
++  import     CLAUDE.md / AGENTS.md pull it in with `@path`, transitively
++  path       a tracked non-document file (code, data, workflow, test) names its exact path
++  generated  front matter `generated-by: <script>`, and the script exists
++  declared   front matter `consumer: <path>`; the consumer exists, is not a document and names this file or its directory
++  registry   a row in doc-consumers.json: glob -> consumer file that contains the row's `needle`
++  verified   explain-only pages in `verified.globs`: every backticked file path in the page must exist, and at least one must, so the
++             page cannot drift from the code it describes (a missing path is a CI failure naming the line)
++  knowledge  reference documents inside `knowledge.globs`: foundation/kb.py ranks them against each issue and foundation/executor.py
++             puts the best matches in the agent's prompt
++A document that only mentions another document is not consuming it. Removed documents stay in the `removed` ledger with the
++sha256 of what was removed and the file that still holds the same bytes, so nothing leaves the active set without a disposition.
++"""
++from __future__ import annotations
++import fnmatch, hashlib, json, os, re, subprocess, sys
++from pathlib import Path
++
++REPO = Path(__file__).resolve().parent.parent
++REGISTRIES = ("doctrine/doc-consumers.json", "tools/doc-consumers.json", "doc-consumers.json")
++REGISTRY = REGISTRIES[0]
++DOC_EXT = (".md", ".txt", ".rst")
++BINARY = re.compile(r"\.(svg|png|pdf|jpe?g|ico|woff2?|zip|bundle|gif|webp)$", re.I)
++
++
++def registry_path(root=REPO) -> str:
++    """The registry is doctrine/doc-consumers.json here; sibling repos that carry a copy of this file keep it in tools/ or at the root."""
++    for r in REGISTRIES:
++        if (Path(root) / r).is_file():
++            return r
++    raise FileNotFoundError("no doc-consumers.json (looked in " + ", ".join(REGISTRIES) + ")")
++
++
++def load(root=REPO) -> dict:
++    return json.loads((Path(root) / registry_path(root)).read_text(encoding="utf-8"))
++
++
++def tracked(root=REPO) -> list[str]:
++    out = subprocess.run(["git", "-C", str(root), "ls-files"], capture_output=True, text=True)
++    if out.returncode != 0:
++        raise RuntimeError(f"git ls-files failed: {out.stderr.strip()}")
++    return [f for f in out.stdout.splitlines() if (Path(root) / f).is_file()]
++
++
++def is_doc(path: str) -> bool:
++    return path.endswith(DOC_EXT)
++
++
++def _read(root, rel):
++    try:
++        return (Path(root) / rel).read_text(encoding="utf-8")
++    except (UnicodeDecodeError, OSError):
++        return ""
++
++
++def _glob(path: str, pattern: str) -> bool:
++    if pattern.endswith("/**"):
++        return path.startswith(pattern[:-2])
++    if pattern.startswith("**/"):
++        return fnmatch.fnmatch(path, pattern) or fnmatch.fnmatch(path, pattern[3:])
++    return fnmatch.fnmatch(path, pattern)
++
++
++def front_matter(text: str) -> dict:
++    m = re.match(r"---\n(.*?)\n---\n", text, re.S)
++    out = {}
++    if m:
++        for line in m.group(1).splitlines():
++            k, _, v = line.partition(":")
++            if k.strip() and v.strip():
++                out[k.strip()] = v.strip().strip("'\"")
++    return out
++
++
++SPAN = re.compile(r"`([^`\n]+)`")
++CODE_TOKEN = re.compile(r"(?<![\w/.:-])([A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:js|mjs|cjs|py|json|jsonc|sh|yml|yaml|toml|sql|md|html))(?![\w/-])")
++
++
++def verify_page(root, doc) -> tuple[list[str], list[str]]:
++    """(resolved, unresolved) backticked file paths in a document, resolved against the repository root or the document's folder."""
++    ok, missing = [], []
++    for tok in sorted({t for span in SPAN.findall(_read(root, doc)) for t in CODE_TOKEN.findall(span)}):
++        if "*" in tok or tok.startswith(("http", "~", "/")):
++            continue
++        cand = (Path(root) / tok, Path(root) / os.path.dirname(doc) / tok)
++        (ok if any(c.exists() for c in cand) else missing).append(tok)
++    return ok, missing
++
++
++def _imports(root, docs) -> set[str]:
++    seen, todo = set(), [d for d in ("CLAUDE.md", "AGENTS.md", "agents/AGENTS.md") if d in docs]
++    seen.update(todo)
++    while todo:
++        cur = todo.pop()
++        base = (Path(cur).parent)
++        for ref in re.findall(r"(?m)^\s*@(\S+\.md)\s*$", _read(root, cur)):
++            p = os.path.normpath((base / ref).as_posix() if not ref.startswith("/") else ref[1:]).replace(os.sep, "/")
++            if p not in seen and p in docs:
++                seen.add(p)
++                todo.append(p)
++    return seen
++
++
++def _relatives(doc: str, referrer: str):
++    """The spellings a file may use for `doc`: relative to its own folder or to any ancestor folder (a test that does parents[1] / "docs/X.md")."""
++    out, a = [], os.path.dirname(referrer)
++    while a:
++        rel = os.path.relpath(doc, a)
++        if not rel.startswith("..") and rel != doc:
++            out.append(rel)
++        a = os.path.dirname(a)
++    return out
++
++
++def evaluate(root=REPO) -> dict:
++    """Return {doc: (tier, evidence)} for consumed docs, plus 'orphans', 'docs', and problems with registry rows."""
++    root = Path(root)
++    reg = load(root)
++    files = tracked(root)
++    docs = sorted(f for f in files if is_doc(f))
++    ignore = tuple(reg.get("ignore_references_from", []))
++    code = {f: _read(root, f) for f in files if not is_doc(f) and not BINARY.search(f) and not f.startswith(ignore) and f != registry_path(root)}
++    consumed: dict[str, tuple[str, str]] = {}
++    problems: list[str] = []
++    for d in sorted(_imports(root, set(docs))):
++        consumed[d] = ("import", "imported by an agent instruction file")
++    for row in reg["consumers"]:
++        c = row["consumer"]
++        if is_doc(c) or not (root / c).is_file():
++            problems.append(f"registry row {row['id']}: consumer {c} must be an existing non-document file")
++            continue
++        if row["needle"] not in _read(root, c):
++            problems.append(f"registry row {row['id']}: consumer {c} does not contain its needle {row['needle']!r}")
++            continue
++        hit = [d for d in docs if any(_glob(d, g) for g in row["paths"])]
++        if not hit:
++            problems.append(f"registry row {row['id']}: no document matches {row['paths']} (remove the row)")
++        for d in hit:
++            consumed.setdefault(d, ("registry", f"{row['id']} -> {c}"))
++    for d in docs:
++        if d in consumed:
++            continue
++        fm = front_matter(_read(root, d))
++        if fm.get("generated-by"):
++            g = fm["generated-by"].split()[0]
++            if (root / g).is_file() and not is_doc(g):
++                consumed[d] = ("generated", g)
++                continue
++            problems.append(f"{d}: generated-by {g} does not exist")
++        if fm.get("consumer"):
++            c = fm["consumer"].split()[0]
++            parent = str(Path(d).parent)
++            if (root / c).is_file() and not is_doc(c) and (d in _read(root, c) or (parent != "." and parent + "/" in _read(root, c))):
++                consumed[d] = ("declared", c)
++                continue
++            problems.append(f"{d}: front matter consumer {c} must be an existing non-document file that names this file or its directory")
++        for f, t in code.items():
++            if d in t or any(re.search(r"(?<![\w/.-])" + re.escape(rel) + r"(?![\w])", t) for rel in _relatives(d, f)):
++                consumed[d] = ("path", f)
++                break
++    for d in docs:
++        if d not in consumed and any(_glob(d, g) for g in reg.get("verified", {}).get("globs", [])):
++            ok, missing = verify_page(root, d)
++            if missing:
++                problems.append(f"{d}: names files that do not exist ({', '.join(missing[:4])}); fix the page or the code so they agree")
++            elif ok:
++                consumed[d] = ("verified", f"every backticked path exists ({len(ok)})")
++    kn = reg.get("knowledge", {})
++    if kn:
++        ex = _read(root, "foundation/executor.py")
++        if "kb.retrieve" not in ex or not (root / "foundation/kb.py").is_file():
++            problems.append("knowledge tier: foundation/executor.py must call kb.retrieve and foundation/kb.py must exist")
++        else:
++            for d in docs:
++                if d.endswith(".md") and any(_glob(d, g) for g in kn["globs"]):
++                    consumed.setdefault(d, ("knowledge", "foundation/kb.py -> foundation/executor.py"))
++    orphans = [d for d in docs if d not in consumed]
++    return {"docs": docs, "consumed": consumed, "orphans": orphans, "problems": problems, "registry": reg}
++
++
++def _human_hits(text: str, pats) -> list[str]:
++    hits = []
++    for line in text.splitlines():
++        for p in pats:
++            if re.search(p, line, re.I):
++                hits.append(line.strip()[:120])
++                break
++    return hits
++
++
++def humans(root=REPO) -> dict[str, list[str]]:
++    root = Path(root)
++    reg = load(root)
++    pats = reg["human_action_patterns"]
++    exempt = reg.get("human_action_exempt", [])
++    out = {}
++    for d in (f for f in tracked(root) if is_doc(f)):
++        if any(_glob(d, g) for g in exempt):
++            continue
++        h = _human_hits(_read(root, d), pats)
++        if h:
++            out[d] = h
++    return out
++
++
++def removed_check(root, reg) -> list[str]:
++    """Every removed document has a disposition: identical bytes elsewhere (duplicate_of), a live replacement (superseded_by), or
++    evidence that it was a dead end; its sha256 and the commit that still holds it make the removal recoverable; and nothing
++    live may still name it."""
++    bad, root = [], Path(root)
++    removed = reg.get("removed", [])
++    for r in removed:
++        for k in ("path", "sha256", "reason", "date", "recover"):
++            if not r.get(k):
++                bad.append(f"removed ledger {r.get('path', '?')}: lacks {k}")
++        if not (r.get("duplicate_of") or r.get("superseded_by") or r.get("evidence")):
++            bad.append(f"removed ledger {r.get('path', '?')}: needs duplicate_of, superseded_by or evidence")
++        if (root / r.get("path", "-")).exists():
++            bad.append(f"removed ledger: {r['path']} is listed as removed but still exists")
++        if r.get("duplicate_of"):
++            dup = root / r["duplicate_of"]
++            if not dup.is_file() or hashlib.sha256(dup.read_bytes()).hexdigest() != r.get("sha256"):
++                bad.append(f"removed ledger {r['path']}: {r['duplicate_of']} no longer holds the same bytes (sha256 differs); restore or re-record")
++        if r.get("superseded_by") and not (root / r["superseded_by"]).exists():
++            bad.append(f"removed ledger {r['path']}: superseded_by {r['superseded_by']} does not exist")
++    ignore = tuple(reg.get("ignore_references_from", [])) + (registry_path(root),)
++    paths = {r["path"] for r in removed if r.get("path")}
++    for f in tracked(root):
++        if is_doc(f) or BINARY.search(f) or f.startswith(ignore):
++            continue
++        t = _read(root, f)
++        for p in paths:
++            if re.search(r"(?<![\w/.-])" + re.escape(p) + r"(?![\w-])", t):
++                bad.append(f"{f}: still names removed document {p}; point it at the replacement or drop the reference")
++    return bad
++
++
++def converted_check(root, reg) -> list[str]:
++    """A document converted to data keeps a row: the data file exists and a non-document consumer names it."""
++    bad, root = [], Path(root)
++    for c in reg.get("converted", []):
++        for k in ("from", "to", "consumer", "sha256", "recover", "date"):
++            if not c.get(k):
++                bad.append(f"converted ledger {c.get('from', '?')}: lacks {k}")
++        if (root / c.get("from", "-")).exists():
++            bad.append(f"converted ledger: {c['from']} still exists next to its data file")
++        if not (root / c.get("to", "-")).is_file() or is_doc(c.get("to", "")):
++            bad.append(f"converted ledger {c.get('from')}: data file {c.get('to')} must exist and not be a document")
++        elif not (root / c.get("consumer", "-")).is_file() or c["to"] not in _read(root, c["consumer"]):
++            bad.append(f"converted ledger {c['from']}: consumer {c.get('consumer')} must exist and name {c['to']}")
++    return bad
++
++
++def check(root=REPO) -> list[str]:
++    root = Path(root)
++    ev = evaluate(root)
++    reg = ev["registry"]
++    bad = list(ev["problems"])
++    bad += [f"orphan document (nothing consumes it): {d}: wire it, convert it to data, merge it, or remove it with a ledger row" for d in ev["orphans"]]
++    bad += removed_check(root, reg)
++    bad += converted_check(root, reg)
++    tpl = _read(root, "brand/templates/doc-template.md")  # doc-template.md: the template every new document starts from
++    if (root / "brand/templates/doc-template.md").is_file() and not re.search(r"(?m)^consumer:", tpl):
++        bad.append("brand/templates/doc-template.md must carry a `consumer:` front matter line")
++    base = reg.get("human_action_baseline", {})
++    for d, hits in humans(root).items():
++        if len(hits) > base.get(d, 0):
++            bad.append(f"{d}: tells a person to act ({len(hits)} lines, baseline {base.get(d, 0)}): {hits[0]!r}; file an automatic backlog item (owner, trigger, verification) instead of writing an instruction")
++    return bad
++
++
++def report(root=REPO) -> dict:
++    ev = evaluate(root)
++    tiers: dict[str, int] = {}
++    for tier, _ in ev["consumed"].values():
++        tiers[tier] = tiers.get(tier, 0) + 1
++    reg = ev["registry"]
++    return {"docs": len(ev["docs"]), "consumed": len(ev["consumed"]), "orphans": len(ev["orphans"]), "tiers": tiers,
++            "removed": len(reg.get("removed", [])), "converted": len(reg.get("converted", [])),
++            "human_action_docs": len(humans(root))}
++
++
++def main(argv=None) -> int:
++    global REPO
++    argv = list(sys.argv[1:] if argv is None else argv)
++    if "--root" in argv:  # run against another checkout: python3 tools/docs_audit.py --root . --check
++        i = argv.index("--root")
++        REPO = Path(argv[i + 1]).resolve()
++        del argv[i:i + 2]
++    if "--report" in argv:
++        print(json.dumps(report(REPO), indent=1))
++        return 0
++    if "--orphans" in argv:
++        print("\n".join(evaluate(REPO)["orphans"]) or "no orphans")
++        return 0
++    if "--humans" in argv:
++        for d, h in humans(REPO).items():
++            print(d, len(h), h[0])
++        return 0
++    bad = check(REPO)
++    print("\n".join(bad) or "docs-audit ok: " + json.dumps(report(REPO)))
++    return 1 if bad else 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+-- 
+2.43.0
+

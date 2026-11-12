@@ -1462,6 +1462,38 @@
    "credentials": []
   },
   {
+   "id": "doc-consumption",
+   "kind": "doctrine",
+   "summary": "Every tracked document has a consumer; orphans fail the build and documents that tell a person to act become backlog items.",
+   "trigger": "every pull request (checks job) and every change to a .md, .txt or .rst file",
+   "owner": "portfolio-manager",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "python3 -m foundation docs_audit --check in the checks job",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command run by an agent session from the repository",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:tests/foundation/test_docs_audit.py::def test_orphan_fails",
+   "writeback": [
+    "docs/decisions",
+    "doctrine/doc-consumers.json"
+   ],
+   "system_path": [
+    "foundation/docs_audit.py",
+    "foundation/kb.py",
+    "doctrine/doc-consumers.json"
+   ]
+  },
+  {
    "id": "core-instance-sync",
    "kind": "release",
    "summary": "Core and instances stay one system: kernel flows down by upgrade PR, instance fixes flow up as issues, drift opens an issue.",
