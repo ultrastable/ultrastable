@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261112-95",
+  "title": "OL-20261112-95: Declare flows for the 53 pending loops",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** every tick while pending is non-empty\n**Done check:** cmd:python3 -m foundation flows --check\n**Status:** open\n\nEach pending loop in doctrine/flows.json gets inflows, outflows (with via) and feedback, then leaves pending; the check fails a declared loop left on the list.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
