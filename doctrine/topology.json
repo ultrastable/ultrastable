@@ -1,5 +1,5 @@
 {
-  "_doc": "SYS-1: the whole system as one declared topology. Every worker, store, queue, index and workflow, with its bindings, is listed here; `python3 -m foundation topology --render` writes each worker's wrangler config, `--check` validates the references, `--drift` compares this file with the live account. state=live means it must exist now; state=planned means the executor is building it (drift reports it as pending, not as a failure). Ids are not secrets; variable values and secrets never appear here (only their names).",
+  "_doc": "SYS-1: the whole system as one declared topology. Every worker, store, queue, index and workflow, with its bindings, is listed here; `python3 -m foundation topology --render` writes each worker's wrangler config, `--check` validates the references, `--drift` compares this file with the live account. state=live means it must exist now; state=planned means the executor is building it (drift reports it as pending, not as a failure). Ids are not secrets; variable values and secrets never appear here (only their names). doctrine/system.json (SYSTEM-1) is GENERATED from this file by `python3 -m foundation topology --emit-system`; edit this file, never that one.",
   "version": "1.0.0",
   "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
   "prefix": "ultrastable-",
@@ -9,20 +9,23 @@
         "name": "ultrastable-org",
         "id": "7468898a-b515-495f-9910-e91cb80f5810",
         "state": "live",
-        "what": "the org's own records: items, claims, gate cards, trust ledger, tick runs"
+        "what": "the org's own records: items, claims, gate cards, trust ledger, tick runs",
+        "key": "org"
       },
       {
         "name": "ultrastable-ops",
         "id": "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd",
         "state": "live",
-        "what": "site analytics, dashboard state, the published transparency snapshot"
+        "what": "site analytics, dashboard state, the published transparency snapshot",
+        "key": "ops"
       },
       {
         "name": "ultrastable-ultrastable",
         "state": "live",
         "retire_candidate": true,
         "what": "found in the account, owner unknown: created by an earlier bootstrap run; the drift loop retires it once nothing reads it",
-        "id": "a0227f92-04a7-4640-ae39-bb6a47fc9488"
+        "id": "a0227f92-04a7-4640-ae39-bb6a47fc9488",
+        "key": "ultrastable"
       }
     ],
     "kv": [
@@ -30,13 +33,21 @@
         "name": "ultrastable-site-assets",
         "id": "c6ca64dddec5489cbcee896113949eba",
         "state": "live",
-        "what": "site images and built-site state"
+        "what": "site images and built-site state",
+        "key": "assets"
       },
       {
         "name": "ultrastable-private",
         "id": "f41303a09abc473faf41f9685ebb1a72",
         "state": "live",
-        "what": "private worker state"
+        "what": "private worker state",
+        "key": "private"
+      },
+      {
+        "name": "ultrastable-state",
+        "state": "planned",
+        "what": "worker state for the tick (STATE binding)",
+        "key": "state"
       }
     ],
     "r2": [
@@ -48,41 +59,29 @@
     ],
     "queues": [
       {
-        "name": "ultrastable-jobs",
+        "name": "ultrastable-work",
         "state": "planned",
-        "what": "work handed from the tick to executors",
-        "dlq": "ultrastable-jobs-dlq"
-      },
-      {
-        "name": "ultrastable-jobs-dlq",
-        "state": "planned",
-        "what": "jobs that failed their retries; the failure registry reads it"
+        "what": "work handed from the tick to code agents; the tick worker consumes it",
+        "key": "work"
       }
     ],
     "vectorize": [
       {
-        "name": "ultrastable-kb",
+        "name": "ultrastable-memory",
         "state": "planned",
         "dimensions": 768,
         "metric": "cosine",
-        "what": "the repository's own knowledge for the agents (Q-SYS-VECTOR-KB)"
+        "what": "the repository's own knowledge for the agents (Q-SYS-VECTOR-KB)",
+        "key": "memory"
       }
     ],
-    "workflows": [
-      {
-        "name": "ultrastable-loop",
-        "state": "planned",
-        "script": "ultrastable-executor",
-        "class_name": "LoopWorkflow",
-        "what": "durable execution of one loop pass with retries"
-      }
-    ]
+    "workflows": []
   },
   "workers": [
     {
       "id": "ultrastable-tick",
       "state": "live",
-      "role": "heartbeat: the org's tick, executor dispatch and lane",
+      "role": "heartbeat, executor dispatch, in-Worker code agents, lane",
       "main": "seed/worker/src/index.js",
       "compatibility_date": "2026-10-01",
       "crons": [
@@ -96,13 +95,23 @@
         "ai": [
           "AI"
         ],
+        "kv": {
+          "STATE": "ultrastable-state"
+        },
         "queues_producer": {
-          "JOBS": "ultrastable-jobs"
+          "WORK": "ultrastable-work"
         },
+        "queues_consumer": [
+          "ultrastable-work"
+        ],
         "vectorize": {
-          "KB": "ultrastable-kb"
+          "MEMORY": "ultrastable-memory"
         },
-        "services": {},
+        "services": {
+          "SITE": "ultrastable-site",
+          "DASHBOARD": "ultrastable-dashboard",
+          "AGENTS": "ultrastable-agents"
+        },
         "secrets": [
           "GITHUB_DISPATCH_TOKEN",
           "GITHUB_WEBHOOK_SECRET",
@@ -135,7 +144,8 @@
           "AI"
         ],
         "services": {
-          "OWNER": "ultrastable-dashboard"
+          "OWNER": "ultrastable-dashboard",
+          "TICK": "ultrastable-tick"
         },
         "secrets": [],
         "vars": {}
@@ -159,7 +169,9 @@
         "send_email": [
           "SEND_EMAIL"
         ],
-        "services": {},
+        "services": {
+          "TICK": "ultrastable-tick"
+        },
         "secrets": [
           "GITHUB_TOKEN",
           "FLEET_TOKEN"
@@ -171,36 +183,6 @@
           "MAIL_FROM",
           "OWNER_EMAIL"
         ]
-      }
-    },
-    {
-      "id": "ultrastable-executor",
-      "state": "planned",
-      "role": "queue consumer and workflow host: runs one change through the agent ladder and opens the PR",
-      "main": "seed/worker/src/executor.js",
-      "compatibility_date": "2026-11-04",
-      "public": false,
-      "bindings": {
-        "d1": {
-          "DB": "ultrastable-org"
-        },
-        "ai": [
-          "AI"
-        ],
-        "queues_consumer": [
-          "ultrastable-jobs"
-        ],
-        "vectorize": {
-          "KB": "ultrastable-kb"
-        },
-        "workflows": {
-          "LOOP": "ultrastable-loop"
-        },
-        "services": {},
-        "secrets": [
-          "GITHUB_TOKEN"
-        ],
-        "vars": {}
       }
     },
     {
@@ -219,6 +201,37 @@
         "secrets": [],
         "vars": {}
       }
+    },
+    {
+      "id": "ultrastable-agents",
+      "state": "live",
+      "role": "code agents (Workers AI adapters from doctrine/code-agents.json), probed live",
+      "main": "deploy/agents-worker.js",
+      "compatibility_date": "2026-11-04",
+      "public": false,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-ops"
+        },
+        "ai": [
+          "AI"
+        ],
+        "services": {},
+        "secrets": [],
+        "vars": {}
+      }
     }
-  ]
+  ],
+  "edit_path": [
+    "tick (ultrastable-tick cron)",
+    "pick top queue item",
+    "code agent adapter edits (doctrine/code-agents.json)",
+    "PR on a branch",
+    "checks.yml",
+    "lane merges",
+    "deploy-system.yml / deploy-site.yml",
+    "dashboard counts the deploy"
+  ],
+  "deploy_counter": "ops/deploys.jsonl",
+  "system_compatibility_date": "2026-11-04"
 }

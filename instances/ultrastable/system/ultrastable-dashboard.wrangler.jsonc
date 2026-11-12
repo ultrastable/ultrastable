@@ -9,13 +9,14 @@
   },
   "triggers": {
     "crons": [
-      "0 13 * * *"
+      "0 13 * * *",
+      "*/10 * * * *"
     ]
   },
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "ultrastable-org",
+      "database_name": "ultrastable-ops",
       "database_id": "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"
     }
   ],

@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T14:35:23Z",
- "commit": "82391b8",
+ "generated": "2026-11-12T14:51:49Z",
+ "commit": "5f4f9b8",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 66,
@@ -18,18 +18,18 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 67,
-  "backlog_items": 70
+  "backlog_open": 66,
+  "backlog_items": 71
  },
  "throughput": {
   "queue": {
-   "items": 70,
+   "items": 71,
    "by_status": {
-    "open": 67,
-    "closed": 1,
+    "open": 66,
+    "closed": 3,
     "done": 2
    },
-   "takeable_now": 67
+   "takeable_now": 66
   },
   "merged": {
    "total": 0,
@@ -60,32 +60,109 @@
   },
   "changelog": [],
   "deploys": {
-   "site_runs": 27,
+   "site_runs": 30,
    "by_conclusion": {
-    "success": 26,
+    "success": 29,
     "cancelled": 1
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-12T14:33:27Z",
+    "createdAt": "2026-11-12T14:44:59Z",
     "event": "push",
-    "headSha": "59c8c9c0ea05fc7047bd72e1d4745ba2d86ee383"
+    "headSha": "76a3c027a8fb0ce54567a6e14ec54c85601162f6"
    },
    "per_day_success": {
-    "2026-11-12": 26
+    "2026-11-12": 29
    }
   },
   "executor": {
-   "runs": 8,
+   "runs": 9,
    "by_conclusion": {
-    "failure": 5,
-    "success": 3
+    "success": 3,
+    "failure": 6
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
    "attempts": {},
    "log_rows": 1
+  },
+  "model_cost": {
+   "calls": 0,
+   "usd": 0,
+   "by_model": {}
   }
+ },
+ "topology": {
+  "parts": {
+   "d1": {
+    "live": 3,
+    "planned": 0
+   },
+   "kv": {
+    "live": 2,
+    "planned": 1
+   },
+   "queues": {
+    "live": 0,
+    "planned": 1
+   },
+   "vectorize": {
+    "live": 0,
+    "planned": 1
+   },
+   "workflows": {
+    "live": 0,
+    "planned": 0
+   },
+   "r2": {
+    "live": 1,
+    "planned": 0
+   },
+   "workers": {
+    "live": 5,
+    "planned": 0
+   }
+  },
+  "pending_bindings": [
+   "ultrastable-tick: kv STATE -> ultrastable-state",
+   "ultrastable-tick: queue WORK -> ultrastable-work",
+   "ultrastable-tick: vectorize MEMORY -> ultrastable-memory"
+  ],
+  "workers": [
+   {
+    "id": "ultrastable-tick",
+    "state": "live",
+    "role": "heartbeat, executor dispatch, in-Worker code agents, lane",
+    "public": false
+   },
+   {
+    "id": "ultrastable-site",
+    "state": "live",
+    "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents)",
+    "public": true
+   },
+   {
+    "id": "ultrastable-dashboard",
+    "state": "live",
+    "role": "owner dashboard: e-mailed-code login, task queue, audit log; reached only through the site's OWNER service binding",
+    "public": false
+   },
+   {
+    "id": "ultrastable-ultrastable",
+    "state": "live",
+    "role": "found in the account, owner unknown: a bootstrap output (tenant 0 self-test); retired once nothing routes to it",
+    "public": false
+   },
+   {
+    "id": "ultrastable-agents",
+    "state": "live",
+    "role": "code agents (Workers AI adapters from doctrine/code-agents.json), probed live",
+    "public": false
+   }
+  ],
+  "drift": [
+   "no CLOUDFLARE_API_TOKEN on this host: drift not measured"
+  ]
  },
  "managers": [
   {
@@ -1450,6 +1527,51 @@
  "changes": {
   "commits": [
    {
+    "sha": "5f4f9b8",
+    "at": "2026-11-12T14:39:43+00:00",
+    "author": "Claude",
+    "subject": "Merge main; scripts/resolve_generated.py resolves the generated-file conflicts every PR hits",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/5f4f9b84a6de9b78bd3bf54f669363d2b2d47df7"
+   },
+   {
+    "sha": "ab1ff65",
+    "at": "2026-11-12T15:39:33+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SYS-1 + SYS-2: topology and code-agent ladder (#270)",
+    "pr": 270,
+    "item": "SYS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/ab1ff650303fa68a4cea7f53794a491fb78f4e44"
+   },
+   {
+    "sha": "c7917aa",
+    "at": "2026-11-12T14:38:55+00:00",
+    "author": "Claude",
+    "subject": "Merge main into LANE-WATCH-1",
+    "pr": null,
+    "item": "LANE-WATCH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/c7917aa2fdc34a23ff70f272d2d40be474c50e16"
+   },
+   {
+    "sha": "476b12d",
+    "at": "2026-11-12T14:36:37+00:00",
+    "author": "github-actions[bot]",
+    "subject": "Update ultrastable.io/proof to serve a product-side feed (#Q-10) (#268)",
+    "pr": 268,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/476b12d061c2e276bcd584002334597fc4732367"
+   },
+   {
+    "sha": "040f4f6",
+    "at": "2026-11-12T14:35:59+00:00",
+    "author": "Claude",
+    "subject": "LANE-WATCH-1: lane fails when a green PR stays open; crosswalk bans 'waiting for review'",
+    "pr": null,
+    "item": "LANE-WATCH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/040f4f6094751fc615d0da5aea5c5cb47c206361"
+   },
+   {
     "sha": "82391b8",
     "at": "2026-11-12T14:34:25+00:00",
     "author": "Claude",
@@ -1763,51 +1885,6 @@
     "pr": null,
     "item": "VISION-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/55d41e46b0cddb3334a586f808390a47b5df78e5"
-   },
-   {
-    "sha": "f1b5b80",
-    "at": "2026-11-12T13:55:22+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "VISION-1: encode the systems vision in doctrine, agent files, bootstrap prompt and bootstrapper",
-    "pr": null,
-    "item": "VISION-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/f1b5b8058b10b63bf04d53b8aa6248a9d112c044"
-   },
-   {
-    "sha": "61f951e",
-    "at": "2026-11-12T13:52:09+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "POSITION: say what Ultrastable is not for (#246)",
-    "pr": 246,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/61f951ee17a416456206ac4ae93c09a37f7a3c19"
-   },
-   {
-    "sha": "0f81604",
-    "at": "2026-11-12T13:50:25+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "writeback: open-loop ids never overwrite an existing item (#244)",
-    "pr": 244,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/0f816046f8170d7ec58721576a7c93f03836ea2e"
-   },
-   {
-    "sha": "6e998b1",
-    "at": "2026-11-12T13:49:45+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "STRANGE-LOOP-1: self-improving loops, no zombie sessions (#243)",
-    "pr": 243,
-    "item": "STRANGE-LOOP-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/6e998b178aaa20e8e789742011632ae680e8e7d0"
-   },
-   {
-    "sha": "85b63bf",
-    "at": "2026-11-12T13:46:42+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "MARKET-1: component gap analysis as data, tests map claims to code, gaps become queue items (#241)",
-    "pr": 241,
-    "item": "MARKET-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/85b63bfd25edd609b3045d88022a01f17e108ad8"
    }
   ],
   "pull_requests": []
