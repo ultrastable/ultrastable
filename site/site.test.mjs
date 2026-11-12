@@ -9,25 +9,43 @@ const get = (u) => mod.fetch(new Request(u));
 globalThis.fetch = async () => { throw new Error("offline"); };
 let r = await get("https://ultrastable.app/anything");
 assert.equal(r.status, 301); assert.equal(r.headers.get("location"), "https://ultrastable.io/pilot");
-// BUILD-1: idea -> building -> live page -> change, all in plain words, with an in-memory KV and a fake model
-const kv = new Map(); const mem = { delete: async (k) => { kv.delete(k); }, get: async (k) => kv.has(k) ? kv.get(k) : null, put: async (k, v) => { kv.set(k, v); } };
-let calls = 0; const AI = { run: async (m, a) => { calls++; const ch = a.messages[1].content.includes("current page"); return { response: "```html\n<html><body><h1>" + (ch ? "changed" : "bins") + "</h1></body></html>\n```" }; } };
+// BUILD-1 + RECALL-1 + AUDIT-1: idea -> three tap questions -> building -> live page -> independent check -> change, with an in-memory KV and fake models
+const kv = new Map(); const mem = { get: async (k) => kv.has(k) ? kv.get(k) : null, put: async (k, v) => { kv.set(k, v); }, delete: async (k) => { kv.delete(k); } };
+const briefs = []; let builds = 0;
+const AI = { run: async (m, a) => {
+  const user = a.messages[1].content;
+  if (!m.includes("qwen")) {
+    if (a.messages[0].content.includes("strict reviewer")) return { response: JSON.stringify({ met: ["Has a heading"], gaps: [{ what: "No sign-up form", critical: true }] }) };
+    return { response: JSON.stringify([{ q: "Do neighbours sign up?", cue: "e.g. a list" }, { q: "Phone first?", cue: "small screens" }, { q: "Calm look?", cue: "simple" }]) };
+  }
+  builds++; briefs.push(user); const ch = user.includes("current page") && !user.includes("Fix these problems");
+  return { response: "```html\n<html><body><h1>" + (user.includes("Fix these problems") ? "fixed" : ch ? "changed" : "bins") + "</h1></body></html>\n```" };
+} };
 const E2 = { ASSETS: mem, AI };
+const post = (path, o) => { const f = new FormData(); for (const k in o) f.set(k, o[k]); return mod.fetch(new Request("https://ultrastable.io" + path, { method: "POST", body: f }), E2); };
 r = await get("https://ultrastable.io/start"); assert.equal(r.status, 200); assert.match(await r.text(), /What do you want to build/);
-const fd = new FormData(); fd.set("idea", "an app for bin day");
-r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: fd }), E2);
-assert.equal(r.status, 303); const id = /\/s\/([a-f0-9]{10})\/make/.exec(r.headers.get("location"))[1];
-r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/make"), E2); assert.equal(r.status, 302, "the /make request itself runs the build and redirects when ready");
-r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.equal(r.status, 200);
-const page = await r.text(); assert.match(page, /<h1>bins<\/h1>/); assert.match(page, /Change something/); assert.match(r.headers.get("content-security-policy"), /sandbox/);
-const fc = new FormData(); fc.set("id", id); fc.set("change", "make it green");
-r = await mod.fetch(new Request("https://ultrastable.io/api/change", { method: "POST", body: fc }), E2); assert.equal(r.status, 303);
+r = await post("/api/idea", { idea: "an app for bin day" });
+assert.equal(r.status, 303); const id = /\/s\/([a-f0-9]{10})\/ask/.exec(r.headers.get("location"))[1];
+for (let i = 0; i < 3; i++) {
+  r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/ask"), E2); assert.match(await r.text(), new RegExp("Question " + (i + 1) + " of 3"));
+  r = await post("/api/answer", { id, a: ["yes", "no", "unsure"][i] });
+  assert.equal(r.status, 303); assert.match(r.headers.get("location"), i < 2 ? /\/ask$/ : /\/make$/);
+}
+r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/make"), E2); assert.equal(r.status, 302, "the /make request itself runs the build");
+assert.match(briefs[0], /Do neighbours sign up\? YES/); assert.match(briefs[0], /Phone first\? NO/); assert.match(briefs[0], /Calm look\? NOT SURE/);
+assert.equal(builds, 1, "the build is its own stage; the audit and fix run in a later request");
+r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.equal(r.status, 200); assert.equal(builds, 2, "first view starts the audit, which fixes the critical gap");
+const page = await r.text(); assert.match(page, /<h1>fixed<\/h1>/); assert.match(page, /Change something/); assert.match(page, /What I checked/); assert.match(r.headers.get("content-security-policy"), /sandbox/);
+r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/review"), E2); const rv = await r.text();
+assert.match(rv, /Has a heading/); assert.match(rv, /No sign-up form \(fixed automatically\)/); assert.match(rv, /What I cannot do yet/); assert.match(rv, /not shared with other visitors/);
+r = await post("/api/change", { id, change: "make it green" }); assert.equal(r.status, 303);
 r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/make"), E2); assert.equal(r.status, 302);
-r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.match(await r.text(), /changed/); assert.equal(calls, 2);
-// BUILD-2: an evicted build (state stuck at building, claim expired) is resumed by the next poll; a model that always fails ends as failed after 3 tries
+r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.match(await r.text(), /changed/);
+// BUILD-2: a model that always fails ends as failed after 3 tries, and the questions fall back to defaults
 const bad = { ASSETS: mem, AI: { run: async () => { throw new Error("model down"); } } };
-const f2 = new FormData(); f2.set("idea", "x"); r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: f2 }), bad);
-const id2 = /\/s\/([a-f0-9]{10})\/make/.exec(r.headers.get("location"))[1];
+const post2 = (path, o) => { const f = new FormData(); for (const k in o) f.set(k, o[k]); return mod.fetch(new Request("https://ultrastable.io" + path, { method: "POST", body: f }), bad); };
+r = await post2("/api/idea", { idea: "x" }); const id2 = /\/s\/([a-f0-9]{10})\/ask/.exec(r.headers.get("location"))[1];
+for (let i = 0; i < 3; i++) await post2("/api/answer", { id: id2, a: "yes" });
 for (let i = 0; i < 4; i++) { r = await mod.fetch(new Request("https://ultrastable.io/s/" + id2 + "/make"), bad); }
 assert.equal(kv.get("state:" + id2), "failed"); assert.match(await r.text(), /Something went wrong/);
 r = await mod.fetch(new Request("https://ultrastable.io/s/0000000000"), E2); assert.equal(r.status, 404);

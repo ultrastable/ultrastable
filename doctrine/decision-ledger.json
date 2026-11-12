@@ -83,6 +83,14 @@
    "probe": "file:doctrine/user-path.json"
   },
   {
+   "id": "decision-2026-11-12-the-front-door-asks-what-it-does-not-know-and-audits-what-it",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "The front door asks what it does not know and audits what it built",
+   "body": "Verified live on ultrastable.io (site 0.7.0): an idea produced 3 tap-only questions, the answers entered the build brief, the page was live in about 30 s, and an independent model (llama-3.3-70b, not the qwen builder) published /s/<id>/review listing 4 done, 5 gaps and the standing limits. Problems found by that run: a deprecated hard-coded model id had silently disabled the audit, so every AI call now walks a model list (re-probed, audit returns real findings); builds and audits run in separate requests because waitUntil is capped near 30 s; a stuck build now fails after 150 s. node site/site.test.mjs passes the whole flow. Pattern from QNFO prompted recall.",
+   "probe": "grep:site/worker.js::AUDIT-1"
+  },
+  {
    "id": "lesson-2026-11-12-backgrounded-ai-build-was-evicted-and-left-sites-stuck-at-bu",
    "kind": "lesson",
    "date": "2026-11-12",
