@@ -1,7 +1,7 @@
 {
   "id": "Q-10",
   "title": "Q-10: Claims feed on the product's own host",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-10.json::Status:\\*\\* closed\n**Status:** open\n\nMigrated from GitHub issue 10 (Issues are off on the code repository; this file is the record).\n\nultrastable.io/proof reads qnfo.org/api/platform-claims, which also exposes a repo_url pointing at the public QNFO repository. Serve a product-side feed instead.\n\nsize: S\n\n**Closing probe:** GET ultrastable.io/proof feed URL returns 200 with no qnfo.org/api/platform-claims dependency and no repo_url to the QNFO repo.",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-10.json::Status:\\*\\* closed\n**Status:** closed\n\nMigrated from GitHub issue 10 (Issues are off on the code repository; this file is the record).\n\nultrastable.io/proof reads qnfo.org/api/platform-claims, which also exposes a repo_url pointing at the public QNFO repository. Serve a product-side feed instead.\n\nsize: S\n\n**Closing probe:** GET ultrastable.io/proof feed URL returns 200 with no qnfo.org/api/platform-claims dependency and no repo_url to the QNFO repo.\n\n**Evidence:** closed by the pull request that carries this change\n",
   "labels": [
     "p2",
     "agent-ready"
