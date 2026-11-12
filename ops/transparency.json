@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T15:14:48Z",
- "commit": "2dce872",
+ "generated": "2026-11-12T15:21:42Z",
+ "commit": "97d4a90",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 67,
@@ -18,18 +18,18 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 78,
-  "backlog_items": 83
+  "backlog_open": 81,
+  "backlog_items": 86
  },
  "throughput": {
   "queue": {
-   "items": 83,
+   "items": 86,
    "by_status": {
-    "open": 78,
+    "open": 81,
     "closed": 4,
     "done": 1
    },
-   "takeable_now": 78
+   "takeable_now": 81
   },
   "merged": {
    "total": 0,
@@ -78,8 +78,8 @@
   "executor": {
    "runs": 9,
    "by_conclusion": {
-    "failure": 6,
-    "success": 3
+    "success": 3,
+    "failure": 6
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -106,7 +106,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 1666.6,
+   "age_s": 2081.9,
    "status": "fresh",
    "missed": 0
   },
@@ -130,16 +130,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 76.6,
+   "age_s": 276.9,
    "status": "fresh",
-   "missed": 0,
-   "lag_s": 56.0
+   "missed": 0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 386.6,
+   "age_s": 448.9,
    "status": "fresh",
    "missed": 0
   }
@@ -163,7 +162,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-12T15:14:36Z",
+  "generated": "2026-11-12T15:21:30Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -212,7 +211,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-12T15:14:36Z",
+     "at": "2026-11-12T15:21:30Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -265,16 +264,16 @@
  },
  "growth": {
   "mix": {
-   "growth": 8,
-   "fix": 2,
-   "maintenance": 10,
+   "growth": 9,
+   "fix": 0,
+   "maintenance": 11,
    "total": 20,
-   "growth_share": 0.4,
+   "growth_share": 0.45,
    "target": 0.4
   },
   "target_growth_share": 0.4,
-  "growth_items_takeable": 10,
-  "items_takeable": 78,
+  "growth_items_takeable": 12,
+  "items_takeable": 81,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -319,7 +318,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 1683.3,
+   "last_beat_age_s": 2097.2,
    "expected_interval_s": 21600,
    "beats_24h": 9,
    "expected_24h": 4.0,
@@ -330,7 +329,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 50.3,
+   "last_beat_age_s": 464.2,
    "expected_interval_s": 86400,
    "beats_24h": 7,
    "expected_24h": 1.0,
@@ -341,9 +340,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 125.3,
+   "last_beat_age_s": 8.2,
    "expected_interval_s": 86400,
-   "beats_24h": 36,
+   "beats_24h": 37,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -1805,6 +1804,51 @@
  "changes": {
   "commits": [
    {
+    "sha": "97d4a90",
+    "at": "2026-11-12T15:16:46+00:00",
+    "author": "Claude",
+    "subject": "Rebuild dashboard",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/97d4a90e5e12fd46ef78b2b7dae71da57fc502ff"
+   },
+   {
+    "sha": "d2b02e3",
+    "at": "2026-11-12T15:16:46+00:00",
+    "author": "Claude",
+    "subject": "Merge main",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/d2b02e370926430bfabb3a92ac1c78e1522c7118"
+   },
+   {
+    "sha": "e140730",
+    "at": "2026-11-12T15:16:42+00:00",
+    "author": "Claude",
+    "subject": "File the five unfinished autonomy items with owners, triggers and probes",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/e140730d1e075a106cc2b6f28b37826ca746a477"
+   },
+   {
+    "sha": "946d9aa",
+    "at": "2026-11-12T15:15:16+00:00",
+    "author": "Claude",
+    "subject": "Merge main; test_pm uses the scratch helper so the cleanup guard passes",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/946d9aa2c397f0c1ac83fd03bc01906cd1996ebd"
+   },
+   {
+    "sha": "dfc25e0",
+    "at": "2026-11-12T16:12:35+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Quiet product manager pass; adopt parallel growth items; lane hook filed (#280)",
+    "pr": 280,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/dfc25e04238f5137b91e290de080b1f5b6f763aa"
+   },
+   {
     "sha": "2dce872",
     "at": "2026-11-12T15:12:15+00:00",
     "author": "Claude",
@@ -2118,51 +2162,6 @@
     "pr": null,
     "item": "QUALITY-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/98330af5af525470ed4a9071995316a9295255b9"
-   },
-   {
-    "sha": "1dc0651",
-    "at": "2026-11-12T14:32:11+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "QUALITY-1: design-system build prompt, deterministic lint feeds repair pass, honest live/limits wording",
-    "pr": null,
-    "item": "QUALITY-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/1dc0651f157868d0f98bfb2c182e24b81c96f7f2"
-   },
-   {
-    "sha": "594e814",
-    "at": "2026-11-12T14:30:33+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "PINS-1: merge with SITE-PINS-1; keep one source of truth plus the unprobed-issue ratchet; promote front-door pin",
-    "pr": null,
-    "item": "PINS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/594e814e71e29070e3886dc4f02b1bedf0eecbd3"
-   },
-   {
-    "sha": "94fd50f",
-    "at": "2026-11-12T14:28:05+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "PINS-1: site status pins and roadmap computed from code, proofs and probe-backed issues; unprobed issues ratchet",
-    "pr": null,
-    "item": "PINS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/94fd50f5e36f6b131964083b17787874cb621bc9"
-   },
-   {
-    "sha": "1f620d0",
-    "at": "2026-11-12T14:26:39+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "SITE-PINS-1: tie every site status pin and honest gap to a real issue and code (#247)",
-    "pr": 247,
-    "item": "SITE-PINS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/1f620d02dadc91d3b63f24d83dafd526984c580d"
-   },
-   {
-    "sha": "671fdf0",
-    "at": "2026-11-12T14:20:56+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "VISION-1: front door refuses definite one-offs (422 not_a_fit) before storing or building; file the live-clock and declared-probe gaps",
-    "pr": null,
-    "item": "VISION-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/671fdf0a01d35fb5070b749ff4b7f927f00bdfbf"
    }
   ],
   "pull_requests": []
