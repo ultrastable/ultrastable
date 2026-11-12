@@ -1,0 +1,11 @@
+{
+  "id": "Q-FLOW-QNFO-TWIN",
+  "title": "Q-FLOW-QNFO-TWIN: the QNFO fleet's workflow flow map and check",
+  "body": "**Owner:** operations\n**Trigger:** every QNFO fleet run\n**Done check:** grep:instances/qnfo/flows.json::flows\n**Status:** open\n\nDeclare every QNFO workflow's inflows, outflows, bindings and feedback in instances/qnfo and fail the fleet check for an output that feeds no signal or an input with no producer (twin of foundation/flows.py in qnfo-workers _shared/flow-registry.js).",
+  "labels": [
+    "role:operations",
+    "repair"
+  ],
+  "milestone": "Now",
+  "workstream": "Autonomy"
+}

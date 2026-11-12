@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T15:21:42Z",
- "commit": "97d4a90",
+ "generated": "2026-11-12T16:04:03Z",
+ "commit": "9f90d21",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 67,
@@ -18,18 +18,18 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 81,
-  "backlog_items": 86
+  "backlog_open": 85,
+  "backlog_items": 90
  },
  "throughput": {
   "queue": {
-   "items": 86,
+   "items": 90,
    "by_status": {
-    "open": 81,
+    "open": 85,
     "closed": 4,
     "done": 1
    },
-   "takeable_now": 81
+   "takeable_now": 85
   },
   "merged": {
    "total": 0,
@@ -60,26 +60,26 @@
   },
   "changelog": [],
   "deploys": {
-   "site_runs": 36,
+   "site_runs": 39,
    "by_conclusion": {
-    "success": 34,
+    "success": 37,
     "cancelled": 2
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-12T15:12:39Z",
+    "createdAt": "2026-11-12T15:54:35Z",
     "event": "push",
-    "headSha": "dfc25e04238f5137b91e290de080b1f5b6f763aa"
+    "headSha": "9f90d2116e87b015dcc860da79777c6ecf8dcf28"
    },
    "per_day_success": {
-    "2026-11-12": 34
+    "2026-11-12": 37
    }
   },
   "executor": {
    "runs": 9,
    "by_conclusion": {
-    "success": 3,
-    "failure": 6
+    "failure": 6,
+    "success": 3
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -106,7 +106,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 2081.9,
+   "age_s": 4623.9,
    "status": "fresh",
    "missed": 0
   },
@@ -130,15 +130,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 276.9,
+   "age_s": 518.9,
    "status": "fresh",
-   "missed": 0
+   "missed": 0,
+   "lag_s": 36.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 448.9,
+   "age_s": 2990.9,
    "status": "fresh",
    "missed": 0
   }
@@ -162,13 +163,13 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-12T15:21:30Z",
+  "generated": "2026-11-12T16:03:51Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1314.3,
+    "expected_today": 1314.5,
     "value": null,
     "behind": null,
     "progress": null
@@ -177,7 +178,7 @@
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 566.0,
+    "expected_today": 566.1,
     "value": null,
     "behind": null,
     "progress": null
@@ -186,7 +187,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 821.2,
+    "expected_today": 821.4,
     "value": null,
     "behind": null,
     "progress": null
@@ -195,7 +196,7 @@
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 327.7,
+    "expected_today": 327.8,
     "value": null,
     "behind": null,
     "progress": null
@@ -211,7 +212,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-12T15:21:30Z",
+     "at": "2026-11-12T16:03:51Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -264,16 +265,16 @@
  },
  "growth": {
   "mix": {
-   "growth": 9,
-   "fix": 0,
-   "maintenance": 11,
+   "growth": 10,
+   "fix": 1,
+   "maintenance": 9,
    "total": 20,
-   "growth_share": 0.45,
+   "growth_share": 0.5,
    "target": 0.4
   },
   "target_growth_share": 0.4,
-  "growth_items_takeable": 12,
-  "items_takeable": 81,
+  "growth_items_takeable": 13,
+  "items_takeable": 85,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -318,7 +319,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 2097.2,
+   "last_beat_age_s": 4638.7,
    "expected_interval_s": 21600,
    "beats_24h": 9,
    "expected_24h": 4.0,
@@ -329,7 +330,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 464.2,
+   "last_beat_age_s": 3005.7,
    "expected_interval_s": 86400,
    "beats_24h": 7,
    "expected_24h": 1.0,
@@ -340,9 +341,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 8.2,
+   "last_beat_age_s": 564.7,
    "expected_interval_s": 86400,
-   "beats_24h": 37,
+   "beats_24h": 39,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -1804,40 +1805,31 @@
  "changes": {
   "commits": [
    {
-    "sha": "97d4a90",
-    "at": "2026-11-12T15:16:46+00:00",
-    "author": "Claude",
-    "subject": "Rebuild dashboard",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/97d4a90e5e12fd46ef78b2b7dae71da57fc502ff"
+    "sha": "9f90d21",
+    "at": "2026-11-12T16:54:30+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path (#282)",
+    "pr": 282,
+    "item": "FLOW-DIRECTIVE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/9f90d2116e87b015dcc860da79777c6ecf8dcf28"
    },
    {
-    "sha": "d2b02e3",
-    "at": "2026-11-12T15:16:46+00:00",
-    "author": "Claude",
-    "subject": "Merge main",
-    "pr": null,
+    "sha": "0167d22",
+    "at": "2026-11-12T16:24:59+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Write-back: lesson on duplicate parallel builds (#279)",
+    "pr": 279,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/d2b02e370926430bfabb3a92ac1c78e1522c7118"
+    "url": "https://github.com/ultrastable/ultrastable/commit/0167d22fb227dd1b763e7b8e17d3699aee189eb4"
    },
    {
-    "sha": "e140730",
-    "at": "2026-11-12T15:16:42+00:00",
-    "author": "Claude",
-    "subject": "File the five unfinished autonomy items with owners, triggers and probes",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/e140730d1e075a106cc2b6f28b37826ca746a477"
-   },
-   {
-    "sha": "946d9aa",
-    "at": "2026-11-12T15:15:16+00:00",
-    "author": "Claude",
-    "subject": "Merge main; test_pm uses the scratch helper so the cleanup guard passes",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/946d9aa2c397f0c1ac83fd03bc01906cd1996ebd"
+    "sha": "ec06c96",
+    "at": "2026-11-12T16:21:26+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "GROWTH-PM-1: growth policy values and product coverage enforced in CI (#281)",
+    "pr": 281,
+    "item": "GROWTH-PM-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/ec06c96a6b12b89693af9a8aa7bdc8c5d2b9c297"
    },
    {
     "sha": "dfc25e0",
@@ -1847,15 +1839,6 @@
     "pr": 280,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/dfc25e04238f5137b91e290de080b1f5b6f763aa"
-   },
-   {
-    "sha": "2dce872",
-    "at": "2026-11-12T15:12:15+00:00",
-    "author": "Claude",
-    "subject": "Write-back: lesson on duplicate parallel builds",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/2dce872cc912cd1ea71361b4532a51fdcf3c6d9c"
    },
    {
     "sha": "1de7ab7",
@@ -2162,6 +2145,24 @@
     "pr": null,
     "item": "QUALITY-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/98330af5af525470ed4a9071995316a9295255b9"
+   },
+   {
+    "sha": "1dc0651",
+    "at": "2026-11-12T14:32:11+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "QUALITY-1: design-system build prompt, deterministic lint feeds repair pass, honest live/limits wording",
+    "pr": null,
+    "item": "QUALITY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1dc0651f157868d0f98bfb2c182e24b81c96f7f2"
+   },
+   {
+    "sha": "594e814",
+    "at": "2026-11-12T14:30:33+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PINS-1: merge with SITE-PINS-1; keep one source of truth plus the unprobed-issue ratchet; promote front-door pin",
+    "pr": null,
+    "item": "PINS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/594e814e71e29070e3886dc4f02b1bedf0eecbd3"
    }
   ],
   "pull_requests": []

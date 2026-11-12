@@ -4,11 +4,16 @@
                                           as pending (shrink-only); every inflow has a producer, every outflow a consumer (or, for an outflow
                                           to the world, a named returning signal that some loop consumes); every declared flow lies on a cycle
   python3 -m foundation flows --map      the signal graph as JSON (flows, edges, closed, pending)
+  python3 -m foundation flows --workflows  every workflow with its loop, the signals in and out, and the bindings (secrets) it uses
+  python3 -m foundation flows --sync     write each workflow-bearing flow's `bindings` from the secrets its workflows reference
+
+Workflow rule (FLOW-DIRECTIVE-1, owner 2026-11-12): every workflow belongs to a loop that declares its flows (none may be pending), and the flow's `bindings`
+equal the secrets the workflow files reference, so an input or output cannot travel on a binding nobody declared.
 
 Fleet twin: QNFO/qnfo-workers _shared/flow-registry.js (same rules, Cloudflare runtime).
 """
 from __future__ import annotations
-import json, sys
+import json, re, sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -94,7 +99,62 @@ def check(root=REPO, d: dict | None = None, loops: list | None = None) -> list[s
                 bad.append(f"flow {fid}: outflow {s} has no consumer")
         if fid not in g["closed"]:
             bad.append(f"flow {fid} lies on no feedback cycle")
+    return bad + workflow_check(d, loops, root)
+
+
+SECRET = re.compile(r"secrets\.([A-Z][A-Z0-9_]*)")
+FREE = {"GITHUB_TOKEN"}  # minted by GitHub for each run, not a binding anyone declares
+
+
+def workflow_loops(root, loops) -> dict:
+    wf = {p.name: [] for p in sorted((Path(root) / ".github/workflows").glob("*.yml"))}
+    for l in loops:
+        for w in l.get("workflows", []):
+            wf.setdefault(w, []).append(l["id"])
+    return wf
+
+
+def derived_bindings(root, loops) -> dict:
+    out = {}
+    for w, ids in workflow_loops(root, loops).items():
+        f = Path(root) / ".github/workflows" / w
+        used = set(SECRET.findall(f.read_text(encoding="utf-8"))) - FREE if f.is_file() else set()
+        for i in ids:
+            out.setdefault(i, set()).update(used)
+    return {k: sorted(v) for k, v in out.items()}
+
+
+def workflow_check(d: dict, loops: list, root=REPO) -> list[str]:
+    bad, flows = [], d["flows"]
+    for w, ids in workflow_loops(root, loops).items():
+        if not ids:
+            bad.append(f"workflow {w} belongs to no loop")
+        elif not any(i in flows for i in ids):
+            bad.append(f"workflow {w}: its loops {ids} declare no flow (inflows, outflows, feedback)")
+    for i, used in derived_bindings(root, loops).items():
+        if i in flows and flows[i].get("bindings") != used:
+            bad.append(f"flow {i}: bindings {flows[i].get('bindings')} differ from the secrets its workflows use {used}; run flows --sync")
     return bad
+
+
+def sync(root=REPO) -> int:
+    d, loops = load(root)
+    for i, used in derived_bindings(root, loops).items():
+        if i in d["flows"]:
+            d["flows"][i]["bindings"] = used
+    (Path(root) / DOCTRINE).write_text(json.dumps(d, indent=2) + "\n", encoding="utf-8")
+    return 0
+
+
+def workflow_table(root=REPO) -> list[dict]:
+    d, loops = load(root)
+    rows = []
+    for w, ids in workflow_loops(root, loops).items():
+        for i in ids:
+            f = d["flows"].get(i, {})
+            rows.append({"workflow": w, "loop": i, "in": [x["signal"] for x in f.get("inflows", [])], "out": [x["signal"] for x in f.get("outflows", [])],
+                         "bindings": f.get("bindings", []), "declared": i in d["flows"]})
+    return rows
 
 
 def flow_map(root=REPO) -> dict:
@@ -106,6 +166,11 @@ def flow_map(root=REPO) -> dict:
 
 def main(argv) -> int:
     a = list(argv)
+    if "--workflows" in a:
+        print(json.dumps(workflow_table(), indent=1))
+        return 0
+    if "--sync" in a:
+        return sync()
     if "--map" in a:
         print(json.dumps(flow_map(), indent=1))
         return 0

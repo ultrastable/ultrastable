@@ -506,6 +506,14 @@
    "body": "Rowan 2026-11-12: account for every workflow's inflows and outflows as loops. doctrine/flows.json declares 14 core loops (all on a feedback cycle); 53 loops on the shrink-only pending list; flows --check runs in checks. Fleet twin: QNFO/qnfo-workers _shared/flow-registry.js.",
    "probe": "file:foundation/flows.py",
    "session": "https://claude.ai/code/session_0156nqDscdBj2VCWxbp4abR1"
+  },
+  {
+   "id": "decision-2026-11-12-workflow-flow-map-every-workflow-declares-flows-and-bindings",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Workflow flow map: every workflow declares flows and bindings",
+   "body": "Rowan's standing directive: every workflow's inflows and outflows are loops. Fourteen workflow-bearing loops moved out of pending; the check now fails a workflow whose loops declare no flow and a flow whose bindings differ from the secrets its workflows use. Jobs, outreach and resume: outreach returns replies to the registry; the resume system is outside this repo and filed as Q-FLOW-RESUME-JOBS. Session: session_0156nqDrGFZaa8zQwcdGZNQU",
+   "probe": "grep:foundation/flows.py::def workflow_check"
   }
  ]
 }
