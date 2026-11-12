@@ -102,3 +102,11 @@ class RepairLoop(unittest.TestCase):
         self.assertGreaterEqual(executor.REPAIRS, 1)
         self.assertIn("YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS", src)
         self.assertIn("Server-side only: never reference localhost", executor.build_prompt({"number": 1, "title": "t", "body": ""}, ""))
+
+    def test_cloudflare_dict_response_is_accepted(self):
+        import io, os, urllib.request
+        from unittest import mock
+        body = json.dumps({"result": {"response": {"summary": "s", "files": []}}}).encode()
+        with mock.patch.dict(os.environ, {"CLOUDFLARE_ACCOUNT_ID": "a", "CLOUDFLARE_API_TOKEN": "t"}), \
+             mock.patch.object(urllib.request, "urlopen", return_value=io.BytesIO(body)):
+            self.assertEqual(executor.call_cloudflare("p")["summary"], "s")
