@@ -60,7 +60,7 @@ def _cf(path: str, body: dict, token: str, acct: str):
 
 
 def d1_beats(c: dict, token: str, acct: str) -> list[float]:
-    r = _cf(f"d1/database/{c['d1_id']}/query", {"sql": f"SELECT {c['column']} AS t FROM {c['table']} ORDER BY id DESC LIMIT 60"}, token, acct)
+    r = _cf(f"d1/database/{c['d1_id']}/query", {"sql": f"SELECT {c['column']} AS t FROM {c['table']} ORDER BY id DESC LIMIT {int(86400 // c['expected_interval_s']) + 12}"}, token, acct)
     return [_ts(x["t"]) for x in r["result"][0]["results"]]
 
 

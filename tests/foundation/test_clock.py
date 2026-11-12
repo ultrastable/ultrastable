@@ -35,6 +35,16 @@ class Clock(unittest.TestCase):
         self.assertTrue(C.should_chain(1, 4, 5, ["failure", "failure", "success"], 3)[0])
         self.assertFalse(C.should_chain(0, 4, 5, [], 3, budget_ok=False)[0])
 
+    def test_d1_window_covers_a_full_day_of_beats(self):
+        import unittest.mock as m
+        seen = {}
+        def fake(path, body, token, acct):
+            seen["sql"] = body["sql"]; return {"result": [{"results": []}]}
+        c = C.load()["clocks"][0]
+        with m.patch.object(C, "_cf", fake):
+            C.d1_beats(c, "t", "a")
+        self.assertIn("LIMIT 156", seen["sql"])   # 144 beats a day plus a margin, not a truncated 60
+
     def test_executor_workflow_runs_the_chain_step(self):
         t = (C.REPO / ".github/workflows/executor.yml").read_text(encoding="utf-8")
         self.assertIn("foundation clock --chain --apply", t)
