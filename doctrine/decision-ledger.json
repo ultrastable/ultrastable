@@ -472,6 +472,14 @@
    "title": "heal pass flagged the heartbeat missing because it ran without the Cloudflare token",
    "body": "The first scheduled heal pass could not read the tick clock, so the heartbeat stage showed missing and a catch-up was planned for a clock that was fine. An unreadable clock is now reported as unmeasured and never escalated, and both workflows pass the Cloudflare token to the heal step; tests pass.",
    "probe": "grep:foundation/clockwork.py::unmeasured"
+  },
+  {
+   "id": "lesson-2026-11-12-duplicate-parallel-builds-of-the-same-directive",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Duplicate parallel builds of the same directive",
+   "body": "Three sessions built the system declaration, the clockwork stages and the growth manager at once (PRs 271, 272, 273, 275, 276). Two PRs were closed as superseded. Before building a directive-sized item, list open and recent PRs and queue claims for the same term, and claim the item first. Session: session_0156nqDrGFZaa8zQwcdGZNQU",
+   "probe": "grep:foundation/clockwork.py::CLOCKWORK-2"
   }
  ]
 }
