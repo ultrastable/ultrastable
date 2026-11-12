@@ -1816,6 +1816,42 @@
       "area": "governance"
     },
     {
+      "id": "product-scout",
+      "kind": "governance",
+      "summary": "SCOUT-1: the product manager's research loop. Competitor, platform and best-practice sources are re-read on cadence; a relevant change becomes a finding and a queue item that closes only with a recorded disposition (adopt into a market.json gap or feature, have, reject).",
+      "trigger": "daily (scout.yml), every PR check",
+      "owner": "product-manager",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "python3 -m foundation scout --check reports ok and every finding has a queue item and, once closed, a disposition",
+      "paths": [
+        {
+          "id": "ci",
+          "how": "scout.yml daily: python3 -m foundation scout --run --apply, PR for the lane",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation scout --run --apply from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/scout.py::def run",
+      "writeback": [
+        "doctrine/scout-state.json",
+        "doctrine/market.json"
+      ],
+      "system_path": [
+        "foundation/scout.py",
+        "doctrine/scout.json",
+        ".github/workflows/scout.yml"
+      ],
+      "area": "governance",
+      "workflows": [
+        "scout.yml"
+      ]
+    },
+    {
       "id": "strange-loop-hygiene",
       "kind": "governance",
       "summary": "STRANGE-LOOP-1: no zombie sessions, branches, PRs or issues, and each sweep must beat the last: it records its own leftover count and files a plus against its weakest step.",

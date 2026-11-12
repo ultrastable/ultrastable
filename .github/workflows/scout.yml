@@ -1,0 +1,44 @@
+name: scout
+# budget: ~1 min x 1 per day = ~30 min per month
+# trigger: daily schedule and manual dispatch; sources carry their own cadence_days (3 to 30), so a daily pass reads only the due ones
+# free-alternative: `python3 -m foundation scout --run --apply` from a cloud-hosted agent routine or the Cloudflare tick worker
+# SCOUT-1: the product manager's research loop. Re-reads competitor, platform and best-practice sources, files findings as queue items, opens a PR for the lane to merge.
+on:
+  schedule:
+    - cron: "41 5 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: scout
+  cancel-in-progress: false
+jobs:
+  scout:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - run: python3 scripts/actions_guard.py scout
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Read the watchlist
+        run: python3 -m foundation scout --run --apply
+      - name: Open a PR with the new state and findings
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "$(git status --porcelain doctrine/scout-state.json docs/issues)" ]; then echo "scout: no change"; exit 0; fi
+          b="agent/scout-$(date -u +%Y%m%d)"
+          git config user.name "ultrastable-scout"; git config user.email "scout@users.noreply.github.com"
+          git checkout -b "$b"
+          git add doctrine/scout-state.json docs/issues
+          git commit -m "SCOUT-1: research pass $(date -u +%F)"
+          git push origin "$b"
+          gh pr create --base main --head "$b" --title "SCOUT-1: research pass $(date -u +%F)" --body "## Self-audit
+          Real output: $(python3 -m foundation scout --report | tail -1)
+          Not thinking about: sources that changed only in markup the keyword filter ignores; filed as scout.json keyword tuning if seen.
+          Findings are Q-SCOUT-* queue items; fixed by disposition, not by this PR."

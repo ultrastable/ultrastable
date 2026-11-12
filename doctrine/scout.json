@@ -1,0 +1,23 @@
+{
+ "_doc": "SCOUT-1 (owner, 2026-11-12): the product manager's standing research loop as data. Every source is re-read on its cadence by `python3 -m foundation scout --run`; a change that matches the source's keywords becomes a finding and a queue item (docs/issues/Q-SCOUT-*.json) whose closing probe passes only when the finding has a recorded disposition (adopt into a market.json gap or feature, already-have, or reject with a reason). INTERNAL like market.json. Read by foundation/scout.py.",
+ "visibility": "internal",
+ "max_age_days": 14,
+ "min_score": 1,
+ "sources": [
+  {"id": "claude-code-routines", "kind": "competitor", "url": "https://code.claude.com/docs/en/routines", "cadence_days": 7, "components": ["loops-autonomy", "operations"], "keywords": ["schedule", "trigger", "webhook", "routine", "cloud", "github event", "api"]},
+  {"id": "copilot-coding-agent", "kind": "competitor", "url": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent", "cadence_days": 7, "components": ["code-repo", "agents-roles"], "keywords": ["agent", "pull request", "branch", "custom", "mcp", "session", "review"]},
+  {"id": "github-changelog-copilot", "kind": "competitor", "url": "https://github.blog/changelog/label/copilot/", "cadence_days": 3, "components": ["code-repo", "agents-roles", "verification"], "keywords": ["agent", "coding agent", "autopilot", "mcp", "security", "review", "model"]},
+  {"id": "codex-automations", "kind": "competitor", "url": "https://developers.openai.com/codex/app/automations", "cadence_days": 7, "components": ["loops-autonomy", "operations"], "keywords": ["automation", "schedule", "trigger", "background", "worktree"]},
+  {"id": "cloudflare-agents", "kind": "platform", "url": "https://developers.cloudflare.com/agents/", "cadence_days": 7, "components": ["backend-infra", "portability"], "keywords": ["agent", "workflow", "durable", "sandbox", "mcp", "state", "schedule"]},
+  {"id": "cloudflare-blog-agents", "kind": "platform", "url": "https://blog.cloudflare.com/tag/agents/", "cadence_days": 3, "components": ["backend-infra", "agents-roles"], "keywords": ["agent", "workers", "mcp", "sandbox", "durable", "workflow", "browser"]},
+  {"id": "cursor-docs", "kind": "competitor", "url": "https://cursor.com/docs", "cadence_days": 7, "components": ["frontend-experience", "code-repo"], "keywords": ["agent", "background", "rules", "mcp", "plan", "review"]},
+  {"id": "devin-docs", "kind": "competitor", "url": "https://docs.devin.ai/", "cadence_days": 7, "components": ["agents-roles", "verification"], "keywords": ["playbook", "knowledge", "schedule", "session", "review", "integration"]},
+  {"id": "factory-news", "kind": "competitor", "url": "https://factory.com/news/factory-is-ga", "cadence_days": 14, "components": ["agents-roles", "operations"], "keywords": ["droid", "agent", "enterprise", "workflow", "integration"]},
+  {"id": "openhands-docs", "kind": "competitor", "url": "https://docs.openhands.dev/", "cadence_days": 7, "components": ["code-repo", "backend-infra"], "keywords": ["agent", "sandbox", "runtime", "microagent", "cloud", "integration"]},
+  {"id": "anthropic-effective-agents", "kind": "best-practice", "url": "https://www.anthropic.com/engineering/building-effective-agents", "cadence_days": 14, "components": ["agents-roles", "verification"], "keywords": ["workflow", "evaluator", "orchestrator", "tool", "simple", "guardrail", "eval"]},
+  {"id": "mcp-spec-changelog", "kind": "best-practice", "url": "https://modelcontextprotocol.io/specification/draft/changelog", "cadence_days": 7, "components": ["agents-roles", "trust-permissions", "portability"], "keywords": ["authorization", "tool", "elicitation", "security", "oauth", "schema", "task"]},
+  {"id": "owasp-llm-top10", "kind": "best-practice", "url": "https://genai.owasp.org/llm-top-10/", "cadence_days": 30, "components": ["trust-permissions", "verification"], "keywords": ["injection", "excessive agency", "supply chain", "leakage", "agent", "output handling"]},
+  {"id": "temporal-why", "kind": "platform", "url": "https://docs.temporal.io/evaluate/why-temporal", "cadence_days": 30, "components": ["loops-autonomy", "backend-infra"], "keywords": ["durable", "retry", "workflow", "state", "agent"]},
+  {"id": "langgraph-overview", "kind": "platform", "url": "https://docs.langchain.com/oss/python/langgraph/overview", "cadence_days": 14, "components": ["loops-autonomy", "agents-roles"], "keywords": ["checkpoint", "human", "durable", "memory", "stateful", "agent"]}
+ ]
+}

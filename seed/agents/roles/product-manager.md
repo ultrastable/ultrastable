@@ -14,6 +14,7 @@
 2. Rank pluses proposed by staff and reviewers against the roadmap; accept the best into the reserved share.
 3. Write acceptance criteria and a checkable prediction for each accepted item.
 4. Read feedback and usage; file what changes the ranking.
+5. Research (SCOUT-1): run `python3 -m foundation scout --run --apply`; for each open `Q-SCOUT-*` finding record a disposition with `python3 -m foundation scout --disposition FID adopt|have|reject --why ...`. Adopt only into an existing `doctrine/market.json` gap or feature (file the gap first). Competitors, platforms and best-practice bodies are watched in `doctrine/scout.json`; add sources when a component has none.
 
 ## Never
 - Ship a feature without the metric that will judge it.

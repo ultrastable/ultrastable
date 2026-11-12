@@ -296,6 +296,14 @@
    "title": "deploy-site.mjs bound no D1, so /api/live and site analytics had no database",
    "body": "The deploy script uploaded only ASSETS and AI bindings while site/wrangler.toml declares DB (ultrastable-ops). Fixed by binding d1 DB in deploy/deploy-site.mjs; /api/live is the probe.",
    "probe": "grep:deploy/deploy-site.mjs::type: \"d1\""
+  },
+  {
+   "id": "lesson-2026-11-12-scout-1-product-research-loop",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "SCOUT-1 product research loop",
+   "body": "The product manager now runs foundation/scout.py daily: watchlist doctrine/scout.json, state doctrine/scout-state.json, findings become Q-SCOUT-* queue items closed only by a recorded disposition. Adopt requires an existing market.json gap or feature.",
+   "probe": "grep:foundation/scout.py::def run"
   }
  ]
 }
