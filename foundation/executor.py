@@ -178,7 +178,8 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     n = issue["number"]
     row = {"issue": n, "title": issue["title"], "prediction": f"issue_{n}_closed = 1 within 24 h"}
     key = os.environ.get("ANTHROPIC_API_KEY")
-    if model_call is None and not key and not cf_ready():
+    from . import agent_ladder  # SYS-2: which model writes the change, who reviews it and what it cost
+    if model_call is None and not key and not cf_ready() and not agent_ladder.rungs(root):
         row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (a cloud-hosted routine that starts a Claude session, which runs --pick and --record) takes the item without any key")
         log(root, row); return row
     if not apply:
@@ -195,9 +196,13 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
             failed = []
             try:
-                out = (model_call or (lambda p: call_model(p, key)))(prompt)
+                if model_call:
+                    out, meta = model_call(prompt), {}
+                else:
+                    out, meta = agent_ladder.call(prompt, attempt, root=root)
+                    row.setdefault("models", []).append(meta["model"])
                 files = apply_edits(out["files"], root)
-            except (ValueError, KeyError, TypeError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
+            except (ValueError, KeyError, TypeError, OSError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
                 failed.append("the reply was not valid JSON with a files list: " + type(e).__name__ + ": " + str(e)[:300])
                 if attempt < REPAIRS:
                     prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED; reply with ONLY valid JSON (escape backslashes and quotes inside file content): " + failed[0]
@@ -209,6 +214,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 code, o = sh(c, root)
                 if code:
                     failed.append(f"{' '.join(c)}: {o[-2500:]}")
+            if not failed and model_call is None:
+                rv = agent_ladder.review(issue, out, meta.get("model", ""), root=root)
+                row["review"] = rv
+                if not rv["approve"]:
+                    failed.append("independent reviewer (" + str(rv.get("model")) + ") vetoed the change: " + "; ".join(rv["reasons"]))
             if not failed:
                 break
             sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd"], root)

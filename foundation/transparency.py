@@ -143,6 +143,11 @@ def throughput(root, use_gh=True):
         out["queue"] = {"items": len(its), "by_status": c, "takeable_now": len(qmod.takeable(root))}
     except Exception as e:  # recorded in the snapshot, never swallowed
         out["queue"] = {"error": str(e)[:200]}
+    try:
+        from . import agent_ladder
+        out["model_cost"] = agent_ladder.summary(root)
+    except Exception as e:  # recorded, never swallowed
+        out["model_cost"] = {"error": str(e)[:200]}
     if not use_gh:
         return out
     prs = _gh_json(root, "pr", "list", "--repo", GH, "--state", "merged", "--limit", "300", "--json", "number,title,headRefName,mergedAt,createdAt,additions,deletions,body,url")
@@ -188,6 +193,11 @@ def snapshot(root=REPO, use_gh=True):
     open_prs = [p for p in ch["pull_requests"] if p["state"] in ("open", "draft")]
     merged = [p for p in ch["pull_requests"] if p["state"] == "merged"]
     th = throughput(root, use_gh)
+    try:
+        from . import topology
+        top = {**topology.summary(root), "drift": topology.drift(root) if use_gh else ["not measured"]}
+    except Exception as e:  # recorded, never swallowed
+        top = {"error": str(e)[:200]}
     s = {
         "schema": "ultrastable-transparency/v1",
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -201,7 +211,7 @@ def snapshot(root=REPO, use_gh=True):
             "prs_merged_total": (th.get("merged") or {}).get("total"), "prs_merged_unattended": ((th.get("merged") or {}).get("by_origin") or {}).get("unattended executor", {}).get("prs"),
             "backlog_open": (th.get("queue") or {}).get("by_status", {}).get("open"), "backlog_items": (th.get("queue") or {}).get("items"),
         },
-        "throughput": th, "managers": mg, "claims": cl, "gaps": gp, "changes": ch, "loop_improvements": improvements(root),
+        "throughput": th, "topology": top, "managers": mg, "claims": cl, "gaps": gp, "changes": ch, "loop_improvements": improvements(root),
         "feedback_loop": "claim (site/doctrine) -> probe (components, gap register, loops) -> gap item -> branch/draft PR by an agent -> merge on green checks -> deploy -> probe again; each row above links the step to its record.",
     }
     return scrub(s)

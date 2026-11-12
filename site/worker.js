@@ -586,4 +586,6 @@ const handler = {
   }
 };
 // AGENTIC-1: machine-readable discovery and a read-only MCP endpoint in front of every page.
-export default { async fetch(request, env, ctx) { const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };
+// TOPOLOGY-1: the owner dashboard is a separate worker reached through the OWNER service binding (doctrine/topology.json); only its own paths are forwarded.
+const OWNER_PATH = /^\/(owner|api\/owner\/[a-z]+)$/;
+export default { async fetch(request, env, ctx) { if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };
