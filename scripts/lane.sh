@@ -58,6 +58,10 @@ lane: held on a High finding. Fix and remove the hold label.' >/dev/null 2>&1
   # A concurrent lane pass already merging this PR is a benign race, not a degraded run: call gh directly so it is not counted.
   if out=$(timeout "${GH_TIMEOUT:-60}" "$_GH_BIN" pr merge "$n" -R "$repo" --squash --delete-branch --match-head-commit "$sha" 2>&1); then
     echo "#$n merged"
+    # DEPLOY-1: merges made with GITHUB_TOKEN never fire push workflows, so the lane dispatches the deploy itself when the PR touched deployable paths.
+    if gh pr diff "$n" -R "$repo" --name-only 2>/dev/null | grep -qE '^(site/|seed/analytics/|deploy/deploy-site\.mjs)'; then
+      gh workflow run deploy-site.yml -R "$repo" --ref main >/dev/null 2>&1 && echo "#$n dispatched deploy-site"
+    fi
   else
     echo "#$n merge failed: $out"
     case "$out" in *"already in progress"*|*"already merged"*) continue;; esac

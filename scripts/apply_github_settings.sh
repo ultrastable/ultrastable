@@ -7,8 +7,16 @@ set -uo pipefail
 MODE="${1:-apply}"
 CFG="${CFG:-github/org-settings.json}"
 ORG="${ORG:-ultrastable}"
-fail=0
-step() { local label="$1"; shift; if out=$("$@" 2>&1); then echo "ok   $label"; else echo "FAIL $label: $out"; fail=$((fail+1)); fi; }
+fail=0; gated=0
+# Fail closed on missing tools: a missing jq used to make every step a silent no-op that still printed "failures: 0".
+command -v jq >/dev/null 2>&1 || { echo "FAIL jq is required (apt install jq / winget install jqlang.jq)"; exit 1; }
+command -v gh >/dev/null 2>&1 || { echo "FAIL gh is required"; exit 1; }
+jq() { command jq "$@" | tr -d '\r'; }
+# PLAN-GATED: features GitHub withholds from private repos on the Free plan (HTTP 403/422 with these messages) are reported as GATED, counted
+# separately and listed in docs/BOOTSTRAP-GAPS.md; any other failure stays red.
+step() { local label="$1"; shift; if out=$("$@" 2>&1); then echo "ok   $label"
+  elif grep -qE "Upgrade to GitHub (Pro|Team)|not available for this repository|make this repository public" <<<"$out"; then echo "GATED $label: plan feature (needs paid plan or public repo)"; gated=$((gated+1))
+  else echo "FAIL $label: $out"; fail=$((fail+1)); fi; }
 
 if [ "$MODE" = probe ]; then
   gh api "orgs/$ORG" --jq '{login,description,blog,email,default_repository_permission,members_can_create_public_repositories}' || fail=$((fail+1))
@@ -28,6 +36,7 @@ step "org $ORG" gh api -X PATCH "orgs/$ORG" "${args[@]}"
 
 # Repos
 for R in $(jq -r '.repos|keys[]' "$CFG"); do
+  if [ "$(gh api "repos/$R" --jq .archived 2>/dev/null)" = true ]; then echo "skip $R (archived)"; continue; fi
   body=$(jq -c --argjson r "$(jq ".repos[\"$R\"]" "$CFG")" -n '$r.settings + {description:$r.description, homepage:$r.homepage}')
   step "repo $R settings" gh api -X PATCH "repos/$R" --input - <<<"$body"
   topics=$(jq -c '{names: .repos["'"$R"'"].topics}' "$CFG")
@@ -40,5 +49,5 @@ for R in $(jq -r '.repos|keys[]' "$CFG"); do
   prot=$(jq -c '.repos["'"$R"'"].branch_protection | {required_status_checks:null,enforce_admins:false,required_pull_request_reviews:null,restrictions:null,allow_force_pushes,allow_deletions,required_linear_history}' "$CFG")
   step "repo $R protect $br" gh api -X PUT "repos/$R/branches/$br/protection" --input - <<<"$prot"
 done
-echo "failures: $fail"
+echo "failures: $fail gated: $gated"
 [ "$fail" -eq 0 ]

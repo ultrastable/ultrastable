@@ -41,6 +41,14 @@
    "title": "Deploy was green while live served old code",
    "body": "Merged site 0.3.1 never went live: worker.js imports ../seed/analytics/analytics.js, the single-file upload returned code 10021, deploy-site.mjs ignored success=false, and the verify step fetched only an image. Measured after the fix: curl https://ultrastable.io/health returned version 0.3.1 and /org returned 200 (before: 0.2.0 and 404). deploy-site now runs on push to main for site paths; deploy exits nonzero unless the live version equals the repo VERSION; lane no longer fails on the concurrent-merge race.",
    "probe": "grep:deploy/deploy-site.mjs::live version"
+  },
+  {
+   "id": "lesson-2026-11-12-bootstrap-settings-script-reported-success-while-doing-nothi",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Bootstrap settings script reported success while doing nothing",
+   "body": "apply_github_settings.sh printed failures: 0 with jq missing, so every step was a no-op; it also failed on CRLF jq output, targeted six archived repos, omitted workers/spec/license, and treated GitHub plan limits as permanent red. Measured after the fix: running it from an org-admin gh session returned 'failures: 0 gated: 8' and the org description matches the config. It now requires jq and gh, strips CR, skips archived repos and reports plan-gated features as GATED. Lane merges via GITHUB_TOKEN never fire push workflows, so the lane dispatches deploy-site after merging deployable paths, and scripts/drift_probe.sh compares live version and org description daily; measured: site live=0.3.1 repo=0.3.1.",
+   "probe": "grep:scripts/drift_probe.sh::DRIFT"
   }
  ]
 }
