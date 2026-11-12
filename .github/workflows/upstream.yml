@@ -1,7 +1,7 @@
 name: upstream
 # budget: ~2 min per week
 # trigger: weekly drift scan of registered instances (pull route) and repository_dispatch from instances (push route)
-# free-alternative: `python3 -m foundation upstream drift --instance <dir> --fail` from any local scheduler
+# free-alternative: `python3 -m foundation upstream drift --instance <dir> --fail` from a Cloudflare cron worker or a cloud-hosted agent session
 # Core side of the two-way channel: scans each instance in instances/*/instance.json that names a repo, opens an issue when it has diverged.
 on:
   schedule:

@@ -2,7 +2,7 @@ name: failure-audit
 # FAILURE-AUDIT-1: the system audits its own failure modes. Daily only; the primary clock is the Cloudflare tick.
 # budget: ~8 min x 30 per month
 # trigger: daily and dispatch; failure modes drift over days, so a faster event buys nothing
-# free-alternative: run `python3 -m foundation failure_audit --run` from any local scheduler or the Cloudflare cron worker
+# free-alternative: run `python3 -m foundation failure_audit --run` from a cloud-hosted agent session or the Cloudflare cron worker
 # Runs doctrine/detectors.json, appends ops/failure-audit.jsonl and files or clears docs/issues/AUDIT-*.json; the evidence is committed to
 # branch audit-evidence, which the next run starts from so streaks (same signature twice = change approach, three = incident) persist.
 on:

@@ -1,7 +1,7 @@
 name: checks
 # budget: ~3 min per ready PR update, cancel-in-progress
 # trigger: PR gate; drafts skipped
-# free-alternative: none needed; local `scripts/lint_workflows.py` and tests run in agent sessions first
+# free-alternative: none needed; `scripts/lint_workflows.py` and the tests run in the cloud-hosted agent session first
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]

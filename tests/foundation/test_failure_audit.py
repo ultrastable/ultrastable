@@ -4,10 +4,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from foundation import failure_audit as fa  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402  (removed when the test ends)
 
 
 def sandbox(cmd):
-    d = Path(tempfile.mkdtemp())
+    d = scratch()
     (d / "doctrine").mkdir(); (d / ".github/workflows").mkdir(parents=True); (d / "docs/issues").mkdir(parents=True)
     shutil.copy(ROOT / "doctrine/registers.json", d / "doctrine/registers.json")
     (d / ".github/workflows/failure-audit.yml").write_text("name: x\n")

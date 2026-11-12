@@ -162,6 +162,14 @@
     "23 6 * * *"
    ]
   },
+  "failure-audit.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 5 * * *"
+   ]
+  },
   "fleet.yml": {
    "events": [
     "repository_dispatch",
@@ -210,7 +218,7 @@
     "workflow_dispatch"
    ],
    "crons": [
-    "41 5 * * 1"
+    "41 5 * * *"
    ]
   },
   "org-manage.yml": {
@@ -279,14 +287,6 @@
    ],
    "crons": [
     "47 5 * * 3"
-   ]
-  },
-  "failure-audit.yml": {
-   "events": [
-    "workflow_dispatch"
-   ],
-   "crons": [
-    "41 5 * * *"
    ]
   }
  }

@@ -1,5 +1,5 @@
 """PINS-1 ratchet: a roadmap issue without a runnable probe cannot be added; the baseline only shrinks."""
-import json, sys, tempfile, unittest
+import atexit, json, shutil, sys, tempfile, unittest
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
@@ -7,7 +7,7 @@ from foundation import pins  # noqa: E402
 
 
 def sandbox(issues, baseline):
-    d = Path(tempfile.mkdtemp()); (d / "docs/issues").mkdir(parents=True); (d / "doctrine").mkdir()
+    d = Path(tempfile.mkdtemp()); atexit.register(shutil.rmtree, d, True); (d / "docs/issues").mkdir(parents=True); (d / "doctrine").mkdir()
     (d / pins.BASELINE).write_text(json.dumps({"unprobed": baseline}))
     for i, done, status in issues:
         (d / f"docs/issues/{i}.json").write_text(json.dumps({"body": f"**Owner:** ops\n**Done check:** {done}\n**Status:** {status}"}))

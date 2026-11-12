@@ -1,10 +1,13 @@
-"""Launch: start Ultrastable's own loops on Ultrastable's own records, on any host that can run a schedule.
+"""Launch: start Ultrastable's own loops on Ultrastable's own records, on every server-side host that can run a schedule.
+
+Server-side only (owner, 2026-11-12): the hosts are the Cloudflare cron worker, a cloud-hosted Claude routine and GitHub Actions. No host is a
+person's computer; `python3 -m foundation serverside --check` (doctrine/server-side.json) fails a change that adds one.
 
   python3 -m foundation launch                       one pass of every loop, evidence written to ops/loop-evidence/
   python3 -m foundation launch --commit [--push]     ... and commit the evidence (push goes to branch `loop-evidence`)
   python3 -m foundation launch --probe               test every host surface and say what each returned
   python3 -m foundation launch --export-d1 FILE      SQL that loads the real records into the Cloudflare D1 the cron worker ticks on
-  python3 -m foundation launch --install SURFACE     print the install artifact: cron | task-scheduler | github-actions | claude-routine | cloudflare
+  python3 -m foundation launch --install SURFACE     print the install artifact: github-actions | claude-routine | cloudflare
 
 The loops (instances/ultrastable/loops.json): tick (manager heartbeat), plussing (plus share), probes (verifier and gap
 register), funding-outreach (engine run; every contact stays dry-run until outreach/gate.json says live), write-back (evidence
@@ -20,7 +23,7 @@ from . import selfhost
 REPO = selfhost.REPO
 EVIDENCE = "ops/loop-evidence"
 REGISTRY = "instances/ultrastable/loops.json"
-SURFACES = ("cloudflare-worker", "claude-routine", "local-scheduler", "github-actions")
+SURFACES = ("cloudflare-worker", "claude-routine", "github-actions")
 
 
 def _now() -> str:
@@ -48,18 +51,16 @@ def probe_surfaces(root=REPO, env=None) -> list[dict]:
     out.append({"surface": "cloudflare-worker", "available": len(cf) == 2,
                 "detail": "API credentials present as bindings" if len(cf) == 2 else f"CLOUDFLARE_API_TOKEN/ACCOUNT_ID not both set here (found: {cf or 'none'}); the worker `ultrastable-tick` already exists in the account with an every-10-minutes cron, and the account connector reaches D1; deploys of new code go through the connector or `deploy-site`-style workflow",
                 "how": "worker `ultrastable-tick` (cron) + D1 `ultrastable-org`; `launch --export-d1` loads the real records"})
-    claude = shutil.which("claude")
-    out.append({"surface": "claude-routine", "available": bool(claude) or bool(env.get("CLAUDE_CODE_REMOTE")),
-                "detail": "claude CLI on PATH" if claude else ("running inside a Claude Code cloud session (scheduled triggers and in-session loops available)" if env.get("CLAUDE_CODE_REMOTE") else "no claude CLI and not a cloud session"),
-                "how": "scheduled routine or /loop running `python3 -m foundation launch --failover --commit --push` (deploy/loops/claude-routine.md)"})
-    sched = [n for n in ("crontab", "schtasks", "systemctl", "launchctl") if shutil.which(n)]
-    out.append({"surface": "local-scheduler", "available": bool(sched), "detail": f"scheduler tools on PATH: {sched or 'none'} ({platform.system()})",
-                "how": "deploy/loops/local/ (cron line, systemd timer, Windows Task Scheduler)"})
+    # Only a cloud-hosted routine counts. A `claude` CLI on PATH is a program on whatever computer this is, not a server-side host, so it is never probed.
+    cloud = bool(env.get("CLAUDE_CODE_REMOTE"))
+    out.append({"surface": "claude-routine", "available": cloud,
+                "detail": "running inside a Claude Code cloud session (cloud routines and in-session loops available)" if cloud else "not a Claude Code cloud session (CLAUDE_CODE_REMOTE unset); a routine runs in the cloud or not at all",
+                "how": "cloud-hosted routine running `python3 -m foundation launch --failover --commit --push` (deploy/loops/claude-routine.md)"})
     gh = has("GH_TOKEN", "GITHUB_TOKEN", "GITHUB_ACTIONS")
     budget = json.loads((Path(root) / "actions-budget.json").read_text(encoding="utf-8"))
     out.append({"surface": "github-actions", "available": bool(gh) or (Path(root) / ".github/workflows/loop.yml").exists(),
-                "detail": f"workflow .github/workflows/loop.yml present, weekly only, ~2 min/run inside the {budget['monthly_free_minutes']} free minutes (budget paused={budget['paused']})" if (Path(root) / ".github/workflows/loop.yml").exists() else "loop workflow missing",
-                "how": ".github/workflows/loop.yml (weekly + dispatch; actions_guard + budget headers)"})
+                "detail": f"workflow .github/workflows/loop.yml present, daily failover gate plus dispatch, about 1 min/run when another host is alive, inside the {budget['monthly_free_minutes']} free minutes (budget paused={budget['paused']}); runs on the workflow's built-in token, which no person mints" if (Path(root) / ".github/workflows/loop.yml").exists() else "loop workflow missing",
+                "how": ".github/workflows/loop.yml (daily failover gate + dispatch; actions_guard + budget headers)"})
     node = shutil.which("node")
     out.append({"surface": "runtime", "available": True, "detail": f"python {platform.python_version()}, node {'present' if node else 'absent (minimal python tick path is used)'}", "how": ""})
     return out
@@ -114,13 +115,27 @@ def _loop_closed(root) -> dict:
     return {"loop": "orphan-artifacts", "ok": m["new_orphans"] == 0 and m["human_wait_states"] == 0, **m}
 
 
-def run_once(root=REPO, skip_outreach=False, now=None) -> dict:
+def _loop_liveness(root) -> dict:
+    """LIVENESS-1: every pass asks whether the loops are actually running. A loop that is stale, failing or never started fails this
+    loop and gets a queue item; evidence that cannot be read from this host is reported as unknown and fails nothing."""
+    from . import liveness
+    try:
+        rep = liveness.run(root)
+        filed = liveness.file_items(root, rep)
+    except Exception as e:  # recorded as a failed loop, never swallowed
+        return {"loop": "liveness", "ok": False, "detail": str(e)[:300]}
+    down = [f"{r['id']}:{r['verdict']}" for r in rep["probes"] if r["verdict"] in ("stale", "failing", "never")]
+    return {"loop": "liveness", "ok": not down, "claim": rep["claim"], "claim_holds": rep["claim_holds"], "alive": rep["alive"], "total": rep["total"],
+            "not_alive": down, "unknown": [r["id"] for r in rep["probes"] if r["verdict"] == "unknown"], "items_filed": filed}
+
+
+def run_once(root=REPO, skip_outreach=False, now=None, liveness=True) -> dict:
     root = Path(root)
     scratch = root / ".selfhost" / "launch.db"
     results = [_loop_tick(root, scratch)]
     if results[0]["ok"]:
         results.append(_loop_plussing(scratch))
-    results += [_loop_probes(root), _loop_funding(root, skip_outreach), _loop_closed(root)]
+    results += [_loop_probes(root), _loop_funding(root, skip_outreach), _loop_closed(root)] + ([_loop_liveness(root)] if liveness else [])
     results.append(_loop_lifecycle(root))
     results.append(_loop_components(root))
     ok = [r["loop"] for r in results if r["ok"]]
@@ -187,18 +202,13 @@ def export_d1(root=REPO) -> str:
 
 def install_artifact(surface: str, root=REPO) -> str:
     root = Path(root)
-    cmd = "python3 -m foundation launch --failover --commit --push"
-    if surface == "cron":
-        return f"17 * * * * cd {root} && ULTRASTABLE_HOST=local-cron {cmd} >> .selfhost/loop.log 2>&1\n"
-    if surface == "task-scheduler":
-        return f'schtasks /Create /SC HOURLY /TN "UltrastableLoop" /TR "cmd /c cd /d {root} && set ULTRASTABLE_HOST=windows-task&& {cmd}" /F\n'
     if surface == "github-actions":
         return (root / ".github/workflows/loop.yml").read_text(encoding="utf-8")
     if surface == "claude-routine":
         return (root / "deploy/loops/claude-routine.md").read_text(encoding="utf-8")
     if surface == "cloudflare":
         return (root / "deploy/loops/cloudflare.md").read_text(encoding="utf-8")
-    raise ValueError(f"unknown surface {surface}")
+    raise ValueError(f"unknown surface {surface}: the install artifacts are github-actions, claude-routine and cloudflare (server-side only)")
 
 
 def _loop_lifecycle(root) -> dict:

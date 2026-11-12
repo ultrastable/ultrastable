@@ -1110,9 +1110,9 @@
       "aliases": [
         "FALLBACK-CLASSES-1"
       ],
-      "version": "1.0.0",
-      "definition": "A paid path never ends work while a free path exists, and an external provider never ends work while a local, cached or degraded path exists; the path that ran is reported.",
-      "not": "Not a single paid or external dependency.",
+      "version": "1.1.0",
+      "definition": "A paid path never ends work while a free path exists, and an external provider never ends work while an in-system, cached or degraded path exists; the path that ran is reported. The in-system path is a cloud-hosted agent session running the command from the repository (path class `session`), never a person's computer.",
+      "not": "Not a single paid or external dependency. Not a fallback onto a computer somebody owns and keeps on.",
       "tested_by": [
         "grep:tests/foundation/test_loops.py::def test_paid_path_needs_free_fallback"
       ],
@@ -1121,7 +1121,8 @@
         "instances/ultrastable/loop-registry.json"
       ],
       "related": [
-        "sla-and-paths"
+        "sla-and-paths",
+        "server-side-only"
       ],
       "lineage": [
         {
@@ -1129,6 +1130,47 @@
           "date": "2026-11-11",
           "change": "Adopted with the doctrine kernel 8.2.1.",
           "source": "doctrine/standing-directives.md"
+        },
+        {
+          "version": "1.1.0",
+          "date": "2026-11-12",
+          "change": "Server-side only (owner, 2026-11-12): the directive's in-system fallback is a cloud-hosted agent session, so the loop path class is `session`; a path on a person's computer is no longer a class.",
+          "source": "doctrine/server-side.json"
+        }
+      ]
+    },
+    {
+      "id": "server-side-only",
+      "term": "Server-side only",
+      "aliases": [
+        "SERVER-SIDE-1",
+        "no local infrastructure"
+      ],
+      "version": "1.0.0",
+      "definition": "Ultrastable runs server-side only. Every loop, merge, deploy and check runs on the infrastructure Ultrastable itself runs on (the Cloudflare worker with its D1 database, GitHub Actions, cloud-hosted agent routines), and nothing assumes, depends on or references a scheduler, code agent, desktop app or laptop on a person's computer. The credential-free route is GitHub Actions on its built-in token, which GitHub mints for each run.",
+      "not": "Not 'cloud only for convenience': a host on a person's computer is a defect that fails the build, even as a last fallback. Not a ban on the word local: an instance's own edits, a container's own port and a test fixture are not hosts.",
+      "tested_by": [
+        "grep:tests/foundation/test_serverside.py::def test_repo_is_clean",
+        "grep:tests/foundation/test_serverside.py::def test_a_host_with_an_adapter_on_a_persons_computer_fails",
+        "grep:tests/foundation/test_launch.py::def test_credential_free_route_is_the_github_actions_host"
+      ],
+      "implemented_by": [
+        "doctrine/server-side.json",
+        "foundation/serverside.py",
+        "scripts/check_routes.py",
+        "instances/ultrastable/loops.json"
+      ],
+      "related": [
+        "fallback-classes",
+        "closed-system",
+        "self-hosting"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-12",
+          "change": "Owner directive: Ultrastable runs server-side only; no machine, scheduler, code agent, desktop app or laptop of a person may be assumed or referenced. The scheduler host on a person's computer and the desktop task that merged needs-pat PRs were removed; the credential-free route moved to GitHub Actions' built-in token.",
+          "source": "doctrine/server-side.json"
         }
       ]
     },

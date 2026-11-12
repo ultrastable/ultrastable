@@ -1,5 +1,5 @@
 {
-  "_doc": "Loop registry: every recurring loop Ultrastable runs on itself, where it runs, how often, its evidence path and closing probe. `python3 -m foundation launch` runs all of them once; every host only schedules that command. Changed by reviewed PR.",
+  "_doc": "Loop registry: every recurring loop Ultrastable runs on itself, where it runs, how often, its evidence path and closing probe. `python3 -m foundation launch` runs all of them once; every host only schedules that command. Server-side only (owner, 2026-11-12): every host names the platform it runs on in `runs_on`, one of the platforms in doctrine/server-side.json; a host on a person's computer fails `python3 -m foundation serverside --check`. Changed by reviewed PR.",
   "version": "1.0.0",
   "command": "python3 -m foundation launch --commit --push",
   "evidence": "ops/loop-evidence/",
@@ -42,36 +42,31 @@
       "state": "running",
       "adapter": "deploy/loops/cloudflare.md",
       "credential": "cloudflare-account",
+      "runs_on": "cloudflare",
       "takeover_after_hours": 0
     },
     {
       "id": "claude-routine",
-      "cadence": "hourly scheduled routine or session loop",
+      "cadence": "hourly cloud-hosted routine (runs in Anthropic's cloud; no desktop app or person's computer is involved)",
       "state": "ready",
       "adapter": "deploy/loops/claude-routine.md",
       "credential": "claude-session",
+      "runs_on": "claude-cloud",
       "takeover_after_hours": 3
     },
     {
-      "id": "local-scheduler",
-      "cadence": "hourly cron or Windows Task Scheduler",
-      "state": "ready",
-      "adapter": "deploy/loops/local/",
-      "credential": "none",
-      "takeover_after_hours": 2
-    },
-    {
       "id": "github-actions",
-      "cadence": "weekly + dispatch only (free-minutes rule)",
+      "cadence": "daily failover gate + dispatch (free-minutes rule: about one minute a day while another host is alive)",
       "state": "ready",
       "adapter": ".github/workflows/loop.yml",
       "credential": "github-builtin",
-      "takeover_after_hours": 168
+      "runs_on": "github-actions",
+      "takeover_after_hours": 12
     }
   ],
   "failover": {
     "command": "python3 -m foundation launch --failover --commit --push",
-    "rule": "a fallback host runs the loop only when no host has written evidence for its takeover_after_hours; the evidence record names the host that took over"
+    "rule": "a fallback host runs the loop only when no host has written evidence for its takeover_after_hours; the evidence record names the host that took over. The credential-free fallback is github-actions: its built-in token is minted by GitHub per run, so no person mints, stores or renews anything for it"
   },
   "deploy_routes": "deploy/routes.json"
 }

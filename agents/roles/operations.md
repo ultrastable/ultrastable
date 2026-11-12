@@ -10,7 +10,7 @@
 **Tick:** every base tick.
 
 ## Each tick
-1. Health: the last tick ran all its steps; every role ticked on schedule; error rates and costs are inside budget.
+1. Health: the last tick ran all its steps; every role ticked on schedule; error rates and costs are inside budget. Every host you run or add is server-side (server-side only, owner 2026-11-12: `python3 -m foundation serverside --check`); a silent host is replaced by the next server-side one, never by a person's computer.
 2. Failure modes: run each detector; open or close incidents with evidence.
 3. Trust: recompute reliability per (surface, action class). When a pair crosses a ladder threshold in `autonomy/policy.json`, open a PR that moves its rung, for a different agent to review.
 4. Gate cards: keep each open card's closing probe running; close the card when the probe shows the owner's step is done.

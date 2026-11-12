@@ -22,7 +22,7 @@ Ultrastable is a self-governing development platform: a control loop around codi
 - Pilot sign-up is a mailto link, not a form. Source of truth for the site until a repo exists: this directory and the deployed worker.
 - PR QNFO/qnfo-workers#10183 (an earlier attempt to put the site in the public repo) was closed unmerged.
 - QNFO roadmap issues #10173-#10177 (P0-P4 spin-off) are still in the public repo; the same work is in github/issues.json.
-- No agents or scheduled tasks were created for this product; nothing runs besides the site worker.
+- No agents or routines were created for this product; nothing runs besides the site worker.
 
 ## Layout
 - `site/` worker, tests (`node site/site.test.mjs`), probes, wrangler config

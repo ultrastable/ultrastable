@@ -2,10 +2,12 @@
 
   python3 -m foundation new-system --manifest instances/<slug>/instance.json --out ../<slug> [--apply]
   python3 -m foundation validate --manifest FILE
-  python3 -m foundation ladder            # credential ladder against this machine
+  python3 -m foundation ladder            # credential ladder against the host it runs on
   python3 -m foundation standards [--check|--apply]   agentic standards register, surfaces, conformance lint
   python3 -m foundation filing --manifest FILE
-  python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE]   start the loops on this repo
+  python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE | --failover [--decide]]   start the loops on this repo (server-side hosts only)
+  python3 -m foundation liveness [--json|--check|--file-items|--static|--probe ID]   are the autonomous loops actually running (evidence, not files)
+  python3 -m foundation serverside [--check|--scan]                       server-side only: no host, scheduler, agent or route on a person's computer
   python3 -m foundation selfhost [--verify|--gaps|--no-node] [--db PATH]   Ultrastable boots its own organization from this repo
   python3 -m foundation glossary [--check|--apply|--show [ID]]            the owner's keywords, with tests, code and lineage
   python3 -m foundation loops [--verify|--list]                           the loop registry and its closing verifier
@@ -64,6 +66,12 @@ def main(argv=None) -> int:
         return boundary.main(_av[1:])
     if _av[:1] == ["closedloop"]:
         return closedloop.main(_av[1:])
+    if _av[:1] == ["liveness"]:
+        from . import liveness
+        return liveness.main(_av[1:])
+    if _av[:1] == ["serverside"]:
+        from . import serverside
+        return serverside.main(_av[1:])
     args0 = sys.argv[1:] if argv is None else list(argv)
     if args0[:1] == ["sessions"]:
         from . import sessions
@@ -101,7 +109,7 @@ def main(argv=None) -> int:
     f = sub.add_parser("filing"); f.add_argument("--manifest", required=True)
     r = sub.add_parser("autorun"); r.add_argument("--ticks", type=int, default=10); r.add_argument("--out", default=".selfhost/autorun"); r.add_argument("--public", action="store_true"); r.add_argument("--no-node", action="store_true")
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
-    l = sub.add_parser("launch"); l.add_argument("--commit", action="store_true"); l.add_argument("--push", action="store_true"); l.add_argument("--probe", action="store_true"); l.add_argument("--export-d1"); l.add_argument("--install"); l.add_argument("--skip-outreach", action="store_true"); l.add_argument("--failover", action="store_true")
+    l = sub.add_parser("launch"); l.add_argument("--commit", action="store_true"); l.add_argument("--push", action="store_true"); l.add_argument("--probe", action="store_true"); l.add_argument("--export-d1"); l.add_argument("--install"); l.add_argument("--skip-outreach", action="store_true"); l.add_argument("--failover", action="store_true"); l.add_argument("--decide", action="store_true")
     a = ap.parse_args(argv)
     if a.cmd == "docs_audit":
         from . import docs_audit
@@ -125,6 +133,11 @@ def main(argv=None) -> int:
             host = os.environ.get("ULTRASTABLE_HOST", "unspecified")
             d = failover.decide(launch.REPO, host)
             print("failover:", json.dumps(d))
+            if a.decide:  # the gate alone: say whether this host takes over, as a step output where one exists, and run nothing
+                if os.environ.get("GITHUB_OUTPUT"):
+                    with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+                        f.write(f"run={'true' if d['run'] else 'false'}\n")
+                return 0
             if not d["run"]:
                 return 0
             os.environ["ULTRASTABLE_HOST"] = "failover:" + host

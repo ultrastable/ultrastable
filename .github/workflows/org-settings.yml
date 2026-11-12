@@ -1,7 +1,7 @@
 name: org-settings
 # budget: ~1 min per owner dispatch
 # trigger: dispatch only
-# free-alternative: run `scripts/apply_github_settings.sh` locally with the admin token
+# free-alternative: run `scripts/apply_github_settings.sh` from a cloud-hosted agent session with the admin token bound
 # Applies github/org-settings.json (org profile fields, repo description/homepage/topics, merge and
 # security settings, main-branch protection). Needs ORG_ADMIN_TOKEN (docs/ops/ORG-TOKEN.md).
 # Without the token the run is red with an explicit gate message; that is the recorded state of BG-22.

@@ -13,10 +13,12 @@ for next. Ultrastable puts the managers behind the scenes (portfolio, program, p
 file the work, hand it to coding agents, prove the result live and keep score. The owner supplies direction and a budget; the system supplies the
 backlog. That is the product: **autonomous, measured, continuous improvement of something that has to keep running.**
 
-Typical customers are businesses and organizations (B2B) running something WordPress-class or bigger, where maintenance has become the burden:
+The owner can be an organization, a small business or one person. What qualifies an idea is the system test below, not who owns it and not whether it
+earns money: it has to be something that keeps running, keeps needing work, and is worth a monthly cost to its owner. Examples:
 - a club, association or small-business website that must keep growing (search ranking, content, performance, security patches, bookings, member
   features) instead of freezing after launch;
-- a shop or marketplace whose catalogue, conversion, speed and uptime need weekly attention;
+- a personal system one person depends on every day: a companion that remembers and follows up, a signals desk that watches markets or the
+  news against the owner's own rules, a tracker whose sources and logic keep changing;
 - a service fleet that finds its own failures and fixes them, with probes and automatic revert;
 - a research or publishing operation whose findings, editions and citations stay current;
 - a compliance, security or cost program that watches an environment and closes what it finds;
@@ -33,6 +35,9 @@ A site is not excluded by being a website. It is included when it is meant to be
 4. **A running cost the owner accepts.** The back end (compute, model calls, storage) costs money every month. A stated monthly budget is part of the idea.
 
 ## What it is not for
+
+Selling things online. Storefronts, carts and checkout are served well by shop builders; Ultrastable does not compete there and does not pitch itself
+on revenue. An owner's shop can sit beside a system Ultrastable runs, but the shop is not the system.
 
 A single finished deliverable nobody will run again: a one-off page, an invitation, a trip plan, a weekend project, a personal reminder. Those
 need a site builder or a chat assistant. Starting a portfolio manager, project managers and a team of agents for them is a defect: the cost of the

@@ -12,7 +12,7 @@
    "id": "sqlite",
    "kind": "store",
    "outside": false,
-   "runbook": "docs/runbooks/any-tools/laptop-sqlite.md",
+   "runbook": "docs/runbooks/any-tools/sqlite.md",
    "minimal": true,
    "run": "python3 -m foundation selfhost --no-node"
   },

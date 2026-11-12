@@ -13,7 +13,7 @@ class SiteRoadmap(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
 
     def _copy(self):
-        td = Path(tempfile.mkdtemp())
+        td = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, td, ignore_errors=True)
         (td / "site").mkdir()
         shutil.copy(ROOT / "site/pins.json", td / "site/pins.json")
         shutil.copytree(ROOT / "docs/issues", td / "docs/issues")
