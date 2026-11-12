@@ -73,3 +73,18 @@ class Liveness(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class QueueStatusWords(unittest.TestCase):
+    def test_done_and_closed_both_mean_finished_and_both_need_evidence(self):
+        from foundation import queue
+        r = copy_repo()
+        item = lambda status, extra="": {"id": "Q-T", "title": "Q-T: t", "body": f"**Owner:** operations\n**Trigger:** t\n**Done check:** file:README.md\n**Status:** {status}\n\nx{extra}"}
+        p = r / "docs/issues/Q-T.json"
+        for status in ("done", "closed"):
+            p.write_text(json.dumps(item(status, "\n\n**Evidence:** measured\n")))
+            self.assertEqual([b for b in queue.check(r) if b.startswith("Q-T")], [], status)
+            p.write_text(json.dumps(item(status)))
+            self.assertTrue(any("Q-T: closed without evidence" in b for b in queue.check(r)), status)
+        p.write_text(json.dumps(item("parked")))
+        self.assertTrue(any("Q-T: status 'parked' is not open, closed or done" in b for b in queue.check(r)))
