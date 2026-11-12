@@ -202,3 +202,11 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.equal((await rpc("nope")).error.code, -32601);
   assert.equal((await g3("/mcp")).status, 405); assert.equal((await g3("/mcp", { method: "DELETE" })).status, 405);
 }
+// TOPOLOGY-1: the owner dashboard is reached through the OWNER service binding, only on its own paths
+{
+  const hits = []; const OWNER = { fetch: async (r) => { hits.push(new URL(r.url).pathname); return new Response("dash"); } };
+  const E4 = { ...ENV, OWNER };
+  for (const p of ["/owner", "/owner/", "/api/owner/code"]) { const rr = await mod.fetch(new Request("https://ultrastable.io" + p), E4); assert.equal(await rr.text(), "dash"); }
+  const rr = await mod.fetch(new Request("https://ultrastable.io/api/owner"), E4); assert.notEqual(await rr.text(), "dash");
+  assert.equal(hits.length, 3);
+}

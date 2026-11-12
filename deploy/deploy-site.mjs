@@ -22,8 +22,22 @@ src = src.replace(/(from\s+")(\.{1,2}\/[^"]+)(")/g, (_, a, spec, c) => {
   extra.push([name, readFileSync(new URL("../site/" + spec, import.meta.url))]);
   return a + "./" + name + c;
 });
+// TOPOLOGY-1: bindings come from doctrine/topology.json (same mapping as foundation/topology.py `bindings`, live targets only), so the declaration and the deploy cannot disagree.
+// Plain Node on purpose: the deploy workflow has no Python dependencies installed.
+const TOPO = JSON.parse(readFileSync(new URL("../doctrine/topology.json", import.meta.url), "utf8"));
+function topologyBindings(id) {
+  const w = TOPO.workers.find(x => x.id === id), b = w.bindings || {}, live = (kind, n) => ((TOPO.stores[kind] || []).find(s => s.name === n) || {}).state === "live", st = (kind, n) => (TOPO.stores[kind] || []).find(s => s.name === n), out = [];
+  for (const [bn, t] of Object.entries(b.d1 || {})) if (live("d1", t)) out.push({ type: "d1", name: bn, id: st("d1", t).id });
+  for (const [bn, t] of Object.entries(b.kv || {})) if (live("kv", t)) out.push({ type: "kv_namespace", name: bn, namespace_id: st("kv", t).id });
+  for (const bn of b.ai || []) out.push({ type: "ai", name: bn });
+  for (const [bn, t] of Object.entries(b.services || {})) if ((TOPO.workers.find(x => x.id === t) || {}).state === "live") out.push({ type: "service", name: bn, service: t });
+  for (const [bn, v] of Object.entries(b.vars || {})) out.push({ type: "plain_text", name: bn, text: v });
+  return out;
+}
+const TOPOLOGY_BINDINGS = topologyBindings("ultrastable-site");
+if (!TOPOLOGY_BINDINGS.some(b => b.name === "ASSETS" && b.namespace_id === ns.id)) { console.error("topology ASSETS namespace differs from the account's " + NS_TITLE); process.exit(1); }
 const form = new FormData();
-form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", bindings: [{ type: "kv_namespace", name: "ASSETS", namespace_id: ns.id }, { type: "ai", name: "AI" }, { type: "d1", name: "DB", id: "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd" }] })], { type: "application/json" }));
+form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", bindings: TOPOLOGY_BINDINGS })], { type: "application/json" }));
 form.append("worker.js", new Blob([src], { type: "application/javascript+module" }), "worker.js");
 for (const [name, body] of extra) form.append(name, new Blob([body], { type: "application/javascript+module" }), name);
 const up = await api("PUT", `/accounts/${A}/workers/scripts/ultrastable-site`, form);
