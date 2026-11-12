@@ -73,6 +73,14 @@
    "title": "BUILD-1: the product is idea to live site in one prompt bar, no setup",
    "body": "Measured: on ultrastable.io (site 0.5.0) a plain-words idea posted to /api/idea became a hosted page at /s/<id> in about 20 seconds using Workers AI and KV, with no account, key, repo or terminal; the change form regenerates it. node site/site.test.mjs covers idea, build, serve and change. Generated pages run under a sandbox CSP. Limits found: no shared back end yet (data stays in the visitor's browser), pages live on a path of ultrastable.io rather than their own address. Next: per-site database and wildcard subdomain, tracked in ultrastable/ops.",
    "probe": "grep:site/worker.js::BUILD-1"
+  },
+  {
+   "id": "decision-2026-11-12-user-path-1-guided-set-up-is-data-one-yes-no-question-per-sc",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "USER-PATH-1: guided set-up is data, one yes/no question per screen, plain words only",
+   "body": "Measured: https://ultrastable.io/setup (site 0.6.0) walked in a real browser: yes to GitHub, typed a name, step 3 opened https://github.com/ultrastable/ultrastable/generate and showed the confirm screen; progress persisted in localStorage. The steps live in doctrine/user-path.json, site/userpath.js is generated, and scripts/gen_userpath.py --check (a step in checks) fails on technical words, non-https links or stale output. ultrastable/ultrastable is now a GitHub template so the Make my copy click works for anyone with access. Next in ultrastable/ops: first-run workflow in the copy that enables its own autopilot without a click, Cloudflare Deploy button once the seed is public, OAuth connections for Google and Buffer.",
+   "probe": "file:doctrine/user-path.json"
   }
  ]
 }

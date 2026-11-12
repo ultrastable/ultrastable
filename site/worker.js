@@ -2,7 +2,8 @@
 // Canonical host ultrastable.io; ultrastable.app and ultrastable.net redirect to it (/pilot and /proof). Live proof comes from
 // the platform claims QNFO publishes as customer zero. Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
-var VERSION = "0.5.0";
+import USER_PATH from "./userpath.js";
+var VERSION = "0.6.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -66,7 +67,7 @@ function home(d) {
   return shell({ path: "/", title: "Ultrastable: the foundation for any autonomous system", description: "Ultrastable is the foundation for any autonomous system. Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live and keeps score of how often it was right." },
     "<section class=\"us-hero\"><h1>Ultrastable is the foundation for any autonomous system.</h1><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p>"
     + "<p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p>"
-    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/start\">Start with an idea</a><a class=\"btn\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
+    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/start\">Start with an idea</a><a class=\"btn\" href=\"/setup\">Set up my own</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine(d) + "</div></section>"
     + "<h2>What is different</h2><div class=\"us-grid c3\">"
     + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction and reads reports.")
@@ -246,6 +247,31 @@ async function siteRoutes(u, env) {
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
   return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'none'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
 }
+// USER-PATH-1: guided set-up. One question per screen, every action one click, progress kept in this browser only.
+// Steps come from doctrine/user-path.json (generated into userpath.js); no step needs a command, a key or a file.
+function setup() {
+  const data = JSON.stringify(USER_PATH).replace(/</g, "\\u003c");
+  const js = "(function(){var D=" + data + ",S=D.steps,K='us-setup',st={};try{st=JSON.parse(localStorage.getItem(K)||'{}')}catch(e){}"
+    + "st.i=st.i||0;st.v=st.v||{};var el=document.getElementById('us-wiz');"
+    + "function save(){try{localStorage.setItem(K,JSON.stringify(st))}catch(e){}}"
+    + "function fill(t){return String(t||'').replace('{template}',D.template).replace('{user}',st.v.user||'your-name').replace('{project}',st.v.project||'your-project')}"
+    + "function h(tag,txt,cls){var n=document.createElement(tag);if(txt!=null)n.textContent=txt;if(cls)n.className=cls;return n}"
+    + "function btn(txt,fn,primary){var b=h('button',txt,'btn'+(primary?' btn-primary':''));b.type='button';b.onclick=fn;b.style.marginRight='.6rem';return b}"
+    + "function go(n){st.i=n;st.p=null;save();draw()}"
+    + "function open(a){window.open(fill(a.url),'_blank','noopener')}"
+    + "function draw(){el.textContent='';if(st.i>=S.length){el.appendChild(h('h2',D.done.title));el.appendChild(h('p',D.done.text));el.appendChild(btn('Start again',function(){st={i:0,v:st.v};save();draw()}));return}"
+    + "var s=S[st.i];el.appendChild(h('p','Step '+(st.i+1)+' of '+S.length+(s.optional?' (optional)':'')+' - '+s.service,'meta'));"
+    + "el.appendChild(h('h2',s.ask));el.appendChild(h('p',s.why,'meta'));var row=h('div');row.className='us-actions';"
+    + "if(s.input){var f=h('input');f.type='text';f.placeholder=s.input.placeholder;f.value=st.v[s.input.field]||'';f.style.cssText='font-size:1.1rem;padding:.7rem;width:100%;max-width:24rem;display:block;margin:.6rem 0';el.appendChild(f);"
+    + "row.appendChild(btn('Continue',function(){var v=f.value.trim().replace(/[^A-Za-z0-9._-]/g,'');if(!v){f.focus();return}st.v[s.input.field]=v;go(st.i+1)},true))}"
+    + "else if(st.p){var a=s[st.p];el.appendChild(h('p',fill(a.then||'')));row.appendChild(btn(s.confirm?'Yes':'Continue',function(){go(st.i+1)},true));row.appendChild(btn('Open it again',function(){open(a)}))}"
+    + "else{row.appendChild(btn('Yes',function(){var a=s.yes;if(a.url){open(a);st.p='yes';save();draw()}else go(st.i+1)},true));"
+    + "row.appendChild(btn(s.optional?'Not now':'No',function(){var a=s.no;if(!a||a.next){if(s.optional||(a&&a.next))go(st.i+1);else{el.appendChild(h('p','No problem. Come back to this page whenever you are ready.'))}}else{open(a);st.p='no';save();draw()}}))}"
+    + "el.appendChild(row);if(st.i>0){var b=h('p');var l=h('a','Back');l.href='#';l.onclick=function(e){e.preventDefault();go(st.i-1)};b.appendChild(l);el.appendChild(b)}}"
+    + "draw()})();";
+  return shell({ path: "/setup", title: "Set up - Ultrastable", description: "Set up your own Ultrastable project one simple question at a time." },
+    "<div class=\"head\"><h1>Let's get you set up</h1><p>One question at a time. Everything is a click. Nothing to install or type.</p></div><div id=\"us-wiz\" class=\"card\"><noscript>This page needs JavaScript to guide you.</noscript></div><script>" + js + "</script>");
+}
 function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
     "<div class=\"head\"><h1>Contact</h1><p>One address; a person replies within two working days.</p></div>"
@@ -281,7 +307,7 @@ export default {
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
     { const sr = await siteRoutes(u, env); if (sr) return sr; }
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
@@ -294,9 +320,10 @@ export default {
       case "/contact": return new Response(contact(), { headers: HTML });
       case "/pilot": return new Response(pilot(), { headers: HTML });
       case "/start": return new Response(start(false), { headers: HTML });
+      case "/setup": return new Response(setup(), { headers: HTML });
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
-      case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
+      case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot", "/start", "/setup"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
       default: return new Response(shell({ path: u.pathname, title: "Not found - Ultrastable", description: "Page not found." }, "<div class=\"head\"><h1>Not found</h1><p>That page does not exist. <a href=\"/\">Go to the home page</a>.</p></div>"), { status: 404, headers: HTML });
     }
   }
