@@ -13,3 +13,6 @@ Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussin
 
 ## Closing probe (QNFO repositories are outside this session's scope)
 Open PR in `QNFO/qnfo-workers` titled "Adopt the Ultrastable foundation kernel" whose diff contains `agents/AGENTS.md`, `autonomy/policy.json`, `docs/PROJECT-MEMORY.md`; `python3 -m gaplint` run there reports 0 findings. Until then the adoption is PLANNED, verified only against fixtures here.
+
+## Update 2026-11-12: instance of the core, not a copy
+QNFO pins a core version in `ultrastable.lock.json` and holds only config, plugins and domain content; see `docs/architecture/core-and-instances.md`. Adoption command: `python3 -m foundation upstream adopt --out <qnfo checkout> --name QNFO --slug qnfo`. Status: PLANNED (QNFO repositories are outside this session's scope).

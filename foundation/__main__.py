@@ -13,6 +13,7 @@
   python3 -m foundation directive [--check|--lint FILE...|--ledger|--probe|--bootstrap] the guiding directive as code
   python3 -m foundation trust [--show|--event SURFACE ACTION EVENT|--tick] the trust ledger and ladder
   python3 -m foundation executor [--apply] [--issue N]                    pick the top issue, change, check, open a PR
+  python3 -m foundation upstream contract|adopt|sync|check|drift|leaks   core/instance link: pin, flow down, send up, drift, bring your own repo
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
 """
 import argparse, datetime as dt, json, os, sys
@@ -21,6 +22,10 @@ from . import standards, doctrine, directive, filing, glossary, kernel, ladder, 
 
 
 def main(argv=None) -> int:
+    args0 = sys.argv[1:] if argv is None else list(argv)
+    if args0[:1] == ["upstream"]:
+        from . import upstream
+        return upstream.main(args0[1:])
     ap = argparse.ArgumentParser(prog="foundation", description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     n = sub.add_parser("new-system"); n.add_argument("--manifest", required=True); n.add_argument("--out", required=True); n.add_argument("--apply", action="store_true"); n.add_argument("--date")
@@ -34,6 +39,7 @@ def main(argv=None) -> int:
     dv = sub.add_parser("directive"); dv.add_argument("--check", action="store_true"); dv.add_argument("--lint", nargs="+"); dv.add_argument("--ledger", action="store_true"); dv.add_argument("--probe", action="store_true"); dv.add_argument("--bootstrap", action="store_true")
     tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true")
     ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo")
+    sub.add_parser("upstream", add_help=False)
     wb = sub.add_parser("writeback"); ws = wb.add_subparsers(dest="wcmd", required=True)
     rc = ws.add_parser("record"); rc.add_argument("--kind", required=True); rc.add_argument("--title", required=True); rc.add_argument("--body", required=True)
     for opt in ("session", "owner", "trigger", "probe", "term", "source"):

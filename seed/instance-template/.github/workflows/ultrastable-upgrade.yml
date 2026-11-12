@@ -1,0 +1,40 @@
+name: ultrastable-upgrade
+# budget: ~2 min per week
+# trigger: weekly (flow DOWN: new core versions arrive as a PR) and manual dispatch
+# free-alternative: run `python3 -m foundation upstream sync --instance . --apply` in any local scheduler
+# Checks out the core, syncs the kernel into this repo (local edits are kept, never overwritten), runs the contract tests, opens a PR.
+on:
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: ultrastable-upgrade
+  cancel-in-progress: true
+jobs:
+  upgrade:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: "{core_repo}"
+          path: .core
+          token: ${{ secrets.CORE_READ_TOKEN || github.token }}
+      - run: pip install pyyaml
+      - name: Sync kernel from core
+        run: PYTHONPATH=.core python3 -m foundation upstream sync --core .core --instance . --apply
+      - name: Contract tests against this instance
+        run: PYTHONPATH=.core python3 -m foundation upstream check --core .core --instance .
+      - name: Open PR (merges on green through this repo's lane)
+        run: |
+          rm -rf .core
+          git config user.name ultrastable-bot && git config user.email bot@users.noreply.github.com
+          git checkout -B ultrastable/upgrade
+          git add -A && git diff --cached --quiet && { echo "already current"; exit 0; }
+          git commit -m "Upgrade Ultrastable kernel from core" && git push -f origin ultrastable/upgrade
+          gh pr create --fill --base main --head ultrastable/upgrade || gh pr edit ultrastable/upgrade --body "refreshed"
+        env: { GH_TOKEN: "${{ github.token }}" }

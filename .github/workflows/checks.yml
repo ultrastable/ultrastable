@@ -63,6 +63,10 @@ jobs:
           python3 -m foundation directive --check
           python3 -m foundation directive --lint HANDOFF.md docs/lessons/*.md
           python3 -m foundation writeback check --base "origin/${{ github.base_ref || 'main' }}"
+      - name: Core and instances (contract is current, kernel has no instance-specific values)
+        run: |
+          python3 -m foundation upstream contract --check
+          python3 -m foundation upstream leaks
       - name: Agentic standards (register, surfaces, discovery lint; Worker conformance and contract tests)
         run: |
           python3 -m foundation standards --check
