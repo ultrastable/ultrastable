@@ -51,7 +51,7 @@ class Filing(unittest.TestCase):
         self.assertIn("growth", j["labels"]); self.assertIn("Metric moved: agent_hits_7d", j["body"])
         again = pm.run(r, apply=True, now=START + 14 * DAY, use_live=False, vals=vals, stage_rows=[])
         self.assertEqual(again["filed"]["growth"], [])      # an open growth item for that metric exists: do not pile on
-        self.assertTrue((r / pm.REPORT).is_file())
+        self.assertFalse((r / pm.REPORT).exists())     # a quiet pass writes no report file: nothing to commit, no daily pull request
 
     def test_replaced_experiment_files_the_next_idea_not_the_same(self):
         r = temp_root()
@@ -151,6 +151,24 @@ class Clockwork(unittest.TestCase):
         r = W.heal(REPO, apply=False, st=st, sett={"unsettled": [], "names": {}, "counts": {}})
         self.assertEqual([a["action"] for a in r["actions"]], ["mutate"])
         self.assertFalse(r["actions"][0]["done"])
+
+    def test_an_unmeasured_clock_is_not_a_missing_stage(self):
+        import unittest.mock as m
+        with m.patch.object(clock, "report", return_value=[{"id": "tick-heartbeat", "status": "unmeasured", "why": "no token"}]), m.patch.object(clock, "gh_run_beats", return_value=[]),              m.patch.object(W, "_gh_json", return_value=[]):
+            st = {s["id"]: s for s in W.stages(REPO, now=1e9, prs=[])}
+        self.assertEqual(st["heartbeat"]["status"], "unmeasured")
+        self.assertEqual(st["heartbeat"]["missed"], 0)
+
+    def test_heal_steps_carry_the_cloudflare_token(self):
+        for f in ("product-manager.yml", "executor.yml"):
+            t = (REPO / ".github/workflows" / f).read_text(encoding="utf-8")
+            i = t.index("run: python3 -m foundation clock --heal --apply")
+            self.assertIn("CLOUDFLARE_API_TOKEN", t[i:i + 400], f)
+
+    def test_a_pm_pull_request_is_not_mistaken_for_an_executor_change(self):
+        src = (REPO / "foundation/executor.py").read_text(encoding="utf-8")
+        i = src.index("def publish_change")
+        self.assertNotIn("Executor run", src[i:src.index("def gh_json")])
 
     def test_workflows_run_heal_and_pm(self):
         ex = (REPO / ".github/workflows/executor.yml").read_text(encoding="utf-8")

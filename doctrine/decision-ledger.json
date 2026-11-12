@@ -466,6 +466,22 @@
    "probe": "file:foundation/pm.py"
   },
   {
+   "id": "lesson-2026-11-12-heal-pass-flagged-the-heartbeat-missing-because-it-ran-witho",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "heal pass flagged the heartbeat missing because it ran without the Cloudflare token",
+   "body": "The first scheduled heal pass could not read the tick clock, so the heartbeat stage showed missing and a catch-up was planned for a clock that was fine. An unreadable clock is now reported as unmeasured and never escalated, and both workflows pass the Cloudflare token to the heal step; tests pass.",
+   "probe": "grep:foundation/clockwork.py::unmeasured"
+  },
+  {
+   "id": "decision-2026-11-12-product-manager-pass-is-quiet-when-nothing-changes-parallel-",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Product manager pass is quiet when nothing changes; parallel CLOCKWORK work adopted",
+   "body": "A daily pull request for a pass that filed nothing was noise: the report file changed every run. The report is now computed from live measurements for the public record, and only experiment state, knob changes and filed items are committed, so a quiet pass opens no pull request. Product manager pull requests no longer carry the executor marker, so settlement does not count them. A parallel branch built the same clockwork and growth modules; its four growth items were adopted with runnable probes and its lane hook is filed as Q-CLOCK-LANE-HOOK; tests pass.",
+   "probe": "file:docs/issues/Q-CLOCK-LANE-HOOK.json"
+  },
+  {
    "id": "decision-2026-11-12-growth-pm-1-growth-policy-values-and-product-coverage-are-en",
    "kind": "decision",
    "date": "2026-11-12",

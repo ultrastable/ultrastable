@@ -159,7 +159,7 @@ def publish_change(repo: str, root, branch: str, subject: str, body: str) -> dic
         code, o = sh(s, root)
         if code:
             return {"pr": None, "error": f"{' '.join(s[:2])} failed: {o[-200:]}"}
-    code, o = sh(["gh", "pr", "create", "-R", repo, "--draft", "--base", "main", "--head", branch, "--title", subject, "--body", body + "\n\nExecutor run " + now() + " (product manager pass)."], root)
+    code, o = sh(["gh", "pr", "create", "-R", repo, "--draft", "--base", "main", "--head", branch, "--title", subject, "--body", body + "\n\nProduct manager pass " + now() + "."], root)
     if code:
         return {"pr": None, "error": "pr create failed: " + o[-200:]}
     pr, res = o.splitlines()[-1], {}
