@@ -105,6 +105,14 @@
    "title": "COMPLETE-1: finished work and finished threads are closed automatically",
    "body": "Standing owner rule written into agents/AGENTS.md, seed/agents/AGENTS.md and agents/PROJECT-INSTRUCTIONS.md. Verified by running scripts/completion_sweep.sh against the live repo: it deleted 2 squash-merged branches (agent/brand-settings-buildout, claude/project-thread-pi8gkc) and left every branch with unmerged commits or an open PR alone; gaplint reports 0 findings. The sweep runs in the daily lane workflow. Session side: the app already archives on PR close and after 1 idle day (probed with get_settings), and 5 idle finished sessions were archived. Next: sweep closes done issues with evidence and ops-repo threads.",
    "probe": "file:scripts/completion_sweep.sh"
+  },
+  {
+   "id": "decision-2026-11-12-work-queue-is-repository-data-issues-are-turned-off-on-the-c",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Work queue is repository data; Issues are turned off on the code repo",
+   "body": "Measured: python3 -m foundation queue --check prints queue ok with 26 takeable items, and 17 former GitHub issues were migrated to docs/issues/Q-*.json. The executor now picks from foundation/queue.py (EXECUTOR_SOURCE=issues restores the old source), claims nothing remotely, and closes the item inside its own pull request so the merge is the closure; three consecutive failures park an item. Issue scripts exit 0 when has_issues is false, funding findings become queue items, and tests/foundation/test_executor.py covers the queue.",
+   "probe": "grep:foundation/queue.py::QUEUE-1"
   }
  ]
 }
