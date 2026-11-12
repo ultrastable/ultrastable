@@ -546,6 +546,15 @@
    "title": "Executor PRs failed checks on a stale site roadmap",
    "body": "Closing a queue item changes docs/issues, which makes site/roadmap-data.js stale; the executor now regenerates it.",
    "probe": "grep:foundation/executor.py::build_site_roadmap"
+  },
+  {
+   "id": "lesson-2026-11-12-a-health-probe-must-judge-the-newest-finished-tick-not-the-n",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "A health probe must judge the newest finished tick, not the newest row",
+   "body": "runTick inserts its tick_runs row before the steps run, so a probe landing on the cron second read steps_completed NULL and answered 503 (CF-OBS groups on ultrastable-ultrastable and demo-child-ultrastable). Health now uses lastTickForHealth: newest finished tick, a tick unfinished for over 5 minutes still fails. A D1 schema file is not applied by deploy: create tables on first use (ensureSnapshots). A daily job rides a */10 cron slot (digestDue) instead of its own slow cron.",
+   "probe": "grep:seed/worker/src/tick.js::lastTickForHealth",
+   "session": "agentG"
   }
  ]
 }
