@@ -14,6 +14,7 @@ from .executor import priority
 
 REPO = Path(__file__).resolve().parents[1]
 LOG = "ops/fleet-log.jsonl"
+HOME = "ultrastable"  # the repository this code runs from; its queue is read from docs/issues when Issues are off
 
 
 def load(root=REPO) -> dict:
@@ -56,12 +57,16 @@ def probe_surfaces(cfg: dict, apis: dict) -> dict:
     return out
 
 
-def queue(cfg: dict, api, repos: list[str] | None = None) -> list[dict]:
+def queue(cfg: dict, api, repos: list[str] | None = None, root=REPO) -> list[dict]:
     """One queue: every open non-PR issue of every repo, driver order (p-label, then oldest), repo name as tie-break."""
     items = []
     for r in repos or cfg["repos"]:
         st, rows = api("GET", f"/repos/{cfg['org']}/{r}/issues?state=open&per_page=100")
         if st != 200:
+            # Issues are off (or unreadable): the queue lives as repo data (docs/issues/Q-*.json); the home repo is this checkout.
+            if r == HOME:
+                from .queue import takeable
+                items += [dict(i, repo=r) for i in takeable(root)]
             continue
         items += [dict(i, repo=r) for i in rows if "pull_request" not in i]
     return sorted(items, key=lambda i: (priority(i), i["repo"]))
@@ -138,7 +143,7 @@ def run(root=REPO, apply=False, apis: dict | None = None, repos=None) -> dict:
     rec["surfaces"] = probe_surfaces(cfg, apis)
     best = next(iter(apis.values()))
     use = lambda r: apis.get((rec["surfaces"].get(r) or {}).get("surface")) or best
-    rec["queue"] = len(queue(cfg, best, repos))
+    rec["queue"] = len(queue(cfg, best, repos, root))
     for r in repos or cfg["repos"]:
         rec["merges"] += merge_lane(cfg, use(r), apply, [r])
 
