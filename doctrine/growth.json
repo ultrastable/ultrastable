@@ -1,42 +1,48 @@
 {
-  "_doc": "GROWTH-1: the product manager's job is growth, not only bug fixes (owner directive 2026-11-12). This file is what the product manager loop reads: the share of shipped work that must be growth, the metrics that say whether the product is growing, and how work is classified. foundation/growth.py measures the mix and the metrics, publishes them on /live, and the executor prefers a growth item whenever the recent mix falls below the target. A growth item adds a capability, a surface, a reader or a customer path; a fix repairs something that was meant to work; maintenance keeps it running.",
-  "version": "1.0.0",
+  "_doc": "GROWTH-1/2: the product manager's job is growth, not only bug fixes (owner directive 2026-11-12). This file is what the product manager loop reads: the share of shipped work that must be growth, the growth metrics with a baseline, a target and a horizon (the expected value today is the straight line between them), how work is classified, and the idea bank each metric draws its next experiment from. foundation/growth.py measures the mix and the metrics, foundation/pm.py runs the loop (targets, experiments, knobs, filing) and the executor prefers a growth item whenever the recent mix falls below the target. A growth item adds a capability, a surface, a reader or a customer path; a fix repairs something that was meant to work; maintenance keeps it running.",
+  "version": "2.0.0",
   "target_growth_share": 0.4,
   "window_merges": 20,
   "label": "growth",
+  "start": "2026-11-12",
+  "horizon_days": 28,
+  "revise_after_days": 14,
+  "experiment_check_after_days": 7,
   "classify": {
     "fix": "\\b(fix|fixes|repair|bug|stale|failing|failed|revert|regress|hotfix|broken|conflict)\\b",
     "growth": "\\b(grow|growth|GROW|add|adds|new|build|built|launch|feed|demo|pilot|case study|pricing|surface|capability|feature|MCP|agent-readable|live record|changelog|dashboard|topology|ladder)\\b"
   },
   "metrics": [
-    {
-      "id": "pageviews_7d",
-      "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
-      "target": 1500,
-      "direction": ">=",
-      "trigger": "breach opens a growth item for the product manager"
-    },
-    {
-      "id": "visitors_7d",
-      "what": "distinct visitors in the last 7 days",
-      "target": 650,
-      "direction": ">=",
-      "trigger": "breach opens a growth item for the product manager"
-    },
-    {
-      "id": "agent_hits_7d",
-      "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
-      "target": 1000,
-      "direction": ">=",
-      "trigger": "breach opens a growth item for the product manager"
-    },
-    {
-      "id": "pilot_page_views_7d",
-      "what": "views of the pilot application page in the last 7 days",
-      "target": 400,
-      "direction": ">=",
-      "trigger": "breach opens a growth item for the product manager"
-    }
+    {"id": "pageviews_7d", "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)", "baseline": 1310, "target": 1500, "direction": ">=", "trigger": "behind its trajectory opens the next growth item from the idea bank"},
+    {"id": "visitors_7d", "what": "distinct visitors in the last 7 days", "baseline": 564, "target": 650, "direction": ">=", "trigger": "behind its trajectory opens the next growth item from the idea bank"},
+    {"id": "agent_hits_7d", "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)", "baseline": 817, "target": 1000, "direction": ">=", "trigger": "behind its trajectory opens the next growth item from the idea bank"},
+    {"id": "pilot_page_views_7d", "what": "views of the pilot application page in the last 7 days", "baseline": 326, "target": 400, "direction": ">=", "trigger": "behind its trajectory opens the next growth item from the idea bank"}
   ],
-  "owner_note": "Targets are first hypotheses chosen by the system: the baseline measured on 2026-11-12 (1310 page views, 564 visitors, 817 agent hits, 326 pilot page views in 7 days) plus 15 to 25 percent. The product manager revises them from measured baselines, each change as a reviewed PR."
+  "bank": {
+    "pageviews_7d": [
+      {"id": "USE-CASE-PAGES", "title": "GROW-7: one page per kind of system the product runs (club site, service fleet, research desk) with a deep link into the interview", "probe": "file:site/usecases.js", "pct": 15,
+       "desc": "Add /use-cases and one page per system type from the VISION list, each with the loop, the measure, the upkeep and a typical monthly cost, linking into the interview. Paths: site/usecases.js, site/worker.js, site/site.test.mjs."},
+      {"id": "STRUCTURED-DATA", "title": "GROW-8: structured data (FAQPage, SoftwareApplication) on the core pages", "probe": "grep:site/worker.js::FAQPage", "pct": 10,
+       "desc": "Add JSON-LD for FAQPage on /faq and SoftwareApplication on /product, generated from the same data as the visible text. Paths: site/worker.js, site/site.test.mjs."}
+    ],
+    "visitors_7d": [
+      {"id": "SHARE-CARDS", "title": "GROW-9: a share card per page generated from the live record", "probe": "file:site/cards.js", "pct": 15,
+       "desc": "Generate Open Graph cards for /live, /demo and the case study showing the current scoreboard, so a shared link shows the system working. Paths: site/cards.js, site/worker.js."},
+      {"id": "WEEKLY-DIGEST", "title": "GROW-10: a weekly digest of what the system shipped, built from the changelog", "probe": "file:site/digest.js", "pct": 10,
+       "desc": "A digest page and feed of the week's merged changes and clock health, ready for the existing double opt-in subscribe flow. Paths: site/digest.js, site/worker.js."}
+    ],
+    "agent_hits_7d": [
+      {"id": "MARKDOWN-PAGES", "title": "GROW-11: markdown content negotiation for every page", "probe": "grep:site/worker.js::text/markdown", "pct": 20,
+       "desc": "Return a Markdown rendering of each page when the request sends Accept: text/markdown, with an x-markdown-tokens header, so agents read the site cheaply. Paths: site/worker.js, site/site.test.mjs."},
+      {"id": "AGENT-DOCS", "title": "GROW-12: runnable examples for the MCP endpoint and the OpenAPI document", "probe": "file:site/agentdocs.js", "pct": 15,
+       "desc": "A /docs/agents page with copyable curl and client examples for every MCP tool, generated from the tool list. Paths: site/agentdocs.js, site/worker.js."}
+    ],
+    "pilot_page_views_7d": [
+      {"id": "PILOT-FAQ", "title": "GROW-13: a pilot FAQ answering price, data, hosting and exit", "probe": "file:site/pilotfaq.js", "pct": 15,
+       "desc": "Answer the questions a pilot applicant has before applying (what it costs, where the data lives, who hosts it, how to leave), from the pilot offer data. Paths: site/pilotfaq.js, site/worker.js."},
+      {"id": "PILOT-CTA", "title": "GROW-14: a one-tap apply entry from the live record and the demo", "probe": "grep:site/live.js::/pilot", "pct": 20,
+       "desc": "Add an apply link with a short why to the live page and the demo, tagged so its conversion is measured. Paths: site/live.js, site/demo.js."}
+    ]
+  },
+  "owner_note": "Targets are first hypotheses chosen by the system: the baseline measured on 2026-11-12 (1310 page views, 564 visitors, 817 agent hits, 326 pilot page views in 7 days) plus 15 to 25 percent over 28 days. The product manager revises them from measured baselines, each change as a reviewed PR."
 }

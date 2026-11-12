@@ -263,6 +263,14 @@
    ],
    "crons": []
   },
+  "product-manager.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "11 7 * * *"
+   ]
+  },
   "retriage.yml": {
    "events": [
     "workflow_dispatch"

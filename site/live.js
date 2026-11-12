@@ -38,6 +38,18 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
  const gs=sec('Growth','The product manager keeps shipped work from becoming only repairs: growth share of recent merges against its target, and the measured reach of the product. A breach opens a growth item.');
  table(gs,['Measure','Value'],[['Growth share of the last '+gm.total+' merges',gm.growth_share==null?'':Math.round(gm.growth_share*100)+'% (target '+Math.round((gw.target_growth_share||0)*100)+'%)'],['Merges: growth / fix / maintenance',gm.growth+' / '+gm.fix+' / '+gm.maintenance],['Growth items the executor may take now',gw.growth_items_takeable]]);
  table(gs,['Metric','7-day value','Target','Breach'],(gw.metrics||[]).map(m=>[m.what,m.value==null?'not measured':m.value,m.target,m.breach==null?'':m.breach?'yes':'no']));
+ const sg=sec('Pipeline stages','Freshness of every stage against its own SLA: heartbeat, author, pull request, merge, deploy, publish. Stale stages are caught up, then changed, then filed as p0 repairs.');
+ table(sg,['Stage','Status','Age (s)','SLA (s)','Missed SLAs','What it is'],(d.stages||[]).map(x=>[x.id,x.status+(x.lag_s!=null?' (lag '+x.lag_s+' s)':''),x.age_s,x.sla_s,x.missed,x.what]));
+ const st2=d.settlement||{};
+ const se=sec('Settlement by name','Every change the executor opens ends under the name of its work item: merged, closed, parked, failed or expired. Unsettled changes past the window are closed as expired and the item returns to the queue.');
+ table(se,['Name','State','PR','Age (h)'],(st2.names||[]).map(x=>[x.name,x.state,x.pr==null?'':x.pr,x.age_h==null?'':x.age_h]));
+ const pmr=d.product_manager||{};
+ const pg=sec('Product manager','Targets follow a straight line from baseline to target; experiments are kept or replaced after a week; knobs are bounded, logged and reverted if the metric is no better; growth and repair items are filed by the loop.');
+ table(pg,['Metric','Baseline','Expected today','Value','Target','Behind'],(pmr.targets||[]).map(t=>[t.id,t.baseline,t.expected_today,t.value==null?'not measured':t.value,t.target,t.behind==null?'':t.behind?'yes':'no']));
+ table(pg,['Experiment (item)','Metric','Baseline','Predicted %','Verdict'],(pmr.experiments||[]).map(e=>[e.item,e.metric,e.baseline,e.predicted_pct,e.verdict||'running']));
+ table(pg,['Knob','Value'],Object.entries(((pmr.knobs||{}).values)||{}));
+ table(pg,['Knob change','Old','New','Why','Reviewed'],(pmr.knob_log||[]).map(k=>[k.knob+' ('+k.at.slice(0,10)+')',k.old,k.new,k.why,k.reviewed||'pending']));
+ table(pg,['Filed by the loop'],[].concat(((pmr.filed||{}).growth||[]).map(x=>['growth: '+x]),((pmr.filed||{}).repair||[]).map(x=>['repair: '+x])).concat([['(none this pass)']].slice(0,((pmr.filed||{}).growth||[]).length+((pmr.filed||{}).repair||[]).length?0:1)));
  const ck=sec('Clocks','Every loop is a clock. Status is measured from its recorded beats, never declared: ticking, late, stopped, or idle when there is no work. A stopped or inaccurate clock is a defect.');
  table(ck,['Clock','Status','Last beat (s ago)','Beats in 24 h (expected)','Median jitter (s)','What it does'],(d.clocks||[]).map(c=>[c.id,c.status+(c.why?' ('+c.why+')':''),c.last_beat_age_s,c.beats_24h==null?'':c.beats_24h+' ('+c.expected_24h+')',c.median_jitter_s,c.what]));
  const tp2=d.topology||{},pt=tp2.parts||{};

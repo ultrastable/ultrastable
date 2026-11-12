@@ -152,6 +152,13 @@ def check(root=REPO) -> list[str]:
             bad.append(f"clock {c['id']}: d1 clock needs d1_id, table and column")
         if c.get("source") == "workflow" and not (REPO / ".github/workflows" / (c.get("workflow", "") + ".yml")).is_file():
             bad.append(f"clock {c['id']}: workflow {c.get('workflow')} does not exist")
+    for sg in d.get("stages", []):
+        if not sg.get("sla_s") or not sg.get("source"):
+            bad.append(f"stage {sg.get('id')}: needs source and sla_s")
+    if not d.get("escalation") or [x["missed"] for x in d["escalation"]] != sorted(x["missed"] for x in d["escalation"]):
+        bad.append("escalation: ladder missing or not ordered by missed SLAs")
+    if not d.get("settlement", {}).get("sla_hours"):
+        bad.append("settlement: sla_hours missing")
     ch = d.get("chain", {})
     if not ch or ch.get("max_runs_per_day", 0) < 1 or ch.get("backoff_after_failures", 0) < 1:
         bad.append("chain needs max_runs_per_day and backoff_after_failures")
@@ -162,6 +169,15 @@ def main(argv) -> int:
     a = list(argv)
     if "--report" in a:
         print(json.dumps(report(), indent=1))
+        return 0
+    if any(x in a for x in ("--stages", "--settlement", "--heal")):
+        from . import clockwork
+        if "--stages" in a:
+            print(json.dumps(clockwork.stages(), indent=1))
+        elif "--settlement" in a:
+            print(json.dumps(clockwork.settlement(), indent=1))
+        else:
+            print(json.dumps(clockwork.heal(apply="--apply" in a), indent=1))
         return 0
     if "--chain" in a:
         res = chain(apply="--apply" in a)

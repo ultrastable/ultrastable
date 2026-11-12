@@ -47,6 +47,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["fleet"]:
         from . import fleet
         return fleet.main(_av[1:])
+    if _av[:1] == ["pm"]:
+        from . import pm
+        return pm.main(_av[1:])
     if _av[:1] == ["growth"]:
         from . import growth
         return growth.main(_av[1:])

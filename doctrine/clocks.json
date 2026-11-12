@@ -45,5 +45,91 @@
     "workflow": "executor",
     "max_runs_per_day": 4,
     "backoff_after_failures": 3
+  },
+  "stages": [
+    {
+      "id": "heartbeat",
+      "what": "the Cloudflare tick ran",
+      "source": "clock",
+      "clock": "tick-heartbeat",
+      "sla_s": 900
+    },
+    {
+      "id": "author",
+      "what": "an executor run started (it reaches the model route)",
+      "source": "workflow",
+      "workflow": "executor",
+      "sla_s": 43200,
+      "needs_work": true
+    },
+    {
+      "id": "pr",
+      "what": "an unattended pull request was opened",
+      "source": "pr_opened",
+      "sla_s": 172800,
+      "needs_work": true
+    },
+    {
+      "id": "merge",
+      "what": "an unattended pull request merged to main",
+      "source": "pr_merged",
+      "sla_s": 259200,
+      "needs_work": true
+    },
+    {
+      "id": "deploy",
+      "what": "the site deployed after the last change to it (merge to live lag)",
+      "source": "merge_to_deploy",
+      "workflow": "deploy-site",
+      "paths": [
+        "site",
+        "seed/analytics",
+        "deploy/deploy-site.mjs",
+        "doctrine/topology.json"
+      ],
+      "sla_s": 900
+    },
+    {
+      "id": "publish",
+      "what": "the public record was republished",
+      "source": "workflow_success",
+      "workflow": "transparency",
+      "sla_s": 93600
+    }
+  ],
+  "escalation": [
+    {
+      "missed": 1,
+      "action": "catch-up",
+      "what": "wake the stage's own workflow now (bounded per day)"
+    },
+    {
+      "missed": 2,
+      "action": "mutate",
+      "what": "change the approach: run the next takeable item instead of the one that is stuck"
+    },
+    {
+      "missed": 4,
+      "action": "incident",
+      "what": "file a repair item for the product manager (p0) and show it on the public record"
+    }
+  ],
+  "catchup": {
+    "max_per_stage_per_day": 2,
+    "dispatch": {
+      "author": "executor.yml",
+      "publish": "transparency.yml"
+    }
+  },
+  "settlement": {
+    "sla_hours": 6,
+    "names": [
+      "merged",
+      "closed",
+      "parked",
+      "failed",
+      "expired"
+    ],
+    "close_comment": "Settled as expired by CLOCKWORK-1: no merge within the settlement window; the item returns to the queue under its own name."
   }
 }

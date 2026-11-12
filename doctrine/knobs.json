@@ -1,0 +1,44 @@
+{
+  "_doc": "GROWTH-2: the knobs the product manager loop may turn (foundation/pm.py). Each is bounded, changed at most once a week, logged with its prediction in ops/growth/knob-log.jsonl, and reverted by the next review when the metric it was meant to move is no better. Anything not listed here is not a knob.",
+  "version": "1.0.0",
+  "min_days_between_changes": 7,
+  "review_after_days": 7,
+  "knobs": [
+    {
+      "id": "target_growth_share",
+      "file": "doctrine/growth.json",
+      "path": "target_growth_share",
+      "min": 0.2,
+      "max": 0.6,
+      "step": 0.05,
+      "metric": "growth_share",
+      "owner": "product-manager",
+      "what": "the share of shipped work that must be growth; the executor takes a growth item first below it",
+      "keep_if": "hold"
+    },
+    {
+      "id": "chain_max_runs_per_day",
+      "file": "doctrine/clocks.json",
+      "path": "chain.max_runs_per_day",
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "metric": "executor_merged_7d",
+      "owner": "product-manager",
+      "what": "how many times a day the executor may wake itself; raised when work waits and nothing merges unattended",
+      "keep_if": "improve"
+    },
+    {
+      "id": "window_merges",
+      "file": "doctrine/growth.json",
+      "path": "window_merges",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "metric": "growth_share",
+      "owner": "product-manager",
+      "what": "how many recent merges the growth share is measured over",
+      "keep_if": "hold"
+    }
+  ]
+}

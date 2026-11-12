@@ -147,6 +147,30 @@ def sh(argv, root=REPO, timeout=600):
         return 127, f"{type(e).__name__}: {e}"
 
 
+REPO_SLUG = os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable")
+
+
+def publish_change(repo: str, root, branch: str, subject: str, body: str) -> dict:
+    """Commit the working tree on `branch` and open it the executor's way: draft PR, marked ready, checks dispatched on the branch (a PR opened with the workflow token
+    raises no pull_request event); the lane merges on green. Used by the product manager loop for the items it files."""
+    steps = [["git", "checkout", "-B", branch], ["git", "add", "-A", "--", ".", f":!{LOG}"],
+             ["git", "-c", "user.name=ultrastable-pm", "-c", "user.email=pm@users.noreply.github.com", "commit", "-m", subject], ["git", "push", "-u", "origin", branch]]
+    for s in steps:
+        code, o = sh(s, root)
+        if code:
+            return {"pr": None, "error": f"{' '.join(s[:2])} failed: {o[-200:]}"}
+    code, o = sh(["gh", "pr", "create", "-R", repo, "--draft", "--base", "main", "--head", branch, "--title", subject, "--body", body + "\n\nExecutor run " + now() + " (product manager pass)."], root)
+    if code:
+        return {"pr": None, "error": "pr create failed: " + o[-200:]}
+    pr, res = o.splitlines()[-1], {}
+    res["pr"] = pr
+    for kick in (["gh", "pr", "ready", pr, "-R", repo], ["gh", "workflow", "run", "checks.yml", "-R", repo, "--ref", branch]):
+        kc, ko = sh(kick, root)
+        if kc:
+            res["kick_failed"] = (res.get("kick_failed", "") + f" {' '.join(kick[:3])}: {ko[-120:]}").strip()
+    return res
+
+
 def gh_json(args, root=REPO):
     code, out = sh(["gh"] + args, root, 90)
     if code:

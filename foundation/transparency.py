@@ -194,6 +194,20 @@ def snapshot(root=REPO, use_gh=True):
     merged = [p for p in ch["pull_requests"] if p["state"] == "merged"]
     th = throughput(root, use_gh)
     try:
+        from . import clockwork
+        prs_all = clockwork.executor_prs() if use_gh else []
+        stg = clockwork.stages(root, prs=prs_all) if use_gh else []
+        sett = clockwork.settlement(root, prs=prs_all) if use_gh else {}
+        sett = {"counts": sett.get("counts"), "names": list((sett.get("names") or {}).values())[-40:], "unsettled": sett.get("unsettled")}
+    except Exception as e:  # recorded, never swallowed
+        stg, sett = [{"id": "stages", "status": "unmeasured", "why": str(e)[:160]}], {}
+    try:
+        from . import pm
+        pm_rep = pm._read(root, pm.REPORT, {})
+        pm_rep["knob_log"] = pm.knob_log(root)[-10:]
+    except Exception as e:  # recorded
+        pm_rep = {"error": str(e)[:160]}
+    try:
         from . import growth
         gr = growth.snapshot(root, use_live=use_gh)
     except Exception as e:  # recorded, never swallowed
@@ -221,7 +235,7 @@ def snapshot(root=REPO, use_gh=True):
             "prs_merged_total": (th.get("merged") or {}).get("total"), "prs_merged_unattended": ((th.get("merged") or {}).get("by_origin") or {}).get("unattended executor", {}).get("prs"),
             "backlog_open": (th.get("queue") or {}).get("by_status", {}).get("open"), "backlog_items": (th.get("queue") or {}).get("items"),
         },
-        "throughput": th, "growth": gr, "clocks": clocks, "topology": top, "managers": mg, "claims": cl, "gaps": gp, "changes": ch, "loop_improvements": improvements(root),
+        "throughput": th, "stages": stg, "settlement": sett, "product_manager": pm_rep, "growth": gr, "clocks": clocks, "topology": top, "managers": mg, "claims": cl, "gaps": gp, "changes": ch, "loop_improvements": improvements(root),
         "feedback_loop": "claim (site/doctrine) -> probe (components, gap register, loops) -> gap item -> branch/draft PR by an agent -> merge on green checks -> deploy -> probe again; each row above links the step to its record.",
     }
     return scrub(s)
