@@ -12,13 +12,126 @@
   },
   "proof": "Ultrastable runs on itself. Its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else. Verify it: `python3 -m foundation selfhost --verify` in ultrastable/ultrastable.",
   "repos": [
-    {"name": "ultrastable", "role": "System of record", "line": "The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof.", "audience": "Anyone who wants the whole picture, and the agents that run it.", "quickstart": ["python3 -m foundation selfhost --verify", "python3 -m foundation new-system --manifest instances/ultrastable/instance.json --out /tmp/ultrastable-instance"], "topics": ["autonomous-agents", "ai-agents", "agent-orchestration", "developer-tools", "automation", "bootstrapping", "self-hosting", "cloudflare-workers"]},
-    {"name": "seed", "role": "Bootstrapper", "line": "One idea file in, a running organization of virtual managers and staff out.", "audience": "Founders and makers with an idea and no team.", "quickstart": ["python3 bootstrap/bootstrap.py --dry-run"], "topics": ["bootstrapping", "ai-agents", "cloudflare-workers", "autonomous-agents", "idea-to-organization"]},
-    {"name": "platform", "role": "Runtime and adapters", "line": "The tick, roles, trust ledger, prediction scorer and plussing queue, portable across Cloudflare and Google Cloud.", "audience": "Engineers who run or extend the core.", "quickstart": ["pip install -e .", "python -m pytest tests"], "topics": ["agent-orchestration", "cloudflare-workers", "google-cloud", "runtime", "autonomous-agents"]},
-    {"name": "docs", "role": "Concepts and roadmap", "line": "How it works: virtual staff, feedback loops, earned trust, plussing, governance, bootstrapping and the roadmap.", "audience": "Readers who want to understand before they run anything.", "quickstart": ["Start at concepts/overview.md, then concepts/feedback-loops.md"], "topics": ["documentation", "autonomous-agents", "governance", "roadmap"]},
-    {"name": "site", "role": "Public site", "line": "The Cloudflare Worker behind the Ultrastable domains.", "audience": "Visitors, and whoever deploys the site.", "quickstart": ["npx wrangler dev"], "topics": ["cloudflare-workers", "website", "static-site"]},
-    {"name": "business", "role": "Plan and funding", "line": "Business plan, customers, competition, pitch, funding and promotion, written by the virtual managers.", "audience": "Partners, funders and advisors.", "quickstart": ["Start at plan/README.md"], "topics": ["business-plan", "funding", "go-to-market"]},
-    {"name": "ip", "role": "Architecture and IP", "line": "Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11).", "audience": "Counsel, and engineers who want the precise design.", "quickstart": ["Start at README.md"], "topics": ["architecture", "specifications", "intellectual-property"]}
+    {
+      "name": "ultrastable",
+      "role": "System of record",
+      "line": "The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof.",
+      "audience": "Anyone who wants the whole picture, and the agents that run it.",
+      "quickstart": [
+        "python3 -m foundation selfhost --verify",
+        "python3 -m foundation new-system --manifest instances/ultrastable/instance.json --out /tmp/ultrastable-instance"
+      ],
+      "topics": [
+        "autonomous-agents",
+        "ai-agents",
+        "agent-orchestration",
+        "developer-tools",
+        "automation",
+        "bootstrapping",
+        "self-hosting",
+        "cloudflare-workers"
+      ]
+    },
+    {
+      "name": "seed",
+      "role": "Bootstrapper",
+      "line": "One idea file in, a running organization of virtual managers and staff out.",
+      "audience": "Founders and makers with an idea and no team.",
+      "quickstart": [
+        "python3 bootstrap/bootstrap.py --dry-run"
+      ],
+      "topics": [
+        "bootstrapping",
+        "ai-agents",
+        "cloudflare-workers",
+        "autonomous-agents",
+        "idea-to-organization"
+      ],
+      "archived": true
+    },
+    {
+      "name": "platform",
+      "role": "Runtime and adapters",
+      "line": "The tick, roles, trust ledger, prediction scorer and plussing queue, portable across Cloudflare and Google Cloud.",
+      "audience": "Engineers who run or extend the core.",
+      "quickstart": [
+        "pip install -e .",
+        "python -m pytest tests"
+      ],
+      "topics": [
+        "agent-orchestration",
+        "cloudflare-workers",
+        "google-cloud",
+        "runtime",
+        "autonomous-agents"
+      ],
+      "archived": true
+    },
+    {
+      "name": "docs",
+      "role": "Concepts and roadmap",
+      "line": "How it works: virtual staff, feedback loops, earned trust, plussing, governance, bootstrapping and the roadmap.",
+      "audience": "Readers who want to understand before they run anything.",
+      "quickstart": [
+        "Start at concepts/overview.md, then concepts/feedback-loops.md"
+      ],
+      "topics": [
+        "documentation",
+        "autonomous-agents",
+        "governance",
+        "roadmap"
+      ],
+      "archived": true
+    },
+    {
+      "name": "site",
+      "role": "Public site",
+      "line": "The Cloudflare Worker behind the Ultrastable domains.",
+      "audience": "Visitors, and whoever deploys the site.",
+      "quickstart": [
+        "npx wrangler dev"
+      ],
+      "topics": [
+        "cloudflare-workers",
+        "website",
+        "static-site"
+      ],
+      "archived": true
+    },
+    {
+      "name": "business",
+      "role": "Plan and funding",
+      "line": "Business plan, customers, competition, pitch, funding and promotion, written by the virtual managers.",
+      "audience": "Partners, funders and advisors.",
+      "quickstart": [
+        "Start at plan/README.md"
+      ],
+      "topics": [
+        "business-plan",
+        "funding",
+        "go-to-market"
+      ],
+      "archived": true
+    },
+    {
+      "name": "ip",
+      "role": "Architecture and IP",
+      "line": "Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11).",
+      "audience": "Counsel, and engineers who want the precise design.",
+      "quickstart": [
+        "Start at README.md"
+      ],
+      "topics": [
+        "architecture",
+        "specifications",
+        "intellectual-property"
+      ],
+      "archived": true
+    }
   ],
-  "extraction_repos": ["workers", "spec", "license"]
+  "extraction_repos": [
+    "workers",
+    "spec",
+    "license"
+  ]
 }

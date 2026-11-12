@@ -16,8 +16,12 @@ def desired():
     cur["org"]["description"] = pos["tagline"] + " Runs on itself."
     cur["org"]["blog"], cur["org"]["email"] = cfg["site"], cfg["contact"]
     base = next(iter(cur["repos"].values()))
-    repos = {}
+    # Repos flagged "archived" in brand.json stay rendered but are not applied (GitHub rejects writes to archived repos); repos in the
+    # settings file that brand.json does not name (workers, spec, license) are kept as written.
+    repos = {k: v for k, v in cur["repos"].items() if k.split("/")[1] not in {r["name"] for r in cfg["repos"]}}
     for r in cfg["repos"]:
+        if r.get("archived"):
+            continue
         key = f"{cfg['org']}/{r['name']}"
         old = cur["repos"].get(key, base)
         repos[key] = {**old, "description": f"{r['line']} {pos['tagline']}"[:350], "homepage": cfg["site"], "topics": r["topics"]}
