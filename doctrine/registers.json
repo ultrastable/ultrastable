@@ -216,7 +216,7 @@
    "remediation": "status is computed; new unprobed issues fail the build; the baseline only shrinks",
    "status": "controlled",
    "cadence_ticks": 144,
-   "probe": "grep:foundation/pins.py::def compute"
+   "probe": "grep:foundation/pins.py::def unprobed"
   }
  ],
  "controls": [
