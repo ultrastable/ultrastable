@@ -7,32 +7,37 @@ Every agent, role and bootstrap reads this first. It is the answer to "what is t
 
 ## What it is for
 
-Ultrastable runs **systems**: bodies of ongoing work that must keep running, measuring themselves and correcting themselves after the
-person who started them has stopped paying attention. A system is autonomous if it has self-referential loops and the ability to close them.
-Coding agents write code. Ultrastable decides what to work on next, hands it to an agent, proves the result live, reverts what regresses and
-keeps score of how often it was right.
+The gap Ultrastable fills is **the development work after the first version**. Vibe coding produces a thin, static first draft and stops. A coding agent
+does what it is told, so the owner must already know what to ask for. A person who starts with a bare skeleton of an idea does not know what to ask
+for next. Ultrastable puts the managers behind the scenes (portfolio, program, product, project) that look at measurements, decide what to improve,
+file the work, hand it to coding agents, prove the result live and keep score. The owner supplies direction and a budget; the system supplies the
+backlog. That is the product: **autonomous, measured, continuous improvement of something that has to keep running.**
 
-Systems it is built for (each one is a fleet of roles, not a page):
+Typical customers are businesses and organizations (B2B) running something WordPress-class or bigger, where maintenance has become the burden:
+- a club, association or small-business website that must keep growing (search ranking, content, performance, security patches, bookings, member
+  features) instead of freezing after launch;
+- a shop or marketplace whose catalogue, conversion, speed and uptime need weekly attention;
 - a service fleet that finds its own failures and fixes them, with probes and automatic revert;
 - a research or publishing operation whose findings, editions and citations stay current;
 - a compliance, security or cost program that watches an environment and closes what it finds;
 - a data pipeline that notices drift, repairs itself and logs why;
-- a portfolio of software projects where agents triage and ship and a few human gates remain;
-- a growth, support or evaluation operation that tests, measures and keeps only what works.
+- a portfolio of software projects where agents triage and ship and a few human gates remain.
+
+A site is not excluded by being a website. It is included when it is meant to be **run and improved**, not launched and forgotten.
 
 ## The system test (all four must hold, or it is not a fit)
 
-1. **A loop it must close.** Something is observed, acted on and observed again, repeatedly, with no person in the middle.
+1. **A loop it must close.** Something is observed (traffic, errors, failing probes, support requests), acted on and observed again, with no person in the middle.
 2. **A measure that can be wrong.** A named metric or probe that can breach, and a prediction logged before each change and scored after.
-3. **Upkeep that never ends.** Work that keeps arriving (failures, drift, new sources, new rules). A finished deliverable is not a system.
+3. **Upkeep and improvement that never end.** Work keeps arriving (failures, drift, new sources, new rules) and there is always a next improvement the managers can originate from the measures.
 4. **A running cost the owner accepts.** The back end (compute, model calls, storage) costs money every month. A stated monthly budget is part of the idea.
 
 ## What it is not for
 
-A one-off page, an app you build once and forget, a trip, a weekend project, a hobby tool, a personal reminder, prompt-by-prompt "vibe coding".
-Those need a site builder or a chat assistant. Starting a project manager, a portfolio manager and a team of agents for them is a defect: the
-cost of the organization would exceed the value of the thing. When an idea fails the system test, the right output is a plain "this is not a
-fit, here is what to use instead", never a smaller staffing of the same machinery.
+A single finished deliverable nobody will run again: a one-off page, an invitation, a trip plan, a weekend project, a personal reminder. Those
+need a site builder or a chat assistant. Starting a portfolio manager, project managers and a team of agents for them is a defect: the cost of the
+organization would exceed the value of the thing. When an idea fails the system test, the right output is a plain "this is not a fit, here is what
+to use instead", never a smaller staffing of the same machinery.
 
 ## Proportion rule
 

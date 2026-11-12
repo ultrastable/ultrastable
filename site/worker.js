@@ -68,14 +68,14 @@ function statusLine(d) {
 
 function home(d) {
   return shell({ path: "/", title: "Ultrastable: the foundation for any autonomous system", description: "Ultrastable is the foundation for any autonomous system. Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live and keeps score of how often it was right." },
-    "<section class=\"us-hero\"><h1>Tell us what you need. We build it and keep it running.</h1><p class=\"us-lede\">Speak or type a few words. We ask a couple of quick questions, then build it, host it and look after it. Ultrastable is the foundation for any autonomous system.</p>"
+    "<section class=\"us-hero\"><h1>Start with a bare idea. We keep improving it.</h1><p class=\"us-lede\">Vibe coding stops at a thin first draft and a coding agent waits to be told what to do. Behind the scenes, Ultrastable's portfolio, program and product managers measure what you run, decide what to improve next and keep shipping it, on a back end you budget for. Ultrastable is the foundation for any autonomous system.</p>"
     + IV.askBar("Tell me what is on your mind…")
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">Set up my own</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine(d) + "</div></section>"
     + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
     + "<h2>What it is not for</h2><div class=\"us-grid c2\">"
-    + card("Not for one-off pages or trips", "A booking page, a packing list or a weekend project does not need loops, probes or a paid back end. Use a site builder.")
-    + card("Not for prompt-by-prompt vibe coding", "Ultrastable needs setup and commitment: a named objective, metrics, and a short list of steps a person always decides.")
+    + card("Not for things you build once and forget", "An invitation, a packing list or a weekend page does not need managers, probes or a paid back end. Use a site builder.")
+    + card("Not a substitute for a goal", "It needs setup and commitment: a named objective, a budget and a short list of steps a person always decides. From a bare skeleton it works out the next improvement; it does not invent your purpose.")
     + "</div>"
     + "<h2>What is different</h2><div class=\"us-grid c3\">"
     + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction and reads reports.")
