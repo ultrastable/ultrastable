@@ -1,0 +1,11 @@
+{
+  "id": "PIN-earned-trust",
+  "title": "PIN-earned-trust: Earned-trust ledger is live",
+  "body": "**Owner:** operations\n**Trigger:** every site deploy (pins check)\n**Done check:** file:instances/ultrastable/trust-ledger.json\n**Status:** done: live; verified by the done check on every build\n\nA trust ledger widens or narrows each role's scope from graded outcomes, by reviewed PR only.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.",
+  "labels": [
+    "role:operations",
+    "pin"
+  ],
+  "milestone": "Done",
+  "workstream": "Site pins"
+}

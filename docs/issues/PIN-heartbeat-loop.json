@@ -1,0 +1,11 @@
+{
+  "id": "PIN-heartbeat-loop",
+  "title": "PIN-heartbeat-loop: Heartbeat loop is live",
+  "body": "**Owner:** operations\n**Trigger:** every site deploy (pins check)\n**Done check:** file:seed/worker/src/tick.js\n**Status:** done: live; verified by the done check on every build\n\nThe 10-minute tick reconciles state, claims the top ready item, dispatches, verifies and writes back.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.",
+  "labels": [
+    "role:operations",
+    "pin"
+  ],
+  "milestone": "Done",
+  "workstream": "Site pins"
+}
