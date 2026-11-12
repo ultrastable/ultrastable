@@ -1,10 +1,10 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T14:51:49Z",
- "commit": "5f4f9b8",
+ "generated": "2026-11-12T15:14:48Z",
+ "commit": "2dce872",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
-  "managers_and_loops": 66,
+  "managers_and_loops": 67,
   "loops_with_evidence": 2,
   "components": {
    "live": 24
@@ -18,18 +18,18 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 66,
-  "backlog_items": 71
+  "backlog_open": 78,
+  "backlog_items": 83
  },
  "throughput": {
   "queue": {
-   "items": 71,
+   "items": 83,
    "by_status": {
-    "open": 66,
-    "closed": 3,
-    "done": 2
+    "open": 78,
+    "closed": 4,
+    "done": 1
    },
-   "takeable_now": 66
+   "takeable_now": 78
   },
   "merged": {
    "total": 0,
@@ -60,26 +60,26 @@
   },
   "changelog": [],
   "deploys": {
-   "site_runs": 30,
+   "site_runs": 36,
    "by_conclusion": {
-    "success": 29,
-    "cancelled": 1
+    "success": 34,
+    "cancelled": 2
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-12T14:44:59Z",
+    "createdAt": "2026-11-12T15:12:39Z",
     "event": "push",
-    "headSha": "76a3c027a8fb0ce54567a6e14ec54c85601162f6"
+    "headSha": "dfc25e04238f5137b91e290de080b1f5b6f763aa"
    },
    "per_day_success": {
-    "2026-11-12": 29
+    "2026-11-12": 34
    }
   },
   "executor": {
    "runs": 9,
    "by_conclusion": {
-    "success": 3,
-    "failure": 6
+    "failure": 6,
+    "success": 3
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -92,6 +92,263 @@
    "by_model": {}
   }
  },
+ "stages": [
+  {
+   "id": "heartbeat",
+   "what": "the Cloudflare tick ran",
+   "sla_s": 900,
+   "age_s": null,
+   "status": "unmeasured",
+   "missed": 0,
+   "why": "no CLOUDFLARE_API_TOKEN on this host"
+  },
+  {
+   "id": "author",
+   "what": "an executor run started (it reaches the model route)",
+   "sla_s": 43200,
+   "age_s": 1666.6,
+   "status": "fresh",
+   "missed": 0
+  },
+  {
+   "id": "pr",
+   "what": "an unattended pull request was opened",
+   "sla_s": 172800,
+   "age_s": null,
+   "status": "missing",
+   "missed": 1
+  },
+  {
+   "id": "merge",
+   "what": "an unattended pull request merged to main",
+   "sla_s": 259200,
+   "age_s": null,
+   "status": "missing",
+   "missed": 1
+  },
+  {
+   "id": "deploy",
+   "what": "the site deployed after the last change to it (merge to live lag)",
+   "sla_s": 900,
+   "age_s": 76.6,
+   "status": "fresh",
+   "missed": 0,
+   "lag_s": 56.0
+  },
+  {
+   "id": "publish",
+   "what": "the public record was republished",
+   "sla_s": 93600,
+   "age_s": 386.6,
+   "status": "fresh",
+   "missed": 0
+  }
+ ],
+ "settlement": {
+  "counts": {
+   "merged": 0,
+   "closed": 0,
+   "parked": 0,
+   "failed": 1,
+   "expired": 0,
+   "open": 0
+  },
+  "names": [
+   {
+    "name": "Q-SYS-BOOT-REHEARSAL",
+    "state": "failed",
+    "failures": 1
+   }
+  ],
+  "unsettled": []
+ },
+ "product_manager": {
+  "generated": "2026-11-12T15:14:36Z",
+  "targets": [
+   {
+    "id": "pageviews_7d",
+    "baseline": 1310,
+    "target": 1500,
+    "expected_today": 1314.3,
+    "value": null,
+    "behind": null,
+    "progress": null
+   },
+   {
+    "id": "visitors_7d",
+    "baseline": 564,
+    "target": 650,
+    "expected_today": 566.0,
+    "value": null,
+    "behind": null,
+    "progress": null
+   },
+   {
+    "id": "agent_hits_7d",
+    "baseline": 817,
+    "target": 1000,
+    "expected_today": 821.2,
+    "value": null,
+    "behind": null,
+    "progress": null
+   },
+   {
+    "id": "pilot_page_views_7d",
+    "baseline": 326,
+    "target": 400,
+    "expected_today": 327.7,
+    "value": null,
+    "behind": null,
+    "progress": null
+   }
+  ],
+  "experiments": [],
+  "knobs": {
+   "values": {
+    "target_growth_share": 0.4,
+    "chain_max_runs_per_day": 4,
+    "window_merges": 20
+   },
+   "last": {
+    "reviewed": null,
+    "changed": {
+     "at": "2026-11-12T15:14:36Z",
+     "knob": "chain_max_runs_per_day",
+     "old": 4,
+     "new": 5,
+     "why": "work is waiting and nothing merged unattended in 7 days: more attempts per day",
+     "prediction": "executor_merged_7d rises above 0 within 7 days",
+     "metric": "executor_merged_7d",
+     "baseline": 0,
+     "reviewed": null,
+     "changed": true
+    }
+   }
+  },
+  "filed": {
+   "growth": [],
+   "repair": []
+  },
+  "stages": [
+   {
+    "id": "heartbeat",
+    "status": "unmeasured",
+    "missed": 0
+   },
+   {
+    "id": "author",
+    "status": "fresh",
+    "missed": 0
+   },
+   {
+    "id": "pr",
+    "status": "missing",
+    "missed": 1
+   },
+   {
+    "id": "merge",
+    "status": "missing",
+    "missed": 1
+   },
+   {
+    "id": "deploy",
+    "status": "fresh",
+    "missed": 0
+   },
+   {
+    "id": "publish",
+    "status": "fresh",
+    "missed": 0
+   }
+  ],
+  "knob_log": []
+ },
+ "growth": {
+  "mix": {
+   "growth": 8,
+   "fix": 2,
+   "maintenance": 10,
+   "total": 20,
+   "growth_share": 0.4,
+   "target": 0.4
+  },
+  "target_growth_share": 0.4,
+  "growth_items_takeable": 10,
+  "items_takeable": 78,
+  "metrics": [
+   {
+    "id": "pageviews_7d",
+    "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
+    "value": null,
+    "target": 1500,
+    "breach": null
+   },
+   {
+    "id": "visitors_7d",
+    "what": "distinct visitors in the last 7 days",
+    "value": null,
+    "target": 650,
+    "breach": null
+   },
+   {
+    "id": "agent_hits_7d",
+    "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
+    "value": null,
+    "target": 1000,
+    "breach": null
+   },
+   {
+    "id": "pilot_page_views_7d",
+    "what": "views of the pilot application page in the last 7 days",
+    "value": null,
+    "target": 400,
+    "breach": null
+   }
+  ],
+  "breaches": []
+ },
+ "clocks": [
+  {
+   "id": "tick-heartbeat",
+   "what": "the org's heartbeat on Cloudflare (cron every 10 minutes): reconcile, claims, gates, predictions, dispatch",
+   "source": "d1",
+   "status": "unmeasured",
+   "why": "no CLOUDFLARE_API_TOKEN on this host"
+  },
+  {
+   "id": "executor",
+   "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
+   "source": "workflow",
+   "last_beat_age_s": 1683.3,
+   "expected_interval_s": 21600,
+   "beats_24h": 9,
+   "expected_24h": 4.0,
+   "median_jitter_s": null,
+   "status": "ticking"
+  },
+  {
+   "id": "transparency",
+   "what": "the public live record on ultrastable.io/live",
+   "source": "workflow",
+   "last_beat_age_s": 50.3,
+   "expected_interval_s": 86400,
+   "beats_24h": 7,
+   "expected_24h": 1.0,
+   "median_jitter_s": null,
+   "status": "ticking"
+  },
+  {
+   "id": "deploy-site",
+   "what": "merge to live site deploy",
+   "source": "workflow",
+   "last_beat_age_s": 125.3,
+   "expected_interval_s": 86400,
+   "beats_24h": 36,
+   "expected_24h": 1.0,
+   "median_jitter_s": null,
+   "status": "ticking"
+  }
+ ],
  "topology": {
   "parts": {
    "d1": {
@@ -1119,6 +1376,27 @@
    "cycle_metric": null,
    "last_plus": null,
    "last_run": null
+  },
+  {
+   "loop": "product-manager-pass",
+   "kind": "manager",
+   "summary": "The product manager pass: growth targets and trajectory, experiment verdicts, knob review, and growth and repair items filed as a pull request; preceded by the heal pass (catch-up ticks, settlement, escalation).",
+   "owner": "product-manager",
+   "trigger": "daily workflow product-manager.yml",
+   "sla": "10m",
+   "closing_probe": "file:foundation/pm.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "the roadmap and the user value of one project.",
+   "cadence": "every 3 base ticks.",
+   "each_tick": [
+    "Turn the outcome into at most five roadmap items, each with goal, user, success metric.",
+    "Rank pluses proposed by staff and reviewers against the roadmap; accept the best into the reserved share.",
+    "Write acceptance criteria and a checkable prediction for each accepted item.",
+    "Read feedback and usage; file what changes the ranking."
+   ],
+   "role_file": "agents/roles/product-manager.md"
   }
  ],
  "claims": {
@@ -1527,13 +1805,85 @@
  "changes": {
   "commits": [
    {
-    "sha": "5f4f9b8",
-    "at": "2026-11-12T14:39:43+00:00",
+    "sha": "2dce872",
+    "at": "2026-11-12T15:12:15+00:00",
     "author": "Claude",
-    "subject": "Merge main; scripts/resolve_generated.py resolves the generated-file conflicts every PR hits",
+    "subject": "Write-back: lesson on duplicate parallel builds",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/5f4f9b84a6de9b78bd3bf54f669363d2b2d47df7"
+    "url": "https://github.com/ultrastable/ultrastable/commit/2dce872cc912cd1ea71361b4532a51fdcf3c6d9c"
+   },
+   {
+    "sha": "1de7ab7",
+    "at": "2026-11-12T16:11:59+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Queue item Q-LOOP-IMPROVE: loops score themselves and improve (#238)",
+    "pr": 238,
+    "item": "Q-LOOP-IMPROVE",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1de7ab7e64444bd2a41acd84f2d5914481ae6df9"
+   },
+   {
+    "sha": "92c5cc4",
+    "at": "2026-11-12T16:11:55+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "QUALITY-1: queue and roadmap checks agree on closed issues (#249)",
+    "pr": 249,
+    "item": "QUALITY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/92c5cc44424efe39580f147c4e98d7cdb1b8da12"
+   },
+   {
+    "sha": "67d9aca",
+    "at": "2026-11-12T16:09:45+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Heal pass: unmeasured is not missing; token on the heal steps (#278)",
+    "pr": 278,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/67d9acab737adb54abd62a62ab32225fa995a059"
+   },
+   {
+    "sha": "19d3916",
+    "at": "2026-11-12T16:07:16+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "CLOCKWORK-2 + GROWTH-2: stages, catch-up, settlement, escalation; targets, experiments, knobs, filing (#276)",
+    "pr": 276,
+    "item": "CLOCKWORK-2",
+    "url": "https://github.com/ultrastable/ultrastable/commit/19d3916f55620d0740c21ddf7d931502fa2c3870"
+   },
+   {
+    "sha": "d4248d1",
+    "at": "2026-11-12T16:00:22+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "LANE-WATCH-1: a green PR never stays open (#269)",
+    "pr": 269,
+    "item": "LANE-WATCH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/d4248d17fb60c3ea5467ccde2634198763a8ffb1"
+   },
+   {
+    "sha": "2c8f8da",
+    "at": "2026-11-12T15:57:27+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Clock report: full-day beat window (#274)",
+    "pr": 274,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/2c8f8dac2947bedc650f56e2995399dc3829586a"
+   },
+   {
+    "sha": "f04a484",
+    "at": "2026-11-12T15:55:34+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "CLOCKWORK-1 + GROWTH-1: measured clocks, executor self-chaining, product-manager growth loop (#273)",
+    "pr": 273,
+    "item": "CLOCKWORK-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f04a48443f1de4a98a3528b3a7f142433ba46987"
+   },
+   {
+    "sha": "76a3c02",
+    "at": "2026-11-12T15:44:56+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Unify system declaration and code-agent ladder with SYSTEM-1 and CODE-AGENTS-1 (#271)",
+    "pr": 271,
+    "item": "SYSTEM-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/76a3c027a8fb0ce54567a6e14ec54c85601162f6"
    },
    {
     "sha": "ab1ff65",
@@ -1545,15 +1895,6 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/ab1ff650303fa68a4cea7f53794a491fb78f4e44"
    },
    {
-    "sha": "c7917aa",
-    "at": "2026-11-12T14:38:55+00:00",
-    "author": "Claude",
-    "subject": "Merge main into LANE-WATCH-1",
-    "pr": null,
-    "item": "LANE-WATCH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/c7917aa2fdc34a23ff70f272d2d40be474c50e16"
-   },
-   {
     "sha": "476b12d",
     "at": "2026-11-12T14:36:37+00:00",
     "author": "github-actions[bot]",
@@ -1561,24 +1902,6 @@
     "pr": 268,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/476b12d061c2e276bcd584002334597fc4732367"
-   },
-   {
-    "sha": "040f4f6",
-    "at": "2026-11-12T14:35:59+00:00",
-    "author": "Claude",
-    "subject": "LANE-WATCH-1: lane fails when a green PR stays open; crosswalk bans 'waiting for review'",
-    "pr": null,
-    "item": "LANE-WATCH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/040f4f6094751fc615d0da5aea5c5cb47c206361"
-   },
-   {
-    "sha": "82391b8",
-    "at": "2026-11-12T14:34:25+00:00",
-    "author": "Claude",
-    "subject": "Merge main into the executor PR",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/82391b86937df34e19dfaae0bada5af0e308dd8d"
    },
    {
     "sha": "59c8c9c",
@@ -1597,15 +1920,6 @@
     "pr": 267,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/8c618a195e5e2a2430f33756fbd7158c477c1d71"
-   },
-   {
-    "sha": "d9a7ca7",
-    "at": "2026-11-12T14:21:43+00:00",
-    "author": "ultrastable-executor",
-    "subject": "Update ultrastable.io/proof to serve a product-side feed (#Q-10)",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/d9a7ca7a187c995a6814ba62c83351ced6243ada"
    },
    {
     "sha": "15ee7fd",
@@ -1849,42 +2163,6 @@
     "pr": null,
     "item": "VISION-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/671fdf0a01d35fb5070b749ff4b7f927f00bdfbf"
-   },
-   {
-    "sha": "a60da07",
-    "at": "2026-11-12T14:17:22+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "FAILURE-AUDIT-1: the system audits its own failure modes; fix Windows paths and host-dependent tests; seed Ultrastable's own metrics",
-    "pr": null,
-    "item": "FAILURE-AUDIT-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/a60da0786beed874c05822ac1bbc7571a6297a9f"
-   },
-   {
-    "sha": "d15dd23",
-    "at": "2026-11-12T14:02:46+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "OBJECTIVES-1: objectives, metrics and probes as bootstrap output; tick step 'measure' files and closes its own breaches",
-    "pr": null,
-    "item": "OBJECTIVES-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/d15dd23f08f27fa245cd66f975c599b3fc1e234e"
-   },
-   {
-    "sha": "d687899",
-    "at": "2026-11-12T13:59:30+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "TEAM-1: phased virtual team as code (#230)",
-    "pr": 230,
-    "item": "TEAM-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/d6878990d4f6ed9111faae039c71fc953ccae645"
-   },
-   {
-    "sha": "55d41e4",
-    "at": "2026-11-12T13:56:44+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "VISION-1: value proposition is continuous improvement of maintained B2B systems; replace trivial idea bank",
-    "pr": null,
-    "item": "VISION-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/55d41e46b0cddb3334a586f808390a47b5df78e5"
    }
   ],
   "pull_requests": []

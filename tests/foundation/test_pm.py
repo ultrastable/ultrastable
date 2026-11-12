@@ -4,6 +4,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from foundation import pm, clock, clockwork as W, growth as G  # noqa: E402
+import _repo  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 START = pm._ts("2026-11-12T00:00:00Z")
@@ -11,7 +12,7 @@ DAY = 86400
 
 
 def temp_root():
-    r = Path(tempfile.mkdtemp())
+    r = Path(_repo.scratch())
     (r / "doctrine").mkdir()
     for f in ("growth.json", "knobs.json", "clocks.json"):
         shutil.copy2(REPO / "doctrine" / f, r / "doctrine" / f)
@@ -49,7 +50,7 @@ class Filing(unittest.TestCase):
         self.assertIn("growth", j["labels"]); self.assertIn("Metric moved: agent_hits_7d", j["body"])
         again = pm.run(r, apply=True, now=START + 14 * DAY, use_live=False, vals=vals, stage_rows=[])
         self.assertEqual(again["filed"]["growth"], [])      # an open growth item for that metric exists: do not pile on
-        self.assertTrue((r / pm.REPORT).is_file())
+        self.assertFalse((r / pm.REPORT).exists())     # a quiet pass writes no report file: nothing to commit, no daily pull request
 
     def test_replaced_experiment_files_the_next_idea_not_the_same(self):
         r = temp_root()
@@ -162,6 +163,11 @@ class Clockwork(unittest.TestCase):
             t = (REPO / ".github/workflows" / f).read_text(encoding="utf-8")
             i = t.index("run: python3 -m foundation clock --heal --apply")
             self.assertIn("CLOUDFLARE_API_TOKEN", t[i:i + 400], f)
+
+    def test_a_pm_pull_request_is_not_mistaken_for_an_executor_change(self):
+        src = (REPO / "foundation/executor.py").read_text(encoding="utf-8")
+        i = src.index("def publish_change")
+        self.assertNotIn("Executor run", src[i:src.index("def gh_json")])
 
     def test_workflows_run_heal_and_pm(self):
         ex = (REPO / ".github/workflows/executor.yml").read_text(encoding="utf-8")
