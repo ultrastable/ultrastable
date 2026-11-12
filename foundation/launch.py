@@ -122,6 +122,7 @@ def run_once(root=REPO, skip_outreach=False, now=None) -> dict:
         results.append(_loop_plussing(scratch))
     results += [_loop_probes(root), _loop_funding(root, skip_outreach), _loop_closed(root)]
     results.append(_loop_lifecycle(root))
+    results.append(_loop_components(root))
     ok = [r["loop"] for r in results if r["ok"]]
     bad = [r["loop"] for r in results if not r["ok"]]
     t = next((r for r in results if r["loop"] == "tick"), {})
@@ -211,3 +212,13 @@ def _loop_lifecycle(root) -> dict:
     except Exception as e:  # recorded as a failed loop, never swallowed
         return {"loop": "lifecycle", "ok": False, "detail": f"{type(e).__name__}: {e}"[:300]}
     return {"loop": "lifecycle", "ok": not bad, "reaped": r["reaped"], "incidents": r["incidents"], "problems": bad[:5], "filed": imp["filed"], "kept": [x for x in sc if x["kept"]], "reverted": [x for x in sc if not x["kept"]]}
+
+
+def _loop_components(root) -> dict:
+    """COMPONENTS-1: recompute the system graph every pass; every gap becomes a filed item with this module as its closing probe."""
+    from . import components
+    try:
+        ev, filed = components.evaluate(root), components.file_gaps(root)
+    except Exception as e:  # recorded as a failed loop, never swallowed
+        return {"loop": "components", "ok": False, "detail": f"{type(e).__name__}: {e}"[:300]}
+    return {"loop": "components", "ok": True, **ev["integration"], "gaps_filed": filed, "invalid_claims": [o["id"] for o in ev["objections"] if o["verdict"] == "invalid"]}
