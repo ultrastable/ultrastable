@@ -10,7 +10,7 @@ import { agentic, withLinks, CONTENT_SIGNAL } from "./agentic.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
-var VERSION = "0.11.0";
+var VERSION = "0.12.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -229,8 +229,11 @@ const FALLBACK_QS = [
   { q: "Should visitors be able to add or save their own information?", cue: "For example a sign-up list, notes or favourites." },
   { q: "Will most people open this on a phone?", cue: "We will make the layout fit small screens first." },
   { q: "Should it look calm and simple rather than bold and colourful?", cue: "You can change this later with one sentence." }];
+// BUILD-3: the daily probe records which ids still answer; a dead one is skipped so a deprecated id never reaches a user (the list is used whole if every id is marked dead).
 async function runAny(env, models, body) {
-  let last; for (const m of models) { try { return await env.AI.run(m, body); } catch (e) { last = e; console.error("model failed", m, String(e).slice(0, 160)); } } throw last;
+  let last; const h = await jget(env, "health:models").catch(() => null), dead = new Set(((h && h.models) || []).filter(x => !x.ok).map(x => x.model));
+  const live = models.filter(m => !dead.has(m)); if (live.length) models = live;
+  for (const m of models) { try { return await env.AI.run(m, body); } catch (e) { last = e; console.error("model failed", m, String(e).slice(0, 160)); } } throw last;
 }
 async function aiJson(env, models, system, user, tokens) {
   const r = await runAny(env, models, { messages: [{ role: "system", content: system }, { role: "user", content: user }], max_tokens: tokens });
@@ -455,6 +458,77 @@ async function siteRoutes(u, env, ctx) {
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
   return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'none'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
 }
+// BUILD-3: close the loop. A cron tick (hourly) does four things from the system's own records: model health probe (daily), automatic change rounds for
+// audit gaps (max 2 per site), manager work items for stored ideas, and the numbers behind /status.
+const ROUND_MAX = 2, ALL_MODELS = () => Array.from(new Set(BUILDERS.concat(ASKERS)));
+async function kvList(env, prefix, cap) {
+  const out = []; let cursor;
+  if (!env.ASSETS.list) return out;
+  for (let i = 0; i < 10 && out.length < (cap || 1000); i++) {
+    const r = await env.ASSETS.list({ prefix, cursor }); out.push(...r.keys.map(k => k.name)); if (r.list_complete) break; cursor = r.cursor;
+  }
+  return out;
+}
+export async function probeModels(env) {
+  const models = [];
+  for (const m of ALL_MODELS()) {
+    try { await env.AI.run(m, { messages: [{ role: "user", content: "Reply with the word ok." }], max_tokens: 5 }); models.push({ model: m, ok: true }); }
+    catch (e) { models.push({ model: m, ok: false, error: String(e).slice(0, 200) }); console.error("model health: dead", m, String(e).slice(0, 160)); }
+  }
+  const rec = { models, at: new Date().toISOString() }; await jput(env, "health:models", rec); return rec;
+}
+// Non-critical gaps (and lint left over) become a change round without the person asking; critical ones were already fixed once by the audit.
+export function roundText(rec) {
+  return ((rec && rec.gaps) || []).filter(g => !g.critical).map(g => g.what).concat((rec && rec.lint_left) || []).slice(0, 4);
+}
+export async function changeRounds(env, ctx, limit) {
+  const done = [];
+  for (const k of await kvList(env, "audit:", 200)) {
+    if (done.length >= (limit || 3)) break;
+    const id = k.slice(6); if (!okId(id)) continue;
+    const rec = await jget(env, k), n = Number(await env.ASSETS.get("rounds:" + id) || 0), todo = roundText(rec);
+    if (!todo.length || n >= ROUND_MAX || await env.ASSETS.get("state:" + id) !== "ready") continue;
+    const b = await jget(env, "brief:" + id); if (!b) continue;
+    await env.ASSETS.put("rounds:" + id, String(n + 1));
+    await store(env, id, b.brief, await env.ASSETS.get("site:" + id), "Fix these remaining problems and change nothing else: " + todo.join("; "));
+    if (await resume(env, id) === "ready") await ensureAudit(env, null, id);
+    done.push({ id, round: n + 1, todo });
+  }
+  return done;
+}
+// Every stored idea is a work item with an owner, a trigger and a closing probe, so the managers see all of them.
+export async function ideaWork(env) {
+  const items = [];
+  for (const k of (await kvList(env, "idea:", 500)).slice(-100)) {
+    const id = k.slice(-10), text = String(await env.ASSETS.get(k) || "").slice(0, 200), st = await env.ASSETS.get("state:" + id);
+    items.push({ id, idea: text, state: st || "not built", owner: "product manager", trigger: "idea stored " + k.slice(5, 24), probe: "state:" + id + " is ready and /s/" + id + "/review lists no open gap", open: st !== "ready" });
+  }
+  await jput(env, "work:ideas", { items, at: new Date().toISOString() }); return items;
+}
+export async function tick(env, ctx, now) {
+  const t = now || new Date(), out = { at: t.toISOString() }, h = await jget(env, "health:models");
+  if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
+  out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length;
+  await jput(env, "tick:last", out); return out;
+}
+async function statusData(env) {
+  const states = await kvList(env, "state:", 1000), audits = await kvList(env, "audit:", 1000), c = { ready: 0, building: 0, failed: 0, other: 0 };
+  for (const k of states) { const v = await env.ASSETS.get(k); c[v in c ? v : "other"]++; }
+  let met = 0, gaps = 0, closed = 0, open = 0;
+  for (const k of audits) { const r = await jget(env, k); if (!r) continue; met += (r.met || []).length; gaps += (r.gaps || []).length; closed += (r.fixed || []).length; open += roundText(r).length; }
+  const w = await jget(env, "work:ideas"), t = await jget(env, "tick:last"), h = await jget(env, "health:models");
+  return { builds: { total: states.length, ...c }, audits: { total: audits.length, met, gaps, closed, open }, ideas: { total: w ? w.items.length : 0, open: w ? w.items.filter(i => i.open).length : 0 }, models: h ? h.models : [], health_at: h ? h.at : null, tick_at: t ? t.at : null };
+}
+async function statusPage(env) {
+  if (!env || !env.ASSETS) return shell({ path: "/status", title: "Status - Ultrastable", description: "Live status." }, "<div class=\"head\"><h1>Status</h1><p>No records are connected here.</p></div>");
+  const d = await statusData(env), row = (a, b) => "<tr><td>" + esc(a) + "</td><td>" + esc(String(b)) + "</td></tr>", card = (t, rows) => "<div class=\"card\"><h3 class=\"card-title\">" + t + "</h3><div class=\"us-wrap\"><table class=\"us-table\"><tbody>" + rows + "</tbody></table></div></div>";
+  const body = "<div class=\"head\"><h1>Status</h1><p>Read from the system's own records. Last tick " + esc(d.tick_at || "not yet") + ".</p></div>"
+    + card("Builds", row("Total", d.builds.total) + row("Ready", d.builds.ready) + row("Building", d.builds.building) + row("Failed", d.builds.failed))
+    + card("Audits", row("Audited", d.audits.total) + row("Gaps found", d.audits.gaps) + row("Gaps closed automatically", d.audits.closed) + row("Gaps still open", d.audits.open))
+    + card("Ideas", row("Stored", d.ideas.total) + row("Not yet built", d.ideas.open))
+    + card("Model health", d.models.length ? d.models.map(m => row(m.model, m.ok ? "answering" : "dead: " + (m.error || ""))).join("") + row("Checked", d.health_at) : row("Probe", "not run yet"));
+  return shell({ path: "/status", title: "Status - Ultrastable", description: "Builds, audits, gaps closed and model health." }, body);
+}
 // AGENT-PROMPT-1: the whole set-up as one paste. Works in any AI assistant; the person needs no account to start.
 const AGENT_PROMPT = "I want to start a project with Ultrastable (https://ultrastable.io), a system that runs itself so I do not have to code. "
   + "Read https://ultrastable.io/agent.md and follow it. Ask me, in plain words, what I want to make, then do every step you can yourself. "
@@ -556,6 +630,7 @@ const handler = {
     if (request.method === "POST" && u.pathname === "/api/answer") return takeAnswer(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
     { const sr = await siteRoutes(u, env, ctx); if (sr) return sr; }
+    if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
     const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
@@ -588,4 +663,4 @@ const handler = {
 // AGENTIC-1: machine-readable discovery and a read-only MCP endpoint in front of every page.
 // TOPOLOGY-1: the owner dashboard is a separate worker reached through the OWNER service binding (doctrine/topology.json); only its own paths are forwarded.
 const OWNER_PATH = /^\/(owner|api\/owner\/[a-z]+)$/;
-export default { async fetch(request, env, ctx) { if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };
+export default { async scheduled(event, env, ctx) { ctx.waitUntil(tick(env, ctx).catch(e => console.error("tick failed", String(e)))); }, async fetch(request, env, ctx) { if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };

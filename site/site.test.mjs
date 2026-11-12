@@ -210,3 +210,24 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   const rr = await mod.fetch(new Request("https://ultrastable.io/api/owner"), E4); assert.notEqual(await rr.text(), "dash");
   assert.equal(hits.length, 3);
 }
+// BUILD-3: tick = model health + automatic change rounds (max 2) + idea work items; /status reads the records; a dead model id is skipped.
+{
+  const store3 = new Map(), kv3 = { get: async k => store3.has(k) ? store3.get(k) : null, put: async (k, v) => { store3.set(k, v); }, delete: async k => { store3.delete(k); },
+    list: async ({ prefix }) => ({ keys: [...store3.keys()].filter(k => k.startsWith(prefix)).map(name => ({ name })), list_complete: true }) };
+  const calls = []; const AI3 = { run: async (m, a) => { calls.push(m); if (m.includes("llama-3.1-8b")) throw new Error("deprecated"); if (a.messages[0].content && a.messages[0].content.includes("strict reviewer")) return { response: JSON.stringify({ met: ["ok"], gaps: [] }) }; return { response: "<html><body>round</body></html>" }; } };
+  const env3 = { ASSETS: kv3, AI: AI3 }, sid = "abcdef0123";
+  store3.set("idea:2026-11-12T10:00:00.000Z:" + sid, "bin day app"); store3.set("state:" + sid, "ready"); store3.set("site:" + sid, "<html><body>v1</body></html>");
+  store3.set("brief:" + sid, JSON.stringify({ brief: "Idea: bins" })); store3.set("audit:" + sid, JSON.stringify({ met: [], gaps: [{ what: "No dark mode", critical: false }, { what: "No sign-up", critical: true }], limits: [] }));
+  const T = (await import(pathToFileURL(fileURLToPath(new URL("./worker.js", import.meta.url))).href));
+  const out = await T.tick(env3, null);
+  assert.equal(out.rounds.length, 1); assert.deepEqual(out.rounds[0].todo, ["No dark mode"]); assert.equal(store3.get("rounds:" + sid), "1");
+  assert.match(store3.get("site:" + sid), /round/); assert.equal(out.ideas, 1);
+  const h = JSON.parse(store3.get("health:models")); assert.equal(h.models.find(m => m.model.includes("llama-3.1-8b")).ok, false);
+  calls.length = 0; store3.set("rounds:" + sid, "1"); store3.set("audit:" + sid, JSON.stringify({ met: [], gaps: [{ what: "y", critical: false }], limits: [] })); await T.changeRounds(env3, null);
+  assert.ok(calls.length > 0 && !calls.some(m => m.includes("llama-3.1-8b")), "a dead model id is never called");
+  store3.set("audit:" + sid, JSON.stringify({ met: [], gaps: [{ what: "x", critical: false }], limits: [] })); store3.set("rounds:" + sid, "2");
+  assert.equal((await T.changeRounds(env3, null)).length, 0, "round cap of 2");
+  const res = await mod.fetch(new Request("https://ultrastable.io/status"), env3), txt = await res.text();
+  assert.equal(res.status, 200); assert.match(txt, /Model health/); assert.match(txt, /dead: /); assert.match(txt, /Gaps closed automatically/);
+  console.log("ultrastable-site build-3 ok");
+}

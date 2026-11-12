@@ -42,6 +42,8 @@ form.append("worker.js", new Blob([src], { type: "application/javascript+module"
 for (const [name, body] of extra) form.append(name, new Blob([body], { type: "application/javascript+module" }), name);
 const up = await api("PUT", `/accounts/${A}/workers/scripts/ultrastable-site`, form);
 console.log("upload", up.success);
+// BUILD-3: the hourly tick (model health, change rounds, idea work items).
+{ const cr = await api("PUT", `/accounts/${A}/workers/scripts/ultrastable-site/schedules`, JSON.stringify([{ cron: "17 * * * *" }]), { "content-type": "application/json" }); console.log("cron", cr.success); if (!cr.success) { console.error("cron failed:", JSON.stringify(cr.errors)); process.exit(1); } }
 if (!up.success) { console.error("upload failed:", JSON.stringify(up.errors)); process.exit(1); }
 const zones = { "ultrastable.io": "18a7463a4e79b98d04aa22eb96b0127b", "www.ultrastable.io": "18a7463a4e79b98d04aa22eb96b0127b", "ultrastable.app": "29a8a782765682441aafd3f64a186ea6", "ultrastable.net": "e23fd6a6078d557c08462aaa80614402" };
 let bad = 0;
