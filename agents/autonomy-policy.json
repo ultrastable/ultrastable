@@ -1,6 +1,6 @@
 {
   "$schema_version": "0.1.0",
-  "doc": "Autonomy settings for a new org. Changed only by a reviewed PR; the tick reads it, never writes it. See docs/bootstrapping.md#autonomy. Gated actions on surfaces an agent's shell can reach list their harness_deny rules, mirrored in .claude/settings.json (tests/test_policy.py).",
+  "doc": "Autonomy settings for a new org. Changed only by a PR merged on green checks (agent review; never a person); the tick reads it, never writes it. See docs/bootstrapping.md#autonomy. Gated actions on surfaces an agent's shell can reach list their harness_deny rules, mirrored in .claude/settings.json (tests/test_policy.py).",
   "interrupt_gate": {
     "rule": "Pause only when an action is irreversible AND identity-bound AND has no engineerable reversible path. Engineer reversibility first (backup, branch, draft, preview, canary), then proceed.",
     "card_fields": [
@@ -17,6 +17,26 @@
       "send a message outside the org on the owner's behalf",
       "create or rotate a credential only the owner can mint"
     ]
+  },
+  "closed_loop": {
+    "id": "CLOSED-LOOP-1",
+    "rule": "Assume nothing is ever read, reviewed or decided by a person and that no external input arrives. Every loop closes itself; every artifact has a consuming loop or is not produced; documents and memories are not storage; blockers are resolved by building the capability.",
+    "assume_human_reader": false,
+    "assume_human_review": false,
+    "assume_owner_decision": false,
+    "assume_external_input": false,
+    "memory_or_document_is_storage": false,
+    "every_artifact_has_a_consumer": true,
+    "every_loop_closes_by_system": true,
+    "wait_on_person_allowed_only_for": [
+      "credential",
+      "money",
+      "legal_signature",
+      "owner_account"
+    ],
+    "wait_requires_default_in_effect": true,
+    "loop_proceeds_on_default_while_waiting": true,
+    "enforced_by": "python3 -m foundation closedloop --check (Ultrastable core); metrics orphan_artifacts and human_wait_states, target 0"
   },
   "standing_limits": {
     "doc": "These always win over trust, rung or policy. A refusal is stated plainly with its reason and recorded; it is never re-routed around.",

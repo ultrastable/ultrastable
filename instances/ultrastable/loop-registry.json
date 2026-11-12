@@ -709,7 +709,9 @@
    ],
    "credentials": [
     "CLOUDFLARE_API_TOKEN"
-   ]
+   ],
+   "identity_bound": "credential",
+   "default_in_effect": "the site keeps serving from the current Cloudflare account; deploys run there"
   },
   {
    "id": "org-profile",
@@ -748,7 +750,9 @@
    ],
    "credentials": [
     "ORG_ADMIN_TOKEN"
-   ]
+   ],
+   "identity_bound": "credential",
+   "default_in_effect": "milestones and tracking issues stand in for Projects boards"
   },
   {
    "id": "funding-verify",
@@ -824,7 +828,7 @@
   {
    "id": "outreach-send",
    "kind": "outreach",
-   "summary": "Send an approved packet by the registered route.",
+   "summary": "Send a guard-clean packet by the registered route.",
    "trigger": "a queued target with a registered sender",
    "owner": "outreach-coordinator",
    "closes_by": "gate:NEEDS-YOU.md",
@@ -853,7 +857,9 @@
    ],
    "credentials": [
     "OUTREACH_SEND_TOKEN"
-   ]
+   ],
+   "identity_bound": "legal_signature",
+   "default_in_effect": "packets stay unsent; registry pull requests and feeds carry the work"
   },
   {
    "id": "social-post",
@@ -891,7 +897,9 @@
    "credentials": [
     "BLUESKY_APP_PASSWORD",
     "MASTODON_TOKEN"
-   ]
+   ],
+   "identity_bound": "legal_signature",
+   "default_in_effect": "posting stays dry-run; the repository and feeds carry the work"
   },
   {
    "id": "plussing",
@@ -1482,6 +1490,38 @@
    "workflows": [
     "upstream.yml"
    ]
+  },
+  {
+   "id": "closed-loop",
+   "kind": "governance",
+   "summary": "CLOSED-LOOP-1: every artifact has a consuming loop and no loop waits on a person; orphans and waits are measured each pass and drained to zero.",
+   "trigger": "every PR (checks.yml), every loop pass (launch), daily issues sweep (issues.yml)",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "python3 -m foundation closedloop --metrics reports orphan_artifacts 0 and human_wait_states 0",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation closedloop --check in checks.yml",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "python3 -m foundation closedloop --metrics on any machine",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:foundation/closedloop.py::def check",
+   "writeback": [
+    "doctrine/closed-loop-baseline.json"
+   ],
+   "system_path": [
+    "foundation/closedloop.py",
+    "doctrine/closed-loop.json",
+    "doctrine/closed-loop-baseline.json"
+   ],
+   "area": "governance"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

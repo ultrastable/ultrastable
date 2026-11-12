@@ -14,6 +14,7 @@
   python3 -m foundation trust [--show|--event SURFACE ACTION EVENT|--tick] the trust ledger and ladder
   python3 -m foundation executor [--apply] [--issue N]                    pick the top issue, change, check, open a PR (--pick, --record: the key-free session route)
   python3 -m foundation upstream contract|adopt|sync|check|drift|leaks   core/instance link: pin, flow down, send up, drift, bring your own repo
+  python3 -m foundation closedloop [--check|--metrics|--baseline|--issue-body|--sync-issue OWNER/REPO]   CLOSED-LOOP-1: no orphan artifact, no human-wait
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
 """
 import argparse, datetime as dt, json, os, sys
@@ -23,6 +24,9 @@ from . import standards, doctrine, directive, filing, glossary, kernel, ladder, 
 
 def main(argv=None) -> int:
     args0 = sys.argv[1:] if argv is None else list(argv)
+    if args0[:1] == ["closedloop"]:
+        from . import closedloop
+        return closedloop.main(args0[1:])
     if args0[:1] == ["upstream"]:
         from . import upstream
         return upstream.main(args0[1:])

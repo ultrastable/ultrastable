@@ -9,3 +9,4 @@ Write-back target for decisions: what was decided, why, the default in effect an
 - 2026-11-12: [PR 200 folded into the executor line](2026-11-12-pr-200-folded-into-the-executor-line.md)
 - 2026-11-12: [No owner cards; one NEEDS-YOU page; key-free executor via Claude sessions](2026-11-12-no-owner-cards-one-needs-you-page-key-free-executor-via-clau.md)
 - 2026-11-12: [One core, many instances](2026-11-12-one-core-many-instances.md)
+- 2026-11-12: [CLOSED-LOOP-1: no artifact without a consuming loop, no wait on a person](2026-11-12-closed-loop-1-no-artifact-without-a-consuming-loop-no-wait-o.md)

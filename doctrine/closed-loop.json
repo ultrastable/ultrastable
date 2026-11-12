@@ -1,0 +1,90 @@
+{
+  "_doc": "CLOSED-LOOP-1 as policy values. Read by foundation/closedloop.py (check, metrics, backlog issue) and by every agent through agents/AGENTS.md. Change only by PR.",
+  "id": "CLOSED-LOOP-1",
+  "source": "Rowan, 2026-11-12: \"Never assume that anything is needed externally ... documents and memories are useless ... Everything must be translated into something that can be executed by code ... Don't ever assume that anything will ever be reviewed ... All of your loops must be closed by you.\"",
+  "assume": {
+    "human_reader": false,
+    "human_review": false,
+    "owner_decision": false,
+    "external_input": false,
+    "memory_or_document_as_storage": false
+  },
+  "rules": {
+    "every_artifact_has_a_consumer": true,
+    "every_loop_closes_by_system": true,
+    "wait_on_person_allowed_only_for": [
+      "credential",
+      "money",
+      "legal_signature",
+      "owner_account"
+    ],
+    "wait_requires_default_in_effect": true,
+    "loop_proceeds_on_default_while_waiting": true,
+    "new_orphan_artifact_fails_ci": true,
+    "baseline_is_shrink_only": true,
+    "blocker_resolution": "build the capability, route around, or delegate; never hand to a person"
+  },
+  "consumer_code_suffixes": [
+    ".py",
+    ".js",
+    ".mjs",
+    ".cjs",
+    ".ts",
+    ".tsx",
+    ".sh",
+    ".yml",
+    ".yaml",
+    ".toml",
+    ".cmd",
+    ".ps1",
+    ".html"
+  ],
+  "artifact_suffixes": [
+    ".md"
+  ],
+  "platform_consumed": {
+    "_doc": "Files a running program loads by name on every run: agent harnesses (AGENTS.md, CLAUDE.md, copilot-instructions.md, SKILL.md), GitHub (README.md, LICENSE, SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, issue and PR templates), citation tooling. Role files under agents/roles are loaded by the agent that holds the role.",
+    "basenames": [
+      "README.md",
+      "AGENTS.md",
+      "CLAUDE.md",
+      "SKILL.md",
+      "copilot-instructions.md",
+      "SECURITY.md",
+      "CONTRIBUTING.md",
+      "CODE_OF_CONDUCT.md",
+      "LICENSE.md",
+      "pull_request_template.md",
+      "CHANGELOG.md"
+    ],
+    "dirs": [
+      ".github/ISSUE_TEMPLATE",
+      ".git",
+      "agents/roles"
+    ]
+  },
+  "wait_phrases": [
+    "\\b(owner|person|human|rowan|reviewer)\\b[^.]{0,40}\\b(decides?|decision|approves?|approval|reviews?|reads?|confirms?|chooses?|picks?)\\b",
+    "\\bawait(s|ing)? (an? )?(approval|review|decision|sign-?off)\\b",
+    "\\bmanual (review|approval|step)\\b",
+    "\\bfor (the )?(owner|human|person) to (read|review|decide|approve)\\b"
+  ],
+  "metrics": {
+    "orphan_artifacts": {
+      "target": 0,
+      "direction": "down"
+    },
+    "human_wait_states": {
+      "target": 0,
+      "direction": "down"
+    }
+  },
+  "backlog_issue": {
+    "title": "CLOSED-LOOP-1: orphan artifacts and human-wait states to zero",
+    "labels": [
+      "p2",
+      "closed-loop"
+    ],
+    "batch": 25
+  }
+}

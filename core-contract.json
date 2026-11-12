@@ -1,6 +1,6 @@
 {
  "contract": 1,
- "version": "0.1.0",
+ "version": "0.2.0",
  "repo": "ultrastable/ultrastable",
  "kernel_root": "seed",
  "kernel_paths": [
@@ -50,7 +50,7 @@
   "scripts/test_outreach.py": "negative test: asserts the Ultrastable profile never says the forbidden word"
  },
  "digests": {
-  "agents/AGENTS.md": "6d750e9031523e37b351839f117fd8b484d453efc353e2f226ecb003c0f7a05e",
+  "agents/AGENTS.md": "70e7da041954fe7e692cae8336bdfbb66e45d0dfd61169a6c4c1cc11e6ab07b4",
   "agents/roles/funding-manager.md": "a4b324fd72dddb9e5c6aa8f794ab54b30886c6b171b599ca1ee0fb89859fb998",
   "agents/roles/operations.md": "fe17430abd5dff63a571ac21592c804d169f400714200d5ea68d58507635ee63",
   "agents/roles/outreach-coordinator.md": "76a4a7cbf671557d68a52132292319bb287a605f9fa276a1953a735f10d819f1",
@@ -60,7 +60,7 @@
   "agents/roles/project-manager.md": "8131491819dd57c346d1263434f693136361e875e64ed48109155ba583afe0ba",
   "agents/roles/reviewer.md": "011b33fb0fa8e0210f9a8303976c3ea37dd4915a36350d36b428ac715f15354a",
   "agents/roles/staff.md": "0a194797e2436381c7a958e4e7d0406590392e7dda5da51fd840f2b5df66a620",
-  "autonomy/policy.json": "27346dd9a7ae4d5d01c6bf2d484d2ed16fa0af7c382f22b555aa57bdfb993b20",
+  "autonomy/policy.json": "37deeadc96468bd807e461b8e4dbd4f235347d92fbdf4d036e0eabbbf05c4960",
   "bootstrap/bootstrap.py": "95aa3ce55f8fa6ebd8cc6e23ef52084e06a71791b444542fa02a48b9dee2c00c",
   "bootstrap/cases.json": "3bc96353b7d0db2fb0295a851ad528464ce7d1a3f6dbb627c92f528d44c561a7",
   "bootstrap/cases.py": "1561994458fcfd24cf758a6187a30f332b53281fbbf7a7a23525783e31dcd8f5",

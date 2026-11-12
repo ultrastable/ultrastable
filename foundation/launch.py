@@ -104,13 +104,23 @@ def _loop_funding(root, skip) -> dict:
     return {"loop": "funding-outreach", "ok": code == 0, "mode": gate.get("mode", "dry-run"), "exit": code, "tail": text.splitlines()[-4:]}
 
 
+def _loop_closed(root) -> dict:
+    """CLOSED-LOOP-1: measure orphan artifacts and human-wait states every pass; a new orphan or any wait fails the loop."""
+    from . import closedloop
+    try:
+        m = closedloop.metrics(root)
+    except Exception as e:  # recorded as a failed loop, never swallowed
+        return {"loop": "closed-loop", "ok": False, "detail": str(e)[:300]}
+    return {"loop": "closed-loop", "ok": m["new_orphans"] == 0 and m["human_wait_states"] == 0, **m}
+
+
 def run_once(root=REPO, skip_outreach=False, now=None) -> dict:
     root = Path(root)
     scratch = root / ".selfhost" / "launch.db"
     results = [_loop_tick(root, scratch)]
     if results[0]["ok"]:
         results.append(_loop_plussing(scratch))
-    results += [_loop_probes(root), _loop_funding(root, skip_outreach)]
+    results += [_loop_probes(root), _loop_funding(root, skip_outreach), _loop_closed(root)]
     ok = [r["loop"] for r in results if r["ok"]]
     bad = [r["loop"] for r in results if not r["ok"]]
     t = next((r for r in results if r["loop"] == "tick"), {})
