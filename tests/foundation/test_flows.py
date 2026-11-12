@@ -38,12 +38,30 @@ class FlowTests(unittest.TestCase):
         d["pending"].append("merge-lane")
         self.assertTrue(any("remove it from pending" in b for b in flows.check(d=d, loops=self.loops)))
 
+    def test_workflow_with_only_pending_loops_fails(self):
+        d = copy.deepcopy(self.d)
+        del d["flows"]["social-post"]
+        d["pending"].append("social-post")
+        self.assertTrue(any("workflow social-post.yml: its loops" in b for b in flows.check(d=d, loops=self.loops)))
+
+    def test_undeclared_binding_fails(self):
+        d = copy.deepcopy(self.d)
+        d["flows"]["social-post"]["bindings"] = []
+        self.assertTrue(any("flow social-post: bindings" in b and "run flows --sync" in b for b in flows.check(d=d, loops=self.loops)))
+
+    def test_every_workflow_file_is_in_the_table(self):
+        names = {p.name for p in (flows.REPO / ".github/workflows").glob("*.yml")}
+        rows = flows.workflow_table()
+        self.assertEqual(names, {r["workflow"] for r in rows})
+        self.assertTrue(all(r["declared"] and r["out"] for r in rows))
+
     def test_directive_in_agent_files(self):
         root = flows.REPO
         for p in ("agents/AGENTS.md", "seed/agents/AGENTS.md"):
             t = (root / p).read_text(encoding="utf-8")
             self.assertIn("FLOW-DIRECTIVE-1", t, p)
             self.assertIn("foundation flows --check", t, p)
+            self.assertIn("flows --workflows", t, p)
 
 
 if __name__ == "__main__":
