@@ -514,6 +514,14 @@
    "title": "Workflow flow map: every workflow declares flows and bindings",
    "body": "Rowan's standing directive: every workflow's inflows and outflows are loops. Fourteen workflow-bearing loops moved out of pending; the check now fails a workflow whose loops declare no flow and a flow whose bindings differ from the secrets its workflows use. Jobs, outreach and resume: outreach returns replies to the registry; the resume system is outside this repo and filed as Q-FLOW-RESUME-JOBS. Session: session_0156nqDrGFZaa8zQwcdGZNQU",
    "probe": "grep:foundation/flows.py::def workflow_check"
+  },
+  {
+   "id": "lesson-2026-11-12-workers-ai-may-return-response-as-a-parsed-dict",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Workers AI may return response as a parsed dict",
+   "body": "call_cloudflare assumed a string and crashed with AttributeError on .find; it now returns dicts as is, with a test.",
+   "probe": "grep:foundation/executor.py::isinstance\\(text, dict\\)"
   }
  ]
 }
