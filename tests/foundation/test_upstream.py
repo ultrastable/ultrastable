@@ -1,6 +1,6 @@
 import json, shutil, tempfile, unittest
 from pathlib import Path
-from _repo import ROOT, copy_repo
+from _repo import ROOT, copy_repo, scratch
 from foundation import upstream
 
 
@@ -15,7 +15,7 @@ class Upstream(unittest.TestCase):
         self.assertTrue(upstream.leaks(core))
 
     def adopt(self):
-        out = Path(tempfile.mkdtemp())
+        out = Path(scratch())
         rep = upstream.adopt(ROOT, out, "Acme", "acme")
         return out, rep
 
@@ -28,12 +28,12 @@ class Upstream(unittest.TestCase):
         self.assertEqual(again["created"] + again["updated"] + again["added"], [])
 
     def test_adoption_never_overwrites_existing_files(self):
-        out = Path(tempfile.mkdtemp()); (out / "AGENTS.md").write_text("mine")
+        out = Path(scratch()); (out / "AGENTS.md").write_text("mine")
         rep = upstream.adopt(ROOT, out, "Acme", "acme")
         self.assertEqual((out / "AGENTS.md").read_text(), "mine"); self.assertIn("AGENTS.md", rep["conflicts"])
 
     def test_down_flow_and_up_candidates(self):
-        core = copy_repo(); out = Path(tempfile.mkdtemp())
+        core = copy_repo(); out = Path(scratch())
         upstream.adopt(core, out, "Acme", "acme")
         (core / "seed/agents/roles/staff.md").open("a").write("\nimproved upstream\n")
         (out / "autonomy/policy.json").open("a").write(" ")  # local edit
@@ -49,7 +49,7 @@ class Upstream(unittest.TestCase):
         self.assertEqual(json.loads((out / upstream.LOCK).read_text())["core"]["version"], "0.2.0")
 
     def test_major_mismatch_fails_contract(self):
-        core = copy_repo(); out = Path(tempfile.mkdtemp()); upstream.adopt(core, out, "Acme", "acme")
+        core = copy_repo(); out = Path(scratch()); upstream.adopt(core, out, "Acme", "acme")
         (core / upstream.CONTRACT).write_text(json.dumps(upstream.build_contract(core, "1.0.0")))
         self.assertTrue(any("major" in b for b in upstream.check(core, out)))
 

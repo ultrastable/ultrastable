@@ -46,10 +46,8 @@ def build(root=ROOT) -> dict:
         sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True).stdout.strip()
     except OSError:
         sha = ""
-    return {
-        "asof": sha,
-        "pilot": j(root, "doctrine/pilot-model.json"),
-        "panels": [
+    tenant0 = {
+        "level": 0, "panels": [
             {"id": "loops", "title": "Closed loops", "source": "instances/ultrastable/loop-registry.json",
              "headline": f"{len(loops)} registered loops", "rows": [[k, v] for k, v in sorted(by_area.items())],
              "note": "Each has a trigger, owner, SLA, two independent paths and a closing probe."},
@@ -76,6 +74,8 @@ def build(root=ROOT) -> dict:
         "live_feed": {"available": False, "tracked_by": "Q-LOOP-live-clock",
                       "says": "Ticks, dispatches and breaches as they happen appear here once a deployed runtime reports. Until then this page shows the control plane, not live traffic."},
     }
+    # TENANT-1: one view that takes a tenant id; tenant 0 is Ultrastable on itself. Only registered tenants render; others are 404.
+    return {"asof": sha, "pilot": j(root, "doctrine/pilot-model.json"), "tenants": {"ultrastable": tenant0}}
 
 
 def render(d) -> str:
@@ -86,7 +86,11 @@ def check(root=ROOT) -> list:
     root = Path(root)
     bad = []
     d = build(root)
-    for p in d["panels"]:
+    for t in d["tenants"].values():
+        for p in t["panels"]:
+            if not (root / p["source"]).exists():
+                bad.append(f"panel {p['id']}: source {p['source']} missing")
+    for p in []:
         if not (root / p["source"]).exists():
             bad.append(f"panel {p['id']}: source {p['source']} missing")
     cur = root / OUT

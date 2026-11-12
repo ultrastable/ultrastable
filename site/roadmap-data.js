@@ -154,6 +154,15 @@ export default {
    "title": "A second independent installation",
    "trigger": "every executor run"
   },
+  "Q-LAYER-child-reporting": {
+   "done": "file:instances/ultrastable/child-link.json",
+   "id": "Q-LAYER-child-reporting",
+   "milestone": "Next",
+   "owner": "operations",
+   "status": "open",
+   "title": "A child system reports its liveness to its parent",
+   "trigger": "every executor run"
+  },
   "Q-LOOP-live-clock": {
    "done": "file:instances/ultrastable/live-runtime.json",
    "id": "Q-LOOP-live-clock",
@@ -161,6 +170,15 @@ export default {
    "owner": "operations",
    "status": "open",
    "title": "Run Ultrastable's own seed heartbeat on a deployed runtime and report it",
+   "trigger": "every executor run"
+  },
+  "Q-TENANT-row-isolation": {
+   "done": "file:seed/worker/migrations/0005_tenant_core.sql",
+   "id": "Q-TENANT-row-isolation",
+   "milestone": "Next",
+   "owner": "operations",
+   "status": "open",
+   "title": "tenant_id on every core table so multi-tenant is stricter isolation, not a rewrite",
    "trigger": "every executor run"
   }
  },
@@ -319,6 +337,31 @@ export default {
    "status": "testing",
    "what": "A public dashboard computed from the repository (loops, objectives, failure modes, capabilities, roadmap, earned autonomy) and the bring-your-own-account pilot model with its revenue hypotheses as data. The live tick feed is pending a deployed runtime.",
    "where": "/dashboard"
+  },
+  {
+   "code": [
+    "doctrine/pilot-model.json",
+    "seed/bootstrap/bootstrap.py",
+    "seed/worker/src/tick.js",
+    "docs/doctrine/VISION.md"
+   ],
+   "issue": "Q-LAYER-child-reporting",
+   "name": "Pilot applications and layered systems",
+   "status": "testing",
+   "what": "The pilot is an application program whose form scores answers against the four system-test questions; the bootstrapper records parent and level and the measure step is scoped to its own tenant. The first child reporting to a parent is pending.",
+   "where": "/pilot"
+  },
+  {
+   "code": [
+    "seed/worker/migrations/0004_objectives.sql",
+    "seed/worker/src/tick.js",
+    "scripts/build_dashboard.py"
+   ],
+   "issue": "Q-TENANT-row-isolation",
+   "name": "Tenant isolation",
+   "status": "testing",
+   "what": "Tenant 0 (Ultrastable on itself) and customer tenants share one shape; the dashboard takes a tenant id and unknown tenants 404; a runtime measures only its own tenant's metrics. Tenant ids on the remaining core tables and per-tenant credentials are pending.",
+   "where": "/dashboard?tenant=ultrastable"
   }
  ]
 };

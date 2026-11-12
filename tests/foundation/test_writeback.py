@@ -1,7 +1,7 @@
 """The write-back path: sessions put what they learned into the repository, and code with no write-back fails the check."""
 import json, tempfile, unittest
 from pathlib import Path
-from _repo import ROOT, copy_repo, git, tiny_repo
+from _repo import ROOT, copy_repo, git, tiny_repo, scratch
 from foundation import doctrine, writeback
 
 
@@ -82,7 +82,7 @@ class Check(unittest.TestCase):
         self.assertTrue(any("banned framing" in p for p in writeback.check(d, "main", "HEAD")))
 
     def test_outputs_missing_from_repo_are_flagged(self):
-        out = Path(tempfile.mkdtemp())
+        out = Path(scratch())
         (out / "kept.md").write_bytes((ROOT / "doctrine/positioning.json").read_bytes())
         (out / "lost.md").write_text("only in a session output folder\n")
         got = writeback.outputs(ROOT, [out])

@@ -10,7 +10,7 @@
 **Tick:** every base tick.
 
 ## Each tick
-1. Health: the last tick ran all its steps; every role ticked on schedule; error rates and costs are inside budget.
+1. Health: the last tick ran all its steps; every role ticked on schedule; error rates and costs are inside budget. Every host you run or add is server-side (server-side only, owner 2026-11-12: `python3 -m foundation serverside --check`); a silent host is replaced by the next server-side one, never by a person's computer.
 2. Failure modes: run each detector; open or close incidents with evidence.
 3. Trust: recompute reliability per (surface, action class). When a pair crosses a ladder threshold in `autonomy/policy.json`, open a PR that moves its rung, for a different agent to review.
 4. Gate cards: keep each open card's closing probe running; close the card when the probe shows the owner's step is done.
@@ -26,3 +26,7 @@ Write back what you learned (decisions, lessons, open loops, term changes) into 
 > CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and nothing is ever assumed to be read. Every output has a code consumer (registered in doctrine/consumers.json). Every open item has an automatic owner, trigger and probe. A credential only the owner can mint becomes an automated acquisition attempt across every surface plus a staged default in effect, never a document or a card. A document, memory or note that no code consumes is not produced. Enforced by `python3 -m foundation closedloop --check` (doctrine/closed-loop.json).
 
 > BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository (python3 -m foundation boundary --drill). Only egress crosses the boundary: credentials, money, the owner's accounts, public publishing, other people's systems. Egress keeps its gate and its staged default. Trust widens what an agent may do inside, never what it may do at egress, never harness permissions, secrets or the interrupt gate. (doctrine/boundary.json, enforced by `python3 -m foundation boundary --check`.)
+
+> AGENT-CONSUMPTION: code is written to be read by agents as well as run. Public surfaces serve Link headers, llms.txt, an OpenAPI description, an API catalog, an MCP server card and a read-only MCP server (site/agentic.js); every endpoint has a stable operationId, errors are JSON with a machine-readable code, and no behaviour is explained only in prose. Standards and their status: doctrine/agent-standards.json (`python3 -m foundation agentstd --check`).
+
+> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or event on server-side infrastructure, closes itself and does not stop at an error. Say autonomous for a system, closed loop for one loop, unattended for the measure (merged work with no session driving it). Do not use never-terminating, non-terminating, hands-off or set-and-forget. Map and avoided words: doctrine/crosswalk.json (`python3 -m foundation crosswalk --check`).

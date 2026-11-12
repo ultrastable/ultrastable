@@ -20,6 +20,9 @@ CLAIM_LABEL = "in-progress"
 DENY_PREFIXES = (".git/", ".github/", "autonomy/", "ops/executor-log")
 DENY_NAMES = (".env", "id_rsa", "credentials")
 MAX_FILES, MAX_BYTES = 8, 200_000
+# Generated files are derived from the queue and docs, so any change makes them stale; the executor regenerates them instead of failing its own checks.
+REPAIRS = 2
+GENERATORS = [["python3", "scripts/build_dashboard.py"], ["python3", "-m", "foundation", "doctrine", "--apply"], ["python3", "-m", "foundation", "glossary", "--apply"], ["python3", "-m", "foundation", "standards", "--apply"]]
 CHECKS = [["python3", "scripts/lint_workflows.py"], ["python3", "-m", "unittest", "discover", "-s", "tests/foundation"]]
 
 
@@ -99,7 +102,8 @@ def build_prompt(issue: dict, tree: str) -> str:
     ref = kb.retrieve(f"{issue['title']} {issue.get('body') or ''}")
     return (axiom() + "\n\nYou are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. "
             'Reply with ONLY JSON: {"summary":"one line","files":[{"path":"relative/path","content":"full new file content"}]}. '
-            "Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code.\n\n"
+            "Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code. "
+            "Every new Markdown file must contain the exact line: Ultrastable is the foundation for any autonomous system. Do not write about memory or chat as storage. Server-side only: never reference localhost, 127.0.0.1 or a listening port; code runs as a Cloudflare Worker or a plain function with injected fetch.\n\n"
             f"ISSUE #{issue['number']}: {issue['title']}\n{(issue.get('body') or '')[:6000]}\n\nREPOSITORY FILES (partial):\n{tree[:6000]}\n"
             + (lambda c: f"\n{c[:6000]}\n" if c else "")(_public_context(issue)) + ref)
 
@@ -123,7 +127,8 @@ def call_cloudflare(prompt: str) -> dict:
 
 def call_model(prompt: str, key: str | None, model: str | None = None) -> dict:
     if not key:
-        return call_cloudflare(prompt)
+        from . import agents  # CODE-AGENTS-1: routed by cost across the adapter registry, falling back on failure
+        return agents.complete(prompt)[0]
     model = model or os.environ.get("EXECUTOR_MODEL", "claude-sonnet-5-5")
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", method="POST",
         data=json.dumps({"model": model, "max_tokens": 16000, "messages": [{"role": "user", "content": prompt}]}).encode(),
@@ -174,7 +179,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     row = {"issue": n, "title": issue["title"], "prediction": f"issue_{n}_closed = 1 within 24 h"}
     key = os.environ.get("ANTHROPIC_API_KEY")
     if model_call is None and not key and not cf_ready():
-        row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (scheduled task that starts a Claude session, which runs --pick and --record) takes the item without any key")
+        row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (a cloud-hosted routine that starts a Claude session, which runs --pick and --record) takes the item without any key")
         log(root, row); return row
     if not apply:
         row.update(result="dry-run", detail="would claim, change, check and open a PR")
@@ -184,21 +189,48 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     gi(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"claim: executor {now()}"], root)
     try:
         _, tree = sh(["git", "ls-files"], root)
-        out = (model_call or (lambda p: call_model(p, key)))(build_prompt(issue, tree))
         branch = f"agent/{n}-{re.sub(r'[^a-z0-9]+', '-', issue['title'].lower())[:40].strip('-')}"
         sh(["git", "checkout", "-B", branch], root)
-        files = apply_edits(out["files"], root)
-        failed = []
-        for c in (checks if checks is not None else CHECKS):
-            code, o = sh(c, root)
-            if code:
-                failed.append(f"{' '.join(c)}: {o[-400:]}")
-        if failed:
+        prompt, failed, files, out = build_prompt(issue, tree), [], [], {}
+        for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
+            failed = []
+            try:
+                out = (model_call or (lambda p: call_model(p, key)))(prompt)
+                files = apply_edits(out["files"], root)
+            except (ValueError, KeyError, TypeError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
+                failed.append("the reply was not valid JSON with a files list: " + type(e).__name__ + ": " + str(e)[:300])
+                if attempt < REPAIRS:
+                    prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED; reply with ONLY valid JSON (escape backslashes and quotes inside file content): " + failed[0]
+                continue
+            if checks is None:
+                for g in GENERATORS:
+                    sh(g, root)
+            for c in (checks if checks is not None else CHECKS):
+                code, o = sh(c, root)
+                if code:
+                    failed.append(f"{' '.join(c)}: {o[-2500:]}")
+            if not failed:
+                break
             sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd"], root)
-            raise RuntimeError("checks failed: " + " | ".join(failed))
+            prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS; fix exactly these problems and reply with the full JSON again:" + chr(10) + chr(10).join(failed)[:5000]
+        if failed:
+            raise RuntimeError("checks failed after " + str(REPAIRS + 1) + " attempts: " + " | ".join(failed))
         row.update(files=files, summary=out.get("summary", ""))
+        # WRITEBACK-1: the `checks` write-back gate fails any change that has code and no write-back (the first live executor PR failed on it), so
+        # the executor records its own decision in the same commit: what it did, the evidence (checks that passed) and a file probe.
+        probe_file = next((f for f in files if f != qmod.QUEUE_GLOB and not f.startswith("docs/issues/")), files[0] if files else "docs/issues")
+        wc, wo = sh(["python3", "-m", "foundation", "writeback", "record", "--kind", "decision", "--title", f"Executor closed {n}: {out.get('summary', issue['title'])}"[:140],
+                     "--body", f"Measured: checks passed before the PR ({', '.join(' '.join(c) for c in (checks if checks is not None else CHECKS))}); files changed: {', '.join(files)}.",
+                     "--owner", "executor", "--probe", f"file:{probe_file}"], root)
+        if wc:
+            raise RuntimeError("write-back failed: " + wo[-300:])
         if queue_mode():
             qmod.close(root, n, "closed by the pull request that carries this change")  # merging the PR closes the item: no remote state to update
+        if checks is None:
+            for g in GENERATORS:
+                gc, go = sh(g, root)
+                if gc:
+                    raise RuntimeError("generator failed: " + " ".join(g) + ": " + go[-300:])
         sh(["git", "add", "-A", "--", ".", f":!{LOG}"], root)
         sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "-m", f"{out.get('summary', issue['title'])} (#{n})"], root)
         code, o = sh(["git", "push", "-u", "origin", branch], root)

@@ -11,8 +11,7 @@ M = lambda n: T0 + dt.timedelta(minutes=n)
 
 
 def scratch():
-    d = Path(tempfile.mkdtemp())
-    atexit.register(shutil.rmtree, d, True)
+    d = Path(tempfile.mkdtemp()); atexit.register(shutil.rmtree, d, True)
     (d / "docs/issues").mkdir(parents=True)
     return d
 

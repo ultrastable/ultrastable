@@ -693,7 +693,7 @@
    "id": "FALLBACK-CLASSES-1",
    "enforced_by": "foundation/loops.py",
    "probe": "grep:foundation/loops.py::fallback class",
-   "note": "a loop that has a paid or external path also has a free, local or degraded path"
+   "note": "a loop that has a paid or external path also has a free, session or degraded path (the directive's in-system path is a cloud-hosted agent session; server-side only, doctrine/server-side.json)"
   },
   {
    "id": "CREDENTIAL-ONE-SOURCE-1",

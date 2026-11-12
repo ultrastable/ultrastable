@@ -133,7 +133,7 @@ def run(root=REPO, apply=False, apis: dict | None = None, repos=None) -> dict:
     apis = apis if apis is not None else {sid: http_api(t) for sid, t in tokens()}
     rec = {"at": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "apply": apply, "surfaces": {}, "queue": 0, "merges": [], "drift": [], "issues": []}
     if not apis:
-        rec["error"] = "no write surface has a token in this environment; falling back to the claude-session surface (ops/scheduled-tasks/)"
+        rec["error"] = "no write surface has a token in this environment; falling back to the claude-session surface (the cloud-hosted routine, deploy/loops/claude-routine.md)"
         return _log(root, rec)
     rec["surfaces"] = probe_surfaces(cfg, apis)
     best = next(iter(apis.values()))

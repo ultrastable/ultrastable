@@ -11,6 +11,7 @@ import json, re, shlex, subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+QUEUE_GLOB = "docs/issues/"
 CMD_ALLOWED = ("gh ", "python3 scripts/", "python3 -m foundation ", "python3 tools/", "git ")
 FIELD = lambda body, name: (re.search(rf"^\*\*{name}:\*\*\s*(.+)$", body, re.M) or [None, ""])[1].strip()
 
@@ -82,9 +83,11 @@ def check(root=REPO) -> list[str]:
         for f in ("owner", "trigger", "probe", "status"):
             if not it[f]:
                 bad.append(f"{it['id']}: lacks {f}")
-        if it["status"] not in ("open", "closed"):
-            bad.append(f"{it['id']}: status {it['status']!r} is not open or closed")
-        if it["status"] == "closed" and "**Evidence:**" not in it["json"].get("body", ""):
+        # A finished item says closed; done is accepted as the same thing, because the site roadmap and older items use that word and two
+        # checks that disagree on vocabulary turned main red (2026-11-12). Either way a finished item needs evidence.
+        if it["status"] not in ("open", "closed", "done"):
+            bad.append(f"{it['id']}: status {it['status']!r} is not open, closed or done")
+        if it["status"] in ("closed", "done") and "**Evidence:**" not in it["json"].get("body", ""):
             bad.append(f"{it['id']}: closed without evidence (silent drop)")
         if it["probe"].startswith("cmd:") and not it["probe"][4:].startswith(CMD_ALLOWED):
             bad.append(f"{it['id']}: probe command is not allow-listed")

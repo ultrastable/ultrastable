@@ -5,6 +5,8 @@ import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import USER_PATH from "./userpath.js";
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
+import { liveResponse } from "./live.js";
+import { agentic, withLinks, CONTENT_SIGNAL } from "./agentic.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
@@ -130,13 +132,19 @@ async function proof() {
 }
 
 function pilot() {
-  const href = "mailto:" + PILOT_MAIL + "?subject=" + encodeURIComponent("Ultrastable pilot") + "&body=" + encodeURIComponent("Team size:\nRepositories or services:\nCoding agents in use:\n");
-  return shell({ path: "/pilot", title: "Join the Ultrastable pilot", description: "Design-partner pilot for teams that run many services and want coding agents to keep them healthy, with an audit trail." },
-    "<div class=\"head\"><h1>Join the pilot</h1><p>Three design partners, free, one repository each.</p></div>"
-    + "<div class=\"card\"><h3 class=\"card-title\">Who it is for</h3><p class=\"meta\">Small engineering teams running many services who want agents to find and fix problems without a person choosing every task, and teams that must show auditors what their coding agents did and why.</p></div>"
-    + "<div class=\"card\"><h3 class=\"card-title\">What you get</h3><p class=\"meta\">The loop installed on one repository: issues from your metrics, agent hand-off, probes with automatic revert, and the ledgers. In return: monthly feedback and permission to cite results.</p></div>"
-    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"" + href + "\">Email the pilot team</a></div>"
-    + "<p class=\"meta\">The email opens with three short lines to fill in. Replies come from a person within two working days.</p>");
+  const P = DASH.pilot, g = P.program;
+  const href = "mailto:" + PILOT_MAIL + "?subject=" + encodeURIComponent("Ultrastable pilot application") + "&body=" + encodeURIComponent(g.apply_fields.map(function (f) { return f + ":\n"; }).join(""));
+  const list = function (a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; };
+  return shell({ path: "/pilot", title: "Apply for an Ultrastable pilot", description: g.pitch },
+    "<div class=\"head\"><h1>" + esc(g.title) + "</h1><p>" + esc(g.pitch) + "</p></div>"
+    + "<div class=\"card\"><h3 class=\"card-title\">What we look for</h3>" + list(g.selection) + "</div>"
+    + "<div class=\"card\"><h3 class=\"card-title\">What you get</h3><p class=\"meta\">" + esc(g.you_get) + " In return: " + esc(g.we_get) + ".</p></div>"
+    + "<div class=\"card\"><h3 class=\"card-title\">What to tell us</h3>" + list(g.apply_fields) + "<p class=\"meta\">Price: " + esc(g.price) + ".</p></div>"
+    + "<div class=\"card\"><h3 class=\"card-title\">Where it runs</h3><p class=\"meta\">" + esc(P.why) + "</p></div>"
+    + "<h2 id=\"apply\">Apply</h2><form id=\"pf\" class=\"card\" method=\"post\" action=\"/api/pilot\">" + [["system", g.apply_fields[0]], ["keeps_doing", g.apply_fields[1]], ["measure", g.apply_fields[2]], ["budget", g.apply_fields[3]], ["runs_on", g.apply_fields[4]], ["contact", "How we reach you (email)"]].map(function (x) { return "<p><label>" + esc(x[1]) + "<br><textarea name=\"" + x[0] + "\" rows=\"2\" maxlength=\"1500\" style=\"width:100%\"" + (x[0] === "contact" ? "" : " required") + "></textarea></label></p>"; }).join("") + "<p><button class=\"btn btn-primary\" type=\"submit\">Send application</button></p><p id=\"pr\" class=\"meta\" role=\"status\"></p></form>"
+    + "<script>document.getElementById('pf').addEventListener('submit',function(e){e.preventDefault();var f=e.target;fetch('/api/pilot',{method:'POST',body:new FormData(f),headers:{accept:'application/json'}}).then(function(r){return r.json()}).then(function(j){document.getElementById('pr').textContent=j.message||j.error||'Something went wrong.'}).catch(function(){document.getElementById('pr').textContent='Could not send; use the email link.'})})</script>"
+    + "<div class=\"us-actions\"><a class=\"btn\" href=\"" + href + "\">Or apply by email</a><a class=\"btn\" href=\"/dashboard\">See the dashboard</a></div>"
+    + "<p class=\"meta\">Replies come from a person within two working days. The form above is the interview: it scores your answers against the four system-test questions.</p>");
 }
 
 function product() {
@@ -343,6 +351,30 @@ function systemTest(idea) {
   return { ok: true };
 }
 
+// PILOT-1: the application is the interview. The four system-test questions (VISION.md) are scored here; a poor fit is told so, plainly.
+const PILOT_FIELDS = ["system", "keeps_doing", "measure", "budget", "runs_on"];
+function scorePilot(a) {
+  const missing = PILOT_FIELDS.filter(function (k) { return !String(a[k] || "").trim(); });
+  if (missing.length) return { ok: false, error: "Please answer: " + missing.join(", ") };
+  const loop = String(a.keeps_doing).length >= 20, measure = String(a.measure).length >= 15, budget = /[0-9]/.test(String(a.budget));
+  const upkeep = new RegExp("(weekly|daily|monthly|every|ongoing|keeps|continuous|maintain|update|monitor|improv)", "i").test(a.keeps_doing + " " + a.system);
+  const oneOff = !systemTest(String(a.system) + " " + String(a.keeps_doing)).ok;
+  const checks = { loop: loop, measure: measure, upkeep: upkeep, budget: budget };
+  const fit = !oneOff && loop && measure && upkeep && budget;
+  return { ok: true, fit: fit, checks: checks, one_off: oneOff };
+}
+async function pilotApplication(request, env) {
+  const f = await request.formData().catch(function () { return null; });
+  if (!f) return json({ error: "Send the application as a form." }, 400);
+  const a = {}; PILOT_FIELDS.concat(["contact"]).forEach(function (k) { a[k] = String(f.get(k) || "").trim().slice(0, 1500); });
+  const r = scorePilot(a);
+  if (!r.ok) return json({ error: r.error }, 400);
+  const lim = await limited(request, env); if (lim) return lim;
+  const id = newId();
+  await env.ASSETS.put("pilot:" + new Date().toISOString() + ":" + id, JSON.stringify({ a: a, fit: r.fit, checks: r.checks }), { expirationTtl: 31536000 });
+  return json({ id: id, fit: r.fit, checks: r.checks, message: r.fit ? "Thank you. This reads as a fit for the system test; a person replies within two working days." : "Thank you. As written this does not yet pass the system test (a loop to close, a measure that can be wrong, upkeep that never ends, a monthly budget). Tell us more and apply again." }, 201);
+}
+
 async function takeIdea(request, env, ctx) {
   const f = await request.formData().catch(() => null), idea = f && String(f.get("idea") || "").trim().slice(0, 2000);
   if (!idea) return new Response(start(false), { status: 400, headers: HTML });
@@ -470,17 +502,19 @@ function roadmap() {
     "<div class=\"head\"><h1>Roadmap</h1><p>Each item here backs a claim on this site. It has an owner, a trigger and a closing probe the system runs; an item closes only when its probe passes. Machine-readable: <a href=\"/roadmap.json\">roadmap.json</a>.</p></div>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Item</th><th>What</th><th>State</th><th>Closing probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>");
 }
-function dashboard() {
-  const panels = DASH.panels.map(function (p) {
+function dashboard(tenantId) {
+  const T = DASH.tenants[tenantId];
+  if (!T) return null;
+  const panels = T.panels.map(function (p) {
     const rows = p.rows.map(function (r) { return "<tr><td>" + esc(r[0]) + "</td><td><small>" + esc(r[1]) + "</small></td></tr>"; }).join("");
     return "<div class=\"card\" id=\"panel-" + esc(p.id) + "\"><h3 class=\"card-title\">" + esc(p.title) + "</h3><p><strong>" + esc(p.headline) + "</strong></p><div class=\"us-wrap\"><table class=\"us-table\"><tbody>" + rows + "</tbody></table></div><p class=\"meta\">" + esc(p.note) + " Source: <code>" + esc(p.source) + "</code></p></div>";
   }).join("");
   const pm = DASH.pilot;
   const opts = pm.options.map(function (o) { return "<tr><td><strong>" + esc(o.id) + "</strong></td><td><small>" + esc(o.runs_on) + "</small></td><td><small>" + esc(o.revenue) + "</small></td><td><small>" + esc(o.status) + "</small></td></tr>"; }).join("");
   return shell({ path: "/dashboard", title: "Ultrastable dashboard preview", description: "What the control plane looks like: loops, objectives and metrics, failure modes, capabilities, roadmap and earned autonomy, computed from the repository." },
-    "<div class=\"head\"><h1>Dashboard preview</h1><p>This is the control plane Ultrastable runs on itself, computed from its own repository (commit <code>" + esc(DASH.asof) + "</code>). No customer data is shown or held here: a pilot runs in your own account.</p></div>"
+    "<div class=\"head\"><h1>Dashboard preview</h1><p>This is the control plane Ultrastable runs on itself, computed from its own repository (tenant <code>" + esc(tenantId) + "</code>, level " + T.level + ", commit <code>" + esc(DASH.asof) + "</code>). No customer data is shown or held here: a pilot runs in your own account.</p></div>"
     + "<div class=\"us-grid c2\">" + panels + "</div>"
-    + "<h2>Live feed</h2><p>" + esc(DASH.live_feed.says) + " Tracked by <a href=\"/roadmap#" + esc(DASH.live_feed.tracked_by) + "\">" + esc(DASH.live_feed.tracked_by) + "</a>.</p>"
+    + "<h2>Live feed</h2><p>" + esc(T.live_feed.says) + " Tracked by <a href=\"/roadmap#" + esc(T.live_feed.tracked_by) + "\">" + esc(T.live_feed.tracked_by) + "</a>.</p>"
     + "<h2 id=\"pilot\">Pilot model</h2><p>" + esc(pm.why) + "</p><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Option</th><th>Runs on</th><th>Revenue (hypothesis)</th><th>Status</th></tr></thead><tbody>" + opts + "</tbody></table></div>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/roadmap\">See the roadmap</a><a class=\"btn\" href=\"/engineers\">For engineers</a></div>");
 }
@@ -492,7 +526,7 @@ function contact() {
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");
 }
 
-const ROBOTS = "User-agent: *\nAllow: /\nSitemap: https://" + CANON + "/sitemap.xml\n";
+const ROBOTS = "User-agent: *\n" + CONTENT_SIGNAL + "Allow: /\nSitemap: https://" + CANON + "/sitemap.xml\n";
 const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. Ultrastable runs on itself. QNFO runs on it as customer zero.\n\n- [Live proof](https://" + CANON + "/proof): claims checked against QNFO's records\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n";
 
 const FAVICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"ultrastable\"><title>ultrastable</title><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></svg>";
@@ -502,7 +536,7 @@ const SVG = { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age
 
 const HTML = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" };
 
-export default {
+const handler = {
   async fetch(request, env, ctx) {
     const u = new URL(request.url);
     const host = u.hostname.replace(/^www\./, "");
@@ -516,7 +550,9 @@ export default {
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
     if (request.method === "GET" && u.pathname === "/api/suggest") return suggestions(u, env);
+    if (u.pathname === "/live" || u.pathname === "/api/live") return liveResponse(u, request, env, shell, HTML);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
+    if (request.method === "POST" && u.pathname === "/api/pilot") return pilotApplication(request, env);
     if (request.method === "POST" && u.pathname === "/api/answer") return takeAnswer(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
     { const sr = await siteRoutes(u, env, ctx); if (sr) return sr; }
@@ -532,7 +568,7 @@ export default {
       case "/org": return new Response(org(), { headers: HTML });
       case "/engineers": return new Response(engineers(), { headers: HTML });
       case "/roadmap": return new Response(roadmap(), { headers: HTML });
-      case "/dashboard": return new Response(dashboard(), { headers: HTML });
+      case "/dashboard": { const t = u.searchParams.get("tenant") || "ultrastable"; const h = dashboard(t); return h ? new Response(h, { headers: HTML }) : new Response("No such tenant", { status: 404, headers: HTML }); }
       case "/roadmap.json": return new Response(JSON.stringify(ROAD), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/contact": return new Response(contact(), { headers: HTML });
@@ -549,3 +585,5 @@ export default {
     }
   }
 };
+// AGENTIC-1: machine-readable discovery and a read-only MCP endpoint in front of every page.
+export default { async fetch(request, env, ctx) { const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };

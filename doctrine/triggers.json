@@ -153,6 +153,13 @@
    ],
    "crons": []
   },
+  "deploy-system.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": []
+  },
   "executor.yml": {
    "events": [
     "repository_dispatch",
@@ -160,6 +167,14 @@
    ],
    "crons": [
     "23 6 * * *"
+   ]
+  },
+  "failure-audit.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 5 * * *"
    ]
   },
   "fleet.yml": {
@@ -210,7 +225,7 @@
     "workflow_dispatch"
    ],
    "crons": [
-    "41 5 * * 1"
+    "41 5 * * *"
    ]
   },
   "org-manage.yml": {
@@ -272,6 +287,14 @@
     "17 15 * * 2,5"
    ]
   },
+  "transparency.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "17 5 * * *"
+   ]
+  },
   "upstream.yml": {
    "events": [
     "repository_dispatch",
@@ -279,14 +302,6 @@
    ],
    "crons": [
     "47 5 * * 3"
-   ]
-  },
-  "failure-audit.yml": {
-   "events": [
-    "workflow_dispatch"
-   ],
-   "crons": [
-    "41 5 * * *"
    ]
   }
  }

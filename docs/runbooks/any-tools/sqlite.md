@@ -1,4 +1,4 @@
-# Path: a laptop with SQLite (the minimal path)
+# Path: any host with Python and SQLite (the minimal path)
 
 Needs Python 3.10 or newer and a copy of this repository. No network, no git, no Node, no account.
 

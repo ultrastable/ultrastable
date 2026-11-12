@@ -1,0 +1,72 @@
+"""CODE-AGENTS-1: every adapter is invoked through a recorded transport; routing by cost; disjoint-family ensemble; fallback."""
+import unittest
+from pathlib import Path
+from foundation import agents
+
+REPO = Path(__file__).resolve().parents[2]
+ENV = {"CLOUDFLARE_API_TOKEN": "t", "CLOUDFLARE_ACCOUNT_ID": "acct", "ANTHROPIC_API_KEY": "k"}
+A = {a["id"]: a for a in agents.load(REPO)["adapters"]}
+
+
+def fake(calls, text='{"summary":"s","files":[]}'):
+    def t(url, headers, body, timeout=300):
+        calls.append((url, headers, body))
+        return {"content": [{"text": text}]} if "anthropic" in url else {"result": {"response": text}}
+    return t
+
+
+class Agents(unittest.TestCase):
+    def test_registry_is_clean(self):
+        self.assertEqual(agents.check(REPO), [])
+
+    def test_invoke_workers_ai_qwen_coder(self):
+        c = []; out = agents.invoke(A["workers-ai-qwen-coder"], "p", ENV, fake(c))
+        self.assertIn("/accounts/acct/ai/run/@cf/qwen/qwen2.5-coder-32b-instruct", c[0][0]); self.assertEqual(c[0][1]["authorization"], "Bearer t"); self.assertIn("summary", out)
+
+    def test_invoke_workers_ai_glm_keeps_reasoning_low(self):
+        c = []; agents.invoke(A["workers-ai-glm"], "p", ENV, fake(c)); self.assertEqual(c[0][2]["reasoning_effort"], "low")
+
+    def test_invoke_workers_ai_llama(self):
+        c = []; agents.invoke(A["workers-ai-llama"], "p", ENV, fake(c)); self.assertIn("llama-3.3-70b", c[0][0])
+
+    def test_invoke_anthropic_api(self):
+        c = []; agents.invoke(A["anthropic-api"], "p", ENV, fake(c)); self.assertEqual(c[0][1]["x-api-key"], "k"); self.assertEqual(c[0][2]["model"], "claude-sonnet-5-5")
+
+    def test_claude_session_is_not_an_http_route(self):
+        self.assertFalse(agents.available(A["claude-session"], ENV))
+        with self.assertRaises(ValueError):
+            agents.build_request(A["claude-session"], "p", ENV)
+
+    def test_routing_cheapest_known_first_and_unavailable_dropped(self):
+        ids = [a["id"] for a in agents.route_authors(ENV, REPO)]
+        self.assertEqual(ids[0], "workers-ai-glm"); self.assertLess(ids.index("workers-ai-glm"), ids.index("workers-ai-llama")); self.assertEqual(ids[-1] in ("anthropic-api", "workers-ai-qwen-coder"), True)
+        self.assertEqual(agents.route_authors({}, REPO), [])
+
+    def test_ensemble_disjoint_and_never_authors_family(self):
+        fams = [a["family"] for a in agents.ensemble("glm", ENV, REPO)]
+        self.assertNotIn("glm", fams); self.assertEqual(len(fams), len(set(fams))); self.assertGreaterEqual(len(fams), 2)
+
+    def test_needs_ensemble_on_risky_paths(self):
+        self.assertTrue(agents.needs_ensemble(["site/auth.js"])); self.assertFalse(agents.needs_ensemble(["docs/x.md"]))
+
+    def test_complete_falls_back_to_next_adapter(self):
+        n = []
+        def t(url, headers, body, timeout=300):
+            n.append(url)
+            if "glm" in url:
+                raise OSError("model down")
+            return {"result": {"response": '{"summary":"ok","files":[]}'}} if "cloudflare" in url else {"content": [{"text": '{"summary":"ok","files":[]}'}]}
+        out, who = agents.complete("p", ENV, t, REPO)
+        self.assertEqual(out["summary"], "ok"); self.assertNotEqual(who, "workers-ai-glm"); self.assertIn("glm", n[0])
+
+    def test_complete_without_any_adapter_says_so(self):
+        with self.assertRaises(RuntimeError):
+            agents.complete("p", {}, fake([]), REPO)
+
+    def test_review_uses_two_families(self):
+        r = agents.review("diff", "claude", ENV, fake([], "no defects"), REPO)
+        self.assertGreaterEqual(len({x["family"] for x in r}), 2)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,7 +1,7 @@
 name: fleet
 # budget: ~3 min per run, once per day plus manual dispatch
 # trigger: daily (never faster); the Cloudflare tick Worker may also dispatch it with repository_dispatch `ultrastable-tick`
-# free-alternative: `python3 -m foundation queue --run --apply && python3 -m foundation fleet --apply` from any host or a scheduled Claude session
+# free-alternative: `python3 -m foundation queue --run --apply && python3 -m foundation fleet --apply` from a cloud-hosted Claude routine
 # CLOSED-LOOP-AXIOM: one queue, one merge lane and one drift loop across every org repository; residual items are probed until they pass.
 on:
   schedule:

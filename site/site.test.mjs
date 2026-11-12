@@ -154,8 +154,51 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
 {
   const D = (await import("./dashboard-data.js")).default;
   const html = await (await get("https://ultrastable.io/dashboard")).text();
-  for (const p of D.panels) { assert.ok(html.includes('id="panel-' + p.id + '"'), "panel " + p.id); assert.ok(html.includes(p.source), "source shown: " + p.source); }
+  for (const p of D.tenants.ultrastable.panels) { assert.ok(html.includes('id="panel-' + p.id + '"'), "panel " + p.id); assert.ok(html.includes(p.source), "source shown: " + p.source); }
   assert.ok(html.includes("Q-LOOP-live-clock") && /live feed/i.test(html), "the pending live feed is stated, not faked");
   assert.ok(html.includes("bring-your-own-account") && html.includes('id="pilot"'));
   console.log("ultrastable-site dashboard ok");
+}
+// PILOT-1 + TENANT-1: the application is scored against the four system-test questions; the dashboard takes a tenant id and unknown tenants 404.
+{
+  let ipn = 0; const apply = (o) => { const f = new FormData(); for (const k in o) f.set(k, o[k]); return mod.fetch(new Request("https://ultrastable.io/api/pilot", { method: "POST", body: f, headers: { "cf-connecting-ip": "203.0.113." + (++ipn) } }), E2); };
+  const good = { system: "A club website and member platform", keeps_doing: "keeps improving search ranking and member features every week", measure: "weekly sessions and sign-ups, target +5 percent a month", budget: "200 USD a month", runs_on: "our Cloudflare account" };
+  let r = await apply(good); assert.equal(r.status, 201); let j = await r.json(); assert.equal(j.fit, true); assert.deepEqual(Object.values(j.checks), [true, true, true, true]);
+  r = await apply({ ...good, system: "A packing list for camping trips", keeps_doing: "make it once", measure: "", budget: "none" }); assert.equal(r.status, 400, "missing answers are refused with what to fill in");
+  r = await apply({ ...good, system: "A packing list for camping trips", keeps_doing: "a one-off page we use for the trip, nothing more", budget: "10" }); j = await r.json(); assert.equal(j.fit, false); assert.match(j.message, /system test/);
+  const page = await (await get("https://ultrastable.io/pilot")).text(); assert.ok(page.includes('action="/api/pilot"') && page.includes("system test") === false || page.includes('id="apply"'));
+  assert.equal((await get("https://ultrastable.io/dashboard?tenant=ultrastable")).status, 200);
+  assert.equal((await get("https://ultrastable.io/dashboard?tenant=nobody")).status, 404, "only registered tenants render");
+  console.log("ultrastable-site pilot and tenant ok");
+}
+// TRANSPARENCY-1: /live is read-only for everyone: GET works, every write verb is refused, an absent snapshot says so.
+{
+  const snap = JSON.stringify({ generated: "2026-11-12T00:00:00Z", scoreboard: {} });
+  const db = { prepare: (q) => ({ bind: () => ({ all: async () => ({ results: [{ body: snap.slice(0, 20) }, { body: snap.slice(20) }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 2 }) }) };
+  let rr = await mod.fetch(new Request("https://ultrastable.io/api/live"), { ...ENV, DB: db });
+  assert.equal(rr.status, 200); assert.equal(await rr.text(), snap);
+  rr = await mod.fetch(new Request("https://ultrastable.io/api/live"), ENV);
+  assert.equal(rr.status, 503);
+  for (const m of ["POST", "PUT", "DELETE", "PATCH"]) { rr = await mod.fetch(new Request("https://ultrastable.io/api/live", { method: m, body: "x" }), { ...ENV, DB: db }); assert.equal(rr.status, 405); }
+  rr = await mod.fetch(new Request("https://ultrastable.io/live"), ENV);
+  assert.equal(rr.status, 200); assert.match(await rr.text(), /running on Ultrastable/);
+}
+// AGENTIC-1: discovery documents and the read-only MCP endpoint
+{
+  const snap = JSON.stringify({ generated: "g", scoreboard: { a: 1 }, throughput: { changelog: [] }, managers: [], claims: {}, gaps: [] });
+  const db = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: snap }] }) }), first: async () => ({ generated: "g", total: 1 }) }) };
+  const E3 = { ...ENV, DB: db };
+  const g3 = async (p, init) => mod.fetch(new Request("https://ultrastable.io" + p, init), E3);
+  let rr = await g3("/.well-known/api-catalog"); assert.match(rr.headers.get("content-type"), /linkset\+json/); assert.ok((await rr.json()).linkset.length >= 1);
+  rr = await g3("/.well-known/mcp/server-card.json"); assert.equal((await rr.json()).serverInfo.name, "ultrastable-live");
+  rr = await g3("/.well-known/agent-skills/index.json"); const sk = (await rr.json()).skills[0]; assert.match(sk.sha256, /^[0-9a-f]{64}$/);
+  const md = await (await g3("/.well-known/agent-skills/ultrastable-live/SKILL.md")).text();
+  const h = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(md)))).map(x => x.toString(16).padStart(2, "0")).join(""); assert.equal(h, sk.sha256);
+  assert.match(await (await g3("/robots.txt")).text(), /Content-Signal:/);
+  assert.match((await g3("/")).headers.get("link"), /api-catalog/);
+  const rpc = async (m, params) => (await (await g3("/mcp", { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: m, params }) })).json());
+  assert.equal((await rpc("tools/list")).result.tools.length, 6);
+  assert.equal(JSON.parse((await rpc("tools/call", { name: "get_scoreboard" })).result.content[0].text).a, 1);
+  assert.equal((await rpc("nope")).error.code, -32601);
+  assert.equal((await g3("/mcp")).status, 405); assert.equal((await g3("/mcp", { method: "DELETE" })).status, 405);
 }

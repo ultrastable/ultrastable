@@ -155,6 +155,31 @@
     "site/dashboard-data.js",
     "doctrine/pilot-model.json"
    ]
+  },
+  {
+   "status": "testing",
+   "name": "Pilot applications and layered systems",
+   "what": "The pilot is an application program whose form scores answers against the four system-test questions; the bootstrapper records parent and level and the measure step is scoped to its own tenant. The first child reporting to a parent is pending.",
+   "where": "/pilot",
+   "issue": "Q-LAYER-child-reporting",
+   "code": [
+    "doctrine/pilot-model.json",
+    "seed/bootstrap/bootstrap.py",
+    "seed/worker/src/tick.js",
+    "docs/doctrine/VISION.md"
+   ]
+  },
+  {
+   "status": "testing",
+   "name": "Tenant isolation",
+   "what": "Tenant 0 (Ultrastable on itself) and customer tenants share one shape; the dashboard takes a tenant id and unknown tenants 404; a runtime measures only its own tenant's metrics. Tenant ids on the remaining core tables and per-tenant credentials are pending.",
+   "where": "/dashboard?tenant=ultrastable",
+   "issue": "Q-TENANT-row-isolation",
+   "code": [
+    "seed/worker/migrations/0004_objectives.sql",
+    "seed/worker/src/tick.js",
+    "scripts/build_dashboard.py"
+   ]
   }
  ],
  "gaps": [

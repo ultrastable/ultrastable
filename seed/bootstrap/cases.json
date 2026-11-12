@@ -82,7 +82,7 @@
        {"step": "Work in the canonical repository and record the other as a mirror target", "probe": "mirror target listed in docs/BOOTSTRAP-GAPS.md"},
        {"step": "Unarchive or mirror through the admin credential when it exists", "probe": "gh repo view shows isArchived false"}],
      "owner_card": null},
-    {"id": "BC-13", "title": "The owner's computer is not reachable",
+    {"id": "BC-13", "title": "The owner's computer is not reachable (server-side only: no step may depend on it)",
      "when": {"device_reachable": false},
      "routes": [
        {"step": "Run everything through scheduled workflows and the platform connectors; no step depends on the owner's device", "probe": "boot-log surfaces shows a workflow route ok"},

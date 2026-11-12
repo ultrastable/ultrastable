@@ -2,12 +2,14 @@
 import copy, json, shutil, tempfile, unittest
 from pathlib import Path
 from foundation import market, queue
+import sys as _sys; _sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402  (scratch directories are removed when the run ends)
 
 REPO = Path(__file__).resolve().parents[2]
 
 
 def _copy():
-    t = Path(tempfile.mkdtemp())
+    t = Path(scratch())
     for rel in ("doctrine", "docs/issues", "site", "foundation", "instances"):
         shutil.copytree(REPO / rel, t / rel, ignore=shutil.ignore_patterns("__pycache__"))
     for rel in ("scripts", "seed", "platform", "tests", "ops"):  # read-only evidence for proofs and test-file checks

@@ -13,10 +13,12 @@ for next. Ultrastable puts the managers behind the scenes (portfolio, program, p
 file the work, hand it to coding agents, prove the result live and keep score. The owner supplies direction and a budget; the system supplies the
 backlog. That is the product: **autonomous, measured, continuous improvement of something that has to keep running.**
 
-Typical customers are businesses and organizations (B2B) running something WordPress-class or bigger, where maintenance has become the burden:
+The owner can be an organization, a small business or one person. What qualifies an idea is the system test below, not who owns it and not whether it
+earns money: it has to be something that keeps running, keeps needing work, and is worth a monthly cost to its owner. Examples:
 - a club, association or small-business website that must keep growing (search ranking, content, performance, security patches, bookings, member
   features) instead of freezing after launch;
-- a shop or marketplace whose catalogue, conversion, speed and uptime need weekly attention;
+- a personal system one person depends on every day: a companion that remembers and follows up, a signals desk that watches markets or the
+  news against the owner's own rules, a tracker whose sources and logic keep changing;
 - a service fleet that finds its own failures and fixes them, with probes and automatic revert;
 - a research or publishing operation whose findings, editions and citations stay current;
 - a compliance, security or cost program that watches an environment and closes what it finds;
@@ -33,6 +35,9 @@ A site is not excluded by being a website. It is included when it is meant to be
 4. **A running cost the owner accepts.** The back end (compute, model calls, storage) costs money every month. A stated monthly budget is part of the idea.
 
 ## What it is not for
+
+Selling things online. Storefronts, carts and checkout are served well by shop builders; Ultrastable does not compete there and does not pitch itself
+on revenue. An owner's shop can sit beside a system Ultrastable runs, but the shop is not the system.
 
 A single finished deliverable nobody will run again: a one-off page, an invitation, a trip plan, a weekend project, a personal reminder. Those
 need a site builder or a chat assistant. Starting a portfolio manager, project managers and a team of agents for them is a defect: the cost of the
@@ -53,6 +58,14 @@ QNFO fleet runs on (metric registry, trigger state, breach files its own remedy)
   gets improved without the owner knowing what to ask for.
 - Kit items KIT-5 (instrumented) and KIT-6 (clock proof) are the bootstrap's own closing probes. Code: `seed/worker/migrations/0004_objectives.sql`,
   `seed/worker/src/tick.js`, `seed/bootstrap/bootstrap.py`, tests `seed/worker/test/measure.test.js`, `tests/test_vision.py`.
+
+## Layers: turtles all the way down
+
+There are at least two levels, and the structure is recursive. Level 0 is Ultrastable running on its own infrastructure (customer zero). Level 1 is a
+system a customer builds on it. Level 2 is whatever that customer builds for its own users on top. The same bootstrap, system test, objectives and
+probes apply at every level; nothing is special-cased. A child records its `parent` and `level` in its IDEA.md and gets an `M-parent-link` liveness
+metric, so a child that goes silent breaches at the level above it. Data: `layers` in `doctrine/pilot-model.json`; code: `seed/bootstrap/bootstrap.py`;
+tests: `tests/test_vision.py` (LayerTests). Tenancy: tenant 0 is Ultrastable on itself (the public demo); each customer system is a tenant of the same shape, the dashboard takes a tenant id, every metric row carries `tenant_id`, and a runtime measures only its own tenant, so one level's loops cannot change another's (`seed/worker/src/tick.js`, `Q-TENANT-row-isolation`). Multi-tenant hosting would be a separate obligation (`multi_tenant_obligations` there), not a pilot feature.
 
 ## Proportion rule
 
