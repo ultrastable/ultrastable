@@ -194,6 +194,14 @@
    "title": "Parallel sessions built the same site-pins system; merge into one source of truth",
    "body": "PINS-1 (computed pins) collided with SITE-PINS-1 (#247) on main. Kept SITE-PINS-1 (site/pins.json, scripts/build_site_roadmap.py) as the single source for the site and kept only the shrink-only ratchet for roadmap issues without a runnable probe (foundation/pins.py, doctrine/pins-baseline.json). Lesson: before building a surface, read origin/main and open PRs for the same directive.",
    "probe": "grep:foundation/pins.py::def unprobed"
+  },
+  {
+   "id": "lesson-2026-11-12-generated-demos-must-be-linted-a-static-page-cannot-be-an-au",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Generated demos must be linted; a static page cannot be an autonomous system",
+   "body": "Design-system prompt plus model-free lint feeding repair plus honest limits wording. Open: screenshot-critique pass.",
+   "probe": "grep:site/worker.js::export function lint"
   }
  ]
 }
