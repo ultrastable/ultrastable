@@ -169,6 +169,14 @@
    "title": "Write-back open-loop ids are max+1, never count+1",
    "body": "count+1 overwrote OL-20261112-11 (the Cloudflare account transfer residual) because ids have gaps; closedloop --check caught it as a residual with no queue entry. record() now takes max+1 and refuses to overwrite.",
    "probe": "grep:foundation/writeback.py::never count\\+1"
+  },
+  {
+   "id": "decision-2026-11-12-position-say-what-ultrastable-is-not-for",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "POSITION: say what Ultrastable is not for",
+   "body": "The home page lists what Ultrastable is not for (one-off pages, prompt-by-prompt vibe coding) and agent.md tells assistants to stop when the idea is a one-off page, so people self-select into ongoing systems that need setup and a paid back end.",
+   "probe": "grep:site/worker.js::What it is not for"
   }
  ]
 }
