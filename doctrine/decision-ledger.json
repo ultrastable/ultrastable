@@ -49,6 +49,14 @@
    "title": "Bootstrap settings script reported success while doing nothing",
    "body": "apply_github_settings.sh printed failures: 0 with jq missing, so every step was a no-op; it also failed on CRLF jq output, targeted six archived repos, omitted workers/spec/license, and treated GitHub plan limits as permanent red. Measured after the fix: running it from an org-admin gh session returned 'failures: 0 gated: 8' and the org description matches the config. It now requires jq and gh, strips CR, skips archived repos and reports plan-gated features as GATED. Lane merges via GITHUB_TOKEN never fire push workflows, so the lane dispatches deploy-site after merging deployable paths, and scripts/drift_probe.sh compares live version and org description daily; measured: site live=0.3.1 repo=0.3.1.",
    "probe": "grep:scripts/drift_probe.sh::DRIFT"
+  },
+  {
+   "id": "decision-2026-11-12-code-repo-holds-code-administration-lives-in-ops-the-front-d",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Code repo holds code; administration lives in ops; the front door is one prompt bar",
+   "body": "Measured: 27 of 44 open issues in ultrastable/ultrastable were administration (funding, patent, legal, owner cards, org setup) and were transferred to the private ultrastable/ops repo; 19 code tasks remain and are executor-owned. Site 0.4.0 adds /start, a single prompt bar that stores a plain-words idea in KV; node site/site.test.mjs passes with the page and the POST. Next, tracked in ops: executor reads its queue from repo data so Issues can be disabled on the code repo, the idea consumer asks follow-up questions and scaffolds a Cloudflare Worker, and the six archived duplicate repos are removed after a mirror backup.",
+   "probe": "grep:site/worker.js::FRONT-DOOR-1"
   }
  ]
 }

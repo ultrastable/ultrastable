@@ -2,7 +2,7 @@
 // Canonical host ultrastable.io; ultrastable.app and ultrastable.net redirect to it (/pilot and /proof). Live proof comes from
 // the platform claims QNFO publishes as customer zero. Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
-var VERSION = "0.3.1";
+var VERSION = "0.4.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -66,7 +66,7 @@ function home(d) {
   return shell({ path: "/", title: "Ultrastable: the foundation for any autonomous system", description: "Ultrastable is the foundation for any autonomous system. Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live and keeps score of how often it was right." },
     "<section class=\"us-hero\"><h1>Ultrastable is the foundation for any autonomous system.</h1><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p>"
     + "<p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p>"
-    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
+    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/start\">Start with an idea</a><a class=\"btn\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine(d) + "</div></section>"
     + "<h2>What is different</h2><div class=\"us-grid c3\">"
     + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction and reads reports.")
@@ -183,6 +183,23 @@ function faq() {
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");
 }
 
+// FRONT-DOOR-1: one prompt bar. A person types an idea in plain words; the system takes it from there. No account, key, repo or terminal.
+// The idea is stored under idea:<time>:<id> in the ASSETS KV; the executor tick is its consumer (instances/ultrastable/loop-registry.json).
+function start(done) {
+  const form = "<form method=\"post\" action=\"/api/idea\" class=\"us-prompt\"><label for=\"idea\"><strong>What do you want to build?</strong></label>"
+    + "<textarea id=\"idea\" name=\"idea\" rows=\"4\" maxlength=\"2000\" required placeholder=\"An app that reminds my neighbours when bins go out...\" style=\"width:100%;font-size:1.1rem;padding:.8rem\"></textarea>"
+    + "<div class=\"us-actions\"><button class=\"btn btn-primary\" type=\"submit\">Start</button></div></form>";
+  const body = done
+    ? "<div class=\"head\"><h1>Got it.</h1><p>Your idea is in. Next we ask you a few plain questions, then build it and put it online. You do not install or set up anything.</p></div><div class=\"us-actions\"><a class=\"btn\" href=\"/start\">Add another idea</a></div>"
+    : "<div class=\"head\"><h1>Describe your idea</h1><p>One sentence is enough. We build it, host it and keep it running.</p></div>" + form;
+  return shell({ path: "/start", title: "Start - Ultrastable", description: "Describe an idea in plain words and Ultrastable builds, hosts and runs it." }, body);
+}
+async function takeIdea(request, env) {
+  const f = await request.formData().catch(() => null), idea = f && String(f.get("idea") || "").trim().slice(0, 2000);
+  if (!idea) return new Response(start(false), { status: 400, headers: HTML });
+  if (env && env.ASSETS) await env.ASSETS.put("idea:" + new Date().toISOString() + ":" + crypto.randomUUID().slice(0, 8), idea);
+  return new Response(start(true), { headers: HTML });
+}
 function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
     "<div class=\"head\"><h1>Contact</h1><p>One address; a person replies within two working days.</p></div>"
@@ -214,8 +231,9 @@ export default {
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/proof", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
+    if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env);
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
@@ -227,6 +245,7 @@ export default {
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/contact": return new Response(contact(), { headers: HTML });
       case "/pilot": return new Response(pilot(), { headers: HTML });
+      case "/start": return new Response(start(false), { headers: HTML });
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
       case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });

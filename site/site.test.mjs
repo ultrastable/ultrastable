@@ -9,6 +9,11 @@ const get = (u) => mod.fetch(new Request(u));
 globalThis.fetch = async () => { throw new Error("offline"); };
 let r = await get("https://ultrastable.app/anything");
 assert.equal(r.status, 301); assert.equal(r.headers.get("location"), "https://ultrastable.io/pilot");
+// FRONT-DOOR-1: the prompt bar page renders and a posted idea is stored and acknowledged
+r = await get("https://ultrastable.io/start"); assert.equal(r.status, 200); assert.match(await r.text(), /What do you want to build/);
+const put = []; const fd = new FormData(); fd.set("idea", "an app for bin day");
+r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: fd }), { ASSETS: { put: async (k, v) => put.push([k, v]) } });
+assert.equal(r.status, 200); assert.match(await r.text(), /Got it/); assert.equal(put.length, 1); assert.equal(put[0][1], "an app for bin day");
 r = await get("https://ultrastable.net/"); assert.equal(r.headers.get("location"), "https://ultrastable.io/proof");
 r = await get("https://www.ultrastable.io/how"); assert.equal(r.headers.get("location"), "https://ultrastable.io/how");
 for (const p of ["/", "/how", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
