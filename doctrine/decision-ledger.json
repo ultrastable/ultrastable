@@ -14,8 +14,9 @@
    "kind": "decision",
    "date": "2026-11-12",
    "title": "Write-back is an executable ledger row, not a page",
-   "body": "writeback record --kind lesson|decision writes doctrine/decision-ledger.json with a required file or grep probe; closedloop --check runs every probe.",
-   "probe": "grep:foundation/writeback.py::LEDGER = "
+   "body": "CLOSED-LOOP-1: writeback record --kind lesson|decision writes doctrine/decision-ledger.json with a required file or grep probe, and the closed-loop checks run every probe, so a lesson or decision is carried by code or CI fails.",
+   "probe": "grep:foundation/writeback.py::LEDGER = ",
+   "session": "session_0156nqDrJvHpEG6mS66nV7Xg"
   }
  ]
 }
