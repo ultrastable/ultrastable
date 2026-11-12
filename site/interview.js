@@ -184,9 +184,9 @@ export const JS = String.raw`(function () {
   }
   function live(id, a) {
     var li = step('Publishing'); mark(li, true, 'Live');
-    var m = el('div'); m.appendChild(el('p', null, 'Your site is live.'));
-    if (a && a.met && a.met.length) m.appendChild(el('p', null, 'Done: ' + a.met.slice(0, 3).join('; ') + '.'));
-    if (a && a.gaps && a.gaps.length) m.appendChild(el('p', null, 'Not yet: ' + a.gaps.slice(0, 2).map(function (g) { return g.what; }).join('; ') + '.'));
+    var m = el('div'); var rest = a && a.gaps ? a.gaps.length : 0; m.appendChild(el('p', null, rest ? 'Your site is live, with limits I want you to know about.' : 'Your site is live.'));
+    var vague = /basic html|css styling|structure is provided|javascript functions are defined/i; if (a && a.met && a.met.filter(function (x) { return !vague.test(x); }).length) m.appendChild(el('p', null, 'Working now: ' + a.met.filter(function (x) { return !vague.test(x); }).slice(0, 3).join('; ') + '.'));
+    if (a && a.gaps && a.gaps.length) m.appendChild(el('p', null, (a.fixed && a.fixed.length ? 'I tried to fix these and could not confirm it: ' : 'Not yet: ') + a.gaps.slice(0, 2).map(function (g) { return g.what; }).join('; ') + '.'));
     say('bot', m); S.busy = false; S.phase = 'live'; inp.placeholder = 'Tell me what to change…';
     chipRow([{ label: 'Open my site', cls: 'pick', href: '/s/' + id, blank: true }, { label: 'What I checked', href: '/s/' + id + '/review', blank: true }, { label: 'Start another', cls: 'quiet', fn: function () { location.reload(); } }]);
   }
