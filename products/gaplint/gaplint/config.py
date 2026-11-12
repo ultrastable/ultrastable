@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 DEFAULTS = {
-    "rules": ["GL001", "GL002", "GL003", "GL004", "GL006", "GL007"],
+    "rules": ["GL001", "GL002", "GL003", "GL004", "GL006", "GL007", "GL010"],
     "gap_entries": {
         "files": ["docs/BOOTSTRAP-GAPS.md", "BOOTSTRAP-GAPS.md"],
         "heading": r"^##\s+(?:Owner card:\s+)?BG-\d+",
@@ -30,6 +30,7 @@ DEFAULTS = {
             "never swallow an error": r"never swallow an error",
         },
     },
+    "self_closed": {"required_in": ["agents/AGENTS.md", "seed/agents/AGENTS.md", "agents/PROJECT-INSTRUCTIONS.md"], "scan": ["docs/handoff/*.md"]},
     "person_as_actor": {
         "files": ["docs/handoff/*.md"],
         "patterns": [r"\bneeds you to\b", r"\bif you want\b", r"\blet me know if\b", r"\btell me to\b", r"\byou should\b", r"\byou'll need to\b"],
