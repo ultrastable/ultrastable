@@ -20,6 +20,8 @@ CLAIM_LABEL = "in-progress"
 DENY_PREFIXES = (".git/", ".github/", "autonomy/", "ops/executor-log")
 DENY_NAMES = (".env", "id_rsa", "credentials")
 MAX_FILES, MAX_BYTES = 8, 200_000
+# Generated files are derived from the queue and docs, so any change makes them stale; the executor regenerates them instead of failing its own checks.
+GENERATORS = [["python3", "scripts/build_dashboard.py"]]
 CHECKS = [["python3", "scripts/lint_workflows.py"], ["python3", "-m", "unittest", "discover", "-s", "tests/foundation"]]
 
 
@@ -189,6 +191,9 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         sh(["git", "checkout", "-B", branch], root)
         files = apply_edits(out["files"], root)
         failed = []
+        if checks is None:
+            for g in GENERATORS:
+                sh(g, root)
         for c in (checks if checks is not None else CHECKS):
             code, o = sh(c, root)
             if code:
@@ -207,6 +212,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             raise RuntimeError("write-back failed: " + wo[-300:])
         if queue_mode():
             qmod.close(root, n, "closed by the pull request that carries this change")  # merging the PR closes the item: no remote state to update
+        if checks is None:
+            for g in GENERATORS:
+                gc, go = sh(g, root)
+                if gc:
+                    raise RuntimeError("generator failed: " + " ".join(g) + ": " + go[-300:])
         sh(["git", "add", "-A", "--", ".", f":!{LOG}"], root)
         sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "-m", f"{out.get('summary', issue['title'])} (#{n})"], root)
         code, o = sh(["git", "push", "-u", "origin", branch], root)
