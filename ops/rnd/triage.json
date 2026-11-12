@@ -1,0 +1,34 @@
+{
+ "Q-SCOUT-claude-code-865f57db": {
+  "outcome": "adopted",
+  "reason": "safe_path refused '..' and absolute paths but a symlink inside the tree could still carry a write outside it; apply_edits now resolves the target (claude-code 2.1.314 blockWritesOutsideWorkingDirectories)",
+  "task": "Q-ADOPT-write-containment",
+  "title": "executor refuses writes that resolve outside the working tree",
+  "probe": "grep:foundation/executor.py::resolves outside the working tree",
+  "body": "Shipped with the RND-1 change: apply_edits resolves the parent and any symlink target and refuses a path outside the repository. Test: tests/foundation/test_rnd.py."
+ },
+ "Q-SCOUT-claude-code-c35a8e45": {
+  "outcome": "adopted",
+  "reason": "claude-fable-5-2 became the default Fable model; a different model from the author reviewing it is the cross-model-rescoring gap's first step",
+  "task": "Q-ADOPT-fable-reviewer",
+  "title": "roster a second model family member as reviewer",
+  "probe": "grep:doctrine/code-agents.json::claude-fable-5-2",
+  "body": "Added a claude-fable-5-2 reviewer route to doctrine/code-agents.json so the author and the reviewer are different models. foundation/rescore.py (Q-GAP-cross-model-rescoring) remains the full closure."
+ },
+ "Q-SCOUT-claude-code-d1bbd9e0": {
+  "outcome": "declined",
+  "reason": "the release is about gateway pooled budgets and an ultrathink switch; the matched gap (other-cloud-proof) is unrelated, and per-agent spend caps already live in the autonomy policy"
+ },
+ "Q-SCOUT-cloudflare-agents-cb441d6b": {
+  "outcome": "adopted",
+  "reason": "Browser Run internal hostnames let the executor open a preview Worker in a browser and probe it, which closes the verify-before-merge step without a public URL",
+  "task": "Q-ADOPT-browser-preview-probe",
+  "title": "executor probes a preview Worker through Browser Run internal hostnames",
+  "probe": "grep:foundation/executor.py::preview.internal",
+  "body": "After an executor change that touches a Worker, open the preview through a Browser Run browser with an internal hostname (agents 0.31.0) and probe the page before the PR merges. Paths: foundation/executor.py, tests/foundation/test_executor.py."
+ },
+ "Q-SCOUT-google-adk-7a45defe": {
+  "outcome": "declined",
+  "reason": "the release adds workflow approvals and finer tool-execution control; this system has no approval waits by doctrine (closed loops), and the performance item concerns a runtime we do not use"
+ }
+}

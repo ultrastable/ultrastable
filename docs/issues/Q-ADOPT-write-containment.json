@@ -1,0 +1,13 @@
+{
+  "id": "Q-ADOPT-write-containment",
+  "title": "Q-ADOPT-write-containment: executor refuses writes that resolve outside the working tree",
+  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** grep:foundation/executor.py::resolves outside the working tree\n**Prediction:** adoption_shipped >= 1 within 336 h\n**Status:** open\n\nShipped with the RND-1 change: apply_edits resolves the parent and any symlink target and refuses a path outside the repository. Test: tests/foundation/test_rnd.py.\n\nAdopted from Q-SCOUT-claude-code-865f57db: safe_path refused '..' and absolute paths but a symlink inside the tree could still carry a write outside it; apply_edits now resolves the target (claude-code 2.1.314 blockWritesOutsideWorkingDirectories)",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "rnd",
+    "adopted"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "Q-ADOPT-browser-preview-probe",
+  "title": "Q-ADOPT-browser-preview-probe: executor probes a preview Worker through Browser Run internal hostnames",
+  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** grep:foundation/executor.py::preview.internal\n**Prediction:** adoption_shipped >= 1 within 336 h\n**Status:** open\n\nAfter an executor change that touches a Worker, open the preview through a Browser Run browser with an internal hostname (agents 0.31.0) and probe the page before the PR merges. Paths: foundation/executor.py, tests/foundation/test_executor.py.\n\nAdopted from Q-SCOUT-cloudflare-agents-cb441d6b: Browser Run internal hostnames let the executor open a preview Worker in a browser and probe it, which closes the verify-before-merge step without a public URL",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "rnd",
+    "adopted"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

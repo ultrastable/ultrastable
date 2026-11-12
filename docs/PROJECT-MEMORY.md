@@ -157,3 +157,6 @@ Update this file in the same PR as any change to status, rules, facts, owner ite
 
 ## Scout (2026-11-12)
 - SCOUT-1: `doctrine/scout.json` sources, `foundation/scout.py`, weekly `.github/workflows/scout.yml`. Scores feed entries against `doctrine/market.json` gaps and needs, files `Q-SCOUT-*` growth items, re-weights sources from `ops/scout/adopted.jsonl` (`scout --adopt`). Flow `scout` in `doctrine/flows.json`; clock `scout` in `doctrine/clocks.json`. The sandbox cannot reach the feeds; the workflow fetches them live.
+
+## RND-1: research, development and competitive analysis as code (2026-11-12)
+`foundation/rnd.py` runs inside the weekly scout workflow. Profiles of each competitor (`ops/rnd/profiles/`), a capability diff against what this repo proves, gap items (`Q-RND-GAP-*`), experiments (`Q-EXP-*`), scout findings triaged into `Q-ADOPT-*` tasks or declined (`ops/rnd/triage.json`), outcomes scored once (`ops/rnd/outcomes.jsonl`) and priorities the executor reads (`ops/rnd/priorities.json`). Open: Q-ADOPT-browser-preview-probe. The first live profile refresh happens in Actions (the sandbox gets 403 from the feeds).

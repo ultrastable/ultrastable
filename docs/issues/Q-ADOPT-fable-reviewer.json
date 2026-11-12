@@ -1,0 +1,13 @@
+{
+  "id": "Q-ADOPT-fable-reviewer",
+  "title": "Q-ADOPT-fable-reviewer: roster a second model family member as reviewer",
+  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** grep:doctrine/code-agents.json::claude-fable-5-2\n**Prediction:** adoption_shipped >= 1 within 336 h\n**Status:** open\n\nAdded a claude-fable-5-2 reviewer route to doctrine/code-agents.json so the author and the reviewer are different models. foundation/rescore.py (Q-GAP-cross-model-rescoring) remains the full closure.\n\nAdopted from Q-SCOUT-claude-code-c35a8e45: claude-fable-5-2 became the default Fable model; a different model from the author reviewing it is the cross-model-rescoring gap's first step",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "rnd",
+    "adopted"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

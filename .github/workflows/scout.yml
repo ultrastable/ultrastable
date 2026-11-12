@@ -18,8 +18,10 @@ jobs:
         run: python3 scripts/actions_guard.py scout
       - name: Scout the state of the art (SCOUT-1)
         run: python3 -m foundation scout --run --apply
+      - name: Product-manager R&D pass (RND-1, competitor profiles, gaps, experiments, adoption)
+        run: python3 -m foundation rnd --run --apply
       - name: Commit findings, state and the pass log
         run: |
           git config user.name "ultrastable-scout"; git config user.email "actions@users.noreply.github.com"
-          git add docs/issues ops/scout
-          git diff --cached --quiet || { git commit -m "scout: weekly pass, findings filed and sources re-weighted"; git pull --rebase -q origin main; git push origin HEAD:main; }
+          git add docs/issues ops/scout ops/rnd
+          git diff --cached --quiet || { git commit -m "scout and rnd: weekly pass, findings filed, profiles refreshed, sources re-weighted"; git pull --rebase -q origin main; git push origin HEAD:main; }
