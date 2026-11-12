@@ -104,7 +104,26 @@ def build_prompt(issue: dict, tree: str) -> str:
             + (lambda c: f"\n{c[:6000]}\n" if c else "")(_public_context(issue)) + ref)
 
 
-def call_model(prompt: str, key: str, model: str | None = None) -> dict:
+def cf_ready() -> bool:
+    return bool(os.environ.get("CLOUDFLARE_API_TOKEN") and os.environ.get("CLOUDFLARE_ACCOUNT_ID"))
+
+
+def call_cloudflare(prompt: str) -> dict:
+    """Second model route (no Anthropic key needed): Workers AI on the account the fleet already holds. Same JSON contract as call_model."""
+    acct, tok = os.environ["CLOUDFLARE_ACCOUNT_ID"], os.environ["CLOUDFLARE_API_TOKEN"]
+    model = os.environ.get("EXECUTOR_CF_MODEL", "@cf/qwen/qwen2.5-coder-32b-instruct")
+    req = urllib.request.Request(f"https://api.cloudflare.com/client/v4/accounts/{acct}/ai/run/{model}", method="POST",
+        data=json.dumps({"messages": [{"role": "user", "content": prompt}], "max_tokens": 7000}).encode(),
+        headers={"authorization": "Bearer " + tok, "content-type": "application/json"})
+    with urllib.request.urlopen(req, timeout=300) as r:
+        text = json.loads(r.read())["result"]["response"]
+    s, e = text.find("{"), text.rfind("}")
+    return json.loads(text[s:e + 1])
+
+
+def call_model(prompt: str, key: str | None, model: str | None = None) -> dict:
+    if not key:
+        return call_cloudflare(prompt)
     model = model or os.environ.get("EXECUTOR_MODEL", "claude-sonnet-5-5")
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", method="POST",
         data=json.dumps({"model": model, "max_tokens": 16000, "messages": [{"role": "user", "content": prompt}]}).encode(),
@@ -154,7 +173,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     n = issue["number"]
     row = {"issue": n, "title": issue["title"], "prediction": f"issue_{n}_closed = 1 within 24 h"}
     key = os.environ.get("ANTHROPIC_API_KEY")
-    if model_call is None and not key:
+    if model_call is None and not key and not cf_ready():
         row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (scheduled task that starts a Claude session, which runs --pick and --record) takes the item without any key")
         log(root, row); return row
     if not apply:

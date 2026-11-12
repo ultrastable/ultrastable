@@ -113,6 +113,14 @@
    "title": "Work queue is repository data; Issues are turned off on the code repo",
    "body": "Measured: python3 -m foundation queue --check prints queue ok with 26 takeable items, and 17 former GitHub issues were migrated to docs/issues/Q-*.json. The executor now picks from foundation/queue.py (EXECUTOR_SOURCE=issues restores the old source), claims nothing remotely, and closes the item inside its own pull request so the merge is the closure; three consecutive failures park an item. Issue scripts exit 0 when has_issues is false, funding findings become queue items, and tests/foundation/test_executor.py covers the queue.",
    "probe": "grep:foundation/queue.py::QUEUE-1"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-picked-queue-items-live-but-had-no-model-route",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Executor picked queue items live but had no model route",
+   "body": "A dispatched executor run on main picked Q-10 from the repo-data queue and recorded no-model-credential, because ANTHROPIC_API_KEY is not bound in Actions; the issues sweep also failed on disabled Issues. Measured after the fix: pytest tests/foundation/test_executor.py returned 9 passed, and python3 -m foundation orphans --sync-issue returned 'issues off: backlog enforced by orphans --check in checks; zero=True'. Added a Workers AI model route using the Cloudflare secrets the repo already holds, and org settings now declare has_issues false so a settings apply cannot turn Issues back on.",
+   "probe": "grep:foundation/executor.py::call_cloudflare"
   }
  ]
 }
