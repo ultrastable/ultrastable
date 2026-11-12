@@ -31,6 +31,7 @@ class Agents(unittest.TestCase):
 
     def test_invoke_anthropic_api(self):
         c = []; agents.invoke(A["anthropic-api"], "p", ENV, fake(c)); self.assertEqual(c[0][1]["x-api-key"], "k"); self.assertEqual(c[0][2]["model"], "claude-sonnet-5-5")
+        c = []; agents.invoke(A["anthropic-api-fable"], "p", ENV, fake(c)); self.assertEqual(c[0][2]["model"], "claude-fable-5-2")  # RND-1: the second-model reviewer route
 
     def test_claude_session_is_not_an_http_route(self):
         self.assertFalse(agents.available(A["claude-session"], ENV))

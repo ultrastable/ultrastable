@@ -80,8 +80,15 @@ def apply_edits(edits: list[dict], root=REPO) -> list[str]:
     if total > MAX_BYTES:
         raise ValueError("change is larger than the executor limit")
     out = []
+    base = Path(root).resolve()
     for e in edits:
         f = Path(root) / e["path"]
+        try:  # RND-1 (adopted from claude-code v2.1.314): a symlink inside the tree must not carry a write outside the working tree
+            f.parent.resolve().relative_to(base)
+            if f.is_symlink():
+                f.resolve().relative_to(base)
+        except ValueError:
+            raise ValueError(f"{e['path']!r}: resolves outside the working tree")
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(e["content"], encoding="utf-8")
         out.append(e["path"])
@@ -204,7 +211,8 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     issues = crossrepo.takeable(repo, root) if remote else qmod.takeable(root) if qm else gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root)
     if qm and not issue_no:
         from . import growth  # GROWTH-1: a product manager keeps the backlog from devolving into bug fixes
-        issues = growth.prefer(issues, root)
+        from . import rnd  # RND-1: competitor gaps and adopted findings carry a priority the loop computed
+        issues = rnd.boost(growth.prefer(issues, root), root)
     issue = next((i for i in issues if str(i["number"]) == str(issue_no)), None) if issue_no else pick(issues)
     if not issue:
         row = {"result": "idle", "detail": "no open issue the executor may take", "prediction": "open_issues_takeable <= 0 within 24 h"}

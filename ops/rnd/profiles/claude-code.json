@@ -1,0 +1,21 @@
+{
+ "capabilities": {
+  "autonomous-pr": "*GitHub**: run automatically in response to repository events such as pull requests or releases A single scheduled task can combine triggers. For example",
+  "cross-model-review": "reviews the PR instead of starting from a blank terminal. * **Bespoke code review**: a GitHub trigger runs on `pull_request.opened`. The scheduled task",
+  "existing-repo-adoption": "* **Backlog maintenance**: a schedule trigger runs every weeknight in your repository, with your issue tracker added as a connector. The scheduled task rea",
+  "idea-to-deploy": "iggers. For example, a PR review task can run nightly, trigger from a deploy script, and also react to every new PR. A scheduled task doesn't need",
+  "mcp-server": "positories, and a set of [connectors](https://code.claude.com/docs/en/mcp.md), packaged once and run automatically. Scheduled tasks execute on",
+  "observability": "e to investigate the alert in the fire payload, so it pulls the stack trace and correlates it with recent commits in the repository. It then open",
+  "permission-guardrails": "les/13930452), you also need a role that includes the scheduled tasks permission. An Owner can add it in a role's **Remote sessions** section at [**Or",
+  "scheduled-agents": "er all available pages before exploring further. # Automate work with scheduled tasks > Put Claude Code on autopilot. Create scheduled tasks, formerl",
+  "self-hostable": "on Anthropic-managed cloud infrastructure, or on your organization's [self-hosted environment](https://code.claude.com/docs/en/self-hosted-environments",
+  "spend-budgets": "urly limits has overage. When a scheduled task hits your subscription usage limit, organizations with usage credits turned on can keep running schedule"
+ },
+ "errors": {
+  "https://github.com/anthropics/claude-code/releases.atom": "HTTPError: HTTP Error 403: Forbidden"
+ },
+ "id": "claude-code",
+ "name": "Claude Code (routines and releases)",
+ "refreshed_at": "2026-11-12T19:57:40Z",
+ "sha": "5fd36755a6d7"
+}

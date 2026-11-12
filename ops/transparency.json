@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T19:49:04Z",
- "commit": "642bc93",
+ "generated": "2026-11-12T20:01:30Z",
+ "commit": "86e943b",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 68,
@@ -18,18 +18,18 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 85,
-  "backlog_items": 90
+  "backlog_open": 93,
+  "backlog_items": 98
  },
  "throughput": {
   "queue": {
-   "items": 90,
+   "items": 98,
    "by_status": {
-    "open": 85,
+    "open": 93,
     "closed": 4,
     "done": 1
    },
-   "takeable_now": 83
+   "takeable_now": 91
   },
   "merged": {
    "total": 0,
@@ -60,26 +60,26 @@
   },
   "changelog": [],
   "deploys": {
-   "site_runs": 42,
+   "site_runs": 43,
    "by_conclusion": {
-    "success": 40,
+    "success": 41,
     "cancelled": 2
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-12T19:01:32Z",
+    "createdAt": "2026-11-12T19:51:38Z",
     "event": "push",
-    "headSha": "98d2e61d894823eedae1b30c15c4a3bfbcbc2737"
+    "headSha": "e88dab4e858c49d266e36cc0bb3607bb1dd6c497"
    },
    "per_day_success": {
-    "2026-11-12": 40
+    "2026-11-12": 41
    }
   },
   "executor": {
    "runs": 12,
    "by_conclusion": {
-    "success": 3,
-    "failure": 9
+    "failure": 9,
+    "success": 3
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -106,7 +106,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 5769.6,
+   "age_s": 6515.4,
    "status": "fresh",
    "missed": 0
   },
@@ -130,7 +130,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 2803.6,
+   "age_s": 542.4,
    "status": "fresh",
    "missed": 0,
    "lag_s": 34.0
@@ -139,7 +139,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 16491.6,
+   "age_s": 17237.4,
    "status": "fresh",
    "missed": 0
   }
@@ -163,13 +163,13 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-12T19:48:53Z",
+  "generated": "2026-11-12T20:01:19Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1315.6,
+    "expected_today": 1315.7,
     "value": null,
     "behind": null,
     "progress": null
@@ -178,7 +178,7 @@
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 566.5,
+    "expected_today": 566.6,
     "value": null,
     "behind": null,
     "progress": null
@@ -187,7 +187,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 822.4,
+    "expected_today": 822.5,
     "value": null,
     "behind": null,
     "progress": null
@@ -212,7 +212,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-12T19:48:53Z",
+     "at": "2026-11-12T20:01:19Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -273,8 +273,8 @@
    "target": 0.4
   },
   "target_growth_share": 0.4,
-  "growth_items_takeable": 13,
-  "items_takeable": 83,
+  "growth_items_takeable": 21,
+  "items_takeable": 91,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -319,7 +319,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 5784.5,
+   "last_beat_age_s": 6531.0,
    "expected_interval_s": 21600,
    "beats_24h": 12,
    "expected_24h": 4.0,
@@ -330,7 +330,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 16506.5,
+   "last_beat_age_s": 17253.0,
    "expected_interval_s": 86400,
    "beats_24h": 7,
    "expected_24h": 1.0,
@@ -341,9 +341,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 2848.5,
+   "last_beat_age_s": 589.0,
    "expected_interval_s": 86400,
-   "beats_24h": 42,
+   "beats_24h": 43,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -352,12 +352,12 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": null,
+   "last_beat_age_s": 582.0,
    "expected_interval_s": 604800,
-   "beats_24h": 0,
+   "beats_24h": 1,
    "expected_24h": 0.1,
    "median_jitter_s": null,
-   "status": "stopped"
+   "status": "ticking"
   }
  ],
  "topology": {
@@ -1828,6 +1828,24 @@
  "changes": {
   "commits": [
    {
+    "sha": "86e943b",
+    "at": "2026-11-12T19:51:57+00:00",
+    "author": "ultrastable-scout",
+    "subject": "scout: weekly pass, findings filed and sources re-weighted",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/86e943b4fdc7671ecbe21d3d93c47decc53454ab"
+   },
+   {
+    "sha": "e88dab4",
+    "at": "2026-11-12T20:51:35+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SCOUT-1: weekly scout of the state of the art feeds the growth product manager (#292)",
+    "pr": 292,
+    "item": "SCOUT-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/e88dab4e858c49d266e36cc0bb3607bb1dd6c497"
+   },
+   {
     "sha": "642bc93",
     "at": "2026-11-12T20:07:58+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2168,24 +2186,6 @@
     "pr": 254,
     "item": "GENESIS-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/91f16db63e9a3799c600f365115bd09fbd35ef07"
-   },
-   {
-    "sha": "af21ab4",
-    "at": "2026-11-12T14:53:44+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "TRANSPARENCY-1: daily publish workflow for /live (#252)",
-    "pr": 252,
-    "item": "TRANSPARENCY-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/af21ab44b17e1b05a3e80a9bd183288f45a14e27"
-   },
-   {
-    "sha": "a2d6fd2",
-    "at": "2026-11-12T14:52:15+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "TRANSPARENCY-1: bind D1 in site deploy (#251)",
-    "pr": 251,
-    "item": "TRANSPARENCY-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/a2d6fd2f6070487a7984353f7253381e847e08b7"
    }
   ],
   "pull_requests": []

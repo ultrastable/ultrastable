@@ -52,6 +52,10 @@
         {
           "signal": "budget.state",
           "via": "file"
+        },
+        {
+          "signal": "rnd.priorities",
+          "via": "file:ops/rnd/priorities.json"
         }
       ],
       "outflows": [
@@ -252,6 +256,10 @@
         {
           "signal": "scout.log",
           "via": "file:ops/scout/log.jsonl"
+        },
+        {
+          "signal": "rnd.log",
+          "via": "file:ops/rnd/log.jsonl"
         }
       ],
       "outflows": [
@@ -642,9 +650,17 @@
         {
           "signal": "scout.log",
           "via": "file:ops/scout/log.jsonl"
+        },
+        {
+          "signal": "rnd.log",
+          "via": "file:ops/rnd/log.jsonl"
+        },
+        {
+          "signal": "rnd.priorities",
+          "via": "file:ops/rnd/priorities.json"
         }
       ],
-      "feedback": "an adopted finding raises its source's weight and a declined or quiet one lowers it, so the next pass reads better sources and files fewer misses",
+      "feedback": "an adopted finding raises its source's weight and a declined or quiet one lowers it, so the next pass reads better sources and files fewer misses; shipped and stalled adoptions re-weight the source and set item priority (rnd.priorities), which the executor reads",
       "bindings": []
     }
   },

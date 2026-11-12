@@ -571,6 +571,14 @@
    "title": "Scout stage for the growth product manager",
    "body": "Rowan: keep scouting the state of the art. Weekly scout.yml reads release feeds, scores against the gap register, files growth items and re-weights sources from adoption outcomes; flow and clock declared. Session: session_0156nqDrGFZaa8zQwcdGZNQU",
    "probe": "grep:foundation/scout.py::def reweight"
+  },
+  {
+   "id": "decision-2026-11-12-rnd-1-product-manager-r-d-loop-is-code",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "RND-1 product-manager R&D loop is code",
+   "body": "foundation/rnd.py: competitor profiles on cadence, capability gap diff, experiments, scout triage into executor tasks, outcome feedback to source weights and priorities",
+   "probe": "file:foundation/rnd.py"
   }
  ]
 }

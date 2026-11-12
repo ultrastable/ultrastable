@@ -1,0 +1,34 @@
+{
+ "_doc": "RND-1 (owner, 2026-11-12): research, development and competitive analysis are the product manager's job, run as code. Each competitor has a profile refreshed on its cadence from the pages and feeds listed here; a profile records which capabilities (the taxonomy below) the sources evidence, with the matching sentence. foundation/rnd.py diffs profiles against the last refresh (a capability that appeared or vanished is a finding), diffs the market against what this repository proves (`ours` probes), proposes experiments from findings and adopts scout items into executor tasks. `ours` is a probe spec (file: or grep:) that passes only when the capability exists here; a capability evidenced by at least min_competitors competitors that this repository lacks is a gap and becomes a queue item. Sources are public pages read over https; a dead source is recorded, never swallowed.",
+ "version": "1.0.0",
+ "min_competitors": 2,
+ "cadence_days": 7,
+ "max_experiments_per_run": 3,
+ "stall_days": 21,
+ "metric_for": {"mcp-server": "agent_hits_7d", "idea-to-deploy": "pilot_page_views_7d", "existing-repo-adoption": "pageviews_7d", "default": "pageviews_7d"},
+ "capabilities": [
+  {"id": "scheduled-agents", "what": "agents that run on a schedule or trigger with no person present", "component": "loops-autonomy", "rx": "\\b(schedul\\w+|cron|routines?|recurring)\\b", "ours": "file:.github/workflows/scout.yml"},
+  {"id": "autonomous-pr", "what": "agent opens, checks and merges its own pull request", "component": "code-repo", "rx": "\\b(pull requests?|open(s|ed)? a PR|auto-?merge)\\b", "ours": "grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"", "gap": "executor-merged-pr"},
+  {"id": "multi-agent-roles", "what": "named sub-agents or roles with separate scopes", "component": "agents-roles", "rx": "\\b(sub-?agents?|multi-agent|custom agents?|agent teams?)\\b", "ours": "file:agents/roles/product-manager.md"},
+  {"id": "sandboxed-execution", "what": "code runs in an isolated sandbox", "component": "trust-permissions", "rx": "\\bsandbox\\w*", "ours": "file:doctrine/boundary.json"},
+  {"id": "spend-budgets", "what": "spend or usage limits per agent, user or group", "component": "trust-permissions", "rx": "\\b(budgets?|spend limits?|usage limits?|cost caps?)\\b", "ours": "file:seed/autonomy/policy.json"},
+  {"id": "permission-guardrails", "what": "permission modes, allowlists and guardrails on agent actions", "component": "trust-permissions", "rx": "\\b(permissions?|allowlist\\w*|guardrails?)\\b", "ours": "file:agents/autonomy-policy.json"},
+  {"id": "cross-model-review", "what": "a second model reviews or re-scores the first", "component": "verification", "rx": "\\b(code review|second model|cross-model|reviewer model|review agent)\\b", "ours": "file:foundation/rescore.py", "gap": "cross-model-rescoring"},
+  {"id": "mcp-server", "what": "exposes or consumes tools over the Model Context Protocol", "component": "agents-roles", "rx": "\\bMCP\\b", "ours": "grep:site/agentic.js::/mcp"},
+  {"id": "idea-to-deploy", "what": "plain-language prompt to a deployed app", "component": "idea-intake", "rx": "\\b(deploy\\w*|one-click|publish\\w*)\\b", "ours": "grep:site/worker.js::async function build"},
+  {"id": "existing-repo-adoption", "what": "works on an existing repository or codebase", "component": "code-repo", "rx": "\\b(existing (repo\\w*|codebase)|import\\w* (a |your )?(repo\\w*|github)|your repo\\w*)\\b", "ours": "file:foundation/adopt.py", "gap": "adopt-existing-repo"},
+  {"id": "self-hostable", "what": "can be run in the customer's own account", "component": "portability", "rx": "\\b(self-host\\w*|open[- ]source|your own (cloud|account|infrastructure))\\b", "ours": "file:docs/FOUNDATION.md"},
+  {"id": "observability", "what": "traces, logs and telemetry of agent runs", "component": "operations", "rx": "\\b(traces?|observability|telemetry|audit logs?)\\b", "ours": "file:seed/analytics/analytics.js"},
+  {"id": "other-cloud", "what": "runs on more than one cloud", "component": "portability", "rx": "\\b(AWS|GCP|Azure|multi-cloud|Vercel)\\b", "ours": "file:docs/bootstrapping/other-cloud-proof.json", "gap": "other-cloud-proof"}
+ ],
+ "competitors": [
+  {"id": "github-copilot-agent", "name": "GitHub Copilot coding agent", "sources": [{"url": "https://docs.github.com/copilot/concepts/coding-agent/about-copilot-coding-agent", "kind": "page"}]},
+  {"id": "claude-code", "name": "Claude Code (routines and releases)", "sources": [{"url": "https://code.claude.com/docs/en/routines.md", "kind": "page"}, {"url": "https://github.com/anthropics/claude-code/releases.atom", "kind": "atom"}]},
+  {"id": "cloudflare-vibesdk", "name": "Cloudflare VibeSDK", "sources": [{"url": "https://blog.cloudflare.com/deploy-your-own-ai-vibe-coding-platform/", "kind": "page"}]},
+  {"id": "app-builders", "name": "Lovable, Bolt.new, v0, Replit, Base44", "sources": [{"url": "https://www.ionos.com/digitalguide/websites/web-development/best-ai-app-builder.md", "kind": "page"}]},
+  {"id": "factory", "name": "Factory", "sources": [{"url": "https://factory.com/news/factory-is-ga", "kind": "page"}]},
+  {"id": "openai-codex", "name": "OpenAI Codex", "sources": [{"url": "https://github.com/openai/codex/releases.atom", "kind": "atom"}]},
+  {"id": "openhands", "name": "OpenHands", "sources": [{"url": "https://github.com/All-Hands-AI/OpenHands/releases.atom", "kind": "atom"}]},
+  {"id": "langgraph", "name": "LangGraph", "sources": [{"url": "https://github.com/langchain-ai/langgraph/releases.atom", "kind": "atom"}]}
+ ]
+}
