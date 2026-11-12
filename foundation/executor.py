@@ -197,6 +197,14 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd"], root)
             raise RuntimeError("checks failed: " + " | ".join(failed))
         row.update(files=files, summary=out.get("summary", ""))
+        # WRITEBACK-1: the `checks` write-back gate fails any change that has code and no write-back (the first live executor PR failed on it), so
+        # the executor records its own decision in the same commit: what it did, the evidence (checks that passed) and a file probe.
+        probe_file = next((f for f in files if f != qmod.QUEUE_GLOB and not f.startswith("docs/issues/")), files[0] if files else "docs/issues")
+        wc, wo = sh(["python3", "-m", "foundation", "writeback", "record", "--kind", "decision", "--title", f"Executor closed {n}: {out.get('summary', issue['title'])}"[:140],
+                     "--body", f"Measured: checks passed before the PR ({', '.join(' '.join(c) for c in (checks if checks is not None else CHECKS))}); files changed: {', '.join(files)}.",
+                     "--owner", "executor", "--probe", f"file:{probe_file}"], root)
+        if wc:
+            raise RuntimeError("write-back failed: " + wo[-300:])
         if queue_mode():
             qmod.close(root, n, "closed by the pull request that carries this change")  # merging the PR closes the item: no remote state to update
         sh(["git", "add", "-A", "--", ".", f":!{LOG}"], root)

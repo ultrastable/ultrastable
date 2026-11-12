@@ -129,6 +129,14 @@
    "title": "Executor PR sat as an unchecked draft",
    "body": "The first live executor run opened PR 233 for Q-10 as a draft with zero checks, because a PR opened with GITHUB_TOKEN raises no pull_request event and a draft runs no CI, so the lane had nothing to merge. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed and the executor now marks the PR ready and dispatches checks.yml on its branch right after pr create, recording any failed kick in the log row.",
    "probe": "grep:foundation/executor.py::kick_failed"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-prs-failed-the-write-back-gate",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Executor PRs failed the write-back gate",
+   "body": "The first live executor PR (233 for Q-10) failed the checks step 'code changed with no write-back'. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed, and a manual python3 -m foundation writeback record --kind decision with a Measured body and a file probe printed 'recorded'. The executor now records that decision itself in the same commit as its change.",
+   "probe": "grep:foundation/executor.py::WRITEBACK-1"
   }
  ]
 }

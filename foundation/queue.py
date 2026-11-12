@@ -11,6 +11,7 @@ import json, re, shlex, subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+QUEUE_GLOB = "docs/issues/"
 CMD_ALLOWED = ("gh ", "python3 scripts/", "python3 -m foundation ", "python3 tools/", "git ")
 FIELD = lambda body, name: (re.search(rf"^\*\*{name}:\*\*\s*(.+)$", body, re.M) or [None, ""])[1].strip()
 
