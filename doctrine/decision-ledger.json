@@ -57,6 +57,14 @@
    "title": "Code repo holds code; administration lives in ops; the front door is one prompt bar",
    "body": "Measured: 27 of 44 open issues in ultrastable/ultrastable were administration (funding, patent, legal, owner cards, org setup) and were transferred to the private ultrastable/ops repo; 19 code tasks remain and are executor-owned. Site 0.4.0 adds /start, a single prompt bar that stores a plain-words idea in KV; node site/site.test.mjs passes with the page and the POST. Next, tracked in ops: executor reads its queue from repo data so Issues can be disabled on the code repo, the idea consumer asks follow-up questions and scaffolds a Cloudflare Worker, and the six archived duplicate repos are removed after a mirror backup.",
    "probe": "grep:site/worker.js::FRONT-DOOR-1"
+  },
+  {
+   "id": "decision-2026-11-12-six-archived-duplicate-repos-deleted-after-mirror-backup",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Six archived duplicate repos deleted after mirror backup",
+   "body": "Measured: gh repo list ultrastable now shows ultrastable, ops, license, spec, workers and .github only. Before deletion each of seed, platform, docs, site, business and ip was mirror-cloned (1 ref each, 87K to 515K) to repo-backups outside the repository; their content already lives in ultrastable/ultrastable.",
+   "probe": "grep:doctrine/decision-ledger.json::archived-duplicate"
   }
  ]
 }
