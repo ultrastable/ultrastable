@@ -522,6 +522,14 @@
    "title": "Workers AI may return response as a parsed dict",
    "body": "call_cloudflare assumed a string and crashed with AttributeError on .find; it now returns dicts as is, with a test.",
    "probe": "grep:foundation/executor.py::isinstance\\(text, dict\\)"
+  },
+  {
+   "id": "decision-2026-11-12-exec-x-executor-works-ultrastable-workers-issues-in-a-clone-",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "EXEC-X: executor works ultrastable/workers issues in a clone, capped 4 PRs/day",
+   "body": "Remote intake via foundation/crossrepo.py: eligibility needs a machine-readable closing probe, skips epics, held and protected-change items; uses npm test and the contract PR body; no main-repo writeback.",
+   "probe": "file:foundation/crossrepo.py"
   }
  ]
 }

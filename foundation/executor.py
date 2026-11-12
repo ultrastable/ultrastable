@@ -11,6 +11,7 @@ is required. Without --apply nothing is changed on GitHub or in git: the pick, t
 from __future__ import annotations
 import datetime as dt, json, os, re, subprocess, urllib.request
 from . import queue as qmod
+from . import crossrepo
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -166,7 +167,7 @@ def publish_change(repo: str, root, branch: str, subject: str, body: str) -> dic
         return {"pr": None, "error": "pr create failed: " + o[-200:]}
     pr, res = o.splitlines()[-1], {}
     res["pr"] = pr
-    for kick in (["gh", "pr", "ready", pr, "-R", repo], ["gh", "workflow", "run", "checks.yml", "-R", repo, "--ref", branch]):
+    for kick in (["gh", "pr", "ready", pr, "-R", repo], ["gh", "workflow", "run", "ci.yml" if remote else "checks.yml", "-R", repo, "--ref", branch]):
         kc, ko = sh(kick, root)
         if kc:
             res["kick_failed"] = (res.get("kick_failed", "") + f" {' '.join(kick[:3])}: {ko[-120:]}").strip()
@@ -193,28 +194,32 @@ def queue_mode() -> bool:
     return os.environ.get("EXECUTOR_SOURCE", "queue") == "queue"
 
 
-def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None) -> dict:
+def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None, remote: bool = False) -> dict:
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)
-    issues = qmod.takeable(root) if queue_mode() else gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root)
-    if queue_mode() and not issue_no:
+    qm = queue_mode() and not remote  # EXEC-X: a remote repository (EXECUTOR_TARGET_REPOS) is worked from its own GitHub issues in a clone
+    lroot = REPO if remote else root  # the log, the model ladder and its reviewer stay the executor's own, whatever repository is being changed
+    if remote and checks is None:
+        checks = crossrepo.CHECKS
+    issues = crossrepo.takeable(repo, root) if remote else qmod.takeable(root) if qm else gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root)
+    if qm and not issue_no:
         from . import growth  # GROWTH-1: a product manager keeps the backlog from devolving into bug fixes
         issues = growth.prefer(issues, root)
     issue = next((i for i in issues if str(i["number"]) == str(issue_no)), None) if issue_no else pick(issues)
     if not issue:
         row = {"result": "idle", "detail": "no open issue the executor may take", "prediction": "open_issues_takeable <= 0 within 24 h"}
-        log(root, row); return row
+        log(lroot, row); return row
     n = issue["number"]
     row = {"issue": n, "title": issue["title"], "prediction": f"issue_{n}_closed = 1 within 24 h"}
     key = os.environ.get("ANTHROPIC_API_KEY")
     from . import agent_ladder  # SYS-2: which model writes the change, who reviews it and what it cost
     if model_call is None and not key and not cf_ready() and not agent_ladder.rungs(root):
         row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (a cloud-hosted routine that starts a Claude session, which runs --pick and --record) takes the item without any key")
-        log(root, row); return row
+        log(lroot, row); return row
     if not apply:
         row.update(result="dry-run", detail="would claim, change, check and open a PR")
         return row
-    gi = (lambda *a, **k: (0, "")) if queue_mode() else sh  # queue items carry no remote labels or comments; the log row is the claim
+    gi = (lambda *a, **k: (0, "")) if qm else sh  # queue items carry no remote labels or comments; the log row is the claim
     gi(["gh", "issue", "edit", str(n), "-R", repo, "--add-label", CLAIM_LABEL], root)
     gi(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"claim: executor {now()}"], root)
     try:
@@ -228,7 +233,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if model_call:
                     out, meta = model_call(prompt), {}
                 else:
-                    out, meta = agent_ladder.call(prompt, attempt, root=root)
+                    out, meta = agent_ladder.call(prompt, attempt, root=lroot)
                     row.setdefault("models", []).append(meta["model"])
                 files = apply_edits(out["files"], root)
             except (ValueError, KeyError, TypeError, OSError, AttributeError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
@@ -244,7 +249,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if code:
                     failed.append(f"{' '.join(c)}: {o[-2500:]}")
             if not failed and model_call is None:
-                rv = agent_ladder.review(issue, out, meta.get("family", ""), root=root)
+                rv = agent_ladder.review(issue, out, meta.get("family", ""), root=lroot)
                 row["review"] = rv
                 if not rv["approve"]:
                     failed.append("independent reviewer (" + str(rv.get("model")) + ") vetoed the change: " + "; ".join(rv["reasons"]))
@@ -258,14 +263,14 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         # WRITEBACK-1: the `checks` write-back gate fails any change that has code and no write-back (the first live executor PR failed on it), so
         # the executor records its own decision in the same commit: what it did, the evidence (checks that passed) and a file probe.
         probe_file = next((f for f in files if f != qmod.QUEUE_GLOB and not f.startswith("docs/issues/")), files[0] if files else "docs/issues")
-        wc, wo = sh(["python3", "-m", "foundation", "writeback", "record", "--kind", "decision", "--title", f"Executor closed {n}: {out.get('summary', issue['title'])}"[:140],
+        wc, wo = (0, "") if remote else sh(["python3", "-m", "foundation", "writeback", "record", "--kind", "decision", "--title", f"Executor closed {n}: {out.get('summary', issue['title'])}"[:140],
                      "--body", f"Measured: checks passed before the PR ({', '.join(' '.join(c) for c in (checks if checks is not None else CHECKS))}); files changed: {', '.join(files)}.",
                      "--owner", "executor", "--probe", f"file:{probe_file}"], root)
         if wc:
             raise RuntimeError("write-back failed: " + wo[-300:])
-        if queue_mode():
+        if qm:
             qmod.close(root, n, "closed by the pull request that carries this change")  # merging the PR closes the item: no remote state to update
-        if checks is None:
+        if checks is None and not remote:
             for g in GENERATORS:
                 gc, go = sh(g, root)
                 if gc:
@@ -282,11 +287,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         row.update(result="pr-opened", pr=o.splitlines()[-1])
         # A PR opened with GITHUB_TOKEN raises no pull_request event, and a draft runs no CI, so the executor starts the loop itself: mark ready,
         # dispatch checks on the branch (workflow_dispatch is allowed for the token); the lane merges when that run completes green.
-        for kick in (["gh", "pr", "ready", row["pr"], "-R", repo], ["gh", "workflow", "run", "checks.yml", "-R", repo, "--ref", branch]):
+        for kick in (["gh", "pr", "ready", row["pr"], "-R", repo], ["gh", "workflow", "run", "ci.yml" if remote else "checks.yml", "-R", repo, "--ref", branch]):
             kc, ko = sh(kick, root)
             if kc:
                 row["kick_failed"] = (row.get("kick_failed", "") + f" {' '.join(kick[:3])}: {ko[-120:]}").strip()
-        log(root, row)
+        log(lroot, row)
     except Exception as e:  # recorded, labelled, never swallowed
         row.update(result="failed", detail=f"{type(e).__name__}: {str(e)[:600]}")
         from . import publicread
@@ -294,11 +299,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             # A public route exists: do not label executor-failed; release the claim so the next tick retries with public history in the prompt.
             row.update(result="retry-public", detail=row["detail"] + " | public unauthenticated read works; retrying next tick through it")
             gi(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL], root)
-            log(root, row)
+            log(lroot, row)
             return row
         gi(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL, "--add-label", "executor-failed"], root)
         gi(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"executor failed: {row['detail']}\n\nA failure is a backlog item: remove `executor-failed` to retry, or the next tick with a different provider takes it."], root)
-        log(root, row)
+        log(lroot, row)
     return row
 
 
@@ -331,6 +336,16 @@ def main(argv=None) -> int:
         os.environ["ULTRASTABLE_HOST"] = a.host
         log(REPO, row); print(json.dumps(row, indent=2)); return 0
     row = run(a.repo, a.apply, a.issue)
+    if row["result"] == "idle" and not a.issue:  # EXEC-X: own queue empty, so work the target repositories' issues (EXECUTOR_TARGET_REPOS)
+        for target in crossrepo.targets():
+            try:
+                root = crossrepo.clone(target) if a.apply else REPO
+                row = run(target, a.apply, None, root=root, remote=True)
+            except Exception as e:  # a target that cannot be reached must not hide the next one
+                row = {"result": "failed", "detail": f"{target}: {type(e).__name__}: {str(e)[:300]}"}
+                log(REPO, row)
+            if row["result"] != "idle":
+                break
     print(json.dumps(row, indent=2))
     if row["result"] == "no-model-credential":
         print("::warning::executor has no model credential on this host; recorded")

@@ -110,3 +110,20 @@ class RepairLoop(unittest.TestCase):
         with mock.patch.dict(os.environ, {"CLOUDFLARE_ACCOUNT_ID": "a", "CLOUDFLARE_API_TOKEN": "t"}), \
              mock.patch.object(urllib.request, "urlopen", return_value=io.BytesIO(body)):
             self.assertEqual(executor.call_cloudflare("p")["summary"], "s")
+
+    def test_crossrepo_eligibility_and_pr_body(self):
+        from foundation import crossrepo as cx
+        ok = {"title": "packs: x", "body": "a\n\nClosing probe: file_exists:core/x.js", "labels": [{"name": "open-loop"}]}
+        self.assertTrue(cx.eligible(ok))
+        self.assertFalse(cx.eligible(dict(ok, labels=[{"name": "protected-change"}])))
+        self.assertFalse(cx.eligible(dict(ok, title="EPIC: all")))
+        self.assertFalse(cx.eligible(dict(ok, body="no probe here")))
+        body = cx.pr_body(7, {"models": ["m"]}, "t")
+        for field in ("Item: #7", "Spec:", "Prediction:", "Evidence:", "Author:", "Reviewer:", "Closes #7"):
+            self.assertIn(field, body)
+
+    def test_crossrepo_cap_stops_intake(self):
+        from foundation import crossrepo as cx
+        from unittest import mock
+        with mock.patch.object(cx, "prs_today", return_value=cx.MAX_PRS_PER_DAY):
+            self.assertEqual(cx.takeable("o/r"), [])
