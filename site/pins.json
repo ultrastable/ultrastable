@@ -75,9 +75,9 @@
    ]
   },
   {
-   "status": "testing",
+   "status": "live",
    "name": "Chat-thread front door",
-   "what": "A pill input with dictation, rotating suggestions, tap-to-answer questions, then each build step shown as it runs. The question bank is static; the front door does not yet run the system test before building.",
+   "what": "A pill input with dictation, rotating suggestions, tap-to-answer questions, then each build step shown as it runs. It runs the system test first and tells a one-off idea plainly that it is not a fit. The question bank is still static.",
    "where": "site/interview.js",
    "issue": "Q-GAP-front-door-qualify",
    "code": [

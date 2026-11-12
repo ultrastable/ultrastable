@@ -132,7 +132,7 @@ export default {
    "id": "Q-GAP-front-door-qualify",
    "milestone": "Next",
    "owner": "product-manager",
-   "status": "open",
+   "status": "closed",
    "title": "Run the system test at the public front door before BUILD-1 builds a page",
    "trigger": "every executor run"
   },
@@ -235,8 +235,8 @@ export default {
    ],
    "issue": "Q-GAP-front-door-qualify",
    "name": "Chat-thread front door",
-   "status": "testing",
-   "what": "A pill input with dictation, rotating suggestions, tap-to-answer questions, then each build step shown as it runs. The question bank is static; the front door does not yet run the system test before building.",
+   "status": "live",
+   "what": "A pill input with dictation, rotating suggestions, tap-to-answer questions, then each build step shown as it runs. It runs the system test first and tells a one-off idea plainly that it is not a fit. The question bank is still static.",
    "where": "site/interview.js"
   },
   {
