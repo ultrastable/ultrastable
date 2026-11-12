@@ -17,3 +17,4 @@ Write-back target for decisions: what was decided, why, the default in effect an
 - 2026-11-12: [Org page confidentiality gate is a lint](2026-11-12-org-page-confidentiality-gate-is-a-lint.md)
 - 2026-11-12: [Instance dependencies are closed by evaluated probes](2026-11-12-instance-dependencies-are-closed-by-evaluated-probes.md)
 - 2026-11-12: [Merge PRs immediately and resolve everything](2026-11-12-merge-prs-immediately-and-resolve-everything.md)
+- 2026-11-12: [Zero-fuss setup is a checked rule](2026-11-12-zero-fuss-setup-is-a-checked-rule.md)
