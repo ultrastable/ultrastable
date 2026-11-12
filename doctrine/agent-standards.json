@@ -1,0 +1,110 @@
+{
+  "_doc": "AGENT-INTEROP-1 (owner directive 2026-11-12): which agent-interoperability standards the public site implements, declines or has pending, with source and date read. Checked by `python3 -m foundation agentstd --check`; consumed by tests/foundation/test_agentstd.py and site/agentic.js.",
+  "marker": "AGENT-CONSUMPTION",
+  "marker_text": "AGENT-CONSUMPTION: code is written to be read by agents as well as run. Public surfaces serve Link headers, llms.txt, an OpenAPI description, an API catalog, an MCP server card and a read-only MCP server (site/agentic.js); every endpoint has a stable operationId, errors are JSON with a machine-readable code, and no behaviour is explained only in prose. Standards and their status: doctrine/agent-standards.json (`python3 -m foundation agentstd --check`).",
+  "instruction_files": [
+    "AGENTS.md",
+    "agents/AGENTS.md",
+    "agents/PROJECT-INSTRUCTIONS.md",
+    "agents/roles/*.md",
+    "seed/AGENTS.md",
+    "seed/agents/AGENTS.md",
+    "seed/agents/roles/*.md",
+    ".github/copilot-instructions.md",
+    "seed/.github/copilot-instructions.md"
+  ],
+  "standards": [
+    {
+      "id": "markdown-for-agents",
+      "status": "pending",
+      "what": "Accept: text/markdown and .md suffix return page content as Markdown with Vary: Accept",
+      "source": "https://blog.cloudflare.com/agent-readiness/",
+      "read": "2026-11-12",
+      "published": "2026-04-17",
+      "trigger": "Accept: text/markdown negotiation is added to site/agentic.js withLinks",
+      "probe": "grep:doctrine/agent-standards.json::markdown-for-agents"
+    },
+    {
+      "id": "link-headers",
+      "status": "implemented",
+      "what": "RFC 8288 Link headers on HTML responses pointing to llms.txt, the OpenAPI description, the API catalog and the sitemap",
+      "source": "https://blog.cloudflare.com/agent-readiness/",
+      "read": "2026-11-12",
+      "code": "site/agentic.js",
+      "proof": "grep:site/site.test.mjs::api-catalog"
+    },
+    {
+      "id": "robots-content-signal",
+      "status": "implemented",
+      "what": "robots.txt declares Content-Signal: search=yes, ai-input=yes, ai-train=no",
+      "source": "https://blog.cloudflare.com/agent-readiness/",
+      "read": "2026-11-12",
+      "code": "site/agentic.js",
+      "proof": "grep:site/site.test.mjs::Content-Signal"
+    },
+    {
+      "id": "llms-txt",
+      "status": "implemented",
+      "what": "llms.txt in the llmstxt.org shape: H1, blockquote summary, H2 file lists, an Optional section",
+      "source": "https://llmstxt.org/",
+      "read": "2026-11-12",
+      "code": "site/worker.js",
+      "proof": "grep:site/worker.js::llms\\.txt"
+    },
+    {
+      "id": "openapi",
+      "status": "implemented",
+      "what": "OpenAPI 3.1 description of the public API at /openapi.json",
+      "source": "https://spec.openapis.org/oas/v3.1.0",
+      "read": "2026-11-12",
+      "code": "site/agentic.js",
+      "proof": "grep:site/agentic.js::openapi: \"3\\.1\\.0\""
+    },
+    {
+      "id": "api-catalog",
+      "status": "implemented",
+      "what": "RFC 9727 API catalog linkset at /.well-known/api-catalog",
+      "source": "https://www.rfc-editor.org/rfc/rfc9727",
+      "read": "2026-11-12",
+      "code": "site/agentic.js",
+      "proof": "grep:site/site.test.mjs::linkset"
+    },
+    {
+      "id": "mcp-server",
+      "status": "implemented",
+      "what": "Read-only MCP server (Streamable HTTP, stateless JSON-RPC) at /mcp; no write tool is exposed",
+      "source": "https://modelcontextprotocol.io/specification/2025-06-18",
+      "read": "2026-11-12",
+      "code": "site/agentic.js",
+      "proof": "grep:site/site.test.mjs::tools/list"
+    },
+    {
+      "id": "mcp-server-card",
+      "status": "implemented",
+      "what": "Server card at /.well-known/mcp/server-card.json. The card shape is a draft in Cloudflare's readiness check, not a ratified specification",
+      "source": "https://blog.cloudflare.com/agent-readiness/",
+      "read": "2026-11-12",
+      "code": "site/agentic.js",
+      "proof": "grep:site/site.test.mjs::server-card"
+    },
+    {
+      "id": "a2a-agent-card",
+      "status": "declined",
+      "what": "A2A agent card at /.well-known/agent-card.json",
+      "reason": "No A2A endpoint exists to describe; publishing a card without one would advertise a capability that is not built",
+      "source": "https://isitagentready.com/.well-known/agent-skills/a2a-agent-card/SKILL.md",
+      "read": "2026-11-12",
+      "trigger": "an A2A endpoint is built",
+      "probe": "grep:doctrine/agent-standards.json::a2a-agent-card"
+    },
+    {
+      "id": "agent-skills-index",
+      "status": "implemented",
+      "what": "/.well-known/agent-skills index of skills",
+      "source": "https://blog.cloudflare.com/agent-readiness/",
+      "read": "2026-11-12",
+      "code": "site/agentic.js",
+      "proof": "grep:site/site.test.mjs::agent-skills"
+    }
+  ]
+}

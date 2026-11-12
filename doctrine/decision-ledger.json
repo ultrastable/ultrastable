@@ -376,6 +376,30 @@
    "title": "SYS roadmap: the system is topology, agent ladder, failure registry, vector index, agent-readiness, bootstrap rehearsal",
    "body": "Owner 2026-11-12: one worker and a D1 database is not a system. Six executor-takeable queue items with file probes: Q-SYS-TOPOLOGY, Q-SYS-AGENT-LADDER, Q-SYS-FAILURE-REGISTRY, Q-SYS-VECTOR-KB, Q-SYS-AGENT-READINESS, Q-SYS-BOOT-REHEARSAL. Measured: QNFO account has 47 workers, 10 vector indexes, 4 workflows, 2 queues; Ultrastable has 3 core workers, 2 D1 databases, 1 KV.",
    "probe": "file:docs/issues/Q-SYS-TOPOLOGY.json"
+  },
+  {
+   "id": "decision-2026-11-12-agent-interop-1-and-terms-crosswalk-1",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "AGENT-INTEROP-1 and TERMS-CROSSWALK-1",
+   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Site serves Markdown, Link headers, llms.txt, OpenAPI, API catalog, read-only MCP; standards are data with source and date; A2A declined with reason (no endpoint). Crosswalk maps autonomous, closed loop, automatic, never stops, no person in the loop to glossary terms; markers stamped in every instruction file.",
+   "probe": "grep:foundation/agentstd.py::def check"
+  },
+  {
+   "id": "decision-2026-11-12-code-agents-1-and-system-1-adapter-registry-one-running-syst",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "CODE-AGENTS-1 and SYSTEM-1: adapter registry, one running system",
+   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Adapter registry with cost routing and disjoint-family ensemble (from the QNFO review gate); in-Worker code agent through env.AI; system topology as data rendered to wrangler configs; deploy-system.yml deploys ultrastable-agents and probes every adapter. A direct connector deploy was refused by the permission classifier (production deploy) and is recorded; the repo workflow is the deploy route.",
+   "probe": "grep:foundation/system.py::def render_worker"
+  },
+  {
+   "id": "decision-2026-11-12-duplicate-agent-discovery-dropped-crosswalk-aligned-to-gloss",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Duplicate agent discovery dropped, crosswalk aligned to glossary",
+   "body": "Session: session_0156nqDrGFZaa8zQwcdGZNQU. Measured: main already served site/agentic.js with OpenAPI, API catalog, server card, MCP and skills index, so this branch's site/agent.js was removed; doctrine/crosswalk.json now maps automatic, autonomous and unattended to the glossary unattended and autonomy terms; agentstd, crosswalk, loops, system and agents checks report ok.",
+   "probe": "grep:site/agentic.js::api-catalog"
   }
  ]
 }

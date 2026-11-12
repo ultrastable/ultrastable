@@ -127,7 +127,8 @@ def call_cloudflare(prompt: str) -> dict:
 
 def call_model(prompt: str, key: str | None, model: str | None = None) -> dict:
     if not key:
-        return call_cloudflare(prompt)
+        from . import agents  # CODE-AGENTS-1: routed by cost across the adapter registry, falling back on failure
+        return agents.complete(prompt)[0]
     model = model or os.environ.get("EXECUTOR_MODEL", "claude-sonnet-5-5")
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", method="POST",
         data=json.dumps({"model": model, "max_tokens": 16000, "messages": [{"role": "user", "content": prompt}]}).encode(),

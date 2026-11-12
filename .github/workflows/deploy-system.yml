@@ -1,0 +1,31 @@
+name: deploy-system
+# budget: ~1 min per run, only when the code-agent worker, its adapters or the system data change, 5 min timeout
+# trigger: push to main touching the listed paths (a deploy follows a merge; never faster than the merge rate), plus manual dispatch
+# free-alternative: run `node deploy/deploy-system.mjs` from a cloud-hosted agent session with a Cloudflare token, or the Cloudflare connector
+# SYSTEM-1: merge -> deploy of the code-agent worker -> live probe of every Workers AI adapter -> a row in ops/deploys.jsonl (the deploy counter).
+on:
+  push:
+    branches: [main]
+    paths: ["seed/worker/src/codeagent.js", "deploy/agents-worker.js", "deploy/deploy-system.mjs", "doctrine/system.json", "doctrine/code-agents.json", ".github/workflows/deploy-system.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: {group: deploy-system, cancel-in-progress: true}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ vars.DEPLOY_SITE_ENABLED == 'true' }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: 22}
+      - name: Worker tests
+        run: cd seed/worker && node --test --no-warnings test/codeagent.test.js
+      - name: Require credentials
+        run: '[ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Cloudflare secrets not set"; exit 1; }'
+      - name: Deploy and probe
+        run: node deploy/deploy-system.mjs
