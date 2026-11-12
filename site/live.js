@@ -23,6 +23,12 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
  $('#asof').textContent='Snapshot '+d.generated+' from commit '+d.commit+'. '+d.access+'.';
  const sb=sec('Scoreboard','Every number is computed from the repository and the live checks, not typed in.');
  table(sb,['Measure','Value'],[['Loops and managers in the registry',s.managers_and_loops],['...of which have a recorded run',s.loops_with_evidence+' (the rest are a gap and are listed below)'],['Components live',JSON.stringify(s.components)],['Wired connections',s.edges_wired+' of '+s.edges_total],['User stories passing',s.stories_passing+' of '+s.stories_total],['Open gaps',s.open_gaps],['Open pull requests',s.open_prs]]);
+ const th=d.throughput||{},mg0=th.merged||{},oo=mg0.by_origin||{};
+ const tp=sec('How much code ships','Merged pull requests, by who opened them. Unattended means the server-side executor picked the work from the backlog without a session driving it.');
+ table(tp,['Origin','Merged PRs','Lines added','Lines removed'],Object.keys(oo).map(k=>[k,oo[k].prs,oo[k].lines_added,oo[k].lines_removed]));
+ table(tp,['Measure','Value'],[['Merged PRs in total',mg0.total],['Median hours from open to merge',mg0.median_hours_open_to_merge],['Merged per day',JSON.stringify(mg0.per_day)],['Site deploys by outcome (last 50)',JSON.stringify((th.deploys||{}).by_conclusion)],['Backlog items by status',JSON.stringify((th.queue||{}).by_status)],['Backlog items the executor may take now',(th.queue||{}).takeable_now],['Executor runs by outcome',JSON.stringify((th.executor||{}).by_conclusion)],['PRs the executor opened unattended',(th.executor||{}).prs_opened_unattended]]);
+ const cg=sec('Changelog','Every merged change by day, with size. Repository contents and the backlog text stay private.');
+ (th.changelog||[]).forEach(g=>{cg.appendChild(el('h3',null,g.date+' ('+g.changes.length+' changes)'));table(cg,['PR','Title','By','Size'],g.changes.map(x=>[x.n,x.title,x.by,'+'+x.plus+' -'+x.minus]))});
  const ch=sec('Change feed','What the agents changed, newest first. Each row links the change to the work item that caused it.');
  table(ch,['When','Change','Work item','Source'],d.changes.commits.slice(0,25).map(x=>[x.at.slice(0,16).replace('T',' '),x.subject,x.item||'',{t:x.sha,href:x.url}]));
  const pr=sec('Pull requests in flight and recently merged');
