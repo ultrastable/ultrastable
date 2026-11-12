@@ -3,7 +3,7 @@
 Nobody reads documents here; the system runs on code. So a document may exist only if something consumes it: an agent instruction
 import, code or data that names it, a check that reads it, or a generator that writes it. A document with no consumer is a CI failure.
 
-  python3 -m foundation docs_audit --check     fail on orphans, broken registry rows, bad removal ledger, human-action regressions
+  python3 -m foundation docs_audit --check     (or: python3 foundation/docs_audit.py --root DIR --check, the file is stdlib-only and is copied into sibling repos)  fail on orphans, broken registry rows, bad removal ledger, human-action regressions
   python3 -m foundation docs_audit --report    counts per consumption tier (docs found, wired, generated, converted, removed)
   python3 -m foundation docs_audit --orphans   list the documents nothing consumes
   python3 -m foundation docs_audit --humans    list documents that tell a person to act (a defect: file a backlog item instead)
@@ -24,13 +24,22 @@ import fnmatch, hashlib, json, os, re, subprocess, sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-REGISTRY = "doctrine/doc-consumers.json"
+REGISTRIES = ("doctrine/doc-consumers.json", "tools/doc-consumers.json", "doc-consumers.json")
+REGISTRY = REGISTRIES[0]
 DOC_EXT = (".md", ".txt", ".rst")
 BINARY = re.compile(r"\.(svg|png|pdf|jpe?g|ico|woff2?|zip|bundle|gif|webp)$", re.I)
 
 
+def registry_path(root=REPO) -> str:
+    """The registry is doctrine/doc-consumers.json here; sibling repos that carry a copy of this file keep it in tools/ or at the root."""
+    for r in REGISTRIES:
+        if (Path(root) / r).is_file():
+            return r
+    raise FileNotFoundError("no doc-consumers.json (looked in " + ", ".join(REGISTRIES) + ")")
+
+
 def load(root=REPO) -> dict:
-    return json.loads((Path(root) / REGISTRY).read_text(encoding="utf-8"))
+    return json.loads((Path(root) / registry_path(root)).read_text(encoding="utf-8"))
 
 
 def tracked(root=REPO) -> list[str]:
@@ -89,7 +98,7 @@ def evaluate(root=REPO) -> dict:
     files = tracked(root)
     docs = sorted(f for f in files if is_doc(f))
     ignore = tuple(reg.get("ignore_references_from", []))
-    code = {f: _read(root, f) for f in files if not is_doc(f) and not BINARY.search(f) and not f.startswith(ignore) and f != REGISTRY}
+    code = {f: _read(root, f) for f in files if not is_doc(f) and not BINARY.search(f) and not f.startswith(ignore) and f != registry_path(root)}
     consumed: dict[str, tuple[str, str]] = {}
     problems: list[str] = []
     for d in sorted(_imports(root, set(docs))):
@@ -187,7 +196,7 @@ def removed_check(root, reg) -> list[str]:
                 bad.append(f"removed ledger {r['path']}: {r['duplicate_of']} no longer holds the same bytes (sha256 differs); restore or re-record")
         if r.get("superseded_by") and not (root / r["superseded_by"]).exists():
             bad.append(f"removed ledger {r['path']}: superseded_by {r['superseded_by']} does not exist")
-    ignore = tuple(reg.get("ignore_references_from", [])) + (REGISTRY,)
+    ignore = tuple(reg.get("ignore_references_from", [])) + (registry_path(root),)
     paths = {r["path"] for r in removed if r.get("path")}
     for f in tracked(root):
         if is_doc(f) or BINARY.search(f) or f.startswith(ignore):
@@ -207,7 +216,7 @@ def check(root=REPO) -> list[str]:
     bad += [f"orphan document (nothing consumes it): {d}: wire it, convert it to data, merge it, or remove it with a ledger row" for d in ev["orphans"]]
     bad += removed_check(root, reg)
     tpl = _read(root, "brand/templates/doc-template.md")  # doc-template.md: the template every new document starts from
-    if "consumer:" not in front_matter(tpl) and not re.search(r"(?m)^consumer:", tpl):
+    if (root / "brand/templates/doc-template.md").is_file() and not re.search(r"(?m)^consumer:", tpl):
         bad.append("brand/templates/doc-template.md must carry a `consumer:` front matter line")
     base = reg.get("human_action_baseline", {})
     for d, hits in humans(root).items():
@@ -228,19 +237,24 @@ def report(root=REPO) -> dict:
 
 
 def main(argv=None) -> int:
-    argv = sys.argv[1:] if argv is None else argv
+    global REPO
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if "--root" in argv:  # run against another checkout: python3 tools/docs_audit.py --root . --check
+        i = argv.index("--root")
+        REPO = Path(argv[i + 1]).resolve()
+        del argv[i:i + 2]
     if "--report" in argv:
-        print(json.dumps(report(), indent=1))
+        print(json.dumps(report(REPO), indent=1))
         return 0
     if "--orphans" in argv:
-        print("\n".join(evaluate()["orphans"]) or "no orphans")
+        print("\n".join(evaluate(REPO)["orphans"]) or "no orphans")
         return 0
     if "--humans" in argv:
-        for d, h in humans().items():
+        for d, h in humans(REPO).items():
             print(d, len(h), h[0])
         return 0
-    bad = check()
-    print("\n".join(bad) or "docs-audit ok: " + json.dumps(report()))
+    bad = check(REPO)
+    print("\n".join(bad) or "docs-audit ok: " + json.dumps(report(REPO)))
     return 1 if bad else 0
 
 
