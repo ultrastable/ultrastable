@@ -304,6 +304,14 @@
    "title": "TRANSPARENCY-1b: measure shipped code by origin",
    "body": "Measured 2026-11-12: 149 merged PRs in 3 days (136 by interactive agent sessions, 0 by the unattended executor), backlog 62 open of 64; /live now publishes throughput and a per-day changelog without repository contents. The unattended executor is the gap to close.",
    "probe": "grep:foundation/transparency.py::def throughput"
+  },
+  {
+   "id": "lesson-2026-11-12-transparency-publish-reported-green-while-d1-refused-the-sna",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "transparency publish reported green while D1 refused the snapshot",
+   "body": "The publish step printed published false and exited 0 (a swallowed error), and D1 rejects a single 120 KB statement. Snapshot now stored in 50 KB parts and --publish exits 1 when not published; /api/live generated time is the probe.",
+   "probe": "grep:foundation/transparency.py::return 1"
   }
  ]
 }

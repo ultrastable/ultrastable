@@ -174,7 +174,7 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
 // TRANSPARENCY-1: /live is read-only for everyone: GET works, every write verb is refused, an absent snapshot says so.
 {
   const snap = JSON.stringify({ generated: "2026-11-12T00:00:00Z", scoreboard: {} });
-  const db = { prepare: () => ({ first: async () => ({ generated: "2026-11-12T00:00:00Z", body: snap }) }) };
+  const db = { prepare: (q) => ({ bind: () => ({ all: async () => ({ results: [{ body: snap.slice(0, 20) }, { body: snap.slice(20) }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 2 }) }) };
   let rr = await mod.fetch(new Request("https://ultrastable.io/api/live"), { ...ENV, DB: db });
   assert.equal(rr.status, 200); assert.equal(await rr.text(), snap);
   rr = await mod.fetch(new Request("https://ultrastable.io/api/live"), ENV);
