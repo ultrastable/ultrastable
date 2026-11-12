@@ -51,7 +51,7 @@ assert.equal(kv.get("state:" + id2), "failed"); assert.match(await r.text(), /So
 r = await mod.fetch(new Request("https://ultrastable.io/s/0000000000"), E2); assert.equal(r.status, 404);
 r = await get("https://ultrastable.net/"); assert.equal(r.headers.get("location"), "https://ultrastable.io/proof");
 r = await get("https://www.ultrastable.io/how"); assert.equal(r.headers.get("location"), "https://ultrastable.io/how");
-for (const p of ["/", "/engineers", "/roadmap", "/how", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
+for (const p of ["/", "/engineers", "/dashboard", "/roadmap", "/how", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
   r = await get("https://ultrastable.io" + p); assert.equal(r.status, 200, p);
   const h = await r.text(); assert.match(h, /<body/); assert.match(h, /rel="canonical"/);
   assert.ok(((h.replace(/<style>[\s\S]*?<\/style>/, "")).match(/class="btn btn-primary"/g) || []).length <= 1, p + " has at most one primary action");
@@ -139,4 +139,23 @@ console.log("ultrastable-site org ok");
   let r = await idea("A packing list for camping trips"); assert.equal(r.status, 422); const nf = await r.json(); assert.equal(nf.state, "not_a_fit"); assert.match(nf.error, /site builder/);
   r = await idea("A club website that keeps improving its own search ranking every week"); assert.notEqual(r.status, 422, "a maintained system is not refused");
   console.log("ultrastable-site vision ok");
+}
+
+const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js", import.meta.url))).href);
+// QUALITY-1: lint flags the defects seen in the first demo and passes a sound page
+{
+  const bad = "<html><head><title>x</title></head><body><textarea></textarea><button>Publish</button><div class=\"status\"></div></body></html>";
+  const f = lint(bad).join(" | ");
+  assert.match(f, /viewport/); assert.match(f, /box-sizing/); assert.match(f, /click handler/); assert.match(f, /empty status/); assert.match(f, /save what/);
+  const good = "<!doctype html><html><head><meta name=viewport content=x><title>Ed</title><style>*{box-sizing:border-box}</style></head><body><textarea id=t></textarea><button id=b>Go</button><script>try{localStorage.x=1}catch(e){}b.addEventListener('click',()=>{})</script></body></html>";
+  assert.deepEqual(lint(good), []);
+}
+// DASHBOARD-1: the dashboard preview renders every computed panel, says the live feed is pending, and states the pilot model.
+{
+  const D = (await import("./dashboard-data.js")).default;
+  const html = await (await get("https://ultrastable.io/dashboard")).text();
+  for (const p of D.panels) { assert.ok(html.includes('id="panel-' + p.id + '"'), "panel " + p.id); assert.ok(html.includes(p.source), "source shown: " + p.source); }
+  assert.ok(html.includes("Q-LOOP-live-clock") && /live feed/i.test(html), "the pending live feed is stated, not faked");
+  assert.ok(html.includes("bring-your-own-account") && html.includes('id="pilot"'));
+  console.log("ultrastable-site dashboard ok");
 }

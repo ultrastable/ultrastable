@@ -7,6 +7,7 @@ import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
+import DASH from "./dashboard-data.js";
 var VERSION = "0.11.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
@@ -205,7 +206,13 @@ function start(note) {
 // questions (Yes / No / Not sure); every answer changes the brief at once. AUDIT-1: after building, a second model checks the page against the brief,
 // revises once if it finds a real gap, and publishes an honest "what I checked / what I could not do" list at /s/<id>/review.
 // Model ids are deprecated without notice (a hard-coded one silently broke the audit), so every call walks a list until one answers.
-const BUILDERS = ["@cf/qwen/qwen2.5-coder-32b-instruct", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"], ASKERS = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/mistralai/mistral-small-3.1-24b-instruct"], SYS = "You build small, beautiful, working web pages. Output exactly one complete self-contained HTML file (inline CSS and JS, no external libraries, mobile friendly, accessible, real content not lorem ipsum, any saved data kept in localStorage wrapped in try/catch with an in-memory fallback, because the page runs sandboxed). No explanation, no markdown.";
+const BUILDERS = ["@cf/qwen/qwen2.5-coder-32b-instruct", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"], ASKERS = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/mistralai/mistral-small-3.1-24b-instruct"], SYS = [
+  "You are a senior product designer and front-end engineer. Build ONE complete self-contained HTML file (inline CSS and JS, no external libraries or fonts) that is a small but genuinely working product for the brief, not a mockup.",
+  "SCOPE: a single page cannot run server jobs or act on its own. Build the real, useful part that works in the browser today (the person operates it), make every control do something real, and never fake the rest. Put one calm line near the bottom saying what needs the full Ultrastable build (for example, running on its own on a schedule).",
+  "WORKING: every button, form and link must have a handler that visibly changes the screen (a list grows, a status updates, a draft is saved and shown). No dead buttons, no empty grey bars or boxes: if an area has no data yet, show a friendly empty state with an example. Pre-fill realistic sample content for the person's topic so the first screen already looks alive. Persist data in localStorage inside try/catch with an in-memory fallback (the page is sandboxed).",
+  "DESIGN: warm and modern, not default-browser or Bootstrap-blue. Use `*{box-sizing:border-box}`, a system font stack, a 4px spacing scale, a max content width near 720px centred, 16px minimum text, line-height 1.5, one accent colour (a deep warm orange or teal) on a soft off-white background, cards with 16px radius and a faint shadow, buttons 48px tall with hover, focus-visible and disabled states, inputs and textareas width:100% with the same radius. Nothing may overflow its card. Mobile first, works at 360px wide. Include <meta name=viewport>, a <title>, a clear heading naming the thing, and one-sentence helper text.",
+  "OUTPUT: only the HTML file, starting with <!doctype html>. No explanation, no markdown."
+].join(" ");
 const newId = () => crypto.randomUUID().replace(/-/g, "").slice(0, 10);
 const okId = (x) => /^[a-f0-9]{10}$/.test(x || "");
 const jget = async (env, k) => { const v = await env.ASSETS.get(k); try { return v ? JSON.parse(v) : null; } catch (e) { return null; } };
@@ -243,6 +250,19 @@ async function aiHtml(env, brief, prev, change) {
   if (!/<html[\s>]/i.test(h) || !/<\/html>/i.test(h)) throw new Error("the model did not return a complete page");
   return h;
 }
+// QUALITY-1: deterministic checks that need no model. Each failure is a concrete, fixable defect fed to the repair pass and listed honestly.
+export function lint(html) {
+  const bad = [], h = String(html), strip = h.replace(/<script[\s\S]*?<\/script>/gi, "");
+  if (!/<meta[^>]+viewport/i.test(h)) bad.push("add a viewport meta tag so it fits phones");
+  if (!/box-sizing\s*:\s*border-box/i.test(h)) bad.push("add *{box-sizing:border-box} so inputs and textareas never overflow their card");
+  if (!/<title>[^<]+<\/title>/i.test(h)) bad.push("add a real <title>");
+  if (!/localStorage/.test(h) && /<(textarea|input)\b/i.test(strip)) bad.push("save what the person types (localStorage in try/catch with an in-memory fallback)");
+  const buttons = (strip.match(/<button\b[^>]*>/gi) || []).length, wired = (h.match(/addEventListener\(|\bonclick\s*=|\bonsubmit\s*=|\.onclick\s*=|\.onsubmit\s*=/gi) || []).length;
+  if (buttons && !wired) bad.push("every button needs a click handler that visibly changes the screen");
+  if (/<div[^>]*class="[^"]*(progress|bar|status|output|result)[^"]*"[^>]*>\s*<\/div>/i.test(strip)) bad.push("no empty status bars or boxes: show an empty-state message or real content");
+  if (/lorem ipsum/i.test(h)) bad.push("replace lorem ipsum with real content for this topic");
+  return bad;
+}
 // AUDIT-1: a different model than the builder grades the page against the brief; the limits that no page-only build can meet are always declared.
 const ALWAYS_LIMITS = ["Information people enter is kept only in their own browser, not shared with other visitors yet.", "The site lives at a shared Ultrastable address, not your own web address yet."];
 async function audit(env, id, brief, html) {
@@ -267,10 +287,10 @@ async function ensureAudit(env, ctx, id) {
     const b = await jget(env, "brief:" + id), html = await env.ASSETS.get("site:" + id);
     if (!b || !html) return;
     const rec = await audit(env, id, b.brief + (b.change ? "\nLatest change asked: " + b.change : ""), html);
-    const crit = rec.gaps.filter(g => g.critical).map(g => g.what);
+    const lints = lint(html), crit = rec.gaps.map(g => g.what).concat(lints).slice(0, 6);
     if (crit.length && !b.change) {
       const better = await aiHtml(env, b.brief, html, "Fix these problems and change nothing else: " + crit.join("; ")).catch(() => null);
-      if (better) { await env.ASSETS.put("site:" + id, better); rec.fixed = crit; await jput(env, "audit:" + id, rec); }
+      if (better) { await env.ASSETS.put("site:" + id, better); rec.fixed = crit; const left = lint(better); rec.lint_left = left; rec.gaps = rec.gaps.map(g => Object.assign({}, g, { attempted: true })); await jput(env, "audit:" + id, rec); }
     }
   })().catch(e => console.error("audit stage failed", id, String(e)));
   if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job;
@@ -450,6 +470,20 @@ function roadmap() {
     "<div class=\"head\"><h1>Roadmap</h1><p>Each item here backs a claim on this site. It has an owner, a trigger and a closing probe the system runs; an item closes only when its probe passes. Machine-readable: <a href=\"/roadmap.json\">roadmap.json</a>.</p></div>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Item</th><th>What</th><th>State</th><th>Closing probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>");
 }
+function dashboard() {
+  const panels = DASH.panels.map(function (p) {
+    const rows = p.rows.map(function (r) { return "<tr><td>" + esc(r[0]) + "</td><td><small>" + esc(r[1]) + "</small></td></tr>"; }).join("");
+    return "<div class=\"card\" id=\"panel-" + esc(p.id) + "\"><h3 class=\"card-title\">" + esc(p.title) + "</h3><p><strong>" + esc(p.headline) + "</strong></p><div class=\"us-wrap\"><table class=\"us-table\"><tbody>" + rows + "</tbody></table></div><p class=\"meta\">" + esc(p.note) + " Source: <code>" + esc(p.source) + "</code></p></div>";
+  }).join("");
+  const pm = DASH.pilot;
+  const opts = pm.options.map(function (o) { return "<tr><td><strong>" + esc(o.id) + "</strong></td><td><small>" + esc(o.runs_on) + "</small></td><td><small>" + esc(o.revenue) + "</small></td><td><small>" + esc(o.status) + "</small></td></tr>"; }).join("");
+  return shell({ path: "/dashboard", title: "Ultrastable dashboard preview", description: "What the control plane looks like: loops, objectives and metrics, failure modes, capabilities, roadmap and earned autonomy, computed from the repository." },
+    "<div class=\"head\"><h1>Dashboard preview</h1><p>This is the control plane Ultrastable runs on itself, computed from its own repository (commit <code>" + esc(DASH.asof) + "</code>). No customer data is shown or held here: a pilot runs in your own account.</p></div>"
+    + "<div class=\"us-grid c2\">" + panels + "</div>"
+    + "<h2>Live feed</h2><p>" + esc(DASH.live_feed.says) + " Tracked by <a href=\"/roadmap#" + esc(DASH.live_feed.tracked_by) + "\">" + esc(DASH.live_feed.tracked_by) + "</a>.</p>"
+    + "<h2 id=\"pilot\">Pilot model</h2><p>" + esc(pm.why) + "</p><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Option</th><th>Runs on</th><th>Revenue (hypothesis)</th><th>Status</th></tr></thead><tbody>" + opts + "</tbody></table></div>"
+    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/roadmap\">See the roadmap</a><a class=\"btn\" href=\"/engineers\">For engineers</a></div>");
+}
 function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
     "<div class=\"head\"><h1>Contact</h1><p>One address; a person replies within two working days.</p></div>"
@@ -487,7 +521,7 @@ export default {
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
     { const sr = await siteRoutes(u, env, ctx); if (sr) return sr; }
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/engineers", "/roadmap", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
@@ -498,6 +532,7 @@ export default {
       case "/org": return new Response(org(), { headers: HTML });
       case "/engineers": return new Response(engineers(), { headers: HTML });
       case "/roadmap": return new Response(roadmap(), { headers: HTML });
+      case "/dashboard": return new Response(dashboard(), { headers: HTML });
       case "/roadmap.json": return new Response(JSON.stringify(ROAD), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/contact": return new Response(contact(), { headers: HTML });
