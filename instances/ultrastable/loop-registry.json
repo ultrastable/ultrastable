@@ -1904,6 +1904,38 @@
     "seed/worker/src/events.js",
     "seed/worker/src/index.js"
    ]
+  },
+  {
+   "id": "lifecycle",
+   "kind": "manager",
+   "summary": "No zombie sessions: leases, heartbeats, reaper; and loops that score and mutate themselves (the improver scores itself).",
+   "trigger": "each launch pass, after every other loop",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command run by an agent session from the repository",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "file:foundation/lifecycle.py",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "foundation/lifecycle.py",
+    "foundation/launch.py",
+    "ops/loop-evidence"
+   ]
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

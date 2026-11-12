@@ -1,5 +1,5 @@
 """Shared helpers: a scratch copy of the repository to break on purpose, and a tiny git repo for the write-back check."""
-import json, shutil, subprocess, sys, tempfile
+import atexit, json, shutil, subprocess, sys, tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -9,6 +9,7 @@ SKIP = shutil.ignore_patterns(".git", "node_modules", "kit", "ip", "artifacts", 
 
 def copy_repo() -> Path:
     d = tempfile.mkdtemp()
+    atexit.register(shutil.rmtree, d, True)  # no scratch copy outlives the test run (2559 leaked folders filled a disk)
     shutil.copytree(ROOT, d, ignore=SKIP, dirs_exist_ok=True)
     return Path(d)
 

@@ -121,6 +121,7 @@ def run_once(root=REPO, skip_outreach=False, now=None) -> dict:
     if results[0]["ok"]:
         results.append(_loop_plussing(scratch))
     results += [_loop_probes(root), _loop_funding(root, skip_outreach), _loop_closed(root)]
+    results.append(_loop_lifecycle(root))
     ok = [r["loop"] for r in results if r["ok"]]
     bad = [r["loop"] for r in results if not r["ok"]]
     t = next((r for r in results if r["loop"] == "tick"), {})
@@ -197,3 +198,16 @@ def install_artifact(surface: str, root=REPO) -> str:
     if surface == "cloudflare":
         return (root / "deploy/loops/cloudflare.md").read_text(encoding="utf-8")
     raise ValueError(f"unknown surface {surface}")
+
+
+def _loop_lifecycle(root) -> dict:
+    """LIFECYCLE-1: reap zombie sessions, then let the loops improve themselves from this pass's own history. Runs last so it scores the full pass."""
+    from . import lifecycle
+    try:
+        r = lifecycle.reap(root)
+        bad = lifecycle.check(root)
+        imp = lifecycle.improve(root)
+        sc = lifecycle.score(root)
+    except Exception as e:  # recorded as a failed loop, never swallowed
+        return {"loop": "lifecycle", "ok": False, "detail": f"{type(e).__name__}: {e}"[:300]}
+    return {"loop": "lifecycle", "ok": not bad, "reaped": r["reaped"], "incidents": r["incidents"], "problems": bad[:5], "filed": imp["filed"], "kept": [x for x in sc if x["kept"]], "reverted": [x for x in sc if not x["kept"]]}
