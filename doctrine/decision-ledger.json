@@ -169,6 +169,33 @@
    "title": "Write-back open-loop ids are max+1, never count+1",
    "body": "count+1 overwrote OL-20261112-11 (the Cloudflare account transfer residual) because ids have gaps; closedloop --check caught it as a residual with no queue entry. record() now takes max+1 and refuses to overwrite.",
    "probe": "grep:foundation/writeback.py::never count\\+1"
+  },
+  {
+   "id": "decision-2026-11-12-server-side-only-github-actions-on-its-built-in-token-is-the",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Server-side only: GitHub Actions on its built-in token is the credential-free route",
+   "body": "Owner directive 2026-11-12: Ultrastable runs server-side only. The scheduler host on a person's computer, its two launch scripts, the browser sign-in script and the desktop task definition were removed. The No-single-route rule stays; its credential-free route is now the GitHub Actions loop host, because GitHub mints the workflow token for each run and no person mints it (deploy/routes.json person_free_credentials). The failover chain is Cloudflare worker 0 h, cloud-hosted Claude routine 3 h, GitHub Actions 12 h behind a daily gate. Measured: python3 scripts/check_routes.py prints 'routes ok: credential-free route is server-side (github-actions)'; python3 -m foundation serverside --check prints 'serverside ok'.",
+   "probe": "grep:deploy/routes.json::github-builtin",
+   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+  },
+  {
+   "id": "decision-2026-11-12-the-lane-workflow-is-the-server-side-needs-pat-merger",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "The lane workflow is the server-side needs-pat merger",
+   "body": "PRs that change .github/workflows are merged by scripts/lane.sh in lane.yml, on green and on the exact head commit, with a workflow-capable credential resolved by scripts/lane_credential.py: LANE_PAT, then a GitHub App installation token (LANE_APP_ID, LANE_APP_PRIVATE_KEY). PRs labeled hold are skipped. Measured on 2026-11-12: PR 222 changed lane.yml and its lane review was posted by github-actions[bot], so the lane ran on the built-in token and LANE_PAT was not bound then; with no credential the lane leaves such PRs open, green and labeled needs-pat and logs waiting=N. The owner step is the single item lane-credential in foundation/data/needs-you.json with that default in effect. Evidence: tests/foundation/test_lane_merger.py, 10 tests pass.",
+   "probe": "grep:scripts/lane.sh::NEEDS-PAT-1",
+   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+  },
+  {
+   "id": "lesson-2026-11-12-test-helpers-left-a-repository-copy-per-test-in-the-temp-dir",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Test helpers left a repository copy per test in the temp directory",
+   "body": "copy_repo() and tiny_repo() called tempfile.mkdtemp() and nothing removed the result. Measured on main before the fix: one run of python3 -m unittest discover -s tests/foundation left 113 directories and 781 MB in the temp directory; on the larger checkout three runs filled a 117 GB disk. Fix: tests/foundation/_repo.py scratch() registers removal with the running test (addCleanup, addClassCleanup), at interpreter exit, and sweeps directories a killed run left; every bare mkdtemp in tests/foundation goes through it and test_repo_cleanup.py fails a new bare one. Measured after the fix: the same run leaves 0 directories.",
+   "probe": "grep:tests/foundation/_repo.py::addCleanup",
+   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
   }
  ]
 }

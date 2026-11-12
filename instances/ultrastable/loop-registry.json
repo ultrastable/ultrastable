@@ -27,6 +27,11 @@
    "binding": "MASTODON_TOKEN",
    "source": "docs/ops/SOCIAL-ACCOUNTS.md",
    "probe": "first social-post run logs posted"
+  },
+  {
+   "binding": "LANE_PAT",
+   "source": "NEEDS-YOU.md",
+   "probe": "a lane run logs 'lane: workflow credential: lane-pat' (or github-app when LANE_APP_ID and LANE_APP_PRIVATE_KEY are bound instead)"
   }
  ],
  "loops": [
@@ -48,7 +53,7 @@
     {
      "id": "selfhost",
      "how": "python3 -m foundation selfhost, Python only",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "grep:foundation/selfhost.py::def boot",
@@ -80,9 +85,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/portfolio-manager.md",
@@ -125,9 +130,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/project-manager.md",
@@ -170,9 +175,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/product-manager.md",
@@ -215,9 +220,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/staff.md",
@@ -247,9 +252,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/reviewer.md",
@@ -279,9 +284,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/operations.md",
@@ -324,9 +329,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/funding-manager.md",
@@ -356,9 +361,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/outreach-manager.md",
@@ -401,9 +406,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/outreach-coordinator.md",
@@ -433,9 +438,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:foundation/selfhost.py::def boot",
@@ -467,9 +472,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:scripts/triage.sh",
@@ -502,9 +507,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:scripts/retriage.sh",
@@ -534,9 +539,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:tools/build_index.py",
@@ -566,9 +571,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same commands run by the agent session before pushing",
-     "class": "local"
+     "id": "session",
+     "how": "the same commands run by the cloud-hosted agent session before pushing",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:.github/workflows/checks.yml::foundation loops --verify",
@@ -589,8 +594,12 @@
   {
    "id": "merge-lane",
    "kind": "release",
-   "summary": "Review and merge every green PR with no person.",
+   "summary": "Review and merge every green PR with no person. NEEDS-PAT-1: a PR that changes workflow files (label needs-pat) is merged here too, on green and on its head commit, with a workflow-capable credential (LANE_PAT, or a GitHub App installation token); it replaces the task that ran on a person's computer until 2026-11-12.",
    "trigger": "checks completed on a PR; daily fallback sweep",
+   "credentials": [
+    "LANE_PAT"
+   ],
+   "staged_default": "scripts/lane_credential.py tries LANE_PAT, then a GitHub App installation token; with neither bound the PR stays open, green and labeled needs-pat, the lane logs waiting=N on every pass and every other PR still merges",
    "owner": "operations",
    "closes_by": "system",
    "sla": "1h",
@@ -602,9 +611,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:scripts/lane.sh",
@@ -612,7 +621,9 @@
     "docs/handoff"
    ],
    "system_path": [
-    "scripts/lane.sh"
+    "scripts/lane.sh",
+    "scripts/lane_credential.py",
+    "tests/foundation/test_lane_merger.py"
    ],
    "workflows": [
     "lane.yml"
@@ -635,9 +646,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:.github/workflows/platform-core.yml::platform/core",
@@ -667,9 +678,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:scripts/actions_budget.py",
@@ -700,9 +711,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "node deploy/deploy-site.mjs from an agent session",
-     "class": "local"
+     "id": "session",
+     "how": "node deploy/deploy-site.mjs from a cloud-hosted agent session",
+     "class": "session"
     }
    ],
    "closing_probe": "file:deploy/deploy-site.mjs",
@@ -740,9 +751,9 @@
      "class": "free"
     },
     {
-     "id": "local",
+     "id": "session",
      "how": "scripts/apply_github_settings.sh with the admin token binding",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "file:github/org-settings.json",
@@ -816,9 +827,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "python3 scripts/outreach.py run from an agent session",
-     "class": "local"
+     "id": "session",
+     "how": "python3 scripts/outreach.py run from a cloud-hosted agent session",
+     "class": "session"
     }
    ],
    "closing_probe": "file:scripts/outreach.py",
@@ -931,9 +942,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:seed/ultrastable.json::plus_share",
@@ -964,9 +975,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:agents/AGENTS.md::Predict before you act",
@@ -995,9 +1006,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:tests/foundation/test_kernel.py::def test_trust_event_moves_score_and_rung",
@@ -1027,9 +1038,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:scripts/check_memory.py",
@@ -1055,7 +1066,7 @@
     {
      "id": "command",
      "how": "python3 -m foundation writeback record",
-     "class": "local"
+     "class": "session"
     },
     {
      "id": "check",
@@ -1093,9 +1104,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:tests/foundation/test_loops.py::def test_repo_loops_verify_clean",
@@ -1123,9 +1134,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:tests/foundation/test_glossary.py::def test_term_change_bumps_version_and_records_lineage",
@@ -1156,9 +1167,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:tests/foundation/test_foundation.py::def test",
@@ -1187,9 +1198,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:tests/foundation/test_kernel.py::def test_lint_flags_conditional_offer_and_you_as_actor",
@@ -1218,9 +1229,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:doctrine/kernel-8.2.1.md",
@@ -1251,9 +1262,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:tests/foundation/test_selfhost.py::def test_outside_tool_without_gap_fails",
@@ -1283,9 +1294,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:scripts/dashboard_snapshot.py",
@@ -1302,7 +1313,7 @@
    "id": "launch",
    "kind": "tick",
    "summary": "Run every launch loop once per host schedule and commit the evidence and four-line report.",
-   "trigger": "hourly on any enabled host (Cloudflare worker, routine, local scheduler); weekly and on dispatch in Actions",
+   "trigger": "hourly on the cloud-hosted routine after 3 h without evidence; daily and on dispatch in Actions after 12 h without evidence (the Cloudflare worker runs the seed tick on D1 every 10 minutes)",
    "owner": "operations",
    "closes_by": "system",
    "sla": "1h",
@@ -1314,9 +1325,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "an agent session runs the same command from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "a cloud-hosted agent session runs the same command from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "file:foundation/launch.py",
@@ -1348,9 +1359,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:tests/foundation/test_directive.py::def test_repo_directive_clean",
@@ -1381,9 +1392,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:tests/foundation/test_directive.py::def test_missing_durable_fact_fails",
@@ -1413,9 +1424,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "python3 -m foundation executor --apply from any agent session or local scheduler",
-     "class": "local"
+     "id": "session",
+     "how": "python3 -m foundation executor --pick and --record from the cloud-hosted Claude routine (no model key)",
+     "class": "session"
     }
    ],
    "closing_probe": "file:foundation/executor.py",
@@ -1438,8 +1449,8 @@
   {
    "id": "executor-session",
    "kind": "tick",
-   "summary": "A Claude scheduled task starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green; no model API key.",
-   "trigger": "scheduled task every 3 h (Claude routine)",
+   "summary": "A cloud-hosted Claude routine starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green; no model API key.",
+   "trigger": "cloud-hosted Claude routine every 3 h (cron 33 */3 * * * UTC in the cloud scheduler)",
    "owner": "operations",
    "closes_by": "system",
    "sla": "3h",
@@ -1485,9 +1496,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "id": "session",
+     "how": "the same command run by a cloud-hosted agent session from the repository",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:tests/foundation/test_docs_audit.py::def test_orphan_fails",
@@ -1499,6 +1510,39 @@
     "foundation/docs_audit.py",
     "foundation/kb.py",
     "doctrine/doc-consumers.json"
+   ]
+  },
+  {
+   "id": "server-side-only",
+   "kind": "doctrine",
+   "summary": "Ultrastable runs server-side only: no host, scheduler, code agent or route on a person's computer. The scan and the registry checks fail the build when one comes back.",
+   "trigger": "every pull request (the doctrine step of the checks job) and every change to a loop host, route or loop path",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "python3 -m foundation doctrine --check in the checks job (it calls foundation/serverside.py)",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation serverside --check run by a cloud-hosted agent session from the repository",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:tests/foundation/test_serverside.py::def test_a_host_with_an_adapter_on_a_persons_computer_fails",
+   "writeback": [
+    "doctrine/decision-ledger.json",
+    "doctrine/server-side.json"
+   ],
+   "system_path": [
+    "foundation/serverside.py",
+    "doctrine/server-side.json",
+    "scripts/check_routes.py",
+    "foundation/failover.py"
    ]
   },
   {
@@ -1518,8 +1562,8 @@
     },
     {
      "id": "push",
-     "how": "seed/instance-template/.github/workflows/ultrastable-contribute.yml in the instance, or python3 -m foundation upstream drift locally",
-     "class": "local"
+     "how": "seed/instance-template/.github/workflows/ultrastable-contribute.yml in the instance, or python3 -m foundation upstream drift from a cloud-hosted agent session",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:foundation/upstream.py::def drift",
@@ -1553,9 +1597,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "python3 -m foundation queue --run --apply; python3 -m foundation fleet --apply from any agent session",
-     "class": "local"
+     "id": "session",
+     "how": "python3 -m foundation queue --run --apply; python3 -m foundation fleet --apply from a cloud-hosted agent session",
+     "class": "session"
     }
    ],
    "closing_probe": "file:foundation/fleet.py",
@@ -1593,9 +1637,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "python3 -m foundation orphans --metrics on any machine",
-     "class": "local"
+     "id": "session",
+     "how": "python3 -m foundation orphans --metrics from a cloud-hosted agent session",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:foundation/orphans.py::def check",
@@ -1625,9 +1669,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "python3 -m foundation boundary --check on any machine",
-     "class": "local"
+     "id": "session",
+     "how": "python3 -m foundation boundary --check from a cloud-hosted agent session",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:foundation/boundary.py::def drill",
@@ -1656,9 +1700,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "python3 -m foundation boundary --reap sessions.json on any machine",
-     "class": "local"
+     "id": "session",
+     "how": "python3 -m foundation boundary --reap sessions.json from a cloud-hosted agent session",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:foundation/boundary.py::def reap",
@@ -1689,7 +1733,7 @@
     {
      "id": "git-only",
      "how": "the same command with plain git for-each-ref when gh is unavailable",
-     "class": "local"
+     "class": "degraded"
     }
    ],
    "closing_probe": "grep:foundation/sessions.py::def classify",
@@ -1723,9 +1767,9 @@
      "class": "free"
     },
     {
-     "id": "local",
-     "how": "python3 -m foundation market --check on any machine",
-     "class": "local"
+     "id": "session",
+     "how": "python3 -m foundation market --check from a cloud-hosted agent session",
+     "class": "session"
     }
    ],
    "closing_probe": "grep:foundation/market.py::def check",
@@ -1757,7 +1801,7 @@
     {
      "id": "session-sweep",
      "how": "the app's own scheduler archives a session when its PR closes (auto_archive_on_pr_close=true) and after 1 idle day (auto_archive_inactive_days=1), read from get_settings 2026-11-12; any agent session also archives idle finished ones it finds",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "grep:scripts/completion_sweep.sh::cycle_metric",

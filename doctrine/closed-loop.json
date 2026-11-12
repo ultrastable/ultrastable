@@ -23,8 +23,7 @@
   "seed/agents/roles/*.md",
   "seed/.github/copilot-instructions.md",
   ".github/copilot-instructions.md",
-  "seed/instance-template/**/AGENTS.md",
-  "ops/scheduled-tasks/*.md"
+  "seed/instance-template/**/AGENTS.md"
  ],
  "prompt_sources": [
   "foundation/executor.py"
@@ -85,7 +84,6 @@
   "agents/**/*.md",
   "seed/agents/**/*.md",
   "seed/AGENTS.md",
-  "ops/scheduled-tasks/*.md",
   "docs/handoff/*.md",
   "docs/ops/*.md",
   "docs/runbooks/*.md",

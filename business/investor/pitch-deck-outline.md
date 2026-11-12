@@ -1,6 +1,6 @@
 # Pitch deck outline: 12 slides (working draft, 2026-11-10)
 
-Deck is NDA-only until the provisional is filed; slides tagged (AFTER FILING) wait. Evidence paths are relative to `C:\Users\LENOVO\Dev\`. Every number must come from the cited source; no invented metrics.
+Deck is NDA-only until the provisional is filed; slides tagged (AFTER FILING) wait. Evidence paths are relative to the root of the workspace that holds the repositories side by side. Every number must come from the cited source; no invented metrics.
 
 1. **Title: Ultrastable, the manager for your AI workers**
    - AI agents are cheap; managing them isn't.

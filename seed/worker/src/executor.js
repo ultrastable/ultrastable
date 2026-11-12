@@ -1,7 +1,7 @@
 // Executor dispatch: the Worker's tick hands the work step to a host that can run code (GitHub Actions `executor.yml`).
 // Provider interface: a provider is { id, available(env), dispatch(env, fetchImpl) } -> { ok, detail }. The first available
 // provider wins; every result is returned so the tick records it as an outcome (never silent). Add providers (a hosted model
-// Worker, a queue a local agent drains) without touching the tick.
+// Worker, a queue a cloud-hosted agent drains) without touching the tick.
 export const PROVIDERS = [
   {
     id: 'github-actions',

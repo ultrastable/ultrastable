@@ -5,12 +5,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from foundation import doctrine, selfhost  # noqa: E402
+import sys as _sys; _sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402  (scratch directories are removed when the run ends)
 
 SKIP = shutil.ignore_patterns(".git", "node_modules", "kit", "ip", "artifacts", "research", ".selfhost", "__pycache__", "qnfo-platform-thread")
 
 
 def copy_repo():
-    d = tempfile.mkdtemp()
+    d = scratch()
     shutil.copytree(ROOT, d, ignore=SKIP, dirs_exist_ok=True)
     return Path(d)
 
@@ -67,7 +69,7 @@ class Verifier(unittest.TestCase):
 
 class Boot(unittest.TestCase):
     def db(self):
-        return os.path.join(tempfile.mkdtemp(), "u.db")
+        return os.path.join(scratch(), "u.db")
 
     def test_minimal_path_boots_everything_from_the_repo(self):
         out = selfhost.boot(ROOT, self.db(), node=False)
@@ -96,7 +98,7 @@ class Boot(unittest.TestCase):
         self.assertEqual(out["status"], "refused")
 
     def test_any_tools_minimal_path_needs_only_python(self):  # no node, no git, no network on PATH
-        env = {"PATH": str(Path(sys.executable).parent), "HOME": tempfile.mkdtemp(), "PYTHONPATH": str(ROOT)}
+        env = {"PATH": str(Path(sys.executable).parent), "HOME": str(scratch()), "PYTHONPATH": str(ROOT)}
         db = self.db()
         r = subprocess.run([sys.executable, "-m", "foundation", "selfhost", "--no-node", "--db", db], cwd=ROOT, env=env, capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stderr)
@@ -109,7 +111,7 @@ class Doctrine(unittest.TestCase):
     def test_every_runbook_for_a_registered_adapter_exists_and_minimal_path_is_documented(self):
         reg = json.loads((ROOT / "platform/adapters/registry.json").read_text())
         self.assertTrue(all((ROOT / a["runbook"]).is_file() for a in reg["adapters"]))
-        self.assertIn("--no-node", (ROOT / "docs/runbooks/any-tools/laptop-sqlite.md").read_text())
+        self.assertIn("--no-node", (ROOT / "docs/runbooks/any-tools/sqlite.md").read_text())
 
     def test_missing_self_hosting_line_fails_the_positioning_check(self):
         r = copy_repo()

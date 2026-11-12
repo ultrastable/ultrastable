@@ -1,7 +1,7 @@
 name: index
 # budget: ~1 min x 4/month
 # trigger: weekly rebuild; dispatch on demand
-# free-alternative: agent sessions run `tools/build_index.py` locally
+# free-alternative: cloud-hosted agent sessions run `tools/build_index.py`
 on:
   schedule: [{cron: "17 6 * * 1"}]
   workflow_dispatch: {}

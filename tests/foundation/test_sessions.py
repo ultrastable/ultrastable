@@ -31,7 +31,7 @@ class Classify(unittest.TestCase):
 
 class Meta(unittest.TestCase):
     def setUp(self):
-        self.tmp = Path(tempfile.mkdtemp())
+        self.tmp = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         (self.tmp / "doctrine").mkdir(); (self.tmp / "ops").mkdir()
         sessions._write_policy(self.tmp, dict(POL, idle_ttl_hours=4))
 

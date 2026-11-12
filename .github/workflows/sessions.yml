@@ -2,7 +2,7 @@ name: sessions
 # SESSION-CLOSE-1: the session reaper on GitHub's scheduler. Daily only; the primary clock is the Cloudflare tick.
 # budget: ~1 min x 30 per month
 # trigger: daily and dispatch; sessions go idle over hours, so a faster event buys nothing
-# free-alternative: run `python3 -m foundation sessions --apply` from any local scheduler or the Cloudflare cron worker
+# free-alternative: run `python3 -m foundation sessions --apply` from a cloud-hosted agent session or the Cloudflare cron worker
 # Parks or closes idle agent/claude branches with a recorded disposition and appends ops/session-ledger.jsonl; the evidence (ledger, tuned
 # doctrine/sessions.json, backlog issues) is committed to branch session-evidence, which the next run starts from so the loop keeps what it learned.
 on:

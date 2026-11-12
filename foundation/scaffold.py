@@ -111,7 +111,7 @@ def generate(raw: dict, out, date: str, ctx: ownersteps.StepCtx | None = None, a
         wf = out / ".github" / "workflows"
         wf.mkdir(parents=True, exist_ok=True)
         (wf / "checks.yml").write_text(
-            "name: checks\n# budget: about 2 min per ready PR update\n# trigger: pull requests only; no schedule\n# free-alternative: run the same commands locally in the agent session\n"
+            "name: checks\n# budget: about 2 min per ready PR update\n# trigger: pull requests only; no schedule\n# free-alternative: run the same commands in the cloud-hosted agent session\n"
             "on:\n  pull_request:\n    types: [opened, synchronize, reopened, ready_for_review]\nconcurrency:\n  group: checks-${{ github.ref }}\n  cancel-in-progress: true\npermissions:\n  contents: read\n"
             "jobs:\n  checks:\n    runs-on: ubuntu-24.04\n    timeout-minutes: 5\n    steps:\n      - uses: actions/checkout@v4\n      - run: python3 bootstrap/bootstrap.py --root . --dry-run\n")
 

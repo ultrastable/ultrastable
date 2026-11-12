@@ -5,6 +5,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from foundation import autorun, cockpit  # noqa: E402
+import sys as _sys; _sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402  (scratch directories are removed when the run ends)
 
 BANNED = json.loads((ROOT / "demos/publish.json").read_text())["banned"]
 
@@ -12,7 +14,7 @@ BANNED = json.loads((ROOT / "demos/publish.json").read_text())["banned"]
 class Autorun(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.tmp = tempfile.mkdtemp()
+        cls.tmp = scratch()
         cls.res = autorun.run(ROOT, ticks=8, db_path=Path(cls.tmp) / "a.db")
         cls.log = cls.res["log"]
 
@@ -107,7 +109,7 @@ class Cockpit(unittest.TestCase):
         self.assertFalse(re.search(r"[\w.]+@(gmail|outlook|hotmail)\.", json.dumps(self.s["inbox"])))
 
     def test_writes_static_files_that_embed_the_state(self):
-        d = Path(tempfile.mkdtemp())
+        d = Path(scratch())
         names = cockpit.write(d, ROOT, ticks=3)
         for n in names:
             self.assertTrue((d / n).is_file())

@@ -1,16 +1,23 @@
 {
-  "_doc": "Every deploy path has at least two routes, and at least one needs no credential a non-coder would have to mint. scripts/check_routes.py fails the build otherwise (lesson 2026-11-11, doctrine/LESSONS.md).",
+  "_doc": "Every deploy path has at least two routes, and at least one needs no credential a person would have to mint. Server-side only (owner, 2026-11-12): that credential-free route runs on a server-side platform, never on a person's computer. `person_free_credentials` lists the credentials that qualify and why; `none` is not one of them, because a route with no credential at all used to mean a person's own computer. scripts/check_routes.py fails the build otherwise (lesson 2026-11-11, doctrine/LESSONS.md).",
+  "person_free_credentials": {
+    "github-builtin": {
+      "why": "GitHub mints the workflow token (GITHUB_TOKEN) itself at the start of every Actions run and revokes it at the end; no person creates, stores, pastes or renews it",
+      "runs_on": "github-actions",
+      "adapter_glob": ".github/workflows/*.yml"
+    }
+  },
   "targets": [
     {"id": "tick-worker", "routes": [
-      {"id": "dashboard-button", "credential": "oauth-in-browser", "how": "deploy/first-run/README.md: one click, sign in to Cloudflare in the browser"},
-      {"id": "wrangler-login", "credential": "oauth-in-browser", "how": "deploy/first-run/first-run.sh (wrangler login opens the browser; no token typed)"},
-      {"id": "connector", "credential": "connector", "how": "Cloudflare connector in a Claude session"},
-      {"id": "no-cloudflare", "credential": "none", "how": "local, Claude routine or GitHub hosts run the same loop (deploy/loops/)"}
+      {"id": "dashboard-button", "credential": "oauth-in-browser", "how": "deploy/first-run/README.md: one click on the Deploy to Workers button; Cloudflare builds and deploys on its own servers"},
+      {"id": "connector", "credential": "connector", "how": "Cloudflare connector in a cloud-hosted Claude session"},
+      {"id": "cf-account-workflow", "credential": "cloudflare-token", "how": ".github/workflows/cf-account.yml with a Cloudflare token bound as a repository secret"},
+      {"id": "no-cloudflare", "credential": "github-builtin", "how": ".github/workflows/loop.yml: the GitHub Actions host runs the same loop with its built-in token when the worker is silent; the cloud-hosted Claude routine (deploy/loops/claude-routine.md) is the other fallback"}
     ]},
     {"id": "loop-host", "routes": [
-      {"id": "local-scheduler", "credential": "none", "how": "deploy/loops/local/"},
       {"id": "github-actions", "credential": "github-builtin", "how": ".github/workflows/loop.yml"},
-      {"id": "claude-routine", "credential": "claude-session", "how": "deploy/loops/claude-routine.md"}
+      {"id": "claude-routine", "credential": "claude-session", "how": "deploy/loops/claude-routine.md (cloud-hosted routine)"},
+      {"id": "cloudflare-worker", "credential": "cloudflare-account", "how": "deploy/loops/cloudflare.md (cron worker ultrastable-tick)"}
     ]}
   ]
 }

@@ -29,7 +29,7 @@ Name: W. Ross Ashby's *ultrastable system* (1952), a machine that changes its ow
 |---|---|---|
 | Back end | Tick, store, roles, policy; portable core with Cloudflare and Google Cloud adapters | core BUILT; CF RUNNING; GCP skeleton BUILT, undeployed. [architecture](../platform/docs/architecture.md) |
 | Dashboard | Live view of loops, trust ledger, open gate cards, predictions, issues by area | `docs/ISSUES-BY-AREA.md` is a generated stand-in; the product dashboard is being built in a sibling thread. PLANNED |
-| Command line | Bootstrap, status, approve a gate card, run a tick locally | `seed/bootstrap/bootstrap.py` is BUILT; a unified `ultrastable` CLI is PLANNED |
+| Command line | Bootstrap, status, approve a gate card, run a tick from a cloud-hosted session | `seed/bootstrap/bootstrap.py` is BUILT; a unified `ultrastable` CLI is PLANNED |
 | Seed | Idea to running organization | BUILT, tests pass, cloud apply not yet run |
 
 ## Lessons carried over from QNFO and AIOS
