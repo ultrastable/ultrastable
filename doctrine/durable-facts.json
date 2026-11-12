@@ -1,0 +1,19 @@
+{
+ "_doc": "Facts that must live in the repository and nowhere only else. Project memory, tool memory and chat are not storage (Rowan, 2026-11-12), so each fact here carries a probe into a repo file; `python3 -m foundation directive --check` fails when a probe fails, i.e. when a fact exists only outside the repo. Add a fact here in the same PR that learns it. Changed only by a reviewed PR.",
+ "version": "1.0.0",
+ "facts": [
+  {"id": "qnfo-has-licence", "statement": "QNFO's public repository has a licence: the QNFO User License Agreement v2.1 (no commercial use). Never state it has none.", "probe": "grep:docs/PROJECT-MEMORY.md::QNFO User License Agreement v2\\.1", "also": "grep:docs/PROJECT-MEMORY.md::Never state that QNFO has no licence"},
+  {"id": "brand-separate-from-qnfo", "statement": "Ultrastable is an autonomous business system; its brand is separate from QNFO (no research framing; financials not claimed).", "probe": "grep:docs/PROJECT-MEMORY.md::brand is separate from QNFO"},
+  {"id": "patent-dropped-license-instead", "statement": "No patent (2026-11-11); source-available hybrid licence USL-1.0 with a revenue-share commercial licence.", "probe": "grep:docs/PROJECT-MEMORY.md::LicenseRef-Ultrastable-USL-1\\.0"},
+  {"id": "owner-only-org-token", "statement": "Owner-only: mint ORG_ADMIN_TOKEN (docs/ops/ORG-TOKEN.md) or unarchive ultrastable/.github so the public org page can go live.", "probe": "grep:docs/PROJECT-MEMORY.md::Mint `ORG_ADMIN_TOKEN`"},
+  {"id": "owner-only-avatar", "statement": "Owner-only: org avatar upload.", "probe": "grep:docs/PROJECT-MEMORY.md::Org avatar upload"},
+  {"id": "owner-only-entity", "statement": "Owner-only: legal entity and IP assignment (BIZ-1).", "probe": "grep:docs/PROJECT-MEMORY.md::Legal entity and IP assignment"},
+  {"id": "owner-only-applications", "statement": "Owner-only: submit funding applications.", "probe": "grep:docs/PROJECT-MEMORY.md::Submit funding applications"},
+  {"id": "owner-profile", "statement": "Rowan is the ideas person, not the business person; virtual managers own business, marketing, funding, legal/IP and ops; works by voice and vibe, no manual steps.", "probe": "grep:docs/PROJECT-MEMORY.md::ideas person, not the business person"},
+  {"id": "platform-agnostic", "statement": "Portable core with Cloudflare and Google Cloud adapters; Cloudflare first.", "probe": "grep:docs/PROJECT-MEMORY.md::Platform-agnostic"},
+  {"id": "reporting-style", "statement": "Project-chat posts are a few plain lines, outcome first, threads linked by title.", "probe": "grep:docs/PROJECT-MEMORY.md::Reporting"},
+  {"id": "guiding-directive", "statement": "The guiding directive (Rowan, 2026-11-12) governs all work; verbatim text in the repo.", "probe": "grep:docs/PROJECT-MEMORY.md::GUIDING-DIRECTIVE", "also": "file:docs/doctrine/GUIDING-DIRECTIVE.md"},
+  {"id": "memory-is-not-storage", "statement": "Project memory, tool memory and chat are not storage (Rowan, 2026-11-12); the repo is the only source of truth and may be bootstrapped with project memory disabled.", "probe": "grep:docs/PROJECT-MEMORY.md::not storage", "also": "file:docs/BOOTSTRAP-NO-MEMORY.md"},
+  {"id": "project-instructions-in-repo", "statement": "The project instructions (rules 1 to 10) live in agents/PROJECT-INSTRUCTIONS.md.", "probe": "grep:agents/PROJECT-INSTRUCTIONS.md::GUIDING DIRECTIVE"}
+ ]
+}
