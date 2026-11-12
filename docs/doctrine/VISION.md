@@ -71,7 +71,7 @@ the commitment is stating the loop, the measure, the upkeep and the budget.
 | `tests/test_vision.py` | fails the build if any of the above drifts |
 | Site front door | headline, hint, suggestions and the "What it is not for" section say the same thing |
 
-## Known drift (owner: product-manager; closing probe: `tests/test_vision.py`)
+## Known drift (owner: product-manager; closing probe: `tests/test_vision.py`, `site/site.test.mjs`)
 
-- The public front door's BUILD-1 path still produces a single self-contained page from an idea. That is a demo of the interview, not the
-  product. It must route ideas through the system test before building (gap Q-GAP-front-door-qualify).
+- None open. The public front door refuses a definite one-off before anything is stored or built (`systemTest` in `site/worker.js`, HTTP 422 `not_a_fit`)
+  and lets any maintained system through to the interview, which asks for the loop, the measure, the upkeep and the budget.

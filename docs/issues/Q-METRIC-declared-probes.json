@@ -1,0 +1,11 @@
+{
+  "id": "Q-METRIC-declared-probes",
+  "title": "Q-METRIC-declared-probes: Give the declared metrics M-generator and M-outreach real probes",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** grep:instances/ultrastable/objectives.json::\"source\": \"sql\"\n**Status:** open\n\nGap in component `objectives`: M-generator and M-outreach are declared, so they breach by design until probed (OBJECTIVES-1). Expose test results and the outreach ledger send count as sql or http probes and change their source from declared.",
+  "labels": [
+    "role:product-manager",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

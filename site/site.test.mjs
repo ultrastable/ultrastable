@@ -127,3 +127,10 @@ const orgBody = orgHtml.slice(orgHtml.indexOf("<main"), orgHtml.indexOf('<div cl
 assert.ok(orgBody.length > 200, "org body extracted");
 assert.doesNotMatch(orgBody, /github\.com|QNFO|patent|adapter\s+for|wrangler|D1|token/i, "/org stays at repo-role level");
 console.log("ultrastable-site org ok");
+// VISION-1: the front door refuses a definite one-off before anything is stored or built, and lets a maintained system through.
+{
+  const idea = (text) => { const f = new FormData(); f.set("idea", text); return mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: f, headers: { accept: "application/json" } }), E2); };
+  let r = await idea("A packing list for camping trips"); assert.equal(r.status, 422); const nf = await r.json(); assert.equal(nf.state, "not_a_fit"); assert.match(nf.error, /site builder/);
+  r = await idea("A club website that keeps improving its own search ranking every week"); assert.notEqual(r.status, 422, "a maintained system is not refused");
+  console.log("ultrastable-site vision ok");
+}
