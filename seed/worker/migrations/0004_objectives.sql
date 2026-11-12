@@ -1,5 +1,5 @@
 -- OBJECTIVES-1: every system states what its agents work toward (objectives) and how that is measured (metrics with probes).
--- Same pattern the QNFO fleet runs on (metric_registry + trigger state): a metric that is outside its healthy condition files its own
+-- Metric registry with trigger state: a metric that is outside its healthy condition files its own
 -- remedy item, and recovers it when the probe passes. The tick step `measure` reads these tables; nobody has to look at them.
 CREATE TABLE IF NOT EXISTS objectives (
   id TEXT PRIMARY KEY,                    -- OBJ-1 ...
