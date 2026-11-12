@@ -89,6 +89,14 @@
    "title": "Backgrounded AI build was evicted and left sites stuck at building",
    "body": "Measured: a live POST to /api/idea returned a make URL that still showed Building after more than 2 minutes, while a direct Workers AI call for the same kind of page took 28 s. The build ran in waitUntil, which is cut off about 30 s after the response, so the state never left building. Fixed in site 0.5.1: the job is stored, the /make request awaits the build, a 120 s claim stops duplicate builds, an evicted build is resumed by the next poll, and tries are capped at 3 before the state becomes failed. node site/site.test.mjs covers the build, the change and the capped failure.",
    "probe": "grep:site/worker.js::BUILD-2"
+  },
+  {
+   "id": "decision-2026-11-12-complete-1-finished-work-and-finished-threads-are-closed-aut",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "COMPLETE-1: finished work and finished threads are closed automatically",
+   "body": "Standing owner rule written into agents/AGENTS.md, seed/agents/AGENTS.md and agents/PROJECT-INSTRUCTIONS.md. Verified by running scripts/completion_sweep.sh against the live repo: it deleted 2 squash-merged branches (agent/brand-settings-buildout, claude/project-thread-pi8gkc) and left every branch with unmerged commits or an open PR alone; gaplint reports 0 findings. The sweep runs in the daily lane workflow. Session side: the app already archives on PR close and after 1 idle day (probed with get_settings), and 5 idle finished sessions were archived. Next: sweep closes done issues with evidence and ops-repo threads.",
+   "probe": "file:scripts/completion_sweep.sh"
   }
  ]
 }
