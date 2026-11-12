@@ -2151,7 +2151,7 @@
       "id": "public-transparency",
       "kind": "probe",
       "summary": "Publishes a read-only snapshot of managers, loops, claim checks and the change feed to ultrastable.io/live; a loop with no recorded run shows as a gap.",
-      "trigger": "every launch pass on every loop host",
+      "trigger": "daily workflow transparency.yml and every launch pass",
       "owner": "operations",
       "closes_by": "system",
       "sla": "10m",
@@ -2176,9 +2176,13 @@
       "system_path": [
         "foundation/transparency.py",
         "site/live.js",
-        "instances/ultrastable/loops.json"
+        "instances/ultrastable/loops.json",
+        ".github/workflows/transparency.yml"
       ],
-      "launch": "transparency"
+      "launch": "transparency",
+      "workflows": [
+        "transparency.yml"
+      ]
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

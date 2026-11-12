@@ -123,6 +123,58 @@ def changes(root, use_gh=True):
     return {"commits": commits, "pull_requests": prs}
 
 
+def _gh_json(root, *args):
+    try:
+        return json.loads(_sh(root, "gh", *args) or "[]")
+    except ValueError:
+        return []
+
+
+def throughput(root, use_gh=True):
+    """How much code the system actually ships, and who ships it. Unattended = PRs opened by the server-side executor (body says 'Executor run');
+    everything else on agent/* or claude/* branches is an interactive agent session."""
+    from . import queue as qmod
+    out = {"queue": {}, "merged": {}, "changelog": [], "deploys": {}, "executor": {}}
+    try:
+        its = qmod.items(root)
+        c = {}
+        for i in its:
+            c[i.get("status") or "?"] = c.get(i.get("status") or "?", 0) + 1
+        out["queue"] = {"items": len(its), "by_status": c, "takeable_now": len(qmod.takeable(root))}
+    except Exception as e:  # recorded in the snapshot, never swallowed
+        out["queue"] = {"error": str(e)[:200]}
+    if not use_gh:
+        return out
+    prs = _gh_json(root, "pr", "list", "--repo", GH, "--state", "merged", "--limit", "300", "--json", "number,title,headRefName,mergedAt,createdAt,additions,deletions,body,url")
+    origin = {"unattended executor": [0, 0, 0], "agent session": [0, 0, 0], "bot": [0, 0, 0], "other": [0, 0, 0]}
+    day, hours = {}, []
+    for p in prs:
+        br = p.get("headRefName", "")
+        k = "unattended executor" if "Executor run" in (p.get("body") or "") else "bot" if br.startswith(("dependabot", "ultrastable-")) else "agent session" if br.startswith(("agent/", "claude/")) else "other"
+        o = origin[k]; o[0] += 1; o[1] += p.get("additions", 0); o[2] += p.get("deletions", 0)
+        d = (p.get("mergedAt") or "")[:10]
+        day.setdefault(d, []).append({"n": p["number"], "title": p["title"], "by": k, "plus": p.get("additions", 0), "minus": p.get("deletions", 0), "url": p["url"]})
+        try:
+            a, b = (datetime.fromisoformat(p["createdAt"].replace("Z", "+00:00")), datetime.fromisoformat(p["mergedAt"].replace("Z", "+00:00")))
+            hours.append((b - a).total_seconds() / 3600)
+        except (KeyError, ValueError):
+            pass
+    hours.sort()
+    out["merged"] = {"total": len(prs), "by_origin": {k: {"prs": v[0], "lines_added": v[1], "lines_removed": v[2]} for k, v in origin.items()},
+                     "per_day": {d: len(v) for d, v in sorted(day.items())}, "median_hours_open_to_merge": round(hours[len(hours) // 2], 2) if hours else None}
+    out["changelog"] = [{"date": d, "changes": v} for d, v in sorted(day.items(), reverse=True)[:14]]
+    runs = _gh_json(root, "run", "list", "--repo", GH, "--workflow", "deploy-site", "--limit", "50", "--json", "conclusion,createdAt,event,headSha")
+    dc = {}
+    for r in runs:
+        dc[r.get("conclusion") or "running"] = dc.get(r.get("conclusion") or "running", 0) + 1
+    out["deploys"] = {"site_runs": len(runs), "by_conclusion": dc, "latest": runs[0] if runs else None,
+                      "per_day_success": {d: sum(1 for r in runs if r["createdAt"][:10] == d and r.get("conclusion") == "success") for d in sorted({r["createdAt"][:10] for r in runs})}}
+    ex = _gh_json(root, "run", "list", "--repo", GH, "--workflow", "executor", "--limit", "30", "--json", "conclusion,createdAt,event")
+    out["executor"] = {"runs": len(ex), "by_conclusion": {c: sum(1 for r in ex if r.get("conclusion") == c) for c in {r.get("conclusion") for r in ex}},
+                       "prs_opened_unattended": origin["unattended executor"][0], "log_rows": len((Path(root) / "ops/executor-log.jsonl").read_text(encoding="utf-8").splitlines()) if (Path(root) / "ops/executor-log.jsonl").is_file() else 0}
+    return out
+
+
 def improvements(root):
     return (_j(root, "instances/ultrastable/improvements.json", {}) or {}).get("entries", [])[-20:]
 
@@ -132,6 +184,7 @@ def snapshot(root=REPO, use_gh=True):
     mg, cl, gp, ch = managers(root), claims(root), gaps(root), changes(root, use_gh)
     open_prs = [p for p in ch["pull_requests"] if p["state"] in ("open", "draft")]
     merged = [p for p in ch["pull_requests"] if p["state"] == "merged"]
+    th = throughput(root, use_gh)
     s = {
         "schema": "ultrastable-transparency/v1",
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -142,8 +195,10 @@ def snapshot(root=REPO, use_gh=True):
             "components": cl.get("component_status", {}), "edges_wired": (cl.get("integration") or {}).get("edges_wired"), "edges_total": (cl.get("integration") or {}).get("edges"),
             "stories_passing": sum(1 for x in cl.get("stories", []) if x.get("pass")), "stories_total": len(cl.get("stories", [])),
             "open_gaps": sum(1 for g in gp if (g.get("status") or "open") != "closed"), "open_prs": len(open_prs), "merged_prs_listed": len(merged),
+            "prs_merged_total": (th.get("merged") or {}).get("total"), "prs_merged_unattended": ((th.get("merged") or {}).get("by_origin") or {}).get("unattended executor", {}).get("prs"),
+            "backlog_open": (th.get("queue") or {}).get("by_status", {}).get("open"), "backlog_items": (th.get("queue") or {}).get("items"),
         },
-        "managers": mg, "claims": cl, "gaps": gp, "changes": ch, "loop_improvements": improvements(root),
+        "throughput": th, "managers": mg, "claims": cl, "gaps": gp, "changes": ch, "loop_improvements": improvements(root),
         "feedback_loop": "claim (site/doctrine) -> probe (components, gap register, loops) -> gap item -> branch/draft PR by an agent -> merge on green checks -> deploy -> probe again; each row above links the step to its record.",
     }
     return scrub(s)
