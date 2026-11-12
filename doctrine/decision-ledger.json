@@ -213,6 +213,15 @@
    "body": "Every closing probe in the loop registry was file: or grep:, so loops verify passed while two workflows had never run. Measured 2026-11-12 12:58 UTC through the GitHub API: loop.yml 0 runs, fleet.yml 0 runs; executor log row 0.8 h old and session ledger row 0.5 h old on their evidence branches. Fix: foundation/liveness.py reads run evidence per probe in instances/ultrastable/liveness.json and gives alive, stale, failing, never or unknown; every launch pass runs it and files a queue item per loop that is not alive. Both workflows were dispatched on main at 12:59 UTC to start them.",
    "probe": "grep:foundation/liveness.py::def verdict",
    "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+  },
+  {
+   "id": "lesson-2026-11-12-tick-loader-resolved-paths-with-url-pathname",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Tick loader resolved paths with URL.pathname",
+   "body": "platform/selfhost/tick.mjs and the GCP adapter built file paths from URL.pathname, which is percent-encoded and on Windows begins with a slash before the drive letter, so the migrations directory was looked up at a doubled drive path there and at dir%20with%20space on any host whose checkout path has a space. Measured before the fix on Linux: selfhost boot from a copy under 'dir with space' returned status failed, ENOENT scandir .../dir%20with%20space/seed/worker/migrations. Fix: fileURLToPath. Measured after: tests/foundation/test_selfhost.py test_full_tick_from_a_path_that_needs_url_decoding passes; the GCP adapter tests pass. The http metric source in seed/worker/src/tick.js had no test; seed/worker/test/measure.test.js now covers 2xx, error status, unreachable host and recovery.",
+   "probe": "grep:platform/selfhost/tick.mjs::fileURLToPath",
+   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
   }
  ]
 }

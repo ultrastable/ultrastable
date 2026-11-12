@@ -51,3 +51,29 @@ test('OBJECTIVES-1: an sql probe that is not one SELECT is refused and counts as
   assert.equal(db.raw.prepare("SELECT breached FROM metrics WHERE id='M-bad'").get().breached, 1);
   assert.match(r.report, /must be one SELECT/);
 });
+
+test('OBJECTIVES-1: an http probe is healthy on a 2xx answer, breaches on an error status or an unreachable host, and recovers', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m');
+    INSERT INTO metrics (id,name,kind,source,spec,op,threshold,grace_hours,owner_role,remedy)
+    VALUES ('M-up','site answers','liveness','http','https://example.invalid/health','>=',1,0,'operations','Bring it back.');`);
+  const asked = [];
+  let answer = async url => { asked.push(url); return { ok: true, status: 200 }; };
+  const env = { fetch: (url, init) => answer(url, init) };
+  const value = () => db.raw.prepare("SELECT last_value, breached FROM metrics WHERE id='M-up'").get();
+  await runTick(db, { config, now: T0, env });
+  assert.deepEqual(asked, ['https://example.invalid/health']);
+  assert.deepEqual({ ...value() }, { last_value: 1, breached: 0 });
+  answer = async () => ({ ok: false, status: 503 });
+  await runTick(db, { config, now: T0 + 600e3, env });
+  assert.deepEqual({ ...value() }, { last_value: 0, breached: 1 });
+  assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='BREACH-M-up'").get().status !== 'done', true);
+  answer = async () => { throw new Error('getaddrinfo ENOTFOUND'); };            // an unreachable host is a 0, never an exception that stops the tick
+  const r = await runTick(db, { config, now: T0 + 1200e3, env });
+  assert.deepEqual(r.errors, []);
+  assert.deepEqual({ ...value() }, { last_value: 0, breached: 1 });
+  answer = async () => ({ ok: true, status: 204 });
+  await runTick(db, { config, now: T0 + 1800e3, env });
+  assert.deepEqual({ ...value() }, { last_value: 1, breached: 0 });
+  assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='BREACH-M-up'").get().status, 'done');
+});

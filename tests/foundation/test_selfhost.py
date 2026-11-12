@@ -91,6 +91,16 @@ class Boot(unittest.TestCase):
         self.assertEqual((out["status"], out["path"]), ("ok", "seed-tick-node"))
         self.assertEqual((out["tick"]["completed"], out["tick"]["errors"]), (out["tick"]["total"], []))   # every step of the seed tick completes, however many steps the seed has (8 since OBJECTIVES-1 added measure)
 
+    @unittest.skipUnless(shutil.which("node"), "node absent: the minimal path is the contract")
+    def test_full_tick_from_a_path_that_needs_url_decoding(self):
+        """The tick resolved its migrations with URL.pathname, which is percent-encoded and, on Windows, starts with a slash before the
+        drive letter (the doubled drive path). Any checkout path with a space failed the same way on every platform."""
+        base = scratch() / "dir with space"
+        shutil.copytree(ROOT, base, ignore=SKIP)
+        out = selfhost.boot(base, os.path.join(scratch(), "u.db"), node=True)
+        self.assertEqual((out["status"], out["path"]), ("ok", "seed-tick-node"), out)
+        self.assertEqual(out["tick"]["errors"], [])
+
     def test_refuses_to_boot_when_verifier_fails(self):
         r = copy_repo()
         (r / ".github/workflows/notify.yml").write_text("run: curl https://api.linear.app/graphql\n")

@@ -4,10 +4,11 @@
 import http from 'node:http';
 import { readFileSync } from 'node:fs';
 import { timingSafeEqual } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 import { runTick } from '../../../seed/worker/src/tick.js';
 import { openDb } from '../sqlite/d1-sqlite.js';
 
-const HERE = new URL('.', import.meta.url).pathname;
+const HERE = fileURLToPath(new URL('.', import.meta.url));
 const MIGRATIONS = process.env.ULTRASTABLE_MIGRATIONS || `${HERE}../../../seed/worker/migrations`;
 
 export function loadConfig(env = process.env) {
