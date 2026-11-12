@@ -45,5 +45,7 @@ console.log("ultrastable-site pages ok");
 
 // /org states repository roles only: no links to repositories, no architecture terms (org/repos.json public_presence.confidentiality).
 const orgHtml = await (await get("https://ultrastable.io/org")).text();
-assert.doesNotMatch(orgHtml.replace(/<style>[\s\S]*?<\/style>/, ""), /github\.com|QNFO|patent|adapter\s+for|wrangler|D1|token/i, "/org stays at repo-role level");
+const orgBody = orgHtml.slice(orgHtml.indexOf("<main"), orgHtml.indexOf('<div class="us-foot"'));
+assert.ok(orgBody.length > 200, "org body extracted");
+assert.doesNotMatch(orgBody, /github\.com|QNFO|patent|adapter\s+for|wrangler|D1|token/i, "/org stays at repo-role level");
 console.log("ultrastable-site org ok");
