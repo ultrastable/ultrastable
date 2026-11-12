@@ -64,6 +64,9 @@ def stages(root=REPO, now: float | None = None, env=None, prs=None) -> list[dict
         last = None
         if c["source"] == "clock":
             cl = clocks.get(c["clock"], {})
+            if cl.get("status") == "unmeasured":   # an unreadable clock is a finding of its own, never a reason to escalate the stage
+                out.append({"id": c["id"], "what": c["what"], "sla_s": c["sla_s"], "age_s": None, "status": "unmeasured", "missed": 0, "why": cl.get("why")})
+                continue
             last = None if cl.get("last_beat_age_s") is None else now - cl["last_beat_age_s"]
         elif c["source"] == "workflow":
             b = C.gh_run_beats(c["workflow"], root)
