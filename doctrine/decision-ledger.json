@@ -328,6 +328,14 @@
    "title": "executor failed every run on a roadmap item with no runnable probe",
    "body": "PORT-EXEC-1 had a prose done check, so the pins test failed in the executor's pre-PR checks and Q-10 never reached a PR. Probe is now file:ops/port-evidence/gcp-verify.json (the recorded verify run of the gcp adapter).",
    "probe": "grep:docs/issues/PORT-EXEC-1.json::gcp-verify"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-prs-failed-on-stale-generated-dashboard-data",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "executor PRs failed on stale generated dashboard data",
+   "body": "Any queue or doc change makes site/dashboard-data.js stale, so the executor's own pre-PR checks failed. The executor now runs scripts/build_dashboard.py before its checks and before the commit.",
+   "probe": "grep:foundation/executor.py::GENERATORS"
   }
  ]
 }
