@@ -127,3 +127,9 @@ class RepairLoop(unittest.TestCase):
         from unittest import mock
         with mock.patch.object(cx, "prs_today", return_value=cx.MAX_PRS_PER_DAY):
             self.assertEqual(cx.takeable("o/r"), [])
+
+    def test_every_generated_file_checked_in_ci_is_regenerated_by_the_executor(self):
+        """Root cause of repeated executor PR failures: a queue change made site/roadmap-data.js stale and the executor did not regenerate it."""
+        ci = (Path(executor.__file__).resolve().parents[1] / ".github/workflows/checks.yml").read_text(encoding="utf-8")
+        self.assertIn("build_site_roadmap.py --check", ci)
+        self.assertIn(["python3", "scripts/build_site_roadmap.py"], executor.GENERATORS)
