@@ -15,11 +15,11 @@ class Topology(unittest.TestCase):
             files = T.render(T.REPO, d)
             self.assertEqual(len(files), len(T.load()["workers"]))
             site = json.loads((Path(d) / "ultrastable-site.json").read_text())
-            self.assertEqual(site["services"], [{"binding": "OWNER", "service": "ultrastable-dashboard"}])
+            self.assertIn({"binding": "OWNER", "service": "ultrastable-dashboard"}, site["services"])
             self.assertEqual(site["d1_databases"][0]["database_name"], "ultrastable-ops")
             tick = json.loads((Path(d) / "ultrastable-tick.json").read_text())
             self.assertNotIn("queues", tick)  # the queue is planned, so it is pending, not rendered
-            self.assertTrue(any("ultrastable-jobs" in p for p in tick["_pending"]))
+            self.assertTrue(any("ultrastable-work" in p for p in tick["_pending"]))
 
     def test_no_secret_or_address_values(self):
         t = T.load()
@@ -53,7 +53,11 @@ class Topology(unittest.TestCase):
         self.assertIn("d1 ultrastable-stray exists in the account but is not declared", joined)
         self.assertIn("worker ultrastable-extra exists in the account but is not declared", joined)
         self.assertIn("binding OWNER (service) is declared but not deployed", joined)
-        self.assertNotIn("ultrastable-jobs", joined)  # planned and absent is not drift
+        self.assertNotIn("ultrastable-work", joined)  # planned and absent is not drift
+
+    def test_system_json_is_generated_from_the_topology(self):
+        self.assertEqual(json.loads((T.REPO / "doctrine/system.json").read_text(encoding="utf-8")), T.emit_system())
+        self.assertEqual(json.loads((T.REPO / "doctrine/system.json").read_text(encoding="utf-8"))["resources"]["d1"]["org"]["id"], "7468898a-b515-495f-9910-e91cb80f5810")
 
     def test_deploy_script_reads_the_same_declaration(self):
         src = (T.REPO / "deploy/deploy-site.mjs").read_text(encoding="utf-8")

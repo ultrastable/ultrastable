@@ -17,7 +17,8 @@ RISKY = re.compile(r"(auth|route|cache|migration|workflow|\.github/|token|secret
 
 
 def load(root=REPO) -> dict:
-    return json.loads((Path(root) / PATH).read_text(encoding="utf-8"))
+    p = Path(root) / PATH
+    return json.loads((p if p.is_file() else REPO / PATH).read_text(encoding="utf-8"))  # a root without its own registry (a temp copy, a new org) uses the platform default
 
 
 def available(a: dict, env=None) -> bool:

@@ -215,7 +215,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if code:
                     failed.append(f"{' '.join(c)}: {o[-2500:]}")
             if not failed and model_call is None:
-                rv = agent_ladder.review(issue, out, meta.get("model", ""), root=root)
+                rv = agent_ladder.review(issue, out, meta.get("family", ""), root=root)
                 row["review"] = rv
                 if not rv["approve"]:
                     failed.append("independent reviewer (" + str(rv.get("model")) + ") vetoed the change: " + "; ".join(rv["reasons"]))
