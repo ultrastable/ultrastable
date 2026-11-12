@@ -1,0 +1,42 @@
+{
+  "_doc": "GROWTH-1: the product manager's job is growth, not only bug fixes (owner directive 2026-11-12). This file is what the product manager loop reads: the share of shipped work that must be growth, the metrics that say whether the product is growing, and how work is classified. foundation/growth.py measures the mix and the metrics, publishes them on /live, and the executor prefers a growth item whenever the recent mix falls below the target. A growth item adds a capability, a surface, a reader or a customer path; a fix repairs something that was meant to work; maintenance keeps it running.",
+  "version": "1.0.0",
+  "target_growth_share": 0.4,
+  "window_merges": 20,
+  "label": "growth",
+  "classify": {
+    "fix": "\\b(fix|fixes|repair|bug|stale|failing|failed|revert|regress|hotfix|broken|conflict)\\b",
+    "growth": "\\b(grow|growth|GROW|add|adds|new|build|built|launch|feed|demo|pilot|case study|pricing|surface|capability|feature|MCP|agent-readable|live record|changelog|dashboard|topology|ladder)\\b"
+  },
+  "metrics": [
+    {
+      "id": "pageviews_7d",
+      "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
+      "target": 1500,
+      "direction": ">=",
+      "trigger": "breach opens a growth item for the product manager"
+    },
+    {
+      "id": "visitors_7d",
+      "what": "distinct visitors in the last 7 days",
+      "target": 650,
+      "direction": ">=",
+      "trigger": "breach opens a growth item for the product manager"
+    },
+    {
+      "id": "agent_hits_7d",
+      "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
+      "target": 1000,
+      "direction": ">=",
+      "trigger": "breach opens a growth item for the product manager"
+    },
+    {
+      "id": "pilot_page_views_7d",
+      "what": "views of the pilot application page in the last 7 days",
+      "target": 400,
+      "direction": ">=",
+      "trigger": "breach opens a growth item for the product manager"
+    }
+  ],
+  "owner_note": "Targets are first hypotheses chosen by the system: the baseline measured on 2026-11-12 (1310 page views, 564 visitors, 817 agent hits, 326 pilot page views in 7 days) plus 15 to 25 percent. The product manager revises them from measured baselines, each change as a reviewed PR."
+}

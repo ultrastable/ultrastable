@@ -434,6 +434,22 @@
       "probe": "grep:foundation/topology.py::emit_system"
     },
     {
+      "id": "decision-2026-11-12-clockwork-1-and-growth-1-loops-are-measured-clocks-the-produ",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "CLOCKWORK-1 and GROWTH-1: loops are measured clocks; the product manager owns growth",
+      "body": "Measured 2026-11-12: the tick heartbeat ran 318 times in 2.2 days with 0 s median jitter; the executor's only recurring clock was one cron per day because no dispatch token is bound to the tick worker. foundation/clock.py measures every clock (ticking, late, stopped, idle) from recorded beats; the executor wakes its own next run when takeable work remains (4 per day cap, back off after 3 failures, budget guard applies); tests pass. foundation/growth.py measures the growth share of merges (target 40 percent) and the growth metrics (baseline 1310 page views, 564 visitors, 817 agent hits, 326 pilot page views in 7 days), and the executor takes a growth item first when the mix is below target; tests pass. Six growth items filed. Fixed, with a test that passes: a model returning an object instead of a string crashed the executor.",
+      "probe": "file:foundation/clock.py"
+    },
+    {
+      "id": "lesson-2026-11-12-clock-report-truncated-the-tick-beats-to-ten-hours",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "clock report truncated the tick beats to ten hours",
+      "body": "The d1 clock read only the last 60 beats, so beats in 24 hours showed 60 of 144 for a heartbeat that ticks every 10 minutes. The window now covers a full day plus a margin; a test pins it; ran against the account and the count matches the expectation.",
+      "probe": "grep:foundation/clock.py::86400"
+    },
+    {
       "id": "decision-2026-11-12-lane-watch-1-green-prs-may-not-stay-open",
       "kind": "decision",
       "date": "2026-11-12",

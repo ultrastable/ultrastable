@@ -53,6 +53,15 @@ class Ladder(unittest.TestCase):
         rv = L.review({"title": "t"}, {"files": []}, "glm", root=self.d, env=CF, send=boom)
         self.assertTrue(rv["approve"]); self.assertIn("skipped", rv)
 
+    def test_model_that_returns_the_object_not_a_string_is_handled(self):
+        a = L.rungs(self.d, CF)[0]
+        class R:  # transport stub at the HTTP level: the reply text is a dict
+            pass
+        import unittest.mock as m
+        with m.patch.object(agents, "http", return_value={"result": {"response": {"summary": "s", "files": []}}}):
+            text, _ = L.transport(a, "p", CF)
+        self.assertEqual(json.loads(text)["summary"], "s")
+
     def test_cost_summary_counts_priced_calls(self):
         L.call("p", 1, root=self.d, env=CF, send=lambda a, p, e: ('{"a":1}', {"in": 1000, "out": 1000}))
         s = L.summary(self.d)

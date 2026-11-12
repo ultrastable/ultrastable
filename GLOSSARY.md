@@ -51,6 +51,7 @@ Generated from `doctrine/glossary.json` by `python3 -m foundation glossary --app
 | [Memory is not storage](#memory-is-not-storage) | Project memory, tool memory and chat are not storage (Rowan, 2026-11-12). | 1.0.0 |
 | [Document consumed](#doc-consumed) | A document exists only if code, a check, an agent's loaded instructions or a loop consumes it. | 1.0.0 |
 | [Unattended](#unattended) | The crosswalk for the words the owner and the agents use for the same property. | 1.0.0 |
+| [Clockwork](#clockwork) | A loop behaves as clockwork when it is a clock: it has an expected interval, its beats are recorded, and its measured status is ticking (a beat within 1.5 intervals) and accurate (small median distance from schedule). | 1.0.0 |
 
 ## <a id="autonomy"></a>Autonomy
 
@@ -843,3 +844,21 @@ The crosswalk for the words the owner and the agents use for the same property. 
 **Lineage:**
 
 - 1.0.0 (2026-11-12): Owner: autonomous means automatic means unattended; none of it stops or terminates, and the vocabulary must not drift between contexts and agents. This entry is the crosswalk and the measure. (`doctrine/glossary.json`)
+
+## <a id="clockwork"></a>Clockwork
+
+A loop behaves as clockwork when it is a clock: it has an expected interval, its beats are recorded, and its measured status is ticking (a beat within 1.5 intervals) and accurate (small median distance from schedule). Late means within 3 intervals, stopped means older, idle means there is no work. Status is measured from recorded beats, never declared, and a late or stopped clock is a defect.
+
+**Not:** Not a loop that is merely scheduled, not a clock that ticks but is wrong, and not a status written by the loop about itself.
+
+**Also called:** runs like clockwork, keeps ticking, working clock, never stops
+
+**Tested by:** `grep:tests/foundation/test_clock.py::test_status_thresholds`; `grep:doctrine/clocks.json::expected_interval_s`
+
+**Implemented by:** `foundation/clock.py`, `doctrine/clocks.json`, `.github/workflows/executor.yml`
+
+**Related:** [unattended](#unattended), [autonomy](#autonomy), [loop](#loop)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-12): Owner: this must all keep ticking like clockwork; a stopped or inaccurate clock is not a working clock. (`doctrine/clocks.json`)

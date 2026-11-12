@@ -1363,6 +1363,41 @@
      "source": "doctrine/glossary.json"
     }
    ]
+  },
+  {
+   "id": "clockwork",
+   "term": "Clockwork",
+   "aliases": [
+    "runs like clockwork",
+    "keeps ticking",
+    "working clock",
+    "never stops"
+   ],
+   "version": "1.0.0",
+   "definition": "A loop behaves as clockwork when it is a clock: it has an expected interval, its beats are recorded, and its measured status is ticking (a beat within 1.5 intervals) and accurate (small median distance from schedule). Late means within 3 intervals, stopped means older, idle means there is no work. Status is measured from recorded beats, never declared, and a late or stopped clock is a defect.",
+   "not": "Not a loop that is merely scheduled, not a clock that ticks but is wrong, and not a status written by the loop about itself.",
+   "tested_by": [
+    "grep:tests/foundation/test_clock.py::test_status_thresholds",
+    "grep:doctrine/clocks.json::expected_interval_s"
+   ],
+   "implemented_by": [
+    "foundation/clock.py",
+    "doctrine/clocks.json",
+    ".github/workflows/executor.yml"
+   ],
+   "related": [
+    "unattended",
+    "autonomy",
+    "loop"
+   ],
+   "lineage": [
+    {
+     "version": "1.0.0",
+     "date": "2026-11-12",
+     "change": "Owner: this must all keep ticking like clockwork; a stopped or inaccurate clock is not a working clock.",
+     "source": "doctrine/clocks.json"
+    }
+   ]
   }
  ]
 }

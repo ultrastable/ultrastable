@@ -1,0 +1,12 @@
+{
+  "id": "Q-GROW-PILOT-OFFER",
+  "title": "Q-GROW-PILOT-OFFER: GROW-3: a priced pilot offer as data, shown on the pilot page",
+  "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order (growth items first when the recent growth share is below target)\n**Done check:** file:doctrine/pilot-offer.json\n**Status:** open\n\nOwner directive 2026-11-12: product management is growth, not only bug fixes. Growth item: it adds a capability, a surface, a reader or a customer path.\n\nWrite doctrine/pilot-offer.json: who the pilot is for (the four system-test questions), what the pilot includes (tenant on the same shape, objectives, metrics, loops, a monthly budget), a first monthly price hypothesis with its range, and how the price is revised from measured pilot cost (model calls, compute, storage). Render it on /pilot. The system chooses the default price; changing it is a reviewed PR with a revert.\nPaths: doctrine/pilot-offer.json, site/worker.js, site/site.test.mjs.\nAcceptance: /pilot shows the offer and price from the data file; a test fails if the page and the file disagree.\nMetric moved: pilot applications. Prediction: stated price raises application quality (all four system-test answers present) from the current baseline.\n\nsize: M\n\n**Closing probe:** file:doctrine/pilot-offer.json and the stated metric measured after the change (keep only if the target moved and no guard worsened).",
+  "labels": [
+    "p1",
+    "growth",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}
