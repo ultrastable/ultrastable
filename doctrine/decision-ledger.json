@@ -1,421 +1,421 @@
 {
- "_doc": "CLOSED-LOOP-1 write-back: every lesson and decision as a row with a closing probe (file:<path> or grep:<path>::<regex>) that `python3 -m foundation orphans --check` executes on every PR and loop pass. Written by `python3 -m foundation writeback record --kind lesson|decision --probe SPEC`.",
- "rows": [
-  {
-   "id": "decision-2026-11-12-closed-loop-1-no-artifact-without-a-consuming-loop-no-wait-o",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "CLOSED-LOOP-1: no artifact without a consuming loop, no wait on a person",
-   "body": "Rowan 2026-11-12: assume nothing is read, reviewed or decided by a person. Policy values in doctrine/closed-loop.json and closed_loop in autonomy/policy.json; foundation/orphans.py fails CI on a new orphan artifact, a non-identity-bound wait or a failing ledger probe; lessons and decisions are ledger rows with probes, not pages.",
-   "probe": "grep:foundation/orphans.py::def ledger_failures"
-  },
-  {
-   "id": "decision-2026-11-12-write-back-is-an-executable-ledger-row-not-a-page",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Write-back is an executable ledger row, not a page",
-   "body": "writeback record --kind lesson|decision writes doctrine/decision-ledger.json with a required file or grep probe; closedloop --check runs every probe.",
-   "probe": "grep:foundation/writeback.py::LEDGER = "
-  },
-  {
-   "id": "decision-2026-11-12-orphan-scan-delegates-to-the-document-audit",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Orphan scan delegates to the document audit",
-   "body": "CLOSED-LOOP-1 (orphans.py) and DOC-CONSUMED-1 (docs_audit.py) measured the same thing two ways. The document audit is the single definition; orphans.py keeps the human-wait check, the decision ledger and the backlog issue, and reads orphan documents from docs_audit.",
-   "probe": "grep:foundation/orphans.py::docs_audit",
-   "session": "session_0156nqDrJvHpEG6mS66nV7Xg"
-  },
-  {
-   "id": "decision-2026-11-12-fleet-skips-archived-repositories",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Fleet skips archived repositories",
-   "body": "ultrastable/seed is archived and read-only; its live copy is the seed directory of this repository. The fleet lane lists live repositories only and records an archived one instead of failing or opening a card.",
-   "probe": "grep:foundation/fleet.py::archived"
-  },
-  {
-   "id": "lesson-2026-11-12-deploy-was-green-while-live-served-old-code",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Deploy was green while live served old code",
-   "body": "Merged site 0.3.1 never went live: worker.js imports ../seed/analytics/analytics.js, the single-file upload returned code 10021, deploy-site.mjs ignored success=false, and the verify step fetched only an image. Measured after the fix: curl https://ultrastable.io/health returned version 0.3.1 and /org returned 200 (before: 0.2.0 and 404). deploy-site now runs on push to main for site paths; deploy exits nonzero unless the live version equals the repo VERSION; lane no longer fails on the concurrent-merge race.",
-   "probe": "grep:deploy/deploy-site.mjs::live version"
-  },
-  {
-   "id": "lesson-2026-11-12-bootstrap-settings-script-reported-success-while-doing-nothi",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Bootstrap settings script reported success while doing nothing",
-   "body": "apply_github_settings.sh printed failures: 0 with jq missing, so every step was a no-op; it also failed on CRLF jq output, targeted six archived repos, omitted workers/spec/license, and treated GitHub plan limits as permanent red. Measured after the fix: running it from an org-admin gh session returned 'failures: 0 gated: 8' and the org description matches the config. It now requires jq and gh, strips CR, skips archived repos and reports plan-gated features as GATED. Lane merges via GITHUB_TOKEN never fire push workflows, so the lane dispatches deploy-site after merging deployable paths, and scripts/drift_probe.sh compares live version and org description daily; measured: site live=0.3.1 repo=0.3.1.",
-   "probe": "grep:scripts/drift_probe.sh::DRIFT"
-  },
-  {
-   "id": "decision-2026-11-12-code-repo-holds-code-administration-lives-in-ops-the-front-d",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Code repo holds code; administration lives in ops; the front door is one prompt bar",
-   "body": "Measured: 27 of 44 open issues in ultrastable/ultrastable were administration (funding, patent, legal, owner cards, org setup) and were transferred to the private ultrastable/ops repo; 19 code tasks remain and are executor-owned. Site 0.4.0 adds /start, a single prompt bar that stores a plain-words idea in KV; node site/site.test.mjs passes with the page and the POST. Next, tracked in ops: executor reads its queue from repo data so Issues can be disabled on the code repo, the idea consumer asks follow-up questions and scaffolds a Cloudflare Worker, and the six archived duplicate repos are removed after a mirror backup.",
-   "probe": "grep:site/worker.js::FRONT-DOOR-1"
-  },
-  {
-   "id": "decision-2026-11-12-six-archived-duplicate-repos-deleted-after-mirror-backup",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Six archived duplicate repos deleted after mirror backup",
-   "body": "Measured: gh repo list ultrastable now shows ultrastable, ops, license, spec, workers and .github only. Before deletion each of seed, platform, docs, site, business and ip was mirror-cloned (1 ref each, 87K to 515K) to repo-backups outside the repository; their content already lives in ultrastable/ultrastable.",
-   "probe": "grep:doctrine/decision-ledger.json::archived-duplicate"
-  },
-  {
-   "id": "decision-2026-11-12-build-1-the-product-is-idea-to-live-site-in-one-prompt-bar-n",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "BUILD-1: the product is idea to live site in one prompt bar, no setup",
-   "body": "Measured: on ultrastable.io (site 0.5.0) a plain-words idea posted to /api/idea became a hosted page at /s/<id> in about 20 seconds using Workers AI and KV, with no account, key, repo or terminal; the change form regenerates it. node site/site.test.mjs covers idea, build, serve and change. Generated pages run under a sandbox CSP. Limits found: no shared back end yet (data stays in the visitor's browser), pages live on a path of ultrastable.io rather than their own address. Next: per-site database and wildcard subdomain, tracked in ultrastable/ops.",
-   "probe": "grep:site/worker.js::BUILD-1"
-  },
-  {
-   "id": "decision-2026-11-12-user-path-1-guided-set-up-is-data-one-yes-no-question-per-sc",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "USER-PATH-1: guided set-up is data, one yes/no question per screen, plain words only",
-   "body": "Measured: https://ultrastable.io/setup (site 0.6.0) walked in a real browser: yes to GitHub, typed a name, step 3 opened https://github.com/ultrastable/ultrastable/generate and showed the confirm screen; progress persisted in localStorage. The steps live in doctrine/user-path.json, site/userpath.js is generated, and scripts/gen_userpath.py --check (a step in checks) fails on technical words, non-https links or stale output. ultrastable/ultrastable is now a GitHub template so the Make my copy click works for anyone with access. Next in ultrastable/ops: first-run workflow in the copy that enables its own autopilot without a click, Cloudflare Deploy button once the seed is public, OAuth connections for Google and Buffer.",
-   "probe": "file:doctrine/user-path.json"
-  },
-  {
-   "id": "decision-2026-11-12-the-front-door-asks-what-it-does-not-know-and-audits-what-it",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "The front door asks what it does not know and audits what it built",
-   "body": "Verified live on ultrastable.io (site 0.7.0): an idea produced 3 tap-only questions, the answers entered the build brief, the page was live in about 30 s, and an independent model (llama-3.3-70b, not the qwen builder) published /s/<id>/review listing 4 done, 5 gaps and the standing limits. Problems found by that run: a deprecated hard-coded model id had silently disabled the audit, so every AI call now walks a model list (re-probed, audit returns real findings); builds and audits run in separate requests because waitUntil is capped near 30 s; a stuck build now fails after 150 s. node site/site.test.mjs passes the whole flow. Pattern from QNFO prompted recall.",
-   "probe": "grep:site/worker.js::AUDIT-1"
-  },
-  {
-   "id": "lesson-2026-11-12-backgrounded-ai-build-was-evicted-and-left-sites-stuck-at-bu",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Backgrounded AI build was evicted and left sites stuck at building",
-   "body": "Measured: a live POST to /api/idea returned a make URL that still showed Building after more than 2 minutes, while a direct Workers AI call for the same kind of page took 28 s. The build ran in waitUntil, which is cut off about 30 s after the response, so the state never left building. Fixed in site 0.5.1: the job is stored, the /make request awaits the build, a 120 s claim stops duplicate builds, an evicted build is resumed by the next poll, and tries are capped at 3 before the state becomes failed. node site/site.test.mjs covers the build, the change and the capped failure.",
-   "probe": "grep:site/worker.js::BUILD-2"
-  },
-  {
-   "id": "decision-2026-11-12-complete-1-finished-work-and-finished-threads-are-closed-aut",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "COMPLETE-1: finished work and finished threads are closed automatically",
-   "body": "Standing owner rule written into agents/AGENTS.md, seed/agents/AGENTS.md and agents/PROJECT-INSTRUCTIONS.md. Verified by running scripts/completion_sweep.sh against the live repo: it deleted 2 squash-merged branches (agent/brand-settings-buildout, claude/project-thread-pi8gkc) and left every branch with unmerged commits or an open PR alone; gaplint reports 0 findings. The sweep runs in the daily lane workflow. Session side: the app already archives on PR close and after 1 idle day (probed with get_settings), and 5 idle finished sessions were archived. Next: sweep closes done issues with evidence and ops-repo threads.",
-   "probe": "file:scripts/completion_sweep.sh"
-  },
-  {
-   "id": "decision-2026-11-12-work-queue-is-repository-data-issues-are-turned-off-on-the-c",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Work queue is repository data; Issues are turned off on the code repo",
-   "body": "Measured: python3 -m foundation queue --check prints queue ok with 26 takeable items, and 17 former GitHub issues were migrated to docs/issues/Q-*.json. The executor now picks from foundation/queue.py (EXECUTOR_SOURCE=issues restores the old source), claims nothing remotely, and closes the item inside its own pull request so the merge is the closure; three consecutive failures park an item. Issue scripts exit 0 when has_issues is false, funding findings become queue items, and tests/foundation/test_executor.py covers the queue.",
-   "probe": "grep:foundation/queue.py::QUEUE-1"
-  },
-  {
-   "id": "lesson-2026-11-12-executor-picked-queue-items-live-but-had-no-model-route",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Executor picked queue items live but had no model route",
-   "body": "A dispatched executor run on main picked Q-10 from the repo-data queue and recorded no-model-credential, because ANTHROPIC_API_KEY is not bound in Actions; the issues sweep also failed on disabled Issues. Measured after the fix: pytest tests/foundation/test_executor.py returned 9 passed, and python3 -m foundation orphans --sync-issue returned 'issues off: backlog enforced by orphans --check in checks; zero=True'. Added a Workers AI model route using the Cloudflare secrets the repo already holds, and org settings now declare has_issues false so a settings apply cannot turn Issues back on.",
-   "probe": "grep:foundation/executor.py::call_cloudflare"
-  },
-  {
-   "id": "lesson-2026-11-12-executor-pr-sat-as-an-unchecked-draft",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Executor PR sat as an unchecked draft",
-   "body": "The first live executor run opened PR 233 for Q-10 as a draft with zero checks, because a PR opened with GITHUB_TOKEN raises no pull_request event and a draft runs no CI, so the lane had nothing to merge. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed and the executor now marks the PR ready and dispatches checks.yml on its branch right after pr create, recording any failed kick in the log row.",
-   "probe": "grep:foundation/executor.py::kick_failed"
-  },
-  {
-   "id": "lesson-2026-11-12-executor-prs-failed-the-write-back-gate",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Executor PRs failed the write-back gate",
-   "body": "The first live executor PR (233 for Q-10) failed the checks step 'code changed with no write-back'. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed, and a manual python3 -m foundation writeback record --kind decision with a Measured body and a file probe printed 'recorded'. The executor now records that decision itself in the same commit as its change.",
-   "probe": "grep:foundation/executor.py::WRITEBACK-1"
-  },
-  {
-   "id": "decision-2026-11-12-boundary-1-containment-boundary",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "BOUNDARY-1 containment boundary",
-   "body": "Creation and destruction inside a rebuildable boundary; egress gated; trust tiers apply inside only; session reaper; strange-loop improvement ledger.",
-   "probe": "grep:foundation/boundary.py::def drill"
-  },
-  {
-   "id": "lesson-2026-11-12-boundary-session-reaper",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Boundary session reaper",
-   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Finished or idle sessions are archived from boundary.reap decisions.",
-   "probe": "grep:foundation/boundary.py::def reap"
-  },
-  {
-   "id": "decision-2026-11-12-front-2-chat-thread-front-door",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "FRONT-2 chat-thread front door",
-   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. The front door is a conversation: pill input with dictation, rotating context-aware suggestions (bank plus model), tap-to-answer questions in the thread, each build step shown as it runs, change requests in the same thread. JSON endpoints /api/suggest, /api/idea, /s/<id>/status. No-JS form fallback kept.",
-   "probe": "grep:site/suggest.js::export function suggest"
-  },
-  {
-   "id": "decision-2026-11-12-market-1-components-and-gaps-as-data",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "MARKET-1 components and gaps as data",
-   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. doctrine/market.json holds components, researched competitor coverage with sources read 2026-11-12, users, stories and objections. Claimed features need passing proofs and tests; each gap is a Q-GAP queue item the executor works; competitor names stay off the public site. Defensible wording is 'not found in the sources read', never 'nobody does'.",
-   "probe": "grep:foundation/market.py::def check"
-  },
-  {
-   "id": "lesson-2026-11-12-write-back-open-loop-ids-are-max-1-never-count-1",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Write-back open-loop ids are max+1, never count+1",
-   "body": "count+1 overwrote OL-20261112-11 (the Cloudflare account transfer residual) because ids have gaps; closedloop --check caught it as a residual with no queue entry. record() now takes max+1 and refuses to overwrite.",
-   "probe": "grep:foundation/writeback.py::never count\\+1"
-  },
-  {
-   "id": "decision-2026-11-12-position-say-what-ultrastable-is-not-for",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "POSITION: say what Ultrastable is not for",
-   "body": "The home page lists what Ultrastable is not for (one-off pages, prompt-by-prompt vibe coding) and agent.md tells assistants to stop when the idea is a one-off page, so people self-select into ongoing systems that need setup and a paid back end.",
-   "probe": "grep:site/worker.js::What it is not for"
-  },
-  {
-   "id": "lesson-2026-11-12-site-claims-must-link-to-issues-and-code-site-pins-1",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Site claims must link to issues and code (SITE-PINS-1)",
-   "body": "A public-site status pin or honest gap with no docs/issues item and no existing code path is a defect. site/pins.json plus scripts/build_site_roadmap.py --check enforce it; doctrine/market.json engineer-lane now proves site/pins.json.",
-   "probe": "file:scripts/build_site_roadmap.py",
-   "session": "session_0156nqDtk2xvHdHtnZ3B7oBL"
-  },
-  {
-   "id": "lesson-2026-11-12-parallel-sessions-built-the-same-site-pins-system-merge-into",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Parallel sessions built the same site-pins system; merge into one source of truth",
-   "body": "PINS-1 (computed pins) collided with SITE-PINS-1 (#247) on main. Kept SITE-PINS-1 (site/pins.json, scripts/build_site_roadmap.py) as the single source for the site and kept only the shrink-only ratchet for roadmap issues without a runnable probe (foundation/pins.py, doctrine/pins-baseline.json). Lesson: before building a surface, read origin/main and open PRs for the same directive.",
-   "probe": "grep:foundation/pins.py::def unprobed"
-  },
-  {
-   "id": "lesson-2026-11-12-generated-demos-must-be-linted-a-static-page-cannot-be-an-au",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Generated demos must be linted; a static page cannot be an autonomous system",
-   "body": "Design-system prompt plus model-free lint feeding repair plus honest limits wording. Open: screenshot-critique pass.",
-   "probe": "grep:site/worker.js::export function lint"
-  },
-  {
-   "id": "decision-2026-11-12-pilot-model-bring-your-own-account-first-hosted-deferred-das",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Pilot model: bring-your-own-account first; hosted deferred; dashboard shows Ultrastable on itself",
-   "body": "Owner worried that hosting customers on our Cloudflare creates data-protection, encryption and isolation burden and that a thin demo does not show the back end. Decision: pilots run in the customer's own account (no customer data on our infrastructure); revenue hypotheses (paid pilot then subscription for playbooks, dashboard and support) are data in doctrine/pilot-model.json with probes; /dashboard shows the real control plane computed from the repo with the live feed explicitly pending (Q-LOOP-live-clock). Revert: offer hosted only after the isolation and processor terms are built.",
-   "probe": "file:doctrine/pilot-model.json"
-  },
-  {
-   "id": "decision-2026-11-12-pilot-is-an-application-program-layers-are-recursive-multi-t",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Pilot is an application program; layers are recursive; multi-tenant is a separate gated obligation",
-   "body": "Owner: sell the pilot as open applications for strong use cases and interesting demos of autonomous code loops and virtual agent managers; price set by what the market bears; multi-tenant is possible but a different data-protection obligation; the system is recursive (platform on its own infrastructure, customer systems on it, systems on those). Encoded: doctrine/pilot-model.json program, layers, multi_tenant_obligations; bootstrap records parent and level and adds M-parent-link; /pilot renders the program from data. Intake handler, first child link and multi-tenant controls are filed as Q-PILOT-application-intake, Q-LAYER-child-reporting, Q-GAP-multi-tenant-controls.",
-   "probe": "file:doctrine/pilot-model.json"
-  },
-  {
-   "id": "decision-2026-11-12-tenant-0-model-and-application-as-interview",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Tenant 0 model and application-as-interview",
-   "body": "Advisory from owner: treat the platform as tenant 0 of its own model; same shape at every level; isolation from the start so multi-tenant is stricter isolation not a rewrite; application form is the system-test interview. Built: POST /api/pilot scores the four system-test answers; metrics/objectives carry tenant_id and a runtime measures only its own tenant (tested); dashboard takes a tenant id and 404s unknown tenants. Remaining: tenant_id on core tables and per-tenant credentials (Q-TENANT-row-isolation), child reporting (Q-LAYER-child-reporting). Price: left open, a real monthly quote is the owner's market call per hypotheses H1/H2.",
-   "probe": "grep:site/worker.js::pilotApplication"
-  },
-  {
-   "id": "decision-2026-11-12-server-side-only-github-actions-on-its-built-in-token-is-the",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Server-side only: GitHub Actions on its built-in token is the credential-free route",
-   "body": "Owner directive 2026-11-12: Ultrastable runs server-side only. The scheduler host on a person's computer, its two launch scripts, the browser sign-in script and the desktop task definition were removed. The No-single-route rule stays; its credential-free route is now the GitHub Actions loop host, because GitHub mints the workflow token for each run and no person mints it (deploy/routes.json person_free_credentials). The failover chain is Cloudflare worker 0 h, cloud-hosted Claude routine 3 h, GitHub Actions 12 h behind a daily gate. Measured: python3 scripts/check_routes.py prints 'routes ok: credential-free route is server-side (github-actions)'; python3 -m foundation serverside --check prints 'serverside ok'.",
-   "probe": "grep:deploy/routes.json::github-builtin",
-   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
-  },
-  {
-   "id": "decision-2026-11-12-the-lane-workflow-is-the-server-side-needs-pat-merger",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "The lane workflow is the server-side needs-pat merger",
-   "body": "PRs that change .github/workflows are merged by scripts/lane.sh in lane.yml, on green and on the exact head commit, with a workflow-capable credential resolved by scripts/lane_credential.py: LANE_PAT, then a GitHub App installation token (LANE_APP_ID, LANE_APP_PRIVATE_KEY). PRs labeled hold are skipped. Measured on 2026-11-12: PR 222 changed lane.yml and its lane review was posted by github-actions[bot], so the lane ran on the built-in token and LANE_PAT was not bound then; with no credential the lane leaves such PRs open, green and labeled needs-pat and logs waiting=N. The owner step is the single item lane-credential in foundation/data/needs-you.json with that default in effect. Evidence: tests/foundation/test_lane_merger.py, 10 tests pass.",
-   "probe": "grep:scripts/lane.sh::NEEDS-PAT-1",
-   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
-  },
-  {
-   "id": "lesson-2026-11-12-test-helpers-left-a-repository-copy-per-test-in-the-temp-dir",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Test helpers left a repository copy per test in the temp directory",
-   "body": "copy_repo() and tiny_repo() called tempfile.mkdtemp() and nothing removed the result. Measured on main before the fix: one run of python3 -m unittest discover -s tests/foundation left 113 directories and 781 MB in the temp directory; on the larger checkout three runs filled a 117 GB disk. Fix: tests/foundation/_repo.py scratch() registers removal with the running test (addCleanup, addClassCleanup), at interpreter exit, and sweeps directories a killed run left; every bare mkdtemp in tests/foundation goes through it and test_repo_cleanup.py fails a new bare one. Measured after the fix: the same run leaves 0 directories.",
-   "probe": "grep:tests/foundation/_repo.py::addCleanup",
-   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
-  },
-  {
-   "id": "lesson-2026-11-12-closing-probes-proved-code-existed-not-that-loops-ran",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Closing probes proved code existed, not that loops ran",
-   "body": "Every closing probe in the loop registry was file: or grep:, so loops verify passed while two workflows had never run. Measured 2026-11-12 12:58 UTC through the GitHub API: loop.yml 0 runs, fleet.yml 0 runs; executor log row 0.8 h old and session ledger row 0.5 h old on their evidence branches. Fix: foundation/liveness.py reads run evidence per probe in instances/ultrastable/liveness.json and gives alive, stale, failing, never or unknown; every launch pass runs it and files a queue item per loop that is not alive. Both workflows were dispatched on main at 12:59 UTC to start them.",
-   "probe": "grep:foundation/liveness.py::def verdict",
-   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
-  },
-  {
-   "id": "lesson-2026-11-12-tick-loader-resolved-paths-with-url-pathname",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "Tick loader resolved paths with URL.pathname",
-   "body": "platform/selfhost/tick.mjs and the GCP adapter built file paths from URL.pathname, which is percent-encoded and on Windows begins with a slash before the drive letter, so the migrations directory was looked up at a doubled drive path there and at dir%20with%20space on any host whose checkout path has a space. Measured before the fix on Linux: selfhost boot from a copy under 'dir with space' returned status failed, ENOENT scandir .../dir%20with%20space/seed/worker/migrations. Fix: fileURLToPath. Measured after: tests/foundation/test_selfhost.py test_full_tick_from_a_path_that_needs_url_decoding passes; the GCP adapter tests pass. The http metric source in seed/worker/src/tick.js had no test; seed/worker/test/measure.test.js now covers 2xx, error status, unreachable host and recovery.",
-   "probe": "grep:platform/selfhost/tick.mjs::fileURLToPath",
-   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
-  },
-  {
-   "id": "decision-2026-11-12-fit-is-the-system-test-not-b2b-and-not-revenue",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Fit is the system test, not B2B and not revenue",
-   "body": "Owner, 2026-11-12: the use cases are not only B2B. A personal system (a companion, a signals desk for markets or news) qualifies when it needs ongoing agentic upkeep and its owner accepts a running cost; storefronts are left to shop builders and the product is not pitched on revenue. docs/doctrine/VISION.md and its seed copy now say the owner can be an organization, a small business or one person, drop the shop example and list selling online under what it is not for; site/suggest.js replaces the shop suggestion with two personal systems. Measured: tests/test_vision.py 5 tests pass, including a one-person signals desk that passes the bootstrap qualify stage.",
-   "probe": "grep:tests/test_vision.py::def test_a_personal_system_is_a_fit_when_it_passes_the_system_test",
-   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
-  },
-  {
-   "id": "decision-2026-11-12-transparency-1-everything-about-how-ultrastable-runs-is-read",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "TRANSPARENCY-1: everything about how Ultrastable runs is read-only public",
-   "body": "Owner 2026-11-12: full transparency, everybody read-only; changes keep the e-mailed code. /live and /api/live serve a snapshot from foundation/transparency.py published to D1 each launch pass. Open: most registry loops have no recorded run; /owner is shadowed by the site worker.",
-   "probe": "grep:site/live.js::read-only"
-  },
-  {
-   "id": "lesson-2026-11-12-deploy-site-mjs-bound-no-d1-so-api-live-and-site-analytics-h",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "deploy-site.mjs bound no D1, so /api/live and site analytics had no database",
-   "body": "The deploy script uploaded only ASSETS and AI bindings while site/wrangler.toml declares DB (ultrastable-ops). Fixed by binding d1 DB in deploy/deploy-site.mjs; /api/live is the probe.",
-   "probe": "grep:deploy/deploy-site.mjs::type: \"d1\""
-  },
-  {
-   "id": "decision-2026-11-12-transparency-1b-measure-shipped-code-by-origin",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "TRANSPARENCY-1b: measure shipped code by origin",
-   "body": "Measured 2026-11-12: 149 merged PRs in 3 days (136 by interactive agent sessions, 0 by the unattended executor), backlog 62 open of 64; /live now publishes throughput and a per-day changelog without repository contents. The unattended executor is the gap to close.",
-   "probe": "grep:foundation/transparency.py::def throughput"
-  },
-  {
-   "id": "lesson-2026-11-12-transparency-publish-reported-green-while-d1-refused-the-sna",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "transparency publish reported green while D1 refused the snapshot",
-   "body": "The publish step printed published false and exited 0 (a swallowed error), and D1 rejects a single 120 KB statement. Snapshot now stored in 50 KB parts and --publish exits 1 when not published; /api/live generated time is the probe.",
-   "probe": "grep:foundation/transparency.py::return 1"
-  },
-  {
-   "id": "lesson-2026-11-12-executor-failed-every-run-on-a-roadmap-item-with-no-runnable",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "executor failed every run on a roadmap item with no runnable probe",
-   "body": "PORT-EXEC-1 had a prose done check, so the pins test failed in the executor's pre-PR checks and Q-10 never reached a PR. Probe is now file:ops/port-evidence/gcp-verify.json (the recorded verify run of the gcp adapter).",
-   "probe": "grep:docs/issues/PORT-EXEC-1.json::gcp-verify"
-  },
-  {
-   "id": "lesson-2026-11-12-executor-prs-failed-on-stale-generated-dashboard-data",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "executor PRs failed on stale generated dashboard data",
-   "body": "Any queue or doc change makes site/dashboard-data.js stale, so the executor's own pre-PR checks failed. The executor now runs scripts/build_dashboard.py before its checks and before the commit.",
-   "probe": "grep:foundation/executor.py::GENERATORS"
-  },
-  {
-   "id": "lesson-2026-11-12-executor-abandoned-a-change-on-the-first-failed-check",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "executor abandoned a change on the first failed check",
-   "body": "The model's Q-10 change violated the server-side-only rule (localhost) and the executor discarded it. It now tells the model the rule and feeds failed check output back for up to 2 repairs before abandoning.",
-   "probe": "grep:foundation/executor.py::REPAIRS"
-  },
-  {
-   "id": "lesson-2026-11-12-executor-crashed-on-an-unusable-model-reply",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "executor crashed on an unusable model reply",
-   "body": "A JSONDecodeError from the model reply ended the run with no repair. Unusable replies now count as a failed attempt and the model is asked again, within the same REPAIRS budget.",
-   "probe": "grep:foundation/executor.py::COULD NOT BE USED"
-  },
-  {
-   "id": "decision-2026-11-12-agentic-1-ultrastable-io-is-machine-readable-and-exposes-a-r",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "AGENTIC-1: ultrastable.io is machine-readable and exposes a read-only MCP endpoint",
-   "body": "Checked against Cloudflare's agent-readiness scan (isitagentready.com): API Catalog (RFC 9727), MCP Server Card, Agent Skills index with checksums, OpenAPI, Link headers, Content Signals, and a real read-only /mcp (JSON-RPC) over the live snapshot. Also glossary term unattended: crosswalk of autonomous, automatic and unattended, measured by merged executor PRs. Standards the seed worker already carries are not yet wired into the live site worker's own repo flow.",
-   "probe": "grep:site/agentic.js::get_scoreboard"
-  },
-  {
-   "id": "lesson-2026-11-12-executor-changes-failed-the-doctrine-check-failure-text-was-",
-   "kind": "lesson",
-   "date": "2026-11-12",
-   "title": "executor changes failed the doctrine check; failure text was cut off",
-   "body": "Run 5 failed after 3 attempts on test_repo_is_consistent_with_the_doctrine_file, and the logged tail hid the reason. The executor now regenerates doctrine, glossary and standards files, states the tagline rule for new Markdown in its prompt, and feeds 2500 characters of check output back.",
-   "probe": "grep:foundation/executor.py::foundation\", \"doctrine\", \"--apply"
-  },
-  {
-   "id": "decision-2026-11-12-sys-roadmap-the-system-is-topology-agent-ladder-failure-regi",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "SYS roadmap: the system is topology, agent ladder, failure registry, vector index, agent-readiness, bootstrap rehearsal",
-   "body": "Owner 2026-11-12: one worker and a D1 database is not a system. Six executor-takeable queue items with file probes: Q-SYS-TOPOLOGY, Q-SYS-AGENT-LADDER, Q-SYS-FAILURE-REGISTRY, Q-SYS-VECTOR-KB, Q-SYS-AGENT-READINESS, Q-SYS-BOOT-REHEARSAL. Measured: QNFO account has 47 workers, 10 vector indexes, 4 workflows, 2 queues; Ultrastable has 3 core workers, 2 D1 databases, 1 KV.",
-   "probe": "file:docs/issues/Q-SYS-TOPOLOGY.json"
-  },
-  {
-   "id": "decision-2026-11-12-agent-interop-1-and-terms-crosswalk-1",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "AGENT-INTEROP-1 and TERMS-CROSSWALK-1",
-   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Site serves Markdown, Link headers, llms.txt, OpenAPI, API catalog, read-only MCP; standards are data with source and date; A2A declined with reason (no endpoint). Crosswalk maps autonomous, closed loop, automatic, never stops, no person in the loop to glossary terms; markers stamped in every instruction file.",
-   "probe": "grep:foundation/agentstd.py::def check"
-  },
-  {
-   "id": "decision-2026-11-12-code-agents-1-and-system-1-adapter-registry-one-running-syst",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "CODE-AGENTS-1 and SYSTEM-1: adapter registry, one running system",
-   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Adapter registry with cost routing and disjoint-family ensemble (from the QNFO review gate); in-Worker code agent through env.AI; system topology as data rendered to wrangler configs; deploy-system.yml deploys ultrastable-agents and probes every adapter. A direct connector deploy was refused by the permission classifier (production deploy) and is recorded; the repo workflow is the deploy route.",
-   "probe": "grep:foundation/system.py::def render_worker"
-  },
-  {
-   "id": "decision-2026-11-12-duplicate-agent-discovery-dropped-crosswalk-aligned-to-gloss",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Duplicate agent discovery dropped, crosswalk aligned to glossary",
-   "body": "Session: session_0156nqDrGFZaa8zQwcdGZNQU. Measured: main already served site/agentic.js with OpenAPI, API catalog, server card, MCP and skills index, so this branch's site/agent.js was removed; doctrine/crosswalk.json now maps automatic, autonomous and unattended to the glossary unattended and autonomy terms; agentstd, crosswalk, loops, system and agents checks report ok.",
-   "probe": "grep:site/agentic.js::api-catalog"
-  },
-  {
-   "id": "decision-2026-11-12-executor-closed-q-10-update-ultrastable-io-proof-to-serve-a-",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Executor closed Q-10: Update ultrastable.io/proof to serve a product-side feed",
-   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: brand/public-profile/profile/proof.js, tests/proof.test.js.",
-   "probe": "file:brand/public-profile/profile/proof.js"
-  },
-  {
-   "id": "decision-2026-11-12-lane-watch-1-green-prs-may-not-stay-open",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "LANE-WATCH-1: green PRs may not stay open",
-   "body": "Session: session_0156nqDrGFZaa8zQwcdGZNQU. Measured: PR 264 changed workflow files, so the built-in token could not merge it and the lane left it open with no credential bound; PRs 238 and 249 were red on stale branches and 268 conflicted after main moved. The lane now runs foundation lanewatch after each merge pass and fails when a green mergeable PR is older than 30 minutes, naming the cause; the crosswalk bans reporting a PR as waiting for review.",
-   "probe": "grep:foundation/lanewatch.py::def classify"
-  }
- ]
+  "_doc": "CLOSED-LOOP-1 write-back: every lesson and decision as a row with a closing probe (file:<path> or grep:<path>::<regex>) that `python3 -m foundation orphans --check` executes on every PR and loop pass. Written by `python3 -m foundation writeback record --kind lesson|decision --probe SPEC`.",
+  "rows": [
+    {
+      "id": "decision-2026-11-12-closed-loop-1-no-artifact-without-a-consuming-loop-no-wait-o",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "CLOSED-LOOP-1: no artifact without a consuming loop, no wait on a person",
+      "body": "Rowan 2026-11-12: assume nothing is read, reviewed or decided by a person. Policy values in doctrine/closed-loop.json and closed_loop in autonomy/policy.json; foundation/orphans.py fails CI on a new orphan artifact, a non-identity-bound wait or a failing ledger probe; lessons and decisions are ledger rows with probes, not pages.",
+      "probe": "grep:foundation/orphans.py::def ledger_failures"
+    },
+    {
+      "id": "decision-2026-11-12-write-back-is-an-executable-ledger-row-not-a-page",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Write-back is an executable ledger row, not a page",
+      "body": "writeback record --kind lesson|decision writes doctrine/decision-ledger.json with a required file or grep probe; closedloop --check runs every probe.",
+      "probe": "grep:foundation/writeback.py::LEDGER = "
+    },
+    {
+      "id": "decision-2026-11-12-orphan-scan-delegates-to-the-document-audit",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Orphan scan delegates to the document audit",
+      "body": "CLOSED-LOOP-1 (orphans.py) and DOC-CONSUMED-1 (docs_audit.py) measured the same thing two ways. The document audit is the single definition; orphans.py keeps the human-wait check, the decision ledger and the backlog issue, and reads orphan documents from docs_audit.",
+      "probe": "grep:foundation/orphans.py::docs_audit",
+      "session": "session_0156nqDrJvHpEG6mS66nV7Xg"
+    },
+    {
+      "id": "decision-2026-11-12-fleet-skips-archived-repositories",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Fleet skips archived repositories",
+      "body": "ultrastable/seed is archived and read-only; its live copy is the seed directory of this repository. The fleet lane lists live repositories only and records an archived one instead of failing or opening a card.",
+      "probe": "grep:foundation/fleet.py::archived"
+    },
+    {
+      "id": "lesson-2026-11-12-deploy-was-green-while-live-served-old-code",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Deploy was green while live served old code",
+      "body": "Merged site 0.3.1 never went live: worker.js imports ../seed/analytics/analytics.js, the single-file upload returned code 10021, deploy-site.mjs ignored success=false, and the verify step fetched only an image. Measured after the fix: curl https://ultrastable.io/health returned version 0.3.1 and /org returned 200 (before: 0.2.0 and 404). deploy-site now runs on push to main for site paths; deploy exits nonzero unless the live version equals the repo VERSION; lane no longer fails on the concurrent-merge race.",
+      "probe": "grep:deploy/deploy-site.mjs::live version"
+    },
+    {
+      "id": "lesson-2026-11-12-bootstrap-settings-script-reported-success-while-doing-nothi",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Bootstrap settings script reported success while doing nothing",
+      "body": "apply_github_settings.sh printed failures: 0 with jq missing, so every step was a no-op; it also failed on CRLF jq output, targeted six archived repos, omitted workers/spec/license, and treated GitHub plan limits as permanent red. Measured after the fix: running it from an org-admin gh session returned 'failures: 0 gated: 8' and the org description matches the config. It now requires jq and gh, strips CR, skips archived repos and reports plan-gated features as GATED. Lane merges via GITHUB_TOKEN never fire push workflows, so the lane dispatches deploy-site after merging deployable paths, and scripts/drift_probe.sh compares live version and org description daily; measured: site live=0.3.1 repo=0.3.1.",
+      "probe": "grep:scripts/drift_probe.sh::DRIFT"
+    },
+    {
+      "id": "decision-2026-11-12-code-repo-holds-code-administration-lives-in-ops-the-front-d",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Code repo holds code; administration lives in ops; the front door is one prompt bar",
+      "body": "Measured: 27 of 44 open issues in ultrastable/ultrastable were administration (funding, patent, legal, owner cards, org setup) and were transferred to the private ultrastable/ops repo; 19 code tasks remain and are executor-owned. Site 0.4.0 adds /start, a single prompt bar that stores a plain-words idea in KV; node site/site.test.mjs passes with the page and the POST. Next, tracked in ops: executor reads its queue from repo data so Issues can be disabled on the code repo, the idea consumer asks follow-up questions and scaffolds a Cloudflare Worker, and the six archived duplicate repos are removed after a mirror backup.",
+      "probe": "grep:site/worker.js::FRONT-DOOR-1"
+    },
+    {
+      "id": "decision-2026-11-12-six-archived-duplicate-repos-deleted-after-mirror-backup",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Six archived duplicate repos deleted after mirror backup",
+      "body": "Measured: gh repo list ultrastable now shows ultrastable, ops, license, spec, workers and .github only. Before deletion each of seed, platform, docs, site, business and ip was mirror-cloned (1 ref each, 87K to 515K) to repo-backups outside the repository; their content already lives in ultrastable/ultrastable.",
+      "probe": "grep:doctrine/decision-ledger.json::archived-duplicate"
+    },
+    {
+      "id": "decision-2026-11-12-build-1-the-product-is-idea-to-live-site-in-one-prompt-bar-n",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "BUILD-1: the product is idea to live site in one prompt bar, no setup",
+      "body": "Measured: on ultrastable.io (site 0.5.0) a plain-words idea posted to /api/idea became a hosted page at /s/<id> in about 20 seconds using Workers AI and KV, with no account, key, repo or terminal; the change form regenerates it. node site/site.test.mjs covers idea, build, serve and change. Generated pages run under a sandbox CSP. Limits found: no shared back end yet (data stays in the visitor's browser), pages live on a path of ultrastable.io rather than their own address. Next: per-site database and wildcard subdomain, tracked in ultrastable/ops.",
+      "probe": "grep:site/worker.js::BUILD-1"
+    },
+    {
+      "id": "decision-2026-11-12-user-path-1-guided-set-up-is-data-one-yes-no-question-per-sc",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "USER-PATH-1: guided set-up is data, one yes/no question per screen, plain words only",
+      "body": "Measured: https://ultrastable.io/setup (site 0.6.0) walked in a real browser: yes to GitHub, typed a name, step 3 opened https://github.com/ultrastable/ultrastable/generate and showed the confirm screen; progress persisted in localStorage. The steps live in doctrine/user-path.json, site/userpath.js is generated, and scripts/gen_userpath.py --check (a step in checks) fails on technical words, non-https links or stale output. ultrastable/ultrastable is now a GitHub template so the Make my copy click works for anyone with access. Next in ultrastable/ops: first-run workflow in the copy that enables its own autopilot without a click, Cloudflare Deploy button once the seed is public, OAuth connections for Google and Buffer.",
+      "probe": "file:doctrine/user-path.json"
+    },
+    {
+      "id": "decision-2026-11-12-the-front-door-asks-what-it-does-not-know-and-audits-what-it",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "The front door asks what it does not know and audits what it built",
+      "body": "Verified live on ultrastable.io (site 0.7.0): an idea produced 3 tap-only questions, the answers entered the build brief, the page was live in about 30 s, and an independent model (llama-3.3-70b, not the qwen builder) published /s/<id>/review listing 4 done, 5 gaps and the standing limits. Problems found by that run: a deprecated hard-coded model id had silently disabled the audit, so every AI call now walks a model list (re-probed, audit returns real findings); builds and audits run in separate requests because waitUntil is capped near 30 s; a stuck build now fails after 150 s. node site/site.test.mjs passes the whole flow. Pattern from QNFO prompted recall.",
+      "probe": "grep:site/worker.js::AUDIT-1"
+    },
+    {
+      "id": "lesson-2026-11-12-backgrounded-ai-build-was-evicted-and-left-sites-stuck-at-bu",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Backgrounded AI build was evicted and left sites stuck at building",
+      "body": "Measured: a live POST to /api/idea returned a make URL that still showed Building after more than 2 minutes, while a direct Workers AI call for the same kind of page took 28 s. The build ran in waitUntil, which is cut off about 30 s after the response, so the state never left building. Fixed in site 0.5.1: the job is stored, the /make request awaits the build, a 120 s claim stops duplicate builds, an evicted build is resumed by the next poll, and tries are capped at 3 before the state becomes failed. node site/site.test.mjs covers the build, the change and the capped failure.",
+      "probe": "grep:site/worker.js::BUILD-2"
+    },
+    {
+      "id": "decision-2026-11-12-complete-1-finished-work-and-finished-threads-are-closed-aut",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "COMPLETE-1: finished work and finished threads are closed automatically",
+      "body": "Standing owner rule written into agents/AGENTS.md, seed/agents/AGENTS.md and agents/PROJECT-INSTRUCTIONS.md. Verified by running scripts/completion_sweep.sh against the live repo: it deleted 2 squash-merged branches (agent/brand-settings-buildout, claude/project-thread-pi8gkc) and left every branch with unmerged commits or an open PR alone; gaplint reports 0 findings. The sweep runs in the daily lane workflow. Session side: the app already archives on PR close and after 1 idle day (probed with get_settings), and 5 idle finished sessions were archived. Next: sweep closes done issues with evidence and ops-repo threads.",
+      "probe": "file:scripts/completion_sweep.sh"
+    },
+    {
+      "id": "decision-2026-11-12-work-queue-is-repository-data-issues-are-turned-off-on-the-c",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Work queue is repository data; Issues are turned off on the code repo",
+      "body": "Measured: python3 -m foundation queue --check prints queue ok with 26 takeable items, and 17 former GitHub issues were migrated to docs/issues/Q-*.json. The executor now picks from foundation/queue.py (EXECUTOR_SOURCE=issues restores the old source), claims nothing remotely, and closes the item inside its own pull request so the merge is the closure; three consecutive failures park an item. Issue scripts exit 0 when has_issues is false, funding findings become queue items, and tests/foundation/test_executor.py covers the queue.",
+      "probe": "grep:foundation/queue.py::QUEUE-1"
+    },
+    {
+      "id": "lesson-2026-11-12-executor-picked-queue-items-live-but-had-no-model-route",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Executor picked queue items live but had no model route",
+      "body": "A dispatched executor run on main picked Q-10 from the repo-data queue and recorded no-model-credential, because ANTHROPIC_API_KEY is not bound in Actions; the issues sweep also failed on disabled Issues. Measured after the fix: pytest tests/foundation/test_executor.py returned 9 passed, and python3 -m foundation orphans --sync-issue returned 'issues off: backlog enforced by orphans --check in checks; zero=True'. Added a Workers AI model route using the Cloudflare secrets the repo already holds, and org settings now declare has_issues false so a settings apply cannot turn Issues back on.",
+      "probe": "grep:foundation/executor.py::call_cloudflare"
+    },
+    {
+      "id": "lesson-2026-11-12-executor-pr-sat-as-an-unchecked-draft",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Executor PR sat as an unchecked draft",
+      "body": "The first live executor run opened PR 233 for Q-10 as a draft with zero checks, because a PR opened with GITHUB_TOKEN raises no pull_request event and a draft runs no CI, so the lane had nothing to merge. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed and the executor now marks the PR ready and dispatches checks.yml on its branch right after pr create, recording any failed kick in the log row.",
+      "probe": "grep:foundation/executor.py::kick_failed"
+    },
+    {
+      "id": "lesson-2026-11-12-executor-prs-failed-the-write-back-gate",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Executor PRs failed the write-back gate",
+      "body": "The first live executor PR (233 for Q-10) failed the checks step 'code changed with no write-back'. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed, and a manual python3 -m foundation writeback record --kind decision with a Measured body and a file probe printed 'recorded'. The executor now records that decision itself in the same commit as its change.",
+      "probe": "grep:foundation/executor.py::WRITEBACK-1"
+    },
+    {
+      "id": "decision-2026-11-12-boundary-1-containment-boundary",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "BOUNDARY-1 containment boundary",
+      "body": "Creation and destruction inside a rebuildable boundary; egress gated; trust tiers apply inside only; session reaper; strange-loop improvement ledger.",
+      "probe": "grep:foundation/boundary.py::def drill"
+    },
+    {
+      "id": "lesson-2026-11-12-boundary-session-reaper",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Boundary session reaper",
+      "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Finished or idle sessions are archived from boundary.reap decisions.",
+      "probe": "grep:foundation/boundary.py::def reap"
+    },
+    {
+      "id": "decision-2026-11-12-front-2-chat-thread-front-door",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "FRONT-2 chat-thread front door",
+      "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. The front door is a conversation: pill input with dictation, rotating context-aware suggestions (bank plus model), tap-to-answer questions in the thread, each build step shown as it runs, change requests in the same thread. JSON endpoints /api/suggest, /api/idea, /s/<id>/status. No-JS form fallback kept.",
+      "probe": "grep:site/suggest.js::export function suggest"
+    },
+    {
+      "id": "decision-2026-11-12-market-1-components-and-gaps-as-data",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "MARKET-1 components and gaps as data",
+      "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. doctrine/market.json holds components, researched competitor coverage with sources read 2026-11-12, users, stories and objections. Claimed features need passing proofs and tests; each gap is a Q-GAP queue item the executor works; competitor names stay off the public site. Defensible wording is 'not found in the sources read', never 'nobody does'.",
+      "probe": "grep:foundation/market.py::def check"
+    },
+    {
+      "id": "lesson-2026-11-12-write-back-open-loop-ids-are-max-1-never-count-1",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Write-back open-loop ids are max+1, never count+1",
+      "body": "count+1 overwrote OL-20261112-11 (the Cloudflare account transfer residual) because ids have gaps; closedloop --check caught it as a residual with no queue entry. record() now takes max+1 and refuses to overwrite.",
+      "probe": "grep:foundation/writeback.py::never count\\+1"
+    },
+    {
+      "id": "decision-2026-11-12-position-say-what-ultrastable-is-not-for",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "POSITION: say what Ultrastable is not for",
+      "body": "The home page lists what Ultrastable is not for (one-off pages, prompt-by-prompt vibe coding) and agent.md tells assistants to stop when the idea is a one-off page, so people self-select into ongoing systems that need setup and a paid back end.",
+      "probe": "grep:site/worker.js::What it is not for"
+    },
+    {
+      "id": "lesson-2026-11-12-site-claims-must-link-to-issues-and-code-site-pins-1",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Site claims must link to issues and code (SITE-PINS-1)",
+      "body": "A public-site status pin or honest gap with no docs/issues item and no existing code path is a defect. site/pins.json plus scripts/build_site_roadmap.py --check enforce it; doctrine/market.json engineer-lane now proves site/pins.json.",
+      "probe": "file:scripts/build_site_roadmap.py",
+      "session": "session_0156nqDtk2xvHdHtnZ3B7oBL"
+    },
+    {
+      "id": "lesson-2026-11-12-parallel-sessions-built-the-same-site-pins-system-merge-into",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Parallel sessions built the same site-pins system; merge into one source of truth",
+      "body": "PINS-1 (computed pins) collided with SITE-PINS-1 (#247) on main. Kept SITE-PINS-1 (site/pins.json, scripts/build_site_roadmap.py) as the single source for the site and kept only the shrink-only ratchet for roadmap issues without a runnable probe (foundation/pins.py, doctrine/pins-baseline.json). Lesson: before building a surface, read origin/main and open PRs for the same directive.",
+      "probe": "grep:foundation/pins.py::def unprobed"
+    },
+    {
+      "id": "lesson-2026-11-12-generated-demos-must-be-linted-a-static-page-cannot-be-an-au",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Generated demos must be linted; a static page cannot be an autonomous system",
+      "body": "Design-system prompt plus model-free lint feeding repair plus honest limits wording. Open: screenshot-critique pass.",
+      "probe": "grep:site/worker.js::export function lint"
+    },
+    {
+      "id": "decision-2026-11-12-pilot-model-bring-your-own-account-first-hosted-deferred-das",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Pilot model: bring-your-own-account first; hosted deferred; dashboard shows Ultrastable on itself",
+      "body": "Owner worried that hosting customers on our Cloudflare creates data-protection, encryption and isolation burden and that a thin demo does not show the back end. Decision: pilots run in the customer's own account (no customer data on our infrastructure); revenue hypotheses (paid pilot then subscription for playbooks, dashboard and support) are data in doctrine/pilot-model.json with probes; /dashboard shows the real control plane computed from the repo with the live feed explicitly pending (Q-LOOP-live-clock). Revert: offer hosted only after the isolation and processor terms are built.",
+      "probe": "file:doctrine/pilot-model.json"
+    },
+    {
+      "id": "decision-2026-11-12-pilot-is-an-application-program-layers-are-recursive-multi-t",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Pilot is an application program; layers are recursive; multi-tenant is a separate gated obligation",
+      "body": "Owner: sell the pilot as open applications for strong use cases and interesting demos of autonomous code loops and virtual agent managers; price set by what the market bears; multi-tenant is possible but a different data-protection obligation; the system is recursive (platform on its own infrastructure, customer systems on it, systems on those). Encoded: doctrine/pilot-model.json program, layers, multi_tenant_obligations; bootstrap records parent and level and adds M-parent-link; /pilot renders the program from data. Intake handler, first child link and multi-tenant controls are filed as Q-PILOT-application-intake, Q-LAYER-child-reporting, Q-GAP-multi-tenant-controls.",
+      "probe": "file:doctrine/pilot-model.json"
+    },
+    {
+      "id": "decision-2026-11-12-tenant-0-model-and-application-as-interview",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Tenant 0 model and application-as-interview",
+      "body": "Advisory from owner: treat the platform as tenant 0 of its own model; same shape at every level; isolation from the start so multi-tenant is stricter isolation not a rewrite; application form is the system-test interview. Built: POST /api/pilot scores the four system-test answers; metrics/objectives carry tenant_id and a runtime measures only its own tenant (tested); dashboard takes a tenant id and 404s unknown tenants. Remaining: tenant_id on core tables and per-tenant credentials (Q-TENANT-row-isolation), child reporting (Q-LAYER-child-reporting). Price: left open, a real monthly quote is the owner's market call per hypotheses H1/H2.",
+      "probe": "grep:site/worker.js::pilotApplication"
+    },
+    {
+      "id": "decision-2026-11-12-server-side-only-github-actions-on-its-built-in-token-is-the",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Server-side only: GitHub Actions on its built-in token is the credential-free route",
+      "body": "Owner directive 2026-11-12: Ultrastable runs server-side only. The scheduler host on a person's computer, its two launch scripts, the browser sign-in script and the desktop task definition were removed. The No-single-route rule stays; its credential-free route is now the GitHub Actions loop host, because GitHub mints the workflow token for each run and no person mints it (deploy/routes.json person_free_credentials). The failover chain is Cloudflare worker 0 h, cloud-hosted Claude routine 3 h, GitHub Actions 12 h behind a daily gate. Measured: python3 scripts/check_routes.py prints 'routes ok: credential-free route is server-side (github-actions)'; python3 -m foundation serverside --check prints 'serverside ok'.",
+      "probe": "grep:deploy/routes.json::github-builtin",
+      "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+    },
+    {
+      "id": "decision-2026-11-12-the-lane-workflow-is-the-server-side-needs-pat-merger",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "The lane workflow is the server-side needs-pat merger",
+      "body": "PRs that change .github/workflows are merged by scripts/lane.sh in lane.yml, on green and on the exact head commit, with a workflow-capable credential resolved by scripts/lane_credential.py: LANE_PAT, then a GitHub App installation token (LANE_APP_ID, LANE_APP_PRIVATE_KEY). PRs labeled hold are skipped. Measured on 2026-11-12: PR 222 changed lane.yml and its lane review was posted by github-actions[bot], so the lane ran on the built-in token and LANE_PAT was not bound then; with no credential the lane leaves such PRs open, green and labeled needs-pat and logs waiting=N. The owner step is the single item lane-credential in foundation/data/needs-you.json with that default in effect. Evidence: tests/foundation/test_lane_merger.py, 10 tests pass.",
+      "probe": "grep:scripts/lane.sh::NEEDS-PAT-1",
+      "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+    },
+    {
+      "id": "lesson-2026-11-12-test-helpers-left-a-repository-copy-per-test-in-the-temp-dir",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Test helpers left a repository copy per test in the temp directory",
+      "body": "copy_repo() and tiny_repo() called tempfile.mkdtemp() and nothing removed the result. Measured on main before the fix: one run of python3 -m unittest discover -s tests/foundation left 113 directories and 781 MB in the temp directory; on the larger checkout three runs filled a 117 GB disk. Fix: tests/foundation/_repo.py scratch() registers removal with the running test (addCleanup, addClassCleanup), at interpreter exit, and sweeps directories a killed run left; every bare mkdtemp in tests/foundation goes through it and test_repo_cleanup.py fails a new bare one. Measured after the fix: the same run leaves 0 directories.",
+      "probe": "grep:tests/foundation/_repo.py::addCleanup",
+      "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+    },
+    {
+      "id": "lesson-2026-11-12-closing-probes-proved-code-existed-not-that-loops-ran",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Closing probes proved code existed, not that loops ran",
+      "body": "Every closing probe in the loop registry was file: or grep:, so loops verify passed while two workflows had never run. Measured 2026-11-12 12:58 UTC through the GitHub API: loop.yml 0 runs, fleet.yml 0 runs; executor log row 0.8 h old and session ledger row 0.5 h old on their evidence branches. Fix: foundation/liveness.py reads run evidence per probe in instances/ultrastable/liveness.json and gives alive, stale, failing, never or unknown; every launch pass runs it and files a queue item per loop that is not alive. Both workflows were dispatched on main at 12:59 UTC to start them.",
+      "probe": "grep:foundation/liveness.py::def verdict",
+      "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+    },
+    {
+      "id": "lesson-2026-11-12-tick-loader-resolved-paths-with-url-pathname",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "Tick loader resolved paths with URL.pathname",
+      "body": "platform/selfhost/tick.mjs and the GCP adapter built file paths from URL.pathname, which is percent-encoded and on Windows begins with a slash before the drive letter, so the migrations directory was looked up at a doubled drive path there and at dir%20with%20space on any host whose checkout path has a space. Measured before the fix on Linux: selfhost boot from a copy under 'dir with space' returned status failed, ENOENT scandir .../dir%20with%20space/seed/worker/migrations. Fix: fileURLToPath. Measured after: tests/foundation/test_selfhost.py test_full_tick_from_a_path_that_needs_url_decoding passes; the GCP adapter tests pass. The http metric source in seed/worker/src/tick.js had no test; seed/worker/test/measure.test.js now covers 2xx, error status, unreachable host and recovery.",
+      "probe": "grep:platform/selfhost/tick.mjs::fileURLToPath",
+      "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+    },
+    {
+      "id": "decision-2026-11-12-fit-is-the-system-test-not-b2b-and-not-revenue",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Fit is the system test, not B2B and not revenue",
+      "body": "Owner, 2026-11-12: the use cases are not only B2B. A personal system (a companion, a signals desk for markets or news) qualifies when it needs ongoing agentic upkeep and its owner accepts a running cost; storefronts are left to shop builders and the product is not pitched on revenue. docs/doctrine/VISION.md and its seed copy now say the owner can be an organization, a small business or one person, drop the shop example and list selling online under what it is not for; site/suggest.js replaces the shop suggestion with two personal systems. Measured: tests/test_vision.py 5 tests pass, including a one-person signals desk that passes the bootstrap qualify stage.",
+      "probe": "grep:tests/test_vision.py::def test_a_personal_system_is_a_fit_when_it_passes_the_system_test",
+      "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+    },
+    {
+      "id": "decision-2026-11-12-transparency-1-everything-about-how-ultrastable-runs-is-read",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "TRANSPARENCY-1: everything about how Ultrastable runs is read-only public",
+      "body": "Owner 2026-11-12: full transparency, everybody read-only; changes keep the e-mailed code. /live and /api/live serve a snapshot from foundation/transparency.py published to D1 each launch pass. Open: most registry loops have no recorded run; /owner is shadowed by the site worker.",
+      "probe": "grep:site/live.js::read-only"
+    },
+    {
+      "id": "lesson-2026-11-12-deploy-site-mjs-bound-no-d1-so-api-live-and-site-analytics-h",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "deploy-site.mjs bound no D1, so /api/live and site analytics had no database",
+      "body": "The deploy script uploaded only ASSETS and AI bindings while site/wrangler.toml declares DB (ultrastable-ops). Fixed by binding d1 DB in deploy/deploy-site.mjs; /api/live is the probe.",
+      "probe": "grep:deploy/deploy-site.mjs::type: \"d1\""
+    },
+    {
+      "id": "decision-2026-11-12-transparency-1b-measure-shipped-code-by-origin",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "TRANSPARENCY-1b: measure shipped code by origin",
+      "body": "Measured 2026-11-12: 149 merged PRs in 3 days (136 by interactive agent sessions, 0 by the unattended executor), backlog 62 open of 64; /live now publishes throughput and a per-day changelog without repository contents. The unattended executor is the gap to close.",
+      "probe": "grep:foundation/transparency.py::def throughput"
+    },
+    {
+      "id": "lesson-2026-11-12-transparency-publish-reported-green-while-d1-refused-the-sna",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "transparency publish reported green while D1 refused the snapshot",
+      "body": "The publish step printed published false and exited 0 (a swallowed error), and D1 rejects a single 120 KB statement. Snapshot now stored in 50 KB parts and --publish exits 1 when not published; /api/live generated time is the probe.",
+      "probe": "grep:foundation/transparency.py::return 1"
+    },
+    {
+      "id": "lesson-2026-11-12-executor-failed-every-run-on-a-roadmap-item-with-no-runnable",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "executor failed every run on a roadmap item with no runnable probe",
+      "body": "PORT-EXEC-1 had a prose done check, so the pins test failed in the executor's pre-PR checks and Q-10 never reached a PR. Probe is now file:ops/port-evidence/gcp-verify.json (the recorded verify run of the gcp adapter).",
+      "probe": "grep:docs/issues/PORT-EXEC-1.json::gcp-verify"
+    },
+    {
+      "id": "lesson-2026-11-12-executor-prs-failed-on-stale-generated-dashboard-data",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "executor PRs failed on stale generated dashboard data",
+      "body": "Any queue or doc change makes site/dashboard-data.js stale, so the executor's own pre-PR checks failed. The executor now runs scripts/build_dashboard.py before its checks and before the commit.",
+      "probe": "grep:foundation/executor.py::GENERATORS"
+    },
+    {
+      "id": "lesson-2026-11-12-executor-abandoned-a-change-on-the-first-failed-check",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "executor abandoned a change on the first failed check",
+      "body": "The model's Q-10 change violated the server-side-only rule (localhost) and the executor discarded it. It now tells the model the rule and feeds failed check output back for up to 2 repairs before abandoning.",
+      "probe": "grep:foundation/executor.py::REPAIRS"
+    },
+    {
+      "id": "lesson-2026-11-12-executor-crashed-on-an-unusable-model-reply",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "executor crashed on an unusable model reply",
+      "body": "A JSONDecodeError from the model reply ended the run with no repair. Unusable replies now count as a failed attempt and the model is asked again, within the same REPAIRS budget.",
+      "probe": "grep:foundation/executor.py::COULD NOT BE USED"
+    },
+    {
+      "id": "decision-2026-11-12-agentic-1-ultrastable-io-is-machine-readable-and-exposes-a-r",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "AGENTIC-1: ultrastable.io is machine-readable and exposes a read-only MCP endpoint",
+      "body": "Checked against Cloudflare's agent-readiness scan (isitagentready.com): API Catalog (RFC 9727), MCP Server Card, Agent Skills index with checksums, OpenAPI, Link headers, Content Signals, and a real read-only /mcp (JSON-RPC) over the live snapshot. Also glossary term unattended: crosswalk of autonomous, automatic and unattended, measured by merged executor PRs. Standards the seed worker already carries are not yet wired into the live site worker's own repo flow.",
+      "probe": "grep:site/agentic.js::get_scoreboard"
+    },
+    {
+      "id": "lesson-2026-11-12-executor-changes-failed-the-doctrine-check-failure-text-was-",
+      "kind": "lesson",
+      "date": "2026-11-12",
+      "title": "executor changes failed the doctrine check; failure text was cut off",
+      "body": "Run 5 failed after 3 attempts on test_repo_is_consistent_with_the_doctrine_file, and the logged tail hid the reason. The executor now regenerates doctrine, glossary and standards files, states the tagline rule for new Markdown in its prompt, and feeds 2500 characters of check output back.",
+      "probe": "grep:foundation/executor.py::foundation\", \"doctrine\", \"--apply"
+    },
+    {
+      "id": "decision-2026-11-12-sys-roadmap-the-system-is-topology-agent-ladder-failure-regi",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "SYS roadmap: the system is topology, agent ladder, failure registry, vector index, agent-readiness, bootstrap rehearsal",
+      "body": "Owner 2026-11-12: one worker and a D1 database is not a system. Six executor-takeable queue items with file probes: Q-SYS-TOPOLOGY, Q-SYS-AGENT-LADDER, Q-SYS-FAILURE-REGISTRY, Q-SYS-VECTOR-KB, Q-SYS-AGENT-READINESS, Q-SYS-BOOT-REHEARSAL. Measured: QNFO account has 47 workers, 10 vector indexes, 4 workflows, 2 queues; Ultrastable has 3 core workers, 2 D1 databases, 1 KV.",
+      "probe": "file:docs/issues/Q-SYS-TOPOLOGY.json"
+    },
+    {
+      "id": "decision-2026-11-12-agent-interop-1-and-terms-crosswalk-1",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "AGENT-INTEROP-1 and TERMS-CROSSWALK-1",
+      "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Site serves Markdown, Link headers, llms.txt, OpenAPI, API catalog, read-only MCP; standards are data with source and date; A2A declined with reason (no endpoint). Crosswalk maps autonomous, closed loop, automatic, never stops, no person in the loop to glossary terms; markers stamped in every instruction file.",
+      "probe": "grep:foundation/agentstd.py::def check"
+    },
+    {
+      "id": "decision-2026-11-12-code-agents-1-and-system-1-adapter-registry-one-running-syst",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "CODE-AGENTS-1 and SYSTEM-1: adapter registry, one running system",
+      "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Adapter registry with cost routing and disjoint-family ensemble (from the QNFO review gate); in-Worker code agent through env.AI; system topology as data rendered to wrangler configs; deploy-system.yml deploys ultrastable-agents and probes every adapter. A direct connector deploy was refused by the permission classifier (production deploy) and is recorded; the repo workflow is the deploy route.",
+      "probe": "grep:foundation/system.py::def render_worker"
+    },
+    {
+      "id": "decision-2026-11-12-duplicate-agent-discovery-dropped-crosswalk-aligned-to-gloss",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Duplicate agent discovery dropped, crosswalk aligned to glossary",
+      "body": "Session: session_0156nqDrGFZaa8zQwcdGZNQU. Measured: main already served site/agentic.js with OpenAPI, API catalog, server card, MCP and skills index, so this branch's site/agent.js was removed; doctrine/crosswalk.json now maps automatic, autonomous and unattended to the glossary unattended and autonomy terms; agentstd, crosswalk, loops, system and agents checks report ok.",
+      "probe": "grep:site/agentic.js::api-catalog"
+    },
+    {
+      "id": "decision-2026-11-12-executor-closed-q-10-update-ultrastable-io-proof-to-serve-a-",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "Executor closed Q-10: Update ultrastable.io/proof to serve a product-side feed",
+      "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: brand/public-profile/profile/proof.js, tests/proof.test.js.",
+      "probe": "file:brand/public-profile/profile/proof.js"
+    },
+    {
+      "id": "decision-2026-11-12-lane-watch-1-green-prs-may-not-stay-open",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "LANE-WATCH-1: green PRs may not stay open",
+      "body": "Session: session_0156nqDrGFZaa8zQwcdGZNQU. Measured: PR 264 changed workflow files, so the built-in token could not merge it and the lane left it open with no credential bound; PRs 238 and 249 were red on stale branches and 268 conflicted after main moved. The lane now runs foundation lanewatch after each merge pass and fails when a green mergeable PR is older than 30 minutes, naming the cause; the crosswalk bans reporting a PR as waiting for review.",
+      "probe": "grep:foundation/lanewatch.py::def classify"
+    }
+  ]
 }
