@@ -132,7 +132,7 @@ export default {
    "id": "Q-GAP-front-door-qualify",
    "milestone": "Next",
    "owner": "product-manager",
-   "status": "done",
+   "status": "closed",
    "title": "Run the system test at the public front door before BUILD-1 builds a page",
    "trigger": "every executor run"
   },
