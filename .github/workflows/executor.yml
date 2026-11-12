@@ -9,6 +9,10 @@ on:
   repository_dispatch:
     types: [ultrastable-tick]
   workflow_dispatch:
+    inputs:
+      issue:
+        description: "issue number to work (default, top of driver order)"
+        required: false
 permissions:
   contents: write
   pull-requests: write
@@ -31,7 +35,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - run: pip install pyyaml
       - name: Execute one item
-        run: ULTRASTABLE_HOST="github-actions:${{ github.event_name }}" python3 -m foundation executor --apply
+        run: ULTRASTABLE_HOST="github-actions:${{ github.event_name }}" python3 -m foundation executor --apply ${{ inputs.issue && format('--issue {0}', inputs.issue) || '' }}
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

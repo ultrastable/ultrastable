@@ -173,11 +173,15 @@ def cutover(api, src, dst, apply, plan, rollback=False) -> dict:
 def main(argv=None, api=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     token = os.environ.get("CLOUDFLARE_API_TOKEN", "")
+    token = token or os.environ.get("SRC_CLOUDFLARE_API_TOKEN", "")
     if api is None:
         if not token:
             print(json.dumps({"ok": False, "detail": "CLOUDFLARE_API_TOKEN not bound on this host; recorded, the connector/browser routes in deploy/routes.json apply"}))
             return 2
-        api = lambda m, p, b=None, raw=False, headers=None: http(m, p, token, b, raw, headers)
+        src_tok, dst_tok = os.environ.get("SRC_CLOUDFLARE_API_TOKEN", token), os.environ.get("DST_CLOUDFLARE_API_TOKEN", token)
+        src_id = accounts()["current"]["id"]
+        # Separate tokens: paths under the source account use the read token, everything else the target token.
+        api = lambda m, p, b=None, raw=False, headers=None: http(m, p, src_tok if f"/accounts/{src_id}" in p else dst_tok, b, raw, headers)
     cfg, plan = accounts(), json.loads(PLAN.read_text(encoding="utf-8"))
     src, dst, apply = cfg["current"]["id"], cfg["target"]["id"], "--apply" in argv
     cmd = argv[0] if argv else "probe"

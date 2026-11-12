@@ -3,6 +3,7 @@
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { runTick } from './tick.js';
 import { runExecutor } from './executor.js';
+import { runLane } from './lane.js';
 import config from './config.js';
 import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
 import { nowScreen, nextScreen, needsScreen, questionScreen, doneScreen } from './ui.js';
@@ -19,6 +20,7 @@ export default {
   async scheduled(_event, env, ctx) {
     ctx.waitUntil(runTick(env.DB, { config, env: presence(env) }));
     ctx.waitUntil(runExecutor(env).then(r => console.log('executor', JSON.stringify(r))).catch(e => console.error('executor', e && e.message)));
+    ctx.waitUntil(runLane({ token: env.GITHUB_TOKEN, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []), issueWorkflow: null }).then(r => console.log('lane', JSON.stringify(r))).catch(e => console.error('lane', e && e.message)));
     ctx.waitUntil(selfcheck(env, hosts(env)[0]).catch(e => console.error('analytics selfcheck', e && e.message)));
   },
 

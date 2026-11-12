@@ -1404,7 +1404,8 @@
    "system_path": [
     "foundation/executor.py",
     "seed/worker/src/executor.js",
-    "scripts/executor_evidence.sh"
+    "scripts/executor_evidence.sh",
+    "seed/worker/src/lane.js"
    ],
    "workflows": [
     "executor.yml",
