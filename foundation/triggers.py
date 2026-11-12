@@ -198,6 +198,5 @@ def install(repo: str, url: str, worker_dir: str = "seed/worker", apply: bool = 
     ok = all(o["exit"] == 0 for o in out)
     if ok:
         m = REPO / "ops/loop-evidence/webhook-installed.json"
-        m.write_text(json.dumps({"repo": repo, "url": url.rstrip("/") + "/hook/github", "events": events}) + "
-", encoding="utf-8")
+        m.write_text(json.dumps({"repo": repo, "url": url.rstrip("/") + "/hook/github", "events": events}) + chr(10), encoding="utf-8")
     return {"applied": True, "ok": ok, "steps": out}
