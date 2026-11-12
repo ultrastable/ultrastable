@@ -38,7 +38,7 @@ class Executor(unittest.TestCase):
 
     def test_no_model_credential_is_recorded_not_hidden(self):
         import os, unittest.mock as m
-        with tempfile.TemporaryDirectory() as d, m.patch.object(executor, "gh_json", return_value=[I(7)]), m.patch.dict(os.environ, {}, clear=True):
+        with tempfile.TemporaryDirectory() as d, m.patch.object(executor, "gh_json", return_value=[I(7)]), m.patch.dict(os.environ, {"EXECUTOR_SOURCE": "issues"}, clear=True):
             row = executor.run("o/r", apply=True, root=d)
             self.assertEqual(row["result"], "no-model-credential")
             line = json.loads((Path(d) / executor.LOG).read_text().splitlines()[0])
@@ -47,12 +47,48 @@ class Executor(unittest.TestCase):
 
     def test_pick_and_record_need_no_model_key(self):
         import os, unittest.mock as m
-        with m.patch.object(executor, "gh_json", return_value=[I(3), I(2)]), m.patch.dict(os.environ, {}, clear=True):
+        with m.patch.object(executor, "gh_json", return_value=[I(3), I(2)]), m.patch.dict(os.environ, {"EXECUTOR_SOURCE": "issues"}, clear=True):
             self.assertEqual(executor.pick_row("o/r")["issue"], 2)
 
     def test_needs_you_page_is_current_and_link_only(self):
         from foundation import needsyou
         self.assertEqual(needsyou.check(), [])
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+NL = chr(10)
+
+
+class QueueMode(unittest.TestCase):
+    """QUEUE-1: the executor works repository-data items, needs no GitHub Issues, and the merge of its PR is the closure."""
+
+    def _repo(self, d):
+        (Path(d) / "docs/issues").mkdir(parents=True)
+        for n, lab in (("Q-1", "p2"), ("Q-2", "p1")):
+            body = NL.join(["**Owner:** executor", "**Trigger:** tick", "**Done check:** file:x", "**Status:** open", "", f"work {n}"])
+            (Path(d) / f"docs/issues/{n}.json").write_text(json.dumps({"id": n, "title": n, "body": body, "labels": [lab]}))
+        (Path(d) / "docs/issues/Q-3.json").write_text(json.dumps({"id": "Q-3", "title": "owner", "labels": ["p0"], "body": NL.join(["**Owner:** ROWAN", "**Trigger:** t", "**Done check:** file:x", "**Status:** open"])}))
+
+    def test_takeable_skips_owner_items_and_orders_by_priority(self):
+        with tempfile.TemporaryDirectory() as d:
+            self._repo(d)
+            from foundation import queue
+            self.assertEqual(executor.pick(queue.takeable(d))["number"], "Q-2")
+            self.assertEqual(sorted(i["number"] for i in queue.takeable(d)), ["Q-1", "Q-2"])
+
+    def test_three_failures_park_an_item_and_close_requires_evidence(self):
+        with tempfile.TemporaryDirectory() as d:
+            self._repo(d)
+            from foundation import queue
+            for _ in range(3):
+                executor.log(d, {"issue": "Q-2", "result": "failed"})
+            self.assertEqual([i["number"] for i in queue.takeable(d)], ["Q-1"])
+            queue.close(d, "Q-1", "closed by the pull request that carries this change")
+            self.assertEqual(queue.takeable(d), [])
+            self.assertNotIn("Q-1: closed without evidence", "".join(queue.check(d)))
 
 
 if __name__ == "__main__":

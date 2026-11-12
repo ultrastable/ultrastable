@@ -3,6 +3,7 @@
 # Runs from .github/workflows/retriage.yml (every 3 hours). Uses GITHUB_TOKEN permissions only; a denied action is logged, never bypassed.
 set -uo pipefail
 . "$(dirname "$0")/lib-safe.sh"
+issues_or_exit
 repo="${GITHUB_REPOSITORY:?}"
 log() { echo "retriage: $*"; }
 gaps=""

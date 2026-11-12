@@ -2,6 +2,7 @@
 # TRIAGE-1: every open issue gets a priority (p0-p3), an SLA comment and an owner lane within the hour.
 set -uo pipefail
 . "$(dirname "$0")/lib-safe.sh"
+issues_or_exit
 repo="${GITHUB_REPOSITORY:?}"
 for n in $(gh issue list -R "$repo" --state open --limit 300 --json number --jq '.[].number'); do
   l=",$(gh issue view "$n" -R "$repo" --json labels --jq '[.labels[].name]|join(",")'),"
