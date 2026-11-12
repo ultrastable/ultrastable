@@ -1,0 +1,612 @@
+{
+ "generated_by": "python3 -m foundation components --evidence",
+ "market_accessed": "2026-11-12",
+ "integration": {
+  "edges_wired": 19,
+  "edges": 19,
+  "components_live": 24,
+  "components": 24
+ },
+ "components": {
+  "time-trigger": {
+   "what": "cron heartbeat wakes every role at its own cadence",
+   "status": "live"
+  },
+  "event-trigger": {
+   "what": "signed webhook / dispatch wakes one role now",
+   "status": "live"
+  },
+  "persistent-state": {
+   "what": "durable task DB: items, claims, outcomes, ledger",
+   "status": "live"
+  },
+  "role-managers": {
+   "what": "portfolio, project, product and business role agents with owner, trigger, done check",
+   "status": "live"
+  },
+  "code-executor": {
+   "what": "picks the top issue, changes code, opens a PR",
+   "status": "live"
+  },
+  "independent-review": {
+   "what": "a different agent or model reviews every change",
+   "status": "live"
+  },
+  "merge-deploy": {
+   "what": "merge on green, deploy through the canonical path",
+   "status": "live"
+  },
+  "verify-live": {
+   "what": "an item counts done only after a live probe",
+   "status": "live"
+  },
+  "metrics-triggers": {
+   "what": "scoreboard with breach triggers that create work",
+   "status": "live"
+  },
+  "self-improvement": {
+   "what": "loops score themselves; same failure twice mutates; predictions kept or reverted",
+   "status": "live"
+  },
+  "session-lifecycle": {
+   "what": "leases, heartbeats, reaper: no zombie sessions",
+   "status": "live"
+  },
+  "trust-ladder": {
+   "what": "earned autonomy per surface and action class",
+   "status": "live"
+  },
+  "budget-guard": {
+   "what": "spend caps and kill switches that steer instead of stop",
+   "status": "live"
+  },
+  "failover": {
+   "what": "no single route: host and credential failover",
+   "status": "live"
+  },
+  "memory-in-repo": {
+   "what": "every decision and lesson written back to the repository",
+   "status": "live"
+  },
+  "funding-outreach": {
+   "what": "grants and outreach with caps, consent, suppression",
+   "status": "live"
+  },
+  "ip-legal": {
+   "what": "filing route planner and disclosure gate",
+   "status": "live"
+  },
+  "research-publishing": {
+   "what": "research as a pipeline to published versions",
+   "status": "live"
+  },
+  "marketing-content": {
+   "what": "content calendar and social pipeline behind a disclosure gate",
+   "status": "live"
+  },
+  "customer-onboarding": {
+   "what": "non-technical, voice-first, zero-fuss setup",
+   "status": "live"
+  },
+  "fleet-multi-repo": {
+   "what": "one system across repositories, wired by code",
+   "status": "live"
+  },
+  "bootstrap-from-idea": {
+   "what": "generate a bootable autonomous org from one manifest",
+   "status": "live"
+  },
+  "self-hosting": {
+   "what": "the product runs its own roadmap, issues and managers",
+   "status": "live"
+  },
+  "gap-analysis": {
+   "what": "this graph, computed, with gaps auto-filed",
+   "status": "live"
+  }
+ },
+ "matrix": {
+  "time-trigger": {
+   "ultrastable": "live",
+   "Claude Code": "yes",
+   "GitHub Copilot coding agent": "partial",
+   "OpenAI Codex": "yes",
+   "Devin (Cognition)": "yes",
+   "Cursor": "yes",
+   "Factory (Droids)": "yes",
+   "OpenHands (All Hands)": "yes",
+   "Cloudflare Agents SDK + Workflows": "yes",
+   "Zapier Agents": "yes",
+   "Temporal": "yes",
+   "LangGraph (LangSmith Deployment)": "yes"
+  },
+  "event-trigger": {
+   "ultrastable": "live",
+   "Claude Code": "yes",
+   "GitHub Copilot coding agent": "yes",
+   "OpenAI Codex": "yes",
+   "Devin (Cognition)": "partial",
+   "Cursor": "yes",
+   "Factory (Droids)": "yes",
+   "OpenHands (All Hands)": "yes",
+   "Cloudflare Agents SDK + Workflows": "yes",
+   "Zapier Agents": "yes",
+   "Temporal": "partial",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  },
+  "persistent-state": {
+   "ultrastable": "live",
+   "Claude Code": "partial",
+   "GitHub Copilot coding agent": "unknown",
+   "OpenAI Codex": "unknown",
+   "Devin (Cognition)": "partial",
+   "Cursor": "unknown",
+   "Factory (Droids)": "partial",
+   "OpenHands (All Hands)": "partial",
+   "Cloudflare Agents SDK + Workflows": "yes",
+   "Zapier Agents": "unknown",
+   "Temporal": "yes",
+   "LangGraph (LangSmith Deployment)": "yes"
+  },
+  "role-managers": {
+   "ultrastable": "live",
+   "Claude Code": "partial",
+   "GitHub Copilot coding agent": "no",
+   "OpenAI Codex": "no",
+   "Devin (Cognition)": "no",
+   "Cursor": "no",
+   "Factory (Droids)": "partial",
+   "OpenHands (All Hands)": "no",
+   "Cloudflare Agents SDK + Workflows": "no",
+   "Zapier Agents": "no",
+   "Temporal": "no",
+   "LangGraph (LangSmith Deployment)": "no"
+  },
+  "code-executor": {
+   "ultrastable": "live",
+   "Claude Code": "yes",
+   "GitHub Copilot coding agent": "yes",
+   "OpenAI Codex": "yes",
+   "Devin (Cognition)": "yes",
+   "Cursor": "yes",
+   "Factory (Droids)": "yes",
+   "OpenHands (All Hands)": "yes",
+   "Cloudflare Agents SDK + Workflows": "partial",
+   "Zapier Agents": "unknown",
+   "Temporal": "no",
+   "LangGraph (LangSmith Deployment)": "no"
+  },
+  "independent-review": {
+   "ultrastable": "live",
+   "Claude Code": "yes",
+   "GitHub Copilot coding agent": "yes",
+   "OpenAI Codex": "yes",
+   "Devin (Cognition)": "yes",
+   "Cursor": "yes",
+   "Factory (Droids)": "yes",
+   "OpenHands (All Hands)": "yes",
+   "Cloudflare Agents SDK + Workflows": "unknown",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  },
+  "merge-deploy": {
+   "ultrastable": "live",
+   "Claude Code": "partial",
+   "GitHub Copilot coding agent": "partial",
+   "OpenAI Codex": "unknown",
+   "Devin (Cognition)": "partial",
+   "Cursor": "partial",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "unknown",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  },
+  "verify-live": {
+   "ultrastable": "live",
+   "Claude Code": "unknown",
+   "GitHub Copilot coding agent": "unknown",
+   "OpenAI Codex": "unknown",
+   "Devin (Cognition)": "unknown",
+   "Cursor": "unknown",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "unknown",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  },
+  "metrics-triggers": {
+   "ultrastable": "live",
+   "Claude Code": "unknown",
+   "GitHub Copilot coding agent": "unknown",
+   "OpenAI Codex": "unknown",
+   "Devin (Cognition)": "unknown",
+   "Cursor": "partial",
+   "Factory (Droids)": "partial",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "unknown",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  },
+  "self-improvement": {
+   "ultrastable": "live",
+   "Claude Code": "unknown",
+   "GitHub Copilot coding agent": "unknown",
+   "OpenAI Codex": "unknown",
+   "Devin (Cognition)": "partial",
+   "Cursor": "unknown",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "unknown",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  },
+  "session-lifecycle": {
+   "ultrastable": "live",
+   "Claude Code": "unknown",
+   "GitHub Copilot coding agent": "partial",
+   "OpenAI Codex": "partial",
+   "Devin (Cognition)": "unknown",
+   "Cursor": "unknown",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "partial",
+   "Zapier Agents": "unknown",
+   "Temporal": "yes",
+   "LangGraph (LangSmith Deployment)": "partial"
+  },
+  "trust-ladder": {
+   "ultrastable": "live",
+   "Claude Code": "partial",
+   "GitHub Copilot coding agent": "partial",
+   "OpenAI Codex": "partial",
+   "Devin (Cognition)": "unknown",
+   "Cursor": "unknown",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "partial",
+   "Zapier Agents": "unknown",
+   "Temporal": "partial",
+   "LangGraph (LangSmith Deployment)": "partial"
+  },
+  "budget-guard": {
+   "ultrastable": "live",
+   "Claude Code": "partial",
+   "GitHub Copilot coding agent": "yes",
+   "OpenAI Codex": "unknown",
+   "Devin (Cognition)": "yes",
+   "Cursor": "partial",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "unknown",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  },
+  "failover": {
+   "ultrastable": "live",
+   "Claude Code": "partial",
+   "GitHub Copilot coding agent": "unknown",
+   "OpenAI Codex": "unknown",
+   "Devin (Cognition)": "unknown",
+   "Cursor": "unknown",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "unknown",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  },
+  "memory-in-repo": {
+   "ultrastable": "live",
+   "Claude Code": "yes",
+   "GitHub Copilot coding agent": "unknown",
+   "OpenAI Codex": "partial",
+   "Devin (Cognition)": "unknown",
+   "Cursor": "unknown",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "unknown",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "no"
+  },
+  "funding-outreach": {
+   "ultrastable": "live",
+   "Claude Code": "no",
+   "GitHub Copilot coding agent": "no",
+   "OpenAI Codex": "no",
+   "Devin (Cognition)": "no",
+   "Cursor": "no",
+   "Factory (Droids)": "no",
+   "OpenHands (All Hands)": "no",
+   "Cloudflare Agents SDK + Workflows": "no",
+   "Zapier Agents": "no",
+   "Temporal": "no",
+   "LangGraph (LangSmith Deployment)": "no"
+  },
+  "ip-legal": {
+   "ultrastable": "live",
+   "Claude Code": "no",
+   "GitHub Copilot coding agent": "no",
+   "OpenAI Codex": "no",
+   "Devin (Cognition)": "no",
+   "Cursor": "no",
+   "Factory (Droids)": "no",
+   "OpenHands (All Hands)": "no",
+   "Cloudflare Agents SDK + Workflows": "no",
+   "Zapier Agents": "no",
+   "Temporal": "no",
+   "LangGraph (LangSmith Deployment)": "no"
+  },
+  "research-publishing": {
+   "ultrastable": "live",
+   "Claude Code": "no",
+   "GitHub Copilot coding agent": "no",
+   "OpenAI Codex": "no",
+   "Devin (Cognition)": "no",
+   "Cursor": "no",
+   "Factory (Droids)": "no",
+   "OpenHands (All Hands)": "no",
+   "Cloudflare Agents SDK + Workflows": "no",
+   "Zapier Agents": "no",
+   "Temporal": "no",
+   "LangGraph (LangSmith Deployment)": "no"
+  },
+  "marketing-content": {
+   "ultrastable": "live",
+   "Claude Code": "no",
+   "GitHub Copilot coding agent": "no",
+   "OpenAI Codex": "no",
+   "Devin (Cognition)": "no",
+   "Cursor": "no",
+   "Factory (Droids)": "no",
+   "OpenHands (All Hands)": "no",
+   "Cloudflare Agents SDK + Workflows": "no",
+   "Zapier Agents": "no",
+   "Temporal": "no",
+   "LangGraph (LangSmith Deployment)": "no"
+  },
+  "customer-onboarding": {
+   "ultrastable": "live",
+   "Claude Code": "no",
+   "GitHub Copilot coding agent": "no",
+   "OpenAI Codex": "no",
+   "Devin (Cognition)": "no",
+   "Cursor": "no",
+   "Factory (Droids)": "no",
+   "OpenHands (All Hands)": "no",
+   "Cloudflare Agents SDK + Workflows": "no",
+   "Zapier Agents": "no",
+   "Temporal": "no",
+   "LangGraph (LangSmith Deployment)": "no"
+  },
+  "fleet-multi-repo": {
+   "ultrastable": "live",
+   "Claude Code": "partial",
+   "GitHub Copilot coding agent": "partial",
+   "OpenAI Codex": "partial",
+   "Devin (Cognition)": "partial",
+   "Cursor": "unknown",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "no",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  },
+  "bootstrap-from-idea": {
+   "ultrastable": "live",
+   "Claude Code": "no",
+   "GitHub Copilot coding agent": "no",
+   "OpenAI Codex": "no",
+   "Devin (Cognition)": "no",
+   "Cursor": "no",
+   "Factory (Droids)": "no",
+   "OpenHands (All Hands)": "no",
+   "Cloudflare Agents SDK + Workflows": "no",
+   "Zapier Agents": "no",
+   "Temporal": "no",
+   "LangGraph (LangSmith Deployment)": "no"
+  },
+  "self-hosting": {
+   "ultrastable": "live",
+   "Claude Code": "unknown",
+   "GitHub Copilot coding agent": "unknown",
+   "OpenAI Codex": "unknown",
+   "Devin (Cognition)": "unknown",
+   "Cursor": "unknown",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "partial",
+   "Cloudflare Agents SDK + Workflows": "unknown",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  },
+  "gap-analysis": {
+   "ultrastable": "live",
+   "Claude Code": "unknown",
+   "GitHub Copilot coding agent": "unknown",
+   "OpenAI Codex": "unknown",
+   "Devin (Cognition)": "unknown",
+   "Cursor": "unknown",
+   "Factory (Droids)": "unknown",
+   "OpenHands (All Hands)": "unknown",
+   "Cloudflare Agents SDK + Workflows": "unknown",
+   "Zapier Agents": "unknown",
+   "Temporal": "unknown",
+   "LangGraph (LangSmith Deployment)": "unknown"
+  }
+ },
+ "users": {
+  "non-technical-founder": {
+   "who": "Has an idea and no engineering background; wants a working, maintained product without touching code, cloud accounts or deploys.",
+   "stories": [
+    {
+     "id": "idea-to-live",
+     "story": "I describe my idea by voice and get a live site that keeps itself updated.",
+     "passes": true
+    },
+    {
+     "id": "never-touch-config",
+     "story": "I never see a key, a config file or a deploy command; if something needs me it is one link with a default already in effect.",
+     "passes": true
+    }
+   ]
+  },
+  "solo-developer-maintainer": {
+   "who": "Maintains open-source or a small product alone; drowning in issues, reviews and releases.",
+   "stories": [
+    {
+     "id": "issues-resolve-themselves",
+     "story": "New issues are triaged, fixed in a PR, reviewed by a different agent, merged and verified live without me.",
+     "passes": true
+    },
+    {
+     "id": "no-zombie-work",
+     "story": "A stuck or abandoned agent session never holds work hostage.",
+     "passes": true
+    }
+   ]
+  },
+  "research-lab": {
+   "who": "Academic or independent researcher; needs ideas turned into reviewed, versioned, citable publications.",
+   "stories": [
+    {
+     "id": "research-to-published",
+     "story": "A queued idea becomes a reviewed draft and at least two published versions with a citation file.",
+     "passes": true
+    }
+   ]
+  },
+  "small-team-startup": {
+   "who": "Two to ten people; cannot hire a marketing, legal, finance or support function yet.",
+   "stories": [
+    {
+     "id": "virtual-team",
+     "story": "Roles I cannot hire exist as agents that wake on schedule and on events, phased in as the code loop proves itself.",
+     "passes": true
+    },
+    {
+     "id": "promotion-and-funding",
+     "story": "Funding applications and outreach run within caps, consent and suppression, with the disclosure gate before anything goes public.",
+     "passes": true
+    }
+   ]
+  },
+  "platform-governance-lead": {
+   "who": "Responsible for what autonomous agents may do; needs earned trust, budgets and audit.",
+   "stories": [
+    {
+     "id": "earned-autonomy",
+     "story": "Agents gain autonomy per action class only through verified outcomes, and lose it on a hidden failure.",
+     "passes": true
+    },
+    {
+     "id": "spend-is-bounded",
+     "story": "A breached spend cap steers work to cheaper paths and blocks new workers; it never silently overspends.",
+     "passes": true
+    }
+   ]
+  }
+ },
+ "objections": [
+  {
+   "id": "just-a-code-agent",
+   "objection": "Isn't this just a code agent?",
+   "answer": "A code agent is one component (code-executor). The product is the loop around it: what wakes it, who assigns it work, who reviews it, what verifies the deploy, and how the loops improve themselves.",
+   "verdict": "unverified",
+   "components_live": true,
+   "competitors_offering": [],
+   "unverified_cells": 15
+  },
+  {
+   "id": "claude-code-has-the-money",
+   "objection": "Claude Code's maker has far more funding; surely they have thought of this.",
+   "answer": "A model vendor sells the agent; this product is vendor-neutral orchestration on the customer's own repository and cloud, so it routes across vendors rather than competing with one.",
+   "verdict": "unverified",
+   "components_live": true,
+   "competitors_offering": [],
+   "unverified_cells": 16
+  },
+  {
+   "id": "workflow-tools-exist",
+   "objection": "Automation tools and workflow engines already trigger things on a schedule.",
+   "answer": "They trigger steps; they do not own work items with claims, independent review, trust, or self-scoring, and they do not run a business function team.",
+   "verdict": "unverified",
+   "components_live": true,
+   "competitors_offering": [],
+   "unverified_cells": 5
+  },
+  {
+   "id": "safe-to-let-run",
+   "objection": "Is it safe to let agents run unattended?",
+   "answer": "Autonomy is earned per action class, budgets steer rather than stop, every change is reviewed by a different agent, and an irreversible identity-bound act is a single card with a default in effect.",
+   "verdict": "unverified",
+   "components_live": true,
+   "competitors_offering": [],
+   "unverified_cells": 5
+  },
+  {
+   "id": "non-technical-users",
+   "objection": "Can a non-technical person really use this?",
+   "answer": "The entry point is a spoken idea and a short either/or interview; the generator produces the instance manifest and the cloud setup runs from it.",
+   "verdict": "supported",
+   "components_live": true,
+   "competitors_offering": [],
+   "unverified_cells": 0
+  },
+  {
+   "id": "does-it-run-itself",
+   "objection": "Does it really run on itself?",
+   "answer": "Its roadmap, issues, roles, trust ledger and loops are executed by the same kernel it ships, and this gap analysis is computed from probes, not written.",
+   "verdict": "unverified",
+   "components_live": true,
+   "competitors_offering": [],
+   "unverified_cells": 10
+  }
+ ],
+ "closest_overlaps": [
+  {
+   "product": "Claude Code",
+   "component": "time-trigger",
+   "why_it_matters": "Cloud scheduled tasks with schedule, API and GitHub triggers directly cover the unattended-wake claim."
+  },
+  {
+   "product": "Cursor",
+   "component": "event-trigger",
+   "why_it_matters": "Automations fire on PRs, CI, Slack, Linear, Sentry and PagerDuty and include autofix, covering much of the wake-and-act loop."
+  },
+  {
+   "product": "Claude Code",
+   "component": "independent-review",
+   "why_it_matters": "Automatic PR review is native in several products (Claude Code, Codex, Devin, Cursor Bugbot, Copilot, Factory), so review alone is not a moat."
+  },
+  {
+   "product": "Factory (Droids)",
+   "component": "time-trigger",
+   "why_it_matters": "Four trigger types plus built-in triage, QA, incident and CVE automations resemble an autonomous engineering org in product form."
+  },
+  {
+   "product": "Temporal",
+   "component": "session-lifecycle",
+   "why_it_matters": "Heartbeats, timeouts and durable history are mature infrastructure for lease and reaper behavior; differentiation must lie in the agent-specific layer."
+  }
+ ],
+ "caveats": [
+  "Static probes (file, grep) show a connection exists in code; only a component with a passing proof probe (test or live evidence) is called live.",
+  "Competitor cells come from doctrine/market-evidence.json with sources and an access date; unknown means not verified, and an unverified cell never counts as support.",
+  "Most cells marked unknown mean the specific doc page was not fetched or did not mention the capability; they are not evidence of absence.",
+  "Cells marked no for domain components (funding-outreach, ip-legal, research-publishing, marketing-content, customer-onboarding, bootstrap-from-idea, role-managers) rest on feature lists reviewed, not exhaustive proof; a vendor could ship one unannounced.",
+  "n8n was not researched; Zapier Agents was used as the automation-platform representative and only its trigger docs were verified.",
+  "Many docs pages were summarized by a fetch tool rather than read in full; notes are paraphrases and should be re-checked before quoting to investors.",
+  "Several product claims come from secondary sources (dev.to for Copilot assignment, search summaries for Cursor, Devin and Codex); primary-source confirmation is advised.",
+  "Products ship fast and some are preview features (Claude Code scheduled tasks are labeled research preview); status is as of 2026-11-12.",
+  "The components describe an integrated whole; a product covering each piece natively is not the same as covering the integrated whole, but no product was found that does so."
+ ]
+}

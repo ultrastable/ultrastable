@@ -1,0 +1,1361 @@
+{
+ "accessed": "2026-11-12",
+ "products": {
+  "Claude Code": {
+   "url": "https://code.claude.com/docs/en/overview",
+   "components": {
+    "time-trigger": {
+     "native": "yes",
+     "note": "Cloud scheduled tasks (formerly routines) run on a recurring or one-time schedule on Anthropic infrastructure with the laptop closed.",
+     "source": "https://code.claude.com/docs/en/routines"
+    },
+    "event-trigger": {
+     "native": "yes",
+     "note": "The same tasks can fire from GitHub events such as PRs or releases, or from an authenticated HTTP call; the Actions integration reacts to @claude mentions and any workflow event.",
+     "source": "https://code.claude.com/docs/en/routines"
+    },
+    "persistent-state": {
+     "native": "partial",
+     "note": "Sessions and CLAUDE.md memory persist, but no durable task database, claims or ledger is documented; webhook events are capped hourly and dropped past the cap.",
+     "source": "https://code.claude.com/docs/en/routines"
+    },
+    "role-managers": {
+     "native": "partial",
+     "note": "Subagents let one session delegate to specialist roles, but nothing documented allocates work across a portfolio of projects.",
+     "source": "https://code.claude.com/docs/en/github-actions"
+    },
+    "code-executor": {
+     "native": "yes",
+     "note": "Edits code and pushes claude/-prefixed branches and PRs, in cloud tasks and through the GitHub Action.",
+     "source": "https://code.claude.com/docs/en/routines"
+    },
+    "independent-review": {
+     "native": "yes",
+     "note": "A separate Code Review feature reviews pull requests automatically, though it is the same vendor's models rather than a deliberately different model.",
+     "source": "https://code.claude.com/docs/en/code-review"
+    },
+    "merge-deploy": {
+     "native": "partial",
+     "note": "Cloud sessions can auto-fix PRs and the app holds merge-queue read access, but a first-party merge-on-green plus deploy loop was not found in the pages read.",
+     "source": "https://code.claude.com/docs/en/github-actions"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://code.claude.com/docs/en/overview"
+    },
+    "metrics-triggers": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://code.claude.com/docs/en/overview"
+    },
+    "self-improvement": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://code.claude.com/docs/en/overview"
+    },
+    "session-lifecycle": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://code.claude.com/docs/en/overview"
+    },
+    "trust-ladder": {
+     "native": "partial",
+     "note": "Permission rules and allowed-tool lists scope what an unattended run may do, but they are static settings and are not earned or promoted from track record.",
+     "source": "https://code.claude.com/docs/en/github-actions"
+    },
+    "budget-guard": {
+     "native": "partial",
+     "note": "Turn caps, workflow timeouts and subscription usage limits bound a run; overage only continues if usage credits are enabled.",
+     "source": "https://code.claude.com/docs/en/routines"
+    },
+    "failover": {
+     "native": "partial",
+     "note": "Inference can be pointed at Bedrock, Vertex-style or Foundry providers, but automatic failover between routes was not documented.",
+     "source": "https://code.claude.com/docs/en/github-actions"
+    },
+    "memory-in-repo": {
+     "native": "yes",
+     "note": "CLAUDE.md and repo-resident skills carry project rules and are read on every run.",
+     "source": "https://code.claude.com/docs/en/github-actions"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://code.claude.com/docs/en/overview"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://code.claude.com/docs/en/overview"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://code.claude.com/docs/en/overview"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://code.claude.com/docs/en/overview"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://code.claude.com/docs/en/overview"
+    },
+    "fleet-multi-repo": {
+     "native": "partial",
+     "note": "A single scheduled task can attach several repositories and the action can be rolled out org-wide, but cross-repo coordination logic is yours to write.",
+     "source": "https://code.claude.com/docs/en/routines"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://code.claude.com/docs/en/overview"
+    },
+    "self-hosting": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://code.claude.com/docs/en/overview"
+    }
+   }
+  },
+  "GitHub Copilot coding agent": {
+   "url": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent",
+   "components": {
+    "time-trigger": {
+     "native": "partial",
+     "note": "Docs mention scheduled automations and Markdown-defined agentic workflows running as Actions; depth of scheduling was not confirmed.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "event-trigger": {
+     "native": "yes",
+     "note": "Work starts when an issue is assigned to Copilot (also from Jira, Slack or Linear) or from chat prompts.",
+     "source": "https://dev.to/thelogicwarlock/assign-to-copilot-explained-what-githubs-coding-agent-actually-does-59g9"
+    },
+    "persistent-state": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "role-managers": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "code-executor": {
+     "native": "yes",
+     "note": "Works in an Actions-powered environment and opens a PR; one branch and one PR per session.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "independent-review": {
+     "native": "yes",
+     "note": "Copilot code review is a first-party reviewer for pull request changes.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "merge-deploy": {
+     "native": "partial",
+     "note": "An agent-merge capability fixes failed workflows and conflicts, but merging and deploying remain governed by repo rules.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "metrics-triggers": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "self-improvement": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "session-lifecycle": {
+     "native": "partial",
+     "note": "Sessions have a hard cap of 59 minutes on Actions, which bounds zombies but is not a lease or heartbeat system.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "trust-ladder": {
+     "native": "partial",
+     "note": "Draft PRs need approval from a user with write access before Actions workflows run; this is a fixed gate, not earned autonomy.",
+     "source": "https://dev.to/thelogicwarlock/assign-to-copilot-explained-what-githubs-coding-agent-actually-does-59g9"
+    },
+    "budget-guard": {
+     "native": "yes",
+     "note": "Admins can set a monthly budget for premium requests and choose to stop usage when it is reached.",
+     "source": "https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/manage-and-track-spending/manage-company-spending"
+    },
+    "failover": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "memory-in-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "fleet-multi-repo": {
+     "native": "partial",
+     "note": "Runs per repository and branch; the docs describe a single repository context per task.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    },
+    "self-hosting": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent"
+    }
+   }
+  },
+  "OpenAI Codex": {
+   "url": "https://developers.openai.com/codex/app/automations",
+   "components": {
+    "time-trigger": {
+     "native": "yes",
+     "note": "Scheduled tasks (formerly automations) run recurring jobs from ChatGPT web or desktop.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "event-trigger": {
+     "native": "yes",
+     "note": "On eligible plans a scheduled task can fire on Gmail, Slack or GitHub pull request activity.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "persistent-state": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "role-managers": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "code-executor": {
+     "native": "yes",
+     "note": "Cloud tasks run in isolated workspaces, keep going while the device is offline, and prepare commits or PRs.",
+     "source": "https://learn.chatgpt.com/docs/cloud"
+    },
+    "independent-review": {
+     "native": "yes",
+     "note": "Automatic review or @codex review comments on PRs, with custom rules in AGENTS.md, and @codex fix it for follow-up.",
+     "source": "https://developers.openai.com/codex/integrations/github"
+    },
+    "merge-deploy": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "metrics-triggers": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "self-improvement": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "session-lifecycle": {
+     "native": "partial",
+     "note": "Project-scoped tasks need the machine on and the desktop app running, which is a dependency rather than lease management.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "trust-ladder": {
+     "native": "partial",
+     "note": "Admins can gate event-triggered scheduled tasks by workspace permission; this is an on/off control, not earned autonomy.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "budget-guard": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "failover": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "memory-in-repo": {
+     "native": "partial",
+     "note": "Review rules and guidance live in AGENTS.md files in the repository.",
+     "source": "https://developers.openai.com/codex/integrations/github"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "fleet-multi-repo": {
+     "native": "partial",
+     "note": "Connected GitHub or GitLab accounts expose any available repository to tasks.",
+     "source": "https://learn.chatgpt.com/docs/cloud"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    },
+    "self-hosting": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.openai.com/codex/app/automations"
+    }
+   }
+  },
+  "Devin (Cognition)": {
+   "url": "https://docs.devin.ai/",
+   "components": {
+    "time-trigger": {
+     "native": "yes",
+     "note": "Scheduled sessions run recurring or one-time, and are now created as automations with a schedule trigger.",
+     "source": "https://docs.devin.ai/product-guides/scheduled-sessions"
+    },
+    "event-trigger": {
+     "native": "partial",
+     "note": "Slack and Teams tagging and git integrations exist, and automations imply other triggers, but a full event list was not confirmed.",
+     "source": "https://docs.devin.ai/release-notes/overview"
+    },
+    "persistent-state": {
+     "native": "partial",
+     "note": "Knowledge items are recalled automatically across sessions; no claims or task ledger was found.",
+     "source": "https://docs.devin.ai/use-cases/gallery/scheduled-knowledge-maintenance"
+    },
+    "role-managers": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.devin.ai/"
+    },
+    "code-executor": {
+     "native": "yes",
+     "note": "Devin writes code in its own environment and opens PRs through its git integrations.",
+     "source": "https://docs.devin.ai/enterprise/integrations/git-integrations.md"
+    },
+    "independent-review": {
+     "native": "yes",
+     "note": "Devin Review is a first-party PR reviewer covering GitHub and GitLab.",
+     "source": "https://docs.devin.ai/work-with-devin/devin-review"
+    },
+    "merge-deploy": {
+     "native": "partial",
+     "note": "Review approval can satisfy a repo requirement so GitHub auto-merge proceeds, but Devin Review does not merge by itself.",
+     "source": "https://docs.devin.ai/work-with-devin/devin-review"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.devin.ai/"
+    },
+    "metrics-triggers": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.devin.ai/"
+    },
+    "self-improvement": {
+     "native": "partial",
+     "note": "Scheduled knowledge cleanup proposes merges and deletions that a human approves; it is not an autonomous keep-or-revert loop.",
+     "source": "https://docs.devin.ai/use-cases/gallery/scheduled-knowledge-maintenance"
+    },
+    "session-lifecycle": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.devin.ai/"
+    },
+    "trust-ladder": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.devin.ai/"
+    },
+    "budget-guard": {
+     "native": "yes",
+     "note": "Usage policies cap ACU spend with shared-pool budgets and per-user limits.",
+     "source": "https://docs.devin.ai/enterprise/features/usage-policies.md"
+    },
+    "failover": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.devin.ai/"
+    },
+    "memory-in-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.devin.ai/"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.devin.ai/"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.devin.ai/"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.devin.ai/"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.devin.ai/"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.devin.ai/"
+    },
+    "fleet-multi-repo": {
+     "native": "partial",
+     "note": "Enterprise git integrations connect GitHub, GitLab and Azure DevOps across an organization.",
+     "source": "https://docs.devin.ai/enterprise/integrations/git-integrations.md"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.devin.ai/"
+    },
+    "self-hosting": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.devin.ai/"
+    }
+   }
+  },
+  "Cursor": {
+   "url": "https://cursor.com/docs",
+   "components": {
+    "time-trigger": {
+     "native": "yes",
+     "note": "Automations run cloud agents on a cron schedule.",
+     "source": "https://cursor.com/docs/cloud-agent/automations.md"
+    },
+    "event-trigger": {
+     "native": "yes",
+     "note": "Automations fire on GitHub or GitLab PR events, CI completion, Slack, Linear, Sentry, PagerDuty and webhooks.",
+     "source": "https://cursor.com/docs/cloud-agent/automations.md"
+    },
+    "persistent-state": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://cursor.com/docs"
+    },
+    "role-managers": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://cursor.com/docs"
+    },
+    "code-executor": {
+     "native": "yes",
+     "note": "Cloud agents work in the background and open PRs; they also try to fix failing Actions on PRs they created (Teams and Enterprise).",
+     "source": "https://cursor.com/help/ai-features/cloud-agents"
+    },
+    "independent-review": {
+     "native": "yes",
+     "note": "Bugbot reviews PRs for bugs and can autofix by spawning a cloud agent.",
+     "source": "https://cursor.com/docs/bugbot"
+    },
+    "merge-deploy": {
+     "native": "partial",
+     "note": "CI-failure autofix on agent PRs exists, but automatic merge and deploy was not documented in the sources read.",
+     "source": "https://cursor.com/help/ai-features/cloud-agents"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://cursor.com/docs"
+    },
+    "metrics-triggers": {
+     "native": "partial",
+     "note": "Sentry and PagerDuty alerts can wake an automation, which is event-driven rather than a scoreboard with breach triggers.",
+     "source": "https://cursor.com/docs/cloud-agent/automations.md"
+    },
+    "self-improvement": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://cursor.com/docs"
+    },
+    "session-lifecycle": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://cursor.com/docs"
+    },
+    "trust-ladder": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://cursor.com/docs"
+    },
+    "budget-guard": {
+     "native": "partial",
+     "note": "Automations are billed as cloud agent usage; specific spend caps were not confirmed.",
+     "source": "https://cursor.com/docs/cloud-agent/automations.md"
+    },
+    "failover": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://cursor.com/docs"
+    },
+    "memory-in-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://cursor.com/docs"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://cursor.com/docs"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://cursor.com/docs"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://cursor.com/docs"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://cursor.com/docs"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://cursor.com/docs"
+    },
+    "fleet-multi-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://cursor.com/docs"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://cursor.com/docs"
+    },
+    "self-hosting": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://cursor.com/docs"
+    }
+   }
+  },
+  "Factory (Droids)": {
+   "url": "https://docs.factory.com/",
+   "components": {
+    "time-trigger": {
+     "native": "yes",
+     "note": "Automations support cron-style schedules.",
+     "source": "https://docs.factory.com/docs/automations/overview"
+    },
+    "event-trigger": {
+     "native": "yes",
+     "note": "Automations also fire from Slack messages, GitHub repository events and HTTP webhooks.",
+     "source": "https://docs.factory.com/docs/automations/overview"
+    },
+    "persistent-state": {
+     "native": "partial",
+     "note": "Cloud sessions persist across surfaces; a durable task ledger was not confirmed.",
+     "source": "https://docs.factory.com/"
+    },
+    "role-managers": {
+     "native": "partial",
+     "note": "Workstreams orchestrate parallel multiple agents, though portfolio-level work allocation was not confirmed.",
+     "source": "https://docs.factory.com/"
+    },
+    "code-executor": {
+     "native": "yes",
+     "note": "Droids run on CLI, web and headless CI to implement and change code.",
+     "source": "https://docs.factory.com/"
+    },
+    "independent-review": {
+     "native": "yes",
+     "note": "Code Review and Security Review ship as guided automations.",
+     "source": "https://docs.factory.com/docs/automations/overview"
+    },
+    "merge-deploy": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.factory.com/"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.factory.com/"
+    },
+    "metrics-triggers": {
+     "native": "partial",
+     "note": "CVE remediation polls vulnerability scanners on a schedule, an example of a signal driving work but not a general scoreboard.",
+     "source": "https://docs.factory.com/docs/automations/overview"
+    },
+    "self-improvement": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.factory.com/"
+    },
+    "session-lifecycle": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.factory.com/"
+    },
+    "trust-ladder": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.factory.com/"
+    },
+    "budget-guard": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.factory.com/"
+    },
+    "failover": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.factory.com/"
+    },
+    "memory-in-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.factory.com/"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.factory.com/"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.factory.com/"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.factory.com/"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.factory.com/"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.factory.com/"
+    },
+    "fleet-multi-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.factory.com/"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.factory.com/"
+    },
+    "self-hosting": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.factory.com/"
+    }
+   }
+  },
+  "OpenHands (All Hands)": {
+   "url": "https://docs.openhands.dev/",
+   "components": {
+    "time-trigger": {
+     "native": "yes",
+     "note": "Cron automations take a five-field expression and timezone via the cloud automation API.",
+     "source": "https://docs.openhands.dev/openhands/usage/automations/event-automations"
+    },
+    "event-trigger": {
+     "native": "yes",
+     "note": "Event automations react to webhooks such as GitHub PR opened or commented; silent no-delivery occurs if setup steps are missed.",
+     "source": "https://docs.openhands.dev/openhands/usage/automations/event-automations"
+    },
+    "persistent-state": {
+     "native": "partial",
+     "note": "Agent Server and cloud keep conversations; the PR-reviewer skill keeps its own state in deterministic code.",
+     "source": "https://github.com/OpenHands/extensions"
+    },
+    "role-managers": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "code-executor": {
+     "native": "yes",
+     "note": "Agents edit code in sandboxes through the cloud, SDK or Agent Server.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "independent-review": {
+     "native": "yes",
+     "note": "A pr-review plugin and action post inline review comments on PRs.",
+     "source": "https://docs.openhands.dev/openhands/usage/essential-guidelines/sdlc-integration"
+    },
+    "merge-deploy": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "metrics-triggers": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "self-improvement": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "session-lifecycle": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "trust-ladder": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "budget-guard": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "failover": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "memory-in-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "fleet-multi-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.openhands.dev/"
+    },
+    "self-hosting": {
+     "native": "partial",
+     "note": "The project runs a bot that reviews its own repository PRs, evidence of dogfooding but not of an autonomous dev org.",
+     "source": "https://github.com/OpenHands/extensions/pull/660"
+    }
+   }
+  },
+  "Cloudflare Agents SDK + Workflows": {
+   "url": "https://developers.cloudflare.com/agents/",
+   "components": {
+    "time-trigger": {
+     "native": "yes",
+     "note": "Agents have a built-in durable scheduler, and Workflows supports cron-triggered instances.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "event-trigger": {
+     "native": "yes",
+     "note": "Agents accept chat, voice, email, Slack and webhook inputs.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "persistent-state": {
+     "native": "yes",
+     "note": "Each agent has local SQL storage and persistent identity on Durable Objects.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "role-managers": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "code-executor": {
+     "native": "partial",
+     "note": "Sandboxed code execution is a tool an agent can call; no repo-edit-and-PR product loop is provided.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "independent-review": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "merge-deploy": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "metrics-triggers": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "self-improvement": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "session-lifecycle": {
+     "native": "partial",
+     "note": "Durable Object lifecycle and alarms give recoverable work, but leases, heartbeats and a reaper for sessions are not documented as such.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "trust-ladder": {
+     "native": "partial",
+     "note": "Human-in-the-loop approval flows are supported; graduated autonomy per action class is not.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "budget-guard": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "failover": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "memory-in-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "fleet-multi-repo": {
+     "native": "no",
+     "note": "A runtime for agents, not a repository-spanning system.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://developers.cloudflare.com/agents/"
+    },
+    "self-hosting": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://developers.cloudflare.com/agents/"
+    }
+   }
+  },
+  "Zapier Agents": {
+   "url": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger",
+   "components": {
+    "time-trigger": {
+     "native": "yes",
+     "note": "Agents can start from Schedule by Zapier at set intervals.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "event-trigger": {
+     "native": "yes",
+     "note": "Agents can start from app triggers or from Zaps and MCP, and webhooks reach them through a Zap.",
+     "source": "https://help.zapier.com/hc/en-us/articles/8496288690317-Trigger-Zaps-from-webhooks"
+    },
+    "persistent-state": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "role-managers": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "code-executor": {
+     "native": "unknown",
+     "note": "Zapier connects to GitHub, but an agent that edits code and opens PRs was not verified.",
+     "source": "https://zapier.com/automations/engineering/dev-ops/ci-cd-pipeline-management/trigger-production-pipeline-from-webhook-and-schedule-run"
+    },
+    "independent-review": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "merge-deploy": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "metrics-triggers": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "self-improvement": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "session-lifecycle": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "trust-ladder": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "budget-guard": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "failover": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "memory-in-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "fleet-multi-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    },
+    "self-hosting": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://help.zapier.com/hc/en-us/articles/45394909914381-Set-up-your-agent-s-trigger"
+    }
+   }
+  },
+  "Temporal": {
+   "url": "https://docs.temporal.io/evaluate/why-temporal",
+   "components": {
+    "time-trigger": {
+     "native": "yes",
+     "note": "Schedules are first-class service objects with overlap, catchup, pause and backfill controls.",
+     "source": "https://docs.temporal.io/evaluate/development-production-features/schedules"
+    },
+    "event-trigger": {
+     "native": "partial",
+     "note": "Signals, Updates and Queries reach running workflows, but webhook ingestion is code you write.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "persistent-state": {
+     "native": "yes",
+     "note": "Event History preserves workflow state across crashes and restarts.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "role-managers": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "code-executor": {
+     "native": "no",
+     "note": "Orchestrator only; it does not itself edit code or open PRs.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "independent-review": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "merge-deploy": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "metrics-triggers": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "self-improvement": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "session-lifecycle": {
+     "native": "yes",
+     "note": "Activity heartbeats, timeouts and retries detect and replace dead workers, the closest native match to leases and a reaper.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "trust-ladder": {
+     "native": "partial",
+     "note": "Signals support human approvals mid-run; per-action-class earned autonomy is not a feature.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "budget-guard": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "failover": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "memory-in-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "fleet-multi-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    },
+    "self-hosting": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.temporal.io/evaluate/why-temporal"
+    }
+   }
+  },
+  "LangGraph (LangSmith Deployment)": {
+   "url": "https://docs.langchain.com/oss/python/langgraph/overview",
+   "components": {
+    "time-trigger": {
+     "native": "yes",
+     "note": "The deployment platform offers cron jobs with a schedule, assistant and input; not available on all licenses.",
+     "source": "https://docs.langchain.com/langgraph-platform/cron-jobs"
+    },
+    "event-trigger": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "persistent-state": {
+     "native": "yes",
+     "note": "Checkpointing persists state and resumes after failures or pauses.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "role-managers": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "code-executor": {
+     "native": "no",
+     "note": "A framework for building agents, not a code-editing product.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "independent-review": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "merge-deploy": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "verify-live": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "metrics-triggers": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "self-improvement": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "session-lifecycle": {
+     "native": "partial",
+     "note": "Checkpointed resume handles failures, but lease or heartbeat management was not documented.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "trust-ladder": {
+     "native": "partial",
+     "note": "Human-in-the-loop pause and inspect exists; earned autonomy does not.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "budget-guard": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "failover": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "memory-in-repo": {
+     "native": "no",
+     "note": "Memory is held in thread state and stores rather than written back to a repository.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "funding-outreach": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "ip-legal": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "research-publishing": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "marketing-content": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "customer-onboarding": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "fleet-multi-repo": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "bootstrap-from-idea": {
+     "native": "no",
+     "note": "No first-party feature of this kind found in the docs and feature lists reviewed; absence not exhaustively proven.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    },
+    "self-hosting": {
+     "native": "unknown",
+     "note": "Not verified in the sources reviewed; could not confirm either way.",
+     "source": "https://docs.langchain.com/oss/python/langgraph/overview"
+    }
+   }
+  }
+ },
+ "closest_overlaps": [
+  {
+   "product": "Claude Code",
+   "component": "time-trigger",
+   "why_it_matters": "Cloud scheduled tasks with schedule, API and GitHub triggers directly cover the unattended-wake claim."
+  },
+  {
+   "product": "Cursor",
+   "component": "event-trigger",
+   "why_it_matters": "Automations fire on PRs, CI, Slack, Linear, Sentry and PagerDuty and include autofix, covering much of the wake-and-act loop."
+  },
+  {
+   "product": "Claude Code",
+   "component": "independent-review",
+   "why_it_matters": "Automatic PR review is native in several products (Claude Code, Codex, Devin, Cursor Bugbot, Copilot, Factory), so review alone is not a moat."
+  },
+  {
+   "product": "Factory (Droids)",
+   "component": "time-trigger",
+   "why_it_matters": "Four trigger types plus built-in triage, QA, incident and CVE automations resemble an autonomous engineering org in product form."
+  },
+  {
+   "product": "Temporal",
+   "component": "session-lifecycle",
+   "why_it_matters": "Heartbeats, timeouts and durable history are mature infrastructure for lease and reaper behavior; differentiation must lie in the agent-specific layer."
+  }
+ ],
+ "caveats": [
+  "Most cells marked unknown mean the specific doc page was not fetched or did not mention the capability; they are not evidence of absence.",
+  "Cells marked no for domain components (funding-outreach, ip-legal, research-publishing, marketing-content, customer-onboarding, bootstrap-from-idea, role-managers) rest on feature lists reviewed, not exhaustive proof; a vendor could ship one unannounced.",
+  "n8n was not researched; Zapier Agents was used as the automation-platform representative and only its trigger docs were verified.",
+  "Many docs pages were summarized by a fetch tool rather than read in full; notes are paraphrases and should be re-checked before quoting to investors.",
+  "Several product claims come from secondary sources (dev.to for Copilot assignment, search summaries for Cursor, Devin and Codex); primary-source confirmation is advised.",
+  "Products ship fast and some are preview features (Claude Code scheduled tasks are labeled research preview); status is as of 2026-11-12.",
+  "The components describe an integrated whole; a product covering each piece natively is not the same as covering the integrated whole, but no product was found that does so."
+ ]
+}

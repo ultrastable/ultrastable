@@ -1,0 +1,13 @@
+{
+  "id": "OL-ROLE-data-analyst",
+  "title": "OL-ROLE-data-analyst: activate the data analyst role (phase 2)",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** phase 2 gate passes (python3 -m foundation team --gate)\n**Done check:** file:agents/roles/data-analyst.md\n**Status:** open\n\nActivate the data analyst role: python3 -m foundation team --apply writes the role files, the seed role and the loop entry once the gate is open. Metric: predictions_scored_share.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop",
+    "team",
+    "phase:2"
+  ],
+  "milestone": "Later",
+  "workstream": "Virtual team"
+}

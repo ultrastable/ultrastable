@@ -1,0 +1,12 @@
+{
+  "id": "OL-GAP-verify-just-a-code-agent",
+  "title": "OL-GAP-verify-just-a-code-agent: objection just-a-code-agent rests on 15 unverified market cells",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** every loop pass\n**Done check:** cmd:python3 -m foundation components --probe objection-verified:just-a-code-agent\n**Status:** open\n\nRead the primary vendor page for each unknown cell in doctrine/market-evidence.json and set native to yes, partial or no with a source. An unknown cell never counts as support.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop",
+    "gap"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
