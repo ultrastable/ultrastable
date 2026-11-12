@@ -1,0 +1,11 @@
+{
+  "id": "Q-SYS-DEPLOY-ALL",
+  "title": "Q-SYS-DEPLOY-ALL: SYS-7: deploy every declared worker and store from the topology",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:deploy/deploy-system.mjs::topology.json\n**Status:** open\n\n`python3 -m foundation topology --drift` lists bindings declared in doctrine/topology.json but not deployed: the tick worker's AI, SITE, DASHBOARD and AGENTS bindings, the dashboard's TICK binding. deploy/deploy-system.mjs builds bindings from doctrine/system.json for AI and D1 only and defaults to the agents worker. Make it read doctrine/topology.json (as deploy/deploy-site.mjs does), build every binding type for any worker in DEPLOY_WORKERS (d1, kv, ai, services, queues, vectorize, vars), create planned stores before the workers that bind them, deploy tick, dashboard and agents, and probe each /health.\nPaths: deploy/deploy-system.mjs, .github/workflows/deploy-system.yml, doctrine/topology.json.\nAcceptance: after the run, `topology --drift` reports no declared-but-undeployed bindings.\n\nsize: M\n\n**Closing probe:** grep:deploy/deploy-system.mjs::topology.json; drift on /live shows none.",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "System wiring"
+}
