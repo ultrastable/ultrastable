@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-other-cloud-proof",
+  "title": "Q-GAP-other-cloud-proof: Prove one non-Cloudflare cloud end to end",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:docs/bootstrapping/other-cloud-proof.json\n**Status:** open\n\nGap in component `portability`: Prove one non-Cloudflare cloud end to end. Briefs exist; nothing is proven off Cloudflare. Source: doctrine/market.json (MARKET-1).",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-org-setup-in-thread",
+  "title": "Q-GAP-org-setup-in-thread: Set up a full organization from the thread",
+  "body": "**Owner:** staff\n**Trigger:** every executor run\n**Done check:** grep:site/interview.js::setup-org\n**Status:** open\n\nGap in component `frontend-experience`: Set up a full organization from the thread. The thread builds a site; the organization around it is still set up through /setup. Source: doctrine/market.json (MARKET-1).",
+  "labels": [
+    "role:staff",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}
