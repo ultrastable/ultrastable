@@ -33,4 +33,8 @@ done
 for n in $(gh issue list -R "$repo" --state open --label done --json number --jq '.[].number'); do
   gh issue close "$n" -R "$repo" --reason completed --comment "completion-sweep: labelled done; closing as complete." >/dev/null && echo "closed issue #$n"
 done
+# STRANGE-LOOP-1: the loop measures itself so each run is comparable with the last. cycle_metric = items still open that this pass could not close.
+left_prs=$(gh pr list -R "$repo" --state open --json number,updatedAt --jq '[.[] | select((now - (.updatedAt|fromdateiso8601)) > 86400)] | length')
+left_issues=$(gh issue list -R "$repo" --state open --label done --json number --jq length)
+echo "cycle_metric leftover_after_sweep prs_idle_over_1d=${left_prs:-?} done_issues=${left_issues:-?}"
 safe_exit

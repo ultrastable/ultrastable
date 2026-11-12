@@ -1738,6 +1738,39 @@
     "doctrine/market.json"
    ],
    "area": "governance"
+  },
+  {
+   "id": "strange-loop-hygiene",
+   "kind": "governance",
+   "summary": "STRANGE-LOOP-1: no zombie sessions, branches, PRs or issues, and each sweep must beat the last: it records its own leftover count and files a plus against its weakest step.",
+   "trigger": "daily lane sweep (scripts/completion_sweep.sh); the app archives sessions when their PR closes and after 1 idle day",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "leftover count is 0 and the cycle_metric line is printed by every sweep",
+   "paths": [
+    {
+     "id": "ci-sweep",
+     "how": "scripts/completion_sweep.sh in the daily lane sweep",
+     "class": "free"
+    },
+    {
+     "id": "session-sweep",
+     "how": "the app's own scheduler archives a session when its PR closes (auto_archive_on_pr_close=true) and after 1 idle day (auto_archive_inactive_days=1), read from get_settings 2026-11-12; any agent session also archives idle finished ones it finds",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:scripts/completion_sweep.sh::cycle_metric",
+   "cycle_metric": "leftover_after_sweep",
+   "last_plus": "sweep prints its own cycle_metric each run so the next run is comparable",
+   "writeback": [
+    "docs/PROJECT-MEMORY.md"
+   ],
+   "system_path": [
+    "scripts/completion_sweep.sh",
+    "agents/AGENTS.md"
+   ],
+   "area": "governance"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
