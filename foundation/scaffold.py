@@ -8,7 +8,7 @@ from __future__ import annotations
 import json, re, shutil
 from pathlib import Path
 
-from . import TAGLINE, __version__, filing, manifest as mf, minutes, ownersteps, preflight, ladder
+from . import TAGLINE, __version__, filing, genesis, manifest as mf, minutes, ownersteps, preflight, ladder
 
 REPO = Path(__file__).resolve().parent.parent
 KERNEL = REPO / "seed"
@@ -130,6 +130,7 @@ def generate(raw: dict, out, date: str, ctx: ownersteps.StepCtx | None = None, a
 
     step("kernel", copy_kernel)
     step("instance", write_instance)
+    step("genesis", lambda: genesis.write(m, out))
     cases_plan = step("cases", cases_and_plans) or {"applicable": [], "cards": []}
     c = ctx or ownersteps.StepCtx()
     c.facts = {**mf.facts_for(m), **{k: v for k, v in c.facts.items()}}
