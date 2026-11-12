@@ -1,9 +1,9 @@
 {
   "id": "OL-20261112-1",
-  "title": "OL-20261112-1: Burn down the human-action document baseline to zero",
-  "body": "**Owner:** portfolio-manager\n**Trigger:** every PR that touches a document, and weekly via the loop breaker\n**Done check:** grep:doctrine/doc-consumers.json::\"human_action_baseline\": \\{\\}\n**Status:** open\n\n12 documents still hold lines that tell a person to act (doctrine/doc-consumers.json human_action_baseline; python3 -m foundation docs_audit --humans). For each: convert the instruction into an automatic backlog item or a data-driven check and delete the sentence; lower the baseline in the same PR.",
+  "title": "OL-20261112-1: QNFO runtime config and replace PR owed by the QNFO lane",
+  "body": "**Owner:** qnfo-lane\n**Trigger:** workers cutover stages 1 and 6\n**Done check:** grep:scripts/upstream_scan.py::dependencies\n**Status:** open\n\nRecorded in instances/qnfo/dependencies.json with owner, trigger and closing probes (an upstream check passing in the QNFO checkout); scripts/upstream_scan.py prints them in every weekly drift scan. Workers release tag workflow is workers PR #107.",
   "labels": [
-    "role:portfolio-manager",
+    "role:qnfo-lane",
     "open-loop"
   ],
   "milestone": "Now",

@@ -2,7 +2,7 @@
 // Canonical host ultrastable.io; ultrastable.app and ultrastable.net redirect to it (/pilot and /proof). Live proof comes from
 // the platform claims QNFO publishes as customer zero. Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
-var VERSION = "0.3.0";
+var VERSION = "0.3.1";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -156,6 +156,16 @@ function team() {
     + "<h2>Open roles</h2><p>We are looking for an operator or co-founder with commercial and go-to-market experience, and for design partners. <a href=\"/contact\">Get in touch.</a></p>");
 }
 
+function org() {
+  return shell({ path: "/org", title: "Ultrastable organization", description: "How the Ultrastable organization is laid out: four repositories, each with one purpose." },
+    "<div class=\"head\"><h1>Organization</h1><p>Four repositories, each with one purpose. Ultrastable runs on itself, so this layout is itself checked by code.</p></div>"
+    + "<div class=\"us-grid c2\">"
+    + card("System of record", "Roadmap, doctrine, agents, operations and the self-hosting proof.")
+    + card("Code", "The portable core, platform adapters and the bootstrapper that turns an idea file into a running organization.")
+    + card("Specifications", "Architectural specifications, product documentation and the license: free for non-commercial use, revenue share for commercial use.")
+    + card("Profile", "The public face of the organization on GitHub.")
+    + "</div><p class=\"meta\">Repositories are private until the license is released. Superseded early splits are archived, never deleted.</p>");
+}
 function faq() {
   const q = [
     ["Is Ultrastable another coding agent?", "No. It is the layer around the agents you already use. It decides what to work on, assigns it, checks the result and keeps score."],
@@ -205,7 +215,7 @@ export default {
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
@@ -213,12 +223,13 @@ export default {
       case "/proof": return new Response(await proof(), { headers: HTML });
       case "/product": return new Response(product(), { headers: HTML });
       case "/team": return new Response(team(), { headers: HTML });
+      case "/org": return new Response(org(), { headers: HTML });
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/contact": return new Response(contact(), { headers: HTML });
       case "/pilot": return new Response(pilot(), { headers: HTML });
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
-      case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/product", "/how", "/proof", "/team", "/faq", "/contact", "/pilot"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
+      case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
       default: return new Response(shell({ path: u.pathname, title: "Not found - Ultrastable", description: "Page not found." }, "<div class=\"head\"><h1>Not found</h1><p>That page does not exist. <a href=\"/\">Go to the home page</a>.</p></div>"), { status: 404, headers: HTML });
     }
   }

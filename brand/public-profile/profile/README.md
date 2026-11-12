@@ -15,13 +15,11 @@ An organization of virtual managers and staff that runs projects, scores its own
 ## Repositories
 | Repo | Role | What |
 |---|---|---|
-| [ultrastable](https://github.com/ultrastable/ultrastable) | System of record | The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof. |
-| [seed](https://github.com/ultrastable/seed) | Bootstrapper | One idea file in, a running organization of virtual managers and staff out. |
-| [platform](https://github.com/ultrastable/platform) | Runtime and adapters | The tick, roles, trust ledger, prediction scorer and plussing queue, portable across Cloudflare and Google Cloud. |
-| [docs](https://github.com/ultrastable/docs) | Concepts and roadmap | How it works: virtual staff, feedback loops, earned trust, plussing, governance, bootstrapping and the roadmap. |
-| [site](https://github.com/ultrastable/site) | Public site | The Cloudflare Worker behind the Ultrastable domains. |
-| [business](https://github.com/ultrastable/business) | Plan and funding | Business plan, customers, competition, pitch, funding and promotion, written by the virtual managers. |
-| [ip](https://github.com/ultrastable/ip) | Architecture and IP | Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11). |
+| [ultrastable](https://github.com/ultrastable/ultrastable) | System of record | Roadmap, doctrine, foundation code, agents, brand and the self-hosting proof. |
+| [workers](https://github.com/ultrastable/workers) | Code | The portable core, Cloudflare and Google Cloud adapters, and the bootstrapper: one idea file in, a running organization out. |
+| [spec](https://github.com/ultrastable/spec) | Specifications and license | Architectural specifications, product documentation and the Ultrastable License. |
+
+Earlier split repositories are archived; the registry is `org/repos.json` in the system of record.
 
 ## License
 Source-available. Free for non-commercial use: read it, run it, study it, change it, share it. Any commercial use needs a Commercial License with revenue share. See [LICENSING.md](https://github.com/ultrastable/ultrastable/blob/main/LICENSING.md).

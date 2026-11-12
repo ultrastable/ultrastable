@@ -155,6 +155,9 @@
    "how": "boundary test walks platform/core"
   }
  ],
+ "verified": {
+  "globs": ["org/**"]
+ },
  "knowledge": {
   "globs": [
    "business/**",

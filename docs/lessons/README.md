@@ -9,3 +9,7 @@ Write-back target for what sessions and loops learned: decisions, lessons, open 
 - 2026-11-12: [A path mention in a document or an issue is not consumption](2026-11-12-a-path-mention-in-a-document-or-an-issue-is-not-consumption.md)
 - 2026-11-12: [Sibling repos were stale pre-consolidation snapshots and the app cannot write to six of them](2026-11-12-sibling-repos-were-stale-pre-consolidation-snapshots-and-the.md)
 - 2026-11-12: [Sibling repos were stale snapshots and six returned 403 to the app](2026-11-12-sibling-repos-were-stale-snapshots-and-six-returned-403-to-t.md)
+- 2026-11-12: [Core has two code homes; read the plan before designing the pin](2026-11-12-core-has-two-code-homes-read-the-plan-before-designing-the-p.md)
+- 2026-11-12: [.github surfaces retested 2026-11-12](2026-11-12-github-surfaces-retested-2026-11-12.md)
+- 2026-11-12: [Do not commit derived digests; they race with every kernel change](2026-11-12-do-not-commit-derived-digests-they-race-with-every-kernel-ch.md)
+- 2026-11-12: [Connector grant is per account](2026-11-12-connector-grant-is-per-account.md)
