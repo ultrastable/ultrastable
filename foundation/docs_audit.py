@@ -65,6 +65,8 @@ def _read(root, rel):
 def _glob(path: str, pattern: str) -> bool:
     if pattern.endswith("/**"):
         return path.startswith(pattern[:-2])
+    if pattern.startswith("**/"):
+        return fnmatch.fnmatch(path, pattern) or fnmatch.fnmatch(path, pattern[3:])
     return fnmatch.fnmatch(path, pattern)
 
 
@@ -79,13 +81,14 @@ def front_matter(text: str) -> dict:
     return out
 
 
-CODE_TOKEN = re.compile(r"`([A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:js|mjs|cjs|py|json|sh|yml|yaml|toml|sql|md|html))`")
+SPAN = re.compile(r"`([^`\n]+)`")
+CODE_TOKEN = re.compile(r"(?<![\w/.:-])([A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:js|mjs|cjs|py|json|jsonc|sh|yml|yaml|toml|sql|md|html))(?![\w/-])")
 
 
 def verify_page(root, doc) -> tuple[list[str], list[str]]:
     """(resolved, unresolved) backticked file paths in a document, resolved against the repository root or the document's folder."""
     ok, missing = [], []
-    for tok in sorted(set(CODE_TOKEN.findall(_read(root, doc)))):
+    for tok in sorted({t for span in SPAN.findall(_read(root, doc)) for t in CODE_TOKEN.findall(span)}):
         if "*" in tok or tok.startswith(("http", "~", "/")):
             continue
         cand = (Path(root) / tok, Path(root) / os.path.dirname(doc) / tok)
@@ -236,7 +239,7 @@ def removed_check(root, reg) -> list[str]:
             continue
         t = _read(root, f)
         for p in paths:
-            if p in t:
+            if re.search(r"(?<![\w/.-])" + re.escape(p) + r"(?![\w-])", t):
                 bad.append(f"{f}: still names removed document {p}; point it at the replacement or drop the reference")
     return bad
 

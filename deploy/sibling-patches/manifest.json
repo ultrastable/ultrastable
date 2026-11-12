@@ -1,0 +1,33 @@
+{
+ "_doc": "Prepared DOC-CONSUMED-1 changes for the six stale sibling repos (ultrastable/site, platform, seed, docs, ip, business). Each patch applies with `git am` on the base commit and is blocked only because the Claude GitHub App cannot write to these repos (git push and the API both return 403 'Resource not accessible by integration'). Applied automatically by the first tick whose token can write; `pending` empties as each lands.",
+ "base": {
+  "site": "425a3a5c63288464e2f5acae41850edb61d4be7d",
+  "platform": "76e90e2e534d34d88d08329d773455ff030966e0",
+  "seed": "079ee7b7f4f14db86b2e12e98bb5534c5d091cca",
+  "docs": "01659e1011b4367b7c68b936f6d45d8f7af2873f",
+  "ip": "64769ff5972dcc1ddd50259fbc902a09d5a6434e",
+  "business": "b6352d4e91f1840fb9cc91e07de626192b007be3"
+ },
+ "patches": {
+  "site": "deploy/sibling-patches/site.patch",
+  "platform": "deploy/sibling-patches/platform.patch",
+  "seed": "deploy/sibling-patches/seed.patch",
+  "docs": "deploy/sibling-patches/docs.patch",
+  "ip": "deploy/sibling-patches/ip.patch",
+  "business": "deploy/sibling-patches/business.patch"
+ },
+ "pending": [
+  "business",
+  "docs",
+  "ip",
+  "platform",
+  "seed",
+  "site"
+ ],
+ "blocker": "GitHub App has no write access to ultrastable/{site,platform,seed,docs,ip,business}; ORG_ADMIN_TOKEN not minted (docs/ops/ORG-TOKEN.md)",
+ "surfaces_tested": [
+  "git push over https (403)",
+  "GitHub API create_branch via MCP (403)",
+  "monorepo workflow GITHUB_TOKEN (scoped to this repo only)"
+ ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261112-2",
+  "title": "OL-20261112-2: Land DOC-CONSUMED-1 in the six stale sibling repos",
+  "body": "**Owner:** operations\n**Trigger:** any tick whose token can write to those repos; daily check of repo write access\n**Done check:** grep:deploy/sibling-patches/manifest.json::\"pending\": \\[\\]\n**Status:** open\n\nPrepared and tested patches for ultrastable/site, platform, seed, docs, ip, business sit in deploy/sibling-patches/ (git am on the recorded base). git push and the GitHub API both returned 403 'Resource not accessible by integration' for these six repos (workers and the monorepo were writable). Route: apply with git am and open a PR as soon as any surface can write (GitHub App installed on those repos, or ORG_ADMIN_TOKEN per docs/ops/ORG-TOKEN.md); the tick that holds such a token applies them and empties pending in manifest.json.",
+  "labels": [
+    "role:operations",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

@@ -1,0 +1,1579 @@
+From 5ebb11747a1760bda2ddac57c1422a9aa82400cd Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 09:57:58 +0000
+Subject: [PATCH] DOC-CONSUMED-1: every document has a consumer (docs_audit,
+ registry); stale snapshot documents removed with a sha256 ledger
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0156nqDtDer7yrN7xaKoWgV1
+---
+ README.md                                   |   7 -
+ funding.md                                  |   8 -
+ investor/README.md                          |  27 --
+ investor/data-room-index.md                 |  41 ---
+ investor/demo-script.md                     |  57 ----
+ investor/google-for-startups-application.md |  79 -----
+ investor/investor-one-pager.md              |  54 ----
+ investor/marketing-strategy.md              | 122 --------
+ investor/pitch-deck-outline.md              |  75 -----
+ plan/00-business-manager.md                 |  46 ---
+ plan/01-management-roster.md                |  52 ----
+ plan/02-customers.md                        |  48 ---
+ plan/03-competition.md                      |  35 ---
+ plan/04-pitch-kit.md                        |  63 ----
+ plan/05-funding.md                          |  50 ----
+ plan/06-promotion.md                        |  61 ----
+ plan/07-events.md                           |  42 ---
+ plan/README.md                              |  58 ----
+ tools/doc-consumers.json                    | 165 ++++++++++
+ tools/docs_audit.py                         | 315 ++++++++++++++++++++
+ 20 files changed, 480 insertions(+), 925 deletions(-)
+ delete mode 100644 README.md
+ delete mode 100644 funding.md
+ delete mode 100644 investor/README.md
+ delete mode 100644 investor/data-room-index.md
+ delete mode 100644 investor/demo-script.md
+ delete mode 100644 investor/google-for-startups-application.md
+ delete mode 100644 investor/investor-one-pager.md
+ delete mode 100644 investor/marketing-strategy.md
+ delete mode 100644 investor/pitch-deck-outline.md
+ delete mode 100644 plan/00-business-manager.md
+ delete mode 100644 plan/01-management-roster.md
+ delete mode 100644 plan/02-customers.md
+ delete mode 100644 plan/03-competition.md
+ delete mode 100644 plan/04-pitch-kit.md
+ delete mode 100644 plan/05-funding.md
+ delete mode 100644 plan/06-promotion.md
+ delete mode 100644 plan/07-events.md
+ delete mode 100644 plan/README.md
+ create mode 100644 tools/doc-consumers.json
+ create mode 100644 tools/docs_audit.py
+
+diff --git a/README.md b/README.md
+deleted file mode 100644
+index 51a3d8b..0000000
+--- a/README.md
++++ /dev/null
+@@ -1,7 +0,0 @@
+-# ultrastable/business (owner only)
+-
+-Company, funding and go-to-market material for Ultrastable.
+-
+-- Business plan and pitch kit, by virtual manager: [plan/](plan/README.md)
+-- Funding plan summary: [funding.md](funding.md)
+-- Patents live in the `ip` repo; the launch backlog lives in `docs/roadmap.md`.
+diff --git a/funding.md b/funding.md
+deleted file mode 100644
+index 57abc5b..0000000
+--- a/funding.md
++++ /dev/null
+@@ -1,8 +0,0 @@
+-# Funding plan (summary, 2026-11-10)
+-
+-Source doc: https://claude.ai/artifact/NawSpUE1JqP1Ti7EB9NDWZ (mirror its content here as it changes).
+-
+-- Unfunded today. Large credit tiers (Google AI, Cloudflare Tier 1/2, AWS) need an institutional round; Google excludes angel money.
+-- Every credit program needs a live public site and domain email. Order: file provisional, publish outcome-only site, apply to small credit tiers, NSF SBIR pitch, raise.
+-- Don't buy paid Google Workspace on the ultrastable domain within 31 days before the Google AI program application.
+-- Platform stance: platform-agnostic and cloud-based. Portable core plus adapters, Cloudflare first, Google second; pitch both.
+diff --git a/investor/README.md b/investor/README.md
+deleted file mode 100644
+index b3e246e..0000000
+--- a/investor/README.md
++++ /dev/null
+@@ -1,27 +0,0 @@
+-# Ultrastable business documents (working drafts, 2026-11-10)
+-
+-Funding- and investor-facing drafts for Ultrastable. Prepared by the virtual business, marketing and finance managers for Rowan (founder). All drafts: no metric, customer, revenue or quote has been invented; every estimate is labeled ESTIMATE; every field Rowan must confirm is marked `[FOUNDER CONFIRM]`; legal and tax items are `[LAWYER]` / `[ACCOUNTANT]`. Patent text referenced anywhere is a working draft for attorney review, not legal advice.
+-
+-| File | Purpose |
+-|---|---|
+-| [marketing-strategy.md](marketing-strategy.md) | Positioning, ICP, messaging, channels, 90-day calendar, metrics, budget, objections, SAFE NOW vs AFTER FILING |
+-| [google-for-startups-application.md](google-for-startups-application.md) | Ready-to-paste answers for the Google for Startups Cloud Program, credit plan, pre-submission checklist |
+-| [investor-one-pager.md](investor-one-pager.md) | One-page investor summary: what exists vs roadmap, ask, risks |
+-| [pitch-deck-outline.md](pitch-deck-outline.md) | 12 slides with headline, bullets and repo evidence source |
+-| [demo-script.md](demo-script.md) | 5-minute demo using the real CLI and dashboard |
+-| [data-room-index.md](data-room-index.md) | Investor data-room checklist with status and owner |
+-
+-## Disclosure rule (read first)
+-
+-The provisional patent is NOT yet filed. Until it is, these files are internal / NDA-only. Public material (site, public repos, posts, the Google application text) stays outcome-only. Items tagged **SAFE NOW** may be said publicly; **AFTER FILING** items wait for the filing receipt. Never disclose before filing: trust formulas, ladder rungs, prediction-scoring details, the plus-capacity rule, self-amending rules, schemas, QNFO metrics. QNFO/qnfo-workers has been public since 2026-08-10 (no licence file), so file well before 2027-08-10, and sooner is better.
+-
+-## Sources used (all in the repo)
+-
+-- `Dev/ultrastable/PROJECT-INSTRUCTIONS.md`, `Dev/us-remote/README.md`, `HANDOFF.md`, `docs/product-and-positioning.md`
+-- `Dev/us-remote/org-repos/business/**` (funding.md, plan/00-07), `org-repos/docs/funding/funding-options.md`
+-- `Dev/us-remote/research/market-read.md`
+-- Code actually inspected: `Dev/us-platform/ultrastable/{engine,agents,cli,server,demo,config,store}.py`, `tests/test_engine.py`, `deploy/gcp/deploy.sh`. Observed 2026-11-10: 12 unit tests pass; `python -m ultrastable demo` runs 40 ticks with simulated agents.
+-
+-## Facts that could not be verified from the repo
+-
+-Legal entity status; whether a Google Cloud / Workspace account exists on ultrastable.io; the provisional filing date; the current Google program tiers and amounts; the funding-options claims about third-party programs (taken from the repo's notes, not re-checked); any live Cloud Run deployment of the platform (the deploy script exists, nothing shows it was run); the Cloudflare adapter (`deploy/cloudflare/` is empty).
+diff --git a/investor/data-room-index.md b/investor/data-room-index.md
+deleted file mode 100644
+index 68c688b..0000000
+--- a/investor/data-room-index.md
++++ /dev/null
+@@ -1,41 +0,0 @@
+-# Investor data-room index (2026-11-10)
+-
+-Status codes: **HAVE** (exists, path given), **DRAFT** (working draft exists), **NEEDS LAWYER**, **NEEDS ACCOUNTANT**, **TODO** (nothing yet). Paths relative to `C:\Users\LENOVO\Dev\`. Owners are roles; Rowan alone signs, pays and files.
+-
+-| # | Item | Status | Where / note | Owner |
+-|---|---|---|---|---|
+-| 1 | One-pager | DRAFT | `us-business-new/investor-one-pager.md` | Finance manager |
+-| 2 | Pitch deck outline | DRAFT | `us-business-new/pitch-deck-outline.md` (slides not built) | Marketing manager |
+-| 3 | Demo script and recording | DRAFT script / TODO video | `us-business-new/demo-script.md` | Marketing + Rowan |
+-| 4 | Product code and tests | HAVE | `us-platform/` (12 tests pass 2026-11-10) | Product manager |
+-| 5 | Product docs / positioning | HAVE | `us-remote/docs/product-and-positioning.md`, `ultrastable/PROJECT-INSTRUCTIONS.md` | Business manager |
+-| 6 | Competitive analysis | HAVE | `us-remote/org-repos/business/plan/03-competition.md`, `research/market-read.md` (to be refreshed within 30 days) | Research staff |
+-| 7 | Business plan | HAVE | `us-remote/org-repos/business/plan/00-07` | Business manager |
+-| 8 | Funding plan | HAVE | `business/funding.md`, `docs/funding/funding-options.md` | Finance manager |
+-| 9 | Use of funds / budget | DRAFT | One-pager + plan/05 percentages; 18-month budget model TODO | Finance manager, **NEEDS ACCOUNTANT** |
+-| 10 | Financial model and runway | TODO | no model exists | Finance manager, **NEEDS ACCOUNTANT** |
+-| 11 | Entity formation documents | TODO | no entity recorded | Rowan, **NEEDS LAWYER** `[LAWYER]` `[ACCOUNTANT]` |
+-| 12 | Cap table | TODO | after entity | Rowan, **NEEDS LAWYER** |
+-| 13 | Founder IP assignment / licence of QNFO-origin code to the company | TODO | main investor risk (HANDOFF.md) | Rowan, **NEEDS LAWYER** |
+-| 14 | Provisional patent drafts | DRAFT | `Dev/ultrastable/` local-workspace patent drafts (working drafts, not legal advice) | Legal/IP manager, **NEEDS LAWYER** |
+-| 15 | Provisional filing receipt | TODO | not filed; file before 2027-08-10, sooner better | Rowan, **NEEDS LAWYER** |
+-| 16 | Public-disclosure record of qnfo-workers (public since 2026-08-10, no licence file) | HAVE (fact) | HANDOFF.md; counsel to assess | Legal/IP manager, **NEEDS LAWYER** |
+-| 17 | Trademark search (Ultrastable; note "cybernetic organizations" overlap) | TODO | product doc section 7 partial only | Legal/IP manager, **NEEDS LAWYER** |
+-| 18 | NDA template | TODO | needed before sharing this folder | Legal/IP manager, **NEEDS LAWYER** |
+-| 19 | Domains and site | HAVE | ultrastable.io/.app/.net, worker `ultrastable-site`, `us-remote/site/` (note: registered inside QNFO's Cloudflare account; transfer to the company later) | Operations |
+-| 20 | GitHub repo | HAVE | private https://github.com/ultrastable/ultrastable (12 issues; Projects board missing) | Operations |
+-| 21 | QNFO case study with real numbers | TODO (after filing) | source figures in product doc section 3, self-measured | Customer success + Legal review |
+-| 22 | Customer pipeline / discovery log | TODO | `customers/discovery-log.md` not created; no calls logged | Sales manager |
+-| 23 | Pilot terms / design-partner agreement | TODO | draft needed | Sales manager, **NEEDS LAWYER** |
+-| 24 | Credit program applications | DRAFT | `us-business-new/google-for-startups-application.md`; others not drafted | Finance manager |
+-| 25 | Grant (NSF SBIR) materials | TODO | Project Pitch; full proposal 2027-03-04 or 2027-07-07 per funding notes (verify) | Finance manager |
+-| 26 | Tax and accounting setup | TODO | **NEEDS ACCOUNTANT** | Rowan |
+-| 27 | Security / privacy summary | TODO | token-protected writes exist; no formal review | Operations |
+-| 28 | Risk register | DRAFT | risks section of the one-pager | Business manager |
+-| 29 | Team and hiring plan | DRAFT | `plan/01-management-roster.md`; founding engineer + part-time commercial lead | Business manager |
+-| 30 | Cloud deployment evidence (Cloud Run URL) | TODO | `us-platform/deploy/gcp/deploy.sh` exists; no live deployment recorded | Operations |
+-
+-## Rules
+-- Share only after an NDA (#18) and, for AFTER FILING items, after the filing receipt (#15).
+-- Nothing in the room may claim a metric, customer or revenue that is not evidenced by a file here.
+-- Update this index when an item changes status; the reviewer agent re-checks it monthly.
+diff --git a/investor/demo-script.md b/investor/demo-script.md
+deleted file mode 100644
+index c4625ca..0000000
+--- a/investor/demo-script.md
++++ /dev/null
+@@ -1,57 +0,0 @@
+-# 5-minute demo script (internal / NDA audiences until filing)
+-
+-Commands match `us-platform/ultrastable/cli.py` and were exercised on 2026-11-10 (demo run: 40 ticks; unit tests: 12 pass). Run from `C:\Users\LENOVO\Dev\us-platform`. Global flags `--db` and `--config` come BEFORE the subcommand. Use a throwaway DB path so you start clean.
+-
+-**Say up front (every time):** the agents in this demo are SIMULATED, deterministic stand-ins. The platform manages agents; this shows the control loop, not model quality. Command and Anthropic adapters exist but are not yet proven in production.
+-
+-**Disclosure:** for audiences without an NDA or before filing, do not narrate how trust is computed, the rung names, prediction scoring or the plus rule. Show the screens and say "that's the part we're patenting". The dashboard text itself shows rung names, so screen-share only under NDA or after filing.
+-
+-## Setup (before the call)
+-```
+-cd C:\Users\LENOVO\Dev\us-platform
+-set ULTRASTABLE_DB=%TEMP%\demo.db
+-```
+-(or pass `--db demo.db` each time)
+-
+-## 0:00-0:40 The problem
+-"Agents are cheap; managing them isn't. Ultrastable is the manager." Show nothing yet.
+-
+-## 0:40-1:40 One command: the whole organization
+-```
+-python -m ultrastable --db demo.db demo
+-```
+-Expected shape (observed): a four-line report ending `Happened: tick 40 ran 11/11 steps ...`, `Decided`, `Next`, `Open: ... gate card(s)`, then KPIs: ticks 40, items_done 47 (observed in one run; may vary with code changes), open_gates 4, silent_drops 0. Point out: 26 seeded work items across three projects; nothing dropped silently.
+-
+-## 1:40-2:20 Backlog and gates in the terminal
+-```
+-python -m ultrastable --db demo.db backlog --all
+-python -m ultrastable --db demo.db gates
+-```
+-Gate cards (observed): "Sign the pilot agreement template", "Buy the conference sponsor package", "Send the outreach as the founder" plus a trust-promotion card. Message: it did the reversible work and stopped only at money, signature and speaking as the founder.
+-
+-Optional (resolve one, an owner step):
+-```
+-python -m ultrastable --db demo.db resolve GATE-W-018
+-```
+-
+-## 2:20-3:00 Trust table
+-```
+-python -m ultrastable --db demo.db trust
+-```
+-Message (SAFE NOW): "It gets more independent as it proves itself; different kinds of work have different freedom." Do not explain the formula.
+-
+-## 3:00-4:30 Live dashboard
+-```
+-python -m ultrastable --db demo2.db serve --seed-demo --port 8080 --auto-tick 5
+-```
+-Open http://localhost:8080. Walk the sections as they appear: Virtual managers; Last tick report (four lines); Owner gate cards ("the only things that interrupt a person"); Work items; Projects; Earned trust; Rule amendments; Audit trail. Let two or three auto-ticks happen so the board changes. Show `GET /healthz` and `GET /api/state`. Note writes to `/tick`, `/api/items`, gate resolve need the bearer token if `ULTRASTABLE_TOKEN` is set; without it the server prints that writes are OPEN, so set it for any non-local use.
+-
+-Amendments: show the "Rule amendments" panel (after a demo run, repeated failures became an adopted rule version; KPI `rules_version` went to 3 in the observed run). Say only: "rules change by recorded, versioned amendment".
+-
+-## 4:30-5:00 Close
+-- "Add your own work": `python -m ultrastable --db demo.db add "Write the pricing page" --project web --priority 20` (project must exist; use a seeded one).
+-- Deployment: Google Cloud Run + Cloud Scheduler script is in `deploy/gcp/deploy.sh` (not run during the demo).
+-- Ask: pilots with three teams; pre-seed conversation (NDA).
+-
+-## If something fails
+-Say so and show the test run instead: `python -m unittest discover -s tests` (12 tests, observed OK). Do not improvise claims about real agents.
+diff --git a/investor/google-for-startups-application.md b/investor/google-for-startups-application.md
+deleted file mode 100644
+index 337f05e..0000000
+--- a/investor/google-for-startups-application.md
++++ /dev/null
+@@ -1,79 +0,0 @@
+-# Google for Startups Cloud Program: application draft (2026-11-10)
+-
+-Status: DRAFT for Rowan. Every field marked `[FOUNDER CONFIRM]` must be checked by Rowan before pasting. Program tiers, amounts and eligibility change; the repo's funding notes say the large AI tier needs an institutional investor. Current amounts were NOT verified here: confirm on the program page before applying. The text below is outcome-only (no trust formulas, ladder rungs, scoring details or QNFO metrics) so it is safe to submit before the provisional patent is filed.
+-
+-## Target tier
+-
+-Start tier (earliest stage, no institutional investor) is the realistic target. The top/AI tier requires an institutional investor and excludes angel money per the funding notes; do not apply for it now. `[FOUNDER CONFIRM]` tier names and eligibility on the live page.
+-
+-## Pre-submission checklist
+-
+-- [ ] Company website live and public: https://ultrastable.io (live as of HANDOFF 2026-11-10, verified there; re-check it loads on the day).
+-- [ ] Domain email on ultrastable.io (e.g. founder@ultrastable.io). Today only an Email Routing forward pilot@ultrastable.io exists; a sending-capable domain address is needed. `[FOUNDER CONFIRM]`
+-- [ ] No paid Google Workspace subscription on the ultrastable domain within 31 days before applying (funding notes). Use Cloudflare Email Routing or another provider until after submission.
+-- [ ] Entity: legal entity formed, or confirm the program accepts the applicant's status. Entity not formed per repo records. `[LAWYER]` `[ACCOUNTANT]`
+-- [ ] A Google Cloud billing account / organization ready to receive credits `[FOUNDER CONFIRM]`.
+-- [ ] Funding status answered honestly (below). No angel/institutional money claimed.
+-- [ ] Website contains no non-public details (disclosure rule); /proof feed reviewed.
+-- [ ] Rowan submits personally (identity-bound).
+-
+-## Ready-to-paste answers
+-
+-**Company name:** Ultrastable `[FOUNDER CONFIRM legal name]`
+-**Website:** https://ultrastable.io
+-**Country / location:** `[FOUNDER CONFIRM]`
+-**Founding date / incorporation:** `[FOUNDER CONFIRM]`
+-**Founders and roles:** Rowan `[FOUNDER CONFIRM full name]`, founder and inventor (product, direction).
+-**Number of full-time employees:** 1 (founder) `[FOUNDER CONFIRM]`
+-**Industry / category:** Developer tools; AI agent management.
+-
+-**Company description (short):**
+-Ultrastable is a self-governing development platform: a control loop of virtual managers around the coding agents a team already uses. It keeps the backlog, hands work to the agent that fits, has every result checked independently, and interrupts a person only for decisions that cannot be undone.
+-
+-**Problem:**
+-AI coding agents are now cheap and capable, but someone still has to manage them: choose the work, check the results, and decide what is safe to let them do alone. For founders, agencies and small teams that manager is the human, and it becomes the bottleneck. Existing agent tools assume a person directing each task, or are governance gateways that only log and restrict.
+-
+-**Solution:**
+-Ultrastable puts virtual managers (portfolio, project, product, operations, an independent reviewer) above the agents. Agents gain independence as they prove themselves on a kind of work; improvement work is planned alongside fixes; nothing leaves the backlog without a recorded outcome. The core is cloud-agnostic, with adapters for different clouds and for different agents (CLI agents and the Anthropic API).
+-
+-**Product stage:** Working prototype, pre-revenue, pre-launch. A runnable platform exists with automated tests (12 unit tests pass, run 2026-11-10), a web dashboard, JSON API, and a Google Cloud deployment script (Cloud Run + Cloud Scheduler + Secret Manager). Its demo uses simulated agents; real-agent adapters (Command for CLI agents, Anthropic API) exist but are not yet proven in production. No paying customers. `[FOUNDER CONFIRM]`
+-
+-**Traction (truthful only):**
+-- Working platform with passing tests and a dashboard.
+-- Founder's own multi-project work (QNFO) runs on the earlier version of this system; it is the first internal user ("customer zero"). Specific figures are withheld pending IP filing.
+-- Public site live; design-partner pilot offer open (pilot@ultrastable.io). No pilots, revenue or users to report. `[FOUNDER CONFIRM]` nothing has changed.
+-
+-**Tech stack:** Python 3.11+, standard library only (no runtime dependencies), SQLite store today, HTTP server (stdlib) in a Docker container; Cloud Run, Cloud Scheduler, Secret Manager for deployment; Anthropic Messages API adapter; Cloudflare Workers currently host the public site.
+-
+-**Why Google Cloud:**
+-1. The deploy path is already written for Cloud Run: one container, a Cloud Scheduler heartbeat that triggers the control loop every 10 minutes, and the token held in Secret Manager. Credits would let us run it for the first design partners without charging them infrastructure costs.
+-2. Vertex AI / Gemini as an additional model adapter, so customers can choose the model family used by the doer and, separately, by the independent reviewer (reviewer independence is a product principle).
+-3. Cloud SQL for PostgreSQL is the planned production store to replace the single-instance SQLite store (roadmap, not built).
+-4. Platform-agnostic stance: Google is a first-class target alongside Cloudflare; being on both lets us pitch customers on either.
+-
+-**Credit use plan (ESTIMATE; scale to the tier granted):**
+-
+-| Month | Use | Share of credits |
+-|---|---|---|
+-| 1 | Cloud Run + Scheduler + Secret Manager for a demo instance and one design-partner instance; Artifact Registry/Build | 10% |
+-| 2 | Build Gemini/Vertex adapter; reviewer-vs-doer model-family tests | 20% |
+-| 3 | Cloud SQL for PostgreSQL store; migration tests | 15% |
+-| 4-5 | 3 design-partner instances; Vertex usage for real agent runs | 30% |
+-| 6 | Logging/monitoring, load and failure testing, security hardening | 15% |
+-| Reserve | Overage buffer | 10% |
+-
+-`[FOUNDER CONFIRM]` plan matches the granted amount.
+-
+-**Team:** Rowan, solo founder: ideas, direction, product vision, and the identity-bound steps (signing, spending, filing). Development, marketing, funding preparation and operations are performed by the platform's virtual managers and AI coding agents, supervised by Rowan. Planned hires with funding: founding engineer, part-time commercial lead. Be prepared to state that this is a one-person company. `[FOUNDER CONFIRM]`
+-
+-**Funding status:** Bootstrapped by the founder; no institutional round; no angel investment received `[FOUNDER CONFIRM]`. Planning a pre-seed round after the provisional patent filing. Applying to the Start tier; we understand the top tier requires an institutional investor.
+-
+-**How much funding raised:** $0 external `[FOUNDER CONFIRM]`.
+-
+-**Ask / what credits unlock:** Run the first design-partner instances and the Vertex AI adapter without infrastructure spend.
+-
+-**Anything else (optional):** Founder is applying with an inventor-led, IP-protected product; patent application in preparation `[FOUNDER CONFIRM before stating it; do not say "patent pending" until filed]`.
+-
+-## After submission
+-
+-Record the application date and reference in the data room (data-room-index.md). If the 31-day Workspace rule matters, log the date of any Workspace purchase.
+diff --git a/investor/investor-one-pager.md b/investor/investor-one-pager.md
+deleted file mode 100644
+index 9516532..0000000
+--- a/investor/investor-one-pager.md
++++ /dev/null
+@@ -1,54 +0,0 @@
+-# Ultrastable: investor one-pager (CONFIDENTIAL, NDA only until the provisional patent is filed)
+-
+-Draft 2026-11-10. Planning figures are ESTIMATES. Contains no revenue, customer or user numbers because there are none.
+-
+-**One line:** Ultrastable is the manager for your AI workers: a self-governing control loop around the coding agents a team already uses.
+-
+-## Problem
+-Coding agents are cheap and capable; managing them is the new bottleneck. The person who assigns, checks and decides is the founder or lead, all day. Agent tools mostly assume a human directing each task, or are governance gateways (cost, access, audit).
+-
+-## Solution
+-Virtual managers (portfolio, project, product, operations, independent reviewer) keep the backlog, assign work to the agent that fits, verify every claimed result independently, and interrupt a person only for steps that are irreversible and tied to an identity. Independence grows with a proven record; a share of capacity is reserved for improvement; nothing leaves the backlog without a recorded outcome. (Mechanics: AFTER FILING / NDA.)
+-
+-## Why now
+-Agent adoption is mainstream and governance is a standard buying criterion for coding agents (market-read.md, vendor-blog sources, indicative). One analyst brief puts agent governance at roughly USD 1.0-1.5B in 2026 with cross-vendor governance immature (meticulousresearch.com, via research/market-read.md; not independently verified). The repo's searches found no product offering automatic revert of agent changes or a system that chooses its own work: a claimed gap, not proof.
+-
+-## Product: what exists today vs roadmap
+-
+-| Exists today (inspected 2026-11-10 in `us-platform`) | Roadmap (not built) |
+-|---|---|
+-| Control loop of 11 steps per tick (reconcile, claims, gate probes, prediction scoring, audit, trust, portfolio, product, execute, amend, plus share), guarded so one failing step does not stop the loop | Postgres / Cloud SQL store (SQLite today) |
+-| CLI: init, tick, status, backlog, trust, gates, resolve, add, demo, serve | Cloudflare deployment adapter (`deploy/cloudflare/` is empty) |
+-| Dashboard + JSON API (stdlib HTTP, bearer-token writes) | Multi-tenant, auth/SSO, billing |
+-| Owner gate cards that block irreversible, identity-bound actions; blocked actions recorded | Production proof of real-agent adapters |
+-| Agent adapters: Simulated, Command (any CLI agent, independent check command), Anthropic API; Vertex/Gemini planned | Default policy pack extraction from QNFO overlays (core-manifest P1-P4) |
+-| Google Cloud deploy script (Cloud Run, Scheduler, Secret Manager); 12 unit tests pass | Packaged installer; second tenant outside QNFO |
+-
+-**Honest limits:** the shipped demo uses SIMULATED agents. Command and Anthropic adapters exist but are not yet proven in production. QNFO's fleet is the earlier, larger, Cloudflare-based system the design came from; product-design claims about it are self-measured and entangled with QNFO's applications (positioning doc, section 4). One installation, one internal user, no external customers.
+-
+-## Business model
+-Priced per project managed, plus model usage at cost (pitch-kit hypothesis, plan/04; unvalidated). Pricing is a Rowan decision. `[FOUNDER CONFIRM]`
+-
+-## Market
+-Segments ranked: solo founders/indie builders with 3+ projects (beachhead), agencies, small engineering teams (plan/02). Sizing: no bottom-up model exists yet; the only figure is the indicative USD 1.0-1.5B governance estimate above. Competitors named in plan/03: coding agents (complements), "run a company with agents" products incl. Paperclip (open source), frameworks, enterprise suites. Devin/Cursor valuations in that file are from one blog and unconfirmed.
+-
+-## Traction (truthful)
+-Working platform with passing tests; public site live (ultrastable.io); QNFO runs on the earlier system as customer zero (figures NDA ONLY); design-partner pilot offer open. No revenue, no external users, no pilots started.
+-
+-## Ask
+-**$1.25M pre-seed on a post-money SAFE (planning figure, ESTIMATE; range $1.0-1.5M).** Valuation cap and terms: `[LAWYER]` and advisors. 18-month runway target.
+-
+-## Use of funds (plan/05, planning)
+-People (founder + founding engineer + part-time commercial lead) 60%; model/cloud beyond credits 15%; legal/IP 10%; go-to-market 10%; reserve 5%.
+-
+-## Risks (stated plainly)
+-1. **IP and ownership:** the QNFO/qnfo-workers repo is public with no licence file (checked 2026-11-10) and holds the product design doc in history. No entity exists yet to own the IP; written assignment/licence from the author to the company is needed. `[LAWYER]`
+-2. **Provisional patent not yet filed**; public-disclosure clock from 2026-08-10 (file well before 2027-08-10). Drafts are working drafts, not legal advice.
+-3. **Solo founder**; execution depends on the platform's own agents plus planned hires.
+-4. **Demo is simulated**; real-adapter proof pending; the 73% self-scored prediction rate cited in repo docs has no external audit.
+-5. **Crowded narrative** and risk that agent vendors add management layers.
+-6. **Unvalidated willingness to pay**; no pilots yet.
+-7. Funding programs: top credit tiers need an institutional round.
+-
+-## Contact
+-Rowan `[FOUNDER CONFIRM name, email on ultrastable.io]`
+diff --git a/investor/marketing-strategy.md b/investor/marketing-strategy.md
+deleted file mode 100644
+index 2a16a0b..0000000
+--- a/investor/marketing-strategy.md
++++ /dev/null
+@@ -1,122 +0,0 @@
+-# Marketing strategy (working draft, 2026-11-10)
+-
+-Voice: virtual marketing manager. Rowan approves anything published under his own name. Figures marked ESTIMATE are planning assumptions, not data. Nothing here is a claim about current traffic, customers or revenue: there are none yet.
+-
+-## 1. Disclosure status: SAFE NOW vs AFTER FILING
+-
+-The provisional patent is not filed. Until the filing receipt exists:
+-
+-| SAFE NOW (public ok) | AFTER FILING (hold) | NEVER before filing |
+-|---|---|---|
+-| "The manager for your AI workers" | "Patent pending" | How trust is computed; the ladder rungs |
+-| "It gets more independent as it proves itself" | Earned-autonomy ladder in plain words | How predictions are scored; hit-rate mechanics |
+-| "It only interrupts you for decisions that can't be undone" | The gate classification (irreversible AND identity-bound, reversible path first) | The plus-capacity rule and drift detector |
+-| "It plans improvement, not just fixes" | Plussing explained with the shipped numbers | How rules amend themselves |
+-| "Nothing drops silently" | QNFO case study with real numbers (roadmap PR-3) | Schemas, QNFO metrics, product design doc |
+-| "We run our own work on it" | Demo video of `demo` and dashboard | Anything in `qnfo-platform-thread` or `docs/qnfo-origin/` |
+-
+-Rules: public repos and domains (ultrastable.io, .app, .net) stay outcome-only. The existing /proof page reads QNFO claims from a public feed and that feed exposes a public repo URL; review it against this table before any outbound push (HANDOFF.md notes the gap). `[LAWYER]` confirms the NDA template and the filing date before the AFTER FILING column switches on.
+-
+-## 2. Positioning
+-
+-One line (SAFE NOW): **AI agents are cheap. Managing them isn't. Ultrastable is the manager.**
+-Category: the self-governing layer around the coding agents a team already uses. Not another agent, not only a gateway (product-and-positioning.md section 8).
+-Why we win (competition plan, 03): autonomy that is earned, one narrow interrupt gate, planned improvement. Never lead with "AI agents that run your company": five other products say it (Paperclip, Cofounder.co, Polsia, NanoCorp, agent.ceo per the repo's competition file, checked 2026-11-10).
+-
+-## 3. Ideal customer profiles (ranked)
+-
+-| Rank | Segment | Buyer | Pain | Why this rank |
+-|---|---|---|---|---|
+-| 1 | Solo founders and indie builders running 3+ projects with coding agents | The founder | Spends the day re-prompting, checking, deciding trivia | Beachhead per customers plan: fast sale, low price, loud voice; Rowan is this person |
+-| 2 | Agencies and dev shops | Owner / head of delivery | Margin depends on projects one lead can supervise | Higher price, repeatable kit |
+-| 3 | Small engineering teams (5-50) with many services | CTO / head of platform | Review load, no backlog owner, auditors want an account of what agents did | Largest contracts, longest sales cycle; matches the design-partner pilot in positioning section 8 |
+-
+-Opportunistic: research labs, nonprofits, open-source maintainers (case studies, grants). Later: non-software functions.
+-Caveat: the positioning doc names segment 3 (engineering lead) as the pilot buyer while the customers plan ranks solo founders first. Resolve with the first 10 discovery calls. `[FOUNDER CONFIRM]`.
+-
+-## 4. Messaging pillars (all SAFE NOW wording)
+-
+-1. **Managed, not just assisted.** Backlog, assignment, independent check, four-line weekly report.
+-2. **Earns its freedom.** Starts by asking; asks less as it proves itself.
+-3. **Interrupts only for what can't be undone.** Short list the customer controls.
+-4. **Plans improvement.** A protected share of time for making things better, not endless bug fixing.
+-5. **Works with the agents you have.** Claude Code, Codex and similar CLIs; cloud-agnostic core.
+-6. **Auditable.** Every item leaves with a recorded disposition.
+-
+-Proof sentence (SAFE NOW): "We run our own work on it." Numbers wait for filing.
+-
+-## 5. Channels
+-
+-| Channel | Role | Cost | Owner |
+-|---|---|---|---|
+-| Founder-led discovery calls (script in plan/02) | Primary; validates ICP | time | Rowan takes calls, managers prep |
+-| ultrastable.io site (/, /how, /proof, /pilot) | Credibility + pilot sign-up (currently a mailto) | existing | Marketing manager |
+-| LinkedIn + X from Rowan's accounts | Founder narrative | time | Rowan approves |
+-| Hacker News / Reddit (agent and indie-hacker communities) | Launch spike | time | Rowan posts |
+-| Short demo video (after filing) | Main sales asset | low | Marketing + Rowan |
+-| Events and demo days (plan/07) | Intros to investors and partners | ESTIMATE $0-1,500 each | Sales manager books |
+-| Cloud partner programs (Google, Cloudflare, Anthropic) | Credits, co-marketing | free | Finance manager |
+-| Newsletter / blog | Compounding | time | Marketing |
+-
+-Paid ads: not before 10 qualified conversations confirm the ICP.
+-
+-## 6. 90-day calendar
+-
+-Week 0 = the day the provisional is filed (F). Until F, run only the PRE-FILING rows. If filing slips, hold the AFTER FILING rows; do not slip the SAFE NOW rows.
+-
+-| Weeks | Track | Actions | Class |
+-|---|---|---|---|
+-| Pre-F (now) | Foundation | Fix /proof feed exposure; replace mailto with form; draft 5 SAFE NOW posts; build lead list of 40 (ESTIMATE target) | SAFE NOW |
+-| Pre-F | Discovery | 10 discovery calls from personal network, logged in `customers/discovery-log.md` | SAFE NOW |
+-| Pre-F | Funding | Apply to small credit tiers once entity + site + domain email exist (see Google application) | SAFE NOW |
+-| 1-2 | Filing announce | "Patent pending" line on site; plain-language "how it earns trust" page | AFTER FILING |
+-| 1-2 | Case study | QNFO case study from real data, reviewed by `[LAWYER]` for disclosure | AFTER FILING |
+-| 3-4 | Demo | Record 5-minute demo (demo-script.md); re-label simulated parts clearly | AFTER FILING |
+-| 3-6 | Pilot recruiting | Offer 3 design-partner pilots, one repo each | SAFE NOW |
+-| 5-6 | Launch | Show HN / community post + founder thread; site pilot form live | AFTER FILING |
+-| 7-9 | Content | 1 post/week: managing agents, irreversible-only gates, plussing outcomes | mixed |
+-| 8-10 | Events | 1-2 demo days or meetups; investor intros | mixed |
+-| 10-13 | Convert | Pilot reviews; first paid conversion offer; testimonial only with written permission | AFTER FILING |
+-
+-## 7. Content plan
+-
+-- Anchor pieces: (1) "AI agents are cheap; managing them isn't" (SAFE NOW); (2) "Why your agent shouldn't ask permission for everything" (SAFE NOW, gate idea only); (3) "A week of one organization run by managers" with the demo (AFTER FILING); (4) QNFO case study (AFTER FILING).
+-- Cadence: 1 long piece per 2 weeks, 2 short posts per week (ESTIMATE).
+-- Every piece passes the disclosure checklist (section 1) before publishing; reviewer agent checks it, not the author.
+-- Always label the shipped demo as using simulated agents.
+-
+-## 8. Launch sequence
+-
+-1. File provisional `[LAWYER]`. 2. Disclosure checklist clean. 3. Site update + pilot form. 4. Case study and demo video. 5. Quiet send to discovery-call contacts. 6. Public launch post. 7. Credit/partner announcements. 8. First pilot case study with permission.
+-
+-## 9. Metrics (targets are ESTIMATES; baseline today is zero or unknown)
+-
+-| Metric | 90-day target (ESTIMATE) | Source |
+-|---|---|---|
+-| Logged discovery calls | 25 | discovery-log.md |
+-| Pilot inquiries to pilot@ultrastable.io | 15 | inbox |
+-| Design-partner pilots started | 3 | HANDOFF.md target |
+-| /proof visits from outside the fleet | 500 | site analytics `[FOUNDER CONFIRM]` tool |
+-| Email list | 150 | form |
+-| Paid conversions | 0-2 (do not plan on revenue) | billing, none yet |
+-
+-## 10. Budget range (ESTIMATE, 90 days)
+-
+-Low $500-1,500 (domains/tools, form, video editing); mid $1,500-5,000 (adds events, small sponsored placements); excludes counsel and filing fees, which sit in the funding plan (provisional fee about $65 micro / $130 small entity, plus counsel review). `[ACCOUNTANT]` to confirm entity-level treatment.
+-
+-## 11. Objection handling
+-
+-| Objection | Answer |
+-|---|---|
+-| "Devin / Cursor / Claude Code already do this" | They are the workers; we manage them. |
+-| "Paperclip is free" | Org charts are easy; knowing when an agent can act alone is hard. Ours earns it. Open core is a `[FOUNDER CONFIRM]` / `[LAWYER]` question. |
+-| "I'd never let AI act without approval" | It starts by asking about everything; you set the short list it always asks about. |
+-| "Big labs will build this" | Maybe a version. We are model- and cloud-agnostic; method patent pending AFTER FILING. |
+-| "You're a solo founder" | True, and a risk we state openly; the product is the team, and funds go to a founding engineer. |
+-| "What if an agent breaks something?" | Independent check on every result, irreversible steps go to a person, reversible ones can be rolled back. |
+-| "Is the demo real?" | The shipped demo uses simulated agents to show the control loop; command and Anthropic adapters exist but are not yet proven in production. |
+-| "Show me numbers" | Under NDA or after filing. |
+-
+-## 12. Risks to the plan
+-
+-IP/ownership (public repo, no licence, no assignment to an entity yet); solo founder; crowded narrative; demo is simulated; wedge segment unconfirmed.
+diff --git a/investor/pitch-deck-outline.md b/investor/pitch-deck-outline.md
+deleted file mode 100644
+index bf564bb..0000000
+--- a/investor/pitch-deck-outline.md
++++ /dev/null
+@@ -1,75 +0,0 @@
+-# Pitch deck outline: 12 slides (working draft, 2026-11-10)
+-
+-Deck is NDA-only until the provisional is filed; slides tagged (AFTER FILING) wait. Evidence paths are relative to `C:\Users\LENOVO\Dev\`. Every number must come from the cited source; no invented metrics.
+-
+-1. **Title: Ultrastable, the manager for your AI workers**
+-   - AI agents are cheap; managing them isn't.
+-   - Self-governing layer around the coding agents a team already uses.
+-   - Rowan, founder `[FOUNDER CONFIRM]`.
+-   - Evidence: `us-remote/org-repos/business/plan/04-pitch-kit.md` (one-liner).
+-
+-2. **Problem: the human manager is the bottleneck**
+-   - Founders and leads spend the day assigning, checking and deciding for agents.
+-   - Agent products assume a person directs each task.
+-   - Gateways log and restrict but do not manage.
+-   - Evidence: `us-remote/docs/product-and-positioning.md` sections 2 and 8.
+-
+-3. **Solution: virtual managers above the agents**
+-   - Portfolio, project, product, operations managers plus an independent reviewer.
+-   - Assigns work to the agent that fits; verifies each result independently.
+-   - Weekly four-line report: happened, decided, next, open.
+-   - Evidence: `us-platform/ultrastable/engine.py` (`state()` managers), `org-repos/business/plan/01-management-roster.md`.
+-
+-4. **What makes it different (SAFE NOW wording)**
+-   - Gets more independent as it proves itself.
+-   - Interrupts only for decisions that cannot be undone.
+-   - Plans improvement, not just fixes; nothing drops silently.
+-   - Evidence: `plan/03-competition.md` difference table. Mechanics are AFTER FILING.
+-
+-5. **Product today: a working control loop**
+-   - 11-step tick, guarded per step; CLI, dashboard and JSON API; 12 tests pass.
+-   - Gate cards for irreversible, identity-bound steps; blocked actions recorded.
+-   - Demo uses simulated agents; Command and Anthropic adapters exist, unproven in production.
+-   - Evidence: `us-platform/ultrastable/{engine,cli,server,agents}.py`, `us-platform/tests/test_engine.py`.
+-
+-6. **Demo (live, 5 min)**
+-   - `python -m ultrastable demo`, then `serve --seed-demo`.
+-   - Gate cards, trust table, amendments on the dashboard.
+-   - State clearly: simulated agents.
+-   - Evidence: `demo-script.md` in this folder; `us-platform/ultrastable/demo.py`.
+-
+-7. **Origin and proof: QNFO as customer zero (AFTER FILING)**
+-   - The founder's own multi-project fleet runs on the earlier system.
+-   - Case study with real numbers, reviewed for disclosure; figures are self-measured.
+-   - No external customer yet.
+-   - Evidence: `us-remote/docs/product-and-positioning.md` section 3-4; `us-remote/research/market-read.md`.
+-
+-8. **Market and competition**
+-   - Coding agents are complements; "run a company with agents" tools are direct competitors (e.g. Paperclip, open source).
+-   - Governance spend: roughly USD 1.0-1.5B in 2026 per one analyst brief (indicative, unverified).
+-   - Claimed gap: automatic revert and self-chosen work.
+-   - Evidence: `us-remote/research/market-read.md`, `plan/03-competition.md`.
+-
+-9. **Customers and go-to-market**
+-   - Beachhead solo founders with 3+ projects; then agencies; then small engineering teams.
+-   - Three design-partner pilots, one repo each.
+-   - Founder-led discovery calls, site, demo video, events.
+-   - Evidence: `plan/02-customers.md`, `plan/06-promotion.md`, `marketing-strategy.md`.
+-
+-10. **Business model**
+-   - Per project managed, plus model usage at cost (hypothesis, unvalidated).
+-   - Open-core option under consideration `[FOUNDER CONFIRM]` `[LAWYER]`.
+-   - Cloud-agnostic core; Google Cloud and Cloudflare adapters (Cloudflare adapter not yet built).
+-   - Evidence: `plan/04-pitch-kit.md` objection table; `us-platform/deploy/gcp/deploy.sh`.
+-
+-11. **Team, IP and risks**
+-   - Solo founder; platform agents do build/ops work; hires planned.
+-   - Provisional patent in preparation, not filed; IP assignment to an entity pending `[LAWYER]`.
+-   - Public QNFO repo without licence is the main investor risk.
+-   - Evidence: `us-remote/HANDOFF.md` (blocked section), `ultrastable/PROJECT-INSTRUCTIONS.md` rule 3.
+-
+-12. **Ask: $1.25M pre-seed SAFE (planning figure)**
+-   - 18 months: founder, founding engineer, part-time commercial lead.
+-   - Use: people 60%, model/cloud 15%, legal/IP 10%, GTM 10%, reserve 5%.
+-   - Milestones: filing, entity, 3 pilots, first paid conversions, real-adapter proof.
+-   - Evidence: `us-remote/org-repos/business/plan/05-funding.md`, `org-repos/docs/funding/funding-options.md`.
+diff --git a/plan/00-business-manager.md b/plan/00-business-manager.md
+deleted file mode 100644
+index 1398dfa..0000000
+--- a/plan/00-business-manager.md
++++ /dev/null
+@@ -1,46 +0,0 @@
+-# The business manager's view
+-
+-*Voice: the virtual business and strategy manager. Owns the business model, the plan, and keeping the other managers pointed at the same goal.*
+-
+-## The verdict in one paragraph
+-
+-Ultrastable is a business, and the timing is right, but the moat is not "AI agents that run a company". Several products already say that (see [competition](03-competition.md)). The moat is that Ultrastable's agents **earn** their independence from a verified track record, **plan improvement** instead of sliding into endless bug fixing, and **interrupt people only** for steps that are both irreversible and tied to someone's identity. QNFO already runs this way, which makes Rowan's own fleet customer zero and the best evidence there is. The plan is: protect it (file), prove it (case study from QNFO), sell it to people who run many projects with few people, and fund it with credits and a grant before giving up equity.
+-
+-## What we sell
+-
+-**The management layer for AI workers.** Coding agents (Devin, Cursor, Claude Code, Codex) are workers. Ultrastable is the manager above them: it keeps the backlog, assigns work, checks results independently, decides how much freedom each agent gets, and reserves time for making things better.
+-
+-- **Product:** a hosted service plus a portable core. Cloudflare first, Google Cloud second (platform-agnostic per Rowan, 2026-11-10).
+-- **Package:** the **org kit**: a new organization or project starts with the same roles, gates, backlog shape and review rhythm in one step.
+-- **Who pays:** people who run several projects with few humans: solo founders, agencies, small engineering teams ([customers](02-customers.md)).
+-
+-## How it makes money (hypotheses to test, not decisions)
+-
+-| Tier | For | Price hypothesis | Notes |
+-|---|---|---|---|
+-| Open core | Builders who self-host | free | Builds trust and a community; Paperclip is MIT-licensed, so a closed-only product starts behind on reach |
+-| Solo | One founder, up to 3 projects | about $99 per month + model usage at cost | Cofounder.co lists $120/month and NanoCorp $30/month ([source](https://pancake.ai/blog/best-autonomous-company-platform-2026)) |
+-| Team | Agency or team, up to 20 projects | about $499 per month + usage | Priced on projects managed, not seats, since the point is fewer seats |
+-| Enterprise | Larger orgs, own cloud | annual contract | Private deployment, audit export, SSO |
+-
+-The open-core decision is a Rowan call with a lawyer: it changes what the patent protects in practice. **[LAWYER]**
+-
+-## The next 90 days (2026-11-10 to 2027-02-08)
+-
+-1. **File the provisional.** Everything public waits on it. Target: before 2026-12-31. Rowan with counsel (roadmap IP-4, IP-5).
+-2. **Pick the entity.** Credits, grants and investors all need one (roadmap BIZ-1). **[LAWYER] [ACCOUNTANT]**
+-3. **Write the QNFO case study privately now**, publish the day after filing (roadmap PR-3).
+-4. **Apply for credits** (Google for Startups, Cloudflare for Startups, Anthropic, AWS Activate) once the entity, domain email and site exist (FN-2 to FN-4).
+-5. **Submit an NSF SBIR Project Pitch** so a full proposal can make the 2027-03-04 deadline ([funding](05-funding.md)).
+-6. **Run 10 discovery conversations** with target customers using only SAFE NOW language ([pitch kit](04-pitch-kit.md)).
+-7. **Decide on YC Spring 2027** (deadline about 2027-02-08, unconfirmed) ([events](07-events.md)).
+-
+-## Biggest risks
+-
+-| Risk | What we do about it |
+-|---|---|
+-| Public disclosure already happened; foreign rights may be lost | File now; stop adding technical detail to public repos; counsel advises on what remains **[LAWYER]** |
+-| Big platforms add "trust-based autonomy" themselves | Speed, the patent, and the org kit: we sell a way of running work, not a feature |
+-| Solo founder | The roster below is the team; first hire is a founding engineer or a commercial co-founder once funded |
+-| Agents doing harm in a customer's systems | The narrow gate, full audit log, customer-set limits; contract terms **[LAWYER]** |
+-| Model costs eat margin | Pass usage through at cost; route work to the cheapest model that passes review |
+diff --git a/plan/01-management-roster.md b/plan/01-management-roster.md
+deleted file mode 100644
+index 5e946d8..0000000
+--- a/plan/01-management-roster.md
++++ /dev/null
+@@ -1,52 +0,0 @@
+-# The management roster
+-
+-*Voice: the business manager. This is the org chart Ultrastable runs on, for itself first. Every manager is a virtual agent with an owner area, a trigger that wakes it, a done check, and a weekly four-line report: what happened, what was decided, what's next, what's open.*
+-
+-```mermaid
+-flowchart TD
+-  R[Rowan: inventor, direction, identity-bound steps] --> B[Business manager]
+-  B --> P[Portfolio manager]
+-  B --> F[Finance and fundraising]
+-  B --> L[Legal and IP]
+-  B --> M[Marketing and promotion]
+-  B --> S[Sales and partnerships]
+-  B --> C[Customer success]
+-  P --> PJ[Project managers]
+-  P --> PD[Product manager]
+-  P --> O[Operations]
+-  PJ --> ST[Staff agents]
+-  Q[Reviewer and QA: independent of all of them] -.checks.-> ST
+-  Q -.checks.-> M
+-  Q -.checks.-> F
+-```
+-
+-## Who owns what
+-
+-| Manager | Owns | Wakes on | Done check | What only Rowan does |
+-|---|---|---|---|---|
+-| **Business manager** | The plan, the model, priorities across business functions, this folder | Weekly; any change in funding, filing or a big customer signal | Plan matches the roadmap; each manager's report is in | Sets direction; approves strategy changes |
+-| **Portfolio manager** | Which projects get capacity; the disclosure gate (roadmap PF-1) | Every tick; any new project or objective | Capacity adds up; nothing public before filing | Starts or stops a whole project |
+-| **Project managers** | Delivery of one project's backlog | Every tick | Each item has owner, trigger, done check; nothing dropped silently | none |
+-| **Product manager** | Roadmap, pricing hypotheses, the plus queue | New feedback; each finished item's plus | Ranked roadmap; 20% of capacity on pluses | Approves pricing |
+-| **Marketing and promotion** | Story, site, content calendar, case study, social | Weekly content tick; filing date; each event | Content shipped on the calendar, all tagged SAFE NOW until filing | Approves anything published under Rowan's name; posts from Rowan's own accounts |
+-| **Sales and partnerships** | Lead list, discovery calls prep, demos, partner programs (Cloudflare, Google, Anthropic) | New lead; event in 30 days; credit offer | Every lead has a next step and date | Takes the calls and meetings in person; signs contracts |
+-| **Finance and fundraising** | Budget, burn, credits, grants, investor pipeline, data room | Monthly close; each deadline in [funding](05-funding.md) | Runway known to the week; every application drafted ahead of deadline | Signs SAFEs and grant certifications; moves money; picks investors **[ACCOUNTANT] [LAWYER]** |
+-| **Legal and IP** | Patent timeline, evidence log, trademark, contract templates, NDA tracking | Filing; 12-month conversion clock (IP-6); any new public material | Disclosure checklist clean; deadlines on the calendar | Hires counsel; signs filings; decides foreign filing **[LAWYER]** |
+-| **Customer success** | Onboarding with the org kit, health of each customer, case studies | New customer; a customer's trust ladder stalls | Each customer reaches "delegated" on at least one action class | none for routine work |
+-| **Operations** | Cloud accounts, deploys, domains, email, uptime, costs | Every tick; any incident | Health checks green; costs under budget | Creates accounts only Rowan can own; pays bills |
+-| **Reviewer and QA** | Independent checks of every manager's output, including this plan | Any claimed result | Pass or fail with evidence; never reviews its own work | none |
+-| **Research staff** | Competitive intel, prior art, event and program scouting | Monthly; before any pitch | [Competition](03-competition.md) and [events](07-events.md) dated within 30 days | none |
+-
+-## Rowan's whole job, in one list
+-
+-Rowan's part is the identity-bound work: steps that need Rowan's name, signature, money or face. The managers prepare each one so it takes minutes.
+-
+-1. **Ideas and direction.** Say what matters; the managers infer the rest from the record.
+-2. **File the provisional** with counsel (roadmap IP-4, IP-5). **[LAWYER]**
+-3. **Choose the entity** (roadmap BIZ-1). **[LAWYER] [ACCOUNTANT]**
+-4. **Create accounts only Rowan can own:** GitHub repos (GH-1), cloud and credit applications (FN-2, FN-3), USPTO.
+-5. **Be the face:** show up to calls, events and demo days; the managers write the script and book the slots.
+-6. **Sign and pay:** contracts, SAFEs, grant certifications, fees.
+-7. **Approve public words** posted under Rowan's name until the marketing manager has earned that trust.
+-
+-Everything else on the roadmap belongs to a manager above.
+diff --git a/plan/02-customers.md b/plan/02-customers.md
+deleted file mode 100644
+index 80cca25..0000000
+--- a/plan/02-customers.md
++++ /dev/null
+@@ -1,48 +0,0 @@
+-# Customers and how to apply Ultrastable
+-
+-*Voice: the sales manager, with customer success on the "how to apply" part.*
+-
+-## Who buys first
+-
+-The best first customer looks like Rowan: someone with more projects than people, who already uses AI coding agents and is tired of being their manager.
+-
+-| Segment | The buyer | Their pain | What Ultrastable does for them | Priority |
+-|---|---|---|---|---|
+-| **Solo founders and indie builders** running 3+ projects | The founder | Spends the day re-prompting agents, checking their work and deciding trivial things | Runs each project's backlog, checks the work, only asks about irreversible steps | **Beachhead** (fast sale, low price, loud voice) |
+-| **Agencies and dev shops** | Owner or head of delivery | Margins depend on how many client projects one lead can supervise | One lead oversees many client projects; every client gets the same org kit and audit trail | **Second** (higher price, repeatable) |
+-| **Small engineering teams** (5 to 50 engineers) | CTO, VP Engineering, head of platform | Agents produce code but nobody owns the backlog, review load explodes, maintenance crowds out roadmap | Managers above the agents; reserved time for improvement; independent review | **Third** (bigger contracts, longer sales) |
+-| **Research labs, nonprofits, open-source maintainers** | PI, program lead, maintainer | Little staff, lots of ongoing work | Same, with grant-friendly reporting | Opportunistic; good for case studies and grants |
+-| **Business functions beyond software** (marketing, ops, research) | Department head | Same management problem, different work | The roles are configuration, so the same structure runs any function | Later; proves "any organization" |
+-
+-## Use cases to lead with
+-
+-1. **"My agents need a manager."** Turn a pile of agent sessions into a managed backlog with owners and done checks.
+-2. **Many projects, one person.** A portfolio view that allocates attention across projects automatically.
+-3. **Maintenance without stagnation.** Keep fixing what breaks while a fixed share of time goes to making things better.
+-4. **Autonomy with an audit trail.** Every decision and result is logged, so a person can review any of it later.
+-5. **New project in a day.** The org kit starts a project with roles, gates and a backlog already in place.
+-
+-## How to apply Ultrastable to an organization (the org kit)
+-
+-*Customer success runs this; it is the same path Ultrastable itself is following in the [roadmap](../../docs/roadmap.md).*
+-
+-1. **Map the org chart.** Write down the real roles (or the ones they wish they had). Each becomes a virtual manager or staff role in a config file.
+-2. **State the objectives.** Three to five outcomes the organization wants this quarter. Managers rank all work against them.
+-3. **Connect the work.** Repos, issue tracker, cloud account, docs. Read-only first.
+-4. **Set the gate.** Agree, in writing, which steps always need a human: spending money, signing, outside communication, deleting data without a backup. That list stays short.
+-5. **Start in observe mode.** Agents propose; people approve. Every result is checked independently and logged.
+-6. **Let autonomy rise with the record.** As agents prove themselves on a kind of work, they get more freedom on that kind of work. The customer can always override.
+-7. **Weekly review.** A four-line report per project: what happened, what was decided, what's next, what's open.
+-8. **Make it repeatable.** Save the setup as the organization's own kit for its next project.
+-
+-Talking about step 6 in public: SAFE NOW as "it gets more independent as it proves itself". The method behind it is AFTER FILING.
+-
+-## Discovery call script (SAFE NOW)
+-
+-- "How many projects are you running, and how many people?"
+-- "How do you use AI coding agents today? Who manages them?"
+-- "What did you have to decide yourself last week that you wish you hadn't?"
+-- "What would you never let an agent do without asking?"
+-- "If something ran your backlog and only asked about the things on that list, what would that be worth per month?"
+-
+-The sales manager logs each call's answers in `customers/discovery-log.md` (private) with date and segment.
+diff --git a/plan/03-competition.md b/plan/03-competition.md
+deleted file mode 100644
+index a99b692..0000000
+--- a/plan/03-competition.md
++++ /dev/null
+@@ -1,35 +0,0 @@
+-# Competition: the honest landscape
+-
+-*Voice: research staff. Checked 2026-11-10. Rowan is right that this is not new: several products already sell "a company run by AI agents". Ultrastable wins only on how it manages them, so that is what the pitch has to be about.*
+-
+-## The landscape in four layers
+-
+-| Layer | Players | What they are | Relation to Ultrastable |
+-|---|---|---|---|
+-| **AI workers (coding agents)** | Devin by Cognition (raised over $1B at $26B post-money, May 2026; reported $492M annualized revenue), Cursor ($50B valuation, April 2026), Claude Code, OpenAI Codex, Google Jules ([source](https://letsdatascience.com/blog/cognition-1-billion-26-billion-devin-89-percent-code)); also GitHub Copilot coding agent, Factory, Replit Agent | Agents that do the work, with a person directing | **Complements.** Ultrastable manages them. Their growth is our market. Risk: they add a management layer themselves |
+-| **"Run a company with agents"** | [Paperclip](https://hn.jakechampion.name/reader/https://paperclip.ing) (MIT open source: org charts, budgets with auto-pause, heartbeats, approvals, audit log, multi-company); Cofounder.co (agent departments, approval before risky actions, from $120/month); Polsia (daily cycles, acts first and reports after); NanoCorp (from $30/month); SoGood (CEO agent plus eight specialists) ([source](https://pancake.ai/blog/best-autonomous-company-platform-2026)); [agent.ceo](https://agent.ceo/blog/introducing-cybernetic-organizations) ("cybernetic organizations", CEO/CTO/engineer agents, Feb 2026) | Closest in story | **Direct competitors.** Paperclip in particular already has hierarchy and heartbeats, so those cannot be our headline |
+-| **Multi-agent frameworks** | CrewAI, LangGraph, Microsoft Agent Framework (AutoGen), OpenAI Agents SDK, Claude Agent SDK, MetaGPT and ChatDev (research: software-company roles for LLM agents) | Toolkits for building agent teams | **Substrate and prior art.** Builders could assemble something like us; MetaGPT/ChatDev mean role names alone are not novel |
+-| **Enterprise agent platforms and workflow tools** | Salesforce Agentforce, ServiceNow AI agents, Google Gemini Enterprise, AWS Bedrock AgentCore, Microsoft Copilot Studio; Zapier, n8n, Lindy, Relevance AI | Agents inside a vendor's suite, or task automation | **Future channels or acquirers**, not first-year rivals |
+-
+-Layer 3 and 4 entries are from general knowledge and were not re-checked on 2026-11-10.
+-
+-## Where Ultrastable is actually different
+-
+-| Difference | Others | Ultrastable | Say it |
+-|---|---|---|---|
+-| **Autonomy is earned, not configured** | Fixed approvals or a budget cap (Paperclip, Cofounder.co) or "act first, report after" (Polsia) | Each agent's freedom on each kind of work rises and falls with its verified record | SAFE NOW: "it gets more independent as it proves itself". AFTER FILING: the trust ledger and ladder |
+-| **Interrupts only for what can't be undone** | Approve-many, or approve-nothing | One narrow gate: irreversible *and* tied to someone's identity, after trying to make the step reversible | SAFE NOW: "it only interrupts you for decisions that can't be undone". AFTER FILING: the classification and reversible-path step |
+-| **Predict, then check** | Agents report success themselves | Every action has a checkable prediction beforehand and an independent check after | AFTER FILING |
+-| **Improvement is planned (plussing)** | Agent teams drift into fixing whatever broke | Every finished item proposes a plus; a fixed share of capacity goes to them; drift into fix-only work is detected | SAFE NOW: "it plans improvement, not just fixes". AFTER FILING: the capacity rule and drift detector |
+-| **Rules that improve themselves** | Static prompts | Repeated failures and human friction become versioned rule changes, tested against history | AFTER FILING |
+-| **Nothing drops silently** | Tasks can vanish | Every item leaves only with a recorded disposition | SAFE NOW |
+-| **Org kit** | Templates per company | The same roles, gates and rhythm reused for any new organization or project | SAFE NOW |
+-| **Running in production** | Many are weeks old | QNFO has run this way on Cloudflare since 2026 | SAFE NOW: "we run our own work on it". Numbers: NDA ONLY until filed |
+-
+-## What this means for the pitch
+-
+-- Never lead with "AI agents that run your company"; that sentence belongs to five other products.
+-- Lead with the manager problem: agents are cheap, managing them is the new bottleneck.
+-- Make the gate and earned autonomy the memorable part: "it asks less as it proves more".
+-- Paperclip is free and open. Our answer is the management quality, the hosted service, and possibly an open core of our own (a Rowan + **[LAWYER]** decision).
+-- Name overlap: agent.ceo uses "cybernetic organizations". Ultrastable's Ashby lineage is older and more precise; use it in the story after filing, and include it in the trademark search. **[LAWYER]**
+diff --git a/plan/04-pitch-kit.md b/plan/04-pitch-kit.md
+deleted file mode 100644
+index 6062fc9..0000000
+--- a/plan/04-pitch-kit.md
++++ /dev/null
+@@ -1,63 +0,0 @@
+-# Pitch kit
+-
+-*Voice: the marketing manager. Everything in the SAFE NOW sections can be said today. The AFTER FILING sections are written and waiting; they switch on the day the provisional is filed.*
+-
+-## One-liner
+-
+-**SAFE NOW:** "Ultrastable is the manager for your AI workers. It runs your projects like a great team does, and only interrupts you for the decisions that can't be undone."
+-
+-Shorter: "AI agents are cheap. Managing them isn't. Ultrastable is the manager."
+-
+-## 30-second pitch (SAFE NOW)
+-
+-> Everyone's using AI agents to write code now, and they're good. But somebody still has to manage them: keep the backlog, check their work, decide what matters. That somebody is usually the founder, all day.
+->
+-> Ultrastable is that manager. It runs a whole portfolio of projects the way a well-run team does, it gets more independent as it proves itself, and it only stops to ask you about the things you can't take back, like spending money or signing something.
+->
+-> I built it to run my own projects, and it does. Now I'm turning it into a product.
+-
+-## 2-minute pitch (SAFE NOW version)
+-
+-> **The problem.** AI coding agents went from novelty to normal in two years. The companies making them are worth tens of billions. But every one of them assumes a human manager: someone to hand out tasks, review results, and make the calls. For a founder, an agency, or a small team, that person is the bottleneck. The agents wait on you.
+->
+-> **What we do.** Ultrastable is the management layer. It sets up virtual managers the way you would staff a real organization: someone who allocates across projects, someone who owns each project, someone who checks the work independently. They keep the backlog, assign work to whatever agents you use, verify the results, and report in four lines a week.
+->
+-> **What's different.** Two things. First, it earns its freedom. It starts out asking, and as it proves itself on a kind of work, it asks less. Second, it plans improvement. Automated teams tend to collapse into endless bug fixing; ours sets time aside to make things better. And it only interrupts you for steps that can't be undone.
+->
+-> **Proof.** I run my own projects on it today. It's not a demo, it's how my work gets done.
+->
+-> **Ask.** [Pick one: "I'm looking for teams running several projects with AI agents who want to try it." / "I'm raising a pre-seed round to turn it into a product." / "I'd love an intro to someone who runs an agency."]
+-
+-## 2-minute pitch additions (AFTER FILING, say "patent pending")
+-
+-- "Every action comes with a prediction that gets scored later, so the system knows how well-calibrated each agent is."
+-- "Autonomy is computed per kind of work from the verified record, along a ladder from observed to self-directed."
+-- "A fixed share of capacity goes to improvements, and the system detects when fixes start crowding them out."
+-- "Its operating rules amend themselves from recurring failures, with full version history."
+-- "Here are the numbers from running it on our own fleet." (Real QNFO numbers from the case study, roadmap PR-3.)
+-
+-## Talking points for running into someone
+-
+-| If they are... | Say (SAFE NOW) |
+-|---|---|
+-| A founder | "How much of your day is managing your AI tools? That's the part we take." |
+-| An engineer | "It's the manager above Claude Code or Codex: backlog, assignment, independent review, and it only escalates irreversible steps." |
+-| An investor | "Coding agents are a $25B+ category. Every one of them needs a manager. We're the manager, and it's running in production for us." |
+-| An agency owner | "One lead can oversee many more client projects, with an audit trail per client." |
+-| A big-company leader | "It's how you let agents act without approving everything: they earn scope, and humans only see the irreversible calls." |
+-| Press or a podcast | Wait until after filing. Then: "The bottleneck in AI isn't the workers anymore, it's management." |
+-
+-**Never say before filing:** how trust is computed, the ladder rungs, how predictions are scored, the plus capacity rule or drift detector, how rules amend themselves, schemas, QNFO metrics. If asked: "That's the part we're patenting. Happy to go deeper once it's filed."
+-
+-## Objection handling
+-
+-| Objection | Answer |
+-|---|---|
+-| "Devin / Cursor / Claude Code already do this." | "They're the workers, and they're great. We're the manager above them. We work with whichever ones you use." |
+-| "Paperclip does org charts for agents, and it's free." | "Org charts are the easy part. The hard part is knowing when an agent can be trusted to act alone. Ours earns that from its record, and only interrupts for irreversible steps." |
+-| "I'd never let AI act without approval." | "You don't have to. It starts by asking about everything. You decide the short list it always asks about. It only stops asking about the rest once it has proven itself." |
+-| "The big labs will just build this." | "Maybe a version. We're model-agnostic and cloud-agnostic, we already run it, and the method is patent pending (after filing)." |
+-| "You're a solo founder." | "So the product is the team. I run my company on it; that's the demo. Funding goes to a founding engineer and a commercial lead." |
+-| "What if an agent breaks something?" | "Every change is checked independently and logged, irreversible steps always come to a person, and anything reversible can be rolled back." |
+-| "What's the business model?" | "Priced per project managed, plus model usage at cost. Fewer seats is the point." |
+-| "Show me numbers." | Before filing: "Happy to walk through it under NDA, or in a few weeks once our filing is in." After: the case study. |
+diff --git a/plan/05-funding.md b/plan/05-funding.md
+deleted file mode 100644
+index 80d3b1b..0000000
+--- a/plan/05-funding.md
++++ /dev/null
+@@ -1,50 +0,0 @@
+-# Funding
+-
+-*Voice: the finance and fundraising manager. Builds on [funding options](../../docs/funding/funding-options.md) (also viewable as [Ultrastable funding options](https://claude.ai/artifact/NawSpUE1JqP1Ti7EB9NDWZ)) and the "Find funding and startup credit programs" thread; figures there win where they differ.*
+-
+-## The order money comes in
+-
+-Non-dilutive first, then equity once there is proof and a filing.
+-
+-| Stage | When | Kind | How much | What it buys |
+-|---|---|---|---|---|
+-| **0. Bootstrap** | Now to filing | Rowan's own money | about $3k to $8k (estimate) | Provisional fee (about $65 micro to $130 small entity), counsel review of the draft, entity formation, domain and email **[LAWYER] [ACCOUNTANT]** |
+-| **1. Credits** | Right after entity + site + domain email | Cloud and model credits | small tiers first (thousands to tens of thousands of dollars); the large tiers need an institutional round | Compute and model usage for 6 to 12 months. Google for Startups Cloud, Cloudflare for Startups, Anthropic, AWS Activate, Microsoft for Startups, NVIDIA Inception |
+-| **2. Grant** | Project Pitch now; full proposal by 2027-03-04 or 2027-07-07 | NSF SBIR Phase I (America's Seed Fund) | up to $305,000, no equity ([deadlines](https://hub.causo.ai/deadlines/ai)) | 6 to 12 months of R&D; Phase II up to $1.25M later |
+-| **3. Accelerator** | YC Spring 2027 (about 2027-02-08, unconfirmed), a16z speedrun (rolling), Techstars | Standard accelerator deal | YC's standard deal, about $500k (from memory, check); Techstars $220,000 | Money, network, demo day **[LAWYER]** on terms |
+-| **4. Pre-seed** | After filing + case study + first paying users | SAFE from angels and pre-seed funds | **$1.0M to $1.5M** (planning range) | 18 months: Rowan's salary, a founding engineer, a part-time commercial lead, model and cloud costs, legal |
+-| **5. Seed** | 12 to 18 months later | Priced round | $3M to $6M (planning range) | Team of 6 to 10, enterprise features, go-to-market |
+-
+-Ranges in stages 4 and 5 are planning assumptions, not market data. Valuation caps and terms are for counsel and an advisor. **[LAWYER] [ACCOUNTANT]**
+-
+-## The pre-seed ask
+-
+-**AFTER FILING:** "We're raising $1.25M on a post-money SAFE to turn Ultrastable from the system that runs our own work into a product for teams running many projects with AI agents. It funds 18 months, a founding engineer, and our first 50 paying customers."
+-
+-**SAFE NOW (no numbers about the product):** "We're getting ready to raise a pre-seed round early next year. Can I send you something when we're ready?"
+-
+-## Use of funds (planning, for a $1.25M round)
+-
+-| Use | Share |
+-|---|---|
+-| People (Rowan + founding engineer + part-time commercial lead) | 60% |
+-| Model and cloud usage beyond credits | 15% |
+-| Legal and IP (non-provisional, trademark, contracts) | 10% |
+-| Go-to-market (events, content, demo production) | 10% |
+-| Reserve | 5% |
+-
+-## What investors will ask for (the data room the finance manager keeps)
+-
+-- Entity documents, cap table, founder IP assignment **[LAWYER]**
+-- Provisional filing receipt
+-- QNFO case study with real numbers
+-- Product demo video
+-- Pipeline: discovery-call log and any paying users
+-- 18-month budget and runway model **[ACCOUNTANT]**
+-
+-## Rules from the funding work (2026-11-10)
+-
+-- Every credit program needs a live public site and domain email, so the order is: file, publish outcome-only site, apply.
+-- Google's top credit tier excludes angel money; it needs an institutional round.
+-- Don't buy paid Google Workspace on the Ultrastable domain within 31 days before the Google AI program application.
+-- Pitch both a Cloudflare version and a Google Cloud version (platform-agnostic core).
+diff --git a/plan/06-promotion.md b/plan/06-promotion.md
+deleted file mode 100644
+index 62e21ce..0000000
+--- a/plan/06-promotion.md
++++ /dev/null
+@@ -1,61 +0,0 @@
+-# Promotion plan
+-
+-*Voice: the marketing manager. Two phases split by the filing date. Before filing we build relationships quietly; after filing we tell the story loudly.*
+-
+-## Phase 1: before filing (now until the provisional is filed)
+-
+-Goal: be ready to launch the day after filing, without disclosing anything.
+-
+-| Work | Owner | Done check |
+-|---|---|---|
+-| Write the launch kit privately: site copy, case study, demo video script, launch post, Show HN post, founder story | Marketing | All drafts in `docs/business/launch/`, reviewed by Rowan |
+-| Build a list of 100 target people (founders, agency owners, engineering leads) and 30 investors | Sales + Finance | List in private `customers/` and `investors/` files |
+-| Run 10 discovery calls with SAFE NOW language only | Sales prepares, Rowan talks | Notes in the discovery log |
+-| Join communities as a listener: AI Engineer, AI Tinkerers meetups, Cloudflare and Google developer communities, relevant Discords | Marketing | Accounts exist; nothing about mechanisms posted |
+-| Apply to events and programs whose applications are not public (accelerators, grants) | Finance + Events | Applications submitted with SAFE NOW wording |
+-| Hold the gate: no new technical detail in public repos | Portfolio | Weekly check of `qnfo-workers` public changes |
+-
+-## Phase 2: launch week (the week after filing)
+-
+-1. Site goes live on the Ultrastable domain with "patent pending" (roadmap WEB-2).
+-2. Publish the QNFO case study with real numbers (PR-3).
+-3. Launch post from Rowan: "I'm an ideas person. I built a manager so I wouldn't have to be one."
+-4. Show HN and Product Hunt on separate days.
+-5. Two-minute demo video: a real week of Ultrastable running its own roadmap.
+-6. Personal notes to everyone from the Phase 1 lists.
+-
+-## Phase 3: steady state (after launch)
+-
+-| Channel | Cadence | What |
+-|---|---|---|
+-| Build-in-public posts (LinkedIn, X, Bluesky) | 3 per week | Weekly four-line report from Ultrastable's own managers; it is the product demoing itself |
+-| Long-form essays | 2 per month | The management bottleneck, earned autonomy, plussing, Ashby's ultrastability |
+-| Demo videos | 1 per month | One real task from backlog to verified result |
+-| Newsletter | Weekly | The best of the above, plus the plus of the week |
+-| Talks and podcasts | 1 per month from Q2 2027 | See [events](07-events.md) |
+-| Partner showcases | As offered | Cloudflare, Google Cloud, Anthropic startup programs often feature portfolio companies |
+-| Open-source core (if chosen) | Ongoing | Repository, docs, examples; GitHub stars as a reach metric |
+-
+-## The story we tell
+-
+-"I'm the ideas person, not the business person. So I built the managers I needed, and they run my work. Now they can run yours."
+-
+-That story is true, short, and only Rowan can tell it. Rowan's role in promotion is being the voice; the marketing manager writes, schedules and measures.
+-
+-## How we know it's working
+-
+-| Metric | Target by 2027-06-30 |
+-|---|---|
+-| Waitlist or sign-ups | 1,000 |
+-| Discovery calls completed | 40 |
+-| Paying users | 25 |
+-| Newsletter subscribers | 500 |
+-| Talks or podcast appearances | 4 |
+-
+-Targets are guesses to start the loop; the marketing manager revises them monthly from real numbers.
+-
+-## Rules
+-
+-- Anything posted under Rowan's name is approved by Rowan until the marketing manager has a record of clean posts.
+-- Every public piece is tagged SAFE NOW or AFTER FILING in its draft file; nothing tagged AFTER FILING ships before the filing receipt exists.
+-- No outreach to people who did not ask for it in bulk; personal notes only, with an easy opt-out.
+diff --git a/plan/07-events.md b/plan/07-events.md
+deleted file mode 100644
+index bbf05c2..0000000
+--- a/plan/07-events.md
++++ /dev/null
+@@ -1,42 +0,0 @@
+-# Events, demo days and deadlines
+-
+-*Voice: events staff. Checked 2026-11-10. Dates come from the linked pages; anything marked "est." is an estimate to confirm on the organizer's own site before paying anything. Rowan's home city is not recorded yet, so local meetups are left as a standing item.*
+-
+-**Gate:** applications that stay private (accelerators, grants) can go in before filing with SAFE NOW wording. Talks, demos, booths and public pitch competitions wait until after filing. Target: file before 2027-01-31 so the whole 2027 season is open.
+-
+-## Calendar
+-
+-| Date | Event | Where | Why go | Before or after filing | Source |
+-|---|---|---|---|---|---|
+-| 2026-11-10 to 11-12 | AI Engineer Code Summit | San Francisco | Coding-agent builders and buyers; too soon to pitch, watch the talks | Watch only | [startupstash](https://startupstash.com/conferences/ai/) |
+-| 2026-11-30 to 12-04 | AWS re:Invent | Las Vegas | Enterprise cloud buyers; startup programs | Network only | [opencurious](https://www.opencurious.com/tech-events/aws-reinvent-2026) |
+-| 2026-12-09 to 12-10 | The AI Summit New York | New York | Enterprise AI buyers | Network only | [startupstash](https://startupstash.com/conferences/ai/) |
+-| 2027-02-08 (est.) | **YC Spring 2027 application deadline** | Online | Money, network, demo day | Private application, OK before filing | [roundfunded](https://www.roundfunded.com/zh/blogs/yc-application-deadlines-2026-2027) |
+-| 2027-02-17 to 02-19 | AI Engineer Europe | London | Builder audience; first talk submission | After filing | [startupstash](https://startupstash.com/conferences/ai/) |
+-| 2027-03-04 | **NSF SBIR Phase I deadline** (Project Pitch first) | Online | Up to $305,000, no equity | Private, OK before filing | [causo](https://hub.causo.ai/deadlines/ai) |
+-| 2027-03-08 to 03-10 | **HumanX** | Las Vegas | AI leaders and investors; strong fit for the management story | After filing | [startupstash](https://startupstash.com/conferences/ai/) |
+-| 2027-03-15 to 03-18 | NVIDIA GTC | San Jose | NVIDIA Inception startup program | After filing | [startupstash](https://startupstash.com/conferences/ai/) |
+-| 2027-04-13 to 04-15 | **Google Cloud Next** | Las Vegas | The Google Cloud version of the pitch; Google for Startups | After filing | [opencurious](https://www.opencurious.com/tech-events/google-cloud-next-2027) |
+-| 2027-05-03 (est.) | YC Summer 2027 application deadline | Online | Second shot at YC | Private | [roundfunded](https://www.roundfunded.com/zh/blogs/yc-application-deadlines-2026-2027) |
+-| 2027-05-25 to 05-28 | **Web Summit Vancouver** (startup program, PITCH) | Vancouver | Startup booth and pitch competition | After filing | [Web Summit](https://vancouver.websummit.com/web-summit-vancouver-2027/) |
+-| 2027-06-09 to 06-10 | The AI Summit London | London | Enterprise | After filing | [startupstash](https://startupstash.com/conferences/ai/) |
+-| 2027-06-29 to 07-01 | **AI Engineer World's Fair** | San Francisco | The main builder event; demo and talk target | After filing | [startupstash](https://startupstash.com/conferences/ai/) |
+-| 2027-07-07 | NSF SBIR Phase I second deadline | Online | Fallback grant date | Private | [causo](https://hub.causo.ai/deadlines/ai) |
+-| 2027-08-02 to 08-05 | Ai4 | Las Vegas | Broad AI buyers | After filing | [startupstash](https://startupstash.com/conferences/ai/) |
+-| 2027-09-20 to 09-22 | HumanX Amsterdam | Amsterdam | European investors | After filing | [startupstash](https://startupstash.com/conferences/ai/) |
+-| 2027-10-06 to 10-07 | World Summit AI | Amsterdam | European enterprise | After filing | [startupstash](https://startupstash.com/conferences/ai/) |
+-
+-**Rolling:** a16z speedrun (open year-round; next cohort SR009), Antler (rolling), Cloudflare for Startups and Google for Startups (rolling, need entity and site).
+-
+-## Top five picks
+-
+-1. **YC Spring 2027** (about 2027-02-08): private, high upside, forces the story into shape.
+-2. **NSF SBIR** (2027-03-04): non-dilutive money that fits a patented method.
+-3. **HumanX** (2027-03-08): the right audience for "AI needs managers".
+-4. **Google Cloud Next** (2027-04-13): pairs with the Google credit application.
+-5. **AI Engineer World's Fair** (2027-06-29): where the builders who buy this are.
+-
+-## Standing items
+-
+-- Local AI meetups (AI Tinkerers and similar) once Rowan's city is in project memory.
+-- The events manager re-checks every date 60 days before the event and moves this table forward monthly.
+diff --git a/plan/README.md b/plan/README.md
+deleted file mode 100644
+index a04a760..0000000
+--- a/plan/README.md
++++ /dev/null
+@@ -1,58 +0,0 @@
+-# Ultrastable business-in-a-box
+-
+-Drafted 2026-11-10 by Ultrastable's virtual managers, for Rowan's review. Rowan is the inventor and sets direction; the managers below carry the business. Nothing here is final until Rowan marks it reviewed in the table at the bottom.
+-
+-**Standing rule: if it is not in code, it does not exist.** These files are the source of truth. Chat threads, docs and artifacts are views of them and can be deleted at any time.
+-
+-## Files
+-
+-| File | Written by | Answers |
+-|---|---|---|
+-| [00-business-manager.md](00-business-manager.md) | Business manager | What the business is, how it makes money, the next 90 days |
+-| [01-management-roster.md](01-management-roster.md) | Business manager | Which virtual managers run Ultrastable, what each owns, and what only Rowan does |
+-| [02-customers.md](02-customers.md) | Sales manager + Customer success | Who buys, why, and how Ultrastable is applied to an organization |
+-| [03-competition.md](03-competition.md) | Research staff | The honest landscape and where Ultrastable is different |
+-| [04-pitch-kit.md](04-pitch-kit.md) | Marketing manager | One-liner, 30-second and 2-minute pitches, talking points, objections |
+-| [05-funding.md](05-funding.md) | Finance manager | What kinds of money, how much, and the ask |
+-| [06-promotion.md](06-promotion.md) | Marketing manager | How Ultrastable gets known, before and after filing |
+-| [07-events.md](07-events.md) | Events staff | Conferences, demo days and deadlines with dates |
+-
+-Related: [roadmap](../../docs/roadmap.md) (the single backlog), [virtual staff](../../docs/concepts/virtual-staff.md), the funding options doc ([Ultrastable funding options](https://claude.ai/artifact/NawSpUE1JqP1Ti7EB9NDWZ)).
+-
+-## The disclosure rule (read before saying anything in public)
+-
+-The provisional patent is **not filed**. The public `QNFO/qnfo-workers` repository has described the core concepts since 2026-08-10. Until filing, public talk stays at the level of outcomes, never mechanisms. Every talking point in these files carries one tag:
+-
+-| Tag | Meaning | Example |
+-|---|---|---|
+-| **SAFE NOW** | Outcome-level. Says what it does for people, not how. OK in conversation, event applications, badge scans. | "It runs a project like a well-managed team and only interrupts you for decisions that can't be undone." |
+-| **AFTER FILING** | Names a mechanism (trust ledger, scored predictions, plus capacity rule, gate classification, self-amending rules). Use only after filing, with "patent pending". | "Each agent's autonomy is computed from its verified track record." |
+-| **NDA ONLY** | Numbers, architecture, schemas, claim language. Counsel only, or under a signed NDA. Most investors will not sign one, so assume it stays private. | QNFO autonomy rates, the priority function |
+-
+-US law gives the inventor one year from their own first public disclosure (outer limit about 2027-08-10). Most other countries do not, so some foreign rights may already be gone. Filing the provisional is the single step that unlocks everything public in this plan.
+-
+-## Needs a professional
+-
+-These are flagged, not decided, in the files:
+-
+-- **[LAWYER]** Provisional review and filing; which foreign rights remain; whether to make `qnfo-workers` private now.
+-- **[LAWYER]** Which entity owns Ultrastable and its IP; founder IP assignment from Rowan to the entity; "Ultrastable" trademark search (note: "ultrastability" is W. Ross Ashby's 1952 term, and agent.ceo markets "cybernetic organizations").
+-- **[LAWYER]** SAFE or note terms, accelerator terms, customer contracts (liability when agents act in a customer's systems), privacy terms.
+-- **[ACCOUNTANT]** Entity and tax election (most US investors and accelerators expect a Delaware C-corp), R&D tax credit, SBIR grant accounting, how cloud credits and founder expenses are booked.
+-
+-This is planning material prepared with Claude, not legal, tax or investment advice.
+-
+-## Rowan's review
+-
+-| File | Status | Rowan's notes |
+-|---|---|---|
+-| 00-business-manager | draft | |
+-| 01-management-roster | draft | |
+-| 02-customers | draft | |
+-| 03-competition | draft | |
+-| 04-pitch-kit | draft | |
+-| 05-funding | draft | |
+-| 06-promotion | draft | |
+-| 07-events | draft | |
+-
+-This folder lives in the owner-only `business` repo because it holds competitive analysis and NDA-only notes. It stays private after filing.
+diff --git a/tools/doc-consumers.json b/tools/doc-consumers.json
+new file mode 100644
+index 0000000..b3365df
+--- /dev/null
++++ b/tools/doc-consumers.json
+@@ -0,0 +1,165 @@
++{
++ "_doc": "Doc-consumption registry (owner, 2026-11-12: nobody reads documents; every document is consumed by code). `python3 tools/docs_audit.py --check` fails on a document nothing consumes. Same stdlib file as ultrastable/ultrastable foundation/docs_audit.py; see agents/AGENTS.md rule DOC-CONSUMED-1 there.",
++ "version": "1.0.0",
++ "consumers": [],
++ "verified": {
++  "globs": [
++   "**/*.md"
++  ]
++ },
++ "ignore_references_from": [],
++ "human_action_patterns": [
++  "\\\\b(Rowan|the owner|owner)\\\\s+(should|must|needs? to|has to|will need to)\\\\b",
++  "\\\\b(please|just)\\\\s+(click|open|run|file|sign|submit|paste|upload|email)\\\\b"
++ ],
++ "human_action_exempt": [],
++ "human_action_baseline": {},
++ "converted": [],
++ "removed": [
++  {
++   "path": "README.md",
++   "sha256": "3cb3c9811dc959dc7773ad0f7ba619328dbb4c5e2552219b2383c22a72bebab6",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:business/; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "funding.md",
++   "sha256": "7e4e5393138737070907917c55d22d6ba233bcba1527a8de93efa8b46e4d8469",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/funding.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "investor/README.md",
++   "sha256": "20c05227072d63097f9104a88c47ef4da9b8bfa12fb93f312111adef03278b0f",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:business/; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "investor/data-room-index.md",
++   "sha256": "1f1f94421752b219ac7392adc8c2f90cb8e54f0f58315ebe2479402b12375013",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:business/; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "investor/demo-script.md",
++   "sha256": "69108db643f2834980a862788a1fee1a9371ba7e4e944124a000d0efa6dad64b",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/investor/demo-script.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "investor/google-for-startups-application.md",
++   "sha256": "e8cccaeb3e1496252d9baed3dd78b8f5fd2040b9db52ab1e712cf9bae8c17b52",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/investor/google-for-startups-application.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "investor/investor-one-pager.md",
++   "sha256": "d0fb6271d12566b37624c5db0d4006abdbcb90738fb85e029f002367ff2fea25",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:business/; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "investor/marketing-strategy.md",
++   "sha256": "201c65d85c3edb1d57fd89599e256c43deaed6f71a27487e8898b9f24f103e84",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:business/; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "investor/pitch-deck-outline.md",
++   "sha256": "2bd64f4eb65b15b209f8e85ade0af81512b5fcc1d5235b45cba4e6649e29301f",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/investor/pitch-deck-outline.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "plan/00-business-manager.md",
++   "sha256": "9dbbb99709dd4cf9b473c5482d59becd4445ba6eb6217ed97a328c25e934b471",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:business/; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "plan/01-management-roster.md",
++   "sha256": "dbf78f937f18467b4d0287573ca04effaebab52e9f20eb84646b780f4ecd758b",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/plan/01-management-roster.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "plan/02-customers.md",
++   "sha256": "b998bb9db82b451c2563ba10802da1c50d8616d6c84d0a0703307a747e029c9f",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/plan/02-customers.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "plan/03-competition.md",
++   "sha256": "dc87e1f2dbd2a2135d85eab453b657e170cce3b020f6557e2a959ff682d93799",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/plan/03-competition.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "plan/04-pitch-kit.md",
++   "sha256": "8ac955a74ef1b67489dd323a1f6b5985bf2fb5867b87410dbd82f7f0d0e12f88",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/plan/04-pitch-kit.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "plan/05-funding.md",
++   "sha256": "75de9832a2bd47c257a9407ac965dff9a9b9c109e3e61510202fff56a95cd94c",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/plan/05-funding.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "plan/06-promotion.md",
++   "sha256": "79dff1d10993b0baff4cbab4742c489fb21fd8b352ae5f2f2484b3e8cd07ab40",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/plan/06-promotion.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "plan/07-events.md",
++   "sha256": "d00b335b0351b973d9e984ded0e93458f601a627508f6a372c32a594642edcc3",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:business/plan/07-events.md",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  },
++  {
++   "path": "plan/README.md",
++   "sha256": "e49e2724834074c84dd50a667a97bc750569dd8116d7473f4ad20da515d96f89",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:business/; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "b6352d4e91f1840fb9cc91e07de626192b007be3"
++  }
++ ],
++ "superseded_by_repo": "ultrastable/ultrastable:business/"
++}
+diff --git a/tools/docs_audit.py b/tools/docs_audit.py
+new file mode 100644
+index 0000000..e967517
+--- /dev/null
++++ b/tools/docs_audit.py
+@@ -0,0 +1,315 @@
++"""Doc-consumption audit. Ultrastable is the foundation for any autonomous system. (owner, 2026-11-12)
++
++Nobody reads documents here; the system runs on code. So a document may exist only if something consumes it: an agent instruction
++import, code or data that names it, a check that reads it, or a generator that writes it. A document with no consumer is a CI failure.
++
++  python3 -m foundation docs_audit --check     (or: python3 foundation/docs_audit.py --root DIR --check, the file is stdlib-only and is copied into sibling repos)  fail on orphans, broken registry rows, bad removal ledger, human-action regressions
++  python3 -m foundation docs_audit --report    counts per consumption tier (docs found, wired, generated, converted, removed)
++  python3 -m foundation docs_audit --orphans   list the documents nothing consumes
++  python3 -m foundation docs_audit --humans    list documents that tell a person to act (a defect: file a backlog item instead)
++
++Consumption tiers, strongest first (the registry is `doctrine/doc-consumers.json`):
++  import     CLAUDE.md / AGENTS.md pull it in with `@path`, transitively
++  path       a tracked non-document file (code, data, workflow, test) names its exact path
++  generated  front matter `generated-by: <script>`, and the script exists
++  declared   front matter `consumer: <path>`; the consumer exists, is not a document and names this file or its directory
++  registry   a row in doc-consumers.json: glob -> consumer file that contains the row's `needle`
++  verified   explain-only pages in `verified.globs`: every backticked file path in the page must exist, and at least one must, so the
++             page cannot drift from the code it describes (a missing path is a CI failure naming the line)
++  knowledge  reference documents inside `knowledge.globs`: foundation/kb.py ranks them against each issue and foundation/executor.py
++             puts the best matches in the agent's prompt
++A document that only mentions another document is not consuming it. Removed documents stay in the `removed` ledger with the
++sha256 of what was removed and the file that still holds the same bytes, so nothing leaves the active set without a disposition.
++"""
++from __future__ import annotations
++import fnmatch, hashlib, json, os, re, subprocess, sys
++from pathlib import Path
++
++REPO = Path(__file__).resolve().parent.parent
++REGISTRIES = ("doctrine/doc-consumers.json", "tools/doc-consumers.json", "doc-consumers.json")
++REGISTRY = REGISTRIES[0]
++DOC_EXT = (".md", ".txt", ".rst")
++BINARY = re.compile(r"\.(svg|png|pdf|jpe?g|ico|woff2?|zip|bundle|gif|webp)$", re.I)
++
++
++def registry_path(root=REPO) -> str:
++    """The registry is doctrine/doc-consumers.json here; sibling repos that carry a copy of this file keep it in tools/ or at the root."""
++    for r in REGISTRIES:
++        if (Path(root) / r).is_file():
++            return r
++    raise FileNotFoundError("no doc-consumers.json (looked in " + ", ".join(REGISTRIES) + ")")
++
++
++def load(root=REPO) -> dict:
++    return json.loads((Path(root) / registry_path(root)).read_text(encoding="utf-8"))
++
++
++def tracked(root=REPO) -> list[str]:
++    out = subprocess.run(["git", "-C", str(root), "ls-files"], capture_output=True, text=True)
++    if out.returncode != 0:
++        raise RuntimeError(f"git ls-files failed: {out.stderr.strip()}")
++    return [f for f in out.stdout.splitlines() if (Path(root) / f).is_file()]
++
++
++def is_doc(path: str) -> bool:
++    return path.endswith(DOC_EXT)
++
++
++def _read(root, rel):
++    try:
++        return (Path(root) / rel).read_text(encoding="utf-8")
++    except (UnicodeDecodeError, OSError):
++        return ""
++
++
++def _glob(path: str, pattern: str) -> bool:
++    if pattern.endswith("/**"):
++        return path.startswith(pattern[:-2])
++    if pattern.startswith("**/"):
++        return fnmatch.fnmatch(path, pattern) or fnmatch.fnmatch(path, pattern[3:])
++    return fnmatch.fnmatch(path, pattern)
++
++
++def front_matter(text: str) -> dict:
++    m = re.match(r"---\n(.*?)\n---\n", text, re.S)
++    out = {}
++    if m:
++        for line in m.group(1).splitlines():
++            k, _, v = line.partition(":")
++            if k.strip() and v.strip():
++                out[k.strip()] = v.strip().strip("'\"")
++    return out
++
++
++SPAN = re.compile(r"`([^`\n]+)`")
++CODE_TOKEN = re.compile(r"(?<![\w/.:-])([A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:js|mjs|cjs|py|json|jsonc|sh|yml|yaml|toml|sql|md|html))(?![\w/-])")
++
++
++def verify_page(root, doc) -> tuple[list[str], list[str]]:
++    """(resolved, unresolved) backticked file paths in a document, resolved against the repository root or the document's folder."""
++    ok, missing = [], []
++    for tok in sorted({t for span in SPAN.findall(_read(root, doc)) for t in CODE_TOKEN.findall(span)}):
++        if "*" in tok or tok.startswith(("http", "~", "/")):
++            continue
++        cand = (Path(root) / tok, Path(root) / os.path.dirname(doc) / tok)
++        (ok if any(c.exists() for c in cand) else missing).append(tok)
++    return ok, missing
++
++
++def _imports(root, docs) -> set[str]:
++    seen, todo = set(), [d for d in ("CLAUDE.md", "AGENTS.md", "agents/AGENTS.md") if d in docs]
++    seen.update(todo)
++    while todo:
++        cur = todo.pop()
++        base = (Path(cur).parent)
++        for ref in re.findall(r"(?m)^\s*@(\S+\.md)\s*$", _read(root, cur)):
++            p = os.path.normpath((base / ref).as_posix() if not ref.startswith("/") else ref[1:]).replace(os.sep, "/")
++            if p not in seen and p in docs:
++                seen.add(p)
++                todo.append(p)
++    return seen
++
++
++def _relatives(doc: str, referrer: str):
++    """The spellings a file may use for `doc`: relative to its own folder or to any ancestor folder (a test that does parents[1] / "docs/X.md")."""
++    out, a = [], os.path.dirname(referrer)
++    while a:
++        rel = os.path.relpath(doc, a)
++        if not rel.startswith("..") and rel != doc:
++            out.append(rel)
++        a = os.path.dirname(a)
++    return out
++
++
++def evaluate(root=REPO) -> dict:
++    """Return {doc: (tier, evidence)} for consumed docs, plus 'orphans', 'docs', and problems with registry rows."""
++    root = Path(root)
++    reg = load(root)
++    files = tracked(root)
++    docs = sorted(f for f in files if is_doc(f))
++    ignore = tuple(reg.get("ignore_references_from", []))
++    code = {f: _read(root, f) for f in files if not is_doc(f) and not BINARY.search(f) and not f.startswith(ignore) and f != registry_path(root)}
++    consumed: dict[str, tuple[str, str]] = {}
++    problems: list[str] = []
++    for d in sorted(_imports(root, set(docs))):
++        consumed[d] = ("import", "imported by an agent instruction file")
++    for row in reg["consumers"]:
++        c = row["consumer"]
++        if is_doc(c) or not (root / c).is_file():
++            problems.append(f"registry row {row['id']}: consumer {c} must be an existing non-document file")
++            continue
++        if row["needle"] not in _read(root, c):
++            problems.append(f"registry row {row['id']}: consumer {c} does not contain its needle {row['needle']!r}")
++            continue
++        hit = [d for d in docs if any(_glob(d, g) for g in row["paths"])]
++        if not hit:
++            problems.append(f"registry row {row['id']}: no document matches {row['paths']} (remove the row)")
++        for d in hit:
++            consumed.setdefault(d, ("registry", f"{row['id']} -> {c}"))
++    for d in docs:
++        if d in consumed:
++            continue
++        fm = front_matter(_read(root, d))
++        if fm.get("generated-by"):
++            g = fm["generated-by"].split()[0]
++            if (root / g).is_file() and not is_doc(g):
++                consumed[d] = ("generated", g)
++                continue
++            problems.append(f"{d}: generated-by {g} does not exist")
++        if fm.get("consumer"):
++            c = fm["consumer"].split()[0]
++            parent = str(Path(d).parent)
++            if (root / c).is_file() and not is_doc(c) and (d in _read(root, c) or (parent != "." and parent + "/" in _read(root, c))):
++                consumed[d] = ("declared", c)
++                continue
++            problems.append(f"{d}: front matter consumer {c} must be an existing non-document file that names this file or its directory")
++        for f, t in code.items():
++            if d in t or any(re.search(r"(?<![\w/.-])" + re.escape(rel) + r"(?![\w])", t) for rel in _relatives(d, f)):
++                consumed[d] = ("path", f)
++                break
++    for d in docs:
++        if d not in consumed and any(_glob(d, g) for g in reg.get("verified", {}).get("globs", [])):
++            ok, missing = verify_page(root, d)
++            if missing:
++                problems.append(f"{d}: names files that do not exist ({', '.join(missing[:4])}); fix the page or the code so they agree")
++            elif ok:
++                consumed[d] = ("verified", f"every backticked path exists ({len(ok)})")
++    kn = reg.get("knowledge", {})
++    if kn:
++        ex = _read(root, "foundation/executor.py")
++        if "kb.retrieve" not in ex or not (root / "foundation/kb.py").is_file():
++            problems.append("knowledge tier: foundation/executor.py must call kb.retrieve and foundation/kb.py must exist")
++        else:
++            for d in docs:
++                if d.endswith(".md") and any(_glob(d, g) for g in kn["globs"]):
++                    consumed.setdefault(d, ("knowledge", "foundation/kb.py -> foundation/executor.py"))
++    orphans = [d for d in docs if d not in consumed]
++    return {"docs": docs, "consumed": consumed, "orphans": orphans, "problems": problems, "registry": reg}
++
++
++def _human_hits(text: str, pats) -> list[str]:
++    hits = []
++    for line in text.splitlines():
++        for p in pats:
++            if re.search(p, line, re.I):
++                hits.append(line.strip()[:120])
++                break
++    return hits
++
++
++def humans(root=REPO) -> dict[str, list[str]]:
++    root = Path(root)
++    reg = load(root)
++    pats = reg["human_action_patterns"]
++    exempt = reg.get("human_action_exempt", [])
++    out = {}
++    for d in (f for f in tracked(root) if is_doc(f)):
++        if any(_glob(d, g) for g in exempt):
++            continue
++        h = _human_hits(_read(root, d), pats)
++        if h:
++            out[d] = h
++    return out
++
++
++def removed_check(root, reg) -> list[str]:
++    """Every removed document has a disposition: identical bytes elsewhere (duplicate_of), a live replacement (superseded_by), or
++    evidence that it was a dead end; its sha256 and the commit that still holds it make the removal recoverable; and nothing
++    live may still name it."""
++    bad, root = [], Path(root)
++    removed = reg.get("removed", [])
++    for r in removed:
++        for k in ("path", "sha256", "reason", "date", "recover"):
++            if not r.get(k):
++                bad.append(f"removed ledger {r.get('path', '?')}: lacks {k}")
++        if not (r.get("duplicate_of") or r.get("superseded_by") or r.get("evidence")):
++            bad.append(f"removed ledger {r.get('path', '?')}: needs duplicate_of, superseded_by or evidence")
++        if (root / r.get("path", "-")).exists():
++            bad.append(f"removed ledger: {r['path']} is listed as removed but still exists")
++        if r.get("duplicate_of"):
++            dup = root / r["duplicate_of"]
++            if not dup.is_file() or hashlib.sha256(dup.read_bytes()).hexdigest() != r.get("sha256"):
++                bad.append(f"removed ledger {r['path']}: {r['duplicate_of']} no longer holds the same bytes (sha256 differs); restore or re-record")
++        if r.get("superseded_by") and not (root / r["superseded_by"]).exists():
++            bad.append(f"removed ledger {r['path']}: superseded_by {r['superseded_by']} does not exist")
++    ignore = tuple(reg.get("ignore_references_from", [])) + (registry_path(root),)
++    paths = {r["path"] for r in removed if r.get("path")}
++    for f in tracked(root):
++        if is_doc(f) or BINARY.search(f) or f.startswith(ignore):
++            continue
++        t = _read(root, f)
++        for p in paths:
++            if re.search(r"(?<![\w/.-])" + re.escape(p) + r"(?![\w-])", t):
++                bad.append(f"{f}: still names removed document {p}; point it at the replacement or drop the reference")
++    return bad
++
++
++def converted_check(root, reg) -> list[str]:
++    """A document converted to data keeps a row: the data file exists and a non-document consumer names it."""
++    bad, root = [], Path(root)
++    for c in reg.get("converted", []):
++        for k in ("from", "to", "consumer", "sha256", "recover", "date"):
++            if not c.get(k):
++                bad.append(f"converted ledger {c.get('from', '?')}: lacks {k}")
++        if (root / c.get("from", "-")).exists():
++            bad.append(f"converted ledger: {c['from']} still exists next to its data file")
++        if not (root / c.get("to", "-")).is_file() or is_doc(c.get("to", "")):
++            bad.append(f"converted ledger {c.get('from')}: data file {c.get('to')} must exist and not be a document")
++        elif not (root / c.get("consumer", "-")).is_file() or c["to"] not in _read(root, c["consumer"]):
++            bad.append(f"converted ledger {c['from']}: consumer {c.get('consumer')} must exist and name {c['to']}")
++    return bad
++
++
++def check(root=REPO) -> list[str]:
++    root = Path(root)
++    ev = evaluate(root)
++    reg = ev["registry"]
++    bad = list(ev["problems"])
++    bad += [f"orphan document (nothing consumes it): {d}: wire it, convert it to data, merge it, or remove it with a ledger row" for d in ev["orphans"]]
++    bad += removed_check(root, reg)
++    bad += converted_check(root, reg)
++    tpl = _read(root, "brand/templates/doc-template.md")  # doc-template.md: the template every new document starts from
++    if (root / "brand/templates/doc-template.md").is_file() and not re.search(r"(?m)^consumer:", tpl):
++        bad.append("brand/templates/doc-template.md must carry a `consumer:` front matter line")
++    base = reg.get("human_action_baseline", {})
++    for d, hits in humans(root).items():
++        if len(hits) > base.get(d, 0):
++            bad.append(f"{d}: tells a person to act ({len(hits)} lines, baseline {base.get(d, 0)}): {hits[0]!r}; file an automatic backlog item (owner, trigger, verification) instead of writing an instruction")
++    return bad
++
++
++def report(root=REPO) -> dict:
++    ev = evaluate(root)
++    tiers: dict[str, int] = {}
++    for tier, _ in ev["consumed"].values():
++        tiers[tier] = tiers.get(tier, 0) + 1
++    reg = ev["registry"]
++    return {"docs": len(ev["docs"]), "consumed": len(ev["consumed"]), "orphans": len(ev["orphans"]), "tiers": tiers,
++            "removed": len(reg.get("removed", [])), "converted": len(reg.get("converted", [])),
++            "human_action_docs": len(humans(root))}
++
++
++def main(argv=None) -> int:
++    global REPO
++    argv = list(sys.argv[1:] if argv is None else argv)
++    if "--root" in argv:  # run against another checkout: python3 tools/docs_audit.py --root . --check
++        i = argv.index("--root")
++        REPO = Path(argv[i + 1]).resolve()
++        del argv[i:i + 2]
++    if "--report" in argv:
++        print(json.dumps(report(REPO), indent=1))
++        return 0
++    if "--orphans" in argv:
++        print("\n".join(evaluate(REPO)["orphans"]) or "no orphans")
++        return 0
++    if "--humans" in argv:
++        for d, h in humans(REPO).items():
++            print(d, len(h), h[0])
++        return 0
++    bad = check(REPO)
++    print("\n".join(bad) or "docs-audit ok: " + json.dumps(report(REPO)))
++    return 1 if bad else 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+-- 
+2.43.0
+
