@@ -71,6 +71,11 @@ class Upstream(unittest.TestCase):
                 for k in ("id", "owner", "blocker", "trigger", "probe"):
                     self.assertTrue(d.get(k), f"{f}: {d.get('id')} lacks {k}")
 
+    def test_scan_probe_status_is_data_driven(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("upstream_scan", ROOT / "scripts/upstream_scan.py"); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+        self.assertEqual(m.probe_status("file:x"), "open")
+
     def test_instance_workflows_parse(self):
         import yaml
         out, _ = self.adopt()
