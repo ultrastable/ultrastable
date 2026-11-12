@@ -14,3 +14,4 @@ Write-back target for decisions: what was decided, why, the default in effect an
 - 2026-11-12: [CODEOWNERS human approval on workers protected paths is a control to replace](2026-11-12-codeowners-human-approval-on-workers-protected-paths-is-a-co.md)
 - 2026-11-12: [Org presence without a person-supplied token](2026-11-12-org-presence-without-a-person-supplied-token.md)
 - 2026-11-12: [Org page confidentiality gate is a lint](2026-11-12-org-page-confidentiality-gate-is-a-lint.md)
+- 2026-11-12: [Instance dependencies are closed by evaluated probes](2026-11-12-instance-dependencies-are-closed-by-evaluated-probes.md)

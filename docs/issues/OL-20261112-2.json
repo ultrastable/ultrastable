@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261112-2",
+  "title": "OL-20261112-2: Workers release tag v0.1.0 is a scan-evaluated dependency",
+  "body": "**Owner:** operations\n**Trigger:** workers #107 merged\n**Done check:** grep:scripts/upstream_scan.py::def probe_status\n**Status:** open\n\nOwner/trigger/probe live in instances/ultrastable/dependencies.json; scripts/upstream_scan.py evaluates the tag: probe weekly and reports closed when the tag exists. Blocked only by the owner's CODEOWNERS control on workers .github/, registered for replacement.",
+  "labels": [
+    "role:operations",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

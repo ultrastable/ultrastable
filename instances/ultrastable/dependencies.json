@@ -1,0 +1,12 @@
+{
+ "instance": "ultrastable",
+ "dependencies": [
+  {
+   "id": "workers-release-tag-v0.1.0",
+   "owner": "operations",
+   "blocker": "ultrastable/workers has no tag; the release workflow (workers #107) is under a protected path that the owner's CODEOWNERS rule reserves, registered as control ctl-workers-codeowners-human-approval (disposition: replace)",
+   "trigger": "workers #107 merged by whoever the control replacement names, then the release workflow dispatched with 0.1.0",
+   "probe": "tag:ultrastable/workers:v0.1.0"
+  }
+ ]
+}
