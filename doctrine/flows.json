@@ -1,0 +1,29 @@
+{
+  "_doc": "FLOW-DIRECTIVE-1 (Rowan, 2026-11-12): every loop declares its typed inflows, outflows (with the binding each travels on) and its feedback path, so its outcomes return as signals that change its next output. Read by foundation/flows.py (python3 -m foundation flows --check). Fleet twin: QNFO/qnfo-workers _shared/flow-registry.js.",
+  "id": "FLOW-DIRECTIVE-1",
+  "version": "1.0.0",
+  "quote": "How is this information flowing in? And what are we doing with it flowing out? And that applies to any workflow, any.",
+  "external_sources": {
+    "ext.site_visits": "readers of the public site (Cloudflare Web Analytics, returned by site.page)",
+    "ext.post_engagement": "replies, reposts and clicks on posts (returned by social.post)",
+    "ext.owner_goals": "IDEA.md and the owner's standing directives (instance manifest)"
+  },
+  "flows": {
+    "tick-heartbeat": {"inflows": [{"signal": "backlog.ranked", "via": "d1:ultrastable-org"}, {"signal": "metric.readings", "via": "d1:ultrastable-org"}, {"signal": "trust.scope", "via": "d1:ultrastable-org"}], "outflows": [{"signal": "dispatch.items", "via": "d1:ultrastable-org"}, {"signal": "tick.evidence", "via": "d1:ultrastable-org"}], "feedback": "verdicts and readings from its own past ticks re-rank the next pull"},
+    "agent-executor": {"inflows": [{"signal": "dispatch.items", "via": "github:issues"}], "outflows": [{"signal": "pr.opened", "via": "github:pulls"}], "feedback": "a red check or a reverted merge files an item the next tick takes"},
+    "change-gate": {"inflows": [{"signal": "pr.opened", "via": "github:pulls"}], "outflows": [{"signal": "pr.checked", "via": "github:checks"}], "feedback": "failing checks return to the executor as items"},
+    "merge-lane": {"inflows": [{"signal": "pr.checked", "via": "github:checks"}], "outflows": [{"signal": "main.merged", "via": "github:main"}], "feedback": "lanewatch measures time to merge and files a stuck PR"},
+    "site-deploy": {"inflows": [{"signal": "main.merged", "via": "github:main"}], "outflows": [{"signal": "site.page", "via": "pages:ultrastable.io", "to": "ext.site_visits", "returns": "site.visits"}], "feedback": "page visits return through the dashboard snapshot as metric readings"},
+    "social-post": {"inflows": [{"signal": "main.merged", "via": "github:main"}], "outflows": [{"signal": "social.post", "via": "api:social", "to": "ext.post_engagement", "returns": "post.engagement"}], "feedback": "engagement returns through the dashboard snapshot and steers the growth items"},
+    "dashboard-snapshot": {"inflows": [{"signal": "site.visits", "via": "api:cloudflare-analytics"}, {"signal": "post.engagement", "via": "api:social"}, {"signal": "tick.evidence", "via": "d1:ultrastable-org"}], "outflows": [{"signal": "metric.readings", "via": "d1:ultrastable-org"}], "feedback": "its readings are the measures every other loop is judged by"},
+    "predict-verify": {"inflows": [{"signal": "tick.evidence", "via": "d1:ultrastable-org"}, {"signal": "metric.readings", "via": "d1:ultrastable-org"}], "outflows": [{"signal": "prediction.verdicts", "via": "d1:ultrastable-org"}], "feedback": "missed predictions lower trust and revert the change"},
+    "trust-ledger": {"inflows": [{"signal": "prediction.verdicts", "via": "d1:ultrastable-org"}], "outflows": [{"signal": "trust.scope", "via": "d1:ultrastable-org"}], "feedback": "scope widens or narrows from verified outcomes"},
+    "failure-audit": {"inflows": [{"signal": "metric.readings", "via": "d1:ultrastable-org"}], "outflows": [{"signal": "issue.filed", "via": "github:issues"}], "feedback": "a detector that keeps firing escalates and files its own redesign"},
+    "product-manager-pass": {"inflows": [{"signal": "metric.readings", "via": "d1:ultrastable-org"}, {"signal": "owner.goals", "via": "repo:IDEA.md"}], "outflows": [{"signal": "issue.filed", "via": "github:issues"}], "feedback": "a growth item is kept only if its metric moved"},
+    "plussing": {"inflows": [{"signal": "main.merged", "via": "github:main"}], "outflows": [{"signal": "issue.filed", "via": "github:issues"}], "feedback": "accepted pluses are scored by the metric they named"},
+    "issue-triage": {"inflows": [{"signal": "issue.filed", "via": "github:issues"}], "outflows": [{"signal": "backlog.ranked", "via": "d1:ultrastable-org"}], "feedback": "priority rises with age and with capability gain"},
+    "planning-roadmap": {"inflows": [{"signal": "owner.goals", "via": "repo:IDEA.md"}, {"signal": "metric.readings", "via": "d1:ultrastable-org"}], "outflows": [{"signal": "issue.filed", "via": "github:issues"}], "feedback": "roadmap items close only on their metric"}
+  },
+  "implicit_producers": {"owner.goals": "ext.owner_goals"},
+  "pending": ["role-portfolio-manager", "role-project-manager", "role-product-manager", "role-staff", "role-reviewer", "role-operations", "role-funding-manager", "role-outreach-manager", "role-outreach-coordinator", "retriage", "index-refresh", "platform-core-tests", "actions-budget", "org-profile", "funding-verify", "funding-outreach", "outreach-send", "memory-fresh", "write-back", "loop-registry", "glossary", "doctrine-check", "recognition-lint", "doctrine-amendment", "gap-register", "launch", "guiding-directive", "durable-facts", "executor-session", "doc-consumption", "liveness", "server-side-only", "core-instance-sync", "fleet-lane", "orphan-artifacts", "containment-boundary", "session-reaper", "branch-reaper", "market-gaps", "strange-loop-hygiene", "role-research-publisher", "role-marketing-manager", "role-legal-ip-manager", "role-customer-success", "role-org-designer", "triggers", "lifecycle", "components", "public-transparency", "agent-interop", "terms-crosswalk", "code-agents", "running-system"]
+}

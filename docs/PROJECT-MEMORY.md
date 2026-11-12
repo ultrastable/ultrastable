@@ -21,6 +21,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 6. **Reporting.** Project-chat posts are a few plain lines, outcome first, threads linked by title.
 7. **Facts are checked at the source** before being stated (licences, disclosures, numbers).
 8. **Memory lives in the repo** (this file). See `agents/AGENTS.md` section 1.
+9. **Every loop declares its flows (FLOW-DIRECTIVE-1, 2026-11-12).** Typed inflows, outflows with their binding, and the feedback path by which outcomes return; declarations in `doctrine/flows.json`, checked by `python3 -m foundation flows --check`.
 
 ## 2. Facts from Rowan
 
