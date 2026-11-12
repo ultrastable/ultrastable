@@ -15,6 +15,8 @@ export const TOOLS = [
   ["get_changelog", "Merged changes by day with size and origin", s => (s.throughput || {}).changelog],
   ["get_loops", "Every registered loop and manager with trigger, owner and last recorded run", s => s.managers],
   ["get_claims", "What the site claims, checked against code: components, wired edges, user stories, objections", s => s.claims],
+  ["get_clocks", "Every loop as a clock: measured status, last beat, beats in 24 hours, jitter", s => s.clocks],
+  ["get_growth", "Growth: share of shipped work that adds capability versus repairs, and the measured reach of the product", s => s.growth],
   ["get_gaps", "The gap register: what Ultrastable still does through outside tools", s => s.gaps],
 ].map(([name, description, pick]) => ({ name, description, pick, inputSchema: { type: "object", properties: {}, additionalProperties: false }, annotations: { readOnlyHint: true, openWorldHint: false } }));
 

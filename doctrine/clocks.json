@@ -1,0 +1,49 @@
+{
+  "_doc": "CLOCKWORK-1: every loop is a clock with an expected interval and a source of beats; `python3 -m foundation clock --report` measures them (ticking, late, stopped, idle) and the result is published on /live. A stopped or inaccurate clock is a defect. `chain` is how the executor keeps ticking between its daily cron: a run that ends with takeable work wakes the next run, capped per day and backed off after failures; the Actions budget guard still applies.",
+  "version": "1.0.0",
+  "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
+  "clocks": [
+    {
+      "id": "tick-heartbeat",
+      "what": "the org's heartbeat on Cloudflare (cron every 10 minutes): reconcile, claims, gates, predictions, dispatch",
+      "source": "d1",
+      "d1_id": "7468898a-b515-495f-9910-e91cb80f5810",
+      "table": "tick_runs",
+      "column": "started_at",
+      "expected_interval_s": 600,
+      "periodic": true
+    },
+    {
+      "id": "executor",
+      "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
+      "source": "workflow",
+      "workflow": "executor",
+      "expected_interval_s": 21600,
+      "idle_when_no_work": true,
+      "periodic": false
+    },
+    {
+      "id": "transparency",
+      "what": "the public live record on ultrastable.io/live",
+      "source": "workflow",
+      "workflow": "transparency",
+      "expected_interval_s": 86400,
+      "periodic": false
+    },
+    {
+      "id": "deploy-site",
+      "what": "merge to live site deploy",
+      "source": "workflow",
+      "workflow": "deploy-site",
+      "expected_interval_s": 86400,
+      "idle_when_no_work": false,
+      "event_driven": true,
+      "periodic": false
+    }
+  ],
+  "chain": {
+    "workflow": "executor",
+    "max_runs_per_day": 4,
+    "backoff_after_failures": 3
+  }
+}

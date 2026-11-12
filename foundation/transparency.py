@@ -194,6 +194,16 @@ def snapshot(root=REPO, use_gh=True):
     merged = [p for p in ch["pull_requests"] if p["state"] == "merged"]
     th = throughput(root, use_gh)
     try:
+        from . import growth
+        gr = growth.snapshot(root, use_live=use_gh)
+    except Exception as e:  # recorded, never swallowed
+        gr = {"error": str(e)[:200]}
+    try:
+        from . import clock
+        clocks = clock.report(root) if use_gh else []
+    except Exception as e:  # recorded, never swallowed
+        clocks = [{"id": "clock-report", "status": "unmeasured", "why": str(e)[:160]}]
+    try:
         from . import topology
         top = {**topology.summary(root), "drift": topology.drift(root) if use_gh else ["not measured"]}
     except Exception as e:  # recorded, never swallowed
@@ -211,7 +221,7 @@ def snapshot(root=REPO, use_gh=True):
             "prs_merged_total": (th.get("merged") or {}).get("total"), "prs_merged_unattended": ((th.get("merged") or {}).get("by_origin") or {}).get("unattended executor", {}).get("prs"),
             "backlog_open": (th.get("queue") or {}).get("by_status", {}).get("open"), "backlog_items": (th.get("queue") or {}).get("items"),
         },
-        "throughput": th, "topology": top, "managers": mg, "claims": cl, "gaps": gp, "changes": ch, "loop_improvements": improvements(root),
+        "throughput": th, "growth": gr, "clocks": clocks, "topology": top, "managers": mg, "claims": cl, "gaps": gp, "changes": ch, "loop_improvements": improvements(root),
         "feedback_loop": "claim (site/doctrine) -> probe (components, gap register, loops) -> gap item -> branch/draft PR by an agent -> merge on green checks -> deploy -> probe again; each row above links the step to its record.",
     }
     return scrub(s)
