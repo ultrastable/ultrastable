@@ -538,6 +538,14 @@
    "title": "Executor fell through to remote repos only when idle; a failing own-queue item starved them",
    "body": "Fall through to EXECUTOR_TARGET_REPOS also when the own item failed.",
    "probe": "grep:foundation/executor.py::EXEC-X: own queue empty or its top item failed"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-prs-failed-checks-on-a-stale-site-roadmap",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Executor PRs failed checks on a stale site roadmap",
+   "body": "Closing a queue item changes docs/issues, which makes site/roadmap-data.js stale; the executor now regenerates it.",
+   "probe": "grep:foundation/executor.py::build_site_roadmap"
   }
  ]
 }

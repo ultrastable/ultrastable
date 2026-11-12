@@ -53,6 +53,11 @@ def executor_rows(root=REPO) -> list[dict]:
     return sorted(rows, key=lambda r: r.get("at") or "")
 
 
+def protected_probe(probe: str) -> bool:
+    m = re.match(r"(?:file|grep):(\S+?)(?:::|$)", probe or "")
+    return bool(m and m.group(1).startswith((".github/", "autonomy/")))
+
+
 def takeable(root=REPO) -> list[dict]:
     """QUEUE-1: open queue items in the shape the executor's pick() expects. Owner-held items (identity-bound, ROWAN) are not the executor's.
     An item whose last three executor log rows all failed is parked until a row of another result appears, so a bad item cannot starve the rest."""
@@ -64,6 +69,8 @@ def takeable(root=REPO) -> list[dict]:
     for it in items(root):
         j = it["json"]
         if it["status"] != "open" or re.search(r"ROWAN|identity-bound", it["owner"], re.I) or fails.get(str(it["id"]), 0) >= 3:
+            continue
+        if protected_probe(it["probe"]):  # the executor may not write .github/ or autonomy/, so an item whose done check lives there can only fail (it starved the queue head on 2026-11-12)
             continue
         out.append({"number": it["id"], "title": j.get("title", it["id"]), "body": j.get("body", ""), "labels": [{"name": n} for n in j.get("labels", [])],
                     "updated_at": "1970-01-01T00:00:00Z"})
