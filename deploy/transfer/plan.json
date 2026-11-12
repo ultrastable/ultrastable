@@ -1,0 +1,52 @@
+{
+  "_doc": "Staged, reversible move of Ultrastable assets from the QNFO (quniverse) account to the dedicated Ultrastable account. The source is never deleted by this plan; deletion is a later, separate item after a soak period. Driven by scripts/cf_account.py.",
+  "assets": {
+    "workers": [
+      "ultrastable-*"
+    ],
+    "d1": [
+      "ultrastable-org"
+    ]
+  },
+  "crons": {
+    "ultrastable-tick": [
+      "*/10 * * * *"
+    ]
+  },
+  "stages": [
+    {
+      "id": "1-inventory",
+      "do": "cf_account.py inventory <source> and <target>; write the result to deploy/transfer/inventory-*.json",
+      "exit": "both inventories read"
+    },
+    {
+      "id": "2-copy",
+      "do": "cf_account.py transfer copy --apply: D1 export/import, KV, worker code with bindings remapped; crons off on target",
+      "exit": "state.stage = copied; secret names listed for re-binding"
+    },
+    {
+      "id": "3-verify",
+      "do": "cf_account.py transfer verify: workers present, D1 row counts equal per table; then GET /health on the target worker",
+      "exit": "ok true"
+    },
+    {
+      "id": "4-cutover",
+      "do": "cf_account.py transfer cutover --apply: enable crons on target first, then remove from source (never zero hosts)",
+      "exit": "a tick row written on the target within 15 minutes"
+    },
+    {
+      "id": "5-rollback",
+      "do": "cf_account.py transfer rollback --apply: crons back to source, removed from target; nothing deleted",
+      "exit": "a tick row written on the source within 15 minutes"
+    },
+    {
+      "id": "6-soak-then-retire",
+      "do": "after 7 days of clean ticks on the target, file an item to retire source copies",
+      "exit": "item filed with owner and probe"
+    }
+  ],
+  "manual_after_cutover": [
+    "custom domains (ultrastable.io/.app/.net) are zone-bound: move the zone or re-attach the routes in the zone's account",
+    "re-bind worker secrets by name from the repo secret store (values are never read from Cloudflare)"
+  ]
+}

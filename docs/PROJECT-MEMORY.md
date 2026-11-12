@@ -8,7 +8,7 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-11
+Last updated: 2026-11-12
 Maintained by: every agent, on every session end. Staleness is checked by `scripts/check_memory.py` (CI `memory-fresh`).
 
 ## 1. Standing rules (from Rowan)
@@ -35,6 +35,10 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 - Platform stance (2026-11-10): platform-agnostic, cloud-based for now; Cloudflare first, Google adapter second, pitch both.
 - Domain `ultrastable.org` is registered (possible Apache-style open-source home).
 - Positioning: autonomous business system; financials are NOT claimed; QNFO only as a test case.
+
+- **Brand separation.** Ultrastable is an autonomous business system; its brand is separate from QNFO (no research framing; financials are not claimed). QNFO appears only as a demonstration and a test case.
+- **Guiding directive (Rowan, 2026-11-12).** `docs/doctrine/GUIDING-DIRECTIVE.md` (GUIDING-DIRECTIVE) governs all work and every sub-agent inherits it in full. Machine form `doctrine/directive.json`, registers `doctrine/registers.json`, code `foundation/directive.py`, map `docs/doctrine/GUIDING-DIRECTIVE-MAP.md`. It layers on kernel 8.2.1; its section 4 is IC-GATE-001.
+- **Memory is not storage (Rowan, 2026-11-12).** Project memory, tool memory and chat are not storage; Rowan may disable project memories. Every durable fact lives in this repository. `doctrine/durable-facts.json` lists the required facts with probes (licence facts, brand separation, owner-only items, rules); `python3 -m foundation directive --check` fails a fact that exists only outside the repo; `docs/BOOTSTRAP-NO-MEMORY.md` is the start with memory disabled. The tool-memory note is a pointer to this file and carries nothing else.
 
 ## 3. Current status (2026-11-10)
 
@@ -104,3 +108,9 @@ Update this file in the same PR as any change to status, rules, facts, owner ite
 - 2026-11-11: Rowan dropped the patent for the hybrid license plus architectural specs (section 2). `scripts/check_license.py` and the doctrine check enforce the license in the existing `checks` workflow; no workflow was added. The European and US filing rows and the provisional pre-flight step are retired.
 - 2026-11-11: Ultrastable runs on itself (Rowan: core positioning, bootstrapped, with any tools). `python3 -m foundation selfhost` boots Ultrastable's own organization (roles, items from docs/issues, trust ledger, plus share, gap register) from this repo into SQLite and runs the seed tick; `--no-node` is the minimal path (Python 3 plus a copy of the repo); `--verify` fails when a process uses a tool with no adapter in `platform/adapters/registry.json` or an outside tool with no gap in `instances/ultrastable/gaps.json`. Doctrine block `runs_on_itself` in `doctrine/positioning.json` is enforced by `foundation doctrine --check` (existing checks workflow, no new workflow). Runbooks: `docs/runbooks/any-tools/`. Open gaps SG-1 forge, SG-2 executor, SG-3 report sink, SG-4 mail sender, SG-5 social, SG-8 GCP live deploy.
 - 2026-11-11: Agentic standards are code (Rowan: "infrastructure that works so nobody notices"). Register `seed/standards/standards.json`, surfaces `seed/standards/surfaces.json`, narrative `docs/standards/AGENTIC-STANDARDS.md`. The seed Worker serves a remote MCP server at `/mcp` and the discovery documents (llms.txt, AGENTS.md, agent card, MCP server card, Agent Skills index, api-catalog, OAuth protected-resource metadata, OpenAPI) through ports and adapters (`seed/worker/src/agentic/`); interface contract frozen in `seed/worker/contract/mcp-tools.v1.json`. `python3 -m foundation standards --check` plus the Worker node tests run in the existing `checks` job (no new workflow); the register goes stale after 120 days. Planned: STD-1 registry listing, STD-2 McpAgent/AI Gateway, STD-3 Web Bot Auth. Glossary and loop registry data come from that thread's files via `config.registries`, not duplicated.
+
+## 2026-11-12: executor and account transfer
+- Agent-executor built (`foundation/executor.py`, workflow `executor.yml`, Worker dispatch `seed/worker/src/executor.js`); gap SG-2 closed. Needs repo secret `ANTHROPIC_API_KEY` (else each run records `no-model-credential`) and Worker binding `GITHUB_DISPATCH_TOKEN`+`GITHUB_REPO` for Worker-triggered runs; the daily Actions schedule works without the Worker.
+- Dedicated account `81e3a4ef...` unreachable from every surface (docs/failures/2026-11-12-target-account-unreachable.md). Staged reversible transfer: `scripts/cf_account.py`, `deploy/transfer/plan.json`, workflow `cf-account.yml`. Not yet run live.
+- 2026-11-12: The guiding directive is code (Rowan: "All information is useful somehow... figure out what to do with it"). Verbatim text, JSON form, SPOF/failure-mode/control registers with cadence probes, silent-drop accounting, loop-breaker, provenance validation, scorecard (autonomy rate, blocker-survival, surface-coverage) and an owner-handback lint are in `foundation/directive.py`; the check runs in the existing `checks` job (no new workflow). Same day: memory is not storage; durable facts moved into the repo with a check.
+- PR #202 merged; sibling PR #200 folded in (Worker lane kept, its transfer script superseded by scripts/cf_account.py, separate SRC/DST tokens supported). Owner gate card: outreach/cards/OWNER-CF-AND-MODEL.md.

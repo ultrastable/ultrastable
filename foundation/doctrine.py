@@ -119,11 +119,13 @@ def check(root=REPO) -> list[str]:
             from . import selfhost
             bad += [f"selfhost: {x}" for x in selfhost.verify(root)]
     bad += framing_scan(root, d)
-    from . import kernel, loops, glossary
+    from . import kernel, loops, glossary, directive
     if (root / kernel.PATH).exists():
         bad += [f"kernel: {x}" for x in kernel.check(root)]
     if (root / loops.PATH).exists():
         bad += [f"loops: {x}" for x in loops.verify(root)]
+    if (root / directive.PATH).exists():
+        bad += [f"directive: {x}" for x in directive.check(root)]
     if (root / glossary.PATH).exists():
         bad += [f"glossary: {x}" for x in glossary.check(root)]
     for rel in sorted((root / "docs/lessons").glob("*.md")) if (root / "docs/lessons").is_dir() else []:

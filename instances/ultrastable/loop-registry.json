@@ -1309,6 +1309,109 @@
    "workflows": [
     "loop.yml"
    ]
+  },
+  {
+   "id": "guiding-directive",
+   "kind": "doctrine",
+   "summary": "The guiding directive, its registers (SPOF, failure mode, control), silent-drop accounting, loop-breaker, provenance and scorecard are probed every tick; drift fails the check.",
+   "trigger": "every tick and every change to doctrine, registers or instruction files",
+   "owner": "portfolio-manager",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "python3 -m foundation directive in the checks job",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command run by an agent session from the repository",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:tests/foundation/test_directive.py::def test_repo_directive_clean",
+   "writeback": [
+    "doctrine/probe-log.jsonl",
+    "docs/PROJECT-MEMORY.md"
+   ],
+   "system_path": [
+    "docs/doctrine/GUIDING-DIRECTIVE.md",
+    "doctrine/directive.json",
+    "doctrine/registers.json",
+    "foundation/directive.py"
+   ]
+  },
+  {
+   "id": "durable-facts",
+   "kind": "doctrine",
+   "summary": "Every required fact is probed in the repo so nothing lives only in project or tool memory.",
+   "trigger": "every tick and every change to docs/PROJECT-MEMORY.md",
+   "owner": "portfolio-manager",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "python3 -m foundation directive in the checks job",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command run by an agent session from the repository",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:tests/foundation/test_directive.py::def test_missing_durable_fact_fails",
+   "writeback": [
+    "docs/PROJECT-MEMORY.md",
+    "doctrine/durable-facts.json"
+   ],
+   "system_path": [
+    "doctrine/durable-facts.json",
+    "docs/BOOTSTRAP-NO-MEMORY.md",
+    "foundation/directive.py"
+   ]
+  },
+  {
+   "id": "agent-executor",
+   "kind": "staff",
+   "summary": "Pick the top open issue in driver order, claim it, change, check, open a PR; the merge lane merges on green.",
+   "trigger": "Cloudflare tick Worker dispatch (repository_dispatch), daily schedule, manual dispatch",
+   "owner": "staff",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "Cloudflare tick Worker dispatches .github/workflows/executor.yml (seed/worker/src/executor.js)",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "python3 -m foundation executor --apply from any agent session or local scheduler",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "file:foundation/executor.py",
+   "writeback": [
+    "docs/handoff",
+    "docs/PROJECT-MEMORY.md"
+   ],
+   "system_path": [
+    "foundation/executor.py",
+    "seed/worker/src/executor.js",
+    "scripts/executor_evidence.sh",
+    "seed/worker/src/lane.js"
+   ],
+   "workflows": [
+    "executor.yml",
+    "cf-account.yml"
+   ],
+   "area": "managers"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

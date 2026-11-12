@@ -29,7 +29,7 @@
    "plan": "Add seed/worker/src/executor.js with a provider interface (hosted model API, local model, or a queue file a human-run agent drains) so any agent can take a dispatch; record each result as an outcome.",
    "closing_probe": "file:seed/worker/src/executor.js",
    "owner_role": "staff",
-   "status": "open"
+   "status": "closed"
   },
   {
    "id": "SG-3",

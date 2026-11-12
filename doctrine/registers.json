@@ -1,0 +1,192 @@
+{
+ "_doc": "The SPOF, failure-mode and control-disposition registers of the guiding directive (sections 12, 13, 16). Every entry names an owner, a trigger, a remediation and a closing probe that `python3 -m foundation directive --check` runs; a SPOF is only 'remediated' when its second path is exercised (an exercise probe that resolves). Probing cadence is in ticks; `directive --probe` writes evidence to doctrine/probe-log.jsonl (append-only). Changed only by a reviewed PR.",
+ "version": "1.0.0",
+ "spofs": [
+  {
+   "id": "spof-org-admin-token",
+   "kind": "credential",
+   "what": "ORG_ADMIN_TOKEN is the only route to the public GitHub org page",
+   "owner": "operations",
+   "trigger": "org-profile probe fails",
+   "remediation": "second path: gate card docs/ops/ORG-TOKEN.md with the holding page as the default in effect",
+   "status": "mitigated",
+   "second_path_exercised": "file:docs/ops/ORG-TOKEN.md",
+   "probe": "file:docs/ops/ORG-TOKEN.md"
+  },
+  {
+   "id": "spof-single-host",
+   "kind": "host",
+   "what": "one runtime host running the tick",
+   "owner": "portfolio-manager",
+   "trigger": "tick evidence older than 2 ticks",
+   "remediation": "failover to the next host and the Python selfhost path",
+   "status": "remediated",
+   "second_path_exercised": "grep:tests/foundation/test_selfhost.py::def test_",
+   "probe": "file:foundation/failover.py"
+  },
+  {
+   "id": "spof-owner-approval",
+   "kind": "approval",
+   "what": "any step waiting on the owner for reversible work",
+   "owner": "portfolio-manager",
+   "trigger": "an item waits on a person",
+   "remediation": "interrupt gate is narrow; owner steps become gate cards with a default in effect",
+   "status": "remediated",
+   "second_path_exercised": "file:foundation/data/owner-steps.json",
+   "probe": "file:foundation/data/owner-steps.json"
+  },
+  {
+   "id": "spof-tool-memory",
+   "kind": "assumption",
+   "what": "project or tool memory as a store of facts",
+   "owner": "operations",
+   "trigger": "a required fact is absent from the repo",
+   "remediation": "doctrine/durable-facts.json check; the repo is the only memory",
+   "status": "remediated",
+   "second_path_exercised": "grep:tests/foundation/test_directive.py::def test_missing_durable_fact_fails",
+   "probe": "file:doctrine/durable-facts.json"
+  },
+  {
+   "id": "spof-github-forge",
+   "kind": "component",
+   "what": "GitHub as the only forge",
+   "owner": "operations",
+   "trigger": "push or API refused",
+   "remediation": "bundle export and platform adapters (gap SG-1)",
+   "status": "backlogged",
+   "second_path_exercised": "",
+   "probe": "file:instances/ultrastable/gaps.json",
+   "backlog": {
+    "owner": "operations",
+    "trigger": "SG-1 forge adapter lands",
+    "verification": "grep:instances/ultrastable/gaps.json::SG-1"
+   }
+  },
+  {
+   "id": "spof-model-credential",
+   "kind": "credential",
+   "what": "the agent-executor depends on one model credential (ANTHROPIC_API_KEY)",
+   "owner": "staff",
+   "trigger": "executor log shows no-model-credential",
+   "remediation": "provider interface (seed/worker/src/executor.js, foundation/executor.py); session-run executor as local route; gate card outreach/cards/OWNER-CF-AND-MODEL.md",
+   "status": "mitigated",
+   "second_path_exercised": "grep:tests/foundation/test_executor.py::def test_no_model_credential",
+   "probe": "file:outreach/cards/OWNER-CF-AND-MODEL.md"
+  },
+  {
+   "id": "spof-cloudflare-account-credential",
+   "kind": "credential",
+   "what": "the move to the dedicated Cloudflare account needs one token covering it",
+   "owner": "operations",
+   "trigger": "cf_account probe reports target_reachable false",
+   "remediation": "old account keeps ticking; GitHub Actions executor and local hosts continue; gate card outreach/cards/OWNER-CF-AND-MODEL.md; staged plan deploy/transfer/plan.json",
+   "status": "mitigated",
+   "second_path_exercised": "grep:tests/foundation/test_cf_account.py::def test_probe_says_target_unreachable",
+   "probe": "file:docs/failures/2026-11-12-target-account-unreachable.md"
+  }
+ ],
+ "failure_modes": [
+  {
+   "id": "fm-owner-handback",
+   "trigger": "an agent report ends in a question, menu or approval request",
+   "symptom": "work waits on the owner",
+   "blast_radius": "autonomy rate",
+   "detection": "python3 -m foundation directive --lint",
+   "root_cause": "decision deferred instead of made",
+   "remediation": "lint fails the report; rewrite as decision plus assumption",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_directive.py::def test_lint_flags_owner_handback"
+  },
+  {
+   "id": "fm-silent-drop",
+   "trigger": "an item leaves the active set without a disposition",
+   "symptom": "accounting invariant imbalance",
+   "blast_radius": "backlog integrity",
+   "detection": "directive.accounting",
+   "root_cause": "closure without recording",
+   "remediation": "accounting check fails the tick",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_directive.py::def test_accounting_invariant"
+  },
+  {
+   "id": "fm-retry-spin",
+   "trigger": "same action fails with the same signature",
+   "symptom": "repeated retries",
+   "blast_radius": "cycle budget",
+   "detection": "directive.loop_breaker",
+   "root_cause": "approach not mutated",
+   "remediation": "mutate on 2nd failure, incident on 3rd",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_directive.py::def test_loop_breaker"
+  },
+  {
+   "id": "fm-blocker-unproven",
+   "trigger": "a blocker is reported with fewer surfaces tested than available",
+   "symptom": "blocker handed to the owner",
+   "blast_radius": "surface_coverage",
+   "detection": "directive.scorecard",
+   "root_cause": "one surface tested then stopped",
+   "remediation": "blocker log requires all surfaces and evidence",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_directive.py::def test_blocker_log_scorecard"
+  },
+  {
+   "id": "fm-fact-only-in-tool-memory",
+   "trigger": "a durable fact exists only in project or tool memory",
+   "symptom": "fact lost when memory is disabled",
+   "blast_radius": "all agents",
+   "detection": "directive --check durable facts",
+   "root_cause": "write-back skipped",
+   "remediation": "facts register with repo probes fails CI",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_directive.py::def test_missing_durable_fact_fails"
+  }
+ ],
+ "controls": [
+  {
+   "id": "ctl-interrupt-gate",
+   "kind": "gate",
+   "what": "the narrow interrupt gate (IC-GATE-001)",
+   "disposition": "keep",
+   "critical_path": false,
+   "note": "doctrine, out of scope for disposition (directive section 13)",
+   "alternate": "file:foundation/data/owner-steps.json",
+   "probe": "file:seed/autonomy/policy.json"
+  },
+  {
+   "id": "ctl-actions-kill-switch",
+   "kind": "kill-switch",
+   "what": "actions-budget.json minute kill switch for non-essential workflows",
+   "disposition": "replace",
+   "critical_path": false,
+   "note": "demoted off the critical path: essential workflows ignore it; non-essential ones degrade to the zero-minute alternative",
+   "alternate": "file:scripts/lint_workflows.py",
+   "probe": "file:actions-budget.json"
+  },
+  {
+   "id": "ctl-outreach-gate",
+   "kind": "filter",
+   "what": "outreach rate caps, opt-outs and kill switch",
+   "disposition": "demote",
+   "critical_path": false,
+   "note": "protects against mass contact (a catastrophic mode); opt-outs always win",
+   "alternate": "file:outreach/gate.json",
+   "probe": "file:outreach/gate.json"
+  },
+  {
+   "id": "ctl-merge-approval",
+   "kind": "hold",
+   "what": "human merge approval on reversible work",
+   "disposition": "remove",
+   "critical_path": false,
+   "note": "replaced by green CI, independent review and automatic rollback by revert; directive: no merge approvals",
+   "alternate": "file:.github/workflows/checks.yml",
+   "probe": "file:.github/workflows/checks.yml"
+  }
+ ]
+}

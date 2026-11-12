@@ -1,0 +1,44 @@
+name: executor
+# budget: ~5 min per run, at most 2 per day plus Worker dispatches (the Worker dispatches only when GITHUB_DISPATCH_TOKEN is bound; guard below)
+# trigger: daily fallback, repository_dispatch `ultrastable-tick` from the Cloudflare tick Worker, and manual dispatch
+# free-alternative: the same command on any host: `python3 -m foundation executor --apply` (local scheduler, Claude routine)
+# The agent-executor step of the tick: picks the top open issue in driver order, claims it, changes, checks, opens a PR; the lane merges on green.
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  repository_dispatch:
+    types: [ultrastable-tick]
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: "issue number to work (default, top of driver order)"
+        required: false
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+concurrency:
+  group: executor
+  cancel-in-progress: false
+jobs:
+  executor:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - run: python3 scripts/actions_guard.py executor
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: pip install pyyaml
+      - name: Execute one item
+        run: ULTRASTABLE_HOST="github-actions:${{ github.event_name }}" python3 -m foundation executor --apply ${{ inputs.issue && format('--issue {0}', inputs.issue) || '' }}
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Commit provenance to loop-evidence
+        if: always()
+        run: bash scripts/executor_evidence.sh

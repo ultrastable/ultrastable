@@ -4,3 +4,4 @@ Write-back target for what sessions and loops learned: decisions, lessons, open 
 
 ## Index
 - 2026-11-11: [Doctrine codified: glossary, loops, write-back, kernel](2026-11-11-doctrine-codified-glossary-loops-write-back-kernel.md)
+- 2026-11-12: [Credential gaps are red-teamed to two owner secrets](2026-11-12-credential-gaps-are-red-teamed-to-two-owner-secrets.md)
