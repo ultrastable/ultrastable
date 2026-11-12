@@ -195,4 +195,9 @@ def install(repo: str, url: str, worker_dir: str = "seed/worker", apply: bool = 
     for argv, data in ((["gh", "api", f"repos/{repo}/hooks", "--input", "-"], body), (["wrangler", "secret", "put", "GITHUB_WEBHOOK_SECRET"], secret)):
         r = subprocess.run(argv, input=data, capture_output=True, text=True, cwd=REPO / worker_dir if argv[0] == "wrangler" else REPO)
         out.append({"cmd": " ".join(argv[:3]), "exit": r.returncode, "error": (r.stderr or "")[-200:].replace(secret, "***") if r.returncode else ""})
-    return {"applied": True, "steps": out}
+    ok = all(o["exit"] == 0 for o in out)
+    if ok:
+        m = REPO / "ops/loop-evidence/webhook-installed.json"
+        m.write_text(json.dumps({"repo": repo, "url": url.rstrip("/") + "/hook/github", "events": events}) + "
+", encoding="utf-8")
+    return {"applied": True, "ok": ok, "steps": out}

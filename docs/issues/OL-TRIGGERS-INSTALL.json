@@ -1,0 +1,12 @@
+{
+  "id": "OL-TRIGGERS-INSTALL",
+  "title": "OL-TRIGGERS-INSTALL: register the signed GitHub webhook on the live worker",
+  "body": "**Owner:** operations\n**Trigger:** the worker URL is known (deploy of ultrastable-tick) and gh and wrangler are authenticated; checked every heartbeat\n**Done check:** file:ops/loop-evidence/webhook-installed.json\n**Status:** open\n\nRun `python3 -m foundation triggers --install ultrastable/ultrastable <worker-url> --apply`: mints the webhook secret in memory, registers the GitHub webhook and stores GITHUB_WEBHOOK_SECRET on the worker. Writes the marker file on success. Until then events fall back to the cron heartbeat.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "triggers"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
