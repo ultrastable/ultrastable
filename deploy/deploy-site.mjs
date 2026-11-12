@@ -43,7 +43,7 @@ for (const [name, body] of extra) form.append(name, new Blob([body], { type: "ap
 const up = await api("PUT", `/accounts/${A}/workers/scripts/ultrastable-site`, form);
 console.log("upload", up.success);
 if (!up.success) { console.error("upload failed:", JSON.stringify(up.errors)); process.exit(1); }
-const zones = { "ultrastable.io": "18a7463a4e79b98d04aa22eb96b0127b", "www.ultrastable.io": "18a7463a4e79b98d04aa22eb96b0127b", "ultrastable.app": "29a8a782765682441aafd3f64a186ea6", "ultrastable.net": "e23fd6a6078d557c08462aaa80614402" };
+const zones = { "ultrastable.io": "18a7463a4e79b98d04aa22eb96b0127b", "www.ultrastable.io": "18a7463a4e79b98d04aa22eb96b0127b", "ultrastable.app": "29a8a782765682441aafd3f64a186ea6", "www.ultrastable.app": "29a8a782765682441aafd3f64a186ea6", "www.ultrastable.net": "e23fd6a6078d557c08462aaa80614402", "ultrastable.net": "e23fd6a6078d557c08462aaa80614402" };
 let bad = 0;
 for (const [hostname, zone_id] of Object.entries(zones)) {
   const ok = (await api("PUT", `/accounts/${A}/workers/domains`, JSON.stringify({ hostname, service: "ultrastable-site", zone_id, environment: "production" }), { "content-type": "application/json" })).success;

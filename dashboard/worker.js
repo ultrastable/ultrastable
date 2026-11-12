@@ -202,6 +202,7 @@ export async function stateOf(env) {
   const done = (await env.DB.prepare("SELECT COUNT(*) c FROM tasks WHERE state='done'").first()).c;
   const audit = await q("SELECT id,at,cmd,ok FROM audit ORDER BY id DESC LIMIT 8");
   const notes = await q("SELECT at,subject,sent,error FROM notifications ORDER BY at DESC LIMIT 6");
+  await ensureSnapshots(env);
   const sn = await env.DB.prepare("SELECT body,at FROM snapshots WHERE key='repo'").first();
   let snapshot = null; if (sn) { try { snapshot = { ...JSON.parse(sn.body), received: sn.at }; } catch (e) { snapshot = { error: "stored snapshot is not valid JSON" }; } }
   let analytics = null; try { analytics = await report(env); } catch (e) { analytics = { error: String(e.message || e) }; }
@@ -209,7 +210,13 @@ export async function stateOf(env) {
 }
 
 // ---------- scheduled tick: probes, notifications, daily digest ----------
+// CRON-GRID-1: one */10 trigger; the daily digest rides the first tick of 13:00 UTC (notify() dedups on "digest:<day>", so a retry never double-sends).
+export function digestDue(cron, now = new Date()) { return cron === "0 13 * * *" || (cron === "*/10 * * * *" && now.getUTCHours() === 13 && now.getUTCMinutes() < 10); }
+// The snapshots table is part of schema.sql but the live D1 was seeded without it ("no such table: snapshots" in CF-OBS 85b2b062); create it on first use.
+const snapshotsReady = new WeakSet();
+export async function ensureSnapshots(env) { if (snapshotsReady.has(env.DB)) return; await env.DB.prepare("CREATE TABLE IF NOT EXISTS snapshots(key TEXT PRIMARY KEY, body TEXT NOT NULL, at INTEGER NOT NULL)").run(); snapshotsReady.add(env.DB); }
 export async function tick(env, cron) {
+  try { await ensureSnapshots(env); } catch (e) { console.error("ensureSnapshots", e && e.message); }
   try { await selfcheck(env, HOSTS[0]); } catch (e) { console.error("selfcheck", e && e.message); }
   const res = await runProbes(env); const day = new Date().toISOString().slice(0, 10);
   for (const r of res.filter(x => !x.ok && x.name !== "github")) await notify(env, "fail:" + r.name + ":" + day, "Ultrastable check failing: " + r.name, r.name + " failed: " + r.detail + "\nOpen https://ultrastable.io/owner");
@@ -219,7 +226,7 @@ export async function tick(env, cron) {
     const sent = await notify(env, "task:" + fresh[0].id, fresh.length + " new item(s) in your Ultrastable queue", fresh.map(t => "- " + t.title).join("\n") + "\nOpen https://ultrastable.io/owner and tap Done, Snooze or Hand to fleet.");
     if (sent) for (const t of fresh.slice(1)) await env.DB.prepare("INSERT OR IGNORE INTO notifications(key,at,subject,sent) VALUES(?1,?2,'(grouped)',1)").bind("task:" + t.id, Date.now()).run();
   }
-  if (cron === "0 13 * * *") { const s = await stateOf(env); await notify(env, "digest:" + day, "Ultrastable daily digest", s.checks.map(k => (k.ok ? "ok   " : "FAIL ") + k.name + " - " + k.detail).join("\n") + "\n\nAnalytics:\n" + (s.analytics && s.analytics.metrics ? summary(s.analytics) : "unavailable") + "\n\nOwner queue: " + s.counts.owner + " open. Fleet: " + s.counts.fleet + " open, " + s.counts.queued + " queued, " + s.counts.done + " done.\nhttps://ultrastable.io/owner"); }
+  if (digestDue(cron)) { const s = await stateOf(env); await notify(env, "digest:" + day, "Ultrastable daily digest", s.checks.map(k => (k.ok ? "ok   " : "FAIL ") + k.name + " - " + k.detail).join("\n") + "\n\nAnalytics:\n" + (s.analytics && s.analytics.metrics ? summary(s.analytics) : "unavailable") + "\n\nOwner queue: " + s.counts.owner + " open. Fleet: " + s.counts.fleet + " open, " + s.counts.queued + " queued, " + s.counts.done + " done.\nhttps://ultrastable.io/owner"); }
 }
 
 // ---------- pages ----------
@@ -287,6 +294,7 @@ export async function route(req, env) {
       const raw = await req.text(); if (raw.length > 200000) return json({ error: "snapshot too large" }, 413);
       let b; try { b = JSON.parse(raw); } catch (e) { return json({ error: "not JSON" }, 400); }
       if (!Array.isArray(b.panels)) return json({ error: "snapshot needs panels" }, 400);
+      await ensureSnapshots(env);
       await env.DB.prepare("INSERT INTO snapshots(key,body,at) VALUES('repo',?1,?2) ON CONFLICT(key) DO UPDATE SET body=?1,at=?2").bind(raw, Date.now()).run();
       return json({ ok: true, panels: b.panels.length });
     }

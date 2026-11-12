@@ -2,7 +2,7 @@
 {
   "name": "{worker_name}",
   "main": "src/index.js",
-  "compatibility_date": "2026-10-01",
+  "compatibility_date": "2026-11-12",
   "triggers": { "crons": ["{tick_cron}"] },
   "d1_databases": [
     { "binding": "DB", "database_name": "{d1_database}", "database_id": "{d1_database_id}", "migrations_dir": "migrations" }
