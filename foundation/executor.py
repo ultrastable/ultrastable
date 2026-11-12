@@ -22,7 +22,7 @@ DENY_NAMES = (".env", "id_rsa", "credentials")
 MAX_FILES, MAX_BYTES = 8, 200_000
 # Generated files are derived from the queue and docs, so any change makes them stale; the executor regenerates them instead of failing its own checks.
 REPAIRS = 2
-GENERATORS = [["python3", "scripts/build_dashboard.py"]]
+GENERATORS = [["python3", "scripts/build_dashboard.py"], ["python3", "-m", "foundation", "doctrine", "--apply"], ["python3", "-m", "foundation", "glossary", "--apply"], ["python3", "-m", "foundation", "standards", "--apply"]]
 CHECKS = [["python3", "scripts/lint_workflows.py"], ["python3", "-m", "unittest", "discover", "-s", "tests/foundation"]]
 
 
@@ -103,7 +103,7 @@ def build_prompt(issue: dict, tree: str) -> str:
     return (axiom() + "\n\nYou are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. "
             'Reply with ONLY JSON: {"summary":"one line","files":[{"path":"relative/path","content":"full new file content"}]}. '
             "Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code. "
-            "Server-side only: never reference localhost, 127.0.0.1 or a listening port; code runs as a Cloudflare Worker or a plain function with injected fetch.\n\n"
+            "Every new Markdown file must contain the exact line: Ultrastable is the foundation for any autonomous system. Do not write about memory or chat as storage. Server-side only: never reference localhost, 127.0.0.1 or a listening port; code runs as a Cloudflare Worker or a plain function with injected fetch.\n\n"
             f"ISSUE #{issue['number']}: {issue['title']}\n{(issue.get('body') or '')[:6000]}\n\nREPOSITORY FILES (partial):\n{tree[:6000]}\n"
             + (lambda c: f"\n{c[:6000]}\n" if c else "")(_public_context(issue)) + ref)
 
@@ -207,7 +207,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             for c in (checks if checks is not None else CHECKS):
                 code, o = sh(c, root)
                 if code:
-                    failed.append(f"{' '.join(c)}: {o[-1200:]}")
+                    failed.append(f"{' '.join(c)}: {o[-2500:]}")
             if not failed:
                 break
             sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd"], root)
