@@ -1,8 +1,11 @@
 {
   "id": "PORT-EXEC-1",
   "title": "PORT-EXEC-1: executor closes PORT-<runtime> items: run the adapter verify command, record the result, mark the item done or file the failure",
-  "body": "code-task: repo=ultrastable path=foundation/executor.py\n**Owner:** staff (platform)\n**Trigger:** tick, item id matches PORT-*\n**Done check:** grep:foundation/executor.py::PORT-\\*\n\nDefinition: PORT-gcp reaches done with a recorded `platform/adapters/gcp` verify run; a failing verify files FAIL-PORT-<id>\n**Status:** open\n\nSeeded by GENESIS-1 follow-up. Every closed item proposes a plus.",
-  "labels": ["role:staff", "ws:platform"],
+  "body": "code-task: repo=ultrastable path=foundation/executor.py\n**Owner:** staff (platform)\n**Trigger:** tick, item id matches PORT-*\n**Done check:** file:ops/port-evidence/gcp-verify.json\n**Status:** open\n\nSeeded by GENESIS-1 follow-up. Every closed item proposes a plus.",
+  "labels": [
+    "role:staff",
+    "ws:platform"
+  ],
   "milestone": "Next",
   "workstream": "Platform"
 }

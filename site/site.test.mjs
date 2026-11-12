@@ -183,29 +183,22 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   rr = await mod.fetch(new Request("https://ultrastable.io/live"), ENV);
   assert.equal(rr.status, 200); assert.match(await rr.text(), /running on Ultrastable/);
 }
-// AGENT-INTEROP-1: markdown for agents, link headers, robots/llms.txt, OpenAPI, API catalog, read-only MCP with card.
+// AGENTIC-1: discovery documents and the read-only MCP endpoint
 {
-  const g = (p, h) => mod.fetch(new Request("https://ultrastable.io" + p, { headers: h || {} }), ENV);
-  let a = await g("/how", { accept: "text/markdown" });
-  assert.match(a.headers.get("content-type"), /text\/markdown/); assert.match(a.headers.get("vary"), /Accept/);
-  let t = await a.text(); assert.match(t, /^# /m); assert.ok(!/<(div|main|h1)/.test(t));
-  a = await g("/how.md"); assert.match(a.headers.get("content-type"), /text\/markdown/);
-  a = await g("/index.md"); assert.equal(a.status, 200);
-  a = await g("/how"); assert.match(a.headers.get("content-type"), /text\/html/); assert.match(a.headers.get("link"), /api-catalog/); assert.match(a.headers.get("link"), /service-desc/);
-  a = await g("/robots.txt"); t = await a.text(); assert.match(t, /Content-Signal: search=yes, ai-input=yes, ai-train=no/); assert.match(t, /Sitemap:/);
-  a = await g("/llms.txt"); t = await a.text(); assert.match(t, /^# Ultrastable\n\n> /); assert.match(t, /^## Optional$/m); assert.ok(/\]\(https:\/\/ultrastable\.io\/[^)]+\)/.test(t));
-  a = await g("/openapi.json"); let o = await a.json(); assert.equal(o.openapi, "3.1.0"); assert.ok(o.paths["/api/live"] && o.paths["/mcp"]);
-  a = await g("/.well-known/api-catalog"); assert.match(a.headers.get("content-type"), /linkset\+json/); assert.ok((await a.json()).linkset[0]["service-desc"]);
-  a = await g("/.well-known/mcp/server-card.json"); let c = await a.json(); assert.equal(c.transport.endpoint, "https://ultrastable.io/mcp");
-  const rpc = (b) => mod.fetch(new Request("https://ultrastable.io/mcp", { method: "POST", body: JSON.stringify(b) }), ENV);
-  a = await rpc({ jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-06-18" } }); let j = await a.json(); assert.equal(j.result.protocolVersion, "2025-06-18");
-  a = await rpc({ jsonrpc: "2.0", method: "notifications/initialized" }); assert.equal(a.status, 202);
-  a = await rpc({ jsonrpc: "2.0", id: 2, method: "tools/list" }); j = await a.json(); assert.deepEqual(j.result.tools.map((x) => x.name).sort(), ["ultrastable_capabilities", "ultrastable_live_status", "ultrastable_suggest_ideas"]);
-  a = await rpc({ jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: "ultrastable_suggest_ideas", arguments: { q: "bin day", n: 3 } } }); j = await a.json(); assert.equal(j.result.isError, false); assert.ok(JSON.parse(j.result.content[0].text).length);
-  a = await rpc({ jsonrpc: "2.0", id: 4, method: "tools/call", params: { name: "ultrastable_capabilities" } }); assert.ok(JSON.parse((await a.json()).result.content[0].text).gaps);
-  a = await rpc({ jsonrpc: "2.0", id: 5, method: "tools/call", params: { name: "build_site" } }); assert.equal((await a.json()).error.code, -32602);
-  a = await rpc({ jsonrpc: "2.0", id: 6, method: "nope" }); assert.equal((await a.json()).error.code, -32601);
-  a = await mod.fetch(new Request("https://ultrastable.io/mcp", { method: "POST", body: "{" }), ENV); assert.equal(a.status, 400);
-  a = await g("/mcp"); assert.equal(a.status, 405);
-  console.log("ultrastable-site agent interop ok");
+  const snap = JSON.stringify({ generated: "g", scoreboard: { a: 1 }, throughput: { changelog: [] }, managers: [], claims: {}, gaps: [] });
+  const db = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: snap }] }) }), first: async () => ({ generated: "g", total: 1 }) }) };
+  const E3 = { ...ENV, DB: db };
+  const g3 = async (p, init) => mod.fetch(new Request("https://ultrastable.io" + p, init), E3);
+  let rr = await g3("/.well-known/api-catalog"); assert.match(rr.headers.get("content-type"), /linkset\+json/); assert.ok((await rr.json()).linkset.length >= 1);
+  rr = await g3("/.well-known/mcp/server-card.json"); assert.equal((await rr.json()).serverInfo.name, "ultrastable-live");
+  rr = await g3("/.well-known/agent-skills/index.json"); const sk = (await rr.json()).skills[0]; assert.match(sk.sha256, /^[0-9a-f]{64}$/);
+  const md = await (await g3("/.well-known/agent-skills/ultrastable-live/SKILL.md")).text();
+  const h = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(md)))).map(x => x.toString(16).padStart(2, "0")).join(""); assert.equal(h, sk.sha256);
+  assert.match(await (await g3("/robots.txt")).text(), /Content-Signal:/);
+  assert.match((await g3("/")).headers.get("link"), /api-catalog/);
+  const rpc = async (m, params) => (await (await g3("/mcp", { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: m, params }) })).json());
+  assert.equal((await rpc("tools/list")).result.tools.length, 6);
+  assert.equal(JSON.parse((await rpc("tools/call", { name: "get_scoreboard" })).result.content[0].text).a, 1);
+  assert.equal((await rpc("nope")).error.code, -32601);
+  assert.equal((await g3("/mcp")).status, 405); assert.equal((await g3("/mcp", { method: "DELETE" })).status, 405);
 }

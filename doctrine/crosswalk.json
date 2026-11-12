@@ -1,14 +1,73 @@
 {
   "_doc": "TERMS-CROSSWALK-1 (owner directive 2026-11-12): words people and agents use for overlapping ideas, each mapped to one canonical glossary term. Checked by `python3 -m foundation crosswalk --check`; consumed by tests/foundation/test_crosswalk.py.",
   "marker": "TERMS-CROSSWALK",
-  "marker_text": "TERMS-CROSSWALK: say autonomous for a system with self-referential loops and the ability to close them (glossary `autonomy`); closed loop for one loop that its own system closes (`loop`, `self-referential-closure`); automatic only for one step that code runs with no person (a property of a step, never of a system). Do not use unattended, never-terminating, hands-off or set-and-forget as synonyms. Map and avoided words: doctrine/crosswalk.json (`python3 -m foundation crosswalk --check`).",
-  "instruction_files": ["AGENTS.md", "agents/AGENTS.md", "agents/PROJECT-INSTRUCTIONS.md", "agents/roles/*.md", "seed/AGENTS.md", "seed/agents/AGENTS.md", "seed/agents/roles/*.md", ".github/copilot-instructions.md", "seed/.github/copilot-instructions.md"],
-  "entries": [
-    {"say": "autonomous", "canonical": "autonomy", "means": "self-referential loops plus the ability to close them", "also_heard": ["self-driving", "self-running"], "not": "running without people; not a single automated step"},
-    {"say": "closed loop", "canonical": "loop", "means": "a loop whose trigger, action, verification and write-back the system itself runs", "also_heard": ["closed-loop", "closing the loop"], "not": "a loop a person must close"},
-    {"say": "automatic", "canonical": "tick", "means": "one step executed by code with no person; a property of a step", "also_heard": ["automated", "automatically"], "not": "autonomy; many automatic steps do not make a system autonomous"},
-    {"say": "never stops", "canonical": "tick", "means": "the heartbeat always pulls the next item; stops only at the interrupt gate", "also_heard": ["never-terminating", "non-terminating", "continuous"], "not": "an unbounded process with no stop condition"},
-    {"say": "no person in the loop", "canonical": "interrupt-gate", "means": "no human step except an irreversible, identity-bound act, which becomes a gate card with a default in effect", "also_heard": ["unattended", "hands-off", "set and forget"], "not": "no human can ever intervene"}
+  "marker_text": "TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or event on server-side infrastructure, closes itself and does not stop at an error. Say autonomous for a system, closed loop for one loop, unattended for the measure (merged work with no session driving it). Do not use never-terminating, non-terminating, hands-off or set-and-forget. Map and avoided words: doctrine/crosswalk.json (`python3 -m foundation crosswalk --check`).",
+  "instruction_files": [
+    "AGENTS.md",
+    "agents/AGENTS.md",
+    "agents/PROJECT-INSTRUCTIONS.md",
+    "agents/roles/*.md",
+    "seed/AGENTS.md",
+    "seed/agents/AGENTS.md",
+    "seed/agents/roles/*.md",
+    ".github/copilot-instructions.md",
+    "seed/.github/copilot-instructions.md"
   ],
-  "avoided": ["unattended", "never-terminating", "non-terminating", "hands-off", "set-and-forget", "set and forget", "self-running"]
+  "entries": [
+    {
+      "say": "autonomous",
+      "canonical": "autonomy",
+      "means": "self-referential loops plus the ability to close them",
+      "also_heard": [
+        "self-driving"
+      ],
+      "not": "a single automated step"
+    },
+    {
+      "say": "closed loop",
+      "canonical": "loop",
+      "means": "a loop whose trigger, action, verification and write-back the system itself runs",
+      "also_heard": [
+        "closed-loop",
+        "closing the loop"
+      ],
+      "not": "a loop a person must close"
+    },
+    {
+      "say": "automatic",
+      "canonical": "unattended",
+      "means": "owner's word for the same property as unattended: runs on a clock or event with no person in the path",
+      "also_heard": [
+        "automated",
+        "automatically"
+      ],
+      "not": "a step that needs an open session"
+    },
+    {
+      "say": "unattended",
+      "canonical": "unattended",
+      "means": "the agents' word and the measure: merged pull requests whose origin is the server-side executor",
+      "also_heard": [
+        "no person in the loop"
+      ],
+      "not": "a system a person cannot inspect"
+    },
+    {
+      "say": "never stops",
+      "canonical": "unattended",
+      "means": "does not stop at an error: a failure is recorded and the next run is a different attempt",
+      "also_heard": [
+        "continuous"
+      ],
+      "not": "an unbounded process with no stop condition"
+    }
+  ],
+  "avoided": [
+    "never-terminating",
+    "non-terminating",
+    "hands-off",
+    "set-and-forget",
+    "set and forget",
+    "self-running"
+  ]
 }

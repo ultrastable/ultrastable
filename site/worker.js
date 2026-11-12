@@ -6,9 +6,9 @@ import USER_PATH from "./userpath.js";
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
 import { liveResponse } from "./live.js";
+import { agentic, withLinks, CONTENT_SIGNAL } from "./agentic.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
-import AG from "./agent.js";
 import DASH from "./dashboard-data.js";
 var VERSION = "0.11.0";
 const CANON = "ultrastable.io";
@@ -526,8 +526,8 @@ function contact() {
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");
 }
 
-const ROBOTS = AG.robots();
-const LLMS = AG.llmsTxt();
+const ROBOTS = "User-agent: *\n" + CONTENT_SIGNAL + "Allow: /\nSitemap: https://" + CANON + "/sitemap.xml\n";
+const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. Ultrastable runs on itself. QNFO runs on it as customer zero.\n\n- [Live proof](https://" + CANON + "/proof): claims checked against QNFO's records\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n";
 
 const FAVICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"ultrastable\"><title>ultrastable</title><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></svg>";
 const SOCIAL = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1280 640\" width=\"1280\" height=\"640\"><title>ultrastable</title><defs><linearGradient id=\"g\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#12342A\"/><stop offset=\"1\" stop-color=\"#0B1A15\"/></linearGradient></defs><rect width=\"1280\" height=\"640\" fill=\"url(#g)\"/><g transform=\"translate(96 96) scale(2)\"><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></g><text x=\"96\" y=\"340\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#F6F1E7\">Coding agents write code.</text><text x=\"96\" y=\"430\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#FF5B1F\">Ultrastable runs the system.</text><text x=\"96\" y=\"530\" font-family=\"Georgia,serif\" font-size=\"32\" fill=\"#C9D4CC\">From one idea to a business that improves itself.</text><text x=\"1184\" y=\"590\" text-anchor=\"end\" font-family=\"Georgia,serif\" font-size=\"28\" fill=\"#FFC857\">ultrastable.io</text></svg>";
@@ -536,7 +536,7 @@ const SVG = { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age
 
 const HTML = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" };
 
-const route = {
+const handler = {
   async fetch(request, env, ctx) {
     const u = new URL(request.url);
     const host = u.hostname.replace(/^www\./, "");
@@ -585,9 +585,5 @@ const route = {
     }
   }
 };
-const AGENT_DEPS = (env) => ({
-  capabilities: () => ROAD,
-  suggest: (q, seed, n) => SG.suggest(q, [], seed, n),
-  live: async () => { try { const r = await liveResponse(new URL("https://" + CANON + "/api/live"), new Request("https://" + CANON + "/api/live"), env, shell, HTML); return await r.json(); } catch (e) { return { error: "live view unavailable" }; } }
-});
-export default { fetch: (request, env, ctx) => AG.withAgent(request, env, ctx, (rq, e, c) => route.fetch(rq, e, c), AGENT_DEPS(env)) };
+// AGENTIC-1: machine-readable discovery and a read-only MCP endpoint in front of every page.
+export default { async fetch(request, env, ctx) { const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };

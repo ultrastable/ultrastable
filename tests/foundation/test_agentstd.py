@@ -26,7 +26,7 @@ class AgentStd(unittest.TestCase):
             shutil.copytree(REPO / "doctrine", r / "doctrine")
             shutil.copytree(REPO / "site", r / "site", ignore=shutil.ignore_patterns("assets", "node_modules"))
             d = agentstd.load(r)
-            d["standards"][0]["proof"] = "grep:site/site.test.mjs::no-such-text-xyz"
+            next(x for x in d["standards"] if x["id"] == "link-headers")["proof"] = "grep:site/site.test.mjs::no-such-text-xyz"
             import json
             (r / "doctrine/agent-standards.json").write_text(json.dumps(d), encoding="utf-8")
             self.assertTrue(any("proof probe fails" in b for b in agentstd.check(r)))
@@ -38,8 +38,8 @@ class Crosswalk(unittest.TestCase):
 
     def test_avoided_word_caught_but_marker_line_exempt(self):
         av = crosswalk.load(REPO)["avoided"]
-        self.assertEqual(crosswalk.avoided_hits("The loop runs unattended.", av), ["unattended"])
-        self.assertEqual(crosswalk.avoided_hits("TERMS-CROSSWALK: do not use unattended", av), [])
+        self.assertEqual(crosswalk.avoided_hits("The loop runs hands-off.", av), ["hands-off"])
+        self.assertEqual(crosswalk.avoided_hits("TERMS-CROSSWALK: do not use hands-off", av), [])
         self.assertEqual(crosswalk.avoided_hits("an attended step", av), [])
 
 

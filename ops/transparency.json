@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T14:22:37Z",
- "commit": "2b61fc3",
+ "generated": "2026-11-12T14:25:41Z",
+ "commit": "82e9098",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 66,
@@ -18,17 +18,17 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 62,
-  "backlog_items": 64
+  "backlog_open": 68,
+  "backlog_items": 70
  },
  "throughput": {
   "queue": {
-   "items": 64,
+   "items": 70,
    "by_status": {
-    "open": 62,
+    "open": 68,
     "done": 2
    },
-   "takeable_now": 62
+   "takeable_now": 68
   },
   "merged": {
    "total": 0,
@@ -1449,6 +1449,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "82e9098",
+    "at": "2026-11-12T14:23:12+00:00",
+    "author": "Claude",
+    "subject": "SYSTEM-1: one running system as data (wrangler configs per worker), in-Worker code agent probe, deploy-system workflow and script",
+    "pr": null,
+    "item": "SYSTEM-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/82e90986362f4e579bb10d089cfb389a4c69e7c2"
+   },
+   {
     "sha": "2b61fc3",
     "at": "2026-11-12T14:16:35+00:00",
     "author": "Claude",
@@ -1798,15 +1807,6 @@
     "pr": 226,
     "item": "RECALL-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/73863867b3dbc28dffbce6ea856a8aa95bbf2312"
-   },
-   {
-    "sha": "130153e",
-    "at": "2026-11-12T12:54:21+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "COMPLETE-1: always complete and close finished work, threads and sessions (#228)",
-    "pr": 228,
-    "item": "COMPLETE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/130153e6341868cd6e2488ee4f26ed795c05fa60"
    }
   ],
   "pull_requests": []
