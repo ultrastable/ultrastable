@@ -1,0 +1,125 @@
+{
+  "_doc": "SYSTEM-1 (owner directive 2026-11-12): the one running system as data. Workers, their bindings and how they link (service bindings, queue, shared D1/KV, Workers AI, vector index). `python3 -m foundation system --render` writes one wrangler config per worker to instances/ultrastable/system/; `--check` fails when the rendered files drift, a service binding names no worker, or a queue has no consumer. deploy/deploy-system.mjs deploys the tick worker from the same data and probes /agents/probe.",
+  "name": "ultrastable",
+  "compatibility_date": "2026-11-04",
+  "resources": {
+    "d1": {
+      "org": {
+        "name": "ultrastable-org",
+        "id": "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"
+      }
+    },
+    "kv": {
+      "assets": {
+        "title": "ultrastable-site-assets"
+      },
+      "state": {
+        "title": "ultrastable-state"
+      }
+    },
+    "queues": {
+      "work": {
+        "name": "ultrastable-work"
+      }
+    },
+    "vectorize": {
+      "memory": {
+        "name": "ultrastable-memory",
+        "dimensions": 768,
+        "metric": "cosine"
+      }
+    }
+  },
+  "workers": {
+    "ultrastable-tick": {
+      "main": "seed/worker/src/index.js",
+      "role": "heartbeat, executor dispatch, in-Worker code agents, lane",
+      "crons": [
+        "*/10 * * * *"
+      ],
+      "bindings": {
+        "d1": {
+          "DB": "org"
+        },
+        "ai": [
+          "AI"
+        ],
+        "kv": {
+          "STATE": "state"
+        },
+        "queue_producers": {
+          "WORK": "work"
+        },
+        "queue_consumers": [
+          "work"
+        ],
+        "vectorize": {
+          "MEMORY": "memory"
+        },
+        "services": {
+          "SITE": "ultrastable-site",
+          "DASHBOARD": "ultrastable-dashboard",
+          "AGENTS": "ultrastable-agents"
+        }
+      }
+    },
+    "ultrastable-site": {
+      "main": "site/worker.js",
+      "role": "public front door, live view, agent endpoints",
+      "crons": [],
+      "bindings": {
+        "d1": {
+          "DB": "org"
+        },
+        "ai": [
+          "AI"
+        ],
+        "kv": {
+          "ASSETS": "assets"
+        },
+        "services": {
+          "TICK": "ultrastable-tick"
+        }
+      }
+    },
+    "ultrastable-dashboard": {
+      "main": "dashboard/worker.js",
+      "role": "owner dashboard behind emailed-code login",
+      "crons": [
+        "0 13 * * *"
+      ],
+      "bindings": {
+        "d1": {
+          "DB": "org"
+        },
+        "services": {
+          "TICK": "ultrastable-tick"
+        }
+      }
+    },
+    "ultrastable-agents": {
+      "main": "deploy/agents-worker.js",
+      "role": "code agents (Workers AI adapters from doctrine/code-agents.json), probed live",
+      "crons": [],
+      "bindings": {
+        "ai": [
+          "AI"
+        ],
+        "d1": {
+          "DB": "org"
+        }
+      }
+    }
+  },
+  "edit_path": [
+    "tick (ultrastable-tick cron)",
+    "pick top queue item",
+    "code agent adapter edits (doctrine/code-agents.json)",
+    "PR on a branch",
+    "checks.yml",
+    "lane merges",
+    "deploy-system.yml / deploy-site.yml",
+    "dashboard counts the deploy"
+  ],
+  "deploy_counter": "ops/deploys.jsonl"
+}

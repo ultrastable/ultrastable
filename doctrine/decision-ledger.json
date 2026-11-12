@@ -328,6 +328,14 @@
    "title": "AGENT-INTEROP-1 and TERMS-CROSSWALK-1",
    "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Site serves Markdown, Link headers, llms.txt, OpenAPI, API catalog, read-only MCP; standards are data with source and date; A2A declined with reason (no endpoint). Crosswalk maps autonomous, closed loop, automatic, never stops, no person in the loop to glossary terms; markers stamped in every instruction file.",
    "probe": "grep:foundation/agentstd.py::def check"
+  },
+  {
+   "id": "decision-2026-11-12-code-agents-1-and-system-1-adapter-registry-one-running-syst",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "CODE-AGENTS-1 and SYSTEM-1: adapter registry, one running system",
+   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Adapter registry with cost routing and disjoint-family ensemble (from the QNFO review gate); in-Worker code agent through env.AI; system topology as data rendered to wrangler configs; deploy-system.yml deploys ultrastable-agents and probes every adapter. A direct connector deploy was refused by the permission classifier (production deploy) and is recorded; the repo workflow is the deploy route.",
+   "probe": "grep:foundation/system.py::def render_worker"
   }
  ]
 }

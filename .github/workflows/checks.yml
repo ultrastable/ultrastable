@@ -70,6 +70,8 @@ jobs:
           python3 -m foundation market --check
           python3 -m foundation agentstd --check
           python3 -m foundation crosswalk --check
+          python3 -m foundation agents --check
+          python3 -m foundation system --check
           python3 -m foundation boundary --drill
           python3 -m foundation queue --check
           python3 -m foundation directive --lint HANDOFF.md docs/lessons/*.md

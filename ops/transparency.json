@@ -1,10 +1,10 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T14:14:22Z",
- "commit": "f4246ca",
+ "generated": "2026-11-12T14:22:37Z",
+ "commit": "2b61fc3",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
-  "managers_and_loops": 64,
+  "managers_and_loops": 66,
   "loops_with_evidence": 2,
   "components": {
    "live": 24
@@ -59,26 +59,26 @@
   },
   "changelog": [],
   "deploys": {
-   "site_runs": 24,
+   "site_runs": 26,
    "by_conclusion": {
-    "success": 23,
+    "success": 25,
     "cancelled": 1
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-12T14:10:33Z",
+    "createdAt": "2026-11-12T14:21:51Z",
     "event": "push",
-    "headSha": "0b54048f196af2a08d9915a011b0ba2eb650af55"
+    "headSha": "8c618a195e5e2a2430f33756fbd7158c477c1d71"
    },
    "per_day_success": {
-    "2026-11-12": 23
+    "2026-11-12": 25
    }
   },
   "executor": {
-   "runs": 6,
+   "runs": 8,
    "by_conclusion": {
-    "failure": 4,
-    "success": 2
+    "success": 3,
+    "failure": 5
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -1017,6 +1017,30 @@
    "cycle_metric": null,
    "last_plus": null,
    "last_run": null
+  },
+  {
+   "loop": "code-agents",
+   "kind": "governance",
+   "summary": "CODE-AGENTS-1: code agents that edit the codebase are an adapter registry with cost routing and a disjoint-family ensemble; every adapter has an invoking test and a live probe.",
+   "owner": "operations",
+   "trigger": "every PR (checks.yml)",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/agents.py::def route_authors",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "running-system",
+   "kind": "governance",
+   "summary": "SYSTEM-1: tick, executor, agents, site and dashboard are one system rendered to wrangler configs from data and deployed by deploy-system.yml with a live probe.",
+   "owner": "operations",
+   "trigger": "every PR (checks.yml)",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/system.py::def render_worker",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
   }
  ],
  "claims": {
@@ -1425,6 +1449,24 @@
  "changes": {
   "commits": [
    {
+    "sha": "2b61fc3",
+    "at": "2026-11-12T14:16:35+00:00",
+    "author": "Claude",
+    "subject": "CODE-AGENTS-1: adapter registry, cost routing, disjoint-family ensemble, invoking tests",
+    "pr": null,
+    "item": "CODE-AGENTS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/2b61fc3ca07b5a76453f0a4eb2f7baf04dbeee4e"
+   },
+   {
+    "sha": "65e4862",
+    "at": "2026-11-12T14:14:55+00:00",
+    "author": "Claude",
+    "subject": "AGENT-INTEROP-1, TERMS-CROSSWALK-1: agent-readable site (Markdown, Link, llms.txt, OpenAPI, catalog, read-only MCP), standards and crosswalk as data with checks",
+    "pr": null,
+    "item": "AGENT-INTEROP-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/65e4862070e225cd62a8a74780b59ca956a4fbae"
+   },
+   {
     "sha": "f4246ca",
     "at": "2026-11-12T15:02:47+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -1765,24 +1807,6 @@
     "pr": 228,
     "item": "COMPLETE-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/130153e6341868cd6e2488ee4f26ed795c05fa60"
-   },
-   {
-    "sha": "69fb2dd",
-    "at": "2026-11-12T12:52:04+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "AGENT-PASTE-1 + PLATFORM-BRIEF-1: paste-into-any-AI start, deploy on any cloud via its own agent (site 0.9.0) (#227)",
-    "pr": 227,
-    "item": "AGENT-PASTE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/69fb2dd3209fa157bd2345090dad0d874f3638b1"
-   },
-   {
-    "sha": "c451a53",
-    "at": "2026-11-12T12:39:41+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "BUILD-2: idea build no longer stuck at Building (site 0.5.1) (#225)",
-    "pr": 225,
-    "item": "BUILD-2",
-    "url": "https://github.com/ultrastable/ultrastable/commit/c451a5386fdc22ae9f776df18e8fd6ed56b09e4d"
    }
   ],
   "pull_requests": []
