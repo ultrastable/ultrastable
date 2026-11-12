@@ -1,22 +1,128 @@
 {
-  "_doc": "GROWTH-1 (owner, 2026-11-12): the virtual product manager owns growth, not bug fixes. Targets are numbers the product must move; knobs are the places the system can change to move them; experiments are growth changes each with a prediction. foundation/growth.py files each proposed experiment as a queue item labelled `growth`, files repair items from clockwork misses, and fails the check when work filed is fixes only or the growth share of filed work falls under the floor. Reads doctrine/market.json (gaps become growth items), docs/issues, ops/improvements.jsonl. Consumers: foundation/growth.py, tests/foundation/test_growth.py, role product-manager.",
-  "floor": {"growth_share_min": 0.3, "growth_labels": ["growth", "gap"], "repair_labels": ["repair", "bug", "ci-failed", "clock"]},
+  "_doc": "GROWTH-1: the product manager's job is growth, not only bug fixes (owner directive 2026-11-12). This file is what the product manager loop reads: the share of shipped work that must be growth, the metrics that say whether the product is growing, and how work is classified. foundation/growth.py measures the mix and the metrics, publishes them on /live, and the executor prefers a growth item whenever the recent mix falls below the target. A growth item adds a capability, a surface, a reader or a customer path; a fix repairs something that was meant to work; maintenance keeps it running.",
+  "version": "1.0.0",
+  "target_growth_share": 0.4,
+  "window_merges": 20,
+  "label": "growth",
+  "classify": {
+    "fix": "\\b(fix|fixes|repair|bug|stale|failing|failed|revert|regress|hotfix|broken|conflict)\\b",
+    "growth": "\\b(grow|growth|GROW|add|adds|new|build|built|launch|feed|demo|pilot|case study|pricing|surface|capability|feature|MCP|agent-readable|live record|changelog|dashboard|topology|ladder)\\b"
+  },
+  "metrics": [
+    {
+      "id": "pageviews_7d",
+      "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
+      "target": 1500,
+      "direction": ">=",
+      "trigger": "breach opens a growth item for the product manager"
+    },
+    {
+      "id": "visitors_7d",
+      "what": "distinct visitors in the last 7 days",
+      "target": 650,
+      "direction": ">=",
+      "trigger": "breach opens a growth item for the product manager"
+    },
+    {
+      "id": "agent_hits_7d",
+      "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
+      "target": 1000,
+      "direction": ">=",
+      "trigger": "breach opens a growth item for the product manager"
+    },
+    {
+      "id": "pilot_page_views_7d",
+      "what": "views of the pilot application page in the last 7 days",
+      "target": 400,
+      "direction": ">=",
+      "trigger": "breach opens a growth item for the product manager"
+    }
+  ],
+  "owner_note": "Targets are first hypotheses chosen by the system: the baseline measured on 2026-11-12 (1310 page views, 564 visitors, 817 agent hits, 326 pilot page views in 7 days) plus 15 to 25 percent. The product manager revises them from measured baselines, each change as a reviewed PR.",
   "targets": [
-    {"id": "idea-to-pilot", "metric": "pilot_applications_7d", "source": "site analytics scoreboard", "target": 5, "why": "pilot applications are the conversion the front door exists for"},
-    {"id": "interview-completion", "metric": "interview_completion_rate", "source": "site analytics scoreboard", "target": 0.5, "why": "an idea flow that people finish"},
-    {"id": "systems-running", "metric": "tenant_systems_deploying_unattended", "source": "tenant 0 and pilots: ops/deploys.jsonl", "target": 3, "why": "the product is systems that ship code on their own"},
-    {"id": "market-coverage", "metric": "market_gaps_closed", "source": "doctrine/market.json", "target": 5, "why": "closing the gaps against competitors"}
+    {
+      "id": "idea-to-pilot",
+      "metric": "pilot_applications_7d",
+      "source": "site analytics scoreboard",
+      "target": 5,
+      "why": "pilot applications are the conversion the front door exists for"
+    },
+    {
+      "id": "interview-completion",
+      "metric": "interview_completion_rate",
+      "source": "site analytics scoreboard",
+      "target": 0.5,
+      "why": "an idea flow that people finish"
+    },
+    {
+      "id": "systems-running",
+      "metric": "tenant_systems_deploying_unattended",
+      "source": "tenant 0 and pilots: ops/deploys.jsonl",
+      "target": 3,
+      "why": "the product is systems that ship code on their own"
+    },
+    {
+      "id": "market-coverage",
+      "metric": "market_gaps_closed",
+      "source": "doctrine/market.json",
+      "target": 5,
+      "why": "closing the gaps against competitors"
+    }
   ],
   "knobs": [
-    {"id": "front-door-copy", "where": "site/worker.js", "what": "headline, hint and suggestions on the front door"},
-    {"id": "interview-questions", "where": "site/interview.js", "what": "question bank and order"},
-    {"id": "pilot-form", "where": "site/worker.js", "what": "fields and length of the pilot application"},
-    {"id": "capability-set", "where": "doctrine/market.json", "what": "which components are built next"}
+    {
+      "id": "front-door-copy",
+      "where": "site/worker.js",
+      "what": "headline, hint and suggestions on the front door"
+    },
+    {
+      "id": "interview-questions",
+      "where": "site/interview.js",
+      "what": "question bank and order"
+    },
+    {
+      "id": "pilot-form",
+      "where": "site/worker.js",
+      "what": "fields and length of the pilot application"
+    },
+    {
+      "id": "capability-set",
+      "where": "doctrine/market.json",
+      "what": "which components are built next"
+    }
   ],
   "experiments": [
-    {"id": "shorter-pilot-form", "target": "idea-to-pilot", "knob": "pilot-form", "hypothesis": "Fewer required fields raise the share of started applications that are sent.", "prediction": "pilot_applications_7d >= 5 within 168 h", "status": "proposed"},
-    {"id": "adaptive-follow-ups", "target": "interview-completion", "knob": "interview-questions", "hypothesis": "Follow-up questions chosen from the first answer keep people in the interview.", "prediction": "interview_completion_rate >= 0.5 within 168 h", "status": "proposed"},
-    {"id": "front-door-example-systems", "target": "idea-to-pilot", "knob": "front-door-copy", "hypothesis": "Three concrete running systems on the front door raise taps into the interview.", "prediction": "pilot_applications_7d >= 5 within 168 h", "status": "proposed"},
-    {"id": "second-tenant-deploying", "target": "systems-running", "knob": "capability-set", "hypothesis": "A second tenant system with its own deploy loop proves the product beyond tenant 0.", "prediction": "tenant_systems_deploying_unattended >= 2 within 336 h", "status": "proposed"}
+    {
+      "id": "shorter-pilot-form",
+      "target": "idea-to-pilot",
+      "knob": "pilot-form",
+      "hypothesis": "Fewer required fields raise the share of started applications that are sent.",
+      "prediction": "pilot_applications_7d >= 5 within 168 h",
+      "status": "proposed"
+    },
+    {
+      "id": "adaptive-follow-ups",
+      "target": "interview-completion",
+      "knob": "interview-questions",
+      "hypothesis": "Follow-up questions chosen from the first answer keep people in the interview.",
+      "prediction": "interview_completion_rate >= 0.5 within 168 h",
+      "status": "proposed"
+    },
+    {
+      "id": "front-door-example-systems",
+      "target": "idea-to-pilot",
+      "knob": "front-door-copy",
+      "hypothesis": "Three concrete running systems on the front door raise taps into the interview.",
+      "prediction": "pilot_applications_7d >= 5 within 168 h",
+      "status": "proposed"
+    },
+    {
+      "id": "second-tenant-deploying",
+      "target": "systems-running",
+      "knob": "capability-set",
+      "hypothesis": "A second tenant system with its own deploy loop proves the product beyond tenant 0.",
+      "prediction": "tenant_systems_deploying_unattended >= 2 within 336 h",
+      "status": "proposed"
+    }
   ]
 }

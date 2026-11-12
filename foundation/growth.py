@@ -1,84 +1,128 @@
-"""GROWTH-1: the product manager's growth loop. Ultrastable is the foundation for any autonomous system.
+"""GROWTH-1: the product manager's growth loop as code. Measures the growth share of shipped work and the growth metrics, and steers the executor toward growth.
 
-  python3 -m foundation growth --check            declaration valid, and the filed work is not fixes only (share floor)
-  python3 -m foundation growth --cycle [--apply]  file each proposed experiment and each open market gap as growth items; --apply writes them
-  python3 -m foundation growth --share            growth versus repair counts and share, as JSON
+  python3 -m foundation growth [--report|--check]
 
-Growth work (experiments against targets, closing competitor gaps) is what a product manager exists for; repair work (failing checks, missed clock ticks)
-keeps the system true. Both are filed through the same queue. The share of growth in filed work has a floor, and a period with repairs and no growth fails.
+Mix: the last `window_merges` merge subjects on main are classified fix / growth / maintenance (doctrine/growth.json). When the growth share is below the target and a
+growth item (label `growth`) is takeable, the executor picks from the growth items first, so the backlog cannot devolve into bug fixes. Metrics: first-party hits in D1
+(seed/analytics) read over the Cloudflare API when a token is bound. Targets and triggers are data; a metric below target is a breach the product manager answers with a
+growth item.
 """
 from __future__ import annotations
-import json, re, sys
+import json, os, re, subprocess, sys, time
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 PATH = "doctrine/growth.json"
-PRED = re.compile(r"^[a-z0-9_]+ (>=|<=|==|>|<) [0-9.]+ within [0-9]+ h$")
 
 
 def load(root=REPO) -> dict:
-    return json.loads((Path(root) / PATH).read_text(encoding="utf-8"))
+    p = Path(root) / PATH
+    return json.loads((p if p.is_file() else REPO / PATH).read_text(encoding="utf-8"))
 
 
-def issues(root=REPO) -> list[dict]:
+def _names(labels) -> list[str]:
+    return [l["name"] if isinstance(l, dict) else l for l in labels or []]
+
+
+def classify(title: str, labels=(), cfg=None) -> str:
+    cfg = cfg or load()
+    if cfg["label"] in _names(labels):
+        return "growth"
+    if re.search(cfg["classify"]["fix"], title, re.I):
+        return "fix"
+    if re.search(cfg["classify"]["growth"], title, re.I):
+        return "growth"
+    return "maintenance"
+
+
+def mix(subjects: list[str], cfg=None) -> dict:
+    cfg = cfg or load()
+    c = {"growth": 0, "fix": 0, "maintenance": 0}
+    for s in subjects[: cfg["window_merges"]]:
+        c[classify(s, (), cfg)] += 1
+    n = sum(c.values())
+    return {**c, "total": n, "growth_share": round(c["growth"] / n, 3) if n else None, "target": cfg["target_growth_share"]}
+
+
+def recent_subjects(root=REPO, n=None) -> list[str]:
+    n = n or load(root)["window_merges"]
+    try:
+        r = subprocess.run(["git", "-C", str(root), "log", f"-{n}", "--format=%s", "--first-parent"], capture_output=True, text=True, timeout=30, encoding="utf-8")
+        return [l for l in r.stdout.splitlines() if l]
+    except (OSError, subprocess.SubprocessError):
+        return []
+
+
+def prefer(issues: list[dict], root=REPO, subjects=None) -> list[dict]:
+    """Executor hook: when the recent mix is below the growth target and a growth item is takeable, only growth items are candidates."""
+    cfg = load(root)
+    m = mix(subjects if subjects is not None else recent_subjects(root), cfg)
+    if m["growth_share"] is None or m["growth_share"] >= cfg["target_growth_share"]:
+        return issues
+    g = [i for i in issues if cfg["label"] in _names(i.get("labels"))]
+    return g or issues
+
+
+def hits_metrics(token: str, acct: str, db: str, now: float | None = None) -> dict:
+    from . import clock
+    now = int(now or time.time())
+    q = lambda sql: clock._cf(f"d1/database/{db}/query", {"sql": sql}, token, acct)["result"][0]["results"][0]
+    w = now - 7 * 86400
+    a = q(f"SELECT COUNT(*) AS pv, COUNT(DISTINCT vid) AS v FROM hits WHERE bot=0 AND name='pageview' AND at>={w}")
+    b = q(f"SELECT COUNT(*) AS n FROM hits WHERE bot=1 AND at>={w}")
+    c = q(f"SELECT COUNT(*) AS n FROM hits WHERE bot=0 AND name='pageview' AND path LIKE '/pilot%' AND at>={w}")
+    return {"pageviews_7d": a["pv"], "visitors_7d": a["v"], "agent_hits_7d": b["n"], "pilot_page_views_7d": c["n"]}
+
+
+def evaluate(metrics: dict, cfg=None) -> list[dict]:
+    cfg = cfg or load()
     out = []
-    for p in sorted((Path(root) / "docs/issues").glob("*.json")):
-        try:
-            d = json.loads(p.read_text(encoding="utf-8"))
-        except ValueError:
-            continue
-        if isinstance(d, dict):
-            out.append(d)
+    for m in cfg["metrics"]:
+        v = metrics.get(m["id"])
+        hit = None if v is None else (v < m["target"] if m["direction"] == ">=" else v > m["target"])
+        out.append({"id": m["id"], "what": m["what"], "value": v, "target": m["target"], "breach": hit})
     return out
 
 
-def share(root=REPO) -> dict:
-    f = load(root)["floor"]; g = r = 0
-    for it in issues(root):
-        ls = set(it.get("labels", []))
-        if ls & set(f["growth_labels"]): g += 1
-        elif ls & set(f["repair_labels"]): r += 1
-    return {"growth": g, "repair": r, "share": round(g / (g + r), 3) if g + r else None, "floor": f["growth_share_min"]}
-
-
-def item(e: dict, t: dict, k: dict) -> dict:
-    return {"id": "Q-GROW-" + e["id"], "title": f"Q-GROW-{e['id']}: {e['hypothesis']}",
-            "body": f"**Owner:** product-manager\n**Trigger:** every product-manager cycle\n**Done check:** grep:doctrine/growth.json::\"id\": \"{e['id']}\"\n**Prediction:** {e['prediction']}\n**Status:** open\n\nGrowth experiment on target `{t['id']}` ({t['metric']} target {t['target']}), knob `{k['id']}` in `{k['where']}`: {k['what']}. {t['why']}. Ship the change, log the prediction, keep it if the metric moved and revert it if not.",
-            "labels": ["role:product-manager", "growth"], "milestone": "Next", "workstream": "Growth"}
-
-
-def cycle(root=REPO, apply=False) -> list[str]:
-    d, have, filed = load(root), {i.get("id") for i in issues(root)}, []
-    T, K = {t["id"]: t for t in d["targets"]}, {k["id"]: k for k in d["knobs"]}
-    for e in d["experiments"]:
-        it = item(e, T[e["target"]], K[e["knob"]])
-        if e["status"] == "proposed" and it["id"] not in have:
-            filed.append(it["id"])
-            if apply:
-                (Path(root) / "docs/issues" / (it["id"] + ".json")).write_text(json.dumps(it, indent=2) + "\n", encoding="utf-8")
-    return filed
+def snapshot(root=REPO, use_live=True, env=None) -> dict:
+    env, cfg = os.environ if env is None else env, load(root)
+    d: dict = {"mix": mix(recent_subjects(root), cfg), "target_growth_share": cfg["target_growth_share"]}
+    try:
+        from . import queue as qmod
+        items = qmod.takeable(root)
+        d["growth_items_takeable"] = sum(1 for i in items if cfg["label"] in _names(i.get("labels")))
+        d["items_takeable"] = len(items)
+    except Exception as e:  # recorded
+        d["queue_error"] = str(e)[:120]
+    metrics = {}
+    if use_live and env.get("CLOUDFLARE_API_TOKEN"):
+        try:
+            metrics = hits_metrics(env["CLOUDFLARE_API_TOKEN"], "edb167b78c9fb901ea5bca3ce58ccc4b", "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd")
+        except Exception as e:  # recorded: an unmeasured metric is a finding
+            d["metrics_error"] = type(e).__name__ + ": " + str(e)[:120]
+    d["metrics"] = evaluate(metrics, cfg)
+    d["breaches"] = [m["id"] for m in d["metrics"] if m["breach"]]
+    return d
 
 
 def check(root=REPO) -> list[str]:
-    d, bad = load(root), []
-    T, K = {t["id"] for t in d["targets"]}, {k["id"] for k in d["knobs"]}
-    for e in d["experiments"]:
-        if e["target"] not in T: bad.append(f"{e['id']}: unknown target {e['target']}")
-        if e["knob"] not in K: bad.append(f"{e['id']}: unknown knob {e['knob']}")
-        if not PRED.match(e["prediction"]): bad.append(f"{e['id']}: prediction not in the form '<metric> <op> <number> within <N> h'")
-    s = share(root)
-    if s["repair"] and not s["growth"]: bad.append("fixes only: repair work filed and no growth work")
-    if s["share"] is not None and s["share"] < s["floor"]: bad.append(f"growth share {s['share']} is under the floor {s['floor']}")
-    if cycle(root): bad.append("proposed experiments not yet filed: run growth --cycle --apply")
+    cfg, bad = load(root), []
+    for k in ("target_growth_share", "window_merges", "label", "classify", "metrics"):
+        if k not in cfg:
+            bad.append(f"{PATH}: missing {k}")
+    for m in cfg.get("metrics", []):
+        if not m.get("trigger"):
+            bad.append(f"metric {m.get('id')}: registered without a trigger (a metric is registered together with its trigger)")
     return bad
 
 
-def main(argv: list[str]) -> int:
-    if "--share" in argv:
-        print(json.dumps(share())); return 0
-    if "--cycle" in argv:
-        print(json.dumps(cycle(apply="--apply" in argv))); return 0
-    bad = check(); print("\n".join(bad) or "growth ok"); return 1 if bad else 0
+def main(argv) -> int:
+    if "--report" in argv:
+        print(json.dumps(snapshot(), indent=1))
+        return 0
+    bad = check()
+    print(chr(10).join(bad) if bad else "growth ok")
+    return 1 if bad else 0
 
 
 if __name__ == "__main__":

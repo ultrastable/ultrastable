@@ -623,7 +623,8 @@
       "system_path": [
         "scripts/lane.sh",
         "scripts/lane_credential.py",
-        "tests/foundation/test_lane_merger.py"
+        "tests/foundation/test_lane_merger.py",
+        "foundation/lanewatch.py"
       ],
       "workflows": [
         "lane.yml"
@@ -2341,33 +2342,33 @@
       "area": "governance"
     },
     {
-      "id": "growth-pm",
+      "id": "growth-experiments",
       "kind": "governance",
-      "summary": "GROWTH-1: the product manager files growth experiments against targets and knobs, and the check fails on a fixes-only period or a growth share under the floor.",
+      "summary": "GROWTH-1: the product manager files growth experiments (targets, knobs, predictions) as growth queue items; the check validates them.",
       "trigger": "every PR (checks.yml) and the daily sweep",
       "owner": "product-manager",
       "closes_by": "system",
       "sla": "1d",
-      "done": "python3 -m foundation growth --check reports ok",
+      "done": "python3 -m foundation experiments --check reports ok",
       "paths": [
         {
           "id": "ci",
-          "how": "python3 -m foundation growth --check",
+          "how": "python3 -m foundation experiments --check",
           "class": "free"
         },
         {
           "id": "session",
-          "how": "python3 -m foundation growth --check from a cloud-hosted agent session",
+          "how": "python3 -m foundation experiments --check from a cloud-hosted agent session",
           "class": "session"
         }
       ],
-      "closing_probe": "grep:foundation/growth.py::def cycle",
+      "closing_probe": "grep:foundation/experiments.py::def cycle",
       "writeback": [
         "docs/issues"
       ],
       "system_path": [
         "doctrine/growth.json",
-        "foundation/growth.py"
+        "foundation/experiments.py"
       ],
       "area": "governance"
     }

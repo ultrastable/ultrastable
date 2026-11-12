@@ -35,6 +35,12 @@ from . import boundary, closedloop, standards, doctrine, directive, filing, glos
 def main(argv=None) -> int:
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
+    if _av[:1] == ["clockwork"]:
+        from . import clockwork
+        return clockwork.main(_av[1:])
+    if _av[:1] == ["experiments"]:
+        from . import experiments
+        return experiments.main(_av[1:])
     if _av[:1] == ["pins"]:
         from . import pins
         return pins.main(_av[1:])
@@ -47,6 +53,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["fleet"]:
         from . import fleet
         return fleet.main(_av[1:])
+    if _av[:1] == ["growth"]:
+        from . import growth
+        return growth.main(_av[1:])
+    if _av[:1] == ["clock"]:
+        from . import clock
+        return clock.main(_av[1:])
     if _av[:1] == ["topology"]:
         from . import topology
         return topology.main(_av[1:])
@@ -71,12 +83,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["market"]:
         from . import market
         return market.main(_av[1:])
-    if _av[:1] == ["growth"]:
-        from . import growth
-        return growth.main(_av[1:])
-    if _av[:1] == ["clockwork"]:
-        from . import clockwork
-        return clockwork.main(_av[1:])
+    if _av[:1] == ["lanewatch"]:
+        from . import lanewatch
+        return lanewatch.main(_av[1:])
     if _av[:1] == ["system"]:
         from . import system
         return system.main(_av[1:])

@@ -48,7 +48,7 @@
       "cadence_minutes": 1440,
       "evidence": "ops/improvements.jsonl",
       "max_late_minutes": 360,
-      "catch_up": "python3 -m foundation growth --cycle --apply"
+      "catch_up": "python3 -m foundation experiments --cycle --apply"
     },
     {
       "id": "clockwork",

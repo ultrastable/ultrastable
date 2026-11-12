@@ -39,7 +39,11 @@ jobs:
           LANE_APP_PRIVATE_KEY: ${{ secrets.LANE_APP_PRIVATE_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: bash scripts/lane.sh
-      - name: Clockwork and growth tick (CLOCKWORK-1, GROWTH-1)
+      - name: No green PR stays open (LANE-WATCH-1)
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 -m foundation lanewatch --check
+      - name: Clockwork tick (CLOCKWORK-1, catch-up and escalation items, growth experiments filed)
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: bash scripts/clock_growth.sh

@@ -1,39 +1,43 @@
-"""GROWTH-1: experiments file as growth items, the share floor holds, a fixes-only period fails."""
-import json, sys, unittest
+"""GROWTH-1: the product manager's mix and metrics; the executor prefers growth when the recent mix is below target."""
+import sys, unittest
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from foundation import growth as G  # noqa: E402
-import _repo  # noqa: E402
-
-REPO = Path(__file__).resolve().parents[2]
-
-
-def make(issues):
-    d = Path(_repo.scratch()); (d / "doctrine").mkdir(); (d / "docs/issues").mkdir(parents=True)
-    (d / G.PATH).write_text((REPO / G.PATH).read_text())
-    for i, labels in enumerate(issues):
-        (d / "docs/issues" / f"X-{i}.json").write_text(json.dumps({"id": f"X-{i}", "labels": labels}))
-    return d
 
 
 class Growth(unittest.TestCase):
-    def test_repo_is_clean(self):
-        self.assertEqual(G.check(REPO), [])
+    def test_declaration_is_complete(self):
+        self.assertEqual(G.check(), [])
 
-    def test_fixes_only_fails(self):
-        self.assertIn("fixes only: repair work filed and no growth work", G.check(make([["repair"], ["clock"]])))
+    def test_classification(self):
+        self.assertEqual(G.classify("Fix stale dashboard data"), "fix")
+        self.assertEqual(G.classify("Add a public changelog feed"), "growth")
+        self.assertEqual(G.classify("Rename a variable"), "maintenance")
+        self.assertEqual(G.classify("Rename a variable", [{"name": "growth"}]), "growth")
 
-    def test_cycle_files_growth_items_and_share_recovers(self):
-        d = make([["repair"], ["repair"]])
-        ids = G.cycle(d, apply=True); self.assertIn("Q-GROW-shorter-pilot-form", ids)
-        self.assertEqual(G.cycle(d), [])  # idempotent
-        self.assertEqual(G.check(d), [])
-        self.assertGreaterEqual(G.share(d)["share"], 0.3)
+    def test_mix_share(self):
+        m = G.mix(["Fix a", "Fix b", "Add feed", "Rename x"])
+        self.assertEqual((m["fix"], m["growth"], m["maintenance"]), (2, 1, 1))
+        self.assertEqual(m["growth_share"], 0.25)
+        self.assertIsNone(G.mix([])["growth_share"])
 
-    def test_share_floor(self):
-        bad = G.check(make([["repair"]] * 20 + [["growth"]] * 4))  # experiments unfiled too
-        self.assertTrue(any("under the floor" in b for b in bad))
+    def test_prefer_growth_only_when_below_target(self):
+        issues = [{"number": 1, "labels": [{"name": "p1"}]}, {"number": 2, "labels": [{"name": "growth"}]}]
+        low = ["Fix a", "Fix b", "Fix c", "Fix d", "Add feed"]          # 20 percent growth: below the 40 percent target
+        self.assertEqual([i["number"] for i in G.prefer(issues, subjects=low)], [2])
+        high = ["Add feed", "Add demo", "Fix a"]                         # 67 percent: leave the order alone
+        self.assertEqual([i["number"] for i in G.prefer(issues, subjects=high)], [1, 2])
+        self.assertEqual([i["number"] for i in G.prefer([issues[0]], subjects=low)], [1])   # no growth item takeable: do not block
 
-    def test_bad_prediction_form_fails(self):
-        d = make([]); p = d / G.PATH; c = json.loads(p.read_text()); c["experiments"][0]["prediction"] = "soon"; p.write_text(json.dumps(c))
-        self.assertTrue(any("prediction" in b for b in G.check(d)))
+    def test_metric_breach_logic(self):
+        r = {m["id"]: m for m in G.evaluate({"pageviews_7d": 10, "visitors_7d": 10**6})}
+        self.assertTrue(r["pageviews_7d"]["breach"]); self.assertFalse(r["visitors_7d"]["breach"])
+        self.assertIsNone(r["agent_hits_7d"]["breach"])                   # unmeasured is not a pass
+
+    def test_executor_uses_the_preference(self):
+        self.assertIn("growth.prefer", (G.REPO / "foundation/executor.py").read_text(encoding="utf-8"))
+
+
+if __name__ == "__main__":
+    unittest.main()

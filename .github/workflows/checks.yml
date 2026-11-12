@@ -71,7 +71,7 @@ jobs:
           python3 -m foundation agentstd --check
           python3 -m foundation crosswalk --check
           python3 -m foundation clockwork --check
-          python3 -m foundation growth --check
+          python3 -m foundation experiments --check
           python3 -m foundation agents --check
           python3 -m foundation system --check
           python3 -m foundation boundary --drill

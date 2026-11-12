@@ -1,0 +1,12 @@
+{
+  "id": "Q-GROW-AGENT-DIRECTORIES",
+  "title": "Q-GROW-AGENT-DIRECTORIES: GROW-5: prepare listings for agent directories and registries (dry run)",
+  "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order (growth items first when the recent growth share is below target)\n**Done check:** file:outreach/agent-directories.json\n**Status:** open\n\nOwner directive 2026-11-12: product management is growth, not only bug fixes. Growth item: it adds a capability, a surface, a reader or a customer path.\n\nAgents find tools through registries and directories (MCP registries, agent skill indexes, agent-to-agent marketplaces). List each one with its submission route, what it needs (server card URL, skills index URL, description), the packet for Ultrastable's /mcp endpoint, and its status. Publishing is outreach egress: it stays a dry run behind the existing outreach gate until the gate says live.\nPaths: outreach/agent-directories.json, scripts/outreach.py.\nAcceptance: every listed directory has a complete packet; none is sent while the gate is dry-run.\nMetric moved: agent_hits_7d.\n\nsize: M\n\n**Closing probe:** file:outreach/agent-directories.json and the stated metric measured after the change (keep only if the target moved and no guard worsened).",
+  "labels": [
+    "p1",
+    "growth",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

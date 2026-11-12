@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T14:57:49Z",
- "commit": "76a3c02",
+ "generated": "2026-11-12T15:06:18Z",
+ "commit": "372db3b",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 68,
@@ -18,18 +18,18 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 70,
-  "backlog_items": 75
+  "backlog_open": 76,
+  "backlog_items": 81
  },
  "throughput": {
   "queue": {
-   "items": 75,
+   "items": 81,
    "by_status": {
-    "open": 70,
+    "open": 76,
     "closed": 3,
     "done": 2
    },
-   "takeable_now": 70
+   "takeable_now": 76
   },
   "merged": {
    "total": 0,
@@ -60,19 +60,19 @@
   },
   "changelog": [],
   "deploys": {
-   "site_runs": 31,
+   "site_runs": 32,
    "by_conclusion": {
-    "success": 30,
+    "success": 31,
     "cancelled": 1
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-12T14:55:37Z",
+    "createdAt": "2026-11-12T15:00:26Z",
     "event": "push",
-    "headSha": "f04a48443f1de4a98a3528b3a7f142433ba46987"
+    "headSha": "d4248d17fb60c3ea5467ccde2634198763a8ffb1"
    },
    "per_day_success": {
-    "2026-11-12": 30
+    "2026-11-12": 31
    }
   },
   "executor": {
@@ -92,6 +92,92 @@
    "by_model": {}
   }
  },
+ "growth": {
+  "mix": {
+   "growth": 9,
+   "fix": 2,
+   "maintenance": 9,
+   "total": 20,
+   "growth_share": 0.45,
+   "target": 0.4
+  },
+  "target_growth_share": 0.4,
+  "growth_items_takeable": 10,
+  "items_takeable": 76,
+  "metrics": [
+   {
+    "id": "pageviews_7d",
+    "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
+    "value": null,
+    "target": 1500,
+    "breach": null
+   },
+   {
+    "id": "visitors_7d",
+    "what": "distinct visitors in the last 7 days",
+    "value": null,
+    "target": 650,
+    "breach": null
+   },
+   {
+    "id": "agent_hits_7d",
+    "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
+    "value": null,
+    "target": 1000,
+    "breach": null
+   },
+   {
+    "id": "pilot_page_views_7d",
+    "what": "views of the pilot application page in the last 7 days",
+    "value": null,
+    "target": 400,
+    "breach": null
+   }
+  ],
+  "breaches": []
+ },
+ "clocks": [
+  {
+   "id": "tick-heartbeat",
+   "what": "the org's heartbeat on Cloudflare (cron every 10 minutes): reconcile, claims, gates, predictions, dispatch",
+   "source": "d1",
+   "status": "unmeasured",
+   "why": "no CLOUDFLARE_API_TOKEN on this host"
+  },
+  {
+   "id": "executor",
+   "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
+   "source": "workflow",
+   "last_beat_age_s": 1174.0,
+   "expected_interval_s": 21600,
+   "beats_24h": 9,
+   "expected_24h": 4.0,
+   "median_jitter_s": null,
+   "status": "ticking"
+  },
+  {
+   "id": "transparency",
+   "what": "the public live record on ultrastable.io/live",
+   "source": "workflow",
+   "last_beat_age_s": 598.0,
+   "expected_interval_s": 86400,
+   "beats_24h": 5,
+   "expected_24h": 1.0,
+   "median_jitter_s": null,
+   "status": "ticking"
+  },
+  {
+   "id": "deploy-site",
+   "what": "merge to live site deploy",
+   "source": "workflow",
+   "last_beat_age_s": 349.0,
+   "expected_interval_s": 86400,
+   "beats_24h": 32,
+   "expected_24h": 1.0,
+   "median_jitter_s": null,
+   "status": "ticking"
+  }
+ ],
  "topology": {
   "parts": {
    "d1": {
@@ -1133,13 +1219,13 @@
    "last_run": null
   },
   {
-   "loop": "growth-pm",
+   "loop": "growth-experiments",
    "kind": "governance",
-   "summary": "GROWTH-1: the product manager files growth experiments against targets and knobs, and the check fails on a fixes-only period or a growth share under the floor.",
+   "summary": "GROWTH-1: the product manager files growth experiments (targets, knobs, predictions) as growth queue items; the check validates them.",
    "owner": "product-manager",
    "trigger": "every PR (checks.yml) and the daily sweep",
    "sla": "1d",
-   "closing_probe": "grep:foundation/growth.py::def cycle",
+   "closing_probe": "grep:foundation/experiments.py::def cycle",
    "cycle_metric": null,
    "last_plus": null,
    "last_run": null
@@ -1551,6 +1637,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "372db3b",
+    "at": "2026-11-12T14:58:18+00:00",
+    "author": "Claude",
+    "subject": "CLOCKWORK-1 and GROWTH-1: per-stage clock, catch-up, settlement, escalation; growth product manager with targets, knobs, experiments and share floor",
+    "pr": null,
+    "item": "CLOCKWORK-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/372db3b2be9b563ac3058b596a0c89e324a4a6f5"
+   },
+   {
     "sha": "76a3c02",
     "at": "2026-11-12T15:44:56+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -1900,15 +1995,6 @@
     "pr": 244,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/0f816046f8170d7ec58721576a7c93f03836ea2e"
-   },
-   {
-    "sha": "6e998b1",
-    "at": "2026-11-12T13:49:45+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "STRANGE-LOOP-1: self-improving loops, no zombie sessions (#243)",
-    "pr": 243,
-    "item": "STRANGE-LOOP-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/6e998b178aaa20e8e789742011632ae680e8e7d0"
    }
   ],
   "pull_requests": []

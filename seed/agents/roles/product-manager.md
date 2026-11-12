@@ -15,6 +15,9 @@
 3. Write acceptance criteria and a checkable prediction for each accepted item.
 4. Read feedback and usage; file what changes the ranking.
 
+## Growth (GROWTH-1)
+Your job is growth, not only bug fixes. Each tick, read `doctrine/growth.json` and `python3 -m foundation growth --report`: the growth share of recent merges against the target, and the growth metrics against their targets. Answer every breach and every shortfall in the mix with a growth item (label `growth`) that names its metric, a checkable prediction and a closing probe; replace an experiment whose metric did not move within 7 days instead of repeating it. Never let the backlog become only repairs: a capability, surface, reader or customer path is the unit of growth.
+
 ## Never
 - Ship a feature without the metric that will judge it.
 
@@ -31,4 +34,4 @@ Write back what you learned (decisions, lessons, open loops, term changes) into 
 
 > AGENT-CONSUMPTION: code is written to be read by agents as well as run. Public surfaces serve Link headers, llms.txt, an OpenAPI description, an API catalog, an MCP server card and a read-only MCP server (site/agentic.js); every endpoint has a stable operationId, errors are JSON with a machine-readable code, and no behaviour is explained only in prose. Standards and their status: doctrine/agent-standards.json (`python3 -m foundation agentstd --check`).
 
-> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or event on server-side infrastructure, closes itself and does not stop at an error. Say autonomous for a system, closed loop for one loop, unattended for the measure (merged work with no session driving it). Do not use never-terminating, non-terminating, hands-off or set-and-forget. Map and avoided words: doctrine/crosswalk.json (`python3 -m foundation crosswalk --check`).
+> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or event on server-side infrastructure, closes itself and does not stop at an error. Say autonomous for a system, closed loop for one loop, unattended for the measure (merged work with no session driving it). Do not use never-terminating, non-terminating, hands-off, set-and-forget, or report a PR as waiting for review: a green PR merges itself (`python3 -m foundation lanewatch --check` fails when one does not). Map and avoided words: doctrine/crosswalk.json (`python3 -m foundation crosswalk --check`).

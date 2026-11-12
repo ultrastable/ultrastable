@@ -1,0 +1,12 @@
+{
+  "id": "Q-GROW-CHANGELOG-FEED",
+  "title": "Q-GROW-CHANGELOG-FEED: GROW-1: public changelog feed (RSS and JSON) built from the merged-change record",
+  "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order (growth items first when the recent growth share is below target)\n**Done check:** grep:site/worker.js::changelog.xml\n**Status:** open\n\nOwner directive 2026-11-12: product management is growth, not only bug fixes. Growth item: it adds a capability, a surface, a reader or a customer path.\n\nAdd /changelog.xml (RSS) and /changelog.json served from the same snapshot as /live (merged changes by day, size, origin; no repository contents). Link it from /live, llms.txt and the API catalog so readers and agents can subscribe to the fact that the system keeps shipping.\nPaths: site/worker.js, site/live.js, site/agentic.js, site/site.test.mjs.\nAcceptance: the feed validates as RSS 2.0, lists the last 30 days, and a test covers it.\nMetric moved: agent_hits_7d, visitors_7d. Prediction: agent_hits_7d rises at least 15 percent within 14 days.\n\nsize: M\n\n**Closing probe:** grep:site/worker.js::changelog.xml and the stated metric measured after the change (keep only if the target moved and no guard worsened).",
+  "labels": [
+    "p1",
+    "growth",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}
