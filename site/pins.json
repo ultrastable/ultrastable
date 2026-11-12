@@ -143,6 +143,18 @@
    "code": [
     "site/interview.js"
    ]
+  },
+  {
+   "status": "testing",
+   "name": "Dashboard preview and pilot model",
+   "what": "A public dashboard computed from the repository (loops, objectives, failure modes, capabilities, roadmap, earned autonomy) and the bring-your-own-account pilot model with its revenue hypotheses as data. The live tick feed is pending a deployed runtime.",
+   "where": "/dashboard",
+   "issue": "Q-LOOP-live-clock",
+   "code": [
+    "scripts/build_dashboard.py",
+    "site/dashboard-data.js",
+    "doctrine/pilot-model.json"
+   ]
   }
  ],
  "gaps": [

@@ -7,6 +7,7 @@ import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
+import DASH from "./dashboard-data.js";
 var VERSION = "0.11.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
@@ -469,6 +470,20 @@ function roadmap() {
     "<div class=\"head\"><h1>Roadmap</h1><p>Each item here backs a claim on this site. It has an owner, a trigger and a closing probe the system runs; an item closes only when its probe passes. Machine-readable: <a href=\"/roadmap.json\">roadmap.json</a>.</p></div>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Item</th><th>What</th><th>State</th><th>Closing probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>");
 }
+function dashboard() {
+  const panels = DASH.panels.map(function (p) {
+    const rows = p.rows.map(function (r) { return "<tr><td>" + esc(r[0]) + "</td><td><small>" + esc(r[1]) + "</small></td></tr>"; }).join("");
+    return "<div class=\"card\" id=\"panel-" + esc(p.id) + "\"><h3 class=\"card-title\">" + esc(p.title) + "</h3><p><strong>" + esc(p.headline) + "</strong></p><div class=\"us-wrap\"><table class=\"us-table\"><tbody>" + rows + "</tbody></table></div><p class=\"meta\">" + esc(p.note) + " Source: <code>" + esc(p.source) + "</code></p></div>";
+  }).join("");
+  const pm = DASH.pilot;
+  const opts = pm.options.map(function (o) { return "<tr><td><strong>" + esc(o.id) + "</strong></td><td><small>" + esc(o.runs_on) + "</small></td><td><small>" + esc(o.revenue) + "</small></td><td><small>" + esc(o.status) + "</small></td></tr>"; }).join("");
+  return shell({ path: "/dashboard", title: "Ultrastable dashboard preview", description: "What the control plane looks like: loops, objectives and metrics, failure modes, capabilities, roadmap and earned autonomy, computed from the repository." },
+    "<div class=\"head\"><h1>Dashboard preview</h1><p>This is the control plane Ultrastable runs on itself, computed from its own repository (commit <code>" + esc(DASH.asof) + "</code>). No customer data is shown or held here: a pilot runs in your own account.</p></div>"
+    + "<div class=\"us-grid c2\">" + panels + "</div>"
+    + "<h2>Live feed</h2><p>" + esc(DASH.live_feed.says) + " Tracked by <a href=\"/roadmap#" + esc(DASH.live_feed.tracked_by) + "\">" + esc(DASH.live_feed.tracked_by) + "</a>.</p>"
+    + "<h2 id=\"pilot\">Pilot model</h2><p>" + esc(pm.why) + "</p><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Option</th><th>Runs on</th><th>Revenue (hypothesis)</th><th>Status</th></tr></thead><tbody>" + opts + "</tbody></table></div>"
+    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/roadmap\">See the roadmap</a><a class=\"btn\" href=\"/engineers\">For engineers</a></div>");
+}
 function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
     "<div class=\"head\"><h1>Contact</h1><p>One address; a person replies within two working days.</p></div>"
@@ -506,7 +521,7 @@ export default {
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
     { const sr = await siteRoutes(u, env, ctx); if (sr) return sr; }
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/engineers", "/roadmap", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
@@ -517,6 +532,7 @@ export default {
       case "/org": return new Response(org(), { headers: HTML });
       case "/engineers": return new Response(engineers(), { headers: HTML });
       case "/roadmap": return new Response(roadmap(), { headers: HTML });
+      case "/dashboard": return new Response(dashboard(), { headers: HTML });
       case "/roadmap.json": return new Response(JSON.stringify(ROAD), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/contact": return new Response(contact(), { headers: HTML });

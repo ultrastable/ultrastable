@@ -1,0 +1,24 @@
+{
+ "_doc": "PILOT-MODEL-1 (owner question, 2026-11-12): who runs Ultrastable for a pilot customer, and what is the revenue model. Decision and hypotheses as data; consumed by scripts/build_dashboard.py (the pilot options panel on /dashboard) and checked by tests/foundation/test_dashboard.py. Prices are hypotheses to test with pilots, not advice or commitments.",
+ "decision": "bring-your-own-account",
+ "decided": "2026-11-12",
+ "why": "The pilot runs in the customer's own Cloudflare (or other cloud) account, so the customer's data and secrets never touch our infrastructure. That removes our data-protection, encryption and multi-tenant isolation burden during the pilot and answers the buyer's first question (where does my data live) with 'in your account'. Ultrastable's own infrastructure only ever holds Ultrastable's own data, which is what the public dashboard shows.",
+ "revert": "Offer the hosted option only after a pilot asks for it and the isolation, encryption and data-processing terms in the hosted option are built and reviewed; the model below keeps that as a separate, later tier.",
+ "options": [
+  {"id": "bring-your-own-account", "runs_on": "customer's account", "our_data_burden": "none beyond our own", "setup": "we help install; the loops then run there",
+   "revenue": "paid pilot (fixed fee for setup and the first improvement cycles), then a monthly subscription for updates, managers' playbooks and support", "status": "chosen for the pilot"},
+  {"id": "hosted", "runs_on": "our account, isolated per customer", "our_data_burden": "high: isolation, encryption, retention, processor terms",
+   "revenue": "monthly subscription including infrastructure", "status": "deferred until a pilot asks and the burden is built"},
+  {"id": "open-core", "runs_on": "customer's account", "our_data_burden": "none",
+   "revenue": "core is source-available under the hybrid licence; charge for the managers' policy packs, the dashboard and support", "status": "compatible with the chosen model"}
+ ],
+ "pilot_proof_points": [
+  "a second independent installation reports a tick (Q-GAP-second-installation)",
+  "the customer's own objectives and metrics are seeded and probed from day one (OBJECTIVES-1)",
+  "the first improvement the managers originated, measured before and after"
+ ],
+ "hypotheses": [
+  {"id": "H1", "claim": "Buyers will pay a fixed pilot fee when the system runs in their own account and the first measured improvement is guaranteed in the agreement", "test": "first three pilot conversations", "closing_probe": "file:business/pilots/pilot-1-agreement.md"},
+  {"id": "H2", "claim": "Subscription is sustained by the improvement backlog the managers keep generating, not by hosting", "test": "pilot retention at month 3", "closing_probe": "file:business/pilots/retention-month-3.json"}
+ ]
+}

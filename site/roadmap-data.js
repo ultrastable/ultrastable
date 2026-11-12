@@ -153,6 +153,15 @@ export default {
    "status": "open",
    "title": "A second independent installation",
    "trigger": "every executor run"
+  },
+  "Q-LOOP-live-clock": {
+   "done": "file:instances/ultrastable/live-runtime.json",
+   "id": "Q-LOOP-live-clock",
+   "milestone": "Next",
+   "owner": "operations",
+   "status": "open",
+   "title": "Run Ultrastable's own seed heartbeat on a deployed runtime and report it",
+   "trigger": "every executor run"
   }
  },
  "pins": [
@@ -298,6 +307,18 @@ export default {
    "status": "pinned",
    "what": "Pick the next question from the answers so far with a small model instead of a fixed bank.",
    "where": "site/worker.js adaptiveQuestion"
+  },
+  {
+   "code": [
+    "scripts/build_dashboard.py",
+    "site/dashboard-data.js",
+    "doctrine/pilot-model.json"
+   ],
+   "issue": "Q-LOOP-live-clock",
+   "name": "Dashboard preview and pilot model",
+   "status": "testing",
+   "what": "A public dashboard computed from the repository (loops, objectives, failure modes, capabilities, roadmap, earned autonomy) and the bring-your-own-account pilot model with its revenue hypotheses as data. The live tick feed is pending a deployed runtime.",
+   "where": "/dashboard"
   }
  ]
 };

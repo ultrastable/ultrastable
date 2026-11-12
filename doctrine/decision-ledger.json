@@ -202,6 +202,14 @@
    "title": "Generated demos must be linted; a static page cannot be an autonomous system",
    "body": "Design-system prompt plus model-free lint feeding repair plus honest limits wording. Open: screenshot-critique pass.",
    "probe": "grep:site/worker.js::export function lint"
+  },
+  {
+   "id": "decision-2026-11-12-pilot-model-bring-your-own-account-first-hosted-deferred-das",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Pilot model: bring-your-own-account first; hosted deferred; dashboard shows Ultrastable on itself",
+   "body": "Owner worried that hosting customers on our Cloudflare creates data-protection, encryption and isolation burden and that a thin demo does not show the back end. Decision: pilots run in the customer's own account (no customer data on our infrastructure); revenue hypotheses (paid pilot then subscription for playbooks, dashboard and support) are data in doctrine/pilot-model.json with probes; /dashboard shows the real control plane computed from the repo with the live feed explicitly pending (Q-LOOP-live-clock). Revert: offer hosted only after the isolation and processor terms are built.",
+   "probe": "file:doctrine/pilot-model.json"
   }
  ]
 }

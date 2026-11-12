@@ -1,0 +1,11 @@
+{
+  "id": "Q-PILOT-first-agreement",
+  "title": "Q-PILOT-first-agreement: First pilot agreement on the bring-your-own-account model",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** file:business/pilots/pilot-1-agreement.md\n**Status:** open\n\nTest hypothesis H1 in doctrine/pilot-model.json: a fixed-fee pilot in the customer's own account with a guaranteed first measured improvement. Record the agreement (terms, fee, success measure) in business/pilots/pilot-1-agreement.md. Signing is the owner's act; the fleet prepares the draft and the success probes.",
+  "labels": [
+    "role:product-manager",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}
