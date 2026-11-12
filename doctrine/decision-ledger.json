@@ -336,6 +336,14 @@
    "title": "executor PRs failed on stale generated dashboard data",
    "body": "Any queue or doc change makes site/dashboard-data.js stale, so the executor's own pre-PR checks failed. The executor now runs scripts/build_dashboard.py before its checks and before the commit.",
    "probe": "grep:foundation/executor.py::GENERATORS"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-abandoned-a-change-on-the-first-failed-check",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "executor abandoned a change on the first failed check",
+   "body": "The model's Q-10 change violated the server-side-only rule (localhost) and the executor discarded it. It now tells the model the rule and feeds failed check output back for up to 2 repairs before abandoning.",
+   "probe": "grep:foundation/executor.py::REPAIRS"
   }
  ]
 }

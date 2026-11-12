@@ -93,3 +93,12 @@ class QueueMode(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RepairLoop(unittest.TestCase):
+    def test_repairs_and_server_side_constraint_are_in_the_code(self):
+        from foundation import executor
+        src = Path(executor.__file__).read_text(encoding="utf-8")
+        self.assertGreaterEqual(executor.REPAIRS, 1)
+        self.assertIn("YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS", src)
+        self.assertIn("Server-side only: never reference localhost", executor.build_prompt({"number": 1, "title": "t", "body": ""}, ""))

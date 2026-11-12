@@ -21,6 +21,7 @@ DENY_PREFIXES = (".git/", ".github/", "autonomy/", "ops/executor-log")
 DENY_NAMES = (".env", "id_rsa", "credentials")
 MAX_FILES, MAX_BYTES = 8, 200_000
 # Generated files are derived from the queue and docs, so any change makes them stale; the executor regenerates them instead of failing its own checks.
+REPAIRS = 2
 GENERATORS = [["python3", "scripts/build_dashboard.py"]]
 CHECKS = [["python3", "scripts/lint_workflows.py"], ["python3", "-m", "unittest", "discover", "-s", "tests/foundation"]]
 
@@ -101,7 +102,8 @@ def build_prompt(issue: dict, tree: str) -> str:
     ref = kb.retrieve(f"{issue['title']} {issue.get('body') or ''}")
     return (axiom() + "\n\nYou are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. "
             'Reply with ONLY JSON: {"summary":"one line","files":[{"path":"relative/path","content":"full new file content"}]}. '
-            "Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code.\n\n"
+            "Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code. "
+            "Server-side only: never reference localhost, 127.0.0.1 or a listening port; code runs as a Cloudflare Worker or a plain function with injected fetch.\n\n"
             f"ISSUE #{issue['number']}: {issue['title']}\n{(issue.get('body') or '')[:6000]}\n\nREPOSITORY FILES (partial):\n{tree[:6000]}\n"
             + (lambda c: f"\n{c[:6000]}\n" if c else "")(_public_context(issue)) + ref)
 
@@ -186,21 +188,26 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     gi(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"claim: executor {now()}"], root)
     try:
         _, tree = sh(["git", "ls-files"], root)
-        out = (model_call or (lambda p: call_model(p, key)))(build_prompt(issue, tree))
         branch = f"agent/{n}-{re.sub(r'[^a-z0-9]+', '-', issue['title'].lower())[:40].strip('-')}"
         sh(["git", "checkout", "-B", branch], root)
-        files = apply_edits(out["files"], root)
-        failed = []
-        if checks is None:
-            for g in GENERATORS:
-                sh(g, root)
-        for c in (checks if checks is not None else CHECKS):
-            code, o = sh(c, root)
-            if code:
-                failed.append(f"{' '.join(c)}: {o[-400:]}")
-        if failed:
+        prompt, failed, files, out = build_prompt(issue, tree), [], [], {}
+        for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
+            out = (model_call or (lambda p: call_model(p, key)))(prompt)
+            files = apply_edits(out["files"], root)
+            failed = []
+            if checks is None:
+                for g in GENERATORS:
+                    sh(g, root)
+            for c in (checks if checks is not None else CHECKS):
+                code, o = sh(c, root)
+                if code:
+                    failed.append(f"{' '.join(c)}: {o[-1200:]}")
+            if not failed:
+                break
             sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd"], root)
-            raise RuntimeError("checks failed: " + " | ".join(failed))
+            prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS; fix exactly these problems and reply with the full JSON again:" + chr(10) + chr(10).join(failed)[:5000]
+        if failed:
+            raise RuntimeError("checks failed after " + str(REPAIRS + 1) + " attempts: " + " | ".join(failed))
         row.update(files=files, summary=out.get("summary", ""))
         # WRITEBACK-1: the `checks` write-back gate fails any change that has code and no write-back (the first live executor PR failed on it), so
         # the executor records its own decision in the same commit: what it did, the evidence (checks that passed) and a file probe.
