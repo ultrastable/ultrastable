@@ -1836,9 +1836,13 @@
    "system_path": [
     "foundation/sessions.py",
     "doctrine/sessions.json",
-    "tests/foundation/test_sessions.py"
+    "tests/foundation/test_sessions.py",
+    ".github/workflows/sessions.yml"
    ],
-   "area": "managers"
+   "area": "managers",
+   "workflows": [
+    "sessions.yml"
+   ]
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

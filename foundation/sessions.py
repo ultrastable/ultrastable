@@ -62,6 +62,11 @@ def collect(root=REPO) -> list[dict]:
                 continue
             rc2, n = _run(root, "git", "rev-list", "--count", f"origin/main..{ref}")
             items[name] = {"name": name, "last_activity": int(ts or 0), "sha": sha, "ahead": int(n.strip() or 0) if rc2 == 0 else 1, "pr": None, "draft": None, "checks": "unknown"}
+    rc, out = _run(root, "git", "worktree", "list", "--porcelain")
+    if rc == 0:  # a branch checked out in a worktree has a live session on this machine: never a zombie
+        for line in out.splitlines():
+            if line.startswith("branch refs/heads/") and line[18:] in items:
+                items[line[18:]]["last_activity"] = int(time.time())
     rc, out = _run(root, "gh", "pr", "list", "--state", "open", "--limit", "200", "--json", "number,headRefName,isDraft,updatedAt,statusCheckRollup")
     if rc == 0:
         try:
