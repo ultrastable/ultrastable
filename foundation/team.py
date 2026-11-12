@@ -109,6 +109,8 @@ def apply(root=REPO, g=None) -> dict:
                 p = root / "docs/issues" / f"OL-ROLE-{rid}.json"
                 _dump(p, item(rid, ph["n"], role), 2); filed.append(rid)
     _dump(seed_p, seed, 2); _dump(reg_p, reg, 1)
+    from . import triggers
+    triggers.sync(root)  # every new role gets its wake route in the same change
     return {"activated": done, "filed": filed, "phase": g["current"]}
 
 
