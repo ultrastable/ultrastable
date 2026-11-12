@@ -1773,6 +1773,39 @@
     "doctrine/team.json",
     "foundation/team.py"
    ]
+  },
+  {
+   "id": "triggers",
+   "kind": "manager",
+   "summary": "Time and event triggers: cron heartbeat cadences, signed webhook routes, workflow schedule drift.",
+   "trigger": "every PR touching .github/workflows or doctrine/triggers.json, and each heartbeat",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command run by an agent session from the repository",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "file:doctrine/triggers.json",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "doctrine/triggers.json",
+    "foundation/triggers.py",
+    "seed/worker/src/events.js",
+    "seed/worker/src/index.js"
+   ]
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
