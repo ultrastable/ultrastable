@@ -17,11 +17,46 @@ FIELD = lambda body, name: (re.search(rf"^\*\*{name}:\*\*\s*(.+)$", body, re.M) 
 
 def items(root=REPO) -> list[dict]:
     out = []
-    for p in sorted((Path(root) / "docs/issues").glob("OL-*.json")):
+    for p in sorted(f for pat in ("OL-*.json", "Q-*.json") for f in (Path(root) / "docs/issues").glob(pat)):
         j = json.loads(p.read_text(encoding="utf-8")); b = j.get("body", "")
         out.append({"id": j["id"], "path": p, "json": j, "owner": FIELD(b, "Owner"), "trigger": FIELD(b, "Trigger"), "probe": FIELD(b, "Done check"),
                     "status": FIELD(b, "Status"), "residual": FIELD(b, "Residual")})
     return out
+
+
+def takeable(root=REPO) -> list[dict]:
+    """QUEUE-1: open queue items in the shape the executor's pick() expects. Owner-held items (identity-bound, ROWAN) are not the executor's.
+    An item whose last three executor log rows all failed is parked until a row of another result appears, so a bad item cannot starve the rest."""
+    root = Path(root); fails: dict[str, int] = {}
+    log = root / "ops/executor-log.jsonl"
+    if log.exists():
+        for line in log.read_text(encoding="utf-8").splitlines():
+            try:
+                r = json.loads(line)
+            except ValueError:
+                continue
+            if r.get("issue") is not None:
+                k = str(r["issue"]); fails[k] = fails.get(k, 0) + 1 if r.get("result") == "failed" else 0
+    out = []
+    for it in items(root):
+        j = it["json"]
+        if it["status"] != "open" or re.search(r"ROWAN|identity-bound", it["owner"], re.I) or fails.get(str(it["id"]), 0) >= 3:
+            continue
+        out.append({"number": it["id"], "title": j.get("title", it["id"]), "body": j.get("body", ""), "labels": [{"name": n} for n in j.get("labels", [])],
+                    "updated_at": "1970-01-01T00:00:00Z"})
+    return out
+
+
+def close(root, item_id: str, why: str) -> None:
+    """Mark an item closed with evidence (check() rejects a closed item without it). Called inside the executor's PR so the merge is the closure."""
+    root = Path(root)
+    for it in items(root):
+        if str(it["id"]) == str(item_id):
+            j = it["json"]
+            j["body"] = j["body"].replace("**Status:** open", "**Status:** closed") + f"\n\n**Evidence:** {why}\n"
+            it["path"].write_text(json.dumps(j, indent=2) + "\n", encoding="utf-8")
+            return
+    raise KeyError(f"queue item {item_id} not found")
 
 
 def probe(root, spec: str) -> tuple[bool, str]:

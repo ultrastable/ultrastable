@@ -1,0 +1,11 @@
+{
+  "id": "Q-11",
+  "title": "Q-11: CI deploy from this repo to Cloudflare",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-11.json::Status:\\*\\* closed\n**Status:** open\n\nMigrated from GitHub issue 11 (Issues are off on the code repository; this file is the record).\n\nThe site is deployed from deploy/deploy-site.mjs by hand. Add a workflow that deploys site/worker.js on merge to main, plus a post-deploy probe of /health and /pilot. Needs a Cloudflare API token stored as a GitHub secret.\n\nsize: S",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}

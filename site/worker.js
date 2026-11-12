@@ -195,33 +195,94 @@ function start(note) {
 }
 // BUILD-1: idea -> live site with no account, key or terminal. Workers AI (binding AI) writes one self-contained page, KV (ASSETS) hosts it at
 // /s/<id>, and a plain "change something" form regenerates it. Served under a sandbox CSP so a generated page can never touch ultrastable.io.
-const MODEL = "@cf/qwen/qwen2.5-coder-32b-instruct", SYS = "You build small, beautiful, working web pages. Output exactly one complete self-contained HTML file (inline CSS and JS, no external libraries, mobile friendly, accessible, real content not lorem ipsum, any saved data kept in localStorage wrapped in try/catch with an in-memory fallback, because the page runs sandboxed). No explanation, no markdown.";
+// RECALL-1 (borrowed from QNFO PROMPTED-RECALL-1): before building, the system looks for what it does not know about the idea and asks 3 tap-only
+// questions (Yes / No / Not sure); every answer changes the brief at once. AUDIT-1: after building, a second model checks the page against the brief,
+// revises once if it finds a real gap, and publishes an honest "what I checked / what I could not do" list at /s/<id>/review.
+// Model ids are deprecated without notice (a hard-coded one silently broke the audit), so every call walks a list until one answers.
+const BUILDERS = ["@cf/qwen/qwen2.5-coder-32b-instruct", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"], ASKERS = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/mistralai/mistral-small-3.1-24b-instruct"], SYS = "You build small, beautiful, working web pages. Output exactly one complete self-contained HTML file (inline CSS and JS, no external libraries, mobile friendly, accessible, real content not lorem ipsum, any saved data kept in localStorage wrapped in try/catch with an in-memory fallback, because the page runs sandboxed). No explanation, no markdown.";
 const newId = () => crypto.randomUUID().replace(/-/g, "").slice(0, 10);
 const okId = (x) => /^[a-f0-9]{10}$/.test(x || "");
-async function aiHtml(env, idea, prev, change) {
+const jget = async (env, k) => { const v = await env.ASSETS.get(k); try { return v ? JSON.parse(v) : null; } catch (e) { return null; } };
+const jput = (env, k, v) => env.ASSETS.put(k, JSON.stringify(v));
+const FALLBACK_QS = [
+  { q: "Should visitors be able to add or save their own information?", cue: "For example a sign-up list, notes or favourites." },
+  { q: "Will most people open this on a phone?", cue: "We will make the layout fit small screens first." },
+  { q: "Should it look calm and simple rather than bold and colourful?", cue: "You can change this later with one sentence." }];
+async function runAny(env, models, body) {
+  let last; for (const m of models) { try { return await env.AI.run(m, body); } catch (e) { last = e; console.error("model failed", m, String(e).slice(0, 160)); } } throw last;
+}
+async function aiJson(env, models, system, user, tokens) {
+  const r = await runAny(env, models, { messages: [{ role: "system", content: system }, { role: "user", content: user }], max_tokens: tokens });
+  // Workers AI returns either a string, an already-parsed object in r.response, or OpenAI-style choices; accept all three.
+  if (r && r.response && typeof r.response === "object") return r.response;
+  const t = String((r && (r.response || r.result || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || ""), m = /[\[{][\s\S]*[\]}]/.exec(t);
+  return m ? JSON.parse(m[0]) : null;
+}
+async function questionsFor(env, idea) {
+  try {
+    const a = await aiJson(env, ASKERS, "You find what is unknown about a new web idea. Reply with only a JSON array of exactly 3 objects {\"q\":\"a yes/no question in plain words a child could answer\",\"cue\":\"one short example\"}. Each question must settle something that would change what gets built. No jargon.", idea, 500);
+    const qs = (Array.isArray(a) ? a : []).filter(x => x && typeof x.q === "string" && x.q.length < 200).slice(0, 3).map(x => ({ q: x.q, cue: String(x.cue || "").slice(0, 160) }));
+    return qs.length === 3 ? qs : FALLBACK_QS;
+  } catch (e) { console.error("questions failed", String(e)); return FALLBACK_QS; }
+}
+function briefOf(a) {
+  const lines = a.qs.map((x, i) => "- " + x.q + " " + ({ yes: "YES", no: "NO", unsure: "NOT SURE (pick the safest sensible default and say nothing)" }[a.ans[i]] || "NOT ASKED"));
+  return "Idea: " + a.idea + "\nWhat the person told us:\n" + lines.join("\n");
+}
+async function aiHtml(env, brief, prev, change) {
   const msgs = [{ role: "system", content: SYS }];
-  msgs.push(prev ? { role: "user", content: "Here is the current page:\n" + prev + "\n\nChange it as follows and return the whole updated file: " + change } : { role: "user", content: "Build this: " + idea });
-  const r = await env.AI.run(MODEL, { messages: msgs, max_tokens: 7000 });
-  const t = String((r && (r.response || r.result)) || ""), m = /```(?:html)?\s*([\s\S]*?)```/.exec(t), h = (m ? m[1] : t).trim();
+  msgs.push(prev ? { role: "user", content: "Here is the current page:\n" + prev + "\n\nChange it as follows and return the whole updated file: " + change } : { role: "user", content: "Build this.\n" + brief });
+  const r = await runAny(env, BUILDERS, { messages: msgs, max_tokens: 7000 });
+  const t = String((r && (r.response || r.result || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || ""), m = /```(?:html)?\s*([\s\S]*?)```/.exec(t), h = (m ? m[1] : t).trim();
   if (!/<html[\s>]/i.test(h) || !/<\/html>/i.test(h)) throw new Error("the model did not return a complete page");
   return h;
 }
-async function build(env, id, idea, prev, change) {
-  try { await env.ASSETS.put("site:" + id, await aiHtml(env, idea, prev, change)); await env.ASSETS.put("state:" + id, "ready"); }
-  catch (e) { console.error("build failed", id, String(e)); await env.ASSETS.put("state:" + id, "failed"); }
+// AUDIT-1: a different model than the builder grades the page against the brief; the limits that no page-only build can meet are always declared.
+const ALWAYS_LIMITS = ["Information people enter is kept only in their own browser, not shared with other visitors yet.", "The site lives at a shared Ultrastable address, not your own web address yet."];
+async function audit(env, id, brief, html) {
+  try {
+    const a = await aiJson(env, ASKERS, "You are a strict reviewer. Compare the HTML page with the brief. Reply with only JSON {\"met\":[\"short plain sentences of what is done\"],\"gaps\":[{\"what\":\"plain sentence\",\"critical\":true|false}]}. Be honest; list a gap when something asked for is missing or likely broken.", brief + "\n\nPAGE:\n" + html.slice(0, 9000), 700);
+    const rec = { met: ((a && a.met) || []).slice(0, 8).map(String), gaps: ((a && a.gaps) || []).slice(0, 6).map(g => ({ what: String(g.what || g), critical: !!g.critical })), limits: ALWAYS_LIMITS, at: new Date().toISOString() };
+    await jput(env, "audit:" + id, rec); return rec;
+  } catch (e) { console.error("audit failed", id, String(e)); const rec = { met: [], gaps: [], limits: ALWAYS_LIMITS, note: "The automatic check could not run this time.", error: String(e).slice(0, 300), at: new Date().toISOString() }; await jput(env, "audit:" + id, rec); return rec; }
 }
-async function kick(request, env, ctx, id, idea, prev, change) {
+async function build(env, id, brief, prev, change) {
+  try {
+    await env.ASSETS.put("brief:" + id, JSON.stringify({ brief, change: change || null }));
+    await env.ASSETS.put("site:" + id, await aiHtml(env, brief, prev, change)); await env.ASSETS.put("state:" + id, "ready");
+    await env.ASSETS.delete("audit:" + id);
+  } catch (e) { console.error("build failed", id, String(e)); await env.ASSETS.put("state:" + id, "failed"); }
+}
+// Each stage runs in its own request so it gets its own time budget (waitUntil is capped at about 30 s): build, then audit and at most one fix.
+async function ensureAudit(env, ctx, id) {
+  if (await env.ASSETS.get("audit:" + id) || await env.ASSETS.get("auditing:" + id)) return;
+  await env.ASSETS.put("auditing:" + id, "1", { expirationTtl: 120 });
+  const job = (async () => {
+    const b = await jget(env, "brief:" + id), html = await env.ASSETS.get("site:" + id);
+    if (!b || !html) return;
+    const rec = await audit(env, id, b.brief + (b.change ? "\nLatest change asked: " + b.change : ""), html);
+    const crit = rec.gaps.filter(g => g.critical).map(g => g.what);
+    if (crit.length && !b.change) {
+      const better = await aiHtml(env, b.brief, html, "Fix these problems and change nothing else: " + crit.join("; ")).catch(() => null);
+      if (better) { await env.ASSETS.put("site:" + id, better); rec.fixed = crit; await jput(env, "audit:" + id, rec); }
+    }
+  })().catch(e => console.error("audit stage failed", id, String(e)));
+  if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job;
+}
+async function limited(request, env) {
   const ip = request.headers.get("cf-connecting-ip") || "x", key = "rl:" + ip + ":" + new Date().toISOString().slice(0, 13);
   const n = Number(await env.ASSETS.get(key) || 0);
   if (n >= 6) return new Response(start("Lots of builds from your connection this hour. Please try again a little later."), { status: 429, headers: HTML });
-  await env.ASSETS.put(key, String(n + 1), { expirationTtl: 7200 });
-  // BUILD-2: the build runs inside the /make request (awaited), never in waitUntil. waitUntil is cut off about 30 s after the response and the
-  // model takes 20-40 s, so a backgrounded build was evicted mid-flight and left the state at "building" forever. The job is stored so that
-  // any later /make poll can resume it after an eviction; a claim with a TTL stops two polls building at once; tries are capped at 3.
-  await env.ASSETS.put("job:" + id, JSON.stringify({ idea: idea, change: change, base: prev ? true : false }), { expirationTtl: 86400 });
+  await env.ASSETS.put(key, String(n + 1), { expirationTtl: 7200 }); return null;
+}
+const goto = (id, tail) => Response.redirect("https://" + CANON + "/s/" + id + tail, 303);
+// BUILD-2 (kept): the build runs inside the /make request (awaited), never in waitUntil, which is cut off about 30 s after the response. The job
+// is stored so any later /make poll resumes it after an eviction; a claim with a TTL stops two polls building at once; tries are capped at 3.
+async function launch(env, ctx, id, brief, prev, change) {
+  await env.ASSETS.put("job:" + id, JSON.stringify({ brief: brief, change: change, base: prev ? true : false }), { expirationTtl: 86400 });
   await env.ASSETS.put("tries:" + id, "0", { expirationTtl: 86400 });
-  await env.ASSETS.put("state:" + id, "building");
-  return Response.redirect("https://" + CANON + "/s/" + id + "/make", 303);
+  await env.ASSETS.put("state:" + id, "building"); await env.ASSETS.put("since:" + id, String(Date.now()));
+  return goto(id, "/make");
 }
 async function resume(env, id) {
   if (await env.ASSETS.get("claim:" + id)) return "claimed";
@@ -229,38 +290,71 @@ async function resume(env, id) {
   if (!job || tries >= 3) { await env.ASSETS.put("state:" + id, "failed"); return "failed"; }
   await env.ASSETS.put("claim:" + id, "1", { expirationTtl: 120 });
   await env.ASSETS.put("tries:" + id, String(tries + 1), { expirationTtl: 86400 });
-  await build(env, id, job.idea, job.base ? await env.ASSETS.get("site:" + id) : null, job.change);
+  await build(env, id, job.brief, job.base ? await env.ASSETS.get("site:" + id) : null, job.change);
   await env.ASSETS.delete("claim:" + id);
   return await env.ASSETS.get("state:" + id);
 }
 async function takeIdea(request, env, ctx) {
   const f = await request.formData().catch(() => null), idea = f && String(f.get("idea") || "").trim().slice(0, 2000);
   if (!idea) return new Response(start(false), { status: 400, headers: HTML });
+  const lim = await limited(request, env); if (lim) return lim;
   const id = newId(); await env.ASSETS.put("idea:" + new Date().toISOString() + ":" + id, idea);
-  const prof = String(f.get("profile") || "").slice(0, 2000); if (prof) { try { JSON.parse(prof); await env.ASSETS.put("profile:" + id, prof, { expirationTtl: 31536000 }); } catch (e) { console.error("bad profile dropped", String(e)); } }
-  return kick(request, env, ctx, id, idea, null, null);
+  const profText = String(f.get("profile") || "").slice(0, 2000); let profOk = false;
+  if (profText) { try { JSON.parse(profText); await env.ASSETS.put("profile:" + id, profText, { expirationTtl: 31536000 }); profOk = true; } catch (e) { console.error("bad profile dropped", String(e)); } }
+  // INTERVIEW-1: the on-page interview already asked its questions, so build now; without it (no JavaScript) the server-side questions run.
+  if (profOk) return launch(env, ctx, id, idea, null, null);
+  await jput(env, "ask:" + id, { idea, qs: await questionsFor(env, idea), ans: [] });
+  await env.ASSETS.put("state:" + id, "asking");
+  return goto(id, "/ask");
+}
+async function takeAnswer(request, env, ctx) {
+  const f = await request.formData().catch(() => null), id = f && String(f.get("id") || ""), v = f && String(f.get("a") || "");
+  const a = okId(id) ? await jget(env, "ask:" + id) : null;
+  if (!a || !["yes", "no", "unsure"].includes(v)) return new Response(start("That question was not found."), { status: 404, headers: HTML });
+  if (a.ans.length < a.qs.length) a.ans.push(v);
+  await jput(env, "ask:" + id, a);
+  return a.ans.length < a.qs.length ? goto(id, "/ask") : launch(env, ctx, id, briefOf(a), null, null);
 }
 async function takeChange(request, env, ctx) {
   const f = await request.formData().catch(() => null), id = f && String(f.get("id") || ""), change = f && String(f.get("change") || "").trim().slice(0, 1000);
   const prev = okId(id) ? await env.ASSETS.get("site:" + id) : null;
   if (!prev || !change) return new Response(start("That site was not found."), { status: 404, headers: HTML });
-  return kick(request, env, ctx, id, null, prev, change);
+  const lim = await limited(request, env); if (lim) return lim;
+  const a = await jget(env, "ask:" + id);
+  return launch(env, ctx, id, a ? briefOf(a) : "", prev, change);
 }
-async function siteRoutes(u, env) {
-  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change)?$/.exec(u.pathname);
+const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
+async function siteRoutes(u, env, ctx) {
+  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review)?$/.exec(u.pathname);
   if (!m || !env || !env.ASSETS) return null;
-  const id = m[1], st = await env.ASSETS.get("state:" + id);
+  const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
-  if (m[2] === "/change") return new Response(shell({ path: u.pathname, title: "Change your site", description: "Change your site." }, "<div class=\"head\"><h1>What should change?</h1><p>Say it in plain words.</p></div><form method=\"post\" action=\"/api/change\"><input type=\"hidden\" name=\"id\" value=\"" + id + "\"><div class=\"us-ask\"><input name=\"change\" type=\"text\" maxlength=\"1000\" required autocomplete=\"off\" aria-label=\"What should change\" placeholder=\"Make it green and add a contact button\"><button type=\"submit\" class=\"us-rb go\" aria-label=\"Update\" title=\"Update\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 12l16-8-6 16-3-7-7-1z\"/></svg></button></div><div class=\"us-chips\"><a class=\"us-chip quiet\" href=\"/s/" + id + "\">Cancel</a></div></form>"), { headers: HTML });
+  if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
+  if (st === "ready" && (!m[2] || m[2] === "/review")) await ensureAudit(env, ctx, id);
+  if (m[2] === "/ask") {
+    const a = await jget(env, "ask:" + id);
+    if (!a || a.ans.length >= a.qs.length) return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
+    const n = a.ans.length, q = a.qs[n], b = (v, t, p) => "<button class=\"btn" + (p ? " btn-primary" : "") + "\" name=\"a\" value=\"" + v + "\" type=\"submit\" style=\"margin-right:.6rem\">" + t + "</button>";
+    return page("A quick question", "<div class=\"head\"><p class=\"meta\">Question " + (n + 1) + " of " + a.qs.length + "</p><h1>" + esc(q.q) + "</h1><p class=\"meta\">" + esc(q.cue) + "</p></div><form method=\"post\" action=\"/api/answer\"><input type=\"hidden\" name=\"id\" value=\"" + id + "\"><div class=\"us-actions\">" + b("yes", "Yes", 1) + b("no", "No") + b("unsure", "Not sure") + "</div></form>");
+  }
+  if (m[2] === "/review") {
+    const r = await jget(env, "audit:" + id);
+    if (!r) return page("What I checked", "<div class=\"head\"><h1>Still checking</h1><p>Give it a few seconds, then refresh.</p></div><meta http-equiv=\"refresh\" content=\"5\">");
+    return page("What I checked", "<div class=\"head\"><h1>What I checked</h1><p>An independent check of your site against what you asked for.</p></div><div class=\"card\"><h3 class=\"card-title\">Done</h3>" + li(r.met) + "</div><div class=\"card\"><h3 class=\"card-title\">Not right yet</h3>" + li(r.gaps.map(g => g.what + (r.fixed && r.fixed.includes(g.what) ? " (fixed automatically)" : ""))) + "</div><div class=\"card\"><h3 class=\"card-title\">What I cannot do yet</h3>" + li(r.limits) + (r.note ? "<p class=\"meta\">" + esc(r.note) + "</p>" : "") + "</div><div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/s/" + id + "\">Back to my site</a> <a class=\"btn\" href=\"/s/" + id + "/change\">Change something</a></div>");
+  }
+  if (m[2] === "/change") return page("Change your site", "<div class=\"head\"><h1>What should change?</h1><p>Say it in plain words.</p></div><form method=\"post\" action=\"/api/change\"><input type=\"hidden\" name=\"id\" value=\"" + id + "\"><div class=\"us-ask\"><input name=\"change\" type=\"text\" maxlength=\"1000\" required autocomplete=\"off\" aria-label=\"What should change\" placeholder=\"Make it green and add a contact button\"><button type=\"submit\" class=\"us-rb go\" aria-label=\"Update\" title=\"Update\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 12l16-8-6 16-3-7-7-1z\"/></svg></button></div><div class=\"us-chips\"><a class=\"us-chip quiet\" href=\"/s/" + id + "\">Cancel</a></div></form>");
   if (m[2] === "/make") {
+    if (st === "asking") return Response.redirect("https://" + CANON + "/s/" + id + "/ask", 302);
     let cur = st;
     if (cur === "building") cur = await resume(env, id);
     if (cur === "ready") return Response.redirect("https://" + CANON + "/s/" + id, 302);
     const msg = cur === "failed" ? "<p>That did not work this time. <a href=\"/start\">Try again</a>.</p>" : "<p>Building your site. This takes about half a minute. This page updates by itself.</p><meta http-equiv=\"refresh\" content=\"4\">";
-    return new Response(shell({ path: u.pathname, title: "Building - Ultrastable", description: "Building your site." }, "<div class=\"head\"><h1>" + (cur === "failed" ? "Something went wrong" : "Building...") + "</h1></div>" + msg), { headers: HTML });
+    return page("Building", "<div class=\"head\"><h1>" + (cur === "failed" ? "Something went wrong" : "Building...") + "</h1></div>" + msg);
   }
+  if (st === "asking") return Response.redirect("https://" + CANON + "/s/" + id + "/ask", 302);
   if (st !== "ready") return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
-  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><a href=\"https://" + CANON + "/s/" + id + "/change\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none\" target=\"_top\">Change something</a></div>";
+  const lk = (h, t) => "<a href=\"https://" + CANON + "/s/" + id + h + "\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none;margin-left:6px\" target=\"_top\">" + t + "</a>";
+  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\">" + lk("/review", "What I checked") + lk("/change", "Change something") + "</div>";
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
   return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'none'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
 }
@@ -336,8 +430,9 @@ export default {
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
+    if (request.method === "POST" && u.pathname === "/api/answer") return takeAnswer(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
-    { const sr = await siteRoutes(u, env); if (sr) return sr; }
+    { const sr = await siteRoutes(u, env, ctx); if (sr) return sr; }
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
     const PAGES = ["/", "/engineers", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
