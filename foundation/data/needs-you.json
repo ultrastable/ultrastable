@@ -3,8 +3,8 @@
   "items": [
     {"id": "funding", "title": "Submit funding applications", "why": "An application is a statement made in your name; the packets are written and checked.",
      "default": "Packets stay unsent.", "url": "https://github.com/ultrastable/ultrastable/blob/main/outreach/STATUS.md", "button": "Open the list of programmes with their application links"},
-    {"id": "cloudflare-new-account", "title": "Let Claude reach the new Cloudflare account", "why": "Only the account owner can authorize access to account 81e3a4efb4eb66e613529b87682911bb.",
-     "default": "The old account keeps running everything; nothing moves.", "url": "https://claude.ai/settings/connectors", "button": "Reconnect the Cloudflare connector with the login that owns the new account"},
+    {"id": "cloudflare-new-account", "title": "Let Claude reach the new Cloudflare account", "why": "Your Cloudflare login is already a member of the ultrastable account (81e3a4ef...), but the connector was authorized for the quniverse account only; only you can grant it the second account.",
+     "default": "The old account keeps running everything; nothing moves.", "url": "https://claude.ai/settings/connectors", "button": "Reconnect the Cloudflare connector and tick the ultrastable account"},
     {"id": "org-brand", "title": "Upload the org avatar and pin repos", "why": "GitHub has no API for these.",
      "default": "Generated identicon, no pins.", "url": "https://github.com/organizations/ultrastable/settings/profile", "button": "Open the org profile settings"},
     {"id": "social", "title": "Create the Bluesky account", "why": "Account creation accepts terms in your name.",

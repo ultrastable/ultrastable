@@ -9,3 +9,4 @@ Write-back target for what sessions and loops learned: decisions, lessons, open 
 - 2026-11-12: [Core has two code homes; read the plan before designing the pin](2026-11-12-core-has-two-code-homes-read-the-plan-before-designing-the-p.md)
 - 2026-11-12: [.github surfaces retested 2026-11-12](2026-11-12-github-surfaces-retested-2026-11-12.md)
 - 2026-11-12: [Do not commit derived digests; they race with every kernel change](2026-11-12-do-not-commit-derived-digests-they-race-with-every-kernel-ch.md)
+- 2026-11-12: [Connector grant is per account](2026-11-12-connector-grant-is-per-account.md)
