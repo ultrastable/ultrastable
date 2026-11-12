@@ -59,6 +59,14 @@ QNFO fleet runs on (metric registry, trigger state, breach files its own remedy)
 - Kit items KIT-5 (instrumented) and KIT-6 (clock proof) are the bootstrap's own closing probes. Code: `seed/worker/migrations/0004_objectives.sql`,
   `seed/worker/src/tick.js`, `seed/bootstrap/bootstrap.py`, tests `seed/worker/test/measure.test.js`, `tests/test_vision.py`.
 
+## Layers: turtles all the way down
+
+There are at least two levels, and the structure is recursive. Level 0 is Ultrastable running on its own infrastructure (customer zero). Level 1 is a
+system a customer builds on it. Level 2 is whatever that customer builds for its own users on top. The same bootstrap, system test, objectives and
+probes apply at every level; nothing is special-cased. A child records its `parent` and `level` in its IDEA.md and gets an `M-parent-link` liveness
+metric, so a child that goes silent breaches at the level above it. Data: `layers` in `doctrine/pilot-model.json`; code: `seed/bootstrap/bootstrap.py`;
+tests: `tests/test_vision.py` (LayerTests). Tenancy: tenant 0 is Ultrastable on itself (the public demo); each customer system is a tenant of the same shape, the dashboard takes a tenant id, every metric row carries `tenant_id`, and a runtime measures only its own tenant, so one level's loops cannot change another's (`seed/worker/src/tick.js`, `Q-TENANT-row-isolation`). Multi-tenant hosting would be a separate obligation (`multi_tenant_obligations` there), not a pilot feature.
+
 ## Proportion rule
 
 Staffing follows the system, not the other way around. Roles, projects and managers are created only for outcomes that pass the system test.

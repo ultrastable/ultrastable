@@ -68,3 +68,17 @@ test('OBJECTIVES-1: an http probe reads 1 on a 2xx answer and 0 on an error or a
   await runTick(db, { config, env: up, now: T0 + 1800e3 });
   assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='BREACH-M-up'").get().status, 'done', 'recovery closes the remedy');
 });
+
+test('TENANT-1: a runtime measures only its own tenant; another tenant\'s metric is never read, never breaches, never files an item here', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO metrics (id,tenant_id,name,kind,source,spec,op,threshold,owner_role,remedy)
+    VALUES ('M-own',NULL,'own','target','sql','SELECT 0','<=',0,'operations','r'),
+           ('M-mine','t','mine tenant','target','sql','SELECT 1','<=',0,'operations','r'),
+           ('M-foreign','customer-b','foreign','target','sql','SELECT 1','<=',0,'operations','r');`);
+  await runTick(db, { config, now: T0 });                      // config.org_slug is 't'
+  assert.equal(db.raw.prepare("SELECT breached FROM metrics WHERE id='M-own'").get().breached, 0);
+  assert.equal(db.raw.prepare("SELECT breached FROM metrics WHERE id='M-mine'").get().breached, 1, 'its own tenant breaches');
+  const f = db.raw.prepare("SELECT breached, last_at FROM metrics WHERE id='M-foreign'").get();
+  assert.equal(f.breached, 0); assert.equal(f.last_at, null, 'a foreign tenant metric is never even read');
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id='BREACH-M-foreign'").get().n, 0, 'and files nothing in this runtime');
+});

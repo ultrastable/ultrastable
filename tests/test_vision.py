@@ -63,5 +63,19 @@ class InstrumentTests(unittest.TestCase):
         self.assertTrue(b.objectives)
 
 
+class LayerTests(unittest.TestCase):
+    def test_child_records_parent_and_level_and_must_report_up(self):
+        idea = (ROOT / "seed/IDEA.md").read_text(encoding="utf-8").replace("slug: example-co", "slug: example-co" + chr(10) + "parent: ultrastable")
+        b = boot(idea)
+        b.guard("instrument", b.instrument)
+        self.assertEqual((b.parent, b.level), ("ultrastable", 1))
+        link = [m for m in b.metrics if m["id"] == "M-parent-link"]
+        self.assertEqual(len(link), 1); self.assertEqual(link[0]["source"], "declared", "a silent child breaches until a probe exists")
+
+    def test_level_zero_has_no_parent_link(self):
+        b = boot((ROOT / "seed/IDEA.md").read_text(encoding="utf-8")); b.guard("instrument", b.instrument)
+        self.assertEqual((b.parent, b.level), ("", 0)); self.assertFalse([m for m in b.metrics if m["id"] == "M-parent-link"])
+
+
 if __name__ == "__main__":
     unittest.main()

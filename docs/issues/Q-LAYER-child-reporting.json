@@ -1,0 +1,11 @@
+{
+  "id": "Q-LAYER-child-reporting",
+  "title": "Q-LAYER-child-reporting: A child system reports its liveness to its parent",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:instances/ultrastable/child-link.json\n**Status:** open\n\nLayers (doctrine/pilot-model.json `layers`): the bootstrapper now records parent and level. Build the reporting path: the child's /health metrics are read by the parent's http probe, and a silent child breaches M-parent-link. Record the first working link in instances/ultrastable/child-link.json.",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "Q-PILOT-application-intake",
+  "title": "Q-PILOT-application-intake: Pilot application intake that records applications as data",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** grep:site/worker.js::pilotApplication\n**Status:** done\n\nThe /pilot page states the program from doctrine/pilot-model.json. Add POST /api/pilot that validates the five apply_fields, stores the application (KV, no personal data beyond a contact the applicant supplies), scores it against the selection criteria and files a review item, so an application is never an email nobody reads.",
+  "labels": [
+    "role:product-manager",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}
