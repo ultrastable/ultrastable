@@ -205,6 +205,18 @@
    "status": "controlled",
    "cadence_ticks": 144,
    "probe": "grep:seed/worker/test/measure.test.js::http"
+  },
+  {
+   "id": "fm-site-claims-unlinked",
+   "trigger": "a pin or roadmap item is added without code, proof or a probe-backed issue, or an issue ships with a prose done check",
+   "symptom": "the site says something no code can confirm",
+   "blast_radius": "credibility of every public claim",
+   "detection": "python3 -m foundation pins --check",
+   "root_cause": "status typed by hand instead of computed from code",
+   "remediation": "status is computed; new unprobed issues fail the build; the baseline only shrinks",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:foundation/pins.py::def compute"
   }
  ],
  "controls": [

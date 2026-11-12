@@ -1,7 +1,7 @@
 {
   "id": "SESSION-CLOSE-2",
   "title": "SESSION-CLOSE-2: run the session reaper on every heartbeat tick",
-  "body": "**Owner:** operations\n**Trigger:** SESSION-CLOSE-1 merged\n**Status:** open\n\nWire `python3 -m foundation sessions --apply` into the tick (seed/worker/src/tick.js via the executor dispatch) and a daily workflow with the budget headers, so a ledger line exists per tick. First run will park the 19 branches idle past 4 h on 2026-11-12. Closing probe: `ops/session-ledger.jsonl` gains a line per tick and `sessions --scan` reports 0 zombies.",
+  "body": "**Owner:** operations\n**Trigger:** SESSION-CLOSE-1 merged\n**Done check:** grep:seed/worker/src/tick.js::foundation sessions\n**Status:** open\n\nWire `python3 -m foundation sessions --apply` into the tick (seed/worker/src/tick.js via the executor dispatch) and a daily workflow with the budget headers, so a ledger line exists per tick. First run will park the 19 branches idle past 4 h on 2026-11-12. Closing probe: `ops/session-ledger.jsonl` gains a line per tick and `sessions --scan` reports 0 zombies.",
   "labels": [
     "role:operations",
     "ws:sessions",
