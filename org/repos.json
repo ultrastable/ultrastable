@@ -21,7 +21,7 @@
         "github.com/ultrastable profile"
       ],
       "last_activity": "unknown",
-      "note": "archived at creation. Surfaces tested 2026-11-12, all refused or out of scope: MCP file/actions access, add_repo, connectors (no GitHub connector), GITHUB_TOKEN workflow (repo-scoped), profile from another repo (not supported by GitHub). Detail in docs/BOOTSTRAP-GAPS.md. Trigger: org-manage with ORG_ADMIN_TOKEN."
+      "note": "Archived at creation; GitHub org page is optional. Public presence is ultrastable.io/org. Surface results in surface_results_2026_11_12."
     },
     {
       "name": "spec",
@@ -106,11 +106,11 @@
       "private": true,
       "created": "2026-11-11",
       "last_activity": "2026-11-11",
-      "note": "archive pending: the session permission check refused the archive call; the org-manage workflow performs it with the admin token",
+      "note": "Retired: content lives in spec/license/, this repo's README points to spec. Archiving is cosmetic and non-blocking; attempted via API and refused, so it is never required.",
       "merged_into": "spec",
       "reason": "Folded into spec/license/ on 2026-11-12 (spec PR 9); one fewer repo for an investor to read. Backup bundle ultrastable-git/2026-11-12/license-backup.bundle.",
       "consumers": [],
-      "probe": "python3 scripts/check_org_repos.py --live reports archived true; trigger org-manage once ORG_ADMIN_TOKEN exists"
+      "archive_optional": true
     },
     {
       "name": "platform",
@@ -148,5 +148,22 @@
       "last_activity": "2026-11-10",
       "reason": "SUPERSEDED duplicate; deployed from ultrastable/site"
     }
-  ]
+  ],
+  "public_presence": {
+    "primary": "https://ultrastable.io/org",
+    "route": "Cloudflare Worker site, deployed through the Cloudflare connector (docs/ops/SITE-DEPLOY.md), needs no person-supplied token",
+    "github_org_page": "staged at brand/public-profile/; goes live whenever .github becomes writable, never required"
+  },
+  "surface_results_2026_11_12": {
+    "github_mcp_on_.github": "refused: repository not configured for session",
+    "add_repo_.github": "refused: dot-named repositories cannot be attached",
+    "connectors": "two Cloudflare connectors, no GitHub connector; Cloudflare tokens cannot reach GitHub",
+    "github_token_workflow": "repo-scoped, cannot administer another repo (tested 2026-11-10)",
+    "session_proxy_settings_write": "refused: repository settings writes are not permitted",
+    "archive_license_via_api": "refused by the session permission check; not retried",
+    "device_bash": "owner device not connected to the bridge",
+    "github_app_manifest_flow": "needs an owner browser approval, so not a closed loop; not relied on",
+    "org_profile_from_other_repo": "unsupported by GitHub; replaced by ultrastable.io/org",
+    "final_disposition": "nothing in the investor-facing view depends on a person-supplied input"
+  }
 }

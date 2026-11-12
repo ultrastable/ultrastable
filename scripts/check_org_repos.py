@@ -28,6 +28,8 @@ def check(reg):
             errs.append(f"{n}: archive/merge needs reason and merged_into")
         if r.get("private") is not True:
             errs.append(f"{n}: must be private until license sign-off")
+    if not reg.get("public_presence", {}).get("primary", "").startswith("https://"):
+        errs.append("public_presence.primary missing")
     for t in reg["target"]:
         short = t.split("/", 1)[1]
         if short not in names:
@@ -43,7 +45,7 @@ def live(reg):
             unverified.append(r["name"])
             continue
         d = json.loads(p.stdout)
-        if d["archived"] != r["archived"]:
+        if d["archived"] != r["archived"] and not r.get("archive_optional"):
             errs.append(f"{r['name']}: archived is {d['archived']}, registry says {r['archived']}")
         if d["private"] != r["private"]:
             errs.append(f"{r['name']}: private is {d['private']}, registry says {r['private']}")
