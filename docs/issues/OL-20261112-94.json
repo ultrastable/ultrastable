@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261112-94",
+  "title": "OL-20261112-94: Move ultrastable out of the Qniverse Cloudflare account",
+  "body": "**Owner:** operations\n**Trigger:** any tick whose token covers account 81e3a4efb4eb66e613529b87682911bb; daily cf-account probe\n**Done check:** cmd:python3 scripts/cf_account.py probe\n**Status:** open\n\nBackups taken 2026-11-12 (D1 SQL, Worker scripts, KV values; R2 bucket is empty). Route: cf_account.py copy then cutover, then delete the ultrastable resources from quniverse. Gated on a Cloudflare sign-in for the target account (identity-bound); default in effect: keep running in the old account. See deploy/cloudflare-accounts.json.",
+  "labels": [
+    "role:operations",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

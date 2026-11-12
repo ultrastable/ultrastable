@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261112-93",
+  "title": "OL-20261112-93: Compare the sweep's cycle_metric run over run (STRANGE-LOOP-1)",
+  "body": "**Owner:** operations\n**Trigger:** daily lane sweep\n**Done check:** grep:scripts/completion_sweep.sh::previous_cycle_metric\n**Status:** open\n\ncompletion_sweep.sh prints `cycle_metric leftover_after_sweep` each run. Store the previous value in loop-evidence and file a plus when the leftover count does not fall, so each run is measurably better than the last.",
+  "labels": [
+    "role:operations",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
