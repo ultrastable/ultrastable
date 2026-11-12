@@ -1,13 +1,18 @@
 // TRANSPARENCY-1: /live and /api/live. Read-only for everyone; GET only, no write path, no secrets.
-// Data: D1 table `transparency` (one row), written by `python3 -m foundation transparency --sql` on every loop pass.
+// Data: D1 table `transparency_parts` (numbered parts of one generation), written by `python3 -m foundation transparency --sql` on every loop pass.
 // Changing anything stays behind the owner's e-mailed code (dashboard worker, /owner).
 const JSON_H = { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=60", "access-control-allow-origin": "*", "x-content-type-options": "nosniff" };
 
 async function load(env) {
   if (!env || !env.DB) return null;
   try {
-    const r = await env.DB.prepare("SELECT generated, body FROM transparency WHERE id=1").first();
-    return r ? { generated: r.generated, body: r.body } : null;
+    // newest generation whose part 0 exists (part 0 is written last), parts joined in order
+    const h = await env.DB.prepare("SELECT generated, total FROM transparency_parts WHERE part=0 ORDER BY generated DESC LIMIT 1").first();
+    if (!h) return null;
+    const rows = await env.DB.prepare("SELECT body FROM transparency_parts WHERE generated=? ORDER BY part").bind(h.generated).all();
+    const list = rows.results || [];
+    if (list.length !== h.total) return null;
+    return { generated: h.generated, body: list.map(r => r.body).join("") };
   } catch (e) { return null; }
 }
 

@@ -207,10 +207,20 @@ def snapshot(root=REPO, use_gh=True):
     return scrub(s)
 
 
+PART = 50000  # D1 refuses very large single statements, so the snapshot is stored as parts of this many characters
+
+
 def sql(snap):
-    body = json.dumps(snap, separators=(",", ":")).replace("'", "''")
-    return ("CREATE TABLE IF NOT EXISTS transparency (id INTEGER PRIMARY KEY CHECK (id=1), generated TEXT NOT NULL, body TEXT NOT NULL);\n"
-            f"INSERT INTO transparency (id,generated,body) VALUES (1,'{snap['generated']}','{body}') ON CONFLICT(id) DO UPDATE SET generated=excluded.generated, body=excluded.body;\n")
+    """Statements that store the snapshot as numbered parts of one generation. Part 0 is written last: the site serves a generation only once its part 0 exists."""
+    txt = json.dumps(snap, separators=(",", ":"))
+    parts = [txt[i:i + PART] for i in range(0, len(txt), PART)] or [""]
+    g = snap["generated"]
+    out = ["CREATE TABLE IF NOT EXISTS transparency_parts (generated TEXT NOT NULL, part INTEGER NOT NULL, total INTEGER NOT NULL, body TEXT NOT NULL, PRIMARY KEY (generated, part))"]
+    order = list(range(1, len(parts))) + [0]
+    for n in order:
+        out.append("INSERT OR REPLACE INTO transparency_parts (generated,part,total,body) VALUES ('%s',%d,%d,'%s')" % (g, n, len(parts), parts[n].replace("'", "''")))
+    out.append("DELETE FROM transparency_parts WHERE generated < '%s'" % g)
+    return out
 
 
 ACCOUNT, DB_ID = "edb167b78c9fb901ea5bca3ce58ccc4b", "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"  # D1 ultrastable-ops (site/wrangler.toml)
@@ -222,7 +232,7 @@ def publish(snap, token=None) -> dict:
     token = token or os.environ.get("CLOUDFLARE_API_TOKEN")
     if not token:
         return {"published": False, "why": "no CLOUDFLARE_API_TOKEN in this host's environment"}
-    stmts = [x for x in sql(snap).splitlines() if x.strip()]
+    stmts = sql(snap)
     for st in stmts:
         req = urllib.request.Request(f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT}/d1/database/{DB_ID}/query", data=json.dumps({"sql": st}).encode(),
                                      headers={"authorization": "Bearer " + token, "content-type": "application/json"})
@@ -256,9 +266,12 @@ def main(argv) -> int:
         Path(out).write_text(txt, encoding="utf-8")
     if sq:
         Path(sq).parent.mkdir(parents=True, exist_ok=True)
-        Path(sq).write_text(sql(snap), encoding="utf-8")
+        Path(sq).write_text((";" + chr(10)).join(sql(snap)) + ";" + chr(10), encoding="utf-8")
     if "--publish" in a:
-        print(json.dumps(publish(snap)))
+        res = publish(snap)
+        print(json.dumps(res))
+        if not res.get("published"):
+            return 1  # a snapshot that did not reach the site is a failed run, never a green one
     if not out and not sq and "--publish" not in a:
         print(txt)
     else:
