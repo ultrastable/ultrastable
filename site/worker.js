@@ -4,6 +4,7 @@
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import USER_PATH from "./userpath.js";
 var VERSION = "0.9.0";
+var VERSION = "0.9.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -267,7 +268,7 @@ async function siteRoutes(u, env) {
 const AGENT_PROMPT = "I want to start a project with Ultrastable (https://ultrastable.io), a system that runs itself so I do not have to code. "
   + "Read https://ultrastable.io/agent.md and follow it. Ask me, in plain words, what I want to make, then do every step you can yourself. "
   + "If a step needs me, give me one link and one thing to click, nothing else. Do not use technical words with me.";
-const AGENT_MD = "# Ultrastable: set-up instructions for an AI assistant\n\nYou are helping a person who knows nothing about code. Goal: their idea becomes a live project that keeps itself running.\n\n1. Ask one question: what do they want to make or fix? Accept speech-to-text rambling; restate it in one sentence and confirm.\n2. Do everything you can with your own tools (create the GitHub project from the template, connect Cloudflare, open the first pull request). Use their sign-ins only through the sign-in pages they approve; never ask them to paste passwords or keys into chat.\n3. If you cannot act, walk them through https://ultrastable.io/setup one question at a time. Each step is a single link and a single click.\n4. Speak plainly. No words like token, terminal, repo, API. Say what you are doing and what they should see.\n5. Finish by telling them where to watch their project (https://ultrastable.io/proof) and that it now maintains itself; they only need to come back with new ideas.\n";
+const AGENT_MD = "# Ultrastable: set-up instructions for an AI assistant\n\nYou are helping a person who knows nothing about code. Goal: their idea becomes a live project that keeps itself running.\n\n1. Ask one question: what do they want to make or fix? Accept speech-to-text rambling; restate it in one sentence and confirm.\n2. Do everything you can with your own tools (create the GitHub project from the template, connect Cloudflare, open the first pull request). To run on another cloud, give that cloud's own assistant https://ultrastable.io/deploy.md and let it work out the deployment. Use their sign-ins only through the sign-in pages they approve; never ask them to paste passwords or keys into chat.\n3. If you cannot act, walk them through https://ultrastable.io/setup one question at a time. Each step is a single link and a single click.\n4. Speak plainly. No words like token, terminal, repo, API. Say what you are doing and what they should see.\n5. Finish by telling them where to watch their project (https://ultrastable.io/proof) and that it now maintains itself; they only need to come back with new ideas.\n";
 // USER-PATH-1: guided set-up. One question per screen, every action one click, progress kept in this browser only.
 // Steps come from doctrine/user-path.json (generated into userpath.js); no step needs a command, a key or a file.
 function setup() {
@@ -342,6 +343,8 @@ export default {
       case "/pilot": return new Response(pilot(), { headers: HTML });
       case "/start": return new Response(start(false), { headers: HTML });
       case "/setup": return new Response(setup(), { headers: HTML });
+      case "/deploy.md": return new Response(BRIEF.all, { headers: { "Content-Type": "text/markdown; charset=utf-8", "Access-Control-Allow-Origin": "*" } });
+      case "/deploy/cloudflare.md": case "/deploy/gcp.md": case "/deploy/aws.md": case "/deploy/azure.md": return new Response(BRIEF[pth.slice(8, -3)], { headers: { "Content-Type": "text/markdown; charset=utf-8", "Access-Control-Allow-Origin": "*" } });
       case "/agent.md": return new Response(AGENT_MD, { headers: { "Content-Type": "text/markdown; charset=utf-8", "Access-Control-Allow-Origin": "*" } });
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
