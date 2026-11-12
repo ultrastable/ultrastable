@@ -45,6 +45,9 @@ def probe_surfaces(cfg: dict, apis: dict) -> dict:
         out[r] = {"surface": None, "tried": []}
         for sid, api in apis.items():
             st, j = api("GET", f"/repos/{cfg['org']}/{r}")
+            if st == 200 and j.get("archived"):
+                out[r]["archived"] = True  # read-only: skipped, recorded, never a card
+                break
             ok = st == 200 and bool((j.get("permissions") or {}).get("push"))
             out[r]["tried"].append({"surface": sid, "status": st, "push": ok})
             if ok:

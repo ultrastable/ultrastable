@@ -5,7 +5,6 @@
   "ultrastable",
   "workers",
   "spec",
-  "seed",
   "license",
   "docs",
   "site",
@@ -70,8 +69,7 @@
     "ultrastable",
     "workers",
     "spec",
-    "license",
-    "seed"
+    "license"
    ],
    "rule": "contains:CLOSED-LOOP-AXIOM"
   }
@@ -99,5 +97,6 @@
  "public_read": [
   "QNFO/qnfo-workers"
  ],
- "reach_error": "cannot reach|could not (read|reach|clone)|unreachable|not accessible|404|403|repository not found|permission denied|authentication"
+ "reach_error": "cannot reach|could not (read|reach|clone)|unreachable|not accessible|404|403|repository not found|permission denied|authentication",
+ "_archived": "seed is archived (read-only); its live copy is ultrastable/ultrastable seed/. Archived repositories are skipped by fleet.py."
 }
