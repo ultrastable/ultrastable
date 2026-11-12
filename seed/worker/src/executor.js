@@ -1,0 +1,31 @@
+// Executor dispatch: the Worker's tick hands the work step to a host that can run code (GitHub Actions `executor.yml`).
+// Provider interface: a provider is { id, available(env), dispatch(env, fetchImpl) } -> { ok, detail }. The first available
+// provider wins; every result is returned so the tick records it as an outcome (never silent). Add providers (a hosted model
+// Worker, a queue a local agent drains) without touching the tick.
+export const PROVIDERS = [
+  {
+    id: 'github-actions',
+    available: env => Boolean(env.GITHUB_DISPATCH_TOKEN && env.GITHUB_REPO),
+    async dispatch(env, fetchImpl = fetch) {
+      const r = await fetchImpl(`https://api.github.com/repos/${env.GITHUB_REPO}/dispatches`, {
+        method: 'POST',
+        headers: { authorization: `Bearer ${env.GITHUB_DISPATCH_TOKEN}`, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-tick', 'content-type': 'application/json' },
+        body: JSON.stringify({ event_type: 'ultrastable-tick', client_payload: { host: 'cloudflare-worker' } }),
+      });
+      return { ok: r.status === 204, detail: `github dispatch HTTP ${r.status}` };
+    },
+  },
+];
+
+export async function runExecutor(env, { providers = PROVIDERS, fetchImpl } = {}) {
+  const results = [];
+  for (const p of providers) {
+    if (!p.available(env)) { results.push({ provider: p.id, ok: false, detail: 'not configured (binding missing)' }); continue; }
+    try {
+      const r = await p.dispatch(env, fetchImpl);
+      results.push({ provider: p.id, ...r });
+      if (r.ok) break;
+    } catch (e) { results.push({ provider: p.id, ok: false, detail: String(e && e.message) }); }
+  }
+  return results;
+}

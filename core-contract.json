@@ -1,0 +1,52 @@
+{
+ "contract": 1,
+ "version": "0.1.0",
+ "repo": "ultrastable/ultrastable",
+ "kernel_root": "seed",
+ "kernel_paths": [
+  "agents",
+  "autonomy",
+  "bootstrap",
+  "worker",
+  ".claude",
+  ".github/copilot-instructions.md",
+  "AGENTS.md",
+  "CLAUDE.md",
+  "scripts",
+  "funding",
+  "outreach",
+  "docs/aios-lessons.md",
+  "docs/bootstrapping.md"
+ ],
+ "owned_by_instance": [
+  "instance.json",
+  "domain/",
+  "plugins/",
+  "docs/PROJECT-MEMORY.md",
+  "IDEA.md",
+  "README.md"
+ ],
+ "required_instance_files": [
+  "instance.json",
+  "ultrastable.lock.json",
+  "docs/PROJECT-MEMORY.md",
+  "AGENTS.md"
+ ],
+ "compat": "same major version; a major bump ships a migration note in docs/architecture/core-and-instances.md",
+ "runtime_core": {
+  "repo": "ultrastable/workers",
+  "what": "runtime code (core/, adapters/) that replaces the QNFO workers; pinned per instance by git tag in ultrastable.lock.json under runtime.ref",
+  "instance_file": "instance.runtime.json",
+  "instance_file_validator": "tools/instance_config.mjs (--strict rejects placeholders)",
+  "cutover_plan": "docs/cutover/PLAN.md",
+  "parity_contract": "docs/cutover/parity-contract.json"
+ },
+ "forbidden_in_kernel": [
+  "qnfo",
+  "q08.org",
+  "qnfo-workers"
+ ],
+ "leak_allowlist": {
+  "scripts/test_outreach.py": "negative test: asserts the Ultrastable profile never says the forbidden word"
+ }
+}

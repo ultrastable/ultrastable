@@ -1,0 +1,14 @@
+{"at": "2026-11-12T08:35:08+00:00", "register": "spofs", "id": "spof-org-admin-token", "probe": "file:docs/ops/ORG-TOKEN.md", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "spofs", "id": "spof-single-host", "probe": "file:foundation/failover.py", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "spofs", "id": "spof-owner-approval", "probe": "file:foundation/data/owner-steps.json", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "spofs", "id": "spof-tool-memory", "probe": "file:doctrine/durable-facts.json", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "spofs", "id": "spof-github-forge", "probe": "file:instances/ultrastable/gaps.json", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "failure_modes", "id": "fm-owner-handback", "probe": "grep:tests/foundation/test_directive.py::def test_lint_flags_owner_handback", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "failure_modes", "id": "fm-silent-drop", "probe": "grep:tests/foundation/test_directive.py::def test_accounting_invariant", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "failure_modes", "id": "fm-retry-spin", "probe": "grep:tests/foundation/test_directive.py::def test_loop_breaker", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "failure_modes", "id": "fm-blocker-unproven", "probe": "grep:tests/foundation/test_directive.py::def test_blocker_log_scorecard", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "failure_modes", "id": "fm-fact-only-in-tool-memory", "probe": "grep:tests/foundation/test_directive.py::def test_missing_durable_fact_fails", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "controls", "id": "ctl-interrupt-gate", "probe": "file:seed/autonomy/policy.json", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "controls", "id": "ctl-actions-kill-switch", "probe": "file:actions-budget.json", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "controls", "id": "ctl-outreach-gate", "probe": "file:outreach/gate.json", "ok": true}
+{"at": "2026-11-12T08:35:08+00:00", "register": "controls", "id": "ctl-merge-approval", "probe": "file:.github/workflows/checks.yml", "ok": true}

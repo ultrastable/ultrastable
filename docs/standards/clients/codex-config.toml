@@ -1,0 +1,5 @@
+# Codex CLI: add to ~/.codex/config.toml. Replace the URL with your organisation's Worker.
+# The token is read from the environment, never written here.
+[mcp_servers.ultrastable]
+url = "https://YOUR-ORG.example/mcp"
+bearer_token_env_var = "ULTRASTABLE_MCP_TOKEN"

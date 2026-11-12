@@ -1,0 +1,11 @@
+{
+  "id": "STD-3",
+  "title": "STD-3: Web Bot Auth: verify inbound and sign outbound agent requests",
+  "body": "**Owner:** **staff**\n**Trigger:** none\n**Done check:** register entry `web-bot-auth` moves from planned to supported with a passing test\n**Status:** open\n\nEdge verification adapter; no port change.",
+  "labels": [
+    "role:staff",
+    "ws:platform"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}

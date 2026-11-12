@@ -11,12 +11,13 @@ let r = await get("https://ultrastable.app/anything");
 assert.equal(r.status, 301); assert.equal(r.headers.get("location"), "https://ultrastable.io/pilot");
 r = await get("https://ultrastable.net/"); assert.equal(r.headers.get("location"), "https://ultrastable.io/proof");
 r = await get("https://www.ultrastable.io/how"); assert.equal(r.headers.get("location"), "https://ultrastable.io/how");
-for (const p of ["/", "/how", "/proof", "/pilot", "/product", "/team", "/faq", "/contact"]) {
+for (const p of ["/", "/how", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
   r = await get("https://ultrastable.io" + p); assert.equal(r.status, 200, p);
   const h = await r.text(); assert.match(h, /<body/); assert.match(h, /rel="canonical"/);
   assert.ok(((h.replace(/<style>[\s\S]*?<\/style>/, "")).match(/class="btn btn-primary"/g) || []).length <= 1, p + " has at most one primary action");
 }
 assert.match(await (await get("https://ultrastable.io/")).text(), /Live checks are loading/, "offline claims fail soft");
+assert.match(await (await get("https://ultrastable.io/")).text(), /Directed by[^<]*<a[^>]*>Rowan Brad Quni-Gudzinas<\/a>, founder and director of Ultrastable/, "BRAND: the platform credits its director on every page");
 assert.equal((await get("https://ultrastable.io/nope")).status, 404);
 assert.equal((await (await get("https://ultrastable.io/health")).json()).worker, "ultrastable-site");
 assert.match(await (await get("https://ultrastable.io/robots.txt")).text(), /Sitemap/);
@@ -36,8 +37,15 @@ assert.match(pilot, /og:image" content="https:\/\/ultrastable\.io\/social-card\.
 assert.match(pilot, /twitter:card" content="summary_large_image/);
 
 // Generic public pages: no research framing, no prior-disclosure or patent-mechanism wording (docs/CONFIDENTIALITY.md).
-for (const p of ["/", "/product", "/team", "/faq", "/contact"]) {
+for (const p of ["/", "/product", "/team", "/org", "/faq", "/contact"]) {
   const h = await (await get("https://ultrastable.io" + p)).text();
   assert.doesNotMatch(h, /QNFO|patent|provisional|disclos|research/i, p + " stays generic");
 }
 console.log("ultrastable-site pages ok");
+
+// /org states repository roles only: no links to repositories, no architecture terms (org/repos.json public_presence.confidentiality).
+const orgHtml = await (await get("https://ultrastable.io/org")).text();
+const orgBody = orgHtml.slice(orgHtml.indexOf("<main"), orgHtml.indexOf('<div class="us-foot"'));
+assert.ok(orgBody.length > 200, "org body extracted");
+assert.doesNotMatch(orgBody, /github\.com|QNFO|patent|adapter\s+for|wrangler|D1|token/i, "/org stays at repo-role level");
+console.log("ultrastable-site org ok");

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ultrastable.dev/schemas/standards.schema.json",
+  "title": "Ultrastable standards register",
+  "type": "object",
+  "required": ["version", "checked", "entries", "bodies"],
+  "properties": {
+    "version": {"type": "string"},
+    "checked": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "stale_after_days": {"type": "integer", "minimum": 30},
+    "bodies": {"type": "array", "items": {"type": "object", "required": ["id", "name", "role"], "properties": {"id": {"type": "string"}, "name": {"type": "string"}, "role": {"type": "string"}}}},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "body", "status", "tracked", "why", "support", "sources"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "name": {"type": "string"},
+          "body": {"type": "string"},
+          "status": {"enum": ["stable", "draft", "proposal", "development", "de-facto"]},
+          "tracked": {"type": "string"},
+          "why": {"type": "string"},
+          "support": {"enum": ["supported", "partial", "planned", "not_applicable"]},
+          "how": {"type": "array", "items": {"type": "string"}},
+          "acl": {"type": "string"},
+          "tests": {"type": "array", "items": {"type": "object", "required": ["file", "name"], "properties": {"file": {"type": "string"}, "name": {"type": "string"}}}},
+          "gap": {"type": "string"},
+          "tracked_by": {"type": "string"},
+          "reason": {"type": "string"},
+          "sources": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["title", "url", "accessed"], "properties": {"title": {"type": "string"}, "url": {"type": "string"}, "published": {"type": ["string", "null"]}, "accessed": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"}}}}
+        }
+      }
+    }
+  }
+}

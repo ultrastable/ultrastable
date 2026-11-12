@@ -1,0 +1,17 @@
+{
+  "name": "selfdescribe",
+  "role": "branding",
+  "classes": [
+    "describe_self",
+    "draft"
+  ],
+  "adapters": [
+    "repo"
+  ],
+  "entry": "selfdescribe/plugin.py",
+  "optional": true,
+  "default": {
+    "enabled": false,
+    "mode": "dry-run"
+  }
+}

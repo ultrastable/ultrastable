@@ -1,7 +1,7 @@
 {
-  "_doc": "Source of truth for Ultrastable's positioning and memory rule. Prose elsewhere is generated or checked against this file: `python3 -m foundation doctrine --apply` injects the line into the markdown files listed under `inject`, `--check` (run by checks.yml and the tests) fails when any listed file lacks it or states a contradiction, and gaplint rules GL008 and GL009 read this file. Changed only by a reviewed PR.",
+  "_doc": "Source of truth for Ultrastable's positioning and memory rule. Prose elsewhere is generated or checked against this file: `python3 -m foundation doctrine --apply` injects the line into the markdown files listed under `inject`, `--check` (run by checks.yml and the tests) fails when any listed file lacks it or states a contradiction, and gaplint rules GL008 and GL009 read this file. The `autonomy` block carries the autonomy line, injected and checked like the tagline. `banned_framing` is checked across every tracked text file and every commit message. Changed only by a reviewed PR.",
   "id": "positioning",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "tagline": "Ultrastable is the foundation for any autonomous system.",
   "pattern": "foundation\\s+for\\s+any\\s+autonomous\\s+system",
   "contradictions": [
@@ -32,7 +32,8 @@
       "platform/README.md",
       "products/README.md",
       "docs/overview.md",
-      "instances/*/README.md"
+      "instances/*/README.md",
+      "docs/standards/AGENTIC-STANDARDS.md"
     ],
     "check_only": [
       "site/worker.js",
@@ -40,6 +41,26 @@
       "outreach/profiles.json",
       "business/funding/applications/_template/packet.json",
       "seed/outreach/profiles.template.json"
+    ]
+  },
+  "licensing": {
+    "decision": "2026-11-11 (Rowan): no patent. Source-available hybrid license: free for non-commercial use, a Commercial License with revenue share for any commercial use. Specs live in ultrastable/spec and replace the patent drafts; the patent drafts are archived in ip/.",
+    "license_file": "LICENSE",
+    "required_patterns": [
+      "LicenseRef-Ultrastable-USL-1.0",
+      "COMMERCIAL USE REQUIRES A COMMERCIAL LICENSE"
+    ],
+    "banned_patterns": [
+      "patent[- ]pending",
+      "provisional (patent )?(is |was |will be )?filed",
+      "file the provisional"
+    ],
+    "scan": [
+      "external/*.md",
+      "site/worker.js",
+      "demos/public/index.html",
+      "brand/public-profile/**/*.md",
+      "README.md"
     ]
   },
   "memory": {
@@ -62,6 +83,113 @@
       "rely on (chat|tool|platform|hearthbot) memory"
     ]
   },
+  "runs_on_itself": {
+    "_doc": "Self-reference is the proof. Ultrastable runs its own planning, issues, managers, trust ledger, plussing budget, specs, release and reporting with the code it gives everyone else. `python3 -m foundation selfhost --verify` fails when any of it depends on a tool with no recorded adapter; `foundation doctrine --check` runs that verifier and fails when a listed file lacks the line.",
+    "tagline": "Ultrastable runs on itself.",
+    "pattern": "ultrastable\\s+runs\\s+on\\s+itself",
+    "line": "Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).",
+    "contradictions": [
+      "ultrastable (does not|doesn't|will not|won't) run on itself",
+      "ultrastable (is|was) (built|run) (with|on) (tools|a tool) (that )?(it )?(does not|doesn't) (record|track)"
+    ],
+    "md_files": [
+      "README.md",
+      "agents/AGENTS.md",
+      "agents/PROJECT-INSTRUCTIONS.md",
+      "agents/roles/*.md",
+      "business/funding/README.md",
+      "demos/README.md",
+      "docs/FOUNDATION.md",
+      "docs/PROJECT-MEMORY.md",
+      "docs/overview.md",
+      "docs/runbooks/any-tools/README.md",
+      "instances/*/README.md",
+      "instances/ultrastable/README.md",
+      "platform/README.md",
+      "products/README.md",
+      "seed/README.md",
+      "seed/agents/AGENTS.md",
+      "seed/agents/roles/*.md",
+      "social/README.md",
+      "specs/README.md"
+    ],
+    "check_only": [
+      "site/worker.js",
+      "site/STAGED-COPY.md",
+      "external/overview.md",
+      "external/one-pager.md",
+      "external/customer-story.md",
+      "external/README.md",
+      "brand/public-profile/README.md",
+      "brand/public-profile/profile/README.md"
+    ],
+    "verifier": "python3 -m foundation selfhost --verify",
+    "registry": [
+      "instances/ultrastable/selfhost.json",
+      "instances/ultrastable/gaps.json",
+      "platform/adapters/registry.json"
+    ],
+    "_public_note": "Public and SAFE NOW files carry only the short tagline, never the mechanism line; they are check_only and edited by hand."
+  },
+  "loops_thesis": "Vibe coding is a start, not a system. A system is many agents with separate duties, running code loops that check, report and improve themselves. Ultrastable is built that way: multi-agent, self-referential loops, not a prompt and not a single code agent.",
+  "autonomy": {
+    "_doc": "Autonomy is self-referential loops plus the ability to close them. Knowing without being able to act is useless, so the system is privileged to close its own loops. Injected after the tagline into the md_files of `inject`; the short tagline alone goes in the public check_only files. The loop registry and its verifier (`python3 -m foundation loops --verify`) make it testable.",
+    "tagline": "A system is autonomous if it has self-referential loops and the ability to close them.",
+    "pattern": "self-referential\\s+loops\\s+and\\s+the\\s+ability\\s+to\\s+close",
+    "line": "A system is autonomous if it has self-referential loops and the ability to close them. Knowing without being able to act is useless, so the system is privileged to close its own loops (`python3 -m foundation loops --verify`).",
+    "contradictions": [
+      "autonom(y|ous)[^.\\n]{0,30}\\b(means|is) (just|only|merely) (automation|running without (a )?(person|human))",
+      "autonomy does not (need|require) (the )?(ability )?(to )?close"
+    ],
+    "md_files": [
+      "README.md",
+      "agents/AGENTS.md",
+      "agents/PROJECT-INSTRUCTIONS.md",
+      "agents/roles/*.md",
+      "seed/agents/AGENTS.md",
+      "seed/agents/roles/*.md",
+      "seed/README.md",
+      "docs/PROJECT-MEMORY.md",
+      "docs/FOUNDATION.md",
+      "external/overview.md",
+      "external/one-pager.md",
+      "external/customer-story.md",
+      "external/README.md",
+      "brand/public-profile/README.md",
+      "brand/public-profile/profile/README.md",
+      "business/funding/README.md",
+      "site/STAGED-COPY.md",
+      "demos/README.md",
+      "social/README.md",
+      "platform/README.md",
+      "products/README.md",
+      "docs/overview.md",
+      "instances/*/README.md"
+    ],
+    "check_only": [
+      "site/worker.js",
+      "demos/public/index.html",
+      "outreach/profiles.json"
+    ],
+    "registry": [
+      "instances/ultrastable/loop-registry.json",
+      "doctrine/glossary.json"
+    ]
+  },
+  "self_bootstrapped": {
+    "_doc": "The doctrine is bootstrapped by the system itself: its own principles, self-reference, autonomy and self-improvement loops. That is all that is said about its origin. The kernel is doctrine/kernel-8.2.1.md.",
+    "tagline": "The doctrine is self-bootstrapped.",
+    "kernel": "doctrine/kernel.json"
+  },
+  "banned_framing": {
+    "_doc": "Fails when a tracked text file or a commit message compares the doctrine with an external rule-set approach. The pattern is assembled in foundation/doctrine.py from fragments so this repository never states it; this block lists only the exclusions.",
+    "exclude": [
+      "foundation/doctrine.py",
+      "tests/foundation/test_doctrine_lint.py"
+    ],
+    "max_bytes": 2000000
+  },
+  "stability_line": "Ultra-stable: infrastructure that works so nobody notices.",
   "zero_fuss": {
     "rule": "Zero-fuss, super-simple, zero-knowledge setup. A user with no technical knowledge can get a working result with no keys, config files, installs, hosting or jargon to handle.",
     "required_in": [

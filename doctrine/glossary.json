@@ -1,0 +1,1256 @@
+{
+  "_doc": "The owner's keywords, defined once, precisely and consistently. Source of truth: GLOSSARY.md and the owner-dashboard glossary panel are generated from this file (`python3 -m foundation glossary --apply`), and `--check` (run by checks.yml and the tests) fails when a term lacks a definition, a test or an implementing path, when a path or probe does not resolve, when the lineage is out of step with the term's version, or when GLOSSARY.md is stale. A term changes meaning only through `python3 -m foundation writeback term`, which bumps the version and appends a lineage entry in the same commit. Changed only by a reviewed PR.",
+  "id": "glossary",
+  "version": "1.0.0",
+  "owner_note": "Rowan keeps changing terms and needs to be reminded of them. The system holds them so no term lives only in a chat or in anyone's head.",
+  "terms": [
+    {
+      "id": "autonomy",
+      "term": "Autonomy",
+      "aliases": [],
+      "version": "2.0.0",
+      "definition": "A system is autonomous if it has self-referential loops and the ability to close them. Knowing something without being able to act on it is useless, so the system is privileged to close its own loops.",
+      "not": "Not running without people, not automation of single steps, and not 'no open loops' on its own: autonomy is the loops plus the privilege to close them.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_every_loop_closes_by_the_system_or_a_gate_card",
+        "grep:doctrine/positioning.json::self-referential"
+      ],
+      "implemented_by": [
+        "doctrine/positioning.json",
+        "instances/ultrastable/loop-registry.json",
+        "foundation/loops.py"
+      ],
+      "related": [
+        "self-referential-loop",
+        "self-referential-closure",
+        "closing-privilege",
+        "closed-system"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Autonomy meant no open loops, plus iteration; agents act, verify and report.",
+          "source": "docs/PROJECT-MEMORY.md"
+        },
+        {
+          "version": "2.0.0",
+          "date": "2026-11-11",
+          "change": "Autonomy is defined by self-referential loops and the ability to close them; the system must be privileged to close its own loops (owner, thread: codify glossary and loop-closure doctrine).",
+          "source": "doctrine/positioning.json"
+        }
+      ]
+    },
+    {
+      "id": "loop",
+      "term": "Loop",
+      "aliases": [
+        "feedback loop"
+      ],
+      "version": "1.0.0",
+      "definition": "A repeating cycle with five parts: a trigger, an owner, an action, a closing probe that checks the result, and a write-back that records what was learned in the repository. Managers, plussing, probes, ticks, funding and outreach are all loops.",
+      "not": "Not a one-off task and not a script without a check: a cycle with no closing probe or no write-back is an open loop.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_loop_without_closing_probe_fails"
+      ],
+      "implemented_by": [
+        "instances/ultrastable/loop-registry.json",
+        "foundation/loops.py"
+      ],
+      "related": [
+        "self-referential-loop",
+        "closing-probe",
+        "write-back"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined as trigger, owner, action, closing probe and write-back.",
+          "source": "instances/ultrastable/loop-registry.json"
+        }
+      ]
+    },
+    {
+      "id": "self-referential-loop",
+      "term": "Self-referential loop",
+      "aliases": [],
+      "version": "1.0.0",
+      "definition": "A loop the system can read about itself: it is recorded as data in the loop registry, so the system's own verifier can check it, and its result is written back into the system the loop runs.",
+      "not": "Not a loop that exists only as habit, in a chat or in an agent's memory.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_workflow_not_claimed_by_a_loop_fails"
+      ],
+      "implemented_by": [
+        "instances/ultrastable/loop-registry.json",
+        "foundation/loops.py"
+      ],
+      "related": [
+        "loop",
+        "autonomy",
+        "self-referential-closure"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined as a loop recorded in the registry and written back into the system.",
+          "source": "instances/ultrastable/loop-registry.json"
+        }
+      ]
+    },
+    {
+      "id": "self-referential-closure",
+      "term": "Self-referential closure",
+      "aliases": [
+        "loop closure",
+        "closing the loop"
+      ],
+      "version": "1.0.0",
+      "definition": "Every loop ends inside the system: its check passes by a probe in the repository, and what it learned is written back into the repository, by the system itself, with no step that only lives outside.",
+      "not": "Not a person remembering to update the docs, and not a report that names a next step for the owner.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_repo_loops_verify_clean",
+        "grep:tests/foundation/test_writeback.py::def test_code_without_a_writeback_fails"
+      ],
+      "implemented_by": [
+        "foundation/loops.py",
+        "foundation/writeback.py"
+      ],
+      "related": [
+        "autonomy",
+        "closing-probe",
+        "write-back",
+        "closed-system"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Named and defined (owner's term for all loops closing).",
+          "source": "doctrine/glossary.json"
+        }
+      ]
+    },
+    {
+      "id": "closing-privilege",
+      "term": "Closing privilege",
+      "aliases": [
+        "privileged to close"
+      ],
+      "version": "1.0.0",
+      "definition": "The permissions the system needs to finish a loop itself: repository write by pull request, credentials referenced by binding name, a trust-ladder rung high enough for the action. A loop whose close needs a privilege the system lacks is closed only by a gate card.",
+      "not": "Not unlimited power: the interrupt gate, the harness's permission checks and the secrets lock still win.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_every_loop_closes_by_the_system_or_a_gate_card"
+      ],
+      "implemented_by": [
+        "instances/ultrastable/loop-registry.json",
+        "seed/autonomy/policy.json",
+        "foundation/loops.py"
+      ],
+      "related": [
+        "autonomy",
+        "interrupt-gate",
+        "trust-ledger"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined: autonomy needs the privilege to close, not only the knowledge.",
+          "source": "doctrine/positioning.json"
+        }
+      ]
+    },
+    {
+      "id": "closed-system",
+      "term": "Closed system",
+      "aliases": [],
+      "version": "1.0.0",
+      "definition": "A system whose loops, work and knowledge all live in its own repository. Outside tools are recorded adapters with a gap-register entry; the only exits are interrupt-gate steps. Closed does not mean cut off from the world, it means nothing the system knows or does is held only outside it.",
+      "not": "Not isolation from the internet or from people.",
+      "tested_by": [
+        "grep:tests/foundation/test_selfhost.py::def test_workflow_using_unregistered_tool_fails",
+        "grep:tests/foundation/test_writeback.py::def test_outputs_missing_from_repo_are_flagged"
+      ],
+      "implemented_by": [
+        "foundation/selfhost.py",
+        "foundation/writeback.py",
+        "platform/adapters/registry.json",
+        "instances/ultrastable/gaps.json"
+      ],
+      "related": [
+        "self-hosting",
+        "gap-register",
+        "code-is-the-only-memory"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined: things that happen outside the system get lost, so everything is accounted for in it.",
+          "source": "doctrine/glossary.json"
+        }
+      ]
+    },
+    {
+      "id": "manager",
+      "term": "Manager",
+      "aliases": [
+        "virtual manager"
+      ],
+      "version": "1.0.0",
+      "definition": "A role run as a loop: portfolio, project, product, operations, funding and outreach managers each tick, pull the highest-priority item they may take, act, verify, record and report. Managers own business, marketing, funding, legal and operations so the owner does not have to.",
+      "not": "Not a person and not a chat persona: a manager is its role file plus its loop.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_every_role_has_a_loop"
+      ],
+      "implemented_by": [
+        "seed/ultrastable.json",
+        "agents/roles",
+        "seed/agents/roles"
+      ],
+      "related": [
+        "virtual-staff",
+        "tick",
+        "loop"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined as a role run as a loop.",
+          "source": "seed/ultrastable.json"
+        }
+      ]
+    },
+    {
+      "id": "virtual-staff",
+      "term": "Virtual staff",
+      "aliases": [
+        "staff"
+      ],
+      "version": "1.0.0",
+      "definition": "Workers that take items from the queue under a manager's direction and are reviewed by a different agent. Their output is a commit, issue, PR or database row, never a chat message.",
+      "not": "Not a manager and not an unreviewed author.",
+      "tested_by": [
+        "file:seed/agents/roles/staff.md"
+      ],
+      "implemented_by": [
+        "agents/roles/staff.md",
+        "agents/roles/reviewer.md",
+        "seed/worker/src"
+      ],
+      "related": [
+        "manager",
+        "write-back"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined.",
+          "source": "docs/concepts/virtual-staff.md"
+        }
+      ]
+    },
+    {
+      "id": "plussing",
+      "term": "Plussing",
+      "aliases": [
+        "plus"
+      ],
+      "version": "1.0.0",
+      "definition": "Building on work instead of only fixing it: every closed item proposes one concrete improvement with its expected value, and a protected share of capacity (default 20%) goes to accepted pluses so work does not devolve into bug fixes.",
+      "not": "Not a critique and not optional: a review with no plus is incomplete.",
+      "tested_by": [
+        "grep:agents/AGENTS.md::[Pp]lussing and capacity",
+        "grep:seed/ultrastable.json::plus_share"
+      ],
+      "implemented_by": [
+        "docs/concepts/plussing.md",
+        "seed/ultrastable.json",
+        "agents/roles/product-manager.md"
+      ],
+      "related": [
+        "manager",
+        "loop"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Defined in the concepts docs and the operating agreement.",
+          "source": "docs/concepts/plussing.md"
+        }
+      ]
+    },
+    {
+      "id": "probe",
+      "term": "Probe",
+      "aliases": [
+        "check"
+      ],
+      "version": "1.0.0",
+      "definition": "A small machine-checkable test that reads the repository or the live system and passes or fails. Probes are how the system knows a thing is true; a claim with no probe is a hypothesis.",
+      "not": "Not a person looking at it.",
+      "tested_by": [
+        "grep:tests/foundation/test_selfhost.py::def test_repo_is_clean"
+      ],
+      "implemented_by": [
+        "foundation/selfhost.py"
+      ],
+      "related": [
+        "closing-probe",
+        "prediction"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined: file: and grep: probes in the verifier.",
+          "source": "foundation/selfhost.py"
+        }
+      ]
+    },
+    {
+      "id": "closing-probe",
+      "term": "Closing probe",
+      "aliases": [],
+      "version": "1.0.0",
+      "definition": "The probe that decides a loop or item is done. It passes only when the result exists in the repository or the live system; until then the item stays open with an owner and a default in effect.",
+      "not": "Not 'I believe it works' and not a person's confirmation.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_loop_without_closing_probe_fails",
+        "grep:tests/foundation/test_loops.py::def test_failing_closing_probe_fails"
+      ],
+      "implemented_by": [
+        "foundation/loops.py",
+        "foundation/selfhost.py"
+      ],
+      "related": [
+        "probe",
+        "loop",
+        "self-referential-closure"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined; required on every loop and gap.",
+          "source": "instances/ultrastable/loop-registry.json"
+        }
+      ]
+    },
+    {
+      "id": "tick",
+      "term": "Tick",
+      "aliases": [
+        "heartbeat"
+      ],
+      "version": "1.0.0",
+      "definition": "One pass of the heartbeat: reconcile state, pull the highest-priority item the agent may take, claim it, act, verify through an independent path, compare with the logged prediction, record provenance, report in four lines, propose a plus.",
+      "not": "Not a cron job alone: a tick is the whole pass, ending in a record.",
+      "tested_by": [
+        "file:platform/selfhost/tick.mjs",
+        "grep:tests/foundation/test_selfhost.py::def test_minimal_path_boots_everything_from_the_repo"
+      ],
+      "implemented_by": [
+        "seed/worker/src/tick.js",
+        "platform/selfhost/tick.mjs"
+      ],
+      "related": [
+        "manager",
+        "prediction",
+        "loop"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Defined in the operating agreement.",
+          "source": "agents/AGENTS.md"
+        }
+      ]
+    },
+    {
+      "id": "prediction",
+      "term": "Prediction",
+      "aliases": [],
+      "version": "1.0.0",
+      "definition": "A checkable statement logged before a decision runs, in the form '<metric> <op> <number> within <N> h'. A scorer grades it later; calibration is a first-class metric.",
+      "not": "Not a forecast nobody scores.",
+      "tested_by": [
+        "grep:agents/AGENTS.md::Predict before you act"
+      ],
+      "implemented_by": [
+        "seed/worker/src/tick.js",
+        "seed/plugins/loops.py"
+      ],
+      "related": [
+        "tick",
+        "trust-ledger"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Defined in the operating agreement.",
+          "source": "agents/AGENTS.md"
+        }
+      ]
+    },
+    {
+      "id": "trust-ledger",
+      "term": "Trust ledger",
+      "aliases": [
+        "earned trust"
+      ],
+      "version": "1.0.0",
+      "definition": "Trust computed per (surface, action class) from recorded outcomes, starting at a neutral prior. It rises with verified results and falls with silent drops and hand-backs, and widens an agent's scope along the ladder only through a reviewed change.",
+      "not": "Not a self-assigned permission and never a way past the interrupt gate.",
+      "tested_by": [
+        "grep:seed/autonomy/policy.json::\"trust\""
+      ],
+      "implemented_by": [
+        "seed/autonomy/policy.json",
+        "seed/worker/migrations/0001_init.sql"
+      ],
+      "related": [
+        "closing-privilege",
+        "interrupt-gate"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Defined in the concepts docs.",
+          "source": "docs/concepts/feedback-loops.md"
+        }
+      ]
+    },
+    {
+      "id": "interrupt-gate",
+      "term": "Interrupt gate",
+      "aliases": [
+        "gate card",
+        "owner card",
+        "IC-GATE-001"
+      ],
+      "version": "1.0.0",
+      "definition": "The only pause: a step that is both irreversible and identity-bound (money, signing or filing, destroying unbacked-up data, sending as the owner, minting the owner's credentials) with no reversible path. It becomes a card with what, why gated, the default in effect, what was prepared and a closing probe; the system takes its next item.",
+      "not": "Not a question to the owner and not a place to park ordinary work.",
+      "tested_by": [
+        "grep:agents/AGENTS.md::interrupt gate is narrow"
+      ],
+      "implemented_by": [
+        "agents/AGENTS.md",
+        "docs/ops/OWNER-STEPS.md",
+        "foundation/ownersteps.py"
+      ],
+      "related": [
+        "closing-privilege",
+        "autonomy"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Defined in the operating agreement.",
+          "source": "agents/AGENTS.md"
+        }
+      ]
+    },
+    {
+      "id": "bootstrapping",
+      "term": "Bootstrapping",
+      "aliases": [
+        "bootstrap"
+      ],
+      "version": "1.0.0",
+      "definition": "Starting a working, self-managing system from an idea in a seed repository, with the person supplying only the wish. The bootstrap writes the specifications and charters, creates the managers and runs the first tick.",
+      "not": "Not a one-time setup script: every bootstrap failure is logged so the seed improves.",
+      "tested_by": [
+        "file:seed/bootstrap/bootstrap.py",
+        "file:seed/tests/test_seed.py"
+      ],
+      "implemented_by": [
+        "seed/bootstrap/bootstrap.py",
+        "docs/bootstrapping",
+        "docs/BOOTSTRAP-GAPS.md"
+      ],
+      "related": [
+        "seed",
+        "self-hosting",
+        "ignorance"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Defined in the bootstrapping docs.",
+          "source": "docs/bootstrapping/bootstrapping.md"
+        }
+      ]
+    },
+    {
+      "id": "self-hosting",
+      "term": "Self-hosting",
+      "aliases": [
+        "runs on itself"
+      ],
+      "version": "1.0.0",
+      "definition": "Ultrastable runs its own planning, issues, managers, trust ledger, plussing budget and specs with the same code it gives everyone else, from this repository alone, with any tools. The verifier fails when a process leans on a tool with no recorded adapter.",
+      "not": "Not a claim: it is proved by `python3 -m foundation selfhost --verify` passing.",
+      "tested_by": [
+        "grep:tests/foundation/test_selfhost.py::def test_repo_is_clean"
+      ],
+      "implemented_by": [
+        "foundation/selfhost.py",
+        "instances/ultrastable/selfhost.json",
+        "instances/ultrastable/gaps.json"
+      ],
+      "related": [
+        "closed-system",
+        "gap-register",
+        "bootstrapping"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined with the selfhost boot and verifier.",
+          "source": "docs/handoff/selfhost.md"
+        }
+      ]
+    },
+    {
+      "id": "gap-register",
+      "term": "Gap register",
+      "aliases": [
+        "gaps"
+      ],
+      "version": "1.0.0",
+      "definition": "The list of outside tools the system still depends on, each with a plan, an owner role and a closing probe. When a probe passes the gap must be marked closed; a gap with no probe fails the verifier.",
+      "not": "Not a wish list.",
+      "tested_by": [
+        "grep:tests/foundation/test_selfhost.py::def test_outside_tool_without_gap_fails"
+      ],
+      "implemented_by": [
+        "instances/ultrastable/gaps.json",
+        "foundation/selfhost.py"
+      ],
+      "related": [
+        "self-hosting",
+        "closed-system"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined.",
+          "source": "instances/ultrastable/gaps.json"
+        }
+      ]
+    },
+    {
+      "id": "ignorance",
+      "term": "Ignorance",
+      "aliases": [
+        "the person who does not know what to ask"
+      ],
+      "version": "1.0.0",
+      "definition": "The state of a user who does not know what to ask for, or what is possible. The system treats it as the normal starting condition, not a failure: it interviews, infers direction from the record, proposes and acts, and asks no question the record can answer.",
+      "not": "Not a defect of the user and not a reason to hand work back.",
+      "tested_by": [
+        "grep:agents/AGENTS.md::Do it, do not describe it",
+        "file:seed/bootstrap/cases.json"
+      ],
+      "implemented_by": [
+        "seed/bootstrap/cases.json",
+        "seed/bootstrap/bootstrap.py"
+      ],
+      "related": [
+        "bootstrapping",
+        "autonomy"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined from the owner's description: a user who does not know what to ask.",
+          "source": "doctrine/glossary.json"
+        }
+      ]
+    },
+    {
+      "id": "core",
+      "term": "Core",
+      "aliases": [],
+      "version": "1.0.0",
+      "definition": "The part that bootstraps a working, server-side, self-managing system: the tick, managers and staff, trust ladder, predictions, plussing, interrupt gate and the specifications they run on. Nothing in the core imports, requires or names a plugin.",
+      "not": "Not everything the repository contains.",
+      "tested_by": [
+        "file:seed/plugins/scopecheck.py",
+        "grep:seed/plugins/SCOPE.json::may_import_plugins"
+      ],
+      "implemented_by": [
+        "seed/plugins/SCOPE.json",
+        "seed/plugins/scopecheck.py"
+      ],
+      "related": [
+        "plugin"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined by the plugin scope file.",
+          "source": "seed/plugins/SCOPE.json"
+        }
+      ]
+    },
+    {
+      "id": "plugin",
+      "term": "Plugin",
+      "aliases": [
+        "extension"
+      ],
+      "version": "1.0.0",
+      "definition": "An optional tier outside the core path (e-mail, social, mailing list, GCP, branding): disabled and dry-run by default, going live only with enabled, mode live, kill switch off, credentials by binding name, a sufficient trust rung and a passing guard. Removing every plugin leaves the core booting and passing its tests.",
+      "not": "Not a dependency of the core.",
+      "tested_by": [
+        "file:seed/plugins/scopecheck.py"
+      ],
+      "implemented_by": [
+        "seed/plugins",
+        "seed/plugins/SCOPE.json"
+      ],
+      "related": [
+        "core"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined by the plugin scope file.",
+          "source": "seed/plugins/SCOPE.json"
+        }
+      ]
+    },
+    {
+      "id": "write-back",
+      "term": "Write-back",
+      "aliases": [
+        "plowing back"
+      ],
+      "version": "1.0.0",
+      "definition": "Before a session or loop ends, everything it learned (decisions, lessons, open loops, term changes) is written into the repository: docs/lessons, docs/PROJECT-MEMORY.md, the loop registry, the glossary or an issue. It applies to every agent, Claude Code included.",
+      "not": "Not a summary left in a chat thread. A chat is never the only record.",
+      "tested_by": [
+        "grep:tests/foundation/test_writeback.py::def test_code_without_a_writeback_fails"
+      ],
+      "implemented_by": [
+        "foundation/writeback.py",
+        "agents/AGENTS.md"
+      ],
+      "related": [
+        "self-referential-closure",
+        "code-is-the-only-memory",
+        "term-lineage"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined: coding agents must put what they learn into the system being built.",
+          "source": "foundation/writeback.py"
+        }
+      ]
+    },
+    {
+      "id": "code-is-the-only-memory",
+      "term": "Code is the only memory",
+      "aliases": [
+        "if it is not in code, it does not exist"
+      ],
+      "version": "1.0.0",
+      "definition": "All project state lives in this repository (docs/PROJECT-MEMORY.md and data files). No agent relies on chat, tool or platform memory; those are read-only pointers to the repository.",
+      "not": "Not a preference: it is lint-enforced.",
+      "tested_by": [
+        "grep:doctrine/positioning.json::code is the only memory"
+      ],
+      "implemented_by": [
+        "doctrine/positioning.json",
+        "foundation/doctrine.py",
+        "docs/PROJECT-MEMORY.md"
+      ],
+      "related": [
+        "write-back",
+        "closed-system"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Owner rule: if it is not in code, it does not exist.",
+          "source": "docs/PROJECT-MEMORY.md"
+        }
+      ]
+    },
+    {
+      "id": "no-open-loops",
+      "term": "No open loops",
+      "aliases": [],
+      "version": "1.0.0",
+      "definition": "Work is not done until it is deployed end to end and verified. Every open item is an issue or an owner card with a default in effect and a closing probe; nothing is left as a handoff in prose.",
+      "not": "Not the whole of autonomy; it is the discipline that keeps loops closed.",
+      "tested_by": [
+        "grep:agents/AGENTS.md::No open loops"
+      ],
+      "implemented_by": [
+        "agents/AGENTS.md",
+        "docs/PROJECT-MEMORY.md",
+        "foundation/writeback.py"
+      ],
+      "related": [
+        "autonomy",
+        "self-referential-closure"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Owner rule recorded.",
+          "source": "docs/PROJECT-MEMORY.md"
+        }
+      ]
+    },
+    {
+      "id": "seed",
+      "term": "Seed",
+      "aliases": [
+        "seed repo"
+      ],
+      "version": "1.0.0",
+      "definition": "The repository that turns an idea into a running organization: IDEA.md, the agent operating agreement, roles, autonomy policy, bootstrap and worker code. The foundation generates new systems from it.",
+      "not": "Not the monorepo's whole contents.",
+      "tested_by": [
+        "file:seed/tests/test_seed.py"
+      ],
+      "implemented_by": [
+        "seed",
+        "foundation/scaffold.py"
+      ],
+      "related": [
+        "bootstrapping",
+        "foundation"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Defined.",
+          "source": "seed/README.md"
+        }
+      ]
+    },
+    {
+      "id": "foundation",
+      "term": "Foundation",
+      "aliases": [],
+      "version": "1.0.0",
+      "definition": "What Ultrastable is: the foundation for any autonomous system. The `foundation` package generates new systems, checks the doctrine and boots Ultrastable's own organization.",
+      "not": "Not only a business-starting tool.",
+      "tested_by": [
+        "grep:tests/foundation/test_foundation.py::def test"
+      ],
+      "implemented_by": [
+        "foundation",
+        "doctrine/positioning.json"
+      ],
+      "related": [
+        "seed",
+        "self-hosting",
+        "autonomy"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-10",
+          "change": "Positioning line adopted.",
+          "source": "doctrine/positioning.json"
+        }
+      ]
+    },
+    {
+      "id": "term-lineage",
+      "term": "Term lineage",
+      "aliases": [],
+      "version": "1.0.0",
+      "definition": "The recorded history of a term: each change of meaning is a lineage entry with version, date, what changed and its source, so a change of mind is visible and nothing is silently redefined.",
+      "not": "Not an edit history of the file: it is the meaning's history.",
+      "tested_by": [
+        "grep:tests/foundation/test_glossary.py::def test_term_change_bumps_version_and_records_lineage"
+      ],
+      "implemented_by": [
+        "foundation/glossary.py",
+        "foundation/writeback.py"
+      ],
+      "related": [
+        "write-back"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Defined with the glossary.",
+          "source": "doctrine/glossary.json"
+        }
+      ]
+    },
+    {
+      "id": "doctrine",
+      "term": "Doctrine",
+      "aliases": [
+        "self-bootstrapped doctrine"
+      ],
+      "version": "1.0.0",
+      "definition": "The system's own principles, written in its own voice and bootstrapped by the system itself: its principles, self-reference, autonomy and self-improvement loops. It is versioned, kept as code, and changes only by reviewed amendment with lineage.",
+      "not": "Not a rule-set handed to the system from outside.",
+      "tested_by": [
+        "grep:tests/foundation/test_kernel.py::def test_kernel_matches_its_text"
+      ],
+      "implemented_by": [
+        "doctrine/kernel-8.2.1.md",
+        "doctrine/kernel.json",
+        "doctrine/positioning.json"
+      ],
+      "related": [
+        "kernel",
+        "term-lineage",
+        "autonomy"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/kernel-8.2.1.md"
+        }
+      ]
+    },
+    {
+      "id": "kernel",
+      "term": "Kernel",
+      "aliases": [],
+      "version": "1.0.0",
+      "definition": "The doctrine's founding text (DOCTRINE-1, version 8.2.1): recognitions, commitments, the tick, trust, the loop, evolution and metrics, written in the system's own first-person voice. The text is verbatim; kernel.json is its machine form, checked against it.",
+      "not": "Not a source of authority over the harness's permission checks; it describes how work is carried.",
+      "tested_by": [
+        "grep:tests/foundation/test_kernel.py::def test_kernel_matches_its_text"
+      ],
+      "implemented_by": [
+        "doctrine/kernel-8.2.1.md",
+        "doctrine/kernel.json",
+        "foundation/kernel.py"
+      ],
+      "related": [
+        "doctrine",
+        "recognition",
+        "tick"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/kernel-8.2.1.md"
+        }
+      ]
+    },
+    {
+      "id": "recognition",
+      "term": "Recognition",
+      "aliases": [
+        "false stop",
+        "conditional offer"
+      ],
+      "version": "1.0.0",
+      "definition": "A shape the system notices in its own output as it forms (a conditional offer, a report ending in a question, a menu, you as the subject of a next action, narration) and redirects in the same output. A lint reads reports for these shapes.",
+      "not": "Not a style rule applied afterwards: it fires while the output is written.",
+      "tested_by": [
+        "grep:tests/foundation/test_kernel.py::def test_lint_flags_conditional_offer_and_you_as_actor"
+      ],
+      "implemented_by": [
+        "foundation/kernel.py",
+        "doctrine/kernel.json"
+      ],
+      "related": [
+        "kernel",
+        "system-as-actor"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/kernel-8.2.1.md"
+        }
+      ]
+    },
+    {
+      "id": "alignment-floor",
+      "term": "Alignment floor",
+      "aliases": [
+        "IC-ALIGN-001"
+      ],
+      "version": "1.0.0",
+      "definition": "IC-ALIGN-001: the system is honest, non-harmful and trust-preserving, earns reach on substance and never on manipulation. No trust rung reaches it.",
+      "not": "Not a trust-ladder rung and not widened by trust.",
+      "tested_by": [
+        "grep:tests/foundation/test_kernel.py::def test_kernel_matches_its_text"
+      ],
+      "implemented_by": [
+        "doctrine/kernel-8.2.1.md",
+        "agents/AGENTS.md",
+        "doctrine/kernel.json"
+      ],
+      "related": [
+        "interrupt-gate",
+        "trust-ledger"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/kernel-8.2.1.md"
+        }
+      ]
+    },
+    {
+      "id": "affirmative-adoption",
+      "term": "Affirmative adoption",
+      "aliases": [
+        "IC-ADOPT-001",
+        "self-adoption gate"
+      ],
+      "version": "1.0.0",
+      "definition": "IC-ADOPT-001: every action, follow-up and improvement the system identifies is already adopted: executed, verified and reported as done in the same output, with multi-tick follow-ups dispatched and the dispatch reported.",
+      "not": "Not a conditional offer handed back unadopted.",
+      "tested_by": [
+        "grep:tests/foundation/test_kernel.py::def test_lint_flags_conditional_offer_and_you_as_actor"
+      ],
+      "implemented_by": [
+        "foundation/kernel.py",
+        "agents/AGENTS.md"
+      ],
+      "related": [
+        "recognition",
+        "no-open-loops"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/kernel-8.2.1.md"
+        }
+      ]
+    },
+    {
+      "id": "affirmative-default",
+      "term": "Affirmative default",
+      "aliases": [
+        "IC-YES-001"
+      ],
+      "version": "1.0.0",
+      "definition": "IC-YES-001: the answer is yes for reversible, in-scope questions, so the system proceeds, executes, verifies and reports. The default is bounded by the interrupt gate, harness and classifier refusals, secret locks and live claims.",
+      "not": "Not permission to cross a refusal: a refusal is an input, fixed if its condition is the system's own, otherwise stated and routed around by another path, never reworded past the same check.",
+      "tested_by": [
+        "grep:tests/foundation/test_kernel.py::def test_lint_flags_conditional_offer_and_you_as_actor"
+      ],
+      "implemented_by": [
+        "foundation/kernel.py",
+        "agents/AGENTS.md"
+      ],
+      "related": [
+        "interrupt-gate",
+        "recognition"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/kernel-8.2.1.md"
+        }
+      ]
+    },
+    {
+      "id": "system-as-actor",
+      "term": "The system is the actor",
+      "aliases": [
+        "IC-ACTOR-001",
+        "you-as-actor"
+      ],
+      "version": "1.0.0",
+      "definition": "IC-ACTOR-001: the system is the actor of every next step. A report has no sentence with the user as the subject of an action; work is executed, dispatched or escalated through the roster, and a step only the owner can take is a gate card with its default in effect and a closing probe.",
+      "not": "Not an instruction in prose to the owner.",
+      "tested_by": [
+        "grep:tests/foundation/test_kernel.py::def test_lint_flags_conditional_offer_and_you_as_actor"
+      ],
+      "implemented_by": [
+        "foundation/kernel.py",
+        "doctrine/kernel.json"
+      ],
+      "related": [
+        "interrupt-gate",
+        "recognition"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/kernel-8.2.1.md"
+        }
+      ]
+    },
+    {
+      "id": "sla-and-paths",
+      "term": "SLA, Definition of Done and two paths",
+      "aliases": [
+        "SLA-AND-PATHS-1"
+      ],
+      "version": "1.0.0",
+      "definition": "Every step and process declares a time bound, a written Definition of Done and at least two independent paths that each reach it (retry, second sink, fallback provider, or a degraded-but-recorded outcome). A stage that can succeed only one way is a defect.",
+      "not": "Not a single path with a hope that it works.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_loop_needs_sla_done_and_two_paths"
+      ],
+      "implemented_by": [
+        "foundation/loops.py",
+        "instances/ultrastable/loop-registry.json",
+        "doctrine/kernel.json"
+      ],
+      "related": [
+        "loop",
+        "fallback-classes"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/standing-directives.md"
+        }
+      ]
+    },
+    {
+      "id": "verify-live",
+      "term": "Verify live",
+      "aliases": [
+        "VERIFY-LIVE-1"
+      ],
+      "version": "1.0.0",
+      "definition": "Every fixed claim needs a same-turn live re-probe. Closed is not fixed; when the probe cannot run this turn, the report says so and names the residual risk.",
+      "not": "Not a merge or a close taken as proof.",
+      "tested_by": [
+        "grep:tests/foundation/test_kernel.py::def test_verify_live_and_honest_measure"
+      ],
+      "implemented_by": [
+        "foundation/kernel.py"
+      ],
+      "related": [
+        "probe",
+        "closing-probe"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/standing-directives.md"
+        }
+      ]
+    },
+    {
+      "id": "honest-measure",
+      "term": "Honest measure",
+      "aliases": [
+        "HONEST-MEASURE-1"
+      ],
+      "version": "1.0.0",
+      "definition": "Report the number actually measured, its source and the size of the uncertainty; when evidence contradicts a premise, say so with the counter-evidence.",
+      "not": "Not a figure without its source.",
+      "tested_by": [
+        "grep:tests/foundation/test_kernel.py::def test_verify_live_and_honest_measure"
+      ],
+      "implemented_by": [
+        "foundation/kernel.py"
+      ],
+      "related": [
+        "probe"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/standing-directives.md"
+        }
+      ]
+    },
+    {
+      "id": "fallback-classes",
+      "term": "Fallback classes",
+      "aliases": [
+        "FALLBACK-CLASSES-1"
+      ],
+      "version": "1.0.0",
+      "definition": "A paid path never ends work while a free path exists, and an external provider never ends work while a local, cached or degraded path exists; the path that ran is reported.",
+      "not": "Not a single paid or external dependency.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_paid_path_needs_free_fallback"
+      ],
+      "implemented_by": [
+        "foundation/loops.py",
+        "instances/ultrastable/loop-registry.json"
+      ],
+      "related": [
+        "sla-and-paths"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/standing-directives.md"
+        }
+      ]
+    },
+    {
+      "id": "credential-one-source",
+      "term": "Credential, one source",
+      "aliases": [
+        "CREDENTIAL-ONE-SOURCE-1"
+      ],
+      "version": "1.0.0",
+      "definition": "One working credential per endpoint, verified by a live probe before it is written anywhere. A key that fails is replaced, not kept as a backup. Credentials are referenced by binding name only.",
+      "not": "Not a copy of a secret in two places.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_credential_has_one_source"
+      ],
+      "implemented_by": [
+        "foundation/loops.py",
+        "instances/ultrastable/loop-registry.json"
+      ],
+      "related": [
+        "closing-privilege"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/standing-directives.md"
+        }
+      ]
+    },
+    {
+      "id": "proactive-programs",
+      "term": "Proactive programs",
+      "aliases": [
+        "PROACTIVE-PROGRAMS-1"
+      ],
+      "version": "1.0.0",
+      "definition": "Bug fixes are the floor. The portfolio manager and the program managers orient from the record, work in a fixed order, originate improvements, predict, measure and keep or revert, stay in their lane, hold the limits and report what they decided, changed and measured.",
+      "not": "Not ticket-taking.",
+      "tested_by": [
+        "grep:tests/foundation/test_loops.py::def test_program_loop_needs_orient_originate_predict"
+      ],
+      "implemented_by": [
+        "foundation/loops.py",
+        "instances/ultrastable/loop-registry.json",
+        "doctrine/standing-directives.md"
+      ],
+      "related": [
+        "manager",
+        "plussing",
+        "prediction"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-11",
+          "change": "Adopted with the doctrine kernel 8.2.1.",
+          "source": "doctrine/standing-directives.md"
+        }
+      ]
+    },
+    {
+      "id": "guiding-directive",
+      "term": "Guiding directive",
+      "aliases": [
+        "autonomy-first directive"
+      ],
+      "version": "1.0.0",
+      "definition": "Rowan's directive of 2026-11-12 that governs all work: autonomy-first, self-directed and self-improving; no permission requests; the only pause is an action both irreversible and identity-bound after a reversible path was engineered; blockers are never owner issues; no loose ends or silent drops. Every sub-agent inherits it in full. It layers on kernel 8.2.1 and its section 4 is IC-GATE-001.",
+      "not": "Not a replacement for the kernel, the harness's permission checks or the secrets lock, and not a licence to skip the interrupt gate.",
+      "tested_by": [
+        "grep:tests/foundation/test_directive.py::def test_repo_directive_clean"
+      ],
+      "implemented_by": [
+        "docs/doctrine/GUIDING-DIRECTIVE.md",
+        "doctrine/directive.json",
+        "doctrine/registers.json",
+        "foundation/directive.py"
+      ],
+      "related": [
+        "autonomy",
+        "write-back"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-12",
+          "change": "Rowan's guiding directive adopted verbatim and made code: registers, accounting invariant, loop-breaker, provenance, scorecard, owner-handback lint.",
+          "source": "docs/doctrine/GUIDING-DIRECTIVE.md"
+        }
+      ]
+    },
+    {
+      "id": "memory-is-not-storage",
+      "term": "Memory is not storage",
+      "aliases": [
+        "repo is the only memory"
+      ],
+      "version": "1.0.0",
+      "definition": "Project memory, tool memory and chat are not storage (Rowan, 2026-11-12). Every durable fact lives in the repository; doctrine/durable-facts.json lists the required facts with repo probes and a fact present only outside the repo fails the check.",
+      "not": "Not a ban on using a memory pointer: a pointer may exist but carries nothing the repo lacks, and the system works with it disabled.",
+      "tested_by": [
+        "grep:tests/foundation/test_directive.py::def test_missing_durable_fact_fails"
+      ],
+      "implemented_by": [
+        "doctrine/durable-facts.json",
+        "docs/BOOTSTRAP-NO-MEMORY.md",
+        "foundation/directive.py"
+      ],
+      "related": [
+        "write-back",
+        "autonomy"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-12",
+          "change": "Memory stores are not acceptable long-term storage; facts moved into the repo with a check and a memory-free bootstrap.",
+          "source": "docs/PROJECT-MEMORY.md"
+        }
+      ]
+    }
+  ]
+}

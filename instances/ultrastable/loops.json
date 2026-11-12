@@ -1,0 +1,77 @@
+{
+  "_doc": "Loop registry: every recurring loop Ultrastable runs on itself, where it runs, how often, its evidence path and closing probe. `python3 -m foundation launch` runs all of them once; every host only schedules that command. Changed by reviewed PR.",
+  "version": "1.0.0",
+  "command": "python3 -m foundation launch --commit --push",
+  "evidence": "ops/loop-evidence/",
+  "loops": [
+    {
+      "id": "tick",
+      "what": "manager heartbeat: reconcile, claims, gates, predictions, trust, dispatch, plus share",
+      "mode": "live",
+      "probe": "file:platform/selfhost/tick.mjs"
+    },
+    {
+      "id": "plussing",
+      "what": "plus share of finished and queued work against the protected budget",
+      "mode": "live",
+      "probe": "file:foundation/launch.py"
+    },
+    {
+      "id": "probes",
+      "what": "selfhost verifier and gap-register closing probes",
+      "mode": "live",
+      "probe": "file:instances/ultrastable/gaps.json"
+    },
+    {
+      "id": "funding-outreach",
+      "what": "funding and outreach engine run; all contact dry-run until outreach/gate.json is live",
+      "mode": "dry-run",
+      "probe": "file:scripts/outreach.py"
+    },
+    {
+      "id": "write-back",
+      "what": "evidence and four-line report committed to the repository on branch loop-evidence",
+      "mode": "live",
+      "probe": "file:ops/loop-evidence/LATEST.md"
+    }
+  ],
+  "hosts": [
+    {
+      "id": "cloudflare-worker",
+      "cadence": "every 10 minutes (existing worker ultrastable-tick, D1 ultrastable-org)",
+      "state": "running",
+      "adapter": "deploy/loops/cloudflare.md",
+      "credential": "cloudflare-account",
+      "takeover_after_hours": 0
+    },
+    {
+      "id": "claude-routine",
+      "cadence": "hourly scheduled routine or session loop",
+      "state": "ready",
+      "adapter": "deploy/loops/claude-routine.md",
+      "credential": "claude-session",
+      "takeover_after_hours": 3
+    },
+    {
+      "id": "local-scheduler",
+      "cadence": "hourly cron or Windows Task Scheduler",
+      "state": "ready",
+      "adapter": "deploy/loops/local/",
+      "credential": "none",
+      "takeover_after_hours": 2
+    },
+    {
+      "id": "github-actions",
+      "cadence": "weekly + dispatch only (free-minutes rule)",
+      "state": "ready",
+      "adapter": ".github/workflows/loop.yml",
+      "credential": "github-builtin",
+      "takeover_after_hours": 168
+    }
+  ],
+  "failover": {
+    "command": "python3 -m foundation launch --failover --commit --push",
+    "rule": "a fallback host runs the loop only when no host has written evidence for its takeover_after_hours; the evidence record names the host that took over"
+  },
+  "deploy_routes": "deploy/routes.json"
+}

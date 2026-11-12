@@ -2,7 +2,7 @@
 // Canonical host ultrastable.io; ultrastable.app and ultrastable.net redirect to it (/pilot and /proof). Live proof comes from
 // the platform claims QNFO publishes as customer zero. Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
-var VERSION = "0.2.0";
+var VERSION = "0.3.1";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -38,7 +38,9 @@ function shell(opts, body) {
     + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
     + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet hide-sm\" href=\"/team\">Team</a><a class=\"btn btn-quiet hide-sm\" href=\"/faq\">FAQ</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
-    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Every number on this site is read from a live system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div></main></body></html>";
+    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Every number on this site is read from a live system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
+    + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://orcid.org/0009-0002-4317-5604\">ORCID</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
+    + "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"Ultrastable\",\"url\":\"https://ultrastable.io\",\"creator\":{\"@type\":\"Person\",\"name\":\"Rowan Brad Quni-Gudzinas\",\"jobTitle\":\"Founder and Director, Ultrastable\",\"url\":\"https://rwnq8.github.io\",\"sameAs\":[\"https://orcid.org/0009-0002-4317-5604\",\"https://github.com/rwnq8\",\"https://www.linkedin.com/in/rowan-quni\"]}}</script></main></body></html>";
 }
 
 let CACHE = { at: 0, data: null };
@@ -62,7 +64,7 @@ function statusLine(d) {
 
 function home(d) {
   return shell({ path: "/", title: "Ultrastable: the foundation for any autonomous system", description: "Ultrastable is the foundation for any autonomous system. Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live and keeps score of how often it was right." },
-    "<section class=\"us-hero\"><h1>Ultrastable is the foundation for any autonomous system.</h1><p class=\"us-tagline\">Coding agents write code. Ultrastable runs the system.</p>"
+    "<section class=\"us-hero\"><h1>Ultrastable is the foundation for any autonomous system.</h1><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p>"
     + "<p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine(d) + "</div></section>"
@@ -154,6 +156,16 @@ function team() {
     + "<h2>Open roles</h2><p>We are looking for an operator or co-founder with commercial and go-to-market experience, and for design partners. <a href=\"/contact\">Get in touch.</a></p>");
 }
 
+function org() {
+  return shell({ path: "/org", title: "Ultrastable organization", description: "How the Ultrastable organization is laid out: four repositories, each with one purpose." },
+    "<div class=\"head\"><h1>Organization</h1><p>Four repositories, each with one purpose. Ultrastable runs on itself, so this layout is itself checked by code.</p></div>"
+    + "<div class=\"us-grid c2\">"
+    + card("System of record", "Roadmap, doctrine, agents, operations and the self-hosting proof.")
+    + card("Code", "The portable core, platform adapters and the bootstrapper that turns an idea file into a running organization.")
+    + card("Specifications", "Architectural specifications, product documentation and the license: free for non-commercial use, revenue share for commercial use.")
+    + card("Profile", "The public face of the organization on GitHub.")
+    + "</div><p class=\"meta\">Repositories are private until the license is released. Superseded early splits are archived, never deleted.</p>");
+}
 function faq() {
   const q = [
     ["Is Ultrastable another coding agent?", "No. It is the layer around the agents you already use. It decides what to work on, assigns it, checks the result and keeps score."],
@@ -180,7 +192,7 @@ function contact() {
 }
 
 const ROBOTS = "User-agent: *\nAllow: /\nSitemap: https://" + CANON + "/sitemap.xml\n";
-const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. QNFO runs on it as customer zero.\n\n- [Live proof](https://" + CANON + "/proof): claims checked against QNFO's records\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n";
+const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. Ultrastable runs on itself. QNFO runs on it as customer zero.\n\n- [Live proof](https://" + CANON + "/proof): claims checked against QNFO's records\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n";
 
 const FAVICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"ultrastable\"><title>ultrastable</title><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></svg>";
 const SOCIAL = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1280 640\" width=\"1280\" height=\"640\"><title>ultrastable</title><defs><linearGradient id=\"g\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#12342A\"/><stop offset=\"1\" stop-color=\"#0B1A15\"/></linearGradient></defs><rect width=\"1280\" height=\"640\" fill=\"url(#g)\"/><g transform=\"translate(96 96) scale(2)\"><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></g><text x=\"96\" y=\"340\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#F6F1E7\">Coding agents write code.</text><text x=\"96\" y=\"430\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#FF5B1F\">Ultrastable runs the system.</text><text x=\"96\" y=\"530\" font-family=\"Georgia,serif\" font-size=\"32\" fill=\"#C9D4CC\">From one idea to a business that improves itself.</text><text x=\"1184\" y=\"590\" text-anchor=\"end\" font-family=\"Georgia,serif\" font-size=\"28\" fill=\"#FFC857\">ultrastable.io</text></svg>";
@@ -203,7 +215,7 @@ export default {
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
@@ -211,12 +223,13 @@ export default {
       case "/proof": return new Response(await proof(), { headers: HTML });
       case "/product": return new Response(product(), { headers: HTML });
       case "/team": return new Response(team(), { headers: HTML });
+      case "/org": return new Response(org(), { headers: HTML });
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/contact": return new Response(contact(), { headers: HTML });
       case "/pilot": return new Response(pilot(), { headers: HTML });
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
-      case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/product", "/how", "/proof", "/team", "/faq", "/contact", "/pilot"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
+      case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
       default: return new Response(shell({ path: u.pathname, title: "Not found - Ultrastable", description: "Page not found." }, "<div class=\"head\"><h1>Not found</h1><p>That page does not exist. <a href=\"/\">Go to the home page</a>.</p></div>"), { status: 404, headers: HTML });
     }
   }

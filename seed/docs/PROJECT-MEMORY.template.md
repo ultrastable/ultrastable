@@ -11,7 +11,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 1. **If it is not in code, it does not exist.** GitHub org `ultrastable` is canonical for code, files, plans, issues, tasks, agents and instructions. Local files, Library copies, thread output and chat or platform memory are ephemeral. Repos are private.
 2. **No open loops.** Autonomy means no open loops, plus iteration. Work ends in completion, not handoff: deployed end to end, verified, recorded. An item leaves the active set only as done, superseded, cancelled, or blocked with owner, blocker and closing probe.
 3. **Autonomy first.** Agents act, verify and report as done. They do not ask questions the record can answer. Test every surface before reporting a blocker and say what each returned. Pauses only at steps both irreversible and identity-bound, after engineering reversibility.
-4. **Confidentiality until the provisional patent is filed.** Site and details stay off public domains, repos and posts. Only talking points tagged SAFE NOW may be used publicly. Patent drafts are working drafts for attorney review, not legal advice. Business figures are estimates until checked.
+4. **Nothing public until the owner says so.** Site and details stay off public domains, repos and posts until the owner publishes. Only talking points tagged SAFE NOW may be used publicly. Legal texts (licenses, specs notes) are written and reviewed by the fleet; decisions are recorded in the repo. Business figures are estimates until checked.
 5. **Platform-agnostic.** Portable core with Cloudflare and Google Cloud adapters; the working system runs on Cloudflare today.
 6. **Reporting.** Project-chat posts are a few plain lines, outcome first, threads linked by title.
 7. **Facts are checked at the source** before being stated (licences, disclosures, numbers).
@@ -20,8 +20,8 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 ## 2. Facts from Rowan
 
 - The QNFO public repository has a licence: the QNFO User License Agreement v2.1, which prohibits commercial use.
-- The key combination of the invention has NOT been publicly disclosed. The QNFO repository public since August 2026 is a separate effort.
-- Never state in any file that the invention is already disclosed or that QNFO has no licence. What was public and when is only an open question for the patent attorney (`ip/provisional/FILING-CHECKLIST.md`).
+- Ultrastable protects its code and specifications with a hybrid license (free non-commercial, Commercial License for commercial use), not a patent (decision 2026-11-11).
+- Never state that QNFO has no licence. Never describe the system as patent pending.
 - Rowan is the ideas person, not the business person. Virtual managers own business, marketing, funding, legal/IP and ops.
 - Working style: judged on results, wants no questions, wants failures logged so the seed improves, wants everything in code and deployed end to end, no open loops.
 - Platform stance (2026-11-10): platform-agnostic, cloud-based for now; Cloudflare first, Google adapter second, pitch both.
@@ -41,7 +41,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 
 | Item | Default in effect | Closing probe |
 |---|---|---|
-| File the provisional patent (after attorney review) | Drafts stay private | Filing receipt recorded in `ip/evidence-log.md` |
+| Publish the repositories (changes visibility) | Everything stays private | Repository visibility is public |
 | Legal entity and IP assignment (BIZ-1) | `LICENSE` placeholder, proprietary | Entity name in `LICENSE` |
 | Mint `ORG_ADMIN_TOKEN` | Holding page only | `org-manage` probe passes; `curl -s https://github.com/ultrastable` shows profile |
 | Create/unarchive repos if the fleet cannot | Monorepo is canonical | `gh api repos/ultrastable/<name> --jq .archived` |

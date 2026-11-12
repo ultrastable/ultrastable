@@ -46,16 +46,46 @@ jobs:
       - name: Seed tests
         working-directory: seed
         run: python3 -m unittest discover -s tests
+      - name: Plugin tier (boundary lint, self-description drift, plugin and sender tests)
+        working-directory: seed
+        run: |
+          python3 -m plugins check
+          python3 -m plugins self --check
+          python3 -m unittest discover -s plugins/tests -t .
+          node --test plugins/email/worker/sender.test.mjs
       - name: Doctrine check (positioning and code-is-the-only-memory, from doctrine/positioning.json)
         run: python3 -m foundation doctrine --check
+      - name: Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)
+        run: |
+          python3 -m foundation loops --verify
+          python3 -m foundation glossary --check
+          python3 -m foundation kernel --check
+          python3 -m foundation directive --check
+          python3 -m foundation closedloop --check
+          python3 -m foundation queue --check
+          python3 -m foundation directive --lint HANDOFF.md docs/lessons/*.md
+          python3 -m foundation writeback check --base "origin/${{ github.base_ref || 'main' }}"
+          python3 -m foundation needsyou --check
+      - name: Core and instances (contract is current, kernel has no instance-specific values)
+        run: |
+          python3 -m foundation upstream contract --check
+          python3 -m foundation upstream leaks
+      - name: Agentic standards (register, surfaces, discovery lint; Worker conformance and contract tests)
+        run: |
+          python3 -m foundation standards --check
+          (cd seed/worker && node --test --no-warnings test/*.test.js)
       - name: Foundation tests, new-system end-to-end (one job, no matrix)
         run: python3 -m unittest discover -s tests/foundation
-      - name: Provisional pre-flight
+      - name: License (patent track dropped 2026-11-11; pre-flight retired)
         run: |
-          sudo apt-get install -y -q poppler-utils >/dev/null
-          python3 ip/provisional/tools/preflight.py
+          python3 scripts/check_license.py
+          (cd scripts && python3 test_license.py)
+      - name: No single route (loops and deploy paths)
+        run: python3 scripts/check_routes.py
       - name: Project memory is current
         run: python3 scripts/check_memory.py
+      - name: Org repo registry (every repo declares a purpose)
+        run: python3 scripts/check_org_repos.py
       - name: Business index (BIZ-3)
         run: python3 scripts/check_business_index.py
       - name: Product and demo tests, gaplint on this repo (no extra workflow; runs on PRs only)

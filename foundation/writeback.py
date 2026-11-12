@@ -1,0 +1,108 @@
+"""The knowledge write-back path. The system is closed only if what a session learns lands in the repository, so every agent (Claude Code
+included) ends a session by writing its decisions, lessons, open loops and term changes here, and CI fails a change that has code but no
+write-back.
+
+  python3 -m foundation writeback record --kind lesson|decision|open-loop|term --title T --body B [--session ID] [--owner ROLE --trigger T --probe SPEC] [--term ID --source PATH]
+  python3 -m foundation writeback check [--base origin/main] [--head HEAD]   the range has a write-back, every session cites itself, no banned framing in commit messages
+  python3 -m foundation writeback outputs DIR... [--ignore GLOB]           files in session output folders that are missing from the repository
+"""
+from __future__ import annotations
+import datetime as dt, fnmatch, hashlib, json, re, subprocess
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+WB_PREFIXES = ("docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loop-registry.json", "docs/issues/OL-")
+DOC_ONLY = re.compile(r"^(docs/|doctrine/|GLOSSARY\.md$|.*\.md$)")
+
+
+def _slug(s: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:60] or "note"
+
+
+def record(root, kind: str, title: str, body: str, *, session: str = "", owner: str = "", trigger: str = "", probe: str = "", term: str = "", source: str = "doctrine/glossary.json", today: str | None = None) -> str:
+    from . import kernel, glossary
+    root, day = Path(root), today or dt.date.today().isoformat()
+    if not title.strip() or not body.strip():
+        raise ValueError("a write-back needs a title and a body")
+    if kind in ("lesson", "decision"):
+        found = kernel.lint(body, kernel.load(root))
+        if found:
+            raise ValueError("rewrite before recording (the report hands work back or lacks evidence): " + "; ".join(f"{f['recognition']}: {f['text']}" for f in found[:3]))
+        d = root / ("docs/lessons" if kind == "lesson" else "docs/decisions")
+        d.mkdir(parents=True, exist_ok=True)
+        f = d / f"{day}-{_slug(title)}.md"
+        head = [f"# {title.strip()}", "", f"Date: {day}", f"Kind: {kind}"] + ([f"Session: {session}"] if session else []) + ["", body.strip(), ""]
+        f.write_text("\n".join(head), encoding="utf-8")
+        idx = d / "README.md"
+        if idx.exists():
+            idx.write_text(idx.read_text(encoding="utf-8").rstrip("\n") + f"\n- {day}: [{title.strip()}]({f.name})\n", encoding="utf-8")
+        return f.relative_to(root).as_posix()
+    if kind == "open-loop":
+        if not (owner and trigger and probe):
+            raise ValueError("an open loop needs an owner role, a trigger and a closing probe")
+        if probe.split(":", 1)[0] not in ("file", "grep", "cmd"):
+            raise ValueError("probe must be file:<path>, grep:<path>::<regex> or cmd:<allowed command>")
+        n = len(list((root / "docs/issues").glob(f"OL-{day.replace('-', '')}-*.json"))) + 1
+        iid = f"OL-{day.replace('-', '')}-{n}"
+        body_txt = f"**Owner:** {owner}\n**Trigger:** {trigger}\n**Done check:** {probe}\n**Status:** open\n\n{body.strip()}"
+        item = {"id": iid, "title": f"{iid}: {title.strip()}", "body": body_txt, "labels": [f"role:{owner}", "open-loop"], "milestone": "Now", "workstream": "Open loops"}
+        (root / "docs/issues" / f"{iid}.json").write_text(json.dumps(item, indent=2) + "\n", encoding="utf-8")
+        return f"docs/issues/{iid}.json"
+    if kind == "term":
+        t = glossary.term_change(root, term, body, title, source, day)
+        return f"doctrine/glossary.json ({t['id']} v{t['version']})"
+    raise ValueError(f"unknown kind {kind!r}")
+
+
+def _git(root, *a) -> str:
+    r = subprocess.run(["git", "-C", str(root), *a], capture_output=True, text=True)
+    if r.returncode:
+        raise RuntimeError(f"git {' '.join(a)}: {r.stderr.strip()[:200]}")
+    return r.stdout
+
+
+def check(root=REPO, base="origin/main", head="HEAD") -> list[str]:
+    from . import doctrine
+    root, bad = Path(root), []
+    try:
+        mb = _git(root, "merge-base", base, head).strip()
+    except RuntimeError as e:
+        return [f"no base to compare ({e}); fetch the base branch"] if base != "origin/main" else []
+    commits = [c for c in _git(root, "log", "--no-merges", "--format=%H", f"{mb}..{head}").split() if c]
+    if not commits:
+        return []
+    files = [f for f in _git(root, "diff", "--name-only", mb, head).splitlines() if f]
+    code = [f for f in files if not DOC_ONLY.match(f) and not f.startswith("tests/")]
+    if code and not any(f.startswith(WB_PREFIXES) for f in files):
+        bad.append("code changed (" + ", ".join(code[:3]) + (" ..." if len(code) > 3 else "") + ") with no write-back: add a lesson, decision, handoff, open loop or memory update (python3 -m foundation writeback record)")
+    msgs = _git(root, "log", "--no-merges", "--format=%H%x1f%B%x1e", f"{mb}..{head}").split("\x1e")
+    sessions = set()
+    for m in msgs:
+        if "\x1f" not in m:
+            continue
+        sha, text = m.split("\x1f", 1)
+        sessions.update(re.findall(r"Claude-Session:\s*\S*?(session_\w+)", text))
+        if doctrine.banned_framing(text):
+            bad.append(f"commit {sha.strip()[:8]}: message uses a banned framing (the doctrine is self-bootstrapped; say only that)")
+    for s in sorted(sessions):
+        cited = any(f.startswith(WB_PREFIXES) and (root / f).is_file() and s in (root / f).read_text(encoding="utf-8", errors="replace") for f in files)
+        if not cited:
+            bad.append(f"session {s} made commits but no write-back file in the range cites it (Session: {s})")
+    return bad
+
+
+def outputs(root, dirs, ignore=()) -> list[str]:
+    """Files in session output folders whose content is not in the repository: knowledge that lives only outside."""
+    root = Path(root)
+    tracked = set()
+    for f in _git(root, "ls-files").splitlines():
+        p = root / f
+        if p.is_file():
+            tracked.add(hashlib.sha256(p.read_bytes()).hexdigest())
+    missing = []
+    for d in dirs:
+        for p in sorted(Path(d).rglob("*")):
+            if p.is_file() and not any(fnmatch.fnmatch(p.name, g) or fnmatch.fnmatch(str(p), g) for g in ignore):
+                if hashlib.sha256(p.read_bytes()).hexdigest() not in tracked:
+                    missing.append(f"{p}: not in the repository")
+    return missing

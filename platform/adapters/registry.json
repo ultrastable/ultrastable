@@ -1,0 +1,127 @@
+{
+ "_doc": "Adapter registry: every tool Ultrastable touches other than its own code. `kind` outside=true means the tool is not part of the system and needs a gap entry. `runbook` is how anyone runs that path with any means; `minimal` marks the path that needs only Python 3 and a copy of the repo. `watch` regexes are searched for in .github/workflows and scripts: a hit on a tool not registered here fails the verifier.",
+ "version": "1.0.0",
+ "adapters": [
+  {
+   "id": "system",
+   "kind": "core",
+   "outside": false,
+   "runbook": "docs/runbooks/any-tools/README.md"
+  },
+  {
+   "id": "sqlite",
+   "kind": "store",
+   "outside": false,
+   "runbook": "docs/runbooks/any-tools/laptop-sqlite.md",
+   "minimal": true,
+   "run": "python3 -m foundation selfhost --no-node"
+  },
+  {
+   "id": "git",
+   "kind": "store",
+   "outside": true,
+   "runbook": "docs/runbooks/any-tools/manual-copy-paste.md",
+   "watch": [
+    "\\bgit\\s+(clone|push|fetch)\\b"
+   ]
+  },
+  {
+   "id": "github",
+   "kind": "forge",
+   "outside": true,
+   "runbook": "docs/runbooks/any-tools/github.md",
+   "watch": [
+    "api\\.github\\.com",
+    "\\bgh\\s+(api|pr|issue)\\b",
+    "actions/checkout"
+   ]
+  },
+  {
+   "id": "cloudflare",
+   "kind": "runtime",
+   "outside": true,
+   "runbook": "docs/runbooks/any-tools/cloudflare.md",
+   "watch": [
+    "api\\.cloudflare\\.com",
+    "\\bwrangler\\b"
+   ]
+  },
+  {
+   "id": "gcp",
+   "kind": "runtime",
+   "outside": true,
+   "runbook": "docs/runbooks/any-tools/gcp.md",
+   "watch": [
+    "\\bgcloud\\b",
+    "run\\.googleapis\\.com"
+   ]
+  },
+  {
+   "id": "agent-executor",
+   "kind": "agent",
+   "outside": true,
+   "runbook": "docs/runbooks/any-tools/agents.md",
+   "watch": [
+    "api\\.anthropic\\.com",
+    "api\\.openai\\.com"
+   ]
+  },
+  {
+   "id": "claude-threads",
+   "kind": "channel",
+   "outside": true,
+   "runbook": "docs/runbooks/any-tools/agents.md",
+   "watch": []
+  },
+  {
+   "id": "mail-sender",
+   "kind": "channel",
+   "outside": true,
+   "runbook": "docs/runbooks/any-tools/manual-copy-paste.md",
+   "watch": [
+    "\\bsmtp\\b",
+    "api\\.sendgrid\\.com",
+    "api\\.mailgun\\.net",
+    "api\\.resend\\.com"
+   ]
+  },
+  {
+   "id": "social-channels",
+   "kind": "channel",
+   "outside": true,
+   "runbook": "docs/runbooks/any-tools/manual-copy-paste.md",
+   "watch": [
+    "bsky\\.social",
+    "mastodon"
+   ]
+  },
+  {
+   "id": "scheduler-host",
+   "kind": "scheduler",
+   "outside": true,
+   "runbook": "docs/runbooks/LAUNCH.md",
+   "watch": []
+  },
+  {
+   "id": "cloudflare-credential",
+   "kind": "credential",
+   "outside": true,
+   "runbook": "deploy/first-run/README.md",
+   "watch": []
+  }
+ ],
+ "unregistered_watch": {
+  "_doc": "Tools that would make a process depend on something with no adapter. Finding one of these in workflows or scripts fails the verifier until it is registered above with a runbook, a gap and a test.",
+  "patterns": [
+   "hooks\\.slack\\.com",
+   "api\\.linear\\.app",
+   "atlassian\\.net",
+   "api\\.notion\\.com",
+   "api\\.trello\\.com",
+   "api\\.airtable\\.com",
+   "api\\.hubapi\\.com",
+   "api\\.asana\\.com",
+   "discord(app)?\\.com/api"
+  ]
+ }
+}

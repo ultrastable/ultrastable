@@ -2,6 +2,10 @@
 
 **Ultrastable is the foundation for any autonomous system.**
 
+A system is autonomous if it has self-referential loops and the ability to close them. Knowing without being able to act is useless, so the system is privileged to close its own loops (`python3 -m foundation loops --verify`).
+
+Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
+
 The spark. One person writes an idea; this repo turns it into a running organization of virtual managers and staff, server-side, on a heartbeat.
 
 ```
@@ -37,6 +41,7 @@ A missing credential never stops the boot. The step is recorded as a backlog ite
 | [`CLAUDE.md`](CLAUDE.md), [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | Pointers so each agent loads `agents/AGENTS.md`. |
 | [`bootstrap/bootstrap.py`](bootstrap/bootstrap.py) | The bootstrapper: read, detect, select, plan, provision, start, report. Stdlib only, idempotent. |
 | [`worker/`](worker/) | The server-side runtime: Cloudflare Worker with the tick, D1 migrations, tests. |
+| [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided communication flow). Dry-run by default, never in the core path. Spec: `docs/architecture/plugins.md`. |
 | [`tests/`](tests/) | Bootstrapper and policy tests (`python3 -m unittest discover tests`). |
 | [`docs/bootstrapping.md`](docs/bootstrapping.md) | The boot sequence, stage by stage, and what each stage learned from AIOS. |
 
@@ -48,3 +53,6 @@ A missing credential never stops the boot. The step is recorded as a backlog ite
 - **Trust is computed, not granted.** It rises and falls with recorded outcomes per surface and action class, and widens scope only through a reviewed change to `autonomy/policy.json`.
 - **Never self-review.** A different agent or model verifies each claimed result.
 - **Plussing.** 20% of capacity goes to improvements, and every closed item proposes one.
+
+## Interview and screens (no code needed)
+`python3 bootstrap/interview.py --org-name "My Project"` asks plain questions with hints and numbered choices, then writes `IDEA.md` and `specs/`. The Worker serves the same interview at `/start` and three screens at `/`, `/next`, `/needs-you`. See [SCOPE.md](SCOPE.md) and [LICENSING.md](LICENSING.md).

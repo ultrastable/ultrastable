@@ -1,0 +1,30 @@
+name: upstream
+# budget: ~2 min per week
+# trigger: weekly drift scan of registered instances (pull route) and repository_dispatch from instances (push route)
+# free-alternative: `python3 -m foundation upstream drift --instance <dir> --fail` from any local scheduler
+# Core side of the two-way channel: scans each instance in instances/*/instance.json that names a repo, opens an issue when it has diverged.
+on:
+  schedule:
+    - cron: "47 5 * * 3"
+  repository_dispatch:
+    types: [instance-drift]
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: upstream
+  cancel-in-progress: true
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7
+      - run: python3 scripts/actions_guard.py upstream
+        env: { GH_TOKEN: "${{ github.token }}" }
+      - name: Drift scan of registered instances
+        run: python3 scripts/upstream_scan.py
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INSTANCE_READ_TOKEN: ${{ secrets.INSTANCE_READ_TOKEN }}

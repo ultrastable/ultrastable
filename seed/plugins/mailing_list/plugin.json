@@ -1,0 +1,16 @@
+{
+  "name": "mailing_list",
+  "role": "outreach",
+  "classes": [
+    "draft"
+  ],
+  "adapters": [
+    "file-store"
+  ],
+  "entry": "mailing_list/plugin.py",
+  "optional": true,
+  "default": {
+    "enabled": false,
+    "mode": "dry-run"
+  }
+}

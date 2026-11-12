@@ -2,7 +2,7 @@
   "_doc": "Desired GitHub state for the ultrastable org and its canonical repo. Applied by scripts/apply_github_settings.sh via the org-settings workflow. Everything public here is SAFE NOW (generic). Edit this file, not the GitHub UI.",
   "org": {
     "name": "Ultrastable",
-    "description": "Coding agents write code. Ultrastable runs the system. From one idea to an organization that improves itself.",
+    "description": "Ultrastable is the foundation for any autonomous system. Runs on itself.",
     "blog": "https://ultrastable.io",
     "email": "pilot@ultrastable.io",
     "default_repository_permission": "read",
@@ -13,9 +13,233 @@
   },
   "repos": {
     "ultrastable/ultrastable": {
-      "description": "Ultrastable: an autonomous system that turns one idea into an organization that improves itself. Private system of record.",
+      "description": "The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof. Ultrastable is the foundation for any autonomous system.",
       "homepage": "https://ultrastable.io",
-      "topics": ["autonomous-agents", "ai-agents", "agent-orchestration", "developer-tools", "devops", "automation", "bootstrapping", "cloudflare-workers", "google-cloud"],
+      "topics": [
+        "autonomous-agents",
+        "ai-agents",
+        "agent-orchestration",
+        "developer-tools",
+        "automation",
+        "bootstrapping",
+        "self-hosting",
+        "cloudflare-workers"
+      ],
+      "settings": {
+        "has_issues": true,
+        "has_projects": true,
+        "has_wiki": false,
+        "has_discussions": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY"
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
+    "ultrastable/seed": {
+      "description": "One idea file in, a running organization of virtual managers and staff out. Ultrastable is the foundation for any autonomous system.",
+      "homepage": "https://ultrastable.io",
+      "topics": [
+        "bootstrapping",
+        "ai-agents",
+        "cloudflare-workers",
+        "autonomous-agents",
+        "idea-to-organization"
+      ],
+      "settings": {
+        "has_issues": true,
+        "has_projects": true,
+        "has_wiki": false,
+        "has_discussions": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY"
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
+    "ultrastable/platform": {
+      "description": "The tick, roles, trust ledger, prediction scorer and plussing queue, portable across Cloudflare and Google Cloud. Ultrastable is the foundation for any autonomous system.",
+      "homepage": "https://ultrastable.io",
+      "topics": [
+        "agent-orchestration",
+        "cloudflare-workers",
+        "google-cloud",
+        "runtime",
+        "autonomous-agents"
+      ],
+      "settings": {
+        "has_issues": true,
+        "has_projects": true,
+        "has_wiki": false,
+        "has_discussions": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY"
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
+    "ultrastable/docs": {
+      "description": "How it works: virtual staff, feedback loops, earned trust, plussing, governance, bootstrapping and the roadmap. Ultrastable is the foundation for any autonomous system.",
+      "homepage": "https://ultrastable.io",
+      "topics": [
+        "documentation",
+        "autonomous-agents",
+        "governance",
+        "roadmap"
+      ],
+      "settings": {
+        "has_issues": true,
+        "has_projects": true,
+        "has_wiki": false,
+        "has_discussions": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY"
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
+    "ultrastable/site": {
+      "description": "The Cloudflare Worker behind the Ultrastable domains. Ultrastable is the foundation for any autonomous system.",
+      "homepage": "https://ultrastable.io",
+      "topics": [
+        "cloudflare-workers",
+        "website",
+        "static-site"
+      ],
+      "settings": {
+        "has_issues": true,
+        "has_projects": true,
+        "has_wiki": false,
+        "has_discussions": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY"
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
+    "ultrastable/business": {
+      "description": "Business plan, customers, competition, pitch, funding and promotion, written by the virtual managers. Ultrastable is the foundation for any autonomous system.",
+      "homepage": "https://ultrastable.io",
+      "topics": [
+        "business-plan",
+        "funding",
+        "go-to-market"
+      ],
+      "settings": {
+        "has_issues": true,
+        "has_projects": true,
+        "has_wiki": false,
+        "has_discussions": false,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY"
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
+    "ultrastable/ip": {
+      "description": "Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11). Ultrastable is the foundation for any autonomous system.",
+      "homepage": "https://ultrastable.io",
+      "topics": [
+        "architecture",
+        "specifications",
+        "intellectual-property"
+      ],
       "settings": {
         "has_issues": true,
         "has_projects": true,
@@ -45,10 +269,32 @@
     }
   },
   "manual_ui_only": [
-    {"item": "Org avatar", "file": "brand/logo/ultrastable-icon-512.png", "where": "github.com/organizations/ultrastable/settings/profile", "probe": "avatar URL differs from the identicon"},
-    {"item": "Repo social preview", "file": "brand/social/social-card.png", "where": "repo Settings > General > Social preview (no API exists)", "probe": "opengraph.githubassets.com card shows the custom image"},
-    {"item": "Pinned repositories on the org page", "where": "org page > Customize pins (no REST API)", "probe": "org page lists the pinned repo"},
-    {"item": "Verified domains ultrastable.io, .app, .net", "where": "org Settings > Verified and approved domains (TXT record, then verify)", "probe": "domains show Verified"},
-    {"item": "Org-wide 2FA requirement", "where": "org Settings > Authentication security (no API)", "probe": "setting shows required"}
+    {
+      "item": "Org avatar",
+      "file": "brand/logo/ultrastable-icon-512.png",
+      "where": "github.com/organizations/ultrastable/settings/profile",
+      "probe": "avatar URL differs from the identicon"
+    },
+    {
+      "item": "Repo social preview",
+      "file": "brand/social/social-card.png",
+      "where": "repo Settings > General > Social preview (no API exists)",
+      "probe": "opengraph.githubassets.com card shows the custom image"
+    },
+    {
+      "item": "Pinned repositories on the org page",
+      "where": "org page > Customize pins (no REST API)",
+      "probe": "org page lists the pinned repo"
+    },
+    {
+      "item": "Verified domains ultrastable.io, .app, .net",
+      "where": "org Settings > Verified and approved domains (TXT record, then verify)",
+      "probe": "domains show Verified"
+    },
+    {
+      "item": "Org-wide 2FA requirement",
+      "where": "org Settings > Authentication security (no API)",
+      "probe": "setting shows required"
+    }
   ]
 }

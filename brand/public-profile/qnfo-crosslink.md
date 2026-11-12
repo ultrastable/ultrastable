@@ -1,6 +1,6 @@
 # QNFO profile cross-link (draft, SAFE NOW)
 
-QNFO is shown only as the test case that proves Ultrastable works; it carries none of Ultrastable's look and Ultrastable carries none of QNFO's. Generic on purpose (provisional patent unfiled, QNFO repo public). Owner decides whether to publish the relationship.
+QNFO is shown only as the test case that proves Ultrastable works; it carries none of Ultrastable's look and Ultrastable carries none of QNFO's. Generic on purpose (the license, not a patent, protects the code; QNFO repo public). Owner decides whether to publish the relationship.
 
 ```md
 ## Related: Ultrastable

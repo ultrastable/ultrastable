@@ -6,7 +6,7 @@ name: outreach
 # Minute budget: one job, about 1 minute per run, 4-5 runs a month = under 6 minutes a month. No push trigger, no second workflow.
 # Prefer the Cloudflare cron worker for anything more frequent (docs/BOOTSTRAP-GAPS.md BG-34).
 # Dry-run until outreach/gate.json mode=live AND sender.registered AND the OUTREACH_SEND_URL / OUTREACH_SEND_TOKEN secrets exist.
-# Kill switch: outreach/gate.json "kill": true. Owner cards are written to outreach/cards/. Status: outreach/STATUS.md.
+# Kill switch: outreach/gate.json "kill": true. The one list for a person is NEEDS-YOU.md. Status: outreach/STATUS.md.
 # To record a reply from a phone: run this workflow with reply_key and reply_kind.
 on:
   schedule:

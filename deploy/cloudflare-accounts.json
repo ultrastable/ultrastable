@@ -1,0 +1,14 @@
+{
+  "_doc": "Cloudflare accounts Ultrastable runs on. Account ids are not secrets. The API token is never stored here: bind it as CLOUDFLARE_API_TOKEN (repo secret or env). Changed by reviewed PR.",
+  "target": {
+    "id": "81e3a4efb4eb66e613529b87682911bb",
+    "named_by": "Rowan 2026-11-11",
+    "state": "not yet running; unreachable from every surface tested 2026-11-12 (see docs/failures/2026-11-12-target-account-unreachable.md); `scripts/cf_account.py probe` and workflow cf-account run the move the moment a token covering this account is bound",
+    "move": "worker ultrastable-tick, ultrastable-dashboard, ultrastable-site and D1 ultrastable-org"
+  },
+  "current": {
+    "id": "edb167b78c9fb901ea5bca3ce58ccc4b",
+    "name": "quniverse",
+    "state": "running: ultrastable-tick cron, D1 ultrastable-org"
+  }
+}

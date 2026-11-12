@@ -12,3 +12,5 @@ demos/dist/
 dist/
 
 .wrangler/
+.selfhost/
+dashboard/cockpit/dist/
