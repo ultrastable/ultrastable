@@ -83,13 +83,24 @@ def apply_edits(edits: list[dict], root=REPO) -> list[str]:
     return out
 
 
+def _public_context(issue: dict) -> str:
+    from . import publicread
+    return publicread.context(issue, REPO)
+
+
+def axiom() -> str:
+    """The CLOSED-LOOP-AXIOM, loaded from doctrine/closed-loop.json so every prompt carries it (a test fails when it does not)."""
+    return json.loads((REPO / "doctrine/closed-loop.json").read_text(encoding="utf-8"))["axiom"]
+
+
 def build_prompt(issue: dict, tree: str) -> str:
     from . import kb  # reference documents are consumed here: the best matches for this issue are read by the agent
     ref = kb.retrieve(f"{issue['title']} {issue.get('body') or ''}")
-    return ("You are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. "
+    return (axiom() + "\n\nYou are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. "
             'Reply with ONLY JSON: {"summary":"one line","files":[{"path":"relative/path","content":"full new file content"}]}. '
             "Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code.\n\n"
-            f"ISSUE #{issue['number']}: {issue['title']}\n{(issue.get('body') or '')[:6000]}\n\nREPOSITORY FILES (partial):\n{tree[:6000]}\n{ref}")
+            f"ISSUE #{issue['number']}: {issue['title']}\n{(issue.get('body') or '')[:6000]}\n\nREPOSITORY FILES (partial):\n{tree[:6000]}\n"
+            + (lambda c: f"\n{c[:6000]}\n" if c else "")(_public_context(issue)) + ref)
 
 
 def call_model(prompt: str, key: str, model: str | None = None) -> dict:
@@ -172,6 +183,13 @@ def run(repo: str, apply: bool = False, issue_no: int | None = None, root=REPO, 
         log(root, row)
     except Exception as e:  # recorded, labelled, never swallowed
         row.update(result="failed", detail=f"{type(e).__name__}: {str(e)[:600]}")
+        from . import publicread
+        if publicread.is_reach_error(row["detail"]) and publicread.mentioned(f"{issue['title']} {issue.get('body') or ''}") and publicread.works(publicread.mentioned(f"{issue['title']} {issue.get('body') or ''}")[0]):
+            # A public route exists: do not label executor-failed; release the claim so the next tick retries with public history in the prompt.
+            row.update(result="retry-public", detail=row["detail"] + " | public unauthenticated read works; retrying next tick through it")
+            sh(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL], root)
+            log(root, row)
+            return row
         sh(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL, "--add-label", "executor-failed"], root)
         sh(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"executor failed: {row['detail']}\n\nA failure is a backlog item: remove `executor-failed` to retry, or the next tick with a different provider takes it."], root)
         log(root, row)

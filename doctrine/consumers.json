@@ -1,0 +1,73 @@
+{
+ "_doc": "Every generated artifact has a code consumer. `artifacts` maps a file glob to the code that reads it and the regex proving it does. `roots` are the places generated artifacts live; a file there with no entry fails `python3 -m foundation closedloop --check`. Remove the file or give it a consumer; never leave it for a person to read.",
+ "roots": [
+  "HANDOFF.md",
+  "NEEDS-YOU.md",
+  "docs/handoff/*.md",
+  "docs/ops/*.md",
+  "docs/lessons/*.md",
+  "docs/failures/*.md"
+ ],
+ "artifacts": [
+  {
+   "glob": "docs/handoff/*.md",
+   "consumer": "foundation/writeback.py",
+   "reads": "docs/handoff"
+  },
+  {
+   "glob": "docs/lessons/*.md",
+   "consumer": "foundation/writeback.py",
+   "reads": "docs/lessons"
+  },
+  {
+   "glob": "docs/failures/*.md",
+   "consumer": "foundation/executor.py",
+   "reads": "docs/failures"
+  },
+  {
+   "glob": "NEEDS-YOU.md",
+   "consumer": "foundation/needsyou.py",
+   "reads": "NEEDS-YOU"
+  },
+  {
+   "glob": "HANDOFF.md",
+   "consumer": ".github/workflows/checks.yml",
+   "reads": "HANDOFF.md"
+  },
+  {
+   "glob": "docs/ops/ACTIONS-BUDGET.md",
+   "consumer": "foundation/loops.py",
+   "reads": "writeback"
+  },
+  {
+   "glob": "docs/ops/GITHUB-SETTINGS-AUDIT.md",
+   "consumer": "foundation/loops.py",
+   "reads": "writeback"
+  },
+  {
+   "glob": "docs/ops/ORG-TOKEN.md",
+   "consumer": "foundation/loops.py",
+   "reads": "writeback"
+  },
+  {
+   "glob": "docs/ops/SITE-DEPLOY.md",
+   "consumer": "foundation/loops.py",
+   "reads": "writeback"
+  },
+  {
+   "glob": "docs/ops/SOCIAL-ACCOUNTS.md",
+   "consumer": "foundation/loops.py",
+   "reads": "writeback"
+  },
+  {
+   "glob": "docs/ops/OWNER-STEPS.md",
+   "consumer": "foundation/ownersteps.py",
+   "reads": "OWNER-STEPS"
+  },
+  {
+   "glob": "docs/ops/BOOTSTRAP-NOTES-branding.md",
+   "consumer": "foundation/brandcheck.py",
+   "reads": "address|contact"
+  }
+ ]
+}

@@ -11,4 +11,4 @@ Identity-bound step (only the owner can mint the token). Default in effect until
 5. Repo Settings > Secrets and variables > Actions > New repository secret named `ORG_ADMIN_TOKEN`.
 6. Actions > org-manage > Run workflow: `probe`, then `projects`, then `close-superseded`.
 
-Creating repos needs the Administration organization permission and is deliberately not in the workflow; add it only if you want the fleet to create repos.
+Creating repos needs the Administration organization permission and is deliberately not in the workflow; the fleet creates repos only through the automated acquisition route.

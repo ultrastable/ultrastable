@@ -40,8 +40,8 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
     if kind == "open-loop":
         if not (owner and trigger and probe):
             raise ValueError("an open loop needs an owner role, a trigger and a closing probe")
-        if probe.split(":", 1)[0] not in ("file", "grep"):
-            raise ValueError("probe must be file:<path> or grep:<path>::<regex>")
+        if probe.split(":", 1)[0] not in ("file", "grep", "cmd"):
+            raise ValueError("probe must be file:<path>, grep:<path>::<regex> or cmd:<allowed command>")
         n = len(list((root / "docs/issues").glob(f"OL-{day.replace('-', '')}-*.json"))) + 1
         iid = f"OL-{day.replace('-', '')}-{n}"
         body_txt = f"**Owner:** {owner}\n**Trigger:** {trigger}\n**Done check:** {probe}\n**Status:** open\n\n{body.strip()}"

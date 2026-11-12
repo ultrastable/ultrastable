@@ -19,10 +19,20 @@
 """
 import argparse, datetime as dt, json, os, sys
 
-from . import standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
+from . import closedloop, standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
 
 
 def main(argv=None) -> int:
+    import sys as _s
+    _av = _s.argv[1:] if argv is None else list(argv)
+    if _av[:1] == ["queue"]:
+        from . import queue
+        return queue.main(_av[1:])
+    if _av[:1] == ["fleet"]:
+        from . import fleet
+        return fleet.main(_av[1:])
+    if _av[:1] == ["closedloop"]:
+        return closedloop.main(_av[1:])
     args0 = sys.argv[1:] if argv is None else list(argv)
     if args0[:1] == ["upstream"]:
         from . import upstream
@@ -37,6 +47,7 @@ def main(argv=None) -> int:
     gl = sub.add_parser("glossary"); gl.add_argument("--check", action="store_true"); gl.add_argument("--apply", action="store_true"); gl.add_argument("--show", nargs="?", const="")
     lp = sub.add_parser("loops"); lp.add_argument("--verify", action="store_true"); lp.add_argument("--list", action="store_true")
     kn = sub.add_parser("kernel"); kn.add_argument("--check", action="store_true"); kn.add_argument("--lint", nargs="+"); kn.add_argument("--metrics", nargs="+")
+    cl = sub.add_parser("closedloop"); cl.add_argument("rest", nargs="*")
     dv = sub.add_parser("directive"); dv.add_argument("--check", action="store_true"); dv.add_argument("--lint", nargs="+"); dv.add_argument("--ledger", action="store_true"); dv.add_argument("--probe", action="store_true"); dv.add_argument("--bootstrap", action="store_true")
     tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true")
     da = sub.add_parser("docs_audit"); da.add_argument("--check", action="store_true"); da.add_argument("--report", action="store_true"); da.add_argument("--orphans", action="store_true"); da.add_argument("--humans", action="store_true")
@@ -136,6 +147,8 @@ def main(argv=None) -> int:
             print("\n".join(f"{x['file']}:{x['line']}: {x['recognition']}: {x['text']}" for x in found) or "no recognitions fired"); return 1 if found else 0
         bad = kernel.check()
         print("\n".join(bad) or "kernel ok"); return 1 if bad else 0
+    if a.cmd == "closedloop":
+        return closedloop.main(a.rest)
     if a.cmd == "directive":
         if a.lint:
             found = [dict(x, file=fn) for fn in a.lint for x in directive.lint(open(fn, encoding="utf-8").read())]

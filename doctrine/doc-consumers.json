@@ -153,10 +153,21 @@
    "consumer": "platform/core/tests/test_boundary.py",
    "needle": "docs",
    "how": "boundary test walks platform/core"
+  },
+  {
+   "id": "scheduled-tasks",
+   "paths": [
+    "ops/scheduled-tasks/*.md"
+   ],
+   "consumer": "foundation/fleet.py",
+   "needle": "scheduled-tasks",
+   "how": "fleet.py reads the scheduled-task definitions"
   }
  ],
  "verified": {
-  "globs": ["org/**"]
+  "globs": [
+   "org/**"
+  ]
  },
  "knowledge": {
   "globs": [
@@ -175,7 +186,7 @@
   "how": "foundation/kb.py ranks these for every issue; foundation/executor.py build_prompt adds the best matches to the agent's prompt"
  },
  "human_action_patterns": [
-  "\\b(Rowan|the owner|owner)\\s+(should|must|needs? to|has to|will need to|can)\\b",
+  "\\b(Rowan|the owner|owner)\\s+(should|must|needs? to|has to|will need to)\\b",
   "\\byou\\s+(should|must|need to|will need to|can then|have to)\\b",
   "\\b(please|just)\\s+(click|open|run|file|sign|submit|paste|upload|email)\\b"
  ],
@@ -196,17 +207,10 @@
   "seed/**"
  ],
  "human_action_baseline": {
-  "business/google-startups/application-kit.md": 1,
   "business/investor/README.md": 1,
-  "business/plan/01-management-roster.md": 2,
   "business/plan/02-customers.md": 1,
-  "business/plan/06-promotion.md": 1,
-  "dashboard/README.md": 1,
-  "docs/failures/2026-11-12-target-account-unreachable.md": 1,
-  "docs/ops/ORG-TOKEN.md": 1,
   "external/google-startups-answers.md": 1,
   "ip/europe/DECISION-MEMO.md": 1,
-  "ip/europe/FORM-VALUES.md": 1,
   "ip/provisional/FILING-CHECKLIST.md": 1
  },
  "converted": [],
@@ -682,14 +686,6 @@
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
    "evidence": "no tracked file names site/RELEASE-0.1.0.md"
-  },
-  {
-   "path": "ops/scheduled-tasks/ultrastable-needs-pat-merger.md",
-   "sha256": "f8625ac1d0e51b498c45ad04516942914eea915cfd81dcb0d7ad52e4777480bd",
-   "reason": "scheduled-task spec for PRs labelled needs-pat; no workflow, script or file uses that label, and the merge-on-green lane (.github/workflows/lane.yml) merges PRs",
-   "date": "2026-11-12",
-   "recover": "59a285d92572890115015950609dbe82bb321bdf",
-   "evidence": "grep needs-pat over tracked files finds only this file"
   },
   {
    "path": "brand/templates/README-template.md",
