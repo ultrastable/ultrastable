@@ -280,6 +280,14 @@
     "17 15 * * 2,5"
    ]
   },
+  "transparency.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "17 5 * * *"
+   ]
+  },
   "upstream.yml": {
    "events": [
     "repository_dispatch",
