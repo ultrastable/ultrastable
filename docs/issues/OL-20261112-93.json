@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261112-93",
+  "title": "OL-20261112-93: PICKS-1: suggestions re-rank from what people choose",
+  "body": "**Owner:** product-manager\n**Trigger:** 20 recorded builds with ui=thread\n**Done check:** grep:site/worker.js::PICKS-1\n**Status:** open\n\nEvery build stores the ideas and additions the person picked (KV key picks); /api/suggest ranks by those counts with no curation. Next: measure pick rate per suggestion source (daily, pool, model) and drop sources that are never picked.",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

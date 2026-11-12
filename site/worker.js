@@ -5,7 +5,8 @@ import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import USER_PATH from "./userpath.js";
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
-var VERSION = "0.11.0";
+import TH from "./thread.js";
+var VERSION = "0.12.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -30,7 +31,7 @@ const CSS = [
   ".us-table th{font-size:14px;color:var(--ink2)}.us-wrap{overflow-x:auto}.us-us td{background:var(--soft);font-weight:600}",
   ".us-foot{border-top:1px solid var(--line);margin-top:32px;padding-top:16px;color:var(--ink2);font-size:14px}",
   ".us-pass{color:var(--good);font-weight:700}.us-fail{color:var(--bad);font-weight:700}"
-].join("\n") + "\n" + IV.CSS;
+].join("\n") + "\n" + IV.CSS + "\n" + TH.CSS;
 
 function esc(s) { return dsEsc(s); }
 
@@ -67,9 +68,8 @@ function statusLine(d) {
 
 function home(d) {
   return shell({ path: "/", title: "Ultrastable: the foundation for any autonomous system", description: "Ultrastable is the foundation for any autonomous system. Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live and keeps score of how often it was right." },
-    "<section class=\"us-hero\"><h1>Tell us what you need. We build it and keep it running.</h1><p class=\"us-lede\">Speak or type a few words. We ask a couple of quick questions, then build it, host it and look after it. Ultrastable is the foundation for any autonomous system.</p>"
-    + IV.askBar("Tell me what is on your mind…")
-    + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">Set up my own</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
+    TH.thread({ title: "What do you want to make?", lede: "Say it or type it, the way you would text a friend. I ask a few quick questions, then build it, put it online and keep it running." })
+    + "<section class=\"us-hero\"><p class=\"us-lede\">Ultrastable is the foundation for any autonomous system.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">Set up my own</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine(d) + "</div></section>"
     + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
     + "<h2>What is different</h2><div class=\"us-grid c3\">"
@@ -189,8 +189,8 @@ function faq() {
 
 // FRONT-DOOR-1: one prompt bar. A person types an idea in plain words; the system takes it from there. No account, key, repo or terminal.
 // The idea is stored under idea:<time>:<id> in the ASSETS KV; the executor tick is its consumer (instances/ultrastable/loop-registry.json).
-function start(note) {
-  const body = "<div class=\"head\"><h1>Tell me what is on your mind</h1><p>" + (typeof note === "string" ? note : "A word or two is plenty. Speak it or type it, then answer a few quick either/or questions. We build it, host it and keep it running.") + "</p></div>" + IV.askBar("Say or type a few words…");
+function start(note, prefill) {
+  const body = TH.thread({ title: "Tell me what is on your mind", lede: typeof note === "string" ? note : "A word or two is plenty. Speak it or type it, and I will take it from there.", prefill: prefill || "" });
   return shell({ path: "/start", title: "Start - Ultrastable", description: "Say or type a few words and Ultrastable interviews you, then builds, hosts and runs it." }, body);
 }
 // BUILD-1: idea -> live site with no account, key or terminal. Workers AI (binding AI) writes one self-contained page, KV (ASSETS) hosts it at
@@ -271,18 +271,18 @@ async function ensureAudit(env, ctx, id) {
 }
 async function limited(request, env) {
   const ip = request.headers.get("cf-connecting-ip") || "x", key = "rl:" + ip + ":" + new Date().toISOString().slice(0, 13);
-  const n = Number(await env.ASSETS.get(key) || 0);
-  if (n >= 6) return new Response(start("Lots of builds from your connection this hour. Please try again a little later."), { status: 429, headers: HTML });
+  const n = Number(await env.ASSETS.get(key) || 0), msg = "Lots of builds from your connection this hour. Please try again a little later.";
+  if (n >= 6) return wantsJson(request) ? Response.json({ error: msg }, { status: 429 }) : new Response(start(msg), { status: 429, headers: HTML });
   await env.ASSETS.put(key, String(n + 1), { expirationTtl: 7200 }); return null;
 }
 const goto = (id, tail) => Response.redirect("https://" + CANON + "/s/" + id + tail, 303);
 // BUILD-2 (kept): the build runs inside the /make request (awaited), never in waitUntil, which is cut off about 30 s after the response. The job
 // is stored so any later /make poll resumes it after an eviction; a claim with a TTL stops two polls building at once; tries are capped at 3.
-async function launch(env, ctx, id, brief, prev, change) {
+async function launch(env, ctx, id, brief, prev, change, json) {
   await env.ASSETS.put("job:" + id, JSON.stringify({ brief: brief, change: change, base: prev ? true : false }), { expirationTtl: 86400 });
   await env.ASSETS.put("tries:" + id, "0", { expirationTtl: 86400 });
   await env.ASSETS.put("state:" + id, "building"); await env.ASSETS.put("since:" + id, String(Date.now()));
-  return goto(id, "/make");
+  return json ? Response.json({ id, state: "building" }, { status: 201 }) : goto(id, "/make");
 }
 async function resume(env, id) {
   if (await env.ASSETS.get("claim:" + id)) return "claimed";
@@ -296,13 +296,14 @@ async function resume(env, id) {
 }
 async function takeIdea(request, env, ctx) {
   const f = await request.formData().catch(() => null), idea = f && String(f.get("idea") || "").trim().slice(0, 2000);
-  if (!idea) return new Response(start(false), { status: 400, headers: HTML });
+  const json = wantsJson(request);
+  if (!idea) return json ? Response.json({ error: "Say a few words about your idea first." }, { status: 400 }) : new Response(start(false), { status: 400, headers: HTML });
   const lim = await limited(request, env); if (lim) return lim;
   const id = newId(); await env.ASSETS.put("idea:" + new Date().toISOString() + ":" + id, idea);
   const profText = String(f.get("profile") || "").slice(0, 2000); let profOk = false;
   if (profText) { try { JSON.parse(profText); await env.ASSETS.put("profile:" + id, profText, { expirationTtl: 31536000 }); profOk = true; } catch (e) { console.error("bad profile dropped", String(e)); } }
   // INTERVIEW-1: the on-page interview already asked its questions, so build now; without it (no JavaScript) the server-side questions run.
-  if (profOk) return launch(env, ctx, id, idea, null, null);
+  if (profOk) { const pk = learnPicks(env, profText); if (ctx && ctx.waitUntil) ctx.waitUntil(pk); else await pk; return launch(env, ctx, id, idea, null, null, json); }
   await jput(env, "ask:" + id, { idea, qs: await questionsFor(env, idea), ans: [] });
   await env.ASSETS.put("state:" + id, "asking");
   return goto(id, "/ask");
@@ -318,10 +319,82 @@ async function takeAnswer(request, env, ctx) {
 async function takeChange(request, env, ctx) {
   const f = await request.formData().catch(() => null), id = f && String(f.get("id") || ""), change = f && String(f.get("change") || "").trim().slice(0, 1000);
   const prev = okId(id) ? await env.ASSETS.get("site:" + id) : null;
-  if (!prev || !change) return new Response(start("That site was not found."), { status: 404, headers: HTML });
+  const json = wantsJson(request);
+  if (!prev || !change) return json ? Response.json({ error: "That site was not found." }, { status: 404 }) : new Response(start("That site was not found."), { status: 404, headers: HTML });
   const lim = await limited(request, env); if (lim) return lim;
-  const a = await jget(env, "ask:" + id);
-  return launch(env, ctx, id, a ? briefOf(a) : "", prev, change);
+  const a = await jget(env, "ask:" + id), b = a ? null : await jget(env, "brief:" + id);
+  return launch(env, ctx, id, a ? briefOf(a) : (b && b.brief) || "", prev, change, json);
+}
+const wantsJson = (request) => (request.headers.get("accept") || "").includes("application/json");
+// THREAD-1: the thread drives the same build as JSON, one stage per request. POST /api/s/<id>/build runs or resumes the build (awaited, as
+// BUILD-2 requires); GET /api/s/<id> reports the state and, once ready, starts the independent check and returns it when done.
+async function apiSite(request, u, env, ctx) {
+  const m = /^\/api\/s\/([a-f0-9]{10})(\/build)?$/.exec(u.pathname);
+  if (!m || !env || !env.ASSETS) return null;
+  const id = m[1], NS = { "Cache-Control": "no-store" }; let st = await env.ASSETS.get("state:" + id);
+  if (!st) return Response.json({ error: "not found" }, { status: 404, headers: NS });
+  if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
+  if (m[2]) {
+    if (request.method !== "POST") return Response.json({ error: "use POST" }, { status: 405, headers: NS });
+    if (st === "building") st = await resume(env, id);
+    return Response.json({ id, state: st === "claimed" ? "building" : st }, { headers: NS });
+  }
+  let audit = null;
+  if (st === "ready") { audit = await jget(env, "audit:" + id); if (!audit) await ensureAudit(env, ctx, id); }
+  return Response.json({ id, state: st, url: "https://" + CANON + "/s/" + id, audit }, { headers: NS });
+}
+// SUGGEST-1: ideas that rotate and adapt. No q: a fresh daily set written once a day by a small model plus the curated pool, ranked by what
+// people actually picked (PICKS-1 below). With q: a small model suggests details to add while typing (grow), features to include before the
+// build (add) or the next change after it (change); answers are cached per question for a week, so repeats cost nothing. Any model failure
+// falls back to keyword matches in the pool (near), so suggestions never depend on one route.
+const SUGGESTERS = ["@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/mistralai/mistral-small-3.1-24b-instruct"];
+const SUGGEST_SYS = {
+  day: "Suggest 8 small, concrete things an everyday person who cannot code might want to make: a page, a simple app or a small tool for their life, hobby, club or small business. Each under 9 words, plain words, starting with \"A\" or \"An\". Vary them widely. Reply with only a JSON array of strings.",
+  grow: "A person who cannot code is typing what they want to make. Suggest 4 short details they might add to make it clearer or better, in their own voice, each under 7 words, no jargon, for example \"with online booking\". Reply with only a JSON array of strings.",
+  add: "Here is a plan for a small page or app. Suggest 4 features people with this idea usually want, each under 6 words, plain words, for example \"A contact form\". Do not repeat what the plan already says. Reply with only a JSON array of strings.",
+  change: "Here is a small web page someone just made and maybe a change they are typing. Suggest 4 short change requests they might want next, imperative, under 7 words each, for example \"Add a photo gallery\". Reply with only a JSON array of strings."
+};
+const cleanIdeas = (a, n) => (Array.isArray(a) ? a : []).map((x) => String(typeof x === "string" ? x : (x && (x.idea || x.text || x.t)) || "").replace(/^[\s"'*\d.-]+|["'\s.]+$/g, "")).filter((x) => x.length > 2 && x.length <= 80 && !/[<>{}]/.test(x)).filter((x, i, a) => a.indexOf(x) === i).slice(0, n);
+async function hashKey(t) { const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(d)].slice(0, 8).map((b) => b.toString(16).padStart(2, "0")).join(""); }
+function nearPool(q) { const w = q.match(/[a-z]{3,}/g) || []; return TH.POOL.map((p) => [p[0], w.filter((x) => p[1].includes(x.slice(0, 5))).length]).filter((x) => x[1]).sort((a, b) => b[1] - a[1]).map((x) => x[0]).slice(0, 4); }
+async function suggest(request, u, env) {
+  const mode = ["grow", "add", "change"].includes(u.searchParams.get("mode")) ? u.searchParams.get("mode") : "grow", q = (u.searchParams.get("q") || "").trim().toLowerCase().slice(0, 400);
+  const H = { "Cache-Control": q ? "public, max-age=3600" : "public, max-age=300" }, kv = env && env.ASSETS;
+  if (!q) {
+    const picks = kv ? (await jget(env, "picks") || {}) : {}, dk = "sg:day:" + new Date().toISOString().slice(0, 10);
+    let day = kv ? await jget(env, dk) : null;
+    if (!day && kv && env.AI && !(await kv.get(dk + ":try"))) {
+      await kv.put(dk + ":try", "1", { expirationTtl: 3600 });
+      try { day = cleanIdeas(await aiJson(env, SUGGESTERS, SUGGEST_SYS.day, "Today is " + dk.slice(7) + ".", 400), 8); if (day.length) await jput(env, dk, day); } catch (e) { console.error("daily ideas failed", String(e).slice(0, 200)); day = null; }
+    }
+    const all = (day || []).concat(TH.POOL.map((p) => p[0])).filter((x, i, a) => a.indexOf(x) === i);
+    const ranked = all.map((x) => [x, (picks[x] || 0) * 3 + Math.random() * 4]).sort((a, b) => b[1] - a[1]).map((x) => x[0]);
+    return Response.json({ ideas: ranked.slice(0, 18), source: day && day.length ? "daily+pool" : "pool" }, { headers: H });
+  }
+  const near = nearPool(q), ck = "sg:" + mode + ":" + await hashKey(q);
+  const hit = kv ? await jget(env, ck) : null; if (hit) return Response.json({ ideas: hit, near, source: "cache" }, { headers: H });
+  if (!kv || !env.AI) return Response.json({ ideas: [], near, source: "pool" }, { headers: H });
+  const ip = request.headers.get("cf-connecting-ip") || "x", rk = "sgl:" + ip + ":" + new Date().toISOString().slice(0, 13), n = Number(await kv.get(rk) || 0);
+  if (n >= 90) return Response.json({ ideas: [], near, source: "limited" }, { headers: H });
+  await kv.put(rk, String(n + 1), { expirationTtl: 7200 });
+  try {
+    const ideas = cleanIdeas(await aiJson(env, SUGGESTERS, SUGGEST_SYS[mode], q, 200), 4);
+    if (ideas.length) await kv.put(ck, JSON.stringify(ideas), { expirationTtl: 604800 });
+    return Response.json({ ideas, near, source: "model" }, { headers: H });
+  } catch (e) { console.error("suggest failed", mode, String(e).slice(0, 200)); return Response.json({ ideas: [], near, source: "fallback" }, { headers: H }); }
+}
+// PICKS-1 (closed loop): every build records which suggested ideas and additions the person chose; /api/suggest ranks by those counts, so the
+// ideas people actually use rise to the front with no one curating them. When the map passes 400 entries it keeps the top 200 at half weight.
+async function learnPicks(env, profText) {
+  try {
+    const p = JSON.parse(profText), said = String(p.said || "").toLowerCase(), adds = Array.isArray(p.adds) ? p.adds.map(String).slice(0, 8) : [];
+    const hits = adds.concat(TH.POOL.map((x) => x[0]).filter((t) => said.startsWith(t.toLowerCase())));
+    if (!hits.length) return;
+    let m = await jget(env, "picks") || {};
+    hits.forEach((t) => { if (t.length <= 80) m[t] = (m[t] || 0) + 1; });
+    const ks = Object.keys(m); if (ks.length > 400) { const o = {}; ks.sort((a, b) => m[b] - m[a]).slice(0, 200).forEach((k) => { o[k] = Math.max(1, Math.floor(m[k] / 2)); }); m = o; }
+    await jput(env, "picks", m);
+  } catch (e) { console.error("picks failed", String(e).slice(0, 200)); }
 }
 const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
 async function siteRoutes(u, env, ctx) {
@@ -432,6 +505,8 @@ export default {
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/answer") return takeAnswer(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
+    if (u.pathname === "/api/suggest" && request.method === "GET") return suggest(request, u, env);
+    { const as = await apiSite(request, u, env, ctx); if (as) return as; }
     { const sr = await siteRoutes(u, env, ctx); if (sr) return sr; }
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
     const PAGES = ["/", "/engineers", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
@@ -447,7 +522,7 @@ export default {
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/contact": return new Response(contact(), { headers: HTML });
       case "/pilot": return new Response(pilot(), { headers: HTML });
-      case "/start": return new Response(start(false), { headers: HTML });
+      case "/start": return new Response(start(false, (u.searchParams.get("idea") || "").slice(0, 300)), { headers: { ...HTML, "Cache-Control": "no-store" } });
       case "/setup": return new Response(setup(), { headers: HTML });
       case "/deploy.md": return new Response(BRIEF.all, { headers: { "Content-Type": "text/markdown; charset=utf-8", "Access-Control-Allow-Origin": "*" } });
       case "/deploy/cloudflare.md": case "/deploy/gcp.md": case "/deploy/aws.md": case "/deploy/azure.md": return new Response(BRIEF[pth.slice(8, -3)], { headers: { "Content-Type": "text/markdown; charset=utf-8", "Access-Control-Allow-Origin": "*" } });

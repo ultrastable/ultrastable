@@ -11,10 +11,11 @@ let r = await get("https://ultrastable.app/anything");
 assert.equal(r.status, 301); assert.equal(r.headers.get("location"), "https://ultrastable.io/pilot");
 // BUILD-1 + RECALL-1 + AUDIT-1: idea -> three tap questions -> building -> live page -> independent check -> change, with an in-memory KV and fake models
 const kv = new Map(); const mem = { get: async (k) => kv.has(k) ? kv.get(k) : null, put: async (k, v) => { kv.set(k, v); }, delete: async (k) => { kv.delete(k); } };
-const briefs = []; let builds = 0;
+const briefs = []; let builds = 0, sugCalls = 0;
 const AI = { run: async (m, a) => {
   const user = a.messages[1].content;
   if (!m.includes("qwen")) {
+    if (a.messages[0].content.includes("JSON array of strings")) { sugCalls++; return { response: JSON.stringify(["with online booking", "<b>bad</b>", "with online booking", "Add a map"]) }; }
     if (a.messages[0].content.includes("strict reviewer")) return { response: JSON.stringify({ met: ["Has a heading"], gaps: [{ what: "No sign-up form", critical: true }] }) };
     return { response: JSON.stringify([{ q: "Do neighbours sign up?", cue: "e.g. a list" }, { q: "Phone first?", cue: "small screens" }, { q: "Calm look?", cue: "simple" }]) };
   }
@@ -65,13 +66,40 @@ assert.match(await (await get("https://ultrastable.io/favicon.svg")).text(), /<s
 assert.match(await (await get("https://ultrastable.io/")).text(), /og:image/);
 // INTERVIEW-1: pill ask bar with mic, chips, engineer lane, honest pins; the client script must parse.
 const homeHtml = await (await get("https://ultrastable.io/")).text();
-assert.match(homeHtml, /class="us-ask"/); assert.match(homeHtml, /id="us-mic"/); assert.match(homeHtml, /href="\/engineers"/);
-assert.doesNotMatch(homeHtml, /<textarea/, "no intimidating text box on the front door");
+// THREAD-1: a rounded composer (one line that grows) with mic, rotating idea chips and a conversation log.
+assert.match(homeHtml, /class="th-cmp"/); assert.match(homeHtml, /id="th-mic"/); assert.match(homeHtml, /href="\/engineers"/); assert.match(homeHtml, /role="log"/);
+assert.match(homeHtml, /<textarea id="th-in" name="idea" rows="1"/, "the composer starts as a one-line pill, never a square box");
+assert.match(homeHtml, /\.th-cmp\{[^}]*border-radius:28px/, "composer is rounded");
+assert.ok((homeHtml.match(/class="th-chip"/g) || []).length >= 6, "idea chips are offered");
+assert.match(homeHtml, /form class="th-cmp" id="th-form" method="post" action="\/api\/idea"/, "works without JavaScript");
+const st = await (await get("https://ultrastable.io/start?idea=A%20wedding%20page")).text(); assert.match(st, />A wedding page<\/textarea>/); assert.match(st, /"auto":true/);
 for (const m of homeHtml.matchAll(/<script>([\s\S]*?)<\/script>/g)) new Function(m[1]);
 const eng = await (await get("https://ultrastable.io/engineers")).text(); assert.match(eng, /Pinned/); assert.match(eng, /Live/);
 const fp = new FormData(); fp.set("idea", "bins. for other people"); fp.set("profile", JSON.stringify({ space: { who: "B" } }));
 r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: fp }), E2); assert.equal(r.status, 303);
 assert.ok([...kv.keys()].some((k) => k.startsWith("profile:")), "interview profile is stored with the idea");
+// THREAD-1: the thread drives the build as JSON stages: idea -> build -> status with the independent check -> change.
+const pj = (path, o, env) => { const f = new FormData(); for (const k in o) f.set(k, o[k]); return mod.fetch(new Request("https://ultrastable.io" + path, { method: "POST", body: f, headers: { accept: "application/json" } }), env || E2); };
+r = await pj("/api/idea", { idea: "A wedding page with RSVPs. for other people", profile: JSON.stringify({ said: "A wedding page with RSVPs", space: { who: "B" }, adds: ["A photo gallery"] }) });
+assert.equal(r.status, 201); const tj = await r.json(); assert.equal(tj.state, "building"); assert.ok(/^[a-f0-9]{10}$/.test(tj.id));
+const picks = JSON.parse(kv.get("picks")); assert.equal(picks["A photo gallery"], 1); assert.equal(picks["A wedding page with RSVPs"], 1, "PICKS-1: chosen ideas are counted");
+r = await mod.fetch(new Request("https://ultrastable.io/api/s/" + tj.id + "/build"), E2); assert.equal(r.status, 405);
+r = await pj("/api/s/" + tj.id + "/build", {}); assert.equal((await r.json()).state, "ready");
+r = await mod.fetch(new Request("https://ultrastable.io/api/s/" + tj.id), E2); let sj = await r.json(); assert.equal(sj.state, "ready");
+r = await mod.fetch(new Request("https://ultrastable.io/api/s/" + tj.id), E2); sj = await r.json(); assert.ok(sj.audit && sj.audit.met.length, "status returns the independent check once it ran");
+r = await pj("/api/change", { id: tj.id, change: "make it green" }); assert.equal(r.status, 201);
+r = await pj("/api/s/" + tj.id + "/build", {}); assert.equal((await r.json()).state, "ready");
+assert.match(briefs[briefs.length - 1], /make it green/);
+assert.equal((await mod.fetch(new Request("https://ultrastable.io/api/s/0000000000"), E2)).status, 404);
+r = await pj("/api/idea", { idea: "" }); assert.equal(r.status, 400); assert.ok((await r.json()).error);
+// SUGGEST-1: ideas rotate (daily set + pool, ranked by picks) and adapt to what is typed; model output is cleaned and cached; offline falls back.
+r = await mod.fetch(new Request("https://ultrastable.io/api/suggest"), E2); let sg = await r.json();
+assert.ok(sg.ideas.length >= 10); assert.equal(sg.source, "daily+pool");
+const n0 = sugCalls; r = await mod.fetch(new Request("https://ultrastable.io/api/suggest?mode=grow&q=wedding%20page"), E2); sg = await r.json();
+assert.deepEqual(sg.ideas, ["with online booking", "Add a map"], "deduped, markup dropped"); assert.equal(sg.source, "model"); assert.ok(sg.near.includes("A wedding page with RSVPs"));
+r = await mod.fetch(new Request("https://ultrastable.io/api/suggest?mode=grow&q=wedding%20page"), E2); assert.equal((await r.json()).source, "cache"); assert.equal(sugCalls, n0 + 1, "a repeat costs no model call");
+r = await mod.fetch(new Request("https://ultrastable.io/api/suggest?mode=add&q=bins"), { ASSETS: mem, AI: { run: async () => { throw new Error("down"); } } }); assert.equal((await r.json()).source, "fallback");
+r = await get("https://ultrastable.io/api/suggest?q=dog%20walks"); sg = await r.json(); assert.ok(sg.near.includes("A page where clients book dog walks"), "no KV or model: pool keyword match");
 console.log("ultrastable-site ok");
 
 // Social preview must be a PNG (SVG og:image is ignored by most crawlers).

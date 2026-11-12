@@ -145,6 +145,30 @@
    "title": "Boundary session reaper",
    "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Finished or idle sessions are archived from boundary.reap decisions.",
    "probe": "grep:foundation/boundary.py::def reap"
+  },
+  {
+   "id": "decision-2026-11-12-thread-1-the-front-door-is-a-chat-thread",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "THREAD-1: the front door is a chat thread",
+   "body": "Owner 2026-11-12: interfaces must be familiar. / and /start are a text thread: rounded composer with mic, ideas that rotate and adapt (/api/suggest, daily model set plus pool), inline either/or bubbles, the build shown as a live run card with the real calls, preview and changes in the thread. Detailed descriptions skip the questions; engineers keep /engineers.",
+   "probe": "grep:site/thread.js::THREAD-1"
+  },
+  {
+   "id": "lesson-2026-11-12-serialized-client-functions-need-a-name-shim",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Serialized client functions need a __name shim",
+   "body": "wrangler/esbuild keepNames injects __name() into functions, so client.toString() threw ReferenceError in the browser; thread.js prepends a no-op __name. A sandbox attribute on an iframe whose response already sends a CSP sandbox header rendered blank in the app browser; the header alone isolates the page.",
+   "probe": "grep:site/thread.js::__name"
+  },
+  {
+   "id": "lesson-2026-11-12-write-back-open-loop-ids-are-max-1-never-count-1",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Write-back open-loop ids are max+1, never count+1",
+   "body": "count+1 overwrote OL-20261112-11 (the Cloudflare account transfer residual) because ids have gaps; closedloop --check caught it as a residual with no queue entry. record() now takes max+1 and refuses to overwrite.",
+   "probe": "grep:foundation/writeback.py::never count\\+1"
   }
  ]
 }
