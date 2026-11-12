@@ -1,11 +1,11 @@
 {
   "id": "Q-SYS-FAILURE-REGISTRY",
-  "title": "Q-SYS-FAILURE-REGISTRY: SYS-3: loops and the executor file their own failures, deduplicated by signature",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** file:foundation/failures.py\n**Status:** open\n\nOwner directive 2026-11-12: a system is an integrated collection of parts, not one worker and a database.\n\nA failed executor or loop run must become a queue item with owner, trigger and closing probe without a person or a session: signature (loop, first error line), count, last seen, link to the run. Same signature twice mutates the approach; three times files an incident item. The /live page shows the registry.\nPaths: foundation/failures.py, foundation/executor.py, foundation/transparency.py, tests/foundation/test_failures.py.\nAcceptance: a simulated failing run files exactly one item and increments its count on repeat.\n\nsize: L\n\n**Closing probe:** file:foundation/failures.py exists and its tests pass.",
+  "title": "Q-SYS-FAILURE-REGISTRY: bootstrap failure registry including natural-language-to-code bridge failures",
+  "body": "**Owner:** operations\n**Trigger:** every bootstrap run\n**Done check:** grep:foundation/bootstrap_failures.py::def register\n**Status:** open\n\nEvery bootstrap failure becomes a registry row (stage, cause, fix attempted, probe); bridge failures from idea text to code are a named class. Filed at thread close; the executor works it in driver order.",
   "labels": [
-    "p1",
-    "agent-ready"
+    "role:operations",
+    "repair"
   ],
   "milestone": "Now",
-  "workstream": "System wiring"
+  "workstream": "Autonomy"
 }
