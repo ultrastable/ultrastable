@@ -1,0 +1,12 @@
+{
+  "id": "OL-CONSOLIDATE-LIFECYCLE",
+  "title": "OL-CONSOLIDATE-LIFECYCLE: merge the parallel lifecycle and market implementations",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** every PR touching foundation/lifecycle.py, foundation/sessions.py, foundation/market.py or foundation/components.py\n**Done check:** grep:foundation/lifecycle.py::CONSOLIDATED-WITH\n**Status:** open\n\nTwo implementations of session closure and loop self-improvement (lifecycle.py vs sessions.py / STRANGE-LOOP-1) and two of the market and objection analysis (components.py vs market.py) now exist. Pick one source of truth per concern, move the other's tests and data onto it, delete the duplicate, and add a `CONSOLIDATED-WITH:` marker line to the survivor's docstring.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop",
+    "consolidation"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
