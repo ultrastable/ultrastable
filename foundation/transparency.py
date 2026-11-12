@@ -169,9 +169,12 @@ def throughput(root, use_gh=True):
         dc[r.get("conclusion") or "running"] = dc.get(r.get("conclusion") or "running", 0) + 1
     out["deploys"] = {"site_runs": len(runs), "by_conclusion": dc, "latest": runs[0] if runs else None,
                       "per_day_success": {d: sum(1 for r in runs if r["createdAt"][:10] == d and r.get("conclusion") == "success") for d in sorted({r["createdAt"][:10] for r in runs})}}
+    allp = _gh_json(root, "pr", "list", "--repo", GH, "--state", "all", "--limit", "300", "--json", "number,state,body")
+    att = [p for p in allp if "Executor run" in (p.get("body") or "")]
+    att_by_state = {st: sum(1 for p in att if p["state"] == st) for st in {p["state"] for p in att}}
     ex = _gh_json(root, "run", "list", "--repo", GH, "--workflow", "executor", "--limit", "30", "--json", "conclusion,createdAt,event")
     out["executor"] = {"runs": len(ex), "by_conclusion": {c: sum(1 for r in ex if r.get("conclusion") == c) for c in {r.get("conclusion") for r in ex}},
-                       "prs_opened_unattended": origin["unattended executor"][0], "log_rows": len((Path(root) / "ops/executor-log.jsonl").read_text(encoding="utf-8").splitlines()) if (Path(root) / "ops/executor-log.jsonl").is_file() else 0}
+                       "prs_opened_unattended": len(att), "prs_merged_unattended": origin["unattended executor"][0], "attempts": att_by_state, "log_rows": len((Path(root) / "ops/executor-log.jsonl").read_text(encoding="utf-8").splitlines()) if (Path(root) / "ops/executor-log.jsonl").is_file() else 0}
     return out
 
 
