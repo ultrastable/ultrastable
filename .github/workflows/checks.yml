@@ -84,6 +84,8 @@ jobs:
           (cd scripts && python3 test_license.py)
       - name: No single route (loops and deploy paths)
         run: python3 scripts/check_routes.py
+      - name: Guided set-up is plain-language and in sync (USER-PATH-1)
+        run: python3 scripts/gen_userpath.py --check
       - name: Project memory is current
         run: python3 scripts/check_memory.py
       - name: Org repo registry (every repo declares a purpose)
