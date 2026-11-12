@@ -14,7 +14,7 @@ Symptom: portal answers 503. Surfaces tried: web, API. Fix in code: retry with b
 Default in effect: draft stays local. Closing probe: curl returns 200.
 """
 BAD_GAP = "# Gaps\n## BG-2: thing broke\nSymptom: it broke.\n"
-RULES_OK = ("Code is all that matters.\nIf it is not in code, it does not exist.\nNever swallow an error.\n")
+RULES_OK = ("Code is all that matters.\nSELF-CLOSED-LOOPS-1.\nIf it is not in code, it does not exist.\nNever swallow an error.\n")
 
 
 def make(files):
@@ -105,6 +105,22 @@ class Rules(unittest.TestCase):
         self.assertEqual(main([d.name]), 0)
         d2 = make({"docs/BOOTSTRAP-GAPS.md": BAD_GAP, "gaplint.json": json.dumps({"rules": ["GL001"]})})
         self.assertEqual(main([d2.name]), 1)
+
+
+class SelfClosed(unittest.TestCase):
+    def test_rule_missing_and_waiting_text_flagged(self):
+        d = make({"agents/AGENTS.md": "x\n", "docs/handoff/a.md": "pending owner decision on X\n"})
+        cfg = load(Path(d.name))
+        cfg["rules"] = ["GL010"]
+        cfg["self_closed"] = {"required_in": ["agents/AGENTS.md"], "scan": ["docs/handoff/*.md"]}
+        self.assertEqual([f.rule for f in run(Path(d.name), cfg)], ["GL010", "GL010"])
+
+    def test_clean_passes(self):
+        d = make({"agents/AGENTS.md": "SELF-CLOSED-LOOPS-1\n", "docs/handoff/a.md": "system proceeds on the default\n"})
+        cfg = load(Path(d.name))
+        cfg["rules"] = ["GL010"]
+        cfg["self_closed"] = {"required_in": ["agents/AGENTS.md"], "scan": ["docs/handoff/*.md"]}
+        self.assertEqual(list(run(Path(d.name), cfg)), [])
 
 
 if __name__ == "__main__":
