@@ -175,11 +175,11 @@ export default {
   "Q-TENANT-row-isolation": {
    "done": "file:seed/worker/migrations/0005_tenant_core.sql",
    "id": "Q-TENANT-row-isolation",
-   "milestone": "Next",
-   "owner": "operations",
+   "milestone": "Now",
+   "owner": "platform",
    "status": "open",
-   "title": "tenant_id on every core table so multi-tenant is stricter isolation, not a rewrite",
-   "trigger": "every executor run"
+   "title": "tenant_id on core rows and scoped tick queries",
+   "trigger": "every PR (checks.yml)"
   }
  },
  "pins": [
