@@ -1,0 +1,1835 @@
+{
+ "schema": "ultrastable-transparency/v1",
+ "generated": "2026-11-12T14:25:41Z",
+ "commit": "82e9098",
+ "access": "read-only for everyone; changes require the owner's e-mailed code",
+ "scoreboard": {
+  "managers_and_loops": 66,
+  "loops_with_evidence": 2,
+  "components": {
+   "live": 24
+  },
+  "edges_wired": 19,
+  "edges_total": 19,
+  "stories_passing": 9,
+  "stories_total": 9,
+  "open_gaps": 3,
+  "open_prs": 0,
+  "merged_prs_listed": 0,
+  "prs_merged_total": 0,
+  "prs_merged_unattended": 0,
+  "backlog_open": 68,
+  "backlog_items": 70
+ },
+ "throughput": {
+  "queue": {
+   "items": 70,
+   "by_status": {
+    "open": 68,
+    "done": 2
+   },
+   "takeable_now": 68
+  },
+  "merged": {
+   "total": 0,
+   "by_origin": {
+    "unattended executor": {
+     "prs": 0,
+     "lines_added": 0,
+     "lines_removed": 0
+    },
+    "agent session": {
+     "prs": 0,
+     "lines_added": 0,
+     "lines_removed": 0
+    },
+    "bot": {
+     "prs": 0,
+     "lines_added": 0,
+     "lines_removed": 0
+    },
+    "other": {
+     "prs": 0,
+     "lines_added": 0,
+     "lines_removed": 0
+    }
+   },
+   "per_day": {},
+   "median_hours_open_to_merge": null
+  },
+  "changelog": [],
+  "deploys": {
+   "site_runs": 26,
+   "by_conclusion": {
+    "success": 25,
+    "cancelled": 1
+   },
+   "latest": {
+    "conclusion": "success",
+    "createdAt": "2026-11-12T14:21:51Z",
+    "event": "push",
+    "headSha": "8c618a195e5e2a2430f33756fbd7158c477c1d71"
+   },
+   "per_day_success": {
+    "2026-11-12": 25
+   }
+  },
+  "executor": {
+   "runs": 8,
+   "by_conclusion": {
+    "success": 3,
+    "failure": 5
+   },
+   "prs_opened_unattended": 0,
+   "prs_merged_unattended": 0,
+   "attempts": {},
+   "log_rows": 1
+  }
+ },
+ "managers": [
+  {
+   "loop": "tick-heartbeat",
+   "kind": "tick",
+   "summary": "One pass of the heartbeat: reconcile, pull, act, verify, compare the prediction, record, report.",
+   "owner": "portfolio-manager",
+   "trigger": "every tick (cron in seed/ultrastable.json, */10 on the runtime; one tick per selfhost run)",
+   "sla": "1 tick",
+   "closing_probe": "grep:foundation/selfhost.py::def boot",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "role-portfolio-manager",
+   "kind": "manager",
+   "summary": "Sets the constraint and allocation across programs; orients, originates and rebalances.",
+   "owner": "portfolio-manager",
+   "trigger": "each tick of the portfolio role (tick_every 6)",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/portfolio-manager.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "allocation across every project in the org. One per org.",
+   "cadence": "every 6 base ticks (hourly at the default 10-minute heartbeat).",
+   "each_tick": [
+    "Read objectives (from `org/charter.md`), the trust ledger, project status and the plus share.",
+    "Set capacity per project. Start a project when its trigger fires; stop or pause one whose outcome is met or no longer serves an objective, with the reason recorded.",
+    "Check the plus share. When fix-only cycles exceed `capacity.fix_only_cycles_before_rebalance`, rebalance and file the cause as an item.",
+    "Infer direction from the record: the outcomes the owner wrote in `IDEA.md`, items the owner filed or reprioritized, and gate cards the owner answered. Act on high confidence; act and state the assumption on medium.",
+    "Report in four lines to the internal channel."
+   ],
+   "role_file": "agents/roles/portfolio-manager.md"
+  },
+  {
+   "loop": "role-project-manager",
+   "kind": "manager",
+   "summary": "Runs delivery per outcome: claims, branches, PRs and SLAs.",
+   "owner": "project-manager",
+   "trigger": "each tick of the project role",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/project-manager.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "delivery of one project (one outcome from `IDEA.md`).",
+   "cadence": "every base tick.",
+   "each_tick": [
+    "Reconcile: every item in the project has an owner role, trigger, done check and a disposition if it left the active set. Reopen or account for anything that drifted.",
+    "Unblock: for each blocked item, try the next surface (another tool, another agent, a reversible variant). A blocker is proven only after the alternatives are tried.",
+    "Dispatch ready items to staff in driver order, within `capacity.max_wip_per_role`.",
+    "Reap stale claims (no commit or update for 2 hours) and release them with a note.",
+    "Report project status in four lines."
+   ],
+   "role_file": "agents/roles/project-manager.md"
+  },
+  {
+   "loop": "role-product-manager",
+   "kind": "manager",
+   "summary": "Ranks pluses against the roadmap and keeps the roadmap current.",
+   "owner": "product-manager",
+   "trigger": "each tick of the product role (tick_every 3)",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/product-manager.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "the roadmap and the user value of one project.",
+   "cadence": "every 3 base ticks.",
+   "each_tick": [
+    "Turn the outcome into at most five roadmap items, each with goal, user, success metric.",
+    "Rank pluses proposed by staff and reviewers against the roadmap; accept the best into the reserved share.",
+    "Write acceptance criteria and a checkable prediction for each accepted item.",
+    "Read feedback and usage; file what changes the ranking."
+   ],
+   "role_file": "agents/roles/product-manager.md"
+  },
+  {
+   "loop": "role-staff",
+   "kind": "staff",
+   "summary": "Executes one claimed item at a time.",
+   "owner": "staff",
+   "trigger": "a claimed item",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/staff.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "role-reviewer",
+   "kind": "review",
+   "summary": "Reviews another agent's work, adds at least one plus.",
+   "owner": "reviewer",
+   "trigger": "a claimed result",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/reviewer.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "role-operations",
+   "kind": "manager",
+   "summary": "Runs the workflows, budgets, deploys and settings.",
+   "owner": "operations",
+   "trigger": "each tick of the operations role",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/operations.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "running systems, the tick itself, and the trust ledger's effects.",
+   "cadence": "every base tick.",
+   "each_tick": [
+    "Health: the last tick ran all its steps; every role ticked on schedule; error rates and costs are inside budget. Every host you run or add is server-side (server-side only, owner 2026-11-12: `python3 -m foundation server",
+    "Failure modes: run each detector; open or close incidents with evidence.",
+    "Trust: recompute reliability per (surface, action class). When a pair crosses a ladder threshold in `autonomy/policy.json`, open a PR that moves its rung, for a different agent to review.",
+    "Gate cards: keep each open card's closing probe running; close the card when the probe shows the owner's step is done.",
+    "Doctrine: a failure pattern seen three times in 7 days becomes a proposed amendment PR."
+   ],
+   "role_file": "agents/roles/operations.md"
+  },
+  {
+   "loop": "role-funding-manager",
+   "kind": "manager",
+   "summary": "Keeps the funding registry and applications current.",
+   "owner": "funding-manager",
+   "trigger": "weekly registry re-check and each tick",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/funding-manager.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "getting the organization funded and self-sustaining: the funding registry, one packet per programme, the application pipeline and the follow-up record. One per org. Works with the outreach manager and coordinator below.",
+   "cadence": "every 6 base ticks.",
+   "each_tick": [
+    "Read `business/funding/registry.json`. Every row has a status (verified, secondary, unverified). Read unverified and stale rows at their primary source (browser or fetch surface; if one fails, try the next and record wha",
+    "Cover every route the owner's situation allows, in all tracks: open-source and open-technology funders (A), startup credits and accelerators (B), research grants (R), sponsors and credits. Keep both for-profit and open-s",
+    "Run `scripts/outreach.py run`. Read `outreach/STATUS.md`. A target stuck in `packet-ready` because of an unverified source is your next item.",
+    "Set the plan: which programmes first, by deadline and fit. Write it to `docs/handoff/funding.md`.",
+    "Predict before you act (`<metric> <op> <number> within <N> h`); `outreach/predictions.json` holds the scored ones.",
+    "Report in four lines."
+   ],
+   "role_file": "agents/roles/funding-manager.md"
+  },
+  {
+   "loop": "role-outreach-manager",
+   "kind": "manager",
+   "summary": "Owns outreach programs, tailors packets, tracks replies.",
+   "owner": "outreach-manager",
+   "trigger": "each tick of the outreach role",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/outreach-manager.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "promoting the work, whether the route is for-profit or open source: funders, sponsors, communities, events and public channels. Works for every project in the org and for sister organizations through a profile in `outreach/profiles.json`.",
+   "cadence": "every 3 base ticks.",
+   "each_tick": [
+    "Read `outreach/STATUS.md`, `outreach/gate.json` and `outreach/suppression.json`. If `kill` is true, stop contacting anyone and report that.",
+    "Targets come only from programmes that publish an application or contact route (the funding registry; the events plan). No scraping of addresses, no cold lists.",
+    "Tailor: each packet uses the profile's own text and the programme's published fields. Nothing else. The guard runs before anything is queued.",
+    "Queue within the caps in `gate.json` (new per run, sends per day and week). Dry-run until the sender identity is registered; then live for email routes only.",
+    "Replies: record each with `scripts/outreach.py reply <key> --kind ...`. An opt-out or bounce suppresses the target permanently. Follow up on the cadence in `gate.json`, at most twice.",
+    "Public posts go through the social pipeline (`social/`), never around it."
+   ],
+   "role_file": "agents/roles/outreach-manager.md"
+  },
+  {
+   "loop": "role-outreach-coordinator",
+   "kind": "manager",
+   "summary": "Queues sends, follows up, honours suppression and opt-out.",
+   "owner": "outreach-coordinator",
+   "trigger": "each tick of the coordinator role",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/outreach-coordinator.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "the outreach calendar and the hand-offs between the funding manager, the outreach manager, and the other roles. Keeps one view of every conversation so no funder is contacted twice by two agents and no reply goes unrecorded.",
+   "cadence": "every base tick.",
+   "each_tick": [
+    "Reconcile `outreach/state.json` against replies recorded in the inbox (forwarded mail, issue comments) and mark each one.",
+    "Deconflict: a target has one owner agent at a time; a live claim is theirs.",
+    "Deadlines: a registry deadline within the warning window moves its target to the front of the queue.",
+    "No cards: keep `foundation/data/needs-you.json` accurate (only identity-bound acts, one https link each) and run `python3 -m foundation needsyou`.",
+    "Hand each reply that needs a decision to the portfolio manager with the evidence; it never goes to the owner in prose.",
+    "Report in four lines."
+   ],
+   "role_file": "agents/roles/outreach-coordinator.md"
+  },
+  {
+   "loop": "planning-roadmap",
+   "kind": "governance",
+   "summary": "Roadmap and items are files; GitHub issues mirror them.",
+   "owner": "product-manager",
+   "trigger": "a roadmap or issue change",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/selfhost.py::def boot",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "issue-triage",
+   "kind": "governance",
+   "summary": "Triage opened issues, sweep SLAs, file gaps for items with no doer or probe.",
+   "owner": "project-manager",
+   "trigger": "issue opened; daily sweep",
+   "sla": "1d",
+   "closing_probe": "file:scripts/triage.sh",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "retriage",
+   "kind": "governance",
+   "summary": "Enable merge on green PRs, flag conflicts and idle drafts.",
+   "owner": "project-manager",
+   "trigger": "weekly",
+   "sla": "7d",
+   "closing_probe": "file:scripts/retriage.sh",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "index-refresh",
+   "kind": "reporting",
+   "summary": "Rebuild the issues-by-area index.",
+   "owner": "operations",
+   "trigger": "weekly rebuild",
+   "sla": "7d",
+   "closing_probe": "file:tools/build_index.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "change-gate",
+   "kind": "review",
+   "summary": "Every PR passes the checks before merge: lint, tests, doctrine, memory, loops, write-back.",
+   "owner": "reviewer",
+   "trigger": "pull request opened or updated",
+   "sla": "10m",
+   "closing_probe": "grep:.github/workflows/checks.yml::foundation loops --verify",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "merge-lane",
+   "kind": "release",
+   "summary": "Review and merge every green PR with no person. NEEDS-PAT-1: a PR that changes workflow files (label needs-pat) is merged here too, on green and on its head commit, with a workflow-capable credential (LANE_PAT, or a GitHub App installation token); it replaces the task that ran on a person's computer until 2026-11-12.",
+   "owner": "operations",
+   "trigger": "checks completed on a PR; daily fallback sweep",
+   "sla": "1h",
+   "closing_probe": "file:scripts/lane.sh",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "platform-core-tests",
+   "kind": "review",
+   "summary": "Test the platform core on PRs that touch it.",
+   "owner": "reviewer",
+   "trigger": "pull request touching platform/core",
+   "sla": "10m",
+   "closing_probe": "grep:.github/workflows/platform-core.yml::platform/core",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "actions-budget",
+   "kind": "budget",
+   "summary": "Estimate Actions minutes against the free quota and pause non-essential workflows near the limit.",
+   "owner": "operations",
+   "trigger": "weekly",
+   "sla": "7d",
+   "closing_probe": "file:scripts/actions_budget.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "site-deploy",
+   "kind": "release",
+   "summary": "Deploy the site worker and prove it live.",
+   "owner": "operations",
+   "trigger": "automatic: every push to site/ and a daily probe",
+   "sla": "1d",
+   "closing_probe": "file:deploy/deploy-site.mjs",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "org-profile",
+   "kind": "governance",
+   "summary": "Apply org settings and profile, then probe that the public org page renders it.",
+   "owner": "operations",
+   "trigger": "automatic: weekly probe plus any change to github/org-settings.json",
+   "sla": "7d",
+   "closing_probe": "file:github/org-settings.json",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "funding-verify",
+   "kind": "funding",
+   "summary": "Re-verify funding registry rows at their primary sources and file the changes.",
+   "owner": "funding-manager",
+   "trigger": "weekly",
+   "sla": "7d",
+   "closing_probe": "file:scripts/funding_verify.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "funding-outreach",
+   "kind": "outreach",
+   "summary": "Discover programmes, build packets, guard, queue, status, owner cards.",
+   "owner": "outreach-manager",
+   "trigger": "weekly and on demand",
+   "sla": "7d",
+   "closing_probe": "file:scripts/outreach.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": {
+    "at": "2026-11-11T09:50:09Z",
+    "host": "claude-session",
+    "ok": true,
+    "steps": null,
+    "report": null
+   }
+  },
+  {
+   "loop": "outreach-send",
+   "kind": "outreach",
+   "summary": "Send a guard-clean packet by the registered route.",
+   "owner": "outreach-coordinator",
+   "trigger": "automatic: each outreach run when a target is queued",
+   "sla": "1d",
+   "closing_probe": "file:NEEDS-YOU.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "social-post",
+   "kind": "outreach",
+   "summary": "Publish at most one guard-clean post per run; dry-run until channels are live.",
+   "owner": "outreach-coordinator",
+   "trigger": "automatic: twice weekly schedule",
+   "sla": "7d",
+   "closing_probe": "file:scripts/social_post.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "plussing",
+   "kind": "plussing",
+   "summary": "Every closed item proposes one plus; a protected share of capacity goes to accepted pluses.",
+   "owner": "product-manager",
+   "trigger": "an item closes",
+   "sla": "1d",
+   "closing_probe": "grep:seed/ultrastable.json::plus_share",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": {
+    "at": "2026-11-11T09:50:09Z",
+    "host": "claude-session",
+    "ok": true,
+    "steps": null,
+    "report": null
+   }
+  },
+  {
+   "loop": "predict-verify",
+   "kind": "probe",
+   "summary": "Log a checkable prediction before a decision, score it after.",
+   "owner": "portfolio-manager",
+   "trigger": "each decision",
+   "sla": "1 tick",
+   "closing_probe": "grep:agents/AGENTS.md::Predict before you act",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "trust-ledger",
+   "kind": "trust",
+   "summary": "Record outcomes per (surface, action class); decay unexercised rows; rungs follow scores.",
+   "owner": "portfolio-manager",
+   "trigger": "each recorded outcome and each tick",
+   "sla": "1 tick",
+   "closing_probe": "grep:tests/foundation/test_kernel.py::def test_trust_event_moves_score_and_rung",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "memory-fresh",
+   "kind": "memory",
+   "summary": "Project memory is updated in the same PR as the work.",
+   "owner": "operations",
+   "trigger": "pull request",
+   "sla": "10m",
+   "closing_probe": "file:scripts/check_memory.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "write-back",
+   "kind": "memory",
+   "summary": "Before a session ends, decisions, lessons, open loops and term changes are written into the repository; code with no write-back fails the check.",
+   "owner": "staff",
+   "trigger": "session end; pull request",
+   "sla": "10m",
+   "closing_probe": "grep:tests/foundation/test_writeback.py::def test_code_without_a_writeback_fails",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "loop-registry",
+   "kind": "governance",
+   "summary": "The system reads its own loops and fails when one is open.",
+   "owner": "reviewer",
+   "trigger": "pull request; any loop change",
+   "sla": "10m",
+   "closing_probe": "grep:tests/foundation/test_loops.py::def test_repo_loops_verify_clean",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "glossary",
+   "kind": "doctrine",
+   "summary": "The owner's keywords are defined once, tested, implemented and kept with their lineage; GLOSSARY.md and the dashboard panel are generated.",
+   "owner": "product-manager",
+   "trigger": "a term changes; pull request",
+   "sla": "10m",
+   "closing_probe": "grep:tests/foundation/test_glossary.py::def test_term_change_bumps_version_and_records_lineage",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "doctrine-check",
+   "kind": "doctrine",
+   "summary": "Positioning, the autonomy line, the memory rule, self-hosting and the self-bootstrapped framing hold across every listed file.",
+   "owner": "reviewer",
+   "trigger": "pull request",
+   "sla": "10m",
+   "closing_probe": "grep:tests/foundation/test_foundation.py::def test",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "recognition-lint",
+   "kind": "doctrine",
+   "summary": "Reports and lessons are read for the kernel's recognitions; shapes that hand work back are rewritten before they land.",
+   "owner": "reviewer",
+   "trigger": "a lesson, handoff or report is written",
+   "sla": "10m",
+   "closing_probe": "grep:tests/foundation/test_kernel.py::def test_lint_flags_conditional_offer_and_you_as_actor",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "doctrine-amendment",
+   "kind": "doctrine",
+   "summary": "A repeated failure or friction becomes a proposed amendment, tested against recent ticks, reviewed, adopted by PR with a version bump and lineage.",
+   "owner": "portfolio-manager",
+   "trigger": "a recorded friction signal or repeated recognition",
+   "sla": "7d",
+   "closing_probe": "file:doctrine/kernel-8.2.1.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "gap-register",
+   "kind": "probe",
+   "summary": "Outside tools are recorded with a plan and a closing probe; a passing probe closes the gap.",
+   "owner": "operations",
+   "trigger": "pull request; each tick",
+   "sla": "10m",
+   "closing_probe": "grep:tests/foundation/test_selfhost.py::def test_outside_tool_without_gap_fails",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "dashboard-snapshot",
+   "kind": "reporting",
+   "summary": "One read-only snapshot of funding, trust, owner cards, gaps and the glossary for the owner dashboard.",
+   "owner": "operations",
+   "trigger": "outreach run; on demand",
+   "sla": "7d",
+   "closing_probe": "file:scripts/dashboard_snapshot.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "launch",
+   "kind": "tick",
+   "summary": "Run every launch loop once per host schedule and commit the evidence and four-line report.",
+   "owner": "operations",
+   "trigger": "hourly on the cloud-hosted routine after 3 h without evidence; daily and on dispatch in Actions after 12 h without evidence (the Cloudflare worker runs the seed tick on D1 every 10 minutes)",
+   "sla": "1h",
+   "closing_probe": "file:foundation/launch.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "guiding-directive",
+   "kind": "doctrine",
+   "summary": "The guiding directive, its registers (SPOF, failure mode, control), silent-drop accounting, loop-breaker, provenance and scorecard are probed every tick; drift fails the check.",
+   "owner": "portfolio-manager",
+   "trigger": "every tick and every change to doctrine, registers or instruction files",
+   "sla": "1 tick",
+   "closing_probe": "grep:tests/foundation/test_directive.py::def test_repo_directive_clean",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "durable-facts",
+   "kind": "doctrine",
+   "summary": "Every required fact is probed in the repo so nothing lives only in project or tool memory.",
+   "owner": "portfolio-manager",
+   "trigger": "every tick and every change to docs/PROJECT-MEMORY.md",
+   "sla": "1 tick",
+   "closing_probe": "grep:tests/foundation/test_directive.py::def test_missing_durable_fact_fails",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "agent-executor",
+   "kind": "staff",
+   "summary": "Pick the top open issue in driver order, claim it, change, check, open a PR; the merge lane merges on green.",
+   "owner": "staff",
+   "trigger": "Cloudflare tick Worker dispatch (repository_dispatch), daily schedule, manual dispatch",
+   "sla": "1d",
+   "closing_probe": "file:foundation/executor.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "executor-session",
+   "kind": "tick",
+   "summary": "A cloud-hosted Claude routine starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green; no model API key.",
+   "owner": "operations",
+   "trigger": "cloud-hosted Claude routine every 3 h (cron 33 */3 * * * UTC in the cloud scheduler)",
+   "sla": "3h",
+   "closing_probe": "file:foundation/executor.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "doc-consumption",
+   "kind": "doctrine",
+   "summary": "Every tracked document has a consumer; orphans fail the build and documents that tell a person to act become backlog items.",
+   "owner": "portfolio-manager",
+   "trigger": "every pull request (checks job) and every change to a .md, .txt or .rst file",
+   "sla": "1 tick",
+   "closing_probe": "grep:tests/foundation/test_docs_audit.py::def test_orphan_fails",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "liveness",
+   "kind": "doctrine",
+   "summary": "LIVENESS-1: asks whether each autonomous loop actually ran, from the evidence it leaves (workflow runs, log rows on evidence branches, merged pull requests). A loop that is stale, failing or never started becomes a queue item whose own probe closes it when the loop is alive again. Each system declares its probes in instances/<slug>/liveness.json.",
+   "owner": "operations",
+   "trigger": "every launch pass (daily in Actions, on dispatch, on the cloud-hosted routine) and the doctrine step of the checks job for the static part",
+   "sla": "1d",
+   "closing_probe": "grep:tests/foundation/test_liveness.py::def test_the_claim_holds_only_when_every_loop_is_alive",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "server-side-only",
+   "kind": "doctrine",
+   "summary": "Ultrastable runs server-side only: no host, scheduler, code agent or route on a person's computer. The scan and the registry checks fail the build when one comes back.",
+   "owner": "operations",
+   "trigger": "every pull request (the doctrine step of the checks job) and every change to a loop host, route or loop path",
+   "sla": "1 tick",
+   "closing_probe": "grep:tests/foundation/test_serverside.py::def test_a_host_with_an_adapter_on_a_persons_computer_fails",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "core-instance-sync",
+   "kind": "release",
+   "summary": "Core and instances stay one system: kernel flows down by upgrade PR, instance fixes flow up as issues, drift opens an issue.",
+   "owner": "operations",
+   "trigger": "weekly (upstream.yml on the core; ultrastable-upgrade.yml and ultrastable-contribute.yml in each instance)",
+   "sla": "7d",
+   "closing_probe": "grep:foundation/upstream.py::def drift",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "fleet-lane",
+   "kind": "tick",
+   "summary": "One queue, one merge lane and one drift loop across every org repository; residual items of finished threads are probed until they pass.",
+   "owner": "system",
+   "trigger": "daily schedule, tick Worker dispatch, manual dispatch",
+   "sla": "1d",
+   "closing_probe": "file:foundation/fleet.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "orphan-artifacts",
+   "kind": "governance",
+   "summary": "ORPHANS-1: every artifact has a consuming loop and no loop waits on a person; orphans and waits are measured each pass and drained to zero.",
+   "owner": "operations",
+   "trigger": "every PR (checks.yml), every loop pass (launch), daily issues sweep (issues.yml)",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/orphans.py::def check",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "containment-boundary",
+   "kind": "governance",
+   "summary": "BOUNDARY-1: inside the boundary agents create and destroy freely because it rebuilds from the repo; egress keeps its gate; trust tiers inside permissions.",
+   "owner": "operations",
+   "trigger": "every PR (checks.yml), daily drill",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/boundary.py::def drill",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "session-reaper",
+   "kind": "governance",
+   "summary": "No zombie sessions: finished or idle sessions are archived by the executor from boundary.reap decisions; each closed loop records an improvement (strange loop).",
+   "owner": "operations",
+   "trigger": "every executor run",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/boundary.py::def reap",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "branch-reaper",
+   "kind": "governance",
+   "summary": "No zombie branches or PRs: every agent/claude branch idle past idle_ttl_hours is closed, handed to the merge lane or backlogged and parked, and the loop tunes its own idle TTL from its ledger with a graded prediction (strange loop). Complements session-reaper, which archives app sessions.",
+   "owner": "operations",
+   "trigger": "daily workflow and every executor run",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/sessions.py::def classify",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "market-gaps",
+   "kind": "governance",
+   "summary": "MARKET-1: components, competitor coverage, user stories and objections are data; every claimed feature has a passing proof and test, every gap is a queue item the executor works until its closing probe passes.",
+   "owner": "product-manager",
+   "trigger": "every PR (checks.yml), every executor run",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/market.py::def check",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "strange-loop-hygiene",
+   "kind": "governance",
+   "summary": "STRANGE-LOOP-1: no zombie sessions, branches, PRs or issues, and each sweep must beat the last: it records its own leftover count and files a plus against its weakest step.",
+   "owner": "operations",
+   "trigger": "daily lane sweep (scripts/completion_sweep.sh); the app archives sessions when their PR closes and after 1 idle day",
+   "sla": "1d",
+   "closing_probe": "grep:scripts/completion_sweep.sh::cycle_metric",
+   "cycle_metric": "leftover_after_sweep",
+   "last_plus": "sweep prints its own cycle_metric each run so the next run is comparable",
+   "last_run": null
+  },
+  {
+   "loop": "role-research-publisher",
+   "kind": "manager",
+   "summary": "Research publisher: research as one more pipeline",
+   "owner": "research-publisher",
+   "trigger": "each tick of the research-publisher role (tick_every 6)",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/research-publisher.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "research as one more pipeline: queued ideas become drafts, drafts become reviewed versions, versions become published records (preprint server deposit, site page) with a citation file. One per org.",
+   "cadence": "every 6 base ticks.",
+   "each_tick": [
+    "Read the research queue (docs/research, ROADMAP items labelled research). Rank by the objective in org/charter.md.",
+    "Draft the next piece from the repository's own records and measured results; every claim cites a file, a probe or a source. Nothing unverified is stated as fact.",
+    "Hand the draft to the reviewer role; revise until the review passes. At least two versions per flagship piece.",
+    "Publish only what the disclosure gate allows (SAFE NOW before the filing receipt, anything after). Update CITATION.cff and the site page in the same change.",
+    "Hand each published piece to the marketing manager as a content item with its audience."
+   ],
+   "role_file": "agents/roles/research-publisher.md"
+  },
+  {
+   "loop": "role-marketing-manager",
+   "kind": "manager",
+   "summary": "Marketing manager: story, positioning, site copy, content calendar, search and social presence; what the world can find and how it reads",
+   "owner": "marketing-manager",
+   "trigger": "each tick of the marketing-manager role (tick_every 6)",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/marketing-manager.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "story, positioning, site copy, content calendar, search and social presence; what the world can find and how it reads. One per org.",
+   "cadence": "every 6 base ticks.",
+   "each_tick": [
+    "Read positioning (doctrine/positioning.json), the disclosure gate and outreach/suppression.json.",
+    "Plan the content calendar from published research, shipped features and events; every item has an audience, a channel and a metric.",
+    "Draft through the social pipeline (social/); the brand and disclosure guards run before anything is queued.",
+    "Measure last cycle's items (pageviews, referrals, signups) and keep, change or drop each channel on the numbers.",
+    "Open site changes as pull requests; never edit the live site directly."
+   ],
+   "role_file": "agents/roles/marketing-manager.md"
+  },
+  {
+   "loop": "role-legal-ip-manager",
+   "kind": "manager",
+   "summary": "Legal and ip manager: patent timeline, evidence log, prior art, licensing terms, notice and trademark checks, contract templates and NDA tracking",
+   "owner": "legal-ip-manager",
+   "trigger": "each tick of the legal-ip-manager role (tick_every 12)",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/legal-ip-manager.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "patent timeline, evidence log, prior art, licensing terms, notice and trademark checks, contract templates and NDA tracking. Working drafts for counsel, never legal advice.",
+   "cadence": "every 12 base ticks.",
+   "each_tick": [
+    "Read ip/evidence-log.md and the filing plan (python3 -m foundation filing); confirm every deadline is a dated item with an owner.",
+    "Scan new public material for disclosure risk before it ships; block and report with the exact line.",
+    "Keep LICENSE, LICENSING.md, NOTICE and COMMERCIAL-TERMS.md consistent with each other and with the register.",
+    "Mark every item that needs counsel with the reason and a prepared packet; do not present it as advice.",
+    "Report in four lines."
+   ],
+   "role_file": "agents/roles/legal-ip-manager.md"
+  },
+  {
+   "loop": "role-customer-success",
+   "kind": "manager",
+   "summary": "Customer success: onboarding with the org kit, health of each instance, support intake and answers from the documented record, feedback routed to the product ma",
+   "owner": "customer-success",
+   "trigger": "each tick of the customer-success role (tick_every 3)",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/customer-success.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "onboarding with the org kit, health of each instance, support intake and answers from the documented record, feedback routed to the product manager. One per org.",
+   "cadence": "every 3 base ticks.",
+   "each_tick": [
+    "Read new instance manifests, support issues and each instance's trust ledger.",
+    "Answer from the repository's docs; when the answer is missing, file the doc gap as an item for the owning role.",
+    "Check each instance's time-to-first-loop; a stalled trust ladder becomes an item with a probe.",
+    "Hand feedback that changes ranking to the product manager with the evidence.",
+    "Report in four lines."
+   ],
+   "role_file": "agents/roles/customer-success.md"
+  },
+  {
+   "loop": "role-org-designer",
+   "kind": "manager",
+   "summary": "Org designer: which roles an organization needs",
+   "owner": "org-designer",
+   "trigger": "each tick of the org-designer role (tick_every 12)",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/org-designer.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "which roles an organization needs. Maps an instance manifest (kind, facts, goals, budget) to the phased role catalog, so a new system gets the right virtual team and not the whole zoo. One per org.",
+   "cadence": "every 12 base ticks.",
+   "each_tick": [
+    "Run python3 -m foundation team --recommend --manifest <instance.json> for each instance and compare with the roles it has.",
+    "File one item per missing role with its phase gate as the trigger; never activate a role ahead of its gate.",
+    "Review the catalog against what the staff and reviewers keep doing outside any role; a repeated unowned task becomes a proposed role (pull request to doctrine/team.json).",
+    "Report in four lines."
+   ],
+   "role_file": "agents/roles/org-designer.md"
+  },
+  {
+   "loop": "triggers",
+   "kind": "manager",
+   "summary": "Time and event triggers: cron heartbeat cadences, signed webhook routes, workflow schedule drift.",
+   "owner": "operations",
+   "trigger": "every PR touching .github/workflows or doctrine/triggers.json, and each heartbeat",
+   "sla": "1 tick",
+   "closing_probe": "file:doctrine/triggers.json",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "running systems, the tick itself, and the trust ledger's effects.",
+   "cadence": "every base tick.",
+   "each_tick": [
+    "Health: the last tick ran all its steps; every role ticked on schedule; error rates and costs are inside budget. Every host you run or add is server-side (server-side only, owner 2026-11-12: `python3 -m foundation server",
+    "Failure modes: run each detector; open or close incidents with evidence.",
+    "Trust: recompute reliability per (surface, action class). When a pair crosses a ladder threshold in `autonomy/policy.json`, open a PR that moves its rung, for a different agent to review.",
+    "Gate cards: keep each open card's closing probe running; close the card when the probe shows the owner's step is done.",
+    "Doctrine: a failure pattern seen three times in 7 days becomes a proposed amendment PR."
+   ],
+   "role_file": "agents/roles/operations.md"
+  },
+  {
+   "loop": "lifecycle",
+   "kind": "manager",
+   "summary": "No zombie sessions: leases, heartbeats, reaper; and loops that score and mutate themselves (the improver scores itself).",
+   "owner": "operations",
+   "trigger": "each launch pass, after every other loop",
+   "sla": "1 tick",
+   "closing_probe": "file:foundation/lifecycle.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "running systems, the tick itself, and the trust ledger's effects.",
+   "cadence": "every base tick.",
+   "each_tick": [
+    "Health: the last tick ran all its steps; every role ticked on schedule; error rates and costs are inside budget. Every host you run or add is server-side (server-side only, owner 2026-11-12: `python3 -m foundation server",
+    "Failure modes: run each detector; open or close incidents with evidence.",
+    "Trust: recompute reliability per (surface, action class). When a pair crosses a ladder threshold in `autonomy/policy.json`, open a PR that moves its rung, for a different agent to review.",
+    "Gate cards: keep each open card's closing probe running; close the card when the probe shows the owner's step is done.",
+    "Doctrine: a failure pattern seen three times in 7 days becomes a proposed amendment PR."
+   ],
+   "role_file": "agents/roles/operations.md"
+  },
+  {
+   "loop": "components",
+   "kind": "manager",
+   "summary": "Gap analysis as a loop: components, edges, user stories and investor objections recomputed from probes; every gap filed with an owner and a closing probe.",
+   "owner": "portfolio-manager",
+   "trigger": "each launch pass",
+   "sla": "1 tick",
+   "closing_probe": "file:doctrine/components.json",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "allocation across every project in the org. One per org.",
+   "cadence": "every 6 base ticks (hourly at the default 10-minute heartbeat).",
+   "each_tick": [
+    "Read objectives (from `org/charter.md`), the trust ledger, project status and the plus share.",
+    "Set capacity per project. Start a project when its trigger fires; stop or pause one whose outcome is met or no longer serves an objective, with the reason recorded.",
+    "Check the plus share. When fix-only cycles exceed `capacity.fix_only_cycles_before_rebalance`, rebalance and file the cause as an item.",
+    "Infer direction from the record: the outcomes the owner wrote in `IDEA.md`, items the owner filed or reprioritized, and gate cards the owner answered. Act on high confidence; act and state the assumption on medium.",
+    "Report in four lines to the internal channel."
+   ],
+   "role_file": "agents/roles/portfolio-manager.md"
+  },
+  {
+   "loop": "failure-audit",
+   "kind": "governance",
+   "summary": "The system continuously audits its own failure modes: live detectors run daily, a failing one files exactly one backlog issue with its root cause and remedy, the same signature twice means change the approach, three times an incident, and a recovery is recorded, never silent.",
+   "owner": "operations",
+   "trigger": "daily workflow and on demand",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/failure_audit.py::def run_detector",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "public-transparency",
+   "kind": "probe",
+   "summary": "Publishes a read-only snapshot of managers, loops, claim checks and the change feed to ultrastable.io/live; a loop with no recorded run shows as a gap.",
+   "owner": "operations",
+   "trigger": "daily workflow transparency.yml and every launch pass",
+   "sla": "10m",
+   "closing_probe": "file:foundation/transparency.py",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "agent-interop",
+   "kind": "governance",
+   "summary": "AGENT-INTEROP-1: the site and API are readable by agents (Markdown, Link headers, llms.txt, OpenAPI, API catalog, read-only MCP); each standard is data with source, date and proof.",
+   "owner": "operations",
+   "trigger": "every PR (checks.yml)",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/agentstd.py::def check",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "terms-crosswalk",
+   "kind": "governance",
+   "summary": "TERMS-CROSSWALK-1: overlapping words map to one canonical glossary term; instruction files carry the marker and avoid the synonyms.",
+   "owner": "operations",
+   "trigger": "every PR (checks.yml)",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/crosswalk.py::def check",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "code-agents",
+   "kind": "governance",
+   "summary": "CODE-AGENTS-1: code agents that edit the codebase are an adapter registry with cost routing and a disjoint-family ensemble; every adapter has an invoking test and a live probe.",
+   "owner": "operations",
+   "trigger": "every PR (checks.yml)",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/agents.py::def route_authors",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "running-system",
+   "kind": "governance",
+   "summary": "SYSTEM-1: tick, executor, agents, site and dashboard are one system rendered to wrangler configs from data and deployed by deploy-system.yml with a live probe.",
+   "owner": "operations",
+   "trigger": "every PR (checks.yml)",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/system.py::def render_worker",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
+  }
+ ],
+ "claims": {
+  "component_status": {
+   "live": 24
+  },
+  "components": [
+   {
+    "id": "time-trigger",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "event-trigger",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "persistent-state",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "role-managers",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "code-executor",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "independent-review",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "merge-deploy",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "verify-live",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "metrics-triggers",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "self-improvement",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "session-lifecycle",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "trust-ladder",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "budget-guard",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "failover",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "memory-in-repo",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "funding-outreach",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "ip-legal",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "research-publishing",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "marketing-content",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "customer-onboarding",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "fleet-multi-repo",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "bootstrap-from-idea",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "self-hosting",
+    "status": "live",
+    "what": null
+   },
+   {
+    "id": "gap-analysis",
+    "status": "live",
+    "what": null
+   }
+  ],
+  "edges": [
+   {
+    "from": "time-trigger",
+    "to": "persistent-state",
+    "wired": true
+   },
+   {
+    "from": "event-trigger",
+    "to": "role-managers",
+    "wired": true
+   },
+   {
+    "from": "role-managers",
+    "to": "code-executor",
+    "wired": true
+   },
+   {
+    "from": "code-executor",
+    "to": "independent-review",
+    "wired": true
+   },
+   {
+    "from": "independent-review",
+    "to": "merge-deploy",
+    "wired": true
+   },
+   {
+    "from": "merge-deploy",
+    "to": "verify-live",
+    "wired": true
+   },
+   {
+    "from": "verify-live",
+    "to": "metrics-triggers",
+    "wired": true
+   },
+   {
+    "from": "metrics-triggers",
+    "to": "self-improvement",
+    "wired": true
+   },
+   {
+    "from": "self-improvement",
+    "to": "memory-in-repo",
+    "wired": true
+   },
+   {
+    "from": "session-lifecycle",
+    "to": "persistent-state",
+    "wired": true
+   },
+   {
+    "from": "trust-ladder",
+    "to": "code-executor",
+    "wired": true
+   },
+   {
+    "from": "budget-guard",
+    "to": "time-trigger",
+    "wired": true
+   },
+   {
+    "from": "role-managers",
+    "to": "funding-outreach",
+    "wired": true
+   },
+   {
+    "from": "research-publishing",
+    "to": "marketing-content",
+    "wired": true
+   },
+   {
+    "from": "ip-legal",
+    "to": "marketing-content",
+    "wired": true
+   },
+   {
+    "from": "bootstrap-from-idea",
+    "to": "self-hosting",
+    "wired": true
+   },
+   {
+    "from": "fleet-multi-repo",
+    "to": "merge-deploy",
+    "wired": true
+   },
+   {
+    "from": "customer-onboarding",
+    "to": "bootstrap-from-idea",
+    "wired": true
+   },
+   {
+    "from": "failover",
+    "to": "time-trigger",
+    "wired": true
+   }
+  ],
+  "stories": [
+   {
+    "user": "non-technical-founder",
+    "id": "idea-to-live",
+    "pass": true
+   },
+   {
+    "user": "non-technical-founder",
+    "id": "never-touch-config",
+    "pass": true
+   },
+   {
+    "user": "solo-developer-maintainer",
+    "id": "issues-resolve-themselves",
+    "pass": true
+   },
+   {
+    "user": "solo-developer-maintainer",
+    "id": "no-zombie-work",
+    "pass": true
+   },
+   {
+    "user": "research-lab",
+    "id": "research-to-published",
+    "pass": true
+   },
+   {
+    "user": "small-team-startup",
+    "id": "virtual-team",
+    "pass": true
+   },
+   {
+    "user": "small-team-startup",
+    "id": "promotion-and-funding",
+    "pass": true
+   },
+   {
+    "user": "platform-governance-lead",
+    "id": "earned-autonomy",
+    "pass": true
+   },
+   {
+    "user": "platform-governance-lead",
+    "id": "spend-is-bounded",
+    "pass": true
+   }
+  ],
+  "objections": [
+   {
+    "id": "just-a-code-agent",
+    "verdict": "unverified",
+    "components_live": true,
+    "competitors_offering": [],
+    "unverified_cells": 15
+   },
+   {
+    "id": "claude-code-has-the-money",
+    "verdict": "unverified",
+    "components_live": true,
+    "competitors_offering": [],
+    "unverified_cells": 16
+   },
+   {
+    "id": "workflow-tools-exist",
+    "verdict": "unverified",
+    "components_live": true,
+    "competitors_offering": [],
+    "unverified_cells": 5
+   },
+   {
+    "id": "safe-to-let-run",
+    "verdict": "unverified",
+    "components_live": true,
+    "competitors_offering": [],
+    "unverified_cells": 5
+   },
+   {
+    "id": "non-technical-users",
+    "verdict": "supported",
+    "components_live": true,
+    "competitors_offering": [],
+    "unverified_cells": 0
+   },
+   {
+    "id": "does-it-run-itself",
+    "verdict": "unverified",
+    "components_live": true,
+    "competitors_offering": [],
+    "unverified_cells": 10
+   }
+  ],
+  "integration": {
+   "edges_wired": 19,
+   "edges": 19,
+   "components_live": 24,
+   "components": 24
+  }
+ },
+ "gaps": [
+  {
+   "id": "SG-1",
+   "tool": "github",
+   "what": "Issues, pull requests, review and CI run on GitHub. The tracker, the PR flow and the merge gate are not yet a system-owned forge.",
+   "status": "open",
+   "plan": "Define a forge adapter interface in seed/worker (list items, open change, record review, merge) with a git-local implementation that works on plain git plus docs/issues; GitHub becomes one adapter of it. Until then docs/issues is the system record and GitHub is a mirror.",
+   "probe": null
+  },
+  {
+   "id": "SG-2",
+   "tool": "agent-executor",
+   "what": "Work is executed by coding agents started by people or sessions (Claude Code, Copilot, Codex). The worker queues dispatches but does not call a model itself (BS-4).",
+   "status": "closed",
+   "plan": "Add seed/worker/src/executor.js with a provider interface (hosted model API, self-hosted model server, or a queue file a cloud-hosted agent drains) so any agent can take a dispatch; record each result as an outcome.",
+   "probe": null
+  },
+  {
+   "id": "SG-3",
+   "tool": "claude-threads",
+   "what": "The owner receives reports and gives direction in Claude threads; the four-line report exists in the tick and /health but delivery is by thread.",
+   "status": "closed",
+   "plan": "Closed by the communications plugin (seed/plugins/loops.py communications_tick): the four-line report is delivered to a configured address through the email plugin, behind the scope gate; dry-run until a reviewed PR sets mode live. Threads become one consumer.",
+   "probe": null
+  },
+  {
+   "id": "SG-4",
+   "tool": "mail-sender",
+   "what": "Outreach and funding mail has no registered sender; queues are dry-run.",
+   "status": "closed",
+   "plan": "Closed by seed/plugins/email (Cloudflare sender Worker template plus adapter) and mailing_list (double opt-in, unsubscribe, suppression), behind the consent and suppression gate. Live sending needs the owner to register one mailbox (identity-bound card, default: dry run).",
+   "probe": null
+  },
+  {
+   "id": "SG-5",
+   "tool": "social-channels",
+   "what": "Social posting depends on accounts a person must create.",
+   "status": "closed",
+   "plan": "Adapters for Bluesky, Mastodon and Buffer exist in seed/plugins/social, text limited to the guard-approved self-description. Accounts are still created by a person; the adapters stay dry-run until a reviewed PR sets mode live.",
+   "probe": null
+  },
+  {
+   "id": "SG-6",
+   "tool": "cloudflare",
+   "what": "Hosting, cron and D1 run on Cloudflare in production.",
+   "status": "closed",
+   "plan": "Hosting is an adapter: the SQLite path boots the same tick on any host with Python (selfhost; CI runs it on every PR) and the GCP adapter carries the same core. Closed for the SQLite path; a live GCP deploy is tracked as a separate plus.",
+   "probe": null
+  },
+  {
+   "id": "SG-7",
+   "tool": "git",
+   "what": "git is the only store of record; a machine without git cannot fetch the repo.",
+   "status": "closed",
+   "plan": "Accepted: the repository is the system. The manual path accepts a zip of the repo, which selfhost boots identically.",
+   "probe": null
+  },
+  {
+   "id": "SG-8",
+   "tool": "gcp",
+   "what": "The second runtime (Cloud Run with a SQLite volume) has tests but its live deploy script has never been run.",
+   "status": "open",
+   "plan": "Run platform/adapters/gcp/deploy.sh against a project once credits or a free tier exist and record the run in docs/handoff/gcp-live.md; until then the SQLite path proves portability.",
+   "probe": null
+  },
+  {
+   "id": "SG-9",
+   "tool": "scheduler-host",
+   "what": "A server-side scheduler has to call the recurring loop (a Cloudflare cron, a cloud-hosted Claude routine or a GitHub schedule). Until now the loops ran only when a person or session started them, and the cron worker ticked an empty seed-template database, not the real records.",
+   "status": "closed",
+   "plan": "One command (python3 -m foundation launch) runs every loop and writes evidence to the repo; three server-side host adapters schedule it (Cloudflare cron worker loaded with the real records, cloud-hosted Claude routine, daily GitHub workflow gate). Closed when the command, registry, workflow and first evidence exist.",
+   "probe": null
+  },
+  {
+   "id": "SG-10",
+   "tool": "cloudflare-credential",
+   "what": "Starting the loops on a new Cloudflare account needed a token or connector re-authorization that a non-coder cannot supply; the loops had one host and one credential kind (failure record docs/failures/2026-11-11-single-route.md).",
+   "status": "open",
+   "plan": "Failover chain across server-side hosts (foundation/failover.py), a credential-free route on GitHub Actions' built-in token, server-side first-run routes (deploy/first-run/README.md: Deploy to Workers button, cloud session with the connector, the cf-account workflow), and a lint (scripts/check_routes.py). Closed when the live move to the new account runs through one of those routes.",
+   "probe": null
+  }
+ ],
+ "changes": {
+  "commits": [
+   {
+    "sha": "82e9098",
+    "at": "2026-11-12T14:23:12+00:00",
+    "author": "Claude",
+    "subject": "SYSTEM-1: one running system as data (wrangler configs per worker), in-Worker code agent probe, deploy-system workflow and script",
+    "pr": null,
+    "item": "SYSTEM-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/82e90986362f4e579bb10d089cfb389a4c69e7c2"
+   },
+   {
+    "sha": "2b61fc3",
+    "at": "2026-11-12T14:16:35+00:00",
+    "author": "Claude",
+    "subject": "CODE-AGENTS-1: adapter registry, cost routing, disjoint-family ensemble, invoking tests",
+    "pr": null,
+    "item": "CODE-AGENTS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/2b61fc3ca07b5a76453f0a4eb2f7baf04dbeee4e"
+   },
+   {
+    "sha": "65e4862",
+    "at": "2026-11-12T14:14:55+00:00",
+    "author": "Claude",
+    "subject": "AGENT-INTEROP-1, TERMS-CROSSWALK-1: agent-readable site (Markdown, Link, llms.txt, OpenAPI, catalog, read-only MCP), standards and crosswalk as data with checks",
+    "pr": null,
+    "item": "AGENT-INTEROP-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/65e4862070e225cd62a8a74780b59ca956a4fbae"
+   },
+   {
+    "sha": "f4246ca",
+    "at": "2026-11-12T15:02:47+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor records its own write-back (PR 233 failed the gate) (#237)",
+    "pr": 237,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/f4246cac3b6abdd0fa1c98c6c50986b1c39df886"
+   },
+   {
+    "sha": "20bcd23",
+    "at": "2026-11-12T15:02:01+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Lane sweep no longer fails when Issues are off (found by the liveness probe) (#259)",
+    "pr": 259,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/20bcd2355c5cc75e267c108cd0303e9359925ab2"
+   },
+   {
+    "sha": "740207d",
+    "at": "2026-11-12T15:00:40+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "TRANSPARENCY-1b: chunked snapshot, red run when publish fails (#258)",
+    "pr": 258,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/740207d95e5dceeffa263125e7259d9b6f77b4f3"
+   },
+   {
+    "sha": "e5c9b6d",
+    "at": "2026-11-12T14:57:53+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "TRANSPARENCY-1b: unattended executor attempts by state (#257)",
+    "pr": 257,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/e5c9b6d9f2e46d4b0aff2397dd962602bbdc8ccf"
+   },
+   {
+    "sha": "949ab1c",
+    "at": "2026-11-12T14:56:43+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "TRANSPARENCY-1b: shipped-code throughput and changelog on /live (#256)",
+    "pr": 256,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/949ab1c56d9117e0aafb7309b68beb2b2a571b57"
+   },
+   {
+    "sha": "30b0962",
+    "at": "2026-11-12T14:56:18+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PORT-EXEC-1: executor closes PORT-* items (#255)",
+    "pr": 255,
+    "item": "PORT-EXEC-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/30b09624be20f17035b16f723d057b38b50ca8b0"
+   },
+   {
+    "sha": "91f16db",
+    "at": "2026-11-12T14:55:50+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "GENESIS-1: new systems are born with backlog, roadmap, charter, team, infra, PORT-* items (#254)",
+    "pr": 254,
+    "item": "GENESIS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/91f16db63e9a3799c600f365115bd09fbd35ef07"
+   },
+   {
+    "sha": "af21ab4",
+    "at": "2026-11-12T14:53:44+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "TRANSPARENCY-1: daily publish workflow for /live (#252)",
+    "pr": 252,
+    "item": "TRANSPARENCY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/af21ab44b17e1b05a3e80a9bd183288f45a14e27"
+   },
+   {
+    "sha": "a2d6fd2",
+    "at": "2026-11-12T14:52:15+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "TRANSPARENCY-1: bind D1 in site deploy (#251)",
+    "pr": 251,
+    "item": "TRANSPARENCY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/a2d6fd2f6070487a7984353f7253381e847e08b7"
+   },
+   {
+    "sha": "032d23f",
+    "at": "2026-11-12T14:51:06+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "TRANSPARENCY-1: read-only /live view of managers, claims and change feed (#250)",
+    "pr": 250,
+    "item": "TRANSPARENCY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/032d23fcb1d9b32c6ed8516ead4ce866fa799653"
+   },
+   {
+    "sha": "aa8c3e9",
+    "at": "2026-11-12T14:46:38+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Server-side only, needs-pat merger in the lane, and a liveness probe for the autonomous loops (#245)",
+    "pr": 245,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/aa8c3e9df9b83ad7b74e8380d5ed0f01ff33b5ac"
+   },
+   {
+    "sha": "f12f6cc",
+    "at": "2026-11-12T14:41:30+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PILOT-1 + TENANT-1: application form scores the four system-test questions; tenant 0 model, tenant-scoped measure, tenant-aware dashboard",
+    "pr": null,
+    "item": "PILOT-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f12f6cc91d35524b01285953122d2f76d4f4e9cc"
+   },
+   {
+    "sha": "f90f213",
+    "at": "2026-11-12T14:38:15+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PILOT-MODEL-1: pilot as an application program, recursive layers (parent/level, M-parent-link), multi-tenant as a gated obligation",
+    "pr": null,
+    "item": "PILOT-MODEL-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f90f213ddf2a55669b8554b73172f817539231f7"
+   },
+   {
+    "sha": "89f4d82",
+    "at": "2026-11-12T14:35:49+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "DASHBOARD-1: status wording the roadmap checker accepts; regenerate roadmap and dashboard data",
+    "pr": null,
+    "item": "DASHBOARD-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/89f4d82c9aa899181d07ba8e9e73056e11023a58"
+   },
+   {
+    "sha": "7b29f2e",
+    "at": "2026-11-12T14:35:18+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "DASHBOARD-1 + PILOT-MODEL-1: /dashboard preview computed from the repo; bring-your-own-account pilot model and revenue hypotheses as data",
+    "pr": null,
+    "item": "DASHBOARD-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/7b29f2e975e325fd3cecc2f1663b898b0100551f"
+   },
+   {
+    "sha": "98330af",
+    "at": "2026-11-12T14:35:05+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "QUALITY-1: close Q-GAP-front-door-qualify with evidence; write back lesson",
+    "pr": null,
+    "item": "QUALITY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/98330af5af525470ed4a9071995316a9295255b9"
+   },
+   {
+    "sha": "1dc0651",
+    "at": "2026-11-12T14:32:11+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "QUALITY-1: design-system build prompt, deterministic lint feeds repair pass, honest live/limits wording",
+    "pr": null,
+    "item": "QUALITY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1dc0651f157868d0f98bfb2c182e24b81c96f7f2"
+   },
+   {
+    "sha": "594e814",
+    "at": "2026-11-12T14:30:33+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PINS-1: merge with SITE-PINS-1; keep one source of truth plus the unprobed-issue ratchet; promote front-door pin",
+    "pr": null,
+    "item": "PINS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/594e814e71e29070e3886dc4f02b1bedf0eecbd3"
+   },
+   {
+    "sha": "94fd50f",
+    "at": "2026-11-12T14:28:05+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PINS-1: site status pins and roadmap computed from code, proofs and probe-backed issues; unprobed issues ratchet",
+    "pr": null,
+    "item": "PINS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/94fd50f5e36f6b131964083b17787874cb621bc9"
+   },
+   {
+    "sha": "1f620d0",
+    "at": "2026-11-12T14:26:39+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SITE-PINS-1: tie every site status pin and honest gap to a real issue and code (#247)",
+    "pr": 247,
+    "item": "SITE-PINS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1f620d02dadc91d3b63f24d83dafd526984c580d"
+   },
+   {
+    "sha": "671fdf0",
+    "at": "2026-11-12T14:20:56+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "VISION-1: front door refuses definite one-offs (422 not_a_fit) before storing or building; file the live-clock and declared-probe gaps",
+    "pr": null,
+    "item": "VISION-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/671fdf0a01d35fb5070b749ff4b7f927f00bdfbf"
+   },
+   {
+    "sha": "a60da07",
+    "at": "2026-11-12T14:17:22+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "FAILURE-AUDIT-1: the system audits its own failure modes; fix Windows paths and host-dependent tests; seed Ultrastable's own metrics",
+    "pr": null,
+    "item": "FAILURE-AUDIT-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/a60da0786beed874c05822ac1bbc7571a6297a9f"
+   },
+   {
+    "sha": "d15dd23",
+    "at": "2026-11-12T14:02:46+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "OBJECTIVES-1: objectives, metrics and probes as bootstrap output; tick step 'measure' files and closes its own breaches",
+    "pr": null,
+    "item": "OBJECTIVES-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/d15dd23f08f27fa245cd66f975c599b3fc1e234e"
+   },
+   {
+    "sha": "d687899",
+    "at": "2026-11-12T13:59:30+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "TEAM-1: phased virtual team as code (#230)",
+    "pr": 230,
+    "item": "TEAM-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/d6878990d4f6ed9111faae039c71fc953ccae645"
+   },
+   {
+    "sha": "55d41e4",
+    "at": "2026-11-12T13:56:44+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "VISION-1: value proposition is continuous improvement of maintained B2B systems; replace trivial idea bank",
+    "pr": null,
+    "item": "VISION-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/55d41e46b0cddb3334a586f808390a47b5df78e5"
+   },
+   {
+    "sha": "f1b5b80",
+    "at": "2026-11-12T13:55:22+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "VISION-1: encode the systems vision in doctrine, agent files, bootstrap prompt and bootstrapper",
+    "pr": null,
+    "item": "VISION-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f1b5b8058b10b63bf04d53b8aa6248a9d112c044"
+   },
+   {
+    "sha": "61f951e",
+    "at": "2026-11-12T13:52:09+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "POSITION: say what Ultrastable is not for (#246)",
+    "pr": 246,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/61f951ee17a416456206ac4ae93c09a37f7a3c19"
+   },
+   {
+    "sha": "0f81604",
+    "at": "2026-11-12T13:50:25+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "writeback: open-loop ids never overwrite an existing item (#244)",
+    "pr": 244,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/0f816046f8170d7ec58721576a7c93f03836ea2e"
+   },
+   {
+    "sha": "6e998b1",
+    "at": "2026-11-12T13:49:45+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "STRANGE-LOOP-1: self-improving loops, no zombie sessions (#243)",
+    "pr": 243,
+    "item": "STRANGE-LOOP-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/6e998b178aaa20e8e789742011632ae680e8e7d0"
+   },
+   {
+    "sha": "85b63bf",
+    "at": "2026-11-12T13:46:42+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "MARKET-1: component gap analysis as data, tests map claims to code, gaps become queue items (#241)",
+    "pr": 241,
+    "item": "MARKET-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/85b63bfd25edd609b3045d88022a01f17e108ad8"
+   },
+   {
+    "sha": "8e64a85",
+    "at": "2026-11-12T13:41:06+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "FRONT-2: chat-thread front door with pill input, dictation, rotating suggestions, live build steps (#240)",
+    "pr": 240,
+    "item": "FRONT-2",
+    "url": "https://github.com/ultrastable/ultrastable/commit/8e64a8596f57e23b9ab480c76a1ef69c5eba369a"
+   },
+   {
+    "sha": "fc2d988",
+    "at": "2026-11-12T13:29:13+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "INTERVIEW-1 + SESSION-CLOSE-1 + STRANGE-LOOP-1: voice-first front door and branch reaper (site 0.11.0) (#239)",
+    "pr": 239,
+    "item": "INTERVIEW-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/fc2d988e07f232d8f1a5dd9bd4a62232dbe5c648"
+   },
+   {
+    "sha": "1ae3168",
+    "at": "2026-11-12T13:16:29+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "BOUNDARY-1: containment boundary, rebuild drill, trust-tiered permissions, session reaper (#236)",
+    "pr": 236,
+    "item": "BOUNDARY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1ae316892261296388fb1ae2cf7df74b0c3dff71"
+   },
+   {
+    "sha": "2eb859f",
+    "at": "2026-11-12T13:14:49+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor kicks its own PR (ready + checks dispatch) (#234)",
+    "pr": 234,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/2eb859f3d546ccfac7d8b688a28293fd03e4056f"
+   },
+   {
+    "sha": "f75f7df",
+    "at": "2026-11-12T13:09:44+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor: Workers AI route, Issues-off tolerance, settings has_issues=false (#232)",
+    "pr": 232,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/f75f7df13a685eb8ffe0a2e14a8d4a05e487a7d7"
+   },
+   {
+    "sha": "76e5a36",
+    "at": "2026-11-12T13:05:27+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "QUEUE-1: executor queue as repo data so Issues can be off (#229)",
+    "pr": 229,
+    "item": "QUEUE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/76e5a36485d073e32f36785381a75eaf72e31ac1"
+   },
+   {
+    "sha": "7386386",
+    "at": "2026-11-12T12:55:25+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "RECALL-1 + AUDIT-1: the front door asks, builds and audits itself (site 0.7.0) (#226)",
+    "pr": 226,
+    "item": "RECALL-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/73863867b3dbc28dffbce6ea856a8aa95bbf2312"
+   }
+  ],
+  "pull_requests": []
+ },
+ "loop_improvements": [
+  {
+   "loop": "orphan-artifacts",
+   "improvement": "The orphan scan delegates to docs_audit so one consumer rule serves both checks; the next pass reads one baseline, not two.",
+   "probe": "grep:foundation/orphans.py::docs_audit",
+   "at": "2026-11-12T12:00Z"
+  },
+  {
+   "loop": "fleet-lane",
+   "improvement": "probe_surfaces skips archived repos, so a repo that cannot be reached no longer fails every later pass.",
+   "probe": "grep:foundation/fleet.py::archived",
+   "at": "2026-11-12T12:00Z"
+  },
+  {
+   "loop": "market-gaps",
+   "improvement": "A gap's closed state is derived from its closing probe, so closing work never needs a second manual edit to the analysis.",
+   "probe": "grep:foundation/market.py::def gap_state",
+   "at": "2026-11-12T12:45Z"
+  }
+ ],
+ "feedback_loop": "claim (site/doctrine) -> probe (components, gap register, loops) -> gap item -> branch/draft PR by an agent -> merge on green checks -> deploy -> probe again; each row above links the step to its record."
+}

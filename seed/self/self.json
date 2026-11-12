@@ -9,7 +9,12 @@
   "operations: running systems, the tick itself, and the trust ledger's effects.",
   "funding-manager: getting the organization funded and self-sustaining: the funding registry, one packet per programme, the application pipeline and the follow-up record. One per org. Works with the outreach manager and coordinator below.",
   "outreach-manager: promoting the work, whether the route is for-profit or open source: funders, sponsors, communities, events and public channels. Works for every project in the org and for sister organizations through a profile in `outreach/profiles.json`.",
-  "outreach-coordinator: the outreach calendar and the hand-offs between the funding manager, the outreach manager, and the other roles. Keeps one view of every conversation so no funder is contacted twice by two agents and no reply goes unrecorded."
+  "outreach-coordinator: the outreach calendar and the hand-offs between the funding manager, the outreach manager, and the other roles. Keeps one view of every conversation so no funder is contacted twice by two agents and no reply goes unrecorded.",
+  "research-publisher: research as one more pipeline: queued ideas become drafts, drafts become reviewed versions, versions become published records (preprint server deposit, site page) with a citation file. One per org.",
+  "marketing-manager: story, positioning, site copy, content calendar, search and social presence; what the world can find and how it reads. One per org.",
+  "legal-ip-manager: patent timeline, evidence log, prior art, licensing terms, notice and trademark checks, contract templates and NDA tracking. Working drafts for counsel, never legal advice.",
+  "customer-success: onboarding with the org kit, health of each instance, support intake and answers from the documented record, feedback routed to the product manager. One per org.",
+  "org-designer: which roles an organization needs. Maps an instance manifest (kind, facts, goals, budget) to the phased role catalog, so a new system gets the right virtual team and not the whole zoo. One per org."
  ],
  "reach": {
   "communicate": [

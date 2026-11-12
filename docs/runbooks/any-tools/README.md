@@ -15,8 +15,8 @@ python3 -m foundation selfhost            # boots the organization from the repo
 
 | You have | Path | Runbook | Needs |
 |---|---|---|---|
-| Nothing but Python 3 and a copy of the repo (zip, USB, git) | **Minimal** (tested) | [laptop-sqlite.md](laptop-sqlite.md) | `python3 -m foundation selfhost --no-node` |
-| Node 22 as well | Full tick on a laptop | [laptop-sqlite.md](laptop-sqlite.md) | `python3 -m foundation selfhost` |
+| Nothing but Python 3 and a copy of the repo (zip, USB, git) | **Minimal** (tested) | [sqlite.md](sqlite.md) | `python3 -m foundation selfhost --no-node` |
+| Node 22 as well | Full tick on SQLite | [sqlite.md](sqlite.md) | `python3 -m foundation selfhost` |
 | A chat box, no shell | Manual copy-paste | [manual-copy-paste.md](manual-copy-paste.md) | `docs/BOOTSTRAP-PROMPT.md` |
 | Claude Code, Codex, Copilot, any code agent | Agent | [agents.md](agents.md) | the agent reads `agents/AGENTS.md` |
 | GitHub | Forge | [github.md](github.md) | repo access |

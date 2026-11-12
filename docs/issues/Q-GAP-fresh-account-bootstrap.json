@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-fresh-account-bootstrap",
+  "title": "Q-GAP-fresh-account-bootstrap: First real --apply of a brand-new organization on an empty Cloudflare account",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:docs/bootstrapping/fresh-account-proof.json\n**Status:** open\n\nGap in component `bootstrap-from-idea`: the bootstrapper is built and tested against fixtures, but its first real provisioning run on an empty account has not happened. Record the run (stages, ids, first tick) in docs/bootstrapping/fresh-account-proof.json.",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

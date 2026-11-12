@@ -153,15 +153,6 @@
    "consumer": "platform/core/tests/test_boundary.py",
    "needle": "docs",
    "how": "boundary test walks platform/core"
-  },
-  {
-   "id": "scheduled-tasks",
-   "paths": [
-    "ops/scheduled-tasks/*.md"
-   ],
-   "consumer": "foundation/fleet.py",
-   "needle": "scheduled-tasks",
-   "how": "fleet.py reads the scheduled-task definitions"
   }
  ],
  "verified": {
@@ -694,6 +685,23 @@
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
    "evidence": "no tracked file names brand/templates/README-template.md"
+  },
+  {
+   "path": "ops/scheduled-tasks/ultrastable-needs-pat-merger.md",
+   "sha256": "a4dd66e00bc43ebfb3d448a3819cbbbaf335711784d40a5c4952db9bd67b286c",
+   "reason": "server-side only (owner, 2026-11-12): it defined a scheduled task of the Claude desktop app on the owner's computer that merged needs-pat PRs with the owner's own gh login; the task was deleted there the same day",
+   "date": "2026-11-12",
+   "recover": "1ae316892261296388fb1ae2cf7df74b0c3dff71",
+   "superseded_by": "scripts/lane.sh",
+   "evidence": "the lane workflow (.github/workflows/lane.yml, scripts/lane.sh) merges needs-pat PRs server-side when a workflow-capable credential is bound; tests/foundation/test_lane_merger.py"
+  },
+  {
+   "path": "docs/runbooks/any-tools/laptop-sqlite.md",
+   "sha256": "a7d1fc35f17f86692478b82ffa2be4b7d0834b60ea7acfd19f751e3926328aa8",
+   "reason": "server-side only (owner, 2026-11-12): the minimal SQLite path is any host with Python, not a person's computer; renamed and retitled",
+   "date": "2026-11-12",
+   "recover": "1ae316892261296388fb1ae2cf7df74b0c3dff71",
+   "superseded_by": "docs/runbooks/any-tools/sqlite.md"
   }
  ]
 }

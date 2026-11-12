@@ -1,0 +1,13 @@
+{
+  "id": "OL-ROLE-business-manager",
+  "title": "OL-ROLE-business-manager: activate the business manager role (phase 2)",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** phase 2 gate passes (python3 -m foundation team --gate)\n**Done check:** file:agents/roles/business-manager.md\n**Status:** open\n\nActivate the business manager role: python3 -m foundation team --apply writes the role files, the seed role and the loop entry once the gate is open. Metric: business_plan_matches_roadmap.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop",
+    "team",
+    "phase:2"
+  ],
+  "milestone": "Later",
+  "workstream": "Virtual team"
+}

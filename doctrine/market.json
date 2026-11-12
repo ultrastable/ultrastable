@@ -1,0 +1,794 @@
+{
+ "_doc": "MARKET-1 (owner, 2026-11-12): components, competitor coverage, users, stories and objections as data. Every feature claim has a proof probe and a test; every gap has a closing probe and becomes a queue item (docs/issues/Q-GAP-*.json) the executor works; the build fails if a claimed feature loses its proof or a gap quietly closes. INTERNAL: confidentiality rules apply, nothing here is published on the site. Competitor facts come only from the sources listed, read 2026-11-12; 'none-found' means the source was silent, not that the capability is absent. Read by foundation/market.py.",
+ "checked": "2026-11-12",
+ "visibility": "internal",
+ "sources": {
+  "appbuilders": {
+   "url": "https://www.ionos.com/digitalguide/websites/web-development/best-ai-app-builder.md",
+   "what": "comparison of Lovable, Bolt.new, v0, Replit and Base44"
+  },
+  "copilot": {
+   "url": "https://docs.github.com/copilot/concepts/coding-agent/about-copilot-coding-agent",
+   "what": "GitHub Copilot coding agent documentation"
+  },
+  "routines": {
+   "url": "https://code.claude.com/docs/en/routines.md",
+   "what": "Claude Code scheduled tasks documentation (research preview)"
+  },
+  "vibesdk": {
+   "url": "https://blog.cloudflare.com/deploy-your-own-ai-vibe-coding-platform/",
+   "what": "Cloudflare VibeSDK announcement"
+  },
+  "factory": {
+   "url": "https://factory.com/news/factory-is-ga",
+   "what": "Factory general-availability page"
+  },
+  "zapier": {
+   "url": "https://dev.to/jahanzaibai/zapier-agents-vs-n8n-for-ai-automation-what-40-deployments-taught-me-about-the-real-choice-n32",
+   "what": "practitioner write-up on Zapier Agents and n8n (secondary source, anecdotal)"
+  },
+  "githubagents": {
+   "url": "https://github.blog/changelog/2026-02-26-claude-and-codex-now-available-for-copilot-business-pro-users/",
+   "what": "GitHub changelog: Claude and Codex available for Copilot Business and Pro (read at title level only)"
+  }
+ },
+ "components": [
+  {
+   "id": "idea-intake",
+   "name": "Idea intake",
+   "what": "Turning a few spoken or typed words from someone who does not code into a scoped job, with the forks surfaced as questions.",
+   "features": [
+    "pill-thread",
+    "suggestions",
+    "build-from-idea"
+   ],
+   "alternatives": [
+    {
+     "name": "Lovable, Bolt.new, v0, Replit, Base44",
+     "covers": "full",
+     "note": "All take a prompt and produce an app; the comparison lists build, hosting, database and deploy for each.",
+     "source": "appbuilders"
+    },
+    {
+     "name": "Cloudflare VibeSDK",
+     "covers": "full",
+     "note": "Describe an app in plain language; it generates, previews and deploys it on Cloudflare.",
+     "source": "vibesdk"
+    }
+   ],
+   "integration_gap": "Prompt boxes end at the first build. None of the sources read describes intake that carries on as the standing direction for later work."
+  },
+  {
+   "id": "planning-forks",
+   "name": "Planning and anticipating forks",
+   "what": "Breaking an idea into work items and the branching paths (accounts, data, money, domains) before they bite.",
+   "features": [
+    "suggestions",
+    "adaptive-interview"
+   ],
+   "alternatives": [
+    {
+     "name": "Factory Droids",
+     "covers": "partial",
+     "note": "Specs from Slack threads, codebase research and Linear prioritisation for engineering teams.",
+     "source": "factory"
+    }
+   ],
+   "integration_gap": "Planning agents work on an existing engineering org's tickets; the sources read show none that plans from a non-coder's first sentence."
+  },
+  {
+   "id": "code-repo",
+   "name": "Code and repository",
+   "what": "Writing the change, a branch and a pull request.",
+   "features": [
+    "executor-pr",
+    "claims"
+   ],
+   "alternatives": [
+    {
+     "name": "GitHub Copilot coding agent",
+     "covers": "full",
+     "note": "Researches, plans, edits, runs tests and opens one pull request per task, in the background.",
+     "source": "copilot"
+    },
+    {
+     "name": "Claude Code scheduled tasks",
+     "covers": "full",
+     "note": "Cloud sessions run a prompt against repositories and push claude/ branches.",
+     "source": "routines"
+    },
+    {
+     "name": "Factory Droids",
+     "covers": "full",
+     "note": "Builds features end to end from a ticket, spec or prompt.",
+     "source": "factory"
+    }
+   ],
+   "integration_gap": "Coding agents are strong here and Ultrastable does not claim to beat them; it hands work to them. Its own executor opening a merged PR is still pinned."
+  },
+  {
+   "id": "backend-infra",
+   "name": "Backend, hosting and infrastructure",
+   "what": "Where it runs, the database, the domain, deploys.",
+   "features": [
+    "build-from-idea",
+    "deploy-probes",
+    "multi-cloud-briefs"
+   ],
+   "alternatives": [
+    {
+     "name": "Lovable, Bolt.new, Replit, Base44",
+     "covers": "full",
+     "note": "Hosting, database and deployment inside the product.",
+     "source": "appbuilders"
+    },
+    {
+     "name": "v0",
+     "covers": "partial",
+     "note": "Deploys via Vercel; the comparison says backend and data often need external services.",
+     "source": "appbuilders"
+    },
+    {
+     "name": "Cloudflare VibeSDK",
+     "covers": "full",
+     "note": "Per-app Workers, sandboxes, one-click export to GitHub or a Cloudflare account.",
+     "source": "vibesdk"
+    }
+   ],
+   "integration_gap": "Sites Ultrastable builds today have no shared back end and live at a shared address. Both are open gaps."
+  },
+  {
+   "id": "frontend-experience",
+   "name": "Front end people already know",
+   "what": "A familiar interface for non-coders that stays out of an engineer's way.",
+   "features": [
+    "pill-thread",
+    "setup-wizard",
+    "engineer-lane"
+   ],
+   "alternatives": [
+    {
+     "name": "App builders",
+     "covers": "full",
+     "note": "Chat-style prompt interfaces are the norm.",
+     "source": "appbuilders"
+    }
+   ],
+   "integration_gap": "Familiar chat is table stakes. The differentiator is the same thread reaching the repo, the infrastructure and the running loops."
+  },
+  {
+   "id": "agents-roles",
+   "name": "Many agents, one ledger",
+   "what": "Several coding agents and roles taking work without editing the same thing.",
+   "features": [
+    "claims",
+    "loop-registry"
+   ],
+   "alternatives": [
+    {
+     "name": "GitHub Copilot with Claude and Codex agents",
+     "covers": "partial",
+     "note": "GitHub's changelog reports Claude and Codex available alongside Copilot.",
+     "source": "githubagents"
+    }
+   ],
+   "integration_gap": "Not found in the sources read: a neutral claim ledger across agents from different vendors."
+  },
+  {
+   "id": "loops-autonomy",
+   "name": "Self-closing loops",
+   "what": "Work that continues on a heartbeat: pick, do, verify, write back, with no person in the path.",
+   "features": [
+    "heartbeat-tick",
+    "closed-loop-axiom",
+    "reapers"
+   ],
+   "alternatives": [
+    {
+     "name": "Claude Code scheduled tasks",
+     "covers": "partial",
+     "note": "Schedule, API and GitHub triggers run cloud sessions unattended; research preview, tied to an individual account, with hourly caps.",
+     "source": "routines"
+    },
+    {
+     "name": "Copilot automations and Agent Merge",
+     "covers": "partial",
+     "note": "Scheduled or event-driven tasks and automatic fixing of failed Actions or merge conflicts on a watched PR.",
+     "source": "copilot"
+    },
+    {
+     "name": "Zapier Agents and n8n",
+     "covers": "partial",
+     "note": "Automations with agents; a practitioner source reports failures and lost context in multi-step chains.",
+     "source": "zapier"
+    }
+   ],
+   "integration_gap": "Each product runs loops over its own surface. Defensible claim: none of the sources read closes the loop across idea, repo, infrastructure and operations under one verified registry."
+  },
+  {
+   "id": "verification",
+   "name": "Verification and rollback",
+   "what": "Proving a change worked and undoing it without a person.",
+   "features": [
+    "deploy-probes",
+    "audit"
+   ],
+   "alternatives": [
+    {
+     "name": "Copilot coding agent",
+     "covers": "partial",
+     "note": "Docs state its output can be incorrect or insecure and must be reviewed and tested by the user.",
+     "source": "copilot"
+    }
+   ],
+   "integration_gap": "Not found in the sources read: automatic revert on a failed post-deploy probe, or a second model grading the build against the brief."
+  },
+  {
+   "id": "trust-permissions",
+   "name": "Trust and permissions",
+   "what": "What each agent may do, widened by track record and bounded by a closed boundary.",
+   "features": [
+    "trust-ledger",
+    "boundary"
+   ],
+   "alternatives": [
+    {
+     "name": "Claude Code auto mode",
+     "covers": "partial",
+     "note": "A classifier allows or blocks actions during unattended runs; branch and connector scope limit blast radius.",
+     "source": "routines"
+    }
+   ],
+   "integration_gap": "Per-agent permission is common. Earned, scored trust per surface and action, with a machine-read inside/egress boundary, was not found in the sources read."
+  },
+  {
+   "id": "operations",
+   "name": "Keeping it running",
+   "what": "Monitoring, incidents, metrics and scoring whether decisions were right.",
+   "features": [
+    "heartbeat-tick",
+    "prediction-scoring",
+    "deploy-probes"
+   ],
+   "alternatives": [
+    {
+     "name": "Factory Droids",
+     "covers": "partial",
+     "note": "On-call incident resolution, alert triage and root cause analysis.",
+     "source": "factory"
+    },
+    {
+     "name": "App builders",
+     "covers": "none-found",
+     "note": "The comparison source does not cover monitoring or maintenance after launch; that is silence in one source, not proof they lack it.",
+     "source": "appbuilders"
+    }
+   ],
+   "integration_gap": "Prediction scoring is run by the system on itself; an outside audit is pinned and must not be claimed."
+  },
+  {
+   "id": "portability",
+   "name": "Any infrastructure",
+   "what": "Running on more than one cloud or host.",
+   "features": [
+    "multi-cloud-briefs"
+   ],
+   "alternatives": [
+    {
+     "name": "Cloudflare VibeSDK",
+     "covers": "partial",
+     "note": "Cloudflare only, with code export.",
+     "source": "vibesdk"
+    },
+    {
+     "name": "Copilot coding agent",
+     "covers": "partial",
+     "note": "GitHub-hosted repositories only.",
+     "source": "copilot"
+    }
+   ],
+   "integration_gap": "Only Cloudflare is proven in production for Ultrastable. Briefs for other clouds exist but are untested."
+  }
+ ],
+ "features": [
+  {
+   "id": "pill-thread",
+   "name": "Chat-thread front door with pill input and dictation",
+   "status": "testing",
+   "proof": "grep:site/interview.js::us-log",
+   "test": "site/site.test.mjs",
+   "note": "Dictation has not been exercised with real audio."
+  },
+  {
+   "id": "suggestions",
+   "name": "Rotating suggestions that respond to what is typed",
+   "status": "testing",
+   "proof": "grep:site/suggest.js::export function suggest",
+   "test": "site/site.test.mjs",
+   "note": ""
+  },
+  {
+   "id": "build-from-idea",
+   "name": "Idea to live page with no account or terminal",
+   "status": "live",
+   "proof": "grep:site/worker.js::async function build",
+   "test": "site/site.test.mjs",
+   "note": ""
+  },
+  {
+   "id": "audit",
+   "name": "Second-model audit with an honest list of what could not be done",
+   "status": "live",
+   "proof": "grep:site/worker.js::async function audit",
+   "test": "site/site.test.mjs",
+   "note": ""
+  },
+  {
+   "id": "change-in-thread",
+   "name": "Change requests in the same thread",
+   "status": "testing",
+   "proof": "grep:site/worker.js::async function takeChange",
+   "test": "site/site.test.mjs",
+   "note": ""
+  },
+  {
+   "id": "setup-wizard",
+   "name": "Click-only guided setup of a personal project",
+   "status": "live",
+   "proof": "grep:site/userpath.js::steps",
+   "test": "scripts/gen_userpath.py",
+   "note": ""
+  },
+  {
+   "id": "engineer-lane",
+   "name": "Engineer lane with honest Live/Testing/Pinned status",
+   "status": "live",
+   "proof": "file:site/pins.json",
+   "test": "site/site.test.mjs",
+   "note": ""
+  },
+  {
+   "id": "heartbeat-tick",
+   "name": "Ten-minute heartbeat that claims and dispatches work",
+   "status": "live",
+   "proof": "grep:seed/worker/src/tick.js::reap_claims",
+   "test": "seed/worker/test/tick.test.js",
+   "note": ""
+  },
+  {
+   "id": "claims",
+   "name": "Claim ledger across agents with stale-claim release",
+   "status": "live",
+   "proof": "grep:seed/worker/src/tick.js::reap_claims",
+   "test": "seed/worker/test/lane.test.js",
+   "note": ""
+  },
+  {
+   "id": "loop-registry",
+   "name": "Loop registry verified by code",
+   "status": "live",
+   "proof": "grep:foundation/loops.py::def verify",
+   "test": "tests/foundation/test_loops.py",
+   "note": ""
+  },
+  {
+   "id": "closed-loop-axiom",
+   "name": "Closed-loop axiom enforced in every instruction file",
+   "status": "live",
+   "proof": "grep:foundation/closedloop.py::def axiom_check",
+   "test": "tests/foundation/test_closedloop.py",
+   "note": ""
+  },
+  {
+   "id": "reapers",
+   "name": "Idle session and branch reapers",
+   "status": "live",
+   "proof": "grep:foundation/sessions.py::def ",
+   "test": "tests/foundation/test_sessions.py",
+   "note": ""
+  },
+  {
+   "id": "deploy-probes",
+   "name": "Post-deploy probes with automatic revert",
+   "status": "live",
+   "proof": "grep:platform/cloudflare-reference/scripts/deploy_probes.py::revert",
+   "test": "site/site.test.mjs",
+   "note": "Test file is the site gate; the probe runner has its own checks in the platform tree."
+  },
+  {
+   "id": "trust-ledger",
+   "name": "Trust ledger per surface and action",
+   "status": "live",
+   "proof": "grep:foundation/trust.py::def apply",
+   "test": "tests/foundation/test_kernel.py",
+   "note": ""
+  },
+  {
+   "id": "boundary",
+   "name": "Machine-read containment boundary with rebuild drill",
+   "status": "live",
+   "proof": "grep:foundation/boundary.py::def drill",
+   "test": "tests/foundation/test_boundary.py",
+   "note": ""
+  },
+  {
+   "id": "prediction-scoring",
+   "name": "Predictions logged before action and scored later",
+   "status": "live",
+   "proof": "grep:seed/worker/src/tick.js::prediction",
+   "test": "seed/worker/test/tick.test.js",
+   "note": "Scored by the system itself."
+  },
+  {
+   "id": "multi-cloud-briefs",
+   "name": "Deploy briefs for other clouds",
+   "status": "testing",
+   "proof": "grep:site/worker.js::deploy/gcp.md",
+   "test": "site/site.test.mjs",
+   "note": "Only Cloudflare is proven in production."
+  },
+  {
+   "id": "executor-pr",
+   "name": "Executor opens its own merged pull request",
+   "status": "pinned",
+   "proof": "grep:foundation/executor.py::pr-opened",
+   "test": "tests/foundation/test_executor.py",
+   "note": "Built and tested with a fake model; blocked on a bound model credential."
+  },
+  {
+   "id": "adaptive-interview",
+   "name": "Next question chosen from the answers so far",
+   "status": "gap",
+   "proof": "grep:site/worker.js::adaptiveQuestion",
+   "test": "",
+   "note": "Question bank is static."
+  }
+ ],
+ "gaps": [
+  {
+   "id": "adopt-existing-repo",
+   "title": "Wrap loops around an existing repository",
+   "why": "Engineers and vibe-coders arrive with a repo, not an idea.",
+   "closing_probe": "file:foundation/adopt.py",
+   "component": "code-repo",
+   "owner": "staff"
+  },
+  {
+   "id": "shared-backend",
+   "title": "Shared back end for built sites",
+   "why": "Built sites keep data only in the visitor's browser.",
+   "closing_probe": "grep:site/worker.js::/api/data/",
+   "component": "backend-infra",
+   "owner": "staff"
+  },
+  {
+   "id": "own-domain",
+   "title": "Attach the person's own domain",
+   "why": "Built sites live at a shared Ultrastable address.",
+   "closing_probe": "grep:site/worker.js::attachDomain",
+   "component": "backend-infra",
+   "owner": "operations"
+  },
+  {
+   "id": "org-setup-in-thread",
+   "title": "Set up a full organization from the thread",
+   "why": "The thread builds a site; the organization around it is still set up through /setup.",
+   "closing_probe": "grep:site/interview.js::setup-org",
+   "component": "frontend-experience",
+   "owner": "staff"
+  },
+  {
+   "id": "adaptive-interview",
+   "title": "Adaptive follow-up questions",
+   "why": "Questions come from a fixed bank.",
+   "closing_probe": "grep:site/worker.js::adaptiveQuestion",
+   "component": "planning-forks",
+   "owner": "staff"
+  },
+  {
+   "id": "executor-merged-pr",
+   "title": "Executor opens and merges its own pull request",
+   "why": "Built and tested with a fake model only.",
+   "closing_probe": "grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"",
+   "component": "code-repo",
+   "owner": "operations"
+  },
+  {
+   "id": "cross-model-rescoring",
+   "title": "Re-score predictions with a second model",
+   "why": "Prediction scoring is self-run; a held-out grader narrows that before any outside audit.",
+   "closing_probe": "file:foundation/rescore.py",
+   "component": "operations",
+   "owner": "reviewer"
+  },
+  {
+   "id": "second-installation",
+   "title": "A second independent installation",
+   "why": "There is one installation today.",
+   "closing_probe": "file:instances/pilot-1/instance.json",
+   "component": "portability",
+   "owner": "operations"
+  },
+  {
+   "id": "other-cloud-proof",
+   "title": "Prove one non-Cloudflare cloud end to end",
+   "why": "Briefs exist; nothing is proven off Cloudflare.",
+   "closing_probe": "file:docs/bootstrapping/other-cloud-proof.json",
+   "component": "portability",
+   "owner": "operations"
+  }
+ ],
+ "users": [
+  {
+   "id": "first-idea",
+   "persona": "Person with an idea who has never coded",
+   "needs": "Say it, see it live, change it by talking.",
+   "stories": [
+    {
+     "id": "s1",
+     "story": "As someone who has never coded, I say a few words and get a live page, so I can show people my idea today.",
+     "features": [
+      "pill-thread",
+      "build-from-idea"
+     ],
+     "gaps": []
+    },
+    {
+     "id": "s2",
+     "story": "As that person, I see what was checked and what could not be done, so I know what to trust.",
+     "features": [
+      "audit"
+     ],
+     "gaps": []
+    },
+    {
+     "id": "s3",
+     "story": "As that person, I tell the thread what to change and watch it happen.",
+     "features": [
+      "change-in-thread"
+     ],
+     "gaps": []
+    },
+    {
+     "id": "s4",
+     "story": "As that person, I want the site to use my own address and remember what visitors enter.",
+     "features": [],
+     "gaps": [
+      "own-domain",
+      "shared-backend"
+     ]
+    },
+    {
+     "id": "s14",
+     "story": "As someone who is not sure what I want, the questions adapt to what I already said instead of following a fixed list.",
+     "features": [
+      "suggestions"
+     ],
+     "gaps": [
+      "adaptive-interview"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "small-business",
+   "persona": "Small-business owner who needs it kept running",
+   "needs": "It must keep working without hiring anyone.",
+   "stories": [
+    {
+     "id": "s5",
+     "story": "As an owner, a broken deploy undoes itself and I do not have to notice.",
+     "features": [
+      "deploy-probes"
+     ],
+     "gaps": []
+    },
+    {
+     "id": "s6",
+     "story": "As an owner, I want the whole organization set up by talking, not by a wizard.",
+     "features": [
+      "setup-wizard"
+     ],
+     "gaps": [
+      "org-setup-in-thread"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "vibe-coder",
+   "persona": "Vibe coder whose app works but nobody maintains it",
+   "needs": "Something to keep what they built alive and improving.",
+   "stories": [
+    {
+     "id": "s7",
+     "story": "As a vibe coder, I point Ultrastable at what I built and it starts looking after it.",
+     "features": [
+      "heartbeat-tick"
+     ],
+     "gaps": [
+      "adopt-existing-repo"
+     ]
+    },
+    {
+     "id": "s8",
+     "story": "As a vibe coder, the system chooses and verifies its own next task.",
+     "features": [
+      "heartbeat-tick",
+      "prediction-scoring"
+     ],
+     "gaps": [
+      "executor-merged-pr"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "engineer",
+   "persona": "Engineer or team lead who already uses coding agents",
+   "needs": "Loops, claims and proof around the agents they have.",
+   "stories": [
+    {
+     "id": "s9",
+     "story": "As an engineer, several agents take work through one claim ledger, so two never edit the same file.",
+     "features": [
+      "claims",
+      "loop-registry"
+     ],
+     "gaps": []
+    },
+    {
+     "id": "s10",
+     "story": "As an engineer, trust is earned per surface and action and a closed boundary limits blast radius.",
+     "features": [
+      "trust-ledger",
+      "boundary"
+     ],
+     "gaps": []
+    },
+    {
+     "id": "s11",
+     "story": "As an engineer, I can skip the interview and read honest Live, Testing and Pinned status.",
+     "features": [
+      "engineer-lane"
+     ],
+     "gaps": []
+    }
+   ]
+  },
+  {
+   "id": "funder",
+   "persona": "Funder or grant reviewer judging whether this is real",
+   "needs": "Claims that are measured, with limits stated.",
+   "stories": [
+    {
+     "id": "s12",
+     "story": "As a reviewer, every claim has a live check and every limit is stated.",
+     "features": [
+      "engineer-lane",
+      "prediction-scoring"
+     ],
+     "gaps": [
+      "cross-model-rescoring",
+      "second-installation"
+     ]
+    },
+    {
+     "id": "s13",
+     "story": "As a reviewer, I see the system run on more than one cloud.",
+     "features": [
+      "multi-cloud-briefs"
+     ],
+     "gaps": [
+      "other-cloud-proof"
+     ]
+    }
+   ]
+  }
+ ],
+ "objections": [
+  {
+   "id": "just-a-code-agent",
+   "objection": "Isn't this just a code agent?",
+   "answer": "No. Coding agents write the change. Ultrastable decides what to work on, hands each task to the agent that fits, proves the result live, reverts it on a failed probe, and records whether its own prediction was right. It sits around coding agents rather than competing with them.",
+   "concede": "The coding agents named in this file are strong at writing the change, and Ultrastable's own executor opening a merged PR is still pinned.",
+   "components": [
+    "code-repo",
+    "loops-autonomy",
+    "verification"
+   ],
+   "evidence": [
+    "heartbeat-tick",
+    "deploy-probes",
+    "prediction-scoring",
+    "executor-pr"
+   ]
+  },
+  {
+   "id": "claude-code-thought-of-it",
+   "objection": "Surely Claude Code has thought of this.",
+   "answer": "Claude Code now runs unattended scheduled tasks on schedule, API and GitHub triggers, so loops exist there. The sources read show those loops tied to one individual's account, in research preview, working on repositories. What was not found is one verified registry that closes the loop across intake, repository, infrastructure and operations, with earned trust and a scored track record.",
+   "concede": "Scheduled cloud tasks are real and overlap the heartbeat. Say 'in the sources we read', never 'nobody does'.",
+   "components": [
+    "loops-autonomy",
+    "trust-permissions"
+   ],
+   "evidence": [
+    "loop-registry",
+    "trust-ledger",
+    "boundary"
+   ]
+  },
+  {
+   "id": "copilot-has-agents",
+   "objection": "GitHub Copilot already assigns issues to agents.",
+   "answer": "True, and it can fix failed Actions runs on a watched PR. It works on GitHub repositories, one branch and one PR per task, and its documentation says output must be reviewed and tested. Ultrastable adds the idea-to-running-system path and automatic probes and revert.",
+   "concede": "On GitHub-hosted code Copilot's agent is a direct alternative for the code step.",
+   "components": [
+    "code-repo",
+    "agents-roles",
+    "verification"
+   ],
+   "evidence": [
+    "claims",
+    "deploy-probes"
+   ]
+  },
+  {
+   "id": "app-builders",
+   "objection": "Lovable, Bolt and Replit already turn ideas into apps.",
+   "answer": "They do, with hosting and databases. The comparison read for this file does not cover what happens after launch. Ultrastable's pitch is the after: it keeps the thing running and improving, and says what it could not do.",
+   "concede": "Prompt-to-app is table stakes and they are polished at it. Absence of monitoring in one comparison is not proof they lack it.",
+   "components": [
+    "idea-intake",
+    "backend-infra",
+    "operations"
+   ],
+   "evidence": [
+    "build-from-idea",
+    "audit",
+    "heartbeat-tick"
+   ]
+  },
+  {
+   "id": "cloudflare-vibesdk",
+   "objection": "Cloudflare open-sourced a vibe coding platform.",
+   "answer": "VibeSDK generates, previews and deploys apps on Cloudflare and exports code. Ultrastable runs on Cloudflare as well and is complementary, since VibeSDK describes no post-deploy operation.",
+   "concede": "VibeSDK covers intake to deploy on the same infrastructure; the announcement does not state what happens after deploy.",
+   "components": [
+    "backend-infra",
+    "portability"
+   ],
+   "evidence": [
+    "build-from-idea",
+    "multi-cloud-briefs"
+   ]
+  },
+  {
+   "id": "zapier-n8n",
+   "objection": "Zapier Agents and n8n automate things already.",
+   "answer": "They connect services and run flows. They are not described in the source read as writing or maintaining code or hosting what a person asked for.",
+   "concede": "The only source read for them is a secondary, anecdotal practitioner write-up.",
+   "components": [
+    "loops-autonomy"
+   ],
+   "evidence": [
+    "heartbeat-tick"
+   ]
+  },
+  {
+   "id": "is-it-proven",
+   "objection": "Is any of this proven?",
+   "answer": "The live checks on the proof page are measured. One installation exists; prediction scoring is self-run; other clouds are untested. Those limits are in the engineer lane and in the gaps listed here.",
+   "concede": "No second installation, no outside audit, no off-Cloudflare proof yet.",
+   "components": [
+    "operations",
+    "portability"
+   ],
+   "evidence": [
+    "prediction-scoring",
+    "engineer-lane"
+   ]
+  }
+ ]
+}

@@ -1,7 +1,9 @@
 """Host failover without coordination. Every loop host writes evidence naming itself (ops/loop-evidence/*.jsonl). A fallback host runs
 `launch --failover`: it reads the newest evidence from any host and runs the loop only when nobody has written for its own
-`takeover_after_hours` (instances/ultrastable/loops.json). Staggered thresholds make the chain local-cron, Claude routine, weekly GitHub;
-the primary Cloudflare worker has 0 (it always runs). No host needs to know the others are down."""
+`takeover_after_hours` (instances/ultrastable/loops.json). Staggered thresholds make the chain: the Cloudflare worker (0, it always runs),
+the cloud-hosted Claude routine (3 h), then GitHub Actions (12 h, checked by a daily gate). Every host is server-side (doctrine/server-side.json);
+GitHub Actions is the credential-free one, because its built-in token is minted by GitHub for each run and by no person. No host needs to know
+the others are down."""
 from __future__ import annotations
 import datetime as dt, json
 from pathlib import Path
@@ -11,10 +13,10 @@ from . import launch
 
 def sync_evidence(root) -> str:
     """Pull the shared evidence branch so every host sees what the others wrote. A failure is reported, not hidden; deciding goes on
-    with local evidence (which errs toward running the loop)."""
+    with the evidence already in the checkout (which errs toward running the loop)."""
     code, out = launch._run(["git", "fetch", "origin", "loop-evidence"], root, timeout=60)
     if code:
-        return f"could not fetch loop-evidence ({out[-120:]}); using local evidence"
+        return f"could not fetch loop-evidence ({out[-120:]}); using the evidence in the checkout"
     code, out = launch._run(["git", "checkout", "FETCH_HEAD", "--", launch.EVIDENCE], root)
     return "evidence synced" if code == 0 else f"could not read fetched evidence ({out[-120:]})"
 

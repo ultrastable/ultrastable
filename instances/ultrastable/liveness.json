@@ -1,0 +1,16 @@
+{
+ "_doc": "LIVENESS-1 (owner, 2026-11-12): is each autonomous code loop actually running? The closing probes in loop-registry.json prove that code exists (file:, grep:); these probes prove that it ran, from evidence the loop itself leaves on a server-side platform. Every system declares its own list in instances/<slug>/liveness.json: what must be running, where its evidence is, and how old that evidence may get. Read by foundation/liveness.py (`python3 -m foundation liveness`), which the daily lane sweep runs; a loop that is not alive becomes a queue item. Evidence kinds: workflow:<file> (latest completed GitHub Actions run), jsonl:<git ref>:<path>:<time field> (newest row of a log on a branch), merged-pr (newest merged pull request).",
+ "version": "1.0.0",
+ "system": "ultrastable",
+ "claim": "Ultrastable runs on Ultrastable",
+ "probes": [
+  {"id": "merge-lane", "loop": "merge-lane", "what": "the lane reviews and merges pull requests", "evidence": "workflow:lane.yml", "max_age_hours": 26, "must_succeed": true},
+  {"id": "merges-happen", "loop": "merge-lane", "what": "a pull request was merged by the system", "evidence": "merged-pr", "max_age_hours": 26},
+  {"id": "change-gate", "loop": "change-gate", "what": "checks run on pull requests", "evidence": "workflow:checks.yml", "max_age_hours": 26},
+  {"id": "executor", "loop": "agent-executor", "what": "the executor picks an item and records the result", "evidence": "jsonl:origin/loop-evidence:ops/executor-log.jsonl:at", "max_age_hours": 26},
+  {"id": "launch-loops", "loop": "launch", "what": "the launch loops ran and wrote their four-line report", "evidence": "workflow:loop.yml", "max_age_hours": 26},
+  {"id": "session-reaper", "loop": "branch-reaper", "what": "idle branches and sessions are closed", "evidence": "jsonl:origin/session-evidence:ops/session-ledger.jsonl:at", "max_age_hours": 26},
+  {"id": "fleet-lane", "loop": "fleet-lane", "what": "the cross-repository queue and drift loop ran", "evidence": "workflow:fleet.yml", "max_age_hours": 26, "must_succeed": true}
+ ],
+ "alive_share_required": 1.0
+}

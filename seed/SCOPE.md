@@ -4,6 +4,8 @@ Canonical copy with rationale: `docs/product/scope.md` in the docs repo. This fi
 
 **Ultrastable is code.** It bootstraps a working, server-side system from a person's stated wish, and writes the architectural specifications, charters and management artifacts that system is built from.
 
+**Ultrastable is for systems, not one-off pages** (`doctrine/VISION.md`). An idea must pass the system test (a loop to close, a measure that can be wrong, upkeep that never ends, a running cost the owner accepts) before the bootstrapper staffs anything.
+
 ## In scope by default
 - A guided interview (`bootstrap/interview.py`, `worker/src/ui.js`) for someone who only knows what they want and not what they do not know: recall prompts, clickable choices, no typing required, gaps surfaced.
 - Specifications and management artifacts across the full lifecycle: initiating (charter, stakeholders, success measure), planning (architecture spec, plan, budget), executing (backlog, risk register, claims), reviewing (four-line reports, scorecards), closing (definition of finished, after-care). Agile and traditional (PMP-style) are both supported; the owner picks or lets the managers pick.

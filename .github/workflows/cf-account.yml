@@ -1,7 +1,7 @@
 name: cf-account
 # budget: ~1 min per run, manual dispatch only
 # trigger: manual workflow_dispatch (probe, then each transfer stage); no schedule
-# free-alternative: run `python3 scripts/cf_account.py <cmd>` locally or from a Claude session with CLOUDFLARE_API_TOKEN
+# free-alternative: run `python3 scripts/cf_account.py <cmd>` from a cloud-hosted Claude session with CLOUDFLARE_API_TOKEN bound
 # Probes which Cloudflare accounts the bound token reaches and runs the staged transfer (deploy/transfer/plan.json) from the QNFO account to the Ultrastable account.
 on:
   workflow_dispatch:

@@ -1,7 +1,7 @@
 name: ultrastable-upgrade
 # budget: ~2 min per week
 # trigger: weekly (flow DOWN: new core versions arrive as a PR) and manual dispatch
-# free-alternative: run `python3 -m foundation upstream sync --instance . --apply` in any local scheduler
+# free-alternative: run `python3 -m foundation upstream sync --instance . --apply` from a Cloudflare cron worker or a cloud-hosted agent session
 # Checks out the core, syncs the kernel into this repo (local edits are kept, never overwritten), runs the contract tests, opens a PR.
 on:
   schedule:

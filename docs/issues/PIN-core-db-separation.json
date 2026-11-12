@@ -1,0 +1,11 @@
+{
+  "id": "PIN-core-db-separation",
+  "title": "PIN-core-db-separation: Separate the core from QNFO's research database",
+  "body": "**Owner:** staff\n**Trigger:** trigger: pilot milestone 1\n**Done check:** file:docs/migrations/core-db-split.json\n**Status:** open\n\nThe core still shares a database with QNFO's research applications. Done when the split migration and its verification record are committed.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.",
+  "labels": [
+    "role:staff",
+    "pin"
+  ],
+  "milestone": "Next",
+  "workstream": "Site pins"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "OL-ROLE-security-compliance",
+  "title": "OL-ROLE-security-compliance: activate the security and compliance role (phase 2)",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** phase 2 gate passes (python3 -m foundation team --gate)\n**Done check:** file:agents/roles/security-compliance.md\n**Status:** open\n\nActivate the security and compliance role: python3 -m foundation team --apply writes the role files, the seed role and the loop entry once the gate is open. Metric: open_security_findings.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop",
+    "team",
+    "phase:2"
+  ],
+  "milestone": "Later",
+  "workstream": "Virtual team"
+}

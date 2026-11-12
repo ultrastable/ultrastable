@@ -25,7 +25,7 @@
   },
   {
    "id": "claude-session",
-   "how": "the scheduled Claude session with the GitHub connector (ops/scheduled-tasks/)"
+   "how": "a cloud-hosted Claude routine with the GitHub connector (deploy/loops/claude-routine.md); it runs on Anthropic's servers, never on a person's computer"
   }
  ],
  "merge": {

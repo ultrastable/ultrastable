@@ -5,10 +5,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from foundation import standards  # noqa: E402
+import sys as _sys; _sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402  (scratch directories are removed when the run ends)
 
 
 def copy():
-    td = Path(tempfile.mkdtemp())
+    td = Path(scratch())
     for rel in (standards.REG, standards.SURF, standards.SCHEMA, standards.DOC, standards.SNAP, standards.ENTRY):
         (td / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / rel, td / rel)

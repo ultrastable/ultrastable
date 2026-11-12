@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-external-audit",
+  "title": "Q-GAP-external-audit: An independent audit of prediction scoring",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** file:docs/audit/external-scoring-audit.json\n**Status:** open\n\nGap in component `metrics-triggers`: the prediction match rate is scored by the system itself. Have a party outside the system re-score a sample and record the result in docs/audit/external-scoring-audit.json.",
+  "labels": [
+    "role:product-manager",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

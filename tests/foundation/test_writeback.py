@@ -1,7 +1,7 @@
 """The write-back path: sessions put what they learned into the repository, and code with no write-back fails the check."""
 import json, tempfile, unittest
 from pathlib import Path
-from _repo import ROOT, copy_repo, git, tiny_repo
+from _repo import ROOT, copy_repo, git, tiny_repo, scratch
 from foundation import doctrine, writeback
 
 
@@ -33,6 +33,14 @@ class Record(unittest.TestCase):
         item = json.loads((r / p).read_text())
         self.assertEqual(item["id"], "OL-20261201-1")
         self.assertIn("**Done check:** grep:site/worker.js::self-referential", item["body"])
+
+    def test_open_loop_id_never_overwrites_when_numbers_have_gaps(self):
+        r = copy_repo()
+        for n in (1, 2, 91):
+            (r / "docs/issues" / f"OL-20261201-{n}.json").write_text('{"id": "keep"}\n', encoding="utf-8")
+        p = writeback.record(r, "open-loop", "New", "b", owner="staff", trigger="x", probe="grep:site/worker.js::self-referential", today="2026-12-01")
+        self.assertEqual(p, "docs/issues/OL-20261201-92.json")
+        self.assertEqual(json.loads((r / "docs/issues/OL-20261201-2.json").read_text())["id"], "keep")
 
     def test_term_record_changes_the_glossary(self):
         r = copy_repo()
@@ -74,8 +82,8 @@ class Check(unittest.TestCase):
         self.assertTrue(any("banned framing" in p for p in writeback.check(d, "main", "HEAD")))
 
     def test_outputs_missing_from_repo_are_flagged(self):
-        out = Path(tempfile.mkdtemp())
-        (out / "kept.md").write_text((ROOT / "doctrine/positioning.json").read_text())
+        out = Path(scratch())
+        (out / "kept.md").write_bytes((ROOT / "doctrine/positioning.json").read_bytes())
         (out / "lost.md").write_text("only in a session output folder\n")
         got = writeback.outputs(ROOT, [out])
         self.assertEqual(len(got), 1)

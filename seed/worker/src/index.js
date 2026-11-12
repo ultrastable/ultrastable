@@ -4,7 +4,9 @@
 import { runTick } from './tick.js';
 import { runExecutor } from './executor.js';
 import { runLane } from './lane.js';
+import { probe as probeAgents } from './codeagent.js';
 import config from './config.js';
+import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
 import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
 import { nowScreen, nextScreen, needsScreen, questionScreen, doneScreen } from './ui.js';
 import { handleAnalytics, selfcheck, report } from '../../analytics/analytics.js';
@@ -24,8 +26,17 @@ export default {
     ctx.waitUntil(selfcheck(env, hosts(env)[0]).catch(e => console.error('analytics selfcheck', e && e.message)));
   },
 
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now
+      const body = await request.text();
+      if (!(await verifySignature(env.GITHUB_WEBHOOK_SECRET, body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
+      const hit = routeEvent(request.headers.get('x-github-event'), JSON.parse(body || '{}'), EVENT_TABLE);
+      if (!hit) return Response.json({ routed: false }, { status: 202 });
+      const work = runTick(env.DB, { config, env: presence(env), wake: hit.role });
+      if (ctx && ctx.waitUntil) ctx.waitUntil(work); else await work;
+      return Response.json({ routed: true, ...hit }, { status: 202 });
+    }
     // Agent-facing surfaces (MCP, discovery documents) are registered in seed/standards/surfaces.json.
     const agentic = createAgenticHandler({
       store: d1Store(env.DB), registries: staticRegistries(config.registries || {}), auth: bearerAuth, telemetry: consoleTelemetry,
@@ -39,6 +50,7 @@ export default {
       if (!env.ANALYTICS_TOKEN || request.headers.get('authorization') !== 'Bearer ' + env.ANALYTICS_TOKEN) return Response.json({ error: 'unauthorized' }, { status: 401 });
       return Response.json(await report(env));
     }
+    if (url.pathname === '/agents/probe') { const r = await probeAgents(env); return Response.json(r, { status: r.ok ? 200 : 503 }); }
     if (url.pathname === '/health') {
       const last = await env.DB.prepare(
         `SELECT id, started_at, finished_at, steps_completed, steps_total, report, errors FROM tick_runs ORDER BY id DESC LIMIT 1`

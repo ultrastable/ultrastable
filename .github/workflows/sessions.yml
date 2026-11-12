@@ -1,0 +1,44 @@
+name: sessions
+# SESSION-CLOSE-1: the session reaper on GitHub's scheduler. Daily only; the primary clock is the Cloudflare tick.
+# budget: ~1 min x 30 per month
+# trigger: daily and dispatch; sessions go idle over hours, so a faster event buys nothing
+# free-alternative: run `python3 -m foundation sessions --apply` from a cloud-hosted agent session or the Cloudflare cron worker
+# Parks or closes idle agent/claude branches with a recorded disposition and appends ops/session-ledger.jsonl; the evidence (ledger, tuned
+# doctrine/sessions.json, backlog issues) is committed to branch session-evidence, which the next run starts from so the loop keeps what it learned.
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: sessions
+  cancel-in-progress: false
+jobs:
+  sessions:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - run: python3 scripts/actions_guard.py sessions
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Start from the loop's own evidence when it exists
+        run: |
+          if git ls-remote --exit-code --heads origin session-evidence >/dev/null; then
+            git fetch origin session-evidence
+            git checkout origin/session-evidence -- ops doctrine/sessions.json docs/issues
+          fi
+      - run: python3 -m foundation sessions --apply
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Commit the evidence
+        run: |
+          git config user.name "ultrastable-sessions"
+          git config user.email "actions@users.noreply.github.com"
+          git add ops/session-ledger.jsonl doctrine/sessions.json docs/issues
+          if git diff --cached --quiet; then echo "no change"; else git commit -m "sessions: ledger and tuned policy" && git push origin HEAD:refs/heads/session-evidence --force; fi

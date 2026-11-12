@@ -5,6 +5,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from foundation import brandcheck  # noqa: E402
+import sys as _sys; _sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402  (scratch directories are removed when the run ends)
 
 
 class Brand(unittest.TestCase):
@@ -12,7 +14,7 @@ class Brand(unittest.TestCase):
         self.assertEqual(brandcheck.check(ROOT), [])
 
     def _copy(self):
-        td = Path(tempfile.mkdtemp())
+        td = Path(scratch())
         for d in ("brand", "doctrine", "docs/ops"):
             shutil.copytree(ROOT / d, td / d, ignore=shutil.ignore_patterns("*.png"))
         for n in (ROOT / "brand/generated").rglob("*.png"):
