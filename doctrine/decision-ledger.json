@@ -33,6 +33,14 @@
    "title": "Fleet skips archived repositories",
    "body": "ultrastable/seed is archived and read-only; its live copy is the seed directory of this repository. The fleet lane lists live repositories only and records an archived one instead of failing or opening a card.",
    "probe": "grep:foundation/fleet.py::archived"
+  },
+  {
+   "id": "lesson-2026-11-12-deploy-was-green-while-live-served-old-code",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Deploy was green while live served old code",
+   "body": "Merged site 0.3.1 never went live: worker.js imports ../seed/analytics/analytics.js, the single-file upload returned code 10021, deploy-site.mjs ignored success=false, and the verify step fetched only an image. Measured after the fix: curl https://ultrastable.io/health returned version 0.3.1 and /org returned 200 (before: 0.2.0 and 404). deploy-site now runs on push to main for site paths; deploy exits nonzero unless the live version equals the repo VERSION; lane no longer fails on the concurrent-merge race.",
+   "probe": "grep:deploy/deploy-site.mjs::live version"
   }
  ]
 }

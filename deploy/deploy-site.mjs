@@ -12,10 +12,32 @@ let ns = nsList.result.find(n => n.title === NS_TITLE);
 if (!ns) ns = (await api("POST", `/accounts/${A}/storage/kv/namespaces`, JSON.stringify({ title: NS_TITLE }), { "content-type": "application/json" })).result;
 for (const f of readdirSync(new URL("../site/assets/", import.meta.url)))
   console.log("asset", f, (await api("PUT", `/accounts/${A}/storage/kv/namespaces/${ns.id}/values/${f}`, readFileSync(new URL("../site/assets/" + f, import.meta.url)), { "content-type": "application/octet-stream" })).success);
+// worker.js imports sibling modules by relative path (../seed/analytics/analytics.js). The upload API has no path resolution,
+// so each relative import is uploaded as a flat module and the specifier is rewritten to ./<name>. (Root cause of the silent
+// 0.2.0-live / 0.3.1-merged drift: the single-file upload was rejected with code 10021 and the script still exited 0.)
+let src = readFileSync(new URL("../site/worker.js", import.meta.url), "utf8");
+const extra = [];
+src = src.replace(/(from\s+")(\.{1,2}\/[^"]+)(")/g, (_, a, spec, c) => {
+  const name = spec.split("/").pop();
+  extra.push([name, readFileSync(new URL("../site/" + spec, import.meta.url))]);
+  return a + "./" + name + c;
+});
 const form = new FormData();
 form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", bindings: [{ type: "kv_namespace", name: "ASSETS", namespace_id: ns.id }] })], { type: "application/json" }));
-form.append("worker.js", new Blob([readFileSync(new URL("../site/worker.js", import.meta.url))], { type: "application/javascript+module" }), "worker.js");
-console.log("upload", (await api("PUT", `/accounts/${A}/workers/scripts/ultrastable-site`, form)).success);
+form.append("worker.js", new Blob([src], { type: "application/javascript+module" }), "worker.js");
+for (const [name, body] of extra) form.append(name, new Blob([body], { type: "application/javascript+module" }), name);
+const up = await api("PUT", `/accounts/${A}/workers/scripts/ultrastable-site`, form);
+console.log("upload", up.success);
+if (!up.success) { console.error("upload failed:", JSON.stringify(up.errors)); process.exit(1); }
 const zones = { "ultrastable.io": "18a7463a4e79b98d04aa22eb96b0127b", "www.ultrastable.io": "18a7463a4e79b98d04aa22eb96b0127b", "ultrastable.app": "29a8a782765682441aafd3f64a186ea6", "ultrastable.net": "e23fd6a6078d557c08462aaa80614402" };
-for (const [hostname, zone_id] of Object.entries(zones))
-  console.log(hostname, (await api("PUT", `/accounts/${A}/workers/domains`, JSON.stringify({ hostname, service: "ultrastable-site", zone_id, environment: "production" }), { "content-type": "application/json" })).success);
+let bad = 0;
+for (const [hostname, zone_id] of Object.entries(zones)) {
+  const ok = (await api("PUT", `/accounts/${A}/workers/domains`, JSON.stringify({ hostname, service: "ultrastable-site", zone_id, environment: "production" }), { "content-type": "application/json" })).success;
+  console.log(hostname, ok); if (!ok) bad++;
+}
+// Verify live: the served version must equal the repo version (a green deploy that serves old code is a failed deploy).
+const want = /var VERSION = "([^"]+)"/.exec(src)[1];
+let got = "";
+for (let i = 0; i < 12 && got !== want; i++) { await new Promise(r => setTimeout(r, 5000)); try { got = (await (await fetch("https://ultrastable.io/health?v=" + Date.now())).json()).version; } catch {} }
+console.log("live version", got, "want", want);
+if (bad || got !== want) process.exit(1);

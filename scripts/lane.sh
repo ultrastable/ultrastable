@@ -55,10 +55,13 @@ lane: held on a High finding. Fix and remove the hold label.' >/dev/null 2>&1
     fi
   fi
   gh pr review "$n" -R "$repo" --approve --body "auto-review: all checks green on ${sha:0:7} (secret scan, workflow lint, repo verify)." >/dev/null 2>&1 || true
-  if out=$(gh pr merge "$n" -R "$repo" --squash --delete-branch --match-head-commit "$sha" 2>&1); then
+  # A concurrent lane pass already merging this PR is a benign race, not a degraded run: call gh directly so it is not counted.
+  if out=$(timeout "${GH_TIMEOUT:-60}" "$_GH_BIN" pr merge "$n" -R "$repo" --squash --delete-branch --match-head-commit "$sha" 2>&1); then
     echo "#$n merged"
   else
     echo "#$n merge failed: $out"
+    case "$out" in *"already in progress"*|*"already merged"*) continue;; esac
+    echo x >>"$_SAFE_FAILS"
     case "$out" in *workflow*) gh pr edit "$n" -R "$repo" --add-label needs-pat >/dev/null 2>&1;; esac
   fi
 done

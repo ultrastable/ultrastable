@@ -1,10 +1,13 @@
 name: deploy-site
-# trigger: manual workflow_dispatch only, skipped unless DEPLOY_SITE_ENABLED is true
+# trigger: push to main touching the site or its deploy inputs, plus manual workflow_dispatch; skipped unless DEPLOY_SITE_ENABLED is true
 # free-alternative: run `node deploy/deploy-site.mjs` locally or from a session with a Cloudflare token (docs/ops/SITE-DEPLOY.md)
-# budget: ~1 min per run, manual only, 5 min timeout
+# budget: ~1 min per run, only on site changes, 5 min timeout
 # Deploys site/worker.js and attaches ultrastable.io/.app/.net (deploy/deploy-site.mjs).
-# Manual only: GitHub Actions minutes on private repos are budgeted (about 1 minute per run). Sessions deploy through the Cloudflare connector (docs/ops/SITE-DEPLOY.md); this workflow is the fallback once repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID exist.
+# Closes the loop (merge -> deploy -> live-version verify). Path-filtered so it costs about 1 minute only when the site changes. Sessions can also deploy through the Cloudflare connector (docs/ops/SITE-DEPLOY.md); this workflow is the fallback once repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID exist.
 on:
+  push:
+    branches: [main]
+    paths: ["site/**", "seed/analytics/**", "deploy/deploy-site.mjs", ".github/workflows/deploy-site.yml"]
   workflow_dispatch:
 permissions:
   contents: read
