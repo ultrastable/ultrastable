@@ -2,6 +2,7 @@
  "_doc": "Doc-consumption registry (owner, 2026-11-12: nobody reads documents; the system runs on code). `python3 -m foundation docs_audit --check` fails when a tracked .md/.txt/.rst file has no consumer. Tiers: agent-instruction import, exact path named by code/data, front matter generated-by/consumer, a row below (consumer file must exist, be a non-document, and contain the needle), or the knowledge tier (foundation/kb.py ranks these for every issue the executor works). A new document declares its consumer in front matter (`consumer: path`) or gets a row here in the same PR. A document that tells a person to act is a defect: file an automatic backlog item (owner, trigger, verification) instead. Removed documents stay in `removed` with their sha256 and the commit that holds them.",
  "version": "1.0.0",
  "ignore_references_from": [
+  "deploy/sibling-patches/",
   "docs/issues/",
   "dashboard/snapshot.json",
   "demos/"

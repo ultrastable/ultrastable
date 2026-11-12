@@ -8,3 +8,4 @@ Write-back target for what sessions and loops learned: decisions, lessons, open 
 - 2026-11-12: [Card concept removed; session-route executor](2026-11-12-card-concept-removed-session-route-executor.md)
 - 2026-11-12: [A path mention in a document or an issue is not consumption](2026-11-12-a-path-mention-in-a-document-or-an-issue-is-not-consumption.md)
 - 2026-11-12: [Sibling repos were stale pre-consolidation snapshots and the app cannot write to six of them](2026-11-12-sibling-repos-were-stale-pre-consolidation-snapshots-and-the.md)
+- 2026-11-12: [Sibling repos were stale snapshots and six returned 403 to the app](2026-11-12-sibling-repos-were-stale-snapshots-and-six-returned-403-to-t.md)
