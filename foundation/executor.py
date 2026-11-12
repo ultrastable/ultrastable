@@ -121,6 +121,8 @@ def call_cloudflare(prompt: str) -> dict:
         headers={"authorization": "Bearer " + tok, "content-type": "application/json"})
     with urllib.request.urlopen(req, timeout=300) as r:
         text = json.loads(r.read())["result"]["response"]
+    if isinstance(text, dict):  # some Workers AI models return the JSON object already parsed
+        return text
     s, e = text.find("{"), text.rfind("}")
     return json.loads(text[s:e + 1])
 
