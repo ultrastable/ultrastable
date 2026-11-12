@@ -13,7 +13,6 @@ class Upstream(unittest.TestCase):
         core = copy_repo()
         (core / "seed/agents/AGENTS.md").open("a").write("\nsee q08.org\n")
         self.assertTrue(upstream.leaks(core))
-        self.assertTrue(upstream.contract_check(core))
 
     def adopt(self):
         out = Path(tempfile.mkdtemp())

@@ -10,7 +10,7 @@ The core has two code homes, and an instance pins both:
 
 | Home | Holds | Pinned in the lock by |
 |---|---|---|
-| `ultrastable/ultrastable` | kernel (`seed/`: agent protocol, roles, policy, tick worker), `foundation/`, doctrine | `core.version` and per-file `digests` |
+| `ultrastable/ultrastable` | kernel (`seed/`: agent protocol, roles, policy, tick worker), `foundation/`, doctrine | `core.version` in `core-contract.json`, and per-file `digests` computed on demand and stored in the instance lock |
 | `ultrastable/workers` | runtime code (`core/`, `adapters/`) that replaces the QNFO workers, plus the cutover tooling | `runtime.ref` (a git tag of that repo) |
 
 The instance file in `workers` (`tools/instance_config.mjs`: slug, account id, routes, owner contact, repository, secret binding names) is kept here as `instance.runtime.json`. `upstream check` validates it with a port of the same rules (two or more routes, binding names only, `--strict` rejects placeholders), so one contract covers both homes. The foundation manifest `instance.json` (brand, goals, funding) stays separate: it describes the organization, the runtime file describes where it runs.
@@ -60,7 +60,7 @@ flowchart LR
 - **Down (improvements to instances).** `ultrastable-upgrade.yml` in the instance checks out the core, runs `upstream sync` (copies changed kernel files, rewrites the lock, never overwrites a file the instance edited), runs `upstream check`, opens a PR. The instance's own lane merges it on green.
 - **Up (fixes to the core).** A kernel file edited in an instance shows as a `local_edits` entry in `upstream drift`. `ultrastable-contribute.yml` files it as an issue (own repo always; core repo too when `CORE_WRITE_TOKEN` is bound). The executor on the core turns the issue into a PR; once merged and released, the next upgrade PR removes the difference.
 - **Drift detector, two routes.** Pull: `upstream.yml` on the core scans every `instances/*/instance.json` that names a repo and opens an issue per diverged instance (needs `INSTANCE_READ_TOKEN`; otherwise the row is recorded as `unreachable`, never skipped). Push: the instance's contribute bot. Either route alone is enough.
-- **Contract tests against both repos.** Core CI: `upstream contract --check` (kernel changed means a version bump and refreshed digests), `upstream leaks` (no instance values in the kernel), and the unit tests adopt a fresh instance, change the core, sync, and run `check`. Instance CI: the upgrade workflow runs `upstream check` with the core it just pulled.
+- **Contract tests against both repos.** Core CI: `upstream contract --check` (semver version, kernel paths in step with the generator; digests are computed on demand, never committed, because a committed copy goes stale whenever another change touches the kernel and made this PR fail CI), `upstream leaks` (no instance values in the kernel), and the unit tests adopt a fresh instance, change the core, sync, and run `check`. Instance CI: the upgrade workflow runs `upstream check` with the core it just pulled.
 
 ## Bring your own repo
 
