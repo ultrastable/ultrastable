@@ -1806,6 +1806,39 @@
     "seed/worker/src/events.js",
     "seed/worker/src/index.js"
    ]
+  },
+  {
+   "id": "session-reaper",
+   "kind": "governance",
+   "summary": "No zombie sessions: every idle agent branch or PR is closed, handed to the merge lane or backlogged with a disposition, and the loop tunes its own idle TTL from its ledger with a graded prediction (strange loop).",
+   "trigger": "every heartbeat tick and every PR open or close",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "zero sessions idle past idle_ttl_hours and the accounting invariant entered = live + zombies holds in ops/session-ledger.jsonl",
+   "paths": [
+    {
+     "id": "github",
+     "how": "python3 -m foundation sessions --apply with gh pr list/close",
+     "class": "free"
+    },
+    {
+     "id": "git-only",
+     "how": "the same command with plain git for-each-ref when gh is unavailable",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:foundation/sessions.py::def classify",
+   "writeback": [
+    "ops",
+    "docs/issues"
+   ],
+   "system_path": [
+    "foundation/sessions.py",
+    "doctrine/sessions.json",
+    "tests/foundation/test_sessions.py"
+   ],
+   "area": "managers"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
