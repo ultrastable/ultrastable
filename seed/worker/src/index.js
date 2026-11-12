@@ -5,6 +5,7 @@ import { runTick, lastTickForHealth } from './tick.js';
 import { runExecutor } from './executor.js';
 import { runLane } from './lane.js';
 import { probe as probeAgents } from './codeagent.js';
+import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
 import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
 import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
@@ -28,6 +29,7 @@ export default {
 
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (hiddenByHealthOnly(env, request.method, url.pathname)) return new Response('Not found', { status: 404 });
     if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now
       const body = await request.text();
       if (!(await verifySignature(env.GITHUB_WEBHOOK_SECRET, body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });

@@ -555,6 +555,14 @@
    "body": "runTick inserts its tick_runs row before the steps run, so a probe landing on the cron second read steps_completed NULL and answered 503 (CF-OBS groups on ultrastable-ultrastable and demo-child-ultrastable). Health now uses lastTickForHealth: newest finished tick, a tick unfinished for over 5 minutes still fails. A D1 schema file is not applied by deploy: create tables on first use (ensureSnapshots). A daily job rides a */10 cron slot (digestDue) instead of its own slow cron.",
    "probe": "grep:seed/worker/src/tick.js::lastTickForHealth",
    "session": "agentG"
+  },
+  {
+   "id": "decision-2026-11-12-live-1-public-health-only-gate-committed-to-seed-worker",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "LIVE-1: PUBLIC_HEALTH_ONLY gate committed to seed worker",
+   "body": "Live tenants ran visibility.js that was not in main; a rebuild from main would expose /describe. Measured: node --test visibility.test.js tests 2 pass 2.",
+   "probe": "file:seed/worker/src/visibility.js"
   }
  ]
 }
