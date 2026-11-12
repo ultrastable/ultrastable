@@ -1,6 +1,6 @@
 # 5-minute demo script (internal / NDA audiences until filing)
 
-Commands match `us-platform/ultrastable/cli.py` and were exercised on 2026-11-10 (demo run: 40 ticks; unit tests: 12 pass). Run from `C:\Users\LENOVO\Dev\us-platform`. Global flags `--db` and `--config` come BEFORE the subcommand. Use a throwaway DB path so you start clean.
+Commands match `platform/core/ultrastable/cli.py` and were exercised on 2026-11-10 (demo run: 40 ticks; unit tests: 12 pass). Run from `platform/core` in a cloud workspace that has this repository checked out. Global flags `--db` and `--config` come BEFORE the subcommand. Use a throwaway DB path so you start clean.
 
 **Say up front (every time):** the agents in this demo are SIMULATED, deterministic stand-ins. The platform manages agents; this shows the control loop, not model quality. Command and Anthropic adapters exist but are not yet proven in production.
 
@@ -8,8 +8,8 @@ Commands match `us-platform/ultrastable/cli.py` and were exercised on 2026-11-10
 
 ## Setup (before the call)
 ```
-cd C:\Users\LENOVO\Dev\us-platform
-set ULTRASTABLE_DB=%TEMP%\demo.db
+cd platform/core
+export ULTRASTABLE_DB="$(mktemp -d)/demo.db"
 ```
 (or pass `--db demo.db` each time)
 
@@ -44,7 +44,7 @@ Message (SAFE NOW): "It gets more independent as it proves itself; different kin
 ```
 python -m ultrastable --db demo2.db serve --seed-demo --port 8080 --auto-tick 5
 ```
-Open http://localhost:8080. Walk the sections as they appear: Virtual managers; Last tick report (four lines); Owner gate cards ("the only things that interrupt a person"); Work items; Projects; Earned trust; Rule amendments; Audit trail. Let two or three auto-ticks happen so the board changes. Show `GET /healthz` and `GET /api/state`. Note writes to `/tick`, `/api/items`, gate resolve need the bearer token if `ULTRASTABLE_TOKEN` is set; without it the server prints that writes are OPEN, so set it for any non-local use.
+Open port 8080 of that workspace through its forwarded URL. Walk the sections as they appear: Virtual managers; Last tick report (four lines); Owner gate cards ("the only things that interrupt a person"); Work items; Projects; Earned trust; Rule amendments; Audit trail. Let two or three auto-ticks happen so the board changes. Show `GET /healthz` and `GET /api/state`. Note writes to `/tick`, `/api/items`, gate resolve need the bearer token if `ULTRASTABLE_TOKEN` is set; without it the server prints that writes are OPEN, so always set it.
 
 Amendments: show the "Rule amendments" panel (after a demo run, repeated failures became an adopted rule version; KPI `rules_version` went to 3 in the observed run). Say only: "rules change by recorded, versioned amendment".
 

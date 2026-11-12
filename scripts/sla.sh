@@ -33,7 +33,9 @@ gh pr list -R "$repo" --state open --json number,title,updatedAt,labels,headRefN
   case "$l" in *,hold,*) continue;; esac
   age=$(( (now - $(date -d "$(jq -r .updatedAt <<<"$r")" +%s)) / 3600 ))
   lim=48
-  case "$l" in *,conflict,*) lim=12;; *,ci-failed,*) lim=24;; esac
+  # NEEDS-PAT-1: a PR labeled needs-pat that is neither conflicting nor failing waits on the workflow credential with a default in effect
+  # (it stays open); the lane merges it on the pass after one is bound, so the stuck-PR clock does not close it.
+  case "$l" in *,conflict,*) lim=12;; *,ci-failed,*) lim=24;; *,needs-pat,*) continue;; esac
   if [ "$age" -gt "$lim" ]; then
     t=$(jq -r .title <<<"$r")
     gh issue create -R "$repo" --title "Redo PR #$n: $t" --label p2 --body "PR #$n sat ${age}h (limit ${lim}h, labels: $l) and was closed by the SLA sweep. Redo the change from main; branch $(jq -r .headRefName <<<"$r") is kept." >/dev/null 2>&1

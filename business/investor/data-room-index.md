@@ -1,6 +1,6 @@
 # Investor data-room index (2026-11-10)
 
-Status codes: **HAVE** (exists, path given), **DRAFT** (working draft exists), **NEEDS LAWYER**, **NEEDS ACCOUNTANT**, **TODO** (nothing yet). Paths relative to `C:\Users\LENOVO\Dev\`. Owners are roles; Rowan alone signs, pays and files.
+Status codes: **HAVE** (exists, path given), **DRAFT** (working draft exists), **NEEDS LAWYER**, **NEEDS ACCOUNTANT**, **TODO** (nothing yet). Paths are relative to the root of the workspace that holds the repositories side by side. Owners are roles; Rowan alone signs, pays and files.
 
 | # | Item | Status | Where / note | Owner |
 |---|---|---|---|---|

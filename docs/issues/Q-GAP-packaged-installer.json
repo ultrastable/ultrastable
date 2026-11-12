@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-packaged-installer",
+  "title": "Q-GAP-packaged-installer: A packaged installer so a second organization can install without this repository's history",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:seed/install.py\n**Status:** open\n\nGap in component `customer-onboarding`: there is one installation. Package the seed so a pilot repository can install it with one command and the loops start.",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

@@ -1,9 +1,10 @@
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { openDb } from '../../sqlite/d1-sqlite.js';
 import { createServer, loadConfig } from '../server.js';
 
-const MIG = new URL('../../../../seed/worker/migrations', import.meta.url).pathname;
+const MIG = fileURLToPath(new URL('../../../../seed/worker/migrations', import.meta.url));
 
 async function boot(env) {
   const db = openDb(':memory:', MIG);

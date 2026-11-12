@@ -1,0 +1,11 @@
+{
+  "id": "PIN-virtual-managers",
+  "title": "PIN-virtual-managers: Virtual managers and staff are live",
+  "body": "**Owner:** operations\n**Trigger:** every site deploy (pins check)\n**Done check:** file:agents/roles/portfolio-manager.md\n**Status:** done: live; verified by the done check on every build\n\nPortfolio, project and product managers plus operations, reviewer and staff roles are plain files in agents/roles.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.",
+  "labels": [
+    "role:operations",
+    "pin"
+  ],
+  "milestone": "Done",
+  "workstream": "Site pins"
+}

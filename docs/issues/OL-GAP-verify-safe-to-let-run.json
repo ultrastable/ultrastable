@@ -1,0 +1,12 @@
+{
+  "id": "OL-GAP-verify-safe-to-let-run",
+  "title": "OL-GAP-verify-safe-to-let-run: objection safe-to-let-run rests on 5 unverified market cells",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** every loop pass\n**Done check:** cmd:python3 -m foundation components --probe objection-verified:safe-to-let-run\n**Status:** open\n\nRead the primary vendor page for each unknown cell in doctrine/market-evidence.json and set native to yes, partial or no with a source. An unknown cell never counts as support.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop",
+    "gap"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

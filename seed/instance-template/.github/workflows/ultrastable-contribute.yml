@@ -1,7 +1,7 @@
 name: ultrastable-contribute
 # budget: ~1 min per week
 # trigger: weekly (flow UP: kernel files edited here become an issue on the core) and manual dispatch
-# free-alternative: `python3 -m foundation upstream drift --instance . --json` from any local scheduler
+# free-alternative: `python3 -m foundation upstream drift --instance . --json` from a Cloudflare cron worker or a cloud-hosted agent session
 # Reports local kernel edits as an issue in this repo and, when CORE_WRITE_TOKEN is bound, as an issue on the core. Two routes, no single point of failure.
 on:
   schedule:

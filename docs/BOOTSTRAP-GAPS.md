@@ -95,7 +95,7 @@ Rowan's principle: the system must boot from any starting condition and handle e
 | BC-10 | No money to spend | 1. Pick the smallest model tier and free runtime tiers; log cost per tick; 2. Put funding at the top of the backlog: registry, packets, outreach | none: routes suffice |
 | BC-11 | The agent session cannot reach funder or office websites | 1. Mark every unread registry row unverified; never contact from an unverified row; 2. Verify from the scheduled CI runner, which has open network, and promote rows by reviewed PR | none: routes suffice |
 | BC-12 | A repository is archived, private or unwritable | 1. Work in the canonical repository and record the other as a mirror target; 2. Unarchive or mirror through the admin credential when it exists | none: routes suffice |
-| BC-13 | The owner's computer is not reachable | 1. Run everything through scheduled workflows and the platform connectors; no step depends on the owner's device; 2. Queue cards with defaults in effect; they wait without blocking other work | none: routes suffice |
+| BC-13 | The owner's computer is not reachable (server-side only: no step may depend on it) | 1. Run everything through scheduled workflows and the platform connectors; no step depends on the owner's device; 2. Queue cards with defaults in effect; they wait without blocking other work | none: routes suffice |
 
 ## Funding and outreach gaps (2026-11-10)
 

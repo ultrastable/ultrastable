@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-default-policy-pack",
+  "title": "Q-GAP-default-policy-pack: A short default policy pack a buyer can adopt",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** file:seed/autonomy/default-policy-pack.json\n**Status:** open\n\nGap in component `bootstrap-from-idea`: today the policy is long and written as owner directives. Extract a short default pack (limits, gate list, budget caps) into seed/autonomy/default-policy-pack.json, with the long directives as an overlay.",
+  "labels": [
+    "role:product-manager",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

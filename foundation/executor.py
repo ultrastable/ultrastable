@@ -174,7 +174,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     row = {"issue": n, "title": issue["title"], "prediction": f"issue_{n}_closed = 1 within 24 h"}
     key = os.environ.get("ANTHROPIC_API_KEY")
     if model_call is None and not key and not cf_ready():
-        row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (scheduled task that starts a Claude session, which runs --pick and --record) takes the item without any key")
+        row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (a cloud-hosted routine that starts a Claude session, which runs --pick and --record) takes the item without any key")
         log(root, row); return row
     if not apply:
         row.update(result="dry-run", detail="would claim, change, check and open a PR")

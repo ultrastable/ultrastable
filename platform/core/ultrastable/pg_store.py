@@ -16,7 +16,9 @@ def to_pg_schema(sql: str) -> str:
 
 
 def to_pg_sql(sql: str) -> str:
-    return sql.replace("?", "%s")
+    """SQLite-style `?` placeholders to psycopg's `%s`. A literal percent sign (LIKE '%x%') is doubled first, because psycopg reads a
+    lone `%` as the start of a placeholder and refuses the statement."""
+    return sql.replace("%", "%%").replace("?", "%s")
 
 
 class PostgresStore(Store):

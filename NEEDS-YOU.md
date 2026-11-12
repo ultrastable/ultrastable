@@ -18,9 +18,13 @@ GitHub has no API for these. If you do nothing: Generated identicon, no pins.
 Account creation accepts terms in your name. If you do nothing: Posting stays dry-run; the repo, registry pull requests and feeds carry the work.
 **[Create the account](https://bsky.app)**
 
+## Let the merge lane merge changes to its own workflows
+GitHub does not let its built-in workflow token merge a change to workflow files. Only a token made in your account can, and making one is an act in your name. Give it read and write on Contents, Pull requests and Workflows for ultrastable/ultrastable and save it as the repository secret LANE_PAT. If you do nothing: Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.
+**[Create the token](https://github.com/settings/personal-access-tokens/new)**
+
 ## Already done for you
 
-- Work: a Claude scheduled task starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green. No API key is needed.
+- Work: a routine in Claude's cloud starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green. No API key is needed and no computer of yours has to be on.
 - Old Cloudflare account: the tick, site and dashboard keep running there.
 - Entity, patent and the org admin token are not needed now; entity-only programmes stay deferred until you choose one.
 

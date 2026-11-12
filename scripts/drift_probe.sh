@@ -2,7 +2,7 @@
 # DRIFT-1: compare what is live with what the repo declares, and self-heal what the repo token can reach.
 #  - site: live /health version vs site/worker.js VERSION; on drift dispatch deploy-site (repo-scoped token suffices).
 #  - org: public org description/homepage vs github/org-settings.json; org writes need an org-admin token, so drift is reported red
-#    (the run fails, the next local/admin apply of scripts/apply_github_settings.sh closes it).
+#    (the run fails, the next org-settings workflow run with the admin token closes it).
 set -uo pipefail
 . "$(dirname "$0")/lib-safe.sh"
 repo="${GITHUB_REPOSITORY:?}"; fail=0

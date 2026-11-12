@@ -21,8 +21,8 @@ After the first boot, nothing runs on a laptop. The bootstrapper is the only ste
 1. Copy this repo (template repo, `git clone`, or the bundle). Write your idea in [`IDEA.md`](IDEA.md). That is the only file a founder has to touch.
 2. Dry run, anywhere with Python 3.11+ and no dependencies:
    `python3 bootstrap/bootstrap.py --dry-run`
-   It writes `org/` (charter, roles, backlog, gate cards, boot log) and prints a four-line report. Nothing leaves the machine.
-3. Apply, once, from CI or a machine with a Cloudflare token in the environment:
+   It writes `org/` (charter, roles, backlog, gate cards, boot log) and prints a four-line report. Nothing leaves the host it runs on.
+3. Apply, once, from CI or a cloud-hosted session with a Cloudflare token in the environment:
    `python3 bootstrap/bootstrap.py --apply`
    It creates the D1 database, applies migrations, loads the seed rows and deploys the Worker. From then on the Worker's cron is the heartbeat. The GitHub workflow [`bootstrap.yml`](.github/workflows/bootstrap.yml) runs the same command on the first push.
 

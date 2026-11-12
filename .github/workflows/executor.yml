@@ -1,7 +1,7 @@
 name: executor
 # budget: ~5 min per run, at most 2 per day plus Worker dispatches (the Worker dispatches only when GITHUB_DISPATCH_TOKEN is bound; guard below)
 # trigger: daily fallback, repository_dispatch `ultrastable-tick` from the Cloudflare tick Worker, and manual dispatch
-# free-alternative: the same command on any host: `python3 -m foundation executor --apply` (local scheduler, Claude routine)
+# free-alternative: the same command from the cloud-hosted Claude routine: `python3 -m foundation executor --pick` and `--record` (no model key needed)
 # The agent-executor step of the tick: picks the top open issue in driver order, claims it, changes, checks, opens a PR; the lane merges on green.
 on:
   schedule:

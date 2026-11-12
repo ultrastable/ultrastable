@@ -1,15 +1,17 @@
 name: loop
-# The self-bootstrap loop on GitHub's scheduler. Weekly and on demand only (free private-repo Actions minutes; Rowan 2026-11-10).
-# budget: ~2 min x 4-5 per month
-# trigger: weekly and dispatch only
-# free-alternative: Cloudflare cron worker ultrastable-tick (every 10 minutes) or a local scheduler (deploy/loops/local/)
+# The self-bootstrap loop on GitHub's scheduler: the credential-free host. Its token is minted by GitHub for each run; no person mints one.
+# budget: ~1 min x 30 per month while another host is alive (the gate exits before any setup); ~2 min for a run that takes over
+# trigger: daily failover gate and dispatch; it runs the loops only when no host has written evidence for 12 h (instances/ultrastable/loops.json)
+# free-alternative: Cloudflare cron worker ultrastable-tick (every 10 minutes) or the cloud-hosted Claude routine (deploy/loops/claude-routine.md)
 # Runs `python3 -m foundation launch`: every loop once, evidence committed to branch loop-evidence. Outreach stays dry-run.
 on:
   schedule:
-    - cron: "41 5 * * 1"
+    - cron: "41 5 * * *"
   workflow_dispatch:
 permissions:
   contents: write
+  actions: read
+  pull-requests: read
 concurrency:
   group: loop
   cancel-in-progress: true
@@ -24,8 +26,24 @@ jobs:
       - run: python3 scripts/actions_guard.py loop
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: Failover gate (is another host alive?)
+        id: gate
+        run: ULTRASTABLE_HOST=github-actions python3 -m foundation launch --failover --decide
       - uses: actions/setup-node@v6
+        if: steps.gate.outputs.run == 'true' || github.event_name == 'workflow_dispatch'
         with:
           node-version: 22
-      - run: pip install pyyaml
-      - run: ULTRASTABLE_HOST=github-actions python3 -m foundation launch --failover --commit --push
+      - if: steps.gate.outputs.run == 'true' || github.event_name == 'workflow_dispatch'
+        run: pip install pyyaml
+      - name: Run the loops (a dispatch always runs; the schedule runs only on takeover)
+        if: steps.gate.outputs.run == 'true' || github.event_name == 'workflow_dispatch'
+        run: |
+          if [ "${{ github.event_name }}" = workflow_dispatch ]; then flag=""; else flag="--failover"; fi
+          ULTRASTABLE_HOST=github-actions python3 -m foundation launch $flag --commit --push
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Liveness (are the autonomous loops running? evidence, not files)
+        if: always()
+        run: python3 -m foundation liveness
+        env:
+          GH_TOKEN: ${{ github.token }}

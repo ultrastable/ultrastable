@@ -3,13 +3,15 @@ import json, subprocess, tempfile, unittest
 from pathlib import Path
 
 from foundation import docs_audit, kb
+import sys as _sys; _sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402  (scratch directories are removed when the run ends)
 
 REPO = Path(__file__).resolve().parents[2]
 REG = {"consumers": [], "removed": [], "ignore_references_from": [], "human_action_patterns": [r"\bRowan (should|must)\b"], "human_action_exempt": [], "human_action_baseline": {}}
 
 
 def mk(files: dict, reg=None):
-    d = Path(tempfile.mkdtemp())
+    d = Path(scratch())
     (d / "doctrine").mkdir()
     (d / "brand/templates").mkdir(parents=True)
     (d / "brand/templates/doc-template.md").write_text("---\nconsumer: tpl_user.py\n---\n# t\n")
@@ -17,7 +19,7 @@ def mk(files: dict, reg=None):
     (d / docs_audit.REGISTRY).write_text(json.dumps(reg or REG))
     for p, t in files.items():
         (d / p).parent.mkdir(parents=True, exist_ok=True)
-        (d / p).write_text(t)
+        (d / p).write_bytes(t.encode())
     subprocess.run(["git", "init", "-q"], cwd=d, check=True)
     subprocess.run(["git", "add", "-A"], cwd=d, check=True)
     return d

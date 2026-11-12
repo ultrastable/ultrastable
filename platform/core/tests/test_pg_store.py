@@ -9,6 +9,8 @@ class Translate(unittest.TestCase):
         self.assertNotIn("AUTOINCREMENT", s)
         self.assertIn("BIGSERIAL PRIMARY KEY", s)
         self.assertEqual(to_pg_sql("SELECT * FROM t WHERE a=? AND b=?"), "SELECT * FROM t WHERE a=%s AND b=%s")
+        # a literal percent sign is doubled: psycopg rejects a lone % in a statement that has parameters (engine.py uses LIKE '%[hidden]%')
+        self.assertEqual(to_pg_sql("SELECT * FROM t WHERE e LIKE '%[hidden]%' AND u<=?"), "SELECT * FROM t WHERE e LIKE '%%[hidden]%%' AND u<=%s")
 
     def test_fails_closed_without_dsn(self):
         os.environ.pop("NO_SUCH_DSN", None)

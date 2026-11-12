@@ -1,0 +1,11 @@
+{
+  "id": "PIN-fresh-account-bootstrap",
+  "title": "PIN-fresh-account-bootstrap: First real --apply on an empty Cloudflare account",
+  "body": "**Owner:** operations\n**Trigger:** trigger: an empty Cloudflare account bound to the fleet\n**Done check:** file:docs/bootstrapping/fresh-account-apply.json\n**Status:** open\n\nThe first real --apply of a brand-new organization has not run. Done when its evidence file is committed.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.",
+  "labels": [
+    "role:operations",
+    "pin"
+  ],
+  "milestone": "Next",
+  "workstream": "Site pins"
+}

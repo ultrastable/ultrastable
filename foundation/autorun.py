@@ -22,7 +22,7 @@ from . import selfhost
 
 REPO = selfhost.REPO
 SURFACE, ACTION = "work_tracker", "create_update_close"
-KEEP_ROLES = ("portfolio-manager", "project-manager", "product-manager", "staff", "reviewer", "operations", "funding-manager", "outreach-manager", "outreach-coordinator")
+KEEP_ROLES = ("portfolio-manager", "project-manager", "product-manager", "staff", "reviewer", "operations", "funding-manager", "outreach-manager", "outreach-coordinator", "research-publisher", "marketing-manager", "legal-ip-manager", "customer-success", "org-designer")
 PLUS_TEXT = {
     "plus": "Add a closing probe and a test for {id}, so the next change to it is verified without a person",
     "work": "Plus for {id}: record what it taught as a rule in the role file and add a check that would have caught the slowest part",

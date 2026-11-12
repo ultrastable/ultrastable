@@ -16,7 +16,8 @@ from . import selfhost
 REPO = Path(__file__).resolve().parent.parent
 PATH = "instances/ultrastable/loop-registry.json"
 KINDS = {"tick", "manager", "staff", "review", "plussing", "probe", "funding", "outreach", "memory", "doctrine", "release", "reporting", "governance", "budget", "trust"}
-CLASSES = {"free", "paid", "local", "external", "degraded"}
+# `session` is a cloud-hosted agent session running the command from the repository (server-side only: no path runs on a person's computer).
+CLASSES = {"free", "paid", "session", "external", "degraded"}
 OUTSIDE = re.compile(r"https?://|/mnt/|\bchat\b|\bslack\b|\bnotion\b|\blinear\b|\bjira\b|tool memory|platform memory|\.selfhost", re.I)
 SLA = re.compile(r"^\d+\s?(m|h|d|w|tick|ticks)\b")
 
@@ -69,8 +70,8 @@ def verify(root=REPO) -> list[str]:
             bad.append(f"{lid}: needs at least two independent paths (distinct ids, each with how and a class in {sorted(CLASSES)})")
         else:
             classes = {p["class"] for p in paths}
-            if classes & {"paid", "external"} and not classes & {"free", "local", "degraded"}:
-                bad.append(f"{lid}: a paid or external path needs a free, local or degraded fallback class")
+            if classes & {"paid", "external"} and not classes & {"free", "session", "degraded"}:
+                bad.append(f"{lid}: a paid or external path needs a free, session or degraded fallback class")
         if l.get("closing_probe"):
             try:
                 if not selfhost.probe(root, l["closing_probe"]):

@@ -23,7 +23,7 @@ src = src.replace(/(from\s+")(\.{1,2}\/[^"]+)(")/g, (_, a, spec, c) => {
   return a + "./" + name + c;
 });
 const form = new FormData();
-form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", bindings: [{ type: "kv_namespace", name: "ASSETS", namespace_id: ns.id }, { type: "ai", name: "AI" }] })], { type: "application/json" }));
+form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", bindings: [{ type: "kv_namespace", name: "ASSETS", namespace_id: ns.id }, { type: "ai", name: "AI" }, { type: "d1", name: "DB", id: "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd" }] })], { type: "application/json" }));
 form.append("worker.js", new Blob([src], { type: "application/javascript+module" }), "worker.js");
 for (const [name, body] of extra) form.append(name, new Blob([body], { type: "application/javascript+module" }), name);
 const up = await api("PUT", `/accounts/${A}/workers/scripts/ultrastable-site`, form);

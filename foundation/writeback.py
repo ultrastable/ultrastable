@@ -46,8 +46,12 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
             raise ValueError("an open loop needs an owner role, a trigger and a closing probe")
         if probe.split(":", 1)[0] not in ("file", "grep", "cmd"):
             raise ValueError("probe must be file:<path>, grep:<path>::<regex> or cmd:<allowed command>")
-        n = len(list((root / "docs/issues").glob(f"OL-{day.replace('-', '')}-*.json"))) + 1
-        iid = f"OL-{day.replace('-', '')}-{n}"
+        # Next number is max+1, never count+1: numbers have gaps (hand-picked ids such as -91), and count+1 overwrote an existing item.
+        stem = f"OL-{day.replace('-', '')}-"
+        nums = [int(p.stem[len(stem):]) for p in (root / "docs/issues").glob(stem + "*.json") if p.stem[len(stem):].isdigit()]
+        iid = f"{stem}{max(nums, default=0) + 1}"
+        if (root / "docs/issues" / f"{iid}.json").exists():
+            raise ValueError(f"{iid} already exists; refusing to overwrite an open item")
         body_txt = f"**Owner:** {owner}\n**Trigger:** {trigger}\n**Done check:** {probe}\n**Status:** open\n\n{body.strip()}"
         item = {"id": iid, "title": f"{iid}: {title.strip()}", "body": body_txt, "labels": [f"role:{owner}", "open-loop"], "milestone": "Now", "workstream": "Open loops"}
         (root / "docs/issues" / f"{iid}.json").write_text(json.dumps(item, indent=2) + "\n", encoding="utf-8")

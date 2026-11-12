@@ -1,0 +1,13 @@
+{
+  "id": "OL-ROLE-sales-partnerships",
+  "title": "OL-ROLE-sales-partnerships: activate the sales and partnerships role (phase 2)",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** phase 2 gate passes (python3 -m foundation team --gate)\n**Done check:** file:agents/roles/sales-partnerships.md\n**Status:** open\n\nActivate the sales and partnerships role: python3 -m foundation team --apply writes the role files, the seed role and the loop entry once the gate is open. Metric: leads_with_next_step.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop",
+    "team",
+    "phase:2"
+  ],
+  "milestone": "Later",
+  "workstream": "Virtual team"
+}

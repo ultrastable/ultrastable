@@ -4,6 +4,6 @@ What happened: Rowan supplied a new Cloudflare account to run Ultrastable on its
 
 Root cause: the launch was designed around the host that was available (Cloudflare) instead of around the loop. One host plus one credential kind equals a single point of failure, and the fallback hosts existed only as prose.
 
-Fix (this change): the command is the contract and every host calls it; hosts fail over on silence without coordination (`foundation/failover.py`); a credential-free route always exists (`deploy/first-run/`, `deploy/routes.json`); `scripts/check_routes.py` fails CI for any loop or deploy path with one route or without a credential-free route. Lesson recorded in `doctrine/LESSONS.md`; gap SG-10.
+Fix (this change): the command is the contract and every host calls it; hosts fail over on silence without coordination (`foundation/failover.py`); a credential-free route always exists (`deploy/first-run/README.md`, `deploy/routes.json`; since 2026-11-12 it is GitHub Actions on its built-in token, server-side); `scripts/check_routes.py` fails CI for any loop or deploy path with one route or without a credential-free route. Lesson recorded in `doctrine/LESSONS.md`; gap SG-10.
 
-Still open: the move to the new account (account `81e3a4efb4eb66e613529b87682911bb`) waits on the browser sign-in route; the old account keeps ticking. Closing probe: `deploy/cloudflare-accounts.json` target state `running`.
+Still open: the move to the new account (account `81e3a4efb4eb66e613529b87682911bb`) runs through the cloud-hosted transfer routine and the `cf-account` workflow; the old account keeps ticking. Closing probe: `deploy/cloudflare-accounts.json` target state `running`.

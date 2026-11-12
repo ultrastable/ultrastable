@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-second-installation",
+  "title": "Q-GAP-second-installation: A second independent installation",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:instances/pilot-1/instance.json\n**Status:** open\n\nGap in component `portability`: A second independent installation. There is one installation today. Source: doctrine/market.json (MARKET-1).",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

@@ -1,7 +1,7 @@
 name: checks
 # budget: ~3 min per ready PR update, cancel-in-progress
 # trigger: PR gate; drafts skipped
-# free-alternative: none needed; local `scripts/lint_workflows.py` and tests run in agent sessions first
+# free-alternative: none needed; `scripts/lint_workflows.py` and the tests run in the cloud-hosted agent session first
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
@@ -55,6 +55,10 @@ jobs:
           node --test plugins/email/worker/sender.test.mjs
       - name: Doctrine check (positioning and code-is-the-only-memory, from doctrine/positioning.json)
         run: python3 -m foundation doctrine --check
+      - name: Dashboard preview is computed from the repository
+        run: python3 scripts/build_dashboard.py --check
+      - name: Pins (every status pin and roadmap item on the site is computed from code, proofs and probe-backed issues)
+        run: python3 -m foundation pins --check
       - name: Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)
         run: |
           python3 -m foundation loops --verify
@@ -62,6 +66,9 @@ jobs:
           python3 -m foundation kernel --check
           python3 -m foundation directive --check
           python3 -m foundation closedloop --check
+          python3 -m foundation boundary --check
+          python3 -m foundation market --check
+          python3 -m foundation boundary --drill
           python3 -m foundation queue --check
           python3 -m foundation directive --lint HANDOFF.md docs/lessons/*.md
           python3 -m foundation writeback check --base "origin/${{ github.base_ref || 'main' }}"
@@ -86,6 +93,8 @@ jobs:
         run: python3 scripts/check_routes.py
       - name: Guided set-up is plain-language and in sync (USER-PATH-1)
         run: python3 scripts/gen_userpath.py --check
+      - name: Site pins and gaps are tied to real issues and code (SITE-PINS-1)
+        run: python3 scripts/build_site_roadmap.py --check
       - name: Platform brief is current
         run: python3 scripts/platform_brief.py --check
       - name: Project memory is current

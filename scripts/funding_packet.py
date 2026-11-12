@@ -67,6 +67,13 @@ def main():
         state, unmet, f = evaluate(path, pk, reg_ids, today)
         findings += f
         rows.append(f"| {path.parent.name} | {pk.get('registry_id')} | {state} | {', '.join(unmet) or 'none'} | {pk.get('verified_on')} | {pk.get('closing_probe')} |")
+    ev = pathlib.Path(__file__).resolve().parent.parent / "business" / "investor" / "evidence.json"
+    if not ev.is_file():
+        findings.append({"packet": "*", "kind": "no-evidence", "detail": "run python3 -m foundation components --evidence"})
+    else:
+        for o in json.loads(ev.read_text())["objections"]:
+            if o["verdict"] == "invalid":
+                findings.append({"packet": "*", "kind": "invalid-claim", "detail": f"objection {o['id']}: a competitor offers this natively ({', '.join(o['competitors_offering'])}); do not use the claim"})
     md = [f"# Application status (generated {today.isoformat()})\n", "| Packet | Registry | Status | Unmet prerequisites | Terms verified | Closing probe |", "|---|---|---|---|---|---|"] + rows
     pathlib.Path(a.out).write_text("\n".join(md) + "\n")
     print(json.dumps({"checked": today.isoformat(), "packets": len(rows), "findings": findings}, indent=2))

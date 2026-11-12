@@ -29,6 +29,13 @@ export const METRICS = {
     iso(new Date(now - 3600e3))).then(r => r.n),
   items_done: (db) => first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done'`).then(r => r.n),
   open_gate_cards: (db) => first(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE status='open'`).then(r => r.n),
+  dispatches_24h: (db, now) => first(db, `SELECT COUNT(*) AS n FROM dispatches WHERE at >= ?`, iso(new Date(now - 86400e3))).then(r => r.n),
+  items_done_7d: (db, now) => first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done' AND updated_at >= ?`, iso(new Date(now - 7 * 86400e3))).then(r => r.n),
+  verified_outcomes_7d: (db, now) => first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result='verified' AND at >= ?`, iso(new Date(now - 7 * 86400e3))).then(r => r.n),
+  // An objective with no probe-backed target metric is not instrumented; the agents do not yet know how to tell whether they are winning.
+  objectives_without_probe: (db) => first(db,
+    `SELECT COUNT(*) AS n FROM objectives o WHERE o.tenant_id IS NULL AND NOT EXISTS (SELECT 1 FROM metrics m WHERE m.tenant_id IS NULL AND m.objective_id = o.id AND m.kind = 'target' AND m.source IN ('builtin','sql','http'))`).then(r => r.n),
+  metrics_in_breach: (db) => first(db, `SELECT COUNT(*) AS n FROM metrics WHERE breached = 1 AND tenant_id IS NULL`).then(r => r.n),
   silent_drops_7d: (db, now) => first(db,
     `SELECT COUNT(*) AS n FROM outcomes WHERE result='silent_drop' AND at >= ?`,
     iso(new Date(now - 7 * 86400e3))).then(r => r.n),
@@ -47,6 +54,26 @@ async function ensureItem(db, item) {
     item.id, item.title, item.kind || 'fix', item.owner_role, item.done_check,
     item.closing_probe || null, item.priority ?? 10, item.surface || null, item.action_class || null);
   return true;
+}
+
+
+
+// Reads a metric through its probe. sql must be one read-only SELECT; http is healthy (1) on a 2xx answer, else 0.
+async function readMetric(db, m, ctx) {
+  if (m.source === 'builtin') {
+    const f = METRICS[m.spec];
+    if (!f) throw new Error(`unknown builtin ${m.spec}`);
+    return Number(await f(db, ctx.now));
+  }
+  if (m.source === 'sql') {
+    if (!/^\s*select\b/i.test(m.spec) || m.spec.includes(';')) throw new Error('sql probe must be one SELECT');
+    const row = await first(db, m.spec);
+    return Number(Object.values(row || {})[0]);
+  }
+  if (m.source === 'http') {
+    try { const res = await (ctx.env.fetch || fetch)(m.spec, { signal: AbortSignal.timeout(8000) }); return res.ok ? 1 : 0; } catch { return 0; }
+  }
+  return null; // declared: named but not probed
 }
 
 export const STEPS = {
@@ -90,6 +117,40 @@ export const STEPS = {
     }
     ctx.openGates = cards.length - closed;
     if (closed) ctx.notes.push(`closed ${closed} gate card(s) by probe`);
+  },
+
+  // OBJECTIVES-1: read every metric through its probe. Outside its healthy condition it files its own remedy item (owner, done check,
+  // closing probe) and closes that item when the probe passes again. A new system gets grace_hours before liveness can breach.
+  async measure(db, ctx) {
+    const first_tick = await first(db, `SELECT MIN(started_at) AS t FROM tick_runs`);
+    const ageH = first_tick && first_tick.t ? (ctx.now - Date.parse(first_tick.t.replace(' ', 'T') + 'Z')) / 3600e3 : 0;
+    // TENANT-1: a runtime measures only its own tenant's metrics. Rows of another tenant are never read, never breach, never file items here.
+    const ms = await all(db, `SELECT * FROM metrics WHERE tenant_id IS NULL OR tenant_id = ?`, ctx.config.org_slug || '');
+    let breached = 0, warming = 0;
+    for (const m of ms) {
+      let value = null, bad;
+      try { value = await readMetric(db, m, ctx); } catch (e) { ctx.notes.push(`metric ${m.id}: ${e.message}`); }
+      if (m.source === 'declared' || value === null || Number.isNaN(value)) bad = true; // an unprobed measure is a breach, not a pass
+      else bad = !OPS[m.op](value, m.threshold);
+      if (bad && ageH < m.grace_hours) { warming++; bad = false; }
+      await run(db, `UPDATE metrics SET last_value=?, last_at=?, breached=? WHERE id=?`, value, ctx.nowIso, bad ? 1 : 0, m.id);
+      const itemId = `BREACH-${m.id}`;
+      if (bad) {
+        breached++;
+        const how = m.source === 'declared'
+          ? `Build a probe for "${m.spec}" (builtin, sql or http) and update metrics.source/spec so it can be read.`
+          : `${m.name} reads ${value}; healthy is ${m.op} ${m.threshold}.`;
+        await ensureItem(db, {
+          id: itemId, kind: 'fix', priority: m.kind === 'liveness' ? 0 : 5, owner_role: m.owner_role,
+          title: `Metric ${m.name} (${m.kind}) is outside its healthy condition. ${how} ${m.remedy}`.slice(0, 400),
+          done_check: `metric ${m.id} reads ${m.op} ${m.threshold}`, closing_probe: `metric:${m.id}`,
+        });
+      } else {
+        await run(db, `UPDATE items SET status='done', disposition='fixed: metric ${m.id} healthy again', updated_at=?
+                       WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, ctx.nowIso, itemId);
+      }
+    }
+    ctx.notes.push(`measured ${ms.length} metric(s): ${breached} in breach${warming ? `, ${warming} warming up` : ''}`);
   },
 
   // Predictions due now are graded against built-in metrics.
@@ -152,7 +213,7 @@ export const STEPS = {
     const roles = await all(db, `SELECT * FROM roles`);
     let n = 0;
     for (const role of roles) {
-      if (ctx.tickId % Math.max(1, role.tick_every) !== 0) continue;
+      if (ctx.wake !== role.role && ctx.tickId % Math.max(1, role.tick_every) !== 0) continue;  // an event wakes its role out of turn
       const wip = await first(db, `SELECT COUNT(*) AS n FROM claims WHERE agent=?`, role.id);
       if (wip.n >= ctx.config.max_wip_per_role) continue;
       const item = await first(db, `SELECT id FROM items WHERE status='ready' AND owner_role=?
@@ -188,13 +249,13 @@ export const STEPS = {
   },
 };
 
-export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'accrue_trust', 'dispatch', 'check_plus_share'];
+export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'dispatch', 'check_plus_share'];
 
-export async function runTick(db, { config, env = {}, now = Date.now() } = {}) {
+export async function runTick(db, { config, env = {}, now = Date.now(), wake = null } = {}) {
   const startedIso = iso(new Date(now));
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, STEP_ORDER.length);
   const tickId = ins.meta.last_row_id;
-  const ctx = { config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
+  const ctx = { wake, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
   let completed = 0;
   for (const name of STEP_ORDER) {
     try {

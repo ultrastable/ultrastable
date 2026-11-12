@@ -68,7 +68,7 @@ class Registry(unittest.TestCase):
 
     def test_paid_path_needs_free_fallback(self):
         r = copy_repo(); one(r, lambda l: l.update(paths=[{"id": "a", "how": "x", "class": "paid"}, {"id": "b", "how": "y", "class": "external"}]))
-        self.assertTrue(any("free, local or degraded" in p for p in loops.verify(r)))
+        self.assertTrue(any("free, session or degraded" in p for p in loops.verify(r)))
 
     def test_credential_has_one_source(self):
         r = copy_repo(); edit(r / REG, lambda d: d["credentials"].append(dict(d["credentials"][0], source="docs/ops/ORG-TOKEN.md")))
