@@ -222,6 +222,15 @@
    "body": "platform/selfhost/tick.mjs and the GCP adapter built file paths from URL.pathname, which is percent-encoded and on Windows begins with a slash before the drive letter, so the migrations directory was looked up at a doubled drive path there and at dir%20with%20space on any host whose checkout path has a space. Measured before the fix on Linux: selfhost boot from a copy under 'dir with space' returned status failed, ENOENT scandir .../dir%20with%20space/seed/worker/migrations. Fix: fileURLToPath. Measured after: tests/foundation/test_selfhost.py test_full_tick_from_a_path_that_needs_url_decoding passes; the GCP adapter tests pass. The http metric source in seed/worker/src/tick.js had no test; seed/worker/test/measure.test.js now covers 2xx, error status, unreachable host and recovery.",
    "probe": "grep:platform/selfhost/tick.mjs::fileURLToPath",
    "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+  },
+  {
+   "id": "decision-2026-11-12-fit-is-the-system-test-not-b2b-and-not-revenue",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Fit is the system test, not B2B and not revenue",
+   "body": "Owner, 2026-11-12: the use cases are not only B2B. A personal system (a companion, a signals desk for markets or news) qualifies when it needs ongoing agentic upkeep and its owner accepts a running cost; storefronts are left to shop builders and the product is not pitched on revenue. docs/doctrine/VISION.md and its seed copy now say the owner can be an organization, a small business or one person, drop the shop example and list selling online under what it is not for; site/suggest.js replaces the shop suggestion with two personal systems. Measured: tests/test_vision.py 5 tests pass, including a one-person signals desk that passes the bootstrap qualify stage.",
+   "probe": "grep:tests/test_vision.py::def test_a_personal_system_is_a_fit_when_it_passes_the_system_test",
+   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
   }
  ]
 }

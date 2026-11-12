@@ -31,6 +31,17 @@ class VisionTests(unittest.TestCase):
         b = boot((ROOT / "seed/IDEA.md").read_text(encoding="utf-8"))
         self.assertTrue(b.fit, b.log)
 
+    def test_a_personal_system_is_a_fit_when_it_passes_the_system_test(self):
+        """The owner can be one person and the system need not earn money (owner, 2026-11-12): fit is decided by the system test alone."""
+        b = boot("---\norg_name: Signals\n---\n# Idea\nA personal signals desk that watches markets and the news against my own rules.\n"
+                 "# First outcomes\n- A daily signal list I trust\n# System test\n- Loop: sources read, signals scored against outcomes, rules adjusted, with no person in the middle\n"
+                 "- Measure: share of signals that held after five days, target 0.6\n- Upkeep: sources change and rules decay every week\n- Run cost: model calls and storage every month\n"
+                 "# Constraints\n- Budget per month: 40 USD\n")
+        self.assertTrue(b.fit, b.log)
+        v = (ROOT / "docs/doctrine/VISION.md").read_text(encoding="utf-8")
+        self.assertIn("one person", v); self.assertNotIn("(B2B)", v)
+        self.assertIn("Selling things online", v)
+
     def test_camping_app_is_not_staffed(self):
         b = boot("---\norg_name: Trip\n---\n# Idea\nA packing list for camping trips.\n# First outcomes\n- A packing list page\n# Constraints\n- Budget per month: 10 USD\n")
         self.assertFalse(b.fit)

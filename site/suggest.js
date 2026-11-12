@@ -5,7 +5,8 @@
 export const BANK = [
   ["A website for our club that keeps improving its own search ranking and member features", "club association website members community seo society group"],
   ["A small-business site that gets faster, safer and more useful every week", "business website wordpress maintenance performance security small"],
-  ["An online shop whose catalogue, speed and conversion are tuned continuously", "shop store ecommerce catalogue conversion woocommerce products orders"],
+  ["A personal signals desk that watches markets or the news against my own rules and keeps improving them", "personal signals stocks market news alerts watchlist tracker rules portfolio"],
+  ["A personal companion that remembers, follows up and gets better at knowing what helps", "personal companion assistant reminders check-in habits journal wellbeing memory"],
   ["A booking and membership platform that grows features from how people use it", "booking membership platform features usage gym studio clinic appointments"],
   ["A WordPress site that stops rotting: updates, plugins, content and SEO kept current", "wordpress plugins updates seo content rot site slow broken"],
   ["A fleet of services that finds its own failures and fixes them", "services monitor failures fix incident reliability fleet uptime"],
