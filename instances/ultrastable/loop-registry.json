@@ -623,7 +623,8 @@
       "system_path": [
         "scripts/lane.sh",
         "scripts/lane_credential.py",
-        "tests/foundation/test_lane_merger.py"
+        "tests/foundation/test_lane_merger.py",
+        "foundation/lanewatch.py"
       ],
       "workflows": [
         "lane.yml"

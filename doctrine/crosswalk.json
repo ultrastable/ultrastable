@@ -1,7 +1,7 @@
 {
   "_doc": "TERMS-CROSSWALK-1 (owner directive 2026-11-12): words people and agents use for overlapping ideas, each mapped to one canonical glossary term. Checked by `python3 -m foundation crosswalk --check`; consumed by tests/foundation/test_crosswalk.py.",
   "marker": "TERMS-CROSSWALK",
-  "marker_text": "TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or event on server-side infrastructure, closes itself and does not stop at an error. Say autonomous for a system, closed loop for one loop, unattended for the measure (merged work with no session driving it). Do not use never-terminating, non-terminating, hands-off or set-and-forget. Map and avoided words: doctrine/crosswalk.json (`python3 -m foundation crosswalk --check`).",
+  "marker_text": "TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or event on server-side infrastructure, closes itself and does not stop at an error. Say autonomous for a system, closed loop for one loop, unattended for the measure (merged work with no session driving it). Do not use never-terminating, non-terminating, hands-off, set-and-forget, or report a PR as waiting for review: a green PR merges itself (`python3 -m foundation lanewatch --check` fails when one does not). Map and avoided words: doctrine/crosswalk.json (`python3 -m foundation crosswalk --check`).",
   "instruction_files": [
     "AGENTS.md",
     "agents/AGENTS.md",
@@ -68,6 +68,9 @@
     "hands-off",
     "set-and-forget",
     "set and forget",
-    "self-running"
+    "self-running",
+    "waiting for review",
+    "awaiting review",
+    "needs review"
   ]
 }

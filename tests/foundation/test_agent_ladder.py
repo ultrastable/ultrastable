@@ -4,13 +4,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from foundation import agent_ladder as L, agents  # noqa: E402
+import _repo  # noqa: E402
 
 CF = {"CLOUDFLARE_API_TOKEN": "t", "CLOUDFLARE_ACCOUNT_ID": "a"}
 
 
 class Ladder(unittest.TestCase):
     def setUp(self):
-        self.d = tempfile.mkdtemp()
+        self.d = str(_repo.scratch())
 
     def test_registry_is_valid(self):
         self.assertEqual(L.check(), [])

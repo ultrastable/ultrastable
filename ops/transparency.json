@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T14:25:41Z",
- "commit": "82e9098",
+ "generated": "2026-11-12T14:51:49Z",
+ "commit": "5f4f9b8",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 66,
@@ -18,17 +18,18 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 68,
-  "backlog_items": 70
+  "backlog_open": 66,
+  "backlog_items": 71
  },
  "throughput": {
   "queue": {
-   "items": 70,
+   "items": 71,
    "by_status": {
-    "open": 68,
+    "open": 66,
+    "closed": 3,
     "done": 2
    },
-   "takeable_now": 68
+   "takeable_now": 66
   },
   "merged": {
    "total": 0,
@@ -59,32 +60,109 @@
   },
   "changelog": [],
   "deploys": {
-   "site_runs": 26,
+   "site_runs": 30,
    "by_conclusion": {
-    "success": 25,
+    "success": 29,
     "cancelled": 1
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-12T14:21:51Z",
+    "createdAt": "2026-11-12T14:44:59Z",
     "event": "push",
-    "headSha": "8c618a195e5e2a2430f33756fbd7158c477c1d71"
+    "headSha": "76a3c027a8fb0ce54567a6e14ec54c85601162f6"
    },
    "per_day_success": {
-    "2026-11-12": 25
+    "2026-11-12": 29
    }
   },
   "executor": {
-   "runs": 8,
+   "runs": 9,
    "by_conclusion": {
     "success": 3,
-    "failure": 5
+    "failure": 6
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
    "attempts": {},
    "log_rows": 1
+  },
+  "model_cost": {
+   "calls": 0,
+   "usd": 0,
+   "by_model": {}
   }
+ },
+ "topology": {
+  "parts": {
+   "d1": {
+    "live": 3,
+    "planned": 0
+   },
+   "kv": {
+    "live": 2,
+    "planned": 1
+   },
+   "queues": {
+    "live": 0,
+    "planned": 1
+   },
+   "vectorize": {
+    "live": 0,
+    "planned": 1
+   },
+   "workflows": {
+    "live": 0,
+    "planned": 0
+   },
+   "r2": {
+    "live": 1,
+    "planned": 0
+   },
+   "workers": {
+    "live": 5,
+    "planned": 0
+   }
+  },
+  "pending_bindings": [
+   "ultrastable-tick: kv STATE -> ultrastable-state",
+   "ultrastable-tick: queue WORK -> ultrastable-work",
+   "ultrastable-tick: vectorize MEMORY -> ultrastable-memory"
+  ],
+  "workers": [
+   {
+    "id": "ultrastable-tick",
+    "state": "live",
+    "role": "heartbeat, executor dispatch, in-Worker code agents, lane",
+    "public": false
+   },
+   {
+    "id": "ultrastable-site",
+    "state": "live",
+    "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents)",
+    "public": true
+   },
+   {
+    "id": "ultrastable-dashboard",
+    "state": "live",
+    "role": "owner dashboard: e-mailed-code login, task queue, audit log; reached only through the site's OWNER service binding",
+    "public": false
+   },
+   {
+    "id": "ultrastable-ultrastable",
+    "state": "live",
+    "role": "found in the account, owner unknown: a bootstrap output (tenant 0 self-test); retired once nothing routes to it",
+    "public": false
+   },
+   {
+    "id": "ultrastable-agents",
+    "state": "live",
+    "role": "code agents (Workers AI adapters from doctrine/code-agents.json), probed live",
+    "public": false
+   }
+  ],
+  "drift": [
+   "no CLOUDFLARE_API_TOKEN on this host: drift not measured"
+  ]
  },
  "managers": [
   {
@@ -1449,31 +1527,139 @@
  "changes": {
   "commits": [
    {
-    "sha": "82e9098",
-    "at": "2026-11-12T14:23:12+00:00",
+    "sha": "5f4f9b8",
+    "at": "2026-11-12T14:39:43+00:00",
     "author": "Claude",
-    "subject": "SYSTEM-1: one running system as data (wrangler configs per worker), in-Worker code agent probe, deploy-system workflow and script",
+    "subject": "Merge main; scripts/resolve_generated.py resolves the generated-file conflicts every PR hits",
     "pr": null,
-    "item": "SYSTEM-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/82e90986362f4e579bb10d089cfb389a4c69e7c2"
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/5f4f9b84a6de9b78bd3bf54f669363d2b2d47df7"
    },
    {
-    "sha": "2b61fc3",
-    "at": "2026-11-12T14:16:35+00:00",
-    "author": "Claude",
-    "subject": "CODE-AGENTS-1: adapter registry, cost routing, disjoint-family ensemble, invoking tests",
-    "pr": null,
-    "item": "CODE-AGENTS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/2b61fc3ca07b5a76453f0a4eb2f7baf04dbeee4e"
+    "sha": "ab1ff65",
+    "at": "2026-11-12T15:39:33+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SYS-1 + SYS-2: topology and code-agent ladder (#270)",
+    "pr": 270,
+    "item": "SYS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/ab1ff650303fa68a4cea7f53794a491fb78f4e44"
    },
    {
-    "sha": "65e4862",
-    "at": "2026-11-12T14:14:55+00:00",
+    "sha": "c7917aa",
+    "at": "2026-11-12T14:38:55+00:00",
     "author": "Claude",
-    "subject": "AGENT-INTEROP-1, TERMS-CROSSWALK-1: agent-readable site (Markdown, Link, llms.txt, OpenAPI, catalog, read-only MCP), standards and crosswalk as data with checks",
+    "subject": "Merge main into LANE-WATCH-1",
     "pr": null,
+    "item": "LANE-WATCH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/c7917aa2fdc34a23ff70f272d2d40be474c50e16"
+   },
+   {
+    "sha": "476b12d",
+    "at": "2026-11-12T14:36:37+00:00",
+    "author": "github-actions[bot]",
+    "subject": "Update ultrastable.io/proof to serve a product-side feed (#Q-10) (#268)",
+    "pr": 268,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/476b12d061c2e276bcd584002334597fc4732367"
+   },
+   {
+    "sha": "040f4f6",
+    "at": "2026-11-12T14:35:59+00:00",
+    "author": "Claude",
+    "subject": "LANE-WATCH-1: lane fails when a green PR stays open; crosswalk bans 'waiting for review'",
+    "pr": null,
+    "item": "LANE-WATCH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/040f4f6094751fc615d0da5aea5c5cb47c206361"
+   },
+   {
+    "sha": "82391b8",
+    "at": "2026-11-12T14:34:25+00:00",
+    "author": "Claude",
+    "subject": "Merge main into the executor PR",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/82391b86937df34e19dfaae0bada5af0e308dd8d"
+   },
+   {
+    "sha": "59c8c9c",
+    "at": "2026-11-12T15:33:23+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "AGENT-INTEROP-1 and TERMS-CROSSWALK-1: agent-readable site, standards and crosswalk as data (#264)",
+    "pr": 264,
     "item": "AGENT-INTEROP-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/65e4862070e225cd62a8a74780b59ca956a4fbae"
+    "url": "https://github.com/ultrastable/ultrastable/commit/59c8c9c0ea05fc7047bd72e1d4745ba2d86ee383"
+   },
+   {
+    "sha": "8c618a1",
+    "at": "2026-11-12T15:21:47+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "System roadmap: topology, agent ladder, failure registry, vector KB, readiness, bootstrap rehearsal (#267)",
+    "pr": 267,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/8c618a195e5e2a2430f33756fbd7158c477c1d71"
+   },
+   {
+    "sha": "d9a7ca7",
+    "at": "2026-11-12T14:21:43+00:00",
+    "author": "ultrastable-executor",
+    "subject": "Update ultrastable.io/proof to serve a product-side feed (#Q-10)",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/d9a7ca7a187c995a6814ba62c83351ced6243ada"
+   },
+   {
+    "sha": "15ee7fd",
+    "at": "2026-11-12T15:19:58+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor: regenerate doctrine files, tagline rule, longer failure text (#266)",
+    "pr": 266,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/15ee7fd40b8c1cbcceef728f212054b9962ef0a6"
+   },
+   {
+    "sha": "1410a97",
+    "at": "2026-11-12T15:19:21+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "AGENTIC-1: agent-readable ultrastable.io with read-only MCP; unattended crosswalk (#265)",
+    "pr": 265,
+    "item": "AGENTIC-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1410a9760cfdccd986fdfe7696d2a49eec2f4c13"
+   },
+   {
+    "sha": "d6a9068",
+    "at": "2026-11-12T15:14:29+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor: bad model reply is repairable (#263)",
+    "pr": 263,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/d6a90683b2ead4fcd2dac5f72a3811a85b08397e"
+   },
+   {
+    "sha": "2b5dd43",
+    "at": "2026-11-12T15:13:21+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor repair loop and server-side rule in its prompt (#262)",
+    "pr": 262,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/2b5dd43fb6f827d4c310e783bf819b2a4e2f7856"
+   },
+   {
+    "sha": "0b54048",
+    "at": "2026-11-12T15:10:30+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor regenerates derived files so its own PRs pass checks (#261)",
+    "pr": 261,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/0b54048f196af2a08d9915a011b0ba2eb650af55"
+   },
+   {
+    "sha": "3ef58dc",
+    "at": "2026-11-12T15:08:00+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PORT-EXEC-1: runnable probe unblocks the unattended executor (#260)",
+    "pr": 260,
+    "item": "PORT-EXEC-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/3ef58dc63cc2717c06681307f7e765130c681c92"
    },
    {
     "sha": "f4246ca",
@@ -1699,114 +1885,6 @@
     "pr": null,
     "item": "VISION-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/55d41e46b0cddb3334a586f808390a47b5df78e5"
-   },
-   {
-    "sha": "f1b5b80",
-    "at": "2026-11-12T13:55:22+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "VISION-1: encode the systems vision in doctrine, agent files, bootstrap prompt and bootstrapper",
-    "pr": null,
-    "item": "VISION-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/f1b5b8058b10b63bf04d53b8aa6248a9d112c044"
-   },
-   {
-    "sha": "61f951e",
-    "at": "2026-11-12T13:52:09+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "POSITION: say what Ultrastable is not for (#246)",
-    "pr": 246,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/61f951ee17a416456206ac4ae93c09a37f7a3c19"
-   },
-   {
-    "sha": "0f81604",
-    "at": "2026-11-12T13:50:25+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "writeback: open-loop ids never overwrite an existing item (#244)",
-    "pr": 244,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/0f816046f8170d7ec58721576a7c93f03836ea2e"
-   },
-   {
-    "sha": "6e998b1",
-    "at": "2026-11-12T13:49:45+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "STRANGE-LOOP-1: self-improving loops, no zombie sessions (#243)",
-    "pr": 243,
-    "item": "STRANGE-LOOP-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/6e998b178aaa20e8e789742011632ae680e8e7d0"
-   },
-   {
-    "sha": "85b63bf",
-    "at": "2026-11-12T13:46:42+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "MARKET-1: component gap analysis as data, tests map claims to code, gaps become queue items (#241)",
-    "pr": 241,
-    "item": "MARKET-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/85b63bfd25edd609b3045d88022a01f17e108ad8"
-   },
-   {
-    "sha": "8e64a85",
-    "at": "2026-11-12T13:41:06+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "FRONT-2: chat-thread front door with pill input, dictation, rotating suggestions, live build steps (#240)",
-    "pr": 240,
-    "item": "FRONT-2",
-    "url": "https://github.com/ultrastable/ultrastable/commit/8e64a8596f57e23b9ab480c76a1ef69c5eba369a"
-   },
-   {
-    "sha": "fc2d988",
-    "at": "2026-11-12T13:29:13+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "INTERVIEW-1 + SESSION-CLOSE-1 + STRANGE-LOOP-1: voice-first front door and branch reaper (site 0.11.0) (#239)",
-    "pr": 239,
-    "item": "INTERVIEW-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/fc2d988e07f232d8f1a5dd9bd4a62232dbe5c648"
-   },
-   {
-    "sha": "1ae3168",
-    "at": "2026-11-12T13:16:29+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "BOUNDARY-1: containment boundary, rebuild drill, trust-tiered permissions, session reaper (#236)",
-    "pr": 236,
-    "item": "BOUNDARY-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/1ae316892261296388fb1ae2cf7df74b0c3dff71"
-   },
-   {
-    "sha": "2eb859f",
-    "at": "2026-11-12T13:14:49+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Executor kicks its own PR (ready + checks dispatch) (#234)",
-    "pr": 234,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/2eb859f3d546ccfac7d8b688a28293fd03e4056f"
-   },
-   {
-    "sha": "f75f7df",
-    "at": "2026-11-12T13:09:44+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Executor: Workers AI route, Issues-off tolerance, settings has_issues=false (#232)",
-    "pr": 232,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/f75f7df13a685eb8ffe0a2e14a8d4a05e487a7d7"
-   },
-   {
-    "sha": "76e5a36",
-    "at": "2026-11-12T13:05:27+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "QUEUE-1: executor queue as repo data so Issues can be off (#229)",
-    "pr": 229,
-    "item": "QUEUE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/76e5a36485d073e32f36785381a75eaf72e31ac1"
-   },
-   {
-    "sha": "7386386",
-    "at": "2026-11-12T12:55:25+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "RECALL-1 + AUDIT-1: the front door asks, builds and audits itself (site 0.7.0) (#226)",
-    "pr": 226,
-    "item": "RECALL-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/73863867b3dbc28dffbce6ea856a8aa95bbf2312"
    }
   ],
   "pull_requests": []
