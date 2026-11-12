@@ -391,7 +391,7 @@
    "date": "2026-11-12",
    "title": "CODE-AGENTS-1 and SYSTEM-1: adapter registry, one running system",
    "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Adapter registry with cost routing and disjoint-family ensemble (from the QNFO review gate); in-Worker code agent through env.AI; system topology as data rendered to wrangler configs; deploy-system.yml deploys ultrastable-agents and probes every adapter. A direct connector deploy was refused by the permission classifier (production deploy) and is recorded; the repo workflow is the deploy route.",
-   "probe": "grep:foundation/system.py::def render_worker"
+   "probe": "grep:foundation/topology.py::def check"
   },
   {
    "id": "decision-2026-11-12-duplicate-agent-discovery-dropped-crosswalk-aligned-to-gloss",
@@ -424,6 +424,14 @@
    "title": "SYS-1: the system is one declared topology",
    "body": "doctrine/topology.json declares 5 workers, 3 D1, 2 KV, 1 R2 plus planned queues, a vector index and a workflow. foundation/topology.py checks it, renders wrangler configs, prints the Workers bindings and measures drift against the account. First drift measured: an undeclared worker and D1 database (ultrastable-ultrastable, now declared as retire candidates), the AI binding on the tick worker and the OWNER service binding on the site are declared but absent from the account.",
    "probe": "file:doctrine/topology.json"
+  },
+  {
+   "id": "decision-2026-11-12-sys-reconcile-one-declaration",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "SYS-RECONCILE one declaration",
+   "body": "topology.json is the one system declaration and code-agents.json the one agent declaration (executor ladder reads its ladder fields); system.json, system.py and agent-ladder.json removed; test_topology_single fails if either returns. Session: session_0156nqDrGFZaa8zQwcdGZNQU",
+   "probe": "grep:tests/foundation/test_topology_single.py::one_system_declaration"
   }
  ]
 }

@@ -1,19 +1,20 @@
-// SYSTEM-1: deploys the code-agent worker (and any worker in doctrine/system.json listed in DEPLOY_WORKERS) from the system data, then probes it live.
+// SYSTEM-1: deploys the code-agent worker (and any worker in doctrine/topology.json listed in DEPLOY_WORKERS) from the system data, then probes it live.
 //   CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... node deploy/deploy-system.mjs
 // Modules are uploaded flat with relative imports rewritten (same method as deploy-site.mjs). Appends one row to ops/deploys.jsonl (the deploy counter).
 import { readFileSync, appendFileSync } from "node:fs";
 const T = process.env.CLOUDFLARE_API_TOKEN, A = process.env.CLOUDFLARE_ACCOUNT_ID;
 if (!T || !A) { console.error("set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID"); process.exit(1); }
 const api = (m, p, b, h = {}) => fetch("https://api.cloudflare.com/client/v4" + p, { method: m, headers: { authorization: "Bearer " + T, ...h }, body: b }).then(r => r.json());
-const sys = JSON.parse(readFileSync(new URL("../doctrine/system.json", import.meta.url), "utf8"));
+const sys = JSON.parse(readFileSync(new URL("../doctrine/topology.json", import.meta.url), "utf8"));
+const d1id = n => sys.stores.d1.find(x => x.name === n).id;
 const names = (process.env.DEPLOY_WORKERS || "ultrastable-agents").split(",");
 for (const name of names) {
-  const w = sys.workers[name]; if (!w) { console.error("unknown worker", name); process.exit(1); }
+  const w = sys.workers.find(x => x.id === name); if (!w) { console.error("unknown worker", name); process.exit(1); }
   let src = readFileSync(new URL("../" + w.main, import.meta.url), "utf8"); const extra = [];
   src = src.replace(/(from\s+")(\.{1,2}\/[^"]+)(")/g, (_, a, spec, c) => { const f = new URL("../" + w.main.replace(/[^/]+$/, "") + spec, import.meta.url); extra.push([spec.split("/").pop(), readFileSync(f)]); return a + "./" + spec.split("/").pop() + c; });
   const b = w.bindings, bindings = [];
   for (const n of b.ai || []) bindings.push({ type: "ai", name: n });
-  for (const [n, k] of Object.entries(b.d1 || {})) bindings.push({ type: "d1", name: n, id: sys.resources.d1[k].id });
+  for (const [n, k] of Object.entries(b.d1 || {})) bindings.push({ type: "d1", name: n, id: d1id(k) });
   const form = new FormData();
   form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: sys.compatibility_date, bindings })], { type: "application/json" }));
   form.append("worker.js", new Blob([src], { type: "application/javascript+module" }), "worker.js");

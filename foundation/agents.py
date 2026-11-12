@@ -22,7 +22,7 @@ def load(root=REPO) -> dict:
 
 def available(a: dict, env=None) -> bool:
     env = os.environ if env is None else env
-    return a["route"] != "session" and all(env.get(s) for s in a["secrets"])
+    return a["route"] in ("workers-ai", "anthropic") and all(env.get(s) for s in a["secrets"])
 
 
 def _cost(a: dict) -> float:

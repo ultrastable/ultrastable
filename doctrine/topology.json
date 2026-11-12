@@ -219,6 +219,25 @@
         "secrets": [],
         "vars": {}
       }
+    },
+    {
+      "id": "ultrastable-agents",
+      "state": "live",
+      "role": "code agents: Workers AI adapters (glm, llama, qwen-coder) with a live /agents/probe",
+      "main": "deploy/agents-worker.js",
+      "compatibility_date": "2026-11-04",
+      "public": false,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-org"
+        },
+        "ai": [
+          "AI"
+        ],
+        "services": {},
+        "secrets": [],
+        "vars": {}
+      }
     }
   ]
 }

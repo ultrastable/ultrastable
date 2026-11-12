@@ -4,6 +4,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from foundation import agent_ladder as L  # noqa: E402
+import _repo  # noqa: E402
 
 ENV = {"CLOUDFLARE_API_TOKEN": "t", "CLOUDFLARE_ACCOUNT_ID": "a"}
 ALL = {**ENV, "ANTHROPIC_API_KEY": "k", "ROUTER_URL": "https://r", "ROUTER_KEY": "x"}
@@ -11,7 +12,7 @@ ALL = {**ENV, "ANTHROPIC_API_KEY": "k", "ROUTER_URL": "https://r", "ROUTER_KEY":
 
 class Ladder(unittest.TestCase):
     def setUp(self):
-        self.d = tempfile.mkdtemp()
+        self.d = str(_repo.scratch())
 
     def test_config_is_valid(self):
         self.assertEqual(L.check(), [])

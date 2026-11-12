@@ -70,3 +70,19 @@ class Agents(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RouterAdapter(unittest.TestCase):
+    def test_router_adapter_is_invoked_through_the_ladder_transport(self):
+        from foundation import agent_ladder as L
+        seen = []
+        def post(url, headers, body, timeout=300):
+            seen.append((url, headers, body)); return {"choices": [{"message": {"content": "ok"}}], "usage": {"prompt_tokens": 1, "completion_tokens": 1}}
+        orig, L._post = L._post, post
+        try:
+            rung = next(r for r in L.load(REPO)["rungs"] if r["id"] == "router")  # adapter id "router"
+            text, _ = L.transport(rung, "p", {"ROUTER_URL": "https://r.example/", "ROUTER_KEY": "k"})
+        finally:
+            L._post = orig
+        self.assertEqual(text, "ok"); self.assertTrue(seen[0][0].endswith("/v1/chat/completions"))
+        self.assertFalse(agents.available(A["router"], ENV))  # not an http route of the registry's own caller

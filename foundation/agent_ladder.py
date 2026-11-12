@@ -2,7 +2,7 @@
 
   python3 -m foundation agent_ladder [--check|--cost]
 
-Rungs live in doctrine/agent-ladder.json, cheapest first. Attempt N of a change uses rung N (a failed check or an unusable reply escalates). Once checks pass, a
+Rungs are the `ladder` entries of the adapters in doctrine/code-agents.json (the one declaration of the code agents), cheapest first. Attempt N of a change uses rung N (a failed check or an unusable reply escalates). Once checks pass, a
 different model from the author reviews the change and can veto it; a veto is a failed attempt with the reviewer's reasons fed back. Every call appends a row to
 ops/agent-cost.jsonl (model, tokens, estimated cost), which the transparency snapshot publishes. Routes: `workers-ai` (the account's own models, no key beyond the
 Cloudflare token), `anthropic` (used only when ANTHROPIC_API_KEY is bound), `router` (an OpenAI-compatible gateway such as qnfo-router, when ROUTER_URL and
@@ -14,12 +14,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-PATH, COST = "doctrine/agent-ladder.json", "ops/agent-cost.jsonl"
+PATH, COST = "doctrine/code-agents.json", "ops/agent-cost.jsonl"
 
 
 def load(root=REPO) -> dict:
     p = Path(root) / PATH
-    return json.loads((p if p.is_file() else REPO / PATH).read_text(encoding="utf-8"))  # an instance without its own ladder uses the platform default
+    d = json.loads((p if p.is_file() else REPO / PATH).read_text(encoding="utf-8"))  # an instance without its own registry uses the platform default
+    rungs = [{"id": a["ladder"]["id"], "route": a["route"], "model": a["model"], **{k: v for k, v in a["ladder"].items() if k not in ("id", "order")}, "_order": a["ladder"]["order"]}
+             for a in d["adapters"] if a.get("ladder")]
+    return {"rungs": [{k: v for k, v in r.items() if k != "_order"} for r in sorted(rungs, key=lambda r: r["_order"])]}
 
 
 def available(rung: dict, env=None) -> bool:

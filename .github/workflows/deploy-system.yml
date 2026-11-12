@@ -6,7 +6,7 @@ name: deploy-system
 on:
   push:
     branches: [main]
-    paths: ["seed/worker/src/codeagent.js", "deploy/agents-worker.js", "deploy/deploy-system.mjs", "doctrine/system.json", "doctrine/code-agents.json", ".github/workflows/deploy-system.yml"]
+    paths: ["seed/worker/src/codeagent.js", "deploy/agents-worker.js", "deploy/deploy-system.mjs", "doctrine/topology.json", "doctrine/code-agents.json", ".github/workflows/deploy-system.yml"]
   workflow_dispatch:
 permissions:
   contents: write

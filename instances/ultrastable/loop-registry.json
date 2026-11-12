@@ -2283,25 +2283,25 @@
       "owner": "operations",
       "closes_by": "system",
       "sla": "1d",
-      "done": "python3 -m foundation system --check reports ok",
+      "done": "python3 -m foundation topology --check reports ok",
       "paths": [
         {
           "id": "ci",
-          "how": "python3 -m foundation system --check",
+          "how": "python3 -m foundation topology --check",
           "class": "free"
         },
         {
           "id": "session",
-          "how": "python3 -m foundation system --check from a cloud-hosted agent session",
+          "how": "python3 -m foundation topology --check from a cloud-hosted agent session",
           "class": "session"
         }
       ],
-      "closing_probe": "grep:foundation/system.py::def render_worker",
+      "closing_probe": "grep:foundation/topology.py::def check",
       "writeback": [
         "ops/deploys.jsonl"
       ],
       "system_path": [
-        "doctrine/system.json",
+        "doctrine/topology.json",
         "deploy/deploy-system.mjs"
       ],
       "area": "governance",
