@@ -187,6 +187,50 @@
    "note": "replaced by green CI, independent review and automatic rollback by revert; directive: no merge approvals",
    "alternate": "file:.github/workflows/checks.yml",
    "probe": "file:.github/workflows/checks.yml"
+  },
+  {
+   "id": "ctl-workers-codeowners-human-approval",
+   "kind": "approval",
+   "what": "ultrastable/workers CODEOWNERS plus the protected-change label: a human must approve any change under protected paths such as .github/workflows/",
+   "disposition": "replace",
+   "critical_path": false,
+   "note": "Found 2026-11-12 on workers PR #107: it blocks the release workflow, so tags cannot be cut without a person. Target: replace with required checks (ci, contract) plus a bot approval and path guards, so protected paths stay protected without a person on the critical path. Not bypassed in the meantime. Owner: the thread 'Enforce closed loops across all repos and agents'. Off the tick's critical path (the tick and lane run without tags); it blocks only release tagging, so it is demoted, not a stop.",
+   "alternate": "file:docs/architecture/core-and-instances.md",
+   "probe": "file:instances/qnfo/dependencies.json",
+   "replacement": "required checks plus the automated protected-path gate (workers selfhost_check.py and canary_revert.py); the merge lane merges on green. Queue item OL-20261112-15 carries it until the probe passes."
+  },
+  {
+   "id": "ctl-codeowners",
+   "kind": "hold",
+   "what": "CODEOWNERS human approver on protected paths",
+   "disposition": "replace",
+   "replacement": "automated protected-path check (foundation/closedloop.py controls_check, scripts/protected_paths.py) plus required status checks; the bot lane approves on green",
+   "critical_path": false,
+   "note": "CLOSED-LOOP-AXIOM: no human approval step",
+   "alternate": "file:scripts/protected_paths.py",
+   "probe": "file:scripts/protected_paths.py"
+  },
+  {
+   "id": "ctl-protected-change-label",
+   "kind": "hold",
+   "what": "Protected-change label and human reviewer line",
+   "disposition": "replace",
+   "replacement": "the same check requires a Protected-change: reason line in the PR body and fails any diff that weakens a guard",
+   "critical_path": false,
+   "note": "CLOSED-LOOP-AXIOM: no human approval step",
+   "alternate": "file:scripts/protected_paths.py",
+   "probe": "file:scripts/protected_paths.py"
+  },
+  {
+   "id": "ctl-required-human-review",
+   "kind": "hold",
+   "what": "required human pull request reviews",
+   "disposition": "replace",
+   "replacement": "required checks plus automatic revert on a failed post-merge probe",
+   "critical_path": false,
+   "note": "CLOSED-LOOP-AXIOM: no human approval step",
+   "alternate": "file:.github/workflows/checks.yml",
+   "probe": "file:.github/workflows/checks.yml"
   }
  ]
 }

@@ -169,7 +169,24 @@ def memory_in_code(root, cfg):
                 yield Finding("GL009", rel, i, "relies on external memory: " + ln.strip()[:80])
 
 
+# GL010: SELF-CLOSED-LOOPS-1. Agent files carry the rule; handoff and doc files do not wait on a person.
+WAITS = re.compile(r"(awaiting|pending|needs?|requires?)\s+(the\s+)?(owner|human|manual)\s+(review|approval|decision|sign-?off)|please\s+review|for\s+(your|the\s+owner'?s)\s+review|owner\s+to\\s+(decide|approve|review)|waiting\s+(on|for)\s+(the\s+)?(owner|a\s+human)", re.I)
+
+
+def self_closed(root, cfg):
+    spec = cfg["self_closed"]
+    for rel in spec["required_in"]:
+        p = root / rel
+        if p.exists() and "SELF-CLOSED-LOOPS-1" not in read(p):
+            yield Finding("GL010", rel, 1, "agent file lacks SELF-CLOSED-LOOPS-1")
+    for rel, p in iter_files(root, spec["scan"]):
+        for i, ln in enumerate(read(p).splitlines(), 1):
+            if WAITS.search(ln) and not re.search(r"IDENTITY-BOUND|IC-GATE-001", ln):
+                yield Finding("GL010", rel, i, "waits on a person: " + ln.strip()[:80])
+
+
 RULES = {
+    "GL010": self_closed,
     "GL001": gap_entries,
     "GL002": owner_cards,
     "GL003": agent_rules,

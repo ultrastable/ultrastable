@@ -1,13 +1,13 @@
 {
- "_doc": "CLOSED-LOOP-1 write-back: every lesson and decision as a row with a closing probe (file:<path> or grep:<path>::<regex>) that `python3 -m foundation closedloop --check` executes on every PR and loop pass. Written by `python3 -m foundation writeback record --kind lesson|decision --probe SPEC`.",
+ "_doc": "CLOSED-LOOP-1 write-back: every lesson and decision as a row with a closing probe (file:<path> or grep:<path>::<regex>) that `python3 -m foundation orphans --check` executes on every PR and loop pass. Written by `python3 -m foundation writeback record --kind lesson|decision --probe SPEC`.",
  "rows": [
   {
    "id": "decision-2026-11-12-closed-loop-1-no-artifact-without-a-consuming-loop-no-wait-o",
    "kind": "decision",
    "date": "2026-11-12",
    "title": "CLOSED-LOOP-1: no artifact without a consuming loop, no wait on a person",
-   "body": "Rowan 2026-11-12: assume nothing is read, reviewed or decided by a person. Policy values in doctrine/closed-loop.json and closed_loop in autonomy/policy.json; foundation/closedloop.py fails CI on a new orphan artifact, a non-identity-bound wait or a failing ledger probe; lessons and decisions are ledger rows with probes, not pages.",
-   "probe": "grep:foundation/closedloop.py::def ledger_failures"
+   "body": "Rowan 2026-11-12: assume nothing is read, reviewed or decided by a person. Policy values in doctrine/closed-loop.json and closed_loop in autonomy/policy.json; foundation/orphans.py fails CI on a new orphan artifact, a non-identity-bound wait or a failing ledger probe; lessons and decisions are ledger rows with probes, not pages.",
+   "probe": "grep:foundation/orphans.py::def ledger_failures"
   },
   {
    "id": "decision-2026-11-12-write-back-is-an-executable-ledger-row-not-a-page",

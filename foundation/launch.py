@@ -106,12 +106,12 @@ def _loop_funding(root, skip) -> dict:
 
 def _loop_closed(root) -> dict:
     """CLOSED-LOOP-1: measure orphan artifacts and human-wait states every pass; a new orphan or any wait fails the loop."""
-    from . import closedloop
+    from . import orphans
     try:
-        m = closedloop.metrics(root)
+        m = orphans.metrics(root)
     except Exception as e:  # recorded as a failed loop, never swallowed
-        return {"loop": "closed-loop", "ok": False, "detail": str(e)[:300]}
-    return {"loop": "closed-loop", "ok": m["new_orphans"] == 0 and m["human_wait_states"] == 0, **m}
+        return {"loop": "orphan-artifacts", "ok": False, "detail": str(e)[:300]}
+    return {"loop": "orphan-artifacts", "ok": m["new_orphans"] == 0 and m["human_wait_states"] == 0, **m}
 
 
 def run_once(root=REPO, skip_outreach=False, now=None) -> dict:

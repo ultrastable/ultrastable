@@ -68,7 +68,6 @@ def build_contract(core: Path = REPO, version: str | None = None) -> dict:
         }),
         "forbidden_in_kernel": cur.get("forbidden_in_kernel", ["qnfo", "q08.org", "qnfo-workers"]),
         "leak_allowlist": cur.get("leak_allowlist", {}),
-        "digests": kernel_files(core),
     }
 
 
@@ -76,13 +75,14 @@ def contract_check(core: Path = REPO) -> list[str]:
     cp = core / CONTRACT
     if not cp.exists():
         return [f"{CONTRACT} missing (run: python3 -m foundation upstream contract --apply)"]
-    have, want = json.loads(cp.read_text()), build_contract(core)
+    have = json.loads(cp.read_text())
     bad = []
     if not SEMVER.match(have.get("version", "")):
         bad.append("version is not semver")
-    if have.get("digests") != want["digests"]:
-        changed = sorted(k for k in set(have.get("digests", {})) | set(want["digests"]) if have.get("digests", {}).get(k) != want["digests"].get(k))
-        bad.append(f"kernel changed without a contract refresh ({len(changed)} file(s), e.g. {changed[:3]}); run: python3 -m foundation upstream contract --apply and bump the version")
+    if "digests" in have:
+        bad.append("digests must not be committed: they go stale whenever another change touches the kernel; they are computed on demand")
+    if have.get("kernel_paths") != scaffold.KERNEL_PATHS:
+        bad.append("kernel_paths differ from foundation/scaffold.py KERNEL_PATHS; run: python3 -m foundation upstream contract --apply")
     return bad
 
 
@@ -144,7 +144,7 @@ def drift(core: Path, inst: Path) -> dict:
             missing.append(rel)
         elif _sha(f) != sha:
             local_edits.append(rel)
-    behind = lock["core"]["version"] != c["version"] or lock["digests"] != c["digests"]
+    behind = lock["core"]["version"] != c["version"] or lock["digests"] != kernel_files(core)
     return {"status": "drifted" if (behind or local_edits or missing) else "in-sync", "behind": behind,
             "pinned": lock["core"]["version"], "core": c["version"], "local_edits": sorted(local_edits), "missing": sorted(missing)}
 

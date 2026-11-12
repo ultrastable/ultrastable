@@ -1,0 +1,170 @@
+{
+  "_doc": "Registry of every repository in the ultrastable GitHub org. Source of truth for purpose, disposition and visibility. Checked by scripts/check_org_repos.py (in `checks`); live drift is detected by `python3 scripts/check_org_repos.py --live`. Archive is reversible; nothing is deleted.",
+  "updated": "2026-11-12",
+  "why": "Threads on 2026-11-10 created split repos (site, docs, platform, ip, business, seed) in parallel while the monorepo became the system of record, with no single page declaring it. They were archived as SUPERSEDED duplicates the same day. On 2026-11-11 the scope and license pivot split code from docs (workers, spec, license) and made patent drafts historical (ip).",
+  "visibility_rule": "All repos private until the license is signed off (docs/legal/LICENSE-DECISIONS.md). workers, spec and license go public first; ultrastable stays private.",
+  "target": [
+    "ultrastable/ultrastable",
+    "ultrastable/workers",
+    "ultrastable/spec",
+    "ultrastable/.github"
+  ],
+  "repos": [
+    {
+      "name": ".github",
+      "purpose": "Org profile README and community defaults, the public face of the org.",
+      "disposition": "keep",
+      "archived": true,
+      "private": true,
+      "created": "2026-11-10",
+      "consumers": [
+        "github.com/ultrastable profile"
+      ],
+      "last_activity": "unknown",
+      "note": "Archived at creation; GitHub org page is optional. Public presence is ultrastable.io/org. Surface results in surface_results_2026_11_12."
+    },
+    {
+      "name": "spec",
+      "purpose": "Architectural specifications (US-SPEC-*), product docs and the canonical license material (license/); replaces the dropped patent drafts, the docs repo and the license repo.",
+      "disposition": "keep",
+      "archived": false,
+      "private": true,
+      "created": "2026-11-11",
+      "consumers": [
+        "spec_truth tooling in workers"
+      ],
+      "last_activity": "2026-11-11"
+    },
+    {
+      "name": "ultrastable",
+      "purpose": "System of record: roadmap, doctrine, foundation, agents, ops, dashboard, site, outreach, brand, business and archived ip material.",
+      "disposition": "keep",
+      "archived": false,
+      "private": true,
+      "created": "2026-11-10",
+      "consumers": [
+        "all agents",
+        "executor session",
+        "CI checks"
+      ],
+      "last_activity": "2026-11-12"
+    },
+    {
+      "name": "workers",
+      "purpose": "All product code: portable core, Cloudflare and GCP adapters, bootstrapper, console, gaplint, QNFO extraction.",
+      "disposition": "keep",
+      "archived": false,
+      "private": true,
+      "created": "2026-11-11",
+      "consumers": [
+        "bootstrap",
+        "customers after release"
+      ],
+      "last_activity": "2026-11-11"
+    },
+    {
+      "name": "business",
+      "purpose": "Business plan, funding, investor kit; superseded by ultrastable/business/.",
+      "disposition": "archive",
+      "merged_into": "ultrastable",
+      "archived": true,
+      "private": true,
+      "created": "2026-11-10",
+      "consumers": [],
+      "last_activity": "2026-11-10",
+      "reason": "SUPERSEDED duplicate; content lives in ultrastable/business"
+    },
+    {
+      "name": "docs",
+      "purpose": "Early docs and issue JSON; superseded.",
+      "disposition": "archive",
+      "merged_into": "spec",
+      "archived": true,
+      "private": true,
+      "created": "2026-11-10",
+      "consumers": [],
+      "last_activity": "2026-11-10",
+      "reason": "SUPERSEDED duplicate; docs live in ultrastable/docs and spec"
+    },
+    {
+      "name": "ip",
+      "purpose": "Historical patent drafts and evidence; patent dropped 2026-11-11.",
+      "disposition": "archive",
+      "merged_into": "ultrastable",
+      "archived": true,
+      "private": true,
+      "created": "2026-11-10",
+      "consumers": [],
+      "last_activity": "2026-11-10",
+      "reason": "SUPERSEDED duplicate; ultrastable/ip/ARCHIVED.md holds the history"
+    },
+    {
+      "name": "license",
+      "purpose": "Canonical Ultrastable License text, commercial terms, FAQ.",
+      "disposition": "archive",
+      "archived": false,
+      "private": true,
+      "created": "2026-11-11",
+      "last_activity": "2026-11-11",
+      "note": "Retired: content lives in spec/license/, this repo's README points to spec. Archiving is cosmetic and non-blocking; attempted via API and refused, so it is never required.",
+      "merged_into": "spec",
+      "reason": "Folded into spec/license/ on 2026-11-12 (spec PR 9); one fewer repo for an investor to read. Backup bundle ultrastable-git/2026-11-12/license-backup.bundle.",
+      "consumers": [],
+      "archive_optional": true
+    },
+    {
+      "name": "platform",
+      "purpose": "Python runtime and core; superseded by workers/runtimes.",
+      "disposition": "archive",
+      "merged_into": "workers",
+      "archived": true,
+      "private": true,
+      "created": "2026-11-10",
+      "consumers": [],
+      "last_activity": "2026-11-10",
+      "reason": "SUPERSEDED duplicate; newer copy is workers/runtimes/python"
+    },
+    {
+      "name": "seed",
+      "purpose": "Idea-to-organization bootstrapper; superseded by workers/bootstrap and the monorepo seed/.",
+      "disposition": "archive",
+      "merged_into": "workers",
+      "archived": true,
+      "private": true,
+      "created": "2026-11-10",
+      "consumers": [],
+      "last_activity": "2026-11-10",
+      "reason": "SUPERSEDED duplicate; code moved to workers"
+    },
+    {
+      "name": "site",
+      "purpose": "Marketing site worker; superseded by ultrastable/site/.",
+      "disposition": "archive",
+      "merged_into": "ultrastable",
+      "archived": true,
+      "private": true,
+      "created": "2026-11-10",
+      "consumers": [],
+      "last_activity": "2026-11-10",
+      "reason": "SUPERSEDED duplicate; deployed from ultrastable/site"
+    }
+  ],
+  "public_presence": {
+    "primary": "https://ultrastable.io/org",
+    "route": "Cloudflare Worker site, deployed through the Cloudflare connector (docs/ops/SITE-DEPLOY.md), needs no person-supplied token",
+    "github_org_page": "staged at brand/public-profile/; goes live whenever .github becomes writable, never required",
+    "confidentiality": "ultrastable.io already serves generic pages. /org carries repository roles only (no repo links, no architecture, no QNFO or patent wording), enforced by site/site.test.mjs in checks. The patent track was dropped 2026-11-11, so there is no provisional-filed flag to wait on; the gate is the lint. A failing lint blocks the merge and therefore the deploy."
+  },
+  "surface_results_2026_11_12": {
+    "github_mcp_on_.github": "refused: repository not configured for session",
+    "add_repo_.github": "refused: dot-named repositories cannot be attached",
+    "connectors": "two Cloudflare connectors, no GitHub connector; Cloudflare tokens cannot reach GitHub",
+    "github_token_workflow": "repo-scoped, cannot administer another repo (tested 2026-11-10)",
+    "session_proxy_settings_write": "refused: repository settings writes are not permitted",
+    "archive_license_via_api": "refused by the session permission check; not retried",
+    "device_bash": "owner device not connected to the bridge",
+    "github_app_manifest_flow": "needs an owner browser approval, so not a closed loop; not relied on",
+    "org_profile_from_other_repo": "unsupported by GitHub; replaced by ultrastable.io/org",
+    "final_disposition": "nothing in the investor-facing view depends on a person-supplied input"
+  }
+}

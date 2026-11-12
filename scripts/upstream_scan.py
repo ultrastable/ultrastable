@@ -6,6 +6,18 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from foundation import upstream
 
+def probe_status(probe: str) -> str:
+    """Closing probes the scan can evaluate itself. `tag:OWNER/REPO:VTAG` is closed when that tag exists on the remote."""
+    if probe.startswith("tag:"):
+        _, repo, tag = probe.split(":", 2)
+        tok = os.environ.get("INSTANCE_READ_TOKEN") or os.environ.get("GH_TOKEN", "")
+        r = subprocess.run(["git", "ls-remote", "--tags", f"https://x-access-token:{tok}@github.com/{repo}.git", f"refs/tags/{tag}"], capture_output=True, text=True)
+        if r.returncode:
+            return "unknown"
+        return "closed" if r.stdout.strip() else "open"
+    return "open"
+
+
 def main() -> int:
     core, rows = upstream.REPO, []
     for f in sorted(glob.glob("instances/*/instance.json")):
@@ -22,7 +34,17 @@ def main() -> int:
         dr = upstream.drift(core, Path(d)); dr.update(instance=m["slug"], repo=repo); rows.append(dr)
         if dr["status"] != "in-sync":
             subprocess.run(["gh", "issue", "create", "--title", f"Instance {m['slug']} diverged from core {dr.get('core')}", "--body", json.dumps(dr, indent=1)], check=False)
-    print(json.dumps(rows, indent=1))
+    # Dependencies an instance lane owes (recorded, never silently dropped): each has an owner, a trigger and a closing probe.
+    deps = []
+    for f in sorted(glob.glob("instances/*/dependencies.json")):
+        for d in json.load(open(f)).get("dependencies", []):
+            deps.append({**d, "instance": json.load(open(f))["instance"], "status": "open"})
+    for d in deps:
+        d["status"] = probe_status(d.get("probe", ""))
+    for d in deps:
+        if not all(d.get(k) for k in ("owner", "trigger", "probe")):
+            rows.append({"instance": d["instance"], "status": "invalid-dependency", "detail": d["id"] + " lacks owner, trigger or probe"})
+    print(json.dumps({"instances": rows, "dependencies": deps}, indent=1))
     return 0
 
 if __name__ == "__main__":

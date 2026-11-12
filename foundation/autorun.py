@@ -80,6 +80,8 @@ def _node_tick(root: Path, db: Path, cfg: Path) -> dict:
 
 def _check(root: Path, item: sqlite3.Row, meta: dict) -> tuple[bool, str]:
     """The real, independent check after (simulated) work: the closing probe, else the item's source-of-truth file exists."""
+    if (item["closing_probe"] or item["done_check"] or "").startswith("cmd:"):
+        return False, "external closing probe is evaluated by the queue lane (foundation queue --run), not simulated"
     if item["closing_probe"] and item["closing_probe"].split(":", 1)[0] in ("file", "grep"):
         ok = selfhost.probe(root, item["closing_probe"])
         return ok, f"closing probe {item['closing_probe']} {'passes' if ok else 'fails'}"

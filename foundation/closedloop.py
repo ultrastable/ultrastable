@@ -1,219 +1,156 @@
-"""CLOSED-LOOP-1 as code: nothing is produced for a person to read, review or decide, and every loop closes itself.
+"""CLOSED-LOOP-AXIOM as code (owner, 2026-11-12). Ultrastable is the foundation for any autonomous system.
 
-  python3 -m foundation closedloop --check            fail on a new orphan artifact, a stale baseline entry, or a human-wait state
-  python3 -m foundation closedloop --metrics          {"orphan_artifacts": N, "human_wait_states": N, ...} as JSON
-  python3 -m foundation closedloop --baseline         rewrite doctrine/closed-loop-baseline.json (shrink-only: it never adds an entry)
-  python3 -m foundation closedloop --issue-body       the body of the one backlog issue the executor loop drains
-  python3 -m foundation closedloop --sync-issue OWNER/REPO   open, refresh or close that issue (daily issues sweep)
+  python3 -m foundation closedloop --check          axiom in every instruction file and prompt, human-dependency lint, consumers registry, loop trace, control register
+  python3 -m foundation closedloop --lint FILE...   flag outputs that assume a person reads, reviews or decides
+  python3 -m foundation closedloop --trace          each registered loop traced trigger -> consumer -> verification, open ends listed
 
-Policy values: doctrine/closed-loop.json. An artifact (a Markdown file) is consumed when executable code in this repository names it
-(path or file name), or a program loads it by name on every run (platform_consumed). Anything else is an orphan: written for a reader
-that the mandate says does not exist. Orphans present on 2026-11-12 sit in the shrink-only baseline; a new one fails CI, and the
-daily issues sweep files the baseline as one issue the executor loop drains (wire it to a loop, turn it into code, or delete it).
-A human-wait state is a place where a loop waits on a person: allowed only for the identity-bound classes in the policy, and only with
-a default in effect that the loop proceeds on.
+Data: doctrine/closed-loop.json (axiom, patterns, scan globs), doctrine/consumers.json (artifact -> code consumer).
 """
 from __future__ import annotations
-import json, re, subprocess, sys
+import json, re
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parent.parent
-POLICY = "doctrine/closed-loop.json"
-BASELINE = "doctrine/closed-loop-baseline.json"
-REGISTRY = "instances/ultrastable/loop-registry.json"
-NEEDS_YOU = "foundation/data/needs-you.json"
-SKIP_DIRS = {".git", "node_modules", ".selfhost", "__pycache__"}
+REPO = Path(__file__).resolve().parents[1]
+PATH, CONSUMERS = "doctrine/closed-loop.json", "doctrine/consumers.json"
+CODE_SUFFIX = {".py", ".js", ".mjs", ".yml", ".yaml", ".sh"}
 
 
-def policy(root=REPO) -> dict:
-    return json.loads((Path(root) / POLICY).read_text(encoding="utf-8"))
+def load(root=REPO) -> dict:
+    return json.loads((Path(root) / PATH).read_text(encoding="utf-8"))
 
 
-def _files(root: Path):
-    try:
-        out = subprocess.run(["git", "ls-files", "-z"], cwd=root, capture_output=True, timeout=60)
-        if out.returncode == 0 and out.stdout:
-            return [root / p for p in out.stdout.decode("utf-8", "replace").split("\0") if p]
-    except (OSError, subprocess.SubprocessError):
-        pass
-    return [p for p in root.rglob("*") if p.is_file() and not SKIP_DIRS & set(p.relative_to(root).parts)]
-
-
-def orphans(root=REPO) -> list[str]:
-    root = Path(root)
-    pol = policy(root)
-    code_sfx, art_sfx = set(pol["consumer_code_suffixes"]), set(pol["artifact_suffixes"])
-    plat = pol["platform_consumed"]
-    files = [p for p in _files(root) if p.is_file()]
-    arts = [p for p in files if p.suffix in art_sfx]
-    corpus = []
-    for p in files:
-        if p.suffix in code_sfx:
-            try:
-                corpus.append(p.read_text(encoding="utf-8", errors="replace"))
-            except OSError as e:
-                print(f"closedloop: cannot read {p}: {e}", file=sys.stderr)
-    text = "\n".join(corpus)
+def _glob(root: Path, patterns) -> list[Path]:
     out = []
-    for a in arts:
-        rel = a.relative_to(root).as_posix()
-        if a.name in plat["basenames"] or any(rel.startswith(d.rstrip("/") + "/") for d in plat["dirs"]):
+    for g in patterns:
+        out += [p for p in sorted(root.glob(g)) if p.is_file()]
+    return out
+
+
+def _exempt(root: Path, p: Path, d: dict) -> bool:
+    return any(p.match(g) or p.relative_to(root).match(g) for g in d["lint_exempt"])
+
+
+def lint(text: str, d: dict | None = None) -> list[dict]:
+    d = d or load()
+    excused, out = re.compile(d["excused_by"], re.I), []
+    for n, ln in enumerate(text.splitlines(), 1):
+        if excused.search(ln):
             continue
-        if rel in text or (len(a.name) >= 6 and a.name in text):
+        for r in d["human_dependency"]:
+            if any(re.search(p, ln, re.I) for p in r["patterns"]):
+                out.append({"line": n, "rule": r["id"], "text": ln.strip()[:100]})
+    return out
+
+
+def axiom_check(root, d) -> list[str]:
+    bad = []
+    for p in _glob(root, d["instruction_files"]):
+        t = p.read_text(encoding="utf-8")
+        if p.name == "CLAUDE.md" and "@agents/AGENTS.md" in t or p.name == "CLAUDE.md" and "@AGENTS.md" in t:
             continue
-        out.append(rel)
-    return sorted(out)
+        if d["marker"] not in t:
+            bad.append(f"{p.relative_to(root).as_posix()}: lacks {d['marker']}")
+    for rel in d["prompt_sources"]:
+        if d["marker"] not in (root / rel).read_text(encoding="utf-8"):
+            bad.append(f"{rel}: the prompt does not load {d['marker']}")
+    return bad
 
 
-def waits(root=REPO) -> dict:
-    """Human-wait states. `violations` must be empty; `identity_bound` are the allowed waits, each with its default."""
-    root = Path(root)
-    pol = policy(root)
-    allowed = set(pol["rules"]["wait_on_person_allowed_only_for"])
-    rx = [re.compile(p, re.I) for p in pol["wait_phrases"]]
-    bad, ib = [], []
-    ny = root / NEEDS_YOU
-    if ny.exists():
-        for it in json.loads(ny.read_text(encoding="utf-8")).get("items", []):
-            iid = it.get("id", "?")
-            if it.get("class") not in allowed:
-                bad.append(f"needs-you {iid}: class {it.get('class')!r} is not identity-bound ({sorted(allowed)}); the system does it")
-            elif not it.get("default"):
-                bad.append(f"needs-you {iid}: no default in effect; the loop must proceed on one")
-            else:
-                ib.append(f"needs-you {iid} ({it['class']}): default '{it['default']}'")
-    reg = root / REGISTRY
-    if reg.exists():
-        for l in json.loads(reg.read_text(encoding="utf-8")).get("loops", []):
-            lid = l.get("id", "?")
-            cb = l.get("closes_by", "")
-            if cb != "system":
-                if l.get("identity_bound") in allowed and l.get("default_in_effect"):
-                    ib.append(f"loop {lid} ({l['identity_bound']}): default '{l['default_in_effect']}'")
-                else:
-                    bad.append(f"loop {lid}: closes_by {cb!r} waits on a person without identity_bound class and default_in_effect")
-            blob = " ".join(str(l.get(k, "")) for k in ("summary", "trigger", "done"))
-            for r in rx:
-                m = r.search(blob)
-                if m and not l.get("identity_bound"):
-                    bad.append(f"loop {lid}: waits on a person ('{m.group(0)}'); close it by system or mark it identity_bound with a default")
-                    break
-    return {"violations": bad, "identity_bound": ib}
+def lint_check(root, d) -> list[str]:
+    bad = []
+    for p in _glob(root, d["lint_scan"]):
+        if _exempt(root, p, d):
+            continue
+        for f in lint(p.read_text(encoding="utf-8"), d):
+            bad.append(f"{p.relative_to(root).as_posix()}:{f['line']}: {f['rule']}: {f['text']}")
+    return bad
 
 
-def baseline(root=REPO) -> list[str]:
-    p = Path(root) / BASELINE
-    return json.loads(p.read_text(encoding="utf-8")).get("orphans", []) if p.exists() else []
+def consumers_check(root, d=None) -> list[str]:
+    """Every generated artifact matches a registry entry whose consumer is code that exists and names the artifact."""
+    root, bad = Path(root), []
+    reg = json.loads((root / CONSUMERS).read_text(encoding="utf-8"))
+    covered: set[Path] = set()
+    for e in reg["artifacts"]:
+        files = _glob(root, [e["glob"]])
+        if not files and not e.get("optional"):
+            bad.append(f"consumer entry {e['glob']}: matches no file (stale entry)")
+        cons = root / e["consumer"]
+        if cons.suffix not in CODE_SUFFIX or not cons.is_file():
+            bad.append(f"{e['glob']}: consumer {e['consumer']} is not code that exists")
+            continue
+        src = cons.read_text(encoding="utf-8", errors="replace")
+        if not re.search(e["reads"], src):
+            bad.append(f"{e['glob']}: consumer {e['consumer']} does not read it (no match for /{e['reads']}/)")
+            continue
+        covered.update(files)
+    for g in reg["roots"]:
+        for p in _glob(root, [g]):
+            if p not in covered:
+                bad.append(f"{p.relative_to(root).as_posix()}: generated artifact with no code consumer (register it or remove it)")
+    return bad
 
 
-def metrics(root=REPO) -> dict:
-    o, w = orphans(root), waits(root)
-    return {"orphan_artifacts": len(o), "human_wait_states": len(w["violations"]), "identity_bound_waits": len(w["identity_bound"]),
-            "new_orphans": len(set(o) - set(baseline(root)))}
+def trace(root=REPO) -> list[str]:
+    """trigger -> consumer -> verification for every loop; an open end is any link that is a person."""
+    from . import loops, selfhost
+    root, d, bad = Path(root), load(root), []
+    wf = {p.name: p.read_text(encoding="utf-8") for p in (root / ".github/workflows").glob("*.yml")}
+    for l in loops.load(root)["loops"]:
+        i = l["id"]
+        if l.get("closes_by") != "system":
+            bad.append(f"{i}: closes_by {l.get('closes_by')!r}; only 'system' closes a loop (a gate card is an open end)")
+        if re.search(r"\b(owner|person|human|rowan)\b.*\b(dispatch|click|decide|approve|review)", l.get("trigger", ""), re.I):
+            bad.append(f"{i}: trigger depends on a person ({l['trigger'][:60]})")
+        code = [s for s in l.get("system_path", []) if (root / s).suffix in CODE_SUFFIX | {".json"} and (root / s).is_file()]
+        if not code and not l.get("workflows"):
+            bad.append(f"{i}: no code consumer (system_path or workflow)")
+        if not l.get("staged_default") and l.get("credentials"):
+            bad.append(f"{i}: uses credentials but has no staged_default (what runs while the credential is absent)")
+        try:
+            if not selfhost.probe(root, l["closing_probe"]):
+                bad.append(f"{i}: verification (closing probe) fails")
+        except (ValueError, KeyError) as e:
+            bad.append(f"{i}: verification unusable: {e}")
+    return bad
+
+
+def controls_check(root, d=None) -> list[str]:
+    """Human-approval controls are replaced by automated gates and recorded in the control register."""
+    root, bad = Path(root), []
+    regs = json.loads((root / "doctrine/registers.json").read_text(encoding="utf-8"))
+    ids = {c["id"]: c for c in regs["controls"]}
+    for need in ("ctl-codeowners", "ctl-protected-change-label", "ctl-required-human-review"):
+        c = ids.get(need)
+        if not c:
+            bad.append(f"control {need} is not in the register")
+        elif c["disposition"] not in ("remove", "replace") or not c.get("replacement"):
+            bad.append(f"{need}: a human-approval control is removed or replaced with an automated gate")
+    co = root / ".github/CODEOWNERS"
+    if co.exists() and re.search(r"^\s*[^#\s]+\s+@\w", co.read_text(encoding="utf-8"), re.M):
+        bad.append(".github/CODEOWNERS assigns a human approver; replace it with the automated protected-path check")
+    return bad
+
+
+def merge_policy_check(root) -> list[str]:
+    m = json.loads((Path(root) / "doctrine/fleet.json").read_text(encoding="utf-8"))["merge"]
+    bad = []
+    if m.get("wait_minutes") != 0 or m.get("reviews_required") != 0:
+        bad.append("doctrine/fleet.json merge: wait_minutes and reviews_required must be 0 (merge on green at once)")
+    if not m.get("ready_drafts") or not m.get("auto_close_on_probe"):
+        bad.append("doctrine/fleet.json merge: ready_drafts and auto_close_on_probe must be true (resolve every PR and issue automatically)")
+    return bad
 
 
 def check(root=REPO) -> list[str]:
-    root = Path(root)
-    bad = []
-    pol = policy(root)
-    for k, v in pol["assume"].items():
-        if v is not False:
-            bad.append(f"policy assume.{k} must be false (CLOSED-LOOP-1)")
-    o, base = set(orphans(root)), set(baseline(root))
-    for rel in sorted(o - base):
-        bad.append(f"orphan artifact {rel}: no code in the repository reads it. Make a loop consume it, turn it into code, or delete it")
-    for rel in sorted(base - o):
-        bad.append(f"baseline entry {rel} is no longer an orphan (or is gone): remove it from {BASELINE} (shrink-only)")
-    bad += waits(root)["violations"]
-    bad += ledger_failures(root)
-    return bad
+    root = Path(root); d = load(root)
+    from . import queue
+    return queue.check(root) + axiom_check(root, d) + lint_check(root, d) + consumers_check(root, d) + trace(root) + controls_check(root, d) + merge_policy_check(root)
 
 
-def ledger_failures(root=REPO) -> list[str]:
-    """Every lesson and decision row carries a probe; a row whose probe fails is a decision the code no longer carries."""
-    from . import selfhost
-    p = Path(root) / "doctrine/decision-ledger.json"
-    if not p.exists():
-        return []
-    bad = []
-    for r in json.loads(p.read_text(encoding="utf-8")).get("rows", []):
-        try:
-            if not selfhost.probe(root, r.get("probe", "")):
-                bad.append(f"ledger {r['id']}: probe fails ({r.get('probe')}); the code no longer carries this {r.get('kind')}")
-        except ValueError as e:
-            bad.append(f"ledger {r.get('id')}: {e}")
-    return bad
-
-
-def write_baseline(root=REPO) -> int:
-    """Shrink-only: keeps only entries that are still orphans; never adds one unless no baseline exists yet."""
-    root = Path(root)
-    p = root / BASELINE
-    now = orphans(root)
-    keep = sorted(set(now) & set(baseline(root))) if p.exists() else now
-    p.write_text(json.dumps({"_doc": "Shrink-only list of orphan artifacts present when CLOSED-LOOP-1 landed (2026-11-12). The executor loop drains it through the CLOSED-LOOP-1 issue; a new orphan fails CI.",
-                             "orphans": keep}, indent=1) + "\n", encoding="utf-8")
-    return len(keep)
-
-
-def issue_body(root=REPO) -> str:
-    pol = policy(root)
-    base = baseline(root)
-    n = pol["backlog_issue"]["batch"]
-    m = metrics(root)
-    lines = [f"Metrics: orphan_artifacts={m['orphan_artifacts']} (target 0), human_wait_states={m['human_wait_states']} (target 0).", "",
-             f"Next {min(n, len(base))} orphan artifacts (of {len(base)}). For each: make a loop's code read it, turn its content into code or policy values, or delete it. Then remove it from `{BASELINE}`.", ""]
-    lines += [f"- [ ] `{r}`" for r in base[:n]]
-    lines += ["", "code-task: python3 -m foundation closedloop --check", "closing probe: `python3 -m foundation closedloop --metrics` reports orphan_artifacts 0 and human_wait_states 0.",
-              "", "Filed and refreshed by the daily issues sweep (.github/workflows/issues.yml); closed by the same sweep when both metrics reach 0."]
-    return "\n".join(lines)
-
-
-def sync_issue(repo: str, root=REPO) -> str:
-    """Open, refresh or close the one CLOSED-LOOP-1 backlog issue (gh CLI with the workflow token). Returns what it did."""
-    pol = policy(root)["backlog_issue"]
-    m = metrics(root)
-
-    def gh(*a):
-        r = subprocess.run(["gh", *a], capture_output=True, text=True, timeout=90)
-        if r.returncode:
-            raise RuntimeError(f"gh {' '.join(a[:3])}: {r.stderr.strip()[-300:]}")
-        return r.stdout
-    found = json.loads(gh("issue", "list", "-R", repo, "--state", "open", "--search", f"in:title \"{pol['title']}\"", "--json", "number,title") or "[]")
-    found = [i for i in found if i["title"] == pol["title"]]
-    done = m["orphan_artifacts"] == 0 and m["human_wait_states"] == 0
-    if found:
-        n = str(found[0]["number"])
-        if done:
-            gh("issue", "close", n, "-R", repo, "--comment", "closing probe passed: orphan_artifacts 0, human_wait_states 0")
-            return f"closed #{n}"
-        gh("issue", "edit", n, "-R", repo, "--body", issue_body(root))
-        return f"refreshed #{n}"
-    if done:
-        return "nothing to file"
-    for lab in pol["labels"]:
-        subprocess.run(["gh", "label", "create", lab, "-R", repo, "--force"], capture_output=True, timeout=60)
-    url = gh("issue", "create", "-R", repo, "--title", pol["title"], "--body", issue_body(root), *sum([["--label", l] for l in pol["labels"]], []))
-    return "opened " + url.strip()
-
-
-def main(argv=None) -> int:
-    argv = list(sys.argv[1:] if argv is None else argv)
-    if "--sync-issue" in argv:
-        print(sync_issue(argv[argv.index("--sync-issue") + 1])); return 0
-    if "--metrics" in argv:
-        print(json.dumps(metrics(), indent=1)); return 0
-    if "--baseline" in argv:
-        print("baseline entries:", write_baseline()); return 0
-    if "--issue-body" in argv:
-        print(issue_body()); return 0
-    bad = check()
-    for b in bad:
-        print("CLOSED-LOOP-1:", b)
-    m = metrics()
-    print(f"closedloop: {m['orphan_artifacts']} orphan artifact(s) (baseline, shrink-only), {m['human_wait_states']} human-wait state(s), {m['identity_bound_waits']} identity-bound wait(s) with defaults; {len(bad)} failure(s)")
-    return 1 if bad else 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+def main(argv: list[str]) -> int:
+    if argv[:1] == ["--lint"]:
+        found = [f"{fn}:{x['line']}: {x['rule']}: {x['text']}" for fn in argv[1:] for x in lint(Path(fn).read_text(encoding="utf-8"))]
+        print("\n".join(found) or "closed-loop lint ok"); return 1 if found else 0
+    bad = trace() if argv[:1] == ["--trace"] else check()
+    print("\n".join(bad) or "closedloop ok"); return 1 if bad else 0

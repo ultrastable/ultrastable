@@ -1,0 +1,1 @@
+{"schema": "ultrastable-executor/1", "at": "2026-11-12T09:57:00Z", "host": "claude-session", "issue": 34, "result": "verified-no-change", "detail": "PF-1 standing rule enforced by check_org_repos.py; live 0 problems", "prediction": "issue_34_closed = 1 within 24 h"}

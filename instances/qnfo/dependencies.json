@@ -1,0 +1,19 @@
+{
+ "instance": "qnfo",
+ "dependencies": [
+  {
+   "id": "qnfo-x1-runtime-config",
+   "owner": "qnfo-lane",
+   "blocker": "real values for instance.runtime.json need QNFO repo access (workers gap X-1)",
+   "trigger": "workers cutover stage 1",
+   "probe": "file:instances/qnfo/instance.runtime.json exists in the QNFO checkout and `node tools/instance_config.mjs --file <it> --strict` exits 0"
+  },
+  {
+   "id": "qnfo-x3-replace-pr",
+   "owner": "qnfo-lane",
+   "blocker": "stage-7 replace PR is opened by the QNFO fleet's own lane (workers gap X-3)",
+   "trigger": "workers cutover stage 6 gate passes",
+   "probe": "`python3 -m foundation upstream check --instance <QNFO checkout>` exits 0 and ultrastable.lock.json names a runtime.ref tag"
+  }
+ ]
+}

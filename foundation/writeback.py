@@ -12,8 +12,8 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 LEDGER = "doctrine/decision-ledger.json"
-LEDGER_DOC = "CLOSED-LOOP-1 write-back: every lesson and decision as a row with a closing probe (file:<path> or grep:<path>::<regex>) that `python3 -m foundation closedloop --check` executes on every PR and loop pass. Written by `python3 -m foundation writeback record --kind lesson|decision --probe SPEC`."
-WB_PREFIXES = (LEDGER, "doctrine/closed-loop", "docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loop-registry.json", "docs/issues/OL-")
+LEDGER_DOC = "CLOSED-LOOP-1 write-back: every lesson and decision as a row with a closing probe (file:<path> or grep:<path>::<regex>) that `python3 -m foundation orphans --check` executes on every PR and loop pass. Written by `python3 -m foundation writeback record --kind lesson|decision --probe SPEC`."
+WB_PREFIXES = (LEDGER, "doctrine/closed-loop", "doctrine/orphans", "docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loop-registry.json", "docs/issues/OL-")
 DOC_ONLY = re.compile(r"^(docs/|doctrine/|GLOSSARY\.md$|.*\.md$)")
 
 
@@ -30,7 +30,7 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
         found = kernel.lint(body, kernel.load(root))
         if found:
             raise ValueError("rewrite before recording (the report hands work back or lacks evidence): " + "; ".join(f"{f['recognition']}: {f['text']}" for f in found[:3]))
-        # CLOSED-LOOP-1: a lesson or decision is a ledger row with a closing probe that closedloop --check executes on every PR and loop pass,
+        # CLOSED-LOOP-1: a lesson or decision is a ledger row with a closing probe that orphans --check executes on every PR and loop pass,
         # never a Markdown page written for a reader.
         if probe.split(":", 1)[0] not in ("file", "grep"):
             raise ValueError("a lesson or decision needs --probe file:<path> or grep:<path>::<regex>: the code or policy that carries it (CLOSED-LOOP-1)")
@@ -44,8 +44,8 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
     if kind == "open-loop":
         if not (owner and trigger and probe):
             raise ValueError("an open loop needs an owner role, a trigger and a closing probe")
-        if probe.split(":", 1)[0] not in ("file", "grep"):
-            raise ValueError("probe must be file:<path> or grep:<path>::<regex>")
+        if probe.split(":", 1)[0] not in ("file", "grep", "cmd"):
+            raise ValueError("probe must be file:<path>, grep:<path>::<regex> or cmd:<allowed command>")
         n = len(list((root / "docs/issues").glob(f"OL-{day.replace('-', '')}-*.json"))) + 1
         iid = f"OL-{day.replace('-', '')}-{n}"
         body_txt = f"**Owner:** {owner}\n**Trigger:** {trigger}\n**Done check:** {probe}\n**Status:** open\n\n{body.strip()}"
