@@ -1,0 +1,8 @@
+{
+  "id": "Q-SCOUT-nofeed-sources",
+  "title": "Q-SCOUT-nofeed-sources: scout sources that publish no Atom/RSS feed",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** grep:doctrine/scout.json::\"kind\": \"page\"\n**Status:** open\n\nfoundation/scout.py (SCOUT-1, #292) reads Atom/RSS only. Competitors and best-practice bodies with no feed are unwatched: Copilot coding-agent docs, Cursor docs, Devin docs, Factory, OWASP LLM Top 10, Anthropic building-effective-agents. Add a `page` source kind: fetch, strip markup, hash lines, score only lines new since the last pass with the existing scorer, same weights and adoption feedback. Test with recorded pages. Source: closed PR #293 (page-diff prototype, history kept there).",
+  "labels": ["role:product-manager", "growth", "research"],
+  "milestone": "Next",
+  "workstream": "Research"
+}
