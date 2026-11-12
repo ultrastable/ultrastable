@@ -17,6 +17,7 @@ for (const p of ["/", "/how", "/proof", "/pilot", "/product", "/team", "/faq", "
   assert.ok(((h.replace(/<style>[\s\S]*?<\/style>/, "")).match(/class="btn btn-primary"/g) || []).length <= 1, p + " has at most one primary action");
 }
 assert.match(await (await get("https://ultrastable.io/")).text(), /Live checks are loading/, "offline claims fail soft");
+assert.match(await (await get("https://ultrastable.io/")).text(), /Directed by[^<]*<a[^>]*>Rowan Brad Quni-Gudzinas<\/a>, founder and director of Ultrastable/, "BRAND: the platform credits its director on every page");
 assert.equal((await get("https://ultrastable.io/nope")).status, 404);
 assert.equal((await (await get("https://ultrastable.io/health")).json()).worker, "ultrastable-site");
 assert.match(await (await get("https://ultrastable.io/robots.txt")).text(), /Sitemap/);
