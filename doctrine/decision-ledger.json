@@ -368,6 +368,14 @@
    "title": "executor changes failed the doctrine check; failure text was cut off",
    "body": "Run 5 failed after 3 attempts on test_repo_is_consistent_with_the_doctrine_file, and the logged tail hid the reason. The executor now regenerates doctrine, glossary and standards files, states the tagline rule for new Markdown in its prompt, and feeds 2500 characters of check output back.",
    "probe": "grep:foundation/executor.py::foundation\", \"doctrine\", \"--apply"
+  },
+  {
+   "id": "decision-2026-11-12-executor-closed-q-10-update-ultrastable-io-proof-to-serve-a-",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Executor closed Q-10: Update ultrastable.io/proof to serve a product-side feed",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: brand/public-profile/profile/proof.js, tests/proof.test.js.",
+   "probe": "file:brand/public-profile/profile/proof.js"
   }
  ]
 }

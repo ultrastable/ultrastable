@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T14:07:19Z",
- "commit": "740207d",
+ "generated": "2026-11-12T14:21:14Z",
+ "commit": "15ee7fd",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 62,
@@ -14,9 +14,9 @@
   "stories_passing": 9,
   "stories_total": 9,
   "open_gaps": 3,
-  "open_prs": 2,
-  "merged_prs_listed": 33,
-  "prs_merged_total": 155,
+  "open_prs": 3,
+  "merged_prs_listed": 32,
+  "prs_merged_total": 161,
   "prs_merged_unattended": 0,
   "backlog_open": 62,
   "backlog_items": 64
@@ -31,7 +31,7 @@
    "takeable_now": 62
   },
   "merged": {
-   "total": 155,
+   "total": 161,
    "by_origin": {
     "unattended executor": {
      "prs": 0,
@@ -39,9 +39,9 @@
      "lines_removed": 0
     },
     "agent session": {
-     "prs": 142,
-     "lines_added": 110291,
-     "lines_removed": 21022
+     "prs": 148,
+     "lines_added": 115386,
+     "lines_removed": 22335
     },
     "bot": {
      "prs": 4,
@@ -57,7 +57,7 @@
    "per_day": {
     "2026-11-10": 90,
     "2026-11-11": 12,
-    "2026-11-12": 53
+    "2026-11-12": 59
    },
    "median_hours_open_to_merge": 0.01
   },
@@ -65,6 +65,54 @@
    {
     "date": "2026-11-12",
     "changes": [
+     {
+      "n": 266,
+      "title": "Executor: regenerate doctrine files, tagline rule, longer failure text",
+      "by": "agent session",
+      "plus": 11,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/266"
+     },
+     {
+      "n": 265,
+      "title": "AGENTIC-1: agent-readable ultrastable.io with read-only MCP; unattended crosswalk",
+      "by": "agent session",
+      "plus": 1445,
+      "minus": 1286,
+      "url": "https://github.com/ultrastable/ultrastable/pull/265"
+     },
+     {
+      "n": 263,
+      "title": "Executor: bad model reply is repairable",
+      "by": "agent session",
+      "plus": 16,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/263"
+     },
+     {
+      "n": 262,
+      "title": "Executor repair loop and server-side rule in its prompt",
+      "by": "agent session",
+      "plus": 37,
+      "minus": 13,
+      "url": "https://github.com/ultrastable/ultrastable/pull/262"
+     },
+     {
+      "n": 261,
+      "title": "Executor regenerates derived files so its own PRs pass checks",
+      "by": "agent session",
+      "plus": 24,
+      "minus": 6,
+      "url": "https://github.com/ultrastable/ultrastable/pull/261"
+     },
+     {
+      "n": 260,
+      "title": "PORT-EXEC-1: runnable probe unblocks the unattended executor",
+      "by": "agent session",
+      "plus": 3562,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/260"
+     },
      {
       "n": 259,
       "title": "Lane sweep no longer fails when Issues are off (found by the liveness probe)",
@@ -1319,26 +1367,27 @@
    }
   ],
   "deploys": {
-   "site_runs": 23,
+   "site_runs": 25,
    "by_conclusion": {
-    "success": 22,
+    "success": 24,
     "cancelled": 1
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-12T14:00:43Z",
+    "createdAt": "2026-11-12T14:19:25Z",
     "event": "push",
-    "headSha": "740207d95e5dceeffa263125e7259d9b6f77b4f3"
+    "headSha": "1410a9760cfdccd986fdfe7696d2a49eec2f4c13"
    },
    "per_day_success": {
-    "2026-11-12": 22
+    "2026-11-12": 24
    }
   },
   "executor": {
-   "runs": 3,
+   "runs": 8,
    "by_conclusion": {
+    "": 1,
     "success": 2,
-    "failure": 1
+    "failure": 5
    },
    "prs_opened_unattended": 1,
    "prs_merged_unattended": 0,
@@ -2663,6 +2712,78 @@
  "changes": {
   "commits": [
    {
+    "sha": "15ee7fd",
+    "at": "2026-11-12T15:19:58+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor: regenerate doctrine files, tagline rule, longer failure text (#266)",
+    "pr": 266,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/15ee7fd40b8c1cbcceef728f212054b9962ef0a6"
+   },
+   {
+    "sha": "1410a97",
+    "at": "2026-11-12T15:19:21+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "AGENTIC-1: agent-readable ultrastable.io with read-only MCP; unattended crosswalk (#265)",
+    "pr": 265,
+    "item": "AGENTIC-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1410a9760cfdccd986fdfe7696d2a49eec2f4c13"
+   },
+   {
+    "sha": "d6a9068",
+    "at": "2026-11-12T15:14:29+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor: bad model reply is repairable (#263)",
+    "pr": 263,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/d6a90683b2ead4fcd2dac5f72a3811a85b08397e"
+   },
+   {
+    "sha": "2b5dd43",
+    "at": "2026-11-12T15:13:21+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor repair loop and server-side rule in its prompt (#262)",
+    "pr": 262,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/2b5dd43fb6f827d4c310e783bf819b2a4e2f7856"
+   },
+   {
+    "sha": "0b54048",
+    "at": "2026-11-12T15:10:30+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor regenerates derived files so its own PRs pass checks (#261)",
+    "pr": 261,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/0b54048f196af2a08d9915a011b0ba2eb650af55"
+   },
+   {
+    "sha": "3ef58dc",
+    "at": "2026-11-12T15:08:00+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PORT-EXEC-1: runnable probe unblocks the unattended executor (#260)",
+    "pr": 260,
+    "item": "PORT-EXEC-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/3ef58dc63cc2717c06681307f7e765130c681c92"
+   },
+   {
+    "sha": "f4246ca",
+    "at": "2026-11-12T15:02:47+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Executor records its own write-back (PR 233 failed the gate) (#237)",
+    "pr": 237,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/f4246cac3b6abdd0fa1c98c6c50986b1c39df886"
+   },
+   {
+    "sha": "20bcd23",
+    "at": "2026-11-12T15:02:01+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Lane sweep no longer fails when Issues are off (found by the liveness probe) (#259)",
+    "pr": 259,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/20bcd2355c5cc75e267c108cd0303e9359925ab2"
+   },
+   {
     "sha": "740207d",
     "at": "2026-11-12T15:00:40+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2949,81 +3070,95 @@
     "pr": 234,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/2eb859f3d546ccfac7d8b688a28293fd03e4056f"
-   },
-   {
-    "sha": "f75f7df",
-    "at": "2026-11-12T13:09:44+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Executor: Workers AI route, Issues-off tolerance, settings has_issues=false (#232)",
-    "pr": 232,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/f75f7df13a685eb8ffe0a2e14a8d4a05e487a7d7"
-   },
-   {
-    "sha": "76e5a36",
-    "at": "2026-11-12T13:05:27+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "QUEUE-1: executor queue as repo data so Issues can be off (#229)",
-    "pr": 229,
-    "item": "QUEUE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/76e5a36485d073e32f36785381a75eaf72e31ac1"
-   },
-   {
-    "sha": "7386386",
-    "at": "2026-11-12T12:55:25+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "RECALL-1 + AUDIT-1: the front door asks, builds and audits itself (site 0.7.0) (#226)",
-    "pr": 226,
-    "item": "RECALL-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/73863867b3dbc28dffbce6ea856a8aa95bbf2312"
-   },
-   {
-    "sha": "130153e",
-    "at": "2026-11-12T12:54:21+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "COMPLETE-1: always complete and close finished work, threads and sessions (#228)",
-    "pr": 228,
-    "item": "COMPLETE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/130153e6341868cd6e2488ee4f26ed795c05fa60"
-   },
-   {
-    "sha": "69fb2dd",
-    "at": "2026-11-12T12:52:04+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "AGENT-PASTE-1 + PLATFORM-BRIEF-1: paste-into-any-AI start, deploy on any cloud via its own agent (site 0.9.0) (#227)",
-    "pr": 227,
-    "item": "AGENT-PASTE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/69fb2dd3209fa157bd2345090dad0d874f3638b1"
-   },
-   {
-    "sha": "c451a53",
-    "at": "2026-11-12T12:39:41+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "BUILD-2: idea build no longer stuck at Building (site 0.5.1) (#225)",
-    "pr": 225,
-    "item": "BUILD-2",
-    "url": "https://github.com/ultrastable/ultrastable/commit/c451a5386fdc22ae9f776df18e8fd6ed56b09e4d"
-   },
-   {
-    "sha": "32fb833",
-    "at": "2026-11-12T12:35:34+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "USER-PATH-1: click-only guided set-up at /setup (site 0.6.0) (#224)",
-    "pr": 224,
-    "item": "USER-PATH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/32fb833213bdaca8fc4b6855ee9c6b104ce2543b"
-   },
-   {
-    "sha": "ee3e9c5",
-    "at": "2026-11-12T12:31:52+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Front door: idea to live site from one prompt bar (site 0.5.0), brand sync fix (#223)",
-    "pr": 223,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/ee3e9c58c90aeaa4453d427a58587e8f4ef140f6"
    }
   ],
   "pull_requests": [
+   {
+    "number": 266,
+    "title": "Executor: regenerate doctrine files, tagline rule, longer failure text",
+    "state": "merged",
+    "branch": "agent/executor-generators",
+    "opened": "2026-11-12T14:19:52Z",
+    "merged": "2026-11-12T14:19:58Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/266"
+   },
+   {
+    "number": 265,
+    "title": "AGENTIC-1: agent-readable ultrastable.io with read-only MCP; unattended crosswalk",
+    "state": "merged",
+    "branch": "agent/agentic-surfaces",
+    "opened": "2026-11-12T14:19:14Z",
+    "merged": "2026-11-12T14:19:22Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "AGENTIC-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/265"
+   },
+   {
+    "number": 264,
+    "title": "AGENT-INTEROP-1 and TERMS-CROSSWALK-1: agent-readable site, standards and crosswalk as data",
+    "state": "open",
+    "branch": "agent/AGENTS-INTEROP-1-standards",
+    "opened": "2026-11-12T14:15:03Z",
+    "merged": null,
+    "by": "rwnq8",
+    "labels": [
+     "conflict"
+    ],
+    "item": "AGENT-INTEROP-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/264"
+   },
+   {
+    "number": 263,
+    "title": "Executor: bad model reply is repairable",
+    "state": "merged",
+    "branch": "agent/executor-repair2",
+    "opened": "2026-11-12T14:14:23Z",
+    "merged": "2026-11-12T14:14:29Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/263"
+   },
+   {
+    "number": 262,
+    "title": "Executor repair loop and server-side rule in its prompt",
+    "state": "merged",
+    "branch": "agent/executor-repair",
+    "opened": "2026-11-12T14:13:16Z",
+    "merged": "2026-11-12T14:13:22Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/262"
+   },
+   {
+    "number": 261,
+    "title": "Executor regenerates derived files so its own PRs pass checks",
+    "state": "merged",
+    "branch": "agent/executor-regen",
+    "opened": "2026-11-12T14:10:23Z",
+    "merged": "2026-11-12T14:10:30Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/261"
+   },
+   {
+    "number": 260,
+    "title": "PORT-EXEC-1: runnable probe unblocks the unattended executor",
+    "state": "merged",
+    "branch": "agent/port-exec-probe",
+    "opened": "2026-11-12T14:07:54Z",
+    "merged": "2026-11-12T14:08:00Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "PORT-EXEC-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/260"
+   },
    {
     "number": 259,
     "title": "Lane sweep no longer fails when Issues are off (found by the liveness probe)",
@@ -3432,90 +3567,6 @@
     "labels": [],
     "item": "AGENT-PASTE-1",
     "url": "https://github.com/ultrastable/ultrastable/pull/227"
-   },
-   {
-    "number": 226,
-    "title": "RECALL-1 + AUDIT-1: the front door asks, builds and audits itself (site 0.7.0)",
-    "state": "merged",
-    "branch": "claude/recall-audit",
-    "opened": "2026-11-12T11:47:14Z",
-    "merged": "2026-11-12T11:55:25Z",
-    "by": "rwnq8",
-    "labels": [],
-    "item": "RECALL-1",
-    "url": "https://github.com/ultrastable/ultrastable/pull/226"
-   },
-   {
-    "number": 225,
-    "title": "BUILD-2: idea build no longer stuck at Building (site 0.5.1)",
-    "state": "merged",
-    "branch": "claude/idea-consumer",
-    "opened": "2026-11-12T11:38:10Z",
-    "merged": "2026-11-12T11:39:42Z",
-    "by": "rwnq8",
-    "labels": [],
-    "item": "BUILD-2",
-    "url": "https://github.com/ultrastable/ultrastable/pull/225"
-   },
-   {
-    "number": 224,
-    "title": "USER-PATH-1: click-only guided set-up at /setup (site 0.6.0)",
-    "state": "merged",
-    "branch": "claude/setup-wizard",
-    "opened": "2026-11-12T11:34:20Z",
-    "merged": "2026-11-12T11:35:35Z",
-    "by": "rwnq8",
-    "labels": [],
-    "item": "USER-PATH-1",
-    "url": "https://github.com/ultrastable/ultrastable/pull/224"
-   },
-   {
-    "number": 223,
-    "title": "Front door: idea to live site from one prompt bar (site 0.5.0), brand sync fix",
-    "state": "merged",
-    "branch": "claude/bootstrap-closed-loop",
-    "opened": "2026-11-12T11:24:53Z",
-    "merged": "2026-11-12T11:31:53Z",
-    "by": "rwnq8",
-    "labels": [],
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/pull/223"
-   },
-   {
-    "number": 222,
-    "title": "Bootstrap loop: fail-closed GitHub settings, deploy dispatch after merge, daily drift probe",
-    "state": "merged",
-    "branch": "claude/bootstrap-closed-loop",
-    "opened": "2026-11-12T11:12:18Z",
-    "merged": "2026-11-12T11:22:47Z",
-    "by": "rwnq8",
-    "labels": [],
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/pull/222"
-   },
-   {
-    "number": 221,
-    "title": "Close merge\u2192deploy\u2192verify-live loop (site was 0.2.0 live, 0.3.1 merged)",
-    "state": "merged",
-    "branch": "claude/deploy-closes-loop",
-    "opened": "2026-11-12T11:04:14Z",
-    "merged": "2026-11-12T11:05:40Z",
-    "by": "rwnq8",
-    "labels": [],
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/pull/221"
-   },
-   {
-    "number": 220,
-    "title": "Fleet lane skips archived repositories",
-    "state": "merged",
-    "branch": "claude/fleet-skip-archived",
-    "opened": "2026-11-12T10:16:40Z",
-    "merged": "2026-11-12T10:18:06Z",
-    "by": "rwnq8",
-    "labels": [],
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/pull/220"
    }
   ]
  },
