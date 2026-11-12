@@ -161,6 +161,14 @@
    "title": "MARKET-1 components and gaps as data",
    "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. doctrine/market.json holds components, researched competitor coverage with sources read 2026-11-12, users, stories and objections. Claimed features need passing proofs and tests; each gap is a Q-GAP queue item the executor works; competitor names stay off the public site. Defensible wording is 'not found in the sources read', never 'nobody does'.",
    "probe": "grep:foundation/market.py::def check"
+  },
+  {
+   "id": "lesson-2026-11-12-write-back-open-loop-ids-are-max-1-never-count-1",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Write-back open-loop ids are max+1, never count+1",
+   "body": "count+1 overwrote OL-20261112-11 (the Cloudflare account transfer residual) because ids have gaps; closedloop --check caught it as a residual with no queue entry. record() now takes max+1 and refuses to overwrite.",
+   "probe": "grep:foundation/writeback.py::never count\\+1"
   }
  ]
 }
