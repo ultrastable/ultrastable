@@ -49,6 +49,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["team"]:
         from . import team
         return team.main(_av[1:])
+    if _av[:1] == ["market"]:
+        from . import market
+        return market.main(_av[1:])
     if _av[:1] == ["boundary"]:
         return boundary.main(_av[1:])
     if _av[:1] == ["closedloop"]:

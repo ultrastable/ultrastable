@@ -1708,6 +1708,71 @@
    "area": "managers"
   },
   {
+   "id": "market-gaps",
+   "kind": "governance",
+   "summary": "MARKET-1: components, competitor coverage, user stories and objections are data; every claimed feature has a passing proof and test, every gap is a queue item the executor works until its closing probe passes.",
+   "trigger": "every PR (checks.yml), every executor run",
+   "owner": "product-manager",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "python3 -m foundation market --check reports ok and every open gap has an open queue item",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation market --check in checks.yml",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "python3 -m foundation market --check on any machine",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:foundation/market.py::def check",
+   "writeback": [
+    "doctrine/market.json",
+    "instances/ultrastable/improvements.json"
+   ],
+   "system_path": [
+    "foundation/market.py",
+    "doctrine/market.json"
+   ],
+   "area": "governance"
+  },
+  {
+   "id": "strange-loop-hygiene",
+   "kind": "governance",
+   "summary": "STRANGE-LOOP-1: no zombie sessions, branches, PRs or issues, and each sweep must beat the last: it records its own leftover count and files a plus against its weakest step.",
+   "trigger": "daily lane sweep (scripts/completion_sweep.sh); the app archives sessions when their PR closes and after 1 idle day",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "leftover count is 0 and the cycle_metric line is printed by every sweep",
+   "paths": [
+    {
+     "id": "ci-sweep",
+     "how": "scripts/completion_sweep.sh in the daily lane sweep",
+     "class": "free"
+    },
+    {
+     "id": "session-sweep",
+     "how": "the app's own scheduler archives a session when its PR closes (auto_archive_on_pr_close=true) and after 1 idle day (auto_archive_inactive_days=1), read from get_settings 2026-11-12; any agent session also archives idle finished ones it finds",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:scripts/completion_sweep.sh::cycle_metric",
+   "cycle_metric": "leftover_after_sweep",
+   "last_plus": "sweep prints its own cycle_metric each run so the next run is comparable",
+   "writeback": [
+    "docs/PROJECT-MEMORY.md"
+   ],
+   "system_path": [
+    "scripts/completion_sweep.sh",
+    "agents/AGENTS.md"
+   ],
+   "area": "governance"
+  },
+  {
    "id": "role-research-publisher",
    "kind": "manager",
    "summary": "Research publisher: research as one more pipeline",

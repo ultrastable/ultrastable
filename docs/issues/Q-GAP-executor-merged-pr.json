@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-executor-merged-pr",
+  "title": "Q-GAP-executor-merged-pr: Executor opens and merges its own pull request",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"\n**Status:** open\n\nGap in component `code-repo`: Executor opens and merges its own pull request. Built and tested with a fake model only. Source: doctrine/market.json (MARKET-1).",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

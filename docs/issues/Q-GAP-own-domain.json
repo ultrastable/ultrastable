@@ -1,0 +1,11 @@
+{
+  "id": "Q-GAP-own-domain",
+  "title": "Q-GAP-own-domain: Attach the person's own domain",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** grep:site/worker.js::attachDomain\n**Status:** open\n\nGap in component `backend-infra`: Attach the person's own domain. Built sites live at a shared Ultrastable address. Source: doctrine/market.json (MARKET-1).",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}
