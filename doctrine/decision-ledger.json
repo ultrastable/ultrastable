@@ -344,6 +344,14 @@
    "title": "executor abandoned a change on the first failed check",
    "body": "The model's Q-10 change violated the server-side-only rule (localhost) and the executor discarded it. It now tells the model the rule and feeds failed check output back for up to 2 repairs before abandoning.",
    "probe": "grep:foundation/executor.py::REPAIRS"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-crashed-on-an-unusable-model-reply",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "executor crashed on an unusable model reply",
+   "body": "A JSONDecodeError from the model reply ended the run with no repair. Unusable replies now count as a failed attempt and the model is asked again, within the same REPAIRS budget.",
+   "probe": "grep:foundation/executor.py::COULD NOT BE USED"
   }
  ]
 }
