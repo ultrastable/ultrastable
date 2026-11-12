@@ -4,7 +4,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from foundation import pm, clock, clockwork as W, growth as G  # noqa: E402
-import _repo  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 START = pm._ts("2026-11-12T00:00:00Z")
@@ -12,7 +13,7 @@ DAY = 86400
 
 
 def temp_root():
-    r = Path(_repo.scratch())
+    r = scratch()
     (r / "doctrine").mkdir()
     for f in ("growth.json", "knobs.json", "clocks.json"):
         shutil.copy2(REPO / "doctrine" / f, r / "doctrine" / f)

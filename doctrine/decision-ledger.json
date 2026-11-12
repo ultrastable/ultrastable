@@ -482,6 +482,15 @@
       "probe": "file:docs/issues/Q-CLOCK-LANE-HOOK.json"
     },
     {
+      "id": "decision-2026-11-12-growth-pm-1-growth-policy-values-and-product-coverage-are-en",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "GROWTH-PM-1: growth policy values and product coverage are enforced",
+      "body": "autonomy policy growth block (growth_share_floor 0.4 = doctrine target, growth_priority_weight 3, min 2 metrics per product, owner role product-manager); doctrine/growth.json products each name metrics and an owner loop; growth --check runs in checks.yml. Fleet counterpart: QNFO/qnfo-workers growth-pm loop (migrations/2026-11-12-growth-pm.sql).",
+      "probe": "grep:foundation/growth.py::def check_products",
+      "session": "session_0156nqDs8EdntUEvbTBhjQR3"
+    },
+    {
       "id": "lesson-2026-11-12-duplicate-parallel-builds-of-the-same-directive",
       "kind": "lesson",
       "date": "2026-11-12",
