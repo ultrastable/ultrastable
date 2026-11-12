@@ -54,6 +54,18 @@ class Upstream(unittest.TestCase):
         (core / upstream.CONTRACT).write_text(json.dumps(upstream.build_contract(core, "1.0.0")))
         self.assertTrue(any("major" in b for b in upstream.check(core, out)))
 
+    def test_runtime_instance_file_follows_the_workers_validator(self):
+        out, _ = self.adopt()
+        good = {"slug": "acme", "account_id": "a1", "worker_name": "acme-u", "d1_database": "acme-u", "repository": "o/r", "owner_contact": "OWNER_CONTACT_X",
+                "routes": [{"name": "a"}, {"name": "b"}], "secrets": {"github": "GITHUB_TOKEN"}}
+        (out / "instance.runtime.json").write_text(json.dumps(good))
+        self.assertEqual(upstream.check(ROOT, out), [])
+        bad = dict(good, routes=[{"name": "a"}], secrets={"github": "ghp_x"})
+        (out / "instance.runtime.json").write_text(json.dumps(bad))
+        msgs = " ".join(upstream.check(ROOT, out))
+        self.assertIn("no single route", msgs); self.assertIn("binding name", msgs)
+        self.assertTrue(upstream.runtime_check(dict(good, account_id="REPLACE_WITH_ACCOUNT_ID"), strict=True))
+
     def test_instance_workflows_parse(self):
         import yaml
         out, _ = self.adopt()

@@ -4,6 +4,17 @@
 
 Decision (2026-11-12, Rowan's request: "split cleanly, then merge so we work exclusively in Ultrastable"). Code: `foundation/upstream.py`, `core-contract.json`, `seed/instance-template/`, `.github/workflows/upstream.yml`, `scripts/upstream_scan.py`, `tests/foundation/test_upstream.py`.
 
+## Where the core lives (corrected after reading ultrastable/workers #103)
+
+The core has two code homes, and an instance pins both:
+
+| Home | Holds | Pinned in the lock by |
+|---|---|---|
+| `ultrastable/ultrastable` | kernel (`seed/`: agent protocol, roles, policy, tick worker), `foundation/`, doctrine | `core.version` and per-file `digests` |
+| `ultrastable/workers` | runtime code (`core/`, `adapters/`) that replaces the QNFO workers, plus the cutover tooling | `runtime.ref` (a git tag of that repo) |
+
+The instance file in `workers` (`tools/instance_config.mjs`: slug, account id, routes, owner contact, repository, secret binding names) is kept here as `instance.runtime.json`. `upstream check` validates it with a port of the same rules (two or more routes, binding names only, `--strict` rejects placeholders), so one contract covers both homes. The foundation manifest `instance.json` (brand, goals, funding) stays separate: it describes the organization, the runtime file describes where it runs.
+
 ## The rule
 
 **Ultrastable core is the only place the platform is developed. QNFO is an instance: a repo that pins a core version and holds only config, plugins and domain content.** A third party with their own repo or a new idea is the same shape as QNFO. Nothing QNFO-specific lives in the core (`upstream leaks` fails the build if it does).
@@ -26,9 +37,12 @@ Each row cites a page that was fetched on 2026-11-12. Where the page did not cov
 | Template update that records the template version | Copier: `copier update` regenerates a project from the current template version, diffs it against yours and reapplies the diff; it needs the answers file and says never to edit it by hand; conflicts become inline markers or `.rej` files; versions come from the template's git tags; `copier check-update` signals an update through its exit code ([Copier: updating](https://copier.readthedocs.io/en/stable/updating/)) | Same idea, simpler: per-file digests in the lock instead of a regenerate-and-diff. A file the instance edited is never overwritten; it is reported as a conflict and as an upstream candidate. `upstream drift --fail` is the check-update equivalent |
 | Staged upgrades and migrations | Nx: `nx migrate` first only rewrites `package.json` and writes `migrations.json`, then `nx migrate --run-migrations` applies them; each migration is tied to a version; moving one major at a time is "the safest path" ([Nx: update dependencies](https://nx.dev/docs/features/automate-updating-dependencies)) | Two stages as well: `sync` without `--apply` reports, with `--apply` writes. A major bump fails `upstream check` until a migration note exists; minor and patch flow automatically |
 | Shared module layout | Terraform: reusable modules live in their own repository with the root module as the only required element, plus README, LICENSE, `main.tf`, `variables.tf`, `outputs.tf`, nested `modules/` and `examples/` ([Terraform module structure](https://developer.hashicorp.com/terraform/language/modules/develop/structure)). That page does **not** cover version pinning | Core is one repo with a stated public surface (`core-contract.json`). Version pinning is taken from Backstage and Copier above, not from Terraform |
-| Monorepo vs polyrepo, submodule vs subtree, consumer-driven contract tests | Not yet sourced (the search returned titles only; the Spring Cloud Contract and Pact pages were not fetched) | Choices stand as engineering judgement, marked UNSOURCED: polyrepo with one source of truth, no submodules or subtrees because digests make local edits visible, contract tests in both repos |
+| Monorepo vs polyrepo | monorepo.tools (published by Nx, so it favours monorepos): in a monorepo a breaking change and every consumer fix land in one PR and no versioned packages are needed; in a polyrepo sharing code means "package publishing, and version management" and consumers must reconcile versions, but isolation buys autonomy ([monorepo.tools](https://monorepo.tools/)) | Polyrepo on purpose: instances have different owners, licences and secrets. The cost the page names (version management, sequenced fixes) is paid by the lock, the upgrade PR and the contribute bot |
+| Submodule | Pro Git: the superproject records one commit per submodule (mode `160000`); a detached HEAD can lose submodule changes; pushing the superproject without the submodule commits breaks everyone's checkout; diverged pointers do not merge automatically ([Pro Git: Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)) | Not used. Those failure modes are what the per-file digest and the "local edits are never overwritten" rule avoid. Git subtree was not fetched, so the claim that it hides local edits stays UNSOURCED |
+| Consumer-driven contract tests | Pact: the consumer defines the contract, generated while running its own tests; only what a consumer uses is tested, so unused provider behaviour can change freely ([Pact docs](https://docs.pact.io/)). The page does not cover provider verification or `can-i-deploy` | `core-contract.json` lists what instances may rely on; `upstream check` is the consumer-side test run in every instance and in the core's CI against a fresh instance. Provider-side verification in the Pact sense is not implemented |
+| Cloudflare template flow | A Deploy to Cloudflare button clones the source repo into the user's own Git account and provisions resources; the page does not describe how template updates reach the copy ([Deploy buttons](https://developers.cloudflare.com/workers/platform/deploy-buttons/)) | Same gap as a GitHub template, so the lock and upgrade PR are needed for third parties who start from a button |
 
-Still unsourced and open: Cloudflare templates (for example the Deploy to Cloudflare button and `wrangler` templates) were not fetched; they matter for the third-party adoption path and are filed as a follow-up in the open items below.
+Still UNSOURCED: that git subtree hides local edits; Terraform version pinning (the structure page was silent).
 
 ## The two-way channel
 
@@ -56,14 +70,27 @@ python3 -m foundation upstream adopt --out ../my-repo --name "My Project" --slug
 
 Additive and idempotent: existing files are never overwritten (they are reported as conflicts), the lock is written, and the two workflows are added. A new idea with no repo uses the same command on an empty folder, or the seed interview (`seed/bootstrap`). A third party needs no change to the core.
 
-## QNFO cutover (ties to the account-transfer plan)
+## QNFO cutover (aligned with ultrastable/workers #103, merged 2026-11-11)
 
-1. The current QNFO workers are classified in `core-manifest/boundary.json`: `core` workers move into the Ultrastable core, `app` workers stay with QNFO as its domain content and plugins, `personal` never moves.
-2. Cloud move is `scripts/cf_account.py transfer` (inventory, copy, verify, cutover, rollback; nothing is deleted). The QNFO-side extraction PR (QNFO/qnfo-workers #103) is outside this session's repository scope and was not read; the stage list in `deploy/transfer/plan.json` is the only cutover plan checked here. Closing probe for the QNFO side: `python3 -m foundation upstream adopt --out <qnfo checkout> --name QNFO --slug qnfo` produces a PR whose `python3 -m foundation upstream check` passes, then `core` workers are removed from `qnfo-workers` in the same PR series.
-3. After that PR merges, development of anything in the `core` class happens only in `ultrastable/ultrastable`; QNFO receives it through the weekly upgrade PR, and its own fixes come back through the contribute bot.
+Two different moves share the word "cutover"; they must not be confused.
+
+| Move | What changes | Tool | Plan |
+|---|---|---|---|
+| A. QNFO workers repo to Ultrastable runtime code | The code in the QNFO workers repo is replaced by `ultrastable/workers` code; QNFO keeps an instance file and its 12 app and 8 personal workers | `tools/instance_config.mjs`, `tools/parity_smoke.mjs` in `ultrastable/workers` | `docs/cutover/PLAN.md` stages 0 to 8 |
+| B. Ultrastable's own assets between Cloudflare accounts | `ultrastable-*` workers and D1 move from the QNFO account to the Ultrastable account | `scripts/cf_account.py transfer` here | `deploy/transfer/plan.json` stages 1 to 5 |
+
+How the core/instance model sits on move A:
+
+1. **Stage 1, config extraction** produces QNFO's `instance.runtime.json` (private, in the QNFO repo, never in the core: the workers repo's `no-qnfo` guard stays green). `upstream check` now validates it with the same rules as the workers validator. Open gap X-1: real values need QNFO repo access.
+2. **Stages 2 to 6** (shadow deploy, data bridge, unit-by-unit traffic move, scheduler handover, shim retirement) are runtime work in `ultrastable/workers`; the parity contract (`docs/cutover/parity-contract.json`) is the gate. Shims S-1 to S-7 live in the QNFO overlay, which is exactly the instance's `plugins/` and `domain/`.
+3. **Stage 7, replace** becomes `python3 -m foundation upstream adopt --out <QNFO checkout> --name QNFO --slug qnfo` plus a lock with `runtime.ref` set to a `ultrastable/workers` tag. Gap X-3 stands: the PR is opened by the QNFO fleet's own lane, not from here.
+4. From then on, core changes happen in `ultrastable/ultrastable` and `ultrastable/workers` only; QNFO receives them through the weekly upgrade PR and sends fixes back through the contribute bot. `core-manifest/boundary.json` is superseded by `extraction/boundary.json` in the workers repo for the worker classification.
+
+Move B is independent of A and continues on its own stages; the Cloudflare reconnect it needs is on `NEEDS-YOU.md`.
 
 ## Open items (each has a closing probe)
 
-- Apply the adopt command to QNFO (blocked by repository scope; owner: cutover thread; probe: `instances/qnfo/README.md`).
-- Source the UNSOURCED rows above and the Cloudflare template flow (probe: no `UNSOURCED` string in this file).
+- Apply the adopt command to QNFO at workers cutover stage 7 (gap X-3; owner: QNFO fleet lane; probe: `python3 -m foundation upstream check --instance <qnfo checkout>` exits 0).
+- Add `runtime.ref` tagging to `ultrastable/workers` releases (probe: a tag exists and the lock names it).
+- Source the two remaining UNSOURCED claims above (probe: no `UNSOURCED` string in this file).
 - Core releases are the `version` in `core-contract.json`; tagging a GitHub release on merge is a plus (probe: `git tag` lists the version).

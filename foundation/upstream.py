@@ -58,6 +58,14 @@ def build_contract(core: Path = REPO, version: str | None = None) -> dict:
         "owned_by_instance": OWNED,
         "required_instance_files": ["instance.json", LOCK, "docs/PROJECT-MEMORY.md", "AGENTS.md"],
         "compat": "same major version; a major bump ships a migration note in docs/architecture/core-and-instances.md",
+        "runtime_core": cur.get("runtime_core", {
+            "repo": "ultrastable/workers",
+            "what": "runtime code (core/, adapters/) that replaces the QNFO workers; pinned per instance by git tag in ultrastable.lock.json under runtime.ref",
+            "instance_file": "instance.runtime.json",
+            "instance_file_validator": "tools/instance_config.mjs (--strict rejects placeholders)",
+            "cutover_plan": "docs/cutover/PLAN.md",
+            "parity_contract": "docs/cutover/parity-contract.json",
+        }),
         "forbidden_in_kernel": cur.get("forbidden_in_kernel", ["qnfo", "q08.org", "qnfo-workers"]),
         "leak_allowlist": cur.get("leak_allowlist", {}),
         "digests": kernel_files(core),
@@ -92,6 +100,26 @@ def leaks(core: Path = REPO) -> list[str]:
         for term in c["forbidden_in_kernel"]:
             if term in t and rel not in allow:
                 bad.append(f"{c['kernel_root']}/{rel}: contains instance-specific term '{term}'")
+    return bad
+
+
+RUNTIME_REQUIRED = ["slug", "account_id", "worker_name", "d1_database", "routes", "owner_contact", "repository", "secrets"]
+BINDING = re.compile(r"^[A-Z][A-Z0-9_]{2,63}$")
+PLACEHOLDER = re.compile(r"REPLACE|\.invalid\b|^owner/repo$")
+
+
+def runtime_check(cfg: dict, strict: bool = False) -> list[str]:
+    """Python port of ultrastable/workers tools/instance_config.mjs validateInstance, so one contract covers both code homes."""
+    if not isinstance(cfg, dict):
+        return ["instance.runtime.json is not an object"]
+    bad = [f"missing {k}" for k in RUNTIME_REQUIRED if cfg.get(k) in (None, "")]
+    if isinstance(cfg.get("routes"), list) and len(cfg["routes"]) < 2:
+        bad.append("no single route: routes needs a second entry")
+    for name, b in (cfg.get("secrets") or {}).items():
+        if not BINDING.match(str(b)):
+            bad.append(f"secret {name} must be a binding name (UPPER_SNAKE), never a value")
+    if strict:
+        bad += [f"placeholder value in {k}" for k, v in cfg.items() if PLACEHOLDER.search(v if isinstance(v, str) else json.dumps(v))]
     return bad
 
 
@@ -159,6 +187,7 @@ def sync(core: Path, inst: Path, apply: bool = False, force_adopt: bool = False)
            "removed": sorted(removed), "conflicts": sorted(conflicts), "applied": apply}
     if apply:
         (inst / LOCK).write_text(json.dumps({"lock": 1, "core": {"repo": c["repo"], "version": c["version"]},
+                                             "runtime": lock.get("runtime") or {"repo": c.get("runtime_core", {}).get("repo", ""), "ref": None},
                                              "synced_at": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                                              "digests": dict(sorted(new_digests.items()))}, indent=1) + "\n")
         (inst / ".ultrastable").mkdir(exist_ok=True)
@@ -185,6 +214,12 @@ def check(core: Path, inst: Path) -> list[str]:
             bad += [f"instance.json: {p}" for p in mf.validate(json.loads((inst / "instance.json").read_text()))]
         except json.JSONDecodeError as e:
             bad.append(f"instance.json: {e}")
+    rp = inst / c.get("runtime_core", {}).get("instance_file", "instance.runtime.json")
+    if rp.exists():
+        try:
+            bad += [f"{rp.name}: {p}" for p in runtime_check(json.loads(rp.read_text()))]
+        except json.JSONDecodeError as e:
+            bad.append(f"{rp.name}: {e}")
     d = drift(core, inst)
     bad += [f"kernel file missing: {m}" for m in d["missing"]]
     for rel in c["kernel_paths"]:

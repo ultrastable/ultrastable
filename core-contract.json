@@ -33,6 +33,14 @@
   "AGENTS.md"
  ],
  "compat": "same major version; a major bump ships a migration note in docs/architecture/core-and-instances.md",
+ "runtime_core": {
+  "repo": "ultrastable/workers",
+  "what": "runtime code (core/, adapters/) that replaces the QNFO workers; pinned per instance by git tag in ultrastable.lock.json under runtime.ref",
+  "instance_file": "instance.runtime.json",
+  "instance_file_validator": "tools/instance_config.mjs (--strict rejects placeholders)",
+  "cutover_plan": "docs/cutover/PLAN.md",
+  "parity_contract": "docs/cutover/parity-contract.json"
+ },
  "forbidden_in_kernel": [
   "qnfo",
   "q08.org",
