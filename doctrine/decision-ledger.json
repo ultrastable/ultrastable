@@ -320,6 +320,14 @@
    "title": "transparency publish reported green while D1 refused the snapshot",
    "body": "The publish step printed published false and exited 0 (a swallowed error), and D1 rejects a single 120 KB statement. Snapshot now stored in 50 KB parts and --publish exits 1 when not published; /api/live generated time is the probe.",
    "probe": "grep:foundation/transparency.py::return 1"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-failed-every-run-on-a-roadmap-item-with-no-runnable",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "executor failed every run on a roadmap item with no runnable probe",
+   "body": "PORT-EXEC-1 had a prose done check, so the pins test failed in the executor's pre-PR checks and Q-10 never reached a PR. Probe is now file:ops/port-evidence/gcp-verify.json (the recorded verify run of the gcp adapter).",
+   "probe": "grep:docs/issues/PORT-EXEC-1.json::gcp-verify"
   }
  ]
 }
