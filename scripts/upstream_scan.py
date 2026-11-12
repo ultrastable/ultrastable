@@ -22,7 +22,15 @@ def main() -> int:
         dr = upstream.drift(core, Path(d)); dr.update(instance=m["slug"], repo=repo); rows.append(dr)
         if dr["status"] != "in-sync":
             subprocess.run(["gh", "issue", "create", "--title", f"Instance {m['slug']} diverged from core {dr.get('core')}", "--body", json.dumps(dr, indent=1)], check=False)
-    print(json.dumps(rows, indent=1))
+    # Dependencies an instance lane owes (recorded, never silently dropped): each has an owner, a trigger and a closing probe.
+    deps = []
+    for f in sorted(glob.glob("instances/*/dependencies.json")):
+        for d in json.load(open(f)).get("dependencies", []):
+            deps.append({**d, "instance": json.load(open(f))["instance"], "status": "open"})
+    for d in deps:
+        if not all(d.get(k) for k in ("owner", "trigger", "probe")):
+            rows.append({"instance": d["instance"], "status": "invalid-dependency", "detail": d["id"] + " lacks owner, trigger or probe"})
+    print(json.dumps({"instances": rows, "dependencies": deps}, indent=1))
     return 0
 
 if __name__ == "__main__":
