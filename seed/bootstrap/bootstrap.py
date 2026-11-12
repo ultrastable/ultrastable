@@ -5,6 +5,7 @@ Stages (the AIOS boot chain, moved from a laptop to a server):
 
   read      IDEA.md + ultrastable.json + autonomy/policy.json   (AIOS: GRUB -> kernel)
   qualify   the system test (doctrine/VISION.md): not a fit means no roles, no repos, nothing provisioned
+  instrument objectives -> metrics -> probes: what the agents work toward and how the clock proves it is turning (OBJECTIVES-1)
   detect    which connectors have credentials, which tools exist (AIOS: RAM, CPU, disk)
   select    model tier from budget                             (AIOS: model by RAM)
   plan      charter, role instances, kit backlog, gate cards   (AIOS: partition plan)
@@ -177,6 +178,43 @@ class Boot:
             "nothing is staffed or provisioned", "IDEA.md '# System test' section", "boot-log.json stage qualify ok"))
         return "ok", "not a fit: missing " + "; ".join(missing) + ". No roles hired, nothing provisioned."
 
+    # Universal liveness metrics: every system, whatever it does, must prove its own clock is running and its loops are closing.
+    LIVENESS = (
+        ("M-tick-heartbeat", "ticks completed in the last hour", "tick_runs_completed_1h", ">=", 5, 1.5,
+         "operations", "The clock is not turning. Check the Worker cron, the D1 binding and the last tick_runs.errors."),
+        ("M-acting", "dispatches in the last 24 hours", "dispatches_24h", ">=", 1, 6,
+         "operations", "Ticks run but nothing is handed to a role. Check ready items, role rows and the executor."),
+        ("M-closing", "items finished in the last 7 days", "items_done_7d", ">=", 1, 48,
+         "portfolio-manager", "Work starts but nothing closes. Find the stuck stage (review, merge, verify) and fix it."),
+        ("M-verified", "independently verified outcomes in the last 7 days", "verified_outcomes_7d", ">=", 1, 48,
+         "reviewer", "Nothing was verified by a second path. Check that the reviewer role is dispatched and records outcomes."),
+        ("M-no-drops", "silent drops in the last 7 days", "silent_drops_7d", "<=", 0, 0,
+         "portfolio-manager", "An item left the active set with no disposition. Find it and give it one."),
+        ("M-instrumented", "objectives without a probe-backed target metric", "objectives_without_probe", "<=", 0, 1,
+         "product-manager", "Ask what the owner would check to know this objective is being met, then insert a target metric with a builtin, sql or http probe."),
+    )
+
+    def instrument(self):
+        """OBJECTIVES-1: objectives and metrics are the setup that differs for every system; the liveness set is the same for all.
+        The metric the owner declared in IDEA.md '# System test' is recorded as 'declared': a breach until a probe exists for it."""
+        have = {}
+        for bl in self.idea["sections"].get("system test", {}).get("bullets", []):
+            k, _, v = bl.partition(":")
+            have[k.strip().lower()] = v.strip()
+        self.objectives, self.metrics = [], []
+        for i, o in enumerate(self.outcomes, 1):
+            self.objectives.append({"id": f"OBJ-{i}", "statement": o, "owner_role": f"product-manager-{i}"})
+        declared = have.get("measure", "")
+        for ob in self.objectives:
+            if declared:
+                self.metrics.append({"id": f"M-{ob['id']}-declared", "objective_id": ob["id"], "name": f"{ob['statement']}: {declared}",
+                    "kind": "target", "source": "declared", "spec": declared, "op": ">=", "threshold": 0, "grace_hours": 0,
+                    "owner_role": ob["owner_role"], "remedy": "Declared by the owner; the metric exists only once a probe reads it."})
+        for mid, name, spec, op, thr, grace, owner, remedy in self.LIVENESS:
+            self.metrics.append({"id": mid, "objective_id": None, "name": name, "kind": "liveness", "source": "builtin", "spec": spec,
+                "op": op, "threshold": thr, "grace_hours": grace, "owner_role": owner, "remedy": remedy})
+        return "ok", f"{len(self.objectives)} objective(s), {len(self.metrics)} metric(s) ({len(self.LIVENESS)} liveness, the rest declared and awaiting probes)"
+
     def detect(self):
         found, missing = [], []
         for name, c in self.config["connectors"].items():
@@ -253,6 +291,10 @@ class Boot:
              "wrangler deployments list shows the Worker; D1 has roles rows", "GET /health returns JSON"),
             ("KIT-3", "Heartbeat observed: six complete ticks in one hour", "operations", "KIT-2",
              "tick_runs_completed_1h >= 6", "GET /health ok=true"),
+            ("KIT-5", "Every objective has a probe-backed target metric (M-instrumented healthy)", "product-manager", "KIT-3",
+             "metrics_in_breach excludes M-instrumented and objectives_without_probe = 0", "metric:M-instrumented"),
+            ("KIT-6", "Clock proof: heartbeat, acting, closing and verified liveness metrics all healthy", "operations", "KIT-3",
+             "M-tick-heartbeat, M-acting, M-closing, M-verified read healthy", "metric:M-closing"),
             ("KIT-4", "Reports reach the owner's channel in four lines", "operations", "KIT-3",
              "a tick report is visible in the channel", "channel shows last tick id"),
             ("KIT-5", "First plus accepted into the reserved share", "product-manager", "KIT-3",
@@ -298,6 +340,7 @@ class Boot:
         (self.out / "roles.json").write_text(json.dumps(self.roles, indent=2) + "\n")
         (self.out / "backlog.json").write_text(json.dumps(self.items, indent=2) + "\n")
         (self.out / "gate-cards.json").write_text(json.dumps(self.state["gate_cards"], indent=2) + "\n")
+        (self.out / "objectives.json").write_text(json.dumps({"objectives": getattr(self, "objectives", []), "metrics": getattr(self, "metrics", [])}, indent=2) + "\n")
         (self.out / "seed.sql").write_text(self.seed_sql())
         values = {**self.config["runtime"], "slug": self.slug}
         values = {k: fill(v, {"slug": self.slug}) if isinstance(v, str) else v for k, v in values.items()}
@@ -335,6 +378,13 @@ class Boot:
         for c in self.state["gate_cards"]:
             lines.append("INSERT OR IGNORE INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe) VALUES "
                          f"({', '.join(sql_str(c[k]) for k in ('id', 'what', 'why_gated', 'default_in_effect', 'prepared_by_fleet', 'closing_probe'))});")
+        for ob in getattr(self, "objectives", []):
+            lines.append("INSERT OR IGNORE INTO objectives (id, statement, owner_role) VALUES "
+                         f"({sql_str(ob['id'])}, {sql_str(ob['statement'])}, {sql_str(ob['owner_role'])});")
+        for m in getattr(self, "metrics", []):
+            lines.append("INSERT OR IGNORE INTO metrics (id, objective_id, name, kind, source, spec, op, threshold, grace_hours, owner_role, remedy) VALUES "
+                         f"({sql_str(m['id'])}, {sql_str(m['objective_id'])}, {sql_str(m['name'])}, {sql_str(m['kind'])}, {sql_str(m['source'])}, "
+                         f"{sql_str(m['spec'])}, {sql_str(m['op'])}, {m['threshold']}, {m['grace_hours']}, {sql_str(m['owner_role'])}, {sql_str(m['remedy'])});")
         base = self.policy["trust"]["baseline"]
         for sname, surface in self.policy["surfaces"].items():
             for aname in surface["actions"]:
@@ -515,7 +565,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     root = a.root.resolve()
     boot = Boot(root, (a.out or root / "org").resolve(), apply=a.apply)
-    for name in ("read", "qualify", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start"):
+    for name in ("read", "qualify", "instrument", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start"):
         st = boot.guard(name, getattr(boot, name))
         if name == "read" and st == "blocked" and not hasattr(boot, "idea"):
             break  # nothing to plan from; the report says why

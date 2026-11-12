@@ -39,6 +39,21 @@ need a site builder or a chat assistant. Starting a portfolio manager, project m
 organization would exceed the value of the thing. When an idea fails the system test, the right output is a plain "this is not a fit, here is what
 to use instead", never a smaller staffing of the same machinery.
 
+## Objectives, metrics and probes: the meta-system (OBJECTIVES-1)
+
+What the agents work toward, and how anyone can tell, differs for every system, so it is set up at bootstrap, not assumed. Same pattern the
+QNFO fleet runs on (metric registry, trigger state, breach files its own remedy):
+- Stage `instrument` writes `org/objectives.json` and seeds the `objectives` and `metrics` tables. One objective per first outcome. The owner's
+  declared measure is recorded as a `declared` metric, which is a breach until a probe (builtin, sql or http) can read it.
+- Every system gets the same liveness metrics, so "is the clock turning and are the loops closing" is a probe from minute one: tick heartbeat,
+  acting (dispatches), closing (items done), verified (independent outcomes), no silent drops, and instrumented (every objective has a
+  probe-backed target). Each has a grace period, then a silent clock breaches.
+- The tick step `measure` reads every metric each cycle. A breach files `BREACH-<metric>` with an owner, done check and closing probe, and
+  closes it when the probe passes. Product managers originate new target metrics and guards for their objective; that is how a bare skeleton
+  gets improved without the owner knowing what to ask for.
+- Kit items KIT-5 (instrumented) and KIT-6 (clock proof) are the bootstrap's own closing probes. Code: `seed/worker/migrations/0004_objectives.sql`,
+  `seed/worker/src/tick.js`, `seed/bootstrap/bootstrap.py`, tests `seed/worker/test/measure.test.js`, `tests/test_vision.py`.
+
 ## Proportion rule
 
 Staffing follows the system, not the other way around. Roles, projects and managers are created only for outcomes that pass the system test.

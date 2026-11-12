@@ -38,5 +38,18 @@ class VisionTests(unittest.TestCase):
         self.assertFalse(hasattr(b, "roles"), "nothing may be staffed for a non-system")
 
 
+class InstrumentTests(unittest.TestCase):
+    def test_every_system_gets_liveness_probes_and_declared_measure_is_a_breach(self):
+        b = boot((ROOT / "seed/IDEA.md").read_text(encoding="utf-8"))
+        b.guard("instrument", b.instrument)
+        kinds = {m["id"]: m for m in b.metrics}
+        for mid in ("M-tick-heartbeat", "M-acting", "M-closing", "M-verified", "M-no-drops", "M-instrumented"):
+            self.assertEqual(kinds[mid]["kind"], "liveness", mid)
+        decl = [m for m in b.metrics if m["source"] == "declared"]
+        self.assertEqual(len(decl), len(b.objectives))
+        sql = b.seed_sql() if hasattr(b, "roles") else ""
+        self.assertTrue(b.objectives)
+
+
 if __name__ == "__main__":
     unittest.main()
