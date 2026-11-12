@@ -87,7 +87,7 @@ export function thread(o) {
     + "<div class=\"th-log\" id=\"th-log\" role=\"log\" aria-live=\"polite\" aria-label=\"Conversation\"></div>"
     + "<div class=\"th-dock\"><form class=\"th-cmp\" id=\"th-form\" method=\"post\" action=\"/api/idea\">"
     + "<textarea id=\"th-in\" name=\"idea\" rows=\"1\" maxlength=\"1500\" required autocomplete=\"off\" enterkeyhint=\"send\" aria-label=\"Message Ultrastable\">" + esc(o.prefill || "") + "</textarea>"
-    + "<span class=\"th-ph\" id=\"th-ph\" aria-hidden=\"true\">" + (o.prefill ? "" : "Describe your idea…") + "</span>"
+    + "<span class=\"th-ph\" id=\"th-ph\" aria-hidden=\"true\">" + (o.prefill ? "" : "Describe your system…") + "</span>"
     + "<button type=\"button\" class=\"th-rb\" id=\"th-mic\" aria-label=\"Speak\" title=\"Speak\" hidden>" + MIC + "</button>"
     + "<button type=\"submit\" class=\"th-rb go\" id=\"th-go\" aria-label=\"Send\" title=\"Send\">" + GO + "</button></form>"
     + "<p class=\"th-hint\" id=\"th-hint\">This is for ongoing systems that need setup and commitment, not one-off pages. <a href=\"/engineers\">I write code: skip ahead</a></p></div>"
@@ -100,8 +100,8 @@ export function thread(o) {
 
 // The interview bank: either/or questions; words in what was said can answer one up front (shown, and tappable to change).
 const QS = [
-  { id: "kind", q: "Is it something people open and use, or something that quietly runs by itself?", o: [["A", "People use it", "an app or website people use"], ["B", "Runs by itself", "an automation that runs by itself"]], k: { A: "\\b(app|site|website|page|portal|store|shop|game|tool|menu|portfolio|form|list|board|tracker|calculator|quiz|planner)\\b", B: "\\b(automat|bot|schedul|remind|alert|monitor|sync|pipeline)\\w*" } },
-  { id: "who", q: "Is it just for you, or for other people too?", o: [["A", "Just me", "for personal use"], ["B", "Other people", "for other people, such as customers or a community"]], k: { A: "\\b(my own|for me|personal|myself)\\b", B: "\\b(customers?|clients?|members?|neighbou?rs?|community|users?|everyone|people|team|guests?|club|class|business|street|school)\\b" } },
+  { id: "kind", q: "Is it something people open and use, or a system that runs and corrects itself?", o: [["A", "People use it", "an app or website people use"], ["B", "Runs by itself", "an automation that runs by itself"]], k: { A: "\\b(app|site|website|page|portal|store|shop|game|tool|menu|portfolio|form|list|board|tracker|calculator|quiz|planner)\\b", B: "\\b(automat|bot|schedul|remind|alert|monitor|sync|pipeline)\\w*" } },
+  { id: "who", q: "Is it for you alone, or for a team or organization?", o: [["A", "Just me", "for personal use"], ["B", "Other people", "for other people, such as customers or a community"]], k: { A: "\\b(my own|for me|personal|myself)\\b", B: "\\b(customers?|clients?|members?|neighbou?rs?|community|users?|everyone|people|team|guests?|club|class|business|street|school)\\b" } },
   { id: "money", q: "Should it earn money?", yn: 1, o: [["Y", "Yes", "it should earn money"], ["N", "No", "it does not need to earn money"]], k: { Y: "\\b(sell|sells|earn|money|revenue|pay|charge|subscription|business|profit|ordering|order|prices?|invoice|booking)\\b" } },
   { id: "depth", q: "Quick and simple first, or thorough and polished?", o: [["A", "Quick first", "a quick, simple first version"], ["B", "Polished", "a thorough, polished version"]], k: { A: "\\b(quick|simple|fast|prototype|rough)\\b", B: "\\b(polish|thorough|complete|professional|full)\\b" } }
 ];
@@ -129,7 +129,7 @@ function client(C) {
   // Rotating placeholder: example ideas fade in and out while the box is empty.
   var phs = shuffle(C.pool), phi = 0;
   function nextPh() { if (inp.value || S.phase === "done" || S.phase === "building") return; ph.classList.add("out"); setTimeout(function () { if (inp.value) return; ph.textContent = (S.phase === "idle" ? "Try: " : "") + (S.phase === "idle" ? phs[phi++ % phs.length].toLowerCase() + "…" : "Type an answer, or add more detail…"); ph.classList.remove("out"); }, reduce ? 0 : 350); }
-  if (!C.auto) { ph.textContent = "Describe your idea…"; setInterval(nextPh, 3800); }
+  if (!C.auto) { ph.textContent = "Describe your system…"; setInterval(nextPh, 3800); }
 
   // ---------- voice ----------
   function speak(t, done) { if (!voice || !window.speechSynthesis) { if (done) done(); return; } try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(t); u.onend = function () { if (done) done(); }; u.onerror = u.onend; speechSynthesis.speak(u); } catch (e) { if (done) done(); } }
