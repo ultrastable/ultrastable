@@ -720,7 +720,9 @@
    "credentials": [
     "CLOUDFLARE_API_TOKEN"
    ],
-   "staged_default": "deploy-site.yml tries CLOUDFLARE_API_TOKEN, then the Cloudflare MCP and cf CLI surfaces; with none live it builds and probes the site artifact and records dry-run"
+   "staged_default": "deploy-site.yml tries CLOUDFLARE_API_TOKEN, then the Cloudflare MCP and cf CLI surfaces; with none live it builds and probes the site artifact and records dry-run",
+   "identity_bound": "credential",
+   "default_in_effect": "the site keeps serving from the current Cloudflare account; deploys run there"
   },
   {
    "id": "org-profile",
@@ -760,7 +762,9 @@
    "credentials": [
     "ORG_ADMIN_TOKEN"
    ],
-   "staged_default": "org-manage.yml tries ORG_ADMIN_TOKEN, then GITHUB_TOKEN, then the Claude session route; with none live the settings file is the staged default and the weekly probe records drift"
+   "staged_default": "org-manage.yml tries ORG_ADMIN_TOKEN, then GITHUB_TOKEN, then the Claude session route; with none live the settings file is the staged default and the weekly probe records drift",
+   "identity_bound": "credential",
+   "default_in_effect": "milestones and tracking issues stand in for Projects boards"
   },
   {
    "id": "funding-verify",
@@ -836,7 +840,7 @@
   {
    "id": "outreach-send",
    "kind": "outreach",
-   "summary": "Send an approved packet by the registered route.",
+   "summary": "Send a guard-clean packet by the registered route.",
    "trigger": "automatic: each outreach run when a target is queued",
    "owner": "outreach-coordinator",
    "closes_by": "system",
@@ -866,7 +870,9 @@
    "credentials": [
     "OUTREACH_SEND_TOKEN"
    ],
-   "staged_default": "the registered sender is tried; without it the packet stays ready in outreach/ and the probe re-attempts each run"
+   "staged_default": "the registered sender is tried; without it the packet stays ready in outreach/ and the probe re-attempts each run",
+   "identity_bound": "legal_signature",
+   "default_in_effect": "packets stay unsent; registry pull requests and feeds carry the work"
   },
   {
    "id": "social-post",
@@ -905,7 +911,9 @@
     "BLUESKY_APP_PASSWORD",
     "MASTODON_TOKEN"
    ],
-   "staged_default": "direct channel APIs are tried; without a credential the post is written to the calendar as dry-run and re-attempted next run"
+   "staged_default": "direct channel APIs are tried; without a credential the post is written to the calendar as dry-run and re-attempted next run",
+   "identity_bound": "legal_signature",
+   "default_in_effect": "posting stays dry-run; the repository and feeds carry the work"
   },
   {
    "id": "plussing",
@@ -1568,6 +1576,38 @@
    "staged_default": "with no org-wide token the fleet runs on GITHUB_TOKEN for this repository and records the failed surfaces; the scheduled Claude session surface takes the rest",
    "area": "managers",
    "launch": null
+  },
+  {
+   "id": "orphan-artifacts",
+   "kind": "governance",
+   "summary": "ORPHANS-1: every artifact has a consuming loop and no loop waits on a person; orphans and waits are measured each pass and drained to zero.",
+   "trigger": "every PR (checks.yml), every loop pass (launch), daily issues sweep (issues.yml)",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "python3 -m foundation orphans --metrics reports orphan_artifacts 0 and human_wait_states 0",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation orphans --check in checks.yml",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "python3 -m foundation orphans --metrics on any machine",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:foundation/orphans.py::def check",
+   "writeback": [
+    "doctrine/orphans-baseline.json"
+   ],
+   "system_path": [
+    "foundation/orphans.py",
+    "doctrine/orphans.json",
+    "doctrine/orphans-baseline.json"
+   ],
+   "area": "governance"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

@@ -6,18 +6,21 @@ from foundation import doctrine, writeback
 
 
 class Record(unittest.TestCase):
-    def test_record_lesson_and_decision_index_them(self):
+    def test_record_lesson_and_decision_are_ledger_rows_with_probes(self):
         r = copy_repo()
-        p = writeback.record(r, "lesson", "Probe before closing", "The migration was verified by a probe that passes on the live page.", session="session_abc", today="2026-12-01")
-        self.assertEqual(p, "docs/lessons/2026-12-01-probe-before-closing.md")
-        self.assertIn("Session: session_abc", (r / p).read_text())
-        self.assertIn("probe-before-closing.md", (r / "docs/lessons/README.md").read_text())
-        d = writeback.record(r, "decision", "Use the free path", "Chose the free path; revert by restoring the previous file, verified by the tests that pass.", today="2026-12-01")
-        self.assertTrue((r / d).is_file())
+        with self.assertRaises(ValueError):  # CLOSED-LOOP-1: no probe, no record
+            writeback.record(r, "lesson", "Probe before closing", "The migration was verified by a probe that passes on the live page.")
+        p = writeback.record(r, "lesson", "Probe before closing", "The migration was verified by a probe that passes on the live page.", session="session_abc", probe="file:foundation/writeback.py", today="2026-12-01")
+        self.assertEqual(p, "doctrine/decision-ledger.json (lesson-2026-12-01-probe-before-closing)")
+        rows = json.loads((r / writeback.LEDGER).read_text())["rows"]
+        self.assertEqual(rows[-1]["session"], "session_abc")
+        d = writeback.record(r, "decision", "Use the free path", "Chose the free path; revert by restoring the previous file, verified by the tests that pass.", probe="grep:foundation/writeback.py::LEDGER", today="2026-12-01")
+        self.assertIn("decision-2026-12-01-use-the-free-path", d)
+        self.assertFalse((r / "docs/decisions/2026-12-01-use-the-free-path.md").exists())
 
     def test_lesson_that_hands_work_back_is_refused(self):
         with self.assertRaises(ValueError) as c:
-            writeback.record(copy_repo(), "lesson", "x", "Let me know if you want the follow-up.")
+            writeback.record(copy_repo(), "lesson", "x", "Let me know if you want the follow-up.", probe="file:README.md")
         self.assertIn("conditional-offer", str(c.exception))
 
     def test_open_loop_needs_owner_trigger_and_probe(self):

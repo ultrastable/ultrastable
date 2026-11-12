@@ -1,0 +1,4 @@
+{
+ "_doc": "Shrink-only list of orphan artifacts present when CLOSED-LOOP-1 landed (2026-11-12). The executor loop drains it through the CLOSED-LOOP-1 issue; a new orphan fails CI.",
+ "orphans": []
+}

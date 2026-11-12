@@ -40,3 +40,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: bash scripts/metrics.sh
+      - name: CLOSED-LOOP-1 backlog (orphan artifacts and human-wait states to zero; the executor loop drains the issue)
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 -m foundation orphans --sync-issue "${{ github.repository }}"

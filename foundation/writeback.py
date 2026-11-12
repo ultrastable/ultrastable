@@ -2,7 +2,7 @@
 included) ends a session by writing its decisions, lessons, open loops and term changes here, and CI fails a change that has code but no
 write-back.
 
-  python3 -m foundation writeback record --kind lesson|decision|open-loop|term --title T --body B [--session ID] [--owner ROLE --trigger T --probe SPEC] [--term ID --source PATH]
+  python3 -m foundation writeback record --kind lesson|decision|open-loop|term --title T --body B --probe SPEC [--session ID] [--owner ROLE --trigger T] [--term ID --source PATH]
   python3 -m foundation writeback check [--base origin/main] [--head HEAD]   the range has a write-back, every session cites itself, no banned framing in commit messages
   python3 -m foundation writeback outputs DIR... [--ignore GLOB]           files in session output folders that are missing from the repository
 """
@@ -11,7 +11,9 @@ import datetime as dt, fnmatch, hashlib, json, re, subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-WB_PREFIXES = ("docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loop-registry.json", "docs/issues/OL-")
+LEDGER = "doctrine/decision-ledger.json"
+LEDGER_DOC = "CLOSED-LOOP-1 write-back: every lesson and decision as a row with a closing probe (file:<path> or grep:<path>::<regex>) that `python3 -m foundation orphans --check` executes on every PR and loop pass. Written by `python3 -m foundation writeback record --kind lesson|decision --probe SPEC`."
+WB_PREFIXES = (LEDGER, "doctrine/closed-loop", "doctrine/orphans", "docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loop-registry.json", "docs/issues/OL-")
 DOC_ONLY = re.compile(r"^(docs/|doctrine/|GLOSSARY\.md$|.*\.md$)")
 
 
@@ -28,15 +30,17 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
         found = kernel.lint(body, kernel.load(root))
         if found:
             raise ValueError("rewrite before recording (the report hands work back or lacks evidence): " + "; ".join(f"{f['recognition']}: {f['text']}" for f in found[:3]))
-        d = root / ("docs/lessons" if kind == "lesson" else "docs/decisions")
-        d.mkdir(parents=True, exist_ok=True)
-        f = d / f"{day}-{_slug(title)}.md"
-        head = [f"# {title.strip()}", "", f"Date: {day}", f"Kind: {kind}"] + ([f"Session: {session}"] if session else []) + ["", body.strip(), ""]
-        f.write_text("\n".join(head), encoding="utf-8")
-        idx = d / "README.md"
-        if idx.exists():
-            idx.write_text(idx.read_text(encoding="utf-8").rstrip("\n") + f"\n- {day}: [{title.strip()}]({f.name})\n", encoding="utf-8")
-        return f.relative_to(root).as_posix()
+        # CLOSED-LOOP-1: a lesson or decision is a ledger row with a closing probe that orphans --check executes on every PR and loop pass,
+        # never a Markdown page written for a reader.
+        if probe.split(":", 1)[0] not in ("file", "grep"):
+            raise ValueError("a lesson or decision needs --probe file:<path> or grep:<path>::<regex>: the code or policy that carries it (CLOSED-LOOP-1)")
+        led = root / LEDGER
+        rows = json.loads(led.read_text(encoding="utf-8")) if led.exists() else {"_doc": LEDGER_DOC, "rows": []}
+        rid = f"{kind}-{day}-{_slug(title)}"
+        rows["rows"] = [r for r in rows["rows"] if r["id"] != rid] + [{"id": rid, "kind": kind, "date": day, "title": title.strip(), "body": body.strip(), "probe": probe, **({"session": session} if session else {})}]
+        led.parent.mkdir(parents=True, exist_ok=True)
+        led.write_text(json.dumps(rows, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+        return f"{LEDGER} ({rid})"
     if kind == "open-loop":
         if not (owner and trigger and probe):
             raise ValueError("an open loop needs an owner role, a trigger and a closing probe")
