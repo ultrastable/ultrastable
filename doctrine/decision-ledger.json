@@ -464,6 +464,14 @@
    "title": "CLOCKWORK-2 and GROWTH-2: stages, catch-up, settlement, escalation; targets, experiments, knobs, filing",
    "body": "foundation/clockwork.py measures freshness of every pipeline stage against its own SLA, wakes a stale stage's workflow (bounded per day), settles every executor change under the name of its work item (an open change past the window is closed as expired and its item returns to the queue), and escalates by a stateless ladder: catch-up, mutate to the next item, p0 repair item. foundation/pm.py is the product manager loop: targets on a straight-line trajectory, experiments kept or replaced after a week, three bounded knobs reviewed and reverted when the metric is no better, growth items filed from an idea bank and repair items filed from stale stages. Parking now reads the shared evidence branch, since a run's checkout held only its own rows and a failing item was retried forever. New workflow product-manager.yml; tests pass.",
    "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "lesson-2026-11-12-heal-pass-flagged-the-heartbeat-missing-because-it-ran-witho",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "heal pass flagged the heartbeat missing because it ran without the Cloudflare token",
+   "body": "The first scheduled heal pass could not read the tick clock, so the heartbeat stage showed missing and a catch-up was planned for a clock that was fine. An unreadable clock is now reported as unmeasured and never escalated, and both workflows pass the Cloudflare token to the heal step; tests pass.",
+   "probe": "grep:foundation/clockwork.py::unmeasured"
   }
  ]
 }
