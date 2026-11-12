@@ -1,0 +1,11 @@
+{
+  "id": "Q-GROW-second-tenant-deploying",
+  "title": "Q-GROW-second-tenant-deploying: A second tenant system with its own deploy loop proves the product beyond tenant 0.",
+  "body": "**Owner:** product-manager\n**Trigger:** every product-manager cycle\n**Done check:** grep:doctrine/growth.json::\"id\": \"second-tenant-deploying\"\n**Prediction:** tenant_systems_deploying_unattended >= 2 within 336 h\n**Status:** open\n\nGrowth experiment on target `systems-running` (tenant_systems_deploying_unattended target 3), knob `capability-set` in `doctrine/market.json`: which components are built next. the product is systems that ship code on their own. Ship the change, log the prediction, keep it if the metric moved and revert it if not.",
+  "labels": [
+    "role:product-manager",
+    "growth"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

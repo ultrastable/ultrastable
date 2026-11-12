@@ -432,6 +432,14 @@
    "title": "One system declaration: topology is the source, SYSTEM-1 data is generated, agent ladder sits on the code-agent registry",
    "body": "Two sessions had built the same things in parallel. doctrine/topology.json is now the one declaration (verified ids; states live or planned); doctrine/system.json is generated from it (topology --emit-system, stale check). foundation/agent_ladder.py no longer has its own model list: it adds escalation, a reviewer of another family with veto and a cost log on top of doctrine/code-agents.json and foundation/agents.py. Drift against the account now lists exactly the bindings still to be applied (Q-SYS-DEPLOY-ALL). Correction: system.json had mapped the org database to the ops database id.",
    "probe": "grep:foundation/topology.py::emit_system"
+  },
+  {
+   "id": "decision-2026-11-12-clockwork-and-growth-manager",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Clockwork and growth manager",
+   "body": "Rowan confirmed: per-stage clockwork (freshness, catch-up, settlement by name, escalation) and a growth product manager (targets, experiments, knobs, growth and repair items). Session: session_0156nqDrGFZaa8zQwcdGZNQU",
+   "probe": "grep:foundation/growth.py::def cycle"
   }
  ]
 }

@@ -39,6 +39,10 @@ jobs:
           LANE_APP_PRIVATE_KEY: ${{ secrets.LANE_APP_PRIVATE_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: bash scripts/lane.sh
+      - name: Clockwork and growth tick (CLOCKWORK-1, GROWTH-1)
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: bash scripts/clock_growth.sh
       - name: Completion sweep (daily sweep and manual only; COMPLETE-1)
         if: github.event_name != 'workflow_run'
         env:

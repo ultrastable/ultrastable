@@ -1,0 +1,11 @@
+{
+  "id": "Q-GROW-adaptive-follow-ups",
+  "title": "Q-GROW-adaptive-follow-ups: Follow-up questions chosen from the first answer keep people in the interview.",
+  "body": "**Owner:** product-manager\n**Trigger:** every product-manager cycle\n**Done check:** grep:doctrine/growth.json::\"id\": \"adaptive-follow-ups\"\n**Prediction:** interview_completion_rate >= 0.5 within 168 h\n**Status:** open\n\nGrowth experiment on target `interview-completion` (interview_completion_rate target 0.5), knob `interview-questions` in `site/interview.js`: question bank and order. an idea flow that people finish. Ship the change, log the prediction, keep it if the metric moved and revert it if not.",
+  "labels": [
+    "role:product-manager",
+    "growth"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

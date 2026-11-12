@@ -1,0 +1,11 @@
+{
+  "id": "Q-GROW-shorter-pilot-form",
+  "title": "Q-GROW-shorter-pilot-form: Fewer required fields raise the share of started applications that are sent.",
+  "body": "**Owner:** product-manager\n**Trigger:** every product-manager cycle\n**Done check:** grep:doctrine/growth.json::\"id\": \"shorter-pilot-form\"\n**Prediction:** pilot_applications_7d >= 5 within 168 h\n**Status:** open\n\nGrowth experiment on target `idea-to-pilot` (pilot_applications_7d target 5), knob `pilot-form` in `site/worker.js`: fields and length of the pilot application. pilot applications are the conversion the front door exists for. Ship the change, log the prediction, keep it if the metric moved and revert it if not.",
+  "labels": [
+    "role:product-manager",
+    "growth"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

@@ -2308,6 +2308,68 @@
       "workflows": [
         "deploy-system.yml"
       ]
+    },
+    {
+      "id": "clockwork",
+      "kind": "governance",
+      "summary": "CLOCKWORK-1: every stage of every loop declares cadence and evidence; freshness, missed ticks, drift, catch-up, settlement by name and escalation are computed from the loops' own logs.",
+      "trigger": "every PR (checks.yml) and the daily sweep",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "python3 -m foundation clockwork --check reports ok",
+      "paths": [
+        {
+          "id": "ci",
+          "how": "python3 -m foundation clockwork --check",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation clockwork --check from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/clockwork.py::def settle",
+      "writeback": [
+        "docs/issues"
+      ],
+      "system_path": [
+        "doctrine/clockwork.json",
+        "foundation/clockwork.py"
+      ],
+      "area": "governance"
+    },
+    {
+      "id": "growth-pm",
+      "kind": "governance",
+      "summary": "GROWTH-1: the product manager files growth experiments against targets and knobs, and the check fails on a fixes-only period or a growth share under the floor.",
+      "trigger": "every PR (checks.yml) and the daily sweep",
+      "owner": "product-manager",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "python3 -m foundation growth --check reports ok",
+      "paths": [
+        {
+          "id": "ci",
+          "how": "python3 -m foundation growth --check",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation growth --check from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/growth.py::def cycle",
+      "writeback": [
+        "docs/issues"
+      ],
+      "system_path": [
+        "doctrine/growth.json",
+        "foundation/growth.py"
+      ],
+      "area": "governance"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

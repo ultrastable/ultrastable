@@ -1,0 +1,62 @@
+{
+  "_doc": "CLOCKWORK-1 (owner, 2026-11-12): a stopped or inaccurate clock is not a working clock. Every stage of every loop declares its cadence, where it leaves evidence (a JSONL log with an `at` field) and how late it may be. foundation/clockwork.py reads the evidence, computes freshness, missed ticks and drift per stage, issues a catch-up for a stage that missed, settles a catch-up by the name of the stage it closes, and escalates a stage that stays missed. Consumers: foundation/clockwork.py, tests/foundation/test_clockwork.py, the lane's daily sweep.",
+  "escalation": [
+    {
+      "after_missed": 1,
+      "action": "catch-up",
+      "what": "run the stage's own command once now, off schedule"
+    },
+    {
+      "after_missed": 3,
+      "action": "item",
+      "what": "file docs/issues/Q-CLOCK-<stage>.json with the stage as its owner and the stage's probe as the closing probe"
+    },
+    {
+      "after_missed": 6,
+      "action": "reroute",
+      "what": "dispatch the stage's second path (a GitHub Actions run on the built-in token) and mark the first path failing"
+    }
+  ],
+  "stages": [
+    {
+      "id": "executor",
+      "loop": "executor",
+      "cadence_minutes": 60,
+      "evidence": "ops/executor-log.jsonl",
+      "max_late_minutes": 30,
+      "catch_up": "python3 -m foundation executor --run"
+    },
+    {
+      "id": "lane",
+      "loop": "merge-lane",
+      "cadence_minutes": 60,
+      "evidence": "ops/fleet-log.jsonl",
+      "max_late_minutes": 30,
+      "catch_up": "python3 -m foundation fleet --run"
+    },
+    {
+      "id": "deploy",
+      "loop": "running-system",
+      "cadence_minutes": 1440,
+      "evidence": "ops/deploys.jsonl",
+      "max_late_minutes": 360,
+      "catch_up": "node deploy/deploy-system.mjs"
+    },
+    {
+      "id": "improve",
+      "loop": "plussing",
+      "cadence_minutes": 1440,
+      "evidence": "ops/improvements.jsonl",
+      "max_late_minutes": 360,
+      "catch_up": "python3 -m foundation growth --cycle --apply"
+    },
+    {
+      "id": "clockwork",
+      "loop": "clockwork",
+      "cadence_minutes": 1440,
+      "evidence": "ops/clockwork.jsonl",
+      "max_late_minutes": 360,
+      "catch_up": "bash scripts/clock_growth.sh"
+    }
+  ]
+}
