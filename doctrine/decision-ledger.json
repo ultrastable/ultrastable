@@ -288,6 +288,14 @@
    "title": "TRANSPARENCY-1: everything about how Ultrastable runs is read-only public",
    "body": "Owner 2026-11-12: full transparency, everybody read-only; changes keep the e-mailed code. /live and /api/live serve a snapshot from foundation/transparency.py published to D1 each launch pass. Open: most registry loops have no recorded run; /owner is shadowed by the site worker.",
    "probe": "grep:site/live.js::read-only"
+  },
+  {
+   "id": "lesson-2026-11-12-deploy-site-mjs-bound-no-d1-so-api-live-and-site-analytics-h",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "deploy-site.mjs bound no D1, so /api/live and site analytics had no database",
+   "body": "The deploy script uploaded only ASSETS and AI bindings while site/wrangler.toml declares DB (ultrastable-ops). Fixed by binding d1 DB in deploy/deploy-site.mjs; /api/live is the probe.",
+   "probe": "grep:deploy/deploy-site.mjs::type: \"d1\""
   }
  ]
 }
