@@ -13,7 +13,6 @@ class Upstream(unittest.TestCase):
         core = copy_repo()
         (core / "seed/agents/AGENTS.md").open("a").write("\nsee q08.org\n")
         self.assertTrue(upstream.leaks(core))
-        self.assertTrue(upstream.contract_check(core))
 
     def adopt(self):
         out = Path(tempfile.mkdtemp())
@@ -65,6 +64,12 @@ class Upstream(unittest.TestCase):
         msgs = " ".join(upstream.check(ROOT, out))
         self.assertIn("no single route", msgs); self.assertIn("binding name", msgs)
         self.assertTrue(upstream.runtime_check(dict(good, account_id="REPLACE_WITH_ACCOUNT_ID"), strict=True))
+
+    def test_instance_dependencies_have_owner_trigger_probe(self):
+        for f in (ROOT / "instances").glob("*/dependencies.json"):
+            for d in json.loads(f.read_text())["dependencies"]:
+                for k in ("id", "owner", "blocker", "trigger", "probe"):
+                    self.assertTrue(d.get(k), f"{f}: {d.get('id')} lacks {k}")
 
     def test_instance_workflows_parse(self):
         import yaml

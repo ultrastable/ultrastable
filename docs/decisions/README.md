@@ -10,3 +10,5 @@ Write-back target for decisions: what was decided, why, the default in effect an
 - 2026-11-12: [No owner cards; one NEEDS-YOU page; key-free executor via Claude sessions](2026-11-12-no-owner-cards-one-needs-you-page-key-free-executor-via-clau.md)
 - 2026-11-12: [One core, many instances](2026-11-12-one-core-many-instances.md)
 - 2026-11-12: [Org repos: four-repo target, registry org/repos.json](2026-11-12-org-repos-four-repo-target-registry-org-repos-json.md)
+- 2026-11-12: [Release tags are the runtime pin; QNFO-lane items live in dependencies.json](2026-11-12-release-tags-are-the-runtime-pin-qnfo-lane-items-live-in-dep.md)
+- 2026-11-12: [CODEOWNERS human approval on workers protected paths is a control to replace](2026-11-12-codeowners-human-approval-on-workers-protected-paths-is-a-co.md)
