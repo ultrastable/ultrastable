@@ -152,7 +152,8 @@
   "public_presence": {
     "primary": "https://ultrastable.io/org",
     "route": "Cloudflare Worker site, deployed through the Cloudflare connector (docs/ops/SITE-DEPLOY.md), needs no person-supplied token",
-    "github_org_page": "staged at brand/public-profile/; goes live whenever .github becomes writable, never required"
+    "github_org_page": "staged at brand/public-profile/; goes live whenever .github becomes writable, never required",
+    "confidentiality": "ultrastable.io already serves generic pages. /org carries repository roles only (no repo links, no architecture, no QNFO or patent wording), enforced by site/site.test.mjs in checks. The patent track was dropped 2026-11-11, so there is no provisional-filed flag to wait on; the gate is the lint. A failing lint blocks the merge and therefore the deploy."
   },
   "surface_results_2026_11_12": {
     "github_mcp_on_.github": "refused: repository not configured for session",

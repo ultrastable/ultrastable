@@ -37,8 +37,15 @@ assert.match(pilot, /og:image" content="https:\/\/ultrastable\.io\/social-card\.
 assert.match(pilot, /twitter:card" content="summary_large_image/);
 
 // Generic public pages: no research framing, no prior-disclosure or patent-mechanism wording (docs/CONFIDENTIALITY.md).
-for (const p of ["/", "/product", "/team", "/faq", "/contact"]) {
+for (const p of ["/", "/product", "/team", "/org", "/faq", "/contact"]) {
   const h = await (await get("https://ultrastable.io" + p)).text();
   assert.doesNotMatch(h, /QNFO|patent|provisional|disclos|research/i, p + " stays generic");
 }
 console.log("ultrastable-site pages ok");
+
+// /org states repository roles only: no links to repositories, no architecture terms (org/repos.json public_presence.confidentiality).
+const orgHtml = await (await get("https://ultrastable.io/org")).text();
+const orgBody = orgHtml.slice(orgHtml.indexOf("<main"), orgHtml.indexOf('<div class="us-foot"'));
+assert.ok(orgBody.length > 200, "org body extracted");
+assert.doesNotMatch(orgBody, /github\.com|QNFO|patent|adapter\s+for|wrangler|D1|token/i, "/org stays at repo-role level");
+console.log("ultrastable-site org ok");
