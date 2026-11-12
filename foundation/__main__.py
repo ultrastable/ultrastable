@@ -11,6 +11,7 @@
   python3 -m foundation loops [--verify|--list]                           the loop registry and its closing verifier
   python3 -m foundation kernel [--check|--lint FILE...|--metrics FILE...] the doctrine kernel as code
   python3 -m foundation trust [--show|--event SURFACE ACTION EVENT|--tick] the trust ledger and ladder
+  python3 -m foundation executor [--apply] [--issue N]                    pick the top issue, change, check, open a PR
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
 """
 import argparse, datetime as dt, json, os, sys
@@ -30,6 +31,7 @@ def main(argv=None) -> int:
     lp = sub.add_parser("loops"); lp.add_argument("--verify", action="store_true"); lp.add_argument("--list", action="store_true")
     kn = sub.add_parser("kernel"); kn.add_argument("--check", action="store_true"); kn.add_argument("--lint", nargs="+"); kn.add_argument("--metrics", nargs="+")
     tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true")
+    ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo")
     wb = sub.add_parser("writeback"); ws = wb.add_subparsers(dest="wcmd", required=True)
     rc = ws.add_parser("record"); rc.add_argument("--kind", required=True); rc.add_argument("--title", required=True); rc.add_argument("--body", required=True)
     for opt in ("session", "owner", "trigger", "probe", "term", "source"):
@@ -42,6 +44,9 @@ def main(argv=None) -> int:
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
     l = sub.add_parser("launch"); l.add_argument("--commit", action="store_true"); l.add_argument("--push", action="store_true"); l.add_argument("--probe", action="store_true"); l.add_argument("--export-d1"); l.add_argument("--install"); l.add_argument("--skip-outreach", action="store_true"); l.add_argument("--failover", action="store_true")
     a = ap.parse_args(argv)
+    if a.cmd == "executor":
+        from . import executor
+        return executor.main(sys.argv[2:] if argv is None else argv[1:])
     if a.cmd == "launch":
         from . import launch
         if a.probe:

@@ -1,0 +1,33 @@
+name: cf-account
+# budget: ~1 min per run, manual dispatch only
+# trigger: manual workflow_dispatch (probe, then each transfer stage); no schedule
+# free-alternative: run `python3 scripts/cf_account.py <cmd>` locally or from a Claude session with CLOUDFLARE_API_TOKEN
+# Probes which Cloudflare accounts the bound token reaches and runs the staged transfer (deploy/transfer/plan.json) from the QNFO account to the Ultrastable account.
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "probe | transfer plan | transfer copy | transfer verify | transfer cutover | transfer rollback"
+        default: "probe"
+      apply:
+        description: "true to change anything (default dry-run)"
+        default: "false"
+permissions:
+  contents: write
+concurrency:
+  group: cf-account
+  cancel-in-progress: false
+jobs:
+  cf-account:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CMD: ${{ inputs.command }}
+          APPLY: ${{ inputs.apply }}
+        run: |
+          flag=""; [ "$APPLY" = "true" ] && flag="--apply"
+          python3 scripts/cf_account.py $CMD $flag

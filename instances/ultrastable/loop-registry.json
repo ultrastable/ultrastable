@@ -1309,6 +1309,43 @@
    "workflows": [
     "loop.yml"
    ]
+  },
+  {
+   "id": "agent-executor",
+   "kind": "staff",
+   "summary": "Pick the top open issue in driver order, claim it, change, check, open a PR; the merge lane merges on green.",
+   "trigger": "Cloudflare tick Worker dispatch (repository_dispatch), daily schedule, manual dispatch",
+   "owner": "staff",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "Cloudflare tick Worker dispatches .github/workflows/executor.yml (seed/worker/src/executor.js)",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "python3 -m foundation executor --apply from any agent session or local scheduler",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "file:foundation/executor.py",
+   "writeback": [
+    "docs/handoff",
+    "docs/PROJECT-MEMORY.md"
+   ],
+   "system_path": [
+    "foundation/executor.py",
+    "seed/worker/src/executor.js",
+    "scripts/executor_evidence.sh"
+   ],
+   "workflows": [
+    "executor.yml",
+    "cf-account.yml"
+   ],
+   "area": "managers"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
