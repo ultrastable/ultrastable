@@ -1608,6 +1608,171 @@
     "doctrine/orphans-baseline.json"
    ],
    "area": "governance"
+  },
+  {
+   "id": "role-research-publisher",
+   "kind": "manager",
+   "summary": "Research publisher: research as one more pipeline",
+   "trigger": "each tick of the research-publisher role (tick_every 6)",
+   "owner": "research-publisher",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command run by an agent session from the repository",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "file:agents/roles/research-publisher.md",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "agents/roles/research-publisher.md",
+    "seed/agents/roles/research-publisher.md",
+    "doctrine/team.json",
+    "foundation/team.py"
+   ]
+  },
+  {
+   "id": "role-marketing-manager",
+   "kind": "manager",
+   "summary": "Marketing manager: story, positioning, site copy, content calendar, search and social presence; what the world can find and how it reads",
+   "trigger": "each tick of the marketing-manager role (tick_every 6)",
+   "owner": "marketing-manager",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command run by an agent session from the repository",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "file:agents/roles/marketing-manager.md",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "agents/roles/marketing-manager.md",
+    "seed/agents/roles/marketing-manager.md",
+    "doctrine/team.json",
+    "foundation/team.py"
+   ]
+  },
+  {
+   "id": "role-legal-ip-manager",
+   "kind": "manager",
+   "summary": "Legal and ip manager: patent timeline, evidence log, prior art, licensing terms, notice and trademark checks, contract templates and NDA tracking",
+   "trigger": "each tick of the legal-ip-manager role (tick_every 12)",
+   "owner": "legal-ip-manager",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command run by an agent session from the repository",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "file:agents/roles/legal-ip-manager.md",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "agents/roles/legal-ip-manager.md",
+    "seed/agents/roles/legal-ip-manager.md",
+    "doctrine/team.json",
+    "foundation/team.py"
+   ]
+  },
+  {
+   "id": "role-customer-success",
+   "kind": "manager",
+   "summary": "Customer success: onboarding with the org kit, health of each instance, support intake and answers from the documented record, feedback routed to the product ma",
+   "trigger": "each tick of the customer-success role (tick_every 3)",
+   "owner": "customer-success",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command run by an agent session from the repository",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "file:agents/roles/customer-success.md",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "agents/roles/customer-success.md",
+    "seed/agents/roles/customer-success.md",
+    "doctrine/team.json",
+    "foundation/team.py"
+   ]
+  },
+  {
+   "id": "role-org-designer",
+   "kind": "manager",
+   "summary": "Org designer: which roles an organization needs",
+   "trigger": "each tick of the org-designer role (tick_every 12)",
+   "owner": "org-designer",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "the loop's own workflow or command",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command run by an agent session from the repository",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "file:agents/roles/org-designer.md",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "agents/roles/org-designer.md",
+    "seed/agents/roles/org-designer.md",
+    "doctrine/team.json",
+    "foundation/team.py"
+   ]
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

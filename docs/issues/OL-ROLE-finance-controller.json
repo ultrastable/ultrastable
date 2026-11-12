@@ -1,0 +1,13 @@
+{
+  "id": "OL-ROLE-finance-controller",
+  "title": "OL-ROLE-finance-controller: activate the finance controller role (phase 2)",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** phase 2 gate passes (python3 -m foundation team --gate)\n**Done check:** file:agents/roles/finance-controller.md\n**Status:** open\n\nActivate the finance controller role: python3 -m foundation team --apply writes the role files, the seed role and the loop entry once the gate is open. Metric: unified_cost_usd_30d.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop",
+    "team",
+    "phase:2"
+  ],
+  "milestone": "Later",
+  "workstream": "Virtual team"
+}

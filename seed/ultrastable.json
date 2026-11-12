@@ -65,6 +65,36 @@
       "count": 1,
       "instructions": "agents/roles/outreach-coordinator.md",
       "tick_every": 1
+    },
+    {
+      "id": "research-publisher",
+      "count": 1,
+      "instructions": "agents/roles/research-publisher.md",
+      "tick_every": 6
+    },
+    {
+      "id": "marketing-manager",
+      "count": 1,
+      "instructions": "agents/roles/marketing-manager.md",
+      "tick_every": 6
+    },
+    {
+      "id": "legal-ip-manager",
+      "count": 1,
+      "instructions": "agents/roles/legal-ip-manager.md",
+      "tick_every": 12
+    },
+    {
+      "id": "customer-success",
+      "count": 1,
+      "instructions": "agents/roles/customer-success.md",
+      "tick_every": 3
+    },
+    {
+      "id": "org-designer",
+      "count": 1,
+      "instructions": "agents/roles/org-designer.md",
+      "tick_every": 12
     }
   ],
   "model_ladder": {
