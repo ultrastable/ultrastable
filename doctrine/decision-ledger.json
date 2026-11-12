@@ -210,6 +210,14 @@
    "title": "Pilot model: bring-your-own-account first; hosted deferred; dashboard shows Ultrastable on itself",
    "body": "Owner worried that hosting customers on our Cloudflare creates data-protection, encryption and isolation burden and that a thin demo does not show the back end. Decision: pilots run in the customer's own account (no customer data on our infrastructure); revenue hypotheses (paid pilot then subscription for playbooks, dashboard and support) are data in doctrine/pilot-model.json with probes; /dashboard shows the real control plane computed from the repo with the live feed explicitly pending (Q-LOOP-live-clock). Revert: offer hosted only after the isolation and processor terms are built.",
    "probe": "file:doctrine/pilot-model.json"
+  },
+  {
+   "id": "decision-2026-11-12-pilot-is-an-application-program-layers-are-recursive-multi-t",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Pilot is an application program; layers are recursive; multi-tenant is a separate gated obligation",
+   "body": "Owner: sell the pilot as open applications for strong use cases and interesting demos of autonomous code loops and virtual agent managers; price set by what the market bears; multi-tenant is possible but a different data-protection obligation; the system is recursive (platform on its own infrastructure, customer systems on it, systems on those). Encoded: doctrine/pilot-model.json program, layers, multi_tenant_obligations; bootstrap records parent and level and adds M-parent-link; /pilot renders the program from data. Intake handler, first child link and multi-tenant controls are filed as Q-PILOT-application-intake, Q-LAYER-child-reporting, Q-GAP-multi-tenant-controls.",
+   "probe": "file:doctrine/pilot-model.json"
   }
  ]
 }

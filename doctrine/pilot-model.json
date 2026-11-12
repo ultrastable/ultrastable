@@ -5,12 +5,29 @@
  "why": "The pilot runs in the customer's own Cloudflare (or other cloud) account, so the customer's data and secrets never touch our infrastructure. That removes our data-protection, encryption and multi-tenant isolation burden during the pilot and answers the buyer's first question (where does my data live) with 'in your account'. Ultrastable's own infrastructure only ever holds Ultrastable's own data, which is what the public dashboard shows.",
  "revert": "Offer the hosted option only after a pilot asks for it and the isolation, encryption and data-processing terms in the hosted option are built and reviewed; the model below keeps that as a separate, later tier.",
  "options": [
-  {"id": "bring-your-own-account", "runs_on": "customer's account", "our_data_burden": "none beyond our own", "setup": "we help install; the loops then run there",
-   "revenue": "paid pilot (fixed fee for setup and the first improvement cycles), then a monthly subscription for updates, managers' playbooks and support", "status": "chosen for the pilot"},
-  {"id": "hosted", "runs_on": "our account, isolated per customer", "our_data_burden": "high: isolation, encryption, retention, processor terms",
-   "revenue": "monthly subscription including infrastructure", "status": "deferred until a pilot asks and the burden is built"},
-  {"id": "open-core", "runs_on": "customer's account", "our_data_burden": "none",
-   "revenue": "core is source-available under the hybrid licence; charge for the managers' policy packs, the dashboard and support", "status": "compatible with the chosen model"}
+  {
+   "id": "bring-your-own-account",
+   "runs_on": "customer's account",
+   "our_data_burden": "none beyond our own",
+   "setup": "we help install; the loops then run there",
+   "revenue": "paid pilot (fixed fee for setup and the first improvement cycles), then a monthly subscription for updates, managers' playbooks and support",
+   "status": "chosen for the pilot"
+  },
+  {
+   "id": "hosted",
+   "runs_on": "our account, isolated per customer",
+   "our_data_burden": "high: isolation, encryption, retention, processor terms",
+   "revenue": "monthly subscription including infrastructure",
+   "status": "deferred until a pilot asks and the burden is built",
+   "name": "multi-tenant hosted"
+  },
+  {
+   "id": "open-core",
+   "runs_on": "customer's account",
+   "our_data_burden": "none",
+   "revenue": "core is source-available under the hybrid licence; charge for the managers' policy packs, the dashboard and support",
+   "status": "compatible with the chosen model"
+  }
  ],
  "pilot_proof_points": [
   "a second independent installation reports a tick (Q-GAP-second-installation)",
@@ -18,7 +35,78 @@
   "the first improvement the managers originated, measured before and after"
  ],
  "hypotheses": [
-  {"id": "H1", "claim": "Buyers will pay a fixed pilot fee when the system runs in their own account and the first measured improvement is guaranteed in the agreement", "test": "first three pilot conversations", "closing_probe": "file:business/pilots/pilot-1-agreement.md"},
-  {"id": "H2", "claim": "Subscription is sustained by the improvement backlog the managers keep generating, not by hosting", "test": "pilot retention at month 3", "closing_probe": "file:business/pilots/retention-month-3.json"}
- ]
+  {
+   "id": "H1",
+   "claim": "Buyers will pay a fixed pilot fee when the system runs in their own account and the first measured improvement is guaranteed in the agreement",
+   "test": "first three pilot conversations",
+   "closing_probe": "file:business/pilots/pilot-1-agreement.md"
+  },
+  {
+   "id": "H2",
+   "claim": "Subscription is sustained by the improvement backlog the managers keep generating, not by hosting",
+   "test": "pilot retention at month 3",
+   "closing_probe": "file:business/pilots/retention-month-3.json"
+  }
+ ],
+ "program": {
+  "title": "Pilot applications",
+  "pitch": "Applications are open for a small number of pilots with strong use cases and interesting demos of autonomous code loops and virtual agent managers. A pilot is a maintained system you already run or want to run, where the next improvement is not obvious and maintenance has become the burden.",
+  "selection": [
+   "passes the system test in docs/doctrine/VISION.md: a loop to close, a measure that can be wrong, upkeep that never ends, a running cost you accept",
+   "has an owner who can state the objective and the few steps a person always decides",
+   "runs (or will run) in your own account, so your data stays with you",
+   "a use case that makes an interesting public demo, with your permission"
+  ],
+  "you_get": "Ultrastable installed on one system of yours: objectives and probes set up with you, the managers originating and shipping measured improvements, a dashboard of your own system, and the audit trail.",
+  "we_get": "monthly feedback and permission to cite measured results",
+  "apply_fields": [
+   "what the system is",
+   "what it must keep doing",
+   "how you would know it is working",
+   "monthly budget you accept",
+   "where it runs today"
+  ],
+  "price": "set per pilot while the market is tested (hypotheses H1 and H2); no list price is published yet",
+  "intake_probe": "grep:site/worker.js::pilotApplication"
+ },
+ "layers": {
+  "title": "Turtles all the way down",
+  "rule": "The same bootstrap, system test, objectives and probes apply at every level. A level reports up to its parent and runs its own loops; nothing at one level is special-cased.",
+  "levels": [
+   {
+    "level": 0,
+    "name": "Ultrastable on itself",
+    "what": "the platform that runs its own roadmap, managers and probes (customer zero)",
+    "exists": true
+   },
+   {
+    "level": 1,
+    "name": "A customer's system built on it",
+    "what": "a maintained system bootstrapped from an IDEA.md with parent: ultrastable",
+    "exists": false
+   },
+   {
+    "level": 2,
+    "name": "Systems built on that system",
+    "what": "a platform a customer offers its own users, bootstrapped with parent: <their slug>",
+    "exists": false
+   }
+  ],
+  "roll_up": "a child's liveness metrics are readable by its parent through an http probe; a child that stops reporting breaches M-parent-link at the parent",
+  "enforced_by": [
+   "seed/bootstrap/bootstrap.py (parent, level)",
+   "tests/test_vision.py (LayerTests)"
+  ]
+ },
+ "multi_tenant_obligations": {
+  "status": "deferred; a separate obligation, not a pilot feature",
+  "before_offering": [
+   "tenant isolation proven by test (no query or binding crosses tenants)",
+   "encryption of tenant data at rest and in transit, key handling documented",
+   "data-processing agreement, subprocessor list, retention and deletion on request",
+   "breach detection and notification path",
+   "per-tenant budget and kill switch so one tenant cannot spend another's allowance"
+  ],
+  "closing_probe": "file:docs/security/multi-tenant-controls.json"
+ }
 }

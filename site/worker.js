@@ -130,13 +130,17 @@ async function proof() {
 }
 
 function pilot() {
-  const href = "mailto:" + PILOT_MAIL + "?subject=" + encodeURIComponent("Ultrastable pilot") + "&body=" + encodeURIComponent("Team size:\nRepositories or services:\nCoding agents in use:\n");
-  return shell({ path: "/pilot", title: "Join the Ultrastable pilot", description: "Design-partner pilot for teams that run many services and want coding agents to keep them healthy, with an audit trail." },
-    "<div class=\"head\"><h1>Join the pilot</h1><p>Three design partners, free, one repository each.</p></div>"
-    + "<div class=\"card\"><h3 class=\"card-title\">Who it is for</h3><p class=\"meta\">Small engineering teams running many services who want agents to find and fix problems without a person choosing every task, and teams that must show auditors what their coding agents did and why.</p></div>"
-    + "<div class=\"card\"><h3 class=\"card-title\">What you get</h3><p class=\"meta\">The loop installed on one repository: issues from your metrics, agent hand-off, probes with automatic revert, and the ledgers. In return: monthly feedback and permission to cite results.</p></div>"
-    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"" + href + "\">Email the pilot team</a></div>"
-    + "<p class=\"meta\">The email opens with three short lines to fill in. Replies come from a person within two working days.</p>");
+  const P = DASH.pilot, g = P.program;
+  const href = "mailto:" + PILOT_MAIL + "?subject=" + encodeURIComponent("Ultrastable pilot application") + "&body=" + encodeURIComponent(g.apply_fields.map(function (f) { return f + ":\n"; }).join(""));
+  const list = function (a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; };
+  return shell({ path: "/pilot", title: "Apply for an Ultrastable pilot", description: g.pitch },
+    "<div class=\"head\"><h1>" + esc(g.title) + "</h1><p>" + esc(g.pitch) + "</p></div>"
+    + "<div class=\"card\"><h3 class=\"card-title\">What we look for</h3>" + list(g.selection) + "</div>"
+    + "<div class=\"card\"><h3 class=\"card-title\">What you get</h3><p class=\"meta\">" + esc(g.you_get) + " In return: " + esc(g.we_get) + ".</p></div>"
+    + "<div class=\"card\"><h3 class=\"card-title\">What to tell us</h3>" + list(g.apply_fields) + "<p class=\"meta\">Price: " + esc(g.price) + ".</p></div>"
+    + "<div class=\"card\"><h3 class=\"card-title\">Where it runs</h3><p class=\"meta\">" + esc(P.why) + "</p></div>"
+    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"" + href + "\">Apply by email</a><a class=\"btn\" href=\"/dashboard\">See the dashboard</a></div>"
+    + "<p class=\"meta\">Replies come from a person within two working days. Structured intake is tracked by <a href=\"/roadmap#Q-PILOT-application-intake\">Q-PILOT-application-intake</a>.</p>");
 }
 
 function product() {

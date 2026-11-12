@@ -201,6 +201,9 @@ class Boot:
         for bl in self.idea["sections"].get("system test", {}).get("bullets", []):
             k, _, v = bl.partition(":")
             have[k.strip().lower()] = v.strip()
+        # Layers: the same bootstrap runs at every level; a child records its parent and reports up (doctrine/pilot-model.json `layers`).
+        self.parent = self.idea["front"].get("parent", "").strip()
+        self.level = int(self.idea["front"].get("level") or (1 if self.parent else 0))
         self.objectives, self.metrics = [], []
         for i, o in enumerate(self.outcomes, 1):
             self.objectives.append({"id": f"OBJ-{i}", "statement": o, "owner_role": f"product-manager-{i}"})
@@ -210,6 +213,10 @@ class Boot:
                 self.metrics.append({"id": f"M-{ob['id']}-declared", "objective_id": ob["id"], "name": f"{ob['statement']}: {declared}",
                     "kind": "target", "source": "declared", "spec": declared, "op": ">=", "threshold": 0, "grace_hours": 0,
                     "owner_role": ob["owner_role"], "remedy": "Declared by the owner; the metric exists only once a probe reads it."})
+        if self.parent:  # a silent child must breach at the level above it, so the link is a metric from the first tick
+            self.metrics.append({"id": "M-parent-link", "objective_id": None, "name": f"reporting to parent {self.parent}", "kind": "liveness",
+                "source": "declared", "spec": f"https://{self.parent}.example/health reachable from this system", "op": ">=", "threshold": 1,
+                "grace_hours": 0, "owner_role": "operations", "remedy": "Give this system a probe that reads its parent health (http) and a path that reports its own liveness up."})
         for mid, name, spec, op, thr, grace, owner, remedy in self.LIVENESS:
             self.metrics.append({"id": mid, "objective_id": None, "name": name, "kind": "liveness", "source": "builtin", "spec": spec,
                 "op": op, "threshold": thr, "grace_hours": grace, "owner_role": owner, "remedy": remedy})
@@ -340,7 +347,7 @@ class Boot:
         (self.out / "roles.json").write_text(json.dumps(self.roles, indent=2) + "\n")
         (self.out / "backlog.json").write_text(json.dumps(self.items, indent=2) + "\n")
         (self.out / "gate-cards.json").write_text(json.dumps(self.state["gate_cards"], indent=2) + "\n")
-        (self.out / "objectives.json").write_text(json.dumps({"objectives": getattr(self, "objectives", []), "metrics": getattr(self, "metrics", [])}, indent=2) + "\n")
+        (self.out / "objectives.json").write_text(json.dumps({"layer": {"level": getattr(self, "level", 0), "parent": getattr(self, "parent", "")}, "objectives": getattr(self, "objectives", []), "metrics": getattr(self, "metrics", [])}, indent=2) + "\n")
         (self.out / "seed.sql").write_text(self.seed_sql())
         values = {**self.config["runtime"], "slug": self.slug}
         values = {k: fill(v, {"slug": self.slug}) if isinstance(v, str) else v for k, v in values.items()}

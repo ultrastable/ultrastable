@@ -155,6 +155,18 @@
     "site/dashboard-data.js",
     "doctrine/pilot-model.json"
    ]
+  },
+  {
+   "status": "testing",
+   "name": "Pilot applications and layered systems",
+   "what": "The pilot is an application program with published selection criteria; the bootstrapper records parent and level so a system built on a system reports up to its parent. Structured intake and the first child link are pending.",
+   "where": "/pilot",
+   "issue": "Q-PILOT-application-intake",
+   "code": [
+    "doctrine/pilot-model.json",
+    "seed/bootstrap/bootstrap.py",
+    "docs/doctrine/VISION.md"
+   ]
   }
  ],
  "gaps": [

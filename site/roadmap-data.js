@@ -162,6 +162,15 @@ export default {
    "status": "open",
    "title": "Run Ultrastable's own seed heartbeat on a deployed runtime and report it",
    "trigger": "every executor run"
+  },
+  "Q-PILOT-application-intake": {
+   "done": "grep:site/worker.js::pilotApplication",
+   "id": "Q-PILOT-application-intake",
+   "milestone": "Next",
+   "owner": "product-manager",
+   "status": "open",
+   "title": "Pilot application intake that records applications as data",
+   "trigger": "every executor run"
   }
  },
  "pins": [
@@ -319,6 +328,18 @@ export default {
    "status": "testing",
    "what": "A public dashboard computed from the repository (loops, objectives, failure modes, capabilities, roadmap, earned autonomy) and the bring-your-own-account pilot model with its revenue hypotheses as data. The live tick feed is pending a deployed runtime.",
    "where": "/dashboard"
+  },
+  {
+   "code": [
+    "doctrine/pilot-model.json",
+    "seed/bootstrap/bootstrap.py",
+    "docs/doctrine/VISION.md"
+   ],
+   "issue": "Q-PILOT-application-intake",
+   "name": "Pilot applications and layered systems",
+   "status": "testing",
+   "what": "The pilot is an application program with published selection criteria; the bootstrapper records parent and level so a system built on a system reports up to its parent. Structured intake and the first child link are pending.",
+   "where": "/pilot"
   }
  ]
 };
