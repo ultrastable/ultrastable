@@ -96,16 +96,20 @@ def copy(api, src, dst, apply, plan) -> dict:
                 time.sleep(2)
                 exp = result(api("POST", f"/accounts/{src}/d1/database/{d['id']}/export", json.dumps({"output_format": "polling", "current_bookmark": exp["at_bookmark"]}).encode(), headers={"content-type": "application/json"}))
             sql = api("GET", exp["result"]["signed_url"], raw=True) if False else urllib.request.urlopen(exp["result"]["signed_url"], timeout=120).read()
-            new = result(api("POST", f"/accounts/{dst}/d1/database", json.dumps({"name": d["name"]}).encode(), headers={"content-type": "application/json"}))
+            have = [x for x in (result(api("GET", f"/accounts/{dst}/d1/database?name={d['name']}")) or []) if x["name"] == d["name"]]
+            new = have[0] if have else result(api("POST", f"/accounts/{dst}/d1/database", json.dumps({"name": d["name"]}).encode(), headers={"content-type": "application/json"}))
             st["d1_map"][d["id"]] = new["uuid"]
-            api("POST", f"/accounts/{dst}/d1/database/{new['uuid']}/query", json.dumps({"sql": sql.decode()}).encode(), headers={"content-type": "application/json"})
-    for k in inv["kv"]:
+            q = lambda t: api("POST", f"/accounts/{dst}/d1/database/{new['uuid']}/query", json.dumps({"sql": t}).encode(), headers={"content-type": "application/json"})
+            if not have or not (result(q("SELECT name FROM sqlite_master WHERE type='table' LIMIT 1")) or [{}])[0].get("results"):
+                q(sql.decode())   # import only into an empty database: re-runs are idempotent
+    for k in [k for k in inv["kv"] if k["title"].startswith("ultrastable-")]:
         steps.append(f"kv {k['title']}: create on target and copy keys")
         if apply:
-            new = result(api("POST", f"/accounts/{dst}/storage/kv/namespaces", json.dumps({"title": k["title"]}).encode(), headers={"content-type": "application/json"}))
+            have = [x for x in (result(api("GET", f"/accounts/{dst}/storage/kv/namespaces?per_page=100")) or []) if x["title"] == k["title"]]
+            new = have[0] if have else result(api("POST", f"/accounts/{dst}/storage/kv/namespaces", json.dumps({"title": k["title"]}).encode(), headers={"content-type": "application/json"}))
             st["kv_map"][k["id"]] = new["id"]
             keys = [x["name"] for x in result(api("GET", f"/accounts/{src}/storage/kv/namespaces/{k['id']}/keys"))]
-            pairs = [{"key": n, "value": api("GET", f"/accounts/{src}/storage/kv/namespaces/{k['id']}/values/{n}", raw=True).decode()} for n in keys]
+            pairs = [{"key": n, "value": __import__("base64").b64encode(api("GET", f"/accounts/{src}/storage/kv/namespaces/{k['id']}/values/{n}", raw=True)).decode(), "base64": True} for n in keys]
             if pairs:
                 api("PUT", f"/accounts/{dst}/storage/kv/namespaces/{new['id']}/bulk", json.dumps(pairs).encode(), headers={"content-type": "application/json"})
     rebind = {}

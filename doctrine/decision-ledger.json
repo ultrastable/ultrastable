@@ -89,6 +89,14 @@
    "title": "The front door asks what it does not know and audits what it built",
    "body": "Verified live on ultrastable.io (site 0.7.0): an idea produced 3 tap-only questions, the answers entered the build brief, the page was live in about 30 s, and an independent model (llama-3.3-70b, not the qwen builder) published /s/<id>/review listing 4 done, 5 gaps and the standing limits. Problems found by that run: a deprecated hard-coded model id had silently disabled the audit, so every AI call now walks a model list (re-probed, audit returns real findings); builds and audits run in separate requests because waitUntil is capped near 30 s; a stuck build now fails after 150 s. node site/site.test.mjs passes the whole flow. Pattern from QNFO prompted recall.",
    "probe": "grep:site/worker.js::AUDIT-1"
+  },
+  {
+   "id": "lesson-2026-11-12-backgrounded-ai-build-was-evicted-and-left-sites-stuck-at-bu",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Backgrounded AI build was evicted and left sites stuck at building",
+   "body": "Measured: a live POST to /api/idea returned a make URL that still showed Building after more than 2 minutes, while a direct Workers AI call for the same kind of page took 28 s. The build ran in waitUntil, which is cut off about 30 s after the response, so the state never left building. Fixed in site 0.5.1: the job is stored, the /make request awaits the build, a 120 s claim stops duplicate builds, an evicted build is resumed by the next poll, and tries are capped at 3 before the state becomes failed. node site/site.test.mjs covers the build, the change and the capped failure.",
+   "probe": "grep:site/worker.js::BUILD-2"
   }
  ]
 }

@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261112-10",
+  "title": "OL-20261112-10: CF-ACTIONS-TOKEN: move deploy, tick and dashboard to the ultrastable account",
+  "body": "**Owner:** ops\n**Trigger:** daily\n**Done check:** grep:deploy/cloudflare-accounts.json::\"state\": \"running\"\n**Status:** open\n\nAcquire a scoped ultrastable-account token or OAuth-free route, then run cf_account cutover.",
+  "labels": [
+    "role:ops",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
