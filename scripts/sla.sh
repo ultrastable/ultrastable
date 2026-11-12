@@ -2,6 +2,7 @@
 # SLA-1: nothing sits. Issues past SLA are flagged then escalated; stuck PRs are closed and re-filed as issues.
 set -uo pipefail
 . "$(dirname "$0")/lib-safe.sh"
+issues_or_exit
 repo="${GITHUB_REPOSITORY:?}"; now=$(date +%s)
 hrs() { case "$1" in p0) echo 4;; p1) echo 24;; p2) echo 72;; *) echo 168;; esac; }
 up() { case "$1" in p3) echo p2;; p2) echo p1;; *) echo p0;; esac; }

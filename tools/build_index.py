@@ -16,7 +16,12 @@ def issues():
     while True:
         req = urllib.request.Request(f"https://api.github.com/repos/{REPO}/issues?state=all&per_page=100&page={page}",
                                      headers={"Accept": "application/vnd.github+json", **({"Authorization": f"Bearer {TOKEN}"} if TOKEN else {})})
-        batch = json.load(urllib.request.urlopen(req, timeout=30))
+        try:
+            batch = json.load(urllib.request.urlopen(req, timeout=30))
+        except urllib.error.HTTPError as e:
+            if e.code == 410:  # QUEUE-1: Issues are off on this repository; the work items are docs/issues/*.json
+                return out
+            raise
         out += [i for i in batch if "pull_request" not in i]
         if len(batch) < 100: return out
         page += 1

@@ -10,6 +10,7 @@ is required. Without --apply nothing is changed on GitHub or in git: the pick, t
 """
 from __future__ import annotations
 import datetime as dt, json, os, re, subprocess, urllib.request
+from . import queue as qmod
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -136,11 +137,17 @@ def log(root, row: dict) -> None:
         f.write(json.dumps({"schema": "ultrastable-executor/1", "at": now(), "host": os.environ.get("ULTRASTABLE_HOST", "unspecified"), **row}) + "\n")
 
 
-def run(repo: str, apply: bool = False, issue_no: int | None = None, root=REPO, model_call=None, checks=None) -> dict:
+def queue_mode() -> bool:
+    """QUEUE-1: the work queue is repository data (docs/issues/*.json, foundation/queue.py), not GitHub Issues, so Issues can stay off on the code
+    repository. EXECUTOR_SOURCE=issues restores the old source for a repository that still uses it."""
+    return os.environ.get("EXECUTOR_SOURCE", "queue") == "queue"
+
+
+def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None) -> dict:
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)
-    issues = gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root)
-    issue = next((i for i in issues if i["number"] == issue_no), None) if issue_no else pick(issues)
+    issues = qmod.takeable(root) if queue_mode() else gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root)
+    issue = next((i for i in issues if str(i["number"]) == str(issue_no)), None) if issue_no else pick(issues)
     if not issue:
         row = {"result": "idle", "detail": "no open issue the executor may take", "prediction": "open_issues_takeable <= 0 within 24 h"}
         log(root, row); return row
@@ -153,8 +160,9 @@ def run(repo: str, apply: bool = False, issue_no: int | None = None, root=REPO, 
     if not apply:
         row.update(result="dry-run", detail="would claim, change, check and open a PR")
         return row
-    sh(["gh", "issue", "edit", str(n), "-R", repo, "--add-label", CLAIM_LABEL], root)
-    sh(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"claim: executor {now()}"], root)
+    gi = (lambda *a, **k: (0, "")) if queue_mode() else sh  # queue items carry no remote labels or comments; the log row is the claim
+    gi(["gh", "issue", "edit", str(n), "-R", repo, "--add-label", CLAIM_LABEL], root)
+    gi(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"claim: executor {now()}"], root)
     try:
         _, tree = sh(["git", "ls-files"], root)
         out = (model_call or (lambda p: call_model(p, key)))(build_prompt(issue, tree))
@@ -170,6 +178,8 @@ def run(repo: str, apply: bool = False, issue_no: int | None = None, root=REPO, 
             sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd"], root)
             raise RuntimeError("checks failed: " + " | ".join(failed))
         row.update(files=files, summary=out.get("summary", ""))
+        if queue_mode():
+            qmod.close(root, n, "closed by the pull request that carries this change")  # merging the PR closes the item: no remote state to update
         sh(["git", "add", "-A", "--", ".", f":!{LOG}"], root)
         sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "-m", f"{out.get('summary', issue['title'])} (#{n})"], root)
         code, o = sh(["git", "push", "-u", "origin", branch], root)
@@ -187,18 +197,18 @@ def run(repo: str, apply: bool = False, issue_no: int | None = None, root=REPO, 
         if publicread.is_reach_error(row["detail"]) and publicread.mentioned(f"{issue['title']} {issue.get('body') or ''}") and publicread.works(publicread.mentioned(f"{issue['title']} {issue.get('body') or ''}")[0]):
             # A public route exists: do not label executor-failed; release the claim so the next tick retries with public history in the prompt.
             row.update(result="retry-public", detail=row["detail"] + " | public unauthenticated read works; retrying next tick through it")
-            sh(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL], root)
+            gi(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL], root)
             log(root, row)
             return row
-        sh(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL, "--add-label", "executor-failed"], root)
-        sh(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"executor failed: {row['detail']}\n\nA failure is a backlog item: remove `executor-failed` to retry, or the next tick with a different provider takes it."], root)
+        gi(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL, "--add-label", "executor-failed"], root)
+        gi(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"executor failed: {row['detail']}\n\nA failure is a backlog item: remove `executor-failed` to retry, or the next tick with a different provider takes it."], root)
         log(root, row)
     return row
 
 
 def pick_row(repo: str, root=REPO) -> dict:
     """The pick alone: what a model session (any host, no API key) should work next. Same driver order as run()."""
-    issue = pick(gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root))
+    issue = pick(qmod.takeable(root) if queue_mode() else gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root))
     if not issue:
         return {"result": "idle", "detail": "no open issue the executor may take"}
     return {"result": "picked", "issue": issue["number"], "title": issue["title"], "body": (issue.get("body") or "")[:6000]}
@@ -207,7 +217,7 @@ def pick_row(repo: str, root=REPO) -> dict:
 def main(argv=None) -> int:
     import argparse
     ap = argparse.ArgumentParser(prog="foundation executor")
-    ap.add_argument("--apply", action="store_true"); ap.add_argument("--issue", type=int)
+    ap.add_argument("--apply", action="store_true"); ap.add_argument("--issue")
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable"))
     ap.add_argument("--pick", action="store_true", help="print the top takeable issue and exit; needs no model credential (Claude-session route)")
     ap.add_argument("--record", action="store_true", help="append one provenance row for work done by a model session (with --issue --result [--pr --detail --host])")

@@ -2,6 +2,7 @@
 # METRICS-1: scoreboard in the job summary. Targets: breached 0, open PRs 0, stuck PRs 0.
 set -uo pipefail
 . "$(dirname "$0")/lib-safe.sh"
+issues_or_exit
 r="${GITHUB_REPOSITORY:?}"
 o=$(gh issue list -R "$r" --state open --limit 500 --json number --jq length)
 b=$(gh issue list -R "$r" --state open --label sla:breached --limit 500 --json number --jq length)

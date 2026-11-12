@@ -16,3 +16,10 @@ safe_exit() {
   local n; n=$(wc -l <"$_SAFE_FAILS" | tr -d ' ')
   [ "$n" -eq 0 ] || { echo "safe-gh: $n gh call(s) failed" >&2; exit 1; }
 }
+# QUEUE-1: work items are repository data (docs/issues/*.json), so GitHub Issues are off on the code repository. A script that needs Issues calls
+# `issues_or_exit` right after sourcing: it exits 0 with a note when Issues are off, instead of failing every run.
+issues_or_exit() {
+  local on; on=$(timeout 30 "$_GH_BIN" api "repos/${GITHUB_REPOSITORY:?}" --jq .has_issues 2>/dev/null || echo true)
+  [ "$on" = false ] && { echo "issues are off on ${GITHUB_REPOSITORY}; work items live in docs/issues (QUEUE-1)"; exit 0; }
+  return 0
+}
