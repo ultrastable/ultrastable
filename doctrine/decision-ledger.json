@@ -83,12 +83,76 @@
    "probe": "file:doctrine/user-path.json"
   },
   {
+   "id": "decision-2026-11-12-the-front-door-asks-what-it-does-not-know-and-audits-what-it",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "The front door asks what it does not know and audits what it built",
+   "body": "Verified live on ultrastable.io (site 0.7.0): an idea produced 3 tap-only questions, the answers entered the build brief, the page was live in about 30 s, and an independent model (llama-3.3-70b, not the qwen builder) published /s/<id>/review listing 4 done, 5 gaps and the standing limits. Problems found by that run: a deprecated hard-coded model id had silently disabled the audit, so every AI call now walks a model list (re-probed, audit returns real findings); builds and audits run in separate requests because waitUntil is capped near 30 s; a stuck build now fails after 150 s. node site/site.test.mjs passes the whole flow. Pattern from QNFO prompted recall.",
+   "probe": "grep:site/worker.js::AUDIT-1"
+  },
+  {
    "id": "lesson-2026-11-12-backgrounded-ai-build-was-evicted-and-left-sites-stuck-at-bu",
    "kind": "lesson",
    "date": "2026-11-12",
    "title": "Backgrounded AI build was evicted and left sites stuck at building",
    "body": "Measured: a live POST to /api/idea returned a make URL that still showed Building after more than 2 minutes, while a direct Workers AI call for the same kind of page took 28 s. The build ran in waitUntil, which is cut off about 30 s after the response, so the state never left building. Fixed in site 0.5.1: the job is stored, the /make request awaits the build, a 120 s claim stops duplicate builds, an evicted build is resumed by the next poll, and tries are capped at 3 before the state becomes failed. node site/site.test.mjs covers the build, the change and the capped failure.",
    "probe": "grep:site/worker.js::BUILD-2"
+  },
+  {
+   "id": "decision-2026-11-12-complete-1-finished-work-and-finished-threads-are-closed-aut",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "COMPLETE-1: finished work and finished threads are closed automatically",
+   "body": "Standing owner rule written into agents/AGENTS.md, seed/agents/AGENTS.md and agents/PROJECT-INSTRUCTIONS.md. Verified by running scripts/completion_sweep.sh against the live repo: it deleted 2 squash-merged branches (agent/brand-settings-buildout, claude/project-thread-pi8gkc) and left every branch with unmerged commits or an open PR alone; gaplint reports 0 findings. The sweep runs in the daily lane workflow. Session side: the app already archives on PR close and after 1 idle day (probed with get_settings), and 5 idle finished sessions were archived. Next: sweep closes done issues with evidence and ops-repo threads.",
+   "probe": "file:scripts/completion_sweep.sh"
+  },
+  {
+   "id": "decision-2026-11-12-work-queue-is-repository-data-issues-are-turned-off-on-the-c",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Work queue is repository data; Issues are turned off on the code repo",
+   "body": "Measured: python3 -m foundation queue --check prints queue ok with 26 takeable items, and 17 former GitHub issues were migrated to docs/issues/Q-*.json. The executor now picks from foundation/queue.py (EXECUTOR_SOURCE=issues restores the old source), claims nothing remotely, and closes the item inside its own pull request so the merge is the closure; three consecutive failures park an item. Issue scripts exit 0 when has_issues is false, funding findings become queue items, and tests/foundation/test_executor.py covers the queue.",
+   "probe": "grep:foundation/queue.py::QUEUE-1"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-picked-queue-items-live-but-had-no-model-route",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Executor picked queue items live but had no model route",
+   "body": "A dispatched executor run on main picked Q-10 from the repo-data queue and recorded no-model-credential, because ANTHROPIC_API_KEY is not bound in Actions; the issues sweep also failed on disabled Issues. Measured after the fix: pytest tests/foundation/test_executor.py returned 9 passed, and python3 -m foundation orphans --sync-issue returned 'issues off: backlog enforced by orphans --check in checks; zero=True'. Added a Workers AI model route using the Cloudflare secrets the repo already holds, and org settings now declare has_issues false so a settings apply cannot turn Issues back on.",
+   "probe": "grep:foundation/executor.py::call_cloudflare"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-pr-sat-as-an-unchecked-draft",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Executor PR sat as an unchecked draft",
+   "body": "The first live executor run opened PR 233 for Q-10 as a draft with zero checks, because a PR opened with GITHUB_TOKEN raises no pull_request event and a draft runs no CI, so the lane had nothing to merge. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed and the executor now marks the PR ready and dispatches checks.yml on its branch right after pr create, recording any failed kick in the log row.",
+   "probe": "grep:foundation/executor.py::kick_failed"
+  },
+  {
+   "id": "decision-2026-11-12-boundary-1-containment-boundary",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "BOUNDARY-1 containment boundary",
+   "body": "Creation and destruction inside a rebuildable boundary; egress gated; trust tiers apply inside only; session reaper; strange-loop improvement ledger.",
+   "probe": "grep:foundation/boundary.py::def drill"
+  },
+  {
+   "id": "lesson-2026-11-12-boundary-session-reaper",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Boundary session reaper",
+   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Finished or idle sessions are archived from boundary.reap decisions.",
+   "probe": "grep:foundation/boundary.py::def reap"
+  },
+  {
+   "id": "decision-2026-11-12-front-2-chat-thread-front-door",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "FRONT-2 chat-thread front door",
+   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. The front door is a conversation: pill input with dictation, rotating context-aware suggestions (bank plus model), tap-to-answer questions in the thread, each build step shown as it runs, change requests in the same thread. JSON endpoints /api/suggest, /api/idea, /s/<id>/status. No-JS form fallback kept.",
+   "probe": "grep:site/suggest.js::export function suggest"
   }
  ]
 }

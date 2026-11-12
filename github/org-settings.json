@@ -106,7 +106,7 @@
         "cloudflare-workers"
       ],
       "settings": {
-        "has_issues": true,
+        "has_issues": false,
         "has_projects": true,
         "has_wiki": false,
         "has_discussions": false,

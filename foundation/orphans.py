@@ -153,6 +153,10 @@ def sync_issue(repo: str, root=REPO) -> str:
     """Open, refresh or close the one CLOSED-LOOP-1 backlog issue (gh CLI with the workflow token). Returns what it did."""
     pol = policy(root)["backlog_issue"]
     m = metrics(root)
+    # QUEUE-1: Issues are off on the code repository. The shrink-only baseline plus `orphans --check` (a step of `checks`) fails any PR that adds an
+    # orphan, and `orphans --zero` reports the target; nothing remote needs refreshing.
+    if subprocess.run(["gh", "api", f"repos/{repo}", "--jq", ".has_issues"], capture_output=True, text=True, timeout=60).stdout.strip() == "false":
+        return "issues off: backlog enforced by orphans --check in checks; zero=" + str(m["orphan_artifacts"] == 0 and m["human_wait_states"] == 0)
 
     def gh(*a):
         r = subprocess.run(["gh", *a], capture_output=True, text=True, timeout=90)
@@ -181,6 +185,8 @@ def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if "--sync-issue" in argv:
         print(sync_issue(argv[argv.index("--sync-issue") + 1])); return 0
+    if "--zero" in argv:  # closing probe of the queue item Q-ORPHANS
+        m = metrics(); return 0 if m["orphan_artifacts"] == 0 and m["human_wait_states"] == 0 else 1
     if "--metrics" in argv:
         print(json.dumps(metrics(), indent=1)); return 0
     if "--baseline" in argv:

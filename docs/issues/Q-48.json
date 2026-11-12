@@ -1,0 +1,14 @@
+{
+  "id": "Q-48",
+  "title": "Q-48: WEB-4: robots.txt, sitemap.xml, Open Graph tags, Cloudflare Web Analytics",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-48.json::Status:\\*\\* closed\n**Status:** open\n\nMigrated from GitHub issue 48 (Issues are off on the code repository; this file is the record).\n\n**Owner:** Staff (web)\n**Trigger:** WEB-1\n**Done check:** Lighthouse SEO score >= 95 on preview\n**Status:** open\n**Milestone:** Next\n\nSource: `org-repos/docs/roadmap.md` (WEB-4).",
+  "labels": [
+    "role:staff",
+    "m:Next",
+    "ws:web-and-seo",
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}
