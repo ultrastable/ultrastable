@@ -1,0 +1,224 @@
+{
+  "_doc": "SYS-1: the whole system as one declared topology. Every worker, store, queue, index and workflow, with its bindings, is listed here; `python3 -m foundation topology --render` writes each worker's wrangler config, `--check` validates the references, `--drift` compares this file with the live account. state=live means it must exist now; state=planned means the executor is building it (drift reports it as pending, not as a failure). Ids are not secrets; variable values and secrets never appear here (only their names).",
+  "version": "1.0.0",
+  "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
+  "prefix": "ultrastable-",
+  "stores": {
+    "d1": [
+      {
+        "name": "ultrastable-org",
+        "id": "7468898a-b515-495f-9910-e91cb80f5810",
+        "state": "live",
+        "what": "the org's own records: items, claims, gate cards, trust ledger, tick runs"
+      },
+      {
+        "name": "ultrastable-ops",
+        "id": "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd",
+        "state": "live",
+        "what": "site analytics, dashboard state, the published transparency snapshot"
+      },
+      {
+        "name": "ultrastable-ultrastable",
+        "state": "live",
+        "retire_candidate": true,
+        "what": "found in the account, owner unknown: created by an earlier bootstrap run; the drift loop retires it once nothing reads it",
+        "id": "a0227f92-04a7-4640-ae39-bb6a47fc9488"
+      }
+    ],
+    "kv": [
+      {
+        "name": "ultrastable-site-assets",
+        "id": "c6ca64dddec5489cbcee896113949eba",
+        "state": "live",
+        "what": "site images and built-site state"
+      },
+      {
+        "name": "ultrastable-private",
+        "id": "f41303a09abc473faf41f9685ebb1a72",
+        "state": "live",
+        "what": "private worker state"
+      }
+    ],
+    "r2": [
+      {
+        "name": "ultrastable-git",
+        "state": "live",
+        "what": "bundles and backups of the repositories"
+      }
+    ],
+    "queues": [
+      {
+        "name": "ultrastable-jobs",
+        "state": "planned",
+        "what": "work handed from the tick to executors",
+        "dlq": "ultrastable-jobs-dlq"
+      },
+      {
+        "name": "ultrastable-jobs-dlq",
+        "state": "planned",
+        "what": "jobs that failed their retries; the failure registry reads it"
+      }
+    ],
+    "vectorize": [
+      {
+        "name": "ultrastable-kb",
+        "state": "planned",
+        "dimensions": 768,
+        "metric": "cosine",
+        "what": "the repository's own knowledge for the agents (Q-SYS-VECTOR-KB)"
+      }
+    ],
+    "workflows": [
+      {
+        "name": "ultrastable-loop",
+        "state": "planned",
+        "script": "ultrastable-executor",
+        "class_name": "LoopWorkflow",
+        "what": "durable execution of one loop pass with retries"
+      }
+    ]
+  },
+  "workers": [
+    {
+      "id": "ultrastable-tick",
+      "state": "live",
+      "role": "heartbeat: the org's tick, executor dispatch and lane",
+      "main": "seed/worker/src/index.js",
+      "compatibility_date": "2026-10-01",
+      "crons": [
+        "*/10 * * * *"
+      ],
+      "public": false,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-org"
+        },
+        "ai": [
+          "AI"
+        ],
+        "queues_producer": {
+          "JOBS": "ultrastable-jobs"
+        },
+        "vectorize": {
+          "KB": "ultrastable-kb"
+        },
+        "services": {},
+        "secrets": [
+          "GITHUB_DISPATCH_TOKEN",
+          "GITHUB_WEBHOOK_SECRET",
+          "ANALYTICS_TOKEN"
+        ],
+        "vars": {}
+      }
+    },
+    {
+      "id": "ultrastable-site",
+      "state": "live",
+      "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents)",
+      "main": "site/worker.js",
+      "compatibility_date": "2026-11-04",
+      "routes": [
+        "ultrastable.io",
+        "www.ultrastable.io",
+        "ultrastable.app",
+        "ultrastable.net"
+      ],
+      "public": true,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-ops"
+        },
+        "kv": {
+          "ASSETS": "ultrastable-site-assets"
+        },
+        "ai": [
+          "AI"
+        ],
+        "services": {
+          "OWNER": "ultrastable-dashboard"
+        },
+        "secrets": [],
+        "vars": {}
+      }
+    },
+    {
+      "id": "ultrastable-dashboard",
+      "state": "live",
+      "role": "owner dashboard: e-mailed-code login, task queue, audit log; reached only through the site's OWNER service binding",
+      "main": "dashboard/worker.js",
+      "compatibility_date": "2026-11-04",
+      "crons": [
+        "0 13 * * *",
+        "*/10 * * * *"
+      ],
+      "public": false,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-ops"
+        },
+        "send_email": [
+          "SEND_EMAIL"
+        ],
+        "services": {},
+        "secrets": [
+          "GITHUB_TOKEN",
+          "FLEET_TOKEN"
+        ],
+        "vars": {
+          "GITHUB_REPO": "ultrastable/ultrastable"
+        },
+        "var_names": [
+          "MAIL_FROM",
+          "OWNER_EMAIL"
+        ]
+      }
+    },
+    {
+      "id": "ultrastable-executor",
+      "state": "planned",
+      "role": "queue consumer and workflow host: runs one change through the agent ladder and opens the PR",
+      "main": "seed/worker/src/executor.js",
+      "compatibility_date": "2026-11-04",
+      "public": false,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-org"
+        },
+        "ai": [
+          "AI"
+        ],
+        "queues_consumer": [
+          "ultrastable-jobs"
+        ],
+        "vectorize": {
+          "KB": "ultrastable-kb"
+        },
+        "workflows": {
+          "LOOP": "ultrastable-loop"
+        },
+        "services": {},
+        "secrets": [
+          "GITHUB_TOKEN"
+        ],
+        "vars": {}
+      }
+    },
+    {
+      "id": "ultrastable-ultrastable",
+      "state": "live",
+      "retire_candidate": true,
+      "role": "found in the account, owner unknown: a bootstrap output (tenant 0 self-test); retired once nothing routes to it",
+      "main": "seed/worker/src/index.js",
+      "compatibility_date": "2026-10-01",
+      "public": false,
+      "bindings": {
+        "d1": {
+          "DB": "ultrastable-ultrastable"
+        },
+        "services": {},
+        "secrets": [],
+        "vars": {}
+      }
+    }
+  ]
+}

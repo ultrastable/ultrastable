@@ -1,0 +1,10 @@
+{
+  "_doc": "SYS-2: the code-agent ladder, cheapest first. Attempt N of a change uses rung N; the reviewer uses a different model. A rung is skipped when its route has no credential on the host. Prices are estimates in USD per million tokens (Workers AI is billed in neurons; these keep the cost log comparable). Read by foundation/agent_ladder.py, checked by `python3 -m foundation agent_ladder --check`.",
+  "version": "1.0.0",
+  "rungs": [
+    {"id": "cf-coder", "route": "workers-ai", "model": "@cf/qwen/qwen2.5-coder-32b-instruct", "max_tokens": 7000, "usd_per_mtok_in": 0.66, "usd_per_mtok_out": 1.0},
+    {"id": "cf-llama70", "route": "workers-ai", "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast", "max_tokens": 7000, "usd_per_mtok_in": 0.29, "usd_per_mtok_out": 2.25},
+    {"id": "router", "route": "router", "model": "qnfo", "max_tokens": 12000, "usd_per_mtok_in": 1.0, "usd_per_mtok_out": 4.0},
+    {"id": "claude", "route": "anthropic", "model": "claude-sonnet-5-5", "max_tokens": 16000, "usd_per_mtok_in": 3.0, "usd_per_mtok_out": 15.0}
+  ]
+}

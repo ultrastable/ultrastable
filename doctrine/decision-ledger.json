@@ -410,6 +410,22 @@
       "probe": "file:brand/public-profile/profile/proof.js"
     },
     {
+      "id": "decision-2026-11-12-sys-2-code-agent-ladder-with-escalation-independent-reviewer",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "SYS-2: code-agent ladder with escalation, independent reviewer and cost log",
+      "body": "foundation/agent_ladder.py and doctrine/agent-ladder.json: rungs cheapest first (two Workers AI models, optional router, optional Anthropic), attempt N uses rung N, a different model reviews and can veto, every call logged to ops/agent-cost.jsonl and published on /live. Executor uses it when no test model is injected. Run 6 opened the first unattended PR (268) with the single-model path.",
+      "probe": "file:foundation/agent_ladder.py"
+    },
+    {
+      "id": "decision-2026-11-12-sys-1-the-system-is-one-declared-topology",
+      "kind": "decision",
+      "date": "2026-11-12",
+      "title": "SYS-1: the system is one declared topology",
+      "body": "doctrine/topology.json declares 5 workers, 3 D1, 2 KV, 1 R2 plus planned queues, a vector index and a workflow. foundation/topology.py checks it, renders wrangler configs, prints the Workers bindings and measures drift against the account. First drift measured: an undeclared worker and D1 database (ultrastable-ultrastable, now declared as retire candidates), the AI binding on the tick worker and the OWNER service binding on the site are declared but absent from the account.",
+      "probe": "file:doctrine/topology.json"
+    },
+    {
       "id": "decision-2026-11-12-lane-watch-1-green-prs-may-not-stay-open",
       "kind": "decision",
       "date": "2026-11-12",

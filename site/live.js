@@ -31,9 +31,15 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
  const th=d.throughput||{},mg0=th.merged||{},oo=mg0.by_origin||{};
  const tp=sec('How much code ships','Merged pull requests, by who opened them. Unattended means the server-side executor picked the work from the backlog without a session driving it.');
  table(tp,['Origin','Merged PRs','Lines added','Lines removed'],Object.keys(oo).map(k=>[k,oo[k].prs,oo[k].lines_added,oo[k].lines_removed]));
- table(tp,['Measure','Value'],[['Merged PRs in total',mg0.total],['Median hours from open to merge',mg0.median_hours_open_to_merge],['Merged per day',JSON.stringify(mg0.per_day)],['Site deploys by outcome (last 50)',JSON.stringify((th.deploys||{}).by_conclusion)],['Backlog items by status',JSON.stringify((th.queue||{}).by_status)],['Backlog items the executor may take now',(th.queue||{}).takeable_now],['Executor runs by outcome',JSON.stringify((th.executor||{}).by_conclusion)],['PRs the executor opened unattended, by state',JSON.stringify((th.executor||{}).attempts)]]);
+ table(tp,['Measure','Value'],[['Merged PRs in total',mg0.total],['Median hours from open to merge',mg0.median_hours_open_to_merge],['Merged per day',JSON.stringify(mg0.per_day)],['Site deploys by outcome (last 50)',JSON.stringify((th.deploys||{}).by_conclusion)],['Backlog items by status',JSON.stringify((th.queue||{}).by_status)],['Backlog items the executor may take now',(th.queue||{}).takeable_now],['Model calls and estimated cost (USD)',JSON.stringify(th.model_cost)],['Executor runs by outcome',JSON.stringify((th.executor||{}).by_conclusion)],['PRs the executor opened unattended, by state',JSON.stringify((th.executor||{}).attempts)]]);
  const cg=sec('Changelog','Every merged change by day, with size. Repository contents and the backlog text stay private.');
  (th.changelog||[]).forEach(g=>{cg.appendChild(el('h3',null,g.date+' ('+g.changes.length+' changes)'));table(cg,['PR','Title','By','Size'],g.changes.map(x=>[x.n,x.title,x.by,'+'+x.plus+' -'+x.minus]))});
+ const tp2=d.topology||{},pt=tp2.parts||{};
+ const sy=sec('System parts','The whole system as one declaration: workers, stores, queues, indexes and workflows. Planned parts are being built; drift is any difference between the declaration and the live account.');
+ table(sy,['Part','Live','Planned'],Object.keys(pt).map(k=>[k,pt[k].live,pt[k].planned]));
+ table(sy,['Worker','State','Public','Role'],(tp2.workers||[]).map(w=>[w.id,w.state,w.public?'yes':'no',w.role]));
+ table(sy,['Pending bindings (declared, target not built yet)'],(tp2.pending_bindings||[]).map(x=>[x]));
+ table(sy,['Drift against the live account'],(tp2.drift||[]).length?(tp2.drift||[]).map(x=>[x]):[['none']]);
  const ch=sec('Change feed','What the agents changed, newest first. Each row links the change to the work item that caused it.');
  table(ch,['When','Change','Work item','Source'],d.changes.commits.slice(0,25).map(x=>[x.at.slice(0,16).replace('T',' '),x.subject,x.item||'',{t:x.sha,href:x.url}]));
  const pr=sec('Pull requests in flight and recently merged');
