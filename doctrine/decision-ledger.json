@@ -184,7 +184,8 @@
    "date": "2026-11-12",
    "title": "Site claims must link to issues and code (SITE-PINS-1)",
    "body": "A public-site status pin or honest gap with no docs/issues item and no existing code path is a defect. site/pins.json plus scripts/build_site_roadmap.py --check enforce it; doctrine/market.json engineer-lane now proves site/pins.json.",
-   "probe": "file:scripts/build_site_roadmap.py"
+   "probe": "file:scripts/build_site_roadmap.py",
+   "session": "session_0156nqDtk2xvHdHtnZ3B7oBL"
   }
  ]
 }
