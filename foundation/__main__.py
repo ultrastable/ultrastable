@@ -16,6 +16,7 @@
   python3 -m foundation executor [--apply] [--issue N]                    pick the top issue, change, check, open a PR (--pick, --record: the key-free session route)
   python3 -m foundation upstream contract|adopt|sync|check|drift|leaks   core/instance link: pin, flow down, send up, drift, bring your own repo
   python3 -m foundation orphans [--check|--metrics|--baseline|--issue-body|--sync-issue OWNER/REPO]   ORPHANS-1: no orphan artifact, no human-wait
+  python3 -m foundation lifecycle [--open|--beat|--close|--reap|--check|--improve|--score|--report|--hooks]   no zombie sessions; loops that score and mutate themselves
   python3 -m foundation triggers [--check|--sync|--plan]   time (cron heartbeat) and event (webhook) triggers, drift-checked
   python3 -m foundation team [--gate|--check|--apply|--recommend --manifest F]   the phased virtual team (doctrine/team.json)
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
@@ -34,6 +35,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["fleet"]:
         from . import fleet
         return fleet.main(_av[1:])
+    if _av[:1] == ["lifecycle"]:
+        from . import lifecycle
+        return lifecycle.main(_av[1:])
     if _av[:1] == ["triggers"]:
         from . import triggers
         return triggers.main(_av[1:])
