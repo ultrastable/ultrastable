@@ -6,7 +6,10 @@
 # Branches in KEEP are infrastructure (loop evidence). Nothing with unmerged commits is ever deleted.
 set -uo pipefail
 . "$(dirname "$0")/lib-safe.sh"
-repo="${GITHUB_REPOSITORY:?}"; KEEP="main loop-evidence"
+repo="${GITHUB_REPOSITORY:?}"; KEEP="main loop-evidence session-evidence"
+# QUEUE-1: work items are repository data (docs/issues), so GitHub Issues are off on this repository. Every `gh issue` call then fails, and
+# the daily lane sweep was red on each run for that reason alone (found by the liveness probe, 2026-11-12). Ask once; skip the issue steps when off.
+issues_on=$(timeout 30 "$_GH_BIN" api "repos/$repo" --jq .has_issues 2>/dev/null || echo true)
 git fetch -q origin "+refs/heads/*:refs/remotes/origin/*" || echo "fetch failed" >&2
 for b in $(gh api "repos/$repo/branches" --paginate --jq '.[].name'); do
   case " $KEEP " in *" $b "*) continue;; esac
@@ -30,11 +33,13 @@ for b in $(gh api "repos/$repo/branches" --paginate --jq '.[].name'); do
     if [ -n "$m" ] && [ "$m" = "$tip" ]; then gh api -X DELETE "repos/$repo/git/refs/heads/$b" >/dev/null && echo "deleted squash-merged branch $b"; fi
   fi
 done
-for n in $(gh issue list -R "$repo" --state open --label done --json number --jq '.[].number'); do
-  gh issue close "$n" -R "$repo" --reason completed --comment "completion-sweep: labelled done; closing as complete." >/dev/null && echo "closed issue #$n"
-done
+if [ "$issues_on" != false ]; then
+  for n in $(gh issue list -R "$repo" --state open --label done --json number --jq '.[].number'); do
+    gh issue close "$n" -R "$repo" --reason completed --comment "completion-sweep: labelled done; closing as complete." >/dev/null && echo "closed issue #$n"
+  done
+fi
 # STRANGE-LOOP-1: the loop measures itself so each run is comparable with the last. cycle_metric = items still open that this pass could not close.
 left_prs=$(gh pr list -R "$repo" --state open --json number,updatedAt --jq '[.[] | select((now - (.updatedAt|fromdateiso8601)) > 86400)] | length')
-left_issues=$(gh issue list -R "$repo" --state open --label done --json number --jq length)
+if [ "$issues_on" != false ]; then left_issues=$(gh issue list -R "$repo" --state open --label done --json number --jq length); else left_issues="off (items are docs/issues; python3 -m foundation queue --run closes them)"; fi
 echo "cycle_metric leftover_after_sweep prs_idle_over_1d=${left_prs:-?} done_issues=${left_issues:-?}"
 safe_exit

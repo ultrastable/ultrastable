@@ -21,8 +21,16 @@ def out(value):
         sys.stdout.write(r.stdout); sys.exit(r.returncode)
     print(json.dumps(value)); sys.exit(0)
 
+if a[:1] == ["issue"]:
+    if not state.get("has_issues", True):
+        print("the 'o/r' repository has disabled issues", file=sys.stderr); sys.exit(1)
+    out([])
+if a[:1] == ["api"] and a[1] == "repos/o/r":
+    out({"has_issues": state.get("has_issues", True)})
+if a[:1] == ["api"] and a[1].endswith("/branches"):
+    out([])
 if a[:2] == ["pr", "list"]:
-    out([{"number": int(n)} for n in state["prs"]])
+    out([{"number": int(n), "updatedAt": "2026-11-12T00:00:00Z"} for n in state["prs"]])
 if a[:2] == ["pr", "view"]:
     out(state["prs"][a[2]])
 if a[:1] == ["api"] and "/check-runs" in a[1]:
@@ -48,15 +56,25 @@ def pr(sha, *, labels=(), files=("README.md",), draft=False):
 class LaneMergesNeedsPat(unittest.TestCase):
     PAT = "pat-value-for-the-test"
 
-    def run_lane(self, prs, checks, **env):
+    def test_completion_sweep_is_green_when_issues_are_off_on_the_repository(self):
+        """Issues are off here (items are docs/issues). The sweep used to call `gh issue` anyway and failed the daily lane run every time."""
+        r, calls = self.run_lane({}, {}, script="completion_sweep.sh", has_issues=False)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertEqual([c for c in calls if c["argv"][:1] == ["issue"]], [])
+        self.assertIn("done_issues=off", r.stdout)
+        r, calls = self.run_lane({}, {}, script="completion_sweep.sh", has_issues=True)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertTrue([c for c in calls if c["argv"][:2] == ["issue", "list"]])
+
+    def run_lane(self, prs, checks, script="lane.sh", has_issues=True, **env):
         d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, d, ignore_errors=True)
         gh = d / "bin" / "gh"; gh.parent.mkdir()
         gh.write_text(FAKE_GH); gh.chmod(gh.stat().st_mode | stat.S_IEXEC)
-        (d / "state.json").write_text(json.dumps({"prs": prs, "checks": checks, "workflow_token": self.PAT}))
+        (d / "state.json").write_text(json.dumps({"prs": prs, "checks": checks, "workflow_token": self.PAT, "has_issues": has_issues}))
         (d / "log.jsonl").write_text("")
         e = {"PATH": f"{gh.parent}:{os.environ['PATH']}", "GITHUB_REPOSITORY": "o/r", "GH_TOKEN": "builtin", "FAKE_GH_STATE": str(d / "state.json"),
              "FAKE_GH_LOG": str(d / "log.jsonl"), "HOME": str(d), **env}
-        r = subprocess.run(["bash", str(ROOT / "scripts/lane.sh")], env=e, capture_output=True, text=True, timeout=120)
+        r = subprocess.run(["bash", str(ROOT / "scripts" / script)], env=e, capture_output=True, text=True, timeout=120, cwd=d)
         calls = [json.loads(l) for l in (d / "log.jsonl").read_text().splitlines()]
         return r, calls
 
