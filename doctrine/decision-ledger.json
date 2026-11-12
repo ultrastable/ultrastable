@@ -123,6 +123,14 @@
    "probe": "grep:foundation/executor.py::call_cloudflare"
   },
   {
+   "id": "lesson-2026-11-12-executor-pr-sat-as-an-unchecked-draft",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Executor PR sat as an unchecked draft",
+   "body": "The first live executor run opened PR 233 for Q-10 as a draft with zero checks, because a PR opened with GITHUB_TOKEN raises no pull_request event and a draft runs no CI, so the lane had nothing to merge. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed and the executor now marks the PR ready and dispatches checks.yml on its branch right after pr create, recording any failed kick in the log row.",
+   "probe": "grep:foundation/executor.py::kick_failed"
+  },
+  {
    "id": "decision-2026-11-12-boundary-1-containment-boundary",
    "kind": "decision",
    "date": "2026-11-12",
