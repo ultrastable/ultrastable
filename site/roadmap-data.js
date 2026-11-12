@@ -236,7 +236,7 @@ export default {
    "issue": "Q-GAP-front-door-qualify",
    "name": "Chat-thread front door",
    "status": "live",
-   "what": "A pill input with dictation, rotating suggestions, tap-to-answer questions, then each build step shown as it runs. It runs the system test first and tells a one-off idea plainly that it is not a fit. The question bank is still static.",
+   "what": "A pill input with dictation, rotating suggestions, tap-to-answer questions, then each build step shown as it runs. The front door refuses definite one-offs before building; adaptive follow-up questions are tracked separately.",
    "where": "site/interview.js"
   },
   {

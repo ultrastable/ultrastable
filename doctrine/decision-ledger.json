@@ -188,6 +188,14 @@
    "session": "session_0156nqDtk2xvHdHtnZ3B7oBL"
   },
   {
+   "id": "lesson-2026-11-12-parallel-sessions-built-the-same-site-pins-system-merge-into",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Parallel sessions built the same site-pins system; merge into one source of truth",
+   "body": "PINS-1 (computed pins) collided with SITE-PINS-1 (#247) on main. Kept SITE-PINS-1 (site/pins.json, scripts/build_site_roadmap.py) as the single source for the site and kept only the shrink-only ratchet for roadmap issues without a runnable probe (foundation/pins.py, doctrine/pins-baseline.json). Lesson: before building a surface, read origin/main and open PRs for the same directive.",
+   "probe": "grep:foundation/pins.py::def unprobed"
+  },
+  {
    "id": "decision-2026-11-12-server-side-only-github-actions-on-its-built-in-token-is-the",
    "kind": "decision",
    "date": "2026-11-12",
