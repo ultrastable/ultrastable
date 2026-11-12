@@ -16,6 +16,15 @@
    "title": "Write-back is an executable ledger row, not a page",
    "body": "writeback record --kind lesson|decision writes doctrine/decision-ledger.json with a required file or grep probe; closedloop --check runs every probe.",
    "probe": "grep:foundation/writeback.py::LEDGER = "
+  },
+  {
+   "id": "decision-2026-11-12-orphan-scan-delegates-to-the-document-audit",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Orphan scan delegates to the document audit",
+   "body": "CLOSED-LOOP-1 (orphans.py) and DOC-CONSUMED-1 (docs_audit.py) measured the same thing two ways. The document audit is the single definition; orphans.py keeps the human-wait check, the decision ledger and the backlog issue, and reads orphan documents from docs_audit.",
+   "probe": "grep:foundation/orphans.py::docs_audit",
+   "session": "session_0156nqDrJvHpEG6mS66nV7Xg"
   }
  ]
 }
