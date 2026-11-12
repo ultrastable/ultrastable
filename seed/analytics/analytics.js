@@ -1,7 +1,7 @@
 // Ultrastable standard web analytics (ANALYTICS-1, 2026-11-10). Ships in every seed; the dashboard and the seed worker import this one file.
 // First-party and cookieless: no third-party script, no IP stored, no cookie, no cross-day visitor id. Honors Do Not Track and Global Privacy Control.
 // Portable core: touches the platform only through env.DB (SQL) and fetch/Request/Response. Schema: analytics/schema.sql.
-// Every metric in REGISTRY has a trigger or a named exemption (rule from the QNFO scoreboard); test/analytics.test.mjs enforces it.
+// Every metric in REGISTRY has a trigger or a named exemption (rule from the original scoreboard); test/analytics.test.mjs enforces it.
 export const VERSION = "0.1.0";
 const DAY = 864e5, RAW_KEEP_DAYS = 35;
 const BOT_RE = /bot|crawl|spider|slurp|preview|monitor|uptime|curl|wget|python-requests|httpclient|headless|lighthouse|facebookexternalhit|node-fetch|undici|go-http|java\//i;

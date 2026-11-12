@@ -62,6 +62,10 @@ Code is the only memory. All project state lives in this repository (docs/PROJEC
 [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · contact pilot@ultrastable.io
 <!-- brand:end -->
 
+## Start here
+- [How Ultrastable actually starts its own agents](docs/HOW-IT-STARTS.md): plain language, one diagram, a traced example.
+- [One core, many instances](docs/architecture/core-and-instances.md): how QNFO and any third party run on the same core, and how fixes flow both ways.
+
 ## This repository
 Private repository, system of record. If it is not here, it does not exist. **Nothing here leaves the repo except files in [external/](external/)** (no patent: the code and specifications are protected by the [hybrid license](LICENSE), free for non-commercial use and licensed for commercial use; the repository stays private until the owner publishes; rules in [docs/CONFIDENTIALITY.md](docs/CONFIDENTIALITY.md)).
 

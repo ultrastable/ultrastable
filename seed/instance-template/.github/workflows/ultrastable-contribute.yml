@@ -1,0 +1,37 @@
+name: ultrastable-contribute
+# budget: ~1 min per week
+# trigger: weekly (flow UP: kernel files edited here become an issue on the core) and manual dispatch
+# free-alternative: `python3 -m foundation upstream drift --instance . --json` from any local scheduler
+# Reports local kernel edits as an issue in this repo and, when CORE_WRITE_TOKEN is bound, as an issue on the core. Two routes, no single point of failure.
+on:
+  schedule:
+    - cron: "37 4 * * 2"
+  workflow_dispatch:
+permissions:
+  issues: write
+  contents: read
+concurrency:
+  group: ultrastable-contribute
+  cancel-in-progress: true
+jobs:
+  drift:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: "{core_repo}"
+          path: .core
+          token: ${{ secrets.CORE_READ_TOKEN || github.token }}
+      - name: Drift report
+        run: |
+          PYTHONPATH=.core python3 -m foundation upstream drift --core .core --instance . --json > drift.json
+          cat drift.json
+          if python3 -c "import json,sys; sys.exit(0 if json.load(open('drift.json'))['local_edits'] else 1)"; then
+            gh issue create --title "Kernel files edited locally: send upstream or revert" --body-file drift.json || true
+            if [ -n "$CORE_WRITE_TOKEN" ]; then GH_TOKEN="$CORE_WRITE_TOKEN" gh issue create -R {core_repo} --title "Upstream candidate from {slug}" --body-file drift.json; fi
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CORE_WRITE_TOKEN: ${{ secrets.CORE_WRITE_TOKEN }}

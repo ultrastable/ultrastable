@@ -1446,6 +1446,42 @@
     "executor.yml"
    ],
    "credentials": []
+  },
+  {
+   "id": "core-instance-sync",
+   "kind": "release",
+   "summary": "Core and instances stay one system: kernel flows down by upgrade PR, instance fixes flow up as issues, drift opens an issue.",
+   "trigger": "weekly (upstream.yml on the core; ultrastable-upgrade.yml and ultrastable-contribute.yml in each instance)",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "7d",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "pull",
+     "how": ".github/workflows/upstream.yml scans instances (scripts/upstream_scan.py)",
+     "class": "free"
+    },
+    {
+     "id": "push",
+     "how": "seed/instance-template/.github/workflows/ultrastable-contribute.yml in the instance, or python3 -m foundation upstream drift locally",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:foundation/upstream.py::def drift",
+   "writeback": [
+    "docs/handoff",
+    "docs/PROJECT-MEMORY.md"
+   ],
+   "system_path": [
+    "foundation/upstream.py",
+    "core-contract.json",
+    "scripts/upstream_scan.py"
+   ],
+   "area": "operations",
+   "workflows": [
+    "upstream.yml"
+   ]
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
