@@ -215,9 +215,23 @@ async function kick(request, env, ctx, id, idea, prev, change) {
   const n = Number(await env.ASSETS.get(key) || 0);
   if (n >= 6) return new Response(start("Lots of builds from your connection this hour. Please try again a little later."), { status: 429, headers: HTML });
   await env.ASSETS.put(key, String(n + 1), { expirationTtl: 7200 });
+  // BUILD-2: the build runs inside the /make request (awaited), never in waitUntil. waitUntil is cut off about 30 s after the response and the
+  // model takes 20-40 s, so a backgrounded build was evicted mid-flight and left the state at "building" forever. The job is stored so that
+  // any later /make poll can resume it after an eviction; a claim with a TTL stops two polls building at once; tries are capped at 3.
+  await env.ASSETS.put("job:" + id, JSON.stringify({ idea: idea, change: change, base: prev ? true : false }), { expirationTtl: 86400 });
+  await env.ASSETS.put("tries:" + id, "0", { expirationTtl: 86400 });
   await env.ASSETS.put("state:" + id, "building");
-  const job = build(env, id, idea, prev, change); if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job;
   return Response.redirect("https://" + CANON + "/s/" + id + "/make", 303);
+}
+async function resume(env, id) {
+  if (await env.ASSETS.get("claim:" + id)) return "claimed";
+  const tries = Number(await env.ASSETS.get("tries:" + id) || 0), job = JSON.parse((await env.ASSETS.get("job:" + id)) || "null");
+  if (!job || tries >= 3) { await env.ASSETS.put("state:" + id, "failed"); return "failed"; }
+  await env.ASSETS.put("claim:" + id, "1", { expirationTtl: 120 });
+  await env.ASSETS.put("tries:" + id, String(tries + 1), { expirationTtl: 86400 });
+  await build(env, id, job.idea, job.base ? await env.ASSETS.get("site:" + id) : null, job.change);
+  await env.ASSETS.delete("claim:" + id);
+  return await env.ASSETS.get("state:" + id);
 }
 async function takeIdea(request, env, ctx) {
   const f = await request.formData().catch(() => null), idea = f && String(f.get("idea") || "").trim().slice(0, 2000);
@@ -238,9 +252,11 @@ async function siteRoutes(u, env) {
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (m[2] === "/change") return new Response(shell({ path: u.pathname, title: "Change your site", description: "Change your site." }, "<div class=\"head\"><h1>What should change?</h1><p>Say it in plain words.</p></div><form method=\"post\" action=\"/api/change\"><input type=\"hidden\" name=\"id\" value=\"" + id + "\"><textarea name=\"change\" rows=\"3\" maxlength=\"1000\" required style=\"width:100%;font-size:1.1rem;padding:.8rem\" placeholder=\"Make it green and add a contact button\"></textarea><div class=\"us-actions\"><button class=\"btn btn-primary\" type=\"submit\">Update</button> <a class=\"btn\" href=\"/s/" + id + "\">Cancel</a></div></form>"), { headers: HTML });
   if (m[2] === "/make") {
-    if (st === "ready") return Response.redirect("https://" + CANON + "/s/" + id, 302);
-    const msg = st === "failed" ? "<p>That did not work this time. <a href=\"/start\">Try again</a>.</p>" : "<p>Building your site. This takes about half a minute. This page updates by itself.</p><meta http-equiv=\"refresh\" content=\"4\">";
-    return new Response(shell({ path: u.pathname, title: "Building - Ultrastable", description: "Building your site." }, "<div class=\"head\"><h1>" + (st === "failed" ? "Something went wrong" : "Building...") + "</h1></div>" + msg), { headers: HTML });
+    let cur = st;
+    if (cur === "building") cur = await resume(env, id);
+    if (cur === "ready") return Response.redirect("https://" + CANON + "/s/" + id, 302);
+    const msg = cur === "failed" ? "<p>That did not work this time. <a href=\"/start\">Try again</a>.</p>" : "<p>Building your site. This takes about half a minute. This page updates by itself.</p><meta http-equiv=\"refresh\" content=\"4\">";
+    return new Response(shell({ path: u.pathname, title: "Building - Ultrastable", description: "Building your site." }, "<div class=\"head\"><h1>" + (cur === "failed" ? "Something went wrong" : "Building...") + "</h1></div>" + msg), { headers: HTML });
   }
   if (st !== "ready") return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
   const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><a href=\"https://" + CANON + "/s/" + id + "/change\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none\" target=\"_top\">Change something</a></div>";
