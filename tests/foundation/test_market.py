@@ -12,7 +12,10 @@ def _copy():
         shutil.copytree(REPO / rel, t / rel, ignore=shutil.ignore_patterns("__pycache__"))
     for rel in ("scripts", "seed", "platform", "tests", "ops"):  # read-only evidence for proofs and test-file checks
         if (REPO / rel).exists():
-            (t / rel).symlink_to(REPO / rel, target_is_directory=True)
+            try:
+                (t / rel).symlink_to(REPO / rel, target_is_directory=True)
+            except OSError:  # Windows without symlink privilege: a copy is equivalent for read-only evidence
+                shutil.copytree(REPO / rel, t / rel, ignore=shutil.ignore_patterns("__pycache__", "node_modules", ".git", ".wrangler"))
     return t
 
 

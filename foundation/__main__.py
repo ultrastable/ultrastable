@@ -21,6 +21,7 @@
   python3 -m foundation lifecycle [--open|--beat|--close|--reap|--check|--improve|--score|--report|--hooks]   no zombie sessions; loops that score and mutate themselves
   python3 -m foundation triggers [--check|--sync|--plan]   time (cron heartbeat) and event (webhook) triggers, drift-checked
   python3 -m foundation team [--gate|--check|--apply|--recommend --manifest F]   the phased virtual team (doctrine/team.json)
+  python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
 """
 import argparse, datetime as dt, json, os, sys
@@ -31,6 +32,9 @@ from . import boundary, closedloop, standards, doctrine, directive, filing, glos
 def main(argv=None) -> int:
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
+    if _av[:1] == ["failure_audit"]:
+        from . import failure_audit
+        return failure_audit.main(_av[1:])
     if _av[:1] == ["queue"]:
         from . import queue
         return queue.main(_av[1:])

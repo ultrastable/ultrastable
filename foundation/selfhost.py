@@ -150,6 +150,13 @@ def boot(root=REPO, db_path=None, node=True) -> dict:
     surfaces = sorted({(p["id"], "execute") for p in sh["processes"]})
     for s, a in surfaces:
         con.execute("INSERT INTO trust_ledger(surface,action_class,rung,reliability,outcomes) VALUES(?,?,?,?,0)", (s, a, "observed", policy["trust"]["baseline"]))
+    # OBJECTIVES-1: Ultrastable is measured by the same objective and metric rows bootstrap seeds for any system.
+    ob = _j(root, "instances/ultrastable/objectives.json")
+    for o in ob["objectives"]:
+        con.execute("INSERT INTO objectives(id,statement,owner_role) VALUES(?,?,?)", (o["id"], o["statement"], o["owner_role"]))
+    for m in ob["metrics"]:
+        con.execute("INSERT INTO metrics(id,objective_id,name,kind,source,spec,op,threshold,grace_hours,owner_role,remedy) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                    (m["id"], m["objective_id"], m["name"], m["kind"], m["source"], m["spec"], m["op"], m["threshold"], m["grace_hours"], m["owner_role"], m["remedy"]))
     con.execute("INSERT INTO doctrine_lineage(version,source) VALUES(?,?)", (f"positioning-{doctrine['version']}", "doctrine/positioning.json"))
     con.execute("INSERT INTO doctrine_lineage(version,source) VALUES(?,?)", (f"kernel-{_j(root, 'doctrine/kernel.json')['version']}", "doctrine/kernel-8.2.1.md"))
     con.execute("INSERT INTO doctrine_lineage(version,source) VALUES(?,?)", (f"glossary-{_j(root, 'doctrine/glossary.json')['version']}", "doctrine/glossary.json"))
@@ -170,9 +177,9 @@ def boot(root=REPO, db_path=None, node=True) -> dict:
         report = "\n".join([f"Happened: booted {len(roles)} roles, {items} items, {len(surfaces)} trust rows from the repository (minimal path, tick not run).",
                             "Decided: the minimal path seeds state only; the full tick runs where Node 22 exists.",
                             "Next: run the same command with Node, or on Cloudflare or GCP, for the full tick.", f"Open: {open_n} active item(s)."])
-        con.execute("INSERT INTO tick_runs(started_at,finished_at,steps_completed,steps_total,report) VALUES(datetime('now'),datetime('now'),0,7,?)", (report,))
+        con.execute("INSERT INTO tick_runs(started_at,finished_at,steps_completed,steps_total,report) VALUES(datetime('now'),datetime('now'),0,8,?)", (report,))
         con.commit()
-        tick = {"completed": 0, "total": 7, "report": report, "errors": []}
+        tick = {"completed": 0, "total": 8, "report": report, "errors": []}
     counts = {t: con.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0] for t in ("roles", "items", "trust_ledger", "org", "tick_runs")}
     con.close()
     return {"status": "ok", "path": path, "db": str(out), "counts": counts, "tick": tick}

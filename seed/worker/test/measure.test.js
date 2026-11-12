@@ -51,3 +51,20 @@ test('OBJECTIVES-1: an sql probe that is not one SELECT is refused and counts as
   assert.equal(db.raw.prepare("SELECT breached FROM metrics WHERE id='M-bad'").get().breached, 1);
   assert.match(r.report, /must be one SELECT/);
 });
+
+test('OBJECTIVES-1: an http probe reads 1 on a 2xx answer and 0 on an error or a thrown request', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO metrics (id,name,kind,source,spec,op,threshold,owner_role,remedy)
+    VALUES ('M-up','site up','target','http','https://example.test/health','>=',1,'operations','Roll back the deploy.');`);
+  const up = { fetch: async () => ({ ok: true }) }, down = { fetch: async () => ({ ok: false }) }, boom = { fetch: async () => { throw new Error('dns'); } };
+  await runTick(db, { config, env: up, now: T0 });
+  assert.equal(db.raw.prepare("SELECT last_value, breached FROM metrics WHERE id='M-up'").get().last_value, 1);
+  assert.equal(db.raw.prepare("SELECT breached FROM metrics WHERE id='M-up'").get().breached, 0);
+  await runTick(db, { config, env: down, now: T0 + 600e3 });
+  assert.equal(db.raw.prepare("SELECT breached FROM metrics WHERE id='M-up'").get().breached, 1, '5xx breaches');
+  assert.ok(db.raw.prepare("SELECT 1 FROM items WHERE id='BREACH-M-up' AND status<>'done'").get());
+  await runTick(db, { config, env: boom, now: T0 + 1200e3 });
+  assert.equal(db.raw.prepare("SELECT last_value FROM metrics WHERE id='M-up'").get().last_value, 0, 'a thrown request reads 0');
+  await runTick(db, { config, env: up, now: T0 + 1800e3 });
+  assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='BREACH-M-up'").get().status, 'done', 'recovery closes the remedy');
+});

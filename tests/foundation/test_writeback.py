@@ -83,7 +83,7 @@ class Check(unittest.TestCase):
 
     def test_outputs_missing_from_repo_are_flagged(self):
         out = Path(tempfile.mkdtemp())
-        (out / "kept.md").write_text((ROOT / "doctrine/positioning.json").read_text())
+        (out / "kept.md").write_bytes((ROOT / "doctrine/positioning.json").read_bytes())
         (out / "lost.md").write_text("only in a session output folder\n")
         got = writeback.outputs(ROOT, [out])
         self.assertEqual(len(got), 1)

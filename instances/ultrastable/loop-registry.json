@@ -2034,6 +2034,42 @@
     "doctrine/market-evidence.json",
     "foundation/launch.py"
    ]
+  },
+  {
+   "id": "failure-audit",
+   "kind": "governance",
+   "summary": "The system continuously audits its own failure modes: live detectors run daily, a failing one files exactly one backlog issue with its root cause and remedy, the same signature twice means change the approach, three times an incident, and a recovery is recorded, never silent.",
+   "trigger": "daily workflow and on demand",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "every detector in doctrine/detectors.json has a ledger line from the last day and every failing one has an open AUDIT issue",
+   "paths": [
+    {
+     "id": "github",
+     "how": ".github/workflows/failure-audit.yml runs python3 -m foundation failure_audit --run",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "the same command from any machine with the repo",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:foundation/failure_audit.py::def run_detector",
+   "writeback": [
+    "docs/issues"
+   ],
+   "system_path": [
+    "foundation/failure_audit.py",
+    "doctrine/detectors.json",
+    "tests/foundation/test_failure_audit.py",
+    ".github/workflows/failure-audit.yml"
+   ],
+   "workflows": [
+    "failure-audit.yml"
+   ],
+   "area": "managers"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
