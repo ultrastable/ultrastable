@@ -320,6 +320,14 @@
    "title": "transparency publish reported green while D1 refused the snapshot",
    "body": "The publish step printed published false and exited 0 (a swallowed error), and D1 rejects a single 120 KB statement. Snapshot now stored in 50 KB parts and --publish exits 1 when not published; /api/live generated time is the probe.",
    "probe": "grep:foundation/transparency.py::return 1"
+  },
+  {
+   "id": "decision-2026-11-12-agent-interop-1-and-terms-crosswalk-1",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "AGENT-INTEROP-1 and TERMS-CROSSWALK-1",
+   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Site serves Markdown, Link headers, llms.txt, OpenAPI, API catalog, read-only MCP; standards are data with source and date; A2A declined with reason (no endpoint). Crosswalk maps autonomous, closed loop, automatic, never stops, no person in the loop to glossary terms; markers stamped in every instruction file.",
+   "probe": "grep:foundation/agentstd.py::def check"
   }
  ]
 }

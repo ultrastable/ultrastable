@@ -2183,6 +2183,66 @@
       "workflows": [
         "transparency.yml"
       ]
+    },
+    {
+      "id": "agent-interop",
+      "kind": "governance",
+      "summary": "AGENT-INTEROP-1: the site and API are readable by agents (Markdown, Link headers, llms.txt, OpenAPI, API catalog, read-only MCP); each standard is data with source, date and proof.",
+      "trigger": "every PR (checks.yml)",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "python3 -m foundation agentstd --check reports ok",
+      "paths": [
+        {
+          "id": "ci",
+          "how": "python3 -m foundation agentstd --check",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation agentstd --check from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/agentstd.py::def check",
+      "writeback": [
+        "doctrine/agent-standards.json"
+      ],
+      "system_path": [
+        "doctrine/agent-standards.json"
+      ],
+      "area": "governance"
+    },
+    {
+      "id": "terms-crosswalk",
+      "kind": "governance",
+      "summary": "TERMS-CROSSWALK-1: overlapping words map to one canonical glossary term; instruction files carry the marker and avoid the synonyms.",
+      "trigger": "every PR (checks.yml)",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "python3 -m foundation crosswalk --check reports ok",
+      "paths": [
+        {
+          "id": "ci",
+          "how": "python3 -m foundation crosswalk --check",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation crosswalk --check from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/crosswalk.py::def check",
+      "writeback": [
+        "doctrine/crosswalk.json"
+      ],
+      "system_path": [
+        "doctrine/crosswalk.json"
+      ],
+      "area": "governance"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"
