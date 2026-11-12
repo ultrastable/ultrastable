@@ -154,3 +154,6 @@ Update this file in the same PR as any change to status, rules, facts, owner ite
 
 ## Workflow flow map (2026-11-12)
 - `foundation/flows.py` now covers workflows: every `.github/workflows` file belongs to a loop with declared flows, flow `bindings` equal the secrets the workflows use (`flows --workflows`, `--sync`). 14 more loops declared (29 of 67; 38 pending, item Q-FLOW-PENDING-BURNDOWN). The resume and job-search system and the QNFO workflows are filed as Q-FLOW-RESUME-JOBS and Q-FLOW-QNFO-TWIN.
+
+## Scout (2026-11-12)
+- SCOUT-1: `doctrine/scout.json` sources, `foundation/scout.py`, weekly `.github/workflows/scout.yml`. Scores feed entries against `doctrine/market.json` gaps and needs, files `Q-SCOUT-*` growth items, re-weights sources from `ops/scout/adopted.jsonl` (`scout --adopt`). Flow `scout` in `doctrine/flows.json`; clock `scout` in `doctrine/clocks.json`. The sandbox cannot reach the feeds; the workflow fetches them live.

@@ -1,0 +1,22 @@
+{
+  "_doc": "SCOUT-1 (Rowan, 2026-11-12): the growth product manager looks for the state of the art and files what it finds. foundation/scout.py reads each source on a weekly clock, scores every new entry against the gap register in doctrine/market.json and the needs below, files a growth queue item (Q-SCOUT-*) for each entry over the threshold, and re-weights its own sources from what was adopted. Sources are data: a pass that finds a better one adds it by PR (the scout also files a growth item when a source returns nothing for four passes). Read by foundation/scout.py, scripts and .github/workflows/scout.yml.",
+  "threshold": 2.0,
+  "max_per_run": 5,
+  "window_days": 30,
+  "weight": {"initial": 1.0, "floor": 0.25, "ceiling": 2.0, "decay": 0.8, "boost": 1.25, "quiet_passes": 4},
+  "needs": [
+    "background agent", "scheduled", "autonomous", "evals", "observability", "tracing", "cost", "self-host", "sandbox", "mcp", "agent2agent", "a2a",
+    "durable", "workflow", "queue", "memory", "multi-agent", "orchestrat", "pull request", "code review", "voice", "deploy", "rollback", "guardrail", "permission"
+  ],
+  "sources": [
+    {"id": "claude-code", "kind": "atom", "url": "https://github.com/anthropics/claude-code/releases.atom", "topic": "coding agents"},
+    {"id": "openai-codex", "kind": "atom", "url": "https://github.com/openai/codex/releases.atom", "topic": "coding agents"},
+    {"id": "openhands", "kind": "atom", "url": "https://github.com/All-Hands-AI/OpenHands/releases.atom", "topic": "coding agents"},
+    {"id": "cloudflare-agents", "kind": "atom", "url": "https://github.com/cloudflare/agents/releases.atom", "topic": "agent platform"},
+    {"id": "cloudflare-workers-sdk", "kind": "atom", "url": "https://github.com/cloudflare/workers-sdk/releases.atom", "topic": "agent platform"},
+    {"id": "langgraph", "kind": "atom", "url": "https://github.com/langchain-ai/langgraph/releases.atom", "topic": "agent orchestration"},
+    {"id": "google-adk", "kind": "atom", "url": "https://github.com/google/adk-python/releases.atom", "topic": "agent orchestration"},
+    {"id": "mcp-spec", "kind": "atom", "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/releases.atom", "topic": "agent standards"},
+    {"id": "cloudflare-blog", "kind": "rss", "url": "https://blog.cloudflare.com/rss/", "topic": "agent platform"}
+  ]
+}

@@ -2347,6 +2347,42 @@
       "workflows": [
         "product-manager.yml"
       ]
+    },
+    {
+      "id": "scout",
+      "kind": "governance",
+      "summary": "SCOUT-1: the growth product manager scouts the state of the art weekly, scores findings against the gap register, files growth items and re-weights its sources from what was adopted.",
+      "trigger": "weekly (scout.yml) and on demand",
+      "owner": "product-manager",
+      "closes_by": "system",
+      "sla": "7d",
+      "done": "python3 -m foundation scout --check reports ok",
+      "paths": [
+        {
+          "id": "ci",
+          "how": "python3 -m foundation scout --run --apply",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation scout --run --apply from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/scout.py::def reweight",
+      "writeback": [
+        "ops/scout/log.jsonl",
+        "ops/scout/weights.json",
+        "docs/issues"
+      ],
+      "system_path": [
+        "doctrine/scout.json",
+        "foundation/scout.py"
+      ],
+      "area": "governance",
+      "workflows": [
+        "scout.yml"
+      ]
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"
