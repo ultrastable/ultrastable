@@ -129,6 +129,22 @@
    "title": "Executor PR sat as an unchecked draft",
    "body": "The first live executor run opened PR 233 for Q-10 as a draft with zero checks, because a PR opened with GITHUB_TOKEN raises no pull_request event and a draft runs no CI, so the lane had nothing to merge. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed and the executor now marks the PR ready and dispatches checks.yml on its branch right after pr create, recording any failed kick in the log row.",
    "probe": "grep:foundation/executor.py::kick_failed"
+  },
+  {
+   "id": "decision-2026-11-12-boundary-1-containment-boundary",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "BOUNDARY-1 containment boundary",
+   "body": "Creation and destruction inside a rebuildable boundary; egress gated; trust tiers apply inside only; session reaper; strange-loop improvement ledger.",
+   "probe": "grep:foundation/boundary.py::def drill"
+  },
+  {
+   "id": "lesson-2026-11-12-boundary-session-reaper",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Boundary session reaper",
+   "body": "Session: session_0156nqDtuoapfx2PcxBPEqWf. Finished or idle sessions are archived from boundary.reap decisions.",
+   "probe": "grep:foundation/boundary.py::def reap"
   }
  ]
 }

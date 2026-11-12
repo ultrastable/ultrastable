@@ -1,0 +1,37 @@
+{
+ "_doc": "BOUNDARY-1 (Rowan, 2026-11-12): creation and destruction inside a closed boundary, like a container. Inside, agents act with full control and may destroy and recreate freely because everything inside rebuilds from this repository. Egress points are the only places the boundary is crossed; they keep their gates. Nothing here weakens a harness permission check, the secrets rule, or the confidentiality rule: those are egress. Read by foundation/boundary.py.",
+ "marker": "BOUNDARY-AXIOM",
+ "axiom": "BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository (python3 -m foundation boundary --drill). Only egress crosses the boundary: credentials, money, the owner's accounts, public publishing, other people's systems. Egress keeps its gate and its staged default. Trust widens what an agent may do inside, never what it may do at egress, never harness permissions, secrets or the interrupt gate.",
+ "instruction_files": ["CLAUDE.md","AGENTS.md","agents/AGENTS.md","agents/PROJECT-INSTRUCTIONS.md","agents/roles/*.md","seed/CLAUDE.md","seed/AGENTS.md","seed/agents/AGENTS.md","seed/agents/roles/*.md",".github/copilot-instructions.md","seed/.github/copilot-instructions.md"],
+ "inside": [
+  {"id": "repo-working-trees", "what": "clones, branches, build output, scratch", "rebuild": "git clone / git checkout"},
+  {"id": "sandbox-instances", "what": "instances created from instances/<slug>/instance.json in a sandbox account or container", "rebuild": "python3 -m foundation scaffold"},
+  {"id": "derived-data", "what": "generated files, caches, indexes, reports", "rebuild": "the generator named in generated-by"},
+  {"id": "agent-sessions", "what": "sessions, threads, worktrees, workers", "rebuild": "the queue and handoff data"}
+ ],
+ "egress": [
+  {"id": "credentials", "class": "secret", "gate": "interrupt", "default": "automated acquisition across every surface, then staged default", "probe": "file:foundation/data/owner-steps.json"},
+  {"id": "money", "class": "irreversible-identity", "gate": "interrupt", "default": "simulate and stage; never spend", "probe": "file:foundation/data/owner-steps.json"},
+  {"id": "owner-accounts", "class": "identity", "gate": "interrupt", "default": "prepare and stage", "probe": "file:foundation/data/owner-steps.json"},
+  {"id": "public-publishing", "class": "disclosure", "gate": "confidentiality", "default": "private until the disclosure gate in doctrine/positioning.json allows", "probe": "file:doctrine/positioning.json"},
+  {"id": "third-party-systems", "class": "other-people", "gate": "scope", "default": "read-only unless the system is in doctrine/fleet.json", "probe": "file:doctrine/fleet.json"}
+ ],
+ "rebuild": {
+  "drill_checks": [["python3","-m","foundation","directive","--check"],["python3","-m","foundation","loops","--verify"]],
+  "digest_paths": ["doctrine","instances","foundation","seed"]
+ },
+ "permissions": {
+  "_doc": "Minimum trust rung (doctrine/kernel.json ladder) per action class inside the boundary. Egress has no rung: it is always gated. Reserved classes can never be granted by trust.",
+  "inside": {"read": "observed", "create": "assisted", "edit": "assisted", "destroy-derived": "delegated", "rebuild": "delegated", "destroy-instance": "autonomous", "self-modify": "self-modifying"},
+  "reserved": ["harness-permissions","secrets","interrupt-gate","alignment-floor","confidentiality"]
+ },
+ "strange_loop": {
+  "_doc": "Each closed loop records one improvement to its own procedure or check; the next pass uses it. Ledger: instances/ultrastable/improvements.json.",
+  "ledger": "instances/ultrastable/improvements.json"
+ },
+ "reaper": {
+  "_doc": "No idle or zombie sessions. A session with finished work, or idle past the limit, is archived by the executor. Consumed by boundary.reap().",
+  "idle_hours": 24,
+  "finished_states": ["done", "failed", "stopped"]
+ }
+}

@@ -1608,6 +1608,68 @@
     "doctrine/orphans-baseline.json"
    ],
    "area": "governance"
+  },
+  {
+   "id": "containment-boundary",
+   "kind": "governance",
+   "summary": "BOUNDARY-1: inside the boundary agents create and destroy freely because it rebuilds from the repo; egress keeps its gate; trust tiers inside permissions.",
+   "trigger": "every PR (checks.yml), daily drill",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "python3 -m foundation boundary --check and --drill report ok",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation boundary --check",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "python3 -m foundation boundary --check on any machine",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:foundation/boundary.py::def drill",
+   "writeback": [
+    "instances/ultrastable/improvements.json"
+   ],
+   "system_path": [
+    "foundation/boundary.py",
+    "doctrine/boundary.json"
+   ],
+   "area": "governance"
+  },
+  {
+   "id": "session-reaper",
+   "kind": "governance",
+   "summary": "No zombie sessions: finished or idle sessions are archived by the executor from boundary.reap decisions; each closed loop records an improvement (strange loop).",
+   "trigger": "every executor run",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "boundary.reap lists no finished or idle session left open; improvements ledger probes pass",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation boundary --reap sessions.json",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "python3 -m foundation boundary --reap sessions.json on any machine",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:foundation/boundary.py::def reap",
+   "writeback": [
+    "instances/ultrastable/improvements.json"
+   ],
+   "system_path": [
+    "foundation/boundary.py",
+    "instances/ultrastable/improvements.json"
+   ],
+   "area": "governance"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
