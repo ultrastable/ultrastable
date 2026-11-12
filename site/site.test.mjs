@@ -171,3 +171,15 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.equal((await get("https://ultrastable.io/dashboard?tenant=nobody")).status, 404, "only registered tenants render");
   console.log("ultrastable-site pilot and tenant ok");
 }
+// TRANSPARENCY-1: /live is read-only for everyone: GET works, every write verb is refused, an absent snapshot says so.
+{
+  const snap = JSON.stringify({ generated: "2026-11-12T00:00:00Z", scoreboard: {} });
+  const db = { prepare: () => ({ first: async () => ({ generated: "2026-11-12T00:00:00Z", body: snap }) }) };
+  let rr = await mod.fetch(new Request("https://ultrastable.io/api/live"), { ...ENV, DB: db });
+  assert.equal(rr.status, 200); assert.equal(await rr.text(), snap);
+  rr = await mod.fetch(new Request("https://ultrastable.io/api/live"), ENV);
+  assert.equal(rr.status, 503);
+  for (const m of ["POST", "PUT", "DELETE", "PATCH"]) { rr = await mod.fetch(new Request("https://ultrastable.io/api/live", { method: m, body: "x" }), { ...ENV, DB: db }); assert.equal(rr.status, 405); }
+  rr = await mod.fetch(new Request("https://ultrastable.io/live"), ENV);
+  assert.equal(rr.status, 200); assert.match(await rr.text(), /running on Ultrastable/);
+}
