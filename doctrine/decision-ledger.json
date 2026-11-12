@@ -131,6 +131,14 @@
    "probe": "grep:foundation/executor.py::kick_failed"
   },
   {
+   "id": "lesson-2026-11-12-executor-prs-failed-the-write-back-gate",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Executor PRs failed the write-back gate",
+   "body": "The first live executor PR (233 for Q-10) failed the checks step 'code changed with no write-back'. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed, and a manual python3 -m foundation writeback record --kind decision with a Measured body and a file probe printed 'recorded'. The executor now records that decision itself in the same commit as its change.",
+   "probe": "grep:foundation/executor.py::WRITEBACK-1"
+  },
+  {
    "id": "decision-2026-11-12-boundary-1-containment-boundary",
    "kind": "decision",
    "date": "2026-11-12",
