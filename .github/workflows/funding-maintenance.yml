@@ -42,9 +42,5 @@ jobs:
           git checkout -B "$br"; git add docs/issues
           git -c user.name=ultrastable-ops -c user.email=actions@users.noreply.github.com commit -m "Funding findings queued"
           git push -f -u origin "$br"
-          gh pr create --base main --head "$br" --title "Funding findings queued" --body "Queue items from funding_verify.py. Closes by the executor.
-
-## Self-audit
-Real output: $(git diff --stat HEAD~1 | tail -1)
-Not thinking about: findings that clear on their own leave a stale item until the executor closes it.
-Fix: closed by the executor with evidence." || gh pr list --head "$br" --json url --jq '.[0].url'
+          { echo "Queue items from funding_verify.py. Closed by the executor."; echo; echo "## Self-audit"; echo "Real output: $(git diff --stat HEAD~1 | tail -1)"; echo "Not thinking about: findings that clear on their own leave a stale item until the executor closes it."; echo "Fix: closed by the executor with evidence."; } > pr-body.md
+          gh pr create --base main --head "$br" --title "Funding findings queued" --body-file pr-body.md || gh pr list --head "$br" --json url --jq '.[0].url'
