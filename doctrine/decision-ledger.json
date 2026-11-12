@@ -368,6 +368,14 @@
    "title": "executor changes failed the doctrine check; failure text was cut off",
    "body": "Run 5 failed after 3 attempts on test_repo_is_consistent_with_the_doctrine_file, and the logged tail hid the reason. The executor now regenerates doctrine, glossary and standards files, states the tagline rule for new Markdown in its prompt, and feeds 2500 characters of check output back.",
    "probe": "grep:foundation/executor.py::foundation\", \"doctrine\", \"--apply"
+  },
+  {
+   "id": "decision-2026-11-12-sys-roadmap-the-system-is-topology-agent-ladder-failure-regi",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "SYS roadmap: the system is topology, agent ladder, failure registry, vector index, agent-readiness, bootstrap rehearsal",
+   "body": "Owner 2026-11-12: one worker and a D1 database is not a system. Six executor-takeable queue items with file probes: Q-SYS-TOPOLOGY, Q-SYS-AGENT-LADDER, Q-SYS-FAILURE-REGISTRY, Q-SYS-VECTOR-KB, Q-SYS-AGENT-READINESS, Q-SYS-BOOT-REHEARSAL. Measured: QNFO account has 47 workers, 10 vector indexes, 4 workflows, 2 queues; Ultrastable has 3 core workers, 2 D1 databases, 1 KV.",
+   "probe": "file:docs/issues/Q-SYS-TOPOLOGY.json"
   }
  ]
 }
