@@ -18,16 +18,17 @@ Decision (2026-11-12, Rowan's request: "split cleanly, then merge so we work exc
 
 ## What the research says, and what was chosen
 
-| Question | Practice found | Choice here |
-|---|---|---|
-| Fork vs template vs dependency | A GitHub template copies once and never syncs; a fork keeps history but drifts silently. Template tools that keep a record of the template version and re-apply it (Copier, cruft) are the recommended answer for "generate once, keep updating". | Template-plus-lock: `ultrastable.lock.json` records the core version and a digest per kernel file, like a Copier answers file |
-| Vendoring vs package | Backstage's `create-app` also copies code into your repo and ships a version-bump flow (`backstage-cli versions:bump`) rather than a library you cannot read. Terraform modules pin by exact version tag. Nx ships `nx migrate` with codemods per major. | The kernel is vendored (agents must read it in-repo, and no package registry is needed) and bumped by version, with migration notes per major |
-| Submodule / subtree | Submodules pin by commit but are hostile to agents and to non-coders; subtree makes local edits invisible. | Not used. Digests make local edits visible instead |
-| Monorepo vs polyrepo | Monorepos make atomic changes easy and need heavy tooling; polyrepos isolate ownership but drift. | Polyrepo with one source of truth: instances are separate repos (separate owners, licences, secrets) tied by the lock |
-| Contract between layers | Consumer-driven contract tests catch breakage before release. | `core-contract.json` plus `upstream check`, run in the core against a freshly adopted instance and in every instance against its pinned core |
-| Version rule | Semver: patch and minor flow automatically, a major needs a migration note and is not auto-merged. | `check` fails on a major mismatch |
+Each row cites a page that was fetched on 2026-11-12. Where the page did not cover a point, the row says so.
 
-Sources consulted: Backstage "Keeping Backstage updated" (backstage.io/docs/getting-started/keeping-backstage-updated), Terraform module versioning guides (Spacelift, oneUptime), Copier and Diamond Light Source "Switch to Copier" ADR, GitHub community discussion 23528 "How to sync repository template changes?", DevRev "Learnings from using GitHub template repositories", Spring Cloud Contract and Pact consumer-driven contract docs. Search results were titles and summaries; the Nx, Terraform and Backstage specifics above are from background knowledge and are labelled as such, not quoted.
+| Question | Finding (source) | Choice here |
+|---|---|---|
+| Template copy vs live link | Backstage: an app made from a template "doesn't receive template changes automatically"; you bump packages with `backstage-cli versions:bump`, read the `create-app` changelog for template changes, and run versioned codemods; the current version sits in `backstage.json` ([Keeping Backstage updated](https://backstage.io/docs/getting-started/keeping-backstage-updated)) | Copy once, then a versioned bump: `ultrastable.lock.json` plays the role of `backstage.json`, `upstream sync` the role of `versions:bump` |
+| Template update that records the template version | Copier: `copier update` regenerates a project from the current template version, diffs it against yours and reapplies the diff; it needs the answers file and says never to edit it by hand; conflicts become inline markers or `.rej` files; versions come from the template's git tags; `copier check-update` signals an update through its exit code ([Copier: updating](https://copier.readthedocs.io/en/stable/updating/)) | Same idea, simpler: per-file digests in the lock instead of a regenerate-and-diff. A file the instance edited is never overwritten; it is reported as a conflict and as an upstream candidate. `upstream drift --fail` is the check-update equivalent |
+| Staged upgrades and migrations | Nx: `nx migrate` first only rewrites `package.json` and writes `migrations.json`, then `nx migrate --run-migrations` applies them; each migration is tied to a version; moving one major at a time is "the safest path" ([Nx: update dependencies](https://nx.dev/docs/features/automate-updating-dependencies)) | Two stages as well: `sync` without `--apply` reports, with `--apply` writes. A major bump fails `upstream check` until a migration note exists; minor and patch flow automatically |
+| Shared module layout | Terraform: reusable modules live in their own repository with the root module as the only required element, plus README, LICENSE, `main.tf`, `variables.tf`, `outputs.tf`, nested `modules/` and `examples/` ([Terraform module structure](https://developer.hashicorp.com/terraform/language/modules/develop/structure)). That page does **not** cover version pinning | Core is one repo with a stated public surface (`core-contract.json`). Version pinning is taken from Backstage and Copier above, not from Terraform |
+| Monorepo vs polyrepo, submodule vs subtree, consumer-driven contract tests | Not yet sourced (the search returned titles only; the Spring Cloud Contract and Pact pages were not fetched) | Choices stand as engineering judgement, marked UNSOURCED: polyrepo with one source of truth, no submodules or subtrees because digests make local edits visible, contract tests in both repos |
+
+Still unsourced and open: Cloudflare templates (for example the Deploy to Cloudflare button and `wrangler` templates) were not fetched; they matter for the third-party adoption path and are filed as a follow-up in the open items below.
 
 ## The two-way channel
 
@@ -64,4 +65,5 @@ Additive and idempotent: existing files are never overwritten (they are reported
 ## Open items (each has a closing probe)
 
 - Apply the adopt command to QNFO (blocked by repository scope; owner: cutover thread; probe: `instances/qnfo/README.md`).
+- Source the UNSOURCED rows above and the Cloudflare template flow (probe: no `UNSOURCED` string in this file).
 - Core releases are the `version` in `core-contract.json`; tagging a GitHub release on merge is a plus (probe: `git tag` lists the version).
