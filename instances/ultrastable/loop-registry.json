@@ -1706,6 +1706,38 @@
     "sessions.yml"
    ],
    "area": "managers"
+  },
+  {
+   "id": "market-gaps",
+   "kind": "governance",
+   "summary": "MARKET-1: components, competitor coverage, user stories and objections are data; every claimed feature has a passing proof and test, every gap is a queue item the executor works until its closing probe passes.",
+   "trigger": "every PR (checks.yml), every executor run",
+   "owner": "product-manager",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "python3 -m foundation market --check reports ok and every open gap has an open queue item",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation market --check in checks.yml",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "python3 -m foundation market --check on any machine",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:foundation/market.py::def check",
+   "writeback": [
+    "doctrine/market.json",
+    "instances/ultrastable/improvements.json"
+   ],
+   "system_path": [
+    "foundation/market.py",
+    "doctrine/market.json"
+   ],
+   "area": "governance"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

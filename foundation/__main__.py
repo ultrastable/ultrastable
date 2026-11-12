@@ -33,6 +33,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["fleet"]:
         from . import fleet
         return fleet.main(_av[1:])
+    if _av[:1] == ["market"]:
+        from . import market
+        return market.main(_av[1:])
     if _av[:1] == ["boundary"]:
         return boundary.main(_av[1:])
     if _av[:1] == ["closedloop"]:
