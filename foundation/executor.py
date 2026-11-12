@@ -209,6 +209,12 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         if code:
             raise RuntimeError("pr create failed: " + o[-300:])
         row.update(result="pr-opened", pr=o.splitlines()[-1])
+        # A PR opened with GITHUB_TOKEN raises no pull_request event, and a draft runs no CI, so the executor starts the loop itself: mark ready,
+        # dispatch checks on the branch (workflow_dispatch is allowed for the token); the lane merges when that run completes green.
+        for kick in (["gh", "pr", "ready", row["pr"], "-R", repo], ["gh", "workflow", "run", "checks.yml", "-R", repo, "--ref", branch]):
+            kc, ko = sh(kick, root)
+            if kc:
+                row["kick_failed"] = (row.get("kick_failed", "") + f" {' '.join(kick[:3])}: {ko[-120:]}").strip()
         log(root, row)
     except Exception as e:  # recorded, labelled, never swallowed
         row.update(result="failed", detail=f"{type(e).__name__}: {str(e)[:600]}")

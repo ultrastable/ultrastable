@@ -121,6 +121,14 @@
    "title": "Executor picked queue items live but had no model route",
    "body": "A dispatched executor run on main picked Q-10 from the repo-data queue and recorded no-model-credential, because ANTHROPIC_API_KEY is not bound in Actions; the issues sweep also failed on disabled Issues. Measured after the fix: pytest tests/foundation/test_executor.py returned 9 passed, and python3 -m foundation orphans --sync-issue returned 'issues off: backlog enforced by orphans --check in checks; zero=True'. Added a Workers AI model route using the Cloudflare secrets the repo already holds, and org settings now declare has_issues false so a settings apply cannot turn Issues back on.",
    "probe": "grep:foundation/executor.py::call_cloudflare"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-pr-sat-as-an-unchecked-draft",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Executor PR sat as an unchecked draft",
+   "body": "The first live executor run opened PR 233 for Q-10 as a draft with zero checks, because a PR opened with GITHUB_TOKEN raises no pull_request event and a draft runs no CI, so the lane had nothing to merge. Measured after the fix: python3 -m pytest tests/foundation/test_executor.py returned 9 passed and the executor now marks the PR ready and dispatches checks.yml on its branch right after pr create, recording any failed kick in the log row.",
+   "probe": "grep:foundation/executor.py::kick_failed"
   }
  ]
 }
