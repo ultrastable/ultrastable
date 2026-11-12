@@ -60,6 +60,8 @@ jobs:
           python3 -m foundation loops --verify
           python3 -m foundation glossary --check
           python3 -m foundation kernel --check
+          python3 -m foundation directive --check
+          python3 -m foundation directive --lint HANDOFF.md docs/lessons/*.md
           python3 -m foundation writeback check --base "origin/${{ github.base_ref || 'main' }}"
       - name: Agentic standards (register, surfaces, discovery lint; Worker conformance and contract tests)
         run: |

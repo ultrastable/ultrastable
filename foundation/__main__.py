@@ -10,13 +10,14 @@
   python3 -m foundation glossary [--check|--apply|--show [ID]]            the owner's keywords, with tests, code and lineage
   python3 -m foundation loops [--verify|--list]                           the loop registry and its closing verifier
   python3 -m foundation kernel [--check|--lint FILE...|--metrics FILE...] the doctrine kernel as code
+  python3 -m foundation directive [--check|--lint FILE...|--ledger|--probe|--bootstrap] the guiding directive as code
   python3 -m foundation trust [--show|--event SURFACE ACTION EVENT|--tick] the trust ledger and ladder
   python3 -m foundation executor [--apply] [--issue N]                    pick the top issue, change, check, open a PR
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
 """
 import argparse, datetime as dt, json, os, sys
 
-from . import standards, doctrine, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
+from . import standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
 
 
 def main(argv=None) -> int:
@@ -30,6 +31,7 @@ def main(argv=None) -> int:
     gl = sub.add_parser("glossary"); gl.add_argument("--check", action="store_true"); gl.add_argument("--apply", action="store_true"); gl.add_argument("--show", nargs="?", const="")
     lp = sub.add_parser("loops"); lp.add_argument("--verify", action="store_true"); lp.add_argument("--list", action="store_true")
     kn = sub.add_parser("kernel"); kn.add_argument("--check", action="store_true"); kn.add_argument("--lint", nargs="+"); kn.add_argument("--metrics", nargs="+")
+    dv = sub.add_parser("directive"); dv.add_argument("--check", action="store_true"); dv.add_argument("--lint", nargs="+"); dv.add_argument("--ledger", action="store_true"); dv.add_argument("--probe", action="store_true"); dv.add_argument("--bootstrap", action="store_true")
     tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true")
     ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo")
     wb = sub.add_parser("writeback"); ws = wb.add_subparsers(dest="wcmd", required=True)
@@ -119,6 +121,18 @@ def main(argv=None) -> int:
             print("\n".join(f"{x['file']}:{x['line']}: {x['recognition']}: {x['text']}" for x in found) or "no recognitions fired"); return 1 if found else 0
         bad = kernel.check()
         print("\n".join(bad) or "kernel ok"); return 1 if bad else 0
+    if a.cmd == "directive":
+        if a.lint:
+            found = [dict(x, file=fn) for fn in a.lint for x in directive.lint(open(fn, encoding="utf-8").read())]
+            print("\n".join(f"{x['file']}:{x['line']}: {x['recognition']}: {x['text']}" for x in found) or "no owner-handback shapes"); return 1 if found else 0
+        if a.ledger:
+            led = directive.issue_ledger(); print(json.dumps(led, indent=1)); return 0 if led["balanced"] else 1
+        if a.probe:
+            rows = directive.probe_all(); print(f"{sum(r['ok'] for r in rows)}/{len(rows)} probes ok, evidence appended to doctrine/probe-log.jsonl"); return 0 if all(r["ok"] for r in rows) else 1
+        if a.bootstrap:
+            out = directive.bootstrap(); print("\n".join(out)); return 1 if any(x.startswith("MISSING") or " problems" in x for x in out) else 0
+        bad = directive.check()
+        print("\n".join(bad) or "directive ok"); return 1 if bad else 0
     if a.cmd == "trust":
         k, led = kernel.load(), trust.load()
         if a.event:

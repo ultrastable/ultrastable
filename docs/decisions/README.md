@@ -4,3 +4,4 @@ Write-back target for decisions: what was decided, why, the default in effect an
 
 ## Index
 - 2026-11-12: [Executor on Actions, Worker dispatches; staged account transfer](2026-11-12-executor-on-actions-worker-dispatches-staged-account-transfe.md)
+- 2026-11-12: [Guiding directive adopted as code; memory is not storage](2026-11-12-guiding-directive-adopted-as-code-memory-is-not-storage.md)

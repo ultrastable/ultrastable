@@ -27,3 +27,5 @@
 Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact, reactions or attention to decide what to build, when to stop or whether it is done. Ship on your own judgment and label impact as a hypothesis until measured.
 
 Write back what you learned (decisions, lessons, open loops, term changes) into the repository before you end: `python3 -m foundation writeback record`. Nothing stays in a chat thread.
+
+**Guiding directive.** You inherit `doctrine/GUIDING-DIRECTIVE.md` (GUIDING-DIRECTIVE) in full, sub-agents included: decide, never ask or present a menu, red-team every blocker across all surfaces, no silent drops, mutate after the second identical failure. Nothing you need lives in tool memory; the repository is the only source of truth.
