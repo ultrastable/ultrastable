@@ -27,7 +27,10 @@ def transport(a: dict, prompt: str, env=None) -> tuple[str, dict]:
     url, headers, body = agents.build_request(a, prompt, env)
     resp = agents.http(url, headers, body)
     u = (resp.get("result") or {}).get("usage") or resp.get("usage") or {}
-    return agents.parse_text(a, resp), {"in": u.get("prompt_tokens") or u.get("input_tokens"), "out": u.get("completion_tokens") or u.get("output_tokens")}
+    text = agents.parse_text(a, resp)
+    if not isinstance(text, str):  # some models return the JSON object itself instead of a string
+        text = json.dumps(text)
+    return text, {"in": u.get("prompt_tokens") or u.get("input_tokens"), "out": u.get("completion_tokens") or u.get("output_tokens")}
 
 
 parse_json = agents.parse_json

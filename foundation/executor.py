@@ -171,6 +171,9 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)
     issues = qmod.takeable(root) if queue_mode() else gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root)
+    if queue_mode() and not issue_no:
+        from . import growth  # GROWTH-1: a product manager keeps the backlog from devolving into bug fixes
+        issues = growth.prefer(issues, root)
     issue = next((i for i in issues if str(i["number"]) == str(issue_no)), None) if issue_no else pick(issues)
     if not issue:
         row = {"result": "idle", "detail": "no open issue the executor may take", "prediction": "open_issues_takeable <= 0 within 24 h"}
@@ -202,7 +205,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                     out, meta = agent_ladder.call(prompt, attempt, root=root)
                     row.setdefault("models", []).append(meta["model"])
                 files = apply_edits(out["files"], root)
-            except (ValueError, KeyError, TypeError, OSError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
+            except (ValueError, KeyError, TypeError, OSError, AttributeError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
                 failed.append("the reply was not valid JSON with a files list: " + type(e).__name__ + ": " + str(e)[:300])
                 if attempt < REPAIRS:
                     prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED; reply with ONLY valid JSON (escape backslashes and quotes inside file content): " + failed[0]

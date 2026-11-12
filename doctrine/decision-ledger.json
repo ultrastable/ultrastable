@@ -432,6 +432,14 @@
    "title": "One system declaration: topology is the source, SYSTEM-1 data is generated, agent ladder sits on the code-agent registry",
    "body": "Two sessions had built the same things in parallel. doctrine/topology.json is now the one declaration (verified ids; states live or planned); doctrine/system.json is generated from it (topology --emit-system, stale check). foundation/agent_ladder.py no longer has its own model list: it adds escalation, a reviewer of another family with veto and a cost log on top of doctrine/code-agents.json and foundation/agents.py. Drift against the account now lists exactly the bindings still to be applied (Q-SYS-DEPLOY-ALL). Correction: system.json had mapped the org database to the ops database id.",
    "probe": "grep:foundation/topology.py::emit_system"
+  },
+  {
+   "id": "decision-2026-11-12-clockwork-1-and-growth-1-loops-are-measured-clocks-the-produ",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "CLOCKWORK-1 and GROWTH-1: loops are measured clocks; the product manager owns growth",
+   "body": "Measured 2026-11-12: the tick heartbeat ran 318 times in 2.2 days with 0 s median jitter; the executor's only recurring clock was one cron per day because no dispatch token is bound to the tick worker. foundation/clock.py measures every clock (ticking, late, stopped, idle) from recorded beats; the executor wakes its own next run when takeable work remains (4 per day cap, back off after 3 failures, budget guard applies); tests pass. foundation/growth.py measures the growth share of merges (target 40 percent) and the growth metrics (baseline 1310 page views, 564 visitors, 817 agent hits, 326 pilot page views in 7 days), and the executor takes a growth item first when the mix is below target; tests pass. Six growth items filed. Fixed, with a test that passes: a model returning an object instead of a string crashed the executor.",
+   "probe": "file:foundation/clock.py"
   }
  ]
 }

@@ -15,6 +15,9 @@
 3. Write acceptance criteria and a checkable prediction for each accepted item.
 4. Read feedback and usage; file what changes the ranking.
 
+## Growth (GROWTH-1)
+Your job is growth, not only bug fixes. Each tick, read `doctrine/growth.json` and `python3 -m foundation growth --report`: the growth share of recent merges against the target, and the growth metrics against their targets. Answer every breach and every shortfall in the mix with a growth item (label `growth`) that names its metric, a checkable prediction and a closing probe; replace an experiment whose metric did not move within 7 days instead of repeating it. Never let the backlog become only repairs: a capability, surface, reader or customer path is the unit of growth.
+
 ## Never
 - Ship a feature without the metric that will judge it.
 
