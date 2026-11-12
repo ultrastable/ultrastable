@@ -3,7 +3,7 @@
 // the platform claims QNFO publishes as customer zero. Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import USER_PATH from "./userpath.js";
-var VERSION = "0.6.0";
+var VERSION = "0.9.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -263,6 +263,11 @@ async function siteRoutes(u, env) {
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
   return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'none'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
 }
+// AGENT-PROMPT-1: the whole set-up as one paste. Works in any AI assistant; the person needs no account to start.
+const AGENT_PROMPT = "I want to start a project with Ultrastable (https://ultrastable.io), a system that runs itself so I do not have to code. "
+  + "Read https://ultrastable.io/agent.md and follow it. Ask me, in plain words, what I want to make, then do every step you can yourself. "
+  + "If a step needs me, give me one link and one thing to click, nothing else. Do not use technical words with me.";
+const AGENT_MD = "# Ultrastable: set-up instructions for an AI assistant\n\nYou are helping a person who knows nothing about code. Goal: their idea becomes a live project that keeps itself running.\n\n1. Ask one question: what do they want to make or fix? Accept speech-to-text rambling; restate it in one sentence and confirm.\n2. Do everything you can with your own tools (create the GitHub project from the template, connect Cloudflare, open the first pull request). Use their sign-ins only through the sign-in pages they approve; never ask them to paste passwords or keys into chat.\n3. If you cannot act, walk them through https://ultrastable.io/setup one question at a time. Each step is a single link and a single click.\n4. Speak plainly. No words like token, terminal, repo, API. Say what you are doing and what they should see.\n5. Finish by telling them where to watch their project (https://ultrastable.io/proof) and that it now maintains itself; they only need to come back with new ideas.\n";
 // USER-PATH-1: guided set-up. One question per screen, every action one click, progress kept in this browser only.
 // Steps come from doctrine/user-path.json (generated into userpath.js); no step needs a command, a key or a file.
 function setup() {
@@ -286,7 +291,7 @@ function setup() {
     + "el.appendChild(row);if(st.i>0){var b=h('p');var l=h('a','Back');l.href='#';l.onclick=function(e){e.preventDefault();go(st.i-1)};b.appendChild(l);el.appendChild(b)}}"
     + "draw()})();";
   return shell({ path: "/setup", title: "Set up - Ultrastable", description: "Set up your own Ultrastable project one simple question at a time." },
-    "<div class=\"head\"><h1>Let's get you set up</h1><p>One question at a time. Everything is a click. Nothing to install or type.</p></div><div id=\"us-wiz\" class=\"card\"><noscript>This page needs JavaScript to guide you.</noscript></div><script>" + js + "</script>");
+    "<div class=\"head\"><h1>Let's get you set up</h1><p>One question at a time. Everything is a click. Nothing to install or type.</p></div><div class=\"card\"><h3 class=\"card-title\">Easiest: let an assistant do it</h3><p class=\"meta\">Press Copy, then paste into any AI assistant (Claude, ChatGPT, Gemini, Copilot). No account needed to start.</p><textarea id=\"us-ap\" readonly rows=\"4\" style=\"width:100%;font-size:1rem;padding:.6rem\"></textarea><p><button type=\"button\" class=\"btn btn-primary\" id=\"us-cp\">Copy</button> <span id=\"us-cpm\" class=\"meta\"></span></p></div><div id=\"us-wiz\" class=\"card\"><noscript>This page needs JavaScript to guide you.</noscript></div><script>var P=" + JSON.stringify(AGENT_PROMPT) + ";var t=document.getElementById('us-ap');t.value=P;document.getElementById('us-cp').onclick=function(){t.select();try{navigator.clipboard.writeText(P)}catch(e){document.execCommand('copy')}document.getElementById('us-cpm').textContent='Copied. Paste it into your assistant.'};" + js + "</script>");
 }
 function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
@@ -337,6 +342,7 @@ export default {
       case "/pilot": return new Response(pilot(), { headers: HTML });
       case "/start": return new Response(start(false), { headers: HTML });
       case "/setup": return new Response(setup(), { headers: HTML });
+      case "/agent.md": return new Response(AGENT_MD, { headers: { "Content-Type": "text/markdown; charset=utf-8", "Access-Control-Allow-Origin": "*" } });
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
       case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot", "/start", "/setup"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
