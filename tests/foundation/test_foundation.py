@@ -181,6 +181,32 @@ class Doctrine(unittest.TestCase):
             self.assertIn("README.md", doctrine.apply(d))
             self.assertFalse(any("lacks the positioning" in b for b in doctrine.check(d)))
 
+    def test_zero_fuss_rule_is_required_and_flags_setup_burden(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "doctrine").mkdir()
+            shutil.copy2(ROOT / "doctrine/positioning.json", Path(d) / "doctrine/positioning.json")
+            (Path(d) / "docs").mkdir(); (Path(d) / "agents").mkdir(); (Path(d) / "seed").mkdir()
+            (Path(d) / "docs/PROJECT-MEMORY.md").write_text("# Memory\n")
+            (Path(d) / "agents/AGENTS.md").write_text("# A\n")
+            (Path(d) / "seed/README.md").write_text("# S\nYou need to generate an API key first.\n")
+            bad = doctrine.check(d)
+            self.assertTrue(any("zero-fuss rule ('" in b for b in bad))
+            self.assertTrue(any("makes the user do setup work" in b for b in bad))
+        self.assertEqual([b for b in doctrine.check(ROOT) if "zero-fuss" in b], [])
+
+    def test_first_run_needs_only_a_name_and_a_goal(self):
+        """Zero-fuss first-run probe: a manifest of just name + one goal must validate and generate with no prompt, key or config."""
+        import json as _j
+        raw = {"name": "Probe Org", "goals": ["Ship the first thing"]}
+        self.assertEqual(mf.validate(raw), [])
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "m.json"; p.write_text(_j.dumps(raw))
+            r = subprocess.run([sys.executable, "-m", "foundation", "new-system", "--manifest", str(p), "--out", str(Path(d) / "out"), "--date", "2026-01-01"],
+                               cwd=ROOT, input="", capture_output=True, text=True, timeout=120)
+            self.assertIn(r.returncode, (0,), r.stdout + r.stderr)
+            self.assertNotIn("api key", (r.stdout + r.stderr).lower())
+
     def test_gaplint_reads_doctrine(self):
         r = subprocess.run([sys.executable, "-m", "gaplint", str(ROOT), "--rules", "GL008,GL009"], cwd=ROOT / "products/gaplint", capture_output=True, text=True, env={"PYTHONPATH": str(ROOT / "products/gaplint")})
         self.assertEqual(r.returncode, 0, r.stdout)

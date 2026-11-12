@@ -189,5 +189,25 @@
     ],
     "max_bytes": 2000000
   },
-  "stability_line": "Ultra-stable: infrastructure that works so nobody notices."
+  "stability_line": "Ultra-stable: infrastructure that works so nobody notices.",
+  "zero_fuss": {
+    "rule": "Zero-fuss, super-simple, zero-knowledge setup. A user with no technical knowledge can get a working result with no keys, config files, installs, hosting or jargon to handle.",
+    "required_in": [
+      "agents/AGENTS.md",
+      "seed/agents/AGENTS.md"
+    ],
+    "required_pattern": "zero-fuss setup",
+    "scan_user_facing": [
+      "seed/README.md",
+      "seed/IDEA.md",
+      "external/one-pager.md",
+      "external/customer-story.md",
+      "external/overview.md"
+    ],
+    "banned_patterns": [
+      "(edit|open|create)[^.\\n]{0,30}\\b(config|\\.env|yaml|toml)\\b[^.\\n]{0,30}\\b(file|before)\\b[^.\\n]{0,20}(you|to) (run|start|begin)",
+      "you (must|need to|have to) (obtain|get|generate|create|paste)[^.\\n]{0,20}\\b(api key|token|secret)",
+      "you (must|need to|have to) (install|compile|build) [^.\\n]{0,40}(before|first)"
+    ]
+  }
 }

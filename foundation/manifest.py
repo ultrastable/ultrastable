@@ -37,6 +37,8 @@ def deep_merge(base, over):
 
 def resolve(raw: dict) -> dict:
     m = deep_merge(DEFAULTS, raw)
+    if not m.get("slug") and m.get("name"):  # zero-fuss: the owner gives a name, never a slug
+        m["slug"] = re.sub(r"[^a-z0-9]+", "-", str(m["name"]).lower()).strip("-")[:39]
     m["brand"].setdefault("public_name", "")
     if not m["brand"]["public_name"]:
         m["brand"]["public_name"] = m.get("name", "")
@@ -46,7 +48,7 @@ def resolve(raw: dict) -> dict:
 
 def validate(raw: dict) -> list[str]:
     p, m = [], resolve(raw)
-    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,38}", str(raw.get("slug", ""))):
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,38}", str(m.get("slug", ""))):
         p.append("slug must be 2-39 chars of a-z, 0-9, hyphen")
     if not raw.get("name"):
         p.append("name is required")
