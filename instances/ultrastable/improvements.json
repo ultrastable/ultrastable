@@ -1,0 +1,7 @@
+{
+ "version": 1,
+ "entries": [
+  {"loop": "orphan-artifacts", "improvement": "The orphan scan delegates to docs_audit so one consumer rule serves both checks; the next pass reads one baseline, not two.", "probe": "grep:foundation/orphans.py::docs_audit", "at": "2026-11-12T12:00Z"},
+  {"loop": "fleet-lane", "improvement": "probe_surfaces skips archived repos, so a repo that cannot be reached no longer fails every later pass.", "probe": "grep:foundation/fleet.py::archived", "at": "2026-11-12T12:00Z"}
+ ]
+}

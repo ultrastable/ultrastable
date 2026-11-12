@@ -20,7 +20,7 @@
 """
 import argparse, datetime as dt, json, os, sys
 
-from . import closedloop, standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
+from . import boundary, closedloop, standards, doctrine, directive, filing, glossary, kernel, ladder, loops, manifest as mf, scaffold, selfhost, trust, writeback
 
 
 def main(argv=None) -> int:
@@ -32,6 +32,8 @@ def main(argv=None) -> int:
     if _av[:1] == ["fleet"]:
         from . import fleet
         return fleet.main(_av[1:])
+    if _av[:1] == ["boundary"]:
+        return boundary.main(_av[1:])
     if _av[:1] == ["closedloop"]:
         return closedloop.main(_av[1:])
     args0 = sys.argv[1:] if argv is None else list(argv)

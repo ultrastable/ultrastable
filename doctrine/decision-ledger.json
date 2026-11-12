@@ -121,6 +121,14 @@
    "title": "Executor picked queue items live but had no model route",
    "body": "A dispatched executor run on main picked Q-10 from the repo-data queue and recorded no-model-credential, because ANTHROPIC_API_KEY is not bound in Actions; the issues sweep also failed on disabled Issues. Measured after the fix: pytest tests/foundation/test_executor.py returned 9 passed, and python3 -m foundation orphans --sync-issue returned 'issues off: backlog enforced by orphans --check in checks; zero=True'. Added a Workers AI model route using the Cloudflare secrets the repo already holds, and org settings now declare has_issues false so a settings apply cannot turn Issues back on.",
    "probe": "grep:foundation/executor.py::call_cloudflare"
+  },
+  {
+   "id": "decision-2026-11-12-boundary-1-containment-boundary",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "BOUNDARY-1 containment boundary",
+   "body": "Creation and destruction inside a rebuildable boundary; egress gated; trust tiers apply inside only; session reaper; strange-loop improvement ledger.",
+   "probe": "grep:foundation/boundary.py::def drill"
   }
  ]
 }
