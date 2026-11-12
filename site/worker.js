@@ -434,12 +434,12 @@ function setup() {
 }
 function engineers() {
   const tag = { Live: "us-pass", Testing: "meta", Pinned: "us-fail" };
-  const rows = IV.PINS.map(function (p) { return "<tr><td class=\"" + tag[p[0]] + "\">" + esc(p[0]) + "</td><td><strong>" + esc(p[1]) + "</strong><br><small>" + esc(p[2]) + "</small></td><td><small><code>" + esc(p[3]) + "</code></small></td></tr>"; }).join("");
+  const rows = IV.PINS.map(function (p) { return "<tr><td class=\"" + tag[p[0]] + "\">" + esc(p[0]) + "</td><td><strong>" + esc(p[1]) + "</strong><br><small>" + esc(p[2]) + "</small></td><td><small><code>" + esc(p[3]) + "</code><br>" + (p[0] === "Live" ? "code: " : "item: ") + "<code>" + esc(p[4]) + "</code></small></td></tr>"; }).join("");
   return shell({ path: "/engineers", title: "Ultrastable for engineers", description: "The autonomous loops, virtual managers, agents and plussing budget, with what is live, in testing and not built yet." },
     "<div class=\"head\"><h1>For engineers</h1><p>No interview. Ultrastable runs on itself, so the same code is yours to run. Status is honest: Live, Testing, or Pinned (not built yet, with the trigger that will build it).</p></div>"
     + "<div class=\"us-grid c2\">" + card("Loops", "Each loop has a trigger, owner, definition of done, two independent paths and a closing probe. Verify with python3 -m foundation loops --verify.") + card("Virtual managers", "Portfolio, project and product managers own business, marketing, funding, legal and ops; staff roles do the work; reviewers are never the author.") + card("Agents", "Open models, GitHub Copilot, Claude Code and Codex take work through one claim ledger.") + card("Plussing", "A protected improvement budget so the backlog does not devolve into bug fixes.") + "</div>"
     + "<h2>Status and roadmap pins</h2><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Capability</th><th>Where / trigger</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
-    + "<p class=\"meta\">Pins are roadmap items with a trigger and a closing probe; the system works them from its own backlog.</p>"
+    + "<p class=\"meta\">Every row is linked: a Live row names the code that does it, a Testing or Pinned row names the open item in the system's own backlog (docs/issues) with its owner, trigger and closing probe. A row cannot be published without one.</p>"
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/how\">How it works</a><a class=\"btn\" href=\"/start\">Prefer the interview?</a></div>");
 }
 function contact() {

@@ -69,6 +69,27 @@ assert.match(homeHtml, /class="us-ask"/); assert.match(homeHtml, /id="us-mic"/);
 assert.doesNotMatch(homeHtml, /<textarea/, "no intimidating text box on the front door");
 for (const m of homeHtml.matchAll(/<script>([\s\S]*?)<\/script>/g)) new Function(m[1]);
 const eng = await (await get("https://ultrastable.io/engineers")).text(); assert.match(eng, /Pinned/); assert.match(eng, /Live/);
+// PIN-LINK-1: every status and roadmap pin is linked to something code can act on, and the page shows the link.
+{
+  const { existsSync } = await import("node:fs");
+  const { PINS } = await import(pathToFileURL(fileURLToPath(new URL("./interview.js", import.meta.url))).href);
+  const repo = (rel) => fileURLToPath(new URL("../" + rel, import.meta.url));
+  assert.ok(PINS.length >= 10);
+  for (const p of PINS) {
+    assert.equal(p.length, 5, "pin needs status, name, text, where and a link: " + p[1]);
+    assert.ok(["Live", "Testing", "Pinned"].includes(p[0]), p[1]);
+    if (p[0] === "Live") {
+      assert.ok(existsSync(repo(p[4])), "Live pin '" + p[1] + "' names code that does not exist: " + p[4]);
+    } else {
+      const f = repo("docs/issues/" + p[4] + ".json");
+      assert.ok(existsSync(f), p[0] + " pin '" + p[1] + "' names no backlog item: " + p[4]);
+      const body = JSON.parse(readFileSync(f, "utf8")).body;
+      for (const field of ["Owner", "Trigger", "Done check"]) assert.match(body, new RegExp("\\*\\*" + field + ":\\*\\*\\s*\\S"), p[4] + " lacks " + field);
+      assert.match(body, /\*\*Status:\*\*\s*open/, "item " + p[4] + " is finished, so pin '" + p[1] + "' must move to Live");
+    }
+    assert.ok(eng.includes(p[4]), "the page does not show the link for " + p[1]);
+  }
+}
 const fp = new FormData(); fp.set("idea", "bins. for other people"); fp.set("profile", JSON.stringify({ space: { who: "B" } }));
 r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: fp }), E2); assert.equal(r.status, 303);
 assert.ok([...kv.keys()].some((k) => k.startsWith("profile:")), "interview profile is stored with the idea");

@@ -215,21 +215,24 @@ export const JS = String.raw`(function () {
 `;
 
 // ENGINEER-LANE-1: for people who write code. Status is honest: live, testing, or pinned (not built yet, with the trigger that will build it).
+// PIN-LINK-1 (owner, 2026-11-12): every pin is linked to something code can act on. The fifth field of a Live pin is a path in this repository;
+// of a Testing or Pinned pin it is the id of an open item in docs/issues. site/site.test.mjs fails a pin with no link, a dead path, a missing
+// item or a finished item (a finished item means the pin moves to Live).
 export const PINS = [
-  ["Live", "Heartbeat loop", "A 10-minute tick reconciles state, claims the top ready item, dispatches it to a role, verifies and writes back (seed/worker tick).", "python3 -m foundation launch"],
-  ["Live", "Virtual managers and staff", "Portfolio, project and product managers plus operations, reviewer and staff roles, each a plain file in agents/roles with limits in autonomy/policy.json.", "python3 -m foundation loops --verify"],
-  ["Live", "Plussing", "A protected share of capacity (default 20%) goes to improvements so work does not collapse into bug fixes; every closed item proposes a plus.", "capacity.plus_share in ultrastable.json"],
-  ["Live", "Earned-trust autonomy", "A trust ledger widens or narrows what each role may do from graded predictions, never by itself.", "trust rows in the org database"],
-  ["Live", "Probes with automatic revert", "Each deploy declares probes; a probe that passed before and fails after reverts the push and files its own issue.", "site/probes.json"],
-  ["Live", "Ultrastable runs on itself", "Its roadmap, issues, managers and specs run on the same code it gives everyone.", "python3 -m foundation selfhost"],
-  ["Testing", "Other clouds", "Deploy briefs exist for Cloudflare, Google Cloud, AWS and Azure (/deploy.md); only Cloudflare is proven in production.", "/deploy/gcp.md"],
-  ["Testing", "Chat-thread front door", "A familiar conversation: a pill input with dictation, rotating suggestions that respond to what is typed, tap-to-answer questions, then each build step shown as it runs. The question bank is static; adaptive follow-ups from a model are pinned.", "site/interview.js"],
-  ["Pinned", "Executor opens its own merged pull request", "Built and tested with a fake model; blocked on a bound model credential. Each run records no-model-credential until a host has a key.", "trigger: ANTHROPIC_API_KEY bound; probe: a merged agent/* PR"],
-  ["Pinned", "Fresh-account bootstrap", "The first real --apply of a brand-new organization on an empty Cloudflare account has not run yet.", "docs/bootstrapping/bootstrapping.md"],
-  ["Pinned", "Packaged installer and second installation", "Today there is one installation. A second independent one is the first pilot milestone.", "trigger: first pilot repo"],
-  ["Pinned", "Core separated from QNFO's database", "The core still shares a database with QNFO's research applications.", "trigger: pilot milestone 1"],
-  ["Pinned", "Outside audit of prediction scoring", "The match rate is scored by the system itself; an independent audit is a pilot goal.", "trigger: pilot milestone 2"],
-  ["Pinned", "Adaptive interview", "Pick the next question from the answers so far with a small model instead of a fixed bank; record which questions narrowed the solution space most.", "trigger: model credential + 20 recorded interviews"]
+  ["Live", "Heartbeat loop", "A 10-minute tick reconciles state, claims the top ready item, dispatches it to a role, verifies and writes back (seed/worker tick).", "python3 -m foundation launch", "seed/worker/src/tick.js"],
+  ["Live", "Virtual managers and staff", "Portfolio, project and product managers plus operations, reviewer and staff roles, each a plain file in agents/roles with limits in autonomy/policy.json.", "python3 -m foundation loops --verify", "agents/roles"],
+  ["Live", "Plussing", "A protected share of capacity (default 20%) goes to improvements so work does not collapse into bug fixes; every closed item proposes a plus.", "capacity.plus_share in ultrastable.json", "seed/ultrastable.json"],
+  ["Live", "Earned-trust autonomy", "A trust ledger widens or narrows what each role may do from graded predictions, never by itself.", "trust rows in the org database", "instances/ultrastable/trust-ledger.json"],
+  ["Live", "Probes with automatic revert", "Each deploy declares probes; a probe that passed before and fails after reverts the push and files its own issue.", "site/probes.json", "site/probes.json"],
+  ["Testing", "Ultrastable runs on itself", "Its roadmap, issues, managers and specs boot and tick from this repository on the same code it gives everyone. A deployed tick of its own seed that reports its own liveness is not proven yet.", "python3 -m foundation liveness", "Q-LOOP-live-clock"],
+  ["Testing", "Other clouds", "Deploy briefs exist for Cloudflare, Google Cloud, AWS and Azure (/deploy.md); only Cloudflare is proven in production.", "/deploy/gcp.md", "Q-GAP-other-cloud-proof"],
+  ["Testing", "Chat-thread front door", "A familiar conversation: a pill input with dictation, rotating suggestions that respond to what is typed, tap-to-answer questions, then each build step shown as it runs. The question bank is static; adaptive follow-ups from a model are pinned.", "site/interview.js", "Q-GAP-org-setup-in-thread"],
+  ["Pinned", "Executor opens its own merged pull request", "Built and tested with a fake model; blocked on a bound model credential. Each run records no-model-credential until a host has a key.", "trigger: ANTHROPIC_API_KEY bound; probe: a merged agent/* PR", "Q-GAP-executor-merged-pr"],
+  ["Pinned", "Fresh-account bootstrap", "The first real --apply of a brand-new organization on an empty Cloudflare account has not run yet.", "docs/bootstrapping/bootstrapping.md", "PL-6"],
+  ["Pinned", "Packaged installer and second installation", "Today there is one installation. A second independent one is the first pilot milestone.", "trigger: first pilot repo", "Q-GAP-second-installation"],
+  ["Pinned", "Core separated from QNFO's database", "The core still shares a database with QNFO's research applications.", "trigger: pilot milestone 1", "Q-3"],
+  ["Pinned", "Outside audit of prediction scoring", "The match rate is scored by the system itself; an independent audit is a pilot goal.", "trigger: pilot milestone 2", "Q-8"],
+  ["Pinned", "Adaptive interview", "Pick the next question from the answers so far with a small model instead of a fixed bank; record which questions narrowed the solution space most.", "trigger: model credential + 20 recorded interviews", "Q-GAP-adaptive-interview"]
 ];
 
 export default { CSS, JS, askBar, PINS };
