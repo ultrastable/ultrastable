@@ -3,7 +3,7 @@
 // the platform claims QNFO publishes as customer zero. Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import USER_PATH from "./userpath.js";
-var VERSION = "0.9.0";
+import BRIEF from "./platformbrief.js";
 var VERSION = "0.9.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
