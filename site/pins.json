@@ -1,0 +1,166 @@
+{
+ "_doc": "SITE-PINS-1: every status pin and honest gap on the public site, each tied to a docs/issues item (owner, trigger, done check) and to code paths that must exist. Source for site/roadmap-data.js; scripts/build_site_roadmap.py --check enforces it.",
+ "pins": [
+  {
+   "status": "live",
+   "name": "Heartbeat loop",
+   "what": "A 10-minute tick reconciles state, claims the top ready item, dispatches it to a role, verifies and writes back.",
+   "where": "python3 -m foundation launch",
+   "issue": "PIN-heartbeat-loop",
+   "code": [
+    "seed/worker/src/tick.js",
+    "foundation/launch.py"
+   ]
+  },
+  {
+   "status": "live",
+   "name": "Virtual managers and staff",
+   "what": "Portfolio, project and product managers plus operations, reviewer and staff roles, each a plain file in agents/roles with limits in seed/autonomy/policy.json.",
+   "where": "python3 -m foundation loops --verify",
+   "issue": "PIN-virtual-managers",
+   "code": [
+    "agents/roles/portfolio-manager.md",
+    "seed/autonomy/policy.json"
+   ]
+  },
+  {
+   "status": "live",
+   "name": "Plussing",
+   "what": "A protected share of capacity (default 20%) goes to improvements so work does not collapse into bug fixes; every closed item proposes a plus.",
+   "where": "plus_share in seed/ultrastable.json",
+   "issue": "PIN-plussing",
+   "code": [
+    "seed/ultrastable.json"
+   ]
+  },
+  {
+   "status": "live",
+   "name": "Earned-trust autonomy",
+   "what": "A trust ledger widens or narrows what each role may do from graded outcomes, by reviewed change only.",
+   "where": "python3 -m foundation trust --show",
+   "issue": "PIN-earned-trust",
+   "code": [
+    "foundation/trust.py",
+    "instances/ultrastable/trust-ledger.json"
+   ]
+  },
+  {
+   "status": "live",
+   "name": "Probes with automatic revert",
+   "what": "Each deploy declares probes; a probe that passed before and fails after reverts the push and files its own issue.",
+   "where": "site/probes.json",
+   "issue": "PIN-probe-revert",
+   "code": [
+    "site/probes.json"
+   ]
+  },
+  {
+   "status": "live",
+   "name": "Ultrastable runs on itself",
+   "what": "Its roadmap, issues, managers and specs run on the same code it gives everyone.",
+   "where": "python3 -m foundation selfhost",
+   "issue": "PIN-runs-on-itself",
+   "code": [
+    "foundation/selfhost.py"
+   ]
+  },
+  {
+   "status": "testing",
+   "name": "Other clouds",
+   "what": "Deploy briefs exist for Cloudflare, Google Cloud, AWS and Azure (/deploy.md); only Cloudflare is proven in production.",
+   "where": "/deploy/gcp.md",
+   "issue": "Q-GAP-other-cloud-proof",
+   "code": [
+    "deploy/brief/platform-brief.json"
+   ]
+  },
+  {
+   "status": "testing",
+   "name": "Chat-thread front door",
+   "what": "A pill input with dictation, rotating suggestions, tap-to-answer questions, then each build step shown as it runs. The question bank is static; the front door does not yet run the system test before building.",
+   "where": "site/interview.js",
+   "issue": "Q-GAP-front-door-qualify",
+   "code": [
+    "site/interview.js"
+   ]
+  },
+  {
+   "status": "pinned",
+   "name": "Executor opens its own merged pull request",
+   "what": "Built and tested with a fake model; blocked on a bound model credential. Each run records no-model-credential until a host has a key.",
+   "where": "probe: a pr-opened row in ops/executor-log.jsonl",
+   "issue": "Q-GAP-executor-merged-pr",
+   "code": [
+    "foundation/executor.py"
+   ]
+  },
+  {
+   "status": "pinned",
+   "name": "Fresh-account bootstrap",
+   "what": "The first real --apply of a brand-new organization on an empty Cloudflare account has not run yet.",
+   "where": "docs/bootstrapping/fresh-account-apply.json",
+   "issue": "PIN-fresh-account-bootstrap",
+   "code": [
+    "docs/bootstrapping/bootstrapping.md"
+   ]
+  },
+  {
+   "status": "pinned",
+   "name": "Packaged installer and second installation",
+   "what": "Today there is one installation. A second independent one is the first pilot milestone.",
+   "where": "instances/pilot-1/instance.json",
+   "issue": "Q-GAP-second-installation",
+   "code": [
+    "instances/ultrastable/instance.json"
+   ]
+  },
+  {
+   "status": "pinned",
+   "name": "Core separated from QNFO's database",
+   "what": "The core still shares a database with QNFO's research applications.",
+   "where": "docs/migrations/core-db-split.json",
+   "issue": "PIN-core-db-separation",
+   "code": [
+    "platform/core/ultrastable/config.py"
+   ]
+  },
+  {
+   "status": "pinned",
+   "name": "Outside audit of prediction scoring",
+   "what": "The match rate is scored by the system itself; a held-out grader, then an independent audit, is a pilot goal.",
+   "where": "docs/audits/prediction-scoring-audit.json",
+   "issue": "PIN-outside-audit",
+   "code": [
+    "foundation/trust.py"
+   ]
+  },
+  {
+   "status": "pinned",
+   "name": "Adaptive interview",
+   "what": "Pick the next question from the answers so far with a small model instead of a fixed bank.",
+   "where": "site/worker.js adaptiveQuestion",
+   "issue": "Q-GAP-adaptive-interview",
+   "code": [
+    "site/interview.js"
+   ]
+  }
+ ],
+ "gaps": [
+  [
+   "One installation and one customer. There is no installer and no second tenant yet.",
+   "Q-GAP-second-installation"
+  ],
+  [
+   "The core still shares a database with QNFO's research applications; separating it is the first pilot milestone.",
+   "PIN-core-db-separation"
+  ],
+  [
+   "The prediction match rate is scored by the system itself. An outside audit is a pilot goal.",
+   "PIN-outside-audit"
+  ],
+  [
+   "A buyer needs a short default policy pack; today the policy is long and written as owner directives.",
+   "PIN-default-policy-pack"
+  ]
+ ]
+}

@@ -343,7 +343,7 @@
    "id": "engineer-lane",
    "name": "Engineer lane with honest Live/Testing/Pinned status",
    "status": "live",
-   "proof": "grep:site/interview.js::export const PINS",
+   "proof": "file:site/pins.json",
    "test": "site/site.test.mjs",
    "note": ""
   },

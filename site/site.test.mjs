@@ -51,7 +51,7 @@ assert.equal(kv.get("state:" + id2), "failed"); assert.match(await r.text(), /So
 r = await mod.fetch(new Request("https://ultrastable.io/s/0000000000"), E2); assert.equal(r.status, 404);
 r = await get("https://ultrastable.net/"); assert.equal(r.headers.get("location"), "https://ultrastable.io/proof");
 r = await get("https://www.ultrastable.io/how"); assert.equal(r.headers.get("location"), "https://ultrastable.io/how");
-for (const p of ["/", "/engineers", "/how", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
+for (const p of ["/", "/engineers", "/roadmap", "/how", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
   r = await get("https://ultrastable.io" + p); assert.equal(r.status, 200, p);
   const h = await r.text(); assert.match(h, /<body/); assert.match(h, /rel="canonical"/);
   assert.ok(((h.replace(/<style>[\s\S]*?<\/style>/, "")).match(/class="btn btn-primary"/g) || []).length <= 1, p + " has at most one primary action");
@@ -69,27 +69,12 @@ assert.match(homeHtml, /class="us-ask"/); assert.match(homeHtml, /id="us-mic"/);
 assert.doesNotMatch(homeHtml, /<textarea/, "no intimidating text box on the front door");
 for (const m of homeHtml.matchAll(/<script>([\s\S]*?)<\/script>/g)) new Function(m[1]);
 const eng = await (await get("https://ultrastable.io/engineers")).text(); assert.match(eng, /Pinned/); assert.match(eng, /Live/);
-// PIN-LINK-1: every status and roadmap pin is linked to something code can act on, and the page shows the link.
-{
-  const { existsSync } = await import("node:fs");
-  const { PINS } = await import(pathToFileURL(fileURLToPath(new URL("./interview.js", import.meta.url))).href);
-  const repo = (rel) => fileURLToPath(new URL("../" + rel, import.meta.url));
-  assert.ok(PINS.length >= 10);
-  for (const p of PINS) {
-    assert.equal(p.length, 5, "pin needs status, name, text, where and a link: " + p[1]);
-    assert.ok(["Live", "Testing", "Pinned"].includes(p[0]), p[1]);
-    if (p[0] === "Live") {
-      assert.ok(existsSync(repo(p[4])), "Live pin '" + p[1] + "' names code that does not exist: " + p[4]);
-    } else {
-      const f = repo("docs/issues/" + p[4] + ".json");
-      assert.ok(existsSync(f), p[0] + " pin '" + p[1] + "' names no backlog item: " + p[4]);
-      const body = JSON.parse(readFileSync(f, "utf8")).body;
-      for (const field of ["Owner", "Trigger", "Done check"]) assert.match(body, new RegExp("\\*\\*" + field + ":\\*\\*\\s*\\S"), p[4] + " lacks " + field);
-      assert.match(body, /\*\*Status:\*\*\s*open/, "item " + p[4] + " is finished, so pin '" + p[1] + "' must move to Live");
-    }
-    assert.ok(eng.includes(p[4]), "the page does not show the link for " + p[1]);
-  }
-}
+// SITE-PINS-1: every pin and honest gap links to a tracked item that the roadmap page and roadmap.json carry.
+const road = await (await get("https://ultrastable.io/roadmap.json")).json(); const roadHtml = await (await get("https://ultrastable.io/roadmap")).text();
+assert.ok(road.pins.length >= 10);
+for (const p of road.pins) { assert.ok(road.issues[p.issue], "pin without issue: " + p.name); assert.ok(p.code.length, "pin without code: " + p.name); assert.ok(eng.includes("/roadmap#" + p.issue)); assert.ok(roadHtml.includes("id=\"" + p.issue + "\"")); }
+const howHtml = await (await get("https://ultrastable.io/how")).text();
+for (const g of road.gaps) { assert.ok(road.issues[g.issue]); assert.ok(howHtml.includes("/roadmap#" + g.issue)); }
 const fp = new FormData(); fp.set("idea", "bins. for other people"); fp.set("profile", JSON.stringify({ space: { who: "B" } }));
 r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: fp }), E2); assert.equal(r.status, 303);
 assert.ok([...kv.keys()].some((k) => k.startsWith("profile:")), "interview profile is stored with the idea");

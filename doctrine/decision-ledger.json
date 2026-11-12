@@ -179,6 +179,15 @@
    "probe": "grep:site/worker.js::What it is not for"
   },
   {
+   "id": "lesson-2026-11-12-site-claims-must-link-to-issues-and-code-site-pins-1",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Site claims must link to issues and code (SITE-PINS-1)",
+   "body": "A public-site status pin or honest gap with no docs/issues item and no existing code path is a defect. site/pins.json plus scripts/build_site_roadmap.py --check enforce it; doctrine/market.json engineer-lane now proves site/pins.json.",
+   "probe": "file:scripts/build_site_roadmap.py",
+   "session": "session_0156nqDtk2xvHdHtnZ3B7oBL"
+  },
+  {
    "id": "decision-2026-11-12-server-side-only-github-actions-on-its-built-in-token-is-the",
    "kind": "decision",
    "date": "2026-11-12",
@@ -230,15 +239,6 @@
    "title": "Fit is the system test, not B2B and not revenue",
    "body": "Owner, 2026-11-12: the use cases are not only B2B. A personal system (a companion, a signals desk for markets or news) qualifies when it needs ongoing agentic upkeep and its owner accepts a running cost; storefronts are left to shop builders and the product is not pitched on revenue. docs/doctrine/VISION.md and its seed copy now say the owner can be an organization, a small business or one person, drop the shop example and list selling online under what it is not for; site/suggest.js replaces the shop suggestion with two personal systems. Measured: tests/test_vision.py 5 tests pass, including a one-person signals desk that passes the bootstrap qualify stage.",
    "probe": "grep:tests/test_vision.py::def test_a_personal_system_is_a_fit_when_it_passes_the_system_test",
-   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
-  },
-  {
-   "id": "decision-2026-11-12-every-site-pin-links-to-code-or-an-open-backlog-item",
-   "kind": "decision",
-   "date": "2026-11-12",
-   "title": "Every site pin links to code or an open backlog item",
-   "body": "Owner, 2026-11-12: what the site says must be linked to something that can be implemented in code. Each status and roadmap pin on /engineers now carries a fifth field: a repository path for a Live pin, the id of an open docs/issues item (owner, trigger, done check) for a Testing or Pinned pin, shown on the page. site/site.test.mjs fails a pin with no link, a dead path, a missing item or a finished item. The pin 'Ultrastable runs on itself' moved from Live to Testing and links Q-LOOP-live-clock, because a deployed tick of its own seed is not proven. Measured: site tests pass; changing one link to a missing id fails with 'names no backlog item'. Also fixed: platform/core to_pg_sql doubled no literal percent sign, so the Postgres test job failed on LIKE patterns.",
-   "probe": "grep:site/site.test.mjs::PIN-LINK-1",
    "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
   }
  ]

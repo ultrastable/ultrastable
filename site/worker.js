@@ -5,6 +5,7 @@ import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import USER_PATH from "./userpath.js";
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
+import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
 var VERSION = "0.11.0";
 const CANON = "ultrastable.io";
@@ -113,7 +114,7 @@ function how() {
     + card("4. Score the decision", "Each decision logs a prediction before it acts; the outcome is scored later and feeds a trust score per kind of action.")
     + "</div>"
     + "<h2>Why the name</h2><p>W. Ross Ashby's ultrastable system (1952) changes its own settings when an essential variable leaves its limits, so it stays viable without an operator. The trust ledger, doctrine amendments and probe-and-revert loops do that for software.</p>"
-    + "<h2 id=\"gaps\">Honest gaps</h2><ul><li>One installation and one customer. There is no installer and no second tenant yet.</li><li>The core still shares a database with QNFO's research applications; separating it is the first pilot milestone.</li><li>The prediction match rate is scored by the system itself. An outside audit is a pilot goal.</li><li>A buyer needs a short default policy pack; today the policy is long and written as owner directives.</li></ul>"
+    + "<h2 id=\"gaps\">Honest gaps</h2>" + "<ul>" + ROAD.gaps.map(function (g) { return "<li>" + esc(g.text) + " <a href=\"/roadmap#" + esc(g.issue) + "\">" + esc(g.issue) + "</a></li>"; }).join("") + "</ul>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");
 }
 
@@ -433,14 +434,21 @@ function setup() {
     "<div class=\"head\"><h1>Let's get you set up</h1><p>One question at a time. Everything is a click. Nothing to install or type.</p></div><div class=\"card\"><h3 class=\"card-title\">Easiest: let an assistant do it</h3><p class=\"meta\">Press Copy, then paste into any AI assistant (Claude, ChatGPT, Gemini, Copilot). No account needed to start.</p><textarea id=\"us-ap\" readonly rows=\"4\" style=\"width:100%;font-size:1rem;padding:.6rem\"></textarea><p><button type=\"button\" class=\"btn btn-primary\" id=\"us-cp\">Copy</button> <span id=\"us-cpm\" class=\"meta\"></span></p></div><div id=\"us-wiz\" class=\"card\"><noscript>This page needs JavaScript to guide you.</noscript></div><script>var P=" + JSON.stringify(AGENT_PROMPT) + ";var t=document.getElementById('us-ap');t.value=P;document.getElementById('us-cp').onclick=function(){t.select();try{navigator.clipboard.writeText(P)}catch(e){document.execCommand('copy')}document.getElementById('us-cpm').textContent='Copied. Paste it into your assistant.'};" + js + "</script>");
 }
 function engineers() {
-  const tag = { Live: "us-pass", Testing: "meta", Pinned: "us-fail" };
-  const rows = IV.PINS.map(function (p) { return "<tr><td class=\"" + tag[p[0]] + "\">" + esc(p[0]) + "</td><td><strong>" + esc(p[1]) + "</strong><br><small>" + esc(p[2]) + "</small></td><td><small><code>" + esc(p[3]) + "</code><br>" + (p[0] === "Live" ? "code: " : "item: ") + "<code>" + esc(p[4]) + "</code></small></td></tr>"; }).join("");
+  const tag = { live: "us-pass", testing: "meta", pinned: "us-fail" }, lab = { live: "Live", testing: "Testing", pinned: "Pinned" };
+  const rows = ROAD.pins.map(function (p) { return "<tr><td class=\"" + tag[p.status] + "\">" + lab[p.status] + "</td><td><strong>" + esc(p.name) + "</strong><br><small>" + esc(p.what) + "</small></td><td><small><a href=\"/roadmap#" + esc(p.issue) + "\">" + esc(p.issue) + "</a><br><code>" + esc(p.where) + "</code></small></td></tr>"; }).join("");
   return shell({ path: "/engineers", title: "Ultrastable for engineers", description: "The autonomous loops, virtual managers, agents and plussing budget, with what is live, in testing and not built yet." },
     "<div class=\"head\"><h1>For engineers</h1><p>No interview. Ultrastable runs on itself, so the same code is yours to run. Status is honest: Live, Testing, or Pinned (not built yet, with the trigger that will build it).</p></div>"
     + "<div class=\"us-grid c2\">" + card("Loops", "Each loop has a trigger, owner, definition of done, two independent paths and a closing probe. Verify with python3 -m foundation loops --verify.") + card("Virtual managers", "Portfolio, project and product managers own business, marketing, funding, legal and ops; staff roles do the work; reviewers are never the author.") + card("Agents", "Open models, GitHub Copilot, Claude Code and Codex take work through one claim ledger.") + card("Plussing", "A protected improvement budget so the backlog does not devolve into bug fixes.") + "</div>"
-    + "<h2>Status and roadmap pins</h2><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Capability</th><th>Where / trigger</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
-    + "<p class=\"meta\">Every row is linked: a Live row names the code that does it, a Testing or Pinned row names the open item in the system's own backlog (docs/issues) with its owner, trigger and closing probe. A row cannot be published without one.</p>"
+    + "<h2>Status and roadmap pins</h2><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Capability</th><th>Issue / where</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
+    + "<p class=\"meta\">Every pin is a tracked item with an owner, a trigger and a closing probe: see the <a href=\"/roadmap\">roadmap</a> or <a href=\"/roadmap.json\">roadmap.json</a>. A build fails if a pin points at nothing.</p>"
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/how\">How it works</a><a class=\"btn\" href=\"/start\">Prefer the interview?</a></div>");
+}
+function roadmap() {
+  const done = (i) => /^done/i.test(i.status), ids = Object.keys(ROAD.issues).sort();
+  const rows = ids.map(function (k) { const i = ROAD.issues[k]; return "<tr id=\"" + esc(k) + "\"><td><strong>" + esc(k) + "</strong><br><small>" + esc(i.milestone) + "</small></td><td>" + esc(i.title) + "<br><small>Owner: " + esc(i.owner) + ". Trigger: " + esc(i.trigger) + "</small></td><td class=\"" + (done(i) ? "us-pass" : "us-fail") + "\">" + (done(i) ? "Done" : "Open") + "</td><td><small><code>" + esc(i.done) + "</code></small></td></tr>"; }).join("");
+  return shell({ path: "/roadmap", title: "Roadmap - Ultrastable", description: "Every status pin and known gap on this site, tied to a tracked item with an owner, a trigger and a closing probe." },
+    "<div class=\"head\"><h1>Roadmap</h1><p>Each item here backs a claim on this site. It has an owner, a trigger and a closing probe the system runs; an item closes only when its probe passes. Machine-readable: <a href=\"/roadmap.json\">roadmap.json</a>.</p></div>"
+    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Item</th><th>What</th><th>State</th><th>Closing probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>");
 }
 function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
@@ -479,7 +487,7 @@ export default {
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
     { const sr = await siteRoutes(u, env, ctx); if (sr) return sr; }
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/engineers", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/engineers", "/roadmap", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
@@ -489,6 +497,8 @@ export default {
       case "/team": return new Response(team(), { headers: HTML });
       case "/org": return new Response(org(), { headers: HTML });
       case "/engineers": return new Response(engineers(), { headers: HTML });
+      case "/roadmap": return new Response(roadmap(), { headers: HTML });
+      case "/roadmap.json": return new Response(JSON.stringify(ROAD), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/contact": return new Response(contact(), { headers: HTML });
       case "/pilot": return new Response(pilot(), { headers: HTML });
@@ -499,7 +509,7 @@ export default {
       case "/agent.md": return new Response(AGENT_MD, { headers: { "Content-Type": "text/markdown; charset=utf-8", "Access-Control-Allow-Origin": "*" } });
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
-      case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/engineers", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot", "/start", "/setup"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
+      case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/engineers", "/roadmap", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot", "/start", "/setup"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
       default: return new Response(shell({ path: u.pathname, title: "Not found - Ultrastable", description: "Page not found." }, "<div class=\"head\"><h1>Not found</h1><p>That page does not exist. <a href=\"/\">Go to the home page</a>.</p></div>"), { status: 404, headers: HTML });
     }
   }
