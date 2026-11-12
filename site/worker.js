@@ -2,7 +2,7 @@
 // Canonical host ultrastable.io; ultrastable.app and ultrastable.net redirect to it (/pilot and /proof). Live proof comes from
 // the platform claims QNFO publishes as customer zero. Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
-var VERSION = "0.3.1";
+var VERSION = "0.5.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -66,7 +66,7 @@ function home(d) {
   return shell({ path: "/", title: "Ultrastable: the foundation for any autonomous system", description: "Ultrastable is the foundation for any autonomous system. Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live and keeps score of how often it was right." },
     "<section class=\"us-hero\"><h1>Ultrastable is the foundation for any autonomous system.</h1><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p>"
     + "<p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p>"
-    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
+    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/start\">Start with an idea</a><a class=\"btn\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine(d) + "</div></section>"
     + "<h2>What is different</h2><div class=\"us-grid c3\">"
     + card("It chooses the work", "Metrics breach, a trigger files an issue, a coding agent opens the pull request. A person sets direction and reads reports.")
@@ -183,6 +183,69 @@ function faq() {
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");
 }
 
+// FRONT-DOOR-1: one prompt bar. A person types an idea in plain words; the system takes it from there. No account, key, repo or terminal.
+// The idea is stored under idea:<time>:<id> in the ASSETS KV; the executor tick is its consumer (instances/ultrastable/loop-registry.json).
+function start(note) {
+  const form = "<form method=\"post\" action=\"/api/idea\" class=\"us-prompt\"><label for=\"idea\"><strong>What do you want to build?</strong></label>"
+    + "<textarea id=\"idea\" name=\"idea\" rows=\"4\" maxlength=\"2000\" required placeholder=\"An app that reminds my neighbours when bins go out...\" style=\"width:100%;font-size:1.1rem;padding:.8rem\"></textarea>"
+    + "<div class=\"us-actions\"><button class=\"btn btn-primary\" type=\"submit\">Start</button></div></form>";
+  const body = "<div class=\"head\"><h1>Describe your idea</h1><p>" + (typeof note === "string" ? note : "One sentence is enough. We build it, host it and keep it running.") + "</p></div>" + form;
+  return shell({ path: "/start", title: "Start - Ultrastable", description: "Describe an idea in plain words and Ultrastable builds, hosts and runs it." }, body);
+}
+// BUILD-1: idea -> live site with no account, key or terminal. Workers AI (binding AI) writes one self-contained page, KV (ASSETS) hosts it at
+// /s/<id>, and a plain "change something" form regenerates it. Served under a sandbox CSP so a generated page can never touch ultrastable.io.
+const MODEL = "@cf/qwen/qwen2.5-coder-32b-instruct", SYS = "You build small, beautiful, working web pages. Output exactly one complete self-contained HTML file (inline CSS and JS, no external libraries, mobile friendly, accessible, real content not lorem ipsum, any saved data kept in localStorage wrapped in try/catch with an in-memory fallback, because the page runs sandboxed). No explanation, no markdown.";
+const newId = () => crypto.randomUUID().replace(/-/g, "").slice(0, 10);
+const okId = (x) => /^[a-f0-9]{10}$/.test(x || "");
+async function aiHtml(env, idea, prev, change) {
+  const msgs = [{ role: "system", content: SYS }];
+  msgs.push(prev ? { role: "user", content: "Here is the current page:\n" + prev + "\n\nChange it as follows and return the whole updated file: " + change } : { role: "user", content: "Build this: " + idea });
+  const r = await env.AI.run(MODEL, { messages: msgs, max_tokens: 7000 });
+  const t = String((r && (r.response || r.result)) || ""), m = /```(?:html)?\s*([\s\S]*?)```/.exec(t), h = (m ? m[1] : t).trim();
+  if (!/<html[\s>]/i.test(h) || !/<\/html>/i.test(h)) throw new Error("the model did not return a complete page");
+  return h;
+}
+async function build(env, id, idea, prev, change) {
+  try { await env.ASSETS.put("site:" + id, await aiHtml(env, idea, prev, change)); await env.ASSETS.put("state:" + id, "ready"); }
+  catch (e) { console.error("build failed", id, String(e)); await env.ASSETS.put("state:" + id, "failed"); }
+}
+async function kick(request, env, ctx, id, idea, prev, change) {
+  const ip = request.headers.get("cf-connecting-ip") || "x", key = "rl:" + ip + ":" + new Date().toISOString().slice(0, 13);
+  const n = Number(await env.ASSETS.get(key) || 0);
+  if (n >= 6) return new Response(start("Lots of builds from your connection this hour. Please try again a little later."), { status: 429, headers: HTML });
+  await env.ASSETS.put(key, String(n + 1), { expirationTtl: 7200 });
+  await env.ASSETS.put("state:" + id, "building");
+  const job = build(env, id, idea, prev, change); if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job;
+  return Response.redirect("https://" + CANON + "/s/" + id + "/make", 303);
+}
+async function takeIdea(request, env, ctx) {
+  const f = await request.formData().catch(() => null), idea = f && String(f.get("idea") || "").trim().slice(0, 2000);
+  if (!idea) return new Response(start(false), { status: 400, headers: HTML });
+  const id = newId(); await env.ASSETS.put("idea:" + new Date().toISOString() + ":" + id, idea);
+  return kick(request, env, ctx, id, idea, null, null);
+}
+async function takeChange(request, env, ctx) {
+  const f = await request.formData().catch(() => null), id = f && String(f.get("id") || ""), change = f && String(f.get("change") || "").trim().slice(0, 1000);
+  const prev = okId(id) ? await env.ASSETS.get("site:" + id) : null;
+  if (!prev || !change) return new Response(start("That site was not found."), { status: 404, headers: HTML });
+  return kick(request, env, ctx, id, null, prev, change);
+}
+async function siteRoutes(u, env) {
+  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change)?$/.exec(u.pathname);
+  if (!m || !env || !env.ASSETS) return null;
+  const id = m[1], st = await env.ASSETS.get("state:" + id);
+  if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
+  if (m[2] === "/change") return new Response(shell({ path: u.pathname, title: "Change your site", description: "Change your site." }, "<div class=\"head\"><h1>What should change?</h1><p>Say it in plain words.</p></div><form method=\"post\" action=\"/api/change\"><input type=\"hidden\" name=\"id\" value=\"" + id + "\"><textarea name=\"change\" rows=\"3\" maxlength=\"1000\" required style=\"width:100%;font-size:1.1rem;padding:.8rem\" placeholder=\"Make it green and add a contact button\"></textarea><div class=\"us-actions\"><button class=\"btn btn-primary\" type=\"submit\">Update</button> <a class=\"btn\" href=\"/s/" + id + "\">Cancel</a></div></form>"), { headers: HTML });
+  if (m[2] === "/make") {
+    if (st === "ready") return Response.redirect("https://" + CANON + "/s/" + id, 302);
+    const msg = st === "failed" ? "<p>That did not work this time. <a href=\"/start\">Try again</a>.</p>" : "<p>Building your site. This takes about half a minute. This page updates by itself.</p><meta http-equiv=\"refresh\" content=\"4\">";
+    return new Response(shell({ path: u.pathname, title: "Building - Ultrastable", description: "Building your site." }, "<div class=\"head\"><h1>" + (st === "failed" ? "Something went wrong" : "Building...") + "</h1></div>" + msg), { headers: HTML });
+  }
+  if (st !== "ready") return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
+  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><a href=\"https://" + CANON + "/s/" + id + "/change\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none\" target=\"_top\">Change something</a></div>";
+  const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
+  return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'none'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
+}
 function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
     "<div class=\"head\"><h1>Contact</h1><p>One address; a person replies within two working days.</p></div>"
@@ -214,8 +277,11 @@ export default {
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/proof", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
+    if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
+    if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
+    { const sr = await siteRoutes(u, env); if (sr) return sr; }
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
@@ -227,6 +293,7 @@ export default {
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/contact": return new Response(contact(), { headers: HTML });
       case "/pilot": return new Response(pilot(), { headers: HTML });
+      case "/start": return new Response(start(false), { headers: HTML });
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
       case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });

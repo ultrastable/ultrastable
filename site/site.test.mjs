@@ -9,6 +9,20 @@ const get = (u) => mod.fetch(new Request(u));
 globalThis.fetch = async () => { throw new Error("offline"); };
 let r = await get("https://ultrastable.app/anything");
 assert.equal(r.status, 301); assert.equal(r.headers.get("location"), "https://ultrastable.io/pilot");
+// BUILD-1: idea -> building -> live page -> change, all in plain words, with an in-memory KV and a fake model
+const kv = new Map(); const mem = { get: async (k) => kv.has(k) ? kv.get(k) : null, put: async (k, v) => { kv.set(k, v); } };
+let calls = 0; const AI = { run: async (m, a) => { calls++; const ch = a.messages[1].content.includes("current page"); return { response: "```html\n<html><body><h1>" + (ch ? "changed" : "bins") + "</h1></body></html>\n```" }; } };
+const E2 = { ASSETS: mem, AI };
+r = await get("https://ultrastable.io/start"); assert.equal(r.status, 200); assert.match(await r.text(), /What do you want to build/);
+const fd = new FormData(); fd.set("idea", "an app for bin day");
+r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: fd }), E2);
+assert.equal(r.status, 303); const id = /\/s\/([a-f0-9]{10})\/make/.exec(r.headers.get("location"))[1];
+r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.equal(r.status, 200);
+const page = await r.text(); assert.match(page, /<h1>bins<\/h1>/); assert.match(page, /Change something/); assert.match(r.headers.get("content-security-policy"), /sandbox/);
+const fc = new FormData(); fc.set("id", id); fc.set("change", "make it green");
+r = await mod.fetch(new Request("https://ultrastable.io/api/change", { method: "POST", body: fc }), E2); assert.equal(r.status, 303);
+r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.match(await r.text(), /changed/); assert.equal(calls, 2);
+r = await mod.fetch(new Request("https://ultrastable.io/s/0000000000"), E2); assert.equal(r.status, 404);
 r = await get("https://ultrastable.net/"); assert.equal(r.headers.get("location"), "https://ultrastable.io/proof");
 r = await get("https://www.ultrastable.io/how"); assert.equal(r.headers.get("location"), "https://ultrastable.io/how");
 for (const p of ["/", "/how", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
