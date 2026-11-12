@@ -1,0 +1,572 @@
+{
+ "_doc": "COMPONENTS-1: the system as a graph of components, users, stories and objections. Nothing here is asserted: a component is 'live' only when its impl probes AND proof probes pass, 'built' when only impl passes, 'missing' otherwise. An edge is 'wired' only when its probe passes. A story passes only when its acceptance probe passes. An objection answer is 'supported' only while every component it cites is live and doctrine/market-evidence.json still says no competitor offers it natively (a competitor adding it flips the objection to 'invalid' and files a gap). Probes: file:<path>, grep:<path>::<regex>. Consumed by foundation/components.py; gaps are auto-filed as OL-GAP-* items.",
+ "components": {
+  "time-trigger": {
+   "what": "cron heartbeat wakes every role at its own cadence",
+   "impl": [
+    "file:doctrine/triggers.json",
+    "file:seed/worker/wrangler.template.jsonc",
+    "grep:seed/worker/src/index.js::async scheduled"
+   ],
+   "proof": [
+    "file:tests/foundation/test_triggers.py"
+   ]
+  },
+  "event-trigger": {
+   "what": "signed webhook / dispatch wakes one role now",
+   "impl": [
+    "file:seed/worker/src/events.js",
+    "grep:seed/worker/src/index.js::/hook/github"
+   ],
+   "proof": [
+    "file:seed/worker/test/events.test.js"
+   ]
+  },
+  "persistent-state": {
+   "what": "durable task DB: items, claims, outcomes, ledger",
+   "impl": [
+    "file:seed/worker/migrations/0001_init.sql",
+    "file:seed/worker/src/tick.js"
+   ],
+   "proof": [
+    "file:tests/foundation/test_selfhost.py"
+   ]
+  },
+  "role-managers": {
+   "what": "portfolio, project, product and business role agents with owner, trigger, done check",
+   "impl": [
+    "file:agents/roles/portfolio-manager.md",
+    "file:doctrine/team.json",
+    "file:foundation/team.py"
+   ],
+   "proof": [
+    "file:tests/foundation/test_team.py"
+   ]
+  },
+  "code-executor": {
+   "what": "picks the top issue, changes code, opens a PR",
+   "impl": [
+    "file:foundation/executor.py",
+    "file:seed/worker/src/executor.js"
+   ],
+   "proof": [
+    "file:tests/foundation/test_executor.py"
+   ]
+  },
+  "independent-review": {
+   "what": "a different agent or model reviews every change",
+   "impl": [
+    "file:scripts/llm_review.py",
+    "grep:agents/AGENTS.md::Never review your own work"
+   ],
+   "proof": [
+    "file:scripts/test_llm_review.py"
+   ]
+  },
+  "merge-deploy": {
+   "what": "merge on green, deploy through the canonical path",
+   "impl": [
+    "file:.github/workflows/lane.yml",
+    "file:seed/worker/src/lane.js",
+    "file:.github/workflows/deploy-site.yml"
+   ],
+   "proof": [
+    "file:seed/worker/test/lane.test.js"
+   ]
+  },
+  "verify-live": {
+   "what": "an item counts done only after a live probe",
+   "impl": [
+    "file:site/probes.json",
+    "file:scripts/drift_probe.sh"
+   ],
+   "proof": [
+    "grep:ops/loop-evidence/LATEST.md::Happened"
+   ]
+  },
+  "metrics-triggers": {
+   "what": "scoreboard with breach triggers that create work",
+   "impl": [
+    "file:seed/analytics/analytics.js",
+    "file:scripts/metrics.sh"
+   ],
+   "proof": [
+    "file:seed/worker/test/analytics.test.js"
+   ]
+  },
+  "self-improvement": {
+   "what": "loops score themselves; same failure twice mutates; predictions kept or reverted",
+   "impl": [
+    "file:foundation/lifecycle.py"
+   ],
+   "proof": [
+    "file:tests/foundation/test_lifecycle.py"
+   ]
+  },
+  "session-lifecycle": {
+   "what": "leases, heartbeats, reaper: no zombie sessions",
+   "impl": [
+    "grep:foundation/lifecycle.py::def reap"
+   ],
+   "proof": [
+    "grep:tests/foundation/test_lifecycle.py::zombie"
+   ]
+  },
+  "trust-ladder": {
+   "what": "earned autonomy per surface and action class",
+   "impl": [
+    "file:foundation/trust.py",
+    "file:foundation/ladder.py",
+    "file:seed/autonomy/policy.json"
+   ],
+   "proof": [
+    "file:tests/foundation/test_kernel.py"
+   ]
+  },
+  "budget-guard": {
+   "what": "spend caps and kill switches that steer instead of stop",
+   "impl": [
+    "file:scripts/actions_guard.py",
+    "file:actions-budget.json"
+   ],
+   "proof": [
+    "file:.github/workflows/actions-budget.yml"
+   ]
+  },
+  "failover": {
+   "what": "no single route: host and credential failover",
+   "impl": [
+    "file:foundation/failover.py",
+    "file:scripts/check_routes.py"
+   ],
+   "proof": [
+    "file:deploy/routes.json"
+   ]
+  },
+  "memory-in-repo": {
+   "what": "every decision and lesson written back to the repository",
+   "impl": [
+    "file:foundation/writeback.py",
+    "file:docs/PROJECT-MEMORY.md"
+   ],
+   "proof": [
+    "file:tests/foundation/test_writeback.py"
+   ]
+  },
+  "funding-outreach": {
+   "what": "grants and outreach with caps, consent, suppression",
+   "impl": [
+    "file:scripts/outreach.py",
+    "file:outreach/gate.json",
+    "file:business/funding/registry.json"
+   ],
+   "proof": [
+    "file:scripts/test_outreach.py"
+   ]
+  },
+  "ip-legal": {
+   "what": "filing route planner and disclosure gate",
+   "impl": [
+    "file:foundation/filing.py",
+    "file:foundation/data/jurisdictions.json",
+    "file:ip/evidence-log.md"
+   ],
+   "proof": [
+    "file:tests/foundation/test_foundation.py"
+   ]
+  },
+  "research-publishing": {
+   "what": "research as a pipeline to published versions",
+   "impl": [
+    "file:agents/roles/research-publisher.md",
+    "file:CITATION.cff"
+   ],
+   "proof": [
+    "grep:doctrine/triggers.json::research-queued"
+   ]
+  },
+  "marketing-content": {
+   "what": "content calendar and social pipeline behind a disclosure gate",
+   "impl": [
+    "file:agents/roles/marketing-manager.md",
+    "file:scripts/social_post.py",
+    "file:scripts/social_generate.py"
+   ],
+   "proof": [
+    "file:scripts/test_social.py"
+   ]
+  },
+  "customer-onboarding": {
+   "what": "non-technical, voice-first, zero-fuss setup",
+   "impl": [
+    "file:site/interview.js",
+    "file:site/userpath.js",
+    "file:seed/worker/src/interview.js"
+   ],
+   "proof": [
+    "file:site/site.test.mjs"
+   ]
+  },
+  "fleet-multi-repo": {
+   "what": "one system across repositories, wired by code",
+   "impl": [
+    "file:foundation/fleet.py",
+    "file:org/repos.json"
+   ],
+   "proof": [
+    "file:tests/foundation/test_fleet.py"
+   ]
+  },
+  "bootstrap-from-idea": {
+   "what": "generate a bootable autonomous org from one manifest",
+   "impl": [
+    "file:foundation/scaffold.py",
+    "file:foundation/manifest.py",
+    "file:seed/bootstrap/bootstrap.py"
+   ],
+   "proof": [
+    "file:tests/foundation/test_foundation.py"
+   ]
+  },
+  "self-hosting": {
+   "what": "the product runs its own roadmap, issues and managers",
+   "impl": [
+    "file:foundation/selfhost.py",
+    "file:instances/ultrastable/loop-registry.json"
+   ],
+   "proof": [
+    "file:tests/foundation/test_selfhost.py"
+   ]
+  },
+  "gap-analysis": {
+   "what": "this graph, computed, with gaps auto-filed",
+   "impl": [
+    "file:foundation/components.py",
+    "file:doctrine/components.json"
+   ],
+   "proof": [
+    "file:tests/foundation/test_components.py"
+   ]
+  }
+ },
+ "edges": [
+  {
+   "from": "time-trigger",
+   "to": "persistent-state",
+   "via": "the heartbeat runs the tick against the task DB",
+   "probe": "grep:seed/worker/src/index.js::runTick"
+  },
+  {
+   "from": "event-trigger",
+   "to": "role-managers",
+   "via": "a webhook wakes the routed role out of turn",
+   "probe": "grep:seed/worker/src/tick.js::ctx.wake"
+  },
+  {
+   "from": "role-managers",
+   "to": "code-executor",
+   "via": "dispatched items are picked by the executor",
+   "probe": "grep:seed/worker/src/index.js::runExecutor"
+  },
+  {
+   "from": "code-executor",
+   "to": "independent-review",
+   "via": "every PR is reviewed by a different agent",
+   "probe": "grep:agents/AGENTS.md::Never review your own work"
+  },
+  {
+   "from": "independent-review",
+   "to": "merge-deploy",
+   "via": "the lane merges what is green and reviewed",
+   "probe": "grep:seed/worker/src/index.js::runLane"
+  },
+  {
+   "from": "merge-deploy",
+   "to": "verify-live",
+   "via": "deploy is followed by a live probe",
+   "probe": "file:scripts/drift_probe.sh"
+  },
+  {
+   "from": "verify-live",
+   "to": "metrics-triggers",
+   "via": "probe results feed the scoreboard",
+   "probe": "file:site/probes.json"
+  },
+  {
+   "from": "metrics-triggers",
+   "to": "self-improvement",
+   "via": "loop evidence is scored and mutated",
+   "probe": "grep:foundation/launch.py::_loop_lifecycle"
+  },
+  {
+   "from": "self-improvement",
+   "to": "memory-in-repo",
+   "via": "predictions and verdicts are append-only repository files",
+   "probe": "grep:foundation/lifecycle.py::ops/improvements.jsonl"
+  },
+  {
+   "from": "session-lifecycle",
+   "to": "persistent-state",
+   "via": "reaped sessions release their item back to the queue",
+   "probe": "grep:foundation/lifecycle.py::def reap"
+  },
+  {
+   "from": "trust-ladder",
+   "to": "code-executor",
+   "via": "autonomy rung gates which actions the executor may take alone",
+   "probe": "grep:seed/worker/src/tick.js::trust"
+  },
+  {
+   "from": "budget-guard",
+   "to": "time-trigger",
+   "via": "a breached cap steers cadence instead of stopping the loop",
+   "probe": "grep:.github/workflows/loop.yml::actions_guard"
+  },
+  {
+   "from": "role-managers",
+   "to": "funding-outreach",
+   "via": "funding and outreach roles run on the same tick",
+   "probe": "grep:seed/ultrastable.json::funding-manager"
+  },
+  {
+   "from": "research-publishing",
+   "to": "marketing-content",
+   "via": "a published version becomes a content item",
+   "probe": "grep:agents/roles/research-publisher.md::marketing manager"
+  },
+  {
+   "from": "ip-legal",
+   "to": "marketing-content",
+   "via": "the disclosure gate runs before anything is posted",
+   "probe": "grep:agents/roles/marketing-manager.md::disclosure gate"
+  },
+  {
+   "from": "bootstrap-from-idea",
+   "to": "self-hosting",
+   "via": "the generator output is the same kernel the product runs on",
+   "probe": "grep:foundation/scaffold.py::KERNEL_PATHS"
+  },
+  {
+   "from": "fleet-multi-repo",
+   "to": "merge-deploy",
+   "via": "the fleet lane merges across repositories",
+   "probe": "file:foundation/fleet.py"
+  },
+  {
+   "from": "customer-onboarding",
+   "to": "bootstrap-from-idea",
+   "via": "the interview produces the instance manifest",
+   "probe": "grep:foundation/manifest.py::def resolve"
+  },
+  {
+   "from": "failover",
+   "to": "time-trigger",
+   "via": "a silent host is replaced by the next scheduler without coordination",
+   "probe": "grep:foundation/launch.py::failover"
+  }
+ ],
+ "users": {
+  "non-technical-founder": {
+   "who": "Has an idea and no engineering background; wants a working, maintained product without touching code, cloud accounts or deploys.",
+   "stories": [
+    {
+     "id": "idea-to-live",
+     "story": "I describe my idea by voice and get a live site that keeps itself updated.",
+     "components": [
+      "customer-onboarding",
+      "bootstrap-from-idea",
+      "merge-deploy",
+      "verify-live"
+     ],
+     "acceptance": "grep:site/interview.js::speech"
+    },
+    {
+     "id": "never-touch-config",
+     "story": "I never see a key, a config file or a deploy command; if something needs me it is one link with a default already in effect.",
+     "components": [
+      "customer-onboarding",
+      "trust-ladder"
+     ],
+     "acceptance": "file:foundation/data/needs-you.json"
+    }
+   ]
+  },
+  "solo-developer-maintainer": {
+   "who": "Maintains open-source or a small product alone; drowning in issues, reviews and releases.",
+   "stories": [
+    {
+     "id": "issues-resolve-themselves",
+     "story": "New issues are triaged, fixed in a PR, reviewed by a different agent, merged and verified live without me.",
+     "components": [
+      "event-trigger",
+      "code-executor",
+      "independent-review",
+      "merge-deploy",
+      "verify-live"
+     ],
+     "acceptance": "grep:doctrine/triggers.json::issue-opened"
+    },
+    {
+     "id": "no-zombie-work",
+     "story": "A stuck or abandoned agent session never holds work hostage.",
+     "components": [
+      "session-lifecycle",
+      "persistent-state"
+     ],
+     "acceptance": "grep:foundation/lifecycle.py::def reap"
+    }
+   ]
+  },
+  "research-lab": {
+   "who": "Academic or independent researcher; needs ideas turned into reviewed, versioned, citable publications.",
+   "stories": [
+    {
+     "id": "research-to-published",
+     "story": "A queued idea becomes a reviewed draft and at least two published versions with a citation file.",
+     "components": [
+      "research-publishing",
+      "independent-review",
+      "memory-in-repo"
+     ],
+     "acceptance": "file:agents/roles/research-publisher.md"
+    }
+   ]
+  },
+  "small-team-startup": {
+   "who": "Two to ten people; cannot hire a marketing, legal, finance or support function yet.",
+   "stories": [
+    {
+     "id": "virtual-team",
+     "story": "Roles I cannot hire exist as agents that wake on schedule and on events, phased in as the code loop proves itself.",
+     "components": [
+      "role-managers",
+      "time-trigger",
+      "event-trigger"
+     ],
+     "acceptance": "file:doctrine/team.json"
+    },
+    {
+     "id": "promotion-and-funding",
+     "story": "Funding applications and outreach run within caps, consent and suppression, with the disclosure gate before anything goes public.",
+     "components": [
+      "funding-outreach",
+      "ip-legal",
+      "marketing-content"
+     ],
+     "acceptance": "file:outreach/gate.json"
+    }
+   ]
+  },
+  "platform-governance-lead": {
+   "who": "Responsible for what autonomous agents may do; needs earned trust, budgets and audit.",
+   "stories": [
+    {
+     "id": "earned-autonomy",
+     "story": "Agents gain autonomy per action class only through verified outcomes, and lose it on a hidden failure.",
+     "components": [
+      "trust-ladder",
+      "self-improvement"
+     ],
+     "acceptance": "file:foundation/trust.py"
+    },
+    {
+     "id": "spend-is-bounded",
+     "story": "A breached spend cap steers work to cheaper paths and blocks new workers; it never silently overspends.",
+     "components": [
+      "budget-guard",
+      "failover"
+     ],
+     "acceptance": "file:actions-budget.json"
+    }
+   ]
+  }
+ },
+ "objections": [
+  {
+   "id": "just-a-code-agent",
+   "objection": "Isn't this just a code agent?",
+   "answer": "A code agent is one component (code-executor). The product is the loop around it: what wakes it, who assigns it work, who reviews it, what verifies the deploy, and how the loops improve themselves.",
+   "cites": [
+    "code-executor",
+    "time-trigger",
+    "event-trigger",
+    "role-managers",
+    "independent-review",
+    "verify-live",
+    "self-improvement"
+   ],
+   "nobody_offers": [
+    "role-managers",
+    "self-improvement",
+    "trust-ladder"
+   ]
+  },
+  {
+   "id": "claude-code-has-the-money",
+   "objection": "Claude Code's maker has far more funding; surely they have thought of this.",
+   "answer": "A model vendor sells the agent; this product is vendor-neutral orchestration on the customer's own repository and cloud, so it routes across vendors rather than competing with one.",
+   "cites": [
+    "failover",
+    "memory-in-repo",
+    "fleet-multi-repo"
+   ],
+   "nobody_offers": [
+    "failover",
+    "fleet-multi-repo"
+   ]
+  },
+  {
+   "id": "workflow-tools-exist",
+   "objection": "Automation tools and workflow engines already trigger things on a schedule.",
+   "answer": "They trigger steps; they do not own work items with claims, independent review, trust, or self-scoring, and they do not run a business function team.",
+   "cites": [
+    "persistent-state",
+    "trust-ladder",
+    "role-managers",
+    "time-trigger"
+   ],
+   "nobody_offers": [
+    "trust-ladder",
+    "role-managers"
+   ]
+  },
+  {
+   "id": "safe-to-let-run",
+   "objection": "Is it safe to let agents run unattended?",
+   "answer": "Autonomy is earned per action class, budgets steer rather than stop, every change is reviewed by a different agent, and an irreversible identity-bound act is a single card with a default in effect.",
+   "cites": [
+    "trust-ladder",
+    "budget-guard",
+    "independent-review"
+   ],
+   "nobody_offers": [
+    "trust-ladder"
+   ]
+  },
+  {
+   "id": "non-technical-users",
+   "objection": "Can a non-technical person really use this?",
+   "answer": "The entry point is a spoken idea and a short either/or interview; the generator produces the instance manifest and the cloud setup runs from it.",
+   "cites": [
+    "customer-onboarding",
+    "bootstrap-from-idea"
+   ],
+   "nobody_offers": [
+    "bootstrap-from-idea"
+   ]
+  },
+  {
+   "id": "does-it-run-itself",
+   "objection": "Does it really run on itself?",
+   "answer": "Its roadmap, issues, roles, trust ledger and loops are executed by the same kernel it ships, and this gap analysis is computed from probes, not written.",
+   "cites": [
+    "self-hosting",
+    "gap-analysis",
+    "memory-in-repo"
+   ],
+   "nobody_offers": [
+    "self-hosting"
+   ]
+  }
+ ]
+}
