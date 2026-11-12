@@ -5,6 +5,7 @@ import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import USER_PATH from "./userpath.js";
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
+import SG from "./suggest.js";
 var VERSION = "0.11.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
@@ -278,11 +279,12 @@ async function limited(request, env) {
 const goto = (id, tail) => Response.redirect("https://" + CANON + "/s/" + id + tail, 303);
 // BUILD-2 (kept): the build runs inside the /make request (awaited), never in waitUntil, which is cut off about 30 s after the response. The job
 // is stored so any later /make poll resumes it after an eviction; a claim with a TTL stops two polls building at once; tries are capped at 3.
-async function launch(env, ctx, id, brief, prev, change) {
+const json = (o, status) => new Response(JSON.stringify(o), { status: status || 200, headers: { "Content-Type": "application/json", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
+async function launch(env, ctx, id, brief, prev, change) { await store(env, id, brief, prev, change); return goto(id, "/make"); }
+async function store(env, id, brief, prev, change) {
   await env.ASSETS.put("job:" + id, JSON.stringify({ brief: brief, change: change, base: prev ? true : false }), { expirationTtl: 86400 });
   await env.ASSETS.put("tries:" + id, "0", { expirationTtl: 86400 });
   await env.ASSETS.put("state:" + id, "building"); await env.ASSETS.put("since:" + id, String(Date.now()));
-  return goto(id, "/make");
 }
 async function resume(env, id) {
   if (await env.ASSETS.get("claim:" + id)) return "claimed";
@@ -294,14 +296,30 @@ async function resume(env, id) {
   await env.ASSETS.delete("claim:" + id);
   return await env.ASSETS.get("state:" + id);
 }
+// SUGGEST-1: ideas that rotate and respond to what is typed. A bound model proposes follow-ups first; the bank in suggest.js is the floor.
+async function suggestions(u, env) {
+  const q = (u.searchParams.get("q") || "").slice(0, 200), seen = (u.searchParams.get("seen") || "").split("|").filter(Boolean).slice(0, 12), n = Math.min(6, Number(u.searchParams.get("n")) || 4), seed = Number(u.searchParams.get("seed")) || Date.now();
+  let out = [];
+  if (env && env.AI && q.trim().split(/\s+/).length >= 3) {
+    try {
+      const a = await aiJson(env, ASKERS, "You suggest follow-on ideas for someone who is describing a project in a few words. Reply with only a JSON array of 4 short plain-language idea strings, each under 60 characters, each a different useful direction related to what they said. No jargon.", q, 200);
+      out = (Array.isArray(a) ? a : []).filter(x => typeof x === "string" && x.length < 80).slice(0, n);
+    } catch (e) { console.error("suggest model failed", String(e)); }
+  }
+  for (const t of SG.suggest(q, seen.concat(out), seed, n)) if (out.length < n) out.push(t);
+  return json({ s: out, q });
+}
 async function takeIdea(request, env, ctx) {
   const f = await request.formData().catch(() => null), idea = f && String(f.get("idea") || "").trim().slice(0, 2000);
   if (!idea) return new Response(start(false), { status: 400, headers: HTML });
   const lim = await limited(request, env); if (lim) return lim;
   const id = newId(); await env.ASSETS.put("idea:" + new Date().toISOString() + ":" + id, idea);
   const profText = String(f.get("profile") || "").slice(0, 2000); let profOk = false;
+  const wantsJson = (request.headers.get("accept") || "").includes("application/json");
   if (profText) { try { JSON.parse(profText); await env.ASSETS.put("profile:" + id, profText, { expirationTtl: 31536000 }); profOk = true; } catch (e) { console.error("bad profile dropped", String(e)); } }
   // INTERVIEW-1: the on-page interview already asked its questions, so build now; without it (no JavaScript) the server-side questions run.
+  // INTERVIEW-2: the chat thread asked its questions in the conversation and wants JSON, not a redirect; the build then runs from /s/<id>/status.
+  if (profOk && wantsJson) { await store(env, id, idea, null, null); return json({ id, state: "building" }); }
   if (profOk) return launch(env, ctx, id, idea, null, null);
   await jput(env, "ask:" + id, { idea, qs: await questionsFor(env, idea), ans: [] });
   await env.ASSETS.put("state:" + id, "asking");
@@ -320,12 +338,13 @@ async function takeChange(request, env, ctx) {
   const prev = okId(id) ? await env.ASSETS.get("site:" + id) : null;
   if (!prev || !change) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   const lim = await limited(request, env); if (lim) return lim;
-  const a = await jget(env, "ask:" + id);
-  return launch(env, ctx, id, a ? briefOf(a) : "", prev, change);
+  const a = await jget(env, "ask:" + id), brief = a ? briefOf(a) : ((await jget(env, "brief:" + id)) || {}).brief || "";
+  if ((request.headers.get("accept") || "").includes("application/json")) { await store(env, id, brief, prev, change); return json({ id, state: "building" }); }
+  return launch(env, ctx, id, brief, prev, change);
 }
 const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
 async function siteRoutes(u, env, ctx) {
-  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review)?$/.exec(u.pathname);
+  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status)?$/.exec(u.pathname);
   if (!m || !env || !env.ASSETS) return null;
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
@@ -336,6 +355,13 @@ async function siteRoutes(u, env, ctx) {
     if (!a || a.ans.length >= a.qs.length) return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
     const n = a.ans.length, q = a.qs[n], b = (v, t, p) => "<button class=\"btn" + (p ? " btn-primary" : "") + "\" name=\"a\" value=\"" + v + "\" type=\"submit\" style=\"margin-right:.6rem\">" + t + "</button>";
     return page("A quick question", "<div class=\"head\"><p class=\"meta\">Question " + (n + 1) + " of " + a.qs.length + "</p><h1>" + esc(q.q) + "</h1><p class=\"meta\">" + esc(q.cue) + "</p></div><form method=\"post\" action=\"/api/answer\"><input type=\"hidden\" name=\"id\" value=\"" + id + "\"><div class=\"us-actions\">" + b("yes", "Yes", 1) + b("no", "No") + b("unsure", "Not sure") + "</div></form>");
+  }
+  if (m[2] === "/status") {
+    // INTERVIEW-2: the thread polls here. Each poll advances the same stages the pages do, so a status call is the build and the audit.
+    let cur = st; if (cur === "building") cur = await resume(env, id);
+    const out = { state: cur === "claimed" ? "building" : cur };
+    if (cur === "ready" && u.searchParams.get("audit")) { await ensureAudit(env, ctx, id); const r = await jget(env, "audit:" + id); if (r) out.audit = { met: r.met, gaps: r.gaps, fixed: r.fixed || [], limits: r.limits }; }
+    return json(out);
   }
   if (m[2] === "/review") {
     const r = await jget(env, "audit:" + id);
@@ -429,6 +455,7 @@ export default {
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/proof", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
+    if (request.method === "GET" && u.pathname === "/api/suggest") return suggestions(u, env);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/answer") return takeAnswer(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);

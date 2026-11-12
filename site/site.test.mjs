@@ -72,6 +72,35 @@ const eng = await (await get("https://ultrastable.io/engineers")).text(); assert
 const fp = new FormData(); fp.set("idea", "bins. for other people"); fp.set("profile", JSON.stringify({ space: { who: "B" } }));
 r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: fp }), E2); assert.equal(r.status, 303);
 assert.ok([...kv.keys()].some((k) => k.startsWith("profile:")), "interview profile is stored with the idea");
+
+// INTERVIEW-2 + SUGGEST-1: chat thread front door. Suggestions rotate and respond to what is typed; the thread builds through JSON endpoints.
+{
+  const sj = async (q, env) => (await (await mod.fetch(new Request("https://ultrastable.io/api/suggest?" + q), env)).json()).s;
+  const a1 = await sj("seed=1&q="), a2 = await sj("seed=2&q="), a3 = await sj("seed=1&q=");
+  assert.equal(a1.length, 4); assert.deepEqual(a1, a3, "same seed, same suggestions"); assert.notDeepEqual(a1, a2, "a new seed rotates the list");
+  const rel = await sj("seed=5&q=" + encodeURIComponent("a bin day reminder for neighbours"));
+  assert.ok(rel.some((t) => /remind|neighbo|community|club/i.test(t)), "suggestions respond to what is typed: " + rel.join(" | "));
+  const seenOne = await sj("seed=1&q=&seen=" + encodeURIComponent(a1.join("|")));
+  assert.ok(seenOne.every((t) => !a1.includes(t)), "already-shown ideas are not repeated");
+  const modelEnv = { ASSETS: mem, AI: { run: async () => ({ response: JSON.stringify(["Weekly rota for the street", "Reminder texts"]) }) } };
+  const withModel = await sj("seed=3&q=" + encodeURIComponent("bin day for my street"), modelEnv);
+  assert.equal(withModel[0], "Weekly rota for the street"); assert.equal(withModel.length, 4, "model ideas first, bank fills the rest");
+  const jf = new FormData(); jf.set("idea", "a rota for the street"); jf.set("profile", JSON.stringify({ space: { who: "B" }, thread: true }));
+  r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: jf, headers: { Accept: "application/json" } }), E2);
+  assert.equal(r.status, 200); const jid = (await r.json()).id; assert.match(jid, /^[a-f0-9]{10}$/);
+  r = await mod.fetch(new Request("https://ultrastable.io/s/" + jid + "/status"), E2); assert.equal((await r.json()).state, "ready", "status runs the build");
+  r = await mod.fetch(new Request("https://ultrastable.io/s/" + jid + "/status?audit=1"), E2); const first = await r.json();
+  assert.equal(first.state, "ready");
+  r = await mod.fetch(new Request("https://ultrastable.io/s/" + jid + "/status?audit=1"), E2); assert.ok((await r.json()).audit, "the audit arrives on a later poll");
+  const cf = new FormData(); cf.set("id", jid); cf.set("change", "make it green");
+  r = await mod.fetch(new Request("https://ultrastable.io/api/change", { method: "POST", body: cf, headers: { Accept: "application/json" } }), E2); assert.equal((await r.json()).state, "building");
+  assert.equal(((await (await mod.fetch(new Request("https://ultrastable.io/s/" + jid + "/status"), E2)).json()).state), "ready");
+  assert.equal((await mod.fetch(new Request("https://ultrastable.io/s/0000000000/status"), E2)).status, 404);
+  const th = await (await get("https://ultrastable.io/start")).text();
+  assert.match(th, /id="us-log"[^>]*role="log"/); assert.match(th, /id="us-sug"/); assert.match(th, /aria-label="Dictate"/);
+  assert.doesNotMatch(th, /<textarea/); assert.doesNotMatch(th, /QNFO|patent|provisional/i);
+}
+console.log("ultrastable-site thread ok");
 console.log("ultrastable-site ok");
 
 // Social preview must be a PNG (SVG og:image is ignored by most crawlers).
