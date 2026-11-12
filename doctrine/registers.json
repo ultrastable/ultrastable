@@ -68,10 +68,10 @@
    "what": "the agent-executor depends on one model credential (ANTHROPIC_API_KEY)",
    "owner": "staff",
    "trigger": "executor log shows no-model-credential",
-   "remediation": "provider interface (seed/worker/src/executor.js, foundation/executor.py); session-run executor as local route; gate card outreach/cards/OWNER-CF-AND-MODEL.md",
+   "remediation": "provider interface (seed/worker/src/executor.js, foundation/executor.py); session-run executor as local route; gate card NEEDS-YOU.md",
    "status": "mitigated",
    "second_path_exercised": "grep:tests/foundation/test_executor.py::def test_no_model_credential",
-   "probe": "file:outreach/cards/OWNER-CF-AND-MODEL.md"
+   "probe": "file:NEEDS-YOU.md"
   },
   {
    "id": "spof-cloudflare-account-credential",
@@ -79,7 +79,7 @@
    "what": "the move to the dedicated Cloudflare account needs one token covering it",
    "owner": "operations",
    "trigger": "cf_account probe reports target_reachable false",
-   "remediation": "old account keeps ticking; GitHub Actions executor and local hosts continue; gate card outreach/cards/OWNER-CF-AND-MODEL.md; staged plan deploy/transfer/plan.json",
+   "remediation": "old account keeps ticking; GitHub Actions executor and local hosts continue; gate card NEEDS-YOU.md; staged plan deploy/transfer/plan.json",
    "status": "mitigated",
    "second_path_exercised": "grep:tests/foundation/test_cf_account.py::def test_probe_says_target_unreachable",
    "probe": "file:docs/failures/2026-11-12-target-account-unreachable.md"

@@ -146,28 +146,28 @@
      "warn"
     ],
     [
-     "Register one outreach mailbox and store `OUTREACH_SEND_URL`/`OUTREACH_SEND_TOKEN` (OUT-SENDER, `outreach/cards/OUT-SENDER.md`)",
+     "Register one outreach mailbox and store `OUTREACH_SEND_URL`/`OUTREACH_SEND_TOKEN` (OUT-SENDER, `NEEDS-YOU.md`)",
      "default: Outreach stays dry-run | probe: A run logs `sent` for an e-mail-route target",
      "warn"
     ],
     [
-     "Submit the verified application forms in the outreach cards (`outreach/cards/OUT-SEND-<profile>.md`)",
+     "Submit the verified application forms in the outreach cards (`NEEDS-YOU.md`)",
      "default: Not sent; packets stay ready | probe: `outreach/state.json` shows state `sent`",
      "warn"
     ],
     [
      "OUT-SEND-qniverse (1)",
-     "outreach card; default in effect: not sent. outreach/cards/OUT-SEND-qniverse.md",
+     "outreach card; default in effect: not sent. NEEDS-YOU.md",
      "warn"
     ],
     [
      "OUT-SEND-ultrastable (14)",
-     "outreach card; default in effect: not sent. outreach/cards/OUT-SEND-ultrastable.md",
+     "outreach card; default in effect: not sent. NEEDS-YOU.md",
      "warn"
     ],
     [
      "OUT-SENDER (1)",
-     "outreach card; default in effect: not sent. outreach/cards/OUT-SENDER.md",
+     "outreach card; default in effect: not sent. NEEDS-YOU.md",
      "warn"
     ]
    ]

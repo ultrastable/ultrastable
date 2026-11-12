@@ -15,7 +15,7 @@
   },
   {
    "binding": "OUTREACH_SEND_TOKEN",
-   "source": "outreach/cards/OUT-SENDER.md",
+   "source": "NEEDS-YOU.md",
    "probe": "a run logs sent for an e-mail-route target"
   },
   {
@@ -827,7 +827,7 @@
    "summary": "Send an approved packet by the registered route.",
    "trigger": "a queued target with a registered sender",
    "owner": "outreach-coordinator",
-   "closes_by": "gate:outreach/cards/OUT-SENDER.md",
+   "closes_by": "gate:NEEDS-YOU.md",
    "sla": "1d",
    "done": "the closing probe passes and the result is recorded at the write-back target",
    "paths": [
@@ -842,7 +842,7 @@
      "class": "degraded"
     }
    ],
-   "closing_probe": "file:outreach/cards/OUT-SENDER.md",
+   "closing_probe": "file:NEEDS-YOU.md",
    "writeback": [
     "outreach/state.json",
     "outreach/log.jsonl"
@@ -1412,6 +1412,40 @@
     "cf-account.yml"
    ],
    "area": "managers"
+  },
+  {
+   "id": "executor-session",
+   "kind": "tick",
+   "summary": "A Claude scheduled task starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green; no model API key.",
+   "trigger": "scheduled task every 3 h (Claude routine)",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "3h",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "claude-session",
+     "how": "scheduled Claude session runs python3 -m foundation executor --pick and --record",
+     "class": "free"
+    },
+    {
+     "id": "actions",
+     "how": "executor workflow with ANTHROPIC_API_KEY, or the Cloudflare tick dispatch",
+     "class": "free"
+    }
+   ],
+   "closing_probe": "file:foundation/executor.py",
+   "writeback": [
+    "docs/PROJECT-MEMORY.md",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "foundation/executor.py"
+   ],
+   "workflows": [
+    "executor.yml"
+   ],
+   "credentials": []
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

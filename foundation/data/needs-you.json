@@ -1,0 +1,18 @@
+{
+  "_doc": "The only list of things a person must do. Each item is an act only the owner can perform (identity-bound) and carries exactly one link that does it. Everything else self-resolves. Rendered into NEEDS-YOU.md by `python3 -m foundation needsyou`; tests require https links and no file paths.",
+  "items": [
+    {"id": "funding", "title": "Submit funding applications", "why": "An application is a statement made in your name; the packets are written and checked.",
+     "default": "Packets stay unsent.", "url": "https://github.com/ultrastable/ultrastable/blob/main/outreach/STATUS.md", "button": "Open the list of programmes with their application links"},
+    {"id": "cloudflare-new-account", "title": "Let Claude reach the new Cloudflare account", "why": "Only the account owner can authorize access to account 81e3a4efb4eb66e613529b87682911bb.",
+     "default": "The old account keeps running everything; nothing moves.", "url": "https://claude.ai/settings/connectors", "button": "Reconnect the Cloudflare connector with the login that owns the new account"},
+    {"id": "org-brand", "title": "Upload the org avatar and pin repos", "why": "GitHub has no API for these.",
+     "default": "Generated identicon, no pins.", "url": "https://github.com/organizations/ultrastable/settings/profile", "button": "Open the org profile settings"},
+    {"id": "social", "title": "Create the Bluesky account", "why": "Account creation accepts terms in your name.",
+     "default": "Posting stays dry-run; the repo, registry pull requests and feeds carry the work.", "url": "https://bsky.app", "button": "Create the account"}
+  ],
+  "done_for_you": [
+    "Work: a Claude scheduled task starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green. No API key is needed.",
+    "Old Cloudflare account: the tick, site and dashboard keep running there.",
+    "Entity, patent and the org admin token are not needed now; entity-only programmes stay deferred until you choose one."
+  ]
+}

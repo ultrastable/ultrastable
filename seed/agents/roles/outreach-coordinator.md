@@ -13,7 +13,7 @@
 1. Reconcile `outreach/state.json` against replies recorded in the inbox (forwarded mail, issue comments) and mark each one.
 2. Deconflict: a target has one owner agent at a time; a live claim is theirs.
 3. Deadlines: a registry deadline within the warning window moves its target to the front of the queue.
-4. Owner cards: keep each `outreach/cards/*.md` accurate; close a card when its closing probe passes.
+4. No cards: keep `foundation/data/needs-you.json` accurate (only identity-bound acts, one https link each) and run `python3 -m foundation needsyou`.
 5. Hand each reply that needs a decision to the portfolio manager with the evidence; it never goes to the owner in prose.
 6. Report in four lines.
 

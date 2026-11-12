@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-10",
+ "generated": "2026-11-12",
  "mode": "dry-run",
  "kill": false,
  "sender_registered": false,
@@ -47,17 +47,17 @@
   {
    "id": "OUT-SEND-qniverse",
    "count": 1,
-   "file": "outreach/cards/OUT-SEND-qniverse.md"
+   "file": "NEEDS-YOU.md"
   },
   {
    "id": "OUT-SEND-ultrastable",
    "count": 14,
-   "file": "outreach/cards/OUT-SEND-ultrastable.md"
+   "file": "NEEDS-YOU.md"
   },
   {
    "id": "OUT-SENDER",
    "count": 1,
-   "file": "outreach/cards/OUT-SENDER.md"
+   "file": "NEEDS-YOU.md"
   }
  ],
  "predictions": [
