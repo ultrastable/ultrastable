@@ -280,6 +280,14 @@
    "body": "Owner, 2026-11-12: the use cases are not only B2B. A personal system (a companion, a signals desk for markets or news) qualifies when it needs ongoing agentic upkeep and its owner accepts a running cost; storefronts are left to shop builders and the product is not pitched on revenue. docs/doctrine/VISION.md and its seed copy now say the owner can be an organization, a small business or one person, drop the shop example and list selling online under what it is not for; site/suggest.js replaces the shop suggestion with two personal systems. Measured: tests/test_vision.py 5 tests pass, including a one-person signals desk that passes the bootstrap qualify stage.",
    "probe": "grep:tests/test_vision.py::def test_a_personal_system_is_a_fit_when_it_passes_the_system_test",
    "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+  },
+  {
+   "id": "decision-2026-11-12-transparency-1-everything-about-how-ultrastable-runs-is-read",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "TRANSPARENCY-1: everything about how Ultrastable runs is read-only public",
+   "body": "Owner 2026-11-12: full transparency, everybody read-only; changes keep the e-mailed code. /live and /api/live serve a snapshot from foundation/transparency.py published to D1 each launch pass. Open: most registry loops have no recorded run; /owner is shadowed by the site worker.",
+   "probe": "grep:site/live.js::read-only"
   }
  ]
 }
