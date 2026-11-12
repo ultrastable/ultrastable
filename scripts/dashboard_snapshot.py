@@ -76,8 +76,8 @@ def build(today):
     for r in table_rows(mem, "## 4. Owner-only items", "## 5.")[1:]:
         cards.append([r[0][:140], "default: " + (r[1] if len(r) > 1 else "") + (" | probe: " + r[2] if len(r) > 2 else ""), "warn"])
     for c in st.get("owner_cards", []):
-        cards.append([f"{c['id']} ({c['count']})", "outreach card; default in effect: not sent. " + c["file"], "warn"])
-    panels.append({"id": "cards", "title": "Open owner cards (identity-bound)", "rows": cards or [["none", "", "ok"]]})
+        cards.append([f"{c['id']} ({c['count']})", "default in effect: not sent. See NEEDS-YOU.md", "warn"])
+    panels.append({"id": "cards", "title": "Needs you (identity-bound; one page: NEEDS-YOU.md)", "rows": cards or [["none", "", "ok"]]})
 
     # ---- bootstrap gaps
     gaps = (ROOT / "docs/BOOTSTRAP-GAPS.md").read_text()

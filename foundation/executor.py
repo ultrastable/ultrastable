@@ -135,7 +135,7 @@ def run(repo: str, apply: bool = False, issue_no: int | None = None, root=REPO, 
     row = {"issue": n, "title": issue["title"], "prediction": f"issue_{n}_closed = 1 within 24 h"}
     key = os.environ.get("ANTHROPIC_API_KEY")
     if model_call is None and not key:
-        row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/), the next host with a model takes the item")
+        row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (scheduled task that starts a Claude session, which runs --pick and --record) takes the item without any key")
         log(root, row); return row
     if not apply:
         row.update(result="dry-run", detail="would claim, change, check and open a PR")
@@ -176,12 +176,34 @@ def run(repo: str, apply: bool = False, issue_no: int | None = None, root=REPO, 
     return row
 
 
+def pick_row(repo: str, root=REPO) -> dict:
+    """The pick alone: what a model session (any host, no API key) should work next. Same driver order as run()."""
+    issue = pick(gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root))
+    if not issue:
+        return {"result": "idle", "detail": "no open issue the executor may take"}
+    return {"result": "picked", "issue": issue["number"], "title": issue["title"], "body": (issue.get("body") or "")[:6000]}
+
+
 def main(argv=None) -> int:
     import argparse
     ap = argparse.ArgumentParser(prog="foundation executor")
     ap.add_argument("--apply", action="store_true"); ap.add_argument("--issue", type=int)
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable"))
+    ap.add_argument("--pick", action="store_true", help="print the top takeable issue and exit; needs no model credential (Claude-session route)")
+    ap.add_argument("--record", action="store_true", help="append one provenance row for work done by a model session (with --issue --result [--pr --detail --host])")
+    ap.add_argument("--result"); ap.add_argument("--pr"); ap.add_argument("--detail", default=""); ap.add_argument("--host", default="claude-session")
     a = ap.parse_args(argv)
+    if a.pick:
+        row = pick_row(a.repo)
+        print(json.dumps(row, indent=2)); return 0
+    if a.record:
+        if not (a.issue and a.result):
+            ap.error("--record needs --issue and --result")
+        row = {"issue": a.issue, "result": a.result, "detail": a.detail, "prediction": f"issue_{a.issue}_closed = 1 within 24 h"}
+        if a.pr:
+            row["pr"] = a.pr
+        os.environ["ULTRASTABLE_HOST"] = a.host
+        log(REPO, row); print(json.dumps(row, indent=2)); return 0
     row = run(a.repo, a.apply, a.issue)
     print(json.dumps(row, indent=2))
     if row["result"] == "no-model-credential":

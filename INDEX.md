@@ -2,6 +2,8 @@
 
 All of it lives in this private repository: https://github.com/ultrastable/ultrastable
 
+**Right now:** [NEEDS-YOU.md](NEEDS-YOU.md) is the only page that asks a person for anything (four links, each with its default). Live state: the owner dashboard at `/owner` on ultrastable.io and `python3 -m foundation cockpit`. Memory: `docs/PROJECT-MEMORY.md`. The work itself runs by itself: a scheduled Claude session picks the top issue every three hours; the Cloudflare tick and the daily executor workflow are the other routes.
+
 | What | Where on GitHub |
 |---|---|
 | Roadmap (Now / Next / Later / After filing) | Milestones: https://github.com/ultrastable/ultrastable/milestones . Narrative in `ROADMAP.md` |
@@ -15,7 +17,7 @@ All of it lives in this private repository: https://github.com/ultrastable/ultra
 | Hand-off and state | `HANDOFF.md` , `docs/ARTIFACTS.md` (live systems inventory) |
 | Everything from the QNFO platform thread: product doc, boundary check, claim checks, platform page source, migrations, tests, the 12 merged PRs as patches, D1 snapshot, thread record | `qnfo-platform-thread/` (README, MANIFEST.md with commit for each file, `python qnfo-platform-thread/verify.py`) |
 | Every issue grouped by area, refreshed hourly from GitHub | `docs/ISSUES-BY-AREA.md` (`tools/build_index.py`, `.github/workflows/index.yml`) |
-| Owner's local folder (patent drafts, planned repos, 7 git bundles) | `agents/`, `artifacts/`, `seed/` |
+| What needs a person | `NEEDS-YOU.md` (cards no longer exist; `outreach/STATUS.md` lists the funding programmes) |
 | Patent drafting tool | https://github.com/rwnq8/ipatent |
 
 Rule for every session: write results here (code, docs, issues, milestones) and update this index. Nothing is canonical in a chat.

@@ -1,6 +1,6 @@
 # Outreach status
 
-Generated 2026-11-10. Mode **dry-run**, kill switch **off**, sender identity not registered.
+Generated 2026-11-12. Mode **dry-run**, kill switch **off**, sender identity not registered.
 
 | State | Count |
 |---|---|
@@ -10,11 +10,13 @@ Generated 2026-11-10. Mode **dry-run**, kill switch **off**, sender identity not
 
 Sent: 0. Replies: 0. Packet-ready but waiting on source verification: 11.
 
-## Owner cards
+## What needs a person
 
-- `OUT-SEND-qniverse` (1): outreach/cards/OUT-SEND-qniverse.md
-- `OUT-SEND-ultrastable` (14): outreach/cards/OUT-SEND-ultrastable.md
-- `OUT-SENDER` (1): outreach/cards/OUT-SENDER.md
+One page lists it: [NEEDS-YOU.md](../NEEDS-YOU.md).
+
+- OUT-SEND-qniverse: 1
+- OUT-SEND-ultrastable: 14
+- OUT-SENDER: 1
 
 ## Trust (per profile)
 

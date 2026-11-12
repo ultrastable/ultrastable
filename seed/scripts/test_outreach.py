@@ -5,16 +5,6 @@ sys.path.insert(0, str(HERE))
 import outreach as o  # noqa: E402
 
 REPO = HERE.parent
-if not (REPO / "outreach/profiles.json").exists():  # in a fresh seed, only the template ships; use it as the profile
-    import json as _j
-    _t = _j.loads((REPO / "outreach/profiles.template.json").read_text())
-    for _p in _t["profiles"].values():
-        for _k in ("name", "tagline", "summary", "stage"):
-            _p[_k] = _p[_k].replace("{org_name}", "Example Co").replace("{summary}", "A tool library.").replace("{stage}", "Pre-launch.")
-    REPO = pathlib.Path(tempfile.mkdtemp()); (REPO / "outreach").mkdir()
-    for _f in ("gate.json", "suppression.json"):
-        shutil.copy(HERE.parent / "outreach" / _f, REPO / "outreach" / _f)
-    (REPO / "outreach/profiles.json").write_text(_j.dumps({"profiles": {"ultrastable": dict(_t["profiles"]["default"], tracks=["A", "B"]), "qniverse": dict(_t["profiles"]["default"], tracks=["R"])}}))
 D = datetime.date
 
 
@@ -34,7 +24,7 @@ class Base(unittest.TestCase):
         ]}
         (self.tmp / "business/funding/registry.json").write_text(json.dumps(reg))
         o.ROOT, o.OUT, o.REG = self.tmp, self.tmp / "outreach", self.tmp / "business/funding/registry.json"
-        (o.OUT / "packets").mkdir(); (o.OUT / "cards").mkdir()
+        (o.OUT / "packets").mkdir()
         self.today = D(2026, 11, 10)
 
     def tearDown(self):
@@ -62,12 +52,8 @@ class Pipeline(Base):
     def test_dry_run_contacts_nobody_and_forms_become_one_card_per_profile(self):
         r = o.run(self.today)
         self.assertEqual(r["send"]["sent"], 0)
-        cards = sorted(p.name for p in (o.OUT / "cards").glob("*.md"))
-        self.assertEqual(cards, ["OUT-SENDER.md", "OUT-SEND-ultrastable.md"] if False else sorted(cards))
-        self.assertEqual(len([c for c in cards if c.startswith("OUT-SEND-")]), 1)
-        card = (o.OUT / "cards" / "OUT-SEND-ultrastable.md").read_text()
-        for need in ("IDENTITY-BOUND", "Default in effect", "Closing probe"):
-            self.assertIn(need, card)
+        self.assertFalse((o.OUT / "cards").exists())  # the card concept is gone: one page, NEEDS-YOU.md
+        self.assertEqual(len([c for c in r["cards"] if c.startswith("OUT-SEND-")]), 1)
 
     def test_unverified_source_is_never_queued(self):
         o.run(self.today)
@@ -105,7 +91,6 @@ class Guard(Base):
         o.run(self.today)
         self.assertFalse([k for k, t in self.state().items() if t["state"] == "guard-failed"])
 
-    @unittest.skipUnless((HERE.parent / "brand").exists(), "monorepo only")
     def test_ultrastable_profile_never_says_qnfo_or_research(self):
         text = " ".join(json.loads((REPO / "outreach/profiles.json").read_text())["profiles"]["ultrastable"][k] for k in ("summary", "stage", "ask", "tagline")).lower()
         for w in ("qnfo", "research", "patent", "prior"):
@@ -182,12 +167,10 @@ class RepliesAndFollowups(Base):
 
 class Shipped(unittest.TestCase):
     def test_status_is_in_repo_and_seed_copy_matches(self):
-        if not (REPO / "outreach/STATUS.md").exists():
-            return  # a fresh seed has not run yet
         self.assertTrue((REPO / "outreach/STATUS.md").exists())
-        mono = HERE.parent.parent / "scripts/outreach.py"
-        if mono.exists() and HERE.parent.name == "seed":
-            self.assertEqual((HERE / "outreach.py").read_text(), mono.read_text())
+        seed = REPO / "seed/scripts/outreach.py"
+        if seed.exists():
+            self.assertEqual(seed.read_text(), (REPO / "scripts/outreach.py").read_text())
 
 
 if __name__ == "__main__":
