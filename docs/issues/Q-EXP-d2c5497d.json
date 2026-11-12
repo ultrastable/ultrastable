@@ -1,0 +1,13 @@
+{
+  "id": "Q-EXP-d2c5497d",
+  "title": "Q-EXP-d2c5497d: close the autonomous-pr gap with a measured change",
+  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"\n**Prediction:** pageviews_7d >= baseline within 336 h\n**Status:** open\n\nExperiment from R&D finding `gap:autonomous-pr`.\nHypothesis: 2 competitors evidence 'agent opens, checks and merges its own pull request'; building it should move the metric\nMetric: pageviews_7d. Ship the smallest change the done check proves, then compare the metric against its baseline in doctrine/growth.json; a miss reverts the change and lowers the finding's priority.",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "rnd",
+    "experiment"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

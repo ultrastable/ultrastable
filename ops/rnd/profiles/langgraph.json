@@ -1,0 +1,10 @@
+{
+ "capabilities": {
+  "idea-to-deploy": "li): 0.4.43 ( #9682 ) \n feat(cli): use Agent Server flags with hidden deployment aliases ( #9666 ) \n fix(cli): remove discontinued local debugger imag"
+ },
+ "errors": {},
+ "id": "langgraph",
+ "name": "LangGraph",
+ "refreshed_at": "2026-11-12T20:05:06Z",
+ "sha": "51e6afd3b696"
+}

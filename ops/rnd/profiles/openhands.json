@@ -1,0 +1,12 @@
+{
+ "capabilities": {
+  "sandboxed-execution": "l  in  #18986  \n feat(sidebar): start a new conversation in the row's sandbox (OHE-3689) by  @hieptl  in  #18912  \n \n Bug Fixes \n \n fix: pass sessi",
+  "self-hostable": "pichini  in  #19382  \n fix(chat): activate the home model pick when a self-hosted instance turns Agent Profiles off by  @hieptl  in  #19682  \n fix(git)",
+  "spend-budgets": "automation help by  @ak684  in  #19453  \n feat: display conversation budgets with semantic meter fills by  @enyst  in  #18533  \n feat: add Paper t"
+ },
+ "errors": {},
+ "id": "openhands",
+ "name": "OpenHands",
+ "refreshed_at": "2026-11-12T20:05:06Z",
+ "sha": "9ef4e0410f4b"
+}

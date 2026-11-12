@@ -1,7 +1,8 @@
 {
- "Q-GAP-adopt-existing-repo": 1.5,
- "Q-GAP-cross-model-rescoring": 1.5,
- "Q-GAP-executor-merged-pr": 1.5,
+ "Q-GAP-adopt-existing-repo": 2.5,
+ "Q-GAP-cross-model-rescoring": 2.0,
+ "Q-GAP-executor-merged-pr": 2.0,
+ "Q-GAP-other-cloud-proof": 2.5,
  "Q-SCOUT-claude-code-865f57db": 1.95,
  "Q-SCOUT-claude-code-c35a8e45": 1.95,
  "Q-SCOUT-claude-code-d1bbd9e0": 1.95,
