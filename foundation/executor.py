@@ -336,7 +336,7 @@ def main(argv=None) -> int:
         os.environ["ULTRASTABLE_HOST"] = a.host
         log(REPO, row); print(json.dumps(row, indent=2)); return 0
     row = run(a.repo, a.apply, a.issue)
-    if row["result"] == "idle" and not a.issue:  # EXEC-X: own queue empty, so work the target repositories' issues (EXECUTOR_TARGET_REPOS)
+    if row["result"] in ("idle", "failed", "no-model-credential") and not a.issue:  # EXEC-X: own queue empty or its top item failed (e.g. needs a protected path), so work the target repositories' issues (EXECUTOR_TARGET_REPOS)
         for target in crossrepo.targets():
             try:
                 root = crossrepo.clone(target) if a.apply else REPO
@@ -344,7 +344,7 @@ def main(argv=None) -> int:
             except Exception as e:  # a target that cannot be reached must not hide the next one
                 row = {"result": "failed", "detail": f"{target}: {type(e).__name__}: {str(e)[:300]}"}
                 log(REPO, row)
-            if row["result"] != "idle":
+            if row["result"] not in ("idle", "failed"):
                 break
     print(json.dumps(row, indent=2))
     if row["result"] == "no-model-credential":

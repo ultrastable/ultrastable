@@ -530,6 +530,14 @@
    "title": "EXEC-X: executor works ultrastable/workers issues in a clone, capped 4 PRs/day",
    "body": "Remote intake via foundation/crossrepo.py: eligibility needs a machine-readable closing probe, skips epics, held and protected-change items; uses npm test and the contract PR body; no main-repo writeback.",
    "probe": "file:foundation/crossrepo.py"
+  },
+  {
+   "id": "lesson-2026-11-12-executor-fell-through-to-remote-repos-only-when-idle-a-faili",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Executor fell through to remote repos only when idle; a failing own-queue item starved them",
+   "body": "Fall through to EXECUTOR_TARGET_REPOS also when the own item failed.",
+   "probe": "grep:foundation/executor.py::EXEC-X: own queue empty or its top item failed"
   }
  ]
 }
