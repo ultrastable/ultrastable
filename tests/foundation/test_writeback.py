@@ -34,6 +34,14 @@ class Record(unittest.TestCase):
         self.assertEqual(item["id"], "OL-20261201-1")
         self.assertIn("**Done check:** grep:site/worker.js::self-referential", item["body"])
 
+    def test_open_loop_id_never_overwrites_when_numbers_have_gaps(self):
+        r = copy_repo()
+        for n in (1, 2, 91):
+            (r / "docs/issues" / f"OL-20261201-{n}.json").write_text('{"id": "keep"}\n', encoding="utf-8")
+        p = writeback.record(r, "open-loop", "New", "b", owner="staff", trigger="x", probe="grep:site/worker.js::self-referential", today="2026-12-01")
+        self.assertEqual(p, "docs/issues/OL-20261201-92.json")
+        self.assertEqual(json.loads((r / "docs/issues/OL-20261201-2.json").read_text())["id"], "keep")
+
     def test_term_record_changes_the_glossary(self):
         r = copy_repo()
         out = writeback.record(r, "term", "tightened", "A loop with trigger, owner, action, closing probe and write-back.", term="loop", today="2026-12-01")
