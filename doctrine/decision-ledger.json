@@ -352,6 +352,14 @@
    "title": "executor crashed on an unusable model reply",
    "body": "A JSONDecodeError from the model reply ended the run with no repair. Unusable replies now count as a failed attempt and the model is asked again, within the same REPAIRS budget.",
    "probe": "grep:foundation/executor.py::COULD NOT BE USED"
+  },
+  {
+   "id": "decision-2026-11-12-agentic-1-ultrastable-io-is-machine-readable-and-exposes-a-r",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "AGENTIC-1: ultrastable.io is machine-readable and exposes a read-only MCP endpoint",
+   "body": "Checked against Cloudflare's agent-readiness scan (isitagentready.com): API Catalog (RFC 9727), MCP Server Card, Agent Skills index with checksums, OpenAPI, Link headers, Content Signals, and a real read-only /mcp (JSON-RPC) over the live snapshot. Also glossary term unattended: crosswalk of autonomous, automatic and unattended, measured by merged executor PRs. Standards the seed worker already carries are not yet wired into the live site worker's own repo flow.",
+   "probe": "grep:site/agentic.js::get_scoreboard"
   }
  ]
 }

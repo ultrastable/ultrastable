@@ -3,7 +3,7 @@
 // Changing anything stays behind the owner's e-mailed code (dashboard worker, /owner).
 const JSON_H = { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=60", "access-control-allow-origin": "*", "x-content-type-options": "nosniff" };
 
-async function load(env) {
+export async function load(env) {
   if (!env || !env.DB) return null;
   try {
     // newest generation whose part 0 exists (part 0 is written last), parts joined in order
