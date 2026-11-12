@@ -84,10 +84,12 @@ def apply_edits(edits: list[dict], root=REPO) -> list[str]:
 
 
 def build_prompt(issue: dict, tree: str) -> str:
+    from . import kb  # reference documents are consumed here: the best matches for this issue are read by the agent
+    ref = kb.retrieve(f"{issue['title']} {issue.get('body') or ''}")
     return ("You are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. "
             'Reply with ONLY JSON: {"summary":"one line","files":[{"path":"relative/path","content":"full new file content"}]}. '
             "Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code.\n\n"
-            f"ISSUE #{issue['number']}: {issue['title']}\n{(issue.get('body') or '')[:6000]}\n\nREPOSITORY FILES (partial):\n{tree[:6000]}\n")
+            f"ISSUE #{issue['number']}: {issue['title']}\n{(issue.get('body') or '')[:6000]}\n\nREPOSITORY FILES (partial):\n{tree[:6000]}\n{ref}")
 
 
 def call_model(prompt: str, key: str, model: str | None = None) -> dict:

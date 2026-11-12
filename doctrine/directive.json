@@ -36,6 +36,7 @@
   {"id": "backlog_age_p95_ticks", "formula": "p95 open age in ticks", "target": 1}
  ],
  "surfaces": ["cli", "rest_api", "dashboard_ui", "ci_workflow", "sibling_agent", "sub_agent", "composition", "self_modification"],
+ "doc_consumption": {"id": "DOC-CONSUMED-1", "owner_date": "2026-11-12", "registry": "doctrine/doc-consumers.json", "check": "python3 -m foundation docs_audit --check", "rule": "every document has a consumer; a document that tells a person to act is a defect and becomes an automatic backlog item"},
  "lint": [
   {"id": "question-to-owner", "means": "a question or approval request addressed to the owner", "patterns": ["\\b(do you want me to|would you prefer|which (one|option|approach) (do you|would you|should)|what would you like|are you (ok|okay|happy) with|can you (confirm|approve))\\b", "\\b(awaiting|pending|needs?|requires?) (your|owner) (approval|decision|go-ahead|confirmation|input)\\b", "\\bplease (approve|confirm|decide|advise)\\b"]},
   {"id": "menu", "means": "options presented for the owner to choose from", "patterns": ["\\boption (1|2|a|b)\\b", "\\b(here are|the) (two|three|several) (options|approaches|choices)\\b", "\\bpick (one|whichever)\\b", "\\bpros and cons\\b"]},
