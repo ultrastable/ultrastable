@@ -34,8 +34,8 @@ export const METRICS = {
   verified_outcomes_7d: (db, now) => first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result='verified' AND at >= ?`, iso(new Date(now - 7 * 86400e3))).then(r => r.n),
   // An objective with no probe-backed target metric is not instrumented; the agents do not yet know how to tell whether they are winning.
   objectives_without_probe: (db) => first(db,
-    `SELECT COUNT(*) AS n FROM objectives o WHERE NOT EXISTS (SELECT 1 FROM metrics m WHERE m.objective_id = o.id AND m.kind = 'target' AND m.source IN ('builtin','sql','http'))`).then(r => r.n),
-  metrics_in_breach: (db) => first(db, `SELECT COUNT(*) AS n FROM metrics WHERE breached = 1`).then(r => r.n),
+    `SELECT COUNT(*) AS n FROM objectives o WHERE o.tenant_id IS NULL AND NOT EXISTS (SELECT 1 FROM metrics m WHERE m.tenant_id IS NULL AND m.objective_id = o.id AND m.kind = 'target' AND m.source IN ('builtin','sql','http'))`).then(r => r.n),
+  metrics_in_breach: (db) => first(db, `SELECT COUNT(*) AS n FROM metrics WHERE breached = 1 AND tenant_id IS NULL`).then(r => r.n),
   silent_drops_7d: (db, now) => first(db,
     `SELECT COUNT(*) AS n FROM outcomes WHERE result='silent_drop' AND at >= ?`,
     iso(new Date(now - 7 * 86400e3))).then(r => r.n),
@@ -124,7 +124,8 @@ export const STEPS = {
   async measure(db, ctx) {
     const first_tick = await first(db, `SELECT MIN(started_at) AS t FROM tick_runs`);
     const ageH = first_tick && first_tick.t ? (ctx.now - Date.parse(first_tick.t.replace(' ', 'T') + 'Z')) / 3600e3 : 0;
-    const ms = await all(db, `SELECT * FROM metrics`);
+    // TENANT-1: a runtime measures only its own tenant's metrics. Rows of another tenant are never read, never breach, never file items here.
+    const ms = await all(db, `SELECT * FROM metrics WHERE tenant_id IS NULL OR tenant_id = ?`, ctx.config.org_slug || '');
     let breached = 0, warming = 0;
     for (const m of ms) {
       let value = null, bad;

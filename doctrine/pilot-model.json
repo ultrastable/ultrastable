@@ -96,7 +96,8 @@
   "enforced_by": [
    "seed/bootstrap/bootstrap.py (parent, level)",
    "tests/test_vision.py (LayerTests)"
-  ]
+  ],
+  "tenancy": "Tenant 0 is Ultrastable on itself and is the public demo; each customer system is a tenant of the same shape. The dashboard is one view that takes a tenant id. Every metric and objective row carries tenant_id and a runtime measures only its own tenant, so a customer's loop cannot read, breach or file items in the platform's. Core tables and per-tenant credentials follow in Q-TENANT-row-isolation."
  },
  "multi_tenant_obligations": {
   "status": "deferred; a separate obligation, not a pilot feature",

@@ -13,8 +13,8 @@ class Dashboard(unittest.TestCase):
     def test_panels_reflect_the_registries(self):
         d = bd.build(ROOT)
         loops = len(json.loads((ROOT / "instances/ultrastable/loop-registry.json").read_text(encoding="utf-8"))["loops"])
-        self.assertIn(f"{loops} registered loops", [p["headline"] for p in d["panels"] if p["id"] == "loops"][0])
-        self.assertFalse(d["live_feed"]["available"], "no live feed is claimed until a runtime reports")
+        self.assertIn(f"{loops} registered loops", [p["headline"] for p in d["tenants"]["ultrastable"]["panels"] if p["id"] == "loops"][0])
+        self.assertFalse(d["tenants"]["ultrastable"]["live_feed"]["available"], "no live feed is claimed until a runtime reports")
 
     def test_pilot_model_decides_and_hypotheses_have_probes(self):
         pm = json.loads((ROOT / "doctrine/pilot-model.json").read_text(encoding="utf-8"))

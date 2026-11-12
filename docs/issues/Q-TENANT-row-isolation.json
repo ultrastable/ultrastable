@@ -1,0 +1,11 @@
+{
+  "id": "Q-TENANT-row-isolation",
+  "title": "Q-TENANT-row-isolation: tenant_id on every core table so multi-tenant is stricter isolation, not a rewrite",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:seed/worker/migrations/0005_tenant_core.sql\n**Status:** open\n\nTENANT-1 put tenant_id on objectives and metrics and scoped the measure step to its own tenant. Extend the same column to items, claims, gate_cards, predictions, outcomes, dispatches, trust_ledger and roles in migration 0005 (additive, guarded for re-run), scope every tick query by tenant, and add the cross-tenant test (a customer's loop can never change the platform's rows). Credentials follow: each binding names its tenant.",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

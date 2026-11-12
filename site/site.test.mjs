@@ -154,8 +154,20 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
 {
   const D = (await import("./dashboard-data.js")).default;
   const html = await (await get("https://ultrastable.io/dashboard")).text();
-  for (const p of D.panels) { assert.ok(html.includes('id="panel-' + p.id + '"'), "panel " + p.id); assert.ok(html.includes(p.source), "source shown: " + p.source); }
+  for (const p of D.tenants.ultrastable.panels) { assert.ok(html.includes('id="panel-' + p.id + '"'), "panel " + p.id); assert.ok(html.includes(p.source), "source shown: " + p.source); }
   assert.ok(html.includes("Q-LOOP-live-clock") && /live feed/i.test(html), "the pending live feed is stated, not faked");
   assert.ok(html.includes("bring-your-own-account") && html.includes('id="pilot"'));
   console.log("ultrastable-site dashboard ok");
+}
+// PILOT-1 + TENANT-1: the application is scored against the four system-test questions; the dashboard takes a tenant id and unknown tenants 404.
+{
+  let ipn = 0; const apply = (o) => { const f = new FormData(); for (const k in o) f.set(k, o[k]); return mod.fetch(new Request("https://ultrastable.io/api/pilot", { method: "POST", body: f, headers: { "cf-connecting-ip": "203.0.113." + (++ipn) } }), E2); };
+  const good = { system: "A club website and member platform", keeps_doing: "keeps improving search ranking and member features every week", measure: "weekly sessions and sign-ups, target +5 percent a month", budget: "200 USD a month", runs_on: "our Cloudflare account" };
+  let r = await apply(good); assert.equal(r.status, 201); let j = await r.json(); assert.equal(j.fit, true); assert.deepEqual(Object.values(j.checks), [true, true, true, true]);
+  r = await apply({ ...good, system: "A packing list for camping trips", keeps_doing: "make it once", measure: "", budget: "none" }); assert.equal(r.status, 400, "missing answers are refused with what to fill in");
+  r = await apply({ ...good, system: "A packing list for camping trips", keeps_doing: "a one-off page we use for the trip, nothing more", budget: "10" }); j = await r.json(); assert.equal(j.fit, false); assert.match(j.message, /system test/);
+  const page = await (await get("https://ultrastable.io/pilot")).text(); assert.ok(page.includes('action="/api/pilot"') && page.includes("system test") === false || page.includes('id="apply"'));
+  assert.equal((await get("https://ultrastable.io/dashboard?tenant=ultrastable")).status, 200);
+  assert.equal((await get("https://ultrastable.io/dashboard?tenant=nobody")).status, 404, "only registered tenants render");
+  console.log("ultrastable-site pilot and tenant ok");
 }
