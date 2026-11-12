@@ -1,0 +1,13 @@
+{
+  "id": "Q-GROW-adaptive-follow-ups",
+  "title": "Q-GROW-adaptive-follow-ups: Follow-up questions chosen from the first answer keep people in the interview.",
+  "body": "**Owner:** product-manager\n**Trigger:** every product-manager cycle\n**Done check:** grep:site/interview.js::followup\n**Status:** open\n\nMetric moved: visitors_7d. Prediction: visitors_7d rises at least 15 percent within 14 days of the change. Adopted from the parallel CLOCKWORK branch; its probe was rewritten to a file or grep the repository can run.\n\nGrowth experiment on target `interview-completion` (interview_completion_rate target 0.5), knob `interview-questions` in `site/interview.js`: question bank and order. an idea flow that people finish. Ship the change, log the prediction, keep it if the metric moved and revert it if not.\n\n**Closing probe:** grep:site/interview.js::followup.",
+  "labels": [
+    "agent-ready",
+    "growth",
+    "p1",
+    "role:product-manager"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

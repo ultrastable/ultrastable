@@ -1,0 +1,13 @@
+{
+  "id": "Q-GROW-second-tenant-deploying",
+  "title": "Q-GROW-second-tenant-deploying: A second tenant system with its own deploy loop proves the product beyond tenant 0.",
+  "body": "**Owner:** product-manager\n**Trigger:** every product-manager cycle\n**Done check:** file:ops/second-tenant/latest.json\n**Status:** open\n\nMetric moved: pilot_page_views_7d. Prediction: pilot_page_views_7d rises at least 15 percent within 14 days of the change. Adopted from the parallel CLOCKWORK branch; its probe was rewritten to a file or grep the repository can run.\n\nGrowth experiment on target `systems-running` (tenant_systems_deploying_unattended target 3), knob `capability-set` in `doctrine/market.json`: which components are built next. the product is systems that ship code on their own. Ship the change, log the prediction, keep it if the metric moved and revert it if not.\n\n**Closing probe:** file:ops/second-tenant/latest.json.",
+  "labels": [
+    "agent-ready",
+    "growth",
+    "p1",
+    "role:product-manager"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}
