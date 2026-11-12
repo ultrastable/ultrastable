@@ -1,0 +1,12 @@
+{
+  "id": "Q-SCOUT-cloudflare-agents-cb441d6b",
+  "title": "Q-SCOUT-cloudflare-agents-cb441d6b: agents@0.31.0 (cloudflare-agents)",
+  "body": "**Owner:** product-manager\n**Trigger:** every scout pass\n**Done check:** grep:ops/scout/adopted.jsonl::\"id\": \"Q-SCOUT-cloudflare-agents-cb441d6b\"\n**Prediction:** adoption_outcomes_recorded >= 1 within 336 h\n**Status:** open\n\nScout finding from cloudflare-agents (agent platform), score 4.0, matched component:agents-roles, component:trust-permissions, component:portability.\nagents@0.31.0\nhttps://github.com/cloudflare/agents/releases/tag/agents%400.31.0\n\n This release adds internal hostnames to the browser. Give a Browser Run browser hostnames such as  preview.internal , and its requests to them go to your agent instead of the internet, so the model can open a dev server, a workspace folder or another Worker in the same browser it uses for the web. \n\nDecide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt Q-SCOUT-cloudflare-agents-cb441d6b --outcome adopted|declined --reason ...`. The outcome re-weights this source.",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "scout"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

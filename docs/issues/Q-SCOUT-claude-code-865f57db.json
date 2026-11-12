@@ -1,0 +1,12 @@
+{
+  "id": "Q-SCOUT-claude-code-865f57db",
+  "title": "Q-SCOUT-claude-code-865f57db: v2.1.314 (claude-code)",
+  "body": "**Owner:** product-manager\n**Trigger:** every scout pass\n**Done check:** grep:ops/scout/adopted.jsonl::\"id\": \"Q-SCOUT-claude-code-865f57db\"\n**Prediction:** adoption_outcomes_recorded >= 1 within 336 h\n**Status:** open\n\nScout finding from claude-code (coding agents), score 5.0, matched gap:executor-merged-pr, component:code-repo, component:trust-permissions, need:guardrail, need:permission.\nv2.1.314\nhttps://github.com/anthropics/claude-code/releases/tag/v2.1.314\n\n What's changed \n \n Added  permissions.blockWritesOutsideWorkingDirectories : Write, Edit and NotebookEdit refuse paths outside the working directories in every permission mode \n Added an optional  groups  list to Claude apps gateway upstreams: only developers in the listed IdP groups are sent to th\n\nDecide: adopt (ship the change that closes a gap or adds the capability) or decline with a reason, then record `python3 -m foundation scout --adopt Q-SCOUT-claude-code-865f57db --outcome adopted|declined --reason ...`. The outcome re-weights this source.",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "scout"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}
