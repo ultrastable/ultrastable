@@ -21,4 +21,4 @@ Fix in this change: the loop no longer waits on the account. The agent-executor 
 | New account: Deploy to Workers button | Needs a public template repo; blocked by the confidentiality rule until the license is reviewed (not a credential issue) |
 | New account: connectors, env, Actions | See above: all scoped to quniverse |
 
-Result: two secrets only the owner can mint remain. Gate card: `outreach/cards/OWNER-CF-AND-MODEL.md`.
+Result: two secrets only the owner can mint remain. Gate card: `NEEDS-YOU.md`.

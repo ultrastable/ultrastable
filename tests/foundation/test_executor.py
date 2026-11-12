@@ -45,6 +45,15 @@ class Executor(unittest.TestCase):
             self.assertEqual(line["issue"], 7)
             self.assertIn("within 24 h", line["prediction"])
 
+    def test_pick_and_record_need_no_model_key(self):
+        import os, unittest.mock as m
+        with m.patch.object(executor, "gh_json", return_value=[I(3), I(2)]), m.patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(executor.pick_row("o/r")["issue"], 2)
+
+    def test_needs_you_page_is_current_and_link_only(self):
+        from foundation import needsyou
+        self.assertEqual(needsyou.check(), [])
+
 
 if __name__ == "__main__":
     unittest.main()

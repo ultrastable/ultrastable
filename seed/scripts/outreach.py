@@ -238,34 +238,15 @@ class Engine:
 
     # ------------------------------------------------------------ cards and status
     def cards(self):
-        d = OUT / "cards"; d.mkdir(exist_ok=True)
-        cards = []
+        """Open owner items as data only (no files): a count per profile. The one human-facing list is NEEDS-YOU.md."""
         awaiting = {}
         for k, t in self.state["targets"].items():
             if t["state"] == "awaiting-owner":
-                awaiting.setdefault(t["profile"], []).append((k, t))
-        for pname, items in sorted(awaiting.items()):
-            lines = [f"# Owner card OUT-SEND-{pname}", "",
-                     "**IDENTITY-BOUND:** submitting an application or contact form is done as the owner (their name, account or signature). Nothing here is sent by an agent.", "",
-                     "**What:** " + f"{len(items)} programme(s) have a verified source, a guard-clean packet and an open application route. Each packet is ready to paste.", "",
-                     "**Default in effect:** not sent; the queue keeps them ready and the weekly run re-checks the source.", "",
-                     "**Prepared by the fleet:** the packets below, the programme page to open, and what the programme asked for.", "",
-                     "**Closing probe:** `python3 scripts/outreach.py reply <key> --kind ack` after submitting, or `outreach/state.json` shows state `sent`.", ""]
-            for k, t in items:
-                it = self.reg[t["registry_id"]]
-                lines.append(f"- `{k}` {it['name']}: {it['url']} , packet `outreach/packets/{pname}/{t['registry_id']}.md`. Fit note: {it['notes']}")
-            (d / f"OUT-SEND-{pname}.md").write_text("\n".join(lines) + "\n")
-            cards.append({"id": f"OUT-SEND-{pname}", "count": len(items), "file": f"outreach/cards/OUT-SEND-{pname}.md"})
-        sender = (d / "OUT-SENDER.md")
+                awaiting.setdefault(t["profile"], []).append(k)
+        items = [{"id": f"OUT-SEND-{p}", "count": len(v), "file": "NEEDS-YOU.md"} for p, v in sorted(awaiting.items())]
         if not self.gate["sender"]["registered"]:
-            sender.write_text("# Owner card OUT-SENDER\n\n**IDENTITY-BOUND:** a sending identity (a domain mailbox) can only be created by the owner.\n\n**What:** register one mailbox for outreach and store the delivery endpoint as the `OUTREACH_SEND_URL` and `OUTREACH_SEND_TOKEN` secrets (binding names only; never paste values into the repo), then set `sender.registered` to true and `mode` to `live` in `outreach/gate.json` by PR.\n\n**Default in effect:** dry-run; email-route targets are queued but nobody is contacted; form-route targets use the profile card.\n\n**Closing probe:** a run logs `sent` for an email-route target.\n")
-            cards.append({"id": "OUT-SENDER", "count": 1, "file": "outreach/cards/OUT-SENDER.md"})
-        elif sender.exists():
-            sender.unlink()
-        for f in d.glob("OUT-SEND-*.md"):
-            if f.stem not in {c["id"] for c in cards}:
-                f.unlink()
-        return cards
+            items.append({"id": "OUT-SENDER", "count": 1, "file": "NEEDS-YOU.md"})
+        return items
 
     def trust(self):
         """Reliability per (profile, action) = (successes + 0.5*2) / (outcomes + 2), the seed policy formula."""
@@ -319,7 +300,7 @@ class Engine:
         md = ["# Outreach status", "", f"Generated {status['generated']}. Mode **{status['mode']}**, kill switch **{'ON' if status['kill'] else 'off'}**, sender identity {'registered' if status['sender_registered'] else 'not registered'}.", "",
               "| State | Count |", "|---|---|"] + [f"| {s} | {m['state_' + s]} |" for s in STATES if m["state_" + s]] + ["",
               f"Sent: {m['outreach_sent_total']}. Replies: {m['outreach_replies_total']}. Packet-ready but waiting on source verification: {m['blocked_source_unverified']}.", "",
-              "## Owner cards", ""] + ([f"- `{c['id']}` ({c['count']}): {c['file']}" for c in cards] or ["- none"]) + ["", "## Trust (per profile)", ""] + \
+              "## What needs a person", "", "One page lists it: [NEEDS-YOU.md](../NEEDS-YOU.md).", ""] + [f"- {c['id']}: {c['count']}" for c in cards] + ["", "## Trust (per profile)", ""] + \
              [f"- {p}: reliability {v['reliability']} from {v['outcomes']} outcomes" for p, v in status["trust"].items()] + ["", "## Targets", "", "| Key | Programme | State | Route | Source | Blocked by |", "|---|---|---|---|---|---|"] + \
              [f"| {t['key']} | {t['program'][:50]} | {t['state']} | {t['route']} | {t['source']} | {t['blocked_by'] or ''} |" for t in status["targets"]] + [""]
         (OUT / "STATUS.md").write_text("\n".join(md))

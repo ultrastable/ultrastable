@@ -24,7 +24,7 @@ class Base(unittest.TestCase):
         ]}
         (self.tmp / "business/funding/registry.json").write_text(json.dumps(reg))
         o.ROOT, o.OUT, o.REG = self.tmp, self.tmp / "outreach", self.tmp / "business/funding/registry.json"
-        (o.OUT / "packets").mkdir(); (o.OUT / "cards").mkdir()
+        (o.OUT / "packets").mkdir()
         self.today = D(2026, 11, 10)
 
     def tearDown(self):
@@ -52,12 +52,8 @@ class Pipeline(Base):
     def test_dry_run_contacts_nobody_and_forms_become_one_card_per_profile(self):
         r = o.run(self.today)
         self.assertEqual(r["send"]["sent"], 0)
-        cards = sorted(p.name for p in (o.OUT / "cards").glob("*.md"))
-        self.assertEqual(cards, ["OUT-SENDER.md", "OUT-SEND-ultrastable.md"] if False else sorted(cards))
-        self.assertEqual(len([c for c in cards if c.startswith("OUT-SEND-")]), 1)
-        card = (o.OUT / "cards" / "OUT-SEND-ultrastable.md").read_text()
-        for need in ("IDENTITY-BOUND", "Default in effect", "Closing probe"):
-            self.assertIn(need, card)
+        self.assertFalse((o.OUT / "cards").exists())  # the card concept is gone: one page, NEEDS-YOU.md
+        self.assertEqual(len([c for c in r["cards"] if c.startswith("OUT-SEND-")]), 1)
 
     def test_unverified_source_is_never_queued(self):
         o.run(self.today)
