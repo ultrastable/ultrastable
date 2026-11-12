@@ -1,0 +1,453 @@
+From 8434038abbb0fac11294f1998b3379239da43c01 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 09:57:57 +0000
+Subject: [PATCH] DOC-CONSUMED-1: every document has a consumer (docs_audit,
+ registry); stale snapshot documents removed with a sha256 ledger
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0156nqDtDer7yrN7xaKoWgV1
+---
+ README.md                |   2 +-
+ docs/aios-lessons.md     |  33 ----
+ tests/test_docs_audit.py |  17 +++
+ tools/doc-consumers.json |  28 ++++
+ tools/docs_audit.py      | 315 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 361 insertions(+), 34 deletions(-)
+ delete mode 100644 docs/aios-lessons.md
+ create mode 100644 tests/test_docs_audit.py
+ create mode 100644 tools/doc-consumers.json
+ create mode 100644 tools/docs_audit.py
+
+diff --git a/README.md b/README.md
+index ca6234a..e3f9125 100644
+--- a/README.md
++++ b/README.md
+@@ -18,7 +18,7 @@ After the first boot, nothing runs on a laptop. The bootstrapper is the only ste
+    It writes `org/` (charter, roles, backlog, gate cards, boot log) and prints a four-line report. Nothing leaves the machine.
+ 3. Apply, once, from CI or a machine with a Cloudflare token in the environment:
+    `python3 bootstrap/bootstrap.py --apply`
+-   It creates the D1 database, applies migrations, loads the seed rows and deploys the Worker. From then on the Worker's cron is the heartbeat. The GitHub workflow [`bootstrap.yml`](.github/workflows/bootstrap.yml) runs the same command on the first push.
++   It creates the D1 database, applies migrations, loads the seed rows and deploys the Worker. From then on the Worker's cron is the heartbeat. The GitHub workflow [`.github/workflows/bootstrap.yml`](.github/workflows/bootstrap.yml) runs the same command on the first push.
+ 
+ A missing credential never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe, and the rest of the boot continues (the AIOS "PID 1 never dies" rule; see [docs/bootstrapping.md](docs/bootstrapping.md)).
+ 
+diff --git a/docs/aios-lessons.md b/docs/aios-lessons.md
+deleted file mode 100644
+index cf27a9a..0000000
+--- a/docs/aios-lessons.md
++++ /dev/null
+@@ -1,33 +0,0 @@
+-# What AIOS taught the seed
+-
+-AIOS (`rwnq8/AIOS`, 30 commits from 2026-08-11 to 2026-11-09) is Rowan's design experiment in a system that bootstraps itself from nothing: a USB stick that boots Alpine Linux, picks a local model for the hardware, creates its own persistent storage and starts a multi-agent orchestrator with no human input. It never reached "builds an OS", but its first three days of boot testing produced the rules that govern any self-starting system. Ultrastable's seed is the same idea for an organization: the seed is the USB stick, the idea is the hardware, and the server is the machine it boots on.
+-
+-## The mapping
+-
+-| AIOS boot stage | Seed stage | What is detected or chosen |
+-|---|---|---|
+-| GRUB, kernel, initramfs | read | IDEA.md, `ultrastable.json`, `autonomy/policy.json` |
+-| `first_boot.sh` hardware detect (RAM, cores, disk) | detect | Which connector credentials exist, which tools are installed |
+-| Model chosen by RAM (4 GB gets Gemma 1B, 8 GB adds a reviewer) | select | Model tier chosen by monthly budget; the reviewer is a different model from the doer when the budget allows two |
+-| Partition and format persistence | plan, write | Charter, role instances, backlog, gate cards, D1 seed SQL |
+-| Extract bootstrap tarball, switch_root | provision | D1 created, migrations applied, rows seeded, Worker deployed |
+-| Launch `orchestrator.py`, `[AIOS] >` prompt | start | Cron heartbeat armed; first ticks observed on `/health` |
+-| Gatekeeper: safe, dangerous, destructive | autonomy policy | Surfaces, action classes, reversible vs identity-bound, ladder |
+-| Ensemble: primary, reviewer, validator | reviewer role | No work is verified by its own author |
+-
+-## Lessons, each with the commit that taught it and where it lives now
+-
+-1. **The boot must never die.** PID 1 exiting panics the kernel. Six boot-test iterations (commits `4e75671`, `09bc327`, `a29deb6`) ended in the same rule: every failure path drops to a shell instead of exiting, a missing model is a degraded console and not a fatal error. In the seed: every stage runs inside `Boot.guard`; a blocked stage becomes a backlog item with its blocker and a closing probe, and the next stage runs degraded. The Worker tick does the same per step (`worker/src/tick.js`). Tests: `test_missing_idea_degrades_not_dies`, `a failing step never kills the tick`.
+-2. **Test the whole chain end to end early; the failures are never where you expect.** QEMU boot tests found nine defects that reading the code did not: squashfs cannot be an initrd, the shebang needs busybox at one path, the serial console order, a read-only root, missing storage modules. The seed's `bootstrap.py --dry-run` runs the full chain with no credentials in CI on every push, and the first backlog items (KIT-2, KIT-3) are a real deploy and six observed ticks, not a statement that it works.
+-3. **Never swallow an error.** `2>/dev/null` hid the real `apk --root` failure (commit `8cfba48`). The seed checks every command's exit code and keeps the stderr tail (`Boot.run`); the shared agent protocol bans silent catches.
+-4. **Verify before you depend on it.** A phantom package (`alpine-mkinitfs`, commit `614acf3`), hyphen vs dot in a model filename that 404'd (`8fc44bc`), the renamed `llama-cli` target (BUILD.md Phase 1). The seed checks that tools and inputs exist before a stage uses them and records the checks in `boot-log.json`; the invention is to treat each check as a logged fact with a date, as BUILD.md did with SHA256 sums.
+-5. **Choose capability from the environment, not from a config the user must write.** AIOS picked its model from detected RAM. The seed picks its model tier from the stated budget and its autonomy start rungs from the policy, so the founder writes one file.
+-6. **Every commit carries its rationale.** AIOS commits read `ACTION:EDIT FILE: x RATIONALE: what broke and what the test proved`. That is why the boot-failure history above could be reconstructed months later. The seed's protocol requires the same: the PR or commit says what was verified and the evidence.
+-7. **Safety is a classification, not a prompt.** The gatekeeper sorted commands into safe (run), dangerous (show and wait) and destructive (block), and listed protected paths. The seed generalizes it: each action on each surface is marked reversible or not and identity-bound or not, the interrupt gate stops only the irreversible and identity-bound ones, and the harness deny list mirrors the gated shell commands (`tests/test_policy.py` checks the two agree).
+-8. **Local first, then widen.** AIOS started at three small models and a 4 GB laptop, with a reviewer added only when RAM allowed. The seed starts every surface at a low rung and widens only through computed trust and a reviewed PR; money, legal, outreach and secrets are capped below execute.
+-9. **The unfinished part is a lesson too.** AIOS stalled at Phase 1: `llama-cli` compiled but the in-guest model response was never confirmed. The fix in the seed is that nothing is "done" without a closing probe; a done check that was never observed is a loop that stays open.
+-10. **Agent instructions are part of the artifact.** From 2026-11-07 AIOS carries `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, a handoff template and a skill, synced from a hub. The seed ships the same set from day one: any agent that opens the repo cold finds the protocol, its role file and its limits, and no agent depends on chat history.
+-
+-## What this means for the invention
+-
+-The bootstrapping claim is not "an AI sets up a computer". It is the combination: a single human-written idea file; a deterministic bootstrapper that plans, writes and provisions an organization (roles, backlog, autonomy policy, schema, scheduler); an autonomy policy that classifies every action by reversibility and identity-binding and fixes a permission ceiling per surface; a boot that cannot die and records each failure as work; a heartbeat that starts on the server and takes over; and a trust ladder that widens scope only by reviewed change. See `docs/bootstrapping.md` and the patent thread's embodiment note.
+diff --git a/tests/test_docs_audit.py b/tests/test_docs_audit.py
+new file mode 100644
+index 0000000..014e939
+--- /dev/null
++++ b/tests/test_docs_audit.py
+@@ -0,0 +1,17 @@
++# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
++# Copyright (c) 2026 Rowan Brad Quni-Gudzinas
++"""DOC-CONSUMED-1 (owner, 2026-11-12): every document here is consumed by code, a check, an agent instruction or a generator, and
++explain-only pages name only files that exist. tools/docs_audit.py is the same stdlib file as in ultrastable/ultrastable."""
++import pathlib, subprocess, sys, unittest
++
++ROOT = pathlib.Path(__file__).resolve().parents[1]
++
++
++class DocsAudit(unittest.TestCase):
++    def test_every_document_has_a_consumer(self):
++        r = subprocess.run([sys.executable, str(ROOT / "tools/docs_audit.py"), "--root", str(ROOT), "--check"], capture_output=True, text=True)
++        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/doc-consumers.json b/tools/doc-consumers.json
+new file mode 100644
+index 0000000..4258c75
+--- /dev/null
++++ b/tools/doc-consumers.json
+@@ -0,0 +1,28 @@
++{
++ "_doc": "Doc-consumption registry (owner, 2026-11-12: nobody reads documents; every document is consumed by code). `python3 tools/docs_audit.py --check` fails on a document nothing consumes. Same stdlib file as ultrastable/ultrastable foundation/docs_audit.py; see agents/AGENTS.md rule DOC-CONSUMED-1 there.",
++ "version": "1.0.0",
++ "consumers": [],
++ "verified": {
++  "globs": [
++   "**/*.md"
++  ]
++ },
++ "ignore_references_from": [],
++ "human_action_patterns": [
++  "\\\\b(Rowan|the owner|owner)\\\\s+(should|must|needs? to|has to|will need to)\\\\b",
++  "\\\\b(please|just)\\\\s+(click|open|run|file|sign|submit|paste|upload|email)\\\\b"
++ ],
++ "human_action_exempt": [],
++ "human_action_baseline": {},
++ "converted": [],
++ "removed": [
++  {
++   "path": "docs/aios-lessons.md",
++   "sha256": "3287207be711e23567e30940e7a17832c4c392e7daa7753070b0cf2088174699",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:docs/bootstrapping/aios-lessons.md",
++   "date": "2026-11-12",
++   "recover": "079ee7b7f4f14db86b2e12e98bb5534c5d091cca"
++  }
++ ]
++}
+diff --git a/tools/docs_audit.py b/tools/docs_audit.py
+new file mode 100644
+index 0000000..e967517
+--- /dev/null
++++ b/tools/docs_audit.py
+@@ -0,0 +1,315 @@
++"""Doc-consumption audit. Ultrastable is the foundation for any autonomous system. (owner, 2026-11-12)
++
++Nobody reads documents here; the system runs on code. So a document may exist only if something consumes it: an agent instruction
++import, code or data that names it, a check that reads it, or a generator that writes it. A document with no consumer is a CI failure.
++
++  python3 -m foundation docs_audit --check     (or: python3 foundation/docs_audit.py --root DIR --check, the file is stdlib-only and is copied into sibling repos)  fail on orphans, broken registry rows, bad removal ledger, human-action regressions
++  python3 -m foundation docs_audit --report    counts per consumption tier (docs found, wired, generated, converted, removed)
++  python3 -m foundation docs_audit --orphans   list the documents nothing consumes
++  python3 -m foundation docs_audit --humans    list documents that tell a person to act (a defect: file a backlog item instead)
++
++Consumption tiers, strongest first (the registry is `doctrine/doc-consumers.json`):
++  import     CLAUDE.md / AGENTS.md pull it in with `@path`, transitively
++  path       a tracked non-document file (code, data, workflow, test) names its exact path
++  generated  front matter `generated-by: <script>`, and the script exists
++  declared   front matter `consumer: <path>`; the consumer exists, is not a document and names this file or its directory
++  registry   a row in doc-consumers.json: glob -> consumer file that contains the row's `needle`
++  verified   explain-only pages in `verified.globs`: every backticked file path in the page must exist, and at least one must, so the
++             page cannot drift from the code it describes (a missing path is a CI failure naming the line)
++  knowledge  reference documents inside `knowledge.globs`: foundation/kb.py ranks them against each issue and foundation/executor.py
++             puts the best matches in the agent's prompt
++A document that only mentions another document is not consuming it. Removed documents stay in the `removed` ledger with the
++sha256 of what was removed and the file that still holds the same bytes, so nothing leaves the active set without a disposition.
++"""
++from __future__ import annotations
++import fnmatch, hashlib, json, os, re, subprocess, sys
++from pathlib import Path
++
++REPO = Path(__file__).resolve().parent.parent
++REGISTRIES = ("doctrine/doc-consumers.json", "tools/doc-consumers.json", "doc-consumers.json")
++REGISTRY = REGISTRIES[0]
++DOC_EXT = (".md", ".txt", ".rst")
++BINARY = re.compile(r"\.(svg|png|pdf|jpe?g|ico|woff2?|zip|bundle|gif|webp)$", re.I)
++
++
++def registry_path(root=REPO) -> str:
++    """The registry is doctrine/doc-consumers.json here; sibling repos that carry a copy of this file keep it in tools/ or at the root."""
++    for r in REGISTRIES:
++        if (Path(root) / r).is_file():
++            return r
++    raise FileNotFoundError("no doc-consumers.json (looked in " + ", ".join(REGISTRIES) + ")")
++
++
++def load(root=REPO) -> dict:
++    return json.loads((Path(root) / registry_path(root)).read_text(encoding="utf-8"))
++
++
++def tracked(root=REPO) -> list[str]:
++    out = subprocess.run(["git", "-C", str(root), "ls-files"], capture_output=True, text=True)
++    if out.returncode != 0:
++        raise RuntimeError(f"git ls-files failed: {out.stderr.strip()}")
++    return [f for f in out.stdout.splitlines() if (Path(root) / f).is_file()]
++
++
++def is_doc(path: str) -> bool:
++    return path.endswith(DOC_EXT)
++
++
++def _read(root, rel):
++    try:
++        return (Path(root) / rel).read_text(encoding="utf-8")
++    except (UnicodeDecodeError, OSError):
++        return ""
++
++
++def _glob(path: str, pattern: str) -> bool:
++    if pattern.endswith("/**"):
++        return path.startswith(pattern[:-2])
++    if pattern.startswith("**/"):
++        return fnmatch.fnmatch(path, pattern) or fnmatch.fnmatch(path, pattern[3:])
++    return fnmatch.fnmatch(path, pattern)
++
++
++def front_matter(text: str) -> dict:
++    m = re.match(r"---\n(.*?)\n---\n", text, re.S)
++    out = {}
++    if m:
++        for line in m.group(1).splitlines():
++            k, _, v = line.partition(":")
++            if k.strip() and v.strip():
++                out[k.strip()] = v.strip().strip("'\"")
++    return out
++
++
++SPAN = re.compile(r"`([^`\n]+)`")
++CODE_TOKEN = re.compile(r"(?<![\w/.:-])([A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:js|mjs|cjs|py|json|jsonc|sh|yml|yaml|toml|sql|md|html))(?![\w/-])")
++
++
++def verify_page(root, doc) -> tuple[list[str], list[str]]:
++    """(resolved, unresolved) backticked file paths in a document, resolved against the repository root or the document's folder."""
++    ok, missing = [], []
++    for tok in sorted({t for span in SPAN.findall(_read(root, doc)) for t in CODE_TOKEN.findall(span)}):
++        if "*" in tok or tok.startswith(("http", "~", "/")):
++            continue
++        cand = (Path(root) / tok, Path(root) / os.path.dirname(doc) / tok)
++        (ok if any(c.exists() for c in cand) else missing).append(tok)
++    return ok, missing
++
++
++def _imports(root, docs) -> set[str]:
++    seen, todo = set(), [d for d in ("CLAUDE.md", "AGENTS.md", "agents/AGENTS.md") if d in docs]
++    seen.update(todo)
++    while todo:
++        cur = todo.pop()
++        base = (Path(cur).parent)
++        for ref in re.findall(r"(?m)^\s*@(\S+\.md)\s*$", _read(root, cur)):
++            p = os.path.normpath((base / ref).as_posix() if not ref.startswith("/") else ref[1:]).replace(os.sep, "/")
++            if p not in seen and p in docs:
++                seen.add(p)
++                todo.append(p)
++    return seen
++
++
++def _relatives(doc: str, referrer: str):
++    """The spellings a file may use for `doc`: relative to its own folder or to any ancestor folder (a test that does parents[1] / "docs/X.md")."""
++    out, a = [], os.path.dirname(referrer)
++    while a:
++        rel = os.path.relpath(doc, a)
++        if not rel.startswith("..") and rel != doc:
++            out.append(rel)
++        a = os.path.dirname(a)
++    return out
++
++
++def evaluate(root=REPO) -> dict:
++    """Return {doc: (tier, evidence)} for consumed docs, plus 'orphans', 'docs', and problems with registry rows."""
++    root = Path(root)
++    reg = load(root)
++    files = tracked(root)
++    docs = sorted(f for f in files if is_doc(f))
++    ignore = tuple(reg.get("ignore_references_from", []))
++    code = {f: _read(root, f) for f in files if not is_doc(f) and not BINARY.search(f) and not f.startswith(ignore) and f != registry_path(root)}
++    consumed: dict[str, tuple[str, str]] = {}
++    problems: list[str] = []
++    for d in sorted(_imports(root, set(docs))):
++        consumed[d] = ("import", "imported by an agent instruction file")
++    for row in reg["consumers"]:
++        c = row["consumer"]
++        if is_doc(c) or not (root / c).is_file():
++            problems.append(f"registry row {row['id']}: consumer {c} must be an existing non-document file")
++            continue
++        if row["needle"] not in _read(root, c):
++            problems.append(f"registry row {row['id']}: consumer {c} does not contain its needle {row['needle']!r}")
++            continue
++        hit = [d for d in docs if any(_glob(d, g) for g in row["paths"])]
++        if not hit:
++            problems.append(f"registry row {row['id']}: no document matches {row['paths']} (remove the row)")
++        for d in hit:
++            consumed.setdefault(d, ("registry", f"{row['id']} -> {c}"))
++    for d in docs:
++        if d in consumed:
++            continue
++        fm = front_matter(_read(root, d))
++        if fm.get("generated-by"):
++            g = fm["generated-by"].split()[0]
++            if (root / g).is_file() and not is_doc(g):
++                consumed[d] = ("generated", g)
++                continue
++            problems.append(f"{d}: generated-by {g} does not exist")
++        if fm.get("consumer"):
++            c = fm["consumer"].split()[0]
++            parent = str(Path(d).parent)
++            if (root / c).is_file() and not is_doc(c) and (d in _read(root, c) or (parent != "." and parent + "/" in _read(root, c))):
++                consumed[d] = ("declared", c)
++                continue
++            problems.append(f"{d}: front matter consumer {c} must be an existing non-document file that names this file or its directory")
++        for f, t in code.items():
++            if d in t or any(re.search(r"(?<![\w/.-])" + re.escape(rel) + r"(?![\w])", t) for rel in _relatives(d, f)):
++                consumed[d] = ("path", f)
++                break
++    for d in docs:
++        if d not in consumed and any(_glob(d, g) for g in reg.get("verified", {}).get("globs", [])):
++            ok, missing = verify_page(root, d)
++            if missing:
++                problems.append(f"{d}: names files that do not exist ({', '.join(missing[:4])}); fix the page or the code so they agree")
++            elif ok:
++                consumed[d] = ("verified", f"every backticked path exists ({len(ok)})")
++    kn = reg.get("knowledge", {})
++    if kn:
++        ex = _read(root, "foundation/executor.py")
++        if "kb.retrieve" not in ex or not (root / "foundation/kb.py").is_file():
++            problems.append("knowledge tier: foundation/executor.py must call kb.retrieve and foundation/kb.py must exist")
++        else:
++            for d in docs:
++                if d.endswith(".md") and any(_glob(d, g) for g in kn["globs"]):
++                    consumed.setdefault(d, ("knowledge", "foundation/kb.py -> foundation/executor.py"))
++    orphans = [d for d in docs if d not in consumed]
++    return {"docs": docs, "consumed": consumed, "orphans": orphans, "problems": problems, "registry": reg}
++
++
++def _human_hits(text: str, pats) -> list[str]:
++    hits = []
++    for line in text.splitlines():
++        for p in pats:
++            if re.search(p, line, re.I):
++                hits.append(line.strip()[:120])
++                break
++    return hits
++
++
++def humans(root=REPO) -> dict[str, list[str]]:
++    root = Path(root)
++    reg = load(root)
++    pats = reg["human_action_patterns"]
++    exempt = reg.get("human_action_exempt", [])
++    out = {}
++    for d in (f for f in tracked(root) if is_doc(f)):
++        if any(_glob(d, g) for g in exempt):
++            continue
++        h = _human_hits(_read(root, d), pats)
++        if h:
++            out[d] = h
++    return out
++
++
++def removed_check(root, reg) -> list[str]:
++    """Every removed document has a disposition: identical bytes elsewhere (duplicate_of), a live replacement (superseded_by), or
++    evidence that it was a dead end; its sha256 and the commit that still holds it make the removal recoverable; and nothing
++    live may still name it."""
++    bad, root = [], Path(root)
++    removed = reg.get("removed", [])
++    for r in removed:
++        for k in ("path", "sha256", "reason", "date", "recover"):
++            if not r.get(k):
++                bad.append(f"removed ledger {r.get('path', '?')}: lacks {k}")
++        if not (r.get("duplicate_of") or r.get("superseded_by") or r.get("evidence")):
++            bad.append(f"removed ledger {r.get('path', '?')}: needs duplicate_of, superseded_by or evidence")
++        if (root / r.get("path", "-")).exists():
++            bad.append(f"removed ledger: {r['path']} is listed as removed but still exists")
++        if r.get("duplicate_of"):
++            dup = root / r["duplicate_of"]
++            if not dup.is_file() or hashlib.sha256(dup.read_bytes()).hexdigest() != r.get("sha256"):
++                bad.append(f"removed ledger {r['path']}: {r['duplicate_of']} no longer holds the same bytes (sha256 differs); restore or re-record")
++        if r.get("superseded_by") and not (root / r["superseded_by"]).exists():
++            bad.append(f"removed ledger {r['path']}: superseded_by {r['superseded_by']} does not exist")
++    ignore = tuple(reg.get("ignore_references_from", [])) + (registry_path(root),)
++    paths = {r["path"] for r in removed if r.get("path")}
++    for f in tracked(root):
++        if is_doc(f) or BINARY.search(f) or f.startswith(ignore):
++            continue
++        t = _read(root, f)
++        for p in paths:
++            if re.search(r"(?<![\w/.-])" + re.escape(p) + r"(?![\w-])", t):
++                bad.append(f"{f}: still names removed document {p}; point it at the replacement or drop the reference")
++    return bad
++
++
++def converted_check(root, reg) -> list[str]:
++    """A document converted to data keeps a row: the data file exists and a non-document consumer names it."""
++    bad, root = [], Path(root)
++    for c in reg.get("converted", []):
++        for k in ("from", "to", "consumer", "sha256", "recover", "date"):
++            if not c.get(k):
++                bad.append(f"converted ledger {c.get('from', '?')}: lacks {k}")
++        if (root / c.get("from", "-")).exists():
++            bad.append(f"converted ledger: {c['from']} still exists next to its data file")
++        if not (root / c.get("to", "-")).is_file() or is_doc(c.get("to", "")):
++            bad.append(f"converted ledger {c.get('from')}: data file {c.get('to')} must exist and not be a document")
++        elif not (root / c.get("consumer", "-")).is_file() or c["to"] not in _read(root, c["consumer"]):
++            bad.append(f"converted ledger {c['from']}: consumer {c.get('consumer')} must exist and name {c['to']}")
++    return bad
++
++
++def check(root=REPO) -> list[str]:
++    root = Path(root)
++    ev = evaluate(root)
++    reg = ev["registry"]
++    bad = list(ev["problems"])
++    bad += [f"orphan document (nothing consumes it): {d}: wire it, convert it to data, merge it, or remove it with a ledger row" for d in ev["orphans"]]
++    bad += removed_check(root, reg)
++    bad += converted_check(root, reg)
++    tpl = _read(root, "brand/templates/doc-template.md")  # doc-template.md: the template every new document starts from
++    if (root / "brand/templates/doc-template.md").is_file() and not re.search(r"(?m)^consumer:", tpl):
++        bad.append("brand/templates/doc-template.md must carry a `consumer:` front matter line")
++    base = reg.get("human_action_baseline", {})
++    for d, hits in humans(root).items():
++        if len(hits) > base.get(d, 0):
++            bad.append(f"{d}: tells a person to act ({len(hits)} lines, baseline {base.get(d, 0)}): {hits[0]!r}; file an automatic backlog item (owner, trigger, verification) instead of writing an instruction")
++    return bad
++
++
++def report(root=REPO) -> dict:
++    ev = evaluate(root)
++    tiers: dict[str, int] = {}
++    for tier, _ in ev["consumed"].values():
++        tiers[tier] = tiers.get(tier, 0) + 1
++    reg = ev["registry"]
++    return {"docs": len(ev["docs"]), "consumed": len(ev["consumed"]), "orphans": len(ev["orphans"]), "tiers": tiers,
++            "removed": len(reg.get("removed", [])), "converted": len(reg.get("converted", [])),
++            "human_action_docs": len(humans(root))}
++
++
++def main(argv=None) -> int:
++    global REPO
++    argv = list(sys.argv[1:] if argv is None else argv)
++    if "--root" in argv:  # run against another checkout: python3 tools/docs_audit.py --root . --check
++        i = argv.index("--root")
++        REPO = Path(argv[i + 1]).resolve()
++        del argv[i:i + 2]
++    if "--report" in argv:
++        print(json.dumps(report(REPO), indent=1))
++        return 0
++    if "--orphans" in argv:
++        print("\n".join(evaluate(REPO)["orphans"]) or "no orphans")
++        return 0
++    if "--humans" in argv:
++        for d, h in humans(REPO).items():
++            print(d, len(h), h[0])
++        return 0
++    bad = check(REPO)
++    print("\n".join(bad) or "docs-audit ok: " + json.dumps(report(REPO)))
++    return 1 if bad else 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+-- 
+2.43.0
+

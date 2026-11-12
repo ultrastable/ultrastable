@@ -1251,6 +1251,37 @@
           "source": "docs/PROJECT-MEMORY.md"
         }
       ]
-    }
+    },
+ {
+  "id": "doc-consumed",
+  "term": "Document consumed",
+  "aliases": [
+   "DOC-CONSUMED-1",
+   "orphan document"
+  ],
+  "version": "1.0.0",
+  "definition": "A document exists only if code, a check, an agent's loaded instructions or a loop consumes it. Nobody reads documents here, so a document with no consumer is a CI failure and one that tells a person to act is a defect that becomes an automatic backlog item.",
+  "not": "Not 'documents are bad': reference text is allowed and is read by agents (the executor retrieves it per issue). Not a rule about what to write, but about who reads it.",
+  "tested_by": [
+   "grep:tests/foundation/test_docs_audit.py::def test_orphan_fails"
+  ],
+  "implemented_by": [
+   "foundation/docs_audit.py",
+   "foundation/kb.py",
+   "doctrine/doc-consumers.json"
+  ],
+  "related": [
+   "memory-is-not-storage",
+   "autonomy"
+  ],
+  "lineage": [
+   {
+    "version": "1.0.0",
+    "date": "2026-11-12",
+    "change": "Owner: documents are not the point; this is a code-driven system and he does not read docs. Every document must be consumed by something.",
+    "source": "doctrine/doc-consumers.json"
+   }
   ]
+ }
+]
 }

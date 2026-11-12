@@ -27,19 +27,10 @@ class ClosedLoop(unittest.TestCase):
         seed = json.loads((REPO / "seed/autonomy/policy.json").read_text())["closed_loop"]
         self.assertFalse(seed["assume_human_review"]); self.assertFalse(seed["assume_owner_decision"])
 
-    def test_new_orphan_fails_and_baseline_is_shrink_only(self):
-        with tempfile.TemporaryDirectory() as d:
-            t = Path(d); _mini(t)
-            subprocess.run(["git", "add", "-A"], cwd=t, check=True)
-            self.assertEqual(orphans.check(t), [])
-            (t / "docs/report.md").write_text("nobody reads this\n")
-            subprocess.run(["git", "add", "-A"], cwd=t, check=True)
-            self.assertTrue(any("orphan artifact docs/report.md" in b for b in orphans.check(t)))
-            orphans.write_baseline(t)  # an existing baseline never grows
-            (t / orphans.BASELINE).write_text(json.dumps({"orphans": []}))
-            self.assertEqual(orphans.write_baseline(t), 0)
-            (t / orphans.BASELINE).write_text(json.dumps({"orphans": ["docs/used.md"]}))
-            self.assertTrue(any("no longer an orphan" in b for b in orphans.check(t)))
+    def test_orphans_are_decided_by_the_one_document_audit(self):
+        from foundation import docs_audit
+        self.assertEqual(orphans.orphans(REPO), sorted(docs_audit.evaluate(REPO)["orphans"]))
+        self.assertEqual(orphans.baseline(REPO), [])
 
     def test_wait_on_person_needs_identity_class_and_default(self):
         with tempfile.TemporaryDirectory() as d:

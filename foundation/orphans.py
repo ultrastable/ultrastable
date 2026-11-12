@@ -40,29 +40,9 @@ def _files(root: Path):
 
 
 def orphans(root=REPO) -> list[str]:
-    root = Path(root)
-    pol = policy(root)
-    code_sfx, art_sfx = set(pol["consumer_code_suffixes"]), set(pol["artifact_suffixes"])
-    plat = pol["platform_consumed"]
-    files = [p for p in _files(root) if p.is_file()]
-    arts = [p for p in files if p.suffix in art_sfx]
-    corpus = []
-    for p in files:
-        if p.suffix in code_sfx:
-            try:
-                corpus.append(p.read_text(encoding="utf-8", errors="replace"))
-            except OSError as e:
-                print(f"orphans: cannot read {p}: {e}", file=sys.stderr)
-    text = "\n".join(corpus)
-    out = []
-    for a in arts:
-        rel = a.relative_to(root).as_posix()
-        if a.name in plat["basenames"] or any(rel.startswith(d.rstrip("/") + "/") for d in plat["dirs"]):
-            continue
-        if rel in text or (len(a.name) >= 6 and a.name in text):
-            continue
-        out.append(rel)
-    return sorted(out)
+    """Orphan documents are decided by the one document audit (foundation/docs_audit.py, DOC-CONSUMED-1); this module keeps the waits, the ledger and the backlog issue."""
+    from . import docs_audit
+    return sorted(d for d in docs_audit.evaluate(Path(root))["orphans"])
 
 
 def waits(root=REPO) -> dict:

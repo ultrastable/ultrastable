@@ -67,6 +67,7 @@ jobs:
           python3 -m foundation writeback check --base "origin/${{ github.base_ref || 'main' }}"
           python3 -m foundation needsyou --check
           python3 -m foundation orphans --check
+          python3 -m foundation docs_audit --check
       - name: Core and instances (contract is current, kernel has no instance-specific values)
         run: |
           python3 -m foundation upstream contract --check

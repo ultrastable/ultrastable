@@ -1,0 +1,532 @@
+From d6dbc0b94365ae5761208ed2b274661a156b4700 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 09:57:56 +0000
+Subject: [PATCH] DOC-CONSUMED-1: every document has a consumer (docs_audit,
+ registry); stale snapshot documents removed with a sha256 ledger
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0156nqDtDer7yrN7xaKoWgV1
+---
+ README.md                |   6 +-
+ docs/architecture.md     |  18 ---
+ docs/deploy-gcp.md       |  15 --
+ docs/heritage.md         |  17 ---
+ docs/roadmap.md          |  12 --
+ tests/test_docs_audit.py |  17 +++
+ tools/doc-consumers.json |  52 +++++++
+ tools/docs_audit.py      | 315 +++++++++++++++++++++++++++++++++++++++
+ 8 files changed, 388 insertions(+), 64 deletions(-)
+ delete mode 100644 docs/architecture.md
+ delete mode 100644 docs/deploy-gcp.md
+ delete mode 100644 docs/heritage.md
+ delete mode 100644 docs/roadmap.md
+ create mode 100644 tests/test_docs_audit.py
+ create mode 100644 tools/doc-consumers.json
+ create mode 100644 tools/docs_audit.py
+
+diff --git a/README.md b/README.md
+index 760b4f1..48a8778 100644
+--- a/README.md
++++ b/README.md
+@@ -2,6 +2,8 @@
+ 
+ The core Ultrastable platform: the tick, the virtual-staff roles, the trust ledger, the prediction scorer and the plussing queue, generalized from the QNFO fleet so any organization can run it.
+ 
+-Status: the working system runs today inside QNFO on Cloudflare. Extracting and packaging it into this repo is a later step. See [docs/architecture.md](docs/architecture.md) for the target shape.
++Status: the working system runs today inside QNFO on Cloudflare. Extracting and packaging it into this repo is a later step. The target shape is platform/core/docs/architecture.md in ultrastable/ultrastable.
+ 
+-The boot path (idea to running org) lives in the `seed` repo; this repo is where the tick and roles are generalized for multiple tenants. The seed's `worker/src/tick.js` and `worker/migrations/0001_init.sql` are the first working slice.
++The tick, roles, trust ledger, scorer and plussing queue are in `ultrastable/engine.py`; its tests are `tests/test_engine.py`.
++
++The boot path (idea to running org) lives in the `seed` repo; this repo is where the tick and roles are generalized for multiple tenants. The seed's worker/src/tick.js and worker/migrations/0001_init.sql in the seed repo are the first working slice.
+diff --git a/docs/architecture.md b/docs/architecture.md
+deleted file mode 100644
+index 37a3932..0000000
+--- a/docs/architecture.md
++++ /dev/null
+@@ -1,18 +0,0 @@
+-# Target architecture (draft)
+-
+-Runs on Cloudflare, matching the existing fleet.
+-
+-| Component | Responsibility | Likely Cloudflare piece |
+-|---|---|---|
+-| Tick scheduler | Fires the heartbeat per org and per role | Cron Triggers, Workflows |
+-| Role runtime | Portfolio, project, product managers and staff agents | Agents SDK / Durable Objects (one per role instance) |
+-| Work queue and claims | Backlog, priority function, claims, dispositions | D1 + Queues |
+-| Trust ledger | Outcomes per (surface, action class), ladder position | D1 |
+-| Prediction scorer | Scores logged predictions against metrics | Cron + D1 |
+-| Plussing queue | Proposed pluses, ranking, reserved capacity | D1 |
+-| Approval gate | Human approval cards for irreversible steps | Worker + notifications |
+-| Connectors | GitHub, chat, email, the org's tools | MCP |
+-
+-Org-specific data (roles, objectives, connectors, policies) is configuration, so the same platform serves any organization.
+-
+-Open items for packaging: tenant isolation, the config schema for an org chart, migration of the existing QNFO tables, and a one-command install.
+diff --git a/docs/deploy-gcp.md b/docs/deploy-gcp.md
+deleted file mode 100644
+index 614d66d..0000000
+--- a/docs/deploy-gcp.md
++++ /dev/null
+@@ -1,15 +0,0 @@
+-# Deploy on Google Cloud
+-
+-Prereqs: a GCP project with billing, `gcloud` signed in, this repo checked out.
+-
+-```bash
+-PROJECT=my-project REGION=us-central1 ./deploy/gcp/deploy.sh
+-```
+-
+-What it does: enables Cloud Run, Cloud Scheduler, Secret Manager and Artifact Registry; stores a generated bearer token in Secret Manager; deploys the container to Cloud Run (min=max=1 instance); creates a Cloud Scheduler job that `POST`s `/tick` every 10 minutes with the token; prints the dashboard URL.
+-
+-Operating notes
+-* The dashboard is read-only without the token; gate resolution and item creation need it (`?token=` on the dashboard URL).
+-* Storage is the instance's SQLite file: demo-grade. Move to Cloud SQL (Postgres) via the store adapter before real customers (roadmap).
+-* To use Gemini via Vertex AI as an additional model adapter: implement `Agent.do/verify` against the Vertex endpoint (roadmap; same contract as `AnthropicAgent`).
+-* The Dockerfile is not yet built in this repo's CI environment locally; CI builds it on every push.
+diff --git a/docs/heritage.md b/docs/heritage.md
+deleted file mode 100644
+index ed8acc4..0000000
+--- a/docs/heritage.md
++++ /dev/null
+@@ -1,17 +0,0 @@
+-# Heritage: what transferred from QNFO
+-
+-Ultrastable generalizes patterns that run the QNFO research fleet (customer zero) on Cloudflare. The knowledge moved; the code here is a clean-room portable core, not a copy of the fleet.
+-
+-| QNFO practice | Ultrastable component |
+-|---|---|
+-| Fleet tick (cron heartbeat, "PID 1 never dies") | `Engine.tick()`: 11 guarded steps |
+-| Portfolio and program managers, constraint focus | `portfolio` step, per-project allocation |
+-| Work claims, dispositions, "no silent drops" | `claims`, `reconcile`, silent-drop outcomes |
+-| Learn-apply-verify, predictions scored against metrics | `predictions`, `score_predictions`, hit-rate KPI |
+-| Trust by surface and action class; narrow interrupt gate | `trust_ledger`, ladder, `gate_cards` |
+-| Plussing (protected improvement budget) | `product` + `plus_share` steps |
+-| Self-change protocol (versioned, reviewed rule changes) | `amendments`, rules version |
+-| Never self-review | doer/reviewer separation in `agents.py` |
+-| `agent_issues`, remedy efficacy | `events` audit trail, root-cause `FIX-*` items |
+-
+-Provenance and IP: the originating design and its history are recorded in the `ip` repo (invention disclosure, evidence log, IP register). Ownership assignment from the author to the company is an open item tracked in that repo. [LAWYER]
+diff --git a/docs/roadmap.md b/docs/roadmap.md
+deleted file mode 100644
+index 1aee1bd..0000000
+--- a/docs/roadmap.md
++++ /dev/null
+@@ -1,12 +0,0 @@
+-# Platform roadmap
+-
+-| # | Item | Why | Status |
+-|---|---|---|---|
+-| 1 | Run `CommandAgent` against a real repo with Claude Code/Codex and a real check command; record results as the first honest case study | Replace "simulated" with evidence | next |
+-| 2 | Postgres store adapter + Cloud SQL deploy | Durable, multi-instance | next |
+-| 3 | GitHub connector: items from issues, PRs as execution, merge on green | The surface teams use | next |
+-| 4 | Vertex AI (Gemini) and Anthropic reviewer/doer pairing, different model per role | Model-agnostic claim, never self-review | next |
+-| 5 | Custom prediction metrics from tenant data | Calibration on real outcomes | later |
+-| 6 | Tenant isolation, per-user auth (OIDC) | Multi-customer | later |
+-| 7 | Outside audit of prediction match rate | Investor/customer proof | later |
+-| 8 | `ultrastable init` from IDEA.md (the seed bootstrapper) into the core | Idea-to-org in one command | later |
+diff --git a/tests/test_docs_audit.py b/tests/test_docs_audit.py
+new file mode 100644
+index 0000000..014e939
+--- /dev/null
++++ b/tests/test_docs_audit.py
+@@ -0,0 +1,17 @@
++# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
++# Copyright (c) 2026 Rowan Brad Quni-Gudzinas
++"""DOC-CONSUMED-1 (owner, 2026-11-12): every document here is consumed by code, a check, an agent instruction or a generator, and
++explain-only pages name only files that exist. tools/docs_audit.py is the same stdlib file as in ultrastable/ultrastable."""
++import pathlib, subprocess, sys, unittest
++
++ROOT = pathlib.Path(__file__).resolve().parents[1]
++
++
++class DocsAudit(unittest.TestCase):
++    def test_every_document_has_a_consumer(self):
++        r = subprocess.run([sys.executable, str(ROOT / "tools/docs_audit.py"), "--root", str(ROOT), "--check"], capture_output=True, text=True)
++        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/tools/doc-consumers.json b/tools/doc-consumers.json
+new file mode 100644
+index 0000000..e838a24
+--- /dev/null
++++ b/tools/doc-consumers.json
+@@ -0,0 +1,52 @@
++{
++ "_doc": "Doc-consumption registry (owner, 2026-11-12: nobody reads documents; every document is consumed by code). `python3 tools/docs_audit.py --check` fails on a document nothing consumes. Same stdlib file as ultrastable/ultrastable foundation/docs_audit.py; see agents/AGENTS.md rule DOC-CONSUMED-1 there.",
++ "version": "1.0.0",
++ "consumers": [],
++ "verified": {
++  "globs": [
++   "**/*.md"
++  ]
++ },
++ "ignore_references_from": [],
++ "human_action_patterns": [
++  "\\\\b(Rowan|the owner|owner)\\\\s+(should|must|needs? to|has to|will need to)\\\\b",
++  "\\\\b(please|just)\\\\s+(click|open|run|file|sign|submit|paste|upload|email)\\\\b"
++ ],
++ "human_action_exempt": [],
++ "human_action_baseline": {},
++ "converted": [],
++ "removed": [
++  {
++   "path": "docs/architecture.md",
++   "sha256": "b024301c67461d069f900ee90b17aeeec94924d1860ca064f3e3000ecec5db54",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable and ultrastable/workers; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "76e90e2e534d34d88d08329d773455ff030966e0"
++  },
++  {
++   "path": "docs/deploy-gcp.md",
++   "sha256": "8a8213727dca42ab574d003acf67d0f6b27900e01a8ebfc4c7d95f891a317444",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:platform/core/docs/deploy-gcp.md",
++   "date": "2026-11-12",
++   "recover": "76e90e2e534d34d88d08329d773455ff030966e0"
++  },
++  {
++   "path": "docs/heritage.md",
++   "sha256": "68b07800f0bbe00138070764743ae29f307150e5b92144a62ba260cccd15db38",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:platform/core/docs/heritage.md",
++   "date": "2026-11-12",
++   "recover": "76e90e2e534d34d88d08329d773455ff030966e0"
++  },
++  {
++   "path": "docs/roadmap.md",
++   "sha256": "2688c642abfa7b9bf90baa1b11f7511d46527a2447bf33df3b10ea8a163cbe2f",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable and ultrastable/workers; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "76e90e2e534d34d88d08329d773455ff030966e0"
++  }
++ ]
++}
+diff --git a/tools/docs_audit.py b/tools/docs_audit.py
+new file mode 100644
+index 0000000..e967517
+--- /dev/null
++++ b/tools/docs_audit.py
+@@ -0,0 +1,315 @@
++"""Doc-consumption audit. Ultrastable is the foundation for any autonomous system. (owner, 2026-11-12)
++
++Nobody reads documents here; the system runs on code. So a document may exist only if something consumes it: an agent instruction
++import, code or data that names it, a check that reads it, or a generator that writes it. A document with no consumer is a CI failure.
++
++  python3 -m foundation docs_audit --check     (or: python3 foundation/docs_audit.py --root DIR --check, the file is stdlib-only and is copied into sibling repos)  fail on orphans, broken registry rows, bad removal ledger, human-action regressions
++  python3 -m foundation docs_audit --report    counts per consumption tier (docs found, wired, generated, converted, removed)
++  python3 -m foundation docs_audit --orphans   list the documents nothing consumes
++  python3 -m foundation docs_audit --humans    list documents that tell a person to act (a defect: file a backlog item instead)
++
++Consumption tiers, strongest first (the registry is `doctrine/doc-consumers.json`):
++  import     CLAUDE.md / AGENTS.md pull it in with `@path`, transitively
++  path       a tracked non-document file (code, data, workflow, test) names its exact path
++  generated  front matter `generated-by: <script>`, and the script exists
++  declared   front matter `consumer: <path>`; the consumer exists, is not a document and names this file or its directory
++  registry   a row in doc-consumers.json: glob -> consumer file that contains the row's `needle`
++  verified   explain-only pages in `verified.globs`: every backticked file path in the page must exist, and at least one must, so the
++             page cannot drift from the code it describes (a missing path is a CI failure naming the line)
++  knowledge  reference documents inside `knowledge.globs`: foundation/kb.py ranks them against each issue and foundation/executor.py
++             puts the best matches in the agent's prompt
++A document that only mentions another document is not consuming it. Removed documents stay in the `removed` ledger with the
++sha256 of what was removed and the file that still holds the same bytes, so nothing leaves the active set without a disposition.
++"""
++from __future__ import annotations
++import fnmatch, hashlib, json, os, re, subprocess, sys
++from pathlib import Path
++
++REPO = Path(__file__).resolve().parent.parent
++REGISTRIES = ("doctrine/doc-consumers.json", "tools/doc-consumers.json", "doc-consumers.json")
++REGISTRY = REGISTRIES[0]
++DOC_EXT = (".md", ".txt", ".rst")
++BINARY = re.compile(r"\.(svg|png|pdf|jpe?g|ico|woff2?|zip|bundle|gif|webp)$", re.I)
++
++
++def registry_path(root=REPO) -> str:
++    """The registry is doctrine/doc-consumers.json here; sibling repos that carry a copy of this file keep it in tools/ or at the root."""
++    for r in REGISTRIES:
++        if (Path(root) / r).is_file():
++            return r
++    raise FileNotFoundError("no doc-consumers.json (looked in " + ", ".join(REGISTRIES) + ")")
++
++
++def load(root=REPO) -> dict:
++    return json.loads((Path(root) / registry_path(root)).read_text(encoding="utf-8"))
++
++
++def tracked(root=REPO) -> list[str]:
++    out = subprocess.run(["git", "-C", str(root), "ls-files"], capture_output=True, text=True)
++    if out.returncode != 0:
++        raise RuntimeError(f"git ls-files failed: {out.stderr.strip()}")
++    return [f for f in out.stdout.splitlines() if (Path(root) / f).is_file()]
++
++
++def is_doc(path: str) -> bool:
++    return path.endswith(DOC_EXT)
++
++
++def _read(root, rel):
++    try:
++        return (Path(root) / rel).read_text(encoding="utf-8")
++    except (UnicodeDecodeError, OSError):
++        return ""
++
++
++def _glob(path: str, pattern: str) -> bool:
++    if pattern.endswith("/**"):
++        return path.startswith(pattern[:-2])
++    if pattern.startswith("**/"):
++        return fnmatch.fnmatch(path, pattern) or fnmatch.fnmatch(path, pattern[3:])
++    return fnmatch.fnmatch(path, pattern)
++
++
++def front_matter(text: str) -> dict:
++    m = re.match(r"---\n(.*?)\n---\n", text, re.S)
++    out = {}
++    if m:
++        for line in m.group(1).splitlines():
++            k, _, v = line.partition(":")
++            if k.strip() and v.strip():
++                out[k.strip()] = v.strip().strip("'\"")
++    return out
++
++
++SPAN = re.compile(r"`([^`\n]+)`")
++CODE_TOKEN = re.compile(r"(?<![\w/.:-])([A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:js|mjs|cjs|py|json|jsonc|sh|yml|yaml|toml|sql|md|html))(?![\w/-])")
++
++
++def verify_page(root, doc) -> tuple[list[str], list[str]]:
++    """(resolved, unresolved) backticked file paths in a document, resolved against the repository root or the document's folder."""
++    ok, missing = [], []
++    for tok in sorted({t for span in SPAN.findall(_read(root, doc)) for t in CODE_TOKEN.findall(span)}):
++        if "*" in tok or tok.startswith(("http", "~", "/")):
++            continue
++        cand = (Path(root) / tok, Path(root) / os.path.dirname(doc) / tok)
++        (ok if any(c.exists() for c in cand) else missing).append(tok)
++    return ok, missing
++
++
++def _imports(root, docs) -> set[str]:
++    seen, todo = set(), [d for d in ("CLAUDE.md", "AGENTS.md", "agents/AGENTS.md") if d in docs]
++    seen.update(todo)
++    while todo:
++        cur = todo.pop()
++        base = (Path(cur).parent)
++        for ref in re.findall(r"(?m)^\s*@(\S+\.md)\s*$", _read(root, cur)):
++            p = os.path.normpath((base / ref).as_posix() if not ref.startswith("/") else ref[1:]).replace(os.sep, "/")
++            if p not in seen and p in docs:
++                seen.add(p)
++                todo.append(p)
++    return seen
++
++
++def _relatives(doc: str, referrer: str):
++    """The spellings a file may use for `doc`: relative to its own folder or to any ancestor folder (a test that does parents[1] / "docs/X.md")."""
++    out, a = [], os.path.dirname(referrer)
++    while a:
++        rel = os.path.relpath(doc, a)
++        if not rel.startswith("..") and rel != doc:
++            out.append(rel)
++        a = os.path.dirname(a)
++    return out
++
++
++def evaluate(root=REPO) -> dict:
++    """Return {doc: (tier, evidence)} for consumed docs, plus 'orphans', 'docs', and problems with registry rows."""
++    root = Path(root)
++    reg = load(root)
++    files = tracked(root)
++    docs = sorted(f for f in files if is_doc(f))
++    ignore = tuple(reg.get("ignore_references_from", []))
++    code = {f: _read(root, f) for f in files if not is_doc(f) and not BINARY.search(f) and not f.startswith(ignore) and f != registry_path(root)}
++    consumed: dict[str, tuple[str, str]] = {}
++    problems: list[str] = []
++    for d in sorted(_imports(root, set(docs))):
++        consumed[d] = ("import", "imported by an agent instruction file")
++    for row in reg["consumers"]:
++        c = row["consumer"]
++        if is_doc(c) or not (root / c).is_file():
++            problems.append(f"registry row {row['id']}: consumer {c} must be an existing non-document file")
++            continue
++        if row["needle"] not in _read(root, c):
++            problems.append(f"registry row {row['id']}: consumer {c} does not contain its needle {row['needle']!r}")
++            continue
++        hit = [d for d in docs if any(_glob(d, g) for g in row["paths"])]
++        if not hit:
++            problems.append(f"registry row {row['id']}: no document matches {row['paths']} (remove the row)")
++        for d in hit:
++            consumed.setdefault(d, ("registry", f"{row['id']} -> {c}"))
++    for d in docs:
++        if d in consumed:
++            continue
++        fm = front_matter(_read(root, d))
++        if fm.get("generated-by"):
++            g = fm["generated-by"].split()[0]
++            if (root / g).is_file() and not is_doc(g):
++                consumed[d] = ("generated", g)
++                continue
++            problems.append(f"{d}: generated-by {g} does not exist")
++        if fm.get("consumer"):
++            c = fm["consumer"].split()[0]
++            parent = str(Path(d).parent)
++            if (root / c).is_file() and not is_doc(c) and (d in _read(root, c) or (parent != "." and parent + "/" in _read(root, c))):
++                consumed[d] = ("declared", c)
++                continue
++            problems.append(f"{d}: front matter consumer {c} must be an existing non-document file that names this file or its directory")
++        for f, t in code.items():
++            if d in t or any(re.search(r"(?<![\w/.-])" + re.escape(rel) + r"(?![\w])", t) for rel in _relatives(d, f)):
++                consumed[d] = ("path", f)
++                break
++    for d in docs:
++        if d not in consumed and any(_glob(d, g) for g in reg.get("verified", {}).get("globs", [])):
++            ok, missing = verify_page(root, d)
++            if missing:
++                problems.append(f"{d}: names files that do not exist ({', '.join(missing[:4])}); fix the page or the code so they agree")
++            elif ok:
++                consumed[d] = ("verified", f"every backticked path exists ({len(ok)})")
++    kn = reg.get("knowledge", {})
++    if kn:
++        ex = _read(root, "foundation/executor.py")
++        if "kb.retrieve" not in ex or not (root / "foundation/kb.py").is_file():
++            problems.append("knowledge tier: foundation/executor.py must call kb.retrieve and foundation/kb.py must exist")
++        else:
++            for d in docs:
++                if d.endswith(".md") and any(_glob(d, g) for g in kn["globs"]):
++                    consumed.setdefault(d, ("knowledge", "foundation/kb.py -> foundation/executor.py"))
++    orphans = [d for d in docs if d not in consumed]
++    return {"docs": docs, "consumed": consumed, "orphans": orphans, "problems": problems, "registry": reg}
++
++
++def _human_hits(text: str, pats) -> list[str]:
++    hits = []
++    for line in text.splitlines():
++        for p in pats:
++            if re.search(p, line, re.I):
++                hits.append(line.strip()[:120])
++                break
++    return hits
++
++
++def humans(root=REPO) -> dict[str, list[str]]:
++    root = Path(root)
++    reg = load(root)
++    pats = reg["human_action_patterns"]
++    exempt = reg.get("human_action_exempt", [])
++    out = {}
++    for d in (f for f in tracked(root) if is_doc(f)):
++        if any(_glob(d, g) for g in exempt):
++            continue
++        h = _human_hits(_read(root, d), pats)
++        if h:
++            out[d] = h
++    return out
++
++
++def removed_check(root, reg) -> list[str]:
++    """Every removed document has a disposition: identical bytes elsewhere (duplicate_of), a live replacement (superseded_by), or
++    evidence that it was a dead end; its sha256 and the commit that still holds it make the removal recoverable; and nothing
++    live may still name it."""
++    bad, root = [], Path(root)
++    removed = reg.get("removed", [])
++    for r in removed:
++        for k in ("path", "sha256", "reason", "date", "recover"):
++            if not r.get(k):
++                bad.append(f"removed ledger {r.get('path', '?')}: lacks {k}")
++        if not (r.get("duplicate_of") or r.get("superseded_by") or r.get("evidence")):
++            bad.append(f"removed ledger {r.get('path', '?')}: needs duplicate_of, superseded_by or evidence")
++        if (root / r.get("path", "-")).exists():
++            bad.append(f"removed ledger: {r['path']} is listed as removed but still exists")
++        if r.get("duplicate_of"):
++            dup = root / r["duplicate_of"]
++            if not dup.is_file() or hashlib.sha256(dup.read_bytes()).hexdigest() != r.get("sha256"):
++                bad.append(f"removed ledger {r['path']}: {r['duplicate_of']} no longer holds the same bytes (sha256 differs); restore or re-record")
++        if r.get("superseded_by") and not (root / r["superseded_by"]).exists():
++            bad.append(f"removed ledger {r['path']}: superseded_by {r['superseded_by']} does not exist")
++    ignore = tuple(reg.get("ignore_references_from", [])) + (registry_path(root),)
++    paths = {r["path"] for r in removed if r.get("path")}
++    for f in tracked(root):
++        if is_doc(f) or BINARY.search(f) or f.startswith(ignore):
++            continue
++        t = _read(root, f)
++        for p in paths:
++            if re.search(r"(?<![\w/.-])" + re.escape(p) + r"(?![\w-])", t):
++                bad.append(f"{f}: still names removed document {p}; point it at the replacement or drop the reference")
++    return bad
++
++
++def converted_check(root, reg) -> list[str]:
++    """A document converted to data keeps a row: the data file exists and a non-document consumer names it."""
++    bad, root = [], Path(root)
++    for c in reg.get("converted", []):
++        for k in ("from", "to", "consumer", "sha256", "recover", "date"):
++            if not c.get(k):
++                bad.append(f"converted ledger {c.get('from', '?')}: lacks {k}")
++        if (root / c.get("from", "-")).exists():
++            bad.append(f"converted ledger: {c['from']} still exists next to its data file")
++        if not (root / c.get("to", "-")).is_file() or is_doc(c.get("to", "")):
++            bad.append(f"converted ledger {c.get('from')}: data file {c.get('to')} must exist and not be a document")
++        elif not (root / c.get("consumer", "-")).is_file() or c["to"] not in _read(root, c["consumer"]):
++            bad.append(f"converted ledger {c['from']}: consumer {c.get('consumer')} must exist and name {c['to']}")
++    return bad
++
++
++def check(root=REPO) -> list[str]:
++    root = Path(root)
++    ev = evaluate(root)
++    reg = ev["registry"]
++    bad = list(ev["problems"])
++    bad += [f"orphan document (nothing consumes it): {d}: wire it, convert it to data, merge it, or remove it with a ledger row" for d in ev["orphans"]]
++    bad += removed_check(root, reg)
++    bad += converted_check(root, reg)
++    tpl = _read(root, "brand/templates/doc-template.md")  # doc-template.md: the template every new document starts from
++    if (root / "brand/templates/doc-template.md").is_file() and not re.search(r"(?m)^consumer:", tpl):
++        bad.append("brand/templates/doc-template.md must carry a `consumer:` front matter line")
++    base = reg.get("human_action_baseline", {})
++    for d, hits in humans(root).items():
++        if len(hits) > base.get(d, 0):
++            bad.append(f"{d}: tells a person to act ({len(hits)} lines, baseline {base.get(d, 0)}): {hits[0]!r}; file an automatic backlog item (owner, trigger, verification) instead of writing an instruction")
++    return bad
++
++
++def report(root=REPO) -> dict:
++    ev = evaluate(root)
++    tiers: dict[str, int] = {}
++    for tier, _ in ev["consumed"].values():
++        tiers[tier] = tiers.get(tier, 0) + 1
++    reg = ev["registry"]
++    return {"docs": len(ev["docs"]), "consumed": len(ev["consumed"]), "orphans": len(ev["orphans"]), "tiers": tiers,
++            "removed": len(reg.get("removed", [])), "converted": len(reg.get("converted", [])),
++            "human_action_docs": len(humans(root))}
++
++
++def main(argv=None) -> int:
++    global REPO
++    argv = list(sys.argv[1:] if argv is None else argv)
++    if "--root" in argv:  # run against another checkout: python3 tools/docs_audit.py --root . --check
++        i = argv.index("--root")
++        REPO = Path(argv[i + 1]).resolve()
++        del argv[i:i + 2]
++    if "--report" in argv:
++        print(json.dumps(report(REPO), indent=1))
++        return 0
++    if "--orphans" in argv:
++        print("\n".join(evaluate(REPO)["orphans"]) or "no orphans")
++        return 0
++    if "--humans" in argv:
++        for d, h in humans(REPO).items():
++            print(d, len(h), h[0])
++        return 0
++    bad = check(REPO)
++    print("\n".join(bad) or "docs-audit ok: " + json.dumps(report(REPO)))
++    return 1 if bad else 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+-- 
+2.43.0
+
