@@ -1,0 +1,11 @@
+{
+  "id": "INTERVIEW-1",
+  "title": "INTERVIEW-1: Interview-first voice front door with pill ask bar",
+  "body": "**Owner:** Product manager\n**Trigger:** see below\n**Status:** done\n\nShipped in site 0.10.0: pill ask bar with mic on / and /start, A/B and yes/no solution-space interview, profile stored with the idea, /engineers lane with Live/Testing/Pinned. Status: done in site/interview.js. Trigger: none. Closing probe: site/site.test.mjs passes; live GET /engineers returns 200.",
+  "labels": [
+    "role:product",
+    "ws:front-door"
+  ],
+  "milestone": "Now",
+  "workstream": "Product"
+}
