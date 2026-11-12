@@ -8,6 +8,7 @@ Write-back target for decisions: what was decided, why, the default in effect an
 - 2026-11-12: [Guiding directive adopted as code; memory is not storage](2026-11-12-guiding-directive-adopted-as-code-memory-is-not-storage.md)
 - 2026-11-12: [PR 200 folded into the executor line](2026-11-12-pr-200-folded-into-the-executor-line.md)
 - 2026-11-12: [No owner cards; one NEEDS-YOU page; key-free executor via Claude sessions](2026-11-12-no-owner-cards-one-needs-you-page-key-free-executor-via-clau.md)
+- 2026-11-12: [DOC-CONSUMED-1: every document must have a consumer](2026-11-12-doc-consumed-1-every-document-must-have-a-consumer.md)
 - 2026-11-12: [One core, many instances](2026-11-12-one-core-many-instances.md)
 - 2026-11-12: [Org repos: four-repo target, registry org/repos.json](2026-11-12-org-repos-four-repo-target-registry-org-repos-json.md)
 - 2026-11-12: [Release tags are the runtime pin; QNFO-lane items live in dependencies.json](2026-11-12-release-tags-are-the-runtime-pin-qnfo-lane-items-live-in-dep.md)

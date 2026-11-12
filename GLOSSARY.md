@@ -48,6 +48,7 @@ Generated from `doctrine/glossary.json` by `python3 -m foundation glossary --app
 | [Proactive programs](#proactive-programs) | Bug fixes are the floor. | 1.0.0 |
 | [Guiding directive](#guiding-directive) | Rowan's directive of 2026-11-12 that governs all work: autonomy-first, self-directed and self-improving; no permission requests; the only pause is an action both irreversible and identity-bound after a reversible path was engineered; blockers are never owner issues; no loose ends or silent drops. | 1.0.0 |
 | [Memory is not storage](#memory-is-not-storage) | Project memory, tool memory and chat are not storage (Rowan, 2026-11-12). | 1.0.0 |
+| [Document consumed](#doc-consumed) | A document exists only if code, a check, an agent's loaded instructions or a loop consumes it. | 1.0.0 |
 
 ## <a id="autonomy"></a>Autonomy
 
@@ -785,3 +786,21 @@ Project memory, tool memory and chat are not storage (Rowan, 2026-11-12). Every 
 **Lineage:**
 
 - 1.0.0 (2026-11-12): Memory stores are not acceptable long-term storage; facts moved into the repo with a check and a memory-free bootstrap. (`docs/PROJECT-MEMORY.md`)
+
+## <a id="doc-consumed"></a>Document consumed
+
+A document exists only if code, a check, an agent's loaded instructions or a loop consumes it. Nobody reads documents here, so a document with no consumer is a CI failure and one that tells a person to act is a defect that becomes an automatic backlog item.
+
+**Not:** Not 'documents are bad': reference text is allowed and is read by agents (the executor retrieves it per issue). Not a rule about what to write, but about who reads it.
+
+**Also called:** DOC-CONSUMED-1, orphan document
+
+**Tested by:** `grep:tests/foundation/test_docs_audit.py::def test_orphan_fails`
+
+**Implemented by:** `foundation/docs_audit.py`, `foundation/kb.py`, `doctrine/doc-consumers.json`
+
+**Related:** [memory-is-not-storage](#memory-is-not-storage), [autonomy](#autonomy)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-12): Owner: documents are not the point; this is a code-driven system and he does not read docs. Every document must be consumed by something. (`doctrine/doc-consumers.json`)

@@ -1,0 +1,1100 @@
+From b4eb0ab0fa19e9c9896370ba8c768d20b149e9fc Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 12 Nov 2026 09:57:57 +0000
+Subject: [PATCH] DOC-CONSUMED-1: every document has a consumer (docs_audit,
+ registry); stale snapshot documents removed with a sha256 ledger
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0156nqDtDer7yrN7xaKoWgV1
+---
+ README.md                                     |  17 -
+ bootstrapping/aios-lessons.md                 |  33 --
+ bootstrapping/bootstrap-lessons-2026-11-10.md |  22 --
+ bootstrapping/bootstrapping.md                |  58 ----
+ bootstrapping/lessons-business-plan-thread.md |  26 --
+ concepts/feedback-loops.md                    |  13 -
+ concepts/governance.md                        |   6 -
+ concepts/overview.md                          |  11 -
+ concepts/plussing.md                          |  11 -
+ concepts/virtual-staff.md                     |  16 -
+ funding/funding-options.md                    | 150 ---------
+ issues/README.md                              |   3 -
+ projects.md                                   |  11 -
+ roadmap.md                                    | 133 --------
+ tools/doc-consumers.json                      | 133 ++++++++
+ tools/docs_audit.py                           | 315 ++++++++++++++++++
+ 16 files changed, 448 insertions(+), 510 deletions(-)
+ delete mode 100644 README.md
+ delete mode 100644 bootstrapping/aios-lessons.md
+ delete mode 100644 bootstrapping/bootstrap-lessons-2026-11-10.md
+ delete mode 100644 bootstrapping/bootstrapping.md
+ delete mode 100644 bootstrapping/lessons-business-plan-thread.md
+ delete mode 100644 concepts/feedback-loops.md
+ delete mode 100644 concepts/governance.md
+ delete mode 100644 concepts/overview.md
+ delete mode 100644 concepts/plussing.md
+ delete mode 100644 concepts/virtual-staff.md
+ delete mode 100644 funding/funding-options.md
+ delete mode 100644 issues/README.md
+ delete mode 100644 projects.md
+ delete mode 100644 roadmap.md
+ create mode 100644 tools/doc-consumers.json
+ create mode 100644 tools/docs_audit.py
+
+diff --git a/README.md b/README.md
+deleted file mode 100644
+index 94b4bc5..0000000
+--- a/README.md
++++ /dev/null
+@@ -1,17 +0,0 @@
+-# ultrastable/docs
+-
+-How Ultrastable works. These pages are the source of truth for the concept; the site and the patent disclosure draw from them.
+-
+-- [Overview](concepts/overview.md)
+-- [Virtual staff](concepts/virtual-staff.md)
+-- [Feedback loops and trust](concepts/feedback-loops.md)
+-- [Plussing](concepts/plussing.md)
+-- [Governance: what people decide](concepts/governance.md)
+-
+-Launch plan: [Roadmap](roadmap.md), Ultrastable run as its own first managed project.
+-
+-Funding: [Funding options](funding/funding-options.md), covering credits, grants, investors and the GCP vs Cloudflare stance.
+-
+-Business plan and pitch kit: Business-in-a-box in the owner-only `business` repo (`business/plan/README.md`), written by the virtual managers: roster, customers, competition, pitch, funding, promotion, events.
+-
+-Bootstrapping: [AIOS lessons](bootstrapping/aios-lessons.md) and [idea-to-organization boot sequence](bootstrapping/bootstrapping.md). Code: the `seed` repo.
+diff --git a/bootstrapping/aios-lessons.md b/bootstrapping/aios-lessons.md
+deleted file mode 100644
+index cf27a9a..0000000
+--- a/bootstrapping/aios-lessons.md
++++ /dev/null
+@@ -1,33 +0,0 @@
+-# What AIOS taught the seed
+-
+-AIOS (`rwnq8/AIOS`, 30 commits from 2026-08-11 to 2026-11-09) is Rowan's design experiment in a system that bootstraps itself from nothing: a USB stick that boots Alpine Linux, picks a local model for the hardware, creates its own persistent storage and starts a multi-agent orchestrator with no human input. It never reached "builds an OS", but its first three days of boot testing produced the rules that govern any self-starting system. Ultrastable's seed is the same idea for an organization: the seed is the USB stick, the idea is the hardware, and the server is the machine it boots on.
+-
+-## The mapping
+-
+-| AIOS boot stage | Seed stage | What is detected or chosen |
+-|---|---|---|
+-| GRUB, kernel, initramfs | read | IDEA.md, `ultrastable.json`, `autonomy/policy.json` |
+-| `first_boot.sh` hardware detect (RAM, cores, disk) | detect | Which connector credentials exist, which tools are installed |
+-| Model chosen by RAM (4 GB gets Gemma 1B, 8 GB adds a reviewer) | select | Model tier chosen by monthly budget; the reviewer is a different model from the doer when the budget allows two |
+-| Partition and format persistence | plan, write | Charter, role instances, backlog, gate cards, D1 seed SQL |
+-| Extract bootstrap tarball, switch_root | provision | D1 created, migrations applied, rows seeded, Worker deployed |
+-| Launch `orchestrator.py`, `[AIOS] >` prompt | start | Cron heartbeat armed; first ticks observed on `/health` |
+-| Gatekeeper: safe, dangerous, destructive | autonomy policy | Surfaces, action classes, reversible vs identity-bound, ladder |
+-| Ensemble: primary, reviewer, validator | reviewer role | No work is verified by its own author |
+-
+-## Lessons, each with the commit that taught it and where it lives now
+-
+-1. **The boot must never die.** PID 1 exiting panics the kernel. Six boot-test iterations (commits `4e75671`, `09bc327`, `a29deb6`) ended in the same rule: every failure path drops to a shell instead of exiting, a missing model is a degraded console and not a fatal error. In the seed: every stage runs inside `Boot.guard`; a blocked stage becomes a backlog item with its blocker and a closing probe, and the next stage runs degraded. The Worker tick does the same per step (`worker/src/tick.js`). Tests: `test_missing_idea_degrades_not_dies`, `a failing step never kills the tick`.
+-2. **Test the whole chain end to end early; the failures are never where you expect.** QEMU boot tests found nine defects that reading the code did not: squashfs cannot be an initrd, the shebang needs busybox at one path, the serial console order, a read-only root, missing storage modules. The seed's `bootstrap.py --dry-run` runs the full chain with no credentials in CI on every push, and the first backlog items (KIT-2, KIT-3) are a real deploy and six observed ticks, not a statement that it works.
+-3. **Never swallow an error.** `2>/dev/null` hid the real `apk --root` failure (commit `8cfba48`). The seed checks every command's exit code and keeps the stderr tail (`Boot.run`); the shared agent protocol bans silent catches.
+-4. **Verify before you depend on it.** A phantom package (`alpine-mkinitfs`, commit `614acf3`), hyphen vs dot in a model filename that 404'd (`8fc44bc`), the renamed `llama-cli` target (BUILD.md Phase 1). The seed checks that tools and inputs exist before a stage uses them and records the checks in `boot-log.json`; the invention is to treat each check as a logged fact with a date, as BUILD.md did with SHA256 sums.
+-5. **Choose capability from the environment, not from a config the user must write.** AIOS picked its model from detected RAM. The seed picks its model tier from the stated budget and its autonomy start rungs from the policy, so the founder writes one file.
+-6. **Every commit carries its rationale.** AIOS commits read `ACTION:EDIT FILE: x RATIONALE: what broke and what the test proved`. That is why the boot-failure history above could be reconstructed months later. The seed's protocol requires the same: the PR or commit says what was verified and the evidence.
+-7. **Safety is a classification, not a prompt.** The gatekeeper sorted commands into safe (run), dangerous (show and wait) and destructive (block), and listed protected paths. The seed generalizes it: each action on each surface is marked reversible or not and identity-bound or not, the interrupt gate stops only the irreversible and identity-bound ones, and the harness deny list mirrors the gated shell commands (`tests/test_policy.py` checks the two agree).
+-8. **Local first, then widen.** AIOS started at three small models and a 4 GB laptop, with a reviewer added only when RAM allowed. The seed starts every surface at a low rung and widens only through computed trust and a reviewed PR; money, legal, outreach and secrets are capped below execute.
+-9. **The unfinished part is a lesson too.** AIOS stalled at Phase 1: `llama-cli` compiled but the in-guest model response was never confirmed. The fix in the seed is that nothing is "done" without a closing probe; a done check that was never observed is a loop that stays open.
+-10. **Agent instructions are part of the artifact.** From 2026-11-07 AIOS carries `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, a handoff template and a skill, synced from a hub. The seed ships the same set from day one: any agent that opens the repo cold finds the protocol, its role file and its limits, and no agent depends on chat history.
+-
+-## What this means for the invention
+-
+-The bootstrapping claim is not "an AI sets up a computer". It is the combination: a single human-written idea file; a deterministic bootstrapper that plans, writes and provisions an organization (roles, backlog, autonomy policy, schema, scheduler); an autonomy policy that classifies every action by reversibility and identity-binding and fixes a permission ceiling per surface; a boot that cannot die and records each failure as work; a heartbeat that starts on the server and takes over; and a trust ladder that widens scope only by reviewed change. See `docs/bootstrapping.md` and the patent thread's embodiment note.
+diff --git a/bootstrapping/bootstrap-lessons-2026-11-10.md b/bootstrapping/bootstrap-lessons-2026-11-10.md
+deleted file mode 100644
+index 7517ab2..0000000
+--- a/bootstrapping/bootstrap-lessons-2026-11-10.md
++++ /dev/null
+@@ -1,22 +0,0 @@
+-# Bootstrap procedure and failures, 2026-11-10
+-
+-Purpose: improve future initialization of an Ultrastable project (idea to private repos to local copy).
+-
+-## What worked
+-1. Draft each repo as files in the project Library (ultrastable-repos/), one folder per planned repo, with an index README.
+-2. Commit each repo as a git bundle (ultrastable-git/) plus push-all.sh, so a push is one command once repos exist.
+-3. Copy to the local folder with device_commit_files, one file per entry, 40-45 per call, then verify with a recursive device_list_dir.
+-4. Keep every deliverable as a file, never only in a thread.
+-
+-## Failures and fixes
+-- Cloud sessions cannot create GitHub repos. Rowan (or an owner) must create the org repos and install the Claude GitHub App before any push. Ask for this at the start, not at the end.
+-- add_repo on ultrastable/site returned "not found or no access" at 08:22; repos appeared later (all private by 09:30). Re-check list_repos instead of assuming.
+-- Computer sessions on QNFO-WIN failed to start three times. Prefer folder access; do not depend on a device shell.
+-- Remote device tools refuse to write .github and .claude paths (7 files). Workaround: the git bundles carry them; push from a machine with a shell. Next time plan the bundle path first.
+-- Another thread was writing a duplicate ultrastable/ folder and a zip at the same time. Assign one owner per Library path before starting.
+-- The Library is a network mount: file counts changed mid-run. Take the file list once, then copy from that list.
+-
+-## Improvements for next init
+-- Step 0: confirm org, repos, GitHub App and device folder access exist; list what is missing in one message.
+-- Make the seed's bootstrap.py check these preconditions and print a plain pass/fail table.
+-- Never make a site public or deploy it before the provisional patent is filed. Deploy means: private repos pushed, nothing on a public domain.
+diff --git a/bootstrapping/bootstrapping.md b/bootstrapping/bootstrapping.md
+deleted file mode 100644
+index 824188f..0000000
+--- a/bootstrapping/bootstrapping.md
++++ /dev/null
+@@ -1,58 +0,0 @@
+-# Bootstrapping: idea in, organization out
+-
+-Goal: a person has an idea. Everything else starts from it, server-side, without that person operating anything.
+-
+-## The chain
+-
+-```
+-IDEA.md ─► read ─► detect ─► select ─► plan ─► write ─► provision ─► start ─► tick, tick, tick
+- (human)   (seed)  creds,    model     roles,   org/     D1, Worker   cron     (server, forever)
+-                   tools     tier      backlog, files    deploy       armed
+-                                       gates
+-```
+-
+-After `start`, the Worker's cron fires `runTick` every 10 minutes. Managers and staff are role rows in D1 with a model and a tick interval; each tick claims and dispatches items. Nothing needs a laptop.
+-
+-## Stages
+-
+-| Stage | Input | Output | If it fails |
+-|---|---|---|---|
+-| read | `IDEA.md`, `ultrastable.json`, `autonomy/policy.json` | parsed idea; policy validated (`validate_policy`) | missing IDEA.md: degrade to an empty charter and open a gate card; invalid policy: block |
+-| detect | environment | which connector secrets are set (never their values), which tools exist | each missing secret becomes a gate card with an `env:NAME` closing probe |
+-| select | budget in IDEA.md | model for doer, reviewer, manager | budget 0 uses the smallest tier |
+-| plan | the above | role instances (one project manager and product manager per outcome), kit backlog `KIT-0..6`, outcome items `OUT-n`, predictions | |
+-| write | plan | `org/` files, `worker/wrangler.jsonc`, `worker/src/config.js`, `org/seed.sql` | |
+-| provision | `--apply`, Cloudflare credentials | D1 created or found, migrations applied, seed SQL executed, Worker deployed | blocked: a backlog item `BOOT-PROVISION` with the exact error |
+-| start | | Worker cron armed | KIT-3 closes only when six complete ticks are seen in an hour |
+-
+-The same command is safe to run repeatedly: seed rows use `INSERT OR IGNORE`, D1 creation looks for an existing database first.
+-
+-## The tick (what the server does forever)
+-
+-`reconcile` (disposition for every closed item, triggers become ready), `reap_claims`, `probe_gates` (owner-step cards close themselves when their probe passes), `score_predictions`, `accrue_trust`, `dispatch`, `check_plus_share`. A failing step is recorded and filed as work; the other steps still run. Each tick writes a four-line report to `tick_runs` and `/health`.
+-
+-## Autonomy
+-
+-Everything an agent may do is in `autonomy/policy.json`:
+-
+-- **Surfaces** (repo, runtime, work tracker, internal chat, outreach, DNS, money, legal, secrets), each with a `max_permission` ceiling (`none`, `propose`, `execute`) and a `start_rung`.
+-- **Actions** per surface, each marked `reversible` and `identity_bound`. Irreversible but not identity-bound actions need a `reversible_path` (for example export to R2 before a destructive migration) or are denied.
+-- **The interrupt gate**: stop only for irreversible and identity-bound actions. Everything else runs and is verified.
+-- **Trust ladder**: observed, assisted, delegated, autonomous, self-directed, self-modifying, self-extending. Reliability per (surface, action class) = (verified + 0.5 x 2) / (outcomes + 2). With at least 10 outcomes, reliability 0.8 or more and no severe failure, `accrue_trust` opens a promotion item. Any hidden failure or silent drop demotes. A rung moves only when a different agent merges the PR changing the policy; the ledger never edits the policy itself. The rung can never exceed the surface ceiling, so money, legal, outreach and secrets stay below `execute` however trusted the fleet becomes.
+-- **Standing limits** that outrank trust: harness permission checks, safety refusals, the secret lock, outreach consent and opt-outs, the owner's override, other agents' live claims.
+-
+-"Maximum permissions" means: allow everything a surface permits at its ceiling and deny only what the gate holds. `.claude/settings.json` does this for Claude Code (broad allow, deny list for force-push, repo deletion, `wrangler` deletes and secret writes). A server runner in an isolated container may run with permission prompts off; the deny list and the policy still apply, and `tests/test_policy.py` fails if a gated shell action lacks its deny rule.
+-
+-## Agent instructions
+-
+-`agents/AGENTS.md` is the single protocol; `CLAUDE.md` and `.github/copilot-instructions.md` point to it, so every agent family reads the same rules. `agents/roles/*.md` are the six role files. A role file changes only by reviewed PR, proposed by the operations role when a failure pattern repeats three times in seven days.
+-
+-## Extending
+-
+-Add a role: a file in `agents/roles/`, an entry in `ultrastable.json`, a PR. Add a surface: an entry in `autonomy/policy.json` with ceilings and actions, a PR. Other runtimes (GCP Cloud Run + Scheduler + Firestore, AWS, self-hosted) reimplement `provision` and `start`; the tick logic, schema and policy are runtime-neutral.
+-
+-## Not done yet (tracked in the roadmap)
+-
+-- Model calls: the tick dispatches items to roles; the executor that calls a model with the role file and the item (and reports back through outcomes) is the next increment (PL-7).
+-- Repo creation and protection (KIT-1) needs a GitHub token; the seed lists it as a gate card until provided.
+-- First real `--apply` against a Cloudflare account has not been run; only the dry run, the tick logic and the policy are tested.
+diff --git a/bootstrapping/lessons-business-plan-thread.md b/bootstrapping/lessons-business-plan-thread.md
+deleted file mode 100644
+index db97f43..0000000
+--- a/bootstrapping/lessons-business-plan-thread.md
++++ /dev/null
+@@ -1,26 +0,0 @@
+-# Bootstrapping lessons: the business-plan thread (2026-11-10)
+-
+-What happened when a thread had to produce the business plan and get it onto GitHub, and what the seed should do differently.
+-
+-## Procedure that worked
+-1. Read the roadmap, IP checklist and concept docs first, so the plan matched what already existed.
+-2. Research competitors and events with dated sources before writing; mark estimates "est." and unsourced numbers "planning guess".
+-3. Write one markdown file per manager persona, with an index README carrying the disclosure tags (SAFE NOW / AFTER FILING / NDA ONLY) and [LAWYER] / [ACCOUNTANT] flags.
+-4. Link it from the roadmap (BIZ-2) and the repo README; commit to a git bundle so the history is ready to push.
+-5. Once the repo was attached, compare the Library files byte for byte against GitHub before pushing. They were identical (another thread had already pushed), so no duplicate push.
+-6. Run an independent review pass on claims. It caught one unsourced market-size number.
+-
+-## Failures and fixes
+-| Failure | Cause | Fix for future initialization |
+-|---|---|---|
+-| Output first went to a Claude Doc and the Library only | Started before Rowan's rule "if it's not in code, it doesn't exist" was in the project instructions | Seed the rule in project instructions on day 0; the first artifact is always a file in a repo |
+-| `add_repo` said "not found" for ultrastable repos | Repos did not exist yet; cloud sessions cannot create repos | Bootstrap checklist step 0: owner creates the empty private repos and installs the Claude GitHub App; the session checks `add_repo` before drafting content that depends on it |
+-| `add_repo` first call failed with an empty owner | Passed `owner/repo` as one string | Pass `owner` and `repo` separately |
+-| Device shell would not start | Rowan's computer had too little free disk space (the workspace needs up to 17 GB) | Preflight: check free disk before relying on the device; do not make the device the only route |
+-| Remote Control session failed to start | Claude Code could not start in the chosen folder on the device | Treat Remote Control as best effort; have a second route (owner runs a one-line `gh repo create` loop, or a cloud-side token with repo-create scope) |
+-| Git in the scratch directory refused to run ("dubious ownership") and `rsync` was missing | Fresh container | Use `git -c safe.directory='*'` and `cp -a` in bootstrap scripts |
+-| Waited for the owner on a blocked step | Asked instead of probing every route | Rule from Rowan: try every route, then proceed; do not wait on an answer |
+-| A market-size number went into the pitch unsourced | Written from memory | Every number in a pitch file needs a source link or a "planning guess" label before commit |
+-
+-## Deploy status
+-Nothing in the business plan is deployed, by design. The site stays unpublished until the provisional is filed (roadmap WEB-2, gate FILED). The plan is documentation in the private `business` repo.
+diff --git a/concepts/feedback-loops.md b/concepts/feedback-loops.md
+deleted file mode 100644
+index 65eb846..0000000
+--- a/concepts/feedback-loops.md
++++ /dev/null
+@@ -1,13 +0,0 @@
+-# Feedback loops and trust
+-
+-## The tick
+-Work runs on a heartbeat. Each tick: reconcile state, pull the highest-priority item, dispatch or execute, verify independently, compare the outcome with the prediction logged beforehand, record provenance, update trust, report.
+-
+-## Predictions
+-Before a decision runs, the agent records a checkable prediction (for example "error rate below 1% within 24 h"). A scorer checks it later. Calibration per agent is a first-class metric.
+-
+-## Trust ledger
+-Trust is computed per (surface, action class) from recorded outcomes, starting from a neutral prior. It rises with verified autonomous results and falls with silent drops, hidden failures and unnecessary hand-backs. Rising trust widens an agent's scope along a ladder (observed, assisted, delegated, autonomous, self-directed), always through reviewed changes, and never past the human approval gate.
+-
+-## Self-correction
+-Repeated failure patterns and friction from people are collected, turned into proposed rule changes, tested against past ticks and adopted by review. The operating doctrine is versioned like code.
+diff --git a/concepts/governance.md b/concepts/governance.md
+deleted file mode 100644
+index 2b576d8..0000000
+--- a/concepts/governance.md
++++ /dev/null
+@@ -1,6 +0,0 @@
+-# Governance: what people decide
+-
+-- **Direction.** People set objectives; managers infer priorities from them and from people's revealed choices.
+-- **The approval gate.** An agent stops only for steps that are both irreversible and identity-bound (spending money, signing, destroying data with no backup, outside communications). It first tries to make the step reversible.
+-- **Override.** A person's override always wins and is recorded.
+-- **Audit.** Every decision, prediction, outcome and trust change is logged and reviewable.
+diff --git a/concepts/overview.md b/concepts/overview.md
+deleted file mode 100644
+index 07d75f6..0000000
+--- a/concepts/overview.md
++++ /dev/null
+@@ -1,11 +0,0 @@
+-# Overview
+-
+-Ultrastable is an autonomous development platform that runs an organization's portfolio of work with virtual managers and virtual staff. It generalizes the QNFO fleet, which already runs this way on Cloudflare.
+-
+-Three ideas carry it:
+-
+-1. **Virtual staff in an org structure.** A portfolio manager, project managers, product managers and staff agents, each owning one level of the work, the way a real organization is staffed.
+-2. **Closed feedback loops.** Every action is predicted, executed, verified and compared to its prediction. Outcomes feed a trust ledger that decides how much autonomy each agent and action class gets next.
+-3. **Plussing.** Improvement is planned work, not a leftover. Every finished item proposes the next way to make it better, and capacity is reserved so the system does not collapse into bug fixing.
+-
+-People set direction and approve the steps that can't be undone. Everything else the virtual staff carries end to end.
+diff --git a/concepts/plussing.md b/concepts/plussing.md
+deleted file mode 100644
+index 6c47e43..0000000
+--- a/concepts/plussing.md
++++ /dev/null
+@@ -1,11 +0,0 @@
+-# Plussing
+-
+-"Plussing" is the practice of building on work rather than only critiquing it: every review must add something.
+-
+-Automated teams tend to devolve into a queue of fixes. Ultrastable counters that structurally:
+-
+-1. **Every closed item proposes a plus**: one concrete next step that would make the result better, filed with its expected value.
+-2. **Product managers rank pluses against the roadmap**, so improvement competes for capacity as planned work.
+-3. **Reserved capacity**: a configurable share of each cycle goes to accepted pluses, not fixes.
+-4. **Drift detection**: the share of fix-only cycles is measured. When fixes crowd out progress for too long, the portfolio manager rebalances and the cause is filed as its own item.
+-5. **Reviews are additive**: a reviewer's output includes at least one plus, not only defects.
+diff --git a/concepts/virtual-staff.md b/concepts/virtual-staff.md
+deleted file mode 100644
+index a330c82..0000000
+--- a/concepts/virtual-staff.md
++++ /dev/null
+@@ -1,16 +0,0 @@
+-# Virtual staff
+-
+-| Role | Owns | Inputs | Outputs |
+-|---|---|---|---|
+-| Portfolio manager | Allocation across projects | Objectives, trust ledger, outcome metrics | Priorities, capacity per project, start/stop decisions |
+-| Project manager | Delivery of one project | Backlog, dependencies, claims, blockers | Dispatched tasks, unblocked work, status reports |
+-| Product manager | Roadmap and user value | Feedback, usage, pluses | Ranked roadmap, accepted pluses, acceptance criteria |
+-| Staff agents | Execution | Assigned task with a stop condition | Verified change, evidence, a proposed plus |
+-| Reviewer / QA | Independent verification | A claimed result | Pass/fail with evidence; never the same agent that did the work |
+-| Operations | Running systems | Health signals, incidents | Remediation, failure-mode records |
+-
+-Rules that make the structure work:
+-
+-- Every item has an owner, a trigger and a closing check. Nothing leaves the active set without a recorded disposition.
+-- Managers dispatch; they don't hand work back to people. A step only a person can take (money, legal, credentials) becomes an explicit approval card.
+-- Roles are configuration, so any organization can map its own structure onto them.
+diff --git a/funding/funding-options.md b/funding/funding-options.md
+deleted file mode 100644
+index 5c3e15c..0000000
+--- a/funding/funding-options.md
++++ /dev/null
+@@ -1,150 +0,0 @@
+-# Ultrastable funding options
+-
+-As of 2026-11-10. Living copy: [Claude Doc](https://claude.ai/artifact/NawSpUE1JqP1Ti7EB9NDWZ); this file is the source of record.
+-
+-## Bottom line
+-
+-Unfunded, Ultrastable can collect about $18,000 in published credits now, growing to roughly $160,000 with Microsoft usage. The big pools (Google $350,000, Cloudflare $100,000 to $350,000, AWS $200,000) need a first institutional round. Every program also needs a live public website, so filing the provisional comes first.
+-
+-1. File the US provisional patent.
+-2. Publish the site with outcome-only wording and a business email on the domain; set up Search Console.
+-3. Apply the same week to Cloudflare Tier 3 ($10,000), Google Start ($2,000), AWS Founders ($1,000), Microsoft for Startups ($5,000 at verification), Anthropic and NVIDIA Inception.
+-4. Send an NSF SBIR Project Pitch.
+-5. Raise a pre-seed round or join a funded accelerator, then reapply for Google Scale AI, Cloudflare Tier 2 and AWS Portfolio.
+-
+-On platform: build a portable core with Cloudflare and Google adapters and pitch both clouds (see the comparison section).
+-
+-## Patent disclosure rule
+-
+-File the US provisional before any application, pitch or demo that describes how the system works to people outside a confidentiality duty. The US gives a one-year grace period after your own disclosure, but Europe, China, Japan and most other countries require absolute novelty, so a public description before filing loses those rights for good.
+-
+-| Activity | Risk before filing | Why |
+-| --- | --- | --- |
+-| Credit applications (Google, Cloudflare, AWS, Microsoft) | Low | Forms ask for company basics and a short product line. Describe the outcome, not the mechanism. |
+-| SBIR/STTR and other federal proposals | Low to medium | Proposals are confidential and can be marked proprietary, but awarded abstracts are published. File before submitting. |
+-| Private investor meetings | Medium | Most VCs will not sign an NDA. Keep the deck to problem, outcome and traction; hold the architecture back. |
+-| Accelerator cohorts and demo days | High | Demo days, cohort announcements and mentor sessions are effectively public. |
+-| Pitch competitions, public decks, blog posts, the public site | High | Public disclosures on the day they go out. |
+-
+-Safe one-line description for any form before filing: "Ultrastable runs software teams of AI agents that plan, build and verify their own work." It names the result without the claimed method (virtual managers, the plus loop, predict-and-verify, trust gating).
+-
+-## Google
+-
+-The Google money is the [Google for Startups Cloud Program](https://cloud.google.com/startup): up to $350,000 in Google Cloud credits over two years for AI-first startups, but only once Ultrastable has institutional funding. Without a raise, the Start tier gives $2,000.
+-
+-| Program | What you get | Eligibility | How to apply |
+-| --- | --- | --- | --- |
+-| [Cloud Program: Start](https://cloud.google.com/startup) | $2,000 in credits, AI Studio access | Founded in the last 2 years, working MVP, clear business model, plans to raise | Online form with an 18-character billing account ID, a business email on the company domain, and a live website. Decision in 5 to 7 days. |
+-| [Cloud Program: Scale AI](https://cloud.google.com/startup/ai) | Up to $350,000 over 2 years (year 1: 100% up to $250,000; year 2: 20% up to $100,000 more); covers Gemini and Gemma; 12 months of Workspace Business Plus | Pre-seed or seed in the last 5 years, or Series A in the last 12 months, from a known investor (SAFEs count; angels, grants and friends-and-family do not). Founded in the last 5 years, Gemini central to the product, no more than $5,000 of prior Google credits | [Apply for the AI program](https://cloud.google.com/startup/apply?pt=AI#application-form). Funded stealth startups need an investor or accelerator referral. |
+-| Cloud Program: Scale (non-AI) | Up to $200,000 over 2 years | Same funding test as Scale AI | Same form |
+-| [Google for Startups Accelerator](https://startupim.com/investor/google-for-startups-accelerator-ai-first) | Equity-free cohort of about 3 months: mentoring, technical residency, credits | Usually seed to Series A, by region and theme; 2026 cohorts ran in India, MENA and Africa | Regional calls for applications. Cohort membership is announced publicly. |
+-
+-Traps to clear before applying:
+-
+-- The website must describe the company, founders and product; Google rejects placeholder or heavily AI-generated sites.
+-- The Google Cloud account and billing ID must be owned by a user on the company domain.
+-- For the AI program, the domain must not have had a paid Google Workspace plan in the 31 days before applying. Do not buy Workspace for the ultrastable domain first.
+-
+-"Google grant" most likely means one of two things. Google Ad Grants is $10,000 a month of search ads for nonprofits only, so it does not apply. The Google for Startups Founders Funds give non-dilutive cash, but only to specific founder groups in periodic rounds (from memory, not verified 2026-11-10).
+-
+-## Cloudflare
+-
+-Ultrastable qualifies for Cloudflare's $10,000 bootstrapped tier once the site is live; the $100,000 and $350,000 tiers need funding from a Cloudflare-affiliated investor.
+-
+-| Program | What you get | Eligibility | How to apply |
+-| --- | --- | --- | --- |
+-| [Cloudflare for Startups, Tier 3](https://cloudflare.com/startups/) | $10,000 in credits for 1 year | Bootstrapped or under $1M raised | [Apply here](https://cloudflare.com/lp/startups). Review takes up to 48 hours; email startups@cloudflare.com after a week. |
+-| Tier 2 | $100,000 for 1 year, possible account manager, technical sessions | Under $5M raised from an affiliated partner | Same form |
+-| Tier 1 | $350,000 for 1 year, account manager, priority support, Solutions Architect office hours | $5M or more from an affiliated partner | Same form |
+-| [Workers Launchpad](https://www.cloudflare.com/startups/workers-launchpad) | Access to more than $2B committed by partner VCs, cohort with demo day | Startups building on the Developer Platform | No open call listed. Cohort #6 was announced 22 September 2025, so the next window likely opens around Birthday Week. |
+-
+-All tiers require: founded in the last 10 years, funded up to Series B within 12 months (bootstrapped counts for Tier 3), a live public website, an active LinkedIn, X or GitHub presence, a business email on the company domain, and no earlier Cloudflare credits. Credits do not cover Workers AI for new startups, AI Gateway is temporarily excluded, and R2 is capped at $10,000. Launchpad demo days are public, so join only after filing.
+-
+-Cloudflare also plans 2026 startup hubs in San Francisco, Austin, London and Lisbon, open to Launchpad and Startup Program members ([announcement](https://blog.cloudflare.com/tag/workers-launchpad/)).
+-
+-## GCP vs Cloudflare: a portable core, pitched to both
+-
+-Build a platform-agnostic core with thin cloud adapters, run Cloudflare as the first production target, and pitch both. The core (managers, staff roles, the plus loop, predict-and-verify, the trust ledger) knows nothing about any cloud; each adapter maps it onto one provider. The credits stack and cover different layers: Cloudflare credits exclude Workers AI, and Google credits cover Gemini.
+-
+-| Layer | Cloudflare pitch | Google pitch |
+-| --- | --- | --- |
+-| Where it runs | Virtual managers and staff as Workers, Durable Objects and the Agents SDK: one stateful agent per role, ticking at the edge | Gemini on Vertex AI as the reasoning engine for every role |
+-| Their strategic interest | A flagship multi-agent system built natively on their agent stack | A product where Gemini is the foundation, which is the Scale AI test |
+-| What credits pay for | Workers, Durable Objects, D1, KV, R2 (up to $10,000) | Gemini and Gemma calls, BigQuery for the outcome ledger, Cloud Run if needed |
+-| Story line | "Autonomous teams that run on Cloudflare's agent platform" | "Gemini-powered virtual staff for any organization" |
+-
+-The adapters need four seams:
+-
+-| Seam | Cloudflare adapter | Google adapter |
+-| --- | --- | --- |
+-| Agent runtime | Durable Objects, Agents SDK | Cloud Run |
+-| State store | D1, KV, R2 | Firestore, BigQuery, Cloud Storage |
+-| Schedule | Cron Triggers, DO alarms | Cloud Scheduler |
+-| Model provider | Workers AI or external (Gemini, Claude) | Gemini on Vertex AI |
+-
+-This framing helps both pitches. Each cloud hears "we chose you as a launch platform" with a working adapter to show, and investors hear "no lock-in, sells to any organization's cloud", which matches the any-organization claim in the patent figures. It also gives a sales path: an enterprise adapter (AWS or Azure) becomes a contract deliverable, not a rewrite.
+-
+-Picking only one cloud loses half the credits and the agnostic story; a full move to GCP throws away a working Workers stack while the Scale AI money still needs a funded round. Build the Google adapter as the second target once Scale AI credits land. Use the outcome wording from the patent section in both pitches until the provisional is filed.
+-
+-## Other cloud and AI credits
+-
+-Microsoft is the largest credit pool open without a raise: up to $150,000 of Azure credits unlocked by usage milestones. The rest pay little until a funded round.
+-
+-| Program | Without a raise | With institutional funding | Notes |
+-| --- | --- | --- | --- |
+-| [Microsoft for Startups](https://fin.ai/learn/startup-credit-programs) | $200 at signup, $5,000 at business verification, then $25,000, $50,000 and $150,000 at 5, 7 and 10+ workloads | Investor Network code, usually starting at $100,000 | Pre-seed to Series C B2B software; includes Azure OpenAI and GitHub Enterprise; credits last up to 2 years |
+-| [AWS Activate](https://aws.amazon.com/aws-startups/learn/applying-for-aws-activate-credits-a-step-by-step-guide) | Founders: $1,000, up to $5,000 over time | Portfolio: up to $200,000 with an Activate Provider Org ID; more for AI startups via an account manager | Founded in the last 10 years, live website; decision in 7 to 10 business days |
+-| [Anthropic Startup Program](https://fin.ai/learn/startup-credit-programs) | Open to apply; amount not published | Credits in practice tied to institutional funding | Founded in the last 4 years; first-party Claude API only |
+-| [OpenAI for Startups](https://fin.ai/learn/startup-credit-programs) | Community and events, no credits | API credits through partner VCs only | Amount not published |
+-| [NVIDIA Inception](https://fin.ai/learn/startup-credit-programs) | Free membership, partner credits, hardware rebates | Same | Pitch deck required; keep it outcome-level before filing |
+-
+-Anthropic and Microsoft are worth applying to now: Claude already does much of the Ultrastable build work, and Azure credits can pay for model inference through Azure OpenAI while the core stays portable.
+-
+-## Grants and non-dilutive money
+-
+-The one real grant for a US software startup is SBIR/STTR, and it is open again: Congress reauthorized it through 30 September 2031, signed 13 April 2026 ([summary](https://fundinglandscape.com/answers/sbir-sttr-reauthorization-2026)). This assumes Ultrastable is a US company.
+-
+-| Program | Amount | Fit for Ultrastable | How to apply |
+-| --- | --- | --- | --- |
+-| NSF SBIR/STTR (America's Seed Fund) | Phase I roughly $305,000, Phase II roughly $1.25M (approximate; confirm in the current solicitation) | Good: NSF funds high-risk technical innovation and takes no equity | Submit a 3-page Project Pitch at seedfund.nsf.gov, then a full Phase I proposal if invited. NSF relaunched with $250M in FY26 ([CASRAI](https://casrai.org/news/nsf-sbir-sttr-fy26-relaunch)). |
+-| DoD, DOE and other agency SBIRs | Phase I typically $150,000 to $300,000 | Possible if a topic asks for autonomous software or AI operations | Topic-driven solicitations on sbir.gov |
+-| Google Ad Grants | $10,000 a month in ads | None: nonprofits only | Not applicable |
+-
+-From fiscal 2027 each agency caps how many proposals a company can file per year, so one strong NSF pitch beats several weak ones. Proposals stay confidential, but award abstracts are published, so file the provisional before submitting.
+-
+-## Investor routes
+-
+-A first institutional cheque matters more than its size: it unlocks Google Scale AI ($350,000), Cloudflare Tier 2 ($100,000), AWS Portfolio ($200,000) and the OpenAI and Anthropic VC routes together.
+-
+-| Route | Typical money | Unlocks credits | Disclosure risk before filing |
+-| --- | --- | --- | --- |
+-| Accelerator with an investment (Y Combinator, Techstars and similar) | Roughly $125,000 to $500,000 on a SAFE (approximate) | Yes: they are partners in most credit programs | High: demo day is public |
+-| Equity-free accelerators (Google for Startups, Workers Launchpad) | No cash; credits and intros | Partly | High: cohorts are announced |
+-| Pre-seed VC on a SAFE | Often $250,000 to $1.5M (approximate) | Yes, when the firm is a known institutional investor | Medium: private meetings, no NDA |
+-| Angels | $25,000 to $250,000 each | No: Google excludes angel money from Scale | Medium |
+-| Licensing or selling the IP | Depends on the patent | Not applicable | Low once filed; buyers value a filed patent far more than an idea |
+-
+-Selling Ultrastable outright works best after the provisional is filed and a working reference deployment exists; QNFO already serves as one.
+-
+-## Follow-up: Google Search Console
+-
+-Set up Search Console for the Ultrastable domains the same way as QNFO, but only once the public site goes live after filing; indexing a site that describes the method is a public disclosure.
+-
+-- [ ] Add each Ultrastable domain as a Domain property in Search Console (owner's Google account)
+-- [ ] Add the TXT verification record in Cloudflare DNS
+-- [ ] Submit the sitemap from the site Worker
+-- [ ] Keep robots blocking indexing until the provisional is filed
+-- [ ] Create the Google Cloud billing account under a user on the company domain (required for the Startup application)
+-
+-## Sources
+-
+-Pages opened 2026-11-10:
+-
+-- [Google for Startups Cloud Program](https://cloud.google.com/startup)
+-- [Google for Startups AI program](https://cloud.google.com/startup/ai)
+-- [Cloudflare for Startups](https://cloudflare.com/startups/)
+-- [Workers Launchpad](https://www.cloudflare.com/startups/workers-launchpad)
+-- [Cloudflare blog: Workers Launchpad tag](https://blog.cloudflare.com/tag/workers-launchpad/)
+-- [AWS Activate application guide](https://aws.amazon.com/aws-startups/learn/applying-for-aws-activate-credits-a-step-by-step-guide)
+-- [Startup credit programs compared (Fin)](https://fin.ai/learn/startup-credit-programs) — Microsoft, Anthropic, OpenAI, NVIDIA figures
+-- [SBIR/STTR reauthorization summary](https://fundinglandscape.com/answers/sbir-sttr-reauthorization-2026)
+diff --git a/issues/README.md b/issues/README.md
+deleted file mode 100644
+index 06c1c84..0000000
+--- a/issues/README.md
++++ /dev/null
+@@ -1,3 +0,0 @@
+-# Issue export
+-
+-One JSON file per roadmap item in `docs/roadmap.md` (generated; the roadmap is the source of truth). Each has title, body (owner, trigger, done check, status), labels (`role:*`, `owner:rowan`, `ws:*`, `gate:filed`) and a milestone (Now, Next, After filing, Later). `_labels.json` lists the labels to create. `create-issues.sh` in `ultrastable-git` creates labels, milestones, issues and the projects described in `../projects.md`.
+diff --git a/projects.md b/projects.md
+deleted file mode 100644
+index c8babb4..0000000
+--- a/projects.md
++++ /dev/null
+@@ -1,11 +0,0 @@
+-# GitHub Projects (org-level, under `ultrastable`)
+-
+-| Project | Purpose | Issues it holds | Views |
+-|---|---|---|---|
+-| **Portfolio: Ultrastable launch** | The single roadmap. Everything lands here. | all items | Board by milestone (Now, Next, After filing, Later); table grouped by `role:*`; filter `owner:rowan` for Rowan's short list |
+-| **Patent** | Provisional filing and counsel | `ws:patent` | Board: draft, review, filed |
+-| **GitHub org and web** | Repos, site, DNS, email, Search Console | `ws:github-org`, `ws:web-and-seo` | Board by milestone |
+-| **Funding and business** | Credits, grants, entity, pitch | `ws:funding`, `ws:business` | Board by deadline |
+-| **Platform** | Packaging the QNFO fleet for any organization | `ws:platform`, `ws:product-and-marketing` | Board by milestone |
+-
+-Rules: the portfolio manager owns the first project and rebalances it weekly. Closed items file a `plus` issue. `gate:filed` items stay in "After filing" until the provisional is filed. Statuses change by commit to `docs/roadmap.md` and by issue state; the two must agree.
+diff --git a/roadmap.md b/roadmap.md
+deleted file mode 100644
+index fe1fef7..0000000
+--- a/roadmap.md
++++ /dev/null
+@@ -1,133 +0,0 @@
+-# Ultrastable roadmap: project #1 is Ultrastable itself
+-
+-Drafted 2026-11-10. This is the single backlog for launching Ultrastable, run on Ultrastable's own rules (the ones proven in QNFO): every item has an **owner role**, a **trigger** (what makes it ready), a **done check**, and finished items propose a **plus**. When the `platform` repo can load a backlog, this file is its first tenant.
+-
+-## Where everything lives (the record is git, not chat)
+-
+-Standing rule from Rowan, 2026-11-10: **if it's not in code, it doesn't exist.** Chat threads can be deleted at any time. Every output is a file in one of these repos, linked from this table, and every status change is a commit to this file.
+-
+-| What | Repo path | Until the GitHub repos exist |
+-|---|---|---|
+-| This roadmap | `docs/roadmap.md` | `/mnt/project-files/ultrastable-repos/docs/roadmap.md` |
+-| Issue export (one file per item) and GitHub Projects definition | `docs/issues/`, `docs/projects.md` | same folder; `ultrastable-git/create-issues.sh` creates them |
+-| Concept docs | `docs/concepts/` | same folder, `docs/concepts/` |
+-| Funding options | `business/funding.md` | `/mnt/project-files/ultrastable-repos/business/funding.md` |
+-| Business plan and pitch kit (managers, customers, competition, pitch, funding, promotion, events) | `business/plan/` | `/mnt/project-files/ultrastable-repos/business/plan/` |
+-| Invention disclosure, prior art, evidence log | `ip/` | `/mnt/project-files/ultrastable-repos/ip/` |
+-| Provisional spec, figures, filing checklist | `ip/provisional/` | `/mnt/project-files/ultrastable-patent/` |
+-| Landing page and Worker config | `site/` | `/mnt/project-files/ultrastable-repos/site/` |
+-| Platform architecture | `platform/docs/architecture.md` | `/mnt/project-files/ultrastable-repos/platform/` |
+-| Org defaults (PR and issue templates) | `.github/` | `/mnt/project-files/ultrastable-repos/.github/` |
+-| Git history for all six repos (site, docs, platform, ip, business, .github), ready to push | n/a | `/mnt/project-files/ultrastable-git/*.bundle` and `push-all.sh` |
+-
+-## How to read this
+-
+-- **Owner** is a virtual role from [virtual staff](concepts/virtual-staff.md). The fleet carries everything except items marked **ROWAN**.
+-- **ROWAN** items are identity-bound: accounts only Rowan holds, signing or filing, money, the legal entity. Each one says what the fleet prepares so Rowan's part is as short as possible.
+-- **Gate: FILED** means the item waits until the provisional patent is filed, because it would publicly disclose the invention.
+-- Priority: **Now** (this week), **Next** (after its trigger), **Later**.
+-- Capacity rule: 20% of each cycle goes to accepted pluses, not fixes ([plussing](concepts/plussing.md)).
+-
+-## The short list: what Rowan does, in order
+-
+-The whole backlog is long; Rowan's part is nine items, and only the first three matter this week.
+-
+-| # | Item | Time | What the fleet prepares |
+-|---|---|---|---|
+-| 1 | **GH-1** Create 6 empty private repos (site, docs, platform, ip, business, .github) under `ultrastable` and install the Claude GitHub App on them | ~10 min | Exact repo names and links (in the GitHub thread) |
+-| 2 | **BIZ-1** Confirm which legal entity owns Ultrastable (reuse the QNFO entity, or form a new one) | decision | Comparison note; most startup programs require an entity, a website and a domain email |
+-| 3 | **CONN-1** Reconnect the QNFO MCP Portal connector on claude.ai | ~2 min | Lets the fleet inventory everything QNFO already has set up (PL-1, WEB-6, IP-3) |
+-| 4 | **IP-4** Pick a patent attorney or agent for a review pass | decision + money | Filing-ready draft, figures, a one-page review brief |
+-| 5 | **IP-5** File the provisional at USPTO Patent Center and pay the fee | ~1 h | Assembled PDF spec, figures, cover sheet data, entity-status note |
+-| 6 | **FN-2 / FN-3** Submit Google for Startups Cloud and Cloudflare for Startups applications | ~30 min each | Drafted answers for every field |
+-| 7 | **WEB-3** Add the domain as a Google Search Console property | ~5 min | DNS verification record added on Cloudflare by the fleet |
+-| 8 | **WEB-5** Click the verification email for the domain mail forward | ~1 min | Email Routing configured |
+-| 9 | **IP-8** Decide on a trademark filing for "Ultrastable" | decision + money | Clearance search notes |
+-
+-## Now (this week)
+-
+-| ID | Item | Owner | Trigger | Done check | Status |
+-|---|---|---|---|---|---|
+-| GH-1 | Create repos (now seven: add `seed`), install Claude app | **ROWAN** | none | Repos visible to the fleet | waiting on Rowan |
+-| GH-2 | Push starter content to all six repos | Project mgr | GH-1 | Each repo has its README on `main` | ready in [ultrastable-repos](../README.md) |
+-| IP-1 | Provisional draft: full spec, claims, figures | Staff (IP) | none | Draft covers every element of the [disclosure](../ip/invention-disclosure.md), all figures referenced | draft done: `ip/provisional/` (spec, 14 figures, drawings PDF, filing checklist) |
+-| IP-2 | Prior-art search with differentiators | Staff (IP) | none | Each [prior-art](../ip/prior-art.md) entry has a link and a "how we differ" line | open |
+-| IP-3 | Fill the evidence log with dated QNFO commits and migrations | Staff (IP) | CONN-1 | Every claimed element has a dated reduction-to-practice entry | open |
+-| QA-1 | Independent review: patent draft vs disclosure vs docs say the same thing | Reviewer | IP-1 draft | Mismatch list empty | open |
+-| BIZ-1 | Choose owning entity | **ROWAN** | none | Entity named in project memory | open |
+-| FN-1 | Map funding and credit programs | Staff (research) | none | Options saved in git, not only as a page | done: `business/funding.md` |
+-| PF-1 | Hold the disclosure gate: nothing public until filed | Portfolio mgr | standing | Site on preview URL only, repos private, no public pitch | live rule |
+-| BIZ-2 | Business-in-a-box: managers, customers, competition, pitch kit, funding, promotion, events (`business/plan/`) | Business mgr | none | All eight files marked reviewed by Rowan in `business/plan/README.md` | drafted 2026-11-10, waiting on Rowan's review |
+-
+-## Bootstrapping (added 2026-11-10)
+-
+-| ID | Item | Owner | Trigger | Done check | Status |
+-|---|---|---|---|---|---|
+-| BS-1 | Seed repo: IDEA.md, bootstrapper, agent instructions, autonomy policy, Worker tick, tests | Staff (platform) | none | `python3 -m unittest discover tests` and `npm test` pass | done: `seed/` (12 Python tests, 9 Worker tests) |
+-| BS-2 | AIOS lessons written down | Staff (research) | none | `docs/bootstrapping/aios-lessons.md` | done |
+-| BS-3 | First real `--apply` on a Cloudflare account; confirm six ticks in an hour (KIT-3) | Ops | GH-2, Cloudflare token | `/health` ok and P-KIT-3 scored hit | open, needs CLOUDFLARE_API_TOKEN (gate card) |
+-| BS-4 | Executor: call a model with role file + item, record outcomes (PL-7) | Staff (platform) | BS-3 | one item completed end to end by a dispatched role | open |
+-| BS-5 | Dogfood: boot Ultrastable itself from an IDEA.md and compare the generated backlog to this file | Portfolio mgr | BS-3 | diff reviewed, gaps filed | open |
+-| BS-6 | Seed as GitHub template repo; one-command install (PL-6) | Staff (platform) | IP-5 (public) | new org boots from a click | later |
+-
+-## Next (after the trigger)
+-
+-| ID | Item | Owner | Trigger | Done check |
+-|---|---|---|---|---|
+-| GH-3 | Labels, issue templates, a GitHub Project board; load this file as issues | Project mgr | GH-2 | Every row here is an issue with owner, trigger and done check |
+-| GH-4 | Restrict `ip` repo to owner; protect `main` on all repos | **ROWAN** (org admin) | GH-2 | Settings screenshot or API check |
+-| WEB-1 | Deploy `site` as a Worker on a preview URL behind Cloudflare Access, `noindex` | Ops | GH-2 | Preview returns 200 for Rowan, 403 for anyone else |
+-| WEB-4 | robots.txt, sitemap.xml, Open Graph tags, Cloudflare Web Analytics | Staff (web) | WEB-1 | Lighthouse SEO score ≥ 95 on preview |
+-| WEB-5 | Domain email (hello@) via Cloudflare Email Routing to Rowan's inbox | Ops + **ROWAN** click | none | Test mail arrives |
+-| WEB-6 | Inventory every QNFO setup step (Search Console, analytics, DNS, email, status, social) and clone the list here | Ops | CONN-1 | Checklist with one row per QNFO service and its Ultrastable twin |
+-| IP-4 | Counsel review | **ROWAN** | IP-1 + QA-1 | Review notes resolved |
+-| IP-5 | File provisional | **ROWAN** | IP-4 | Filing receipt with application number in `ip/` |
+-| IP-6 | Put the 12-month conversion deadline (non-provisional / PCT) on the calendar with 90/60/30-day reminders | Ops | IP-5 | Calendar events exist |
+-| FN-2 | Google for Startups Cloud Program application | Staff drafts, **ROWAN** submits | BIZ-1, WEB-5 | Submission confirmation |
+-| FN-3 | Cloudflare for Startups application | Staff drafts, **ROWAN** submits | BIZ-1, WEB-5 | Submission confirmation |
+-| FN-4 | Other credit programs (Anthropic, AWS Activate, Microsoft for Startups, NVIDIA Inception) | Staff (research) | FN-1 | Ranked list with eligibility |
+-| PL-1 | Inventory the QNFO fleet: workers, crons, D1 tables, views, metrics; map each to [architecture](../platform/docs/architecture.md) | Staff (platform) | CONN-1 | Mapping table, nothing unaccounted |
+-| PL-2 | Org-chart config schema: roles, objectives, gates, connectors as data | Product mgr + Staff | PL-1 | Schema loads this roadmap as a test fixture |
+-
+-## After filing (Gate: FILED)
+-
+-| ID | Item | Owner | Trigger | Done check |
+-|---|---|---|---|---|
+-| WEB-2 | Attach the ultrastable domains to the site, remove `noindex`, switch footer to "Patent pending" | Ops | IP-5 | Domains serve the site over HTTPS |
+-| WEB-3 | Search Console property, DNS verify, submit sitemap | **ROWAN** adds property, Ops does DNS | WEB-2 | Sitemap status "Success" |
+-| GH-5 | Make `.github` public so the org profile shows; `docs` public if chosen | Portfolio mgr proposes, **ROWAN** confirms | IP-5 | Org page shows the profile |
+-| FN-5 | Pitch deck, one story with a Cloudflare variant and a GCP variant | Product mgr | IP-5 | Deck reviewed by Rowan |
+-| PR-3 | QNFO case study: autonomy rate, trust ledger, plus share, with real numbers | Product mgr | IP-5, PL-1 | Page on the site |
+-| IP-8 | Trademark clearance and filing decision for "Ultrastable" | Staff researches, **ROWAN** files | IP-5 | Decision recorded |
+-
+-## Later
+-
+-| ID | Item | Owner |
+-|---|---|---|
+-| PL-3 | Tenant isolation design (one org's data never reaches another's) | Staff (platform) |
+-| PL-4 | Ultrastable runs its own backlog: this roadmap as tenant #1, managers on a tick | Portfolio mgr |
+-| PL-5 | GCP embodiment sketch (Cloud Run, Cloud Scheduler, Firestore or Cloud SQL, Vertex AI Agent Engine) for the pitch and the patent's "other runtimes" | Staff (platform) |
+-| PL-6 | One-command install for a new organization | Staff (platform) |
+-| PR-1 | Positioning and first customer profile | Product mgr |
+-| PR-4 | Pricing hypotheses | Product mgr |
+-| IP-7 | Non-provisional and/or PCT filing | **ROWAN** with counsel, trigger IP-6 reminders |
+-
+-## Pluses (accepted improvements, not fixes)
+-
+-These take the reserved 20%. Each came from looking at a finished or in-flight item and asking "what would make this better?"
+-
+-| Plus | From | Why it's worth it |
+-|---|---|---|
+-| **Zero-manual bootstrap**: a new project should start by voice with no hand-created repos; research a GitHub App or org-owner token the fleet holds, so repo creation, push and deploy are automatic | GH-1 | Rowan: if a human has to click, the system hasn't yet learned the lesson |
+-| **New-project kit**: turn this roadmap's shape (roles, gates, Rowan-only list, pluses) into a template any new project starts from | PL-4 | This is Rowan's actual goal: spin up any project, including our own, the same way |
+-| Add W. Ross Ashby's "ultrastability" (Design for a Brain, 1952) to prior art and the story: the name has a cybernetics lineage that fits closed feedback loops | IP-2 | Strengthens the narrative and pre-empts an examiner or trademark objection |
+-| Patent figures double as site and deck diagrams after filing | IP-1, FN-5 | Nine figures already exist; no new design work |
+-| A weekly portfolio review that reads this file and reports Now/Next movement in four lines | PF-1 | The manager tick, applied to ourselves from day one |
+-| Funding answers written once as a reusable "company facts" file | FN-2, FN-3 | Every later application takes minutes |
+-
+-## Portfolio rules for this project
+-
+-1. **Disclosure gate first.** IP-5 (filing) unlocks the public site, pitches and case study. Everything that can run privately runs now.
+-2. **Build stays on Cloudflare** because the working system lives there; GCP is pitched as a second embodiment, and the build decision is revisited when credit offers land (FN-2, FN-3).
+-3. **Rowan's queue stays short.** Anything the fleet can prepare, it prepares, so each ROWAN item is a click, a signature or a decision.
+-4. **Nothing drops silently.** An item leaves this file only as done, superseded or cancelled, with the reason.
+diff --git a/tools/doc-consumers.json b/tools/doc-consumers.json
+new file mode 100644
+index 0000000..c047715
+--- /dev/null
++++ b/tools/doc-consumers.json
+@@ -0,0 +1,133 @@
++{
++ "_doc": "Doc-consumption registry (owner, 2026-11-12: nobody reads documents; every document is consumed by code). `python3 tools/docs_audit.py --check` fails on a document nothing consumes. Same stdlib file as ultrastable/ultrastable foundation/docs_audit.py; see agents/AGENTS.md rule DOC-CONSUMED-1 there.",
++ "version": "1.0.0",
++ "consumers": [],
++ "verified": {
++  "globs": [
++   "**/*.md"
++  ]
++ },
++ "ignore_references_from": [],
++ "human_action_patterns": [
++  "\\\\b(Rowan|the owner|owner)\\\\s+(should|must|needs? to|has to|will need to)\\\\b",
++  "\\\\b(please|just)\\\\s+(click|open|run|file|sign|submit|paste|upload|email)\\\\b"
++ ],
++ "human_action_exempt": [],
++ "human_action_baseline": {},
++ "converted": [],
++ "removed": [
++  {
++   "path": "README.md",
++   "sha256": "6705dc1cb01ba8d7e2320accbdae2ce197829edd63265db8e8c40f178c355876",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:docs/ and the product repo; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "bootstrapping/aios-lessons.md",
++   "sha256": "3287207be711e23567e30940e7a17832c4c392e7daa7753070b0cf2088174699",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:docs/bootstrapping/aios-lessons.md",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "bootstrapping/bootstrap-lessons-2026-11-10.md",
++   "sha256": "8d6cb679545b3693bc901bf291aa3336b3227b2df270c63887e12a52497c2d7a",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:docs/ and the product repo; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "bootstrapping/bootstrapping.md",
++   "sha256": "bcc144e2d5d653b073da7c6357b0e24cf71caee19a5dee20ec2f453e0ce7305f",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:docs/bootstrapping/bootstrapping.md",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "bootstrapping/lessons-business-plan-thread.md",
++   "sha256": "ea9f62a5d984af44de6b5fd7361bdfc90e0aa3cfe12e3d1f9bf4063432a76eaf",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:docs/ and the product repo; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "concepts/feedback-loops.md",
++   "sha256": "fb46fcd3dbe4fd1593ae4653e183e6c316c03e01b55eba5e817ad0e49a6f21ed",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:docs/concepts/feedback-loops.md",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "concepts/governance.md",
++   "sha256": "f834d96bf6ac03ec7d79fdad264cd2e1c1f8c998aeea7251c48bcac1e4c2a3db",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:docs/concepts/governance.md",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "concepts/overview.md",
++   "sha256": "ff2b671902513a4bbd5542b5bd2ebf4672fde95682a96a0808696e46992bf4ff",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:docs/concepts/overview.md",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "concepts/plussing.md",
++   "sha256": "f790f3d4b66d1a6c8daca9e53274213fb1746df3645a7461f5a033dc48d1f2cb",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:docs/concepts/plussing.md",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "concepts/virtual-staff.md",
++   "sha256": "d5a203b56c4832a554127de89375e25368310a7cf231acafb4d7faa4bd1ad4a0",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:docs/concepts/virtual-staff.md",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "funding/funding-options.md",
++   "sha256": "c55b84e60ab0da61bfff9ab2e88473ae1f72bdc04ac19c14e16f2b7049fb4848",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:docs/ and the product repo; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "issues/README.md",
++   "sha256": "0704354229de2a87b861b675edc9c57dc06d47979c3064cda65fe77f76d37663",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:docs/issues/README.md",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "projects.md",
++   "sha256": "e1cef910644d6cba165340e49b2124b0ae8bf42cfa5a103c7ca3e1f100cf962a",
++   "reason": "stale pre-consolidation snapshot",
++   "evidence": "superseded by a newer version in ultrastable/ultrastable:docs/ and the product repo; this snapshot is from 2026-11-10 and its bytes stay in git history",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  },
++  {
++   "path": "roadmap.md",
++   "sha256": "050142c89de930d01997c58186a10a822904948e8418a445ff30080281767122",
++   "reason": "stale pre-consolidation copy; the same bytes live in the product repositories",
++   "evidence": "byte-identical (sha256) to ultrastable/ultrastable:docs/roadmap-source.md",
++   "date": "2026-11-12",
++   "recover": "01659e1011b4367b7c68b936f6d45d8f7af2873f"
++  }
++ ],
++ "superseded_by_repo": "ultrastable/ultrastable:docs/ and the product repo"
++}
+diff --git a/tools/docs_audit.py b/tools/docs_audit.py
+new file mode 100644
+index 0000000..e967517
+--- /dev/null
++++ b/tools/docs_audit.py
+@@ -0,0 +1,315 @@
++"""Doc-consumption audit. Ultrastable is the foundation for any autonomous system. (owner, 2026-11-12)
++
++Nobody reads documents here; the system runs on code. So a document may exist only if something consumes it: an agent instruction
++import, code or data that names it, a check that reads it, or a generator that writes it. A document with no consumer is a CI failure.
++
++  python3 -m foundation docs_audit --check     (or: python3 foundation/docs_audit.py --root DIR --check, the file is stdlib-only and is copied into sibling repos)  fail on orphans, broken registry rows, bad removal ledger, human-action regressions
++  python3 -m foundation docs_audit --report    counts per consumption tier (docs found, wired, generated, converted, removed)
++  python3 -m foundation docs_audit --orphans   list the documents nothing consumes
++  python3 -m foundation docs_audit --humans    list documents that tell a person to act (a defect: file a backlog item instead)
++
++Consumption tiers, strongest first (the registry is `doctrine/doc-consumers.json`):
++  import     CLAUDE.md / AGENTS.md pull it in with `@path`, transitively
++  path       a tracked non-document file (code, data, workflow, test) names its exact path
++  generated  front matter `generated-by: <script>`, and the script exists
++  declared   front matter `consumer: <path>`; the consumer exists, is not a document and names this file or its directory
++  registry   a row in doc-consumers.json: glob -> consumer file that contains the row's `needle`
++  verified   explain-only pages in `verified.globs`: every backticked file path in the page must exist, and at least one must, so the
++             page cannot drift from the code it describes (a missing path is a CI failure naming the line)
++  knowledge  reference documents inside `knowledge.globs`: foundation/kb.py ranks them against each issue and foundation/executor.py
++             puts the best matches in the agent's prompt
++A document that only mentions another document is not consuming it. Removed documents stay in the `removed` ledger with the
++sha256 of what was removed and the file that still holds the same bytes, so nothing leaves the active set without a disposition.
++"""
++from __future__ import annotations
++import fnmatch, hashlib, json, os, re, subprocess, sys
++from pathlib import Path
++
++REPO = Path(__file__).resolve().parent.parent
++REGISTRIES = ("doctrine/doc-consumers.json", "tools/doc-consumers.json", "doc-consumers.json")
++REGISTRY = REGISTRIES[0]
++DOC_EXT = (".md", ".txt", ".rst")
++BINARY = re.compile(r"\.(svg|png|pdf|jpe?g|ico|woff2?|zip|bundle|gif|webp)$", re.I)
++
++
++def registry_path(root=REPO) -> str:
++    """The registry is doctrine/doc-consumers.json here; sibling repos that carry a copy of this file keep it in tools/ or at the root."""
++    for r in REGISTRIES:
++        if (Path(root) / r).is_file():
++            return r
++    raise FileNotFoundError("no doc-consumers.json (looked in " + ", ".join(REGISTRIES) + ")")
++
++
++def load(root=REPO) -> dict:
++    return json.loads((Path(root) / registry_path(root)).read_text(encoding="utf-8"))
++
++
++def tracked(root=REPO) -> list[str]:
++    out = subprocess.run(["git", "-C", str(root), "ls-files"], capture_output=True, text=True)
++    if out.returncode != 0:
++        raise RuntimeError(f"git ls-files failed: {out.stderr.strip()}")
++    return [f for f in out.stdout.splitlines() if (Path(root) / f).is_file()]
++
++
++def is_doc(path: str) -> bool:
++    return path.endswith(DOC_EXT)
++
++
++def _read(root, rel):
++    try:
++        return (Path(root) / rel).read_text(encoding="utf-8")
++    except (UnicodeDecodeError, OSError):
++        return ""
++
++
++def _glob(path: str, pattern: str) -> bool:
++    if pattern.endswith("/**"):
++        return path.startswith(pattern[:-2])
++    if pattern.startswith("**/"):
++        return fnmatch.fnmatch(path, pattern) or fnmatch.fnmatch(path, pattern[3:])
++    return fnmatch.fnmatch(path, pattern)
++
++
++def front_matter(text: str) -> dict:
++    m = re.match(r"---\n(.*?)\n---\n", text, re.S)
++    out = {}
++    if m:
++        for line in m.group(1).splitlines():
++            k, _, v = line.partition(":")
++            if k.strip() and v.strip():
++                out[k.strip()] = v.strip().strip("'\"")
++    return out
++
++
++SPAN = re.compile(r"`([^`\n]+)`")
++CODE_TOKEN = re.compile(r"(?<![\w/.:-])([A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:js|mjs|cjs|py|json|jsonc|sh|yml|yaml|toml|sql|md|html))(?![\w/-])")
++
++
++def verify_page(root, doc) -> tuple[list[str], list[str]]:
++    """(resolved, unresolved) backticked file paths in a document, resolved against the repository root or the document's folder."""
++    ok, missing = [], []
++    for tok in sorted({t for span in SPAN.findall(_read(root, doc)) for t in CODE_TOKEN.findall(span)}):
++        if "*" in tok or tok.startswith(("http", "~", "/")):
++            continue
++        cand = (Path(root) / tok, Path(root) / os.path.dirname(doc) / tok)
++        (ok if any(c.exists() for c in cand) else missing).append(tok)
++    return ok, missing
++
++
++def _imports(root, docs) -> set[str]:
++    seen, todo = set(), [d for d in ("CLAUDE.md", "AGENTS.md", "agents/AGENTS.md") if d in docs]
++    seen.update(todo)
++    while todo:
++        cur = todo.pop()
++        base = (Path(cur).parent)
++        for ref in re.findall(r"(?m)^\s*@(\S+\.md)\s*$", _read(root, cur)):
++            p = os.path.normpath((base / ref).as_posix() if not ref.startswith("/") else ref[1:]).replace(os.sep, "/")
++            if p not in seen and p in docs:
++                seen.add(p)
++                todo.append(p)
++    return seen
++
++
++def _relatives(doc: str, referrer: str):
++    """The spellings a file may use for `doc`: relative to its own folder or to any ancestor folder (a test that does parents[1] / "docs/X.md")."""
++    out, a = [], os.path.dirname(referrer)
++    while a:
++        rel = os.path.relpath(doc, a)
++        if not rel.startswith("..") and rel != doc:
++            out.append(rel)
++        a = os.path.dirname(a)
++    return out
++
++
++def evaluate(root=REPO) -> dict:
++    """Return {doc: (tier, evidence)} for consumed docs, plus 'orphans', 'docs', and problems with registry rows."""
++    root = Path(root)
++    reg = load(root)
++    files = tracked(root)
++    docs = sorted(f for f in files if is_doc(f))
++    ignore = tuple(reg.get("ignore_references_from", []))
++    code = {f: _read(root, f) for f in files if not is_doc(f) and not BINARY.search(f) and not f.startswith(ignore) and f != registry_path(root)}
++    consumed: dict[str, tuple[str, str]] = {}
++    problems: list[str] = []
++    for d in sorted(_imports(root, set(docs))):
++        consumed[d] = ("import", "imported by an agent instruction file")
++    for row in reg["consumers"]:
++        c = row["consumer"]
++        if is_doc(c) or not (root / c).is_file():
++            problems.append(f"registry row {row['id']}: consumer {c} must be an existing non-document file")
++            continue
++        if row["needle"] not in _read(root, c):
++            problems.append(f"registry row {row['id']}: consumer {c} does not contain its needle {row['needle']!r}")
++            continue
++        hit = [d for d in docs if any(_glob(d, g) for g in row["paths"])]
++        if not hit:
++            problems.append(f"registry row {row['id']}: no document matches {row['paths']} (remove the row)")
++        for d in hit:
++            consumed.setdefault(d, ("registry", f"{row['id']} -> {c}"))
++    for d in docs:
++        if d in consumed:
++            continue
++        fm = front_matter(_read(root, d))
++        if fm.get("generated-by"):
++            g = fm["generated-by"].split()[0]
++            if (root / g).is_file() and not is_doc(g):
++                consumed[d] = ("generated", g)
++                continue
++            problems.append(f"{d}: generated-by {g} does not exist")
++        if fm.get("consumer"):
++            c = fm["consumer"].split()[0]
++            parent = str(Path(d).parent)
++            if (root / c).is_file() and not is_doc(c) and (d in _read(root, c) or (parent != "." and parent + "/" in _read(root, c))):
++                consumed[d] = ("declared", c)
++                continue
++            problems.append(f"{d}: front matter consumer {c} must be an existing non-document file that names this file or its directory")
++        for f, t in code.items():
++            if d in t or any(re.search(r"(?<![\w/.-])" + re.escape(rel) + r"(?![\w])", t) for rel in _relatives(d, f)):
++                consumed[d] = ("path", f)
++                break
++    for d in docs:
++        if d not in consumed and any(_glob(d, g) for g in reg.get("verified", {}).get("globs", [])):
++            ok, missing = verify_page(root, d)
++            if missing:
++                problems.append(f"{d}: names files that do not exist ({', '.join(missing[:4])}); fix the page or the code so they agree")
++            elif ok:
++                consumed[d] = ("verified", f"every backticked path exists ({len(ok)})")
++    kn = reg.get("knowledge", {})
++    if kn:
++        ex = _read(root, "foundation/executor.py")
++        if "kb.retrieve" not in ex or not (root / "foundation/kb.py").is_file():
++            problems.append("knowledge tier: foundation/executor.py must call kb.retrieve and foundation/kb.py must exist")
++        else:
++            for d in docs:
++                if d.endswith(".md") and any(_glob(d, g) for g in kn["globs"]):
++                    consumed.setdefault(d, ("knowledge", "foundation/kb.py -> foundation/executor.py"))
++    orphans = [d for d in docs if d not in consumed]
++    return {"docs": docs, "consumed": consumed, "orphans": orphans, "problems": problems, "registry": reg}
++
++
++def _human_hits(text: str, pats) -> list[str]:
++    hits = []
++    for line in text.splitlines():
++        for p in pats:
++            if re.search(p, line, re.I):
++                hits.append(line.strip()[:120])
++                break
++    return hits
++
++
++def humans(root=REPO) -> dict[str, list[str]]:
++    root = Path(root)
++    reg = load(root)
++    pats = reg["human_action_patterns"]
++    exempt = reg.get("human_action_exempt", [])
++    out = {}
++    for d in (f for f in tracked(root) if is_doc(f)):
++        if any(_glob(d, g) for g in exempt):
++            continue
++        h = _human_hits(_read(root, d), pats)
++        if h:
++            out[d] = h
++    return out
++
++
++def removed_check(root, reg) -> list[str]:
++    """Every removed document has a disposition: identical bytes elsewhere (duplicate_of), a live replacement (superseded_by), or
++    evidence that it was a dead end; its sha256 and the commit that still holds it make the removal recoverable; and nothing
++    live may still name it."""
++    bad, root = [], Path(root)
++    removed = reg.get("removed", [])
++    for r in removed:
++        for k in ("path", "sha256", "reason", "date", "recover"):
++            if not r.get(k):
++                bad.append(f"removed ledger {r.get('path', '?')}: lacks {k}")
++        if not (r.get("duplicate_of") or r.get("superseded_by") or r.get("evidence")):
++            bad.append(f"removed ledger {r.get('path', '?')}: needs duplicate_of, superseded_by or evidence")
++        if (root / r.get("path", "-")).exists():
++            bad.append(f"removed ledger: {r['path']} is listed as removed but still exists")
++        if r.get("duplicate_of"):
++            dup = root / r["duplicate_of"]
++            if not dup.is_file() or hashlib.sha256(dup.read_bytes()).hexdigest() != r.get("sha256"):
++                bad.append(f"removed ledger {r['path']}: {r['duplicate_of']} no longer holds the same bytes (sha256 differs); restore or re-record")
++        if r.get("superseded_by") and not (root / r["superseded_by"]).exists():
++            bad.append(f"removed ledger {r['path']}: superseded_by {r['superseded_by']} does not exist")
++    ignore = tuple(reg.get("ignore_references_from", [])) + (registry_path(root),)
++    paths = {r["path"] for r in removed if r.get("path")}
++    for f in tracked(root):
++        if is_doc(f) or BINARY.search(f) or f.startswith(ignore):
++            continue
++        t = _read(root, f)
++        for p in paths:
++            if re.search(r"(?<![\w/.-])" + re.escape(p) + r"(?![\w-])", t):
++                bad.append(f"{f}: still names removed document {p}; point it at the replacement or drop the reference")
++    return bad
++
++
++def converted_check(root, reg) -> list[str]:
++    """A document converted to data keeps a row: the data file exists and a non-document consumer names it."""
++    bad, root = [], Path(root)
++    for c in reg.get("converted", []):
++        for k in ("from", "to", "consumer", "sha256", "recover", "date"):
++            if not c.get(k):
++                bad.append(f"converted ledger {c.get('from', '?')}: lacks {k}")
++        if (root / c.get("from", "-")).exists():
++            bad.append(f"converted ledger: {c['from']} still exists next to its data file")
++        if not (root / c.get("to", "-")).is_file() or is_doc(c.get("to", "")):
++            bad.append(f"converted ledger {c.get('from')}: data file {c.get('to')} must exist and not be a document")
++        elif not (root / c.get("consumer", "-")).is_file() or c["to"] not in _read(root, c["consumer"]):
++            bad.append(f"converted ledger {c['from']}: consumer {c.get('consumer')} must exist and name {c['to']}")
++    return bad
++
++
++def check(root=REPO) -> list[str]:
++    root = Path(root)
++    ev = evaluate(root)
++    reg = ev["registry"]
++    bad = list(ev["problems"])
++    bad += [f"orphan document (nothing consumes it): {d}: wire it, convert it to data, merge it, or remove it with a ledger row" for d in ev["orphans"]]
++    bad += removed_check(root, reg)
++    bad += converted_check(root, reg)
++    tpl = _read(root, "brand/templates/doc-template.md")  # doc-template.md: the template every new document starts from
++    if (root / "brand/templates/doc-template.md").is_file() and not re.search(r"(?m)^consumer:", tpl):
++        bad.append("brand/templates/doc-template.md must carry a `consumer:` front matter line")
++    base = reg.get("human_action_baseline", {})
++    for d, hits in humans(root).items():
++        if len(hits) > base.get(d, 0):
++            bad.append(f"{d}: tells a person to act ({len(hits)} lines, baseline {base.get(d, 0)}): {hits[0]!r}; file an automatic backlog item (owner, trigger, verification) instead of writing an instruction")
++    return bad
++
++
++def report(root=REPO) -> dict:
++    ev = evaluate(root)
++    tiers: dict[str, int] = {}
++    for tier, _ in ev["consumed"].values():
++        tiers[tier] = tiers.get(tier, 0) + 1
++    reg = ev["registry"]
++    return {"docs": len(ev["docs"]), "consumed": len(ev["consumed"]), "orphans": len(ev["orphans"]), "tiers": tiers,
++            "removed": len(reg.get("removed", [])), "converted": len(reg.get("converted", [])),
++            "human_action_docs": len(humans(root))}
++
++
++def main(argv=None) -> int:
++    global REPO
++    argv = list(sys.argv[1:] if argv is None else argv)
++    if "--root" in argv:  # run against another checkout: python3 tools/docs_audit.py --root . --check
++        i = argv.index("--root")
++        REPO = Path(argv[i + 1]).resolve()
++        del argv[i:i + 2]
++    if "--report" in argv:
++        print(json.dumps(report(REPO), indent=1))
++        return 0
++    if "--orphans" in argv:
++        print("\n".join(evaluate(REPO)["orphans"]) or "no orphans")
++        return 0
++    if "--humans" in argv:
++        for d, h in humans(REPO).items():
++            print(d, len(h), h[0])
++        return 0
++    bad = check(REPO)
++    print("\n".join(bad) or "docs-audit ok: " + json.dumps(report(REPO)))
++    return 1 if bad else 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+-- 
+2.43.0
+

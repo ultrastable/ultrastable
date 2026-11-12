@@ -11,6 +11,7 @@
   python3 -m foundation loops [--verify|--list]                           the loop registry and its closing verifier
   python3 -m foundation kernel [--check|--lint FILE...|--metrics FILE...] the doctrine kernel as code
   python3 -m foundation directive [--check|--lint FILE...|--ledger|--probe|--bootstrap] the guiding directive as code
+  python3 -m foundation docs_audit [--check|--report|--orphans|--humans]  every document must have a consumer (code, check, instruction import, generator)
   python3 -m foundation trust [--show|--event SURFACE ACTION EVENT|--tick] the trust ledger and ladder
   python3 -m foundation executor [--apply] [--issue N]                    pick the top issue, change, check, open a PR (--pick, --record: the key-free session route)
   python3 -m foundation upstream contract|adopt|sync|check|drift|leaks   core/instance link: pin, flow down, send up, drift, bring your own repo
@@ -49,6 +50,7 @@ def main(argv=None) -> int:
     cl = sub.add_parser("closedloop"); cl.add_argument("rest", nargs="*")
     dv = sub.add_parser("directive"); dv.add_argument("--check", action="store_true"); dv.add_argument("--lint", nargs="+"); dv.add_argument("--ledger", action="store_true"); dv.add_argument("--probe", action="store_true"); dv.add_argument("--bootstrap", action="store_true")
     tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true")
+    da = sub.add_parser("docs_audit"); da.add_argument("--check", action="store_true"); da.add_argument("--report", action="store_true"); da.add_argument("--orphans", action="store_true"); da.add_argument("--humans", action="store_true")
     ny = sub.add_parser("needsyou"); ny.add_argument("--check", action="store_true")
     ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo"); ex.add_argument("--pick", action="store_true"); ex.add_argument("--record", action="store_true"); ex.add_argument("--result"); ex.add_argument("--pr"); ex.add_argument("--detail"); ex.add_argument("--host")
     sub.add_parser("upstream", add_help=False)
@@ -64,6 +66,9 @@ def main(argv=None) -> int:
     c = sub.add_parser("cockpit"); c.add_argument("--out", default=".selfhost/cockpit"); c.add_argument("--ticks", type=int, default=10); c.add_argument("--no-node", action="store_true")
     l = sub.add_parser("launch"); l.add_argument("--commit", action="store_true"); l.add_argument("--push", action="store_true"); l.add_argument("--probe", action="store_true"); l.add_argument("--export-d1"); l.add_argument("--install"); l.add_argument("--skip-outreach", action="store_true"); l.add_argument("--failover", action="store_true")
     a = ap.parse_args(argv)
+    if a.cmd == "docs_audit":
+        from . import docs_audit
+        return docs_audit.main([x for x in ("--check", "--report", "--orphans", "--humans") if getattr(a, x[2:])])
     if a.cmd == "needsyou":
         from . import needsyou
         return needsyou.main(["--check"] if a.check else [])
