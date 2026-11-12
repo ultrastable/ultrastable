@@ -1,0 +1,212 @@
+"""TRANSPARENCY-1: Ultrastable shows its own work, read-only, to everyone (owner directive 2026-11-12).
+
+  python3 -m foundation transparency [--out FILE] [--no-gh] [--sql FILE]
+
+Builds one JSON snapshot of how the system runs on itself: the managers and loops, what they last did, the claim-vs-code picture
+(components, wired edges, user stories, investor objections, the gap register), the change feed (merged and open PRs and commits, each
+tied to the work item that caused it), and the scoreboard. The site worker serves it at /live and /api/live (GET only, no write path).
+
+Public means read-only. Everything here is derived from records already in the repository; the only filtering is a secret scrub
+(tokens, keys, e-mail addresses). Writing stays behind the owner's e-mailed code (dashboard worker, /owner).
+The snapshot is published to D1 table `transparency` (`--sql` writes the upsert); the loop hosts run it on every pass (instances/ultrastable/loops.json).
+"""
+from __future__ import annotations
+import json, re, subprocess, sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+from . import components as comp
+
+REPO = Path(__file__).resolve().parents[1]
+GH = "ultrastable/ultrastable"
+SECRET = re.compile(r"(gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|Bearer\s+[A-Za-z0-9._-]{20,}|[\w.+-]+@[\w-]+\.[\w.-]+)")
+ITEM = re.compile(r"\b([A-Z][A-Z0-9]+(?:-[A-Z0-9]+)*-\d+|Q-[A-Z-]+|OL-GAP-[\w-]+|SG-\d+)\b")
+
+
+def scrub(x):
+    if isinstance(x, str):
+        return SECRET.sub("[redacted]", x)
+    if isinstance(x, list):
+        return [scrub(i) for i in x]
+    if isinstance(x, dict):
+        return {k: scrub(v) for k, v in x.items()}
+    return x
+
+
+def _j(root, rel, default=None):
+    p = Path(root) / rel
+    try:
+        return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else default
+    except ValueError:
+        return default
+
+
+def _sh(root, *cmd, timeout=60):
+    try:
+        r = subprocess.run(cmd, cwd=root, capture_output=True, text=True, timeout=timeout, encoding="utf-8", errors="replace")
+        return r.stdout if r.returncode == 0 else ""
+    except (OSError, subprocess.SubprocessError):
+        return ""
+
+
+def _role_summary(root, role):
+    p = Path(root) / "agents/roles" / f"{role}.md"
+    if not p.is_file():
+        return {}
+    t = p.read_text(encoding="utf-8")
+    own = re.search(r"\*\*Owns:\*\*\s*(.+)", t)
+    tick = re.search(r"\*\*Tick:\*\*\s*(.+)", t)
+    steps = re.findall(r"^\d+\.\s+(.+)$", t.split("## Each tick")[-1].split("##")[0], re.M) if "## Each tick" in t else []
+    return {"owns": own and own[1].strip(), "cadence": tick and tick[1].strip(), "each_tick": [s[:220] for s in steps[:6]], "role_file": f"agents/roles/{role}.md"}
+
+
+def managers(root):
+    reg = (_j(root, "instances/ultrastable/loop-registry.json", {}) or {}).get("loops", [])
+    last = {}
+    ev = Path(root) / "ops/loop-evidence"
+    for f in sorted(ev.glob("*.jsonl")) if ev.is_dir() else []:
+        for line in f.read_text(encoding="utf-8").splitlines()[-200:]:
+            try:
+                e = json.loads(line)
+            except ValueError:
+                continue
+            for lp in e.get("loops", []):
+                last[lp.get("loop")] = {"at": e.get("at"), "host": e.get("host"), "ok": lp.get("ok"), "steps": lp.get("steps"), "report": lp.get("report")}
+    out = []
+    for lp in reg:
+        row = {"loop": lp.get("id"), "kind": lp.get("kind"), "summary": lp.get("summary"), "owner": lp.get("owner"), "trigger": lp.get("trigger"), "sla": lp.get("sla"),
+               "closing_probe": lp.get("closing_probe"), "cycle_metric": lp.get("cycle_metric"), "last_plus": lp.get("last_plus"), "last_run": last.get(lp.get("id"))}
+        if lp.get("kind") == "manager":
+            row.update(_role_summary(root, lp.get("owner") or ""))
+        out.append(row)
+    return out
+
+
+def claims(root):
+    try:
+        r = comp.evaluate(root)
+    except Exception as e:  # never fail the snapshot because one source failed
+        return {"error": str(e)[:200]}
+    cs = r.get("components", {})
+    meta = {c.get("id"): c for c in (comp.load(root).get("components") or []) if isinstance(c, dict)}
+    status = {}
+    for v in cs.values():
+        status[v] = status.get(v, 0) + 1
+    return {"component_status": status,
+            "components": [{"id": k, "status": v, "what": (meta.get(k) or {}).get("what") or (meta.get(k) or {}).get("name")} for k, v in cs.items()],
+            "edges": r.get("edges", []), "stories": r.get("stories", []), "objections": r.get("objections", []), "integration": r.get("integration", {})}
+
+
+def gaps(root):
+    g = (_j(root, "instances/ultrastable/gaps.json", {}) or {}).get("gaps", [])
+    return [{k: x.get(k) for k in ("id", "tool", "what", "status", "plan", "probe")} for x in g]
+
+
+def changes(root, use_gh=True):
+    log = _sh(root, "git", "log", "-40", "--format=%H%x09%h%x09%aI%x09%an%x09%s")
+    commits = []
+    for line in log.splitlines():
+        p = line.split("\t")
+        if len(p) == 5:
+            pr = re.search(r"\(#(\d+)\)", p[4])
+            commits.append({"sha": p[1], "at": p[2], "author": p[3], "subject": p[4], "pr": pr and int(pr[1]), "item": (ITEM.search(p[4]) or [None, None])[1], "url": f"https://github.com/{GH}/commit/{p[0]}"})
+    prs = []
+    if use_gh:
+        raw = _sh(root, "gh", "pr", "list", "--repo", GH, "--state", "all", "--limit", "40", "--json", "number,title,state,headRefName,createdAt,mergedAt,author,labels,isDraft,url")
+        try:
+            for p in json.loads(raw or "[]"):
+                prs.append({"number": p["number"], "title": p["title"], "state": "draft" if p.get("isDraft") and p["state"] == "OPEN" else p["state"].lower(), "branch": p["headRefName"],
+                            "opened": p["createdAt"], "merged": p.get("mergedAt"), "by": (p.get("author") or {}).get("login"), "labels": [l["name"] for l in p.get("labels", [])],
+                            "item": (ITEM.search(p["title"]) or [None, None])[1], "url": p["url"]})
+        except (ValueError, KeyError):
+            pass
+    return {"commits": commits, "pull_requests": prs}
+
+
+def improvements(root):
+    return (_j(root, "instances/ultrastable/improvements.json", {}) or {}).get("entries", [])[-20:]
+
+
+def snapshot(root=REPO, use_gh=True):
+    root = Path(root)
+    mg, cl, gp, ch = managers(root), claims(root), gaps(root), changes(root, use_gh)
+    open_prs = [p for p in ch["pull_requests"] if p["state"] in ("open", "draft")]
+    merged = [p for p in ch["pull_requests"] if p["state"] == "merged"]
+    s = {
+        "schema": "ultrastable-transparency/v1",
+        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "commit": _sh(root, "git", "rev-parse", "--short", "HEAD").strip(),
+        "access": "read-only for everyone; changes require the owner's e-mailed code",
+        "scoreboard": {
+            "managers_and_loops": len(mg), "loops_with_evidence": sum(1 for m in mg if m["last_run"]),
+            "components": cl.get("component_status", {}), "edges_wired": (cl.get("integration") or {}).get("edges_wired"), "edges_total": (cl.get("integration") or {}).get("edges"),
+            "stories_passing": sum(1 for x in cl.get("stories", []) if x.get("pass")), "stories_total": len(cl.get("stories", [])),
+            "open_gaps": sum(1 for g in gp if (g.get("status") or "open") != "closed"), "open_prs": len(open_prs), "merged_prs_listed": len(merged),
+        },
+        "managers": mg, "claims": cl, "gaps": gp, "changes": ch, "loop_improvements": improvements(root),
+        "feedback_loop": "claim (site/doctrine) -> probe (components, gap register, loops) -> gap item -> branch/draft PR by an agent -> merge on green checks -> deploy -> probe again; each row above links the step to its record.",
+    }
+    return scrub(s)
+
+
+def sql(snap):
+    body = json.dumps(snap, separators=(",", ":")).replace("'", "''")
+    return ("CREATE TABLE IF NOT EXISTS transparency (id INTEGER PRIMARY KEY CHECK (id=1), generated TEXT NOT NULL, body TEXT NOT NULL);\n"
+            f"INSERT INTO transparency (id,generated,body) VALUES (1,'{snap['generated']}','{body}') ON CONFLICT(id) DO UPDATE SET generated=excluded.generated, body=excluded.body;\n")
+
+
+ACCOUNT, DB_ID = "edb167b78c9fb901ea5bca3ce58ccc4b", "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"  # D1 ultrastable-ops (site/wrangler.toml)
+
+
+def publish(snap, token=None) -> dict:
+    """Upsert the snapshot into D1 over the Cloudflare API. Needs CLOUDFLARE_API_TOKEN in the environment; without it the loop records not-published."""
+    import os, urllib.request
+    token = token or os.environ.get("CLOUDFLARE_API_TOKEN")
+    if not token:
+        return {"published": False, "why": "no CLOUDFLARE_API_TOKEN in this host's environment"}
+    stmts = [x for x in sql(snap).splitlines() if x.strip()]
+    for st in stmts:
+        req = urllib.request.Request(f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT}/d1/database/{DB_ID}/query", data=json.dumps({"sql": st}).encode(),
+                                     headers={"authorization": "Bearer " + token, "content-type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                if not json.loads(r.read()).get("success"):
+                    return {"published": False, "why": "D1 refused the statement"}
+        except Exception as e:  # recorded, never swallowed
+            return {"published": False, "why": str(e)[:200]}
+    return {"published": True, "generated": snap["generated"]}
+
+
+def loop(root=REPO) -> dict:
+    """Launch-loop entry: write ops/transparency.json (the git record) and publish it to the live site."""
+    snap = snapshot(root)
+    out = Path(root) / "ops/transparency.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(snap, indent=1), encoding="utf-8")
+    pub = publish(snap)
+    return {"loop": "transparency", "ok": True, "bytes": out.stat().st_size, "loops_with_evidence": snap["scoreboard"]["loops_with_evidence"], **pub}
+
+
+def main(argv) -> int:
+    a = list(argv)
+    out = a[a.index("--out") + 1] if "--out" in a else None
+    sq = a[a.index("--sql") + 1] if "--sql" in a else None
+    snap = snapshot(REPO, use_gh="--no-gh" not in a)
+    txt = json.dumps(snap, indent=1)
+    if out:
+        Path(out).parent.mkdir(parents=True, exist_ok=True)
+        Path(out).write_text(txt, encoding="utf-8")
+    if sq:
+        Path(sq).parent.mkdir(parents=True, exist_ok=True)
+        Path(sq).write_text(sql(snap), encoding="utf-8")
+    if "--publish" in a:
+        print(json.dumps(publish(snap)))
+    if not out and not sq and "--publish" not in a:
+        print(txt)
+    else:
+        print(f"transparency: {len(txt)} bytes, {snap['scoreboard']['managers_and_loops']} loops, {snap['scoreboard']['open_prs']} open PRs, {len(snap['changes']['commits'])} commits")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

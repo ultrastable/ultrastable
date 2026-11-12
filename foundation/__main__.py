@@ -47,6 +47,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["fleet"]:
         from . import fleet
         return fleet.main(_av[1:])
+    if _av[:1] == ["transparency"]:
+        from . import transparency
+        return transparency.main(_av[1:])
     if _av[:1] == ["components"]:
         from . import components
         return components.main(_av[1:])

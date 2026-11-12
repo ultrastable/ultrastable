@@ -33,6 +33,12 @@
       "what": "evidence and four-line report committed to the repository on branch loop-evidence",
       "mode": "live",
       "probe": "file:ops/loop-evidence/LATEST.md"
+    },
+    {
+      "id": "transparency",
+      "what": "public read-only snapshot of managers, loops, claim checks and the change feed, published to ultrastable.io/live",
+      "mode": "live",
+      "probe": "file:foundation/transparency.py"
     }
   ],
   "hosts": [

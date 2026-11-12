@@ -138,6 +138,8 @@ def run_once(root=REPO, skip_outreach=False, now=None, liveness=True) -> dict:
     results += [_loop_probes(root), _loop_funding(root, skip_outreach), _loop_closed(root)] + ([_loop_liveness(root)] if liveness else [])
     results.append(_loop_lifecycle(root))
     results.append(_loop_components(root))
+    from . import transparency
+    results.append(transparency.loop(root))
     ok = [r["loop"] for r in results if r["ok"]]
     bad = [r["loop"] for r in results if not r["ok"]]
     t = next((r for r in results if r["loop"] == "tick"), {})
