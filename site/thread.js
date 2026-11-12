@@ -8,42 +8,26 @@
 
 // Curated idea pool: t = the idea in a person's own words, k = words that make it related to what someone is typing.
 export const POOL = [
-  ["A booking page for my barbershop", "book booking appointment salon barber hair schedule"],
-  ["A sign-up list for our street's bin rota", "bin rota neighbour street community list"],
-  ["A menu with online ordering for my café", "cafe coffee restaurant food menu order"],
-  ["A page that sells my handmade candles", "sell shop store handmade craft candle etsy"],
-  ["A tracker for my kid's reading", "kid child reading school book track"],
-  ["A website for my band with gig dates", "band music gig concert tour song"],
-  ["A wedding page with RSVPs", "wedding rsvp event party invite guest"],
-  ["A sign-up sheet for volunteer shifts", "volunteer shift charity sign-up rota"],
-  ["A portfolio for my photography", "photo photography portfolio gallery art"],
-  ["A reminder when my plants need water", "plant garden water reminder"],
-  ["A price list and quote form for my cleaning business", "cleaning business quote price service"],
-  ["A lost-and-found board for our school", "school lost found board community"],
-  ["A habit tracker that cheers me on", "habit track goal streak fitness"],
-  ["A page where clients book dog walks", "dog walk pet clients book"],
-  ["A recipe box for our family recipes", "recipe family cook food kitchen"],
-  ["A simple invoice maker for freelancers", "invoice freelance bill payment client"],
-  ["A study planner for exams", "study exam school plan student revision"],
-  ["A tip calculator to split the bill", "tip bill split calculator money"],
-  ["A page for my tutoring with times and prices", "tutor tutoring lessons teach price"],
-  ["A team page for our football club", "football soccer club team sport fixtures"],
-  ["A guestbook for our holiday rental", "holiday rental airbnb guest house"],
-  ["A countdown to our big launch", "launch countdown event date"],
-  ["A quiz to recommend the right product", "quiz recommend product shop customer"],
-  ["A newsletter sign-up for my blog", "newsletter blog email subscribe writing"],
-  ["A map of the best local walks", "map walk local hike trail"],
-  ["A tool to plan meals for the week", "meal plan food week shopping list"],
-  ["A page for my yoga classes", "yoga class fitness timetable studio"],
-  ["A one-page CV that looks great", "cv resume job career profile"],
-  ["A fundraiser page with a progress bar", "fundraiser charity donate goal"],
-  ["A chore chart for the kids", "chore kids family home chart"],
-  ["A feedback form for my workshop", "feedback form workshop survey event"],
-  ["A launch page for my app idea", "app idea startup launch waitlist"],
-  ["A flashcard game for learning Spanish", "learn language spanish flashcard game"],
-  ["A page that shows my opening hours", "opening hours shop business local"],
-  ["A book club page with this month's pick", "book club reading group month"],
-  ["A packing list for camping trips", "camping trip packing list travel"]
+  ["A science lab that reads new papers and keeps its findings current", "papers literature lab science review findings"],
+  ["A fleet of services that finds its own failures and fixes them", "services monitor failures fix incident reliability fleet"],
+  ["A publishing house that drafts, revises and issues new editions on its own", "publish journal paper edition writing revise"],
+  ["A compliance watcher that tracks rule changes and updates our controls", "compliance regulation audit policy rules controls"],
+  ["A software portfolio where agents triage the backlog across many repos", "backlog repos portfolio engineering agents issues"],
+  ["A trading desk that tests strategies and records every result", "trading strategy backtest markets quant desk"],
+  ["A support operation that learns from every ticket and fixes the cause", "support tickets customer service helpdesk cause"],
+  ["A security program that scans, patches and proves each fix", "security vulnerability patch scan dependency"],
+  ["A data pipeline that notices drift, repairs itself and logs why", "data pipeline drift etl quality warehouse"],
+  ["A newsroom that monitors sources and drafts corrections as facts change", "news media sources fact correction journalism"],
+  ["A clinical evidence tracker that keeps guidelines in step with new trials", "clinical trials evidence guidelines medical health"],
+  ["A grants and funding desk that finds calls, drafts and tracks deadlines", "grants funding proposals deadlines nonprofit"],
+  ["A cost controller that watches cloud spend and trims waste weekly", "cloud cost spend budget finops waste"],
+  ["A knowledge base that audits itself and rewrites what has gone stale", "knowledge docs documentation stale wiki"],
+  ["A growth engine that tests messages, measures results and keeps what works", "growth marketing outreach experiments conversion"],
+  ["A supply chain monitor that reroutes orders when something slips", "supply chain logistics orders inventory suppliers"],
+  ["A model evaluation harness that re-tests every release against its own history", "model evaluation benchmark regression ai release"],
+  ["An open-source project run by agents with maintainers deciding the few gates", "open source maintainer project community releases"],
+  ["A legal and contract desk that tracks obligations and renewals", "legal contracts obligations renewals law"],
+  ["A school or training program that adapts its curriculum to measured results", "curriculum training education learners outcomes"]
 ];
 
 export const CSS = [
@@ -99,15 +83,15 @@ const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</
 export function thread(o) {
   o = o || {};
   const first = POOL.slice().sort(() => Math.random() - 0.5).slice(0, 6);
-  return "<section class=\"th\" id=\"th\"><div class=\"th-hello\"><h1>" + esc(o.title || "What do you want to make?") + "</h1><p>" + esc(o.lede || "Say it or type it, the way you would text a friend. I ask a few quick questions, build it, put it online and look after it.") + "</p></div>"
+  return "<section class=\"th\" id=\"th\"><div class=\"th-hello\"><h1>" + esc(o.title || "What system do you want to run?") + "</h1><p>" + esc(o.lede || "Describe a system that has to keep running, learning and fixing itself. I ask a few questions, stand it up on Cloudflare and keep it improving.") + "</p></div>"
     + "<div class=\"th-log\" id=\"th-log\" role=\"log\" aria-live=\"polite\" aria-label=\"Conversation\"></div>"
     + "<div class=\"th-dock\"><form class=\"th-cmp\" id=\"th-form\" method=\"post\" action=\"/api/idea\">"
     + "<textarea id=\"th-in\" name=\"idea\" rows=\"1\" maxlength=\"1500\" required autocomplete=\"off\" enterkeyhint=\"send\" aria-label=\"Message Ultrastable\">" + esc(o.prefill || "") + "</textarea>"
     + "<span class=\"th-ph\" id=\"th-ph\" aria-hidden=\"true\">" + (o.prefill ? "" : "Describe your idea…") + "</span>"
     + "<button type=\"button\" class=\"th-rb\" id=\"th-mic\" aria-label=\"Speak\" title=\"Speak\" hidden>" + MIC + "</button>"
     + "<button type=\"submit\" class=\"th-rb go\" id=\"th-go\" aria-label=\"Send\" title=\"Send\">" + GO + "</button></form>"
-    + "<p class=\"th-hint\" id=\"th-hint\">A few words is enough. <a href=\"/engineers\">I write code: skip ahead</a></p></div>"
-    + "<div class=\"th-sug idle\" id=\"th-sug\"><div class=\"th-lbl\"><span id=\"th-sl\">Ideas to get you going</span><button type=\"button\" class=\"th-more\" id=\"th-more\">Show others</button></div>"
+    + "<p class=\"th-hint\" id=\"th-hint\">This is for ongoing systems that need setup and commitment, not one-off pages. <a href=\"/engineers\">I write code: skip ahead</a></p></div>"
+    + "<div class=\"th-sug idle\" id=\"th-sug\"><div class=\"th-lbl\"><span id=\"th-sl\">Systems people run on Ultrastable</span><button type=\"button\" class=\"th-more\" id=\"th-more\">Show others</button></div>"
     + "<div class=\"th-chips\" id=\"th-chips\">" + first.map((p) => "<a class=\"th-chip\" href=\"/start?idea=" + encodeURIComponent(p[0]) + "\" data-s=\"" + esc(p[0]) + "\">" + esc(p[0]) + "</a>").join("") + "</div>"
     + "<div class=\"th-chips\" id=\"th-recall\" hidden></div></div></section>"
     // Bundlers that keep function names (wrangler/esbuild keepNames) inject __name(...) into serialized functions; the shim keeps it working.
@@ -176,9 +160,9 @@ function client(C) {
   }
   var fresh = shuffle(C.pool), fi = 0, rotor = null, lastQ = "", qTimer = null;
   function idleSet() { var out = []; for (var i = 0; i < 6; i++) out.push(fresh[fi++ % fresh.length]); return out; }
-  function rotate() { if (S.phase !== "idle" || inp.value.trim() || sug.matches(":hover") || sug.contains(document.activeElement)) return; paint("Ideas to get you going", idleSet()); }
+  function rotate() { if (S.phase !== "idle" || inp.value.trim() || sug.matches(":hover") || sug.contains(document.activeElement)) return; paint("Systems people run on Ultrastable", idleSet()); }
   function startRotor() { if (!rotor && !reduce) rotor = setInterval(rotate, 8000); }
-  more.onclick = function () { if (S.phase === "idle" && !inp.value.trim()) paint("Ideas to get you going", idleSet()); else typed(true); };
+  more.onclick = function () { if (S.phase === "idle" && !inp.value.trim()) paint("Systems people run on Ultrastable", idleSet()); else typed(true); };
   // A fresh daily set from the server joins the pool (a model writes it once a day; offline the pool alone rotates).
   fetch("/api/suggest", { headers: { accept: "application/json" } }).then(function (r) { return r.json(); }).then(function (d) { if (d && d.ideas && d.ideas.length) { fresh = shuffle(d.ideas.concat(fresh)).filter(function (x, i, a) { return a.indexOf(x) === i; }); fi = 0; } }).catch(function () {});
   startRotor();
@@ -188,7 +172,7 @@ function client(C) {
   function typed(force) {
     var q = inp.value.trim(); clearTimeout(qTimer);
     if (S.phase !== "idle") return;
-    if (q.length < 4) { if (S.phase === "idle" && lastQ) { lastQ = ""; paint("Ideas to get you going", idleSet()); } return; }
+    if (q.length < 4) { if (S.phase === "idle" && lastQ) { lastQ = ""; paint("Systems people run on Ultrastable", idleSet()); } return; }
     qTimer = setTimeout(function () {
       if (q === lastQ && !force) return; lastQ = q;
       var mode = S.phase === "done" ? "change" : "grow", ctx = S.phase === "done" ? S.text + ". Change asked: " + q : q;
