@@ -89,7 +89,7 @@ class Boot(unittest.TestCase):
     def test_full_tick_with_the_seed_heartbeat(self):
         out = selfhost.boot(ROOT, self.db(), node=True)
         self.assertEqual((out["status"], out["path"]), ("ok", "seed-tick-node"))
-        self.assertEqual((out["tick"]["completed"], out["tick"]["errors"]), (7, []))
+        self.assertEqual((out["tick"]["completed"], out["tick"]["errors"]), (out["tick"]["total"], []))   # every step of the seed tick completes, however many steps the seed has (8 since OBJECTIVES-1 added measure)
 
     def test_refuses_to_boot_when_verifier_fails(self):
         r = copy_repo()
