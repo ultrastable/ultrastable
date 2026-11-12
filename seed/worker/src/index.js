@@ -2,6 +2,7 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { runTick } from './tick.js';
+import { runExecutor } from './executor.js';
 import config from './config.js';
 import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
 import { nowScreen, nextScreen, needsScreen, questionScreen, doneScreen } from './ui.js';
@@ -17,6 +18,7 @@ const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',
 export default {
   async scheduled(_event, env, ctx) {
     ctx.waitUntil(runTick(env.DB, { config, env: presence(env) }));
+    ctx.waitUntil(runExecutor(env).then(r => console.log('executor', JSON.stringify(r))).catch(e => console.error('executor', e && e.message)));
     ctx.waitUntil(selfcheck(env, hosts(env)[0]).catch(e => console.error('analytics selfcheck', e && e.message)));
   },
 
