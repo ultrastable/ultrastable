@@ -1,0 +1,11 @@
+{
+  "id": "Q-SYS-AGENT-READINESS",
+  "title": "Q-SYS-AGENT-READINESS: SYS-5: score ultrastable.io against the agent-readiness checks as a probe",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** file:scripts/agent_readiness.py\n**Status:** open\n\nOwner directive 2026-11-12: a system is an integrated collection of parts, not one worker and a database.\n\nCheck the live site for the standards Cloudflare's scan evaluates (robots.txt, sitemap, Link headers, markdown negotiation, content signals, API catalog, MCP server card, agent skills index, OAuth discovery where an API needs auth) and fail the loop when one regresses. Add Accept: text/markdown content negotiation to the site pages.\nPaths: scripts/agent_readiness.py, site/worker.js, site/site.test.mjs.\nAcceptance: the script prints a per-check result for ultrastable.io and the transparency page shows it.\n\nsize: L\n\n**Closing probe:** file:scripts/agent_readiness.py exists and its tests pass.",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "System wiring"
+}

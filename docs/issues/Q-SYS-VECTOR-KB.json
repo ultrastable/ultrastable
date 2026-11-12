@@ -1,0 +1,11 @@
+{
+  "id": "Q-SYS-VECTOR-KB",
+  "title": "Q-SYS-VECTOR-KB: SYS-4: vector index of the repository's own knowledge for the agents",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** file:foundation/kb_vector.py\n**Status:** open\n\nOwner directive 2026-11-12: a system is an integrated collection of parts, not one worker and a database.\n\nfoundation/kb.py retrieves by keyword. Add a Cloudflare Vectorize index (ultrastable-kb) built from docs, doctrine, the queue and decisions, an embed step in the tick, and a retrieval path that kb.retrieve uses when the binding exists and falls back to keywords otherwise. Topology (Q-SYS-TOPOLOGY) declares the index.\nPaths: foundation/kb_vector.py, foundation/kb.py, tests/foundation/test_kb_vector.py.\nAcceptance: tests cover both paths; the index id is in doctrine/topology.json.\n\nsize: L\n\n**Closing probe:** file:foundation/kb_vector.py exists and its tests pass.",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "System wiring"
+}
