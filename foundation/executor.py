@@ -192,9 +192,15 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         sh(["git", "checkout", "-B", branch], root)
         prompt, failed, files, out = build_prompt(issue, tree), [], [], {}
         for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
-            out = (model_call or (lambda p: call_model(p, key)))(prompt)
-            files = apply_edits(out["files"], root)
             failed = []
+            try:
+                out = (model_call or (lambda p: call_model(p, key)))(prompt)
+                files = apply_edits(out["files"], root)
+            except (ValueError, KeyError, TypeError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
+                failed.append("the reply was not valid JSON with a files list: " + type(e).__name__ + ": " + str(e)[:300])
+                if attempt < REPAIRS:
+                    prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED; reply with ONLY valid JSON (escape backslashes and quotes inside file content): " + failed[0]
+                continue
             if checks is None:
                 for g in GENERATORS:
                     sh(g, root)
