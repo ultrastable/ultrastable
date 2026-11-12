@@ -1,0 +1,103 @@
+{
+ "_doc": "The org-wide lane (CLOSED-LOOP-AXIOM). One queue, one merge lane, one drift loop across every repository. Read by foundation/fleet.py. Surfaces are tried in order per repository; the first that can write is used and recorded in ops/fleet-log.jsonl.",
+ "org": "ultrastable",
+ "repos": [
+  "ultrastable",
+  "workers",
+  "spec",
+  "seed",
+  "license",
+  "docs",
+  "site",
+  "platform"
+ ],
+ "surfaces": [
+  {
+   "id": "fleet-token",
+   "how": "FLEET_TOKEN secret (fine-grained, org-wide), if bound"
+  },
+  {
+   "id": "lane-pat",
+   "how": "LANE_PAT secret already used by executor.yml"
+  },
+  {
+   "id": "github-token",
+   "how": "the workflow's GITHUB_TOKEN (this repository only)"
+  },
+  {
+   "id": "claude-session",
+   "how": "the scheduled Claude session with the GitHub connector (ops/scheduled-tasks/)"
+  }
+ ],
+ "merge": {
+  "method": "squash",
+  "require": [
+   "non-draft",
+   "checks green or no checks defined",
+   "no label hold|blocked"
+  ],
+  "skip_labels": [
+   "hold",
+   "blocked",
+   "wip"
+  ],
+  "wait_minutes": 0,
+  "reviews_required": 0,
+  "ready_drafts": true,
+  "auto_close_on_probe": true,
+  "_doc": "Rowan 2026-11-12: merge PRs immediately, never wait on a PR, resolve all PRs and issues automatically. Checks and the interrupt gate still apply."
+ },
+ "copies": [
+  {
+   "id": "license-text",
+   "files": [
+    "LICENSE"
+   ],
+   "repos": [
+    "ultrastable",
+    "workers",
+    "spec",
+    "license"
+   ],
+   "rule": "identical"
+  },
+  {
+   "id": "agent-axiom",
+   "files": [
+    "AGENTS.md"
+   ],
+   "repos": [
+    "ultrastable",
+    "workers",
+    "spec",
+    "license",
+    "seed"
+   ],
+   "rule": "contains:CLOSED-LOOP-AXIOM"
+  }
+ ],
+ "dependencies": [
+  {
+   "from": "spec",
+   "to": "workers",
+   "on": "specs/",
+   "open": "Spec change in {from}: verify status labels in {to} (tools/spec_truth.py)"
+  },
+  {
+   "from": "ultrastable",
+   "to": "seed",
+   "on": "foundation/",
+   "open": "Foundation change in {from}: sync the seed kernel copy"
+  },
+  {
+   "from": "license",
+   "to": "workers",
+   "on": "LICENSE",
+   "open": "License change in {from}: copy to {to}"
+  }
+ ],
+ "public_read": [
+  "QNFO/qnfo-workers"
+ ],
+ "reach_error": "cannot reach|could not (read|reach|clone)|unreachable|not accessible|404|403|repository not found|permission denied|authentication"
+}

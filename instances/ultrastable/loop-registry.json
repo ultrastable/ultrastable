@@ -92,7 +92,8 @@
    ],
    "system_path": [
     "agents/roles/portfolio-manager.md",
-    "seed/agents/roles/portfolio-manager.md"
+    "seed/agents/roles/portfolio-manager.md",
+    "foundation/executor.py"
    ],
    "program": {
     "orient": [
@@ -136,7 +137,8 @@
    ],
    "system_path": [
     "agents/roles/project-manager.md",
-    "seed/agents/roles/project-manager.md"
+    "seed/agents/roles/project-manager.md",
+    "foundation/executor.py"
    ],
    "program": {
     "orient": [
@@ -180,7 +182,8 @@
    ],
    "system_path": [
     "agents/roles/product-manager.md",
-    "seed/agents/roles/product-manager.md"
+    "seed/agents/roles/product-manager.md",
+    "foundation/executor.py"
    ],
    "program": {
     "orient": [
@@ -224,7 +227,8 @@
    ],
    "system_path": [
     "agents/roles/staff.md",
-    "seed/agents/roles/staff.md"
+    "seed/agents/roles/staff.md",
+    "foundation/executor.py"
    ]
   },
   {
@@ -255,7 +259,8 @@
    ],
    "system_path": [
     "agents/roles/reviewer.md",
-    "seed/agents/roles/reviewer.md"
+    "seed/agents/roles/reviewer.md",
+    "foundation/executor.py"
    ]
   },
   {
@@ -286,7 +291,8 @@
    ],
    "system_path": [
     "agents/roles/operations.md",
-    "seed/agents/roles/operations.md"
+    "seed/agents/roles/operations.md",
+    "foundation/executor.py"
    ],
    "program": {
     "orient": [
@@ -330,7 +336,8 @@
    ],
    "system_path": [
     "agents/roles/funding-manager.md",
-    "seed/agents/roles/funding-manager.md"
+    "seed/agents/roles/funding-manager.md",
+    "foundation/executor.py"
    ]
   },
   {
@@ -361,7 +368,8 @@
    ],
    "system_path": [
     "agents/roles/outreach-manager.md",
-    "seed/agents/roles/outreach-manager.md"
+    "seed/agents/roles/outreach-manager.md",
+    "foundation/executor.py"
    ],
    "program": {
     "orient": [
@@ -405,7 +413,8 @@
    ],
    "system_path": [
     "agents/roles/outreach-coordinator.md",
-    "seed/agents/roles/outreach-coordinator.md"
+    "seed/agents/roles/outreach-coordinator.md",
+    "foundation/executor.py"
    ]
   },
   {
@@ -437,7 +446,8 @@
    "system_path": [
     "docs/roadmap-source.md",
     "ROADMAP.md",
-    "docs/issues"
+    "docs/issues",
+    "foundation/executor.py"
    ],
    "area": "planning"
   },
@@ -678,9 +688,9 @@
    "id": "site-deploy",
    "kind": "release",
    "summary": "Deploy the site worker and prove it live.",
-   "trigger": "manual dispatch when DEPLOY_SITE_ENABLED is true",
+   "trigger": "automatic: every push to site/ and a daily probe",
    "owner": "operations",
-   "closes_by": "gate:docs/ops/OWNER-STEPS.md",
+   "closes_by": "system",
    "sla": "1d",
    "done": "the closing probe passes and the result is recorded at the write-back target",
    "paths": [
@@ -709,15 +719,16 @@
    ],
    "credentials": [
     "CLOUDFLARE_API_TOKEN"
-   ]
+   ],
+   "staged_default": "deploy-site.yml tries CLOUDFLARE_API_TOKEN, then the Cloudflare MCP and cf CLI surfaces; with none live it builds and probes the site artifact and records dry-run"
   },
   {
    "id": "org-profile",
    "kind": "governance",
    "summary": "Apply org settings and profile, then probe that the public org page renders it.",
-   "trigger": "owner dispatch; weekly probe",
+   "trigger": "automatic: weekly probe plus any change to github/org-settings.json",
    "owner": "operations",
-   "closes_by": "gate:docs/ops/ORG-TOKEN.md",
+   "closes_by": "system",
    "sla": "7d",
    "done": "the closing probe passes and the result is recorded at the write-back target",
    "paths": [
@@ -748,7 +759,8 @@
    ],
    "credentials": [
     "ORG_ADMIN_TOKEN"
-   ]
+   ],
+   "staged_default": "org-manage.yml tries ORG_ADMIN_TOKEN, then GITHUB_TOKEN, then the Claude session route; with none live the settings file is the staged default and the weekly probe records drift"
   },
   {
    "id": "funding-verify",
@@ -825,9 +837,9 @@
    "id": "outreach-send",
    "kind": "outreach",
    "summary": "Send an approved packet by the registered route.",
-   "trigger": "a queued target with a registered sender",
+   "trigger": "automatic: each outreach run when a target is queued",
    "owner": "outreach-coordinator",
-   "closes_by": "gate:NEEDS-YOU.md",
+   "closes_by": "system",
    "sla": "1d",
    "done": "the closing probe passes and the result is recorded at the write-back target",
    "paths": [
@@ -853,15 +865,16 @@
    ],
    "credentials": [
     "OUTREACH_SEND_TOKEN"
-   ]
+   ],
+   "staged_default": "the registered sender is tried; without it the packet stays ready in outreach/ and the probe re-attempts each run"
   },
   {
    "id": "social-post",
    "kind": "outreach",
    "summary": "Publish at most one guard-clean post per run; dry-run until channels are live.",
-   "trigger": "twice weekly at most",
+   "trigger": "automatic: twice weekly schedule",
    "owner": "outreach-coordinator",
-   "closes_by": "gate:docs/ops/OWNER-STEPS.md",
+   "closes_by": "system",
    "sla": "7d",
    "done": "the closing probe passes and the result is recorded at the write-back target",
    "paths": [
@@ -891,7 +904,8 @@
    "credentials": [
     "BLUESKY_APP_PASSWORD",
     "MASTODON_TOKEN"
-   ]
+   ],
+   "staged_default": "direct channel APIs are tried; without a credential the post is written to the calendar as dry-run and re-attempted next run"
   },
   {
    "id": "plussing",
@@ -1482,6 +1496,46 @@
    "workflows": [
     "upstream.yml"
    ]
+  },
+  {
+   "id": "fleet-lane",
+   "kind": "tick",
+   "summary": "One queue, one merge lane and one drift loop across every org repository; residual items of finished threads are probed until they pass.",
+   "trigger": "daily schedule, tick Worker dispatch, manual dispatch",
+   "owner": "system",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "queue probes run, open PRs merged on green, drift reported as issues",
+   "paths": [
+    {
+     "id": "workflow",
+     "how": "fleet.yml",
+     "class": "free"
+    },
+    {
+     "id": "local",
+     "how": "python3 -m foundation queue --run --apply; python3 -m foundation fleet --apply from any agent session",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "file:foundation/fleet.py",
+   "writeback": [
+    "docs/issues",
+    "ops/fleet-log.jsonl"
+   ],
+   "system_path": [
+    "foundation/fleet.py",
+    "foundation/queue.py",
+    "foundation/publicread.py",
+    "doctrine/fleet.json",
+    "scripts/fleet_probe.py"
+   ],
+   "workflows": [
+    "fleet.yml"
+   ],
+   "staged_default": "with no org-wide token the fleet runs on GITHUB_TOKEN for this repository and records the failed surfaces; the scheduled Claude session surface takes the rest",
+   "area": "managers",
+   "launch": null
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

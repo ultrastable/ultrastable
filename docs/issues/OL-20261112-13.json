@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261112-13",
+  "title": "OL-20261112-13: Archive license repo and publish .github profile",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** cmd:python3 scripts/fleet_probe.py org-repos-live\n**Status:** open\n**Residual:** org-repos-license-archive-profile\n\nProbe is check_org_repos.py --live.",
+  "labels": [
+    "role:operations",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
