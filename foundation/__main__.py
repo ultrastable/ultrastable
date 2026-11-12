@@ -15,6 +15,7 @@
   python3 -m foundation trust [--show|--event SURFACE ACTION EVENT|--tick] the trust ledger and ladder
   python3 -m foundation executor [--apply] [--issue N]                    pick the top issue, change, check, open a PR (--pick, --record: the key-free session route)
   python3 -m foundation upstream contract|adopt|sync|check|drift|leaks   core/instance link: pin, flow down, send up, drift, bring your own repo
+  python3 -m foundation sessions [--scan|--apply|--meta|--check]       SESSION-CLOSE-1: no zombie branches or PRs; the loop tunes itself
   python3 -m foundation orphans [--check|--metrics|--baseline|--issue-body|--sync-issue OWNER/REPO]   ORPHANS-1: no orphan artifact, no human-wait
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
 """
@@ -37,6 +38,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["closedloop"]:
         return closedloop.main(_av[1:])
     args0 = sys.argv[1:] if argv is None else list(argv)
+    if args0[:1] == ["sessions"]:
+        from . import sessions
+        return sessions.main(args0[1:])
     if args0[:1] == ["orphans"]:
         from . import orphans
         return orphans.main(args0[1:])

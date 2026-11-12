@@ -1670,6 +1670,42 @@
     "instances/ultrastable/improvements.json"
    ],
    "area": "governance"
+  },
+  {
+   "id": "branch-reaper",
+   "kind": "governance",
+   "summary": "No zombie branches or PRs: every agent/claude branch idle past idle_ttl_hours is closed, handed to the merge lane or backlogged and parked, and the loop tunes its own idle TTL from its ledger with a graded prediction (strange loop). Complements session-reaper, which archives app sessions.",
+   "trigger": "daily workflow and every executor run",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "zero branches idle past idle_ttl_hours and the accounting invariant entered = live + zombies holds in ops/session-ledger.jsonl",
+   "paths": [
+    {
+     "id": "github",
+     "how": "python3 -m foundation sessions --apply with gh pr list/close",
+     "class": "free"
+    },
+    {
+     "id": "git-only",
+     "how": "the same command with plain git for-each-ref when gh is unavailable",
+     "class": "local"
+    }
+   ],
+   "closing_probe": "grep:foundation/sessions.py::def classify",
+   "writeback": [
+    "docs/issues"
+   ],
+   "system_path": [
+    "foundation/sessions.py",
+    "doctrine/sessions.json",
+    "tests/foundation/test_sessions.py",
+    ".github/workflows/sessions.yml"
+   ],
+   "workflows": [
+    "sessions.yml"
+   ],
+   "area": "managers"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
