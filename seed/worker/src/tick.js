@@ -152,7 +152,7 @@ export const STEPS = {
     const roles = await all(db, `SELECT * FROM roles`);
     let n = 0;
     for (const role of roles) {
-      if (ctx.tickId % Math.max(1, role.tick_every) !== 0) continue;
+      if (ctx.wake !== role.role && ctx.tickId % Math.max(1, role.tick_every) !== 0) continue;  // an event wakes its role out of turn
       const wip = await first(db, `SELECT COUNT(*) AS n FROM claims WHERE agent=?`, role.id);
       if (wip.n >= ctx.config.max_wip_per_role) continue;
       const item = await first(db, `SELECT id FROM items WHERE status='ready' AND owner_role=?
@@ -190,11 +190,11 @@ export const STEPS = {
 
 export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'accrue_trust', 'dispatch', 'check_plus_share'];
 
-export async function runTick(db, { config, env = {}, now = Date.now() } = {}) {
+export async function runTick(db, { config, env = {}, now = Date.now(), wake = null } = {}) {
   const startedIso = iso(new Date(now));
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, STEP_ORDER.length);
   const tickId = ins.meta.last_row_id;
-  const ctx = { config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
+  const ctx = { wake, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
   let completed = 0;
   for (const name of STEP_ORDER) {
     try {

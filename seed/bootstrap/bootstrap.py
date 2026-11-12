@@ -4,6 +4,7 @@
 Stages (the AIOS boot chain, moved from a laptop to a server):
 
   read      IDEA.md + ultrastable.json + autonomy/policy.json   (AIOS: GRUB -> kernel)
+  qualify   the system test (doctrine/VISION.md): not a fit means no roles, no repos, nothing provisioned
   detect    which connectors have credentials, which tools exist (AIOS: RAM, CPU, disk)
   select    model tier from budget                             (AIOS: model by RAM)
   plan      charter, role instances, kit backlog, gate cards   (AIOS: partition plan)
@@ -151,6 +152,30 @@ class Boot:
         if problems:
             return "blocked", "policy invalid: " + "; ".join(problems)
         return "ok", f"org '{self.org_name}', {len(self.outcomes)} outcome(s), budget {self.budget:g} USD/month"
+
+    SYSTEM_TEST = (("loop", "a loop it closes"), ("measure", "a measure that can be wrong"),
+                   ("upkeep", "upkeep that never ends"), ("run cost", "a running cost the owner accepts"))
+
+    def qualify(self):
+        """doctrine/VISION.md: Ultrastable is for systems. Fail closed, before any role is hired or anything is provisioned."""
+        self.fit = False
+        if not hasattr(self, "idea") or not self.idea["sections"].get("idea", {}).get("prose"):
+            return "ok", "no idea to test; waiting for IDEA.md"
+        have = {}
+        for b in self.idea["sections"].get("system test", {}).get("bullets", []):
+            k, _, v = b.partition(":")
+            if v.strip():
+                have[k.strip().lower()] = v.strip()
+        missing = [label for key, label in self.SYSTEM_TEST if key not in have]
+        if self.budget <= 0:
+            missing.append("a stated monthly budget")
+        self.fit = not missing
+        if self.fit:
+            return "ok", "system test passed: " + ", ".join(k for k, _ in self.SYSTEM_TEST)
+        self.state["gate_cards"].append(self.card("GATE-FIT", "Not a fit for Ultrastable yet: " + "; ".join(missing),
+            "Ultrastable runs ongoing systems (doctrine/VISION.md). A one-off page, trip or hobby tool needs a site builder or a chat assistant, not a staffed organization",
+            "nothing is staffed or provisioned", "IDEA.md '# System test' section", "boot-log.json stage qualify ok"))
+        return "ok", "not a fit: missing " + "; ".join(missing) + ". No roles hired, nothing provisioned."
 
     def detect(self):
         found, missing = [], []
@@ -490,10 +515,12 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     root = a.root.resolve()
     boot = Boot(root, (a.out or root / "org").resolve(), apply=a.apply)
-    for name in ("read", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start"):
+    for name in ("read", "qualify", "detect", "select", "cases", "plan", "write", "surfaces", "org", "provision", "start"):
         st = boot.guard(name, getattr(boot, name))
         if name == "read" and st == "blocked" and not hasattr(boot, "idea"):
             break  # nothing to plan from; the report says why
+        if name == "qualify" and not getattr(boot, "fit", False):
+            break  # not a system: stop before staffing or provisioning anything
     boot.finalize()
     rep = boot.report()
     boot.out.mkdir(parents=True, exist_ok=True)
@@ -502,6 +529,9 @@ def main(argv=None) -> int:
          "provision_plan": boot.state.get("provision_plan", []),
          "surfaces": boot.state.get("surfaces", {}), "org_plan": boot.state.get("org_plan", [])}, indent=2) + "\n")
     (boot.out / "boot-report.md").write_text(rep + "\n")
+    gc = boot.out / "gate-cards.json"
+    if not gc.exists():  # stages after qualify may not have run; the cards still must land
+        gc.write_text(json.dumps(boot.state["gate_cards"], indent=2) + "\n")
     print(rep)
     return 0 if all(s["status"] != "blocked" for s in boot.log) else 2
 

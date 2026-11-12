@@ -78,8 +78,8 @@ assert.ok([...kv.keys()].some((k) => k.startsWith("profile:")), "interview profi
   const sj = async (q, env) => (await (await mod.fetch(new Request("https://ultrastable.io/api/suggest?" + q), env)).json()).s;
   const a1 = await sj("seed=1&q="), a2 = await sj("seed=2&q="), a3 = await sj("seed=1&q=");
   assert.equal(a1.length, 4); assert.deepEqual(a1, a3, "same seed, same suggestions"); assert.notDeepEqual(a1, a2, "a new seed rotates the list");
-  const rel = await sj("seed=5&q=" + encodeURIComponent("a bin day reminder for neighbours"));
-  assert.ok(rel.some((t) => /remind|neighbo|community|club/i.test(t)), "suggestions respond to what is typed: " + rel.join(" | "));
+  const rel = await sj("seed=5&q=" + encodeURIComponent("a website for our club"));
+  assert.ok(rel.some((t) => /club|community|website/i.test(t)), "suggestions respond to what is typed: " + rel.join(" | "));
   const seenOne = await sj("seed=1&q=&seen=" + encodeURIComponent(a1.join("|")));
   assert.ok(seenOne.every((t) => !a1.includes(t)), "already-shown ideas are not repeated");
   const modelEnv = { ASSETS: mem, AI: { run: async () => ({ response: JSON.stringify(["Weekly rota for the street", "Reminder texts"]) }) } };

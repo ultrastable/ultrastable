@@ -271,6 +271,19 @@
       "discoverable": false,
       "reason": "Beacon collector; not an agent surface.",
       "description": "First-party analytics collector."
+    },
+    {
+      "id": "github-webhook",
+      "path": "/hook/github",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "machine",
+      "standards": [],
+      "discoverable": false,
+      "description": "Event-driven trigger: HMAC-signed GitHub webhook (X-Hub-Signature-256) wakes the role named in doctrine/triggers.json; 401 on a bad signature.",
+      "reason": "machine-to-machine callback authenticated by HMAC; nothing for an agent to discover"
     }
   ]
 }

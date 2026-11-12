@@ -1,0 +1,8 @@
+{
+  "id": "Q-GAP-front-door-qualify",
+  "title": "Q-GAP-front-door-qualify: Run the system test at the public front door before BUILD-1 builds a page",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run\n**Done check:** grep:site/worker.js::systemTest\n**Status:** open\n\nGap in component `front-door`: /api/idea builds a one-page site from any idea, which contradicts docs/doctrine/VISION.md. The interview must ask the four system-test questions (loop, measure, upkeep, run cost) and answer a non-system with a plain not-a-fit and what to use instead, as seed/bootstrap/bootstrap.py stage qualify already does. Source: docs/doctrine/VISION.md (VISION-1).",
+  "labels": ["role:product-manager", "gap"],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}
