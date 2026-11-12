@@ -13,7 +13,7 @@ assert.equal(r.status, 301); assert.equal(r.headers.get("location"), "https://ul
 const kv = new Map(); const mem = { delete: async (k) => { kv.delete(k); }, get: async (k) => kv.has(k) ? kv.get(k) : null, put: async (k, v) => { kv.set(k, v); } };
 let calls = 0; const AI = { run: async (m, a) => { calls++; const ch = a.messages[1].content.includes("current page"); return { response: "```html\n<html><body><h1>" + (ch ? "changed" : "bins") + "</h1></body></html>\n```" }; } };
 const E2 = { ASSETS: mem, AI };
-r = await get("https://ultrastable.io/start"); assert.equal(r.status, 200); assert.match(await r.text(), /What do you want to build/);
+r = await get("https://ultrastable.io/start"); assert.equal(r.status, 200); assert.match(await r.text(), /Tell me what is on your mind/);
 const fd = new FormData(); fd.set("idea", "an app for bin day");
 r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: fd }), E2);
 assert.equal(r.status, 303); const id = /\/s\/([a-f0-9]{10})\/make/.exec(r.headers.get("location"))[1];
@@ -33,7 +33,7 @@ assert.equal(kv.get("state:" + id2), "failed"); assert.match(await r.text(), /So
 r = await mod.fetch(new Request("https://ultrastable.io/s/0000000000"), E2); assert.equal(r.status, 404);
 r = await get("https://ultrastable.net/"); assert.equal(r.headers.get("location"), "https://ultrastable.io/proof");
 r = await get("https://www.ultrastable.io/how"); assert.equal(r.headers.get("location"), "https://ultrastable.io/how");
-for (const p of ["/", "/how", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
+for (const p of ["/", "/engineers", "/how", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
   r = await get("https://ultrastable.io" + p); assert.equal(r.status, 200, p);
   const h = await r.text(); assert.match(h, /<body/); assert.match(h, /rel="canonical"/);
   assert.ok(((h.replace(/<style>[\s\S]*?<\/style>/, "")).match(/class="btn btn-primary"/g) || []).length <= 1, p + " has at most one primary action");
@@ -45,6 +45,15 @@ assert.equal((await (await get("https://ultrastable.io/health")).json()).worker,
 assert.match(await (await get("https://ultrastable.io/robots.txt")).text(), /Sitemap/);
 assert.match(await (await get("https://ultrastable.io/favicon.svg")).text(), /<svg/);
 assert.match(await (await get("https://ultrastable.io/")).text(), /og:image/);
+// INTERVIEW-1: pill ask bar with mic, chips, engineer lane, honest pins; the client script must parse.
+const homeHtml = await (await get("https://ultrastable.io/")).text();
+assert.match(homeHtml, /class="us-ask"/); assert.match(homeHtml, /id="us-mic"/); assert.match(homeHtml, /href="\/engineers"/);
+assert.doesNotMatch(homeHtml, /<textarea/, "no intimidating text box on the front door");
+for (const m of homeHtml.matchAll(/<script>([\s\S]*?)<\/script>/g)) new Function(m[1]);
+const eng = await (await get("https://ultrastable.io/engineers")).text(); assert.match(eng, /Pinned/); assert.match(eng, /Live/);
+const fp = new FormData(); fp.set("idea", "bins. for other people"); fp.set("profile", JSON.stringify({ space: { who: "B" } }));
+r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: fp }), E2); assert.equal(r.status, 303);
+assert.ok([...kv.keys()].some((k) => k.startsWith("profile:")), "interview profile is stored with the idea");
 console.log("ultrastable-site ok");
 
 // Social preview must be a PNG (SVG og:image is ignored by most crawlers).

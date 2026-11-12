@@ -1,0 +1,12 @@
+{
+  "id": "INTERVIEW-4",
+  "title": "INTERVIEW-4: Pill and mic pattern on every input surface",
+  "body": "**Owner:** Product manager\n**Trigger:** see below\n**Status:** open\n\nApply the pill ask bar and voice input to /setup text fields, /pilot form, dashboard and cockpit. Trigger: INTERVIEW-1 live. Closing probe: gaplint rule GL011 finds no bare textarea on a public page.",
+  "labels": [
+    "role:product",
+    "ws:front-door",
+    "plus"
+  ],
+  "milestone": "Next",
+  "workstream": "Product"
+}
