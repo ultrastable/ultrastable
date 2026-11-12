@@ -171,6 +171,14 @@
    "probe": "grep:foundation/writeback.py::never count\\+1"
   },
   {
+   "id": "decision-2026-11-12-position-say-what-ultrastable-is-not-for",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "POSITION: say what Ultrastable is not for",
+   "body": "The home page lists what Ultrastable is not for (one-off pages, prompt-by-prompt vibe coding) and agent.md tells assistants to stop when the idea is a one-off page, so people self-select into ongoing systems that need setup and a paid back end.",
+   "probe": "grep:site/worker.js::What it is not for"
+  },
+  {
    "id": "decision-2026-11-12-server-side-only-github-actions-on-its-built-in-token-is-the",
    "kind": "decision",
    "date": "2026-11-12",
