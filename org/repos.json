@@ -21,7 +21,7 @@
         "github.com/ultrastable profile"
       ],
       "last_activity": "unknown",
-      "note": "archived at creation; sessions cannot attach dot-named repos (add_repo) and settings writes are blocked. Surfaces tried are in docs/BOOTSTRAP-GAPS.md."
+      "note": "archived at creation. Surfaces tested 2026-11-12, all refused or out of scope: MCP file/actions access, add_repo, connectors (no GitHub connector), GITHUB_TOKEN workflow (repo-scoped), profile from another repo (not supported by GitHub). Detail in docs/BOOTSTRAP-GAPS.md. Trigger: org-manage with ORG_ADMIN_TOKEN."
     },
     {
       "name": "spec",
@@ -109,7 +109,8 @@
       "note": "archive pending: the session permission check refused the archive call; the org-manage workflow performs it with the admin token",
       "merged_into": "spec",
       "reason": "Folded into spec/license/ on 2026-11-12 (spec PR 9); one fewer repo for an investor to read. Backup bundle ultrastable-git/2026-11-12/license-backup.bundle.",
-      "consumers": []
+      "consumers": [],
+      "probe": "python3 scripts/check_org_repos.py --live reports archived true; trigger org-manage once ORG_ADMIN_TOKEN exists"
     },
     {
       "name": "platform",
