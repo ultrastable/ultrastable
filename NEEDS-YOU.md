@@ -7,8 +7,8 @@ An application is a statement made in your name; the packets are written and che
 **[Open the list of programmes with their application links](https://github.com/ultrastable/ultrastable/blob/main/outreach/STATUS.md)**
 
 ## Let Claude reach the new Cloudflare account
-Only the account owner can authorize access to account 81e3a4efb4eb66e613529b87682911bb. If you do nothing: The old account keeps running everything; nothing moves.
-**[Reconnect the Cloudflare connector with the login that owns the new account](https://claude.ai/settings/connectors)**
+Your Cloudflare login is already a member of the ultrastable account (81e3a4ef...), but the connector was authorized for the quniverse account only; only you can grant it the second account. If you do nothing: The old account keeps running everything; nothing moves.
+**[Reconnect the Cloudflare connector and tick the ultrastable account](https://claude.ai/settings/connectors)**
 
 ## Upload the org avatar and pin repos
 GitHub has no API for these. If you do nothing: Generated identicon, no pins.
