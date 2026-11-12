@@ -83,7 +83,7 @@
       "state": "live",
       "role": "heartbeat, executor dispatch, in-Worker code agents, lane",
       "main": "seed/worker/src/index.js",
-      "compatibility_date": "2026-10-01",
+      "compatibility_date": "2026-11-12",
       "crons": [
         "*/10 * * * *"
       ],
@@ -125,12 +125,14 @@
       "state": "live",
       "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents)",
       "main": "site/worker.js",
-      "compatibility_date": "2026-11-04",
+      "compatibility_date": "2026-11-12",
       "routes": [
         "ultrastable.io",
         "www.ultrastable.io",
         "ultrastable.app",
-        "ultrastable.net"
+        "www.ultrastable.app",
+        "ultrastable.net",
+        "www.ultrastable.net"
       ],
       "public": true,
       "bindings": {
@@ -156,7 +158,7 @@
       "state": "live",
       "role": "owner dashboard: e-mailed-code login, task queue, audit log; reached only through the site's OWNER service binding",
       "main": "dashboard/worker.js",
-      "compatibility_date": "2026-11-04",
+      "compatibility_date": "2026-11-12",
       "crons": [
         "0 13 * * *",
         "*/10 * * * *"
@@ -191,7 +193,7 @@
       "retire_candidate": true,
       "role": "found in the account, owner unknown: a bootstrap output (tenant 0 self-test); retired once nothing routes to it",
       "main": "seed/worker/src/index.js",
-      "compatibility_date": "2026-10-01",
+      "compatibility_date": "2026-11-12",
       "public": false,
       "bindings": {
         "d1": {
@@ -207,7 +209,7 @@
       "state": "live",
       "role": "code agents (Workers AI adapters from doctrine/code-agents.json), probed live",
       "main": "deploy/agents-worker.js",
-      "compatibility_date": "2026-11-04",
+      "compatibility_date": "2026-11-12",
       "public": false,
       "bindings": {
         "d1": {
@@ -233,5 +235,5 @@
     "dashboard counts the deploy"
   ],
   "deploy_counter": "ops/deploys.jsonl",
-  "system_compatibility_date": "2026-11-04"
+  "system_compatibility_date": "2026-11-12"
 }

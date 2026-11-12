@@ -1,6 +1,6 @@
 name = "ultrastable-dashboard"
 main = "worker.js"
-compatibility_date = "2026-11-04"
+compatibility_date = "2026-11-12"
 
 # Public holding page and /owner dashboard on all three domains (same worker).
 routes = [
@@ -13,7 +13,7 @@ routes = [
 ]
 
 [triggers]
-crons = ["*/10 * * * *", "0 13 * * *"]
+crons = ["*/10 * * * *"]
 
 [[d1_databases]]
 binding = "DB"

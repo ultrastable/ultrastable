@@ -1,7 +1,7 @@
 // Ultrastable seed Worker: the server-side heartbeat for one org.
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
-import { runTick } from './tick.js';
+import { runTick, lastTickForHealth } from './tick.js';
 import { runExecutor } from './executor.js';
 import { runLane } from './lane.js';
 import { probe as probeAgents } from './codeagent.js';
@@ -52,9 +52,7 @@ export default {
     }
     if (url.pathname === '/agents/probe') { const r = await probeAgents(env); return Response.json(r, { status: r.ok ? 200 : 503 }); }
     if (url.pathname === '/health') {
-      const last = await env.DB.prepare(
-        `SELECT id, started_at, finished_at, steps_completed, steps_total, report, errors FROM tick_runs ORDER BY id DESC LIMIT 1`
-      ).first();
+      const last = await lastTickForHealth(env.DB);
       const ok = Boolean(last && last.steps_completed === last.steps_total);
       return Response.json({ ok, org: config.org_slug, last_tick: last || null }, { status: ok ? 200 : 503 });
     }

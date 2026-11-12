@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
-import worker, { sha256, route, tick } from "../worker.js";
+import worker, { sha256, route, tick, digestDue, ensureSnapshots } from "../worker.js";
 
 function mkdb() {
   const db = new DatabaseSync(":memory:");
@@ -95,4 +95,17 @@ test("analytics: holding-page views and beacon hits show on the owner dashboard;
   assert.match(out.out, /pageviews_7d = 2/);
   sent.length = 0; await tick(e, "*/10 * * * *");
   assert.ok(e.db.prepare("SELECT COUNT(*) c FROM hits WHERE name='selfcheck'").get().c >= 1);
+});
+
+test("CRON-GRID-1: the daily digest rides the first */10 tick of 13:00 UTC and nothing else", () => {
+  assert.equal(digestDue("*/10 * * * *", new Date("2026-11-12T13:00:30Z")), true);
+  assert.equal(digestDue("*/10 * * * *", new Date("2026-11-12T13:10:00Z")), false);
+  assert.equal(digestDue("*/10 * * * *", new Date("2026-11-12T12:50:00Z")), false);
+});
+
+test("a D1 without the snapshots table gets it created instead of throwing 'no such table: snapshots'", async () => {
+  const db = new DatabaseSync(":memory:");
+  const env = { DB: { prepare: sql => { let a = []; const o = { bind: (...x) => { a = x; return o; }, run: async () => db.prepare(sql).run(...a) }; return o; } } };
+  await ensureSnapshots(env);
+  assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE name='snapshots'").get());
 });

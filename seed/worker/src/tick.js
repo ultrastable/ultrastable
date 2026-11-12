@@ -284,4 +284,14 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
   return { tickId, completed, total: STEP_ORDER.length, report, errors: ctx.errors };
 }
 
+// HEALTH-INFLIGHT-1: runTick inserts its row before the steps run, so a probe that lands inside a tick would read steps_completed=NULL and
+// answer 503 (CF-OBS 503 groups on ultrastable-ultrastable and demo-child-ultrastable, first seen at the cron second). Judge the newest
+// FINISHED tick; a tick still unfinished after 5 minutes is a real fault and stays the newest row.
+export const INFLIGHT_MS = 300e3;
+export function lastTickForHealth(db, now = Date.now()) {
+  return db.prepare(
+    `SELECT id, started_at, finished_at, steps_completed, steps_total, report, errors FROM tick_runs WHERE finished_at IS NOT NULL OR started_at < ? ORDER BY id DESC LIMIT 1`
+  ).bind(iso(new Date(now - INFLIGHT_MS))).first();
+}
+
 export { TERMINAL };

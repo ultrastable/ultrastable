@@ -20,7 +20,7 @@ Modeled on the QNFO fleet dashboard (qnfo-fleet-dashboard), cut down to the part
 `/` serves a generic holding page, noindex, and `robots.txt` disallows everything. The fuller site stays in `site/` (not deployed).
 
 ## Deploy (Cloudflare)
-D1 `ultrastable-ops`, worker `ultrastable-dashboard`, bindings DB, SEND_EMAIL (destination restricted to the owner address), vars OWNER_EMAIL, MAIL_FROM, GITHUB_REPO; crons `*/10 * * * *` and `0 13 * * *`; custom domains ultrastable.io, ultrastable.app, ultrastable.net (and www.ultrastable.io). `wrangler.toml` has the shape; ids are filled in at deploy. Optional secrets: `GITHUB_TOKEN` (sync, label, dispatch), `FLEET_TOKEN`.
+D1 `ultrastable-ops`, worker `ultrastable-dashboard`, bindings DB, SEND_EMAIL (destination restricted to the owner address), vars OWNER_EMAIL, MAIL_FROM, GITHUB_REPO; cron `*/10 * * * *` (the daily digest rides the first tick of 13:00 UTC, CRON-GRID-1); custom domains ultrastable.io, ultrastable.app, ultrastable.net (and www.ultrastable.io). `wrangler.toml` has the shape; ids are filled in at deploy. Optional secrets: `GITHUB_TOKEN` (sync, label, dispatch), `FLEET_TOKEN`.
 
 ## Portability
 The core touches the platform only through `env.DB` (SQL), `env.SEND_EMAIL` (mail) and `fetch`. A Google Cloud adapter (Cloud Run + Cloud SQL or Firestore + a mail API) supplies those three; nothing else is Cloudflare-specific.

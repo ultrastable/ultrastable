@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeDb } from './d1shim.js';
-import { runTick, STEP_ORDER, reliability } from '../src/tick.js';
+import { runTick, STEP_ORDER, reliability, lastTickForHealth } from '../src/tick.js';
 import { readFileSync } from 'node:fs';
 
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
@@ -92,4 +92,14 @@ test('a hidden failure demotes', async () => {
 test('reliability starts at the baseline and moves with outcomes', () => {
   assert.equal(reliability(0, 0, policy.trust), 0.5);
   assert.ok(reliability(10, 10, policy.trust) > 0.9);
+});
+
+test('HEALTH-INFLIGHT-1: health ignores a tick in flight, but an unfinished tick older than 5 minutes is the newest row', async () => {
+  const db = makeDb(); seed(db);
+  await runTick(db, { config, now: T0 });
+  db.raw.prepare(`INSERT INTO tick_runs (started_at, steps_total) VALUES (?, 8)`).run('2026-11-10 00:10:00');
+  const live = await lastTickForHealth(db, T0 + 10 * 60e3 + 5e3);
+  assert.equal(live.steps_completed, live.steps_total); // the finished tick, so /health stays 200 during a tick
+  const stuck = await lastTickForHealth(db, T0 + 10 * 60e3 + 301e3);
+  assert.notEqual(stuck.steps_completed, stuck.steps_total); // stuck for over 5 minutes: 503
 });
