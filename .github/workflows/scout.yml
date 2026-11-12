@@ -1,0 +1,25 @@
+name: scout
+# budget: ~1 min x 4/month
+# trigger: weekly; releases and posts of the leading agent platforms move over days, so a faster event buys nothing; dispatch on demand
+# free-alternative: a cloud-hosted agent session runs `python3 -m foundation scout --run --apply`
+on:
+  schedule: [{cron: "23 6 * * 2"}]
+  workflow_dispatch: {}
+permissions: {contents: write, actions: write}
+concurrency: {group: scout, cancel-in-progress: false}
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py scout
+      - name: Scout the state of the art (SCOUT-1)
+        run: python3 -m foundation scout --run --apply
+      - name: Commit findings, state and the pass log
+        run: |
+          git config user.name "ultrastable-scout"; git config user.email "actions@users.noreply.github.com"
+          git add docs/issues ops/scout
+          git diff --cached --quiet || { git commit -m "scout: weekly pass, findings filed and sources re-weighted"; git pull --rebase -q origin main; git push origin HEAD:main; }

@@ -563,6 +563,14 @@
    "title": "LIVE-1: PUBLIC_HEALTH_ONLY gate committed to seed worker",
    "body": "Live tenants ran visibility.js that was not in main; a rebuild from main would expose /describe. Measured: node --test visibility.test.js tests 2 pass 2.",
    "probe": "file:seed/worker/src/visibility.js"
+  },
+  {
+   "id": "decision-2026-11-12-scout-stage-for-the-growth-product-manager",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Scout stage for the growth product manager",
+   "body": "Rowan: keep scouting the state of the art. Weekly scout.yml reads release feeds, scores against the gap register, files growth items and re-weights sources from adoption outcomes; flow and clock declared. Session: session_0156nqDrGFZaa8zQwcdGZNQU",
+   "probe": "grep:foundation/scout.py::def reweight"
   }
  ]
 }

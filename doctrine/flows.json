@@ -8,7 +8,8 @@
     "ext.post_engagement": "replies, reposts and clicks on posts (returned by social.post)",
     "ext.owner_goals": "IDEA.md and the owner's standing directives (instance manifest)",
     "ext.outreach_replies": "funding programmes and recipients answering outreach (recorded by scripts/outreach.py reply)",
-    "ext.actions_quota": "GitHub Actions minutes used against the monthly quota"
+    "ext.actions_quota": "GitHub Actions minutes used against the monthly quota",
+    "ext.frontier": "releases and posts of the leading agent platforms, coding agents and standards (doctrine/scout.json sources)"
   },
   "flows": {
     "tick-heartbeat": {
@@ -57,6 +58,10 @@
         {
           "signal": "pr.opened",
           "via": "github:pulls"
+        },
+        {
+          "signal": "adoption.outcomes",
+          "via": "file:ops/scout/adopted.jsonl"
         }
       ],
       "feedback": "a red check or a reverted merge files an item the next tick takes",
@@ -243,6 +248,10 @@
         {
           "signal": "owner.goals",
           "via": "repo:IDEA.md"
+        },
+        {
+          "signal": "scout.log",
+          "via": "file:ops/scout/log.jsonl"
         }
       ],
       "outflows": [
@@ -613,11 +622,36 @@
         "CLOUDFLARE_API_TOKEN",
         "LANE_PAT"
       ]
+    },
+    "scout": {
+      "inflows": [
+        {
+          "signal": "frontier.releases",
+          "via": "http:feeds"
+        },
+        {
+          "signal": "adoption.outcomes",
+          "via": "file:ops/scout/adopted.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        },
+        {
+          "signal": "scout.log",
+          "via": "file:ops/scout/log.jsonl"
+        }
+      ],
+      "feedback": "an adopted finding raises its source's weight and a declined or quiet one lowers it, so the next pass reads better sources and files fewer misses",
+      "bindings": []
     }
   },
   "implicit_producers": {
     "owner.goals": "ext.owner_goals",
-    "actions.minutes": "ext.actions_quota"
+    "actions.minutes": "ext.actions_quota",
+    "frontier.releases": "ext.frontier"
   },
   "pending": [
     "role-portfolio-manager",

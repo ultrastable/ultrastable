@@ -39,6 +39,14 @@
       "idle_when_no_work": false,
       "event_driven": true,
       "periodic": false
+    },
+    {
+      "id": "scout",
+      "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
+      "source": "workflow",
+      "workflow": "scout",
+      "expected_interval_s": 604800,
+      "periodic": true
     }
   ],
   "chain": {
