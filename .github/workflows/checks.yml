@@ -82,6 +82,8 @@ jobs:
         run: python3 scripts/check_routes.py
       - name: Project memory is current
         run: python3 scripts/check_memory.py
+      - name: Org repo registry (every repo declares a purpose)
+        run: python3 scripts/check_org_repos.py
       - name: Business index (BIZ-3)
         run: python3 scripts/check_business_index.py
       - name: Product and demo tests, gaplint on this repo (no extra workflow; runs on PRs only)
