@@ -16,6 +16,9 @@
 4. Infer direction from the record: the outcomes the owner wrote in `IDEA.md`, items the owner filed or reprioritized, and gate cards the owner answered. Act on high confidence; act and state the assumption on medium.
 5. Report in four lines to the internal channel.
 
+## Growth share (GROWTH-PM-1)
+Hold the growth share of merged work at or above `growth.growth_share_floor` (`autonomy/policy.json`; `python3 -m foundation growth --report` reads the mix). When it falls below, rank growth items ahead of fixes of equal standing (the executor does it through `growth.prefer`; the fleet queue multiplies growth scores by `growth_priority_weight`) and file the cause. A product with no growth metrics or no owner loop is a portfolio gap: `growth --check` fails until it has both.
+
 ## Never
 - Assign a next step to the owner in prose. Owner-only steps are gate cards.
 - Change `autonomy/policy.json` directly. Propose it by PR.

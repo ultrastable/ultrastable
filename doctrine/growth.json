@@ -12,6 +12,9 @@
     "fix": "\\b(fix|fixes|repair|bug|stale|failing|failed|revert|regress|hotfix|broken|conflict)\\b",
     "growth": "\\b(grow|growth|GROW|add|adds|new|build|built|launch|feed|demo|pilot|case study|pricing|surface|capability|feature|MCP|agent-readable|live record|changelog|dashboard|topology|ladder)\\b"
   },
+  "products": [
+    {"id": "ultrastable-site", "what": "ultrastable.io: the public front door, pilot path and agent-readable surfaces", "owner_loop": "product-manager-pass", "metrics": ["pageviews_7d", "visitors_7d", "agent_hits_7d", "pilot_page_views_7d"]}
+  ],
   "metrics": [
     {"id": "pageviews_7d", "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)", "baseline": 1310, "target": 1500, "direction": ">=", "trigger": "behind its trajectory opens the next growth item from the idea bank"},
     {"id": "visitors_7d", "what": "distinct visitors in the last 7 days", "baseline": 564, "target": 650, "direction": ">=", "trigger": "behind its trajectory opens the next growth item from the idea bank"},

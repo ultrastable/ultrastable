@@ -480,6 +480,15 @@
    "title": "Product manager pass is quiet when nothing changes; parallel CLOCKWORK work adopted",
    "body": "A daily pull request for a pass that filed nothing was noise: the report file changed every run. The report is now computed from live measurements for the public record, and only experiment state, knob changes and filed items are committed, so a quiet pass opens no pull request. Product manager pull requests no longer carry the executor marker, so settlement does not count them. A parallel branch built the same clockwork and growth modules; its four growth items were adopted with runnable probes and its lane hook is filed as Q-CLOCK-LANE-HOOK; tests pass.",
    "probe": "file:docs/issues/Q-CLOCK-LANE-HOOK.json"
+  },
+  {
+   "id": "decision-2026-11-12-growth-pm-1-growth-policy-values-and-product-coverage-are-en",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "GROWTH-PM-1: growth policy values and product coverage are enforced",
+   "body": "autonomy policy growth block (growth_share_floor 0.4 = doctrine target, growth_priority_weight 3, min 2 metrics per product, owner role product-manager); doctrine/growth.json products each name metrics and an owner loop; growth --check runs in checks.yml. Fleet counterpart: QNFO/qnfo-workers growth-pm loop (migrations/2026-11-12-growth-pm.sql).",
+   "probe": "grep:foundation/growth.py::def check_products",
+   "session": "session_0156nqDs8EdntUEvbTBhjQR3"
   }
  ]
 }
