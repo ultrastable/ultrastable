@@ -281,9 +281,8 @@ def run(root=REPO, apply=False, now=None, use_live=True, env=None, vals=None, st
     repair_filed = file_repairs(root, stage_rows, cfgc["escalation"], write=apply)
     rep = {"generated": _iso(now), "targets": tgt, "experiments": ex, "knobs": {"values": {k["id"]: knob_value(root, k) for k in _read(root, KNOBS, {"knobs": []})["knobs"]}, "last": tuned},
            "filed": {"growth": growth_filed, "repair": repair_filed}, "stages": [{"id": s["id"], "status": s["status"], "missed": s["missed"]} for s in stage_rows]}
-    if apply:
-        _write(root, EXPERIMENTS, {"experiments": ex})
-        _write(root, REPORT, rep)
+    if apply and ex != _read(root, EXPERIMENTS, {"experiments": []}).get("experiments"):
+        _write(root, EXPERIMENTS, {"experiments": ex})   # state that persists; the report itself is recomputed from live measurements, so a quiet day changes no file
     return rep
 
 

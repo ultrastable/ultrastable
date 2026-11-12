@@ -1,0 +1,13 @@
+{
+  "id": "Q-GROW-shorter-pilot-form",
+  "title": "Q-GROW-shorter-pilot-form: Fewer required fields raise the share of started applications that are sent.",
+  "body": "**Owner:** product-manager\n**Trigger:** every product-manager cycle\n**Done check:** grep:site/worker.js::pilot_form_v2\n**Status:** open\n\nMetric moved: pilot_page_views_7d. Prediction: pilot_page_views_7d rises at least 15 percent within 14 days of the change. Adopted from the parallel CLOCKWORK branch; its probe was rewritten to a file or grep the repository can run.\n\nGrowth experiment on target `idea-to-pilot` (pilot_applications_7d target 5), knob `pilot-form` in `site/worker.js`: fields and length of the pilot application. pilot applications are the conversion the front door exists for. Ship the change, log the prediction, keep it if the metric moved and revert it if not.\n\n**Closing probe:** grep:site/worker.js::pilot_form_v2.",
+  "labels": [
+    "agent-ready",
+    "growth",
+    "p1",
+    "role:product-manager"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

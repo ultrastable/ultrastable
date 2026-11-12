@@ -203,7 +203,7 @@ def snapshot(root=REPO, use_gh=True):
         stg, sett = [{"id": "stages", "status": "unmeasured", "why": str(e)[:160]}], {}
     try:
         from . import pm
-        pm_rep = pm._read(root, pm.REPORT, {})
+        pm_rep = pm.run(root, apply=False, use_live=use_gh) if use_gh else {}
         pm_rep["knob_log"] = pm.knob_log(root)[-10:]
     except Exception as e:  # recorded
         pm_rep = {"error": str(e)[:160]}
