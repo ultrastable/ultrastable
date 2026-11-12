@@ -1190,6 +1190,67 @@
           "source": "doctrine/standing-directives.md"
         }
       ]
+    },
+    {
+      "id": "guiding-directive",
+      "term": "Guiding directive",
+      "aliases": [
+        "autonomy-first directive"
+      ],
+      "version": "1.0.0",
+      "definition": "Rowan's directive of 2026-11-12 that governs all work: autonomy-first, self-directed and self-improving; no permission requests; the only pause is an action both irreversible and identity-bound after a reversible path was engineered; blockers are never owner issues; no loose ends or silent drops. Every sub-agent inherits it in full. It layers on kernel 8.2.1 and its section 4 is IC-GATE-001.",
+      "not": "Not a replacement for the kernel, the harness's permission checks or the secrets lock, and not a licence to skip the interrupt gate.",
+      "tested_by": [
+        "grep:tests/foundation/test_directive.py::def test_repo_directive_clean"
+      ],
+      "implemented_by": [
+        "docs/doctrine/GUIDING-DIRECTIVE.md",
+        "doctrine/directive.json",
+        "doctrine/registers.json",
+        "foundation/directive.py"
+      ],
+      "related": [
+        "autonomy",
+        "write-back"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-12",
+          "change": "Rowan's guiding directive adopted verbatim and made code: registers, accounting invariant, loop-breaker, provenance, scorecard, owner-handback lint.",
+          "source": "docs/doctrine/GUIDING-DIRECTIVE.md"
+        }
+      ]
+    },
+    {
+      "id": "memory-is-not-storage",
+      "term": "Memory is not storage",
+      "aliases": [
+        "repo is the only memory"
+      ],
+      "version": "1.0.0",
+      "definition": "Project memory, tool memory and chat are not storage (Rowan, 2026-11-12). Every durable fact lives in the repository; doctrine/durable-facts.json lists the required facts with repo probes and a fact present only outside the repo fails the check.",
+      "not": "Not a ban on using a memory pointer: a pointer may exist but carries nothing the repo lacks, and the system works with it disabled.",
+      "tested_by": [
+        "grep:tests/foundation/test_directive.py::def test_missing_durable_fact_fails"
+      ],
+      "implemented_by": [
+        "doctrine/durable-facts.json",
+        "docs/BOOTSTRAP-NO-MEMORY.md",
+        "foundation/directive.py"
+      ],
+      "related": [
+        "write-back",
+        "autonomy"
+      ],
+      "lineage": [
+        {
+          "version": "1.0.0",
+          "date": "2026-11-12",
+          "change": "Memory stores are not acceptable long-term storage; facts moved into the repo with a check and a memory-free bootstrap.",
+          "source": "docs/PROJECT-MEMORY.md"
+        }
+      ]
     }
   ]
 }

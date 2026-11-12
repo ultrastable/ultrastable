@@ -46,6 +46,8 @@ Generated from `doctrine/glossary.json` by `python3 -m foundation glossary --app
 | [Fallback classes](#fallback-classes) | A paid path never ends work while a free path exists, and an external provider never ends work while a local, cached or degraded path exists; the path that ran is reported. | 1.0.0 |
 | [Credential, one source](#credential-one-source) | One working credential per endpoint, verified by a live probe before it is written anywhere. | 1.0.0 |
 | [Proactive programs](#proactive-programs) | Bug fixes are the floor. | 1.0.0 |
+| [Guiding directive](#guiding-directive) | Rowan's directive of 2026-11-12 that governs all work: autonomy-first, self-directed and self-improving; no permission requests; the only pause is an action both irreversible and identity-bound after a reversible path was engineered; blockers are never owner issues; no loose ends or silent drops. | 1.0.0 |
+| [Memory is not storage](#memory-is-not-storage) | Project memory, tool memory and chat are not storage (Rowan, 2026-11-12). | 1.0.0 |
 
 ## <a id="autonomy"></a>Autonomy
 
@@ -747,3 +749,39 @@ Bug fixes are the floor. The portfolio manager and the program managers orient f
 **Lineage:**
 
 - 1.0.0 (2026-11-11): Adopted with the doctrine kernel 8.2.1. (`doctrine/standing-directives.md`)
+
+## <a id="guiding-directive"></a>Guiding directive
+
+Rowan's directive of 2026-11-12 that governs all work: autonomy-first, self-directed and self-improving; no permission requests; the only pause is an action both irreversible and identity-bound after a reversible path was engineered; blockers are never owner issues; no loose ends or silent drops. Every sub-agent inherits it in full. It layers on kernel 8.2.1 and its section 4 is IC-GATE-001.
+
+**Not:** Not a replacement for the kernel, the harness's permission checks or the secrets lock, and not a licence to skip the interrupt gate.
+
+**Also called:** autonomy-first directive
+
+**Tested by:** `grep:tests/foundation/test_directive.py::def test_repo_directive_clean`
+
+**Implemented by:** `docs/doctrine/GUIDING-DIRECTIVE.md`, `doctrine/directive.json`, `doctrine/registers.json`, `foundation/directive.py`
+
+**Related:** [autonomy](#autonomy), [write-back](#write-back)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-12): Rowan's guiding directive adopted verbatim and made code: registers, accounting invariant, loop-breaker, provenance, scorecard, owner-handback lint. (`docs/doctrine/GUIDING-DIRECTIVE.md`)
+
+## <a id="memory-is-not-storage"></a>Memory is not storage
+
+Project memory, tool memory and chat are not storage (Rowan, 2026-11-12). Every durable fact lives in the repository; doctrine/durable-facts.json lists the required facts with repo probes and a fact present only outside the repo fails the check.
+
+**Not:** Not a ban on using a memory pointer: a pointer may exist but carries nothing the repo lacks, and the system works with it disabled.
+
+**Also called:** repo is the only memory
+
+**Tested by:** `grep:tests/foundation/test_directive.py::def test_missing_durable_fact_fails`
+
+**Implemented by:** `doctrine/durable-facts.json`, `docs/BOOTSTRAP-NO-MEMORY.md`, `foundation/directive.py`
+
+**Related:** [write-back](#write-back), [autonomy](#autonomy)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-12): Memory stores are not acceptable long-term storage; facts moved into the repo with a check and a memory-free bootstrap. (`docs/PROJECT-MEMORY.md`)
