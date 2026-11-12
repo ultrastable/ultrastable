@@ -28,7 +28,7 @@ class Launch(unittest.TestCase):
         self.assertIn("not both set", cf["detail"])
 
     def test_run_once_ticks_real_records_and_writes_back(self):
-        rec = launch.run_once(ROOT, skip_outreach=True, now="2026-01-01T00:00:00Z")
+        rec = launch.run_once(ROOT, skip_outreach=True, now="2026-01-01T00:00:00Z", liveness=False)   # liveness reads live evidence; tests/foundation/test_liveness.py covers it
         self.assertTrue(all(r["ok"] for r in rec["loops"]), rec["loops"])
         tick = rec["loops"][0]
         self.assertGreater(tick["counts"]["items"], 40)

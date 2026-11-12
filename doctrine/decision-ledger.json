@@ -204,6 +204,15 @@
    "body": "copy_repo() and tiny_repo() called tempfile.mkdtemp() and nothing removed the result. Measured on main before the fix: one run of python3 -m unittest discover -s tests/foundation left 113 directories and 781 MB in the temp directory; on the larger checkout three runs filled a 117 GB disk. Fix: tests/foundation/_repo.py scratch() registers removal with the running test (addCleanup, addClassCleanup), at interpreter exit, and sweeps directories a killed run left; every bare mkdtemp in tests/foundation goes through it and test_repo_cleanup.py fails a new bare one. Measured after the fix: the same run leaves 0 directories.",
    "probe": "grep:tests/foundation/_repo.py::addCleanup",
    "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
+  },
+  {
+   "id": "lesson-2026-11-12-closing-probes-proved-code-existed-not-that-loops-ran",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Closing probes proved code existed, not that loops ran",
+   "body": "Every closing probe in the loop registry was file: or grep:, so loops verify passed while two workflows had never run. Measured 2026-11-12 12:58 UTC through the GitHub API: loop.yml 0 runs, fleet.yml 0 runs; executor log row 0.8 h old and session ledger row 0.5 h old on their evidence branches. Fix: foundation/liveness.py reads run evidence per probe in instances/ultrastable/liveness.json and gives alive, stale, failing, never or unknown; every launch pass runs it and files a queue item per loop that is not alive. Both workflows were dispatched on main at 12:59 UTC to start them.",
+   "probe": "grep:foundation/liveness.py::def verdict",
+   "session": "session_0156nqDuUz7hvNg4YU9MVeAS"
   }
  ]
 }

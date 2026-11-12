@@ -10,6 +10,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: read
+  pull-requests: read
 concurrency:
   group: loop
   cancel-in-progress: true
@@ -38,3 +40,10 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = workflow_dispatch ]; then flag=""; else flag="--failover"; fi
           ULTRASTABLE_HOST=github-actions python3 -m foundation launch $flag --commit --push
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Liveness (are the autonomous loops running? evidence, not files)
+        if: always()
+        run: python3 -m foundation liveness
+        env:
+          GH_TOKEN: ${{ github.token }}

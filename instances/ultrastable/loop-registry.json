@@ -1513,6 +1513,38 @@
    ]
   },
   {
+   "id": "liveness",
+   "kind": "doctrine",
+   "summary": "LIVENESS-1: asks whether each autonomous loop actually ran, from the evidence it leaves (workflow runs, log rows on evidence branches, merged pull requests). A loop that is stale, failing or never started becomes a queue item whose own probe closes it when the loop is alive again. Each system declares its probes in instances/<slug>/liveness.json.",
+   "trigger": "every launch pass (daily in Actions, on dispatch, on the cloud-hosted routine) and the doctrine step of the checks job for the static part",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "python3 -m foundation liveness reports every probe alive and the claim line says yes",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "foundation/launch.py runs foundation/liveness.py in every pass; loop.yml also prints the table",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation liveness --file-items run by a cloud-hosted agent session from the repository",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:tests/foundation/test_liveness.py::def test_the_claim_holds_only_when_every_loop_is_alive",
+   "writeback": [
+    "docs/issues",
+    "ops/loop-evidence"
+   ],
+   "system_path": [
+    "foundation/liveness.py",
+    "instances/ultrastable/liveness.json",
+    "foundation/launch.py"
+   ]
+  },
+  {
    "id": "server-side-only",
    "kind": "doctrine",
    "summary": "Ultrastable runs server-side only: no host, scheduler, code agent or route on a person's computer. The scan and the registry checks fail the build when one comes back.",

@@ -119,6 +119,7 @@ def check(root=REPO) -> list[str]:
             from . import selfhost
             bad += [f"selfhost: {x}" for x in selfhost.verify(root)]
     bad += framing_scan(root, d)
+    from . import liveness; bad += [f"liveness: {x}" for x in liveness.check(root)] if (root / "instances/ultrastable/liveness.json").exists() else []
     from . import serverside; bad += [f"serverside: {x}" for x in serverside.check(root)] if (root / serverside.PATH).exists() else []
     from . import kernel, loops, glossary, directive
     if (root / kernel.PATH).exists():

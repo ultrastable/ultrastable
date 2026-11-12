@@ -115,13 +115,27 @@ def _loop_closed(root) -> dict:
     return {"loop": "orphan-artifacts", "ok": m["new_orphans"] == 0 and m["human_wait_states"] == 0, **m}
 
 
-def run_once(root=REPO, skip_outreach=False, now=None) -> dict:
+def _loop_liveness(root) -> dict:
+    """LIVENESS-1: every pass asks whether the loops are actually running. A loop that is stale, failing or never started fails this
+    loop and gets a queue item; evidence that cannot be read from this host is reported as unknown and fails nothing."""
+    from . import liveness
+    try:
+        rep = liveness.run(root)
+        filed = liveness.file_items(root, rep)
+    except Exception as e:  # recorded as a failed loop, never swallowed
+        return {"loop": "liveness", "ok": False, "detail": str(e)[:300]}
+    down = [f"{r['id']}:{r['verdict']}" for r in rep["probes"] if r["verdict"] in ("stale", "failing", "never")]
+    return {"loop": "liveness", "ok": not down, "claim": rep["claim"], "claim_holds": rep["claim_holds"], "alive": rep["alive"], "total": rep["total"],
+            "not_alive": down, "unknown": [r["id"] for r in rep["probes"] if r["verdict"] == "unknown"], "items_filed": filed}
+
+
+def run_once(root=REPO, skip_outreach=False, now=None, liveness=True) -> dict:
     root = Path(root)
     scratch = root / ".selfhost" / "launch.db"
     results = [_loop_tick(root, scratch)]
     if results[0]["ok"]:
         results.append(_loop_plussing(scratch))
-    results += [_loop_probes(root), _loop_funding(root, skip_outreach), _loop_closed(root)]
+    results += [_loop_probes(root), _loop_funding(root, skip_outreach), _loop_closed(root)] + ([_loop_liveness(root)] if liveness else [])
     ok = [r["loop"] for r in results if r["ok"]]
     bad = [r["loop"] for r in results if not r["ok"]]
     t = next((r for r in results if r["loop"] == "tick"), {})
