@@ -1,0 +1,11 @@
+{
+  "id": "PIN-default-policy-pack",
+  "title": "PIN-default-policy-pack: Short default policy pack for a buyer",
+  "body": "**Owner:** product-manager\n**Trigger:** pilot milestone 1\n**Done check:** file:seed/autonomy/default-policy-pack.json\n**Status:** open\n\nToday's policy is long and written as owner directives; a buyer needs a short default pack. Done when the pack is committed and the seed loads it.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers, /how and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.",
+  "labels": [
+    "role:product-manager",
+    "pin"
+  ],
+  "milestone": "Next",
+  "workstream": "Site pins"
+}
