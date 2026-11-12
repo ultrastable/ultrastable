@@ -33,7 +33,7 @@
  "banned": [
   {"id": "windows-scheduler", "pattern": "schtasks|task[ -]scheduler|windows-task", "why": "the Windows scheduler runs on a person's computer"},
   {"id": "unix-scheduler", "pattern": "\\bcrontab\\b|\\bsystemd\\b|\\bsystemctl\\b|\\blaunchd\\b|\\blaunchctl\\b", "why": "cron tables, systemd and launchd units are schedulers on a computer somebody owns and keeps on"},
-  {"id": "desktop-scheduled-task", "pattern": "scheduled[- ]tasks?\\b", "why": "a scheduled task of the desktop app runs only while that app is open; the server-side form is a cloud-hosted routine"},
+  {"id": "desktop-scheduled-task", "pattern": "scheduled-tasks?\\b|(desktop|local) scheduled tasks?\\b", "why": "a scheduled task of the desktop app runs only while that app is open; the server-side form is a cloud-hosted routine. Cloud scheduled tasks of any vendor are not matched"},
   {"id": "host-on-a-computer", "pattern": "\\blocal[- ](scheduler|cron|agent|runs?|hosts?|loop|route|machine|computer|laptop|shell)\\b", "why": "a host, agent, loop or route on a person's computer"},
   {"id": "personal-computer", "pattern": "on the laptop|owner(['\\u2019]s)? (machine|laptop|computer|pc)\\b|[A-Za-z]:\\\\Users\\\\|desktop app (that )?(must|has to|needs to) be open", "why": "names a particular person's computer or a path on it"},
   {"id": "loopback", "pattern": "\\blocalhost\\b", "why": "an address that only means something on the computer it is typed on"}
@@ -60,7 +60,6 @@
   {"path": ".github/workflows/platform-core.yml", "reason": "the loopback address is the Postgres service container inside the GitHub Actions runner, which is server-side"},
   {"path": "seed/worker/src/agentic/adapters/memory.js", "reason": "an in-memory adapter that exists as a test fixture; its comment describes in-process test runs, not a host"},
   {"path": "demos/public/cases.json", "reason": "published case studies of what was tried on 2026-11-10; they narrate dated history and define no host or route"},
-  {"path": "doctrine/market.json", "reason": "the market analysis quotes other vendors' product names and documentation titles; they describe those products, not a host of this system"},
   {"path": "docs/bootstrapping/bootstrap-log.md", "reason": "a dated incident log; its rows record failed attempts to reach a person's computer, which is the lesson the rule keeps"}
  ]
 }

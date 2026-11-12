@@ -1864,9 +1864,9 @@
      "class": "free"
     },
     {
-     "id": "local",
+     "id": "session",
      "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/research-publisher.md",
@@ -1897,9 +1897,9 @@
      "class": "free"
     },
     {
-     "id": "local",
+     "id": "session",
      "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/marketing-manager.md",
@@ -1930,9 +1930,9 @@
      "class": "free"
     },
     {
-     "id": "local",
+     "id": "session",
      "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/legal-ip-manager.md",
@@ -1963,9 +1963,9 @@
      "class": "free"
     },
     {
-     "id": "local",
+     "id": "session",
      "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/customer-success.md",
@@ -1996,9 +1996,9 @@
      "class": "free"
     },
     {
-     "id": "local",
+     "id": "session",
      "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "file:agents/roles/org-designer.md",
@@ -2029,9 +2029,9 @@
      "class": "free"
     },
     {
-     "id": "local",
+     "id": "session",
      "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "file:doctrine/triggers.json",
@@ -2062,9 +2062,9 @@
      "class": "free"
     },
     {
-     "id": "local",
+     "id": "session",
      "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "file:foundation/lifecycle.py",
@@ -2094,9 +2094,9 @@
      "class": "free"
     },
     {
-     "id": "local",
+     "id": "session",
      "how": "the same command run by an agent session from the repository",
-     "class": "local"
+     "class": "session"
     }
    ],
    "closing_probe": "file:doctrine/components.json",

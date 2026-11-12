@@ -25,14 +25,14 @@ class ServerSideOnly(unittest.TestCase):
     def test_every_banned_phrase_from_the_directive_is_caught(self):
         d = serverside.load(ROOT)
         for phrase in (WIN, "Windows Task" + " Scheduler", CRON, "a system" + "d timer", "system" + "ctl enable", "a launch" + "d agent", "launch" + "ctl load",
-                       "ops/scheduled" + "-tasks/x.md", "a Claude scheduled" + " task", SCHED, "a local" + " agent drains it", "a local" + " run", "run it on the" + " laptop",
+                       "ops/scheduled" + "-tasks/x.md", "a desktop scheduled" + " task", SCHED, "a local" + " agent drains it", "a local" + " run", "run it on the" + " laptop",
                        "on the owner" + " machine", "the owner's" + " laptop", "C:" + "\\Users\\someone\\Dev", "http://local" + "host:8080", "local" + "-cron", "windows" + "-task"):
             self.assertTrue(serverside.lint(phrase, d), phrase)
 
     def test_ordinary_text_is_not_caught(self):
         d = serverside.load(ROOT)
         for phrase in ("local edits are never overwritten", "the cron worker ticks every 10 minutes", "a cloud-hosted routine runs hourly", "nothing needs a laptop",
-                       "the task is scheduled daily", "a machine-readable register", "mandatory local law"):
+                       "the task is scheduled daily", "cloud scheduled " + "tasks run on a schedule", "a machine-readable register", "mandatory local law"):
             self.assertEqual(serverside.lint(phrase, d), [], phrase)
 
     def test_a_line_that_states_the_rule_and_cites_it_is_the_only_excuse(self):
