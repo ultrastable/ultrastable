@@ -133,3 +133,10 @@ class RepairLoop(unittest.TestCase):
         ci = (Path(executor.__file__).resolve().parents[1] / ".github/workflows/checks.yml").read_text(encoding="utf-8")
         self.assertIn("build_site_roadmap.py --check", ci)
         self.assertIn(["python3", "scripts/build_site_roadmap.py"], executor.GENERATORS)
+
+    def test_items_probed_in_protected_paths_are_not_takeable(self):
+        from foundation import queue as q
+        self.assertTrue(q.protected_probe("grep:.github/workflows/lane.yml::clock --heal"))
+        self.assertTrue(q.protected_probe("file:autonomy/x.json"))
+        self.assertFalse(q.protected_probe("file:foundation/x.py"))
+        self.assertFalse(q.protected_probe(""))
