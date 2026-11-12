@@ -10,7 +10,7 @@ from foundation import launch  # noqa: E402
 class Launch(unittest.TestCase):
     def test_registry_lists_every_loop_and_host(self):
         r = launch.registry(ROOT)
-        self.assertEqual({l["id"] for l in r["loops"]}, {"tick", "plussing", "probes", "funding-outreach", "write-back"})
+        self.assertEqual({l["id"] for l in r["loops"]}, {"tick", "plussing", "probes", "funding-outreach", "write-back", "transparency"})
         self.assertEqual({h["id"] for h in r["hosts"]}, set(launch.SURFACES))
         for h in r["hosts"]:
             self.assertTrue((ROOT / h["adapter"]).exists(), h["adapter"])
