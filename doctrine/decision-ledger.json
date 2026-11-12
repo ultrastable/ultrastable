@@ -25,6 +25,14 @@
    "body": "CLOSED-LOOP-1 (orphans.py) and DOC-CONSUMED-1 (docs_audit.py) measured the same thing two ways. The document audit is the single definition; orphans.py keeps the human-wait check, the decision ledger and the backlog issue, and reads orphan documents from docs_audit.",
    "probe": "grep:foundation/orphans.py::docs_audit",
    "session": "session_0156nqDrJvHpEG6mS66nV7Xg"
+  },
+  {
+   "id": "decision-2026-11-12-fleet-skips-archived-repositories",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "Fleet skips archived repositories",
+   "body": "ultrastable/seed is archived and read-only; its live copy is the seed directory of this repository. The fleet lane lists live repositories only and records an archived one instead of failing or opening a card.",
+   "probe": "grep:foundation/fleet.py::archived"
   }
  ]
 }

@@ -49,6 +49,12 @@ class Fleet(unittest.TestCase):
         self.assertEqual(len(s["workers"]["tried"]), 2)
 
 
+    def test_archived_repository_is_skipped_and_recorded(self):
+        api = lambda m, p, b=None: (200, {"archived": True, "permissions": {"push": False}})
+        s = fleet.probe_surfaces({"org": "ultrastable", "repos": ["seed"]}, {"github-token": api})
+        self.assertTrue(s["seed"]["archived"])
+        self.assertIsNone(s["seed"]["surface"])
+
 
 if __name__ == "__main__":
     unittest.main()
