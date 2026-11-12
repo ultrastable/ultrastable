@@ -58,3 +58,13 @@ class Fleet(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_queue_reads_repo_data_when_issues_off(tmp_path):
+    import json
+    from foundation import fleet
+    d = tmp_path / "docs/issues"; d.mkdir(parents=True)
+    (d / "Q-1.json").write_text(json.dumps({"id": "Q-1", "title": "t", "body": "**Owner:** exec\n**Trigger:** x\n**Done check:** file:a\n**Status:** open"}))
+    cfg = {"org": "ultrastable", "repos": ["ultrastable"]}
+    q = fleet.queue(cfg, lambda m, p, b=None: (410, {}), None, tmp_path)
+    assert [i["number"] for i in q] == ["Q-1"] and q[0]["repo"] == "ultrastable"
