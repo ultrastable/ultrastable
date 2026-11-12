@@ -313,9 +313,23 @@ async function suggestions(u, env) {
   for (const t of SG.suggest(q, seen.concat(out), seed, n)) if (out.length < n) out.push(t);
   return json({ s: out, q });
 }
+// VISION-1 (docs/doctrine/VISION.md): the system test at the front door. Only definite one-offs are refused, so an unusual system is never blocked;
+// the interview that follows still asks for the loop, the measure, the upkeep and the budget. Closing probe: grep:site/worker.js::systemTest.
+const ONE_OFF = new RegExp("(^|[^a-z])(camping|packing list|trip planner|invitation|birthday|baby shower|wedding|honeymoon|weekend project|one[- ]?off|just for me|my own reminder|shopping list|tip calculator)([^a-z]|$)", "i");
+const ONGOING = new RegExp("(^|[^a-z])(keep|keeps|continuous|continuously|ongoing|maintain|maintenance|monitor|fleet|pipeline|portfolio|compliance|operations?|platform|improv[a-z]+|every (day|week|month)|weekly|daily|club|shop|store|business|members?|customers?|support|growth|seo|wordpress|marketplace|publishing|agents?)([^a-z]|$)", "i");
+function systemTest(idea) {
+  if (ONE_OFF.test(idea) && !ONGOING.test(idea)) return { ok: false, message: "This looks like something you build once and use once. Ultrastable runs systems that keep running and keep improving: a site, shop, service or pipeline with ongoing upkeep and a monthly back-end cost. For a one-off page or list, a site builder or a chat assistant is the better tool. If it will be maintained and improved, say what it must keep doing and how you would know it is working." };
+  return { ok: true };
+}
+
 async function takeIdea(request, env, ctx) {
   const f = await request.formData().catch(() => null), idea = f && String(f.get("idea") || "").trim().slice(0, 2000);
   if (!idea) return new Response(start(false), { status: 400, headers: HTML });
+  const fit = systemTest(idea);  // VISION-1: Ultrastable runs maintained systems; a one-off is told so before anything is built or staffed
+  if (!fit.ok) {
+    if ((request.headers.get("accept") || "").includes("application/json")) return Response.json({ error: fit.message, state: "not_a_fit" }, { status: 422 });
+    return new Response(shell({ path: "/start", title: "Not a fit for Ultrastable", description: fit.message }, "<div class=\"head\"><h1>Not a fit for Ultrastable</h1><p>" + esc(fit.message) + "</p></div><div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/\">Describe a system to run</a></div>"), { status: 422, headers: HTML });
+  }
   const lim = await limited(request, env); if (lim) return lim;
   const id = newId(); await env.ASSETS.put("idea:" + new Date().toISOString() + ":" + id, idea);
   const profText = String(f.get("profile") || "").slice(0, 2000); let profOk = false;

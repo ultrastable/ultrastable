@@ -1,10 +1,10 @@
 // Ultrastable GCP adapter: the same tick as the Cloudflare Worker, served from Cloud Run.
 // Cloud Scheduler calls POST /tick on the cron; GET /health reports the last tick.
 // Store: SQLite file on a mounted volume (Cloud Storage FUSE or Filestore) today; Cloud SQL (Postgres) is the planned scale-out (see docs/architecture.md).
+import { fileURLToPath } from 'node:url';
 import http from 'node:http';
 import { readFileSync } from 'node:fs';
 import { timingSafeEqual } from 'node:crypto';
-import { fileURLToPath } from 'node:url';
 import { runTick } from '../../../seed/worker/src/tick.js';
 import { openDb } from '../sqlite/d1-sqlite.js';
 

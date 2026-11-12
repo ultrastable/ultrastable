@@ -1,0 +1,82 @@
+{
+ "_doc": "FAILURE-AUDIT-1: live detectors for the failure modes in doctrine/registers.json, run daily by .github/workflows/failure-audit.yml and on demand. Read by foundation/failure_audit.py. A failing detector files docs/issues/AUDIT-<id>.json; a passing one that had an issue records 'recovered'.",
+ "version": "1.0.0",
+ "workflow": "failure-audit.yml",
+ "detectors": [
+  {
+   "id": "selfhost-tick",
+   "failure_mode": "fm-clock-silent",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "selfhost",
+    "--verify"
+   ],
+   "timeout": 240,
+   "root_cause": "the seed heartbeat cannot boot from this repository alone (path, migration or tick step error)",
+   "owner": "operations",
+   "remedy": "Run python3 -m foundation selfhost, read tick errors, fix the portable core, add a regression test."
+  },
+  {
+   "id": "foundation-tests",
+   "failure_mode": "fm-tests-red",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/foundation"
+   ],
+   "timeout": 900,
+   "root_cause": "a foundation check regressed or a test depends on the host",
+   "owner": "operations",
+   "remedy": "Fix the root cause in code or make the test host-independent; never delete the failing test."
+  },
+  {
+   "id": "seed-tests",
+   "failure_mode": "fm-probe-untested",
+   "kind": "command",
+   "run": [
+    "node",
+    "--test",
+    "--no-warnings",
+    "test/*.test.js"
+   ],
+   "timeout": 300,
+   "root_cause": "the seed worker (tick, measure, executor, lane) regressed",
+   "owner": "operations",
+   "remedy": "Fix the seed worker; every probe kind keeps a test.",
+   "cwd": "seed/worker"
+  },
+  {
+   "id": "vision",
+   "failure_mode": "fm-vision-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "unittest",
+    "tests.test_vision"
+   ],
+   "timeout": 120,
+   "root_cause": "the vision or its enforcement was edited out of one entry point",
+   "owner": "product-manager",
+   "remedy": "Restore the system test in the drifted file; keep docs/doctrine/VISION.md and its seed copy identical."
+  },
+  {
+   "id": "site-health",
+   "failure_mode": "fm-site-down",
+   "kind": "http",
+   "url": "https://ultrastable.io/health",
+   "json_ok": true,
+   "timeout": 15,
+   "root_cause": "the public worker is down or misrouted",
+   "owner": "operations",
+   "remedy": "Check the last deploy-site run and route; canary revert should already have acted."
+  }
+ ]
+}

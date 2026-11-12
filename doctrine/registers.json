@@ -145,6 +145,66 @@
    "status": "controlled",
    "cadence_ticks": 1,
    "probe": "grep:tests/foundation/test_directive.py::def test_missing_durable_fact_fails"
+  },
+  {
+   "id": "fm-clock-silent",
+   "trigger": "the Cloudflare cron or D1 binding stops, or a host path breaks the local tick",
+   "symptom": "no tick_runs, loops stop closing",
+   "blast_radius": "every autonomous loop",
+   "detection": "python3 -m foundation failure_audit --run --only selfhost-tick",
+   "root_cause": "a platform path or binding assumption (Windows drive-letter paths, unbound D1)",
+   "remediation": "detector files AUDIT-selfhost-tick; liveness metrics M-tick-heartbeat and M-acting breach in the tick",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:foundation/failure_audit.py::def run_detector"
+  },
+  {
+   "id": "fm-tests-red",
+   "trigger": "a change merges while a suite is red on a host the CI does not cover",
+   "symptom": "foundation or seed tests fail",
+   "blast_radius": "trust in every other probe",
+   "detection": "python3 -m foundation failure_audit --run --only foundation-tests,seed-tests",
+   "root_cause": "environment-dependent tests (symlinks, CRLF bytes, absolute paths) and unchecked regressions",
+   "remediation": "detector files AUDIT-<id> with evidence; the executor drains it",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:tests/foundation/test_failure_audit.py::def test_failing_detector_files_one_issue"
+  },
+  {
+   "id": "fm-site-down",
+   "trigger": "the public worker stops answering",
+   "symptom": "ultrastable.io/health not ok",
+   "blast_radius": "all public surfaces and the front door",
+   "detection": "python3 -m foundation failure_audit --run --only site-health",
+   "root_cause": "bad deploy or route",
+   "remediation": "detector files AUDIT-site-health; canary revert applies",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:doctrine/detectors.json::site-health"
+  },
+  {
+   "id": "fm-vision-drift",
+   "trigger": "agent files, bootstrap or front door stop carrying the system test",
+   "symptom": "a one-off app is staffed or the vision is missing",
+   "blast_radius": "cost and credibility",
+   "detection": "python3 -m foundation failure_audit --run --only vision",
+   "root_cause": "a doctrine file edited without its enforcement test",
+   "remediation": "tests/test_vision.py fails the build",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:tests/test_vision.py::def test_camping_app_is_not_staffed"
+  },
+  {
+   "id": "fm-probe-untested",
+   "trigger": "a probe type ships without a test",
+   "symptom": "a metric silently reads wrong",
+   "blast_radius": "every objective measured by that probe",
+   "detection": "python3 -m foundation failure_audit --run --only seed-tests",
+   "root_cause": "probe kinds added without coverage",
+   "remediation": "measure.test.js covers builtin, sql and http probes",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:seed/worker/test/measure.test.js::http"
   }
  ],
  "controls": [

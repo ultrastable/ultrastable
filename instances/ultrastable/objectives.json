@@ -1,0 +1,100 @@
+{
+ "_doc": "OBJECTIVES-1 for Ultrastable itself: the same objective and metric rows bootstrap seeds for any system, so Ultrastable is measured by its own mechanism. Seeded into the self-host database by foundation/selfhost.py; read-only evidence in this file.",
+ "objectives": [
+  {
+   "id": "OBJ-1",
+   "statement": "A public site and demos that state the foundation message",
+   "owner_role": "product-manager-1"
+  },
+  {
+   "id": "OBJ-2",
+   "statement": "A repeatable new-system generator any organization can run",
+   "owner_role": "product-manager-2"
+  },
+  {
+   "id": "OBJ-3",
+   "statement": "Funding and outreach loops running on their own",
+   "owner_role": "product-manager-3"
+  }
+ ],
+ "metrics": [
+  {
+   "id": "M-tick-heartbeat",
+   "objective_id": null,
+   "name": "ticks completed in the last hour",
+   "kind": "liveness",
+   "source": "builtin",
+   "spec": "tick_runs_completed_1h",
+   "op": ">=",
+   "threshold": 5,
+   "grace_hours": 1.5,
+   "owner_role": "operations",
+   "remedy": "The clock is not turning. Check the cron, the D1 binding and tick_runs.errors."
+  },
+  {
+   "id": "M-acting",
+   "objective_id": null,
+   "name": "dispatches in the last 24 hours",
+   "kind": "liveness",
+   "source": "builtin",
+   "spec": "dispatches_24h",
+   "op": ">=",
+   "threshold": 1,
+   "grace_hours": 6,
+   "owner_role": "operations",
+   "remedy": "Ticks run but nothing is handed to a role."
+  },
+  {
+   "id": "M-closing",
+   "objective_id": null,
+   "name": "items finished in the last 7 days",
+   "kind": "liveness",
+   "source": "builtin",
+   "spec": "items_done_7d",
+   "op": ">=",
+   "threshold": 1,
+   "grace_hours": 48,
+   "owner_role": "portfolio-manager",
+   "remedy": "Work starts but nothing closes."
+  },
+  {
+   "id": "M-site-up",
+   "objective_id": "OBJ-1",
+   "name": "ultrastable.io answers",
+   "kind": "target",
+   "source": "http",
+   "spec": "https://ultrastable.io/health",
+   "op": ">=",
+   "threshold": 1,
+   "grace_hours": 0,
+   "owner_role": "product-manager-1",
+   "remedy": "The public site is down: roll back the last deploy-site."
+  },
+  {
+   "id": "M-generator",
+   "objective_id": "OBJ-2",
+   "name": "bootstrap qualify and instrument tests pass",
+   "kind": "target",
+   "source": "declared",
+   "spec": "tests/test_vision.py green on every merge",
+   "op": ">=",
+   "threshold": 1,
+   "grace_hours": 0,
+   "owner_role": "product-manager-2",
+   "remedy": "Wire the test result into a sql or http probe."
+  },
+  {
+   "id": "M-outreach",
+   "objective_id": "OBJ-3",
+   "name": "outreach sends in the last 7 days",
+   "kind": "target",
+   "source": "declared",
+   "spec": "outreach/ledger sends per week",
+   "op": ">=",
+   "threshold": 1,
+   "grace_hours": 0,
+   "owner_role": "product-manager-3",
+   "remedy": "Expose the ledger count as a probe."
+  }
+ ]
+}

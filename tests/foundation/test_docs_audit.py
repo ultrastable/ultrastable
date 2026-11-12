@@ -19,7 +19,7 @@ def mk(files: dict, reg=None):
     (d / docs_audit.REGISTRY).write_text(json.dumps(reg or REG))
     for p, t in files.items():
         (d / p).parent.mkdir(parents=True, exist_ok=True)
-        (d / p).write_text(t)
+        (d / p).write_bytes(t.encode())
     subprocess.run(["git", "init", "-q"], cwd=d, check=True)
     subprocess.run(["git", "add", "-A"], cwd=d, check=True)
     return d
