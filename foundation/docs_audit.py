@@ -14,6 +14,8 @@ Consumption tiers, strongest first (the registry is `doctrine/doc-consumers.json
   generated  front matter `generated-by: <script>`, and the script exists
   declared   front matter `consumer: <path>`; the consumer exists, is not a document and names this file or its directory
   registry   a row in doc-consumers.json: glob -> consumer file that contains the row's `needle`
+  verified   explain-only pages in `verified.globs`: every backticked file path in the page must exist, and at least one must, so the
+             page cannot drift from the code it describes (a missing path is a CI failure naming the line)
   knowledge  reference documents inside `knowledge.globs`: foundation/kb.py ranks them against each issue and foundation/executor.py
              puts the best matches in the agent's prompt
 A document that only mentions another document is not consuming it. Removed documents stay in the `removed` ledger with the
@@ -77,6 +79,20 @@ def front_matter(text: str) -> dict:
     return out
 
 
+CODE_TOKEN = re.compile(r"`([A-Za-z0-9_][A-Za-z0-9_./-]*\.(?:js|mjs|cjs|py|json|sh|yml|yaml|toml|sql|md|html))`")
+
+
+def verify_page(root, doc) -> tuple[list[str], list[str]]:
+    """(resolved, unresolved) backticked file paths in a document, resolved against the repository root or the document's folder."""
+    ok, missing = [], []
+    for tok in sorted(set(CODE_TOKEN.findall(_read(root, doc)))):
+        if "*" in tok or tok.startswith(("http", "~", "/")):
+            continue
+        cand = (Path(root) / tok, Path(root) / os.path.dirname(doc) / tok)
+        (ok if any(c.exists() for c in cand) else missing).append(tok)
+    return ok, missing
+
+
 def _imports(root, docs) -> set[str]:
     seen, todo = set(), [d for d in ("CLAUDE.md", "AGENTS.md", "agents/AGENTS.md") if d in docs]
     seen.update(todo)
@@ -89,6 +105,17 @@ def _imports(root, docs) -> set[str]:
                 seen.add(p)
                 todo.append(p)
     return seen
+
+
+def _relatives(doc: str, referrer: str):
+    """The spellings a file may use for `doc`: relative to its own folder or to any ancestor folder (a test that does parents[1] / "docs/X.md")."""
+    out, a = [], os.path.dirname(referrer)
+    while a:
+        rel = os.path.relpath(doc, a)
+        if not rel.startswith("..") and rel != doc:
+            out.append(rel)
+        a = os.path.dirname(a)
+    return out
 
 
 def evaluate(root=REPO) -> dict:
@@ -116,15 +143,6 @@ def evaluate(root=REPO) -> dict:
             problems.append(f"registry row {row['id']}: no document matches {row['paths']} (remove the row)")
         for d in hit:
             consumed.setdefault(d, ("registry", f"{row['id']} -> {c}"))
-    kn = reg.get("knowledge", {})
-    if kn:
-        ex = _read(root, "foundation/executor.py")
-        if "kb.retrieve" not in ex or not (root / "foundation/kb.py").is_file():
-            problems.append("knowledge tier: foundation/executor.py must call kb.retrieve and foundation/kb.py must exist")
-        else:
-            for d in docs:
-                if d.endswith(".md") and any(_glob(d, g) for g in kn["globs"]):
-                    consumed.setdefault(d, ("knowledge", "foundation/kb.py -> foundation/executor.py"))
     for d in docs:
         if d in consumed:
             continue
@@ -143,10 +161,25 @@ def evaluate(root=REPO) -> dict:
                 continue
             problems.append(f"{d}: front matter consumer {c} must be an existing non-document file that names this file or its directory")
         for f, t in code.items():
-            rel = os.path.relpath(d, os.path.dirname(f) or ".")
-            if d in t or (rel != d and not rel.startswith("..") and re.search(r"(?<![\w/.-])" + re.escape(rel) + r"(?![\w])", t)):
+            if d in t or any(re.search(r"(?<![\w/.-])" + re.escape(rel) + r"(?![\w])", t) for rel in _relatives(d, f)):
                 consumed[d] = ("path", f)
                 break
+    for d in docs:
+        if d not in consumed and any(_glob(d, g) for g in reg.get("verified", {}).get("globs", [])):
+            ok, missing = verify_page(root, d)
+            if missing:
+                problems.append(f"{d}: names files that do not exist ({', '.join(missing[:4])}); fix the page or the code so they agree")
+            elif ok:
+                consumed[d] = ("verified", f"every backticked path exists ({len(ok)})")
+    kn = reg.get("knowledge", {})
+    if kn:
+        ex = _read(root, "foundation/executor.py")
+        if "kb.retrieve" not in ex or not (root / "foundation/kb.py").is_file():
+            problems.append("knowledge tier: foundation/executor.py must call kb.retrieve and foundation/kb.py must exist")
+        else:
+            for d in docs:
+                if d.endswith(".md") and any(_glob(d, g) for g in kn["globs"]):
+                    consumed.setdefault(d, ("knowledge", "foundation/kb.py -> foundation/executor.py"))
     orphans = [d for d in docs if d not in consumed]
     return {"docs": docs, "consumed": consumed, "orphans": orphans, "problems": problems, "registry": reg}
 
@@ -208,6 +241,22 @@ def removed_check(root, reg) -> list[str]:
     return bad
 
 
+def converted_check(root, reg) -> list[str]:
+    """A document converted to data keeps a row: the data file exists and a non-document consumer names it."""
+    bad, root = [], Path(root)
+    for c in reg.get("converted", []):
+        for k in ("from", "to", "consumer", "sha256", "recover", "date"):
+            if not c.get(k):
+                bad.append(f"converted ledger {c.get('from', '?')}: lacks {k}")
+        if (root / c.get("from", "-")).exists():
+            bad.append(f"converted ledger: {c['from']} still exists next to its data file")
+        if not (root / c.get("to", "-")).is_file() or is_doc(c.get("to", "")):
+            bad.append(f"converted ledger {c.get('from')}: data file {c.get('to')} must exist and not be a document")
+        elif not (root / c.get("consumer", "-")).is_file() or c["to"] not in _read(root, c["consumer"]):
+            bad.append(f"converted ledger {c['from']}: consumer {c.get('consumer')} must exist and name {c['to']}")
+    return bad
+
+
 def check(root=REPO) -> list[str]:
     root = Path(root)
     ev = evaluate(root)
@@ -215,6 +264,7 @@ def check(root=REPO) -> list[str]:
     bad = list(ev["problems"])
     bad += [f"orphan document (nothing consumes it): {d}: wire it, convert it to data, merge it, or remove it with a ledger row" for d in ev["orphans"]]
     bad += removed_check(root, reg)
+    bad += converted_check(root, reg)
     tpl = _read(root, "brand/templates/doc-template.md")  # doc-template.md: the template every new document starts from
     if (root / "brand/templates/doc-template.md").is_file() and not re.search(r"(?m)^consumer:", tpl):
         bad.append("brand/templates/doc-template.md must carry a `consumer:` front matter line")
