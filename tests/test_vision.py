@@ -1,5 +1,5 @@
 """VISION-1: the vision (docs/doctrine/VISION.md) is present, imported by every agent entry point, enforced by the bootstrapper."""
-import sys, tempfile, unittest
+import atexit, shutil, sys, tempfile, unittest
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "seed" / "bootstrap"))
@@ -8,6 +8,7 @@ import bootstrap as bs  # noqa: E402
 
 def boot(idea_text: str):
     d = Path(tempfile.mkdtemp()); seed = ROOT / "seed"
+    atexit.register(shutil.rmtree, d, True)  # no scratch directory outlives the run
     (d / "ultrastable.json").write_bytes((seed / "ultrastable.json").read_bytes())
     (d / "autonomy").mkdir(); (d / "autonomy" / "policy.json").write_bytes((seed / "autonomy" / "policy.json").read_bytes())
     (d / "IDEA.md").write_text(idea_text, encoding="utf-8")
