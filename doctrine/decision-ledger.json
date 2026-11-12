@@ -81,6 +81,14 @@
    "title": "USER-PATH-1: guided set-up is data, one yes/no question per screen, plain words only",
    "body": "Measured: https://ultrastable.io/setup (site 0.6.0) walked in a real browser: yes to GitHub, typed a name, step 3 opened https://github.com/ultrastable/ultrastable/generate and showed the confirm screen; progress persisted in localStorage. The steps live in doctrine/user-path.json, site/userpath.js is generated, and scripts/gen_userpath.py --check (a step in checks) fails on technical words, non-https links or stale output. ultrastable/ultrastable is now a GitHub template so the Make my copy click works for anyone with access. Next in ultrastable/ops: first-run workflow in the copy that enables its own autopilot without a click, Cloudflare Deploy button once the seed is public, OAuth connections for Google and Buffer.",
    "probe": "file:doctrine/user-path.json"
+  },
+  {
+   "id": "lesson-2026-11-12-backgrounded-ai-build-was-evicted-and-left-sites-stuck-at-bu",
+   "kind": "lesson",
+   "date": "2026-11-12",
+   "title": "Backgrounded AI build was evicted and left sites stuck at building",
+   "body": "Measured: a live POST to /api/idea returned a make URL that still showed Building after more than 2 minutes, while a direct Workers AI call for the same kind of page took 28 s. The build ran in waitUntil, which is cut off about 30 s after the response, so the state never left building. Fixed in site 0.5.1: the job is stored, the /make request awaits the build, a 120 s claim stops duplicate builds, an evicted build is resumed by the next poll, and tries are capped at 3 before the state becomes failed. node site/site.test.mjs covers the build, the change and the capped failure.",
+   "probe": "grep:site/worker.js::BUILD-2"
   }
  ]
 }
