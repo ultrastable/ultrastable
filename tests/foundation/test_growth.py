@@ -41,3 +41,44 @@ class Growth(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GrowthProducts(unittest.TestCase):
+    """GROWTH-PM-1: every product has growth metrics and an owner loop; the roster's policy values agree with doctrine/growth.json."""
+
+    def _copy(self, tmp, mutate):
+        import json, shutil
+        root = Path(tmp)
+        for p in ("doctrine/growth.json", "seed/autonomy/policy.json", "agents/autonomy-policy.json", "instances/ultrastable/loop-registry.json"):
+            (root / p).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(G.REPO / p, root / p)
+        mutate(root, json)
+        return G.check_products(root)
+
+    def test_repo_is_covered(self):
+        self.assertEqual(G.check_products(), [])
+
+    def test_product_without_enough_metrics_fails(self):
+        import tempfile
+        def m(root, json):
+            p = root / "doctrine/growth.json"; d = json.loads(p.read_text()); d["products"][0]["metrics"] = d["products"][0]["metrics"][:1]; p.write_text(json.dumps(d))
+        with tempfile.TemporaryDirectory() as t:
+            bad = self._copy(t, m)
+        self.assertTrue(any("needs at least 2" in b for b in bad), bad)
+
+    def test_product_without_owner_loop_fails(self):
+        import tempfile
+        def m(root, json):
+            p = root / "doctrine/growth.json"; d = json.loads(p.read_text()); d["products"][0]["owner_loop"] = "nobody"; p.write_text(json.dumps(d))
+        with tempfile.TemporaryDirectory() as t:
+            bad = self._copy(t, m)
+        self.assertTrue(any("not in the loop registry" in b for b in bad), bad)
+
+    def test_policy_floor_must_match_doctrine(self):
+        import tempfile
+        def m(root, json):
+            for p in G.POLICIES:
+                q = root / p; d = json.loads(q.read_text()); d["growth"]["growth_share_floor"] = 0.1; q.write_text(json.dumps(d))
+        with tempfile.TemporaryDirectory() as t:
+            bad = self._copy(t, m)
+        self.assertTrue(any("growth_share_floor" in b for b in bad), bad)

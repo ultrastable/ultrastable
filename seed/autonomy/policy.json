@@ -302,5 +302,15 @@
         }
       }
     }
+  },
+  "growth": {
+    "_doc": "GROWTH-PM-1 (owner 2026-11-12): the product manager's job is growth, not only bug fixes. Enforced values: foundation/growth.py --check fails when a product has fewer than min_metrics_per_product growth metrics, no owner loop in the loop registry, or when growth_share_floor differs from doctrine/growth.json target_growth_share. The executor prefers growth items while the recent merge mix is below the floor (growth.prefer); a runtime that keeps an issue queue multiplies the score of growth items by growth_priority_weight.",
+    "growth_share_floor": 0.4,
+    "growth_priority_weight": 3,
+    "min_metrics_per_product": 2,
+    "experiment_measure_after_days": 7,
+    "rollback_when": "metric below baseline after experiment_measure_after_days",
+    "owner_role": "product-manager",
+    "enforced_by": "python3 -m foundation growth --check"
   }
 }

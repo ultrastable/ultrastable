@@ -162,7 +162,8 @@
   "capacity": {
     "plus_share": 0.2,
     "max_wip_per_role": 3,
-    "fix_only_cycles_before_rebalance": 3
+    "fix_only_cycles_before_rebalance": 3,
+    "growth_share_floor": 0.4
   },
   "reporting": {
     "format": "four-lines",

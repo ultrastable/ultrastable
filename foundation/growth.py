@@ -115,6 +115,47 @@ def check(root=REPO) -> list[str]:
             bad.append(f"metric {m.get('id')}: needs a baseline and at least one idea in the bank (the product manager files the next experiment from it)")
         if not m.get("trigger"):
             bad.append(f"metric {m.get('id')}: registered without a trigger (a metric is registered together with its trigger)")
+    bad += check_products(root, cfg)
+    return bad
+
+
+POLICIES = ("seed/autonomy/policy.json", "agents/autonomy-policy.json")
+
+
+def check_products(root=REPO, cfg=None) -> list[str]:
+    """GROWTH-PM-1: every product has growth metrics and an owner loop, and the policy values the roster runs on agree with this file."""
+    cfg, bad, root = cfg or load(root), [], Path(root)
+    pols = [json.loads((root / p).read_text(encoding="utf-8")).get("growth") if (root / p).is_file() else None for p in POLICIES]
+    pol = pols[0] or {}
+    for p, g in zip(POLICIES, pols):
+        if not g:
+            bad.append(f"{p}: missing the growth block (growth_share_floor, min_metrics_per_product, owner_role, enforced_by)")
+    if pols[0] != pols[1]:
+        bad.append("growth policy differs between " + " and ".join(POLICIES))
+    if pol and pol.get("growth_share_floor") != cfg.get("target_growth_share"):
+        bad.append(f"policy growth_share_floor {pol.get('growth_share_floor')} != {PATH} target_growth_share {cfg.get('target_growth_share')}")
+    need = int(pol.get("min_metrics_per_product", 2))
+    known = {m.get("id") for m in cfg.get("metrics", [])}
+    try:
+        loops = {l.get("id"): l for l in json.loads((root / "instances/ultrastable/loop-registry.json").read_text(encoding="utf-8")).get("loops", [])}
+    except FileNotFoundError:
+        loops = {}
+    prods = cfg.get("products") or []
+    if not prods:
+        bad.append(f"{PATH}: no products (each product names its growth metrics and an owner loop)")
+    covered = set()
+    for pr in prods:
+        ms = [m for m in pr.get("metrics", []) if m in known]
+        covered |= set(ms)
+        if len(ms) < need:
+            bad.append(f"product {pr.get('id')}: {len(ms)} growth metrics, needs at least {need}")
+        lp = loops.get(pr.get("owner_loop"))
+        if not lp:
+            bad.append(f"product {pr.get('id')}: owner loop {pr.get('owner_loop')!r} is not in the loop registry")
+        elif pol.get("owner_role") and lp.get("owner") != pol["owner_role"]:
+            bad.append(f"product {pr.get('id')}: owner loop {lp.get('id')} is owned by {lp.get('owner')}, not {pol['owner_role']}")
+    for m in sorted(known - covered):
+        bad.append(f"metric {m}: belongs to no product")
     return bad
 
 
