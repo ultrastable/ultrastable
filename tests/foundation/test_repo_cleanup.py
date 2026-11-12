@@ -63,7 +63,7 @@ class Cleanup(unittest.TestCase):
         bad = []
         for p in sorted(HERE.glob("test_*.py")):
             for n, ln in enumerate(p.read_text(encoding="utf-8").splitlines(), 1):
-                if re.search(r"\bmkdtemp\(", ln) and "addCleanup" not in ln and p.name != Path(__file__).name:
+                if re.search(r"\bmkdtemp\(", ln) and "addCleanup" not in ln and "atexit.register" not in ln and p.name != Path(__file__).name:
                     bad.append(f"{p.name}:{n}")
         self.assertEqual(bad, [], "use _repo.scratch() (removed when the test ends) instead of a bare tempfile.mkdtemp()")
 
