@@ -81,6 +81,14 @@
    "title": "USER-PATH-1: guided set-up is data, one yes/no question per screen, plain words only",
    "body": "Measured: https://ultrastable.io/setup (site 0.6.0) walked in a real browser: yes to GitHub, typed a name, step 3 opened https://github.com/ultrastable/ultrastable/generate and showed the confirm screen; progress persisted in localStorage. The steps live in doctrine/user-path.json, site/userpath.js is generated, and scripts/gen_userpath.py --check (a step in checks) fails on technical words, non-https links or stale output. ultrastable/ultrastable is now a GitHub template so the Make my copy click works for anyone with access. Next in ultrastable/ops: first-run workflow in the copy that enables its own autopilot without a click, Cloudflare Deploy button once the seed is public, OAuth connections for Google and Buffer.",
    "probe": "file:doctrine/user-path.json"
+  },
+  {
+   "id": "decision-2026-11-12-the-front-door-asks-what-it-does-not-know-and-audits-what-it",
+   "kind": "decision",
+   "date": "2026-11-12",
+   "title": "The front door asks what it does not know and audits what it built",
+   "body": "Verified live on ultrastable.io (site 0.7.0): an idea produced 3 tap-only questions, the answers entered the build brief, the page was live in about 30 s, and an independent model (llama-3.3-70b, not the qwen builder) published /s/<id>/review listing 4 done, 5 gaps and the standing limits. Problems found by that run: a deprecated hard-coded model id had silently disabled the audit, so every AI call now walks a model list (re-probed, audit returns real findings); builds and audits run in separate requests because waitUntil is capped near 30 s; a stuck build now fails after 150 s. node site/site.test.mjs passes the whole flow. Pattern from QNFO prompted recall.",
+   "probe": "grep:site/worker.js::AUDIT-1"
   }
  ]
 }
