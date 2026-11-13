@@ -31,10 +31,19 @@ def check(root=REPO) -> list[str]:
     return errs
 
 
+def own(name: str, thr: dict) -> bool:
+    """A database is ours when its name starts with a declared prefix (cost-thresholds file_prefixes); the Quniverse test bed on the same account is foreign and is not judged here unless file_foreign is true."""
+    if thr.get("file_foreign"):
+        return True
+    pre = tuple(thr.get("file_prefixes", [])) + tuple(thr.get("own_prefixes", ["demo-child-ultrastable"]))
+    return str(name).startswith(pre)
+
+
 def level(reading: dict, thr: dict) -> float:
-    """Largest share of budget used: any database's rows read over its max, or the AI neurons over neurons_max."""
-    over = [thr.get("rows_read_override", {}).get(d.get("name"), thr["rows_read_max"]) for d in reading.get("d1", [])]
-    shares = [d["rows_read"] / m for d, m in zip(reading.get("d1", []), over)] + [reading.get("ai", {}).get("neurons", 0) / thr["neurons_max"]]
+    """Largest share of budget used: any of our databases' rows read over its max, or the AI neurons over neurons_max."""
+    dbs = [d for d in reading.get("d1", []) if own(d.get("name", ""), thr)]
+    shares = [d["rows_read"] / thr.get("rows_read_override", {}).get(d.get("name"), thr["rows_read_max"]) for d in dbs]
+    shares.append(reading.get("ai", {}).get("neurons", 0) / thr["neurons_max"])
     return round(max(shares), 3)
 
 
