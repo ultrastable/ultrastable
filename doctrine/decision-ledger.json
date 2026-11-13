@@ -774,6 +774,14 @@
    "title": "FRONT-DOOR-2: idea consumer deploys a Worker per idea; archived-repo deletion left as owner step",
    "body": "Measured: node site/site.test.mjs passes incl. consumeIdeas (pending-credentials without secrets, PUT to Workers API with them, no redeploy). Executor queue already repo data (QUEUE-1); Issues not disabled; scripts/mirror_then_delete.sh dry-run default.",
    "probe": "file:docs/runbooks/front-door-2.md"
+  },
+  {
+   "id": "lesson-2026-11-13-build-2-per-site-shared-d1-database-and-id-ultrastable-io",
+   "kind": "lesson",
+   "date": "2026-11-13",
+   "title": "BUILD-2: per-site shared D1 database and <id>.ultrastable.io",
+   "body": "Sites get a site_data D1 table keyed by site id, exposed same-origin at /s/<id>/api (US.list/US.add client injected), served at <id>.ultrastable.io via wildcard DNS+route set in deploy/deploy-site.mjs; sandbox relaxed (allow-same-origin) only on the subdomain; follow-up questions cut to 2. Wildcard DNS/route need Zone DNS Edit + Workers Routes Edit on the deploy token; a refusal is logged verbatim, not worked around.",
+   "probe": "grep:site/worker.js::siteApi"
   }
  ]
 }
