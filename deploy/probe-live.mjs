@@ -16,7 +16,7 @@ async function once() {
   const fails = [];
   if (!tick || tick.steps_completed !== tick.steps_total) fails.push("tick incomplete: " + (tick && tick.errors));
   if (typeof k !== "number") fails.push("k_eff not measured");
-  if (!sw) fails.push("sweeper has never run"); else if (sw.age_min > maxAge) fails.push(`sweeper last ran ${Math.round(sw.age_min)} min ago`);
+  if (!sw) fails.push("sweeper has never run"); else if (sw.status !== "ok") fails.push("sweeper status " + sw.status + ": " + sw.errors); else if (sw.age_min > maxAge) fails.push(`sweeper last ran ${Math.round(sw.age_min)} min ago`);
   return { ok: !fails.length, fails, tick, k_eff: k, sweeper: sw || null };
 }
 let r = await once();
