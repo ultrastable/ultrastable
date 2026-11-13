@@ -301,7 +301,7 @@
    "reason": "operational probe for deploy verification, not a capability for callers"
   },
   {
-   "id": "criticality-live",
+   "id": "live",
    "path": "/live",
    "methods": [
     "GET"
@@ -310,11 +310,11 @@
    "audience": "public",
    "standards": [],
    "discoverable": false,
-   "description": "k_eff and the criticality snapshot of the last tick (CRITICALITY-1).",
-   "reason": "operational readout consumed by the collector and the dashboard, not a capability for callers"
+   "description": "Liveness plus k_eff of the last tick (CRITICALITY-1).",
+   "reason": "operational criticality telemetry (CRITICALITY-1), not a capability for callers"
   },
   {
-   "id": "criticality-metrics",
+   "id": "metrics-criticality",
    "path": "/metrics/criticality.json",
    "methods": [
     "GET"
@@ -323,8 +323,8 @@
    "audience": "public",
    "standards": [],
    "discoverable": false,
-   "description": "Per-tick criticality snapshot as JSON (CRITICALITY-1).",
-   "reason": "operational readout mirrored into the seed repository by the collector"
+   "description": "Criticality record of the last tick (CRITICALITY-1).",
+   "reason": "operational criticality telemetry (CRITICALITY-1), not a capability for callers"
   },
   {
    "id": "criticality-sample",
@@ -336,8 +336,8 @@
    "audience": "machine",
    "standards": [],
    "discoverable": false,
-   "description": "Takes GitHub-run, cost and owner-touch samples for k_eff; bearer CRITICALITY_TOKEN, 401 without it.",
-   "reason": "machine-to-machine write authenticated by a bearer token; nothing for an agent to discover"
+   "description": "Collectors push GitHub-run, cost and owner-touch samples (CRITICALITY-1).",
+   "reason": "machine-to-machine collector input; nothing for an agent to discover"
   }
  ]
 }
