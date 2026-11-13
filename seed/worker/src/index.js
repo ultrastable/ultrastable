@@ -4,6 +4,7 @@
 import { runTick, lastTickForHealth } from './tick.js';
 import { runExecutor, noteExecutor } from './executor.js';
 import { runLane } from './lane.js';
+import { ingestDeploys } from './selfaudit.js';
 import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
@@ -37,6 +38,7 @@ export default {
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
       const ra = await checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }).catch(e => ({ ok: false, error: e && e.message })); console.log('repo-access', JSON.stringify(ra));  // REPO-ACCESS-1
       const sw = await sweepOpenLoops({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) }); console.log('sweeper', JSON.stringify(sw)); await recordSweep(env.DB, sw);  // SERVER-OWNS-LOOPS-1
+      const dep = await ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }).catch(e => ({ status: 'error ' + (e && e.message) })); console.log('deploy-evidence', JSON.stringify(dep));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
     })().catch(e => console.error('lane', e && e.message)));
     ctx.waitUntil(selfcheck(env, hosts(env)[0]).catch(e => console.error('analytics selfcheck', e && e.message)));
   },

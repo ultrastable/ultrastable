@@ -5,6 +5,7 @@
 // recorded in the tick's errors and as a backlog item; the remaining steps still run.
 
 import { criticalityStep } from './criticality.js';
+import { selfAuditStep, loopBreak } from './selfaudit.js';
 
 const TERMINAL = ['done', 'superseded', 'cancelled'];
 const OPS = {
@@ -210,6 +211,13 @@ export const STEPS = {
     }
   },
 
+  // SELFAUDIT-1: probe the failure-mode register; red files or reopens FM-<id>, green closes it with evidence.
+  async selfaudit(db, ctx) {
+    if (!ctx.config.failure_modes) { ctx.notes.push('selfaudit: no register configured'); return; }
+    await loopBreak(db, ctx, ctx.config.failure_modes.max_redispatch || 3, ensureItem);
+    await selfAuditStep(db, ctx, ctx.config.failure_modes, ensureItem);
+  },
+
   // Roles whose tick is due pull the top ready item for their role and get a dispatch row.
   async dispatch(db, ctx) {
     const roles = await all(db, `SELECT * FROM roles`);
@@ -257,7 +265,7 @@ export const STEPS = {
   },
 };
 
-export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'dispatch', 'check_plus_share', 'criticality'];
+export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'dispatch', 'check_plus_share', 'criticality'];
 
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null } = {}) {
   const startedIso = iso(new Date(now));
