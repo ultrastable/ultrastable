@@ -45,6 +45,15 @@
       "url": "https://ultrastable.io/connect/github",
       "button": "Authorize on GitHub",
       "class": "owner_account"
+    },
+    {
+      "id": "oauth-apps",
+      "title": "Register the Google and Buffer sign-in apps",
+      "why": "Connecting Google and Buffer by their consent screens (tokens stored in each person's own Cloudflare, never typed) needs one OAuth app registered in each service under your identity, with redirect https://ultrastable.io/connect/<service>/callback. IDENTITY-BOUND: registering an app accepts the provider's terms in your name.",
+      "default": "the wizard keeps its account-creation links for Google and Buffer; nothing is typed or stored.",
+      "url": "https://console.cloud.google.com/apis/credentials",
+      "button": "Open Google Cloud credentials",
+      "class": "owner_account"
     }
   ],
   "done_for_you": [
