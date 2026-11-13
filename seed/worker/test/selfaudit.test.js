@@ -63,3 +63,31 @@ test('the tick runs the selfaudit step and files FM items for red probes', async
   assert.ok(!r.errors.some(e => e.startsWith('selfaudit')), r.errors.join('|'));
   assert.ok(db.raw.prepare(`SELECT COUNT(*) n FROM items WHERE id LIKE 'FM-%'`).get().n >= 1);
 });
+
+test('COSTGUARD-1: a red budget probe files the next fix, an over-budget sample stays red, a green sample closes fix and mode', async () => {
+  const { sampleCosts } = await import('../src/costsample.js');
+  const db = makeDb();
+  const m = reg.modes.find(x => x.id === 'qnfo-audit-d1-budget');
+  const one = { modes: [m] };
+  // no token: the sampler records an error sample, the probe is red, the first fix is filed
+  await sampleCosts(db, { token: '', budgets: [{ id: 'qnfo-audit', account_id: 'a', database_id: 'd' }] });
+  let r = await selfAuditStep(db, ctx(), one, ensureItem);
+  assert.deepEqual(r.red, ['qnfo-audit-d1-budget']);
+  assert.ok(db.raw.prepare(`SELECT 1 FROM items WHERE id='FIX-qnfo-audit-fix-top-scan'`).get());
+  // over budget (20M rows in the last hour) stays red
+  const fetch20 = async () => ({ ok: true, status: 200, json: async () => ({ data: { viewer: { accounts: [{ d1AnalyticsAdaptiveGroups: [{ sum: { rowsRead: 20000000 } }] }] } } }) });
+  await sampleCosts(db, { token: 't0k', budgets: [{ id: 'qnfo-audit', account_id: 'a', database_id: 'd' }], fetch: fetch20, now: new Date(Date.now() + 1000) });
+  r = await selfAuditStep(db, ctx(), one, ensureItem); assert.equal(r.red.length, 1);
+  // under budget closes the mode item and its fix
+  const fetch5 = async () => ({ ok: true, status: 200, json: async () => ({ data: { viewer: { accounts: [{ d1AnalyticsAdaptiveGroups: [{ sum: { rowsRead: 5000000 } }] }] } } }) });
+  await sampleCosts(db, { token: 't0k', budgets: [{ id: 'qnfo-audit', account_id: 'a', database_id: 'd' }], fetch: fetch5, now: new Date(Date.now() + 2000) });
+  r = await selfAuditStep(db, ctx(), one, ensureItem);
+  assert.ok(r.closed.includes('FM-qnfo-audit-d1-budget') && r.closed.includes('FIX-qnfo-audit-fix-top-scan'), JSON.stringify(r));
+});
+
+test('github-app-org-access probe follows repo_access', async () => {
+  const db = makeDb(); const m = reg.modes.find(x => x.id === 'github-app-org-access');
+  assert.equal((await probeMode(db, m)).healthy, 0);
+  db.raw.exec(`INSERT INTO org (key,value) VALUES ('repo_access','{"ok":true}')`);
+  assert.equal((await probeMode(db, m)).healthy, 1);
+});

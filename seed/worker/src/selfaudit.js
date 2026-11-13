@@ -36,12 +36,33 @@ export async function selfAuditStep(db, ctx, register, ensureItem) {
       title: `Failure mode ${m.id} is ${healthy === 0 ? 'red' : 'unprobeable'}: ${m.failure} Root cause: ${m.root_cause} Remedy: ${m.remedy}`.slice(0, 400),
       done_check: `probe selfaudit:${m.id} returns green`, closing_probe: `selfaudit:${m.id}`,
     });
+    // The next fix: while the mode is red, the first fix of the mode whose item is not done is filed (and stays open until the probe is green); when every fix is done and it is still red, an ESCALATE item demands a different approach.
+    const fixes = m.fixes || [];
+    if (fixes.length) {
+      let filed = null;
+      for (const fx of fixes) {
+        const fid = `FIX-${fx.id}`;
+        const row = await first(db, `SELECT status FROM items WHERE id=?`, fid);
+        if (row && ['done', 'superseded', 'cancelled'].includes(row.status)) continue;
+        await ensureItem(db, { id: fid, kind: 'fix', owner_role: m.owner_role, priority: -1, title: fx.title.slice(0, 400), done_check: `probe selfaudit:${m.id} returns green`, closing_probe: `selfaudit:${m.id}` });
+        filed = fid; break;
+      }
+      if (!filed) await ensureItem(db, { id: `ESCALATE-${m.id}`, kind: 'fix', owner_role: 'portfolio-manager', priority: -1, title: `Every listed fix of ${m.id} is done and the probe is still red: change the approach and add new fixes to autonomy/failure-modes.json.`, done_check: `probe selfaudit:${m.id} returns green`, closing_probe: `selfaudit:${m.id}` });
+    }
     if (!made) { // the gate: a closed item whose probe is red is reopened with a recorded outcome
       const r = await run(db, `UPDATE items SET status='ready', disposition=NULL, updated_at=? WHERE id=? AND status IN ('done','superseded','cancelled')`, ctx.nowIso, id);
       if (r.meta && r.meta.changes) {
         await run(db, `INSERT INTO outcomes (item_id, surface, action_class, result, evidence) VALUES (?, 'selfaudit', 'probe', 'failed', ?)`, id, `reopened: selfaudit:${m.id} still red at ${ctx.nowIso}`);
         reopened.push(id);
       }
+    }
+  }
+  // Fix items close with their mode: when the probe is green, every FIX-/ESCALATE- item of that mode is closed with evidence.
+  for (const m of (register && register.modes) || []) {
+    if (!green.includes(m.id)) continue;
+    for (const id of [...(m.fixes || []).map(x => `FIX-${x.id}`), `ESCALATE-${m.id}`]) {
+      const r = await run(db, `UPDATE items SET status='done', disposition='probe green: selfaudit:${m.id}', updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, ctx.nowIso, id);
+      if (r.meta && r.meta.changes) { await run(db, `DELETE FROM claims WHERE item_id=?`, id); await run(db, `INSERT INTO outcomes (item_id, surface, action_class, result, evidence) VALUES (?, 'selfaudit', 'probe', 'verified', ?)`, id, `selfaudit:${m.id} green at ${ctx.nowIso}`); closed.push(id); }
     }
   }
   // Any other item that names a selfaudit probe may not stay closed while that probe is red.

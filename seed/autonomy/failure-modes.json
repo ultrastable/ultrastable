@@ -30,7 +30,17 @@
       "owner_role": "portfolio-manager",
       "trigger": "every tick",
       "probe": "SELECT CASE WHEN COALESCE((SELECT json_extract(value,'$.k_eff') FROM org WHERE key='criticality'),0) >= 1 THEN 1 ELSE 0 END",
-      "remedy": "raise verified deploys or cut dispatch waste; the criticality step keeps an ORIGIN item at the head until it holds"
+      "remedy": "raise verified deploys or cut dispatch waste; the criticality step keeps an ORIGIN item at the head until it holds",
+      "fixes": [
+        {
+          "id": "k-fix-deploy-evidence",
+          "title": "Raise k_eff numerator: make every worker deploy append a verified live_matches_commit row to ops/deploys.jsonl so ingestDeploys credits it."
+        },
+        {
+          "id": "k-fix-dispatch-waste",
+          "title": "Raise k_eff by cutting the denominator: find the roles whose dispatches end with no outcome and shrink or split their items."
+        }
+      ]
     },
     {
       "id": "tick-stalled",
@@ -71,6 +81,40 @@
       "trigger": "every tick",
       "probe": "SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE 0 END FROM outcomes WHERE result='silent_drop' AND at >= datetime('now','-1 day')",
       "remedy": "reconcile reopens the item; fix the writer"
+    },
+    {
+      "id": "qnfo-audit-d1-budget",
+      "failure": "QNFO qnfo-audit D1 reads more than 15M rows per hour (or the sampler cannot measure it).",
+      "root_cause": "Full-table scans from qnfo-fleet-control, qnfo-ops and qnfo-fleet-dashboard (about 1750 rows read per query); the debounce trigger of QNFO/qnfo-workers PR 11618 must hold.",
+      "spof": false,
+      "owner_role": "operations",
+      "trigger": "every tick (hourly sample)",
+      "probe": "SELECT CASE WHEN (SELECT rows_read_1h FROM cost_samples WHERE target='qnfo-audit' AND rows_read_1h IS NOT NULL AND at >= datetime('now','-3 hours') ORDER BY id DESC LIMIT 1) < 15000000 THEN 1 ELSE 0 END",
+      "remedy": "file the next fix against QNFO/qnfo-workers (account quniverse): index or LIMIT the heaviest scans, then raise the debounce.",
+      "fixes": [
+        {
+          "id": "qnfo-audit-fix-top-scan",
+          "title": "QNFO/qnfo-workers: find the heaviest qnfo-audit queries (D1 insights by rows read per query) and add indexes or LIMITs to them."
+        },
+        {
+          "id": "qnfo-audit-fix-debounce",
+          "title": "QNFO/qnfo-workers: widen the debounce on qnfo-fleet-control, qnfo-ops and qnfo-fleet-dashboard readers of qnfo-audit (PR 11618 follow-up)."
+        },
+        {
+          "id": "qnfo-audit-fix-sampler",
+          "title": "Bind CF_ANALYTICS_TOKEN (read-only analytics on the quniverse account) to ultrastable-tick by code and set database_id in autonomy/cost-budgets.json, so the sampler can measure."
+        }
+      ]
+    },
+    {
+      "id": "github-app-org-access",
+      "failure": "The GitHub App does not cover the ultrastable org repositories, so sweeper, lane and deploy evidence cannot run.",
+      "root_cause": "The App was registered on the personal account; only the org owner's GitHub passkey can finish registration on the org (identity-bound).",
+      "spof": true,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COALESCE((SELECT json_extract(value,'$.ok') FROM org WHERE key='repo_access'),0)=1 THEN 1 ELSE 0 END",
+      "remedy": "keep gate card GATE-REPO-ACCESS open with its default in effect and the consent screen (/connect/github) served; checkRepoAccess re-probes every tick and adopts the installation by code once it exists. Never ask for a token."
     }
   ],
   "max_redispatch": 3
