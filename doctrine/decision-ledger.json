@@ -768,6 +768,14 @@
       "probe": "file:ip/calendar/deadlines.py"
     },
     {
+      "id": "decision-2026-11-13-front-door-2-idea-consumer-deploys-a-worker-per-idea-archive",
+      "kind": "decision",
+      "date": "2026-11-13",
+      "title": "FRONT-DOOR-2: idea consumer deploys a Worker per idea; archived-repo deletion left as owner step",
+      "body": "Measured: node site/site.test.mjs passes incl. consumeIdeas (pending-credentials without secrets, PUT to Workers API with them, no redeploy). Executor queue already repo data (QUEUE-1); Issues not disabled; scripts/mirror_then_delete.sh dry-run default.",
+      "probe": "file:docs/runbooks/front-door-2.md"
+    },
+    {
       "id": "decision-2026-11-13-executor-closed-q-cost-proof-1-add-deploy-cost-probe-mjs-rec",
       "kind": "decision",
       "date": "2026-11-13",
