@@ -172,3 +172,8 @@ Session: session_0156nqDv8ijT11RmKre7xEmK (CRITICALITY-1, COST-GUARD-1).
 - The merge lane closes conflicts itself (`foundation/conflicts.py`, `scripts/lane.sh`): merge main, resolve generated files, push, dispatch checks; an unresolvable executor PR is closed and its queue item retaken.
 - Model replies may use `<<<FILE>>>` blocks when JSON breaks (`foundation/agents.py`); executor evidence rows are de-duplicated.
 - Rule SERVER-OWNS-LOOPS-1: a client agent only opens work; server loops close it. Probe: `tests/foundation/test_server_owns_loops.py`.
+
+## 2026-11-13: Actions minutes (ZERO-MINUTES-1, GIT-IN-CLOUDFLARE-1)
+- Measured: 2011 min used by day 13 of the month (projected 232% of the free quota); `checks` 1218 min, 958 of them failed runs. `checks.yml` now runs its most-failing steps first.
+- The tick Worker already runs lane merge, sweeper and executor dispatch (`seed/worker/src`), but D1 `sweeper_runs` shows `pulls 404` on every repo until the GitHub App covers the org (owner step: Connect GitHub in NEEDS-YOU.md).
+- Owner direction: GitHub stays master and public face; the Worker should own the loops, possibly with Git-in-Cloudflare storage and deploy providers for Cloudflare, AWS, GCP. Probes: `docs/issues/ZERO-MINUTES-1.json`, `docs/issues/GIT-IN-CLOUDFLARE-1.json`.
