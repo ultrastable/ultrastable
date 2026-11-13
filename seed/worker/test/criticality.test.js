@@ -1,0 +1,100 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { makeDb } from './d1shim.js';
+import { runTick } from '../src/tick.js';
+import { computeKEff, readCriticality, addSample } from '../src/criticality.js';
+
+const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
+const crit = JSON.parse(readFileSync(new URL('../../autonomy/criticality.json', import.meta.url), 'utf8'));
+const config = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy, criticality: crit };
+const T0 = Date.parse('2026-11-10T00:00:00Z'); // frozen: no wall-clock reads anywhere in these tests
+const cur = (o = {}) => ({ deploys: 0, fail: 0, spend: 0, human: 0, originated: 0, ...o });
+
+test('k_eff is credited work over spend plus human touches, with a denominator floor', () => {
+  assert.equal(computeKEff(cur({ deploys: 6, originated: 2, spend: 6, human: 2 }), null, crit).k_eff, 1);
+  assert.equal(computeKEff(cur({ deploys: 3 }), null, crit).k_eff, 3); // floor 1, not divide by zero
+});
+
+test('guard: a deploy rise while spend worsens is not credited', () => {
+  const prev = cur({ deploys: 10, spend: 100 });
+  const r = computeKEff(cur({ deploys: 40, spend: 200 }), prev, crit);
+  assert.equal(r.guard.tripped, true);
+  assert.equal(r.credited_deploys, 10);
+});
+
+test('guard: a deploy rise while the failure rate worsens is not credited', () => {
+  const prev = cur({ deploys: 10, fail: 0, spend: 10 });
+  const r = computeKEff(cur({ deploys: 20, fail: 10, spend: 10 }), prev, crit);
+  assert.equal(r.guard.fail_worse, true);
+  assert.equal(r.credited_deploys, 10);
+});
+
+test('guard: a rise with cost and failures steady is credited in full', () => {
+  const r = computeKEff(cur({ deploys: 20, spend: 10 }), cur({ deploys: 10, spend: 10 }), crit);
+  assert.equal(r.guard.tripped, false);
+  assert.equal(r.credited_deploys, 20);
+});
+
+test('originated credit is capped so filing noise cannot inflate k_eff', () => {
+  const r = computeKEff(cur({ originated: 500, spend: 10 }), null, crit);
+  assert.equal(r.originated_credited, crit.originated.credit_cap);
+});
+
+test('an empty queue cannot end the tick idle: it originates an item at the head and files the idle repair', async () => {
+  const db = makeDb();
+  const r = await runTick(db, { config, now: T0 });
+  const head = db.raw.prepare("SELECT id, priority FROM items WHERE id LIKE 'ORIGIN-%'").get();
+  assert.ok(head, 'an originated item exists');
+  assert.equal(head.priority, crit.origination.head_priority);
+  assert.ok(db.raw.prepare("SELECT 1 FROM items WHERE id LIKE 'IDLE-%'").get(), 'idle tick filed its own repair');
+  assert.ok(r.errors.some(e => e.startsWith('idle_tick')));
+  const c = await readCriticality(db);
+  assert.ok(c.reasons.includes('queue_empty') && c.reasons.includes('idle_tick'));
+});
+
+test('origination picks cost_cut first when spend is over budget, flaky_deploy when failures are over the ceiling', async () => {
+  const db = makeDb();
+  await addSample(db, { source: 'cost-probe', spend_units: crit.origination.spend_budget_units + 1 }, '2026-11-09 00:00:00');
+  await runTick(db, { config, now: T0 });
+  assert.ok(db.raw.prepare("SELECT 1 FROM items WHERE id = 'ORIGIN-cost_cut-2026-11-10'").get());
+  const db2 = makeDb();
+  await addSample(db2, { source: 'github-runs', deploys_ok: 5, deploys_fail: 5 }, '2026-11-09 00:00:00');
+  await runTick(db2, { config, now: T0 });
+  assert.ok(db2.raw.prepare("SELECT 1 FROM items WHERE id = 'ORIGIN-flaky_deploy-2026-11-10'").get());
+});
+
+test('an unowned backlog item (owner role with no doer row) gets a doer item', async () => {
+  const db = makeDb();
+  db.raw.exec("INSERT INTO items (id,title,owner_role,done_check,status) VALUES ('workers-173','x','nobody','x','open')");
+  await runTick(db, { config, now: T0 });
+  assert.ok(db.raw.prepare("SELECT 1 FROM items WHERE id = 'ORIGIN-unowned_backlog-2026-11-10'").get());
+});
+
+test('while a spend cap is breached only the cost cut is originated', async () => {
+  const db = makeDb();
+  await addSample(db, { source: 'cost-probe', spend_units: 1, cap_breached: 1 }, '2026-11-09 00:00:00');
+  await runTick(db, { config, now: T0 });
+  const ids = db.raw.prepare("SELECT id FROM items WHERE id LIKE 'ORIGIN-%'").all().map(x => x.id);
+  assert.deepEqual(ids, ['ORIGIN-cost_cut-2026-11-10']);
+});
+
+test('a healthy tick with queued work and k_eff over the minimum originates nothing', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m');
+    INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ('A','a','operations','x',10,'open'), ('B','b','operations','x',20,'open');`);
+  await addSample(db, { source: 'github-runs', deploys_ok: 50, spend_units: 10 }, '2026-11-09 00:00:00');
+  await runTick(db, { config, now: T0 });
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id LIKE 'ORIGIN-%'").get().n, 0);
+  const c = await readCriticality(db);
+  assert.ok(c.k_eff >= crit.k_min && !c.idle);
+});
+
+test('only probe-verified deploy outcomes count: a loop that verifies its own deploy earns nothing', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO outcomes (surface,action_class,result,evidence,at) VALUES
+    ('deploy','deploy','verified','self-reported ok','2026-11-09 00:00:00'),
+    ('deploy','deploy','verified','probe:live-sha-match','2026-11-09 00:00:00')`);
+  await runTick(db, { config, now: T0 });
+  assert.equal((await readCriticality(db)).raw_deploys, 1);
+});
