@@ -1,0 +1,11 @@
+{
+  "id": "Q-CRIT-LANDED-1",
+  "title": "Q-CRIT-LANDED-1: criticality change merged, deployed and scoring (server-owned)",
+  "body": "**Owner:** merge lane and executor (server side)\n**Trigger:** pull request 305 open; every criticality run adopts open pull requests\n**Done check:** cmd:gh api repos/ultrastable/ultrastable/contents/foundation/ignition.py?ref=main --jq .name\n**Status:** open\n\nServer-side ownership of the criticality change (SERVER-OWNS-LOOPS-1): the lane merges pull request 305 on green, deploy-workers deploys dashboard 0.3.0 and the criticality workflow posts the first score (k=0.0026 on 2026-11-12) to /api/fleet/criticality. A red check is fixed by the executor from its log. Closes when ignition.py is on main.\n\nsize: S\n\n**Closing probe:** cmd:gh api repos/ultrastable/ultrastable/contents/foundation/ignition.py?ref=main --jq .name\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "criticality"
+}
