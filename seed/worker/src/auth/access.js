@@ -5,16 +5,37 @@
 // Surfaces tried in order: installation repositories with the app's token (what the tick sees), the installation record with the app JWT (selection, settings url).
 import { appJwt } from './github-app.js';
 import * as store from './store.js';
+import { getToken } from './index.js';
 const API = 'https://api.github.com';
 const H = t => ({ authorization: 'Bearer ' + t, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-access' });
 
-export async function checkRepoAccess(db, env, tenant, repos, { token, fetch: f = fetch, now = Date.now(), origin = '' } = {}) {
+export async function checkRepoAccess(db, env, tenant, repos, { token: tok, fetch: f = fetch, now = Date.now(), origin = '' } = {}) {
+  let token = tok;
   const m = await store.material(db, env, tenant, 'github-app');
   const out = { ok: false, covered: [], missing: [...repos], selection: null, settings_url: null, connect: origin + '/connect/repos', at: new Date(now).toISOString() };
   if (!m || !m.meta.installation_id) { out.reason = 'app not installed'; return finish(db, out); }
-  if (m.secret && m.meta.app_id) {  // surface 2: the installation record (selection + the exact page where the owner widens it)
-    const r = await f(`${API}/app/installations/${m.meta.installation_id}`, { headers: H(await appJwt(m.meta.app_id, m.secret.pem, now)) });
-    if (r.ok) { const j = await r.json(); out.selection = j.repository_selection; out.settings_url = j.html_url; }
+  const owners = [...new Set(repos.map(x => x.split('/')[0].toLowerCase()))];
+  if (m.secret && m.meta.app_id) {  // surface 2: every installation of this app (the one that holds the repos may already exist: adopt it by code), then the app's own account
+    const jwt = await appJwt(m.meta.app_id, m.secret.pem, now);
+    const li = await f(`${API}/app/installations?per_page=100`, { headers: H(jwt) });
+    const list = li.ok ? await li.json() : [];
+    const want = list.find(i => i.account && owners.includes(String(i.account.login).toLowerCase()));
+    out.installations = list.map(i => i.account && i.account.login);
+    if (want && Number(want.id) !== Number(m.meta.installation_id)) {  // self-heal: switch to the installation that covers the repos, then mint from it
+      await store.put(db, env, tenant, 'github-app', { meta: { installation_id: Number(want.id) }, access: null, status: 'pending' });
+      out.adopted_installation = want.id;
+      const t2 = await getToken(db, env, tenant, 'github-app', { fetch: f, now }); token = t2.ok ? t2.token : null;
+    }
+    const inst = want || list.find(i => Number(i.id) === Number(m.meta.installation_id));
+    if (inst) { out.selection = inst.repository_selection; out.settings_url = inst.html_url || null; }
+    const ap = await f(`${API}/app`, { headers: H(jwt) });
+    const app = ap.ok ? await ap.json() : null;
+    out.app_owner = app && app.owner && app.owner.login;
+    if (!want) {  // no installation on the repos' account: a user-owned private app cannot be installed on an org, so register the app under that org; an org-owned app is installed from its own page
+      const orgOwned = out.app_owner && owners.includes(String(out.app_owner).toLowerCase());
+      out.settings_url = orgOwned ? `https://github.com/apps/${m.meta.slug}/installations/new` : `https://github.com/organizations/${owners[0]}/settings/apps/new`;
+      out.needs = orgOwned ? 'install the app on the organization' : 'register the app under the organization';
+    }
   }
   if (token) {  // surface 1: what this token can actually reach
     const r = await f(`${API}/installation/repositories?per_page=100`, { headers: H(token) });
