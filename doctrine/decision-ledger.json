@@ -732,7 +732,7 @@
    "date": "2026-11-13",
    "title": "Failed checks cost most of the Actions minutes: order steps by measured failure rate",
    "body": "2026-11-13: 958 of 1218 checks minutes were failed runs. The most-failing steps now run first so a bad PR stops in seconds. The Worker lane already exists but sees 404 on every repo until the GitHub App covers the org; ZERO-MINUTES-1 holds the rest.",
-   "probe": "file:ops/worker-merge-evidence.jsonl"
+   "probe": "file:docs/issues/ZERO-MINUTES-1.json"
   }
  ]
 }
