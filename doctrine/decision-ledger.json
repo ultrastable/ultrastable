@@ -758,6 +758,14 @@
    "title": "COSTGUARD-1 budgets as failure modes (Session: session_0156nqDuRz3AxosG8EDZT7Zi; Session: session_0156nqDsZ)",
    "body": "External D1 budgets (qnfo-audit under 15M rows/hr) are sampled hourly by the tick Worker into cost_samples and probed by selfaudit; red files the next FIX- item, green closes it. GitHub App org access and k_eff below 1 are probed modes with fixes.",
    "probe": "grep:instances/ultrastable/failure-modes.json::qnfo-audit-d1-budget"
+  },
+  {
+   "id": "lesson-2026-11-13-free-org-plan-blocks-branch-protection-bundles-restore",
+   "kind": "lesson",
+   "date": "2026-11-13",
+   "title": "Free org plan blocks branch protection; bundles restore",
+   "body": "GH-4 branch protection returns 403 on free private repos (needs paid plan). All 7 archived-repo bundles clone from main (restore test 2026-11-13). IP-6 calendar needs the filing date.",
+   "probe": "file:ip/calendar/deadlines.py"
   }
  ]
 }
