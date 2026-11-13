@@ -30,8 +30,9 @@ export function manifest(origin, name) {
   };
 }
 
-export async function handleAuth(request, env, { tenant = 'default', name = 'ultrastable', fetch: f = fetch, now = Date.now() } = {}) {
+async function route(request, env, { tenant = 'default', name = 'ultrastable', fetch: f = fetch, now = Date.now() } = {}) {
   const url = new URL(request.url), origin = url.origin;
+  if (/^\/(connect|auth)\//.test(url.pathname) || url.pathname === '/connect') await store.ensureSchema(env.DB);  // the Worker brings up its own credential tables before any route touches them
   if (url.pathname === '/connect') { const r = await probe(env.DB, now); return Response.redirect(new URL(r.github_connected ? '/' : '/connect/github', url), 302); }
   if (url.pathname === '/auth/health') { const r = await probe(env.DB, now); return Response.json(r, { status: r.ok ? 200 : 503 }); }
   if (url.pathname === '/connect/github') {
@@ -63,4 +64,15 @@ export async function handleAuth(request, env, { tenant = 'default', name = 'ult
     return doneScreen('GitHub connected', 'Done. From here the system opens, checks, merges and deploys changes by itself.');
   }
   return null;
+}
+
+// Any failure inside an auth route is recorded as a credential event and answered with a retry screen, never a raw Worker exception.
+export async function handleAuth(request, env, opts = {}) {
+  try { return await route(request, env, opts); }
+  catch (e) {
+    const t = opts.tenant || 'default';
+    try { await store.event(env.DB, t, 'github-app', 'failed', String(e && e.message || e).slice(0, 300)); } catch (_) { console.error('auth event', e && e.message); }
+    console.error('auth', e && e.message);
+    return failScreen('Connect GitHub', 'Something went wrong finishing the connection. The system recorded it and you can try again.', '/connect/github');
+  }
 }
