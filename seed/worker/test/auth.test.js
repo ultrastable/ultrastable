@@ -81,3 +81,22 @@ test('the connect flow: consent screen, manifest conversion, install, then nothi
   const m = await store.material(db, e, 't', 'github-app');
   assert.equal(m.meta.installation_id, 88); assert.equal(m.meta.app_id, 5); assert.equal(m.secret.pem, 'PEM');
 });
+
+test('an auth route that throws answers with a retry screen, never a Worker exception', async () => {
+  const { handleAuth } = await import('../src/auth/routes.js');
+  const env = { DB: { prepare() { throw new Error('boom'); } }, CREDENTIAL_KEY: 'k' };
+  const r = await handleAuth(new Request('https://x.test/auth/github/callback?code=c&state=s'), env, {});
+  assert.ok(r.status !== 1101);
+  assert.match(await r.text(), /try again|Try again/i);
+});
+test('the callback works on a database that never had the credential tables', async () => {
+  const { handleAuth, makeState } = await import('../src/auth/routes.js');
+  const { DatabaseSync } = await import('node:sqlite');
+  const raw = new DatabaseSync(':memory:');
+  const db = { prepare(sql) { const st = raw.prepare(sql); let a = []; const o = { bind(...x) { a = x; return o; }, async all() { return { results: st.all(...a) }; }, async first() { return st.get(...a) || null; }, async run() { st.run(...a); return {}; } }; return o; } };
+  const env = { DB: db, CREDENTIAL_KEY: 'a'.repeat(32) };
+  const state = await makeState(env, 'default');
+  const f = async () => ({ status: 201, json: async () => ({ id: 1, slug: 'app', pem: 'pem', webhook_secret: 'w', client_id: 'c', client_secret: 's' }) });
+  const r = await handleAuth(new Request('https://x.test/auth/github/callback?code=c&state=' + encodeURIComponent(state)), env, { fetch: f });
+  assert.equal(r.status, 302); assert.match(r.headers.get('location'), /apps\/app\/installations\/new/);
+});
