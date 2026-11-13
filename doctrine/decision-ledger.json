@@ -599,7 +599,6 @@
    "session": "session_0156nqDuauojj4buPNTq3ejz"
   },
   {
-<<<<<<< HEAD
    "id": "decision-2026-11-13-criticality-1-and-cost-guard-1",
    "kind": "decision",
    "date": "2026-11-13",
@@ -614,14 +613,14 @@
    "title": "Mantra as code",
    "body": "MANTRA in foundation/criticality.py; four clauses computed; k gates executor queue via queue.takeable; stalled tick files Q-CRIT-STALL. Session: session_0156nqDv8ijT11RmKre7xEmK",
    "probe": "file:doctrine/criticality.json"
-=======
+  },
+  {
    "id": "lesson-2026-11-13-q-cost-proof-1-cost-probe-measures-d1-rows-read-and-ai-neuro",
    "kind": "lesson",
    "date": "2026-11-13",
    "title": "Q-COST-PROOF-1: cost probe measures D1 rows read and AI neurons daily",
    "body": "deploy/cost-probe.mjs (d1AnalyticsAdaptiveGroups + aiInferenceAdaptiveGroups) appends ops/cost.jsonl, thresholds in ops/cost-thresholds.json. 2026-11-13 7d: qnfo-audit 9.59B rows read, living-paper 1.78B, qnfo-graph 0.39B, all ultrastable DBs under 7M; AI 8.9M neurons. Account has 80 foreign (Quniverse) resources, 0 undeclared ultrastable-*.",
    "probe": "grep:deploy/cost-probe.mjs::d1AnalyticsAdaptiveGroups"
->>>>>>> origin/main
   }
  ]
 }

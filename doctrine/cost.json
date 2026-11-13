@@ -5,27 +5,78 @@
   "standing_goal": {
     "id": "CRITICALITY-1",
     "north_star": "Ultrastable's loops produce more verified deploys than they consume in cost and attention.",
-    "measures": ["verified_deploys_rising_without_human_input", "spend_under_budget", "each_loop_output_feeds_another_loop"],
-    "priority_order": ["self-sustaining Ultrastable (deploys its own workers)", "cost optimization (QNFO is the testbed)", "new features"]
+    "measures": [
+      "verified_deploys_rising_without_human_input",
+      "spend_under_budget",
+      "each_loop_output_feeds_another_loop"
+    ],
+    "priority_order": [
+      "self-sustaining Ultrastable (deploys its own workers)",
+      "cost optimization (QNFO is the testbed)",
+      "new features"
+    ]
   },
   "budgets": {
-    "d1_rows_read_per_day": {"default": 100000000, "per_database": {"35e2e573-92f3-46ac-83c6-22f6429fc5e5": 400000000, "70a58cb3-b2cd-498d-877f-ecca86859a22": 100000000, "a1954b92-d681-4d02-b1f6-f9a2eb4c265d": 50000000}},
-    "d1_rows_per_read_query_max": 500,
-    "ai_neurons_per_day": 400000,
-    "ai_neurons_per_model_share_max": 0.4
+    "source": "ops/cost-thresholds.json",
+    "note": "rows_read_max and neurons_max over window_days are the budgets; deploy/cost-probe.mjs measures and files breaches, foundation/criticality.py reads the latest reading as normalized cost"
   },
   "baseline_2026-11-13": {
     "window": "2026-11-06..2026-11-13 (7 days)",
-    "d1_rows_read": {"qnfo-audit": 9606549579, "living-paper": 1785197176, "qnfo-graph": 395285882, "q08-signal": 72047114, "personal-life": 69505774, "q08-trades": 59184769},
+    "d1_rows_read": {
+      "qnfo-audit": 9606549579,
+      "living-paper": 1785197176,
+      "qnfo-graph": 395285882,
+      "q08-signal": 72047114,
+      "personal-life": 69505774,
+      "q08-trades": 59184769
+    },
     "qnfo_audit_rows_per_read_query": 2095,
-    "ai_neurons_by_model": {"@cf/openai/gpt-oss-120b": 2679639, "@cf/zai-org/glm-5.3": 1577838, "@cf/zai-org/glm-5.3-flash": 1285376, "@cf/moonshotai/kimi-k2.7-code": 890855, "@cf/moonshotai/kimi-k2.6": 729843, "@cf/deepseek-ai/deepseek-v4.1-flash-1017": 691498}
+    "ai_neurons_by_model": {
+      "@cf/openai/gpt-oss-120b": 2679639,
+      "@cf/zai-org/glm-5.3": 1577838,
+      "@cf/zai-org/glm-5.3-flash": 1285376,
+      "@cf/moonshotai/kimi-k2.7-code": 890855,
+      "@cf/moonshotai/kimi-k2.6": 729843,
+      "@cf/deepseek-ai/deepseek-v4.1-flash-1017": 691498
+    }
   },
   "findings": [
-    {"id": "F1", "db": "qnfo-audit", "cause": "fleet_tick has 67 AFTER INSERT triggers, each scanning views; one tick insert reads ~860k rows (156 inserts/day cost 134M rows); a no-op guarded insert from qnfo-code-orchestrator still reads ~150k rows per call", "remedy": "gate triggers on NEW.source = the canonical tick source and on the 10-minute mark; move metric refresh to the hourly step; make the guarded insert a SELECT on idx_fleet_tick_source_ts first", "status": "open", "owner": "qnfo-fleet-control"},
-    {"id": "F2", "db": "qnfo-audit", "cause": "reach_signals rollup query joins MAX(date) subselect per call (52k rows per call, 3571 calls/day)", "remedy": "cache per hour in ops_config or maintain a rollup table", "status": "open"},
-    {"id": "F3", "db": "qnfo-audit", "cause": "alerts lookup wraps created_at in datetime(), which defeats idx_alerts_source_created (9.4k rows per call, 4130 calls/day)", "remedy": "compare created_at to a precomputed ISO bound, or add index alerts(source, datetime(created_at)) (migration written, not applied: production DB write was refused by the permission check)", "status": "open", "migration": "CREATE INDEX IF NOT EXISTS idx_alerts_source_dt ON alerts (source, datetime(created_at))"},
-    {"id": "F4", "db": "qnfo-audit", "cause": "code_tasks lookup uses goal LIKE ? OR id = ? (2k rows per call, 19k calls/day)", "remedy": "query by id first, LIKE only when no id hit", "status": "open"},
-    {"id": "F5", "ai": "gpt-oss-120b, glm-5.3 and glm-5.3-flash take 52 percent of neurons", "remedy": "route classification and routine loops to smaller models; cap per-model share", "status": "open"}
+    {
+      "id": "F1",
+      "db": "qnfo-audit",
+      "cause": "fleet_tick has 67 AFTER INSERT triggers, each scanning views; one tick insert reads ~860k rows (156 inserts/day cost 134M rows); a no-op guarded insert from qnfo-code-orchestrator still reads ~150k rows per call",
+      "remedy": "gate triggers on NEW.source = the canonical tick source and on the 10-minute mark; move metric refresh to the hourly step; make the guarded insert a SELECT on idx_fleet_tick_source_ts first",
+      "status": "open",
+      "owner": "qnfo-fleet-control"
+    },
+    {
+      "id": "F2",
+      "db": "qnfo-audit",
+      "cause": "reach_signals rollup query joins MAX(date) subselect per call (52k rows per call, 3571 calls/day)",
+      "remedy": "cache per hour in ops_config or maintain a rollup table",
+      "status": "open"
+    },
+    {
+      "id": "F3",
+      "db": "qnfo-audit",
+      "cause": "alerts lookup wraps created_at in datetime(), which defeats idx_alerts_source_created (9.4k rows per call, 4130 calls/day)",
+      "remedy": "compare created_at to a precomputed ISO bound, or add index alerts(source, datetime(created_at)) (migration written, not applied: production DB write was refused by the permission check)",
+      "status": "open",
+      "migration": "CREATE INDEX IF NOT EXISTS idx_alerts_source_dt ON alerts (source, datetime(created_at))"
+    },
+    {
+      "id": "F4",
+      "db": "qnfo-audit",
+      "cause": "code_tasks lookup uses goal LIKE ? OR id = ? (2k rows per call, 19k calls/day)",
+      "remedy": "query by id first, LIKE only when no id hit",
+      "status": "open"
+    },
+    {
+      "id": "F5",
+      "ai": "gpt-oss-120b, glm-5.3 and glm-5.3-flash take 52 percent of neurons",
+      "remedy": "route classification and routine loops to smaller models; cap per-model share",
+      "status": "open"
+    }
   ],
-  "closing_probe": "python3 -m foundation cost --guard (breach files a queue item; passes when every database and the AI total are under budget for the last full day)"
+  "closing_probe": "node deploy/cost-probe.mjs (daily in .github/workflows/cost-guard.yml); a breach files a queue item and narrows the executor queue to cost-cutting items"
 }

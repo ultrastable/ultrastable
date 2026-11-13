@@ -618,7 +618,8 @@
       "feedback": "the deploy count is a first-class metric the product manager and the clock read",
       "bindings": [
         "CLOUDFLARE_ACCOUNT_ID",
-        "CLOUDFLARE_API_TOKEN"
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
       ]
     },
     "executor-session": {

@@ -17,6 +17,7 @@ def repo(deploys, cost_rows=()):
     root = Path(__file__).resolve().parents[2]
     for f in ("criticality.json", "cost.json"):
         (d / "doctrine" / f).write_text((root / "doctrine" / f).read_text(encoding="utf-8"), encoding="utf-8")
+    (d / "ops/cost-thresholds.json").write_text((root / "ops/cost-thresholds.json").read_text(encoding="utf-8"), encoding="utf-8")
     (d / "ops/deploys.jsonl").write_text("".join(json.dumps(x) + "\n" for x in deploys), encoding="utf-8")
     (d / "ops/cost.jsonl").write_text("".join(json.dumps(x) + "\n" for x in cost_rows), encoding="utf-8")
     return d
@@ -32,7 +33,7 @@ class Criticality(unittest.TestCase):
     def test_clauses_computed(self):
         r = C.compute(repo([GOOD]), NOW, feed_ok=True)
         self.assertEqual(r["clauses"], {"ship": True, "verify": True, "spend": True, "feed": True})
-        bad = C.compute(repo([GOOD, dict(GOOD, live_matches_commit=False)], [{"d1_rows_read": {"a": 10**10}, "ai_neurons": 1}]), NOW, feed_ok=False)
+        bad = C.compute(repo([GOOD, dict(GOOD, live_matches_commit=False)], [{"d1": [{"name": "a", "rows_read": 10**10}], "ai": {"neurons": 1}}]), NOW, feed_ok=False)
         self.assertEqual(bad["clauses"], {"ship": True, "verify": False, "spend": False, "feed": False})
         self.assertEqual(C.compute(repo([]), NOW, feed_ok=True)["clauses"]["ship"], False)
 
@@ -44,7 +45,7 @@ class Criticality(unittest.TestCase):
         self.assertEqual(len(C.gate(items, d2)), 3)
 
     def test_control_rods_narrow_to_cost_when_cost_runs_away(self):
-        d = repo([GOOD], [{"d1_rows_read": {"a": 10**10}, "ai_neurons": 1}])
+        d = repo([GOOD], [{"d1": [{"name": "a", "rows_read": 10**10}], "ai": {"neurons": 1}}])
         items = [{"number": "Q-DEPLOY-1", "labels": []}, {"number": "Q-COST-2", "labels": []}, {"number": "F", "labels": []}]
         self.assertEqual([i["number"] for i in C.gate(items, d)], ["Q-COST-2"])
 

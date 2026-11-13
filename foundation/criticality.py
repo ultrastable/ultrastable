@@ -7,7 +7,7 @@
 MANTRA = "Ship. Verify. Spend less than it earns. Feed the next loop."  Each clause is a check, not a sentence:
   Ship                         at least one deploy recorded in the window (ops/deploys.jsonl)
   Verify                       every deploy in the window had live code equal to its commit
-  Spend less than it earns     normalized cost <= 1 (ops/cost.jsonl against doctrine/cost.json budgets)
+  Spend less than it earns     normalized cost <= 1 (ops/cost.jsonl against ops/cost-thresholds.json)
   Feed the next loop           every declared flow lies on a feedback cycle (foundation.flows.check)
 k = verified deploys in window / (normalized cost + human touches). When k < k_floor the executor's queue is filtered to items that raise deploys or cut cost.
 Control rods: when normalized cost exceeds 1 the queue narrows further, to items that cut cost, until the cost guard reads under budget. chain = share of declared flows on a feedback cycle.
@@ -44,14 +44,9 @@ def _ts(s: str) -> datetime:
 
 
 def normalized_cost(root=REPO) -> float:
-    """Latest cost reading over its budget: the larger of total D1 rows read and AI neurons, each as a share of budget. 0 when no reading exists yet."""
-    rows = _rows(root, "ops/cost.jsonl")
-    if not rows:
-        return 0.0
-    b = json.loads((Path(root) / "doctrine/cost.json").read_text(encoding="utf-8"))["budgets"]
-    last = rows[-1]
-    d1_budget = sum(b["d1_rows_read_per_day"]["per_database"].values()) or b["d1_rows_read_per_day"]["default"]
-    return round(max(sum(last["d1_rows_read"].values()) / d1_budget, last["ai_neurons"] / b["ai_neurons_per_day"]), 3)
+    """Latest cost reading over its budget (foundation.cost): 1.0 is at budget; 0 when no reading exists yet."""
+    from . import cost
+    return cost.normalized(root)
 
 
 def human_touches(root=REPO) -> int:

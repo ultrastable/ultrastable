@@ -3,7 +3,7 @@ name: cost-guard
 # trigger: daily schedule; cost data changes by day, so faster adds nothing (COST-GUARD-1)
 # free-alternative: run `python3 -m foundation cost --guard --apply` from a cloud-hosted Claude session with CLOUDFLARE_API_TOKEN bound
 # Also runs the criticality tick (k = verified deploys / (cost + human touches)) and logs it to ops/criticality.jsonl.
-# Reads yesterday's D1 rows read and Workers AI neurons, appends ops/cost.jsonl, files a queue item per budget breach.
+# Runs deploy/cost-probe.mjs (D1 rows read and Workers AI neurons into ops/cost.jsonl, a queue item per breach) and then the criticality tick.
 on:
   schedule:
     - cron: "17 6 * * *"
@@ -19,10 +19,12 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: 22}
       - name: Probe and guard
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: python3 -m foundation cost --probe --apply
+        run: node deploy/cost-probe.mjs
       - name: Criticality tick (CRITICALITY-1)
         run: python3 -m foundation criticality --tick --apply
       - name: Record
