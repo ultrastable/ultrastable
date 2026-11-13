@@ -645,6 +645,14 @@
    "title": "POINT-AND-CLICK-1",
    "body": "No surface asks a person to handle a credential; consent screen + Worker-stored credentials. Session: session_0156nqDv8ijT11RmKre7xEmK",
    "probe": "grep:foundation/pointclick.py::def check"
+  },
+  {
+   "id": "decision-2026-11-13-server-owns-loops-1-the-lane-adopts-every-pr-it-cannot-merge",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "SERVER-OWNS-LOOPS-1: the lane adopts every PR it cannot merge on the same pass; no hand-back wording",
+   "body": "Found 2026-11-13 after SERVER-OWNS-LOOPS-1 merged: every open pull request was unmergeable (conflict or failed check); the lane answered with a comment and a 12h or 24h timer addressed to the opener; the sweeper files its tracked item as a GitHub issue after 24 h, but Issues are off on this repository (has_issues false), so the item was never filed and the 410 answer aborted the rest of that repository's sweep. Change: scripts/lane.sh files docs/issues/OL-PR-<n>.json (owner, trigger, closing probe python3 -m foundation loopowner --closed n) for each pull request it cannot merge and commits it to main for the executor; foundation/loopowner.py lints hand-back phrases (doctrine/loop-ownership.json handback) in the checks step; seed/worker/src/sweeper.js treats issues-off as lane-owned and keeps sweeping. Prediction: open unmergeable pull requests with no docs/issues item = 0 within 24 h of merge. Revert: revert this commit.",
+   "probe": "grep:scripts/lane.sh::foundation loopowner --adopt --apply"
   }
  ]
 }
