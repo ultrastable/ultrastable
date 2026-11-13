@@ -701,6 +701,14 @@
    "title": "VIDEO-1 toolchain pin",
    "body": "piper-tts 1.2 has no wheel for Python 3.12 (piper-phonemize); use piper-tts 1.3 and its Python API (PiperVoice.load, synthesize_wav). A chained 'gh pr checks --watch | tail && merge' merges on red: tail masks the exit code; use --fail-fast without a pipe.",
    "probe": "file:scripts/video_build.py"
+  },
+  {
+   "id": "lesson-2026-11-13-video-1-caption-scale",
+   "kind": "lesson",
+   "date": "2026-11-13",
+   "title": "VIDEO-1 caption scale",
+   "body": "libass SRT PlayRes is 288 high, so FontSize 20 is huge at 720p; use 9 with BorderStyle=3. /live duplicates /dashboard visually; use /proof.",
+   "probe": "file:scripts/video_build.py"
   }
  ]
 }
