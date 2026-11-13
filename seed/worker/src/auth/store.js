@@ -30,5 +30,8 @@ const DDL = [
   "CREATE TABLE IF NOT EXISTS credential_events (id INTEGER PRIMARY KEY AUTOINCREMENT, at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')), tenant TEXT NOT NULL, provider TEXT NOT NULL, event TEXT NOT NULL, detail TEXT)",
   "CREATE INDEX IF NOT EXISTS credential_events_at ON credential_events (at)",
 ];
-let ready = null;
-export function ensureSchema(db) { return (ready ||= (async () => { for (const q of DDL) await db.prepare(q).run(); })().catch(e => { ready = null; throw e; })); }
+const ready = new WeakMap();
+export function ensureSchema(db) {
+  if (!ready.has(db)) ready.set(db, (async () => { for (const q of DDL) await db.prepare(q).run(); })().catch(e => { ready.delete(db); throw e; }));
+  return ready.get(db);
+}
