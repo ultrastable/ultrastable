@@ -6,6 +6,7 @@
 import { readFileSync, readdirSync, mkdirSync, appendFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
+import { fileURLToPath } from "node:url";
 const T = process.env.CLOUDFLARE_API_TOKEN, A = process.env.CLOUDFLARE_ACCOUNT_ID;
 if (!T || !A) { console.error("set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID"); process.exit(1); }
 const verifyOnly = process.argv.includes("--verify");
@@ -15,8 +16,8 @@ const OWN_DEPLOY = new Set(["ultrastable-site", "ultrastable-agents"]);
 const live = topo.workers.filter(w => w.state === "live" && !w.retire_candidate);
 const deploy = live.filter(w => !OWN_DEPLOY.has(w.id));
 const sha = (b) => createHash("sha256").update(b).digest("hex");
-const sh = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: ["ignore", "pipe", "inherit"], encoding: "utf8", ...opts });
-const ROOT = new URL("..", import.meta.url).pathname;
+const sh = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: ["ignore", "pipe", "inherit"], encoding: "utf8", shell: process.platform === "win32" && cmd === "npx", ...opts });
+const ROOT = fileURLToPath(new URL("..", import.meta.url));
 sh("python3", ["-m", "foundation", "topology", "--render"], { cwd: ROOT });
 // The tick's src/config.js is generated (bootstrap writes it per tenant) and is not in git: build it the same way, from the autonomy policy.
 { const pol = JSON.parse(readFileSync(new URL("../seed/autonomy/policy.json", import.meta.url), "utf8"));
