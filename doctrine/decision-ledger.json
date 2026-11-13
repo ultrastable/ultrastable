@@ -784,6 +784,14 @@
       "probe": "grep:site/worker.js::siteApi"
     },
     {
+      "id": "decision-2026-11-13-user-path-1-first-run-workflow-replaces-autopilot-step-oauth",
+      "kind": "decision",
+      "date": "2026-11-13",
+      "title": "USER-PATH-1: first-run workflow replaces autopilot step; OAuth awaits owner apps",
+      "body": "SETUP-2 (ops#30): first-run.yml enables scheduled workflows on a copy's first push; autopilot step removed; public-state detection; task wizards; OAuth needs owner-registered apps (NEEDS-YOU card).",
+      "probe": "file:.github/workflows/first-run.yml"
+    },
+    {
       "id": "decision-2026-11-13-executor-closed-q-cost-proof-1-add-deploy-cost-probe-mjs-rec",
       "kind": "decision",
       "date": "2026-11-13",
