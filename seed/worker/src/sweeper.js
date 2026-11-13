@@ -53,3 +53,11 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
   if (out.errors.length) out.status = 'errors';
   return out;
 }
+
+// Persist one pass (D1) so the live probe can prove the sweeper ran: /live exposes the newest row.
+export async function recordSweep(db, out, at = new Date().toISOString().replace('T', ' ').slice(0, 19)) {
+  await db.prepare(`INSERT INTO sweeper_runs (at, status, merged, filed, released, errors, open_loop_age_hours) VALUES (?,?,?,?,?,?,?)`)
+    .bind(at, out.status, out.merged.length, out.filed.length, out.released.length, out.errors.join('; ').slice(0, 500), out.open_loop_age_hours).run();
+  await db.prepare(`DELETE FROM sweeper_runs WHERE id NOT IN (SELECT id FROM sweeper_runs ORDER BY id DESC LIMIT 500)`).run();
+}
+export async function lastSweep(db) { return (await db.prepare(`SELECT at, status, merged, filed, released, errors, open_loop_age_hours FROM sweeper_runs ORDER BY id DESC LIMIT 1`).first()) || null; }

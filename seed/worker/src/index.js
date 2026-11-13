@@ -4,7 +4,7 @@
 import { runTick, lastTickForHealth } from './tick.js';
 import { runExecutor, noteExecutor } from './executor.js';
 import { runLane } from './lane.js';
-import { sweepOpenLoops } from './sweeper.js';
+import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
@@ -33,7 +33,7 @@ export default {
       const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
       const r = await runExecutor({ ...env, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN }); console.log('executor', JSON.stringify(r)); await noteExecutor(env.DB, r);
       const l = await runLane({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []), issueWorkflow: null }); console.log('lane', JSON.stringify(l));
-      const sw = await sweepOpenLoops({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) }); console.log('sweeper', JSON.stringify(sw));  // SERVER-OWNS-LOOPS-1
+      const sw = await sweepOpenLoops({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) }); console.log('sweeper', JSON.stringify(sw)); await recordSweep(env.DB, sw);  // SERVER-OWNS-LOOPS-1
     })().catch(e => console.error('lane', e && e.message)));
     ctx.waitUntil(selfcheck(env, hosts(env)[0]).catch(e => console.error('analytics selfcheck', e && e.message)));
   },
@@ -73,7 +73,7 @@ export default {
     }
     if (url.pathname === '/live' || url.pathname === '/metrics/criticality.json') {  // CRITICALITY-1: k_eff of the last tick
       const c = await readCriticality(env.DB);
-      return Response.json(url.pathname === '/live' ? { ok: true, org: config.org_slug, k_eff: c ? c.k_eff : null, criticality: c } : (c || {}), { headers: { 'cache-control': 'no-store' } });
+      return Response.json(url.pathname === '/live' ? { ok: true, org: config.org_slug, k_eff: c ? c.k_eff : null, criticality: c, sweeper: await lastSweep(env.DB).catch(() => null) } : (c || {}), { headers: { 'cache-control': 'no-store' } });
     }
     if (url.pathname === '/api/criticality/sample' && request.method === 'POST') {  // collectors push GitHub-run, cost and owner-touch samples
       if (!env.CRITICALITY_TOKEN || request.headers.get('authorization') !== 'Bearer ' + env.CRITICALITY_TOKEN) return Response.json({ error: 'unauthorized' }, { status: 401 });
