@@ -16,7 +16,7 @@ const AI = { run: async (m, a) => {
   const user = a.messages[1].content;
   if (!m.includes("qwen")) {
     if (a.messages[0].content.includes("strict reviewer")) return { response: JSON.stringify({ met: ["Has a heading"], gaps: [{ what: "No sign-up form", critical: true }] }) };
-    return { response: JSON.stringify([{ q: "Do neighbours sign up?", cue: "e.g. a list" }, { q: "Phone first?", cue: "small screens" }, { q: "Calm look?", cue: "simple" }]) };
+    return { response: JSON.stringify([{ q: "Do neighbours sign up?", cue: "e.g. a list" }, { q: "Phone first?", cue: "small screens" }, { q: "Calm look?", cue: "simple" }, { q: "Extra?", cue: "x" }]) };
   }
   builds++; briefs.push(user); const ch = user.includes("current page") && !user.includes("Fix these problems");
   return { response: "```html\n<html><body><h1>" + (user.includes("Fix these problems") ? "fixed" : ch ? "changed" : "bins") + "</h1></body></html>\n```" };
@@ -26,26 +26,49 @@ const post = (path, o) => { const f = new FormData(); for (const k in o) f.set(k
 r = await get("https://ultrastable.io/start"); assert.equal(r.status, 200); assert.match(await r.text(), /Tell me what is on your mind/);
 r = await post("/api/idea", { idea: "an app for bin day" });
 assert.equal(r.status, 303); const id = /\/s\/([a-f0-9]{10})\/ask/.exec(r.headers.get("location"))[1];
-for (let i = 0; i < 3; i++) {
-  r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/ask"), E2); assert.match(await r.text(), new RegExp("Question " + (i + 1) + " of 3"));
-  r = await post("/api/answer", { id, a: ["yes", "no", "unsure"][i] });
-  assert.equal(r.status, 303); assert.match(r.headers.get("location"), i < 2 ? /\/ask$/ : /\/make$/);
+for (let i = 0; i < 2; i++) { // BUILD-2: at most two plain follow-up questions before the first build
+  r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/ask"), E2); assert.match(await r.text(), new RegExp("Question " + (i + 1) + " of 2"));
+  r = await post("/api/answer", { id, a: ["yes", "no"][i] });
+  assert.equal(r.status, 303); assert.match(r.headers.get("location"), i < 1 ? /\/ask$/ : /\/make$/);
 }
 r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/make"), E2); assert.equal(r.status, 302, "the /make request itself runs the build");
-assert.match(briefs[0], /Do neighbours sign up\? YES/); assert.match(briefs[0], /Phone first\? NO/); assert.match(briefs[0], /Calm look\? NOT SURE/);
+assert.match(briefs[0], /Do neighbours sign up\? YES/); assert.match(briefs[0], /Phone first\? NO/); assert.ok(!/Calm look/.test(briefs[0]), "only two questions are asked");
 assert.equal(builds, 1, "the build is its own stage; the audit and fix run in a later request");
 r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.equal(r.status, 200); assert.equal(builds, 2, "first view starts the audit, which fixes the critical gap");
 const page = await r.text(); assert.match(page, /<h1>fixed<\/h1>/); assert.match(page, /Change something/); assert.match(page, /What I checked/); assert.match(r.headers.get("content-security-policy"), /sandbox/);
 r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/review"), E2); const rv = await r.text();
-assert.match(rv, /Has a heading/); assert.match(rv, /No sign-up form \(fixed automatically\)/); assert.match(rv, /What I cannot do yet/); assert.match(rv, /not shared with other visitors/);
+assert.match(rv, /Has a heading/); assert.match(rv, /No sign-up form \(fixed automatically\)/); assert.match(rv, /What I cannot do yet/); assert.match(rv, /visible to every visitor/);
 r = await post("/api/change", { id, change: "make it green" }); assert.equal(r.status, 303);
 r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/make"), E2); assert.equal(r.status, 302);
 r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.match(await r.text(), /changed/);
+// BUILD-2 (shared back end): two browsers see the same list through /s/<id>/api, also on <id>.ultrastable.io; the sandbox is relaxed only on the subdomain
+{
+  const rows = []; let seq = 0;
+  const stmt = (sql) => ({ b: [], bind(...a) { this.b = a; return this; },
+    async run() { if (/INSERT/.test(sql)) { rows.push({ id: ++seq, site: this.b[0], coll: this.b[1], at: this.b[2], data: this.b[3] }); return { meta: { last_row_id: seq } }; } return {}; },
+    async all() { return { results: rows.filter(x => x.site === this.b[0] && x.coll === this.b[1]).reverse().map(x => ({ id: x.id, at: x.at, data: x.data })) }; },
+    async first() { return { n: rows.filter(x => x.site === this.b[0]).length }; } });
+  const DB = { prepare: stmt, batch: async () => [] }, E3 = { ASSETS: mem, AI, DB };
+  const api = (host, path, init) => mod.fetch(new Request("https://" + host + path, init), E3);
+  const add = (host, d) => api(host, "/s/" + id + "/api", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ coll: "signups", data: d }) });
+  assert.equal((await add("ultrastable.io", { name: "Ada" })).status, 201);
+  assert.equal((await add(id + ".ultrastable.io", { name: "Grace" })).status, 201);
+  for (const h of ["ultrastable.io", id + ".ultrastable.io"]) { // "browser one" and "browser two" read the same list
+    const j = await (await api(h, "/s/" + id + "/api?coll=signups")).json(); assert.deepEqual(j.items.map(x => x.data.name), ["Grace", "Ada"], h);
+  }
+  assert.equal((await add("ultrastable.io", [1])).status, 400); assert.equal((await add("ultrastable.io", { x: "y".repeat(2100) })).status, 413);
+  assert.equal((await api("ultrastable.io", "/s/" + id + "/api?coll=BAD NAME")).status, 400);
+  assert.equal((await api("ultrastable.io", "/s/0000000000/api?coll=signups")).status, 404);
+  r = await api(id + ".ultrastable.io", "/"); assert.equal(r.status, 200); const sp = await r.text();
+  assert.match(sp, /window\.US=/); assert.match(sp, new RegExp("https://" + id + "\.ultrastable\.io/s/" + id + "/api"));
+  assert.match(r.headers.get("content-security-policy"), /allow-same-origin/); assert.match(r.headers.get("content-security-policy"), /connect-src 'self'/);
+  r = await api("ultrastable.io", "/s/" + id); assert.doesNotMatch(r.headers.get("content-security-policy"), /allow-same-origin/);
+}
 // BUILD-2: a model that always fails ends as failed after 3 tries, and the questions fall back to defaults
 const bad = { ASSETS: mem, AI: { run: async () => { throw new Error("model down"); } } };
 const post2 = (path, o) => { const f = new FormData(); for (const k in o) f.set(k, o[k]); return mod.fetch(new Request("https://ultrastable.io" + path, { method: "POST", body: f }), bad); };
 r = await post2("/api/idea", { idea: "x" }); const id2 = /\/s\/([a-f0-9]{10})\/ask/.exec(r.headers.get("location"))[1];
-for (let i = 0; i < 3; i++) await post2("/api/answer", { id: id2, a: "yes" });
+for (let i = 0; i < 2; i++) await post2("/api/answer", { id: id2, a: "yes" });
 for (let i = 0; i < 4; i++) { r = await mod.fetch(new Request("https://ultrastable.io/s/" + id2 + "/make"), bad); }
 assert.equal(kv.get("state:" + id2), "failed"); assert.match(await r.text(), /Something went wrong/);
 r = await mod.fetch(new Request("https://ultrastable.io/s/0000000000"), E2); assert.equal(r.status, 404);
