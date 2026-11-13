@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261113-6",
+  "title": "OL-20261113-6: LANE-1 replace LANE_PAT with GitHub App consent",
+  "body": "**Owner:** product-manager\n**Trigger:** workflow-file PR labeled needs-pat\n**Done check:** grep:scripts/lane_credential.py::github-app\n**Status:** open\n\nPOINT-AND-CLICK-1: no person-minted token; install the lane GitHub App via /connect/github one click; remove the LANE_PAT card from NEEDS-YOU.",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
