@@ -20,6 +20,8 @@ Bootstrap a working, server-side, self-managing system from a person's stated wi
 - legal-ip-manager: patent timeline, evidence log, prior art, licensing terms, notice and trademark checks, contract templates and NDA tracking. Working drafts for counsel, never legal advice.
 - customer-success: onboarding with the org kit, health of each instance, support intake and answers from the documented record, feedback routed to the product manager. One per org.
 - org-designer: which roles an organization needs. Maps an instance manifest (kind, facts, goals, budget) to the phased role catalog, so a new system gets the right virtual team and not the whole zoo. One per org.
+- program-manager: the set of projects that serve one portfolio constraint: sequencing, dependencies and the plus share across projects.
+- infrastructure-manager: Cloudflare resources, bindings, secrets and deploys: discovery against `doctrine/topology.json`, cost budgets in `ops/cost-thresholds.json`, and the deploy count in `ops/deploys.jsonl`.
 
 ## What each optional plugin may reach (all dry-run until enabled)
 - communicate: draft
