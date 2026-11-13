@@ -1,7 +1,11 @@
 name: deploy-workers
 # DEPLOY-ALL-1: merge -> deploy of the tick and dashboard Workers -> verify live code equals this commit's build.
 # budget: ~2 min per run, only when worker sources change
+<<<<<<< HEAD
 # trigger: push to main on the listed paths, dispatch by the lane after a merge (GITHUB_TOKEN merges fire no push events), manual dispatch
+=======
+# trigger: push to main on the listed paths, dispatch by the lane after a merge (GITHUB_TOKEN merges fire no push events), manual dispatch; never faster than the merge rate
+>>>>>>> origin/main
 # free-alternative: run `node deploy/deploy-workers.mjs` from a session with a Cloudflare token
 # Verify-only mode (`verify` input, run by the daily drift probe) fails and re-dispatches a deploy when live code differs from main.
 on:
