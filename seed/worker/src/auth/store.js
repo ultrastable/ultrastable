@@ -23,3 +23,12 @@ export async function material(db, env, tenant, provider) {
   if (!r) return null;
   return { secret: await open(env, r.sealed), meta: JSON.parse(r.meta), access: (await open(env, r.access_sealed))?.token || null, expiresAt: r.expires_at, status: r.status };
 }
+
+// AUTH-1: the deploy uploads code only, so the Worker brings its own tables up on first use (idempotent; mirrors migrations/0006_credentials.sql).
+const DDL = [
+  "CREATE TABLE IF NOT EXISTS credentials (tenant TEXT NOT NULL, provider TEXT NOT NULL, sealed TEXT, meta TEXT NOT NULL DEFAULT '{}', access_sealed TEXT, expires_at TEXT, status TEXT NOT NULL DEFAULT 'pending', last_error TEXT, updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')), PRIMARY KEY (tenant, provider))",
+  "CREATE TABLE IF NOT EXISTS credential_events (id INTEGER PRIMARY KEY AUTOINCREMENT, at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now')), tenant TEXT NOT NULL, provider TEXT NOT NULL, event TEXT NOT NULL, detail TEXT)",
+  "CREATE INDEX IF NOT EXISTS credential_events_at ON credential_events (at)",
+];
+let ready = null;
+export function ensureSchema(db) { return (ready ||= (async () => { for (const q of DDL) await db.prepare(q).run(); })().catch(e => { ready = null; throw e; })); }

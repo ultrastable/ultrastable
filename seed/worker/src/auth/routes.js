@@ -32,6 +32,7 @@ export function manifest(origin, name) {
 
 export async function handleAuth(request, env, { tenant = 'default', name = 'ultrastable', fetch: f = fetch, now = Date.now() } = {}) {
   const url = new URL(request.url), origin = url.origin;
+  if (url.pathname === '/connect') { const r = await probe(env.DB, now); return Response.redirect(new URL(r.github_connected ? '/' : '/connect/github', url), 302); }
   if (url.pathname === '/auth/health') { const r = await probe(env.DB, now); return Response.json(r, { status: r.ok ? 200 : 503 }); }
   if (url.pathname === '/connect/github') {
     const state = await makeState(env, tenant, now);
