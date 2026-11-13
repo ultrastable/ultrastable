@@ -4,7 +4,9 @@
 // Worker, a queue a cloud-hosted agent drains) without touching the tick.
 import { probe } from './codeagent.js';
 import { ensureItem } from './tick.js';
+import { prExecutor } from './pr-executor.js';
 export const PROVIDERS = [
+  prExecutor, // ZERO-MINUTES-1: first, so the work step costs no Actions minute; the Actions dispatch below is the second route
   {
     id: 'github-actions',
     available: env => Boolean(env.GITHUB_DISPATCH_TOKEN && env.GITHUB_REPO),

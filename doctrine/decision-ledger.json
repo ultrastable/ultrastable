@@ -725,6 +725,14 @@
    "title": "Live D1 migrations were never applied; k never measured",
    "body": "No step applied seed/worker/migrations to the live org D1, so tick measure and criticality failed every run. Fixed: deploy/apply-d1-migrations.mjs, sweeper_runs on /live, e2e-criticality test, probe-live in deploy-workers.yml.",
    "probe": "file:deploy/probe-live.mjs"
+  },
+  {
+   "id": "decision-2026-11-13-zero-minutes-1-executor-diff-gate-and-lane-merge-run-in-the-",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "ZERO-MINUTES-1: executor, diff gate and lane merge run in the tick Worker, zero Actions minutes",
+   "body": "Measured: 2011 of 2000 free minutes used by day 13; checks 1218 min of which 958 failed. Worker unit tests 99 pass. Actions stays the second route.",
+   "probe": "file:seed/worker/src/pr-executor.js"
   }
  ]
 }

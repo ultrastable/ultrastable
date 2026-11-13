@@ -9,7 +9,8 @@ test('no binding: reported as not configured, never thrown', async () => {
 test('dispatches through GitHub when bound', async () => {
   let seen;
   const r = await runExecutor({ GITHUB_DISPATCH_TOKEN: 't', GITHUB_REPO: 'o/r' }, { fetchImpl: async (u, o) => { seen = { u, o }; return { status: 204 }; } });
-  assert.equal(r[0].ok, true); assert.match(seen.u, /repos\/o\/r\/dispatches/);
+  const a = r.find(x => x.provider === 'github-actions');  // ZERO-MINUTES-1: worker-pr is first and unconfigured here (no AI binding), so Actions is the second route
+  assert.equal(a.ok, true); assert.match(seen.u, /repos\/o\/r\/dispatches/);
   assert.equal(JSON.parse(seen.o.body).event_type, 'ultrastable-tick');
 });
 test('falls through to the next provider', async () => {

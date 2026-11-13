@@ -4,6 +4,7 @@
 import { runTick, lastTickForHealth } from './tick.js';
 import { runExecutor, noteExecutor } from './executor.js';
 import { runLane } from './lane.js';
+import { runGate } from './worker-gate.js';
 import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
@@ -32,8 +33,10 @@ export default {
       await refreshDue(env.DB, env).catch(e => console.error('credentials', e && e.message));
       const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));
       const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
-      const r = await runExecutor({ ...env, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN }); console.log('executor', JSON.stringify(r)); await noteExecutor(env.DB, r);
-      const l = await runLane({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []), issueWorkflow: null }); console.log('lane', JSON.stringify(l));
+      const r = await runExecutor({ ...env, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || (config.github_repos || String(env.GITHUB_REPOS || '').split(','))[0] }); console.log('executor', JSON.stringify(r)); await noteExecutor(env.DB, r);
+      const gateRepos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
+      const g = await runGate({ token, repos: gateRepos }); console.log('gate', JSON.stringify(g));  // ZERO-MINUTES-1
+      const l = await runLane({ token, repos: gateRepos, issueWorkflow: null, zeroActions: env.ZERO_ACTIONS === '1' }); console.log('lane', JSON.stringify(l));
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
       const ra = await checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }).catch(e => ({ ok: false, error: e && e.message })); console.log('repo-access', JSON.stringify(ra));  // REPO-ACCESS-1
       const sw = await sweepOpenLoops({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) }); console.log('sweeper', JSON.stringify(sw)); await recordSweep(env.DB, sw);  // SERVER-OWNS-LOOPS-1
