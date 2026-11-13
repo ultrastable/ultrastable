@@ -64,6 +64,24 @@ class Topology(unittest.TestCase):
         self.assertIn("doctrine/topology.json", src)
         self.assertIn("topologyBindings(\"ultrastable-site\")", src)
 
+    def test_every_live_worker_is_deployed_and_verified_by_a_workflow(self):
+        """DEPLOY-ALL-1: a live worker with no deploy path drifts (the tick sat on a 11-day-old build)."""
+        t = T.load()
+        wf = (T.REPO / ".github/workflows")
+        text = "\n".join(p.read_text(encoding="utf-8") for p in wf.glob("deploy-*.yml"))
+        src = (T.REPO / "deploy/deploy-workers.mjs").read_text(encoding="utf-8")
+        own = {"ultrastable-site": "deploy-site.mjs", "ultrastable-agents": "deploy-system.mjs"}
+        for w in t["workers"]:
+            if w["state"] != "live" or w.get("retire_candidate"):
+                continue
+            if w["id"] in own:
+                self.assertIn(own[w["id"]], text)
+            else:
+                self.assertIn("deploy-workers.mjs", text)
+        self.assertIn("live code matches", src)
+        lane = (T.REPO / "scripts/lane.sh").read_text(encoding="utf-8")
+        self.assertIn("dispatched deploy-workers", lane)  # lane merges fire no push events
+
 
 if __name__ == "__main__":
     unittest.main()
