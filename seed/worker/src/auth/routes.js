@@ -51,7 +51,7 @@ async function route(request, env, opts = {}) {
       provider: 'GitHub', title: 'Connect GitHub', button: 'Authorize on GitHub',
       will: ['Create a private GitHub App for this system (GitHub shows you exactly what it can do).', 'Install it on your repositories so changes can be opened, checked, merged and deployed automatically.', 'Keep its access renewed by itself, with nothing for you to copy or paste.'],
       why: 'This is a one-time approval. After it, the system does all of the work on its own.',
-      action: { method: 'POST', url: 'https://github.com/settings/apps/new?state=' + encodeURIComponent(state), fields: { manifest: JSON.stringify(manifest(origin, uniqueName(name))) } },
+      action: { method: 'POST', url: (opts.repos && opts.repos[0] ? `https://github.com/organizations/${opts.repos[0].split('/')[0]}/settings/apps/new` : 'https://github.com/settings/apps/new') + '?state=' + encodeURIComponent(state), fields: { manifest: JSON.stringify(manifest(origin, uniqueName(name))) } },
     });
   }
   if (url.pathname === '/auth/github/callback') {
