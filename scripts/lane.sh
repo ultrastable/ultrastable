@@ -116,7 +116,13 @@ if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
     if [ -n "$(git -C "$root" status --porcelain docs/issues)" ]; then
       git -C "$root" config user.name "ultrastable-lane"; git -C "$root" config user.email "actions@users.noreply.github.com"
       git -C "$root" add docs/issues
-      if git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS)" && git -C "$root" pull --rebase --autostash -q origin main && git -C "$root" push -q origin HEAD:main; then
+      git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
+      pushed=0
+      for try in 1 2 3 4 5; do
+        if git -C "$root" pull --rebase --autostash -q origin main && git -C "$root" push -q origin HEAD:main; then pushed=1; break; fi
+        sleep $((try * 3))
+      done
+      if [ "$pushed" = 1 ]; then
         echo "lane: adoption items committed to main"
       else
         echo "lane: adoption items not pushed" >&2; echo x >>"$_SAFE_FAILS"
