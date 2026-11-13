@@ -4,6 +4,8 @@
 // Lesson from AIOS ("PID 1 must never die"): every step is guarded. A failing step is
 // recorded in the tick's errors and as a backlog item; the remaining steps still run.
 
+import { criticalityStep } from './criticality.js';
+
 const TERMINAL = ['done', 'superseded', 'cancelled'];
 const OPS = {
   '>=': (a, b) => a >= b, '<=': (a, b) => a <= b,
@@ -247,9 +249,15 @@ export const STEPS = {
       if (made) ctx.notes.push('rebalance item opened');
     }
   },
+
+  // CRITICALITY-1: k_eff over the rolling window; a tick may not end idle or under k_min without originating the highest-value item at the head.
+  async criticality(db, ctx) {
+    if (!ctx.config.criticality) { ctx.notes.push('criticality: no thresholds configured'); return; }
+    await criticalityStep(db, ctx, ctx.config.criticality, ensureItem);
+  },
 };
 
-export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'dispatch', 'check_plus_share'];
+export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'dispatch', 'check_plus_share', 'criticality'];
 
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null } = {}) {
   const startedIso = iso(new Date(now));
