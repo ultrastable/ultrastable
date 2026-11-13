@@ -605,6 +605,14 @@
    "title": "Q-COST-PROOF-1: cost probe measures D1 rows read and AI neurons daily",
    "body": "deploy/cost-probe.mjs (d1AnalyticsAdaptiveGroups + aiInferenceAdaptiveGroups) appends ops/cost.jsonl, thresholds in ops/cost-thresholds.json. 2026-11-13 7d: qnfo-audit 9.59B rows read, living-paper 1.78B, qnfo-graph 0.39B, all ultrastable DBs under 7M; AI 8.9M neurons. Account has 80 foreign (Quniverse) resources, 0 undeclared ultrastable-*.",
    "probe": "grep:deploy/cost-probe.mjs::d1AnalyticsAdaptiveGroups"
+  },
+  {
+   "id": "decision-2026-11-13-cost-checks-1-parallelize-foundation-tests-in-checks",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "COST-CHECKS-1: parallelize foundation tests in checks",
+   "body": "Foundation tests took ~70s serially, pushing 78 of 278 checks runs since Nov 10 to 2 billed minutes while Actions minutes are projected at 3,475 vs 2,000 free for November. Run the 49 modules in 4 processes; keep only if the step stays green and runs bill 1 minute.",
+   "probe": "grep:.github/workflows/checks.yml::COST-CHECKS-1"
   }
  ]
 }
