@@ -8,7 +8,8 @@
 //   GET  /auth/health               credential probe (no secrets)
 import * as store from './store.js';
 import { consentScreen, doneScreen, failScreen } from './consent.js';
-import { probe } from './index.js';
+import { probe, getToken } from './index.js';
+import { checkRepoAccess, readRepoAccess } from './access.js';
 
 const enc = s => new TextEncoder().encode(s);
 async function hmac(env, msg) {
@@ -33,11 +34,17 @@ export function manifest(origin, name) {
   };
 }
 
-async function route(request, env, { tenant = 'default', name = 'ultrastable', fetch: f = fetch, now = Date.now() } = {}) {
+async function route(request, env, opts = {}) {
+  const { tenant = 'default', name = 'ultrastable', fetch: f = fetch, now = Date.now() } = opts;
   const url = new URL(request.url), origin = url.origin;
   if (/^\/(connect|auth)\//.test(url.pathname) || url.pathname === '/connect') await store.ensureSchema(env.DB);  // the Worker brings up its own credential tables before any route touches them
   if (url.pathname === '/connect') { const r = await probe(env.DB, now); return Response.redirect(new URL(r.github_connected ? '/' : '/connect/github', url), 302); }
   if (url.pathname === '/auth/health') { const r = await probe(env.DB, now); return Response.json(r, { status: r.ok ? 200 : 503 }); }
+  if (url.pathname === '/connect/repos') {  // REPO-ACCESS-1: the one click that widens the installation; GitHub sends the owner back to /auth/github/installed, which re-probes
+    const a = await readRepoAccess(env.DB);
+    if (!a || a.ok) return doneScreen('GitHub access', a ? 'Every repository is covered.' : 'Nothing to select yet.');
+    return Response.redirect(a.settings_url || new URL('/connect/github', url).toString(), 302);
+  }
   if (url.pathname === '/connect/github') {
     const state = await makeState(env, tenant, now);
     return consentScreen({
@@ -62,8 +69,13 @@ async function route(request, env, { tenant = 'default', name = 'ultrastable', f
     const t = await checkState(env, url.searchParams.get('state'), now);
     const inst = url.searchParams.get('installation_id');
     if (!t || !inst) return failScreen('Connect GitHub', 'The installation did not complete.', '/connect/github');
-    await store.put(env.DB, env, t, 'github-app', { meta: { installation_id: Number(inst) }, status: 'pending' });
+    await store.put(env.DB, env, t, 'github-app', { meta: { installation_id: Number(inst) }, access: null, status: 'pending' });
     await store.event(env.DB, t, 'github-app', 'consent', 'installed ' + inst);
+    const repos = opts.repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);  // re-probe now: the new token is scoped to the selection just made
+    try {  // the re-probe never fails the install page; the next tick probes again
+      const tk = await getToken(env.DB, env, t, 'github-app', { fetch: f, now });
+      if (tk.ok && repos.length) await checkRepoAccess(env.DB, env, t, repos, { token: tk.token, fetch: f, now, origin });
+    } catch (e) { await store.event(env.DB, t, 'github-app', 'failed', 're-probe: ' + String(e && e.message || e)); }
     return doneScreen('GitHub connected', 'Done. From here the system opens, checks, merges and deploys changes by itself.');
   }
   return null;

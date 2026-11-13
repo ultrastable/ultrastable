@@ -10,6 +10,7 @@ import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
 import { handleAuth } from './auth/routes.js';
 import { getToken, refreshDue } from './auth/index.js';
+import { checkRepoAccess, readRepoAccess } from './auth/access.js';
 import { readCriticality, addSample } from './criticality.js';
 import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
 import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
@@ -33,6 +34,8 @@ export default {
       const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
       const r = await runExecutor({ ...env, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN }); console.log('executor', JSON.stringify(r)); await noteExecutor(env.DB, r);
       const l = await runLane({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []), issueWorkflow: null }); console.log('lane', JSON.stringify(l));
+      const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
+      const ra = await checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }).catch(e => ({ ok: false, error: e && e.message })); console.log('repo-access', JSON.stringify(ra));  // REPO-ACCESS-1
       const sw = await sweepOpenLoops({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) }); console.log('sweeper', JSON.stringify(sw)); await recordSweep(env.DB, sw);  // SERVER-OWNS-LOOPS-1
     })().catch(e => console.error('lane', e && e.message)));
     ctx.waitUntil(selfcheck(env, hosts(env)[0]).catch(e => console.error('analytics selfcheck', e && e.message)));
@@ -41,7 +44,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (hiddenByHealthOnly(env, request.method, url.pathname)) return new Response('Not found', { status: 404 });
-    const au = await handleAuth(request, env, { tenant: env.TENANT || config.org_slug || 'default', name: config.org_slug });
+    const au = await handleAuth(request, env, { tenant: env.TENANT || config.org_slug || 'default', name: config.org_slug, repos: config.github_repos });
     if (au) return au;
     if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now
       const body = await request.text();
@@ -73,7 +76,7 @@ export default {
     }
     if (url.pathname === '/live' || url.pathname === '/metrics/criticality.json') {  // CRITICALITY-1: k_eff of the last tick
       const c = await readCriticality(env.DB);
-      return Response.json(url.pathname === '/live' ? { ok: true, org: config.org_slug, k_eff: c ? c.k_eff : null, criticality: c, sweeper: await lastSweep(env.DB).catch(() => null) } : (c || {}), { headers: { 'cache-control': 'no-store' } });
+      return Response.json(url.pathname === '/live' ? { ok: true, org: config.org_slug, k_eff: c ? c.k_eff : null, criticality: c, sweeper: await lastSweep(env.DB).catch(() => null), repo_access: await readRepoAccess(env.DB).catch(() => null) } : (c || {}), { headers: { 'cache-control': 'no-store' } });
     }
     if (url.pathname === '/api/criticality/sample' && request.method === 'POST') {  // collectors push GitHub-run, cost and owner-touch samples
       if (!env.CRITICALITY_TOKEN || request.headers.get('authorization') !== 'Bearer ' + env.CRITICALITY_TOKEN) return Response.json({ error: 'unauthorized' }, { status: 401 });
