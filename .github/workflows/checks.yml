@@ -37,6 +37,8 @@ jobs:
       - name: Social guard tests
         working-directory: scripts
         run: python3 test_social.py
+      - name: Demo video narration guard
+        run: python3 scripts/video_build.py --check
       - name: Outreach engine tests
         working-directory: scripts
         run: python3 test_outreach.py

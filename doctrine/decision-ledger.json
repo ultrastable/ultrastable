@@ -685,6 +685,14 @@
    "title": "PINS-CMD-1: pins accept allow-listed cmd probes so lane adoption items do not turn checks red",
    "body": "The lane's OL-PR adoption items carry cmd: probes; pins rejected them on every adopted PR. Prediction: checks failures from pins = 0 within 24 h.",
    "probe": "grep:foundation/pins.py::PINS-CMD-1"
+  },
+  {
+   "id": "decision-2026-11-13-video-1-demo-video-plugin",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "VIDEO-1 demo video plugin",
+   "body": "Demo videos are built server-side on Actions (Playwright screenshots of live ultrastable.io, piper neural TTS, ffmpeg) from video/storyboard.json; narration must pass the social guard verbatim-excerpt rule. Owner: marketing-manager. Published to release demo-video.",
+   "probe": "file:scripts/video_build.py"
   }
  ]
 }

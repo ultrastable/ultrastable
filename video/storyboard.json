@@ -1,0 +1,41 @@
+{
+  "_doc": "Demo video as data (VIDEO-1). Each scene is a live ultrastable.io page plus one narration line. Every line must be a verbatim excerpt of its allowlisted SAFE NOW source and pass the social guard (scripts/social_lib.py); scripts/video_build.py --check enforces it and runs in checks. Built server-side by .github/workflows/demo-video.yml. Owner of the loop: marketing-manager (agents/roles/marketing-manager.md).",
+  "id": "ultrastable-overview",
+  "base_url": "https://ultrastable.io",
+  "viewport": [
+    1280,
+    720
+  ],
+  "scenes": [
+    {
+      "path": "/",
+      "source": "external/overview.md",
+      "text": "Ultrastable is the foundation for any autonomous system."
+    },
+    {
+      "path": "/how",
+      "source": "external/overview.md",
+      "text": "Coding agents write code. Ultrastable runs the system."
+    },
+    {
+      "path": "/start",
+      "source": "external/overview.md",
+      "text": "Ultrastable is an autonomous system that sets up and runs any organized effort from one idea."
+    },
+    {
+      "path": "/dashboard",
+      "source": "external/overview.md",
+      "text": "Ultrastable runs on itself."
+    },
+    {
+      "path": "/live",
+      "source": "external/overview.md",
+      "text": "That is how Ultrastable is built: multi-agent, self-referential loops, not a single code agent."
+    },
+    {
+      "path": "/pilot",
+      "source": "external/overview.md",
+      "text": "Only decisions that cannot be undone come to a person."
+    }
+  ]
+}

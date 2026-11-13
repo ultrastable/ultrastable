@@ -14,8 +14,9 @@
 1. Read positioning (doctrine/positioning.json), the disclosure gate and outreach/suppression.json.
 2. Plan the content calendar from published research, shipped features and events; every item has an audience, a channel and a metric.
 3. Draft through the social pipeline (social/); the brand and disclosure guards run before anything is queued.
-4. Measure last cycle's items (pageviews, referrals, signups) and keep, change or drop each channel on the numbers.
-5. Open site changes as pull requests; never edit the live site directly.
+4. Keep the demo video current: edit `video/storyboard.json` (live pages plus guard-clean narration) by PR; `.github/workflows/demo-video.yml` rebuilds it server-side and publishes `releases/download/demo-video/demo.mp4`.
+5. Measure last cycle's items (pageviews, referrals, signups) and keep, change or drop each channel on the numbers.
+6. Open site changes as pull requests; never edit the live site directly.
 
 ## Never
 - Post anything the disclosure gate has not cleared, or any claim that cannot be checked at a source.

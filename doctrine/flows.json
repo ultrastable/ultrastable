@@ -746,6 +746,24 @@
       ],
       "feedback": "a merged client PR shortens the next tick's open_loop_age_hours; a stuck one files a Q-OPENLOOP item the executor takes first",
       "bindings": []
+    },
+    "demo-video": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "video.release",
+          "via": "github:release",
+          "to": "ext.post_engagement",
+          "returns": "post.engagement"
+        }
+      ],
+      "feedback": "views and engagement return through the dashboard snapshot and steer the marketing-manager storyboard edits",
+      "bindings": []
     }
   },
   "implicit_producers": {
