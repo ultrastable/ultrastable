@@ -1,0 +1,11 @@
+{
+  "id": "ROADMAP-ONE-PLATFORM-1",
+  "title": "ROADMAP-ONE-PLATFORM-1: One platform, GitHub as canonical mirror, deploy to any cloud (option; Cloudflare primary now)",
+  "body": "**Owner:** infrastructure-manager\n**Trigger:** quarterly tick\n**Done check:** file:docs/issues/ROADMAP-ONE-PLATFORM-1.json\n**Status:** open: scaffold only; Cloudflare stays the primary runtime\n\nRowan 2026-11-13: it may be possible to keep everything on one cloud provider. If Cloudflare offers Git-compatible storage, the working repository and its loops (executor, gate, lane, deploy) could live entirely there; GitHub stays the canonical public master for discoverability, and deployments target whatever provider is wanted (Cloudflare, AWS, Google Cloud, or GitHub itself). The owner knows the QNFO design, so the approach is to adapt it, starting where it works today. Design seam: the loops already take injected ports (fetch, D1 shim, code-agent adapter), so the VCS and the deploy target are the two ports to make pluggable: `vcs` (github now; cloudflare-git, gitlab later) and `deploy` (cloudflare now; aws, gcp, github-pages later), as the GCP embodiment sketch PL-5 already names for the runtime. First steps, each measured before the next: (1) verify from Cloudflare's own documentation what its Git-compatible storage supports (clone, push, branches, PR-equivalent, webhooks) and record it as data; (2) a one-way mirror probe, GitHub main to the Cloudflare repo, with a parity check on the head SHA; (3) run the Worker executor and lane against the mirror in a shadow mode and record parity in ops/oneplatform-parity.jsonl; (4) one deploy-target adapter beyond Cloudflare. Related: ROADMAP-GH-NATIVE-1 (GitHub only), ZERO-MINUTES-1 (the Worker loops this builds on), PL-5. Practical Solutions is the first tenant to exercise it.",
+  "labels": [
+    "role:infrastructure-manager",
+    "roadmap"
+  ],
+  "milestone": "Later",
+  "workstream": "Platform"
+}
