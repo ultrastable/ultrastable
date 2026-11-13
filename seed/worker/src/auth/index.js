@@ -28,6 +28,7 @@ export async function getToken(db, env, tenant, provider, opts = {}) {
 }
 
 export async function refreshDue(db, env, opts = {}) {
+  await store.ensureSchema(db);
   const now = opts.now || Date.now();
   const rows = (await db.prepare('SELECT tenant, provider, expires_at, status FROM credentials').all()).results || [];
   const out = [];
@@ -42,7 +43,9 @@ export async function refreshDue(db, env, opts = {}) {
 
 // Probe for the failure registry: every credential row is ok and no cached token lapses within the margin.
 export async function probe(db, now = Date.now()) {
+  await store.ensureSchema(db);
   const rows = (await db.prepare('SELECT tenant, provider, expires_at, status FROM credentials').all()).results || [];
   const bad = rows.filter(r => r.status === 'failed' || (r.expires_at && Date.parse(r.expires_at) <= now));
-  return { ok: bad.length === 0, credentials: rows.length, bad: bad.map(r => `${r.tenant}/${r.provider}`) };
+  const gh = rows.some(r => r.provider === 'github-app' && r.status === 'ok');  // no GitHub credential: the Worker points at its own consent screen, never at a person's to-do list
+  return { ok: bad.length === 0 && gh, credentials: rows.length, bad: bad.map(r => `${r.tenant}/${r.provider}`), github_connected: gh, ...(gh ? {} : { connect: '/connect/github' }) };
 }

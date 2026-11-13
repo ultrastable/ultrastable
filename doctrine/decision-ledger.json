@@ -637,6 +637,14 @@
    "title": "COST-CHECKS-1: parallelize foundation tests in checks",
    "body": "Foundation tests took ~70s serially, pushing 78 of 278 checks runs since Nov 10 to 2 billed minutes while Actions minutes are projected at 3,475 vs 2,000 free for November. Run the 49 modules in 4 processes; keep only if the step stays green and runs bill 1 minute.",
    "probe": "grep:.github/workflows/checks.yml::COST-CHECKS-1"
+  },
+  {
+   "id": "decision-2026-11-13-point-and-click-1",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "POINT-AND-CLICK-1",
+   "body": "No surface asks a person to handle a credential; consent screen + Worker-stored credentials. Session: session_0156nqDv8ijT11RmKre7xEmK",
+   "probe": "grep:foundation/pointclick.py::def check"
   }
  ]
 }
