@@ -755,7 +755,7 @@
    "id": "lesson-2026-11-13-costguard-1-budgets-as-failure-modes",
    "kind": "lesson",
    "date": "2026-11-13",
-   "title": "COSTGUARD-1 budgets as failure modes",
+   "title": "COSTGUARD-1 budgets as failure modes (Session: session_0156nqDuRz3AxosG8EDZT7Zi)",
    "body": "External D1 budgets (qnfo-audit under 15M rows/hr) are sampled hourly by the tick Worker into cost_samples and probed by selfaudit; red files the next FIX- item, green closes it. GitHub App org access and k_eff below 1 are probed modes with fixes.",
    "probe": "grep:seed/autonomy/failure-modes.json::qnfo-audit-d1-budget"
   }
