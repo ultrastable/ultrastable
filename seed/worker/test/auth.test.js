@@ -100,3 +100,9 @@ test('the callback works on a database that never had the credential tables', as
   const r = await handleAuth(new Request('https://x.test/auth/github/callback?code=c&state=' + encodeURIComponent(state)), env, { fetch: f });
   assert.equal(r.status, 302); assert.match(r.headers.get('location'), /apps\/app\/installations\/new/);
 });
+
+test('every consent visit prefills a unique GitHub App name so a taken name is never a dead end', async () => {
+  const { uniqueName } = await import('../src/auth/routes.js');
+  const a = uniqueName('ultrastable'), b = uniqueName('ultrastable');
+  assert.notEqual(a, b); assert.match(a, /^ultrastable-[0-9a-f]{6}$/); assert.ok(uniqueName('x'.repeat(60)).length <= 34);
+});
