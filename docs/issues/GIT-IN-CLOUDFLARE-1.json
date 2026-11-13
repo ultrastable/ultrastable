@@ -1,0 +1,8 @@
+{
+  "id": "GIT-IN-CLOUDFLARE-1",
+  "title": "GIT-IN-CLOUDFLARE-1: the Worker keeps its working copy in Cloudflare's Git-compatible storage and mirrors to GitHub; deploy targets sit behind one provider interface",
+  "body": "**Owner:** infrastructure-manager\n**Trigger:** after ZERO-MINUTES-1 step 2 (Worker-native executor)\n**Done check:** file:ops/git-in-cloudflare-evidence.json\n**Status:** open\n\nOwner direction 2026-11-13: GitHub stays the master and public face; the loops need not depend on it; deploys may go to Cloudflare, AWS, GCP or GitHub. Unverified: what Cloudflare's Git-compatible storage supports (push, branches, size). Probe first: the Worker clones the repo into it, commits one change, pushes to the GitHub mirror; record result in ops/. Then add providers for deploy targets beside executor.js PROVIDERS. Practical Solutions bootstraps against the Worker loops, not Actions.",
+  "labels": ["role:infrastructure-manager", "ws:platform"],
+  "milestone": "Next",
+  "workstream": "Platform"
+}
