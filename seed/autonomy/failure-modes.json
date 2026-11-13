@@ -30,7 +30,17 @@
       "owner_role": "portfolio-manager",
       "trigger": "every tick",
       "probe": "SELECT CASE WHEN COALESCE((SELECT json_extract(value,'$.k_eff') FROM org WHERE key='criticality'),0) >= 1 THEN 1 ELSE 0 END",
-      "remedy": "raise verified deploys or cut dispatch waste; the criticality step keeps an ORIGIN item at the head until it holds"
+      "remedy": "raise verified deploys or cut dispatch waste; the criticality step keeps an ORIGIN item at the head until it holds",
+      "fixes": [
+        {
+          "id": "k-fix-deploy-evidence",
+          "title": "Raise k_eff numerator: make every worker deploy append a verified live_matches_commit row to ops/deploys.jsonl so ingestDeploys credits it."
+        },
+        {
+          "id": "k-fix-dispatch-waste",
+          "title": "Raise k_eff by cutting the denominator: find the roles whose dispatches end with no outcome and shrink or split their items."
+        }
+      ]
     },
     {
       "id": "tick-stalled",
@@ -71,6 +81,16 @@
       "trigger": "every tick",
       "probe": "SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE 0 END FROM outcomes WHERE result='silent_drop' AND at >= datetime('now','-1 day')",
       "remedy": "reconcile reopens the item; fix the writer"
+    },
+    {
+      "id": "github-app-org-access",
+      "failure": "The GitHub App does not cover the ultrastable org repositories, so sweeper, lane and deploy evidence cannot run.",
+      "root_cause": "The App was registered on the personal account; only the org owner's GitHub passkey can finish registration on the org (identity-bound).",
+      "spof": true,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COALESCE((SELECT json_extract(value,'$.ok') FROM org WHERE key='repo_access'),0)=1 THEN 1 ELSE 0 END",
+      "remedy": "keep gate card GATE-REPO-ACCESS open with its default in effect and the consent screen (/connect/github) served; checkRepoAccess re-probes every tick and adopts the installation by code once it exists. Never ask for a token."
     }
   ],
   "max_redispatch": 3

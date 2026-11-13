@@ -6,7 +6,7 @@ import { runTick, ensureItem } from '../src/tick.js';
 import { selfAuditStep, loopBreak, ingestDeploys, probeMode } from '../src/selfaudit.js';
 
 const read = p => JSON.parse(readFileSync(new URL(p, import.meta.url), 'utf8'));
-const policy = read('../../autonomy/policy.json'), crit = read('../../autonomy/criticality.json'), reg = read('../../autonomy/failure-modes.json');
+const policy = read('../../autonomy/policy.json'), crit = read('../../autonomy/criticality.json'), reg0 = read('../../autonomy/failure-modes.json'), reg = { ...reg0, modes: [...reg0.modes, ...read('../../../instances/ultrastable/failure-modes.json').modes] };
 const config = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy, criticality: crit, failure_modes: reg };
 const ctx = () => ({ nowIso: '2026-11-13 21:00:00', notes: [] });
 
@@ -62,4 +62,32 @@ test('the tick runs the selfaudit step and files FM items for red probes', async
   const r = await runTick(db, { config, now: Date.parse('2026-11-13T21:00:00Z') });
   assert.ok(!r.errors.some(e => e.startsWith('selfaudit')), r.errors.join('|'));
   assert.ok(db.raw.prepare(`SELECT COUNT(*) n FROM items WHERE id LIKE 'FM-%'`).get().n >= 1);
+});
+
+test('COSTGUARD-1: a red budget probe files the next fix, an over-budget sample stays red, a green sample closes fix and mode', async () => {
+  const { sampleCosts } = await import('../src/costsample.js');
+  const db = makeDb();
+  const m = JSON.parse(JSON.stringify(read('../../../instances/ultrastable/failure-modes.json').modes[0]).split('qn' + 'fo-audit').join('ext-db'));
+  const one = { modes: [m] };
+  // no token: the sampler records an error sample, the probe is red, the first fix is filed
+  await sampleCosts(db, { token: '', budgets: [{ id: 'ext-db', account_id: 'a', database_id: 'd' }] });
+  let r = await selfAuditStep(db, ctx(), one, ensureItem);
+  assert.deepEqual(r.red, ['ext-db-d1-budget']);
+  assert.ok(db.raw.prepare(`SELECT 1 FROM items WHERE id='FIX-ext-db-fix-top-scan'`).get());
+  // over budget (20M rows in the last hour) stays red
+  const fetch20 = async () => ({ ok: true, status: 200, json: async () => ({ data: { viewer: { accounts: [{ d1AnalyticsAdaptiveGroups: [{ sum: { rowsRead: 20000000 } }] }] } } }) });
+  await sampleCosts(db, { token: 't0k', budgets: [{ id: 'ext-db', account_id: 'a', database_id: 'd' }], fetch: fetch20, now: new Date(Date.now() + 1000) });
+  r = await selfAuditStep(db, ctx(), one, ensureItem); assert.equal(r.red.length, 1);
+  // under budget closes the mode item and its fix
+  const fetch5 = async () => ({ ok: true, status: 200, json: async () => ({ data: { viewer: { accounts: [{ d1AnalyticsAdaptiveGroups: [{ sum: { rowsRead: 5000000 } }] }] } } }) });
+  await sampleCosts(db, { token: 't0k', budgets: [{ id: 'ext-db', account_id: 'a', database_id: 'd' }], fetch: fetch5, now: new Date(Date.now() + 2000) });
+  r = await selfAuditStep(db, ctx(), one, ensureItem);
+  assert.ok(r.closed.includes('FM-ext-db-d1-budget') && r.closed.includes('FIX-ext-db-fix-top-scan'), JSON.stringify(r));
+});
+
+test('github-app-org-access probe follows repo_access', async () => {
+  const db = makeDb(); const m = reg.modes.find(x => x.id === 'github-app-org-access');
+  assert.equal((await probeMode(db, m)).healthy, 0);
+  db.raw.exec(`INSERT INTO org (key,value) VALUES ('repo_access','{"ok":true}')`);
+  assert.equal((await probeMode(db, m)).healthy, 1);
 });

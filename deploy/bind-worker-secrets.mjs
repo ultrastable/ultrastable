@@ -12,6 +12,7 @@ export async function bind(env, f = fetch) {
   const names = new Set(((await have.json()).result || []).map(x => x.name));
   const put = [];
   if (!names.has("CREDENTIAL_KEY")) put.push(["CREDENTIAL_KEY", randomBytes(32).toString("base64")]);  // generated once; an existing key is never rotated here (it would orphan sealed rows)
+  if (!names.has("CF_ANALYTICS_TOKEN") && env.CLOUDFLARE_API_TOKEN) put.push(["CF_ANALYTICS_TOKEN", env.CLOUDFLARE_API_TOKEN]);  // COSTGUARD-1: the sampler reads D1 analytics; replaced by a read-only token by the qnfo-audit-fix-sampler item
   if (env.GITHUB_REPOS) put.push(["GITHUB_REPOS", env.GITHUB_REPOS]);
   for (const [name, text] of put) {
     const r = await f(url(env), { method: "PUT", headers: hdr(env), body: JSON.stringify({ name, text, type: "secret_text" }) });
