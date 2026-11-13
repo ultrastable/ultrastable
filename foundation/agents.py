@@ -83,9 +83,26 @@ def invoke(a: dict, prompt: str, env=None, transport=http) -> str:
     return parse_text(a, transport(url, headers, body))
 
 
+BLOCK_FORMAT = ("SUMMARY: one line\n<<<FILE relative/path>>>\nfull new file content, written plainly with no escaping\n<<<END>>>\n"
+                "(one FILE block per file; nothing else in the reply)")
+_BLOCK = re.compile(r"<<<FILE ([^>\n]+)>>>\r?\n(.*?)\r?\n?<<<END>>>", re.S)
+
+
 def parse_json(text: str) -> dict:
+    """The reply as {summary, files}. JSON first. REPLY-BLOCKS-1: whole files inside JSON strings need every quote, backslash and newline escaped, and
+    small models break that (3 of the first 11 executor failures were JSONDecodeError), so a reply in BLOCK_FORMAT is accepted too: no escaping to get wrong."""
     s, e = text.find("{"), text.rfind("}")
-    return json.loads(text[s:e + 1])
+    try:
+        out = json.loads(text[s:e + 1])
+        if isinstance(out, dict) and "files" in out:
+            return out
+        raise ValueError("JSON without a files list")
+    except ValueError:
+        files = [{"path": p.strip(), "content": c + "\n"} for p, c in _BLOCK.findall(text)]
+        if not files:
+            raise
+        m = re.search(r"^SUMMARY:\s*(.+)$", text, re.M)
+        return {"summary": m.group(1).strip() if m else "", "files": files}
 
 
 def complete(prompt: str, env=None, transport=http, root=REPO) -> tuple[dict, str]:

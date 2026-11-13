@@ -26,6 +26,10 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
   fi
   if [ "$mg" = UNKNOWN ]; then sleep 4; mg=$(gh pr view "$n" -R "$repo" --json mergeable --jq .mergeable); fi
   if [ "$mg" = CONFLICTING ]; then
+    # CONFLICT-CLOSE-1: the lane closes the conflict itself: merge main, resolve the generated files, push, dispatch checks. An executor PR that
+    # still cannot merge is closed so its queue item is redone from main. Only a session PR with a real conflict falls through to the label.
+    cr=$(python3 -m foundation conflicts --pr "$n" --apply 2>&1 | tail -1); echo "#$n conflict pass: $cr"
+    case "$cr" in *'"result": "resolved"'*|*'"result": "requeued"'*) continue;; esac
     case "$labels" in
       *,conflict,*) ;;
       *) gh pr edit "$n" -R "$repo" --add-label conflict >/dev/null 2>&1
