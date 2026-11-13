@@ -91,6 +91,13 @@ lane: held on a High finding. Fix and remove the hold label.' >/dev/null 2>&1
     if gh pr diff "$n" -R "$repo" --name-only 2>/dev/null | grep -qE '^(site/|seed/analytics/|deploy/deploy-site\.mjs)'; then
       gh workflow run deploy-site.yml -R "$repo" --ref main >/dev/null 2>&1 && echo "#$n dispatched deploy-site"
     fi
+    # DEPLOY-ALL-1: the tick and dashboard Workers and the code-agent Worker deployed only by hand or by a person's own push; the lane dispatches them too.
+    if gh pr diff "$n" -R "$repo" --name-only 2>/dev/null | grep -qE '^(seed/worker/|seed/analytics/|seed/bootstrap/questions\.json|seed/autonomy/|dashboard/|doctrine/topology\.json|deploy/deploy-workers\.mjs)'; then
+      gh workflow run deploy-workers.yml -R "$repo" --ref main >/dev/null 2>&1 && echo "#$n dispatched deploy-workers"
+    fi
+    if gh pr diff "$n" -R "$repo" --name-only 2>/dev/null | grep -qE '^(seed/worker/src/codeagent\.js|deploy/agents-worker\.js|deploy/deploy-system\.mjs|doctrine/system\.json|doctrine/code-agents\.json)'; then
+      gh workflow run deploy-system.yml -R "$repo" --ref main >/dev/null 2>&1 && echo "#$n dispatched deploy-system"
+    fi
   else
     echo "#$n merge failed: $out"
     case "$out" in *"already in progress"*|*"already merged"*) continue;; esac
