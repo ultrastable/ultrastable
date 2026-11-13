@@ -17,8 +17,9 @@ const REPOS = ['o/a', 'o/b'];
 function gh(state) {
   return async (url, init = {}) => {
     const R = (j, status = 200) => ({ ok: status < 400, status, json: async () => j });
-    if (/\/app\/installations\/9$/.test(url)) return R({ repository_selection: 'selected', html_url: 'https://github.com/organizations/o/settings/installations/9' });
-    if (/access_tokens$/.test(url)) return R({ token: 'tok', expires_at: '2026-11-13T20:00:00Z' }, 201);
+    if (/\/app\/installations\?/.test(url)) return R(state.installs || [{ id: 9, account: { login: 'o' }, repository_selection: 'selected', html_url: 'https://github.com/organizations/o/settings/installations/9' }]);
+    if (/\/app$/.test(url)) return R({ owner: { login: state.owner || 'o' } });
+    if (/access_tokens$/.test(url)) return R({ token: 'tok' + url.match(/installations\/(\d+)/)[1], expires_at: '2026-11-13T20:00:00Z' }, 201);
     if (/installation\/repositories/.test(url)) return R({ repositories: state.repos.map(full_name => ({ full_name })) });
     return R({}, 404);
   };
@@ -48,4 +49,15 @@ test('the setup callback re-probes with a fresh token and closes the card when e
   assert.equal(r.status, 200);
   assert.equal((await readRepoAccess(db)).ok, true);
   assert.equal(db.raw.prepare("SELECT status FROM gate_cards WHERE id='GATE-REPO-ACCESS'").get().status, 'closed');
+});
+
+test('an installation on the personal account only: the Worker points at org registration, and adopts the org installation by code once it exists', async () => {
+  const { db, env } = await setup();
+  const personal = [{ id: 9, account: { login: 'someone' }, repository_selection: 'all', html_url: 'https://github.com/settings/installations/9' }];
+  const a = await checkRepoAccess(db, env, 't', REPOS, { token: 'x', fetch: gh({ repos: ['p/x'], installs: personal, owner: 'someone' }) });
+  assert.equal(a.ok, false); assert.equal(a.settings_url, 'https://github.com/organizations/o/settings/apps/new'); assert.equal(a.needs, 'register the app under the organization');
+  const both = [...personal, { id: 12, account: { login: 'o' }, repository_selection: 'all', html_url: 'https://github.com/organizations/o/settings/installations/12' }];
+  const b = await checkRepoAccess(db, env, 't', REPOS, { token: 'x', fetch: gh({ repos: REPOS, installs: both, owner: 'someone' }) });
+  assert.equal(b.adopted_installation, 12); assert.equal(b.ok, true);
+  assert.equal(JSON.parse((await store.get(db, 't', 'github-app')).meta).installation_id, 12);
 });
