@@ -22,6 +22,9 @@ export async function checkState(env, state, now = Date.now()) {
   return tenant;
 }
 
+// GitHub App names are global, so every visit gets its own prefilled name (never a form field for the person): <name>-<6 random hex>, capped at GitHub's 34 characters.
+export const uniqueName = (name, rnd = () => crypto.randomUUID().replace(/-/g, '').slice(0, 6)) => `${String(name || 'ultrastable').slice(0, 27)}-${rnd()}`;
+
 export function manifest(origin, name) {
   return {
     name, url: origin, redirect_url: origin + '/auth/github/callback', setup_url: origin + '/auth/github/installed', public: false, setup_on_update: true,
@@ -41,7 +44,7 @@ async function route(request, env, { tenant = 'default', name = 'ultrastable', f
       provider: 'GitHub', title: 'Connect GitHub', button: 'Authorize on GitHub',
       will: ['Create a private GitHub App for this system (GitHub shows you exactly what it can do).', 'Install it on your repositories so changes can be opened, checked, merged and deployed automatically.', 'Keep its access renewed by itself, with nothing for you to copy or paste.'],
       why: 'This is a one-time approval. After it, the system does all of the work on its own.',
-      action: { method: 'POST', url: 'https://github.com/settings/apps/new?state=' + encodeURIComponent(state), fields: { manifest: JSON.stringify(manifest(origin, name)) } },
+      action: { method: 'POST', url: 'https://github.com/settings/apps/new?state=' + encodeURIComponent(state), fields: { manifest: JSON.stringify(manifest(origin, uniqueName(name))) } },
     });
   }
   if (url.pathname === '/auth/github/callback') {
