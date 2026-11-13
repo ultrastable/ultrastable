@@ -116,6 +116,11 @@ def build_prompt(issue: dict, tree: str) -> str:
             + (lambda c: f"\n{c[:6000]}\n" if c else "")(_public_context(issue)) + ref)
 
 
+def agents_block_format() -> str:
+    from . import agents
+    return agents.BLOCK_FORMAT
+
+
 def cf_ready() -> bool:
     return bool(os.environ.get("CLOUDFLARE_API_TOKEN") and os.environ.get("CLOUDFLARE_ACCOUNT_ID"))
 
@@ -247,7 +252,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             except (ValueError, KeyError, TypeError, OSError, AttributeError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
                 failed.append("the reply was not valid JSON with a files list: " + type(e).__name__ + ": " + str(e)[:300])
                 if attempt < REPAIRS:
-                    prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED; reply with ONLY valid JSON (escape backslashes and quotes inside file content): " + failed[0]
+                    prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED (" + failed[0] + "). Do NOT reply with JSON this time. Reply in exactly this format instead:" + chr(10) + agents_block_format()
                 continue
             if checks is None:
                 for g in GENERATORS:

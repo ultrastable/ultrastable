@@ -166,3 +166,9 @@ Update this file in the same PR as any change to status, rules, facts, owner ite
 Bootstrap to criticality: loops produce more verified deploys than they consume in cost and attention. Order: a self-sustaining Ultrastable that deploys its own workers, then cost, then new features. Data: `doctrine/cost.json` (goal, budgets, QNFO D1 and AI findings F1-F5), code `foundation/cost.py`, loop `cost-guard`, daily readings in `ops/cost.jsonl`. QNFO baseline 2026-11-06..13: qnfo-audit 9.6B D1 rows read, 2095 rows per read query, caused mainly by 67 AFTER INSERT triggers on fleet_tick. Production D1 writes from a session were refused by the permission check, so the index migration is data in the findings, to be applied by the QNFO repo's own deploy path.
 
 Session: session_0156nqDv8ijT11RmKre7xEmK (CRITICALITY-1, COST-GUARD-1).
+
+## 2026-11-13: server side owns every loop (SELF-SUSTAIN-1)
+- The executor daily cap counts attempts, not wake-ups (`foundation/clock.py`), so the spark gate no longer refuses every start.
+- The merge lane closes conflicts itself (`foundation/conflicts.py`, `scripts/lane.sh`): merge main, resolve generated files, push, dispatch checks; an unresolvable executor PR is closed and its queue item retaken.
+- Model replies may use `<<<FILE>>>` blocks when JSON breaks (`foundation/agents.py`); executor evidence rows are de-duplicated.
+- Rule SERVER-OWNS-LOOPS-1: a client agent only opens work; server loops close it. Probe: `tests/foundation/test_server_owns_loops.py`.

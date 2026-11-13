@@ -26,7 +26,9 @@ def unprobed(root=REPO) -> list[dict]:
         if g("Status").lower() in ("done", "closed", "superseded"):
             continue
         done = g("Done check")
-        if not done.startswith(("file:", "grep:")):
+        # PINS-CMD-1: a cmd: probe on the queue allow-list is runnable by the system (queue.probe), so it counts; the lane's adoption items (OL-PR-*) use one.
+        from . import queue as _q
+        if not (done.startswith(("file:", "grep:")) or (done.startswith("cmd:") and done[4:].startswith(_q.CMD_ALLOWED))):
             out.append({"id": f.stem, "owner": g("Owner"), "done_check": done})
     return out
 

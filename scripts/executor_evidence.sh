@@ -11,5 +11,10 @@ if git ls-remote --exit-code --heads origin loop-evidence >/dev/null; then
 else
   git checkout --orphan loop-evidence; git rm -rfq .
 fi
-mkdir -p ops; cat "${RUNNER_TEMP:-/tmp}/rows.jsonl" >> ops/executor-log.jsonl
+# EVIDENCE-DEDUP-1: the working copy starts with the rows committed on main, so appending the whole file re-wrote main's rows on every run
+# (one 2026-11-12 row appeared 12 times). Only lines the evidence branch does not hold yet are appended.
+mkdir -p ops; touch ops/executor-log.jsonl
+grep -vxFf ops/executor-log.jsonl "${RUNNER_TEMP:-/tmp}/rows.jsonl" > "${RUNNER_TEMP:-/tmp}/new.jsonl" || true
+[ -s "${RUNNER_TEMP:-/tmp}/new.jsonl" ] || { echo "no new executor rows this run"; exit 0; }
+cat "${RUNNER_TEMP:-/tmp}/new.jsonl" >> ops/executor-log.jsonl
 git add ops/executor-log.jsonl; git commit -m "executor provenance"; git push origin loop-evidence

@@ -106,6 +106,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["market"]:
         from . import market
         return market.main(_av[1:])
+    if _av[:1] == ["conflicts"]:
+        from . import conflicts
+        return conflicts.main(_av[1:])
     if _av[:1] == ["lanewatch"]:
         from . import lanewatch
         return lanewatch.main(_av[1:])
