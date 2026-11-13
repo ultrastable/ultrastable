@@ -1,11 +1,14 @@
 name: executor
 # budget: ~5 min per run, up to doctrine/clocks.json chain.max_runs_per_day (4) plus the daily cron and Worker dispatches (the Worker dispatches only when GITHUB_DISPATCH_TOKEN is bound; guard below)
-# trigger: daily fallback, repository_dispatch `ultrastable-tick` from the Cloudflare tick Worker, and manual dispatch
+# trigger: daily fallback (GitHub's scheduler has fired 5 times in 1011 runs, so it cannot be the only spark), a finished lane or site deploy (EXEC-SPARK-1: every merge looks for the next item, gated by the chain caps), repository_dispatch `ultrastable-tick` from the Cloudflare tick Worker, and manual dispatch
 # free-alternative: the same command from the cloud-hosted Claude routine: `python3 -m foundation executor --pick` and `--record` (no model key needed)
 # The agent-executor step of the tick: picks the top open issue in driver order, claims it, changes, checks, opens a PR; the lane merges on green.
 on:
   schedule:
     - cron: "23 6 * * *"
+  workflow_run:
+    workflows: [lane, deploy-site]
+    types: [completed]
   repository_dispatch:
     types: [ultrastable-tick]
   workflow_dispatch:
@@ -34,7 +37,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - run: pip install pyyaml
+      - name: Spark gate (EXEC-SPARK-1)
+        id: spark
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            python3 -m foundation clock --chain | tee spark.json
+            python3 -c "import json;print('go=' + str(json.load(open('spark.json')).get('chain', False)).lower())" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Execute one item
+        if: steps.spark.outputs.go == 'true'
         run: ULTRASTABLE_HOST="github-actions:${{ github.event_name }}" python3 -m foundation executor --apply ${{ inputs.issue && format('--issue {0}', inputs.issue) || '' }}
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
@@ -42,15 +57,15 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Commit provenance to loop-evidence
-        if: always()
+        if: always() && steps.spark.outputs.go == 'true'
         run: bash scripts/executor_evidence.sh
       - name: Keep the clock ticking (CLOCKWORK-1)
-        if: always()
+        if: always() && steps.spark.outputs.go == 'true'
         run: python3 -m foundation clock --chain --apply
         env:
           GH_TOKEN: ${{ github.token }}
       - name: "Heal the clocks (CLOCKWORK-2: catch-up, settlement, escalation)"
-        if: always()
+        if: always() && steps.spark.outputs.go == 'true'
         run: python3 -m foundation clock --heal --apply
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}

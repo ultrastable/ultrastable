@@ -2,7 +2,7 @@
   "name": "Ultrastable",
   "slug": "ultrastable",
   "kind": "business",
-  "owner": {"name": "Rowan", "jurisdiction": "NL", "contact_binding": "OWNER_CONTACT"},
+  "owner": {"name": "Rowan", "jurisdiction": "NL", "contact_binding": "OWNER_CONTACT", "contact_binding_backup": "OWNER_CONTACT_BACKUP"},
   "brand": {"public_name": "Ultrastable", "tagline": "Ultrastable is the foundation for any autonomous system.", "separate_from": ["QNFO"]},
   "idea": "The foundation for any autonomous system: virtual managers and staff, closed loops, plussing and earned-trust autonomy, bootstrapped from one idea file.",
   "goals": ["A public site and demos that state the foundation message", "A repeatable new-system generator any organization can run", "Funding and outreach loops running on their own"],

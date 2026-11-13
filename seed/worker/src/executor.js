@@ -3,6 +3,7 @@
 // provider wins; every result is returned so the tick records it as an outcome (never silent). Add providers (a hosted model
 // Worker, a queue a cloud-hosted agent drains) without touching the tick.
 import { probe } from './codeagent.js';
+import { ensureItem } from './tick.js';
 export const PROVIDERS = [
   {
     id: 'github-actions',
@@ -36,4 +37,19 @@ export async function runExecutor(env, { providers = PROVIDERS, fetchImpl } = {}
     } catch (e) { results.push({ provider: p.id, ok: false, detail: String(e && e.message) }); }
   }
   return results;
+}
+
+// EXEC-SPARK-2: a result nobody reads is a silent failure. When no dispatching provider (a non-observer) is ok, the tick files one
+// item for operations that carries the refusal text and a probe; when one is ok again the item is not reopened here (the probe closes it).
+export async function noteExecutor(db, results) {
+  const dispatchers = results.filter(r => r.provider !== 'workers-ai-agent');
+  if (dispatchers.some(r => r.ok)) return { filed: false };
+  const why = dispatchers.map(r => r.provider + ': ' + r.detail).join('; ').slice(0, 300);
+  const filed = await ensureItem(db, {
+    id: 'EXEC-SPARK-UNREACHABLE', kind: 'fix', owner_role: 'operations', priority: 5,
+    title: 'The tick cannot wake the executor (' + why + ')',
+    done_check: 'a tick dispatches the executor: provider github-actions answers HTTP 204, or the executor workflow starts from its own triggers',
+    closing_probe: 'GET /health shows executor.ok = true; gh run list --workflow executor shows a run with event repository_dispatch',
+  });
+  return { filed, why };
 }

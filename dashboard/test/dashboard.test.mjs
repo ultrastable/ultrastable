@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
-import worker, { sha256, route, tick, digestDue, ensureSnapshots } from "../worker.js";
+import worker, { sha256, route, tick, digestDue, ensureSnapshots, runProbes } from "../worker.js";
 
 function mkdb() {
   const db = new DatabaseSync(":memory:");
@@ -108,4 +108,22 @@ test("a D1 without the snapshots table gets it created instead of throwing 'no s
   const env = { DB: { prepare: sql => { let a = []; const o = { bind: (...x) => { a = x; return o; }, run: async () => db.prepare(sql).run(...a) }; return o; } } };
   await ensureSnapshots(env);
   assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE name='snapshots'").get());
+});
+
+test("MAIL-PATHS-1: a suppressed first address falls through to the backup; both failing is reported", async () => {
+  const got = [];
+  const e = { ...mkdb(), OWNER_EMAIL: "a@one.example", OWNER_EMAIL_BACKUP: "b@two.example", NO_NET: 1, MAILER: async m => { if (m.to === "a@one.example") throw new Error("address suppressed"); got.push(m); } };
+  const r = await call(e, "/api/owner/code", {}); const j = await r.json();
+  assert.equal(r.status, 200); assert.equal(got.length, 1); assert.equal(got[0].to, "b@two.example");
+  assert.ok(!JSON.stringify(j).includes("b@two.example"), "the full address is never shown");
+  assert.ok(/code is \d{6}/.test(got[0].text));
+  const bad = { ...mkdb(), OWNER_EMAIL: "a@one.example", OWNER_EMAIL_BACKUP: "b@two.example", NO_NET: 1, MAILER: async () => { throw new Error("suppressed"); } };
+  const rb = await call(bad, "/api/owner/code", {}); const jb = await rb.json();
+  assert.equal(rb.status, 502); assert.match(jb.error, /any owner address/);
+});
+test("MAIL-PATHS-1: one address is a failing probe, two are a passing one", async () => {
+  const one = { ...mkdb(), OWNER_EMAIL: "a@one.example", NO_NET: 1, MAILER: async () => {} };
+  const two = { ...mkdb(), OWNER_EMAIL: "a@one.example", OWNER_EMAIL_BACKUP: "b@two.example", NO_NET: 1, MAILER: async () => {} };
+  const pick = async env => (await runProbes(env)).find(x => x.name === "owner_email_paths");
+  assert.equal((await pick(one)).ok, false); assert.equal((await pick(two)).ok, true);
 });

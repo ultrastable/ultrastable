@@ -46,7 +46,7 @@ export function reliability(successes, outcomes, trust) {
   return (successes + b * w) / (outcomes + w);
 }
 
-async function ensureItem(db, item) {
+export async function ensureItem(db, item) {
   const existing = await first(db, `SELECT id FROM items WHERE id = ?`, item.id);
   if (existing) return false;
   await run(db, `INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, surface, action_class)

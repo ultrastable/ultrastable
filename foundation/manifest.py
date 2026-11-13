@@ -12,7 +12,7 @@ EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
 
 DEFAULTS = {
     "kind": "other",
-    "owner": {"name": "Owner", "jurisdiction": "", "contact_binding": "OWNER_CONTACT"},
+    "owner": {"name": "Owner", "jurisdiction": "", "contact_binding": "OWNER_CONTACT", "contact_binding_backup": "OWNER_CONTACT_BACKUP"},
     "brand": {"public_name": "", "tagline": "", "separate_from": [], "voice": "plain, calm, claims labeled RUNNING, BUILT or PLANNED"},
     "idea": "",
     "goals": [],
@@ -68,6 +68,9 @@ def validate(raw: dict) -> list[str]:
         p.append("manifest contains an e-mail address; use owner.contact_binding (a secret-store name)")
     if not re.fullmatch(r"[A-Z][A-Z0-9_]+", m["owner"]["contact_binding"]):
         p.append("owner.contact_binding must be an UPPER_SNAKE binding name")
+    bb = m["owner"].get("contact_binding_backup", "")
+    if not re.fullmatch(r"[A-Z][A-Z0-9_]+", bb) or bb == m["owner"]["contact_binding"]:
+        p.append("owner.contact_binding_backup must be a second UPPER_SNAKE binding name, different from contact_binding (MAIL-PATHS-1: one sign-in address is a single point of failure; use an address at a different provider)")
     if m["disclosure"]["gate"] not in ("none", "filed"):
         p.append("disclosure.gate must be 'none' or 'filed'")
     if m["disclosure"]["gate"] == "filed" and not m["ip"]["priority_filed"] and m["disclosure"]["public_allowed"]:
