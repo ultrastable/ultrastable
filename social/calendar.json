@@ -111,6 +111,27 @@
    "text": "Ultrastable is an autonomous system that sets up and runs any organized effort from one idea.",
    "source": "external/overview.md",
    "tag": "SAFE NOW"
+  },
+  {
+   "id": "379ab595222a",
+   "date": "2026-12-12",
+   "text": "Ultrastable runs on itself. Its own planning, work tracking and reporting are run by the system it gives to others.",
+   "source": "external/overview.md",
+   "tag": "SAFE NOW"
+  },
+  {
+   "id": "82452a3f108e",
+   "date": "2026-12-14",
+   "text": "A system is something else: many agents, each with one job, running in code loops that check and improve their own work, with the rules written as code too.",
+   "source": "external/overview.md",
+   "tag": "SAFE NOW"
+  },
+  {
+   "id": "8dfc512ecedc",
+   "date": "2026-12-16",
+   "text": "That is how Ultrastable is built: multi-agent, self-referential loops, not a single code agent.",
+   "source": "external/overview.md",
+   "tag": "SAFE NOW"
   }
  ]
 }

@@ -8,6 +8,7 @@ Funding- and investor-facing drafts for Ultrastable. Prepared by the virtual bus
 | [google-for-startups-application.md](google-for-startups-application.md) | Ready-to-paste answers for the Google for Startups Cloud Program, credit plan, pre-submission checklist |
 | [investor-one-pager.md](investor-one-pager.md) | One-page investor summary: what exists vs roadmap, ask, risks |
 | [pitch-deck-outline.md](pitch-deck-outline.md) | 12 slides with headline, bullets and repo evidence source |
+| [pitch-deck-variants.md](pitch-deck-variants.md) | Cloudflare and GCP variants of the outline (FN-5 draft) |
 | [demo-script.md](demo-script.md) | 5-minute demo using the real CLI and dashboard |
 | [data-room-index.md](data-room-index.md) | Investor data-room checklist with status and owner |
 | [financial-model.md](financial-model.md) | Unit-economics formulas and measured inputs; dollar inputs blank, needs an accountant |
