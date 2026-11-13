@@ -597,6 +597,14 @@
    "body": "Owner mail goes to OWNER_EMAIL then OWNER_EMAIL_BACKUP; the executor starts from lane and deploy-site runs behind the chain gate; the tick files EXEC-SPARK-UNREACHABLE. Open items Q-PARITY-1..7.",
    "probe": "grep:dashboard/worker.js::owner_email_paths",
    "session": "session_0156nqDuauojj4buPNTq3ejz"
+  },
+  {
+   "id": "decision-2026-11-13-executor-closed-q-grow-agent-directories-add-agent-directory",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "Executor closed Q-GROW-AGENT-DIRECTORIES: Add agent-directory listing packets with a dry-run-gated, code-consumed outreach publisher (outrea",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: outreach/agent-directories.json, scripts/outreach.py, tests/test_outreach.py.",
+   "probe": "file:outreach/agent-directories.json"
   }
  ]
 }
