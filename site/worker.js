@@ -217,7 +217,7 @@ function start(note) {
 const BUILDERS = ["@cf/qwen/qwen2.5-coder-32b-instruct", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"], ASKERS = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/mistralai/mistral-small-3.1-24b-instruct"], SYS = [
   "You are a senior product designer and front-end engineer. Build ONE complete self-contained HTML file (inline CSS and JS, no external libraries or fonts) that is a small but genuinely working product for the brief, not a mockup.",
   "SCOPE: a single page cannot run server jobs or act on its own. Build the real, useful part that works in the browser today (the person operates it), make every control do something real, and never fake the rest. Put one calm line near the bottom saying what needs the full Ultrastable build (for example, running on its own on a schedule).",
-  "WORKING: every button, form and link must have a handler that visibly changes the screen (a list grows, a status updates, a draft is saved and shown). No dead buttons, no empty grey bars or boxes: if an area has no data yet, show a friendly empty state with an example. Pre-fill realistic sample content for the person's topic so the first screen already looks alive. Persist data in localStorage inside try/catch with an in-memory fallback (the page is sandboxed).",
+  "WORKING: every button, form and link must have a handler that visibly changes the screen (a list grows, a status updates, a draft is saved and shown). No dead buttons, no empty grey bars or boxes: if an area has no data yet, show a friendly empty state with an example. Pre-fill realistic sample content for the person's topic so the first screen already looks alive. Persist data in localStorage inside try/catch with an in-memory fallback. SHARED DATA: when visitors add things other visitors should see (sign-ups, messages, votes, a guest list), use the preloaded global `US` (do not define it): `await US.list('signups')` resolves to an array of {id, at, data} newest first, `await US.add('signups', {name, email})` stores one record (data is a small JSON object) and resolves to the saved record; render the list from US.list on load and after each add, and fall back to localStorage only if a call throws.",
   "DESIGN: warm and modern, not default-browser or Bootstrap-blue. Use `*{box-sizing:border-box}`, a system font stack, a 4px spacing scale, a max content width near 720px centred, 16px minimum text, line-height 1.5, one accent colour (a deep warm orange or teal) on a soft off-white background, cards with 16px radius and a faint shadow, buttons 48px tall with hover, focus-visible and disabled states, inputs and textareas width:100% with the same radius. Nothing may overflow its card. Mobile first, works at 360px wide. Include <meta name=viewport>, a <title>, a clear heading naming the thing, and one-sentence helper text.",
   "OUTPUT: only the HTML file, starting with <!doctype html>. No explanation, no markdown."
 ].join(" ");
@@ -227,8 +227,39 @@ const jget = async (env, k) => { const v = await env.ASSETS.get(k); try { return
 const jput = (env, k, v) => env.ASSETS.put(k, JSON.stringify(v));
 const FALLBACK_QS = [
   { q: "Should visitors be able to add or save their own information?", cue: "For example a sign-up list, notes or favourites." },
-  { q: "Will most people open this on a phone?", cue: "We will make the layout fit small screens first." },
-  { q: "Should it look calm and simple rather than bold and colourful?", cue: "You can change this later with one sentence." }];
+  { q: "Will most people open this on a phone?", cue: "We will make the layout fit small screens first." }];
+// BUILD-2: each site gets a shared database. D1 table site_data (keyed by site id) in the org database (binding DB), reached by the page through a
+// same-origin /s/<id>/api and served on <id>.ultrastable.io (wildcard route). The table is created on first use so a missing migration cannot break a site.
+// Closing probe: two browsers GET /s/<id>/api?coll=signups and see the same list (site/site.test.mjs).
+const SITEDB_MAX_ROWS = 500, SITEDB_MAX_BYTES = 2000, SUBHOST = /^([a-f0-9]{10})\.ultrastable\.io$/;
+let siteTable = null;
+const ensureSiteTable = (env) => siteTable || (siteTable = env.DB.batch([env.DB.prepare("CREATE TABLE IF NOT EXISTS site_data (id INTEGER PRIMARY KEY AUTOINCREMENT, site TEXT NOT NULL, coll TEXT NOT NULL, at TEXT NOT NULL, data TEXT NOT NULL)"), env.DB.prepare("CREATE INDEX IF NOT EXISTS site_data_site ON site_data (site, coll, id)")]).catch(e => { siteTable = null; throw e; }));
+const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Access-Control-Allow-Headers": "content-type", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" };
+const apiJson = (o, status) => new Response(JSON.stringify(o), { status: status || 200, headers: Object.assign({ "Content-Type": "application/json; charset=utf-8" }, CORS) });
+async function siteApi(request, env, id) {
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+  if (!env || !env.DB || !env.ASSETS) return apiJson({ error: "the site database is not connected", code: "no_database" }, 503);
+  if (!(await env.ASSETS.get("state:" + id))) return apiJson({ error: "site not found", code: "no_site" }, 404);
+  const u = new URL(request.url), body = request.method === "POST" ? await request.json().catch(() => null) : null;
+  const c = String((request.method === "POST" && body && body.coll) || u.searchParams.get("coll") || "").toLowerCase();
+  if (!/^[a-z0-9_-]{1,40}$/.test(c)) return apiJson({ error: "coll must be 1-40 letters, digits, - or _", code: "bad_collection" }, 400);
+  await ensureSiteTable(env);
+  if (request.method === "GET") {
+    const r = await env.DB.prepare("SELECT id, at, data FROM site_data WHERE site = ?1 AND coll = ?2 ORDER BY id DESC LIMIT 200").bind(id, c).all();
+    return apiJson({ site: id, coll: c, items: (r.results || []).map(x => { let d = null; try { d = JSON.parse(x.data); } catch (e) { d = null; } return { id: x.id, at: x.at, data: d }; }) });
+  }
+  if (request.method !== "POST") return apiJson({ error: "method not allowed", code: "method" }, 405);
+  const data = body && body.data;
+  if (!data || typeof data !== "object" || Array.isArray(data)) return apiJson({ error: "data must be a JSON object", code: "bad_data" }, 400);
+  const txt = JSON.stringify(data);
+  if (txt.length > SITEDB_MAX_BYTES) return apiJson({ error: "record too large (max " + SITEDB_MAX_BYTES + " characters)", code: "too_large" }, 413);
+  const n = await env.DB.prepare("SELECT COUNT(*) AS n FROM site_data WHERE site = ?1").bind(id).first();
+  if (n && n.n >= SITEDB_MAX_ROWS) return apiJson({ error: "this site's database is full (" + SITEDB_MAX_ROWS + " records)", code: "full" }, 429);
+  const at = new Date().toISOString(), r = await env.DB.prepare("INSERT INTO site_data (site, coll, at, data) VALUES (?1, ?2, ?3, ?4)").bind(id, c, at, txt).run();
+  return apiJson({ id: r.meta && r.meta.last_row_id, at, data }, 201);
+}
+// The page gets a tiny client so generated code never builds URLs: US.list(coll) / US.add(coll, data). Same-origin on <id>.ultrastable.io; CORS-open on the main host (the page is sandboxed there).
+const usClient = (host, id) => "<script>window.US=(function(){var b=" + JSON.stringify("https://" + host + "/s/" + id + "/api") + ";function j(r){return r.json().then(function(x){if(!r.ok)throw new Error(x.error||r.status);return x})}return{list:function(c){return fetch(b+\"?coll=\"+encodeURIComponent(c)).then(j).then(function(x){return x.items})},add:function(c,d){return fetch(b,{method:\"POST\",headers:{\"content-type\":\"application/json\"},body:JSON.stringify({coll:c,data:d})}).then(j)}}})()</script>";
 // BUILD-3: the daily probe records which ids still answer; a dead one is skipped so a deprecated id never reaches a user (the list is used whole if every id is marked dead).
 async function runAny(env, models, body) {
   let last; const h = await jget(env, "health:models").catch(() => null), dead = new Set(((h && h.models) || []).filter(x => !x.ok).map(x => x.model));
@@ -244,9 +275,9 @@ async function aiJson(env, models, system, user, tokens) {
 }
 async function questionsFor(env, idea) {
   try {
-    const a = await aiJson(env, ASKERS, "You find what is unknown about a new web idea. Reply with only a JSON array of exactly 3 objects {\"q\":\"a yes/no question in plain words a child could answer\",\"cue\":\"one short example\"}. Each question must settle something that would change what gets built. No jargon.", idea, 500);
-    const qs = (Array.isArray(a) ? a : []).filter(x => x && typeof x.q === "string" && x.q.length < 200).slice(0, 3).map(x => ({ q: x.q, cue: String(x.cue || "").slice(0, 160) }));
-    return qs.length === 3 ? qs : FALLBACK_QS;
+    const a = await aiJson(env, ASKERS, "You find what is unknown about a new web idea. Reply with only a JSON array of exactly 2 objects {\"q\":\"a yes/no question in plain words a child could answer\",\"cue\":\"one short example\"}. Each question must settle something that would change what gets built. No jargon.", idea, 500);
+    const qs = (Array.isArray(a) ? a : []).filter(x => x && typeof x.q === "string" && x.q.length < 200).slice(0, 2).map(x => ({ q: x.q, cue: String(x.cue || "").slice(0, 160) }));
+    return qs.length === 2 ? qs : FALLBACK_QS;
   } catch (e) { console.error("questions failed", String(e)); return FALLBACK_QS; }
 }
 function briefOf(a) {
@@ -275,7 +306,7 @@ export function lint(html) {
   return bad;
 }
 // AUDIT-1: a different model than the builder grades the page against the brief; the limits that no page-only build can meet are always declared.
-const ALWAYS_LIMITS = ["Information people enter is kept only in their own browser, not shared with other visitors yet.", "The site lives at a shared Ultrastable address, not your own web address yet."];
+const ALWAYS_LIMITS = ["Anything marked shared (a sign-up list, messages) is stored for this site in the Ultrastable database and is visible to every visitor; other information stays in the visitor's own browser.", "The site lives at its own Ultrastable address (<id>.ultrastable.io), not your own web address yet."];
 async function audit(env, id, brief, html) {
   try {
     const a = await aiJson(env, ASKERS, "You are a strict reviewer. Compare the HTML page with the brief. Reply with only JSON {\"met\":[\"short plain sentences of what is done\"],\"gaps\":[{\"what\":\"plain sentence\",\"critical\":true|false}]}. Be honest; list a gap when something asked for is missing or likely broken.", brief + "\n\nPAGE:\n" + html.slice(0, 9000), 700);
@@ -417,9 +448,10 @@ async function takeChange(request, env, ctx) {
   return launch(env, ctx, id, brief, prev, change);
 }
 const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
-async function siteRoutes(u, env, ctx) {
-  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status)?$/.exec(u.pathname);
+async function siteRoutes(u, env, ctx, request) {
+  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/api)?$/.exec(u.pathname);
   if (!m || !env || !env.ASSETS) return null;
+  if (m[2] === "/api") return siteApi(request, env, m[1]);
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
@@ -453,10 +485,12 @@ async function siteRoutes(u, env, ctx) {
   }
   if (st === "asking") return Response.redirect("https://" + CANON + "/s/" + id + "/ask", 302);
   if (st !== "ready") return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
+  const host = u.hostname === id + "." + CANON ? u.hostname : CANON, sub = host !== CANON;
   const lk = (h, t) => "<a href=\"https://" + CANON + "/s/" + id + h + "\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none;margin-left:6px\" target=\"_top\">" + t + "</a>";
   const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\">" + lk("/review", "What I checked") + lk("/change", "Change something") + "</div>";
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
-  return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'none'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
+  const us = usClient(host, id), html1 = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + us) : /<html[^>]*>/i.test(html) ? html.replace(/<html[^>]*>/i, (m) => m + us) : us + html;
+  return new Response(html1, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation" + (sub ? " allow-same-origin" : "") + "; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'self'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
 }
 // BUILD-3: close the loop. A cron tick (hourly) does four things from the system's own records: model health probe (daily), automatic change rounds for
 // audit gaps (max 2 per site), manager work items for stored ideas, and the numbers behind /status.
@@ -655,6 +689,10 @@ const handler = {
     if (u.pathname === "/social-card.png") return png(env, "social-card.png");
     if (u.pathname === "/apple-touch-icon.png") return png(env, "apple-touch-icon.png");
     if (u.pathname === "/social-card.svg") return new Response(SOCIAL, { headers: SVG });
+    { const sm = SUBHOST.exec(u.hostname); if (sm) { // BUILD-2: <id>.ultrastable.io serves that site at / and its API at /s/<id>/api (same origin)
+      if (u.pathname === "/") { const q = new URL(request.url); q.pathname = "/s/" + sm[1]; return (await siteRoutes(q, env, ctx, request)) || new Response("Not found", { status: 404 }); }
+      if (u.pathname.startsWith("/s/" + sm[1] + "/api")) return siteRoutes(u, env, ctx, request);
+      return Response.redirect("https://" + CANON + u.pathname, 302); } }
     if (host === "ultrastable.app") return Response.redirect("https://" + CANON + "/pilot", 301);
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/proof", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
@@ -665,7 +703,7 @@ const handler = {
     if (request.method === "POST" && u.pathname === "/api/pilot") return pilotApplication(request, env);
     if (request.method === "POST" && u.pathname === "/api/answer") return takeAnswer(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
-    { const sr = await siteRoutes(u, env, ctx); if (sr) return sr; }
+    { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
     const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup"], pth = u.pathname.replace(/\/$/, "") || "/";
