@@ -1,0 +1,4 @@
+{
+  "doc": "COSTGUARD-1: external D1 budgets the tick Worker samples hourly (worker/src/costsample.js); each needs a probed failure mode. Instances supply budgets in instances/<slug>/cost-budgets.json.",
+  "budgets": []
+}
