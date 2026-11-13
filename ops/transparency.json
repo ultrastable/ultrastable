@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-13T11:03:57Z",
- "commit": "c68a5ce",
+ "generated": "2026-11-13T11:12:21Z",
+ "commit": "db38b3f",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 68,
@@ -14,8 +14,8 @@
   "stories_passing": 9,
   "stories_total": 9,
   "open_gaps": 3,
-  "open_prs": 2,
-  "merged_prs_listed": 34,
+  "open_prs": 3,
+  "merged_prs_listed": 33,
   "prs_merged_total": 192,
   "prs_merged_unattended": 2,
   "backlog_open": 108,
@@ -1639,17 +1639,17 @@
    }
   },
   "executor": {
-   "runs": 21,
+   "runs": 26,
    "by_conclusion": {
-    "success": 11,
-    "failure": 10
+    "failure": 10,
+    "success": 16
    },
    "prs_opened_unattended": 5,
    "prs_merged_unattended": 2,
    "attempts": {
-    "MERGED": 2,
     "CLOSED": 2,
-    "OPEN": 1
+    "OPEN": 1,
+    "MERGED": 2
    },
    "log_rows": 1
   },
@@ -1664,7 +1664,7 @@
    "id": "heartbeat",
    "what": "the Cloudflare tick ran",
    "sla_s": 900,
-   "age_s": 175.6,
+   "age_s": 82.4,
    "status": "fresh",
    "missed": 0
   },
@@ -1672,7 +1672,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 174.6,
+   "age_s": 194.4,
    "status": "fresh",
    "missed": 0
   },
@@ -1680,7 +1680,7 @@
    "id": "pr",
    "what": "an unattended pull request was opened",
    "sla_s": 172800,
-   "age_s": 8536.6,
+   "age_s": 9043.4,
    "status": "fresh",
    "missed": 0
   },
@@ -1688,7 +1688,7 @@
    "id": "merge",
    "what": "an unattended pull request merged to main",
    "sla_s": 259200,
-   "age_s": 62261.6,
+   "age_s": 62768.4,
    "status": "fresh",
    "missed": 0
   },
@@ -1696,15 +1696,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 6911.6,
-   "status": "expired",
-   "missed": 7
+   "age_s": 321.4,
+   "status": "fresh",
+   "missed": 0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 71357.6,
+   "age_s": 71864.4,
    "status": "fresh",
    "missed": 0
   }
@@ -1723,28 +1723,28 @@
     "name": "Q-10",
     "state": "merged",
     "pr": 268,
-    "age_h": 20.7,
+    "age_h": 20.8,
     "url": "https://github.com/ultrastable/ultrastable/pull/268"
    },
    {
     "name": "unnamed-277",
     "state": "closed",
     "pr": 277,
-    "age_h": 19.9,
+    "age_h": 20.1,
     "url": "https://github.com/ultrastable/ultrastable/pull/277"
    },
    {
     "name": "executor",
     "state": "merged",
     "pr": 284,
-    "age_h": 17.4,
+    "age_h": 17.5,
     "url": "https://github.com/ultrastable/ultrastable/pull/284"
    },
    {
     "name": "Q-GROW-AGENT-DIRECTORIES",
     "state": "open",
     "pr": 297,
-    "age_h": 2.4,
+    "age_h": 2.5,
     "url": "https://github.com/ultrastable/ultrastable/pull/297"
    },
    {
@@ -1763,40 +1763,40 @@
     "name": "Q-GROW-AGENT-DIRECTORIES",
     "state": "open",
     "pr": 297,
-    "age_h": 2.4,
+    "age_h": 2.5,
     "url": "https://github.com/ultrastable/ultrastable/pull/297"
    }
   ]
  },
  "product_manager": {
-  "generated": "2026-11-13T11:03:22Z",
+  "generated": "2026-11-13T11:11:47Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1319.9,
-    "value": 2123,
+    "expected_today": 1320.0,
+    "value": 2129,
     "behind": false,
-    "progress": 4.28
+    "progress": 4.31
    },
    {
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
     "expected_today": 568.5,
-    "value": 915,
+    "value": 917,
     "behind": false,
-    "progress": 4.08
+    "progress": 4.1
    },
    {
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 826.5,
-    "value": 1194,
+    "expected_today": 826.6,
+    "value": 1197,
     "behind": false,
-    "progress": 2.06
+    "progress": 2.08
    },
    {
     "id": "pilot_page_views_7d",
@@ -1822,9 +1822,7 @@
   },
   "filed": {
    "growth": [],
-   "repair": [
-    "Q-REPAIR-STAGE-DEPLOY"
-   ]
+   "repair": []
   },
   "stages": [
    {
@@ -1849,8 +1847,8 @@
    },
    {
     "id": "deploy",
-    "status": "expired",
-    "missed": 7
+    "status": "fresh",
+    "missed": 0
    },
    {
     "id": "publish",
@@ -1863,9 +1861,9 @@
  "growth": {
   "mix": {
    "growth": 0,
-   "fix": 2,
+   "fix": 3,
    "maintenance": 3,
-   "total": 5,
+   "total": 6,
    "growth_share": 0.0,
    "target": 0.4
   },
@@ -1876,21 +1874,21 @@
    {
     "id": "pageviews_7d",
     "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
-    "value": 2123,
+    "value": 2129,
     "target": 1500,
     "breach": false
    },
    {
     "id": "visitors_7d",
     "what": "distinct visitors in the last 7 days",
-    "value": 915,
+    "value": 917,
     "target": 650,
     "breach": false
    },
    {
     "id": "agent_hits_7d",
     "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
-    "value": 1194,
+    "value": 1197,
     "target": 1000,
     "breach": false
    },
@@ -1909,7 +1907,7 @@
    "id": "tick-heartbeat",
    "what": "the org's heartbeat on Cloudflare (cron every 10 minutes): reconcile, claims, gates, predictions, dispatch",
    "source": "d1",
-   "last_beat_age_s": 205.4,
+   "last_beat_age_s": 110.2,
    "expected_interval_s": 600,
    "beats_24h": 144,
    "expected_24h": 144.0,
@@ -1920,9 +1918,9 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 204.4,
+   "last_beat_age_s": 222.2,
    "expected_interval_s": 21600,
-   "beats_24h": 21,
+   "beats_24h": 26,
    "expected_24h": 4.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -1931,7 +1929,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 71387.4,
+   "last_beat_age_s": 71892.2,
    "expected_interval_s": 86400,
    "beats_24h": 7,
    "expected_24h": 1.0,
@@ -1942,7 +1940,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 13732.4,
+   "last_beat_age_s": 14237.2,
    "expected_interval_s": 86400,
    "beats_24h": 44,
    "expected_24h": 1.0,
@@ -1953,7 +1951,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 53926.4,
+   "last_beat_age_s": 54431.2,
    "expected_interval_s": 604800,
    "beats_24h": 2,
    "expected_24h": 0.1,
@@ -3427,6 +3425,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "db38b3f",
+    "at": "2026-11-13T12:06:17+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "refresh site/dashboard-data.js (stale on main)",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/db38b3fd3dafd2ffcd5e65576967170cf022aecb"
+   },
+   {
     "sha": "c68a5ce",
     "at": "2026-11-13T11:59:45+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -3473,6 +3480,18 @@
    }
   ],
   "pull_requests": [
+   {
+    "number": 301,
+    "title": "COST-GUARD-1 and CRITICALITY-1: cost guard, standing goal, QNFO findings",
+    "state": "open",
+    "branch": "claude/project-thread-gdjia5",
+    "opened": "2026-11-13T11:04:15Z",
+    "merged": null,
+    "by": "rwnq8",
+    "labels": [],
+    "item": "COST-GUARD-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/301"
+   },
    {
     "number": 300,
     "title": "Q-COST-PROOF-1: cost probe and resource discovery",
@@ -3960,18 +3979,6 @@
     "labels": [],
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/pull/262"
-   },
-   {
-    "number": 261,
-    "title": "Executor regenerates derived files so its own PRs pass checks",
-    "state": "merged",
-    "branch": "agent/executor-regen",
-    "opened": "2026-11-12T14:10:23Z",
-    "merged": "2026-11-12T14:10:30Z",
-    "by": "rwnq8",
-    "labels": [],
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/pull/261"
    }
   ]
  },
