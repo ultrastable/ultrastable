@@ -1,0 +1,28 @@
+{
+  "_doc": "CRITICALITY-1 (Rowan, 2026-11-13): the north star as numbers. Criticality means the loops produce more verified deploys than they consume in cost and attention. `python3 -m foundation criticality --run --apply` measures it, stores it (ops/criticality.jsonl and the dashboard D1), files a fix item when it falls and completes or re-dispatches its own queue items. Every number here is a budget or a definition the loop may tune by PR with a prediction; none is an approval gate.",
+  "version": "1.0.0",
+  "window_days": 3,
+  "repos": ["ultrastable/ultrastable", "ultrastable/workers", "ultrastable/seed", "QNFO/qnfo-workers"],
+  "deploy_workflows": ["deploy-workers", "deploy-site", "deploy-system", "canonical-deploy"],
+  "verify_by": {"deploy-workers": "ledger", "default": "run_success"},
+  "automated": {
+    "authors": ["ultrastable-ops", "ultrastable-scout", "ultrastable-pm", "github-actions[bot]"],
+    "pr_head_prefixes": ["agent/", "codeagent-", "ultrastable-"],
+    "pr_body_markers": ["Executor run", "Product manager pass", "Provenance: ops/executor-log.jsonl"],
+    "events": ["schedule", "repository_dispatch"],
+    "_why": "Every run is attributed to the owner's token, so the actor says nothing. A deploy is zero-human when its origin commit was made by a bot author or merged from a pull request the executor or a manager opened, or when the event is a schedule or a Worker dispatch. A pull request from an interactive session (claude/*, any other branch) or a direct push is human-attended."
+  },
+  "budgets": {
+    "d1_rows_read_per_day": 150000000,
+    "ai_neurons_per_day": 242000,
+    "attention_per_day": 3,
+    "deploys_per_day": 10,
+    "_why": "d1: Rowan's 150M rows a day. neurons: the 90% cost target, 80 USD a month at 0.011 USD per 1000 neurons, 242k a day. attention: three human interventions a day. deploys: the zero-human verified deploys a day that count as full output."
+  },
+  "coupling_min": 0.8,
+  "cloudflare": {"audit_db": "qnfo-audit", "prompts_table": "owner_prompts"},
+  "stale_item_hours": 24,
+  "redispatch_max_per_run": 2,
+  "redispatch_attempts_before_stuck": 3,
+  "alert": {"fall_ratio": 0.9, "min_gap_minutes": 30}
+}

@@ -1,7 +1,7 @@
 {
   "id": "Q-PARITY-3",
   "title": "Q-PARITY-3: Metric breach files its own work item with a code-task and closes it on recovery (QNFO METRIC-CLOSED-LOOP-1)",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/tick.js::remedy\n**Status:** open\n\nQuniverse parity (owner directive 2026-11-13: Ultrastable audits and remediates all failure modes and ships improvements with zero user intervention; every Quniverse automation feature is incorporated).\n\nseed/worker measure already reads each metric; make a breach open one deduped item with owner role, a code-task line and a closing probe on the metric itself, and close it when the probe passes. Record which remedy moved which metric (remedy efficacy) and replace a remedy that did not move it in 7 days.\n\nsize: M\n\n**Closing probe:** grep:seed/worker/src/tick.js::remedy\n",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/tick.js::remedy\n**Status:** closed\n\nQuniverse parity (owner directive 2026-11-13: Ultrastable audits and remediates all failure modes and ships improvements with zero user intervention; every Quniverse automation feature is incorporated).\n\nseed/worker measure already reads each metric; make a breach open one deduped item with owner role, a code-task line and a closing probe on the metric itself, and close it when the probe passes. Record which remedy moved which metric (remedy efficacy) and replace a remedy that did not move it in 7 days.\n\nsize: M\n\n**Closing probe:** grep:seed/worker/src/tick.js::remedy\n\n\n**Evidence:** probe passed: grep:seed/worker/src/tick.js::remedy\n",
   "labels": [
     "p1",
     "agent-ready"

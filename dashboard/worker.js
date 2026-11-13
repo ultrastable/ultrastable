@@ -5,7 +5,7 @@
 // Portable core: every platform touch goes through env.DB (SQL), env.SEND_EMAIL (mail) and fetch, so a Google Cloud adapter only
 // has to supply those three. Cloudflare adapter = this file + wrangler.toml.
 import { handleAnalytics, record, selfcheck, report, summary } from "../seed/analytics/analytics.js";
-const VERSION = "0.2.0";
+const VERSION = "0.3.0";
 const COOKIE = "us_owner";
 const OTP_MS = 10 * 60e3, SESSION_MS = 30 * 864e5, STEPUP_MS = 15 * 60e3;
 const HOSTS = ["ultrastable.io", "ultrastable.app", "ultrastable.net"];
@@ -225,7 +225,29 @@ export async function stateOf(env) {
   const sn = await env.DB.prepare("SELECT body,at FROM snapshots WHERE key='repo'").first();
   let snapshot = null; if (sn) { try { snapshot = { ...JSON.parse(sn.body), received: sn.at }; } catch (e) { snapshot = { error: "stored snapshot is not valid JSON" }; } }
   let analytics = null; try { analytics = await report(env); } catch (e) { analytics = { error: String(e.message || e) }; }
-  return { version: VERSION, snapshot, analytics, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
+  let criticality = null; try { criticality = await criticalityOf(env); } catch (e) { criticality = { error: String(e.message || e) }; }
+  return { version: VERSION, snapshot, analytics, criticality, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
+}
+
+// CRITICALITY-1: the score arrives from the criticality workflow. Latest and one row per UTC day live in snapshots; a score at or below 1 files one fleet task per
+// limiting factor (the fleet executor works it) and a score above 1 closes them, so the dashboard never needs a person to read it.
+export async function recordCriticality(env, b, raw) {
+  await ensureSnapshots(env); const now = Date.now(), h = b.headline;
+  await env.DB.prepare("INSERT INTO snapshots(key,body,at) VALUES('criticality',?1,?2) ON CONFLICT(key) DO UPDATE SET body=?1,at=?2").bind(raw, now).run();
+  await env.DB.prepare("INSERT INTO snapshots(key,body,at) VALUES(?3,?1,?2) ON CONFLICT(key) DO UPDATE SET body=?1,at=?2").bind(raw, now, "crit:" + String(b.at || "").slice(0, 10)).run();
+  let filed = 0;
+  if (h.k <= 1) { const fs = Object.entries({ cost_d1: "D1 rows read", cost_ai: "Workers AI neurons", attention: "human interventions", output: "zero-human verified deploys", coupling: "loop coupling" });
+    for (const [f, label] of fs) { const bad = f === h.limiter || (f === "cost_d1" && (h.spend.d1_load || 0) > 1) || (f === "cost_ai" && (h.spend.ai_load || 0) > 1) || (f === "attention" && h.attention.load > 1);
+      if (!bad) continue; const r = await env.DB.prepare("INSERT OR IGNORE INTO tasks(id,title,area,kind,state,why,source,priority,updated_at) VALUES(?1,?2,'criticality','fleet','open',?3,'criticality',2,?4)").bind("crit-" + f, "Criticality k=" + h.k + ": " + label + " out of budget", "Measured " + h.day + ". The criticality workflow files the matching docs/issues item for the executor.", now).run(); filed += r.meta.changes; } }
+  else await env.DB.prepare("UPDATE tasks SET state='done',updated_at=?1 WHERE source='criticality' AND state='open'").bind(now).run();
+  return { ok: true, k: h.k, filed };
+}
+export async function criticalityOf(env) {
+  await ensureSnapshots(env);
+  const l = await env.DB.prepare("SELECT body,at FROM snapshots WHERE key='criticality'").first();
+  const hist = (await env.DB.prepare("SELECT body FROM snapshots WHERE key LIKE 'crit:%' ORDER BY key DESC LIMIT 14").all()).results.map(r => { try { const j = JSON.parse(r.body); return { day: j.headline.day, k: j.headline.k, auto: j.headline.deploys.auto_verified }; } catch (e) { return null; } }).filter(Boolean);
+  let latest = null; if (l) { try { latest = { ...JSON.parse(l.body), received: l.at }; } catch (e) { latest = { error: "stored score is not valid JSON" }; } }
+  return { latest, history: hist.reverse(), stale: !l || Date.now() - l.at > 6 * 3600e3 };
 }
 
 // ---------- scheduled tick: probes, notifications, daily digest ----------
@@ -240,6 +262,7 @@ export async function tick(env, cron) {
   const res = await runProbes(env); const day = new Date().toISOString().slice(0, 10);
   for (const r of res.filter(x => !x.ok && x.name !== "github")) await notify(env, "fail:" + r.name + ":" + day, "Ultrastable check failing: " + r.name, r.name + " failed: " + r.detail + "\nOpen https://ultrastable.io/owner");
   try { const a = await report(env); for (const m of a.metrics.filter(x => x.hit)) await notify(env, "metric:" + m.name + ":" + day, "Ultrastable metric breach: " + m.name, m.name + " = " + m.value + " (" + m.why + ")\n" + m.label + "\nOpen https://ultrastable.io/owner"); } catch (e) { console.error("metrics", e && e.message); }
+  try { const cr = await criticalityOf(env); if (cr.stale) await env.DB.prepare("INSERT OR IGNORE INTO tasks(id,title,area,kind,state,why,source,priority,updated_at) VALUES('crit-stale','Criticality score is older than 6 hours','criticality','fleet','open','The criticality workflow has not posted a score; the fleet re-dispatches it.','criticality',2,?1)").bind(Date.now()).run(); else await env.DB.prepare("UPDATE tasks SET state='done',updated_at=?1 WHERE id='crit-stale' AND state='open'").bind(Date.now()).run(); } catch (e) { console.error("criticality", e && e.message); }
   const fresh = (await env.DB.prepare("SELECT id,title FROM tasks WHERE kind='owner' AND state='open' AND id NOT IN (SELECT substr(key,6) FROM notifications WHERE key LIKE 'task:%') ORDER BY priority LIMIT 50").all()).results;
   if (fresh.length) {
     const sent = await notify(env, "task:" + fresh[0].id, fresh.length + " new item(s) in your Ultrastable queue", fresh.map(t => "- " + t.title).join("\n") + "\nOpen https://ultrastable.io/owner and tap Done, Snooze or Hand to fleet.");
@@ -273,7 +296,7 @@ $('#pill').textContent=bad?bad+' check'+(bad>1?'s':'')+' failing':'All checks pa
 $('#checks').innerHTML=s.checks.map(c=>'<div class="card"><span class="'+(c.ok?'ok':'bad')+'">'+(c.ok?'OK':'FAIL')+'</span> <b>'+E(c.name)+'</b><div class="meta">'+E(c.detail)+'</div></div>').join('')||'<p class="meta">No checks yet. Type probe.</p>';
 const sn=s.snapshot;$('#snapmeta').textContent=sn&&sn.panels?('Snapshot of the repo, generated '+sn.generated+(sn.commit?' at '+sn.commit:'')+(sn.problems&&sn.problems.length?'. Problems: '+sn.problems.join('; '):'')):'No snapshot received yet. The dashboard-snapshot workflow posts one after each outreach run.';
 $('#snap').innerHTML=sn&&sn.panels?sn.panels.map(p=>'<div class="card"><h3>'+E(p.title)+'</h3>'+p.rows.map(r=>'<div class="meta"><span class="'+(r[2]=='ok'?'ok':r[2]=='warn'?'bad':'')+'">'+(r[2]=='ok'?'OK ':r[2]=='warn'?'OPEN ':'')+'</span><b>'+E(r[0])+'</b> '+E(r[1])+'</div>').join('')+'</div>').join(''):'';
-const an=s.analytics;$('#an').innerHTML=an&&an.metrics?'<p class="meta">Collecting for '+an.age_days+' days. '+an.breaches+' breach(es).</p><div class="grid">'+an.metrics.map(m=>'<div class="card"><span class="'+(m.hit?'bad':'ok')+'">'+(m.hit?'BREACH':'OK')+'</span> <b>'+E(m.name)+'</b> '+E(m.value)+'<div class="meta">'+E(m.label)+' ('+E(m.kind)+'; '+E(m.why)+')</div></div>').join('')+'</div><div class="meta">Top pages, 7 days: '+(an.top.map(t=>E(t.host+t.path)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Referrers: '+(an.refs.map(t=>E(t.ref)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Daily views: '+(an.daily.map(d=>E(d.day.slice(5))+' '+d.views).join(' · ')||'none yet')+'</div>':'<p class="meta">Analytics unavailable.</p>';
+const cr=s.criticality&&s.criticality.latest&&s.criticality.latest.headline;$('#crit').innerHTML=cr?'<div class="card"><span class="'+(cr.k>1?'ok':'bad')+'">'+(cr.k>1?'CRITICAL':'BELOW CRITICAL')+'</span> <b>k = '+E(cr.k)+'</b> on '+E(cr.day)+'<div class="meta">Zero-human verified deploys '+E(cr.deploys.auto_verified)+' (human-attended '+E(cr.deploys.human_verified)+'). D1 rows read '+E(cr.spend.d1_load)+'x budget, AI neurons '+E(cr.spend.ai_load)+'x, human interventions '+E(cr.attention.load)+'x. Loop coupling '+E(cr.coupling)+'. Limiter: '+E(cr.limiter)+'.</div><div class="meta">Trend: '+E(s.criticality.history.map(h=>h.day.slice(5)+' k='+h.k).join(" · "))+(s.criticality.stale?' · STALE':'')+'</div></div>':'<p class="meta">No score yet. The criticality workflow posts one.</p>';const an=s.analytics;$('#an').innerHTML=an&&an.metrics?'<p class="meta">Collecting for '+an.age_days+' days. '+an.breaches+' breach(es).</p><div class="grid">'+an.metrics.map(m=>'<div class="card"><span class="'+(m.hit?'bad':'ok')+'">'+(m.hit?'BREACH':'OK')+'</span> <b>'+E(m.name)+'</b> '+E(m.value)+'<div class="meta">'+E(m.label)+' ('+E(m.kind)+'; '+E(m.why)+')</div></div>').join('')+'</div><div class="meta">Top pages, 7 days: '+(an.top.map(t=>E(t.host+t.path)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Referrers: '+(an.refs.map(t=>E(t.ref)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Daily views: '+(an.daily.map(d=>E(d.day.slice(5))+' '+d.views).join(' · ')||'none yet')+'</div>':'<p class="meta">Analytics unavailable.</p>';
 $('#counts').textContent='Your queue: '+s.counts.owner+' open. Fleet: '+s.counts.fleet+' open, '+s.counts.queued+' queued, '+s.counts.done+' done.';
 $('#owner').innerHTML=s.owner.map(t=>task(t,1)).join('')||'<p class="meta">Nothing waiting on you.</p>';
 $('#fleet').innerHTML=s.fleet.map(t=>'<div class="card"><b>'+E(t.title)+'</b> <span class="meta">'+E(t.area||'')+(t.state=='delegated'?' · with the fleet':'')+'</span><div class="row">'+(t.state=='delegated'?'':'<button data-c="fix '+E(t.id)+'">'+(t.fix_cmd?'Fix it':'Hand to fleet')+'</button>')+'<button data-c="done '+E(t.id)+'">Done</button><button data-c="dismiss '+E(t.id)+'">Not doing</button>'+(t.url?'<a class="btn" href="'+E(t.url)+'" rel="noopener">Open</a>':'')+'</div></div>').join('')||'<p class="meta">No fleet tasks.</p>';
@@ -285,7 +308,7 @@ $('#cmd').onsubmit=e=>{e.preventDefault();const v=$('#line').value.trim();if(v){
 $('#logout').onclick=async()=>{await api('/api/owner/logout',{});location.reload()};
 load();`;
 function ownerPage() {
-  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><h2>Needs you</h2><div id=\"owner\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Command line</h2><form id=\"cmd\"><div class=\"row\"><input id=\"line\" placeholder=\"type help\" aria-label=\"command\" autocapitalize=\"off\" autocomplete=\"off\"><button class=\"p\">Run</button></div></form><pre id=\"out\">Commands marked * ask for a fresh emailed code.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
+  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><h2>Needs you</h2><div id=\"owner\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Criticality</h2><div id=\"crit\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Command line</h2><form id=\"cmd\"><div class=\"row\"><input id=\"line\" placeholder=\"type help\" aria-label=\"command\" autocapitalize=\"off\" autocomplete=\"off\"><button class=\"p\">Run</button></div></form><pre id=\"out\">Commands marked * ask for a fresh emailed code.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
 }
 
 // ---------- router ----------
@@ -316,6 +339,12 @@ export async function route(req, env) {
       await ensureSnapshots(env);
       await env.DB.prepare("INSERT INTO snapshots(key,body,at) VALUES('repo',?1,?2) ON CONFLICT(key) DO UPDATE SET body=?1,at=?2").bind(raw, Date.now()).run();
       return json({ ok: true, panels: b.panels.length });
+    }
+    if (p === "/api/fleet/criticality" && req.method === "POST") {
+      const raw = await req.text(); if (raw.length > 200000) return json({ error: "too large" }, 413);
+      let b; try { b = JSON.parse(raw); } catch (e) { return json({ error: "not JSON" }, 400); }
+      if (!b.headline || typeof b.headline.k !== "number") return json({ error: "criticality needs headline.k" }, 400);
+      return json(await recordCriticality(env, b, raw));
     }
     if (p === "/api/fleet/queue") return json({ queue: (await env.DB.prepare("SELECT q.id,q.task_id,t.title,t.url,t.why FROM fleet_queue q JOIN tasks t ON t.id=q.task_id WHERE q.status='queued' ORDER BY q.id LIMIT 20").all()).results });
     if (p === "/api/fleet/ack" && req.method === "POST") { const b = await req.json(); await env.DB.prepare("UPDATE fleet_queue SET status=?2,result=?3,done_at=?4 WHERE id=?1").bind(+b.id, b.status === "done" ? "done" : "failed", String(b.result || "").slice(0, 500), Date.now()).run(); if (b.status === "done") await env.DB.prepare("UPDATE tasks SET state='done',updated_at=?2 WHERE id=(SELECT task_id FROM fleet_queue WHERE id=?1)").bind(+b.id, Date.now()).run(); return json({ ok: true }); }

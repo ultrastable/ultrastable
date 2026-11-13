@@ -26,7 +26,7 @@ def unprobed(root=REPO) -> list[dict]:
         if g("Status").lower() in ("done", "closed", "superseded"):
             continue
         done = g("Done check")
-        if not done.startswith(("file:", "grep:")):
+        if not done.startswith(("file:", "grep:")) and not (f.stem.startswith("Q-CRIT-") and done.startswith("cmd:python3 -m foundation criticality ")):  # CRITICALITY-1: the queue lane runs these cmd probes itself
             out.append({"id": f.stem, "owner": g("Owner"), "done_check": done})
     return out
 

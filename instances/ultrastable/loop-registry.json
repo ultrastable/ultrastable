@@ -32,6 +32,11 @@
       "binding": "LANE_PAT",
       "source": "NEEDS-YOU.md",
       "probe": "a lane run logs 'lane: workflow credential: lane-pat' (or github-app when LANE_APP_ID and LANE_APP_PRIVATE_KEY are bound instead)"
+    },
+    {
+      "binding": "FLEET_TOKEN",
+      "source": "NEEDS-YOU.md",
+      "probe": "the criticality run logs 'dashboard 200' when posting the score"
     }
   ],
   "loops": [
@@ -727,7 +732,8 @@
         "site/worker.js"
       ],
       "workflows": [
-        "deploy-site.yml"
+        "deploy-site.yml",
+        "deploy-workers.yml"
       ],
       "credentials": [
         "CLOUDFLARE_API_TOKEN"
@@ -2383,6 +2389,51 @@
       "workflows": [
         "scout.yml"
       ]
+    },
+    {
+      "id": "criticality",
+      "kind": "governance",
+      "summary": "CRITICALITY-1: measure k (zero-human verified deploys over the binding cost or attention load), run the mantra on every loop, grade predictions, complete or re-dispatch stalled items and control fuel.",
+      "trigger": "after every executor, lane or deploy-workers run, with a daily fallback",
+      "owner": "portfolio-manager",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "python3 -m foundation criticality --check reports ok and the latest record in ops/criticality.jsonl is under 6 hours old",
+      "paths": [
+        {
+          "id": "ci",
+          "how": "python3 -m foundation criticality --run --apply in the criticality workflow",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/criticality.py::def tick_check",
+      "writeback": [
+        "ops/criticality.jsonl",
+        "docs/issues",
+        "actions-budget.json"
+      ],
+      "system_path": [
+        "foundation/criticality.py",
+        "foundation/ignition.py",
+        "doctrine/criticality.json"
+      ],
+      "area": "governance",
+      "workflows": [
+        "criticality.yml"
+      ],
+      "credentials": [
+        "CLOUDFLARE_API_TOKEN",
+        "FLEET_TOKEN",
+        "LANE_PAT"
+      ],
+      "staged_default": "without CLOUDFLARE_API_TOKEN the spend is read from a saved analytics file (--cf-json) or reported as unreadable; without FLEET_TOKEN the score is stored in ops/criticality.jsonl only",
+      "identity_bound": "credential",
+      "default_in_effect": "the score is recorded in the repository and the dashboard shows it when the post succeeds"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

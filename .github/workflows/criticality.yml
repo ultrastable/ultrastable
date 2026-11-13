@@ -1,0 +1,53 @@
+name: criticality
+# budget: ~2 min per run; at most once per 30 minutes (guard below), so under 48 runs a day, normally one per finished executor, lane or deploy
+# trigger: a finished executor, lane or deploy-workers run (GitHub's scheduler fires too rarely to be the only spark), a daily fallback, manual dispatch
+# free-alternative: `python3 -m foundation criticality --run --apply` from a cloud-hosted Claude routine, or the same command from the executor session
+# CRITICALITY-1: measure k, store it (ops/criticality.jsonl and the dashboard), run the mantra on every loop, grade predictions, complete or re-dispatch stalled items, control fuel.
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_run:
+    workflows: [executor, lane, deploy-workers]
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+concurrency:
+  group: criticality
+  cancel-in-progress: false
+jobs:
+  criticality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - run: python3 scripts/actions_guard.py criticality
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Gap guard (at most one run per 30 minutes)
+        id: gap
+        run: |
+          last=$(git log -1 --format=%ct -- ops/criticality.jsonl || echo 0)
+          if [ "${{ github.event_name }}" = "workflow_run" ] && [ $(( $(date +%s) - ${last:-0} )) -lt 1800 ]; then echo "go=false" >> "$GITHUB_OUTPUT"; else echo "go=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Measure, store, alert, self-complete
+        if: steps.gap.outputs.go == 'true'
+        run: python3 -m foundation criticality --run --apply | tee criticality-run.json | python3 -c "import json,sys;j=json.load(sys.stdin);h=j['headline'];print('k=%s day=%s limiter=%s stored=%s' % (h['k'],h['day'],h['limiter'],j.get('stored')))"
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL || 'https://ultrastable.io' }}
+          FLEET_TOKEN: ${{ secrets.FLEET_TOKEN }}
+      - name: Fuel (pause zero-return loops while over budget, resume under it)
+        if: steps.gap.outputs.go == 'true'
+        run: python3 -m foundation ignition --fuel --apply
+      - name: Commit the evidence
+        if: steps.gap.outputs.go == 'true'
+        run: |
+          git config user.name "ultrastable-ops"; git config user.email "actions@users.noreply.github.com"
+          git add ops/criticality.jsonl docs/issues actions-budget.json; git diff --cached --quiet || { git commit -m "criticality: record score, items and fuel" && git pull --rebase -q && git push; }

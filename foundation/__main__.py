@@ -23,6 +23,7 @@
   python3 -m foundation lifecycle [--open|--beat|--close|--reap|--check|--improve|--score|--report|--hooks]   no zombie sessions; loops that score and mutate themselves
   python3 -m foundation triggers [--check|--sync|--plan]   time (cron heartbeat) and event (webhook) triggers, drift-checked
   python3 -m foundation team [--gate|--check|--apply|--recommend --manifest F]   the phased virtual team (doctrine/team.json)
+  python3 -m foundation criticality [--run [--apply]|--score F|--probe FACTOR|--check]   CRITICALITY-1: verified zero-human deploys vs cost and attention, as k
   python3 -m foundation pins [--check|--apply|--report]                  PINS-1: every status pin and roadmap item on the site is computed from code, proofs and issues
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
@@ -39,6 +40,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["rnd"]:
         from . import rnd
         return rnd.main(_av[1:])
+    if _av[:1] == ["criticality"]:
+        from . import criticality
+        return criticality.main(_av[1:])
+    if _av[:1] == ["ignition"]:
+        from . import ignition
+        return ignition.main(_av[1:])
     if _av[:1] == ["scout"]:
         from . import scout
         return scout.main(_av[1:])

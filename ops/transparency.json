@@ -1,10 +1,10 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-12T20:01:30Z",
- "commit": "86e943b",
+ "generated": "2026-11-13T11:28:35Z",
+ "commit": "76c66f8",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
-  "managers_and_loops": 68,
+  "managers_and_loops": 69,
   "loops_with_evidence": 2,
   "components": {
    "live": 24
@@ -19,17 +19,17 @@
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
   "backlog_open": 93,
-  "backlog_items": 98
+  "backlog_items": 110
  },
  "throughput": {
   "queue": {
-   "items": 98,
+   "items": 110,
    "by_status": {
+    "closed": 16,
     "open": 93,
-    "closed": 4,
     "done": 1
    },
-   "takeable_now": 91
+   "takeable_now": 90
   },
   "merged": {
    "total": 0,
@@ -60,26 +60,27 @@
   },
   "changelog": [],
   "deploys": {
-   "site_runs": 43,
+   "site_runs": 47,
    "by_conclusion": {
-    "success": 41,
+    "success": 45,
     "cancelled": 2
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-12T19:51:38Z",
+    "createdAt": "2026-11-13T11:22:16Z",
     "event": "push",
-    "headSha": "e88dab4e858c49d266e36cc0bb3607bb1dd6c497"
+    "headSha": "3e82575b40fbedf5423fcc408b71c579b5a6fcef"
    },
    "per_day_success": {
-    "2026-11-12": 41
+    "2026-11-12": 42,
+    "2026-11-13": 3
    }
   },
   "executor": {
-   "runs": 12,
+   "runs": 30,
    "by_conclusion": {
-    "failure": 9,
-    "success": 3
+    "failure": 3,
+    "success": 27
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -106,7 +107,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 6515.4,
+   "age_s": 328.6,
    "status": "fresh",
    "missed": 0
   },
@@ -130,16 +131,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 542.4,
+   "age_s": 330.6,
    "status": "fresh",
    "missed": 0,
-   "lag_s": 34.0
+   "lag_s": 14877.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 17237.4,
+   "age_s": 72860.6,
    "status": "fresh",
    "missed": 0
   }
@@ -148,7 +149,7 @@
   "counts": {
    "merged": 0,
    "closed": 0,
-   "parked": 0,
+   "parked": 1,
    "failed": 1,
    "expired": 0,
    "open": 0
@@ -158,18 +159,23 @@
     "name": "Q-SYS-BOOT-REHEARSAL",
     "state": "failed",
     "failures": 1
+   },
+   {
+    "name": "Q-CLOCK-LANE-HOOK",
+    "state": "parked",
+    "failures": 2
    }
   ],
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-12T20:01:19Z",
+  "generated": "2026-11-13T11:28:22Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1315.7,
+    "expected_today": 1320.0,
     "value": null,
     "behind": null,
     "progress": null
@@ -178,7 +184,7 @@
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 566.6,
+    "expected_today": 568.5,
     "value": null,
     "behind": null,
     "progress": null
@@ -187,7 +193,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 822.5,
+    "expected_today": 826.7,
     "value": null,
     "behind": null,
     "progress": null
@@ -196,7 +202,7 @@
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 328.2,
+    "expected_today": 329.9,
     "value": null,
     "behind": null,
     "progress": null
@@ -212,7 +218,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-12T20:01:19Z",
+     "at": "2026-11-13T11:28:22Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -265,16 +271,16 @@
  },
  "growth": {
   "mix": {
-   "growth": 6,
+   "growth": 5,
    "fix": 0,
-   "maintenance": 14,
+   "maintenance": 15,
    "total": 20,
-   "growth_share": 0.3,
+   "growth_share": 0.25,
    "target": 0.4
   },
   "target_growth_share": 0.4,
-  "growth_items_takeable": 21,
-  "items_takeable": 91,
+  "growth_items_takeable": 18,
+  "items_takeable": 90,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -319,9 +325,9 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 6531.0,
+   "last_beat_age_s": 344.8,
    "expected_interval_s": 21600,
-   "beats_24h": 12,
+   "beats_24h": 40,
    "expected_24h": 4.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -330,7 +336,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 17253.0,
+   "last_beat_age_s": 72876.8,
    "expected_interval_s": 86400,
    "beats_24h": 7,
    "expected_24h": 1.0,
@@ -341,9 +347,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 589.0,
+   "last_beat_age_s": 374.8,
    "expected_interval_s": 86400,
-   "beats_24h": 43,
+   "beats_24h": 46,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -352,11 +358,11 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 582.0,
+   "last_beat_age_s": 55415.8,
    "expected_interval_s": 604800,
-   "beats_24h": 1,
+   "beats_24h": 2,
    "expected_24h": 0.1,
-   "median_jitter_s": null,
+   "median_jitter_s": 604010.0,
    "status": "ticking"
   }
  ],
@@ -1420,6 +1426,18 @@
    "cycle_metric": null,
    "last_plus": null,
    "last_run": null
+  },
+  {
+   "loop": "criticality",
+   "kind": "governance",
+   "summary": "CRITICALITY-1: measure k (zero-human verified deploys over the binding cost or attention load), run the mantra on every loop, grade predictions, complete or re-dispatch stalled items and control fuel.",
+   "owner": "portfolio-manager",
+   "trigger": "after every executor, lane or deploy-workers run, with a daily fallback",
+   "sla": "1d",
+   "closing_probe": "grep:foundation/criticality.py::def tick_check",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
   }
  ],
  "claims": {
@@ -1828,6 +1846,69 @@
  "changes": {
   "commits": [
    {
+    "sha": "76c66f8",
+    "at": "2026-11-13T10:08:00+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Q-COST-PROOF-1: queue Quniverse cost proof and resource discovery (#299)",
+    "pr": 299,
+    "item": "Q-COST-PROOF-",
+    "url": "https://github.com/ultrastable/ultrastable/commit/76c66f87e60368f3f7e786ac078897827f8f5b95"
+   },
+   {
+    "sha": "36aadd8",
+    "at": "2026-11-13T08:41:55+00:00",
+    "author": "ultrastable-ops",
+    "subject": "deploy-workers: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/36aadd8b90bd4cbf3852a94a39c815b93530163b"
+   },
+   {
+    "sha": "2f7b5ba",
+    "at": "2026-11-13T09:41:21+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "DEPLOY-ALL-1: merges deploy the tick and dashboard Workers and verify live code equals the commit (#298)",
+    "pr": 298,
+    "item": "DEPLOY-ALL-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/2f7b5bacd629ba75260076b58b0b7817c0827c78"
+   },
+   {
+    "sha": "b40465e",
+    "at": "2026-11-13T08:14:47+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Owner mail paths, executor spark, recorded tick failures, Quniverse parity queue (#296)",
+    "pr": 296,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/b40465e17cc483da53fd5be473e044d6f808cbca"
+   },
+   {
+    "sha": "8c4ac79",
+    "at": "2026-11-12T21:05:42+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SCOUT-1: queue item for no-feed sources (#295)",
+    "pr": 295,
+    "item": "SCOUT-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/8c4ac79110ae7b8fa17377e4fec060ef88812d81"
+   },
+   {
+    "sha": "663459d",
+    "at": "2026-11-12T20:05:07+00:00",
+    "author": "ultrastable-scout",
+    "subject": "scout and rnd: weekly pass, findings filed, profiles refreshed, sources re-weighted",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/663459d626b9da24dc10a1e2681a1414cb7be4e9"
+   },
+   {
+    "sha": "afec4d7",
+    "at": "2026-11-12T21:04:47+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "RND-1: product-manager R&D loop as code (#294)",
+    "pr": 294,
+    "item": "RND-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/afec4d7968f23955de6e17148a1516cfff2b7e45"
+   },
+   {
     "sha": "86e943b",
     "at": "2026-11-12T19:51:57+00:00",
     "author": "ultrastable-scout",
@@ -2123,69 +2204,6 @@
     "pr": 260,
     "item": "PORT-EXEC-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/3ef58dc63cc2717c06681307f7e765130c681c92"
-   },
-   {
-    "sha": "f4246ca",
-    "at": "2026-11-12T15:02:47+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Executor records its own write-back (PR 233 failed the gate) (#237)",
-    "pr": 237,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/f4246cac3b6abdd0fa1c98c6c50986b1c39df886"
-   },
-   {
-    "sha": "20bcd23",
-    "at": "2026-11-12T15:02:01+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Lane sweep no longer fails when Issues are off (found by the liveness probe) (#259)",
-    "pr": 259,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/20bcd2355c5cc75e267c108cd0303e9359925ab2"
-   },
-   {
-    "sha": "740207d",
-    "at": "2026-11-12T15:00:40+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "TRANSPARENCY-1b: chunked snapshot, red run when publish fails (#258)",
-    "pr": 258,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/740207d95e5dceeffa263125e7259d9b6f77b4f3"
-   },
-   {
-    "sha": "e5c9b6d",
-    "at": "2026-11-12T14:57:53+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "TRANSPARENCY-1b: unattended executor attempts by state (#257)",
-    "pr": 257,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/e5c9b6d9f2e46d4b0aff2397dd962602bbdc8ccf"
-   },
-   {
-    "sha": "949ab1c",
-    "at": "2026-11-12T14:56:43+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "TRANSPARENCY-1b: shipped-code throughput and changelog on /live (#256)",
-    "pr": 256,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/949ab1c56d9117e0aafb7309b68beb2b2a571b57"
-   },
-   {
-    "sha": "30b0962",
-    "at": "2026-11-12T14:56:18+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "PORT-EXEC-1: executor closes PORT-* items (#255)",
-    "pr": 255,
-    "item": "PORT-EXEC-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/30b09624be20f17035b16f723d057b38b50ca8b0"
-   },
-   {
-    "sha": "91f16db",
-    "at": "2026-11-12T14:55:50+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "GENESIS-1: new systems are born with backlog, roadmap, charter, team, infra, PORT-* items (#254)",
-    "pr": 254,
-    "item": "GENESIS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/91f16db63e9a3799c600f365115bd09fbd35ef07"
    }
   ],
   "pull_requests": []

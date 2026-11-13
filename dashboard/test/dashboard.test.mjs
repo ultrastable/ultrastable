@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
-import worker, { sha256, route, tick, digestDue, ensureSnapshots, runProbes } from "../worker.js";
+import worker, { sha256, route, tick, digestDue, ensureSnapshots, runProbes, recordCriticality, criticalityOf } from "../worker.js";
 
 function mkdb() {
   const db = new DatabaseSync(":memory:");
@@ -126,4 +126,18 @@ test("MAIL-PATHS-1: one address is a failing probe, two are a passing one", asyn
   const two = { ...mkdb(), OWNER_EMAIL: "a@one.example", OWNER_EMAIL_BACKUP: "b@two.example", NO_NET: 1, MAILER: async () => {} };
   const pick = async env => (await runProbes(env)).find(x => x.name === "owner_email_paths");
   assert.equal((await pick(one)).ok, false); assert.equal((await pick(two)).ok, true);
+});
+
+test("criticality: a score at or below 1 files fleet tasks, above 1 closes them, history keeps one row a day", async () => {
+  const e = env(); const rec = k => ({ at: "2026-11-13T11:00:00", headline: { day: "2026-11-12", k, limiter: "cost_d1", deploys: { auto_verified: 1 }, spend: { d1_load: 11, ai_load: 6 }, attention: { load: 39 }, coupling: 1 } });
+  let r = await recordCriticality(e, rec(0.0026), JSON.stringify(rec(0.0026))); assert.equal(r.ok, true); assert.ok(r.filed >= 3);
+  assert.ok(e.db.prepare("SELECT COUNT(*) c FROM tasks WHERE source='criticality' AND state='open'").get().c >= 3);
+  r = await recordCriticality(e, rec(1.5), JSON.stringify(rec(1.5)));
+  assert.equal(e.db.prepare("SELECT COUNT(*) c FROM tasks WHERE source='criticality' AND state='open'").get().c, 0);
+  const c = await criticalityOf(e); assert.equal(c.latest.headline.k, 1.5); assert.equal(c.history.length, 1); assert.equal(c.stale, false);
+});
+test("criticality endpoint needs the fleet token and a headline", async () => {
+  const e = { ...env(), FLEET_TOKEN: "t" }; const post = (b, a) => route(new Request("https://ultrastable.io/api/fleet/criticality", { method: "POST", headers: { authorization: a, "x-us-ui": "1" }, body: JSON.stringify(b) }), e);
+  assert.equal((await post({}, "Bearer x")).status, 401); assert.equal((await post({}, "Bearer t")).status, 400);
+  assert.equal((await post({ at: "2026-11-13", headline: { day: "d", k: 2, limiter: "output", deploys: { auto_verified: 3 }, spend: {}, attention: { load: 0 }, coupling: 1 } }, "Bearer t")).status, 200);
 });

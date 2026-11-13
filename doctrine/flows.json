@@ -9,7 +9,8 @@
     "ext.owner_goals": "IDEA.md and the owner's standing directives (instance manifest)",
     "ext.outreach_replies": "funding programmes and recipients answering outreach (recorded by scripts/outreach.py reply)",
     "ext.actions_quota": "GitHub Actions minutes used against the monthly quota",
-    "ext.frontier": "releases and posts of the leading agent platforms, coding agents and standards (doctrine/scout.json sources)"
+    "ext.frontier": "releases and posts of the leading agent platforms, coding agents and standards (doctrine/scout.json sources)",
+    "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons for the account (returned by the spend probe)"
   },
   "flows": {
     "tick-heartbeat": {
@@ -56,6 +57,10 @@
         {
           "signal": "rnd.priorities",
           "via": "file:ops/rnd/priorities.json"
+        },
+        {
+          "signal": "criticality.items",
+          "via": "file:docs/issues"
         }
       ],
       "outflows": [
@@ -108,6 +113,8 @@
       "feedback": "lanewatch measures time to merge and files a stuck PR",
       "bindings": [
         "ANTHROPIC_API_KEY",
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
         "LANE_APP_ID",
         "LANE_APP_PRIVATE_KEY",
         "LANE_PAT"
@@ -126,6 +133,10 @@
           "via": "pages:ultrastable.io",
           "to": "ext.site_visits",
           "returns": "site.visits"
+        },
+        {
+          "signal": "deploy.runs",
+          "via": "github:actions"
         }
       ],
       "feedback": "page visits return through the dashboard snapshot as metric readings",
@@ -183,6 +194,10 @@
         {
           "signal": "deploy.count",
           "via": "file"
+        },
+        {
+          "signal": "criticality.score",
+          "via": "file:ops/criticality.jsonl"
         }
       ],
       "outflows": [
@@ -486,6 +501,10 @@
         {
           "signal": "tick.evidence",
           "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "fuel.state",
+          "via": "file:actions-budget.json"
         }
       ],
       "outflows": [
@@ -662,12 +681,49 @@
       ],
       "feedback": "an adopted finding raises its source's weight and a declined or quiet one lowers it, so the next pass reads better sources and files fewer misses; shipped and stalled adoptions re-weight the source and set item priority (rnd.priorities), which the executor reads",
       "bindings": []
+    },
+    "criticality": {
+      "inflows": [
+        {
+          "signal": "deploy.runs",
+          "via": "github:actions"
+        },
+        {
+          "signal": "spend.analytics",
+          "via": "http:cloudflare-graphql"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "criticality.score",
+          "via": "file:ops/criticality.jsonl"
+        },
+        {
+          "signal": "criticality.items",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "fuel.state",
+          "via": "file:actions-budget.json"
+        }
+      ],
+      "feedback": "each score predicts the next, a missed prediction files its own revert item, a factor out of budget files the item that fixes it and fuel pauses zero-return loops until burn is back under 1, so the next score reads the effect",
+      "bindings": [
+        "CLOUDFLARE_API_TOKEN",
+        "FLEET_TOKEN",
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {
     "owner.goals": "ext.owner_goals",
     "actions.minutes": "ext.actions_quota",
-    "frontier.releases": "ext.frontier"
+    "frontier.releases": "ext.frontier",
+    "spend.analytics": "ext.cf_analytics"
   },
   "pending": [
     "role-portfolio-manager",

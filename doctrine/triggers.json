@@ -146,6 +146,15 @@
    ],
    "crons": []
   },
+  "criticality.yml": {
+   "events": [
+    "workflow_dispatch",
+    "workflow_run"
+   ],
+   "crons": [
+    "17 5 * * *"
+   ]
+  },
   "deploy-site.yml": {
    "events": [
     "push",
@@ -154,6 +163,13 @@
    "crons": []
   },
   "deploy-system.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": []
+  },
+  "deploy-workers.yml": {
    "events": [
     "push",
     "workflow_dispatch"
