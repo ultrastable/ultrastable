@@ -95,6 +95,18 @@
       "count": 1,
       "instructions": "agents/roles/org-designer.md",
       "tick_every": 12
+    },
+    {
+      "id": "program-manager",
+      "count": 1,
+      "instructions": "agents/roles/program-manager.md",
+      "tick_every": 4
+    },
+    {
+      "id": "infrastructure-manager",
+      "count": 1,
+      "instructions": "agents/roles/infrastructure-manager.md",
+      "tick_every": 2
     }
   ],
   "model_ladder": {

@@ -1,0 +1,12 @@
+{
+  "id": "SERVER-OWNS-LOOPS-1",
+  "rule": "Every loop is owned and closed by a server-side worker. A client session (a code agent, a chat, a person's machine) is only ever a producer of work; it never completes, merges, deploys, resolves, archives or files the follow-up for a loop. The worker that dispatched or created the work owns verifying and closing it.",
+  "owner_directive": "Rowan, 2026-11-13: close all open loops autonomously and server side; client side agents never complete loops; server side agents own the loops they create.",
+  "server_owners": ["ultrastable-tick", "github-actions", "cloud-routine"],
+  "server_path_classes": ["free", "degraded"],
+  "client_path_classes": ["session"],
+  "client_branch_prefixes": ["claude/", "agent/"],
+  "sweeper": {"code": "seed/worker/src/sweeper.js", "max_open_age_hours": 24, "tracked_item_prefix": "Q-OPENLOOP-", "metric": "open_loop_age_hours", "target": 0},
+  "executor_role": "A code agent is a producer. The dispatching worker records the dispatch, verifies the result through an independent path and closes (merge when green, retry, or a tracked item with owner, trigger and probe).",
+  "closing_probe": "python3 -m foundation loopowner --check"
+}

@@ -1,0 +1,65 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// Copyright (c) Ultrastable
+// AUTH-1 + POINT-AND-CLICK-1: the auth-callback routes. The GitHub App is created and installed through GitHub's own manifest flow: one consent click to register the app (GitHub returns the app id and
+// private key to /auth/github/callback), one to install it (GitHub returns the installation id to /auth/github/installed). The Worker stores everything sealed and mints every later token itself.
+//   GET  /connect/github            consent screen
+//   GET  /auth/github/callback      ?code&state  manifest conversion -> store app -> send the person to the install page
+//   GET  /auth/github/installed     ?installation_id&state -> store installation -> done
+//   GET  /auth/health               credential probe (no secrets)
+import * as store from './store.js';
+import { consentScreen, doneScreen, failScreen } from './consent.js';
+import { probe } from './index.js';
+
+const enc = s => new TextEncoder().encode(s);
+async function hmac(env, msg) {
+  const k = await crypto.subtle.importKey('raw', enc(env.CREDENTIAL_KEY || ''), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return [...new Uint8Array(await crypto.subtle.sign('HMAC', k, enc(msg)))].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+export const makeState = async (env, tenant, now = Date.now()) => `${tenant}.${now}.${await hmac(env, `${tenant}.${now}`)}`;
+export async function checkState(env, state, now = Date.now()) {
+  const [tenant, ts, sig] = String(state || '').split('.');
+  if (!tenant || !ts || !sig || now - Number(ts) > 3600e3 || sig !== await hmac(env, `${tenant}.${ts}`)) return null;
+  return tenant;
+}
+
+export function manifest(origin, name) {
+  return {
+    name, url: origin, redirect_url: origin + '/auth/github/callback', setup_url: origin + '/auth/github/installed', public: false, setup_on_update: true,
+    hook_attributes: { url: origin + '/hook/github', active: true }, default_events: ['pull_request', 'push', 'check_suite', 'workflow_run', 'issues'],
+    default_permissions: { contents: 'write', pull_requests: 'write', issues: 'write', actions: 'write', checks: 'read', workflows: 'write', metadata: 'read' },
+  };
+}
+
+export async function handleAuth(request, env, { tenant = 'default', name = 'ultrastable', fetch: f = fetch, now = Date.now() } = {}) {
+  const url = new URL(request.url), origin = url.origin;
+  if (url.pathname === '/auth/health') { const r = await probe(env.DB, now); return Response.json(r, { status: r.ok ? 200 : 503 }); }
+  if (url.pathname === '/connect/github') {
+    const state = await makeState(env, tenant, now);
+    return consentScreen({
+      provider: 'GitHub', title: 'Connect GitHub', button: 'Authorize on GitHub',
+      will: ['Create a private GitHub App for this system (GitHub shows you exactly what it can do).', 'Install it on your repositories so changes can be opened, checked, merged and deployed automatically.', 'Keep its access renewed by itself, with nothing for you to copy or paste.'],
+      why: 'This is a one-time approval. After it, the system does all of the work on its own.',
+      action: { method: 'POST', url: 'https://github.com/settings/apps/new?state=' + encodeURIComponent(state), fields: { manifest: JSON.stringify(manifest(origin, name)) } },
+    });
+  }
+  if (url.pathname === '/auth/github/callback') {
+    const t = await checkState(env, url.searchParams.get('state'), now);
+    if (!t) return failScreen('Connect GitHub', 'That approval link expired.', '/connect/github');
+    const r = await f(`https://api.github.com/app-manifests/${encodeURIComponent(url.searchParams.get('code') || '')}/conversions`, { method: 'POST', headers: { accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-auth' } });
+    if (r.status !== 201) { await store.event(env.DB, t, 'github-app', 'failed', 'manifest conversion HTTP ' + r.status); return failScreen('Connect GitHub', 'GitHub did not finish creating the app.', '/connect/github'); }
+    const j = await r.json();
+    await store.put(env.DB, env, t, 'github-app', { secret: { pem: j.pem, webhook_secret: j.webhook_secret, client_secret: j.client_secret }, meta: { app_id: j.id, slug: j.slug, client_id: j.client_id }, status: 'pending' });
+    await store.event(env.DB, t, 'github-app', 'consent', 'app registered ' + j.slug);
+    const state = await makeState(env, t, now);
+    return Response.redirect(`https://github.com/apps/${j.slug}/installations/new?state=${encodeURIComponent(state)}`, 302);
+  }
+  if (url.pathname === '/auth/github/installed') {
+    const t = await checkState(env, url.searchParams.get('state'), now);
+    const inst = url.searchParams.get('installation_id');
+    if (!t || !inst) return failScreen('Connect GitHub', 'The installation did not complete.', '/connect/github');
+    await store.put(env.DB, env, t, 'github-app', { meta: { installation_id: Number(inst) }, status: 'pending' });
+    await store.event(env.DB, t, 'github-app', 'consent', 'installed ' + inst);
+    return doneScreen('GitHub connected', 'Done. From here the system opens, checks, merges and deploys changes by itself.');
+  }
+  return null;
+}

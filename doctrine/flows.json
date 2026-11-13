@@ -9,7 +9,8 @@
     "ext.owner_goals": "IDEA.md and the owner's standing directives (instance manifest)",
     "ext.outreach_replies": "funding programmes and recipients answering outreach (recorded by scripts/outreach.py reply)",
     "ext.actions_quota": "GitHub Actions minutes used against the monthly quota",
-    "ext.frontier": "releases and posts of the leading agent platforms, coding agents and standards (doctrine/scout.json sources)"
+    "ext.frontier": "releases and posts of the leading agent platforms, coding agents and standards (doctrine/scout.json sources)",
+    "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons per day (doctrine/cost.json budgets)"
   },
   "flows": {
     "tick-heartbeat": {
@@ -56,6 +57,14 @@
         {
           "signal": "rnd.priorities",
           "via": "file:ops/rnd/priorities.json"
+        },
+        {
+          "signal": "cost.items",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
         }
       ],
       "outflows": [
@@ -664,12 +673,86 @@
       ],
       "feedback": "an adopted finding raises its source's weight and a declined or quiet one lowers it, so the next pass reads better sources and files fewer misses; shipped and stalled adoptions re-weight the source and set item priority (rnd.priorities), which the executor reads",
       "bindings": []
+    },
+    "cost-guard": {
+      "inflows": [
+        {
+          "signal": "cf.analytics",
+          "via": "cloudflare:graphql"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "cost.readings",
+          "via": "file:ops/cost.jsonl"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "cost.items",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "cost.readings",
+          "via": "file:ops/cost.jsonl"
+        },
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
+        }
+      ],
+      "feedback": "a merged fix lowers the next day's reading; a breach that persists files an item the executor takes first",
+      "bindings": [
+        "CLOUDFLARE_API_TOKEN"
+      ]
+    },
+    "deploy-workers": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "feedback": "a deploy whose live code differs from the commit files an item the executor takes next",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN"
+      ]
+    },
+    "open-loop-sweeper": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "a merged client PR shortens the next tick's open_loop_age_hours; a stuck one files a Q-OPENLOOP item the executor takes first",
+      "bindings": []
     }
   },
   "implicit_producers": {
     "owner.goals": "ext.owner_goals",
     "actions.minutes": "ext.actions_quota",
-    "frontier.releases": "ext.frontier"
+    "frontier.releases": "ext.frontier",
+    "cf.analytics": "ext.cf_analytics"
   },
   "pending": [
     "role-portfolio-manager",
@@ -709,6 +792,8 @@
     "components",
     "agent-interop",
     "terms-crosswalk",
-    "code-agents"
+    "code-agents",
+    "role-program-manager",
+    "role-infrastructure-manager"
   ]
 }

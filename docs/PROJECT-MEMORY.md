@@ -8,7 +8,7 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-12
+Last updated: 2026-11-13
 Maintained by: every agent, on every session end. Staleness is checked by `scripts/check_memory.py` (CI `memory-fresh`).
 
 ## 1. Standing rules (from Rowan)
@@ -160,3 +160,9 @@ Update this file in the same PR as any change to status, rules, facts, owner ite
 
 ## RND-1: research, development and competitive analysis as code (2026-11-12)
 `foundation/rnd.py` runs inside the weekly scout workflow. Profiles of each competitor (`ops/rnd/profiles/`), a capability diff against what this repo proves, gap items (`Q-RND-GAP-*`), experiments (`Q-EXP-*`), scout findings triaged into `Q-ADOPT-*` tasks or declined (`ops/rnd/triage.json`), outcomes scored once (`ops/rnd/outcomes.jsonl`) and priorities the executor reads (`ops/rnd/priorities.json`). Open: Q-ADOPT-browser-preview-probe. The first live profile refresh happens in Actions (the sandbox gets 403 from the feeds).
+
+## Standing goal (Rowan, 2026-11-13): CRITICALITY-1
+
+Bootstrap to criticality: loops produce more verified deploys than they consume in cost and attention. Order: a self-sustaining Ultrastable that deploys its own workers, then cost, then new features. Data: `doctrine/cost.json` (goal, budgets, QNFO D1 and AI findings F1-F5), code `foundation/cost.py`, loop `cost-guard`, daily readings in `ops/cost.jsonl`. QNFO baseline 2026-11-06..13: qnfo-audit 9.6B D1 rows read, 2095 rows per read query, caused mainly by 67 AFTER INSERT triggers on fleet_tick. Production D1 writes from a session were refused by the permission check, so the index migration is data in the findings, to be applied by the QNFO repo's own deploy path.
+
+Session: session_0156nqDv8ijT11RmKre7xEmK (CRITICALITY-1, COST-GUARD-1).
