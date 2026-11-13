@@ -1,10 +1,10 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-13T11:41:01Z",
- "commit": "d2cf5fe",
+ "generated": "2026-11-13T13:31:04Z",
+ "commit": "368dafa",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
-  "managers_and_loops": 73,
+  "managers_and_loops": 74,
   "loops_with_evidence": 2,
   "components": {
    "live": 24
@@ -14,82 +14,1752 @@
   "stories_passing": 9,
   "stories_total": 9,
   "open_gaps": 3,
-  "open_prs": 0,
-  "merged_prs_listed": 0,
-  "prs_merged_total": 0,
-  "prs_merged_unattended": 0,
-  "backlog_open": 111,
-  "backlog_items": 116
+  "open_prs": 2,
+  "merged_prs_listed": 35,
+  "prs_merged_total": 204,
+  "prs_merged_unattended": 2,
+  "backlog_open": 116,
+  "backlog_items": 121
  },
  "throughput": {
   "queue": {
-   "items": 116,
+   "items": 121,
    "by_status": {
-    "open": 111,
+    "open": 116,
     "closed": 4,
     "done": 1
    },
    "takeable_now": 4
   },
   "merged": {
-   "total": 0,
+   "total": 204,
    "by_origin": {
     "unattended executor": {
-     "prs": 0,
-     "lines_added": 0,
-     "lines_removed": 0
+     "prs": 2,
+     "lines_added": 460,
+     "lines_removed": 405
     },
     "agent session": {
-     "prs": 0,
-     "lines_added": 0,
-     "lines_removed": 0
+     "prs": 184,
+     "lines_added": 133009,
+     "lines_removed": 30811
     },
     "bot": {
-     "prs": 0,
-     "lines_added": 0,
-     "lines_removed": 0
+     "prs": 4,
+     "lines_added": 10,
+     "lines_removed": 10
     },
     "other": {
-     "prs": 0,
-     "lines_added": 0,
-     "lines_removed": 0
+     "prs": 14,
+     "lines_added": 6034,
+     "lines_removed": 57
     }
    },
-   "per_day": {},
-   "median_hours_open_to_merge": null
+   "per_day": {
+    "2026-11-10": 90,
+    "2026-11-11": 12,
+    "2026-11-12": 87,
+    "2026-11-13": 15
+   },
+   "median_hours_open_to_merge": 0.01
   },
-  "changelog": [],
+  "changelog": [
+   {
+    "date": "2026-11-13",
+    "changes": [
+     {
+      "n": 312,
+      "title": "VIDEO-1: server-side narrated demo video of the live product",
+      "by": "other",
+      "plus": 276,
+      "minus": 7,
+      "url": "https://github.com/ultrastable/ultrastable/pull/312"
+     },
+     {
+      "n": 311,
+      "title": "lane: retry the adoption push when main moves",
+      "by": "agent session",
+      "plus": 16,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/311"
+     },
+     {
+      "n": 310,
+      "title": "AUTH-1: unique prefilled GitHub App name per consent visit",
+      "by": "agent session",
+      "plus": 11,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/310"
+     },
+     {
+      "n": 309,
+      "title": "AUTH-1: fix GitHub callback crash (Error 1101)",
+      "by": "agent session",
+      "plus": 39,
+      "minus": 5,
+      "url": "https://github.com/ultrastable/ultrastable/pull/309"
+     },
+     {
+      "n": 308,
+      "title": "AUTH-1: forward /connect from the public site to the tick Worker",
+      "by": "agent session",
+      "plus": 1,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/308"
+     },
+     {
+      "n": 307,
+      "title": "POINT-AND-CLICK-1: lint, self-creating credential schema, /connect redirect",
+      "by": "agent session",
+      "plus": 262,
+      "minus": 147,
+      "url": "https://github.com/ultrastable/ultrastable/pull/307"
+     },
+     {
+      "n": 306,
+      "title": "SERVER-OWNS-LOOPS-1: the lane adopts every PR it cannot merge; no hand-back wording; sweeper survives issues-off",
+      "by": "agent session",
+      "plus": 425,
+      "minus": 18,
+      "url": "https://github.com/ultrastable/ultrastable/pull/306"
+     },
+     {
+      "n": 304,
+      "title": "SELF-SUSTAIN-1: executor cap counts attempts, lane closes conflicts, escape-free replies",
+      "by": "agent session",
+      "plus": 429,
+      "minus": 75,
+      "url": "https://github.com/ultrastable/ultrastable/pull/304"
+     },
+     {
+      "n": 303,
+      "title": "checks: parallelize foundation tests to cut billed minutes (COST-CHECKS-1)",
+      "by": "other",
+      "plus": 53,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/303"
+     },
+     {
+      "n": 302,
+      "title": "CRITICALITY-1: tick-end criticality controller (k_eff)",
+      "by": "agent session",
+      "plus": 389,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/302"
+     },
+     {
+      "n": 301,
+      "title": "COST-GUARD-1 and CRITICALITY-1: cost guard, standing goal, QNFO findings",
+      "by": "agent session",
+      "plus": 2298,
+      "minus": 2325,
+      "url": "https://github.com/ultrastable/ultrastable/pull/301"
+     },
+     {
+      "n": 300,
+      "title": "Q-COST-PROOF-1: cost probe and resource discovery",
+      "by": "agent session",
+      "plus": 2431,
+      "minus": 405,
+      "url": "https://github.com/ultrastable/ultrastable/pull/300"
+     },
+     {
+      "n": 299,
+      "title": "Q-COST-PROOF-1: queue Quniverse cost proof and resource discovery",
+      "by": "agent session",
+      "plus": 11,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/299"
+     },
+     {
+      "n": 298,
+      "title": "DEPLOY-ALL-1: merges deploy the tick and dashboard Workers and verify live code equals the commit",
+      "by": "agent session",
+      "plus": 144,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/298"
+     },
+     {
+      "n": 296,
+      "title": "Owner mail paths, executor spark, recorded tick failures, Quniverse parity queue",
+      "by": "other",
+      "plus": 209,
+      "minus": 26,
+      "url": "https://github.com/ultrastable/ultrastable/pull/296"
+     }
+    ]
+   },
+   {
+    "date": "2026-11-12",
+    "changes": [
+     {
+      "n": 295,
+      "title": "SCOUT-1: queue item for no-feed sources",
+      "by": "agent session",
+      "plus": 8,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/295"
+     },
+     {
+      "n": 294,
+      "title": "RND-1: product-manager R&D loop as code",
+      "by": "agent session",
+      "plus": 763,
+      "minus": 71,
+      "url": "https://github.com/ultrastable/ultrastable/pull/294"
+     },
+     {
+      "n": 292,
+      "title": "SCOUT-1: weekly scout of the state of the art feeds the growth product manager",
+      "by": "agent session",
+      "plus": 586,
+      "minus": 120,
+      "url": "https://github.com/ultrastable/ultrastable/pull/292"
+     },
+     {
+      "n": 291,
+      "title": "LIVE-1: commit PUBLIC_HEALTH_ONLY gate (visibility.js) to seed worker",
+      "by": "agent session",
+      "plus": 34,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/291"
+     },
+     {
+      "n": 290,
+      "title": "Ultrastable workers: /health 503 mid-tick, dashboard snapshots table, CRON-GRID-1, compat_date 2026-11-12, www routes",
+      "by": "agent session",
+      "plus": 75,
+      "minus": 25,
+      "url": "https://github.com/ultrastable/ultrastable/pull/290"
+     },
+     {
+      "n": 289,
+      "title": "BUILD-3: close the loop (tick, change rounds, /status, model health)",
+      "by": "other",
+      "plus": 101,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/289"
+     },
+     {
+      "n": 288,
+      "title": "fleet: queue reads repo-data items when Issues are off",
+      "by": "other",
+      "plus": 17,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/288"
+     },
+     {
+      "n": 287,
+      "title": "executor: regenerate site roadmap",
+      "by": "agent session",
+      "plus": 29,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/287"
+     },
+     {
+      "n": 286,
+      "title": "EXEC-X: fall through to workers when the own item fails",
+      "by": "agent session",
+      "plus": 10,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/286"
+     },
+     {
+      "n": 285,
+      "title": "EXEC-X: executor works ultrastable/workers issues",
+      "by": "agent session",
+      "plus": 129,
+      "minus": 16,
+      "url": "https://github.com/ultrastable/ultrastable/pull/285"
+     },
+     {
+      "n": 284,
+      "title": "executor: accept dict response from Workers AI",
+      "by": "unattended executor",
+      "plus": 18,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/284"
+     },
+     {
+      "n": 283,
+      "title": "FLOW-DIRECTIVE-1: every workflow declares flows and bindings",
+      "by": "agent session",
+      "plus": 861,
+      "minus": 95,
+      "url": "https://github.com/ultrastable/ultrastable/pull/283"
+     },
+     {
+      "n": 282,
+      "title": "FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path",
+      "by": "agent session",
+      "plus": 732,
+      "minus": 503,
+      "url": "https://github.com/ultrastable/ultrastable/pull/282"
+     },
+     {
+      "n": 281,
+      "title": "GROWTH-PM-1: growth policy values and product coverage enforced in CI",
+      "by": "agent session",
+      "plus": 131,
+      "minus": 7,
+      "url": "https://github.com/ultrastable/ultrastable/pull/281"
+     },
+     {
+      "n": 280,
+      "title": "Quiet product manager pass; adopt parallel growth items; lane hook filed",
+      "by": "agent session",
+      "plus": 85,
+      "minus": 98,
+      "url": "https://github.com/ultrastable/ultrastable/pull/280"
+     },
+     {
+      "n": 279,
+      "title": "Write-back: lesson on duplicate parallel builds",
+      "by": "agent session",
+      "plus": 986,
+      "minus": 648,
+      "url": "https://github.com/ultrastable/ultrastable/pull/279"
+     },
+     {
+      "n": 278,
+      "title": "Heal pass: unmeasured is not missing; token on the heal steps",
+      "by": "agent session",
+      "plus": 30,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/278"
+     },
+     {
+      "n": 276,
+      "title": "CLOCKWORK-2 + GROWTH-2: stages, catch-up, settlement, escalation; targets, experiments, knobs, filing",
+      "by": "agent session",
+      "plus": 1583,
+      "minus": 507,
+      "url": "https://github.com/ultrastable/ultrastable/pull/276"
+     },
+     {
+      "n": 274,
+      "title": "Clock report: full-day beat window",
+      "by": "agent session",
+      "plus": 19,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/274"
+     },
+     {
+      "n": 273,
+      "title": "CLOCKWORK-1 + GROWTH-1: measured clocks, executor self-chaining, product-manager growth loop",
+      "by": "agent session",
+      "plus": 680,
+      "minus": 8,
+      "url": "https://github.com/ultrastable/ultrastable/pull/273"
+     },
+     {
+      "n": 271,
+      "title": "Unify system declaration and code-agent ladder with SYSTEM-1 and CODE-AGENTS-1",
+      "by": "agent session",
+      "plus": 267,
+      "minus": 203,
+      "url": "https://github.com/ultrastable/ultrastable/pull/271"
+     },
+     {
+      "n": 270,
+      "title": "SYS-1 + SYS-2: topology and code-agent ladder",
+      "by": "agent session",
+      "plus": 1260,
+      "minus": 424,
+      "url": "https://github.com/ultrastable/ultrastable/pull/270"
+     },
+     {
+      "n": 269,
+      "title": "LANE-WATCH-1: a green PR never stays open",
+      "by": "agent session",
+      "plus": 841,
+      "minus": 626,
+      "url": "https://github.com/ultrastable/ultrastable/pull/269"
+     },
+     {
+      "n": 268,
+      "title": "Update ultrastable.io/proof to serve a product-side feed (#Q-10)",
+      "by": "unattended executor",
+      "plus": 442,
+      "minus": 405,
+      "url": "https://github.com/ultrastable/ultrastable/pull/268"
+     },
+     {
+      "n": 267,
+      "title": "System roadmap: topology, agent ladder, failure registry, vector KB, readiness, bootstrap rehearsal",
+      "by": "agent session",
+      "plus": 77,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/267"
+     },
+     {
+      "n": 266,
+      "title": "Executor: regenerate doctrine files, tagline rule, longer failure text",
+      "by": "agent session",
+      "plus": 11,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/266"
+     },
+     {
+      "n": 265,
+      "title": "AGENTIC-1: agent-readable ultrastable.io with read-only MCP; unattended crosswalk",
+      "by": "agent session",
+      "plus": 1445,
+      "minus": 1286,
+      "url": "https://github.com/ultrastable/ultrastable/pull/265"
+     },
+     {
+      "n": 264,
+      "title": "AGENT-INTEROP-1 and TERMS-CROSSWALK-1: agent-readable site, standards and crosswalk as data",
+      "by": "agent session",
+      "plus": 1971,
+      "minus": 2131,
+      "url": "https://github.com/ultrastable/ultrastable/pull/264"
+     },
+     {
+      "n": 263,
+      "title": "Executor: bad model reply is repairable",
+      "by": "agent session",
+      "plus": 16,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/263"
+     },
+     {
+      "n": 262,
+      "title": "Executor repair loop and server-side rule in its prompt",
+      "by": "agent session",
+      "plus": 37,
+      "minus": 13,
+      "url": "https://github.com/ultrastable/ultrastable/pull/262"
+     },
+     {
+      "n": 261,
+      "title": "Executor regenerates derived files so its own PRs pass checks",
+      "by": "agent session",
+      "plus": 24,
+      "minus": 6,
+      "url": "https://github.com/ultrastable/ultrastable/pull/261"
+     },
+     {
+      "n": 260,
+      "title": "PORT-EXEC-1: runnable probe unblocks the unattended executor",
+      "by": "agent session",
+      "plus": 3562,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/260"
+     },
+     {
+      "n": 259,
+      "title": "Lane sweep no longer fails when Issues are off (found by the liveness probe)",
+      "by": "agent session",
+      "plus": 47,
+      "minus": 10,
+      "url": "https://github.com/ultrastable/ultrastable/pull/259"
+     },
+     {
+      "n": 258,
+      "title": "TRANSPARENCY-1b: chunked snapshot, red run when publish fails",
+      "by": "agent session",
+      "plus": 36,
+      "minus": 10,
+      "url": "https://github.com/ultrastable/ultrastable/pull/258"
+     },
+     {
+      "n": 257,
+      "title": "TRANSPARENCY-1b: unattended executor attempts by state",
+      "by": "agent session",
+      "plus": 5,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/257"
+     },
+     {
+      "n": 256,
+      "title": "TRANSPARENCY-1b: shipped-code throughput and changelog on /live",
+      "by": "agent session",
+      "plus": 77,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/256"
+     },
+     {
+      "n": 255,
+      "title": "PORT-EXEC-1: executor closes PORT-* items",
+      "by": "agent session",
+      "plus": 8,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/255"
+     },
+     {
+      "n": 254,
+      "title": "GENESIS-1: new systems are born with backlog, roadmap, charter, team, infra, PORT-* items",
+      "by": "agent session",
+      "plus": 115,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/254"
+     },
+     {
+      "n": 252,
+      "title": "TRANSPARENCY-1: daily publish workflow for /live",
+      "by": "agent session",
+      "plus": 38,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/252"
+     },
+     {
+      "n": 251,
+      "title": "TRANSPARENCY-1: bind D1 in site deploy",
+      "by": "agent session",
+      "plus": 9,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/251"
+     },
+     {
+      "n": 250,
+      "title": "TRANSPARENCY-1: read-only /live view of managers, claims and change feed",
+      "by": "agent session",
+      "plus": 2479,
+      "minus": 2150,
+      "url": "https://github.com/ultrastable/ultrastable/pull/250"
+     },
+     {
+      "n": 249,
+      "title": "QUALITY-1: queue and roadmap checks agree on closed issues",
+      "by": "agent session",
+      "plus": 2,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/249"
+     },
+     {
+      "n": 248,
+      "title": "QUALITY-1: demo builder quality (design prompt, lint, honest limits)",
+      "by": "agent session",
+      "plus": 44,
+      "minus": 7,
+      "url": "https://github.com/ultrastable/ultrastable/pull/248"
+     },
+     {
+      "n": 247,
+      "title": "SITE-PINS-1: tie every site status pin and honest gap to a real issue and code",
+      "by": "agent session",
+      "plus": 772,
+      "minus": 29,
+      "url": "https://github.com/ultrastable/ultrastable/pull/247"
+     },
+     {
+      "n": 246,
+      "title": "POSITION: say what Ultrastable is not for",
+      "by": "agent session",
+      "plus": 13,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/246"
+     },
+     {
+      "n": 245,
+      "title": "Server-side only, needs-pat merger in the lane, and a liveness probe for the autonomous loops",
+      "by": "agent session",
+      "plus": 1929,
+      "minus": 436,
+      "url": "https://github.com/ultrastable/ultrastable/pull/245"
+     },
+     {
+      "n": 244,
+      "title": "writeback: open-loop ids never overwrite an existing item",
+      "by": "agent session",
+      "plus": 22,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/244"
+     },
+     {
+      "n": 243,
+      "title": "STRANGE-LOOP-1: self-improving loops, no zombie sessions",
+      "by": "agent session",
+      "plus": 41,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/243"
+     },
+     {
+      "n": 241,
+      "title": "MARKET-1: component gap analysis as data, tests map claims to code, gaps become queue items",
+      "by": "agent session",
+      "plus": 1170,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/241"
+     },
+     {
+      "n": 240,
+      "title": "FRONT-2: chat-thread front door with pill input, dictation, rotating suggestions, live build steps",
+      "by": "agent session",
+      "plus": 348,
+      "minus": 82,
+      "url": "https://github.com/ultrastable/ultrastable/pull/240"
+     },
+     {
+      "n": 239,
+      "title": "INTERVIEW-1 + SESSION-CLOSE-1 + STRANGE-LOOP-1: voice-first front door and branch reaper (site 0.11.0)",
+      "by": "agent session",
+      "plus": 612,
+      "minus": 17,
+      "url": "https://github.com/ultrastable/ultrastable/pull/239"
+     },
+     {
+      "n": 238,
+      "title": "Queue item Q-LOOP-IMPROVE: loops score themselves and improve",
+      "by": "agent session",
+      "plus": 8,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/238"
+     },
+     {
+      "n": 237,
+      "title": "Executor records its own write-back (PR 233 failed the gate)",
+      "by": "agent session",
+      "plus": 18,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/237"
+     },
+     {
+      "n": 236,
+      "title": "BOUNDARY-1: containment boundary, rebuild drill, trust-tiered permissions, session reaper",
+      "by": "agent session",
+      "plus": 445,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/236"
+     },
+     {
+      "n": 234,
+      "title": "Executor kicks its own PR (ready + checks dispatch)",
+      "by": "agent session",
+      "plus": 14,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/234"
+     },
+     {
+      "n": 232,
+      "title": "Executor: Workers AI route, Issues-off tolerance, settings has_issues=false",
+      "by": "agent session",
+      "plus": 38,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/232"
+     },
+     {
+      "n": 230,
+      "title": "TEAM-1: phased virtual team as code",
+      "by": "other",
+      "plus": 5158,
+      "minus": 7,
+      "url": "https://github.com/ultrastable/ultrastable/pull/230"
+     },
+     {
+      "n": 229,
+      "title": "QUEUE-1: executor queue as repo data so Issues can be off",
+      "by": "agent session",
+      "plus": 346,
+      "minus": 15,
+      "url": "https://github.com/ultrastable/ultrastable/pull/229"
+     },
+     {
+      "n": 228,
+      "title": "COMPLETE-1: always complete and close finished work, threads and sessions",
+      "by": "agent session",
+      "plus": 54,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/228"
+     },
+     {
+      "n": 227,
+      "title": "AGENT-PASTE-1 + PLATFORM-BRIEF-1: paste-into-any-AI start, deploy on any cloud via its own agent (site 0.9.0)",
+      "by": "agent session",
+      "plus": 307,
+      "minus": 7,
+      "url": "https://github.com/ultrastable/ultrastable/pull/227"
+     },
+     {
+      "n": 226,
+      "title": "RECALL-1 + AUDIT-1: the front door asks, builds and audits itself (site 0.7.0)",
+      "by": "agent session",
+      "plus": 160,
+      "minus": 42,
+      "url": "https://github.com/ultrastable/ultrastable/pull/226"
+     },
+     {
+      "n": 225,
+      "title": "BUILD-2: idea build no longer stuck at Building (site 0.5.1)",
+      "by": "agent session",
+      "plus": 37,
+      "minus": 5,
+      "url": "https://github.com/ultrastable/ultrastable/pull/225"
+     },
+     {
+      "n": 224,
+      "title": "USER-PATH-1: click-only guided set-up at /setup (site 0.6.0)",
+      "by": "agent session",
+      "plus": 347,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/224"
+     },
+     {
+      "n": 223,
+      "title": "Front door: idea to live site from one prompt bar (site 0.5.0), brand sync fix",
+      "by": "agent session",
+      "plus": 109,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/223"
+     },
+     {
+      "n": 222,
+      "title": "Bootstrap loop: fail-closed GitHub settings, deploy dispatch after merge, daily drift probe",
+      "by": "agent session",
+      "plus": 202,
+      "minus": 172,
+      "url": "https://github.com/ultrastable/ultrastable/pull/222"
+     },
+     {
+      "n": 221,
+      "title": "Close merge\u2192deploy\u2192verify-live loop (site was 0.2.0 live, 0.3.1 merged)",
+      "by": "agent session",
+      "plus": 44,
+      "minus": 8,
+      "url": "https://github.com/ultrastable/ultrastable/pull/221"
+     },
+     {
+      "n": 220,
+      "title": "Fleet lane skips archived repositories",
+      "by": "agent session",
+      "plus": 21,
+      "minus": 5,
+      "url": "https://github.com/ultrastable/ultrastable/pull/220"
+     },
+     {
+      "n": 219,
+      "title": "Closed-loop axiom as data, enforcement, fleet lane and residual queue",
+      "by": "agent session",
+      "plus": 1486,
+      "minus": 175,
+      "url": "https://github.com/ultrastable/ultrastable/pull/219"
+     },
+     {
+      "n": 218,
+      "title": "Standing rule: merge PRs immediately and resolve everything",
+      "by": "agent session",
+      "plus": 13,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/218"
+     },
+     {
+      "n": 217,
+      "title": "Record executor tick for #34 (verified, no change)",
+      "by": "agent session",
+      "plus": 1,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/217"
+     },
+     {
+      "n": 216,
+      "title": "Gate the org page with a roles-only lint",
+      "by": "agent session",
+      "plus": 19,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/216"
+     },
+     {
+      "n": 215,
+      "title": "NEEDS-YOU: connector grant is per account",
+      "by": "agent session",
+      "plus": 12,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/215"
+     },
+     {
+      "n": 213,
+      "title": "Track the workers release tag as a scan-evaluated dependency",
+      "by": "agent session",
+      "plus": 51,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/213"
+     },
+     {
+      "n": 212,
+      "title": "Org presence without a token: /org page, four-repo profile",
+      "by": "agent session",
+      "plus": 53,
+      "minus": 16,
+      "url": "https://github.com/ultrastable/ultrastable/pull/212"
+     },
+     {
+      "n": 211,
+      "title": "CLOSED-LOOP-1: no artifact without a consuming loop, no wait on a person",
+      "by": "agent session",
+      "plus": 562,
+      "minus": 44,
+      "url": "https://github.com/ultrastable/ultrastable/pull/211"
+     },
+     {
+      "n": 210,
+      "title": "DOC-CONSUMED-1: every document must have a consumer",
+      "by": "agent session",
+      "plus": 6414,
+      "minus": 5416,
+      "url": "https://github.com/ultrastable/ultrastable/pull/210"
+     },
+     {
+      "n": 209,
+      "title": "SELF-CLOSED-LOOPS-1: every loop closes in code (gaplint GL010)",
+      "by": "agent session",
+      "plus": 53,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/209"
+     },
+     {
+      "n": 208,
+      "title": "Record .github surface retest and license archive probe",
+      "by": "agent session",
+      "plus": 13,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/208"
+     },
+     {
+      "n": 207,
+      "title": "Source last research rows; record QNFO-lane dependencies in the drift scan",
+      "by": "agent session",
+      "plus": 92,
+      "minus": 81,
+      "url": "https://github.com/ultrastable/ultrastable/pull/207"
+     },
+     {
+      "n": 206,
+      "title": "Org repo registry with CI check and drift detector",
+      "by": "agent session",
+      "plus": 237,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/206"
+     },
+     {
+      "n": 205,
+      "title": "One core, many instances: upstream sync, drift, adoption, bootstrap explainer",
+      "by": "agent session",
+      "plus": 852,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/205"
+     },
+     {
+      "n": 204,
+      "title": "Delete owner cards: one NEEDS-YOU page, key-free executor via Claude sessions",
+      "by": "agent session",
+      "plus": 240,
+      "minus": 195,
+      "url": "https://github.com/ultrastable/ultrastable/pull/204"
+     },
+     {
+      "n": 203,
+      "title": "Fold Worker lane (#200) into the executor line",
+      "by": "agent session",
+      "plus": 116,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/203"
+     },
+     {
+      "n": 202,
+      "title": "Agent-executor, Worker dispatch, staged Cloudflare account transfer",
+      "by": "agent session",
+      "plus": 981,
+      "minus": 17,
+      "url": "https://github.com/ultrastable/ultrastable/pull/202"
+     },
+     {
+      "n": 201,
+      "title": "Operating agreement: ingest everything, keep decisions in files, audit public surfaces",
+      "by": "agent session",
+      "plus": 15,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/201"
+     },
+     {
+      "n": 199,
+      "title": "Codify the guiding directive and make the repo the only memory",
+      "by": "agent session",
+      "plus": 1248,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/199"
+     },
+     {
+      "n": 198,
+      "title": "Doctrine: zero-fuss, zero-knowledge setup as a checked rule",
+      "by": "agent session",
+      "plus": 70,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/198"
+     }
+    ]
+   },
+   {
+    "date": "2026-11-11",
+    "changes": [
+     {
+      "n": 197,
+      "title": "No single route: failover, credential-free first run, routes lint (SG-10)",
+      "by": "agent session",
+      "plus": 306,
+      "minus": 21,
+      "url": "https://github.com/ultrastable/ultrastable/pull/197"
+     },
+     {
+      "n": 196,
+      "title": "Record target Cloudflare account and credential needed",
+      "by": "agent session",
+      "plus": 8,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/196"
+     },
+     {
+      "n": 195,
+      "title": "Bake agentic standards into the seed Worker (MCP, discovery, register, conformance lint)",
+      "by": "agent session",
+      "plus": 1929,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/195"
+     },
+     {
+      "n": 194,
+      "title": "Launch the self-bootstrap loops (closes SG-9)",
+      "by": "agent session",
+      "plus": 533,
+      "minus": 19,
+      "url": "https://github.com/ultrastable/ultrastable/pull/194"
+     },
+     {
+      "n": 193,
+      "title": "Codify the doctrine: glossary, loop registry, write-back, kernel",
+      "by": "agent session",
+      "plus": 6026,
+      "minus": 20,
+      "url": "https://github.com/ultrastable/ultrastable/pull/193"
+     },
+     {
+      "n": 192,
+      "title": "Owner cockpit and Ultrastable running on itself (autorun, dashboard, demo)",
+      "by": "agent session",
+      "plus": 1292,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/192"
+     },
+     {
+      "n": 191,
+      "title": "Brand overhaul: positioning on every front page, generated images, contact routing, self dashboard",
+      "by": "agent session",
+      "plus": 1749,
+      "minus": 49,
+      "url": "https://github.com/ultrastable/ultrastable/pull/191"
+     },
+     {
+      "n": 190,
+      "title": "Plugin tier: external services as optional code loops (closes SG-3, SG-4, SG-5)",
+      "by": "agent session",
+      "plus": 1630,
+      "minus": 10,
+      "url": "https://github.com/ultrastable/ultrastable/pull/190"
+     },
+     {
+      "n": 189,
+      "title": "Ultrastable runs on itself: selfhost boot, verifier, gap register, any-tools runbooks",
+      "by": "agent session",
+      "plus": 970,
+      "minus": 11,
+      "url": "https://github.com/ultrastable/ultrastable/pull/189"
+     },
+     {
+      "n": 188,
+      "title": "License: align to USL-1.0, set rates, record decisions",
+      "by": "agent session",
+      "plus": 742,
+      "minus": 1138,
+      "url": "https://github.com/ultrastable/ultrastable/pull/188"
+     },
+     {
+      "n": 187,
+      "title": "License and specs: hybrid license replaces the patent track",
+      "by": "agent session",
+      "plus": 1233,
+      "minus": 34,
+      "url": "https://github.com/ultrastable/ultrastable/pull/187"
+     },
+     {
+      "n": 186,
+      "title": "Scope, license draft, guided interview and 3-screen UI",
+      "by": "agent session",
+      "plus": 683,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/186"
+     }
+    ]
+   },
+   {
+    "date": "2026-11-10",
+    "changes": [
+     {
+      "n": 182,
+      "title": "IP-3: dated evidence log entries (refs #28)",
+      "by": "agent session",
+      "plus": 32,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/182"
+     },
+     {
+      "n": 181,
+      "title": "Lane: LLM diff review (#89)",
+      "by": "agent session",
+      "plus": 78,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/181"
+     },
+     {
+      "n": 178,
+      "title": "IP: claim-to-code map, invention vs implementation split, Cloudflare reference extraction",
+      "by": "agent session",
+      "plus": 8242,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/178"
+     },
+     {
+      "n": 177,
+      "title": "Foundation: layers, new-system generator, owner-step routes, doctrine as code",
+      "by": "agent session",
+      "plus": 1484,
+      "minus": 52,
+      "url": "https://github.com/ultrastable/ultrastable/pull/177"
+     },
+     {
+      "n": 176,
+      "title": "Untrack accidentally committed .wrangler cache",
+      "by": "agent session",
+      "plus": 2,
+      "minus": 12,
+      "url": "https://github.com/ultrastable/ultrastable/pull/176"
+     },
+     {
+      "n": 175,
+      "title": "ULTRASTABLE-1: bounded, counted gh calls in ops scripts",
+      "by": "agent session",
+      "plus": 33,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/175"
+     },
+     {
+      "n": 173,
+      "title": "ANALYTICS-1: count public ultrastable.io pages and serve the beacon from the site worker",
+      "by": "agent session",
+      "plus": 28,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/173"
+     },
+     {
+      "n": 172,
+      "title": "ANALYTICS-1: standard first-party web analytics for every system, rolled into the dashboard",
+      "by": "agent session",
+      "plus": 262,
+      "minus": 7,
+      "url": "https://github.com/ultrastable/ultrastable/pull/172"
+     },
+     {
+      "n": 171,
+      "title": "Owner steps: record 2026-11-10 deploy, hello@ and board",
+      "by": "other",
+      "plus": 10,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/171"
+     },
+     {
+      "n": 170,
+      "title": "Site pages, KV images, manual-only deploy, one owner-steps list",
+      "by": "agent session",
+      "plus": 123,
+      "minus": 25,
+      "url": "https://github.com/ultrastable/ultrastable/pull/170"
+     },
+     {
+      "n": 169,
+      "title": "Cut Actions minutes: throttle schedules, budget guard, kill switch, workflow lint",
+      "by": "agent session",
+      "plus": 314,
+      "minus": 59,
+      "url": "https://github.com/ultrastable/ultrastable/pull/169"
+     },
+     {
+      "n": 168,
+      "title": "Demos, gaplint product and the code-first rule",
+      "by": "agent session",
+      "plus": 940,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/168"
+     },
+     {
+      "n": 167,
+      "title": "Cut outreach automation to weekly and on-demand, declare minute budget",
+      "by": "agent session",
+      "plus": 37,
+      "minus": 67,
+      "url": "https://github.com/ultrastable/ultrastable/pull/167"
+     },
+     {
+      "n": 166,
+      "title": "Funding and outreach loop, research funding track, dashboard panels, bootstrap case library",
+      "by": "agent session",
+      "plus": 4658,
+      "minus": 512,
+      "url": "https://github.com/ultrastable/ultrastable/pull/166"
+     },
+     {
+      "n": 165,
+      "title": "Funding: verify Apache Incubator and Open Source Collective at the source (FUND-6)",
+      "by": "agent session",
+      "plus": 2,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/165"
+     },
+     {
+      "n": 164,
+      "title": "Docs: financial model structure, architecture status, remove committed build output (FN, PL-5)",
+      "by": "agent session",
+      "plus": 44,
+      "minus": 1639,
+      "url": "https://github.com/ultrastable/ultrastable/pull/164"
+     },
+     {
+      "n": 163,
+      "title": "Docs: project memory and BG-28 after the second issue-drain pass",
+      "by": "agent session",
+      "plus": 4,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/163"
+     },
+     {
+      "n": 162,
+      "title": "Funding: Google for Startups packet and application pipeline (BG-28)",
+      "by": "agent session",
+      "plus": 242,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/162"
+     },
+     {
+      "n": 161,
+      "title": "Core: pending verification waits, Vertex 401 token refresh, Postgres reconnect (CORE-4a, 5a, 3a)",
+      "by": "agent session",
+      "plus": 202,
+      "minus": 7,
+      "url": "https://github.com/ultrastable/ultrastable/pull/161"
+     },
+     {
+      "n": 160,
+      "title": "Docs: tenant isolation design, pricing hypotheses, one-command install (PL-3, PR-4, PL-6)",
+      "by": "agent session",
+      "plus": 1683,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/160"
+     },
+     {
+      "n": 159,
+      "title": "Core: registries table, tables map, boundary test, second-installation proof (refs #3, #5)",
+      "by": "agent session",
+      "plus": 81,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/159"
+     },
+     {
+      "n": 158,
+      "title": "Docs: credit programs verified at source and trademark plan (FN-4, FUND-8)",
+      "by": "agent session",
+      "plus": 42,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/158"
+     },
+     {
+      "n": 157,
+      "title": "Docs: issue drain handoff with per-issue dispositions",
+      "by": "agent session",
+      "plus": 19,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/157"
+     },
+     {
+      "n": 156,
+      "title": "Funding: verify Sloan and NSF POSE at the source (FUND-6, refs #108)",
+      "by": "agent session",
+      "plus": 2,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/156"
+     },
+     {
+      "n": 152,
+      "title": "Docs: cost per tick method and measured rates (FUND-7, refs #109)",
+      "by": "agent session",
+      "plus": 23,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/152"
+     },
+     {
+      "n": 151,
+      "title": "Core: Postgres store adapter with CI Postgres service (CORE-3, refs #92)",
+      "by": "agent session",
+      "plus": 109,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/151"
+     },
+     {
+      "n": 147,
+      "title": "Core: GitHub connector, items from issues and merge on green (CORE-4, refs #93)",
+      "by": "agent session",
+      "plus": 158,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/147"
+     },
+     {
+      "n": 146,
+      "title": "Core: Vertex AI adapter and doer/reviewer family pairing (CORE-5, refs #94)",
+      "by": "agent session",
+      "plus": 125,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/146"
+     },
+     {
+      "n": 145,
+      "title": "Project memory: issue drain status and BG-27",
+      "by": "agent session",
+      "plus": 1,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/145"
+     },
+     {
+      "n": 144,
+      "title": "Open-core release plan drafts (FUND-9, closes #111)",
+      "by": "agent session",
+      "plus": 48,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/144"
+     },
+     {
+      "n": 143,
+      "title": "Reconcile business docs: one source per topic; fix licence statements (closes #95)",
+      "by": "agent session",
+      "plus": 48,
+      "minus": 6,
+      "url": "https://github.com/ultrastable/ultrastable/pull/143"
+     },
+     {
+      "n": 142,
+      "title": "docs(ip): IP-8 preliminary trademark clearance notes",
+      "by": "other",
+      "plus": 18,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/142"
+     },
+     {
+      "n": 141,
+      "title": "Org-chart loader: roles, objectives, gates, connectors as data (closes #36)",
+      "by": "agent session",
+      "plus": 146,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/141"
+     },
+     {
+      "n": 140,
+      "title": "Core: policy overlay merge and no-hardcoded-tenant test (closes #2, #4)",
+      "by": "agent session",
+      "plus": 71,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/140"
+     },
+     {
+      "n": 139,
+      "title": "Shrink site social card; record BG-27 deploy blocker",
+      "by": "agent session",
+      "plus": 5,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/139"
+     },
+     {
+      "n": 138,
+      "title": "Bump actions/checkout from 4 to 7",
+      "by": "bot",
+      "plus": 4,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/138"
+     },
+     {
+      "n": 137,
+      "title": "Bump actions/setup-node from 4 to 7",
+      "by": "bot",
+      "plus": 1,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/137"
+     },
+     {
+      "n": 136,
+      "title": "Bump actions/setup-python from 5 to 7",
+      "by": "bot",
+      "plus": 1,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/136"
+     },
+     {
+      "n": 135,
+      "title": "Walkthrough: Online Filing \"restricted\" page fix and paper fallback",
+      "by": "agent session",
+      "plus": 42,
+      "minus": 5,
+      "url": "https://github.com/ultrastable/ultrastable/pull/135"
+     },
+     {
+      "n": 134,
+      "title": "Click-by-click Dutch filing walkthrough (OCNL Online Filing)",
+      "by": "agent session",
+      "plus": 124,
+      "minus": 36,
+      "url": "https://github.com/ultrastable/ultrastable/pull/134"
+     },
+     {
+      "n": 133,
+      "title": "Dutch filing set: description, Dutch claims, abstract, text-free drawings",
+      "by": "agent session",
+      "plus": 5982,
+      "minus": 14,
+      "url": "https://github.com/ultrastable/ultrastable/pull/133"
+     },
+     {
+      "n": 132,
+      "title": "European priority filing package: Dutch national route (ip/europe)",
+      "by": "agent session",
+      "plus": 253,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/132"
+     },
+     {
+      "n": 131,
+      "title": "Add deploy-site workflow (BG-25)",
+      "by": "agent session",
+      "plus": 31,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/131"
+     },
+     {
+      "n": 130,
+      "title": "Condense the provisional patent to 100 sheets and enforce the limit",
+      "by": "agent session",
+      "plus": 2575,
+      "minus": 1264,
+      "url": "https://github.com/ultrastable/ultrastable/pull/130"
+     },
+     {
+      "n": 129,
+      "title": "Automated social posting: guarded queue, Bluesky and Mastodon, kill switch",
+      "by": "agent session",
+      "plus": 468,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/129"
+     },
+     {
+      "n": 128,
+      "title": "retriage: close gap issue when no gaps remain",
+      "by": "other",
+      "plus": 2,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/128"
+     },
+     {
+      "n": 126,
+      "title": "Add CODEOWNERS and CITATION.cff",
+      "by": "other",
+      "plus": 8,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/126"
+     },
+     {
+      "n": 125,
+      "title": "Brand and GitHub settings build-out: settings as code, community files, PNG social card",
+      "by": "agent session",
+      "plus": 235,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/125"
+     },
+     {
+      "n": 124,
+      "title": "retriage: accept 'Done check' as closing probe",
+      "by": "other",
+      "plus": 2,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/124"
+     },
+     {
+      "n": 122,
+      "title": "FUND-10: funding registry, verifier and issue filer in seed/ (BG-17)",
+      "by": "other",
+      "plus": 154,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/122"
+     },
+     {
+      "n": 121,
+      "title": "seed: org-init verifies the public org page (BG-13)",
+      "by": "other",
+      "plus": 8,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/121"
+     },
+     {
+      "n": 119,
+      "title": "Seed: surfaces and org stages, failure-mode audit",
+      "by": "agent session",
+      "plus": 74,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/119"
+     },
+     {
+      "n": 118,
+      "title": "Add bootstrap prompt (docs and seed)",
+      "by": "agent session",
+      "plus": 60,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/118"
+     },
+     {
+      "n": 116,
+      "title": "Log first Cloudflare deployment of the seed and lessons",
+      "by": "agent session",
+      "plus": 29,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/116"
+     },
+     {
+      "n": 115,
+      "title": "Provisional filing-ready package, preflight, retriage workflow",
+      "by": "agent session",
+      "plus": 455,
+      "minus": 11,
+      "url": "https://github.com/ultrastable/ultrastable/pull/115"
+     },
+     {
+      "n": 114,
+      "title": "Log device and computer-use results; add BG-12",
+      "by": "agent session",
+      "plus": 5,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/114"
+     },
+     {
+      "n": 102,
+      "title": "Add dual-track funding package, briefing set and funding maintenance",
+      "by": "agent session",
+      "plus": 670,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/102"
+     },
+     {
+      "n": 101,
+      "title": "Unarchive .github in org-init; log profile surfaces",
+      "by": "agent session",
+      "plus": 5,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/101"
+     },
+     {
+      "n": 100,
+      "title": "Move project memory into the repo",
+      "by": "agent session",
+      "plus": 291,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/100"
+     },
+     {
+      "n": 99,
+      "title": "Session record: open items filed as issues #90-#97",
+      "by": "agent session",
+      "plus": 26,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/99"
+     },
+     {
+      "n": 98,
+      "title": "Patent: provisional v5 (self-description, autonomous business chain, QA applied, claims rewritten)",
+      "by": "agent session",
+      "plus": 1910,
+      "minus": 599,
+      "url": "https://github.com/ultrastable/ultrastable/pull/98"
+     },
+     {
+      "n": 88,
+      "title": "WorkersAIAgent + first real-model proof",
+      "by": "agent session",
+      "plus": 93,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/88"
+     },
+     {
+      "n": 87,
+      "title": "Record archived duplicate repos in BOOTSTRAP-GAPS",
+      "by": "agent session",
+      "plus": 3,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/87"
+     },
+     {
+      "n": 86,
+      "title": "Record real-agent proof attempt and blocker",
+      "by": "agent session",
+      "plus": 1,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/86"
+     },
+     {
+      "n": 85,
+      "title": "Record dashboard deploy procedure and failures",
+      "by": "agent session",
+      "plus": 38,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/85"
+     },
+     {
+      "n": 84,
+      "title": "Runnable Python reference runtime (platform/core) + investor pack",
+      "by": "agent session",
+      "plus": 2042,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/84"
+     },
+     {
+      "n": 83,
+      "title": "Add patent-thread entries to the bootstrap log",
+      "by": "other",
+      "plus": 18,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/83"
+     },
+     {
+      "n": 81,
+      "title": "Record branding and deploy bootstrap notes",
+      "by": "agent session",
+      "plus": 23,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/81"
+     },
+     {
+      "n": 80,
+      "title": "Track bootstrap gaps; add org-init workflow to seed",
+      "by": "agent session",
+      "plus": 164,
+      "minus": 16,
+      "url": "https://github.com/ultrastable/ultrastable/pull/80"
+     },
+     {
+      "n": 79,
+      "title": "Add bootstrap log: day-one procedures and failures",
+      "by": "agent session",
+      "plus": 37,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/79"
+     },
+     {
+      "n": 78,
+      "title": "Record GitHub consolidation lessons",
+      "by": "agent session",
+      "plus": 28,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/78"
+     },
+     {
+      "n": 77,
+      "title": "Core instructions: do it, never stop, rules live everywhere",
+      "by": "agent session",
+      "plus": 9,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/77"
+     },
+     {
+      "n": 76,
+      "title": "Separate Ultrastable brand from QNFO; reposition as autonomous business system",
+      "by": "agent session",
+      "plus": 106,
+      "minus": 100,
+      "url": "https://github.com/ultrastable/ultrastable/pull/76"
+     },
+     {
+      "n": 75,
+      "title": "Stage Ultrastable site copy (private, unpublished)",
+      "by": "agent session",
+      "plus": 36,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/75"
+     },
+     {
+      "n": 74,
+      "title": "Add agents/SELF-AWARENESS.md",
+      "by": "agent session",
+      "plus": 57,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/74"
+     },
+     {
+      "n": 73,
+      "title": "Patent: expand provisional to v4 (sections 23-51, FIG. 16-29, 157 claim summaries)",
+      "by": "agent session",
+      "plus": 3065,
+      "minus": 42,
+      "url": "https://github.com/ultrastable/ultrastable/pull/73"
+     },
+     {
+      "n": 72,
+      "title": "Finish licence and disclosure wording fixes (QNFO-ULA v2.1)",
+      "by": "agent session",
+      "plus": 22,
+      "minus": 22,
+      "url": "https://github.com/ultrastable/ultrastable/pull/72"
+     },
+     {
+      "n": 71,
+      "title": "Reword dashboard patent-timing text per owner correction",
+      "by": "agent session",
+      "plus": 3,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/71"
+     },
+     {
+      "n": 70,
+      "title": "Correct licence statement: QNFO-ULA v2.1 applies",
+      "by": "agent session",
+      "plus": 4,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/70"
+     },
+     {
+      "n": 69,
+      "title": "Add org-manage workflow for Projects boards",
+      "by": "agent session",
+      "plus": 77,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/69"
+     },
+     {
+      "n": 68,
+      "title": "Shop-around package: overview, GCP adapter, external set, Google kit, marketing",
+      "by": "agent session",
+      "plus": 571,
+      "minus": 33,
+      "url": "https://github.com/ultrastable/ultrastable/pull/68"
+     },
+     {
+      "n": 67,
+      "title": "Brand the dashboard and add QNFO cross-link draft",
+      "by": "agent session",
+      "plus": 19,
+      "minus": 3,
+      "url": "https://github.com/ultrastable/ultrastable/pull/67"
+     },
+     {
+      "n": 66,
+      "title": "Bump actions/checkout from 4 to 7",
+      "by": "bot",
+      "plus": 4,
+      "minus": 4,
+      "url": "https://github.com/ultrastable/ultrastable/pull/66"
+     },
+     {
+      "n": 65,
+      "title": "Add owner dashboard, holding page and dashboard innovations for the provisional",
+      "by": "agent session",
+      "plus": 511,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/65"
+     },
+     {
+      "n": 64,
+      "title": "Brand kit, public org profile contents, branded templates and site",
+      "by": "agent session",
+      "plus": 189,
+      "minus": 2,
+      "url": "https://github.com/ultrastable/ultrastable/pull/64"
+     },
+     {
+      "n": 63,
+      "title": "Add the last platform-thread outputs: inventory, owner answers, domain state",
+      "by": "agent session",
+      "plus": 83,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/63"
+     },
+     {
+      "n": 60,
+      "title": "Live issues-by-area page and IP issue table, refreshed hourly from GitHub issues",
+      "by": "agent session",
+      "plus": 223,
+      "minus": 1,
+      "url": "https://github.com/ultrastable/ultrastable/pull/60"
+     },
+     {
+      "n": 54,
+      "title": "Consolidate repo layout",
+      "by": "agent session",
+      "plus": 193,
+      "minus": 6148,
+      "url": "https://github.com/ultrastable/ultrastable/pull/54"
+     },
+     {
+      "n": 51,
+      "title": "Add everything from the QNFO platform thread and the local ultrastable workspace",
+      "by": "agent session",
+      "plus": 25814,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/51"
+     },
+     {
+      "n": 13,
+      "title": "Add seed bootstrapper and the full project library",
+      "by": "agent session",
+      "plus": 4821,
+      "minus": 0,
+      "url": "https://github.com/ultrastable/ultrastable/pull/13"
+     }
+    ]
+   }
+  ],
   "deploys": {
-   "site_runs": 48,
+   "site_runs": 50,
    "by_conclusion": {
-    "success": 46,
+    "success": 48,
     "cancelled": 2
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-13T11:37:31Z",
+    "createdAt": "2026-11-13T13:28:21Z",
     "event": "push",
-    "headSha": "d2cf5fe2835a6c0cc6685baa61640400c93d30e1"
+    "headSha": "368dafab74ef4c926fe3dd69d129c6ce82f8e552"
    },
    "per_day_success": {
-    "2026-11-12": 42,
-    "2026-11-13": 4
+    "2026-11-12": 36,
+    "2026-11-13": 12
    }
   },
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "success": 30
+    "": 2,
+    "cancelled": 3,
+    "success": 25
    },
-   "prs_opened_unattended": 0,
-   "prs_merged_unattended": 0,
-   "attempts": {},
+   "prs_opened_unattended": 5,
+   "prs_merged_unattended": 2,
+   "attempts": {
+    "OPEN": 1,
+    "MERGED": 2,
+    "CLOSED": 2
+   },
    "log_rows": 1
   },
   "model_cost": {
-   "calls": 0,
-   "usd": 0,
-   "by_model": {}
+   "calls": 1,
+   "usd": 0.00197,
+   "by_model": {
+    "@cf/zai-org/glm-5.3-flash": {
+     "calls": 1,
+     "failed": 0,
+     "usd": 0.00197
+    }
+   }
   }
  },
  "stages": [
@@ -97,16 +1767,15 @@
    "id": "heartbeat",
    "what": "the Cloudflare tick ran",
    "sla_s": 900,
-   "age_s": null,
-   "status": "unmeasured",
-   "missed": 0,
-   "why": "no CLOUDFLARE_API_TOKEN on this host"
+   "age_s": 0.8,
+   "status": "fresh",
+   "missed": 0
   },
   {
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 158.6,
+   "age_s": 82.8,
    "status": "fresh",
    "missed": 0
   },
@@ -114,97 +1783,123 @@
    "id": "pr",
    "what": "an unattended pull request was opened",
    "sla_s": 172800,
-   "age_s": null,
-   "status": "missing",
-   "missed": 1
+   "age_s": 17362.8,
+   "status": "fresh",
+   "missed": 0
   },
   {
    "id": "merge",
    "what": "an unattended pull request merged to main",
    "sla_s": 259200,
-   "age_s": null,
-   "status": "missing",
-   "missed": 1
+   "age_s": 71087.8,
+   "status": "fresh",
+   "missed": 0
   },
   {
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 161.6,
+   "age_s": 85.8,
    "status": "fresh",
    "missed": 0,
-   "lag_s": 31.0
+   "lag_s": 34.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 73606.6,
+   "age_s": 1006.8,
    "status": "fresh",
    "missed": 0
   }
  ],
  "settlement": {
   "counts": {
-   "merged": 0,
-   "closed": 0,
-   "parked": 2,
+   "merged": 2,
+   "closed": 1,
+   "parked": 0,
    "failed": 0,
    "expired": 0,
-   "open": 0
+   "open": 1
   },
   "names": [
    {
-    "name": "Q-SYS-BOOT-REHEARSAL",
-    "state": "parked",
-    "failures": 1
+    "name": "Q-10",
+    "state": "merged",
+    "pr": 268,
+    "age_h": 23.1,
+    "url": "https://github.com/ultrastable/ultrastable/pull/268"
    },
    {
-    "name": "Q-CLOCK-LANE-HOOK",
-    "state": "parked",
-    "failures": 2
+    "name": "unnamed-277",
+    "state": "closed",
+    "pr": 277,
+    "age_h": 22.4,
+    "url": "https://github.com/ultrastable/ultrastable/pull/277"
+   },
+   {
+    "name": "executor",
+    "state": "merged",
+    "pr": 284,
+    "age_h": 19.9,
+    "url": "https://github.com/ultrastable/ultrastable/pull/284"
+   },
+   {
+    "name": "Q-GROW-AGENT-DIRECTORIES",
+    "state": "open",
+    "pr": 297,
+    "age_h": 4.8,
+    "url": "https://github.com/ultrastable/ultrastable/pull/297"
    }
   ],
-  "unsettled": []
+  "unsettled": [
+   {
+    "name": "Q-GROW-AGENT-DIRECTORIES",
+    "state": "open",
+    "pr": 297,
+    "age_h": 4.8,
+    "url": "https://github.com/ultrastable/ultrastable/pull/297"
+   }
+  ]
  },
  "product_manager": {
-  "generated": "2026-11-13T11:40:48Z",
+  "generated": "2026-11-13T13:30:25Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1320.1,
-    "value": null,
-    "behind": null,
-    "progress": null
+    "expected_today": 1320.6,
+    "value": 2221,
+    "behind": false,
+    "progress": 4.79
    },
    {
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 568.6,
-    "value": null,
-    "behind": null,
-    "progress": null
+    "expected_today": 568.8,
+    "value": 957,
+    "behind": false,
+    "progress": 4.57
    },
    {
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 826.7,
-    "value": null,
-    "behind": null,
-    "progress": null
+    "expected_today": 827.2,
+    "value": 1245,
+    "behind": false,
+    "progress": 2.34
    },
    {
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 329.9,
-    "value": null,
-    "behind": null,
-    "progress": null
+    "expected_today": 330.1,
+    "value": 576,
+    "behind": false,
+    "progress": 3.38
    }
   ],
   "experiments": [],
@@ -226,7 +1921,7 @@
   "stages": [
    {
     "id": "heartbeat",
-    "status": "unmeasured",
+    "status": "fresh",
     "missed": 0
    },
    {
@@ -236,13 +1931,13 @@
    },
    {
     "id": "pr",
-    "status": "missing",
-    "missed": 1
+    "status": "fresh",
+    "missed": 0
    },
    {
     "id": "merge",
-    "status": "missing",
-    "missed": 1
+    "status": "fresh",
+    "missed": 0
    },
    {
     "id": "deploy",
@@ -259,11 +1954,11 @@
  },
  "growth": {
   "mix": {
-   "growth": 5,
-   "fix": 0,
-   "maintenance": 15,
+   "growth": 1,
+   "fix": 1,
+   "maintenance": 18,
    "total": 20,
-   "growth_share": 0.25,
+   "growth_share": 0.05,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -273,30 +1968,30 @@
    {
     "id": "pageviews_7d",
     "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
-    "value": null,
+    "value": 2221,
     "target": 1500,
-    "breach": null
+    "breach": false
    },
    {
     "id": "visitors_7d",
     "what": "distinct visitors in the last 7 days",
-    "value": null,
+    "value": 957,
     "target": 650,
-    "breach": null
+    "breach": false
    },
    {
     "id": "agent_hits_7d",
     "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
-    "value": null,
+    "value": 1247,
     "target": 1000,
-    "breach": null
+    "breach": false
    },
    {
     "id": "pilot_page_views_7d",
     "what": "views of the pilot application page in the last 7 days",
-    "value": null,
+    "value": 576,
     "target": 400,
-    "breach": null
+    "breach": false
    }
   ],
   "breaches": []
@@ -306,16 +2001,20 @@
    "id": "tick-heartbeat",
    "what": "the org's heartbeat on Cloudflare (cron every 10 minutes): reconcile, claims, gates, predictions, dispatch",
    "source": "d1",
-   "status": "unmeasured",
-   "why": "no CLOUDFLARE_API_TOKEN on this host"
+   "last_beat_age_s": 22.8,
+   "expected_interval_s": 600,
+   "beats_24h": 144,
+   "expected_24h": 144.0,
+   "median_jitter_s": 0.0,
+   "status": "ticking"
   },
   {
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 174.9,
+   "last_beat_age_s": 3.8,
    "expected_interval_s": 21600,
-   "beats_24h": 48,
+   "beats_24h": 60,
    "expected_24h": 4.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -324,9 +2023,9 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 73622.9,
+   "last_beat_age_s": 1028.8,
    "expected_interval_s": 86400,
-   "beats_24h": 7,
+   "beats_24h": 8,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -335,9 +2034,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 205.9,
+   "last_beat_age_s": 138.8,
    "expected_interval_s": 86400,
-   "beats_24h": 44,
+   "beats_24h": 43,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -346,7 +2045,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 56161.9,
+   "last_beat_age_s": 62744.8,
    "expected_interval_s": 604800,
    "beats_24h": 2,
    "expected_24h": 0.1,
@@ -423,7 +2122,8 @@
    }
   ],
   "drift": [
-   "no CLOUDFLARE_API_TOKEN on this host: drift not measured"
+   "worker ultrastable-tick: binding CREDENTIAL_KEY (secret_text) is deployed but not declared",
+   "worker ultrastable-tick: binding GITHUB_REPOS (secret_text) is deployed but not declared"
   ]
  },
  "managers": [
@@ -1174,6 +2874,7 @@
     "Read positioning (doctrine/positioning.json), the disclosure gate and outreach/suppression.json.",
     "Plan the content calendar from published research, shipped features and events; every item has an audience, a channel and a metric.",
     "Draft through the social pipeline (social/); the brand and disclosure guards run before anything is queued.",
+    "Keep the demo video current: edit `video/storyboard.json` (live pages plus guard-clean narration) by PR; `.github/workflows/demo-video.yml` rebuilds it server-side and publishes `releases/download/demo-video/demo.mp4`.",
     "Measure last cycle's items (pageviews, referrals, signups) and keep, change or drop each channel on the numbers.",
     "Open site changes as pull requests; never edit the live site directly."
    ],
@@ -1490,6 +3191,18 @@
    "sla": "1d",
    "closing_probe": "grep:seed/worker/src/sweeper.js::export async function sweepOpenLoops",
    "cycle_metric": "open_loop_age_hours",
+   "last_plus": null,
+   "last_run": null
+  },
+  {
+   "loop": "demo-video",
+   "kind": "outreach",
+   "summary": "Rebuild the narrated demo video of the live product weekly and on storyboard change; publish to the demo-video release.",
+   "owner": "marketing-manager",
+   "trigger": "automatic: weekly schedule and storyboard push",
+   "sla": "7d",
+   "closing_probe": "file:scripts/video_build.py",
+   "cycle_metric": null,
    "last_plus": null,
    "last_run": null
   }
@@ -1900,6 +3613,132 @@
  "changes": {
   "commits": [
    {
+    "sha": "368dafa",
+    "at": "2026-11-13T14:28:18+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "VIDEO-1: server-side narrated demo video of the live product (#312)",
+    "pr": 312,
+    "item": "VIDEO-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/368dafab74ef4c926fe3dd69d129c6ce82f8e552"
+   },
+   {
+    "sha": "b158640",
+    "at": "2026-11-13T13:45:22+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SELF-SUSTAIN-1: executor cap counts attempts, lane closes conflicts, escape-free replies (#304)",
+    "pr": 304,
+    "item": "SELF-SUSTAIN-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/b158640a8182bc728b81c8cf1af0cec51f2419d6"
+   },
+   {
+    "sha": "53bdb42",
+    "at": "2026-11-13T11:57:05Z",
+    "author": "ultrastable-lane",
+    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS)",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/53bdb425c9a8e44fbad3f181ece519b48583b101"
+   },
+   {
+    "sha": "a9c1c6a",
+    "at": "2026-11-13T12:56:43+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "lane: retry the adoption push when main moves (#311)",
+    "pr": 311,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/a9c1c6ac33bd9105ae756a49e7f082bd2aa734d5"
+   },
+   {
+    "sha": "be09493",
+    "at": "2026-11-13T11:54:21Z",
+    "author": "ultrastable-ops",
+    "subject": "deploy-workers: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/be09493a9b913ddc77e5c13dcddcee922b0b11e7"
+   },
+   {
+    "sha": "71f8279",
+    "at": "2026-11-13T12:53:41+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "AUTH-1: unique prefilled GitHub App name per consent visit (#310)",
+    "pr": 310,
+    "item": "AUTH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/71f827977ab9690d35973d547c80580e9fe517dc"
+   },
+   {
+    "sha": "635acf9",
+    "at": "2026-11-13T11:52:52Z",
+    "author": "ultrastable-ops",
+    "subject": "deploy-workers: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/635acf9f1f562495cd73acc2bfa45e835cfcc00c"
+   },
+   {
+    "sha": "f1657aa",
+    "at": "2026-11-13T12:52:15+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SERVER-OWNS-LOOPS-1: the lane adopts every PR it cannot merge; no hand-back wording; sweeper survives issues-off (#306)",
+    "pr": 306,
+    "item": "SERVER-OWNS-LOOPS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f1657aad62066725ae4c87898e546f37da6b90c2"
+   },
+   {
+    "sha": "fb938a1",
+    "at": "2026-11-13T11:48:14Z",
+    "author": "ultrastable-ops",
+    "subject": "deploy-workers: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/fb938a10a9f44a62372148646a32eb525e06e162"
+   },
+   {
+    "sha": "20d8425",
+    "at": "2026-11-13T12:47:41+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "AUTH-1: fix GitHub callback crash (Error 1101) (#309)",
+    "pr": 309,
+    "item": "AUTH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/20d8425b0b7740aae52c534a1ca8077e47c8a2a5"
+   },
+   {
+    "sha": "6e6a357",
+    "at": "2026-11-13T12:45:08+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "AUTH-1: forward /connect from the public site to the tick Worker (#308)",
+    "pr": 308,
+    "item": "AUTH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/6e6a357599a91d65906fc4b24a0d7f465838d315"
+   },
+   {
+    "sha": "bcbcb3e",
+    "at": "2026-11-13T11:44:40Z",
+    "author": "ultrastable-ops",
+    "subject": "deploy-workers: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/bcbcb3e394cdf724786d8cb3f2fda9ad31a0ce8a"
+   },
+   {
+    "sha": "824e98f",
+    "at": "2026-11-13T12:44:02+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "POINT-AND-CLICK-1: lint, self-creating credential schema, /connect redirect (#307)",
+    "pr": 307,
+    "item": "POINT-AND-CLICK-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/824e98fcdab21169656224c57ce1d7c947540989"
+   },
+   {
+    "sha": "894bae1",
+    "at": "2026-11-13T11:38:05Z",
+    "author": "ultrastable-ops",
+    "subject": "deploy-workers: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/894bae1d174296ba0a86e943ff909fb71ba459f2"
+   },
+   {
     "sha": "d2cf5fe",
     "at": "2026-11-13T12:37:28+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -1919,7 +3758,7 @@
    },
    {
     "sha": "f796f4e",
-    "at": "2026-11-13T11:16:30+00:00",
+    "at": "2026-11-13T11:16:30Z",
     "author": "ultrastable-ops",
     "subject": "deploy-workers: record live-verified deploy",
     "pr": null,
@@ -1955,7 +3794,7 @@
    },
    {
     "sha": "36aadd8",
-    "at": "2026-11-13T08:41:55+00:00",
+    "at": "2026-11-13T08:41:55Z",
     "author": "ultrastable-ops",
     "subject": "deploy-workers: record live-verified deploy",
     "pr": null,
@@ -1991,7 +3830,7 @@
    },
    {
     "sha": "663459d",
-    "at": "2026-11-12T20:05:07+00:00",
+    "at": "2026-11-12T20:05:07Z",
     "author": "ultrastable-scout",
     "subject": "scout and rnd: weekly pass, findings filed, profiles refreshed, sources re-weighted",
     "pr": null,
@@ -2009,7 +3848,7 @@
    },
    {
     "sha": "86e943b",
-    "at": "2026-11-12T19:51:57+00:00",
+    "at": "2026-11-12T19:51:57Z",
     "author": "ultrastable-scout",
     "subject": "scout: weekly pass, findings filed and sources re-weighted",
     "pr": null,
@@ -2132,135 +3971,516 @@
     "pr": 281,
     "item": "GROWTH-PM-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/ec06c96a6b12b89693af9a8aa7bdc8c5d2b9c297"
-   },
-   {
-    "sha": "dfc25e0",
-    "at": "2026-11-12T16:12:35+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Quiet product manager pass; adopt parallel growth items; lane hook filed (#280)",
-    "pr": 280,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/dfc25e04238f5137b91e290de080b1f5b6f763aa"
-   },
-   {
-    "sha": "1de7ab7",
-    "at": "2026-11-12T16:11:59+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Queue item Q-LOOP-IMPROVE: loops score themselves and improve (#238)",
-    "pr": 238,
-    "item": "Q-LOOP-IMPROVE",
-    "url": "https://github.com/ultrastable/ultrastable/commit/1de7ab7e64444bd2a41acd84f2d5914481ae6df9"
-   },
-   {
-    "sha": "92c5cc4",
-    "at": "2026-11-12T16:11:55+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "QUALITY-1: queue and roadmap checks agree on closed issues (#249)",
-    "pr": 249,
-    "item": "QUALITY-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/92c5cc44424efe39580f147c4e98d7cdb1b8da12"
-   },
-   {
-    "sha": "67d9aca",
-    "at": "2026-11-12T16:09:45+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Heal pass: unmeasured is not missing; token on the heal steps (#278)",
-    "pr": 278,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/67d9acab737adb54abd62a62ab32225fa995a059"
-   },
-   {
-    "sha": "19d3916",
-    "at": "2026-11-12T16:07:16+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "CLOCKWORK-2 + GROWTH-2: stages, catch-up, settlement, escalation; targets, experiments, knobs, filing (#276)",
-    "pr": 276,
-    "item": "CLOCKWORK-2",
-    "url": "https://github.com/ultrastable/ultrastable/commit/19d3916f55620d0740c21ddf7d931502fa2c3870"
-   },
-   {
-    "sha": "d4248d1",
-    "at": "2026-11-12T16:00:22+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "LANE-WATCH-1: a green PR never stays open (#269)",
-    "pr": 269,
-    "item": "LANE-WATCH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/d4248d17fb60c3ea5467ccde2634198763a8ffb1"
-   },
-   {
-    "sha": "2c8f8da",
-    "at": "2026-11-12T15:57:27+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Clock report: full-day beat window (#274)",
-    "pr": 274,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/2c8f8dac2947bedc650f56e2995399dc3829586a"
-   },
-   {
-    "sha": "f04a484",
-    "at": "2026-11-12T15:55:34+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "CLOCKWORK-1 + GROWTH-1: measured clocks, executor self-chaining, product-manager growth loop (#273)",
-    "pr": 273,
-    "item": "CLOCKWORK-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/f04a48443f1de4a98a3528b3a7f142433ba46987"
-   },
-   {
-    "sha": "76a3c02",
-    "at": "2026-11-12T15:44:56+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Unify system declaration and code-agent ladder with SYSTEM-1 and CODE-AGENTS-1 (#271)",
-    "pr": 271,
-    "item": "SYSTEM-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/76a3c027a8fb0ce54567a6e14ec54c85601162f6"
-   },
-   {
-    "sha": "ab1ff65",
-    "at": "2026-11-12T15:39:33+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "SYS-1 + SYS-2: topology and code-agent ladder (#270)",
-    "pr": 270,
-    "item": "SYS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/ab1ff650303fa68a4cea7f53794a491fb78f4e44"
-   },
-   {
-    "sha": "476b12d",
-    "at": "2026-11-12T14:36:37+00:00",
-    "author": "github-actions[bot]",
-    "subject": "Update ultrastable.io/proof to serve a product-side feed (#Q-10) (#268)",
-    "pr": 268,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/476b12d061c2e276bcd584002334597fc4732367"
-   },
-   {
-    "sha": "59c8c9c",
-    "at": "2026-11-12T15:33:23+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "AGENT-INTEROP-1 and TERMS-CROSSWALK-1: agent-readable site, standards and crosswalk as data (#264)",
-    "pr": 264,
-    "item": "AGENT-INTEROP-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/59c8c9c0ea05fc7047bd72e1d4745ba2d86ee383"
-   },
-   {
-    "sha": "8c618a1",
-    "at": "2026-11-12T15:21:47+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "System roadmap: topology, agent ladder, failure registry, vector KB, readiness, bootstrap rehearsal (#267)",
-    "pr": 267,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/8c618a195e5e2a2430f33756fbd7158c477c1d71"
-   },
-   {
-    "sha": "15ee7fd",
-    "at": "2026-11-12T15:19:58+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Executor: regenerate doctrine files, tagline rule, longer failure text (#266)",
-    "pr": 266,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/15ee7fd40b8c1cbcceef728f212054b9962ef0a6"
    }
   ],
-  "pull_requests": []
+  "pull_requests": [
+   {
+    "number": 312,
+    "title": "VIDEO-1: server-side narrated demo video of the live product",
+    "state": "merged",
+    "branch": "video-plugin-1",
+    "opened": "2026-11-13T13:16:18Z",
+    "merged": "2026-11-13T13:28:18Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "VIDEO-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/312"
+   },
+   {
+    "number": 311,
+    "title": "lane: retry the adoption push when main moves",
+    "state": "merged",
+    "branch": "agent/loop-owner-2",
+    "opened": "2026-11-13T11:54:59Z",
+    "merged": "2026-11-13T11:56:43Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/311"
+   },
+   {
+    "number": 310,
+    "title": "AUTH-1: unique prefilled GitHub App name per consent visit",
+    "state": "merged",
+    "branch": "claude/project-thread-gdjia5",
+    "opened": "2026-11-13T11:53:37Z",
+    "merged": "2026-11-13T11:53:42Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "AUTH-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/310"
+   },
+   {
+    "number": 309,
+    "title": "AUTH-1: fix GitHub callback crash (Error 1101)",
+    "state": "merged",
+    "branch": "claude/project-thread-gdjia5",
+    "opened": "2026-11-13T11:47:37Z",
+    "merged": "2026-11-13T11:47:41Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "AUTH-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/309"
+   },
+   {
+    "number": 308,
+    "title": "AUTH-1: forward /connect from the public site to the tick Worker",
+    "state": "merged",
+    "branch": "claude/project-thread-gdjia5",
+    "opened": "2026-11-13T11:45:04Z",
+    "merged": "2026-11-13T11:45:09Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "AUTH-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/308"
+   },
+   {
+    "number": 307,
+    "title": "POINT-AND-CLICK-1: lint, self-creating credential schema, /connect redirect",
+    "state": "merged",
+    "branch": "claude/project-thread-gdjia5",
+    "opened": "2026-11-13T11:43:52Z",
+    "merged": "2026-11-13T11:44:03Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "POINT-AND-CLICK-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/307"
+   },
+   {
+    "number": 306,
+    "title": "SERVER-OWNS-LOOPS-1: the lane adopts every PR it cannot merge; no hand-back wording; sweeper survives issues-off",
+    "state": "merged",
+    "branch": "agent/loop-owner-1",
+    "opened": "2026-11-13T11:40:23Z",
+    "merged": "2026-11-13T11:52:15Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "SERVER-OWNS-LOOPS-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/306"
+   },
+   {
+    "number": 305,
+    "title": "CRITICALITY-1: k score, mantra, prediction grading, ignition and fuel",
+    "state": "open",
+    "branch": "claude/project-thread-elq2tg",
+    "opened": "2026-11-13T11:29:33Z",
+    "merged": null,
+    "by": "rwnq8",
+    "labels": [
+     "conflict",
+     "server-owned"
+    ],
+    "item": "CRITICALITY-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/305"
+   },
+   {
+    "number": 304,
+    "title": "SELF-SUSTAIN-1: executor cap counts attempts, lane closes conflicts, escape-free replies",
+    "state": "merged",
+    "branch": "agent/self-sustain-1",
+    "opened": "2026-11-13T11:29:19Z",
+    "merged": "2026-11-13T12:45:22Z",
+    "by": "rwnq8",
+    "labels": [
+     "server-owned"
+    ],
+    "item": "SELF-SUSTAIN-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/304"
+   },
+   {
+    "number": 303,
+    "title": "checks: parallelize foundation tests to cut billed minutes (COST-CHECKS-1)",
+    "state": "merged",
+    "branch": "cost/checks-parallel-tests",
+    "opened": "2026-11-13T11:17:25Z",
+    "merged": "2026-11-13T11:22:13Z",
+    "by": "rwnq8",
+    "labels": [
+     "needs-pat"
+    ],
+    "item": "COST-CHECKS-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/303"
+   },
+   {
+    "number": 302,
+    "title": "CRITICALITY-1: tick-end criticality controller (k_eff)",
+    "state": "merged",
+    "branch": "agent/criticality-controller",
+    "opened": "2026-11-13T11:13:36Z",
+    "merged": "2026-11-13T11:15:47Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "CRITICALITY-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/302"
+   },
+   {
+    "number": 301,
+    "title": "COST-GUARD-1 and CRITICALITY-1: cost guard, standing goal, QNFO findings",
+    "state": "merged",
+    "branch": "claude/project-thread-gdjia5",
+    "opened": "2026-11-13T11:04:15Z",
+    "merged": "2026-11-13T11:37:28Z",
+    "by": "rwnq8",
+    "labels": [
+     "conflict",
+     "needs-pat"
+    ],
+    "item": "COST-GUARD-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/301"
+   },
+   {
+    "number": 300,
+    "title": "Q-COST-PROOF-1: cost probe and resource discovery",
+    "state": "merged",
+    "branch": "agent/q-cost-proof-1-cost-probe",
+    "opened": "2026-11-13T10:57:17Z",
+    "merged": "2026-11-13T11:15:56Z",
+    "by": "rwnq8",
+    "labels": [
+     "needs-pat"
+    ],
+    "item": "Q-COST-PROOF-",
+    "url": "https://github.com/ultrastable/ultrastable/pull/300"
+   },
+   {
+    "number": 299,
+    "title": "Q-COST-PROOF-1: queue Quniverse cost proof and resource discovery",
+    "state": "merged",
+    "branch": "claude/cost-proof-1",
+    "opened": "2026-11-13T09:07:56Z",
+    "merged": "2026-11-13T09:08:01Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "Q-COST-PROOF-",
+    "url": "https://github.com/ultrastable/ultrastable/pull/299"
+   },
+   {
+    "number": 298,
+    "title": "DEPLOY-ALL-1: merges deploy the tick and dashboard Workers and verify live code equals the commit",
+    "state": "merged",
+    "branch": "claude/project-thread-vp7syx",
+    "opened": "2026-11-13T08:41:14Z",
+    "merged": "2026-11-13T08:41:22Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "DEPLOY-ALL-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/298"
+   },
+   {
+    "number": 297,
+    "title": "Add agent-directory listing packets with a dry-run-gated, code-consumed outreach publisher (outreach/agent-directories.json, scripts/outreach.py) plus tests. (#Q-GROW-AGENT-DIRECTORIES)",
+    "state": "open",
+    "branch": "agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare",
+    "opened": "2026-11-13T08:40:55Z",
+    "merged": null,
+    "by": "app/github-actions",
+    "labels": [
+     "server-owned"
+    ],
+    "item": "Q-GROW-AGENT-DIRECTORIES",
+    "url": "https://github.com/ultrastable/ultrastable/pull/297"
+   },
+   {
+    "number": 296,
+    "title": "Owner mail paths, executor spark, recorded tick failures, Quniverse parity queue",
+    "state": "merged",
+    "branch": "ccr-fa6d5283-0u9dsq",
+    "opened": "2026-11-13T07:11:36Z",
+    "merged": "2026-11-13T07:14:47Z",
+    "by": "rwnq8",
+    "labels": [
+     "needs-pat"
+    ],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/296"
+   },
+   {
+    "number": 295,
+    "title": "SCOUT-1: queue item for no-feed sources",
+    "state": "merged",
+    "branch": "agent/scout-nofeed",
+    "opened": "2026-11-12T20:05:18Z",
+    "merged": "2026-11-12T20:05:43Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "SCOUT-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/295"
+   },
+   {
+    "number": 294,
+    "title": "RND-1: product-manager R&D loop as code",
+    "state": "merged",
+    "branch": "claude/project-thread-fl07f5",
+    "opened": "2026-11-12T20:02:56Z",
+    "merged": "2026-11-12T20:04:48Z",
+    "by": "rwnq8",
+    "labels": [
+     "needs-pat"
+    ],
+    "item": "RND-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/294"
+   },
+   {
+    "number": 293,
+    "title": "SCOUT-1: product-manager research loop",
+    "state": "closed",
+    "branch": "agent/scout-1",
+    "opened": "2026-11-12T20:02:40Z",
+    "merged": null,
+    "by": "rwnq8",
+    "labels": [
+     "conflict"
+    ],
+    "item": "SCOUT-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/293"
+   },
+   {
+    "number": 292,
+    "title": "SCOUT-1: weekly scout of the state of the art feeds the growth product manager",
+    "state": "merged",
+    "branch": "agent/SCOUT",
+    "opened": "2026-11-12T19:49:55Z",
+    "merged": "2026-11-12T19:51:35Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "SCOUT-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/292"
+   },
+   {
+    "number": 291,
+    "title": "LIVE-1: commit PUBLIC_HEALTH_ONLY gate (visibility.js) to seed worker",
+    "state": "merged",
+    "branch": "agent/live-1-visibility-gate",
+    "opened": "2026-11-12T19:04:37Z",
+    "merged": "2026-11-12T19:07:58Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "LIVE-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/291"
+   },
+   {
+    "number": 290,
+    "title": "Ultrastable workers: /health 503 mid-tick, dashboard snapshots table, CRON-GRID-1, compat_date 2026-11-12, www routes",
+    "state": "merged",
+    "branch": "agent/ultrastable-workers-health-503",
+    "opened": "2026-11-12T18:59:14Z",
+    "merged": "2026-11-12T19:01:29Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "CRON-GRID-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/290"
+   },
+   {
+    "number": 289,
+    "title": "BUILD-3: close the loop (tick, change rounds, /status, model health)",
+    "state": "merged",
+    "branch": "feat/build-3-close-the-loop",
+    "opened": "2026-11-12T18:43:23Z",
+    "merged": "2026-11-12T18:43:30Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "BUILD-3",
+    "url": "https://github.com/ultrastable/ultrastable/pull/289"
+   },
+   {
+    "number": 288,
+    "title": "fleet: queue reads repo-data items when Issues are off",
+    "state": "merged",
+    "branch": "fix/fleet-queue-repo-data",
+    "opened": "2026-11-12T18:41:28Z",
+    "merged": "2026-11-12T18:41:36Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/288"
+   },
+   {
+    "number": 287,
+    "title": "executor: regenerate site roadmap",
+    "state": "merged",
+    "branch": "agent/executor-regen-site-roadmap",
+    "opened": "2026-11-12T18:07:27Z",
+    "merged": "2026-11-12T18:10:09Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/287"
+   },
+   {
+    "number": 286,
+    "title": "EXEC-X: fall through to workers when the own item fails",
+    "state": "merged",
+    "branch": "agent/exec-x-fallthrough",
+    "opened": "2026-11-12T17:57:59Z",
+    "merged": "2026-11-12T17:59:48Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/286"
+   },
+   {
+    "number": 285,
+    "title": "EXEC-X: executor works ultrastable/workers issues",
+    "state": "merged",
+    "branch": "agent/116-cross-repo-intake",
+    "opened": "2026-11-12T17:51:55Z",
+    "merged": "2026-11-12T17:54:04Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/285"
+   },
+   {
+    "number": 284,
+    "title": "executor: accept dict response from Workers AI",
+    "state": "merged",
+    "branch": "agent/executor-cf-dict-response",
+    "opened": "2026-11-12T17:39:08Z",
+    "merged": "2026-11-12T17:45:30Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/284"
+   },
+   {
+    "number": 283,
+    "title": "FLOW-DIRECTIVE-1: every workflow declares flows and bindings",
+    "state": "merged",
+    "branch": "agent/FLOWMAP",
+    "opened": "2026-11-12T16:04:52Z",
+    "merged": "2026-11-12T16:07:01Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "FLOW-DIRECTIVE-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/283"
+   },
+   {
+    "number": 282,
+    "title": "FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path",
+    "state": "merged",
+    "branch": "claude/project-thread-xz5i82",
+    "opened": "2026-11-12T15:45:31Z",
+    "merged": "2026-11-12T15:54:31Z",
+    "by": "rwnq8",
+    "labels": [
+     "needs-pat"
+    ],
+    "item": "FLOW-DIRECTIVE-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/282"
+   },
+   {
+    "number": 281,
+    "title": "GROWTH-PM-1: growth policy values and product coverage enforced in CI",
+    "state": "merged",
+    "branch": "claude/project-thread-11eoyr",
+    "opened": "2026-11-12T15:14:03Z",
+    "merged": "2026-11-12T15:21:26Z",
+    "by": "rwnq8",
+    "labels": [
+     "needs-pat"
+    ],
+    "item": "GROWTH-PM-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/281"
+   },
+   {
+    "number": 280,
+    "title": "Quiet product manager pass; adopt parallel growth items; lane hook filed",
+    "state": "merged",
+    "branch": "agent/pm-quiet",
+    "opened": "2026-11-12T15:12:23Z",
+    "merged": "2026-11-12T15:12:35Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/280"
+   },
+   {
+    "number": 279,
+    "title": "Write-back: lesson on duplicate parallel builds",
+    "state": "merged",
+    "branch": "agent/LESSON-DUPLICATE-WORK",
+    "opened": "2026-11-12T15:12:22Z",
+    "merged": "2026-11-12T15:25:00Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/279"
+   },
+   {
+    "number": 278,
+    "title": "Heal pass: unmeasured is not missing; token on the heal steps",
+    "state": "merged",
+    "branch": "agent/heal-token",
+    "opened": "2026-11-12T15:09:37Z",
+    "merged": "2026-11-12T15:09:46Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/278"
+   },
+   {
+    "number": 277,
+    "title": "Product manager pass: 0 growth and repair item(s) filed",
+    "state": "closed",
+    "branch": "agent/pm-2026111215",
+    "opened": "2026-11-12T15:08:28Z",
+    "merged": null,
+    "by": "app/github-actions",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/277"
+   },
+   {
+    "number": 276,
+    "title": "CLOCKWORK-2 + GROWTH-2: stages, catch-up, settlement, escalation; targets, experiments, knobs, filing",
+    "state": "merged",
+    "branch": "agent/clockwork-growth-full",
+    "opened": "2026-11-12T15:06:39Z",
+    "merged": "2026-11-12T15:07:17Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "CLOCKWORK-2",
+    "url": "https://github.com/ultrastable/ultrastable/pull/276"
+   },
+   {
+    "number": 275,
+    "title": "CLOCKWORK-1 and GROWTH-1: per-stage clock and growth product manager",
+    "state": "closed",
+    "branch": "agent/CLOCKWORK",
+    "opened": "2026-11-12T14:58:26Z",
+    "merged": null,
+    "by": "rwnq8",
+    "labels": [
+     "conflict"
+    ],
+    "item": "CLOCKWORK-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/275"
+   },
+   {
+    "number": 274,
+    "title": "Clock report: full-day beat window",
+    "state": "merged",
+    "branch": "agent/clock-window",
+    "opened": "2026-11-12T14:57:19Z",
+    "merged": "2026-11-12T14:57:27Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/pull/274"
+   },
+   {
+    "number": 273,
+    "title": "CLOCKWORK-1 + GROWTH-1: measured clocks, executor self-chaining, product-manager growth loop",
+    "state": "merged",
+    "branch": "agent/clockwork",
+    "opened": "2026-11-12T14:55:23Z",
+    "merged": "2026-11-12T14:55:34Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "CLOCKWORK-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/273"
+   }
+  ]
  },
  "loop_improvements": [
   {

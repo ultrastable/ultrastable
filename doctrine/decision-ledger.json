@@ -693,6 +693,14 @@
    "title": "VIDEO-1 demo video plugin",
    "body": "Demo videos are built server-side on Actions (Playwright screenshots of live ultrastable.io, piper neural TTS, ffmpeg) from video/storyboard.json; narration must pass the social guard verbatim-excerpt rule. Owner: marketing-manager. Published to release demo-video.",
    "probe": "file:scripts/video_build.py"
+  },
+  {
+   "id": "decision-2026-11-13-executor-closed-q-cost-proof-1-add-deploy-cost-probe-mjs-rec",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "Executor closed Q-COST-PROOF-1: Add deploy/cost-probe.mjs recording D1 rows read (d1AnalyticsAdaptiveGroups) and AI neurons daily, appending",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: deploy/cost-probe.mjs, data/cost-thresholds.json, test/cost-probe.test.mjs.",
+   "probe": "file:deploy/cost-probe.mjs"
   }
  ]
 }
