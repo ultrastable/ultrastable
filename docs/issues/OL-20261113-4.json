@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261113-4",
+  "title": "OL-20261113-4: VIDEO-2 post demo video",
+  "body": "**Owner:** outreach-coordinator\n**Trigger:** demo-video release updated\n**Done check:** grep:scripts/social_post.py::demo.mp4\n**Status:** open\n\nscripts/social_post.py attaches releases/download/demo-video/demo.mp4; channel accounts acquired via /connect consent, never a pasted token.",
+  "labels": [
+    "role:outreach-coordinator",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
