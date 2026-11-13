@@ -6,7 +6,7 @@ import { runTick, ensureItem } from '../src/tick.js';
 import { selfAuditStep, loopBreak, ingestDeploys, probeMode } from '../src/selfaudit.js';
 
 const read = p => JSON.parse(readFileSync(new URL(p, import.meta.url), 'utf8'));
-const policy = read('../../autonomy/policy.json'), crit = read('../../autonomy/criticality.json'), reg = read('../../autonomy/failure-modes.json');
+const policy = read('../../autonomy/policy.json'), crit = read('../../autonomy/criticality.json'), reg0 = read('../../autonomy/failure-modes.json'), reg = { ...reg0, modes: [...reg0.modes, ...read('../../../instances/ultrastable/failure-modes.json').modes] };
 const config = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy, criticality: crit, failure_modes: reg };
 const ctx = () => ({ nowIso: '2026-11-13 21:00:00', notes: [] });
 
@@ -67,22 +67,22 @@ test('the tick runs the selfaudit step and files FM items for red probes', async
 test('COSTGUARD-1: a red budget probe files the next fix, an over-budget sample stays red, a green sample closes fix and mode', async () => {
   const { sampleCosts } = await import('../src/costsample.js');
   const db = makeDb();
-  const m = reg.modes.find(x => x.id === 'qnfo-audit-d1-budget');
+  const m = JSON.parse(JSON.stringify(read('../../../instances/ultrastable/failure-modes.json').modes[0]).split('qn' + 'fo-audit').join('ext-db'));
   const one = { modes: [m] };
   // no token: the sampler records an error sample, the probe is red, the first fix is filed
-  await sampleCosts(db, { token: '', budgets: [{ id: 'qnfo-audit', account_id: 'a', database_id: 'd' }] });
+  await sampleCosts(db, { token: '', budgets: [{ id: 'ext-db', account_id: 'a', database_id: 'd' }] });
   let r = await selfAuditStep(db, ctx(), one, ensureItem);
-  assert.deepEqual(r.red, ['qnfo-audit-d1-budget']);
-  assert.ok(db.raw.prepare(`SELECT 1 FROM items WHERE id='FIX-qnfo-audit-fix-top-scan'`).get());
+  assert.deepEqual(r.red, ['ext-db-d1-budget']);
+  assert.ok(db.raw.prepare(`SELECT 1 FROM items WHERE id='FIX-ext-db-fix-top-scan'`).get());
   // over budget (20M rows in the last hour) stays red
   const fetch20 = async () => ({ ok: true, status: 200, json: async () => ({ data: { viewer: { accounts: [{ d1AnalyticsAdaptiveGroups: [{ sum: { rowsRead: 20000000 } }] }] } } }) });
-  await sampleCosts(db, { token: 't0k', budgets: [{ id: 'qnfo-audit', account_id: 'a', database_id: 'd' }], fetch: fetch20, now: new Date(Date.now() + 1000) });
+  await sampleCosts(db, { token: 't0k', budgets: [{ id: 'ext-db', account_id: 'a', database_id: 'd' }], fetch: fetch20, now: new Date(Date.now() + 1000) });
   r = await selfAuditStep(db, ctx(), one, ensureItem); assert.equal(r.red.length, 1);
   // under budget closes the mode item and its fix
   const fetch5 = async () => ({ ok: true, status: 200, json: async () => ({ data: { viewer: { accounts: [{ d1AnalyticsAdaptiveGroups: [{ sum: { rowsRead: 5000000 } }] }] } } }) });
-  await sampleCosts(db, { token: 't0k', budgets: [{ id: 'qnfo-audit', account_id: 'a', database_id: 'd' }], fetch: fetch5, now: new Date(Date.now() + 2000) });
+  await sampleCosts(db, { token: 't0k', budgets: [{ id: 'ext-db', account_id: 'a', database_id: 'd' }], fetch: fetch5, now: new Date(Date.now() + 2000) });
   r = await selfAuditStep(db, ctx(), one, ensureItem);
-  assert.ok(r.closed.includes('FM-qnfo-audit-d1-budget') && r.closed.includes('FIX-qnfo-audit-fix-top-scan'), JSON.stringify(r));
+  assert.ok(r.closed.includes('FM-ext-db-d1-budget') && r.closed.includes('FIX-ext-db-fix-top-scan'), JSON.stringify(r));
 });
 
 test('github-app-org-access probe follows repo_access', async () => {

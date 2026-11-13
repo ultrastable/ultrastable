@@ -1,8 +1,8 @@
--- COSTGUARD-1: hourly rows-read samples per external D1 database, taken server-side by the tick Worker (GraphQL d1AnalyticsAdaptiveGroups).
+-- COSTGUARD-1: hourly rows-read samples per budgeted external D1 database, taken server-side by the tick Worker (GraphQL d1AnalyticsAdaptiveGroups).
 CREATE TABLE IF NOT EXISTS cost_samples (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   at TEXT NOT NULL,
-  target TEXT NOT NULL,          -- budget id, e.g. qnfo-audit
+  target TEXT NOT NULL,          -- budget id
   rows_read_1h INTEGER,          -- NULL when the sample failed
   error TEXT
 );

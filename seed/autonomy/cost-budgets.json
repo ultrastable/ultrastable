@@ -1,7 +1,4 @@
 {
-  "doc": "COSTGUARD-1: external D1 budgets the tick Worker samples hourly (worker/src/costsample.js). Each budget has a probed failure mode in failure-modes.json. QNFO lives on the quniverse Cloudflare account; the read-only analytics token is bound to the Worker as CF_ANALYTICS_TOKEN.",
-  "budgets": [
-    { "id": "qnfo-audit", "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b", "database_id": "35e2e573-92f3-46ac-83c6-22f6429fc5e5", "database_name": "qnfo-audit", "max_rows_read_per_hour": 15000000,
-      "note": "30d baseline 29.0B rows read (about 40M/hr); debounce trigger from QNFO/qnfo-workers PR 11618 applied 2026-11-13." }
-  ]
+  "doc": "COSTGUARD-1: external D1 budgets the tick Worker samples hourly (worker/src/costsample.js); each needs a probed failure mode. Instances supply budgets in instances/<slug>/cost-budgets.json.",
+  "budgets": []
 }
