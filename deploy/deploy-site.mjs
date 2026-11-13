@@ -51,6 +51,18 @@ for (const [hostname, zone_id] of Object.entries(zones)) {
   const ok = (await api("PUT", `/accounts/${A}/workers/domains`, JSON.stringify({ hostname, service: "ultrastable-site", zone_id, environment: "production" }), { "content-type": "application/json" })).success;
   console.log(hostname, ok); if (!ok) bad++;
 }
+// BUILD-2: <id>.ultrastable.io. A proxied wildcard DNS record plus a wildcard Workers route send every site subdomain to this worker.
+// A missing Cloudflare permission is recorded verbatim (::warning:: plus the owner card text) and does not fail the deploy: sites keep working at /s/<id>.
+{
+  const Z = zones["ultrastable.io"], miss = [];
+  const dns = await api("GET", `/zones/${Z}/dns_records?name=${encodeURIComponent("*.ultrastable.io")}`);
+  if (!dns.success) miss.push("dns list: " + JSON.stringify(dns.errors));
+  else if (!dns.result.length) { const c = await api("POST", `/zones/${Z}/dns_records`, JSON.stringify({ type: "AAAA", name: "*", content: "100::", proxied: true, ttl: 1, comment: "BUILD-2 per-site subdomains (served by worker ultrastable-site)" }), { "content-type": "application/json" }); console.log("wildcard dns", c.success); if (!c.success) miss.push("dns create (needs Zone > DNS > Edit): " + JSON.stringify(c.errors)); } else console.log("wildcard dns present");
+  const rt = await api("GET", `/zones/${Z}/workers/routes`);
+  if (!rt.success) miss.push("routes list: " + JSON.stringify(rt.errors));
+  else if (!rt.result.some(r => r.pattern === "*.ultrastable.io/*")) { const c = await api("POST", `/zones/${Z}/workers/routes`, JSON.stringify({ pattern: "*.ultrastable.io/*", script: "ultrastable-site" }), { "content-type": "application/json" }); console.log("wildcard route", c.success); if (!c.success) miss.push("route create (needs Zone > Workers Routes > Edit): " + JSON.stringify(c.errors)); } else console.log("wildcard route present");
+  for (const m of miss) console.log("::warning::BUILD-2 subdomain setup incomplete, owner card: grant the deploy token Zone DNS Edit + Workers Routes Edit on ultrastable.io. Exact error: " + m);
+}
 // Verify live: the served version must equal the repo version (a green deploy that serves old code is a failed deploy).
 const want = /var VERSION = "([^"]+)"/.exec(src)[1];
 let got = "";
