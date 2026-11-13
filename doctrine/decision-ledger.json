@@ -774,6 +774,14 @@
    "title": "FRONT-DOOR-2: idea consumer deploys a Worker per idea; archived-repo deletion left as owner step",
    "body": "Measured: node site/site.test.mjs passes incl. consumeIdeas (pending-credentials without secrets, PUT to Workers API with them, no redeploy). Executor queue already repo data (QUEUE-1); Issues not disabled; scripts/mirror_then_delete.sh dry-run default.",
    "probe": "file:docs/runbooks/front-door-2.md"
+  },
+  {
+   "id": "decision-2026-11-13-user-path-1-first-run-workflow-replaces-autopilot-step-oauth",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "USER-PATH-1: first-run workflow replaces autopilot step; OAuth awaits owner apps",
+   "body": "SETUP-2 (ops#30): first-run.yml enables scheduled workflows on a copy's first push; autopilot step removed; public-state detection; task wizards; OAuth needs owner-registered apps (NEEDS-YOU card).",
+   "probe": "file:.github/workflows/first-run.yml"
   }
  ]
 }
