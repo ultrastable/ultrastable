@@ -72,15 +72,16 @@ export async function originate(db, t, m, ctx, ensureItem) {
   const order = m.cap_breached ? ['cost_cut'] : t.origination.order;
   for (const kind of order) {
     if (!(await CANDIDATES[kind](m, t, db))) continue;
-    const id = `ORIGIN-${kind}-${day}`;
-    const made = await ensureItem(db, {
+    const pre = `ORIGIN-${kind}-${day}`;
+    const open = await first(db, `SELECT id FROM items WHERE id LIKE ? AND status NOT IN ('done','superseded','cancelled') LIMIT 1`, pre + '%');
+    if (open) return { kind, id: open.id, created: false }; // today's item for this problem is still at the head
+    const id = `${pre}-t${ctx.tickId}`; // a closed one is replaced by a fresh one: the queue may never stay empty
+    await ensureItem(db, {
       id, kind: 'fix', owner_role: t.origination.owner_roles[kind], priority: t.origination.head_priority,
       title: `${t.origination.titles[kind]} (k_eff ${m.k_eff} vs min ${t.k_min})`.slice(0, 400),
       done_check: `k_eff >= ${t.k_min} or the named consumer measurably smaller`, closing_probe: `criticality:${kind}`,
     });
-    if (made) return { kind, id, created: true };
-    const open = await first(db, `SELECT 1 AS x FROM items WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, id);
-    if (open) return { kind, id, created: false }; // today's item for this problem is still at the head
+    return { kind, id, created: true };
   }
   return null;
 }

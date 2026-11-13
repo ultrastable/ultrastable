@@ -57,18 +57,18 @@ test('origination picks cost_cut first when spend is over budget, flaky_deploy w
   const db = makeDb();
   await addSample(db, { source: 'cost-probe', spend_units: crit.origination.spend_budget_units + 1 }, '2026-11-09 00:00:00');
   await runTick(db, { config, now: T0 });
-  assert.ok(db.raw.prepare("SELECT 1 FROM items WHERE id = 'ORIGIN-cost_cut-2026-11-10'").get());
+  assert.ok(db.raw.prepare("SELECT 1 FROM items WHERE id LIKE 'ORIGIN-cost_cut-2026-11-10%'").get());
   const db2 = makeDb();
   await addSample(db2, { source: 'github-runs', deploys_ok: 5, deploys_fail: 5 }, '2026-11-09 00:00:00');
   await runTick(db2, { config, now: T0 });
-  assert.ok(db2.raw.prepare("SELECT 1 FROM items WHERE id = 'ORIGIN-flaky_deploy-2026-11-10'").get());
+  assert.ok(db2.raw.prepare("SELECT 1 FROM items WHERE id LIKE 'ORIGIN-flaky_deploy-2026-11-10%'").get());
 });
 
 test('an unowned backlog item (owner role with no doer row) gets a doer item', async () => {
   const db = makeDb();
   db.raw.exec("INSERT INTO items (id,title,owner_role,done_check,status) VALUES ('workers-173','x','nobody','x','open')");
   await runTick(db, { config, now: T0 });
-  assert.ok(db.raw.prepare("SELECT 1 FROM items WHERE id = 'ORIGIN-unowned_backlog-2026-11-10'").get());
+  assert.ok(db.raw.prepare("SELECT 1 FROM items WHERE id LIKE 'ORIGIN-unowned_backlog-2026-11-10%'").get());
 });
 
 test('while a spend cap is breached only the cost cut is originated', async () => {
@@ -76,7 +76,7 @@ test('while a spend cap is breached only the cost cut is originated', async () =
   await addSample(db, { source: 'cost-probe', spend_units: 1, cap_breached: 1 }, '2026-11-09 00:00:00');
   await runTick(db, { config, now: T0 });
   const ids = db.raw.prepare("SELECT id FROM items WHERE id LIKE 'ORIGIN-%'").all().map(x => x.id);
-  assert.deepEqual(ids, ['ORIGIN-cost_cut-2026-11-10']);
+  assert.deepEqual(ids, ['ORIGIN-cost_cut-2026-11-10-t1']);
 });
 
 test('a healthy tick with queued work and k_eff over the minimum originates nothing', async () => {
