@@ -202,6 +202,13 @@
     "41 5 * * *"
    ]
   },
+  "first-run.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": []
+  },
   "fleet.yml": {
    "events": [
     "repository_dispatch",
