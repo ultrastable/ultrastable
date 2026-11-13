@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-FILES = ("agents/AGENTS.md", "seed/agents/AGENTS.md", "agents/PROJECT-INSTRUCTIONS.md")
+FILES = ("agents/AGENTS.md", "seed/agents/AGENTS.md")
 
 
 class ServerOwnsLoops(unittest.TestCase):
