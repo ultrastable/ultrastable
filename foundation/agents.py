@@ -94,15 +94,15 @@ def parse_json(text: str) -> dict:
     s, e = text.find("{"), text.rfind("}")
     try:
         out = json.loads(text[s:e + 1])
-        if isinstance(out, dict) and "files" in out:
-            return out
-        raise ValueError("JSON without a files list")
     except ValueError:
-        files = [{"path": p.strip(), "content": c + "\n"} for p, c in _BLOCK.findall(text)]
-        if not files:
-            raise
-        m = re.search(r"^SUMMARY:\s*(.+)$", text, re.M)
-        return {"summary": m.group(1).strip() if m else "", "files": files}
+        out = None
+    if isinstance(out, dict) and ("files" in out or not _BLOCK.search(text)):
+        return out
+    files = [{"path": p.strip(), "content": c + "\n"} for p, c in _BLOCK.findall(text)]
+    if not files:
+        raise ValueError("reply is neither JSON nor FILE blocks")
+    m = re.search(r"^SUMMARY:\s*(.+)$", text, re.M)
+    return {"summary": m.group(1).strip() if m else "", "files": files}
 
 
 def complete(prompt: str, env=None, transport=http, root=REPO) -> tuple[dict, str]:
