@@ -1,0 +1,77 @@
+{
+  "$schema_version": "0.1.0",
+  "doc": "SELFAUDIT-1: the probed failure-mode register the tick Worker runs itself every tick (worker/src/selfaudit.js). Each probe is one read-only SELECT returning 1 when healthy. A red probe files or reopens item FM-<id> (owner role, closing probe selfaudit:<id>); the item may only close when its probe is green, never by a message. Detection, owner, trigger and remedy are data here; nothing waits on a person.",
+  "modes": [
+    {
+      "id": "dispatch-no-close",
+      "failure": "Items are dispatched again and again and never produce an outcome (the claim lapses, the reaper releases it, the tick re-dispatches it).",
+      "root_cause": "No consumer closes a dispatch: dispatches stay 'queued' and the re-dispatch had no loop-breaker.",
+      "spof": false,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE 0 END FROM (SELECT item_id FROM dispatches WHERE at >= datetime('now','-3 days') GROUP BY item_id HAVING COUNT(*)>=3 AND item_id IS NOT NULL AND item_id NOT IN (SELECT item_id FROM outcomes WHERE item_id IS NOT NULL) AND item_id NOT IN (SELECT id FROM items WHERE status IN ('blocked','done','superseded','cancelled')))",
+      "remedy": "tick dispatch step blocks an item after max_redispatch dispatches without an outcome and files LOOPBREAK-<item> (guiding directive 2)"
+    },
+    {
+      "id": "no-deploy-evidence",
+      "failure": "k_eff counts zero deploys because no independent deploy evidence reaches D1.",
+      "root_cause": "Q-CRIT-COLLECTORS was filed and never built, so criticality_samples and verified deploy outcomes stay empty.",
+      "spof": true,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COUNT(*)>0 THEN 1 ELSE 0 END FROM outcomes WHERE action_class='deploy' AND result='verified' AND evidence LIKE 'probe:%' AND at >= datetime('now','-14 days')",
+      "remedy": "ingestDeploys reads ops/deploys.jsonl (live_matches_commit rows, written by the post-deploy verifier) into outcomes each tick"
+    },
+    {
+      "id": "k-below-min",
+      "failure": "k_eff is below k_min: loops cost more than they yield.",
+      "root_cause": "Numerator starved (no deploy evidence) and denominator inflated by phantom re-dispatches.",
+      "spof": false,
+      "owner_role": "portfolio-manager",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COALESCE((SELECT json_extract(value,'$.k_eff') FROM org WHERE key='criticality'),0) >= 1 THEN 1 ELSE 0 END",
+      "remedy": "raise verified deploys or cut dispatch waste; the criticality step keeps an ORIGIN item at the head until it holds"
+    },
+    {
+      "id": "tick-stalled",
+      "failure": "The tick has not finished a run in the last 30 minutes.",
+      "root_cause": "cron not firing or the Worker failing before the tick row finishes.",
+      "spof": true,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COUNT(*)>0 THEN 1 ELSE 0 END FROM tick_runs WHERE finished_at IS NOT NULL AND started_at >= datetime('now','-30 minutes')",
+      "remedy": "second route: executor workflow and GitHub Actions dispatch (EXEC-SPARK-1)"
+    },
+    {
+      "id": "sweeper-red",
+      "failure": "The server-side sweeper last pass was not ok, or has not run for 2 hours.",
+      "root_cause": "GitHub App token missing or registered on the wrong account (REPO-ACCESS-1).",
+      "spof": true,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COALESCE((SELECT status='ok' AND at >= datetime('now','-2 hours') FROM sweeper_runs ORDER BY id DESC LIMIT 1),0)=1 THEN 1 ELSE 0 END",
+      "remedy": "adopt the right installation by code, register the App under the org; consent screen is the single identity-bound step"
+    },
+    {
+      "id": "gate-no-default",
+      "failure": "An open gate card has no default in effect, so an owner-only step stalls work.",
+      "root_cause": "an identity-bound step with no staged default in effect.",
+      "spof": false,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE 0 END FROM gate_cards WHERE status='open' AND (default_in_effect IS NULL OR default_in_effect='')",
+      "remedy": "stage the default and let the loop proceed on it"
+    },
+    {
+      "id": "silent-drop",
+      "failure": "An item left the active set with no disposition.",
+      "root_cause": "a path that sets done without a disposition.",
+      "spof": false,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE 0 END FROM outcomes WHERE result='silent_drop' AND at >= datetime('now','-1 day')",
+      "remedy": "reconcile reopens the item; fix the writer"
+    }
+  ],
+  "max_redispatch": 3
+}
