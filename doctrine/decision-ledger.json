@@ -605,6 +605,14 @@
    "title": "CRITICALITY-1 and COST-GUARD-1",
    "body": "Standing goal and QNFO D1 findings F1-F5 recorded as data in doctrine/cost.json, consumed by foundation/cost.py and the cost-guard loop.",
    "probe": "file:doctrine/cost.json"
+  },
+  {
+   "id": "decision-2026-11-13-mantra-as-code",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "Mantra as code",
+   "body": "MANTRA in foundation/criticality.py; four clauses computed; k gates executor queue via queue.takeable; stalled tick files Q-CRIT-STALL. Session: session_0156nqDv8ijT11RmKre7xEmK",
+   "probe": "file:doctrine/criticality.json"
   }
  ]
 }

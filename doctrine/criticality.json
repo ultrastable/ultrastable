@@ -1,0 +1,11 @@
+{
+  "_doc": "CRITICALITY-1 invariant (Rowan, 2026-11-13). foundation/criticality.py computes k every tick and gates the executor queue; the mantra's four clauses are each a computed check.",
+  "version": "1.0.0",
+  "window_hours": 24,
+  "k_floor": 1.0,
+  "cost_floor": 0.1,
+  "raises_labels": ["raises-deploys", "cuts-cost"],
+  "raises_id_prefixes": ["Q-COST", "Q-DEPLOY", "Q-CRIT", "Q-TENANT-deploy"],
+  "raises_workstreams": ["cost", "deploys"],
+  "stall_item": "Q-CRIT-STALL"
+}

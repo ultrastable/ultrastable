@@ -61,6 +61,10 @@
         {
           "signal": "cost.items",
           "via": "file:docs/issues"
+        },
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
         }
       ],
       "outflows": [
@@ -697,6 +701,10 @@
         {
           "signal": "cost.readings",
           "via": "file:ops/cost.jsonl"
+        },
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
         }
       ],
       "feedback": "a merged fix lowers the next day's reading; a breach that persists files an item the executor takes first",

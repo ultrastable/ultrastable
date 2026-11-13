@@ -46,6 +46,10 @@ def build(root=ROOT) -> dict:
         sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True).stdout.strip()
     except OSError:
         sha = ""
+    cl = [json.loads(x) for x in (root / "ops/criticality.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()] if (root / "ops/criticality.jsonl").is_file() else []
+    last = cl[-1] if cl else None
+    crit_head = f"k = {last['k']} ({last['gate']})" if last else "no tick recorded yet"
+    crit_rows = [[c, "met" if ok else "not met"] for c, ok in last["clauses"].items()] if last else []
     tenant0 = {
         "level": 0, "panels": [
             {"id": "loops", "title": "Closed loops", "source": "instances/ultrastable/loop-registry.json",
@@ -67,6 +71,9 @@ def build(root=ROOT) -> dict:
              "headline": f"{len(issues)} issue files, {len(unprobed)} without a runnable probe (shrink-only)",
              "rows": [["open issues without a probe", len(unprobed)], ["issue files", len(issues)]],
              "note": "Every open item carries an owner, a trigger and a done check the system runs."},
+            {"id": "criticality", "title": "Criticality", "source": "ops/criticality.jsonl",
+             "headline": crit_head, "rows": crit_rows,
+             "note": "Ship. Verify. Spend less than it earns. Feed the next loop. k = verified deploys / (cost + human touches); below 1 the queue is limited to deploys and cost."},
             {"id": "trust", "title": "Earned autonomy", "source": "instances/ultrastable/trust-ledger.json",
              "headline": f"{len(rows)} trust rows", "rows": [[k, v] for k, v in sorted(rungs.items())],
              "note": "Autonomy widens per surface and action from graded predictions, never by itself."},

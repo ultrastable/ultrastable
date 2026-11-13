@@ -2408,12 +2408,16 @@
       "closing_probe": "file:doctrine/cost.json",
       "writeback": [
         "ops/cost.jsonl",
-        "docs/issues"
+        "docs/issues",
+        "ops/criticality.jsonl"
       ],
       "system_path": [
         "foundation/cost.py",
         "doctrine/cost.json",
-        "tests/foundation/test_cost.py"
+        "tests/foundation/test_cost.py",
+        "foundation/criticality.py",
+        "doctrine/criticality.json",
+        "tests/foundation/test_criticality.py"
       ],
       "workflows": [
         "cost-guard.yml"
