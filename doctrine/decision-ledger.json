@@ -629,6 +629,14 @@
    "title": "SERVER-OWNS-LOOPS-1",
    "body": "Servers own and close every loop; clients only produce. Session: session_0156nqDv8ijT11RmKre7xEmK",
    "probe": "grep:seed/worker/src/sweeper.js::sweepOpenLoops"
+  },
+  {
+   "id": "decision-2026-11-13-cost-checks-1-parallelize-foundation-tests-in-checks",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "COST-CHECKS-1: parallelize foundation tests in checks",
+   "body": "Foundation tests took ~70s serially, pushing 78 of 278 checks runs since Nov 10 to 2 billed minutes while Actions minutes are projected at 3,475 vs 2,000 free for November. Run the 49 modules in 4 processes; keep only if the step stays green and runs bill 1 minute.",
+   "probe": "grep:.github/workflows/checks.yml::COST-CHECKS-1"
   }
  ]
 }

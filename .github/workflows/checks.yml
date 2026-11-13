@@ -95,7 +95,9 @@ jobs:
           python3 -m foundation standards --check
           (cd seed/worker && node --test --no-warnings test/*.test.js)
       - name: Foundation tests, new-system end-to-end (one job, no matrix)
-        run: python3 -m unittest discover -s tests/foundation
+        # COST-CHECKS-1: was ~70s serial and pushed runs past the 60s billing minute; 4 processes on the 4-vCPU runner
+        run: |
+          ls tests/foundation/test_*.py | xargs -n1 basename | sed 's/\.py$//' |             xargs -P4 -I{} sh -c 'python3 -m unittest discover -s tests/foundation -p "{}.py" > "/tmp/{}.log" 2>&1 || { echo "::error::{} failed"; cat "/tmp/{}.log"; exit 255; }'
       - name: License (patent track dropped 2026-11-11; pre-flight retired)
         run: |
           python3 scripts/check_license.py

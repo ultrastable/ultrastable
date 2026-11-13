@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-13T11:34:26Z",
- "commit": "ba6e52a",
+ "generated": "2026-11-13T11:37:08Z",
+ "commit": "6854928",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 73,
@@ -106,7 +106,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 119.0,
+   "age_s": 279.7,
    "status": "fresh",
    "missed": 0
   },
@@ -130,7 +130,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 444.0,
+   "age_s": 132.7,
    "status": "fresh",
    "missed": 0
   },
@@ -138,7 +138,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 73211.0,
+   "age_s": 73371.7,
    "status": "fresh",
    "missed": 0
   }
@@ -167,7 +167,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-13T11:34:12Z",
+  "generated": "2026-11-13T11:36:54Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -312,7 +312,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 135.6,
+   "last_beat_age_s": 297.3,
    "expected_interval_s": 21600,
    "beats_24h": 46,
    "expected_24h": 4.0,
@@ -323,7 +323,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 73227.6,
+   "last_beat_age_s": 73389.3,
    "expected_interval_s": 86400,
    "beats_24h": 7,
    "expected_24h": 1.0,
@@ -334,9 +334,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 725.6,
+   "last_beat_age_s": 887.3,
    "expected_interval_s": 86400,
-   "beats_24h": 45,
+   "beats_24h": 44,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -345,7 +345,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 55766.6,
+   "last_beat_age_s": 55928.3,
    "expected_interval_s": 604800,
    "beats_24h": 2,
    "expected_24h": 0.1,
@@ -1899,6 +1899,24 @@
  "changes": {
   "commits": [
    {
+    "sha": "6854928",
+    "at": "2026-11-13T11:34:44+00:00",
+    "author": "Claude",
+    "subject": "Write back SERVER-OWNS-LOOPS-1",
+    "pr": null,
+    "item": "SERVER-OWNS-LOOPS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/685492817fadfa8a2a9db7439ed14f3bb009924a"
+   },
+   {
+    "sha": "59382ec",
+    "at": "2026-11-13T11:34:33+00:00",
+    "author": "Claude",
+    "subject": "Server side owns every loop: sweeper, loopowner check, consent route, credential binding without LANE_PAT",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/59382ec8b1ae89ee93a5a55f0a95b99decc06cd3"
+   },
+   {
     "sha": "ba6e52a",
     "at": "2026-11-13T11:26:41+00:00",
     "author": "Claude",
@@ -2239,24 +2257,6 @@
     "pr": 238,
     "item": "Q-LOOP-IMPROVE",
     "url": "https://github.com/ultrastable/ultrastable/commit/1de7ab7e64444bd2a41acd84f2d5914481ae6df9"
-   },
-   {
-    "sha": "92c5cc4",
-    "at": "2026-11-12T16:11:55+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "QUALITY-1: queue and roadmap checks agree on closed issues (#249)",
-    "pr": 249,
-    "item": "QUALITY-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/92c5cc44424efe39580f147c4e98d7cdb1b8da12"
-   },
-   {
-    "sha": "67d9aca",
-    "at": "2026-11-12T16:09:45+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Heal pass: unmeasured is not missing; token on the heal steps (#278)",
-    "pr": 278,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/67d9acab737adb54abd62a62ab32225fa995a059"
    }
   ],
   "pull_requests": []

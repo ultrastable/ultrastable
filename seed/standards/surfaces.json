@@ -1,346 +1,343 @@
 {
-  "_doc": "Every HTTP surface the Worker serves. `python3 -m foundation standards --check` fails when index.js serves a path that is not listed here, and the conformance tests fail when a discoverable surface is missing from /llms.txt, the OpenAPI document or the agent card. A new surface is registered here in the same change that adds it.",
-  "contract_version": "1.0.0",
-  "surfaces": [
-    {
-      "id": "mcp",
-      "path": "/mcp",
-      "methods": [
-        "POST"
-      ],
-      "kind": "mcp",
-      "audience": "agent",
-      "standards": [
-        "mcp",
-        "mcp-auth",
-        "json-schema",
-        "otel-genai"
-      ],
-      "discoverable": true,
-      "description": "Remote MCP server (Streamable HTTP, JSON responses). Tools: tick status, loop registry, glossary, dashboard state, standards register."
-    },
-    {
-      "id": "health",
-      "path": "/health",
-      "methods": [
-        "GET"
-      ],
-      "kind": "rest",
-      "audience": "public",
-      "standards": [
-        "openapi"
-      ],
-      "discoverable": true,
-      "description": "Last tick result; 200 when every step of the last tick completed, 503 otherwise."
-    },
-    {
-      "id": "llms-txt",
-      "path": "/llms.txt",
-      "methods": [
-        "GET"
-      ],
-      "kind": "discovery",
-      "audience": "public",
-      "standards": [
-        "llms-txt"
-      ],
-      "discoverable": true,
-      "description": "Plain-language index for language models."
-    },
-    {
-      "id": "agents-md",
-      "path": "/AGENTS.md",
-      "methods": [
-        "GET"
-      ],
-      "kind": "discovery",
-      "audience": "public",
-      "standards": [
-        "agents-md"
-      ],
-      "discoverable": true,
-      "description": "How a code agent works with this organisation."
-    },
-    {
-      "id": "agent-card",
-      "path": "/.well-known/agent-card.json",
-      "methods": [
-        "GET"
-      ],
-      "kind": "discovery",
-      "audience": "public",
-      "standards": [
-        "a2a",
-        "well-known"
-      ],
-      "discoverable": true,
-      "description": "A2A agent card."
-    },
-    {
-      "id": "mcp-server-card",
-      "path": "/.well-known/mcp/server-card.json",
-      "methods": [
-        "GET"
-      ],
-      "kind": "discovery",
-      "audience": "public",
-      "standards": [
-        "mcp-server-card",
-        "well-known"
-      ],
-      "discoverable": true,
-      "description": "MCP server card (SEP-2127)."
-    },
-    {
-      "id": "agent-skills-index",
-      "path": "/.well-known/agent-skills/index.json",
-      "methods": [
-        "GET"
-      ],
-      "kind": "discovery",
-      "audience": "public",
-      "standards": [
-        "agent-skills",
-        "well-known"
-      ],
-      "discoverable": true,
-      "description": "Agent Skills discovery index."
-    },
-    {
-      "id": "agent-skill-operate",
-      "path": "/.well-known/agent-skills/ultrastable-operate/SKILL.md",
-      "methods": [
-        "GET"
-      ],
-      "kind": "discovery",
-      "audience": "public",
-      "standards": [
-        "agent-skills"
-      ],
-      "discoverable": true,
-      "description": "Skill: operate this organisation through its MCP tools."
-    },
-    {
-      "id": "api-catalog",
-      "path": "/.well-known/api-catalog",
-      "methods": [
-        "GET"
-      ],
-      "kind": "discovery",
-      "audience": "public",
-      "standards": [
-        "api-catalog",
-        "well-known"
-      ],
-      "discoverable": true,
-      "description": "RFC 9727 linkset of the APIs."
-    },
-    {
-      "id": "oauth-protected-resource",
-      "path": "/.well-known/oauth-protected-resource",
-      "methods": [
-        "GET"
-      ],
-      "kind": "discovery",
-      "audience": "public",
-      "standards": [
-        "oauth-prm",
-        "mcp-auth",
-        "well-known"
-      ],
-      "discoverable": true,
-      "description": "RFC 9728 protected resource metadata for /mcp."
-    },
-    {
-      "id": "openapi",
-      "path": "/openapi.json",
-      "methods": [
-        "GET"
-      ],
-      "kind": "discovery",
-      "audience": "public",
-      "standards": [
-        "openapi",
-        "json-schema"
-      ],
-      "discoverable": true,
-      "description": "OpenAPI 3.1 description of the HTTP surfaces."
-    },
-    {
-      "id": "standards",
-      "path": "/standards.json",
-      "methods": [
-        "GET"
-      ],
-      "kind": "discovery",
-      "audience": "public",
-      "standards": [
-        "json-schema"
-      ],
-      "discoverable": true,
-      "description": "The machine-readable standards register this Worker is held to."
-    },
-    {
-      "id": "home",
-      "path": "/",
-      "methods": [
-        "GET"
-      ],
-      "kind": "ui",
-      "audience": "owner",
-      "standards": [],
-      "discoverable": false,
-      "reason": "Human screen for the owner; agents use /mcp.",
-      "description": "Now screen."
-    },
-    {
-      "id": "next",
-      "path": "/next",
-      "methods": [
-        "GET"
-      ],
-      "kind": "ui",
-      "audience": "owner",
-      "standards": [],
-      "discoverable": false,
-      "reason": "Human screen; the same data is the dashboard_state MCP tool.",
-      "description": "Next items screen."
-    },
-    {
-      "id": "needs-you",
-      "path": "/needs-you",
-      "methods": [
-        "GET"
-      ],
-      "kind": "ui",
-      "audience": "owner",
-      "standards": [],
-      "discoverable": false,
-      "reason": "Human screen; gate cards are in the dashboard_state MCP tool.",
-      "description": "Owner gate cards."
-    },
-    {
-      "id": "start",
-      "path": "/start",
-      "methods": [
-        "GET",
-        "POST"
-      ],
-      "kind": "ui",
-      "audience": "owner",
-      "standards": [],
-      "discoverable": false,
-      "reason": "Human interview form.",
-      "description": "Idea interview."
-    },
-    {
-      "id": "api-analytics",
-      "path": "/api/analytics",
-      "methods": [
-        "GET"
-      ],
-      "kind": "rest",
-      "audience": "owner",
-      "standards": [],
-      "discoverable": false,
-      "reason": "Owner-token report; to be exposed as an MCP tool in a later contract version.",
-      "description": "First-party analytics report."
-    },
-    {
-      "id": "analytics-beacon",
-      "path": "/a.js",
-      "methods": [
-        "GET"
-      ],
-      "kind": "analytics",
-      "audience": "public",
-      "standards": [],
-      "discoverable": false,
-      "reason": "Browser beacon script for the org's own sites; not an agent surface.",
-      "description": "First-party analytics beacon."
-    },
-    {
-      "id": "analytics-collect",
-      "path": "/a/e",
-      "methods": [
-        "POST"
-      ],
-      "kind": "analytics",
-      "audience": "public",
-      "standards": [],
-      "discoverable": false,
-      "reason": "Beacon collector; not an agent surface.",
-      "description": "First-party analytics collector."
-    },
-    {
-      "id": "github-webhook",
-      "path": "/hook/github",
-      "methods": [
-        "POST"
-      ],
-      "kind": "rest",
-      "audience": "machine",
-      "standards": [],
-      "discoverable": false,
-      "description": "Event-driven trigger: HMAC-signed GitHub webhook (X-Hub-Signature-256) wakes the role named in doctrine/triggers.json; 401 on a bad signature.",
-      "reason": "machine-to-machine callback authenticated by HMAC; nothing for an agent to discover"
-    },
-    {
-      "id": "agents-probe",
-      "path": "/agents/probe",
-      "methods": [
-        "GET"
-      ],
-      "kind": "rest",
-      "audience": "public",
-      "standards": [
-        "openapi"
-      ],
-      "discoverable": false,
-      "description": "Invokes every code-agent adapter once through the Workers AI binding and returns which answered (CODE-AGENTS-1).",
-      "reason": "operational probe for deploy verification, not a capability for callers"
-    },
-    {
-      "id": "api-criticality-sample",
-      "path": "/api/criticality/sample",
-      "methods": [
-        "GET"
-      ],
-      "kind": "rest",
-      "audience": "agent",
-      "standards": [
-        "json-schema"
-      ],
-      "discoverable": true,
-      "description": "Criticality sample: k_eff inputs and clauses for the tick that just ran."
-    },
-    {
-      "id": "live",
-      "path": "/live",
-      "methods": [
-        "GET"
-      ],
-      "kind": "rest",
-      "audience": "agent",
-      "standards": [
-        "json-schema"
-      ],
-      "discoverable": true,
-      "description": "Live record of ticks, deploys and criticality."
-    },
-    {
-      "id": "metrics-criticality",
-      "path": "/metrics/criticality.json",
-      "methods": [
-        "GET"
-      ],
-      "kind": "rest",
-      "audience": "agent",
-      "standards": [
-        "json-schema"
-      ],
-      "discoverable": true,
-      "description": "Machine-readable criticality metrics (k_eff, clauses)."
-    }
-  ]
+ "_doc": "Every HTTP surface the Worker serves. `python3 -m foundation standards --check` fails when index.js serves a path that is not listed here, and the conformance tests fail when a discoverable surface is missing from /llms.txt, the OpenAPI document or the agent card. A new surface is registered here in the same change that adds it.",
+ "contract_version": "1.0.0",
+ "surfaces": [
+  {
+   "id": "mcp",
+   "path": "/mcp",
+   "methods": [
+    "POST"
+   ],
+   "kind": "mcp",
+   "audience": "agent",
+   "standards": [
+    "mcp",
+    "mcp-auth",
+    "json-schema",
+    "otel-genai"
+   ],
+   "discoverable": true,
+   "description": "Remote MCP server (Streamable HTTP, JSON responses). Tools: tick status, loop registry, glossary, dashboard state, standards register."
+  },
+  {
+   "id": "health",
+   "path": "/health",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "public",
+   "standards": [
+    "openapi"
+   ],
+   "discoverable": true,
+   "description": "Last tick result; 200 when every step of the last tick completed, 503 otherwise."
+  },
+  {
+   "id": "llms-txt",
+   "path": "/llms.txt",
+   "methods": [
+    "GET"
+   ],
+   "kind": "discovery",
+   "audience": "public",
+   "standards": [
+    "llms-txt"
+   ],
+   "discoverable": true,
+   "description": "Plain-language index for language models."
+  },
+  {
+   "id": "agents-md",
+   "path": "/AGENTS.md",
+   "methods": [
+    "GET"
+   ],
+   "kind": "discovery",
+   "audience": "public",
+   "standards": [
+    "agents-md"
+   ],
+   "discoverable": true,
+   "description": "How a code agent works with this organisation."
+  },
+  {
+   "id": "agent-card",
+   "path": "/.well-known/agent-card.json",
+   "methods": [
+    "GET"
+   ],
+   "kind": "discovery",
+   "audience": "public",
+   "standards": [
+    "a2a",
+    "well-known"
+   ],
+   "discoverable": true,
+   "description": "A2A agent card."
+  },
+  {
+   "id": "mcp-server-card",
+   "path": "/.well-known/mcp/server-card.json",
+   "methods": [
+    "GET"
+   ],
+   "kind": "discovery",
+   "audience": "public",
+   "standards": [
+    "mcp-server-card",
+    "well-known"
+   ],
+   "discoverable": true,
+   "description": "MCP server card (SEP-2127)."
+  },
+  {
+   "id": "agent-skills-index",
+   "path": "/.well-known/agent-skills/index.json",
+   "methods": [
+    "GET"
+   ],
+   "kind": "discovery",
+   "audience": "public",
+   "standards": [
+    "agent-skills",
+    "well-known"
+   ],
+   "discoverable": true,
+   "description": "Agent Skills discovery index."
+  },
+  {
+   "id": "agent-skill-operate",
+   "path": "/.well-known/agent-skills/ultrastable-operate/SKILL.md",
+   "methods": [
+    "GET"
+   ],
+   "kind": "discovery",
+   "audience": "public",
+   "standards": [
+    "agent-skills"
+   ],
+   "discoverable": true,
+   "description": "Skill: operate this organisation through its MCP tools."
+  },
+  {
+   "id": "api-catalog",
+   "path": "/.well-known/api-catalog",
+   "methods": [
+    "GET"
+   ],
+   "kind": "discovery",
+   "audience": "public",
+   "standards": [
+    "api-catalog",
+    "well-known"
+   ],
+   "discoverable": true,
+   "description": "RFC 9727 linkset of the APIs."
+  },
+  {
+   "id": "oauth-protected-resource",
+   "path": "/.well-known/oauth-protected-resource",
+   "methods": [
+    "GET"
+   ],
+   "kind": "discovery",
+   "audience": "public",
+   "standards": [
+    "oauth-prm",
+    "mcp-auth",
+    "well-known"
+   ],
+   "discoverable": true,
+   "description": "RFC 9728 protected resource metadata for /mcp."
+  },
+  {
+   "id": "openapi",
+   "path": "/openapi.json",
+   "methods": [
+    "GET"
+   ],
+   "kind": "discovery",
+   "audience": "public",
+   "standards": [
+    "openapi",
+    "json-schema"
+   ],
+   "discoverable": true,
+   "description": "OpenAPI 3.1 description of the HTTP surfaces."
+  },
+  {
+   "id": "standards",
+   "path": "/standards.json",
+   "methods": [
+    "GET"
+   ],
+   "kind": "discovery",
+   "audience": "public",
+   "standards": [
+    "json-schema"
+   ],
+   "discoverable": true,
+   "description": "The machine-readable standards register this Worker is held to."
+  },
+  {
+   "id": "home",
+   "path": "/",
+   "methods": [
+    "GET"
+   ],
+   "kind": "ui",
+   "audience": "owner",
+   "standards": [],
+   "discoverable": false,
+   "reason": "Human screen for the owner; agents use /mcp.",
+   "description": "Now screen."
+  },
+  {
+   "id": "next",
+   "path": "/next",
+   "methods": [
+    "GET"
+   ],
+   "kind": "ui",
+   "audience": "owner",
+   "standards": [],
+   "discoverable": false,
+   "reason": "Human screen; the same data is the dashboard_state MCP tool.",
+   "description": "Next items screen."
+  },
+  {
+   "id": "needs-you",
+   "path": "/needs-you",
+   "methods": [
+    "GET"
+   ],
+   "kind": "ui",
+   "audience": "owner",
+   "standards": [],
+   "discoverable": false,
+   "reason": "Human screen; gate cards are in the dashboard_state MCP tool.",
+   "description": "Owner gate cards."
+  },
+  {
+   "id": "start",
+   "path": "/start",
+   "methods": [
+    "GET",
+    "POST"
+   ],
+   "kind": "ui",
+   "audience": "owner",
+   "standards": [],
+   "discoverable": false,
+   "reason": "Human interview form.",
+   "description": "Idea interview."
+  },
+  {
+   "id": "api-analytics",
+   "path": "/api/analytics",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "owner",
+   "standards": [],
+   "discoverable": false,
+   "reason": "Owner-token report; to be exposed as an MCP tool in a later contract version.",
+   "description": "First-party analytics report."
+  },
+  {
+   "id": "analytics-beacon",
+   "path": "/a.js",
+   "methods": [
+    "GET"
+   ],
+   "kind": "analytics",
+   "audience": "public",
+   "standards": [],
+   "discoverable": false,
+   "reason": "Browser beacon script for the org's own sites; not an agent surface.",
+   "description": "First-party analytics beacon."
+  },
+  {
+   "id": "analytics-collect",
+   "path": "/a/e",
+   "methods": [
+    "POST"
+   ],
+   "kind": "analytics",
+   "audience": "public",
+   "standards": [],
+   "discoverable": false,
+   "reason": "Beacon collector; not an agent surface.",
+   "description": "First-party analytics collector."
+  },
+  {
+   "id": "github-webhook",
+   "path": "/hook/github",
+   "methods": [
+    "POST"
+   ],
+   "kind": "rest",
+   "audience": "machine",
+   "standards": [],
+   "discoverable": false,
+   "description": "Event-driven trigger: HMAC-signed GitHub webhook (X-Hub-Signature-256) wakes the role named in doctrine/triggers.json; 401 on a bad signature.",
+   "reason": "machine-to-machine callback authenticated by HMAC; nothing for an agent to discover"
+  },
+  {
+   "id": "agents-probe",
+   "path": "/agents/probe",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "public",
+   "standards": [
+    "openapi"
+   ],
+   "discoverable": false,
+   "description": "Invokes every code-agent adapter once through the Workers AI binding and returns which answered (CODE-AGENTS-1).",
+   "reason": "operational probe for deploy verification, not a capability for callers"
+  },
+  {
+   "id": "live",
+   "path": "/live",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "public",
+   "standards": [],
+   "discoverable": false,
+   "description": "Liveness plus k_eff of the last tick (CRITICALITY-1).",
+   "reason": "operational criticality telemetry (CRITICALITY-1), not a capability for callers"
+  },
+  {
+   "id": "metrics-criticality",
+   "path": "/metrics/criticality.json",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "public",
+   "standards": [],
+   "discoverable": false,
+   "description": "Criticality record of the last tick (CRITICALITY-1).",
+   "reason": "operational criticality telemetry (CRITICALITY-1), not a capability for callers"
+  },
+  {
+   "id": "criticality-sample",
+   "path": "/api/criticality/sample",
+   "methods": [
+    "POST"
+   ],
+   "kind": "rest",
+   "audience": "machine",
+   "standards": [],
+   "discoverable": false,
+   "description": "Collectors push GitHub-run, cost and owner-touch samples (CRITICALITY-1).",
+   "reason": "machine-to-machine collector input; nothing for an agent to discover"
+  }
+ ]
 }
