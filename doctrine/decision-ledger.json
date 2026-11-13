@@ -725,6 +725,14 @@
    "title": "Live D1 migrations were never applied; k never measured",
    "body": "No step applied seed/worker/migrations to the live org D1, so tick measure and criticality failed every run. Fixed: deploy/apply-d1-migrations.mjs, sweeper_runs on /live, e2e-criticality test, probe-live in deploy-workers.yml.",
    "probe": "file:deploy/probe-live.mjs"
+  },
+  {
+   "id": "lesson-2026-11-13-failed-checks-cost-most-of-the-actions-minutes-order-steps-b",
+   "kind": "lesson",
+   "date": "2026-11-13",
+   "title": "Failed checks cost most of the Actions minutes: order steps by measured failure rate",
+   "body": "2026-11-13: 958 of 1218 checks minutes were failed runs. The most-failing steps now run first so a bad PR stops in seconds. The Worker lane already exists but sees 404 on every repo until the GitHub App covers the org; ZERO-MINUTES-1 holds the rest.",
+   "probe": "file:ops/worker-merge-evidence.jsonl"
   }
  ]
 }
