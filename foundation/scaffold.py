@@ -26,7 +26,7 @@ def _fill(text: str, vals: dict) -> str:
 
 def _idea_md(m: dict) -> str:
     c = m["budget"]["usd_per_month"]
-    lines = ["---", f"org_name: {m['name']}", f"slug: {m['slug']}", f"owner: {m['owner']['name']}", f"owner_contact: set-in-secret-store ({m['owner']['contact_binding']})"]
+    lines = ["---", f"org_name: {m['name']}", f"slug: {m['slug']}", f"owner: {m['owner']['name']}", f"owner_contact: set-in-secret-store ({m['owner']['contact_binding']})", f"owner_contact_backup: set-in-secret-store ({m['owner']['contact_binding_backup']}; a second address at a different provider, used when the first is refused)"]
     for k, v in m["facts"].items():
         if isinstance(v, bool):
             lines.append(f"{k}: {'true' if v else 'false'}")

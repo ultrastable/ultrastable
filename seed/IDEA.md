@@ -4,6 +4,7 @@ org_name: Example Co
 slug: example-co
 owner: Founder Name
 owner_contact: set-in-secret-store   # never put an email or token in this file
+owner_contact_backup: set-in-secret-store   # a second address at a different provider: sign-in codes fall through to it when the first is refused or suppressed
 ---
 
 # Idea

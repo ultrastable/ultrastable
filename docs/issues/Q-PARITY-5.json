@@ -1,0 +1,11 @@
+{
+  "id": "Q-PARITY-5",
+  "title": "Q-PARITY-5: Failure-mode register with a detector per mode and a recurrence check (QNFO failure_modes, fm-* detectors)",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:doctrine/detectors.json::owner-address-single\n**Status:** open\n\nQuniverse parity (owner directive 2026-11-13: Ultrastable audits and remediates all failure modes and ships improvements with zero user intervention; every Quniverse automation feature is incorporated).\n\ndoctrine/detectors.json exists; add a failure_modes register (trigger, symptom, blast radius, detection, root cause, remediation, status), one hourly detector per row and recurrence within the hour files an incident item. Seed it with the modes found 2026-11-13: single owner address, executor never sparked, silent executor result.\n\nsize: M\n\n**Closing probe:** grep:doctrine/detectors.json::owner-address-single\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Quniverse parity"
+}

@@ -163,7 +163,8 @@
   "executor.yml": {
    "events": [
     "repository_dispatch",
-    "workflow_dispatch"
+    "workflow_dispatch",
+    "workflow_run"
    ],
    "crons": [
     "23 6 * * *"

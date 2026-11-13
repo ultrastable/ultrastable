@@ -23,14 +23,30 @@ function json(o, status = 200, extra) { return new Response(JSON.stringify(o), {
 function page(html, status = 200) { return new Response(html, { status, headers: { "Content-Type": "text/html; charset=utf-8", ...SEC, "Content-Security-Policy": "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; frame-ancestors 'none'" } }); }
 
 // ---------- mail (owner notifications and codes) ----------
-export async function sendMail(env, subject, text) {
-  if (!env.OWNER_EMAIL) throw new Error("OWNER_EMAIL is not set");
+// MAIL-PATHS-1 (2026-11-13): one owner address is a single point of failure. Cloudflare Email Sending suppresses an address after a single soft
+// bounce, and then no sign-in code can be sent. OWNER_EMAIL and OWNER_EMAIL_BACKUP each take one address or a comma list; every address is
+// tried in order and the first send that the platform accepts wins. A failure on one address is kept and reported, never swallowed.
+export function ownerAddresses(env) {
+  return [env.OWNER_EMAIL, env.OWNER_EMAIL_BACKUP].flatMap(v => String(v || "").split(",")).map(x => x.trim()).filter((x, i, a) => x && a.indexOf(x) === i);
+}
+export function maskAddr(a) { const p = String(a).split("@"); return p[0].slice(0, 2) + "\u2026@" + (p[1] || ""); }
+async function sendOne(env, to, subject, text) {
   const from = env.MAIL_FROM || "owner@ultrastable.io";
-  if (env.MAILER) return env.MAILER({ from, to: env.OWNER_EMAIL, subject, text });
+  if (env.MAILER) return env.MAILER({ from, to, subject, text });
   if (!env.SEND_EMAIL) throw new Error("SEND_EMAIL binding is missing");
   const { EmailMessage } = await import("cloudflare:email");
-  const raw = ["From: Ultrastable <" + from + ">", "To: " + env.OWNER_EMAIL, "Subject: " + subject, "Message-ID: <" + hex(12) + "@ultrastable.io>", "Date: " + new Date().toUTCString(), "MIME-Version: 1.0", "Content-Type: text/plain; charset=utf-8", "", text].join("\r\n");
-  await env.SEND_EMAIL.send(new EmailMessage(from, env.OWNER_EMAIL, raw));
+  const raw = ["From: Ultrastable <" + from + ">", "To: " + to, "Subject: " + subject, "Message-ID: <" + hex(12) + "@ultrastable.io>", "Date: " + new Date().toUTCString(), "MIME-Version: 1.0", "Content-Type: text/plain; charset=utf-8", "", text].join("\r\n");
+  await env.SEND_EMAIL.send(new EmailMessage(from, to, raw));
+}
+export async function sendMail(env, subject, text) {
+  const to = ownerAddresses(env);
+  if (!to.length) throw new Error("OWNER_EMAIL is not set");
+  const errs = [];
+  for (const a of to) {
+    try { await sendOne(env, a, subject, text); return { to: a }; }
+    catch (e) { errs.push(maskAddr(a) + ": " + String(e && e.message || e).slice(0, 120)); }
+  }
+  throw new Error("no owner address accepted the mail (" + errs.join(" | ") + ")");
 }
 async function notify(env, key, subject, text) {
   const r = await env.DB.prepare("INSERT OR IGNORE INTO notifications(key,at,subject) VALUES(?1,?2,?3)").bind(key, Date.now(), subject).run();
@@ -48,9 +64,10 @@ export async function requestCode(env) {
   const id = hex(16);
   await env.DB.prepare("UPDATE otp SET used=1 WHERE used=0").run();
   await env.DB.prepare("INSERT INTO otp(id,code_hash,created_at,expires_at,attempts,used) VALUES(?1,?2,?3,?4,0,0)").bind(id, await sha256(id + ":" + code), now, now + OTP_MS).run();
-  try { await sendMail(env, "Your Ultrastable code: " + code, "Your Ultrastable owner code is " + code + ".\nIt works for 10 minutes. If you did not ask for it, ignore this message.\n"); }
-  catch (e) { await env.DB.prepare("UPDATE otp SET used=1 WHERE id=?1").bind(id).run(); console.error("mail failed", e && e.message); return { status: 502, body: { error: "could not send the code email" } }; }
-  return { status: 200, body: { ok: true, sent: true } };
+  let sent;
+  try { sent = await sendMail(env, "Your Ultrastable code: " + code, "Your Ultrastable owner code is " + code + ".\nIt works for 10 minutes. If you did not ask for it, ignore this message.\n"); }
+  catch (e) { await env.DB.prepare("UPDATE otp SET used=1 WHERE id=?1").bind(id).run(); console.error("mail failed", e && e.message); return { status: 502, body: { error: "could not send the code email to any owner address (" + String(e && e.message || e).slice(0, 200) + "). The probe records this; try again in a few minutes." } }; }
+  return { status: 200, body: { ok: true, sent: true, to: maskAddr(sent.to) } };
 }
 export async function verifyCode(env, req, code) {
   const now = Date.now();
@@ -88,6 +105,8 @@ export async function runProbes(env) {
   const rec = async (n, ok, d) => { await setCheck(env, n, ok, d); out.push({ name: n, ok, detail: d }); };
   try { await env.DB.prepare("SELECT 1").first(); await rec("database", true, "D1 answers"); } catch (e) { await rec("database", false, String(e.message || e)); }
   await rec("owner_email", !!(env.OWNER_EMAIL && (env.SEND_EMAIL || env.MAILER)), env.OWNER_EMAIL ? "owner address and sender configured" : "OWNER_EMAIL missing");
+  const paths = ownerAddresses(env).length;
+  await rec("owner_email_paths", paths >= 2, paths >= 2 ? paths + " owner addresses: a suppressed one does not lock the owner out" : "only " + paths + " owner address: set OWNER_EMAIL_BACKUP to an address at a different provider (single point of failure, MAIL-PATHS-1)");
   if (!env.NO_NET) {
     for (const h of HOSTS) {
       try { const r = await fetch("https://" + h + "/health", { signal: AbortSignal.timeout(5000) }); const j = await r.json(); await rec("site:" + h, r.status === 200 && j.ok === true, "HTTP " + r.status + (j.version ? " v" + j.version : "")); }

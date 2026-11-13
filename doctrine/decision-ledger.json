@@ -579,6 +579,24 @@
    "title": "RND-1 product-manager R&D loop is code",
    "body": "foundation/rnd.py: competitor profiles on cadence, capability gap diff, experiments, scout triage into executor tasks, outcome feedback to source weights and priorities",
    "probe": "file:foundation/rnd.py"
+  },
+  {
+   "id": "decision-2026-11-13-auto-improve-1-quniverse-automation-parity-is-a-standing-que",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "AUTO-IMPROVE-1: Quniverse automation parity is a standing queue",
+   "body": "Owner directive 2026-11-13 written into agents/AGENTS.md and its seed copy; parity gaps are Q-PARITY-* queue items.",
+   "probe": "grep:agents/AGENTS.md::AUTO-IMPROVE-1",
+   "session": "claude-2026-11-13"
+  },
+  {
+   "id": "decision-2026-11-13-mail-paths-1-and-exec-spark-1-2-no-single-owner-address-no-s",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "MAIL-PATHS-1 and EXEC-SPARK-1/2: no single owner address, no single executor trigger",
+   "body": "Owner mail goes to OWNER_EMAIL then OWNER_EMAIL_BACKUP; the executor starts from lane and deploy-site runs behind the chain gate; the tick files EXEC-SPARK-UNREACHABLE. Open items Q-PARITY-1..7.",
+   "probe": "grep:dashboard/worker.js::owner_email_paths",
+   "session": "session_0156nqDuauojj4buPNTq3ejz"
   }
  ]
 }

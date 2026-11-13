@@ -2,7 +2,7 @@
   "name": "QNFO",
   "slug": "qnfo",
   "kind": "research",
-  "owner": {"name": "Rowan", "jurisdiction": "NL", "contact_binding": "OWNER_CONTACT"},
+  "owner": {"name": "Rowan", "jurisdiction": "NL", "contact_binding": "OWNER_CONTACT", "contact_binding_backup": "OWNER_CONTACT_BACKUP"},
   "brand": {"public_name": "QNFO", "tagline": "A research programme run as an autonomous system on Ultrastable, the foundation for any autonomous system.", "separate_from": ["Ultrastable"]},
   "idea": "An autonomous research programme: the existing fleet, adopted onto the foundation without a rewrite.",
   "goals": ["Adopt the foundation kernel beside the running fleet", "Record the fleet inventory as the first verified evidence", "Route research funding through the shared funding loop"],

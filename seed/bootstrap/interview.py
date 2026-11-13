@@ -119,7 +119,7 @@ def render_idea(answers: dict, org_name: str = "My Project", owner: str = "Owner
     must = ", ".join(c["label"].lower() for c in selected(answers, "must_not")) or "nothing extra"
     lines = [
         "---", f"org_name: {org_name}", f"slug: {from_slug}", f"owner: {owner}",
-        "owner_contact: set-in-secret-store", "---", "",
+        "owner_contact: set-in-secret-store", "owner_contact_backup: set-in-secret-store", "---", "",
         "# Idea", "", answers.get("idea", ""), "",
         "# Who it is for", "", f"- {_choice(next(x for x in questions() if x['id']=='audience'), answers['audience'])['label']}" if answers.get("audience") else "- unknown",
         "", "# First outcomes", "",

@@ -2,7 +2,7 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { runTick, lastTickForHealth } from './tick.js';
-import { runExecutor } from './executor.js';
+import { runExecutor, noteExecutor } from './executor.js';
 import { runLane } from './lane.js';
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
@@ -22,7 +22,7 @@ const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',
 export default {
   async scheduled(_event, env, ctx) {
     ctx.waitUntil(runTick(env.DB, { config, env: presence(env) }));
-    ctx.waitUntil(runExecutor(env).then(r => console.log('executor', JSON.stringify(r))).catch(e => console.error('executor', e && e.message)));
+    ctx.waitUntil(runExecutor(env).then(async r => { console.log('executor', JSON.stringify(r)); await noteExecutor(env.DB, r); }).catch(e => console.error('executor', e && e.message)));
     ctx.waitUntil(runLane({ token: env.GITHUB_TOKEN, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []), issueWorkflow: null }).then(r => console.log('lane', JSON.stringify(r))).catch(e => console.error('lane', e && e.message)));
     ctx.waitUntil(selfcheck(env, hosts(env)[0]).catch(e => console.error('analytics selfcheck', e && e.message)));
   },
