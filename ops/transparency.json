@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-13T11:28:35Z",
- "commit": "76c66f8",
+ "generated": "2026-11-13T11:30:34Z",
+ "commit": "956bebd",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 69,
@@ -79,8 +79,9 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "failure": 3,
-    "success": 27
+    "": 1,
+    "success": 27,
+    "failure": 2
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -107,7 +108,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 328.6,
+   "age_s": 1.9,
    "status": "fresh",
    "missed": 0
   },
@@ -131,7 +132,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 330.6,
+   "age_s": 448.9,
    "status": "fresh",
    "missed": 0,
    "lag_s": 14877.0
@@ -140,7 +141,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 72860.6,
+   "age_s": 72978.9,
    "status": "fresh",
    "missed": 0
   }
@@ -169,7 +170,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-13T11:28:22Z",
+  "generated": "2026-11-13T11:30:21Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -218,7 +219,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-13T11:28:22Z",
+     "at": "2026-11-13T11:30:21Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -271,11 +272,11 @@
  },
  "growth": {
   "mix": {
-   "growth": 5,
+   "growth": 7,
    "fix": 0,
-   "maintenance": 15,
+   "maintenance": 13,
    "total": 20,
-   "growth_share": 0.25,
+   "growth_share": 0.35,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -325,9 +326,9 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 344.8,
+   "last_beat_age_s": 3.2,
    "expected_interval_s": 21600,
-   "beats_24h": 40,
+   "beats_24h": 42,
    "expected_24h": 4.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -336,7 +337,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 72876.8,
+   "last_beat_age_s": 72996.2,
    "expected_interval_s": 86400,
    "beats_24h": 7,
    "expected_24h": 1.0,
@@ -347,7 +348,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 374.8,
+   "last_beat_age_s": 494.2,
    "expected_interval_s": 86400,
    "beats_24h": 46,
    "expected_24h": 1.0,
@@ -358,7 +359,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 55415.8,
+   "last_beat_age_s": 55535.2,
    "expected_interval_s": 604800,
    "beats_24h": 2,
    "expected_24h": 0.1,
@@ -1846,6 +1847,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "f39f8be",
+    "at": "2026-11-13T11:29:23+00:00",
+    "author": "Claude",
+    "subject": "CRITICALITY-1: k score, mantra tick_check, prediction grading, ignition and fuel, dashboard panel",
+    "pr": null,
+    "item": "CRITICALITY-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f39f8be5b4c8e3c276b243e73cdd0486b7f27d73"
+   },
+   {
     "sha": "76c66f8",
     "at": "2026-11-13T10:08:00+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2195,15 +2205,6 @@
     "pr": 261,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/0b54048f196af2a08d9915a011b0ba2eb650af55"
-   },
-   {
-    "sha": "3ef58dc",
-    "at": "2026-11-12T15:08:00+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "PORT-EXEC-1: runnable probe unblocks the unattended executor (#260)",
-    "pr": 260,
-    "item": "PORT-EXEC-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/3ef58dc63cc2717c06681307f7e765130c681c92"
    }
   ],
   "pull_requests": []

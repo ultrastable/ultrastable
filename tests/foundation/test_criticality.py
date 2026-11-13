@@ -59,3 +59,10 @@ class Ignition(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ServerOwns(unittest.TestCase):
+    def test_rule_is_in_every_agent_file_and_adoption_exists(self):
+        for p in ("agents/AGENTS.md", "seed/agents/AGENTS.md"):
+            self.assertIn("SERVER-OWNS-LOOPS-1", (ROOT / p).read_text(encoding="utf-8"), p)
+        self.assertTrue(callable(cr.adopt))

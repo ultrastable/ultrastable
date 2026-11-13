@@ -462,6 +462,35 @@ def grade(rec: dict, root=REPO, apply=False) -> list[dict]:
     return out
 
 
+# ---------- SERVER-OWNS-LOOPS-1 (Rowan, 2026-11-13): a client session never completes a loop; the server adopts every open pull request ----------
+def adopt(c: dict, root=REPO, apply=False) -> list[dict]:
+    """For every open pull request in the repos: mark it ready, start its checks, and merge it the moment checks are green. The session that opened it owns nothing."""
+    out = []
+    for repo in c["repos"]:
+        try:
+            prs = gh([f"repos/{repo}/pulls?state=open&per_page=50"], root)
+        except RuntimeError as e:
+            out.append({"repo": repo, "error": str(e)}); continue
+        for pr in prs:
+            n, ref = pr["number"], pr["head"]["ref"]
+            runs = gh([f"repos/{repo}/actions/runs?branch={ref}&per_page=10&head_sha={pr['head']['sha']}"], root).get("workflow_runs", [])
+            fin = [r for r in runs if r["status"] == "completed"]
+            state = "no-checks" if not runs else "pending" if len(fin) < len(runs) else "green" if all(r["conclusion"] in ("success", "skipped") for r in fin) else "red"
+            row = {"repo": repo, "pr": n, "branch": ref, "checks": state, "action": None}
+            if apply:
+                if pr.get("draft"):
+                    subprocess.run(["gh", "pr", "ready", str(n), "-R", repo], cwd=root, capture_output=True, text=True); row["action"] = "ready"
+                if state == "no-checks":
+                    subprocess.run(["gh", "workflow", "run", "checks.yml" if "ultrastable" in repo else "pr-checks.yml", "-R", repo, "--ref", ref], cwd=root, capture_output=True, text=True); row["action"] = "checks-started"
+                elif state == "green":
+                    r = subprocess.run(["gh", "pr", "merge", str(n), "-R", repo, "--squash", "--delete-branch"], cwd=root, capture_output=True, text=True)
+                    row["action"] = "merged" if r.returncode == 0 else "merge-refused: " + (r.stderr or r.stdout).strip()[:120]
+                elif state == "red":
+                    row["action"] = "red: the executor reads the failing check and pushes the fix (docs/issues item filed by the next run)"
+            out.append(row)
+    return out
+
+
 def run(root=REPO, apply=False, cf_json=None) -> dict:
     c = cfg(root)
     inputs = gather(c, cf_json, root)
@@ -472,6 +501,7 @@ def run(root=REPO, apply=False, cf_json=None) -> dict:
     filed = alert(rec, c, prev, root, apply)
     mm = mantra_all(root, apply)
     rec["graded"] = grade(rec, root, apply)
+    rec["adopted"] = adopt(c, root, apply)
     if apply:
         predict(root, "criticality-" + rec["at"][:13], f"k > {max(h0['k'], 0.01) if (h0 := rec['headline']) else 0.01} within 24 h")
     rec["alerts"], rec["self_completion"] = filed, sc
