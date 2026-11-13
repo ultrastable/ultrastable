@@ -703,6 +703,14 @@
       "probe": "file:scripts/video_build.py"
     },
     {
+      "id": "lesson-2026-11-13-video-1-caption-scale",
+      "kind": "lesson",
+      "date": "2026-11-13",
+      "title": "VIDEO-1 caption scale",
+      "body": "libass SRT PlayRes is 288 high, so FontSize 20 is huge at 720p; use 9 with BorderStyle=3. /live duplicates /dashboard visually; use /proof.",
+      "probe": "file:scripts/video_build.py"
+    },
+    {
       "id": "decision-2026-11-13-executor-closed-q-grow-agent-directories-add-agent-directory",
       "kind": "decision",
       "date": "2026-11-13",

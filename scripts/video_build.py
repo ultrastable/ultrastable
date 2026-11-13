@@ -74,7 +74,7 @@ def build(out):
     (out / "demo.srt").write_text("\n".join(srt))
     (out / "list.txt").write_text("".join(f"file '{c.name}'\n" for c in clips))
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(out / "list.txt"),
-                    "-vf", f"subtitles={out / 'demo.srt'}:force_style='FontSize=20,MarginV=28'",
+                    "-vf", f"subtitles={out / 'demo.srt'}:force_style='FontName=DejaVu Sans,FontSize=9,BorderStyle=3,Outline=2,BackColour=&H99000000,MarginV=14'",
                     "-c:v", "libx264", "-crf", "20", "-c:a", "copy", str(out / "demo.mp4")], check=True)
     meta = {"id": sb["id"], "seconds": round(t, 1), "scenes": len(clips)}
     (out / "demo.json").write_text(json.dumps(meta))

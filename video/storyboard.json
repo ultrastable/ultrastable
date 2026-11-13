@@ -28,7 +28,7 @@
       "text": "Ultrastable runs on itself."
     },
     {
-      "path": "/live",
+      "path": "/proof",
       "source": "external/overview.md",
       "text": "That is how Ultrastable is built: multi-agent, self-referential loops, not a single code agent."
     },
