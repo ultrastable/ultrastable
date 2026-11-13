@@ -693,6 +693,14 @@
    "title": "VIDEO-1 demo video plugin",
    "body": "Demo videos are built server-side on Actions (Playwright screenshots of live ultrastable.io, piper neural TTS, ffmpeg) from video/storyboard.json; narration must pass the social guard verbatim-excerpt rule. Owner: marketing-manager. Published to release demo-video.",
    "probe": "file:scripts/video_build.py"
+  },
+  {
+   "id": "lesson-2026-11-13-video-1-toolchain-pin",
+   "kind": "lesson",
+   "date": "2026-11-13",
+   "title": "VIDEO-1 toolchain pin",
+   "body": "piper-tts 1.2 has no wheel for Python 3.12 (piper-phonemize); use piper-tts 1.3 and its Python API (PiperVoice.load, synthesize_wav). A chained 'gh pr checks --watch | tail && merge' merges on red: tail masks the exit code; use --fail-fast without a pipe.",
+   "probe": "file:scripts/video_build.py"
   }
  ]
 }
