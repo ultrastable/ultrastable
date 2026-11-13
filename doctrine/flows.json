@@ -108,6 +108,8 @@
       "feedback": "lanewatch measures time to merge and files a stuck PR",
       "bindings": [
         "ANTHROPIC_API_KEY",
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
         "LANE_APP_ID",
         "LANE_APP_PRIVATE_KEY",
         "LANE_PAT"

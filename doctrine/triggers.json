@@ -160,6 +160,13 @@
    ],
    "crons": []
   },
+  "deploy-workers.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": []
+  },
   "executor.yml": {
    "events": [
     "repository_dispatch",

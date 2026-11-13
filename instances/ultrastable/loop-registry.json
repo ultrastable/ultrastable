@@ -2307,7 +2307,8 @@
       ],
       "area": "governance",
       "workflows": [
-        "deploy-system.yml"
+        "deploy-system.yml",
+        "deploy-workers.yml"
       ]
     },
     {
