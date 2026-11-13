@@ -2446,7 +2446,8 @@
       ],
       "closing_probe": "file:ops/deploys.jsonl",
       "writeback": [
-        "ops/deploys.jsonl"
+        "ops/deploys.jsonl",
+        "ops/bindings.jsonl"
       ],
       "system_path": [
         ".github/workflows/deploy-workers.yml",
@@ -2455,6 +2456,96 @@
       "workflows": [
         "deploy-workers.yml"
       ]
+    },
+    {
+      "id": "role-program-manager",
+      "kind": "manager",
+      "summary": "Sequences projects under the portfolio constraint; deploy-raising and cost-cutting work first when k is below its floor.",
+      "trigger": "each tick of the program role (tick_every 4)",
+      "owner": "program-manager",
+      "closes_by": "system",
+      "sla": "1 tick",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:agents/roles/program-manager.md",
+      "writeback": [
+        "docs/issues",
+        "docs/PROJECT-MEMORY.md"
+      ],
+      "system_path": [
+        "agents/roles/program-manager.md",
+        "seed/agents/roles/program-manager.md",
+        "foundation/executor.py"
+      ],
+      "program": {
+        "orient": [
+          "ops/criticality.jsonl",
+          "docs/issues",
+          "ROADMAP.md"
+        ],
+        "originate_to": "docs/issues",
+        "predict_log": "docs/lessons",
+        "lane": [
+          "control-plane files, .github and owner paths change by pull request only",
+          "never start a second program's work while the constraint program has focus items without a doer"
+        ]
+      }
+    },
+    {
+      "id": "role-infrastructure-manager",
+      "kind": "manager",
+      "summary": "Discovers Cloudflare resources against the topology, holds the cost budgets, and keeps the tick Worker's lane and dispatch bindings in place.",
+      "trigger": "each tick of the infrastructure role (tick_every 2)",
+      "owner": "infrastructure-manager",
+      "closes_by": "system",
+      "sla": "1 tick",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:agents/roles/infrastructure-manager.md",
+      "writeback": [
+        "docs/issues",
+        "docs/PROJECT-MEMORY.md"
+      ],
+      "system_path": [
+        "agents/roles/infrastructure-manager.md",
+        "seed/agents/roles/infrastructure-manager.md",
+        "foundation/executor.py"
+      ],
+      "program": {
+        "orient": [
+          "ops/cost.jsonl",
+          "ops/bindings.jsonl",
+          "doctrine/topology.json"
+        ],
+        "originate_to": "docs/issues",
+        "predict_log": "docs/lessons",
+        "lane": [
+          "control-plane files, .github and owner paths change by pull request only",
+          "never start a second program's work while the constraint program has focus items without a doer"
+        ]
+      }
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

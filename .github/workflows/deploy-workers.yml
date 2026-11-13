@@ -35,8 +35,14 @@ jobs:
         run: '[ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Cloudflare secrets not set"; exit 1; }'
       - name: Deploy and verify live code equals this commit
         run: node deploy/deploy-workers.mjs ${{ inputs.verify == 'true' && '--verify' || '' }}
+      - name: Bind the tick Worker's credentials (SELF-SUSTAIN-1)
+        if: ${{ inputs.verify != 'true' }}
+        env:
+          LANE_PAT: ${{ secrets.LANE_PAT }}
+          GITHUB_REPOS: ultrastable/ultrastable,ultrastable/seed,ultrastable/workers,ultrastable/spec,ultrastable/license
+        run: node deploy/bind-worker-secrets.mjs
       - name: Record the deploy
         if: ${{ inputs.verify != 'true' }}
         run: |
           git config user.name "ultrastable-ops"; git config user.email "actions@users.noreply.github.com"
-          git add ops/deploys.jsonl; git diff --cached --quiet || { git commit -m "deploy-workers: record live-verified deploy" && git pull --rebase -q && git push; }
+          git add ops/deploys.jsonl ops/bindings.jsonl; git diff --cached --quiet || { git commit -m "deploy-workers: record live-verified deploy" && git pull --rebase -q && git push; }

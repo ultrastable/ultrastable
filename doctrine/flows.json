@@ -728,7 +728,8 @@
       "feedback": "a deploy whose live code differs from the commit files an item the executor takes next",
       "bindings": [
         "CLOUDFLARE_ACCOUNT_ID",
-        "CLOUDFLARE_API_TOKEN"
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
       ]
     }
   },
@@ -776,6 +777,8 @@
     "components",
     "agent-interop",
     "terms-crosswalk",
-    "code-agents"
+    "code-agents",
+    "role-program-manager",
+    "role-infrastructure-manager"
   ]
 }
