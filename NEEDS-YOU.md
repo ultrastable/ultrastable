@@ -22,10 +22,6 @@ Account creation accepts terms in your name. If you do nothing: Posting stays dr
 One approval on GitHub's own page lets the system open, check, merge and deploy changes by itself, including changes to its own workflows. The system then handles every callback, token exchange and renewal. If you do nothing: Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.
 **[Authorize on GitHub](https://ultrastable.io/connect/github)**
 
-## Register the Google and Buffer sign-in apps
-Connecting Google and Buffer by their consent screens (tokens stored in each person's own Cloudflare, never typed) needs one OAuth app registered in each service under your identity: a Google Cloud OAuth client and a Buffer developer app, each with redirect https://ultrastable.io/connect/<service>/callback. IDENTITY-BOUND: registering an app accepts the provider's terms in your name. If you do nothing: the wizard keeps its account-creation links for Google and Buffer and nothing is typed or stored.
-**[Open Google Cloud credentials](https://console.cloud.google.com/apis/credentials)**
-
 ## Already done for you
 
 - Work: a routine in Claude's cloud starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green. No API key is needed and no computer of yours has to be on.

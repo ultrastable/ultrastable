@@ -764,6 +764,22 @@
       ],
       "feedback": "views and engagement return through the dashboard snapshot and steer the marketing-manager storyboard edits",
       "bindings": []
+    },
+    "first-run": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "the first check it starts joins the merge lane; a copy where schedules did not come on keeps the manual Enable fallback",
+      "bindings": []
     }
   },
   "implicit_producers": {
