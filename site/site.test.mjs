@@ -231,3 +231,16 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.equal(res.status, 200); assert.match(txt, /Model health/); assert.match(txt, /dead: /); assert.match(txt, /Gaps closed automatically/);
   console.log("ultrastable-site build-3 ok");
 }
+// FRONT-DOOR-2: the idea consumer scaffolds a Worker and deploys it; without credentials it records pending-credentials and fakes nothing.
+{
+  const { consumeIdeas, scaffoldWorker } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js", import.meta.url))).href);
+  assert.match(scaffoldWorker("abc1234567", "<html>x</html>"), /export default \{ async fetch/);
+  const k = new Map([["idea:2026-11-13T00:00:00.000Z:abc1234567", "bins"], ["state:abc1234567", "ready"], ["site:abc1234567", "<html>x</html>"]]);
+  const E = { ASSETS: { get: async (x) => k.has(x) ? k.get(x) : null, put: async (x, v) => { k.set(x, v); }, list: async ({ prefix }) => ({ keys: [...k.keys()].filter(n => n.startsWith(prefix)).map(name => ({ name })), list_complete: true }) } };
+  let o = await consumeIdeas(E); assert.equal(o[0].reason, "pending-credentials");
+  const calls = []; const fake = async (u, i) => { calls.push((i && i.method || "GET") + " " + u); return new Response(JSON.stringify({ result: { subdomain: "q" } }), { status: 200 }); };
+  o = await consumeIdeas(Object.assign({ CF_DEPLOY_TOKEN: "t", CF_ACCOUNT_ID: "a" }, E), fake); assert.equal(o[0].ok, true);
+  assert.ok(calls[0].startsWith("PUT https://api.cloudflare.com/client/v4/accounts/a/workers/scripts/us-idea-abc1234567"));
+  assert.equal(JSON.parse(k.get("deploy:abc1234567")).url, "https://us-idea-abc1234567.q.workers.dev");
+  assert.deepEqual(await consumeIdeas(E), [], "a deployed idea is not deployed again");
+}

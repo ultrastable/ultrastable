@@ -10,7 +10,7 @@ import { agentic, withLinks, CONTENT_SIGNAL } from "./agentic.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
-var VERSION = "0.12.0";
+var VERSION = "0.13.0";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -505,10 +505,43 @@ export async function ideaWork(env) {
   }
   await jput(env, "work:ideas", { items, at: new Date().toISOString() }); return items;
 }
+// FRONT-DOOR-2: the idea:* consumer. After the 3 follow-up questions (RECALL-1) and the build, the tick scaffolds a real Cloudflare Worker for the idea
+// (it serves the audited page) and deploys it with the Workers API. Needs secrets CF_DEPLOY_TOKEN + CF_ACCOUNT_ID on this worker; without them the page
+// stays hosted at /s/<id> and the idea is recorded as "worker: pending-credentials" (owner step in docs/runbooks/front-door-2.md), never faked.
+export const workerName = (id) => "us-idea-" + id;
+export function scaffoldWorker(id, html) {
+  return "// Scaffolded by Ultrastable for idea " + id + ". Edit through https://ultrastable.io/s/" + id + "/change.\nconst PAGE = " + JSON.stringify(String(html)) + ";\n"
+    + "export default { async fetch(r) { const u = new URL(r.url); if (u.pathname === \"/health\") return Response.json({ ok: true, idea: \"" + id + "\" }); return new Response(PAGE, { headers: { \"Content-Type\": \"text/html; charset=utf-8\", \"X-Content-Type-Options\": \"nosniff\" } }); } };\n";
+}
+export async function deployIdeaWorker(env, id, fetcher) {
+  const f = fetcher || fetch, tok = env.CF_DEPLOY_TOKEN, acct = env.CF_ACCOUNT_ID;
+  if (!tok || !acct) return { ok: false, reason: "pending-credentials" };
+  const html = await env.ASSETS.get("site:" + id); if (!html) return { ok: false, reason: "no-page" };
+  const name = workerName(id), api = "https://api.cloudflare.com/client/v4/accounts/" + acct, h = { Authorization: "Bearer " + tok };
+  const fd = new FormData();
+  fd.set("metadata", JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04" }));
+  fd.set("worker.js", new Blob([scaffoldWorker(id, html)], { type: "application/javascript+module" }), "worker.js");
+  const up = await f(api + "/workers/scripts/" + name, { method: "PUT", headers: h, body: fd });
+  if (!up.ok) return { ok: false, reason: "upload " + up.status + " " + (await up.text()).slice(0, 200) };
+  await f(api + "/workers/scripts/" + name + "/subdomain", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, h), body: JSON.stringify({ enabled: true }) });
+  const sub = await f(api + "/workers/subdomain", { headers: h }).then(r => r.json()).catch(() => null), host = sub && sub.result && sub.result.subdomain;
+  return { ok: true, name, url: host ? "https://" + name + "." + host + ".workers.dev" : null };
+}
+// Consumer: for each stored idea that is built (state ready, audited) and not yet deployed, deploy once per tick (max 3), recording the outcome.
+export async function consumeIdeas(env, fetcher) {
+  const out = [];
+  for (const k of (await kvList(env, "idea:", 500)).slice(-100)) {
+    const id = k.slice(-10), rec = await jget(env, "deploy:" + id);
+    if (out.length >= 3 || (rec && rec.ok) || await env.ASSETS.get("state:" + id) !== "ready") continue;
+    const r = await deployIdeaWorker(env, id, fetcher).catch(e => ({ ok: false, reason: String(e).slice(0, 200) }));
+    await jput(env, "deploy:" + id, Object.assign({ at: new Date().toISOString() }, r)); out.push({ id, ok: r.ok, reason: r.reason || null });
+  }
+  return out;
+}
 export async function tick(env, ctx, now) {
   const t = now || new Date(), out = { at: t.toISOString() }, h = await jget(env, "health:models");
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
-  out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length;
+  out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
   await jput(env, "tick:last", out); return out;
 }
 async function statusData(env) {
