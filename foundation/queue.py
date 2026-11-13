@@ -74,7 +74,8 @@ def takeable(root=REPO) -> list[dict]:
             continue
         out.append({"number": it["id"], "title": j.get("title", it["id"]), "body": j.get("body", ""), "labels": [{"name": n} for n in j.get("labels", [])],
                     "updated_at": "1970-01-01T00:00:00Z"})
-    return out
+    from . import criticality
+    return criticality.gate(out, root)
 
 
 def close(root, item_id: str, why: str) -> None:

@@ -1,0 +1,34 @@
+name: cost-guard
+# budget: ~1 min per run, once a day (~30 min per month)
+# trigger: daily schedule; cost data changes by day, so faster adds nothing (COST-GUARD-1)
+# free-alternative: run `python3 -m foundation cost --guard --apply` from a cloud-hosted Claude session with CLOUDFLARE_API_TOKEN bound
+# Also runs the criticality tick (k = verified deploys / (cost + human touches)) and logs it to ops/criticality.jsonl.
+# Runs deploy/cost-probe.mjs (D1 rows read and Workers AI neurons into ops/cost.jsonl, a queue item per breach) and then the criticality tick.
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: cost-guard
+  cancel-in-progress: false
+jobs:
+  cost-guard:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: 22}
+      - name: Probe and guard
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node deploy/cost-probe.mjs
+      - name: Criticality tick (CRITICALITY-1)
+        run: python3 -m foundation criticality --tick --apply
+      - name: Record
+        run: |
+          git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
+          git add ops/cost.jsonl ops/criticality.jsonl docs/issues
+          git diff --cached --quiet || { git commit -m "cost-guard: daily reading"; git push; }

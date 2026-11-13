@@ -18,9 +18,9 @@ GitHub has no API for these. If you do nothing: Generated identicon, no pins.
 Account creation accepts terms in your name. If you do nothing: Posting stays dry-run; the repo, registry pull requests and feeds carry the work.
 **[Create the account](https://bsky.app)**
 
-## Let the merge lane merge changes to its own workflows
-GitHub does not let its built-in workflow token merge a change to workflow files. Only a token made in your account can, and making one is an act in your name. Give it read and write on Contents, Pull requests and Workflows for ultrastable/ultrastable and save it as the repository secret LANE_PAT. If you do nothing: Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.
-**[Create the token](https://github.com/settings/personal-access-tokens/new)**
+## Connect GitHub
+One approval on GitHub's own page lets the system open, check, merge and deploy changes by itself, including changes to its own workflows. The system then handles every callback, token exchange and renewal. If you do nothing: Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.
+**[Authorize on GitHub](https://ultrastable.io/connect/github)**
 
 ## Already done for you
 

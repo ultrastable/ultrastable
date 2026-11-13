@@ -67,7 +67,8 @@
         "doctrine/kernel.json"
       ],
       "area": "managers",
-      "launch": "tick"
+      "launch": "tick",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-portfolio-manager",
@@ -112,7 +113,8 @@
           "control-plane files, .github and owner paths change by pull request only",
           "never start a second program's work while the constraint program has focus items without a doer"
         ]
-      }
+      },
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-project-manager",
@@ -157,7 +159,8 @@
           "control-plane files, .github and owner paths change by pull request only",
           "never start a second program's work while the constraint program has focus items without a doer"
         ]
-      }
+      },
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-product-manager",
@@ -202,7 +205,8 @@
           "control-plane files, .github and owner paths change by pull request only",
           "never start a second program's work while the constraint program has focus items without a doer"
         ]
-      }
+      },
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-staff",
@@ -234,7 +238,8 @@
         "agents/roles/staff.md",
         "seed/agents/roles/staff.md",
         "foundation/executor.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-reviewer",
@@ -266,7 +271,8 @@
         "agents/roles/reviewer.md",
         "seed/agents/roles/reviewer.md",
         "foundation/executor.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-operations",
@@ -311,7 +317,8 @@
           "control-plane files, .github and owner paths change by pull request only",
           "never start a second program's work while the constraint program has focus items without a doer"
         ]
-      }
+      },
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-funding-manager",
@@ -343,7 +350,8 @@
         "agents/roles/funding-manager.md",
         "seed/agents/roles/funding-manager.md",
         "foundation/executor.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-outreach-manager",
@@ -388,7 +396,8 @@
           "control-plane files, .github and owner paths change by pull request only",
           "never start a second program's work while the constraint program has focus items without a doer"
         ]
-      }
+      },
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-outreach-coordinator",
@@ -420,7 +429,8 @@
         "agents/roles/outreach-coordinator.md",
         "seed/agents/roles/outreach-coordinator.md",
         "foundation/executor.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "planning-roadmap",
@@ -454,7 +464,8 @@
         "docs/issues",
         "foundation/executor.py"
       ],
-      "area": "planning"
+      "area": "planning",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "issue-triage",
@@ -489,7 +500,8 @@
       "workflows": [
         "issues.yml"
       ],
-      "area": "issue-tracking"
+      "area": "issue-tracking",
+      "server_owner": "github-actions"
     },
     {
       "id": "retriage",
@@ -521,7 +533,8 @@
       ],
       "workflows": [
         "retriage.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
     },
     {
       "id": "index-refresh",
@@ -553,7 +566,8 @@
       ],
       "workflows": [
         "index.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
     },
     {
       "id": "change-gate",
@@ -589,7 +603,8 @@
       "workflows": [
         "checks.yml"
       ],
-      "area": "review"
+      "area": "review",
+      "server_owner": "github-actions"
     },
     {
       "id": "merge-lane",
@@ -629,7 +644,8 @@
       "workflows": [
         "lane.yml"
       ],
-      "area": "release"
+      "area": "release",
+      "server_owner": "github-actions"
     },
     {
       "id": "platform-core-tests",
@@ -661,7 +677,8 @@
       ],
       "workflows": [
         "platform-core.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
     },
     {
       "id": "actions-budget",
@@ -694,7 +711,8 @@
       ],
       "workflows": [
         "actions-budget.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
     },
     {
       "id": "site-deploy",
@@ -734,7 +752,8 @@
       ],
       "staged_default": "deploy-site.yml tries CLOUDFLARE_API_TOKEN, then the Cloudflare MCP and cf CLI surfaces; with none live it builds and probes the site artifact and records dry-run",
       "identity_bound": "credential",
-      "default_in_effect": "the site keeps serving from the current Cloudflare account; deploys run there"
+      "default_in_effect": "the site keeps serving from the current Cloudflare account; deploys run there",
+      "server_owner": "github-actions"
     },
     {
       "id": "org-profile",
@@ -776,7 +795,8 @@
       ],
       "staged_default": "org-manage.yml tries ORG_ADMIN_TOKEN, then GITHUB_TOKEN, then the Claude session route; with none live the settings file is the staged default and the weekly probe records drift",
       "identity_bound": "credential",
-      "default_in_effect": "milestones and tracking issues stand in for Projects boards"
+      "default_in_effect": "milestones and tracking issues stand in for Projects boards",
+      "server_owner": "github-actions"
     },
     {
       "id": "funding-verify",
@@ -810,7 +830,8 @@
       ],
       "workflows": [
         "funding-maintenance.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
     },
     {
       "id": "funding-outreach",
@@ -847,7 +868,8 @@
         "outreach.yml"
       ],
       "area": "funding-outreach",
-      "launch": "funding-outreach"
+      "launch": "funding-outreach",
+      "server_owner": "github-actions"
     },
     {
       "id": "outreach-send",
@@ -884,7 +906,8 @@
       ],
       "staged_default": "the registered sender is tried; without it the packet stays ready in outreach/ and the probe re-attempts each run",
       "identity_bound": "legal_signature",
-      "default_in_effect": "packets stay unsent; registry pull requests and feeds carry the work"
+      "default_in_effect": "packets stay unsent; registry pull requests and feeds carry the work",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "social-post",
@@ -925,7 +948,8 @@
       ],
       "staged_default": "direct channel APIs are tried; without a credential the post is written to the calendar as dry-run and re-attempted next run",
       "identity_bound": "legal_signature",
-      "default_in_effect": "posting stays dry-run; the repository and feeds carry the work"
+      "default_in_effect": "posting stays dry-run; the repository and feeds carry the work",
+      "server_owner": "github-actions"
     },
     {
       "id": "plussing",
@@ -958,7 +982,8 @@
         "docs/concepts/plussing.md"
       ],
       "area": "plussing",
-      "launch": "plussing"
+      "launch": "plussing",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "predict-verify",
@@ -989,7 +1014,8 @@
       "system_path": [
         "seed/worker/src/tick.js",
         "seed/plugins/loops.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "trust-ledger",
@@ -1021,7 +1047,8 @@
         "seed/autonomy/policy.json",
         "doctrine/kernel.json"
       ],
-      "area": "trust-ledger"
+      "area": "trust-ledger",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "memory-fresh",
@@ -1052,7 +1079,8 @@
         "scripts/check_memory.py",
         "docs/PROJECT-MEMORY.md"
       ],
-      "area": "memory"
+      "area": "memory",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "write-back",
@@ -1087,7 +1115,8 @@
         "foundation/writeback.py",
         "agents/AGENTS.md"
       ],
-      "launch": "write-back"
+      "launch": "write-back",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "loop-registry",
@@ -1117,7 +1146,8 @@
       "system_path": [
         "foundation/loops.py",
         "instances/ultrastable/loop-registry.json"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "glossary",
@@ -1150,7 +1180,8 @@
         "foundation/glossary.py",
         "doctrine/glossary.json",
         "scripts/dashboard_snapshot.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "doctrine-check",
@@ -1181,7 +1212,8 @@
         "foundation/doctrine.py",
         "doctrine/positioning.json"
       ],
-      "area": "specs"
+      "area": "specs",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "recognition-lint",
@@ -1212,7 +1244,8 @@
       "system_path": [
         "foundation/kernel.py",
         "doctrine/kernel.json"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "doctrine-amendment",
@@ -1245,7 +1278,8 @@
         "doctrine/kernel-8.2.1.md",
         "doctrine/standing-directives.md",
         "foundation/kernel.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "gap-register",
@@ -1277,7 +1311,8 @@
         "foundation/selfhost.py",
         "instances/ultrastable/gaps.json"
       ],
-      "launch": "probes"
+      "launch": "probes",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "dashboard-snapshot",
@@ -1308,7 +1343,8 @@
         "scripts/dashboard_snapshot.py",
         "dashboard/worker.js"
       ],
-      "area": "reporting"
+      "area": "reporting",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "launch",
@@ -1342,7 +1378,8 @@
       ],
       "workflows": [
         "loop.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
     },
     {
       "id": "guiding-directive",
@@ -1375,7 +1412,8 @@
         "doctrine/directive.json",
         "doctrine/registers.json",
         "foundation/directive.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "durable-facts",
@@ -1407,7 +1445,8 @@
         "doctrine/durable-facts.json",
         "docs/BOOTSTRAP-NO-MEMORY.md",
         "foundation/directive.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "agent-executor",
@@ -1445,7 +1484,8 @@
         "executor.yml",
         "cf-account.yml"
       ],
-      "area": "managers"
+      "area": "managers",
+      "server_owner": "github-actions"
     },
     {
       "id": "executor-session",
@@ -1479,7 +1519,8 @@
       "workflows": [
         "executor.yml"
       ],
-      "credentials": []
+      "credentials": [],
+      "server_owner": "github-actions"
     },
     {
       "id": "doc-consumption",
@@ -1511,7 +1552,8 @@
         "foundation/docs_audit.py",
         "foundation/kb.py",
         "doctrine/doc-consumers.json"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "liveness",
@@ -1543,7 +1585,8 @@
         "foundation/liveness.py",
         "instances/ultrastable/liveness.json",
         "foundation/launch.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "server-side-only",
@@ -1576,7 +1619,8 @@
         "doctrine/server-side.json",
         "scripts/check_routes.py",
         "foundation/failover.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "core-instance-sync",
@@ -1612,7 +1656,8 @@
       "area": "operations",
       "workflows": [
         "upstream.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
     },
     {
       "id": "fleet-lane",
@@ -1652,7 +1697,8 @@
       ],
       "staged_default": "with no org-wide token the fleet runs on GITHUB_TOKEN for this repository and records the failed surfaces; the scheduled Claude session surface takes the rest",
       "area": "managers",
-      "launch": null
+      "launch": null,
+      "server_owner": "github-actions"
     },
     {
       "id": "orphan-artifacts",
@@ -1684,7 +1730,8 @@
         "doctrine/orphans.json",
         "doctrine/orphans-baseline.json"
       ],
-      "area": "governance"
+      "area": "governance",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "containment-boundary",
@@ -1715,7 +1762,8 @@
         "foundation/boundary.py",
         "doctrine/boundary.json"
       ],
-      "area": "governance"
+      "area": "governance",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "session-reaper",
@@ -1746,7 +1794,8 @@
         "foundation/boundary.py",
         "instances/ultrastable/improvements.json"
       ],
-      "area": "governance"
+      "area": "governance",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "branch-reaper",
@@ -1782,7 +1831,8 @@
       "workflows": [
         "sessions.yml"
       ],
-      "area": "managers"
+      "area": "managers",
+      "server_owner": "github-actions"
     },
     {
       "id": "market-gaps",
@@ -1814,7 +1864,8 @@
         "foundation/market.py",
         "doctrine/market.json"
       ],
-      "area": "governance"
+      "area": "governance",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "strange-loop-hygiene",
@@ -1847,7 +1898,8 @@
         "scripts/completion_sweep.sh",
         "agents/AGENTS.md"
       ],
-      "area": "governance"
+      "area": "governance",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-research-publisher",
@@ -1880,7 +1932,8 @@
         "seed/agents/roles/research-publisher.md",
         "doctrine/team.json",
         "foundation/team.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-marketing-manager",
@@ -1913,7 +1966,8 @@
         "seed/agents/roles/marketing-manager.md",
         "doctrine/team.json",
         "foundation/team.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-legal-ip-manager",
@@ -1946,7 +2000,8 @@
         "seed/agents/roles/legal-ip-manager.md",
         "doctrine/team.json",
         "foundation/team.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-customer-success",
@@ -1979,7 +2034,8 @@
         "seed/agents/roles/customer-success.md",
         "doctrine/team.json",
         "foundation/team.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "role-org-designer",
@@ -2012,7 +2068,8 @@
         "seed/agents/roles/org-designer.md",
         "doctrine/team.json",
         "foundation/team.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "triggers",
@@ -2045,7 +2102,8 @@
         "foundation/triggers.py",
         "seed/worker/src/events.js",
         "seed/worker/src/index.js"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "lifecycle",
@@ -2077,7 +2135,8 @@
         "foundation/lifecycle.py",
         "foundation/launch.py",
         "ops/loop-evidence"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "components",
@@ -2110,7 +2169,8 @@
         "foundation/components.py",
         "doctrine/market-evidence.json",
         "foundation/launch.py"
-      ]
+      ],
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "failure-audit",
@@ -2146,7 +2206,8 @@
       "workflows": [
         "failure-audit.yml"
       ],
-      "area": "managers"
+      "area": "managers",
+      "server_owner": "github-actions"
     },
     {
       "id": "public-transparency",
@@ -2183,7 +2244,8 @@
       "launch": "transparency",
       "workflows": [
         "transparency.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
     },
     {
       "id": "agent-interop",
@@ -2213,7 +2275,8 @@
       "system_path": [
         "doctrine/agent-standards.json"
       ],
-      "area": "governance"
+      "area": "governance",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "terms-crosswalk",
@@ -2243,7 +2306,8 @@
       "system_path": [
         "doctrine/crosswalk.json"
       ],
-      "area": "governance"
+      "area": "governance",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "code-agents",
@@ -2274,7 +2338,8 @@
         "doctrine/code-agents.json",
         "seed/worker/src/codeagent.js"
       ],
-      "area": "governance"
+      "area": "governance",
+      "server_owner": "ultrastable-tick"
     },
     {
       "id": "running-system",
@@ -2309,7 +2374,8 @@
       "workflows": [
         "deploy-system.yml",
         "deploy-workers.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
     },
     {
       "id": "product-manager-pass",
@@ -2347,7 +2413,8 @@
       ],
       "workflows": [
         "product-manager.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
     },
     {
       "id": "scout",
@@ -2383,7 +2450,210 @@
       "area": "governance",
       "workflows": [
         "scout.yml"
-      ]
+      ],
+      "server_owner": "github-actions"
+    },
+    {
+      "id": "cost-guard",
+      "kind": "probe",
+      "summary": "Reads D1 rows read and Workers AI neurons daily, compares with budgets in doctrine/cost.json, files a queue item per breach.",
+      "trigger": "daily schedule (.github/workflows/cost-guard.yml)",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:doctrine/cost.json",
+      "writeback": [
+        "ops/cost.jsonl",
+        "docs/issues",
+        "ops/criticality.jsonl"
+      ],
+      "system_path": [
+        "foundation/cost.py",
+        "doctrine/cost.json",
+        "tests/foundation/test_cost.py",
+        "foundation/criticality.py",
+        "doctrine/criticality.json",
+        "tests/foundation/test_criticality.py"
+      ],
+      "workflows": [
+        "cost-guard.yml"
+      ],
+      "server_owner": "github-actions"
+    },
+    {
+      "id": "deploy-workers",
+      "kind": "probe",
+      "summary": "Every merge deploys the tick and dashboard Workers and verifies the live code equals the commit (DEPLOY-ALL-1); the count of verified deploys in ops/deploys.jsonl is the criticality measure.",
+      "trigger": "automatic: merge to main touching worker code",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:ops/deploys.jsonl",
+      "writeback": [
+        "ops/deploys.jsonl",
+        "ops/bindings.jsonl"
+      ],
+      "system_path": [
+        ".github/workflows/deploy-workers.yml",
+        "ops/deploys.jsonl"
+      ],
+      "workflows": [
+        "deploy-workers.yml"
+      ],
+      "server_owner": "github-actions"
+    },
+    {
+      "id": "role-program-manager",
+      "kind": "manager",
+      "summary": "Sequences projects under the portfolio constraint; deploy-raising and cost-cutting work first when k is below its floor.",
+      "trigger": "each tick of the program role (tick_every 4)",
+      "owner": "program-manager",
+      "closes_by": "system",
+      "sla": "1 tick",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:agents/roles/program-manager.md",
+      "writeback": [
+        "docs/issues",
+        "docs/PROJECT-MEMORY.md"
+      ],
+      "system_path": [
+        "agents/roles/program-manager.md",
+        "seed/agents/roles/program-manager.md",
+        "foundation/executor.py"
+      ],
+      "program": {
+        "orient": [
+          "ops/criticality.jsonl",
+          "docs/issues",
+          "ROADMAP.md"
+        ],
+        "originate_to": "docs/issues",
+        "predict_log": "docs/lessons",
+        "lane": [
+          "control-plane files, .github and owner paths change by pull request only",
+          "never start a second program's work while the constraint program has focus items without a doer"
+        ]
+      },
+      "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "role-infrastructure-manager",
+      "kind": "manager",
+      "summary": "Discovers Cloudflare resources against the topology, holds the cost budgets, and keeps the tick Worker's lane and dispatch bindings in place.",
+      "trigger": "each tick of the infrastructure role (tick_every 2)",
+      "owner": "infrastructure-manager",
+      "closes_by": "system",
+      "sla": "1 tick",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:agents/roles/infrastructure-manager.md",
+      "writeback": [
+        "docs/issues",
+        "docs/PROJECT-MEMORY.md"
+      ],
+      "system_path": [
+        "agents/roles/infrastructure-manager.md",
+        "seed/agents/roles/infrastructure-manager.md",
+        "foundation/executor.py"
+      ],
+      "program": {
+        "orient": [
+          "ops/cost.jsonl",
+          "ops/bindings.jsonl",
+          "doctrine/topology.json"
+        ],
+        "originate_to": "docs/issues",
+        "predict_log": "docs/lessons",
+        "lane": [
+          "control-plane files, .github and owner paths change by pull request only",
+          "never start a second program's work while the constraint program has focus items without a doer"
+        ]
+      },
+      "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "open-loop-sweeper",
+      "kind": "probe",
+      "summary": "The tick Worker closes every loop a client session leaves open: merges green client PRs, refreshes stale branches, releases stale claims, files one Q-OPENLOOP item per stuck loop.",
+      "trigger": "every tick (cron on the tick Worker)",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "worker",
+          "how": "seed/worker/src/sweeper.js on the tick Worker cron",
+          "class": "free"
+        },
+        {
+          "id": "actions",
+          "how": "scheduled GitHub Actions lane on its built-in token",
+          "class": "free"
+        }
+      ],
+      "closing_probe": "grep:seed/worker/src/sweeper.js::export async function sweepOpenLoops",
+      "writeback": [
+        "ops/cost.jsonl",
+        "docs/issues",
+        "ops/criticality.jsonl"
+      ],
+      "system_path": [
+        "seed/worker/src/sweeper.js",
+        "doctrine/loop-ownership.json",
+        "foundation/loopowner.py"
+      ],
+      "server_owner": "ultrastable-tick",
+      "cycle_metric": "open_loop_age_hours"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"
