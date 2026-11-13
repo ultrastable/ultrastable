@@ -618,8 +618,7 @@
       "feedback": "the deploy count is a first-class metric the product manager and the clock read",
       "bindings": [
         "CLOUDFLARE_ACCOUNT_ID",
-        "CLOUDFLARE_API_TOKEN",
-        "LANE_PAT"
+        "CLOUDFLARE_API_TOKEN"
       ]
     },
     "executor-session": {
@@ -729,9 +728,24 @@
       "feedback": "a deploy whose live code differs from the commit files an item the executor takes next",
       "bindings": [
         "CLOUDFLARE_ACCOUNT_ID",
-        "CLOUDFLARE_API_TOKEN",
-        "LANE_PAT"
+        "CLOUDFLARE_API_TOKEN"
       ]
+    },
+    "open-loop-sweeper": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "a merged client PR shortens the next tick's open_loop_age_hours; a stuck one files a Q-OPENLOOP item the executor takes first",
+      "bindings": []
     }
   },
   "implicit_producers": {

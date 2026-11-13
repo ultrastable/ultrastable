@@ -173,7 +173,7 @@ class Credential(unittest.TestCase):
     def test_the_owner_step_is_recorded_once_with_a_default(self):
         items = [i for i in json.loads((ROOT / "foundation/data/needs-you.json").read_text())["items"] if i["id"] == "lane-credential"]
         self.assertEqual(len(items), 1)
-        self.assertEqual(items[0]["class"], "credential")
+        self.assertEqual(items[0]["class"], "owner_account")  # POINT-AND-CLICK-1: one consent click on GitHub, never a token to mint
         self.assertIn("needs-pat", items[0]["default"])
         wf = (ROOT / ".github/workflows/lane.yml").read_text()
         for name in ("LANE_PAT", "LANE_APP_ID", "LANE_APP_PRIVATE_KEY"):

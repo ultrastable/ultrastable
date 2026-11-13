@@ -8,6 +8,7 @@
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE | --failover [--decide]]   start the loops on this repo (server-side hosts only)
   python3 -m foundation liveness [--json|--check|--file-items|--static|--probe ID]   are the autonomous loops actually running (evidence, not files)
   python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)
+  python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation serverside [--check|--scan]                       server-side only: no host, scheduler, agent or route on a person's computer
   python3 -m foundation selfhost [--verify|--gaps|--no-node] [--db PATH]   Ultrastable boots its own organization from this repo
@@ -68,6 +69,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["criticality"]:
         from . import criticality
         return criticality.main(_av[1:])
+    if _av[:1] == ["loopowner"]:
+        from . import loopowner
+        return loopowner.main(_av[1:])
     if _av[:1] == ["cost"]:
         from . import cost
         return cost.main(_av[1:])

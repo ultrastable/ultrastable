@@ -1,10 +1,10 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-13T11:25:05Z",
- "commit": "9864c40",
+ "generated": "2026-11-13T11:34:26Z",
+ "commit": "ba6e52a",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
-  "managers_and_loops": 72,
+  "managers_and_loops": 73,
   "loops_with_evidence": 2,
   "components": {
    "live": 24
@@ -79,8 +79,7 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "failure": 3,
-    "success": 27
+    "success": 30
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -107,7 +106,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 118.2,
+   "age_s": 119.0,
    "status": "fresh",
    "missed": 0
   },
@@ -131,7 +130,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 56.2,
+   "age_s": 444.0,
    "status": "fresh",
    "missed": 0
   },
@@ -139,7 +138,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 72650.2,
+   "age_s": 73211.0,
    "status": "fresh",
    "missed": 0
   }
@@ -168,13 +167,13 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-13T11:24:52Z",
+  "generated": "2026-11-13T11:34:12Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1320.0,
+    "expected_today": 1320.1,
     "value": null,
     "behind": null,
     "progress": null
@@ -183,7 +182,7 @@
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 568.5,
+    "expected_today": 568.6,
     "value": null,
     "behind": null,
     "progress": null
@@ -192,7 +191,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 826.6,
+    "expected_today": 826.7,
     "value": null,
     "behind": null,
     "progress": null
@@ -259,11 +258,11 @@
  },
  "growth": {
   "mix": {
-   "growth": 7,
+   "growth": 6,
    "fix": 1,
-   "maintenance": 12,
+   "maintenance": 13,
    "total": 20,
-   "growth_share": 0.35,
+   "growth_share": 0.3,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -313,9 +312,9 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 135.3,
+   "last_beat_age_s": 135.6,
    "expected_interval_s": 21600,
-   "beats_24h": 40,
+   "beats_24h": 46,
    "expected_24h": 4.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -324,7 +323,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 72667.3,
+   "last_beat_age_s": 73227.6,
    "expected_interval_s": 86400,
    "beats_24h": 7,
    "expected_24h": 1.0,
@@ -335,9 +334,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 165.3,
+   "last_beat_age_s": 725.6,
    "expected_interval_s": 86400,
-   "beats_24h": 46,
+   "beats_24h": 45,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -346,7 +345,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 55206.3,
+   "last_beat_age_s": 55766.6,
    "expected_interval_s": 604800,
    "beats_24h": 2,
    "expected_24h": 0.1,
@@ -1450,12 +1449,13 @@
    "cycle_metric": null,
    "last_plus": null,
    "last_run": null,
-   "owns": "the set of projects that serve one portfolio constraint; sequencing, dependencies and the plus share across projects.",
+   "owns": "the set of projects that serve one portfolio constraint: sequencing, dependencies and the plus share across projects.",
    "cadence": "every 4 base ticks",
    "each_tick": [
     "Read the portfolio constraint and every open project item.",
     "Sequence the items so deploy-raising and cost-cutting work comes first when k is below its floor (`ops/criticality.jsonl`).",
-    "File the next program item with an owner, trigger and probe; record the decision and a prediction."
+    "File the next program item with an owner, trigger and probe; record the decision and a prediction.",
+    "Hand anything beyond program level to the portfolio manager as an item."
    ],
    "role_file": "agents/roles/program-manager.md"
   },
@@ -1470,14 +1470,27 @@
    "cycle_metric": null,
    "last_plus": null,
    "last_run": null,
-   "owns": "Cloudflare resources, bindings, secrets and deploys: discovery against `doctrine/topology.json`, cost budgets in `doctrine/cost.json`, and the deploy count in `ops/deploys.jsonl`.",
+   "owns": "Cloudflare resources, bindings, secrets and deploys: discovery against `doctrine/topology.json`, cost budgets in `ops/cost-thresholds.json`, and the deploy count in `ops/deploys.jsonl`.",
    "cadence": "every 2 base ticks",
    "each_tick": [
     "Run discovery (`python3 -m foundation topology --drift`) and file every undeclared or drifted resource.",
-    "Read the cost reading (`ops/cost.jsonl`) against budgets; on breach narrow the queue to items that cut cost.",
-    "Verify the tick Worker has its lane and dispatch bindings (`ops/bindings.jsonl`); if not, file the single credential gate."
+    "Read the cost reading (`ops/cost.jsonl`) against budgets; on breach the queue narrows to items that cut cost (`foundation/criticality.py`).",
+    "Verify the tick Worker has its lane and dispatch bindings (`ops/bindings.jsonl`); if not, keep the single credential gate open with its default in effect.",
+    "Hand anything beyond infrastructure level to the operations manager as an item."
    ],
    "role_file": "agents/roles/infrastructure-manager.md"
+  },
+  {
+   "loop": "open-loop-sweeper",
+   "kind": "probe",
+   "summary": "The tick Worker closes every loop a client session leaves open: merges green client PRs, refreshes stale branches, releases stale claims, files one Q-OPENLOOP item per stuck loop.",
+   "owner": "operations",
+   "trigger": "every tick (cron on the tick Worker)",
+   "sla": "1d",
+   "closing_probe": "grep:seed/worker/src/sweeper.js::export async function sweepOpenLoops",
+   "cycle_metric": "open_loop_age_hours",
+   "last_plus": null,
+   "last_run": null
   }
  ],
  "claims": {
@@ -1886,6 +1899,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "ba6e52a",
+    "at": "2026-11-13T11:26:41+00:00",
+    "author": "Claude",
+    "subject": "Role files carry every axiom; register criticality surfaces",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/ba6e52a9786aa8539050071b0b5040b7490adcc5"
+   },
+   {
     "sha": "9864c40",
     "at": "2026-11-13T11:23:48+00:00",
     "author": "Claude",
@@ -2235,15 +2257,6 @@
     "pr": 278,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/67d9acab737adb54abd62a62ab32225fa995a059"
-   },
-   {
-    "sha": "19d3916",
-    "at": "2026-11-12T16:07:16+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "CLOCKWORK-2 + GROWTH-2: stages, catch-up, settlement, escalation; targets, experiments, knobs, filing (#276)",
-    "pr": 276,
-    "item": "CLOCKWORK-2",
-    "url": "https://github.com/ultrastable/ultrastable/commit/19d3916f55620d0740c21ddf7d931502fa2c3870"
    }
   ],
   "pull_requests": []

@@ -1,55 +1,55 @@
 {
- "_doc": "The only list of things a person must do. Each item is an act only the owner can perform (identity-bound) and carries exactly one link that does it. Everything else self-resolves. Rendered into NEEDS-YOU.md by `python3 -m foundation needsyou`; tests require https links and no file paths.",
- "items": [
-  {
-   "id": "funding",
-   "title": "Submit funding applications",
-   "why": "An application is a statement made in your name; the packets are written and checked.",
-   "default": "Packets stay unsent.",
-   "url": "https://github.com/ultrastable/ultrastable/blob/main/outreach/STATUS.md",
-   "button": "Open the list of programmes with their application links",
-   "class": "legal_signature"
-  },
-  {
-   "id": "cloudflare-new-account",
-   "title": "Let Claude reach the new Cloudflare account",
-   "why": "Your Cloudflare login is already a member of the ultrastable account (81e3a4ef...), but the connector was authorized for the quniverse account only; only you can grant it the second account.",
-   "default": "The old account keeps running everything; nothing moves.",
-   "url": "https://claude.ai/settings/connectors",
-   "button": "Reconnect the Cloudflare connector and tick the ultrastable account",
-   "class": "credential"
-  },
-  {
-   "id": "org-brand",
-   "title": "Upload the org avatar and pin repos",
-   "why": "GitHub has no API for these.",
-   "default": "Generated identicon, no pins.",
-   "url": "https://github.com/organizations/ultrastable/settings/profile",
-   "button": "Open the org profile settings",
-   "class": "owner_account"
-  },
-  {
-   "id": "social",
-   "title": "Create the Bluesky account",
-   "why": "Account creation accepts terms in your name.",
-   "default": "Posting stays dry-run; the repo, registry pull requests and feeds carry the work.",
-   "url": "https://bsky.app",
-   "button": "Create the account",
-   "class": "legal_signature"
-  },
-  {
-   "id": "lane-credential",
-   "title": "Let the merge lane merge changes to its own workflows",
-   "why": "GitHub does not let its built-in workflow token merge a change to workflow files. Only a token made in your account can, and making one is an act in your name. Give it read and write on Contents, Pull requests and Workflows for ultrastable/ultrastable and save it as the repository secret LANE_PAT.",
-   "default": "Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.",
-   "url": "https://github.com/settings/personal-access-tokens/new",
-   "button": "Create the token",
-   "class": "credential"
-  }
- ],
- "done_for_you": [
-  "Work: a routine in Claude's cloud starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green. No API key is needed and no computer of yours has to be on.",
-  "Old Cloudflare account: the tick, site and dashboard keep running there.",
-  "Entity, patent and the org admin token are not needed now; entity-only programmes stay deferred until you choose one."
- ]
+  "_doc": "The only list of things a person must do. Each item is an act only the owner can perform (identity-bound) and carries exactly one link that does it. Everything else self-resolves. Rendered into NEEDS-YOU.md by `python3 -m foundation needsyou`; tests require https links and no file paths.",
+  "items": [
+    {
+      "id": "funding",
+      "title": "Submit funding applications",
+      "why": "An application is a statement made in your name; the packets are written and checked.",
+      "default": "Packets stay unsent.",
+      "url": "https://github.com/ultrastable/ultrastable/blob/main/outreach/STATUS.md",
+      "button": "Open the list of programmes with their application links",
+      "class": "legal_signature"
+    },
+    {
+      "id": "cloudflare-new-account",
+      "title": "Let Claude reach the new Cloudflare account",
+      "why": "Your Cloudflare login is already a member of the ultrastable account (81e3a4ef...), but the connector was authorized for the quniverse account only; only you can grant it the second account.",
+      "default": "The old account keeps running everything; nothing moves.",
+      "url": "https://claude.ai/settings/connectors",
+      "button": "Reconnect the Cloudflare connector and tick the ultrastable account",
+      "class": "credential"
+    },
+    {
+      "id": "org-brand",
+      "title": "Upload the org avatar and pin repos",
+      "why": "GitHub has no API for these.",
+      "default": "Generated identicon, no pins.",
+      "url": "https://github.com/organizations/ultrastable/settings/profile",
+      "button": "Open the org profile settings",
+      "class": "owner_account"
+    },
+    {
+      "id": "social",
+      "title": "Create the Bluesky account",
+      "why": "Account creation accepts terms in your name.",
+      "default": "Posting stays dry-run; the repo, registry pull requests and feeds carry the work.",
+      "url": "https://bsky.app",
+      "button": "Create the account",
+      "class": "legal_signature"
+    },
+    {
+      "id": "lane-credential",
+      "title": "Connect GitHub",
+      "why": "One approval on GitHub's own page lets the system open, check, merge and deploy changes by itself, including changes to its own workflows. The system then handles every callback, token exchange and renewal.",
+      "default": "Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.",
+      "url": "https://ultrastable.io/connect/github",
+      "button": "Authorize on GitHub",
+      "class": "owner_account"
+    }
+  ],
+  "done_for_you": [
+    "Work: a routine in Claude's cloud starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green. No API key is needed and no computer of yours has to be on.",
+    "Old Cloudflare account: the tick, site and dashboard keep running there.",
+    "Entity, patent and the org admin token are not needed now; entity-only programmes stay deferred until you choose one."
+  ]
 }
