@@ -10,6 +10,7 @@ function fake(state) {
     if (m === 'GET' && path.startsWith('/repos/o/r/pulls?')) return R(state.prs);
     if (m === 'GET' && /pulls\/\d+$/.test(path)) return R(state.detail);
     if (m === 'PUT' && path.endsWith('/merge')) return R({}, state.mergeOk !== false, state.mergeOk === false ? 405 : 200);
+    if (state.issuesOff && path.includes('/issues')) return R({ message: 'Issues has been disabled in this repository.' }, false, 410);
     if (m === 'GET' && path.includes('labels=open-loop')) return R(state.filed || []);
     if (m === 'POST' && path.endsWith('/issues')) return R({ number: 9 });
     if (m === 'GET' && path.includes('labels=claimed')) return R(state.claimed || []);
@@ -34,4 +35,11 @@ test('an already-filed item is not filed twice; stale claims are released; no to
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
   assert.deepEqual(r.filed, []); assert.deepEqual(r.released, ['o/r#3']);
   assert.equal((await sweepOpenLoops({ repos: ['o/r'] })).status, 'no-token');
+});
+test('with issues off the sweep does not abort: the stuck PR is left to the lane item and the next PR is still handled', async () => {
+  const two = [pr, { number: 7, head: { ref: 'agent/z' }, updated_at: '2026-11-10T00:00:00Z' }];
+  const { f, calls } = fake({ prs: two, detail: { ...pr, mergeable_state: 'dirty' }, issuesOff: true });
+  const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
+  assert.equal(r.status, 'ok'); assert.deepEqual(r.errors, []); assert.deepEqual(r.filed, []);
+  assert.deepEqual(r.lane_owned, ['o/r#5', 'o/r#7']); assert.ok(calls.includes('GET /repos/o/r/pulls/7'));
 });

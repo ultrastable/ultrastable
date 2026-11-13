@@ -13,7 +13,7 @@ async function gh(f, token, method, path, body) {
 const hours = (iso, now) => Math.max(0, (now - Date.parse(iso)) / 36e5);
 
 export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now = Date.now(), maxAgeH = 24 }) {
-  const out = { status: 'ok', merged: [], refreshed: [], filed: [], released: [], errors: [], open_loop_age_hours: 0 };
+  const out = { status: 'ok', merged: [], refreshed: [], filed: [], lane_owned: [], released: [], errors: [], open_loop_age_hours: 0 };
   if (!token) return { ...out, status: 'no-token' };
   for (const repo of repos) {
     try {
@@ -33,13 +33,17 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
         if (age < maxAgeH) continue;
         const title = `Q-OPENLOOP-${repo.replace('/', '-')}-${p.number}: close the open client loop on #${p.number}`;
         const have = await gh(f, token, 'GET', `/repos/${repo}/issues?state=open&labels=open-loop&per_page=100`);
-        if ((have.json || []).some(i => i.title.startsWith(`Q-OPENLOOP-${repo.replace('/', '-')}-${p.number}:`))) continue;
+        // Issues can be off on a repository (items are then docs/issues files): GitHub answers 410 with an object, not a list. That loop is not an
+        // error and must not abort the sweep: the merge lane files its tracked item (OL-PR-<n>, `foundation loopowner --adopt`) on the same pass.
+        if (have.status === 410 || have.status === 404) { out.lane_owned.push(tag); continue; }
+        if ((Array.isArray(have.json) ? have.json : []).some(i => i.title.startsWith(`Q-OPENLOOP-${repo.replace('/', '-')}-${p.number}:`))) continue;
         const body = `Owner: ultrastable-tick sweeper. Trigger: every tick. State: ${d.mergeable_state}, idle ${age.toFixed(0)} h.\nDone: PR #${p.number} merged or superseded with evidence. Closing probe: open_loop_age_hours for this PR is 0.\nSERVER-OWNS-LOOPS-1: the server closes this loop, never a client session.`;
         const c = await gh(f, token, 'POST', `/repos/${repo}/issues`, { title, body, labels: ['open-loop'] });
+        if (c.status === 410 || c.status === 404) { out.lane_owned.push(tag); continue; }
         (c.ok ? out.filed : out.errors).push(c.ok ? tag : `${tag} file ${c.status}`);
       }
       const iss = await gh(f, token, 'GET', `/repos/${repo}/issues?state=open&labels=claimed&per_page=50`);
-      for (const i of iss.ok ? iss.json : []) {
+      for (const i of iss.ok && Array.isArray(iss.json) ? iss.json : []) {
         if (i.pull_request || hours(i.updated_at, now) < maxAgeH) continue;
         const r = await gh(f, token, 'DELETE', `/repos/${repo}/issues/${i.number}/labels/claimed`);
         if (r.ok || r.status === 404) out.released.push(`${repo}#${i.number}`);
