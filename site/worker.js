@@ -571,7 +571,7 @@ const AGENT_MD = "# Ultrastable: set-up instructions for an AI assistant\n\nYou 
 // Steps come from doctrine/user-path.json (generated into userpath.js); no step needs a command, a key or a file.
 function setup() {
   const data = JSON.stringify(USER_PATH).replace(/</g, "\\u003c");
-  const js = "(function(){var D=" + data + ",S=D.steps,K='us-setup',st={};try{st=JSON.parse(localStorage.getItem(K)||'{}')}catch(e){}"
+  const js = "(function(){var D=" + data + ",S=D.steps,K='us-setup',st={};var T=(location.hash||'').slice(1);if(T&&D.tasks&&D.tasks[T]&&T[0]!='_'){S=D.tasks[T].steps;K='us-setup-'+T}try{st=JSON.parse(localStorage.getItem(K)||'{}')}catch(e){}"
     + "st.i=st.i||0;st.v=st.v||{};var el=document.getElementById('us-wiz');"
     + "function save(){try{localStorage.setItem(K,JSON.stringify(st))}catch(e){}}"
     + "function fill(t){return String(t||'').replace('{template}',D.template).replace('{user}',st.v.user||'your-name').replace('{project}',st.v.project||'your-project')}"
@@ -588,7 +588,10 @@ function setup() {
     + "else{row.appendChild(btn('Yes',function(){var a=s.yes;if(a.url){open(a);st.p='yes';save();draw()}else go(st.i+1)},true));"
     + "row.appendChild(btn(s.optional?'Not now':'No',function(){var a=s.no;if(!a||a.next){if(s.optional||(a&&a.next))go(st.i+1);else{el.appendChild(h('p','No problem. Come back to this page whenever you are ready.'))}}else{open(a);st.p='no';save();draw()}}))}"
     + "el.appendChild(row);if(st.i>0){var b=h('p');var l=h('a','Back');l.href='#';l.onclick=function(e){e.preventDefault();go(st.i-1)};b.appendChild(l);el.appendChild(b)}}"
-    + "draw()})();";
+    + "function detect(){var u=st.v.user,p=st.v.project,s=S[st.i];if(!s||!s.detect)return;var k=s.detect.kind,n=function(){if(S[st.i]===s&&!st.p&&!st.d)go(st.i+1)};"
+    + "if(k=='github_repo'&&u&&p)fetch('https://api.github.com/repos/'+u+'/'+p).then(function(r){if(r.ok){st.d=1;st.i++;st.d=0;st.p=null;save();draw()}}).catch(function(){});"
+    + "if(k=='site'&&p)fetch('https://'+p+'.pages.dev/',{mode:'no-cors'}).then(function(){st.i++;st.p=null;save();draw()}).catch(function(){})}"
+    + "draw();detect()})();";
   return shell({ path: "/setup", title: "Set up - Ultrastable", description: "Set up your own Ultrastable project one simple question at a time." },
     "<div class=\"head\"><h1>Let's get you set up</h1><p>One question at a time. Everything is a click. Nothing to install or type.</p></div><div class=\"card\"><h3 class=\"card-title\">Easiest: let an assistant do it</h3><p class=\"meta\">Press Copy, then paste into any AI assistant (Claude, ChatGPT, Gemini, Copilot). No account needed to start.</p><textarea id=\"us-ap\" readonly rows=\"4\" style=\"width:100%;font-size:1rem;padding:.6rem\"></textarea><p><button type=\"button\" class=\"btn btn-primary\" id=\"us-cp\">Copy</button> <span id=\"us-cpm\" class=\"meta\"></span></p></div><div id=\"us-wiz\" class=\"card\"><noscript>This page needs JavaScript to guide you.</noscript></div><script>var P=" + JSON.stringify(AGENT_PROMPT) + ";var t=document.getElementById('us-ap');t.value=P;document.getElementById('us-cp').onclick=function(){t.select();try{navigator.clipboard.writeText(P)}catch(e){document.execCommand('copy')}document.getElementById('us-cpm').textContent='Copied. Paste it into your assistant.'};" + js + "</script>");
 }

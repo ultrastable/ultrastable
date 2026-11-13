@@ -244,3 +244,7 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.equal(JSON.parse(k.get("deploy:abc1234567")).url, "https://us-idea-abc1234567.q.workers.dev");
   assert.deepEqual(await consumeIdeas(E), [], "a deployed idea is not deployed again");
 }
+// USER-PATH-1 / SETUP-2: no autopilot step, public-state detection and task wizards are in the page
+{ const s = await (await get("https://ultrastable.io/setup")).text();
+  assert.ok(!/autopilot/i.test(s), "autopilot step is gone");
+  assert.match(s, /api\.github\.com\/repos/); assert.match(s, /pages\.dev/); assert.match(s, /"tasks"/); }
