@@ -50,12 +50,13 @@ def build(out):
             pg.wait_for_timeout(1200)
             pg.screenshot(path=str(out / f"s{i}.png"))
         b.close()
-    voice = os.environ["PIPER_VOICE"]
+    from piper import PiperVoice
+    voice = PiperVoice.load(os.environ["PIPER_VOICE"])
     srt, clips, t = [], [], 0.0
     for i, s in enumerate(sb["scenes"]):
         wav = out / f"s{i}.wav"
-        subprocess.run(["piper", "--model", voice, "--output_file", str(wav), "--sentence_silence", "0.3"],
-                       input=s["text"].encode(), check=True)
+        with wave.open(str(wav), "wb") as wf:
+            voice.synthesize_wav(s["text"], wf)
         with wave.open(str(wav)) as wf:
             dur = wf.getnframes() / wf.getframerate() + 0.9
         frames = int(dur * 30)
