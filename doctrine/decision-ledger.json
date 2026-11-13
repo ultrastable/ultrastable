@@ -741,6 +741,15 @@
    "title": "SELFAUDIT-1: dispatch with no consumer and no deploy evidence kept k_eff at 0.1",
    "body": "Live D1 2026-11-13: 500 ticks, 208 dispatches (KIT-0 dispatched 30x in 3 days, none with an outcome), 0 outcomes, 0 criticality_samples, so k_eff = 20 capped originated / 210 = 0.095. Q-CRIT-COLLECTORS stayed open and unbuilt. Fix: tick step selfaudit probes the failure-mode register, closing is gated on a green probe, loop-breaker blocks re-dispatch after 3 with no outcome, ingestDeploys reads ops/deploys.jsonl into verified deploy outcomes.",
    "probe": "grep:seed/worker/src/selfaudit.js::selfAuditStep"
+  },
+  {
+   "id": "lesson-2026-11-13-selfaudit-1-session-write-back",
+   "kind": "lesson",
+   "date": "2026-11-13",
+   "title": "SELFAUDIT-1 session write-back",
+   "body": "Session write-back for the SELFAUDIT-1 change: failure-mode register, probe-gated closure, dispatch loop-breaker and deploy evidence ingestion, see seed/worker/src/selfaudit.js.",
+   "probe": "grep:seed/worker/src/selfaudit.js::selfAuditStep",
+   "session": "session_0156nqDtkB93pq1GNnr4TyKn"
   }
  ]
 }
