@@ -711,6 +711,14 @@
       "probe": "file:scripts/video_build.py"
     },
     {
+      "id": "decision-2026-11-13-tokens-are-never-a-person-s-job",
+      "kind": "decision",
+      "date": "2026-11-13",
+      "title": "Tokens are never a person's job",
+      "body": "Owner 2026-11-13: tokens are acquired programmatically via OAuth/App consent callbacks, one friendly click at most; PATs are never requested.",
+      "probe": "file:scripts/lane_credential.py"
+    },
+    {
       "id": "decision-2026-11-13-executor-closed-q-cost-proof-1-add-deploy-cost-probe-mjs-rec",
       "kind": "decision",
       "date": "2026-11-13",
