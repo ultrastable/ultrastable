@@ -2383,6 +2383,74 @@
       "workflows": [
         "scout.yml"
       ]
+    },
+    {
+      "id": "cost-guard",
+      "kind": "probe",
+      "summary": "Reads D1 rows read and Workers AI neurons daily, compares with budgets in doctrine/cost.json, files a queue item per breach.",
+      "trigger": "daily schedule (.github/workflows/cost-guard.yml)",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:doctrine/cost.json",
+      "writeback": [
+        "ops/cost.jsonl",
+        "docs/issues"
+      ],
+      "system_path": [
+        "foundation/cost.py",
+        "doctrine/cost.json",
+        "tests/foundation/test_cost.py"
+      ],
+      "workflows": [
+        "cost-guard.yml"
+      ]
+    },
+    {
+      "id": "deploy-workers",
+      "kind": "probe",
+      "summary": "Every merge deploys the tick and dashboard Workers and verifies the live code equals the commit (DEPLOY-ALL-1); the count of verified deploys in ops/deploys.jsonl is the criticality measure.",
+      "trigger": "automatic: merge to main touching worker code",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:ops/deploys.jsonl",
+      "writeback": [
+        "ops/deploys.jsonl"
+      ],
+      "system_path": [
+        ".github/workflows/deploy-workers.yml",
+        "ops/deploys.jsonl"
+      ],
+      "workflows": [
+        "deploy-workers.yml"
+      ]
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"
