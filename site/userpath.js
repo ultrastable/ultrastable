@@ -37,7 +37,10 @@ export default {
     "url": "https://github.com/{template}/generate",
     "then": "Pick any name, choose Private, press the green button."
    },
-   "confirm": "Is your copy made?"
+   "confirm": "Is your copy made?",
+   "detect": {
+    "kind": "github_repo"
+   }
   },
   {
    "id": "copyname",
@@ -67,25 +70,16 @@ export default {
    "id": "connect",
    "service": "Cloudflare",
    "ask": "Connect your copy to Cloudflare?",
-   "why": "Cloudflare asks to see your copy; you press Allow. After that it keeps your project online by itself.",
+   "why": "Cloudflare asks to see your copy; you press Allow. After that it keeps your project online, and your project switches itself on the first time it is saved.",
    "yes": {
     "label": "Connect",
     "url": "https://dash.cloudflare.com/?to=/:account/workers-and-pages/create",
     "then": "Choose [Import a repository], pick your copy, press Save and Deploy."
    },
-   "confirm": "Does Cloudflare say it is deployed?"
-  },
-  {
-   "id": "autopilot",
-   "service": "GitHub",
-   "ask": "Switch on the autopilot?",
-   "why": "This lets your project check itself, fix itself and improve itself every day.",
-   "yes": {
-    "label": "Open my project",
-    "url": "https://github.com/{user}/{project}/actions",
-    "then": "If you see a green button that says I understand my workflows, press it."
-   },
-   "confirm": "Did you press it, or was there nothing to press?"
+   "confirm": "Does Cloudflare say it is deployed?",
+   "detect": {
+    "kind": "site"
+   }
   },
   {
    "id": "google",
@@ -121,5 +115,60 @@ export default {
  "done": {
   "title": "You are set up.",
   "text": "Your project now runs by itself. Come back to this page any time to see what is switched on, or to add something new."
+ },
+ "_detect": "detect: once the person has typed their GitHub name and copy name the page checks public state and ticks the step itself (github_repo: api.github.com/repos/{user}/{project} answers; site: https://{project}.pages.dev answers). A private copy cannot be seen, so the Yes button always stays as the fallback. Google and Buffer consent-screen connections (tokens stored in the person's own Cloudflare, never typed) wait on owner card 'Register the Google and Buffer sign-in apps' in NEEDS-YOU.md.",
+ "tasks": {
+  "_doc": "Same wizard pattern for every later task: one question, one click, detect when possible. Opened at /setup#<id>.",
+  "manage": {
+   "title": "Check on my project",
+   "steps": [
+    {
+     "id": "look",
+     "service": "Ultrastable",
+     "ask": "Open your project's live page?",
+     "why": "It shows what is running and what it did today.",
+     "yes": {
+      "label": "Open my live page",
+      "url": "https://ultrastable.io/proof",
+      "then": "Come back here if you want to change something."
+     },
+     "confirm": "Did it look right?"
+    }
+   ]
+  },
+  "change": {
+   "title": "Change something",
+   "steps": [
+    {
+     "id": "idea",
+     "service": "Ultrastable",
+     "ask": "Tell us what to change?",
+     "why": "Say it in your own words; we ask a few quick questions.",
+     "yes": {
+      "label": "Start",
+      "url": "https://ultrastable.io/start",
+      "then": "Answer the questions; your project updates itself."
+     },
+     "confirm": "Did your change go through?"
+    }
+   ]
+  },
+  "publish": {
+   "title": "Publish something",
+   "steps": [
+    {
+     "id": "post",
+     "service": "Buffer",
+     "ask": "Share an update on social media?",
+     "why": "Needs Buffer connected (see set-up).",
+     "yes": {
+      "label": "Open Buffer",
+      "url": "https://buffer.com/",
+      "then": "Your project queues posts there once connected."
+     },
+     "confirm": "Did you see your post queued?"
+    }
+   ]
+  }
  }
 };

@@ -2690,6 +2690,44 @@
       ],
       "credentials": [],
       "server_owner": "github-actions"
+    },
+    {
+      "id": "first-run",
+      "kind": "release",
+      "summary": "A copy made from the template switches on its own scheduled workflows on its first push, so the person never presses an autopilot button.",
+      "trigger": "first push to a copy (never in the core repo)",
+      "owner": "customer-success",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "workflow",
+          "how": ".github/workflows/first-run.yml enables each scheduled workflow and starts the first check",
+          "class": "free"
+        },
+        {
+          "id": "manual",
+          "how": "the person presses Enable on the Actions page of their copy",
+          "class": "degraded"
+        }
+      ],
+      "closing_probe": "file:.github/workflows/first-run.yml",
+      "writeback": [
+        "doctrine/user-path.json"
+      ],
+      "system_path": [
+        ".github/workflows/first-run.yml",
+        "doctrine/user-path.json"
+      ],
+      "workflows": [
+        "first-run.yml"
+      ],
+      "credentials": [],
+      "staged_default": "the copy's workflows stay switched off until the person presses Enable",
+      "identity_bound": "none",
+      "default_in_effect": "the wizard no longer asks; first-run enables schedules",
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

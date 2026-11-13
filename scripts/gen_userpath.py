@@ -13,7 +13,8 @@ BANNED = re.compile(r"\b(token|terminal|command|cli|api|key|secret|config|repo|r
 
 def problems(d):
     bad = []
-    for s in d["steps"]:
+    all_steps = list(d["steps"]) + [s for k, v in d.get("tasks", {}).items() if not k.startswith("_") for s in v["steps"]]
+    for s in all_steps:
         for k in ("id", "service", "ask", "why"):
             if not s.get(k):
                 bad.append(f"{s.get('id', '?')}: missing {k}")

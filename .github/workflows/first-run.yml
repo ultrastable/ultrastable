@@ -1,0 +1,35 @@
+name: first-run
+# budget: ~1 min once per copy
+# trigger: the first push to a copy made from the template (never runs in the core repo); then disables itself
+# free-alternative: press Enable on the Actions page of the copy, or ask any assistant to run `gh workflow enable` for each workflow
+# USER-PATH-1 (SETUP-2): replaces the wizard's autopilot step. Switches on every workflow that has a schedule, starts the health check, files nothing.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  actions: write
+  contents: read
+concurrency:
+  group: first-run
+  cancel-in-progress: false
+jobs:
+  start:
+    if: github.repository != 'ultrastable/ultrastable'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Enable every scheduled workflow
+        run: |
+          for f in $(grep -l "schedule:" .github/workflows/*.yml); do
+            n=$(basename "$f")
+            [ "$n" = "first-run.yml" ] && continue
+            gh workflow enable "$n" || echo "::warning::could not enable $n"
+          done
+      - name: Start the first check
+        run: gh workflow run checks.yml || echo "::warning::first check not started"
+      - name: Switch itself off (runs once)
+        run: gh workflow disable first-run.yml
