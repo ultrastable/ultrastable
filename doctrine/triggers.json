@@ -154,6 +154,15 @@
     "17 6 * * *"
    ]
   },
+  "demo-video.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 6 * * 1"
+   ]
+  },
   "deploy-site.yml": {
    "events": [
     "push",

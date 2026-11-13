@@ -1,0 +1,54 @@
+name: demo-video
+# budget: ~6 min x 5/month
+# trigger: weekly, on storyboard change, or dispatch
+# free-alternative: none (needs ffmpeg + chromium; Workers cannot encode video)
+# VIDEO-1: screenshots the live site, narrates with neural TTS (piper), encodes with ffmpeg,
+# publishes to the rolling release `demo-video` for the marketing-manager loop and social pipeline.
+on:
+  schedule:
+    - cron: "41 6 * * 1"
+  push:
+    branches: [main]
+    paths: [video/**, scripts/video_build.py]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: demo-video
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py demo-video
+      - name: Guard narration
+        run: python3 scripts/video_build.py --check
+      - name: Toolchain
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core >/dev/null
+          pip install -q playwright==1.48.0 piper-tts==1.2.0
+          python3 -m playwright install --with-deps chromium >/dev/null
+          mkdir -p /tmp/voice && cd /tmp/voice
+          base=https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/ryan/high
+          curl -fsSLO $base/en_US-ryan-high.onnx && curl -fsSLO $base/en_US-ryan-high.onnx.json
+      - name: Build
+        env: {PIPER_VOICE: /tmp/voice/en_US-ryan-high.onnx}
+        run: python3 scripts/video_build.py --build out
+      - name: Probe output
+        run: |
+          d=$(ffprobe -v error -show_entries format=duration -of csv=p=0 out/demo.mp4)
+          echo "duration=$d"; python3 -c "import sys; sys.exit(0 if float('$d') > 10 else 1)"
+      - name: Publish rolling release
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: |
+          gh release view demo-video >/dev/null 2>&1 || gh release create demo-video --prerelease --title "Ultrastable demo video" --notes "Built server-side by demo-video.yml from video/storyboard.json."
+          gh release upload demo-video out/demo.mp4 out/demo.srt out/demo.json --clobber
+          echo "### Demo video" >> $GITHUB_STEP_SUMMARY
+          echo "https://github.com/${{ github.repository }}/releases/download/demo-video/demo.mp4" >> $GITHUB_STEP_SUMMARY

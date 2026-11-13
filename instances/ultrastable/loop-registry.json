@@ -2654,6 +2654,42 @@
       ],
       "server_owner": "ultrastable-tick",
       "cycle_metric": "open_loop_age_hours"
+    },
+    {
+      "id": "demo-video",
+      "kind": "outreach",
+      "summary": "Rebuild the narrated demo video of the live product weekly and on storyboard change; publish to the demo-video release.",
+      "trigger": "automatic: weekly schedule and storyboard push",
+      "owner": "marketing-manager",
+      "closes_by": "system",
+      "sla": "7d",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:scripts/video_build.py",
+      "writeback": [
+        "video/storyboard.json",
+        "docs/handoff"
+      ],
+      "system_path": [
+        "scripts/video_build.py",
+        "video/storyboard.json"
+      ],
+      "workflows": [
+        "demo-video.yml"
+      ],
+      "credentials": [],
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"
