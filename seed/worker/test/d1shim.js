@@ -3,7 +3,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 export function makeDb() {
   const raw = new DatabaseSync(':memory:');
-  for (const f of ['0001_init.sql', '0004_objectives.sql']) raw.exec(readFileSync(new URL('../migrations/' + f, import.meta.url), 'utf8'));
+  for (const f of ['0001_init.sql', '0004_objectives.sql', '0005_criticality.sql']) raw.exec(readFileSync(new URL('../migrations/' + f, import.meta.url), 'utf8'));
   const db = {
     raw,
     prepare(sql) {
