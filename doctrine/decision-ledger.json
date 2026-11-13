@@ -717,6 +717,14 @@
    "title": "Tokens are never a person's job",
    "body": "Owner 2026-11-13: tokens are acquired programmatically via OAuth/App consent callbacks, one friendly click at most; PATs are never requested.",
    "probe": "file:scripts/lane_credential.py"
+  },
+  {
+   "id": "lesson-2026-11-13-live-d1-migrations-were-never-applied-k-never-measured",
+   "kind": "lesson",
+   "date": "2026-11-13",
+   "title": "Live D1 migrations were never applied; k never measured",
+   "body": "No step applied seed/worker/migrations to the live org D1, so tick measure and criticality failed every run. Fixed: deploy/apply-d1-migrations.mjs, sweeper_runs on /live, e2e-criticality test, probe-live in deploy-workers.yml.",
+   "probe": "file:deploy/probe-live.mjs"
   }
  ]
 }
