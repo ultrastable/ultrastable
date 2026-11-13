@@ -13,6 +13,12 @@ if [ "$got" != "$want" ]; then
   echo "DRIFT site: dispatching deploy-site"
   gh workflow run deploy-site.yml -R "$repo" --ref main || fail=1
 fi
+# DEPLOY-ALL-1: every deployed Worker's code against main, daily. Any difference re-dispatches the deploy, which verifies itself.
+if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
+  node deploy/deploy-workers.mjs --verify || { echo "DRIFT workers: dispatching deploy-workers"; gh workflow run deploy-workers.yml -R "$repo" --ref main || fail=1; gh workflow run deploy-system.yml -R "$repo" --ref main || fail=1; }
+else
+  echo "workers: verify skipped (no Cloudflare token in the lane job)"
+fi
 org=$(python3 -c 'import json;print(json.load(open("github/org-settings.json"))["org"]["description"])' | tr -d '\r')
 live=$(curl -fsS https://api.github.com/orgs/ultrastable | python3 -c 'import sys,json;print(json.load(sys.stdin).get("description") or "")') || live=unreachable
 echo "org: live='$live'"

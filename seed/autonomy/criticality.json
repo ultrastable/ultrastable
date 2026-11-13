@@ -1,0 +1,68 @@
+{
+  "$schema_version": "0.1.0",
+  "doc": "CRITICALITY-1: thresholds for the tick-end criticality controller (worker/src/criticality.js). Numbers live here, never in code. k_eff = (credited verified deploys + credited loop-originated items) / (spend_units + human_touches) over window_days. Owner north star 2026-11-13: loops yield more verified deploys than they consume in cost and attention.",
+  "window_days": 14,
+  "k_min": 1,
+  "denominator_floor": 1,
+  "dispatch_spend_units": 1,
+  "deploy": {
+    "action_classes": [
+      "deploy",
+      "release",
+      "branch_commit_push"
+    ],
+    "surfaces": [
+      "deploy",
+      "repo"
+    ],
+    "verifier_evidence_prefix": "probe:",
+    "doc": "A deploy outcome counts only when its evidence starts with this prefix: a probe the changing loop did not write. External samples (GitHub runs) are independent by construction."
+  },
+  "originated": {
+    "id_prefixes": [
+      "ORIGIN-",
+      "BREACH-",
+      "TICKFAIL-",
+      "REBALANCE-",
+      "LADDER-",
+      "NEXT-"
+    ],
+    "credit_cap": 20,
+    "doc": "Items the loops filed themselves. Credit is capped per window so filing noise cannot inflate k_eff."
+  },
+  "guards": {
+    "spend_worse_tolerance": 0.1,
+    "fail_rate_worse_tolerance": 0.05,
+    "doc": "If deploys rose versus the previous window while spend or failure rate worsened beyond tolerance, the rise is not credited."
+  },
+  "origination": {
+    "order": [
+      "cost_cut",
+      "flaky_deploy",
+      "unowned_backlog",
+      "generic"
+    ],
+    "head_priority": -1,
+    "spend_budget_units": 3000,
+    "max_fail_rate": 0.1,
+    "owner_roles": {
+      "cost_cut": "operations",
+      "flaky_deploy": "operations",
+      "unowned_backlog": "portfolio-manager",
+      "generic": "portfolio-manager"
+    },
+    "titles": {
+      "cost_cut": "Cut spend: window spend is over budget. Find the largest consumer, remove or cheapen it, re-measure.",
+      "flaky_deploy": "Fix flaky deploys: failure rate is over the ceiling. Find the failing workflow, fix its root cause, re-measure.",
+      "unowned_backlog": "Give an unowned backlog item a doer: its owner role has no row in roles. Create the doer or reassign.",
+      "generic": "Raise k_eff: pick the highest-value cost cut or verified-deploy gain and file it with a closing probe."
+    }
+  },
+  "k_max": 3,
+  "successor": {
+    "batch": 3,
+    "id_prefix": "NEXT-",
+    "title": "Successor of {id}: name the next improvement this unlocks, file it with an owner, a done check and a closing probe.",
+    "doc": "Neutron emission: every closed item emits one successor while k_eff <= k_max. Above k_max the control rod drops: no successors, so the reaction cannot run away on filing noise."
+  }
+}

@@ -7,6 +7,10 @@
   python3 -m foundation filing --manifest FILE
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE | --failover [--decide]]   start the loops on this repo (server-side hosts only)
   python3 -m foundation liveness [--json|--check|--file-items|--static|--probe ID]   are the autonomous loops actually running (evidence, not files)
+  python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)
+  python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
+  python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
+  python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation serverside [--check|--scan]                       server-side only: no host, scheduler, agent or route on a person's computer
   python3 -m foundation selfhost [--verify|--gaps|--no-node] [--db PATH]   Ultrastable boots its own organization from this repo
   python3 -m foundation glossary [--check|--apply|--show [ID]]            the owner's keywords, with tests, code and lineage
@@ -63,6 +67,18 @@ def main(argv=None) -> int:
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
+    if _av[:1] == ["criticality"]:
+        from . import criticality
+        return criticality.main(_av[1:])
+    if _av[:1] == ["pointclick"]:
+        from . import pointclick
+        return pointclick.main(_av[1:])
+    if _av[:1] == ["loopowner"]:
+        from . import loopowner
+        return loopowner.main(_av[1:])
+    if _av[:1] == ["cost"]:
+        from . import cost
+        return cost.main(_av[1:])
     if _av[:1] == ["clock"]:
         from . import clock
         return clock.main(_av[1:])
@@ -90,6 +106,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["market"]:
         from . import market
         return market.main(_av[1:])
+    if _av[:1] == ["conflicts"]:
+        from . import conflicts
+        return conflicts.main(_av[1:])
     if _av[:1] == ["lanewatch"]:
         from . import lanewatch
         return lanewatch.main(_av[1:])

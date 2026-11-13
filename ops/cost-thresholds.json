@@ -1,0 +1,12 @@
+{
+  "_doc": "Q-COST-PROOF-1: data read by deploy/cost-probe.mjs. A database whose rows read over window_days exceeds rows_read_max (or its per-database override) files one queue item; Workers AI neurons over the same window above neurons_max files one. Change a number here, never in the script. Resource discovery files an item for each account resource that doctrine/topology.json does not declare when its name starts with a prefix in file_prefixes; other undeclared names (the Quniverse test bed on the same account) are recorded in ops/cost.jsonl as a foreign count and filed only when file_foreign is true.",
+  "window_days": 7,
+  "rows_read_max": 500000000,
+  "rows_read_override": {},
+  "neurons_max": 10000000,
+  "file_prefixes": ["ultrastable-"],
+  "file_foreign": false,
+  "item_labels": ["p1", "agent-ready"],
+  "item_milestone": "Now",
+  "item_workstream": "Quniverse parity"
+}

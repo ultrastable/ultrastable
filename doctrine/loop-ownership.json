@@ -1,0 +1,110 @@
+{
+  "id": "SERVER-OWNS-LOOPS-1",
+  "rule": "Every loop is owned and closed by a server-side worker. A client session (a code agent, a chat, a person's machine) is only ever a producer of work; it never completes, merges, deploys, resolves, archives or files the follow-up for a loop. The worker that dispatched or created the work owns verifying and closing it.",
+  "owner_directive": "Rowan, 2026-11-13: close all open loops autonomously and server side; client side agents never complete loops; server side agents own the loops they create.",
+  "server_owners": [
+    "ultrastable-tick",
+    "github-actions",
+    "cloud-routine"
+  ],
+  "server_path_classes": [
+    "free",
+    "degraded"
+  ],
+  "client_path_classes": [
+    "session"
+  ],
+  "client_branch_prefixes": [
+    "claude/",
+    "agent/"
+  ],
+  "sweeper": {
+    "code": "seed/worker/src/sweeper.js",
+    "max_open_age_hours": 24,
+    "tracked_item_prefix": "Q-OPENLOOP-",
+    "metric": "open_loop_age_hours",
+    "target": 0
+  },
+  "executor_role": "A code agent is a producer. The dispatching worker records the dispatch, verifies the result through an independent path and closes (merge when green, retry, or a tracked item with owner, trigger and probe).",
+  "closing_probe": "python3 -m foundation loopowner --check",
+  "marker": "SERVER-OWNS-LOOPS-1",
+  "required_in": [
+    "agents/AGENTS.md",
+    "seed/agents/AGENTS.md"
+  ],
+  "required_pattern": "SERVER-OWNS-LOOPS-1",
+  "handback": [
+    {
+      "id": "fix-within",
+      "pattern": "\\b(fix|rebase|resolve|update)( it| this)? within \\d+ ?(h|hours?|d|days?)\\b",
+      "why": "a timer that waits on the session that opened the PR; the server repairs or supersedes it at once"
+    },
+    {
+      "id": "remove-the-label",
+      "pattern": "\\b(fix( it)?,? and|then) remove the [a-z-]+ label\\b",
+      "why": "waits on somebody outside the server to clear a label"
+    },
+    {
+      "id": "author-must",
+      "pattern": "\\b(the |its |pr )?(author|opener|opening session|client session|submitter) (must|should|needs? to|has to|is expected to|will) (fix|rebase|resolve|merge|close|follow|finish|complete|update|re-?run)\\b",
+      "why": "names the session that opened the loop as its closer"
+    },
+    {
+      "id": "follow-until-merge",
+      "pattern": "\\bfollow (the|this|your|every|each|its) (pr|pull request)s?( you open(ed)?)? (until|till|to) (it )?(merges?|merged|is merged|completion)\\b",
+      "why": "tells a client session to stay alive to close its own loop"
+    },
+    {
+      "id": "session-closes",
+      "pattern": "\\b(the )?(session|code agent|client) (that opened (it|the pr) )?(closes|completes|finishes|owns) (the|its|this) (loop|pr|pull request)\\b",
+      "why": "assigns loop closure to a client-side agent"
+    },
+    {
+      "id": "waits-for-author",
+      "pattern": "\\b(wait(s|ing)?|block(s|ed)?) (for|on) (the )?(author|opener|session|client)\\b",
+      "why": "a server step that idles on a client"
+    }
+  ],
+  "excused_note": "A line may hold a hand-back phrase only to state or cite the rule (the marker on the same line) or to forbid it (never, is a defect).",
+  "scan": [
+    "scripts/**",
+    ".github/workflows/*.yml",
+    "foundation/*.py",
+    "seed/worker/src/**",
+    "dashboard/worker.js",
+    "deploy/**",
+    "CLAUDE.md",
+    "AGENTS.md",
+    "agents/**/*.md",
+    "seed/agents/**/*.md",
+    "seed/AGENTS.md",
+    "seed/CLAUDE.md"
+  ],
+  "exclude": [
+    {
+      "path": "deploy/sibling-patches/*.patch",
+      "reason": "patch files quote sibling repositories byte for byte"
+    }
+  ],
+  "max_bytes": 2000000,
+  "excused_by": "SERVER-OWNS-LOOPS|\\bnever\\b|\\bno message\\b|\\bis a defect\\b",
+  "wiring": [
+    {
+      "file": "scripts/lane.sh",
+      "pattern": "foundation loopowner --adopt --apply",
+      "why": "the merge lane adopts every pull request it cannot merge on the same pass"
+    }
+  ],
+  "adopt": {
+    "owner": "operations",
+    "item_prefix": "OL-PR-",
+    "label": "server-owned",
+    "states": {
+      "ci-failed": "A check failed on the head commit. Read the failing run, then land the same change so that every check passes: push a fix to the branch, or open a new pull request from main that carries the change and close this one as superseded.",
+      "conflict": "The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded.",
+      "held": "The automatic review held this pull request on a High finding (see its comment). Open a new pull request from main that carries the change without the finding, then close this one as superseded.",
+      "needs-pat": "The pull request changes .github/workflows/** and no workflow-capable credential is bound (foundation/data/needs-you.json, lane-credential). Land every file outside .github/workflows/ in a separate pull request now, so only the workflow change is left behind the credential."
+    },
+    "why": "GitHub Issues are off on this repository (QUEUE-1), so the sweeper's Q-OPENLOOP issue cannot be filed and the executor reads docs/issues only. The lane files the tracked item there, on the pass that finds the pull request unmergeable, with no age threshold."
+  }
+}

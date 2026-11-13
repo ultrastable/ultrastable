@@ -35,6 +35,17 @@ class Clock(unittest.TestCase):
         self.assertTrue(C.should_chain(1, 4, 5, ["failure", "failure", "success"], 3)[0])
         self.assertFalse(C.should_chain(0, 4, 5, [], 3, budget_ok=False)[0])
 
+    def test_cap_counts_attempts_not_wakeups(self):
+        now = C._ts("2026-11-13T12:00:00Z")
+        rows = [{"at": "2026-11-13T08:40:59Z", "host": "github-actions:workflow_run", "issue": "Q-1", "result": "pr-opened"},
+                {"at": "2026-11-13T09:00:00Z", "host": "github-actions:workflow_run", "issue": "Q-2", "result": "failed"},
+                {"at": "2026-11-13T09:10:00Z", "host": "github-actions:workflow_run", "result": "idle"},            # a wake-up with nothing to take
+                {"at": "2026-11-13T09:20:00Z", "host": "claude-session", "issue": 34, "result": "verified-no-change"},  # another host's work
+                {"at": "2026-11-11T09:00:00Z", "host": "github-actions:schedule", "issue": "Q-0", "result": "failed"},  # older than a day
+                {"at": "not a time", "host": "github-actions:schedule", "issue": "Q-9", "result": "failed"}]
+        self.assertEqual(C.attempts_last_24h(rows, now), 2)
+        self.assertTrue(C.should_chain(C.attempts_last_24h(rows, now), 4, 5, ["success"] * 20, 3)[0])  # 20 gated wake-ups no longer fill the cap
+
     def test_d1_window_covers_a_full_day_of_beats(self):
         import unittest.mock as m
         seen = {}

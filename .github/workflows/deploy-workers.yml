@@ -1,0 +1,47 @@
+name: deploy-workers
+# DEPLOY-ALL-1: merge -> deploy of the tick and dashboard Workers -> verify live code equals this commit's build.
+# budget: ~2 min per run, only when worker sources change
+# trigger: push to main on the listed paths, dispatch by the lane after a merge (GITHUB_TOKEN merges fire no push events), manual dispatch; never faster than the merge rate
+# free-alternative: run `node deploy/deploy-workers.mjs` from a session with a Cloudflare token
+# Verify-only mode (`verify` input, run by the daily drift probe) fails and re-dispatches a deploy when live code differs from main.
+on:
+  push:
+    branches: [main]
+    paths: ["seed/worker/**", "seed/analytics/**", "seed/bootstrap/questions.json", "seed/autonomy/**", "dashboard/**", "doctrine/topology.json", "deploy/deploy-workers.mjs", "foundation/topology.py", ".github/workflows/deploy-workers.yml"]
+  workflow_dispatch:
+    inputs:
+      verify:
+        description: "verify only (no deploy)"
+        required: false
+        default: "false"
+permissions:
+  contents: write
+concurrency: {group: deploy-workers, cancel-in-progress: false}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    if: ${{ vars.DEPLOY_SITE_ENABLED == 'true' }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: 22}
+      - name: Worker tests
+        run: node --test --no-warnings seed/worker/test/*.test.js
+      - name: Require credentials
+        run: '[ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Cloudflare secrets not set"; exit 1; }'
+      - name: Deploy and verify live code equals this commit
+        run: node deploy/deploy-workers.mjs ${{ inputs.verify == 'true' && '--verify' || '' }}
+      - name: Bind the tick Worker's credentials (SELF-SUSTAIN-1)
+        if: ${{ inputs.verify != 'true' }}
+        env:
+          GITHUB_REPOS: ultrastable/ultrastable,ultrastable/seed,ultrastable/workers,ultrastable/spec,ultrastable/license
+        run: node deploy/bind-worker-secrets.mjs
+      - name: Record the deploy
+        if: ${{ inputs.verify != 'true' }}
+        run: |
+          git config user.name "ultrastable-ops"; git config user.email "actions@users.noreply.github.com"
+          git add ops/deploys.jsonl ops/bindings.jsonl; git diff --cached --quiet || { git commit -m "deploy-workers: record live-verified deploy" && git pull --rebase -q && git push; }

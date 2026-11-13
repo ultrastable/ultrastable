@@ -1,0 +1,108 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { makeDb } from './d1shim.js';
+import { newKey } from '../src/auth/seal.js';
+import { pkcs1ToPkcs8, appJwt } from '../src/auth/github-app.js';
+import { getToken, refreshDue, probe } from '../src/auth/index.js';
+import * as store from '../src/auth/store.js';
+import { handleAuth, makeState, checkState } from '../src/auth/routes.js';
+import { oauth } from '../src/auth/oauth.js';
+
+const toPem = (der, label) => `-----BEGIN ${label}-----\n${Buffer.from(der).toString('base64').match(/.{1,64}/g).join('\n')}\n-----END ${label}-----`;
+async function appKey() {
+  const k = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign', 'verify']);
+  const pkcs8 = new Uint8Array(await crypto.subtle.exportKey('pkcs8', k.privateKey));
+  return { k, pkcs8, pkcs1: pkcs8.slice(26) };  // a 2048-bit PKCS#8 header is 26 bytes
+}
+const env = () => ({ CREDENTIAL_KEY: newKey() });
+
+test('GitHub issues PKCS#1 keys; wrapping them as PKCS#8 round-trips byte for byte', async () => {
+  const { pkcs8, pkcs1 } = await appKey();
+  assert.deepEqual([...pkcs1ToPkcs8(pkcs1)], [...pkcs8]);
+});
+
+test('the app JWT is RS256 and verifies against the public key', async () => {
+  const { k, pkcs1 } = await appKey();
+  const jwt = await appJwt(42, toPem(pkcs1, 'RSA PRIVATE KEY'), 1_800_000_000_000);
+  const [h, p, s] = jwt.split('.');
+  assert.equal(JSON.parse(Buffer.from(p, 'base64url')).iss, '42');
+  assert.ok(await crypto.subtle.verify('RSASSA-PKCS1-v1_5', k.publicKey, Buffer.from(s, 'base64url'), new TextEncoder().encode(`${h}.${p}`)));
+});
+
+test('an installation token is minted from the stored key, cached, and re-minted inside the refresh margin', async () => {
+  const db = makeDb(), e = env(), { pkcs1 } = await appKey();
+  await store.put(db, e, 't', 'github-app', { secret: { pem: toPem(pkcs1, 'RSA PRIVATE KEY') }, meta: { app_id: 7, installation_id: 9 }, status: 'pending' });
+  let calls = 0, exp = Date.parse('2026-11-13T13:00:00Z');
+  const f = async (url) => { calls++; assert.match(url, /app\/installations\/9\/access_tokens$/); return { status: 201, json: async () => ({ token: 'tok' + calls, expires_at: new Date(exp).toISOString() }) }; };
+  const now = Date.parse('2026-11-13T12:00:00Z');
+  assert.equal((await getToken(db, e, 't', 'github-app', { fetch: f, now })).token, 'tok1');
+  assert.equal((await getToken(db, e, 't', 'github-app', { fetch: f, now })).cached, true);
+  assert.equal(calls, 1);
+  const late = exp - 5 * 60e3;  // inside the 10 minute margin
+  const r = await refreshDue(db, e, { fetch: f, now: late });
+  assert.equal(r[0].action, 'renewed'); assert.equal(calls, 2);
+  assert.equal((await probe(db, now)).ok, true);
+  const raw = db.raw.prepare('SELECT sealed, access_sealed FROM credentials').get();
+  assert.ok(!String(raw.sealed).includes('PRIVATE') && !String(raw.access_sealed).includes('tok'));  // sealed at rest
+});
+
+test('a missing installation is a recorded failure the probe sees', async () => {
+  const db = makeDb(), e = env();
+  await store.put(db, e, 't', 'github-app', { secret: { pem: 'x' }, meta: { app_id: 1 }, status: 'pending' });
+  const r = await getToken(db, e, 't', 'github-app', {});
+  assert.equal(r.ok, false);
+  assert.deepEqual((await probe(db)).bad, ['t/github-app']);
+  assert.equal(db.raw.prepare("SELECT event FROM credential_events").get().event, 'failed');
+});
+
+test('OAuth refresh grant mints access tokens for any host system and keeps a rotated refresh token', async () => {
+  const db = makeDb(), e = env();
+  await store.put(db, e, 't', 'oauth:acme', { secret: { refresh_token: 'r1', client_secret: 's' }, meta: { token_url: 'https://acme.test/token', client_id: 'cid' } });
+  const f = async (url, o) => { assert.match(o.body, /grant_type=refresh_token/); assert.match(o.body, /refresh_token=r1/); return { ok: true, json: async () => ({ access_token: 'a1', expires_in: 3600, refresh_token: 'r2' }) }; };
+  const r = await getToken(db, e, 't', 'oauth:acme', { fetch: f, now: Date.parse('2026-11-13T12:00:00Z') });
+  assert.equal(r.token, 'a1');
+  assert.equal((await store.material(db, e, 't', 'oauth:acme')).secret.refresh_token, 'r2');
+  assert.equal((await oauth.deviceStart({ device_url: 'https://acme.test/device', client_id: 'c', scopes: ['a', 'b'] }, { fetch: async (u, o) => { assert.match(o.body, /scope=a\+b/); return { ok: true, json: async () => ({ user_code: 'X' }) }; } })).user_code, 'X');
+});
+
+test('the connect flow: consent screen, manifest conversion, install, then nothing left for a person', async () => {
+  const db = makeDb(), e = { ...env(), DB: db };
+  const consent = await handleAuth(new Request('https://x.test/connect/github'), e, { tenant: 't', name: 'org' });
+  const page = await consent.text();
+  assert.match(page, /Authorize on GitHub/); assert.match(page, /settings\/apps\/new/); assert.ok(!/<input[^>]*type="(text|password)"/.test(page), 'the consent screen asks for no typed secret');
+  const state = await makeState(e, 't');
+  assert.equal(await checkState(e, state), 't');
+  assert.equal(await checkState(e, state + 'x'), null);
+  const f = async () => ({ status: 201, json: async () => ({ id: 5, slug: 'org-app', pem: 'PEM', webhook_secret: 'w', client_id: 'c', client_secret: 'cs' }) });
+  const cb = await handleAuth(new Request('https://x.test/auth/github/callback?code=abc&state=' + encodeURIComponent(state)), e, { tenant: 't', fetch: f });
+  assert.equal(cb.status, 302); assert.match(cb.headers.get('location'), /apps\/org-app\/installations\/new/);
+  const done = await handleAuth(new Request('https://x.test/auth/github/installed?installation_id=88&state=' + encodeURIComponent(state)), e, { tenant: 't' });
+  assert.match(await done.text(), /GitHub connected/);
+  const m = await store.material(db, e, 't', 'github-app');
+  assert.equal(m.meta.installation_id, 88); assert.equal(m.meta.app_id, 5); assert.equal(m.secret.pem, 'PEM');
+});
+
+test('an auth route that throws answers with a retry screen, never a Worker exception', async () => {
+  const { handleAuth } = await import('../src/auth/routes.js');
+  const env = { DB: { prepare() { throw new Error('boom'); } }, CREDENTIAL_KEY: 'k' };
+  const r = await handleAuth(new Request('https://x.test/auth/github/callback?code=c&state=s'), env, {});
+  assert.ok(r.status !== 1101);
+  assert.match(await r.text(), /try again|Try again/i);
+});
+test('the callback works on a database that never had the credential tables', async () => {
+  const { handleAuth, makeState } = await import('../src/auth/routes.js');
+  const { DatabaseSync } = await import('node:sqlite');
+  const raw = new DatabaseSync(':memory:');
+  const db = { prepare(sql) { const st = raw.prepare(sql); let a = []; const o = { bind(...x) { a = x; return o; }, async all() { return { results: st.all(...a) }; }, async first() { return st.get(...a) || null; }, async run() { st.run(...a); return {}; } }; return o; } };
+  const env = { DB: db, CREDENTIAL_KEY: 'a'.repeat(32) };
+  const state = await makeState(env, 'default');
+  const f = async () => ({ status: 201, json: async () => ({ id: 1, slug: 'app', pem: 'pem', webhook_secret: 'w', client_id: 'c', client_secret: 's' }) });
+  const r = await handleAuth(new Request('https://x.test/auth/github/callback?code=c&state=' + encodeURIComponent(state)), env, { fetch: f });
+  assert.equal(r.status, 302); assert.match(r.headers.get('location'), /apps\/app\/installations\/new/);
+});
+
+test('every consent visit prefills a unique GitHub App name so a taken name is never a dead end', async () => {
+  const { uniqueName } = await import('../src/auth/routes.js');
+  const a = uniqueName('ultrastable'), b = uniqueName('ultrastable');
+  assert.notEqual(a, b); assert.match(a, /^ultrastable-[0-9a-f]{6}$/); assert.ok(uniqueName('x'.repeat(60)).length <= 34);
+});

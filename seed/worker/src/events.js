@@ -117,6 +117,14 @@ export const EVENT_TABLE = [
     "role": "funding-manager"
   },
   {
+    "id": "wake-infrastructure-manager",
+    "event": "repository_dispatch",
+    "actions": [
+      "wake:infrastructure-manager"
+    ],
+    "role": "infrastructure-manager"
+  },
+  {
     "id": "wake-legal-ip-manager",
     "event": "repository_dispatch",
     "actions": [
@@ -179,6 +187,14 @@ export const EVENT_TABLE = [
       "wake:product-manager"
     ],
     "role": "product-manager"
+  },
+  {
+    "id": "wake-program-manager",
+    "event": "repository_dispatch",
+    "actions": [
+      "wake:program-manager"
+    ],
+    "role": "program-manager"
   },
   {
     "id": "wake-project-manager",

@@ -146,6 +146,14 @@
    ],
    "crons": []
   },
+  "cost-guard.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "17 6 * * *"
+   ]
+  },
   "deploy-site.yml": {
    "events": [
     "push",
@@ -154,6 +162,13 @@
    "crons": []
   },
   "deploy-system.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": []
+  },
+  "deploy-workers.yml": {
    "events": [
     "push",
     "workflow_dispatch"

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # LANE-1: one pass over every open PR into main. Idempotent; runs on PR events, check completions and every 10 minutes.
 # Draft -> ready, wait for green checks, auto-review, squash merge. Conflicts are escalated, never left to sit.
+# SERVER-OWNS-LOOPS-1 (owner, 2026-11-13): a PR this pass cannot merge is adopted before the pass ends (foundation/loopowner.py): one queue item
+# with an owner and a closing probe, committed to main for the executor. The lane never hands a PR back to the session that opened it.
 # NEEDS-PAT-1 (server-side only): a PR that changes .github/workflows/** cannot be merged with the workflow's built-in token. The lane
 # merges it itself, on green and on the exact head commit, when a workflow-capable credential is bound (scripts/lane_credential.py:
 # LANE_PAT, or a GitHub App installation token). With none bound it labels the PR needs-pat, leaves it open and says so; it never works
@@ -26,10 +28,14 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
   fi
   if [ "$mg" = UNKNOWN ]; then sleep 4; mg=$(gh pr view "$n" -R "$repo" --json mergeable --jq .mergeable); fi
   if [ "$mg" = CONFLICTING ]; then
+    # CONFLICT-CLOSE-1: the lane closes the conflict itself: merge main, resolve the generated files, push, dispatch checks. An executor PR that
+    # still cannot merge is closed so its queue item is redone from main. Only a session PR with a real conflict falls through to the label.
+    cr=$(python3 -m foundation conflicts --pr "$n" --apply 2>&1 | tail -1); echo "#$n conflict pass: $cr"
+    case "$cr" in *'"result": "resolved"'*|*'"result": "requeued"'*) continue;; esac
     case "$labels" in
       *,conflict,*) ;;
       *) gh pr edit "$n" -R "$repo" --add-label conflict >/dev/null 2>&1
-         gh pr comment "$n" -R "$repo" --body "lane: merge conflict with main. Rebase within 12h or this PR is closed and re-filed as an issue (SLA)." >/dev/null 2>&1;;
+         gh pr comment "$n" -R "$repo" --body "lane: merge conflict with main. SERVER-OWNS-LOOPS: the server resolves or supersedes it on this pass (queue item OL-PR-$n)." >/dev/null 2>&1;;
     esac
     echo "#$n conflict"; continue
   fi
@@ -48,7 +54,7 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
     case "$labels" in
       *,ci-failed,*) ;;
       *) gh pr edit "$n" -R "$repo" --add-label ci-failed >/dev/null 2>&1
-         gh pr comment "$n" -R "$repo" --body "lane: a check failed on ${sha:0:7}. Fix within 24h or this PR is closed and re-filed as an issue (SLA)." >/dev/null 2>&1;;
+         gh pr comment "$n" -R "$repo" --body "lane: a check failed on ${sha:0:7}. SERVER-OWNS-LOOPS: the server repairs or supersedes it on this pass (queue item OL-PR-$n)." >/dev/null 2>&1;;
     esac
     echo "#$n ci-failed"; continue
   fi
@@ -79,7 +85,7 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
       gh pr edit "$n" -R "$repo" --add-label hold >/dev/null 2>&1
       gh pr comment "$n" -R "$repo" --body "$rv"$'
 
-lane: held on a High finding. Fix and remove the hold label.' >/dev/null 2>&1
+lane: held on a High finding. SERVER-OWNS-LOOPS: the server lands a superseding change without the finding and closes this one (queue item OL-PR-'"$n"').' >/dev/null 2>&1
       echo "#$n held by llm-review"; continue
     fi
   fi
@@ -91,6 +97,13 @@ lane: held on a High finding. Fix and remove the hold label.' >/dev/null 2>&1
     if gh pr diff "$n" -R "$repo" --name-only 2>/dev/null | grep -qE '^(site/|seed/analytics/|deploy/deploy-site\.mjs)'; then
       gh workflow run deploy-site.yml -R "$repo" --ref main >/dev/null 2>&1 && echo "#$n dispatched deploy-site"
     fi
+    # DEPLOY-ALL-1: the tick and dashboard Workers and the code-agent Worker deployed only by hand or by a person's own push; the lane dispatches them too.
+    if gh pr diff "$n" -R "$repo" --name-only 2>/dev/null | grep -qE '^(seed/worker/|seed/analytics/|seed/bootstrap/questions\.json|seed/autonomy/|dashboard/|doctrine/topology\.json|deploy/deploy-workers\.mjs)'; then
+      gh workflow run deploy-workers.yml -R "$repo" --ref main >/dev/null 2>&1 && echo "#$n dispatched deploy-workers"
+    fi
+    if gh pr diff "$n" -R "$repo" --name-only 2>/dev/null | grep -qE '^(seed/worker/src/codeagent\.js|deploy/agents-worker\.js|deploy/deploy-system\.mjs|doctrine/system\.json|doctrine/code-agents\.json)'; then
+      gh workflow run deploy-system.yml -R "$repo" --ref main >/dev/null 2>&1 && echo "#$n dispatched deploy-system"
+    fi
   else
     echo "#$n merge failed: $out"
     case "$out" in *"already in progress"*|*"already merged"*) continue;; esac
@@ -99,5 +112,29 @@ lane: held on a High finding. Fix and remove the hold label.' >/dev/null 2>&1
   fi
 done
 echo "lane: needs-pat merged=$wf_merged waiting=$wf_waiting credential=$wf_source"
+# SERVER-OWNS-LOOPS: adopt what is still open and not mergeable and commit the queue items to main, so the executor sees them on its next run
+# (it starts from every finished lane). Runs only inside the lane workflow, or where LANE_ADOPT=1 is set by another server-side host.
+if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
+  root="$(cd "$here/.." && pwd)"
+  if (cd "$root" && python3 -m foundation loopowner --adopt --apply); then
+    if [ -n "$(git -C "$root" status --porcelain docs/issues)" ]; then
+      git -C "$root" config user.name "ultrastable-lane"; git -C "$root" config user.email "actions@users.noreply.github.com"
+      git -C "$root" add docs/issues
+      git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
+      pushed=0
+      for try in 1 2 3 4 5; do
+        if git -C "$root" pull --rebase --autostash -q origin main && git -C "$root" push -q origin HEAD:main; then pushed=1; break; fi
+        sleep $((try * 3))
+      done
+      if [ "$pushed" = 1 ]; then
+        echo "lane: adoption items committed to main"
+      else
+        echo "lane: adoption items not pushed" >&2; echo x >>"$_SAFE_FAILS"
+      fi
+    fi
+  else
+    echo "lane: loopowner adopt failed" >&2; echo x >>"$_SAFE_FAILS"
+  fi
+fi
 
 safe_exit

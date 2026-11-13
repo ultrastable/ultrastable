@@ -299,6 +299,45 @@
    "discoverable": false,
    "description": "Invokes every code-agent adapter once through the Workers AI binding and returns which answered (CODE-AGENTS-1).",
    "reason": "operational probe for deploy verification, not a capability for callers"
+  },
+  {
+   "id": "live",
+   "path": "/live",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "public",
+   "standards": [],
+   "discoverable": false,
+   "description": "Liveness plus k_eff of the last tick (CRITICALITY-1).",
+   "reason": "operational criticality telemetry (CRITICALITY-1), not a capability for callers"
+  },
+  {
+   "id": "metrics-criticality",
+   "path": "/metrics/criticality.json",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "public",
+   "standards": [],
+   "discoverable": false,
+   "description": "Criticality record of the last tick (CRITICALITY-1).",
+   "reason": "operational criticality telemetry (CRITICALITY-1), not a capability for callers"
+  },
+  {
+   "id": "criticality-sample",
+   "path": "/api/criticality/sample",
+   "methods": [
+    "POST"
+   ],
+   "kind": "rest",
+   "audience": "machine",
+   "standards": [],
+   "discoverable": false,
+   "description": "Collectors push GitHub-run, cost and owner-touch samples (CRITICALITY-1).",
+   "reason": "machine-to-machine collector input; nothing for an agent to discover"
   }
  ]
 }

@@ -120,6 +120,24 @@ def should_chain(runs_last_24h: int, max_per_day: int, takeable: int, last_concl
     return True, f"{takeable} takeable item(s), {runs_last_24h} of {max_per_day} runs used today"
 
 
+NO_ATTEMPT = {"idle", "dry-run", "no-model-credential"}
+
+
+def attempts_last_24h(rows: list[dict], now: float) -> int:
+    """SPARK-CAP-1: the daily cap counts work, not wake-ups. Every finished lane wakes the executor workflow, and a wake-up that the spark gate turns
+    away is still a workflow run, so counting runs let the gate's own refusals fill the cap (measured 2026-11-13: "20 runs in 24 h reached the cap of 4"
+    with no attempt made). An attempt is a provenance row written on GitHub Actions that claimed an item."""
+    n = 0
+    for r in rows:
+        try:
+            recent = _ts(r.get("at") or "") >= now - 86400
+        except ValueError:
+            continue
+        if recent and str(r.get("host", "")).startswith("github-actions") and r.get("issue") is not None and r.get("result") not in NO_ATTEMPT:
+            n += 1
+    return n
+
+
 def chain(root=REPO, apply=False, now: float | None = None) -> dict:
     cfg, now = load(root)["chain"], now or datetime.now(timezone.utc).timestamp()
     try:
@@ -127,10 +145,14 @@ def chain(root=REPO, apply=False, now: float | None = None) -> dict:
         rows = json.loads(r.stdout or "[]")
     except (OSError, subprocess.SubprocessError, ValueError) as e:
         return {"chain": False, "why": "could not read the run history: " + str(e)[:100]}
-    last24 = [x for x in rows if _ts(x["createdAt"]) >= now - 86400]
     done = [x.get("conclusion") or "" for x in rows if x.get("status") == "completed"]
-    ok, why = should_chain(len(last24), cfg["max_runs_per_day"], takeable_count(root), done, cfg["backoff_after_failures"])
-    res = {"chain": ok, "why": why}
+    try:
+        from . import queue as qmod
+        used = attempts_last_24h(qmod.executor_rows(root), now)
+    except Exception as e:  # an unreadable log must not open the cap: fall back to the run count, which can only be higher
+        used = len([x for x in rows if _ts(x["createdAt"]) >= now - 86400])
+    ok, why = should_chain(used, cfg["max_runs_per_day"], takeable_count(root), done, cfg["backoff_after_failures"])
+    res = {"chain": ok, "why": why, "attempts_24h": used}
     if ok and apply:
         d = subprocess.run(["gh", "workflow", "run", cfg["workflow"] + ".yml", "--repo", GH], capture_output=True, text=True, timeout=60, encoding="utf-8")
         res["dispatched"] = d.returncode == 0
