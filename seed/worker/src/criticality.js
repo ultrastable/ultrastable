@@ -107,11 +107,25 @@ export async function criticalityStep(db, ctx, t, ensureItem) {
       ctx.errors.push(`idle_tick: tick ${ctx.tickId} dispatched nothing; repair filed`);
     }
   }
-  const snap = { ...m, queue_open: queued.n, idle, reasons, originated_now: origin };
+  const emitted = m.k_eff <= t.k_max ? await emitSuccessors(db, t, ctx, ensureItem) : 0; // control rod: above k_max nothing is emitted
+  const snap = { ...m, emitted_successors: emitted, queue_open: queued.n, idle, reasons, originated_now: origin };
   ctx.criticality = snap;
   await db.prepare(`INSERT INTO org (key, value) VALUES ('criticality', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(JSON.stringify(snap)).run();
   ctx.notes.push(`k_eff ${m.k_eff}${m.guard.tripped ? ' (guard: deploy rise not credited)' : ''}${origin ? `; originated ${origin.id}` : ''}`);
   return snap;
+}
+
+// Neutron emission: each closed item with no successor spawns one, so the reaction feeds itself from its own products.
+export async function emitSuccessors(db, t, ctx, ensureItem) {
+  const sc = t.successor;
+  const done = await all(db, `SELECT id, owner_role, priority FROM items WHERE status='done' AND id NOT LIKE ? AND id NOT LIKE 'IDLE-%'
+      AND ('NEXT-' || id) NOT IN (SELECT id FROM items) ORDER BY updated_at DESC LIMIT ?`, sc.id_prefix + '%', sc.batch);
+  let n = 0;
+  for (const d of done) {
+    if (await ensureItem(db, { id: sc.id_prefix + d.id, kind: 'plus', owner_role: d.owner_role, priority: d.priority,
+      title: sc.title.replace('{id}', d.id).slice(0, 400), done_check: 'a new item with owner, done check and closing probe is filed', closing_probe: `successor:${d.id}` })) n++;
+  }
+  return n;
 }
 
 export async function readCriticality(db) {

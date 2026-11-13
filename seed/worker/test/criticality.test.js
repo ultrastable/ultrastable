@@ -98,3 +98,33 @@ test('only probe-verified deploy outcomes count: a loop that verifies its own de
   await runTick(db, { config, now: T0 });
   assert.equal((await readCriticality(db)).raw_deploys, 1);
 });
+
+// IGNITION: something from nothing. An empty database, a stub doer that closes whatever it is handed, 30 frozen ticks.
+test('ignition from nothing: the queue never empties, every closed item emits a successor, and the reaction does not run away', async () => {
+  const db = makeDb();
+  db.raw.exec("INSERT INTO roles (id, role, tick_every, model) VALUES ('op-1','operations',1,'m'), ('pm-1','portfolio-manager',1,'m')");
+  let t = T0, maxQueue = 0;
+  for (let i = 0; i < 30; i++, t += 600e3) {
+    await runTick(db, { config, now: t });
+    const live = db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE status IN ('open','ready','claimed')").get().n;
+    assert.ok(live > 0, `queue empty at the end of tick ${i}`); // the invariant is checked at tick end, before the doer runs
+    // stub doer: closes every claimed item with a disposition and a probe-verified deploy outcome
+    for (const c of db.raw.prepare('SELECT item_id FROM claims').all()) {
+      db.raw.prepare("UPDATE items SET status='done', disposition='fixed: stub', updated_at=? WHERE id=?").run(new Date(t).toISOString().replace('T', ' ').slice(0, 19), c.item_id);
+      db.raw.prepare("INSERT INTO outcomes (item_id,surface,action_class,result,evidence,at) VALUES (?,?,?,?,?,?)").run(c.item_id, 'deploy', 'deploy', 'verified', 'probe:stub', new Date(t).toISOString().replace('T', ' ').slice(0, 19));
+      db.raw.prepare('DELETE FROM claims WHERE item_id=?').run(c.item_id);
+    }
+    maxQueue = Math.max(maxQueue, live);
+  }
+  assert.ok(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id LIKE 'NEXT-%'").get().n > 0, 'successors were emitted');
+  assert.ok(db.raw.prepare("SELECT COUNT(*) AS n FROM outcomes WHERE result='verified'").get().n >= 20, 'work kept completing');
+  assert.ok(maxQueue < 60, `bounded queue, saw ${maxQueue}`);
+});
+
+test('control rod: above k_max no successors are emitted', async () => {
+  const db = makeDb();
+  db.raw.exec("INSERT INTO items (id,title,owner_role,done_check,status,disposition) VALUES ('X','x','operations','x','done','fixed')");
+  await addSample(db, { source: 'github-runs', deploys_ok: 500, spend_units: 1 }, '2026-11-09 00:00:00');
+  await runTick(db, { config, now: T0 });
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id='NEXT-X'").get().n, 0);
+});
