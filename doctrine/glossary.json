@@ -562,16 +562,18 @@
    "aliases": [
     "the person who does not know what to ask"
    ],
-   "version": "1.0.0",
-   "definition": "The state of a user who does not know what to ask for, or what is possible. The system treats it as the normal starting condition, not a failure: it interviews, infers direction from the record, proposes and acts, and asks no question the record can answer.",
+   "version": "2.0.0",
+   "definition": "What the user does not know, held by the system as a computed set: unknown = known - told. Known facts come from measured sources (criticality regime, open loops, open gaps); told is an append-only log keyed by a fingerprint of the statement, so a changed fact is unknown again. It is also the starting condition of a user who does not know what to ask for or what is possible: the system interviews, infers direction from the record, proposes and acts, asks no question the record can answer, and leads its report with what the user cannot yet know.",
    "not": "Not a defect of the user and not a reason to hand work back.",
    "tested_by": [
     "grep:agents/AGENTS.md::Do it, do not describe it",
-    "file:seed/bootstrap/cases.json"
+    "file:seed/bootstrap/cases.json",
+    "grep:tests/foundation/test_criticality.py::def test_unknown_is_known_minus_told"
    ],
    "implemented_by": [
     "seed/bootstrap/cases.json",
-    "seed/bootstrap/bootstrap.py"
+    "seed/bootstrap/bootstrap.py",
+    "foundation/ignorance.py"
    ],
    "related": [
     "bootstrapping",
@@ -583,6 +585,12 @@
      "date": "2026-11-11",
      "change": "Defined from the owner's description: a user who does not know what to ask.",
      "source": "doctrine/glossary.json"
+    },
+    {
+     "version": "2.0.0",
+     "date": "2026-11-14",
+     "change": "Ignorance becomes a computed set: what the system knows and the user has not been told",
+     "source": "foundation/ignorance.py"
     }
    ]
   },

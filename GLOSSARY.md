@@ -24,7 +24,7 @@ Generated from `doctrine/glossary.json` by `python3 -m foundation glossary --app
 | [Bootstrapping](#bootstrapping) | Starting a working, self-managing system from an idea in a seed repository, with the person supplying only the wish. | 1.0.0 |
 | [Self-hosting](#self-hosting) | Ultrastable runs its own planning, issues, managers, trust ledger, plussing budget and specs with the same code it gives everyone else, from this repository alone, with any tools. | 1.0.0 |
 | [Gap register](#gap-register) | The list of outside tools the system still depends on, each with a plan, an owner role and a closing probe. | 1.0.0 |
-| [Ignorance](#ignorance) | The state of a user who does not know what to ask for, or what is possible. | 1.0.0 |
+| [Ignorance](#ignorance) | What the user does not know, held by the system as a computed set: unknown = known - told. | 2.0.0 |
 | [Core](#core) | The part that bootstraps a working, server-side, self-managing system: the tick, managers and staff, trust ladder, predictions, plussing, interrupt gate and the specifications they run on. | 1.0.0 |
 | [Plugin](#plugin) | An optional tier outside the core path (e-mail, social, mailing list, GCP, branding): disabled and dry-run by default, going live only with enabled, mode live, kill switch off, credentials by binding name, a sufficient trust rung and a passing guard. | 1.0.0 |
 | [Write-back](#write-back) | Before a session or loop ends, everything it learned (decisions, lessons, open loops, term changes) is written into the repository: docs/lessons, docs/PROJECT-MEMORY.md, the loop registry, the glossary or an issue. | 1.0.0 |
@@ -371,21 +371,22 @@ The list of outside tools the system still depends on, each with a plan, an owne
 
 ## <a id="ignorance"></a>Ignorance
 
-The state of a user who does not know what to ask for, or what is possible. The system treats it as the normal starting condition, not a failure: it interviews, infers direction from the record, proposes and acts, and asks no question the record can answer.
+What the user does not know, held by the system as a computed set: unknown = known - told. Known facts come from measured sources (criticality regime, open loops, open gaps); told is an append-only log keyed by a fingerprint of the statement, so a changed fact is unknown again. It is also the starting condition of a user who does not know what to ask for or what is possible: the system interviews, infers direction from the record, proposes and acts, asks no question the record can answer, and leads its report with what the user cannot yet know.
 
 **Not:** Not a defect of the user and not a reason to hand work back.
 
 **Also called:** the person who does not know what to ask
 
-**Tested by:** `grep:agents/AGENTS.md::Do it, do not describe it`; `file:seed/bootstrap/cases.json`
+**Tested by:** `grep:agents/AGENTS.md::Do it, do not describe it`; `file:seed/bootstrap/cases.json`; `grep:tests/foundation/test_criticality.py::def test_unknown_is_known_minus_told`
 
-**Implemented by:** `seed/bootstrap/cases.json`, `seed/bootstrap/bootstrap.py`
+**Implemented by:** `seed/bootstrap/cases.json`, `seed/bootstrap/bootstrap.py`, `foundation/ignorance.py`
 
 **Related:** [bootstrapping](#bootstrapping), [autonomy](#autonomy)
 
 **Lineage:**
 
 - 1.0.0 (2026-11-11): Defined from the owner's description: a user who does not know what to ask. (`doctrine/glossary.json`)
+- 2.0.0 (2026-11-14): Ignorance becomes a computed set: what the system knows and the user has not been told (`foundation/ignorance.py`)
 
 ## <a id="core"></a>Core
 

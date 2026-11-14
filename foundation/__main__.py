@@ -77,6 +77,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
+    if _av[:1] == ["ignorance"]:
+        from . import ignorance
+        return ignorance.main(_av[1:])
     if _av[:1] == ["criticality"]:
         from . import criticality
         return criticality.main(_av[1:])

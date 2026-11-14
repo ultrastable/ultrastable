@@ -95,3 +95,22 @@ class SelfReference(unittest.TestCase):
 
     def test_bootstrap_fixed_point_holds_in_this_repository(self):
         self.assertIs(C.bootstrap_holds(), True)
+
+
+class Ignorance(unittest.TestCase):
+    """IGNORANCE-1: unknown = known - told; a changed statement is unknown again."""
+
+    def test_unknown_is_known_minus_told(self):
+        from foundation import ignorance as I
+        d = repo([dict(GOOD, origin="outside")])
+        (d / "ops/told.jsonl").write_text("", encoding="utf-8")
+        before = {f["id"] for f in I.unknown(d)}
+        self.assertIn("criticality-regime", before)
+        I.record_told(d, ["criticality-regime"])
+        self.assertNotIn("criticality-regime", {f["id"] for f in I.unknown(d)})
+        with self.assertRaises(KeyError):
+            I.record_told(d, ["criticality-regime"])
+
+    def test_repo_register_is_intact(self):
+        from foundation import ignorance as I
+        self.assertEqual(I.check(), [])

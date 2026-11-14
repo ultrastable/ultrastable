@@ -187,3 +187,7 @@ Session: session_0156nqDv8ijT11RmKre7xEmK (CRITICALITY-1, COST-GUARD-1).
 ## 2026-11-14: self-reference is the multiplier (SELF-REFERENCE-1)
 
 Rowan: "Ultrastable runs on Ultrastable. That self-reference is key to bootstrapping and criticality." The two existed apart (`selfhost`, `criticality`); now one invariant. `foundation/criticality.py` computes `bootstrap` (the selfhost fixed point; `criticality --check` fails when it breaks), `k_self` (verified deploys whose commit the system originated on itself: `Executor run` or a handoff by its own `workers-ai*` agent) and `regime` (self-sustaining, driven, subcritical). Every deploy row now carries `origin` (`deploy/deploy-workers.mjs` calls `criticality --origin`). First reading, 2026-11-14: k 2.245, k_self 0.0, regime driven: every recorded deploy came from an outside session. In the driven regime the queue gate puts `raises-self` work first. Worker parity: `Q-SELF-WORKER`.
+
+## 2026-11-14: the system knows what the user does not know (IGNORANCE-1)
+
+Rowan: the system must know what the user cannot or does not know; ignorance is knowable. `foundation/ignorance.py` makes it a computed set, unknown = known - told, from the criticality regime, open loops and open gaps, with `ops/told.jsonl` as the told log (fingerprinted, so a changed fact is unknown again). 47 facts known at first run. The dashboard panel is `Q-IGNORANCE-REPORT`.
