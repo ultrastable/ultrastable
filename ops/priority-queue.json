@@ -3,900 +3,1194 @@
   "id": "Q-GROW-second-tenant-deploying",
   "title": "Q-GROW-second-tenant-deploying: A second tenant system with its own deploy loop proves the product beyond tenant 0.",
   "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform",
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 313.05
- },
- {
-  "id": "Q-SYS-BOOT-REHEARSAL",
-  "title": "Q-SYS-BOOT-REHEARSAL: SYS-6: bootstrap rehearsal from an empty repository to one unattended merged change",
-  "goal": "practical-solutions-on-platform",
-  "unblocks": 0,
-  "size": "L",
-  "held": false,
-  "score": 240.0
+  "score": 319.57,
+  "front": 3
  },
  {
   "id": "ZERO-MINUTES-1",
   "title": "ZERO-MINUTES-1: run the loops on the Cloudflare tick Worker, not on Actions minutes (projected 232% of the free quota)",
   "goal": "run-on-cloudflare",
+  "goals": [
+   "run-on-cloudflare",
+   "cost"
+  ],
   "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 238.27
+  "score": 304.79,
+  "front": 0
  },
  {
   "id": "PORT-EXEC-1",
   "title": "PORT-EXEC-1: executor closes PORT-<runtime> items: run the adapter verify command, record the result, mark the item done or file the failure",
   "goal": "run-on-cloudflare",
+  "goals": [
+   "run-on-cloudflare"
+  ],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 227.83
+  "score": 271.31,
+  "front": 1
  },
  {
   "id": "GIT-IN-CLOUDFLARE-1",
   "title": "GIT-IN-CLOUDFLARE-1: the Worker keeps its working copy in Cloudflare's Git-compatible storage and mirrors to GitHub; deploy targets sit behind one provider interface",
   "goal": "run-on-cloudflare",
+  "goals": [
+   "run-on-cloudflare"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 217.4
+  "score": 260.87,
+  "front": 2
  },
  {
   "id": "Q-TICK-DEPLOY",
   "title": "Q-TICK-DEPLOY: deploy ultrastable-tick with the AI binding from a workflow",
   "goal": "run-on-cloudflare",
+  "goals": [
+   "run-on-cloudflare"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 217.4
+  "score": 260.87,
+  "front": 2
+ },
+ {
+  "id": "Q-SYS-BOOT-REHEARSAL",
+  "title": "Q-SYS-BOOT-REHEARSAL: SYS-6: bootstrap rehearsal from an empty repository to one unattended merged change",
+  "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform"
+  ],
+  "unblocks": 0,
+  "size": "L",
+  "held": false,
+  "score": 240.0,
+  "front": 5
  },
  {
   "id": "Q-GAP-fresh-account-bootstrap",
   "title": "Q-GAP-fresh-account-bootstrap: First real --apply of a brand-new organization on an empty Cloudflare account",
   "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 208.7
+  "score": 208.7,
+  "front": 4
  },
  {
   "id": "Q-GAP-second-installation",
   "title": "Q-GAP-second-installation: A second independent installation",
   "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 208.7
- },
- {
-  "id": "Q-PARITY-3",
-  "title": "Q-PARITY-3: Metric breach files its own work item with a code-task and closes it on recovery (QNFO METRIC-CLOSED-LOOP-1)",
-  "goal": "criticality",
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 184.35
+  "score": 208.7,
+  "front": 4
  },
  {
   "id": "Q-COST-ROWS-LIVING-PAPER",
   "title": "Q-COST-ROWS-LIVING-PAPER: D1 living-paper read 1784402502 rows in 7 days (limit 500000000)",
   "goal": "cost",
+  "goals": [
+   "cost"
+  ],
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 180.01
+  "score": 190.0,
+  "front": 0
  },
  {
   "id": "Q-COST-ROWS-QNFO-AUDIT",
   "title": "Q-COST-ROWS-QNFO-AUDIT: D1 qnfo-audit read 9594224751 rows in 7 days (limit 500000000)",
   "goal": "cost",
+  "goals": [
+   "cost"
+  ],
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 180.01
+  "score": 190.0,
+  "front": 0
+ },
+ {
+  "id": "Q-PARITY-3",
+  "title": "Q-PARITY-3: Metric breach files its own work item with a code-task and closes it on recovery (QNFO METRIC-CLOSED-LOOP-1)",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 1,
+  "size": "M",
+  "held": false,
+  "score": 184.35,
+  "front": 2
  },
  {
   "id": "Q-COST-PROOF-1",
   "title": "Q-COST-PROOF-1: record Quniverse D1 rows read and Workers AI neurons daily and discover account resources without hand-holding",
   "goal": "cost",
+  "goals": [
+   "cost"
+  ],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 166.96
+  "score": 166.96,
+  "front": 3
  },
  {
   "id": "Q-COST-PROOF-2",
   "title": "Q-COST-PROOF-2: run deploy/cost-probe.mjs on a daily server-side clock",
   "goal": "cost",
+  "goals": [
+   "cost"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 156.53
+  "score": 156.52,
+  "front": 6
  },
  {
   "id": "Q-PARITY-4",
   "title": "Q-PARITY-4: Issue-age SLA ladder: nothing older than 120 minutes without action (QNFO SLA-120M)",
   "goal": "cost",
+  "goals": [
+   "cost"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 156.53
+  "score": 156.52,
+  "front": 6
  },
  {
   "id": "Q-SEED-1",
   "title": "Q-SEED-1: charter.json per system whose vectors generate the ranker's goals; a revision is versioned and re-ranks the backlog",
   "goal": null,
+  "goals": [],
   "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 151.3
+  "score": 151.3,
+  "front": 3
  },
  {
   "id": "Q-GROW-AGENT-DIRECTORIES",
   "title": "Q-GROW-AGENT-DIRECTORIES: GROW-5: prepare listings for agent directories and registries (dry run)",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 140.87
+  "score": 140.87,
+  "front": 4
  },
  {
   "id": "Q-GROW-CASE-STUDY",
   "title": "Q-GROW-CASE-STUDY: GROW-6: customer-zero case study generated from the system's own measured record",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44
+  "score": 130.44,
+  "front": 7
  },
  {
   "id": "Q-GROW-CHANGELOG-FEED",
   "title": "Q-GROW-CHANGELOG-FEED: GROW-1: public changelog feed (RSS and JSON) built from the merged-change record",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44
+  "score": 130.44,
+  "front": 7
  },
  {
   "id": "Q-GROW-DEMO-DASHBOARD",
   "title": "Q-GROW-DEMO-DASHBOARD: GROW-2: a public read-only tenant-0 dashboard demo that shows what the system does",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44
+  "score": 130.44,
+  "front": 7
  },
  {
   "id": "Q-GROW-PILOT-OFFER",
   "title": "Q-GROW-PILOT-OFFER: GROW-3: a priced pilot offer as data, shown on the pilot page",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44
+  "score": 130.44,
+  "front": 7
  },
  {
   "id": "Q-GROW-WEEKLY-REPORT",
   "title": "Q-GROW-WEEKLY-REPORT: GROW-4: a weekly growth report loop: metric deltas and the next three experiments",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44
+  "score": 130.44,
+  "front": 7
  },
  {
   "id": "Q-GROW-adaptive-follow-ups",
   "title": "Q-GROW-adaptive-follow-ups: Follow-up questions chosen from the first answer keep people in the interview.",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44
+  "score": 130.44,
+  "front": 7
  },
  {
   "id": "Q-GROW-front-door-example-systems",
   "title": "Q-GROW-front-door-example-systems: Three concrete running systems on the front door raise taps into the interview.",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44
+  "score": 130.44,
+  "front": 7
  },
  {
   "id": "Q-GROW-shorter-pilot-form",
   "title": "Q-GROW-shorter-pilot-form: Fewer required fields raise the share of started applications that are sent.",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44
+  "score": 130.44,
+  "front": 7
  },
  {
   "id": "Q-CLOCK-LANE-HOOK",
   "title": "Q-CLOCK-LANE-HOOK: run the heal pass from the lane so stale stages are caught within one merge cycle",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 120.01
+  "score": 120.0,
+  "front": 1
  },
  {
   "id": "Q-PARITY-1",
   "title": "Q-PARITY-1: Mail-path self-heal in the tick: clear bounce suppressions on owner addresses and record every mail send outcome",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 120.01
+  "score": 120.0,
+  "front": 1
  },
  {
   "id": "Q-PARITY-6",
   "title": "Q-PARITY-6: Second-family review gate on risky diffs (QNFO REVIEW-GATE-1)",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 114.79
+  "score": 114.79,
+  "front": 5
  },
  {
   "id": "Q-LOOP-IMPROVE",
   "title": "Q-LOOP-IMPROVE: every loop scores itself each tick and the worst loop gets one change per week (strange loop)",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 104.35
+  "score": 104.35,
+  "front": 8
  },
  {
   "id": "Q-PARITY-2",
   "title": "Q-PARITY-2: Post-deploy probes with automatic revert (QNFO DEPLOY-PROBES-1 / canary_revert)",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 104.35
+  "score": 104.35,
+  "front": 8
  },
  {
   "id": "Q-PARITY-5",
   "title": "Q-PARITY-5: Failure-mode register with a detector per mode and a recurrence check (QNFO failure_modes, fm-* detectors)",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 104.35
+  "score": 104.35,
+  "front": 8
  },
  {
   "id": "Q-PARITY-7",
   "title": "Q-PARITY-7: Wake the executor from the tick without a person-minted token",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 104.35
+  "score": 104.35,
+  "front": 8
  },
  {
   "id": "Q-SYS-DEPLOY-ALL",
   "title": "Q-SYS-DEPLOY-ALL: SYS-7: deploy every declared worker and store from the topology",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 104.35
+  "score": 104.35,
+  "front": 8
  },
  {
   "id": "OL-20261112-93",
   "title": "OL-20261112-93: Server-side only: the bootstrap credential ladder still counts a signed-in CLI on the host it runs on",
   "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.27
+  "score": 78.26,
+  "front": 4
  },
  {
   "id": "PIN-fresh-account-bootstrap",
   "title": "PIN-fresh-account-bootstrap: First real --apply on an empty Cloudflare account",
   "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.27
+  "score": 78.26,
+  "front": 4
  },
  {
   "id": "Q-48",
   "title": "Q-48: WEB-4: robots.txt, sitemap.xml, Open Graph tags, Cloudflare Web Analytics",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.27
+  "score": 78.26,
+  "front": 7
  },
  {
   "id": "Q-50",
   "title": "Q-50: WEB-6: Inventory every QNFO setup step and clone the list here",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.27
+  "score": 78.26,
+  "front": 7
  },
  {
   "id": "Q-6",
   "title": "Q-6: Pilot sign-up flow",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.27
+  "score": 78.26,
+  "front": 7
  },
  {
   "id": "Q-SYS-FAILURE-REGISTRY",
   "title": "Q-SYS-FAILURE-REGISTRY: bootstrap failure registry including natural-language-to-code bridge failures",
   "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.27
+  "score": 78.26,
+  "front": 4
  },
  {
   "id": "Q-CRIT-COLLECTORS",
   "title": "Q-CRIT-COLLECTORS: push GitHub-run, ops/cost.jsonl and workflow_dispatch samples to /api/criticality/sample and mirror /metrics/criticality.json into ultrastable/seed",
   "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 69.57
+  "score": 69.57,
+  "front": 5
  },
  {
   "id": "Q-CRIT-IGNITION",
   "title": "Q-CRIT-IGNITION: ignition check: every open chain link as a data row, open_ignition_gaps next to k_eff",
   "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 69.57
+  "score": 69.57,
+  "front": 5
  },
  {
   "id": "Q-11",
   "title": "Q-11: CI deploy from this repo to Cloudflare",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 60.01
+  "score": 60.0,
+  "front": 1
  },
  {
   "id": "Q-12",
   "title": "Q-12: Analytics and measurement",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 60.01
+  "score": 60.0,
+  "front": 1
  },
  {
   "id": "Q-179",
   "title": "Q-179: Refactor: move claim-defining logic out of qnfo-workers (steps 0, 2-8)",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18
+  "score": 52.18,
+  "front": 8
  },
  {
   "id": "Q-185",
   "title": "Q-185: WRK-1: Rewrite foundation/ generator against the workers repo layout",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18
+  "score": 52.18,
+  "front": 8
  },
  {
   "id": "Q-35",
   "title": "Q-35: PL-1: Inventory the QNFO fleet: workers, crons, D1 tables, views, metrics; map each to the architecture",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18
+  "score": 52.18,
+  "front": 8
  },
  {
   "id": "Q-7",
   "title": "Q-7: Recruit 3 design partners",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18
+  "score": 52.18,
+  "front": 8
  },
  {
   "id": "Q-8",
   "title": "Q-8: Outside audit of the prediction match rate",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18
+  "score": 52.18,
+  "front": 8
  },
  {
   "id": "Q-90",
   "title": "Q-90: CORE-1: Deploy platform/core to Cloud Run and verify live",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18
+  "score": 52.18,
+  "front": 8
  },
  {
   "id": "Q-91",
   "title": "Q-91: CORE-2: Real-agent proof with Claude Code (needs agent credential) on a real repo",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18
+  "score": 52.18,
+  "front": 8
  },
  {
   "id": "Q-93",
   "title": "Q-93: CORE-4: GitHub connector: items from issues, PRs as execution, merge on green",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18
+  "score": 52.18,
+  "front": 8
  },
  {
   "id": "Q-94",
   "title": "Q-94: CORE-5: Vertex AI (Gemini) adapter and different-model doer/reviewer pairing",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18
+  "score": 52.18,
+  "front": 8
  },
  {
   "id": "WEB-1",
   "title": "WEB-1: Deploy `site` as a Worker on a preview URL behind Cloudflare Access, `noindex`",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 46.96
+  "score": 46.96,
+  "front": 2
  },
  {
   "id": "Q-3",
   "title": "Q-3: P2 Core tables in their own database",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "L",
   "held": false,
-  "score": 40.0
+  "score": 40.0,
+  "front": 9
  },
  {
   "id": "Q-SYS-AGENT-READINESS",
   "title": "Q-SYS-AGENT-READINESS: SYS-5: score ultrastable.io against the agent-readiness checks as a probe",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "L",
   "held": false,
-  "score": 40.0
+  "score": 40.0,
+  "front": 9
  },
  {
   "id": "Q-SYS-VECTOR-KB",
   "title": "Q-SYS-VECTOR-KB: SYS-4: vector index of the repository's own knowledge for the agents",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "L",
   "held": false,
-  "score": 40.0
+  "score": 40.0,
+  "front": 9
  },
  {
   "id": "WEB-2",
   "title": "WEB-2: Attach the ultrastable domains to the site, remove `noindex`, switch footer to \"Patent pending\"",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 36.53
+  "score": 36.52,
+  "front": 4
  },
  {
   "id": "WEB-4",
   "title": "WEB-4: robots.txt, sitemap.xml, Open Graph tags, Cloudflare Web Analytics",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 36.53
+  "score": 36.52,
+  "front": 4
  },
  {
   "id": "WEB-6",
   "title": "WEB-6: Inventory every QNFO setup step (Search Console, analytics, DNS, email, status, social) and clone the list here",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 36.53
+  "score": 36.52,
+  "front": 4
  },
  {
   "id": "GH-2",
   "title": "GH-2: Push starter content to all six repos",
   "goal": null,
+  "goals": [],
   "unblocks": 3,
   "size": "M",
   "held": false,
-  "score": 31.31
+  "score": 31.31,
+  "front": 2
  },
  {
   "id": "PL-1",
   "title": "PL-1: Inventory the QNFO fleet: workers, crons, D1 tables, views, metrics; map each to [architecture](../platform/docs/architecture.md)",
   "goal": null,
+  "goals": [],
   "unblocks": 3,
   "size": "M",
   "held": false,
-  "score": 31.31
+  "score": 31.31,
+  "front": 2
  },
  {
   "id": "BIZ-2",
   "title": "BIZ-2: Business-in-a-box: managers, customers, competition, pitch kit, funding, promotion, events (`business/plan/`)",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "FUND-10",
   "title": "FUND-10: Move funding registry, verifier and issue filer into seed/ (BG-17)",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "FUND-11",
   "title": "FUND-11: Confirm entity jurisdiction assumption before SBIR or EIC work (BG-18)",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "FUND-6",
   "title": "FUND-6: Verify unverified programs at the source (Sloan, Ford/Mellon, NSF POSE, Apache, Open Source Collective, cloud OSS credits)",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "FUND-7",
   "title": "FUND-7: Measure cost per managed project tick (model plus infrastructure)",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "FUND-8",
   "title": "FUND-8: Trademark search and registration plan for Ultrastable",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "FUND-9",
   "title": "FUND-9: Open-core release plan: governance file, security policy, contribution guide, CLA/DCO",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "OL-20261113-5",
   "title": "OL-20261113-5: PROMO-1 promotion manager owns video and social reach",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "Q-FLOW-RESUME-JOBS",
   "title": "Q-FLOW-RESUME-JOBS: bring the jobs, outreach and resume system under the flow map",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "Q-METRIC-declared-probes",
   "title": "Q-METRIC-declared-probes: Give the declared metrics M-generator and M-outreach real probes",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "Q-PILOT-first-agreement",
   "title": "Q-PILOT-first-agreement: First pilot agreement on the bring-your-own-account model",
   "goal": "growth",
+  "goals": [
+   "growth"
+  ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09
+  "score": 26.09,
+  "front": 7
  },
  {
   "id": "IP-1",
   "title": "IP-1: Provisional draft: full spec, claims, figures",
   "goal": null,
+  "goals": [],
   "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 20.87
+  "score": 20.87,
+  "front": 3
  },
  {
   "id": "Q-GAP-cross-model-rescoring",
   "title": "Q-GAP-cross-model-rescoring: Re-score predictions with a second model",
   "goal": null,
+  "goals": [],
   "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 20.87
+  "score": 20.87,
+  "front": 3
  },
  {
   "id": "Q-SCOUT-claude-code-865f57db",
   "title": "Q-SCOUT-claude-code-865f57db: v2.1.314 (claude-code)",
   "goal": null,
+  "goals": [],
   "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 20.87
+  "score": 20.87,
+  "front": 3
  },
  {
   "id": "Q-SCOUT-claude-code-c35a8e45",
   "title": "Q-SCOUT-claude-code-c35a8e45: v2.1.321 (claude-code)",
   "goal": null,
+  "goals": [],
   "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 20.87
+  "score": 20.87,
+  "front": 3
  },
  {
   "id": "Q-SCOUT-cloudflare-agents-cb441d6b",
   "title": "Q-SCOUT-cloudflare-agents-cb441d6b: agents@0.31.0 (cloudflare-agents)",
   "goal": null,
+  "goals": [],
   "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 20.87
+  "score": 20.87,
+  "front": 3
  },
  {
   "id": "Q-38",
   "title": "Q-38: PL-4: Ultrastable runs its own backlog: this roadmap as tenant #1, managers on a tick",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 17.4
+  "score": 17.39,
+  "front": 8
  },
  {
   "id": "INTERVIEW-2",
   "title": "INTERVIEW-2: Adaptive interview: model picks the next question",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "INTERVIEW-4",
   "title": "INTERVIEW-4: Pill and mic pattern on every input surface",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "IP-6",
   "title": "IP-6: Put the 12-month conversion deadline (non-provisional / PCT) on the calendar with 90/60/30-day reminders",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "OL-20261112-1",
   "title": "OL-20261112-1: QNFO runtime config and replace PR owed by the QNFO lane",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "OL-20261112-12",
   "title": "OL-20261112-12: Cut workers release v0.1.0",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "OL-20261112-2",
   "title": "OL-20261112-2: Workers release tag v0.1.0 is a scan-evaluated dependency",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "PL-4",
   "title": "PL-4: Ultrastable runs its own backlog: this roadmap as tenant #1, managers on a tick",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "Q-ADOPT-fable-reviewer",
   "title": "Q-ADOPT-fable-reviewer: roster a second model family member as reviewer",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "Q-ADOPT-write-containment",
   "title": "Q-ADOPT-write-containment: executor refuses writes that resolve outside the working tree",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "Q-SCOUT-claude-code-d1bbd9e0",
   "title": "Q-SCOUT-claude-code-d1bbd9e0: v2.1.316 (claude-code)",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "Q-SCOUT-google-adk-7a45defe",
   "title": "Q-SCOUT-google-adk-7a45defe: v2.12.0 (google-adk)",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "QA-1",
   "title": "QA-1: Independent review: patent draft vs disclosure vs docs say the same thing",
   "goal": null,
+  "goals": [],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44
+  "score": 10.44,
+  "front": 5
  },
  {
   "id": "BND-1",
   "title": "BND-1: Package the containment boundary as a container or sandbox (the selling point)",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  },
  {
   "id": "FN-4",
   "title": "FN-4: Other credit programs (Anthropic, AWS Activate, Microsoft for Startups, NVIDIA Inception)",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  },
  {
   "id": "FN-5",
   "title": "FN-5: Pitch deck, one story with a Cloudflare variant and a GCP variant",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  },
  {
   "id": "GH-3",
   "title": "GH-3: Labels, issue templates, a GitHub Project board; load this file as issues",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  },
  {
   "id": "INTERVIEW-3",
   "title": "INTERVIEW-3: Feed the interview profile into the build prompt and seed repo",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  },
  {
   "id": "IP-2",
   "title": "IP-2: Prior-art search with differentiators",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  },
  {
   "id": "IP-3",
   "title": "IP-3: Fill the evidence log with dated QNFO commits and migrations",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  },
  {
   "id": "OL-20261112-10",
   "title": "OL-20261112-10: CF-ACTIONS-TOKEN: move deploy, tick and dashboard to the ultrastable account",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  },
  {
   "id": "OL-20261112-11",
   "title": "OL-20261112-11: Cloudflare account 81e3 transfer",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  },
  {
   "id": "OL-20261112-13",
   "title": "OL-20261112-13: Archive license repo and publish .github profile",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  },
  {
   "id": "OL-20261112-14",
   "title": "OL-20261112-14: external dependencies X-1 and X-3",
   "goal": null,
+  "goals": [],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.01
+  "score": 0.0,
+  "front": 8
  }
 ]

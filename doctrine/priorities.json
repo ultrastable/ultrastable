@@ -100,5 +100,27 @@
       "Q-SEED-1"
     ]
   },
-  "goal_match_fields": "id+title"
+  "goal_match_fields": "id+title",
+  "secondary_share": 0.25,
+  "pareto_bonus": 10,
+  "constraints": [
+    {
+      "goal": "run-on-cloudflare",
+      "active": true,
+      "multiplier": 1.5,
+      "why": "GitHub Actions jobs refused since 2026-11-14 (billing); every loop on Actions is down until it runs on the Worker"
+    },
+    {
+      "goal": "cost",
+      "signal": "cost_over_budget",
+      "multiplier": 3.0,
+      "why": "control rods: spend over budget makes cost-cutting the binding constraint"
+    },
+    {
+      "goal": "criticality",
+      "signal": "k_below_floor",
+      "multiplier": 1.5,
+      "why": "k under floor: items that raise verified deploys come first"
+    }
+  ]
 }

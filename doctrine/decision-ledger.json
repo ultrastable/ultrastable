@@ -815,6 +815,14 @@
    "title": "LOCAL-CHECKS-1: verify without Actions minutes",
    "body": "GitHub Actions stopped starting jobs (billing failure), so every PR showed a red checks run that never executed and the merge lane stalled. scripts/local_checks.py runs the checks.yml run steps on any host. criticality.gate read wall-clock now (time-bomb); it now takes now.",
    "probe": "file:scripts/local_checks.py"
+  },
+  {
+   "id": "decision-2026-11-14-prioritize-2-multi-objective-ranking-with-shadow-prices",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "PRIORITIZE-2: multi-objective ranking with shadow prices",
+   "body": "Backlog items are vectors over goals. Value = best goal weight x shadow price + 0.25 x other matched goals. Shadow prices rise while a constraint binds (Actions billing-blocked: run-on-cloudflare x1.5; cost over budget: cost x3; k below floor: criticality x1.5), read live from foundation/criticality. Pareto front over (value, unblocks, 1/size) gets a bonus.",
+   "probe": "file:foundation/prioritize.py"
   }
  ]
 }

@@ -35,6 +35,18 @@ class Rank(unittest.TestCase):
     def test_small_beats_large_on_equal_goal(self):
         self.assertEqual(self.ids([item("L", "CORE a", "size: L\n"), item("S", "CORE b", "size: S\n")]), ["S", "L"])
 
+    def test_multi_goal_beats_single_goal(self):
+        self.assertEqual(self.ids([item("X", "CORE a"), item("Y", "CORE SOCIAL b")])[0], "Y")
+
+    def test_binding_constraint_reorders(self):
+        conf = dict(CONF, constraints=[{"goal": "b", "signal": "hot", "multiplier": 5}])
+        items = [item("X", "SOCIAL a"), item("Y", "CORE b")]
+        self.assertEqual([r["id"] for r in P.score_items(items, conf, now=0, signals={})][0], "Y")
+        self.assertEqual([r["id"] for r in P.score_items(items, conf, now=0, signals={"hot": True})][0], "X")
+
+    def test_pareto_fronts(self):
+        self.assertEqual(P.pareto_fronts([(3, 0), (1, 1), (0, 0), (3, 1)]), [1, 1, 2, 0])
+
     def test_live_config_and_repo_rank(self):
         rows = P.rank()
         self.assertTrue(rows and all("score" in r for r in rows))
