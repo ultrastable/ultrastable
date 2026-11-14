@@ -4,6 +4,7 @@
 // needs a bearer token listed in secret INTEGRATION_TOKENS ("name:sha256hex,name2:sha256hex"); tokens are compared by hash, never stored in clear.
 // Consumers: the owner's personal companion (/api/v1/companion/brief), other services, MCP clients (site/agentic.js), and the /ops page below.
 import { registerHandoff } from "../seed/worker/src/handoff.js";
+import { exportBundle, importBundle } from "./portability.js";
 import { SOP_VERSION, SOP_STEPS, SERVER_OWNS } from "./sop.js";
 export const API_VERSION = "1.1.0";
 const ORIGIN = "https://ultrastable.io";
@@ -157,18 +158,27 @@ export async function authIntegration(request, env) {
   return hit ? { ok: true, name: hit.name } : { ok: false, status: 403, error: "unknown token" };
 }
 
+// AGENT-HARNESS-1: one intake path for every client (REST and MCP). Attribution (which agent, in which harness) is recorded on the item's surface so inputs from different agents can be compared.
+const attr = v => String(v || "").trim().replace(/[^A-Za-z0-9._\/-]/g, "").slice(0, 60);
+export async function submitIntake(env, authName, b, now = Date.now()) {
+  const title = String((b && b.title) || "").trim().slice(0, 200), detail = String((b && b.detail) || "").trim().slice(0, 4000);
+  if (!title) return { status: 422, body: { error: "title is required" } };
+  const kind = ["idea", "request", "bug", "question"].includes(b.kind) ? b.kind : "request";
+  const pr = Math.max(1, Math.min(90, Number(b.priority) || 50));  // above 90 is reserved for the org's own driver
+  const agent = attr(b.agent), harness = attr(b.harness);
+  const surface = "integration:" + authName + (agent ? " agent:" + agent : "") + (harness ? " harness:" + harness : "");
+  const id = "IN-" + new Date(now).toISOString().slice(0, 10).replace(/-/g, "") + "-" + (await sha256(authName + title + now)).slice(0, 6);
+  await env.ORG.prepare("INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, surface, disposition) VALUES (?, ?, ?, 'product-manager', ?, ?, ?, 'open', ?, ?)")
+    .bind(id, `${id}: ${title}`, "intake-" + kind, "product-manager triaged it: accepted with a plan, merged into an existing item, or declined with a reason", "GET /api/v1/work/" + id, pr, surface, detail || null).run();
+  return { status: 201, body: { ok: true, id, status: "open", owner_role: "product-manager", url: ORIGIN + "/api/v1/work/" + id, attributed_to: { agent: agent || null, harness: harness || null } } };
+}
+
 export async function intake(request, env, now = Date.now()) {
   const auth = await authIntegration(request, env);
   if (!auth.ok) return json({ error: auth.error }, auth.status, auth.status === 401 ? { "www-authenticate": "Bearer" } : undefined);
   let b; try { b = await request.json(); } catch (e) { return json({ error: "body must be JSON" }, 400); }
-  const title = String((b && b.title) || "").trim().slice(0, 200), detail = String((b && b.detail) || "").trim().slice(0, 4000);
-  if (!title) return json({ error: "title is required" }, 422);
-  const kind = ["idea", "request", "bug", "question"].includes(b.kind) ? b.kind : "request";
-  const pr = Math.max(1, Math.min(90, Number(b.priority) || 50));  // above 90 is reserved for the org's own driver
-  const id = "IN-" + new Date(now).toISOString().slice(0, 10).replace(/-/g, "") + "-" + (await sha256(auth.name + title + now)).slice(0, 6);
-  await env.ORG.prepare("INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, surface, disposition) VALUES (?, ?, ?, 'product-manager', ?, ?, ?, 'open', ?, ?)")
-    .bind(id, `${id}: ${title}`, "intake-" + kind, "product-manager triaged it: accepted with a plan, merged into an existing item, or declined with a reason", "GET /api/v1/work/" + id, pr, "integration:" + auth.name, detail || null).run();
-  return json({ ok: true, id, status: "open", owner_role: "product-manager", url: ORIGIN + "/api/v1/work/" + id }, 201);
+  const r = await submitIntake(env, auth.name, b || {}, now);
+  return json(r.body, r.status);
 }
 
 // ---- HANDOFF-1 / CODE-AGENT-SOP-1: the server's record of handed-off work, and the two writes a code agent may make ----
@@ -216,6 +226,8 @@ export const OPENAPI_PATHS = {
   "/api/v1/handoffs": { get: { operationId: "listHandoffs", summary: "Work handed to the server and each state it moved through (open, merged, deployed, verified, rolled_back ...)", parameters: [{ name: "state", in: "query", schema: { type: "string" } }], responses: { "200": { description: "Handoffs" } } } },
   "/api/v1/handoff": { post: { operationId: "submitHandoff", summary: "Hand a PR to the server (bearer token); the server merges, deploys, probes and closes", security: [{ bearer: [] }], requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["repo", "pr"], properties: { repo: { type: "string" }, pr: { type: "integer" }, item: { type: "string" }, agent: { type: "string" }, verify: { type: "string" }, deploy: { type: "string" } } } } } }, responses: { "201": { description: "Registered" }, "401": { description: "No token" }, "422": { description: "Invalid" } } } },
   "/api/v1/work/{id}/claim": { post: { operationId: "claimWork", summary: "Claim a work order for a code agent (bearer token)", security: [{ bearer: [] }], parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { "201": { description: "Claimed" }, "409": { description: "Not claimable" } } } },
+  "/api/v1/export": { get: { operationId: "exportData", summary: "Everything this integration submitted, as portable JSON (schema ultrastable-export/v1)", security: [{ bearer: [] }], responses: { "200": { description: "Bundle" } } } },
+  "/api/v1/import": { post: { operationId: "importData", summary: "Replay an export bundle; idempotent", security: [{ bearer: [] }], responses: { "200": { description: "Counts" }, "422": { description: "Not an export bundle" } } } },
   "/api/v1/intake": { post: { operationId: "submitIntake", summary: "Submit an idea, request, bug or question as a backlog item (bearer token)", security: [{ bearer: [] }], requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["title"], properties: { title: { type: "string", maxLength: 200 }, detail: { type: "string", maxLength: 4000 }, kind: { type: "string", enum: ["idea", "request", "bug", "question"] }, priority: { type: "integer", minimum: 1, maximum: 90 } } } } } }, responses: { "201": { description: "Created" }, "401": { description: "No token" }, "403": { description: "Unknown token" }, "503": { description: "Intake not configured" } } } },
 };
 
@@ -228,6 +240,15 @@ export async function controlPlane(request, env, ctx) {
     if (request.method !== "POST") return json({ error: "use POST" }, 405, { allow: "POST, OPTIONS" });
     if (!env || !env.ORG) return json({ error: "org database not bound (ORG)" }, 503);
     return cm ? claimItem(request, env, decodeURIComponent(cm[1])) : postHandoff(request, env);
+  }
+  if (p === "/api/v1/export" || p === "/api/v1/import") {  // PORTABILITY-1
+    if (!env || !env.ORG) return json({ error: "org database not bound (ORG)" }, 503);
+    const auth = await authIntegration(request, env);
+    if (!auth.ok) return json({ error: auth.error }, auth.status, auth.status === 401 ? { "www-authenticate": "Bearer" } : undefined);
+    if (p === "/api/v1/export") return request.method === "GET" ? json(await exportBundle(env, auth.name)) : json({ error: "use GET" }, 405, { allow: "GET, OPTIONS" });
+    if (request.method !== "POST") return json({ error: "use POST" }, 405, { allow: "POST, OPTIONS" });
+    let b; try { b = await request.json(); } catch (e) { return json({ error: "body must be JSON" }, 400); }
+    const r = await importBundle(env, auth.name, b); return json(r.body, r.status);
   }
   if (p === "/api/v1/intake") {
     if (request.method !== "POST") return json({ error: "use POST" }, 405, { allow: "POST, OPTIONS" });

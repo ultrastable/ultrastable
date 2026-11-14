@@ -121,8 +121,12 @@ jobs:
         run: python3 scripts/check_routes.py
       - name: Guided set-up is plain-language and in sync (USER-PATH-1)
         run: python3 scripts/gen_userpath.py --check
+      - name: Site worker modules parse (a syntax error blocks every deploy)
+        run: for f in site/*.js; do node --check "$f" || exit 1; done
       - name: Site pins and gaps are tied to real issues and code (SITE-PINS-1)
         run: python3 scripts/build_site_roadmap.py --check
+      - name: Agent data is current
+        run: python3 scripts/build_site_agentdata.py --check
       - name: Platform brief is current
         run: python3 scripts/platform_brief.py --check
       - name: Project memory is current

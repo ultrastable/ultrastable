@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "checked": "2026-11-11",
+  "checked": "2026-11-14",
   "stale_after_days": 120,
   "bodies": [
     {
@@ -576,32 +576,228 @@
       ]
     },
     {
-      "id": "authzen",
-      "name": "OpenID AuthZEN Authorization API 1.0 (policy decision point)",
+      "id": "mcp-ema",
+      "name": "MCP enterprise-managed authorization (ID-JAG, XAA)",
+      "body": "MCP project; IETF OAuth WG (draft)",
+      "status": "draft",
+      "tracked": "researched 2026-11-14",
+      "why": "One admin approval instead of per-server consent screens; the click-once experience for organisations.",
+      "support": "planned",
+      "tracked_by": "STD-4: accept ID-JAG assertions on our authorization server and present them as a client; extension is stable in MCP 2026-07-28 but ID-JAG itself is an IETF draft (-04)",
+      "acl": "seed/worker/src/auth/oauth.js",
+      "sources": [
+        {
+          "title": "What are EMA, ID-JAG and XAA",
+          "url": "https://www.cyera.com/blog/ema-id-jag-xaa-token-exchange",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "oauth-device",
+      "name": "OAuth device authorization grant (RFC 8628) and URL-mode elicitation for consent",
+      "body": "IETF OAuth WG; MCP project",
+      "status": "stable",
+      "tracked": "researched 2026-11-14",
+      "why": "Lets a CLI or headless agent link a service with one click on a phone or browser, never a pasted token.",
+      "support": "planned",
+      "tracked_by": "STD-5: device flow for CLI and headless agents; surface consent URLs through MCP URL elicitation",
+      "acl": "seed/worker/src/auth/oauth.js",
+      "sources": [
+        {
+          "title": "MCP Authorization: OAuth 2.1, PKCE and agent identity",
+          "url": "https://aembit.io/blog/mcp-oauth-2-1-pkce-and-the-future-of-ai-authorization/",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "ssf-caep",
+      "name": "OpenID Shared Signals Framework, CAEP and RISC",
       "body": "OpenID Foundation",
       "status": "stable",
       "tracked": "researched 2026-11-14",
-      "why": "Standard way to ask \"may this agent do this\"; served at /access/v1/evaluation and /access/v1/evaluations from the trust ledger, failing closed.",
-      "support": "supported",
-      "how": [
-        "site/authzen.js",
-        "site/worker.js"
-      ],
-      "acl": "site/authzen.js",
-      "tests": [
+      "why": "Real-time revocation: disconnecting a service or a compromised agent kills its sessions at once instead of at token expiry.",
+      "support": "planned",
+      "tracked_by": "STD-6: receive and emit SSF events for connectors and issued tokens",
+      "acl": "seed/worker/src/auth/oauth.js",
+      "sources": [
         {
-          "file": "site/authzen.test.mjs",
-          "name": "authzen: ledger decides and fails closed"
-        },
-        {
-          "file": "site/authzen.test.mjs",
-          "name": "worker routes /access/v1/evaluation"
+          "title": "AI agent identity standards tracker",
+          "url": "https://nhimg.org/agent-identity-standards-tracker",
+          "published": null,
+          "accessed": "2026-11-14"
         }
-      ],
+      ]
+    },
+    {
+      "id": "dpop-rar",
+      "name": "DPoP (RFC 9449), Resource Indicators (RFC 8707) and Rich Authorization Requests (RFC 9396)",
+      "body": "IETF OAuth WG",
+      "status": "stable",
+      "tracked": "researched 2026-11-14",
+      "why": "Sender-constrained tokens and per-action grants so a leaked token is useless and consent is specific.",
+      "support": "planned",
+      "tracked_by": "STD-7: bind issued tokens with DPoP, require resource indicators, express scopes as RAR",
+      "acl": "seed/worker/src/auth/oauth.js",
+      "sources": [
+        {
+          "title": "MCP Authorization specification",
+          "url": "https://www.descope.com/blog/post/mcp-auth-spec",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "wimse-spiffe",
+      "name": "Workload identity for agents (WIMSE, SPIFFE) and transaction tokens",
+      "body": "IETF WIMSE; CNCF",
+      "status": "draft",
+      "tracked": "researched 2026-11-14",
+      "why": "One verifiable identity per agent and call-chain propagation, the stack that agent-identity guidance converges on.",
+      "support": "planned",
+      "tracked_by": "STD-8: give each virtual agent a durable ID and short-lived credentials per task; carry the chain in transaction tokens",
+      "acl": "seed/worker/src/auth/oauth.js",
+      "sources": [
+        {
+          "title": "Agents are workloads",
+          "url": "https://uberether.com/agents-are-workloads/",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "authzen",
+      "name": "OpenID AuthZEN (policy decision point API)",
+      "body": "OpenID Foundation",
+      "status": "stable",
+      "tracked": "researched 2026-11-14",
+      "why": "Standard way to ask 'may this agent do this' so policy can change without code changes; fits the trust ledger.",
+      "support": "planned",
+      "tracked_by": "STD-9: expose the trust ledger as an AuthZEN decision endpoint",
+      "acl": "seed/worker/src/agentic/acl/discovery.js",
       "sources": [
         {
           "title": "AI agent identity standards: the 2026 landscape",
           "url": "http://nhigovernance.com/ai-agents/agent-identity-standards.html",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "a2a-signed",
+      "name": "A2A v1.0 with signed Agent Cards and task lifecycle",
+      "body": "Agentic AI Foundation",
+      "status": "stable",
+      "tracked": "researched 2026-11-14",
+      "why": "Verifiable agent identity and long-running tasks; our card still declares 0.3.0.",
+      "support": "planned",
+      "tracked_by": "ROADMAP-AGENT-A2A-V1: serve a v1.0 signed card, message/send and tasks/get",
+      "acl": "seed/worker/src/agentic/acl/discovery.js",
+      "sources": [
+        {
+          "title": "A2A passes 150 organizations",
+          "url": "https://www.linuxfoundation.org/press/a2a-protocol-surpasses-150-organizations-lands-in-major-cloud-platforms-and-sees-enterprise-production-use-in-first-year",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "mcp-apps-agui",
+      "name": "MCP Apps (SEP-1865), AG-UI and A2UI for rich agent surfaces",
+      "body": "MCP project; AG-UI; Google (A2UI)",
+      "status": "draft",
+      "tracked": "researched 2026-11-14",
+      "why": "Lets the dashboard and consent screens render inside any agent host as a click-through surface instead of a pasted link.",
+      "support": "planned",
+      "tracked_by": "STD-10: ship the connect and approve screens as MCP Apps; AG-UI event stream for the dashboard",
+      "acl": "seed/worker/src/agentic/acl/discovery.js",
+      "sources": [
+        {
+          "title": "State of generative UI 2026",
+          "url": "https://www.openui.com/blog/state-of-generative-ui-report",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "acp-editor",
+      "name": "Agent Client Protocol (editor to coding agent)",
+      "body": "Zed and community",
+      "status": "draft",
+      "tracked": "researched 2026-11-14",
+      "why": "How editors drive coding agents; relevant to the code-agent SOP and handoff.",
+      "support": "planned",
+      "tracked_by": "STD-11: watch; adopt if VS Code or JetBrains ship it for third-party harnesses",
+      "acl": "seed/worker/src/agentic/acl/discovery.js",
+      "sources": [
+        {
+          "title": "Agentic protocols 2026",
+          "url": "https://geraldmorisseau.com/en/agentic-protocols-2026/",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "ap2-ucp",
+      "name": "AP2 mandates and UCP commerce",
+      "body": "Google, Shopify, Linux Foundation",
+      "status": "draft",
+      "tracked": "researched 2026-11-14",
+      "why": "Signed spending mandates when customers pay through agents; revenue path for the platform.",
+      "support": "planned",
+      "tracked_by": "STD-12: n/a until funding; any payment is identity-bound and stays behind a gate card",
+      "acl": "seed/worker/src/agentic/acl/discovery.js",
+      "sources": [
+        {
+          "title": "Agentic commerce protocols compared",
+          "url": "https://stellagent.ai/insights/mcp-vs-a2a-vs-ap2-protocol-comparison",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "provenance",
+      "name": "C2PA content credentials (ISO/IEC 21694) and EU AI Act Article 50 marking",
+      "body": "C2PA; EU",
+      "status": "stable",
+      "tracked": "researched 2026-11-14",
+      "why": "Generated artifacts we publish need machine-readable marking; applies to generative output placed on the market from 2026-08-02 (until 2026-12-02 for existing systems).",
+      "support": "planned",
+      "tracked_by": "STD-13: sign published artifacts with content credentials; legal-ip manager confirms scope",
+      "acl": "seed/worker/src/agentic/acl/discovery.js",
+      "sources": [
+        {
+          "title": "EU AI Act and content provenance making C2PA urgent",
+          "url": "https://www.softwareseni.com/eu-ai-act-and-content-provenance-regulations-making-c2pa-urgent-in-2026/",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
+    },
+    {
+      "id": "aims-iso",
+      "name": "ISO/IEC 42001 AI management system",
+      "body": "ISO",
+      "status": "stable",
+      "tracked": "researched 2026-11-14",
+      "why": "Customer procurement asks for it; no presumption of conformity under the AI Act yet, so evidence is the value.",
+      "support": "planned",
+      "tracked_by": "STD-14: map existing ledgers (decision log, trust ledger, failure modes) to 42001 controls",
+      "acl": "seed/worker/src/agentic/acl/discovery.js",
+      "sources": [
+        {
+          "title": "ISO 42001 and the EU AI Act control mapping",
+          "url": "https://www.tcsa.in/frameworks/iso-42001/eu-ai-act",
           "published": null,
           "accessed": "2026-11-14"
         }
