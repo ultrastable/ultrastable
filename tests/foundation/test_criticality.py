@@ -40,14 +40,14 @@ class Criticality(unittest.TestCase):
     def test_k_below_floor_filters_queue(self):
         d = repo([], [])
         items = [{"number": "Q-FEATURE-1", "labels": []}, {"number": "Q-COST-9", "labels": []}, {"number": "X", "labels": [{"name": "raises-deploys"}]}]
-        self.assertEqual([i["number"] for i in C.gate(items, d)], ["Q-COST-9", "X"])
+        self.assertEqual([i["number"] for i in C.gate(items, d, NOW)], ["Q-COST-9", "X"])
         d2 = repo([GOOD])
-        self.assertEqual(len(C.gate(items, d2)), 3)
+        self.assertEqual(len(C.gate(items, d2, NOW)), 3)
 
     def test_control_rods_narrow_to_cost_when_cost_runs_away(self):
         d = repo([GOOD], [{"d1": [{"name": "ultrastable-a", "rows_read": 10**10}], "ai": {"neurons": 1}}])
         items = [{"number": "Q-DEPLOY-1", "labels": []}, {"number": "Q-COST-2", "labels": []}, {"number": "F", "labels": []}]
-        self.assertEqual([i["number"] for i in C.gate(items, d)], ["Q-COST-2"])
+        self.assertEqual([i["number"] for i in C.gate(items, d, NOW)], ["Q-COST-2"])
 
     def test_chain_is_the_share_of_flows_on_a_cycle(self):
         self.assertEqual(C.compute(feed_ok=True)["chain"], 1.0)

@@ -109,6 +109,14 @@ export const EVENT_TABLE = [
     "role": "customer-success"
   },
   {
+    "id": "wake-design-manager",
+    "event": "repository_dispatch",
+    "actions": [
+      "wake:design-manager"
+    ],
+    "role": "design-manager"
+  },
+  {
     "id": "wake-funding-manager",
     "event": "repository_dispatch",
     "actions": [
