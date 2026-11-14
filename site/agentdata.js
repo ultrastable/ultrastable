@@ -136,8 +136,8 @@ export default {
     "name": "Web Bot Auth (signed agents)",
     "body": "IETF (HTTP Message Signatures based); Cloudflare",
     "status": "draft",
-    "support": "planned",
-    "tracked_by": "STD-3: verify signatures on inbound agent traffic at the edge and sign outbound agent requests"
+    "support": "supported",
+    "tracked_by": null
    },
    {
     "id": "x402-pay-per-crawl",

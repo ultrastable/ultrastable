@@ -3,6 +3,7 @@
 // checksums, Link headers (RFC 8288), Content Signals in robots.txt. Every tool reads the published snapshot; nothing here can change state.
 import { load } from "./live.js";
 import AGENTDATA from "./agentdata.js";
+import { directory as wbaDirectory, DIRECTORY_PATH, DIRECTORY_TYPE, verifyRequest, fetchDirectory } from "./webbotauth.js";
 import { SOP_MD } from "./sop.js";
 import { OPENAPI_PATHS, API_VERSION, status as cpStatus, agents as cpAgents, work as cpWork, activity as cpActivity, products as cpProducts, companionBrief, authIntegration, submitIntake, workItem } from "./controlplane.js";
 const ORIGIN = "https://ultrastable.io";
@@ -97,7 +98,8 @@ async function mcp(request, env) {
         if (!env.ORG) return ok({ isError: true, content: [{ type: "text", text: "Org database not bound." }] });
         const a = (m.params || {}).arguments || {};
         if (!String(a.agent || "").trim() || !String(a.harness || "").trim()) return ok({ isError: true, content: [{ type: "text", text: "agent and harness are required" }] });
-        const r = await submitIntake(env, auth.name, a);
+        const wb = await verifyRequest(request, o => fetchDirectory(o)).catch(() => ({ ok: false })); // WEB-BOT-AUTH-1: a verified signature adds the agent origin to the harness record
+        const r = await submitIntake(env, auth.name, wb.ok ? { ...a, harness: String(a.harness) + "+wba-" + new URL(wb.agent).hostname } : a);
         return ok({ isError: r.status >= 400, content: [{ type: "text", text: JSON.stringify(r.body) }] });
       }
       const lt = LIVE_TOOLS.find(x => x.name === (m.params || {}).name);
@@ -139,6 +141,7 @@ export async function agentic(request, env) {
   const u = new URL(request.url), p = u.pathname.replace(/\/$/, "");
   if (u.hostname !== "ultrastable.io" && u.hostname !== "www.ultrastable.io" && !u.hostname.endsWith(".workers.dev")) return null;
   switch (p) {
+    case DIRECTORY_PATH: { if (!env || !env.ORG) return new Response("Org database not bound", { status: 503, headers: CORS }); return new Response(JSON.stringify(await wbaDirectory(env)), { headers: { ...CORS, "content-type": DIRECTORY_TYPE, "cache-control": "public, max-age=3600" } }); }
     case "/mcp": return mcp(request, env);
     case "/a2a": return a2a(request, env);
     case "/connect-agent": return new Response(CONNECT_HTML(), { headers: { ...CORS, "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });

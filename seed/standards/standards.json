@@ -527,15 +527,24 @@
       "status": "draft",
       "tracked": "IETF draft; Cloudflare verified bots",
       "why": "How a site proves a request is from a known agent, and how our agents prove who they are to others.",
-      "support": "planned",
-      "tracked_by": "STD-3: verify signatures on inbound agent traffic at the edge and sign outbound agent requests",
-      "acl": "seed/worker/src/agentic/handler.js",
+      "support": "supported",
+      "acl": "site/webbotauth.js",
       "sources": [
         {
           "title": "Cloudflare: Web Bot Auth",
           "url": "https://blog.cloudflare.com/web-bot-auth/",
           "published": null,
           "accessed": "2026-11-11"
+        }
+      ],
+      "how": [
+        "site/webbotauth.js",
+        "site/agentic.js"
+      ],
+      "tests": [
+        {
+          "file": "site/webbotauth.test.mjs",
+          "name": "webbotauth: sign, verify and publish directory"
         }
       ]
     },
