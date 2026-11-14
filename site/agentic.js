@@ -3,7 +3,9 @@
 // checksums, Link headers (RFC 8288), Content Signals in robots.txt. Every tool reads the published snapshot; nothing here can change state.
 import { load } from "./live.js";
 import AGENTDATA from "./agentdata.js";
+import { directory as wbaDirectory, DIRECTORY_PATH, DIRECTORY_TYPE, verifyRequest, fetchDirectory } from "./webbotauth.js";
 import { SOP_MD } from "./sop.js";
+import { oauthRoute, verifyAccess, CHALLENGE } from "./oauth.js";
 import { OPENAPI_PATHS, API_VERSION, status as cpStatus, agents as cpAgents, work as cpWork, activity as cpActivity, products as cpProducts, companionBrief, authIntegration, submitIntake, workItem } from "./controlplane.js";
 const ORIGIN = "https://ultrastable.io";
 const VERSION = "0.1.0";
@@ -41,7 +43,7 @@ export const LIVE_TOOLS = [
 
 // AGENT-HARNESS-1: the one MCP write. Any agent in any harness (VS Code Copilot/Claude/Codex, Cursor, CLI) submits work here; bearer token required, agent and harness required.
 export const WRITE_TOOLS = [{ name: "submit_work", description: "Submit an idea, request, bug or question to Ultrastable's intake. Requires a bearer integration token. State which agent and harness you are so inputs can be compared.",
-  inputSchema: { type: "object", required: ["title", "agent", "harness"], properties: { title: { type: "string", maxLength: 200 }, detail: { type: "string", maxLength: 4000 }, kind: { type: "string", enum: ["idea", "request", "bug", "question"] }, priority: { type: "integer", minimum: 1, maximum: 90 }, agent: { type: "string", description: "Who is sending, e.g. claude-code, codex, copilot, cursor" }, harness: { type: "string", description: "Where it runs, e.g. vscode-claude, vscode-copilot, cli, cloud" } }, additionalProperties: false },
+  inputSchema: { type: "object", required: ["title"], properties: { title: { type: "string", maxLength: 200 }, detail: { type: "string", maxLength: 4000 }, kind: { type: "string", enum: ["idea", "request", "bug", "question"] }, priority: { type: "integer", minimum: 1, maximum: 90 }, agent: { type: "string", description: "Who is sending, e.g. claude-code, codex, copilot, cursor. Optional with OAuth: defaults to the approved client." }, harness: { type: "string", description: "Where it runs, e.g. vscode-claude, vscode-copilot, cli, cloud. Optional with OAuth." } }, additionalProperties: false },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false } }];
 
 // AGENT-HARNESS-1: one page, one click per agent host. No tokens: hosts that support MCP authorization sign the person in by browser consent.
@@ -61,14 +63,14 @@ const OPENAPI = { openapi: "3.1.0", info: { title: "Ultrastable API", version: A
     "/mcp": { post: { operationId: "mcp", summary: "Model Context Protocol endpoint (JSON-RPC 2.0): read tools, plus submit_work with a bearer token", requestBody: { content: { "application/json": { schema: { type: "object" } } } }, responses: { "200": { description: "JSON-RPC response" } } } } } };
 
 const CARD = { serverInfo: { name: "ultrastable-live", title: "Ultrastable live record", version: VERSION }, description: "Ultrastable's own record of how it runs on itself (read tools open), plus one authenticated write: submit_work.",
-  transport: { type: "streamable-http", endpoint: ORIGIN + "/mcp" }, capabilities: { tools: { listChanged: false } }, authentication: { required: false, optionalFor: "submit_work", scheme: "bearer" }, documentation: ORIGIN + "/llms.txt" };
+  transport: { type: "streamable-http", endpoint: ORIGIN + "/mcp" }, capabilities: { tools: { listChanged: false } }, authentication: { required: false, requiredFor: ["submit_work"], scheme: "oauth2.1", protected_resource_metadata: ORIGIN + "/.well-known/oauth-protected-resource", authorization_server: ORIGIN + "/.well-known/oauth-authorization-server", legacy: "bearer integration token" }, documentation: ORIGIN + "/llms.txt" };
 
 // A2A Agent Card (Agent2Agent protocol discovery document): what this agent can be asked, over which interfaces.
 export const AGENT_CARD = { protocolVersion: "1.0", supportedInterfaces: [{ url: ORIGIN + "/a2a", protocolBinding: "JSONRPC", protocolVersion: "1.0" }], name: "Ultrastable", description: "A self-governing development platform. Ask it what it is working on, what is next, what is blocked, which products it hosts; submit work with an integration token.",
   url: ORIGIN + "/a2a", preferredTransport: "JSONRPC", version: API_VERSION, provider: { organization: "Ultrastable", url: ORIGIN }, documentationUrl: ORIGIN + "/openapi.json",
   capabilities: { streaming: false, pushNotifications: false, extendedAgentCard: false, stateTransitionHistory: false }, defaultInputModes: ["application/json"], defaultOutputModes: ["application/json", "text/plain"],
   additionalInterfaces: [{ url: ORIGIN + "/a2a", transport: "JSONRPC" }, { url: ORIGIN + "/mcp", transport: "MCP" }, { url: ORIGIN + "/api/v1", transport: "HTTP+JSON" }],
-  securitySchemes: { bearer: { type: "http", scheme: "bearer" } },
+  securitySchemes: { bearer: { type: "http", scheme: "bearer" }, oauth2: { type: "oauth2", flows: { authorizationCode: { authorizationUrl: ORIGIN + "/oauth/authorize", tokenUrl: ORIGIN + "/oauth/token", scopes: { "mcp:submit": "Submit work to intake" } } }, oauth2MetadataUrl: ORIGIN + "/.well-known/oauth-authorization-server" } },
   skills: [
     { id: "status", name: "Status", description: "Health verdict and reasons, heartbeat, counts", tags: ["ops", "status"], examples: ["Is Ultrastable healthy?"] },
     { id: "agents", name: "Agents", description: "Which virtual agents exist and what each is working on", tags: ["agents"], examples: ["What are the agents working on?"] },
@@ -76,7 +78,7 @@ export const AGENT_CARD = { protocolVersion: "1.0", supportedInterfaces: [{ url:
     { id: "products", name: "Products", description: "Hosted products and their discovery documents", tags: ["discovery"] },
     { id: "brief", name: "Brief", description: "Plain-language digest for a personal assistant", tags: ["companion"], examples: ["Give me the Ultrastable brief"] },
     { id: "handoff", name: "Handoff", description: "Code agents: take a work order, build, hand the PR to the server, stop (SOP at /api/v1/sop)", tags: ["code-agent", "sop"] },
-    { id: "intake", name: "Intake", description: "Submit an idea, request, bug or question (bearer token)", tags: ["write"] } ] };
+    { id: "intake", name: "Intake", description: "Submit an idea, request, bug or question (OAuth consent in the browser; no token to paste)", tags: ["write"] } ] };
 export const LINKS = "</.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/agent-card.json>; rel=\"agent-card\", </openapi.json>; rel=\"service-desc\"; type=\"application/vnd.oai.openapi+json\", </.well-known/mcp/server-card.json>; rel=\"mcp-server-card\", </llms.txt>; rel=\"describedby\"";
 export const CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=no\n";
 
@@ -86,18 +88,22 @@ async function mcp(request, env) {
   let m; try { m = await request.json(); } catch (e) { return j({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }, null, 400); }
   const id = m && m.id !== undefined ? m.id : null, ok = result => j({ jsonrpc: "2.0", id, result }), err = (code, message) => j({ jsonrpc: "2.0", id, error: { code, message } });
   switch (m && m.method) {
-    case "initialize": return ok({ protocolVersion: "2025-06-18", capabilities: { tools: { listChanged: false } }, serverInfo: CARD.serverInfo, instructions: "Ultrastable running on itself. Read tools are open; submit_work needs a bearer integration token and names the sending agent and harness." });
+    case "initialize": return ok({ protocolVersion: "2025-06-18", capabilities: { tools: { listChanged: false } }, serverInfo: CARD.serverInfo, instructions: "Ultrastable running on itself. Read tools are open; submit_work asks you to sign in once in the browser (OAuth 2.1, no token to paste)." });
     case "notifications/initialized": return new Response(null, { status: 202, headers: CORS });
     case "ping": return ok({});
     case "tools/list": return ok({ tools: [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].map(({ name, description, inputSchema, annotations }) => ({ name, description, inputSchema, annotations })) });
     case "tools/call": {
       if ((m.params || {}).name === "submit_work") {
-        const auth = await authIntegration(request, env);
-        if (!auth.ok) return new Response(JSON.stringify({ jsonrpc: "2.0", id, error: { code: -32001, message: auth.error } }), { status: auth.status === 503 ? 503 : auth.status, headers: { ...CORS, "content-type": "application/json; charset=utf-8", ...(auth.status === 401 ? { "www-authenticate": "Bearer" } : {}) } });
+        // MCP-OAUTH-1: an OAuth access token (browser consent, no pasted token) is the normal path; the integration bearer token stays as the legacy path.
+        let auth = await verifyAccess(request, env);
+        if (!auth) { const legacy = await authIntegration(request, env); auth = legacy.ok ? { ok: true, name: legacy.name, via: "token" } : { ok: false, status: legacy.status === 503 ? 401 : legacy.status, error: legacy.error }; }
+        if (!auth.ok) return new Response(JSON.stringify({ jsonrpc: "2.0", id, error: { code: -32001, message: auth.error || "unauthorized" } }), { status: auth.status || 401, headers: { ...CORS, "content-type": "application/json; charset=utf-8", "www-authenticate": CHALLENGE(auth.error === "invalid_token" ? "invalid_token" : undefined) } });
         if (!env.ORG) return ok({ isError: true, content: [{ type: "text", text: "Org database not bound." }] });
-        const a = (m.params || {}).arguments || {};
+        let a = { ...((m.params || {}).arguments || {}) };
+        if (auth.via === "oauth") { a.agent = a.agent || auth.agent; a.harness = a.harness || auth.harness; }  // identity comes from the client the owner approved
         if (!String(a.agent || "").trim() || !String(a.harness || "").trim()) return ok({ isError: true, content: [{ type: "text", text: "agent and harness are required" }] });
-        const r = await submitIntake(env, auth.name, a);
+        const wb = await verifyRequest(request, o => fetchDirectory(o)).catch(() => ({ ok: false })); // WEB-BOT-AUTH-1: a verified signature adds the agent origin to the harness record
+        const r = await submitIntake(env, auth.name, wb.ok ? { ...a, harness: String(a.harness) + "+wba-" + new URL(wb.agent).hostname } : a);
         return ok({ isError: r.status >= 400, content: [{ type: "text", text: JSON.stringify(r.body) }] });
       }
       const lt = LIVE_TOOLS.find(x => x.name === (m.params || {}).name);
@@ -138,7 +144,9 @@ async function a2a(request, env) {
 export async function agentic(request, env) {
   const u = new URL(request.url), p = u.pathname.replace(/\/$/, "");
   if (u.hostname !== "ultrastable.io" && u.hostname !== "www.ultrastable.io" && !u.hostname.endsWith(".workers.dev")) return null;
+  { const o = await oauthRoute(request, env); if (o) return o; }  // MCP-OAUTH-1: protected-resource and authorization-server metadata, /oauth/*
   switch (p) {
+    case DIRECTORY_PATH: { if (!env || !env.ORG) return new Response("Org database not bound", { status: 503, headers: CORS }); return new Response(JSON.stringify(await wbaDirectory(env)), { headers: { ...CORS, "content-type": DIRECTORY_TYPE, "cache-control": "public, max-age=3600" } }); }
     case "/mcp": return mcp(request, env);
     case "/a2a": return a2a(request, env);
     case "/connect-agent": return new Response(CONNECT_HTML(), { headers: { ...CORS, "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });

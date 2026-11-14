@@ -3,6 +3,7 @@
 // so "what is going on" is never older than the last tick. Every GET is public and read-only (CORS *). The single write, POST /api/v1/intake,
 // needs a bearer token listed in secret INTEGRATION_TOKENS ("name:sha256hex,name2:sha256hex"); tokens are compared by hash, never stored in clear.
 // Consumers: the owner's personal companion (/api/v1/companion/brief), other services, MCP clients (site/agentic.js), and the /ops page below.
+import { WEBHOOK_OPENAPI_PATHS } from "./webhooks.js";
 import { registerHandoff } from "../seed/worker/src/handoff.js";
 import { exportBundle, importBundle } from "./portability.js";
 import { SOP_VERSION, SOP_STEPS, SERVER_OWNS } from "./sop.js";
@@ -159,7 +160,7 @@ export async function authIntegration(request, env) {
 }
 
 // AGENT-HARNESS-1: one intake path for every client (REST and MCP). Attribution (which agent, in which harness) is recorded on the item's surface so inputs from different agents can be compared.
-const attr = v => String(v || "").trim().replace(/[^A-Za-z0-9._\/-]/g, "").slice(0, 60);
+const attr = v => String(v || "").trim().replace(/[^A-Za-z0-9._:\/-]/g, "").slice(0, 60);
 export async function submitIntake(env, authName, b, now = Date.now()) {
   const title = String((b && b.title) || "").trim().slice(0, 200), detail = String((b && b.detail) || "").trim().slice(0, 4000);
   if (!title) return { status: 422, body: { error: "title is required" } };
@@ -214,6 +215,7 @@ export async function claimItem(request, env, itemId) {
 
 // ---- router ----
 export const OPENAPI_PATHS = {
+  ...WEBHOOK_OPENAPI_PATHS, // WEBHOOKS-1
   "/api/v1": { get: { operationId: "apiIndex", summary: "Index of the control-plane API", responses: { "200": { description: "Links" } } } },
   "/api/v1/status": { get: { operationId: "getStatus", summary: "Health verdict, heartbeat, work and dispatch counts, live from the org database", responses: { "200": { description: "Status" }, "503": { description: "Org database not bound" } } } },
   "/api/v1/agents": { get: { operationId: "listAgents", summary: "Every virtual agent: role, model, state, what it is working on, dispatch record", responses: { "200": { description: "Agents" } } } },

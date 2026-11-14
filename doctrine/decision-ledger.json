@@ -882,6 +882,30 @@
    "body": "Register in doctrine/blindspots.json with probes; failed system needs file Q-BLIND items, identity-bound ones stay gates. Live finding 2026-11-14: ultrastable.io has SPF for receiving but no DMARC (checked over DNS-over-HTTPS), so outreach would be rejected or spam-foldered. Site had no privacy, accessibility or security contact page; added.",
    "probe": "grep:foundation/blindspots.py::def learn",
    "session": "session_0156nqDsGSkQrok8LwjeYziE"
+  },
+  {
+   "id": "decision-2026-11-14-webhooks-1-callbacks-as-first-class-standards",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "WEBHOOKS-1: callbacks as first-class standards",
+   "body": "Outbound callbacks (CloudEvents 1.0, Standard Webhooks signing) and inbound hooks (Standard Webhooks, GitHub X-Hub-Signature-256) live in site/webhooks.js. Delivery rides the hourly site tick (no new cron). Signing secrets are HMAC-derived from a stored salt, shown once, never stored or typed. Item events come from change detection in the tick; inbound events also deliver immediately.",
+   "probe": "grep:site/webhooks.js::export async function tickWebhooks"
+  },
+  {
+   "id": "decision-2026-11-14-authzen-1-site-worker-is-an-authzen-policy-decision-point",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "AUTHZEN-1: site worker is an AuthZEN policy decision point",
+   "body": "site/authzen.js serves /access/v1/evaluation, /access/v1/evaluations and /.well-known/authzen-configuration from trust_ledger; fails closed; secrets, interrupt gate and alignment floor are never granted by any rung.",
+   "probe": "file:site/authzen.test.mjs"
+  },
+  {
+   "id": "decision-2026-11-14-connect-1-one-connector-framework-no-pasted-tokens",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CONNECT-1: one connector framework, no pasted tokens",
+   "body": "Generic OAuth 2.1 connector flow (PKCE S256, signed one-time state, sealed per-tenant tokens, refresh via the oauth adapter, revoke) plus remote MCP servers as first-class connectors (RFC 9728, RFC 8414, CIMD then DCR, RFC 8707). Google, Microsoft and Buffer need only the single owner card oauth-apps; MCP servers need nothing. Dashboard reads /auth/connectors.",
+   "probe": "file:seed/worker/src/auth/connectors.js"
   }
  ]
 }

@@ -8,12 +8,15 @@ import IV from "./interview.js";
 import { liveResponse } from "./live.js";
 import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL } from "./agentic.js";
+import { passkeys } from "./passkeys.js";
+import { authzen } from "./authzen.js";
 import { indexNow, keyFile, SITEMAP_PATHS } from "./promote.js";
 import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
-import { controlPlane, opsPage, tenantDiscovery } from "./controlplane.js";
+import { controlPlane, opsPage, tenantDiscovery, authIntegration } from "./controlplane.js";
+import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
 import { internalDeploy } from "./deployer.js";
 var VERSION = "0.15.0";
 const CANON = "ultrastable.io";
@@ -582,6 +585,7 @@ export async function tick(env, ctx, now) {
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
   { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
+  out.webhooks = await tickWebhooks(env, t).catch(e => String(e).slice(0, 120)); // WEBHOOKS-1: outbound callbacks ride this tick, no new cron
   await jput(env, "tick:last", out); return out;
 }
 async function statusData(env) {
@@ -722,6 +726,7 @@ const handler = {
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
     if (request.method === "POST" && u.pathname === "/api/meta/ingest") return metaIngest(request, env); // META-SIGNAL-1
     if (request.method === "GET" && u.pathname === "/api/suggest") return suggestions(u, env);
+    { const wh = await webhooksRoute(request, env, ctx, authIntegration); if (wh) return wh; } // WEBHOOKS-1: /hooks/<provider>, /api/v1/webhooks, /api/v1/hooks
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/live" || u.pathname === "/api/live") return liveResponse(u, request, env, shell, HTML);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
@@ -768,4 +773,4 @@ const handler = {
 // TOPOLOGY-1: the owner dashboard is a separate worker reached through the OWNER service binding (doctrine/topology.json); only its own paths are forwarded.
 const OWNER_PATH = /^\/(owner|api\/owner\/[a-z]+)$/;
 const AUTH_PATH = /^\/(connect(\/[a-z-]+)?|auth\/(github\/(callback|installed)|health))$/;  // AUTH-1: the consent screen and provider callbacks live on the tick Worker; the public host forwards them so the person stays on one address
-export default { async scheduled(event, env, ctx) { ctx.waitUntil(tick(env, ctx).catch(e => console.error("tick failed", String(e)))); }, async fetch(request, env, ctx) { { const idp = await internalDeploy(request, env || {}); if (idp) return idp; } /* HANDOFF-1 */ if (env && env.TICK && AUTH_PATH.test(new URL(request.url).pathname)) { try { return await env.TICK.fetch(request); } catch (e) { return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Connect</title><body style="font:16px system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem"><h1>One moment</h1><p>The connection service is restarting. <a href="/connect/github">Try again</a>.</p>', { status: 503, headers: { 'content-type': 'text/html; charset=utf-8', 'retry-after': '10' } }); } } if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); { const kf = keyFile(new URL(request.url).pathname); if (kf) return kf; } const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };
+export default { async scheduled(event, env, ctx) { ctx.waitUntil(tick(env, ctx).catch(e => console.error("tick failed", String(e)))); }, async fetch(request, env, ctx) { { const idp = await internalDeploy(request, env || {}); if (idp) return idp; } /* HANDOFF-1 */ if (env && env.TICK && AUTH_PATH.test(new URL(request.url).pathname)) { try { return await env.TICK.fetch(request); } catch (e) { return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Connect</title><body style="font:16px system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem"><h1>One moment</h1><p>The connection service is restarting. <a href="/connect/github">Try again</a>.</p>', { status: 503, headers: { 'content-type': 'text/html; charset=utf-8', 'retry-after': '10' } }); } } if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); { const kf = keyFile(new URL(request.url).pathname); if (kf) return kf; } { const pk = await passkeys(request, env); if (pk) return pk; } { const z = await authzen(request, env); if (z) return z; } const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };
