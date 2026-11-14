@@ -882,6 +882,14 @@
    "body": "Register in doctrine/blindspots.json with probes; failed system needs file Q-BLIND items, identity-bound ones stay gates. Live finding 2026-11-14: ultrastable.io has SPF for receiving but no DMARC (checked over DNS-over-HTTPS), so outreach would be rejected or spam-foldered. Site had no privacy, accessibility or security contact page; added.",
    "probe": "grep:foundation/blindspots.py::def learn",
    "session": "session_0156nqDsGSkQrok8LwjeYziE"
+  },
+  {
+   "id": "decision-2026-11-14-authzen-1-site-worker-is-an-authzen-policy-decision-point",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "AUTHZEN-1: site worker is an AuthZEN policy decision point",
+   "body": "site/authzen.js serves /access/v1/evaluation, /access/v1/evaluations and /.well-known/authzen-configuration from trust_ledger; fails closed; secrets, interrupt gate and alignment floor are never granted by any rung.",
+   "probe": "file:site/authzen.test.mjs"
   }
  ]
 }

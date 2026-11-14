@@ -40,6 +40,7 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | Web Bot Auth (signed agents) | IETF (HTTP Message Signatures based); Cloudflare | draft | planned | STD-3: verify signatures on inbound agent traffic at the edge and sign outbound agent requests |
 | x402 and pay per crawl (payable web) | x402 (open protocol); Cloudflare Monetization Gateway | draft | n/a | Money movement is identity-bound and irreversible (interrupt gate). Revisit only through a gate card. |
 | NLWeb and WebMCP (browser-side agent tools) | Microsoft (NLWeb); WebMCP community and browsers | proposal | n/a | The Worker serves no content site; the site repository adopts these when it publishes (tracked in its own register). |
+| OpenID AuthZEN Authorization API 1.0 (policy decision point) | OpenID Foundation | stable | supported | `authzen: ledger decides and fails closed`; `worker routes /access/v1/evaluation` |
 
 <!-- standards:end -->
 

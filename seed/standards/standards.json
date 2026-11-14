@@ -574,6 +574,38 @@
           "accessed": "2026-11-11"
         }
       ]
+    },
+    {
+      "id": "authzen",
+      "name": "OpenID AuthZEN Authorization API 1.0 (policy decision point)",
+      "body": "OpenID Foundation",
+      "status": "stable",
+      "tracked": "researched 2026-11-14",
+      "why": "Standard way to ask \"may this agent do this\"; served at /access/v1/evaluation and /access/v1/evaluations from the trust ledger, failing closed.",
+      "support": "supported",
+      "how": [
+        "site/authzen.js",
+        "site/worker.js"
+      ],
+      "acl": "site/authzen.js",
+      "tests": [
+        {
+          "file": "site/authzen.test.mjs",
+          "name": "authzen: ledger decides and fails closed"
+        },
+        {
+          "file": "site/authzen.test.mjs",
+          "name": "worker routes /access/v1/evaluation"
+        }
+      ],
+      "sources": [
+        {
+          "title": "AI agent identity standards: the 2026 landscape",
+          "url": "http://nhigovernance.com/ai-agents/agent-identity-standards.html",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
     }
   ]
 }
