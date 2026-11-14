@@ -807,6 +807,14 @@
    "body": "Eight pre-proven personalities (accent, neutral family, type pairing, shape, density). Selection reads the idea's words, spreads by tenant id, avoids sibling looks, and never shows a person a font or colour choice. New personalities must differ from every existing one (pairwise distinctness check) and earn a place by experiment. Fonts are system stacks: no download, no layout shift.",
    "probe": "grep:doctrine/design.json::DESIGN-LIBRARY-1",
    "session": "session_0156nqDt5zUMoB6okR93xiKQ"
+  },
+  {
+   "id": "lesson-2026-11-14-local-checks-1-verify-without-actions-minutes",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "LOCAL-CHECKS-1: verify without Actions minutes",
+   "body": "GitHub Actions stopped starting jobs (billing failure), so every PR showed a red checks run that never executed and the merge lane stalled. scripts/local_checks.py runs the checks.yml run steps on any host. criticality.gate read wall-clock now (time-bomb); it now takes now.",
+   "probe": "file:scripts/local_checks.py"
   }
  ]
 }
