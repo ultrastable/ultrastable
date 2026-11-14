@@ -279,8 +279,14 @@ def run(root=REPO, apply=False, now=None, use_live=True, env=None, vals=None, st
     stage_rows = clockwork.stages(root, now) if stage_rows is None else stage_rows
     growth_filed = file_growth(root, tgt, ex, write=apply)
     repair_filed = file_repairs(root, stage_rows, cfgc["escalation"], write=apply)
+    # INSIGHT-1: the per-page analytics loop (trends, findings, growth items, settled outcomes, self-tuned threshold) runs inside the pass.
+    from . import insight
+    try:
+        ins = insight.run(root, apply=apply, now=now, use_live=use_live, env=env)
+    except Exception as e:  # an unmeasured loop is a finding, never a crash of the pass
+        ins = {"measured": False, "why": type(e).__name__ + ": " + str(e)[:160], "filed": []}
     rep = {"generated": _iso(now), "targets": tgt, "experiments": ex, "knobs": {"values": {k["id"]: knob_value(root, k) for k in _read(root, KNOBS, {"knobs": []})["knobs"]}, "last": tuned},
-           "filed": {"growth": growth_filed, "repair": repair_filed}, "stages": [{"id": s["id"], "status": s["status"], "missed": s["missed"]} for s in stage_rows]}
+           "filed": {"growth": growth_filed, "repair": repair_filed, "insight": ins.get("filed", [])}, "insight": ins, "stages": [{"id": s["id"], "status": s["status"], "missed": s["missed"]} for s in stage_rows]}
     if apply and ex != _read(root, EXPERIMENTS, {"experiments": []}).get("experiments"):
         _write(root, EXPERIMENTS, {"experiments": ex})   # state that persists; the report itself is recomputed from live measurements, so a quiet day changes no file
     return rep
@@ -292,7 +298,7 @@ def publish(root=REPO, rep=None) -> dict:
     st = subprocess.run(["git", "-C", str(root), "status", "--porcelain"], capture_output=True, text=True, encoding="utf-8").stdout.strip()
     if not st:
         return {"pr": None, "why": "nothing changed"}
-    n = len((rep or {}).get("filed", {}).get("growth", [])) + len((rep or {}).get("filed", {}).get("repair", []))
+    n = len((rep or {}).get("filed", {}).get("growth", [])) + len((rep or {}).get("filed", {}).get("repair", [])) + len((rep or {}).get("filed", {}).get("insight", []))
     day = datetime.now(timezone.utc).strftime("%Y%m%d%H")
     wc, wo = subprocess.run(["python3", "-m", "foundation", "writeback", "record", "--kind", "decision", "--title", f"Product manager pass {day}: {n} item(s) filed", "--body",
                              "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.", "--owner", "product-manager",

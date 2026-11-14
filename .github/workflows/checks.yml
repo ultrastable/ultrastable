@@ -86,6 +86,7 @@ jobs:
           python3 -m foundation boundary --drill
           python3 -m foundation queue --check
           python3 -m foundation growth --check
+          python3 -m foundation insight --check
           python3 -m foundation flows --check
           python3 -m foundation criticality --check
           python3 -m foundation cost --check

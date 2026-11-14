@@ -780,13 +780,42 @@
       ],
       "feedback": "the first check it starts joins the merge lane; a copy where schedules did not come on keeps the manual Enable fallback",
       "bindings": []
+    },
+    "insight-loop": {
+      "inflows": [
+        {
+          "signal": "site.hits",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "insight.ledger",
+          "via": "file:ops/insight/findings.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        },
+        {
+          "signal": "insight.ledger",
+          "via": "file:ops/insight/findings.json"
+        }
+      ],
+      "feedback": "each finding is settled 8 days later against what the page really got; the outcome tunes the rise threshold that classifies the next findings",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {
     "owner.goals": "ext.owner_goals",
     "actions.minutes": "ext.actions_quota",
     "frontier.releases": "ext.frontier",
-    "cf.analytics": "ext.cf_analytics"
+    "cf.analytics": "ext.cf_analytics",
+    "site.hits": "ext.site_visits"
   },
   "pending": [
     "role-portfolio-manager",
