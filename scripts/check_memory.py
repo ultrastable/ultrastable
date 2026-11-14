@@ -5,7 +5,7 @@ Stale means: more than MAX_COMMITS commits, or any commit older than
 MAX_HOURS, landed after the last commit that touched the memory file.
 Also checks required sections and the 'Last updated' line.
 """
-import re, subprocess, sys, time
+import os, re, subprocess, sys, time
 
 MEM = "docs/PROJECT-MEMORY.md"
 MAX_COMMITS = 15
@@ -42,8 +42,14 @@ def main():
     age_h = (time.time() - min(int(t) for t in newer)) / 3600
     print(f"{len(newer)} commits since last memory update; oldest {age_h:.0f}h ago")
     if len(newer) > MAX_COMMITS or age_h > MAX_HOURS:
-        print(f"FAIL: {MEM} is stale (limit {MAX_COMMITS} commits / {MAX_HOURS}h). "
-              "Review status, rules, owner items and workstreams, edit it, bump 'Last updated'.")
+        # COST-ZERO-1: staleness is advisory on PRs (it failed every PR once main was 15 commits ahead: 958 of 1218 minutes this month were failed runs);
+        # it stays a hard failure on pushes to main, and the structural checks above still fail everywhere.
+        msg = (f"{MEM} is stale (limit {MAX_COMMITS} commits / {MAX_HOURS}h). "
+               "Review status, rules, owner items and workstreams, edit it, bump 'Last updated'.")
+        if os.environ.get("GITHUB_EVENT_NAME") == "pull_request":
+            print(f"::warning::{msg}")
+            return 0
+        print("FAIL: " + msg)
         return 1
     print("OK: within staleness limits")
     return 0

@@ -840,6 +840,30 @@
    "body": "DOER-1 (workers#173): from 2026-11-10 to 2026-11-14 the tick wrote 288 claims+dispatches and no step acted on them; the reaper released each claim and the same items were re-claimed up to 30 times. runTick also got a presence-only env, so the AI binding never reached it. Fix: step execute (seed/worker/src/doer.js) runs after dispatch with env.AI and ends every claimed item done, parked with a reason, or waiting; probe claims_released_unworked_24h (target 0) on /health.",
    "probe": "file:seed/worker/src/doer.js",
    "session": "local_933d8bf1"
+  },
+  {
+   "id": "decision-2026-11-13-zero-minutes-1-executor-diff-gate-and-lane-merge-run-in-the-",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "ZERO-MINUTES-1: executor, diff gate and lane merge run in the tick Worker, zero Actions minutes",
+   "body": "Measured: 2011 of 2000 free minutes used by day 13; checks 1218 min of which 958 failed. Worker unit tests 99 pass. Actions stays the second route.",
+   "probe": "file:seed/worker/src/pr-executor.js"
+  },
+  {
+   "id": "decision-2026-11-14-code-agent-sop-1-handoff-1-code-agents-hand-off-at-an-open-p",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CODE-AGENT-SOP-1 + HANDOFF-1: code agents hand off at an open PR; the tick Worker merges, deploys, probes, closes or rolls back",
+   "body": "Rowan 2026-11-14: 'This is a server-side platform, not a local platform. Code agents do not own this.' Measured before: all 5 open PRs were dirty and unowned (including #324, the Worker gate), every merge and deploy in the last day was done by a local Claude Code session, and 288 agent dispatches sat queued. Now: one SOP for any agent (site/sop.js, /api/v1/sop, Agent Skill), claim and handoff APIs, D1 handoffs + handoff_events, seed/worker/src/handoff.js run each tick after the worker-gate and lane (ZERO_ACTIONS=1 lands #324's gate), deploys from the merge commit via site/deployer.js so the Cloudflare credential stays server-side, verify line probed, item closed or rolled back and reopened.",
+   "probe": "file:seed/worker/src/handoff.js"
+  },
+  {
+   "id": "lesson-2026-11-14-a-pr-whose-author-walks-away-dies-dirty-unless-the-server-ow",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "A PR whose author walks away dies dirty unless the server owns it",
+   "body": "PR #324 (Worker gate, the fix for dead Actions minutes) sat dirty for a day because the session that wrote it ended and nothing server-side rebased or re-did it; every other open PR was in the same state. Owning the post-PR loop server-side (handoffs) and recording conflicts as server-owned state is the remedy; a client that merges by hand hides the gap.",
+   "probe": "file:seed/worker/test/handoff.test.js"
   }
  ]
 }

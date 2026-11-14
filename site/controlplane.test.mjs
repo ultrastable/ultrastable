@@ -94,4 +94,37 @@ assert.equal(JSON.parse((await rpc("tools/call", { name: "get_work", arguments: 
 const tc = await J("https://abcdef0123.ultrastable.io/.well-known/api-catalog"); assert.match(tc.headers.get("content-type"), /linkset/); assert.match(tc.body.linkset[0].anchor, /\/s\/abcdef0123\/api$/);
 assert.match(await (await get("https://ultrastable.io/llms.txt")).text(), /Control-plane API \(live\)/);
 assert.match((await get("https://ultrastable.io/")).headers.get("link") || "", /agent-card/);
+// HANDOFF-1 / CODE-AGENT-SOP-1: SOP, skill, claim, handoff registration, the handoff table on /api/v1, and the internal deploy endpoint
+{
+  const { readFileSync } = await import("node:fs");
+  db.exec(readFileSync(new URL("../seed/worker/migrations/0010_handoffs.sql", import.meta.url), "utf8"));
+  const sop = (await J("https://ultrastable.io/api/v1/sop")).body; assert.equal(sop.steps.map(s => s.id).join(","), "take,build,verify,handoff,stop");
+  const sk = (await J("https://ultrastable.io/.well-known/agent-skills/index.json")).body.skills.find(s => s.name === "ultrastable-code-agent");
+  const md = await (await get("https://ultrastable.io/.well-known/agent-skills/ultrastable-code-agent/SKILL.md")).text();
+  const h = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(md)))).map(x => x.toString(16).padStart(2, "0")).join("");
+  assert.equal(h, sk.sha256); assert.match(md, /Your work ends at the open PR/);
+  const authed = (path, body, tok = "s3cret") => J("https://ultrastable.io" + path, ENV, { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + tok }, body: JSON.stringify(body) });
+  db.exec("INSERT INTO items (id,title,owner_role,done_check,priority,status) VALUES ('F','F: free','staff','x',40,'ready')");
+  let c = await authed("/api/v1/work/F/claim", { agent: "codex cli" }); assert.equal(c.status, 201); assert.equal(c.body.agent, "ext:companion:codex-cli");
+  assert.equal((await authed("/api/v1/work/F/claim", {})).status, 409, "a claimed item is not claimable twice");
+  assert.equal((await authed("/api/v1/work/D/claim", {})).status, 409, "blocked items are not claimable");
+  assert.equal((await authed("/api/v1/work/F/claim", {}, "bad")).status, 403);
+  assert.equal((await authed("/api/v1/handoff", { repo: "evil/repo", pr: 1 })).status, 422, "only managed repositories");
+  c = await authed("/api/v1/handoff", { repo: "ultrastable/ultrastable", pr: 341, item: "F", verify: "GET https://ultrastable.io/health", deploy: "ultrastable-site", agent: "codex" });
+  assert.equal(c.status, 201); assert.equal(c.body.id, "ultrastable/ultrastable#341");
+  const hl = (await J("https://ultrastable.io/api/v1/handoffs")).body; assert.equal(hl.handoffs[0].state, "open"); assert.equal(hl.handoffs[0].events[0].state, "open"); assert.match(hl.handoffs[0].url, /pull\/341$/);
+  assert.equal((await J("https://ultrastable.io/api/v1/status")).body.handoffs.open, 1);
+  assert.ok((await J("https://ultrastable.io/openapi.json")).body.paths["/api/v1/handoff"]);
+  // internal deploy: unknown without the key, uploads with it, refuses non-platform names
+  const calls = []; const realFetch = globalThis.fetch;
+  globalThis.fetch = async (u, o) => { calls.push([o && o.method, String(u)]); return new Response(JSON.stringify({ success: true, result: { id: "ver1" } }), { headers: { "content-type": "application/json" } }); };
+  const DENV = { ...ENV, INTERNAL_DEPLOY_KEY: "k".repeat(32), CF_DEPLOY_TOKEN: "cf", CF_ACCOUNT_ID: "acct" };
+  const dep = (key, body) => get("https://ultrastable.io/__internal/deploy", DENV, { method: "POST", headers: { "x-internal-key": key, "content-type": "application/json" }, body: JSON.stringify(body) });
+  assert.equal((await dep("wrong", {})).status, 404); assert.equal((await get("https://ultrastable.io/__internal/deploy", ENV, { method: "POST" })).status, 404, "no key configured: not found");
+  assert.equal((await dep("k".repeat(32), { name: "us-idea-x", modules: [{ name: "worker.js", src: "" }], main: "worker.js" })).status, 400);
+  const ok = await dep("k".repeat(32), { name: "ultrastable-tick", modules: [{ name: "worker.js", src: "export default {}" }], main: "worker.js", bindings: [], crons: ["*/10 * * * *"] });
+  assert.equal(ok.status, 200); assert.deepEqual(await ok.json(), { ok: true, version: "ver1" });
+  assert.deepEqual(calls.map(c => c[0] + " " + c[1].replace("https://api.cloudflare.com/client/v4", "")), ["PUT /accounts/acct/workers/scripts/ultrastable-tick", "PUT /accounts/acct/workers/scripts/ultrastable-tick/schedules"]);
+  globalThis.fetch = realFetch;
+}
 console.log("controlplane ok");

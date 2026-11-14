@@ -2,6 +2,7 @@
 // API Catalog (RFC 9727, /.well-known/api-catalog), OpenAPI, MCP Server Card + a real read-only MCP endpoint (/mcp, JSON-RPC over HTTP), Agent Skills index with
 // checksums, Link headers (RFC 8288), Content Signals in robots.txt. Every tool reads the published snapshot; nothing here can change state.
 import { load } from "./live.js";
+import { SOP_MD } from "./sop.js";
 import { OPENAPI_PATHS, API_VERSION, status as cpStatus, agents as cpAgents, work as cpWork, activity as cpActivity, products as cpProducts, companionBrief } from "./controlplane.js";
 const ORIGIN = "https://ultrastable.io";
 const VERSION = "0.1.0";
@@ -57,6 +58,7 @@ export const AGENT_CARD = { protocolVersion: "0.3.0", name: "Ultrastable", descr
     { id: "backlog", name: "Backlog", description: "On deck, in progress, blocked, done", tags: ["backlog", "roadmap"], examples: ["What is on deck?"] },
     { id: "products", name: "Products", description: "Hosted products and their discovery documents", tags: ["discovery"] },
     { id: "brief", name: "Brief", description: "Plain-language digest for a personal assistant", tags: ["companion"], examples: ["Give me the Ultrastable brief"] },
+    { id: "handoff", name: "Handoff", description: "Code agents: take a work order, build, hand the PR to the server, stop (SOP at /api/v1/sop)", tags: ["code-agent", "sop"] },
     { id: "intake", name: "Intake", description: "Submit an idea, request, bug or question (bearer token)", tags: ["write"] } ] };
 export const LINKS = "</.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/agent-card.json>; rel=\"agent-card\", </openapi.json>; rel=\"service-desc\"; type=\"application/vnd.oai.openapi+json\", </.well-known/mcp/server-card.json>; rel=\"mcp-server-card\", </llms.txt>; rel=\"describedby\"";
 export const CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=no\n";
@@ -92,7 +94,9 @@ export async function agentic(request, env) {
     case "/.well-known/api-catalog": return j({ linkset: [{ anchor: ORIGIN + "/api/v1", "service-desc": [{ href: ORIGIN + "/openapi.json", type: "application/vnd.oai.openapi+json" }], "service-doc": [{ href: ORIGIN + "/llms.txt", type: "text/plain" }], status: [{ href: ORIGIN + "/api/v1/status", type: "application/json" }] }, { anchor: ORIGIN + "/api/live", "service-desc": [{ href: ORIGIN + "/openapi.json", type: "application/vnd.oai.openapi+json" }], "service-doc": [{ href: ORIGIN + "/llms.txt", type: "text/plain" }] }, { anchor: ORIGIN + "/mcp", "service-desc": [{ href: ORIGIN + "/.well-known/mcp/server-card.json", type: "application/json" }] }] }, "application/linkset+json; profile=\"https://www.rfc-editor.org/info/rfc9727\"");
     case "/.well-known/mcp/server-card.json": case "/.well-known/mcp/server-cards.json": case "/.well-known/mcp.json": return j(p.endsWith("cards.json") ? { servers: [CARD] } : CARD);
     case "/.well-known/agent-skills/index.json": case "/.well-known/skills/index.json":
-      return j({ $schema: "https://schemas.agentskills.io/discovery/0.2.0/schema.json", skills: [{ name: "ultrastable-live", type: "skill-md", description: "Read Ultrastable's own live record (read-only).", url: ORIGIN + "/.well-known/agent-skills/ultrastable-live/SKILL.md", sha256: await sha256(SKILL_MD) }] });
+      return j({ $schema: "https://schemas.agentskills.io/discovery/0.2.0/schema.json", skills: [{ name: "ultrastable-live", type: "skill-md", description: "Read Ultrastable's own live record (read-only).", url: ORIGIN + "/.well-known/agent-skills/ultrastable-live/SKILL.md", sha256: await sha256(SKILL_MD) },
+        { name: "ultrastable-code-agent", type: "skill-md", description: "SOP for any code agent: take a work order, build, verify, hand off a PR, stop; the server owns the rest.", url: ORIGIN + "/.well-known/agent-skills/ultrastable-code-agent/SKILL.md", sha256: await sha256(SOP_MD) }] });
+    case "/.well-known/agent-skills/ultrastable-code-agent/SKILL.md": return new Response(SOP_MD, { headers: { ...CORS, "content-type": "text/markdown; charset=utf-8", "cache-control": "public, max-age=300" } });
     case "/.well-known/agent-skills/ultrastable-live/SKILL.md": return new Response(SKILL_MD, { headers: { ...CORS, "content-type": "text/markdown; charset=utf-8", "cache-control": "public, max-age=300" } });
     default: return null;
   }

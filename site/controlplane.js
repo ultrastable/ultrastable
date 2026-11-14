@@ -3,7 +3,9 @@
 // so "what is going on" is never older than the last tick. Every GET is public and read-only (CORS *). The single write, POST /api/v1/intake,
 // needs a bearer token listed in secret INTEGRATION_TOKENS ("name:sha256hex,name2:sha256hex"); tokens are compared by hash, never stored in clear.
 // Consumers: the owner's personal companion (/api/v1/companion/brief), other services, MCP clients (site/agentic.js), and the /ops page below.
-export const API_VERSION = "1.0.0";
+import { registerHandoff } from "../seed/worker/src/handoff.js";
+import { SOP_VERSION, SOP_STEPS, SERVER_OWNS } from "./sop.js";
+export const API_VERSION = "1.1.0";
 const ORIGIN = "https://ultrastable.io";
 const CORS = { "access-control-allow-origin": "*", "access-control-allow-headers": "authorization, content-type", "access-control-allow-methods": "GET, HEAD, POST, OPTIONS", "x-content-type-options": "nosniff" };
 const json = (o, status, extra) => new Response(JSON.stringify(o), { status: status || 200, headers: { ...CORS, "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...(extra || {}) } });
@@ -30,6 +32,7 @@ export async function status(env, now = Date.now()) {
   const d24 = await all(db, "SELECT status, count(*) AS n FROM dispatches WHERE at >= datetime(?, 'unixepoch') GROUP BY status", Math.floor(now / 1000) - 86400);
   const roles = await all(db, "SELECT id, last_tick_at FROM roles");
   const gates = await first(db, "SELECT count(*) AS n FROM gate_cards WHERE status = 'open'");
+  let ho = []; try { ho = await all(db, "SELECT state, count(*) AS n FROM handoffs GROUP BY state"); } catch (e) { /* table arrives with migration 0010 */ }
   const by = (rows) => Object.fromEntries(rows.map(r => [r.status, r.n]));
   const dispBy = by(disp), total = disp.reduce((a, r) => a + r.n, 0), settled = total - (dispBy.queued || 0) - (dispBy.running || 0);
   const report = tick && tick.report ? String(tick.report) : "";
@@ -50,6 +53,7 @@ export async function status(env, now = Date.now()) {
     dispatch: { by_status: dispBy, total, settled, settled_share: total ? +(settled / total).toFixed(3) : null, last_24h: by(d24) },
     agents: { total: roles.length, active_last_hour: active },
     owner: { open_gate_cards: gates ? gates.n : 0 },
+    handoffs: Object.fromEntries(ho.map(r => [r.state, r.n])),
     self_audit: red[1] ? { green: Number(red[1]), red: Number(red[2]), failing: red[3] ? red[3].split(",").map(s => s.trim()) : [] } : null,
   };
 }
@@ -167,6 +171,37 @@ export async function intake(request, env, now = Date.now()) {
   return json({ ok: true, id, status: "open", owner_role: "product-manager", url: ORIGIN + "/api/v1/work/" + id }, 201);
 }
 
+// ---- HANDOFF-1 / CODE-AGENT-SOP-1: the server's record of handed-off work, and the two writes a code agent may make ----
+export async function handoffs(env, state, limit = 50) {
+  const db = env.ORG, lim = Math.max(1, Math.min(200, Number(limit) || 50));
+  const rows = state ? await all(db, "SELECT * FROM handoffs WHERE state = ? ORDER BY updated_at DESC LIMIT ?", state, lim) : await all(db, "SELECT * FROM handoffs ORDER BY updated_at DESC LIMIT ?", lim);
+  const ev = rows.length ? await all(db, `SELECT handoff_id, at, state, detail FROM handoff_events WHERE handoff_id IN (${rows.map(() => "?").join(",")}) ORDER BY id DESC`, ...rows.map(r => r.id)) : [];
+  return { api_version: API_VERSION, count: rows.length, handoffs: rows.map(r => ({ ...r, url: "https://github.com/" + r.repo + "/pull/" + r.pr, events: ev.filter(e => e.handoff_id === r.id).slice(0, 10) })) };
+}
+export function sop() { return { api_version: API_VERSION, sop_version: SOP_VERSION, steps: SOP_STEPS, server_owns: SERVER_OWNS, skill: ORIGIN + "/.well-known/agent-skills/ultrastable-code-agent/SKILL.md" }; }
+async function bodyJson(request) { try { return await request.json(); } catch (e) { return null; } }
+export async function postHandoff(request, env) {
+  const auth = await authIntegration(request, env); if (!auth.ok) return json({ error: auth.error }, auth.status);
+  const b = await bodyJson(request); if (!b) return json({ error: "body must be JSON" }, 400);
+  const repo = String(b.repo || ""), pr = Number(b.pr);
+  if (!/^[A-Za-z0-9-]+\/[A-Za-z0-9._-]+$/.test(repo) || !Number.isInteger(pr) || pr < 1) return json({ error: "repo (owner/name) and pr (number) are required" }, 422);
+  const allowed = String(env.GITHUB_REPOS || "ultrastable/ultrastable").split(",").map(x => x.trim());
+  if (!allowed.includes(repo)) return json({ error: "repo is not one the server manages: " + allowed.join(", ") }, 422);
+  const id = await registerHandoff(env.ORG, { repo, pr, title: b.title ? String(b.title).slice(0, 200) : null, item: b.item ? String(b.item).slice(0, 120) : null, agent: String(b.agent || "integration:" + auth.name).slice(0, 80), verify: b.verify ? String(b.verify).slice(0, 400) : null, deploy: b.deploy ? String(b.deploy).slice(0, 200) : null });
+  await env.ORG.prepare("INSERT INTO handoff_events (handoff_id, state, detail) VALUES (?, 'open', ?)").bind(id, "registered through the API by " + auth.name).run();
+  return json({ ok: true, id, state: "open", track: ORIGIN + "/api/v1/handoffs" }, 201);
+}
+export async function claimItem(request, env, itemId) {
+  const auth = await authIntegration(request, env); if (!auth.ok) return json({ error: auth.error }, auth.status);
+  const b = (await bodyJson(request)) || {}, agent = ("ext:" + auth.name + ":" + String(b.agent || "agent")).slice(0, 80).replace(/[^A-Za-z0-9:._-]/g, "-");
+  const it = await first(env.ORG, "SELECT id, status FROM items WHERE id = ?", itemId); if (!it) return json({ error: "no such item" }, 404);
+  if (!["ready", "open"].includes(it.status)) return json({ error: "item is " + it.status + ", not claimable" }, 409);
+  const held = await first(env.ORG, "SELECT agent FROM claims WHERE item_id = ?", itemId); if (held) return json({ error: "already claimed by " + held.agent }, 409);
+  await env.ORG.prepare("INSERT INTO claims (item_id, agent) VALUES (?, ?)").bind(itemId, agent).run();
+  await env.ORG.prepare("UPDATE items SET status = 'claimed', updated_at = datetime('now') WHERE id = ?").bind(itemId).run();
+  return json({ ok: true, item: itemId, agent, next: "build, verify, open a PR with a ## Handoff block (item: " + itemId + "), then stop. SOP: " + ORIGIN + "/api/v1/sop" }, 201);
+}
+
 // ---- router ----
 export const OPENAPI_PATHS = {
   "/api/v1": { get: { operationId: "apiIndex", summary: "Index of the control-plane API", responses: { "200": { description: "Links" } } } },
@@ -177,6 +212,10 @@ export const OPENAPI_PATHS = {
   "/api/v1/activity": { get: { operationId: "getActivity", summary: "Recent dispatches and tick reports", responses: { "200": { description: "Activity" } } } },
   "/api/v1/products": { get: { operationId: "listProducts", summary: "Hosted products and services with their discovery documents", responses: { "200": { description: "Products" } } } },
   "/api/v1/companion/brief": { get: { operationId: "getCompanionBrief", summary: "Plain-language digest for a personal assistant: state, next up, what needs the owner", responses: { "200": { description: "Brief" } } } },
+  "/api/v1/sop": { get: { operationId: "getSop", summary: "The code-agent standard operating procedure: take, build, verify, hand off, stop", responses: { "200": { description: "SOP" } } } },
+  "/api/v1/handoffs": { get: { operationId: "listHandoffs", summary: "Work handed to the server and each state it moved through (open, merged, deployed, verified, rolled_back ...)", parameters: [{ name: "state", in: "query", schema: { type: "string" } }], responses: { "200": { description: "Handoffs" } } } },
+  "/api/v1/handoff": { post: { operationId: "submitHandoff", summary: "Hand a PR to the server (bearer token); the server merges, deploys, probes and closes", security: [{ bearer: [] }], requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["repo", "pr"], properties: { repo: { type: "string" }, pr: { type: "integer" }, item: { type: "string" }, agent: { type: "string" }, verify: { type: "string" }, deploy: { type: "string" } } } } } }, responses: { "201": { description: "Registered" }, "401": { description: "No token" }, "422": { description: "Invalid" } } } },
+  "/api/v1/work/{id}/claim": { post: { operationId: "claimWork", summary: "Claim a work order for a code agent (bearer token)", security: [{ bearer: [] }], parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { "201": { description: "Claimed" }, "409": { description: "Not claimable" } } } },
   "/api/v1/intake": { post: { operationId: "submitIntake", summary: "Submit an idea, request, bug or question as a backlog item (bearer token)", security: [{ bearer: [] }], requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["title"], properties: { title: { type: "string", maxLength: 200 }, detail: { type: "string", maxLength: 4000 }, kind: { type: "string", enum: ["idea", "request", "bug", "question"] }, priority: { type: "integer", minimum: 1, maximum: 90 } } } } } }, responses: { "201": { description: "Created" }, "401": { description: "No token" }, "403": { description: "Unknown token" }, "503": { description: "Intake not configured" } } } },
 };
 
@@ -184,6 +223,12 @@ export async function controlPlane(request, env, ctx) {
   const u = new URL(request.url), p = u.pathname.replace(/\/$/, "");
   if (!p.startsWith("/api/v1")) return null;
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+  const cm = /^\/api\/v1\/work\/([A-Za-z0-9._:-]{1,120})\/claim$/.exec(p);
+  if (p === "/api/v1/handoff" || cm) {
+    if (request.method !== "POST") return json({ error: "use POST" }, 405, { allow: "POST, OPTIONS" });
+    if (!env || !env.ORG) return json({ error: "org database not bound (ORG)" }, 503);
+    return cm ? claimItem(request, env, decodeURIComponent(cm[1])) : postHandoff(request, env);
+  }
   if (p === "/api/v1/intake") {
     if (request.method !== "POST") return json({ error: "use POST" }, 405, { allow: "POST, OPTIONS" });
     if (!env || !env.ORG) return json({ error: "org database not bound (ORG)" }, 503);
@@ -192,10 +237,12 @@ export async function controlPlane(request, env, ctx) {
   if (request.method !== "GET" && request.method !== "HEAD") return json({ error: "read-only" }, 405, { allow: "GET, HEAD, OPTIONS" });
   if (p === "/api/v1") return json({ api_version: API_VERSION, name: "Ultrastable control-plane API", docs: ORIGIN + "/openapi.json", dashboard: "https://dashboard.ultrastable.io/", endpoints: Object.keys(OPENAPI_PATHS).map(k => ({ path: k, method: Object.keys(OPENAPI_PATHS[k])[0].toUpperCase(), summary: Object.values(OPENAPI_PATHS[k])[0].summary })) });
   if (p === "/api/v1/products") return json(await products(env || {}));
+  if (p === "/api/v1/sop") return json(sop());
   if (!env || !env.ORG) return json({ error: "org database not bound (ORG)" }, 503);
   try {
     if (p === "/api/v1/status") return json(await status(env));
     if (p === "/api/v1/agents") return json(await agents(env));
+    if (p === "/api/v1/handoffs") return json(await handoffs(env, u.searchParams.get("state"), u.searchParams.get("limit")));
     if (p === "/api/v1/activity") return json(await activity(env, u.searchParams.get("limit")));
     if (p === "/api/v1/companion/brief") return json(await companionBrief(env));
     if (p === "/api/v1/work") { const r = await work(env, u.searchParams.get("view") || "on_deck", u.searchParams.get("limit")); return r ? json(r) : json({ error: "view must be one of " + Object.keys(WORK_VIEWS).join(", ") }, 400); }
@@ -216,12 +263,12 @@ function table(head,rows){const w=el('div','us-wrap'),t=el('table','us-table'),h
 function card(id,title,sub){let s=document.getElementById(id);if(!s){s=el('section','card');s.id=id;$('#ops').appendChild(s)}s.textContent='';s.appendChild(el('h2',null,title));if(sub)s.appendChild(el('p','meta',sub));return s}
 const it=i=>({t:i,href:'/api/v1/work/'+encodeURIComponent(i)});
 async function draw(){try{
- const [s,a,prog,deck,blk,act,done]=await Promise.all([api('status'),api('agents'),api('work?view=in_progress'),api('work?view=on_deck&limit=25'),api('work?view=blocked&limit=25'),api('activity?limit=20'),api('work?view=done&limit=10')]);
+ const [s,a,prog,deck,blk,act,done,ho]=await Promise.all([api('status'),api('agents'),api('work?view=in_progress'),api('work?view=on_deck&limit=25'),api('work?view=blocked&limit=25'),api('activity?limit=20'),api('work?view=done&limit=10'),api('handoffs?limit=20')]);
  if(s.error){$('#ops').textContent=s.error;return}
  const v=$('#verdict');v.textContent=s.verdict.toUpperCase();v.className='pill '+(s.verdict==='healthy'?'good':s.verdict==='degraded'?'warn':'bad');
  $('#asof').textContent='Live from the org database. Last heartbeat: tick '+(s.heartbeat?s.heartbeat.tick+', '+ago(s.heartbeat.age_s):'none')+'. Refreshed '+new Date().toLocaleTimeString()+'.';
  const k=card('c-now','Right now'),w=s.work.by_status,d=s.dispatch;
- const g=el('div','kpis');[['Agents active (1 h)',s.agents.active_last_hour+' / '+s.agents.total],['In progress',prog.count],['On deck',deck.count],['Blocked',w.blocked||0],['Done',w.done||0],['Dispatches executed',d.settled+' / '+d.total],['Needs you',s.owner.open_gate_cards]].forEach(([l,n])=>{const b=el('div','kpi');b.appendChild(el('div','n',String(n)));b.appendChild(el('div','l',l));g.appendChild(b)});k.appendChild(g);
+ const g=el('div','kpis');[['Agents active (1 h)',s.agents.active_last_hour+' / '+s.agents.total],['In progress',prog.count],['On deck',deck.count],['Blocked',w.blocked||0],['Done',w.done||0],['Dispatches executed',d.settled+' / '+d.total],['Needs you',s.owner.open_gate_cards],['Handoffs verified',(s.handoffs&&s.handoffs.verified||0)+' / '+Object.values(s.handoffs||{}).reduce((x,y)=>x+y,0)]].forEach(([l,n])=>{const b=el('div','kpi');b.appendChild(el('div','n',String(n)));b.appendChild(el('div','l',l));g.appendChild(b)});k.appendChild(g);
  if(s.reasons.length){const ul=el('ul','reasons');s.reasons.forEach(r=>ul.appendChild(el('li',null,r)));k.appendChild(ul)}
  if(s.heartbeat)k.appendChild(el('p','meta',s.heartbeat.report));
  card('c-agents','Agents','Each virtual agent, the model it runs on, and what it holds now.').appendChild(table(['Agent','Role','Model','State','Working on','Last dispatch','Dispatches (executed / total, 24 h)','Last tick'],a.agents.map(x=>[x.id,x.role,x.model,{t:x.state,pill:x.state==='working'?'good':x.state==='waiting'?'warn':'bad'},x.working_on.map(i=>i.item).join(', ')||'-',x.last_dispatch?x.last_dispatch.item+' ('+x.last_dispatch.status+')':'-',x.dispatches.settled+' / '+x.dispatches.total+' ('+x.dispatches.last_24h+')',x.last_tick_at?ago(x.last_tick_age_s):'never'])));
@@ -230,6 +277,7 @@ async function draw(){try{
  card('c-blk','Blocked',blk.count+' items waiting on something.').appendChild(table(['Item','Title','Owner','Blocker'],blk.items.map(i=>[it(i.id),i.title,i.owner_role,i.blocker||i.disposition||'-'])));
  card('c-act','Activity','Newest dispatches and heartbeat reports.').appendChild(table(['When','Agent','Item','Status'],act.dispatches.map(x=>[x.at,x.agent,x.item||'-',{t:x.status,pill:x.status==='done'?'good':x.status==='queued'?'warn':x.status==='failed'?'bad':''}])));
  document.getElementById('c-act').appendChild(table(['Tick','When','Steps','Summary'],act.ticks.map(t=>[t.id,t.at,t.steps,t.summary])));
+ card('c-ho','Handoffs','Work code agents handed to the server. The server merges, deploys, probes and closes; no agent comes back.').appendChild(table(['PR','Agent','Item','State','Last step','Updated'],(ho.handoffs||[]).map(h=>[{t:h.repo.split('/')[1]+'#'+h.pr,href:h.url},h.agent||'-',h.item||'-',{t:h.state,pill:h.state==='verified'?'good':/fail|rolled|conflict/.test(h.state)?'bad':'warn'},h.detail||'-',h.updated_at])));
  card('c-done','Recently done').appendChild(table(['Item','Title','Updated'],done.items.map(i=>[it(i.id),i.title,i.updated_at])));
 }catch(e){$('#asof').textContent='Could not reach the API: '+e}}
 draw();setInterval(draw,30000);`;

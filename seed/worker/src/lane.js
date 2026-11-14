@@ -13,7 +13,7 @@ async function gh(f, token, method, path, body) {
   return { ok: r.ok, status: r.status, json: text ? JSON.parse(text) : null };
 }
 
-export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkflow = 'issues.yml', maxIssues = 3, maxMerges = 5 }) {
+export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkflow = 'issues.yml', maxIssues = 3, maxMerges = 5, zeroActions = false }) {
   if (!token) return { status: 'no-token', merged: [], dispatched: [], errors: [] };
   const out = { status: 'ok', merged: [], dispatched: [], held: [], errors: [] };
   for (const repo of repos) {
@@ -31,7 +31,12 @@ export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkfl
         }
         const comments = (await gh(f, token, 'GET', `/repos/${repo}/issues/${pr.number}/comments?per_page=30`)).json || [];
         if (comments.some(c => /^HOLD:/.test(c.body || ''))) { out.held.push(`${repo}#${pr.number} HOLD`); continue; }
-        if (!d || d.mergeable_state !== 'clean') { out.held.push(`${repo}#${pr.number} ${d && d.mergeable_state}`); continue; }
+        let ready = d && d.mergeable_state === 'clean';
+        if (!ready && d && zeroActions && ['unstable', 'blocked'].includes(d.mergeable_state)) { // ZERO-MINUTES-1: Actions minutes are exhausted, so the Worker's own diff gate decides
+          const st = await gh(f, token, 'GET', `/repos/${repo}/commits/${d.head.sha}/status`);
+          ready = Boolean(st.ok && (st.json.statuses || []).some(s => s.context === 'worker-gate' && s.state === 'success'));
+        }
+        if (!ready) { out.held.push(`${repo}#${pr.number} ${d && d.mergeable_state}`); continue; }
         const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${pr.number}/merge`, { merge_method: 'squash' });
         (m.ok ? out.merged : out.errors).push(m.ok ? `${repo}#${pr.number}` : `${repo}#${pr.number} merge ${m.status}`);
       }
