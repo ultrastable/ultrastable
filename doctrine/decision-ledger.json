@@ -906,6 +906,14 @@
    "title": "CONNECT-1: one connector framework, no pasted tokens",
    "body": "Generic OAuth 2.1 connector flow (PKCE S256, signed one-time state, sealed per-tenant tokens, refresh via the oauth adapter, revoke) plus remote MCP servers as first-class connectors (RFC 9728, RFC 8414, CIMD then DCR, RFC 8707). Google, Microsoft and Buffer need only the single owner card oauth-apps; MCP servers need nothing. Dashboard reads /auth/connectors.",
    "probe": "file:seed/worker/src/auth/connectors.js"
+  },
+  {
+   "id": "lesson-2026-11-14-closeloop-1-every-session-s-tail-is-a-server-record-not-a-ch",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "CLOSELOOP-1: every session's tail is a server record, not a chat promise",
+   "body": "A session's open tail (PR 371 and 372 awaiting the handoff closer, three follow-ups) lives in the handoff table and docs/issues with closing probes; nothing depends on a local agent polling. Session archive is the only local step and carries no work.",
+   "probe": "grep:docs/issues/ROADMAP-AGENT-PORTABILITY-RESTORE.json::Done check"
   }
  ]
 }
