@@ -70,6 +70,33 @@ r = await post({ title: "Add a calendar export", detail: "from the companion", k
 assert.equal(r.status, 201); assert.match(r.body.id, /^IN-\d{8}-[0-9a-f]{6}$/);
 const row = db.prepare("SELECT * FROM items WHERE id = ?").get(r.body.id);
 assert.equal(row.owner_role, "product-manager"); assert.equal(row.priority, 90, "priority capped below the driver band"); assert.equal(row.surface, "integration:companion"); assert.equal(row.kind, "intake-idea");
+// AGENT-HARNESS-1: attribution over REST and the MCP write tool
+r = await post({ title: "Attributed", agent: "codex", harness: "vscode-codex" }, "Bearer s3cret");
+assert.equal(db.prepare("SELECT surface FROM items WHERE id = ?").get(r.body.id).surface, "integration:companion agent:codex harness:vscode-codex"); assert.equal(r.body.attributed_to.agent, "codex");
+const rpcw = (args, auth) => J("https://ultrastable.io/mcp", ENV, { method: "POST", headers: { ...(auth ? { authorization: auth } : {}) }, body: JSON.stringify({ jsonrpc: "2.0", id: 7, method: "tools/call", params: { name: "submit_work", arguments: args } }) });
+assert.equal((await rpcw({ title: "t", agent: "a", harness: "h" })).status, 401, "MCP write needs a token");
+assert.equal((await rpcw({ title: "t", agent: "a" }, "Bearer s3cret")).body.result.isError, true, "agent and harness are required");
+const mr = await rpcw({ title: "From MCP", kind: "bug", agent: "claude-code", harness: "vscode-claude" }, "Bearer s3cret");
+const mid = JSON.parse(mr.body.result.content[0].text).id; assert.equal(db.prepare("SELECT surface, kind FROM items WHERE id = ?").get(mid).surface, "integration:companion agent:claude-code harness:vscode-claude");
+// AGENT-HARNESS-1: A2A v1.0 SendMessage / GetTask
+const a2a = (method, params, auth) => J("https://ultrastable.io/a2a", ENV, { method: "POST", headers: { ...(auth ? { authorization: auth } : {}) }, body: JSON.stringify({ jsonrpc: "2.0", id: 9, method, params }) });
+assert.equal((await a2a("SendMessage", { message: { parts: [{ text: "x" }] } })).status, 401, "A2A write needs auth");
+const sm = await a2a("SendMessage", { message: { parts: [{ text: "Plan the rollout\nwith detail" }] }, metadata: { agent: "gemini", harness: "a2a-peer" } }, "Bearer s3cret");
+const atid = sm.body.result.task.id; assert.equal(sm.body.result.task.status.state, "TASK_STATE_SUBMITTED");
+assert.equal(db.prepare("SELECT surface FROM items WHERE id = ?").get(atid).surface, "integration:companion agent:gemini harness:a2a-peer");
+assert.equal((await a2a("GetTask", { id: atid })).body.result.task.id, atid);
+assert.equal((await a2a("GetTask", { id: "nope" })).body.error.message, "TaskNotFoundError");
+assert.equal((await J("https://ultrastable.io/.well-known/agent-card.json")).body.supportedInterfaces[0].protocolBinding, "JSONRPC");
+// PORTABILITY-1: export then replay into a clean slate is lossless and idempotent
+{
+  const X = (path, init) => J("https://ultrastable.io" + path, ENV, init), H = { authorization: "Bearer s3cret" };
+  assert.equal((await X("/api/v1/export")).status, 401);
+  const ex = (await X("/api/v1/export", { headers: H })).body; assert.equal(ex.schema, "ultrastable-export/v1"); assert.ok(ex.count >= 3); assert.ok(ex.items.every(i => i.source.startsWith("integration:companion")));
+  assert.ok(!JSON.stringify(ex).includes("s3cret"), "no token in a bundle");
+  const imp = () => X("/api/v1/import", { method: "POST", headers: H, body: JSON.stringify(ex) });
+  const a1 = (await imp()).body, a2 = (await imp()).body; assert.equal(a1.created, ex.count); assert.equal(a2.created, 0); assert.equal(a2.skipped, ex.count);
+  assert.equal((await X("/api/v1/import", { method: "POST", headers: H, body: JSON.stringify({ schema: "x" }) })).status, 422);
+}
 assert.equal((await J("https://ultrastable.io/api/v1/intake", { ORG })).status, 405, "GET on intake");
 assert.equal((await J("https://ultrastable.io/api/v1/intake", { ORG }, { method: "POST", headers: { authorization: "Bearer s3cret" }, body: "{}" })).status, 503, "no tokens configured");
 assert.equal((await J("https://ultrastable.io/api/v1/status", {})).status, 503, "no ORG binding is reported, not faked");

@@ -123,6 +123,8 @@ jobs:
         run: python3 scripts/gen_userpath.py --check
       - name: Site pins and gaps are tied to real issues and code (SITE-PINS-1)
         run: python3 scripts/build_site_roadmap.py --check
+      - name: Agent data is current
+        run: python3 scripts/build_site_agentdata.py --check
       - name: Platform brief is current
         run: python3 scripts/platform_brief.py --check
       - name: Project memory is current
