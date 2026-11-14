@@ -13,6 +13,19 @@
     "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons per day (doctrine/cost.json budgets)"
   },
   "flows": {
+    "qnfo-sauce": {
+      "inflows": [
+        {"signal": "issue.filed", "via": "file:docs/issues"},
+        {"signal": "main.merged", "via": "github:main"},
+        {"signal": "deploys.record", "via": "file:ops/deploys.jsonl"}
+      ],
+      "outflows": [
+        {"signal": "issue.filed", "via": "file:docs/issues"},
+        {"signal": "criticality.k", "via": "file:ops/criticality.jsonl"}
+      ],
+      "feedback": "a closed item whose probe fails again reopens; a remedy that did not move its metric in the window is replaced; a family that keeps growing gets a doer item; the ignition gap count is read next to k on the following pass",
+      "bindings": []
+    },
     "tick-heartbeat": {
       "inflows": [
         {

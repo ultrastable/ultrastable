@@ -129,13 +129,15 @@ def _loop_liveness(root) -> dict:
             "not_alive": down, "unknown": [r["id"] for r in rep["probes"] if r["verdict"] == "unknown"], "items_filed": filed}
 
 
-def run_once(root=REPO, skip_outreach=False, now=None, liveness=True) -> dict:
+def run_once(root=REPO, skip_outreach=False, now=None, liveness=True, sauce_apply=True) -> dict:
     root = Path(root)
     scratch = root / ".selfhost" / "launch.db"
     results = [_loop_tick(root, scratch)]
     if results[0]["ok"]:
         results.append(_loop_plussing(scratch))
     results += [_loop_probes(root), _loop_funding(root, skip_outreach), _loop_closed(root)] + ([_loop_liveness(root)] if liveness else [])
+    from . import sauce  # QNFO-PORT-1: contracts, meta-ticket fold, family throughput, metric loop, ignition gaps, criticality tick
+    results.append(sauce.loop(root, apply=sauce_apply))
     results.append(_loop_lifecycle(root))
     results.append(_loop_components(root))
     from . import transparency
@@ -160,7 +162,8 @@ def write_back(rec: dict, root=REPO) -> list[str]:
         f.write(json.dumps(rec, separators=(",", ":")) + "\n")
     latest = d / "LATEST.md"
     latest.write_text(f"# Latest loop pass\n\n{rec['at']} on `{rec['host']}`\n\n" + "\n".join(f"- {l}" for l in rec["report"]) + "\n\nEvidence: `" + str(day.relative_to(root)) + "`\n", encoding="utf-8")
-    return [str(day.relative_to(root)), str(latest.relative_to(root))]
+    extra = [p for r in rec.get("loops", []) for p in r.get("paths", []) if (root / p).is_file()]  # ledgers a loop wrote this pass travel with the evidence
+    return [str(day.relative_to(root)), str(latest.relative_to(root))] + sorted(set(extra))
 
 
 def commit(paths, root=REPO, push=False) -> dict:

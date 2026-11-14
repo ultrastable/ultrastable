@@ -2106,6 +2106,45 @@
       "server_owner": "ultrastable-tick"
     },
     {
+      "id": "qnfo-sauce",
+      "kind": "governance",
+      "summary": "The loops that make a fleet close its own work (QNFO-PORT-1): closing-probe contracts close an item only on its own probe and reopen a relapse; tickets about another record fold when it resolves; per-family throughput files a build-the-doer item for a family that grows with nothing closing it; the metric loop files, judges and replaces remedies; the links that still do not close are ignition gaps next to k.",
+      "trigger": "each launch pass, before lifecycle; the queue run of the executor and fleet routes goes through the same contracts",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1 tick",
+      "done": "ops/ignition.json is from the last pass, every open item has a contract row from the last pass, and every breached metric has a running remedy",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "python3 -m foundation launch (sauce.loop) on every enabled host",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation sauce --tick --apply run by an agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/sauce.py::def tick",
+      "writeback": [
+        "docs/issues",
+        "ops/ignition.json"
+      ],
+      "system_path": [
+        "foundation/sauce.py",
+        "foundation/contracts.py",
+        "foundation/metafold.py",
+        "foundation/throughput.py",
+        "foundation/metricloop.py",
+        "doctrine/qnfo-port.json",
+        "doctrine/metric-loop.json",
+        "foundation/launch.py"
+      ],
+      "launch": "qnfo-sauce",
+      "server_owner": "ultrastable-tick"
+    },
+    {
       "id": "lifecycle",
       "kind": "manager",
       "summary": "No zombie sessions: leases, heartbeats, reaper; and loops that score and mutate themselves (the improver scores itself).",

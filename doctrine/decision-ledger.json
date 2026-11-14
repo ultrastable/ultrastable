@@ -831,6 +831,14 @@
    "title": "OUTREACH-INTRO-1: intro outreach lane",
    "body": "Rowan 2026-11-14: the system introduces the work to research institutes, funders, AI labs and third-sector organizations instead of waiting for postings. Contacts are role mailboxes the organization publishes on its own pages (resolved and re-verified by code), disclosed automated email, shared gate, dry-run default; live needs sender, postal address and secrets. Follow-up Q-INTRO-1.",
    "probe": "grep:scripts/outreach_intro.py::OUTREACH-INTRO-1"
+  },
+  {
+   "id": "decision-2026-11-14-qnfo-port-1-the-qnfo-loops-that-close-the-fleet-s-own-work-r",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "QNFO-PORT-1: the QNFO loops that close the fleet's own work run as foundation code",
+   "body": "Closing-probe contracts (close on the item's own probe, reopen on relapse, 60/120 min hold after a reopen), the metric closed loop (registry, breach item, 7-day efficacy, replace a remedy that did not move), per-family throughput with a lifecycle ledger (build-the-doer items, silent drops) and the meta-ticket fold now run every launch pass (foundation/sauce.py) and through queue --run. Their open links are ignition gaps in ops/ignition.json, read by criticality next to k; self_sustaining needs k at its floor and 0 gaps. The Worker keeps the same gaps as rows (migration 0010, /live open_ignition_gaps). First real pass 2026-11-14: 28 items closed on passing probes that no route had persisted, 3 OL-PR tickets folded, 2 doer items and 3 metric items filed. Inventory: doctrine/qnfo-port.json; QNFO declares its implementations in instances/qnfo/foundation-loops.json.",
+   "probe": "grep:foundation/sauce.py::def tick"
   }
  ]
 }
