@@ -1,0 +1,11 @@
+{
+  "id": "Q-SEED-1",
+  "title": "Q-SEED-1: charter.json per system whose vectors generate the ranker's goals; a revision is versioned and re-ranks the backlog",
+  "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** file:foundation/charter.py\n**Status:** open\n\ncode-task: repo=ultrastable path=foundation/charter.py\nSee docs/doctrine/SEED.md. Replace the hand-written goals in doctrine/priorities.json with goals derived from each system's charter (tenant 0 and Practical Solutions first); a charter change must change the ranking, proven by a test.\n\nsize: M\n",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

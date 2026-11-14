@@ -52,6 +52,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["failure_audit"]:
         from . import failure_audit
         return failure_audit.main(_av[1:])
+    if _av[:1] == ["prioritize"]:
+        from . import prioritize
+        return prioritize.main(_av[1:])
     if _av[:1] == ["queue"]:
         from . import queue
         return queue.main(_av[1:])

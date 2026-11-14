@@ -66,6 +66,11 @@ def takeable(root=REPO) -> list[dict]:
         if r.get("issue") is not None:
             k = str(r["issue"]); fails[k] = fails.get(k, 0) + 1 if r.get("result") == "failed" else 0
     out = []
+    try:
+        from . import prioritize
+        scores = prioritize.score_map(root)
+    except Exception:  # the ranker must never block the queue; unscored items fall back to label order
+        scores = {}
     for it in items(root):
         j = it["json"]
         if it["status"] != "open" or re.search(r"ROWAN|identity-bound", it["owner"], re.I) or fails.get(str(it["id"]), 0) >= 3:
@@ -73,7 +78,7 @@ def takeable(root=REPO) -> list[dict]:
         if protected_probe(it["probe"]):  # the executor may not write .github/ or autonomy/, so an item whose done check lives there can only fail (it starved the queue head on 2026-11-12)
             continue
         out.append({"number": it["id"], "title": j.get("title", it["id"]), "body": j.get("body", ""), "labels": [{"name": n} for n in j.get("labels", [])],
-                    "updated_at": "1970-01-01T00:00:00Z"})
+                    "updated_at": "1970-01-01T00:00:00Z", **({"score": scores[str(it["id"])]} if str(it["id"]) in scores else {})})
     from . import criticality
     return criticality.gate(out, root)
 

@@ -33,6 +33,8 @@ def now() -> str:
 
 def priority(issue: dict) -> tuple:
     """Driver order: p0..p9 label (lower first), then oldest number. Unlabelled issues sort after labelled ones."""
+    if "score" in issue:  # PRIORITIZE-1: the ranker's score (goal weight, dependency centrality, size, age) replaces label-then-age order
+        return (0, -issue["score"], str(issue["number"]))
     p = 5
     for l in issue.get("labels", []):
         m = re.fullmatch(r"(?:p|priority[:/ -]?)(\d)", l["name"] if isinstance(l, dict) else l, re.I)
