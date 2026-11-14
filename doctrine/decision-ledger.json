@@ -906,6 +906,14 @@
    "title": "CONNECT-1: one connector framework, no pasted tokens",
    "body": "Generic OAuth 2.1 connector flow (PKCE S256, signed one-time state, sealed per-tenant tokens, refresh via the oauth adapter, revoke) plus remote MCP servers as first-class connectors (RFC 9728, RFC 8414, CIMD then DCR, RFC 8707). Google, Microsoft and Buffer need only the single owner card oauth-apps; MCP servers need nothing. Dashboard reads /auth/connectors.",
    "probe": "file:seed/worker/src/auth/connectors.js"
+  },
+  {
+   "id": "decision-2026-11-14-connections-1-one-owner-only-screen-to-see-and-revoke-every-",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CONNECTIONS-1: one owner-only screen to see and revoke every linked service and agent",
+   "body": "ultrastable.io/connections lists services (read from the tick Worker credential store over the TICK binding) and agents (OAuth clients with live tokens in site/oauth.js tables); one click revokes either. The /connect/* consent flow is proxied to the tick Worker for the signed-in owner; only the provider callback skips the session because it carries its own signed state. Mutations are same-origin only.",
+   "probe": "file:site/connections.js"
   }
  ]
 }
