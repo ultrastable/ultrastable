@@ -726,16 +726,29 @@
       "body": "OpenID Foundation",
       "status": "stable",
       "tracked": "researched 2026-11-14",
-      "why": "Standard way to ask 'may this agent do this' so policy can change without code changes; fits the trust ledger.",
-      "support": "planned",
-      "tracked_by": "STD-9: expose the trust ledger as an AuthZEN decision endpoint",
-      "acl": "seed/worker/src/agentic/acl/discovery.js",
+      "why": "Standard way to ask \"may this agent do this\"; served at /access/v1/evaluation and /access/v1/evaluations from the trust ledger, failing closed.",
+      "support": "supported",
+      "acl": "site/authzen.js",
       "sources": [
         {
           "title": "AI agent identity standards: the 2026 landscape",
           "url": "http://nhigovernance.com/ai-agents/agent-identity-standards.html",
           "published": null,
           "accessed": "2026-11-14"
+        }
+      ],
+      "how": [
+        "site/authzen.js",
+        "site/worker.js"
+      ],
+      "tests": [
+        {
+          "file": "site/authzen.test.mjs",
+          "name": "authzen: ledger decides and fails closed"
+        },
+        {
+          "file": "site/authzen.test.mjs",
+          "name": "worker routes /access/v1/evaluation"
         }
       ]
     },
