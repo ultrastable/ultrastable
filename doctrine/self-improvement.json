@@ -1,0 +1,51 @@
+{
+ "_doc": "SELF-IMPROVE-1 as data (owner, 2026-11-13). Every worker, every loop and Ultrastable itself improves continuously by one algorithm over a fixed catalogue of signals. Loaded by foundation/selfimprove.py, `python3 -m foundation selfimprove --check` (a step in checks.yml) and the executor prompt. foundation/lifecycle.py implements the failure-signal branch; selfimprove.py ranks every signal class and decides keep or revert. Prose is never the enforcement; this file and its checker are.",
+ "id": "self-improvement",
+ "version": "1.0.0",
+ "marker": "SELF-IMPROVE-1",
+ "axiom": "SELF-IMPROVE-1: Every worker improves itself by the same loop: sense signals, find the largest weighted gap, make one change with a logged prediction, measure after a fixed window, keep it only if the target moved and no guard worsened, otherwise revert and record why. A change with no prediction, a signal with no code reader, and a window with no verdict are open loops. The improver is scored by the same loop.",
+ "algorithm": [
+  "SENSE: read every signal in `signals` from its source; each reading is (loop, signal, value, at). No source, no signal.",
+  "GAP: gap = max(0, target - value) / target for higher-is-better, max(0, value - target) / target for lower-is-better; targets live in the signal row.",
+  "RANK: priority = gap * weight * (1 + explore_bonus), explore_bonus = explore_c / sqrt(1 + tries of that (loop, signal) in the last window). Untried levers outrank repeated ones; a lever that did not move its metric in `window_days` is retired for `cooldown_days`.",
+  "CHOOSE: take the top candidate; with probability `explore_epsilon` take a random candidate from the top `explore_pool` instead (guards against a local optimum). One change per component at a time so effects are attributable.",
+  "PREDICT: write ev=predict to ops/improvements.jsonl: loop, signal, baseline, op, target, within_hours. No prediction, no change.",
+  "APPLY: queue one item (code-task) for the owning worker; the change ships only through the canonical path (merge on green).",
+  "VERIFY: after `window_days`, a probe the changing agent did not write re-reads the same signal and every guard.",
+  "DECIDE: keep when the target moved by at least `min_effect` and no guard worsened by more than `guard_tolerance`; otherwise file OL-REVERT with the measured numbers. A kept change raises the lever's weight by `reinforce`; a reverted one lowers it by `decay`.",
+  "RECORD: append the verdict (ev=verdict) and write the lesson to docs/lessons; the next SENSE reads it, so the loop learns which levers work for which signal.",
+  "SELF: score this loop with the same code (verdict hit rate, time to verdict, stale predictions); a stale or low-yield improver files OL-MUTATE-improve."
+ ],
+ "params": {
+  "window_days": 7,
+  "cooldown_days": 14,
+  "explore_epsilon": 0.1,
+  "explore_pool": 3,
+  "explore_c": 0.5,
+  "min_effect": 0.05,
+  "guard_tolerance": 0.02,
+  "reinforce": 0.1,
+  "decay": 0.2
+ },
+ "signals": [
+  {"id": "loop-pass-rate", "class": "outcome", "source": "ops/loop-evidence", "consumer": "foundation/lifecycle.py", "better": "higher", "target": 0.95, "weight": 1.0, "note": "did the loop do its job; same-signature failures twice trigger a mutation"},
+  {"id": "executor-result", "class": "outcome", "source": "ops/executor-log.jsonl", "consumer": "foundation/executor.py", "better": "higher", "target": 0.9, "weight": 1.0, "note": "share of items ending verified, not no-change or error; each row carries its prediction"},
+  {"id": "prediction-calibration", "class": "calibration", "source": "ops/improvements.jsonl", "consumer": "foundation/lifecycle.py", "better": "higher", "target": 0.7, "weight": 0.8, "note": "predictions that came true; a worker that cannot predict cannot improve"},
+  {"id": "time-to-close", "class": "latency", "source": "ops/fleet-log.jsonl", "consumer": "foundation/loops.py", "better": "lower", "target": 1.0, "weight": 0.7, "note": "trigger to closing probe, in SLA multiples"},
+  {"id": "zombie-sessions", "class": "hygiene", "source": "doctrine/sessions.json", "consumer": "foundation/lifecycle.py", "better": "lower", "target": 0.0, "weight": 0.6, "note": "open sessions past their TTL; reaps per agent"},
+  {"id": "failure-patterns", "class": "friction", "source": "docs/failures", "consumer": "foundation/executor.py", "better": "lower", "target": 0.0, "weight": 0.9, "note": "repeat failure signatures; the same failure twice is a design defect, not bad luck"},
+  {"id": "trust-ledger", "class": "friction", "source": "instances/ultrastable/trust-ledger.json", "consumer": "foundation/trust.py", "better": "higher", "target": 0.8, "weight": 0.8, "note": "silent drops, hidden failures and hand-backs lower trust; verified autonomous results raise it"},
+  {"id": "open-gaps", "class": "friction", "source": "instances/ultrastable/gaps.json", "consumer": "foundation/selfhost.py", "better": "lower", "target": 0.0, "weight": 0.7, "note": "known gaps with no closing item"},
+  {"id": "cost", "class": "efficiency", "source": "ops/cost.jsonl", "consumer": "foundation/selfhost.py", "better": "lower", "target": 1.0, "weight": 0.6, "note": "spend per verified result against cap; a gain that breaches the cap is a regression"},
+  {"id": "deploy-velocity", "class": "outcome", "source": "ops/criticality.jsonl", "consumer": "foundation/selfhost.py", "better": "higher", "target": 1.0, "weight": 1.0, "note": "verified deploys per window against the criticality baseline (bootstrap to criticality)"},
+  {"id": "user-inbox", "class": "customer", "source": "instances/ultrastable/inbox.json", "consumer": "foundation/queue.py", "better": "lower", "target": 0.0, "weight": 0.9, "note": "unanswered questions, complaints and asks from real users and pilots"},
+  {"id": "external-outcomes", "class": "customer", "source": "instances/ultrastable/objectives.json", "consumer": "foundation/selfhost.py", "better": "higher", "target": 1.0, "weight": 1.0, "note": "objective key results: reach, pilots, subscribers; the signal the world sends back"}
+ ],
+ "guards": [
+  "cost stays under its cap (budget guard)",
+  "loop-pass-rate and executor-result never fall while another signal rises",
+  "no verification probe, guard metric, opt-out or suppression rule is weakened to make a signal move",
+  "the personal and research stores stay separate"
+ ],
+ "per_worker_contract": "Every worker and loop registers its own signals in the table above or in its loop-registry row, runs SENSE to RECORD on its own tick, and may change only its own component. A worker with no signal row is reported by `selfimprove --check`."
+}

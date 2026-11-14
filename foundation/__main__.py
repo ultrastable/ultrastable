@@ -134,6 +134,9 @@ def main(argv=None) -> int:
         return boundary.main(_av[1:])
     if _av[:1] == ["closedloop"]:
         return closedloop.main(_av[1:])
+    if _av[:1] == ["selfimprove"]:
+        from . import selfimprove
+        return selfimprove.main(_av[1:])
     if _av[:1] == ["liveness"]:
         from . import liveness
         return liveness.main(_av[1:])
