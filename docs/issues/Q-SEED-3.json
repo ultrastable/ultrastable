@@ -1,0 +1,11 @@
+{
+  "id": "Q-SEED-3",
+  "title": "Q-SEED-3: intake asks for vision first and only sharpening questions; shallow one-shot output is flagged and deepened by loops",
+  "body": "**Owner:** product-manager\n**Trigger:** after Q-SEED-1\n**Done check:** grep:docs/doctrine/SEED.md::Seed over nuts and bolts\n**Status:** open\n\ncode-task: repo=ultrastable path=foundation/data/interview.json\nSee INTERVIEW-1..4 and docs/doctrine/SEED.md rules 1-2. Probe: the interview for Practical Solutions needs no implementation detail from the person.\n\nsize: M\n",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

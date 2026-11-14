@@ -96,7 +96,8 @@
       "Q-GROW-second-tenant-deploying",
       "Q-GAP-second-installation",
       "Q-SYS-BOOT-REHEARSAL",
-      "Q-GAP-fresh-account-bootstrap"
+      "Q-GAP-fresh-account-bootstrap",
+      "Q-SEED-1"
     ]
   },
   "goal_match_fields": "id+title"

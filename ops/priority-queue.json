@@ -6,7 +6,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 313.04
+  "score": 313.05
  },
  {
   "id": "Q-SYS-BOOT-REHEARSAL",
@@ -24,7 +24,7 @@
   "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 238.26
+  "score": 238.27
  },
  {
   "id": "PORT-EXEC-1",
@@ -42,7 +42,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 217.39
+  "score": 217.4
  },
  {
   "id": "Q-TICK-DEPLOY",
@@ -51,7 +51,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 217.39
+  "score": 217.4
  },
  {
   "id": "Q-GAP-fresh-account-bootstrap",
@@ -87,7 +87,7 @@
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 180.0
+  "score": 180.01
  },
  {
   "id": "Q-COST-ROWS-QNFO-AUDIT",
@@ -96,7 +96,7 @@
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 180.0
+  "score": 180.01
  },
  {
   "id": "Q-COST-PROOF-1",
@@ -114,7 +114,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 156.52
+  "score": 156.53
  },
  {
   "id": "Q-PARITY-4",
@@ -123,7 +123,16 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 156.52
+  "score": 156.53
+ },
+ {
+  "id": "Q-SEED-1",
+  "title": "Q-SEED-1: charter.json per system whose vectors generate the ranker's goals; a revision is versioned and re-ranks the backlog",
+  "goal": null,
+  "unblocks": 2,
+  "size": "M",
+  "held": false,
+  "score": 151.3
  },
  {
   "id": "Q-GROW-AGENT-DIRECTORIES",
@@ -213,7 +222,7 @@
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 120.0
+  "score": 120.01
  },
  {
   "id": "Q-PARITY-1",
@@ -222,7 +231,7 @@
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 120.0
+  "score": 120.01
  },
  {
   "id": "Q-PARITY-6",
@@ -231,7 +240,7 @@
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 114.78
+  "score": 114.79
  },
  {
   "id": "Q-LOOP-IMPROVE",
@@ -285,7 +294,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26
+  "score": 78.27
  },
  {
   "id": "PIN-fresh-account-bootstrap",
@@ -294,7 +303,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26
+  "score": 78.27
  },
  {
   "id": "Q-48",
@@ -303,7 +312,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26
+  "score": 78.27
  },
  {
   "id": "Q-50",
@@ -312,7 +321,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26
+  "score": 78.27
  },
  {
   "id": "Q-6",
@@ -321,7 +330,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26
+  "score": 78.27
  },
  {
   "id": "Q-SYS-FAILURE-REGISTRY",
@@ -330,7 +339,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26
+  "score": 78.27
  },
  {
   "id": "Q-CRIT-COLLECTORS",
@@ -357,7 +366,7 @@
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 60.0
+  "score": 60.01
  },
  {
   "id": "Q-12",
@@ -366,7 +375,7 @@
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 60.0
+  "score": 60.01
  },
  {
   "id": "Q-179",
@@ -375,7 +384,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.17
+  "score": 52.18
  },
  {
   "id": "Q-185",
@@ -384,7 +393,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.17
+  "score": 52.18
  },
  {
   "id": "Q-35",
@@ -393,7 +402,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.17
+  "score": 52.18
  },
  {
   "id": "Q-7",
@@ -402,7 +411,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.17
+  "score": 52.18
  },
  {
   "id": "Q-8",
@@ -411,7 +420,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.17
+  "score": 52.18
  },
  {
   "id": "Q-90",
@@ -420,7 +429,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.17
+  "score": 52.18
  },
  {
   "id": "Q-91",
@@ -429,7 +438,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.17
+  "score": 52.18
  },
  {
   "id": "Q-93",
@@ -438,7 +447,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.17
+  "score": 52.18
  },
  {
   "id": "Q-94",
@@ -447,7 +456,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.17
+  "score": 52.18
  },
  {
   "id": "WEB-1",
@@ -492,7 +501,7 @@
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 36.52
+  "score": 36.53
  },
  {
   "id": "WEB-4",
@@ -501,7 +510,7 @@
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 36.52
+  "score": 36.53
  },
  {
   "id": "WEB-6",
@@ -510,7 +519,7 @@
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 36.52
+  "score": 36.53
  },
  {
   "id": "GH-2",
@@ -681,7 +690,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 17.39
+  "score": 17.4
  },
  {
   "id": "INTERVIEW-2",
@@ -798,7 +807,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
+  "score": 0.01
  },
  {
   "id": "FN-4",
@@ -807,7 +816,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
+  "score": 0.01
  },
  {
   "id": "FN-5",
@@ -816,7 +825,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
+  "score": 0.01
  },
  {
   "id": "GH-3",
@@ -825,7 +834,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
+  "score": 0.01
  },
  {
   "id": "INTERVIEW-3",
@@ -834,7 +843,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
+  "score": 0.01
  },
  {
   "id": "IP-2",
@@ -843,7 +852,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
+  "score": 0.01
  },
  {
   "id": "IP-3",
@@ -852,7 +861,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
+  "score": 0.01
  },
  {
   "id": "OL-20261112-10",
@@ -861,7 +870,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
+  "score": 0.01
  },
  {
   "id": "OL-20261112-11",
@@ -870,7 +879,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
+  "score": 0.01
  },
  {
   "id": "OL-20261112-13",
@@ -879,7 +888,7 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
+  "score": 0.01
  },
  {
   "id": "OL-20261112-14",
@@ -888,15 +897,6 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 0.0
- },
- {
-  "id": "OL-20261112-15",
-  "title": "OL-20261112-15: Replace ctl-workers-codeowners-human-approval",
-  "goal": null,
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0
+  "score": 0.01
  }
 ]
