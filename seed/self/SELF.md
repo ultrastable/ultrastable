@@ -22,6 +22,7 @@ Bootstrap a working, server-side, self-managing system from a person's stated wi
 - org-designer: which roles an organization needs. Maps an instance manifest (kind, facts, goals, budget) to the phased role catalog, so a new system gets the right virtual team and not the whole zoo. One per org.
 - program-manager: the set of projects that serve one portfolio constraint: sequencing, dependencies and the plus share across projects.
 - infrastructure-manager: Cloudflare resources, bindings, secrets and deploys: discovery against `doctrine/topology.json`, cost budgets in `ops/cost-thresholds.json`, and the deploy count in `ops/deploys.jsonl`.
+- design-manager: the design language across the portfolio and every product that rolls up to it (doctrine/design.json), its enforcement, and design R&D: experiments, A/B tests and blue-sky ideas (doctrine/design-experiments.json). One per org.
 
 ## What each optional plugin may reach (all dry-run until enabled)
 - communicate: draft

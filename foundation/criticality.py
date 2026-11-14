@@ -103,13 +103,13 @@ def raises(item: dict, c: dict) -> bool:
     return bool(labels & set(c["raises_labels"])) or str(item.get("number", "")).startswith(tuple(c["raises_id_prefixes"]))
 
 
-def gate(items: list[dict], root=REPO) -> list[dict]:
+def gate(items: list[dict], root=REPO, now: datetime | None = None) -> list[dict]:
     """The queue under the invariant: with k below the floor only items that raise deploys or cut cost may be taken (features are deferred).
     When none qualify the full list is returned so the queue cannot starve; that fallback is itself logged by the tick as a clause failure."""
     if not (Path(root) / "doctrine/criticality.json").is_file():
         return items  # a scratch or seed tree without the invariant declared is not gated
     c = cfg(root)
-    r = compute(root, feed_ok=True)  # k does not depend on the feed clause
+    r = compute(root, now=now, feed_ok=True)  # k does not depend on the feed clause
     if r["cost"] > 1.0:  # control rods: cost has run away, so only items that cut cost may be taken until the guard reads under budget
         rods = [i for i in items if "cuts-cost" in {(l["name"] if isinstance(l, dict) else l) for l in i.get("labels", [])} or str(i.get("number", "")).startswith("Q-COST")]
         return rods or items
