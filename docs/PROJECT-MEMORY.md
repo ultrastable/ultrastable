@@ -177,3 +177,9 @@ Session: session_0156nqDv8ijT11RmKre7xEmK (CRITICALITY-1, COST-GUARD-1).
 - Measured: 2011 min used by day 13 of the month (projected 232% of the free quota); `checks` 1218 min, 958 of them failed runs. `checks.yml` now runs its most-failing steps first.
 - The tick Worker already runs lane merge, sweeper and executor dispatch (`seed/worker/src`), but D1 `sweeper_runs` shows `pulls 404` on every repo until the GitHub App covers the org (owner step: Connect GitHub in NEEDS-YOU.md).
 - Owner direction: GitHub stays master and public face; the Worker should own the loops, possibly with Git-in-Cloudflare storage and deploy providers for Cloudflare, AWS, GCP. Probes: `docs/issues/ZERO-MINUTES-1.json`, `docs/issues/GIT-IN-CLOUDFLARE-1.json`.
+
+## 2026-11-14 INSIGHT-1: analytics are a feedback loop (owner directive)
+- Owner: analytics do not rely on an opt-in tag; they run on Cloudflare data and are feedback loops in both the Qniverse and Ultrastable.
+- Built: `foundation/insight.py` with `doctrine/insight.json` reads each content page's 7 days against the 7 before from the cookieless first-party hits, classifies rising, external_pull and fading, files at most two `Q-INSIGHT-*` growth items a day, settles each finding after 8 days against what the page really got (`ops/insight/findings.json`) and tunes its own `rise_min_views`. It runs inside the product manager pass (`foundation/pm.py`). Loop `insight-loop`, flow declared, check `python3 -m foundation insight --check`.
+- Live read of the hits table: `/proof` 994 views (264 outside-referred), `/pilot` 840 (183), `/` 660 (19); the first pass after merge files the top two as external_pull items. The live fetch itself needs the Cloudflare token bound in product-manager.yml.
+- Twin in the Qniverse: QNFO/qnfo-workers `migrations/2026-11-14-analytics-loop.sql` (ANALYTICS-LOOP-1). Probe: `grep:foundation/insight.py::def settle`.
