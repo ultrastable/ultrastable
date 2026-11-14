@@ -1,9 +1,32 @@
 {
-  "_doc": "Outreach control as data. Edit by PR; the owner flips kill or mode. kill=true stops every stage that contacts anyone, at once. mode=dry-run writes packets, queues and logs but contacts nobody. mode=live additionally delivers email-route targets through the sender adapter, and only when sender.registered is true and the OUTREACH_SEND_URL and OUTREACH_SEND_TOKEN secrets exist. Form routes are never submitted by an agent: they become one consolidated owner card per profile. Rate limits are hard caps.",
-  "kill": false,
-  "mode": "dry-run",
-  "sender": {"registered": false, "identity": null, "note": "Owner card OUT-SENDER: register a sending identity (domain mailbox) once; until then nothing is delivered."},
-  "limits": {"max_new_per_run": 5, "max_sends_per_day": 3, "max_sends_per_week": 8, "followup_days": [14, 35], "max_followups": 2, "min_days_between_contacts_per_target": 10},
-  "paused_profiles": [],
-  "paused_programs": []
+ "_doc": "Outreach control as data. Edit by PR; the owner flips kill or mode. kill=true stops every stage that contacts anyone, at once. mode=dry-run writes packets, queues and logs but contacts nobody. mode=live additionally delivers email-route targets through the sender adapter, and only when sender.registered is true and the OUTREACH_SEND_URL and OUTREACH_SEND_TOKEN secrets exist. Form routes are never submitted by an agent: they become one consolidated owner card per profile. Rate limits are hard caps. The intro lane (outreach_intro.py) shares this gate and its caps; it additionally needs sender.postal_address before any live send, and sender.booking_url (https) is an optional calendar link added to the message.",
+ "kill": false,
+ "mode": "dry-run",
+ "sender": {
+  "registered": false,
+  "identity": null,
+  "note": "Owner card OUT-SENDER: register a sending identity (domain mailbox) once; until then nothing is delivered.",
+  "postal_address": null,
+  "booking_url": null
+ },
+ "limits": {
+  "max_new_per_run": 5,
+  "max_sends_per_day": 3,
+  "max_sends_per_week": 8,
+  "followup_days": [
+   14,
+   35
+  ],
+  "max_followups": 2,
+  "min_days_between_contacts_per_target": 10
+ },
+ "paused_profiles": [],
+ "paused_programs": [],
+ "intro": {
+  "enabled": true,
+  "max_new_per_run": 5,
+  "max_sends_per_week": 5,
+  "reverify_days": 30,
+  "held_regions": []
+ }
 }

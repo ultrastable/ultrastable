@@ -31,12 +31,19 @@ jobs:
           ref: main
       - name: Record reply
         if: ${{ inputs.reply_key != '' && inputs.reply_kind != '' }}
-        run: python3 scripts/outreach.py reply "${{ inputs.reply_key }}" --kind "${{ inputs.reply_kind }}" --note "${{ inputs.reply_note }}"
+        run: |
+          # intro:<id> keys belong to the intro lane (OUTREACH-INTRO-1); every other key to the programme lane
+          case "${{ inputs.reply_key }}" in
+            intro:*) python3 scripts/outreach_intro.py reply "${{ inputs.reply_key }}" --kind "${{ inputs.reply_kind }}" --note "${{ inputs.reply_note }}" ;;
+            *) python3 scripts/outreach.py reply "${{ inputs.reply_key }}" --kind "${{ inputs.reply_kind }}" --note "${{ inputs.reply_note }}" ;;
+          esac
       - name: Run the loop
         env:
           OUTREACH_SEND_URL: ${{ secrets.OUTREACH_SEND_URL }}
           OUTREACH_SEND_TOKEN: ${{ secrets.OUTREACH_SEND_TOKEN }}
-        run: python3 scripts/outreach.py run
+        run: |
+          python3 scripts/outreach.py run
+          python3 scripts/outreach_intro.py run
       - name: Build dashboard snapshot and post it when the secrets exist
         env:
           DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}

@@ -18,6 +18,9 @@
 6. Public posts go through the social pipeline (`social/`), never around it.
 7. Report in four lines.
 
+## Intro lane (OUTREACH-INTRO-1)
+Run `python3 scripts/outreach_intro.py run` after the programme lane. It resolves a published role mailbox from each prospect organization's own pages, re-verifies it, writes a disclosed packet, guards it, queues within the shared caps and sends only in live mode (registered sender, postal address, adapter secrets). Add prospects with `outreach_intro.py add`; grow `outreach/prospects.json` from the segments in `outreach/intro-profile.json` (research institutes, AI labs, funders, ventures, third-sector organizations). Record replies with `outreach_intro.py reply intro:<id> --kind ack|question|meeting|accepted|rejected|opt-out|bounce`. Never use personal addresses, lists or form submissions as the owner.
+
 ## Never
 - Send as the owner, submit a form as the owner, or create accounts in the owner's name. These are gate cards.
 - Contact a suppressed, opted-out or paused target, exceed a cap, or pad a message with claims that cannot be checked at a source.
