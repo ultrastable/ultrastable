@@ -220,9 +220,11 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.match(await (await g3("/robots.txt")).text(), /Content-Signal:/);
   assert.match((await g3("/")).headers.get("link"), /api-catalog/);
   const rpc = async (m, params) => (await (await g3("/mcp", { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: m, params }) })).json());
-  assert.equal((await rpc("tools/list")).result.tools.length, 17); // 11 snapshot tools + 6 live control-plane tools (CONTROL-PLANE-1)
+  assert.equal((await rpc("tools/list")).result.tools.length, 18); // 11 snapshot tools + 6 live control-plane tools (CONTROL-PLANE-1) + submit_work (AGENT-HARNESS-1)
   assert.equal(JSON.parse((await rpc("tools/call", { name: "get_scoreboard" })).result.content[0].text).a, 1);
   assert.equal((await rpc("nope")).error.code, -32601);
+  assert.equal((await g3("/.well-known/mcp")).status, 200); // AGENT-HARNESS-1: well-known discovery
+  assert.equal((await g3("/mcp", { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "submit_work", arguments: { title: "t", agent: "a", harness: "h" } } }) })).status >= 400, true, "submit_work without a token is refused");
   assert.equal((await g3("/mcp")).status, 405); assert.equal((await g3("/mcp", { method: "DELETE" })).status, 405);
 }
 // TOPOLOGY-1: the owner dashboard is reached through the OWNER service binding, only on its own paths

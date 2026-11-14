@@ -70,6 +70,14 @@ r = await post({ title: "Add a calendar export", detail: "from the companion", k
 assert.equal(r.status, 201); assert.match(r.body.id, /^IN-\d{8}-[0-9a-f]{6}$/);
 const row = db.prepare("SELECT * FROM items WHERE id = ?").get(r.body.id);
 assert.equal(row.owner_role, "product-manager"); assert.equal(row.priority, 90, "priority capped below the driver band"); assert.equal(row.surface, "integration:companion"); assert.equal(row.kind, "intake-idea");
+// AGENT-HARNESS-1: attribution over REST and the MCP write tool
+r = await post({ title: "Attributed", agent: "codex", harness: "vscode-codex" }, "Bearer s3cret");
+assert.equal(db.prepare("SELECT surface FROM items WHERE id = ?").get(r.body.id).surface, "integration:companion agent:codex harness:vscode-codex"); assert.equal(r.body.attributed_to.agent, "codex");
+const rpcw = (args, auth) => J("https://ultrastable.io/mcp", ENV, { method: "POST", headers: { ...(auth ? { authorization: auth } : {}) }, body: JSON.stringify({ jsonrpc: "2.0", id: 7, method: "tools/call", params: { name: "submit_work", arguments: args } }) });
+assert.equal((await rpcw({ title: "t", agent: "a", harness: "h" })).status, 401, "MCP write needs a token");
+assert.equal((await rpcw({ title: "t", agent: "a" }, "Bearer s3cret")).body.result.isError, true, "agent and harness are required");
+const mr = await rpcw({ title: "From MCP", kind: "bug", agent: "claude-code", harness: "vscode-claude" }, "Bearer s3cret");
+const mid = JSON.parse(mr.body.result.content[0].text).id; assert.equal(db.prepare("SELECT surface, kind FROM items WHERE id = ?").get(mid).surface, "integration:companion agent:claude-code harness:vscode-claude");
 assert.equal((await J("https://ultrastable.io/api/v1/intake", { ORG })).status, 405, "GET on intake");
 assert.equal((await J("https://ultrastable.io/api/v1/intake", { ORG }, { method: "POST", headers: { authorization: "Bearer s3cret" }, body: "{}" })).status, 503, "no tokens configured");
 assert.equal((await J("https://ultrastable.io/api/v1/status", {})).status, 503, "no ORG binding is reported, not faked");

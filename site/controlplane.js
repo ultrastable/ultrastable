@@ -157,18 +157,27 @@ export async function authIntegration(request, env) {
   return hit ? { ok: true, name: hit.name } : { ok: false, status: 403, error: "unknown token" };
 }
 
+// AGENT-HARNESS-1: one intake path for every client (REST and MCP). Attribution (which agent, in which harness) is recorded on the item's surface so inputs from different agents can be compared.
+const attr = v => String(v || "").trim().replace(/[^A-Za-z0-9._\/-]/g, "").slice(0, 60);
+export async function submitIntake(env, authName, b, now = Date.now()) {
+  const title = String((b && b.title) || "").trim().slice(0, 200), detail = String((b && b.detail) || "").trim().slice(0, 4000);
+  if (!title) return { status: 422, body: { error: "title is required" } };
+  const kind = ["idea", "request", "bug", "question"].includes(b.kind) ? b.kind : "request";
+  const pr = Math.max(1, Math.min(90, Number(b.priority) || 50));  // above 90 is reserved for the org's own driver
+  const agent = attr(b.agent), harness = attr(b.harness);
+  const surface = "integration:" + authName + (agent ? " agent:" + agent : "") + (harness ? " harness:" + harness : "");
+  const id = "IN-" + new Date(now).toISOString().slice(0, 10).replace(/-/g, "") + "-" + (await sha256(authName + title + now)).slice(0, 6);
+  await env.ORG.prepare("INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, surface, disposition) VALUES (?, ?, ?, 'product-manager', ?, ?, ?, 'open', ?, ?)")
+    .bind(id, `${id}: ${title}`, "intake-" + kind, "product-manager triaged it: accepted with a plan, merged into an existing item, or declined with a reason", "GET /api/v1/work/" + id, pr, surface, detail || null).run();
+  return { status: 201, body: { ok: true, id, status: "open", owner_role: "product-manager", url: ORIGIN + "/api/v1/work/" + id, attributed_to: { agent: agent || null, harness: harness || null } } };
+}
+
 export async function intake(request, env, now = Date.now()) {
   const auth = await authIntegration(request, env);
   if (!auth.ok) return json({ error: auth.error }, auth.status, auth.status === 401 ? { "www-authenticate": "Bearer" } : undefined);
   let b; try { b = await request.json(); } catch (e) { return json({ error: "body must be JSON" }, 400); }
-  const title = String((b && b.title) || "").trim().slice(0, 200), detail = String((b && b.detail) || "").trim().slice(0, 4000);
-  if (!title) return json({ error: "title is required" }, 422);
-  const kind = ["idea", "request", "bug", "question"].includes(b.kind) ? b.kind : "request";
-  const pr = Math.max(1, Math.min(90, Number(b.priority) || 50));  // above 90 is reserved for the org's own driver
-  const id = "IN-" + new Date(now).toISOString().slice(0, 10).replace(/-/g, "") + "-" + (await sha256(auth.name + title + now)).slice(0, 6);
-  await env.ORG.prepare("INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, surface, disposition) VALUES (?, ?, ?, 'product-manager', ?, ?, ?, 'open', ?, ?)")
-    .bind(id, `${id}: ${title}`, "intake-" + kind, "product-manager triaged it: accepted with a plan, merged into an existing item, or declined with a reason", "GET /api/v1/work/" + id, pr, "integration:" + auth.name, detail || null).run();
-  return json({ ok: true, id, status: "open", owner_role: "product-manager", url: ORIGIN + "/api/v1/work/" + id }, 201);
+  const r = await submitIntake(env, auth.name, b || {}, now);
+  return json(r.body, r.status);
 }
 
 // ---- HANDOFF-1 / CODE-AGENT-SOP-1: the server's record of handed-off work, and the two writes a code agent may make ----
