@@ -30,6 +30,7 @@
   python3 -m foundation pins [--check|--apply|--report]                  PINS-1: every status pin and roadmap item on the site is computed from code, proofs and issues
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
+  python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
 """
 import argparse, datetime as dt, json, os, sys
@@ -46,6 +47,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["scout"]:
         from . import scout
         return scout.main(_av[1:])
+    if _av[:1] == ["metasignal"]:
+        from . import metasignal
+        return metasignal.main(_av[1:])
     if _av[:1] == ["pins"]:
         from . import pins
         return pins.main(_av[1:])

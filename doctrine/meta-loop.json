@@ -1,0 +1,39 @@
+{
+ "id": "META-SIGNAL-1",
+ "version": "1.1.0",
+ "owner_directive": "Rowan, 2026-11-14: all calls are recorded and monitored. Every recording, dictation and chat is fed into audits and back-end processes: the content is the request, the meta content (sentiment, frustration, repetition, corrections, ideas, stalls) feeds process improvement and the code loop. Wherever the product captures the microphone or voice-to-text, that capture is monitored for issues and roadmap items too: what it means for the whole system, not only the words.",
+ "rule": "Every owner utterance (typed, dictated, transcribed audio) is a signal, and every microphone interaction is a telemetry event. The server records them, extracts meta signals with a deterministic detector (no model call, no cost), and files each kind as a roadmap issue with owner, trigger and probe. A client never summarizes or files these by hand.",
+ "sources": ["dictation", "audio-transcript", "chat", "session-transcript", "interview", "mic-event"],
+ "consent": "Capture applies to the owner's own sessions and to tenants who opted in at the consent screen; raw audio is never stored, only transcript text, mic event codes and extracted signals. Suppression and opt-out are honored first.",
+ "detectors": [
+  {"kind": "frustration", "patterns": ["\\bi'?m not going to keep telling you\\b", "\\bhow many times\\b", "\\bagain\\b.{0,20}\\bstill\\b", "\\bstill (not|doesn'?t|isn'?t|broken)\\b", "\\bwhy (is|are|does|do) (it|this|that|you) (still|always|never)\\b", "\\bfrustrat", "\\bannoy", "\\bugh\\b"], "weight": 3, "roadmap": "Find the root cause of the repeated failure and remove it in code; add a probe."},
+  {"kind": "repeat-directive", "patterns": ["\\bnever (stop|end|ask)\\b", "\\bi (already|keep) (said|told|asked)\\b", "\\bas i said\\b", "\\bi want to point out\\b"], "weight": 2, "roadmap": "A directive was stated more than once: encode it as a doctrine rule with a lint, not a memory."},
+  {"kind": "correction", "patterns": ["\\bthat'?s (not|wrong)\\b", "\\bi meant\\b", "\\bnot what i (asked|wanted|meant)\\b"], "weight": 2, "roadmap": "The agent misread the request: add the ambiguity to the interview questions or the glossary."},
+  {"kind": "idea", "patterns": ["\\bwhat if\\b", "\\bit would be (nice|great|cool)\\b", "\\bwe should\\b", "\\bidea\\b", "\\bmaybe we (could|can)\\b"], "weight": 1, "roadmap": "Queue as an idea in the intake lane for the product manager role."},
+  {"kind": "confusion", "patterns": ["\\bi don'?t understand\\b", "\\bwhat does .{0,30} mean\\b", "\\bconfus"], "weight": 2, "roadmap": "A surface or message was unclear: simplify the copy or the step (zero-fuss principle)."},
+  {"kind": "stall", "patterns": ["\\bwaiting\\b", "\\btaking (too )?long\\b", "\\bstuck\\b", "\\bhung\\b", "\\bnothing (happened|changed)\\b"], "weight": 2, "roadmap": "A loop is slower than the owner's patience: measure its latency and add an SLA."},
+  {"kind": "delight", "patterns": ["\\bperfect\\b", "\\blove (it|this|that)\\b", "\\bexactly what\\b"], "weight": 0, "roadmap": "Record what worked; protect it with a test so it is not regressed."}
+ ],
+ "mic_events": {
+  "doc": "Emitted by the voice surfaces (site/interview.js mic button, and any future capture). Event codes only, no audio. A code is a signal once it crosses its threshold within the window.",
+  "codes": {
+   "not-allowed": {"kind": "mic-blocked", "weight": 2, "roadmap": "Microphone blocked: show a one-tap fix and the typing fallback earlier; measure permission grant rate."},
+   "service-not-allowed": {"kind": "mic-blocked", "weight": 2, "roadmap": "Speech service refused: add the on-device fallback (Vosk) so dictation works without the browser service."},
+   "no-speech": {"kind": "mic-no-speech", "weight": 1, "roadmap": "Dictation heard nothing: tune the prompt and silence timeout; check the device input level hint."},
+   "network": {"kind": "mic-network", "weight": 2, "roadmap": "Browser speech needs network and failed: on-device recognition fallback."},
+   "audio-capture": {"kind": "mic-hardware", "weight": 2, "roadmap": "No usable microphone: surface typing first for this device class."},
+   "unsupported": {"kind": "mic-unsupported", "weight": 1, "roadmap": "Browser has no speech recognition: count the share and decide on a hosted transcription path."},
+   "busy": {"kind": "mic-busy", "weight": 1, "roadmap": "Recognition could not start: debounce and recover automatically."},
+   "edited-after-dictation": {"kind": "mic-misheard", "weight": 1, "roadmap": "Owner corrected the dictated text: collect before/after pairs to tune vocabulary and the glossary."},
+   "abandoned": {"kind": "mic-abandoned", "weight": 2, "roadmap": "Owner pressed the mic then left with no submit: this step loses people, simplify it."}
+  },
+  "thresholds": {"file_issue_when_count_at_least": 3, "window_days": 7}
+ },
+ "thresholds": {"file_issue_when_weight_at_least": 2, "dedupe_window_days": 14},
+ "issue_prefix": "META-",
+ "sink": "docs/meta/signals.jsonl",
+ "closing_probe": "python3 -m foundation metasignal --check",
+ "server_owner": "ultrastable-tick",
+ "ingest": "POST /api/meta/ingest on the site Worker (JSON: source, text or code, at); stored in KV as meta:<iso>:<rand>; the tick Worker drains it through the same detectors into the sink and files META-<n> issues.",
+ "sla_hours": 24
+}
