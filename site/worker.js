@@ -10,7 +10,7 @@ import { agentic, withLinks, CONTENT_SIGNAL } from "./agentic.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
-var VERSION = "0.13.0";
+var VERSION = "0.13.1";
 const CANON = "ultrastable.io";
 const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -680,6 +680,18 @@ const SVG = { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age
 
 const HTML = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" };
 
+// META-SIGNAL-1: record a microphone event code or transcript text for the meta loop (doctrine/meta-loop.json); the tick drains it through foundation/metasignal.py detectors.
+const META_CODES = ["not-allowed", "service-not-allowed", "no-speech", "network", "audio-capture", "unsupported", "busy", "edited-after-dictation", "abandoned"];
+async function metaIngest(request, env) {
+  let b; try { b = JSON.parse((await request.text()).slice(0, 4000)); } catch (e) { return Response.json({ ok: false, code: "bad_json" }, { status: 400 }); }
+  const rec = { source: String(b.source || "chat").slice(0, 24), at: new Date().toISOString() };
+  if (b.source === "mic-event") { if (!META_CODES.includes(b.code)) return Response.json({ ok: false, code: "unknown_code" }, { status: 422 }); rec.code = b.code; rec.surface = String(b.surface || "site").slice(0, 24); }
+  else if (typeof b.text === "string" && b.text.trim()) rec.text = b.text.slice(0, 2000);
+  else return Response.json({ ok: false, code: "empty" }, { status: 422 });
+  await env.ASSETS.put("meta:" + rec.at + ":" + newId(), JSON.stringify(rec), { expirationTtl: 31536000 });
+  return Response.json({ ok: true });
+}
+
 const handler = {
   async fetch(request, env, ctx) {
     const u = new URL(request.url);
@@ -697,6 +709,7 @@ const handler = {
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/proof", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
+    if (request.method === "POST" && u.pathname === "/api/meta/ingest") return metaIngest(request, env); // META-SIGNAL-1
     if (request.method === "GET" && u.pathname === "/api/suggest") return suggestions(u, env);
     if (u.pathname === "/live" || u.pathname === "/api/live") return liveResponse(u, request, env, shell, HTML);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
