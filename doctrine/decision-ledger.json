@@ -882,6 +882,14 @@
    "body": "Register in doctrine/blindspots.json with probes; failed system needs file Q-BLIND items, identity-bound ones stay gates. Live finding 2026-11-14: ultrastable.io has SPF for receiving but no DMARC (checked over DNS-over-HTTPS), so outreach would be rejected or spam-foldered. Site had no privacy, accessibility or security contact page; added.",
    "probe": "grep:foundation/blindspots.py::def learn",
    "session": "session_0156nqDsGSkQrok8LwjeYziE"
+  },
+  {
+   "id": "lesson-2026-11-14-web-bot-auth-1-a-syntax-error-in-one-site-module-blocks-ever",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "WEB-BOT-AUTH-1: a syntax error in one site module blocks every deploy",
+   "body": "PR 361 merged a raw newline inside the LLMS string in site/worker.js; main stopped parsing and ultrastable.io stayed on the old build until #367. Checks now run node --check on every site module, and Web Bot Auth (RFC 9421, Ed25519) signs outbound and verifies inbound agent traffic with a key the Worker makes itself.",
+   "probe": "grep:site/webbotauth.js::export async function verifyRequest"
   }
  ]
 }
