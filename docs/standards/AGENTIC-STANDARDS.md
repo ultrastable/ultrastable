@@ -23,6 +23,7 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 |---|---|---|---|---|
 | Model Context Protocol | Agentic AI Foundation (Linux Foundation) | stable | supported | `mcp: initialize negotiates version`; `mcp: server/discover`; `contract: tools match v1 snapshot` |
 | MCP authorization (OAuth 2.1, protected resource metadata) | MCP / IETF OAuth WG | stable | partial | `mcp: tools/call fails closed`; `mcp: tools/call with token`; `discovery: api catalog and protected resource` |
+| MCP authorization on ultrastable.io (OAuth 2.1 server: PKCE, Client ID Metadata Documents, dynamic registration) | MCP / IETF OAuth WG | stable | supported | `unauthenticated write: 401 with the RFC 9728 challenge`; `token: PKCE enforced, code single use`; `refresh rotation with reuse detection`; `Client ID Metadata Document: fetched, must name itself` |
 | MCP server cards (SEP-2127) | MCP project | proposal | supported | `discovery: server card` |
 | MCP registry (server.json publication) | MCP project | draft | planned | STD-1: publish after the owner verifies the namespace; held until the license review allows public listing |
 | Agent2Agent (A2A) protocol | Agentic AI Foundation (Linux Foundation) | stable | partial | `discovery: agent card` |
