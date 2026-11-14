@@ -271,3 +271,18 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
 { const s = await (await get("https://ultrastable.io/setup")).text();
   assert.ok(!/autopilot/i.test(s), "autopilot step is gone");
   assert.match(s, /api\.github\.com\/repos/); assert.match(s, /pages\.dev/); assert.match(s, /"tasks"/); }
+
+// AGENT-READY-2: Markdown for Agents, AI-bot rules in robots.txt, WebMCP tools (blog.cloudflare.com/agent-readiness).
+{
+  const md = await mod.fetch(new Request("https://ultrastable.io/how", { headers: { accept: "text/markdown" } }), ENV, { waitUntil() {} });
+  assert.equal(md.status, 200); assert.match(md.headers.get("content-type"), /^text\/markdown/); assert.match(md.headers.get("vary") || "", /Accept/i);
+  const mdText = await md.text(); assert.match(mdText, /^# /); assert.ok(!/<div|<script/i.test(mdText), "markdown must carry no markup");
+  const html = await mod.fetch(new Request("https://ultrastable.io/how", { headers: { accept: "text/html,text/markdown;q=0.5" } }), ENV, { waitUntil() {} });
+  assert.match(html.headers.get("content-type"), /text\/html/); assert.match(html.headers.get("vary") || "", /Accept/i);
+  assert.match(await html.text(), /src="\/webmcp\.js"/);
+  const rb = await (await get("https://ultrastable.io/robots.txt")).text();
+  assert.match(rb, /User-agent: GPTBot[\s\S]*?Disallow: \//); assert.match(rb, /User-agent: Claude-User[\s\S]*?Allow: \//); assert.match(rb, /Content-Signal/); assert.match(rb, /Sitemap:/);
+  const wm = await get("https://ultrastable.io/webmcp.js");
+  assert.match(wm.headers.get("content-type"), /javascript/);
+  const js = await wm.text(); assert.match(js, /navigator\.modelContext/); assert.match(js, /ultrastable_status/); assert.ok(!/method:\s*'POST'/.test(js), "webmcp tools are read-only");
+}

@@ -831,6 +831,15 @@
    "title": "OUTREACH-INTRO-1: intro outreach lane",
    "body": "Rowan 2026-11-14: the system introduces the work to research institutes, funders, AI labs and third-sector organizations instead of waiting for postings. Contacts are role mailboxes the organization publishes on its own pages (resolved and re-verified by code), disclosed automated email, shared gate, dry-run default; live needs sender, postal address and secrets. Follow-up Q-INTRO-1.",
    "probe": "grep:scripts/outreach_intro.py::OUTREACH-INTRO-1"
+  },
+  {
+   "id": "decision-2026-11-14-agent-ready-2-pass-cloudflare-s-agent-readiness-checks-that-",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "AGENT-READY-2: pass Cloudflare's agent-readiness checks that apply; decline the ones that would be false",
+   "body": "From blog.cloudflare.com/agent-readiness and /the-agentic-internet (read 2026-11-14): ultrastable.io already passed robots, sitemap, Link headers, llms.txt, Content-Signal, API catalog, Agent Skills and MCP card. Added Markdown for Agents (Accept: text/markdown, Vary: Accept), named AI-bot groups in robots.txt matching ai-train=no, and WebMCP read-only tools in site/readiness.js. Declined OAuth discovery (no authorization server; Q-AGENT-OAUTH-1) and commerce protocols (VISION). Web Bot Auth pending (WEB-BOT-AUTH-1).",
+   "probe": "grep:site/readiness.js::wantsMarkdown",
+   "session": "wt-ar"
   }
  ]
 }
