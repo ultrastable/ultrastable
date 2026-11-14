@@ -1,0 +1,25 @@
+// PORTABILITY-2: /my-data needs a signed-in session, never a token; the bundle holds no secrets; restore is idempotent.
+import assert from "node:assert/strict";
+import { DatabaseSync } from "node:sqlite";
+import { pathToFileURL, fileURLToPath } from "node:url";
+const md = await import(pathToFileURL(fileURLToPath(new URL("./mydata.js", import.meta.url))).href);
+const d1 = db => ({ prepare(sql) { let a = []; const st = { bind(...x) { a = x; return st; }, all: async () => ({ results: db.prepare(sql).all(...a) }), first: async () => db.prepare(sql).get(...a) || null, run: async () => db.prepare(sql).run(...a) }; return st; } });
+const org = new DatabaseSync(":memory:"), dbx = new DatabaseSync(":memory:");
+org.exec(`CREATE TABLE items (id TEXT PRIMARY KEY, title TEXT NOT NULL, kind TEXT NOT NULL DEFAULT 'work', project TEXT, owner_role TEXT NOT NULL, trigger_on TEXT, done_check TEXT NOT NULL, closing_probe TEXT, priority INTEGER NOT NULL DEFAULT 50, status TEXT NOT NULL DEFAULT 'open', disposition TEXT, blocker TEXT, surface TEXT, action_class TEXT, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')));
+INSERT INTO items (id,title,kind,owner_role,done_check,surface,disposition) VALUES ('IN-1','IN-1: add export','intake-idea','pm','x','integration:codex agent:codex','detail one'),('W-1','W-1: internal','work','staff','x','repo','secret internal');`);
+dbx.exec(`CREATE TABLE oauth_clients (client_id TEXT PRIMARY KEY, name TEXT, redirect_uris TEXT, kind TEXT, created_at INTEGER);INSERT INTO oauth_clients VALUES ('c1','VS Code','["x"]','dcr',1);
+CREATE TABLE webhook_subscriptions (id TEXT, owner TEXT, url TEXT, events TEXT, description TEXT, salt TEXT, active INT, failures INT, created_at TEXT);INSERT INTO webhook_subscriptions VALUES ('w1','o','https://e.x/h','*','d','SALT-SECRET',1,0,'t');
+CREATE TABLE passkeys (id TEXT, label TEXT, pub TEXT, created_at INT, last_used_at INT);INSERT INTO passkeys VALUES ('p1','phone','PUBKEY-SECRET',1,2);`);
+const E = { ORG: d1(org), DB: d1(dbx) }, IN = async () => ({ sub: "owner" }), OUT = async () => null;
+const call = (path, init, subj) => md.mydata(new Request("https://ultrastable.io" + path, init), E, subj);
+assert.equal(await md.mydata(new Request("https://example.com/my-data"), E, IN), null, "other hosts are not ours");
+assert.match(await (await call("/my-data", {}, OUT)).text(), /Sign in/); assert.match(await (await call("/my-data", {}, IN)).text(), /Download my data/);
+assert.equal((await call("/my-data/export", {}, OUT)).status, 401); assert.equal((await call("/my-data/import", { method: "POST", headers: { "content-type": "application/json" }, body: "{}" }, OUT)).status, 401);
+const ex = await (await call("/my-data/export", {}, IN)).json();
+assert.equal(ex.schema, "ultrastable-export/v1"); assert.equal(ex.count, 1, "only integration-submitted items, never internal work"); assert.equal(ex.connected_apps[0].name, "VS Code"); assert.equal(ex.webhooks.length, 1); assert.equal(ex.passkeys[0].label, "phone");
+const txt = JSON.stringify(ex); assert.ok(!/SALT-SECRET|PUBKEY-SECRET|secret internal/.test(txt), "no secrets or internal work in a bundle");
+const imp = () => call("/my-data/import", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(ex) }, IN);
+const a = await (await imp()).json(), b = await (await imp()).json(); assert.equal(a.created, 1); assert.equal(b.created, 0); assert.equal(b.skipped, 1);
+assert.equal((await call("/my-data/import", { method: "POST", headers: { "content-type": "text/plain" }, body: "{}" }, IN)).status, 415, "cross-site form posts are refused");
+assert.equal((await call("/my-data/import", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ schema: "x" }) }, IN)).status, 422);
+console.log("mydata ok");

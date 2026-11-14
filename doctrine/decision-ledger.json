@@ -906,6 +906,14 @@
    "title": "CONNECT-1: one connector framework, no pasted tokens",
    "body": "Generic OAuth 2.1 connector flow (PKCE S256, signed one-time state, sealed per-tenant tokens, refresh via the oauth adapter, revoke) plus remote MCP servers as first-class connectors (RFC 9728, RFC 8414, CIMD then DCR, RFC 8707). Google, Microsoft and Buffer need only the single owner card oauth-apps; MCP servers need nothing. Dashboard reads /auth/connectors.",
    "probe": "file:seed/worker/src/auth/connectors.js"
+  },
+  {
+   "id": "lesson-2026-11-14-portability-2-owner-data-export-and-restore-at-my-data-passk",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "PORTABILITY-2: owner data export and restore at /my-data, passkey session, no token",
+   "body": "Portability must not need a token: /my-data uses the passkey session cookie, exports items, connected apps, webhooks and passkey labels with no secrets, and restores idempotently. Bundle format ultrastable-export/v1 is shared with the integration API (/api/v1/export, /api/v1/import).",
+   "probe": "grep:site/mydata.test.mjs::mydata ok"
   }
  ]
 }
