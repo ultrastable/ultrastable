@@ -7,6 +7,8 @@ import { runLane } from './lane.js';
 import { ingestDeploys } from './selfaudit.js';
 import { sampleCosts } from './costsample.js';
 import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
+import { runRoleWork, githubFileExists, aiNamer } from './work.js';
+import { controlPlane } from './controlplane.js';
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
@@ -38,6 +40,7 @@ export default {
       const l = await runLane({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []), issueWorkflow: null }); console.log('lane', JSON.stringify(l));
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
       const ra = await checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }).catch(e => ({ ok: false, error: e && e.message })); console.log('repo-access', JSON.stringify(ra));  // REPO-ACCESS-1
+      const rw = await runRoleWork(env.DB, { fileExists: githubFileExists({ token, repo: env.GITHUB_REPO || repos.find(r => r.endsWith('/ultrastable')) || repos[0] }), namer: aiNamer(env) }).catch(e => ({ error: e && e.message })); console.log('role-work', JSON.stringify(rw));  // ROLE-WORK-1: roles consume their dispatches
       const sw = await sweepOpenLoops({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) }); console.log('sweeper', JSON.stringify(sw)); await recordSweep(env.DB, sw);  // SERVER-OWNS-LOOPS-1
       const dep = await ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }).catch(e => ({ status: 'error ' + (e && e.message) })); console.log('deploy-evidence', JSON.stringify(dep));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
       const cs = await sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }).catch(e => [{ error: e && e.message }]); console.log('cost-samples', JSON.stringify(cs));  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
@@ -48,6 +51,8 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (hiddenByHealthOnly(env, request.method, url.pathname)) return new Response('Not found', { status: 404 });
+    const cp = await controlPlane(request, env, { org: config.org_slug || 'org' });  // CONTROL-PLANE-1: /api/v1/* and /ops
+    if (cp) return cp;
     const au = await handleAuth(request, env, { tenant: env.TENANT || config.org_slug || 'default', name: config.org_slug, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) });
     if (au) return au;
     if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now
