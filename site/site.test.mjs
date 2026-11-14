@@ -220,7 +220,7 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.match(await (await g3("/robots.txt")).text(), /Content-Signal:/);
   assert.match((await g3("/")).headers.get("link"), /api-catalog/);
   const rpc = async (m, params) => (await (await g3("/mcp", { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: m, params }) })).json());
-  assert.equal((await rpc("tools/list")).result.tools.length, 11);
+  assert.equal((await rpc("tools/list")).result.tools.length, 17); // 11 snapshot tools + 6 live control-plane tools (CONTROL-PLANE-1)
   assert.equal(JSON.parse((await rpc("tools/call", { name: "get_scoreboard" })).result.content[0].text).a, 1);
   assert.equal((await rpc("nope")).error.code, -32601);
   assert.equal((await g3("/mcp")).status, 405); assert.equal((await g3("/mcp", { method: "DELETE" })).status, 405);

@@ -2,6 +2,7 @@
 // API Catalog (RFC 9727, /.well-known/api-catalog), OpenAPI, MCP Server Card + a real read-only MCP endpoint (/mcp, JSON-RPC over HTTP), Agent Skills index with
 // checksums, Link headers (RFC 8288), Content Signals in robots.txt. Every tool reads the published snapshot; nothing here can change state.
 import { load } from "./live.js";
+import { OPENAPI_PATHS, API_VERSION, status as cpStatus, agents as cpAgents, work as cpWork, activity as cpActivity, products as cpProducts, companionBrief } from "./controlplane.js";
 const ORIGIN = "https://ultrastable.io";
 const VERSION = "0.1.0";
 const CORS = { "access-control-allow-origin": "*", "x-content-type-options": "nosniff" };
@@ -23,16 +24,41 @@ export const TOOLS = [
   ["get_gaps", "The gap register: what Ultrastable still does through outside tools", s => s.gaps],
 ].map(([name, description, pick]) => ({ name, description, pick, inputSchema: { type: "object", properties: {}, additionalProperties: false }, annotations: { readOnlyHint: true, openWorldHint: false } }));
 
+// CONTROL-PLANE-1: tools answered live from the org database (binding ORG), not from the daily snapshot.
+const VIEW = { type: "object", properties: { view: { type: "string", enum: ["on_deck", "in_progress", "blocked", "done", "all"] }, limit: { type: "integer", maximum: 200 } }, additionalProperties: false };
+export const LIVE_TOOLS = [
+  ["get_status", "Live health verdict with reasons, heartbeat age, work and dispatch counts, open owner steps", (env) => cpStatus(env)],
+  ["get_agents", "Every virtual agent: role, model, state, the item it holds, its dispatch record", (env) => cpAgents(env)],
+  ["get_work", "The backlog by view: on_deck (ranked), in_progress, blocked, done, all", (env, a) => cpWork(env, a.view || "on_deck", a.limit), VIEW],
+  ["get_activity", "Newest dispatches and heartbeat reports", (env) => cpActivity(env)],
+  ["get_products", "Hosted products and services with their discovery documents", (env) => cpProducts(env)],
+  ["get_brief", "Plain-language digest: state, next up, what needs the owner", (env) => companionBrief(env)],
+].map(([name, description, run, schema]) => ({ name, description, run, inputSchema: schema || { type: "object", properties: {}, additionalProperties: false }, annotations: { readOnlyHint: true, openWorldHint: false } }));
+
 async function sha256(text) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
 
-const OPENAPI = { openapi: "3.1.0", info: { title: "Ultrastable live record", version: VERSION, description: "Read-only record of Ultrastable running on itself." }, servers: [{ url: ORIGIN }],
-  paths: { "/api/live": { get: { operationId: "getLiveSnapshot", summary: "Whole snapshot: scoreboard, throughput, changelog, loops, claims, gaps", responses: { "200": { description: "Snapshot (schema ultrastable-transparency/v1)", content: { "application/json": { schema: { type: "object" } } } }, "503": { description: "No snapshot published yet" } } } },
+const OPENAPI = { openapi: "3.1.0", info: { title: "Ultrastable API", version: API_VERSION, description: "Ultrastable's control-plane API (live: agents, backlog, status, products, intake) and its read-only live record." }, servers: [{ url: ORIGIN }],
+  components: { securitySchemes: { bearer: { type: "http", scheme: "bearer", description: "Integration token; only POST /api/v1/intake needs one" } } },
+  paths: { ...OPENAPI_PATHS, "/api/live": { get: { operationId: "getLiveSnapshot", summary: "Whole snapshot: scoreboard, throughput, changelog, loops, claims, gaps", responses: { "200": { description: "Snapshot (schema ultrastable-transparency/v1)", content: { "application/json": { schema: { type: "object" } } } }, "503": { description: "No snapshot published yet" } } } },
     "/mcp": { post: { operationId: "mcp", summary: "Model Context Protocol endpoint (JSON-RPC 2.0), read-only tools", requestBody: { content: { "application/json": { schema: { type: "object" } } } }, responses: { "200": { description: "JSON-RPC response" } } } } } };
 
 const CARD = { serverInfo: { name: "ultrastable-live", title: "Ultrastable live record", version: VERSION }, description: "Read-only access to Ultrastable's own record of how it runs on itself.",
   transport: { type: "streamable-http", endpoint: ORIGIN + "/mcp" }, capabilities: { tools: { listChanged: false } }, authentication: { required: false }, documentation: ORIGIN + "/llms.txt" };
 
-export const LINKS = "</.well-known/api-catalog>; rel=\"api-catalog\", </openapi.json>; rel=\"service-desc\"; type=\"application/vnd.oai.openapi+json\", </.well-known/mcp/server-card.json>; rel=\"mcp-server-card\", </llms.txt>; rel=\"describedby\"";
+// A2A Agent Card (Agent2Agent protocol discovery document): what this agent can be asked, over which interfaces.
+export const AGENT_CARD = { protocolVersion: "0.3.0", name: "Ultrastable", description: "A self-governing development platform. Ask it what it is working on, what is next, what is blocked, which products it hosts; submit work with an integration token.",
+  url: ORIGIN + "/mcp", preferredTransport: "JSONRPC", version: API_VERSION, provider: { organization: "Ultrastable", url: ORIGIN }, documentationUrl: ORIGIN + "/openapi.json",
+  capabilities: { streaming: false, pushNotifications: false, stateTransitionHistory: false }, defaultInputModes: ["application/json"], defaultOutputModes: ["application/json", "text/plain"],
+  additionalInterfaces: [{ url: ORIGIN + "/mcp", transport: "MCP" }, { url: ORIGIN + "/api/v1", transport: "HTTP+JSON" }],
+  securitySchemes: { bearer: { type: "http", scheme: "bearer" } },
+  skills: [
+    { id: "status", name: "Status", description: "Health verdict and reasons, heartbeat, counts", tags: ["ops", "status"], examples: ["Is Ultrastable healthy?"] },
+    { id: "agents", name: "Agents", description: "Which virtual agents exist and what each is working on", tags: ["agents"], examples: ["What are the agents working on?"] },
+    { id: "backlog", name: "Backlog", description: "On deck, in progress, blocked, done", tags: ["backlog", "roadmap"], examples: ["What is on deck?"] },
+    { id: "products", name: "Products", description: "Hosted products and their discovery documents", tags: ["discovery"] },
+    { id: "brief", name: "Brief", description: "Plain-language digest for a personal assistant", tags: ["companion"], examples: ["Give me the Ultrastable brief"] },
+    { id: "intake", name: "Intake", description: "Submit an idea, request, bug or question (bearer token)", tags: ["write"] } ] };
+export const LINKS = "</.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/agent-card.json>; rel=\"agent-card\", </openapi.json>; rel=\"service-desc\"; type=\"application/vnd.oai.openapi+json\", </.well-known/mcp/server-card.json>; rel=\"mcp-server-card\", </llms.txt>; rel=\"describedby\"";
 export const CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=no\n";
 
 async function mcp(request, env) {
@@ -44,8 +70,10 @@ async function mcp(request, env) {
     case "initialize": return ok({ protocolVersion: "2025-06-18", capabilities: { tools: { listChanged: false } }, serverInfo: CARD.serverInfo, instructions: "Read-only record of Ultrastable running on itself." });
     case "notifications/initialized": return new Response(null, { status: 202, headers: CORS });
     case "ping": return ok({});
-    case "tools/list": return ok({ tools: TOOLS.map(({ name, description, inputSchema, annotations }) => ({ name, description, inputSchema, annotations })) });
+    case "tools/list": return ok({ tools: [...LIVE_TOOLS, ...TOOLS].map(({ name, description, inputSchema, annotations }) => ({ name, description, inputSchema, annotations })) });
     case "tools/call": {
+      const lt = LIVE_TOOLS.find(x => x.name === (m.params || {}).name);
+      if (lt) { if (!env || !env.ORG) return ok({ isError: true, content: [{ type: "text", text: "Org database not bound." }] }); try { return ok({ content: [{ type: "text", text: JSON.stringify(await lt.run(env, (m.params || {}).arguments || {})) }] }); } catch (e) { return ok({ isError: true, content: [{ type: "text", text: String(e && e.message || e) }] }); } }
       const t = TOOLS.find(x => x.name === (m.params || {}).name); if (!t) return err(-32602, "Unknown tool");
       const r = await load(env); if (!r) return ok({ isError: true, content: [{ type: "text", text: "No snapshot published yet." }] });
       return ok({ content: [{ type: "text", text: JSON.stringify(t.pick(JSON.parse(r.body)) ?? null) }] });
@@ -60,7 +88,8 @@ export async function agentic(request, env) {
   switch (p) {
     case "/mcp": return mcp(request, env);
     case "/openapi.json": return j(OPENAPI, "application/vnd.oai.openapi+json; charset=utf-8");
-    case "/.well-known/api-catalog": return j({ linkset: [{ anchor: ORIGIN + "/api/live", "service-desc": [{ href: ORIGIN + "/openapi.json", type: "application/vnd.oai.openapi+json" }], "service-doc": [{ href: ORIGIN + "/llms.txt", type: "text/plain" }] }, { anchor: ORIGIN + "/mcp", "service-desc": [{ href: ORIGIN + "/.well-known/mcp/server-card.json", type: "application/json" }] }] }, "application/linkset+json; profile=\"https://www.rfc-editor.org/info/rfc9727\"");
+    case "/.well-known/agent-card.json": case "/.well-known/agent.json": return j(AGENT_CARD);
+    case "/.well-known/api-catalog": return j({ linkset: [{ anchor: ORIGIN + "/api/v1", "service-desc": [{ href: ORIGIN + "/openapi.json", type: "application/vnd.oai.openapi+json" }], "service-doc": [{ href: ORIGIN + "/llms.txt", type: "text/plain" }], status: [{ href: ORIGIN + "/api/v1/status", type: "application/json" }] }, { anchor: ORIGIN + "/api/live", "service-desc": [{ href: ORIGIN + "/openapi.json", type: "application/vnd.oai.openapi+json" }], "service-doc": [{ href: ORIGIN + "/llms.txt", type: "text/plain" }] }, { anchor: ORIGIN + "/mcp", "service-desc": [{ href: ORIGIN + "/.well-known/mcp/server-card.json", type: "application/json" }] }] }, "application/linkset+json; profile=\"https://www.rfc-editor.org/info/rfc9727\"");
     case "/.well-known/mcp/server-card.json": case "/.well-known/mcp/server-cards.json": case "/.well-known/mcp.json": return j(p.endsWith("cards.json") ? { servers: [CARD] } : CARD);
     case "/.well-known/agent-skills/index.json": case "/.well-known/skills/index.json":
       return j({ $schema: "https://schemas.agentskills.io/discovery/0.2.0/schema.json", skills: [{ name: "ultrastable-live", type: "skill-md", description: "Read Ultrastable's own live record (read-only).", url: ORIGIN + "/.well-known/agent-skills/ultrastable-live/SKILL.md", sha256: await sha256(SKILL_MD) }] });
