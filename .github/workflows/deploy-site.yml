@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v7
         with: {node-version: 22}
       - name: Site tests
-        run: node site/site.test.mjs && node site/controlplane.test.mjs
+        run: node site/site.test.mjs && node site/controlplane.test.mjs && node site/webhooks.test.mjs
       - name: Require credentials
         run: '[ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Cloudflare secrets not set (BG-25)"; exit 1; }'
       - name: Deploy
