@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261114-2",
+  "title": "OL-20261114-2: three foundation tests fail on main (pins, autorun, repo_cleanup)",
+  "body": "**Owner:** operations\n**Trigger:** foundation tests red on main\n**Done check:** cmd:python3 -m unittest discover -s tests/foundation -p test_pins.py\n**Status:** open\n\nOn main at 1202e5d: test_pins (META-SIGNAL-2 on the roadmap without a matching reason), test_autorun (owner-only items gate card check), test_repo_cleanup (tests/foundation/test_metasignal.py:17 and :29 make temp directories nothing removes). Found 2026-11-14 while landing SELF-REFERENCE-1; test_upstream is OL-20261114-1. Fix each at its root and keep the foundation test step green.",
+  "labels": [
+    "role:operations",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

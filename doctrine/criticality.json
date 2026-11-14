@@ -1,11 +1,19 @@
 {
   "_doc": "CRITICALITY-1 invariant (Rowan, 2026-11-13). foundation/criticality.py computes k every tick and gates the executor queue; the mantra's four clauses are each a computed check.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "window_hours": 24,
   "k_floor": 1.0,
   "cost_floor": 0.1,
   "raises_labels": ["raises-deploys", "cuts-cost"],
   "raises_id_prefixes": ["Q-COST", "Q-DEPLOY", "Q-CRIT", "Q-TENANT-deploy"],
   "raises_workstreams": ["cost", "deploys"],
-  "stall_item": "Q-CRIT-STALL"
+  "stall_item": "Q-CRIT-STALL",
+  "self_reference": {
+    "_doc": "SELF-REFERENCE-1 (Rowan, 2026-11-14): 'Ultrastable runs on Ultrastable. That self-reference is key to bootstrapping and criticality.' A verified deploy counts toward k_self only when the system originated and executed the work on itself (its executor or its own server-side code agent). Deploys driven by an outside session are an external neutron source: they raise k, never k_self. bootstrap is the fixed point: the bootstrap that boots any system boots Ultrastable from this repository (foundation.selfhost.verify). Regime: self-sustaining (bootstrap holds and k_self >= k_floor), driven (k >= k_floor but k_self below it), subcritical (k < k_floor).",
+    "markers": {"executor": "Executor run", "handoff_agent": "(?m)^agent:\\s*(\\S+)"},
+    "self_agents_prefixes": ["workers-ai", "ultrastable"],
+    "self_origins": ["executor", "self-agent"],
+    "raises_self_labels": ["raises-self"],
+    "raises_self_id_prefixes": ["Q-SELF", "Q-EXEC", "EXEC-", "Q-CRIT"]
+  }
 }

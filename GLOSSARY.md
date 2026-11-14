@@ -52,6 +52,7 @@ Generated from `doctrine/glossary.json` by `python3 -m foundation glossary --app
 | [Document consumed](#doc-consumed) | A document exists only if code, a check, an agent's loaded instructions or a loop consumes it. | 1.0.0 |
 | [Unattended](#unattended) | The crosswalk for the words the owner and the agents use for the same property. | 1.0.0 |
 | [Clockwork](#clockwork) | A loop behaves as clockwork when it is a clock: it has an expected interval, its beats are recorded, and its measured status is ticking (a beat within 1.5 intervals) and accurate (small median distance from schedule). | 1.0.0 |
+| [Self-reference](#self-reference) | Ultrastable runs on Ultrastable, and that self-reference is what bootstrapping and criticality rest on. | 1.0.0 |
 
 ## <a id="autonomy"></a>Autonomy
 
@@ -326,7 +327,7 @@ Starting a working, self-managing system from an idea in a seed repository, with
 
 **Implemented by:** `seed/bootstrap/bootstrap.py`, `docs/bootstrapping`, `docs/BOOTSTRAP-GAPS.md`
 
-**Related:** [seed](#seed), [self-hosting](#self-hosting), [ignorance](#ignorance)
+**Related:** [seed](#seed), [self-hosting](#self-hosting), [ignorance](#ignorance), [self-reference](#self-reference)
 
 **Lineage:**
 
@@ -344,7 +345,7 @@ Ultrastable runs its own planning, issues, managers, trust ledger, plussing budg
 
 **Implemented by:** `foundation/selfhost.py`, `instances/ultrastable/selfhost.json`, `instances/ultrastable/gaps.json`
 
-**Related:** [closed-system](#closed-system), [gap-register](#gap-register), [bootstrapping](#bootstrapping)
+**Related:** [closed-system](#closed-system), [gap-register](#gap-register), [bootstrapping](#bootstrapping), [self-reference](#self-reference)
 
 **Lineage:**
 
@@ -862,3 +863,21 @@ A loop behaves as clockwork when it is a clock: it has an expected interval, its
 **Lineage:**
 
 - 1.0.0 (2026-11-12): Owner: this must all keep ticking like clockwork; a stopped or inaccurate clock is not a working clock. (`doctrine/clocks.json`)
+
+## <a id="self-reference"></a>Self-reference
+
+Ultrastable runs on Ultrastable, and that self-reference is what bootstrapping and criticality rest on. Bootstrapping: the bootstrap that boots any system boots Ultrastable from its own repository (the fixed point, foundation.selfhost.verify empty). Criticality: k_self counts only the verified deploys the system originated and executed on itself (its executor or its own server-side code agent). A deploy an outside session drove raises k but never k_self. The regime is self-sustaining when the fixed point holds and k_self >= k_floor, driven when only k reaches the floor, and subcritical below it.
+
+**Not:** Not a tagline and not k: a chain reaction kept up by an outside source is driven, not self-sustaining.
+
+**Also called:** runs on Ultrastable, k_self
+
+**Tested by:** `grep:tests/foundation/test_criticality.py::def test_self_reference_regime`; `grep:foundation/criticality.py::def bootstrap_holds`
+
+**Implemented by:** `foundation/criticality.py`, `doctrine/criticality.json`, `deploy/deploy-workers.mjs`, `foundation/selfhost.py`
+
+**Related:** [self-hosting](#self-hosting), [bootstrapping](#bootstrapping), [autonomy](#autonomy), [unattended](#unattended)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-14): Owner: 'Ultrastable runs on Ultrastable. That self-reference is key to bootstrapping and criticality.' Made a computed invariant in criticality (k_self, bootstrap, regime). (`foundation/criticality.py`)

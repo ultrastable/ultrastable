@@ -3,6 +3,7 @@
   python3 -m foundation criticality --tick [--apply]   compute k, log to ops/criticality.jsonl, escalate a stalled tick
   python3 -m foundation criticality --check            the declaration and the mantra are intact (CI)
   python3 -m foundation criticality --gate             print the queue the executor may take under the current k
+  python3 -m foundation criticality --origin <sha>     print who originated a commit: executor, self-agent, outside or unknown
 
 MANTRA = "Ship. Verify. Spend less than it earns. Feed the next loop."  Each clause is a check, not a sentence:
   Ship                         at least one deploy recorded in the window (ops/deploys.jsonl)
@@ -12,9 +13,16 @@ MANTRA = "Ship. Verify. Spend less than it earns. Feed the next loop."  Each cla
 k = verified deploys in window / (normalized cost + human touches). When k < k_floor the executor's queue is filtered to items that raise deploys or cut cost.
 Control rods: when normalized cost exceeds 1 the queue narrows further, to items that cut cost, until the cost guard reads under budget. chain = share of declared flows on a feedback cycle.
 A tick whose state (the clause results and the numbers behind them) equals the previous tick's is a failure: it is logged as stalled and files Q-CRIT-STALL.
+
+SELF-REFERENCE-1 (Rowan, 2026-11-14): "Ultrastable runs on Ultrastable. That self-reference is key to bootstrapping and criticality."
+  bootstrap   the fixed point: the bootstrap that boots any system boots Ultrastable from this repository (foundation.selfhost.verify is empty)
+  k_self      verified deploys the system originated and executed on itself / the same denominator as k. A deploy an outside session drove
+              is an external neutron source: it raises k, never k_self. Origin is read from the deployed commit (origin_of) or the row's `origin`.
+  regime      self-sustaining (bootstrap and k_self >= k_floor), driven (k >= k_floor, k_self below it), subcritical (k < k_floor)
+In the driven regime the gate keeps every item but moves the ones that raise k_self (raises-self label or id prefix) to the front.
 """
 from __future__ import annotations
-import hashlib, json, re, sys
+import hashlib, json, re, subprocess, sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -55,6 +63,44 @@ def human_touches(root=REPO) -> int:
     return sum(1 for it in queue.items(root) if it["status"] == "open" and re.search(r"ROWAN|identity-bound", it["owner"], re.I))
 
 
+def origin_of(text: str | None, c: dict | None = None) -> str:
+    """Who originated a deployed commit, from its message: executor (the server-side executor took an item from its own queue), self-agent
+    (a handoff by the system's own code agent), outside (a person or an outside code-agent session), unknown (no message to read)."""
+    if not text:
+        return "unknown"
+    sr = (c or cfg()).get("self_reference", {})
+    mk = sr.get("markers", {})
+    if mk.get("executor") and mk["executor"] in text:
+        return "executor"
+    m = re.search(mk.get("handoff_agent", r"(?m)^agent:\s*(\S+)"), text)
+    if m and m.group(1).lower().startswith(tuple(sr.get("self_agents_prefixes", []))):
+        return "self-agent"
+    return "outside"
+
+
+def commit_message(root, sha: str) -> str | None:
+    """The full message of a commit in this clone, or None when the commit is not here (a shallow clone): None reads as origin unknown."""
+    if not sha or not re.fullmatch(r"[0-9a-f]{7,40}", sha):
+        return None
+    r = subprocess.run(["git", "log", "-1", "--format=%B", sha], cwd=root, capture_output=True, text=True)
+    return r.stdout if r.returncode == 0 and r.stdout.strip() else None
+
+
+def deploy_origin(root, row: dict, c: dict) -> str:
+    return row.get("origin") or origin_of(commit_message(root, row.get("sha", "")), c)
+
+
+def bootstrap_holds(root=REPO) -> bool | None:
+    """The fixed point. None when the tree declares no self-hosting registry (a scratch or seed tree), so it is not judged."""
+    if not (Path(root) / "instances/ultrastable/selfhost.json").is_file():
+        return None
+    from . import selfhost
+    try:
+        return not selfhost.verify(root)
+    except (OSError, KeyError, ValueError):
+        return False  # a broken registry is a broken fixed point
+
+
 def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None) -> dict:
     c, now = cfg(root), now or datetime.now(timezone.utc)
     since = now - timedelta(hours=c["window_hours"])
@@ -64,7 +110,15 @@ def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None)
     if feed_ok is None:
         from . import flows
         feed_ok = not flows.check(root)
-    k = round(len(verified) / (max(cost, c["cost_floor"]) + touches), 3)
+    denom = max(cost, c["cost_floor"]) + touches
+    k = round(len(verified) / denom, 3)
+    sr = c.get("self_reference", {})
+    origins = {}
+    for r in verified:
+        o = deploy_origin(root, r, c); origins[o] = origins.get(o, 0) + 1
+    self_n = sum(n for o, n in origins.items() if o in sr.get("self_origins", ()))
+    k_self, boot = round(self_n / denom, 3), bootstrap_holds(root)
+    regime = "subcritical" if k < c["k_floor"] else "self-sustaining" if k_self >= c["k_floor"] and boot is not False else "driven"
     clauses = {"ship": len(dep) >= 1, "verify": len(dep) == len(verified), "spend": cost <= 1.0, "feed": bool(feed_ok)}
     from . import flows as _fl
     try:
@@ -72,11 +126,13 @@ def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None)
     except (OSError, KeyError, ValueError):
         chain = 0.0  # no declared flow graph: the chain reaction cannot be shown
     return {"chain": chain, "at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "mantra": MANTRA, "deploys": len(dep), "verified_deploys": len(verified),
-            "cost": cost, "human_touches": touches, "k": k, "clauses": clauses, "gate": "deploys-and-cost-only" if k < c["k_floor"] else "open"}
+            "cost": cost, "human_touches": touches, "k": k, "clauses": clauses, "gate": "deploys-and-cost-only" if k < c["k_floor"] else "open",
+            "self_deploys": self_n, "origins": origins, "k_self": k_self, "self_share": round(self_n / len(verified), 3) if verified else 0.0,
+            "bootstrap": boot, "regime": regime}
 
 
 def state_hash(r: dict) -> str:
-    keep = {k: r[k] for k in ("chain", "deploys", "verified_deploys", "cost", "human_touches", "k", "clauses")}
+    keep = {k: r[k] for k in ("chain", "deploys", "verified_deploys", "cost", "human_touches", "k", "clauses", "k_self", "bootstrap") if k in r}
     return hashlib.sha256(json.dumps(keep, sort_keys=True).encode()).hexdigest()[:16]
 
 
@@ -103,6 +159,12 @@ def raises(item: dict, c: dict) -> bool:
     return bool(labels & set(c["raises_labels"])) or str(item.get("number", "")).startswith(tuple(c["raises_id_prefixes"]))
 
 
+def raises_self(item: dict, c: dict) -> bool:
+    sr = c.get("self_reference", {})
+    labels = {(l["name"] if isinstance(l, dict) else l) for l in item.get("labels", [])}
+    return bool(labels & set(sr.get("raises_self_labels", []))) or str(item.get("number", "")).startswith(tuple(sr.get("raises_self_id_prefixes", [])))
+
+
 def gate(items: list[dict], root=REPO, now: datetime | None = None) -> list[dict]:
     """The queue under the invariant: with k below the floor only items that raise deploys or cut cost may be taken (features are deferred).
     When none qualify the full list is returned so the queue cannot starve; that fallback is itself logged by the tick as a clause failure."""
@@ -114,6 +176,8 @@ def gate(items: list[dict], root=REPO, now: datetime | None = None) -> list[dict
         rods = [i for i in items if "cuts-cost" in {(l["name"] if isinstance(l, dict) else l) for l in i.get("labels", [])} or str(i.get("number", "")).startswith("Q-COST")]
         return rods or items
     if r["k"] >= c["k_floor"]:
+        if r["regime"] == "driven":  # critical only on an outside source: the work that lets the system ship on itself goes first, nothing is dropped
+            return [i for i in items if raises_self(i, c)] + [i for i in items if not raises_self(i, c)]
         return items
     kept = [i for i in items if raises(i, c)]
     return kept or items
@@ -125,9 +189,15 @@ def check(root=REPO) -> list[str]:
         errs.append("mantra changed")
     if len(MANTRA.rstrip(".").split(". ")) != len(CLAUSES):
         errs.append("mantra clauses and computed checks differ")
-    for k in ("k_floor", "cost_floor", "raises_labels", "stall_item", "window_hours"):
+    for k in ("k_floor", "cost_floor", "raises_labels", "stall_item", "window_hours", "self_reference"):
         if k not in c:
             errs.append("missing " + k)
+    sr = c.get("self_reference", {})
+    for k in ("markers", "self_origins", "self_agents_prefixes", "raises_self_labels", "raises_self_id_prefixes"):
+        if k not in sr:
+            errs.append("self_reference missing " + k)
+    if bootstrap_holds(root) is False:
+        errs.append("bootstrap fixed point broken: python3 -m foundation selfhost --verify reports findings")
     r = compute(root, feed_ok=True)
     if set(r["clauses"]) != set(CLAUSES):
         errs.append("a clause has no check")
@@ -140,6 +210,9 @@ def main(argv=None) -> int:
         e = check(); print("\n".join(e) or "criticality ok: " + MANTRA); return 1 if e else 0
     if "--tick" in a:
         r = tick(apply="--apply" in a); print(json.dumps(r, indent=2)); return 1 if r["stalled"] and "--apply" not in a else 0  # applied: the stall is logged and filed as an item, which is the escalation
+    if "--origin" in a:
+        i = a.index("--origin"); sha = a[i + 1] if i + 1 < len(a) else ""
+        print(origin_of(commit_message(REPO, sha))); return 0
     if "--gate" in a:
         from . import queue
         print(json.dumps([i["number"] for i in gate(queue.takeable())])); return 0

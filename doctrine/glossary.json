@@ -483,7 +483,8 @@
    "related": [
     "seed",
     "self-hosting",
-    "ignorance"
+    "ignorance",
+    "self-reference"
    ],
    "lineage": [
     {
@@ -514,7 +515,8 @@
    "related": [
     "closed-system",
     "gap-register",
-    "bootstrapping"
+    "bootstrapping",
+    "self-reference"
    ],
    "lineage": [
     {
@@ -1396,6 +1398,41 @@
      "date": "2026-11-12",
      "change": "Owner: this must all keep ticking like clockwork; a stopped or inaccurate clock is not a working clock.",
      "source": "doctrine/clocks.json"
+    }
+   ]
+  },
+  {
+   "id": "self-reference",
+   "term": "Self-reference",
+   "aliases": [
+    "runs on Ultrastable",
+    "k_self"
+   ],
+   "version": "1.0.0",
+   "definition": "Ultrastable runs on Ultrastable, and that self-reference is what bootstrapping and criticality rest on. Bootstrapping: the bootstrap that boots any system boots Ultrastable from its own repository (the fixed point, foundation.selfhost.verify empty). Criticality: k_self counts only the verified deploys the system originated and executed on itself (its executor or its own server-side code agent). A deploy an outside session drove raises k but never k_self. The regime is self-sustaining when the fixed point holds and k_self >= k_floor, driven when only k reaches the floor, and subcritical below it.",
+   "not": "Not a tagline and not k: a chain reaction kept up by an outside source is driven, not self-sustaining.",
+   "tested_by": [
+    "grep:tests/foundation/test_criticality.py::def test_self_reference_regime",
+    "grep:foundation/criticality.py::def bootstrap_holds"
+   ],
+   "implemented_by": [
+    "foundation/criticality.py",
+    "doctrine/criticality.json",
+    "deploy/deploy-workers.mjs",
+    "foundation/selfhost.py"
+   ],
+   "related": [
+    "self-hosting",
+    "bootstrapping",
+    "autonomy",
+    "unattended"
+   ],
+   "lineage": [
+    {
+     "version": "1.0.0",
+     "date": "2026-11-14",
+     "change": "Owner: 'Ultrastable runs on Ultrastable. That self-reference is key to bootstrapping and criticality.' Made a computed invariant in criticality (k_self, bootstrap, regime).",
+     "source": "foundation/criticality.py"
     }
    ]
   }

@@ -864,6 +864,15 @@
    "title": "A PR whose author walks away dies dirty unless the server owns it",
    "body": "PR #324 (Worker gate, the fix for dead Actions minutes) sat dirty for a day because the session that wrote it ended and nothing server-side rebased or re-did it; every other open PR was in the same state. Owning the post-PR loop server-side (handoffs) and recording conflicts as server-owned state is the remedy; a client that merges by hand hides the gap.",
    "probe": "file:seed/worker/test/handoff.test.js"
+  },
+  {
+   "id": "decision-2026-11-14-self-reference-gates-criticality",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "Self-reference gates criticality",
+   "body": "k counts every verified deploy; k_self counts only deploys the system originated on itself, and the regime is driven until k_self reaches k_floor with the selfhost fixed point intact. First reading: k 2.245, k_self 0.0, regime driven.",
+   "probe": "grep:foundation/criticality.py::def bootstrap_holds",
+   "session": "session_0156nqDsV42XULU4MG6JWTcc"
   }
  ]
 }
