@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-14
 
+- 2026-11-14: CONTROL-PLANE-1 + ROLE-WORK-1: the tick Worker serves the org control plane (`seed/worker/src/controlplane.js`: GET /api/v1/status|agents|backlog|activity|integrations, POST /api/v1/events with bearer INTEGRATION_TOKEN, /ops dashboard), forwarded by the site at https://ultrastable.io/api/v1 and /ops and listed in the API catalog. Found 286 dispatches queued and none consumed: `seed/worker/src/work.js` now works every dispatch against its closing probe each tick. Follow-ups: CONTROL-PLANE-2 (companion wiring), ROLE-WORK-2 (executor takes waiting dispatches), OPS-DASH-2 (cost, k, clocks on /ops).
 - 2026-11-14: Actions jobs are refused (billing), so `scripts/local_checks.py` runs checks.yml without Actions (LOCAL-CHECKS-1); PRIORITIZE-2 ranks the backlog as goal vectors with live shadow prices (cost over budget x3, Actions blocked x1.5) and Pareto fronts (`doctrine/priorities.json`).
 Maintained by: every agent, on every session end. Staleness is checked by `scripts/check_memory.py` (CI `memory-fresh`).
 

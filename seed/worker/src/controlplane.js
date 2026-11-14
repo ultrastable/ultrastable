@@ -26,7 +26,7 @@ const STATUSES = ['ready', 'claimed', 'waiting', 'blocked', 'open', 'done', 'sup
 export const INTEGRATIONS = [
   { id: 'personal-companion', direction: 'both', reads: ['/api/v1/status', '/api/v1/agents', '/api/v1/backlog'], writes: ['/api/v1/events'],
     purpose: 'The owner\'s personal companion reads what the org is doing and sends requests, ideas and reminders as signals.', default_role: 'product-manager' },
-  { id: 'qnfo-fleet', direction: 'read', reads: ['/api/v1/status', '/api/v1/agents'], writes: [], purpose: 'The QNFO fleet dashboard shows this org beside its own workers.' },
+  { id: 'parent-fleet', direction: 'read', reads: ['/api/v1/status', '/api/v1/agents'], writes: [], purpose: 'A parent system or fleet dashboard shows this org beside its own workers (the level above reads the level below).' },
   { id: 'agents', direction: 'read', reads: ['/api/v1/openapi.json', '/mcp'], writes: [], purpose: 'Any agent discovers the org through the API catalog, OpenAPI and MCP.' },
 ];
 

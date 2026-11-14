@@ -831,6 +831,24 @@
    "title": "OUTREACH-INTRO-1: intro outreach lane",
    "body": "Rowan 2026-11-14: the system introduces the work to research institutes, funders, AI labs and third-sector organizations instead of waiting for postings. Contacts are role mailboxes the organization publishes on its own pages (resolved and re-verified by code), disclosed automated email, shared gate, dry-run default; live needs sender, postal address and secrets. Follow-up Q-INTRO-1.",
    "probe": "grep:scripts/outreach_intro.py::OUTREACH-INTRO-1"
+  },
+  {
+   "id": "decision-2026-11-14-control-plane-1-one-versioned-control-plane-api-and-ops-dash",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CONTROL-PLANE-1: one versioned control-plane API and /ops dashboard per org, served by the tick Worker from D1",
+   "body": "Every org gets GET /api/v1/{status,agents,backlog,activity,integrations}, POST /api/v1/events (bearer INTEGRATION_TOKEN) and /ops, in seed/worker/src/controlplane.js; the public site forwards /api/v1/* and /ops to the tick over the TICK service binding; the API catalog, llms.txt and OpenAPI list it. Reads are public read-only like /api/live; lists report total, returned and omitted.",
+   "probe": "grep:seed/worker/src/controlplane.js::getStatus",
+   "session": "wt-cp"
+  },
+  {
+   "id": "lesson-2026-11-14-role-work-1-dispatches-were-written-and-never-read-286-queue",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "ROLE-WORK-1: dispatches were written and never read (286 queued, 0 consumed on 2026-11-14)",
+   "body": "The tick's dispatch step claimed items for roles and wrote dispatch rows that no code consumed, so roles existed on paper only and claims expired and re-dispatched in a loop; stale TICKFAIL items also never closed. seed/worker/src/work.js now works each dispatch against its closing probe every tick (file:, metric:, item_done:, successor:, TICKFAIL), records verified or needs_executor outcomes, and closes satisfied unclaimed items. A row nothing reads is a silent drop; every new table gets its consumer in the same change.",
+   "probe": "grep:seed/worker/src/index.js::runRoleWork",
+   "session": "wt-cp"
   }
  ]
 }
