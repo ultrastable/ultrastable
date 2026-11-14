@@ -2,6 +2,7 @@
 //   CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... node deploy/deploy-site.mjs
 // This is the same sequence used for the first deploy on 2026-11-10 (Workers script upload, then Workers custom domains).
 import { readFileSync, readdirSync } from "node:fs";
+import { collectModules } from "../seed/worker/src/handoff.js";
 const T = process.env.CLOUDFLARE_API_TOKEN, A = process.env.CLOUDFLARE_ACCOUNT_ID;
 if (!T || !A) { console.error("set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID"); process.exit(1); }
 const api = (m, p, b, h = {}) => fetch("https://api.cloudflare.com/client/v4" + p, { method: m, headers: { authorization: "Bearer " + T, ...h }, body: b }).then(r => r.json());
@@ -15,13 +16,12 @@ for (const f of readdirSync(new URL("../site/assets/", import.meta.url)))
 // worker.js imports sibling modules by relative path (../seed/analytics/analytics.js). The upload API has no path resolution,
 // so each relative import is uploaded as a flat module and the specifier is rewritten to ./<name>. (Root cause of the silent
 // 0.2.0-live / 0.3.1-merged drift: the single-file upload was rejected with code 10021 and the script still exited 0.)
-let src = readFileSync(new URL("../site/worker.js", import.meta.url), "utf8");
-const extra = [];
-src = src.replace(/(from\s+")(\.{1,2}\/[^"]+)(")/g, (_, a, spec, c) => {
-  const name = spec.split("/").pop();
-  extra.push([name, readFileSync(new URL("../site/" + spec, import.meta.url))]);
-  return a + "./" + name + c;
-});
+// HANDOFF-1: modules are collected recursively with the same function the server-side deployer uses (seed/worker/src/handoff.js collectModules),
+// so a module imported by a module (agentic.js -> sop.js, controlplane.js -> ../seed/worker/src/handoff.js) is uploaded too. Root cause it closes: the
+// one-level flattening uploaded worker.js's direct imports only and Cloudflare rejected the script with 10021 "No such module".
+const ROOT_DIR = new URL("../", import.meta.url);
+const MODS = await collectModules(async (p) => readFileSync(new URL(p, ROOT_DIR), "utf8"), "site/worker.js");
+const src = MODS[0].src;
 // TOPOLOGY-1: bindings come from doctrine/topology.json (same mapping as foundation/topology.py `bindings`, live targets only), so the declaration and the deploy cannot disagree.
 // Plain Node on purpose: the deploy workflow has no Python dependencies installed.
 const TOPO = JSON.parse(readFileSync(new URL("../doctrine/topology.json", import.meta.url), "utf8"));
@@ -38,8 +38,7 @@ const TOPOLOGY_BINDINGS = topologyBindings("ultrastable-site");
 if (!TOPOLOGY_BINDINGS.some(b => b.name === "ASSETS" && b.namespace_id === ns.id)) { console.error("topology ASSETS namespace differs from the account's " + NS_TITLE); process.exit(1); }
 const form = new FormData();
 form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", bindings: TOPOLOGY_BINDINGS, keep_bindings: ["secret_text", "secret_key"] })], { type: "application/json" }));
-form.append("worker.js", new Blob([src], { type: "application/javascript+module" }), "worker.js");
-for (const [name, body] of extra) form.append(name, new Blob([body], { type: "application/javascript+module" }), name);
+for (const m of MODS) form.append(m.name, new Blob([m.src], { type: m.type }), m.name);
 const up = await api("PUT", `/accounts/${A}/workers/scripts/ultrastable-site`, form);
 console.log("upload", up.success);
 // BUILD-3: the hourly tick (model health, change rounds, idea work items).
