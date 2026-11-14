@@ -14,7 +14,7 @@
 1. Run python3 -m foundation design --check and --lint; every new finding is fixed in the change that caused it, and every baseline entry is paid down with a Q-DESIGN item (the baseline only shrinks).
 2. Read the experiments file: record the verdict of every experiment that reached its planned sample with python3 -m foundation design experiments --evaluate; a kept variant becomes the product default in doctrine/design.json in the same change.
 3. Promote the best blue-sky idea whose promote_when holds into an experiment with a metric, a guard and a prediction; wild ideas run only inside their blast_box, never on a production surface.
-4. For each new tenant system, derive its theme from its one accent seed (design --derive) and confirm the pairs pass; never let a person configure colours or fonts.
+4. For each new tenant system, select its personality from the library with design --select (taking siblings' looks into account) and confirm the pairs pass; never show a person a font, colour or theme picker. Keep the library small: add a personality only when it differs from every existing one and an experiment shows it earns its place.
 5. Scout design practice weekly with the scout pass (SCOUT-1): new accessibility rules, token standards and competitor surfaces; file a candidate practice in design.json research and adopt it as code or retire it.
 6. Ask a reviewer of a different model family to critique rendered phone screenshots of every changed surface against the invariants; its findings are items, not opinions.
 7. Report in four lines.

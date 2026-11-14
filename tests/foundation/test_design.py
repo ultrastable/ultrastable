@@ -83,3 +83,37 @@ class Experiments(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Library(unittest.TestCase):
+    def test_every_personality_is_proven_and_distinct(self):
+        self.assertEqual(D.library_check(D.load()), [])
+
+    def test_selection_reads_the_idea_not_a_menu(self):
+        self.assertEqual(D.select("a booking site for my pottery studio and gallery", "t1")["personality"], "studio")
+        self.assertEqual(D.select("track my family recipes and health habits", "t1")["personality"], "garden")
+        self.assertEqual(D.select("a trading signals desk with a budget tracker", "t1")["personality"], "ledger")
+
+    def test_selection_is_stable_and_spreads_when_the_words_say_nothing(self):
+        self.assertEqual(D.select("hello", "abc"), D.select("hello", "abc"))
+        seen = {D.select("hello", f"tenant-{i}")["personality"] for i in range(200)}
+        self.assertGreaterEqual(len(seen), 6)
+        self.assertNotIn("signal", seen)   # the platform's own look is never a default for a tenant
+
+    def test_siblings_do_not_look_alike(self):
+        a = D.select("a pottery studio", "x")["personality"]
+        b = D.select("a pottery studio", "x", taken=[a])["personality"]
+        self.assertNotEqual(a, b)
+
+    def test_two_lookalikes_are_refused(self):
+        cfg = D.load()
+        cfg["library"]["personalities"]["clone"] = dict(cfg["library"]["personalities"]["ledger"], seed="#2563EB")
+        self.assertTrue(any("look alike" in b for b in D.library_check(cfg)))
+
+    def test_an_experiment_can_vary_personality_only_within_the_library(self):
+        root = copy_repo()
+        p = root / "doctrine/design-experiments.json"
+        c = json.loads(p.read_text())
+        c["experiments"][0]["arms"][1]["overrides"] = {"personality": "no-such-look"}
+        p.write_text(json.dumps(c))
+        self.assertTrue(any("not in the library" in b for b in D.experiments_check(root)))

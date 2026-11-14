@@ -4,6 +4,7 @@
   python3 -m foundation design --lint [--write-baseline]   lint the product surfaces against the invariants (shrink-only baseline)
   python3 -m foundation design --css <product>         emit the --ds-* CSS for a product (light, dark by media query)
   python3 -m foundation design --tokens <product>      emit W3C design-tokens JSON ($value/$type)
+  python3 -m foundation design --library | --select "<idea words>" [--tenant ID] [--taken a,b]   the curated personalities; the automatic pick for a deployment
   python3 -m foundation design --derive <hex> [--portfolio ultrastable] [--display F] [--density D]
                                                       a tenant's whole theme from ONE accent colour, auto-corrected until every pair passes
   python3 -m foundation design experiments --check     validate doctrine/design-experiments.json
@@ -70,11 +71,14 @@ def derive_theme(accent_seed: str, portfolio: str = "ultrastable", display: str 
     """Full light and dark tokens from one accent seed. Neutrals and status colours come from the portfolio; the accent is moved in lightness only until its pairs pass."""
     cfg = cfg or load()
     pf = cfg["portfolios"][portfolio]
+    return derive_from(accent_seed, pf["neutrals"], pf["fonts"], pf["radius_px"], density or pf["density"], display or pf["fonts"]["display"], portfolio)
+
+
+def derive_from(accent_seed: str, neutrals: dict, fonts: dict, radius_px: dict, density: str, display: str, label: str) -> dict:
     h, s, _ = hsl(accent_seed)
-    out = {"portfolio": portfolio, "accent_seed": accent_seed.upper(), "display": display or pf["fonts"]["display"], "density": density or pf["density"],
-           "fonts": pf["fonts"], "radius_px": pf["radius_px"], "tokens": {}}
+    out = {"portfolio": label, "accent_seed": accent_seed.upper(), "display": display, "density": density, "fonts": fonts, "radius_px": radius_px, "tokens": {}}
     for mode in MODES:
-        t = dict(pf["neutrals"][mode])
+        t = dict(neutrals[mode])
         if mode == "light":
             on = "#FFFFFF"
             l = 0.62
@@ -123,6 +127,58 @@ def prove(theme: dict, cfg=None) -> list[str]:
             r = contrast(t[fg], t[bg])
             if r + 1e-9 < need:
                 bad.append(f"{mode}: {fg} on {bg} is {r:.2f}, needs {need}")
+    return bad
+
+
+def personality_theme(pid: str, cfg=None) -> dict:
+    cfg = cfg or load()
+    lib = cfg["library"]
+    p = lib["personalities"][pid]
+    neutrals = {m: {**lib["neutral_sets"][p["neutrals"]][m], **lib["status"][m]} for m in MODES}
+    fonts = {"display": lib["stacks"][p["display"]], "body": lib["stacks"][p["body"]], "mono": lib["stacks"]["technical"]}
+    return derive_from(p["seed"], neutrals, fonts, p["radius_px"], p["density"], fonts["display"], "personality:" + pid)
+
+
+def select(text: str, tenant_id: str, taken=(), cfg=None) -> dict:
+    """Pick a personality for a deployment from its own words. Deterministic, spreads deployments, never asks a person."""
+    cfg = cfg or load()
+    pers = cfg["library"]["personalities"]
+    low = (text or "").lower()
+    score = {k: sum(1 for w in v["keywords"] if w in low) for k, v in pers.items()}
+    free = [k for k in pers if k not in set(taken)] or list(pers)
+    best = max(score[k] for k in free)
+    pool = sorted(k for k in free if score[k] == best)
+    if best == 0 and len(pool) > 1 and "signal" in pool:
+        pool.remove("signal")  # signal is the platform's own look; a deployment gets it only by naming that work
+    pick = pool[int(hashlib.sha256(tenant_id.encode()).hexdigest(), 16) % len(pool)]
+    return {"personality": pick, "score": best, "reason": "matched %d keyword(s)" % best if best else "no signal in the words; spread by tenant id", "taken_avoided": sorted(set(taken) & set(pers))}
+
+
+def library_check(cfg) -> list[str]:
+    lib, bad = cfg["library"], []
+    P = lib["personalities"]
+    if len(P) < 6:
+        bad.append("library: fewer than six personalities is a menu of one")
+    for pid, p in P.items():
+        for k, v in (("neutrals", lib["neutral_sets"]), ("display", lib["stacks"]), ("body", lib["stacks"])):
+            if p[k] not in v:
+                bad.append(f"personality {pid}: unknown {k} {p[k]}")
+        if p["density"] not in cfg["density"]:
+            bad.append(f"personality {pid}: unknown density")
+        r = p["radius_px"]
+        if not (r["s"] <= r["m"] <= r["l"]):
+            bad.append(f"personality {pid}: radius must not shrink from s to l")
+        if not p["keywords"] or not p["mood"]:
+            bad.append(f"personality {pid}: needs a mood and keywords so selection can find it")
+        if not bad or not any(b.startswith(f"personality {pid}") for b in bad):
+            for f in prove(personality_theme(pid, cfg), cfg):
+                bad.append(f"personality {pid}: {f}")
+    ids = sorted(P)
+    for i, a in enumerate(ids):
+        for b in ids[i + 1:]:
+            pa, pb = P[a], P[b]
+            if (pa["neutrals"], pa["display"]) == (pb["neutrals"], pb["display"]) and hue_distance(pa["seed"], pb["seed"]) < lib["distinct_min_hue_deg"]:
+                bad.append(f"personalities {a} and {b} look alike (same neutrals, same display face, hues within {lib['distinct_min_hue_deg']} degrees)")
     return bad
 
 
@@ -185,6 +241,7 @@ def check(root=REPO) -> list[str]:
         for s in p.get("surfaces", []):
             if not (Path(root) / s).is_file():
                 bad.append(f"product {pid}: surface {s} does not exist")
+    bad += library_check(cfg)
     if cfg["tenants"]["default_portfolio"] not in cfg["portfolios"]:
         bad.append("tenants.default_portfolio is not a portfolio")
     for pr in cfg["research"]["practices"]:
@@ -203,6 +260,11 @@ def allowed_hex(cfg) -> set[str]:
         for mode in MODES:
             s |= {v.upper() for v in pf["neutrals"][mode].values()}
         s.add(pf["seed"].upper())
+    for pid in cfg["library"]["personalities"]:
+        th = personality_theme(pid, cfg)
+        s.add(th["accent_seed"])
+        for mode in MODES:
+            s |= {v.upper() for v in th["tokens"][mode].values()}
     for pid in cfg["products"]:
         th = product_theme(pid, cfg)
         s.add(th["accent_seed"])
@@ -276,6 +338,8 @@ def experiments_check(root=REPO) -> list[str]:
             ov = set(a.get("overrides", {}))
             if not ov <= set(pol["axes_allowed"]):
                 bad.append(f"experiment {i}: arm {a.get('id')} varies {sorted(ov - set(pol['axes_allowed']))}, not an allowed axis")
+            if "personality" in a.get("overrides", {}) and a["overrides"]["personality"] not in cfg["library"]["personalities"]:
+                bad.append(f"experiment {i}: arm {a.get('id')} names a personality that is not in the library")
             if "accent_seed" in a.get("overrides", {}) and e.get("surface") in cfg["products"]:
                 pr = cfg["products"][e["surface"]]
                 th = derive_theme(a["overrides"]["accent_seed"], pr["portfolio"], pr.get("display"), pr.get("density"), cfg)
@@ -362,6 +426,16 @@ def main(argv=None) -> int:
         if not new and not stale:
             print("design lint ok")
         return 1 if (new or stale) else 0
+    if a[:1] == ["--library"]:
+        for k, v in cfg["library"]["personalities"].items():
+            print(f"{k:12} {v['mood']:34} seed {v['seed']}  {v['neutrals']}/{v['display']}/{v['density']}")
+        return 0
+    if a[:1] == ["--select"] and len(a) >= 2:
+        kw = {a[i][2:]: a[i + 1] for i in range(2, len(a) - 1, 2)}
+        r = select(a[1], kw.get("tenant", "tenant"), [x for x in kw.get("taken", "").split(",") if x], cfg)
+        print(json.dumps(r))
+        print(css(personality_theme(r["personality"], cfg), cfg))
+        return 0
     if a[:1] == ["--css"] and len(a) == 2:
         print(css(product_theme(a[1], cfg), cfg))
         return 0
