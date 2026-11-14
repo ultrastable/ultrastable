@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-14T14:48:41Z",
- "commit": "0e3f48a",
+ "generated": "2026-11-14T11:01:35Z",
+ "commit": "3c0957a",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 76,
@@ -14,25 +14,25 @@
   "stories_passing": 9,
   "stories_total": 9,
   "open_gaps": 3,
-  "open_prs": 5,
-  "merged_prs_listed": 35,
-  "prs_merged_total": 227,
+  "open_prs": 7,
+  "merged_prs_listed": 33,
+  "prs_merged_total": 223,
   "prs_merged_unattended": 2,
-  "backlog_open": 133,
-  "backlog_items": 138
+  "backlog_open": 131,
+  "backlog_items": 136
  },
  "throughput": {
   "queue": {
-   "items": 138,
+   "items": 136,
    "by_status": {
-    "open": 133,
+    "open": 131,
     "closed": 4,
     "done": 1
    },
-   "takeable_now": 129
+   "takeable_now": 127
   },
   "merged": {
-   "total": 227,
+   "total": 223,
    "by_origin": {
     "unattended executor": {
      "prs": 2,
@@ -40,9 +40,9 @@
      "lines_removed": 405
     },
     "agent session": {
-     "prs": 195,
-     "lines_added": 136541,
-     "lines_removed": 31667
+     "prs": 194,
+     "lines_added": 136336,
+     "lines_removed": 31666
     },
     "bot": {
      "prs": 4,
@@ -50,9 +50,9 @@
      "lines_removed": 10
     },
     "other": {
-     "prs": 26,
-     "lines_added": 14213,
-     "lines_removed": 1304
+     "prs": 23,
+     "lines_added": 7428,
+     "lines_removed": 920
     }
    },
    "per_day": {
@@ -60,7 +60,7 @@
     "2026-11-11": 12,
     "2026-11-12": 87,
     "2026-11-13": 32,
-    "2026-11-14": 6
+    "2026-11-14": 2
    },
    "median_hours_open_to_merge": 0.01
   },
@@ -68,14 +68,6 @@
    {
     "date": "2026-11-14",
     "changes": [
-     {
-      "n": 339,
-      "title": "outreach: intro lane that introduces the work to organizations (OUTREACH-INTRO-1)",
-      "by": "other",
-      "plus": 1916,
-      "minus": 19,
-      "url": "https://github.com/ultrastable/ultrastable/pull/339"
-     },
      {
       "n": 337,
       "title": "LOCAL-CHECKS-1: verify PRs without Actions minutes; fix criticality time-bomb; green main",
@@ -85,36 +77,12 @@
       "url": "https://github.com/ultrastable/ultrastable/pull/337"
      },
      {
-      "n": 336,
-      "title": "META-SIGNAL-1: meta content of utterances and mic events feeds the roadmap",
-      "by": "other",
-      "plus": 255,
-      "minus": 4,
-      "url": "https://github.com/ultrastable/ultrastable/pull/336"
-     },
-     {
       "n": 335,
       "title": "DESIGN-LANGUAGE-1: design language, enforcement, design R&D and design-manager role",
       "by": "agent session",
       "plus": 2423,
       "minus": 794,
       "url": "https://github.com/ultrastable/ultrastable/pull/335"
-     },
-     {
-      "n": 334,
-      "title": "PRIORITIZE-1: ranked backlog feeds the executor; Actions billing blocker on NEEDS-YOU",
-      "by": "other",
-      "plus": 4614,
-      "minus": 361,
-      "url": "https://github.com/ultrastable/ultrastable/pull/334"
-     },
-     {
-      "n": 318,
-      "title": "SELF-IMPROVE-1: universal self-improvement algorithm, signals, verdict rule",
-      "by": "agent session",
-      "plus": 205,
-      "minus": 1,
-      "url": "https://github.com/ultrastable/ultrastable/pull/318"
      }
     ]
    },
@@ -1910,18 +1878,18 @@
   "deploys": {
    "site_runs": 50,
    "by_conclusion": {
-    "failure": 3,
-    "success": 44,
+    "failure": 1,
+    "success": 46,
     "cancelled": 3
    },
    "latest": {
     "conclusion": "failure",
-    "createdAt": "2026-11-14T11:03:17Z",
+    "createdAt": "2026-11-14T10:55:27Z",
     "event": "push",
-    "headSha": "af4956de81abf0727fd12d57dafa6e3cca3fc136"
+    "headSha": "64dece4e49869c749794444b075c1f9a16805bff"
    },
    "per_day_success": {
-    "2026-11-12": 24,
+    "2026-11-12": 26,
     "2026-11-13": 20,
     "2026-11-14": 0
    }
@@ -1929,15 +1897,15 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "failure": 25,
-    "success": 5
+    "failure": 16,
+    "success": 14
    },
    "prs_opened_unattended": 6,
    "prs_merged_unattended": 2,
    "attempts": {
-    "CLOSED": 3,
+    "MERGED": 2,
     "OPEN": 1,
-    "MERGED": 2
+    "CLOSED": 3
    },
    "log_rows": 1
   },
@@ -1952,7 +1920,7 @@
    "id": "heartbeat",
    "what": "the Cloudflare tick ran",
    "sla_s": 900,
-   "age_s": 450.4,
+   "age_s": 24.0,
    "status": "fresh",
    "missed": 0
   },
@@ -1960,7 +1928,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 4095.4,
+   "age_s": 308.0,
    "status": "fresh",
    "missed": 0
   },
@@ -1968,7 +1936,7 @@
    "id": "pr",
    "what": "an unattended pull request was opened",
    "sla_s": 172800,
-   "age_s": 90956.4,
+   "age_s": 77330.0,
    "status": "fresh",
    "missed": 0
   },
@@ -1976,7 +1944,7 @@
    "id": "merge",
    "what": "an unattended pull request merged to main",
    "sla_s": 259200,
-   "age_s": 162136.4,
+   "age_s": 148510.0,
    "status": "fresh",
    "missed": 0
   },
@@ -1984,15 +1952,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 13472.4,
-   "status": "expired",
-   "missed": 14
+   "age_s": 315.0,
+   "status": "fresh",
+   "missed": 0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 92055.4,
+   "age_s": 78429.0,
    "status": "fresh",
    "missed": 0
   }
@@ -2011,35 +1979,35 @@
     "name": "Q-10",
     "state": "merged",
     "pr": 268,
-    "age_h": 48.4,
+    "age_h": 44.7,
     "url": "https://github.com/ultrastable/ultrastable/pull/268"
    },
    {
     "name": "unnamed-277",
     "state": "closed",
     "pr": 277,
-    "age_h": 47.7,
+    "age_h": 43.9,
     "url": "https://github.com/ultrastable/ultrastable/pull/277"
    },
    {
     "name": "executor",
     "state": "merged",
     "pr": 284,
-    "age_h": 45.1,
+    "age_h": 41.4,
     "url": "https://github.com/ultrastable/ultrastable/pull/284"
    },
    {
     "name": "Q-GROW-AGENT-DIRECTORIES",
     "state": "closed",
     "pr": 297,
-    "age_h": 30.1,
+    "age_h": 26.3,
     "url": "https://github.com/ultrastable/ultrastable/pull/297"
    },
    {
     "name": "Q-COST-PROOF-1",
     "state": "expired",
     "pr": 314,
-    "age_h": 25.3,
+    "age_h": 21.5,
     "url": "https://github.com/ultrastable/ultrastable/pull/314"
    },
    {
@@ -2053,49 +2021,49 @@
     "name": "Q-COST-PROOF-1",
     "state": "expired",
     "pr": 314,
-    "age_h": 25.3,
+    "age_h": 21.5,
     "url": "https://github.com/ultrastable/ultrastable/pull/314"
    }
   ]
  },
  "product_manager": {
-  "generated": "2026-11-14T14:48:02Z",
+  "generated": "2026-11-14T11:00:54Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1327.8,
-    "value": 3332,
+    "expected_today": 1326.7,
+    "value": 2917,
     "behind": false,
-    "progress": 10.64
+    "progress": 8.46
    },
    {
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 572.0,
-    "value": 1316,
+    "expected_today": 571.6,
+    "value": 1262,
     "behind": false,
-    "progress": 8.74
+    "progress": 8.12
    },
    {
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 834.1,
-    "value": 1710,
+    "expected_today": 833.1,
+    "value": 1645,
     "behind": false,
-    "progress": 4.88
+    "progress": 4.52
    },
    {
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 332.9,
-    "value": 1052,
+    "expected_today": 332.5,
+    "value": 856,
     "behind": false,
-    "progress": 9.81
+    "progress": 7.16
    }
   ],
   "experiments": [],
@@ -2112,9 +2080,7 @@
   },
   "filed": {
    "growth": [],
-   "repair": [
-    "Q-REPAIR-STAGE-DEPLOY"
-   ]
+   "repair": []
   },
   "stages": [
    {
@@ -2139,8 +2105,8 @@
    },
    {
     "id": "deploy",
-    "status": "expired",
-    "missed": 14
+    "status": "fresh",
+    "missed": 0
    },
    {
     "id": "publish",
@@ -2153,41 +2119,41 @@
  "growth": {
   "mix": {
    "growth": 1,
-   "fix": 2,
-   "maintenance": 17,
+   "fix": 1,
+   "maintenance": 18,
    "total": 20,
    "growth_share": 0.05,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 29,
-  "items_takeable": 129,
+  "items_takeable": 127,
   "metrics": [
    {
     "id": "pageviews_7d",
     "what": "human page views in the last 7 days (first-party, cookieless, bots excluded)",
-    "value": 3332,
+    "value": 2917,
     "target": 1500,
     "breach": false
    },
    {
     "id": "visitors_7d",
     "what": "distinct visitors in the last 7 days",
-    "value": 1316,
+    "value": 1262,
     "target": 650,
     "breach": false
    },
    {
     "id": "agent_hits_7d",
     "what": "requests from bots and agents in the last 7 days (discovery documents, MCP, llms.txt)",
-    "value": 1710,
+    "value": 1645,
     "target": 1000,
     "breach": false
    },
    {
     "id": "pilot_page_views_7d",
     "what": "views of the pilot application page in the last 7 days",
-    "value": 1052,
+    "value": 856,
     "target": 400,
     "breach": false
    }
@@ -2199,7 +2165,7 @@
    "id": "tick-heartbeat",
    "what": "the org's heartbeat on Cloudflare (cron every 10 minutes): reconcile, claims, gates, predictions, dispatch",
    "source": "d1",
-   "last_beat_age_s": 489.5,
+   "last_beat_age_s": 63.7,
    "expected_interval_s": 600,
    "beats_24h": 144,
    "expected_24h": 144.0,
@@ -2210,7 +2176,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 4134.5,
+   "last_beat_age_s": 347.7,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -2221,7 +2187,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 9041.5,
+   "last_beat_age_s": 78468.7,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -2232,9 +2198,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 13508.5,
+   "last_beat_age_s": 352.7,
    "expected_interval_s": 86400,
-   "beats_24h": 11,
+   "beats_24h": 22,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -2243,7 +2209,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 153810.5,
+   "last_beat_age_s": 140184.7,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2297,7 +2263,7 @@
    {
     "id": "ultrastable-site",
     "state": "live",
-    "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents), control-plane API /api/v1 and /ops dashboard (reads ORG live)",
+    "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents)",
     "public": true
    },
    {
@@ -2322,7 +2288,6 @@
   "drift": [
    "worker ultrastable-tick: binding CREDENTIAL_KEY (secret_text) is deployed but not declared",
    "worker ultrastable-tick: binding GITHUB_REPOS (secret_text) is deployed but not declared",
-   "worker ultrastable-site: binding ORG (d1) is declared but not deployed",
    "worker ultrastable-site: binding CF_ACCOUNT_ID (secret_text) is deployed but not declared",
    "worker ultrastable-site: binding CF_DEPLOY_TOKEN (secret_text) is deployed but not declared"
   ]
@@ -3849,40 +3814,22 @@
  "changes": {
   "commits": [
    {
-    "sha": "0e3f48a",
-    "at": "2026-11-14T13:09:22+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "outreach: intro lane that introduces the work to organizations (OUTREACH-INTRO-1) (#339)",
-    "pr": 339,
-    "item": "OUTREACH-INTRO-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/0e3f48a6a8d9de385be937bc884be112bba20d51"
+    "sha": "3c0957a",
+    "at": "2026-11-14T11:56:27+01:00",
+    "author": "ultrastable-ops",
+    "subject": "PRIORITIZE-2: vector goals, binding-constraint shadow prices, Pareto fronts",
+    "pr": null,
+    "item": "PRIORITIZE-2",
+    "url": "https://github.com/ultrastable/ultrastable/commit/3c0957a42a9ea54b73cfc4ed5fd9696e33c73b5e"
    },
    {
-    "sha": "af4956d",
-    "at": "2026-11-14T12:03:14+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "META-SIGNAL-1: meta content of utterances and mic events feeds the roadmap (#336)",
-    "pr": 336,
-    "item": "META-SIGNAL-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/af4956de81abf0727fd12d57dafa6e3cca3fc136"
-   },
-   {
-    "sha": "146817c",
-    "at": "2026-11-14T12:02:54+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "SELF-IMPROVE-1: universal self-improvement algorithm, signals, verdict rule (#318)",
-    "pr": 318,
-    "item": "SELF-IMPROVE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/146817cfbebefa4906703e03b0cf779bf632cc6a"
-   },
-   {
-    "sha": "64bde05",
-    "at": "2026-11-14T12:02:03+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "PRIORITIZE-1: ranked backlog feeds the executor; Actions billing blocker on NEEDS-YOU (#334)",
-    "pr": 334,
-    "item": "PRIORITIZE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/64bde057cf5c9d3a3430999f7c1c4904965d5396"
+    "sha": "c775786",
+    "at": "2026-11-14T11:55:34+01:00",
+    "author": "ultrastable-ops",
+    "subject": "merge main",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/c77578683794b0191d5dc5204ce8a0688f3cf50a"
    },
    {
     "sha": "64dece4",
@@ -3901,6 +3848,42 @@
     "pr": 335,
     "item": "DESIGN-LANGUAGE-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/d08bf5f57357165d451f45d1a54edad129014b55"
+   },
+   {
+    "sha": "8e132e4",
+    "at": "2026-11-14T11:01:06+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "ZERO-MINUTES-1 step 2: Worker-native executor provider (priority queue -> Workers AI -> guarded contents-API PR)",
+    "pr": null,
+    "item": "ZERO-MINUTES-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/8e132e4f530fc9655acc01c16df6681f8daf1a9f"
+   },
+   {
+    "sha": "3b4b8b8",
+    "at": "2026-11-14T10:58:24+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SEED: doctrine for seed, vector, fork and collapse; Q-SEED-1..3 queue items",
+    "pr": null,
+    "item": "Q-SEED-",
+    "url": "https://github.com/ultrastable/ultrastable/commit/3b4b8b8b82401ed74a5b0332a2475cd079b02ed1"
+   },
+   {
+    "sha": "5a1d613",
+    "at": "2026-11-14T10:57:30+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "NEEDS-YOU: render billing item",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/5a1d6135a812f7111f26dc44234c74ef600ad6a2"
+   },
+   {
+    "sha": "6ad595c",
+    "at": "2026-11-14T10:57:16+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PRIORITIZE-1: goal/pin/dependency/size ranker feeds the executor; billing blocker added to NEEDS-YOU",
+    "pr": null,
+    "item": "PRIORITIZE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/6ad595c5598a516cfddea05c7972bc74ba6c1b63"
    },
    {
     "sha": "abcfe8b",
@@ -4189,51 +4172,9 @@
     "pr": 309,
     "item": "AUTH-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/20d8425b0b7740aae52c534a1ca8077e47c8a2a5"
-   },
-   {
-    "sha": "6e6a357",
-    "at": "2026-11-13T12:45:08+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "AUTH-1: forward /connect from the public site to the tick Worker (#308)",
-    "pr": 308,
-    "item": "AUTH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/6e6a357599a91d65906fc4b24a0d7f465838d315"
-   },
-   {
-    "sha": "bcbcb3e",
-    "at": "2026-11-13T11:44:40Z",
-    "author": "ultrastable-ops",
-    "subject": "deploy-workers: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/bcbcb3e394cdf724786d8cb3f2fda9ad31a0ce8a"
    }
   ],
   "pull_requests": [
-   {
-    "number": 339,
-    "title": "outreach: intro lane that introduces the work to organizations (OUTREACH-INTRO-1)",
-    "state": "merged",
-    "branch": "ccr-60691fe9-9o0iwa",
-    "opened": "2026-11-14T12:07:10Z",
-    "merged": "2026-11-14T12:09:23Z",
-    "by": "rwnq8",
-    "labels": [],
-    "item": "OUTREACH-INTRO-1",
-    "url": "https://github.com/ultrastable/ultrastable/pull/339"
-   },
-   {
-    "number": 338,
-    "title": "ACCOUNT-SPLIT-1: tenant 0 on its own Cloudflare account; providers model",
-    "state": "draft",
-    "branch": "feat/account-split-provider-arch",
-    "opened": "2026-11-14T11:01:03Z",
-    "merged": null,
-    "by": "rwnq8",
-    "labels": [],
-    "item": "ACCOUNT-SPLIT-1",
-    "url": "https://github.com/ultrastable/ultrastable/pull/338"
-   },
    {
     "number": 337,
     "title": "LOCAL-CHECKS-1: verify PRs without Actions minutes; fix criticality time-bomb; green main",
@@ -4249,10 +4190,10 @@
    {
     "number": 336,
     "title": "META-SIGNAL-1: meta content of utterances and mic events feeds the roadmap",
-    "state": "merged",
+    "state": "open",
     "branch": "meta-signal-1",
     "opened": "2026-11-14T10:13:44Z",
-    "merged": "2026-11-14T11:03:15Z",
+    "merged": null,
     "by": "rwnq8",
     "labels": [],
     "item": "META-SIGNAL-1",
@@ -4273,10 +4214,10 @@
    {
     "number": 334,
     "title": "PRIORITIZE-1: ranked backlog feeds the executor; Actions billing blocker on NEEDS-YOU",
-    "state": "merged",
+    "state": "open",
     "branch": "prioritize-1",
     "opened": "2026-11-14T09:57:34Z",
-    "merged": "2026-11-14T11:02:04Z",
+    "merged": null,
     "by": "rwnq8",
     "labels": [],
     "item": "PRIORITIZE-1",
@@ -4475,10 +4416,10 @@
    {
     "number": 318,
     "title": "SELF-IMPROVE-1: universal self-improvement algorithm, signals, verdict rule",
-    "state": "merged",
+    "state": "open",
     "branch": "agent/selfimprove-1",
     "opened": "2026-11-13T14:15:11Z",
-    "merged": "2026-11-14T11:02:55Z",
+    "merged": null,
     "by": "rwnq8",
     "labels": [
      "ci-failed",
@@ -4719,6 +4660,30 @@
     ],
     "item": "Q-COST-PROOF-",
     "url": "https://github.com/ultrastable/ultrastable/pull/300"
+   },
+   {
+    "number": 299,
+    "title": "Q-COST-PROOF-1: queue Quniverse cost proof and resource discovery",
+    "state": "merged",
+    "branch": "claude/cost-proof-1",
+    "opened": "2026-11-13T09:07:56Z",
+    "merged": "2026-11-13T09:08:01Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "Q-COST-PROOF-",
+    "url": "https://github.com/ultrastable/ultrastable/pull/299"
+   },
+   {
+    "number": 298,
+    "title": "DEPLOY-ALL-1: merges deploy the tick and dashboard Workers and verify live code equals the commit",
+    "state": "merged",
+    "branch": "claude/project-thread-vp7syx",
+    "opened": "2026-11-13T08:41:14Z",
+    "merged": "2026-11-13T08:41:22Z",
+    "by": "rwnq8",
+    "labels": [],
+    "item": "DEPLOY-ALL-1",
+    "url": "https://github.com/ultrastable/ultrastable/pull/298"
    }
   ]
  },
