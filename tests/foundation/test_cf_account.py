@@ -57,3 +57,16 @@ class CfAccount(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class MultiModuleCopy(unittest.TestCase):
+    def test_parse_modules_picks_default_export_as_main(self):
+        import importlib.util, pathlib
+        spec = importlib.util.spec_from_file_location("cfa", pathlib.Path(__file__).resolve().parents[2] / "scripts" / "cf_account.py")
+        m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+        nl = bytes([13, 10])
+        raw = b"--B" + nl + b'Content-Disposition: form-data; name="util.js"' + nl + nl + b"export const x=1;" + nl + b"--B" + nl + b'Content-Disposition: form-data; name="index.js"' + nl + nl + b"export default {};" + nl + b"--B--" + nl
+        mods = m.parse_modules(raw)
+        self.assertEqual([x[0] for x in mods], ["util.js", "index.js"])
+        self.assertEqual(m.main_module(mods), "index.js")
+        self.assertEqual(m.parse_modules(b"export default {}")[0][0], "worker.js")
