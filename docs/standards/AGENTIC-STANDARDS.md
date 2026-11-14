@@ -40,6 +40,18 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | Web Bot Auth (signed agents) | IETF (HTTP Message Signatures based); Cloudflare | draft | planned | STD-3: verify signatures on inbound agent traffic at the edge and sign outbound agent requests |
 | x402 and pay per crawl (payable web) | x402 (open protocol); Cloudflare Monetization Gateway | draft | n/a | Money movement is identity-bound and irreversible (interrupt gate). Revisit only through a gate card. |
 | NLWeb and WebMCP (browser-side agent tools) | Microsoft (NLWeb); WebMCP community and browsers | proposal | n/a | The Worker serves no content site; the site repository adopts these when it publishes (tracked in its own register). |
+| MCP enterprise-managed authorization (ID-JAG, XAA) | MCP project; IETF OAuth WG (draft) | draft | planned | STD-4: accept ID-JAG assertions on our authorization server and present them as a client; extension is stable in MCP 2026-07-28 but ID-JAG itself is an IETF draft (-04) |
+| OAuth device authorization grant (RFC 8628) and URL-mode elicitation for consent | IETF OAuth WG; MCP project | stable | planned | STD-5: device flow for CLI and headless agents; surface consent URLs through MCP URL elicitation |
+| OpenID Shared Signals Framework, CAEP and RISC | OpenID Foundation | stable | planned | STD-6: receive and emit SSF events for connectors and issued tokens |
+| DPoP (RFC 9449), Resource Indicators (RFC 8707) and Rich Authorization Requests (RFC 9396) | IETF OAuth WG | stable | planned | STD-7: bind issued tokens with DPoP, require resource indicators, express scopes as RAR |
+| Workload identity for agents (WIMSE, SPIFFE) and transaction tokens | IETF WIMSE; CNCF | draft | planned | STD-8: give each virtual agent a durable ID and short-lived credentials per task; carry the chain in transaction tokens |
+| OpenID AuthZEN (policy decision point API) | OpenID Foundation | stable | planned | STD-9: expose the trust ledger as an AuthZEN decision endpoint |
+| A2A v1.0 with signed Agent Cards and task lifecycle | Agentic AI Foundation | stable | planned | ROADMAP-AGENT-A2A-V1: serve a v1.0 signed card, message/send and tasks/get |
+| MCP Apps (SEP-1865), AG-UI and A2UI for rich agent surfaces | MCP project; AG-UI; Google (A2UI) | draft | planned | STD-10: ship the connect and approve screens as MCP Apps; AG-UI event stream for the dashboard |
+| Agent Client Protocol (editor to coding agent) | Zed and community | draft | planned | STD-11: watch; adopt if VS Code or JetBrains ship it for third-party harnesses |
+| AP2 mandates and UCP commerce | Google, Shopify, Linux Foundation | draft | planned | STD-12: n/a until funding; any payment is identity-bound and stays behind a gate card |
+| C2PA content credentials (ISO/IEC 21694) and EU AI Act Article 50 marking | C2PA; EU | stable | planned | STD-13: sign published artifacts with content credentials; legal-ip manager confirms scope |
+| ISO/IEC 42001 AI management system | ISO | stable | planned | STD-14: map existing ledgers (decision log, trust ledger, failure modes) to 42001 controls |
 
 <!-- standards:end -->
 
