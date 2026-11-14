@@ -1,0 +1,4 @@
+{
+ "_doc": "Organizations to introduce the work to (OUTREACH-INTRO-1). Rows carry only a name, a homepage on the organization's own domain and a segment; scripts/outreach_intro.py resolves a published role mailbox from the organization's own pages and records its source. Never add personal addresses, purchased lists or scraped lists. Add rows with `outreach_intro.py add`; a reply of opt-out, rejected or bounce sets outreach:false.",
+ "items": []
+}

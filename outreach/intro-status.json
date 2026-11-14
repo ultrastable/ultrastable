@@ -1,0 +1,138 @@
+{
+ "generated": "2026-11-14",
+ "mode": "dry-run",
+ "kill": false,
+ "live_blockers": [
+  "sender-identity",
+  "postal-address",
+  "mode-live"
+ ],
+ "metrics": {
+  "intro_prospects": 15,
+  "intro_state_unresolved": 0,
+  "intro_state_no-public-route": 2,
+  "intro_state_form-only": 7,
+  "intro_state_verified": 6,
+  "intro_state_packet-ready": 0,
+  "intro_state_guard-failed": 0,
+  "intro_state_queued": 0,
+  "intro_state_sent": 0,
+  "intro_state_replied": 0,
+  "intro_state_accepted": 0,
+  "intro_state_rejected": 0,
+  "intro_state_suppressed": 0,
+  "intro_state_stale": 0,
+  "intro_state_closed": 0,
+  "intro_sent_total": 0,
+  "intro_replies_total": 0,
+  "intro_meetings_total": 0,
+  "intro_awaiting_person_reply": 0
+ },
+ "targets": [
+  {
+   "key": "intro:P-ADALOVELACE",
+   "name": "Ada Lovelace Institute",
+   "segment": "research-institute",
+   "state": "form-only",
+   "last_event": "form-only"
+  },
+  {
+   "key": "intro:P-AINOW",
+   "name": "AI Now Institute",
+   "segment": "research-institute",
+   "state": "form-only",
+   "last_event": "form-only"
+  },
+  {
+   "key": "intro:P-ALLENAI",
+   "name": "Allen Institute for AI",
+   "segment": "ai-lab",
+   "state": "verified",
+   "last_event": "verified"
+  },
+  {
+   "key": "intro:P-ASTERA",
+   "name": "Astera Institute",
+   "segment": "funder",
+   "state": "verified",
+   "last_event": "verified"
+  },
+  {
+   "key": "intro:P-CAIS",
+   "name": "Center for AI Safety",
+   "segment": "research-institute",
+   "state": "verified",
+   "last_event": "verified"
+  },
+  {
+   "key": "intro:P-CHT",
+   "name": "Center for Humane Technology",
+   "segment": "third-sector",
+   "state": "verified",
+   "last_event": "verified"
+  },
+  {
+   "key": "intro:P-DATASOCIETY",
+   "name": "Data & Society",
+   "segment": "research-institute",
+   "state": "form-only",
+   "last_event": "form-only"
+  },
+  {
+   "key": "intro:P-EAI",
+   "name": "EleutherAI",
+   "segment": "ai-lab",
+   "state": "verified",
+   "last_event": "verified"
+  },
+  {
+   "key": "intro:P-FORESIGHT",
+   "name": "Foresight Institute",
+   "segment": "funder",
+   "state": "form-only",
+   "last_event": "form-only"
+  },
+  {
+   "key": "intro:P-GOVAI",
+   "name": "Centre for the Governance of AI",
+   "segment": "research-institute",
+   "state": "verified",
+   "last_event": "verified"
+  },
+  {
+   "key": "intro:P-MOZILLA",
+   "name": "Mozilla Foundation",
+   "segment": "funder",
+   "state": "no-public-route",
+   "last_event": "no-public-route"
+  },
+  {
+   "key": "intro:P-OPENPHIL",
+   "name": "Open Philanthropy",
+   "segment": "funder",
+   "state": "form-only",
+   "last_event": "form-only"
+  },
+  {
+   "key": "intro:P-PAI",
+   "name": "Partnership on AI",
+   "segment": "third-sector",
+   "state": "form-only",
+   "last_event": "form-only"
+  },
+  {
+   "key": "intro:P-SCHMIDT",
+   "name": "Schmidt Sciences",
+   "segment": "funder",
+   "state": "form-only",
+   "last_event": "form-only"
+  },
+  {
+   "key": "intro:P-TURING",
+   "name": "The Alan Turing Institute",
+   "segment": "research-institute",
+   "state": "no-public-route",
+   "last_event": "no-public-route"
+  }
+ ]
+}

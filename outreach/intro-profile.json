@@ -1,0 +1,56 @@
+{
+ "_doc": "Who is introducing the work, and the only words intro emails may contain (OUTREACH-INTRO-1). Wording comes from docs/BRAND.md and outreach/profiles.json; nothing here claims revenue, funding, customers, patents or results. The guard checks every field before anything is queued. Segment angles say what we want to learn, never what we have achieved.",
+ "disclosure": "This message was sent by an automated outreach system on behalf of Rowan Quni-Gudzinas. Replies go to a person.",
+ "who": "Rowan is a systems researcher studying autonomous AI systems: how they behave, fail and can be audited, drawing on twenty years of network and decision modeling in public-sector and third-sector settings.",
+ "what": "Two connected efforts: Ultrastable, an autonomous system that sets up and then keeps running and improving an organized effort from one idea, and QNFO, an independent research programme that is run and documented by such a system so its decisions and results can be inspected. Both are early and run by one founder, with no outside customers yet.",
+ "offer": "This is not an application to a posted opening. The question is whether your organization has a need that this work, or a role built around it, could meet. If so, a short conversation would be welcome; if not, a pointer to someone who has that need is just as useful.",
+ "signoff": "Rowan Quni-Gudzinas",
+ "followup": "A brief follow-up to the introduction below. A short conversation, or a pointer to the right person, would be welcome.",
+ "segments": {
+  "research-institute": {
+   "subject": "Introduction: auditable autonomous systems work",
+   "angle": "Your institute works on questions where records of how an autonomous system decides could be inspected and challenged. We would like to learn what your research and data needs are and whether this work could support them."
+  },
+  "ai-lab": {
+   "subject": "Introduction: running autonomous systems with a failure record",
+   "angle": "Your team builds and studies AI systems. This work runs an autonomous system in production and publishes how it fails, and we would like to learn whether that operating experience is useful to your priorities."
+  },
+  "funder": {
+   "subject": "Introduction: autonomous systems work and how it could fit your priorities",
+   "angle": "Your organization supports work in this area. We would like to learn what you look for, and whether this work or a role built around it fits your priorities."
+  },
+  "venture": {
+   "subject": "Introduction: autonomous systems that keep running and improving",
+   "angle": "Your firm looks at software that keeps running and improving after launch. We would like to learn whether this approach is relevant to what you are looking for and how you assess it."
+  },
+  "third-sector": {
+   "subject": "Introduction: autonomous systems for organizations with small teams",
+   "angle": "Organizations like yours keep operating with small teams. We would like to learn which routine work could be run by an auditable autonomous system, and whether a role built around that would help."
+  }
+ },
+ "blocked_patterns": [
+  "patent",
+  "provisional",
+  "filed",
+  "filing",
+  "disclos(?!ure)",
+  "revenue",
+  "profit",
+  "mrr",
+  "arr\\b",
+  "valuation",
+  "raised",
+  "funded",
+  "customers? (signed|paying)",
+  "guarantee",
+  "best ",
+  "first ever",
+  "#1",
+  "breakthrough",
+  "soc ?2",
+  "prior publication",
+  "urgent",
+  "act now",
+  "limited time"
+ ]
+}

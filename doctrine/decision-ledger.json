@@ -823,6 +823,14 @@
    "title": "PRIORITIZE-2: multi-objective ranking with shadow prices",
    "body": "Backlog items are vectors over goals. Value = best goal weight x shadow price + 0.25 x other matched goals. Shadow prices rise while a constraint binds (Actions billing-blocked: run-on-cloudflare x1.5; cost over budget: cost x3; k below floor: criticality x1.5), read live from foundation/criticality. Pareto front over (value, unblocks, 1/size) gets a bonus.",
    "probe": "file:foundation/prioritize.py"
+  },
+  {
+   "id": "decision-2026-11-14-outreach-intro-1-intro-outreach-lane",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "OUTREACH-INTRO-1: intro outreach lane",
+   "body": "Rowan 2026-11-14: the system introduces the work to research institutes, funders, AI labs and third-sector organizations instead of waiting for postings. Contacts are role mailboxes the organization publishes on its own pages (resolved and re-verified by code), disclosed automated email, shared gate, dry-run default; live needs sender, postal address and secrets. Follow-up Q-INTRO-1.",
+   "probe": "grep:scripts/outreach_intro.py::OUTREACH-INTRO-1"
   }
  ]
 }
