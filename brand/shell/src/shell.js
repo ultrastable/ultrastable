@@ -11,7 +11,7 @@ function usFmt(key, v) {
   var s = usSpec(key), n = usNum(v);
   if (n == null) return "n/a";
   if (s && s.format === "fixed2") return n.toFixed(2);
-  if (s && s.format === "times") return (Math.round(n * 100) / 100).toString() + "×";
+  if (s && s.format === "times") return (Math.round(n * 100) / 100).toString() + "\u00d7";
   return Math.round(n).toLocaleString("en-US");
 }
 // good | warn | bad from the vocabulary thresholds; none for a key with no polarity; unknown when the value (or its reference) is missing.

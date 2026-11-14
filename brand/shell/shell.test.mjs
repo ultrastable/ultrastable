@@ -21,6 +21,7 @@ test("artifact is current and its hashes match its bytes", () => {
 });
 
 test("the helper can be inlined into any worker", () => {
+  for (const [name, text] of Object.entries(out)) assert.ok(!/[^\x00-\x7f]/.test(text), name + " is ASCII-only (instances keep their workers ASCII: write a non-ASCII character as a \\u escape)");
   assert.ok(!/^\s*(import|export)\b/m.test(js), "no import or export");
   assert.ok(!js.includes("/*"), "no block comment (a worker wraps inlined code in comments)");
   for (const m of js.matchAll(/^(?:var|function)\s+([A-Za-z_$][\w$]*)/gm)) assert.ok(/^(US_|us)/.test(m[1]), "top-level name " + m[1] + " is not US_/us prefixed");
