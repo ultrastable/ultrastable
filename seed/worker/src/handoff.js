@@ -180,14 +180,24 @@ export function topologyBindings(topo, id) {
   for (const [bn, v] of Object.entries(b.vars || {})) out.push({ type: 'plain_text', name: bn, text: String(v) });
   return { worker: w, bindings: out };
 }
-// generated: repo paths that are built at deploy time and not in git (the tick's config.js), mapped to their source text.
+// The tick's config.js is generated, not in git. Same generator as deploy/deploy-workers.mjs, read from the repo at the deploy commit, so a policy change ships with its merge.
+export async function tickConfigSource(read) {
+  const j = async (p) => JSON.parse(await read(p));
+  const pol = await j('seed/autonomy/policy.json'), fm = await j('seed/autonomy/failure-modes.json'), ifm = await j('instances/ultrastable/failure-modes.json');
+  fm.modes = [...fm.modes, ...ifm.modes];
+  const cfg = { org_slug: 'ultrastable', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy: { trust: pol.trust, ladder: pol.ladder, surfaces: pol.surfaces }, criticality: await j('seed/autonomy/criticality.json'), failure_modes: fm, cost_budgets: (await j('instances/ultrastable/cost-budgets.json')).budgets };
+  return '// Generated on the server path (HANDOFF-1) from seed/autonomy at the deploy commit. Do not edit.\nexport default ' + JSON.stringify(cfg) + ';\n';
+}
+// generated: optional overrides for build-time paths not in git, mapped to their source text.
 export function makeDeployer({ token, fetch: f = fetch, site, key, generated = {} }) {
   return async (id, sha, repo) => {
     try {
       const topo = JSON.parse(await raw(f, token, repo, sha, 'doctrine/topology.json'));
       const tb = topologyBindings(topo, id); if (!tb) return { ok: false, detail: `${id} is not in doctrine/topology.json` };
       if (tb.worker.state !== 'live') return { ok: false, detail: `${id} is ${tb.worker.state}, not live` };
-      const modules = await collectModules(p => (p in generated ? Promise.resolve(generated[p]) : raw(f, token, repo, sha, p)), tb.worker.main);
+      const read = p => raw(f, token, repo, sha, p);
+      const gen = { 'seed/worker/src/config.js': () => tickConfigSource(read), ...Object.fromEntries(Object.entries(generated).map(([k, v]) => [k, () => v])) };
+      const modules = await collectModules(p => (p in gen ? Promise.resolve(gen[p]()) : read(p)), tb.worker.main);
       const r = await site.fetch('https://internal/__internal/deploy', { method: 'POST', headers: { 'x-internal-key': key, 'content-type': 'application/json' },
         body: JSON.stringify({ name: id, modules: modules.map(({ name, src, type }) => ({ name, src, type })), main: modules[0].name, compatibility_date: tb.worker.compatibility_date || topo.compatibility_date, bindings: tb.bindings, crons: tb.worker.crons || null, tag: String(sha).slice(0, 12) }) });
       const j = await r.json().catch(() => ({}));

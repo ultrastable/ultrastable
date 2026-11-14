@@ -114,5 +114,10 @@ test('collectModules flattens nested relative imports and the deployer posts the
   assert.equal((await makeDeployer({ token: 't', fetch: read, site, key: 'K' })('ultrastable-nope', 'abc', 'o/r')).ok, false);
   files['site/b.js'] = undefined; delete files['site/b.js'];
   const g = await makeDeployer({ token: 't', fetch: read, site, key: 'K', generated: { 'site/b.js': 'export const b = 9' } })('ultrastable-site', 'abc123', 'o/r');
-  assert.equal(g.ok, true, 'a generated module not in git is supplied by the tick'); assert.equal(posted.body.modules.find(m => m.name === 'b.js').src, 'export const b = 9');
+  assert.equal(g.ok, true, 'a generated module not in git is supplied by the tick');
+  const cfgFiles = { 'seed/autonomy/policy.json': '{"trust":{"t":1},"ladder":{"l":1},"surfaces":{}}', 'seed/autonomy/failure-modes.json': '{"modes":[{"id":"a"}]}', 'instances/ultrastable/failure-modes.json': '{"modes":[{"id":"b"}]}', 'seed/autonomy/criticality.json': '{"floor":0.5}', 'instances/ultrastable/cost-budgets.json': '{"budgets":[{"id":"d1"}]}' };
+  const { tickConfigSource } = await import('../src/handoff.js');
+  const cs = await tickConfigSource(async p => cfgFiles[p]);
+  const cfg = JSON.parse(cs.slice(cs.indexOf('export default ') + 15, cs.lastIndexOf(';')));
+  assert.equal(cfg.org_slug, 'ultrastable'); assert.deepEqual(cfg.failure_modes.modes.map(m => m.id), ['a', 'b']); assert.equal(cfg.criticality.floor, 0.5); assert.deepEqual(cfg.cost_budgets, [{ id: 'd1' }]); assert.equal(posted.body.modules.find(m => m.name === 'b.js').src, 'export const b = 9');
 });
