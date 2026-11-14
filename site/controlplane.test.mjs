@@ -78,6 +78,15 @@ assert.equal((await rpcw({ title: "t", agent: "a", harness: "h" })).status, 401,
 assert.equal((await rpcw({ title: "t", agent: "a" }, "Bearer s3cret")).body.result.isError, true, "agent and harness are required");
 const mr = await rpcw({ title: "From MCP", kind: "bug", agent: "claude-code", harness: "vscode-claude" }, "Bearer s3cret");
 const mid = JSON.parse(mr.body.result.content[0].text).id; assert.equal(db.prepare("SELECT surface, kind FROM items WHERE id = ?").get(mid).surface, "integration:companion agent:claude-code harness:vscode-claude");
+// AGENT-HARNESS-1: A2A v1.0 SendMessage / GetTask
+const a2a = (method, params, auth) => J("https://ultrastable.io/a2a", ENV, { method: "POST", headers: { ...(auth ? { authorization: auth } : {}) }, body: JSON.stringify({ jsonrpc: "2.0", id: 9, method, params }) });
+assert.equal((await a2a("SendMessage", { message: { parts: [{ text: "x" }] } })).status, 401, "A2A write needs auth");
+const sm = await a2a("SendMessage", { message: { parts: [{ text: "Plan the rollout\nwith detail" }] }, metadata: { agent: "gemini", harness: "a2a-peer" } }, "Bearer s3cret");
+const atid = sm.body.result.task.id; assert.equal(sm.body.result.task.status.state, "TASK_STATE_SUBMITTED");
+assert.equal(db.prepare("SELECT surface FROM items WHERE id = ?").get(atid).surface, "integration:companion agent:gemini harness:a2a-peer");
+assert.equal((await a2a("GetTask", { id: atid })).body.result.task.id, atid);
+assert.equal((await a2a("GetTask", { id: "nope" })).body.error.message, "TaskNotFoundError");
+assert.equal((await J("https://ultrastable.io/.well-known/agent-card.json")).body.supportedInterfaces[0].protocolBinding, "JSONRPC");
 assert.equal((await J("https://ultrastable.io/api/v1/intake", { ORG })).status, 405, "GET on intake");
 assert.equal((await J("https://ultrastable.io/api/v1/intake", { ORG }, { method: "POST", headers: { authorization: "Bearer s3cret" }, body: "{}" })).status, 503, "no tokens configured");
 assert.equal((await J("https://ultrastable.io/api/v1/status", {})).status, 503, "no ORG binding is reported, not faked");
