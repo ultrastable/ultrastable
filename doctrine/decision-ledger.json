@@ -890,6 +890,14 @@
    "title": "WEBHOOKS-1: callbacks as first-class standards",
    "body": "Outbound callbacks (CloudEvents 1.0, Standard Webhooks signing) and inbound hooks (Standard Webhooks, GitHub X-Hub-Signature-256) live in site/webhooks.js. Delivery rides the hourly site tick (no new cron). Signing secrets are HMAC-derived from a stored salt, shown once, never stored or typed. Item events come from change detection in the tick; inbound events also deliver immediately.",
    "probe": "grep:site/webhooks.js::export async function tickWebhooks"
+  },
+  {
+   "id": "decision-2026-11-14-authzen-1-site-worker-is-an-authzen-policy-decision-point",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "AUTHZEN-1: site worker is an AuthZEN policy decision point",
+   "body": "site/authzen.js serves /access/v1/evaluation, /access/v1/evaluations and /.well-known/authzen-configuration from trust_ledger; fails closed; secrets, interrupt gate and alignment floor are never granted by any rung.",
+   "probe": "file:site/authzen.test.mjs"
   }
  ]
 }
