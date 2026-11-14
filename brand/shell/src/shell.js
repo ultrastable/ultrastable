@@ -75,7 +75,7 @@ function usStatusPanel(values, o) {
     var src = o.sources && o.sources[s.key] ? " Source here: " + o.sources[s.key] + "." : "";
     return "<dt>" + usEsc(s.label) + "</dt><dd>" + usEsc(s.define + src) + "</dd>";
   }).join("");
-  return '<section class="us-status" aria-label="System status" data-us-shell="' + usEsc(US_SHELL_VERSION) + '"><p class="us-sentence us-' + usWorst(values) + '" role="status">' + usEsc(usStatusSentence(values)) + "</p>" +
+  return '<section class="us-status" aria-label="System status" data-us-shell="' + usEsc(US_SHELL_VERSION) + '"><p class="us-sentence us-' + (usSustaining(values) === null ? "unknown" : usWorst(values)) + '" role="status">' + usEsc(usStatusSentence(values)) + "</p>" +
     '<ul class="us-tiles">' + tiles + "</ul>" + '<details class="us-defs"><summary>What these numbers mean</summary><dl>' + defs + "</dl></details>" +
     (o.as_of ? '<p class="us-asof">As of ' + usEsc(o.as_of) + "</p>" : "") + "</section>";
 }

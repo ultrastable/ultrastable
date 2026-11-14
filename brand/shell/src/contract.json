@@ -1,7 +1,7 @@
 {
   "id": "RUNS-ON-1",
   "name": "Ultrastable runtime shell",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "_doc": "What it means for a system to run on Ultrastable, as code: one page skeleton, one status vocabulary, one mark. brand/shell/build.mjs bundles this contract with src/shell.css and src/shell.js into artifact/ (ultrastable-shell.css, .js, .json with content hashes); brand/shell/shell.test.mjs proves it; an instance vendors artifact/ unchanged and proves parity against content_hash. Edit src/, never artifact/.",
   "requires": "the --ds-* token contract of doctrine/design.json (token_contract plus --ds-font, --ds-mono, --ds-r-s, --ds-r-m, --ds-r-l), supplied by the instance's portfolio layer",
   "layers": {

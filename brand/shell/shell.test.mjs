@@ -77,6 +77,8 @@ test("the skeleton renders every slot, escapes input and marks the system", () =
   const panel = US.usStatusPanel(v, { as_of: "2026-11-14T12:00Z", sources: { k_eff: "deploy ledger" } });
   for (const s of contract.vocabulary) assert.ok(panel.includes('data-key="' + s.key + '"'), "tile for " + s.key);
   assert.match(panel, /us-sentence us-bad/);
+  const partial = US.usStatusPanel({ loops_running: 3, loops_total: 3, loops_stalled: 0 });
+  assert.match(partial, /us-sentence us-unknown/, "an unknown verdict is never coloured good by the few numbers that are known");
   assert.ok(panel.includes("40 <small>of 44</small>"));
   assert.ok(panel.includes("Source here: deploy ledger."));
   const page = US.usPage({ name: "Demo", tokenCss: ":root{}", values: v, body: "<p>hi</p>" });
