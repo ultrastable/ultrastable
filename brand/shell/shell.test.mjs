@@ -1,4 +1,4 @@
-// RUNS-ON-1 tests: dist is current and hashed, the helper is inlinable, the CSS stays inside the core layer, the vocabulary renders, nothing private leaks.
+// RUNS-ON-1 tests: artifact is current and hashed, the helper is inlinable, the CSS stays inside the core layer, the vocabulary renders, nothing private leaks.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -12,11 +12,11 @@ const css = out["ultrastable-shell.css"], js = out["ultrastable-shell.js"], cont
 const NAMES = ["US_SHELL_CSS", "US_SHELL_CONTRACT", "US_SHELL_VERSION", "usEsc", "usSpec", "usFmt", "usVerdict", "usWorst", "usSustaining", "usStatusSentence", "usMark", "usTopBar", "usStatusPanel", "usFooter", "usPage"];
 const US = new Function(js + "\nreturn {" + NAMES.join(",") + "};")();
 
-test("dist is current and its hashes match its bytes", () => {
-  for (const f of Object.keys(out)) assert.equal(read("dist/" + f), out[f], "dist/" + f + " is stale: run node brand/shell/build.mjs");
-  assert.equal(contract.css_sha256, sha(read("dist/ultrastable-shell.css")));
-  assert.equal(contract.js_sha256, sha(read("dist/ultrastable-shell.js")));
-  assert.equal(contract.content_hash, sha(read("dist/ultrastable-shell.css") + "\n" + read("dist/ultrastable-shell.js")));
+test("artifact is current and its hashes match its bytes", () => {
+  for (const f of Object.keys(out)) assert.equal(read("artifact/" + f), out[f], "artifact/" + f + " is stale: run node brand/shell/build.mjs");
+  assert.equal(contract.css_sha256, sha(read("artifact/ultrastable-shell.css")));
+  assert.equal(contract.js_sha256, sha(read("artifact/ultrastable-shell.js")));
+  assert.equal(contract.content_hash, sha(read("artifact/ultrastable-shell.css") + "\n" + read("artifact/ultrastable-shell.js")));
   assert.match(contract.content_hash, /^[0-9a-f]{64}$/);
 });
 

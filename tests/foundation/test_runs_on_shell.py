@@ -1,4 +1,4 @@
-"""RUNS-ON-1: the runtime shell's dist is current and its node tests pass (brand/shell). Runs inside the foundation suite, so no extra workflow step."""
+"""RUNS-ON-1: the runtime shell's artifact is current and its node tests pass (brand/shell). Runs inside the foundation suite, so no extra workflow step."""
 import shutil, subprocess, unittest
 from pathlib import Path
 
@@ -12,7 +12,7 @@ class RunsOnShell(unittest.TestCase):
         self.assertEqual(p.returncode, 0, (p.stdout + p.stderr)[-3000:])
         return p.stdout
 
-    def test_dist_current(self):
+    def test_artifact_current(self):
         self.assertIn("current", self.run_node("brand/shell/build.mjs", "--check"))
 
     def test_node_suite(self):

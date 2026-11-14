@@ -1,7 +1,7 @@
-// RUNS-ON-1 build: bundles src/contract.json, src/shell.css and src/shell.js into dist/ultrastable-shell.{css,js,json}.
-//   node brand/shell/build.mjs           write dist/
-//   node brand/shell/build.mjs --check   write nothing; exit 1 when dist/ is stale
-// Hashes are sha256 over LF text. content_hash = sha256(css + "\n" + js). An instance that vendors dist/ proves parity against content_hash.
+// RUNS-ON-1 build: bundles src/contract.json, src/shell.css and src/shell.js into artifact/ultrastable-shell.{css,js,json}.
+//   node brand/shell/build.mjs           write artifact/
+//   node brand/shell/build.mjs --check   write nothing; exit 1 when artifact/ is stale
+// Hashes are sha256 over LF text. content_hash = sha256(css + "\n" + js). An instance that vendors artifact/ proves parity against content_hash.
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
@@ -28,13 +28,13 @@ export function build() {
 function main(argv) {
   const out = build(), check = argv.includes("--check");
   let stale = 0;
-  if (!check) mkdirSync(here("dist"), { recursive: true });
+  if (!check) mkdirSync(here("artifact"), { recursive: true });
   for (const [name, text] of Object.entries(out)) {
-    const p = here("dist/" + name);
+    const p = here("artifact/" + name);
     const cur = existsSync(p) ? lf(readFileSync(p, "utf8")) : null;
     if (cur === text) continue;
-    if (check) { console.error("stale: brand/shell/dist/" + name + " (run node brand/shell/build.mjs)"); stale++; }
-    else { writeFileSync(p, text); console.log("wrote brand/shell/dist/" + name + " (" + text.length + " bytes)"); }
+    if (check) { console.error("stale: brand/shell/artifact/" + name + " (run node brand/shell/build.mjs)"); stale++; }
+    else { writeFileSync(p, text); console.log("wrote brand/shell/artifact/" + name + " (" + text.length + " bytes)"); }
   }
   const j = JSON.parse(out["ultrastable-shell.json"]);
   console.log("RUNS-ON-1 v" + j.version + " content_hash " + j.content_hash + (stale ? " STALE" : " current"));
