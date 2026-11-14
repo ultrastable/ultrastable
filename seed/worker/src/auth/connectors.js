@@ -10,7 +10,7 @@
 //   GET  /.well-known/oauth-client/ultrastable.json   our Client ID Metadata Document
 // Registered providers need an OAuth app only when the provider has no open registration; that is the single owner card 'oauth-apps' (IDENTITY-BOUND). MCP servers need none.
 import * as store from './store.js';
-import { consentScreen, doneScreen, failScreen } from './consent.js';
+import { consentScreen, doneScreen, failScreen, connectionsScreen } from './consent.js';
 import { makeConnectorState, checkConnectorState } from './state.js';
 
 export const REGISTRY = {
@@ -98,6 +98,7 @@ const screenFor = (def, title, will) => ({ provider: def.title, title: 'Connect 
 export async function handleConnector(request, env, { tenant = 'default', fetch: f = fetch, now = Date.now(), allowInsecure = false } = {}) {
   const url = new URL(request.url), origin = url.origin, path = url.pathname;
   if (path === '/.well-known/oauth-client/ultrastable.json') return Response.json(cimdDocument(origin), { headers: { 'cache-control': 'public, max-age=3600', 'access-control-allow-origin': '*' } });
+  if (path === '/connections') return connectionsScreen(await connectorStatus(env.DB, env, tenant));
   if (path === '/auth/connectors') return Response.json(await connectorStatus(env.DB, env, tenant));
   const m = /^\/connect\/([a-z0-9-]+)(?:\/(start|callback|disconnect))?$/.exec(path); if (!m) return null;
   const id = m[1], step = m[2] || 'consent', def = REGISTRY[id]; if (!def || def.type === 'github-app') return null;

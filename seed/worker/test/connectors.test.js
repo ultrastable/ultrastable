@@ -109,3 +109,11 @@ test('PKCE challenge is the S256 of the verifier', async () => {
   const { verifier, challenge } = await pkce();
   assert.equal(challenge, Buffer.from(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))).toString('base64url'));
 });
+
+test('CONNECTIONS-1: one screen lists what is linked, offers one-click connect and disconnect, never asks for a token', async () => {
+  const env = mk(); await store.ensureSchema(env.DB);
+  let t = await (await get(env, '/connections')).text();
+  assert.match(t, /Nothing is linked yet/); assert.match(t, /Connect any MCP server/); assert.match(t, /waiting for its one-time app registration/); assert.doesNotMatch(t, /paste|token/i);
+  const e2 = mk({ OAUTH_GOOGLE_CLIENT_ID: 'gid', OAUTH_GOOGLE_CLIENT_SECRET: 'gsec' }); await store.ensureSchema(e2.DB);
+  t = await (await get(e2, '/connections')).text(); assert.match(t, /href="\/connect\/google"/);
+});
