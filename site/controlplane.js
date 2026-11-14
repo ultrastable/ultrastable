@@ -159,7 +159,7 @@ export async function authIntegration(request, env) {
 }
 
 // AGENT-HARNESS-1: one intake path for every client (REST and MCP). Attribution (which agent, in which harness) is recorded on the item's surface so inputs from different agents can be compared.
-const attr = v => String(v || "").trim().replace(/[^A-Za-z0-9._\/-]/g, "").slice(0, 60);
+const attr = v => String(v || "").trim().replace(/[^A-Za-z0-9._:\/-]/g, "").slice(0, 60);
 export async function submitIntake(env, authName, b, now = Date.now()) {
   const title = String((b && b.title) || "").trim().slice(0, 200), detail = String((b && b.detail) || "").trim().slice(0, 4000);
   if (!title) return { status: 422, body: { error: "title is required" } };
