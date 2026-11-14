@@ -3,13 +3,15 @@
   "target": {
     "id": "81e3a4efb4eb66e613529b87682911bb",
     "named_by": "Rowan 2026-11-11",
-    "state": "not yet running; unreachable from every surface tested 2026-11-12 (see docs/failures/2026-11-12-target-account-unreachable.md); `scripts/cf_account.py probe` and workflow cf-account run the move the moment a token covering this account is bound",
-    "gate": "IC-GATE-001 identity-bound: a Cloudflare sign-in for the owner's account (the pane's sign-in page also shows bot verification, which is not bypassed). Default in effect: ultrastable keeps running in the old account, nothing is deleted. Backup taken 2026-11-12 (D1 SQL, Worker scripts, KV key lists; R2 and KV values not yet backed up). Closing probe: `python3 scripts/cf_account.py probe` reports target_reachable true, then cf-account runs the move.",
-    "move": "worker ultrastable-tick, ultrastable-dashboard, ultrastable-site and D1 ultrastable-org"
+    "state": "shadow copy 2026-11-14: reachable through the owner's Cloudflare connector (full API); workers ultrastable-agents, ultrastable-tick, ultrastable-dashboard, ultrastable-site and eight us-idea-* built sites uploaded byte-identical to the source, crons off, workers.dev off for the four core workers; D1 ultrastable-org and ultrastable-ops and KV ultrastable-site-assets and ultrastable-private exist but hold 2026-11-12 data; no zones, no secrets, R2 not enabled. Nothing runs here yet: see deploy/transfer/plan.json blockers",
+    "gate": "IC-GATE-001 identity-bound, narrowed 2026-11-14: the connector reaches the account, but no API token for it exists, so GitHub (secrets CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID) and the site worker (CF_DEPLOY_TOKEN) still deploy to the old account. Minting a token is creating a credential in the owner's account. Default in effect: the old account keeps running everything. Closing probe: `python3 scripts/cf_account.py probe` with DST_CLOUDFLARE_API_TOKEN bound reports target_reachable true.",
+    "move": "see deploy/transfer/plan.json assets",
+    "name": "ultrastable",
+    "workers_dev": "ultrastable.workers.dev"
   },
   "current": {
     "id": "edb167b78c9fb901ea5bca3ce58ccc4b",
     "name": "quniverse",
-    "state": "running: ultrastable-tick cron, D1 ultrastable-org"
+    "state": "running everything: ultrastable-tick, -dashboard, -site, -agents crons and routes; D1 ultrastable-org, -ops; KV; R2 ultrastable-git; zones ultrastable.io/.app/.net/.org"
   }
 }

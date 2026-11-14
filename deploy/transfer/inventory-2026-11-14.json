@@ -1,0 +1,60 @@
+{
+  "at": "2026-11-14",
+  "by": "Cloudflare connector session",
+  "source": {
+    "account": "edb167b78c9fb901ea5bca3ce58ccc4b",
+    "workers_dev": "q08.workers.dev",
+    "workers": [
+      "ultrastable-tick",
+      "ultrastable-dashboard",
+      "ultrastable-site",
+      "ultrastable-agents",
+      "ultrastable-ultrastable",
+      "demo-child-ultrastable",
+      "us-idea-* (8)"
+    ],
+    "d1": [
+      "ultrastable-org",
+      "ultrastable-ops",
+      "ultrastable-ultrastable",
+      "demo-child-ultrastable"
+    ],
+    "kv": [
+      "ultrastable-site-assets",
+      "ultrastable-private"
+    ],
+    "r2": [
+      "ultrastable-git"
+    ],
+    "zones": [
+      "ultrastable.io",
+      "ultrastable.app",
+      "ultrastable.net",
+      "ultrastable.org"
+    ]
+  },
+  "target": {
+    "account": "81e3a4efb4eb66e613529b87682911bb",
+    "workers_dev": "ultrastable.workers.dev",
+    "workers": {
+      "ultrastable-agents": "identical",
+      "ultrastable-tick": "identical, secrets dropped",
+      "ultrastable-dashboard": "identical, send_email dropped",
+      "ultrastable-site": "identical, secrets dropped",
+      "us-idea-* (8)": "identical"
+    },
+    "crons": 0,
+    "d1": [
+      "ultrastable-org (13 tables, 2026-11-12)",
+      "ultrastable-ops (1 table)",
+      "example-co-ultrastable (92 tables)"
+    ],
+    "kv": [
+      "ultrastable-site-assets",
+      "ultrastable-private"
+    ],
+    "r2": "not enabled (10042)",
+    "zones": [],
+    "api_tokens": 0
+  }
+}
