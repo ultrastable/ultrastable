@@ -44,7 +44,7 @@
   "workers": {
     "ultrastable-tick": {
       "main": "seed/worker/src/index.js",
-      "role": "heartbeat, executor dispatch, in-Worker code agents, lane",
+      "role": "heartbeat, executor dispatch, in-Worker code agents, lane, worker gate and handoffs (merge -> deploy -> probe -> close or roll back)",
       "crons": [
         "*/10 * * * *"
       ],
