@@ -1,0 +1,241 @@
+// CONTROL-PLANE-1: Ultrastable's integration API (/api/v1) and operations dashboard (/ops, dashboard.ultrastable.io).
+// Reads the live org database (binding ORG = D1 ultrastable-org: roles, items, claims, dispatches, tick_runs, gate_cards) on every request,
+// so "what is going on" is never older than the last tick. Every GET is public and read-only (CORS *). The single write, POST /api/v1/intake,
+// needs a bearer token listed in secret INTEGRATION_TOKENS ("name:sha256hex,name2:sha256hex"); tokens are compared by hash, never stored in clear.
+// Consumers: the owner's personal companion (/api/v1/companion/brief), other services, MCP clients (site/agentic.js), and the /ops page below.
+export const API_VERSION = "1.0.0";
+const ORIGIN = "https://ultrastable.io";
+const CORS = { "access-control-allow-origin": "*", "access-control-allow-headers": "authorization, content-type", "access-control-allow-methods": "GET, HEAD, POST, OPTIONS", "x-content-type-options": "nosniff" };
+const json = (o, status, extra) => new Response(JSON.stringify(o), { status: status || 200, headers: { ...CORS, "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...(extra || {}) } });
+const STALE_TICK_S = 25 * 60;          // cron is every 10 minutes; two missed beats plus slack is "stalled"
+const ACTIVE_AGENT_S = 60 * 60;        // an agent that ticked within the hour is "active"
+export const DISPATCH_STATES = ["queued", "running", "done", "failed", "parked"];
+const WORK_VIEWS = { on_deck: "on deck", in_progress: "in progress", blocked: "blocked", done: "done", all: "all" };
+
+// D1 stores UTC as "YYYY-MM-DD HH:MM:SS"; tolerate ISO too.
+export const ts = (s) => { if (!s) return null; const t = Date.parse(String(s).includes("T") ? s : String(s).replace(" ", "T") + "Z"); return Number.isFinite(t) ? t : null; };
+const ageS = (s, now) => { const t = ts(s); return t == null ? null : Math.max(0, Math.round((now - t) / 1000)); };
+const all = async (db, sql, ...b) => ((await db.prepare(sql).bind(...b).all()).results) || [];
+const first = async (db, sql, ...b) => (await db.prepare(sql).bind(...b).first()) || null;
+
+async function sha256(text) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
+
+// ---- readers (exported so the MCP endpoint and tests use the same code) ----
+
+export async function status(env, now = Date.now()) {
+  const db = env.ORG;
+  const tick = await first(db, "SELECT id, started_at, finished_at, steps_completed, steps_total, report, errors FROM tick_runs ORDER BY id DESC LIMIT 1");
+  const items = await all(db, "SELECT status, count(*) AS n FROM items GROUP BY status");
+  const disp = await all(db, "SELECT status, count(*) AS n FROM dispatches GROUP BY status");
+  const d24 = await all(db, "SELECT status, count(*) AS n FROM dispatches WHERE at >= datetime(?, 'unixepoch') GROUP BY status", Math.floor(now / 1000) - 86400);
+  const roles = await all(db, "SELECT id, last_tick_at FROM roles");
+  const gates = await first(db, "SELECT count(*) AS n FROM gate_cards WHERE status = 'open'");
+  const by = (rows) => Object.fromEntries(rows.map(r => [r.status, r.n]));
+  const dispBy = by(disp), total = disp.reduce((a, r) => a + r.n, 0), settled = total - (dispBy.queued || 0) - (dispBy.running || 0);
+  const report = tick && tick.report ? String(tick.report) : "";
+  const red = (/selfaudit: (\d+) green, (\d+) red(?: \(([^)]*)\))?/.exec(report) || []);
+  const tickAge = tick ? ageS(tick.finished_at || tick.started_at, now) : null;
+  const active = roles.filter(r => { const a = ageS(r.last_tick_at, now); return a != null && a <= ACTIVE_AGENT_S; }).length;
+  const reasons = [];
+  if (tickAge == null) reasons.push("no tick has ever run");
+  else if (tickAge > STALE_TICK_S) reasons.push(`heartbeat is ${Math.round(tickAge / 60)} min old (expected every 10 min)`);
+  if (tick && tick.errors) reasons.push("last tick reported errors");
+  if (total > 0 && settled === 0) reasons.push(`none of ${total} agent dispatches has been executed (all still queued)`);
+  if (red[2] && Number(red[2]) > 0) reasons.push(`self-audit red: ${red[3] || red[2]}`);
+  const verdict = tickAge == null || tickAge > STALE_TICK_S ? "stalled" : reasons.length ? "degraded" : "healthy";
+  return {
+    api_version: API_VERSION, generated: new Date(now).toISOString(), verdict, reasons,
+    heartbeat: tick ? { tick: tick.id, at: tick.finished_at || tick.started_at, age_s: tickAge, steps: `${tick.steps_completed}/${tick.steps_total}`, report: report.split("\n")[0], errors: tick.errors || null } : null,
+    work: { by_status: by(items), total: items.reduce((a, r) => a + r.n, 0) },
+    dispatch: { by_status: dispBy, total, settled, settled_share: total ? +(settled / total).toFixed(3) : null, last_24h: by(d24) },
+    agents: { total: roles.length, active_last_hour: active },
+    owner: { open_gate_cards: gates ? gates.n : 0 },
+    self_audit: red[1] ? { green: Number(red[1]), red: Number(red[2]), failing: red[3] ? red[3].split(",").map(s => s.trim()) : [] } : null,
+  };
+}
+
+export async function agents(env, now = Date.now()) {
+  const db = env.ORG;
+  const roles = await all(db, "SELECT id, role, project, tick_every, model, last_tick_at FROM roles ORDER BY role, id");
+  const claims = await all(db, "SELECT c.agent, c.item_id, c.claimed_at, c.heartbeat_at, i.title, i.status FROM claims c LEFT JOIN items i ON i.id = c.item_id");
+  const stats = await all(db, "SELECT role_id, count(*) AS total, sum(CASE WHEN status NOT IN ('queued','running') THEN 1 ELSE 0 END) AS settled, sum(CASE WHEN at >= datetime(?, 'unixepoch') THEN 1 ELSE 0 END) AS last_24h, max(at) AS last_at FROM dispatches GROUP BY role_id", Math.floor(now / 1000) - 86400);
+  const last = await all(db, "SELECT d.role_id, d.item_id, d.status, d.at, i.title FROM dispatches d LEFT JOIN items i ON i.id = d.item_id WHERE d.id IN (SELECT max(id) FROM dispatches GROUP BY role_id)");
+  const owned = await all(db, "SELECT owner_role, count(*) AS n FROM items WHERE status IN ('ready','open') GROUP BY owner_role");
+  const S = Object.fromEntries(stats.map(s => [s.role_id, s])), L = Object.fromEntries(last.map(l => [l.role_id, l])), O = Object.fromEntries(owned.map(o => [o.owner_role, o.n]));
+  return {
+    api_version: API_VERSION, generated: new Date(now).toISOString(),
+    agents: roles.map(r => {
+      const mine = claims.filter(c => c.agent === r.id), s = S[r.id] || {}, l = L[r.id], a = ageS(r.last_tick_at, now);
+      return {
+        id: r.id, role: r.role, model: r.model, project: r.project || null, ticks_every: r.tick_every,
+        state: a == null ? "never ran" : a > ACTIVE_AGENT_S ? "idle" : mine.length ? "working" : "waiting",
+        last_tick_at: r.last_tick_at, last_tick_age_s: a,
+        working_on: mine.map(c => ({ item: c.item_id, title: c.title, item_status: c.status, since: c.claimed_at, heartbeat_age_s: ageS(c.heartbeat_at, now) })),
+        last_dispatch: l ? { item: l.item_id, title: l.title, status: l.status, at: l.at } : null,
+        dispatches: { total: s.total || 0, settled: s.settled || 0, last_24h: s.last_24h || 0 },
+        on_deck_for_role: O[r.role] || 0,
+      };
+    }),
+  };
+}
+
+export async function work(env, view = "on_deck", limit = 50) {
+  const db = env.ORG, lim = Math.max(1, Math.min(200, Number(limit) || 50));
+  const where = { on_deck: "i.status IN ('ready','open') AND c.item_id IS NULL", in_progress: "(i.status = 'claimed' OR c.item_id IS NOT NULL) AND i.status NOT IN ('done')", blocked: "i.status = 'blocked'", done: "i.status = 'done'", all: "1=1" }[view];
+  if (!where) return null;
+  const order = view === "done" ? "i.updated_at DESC" : "i.priority DESC, CASE i.status WHEN 'ready' THEN 0 ELSE 1 END, i.created_at ASC";
+  const rows = await all(db, `SELECT i.id, i.title, i.kind, i.owner_role, i.priority, i.status, i.blocker, i.disposition, i.action_class, i.done_check, i.created_at, i.updated_at, c.agent, c.claimed_at,
+      (SELECT count(*) FROM dispatches d WHERE d.item_id = i.id) AS dispatch_count
+    FROM items i LEFT JOIN claims c ON c.item_id = i.id WHERE ${where} ORDER BY ${order} LIMIT ?`, lim);
+  const count = await first(db, `SELECT count(*) AS n FROM items i LEFT JOIN claims c ON c.item_id = i.id WHERE ${where}`);
+  return { api_version: API_VERSION, view, label: WORK_VIEWS[view], count: count ? count.n : rows.length, items: rows.map((r, i) => ({ rank: i + 1, ...r })) };
+}
+
+export async function workItem(env, id) {
+  const db = env.ORG;
+  const item = await first(db, "SELECT * FROM items WHERE id = ?", id);
+  if (!item) return null;
+  const claim = await first(db, "SELECT agent, claimed_at, heartbeat_at FROM claims WHERE item_id = ?", id);
+  const history = await all(db, "SELECT id, tick_id, role_id, model, status, at FROM dispatches WHERE item_id = ? ORDER BY id DESC LIMIT 50", id);
+  return { api_version: API_VERSION, item, claim, dispatches: history };
+}
+
+export async function activity(env, limit = 30) {
+  const db = env.ORG, lim = Math.max(1, Math.min(100, Number(limit) || 30));
+  const dispatches = await all(db, "SELECT d.id, d.role_id AS agent, d.item_id AS item, i.title, d.status, d.model, d.at FROM dispatches d LEFT JOIN items i ON i.id = d.item_id ORDER BY d.id DESC LIMIT ?", lim);
+  const ticks = await all(db, "SELECT id, started_at, steps_completed, steps_total, report, errors FROM tick_runs ORDER BY id DESC LIMIT 10");
+  return { api_version: API_VERSION, dispatches, ticks: ticks.map(t => ({ id: t.id, at: t.started_at, steps: `${t.steps_completed}/${t.steps_total}`, summary: String(t.report || "").split("\n")[0], errors: t.errors || null })) };
+}
+
+// Hosted products: Ultrastable's own services, plus every tenant site it built (BUILD-2: <id>.ultrastable.io). Each lists its discovery documents.
+export const PLATFORM_SERVICES = [
+  { id: "ultrastable-api", kind: "api", name: "Ultrastable control-plane API", url: ORIGIN + "/api/v1", health: ORIGIN + "/health", discovery: { openapi: ORIGIN + "/openapi.json", api_catalog: ORIGIN + "/.well-known/api-catalog", agent_card: ORIGIN + "/.well-known/agent-card.json", mcp: ORIGIN + "/.well-known/mcp/server-card.json", llms: ORIGIN + "/llms.txt" } },
+  { id: "ultrastable-mcp", kind: "mcp", name: "Ultrastable MCP server", url: ORIGIN + "/mcp", health: ORIGIN + "/health", discovery: { mcp: ORIGIN + "/.well-known/mcp/server-card.json" } },
+  { id: "ultrastable-ops", kind: "dashboard", name: "Operations dashboard", url: "https://dashboard.ultrastable.io/", health: ORIGIN + "/health", discovery: { api: ORIGIN + "/api/v1" } },
+  { id: "ultrastable-live", kind: "record", name: "Live record (daily snapshot)", url: ORIGIN + "/live", health: ORIGIN + "/health", discovery: { openapi: ORIGIN + "/openapi.json" } },
+];
+export const tenantDiscovery = (id) => { const o = "https://" + id + ".ultrastable.io"; return { id, kind: "tenant-site", name: "Tenant site " + id, url: o + "/", health: o + "/health", discovery: { api_catalog: o + "/.well-known/api-catalog", api: o + "/s/" + id + "/api" } }; };
+
+export async function products(env) {
+  const ids = new Set();
+  try { if (env.DB) for (const r of await all(env.DB, "SELECT DISTINCT site FROM site_data LIMIT 200")) if (/^[a-f0-9]{10}$/.test(r.site)) ids.add(r.site); } catch (e) { /* table absent on a fresh account */ }
+  try { if (env.ASSETS && env.ASSETS.list) { const l = await env.ASSETS.list({ prefix: "state:", limit: 200 }); for (const k of l.keys || []) { const id = k.name.slice(6); if (/^[a-f0-9]{10}$/.test(id)) ids.add(id); } } } catch (e) { /* KV list unavailable */ }
+  return { api_version: API_VERSION, platform: PLATFORM_SERVICES, tenants: [...ids].sort().map(tenantDiscovery) };
+}
+
+// Plain-language digest for the owner's personal companion: what is happening, what is next, what needs the owner.
+export async function companionBrief(env, now = Date.now()) {
+  const [s, a, deck, gates] = await Promise.all([status(env, now), agents(env, now), work(env, "on_deck", 3), all(env.ORG, "SELECT id, what, why_gated, default_in_effect FROM gate_cards WHERE status = 'open' LIMIT 5")]);
+  const working = a.agents.filter(x => x.working_on.length);
+  const w = s.work.by_status, mins = s.heartbeat ? Math.round(s.heartbeat.age_s / 60) : null;
+  const lines = [
+    s.heartbeat ? `Ultrastable is ${s.verdict}; its last heartbeat was ${mins} minute${mins === 1 ? "" : "s"} ago.` : "Ultrastable has not run yet.",
+    `${working.length} of ${s.agents.total} agents hold work; ${w.ready || 0} items are ready, ${w.blocked || 0} blocked, ${w.done || 0} done.`,
+    deck.items.length ? `Next up: ${deck.items.map(i => i.id).join(", ")}.` : "Nothing is on deck.",
+    s.reasons.length ? `Watch: ${s.reasons[0]}.` : "",
+    gates.length ? `${gates.length} step${gates.length === 1 ? "" : "s"} need${gates.length === 1 ? "s" : ""} you: ${gates.map(g => g.what).join("; ")}.` : "Nothing needs you.",
+  ].filter(Boolean);
+  return {
+    api_version: API_VERSION, generated: new Date(now).toISOString(), headline: lines[0], text: lines.join(" "), verdict: s.verdict,
+    needs_you: gates, next_up: deck.items.map(i => ({ id: i.id, title: i.title, owner_role: i.owner_role })),
+    working: working.map(x => ({ agent: x.id, items: x.working_on.map(i => i.item) })),
+    links: { dashboard: "https://dashboard.ultrastable.io/", status: ORIGIN + "/api/v1/status" },
+  };
+}
+
+// ---- the one write: intake from an authenticated integration ----
+export async function authIntegration(request, env) {
+  const cfg = String(env.INTEGRATION_TOKENS || "").split(",").map(s => s.trim()).filter(Boolean).map(s => { const i = s.indexOf(":"); return { name: s.slice(0, i), hash: s.slice(i + 1).toLowerCase() }; }).filter(x => x.name && /^[0-9a-f]{64}$/.test(x.hash));
+  if (!cfg.length) return { ok: false, status: 503, error: "intake is not configured (secret INTEGRATION_TOKENS unset)" };
+  const m = /^Bearer\s+(\S+)$/i.exec(request.headers.get("authorization") || "");
+  if (!m) return { ok: false, status: 401, error: "missing bearer token" };
+  const h = await sha256(m[1]), hit = cfg.find(c => c.hash === h);
+  return hit ? { ok: true, name: hit.name } : { ok: false, status: 403, error: "unknown token" };
+}
+
+export async function intake(request, env, now = Date.now()) {
+  const auth = await authIntegration(request, env);
+  if (!auth.ok) return json({ error: auth.error }, auth.status, auth.status === 401 ? { "www-authenticate": "Bearer" } : undefined);
+  let b; try { b = await request.json(); } catch (e) { return json({ error: "body must be JSON" }, 400); }
+  const title = String((b && b.title) || "").trim().slice(0, 200), detail = String((b && b.detail) || "").trim().slice(0, 4000);
+  if (!title) return json({ error: "title is required" }, 422);
+  const kind = ["idea", "request", "bug", "question"].includes(b.kind) ? b.kind : "request";
+  const pr = Math.max(1, Math.min(90, Number(b.priority) || 50));  // above 90 is reserved for the org's own driver
+  const id = "IN-" + new Date(now).toISOString().slice(0, 10).replace(/-/g, "") + "-" + (await sha256(auth.name + title + now)).slice(0, 6);
+  await env.ORG.prepare("INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, surface, disposition) VALUES (?, ?, ?, 'product-manager', ?, ?, ?, 'open', ?, ?)")
+    .bind(id, `${id}: ${title}`, "intake-" + kind, "product-manager triaged it: accepted with a plan, merged into an existing item, or declined with a reason", "GET /api/v1/work/" + id, pr, "integration:" + auth.name, detail || null).run();
+  return json({ ok: true, id, status: "open", owner_role: "product-manager", url: ORIGIN + "/api/v1/work/" + id }, 201);
+}
+
+// ---- router ----
+export const OPENAPI_PATHS = {
+  "/api/v1": { get: { operationId: "apiIndex", summary: "Index of the control-plane API", responses: { "200": { description: "Links" } } } },
+  "/api/v1/status": { get: { operationId: "getStatus", summary: "Health verdict, heartbeat, work and dispatch counts, live from the org database", responses: { "200": { description: "Status" }, "503": { description: "Org database not bound" } } } },
+  "/api/v1/agents": { get: { operationId: "listAgents", summary: "Every virtual agent: role, model, state, what it is working on, dispatch record", responses: { "200": { description: "Agents" } } } },
+  "/api/v1/work": { get: { operationId: "listWork", summary: "Backlog by view: on_deck (ranked), in_progress, blocked, done, all", parameters: [{ name: "view", in: "query", schema: { type: "string", enum: Object.keys(WORK_VIEWS) } }, { name: "limit", in: "query", schema: { type: "integer", maximum: 200 } }], responses: { "200": { description: "Items" } } } },
+  "/api/v1/work/{id}": { get: { operationId: "getWorkItem", summary: "One item with its claim and dispatch history", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { "200": { description: "Item" }, "404": { description: "No such item" } } } },
+  "/api/v1/activity": { get: { operationId: "getActivity", summary: "Recent dispatches and tick reports", responses: { "200": { description: "Activity" } } } },
+  "/api/v1/products": { get: { operationId: "listProducts", summary: "Hosted products and services with their discovery documents", responses: { "200": { description: "Products" } } } },
+  "/api/v1/companion/brief": { get: { operationId: "getCompanionBrief", summary: "Plain-language digest for a personal assistant: state, next up, what needs the owner", responses: { "200": { description: "Brief" } } } },
+  "/api/v1/intake": { post: { operationId: "submitIntake", summary: "Submit an idea, request, bug or question as a backlog item (bearer token)", security: [{ bearer: [] }], requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["title"], properties: { title: { type: "string", maxLength: 200 }, detail: { type: "string", maxLength: 4000 }, kind: { type: "string", enum: ["idea", "request", "bug", "question"] }, priority: { type: "integer", minimum: 1, maximum: 90 } } } } } }, responses: { "201": { description: "Created" }, "401": { description: "No token" }, "403": { description: "Unknown token" }, "503": { description: "Intake not configured" } } } },
+};
+
+export async function controlPlane(request, env, ctx) {
+  const u = new URL(request.url), p = u.pathname.replace(/\/$/, "");
+  if (!p.startsWith("/api/v1")) return null;
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+  if (p === "/api/v1/intake") {
+    if (request.method !== "POST") return json({ error: "use POST" }, 405, { allow: "POST, OPTIONS" });
+    if (!env || !env.ORG) return json({ error: "org database not bound (ORG)" }, 503);
+    return intake(request, env);
+  }
+  if (request.method !== "GET" && request.method !== "HEAD") return json({ error: "read-only" }, 405, { allow: "GET, HEAD, OPTIONS" });
+  if (p === "/api/v1") return json({ api_version: API_VERSION, name: "Ultrastable control-plane API", docs: ORIGIN + "/openapi.json", dashboard: "https://dashboard.ultrastable.io/", endpoints: Object.keys(OPENAPI_PATHS).map(k => ({ path: k, method: Object.keys(OPENAPI_PATHS[k])[0].toUpperCase(), summary: Object.values(OPENAPI_PATHS[k])[0].summary })) });
+  if (p === "/api/v1/products") return json(await products(env || {}));
+  if (!env || !env.ORG) return json({ error: "org database not bound (ORG)" }, 503);
+  try {
+    if (p === "/api/v1/status") return json(await status(env));
+    if (p === "/api/v1/agents") return json(await agents(env));
+    if (p === "/api/v1/activity") return json(await activity(env, u.searchParams.get("limit")));
+    if (p === "/api/v1/companion/brief") return json(await companionBrief(env));
+    if (p === "/api/v1/work") { const r = await work(env, u.searchParams.get("view") || "on_deck", u.searchParams.get("limit")); return r ? json(r) : json({ error: "view must be one of " + Object.keys(WORK_VIEWS).join(", ") }, 400); }
+    const m = /^\/api\/v1\/work\/([A-Za-z0-9._:-]{1,120})$/.exec(p);
+    if (m) { const r = await workItem(env, decodeURIComponent(m[1])); return r ? json(r) : json({ error: "no such item" }, 404); }
+  } catch (e) { console.error("control-plane", String(e && e.stack || e)); return json({ error: "query failed", detail: String(e && e.message || e) }, 500); }
+  return json({ error: "not found", index: ORIGIN + "/api/v1" }, 404);
+}
+
+// ---- /ops: the operations dashboard (also the root of dashboard.ultrastable.io). Client-side render of /api/v1, refreshed every 30 s. ----
+const OPS_JS = `
+const $=s=>document.querySelector(s),api=p=>fetch('/api/v1/'+p,{cache:'no-store'}).then(r=>r.json());
+function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function ago(s){if(s==null)return'never';if(s<90)return s+' s ago';if(s<5400)return Math.round(s/60)+' min ago';if(s<172800)return Math.round(s/3600)+' h ago';return Math.round(s/86400)+' d ago'}
+function table(head,rows){const w=el('div','us-wrap'),t=el('table','us-table'),h=el('tr');head.forEach(x=>h.appendChild(el('th',null,x)));t.appendChild(h);
+ if(!rows.length){const tr=el('tr'),td=el('td',null,'none');td.colSpan=head.length;tr.appendChild(td);t.appendChild(tr)}
+ rows.forEach(r=>{const tr=el('tr');r.forEach(c=>{const td=el('td');if(c&&c.href){const a=el('a',null,c.t);a.href=c.href;td.appendChild(a)}else if(c&&c.pill){td.appendChild(el('span','pill '+c.pill,c.t))}else td.textContent=c==null?'':String(c);tr.appendChild(td)});t.appendChild(tr)});w.appendChild(t);return w}
+function card(id,title,sub){let s=document.getElementById(id);if(!s){s=el('section','card');s.id=id;$('#ops').appendChild(s)}s.textContent='';s.appendChild(el('h2',null,title));if(sub)s.appendChild(el('p','meta',sub));return s}
+const it=i=>({t:i,href:'/api/v1/work/'+encodeURIComponent(i)});
+async function draw(){try{
+ const [s,a,prog,deck,blk,act,done]=await Promise.all([api('status'),api('agents'),api('work?view=in_progress'),api('work?view=on_deck&limit=25'),api('work?view=blocked&limit=25'),api('activity?limit=20'),api('work?view=done&limit=10')]);
+ if(s.error){$('#ops').textContent=s.error;return}
+ const v=$('#verdict');v.textContent=s.verdict.toUpperCase();v.className='pill '+(s.verdict==='healthy'?'good':s.verdict==='degraded'?'warn':'bad');
+ $('#asof').textContent='Live from the org database. Last heartbeat: tick '+(s.heartbeat?s.heartbeat.tick+', '+ago(s.heartbeat.age_s):'none')+'. Refreshed '+new Date().toLocaleTimeString()+'.';
+ const k=card('c-now','Right now'),w=s.work.by_status,d=s.dispatch;
+ const g=el('div','kpis');[['Agents active (1 h)',s.agents.active_last_hour+' / '+s.agents.total],['In progress',prog.count],['On deck',deck.count],['Blocked',w.blocked||0],['Done',w.done||0],['Dispatches executed',d.settled+' / '+d.total],['Needs you',s.owner.open_gate_cards]].forEach(([l,n])=>{const b=el('div','kpi');b.appendChild(el('div','n',String(n)));b.appendChild(el('div','l',l));g.appendChild(b)});k.appendChild(g);
+ if(s.reasons.length){const ul=el('ul','reasons');s.reasons.forEach(r=>ul.appendChild(el('li',null,r)));k.appendChild(ul)}
+ if(s.heartbeat)k.appendChild(el('p','meta',s.heartbeat.report));
+ card('c-agents','Agents','Each virtual agent, the model it runs on, and what it holds now.').appendChild(table(['Agent','Role','Model','State','Working on','Last dispatch','Dispatches (executed / total, 24 h)','Last tick'],a.agents.map(x=>[x.id,x.role,x.model,{t:x.state,pill:x.state==='working'?'good':x.state==='waiting'?'warn':'bad'},x.working_on.map(i=>i.item).join(', ')||'-',x.last_dispatch?x.last_dispatch.item+' ('+x.last_dispatch.status+')':'-',x.dispatches.settled+' / '+x.dispatches.total+' ('+x.dispatches.last_24h+')',x.last_tick_at?ago(x.last_tick_age_s):'never'])));
+ card('c-prog','In progress','Claimed items and the agent that holds each.').appendChild(table(['Item','Title','Agent','Since','Dispatches'],prog.items.map(i=>[it(i.id),i.title,i.agent||'-',i.claimed_at||'-',i.dispatch_count])));
+ card('c-deck','On deck','Ranked: priority, then ready before open, then oldest first. '+deck.count+' items.').appendChild(table(['#','Item','Title','Owner','Priority','Status'],deck.items.map(i=>[i.rank,it(i.id),i.title,i.owner_role,i.priority,i.status])));
+ card('c-blk','Blocked',blk.count+' items waiting on something.').appendChild(table(['Item','Title','Owner','Blocker'],blk.items.map(i=>[it(i.id),i.title,i.owner_role,i.blocker||i.disposition||'-'])));
+ card('c-act','Activity','Newest dispatches and heartbeat reports.').appendChild(table(['When','Agent','Item','Status'],act.dispatches.map(x=>[x.at,x.agent,x.item||'-',{t:x.status,pill:x.status==='done'?'good':x.status==='queued'?'warn':x.status==='failed'?'bad':''}])));
+ document.getElementById('c-act').appendChild(table(['Tick','When','Steps','Summary'],act.ticks.map(t=>[t.id,t.at,t.steps,t.summary])));
+ card('c-done','Recently done').appendChild(table(['Item','Title','Updated'],done.items.map(i=>[it(i.id),i.title,i.updated_at])));
+}catch(e){$('#asof').textContent='Could not reach the API: '+e}}
+draw();setInterval(draw,30000);`;
+const OPS_CSS = "<style>.pill{display:inline-block;padding:2px 8px;border-radius:99px;font:600 13px system-ui;border:1px solid var(--line)}.pill.good{color:var(--good);border-color:var(--good)}.pill.warn{color:var(--ac);border-color:var(--ac)}.pill.bad{color:var(--bad);border-color:var(--bad)}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:8px 0}.kpi{background:var(--sf2);border-radius:6px;padding:10px}.kpi .n{font:700 24px system-ui}.kpi .l{color:var(--ink2);font-size:13px}.reasons{margin:8px 0;padding-left:20px;color:var(--bad)}.us-wrap{overflow-x:auto}</style>";
+
+export function opsPage(shell) {
+  const body = OPS_CSS + "<div class=\"head\"><h1>Operations <span id=\"verdict\" class=\"pill\">...</span></h1><p>What Ultrastable is doing on itself: the agents, what each holds, what is on deck, what is blocked. Read-only; the same data is at <a href=\"/api/v1\">/api/v1</a>.</p><p class=\"meta\" id=\"asof\">Loading...</p></div><div id=\"ops\"></div><script>" + OPS_JS + "</script>";
+  return shell({ path: "/ops", title: "Operations: Ultrastable running on Ultrastable", description: "Live operations dashboard: virtual agents, work in progress, the ranked backlog and blockers." }, body);
+}
