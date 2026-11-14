@@ -20,6 +20,9 @@
       "database_id": "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"
     }
   ],
+  "ai": {
+    "binding": "AI"
+  },
   "services": [
     {
       "binding": "TICK",

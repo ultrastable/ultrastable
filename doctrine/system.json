@@ -96,7 +96,7 @@
     },
     "ultrastable-dashboard": {
       "main": "dashboard/worker.js",
-      "role": "owner dashboard: e-mailed-code login, task queue, audit log; reached only through the site's OWNER service binding",
+      "role": "owner dashboard: e-mailed-code login, task queue, audit log, and a plain-English console agent (read-only until a fresh code; changes go through the audited command path); reached only through the site's OWNER service binding",
       "crons": [
         "0 13 * * *",
         "*/10 * * * *"
@@ -107,7 +107,10 @@
         },
         "services": {
           "TICK": "ultrastable-tick"
-        }
+        },
+        "ai": [
+          "AI"
+        ]
       }
     },
     "ultrastable-ultrastable": {

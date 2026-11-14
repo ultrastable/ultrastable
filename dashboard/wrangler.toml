@@ -20,6 +20,10 @@ binding = "DB"
 database_name = "ultrastable-ops"
 database_id = "REPLACED_AT_DEPLOY"
 
+# CONSOLE-AGENT-1: the owner console answers plain-English requests through Workers AI (the same adapters as the tick worker's code agent).
+[ai]
+binding = "AI"
+
 [[send_email]]
 name = "SEND_EMAIL"
 allowed_destination_addresses = ["REPLACED_AT_DEPLOY"]

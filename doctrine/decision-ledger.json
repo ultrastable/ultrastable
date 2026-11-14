@@ -798,6 +798,14 @@
    "title": "INSIGHT-1: analytics are a per-page feedback loop on first-party Cloudflare hits",
    "body": "Owner directive 2026-11-14: analytics run on Cloudflare data with no opt-in tag, and they are feedback loops in both the Qniverse and Ultrastable. foundation/insight.py reads each content page's 7 days against the 7 before from the cookieless hits, classifies rising, external_pull and fading, files at most two growth items a day, settles each finding after 8 days against what the page really got and tunes its own rise threshold. It runs inside the product manager pass; the fleet twin is ANALYTICS-LOOP-1 in QNFO/qnfo-workers. Session: session_0156nqDsPtEM4yqenH7N7zps",
    "probe": "grep:foundation/insight.py::def settle"
+  },
+  {
+   "id": "decision-2026-11-14-console-agent-1-the-owner-console-is-a-plain-english-agent-w",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CONSOLE-AGENT-1: the owner console is a plain-English agent with audited, step-up-gated change",
+   "body": "Owner 2026-11-14: the command line should function like a top-tier server-side agent, and the critiques of the fleet command line apply to Ultrastable. The owner console took only exact registered commands. dashboard/agent.js now runs any other line as a short tool loop on Workers AI: reads through one bounded SELECT over an allow-list of tables and read-only commands, runs changing commands only with a code emailed in the last 15 minutes through the audited, undoable path, always ends in a text answer, and the page says whether the session is read-only. The page gets a stacked 16 px form, named chips, rendered answers and step counts. Session: session_0156nqDsPtEM4yqenH7N7zps",
+   "probe": "grep:dashboard/agent.js::export async function ask"
   }
  ]
 }
