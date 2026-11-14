@@ -1,0 +1,686 @@
+{
+ "_doc": "DESIGN-LANGUAGE-1: one design language for every Ultrastable portfolio and every product that rolls up to it. Four layers, each allowed to vary only what the layer above permits. Consumed by foundation/design.py (python3 -m foundation design --check|--lint|--css|--tokens|--derive), tests/foundation/test_design.py, and the design-manager role (agents/roles/design-manager.md). Edit data here; never hand-edit a generated token file.",
+ "version": "1.0.0",
+ "layers": {
+  "core": "Structure that never varies between portfolios or products: the --ds-* token contract, the 8 px spacing scale, the type scale ratios, tap size, contrast floors, focus ring, motion rules, the component set and the state rules. A product that needs to break one of these is a defect in the core, fixed in the core.",
+  "portfolio": "The family look of one organization: neutrals, accent seed, type pair, shape (radius flavor), density, voice. All products of the portfolio inherit it. The portfolio is the thing a stranger recognizes across products.",
+  "product": "One product's identity inside the family: an accent hue within the portfolio's hue range, a display face from the portfolio's allowed list, a density step, a mark. Everything else is inherited.",
+  "experiment": "A bounded variant of a product theme under test (doctrine/design-experiments.json). It may vary only what the product layer may vary, never the core."
+ },
+ "invariants": {
+  "tap_px": 44,
+  "body_px": 16,
+  "min_text_px": 14,
+  "field_px": 16,
+  "contrast_text": 4.5,
+  "contrast_graphic": 3,
+  "primary_actions_per_screen": 1,
+  "spacing_px": [
+   0,
+   4,
+   8,
+   12,
+   16,
+   24,
+   32,
+   48
+  ],
+  "type_scale_px": {
+   "small": 14,
+   "body": 16,
+   "lead": 18,
+   "h3": 17,
+   "h2": 20,
+   "h1": 26
+  },
+  "max_content_px": 960,
+  "status_colors_reserved": [
+   "good",
+   "warn",
+   "bad"
+  ],
+  "required_states": [
+   "loading",
+   "empty",
+   "error"
+  ],
+  "dark_mode": true,
+  "reduced_motion": true,
+  "visible_focus": true
+ },
+ "token_contract": [
+  "bg",
+  "surface",
+  "surface2",
+  "ink",
+  "ink2",
+  "line",
+  "lineStrong",
+  "accent",
+  "accentHover",
+  "onAccent",
+  "accentSoft",
+  "accentSoftInk",
+  "good",
+  "goodSoft",
+  "warn",
+  "warnSoft",
+  "bad",
+  "badSoft",
+  "focus"
+ ],
+ "contrast_pairs": [
+  [
+   "ink",
+   "bg",
+   4.5
+  ],
+  [
+   "ink",
+   "surface",
+   4.5
+  ],
+  [
+   "ink",
+   "surface2",
+   4.5
+  ],
+  [
+   "ink2",
+   "bg",
+   4.5
+  ],
+  [
+   "ink2",
+   "surface",
+   4.5
+  ],
+  [
+   "ink2",
+   "surface2",
+   4.5
+  ],
+  [
+   "accent",
+   "surface",
+   4.5
+  ],
+  [
+   "accent",
+   "bg",
+   4.5
+  ],
+  [
+   "onAccent",
+   "accent",
+   4.5
+  ],
+  [
+   "onAccent",
+   "accentHover",
+   4.5
+  ],
+  [
+   "accentSoftInk",
+   "accentSoft",
+   4.5
+  ],
+  [
+   "good",
+   "surface",
+   4.5
+  ],
+  [
+   "good",
+   "goodSoft",
+   4.5
+  ],
+  [
+   "warn",
+   "surface",
+   4.5
+  ],
+  [
+   "warn",
+   "warnSoft",
+   4.5
+  ],
+  [
+   "bad",
+   "surface",
+   4.5
+  ],
+  [
+   "bad",
+   "badSoft",
+   4.5
+  ],
+  [
+   "lineStrong",
+   "surface",
+   3
+  ],
+  [
+   "focus",
+   "surface",
+   3
+  ],
+  [
+   "focus",
+   "bg",
+   3
+  ]
+ ],
+ "portfolios": {
+  "ultrastable": {
+   "voice": "Confident, plain, practical, a little bold. Large serif headlines, wide margins, flat colour blocks, one orange action per screen.",
+   "seed": "#FF5B1F",
+   "hue_range_deg": 70,
+   "fonts": {
+    "display": "Fraunces,Georgia,serif",
+    "body": "'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif",
+    "mono": "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"
+   },
+   "display_allowed": [
+    "Fraunces,Georgia,serif",
+    "'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif"
+   ],
+   "radius_px": {
+    "s": 4,
+    "m": 6,
+    "l": 8
+   },
+   "density": "regular",
+   "neutrals": {
+    "light": {
+     "bg": "#F6F1E7",
+     "surface": "#FFFDF8",
+     "surface2": "#EEE7D8",
+     "ink": "#14120F",
+     "ink2": "#5B574F",
+     "line": "#DDD5C5",
+     "lineStrong": "#6F6A5F",
+     "good": "#166534",
+     "goodSoft": "#DCFCE7",
+     "warn": "#854D0E",
+     "warnSoft": "#FEF3C7",
+     "bad": "#B42318",
+     "badSoft": "#FEE4E2"
+    },
+    "dark": {
+     "bg": "#0B1A15",
+     "surface": "#102A22",
+     "surface2": "#17382E",
+     "ink": "#F6F1E7",
+     "ink2": "#C9D4CC",
+     "line": "#24473B",
+     "lineStrong": "#7F978B",
+     "good": "#6EE7A0",
+     "goodSoft": "#12301F",
+     "warn": "#F6C453",
+     "warnSoft": "#33270D",
+     "bad": "#FF9A8F",
+     "badSoft": "#3A1715"
+    }
+   }
+  }
+ },
+ "products": {
+  "ultrastable-site": {
+   "portfolio": "ultrastable",
+   "role": "public front door and marketing pages",
+   "accent_seed": "#FF5B1F",
+   "display": "Fraunces,Georgia,serif",
+   "density": "airy",
+   "surfaces": [
+    "site/worker.js"
+   ]
+  },
+  "ultrastable-cockpit": {
+   "portfolio": "ultrastable",
+   "role": "the owner's dashboard: dense, calm, scannable",
+   "accent_seed": "#D98A00",
+   "display": "'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif",
+   "density": "compact",
+   "surfaces": [
+    "dashboard/worker.js"
+   ]
+  },
+  "ultrastable-console": {
+   "portfolio": "ultrastable",
+   "role": "a customer system's console (ultrastable/workers)",
+   "accent_seed": "#FF5B1F",
+   "display": "'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif",
+   "density": "regular",
+   "surfaces": []
+  }
+ },
+ "tenants": {
+  "_doc": "A system built on Ultrastable is a portfolio of its own. At bootstrap it picks ONE accent seed (a colour, or one the interview infers) and inherits everything else from the portfolio named here; `design --derive <hex>` makes the contrast-proven tokens, so a person never configures a design.",
+  "default_portfolio": "ultrastable",
+  "required": [
+   "accent_seed"
+  ],
+  "optional": [],
+  "selection": "automatic from the library (design --select); a person is never shown a font, colour or theme picker"
+ },
+ "density": {
+  "compact": 0.875,
+  "regular": 1,
+  "airy": 1.125
+ },
+ "product_may_vary": [
+  "accent_seed",
+  "display",
+  "density"
+ ],
+ "product_may_not_vary": [
+  "neutrals",
+  "status colors",
+  "type scale",
+  "spacing scale",
+  "radius flavor",
+  "tap size",
+  "component structure"
+ ],
+ "surfaces_lint": {
+  "_doc": "Surfaces checked by `design --lint`. `baseline` is shrink-only: findings listed there are known debt with a Q- item; a new finding fails the build.",
+  "files": [
+   "site/worker.js",
+   "dashboard/worker.js"
+  ],
+  "baseline": "doctrine/design-baseline.json"
+ },
+ "research": {
+  "_doc": "What the language is built from. Each entry is a practice adopted into the code, with where it lives. A source that stops paying (no finding adopted in 90 days) is replaced by the scout pass.",
+  "practices": [
+   {
+    "id": "tonal-derivation",
+    "source": "Material 3 dynamic colour and Radix Colors step scales",
+    "adopted_as": "foundation/design.py derive_theme: one seed colour yields a full light and dark token set whose pairs are proven, instead of hand-picked hex",
+    "status": "built"
+   },
+   {
+    "id": "design-tokens-format",
+    "source": "W3C Design Tokens Community Group format",
+    "adopted_as": "design --tokens writes $value/$type tokens so any tool reads the same values",
+    "status": "built"
+   },
+   {
+    "id": "wcag-22",
+    "source": "WCAG 2.2 (1.4.3 text contrast, 1.4.11 non-text contrast, 2.4.11 focus not obscured, 2.5.8 target size)",
+    "adopted_as": "contrast_pairs and invariants.tap_px, proven per theme in both modes",
+    "status": "built"
+   },
+   {
+    "id": "touch-targets",
+    "source": "Apple HIG 44 pt, Material 48 dp",
+    "adopted_as": "invariants.tap_px 44",
+    "status": "built"
+   },
+   {
+    "id": "progressive-disclosure",
+    "source": "Nielsen Norman Group usability heuristics (recognition over recall, minimalist design)",
+    "adopted_as": "one primary action per screen, secondary tools behind a disclosure",
+    "status": "built"
+   },
+   {
+    "id": "design-system-governance",
+    "source": "GOV.UK, Atlassian, Shopify Polaris and GitHub Primer: core tokens plus themeable layers, contribution through the system",
+    "adopted_as": "layers, product_may_vary, product_may_not_vary, shrink-only lint baseline",
+    "status": "built"
+   },
+   {
+    "id": "experimentation",
+    "source": "Controlled online experiments (A/B tests): pre-registered metric, guard metrics, fixed sample size, no peeking",
+    "adopted_as": "doctrine/design-experiments.json policy and design experiments --evaluate",
+    "status": "built"
+   },
+   {
+    "id": "apca",
+    "source": "APCA contrast (WCAG 3 draft)",
+    "adopted_as": "recorded as a candidate second contrast measure; not a gate until WCAG 3 settles",
+    "status": "candidate"
+   },
+   {
+    "id": "fluid-type",
+    "source": "clamp()-based fluid type and container queries",
+    "adopted_as": "an experiment: fluid scale against the fixed scale on reading time",
+    "status": "candidate"
+   },
+   {
+    "id": "screenshot-critique",
+    "source": "model-based visual critique of rendered screens against the invariants",
+    "adopted_as": "a second reviewer of a different model family on every surface change",
+    "status": "candidate"
+   }
+  ]
+ },
+ "library": {
+  "_doc": "DESIGN-LIBRARY-1: a small, curated library of whole personalities, so every deployment looks like itself without anyone choosing a font or a colour. A personality is a bundle that was composed once and proven once: accent seed, neutral family, type pairing, shape, density. The system selects one automatically from the idea's own words (design --select) and a deployment's person is never asked. The library stays small on purpose: eight bundles give distinct looks without a menu; a ninth must differ from every existing one (design --check enforces pairwise distinctness) and earn its place by an experiment. Fonts are system stacks with a named first choice: no download, no layout shift, nothing to host.",
+  "neutral_sets": {
+   "warm": {
+    "light": {
+     "bg": "#F6F1E7",
+     "surface": "#FFFDF8",
+     "surface2": "#EEE7D8",
+     "ink": "#14120F",
+     "ink2": "#5B574F",
+     "line": "#DDD5C5",
+     "lineStrong": "#6F6A5F",
+     "good": "#166534",
+     "goodSoft": "#DCFCE7",
+     "warn": "#854D0E",
+     "warnSoft": "#FEF3C7",
+     "bad": "#B42318",
+     "badSoft": "#FEE4E2"
+    },
+    "dark": {
+     "bg": "#0B1A15",
+     "surface": "#102A22",
+     "surface2": "#17382E",
+     "ink": "#F6F1E7",
+     "ink2": "#C9D4CC",
+     "line": "#24473B",
+     "lineStrong": "#7F978B",
+     "good": "#6EE7A0",
+     "goodSoft": "#12301F",
+     "warn": "#F6C453",
+     "warnSoft": "#33270D",
+     "bad": "#FF9A8F",
+     "badSoft": "#3A1715"
+    }
+   },
+   "cool": {
+    "light": {
+     "bg": "#F3F5F8",
+     "surface": "#FFFFFF",
+     "surface2": "#E8ECF2",
+     "ink": "#12161C",
+     "ink2": "#4A5361",
+     "line": "#D3D9E1",
+     "lineStrong": "#6B7585"
+    },
+    "dark": {
+     "bg": "#0D1117",
+     "surface": "#151B23",
+     "surface2": "#1C232D",
+     "ink": "#E6EAF0",
+     "ink2": "#A3ADBB",
+     "line": "#2A323E",
+     "lineStrong": "#77818F"
+    }
+   },
+   "paper": {
+    "light": {
+     "bg": "#F7F7F5",
+     "surface": "#FFFFFF",
+     "surface2": "#EFEFEC",
+     "ink": "#1A1A1A",
+     "ink2": "#55554F",
+     "line": "#DCDCD6",
+     "lineStrong": "#6E6E67"
+    },
+    "dark": {
+     "bg": "#121212",
+     "surface": "#1A1A1A",
+     "surface2": "#232323",
+     "ink": "#EDEDED",
+     "ink2": "#B0B0AA",
+     "line": "#333333",
+     "lineStrong": "#7E7E78"
+    }
+   }
+  },
+  "status": {
+   "light": {
+    "good": "#166534",
+    "goodSoft": "#DCFCE7",
+    "warn": "#854D0E",
+    "warnSoft": "#FEF3C7",
+    "bad": "#B42318",
+    "badSoft": "#FEE4E2"
+   },
+   "dark": {
+    "good": "#6EE7A0",
+    "goodSoft": "#12301F",
+    "warn": "#F6C453",
+    "warnSoft": "#33270D",
+    "bad": "#FF9A8F",
+    "badSoft": "#3A1715"
+   }
+  },
+  "stacks": {
+   "editorial": "Fraunces,Georgia,'Times New Roman',serif",
+   "humanist": "'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif",
+   "geometric": "'Avenir Next',Avenir,'Segoe UI',system-ui,-apple-system,sans-serif",
+   "grotesk": "'Helvetica Neue',Helvetica,Arial,system-ui,sans-serif",
+   "technical": "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace",
+   "rounded": "ui-rounded,'SF Pro Rounded',Nunito,'Segoe UI',system-ui,sans-serif",
+   "transitional": "Charter,'Bitstream Charter','Sitka Text',Cambria,Georgia,serif"
+  },
+  "personalities": {
+   "signal": {
+    "mood": "bold, practical, autonomous",
+    "keywords": [
+     "autonom",
+     "agent",
+     "operations",
+     "platform",
+     "automation",
+     "pipeline of",
+     "infrastructure",
+     "system"
+    ],
+    "seed": "#FF5B1F",
+    "neutrals": "warm",
+    "display": "editorial",
+    "body": "humanist",
+    "radius_px": {
+     "s": 4,
+     "m": 6,
+     "l": 8
+    },
+    "density": "regular"
+   },
+   "field-notes": {
+    "mood": "editorial, thoughtful",
+    "keywords": [
+     "writing",
+     "research",
+     "journal",
+     "publish",
+     "newsletter",
+     "notes",
+     "club",
+     "community",
+     "association",
+     "reading",
+     "library",
+     "archive"
+    ],
+    "seed": "#B45309",
+    "neutrals": "paper",
+    "display": "editorial",
+    "body": "transitional",
+    "radius_px": {
+     "s": 2,
+     "m": 4,
+     "l": 6
+    },
+    "density": "airy"
+   },
+   "ledger": {
+    "mood": "precise, calm, numerate",
+    "keywords": [
+     "finance",
+     "account",
+     "market",
+     "trading",
+     "signals",
+     "tracker",
+     "data",
+     "analytics",
+     "budget",
+     "invoice",
+     "forecast",
+     "report"
+    ],
+    "seed": "#1D4ED8",
+    "neutrals": "cool",
+    "display": "grotesk",
+    "body": "humanist",
+    "radius_px": {
+     "s": 4,
+     "m": 8,
+     "l": 12
+    },
+    "density": "compact"
+   },
+   "workshop": {
+    "mood": "technical, direct",
+    "keywords": [
+     "developer",
+     "code",
+     "devops",
+     "engineering",
+     "build",
+     "tool",
+     "deploy",
+     "repo",
+     "api",
+     "software",
+     "security"
+    ],
+    "seed": "#C2410C",
+    "neutrals": "paper",
+    "display": "technical",
+    "body": "humanist",
+    "radius_px": {
+     "s": 2,
+     "m": 4,
+     "l": 6
+    },
+    "density": "compact"
+   },
+   "garden": {
+    "mood": "warm, caring, personal",
+    "keywords": [
+     "health",
+     "wellness",
+     "family",
+     "home",
+     "food",
+     "garden",
+     "habit",
+     "companion",
+     "personal",
+     "fitness",
+     "care",
+     "recipe",
+     "pet"
+    ],
+    "seed": "#0F766E",
+    "neutrals": "warm",
+    "display": "rounded",
+    "body": "rounded",
+    "radius_px": {
+     "s": 10,
+     "m": 14,
+     "l": 20
+    },
+    "density": "airy"
+   },
+   "atlas": {
+    "mood": "curious, exploratory",
+    "keywords": [
+     "travel",
+     "explore",
+     "map",
+     "learn",
+     "education",
+     "course",
+     "school",
+     "student",
+     "tour",
+     "trip",
+     "guide",
+     "language"
+    ],
+    "seed": "#7C3AED",
+    "neutrals": "cool",
+    "display": "geometric",
+    "body": "geometric",
+    "radius_px": {
+     "s": 8,
+     "m": 12,
+     "l": 16
+    },
+    "density": "regular"
+   },
+   "studio": {
+    "mood": "expressive, crafted",
+    "keywords": [
+     "design",
+     "creative",
+     "portfolio",
+     "art",
+     "music",
+     "photo",
+     "fashion",
+     "boutique",
+     "gallery",
+     "film",
+     "craft",
+     "shop",
+     "studio",
+     "pottery",
+     "ceramic",
+     "handmade",
+     "illustration",
+     "wedding"
+    ],
+    "seed": "#BE185D",
+    "neutrals": "paper",
+    "display": "transitional",
+    "body": "geometric",
+    "radius_px": {
+     "s": 0,
+     "m": 2,
+     "l": 4
+    },
+    "density": "airy"
+   },
+   "harbor": {
+    "mood": "trustworthy, welcoming",
+    "keywords": [
+     "support",
+     "service",
+     "clinic",
+     "legal",
+     "local",
+     "booking",
+     "appointment",
+     "customer",
+     "member",
+     "nonprofit",
+     "church",
+     "school board",
+     "contractor"
+    ],
+    "seed": "#0369A1",
+    "neutrals": "cool",
+    "display": "humanist",
+    "body": "humanist",
+    "radius_px": {
+     "s": 6,
+     "m": 10,
+     "l": 14
+    },
+    "density": "regular"
+   }
+  },
+  "selection": "automatic: score each personality by the idea's words, break ties and spread deployments by a stable hash of the tenant id, and skip personalities a sibling deployment already uses (`taken`). With no signal the hash alone chooses. The person is never asked; the interview infers the words it already collects.",
+  "distinct_min_hue_deg": 20
+ }
+}

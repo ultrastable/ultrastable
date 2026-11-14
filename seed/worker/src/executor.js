@@ -4,7 +4,9 @@
 // Worker, a queue a cloud-hosted agent drains) without touching the tick.
 import { probe } from './codeagent.js';
 import { ensureItem } from './tick.js';
+import { nativeProvider } from './nativeexec.js';
 export const PROVIDERS = [
+  nativeProvider,  // ZERO-MINUTES-1: first choice, no Actions minutes; the Actions dispatch below is the fallback when this one is unavailable or fails
   {
     id: 'github-actions',
     available: env => Boolean(env.GITHUB_DISPATCH_TOKEN && env.GITHUB_REPO),

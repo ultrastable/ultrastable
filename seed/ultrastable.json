@@ -107,6 +107,12 @@
       "count": 1,
       "instructions": "agents/roles/infrastructure-manager.md",
       "tick_every": 2
+    },
+    {
+      "id": "design-manager",
+      "count": 1,
+      "instructions": "agents/roles/design-manager.md",
+      "tick_every": 6
     }
   ],
   "model_ladder": {

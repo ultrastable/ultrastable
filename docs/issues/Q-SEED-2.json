@@ -1,0 +1,11 @@
+{
+  "id": "Q-SEED-2",
+  "title": "Q-SEED-2: fork and collapse: a direction change opens a fork with a charter delta and a prediction, closes it on the metric, logs the choice",
+  "body": "**Owner:** product-manager\n**Trigger:** after Q-SEED-1\n**Done check:** file:foundation/fork.py\n**Status:** open\n\ncode-task: repo=ultrastable path=foundation/fork.py\nSee docs/doctrine/SEED.md rule 5. Reuse pm.py experiments and decision_log; do not build a parallel store.\n\nsize: M\n",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
