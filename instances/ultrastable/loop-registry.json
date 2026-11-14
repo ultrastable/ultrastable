@@ -2728,6 +2728,40 @@
       "identity_bound": "none",
       "default_in_effect": "the wizard no longer asks; first-run enables schedules",
       "server_owner": "github-actions"
+    },
+    {
+      "id": "role-design-manager",
+      "kind": "manager",
+      "summary": "Design manager: the design language across the portfolio and every product that rolls up to it (doctrine/design",
+      "trigger": "each tick of the design-manager role (tick_every 6)",
+      "owner": "design-manager",
+      "closes_by": "system",
+      "sla": "1 tick",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:agents/roles/design-manager.md",
+      "writeback": [
+        "docs/issues",
+        "docs/handoff"
+      ],
+      "system_path": [
+        "agents/roles/design-manager.md",
+        "seed/agents/roles/design-manager.md",
+        "doctrine/team.json",
+        "foundation/team.py"
+      ],
+      "server_owner": "ultrastable-tick"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

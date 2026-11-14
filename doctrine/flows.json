@@ -780,6 +780,18 @@
       ],
       "feedback": "the first check it starts joins the merge lane; a copy where schedules did not come on keeps the manual Enable fallback",
       "bindings": []
+    },
+    "role-design-manager": {
+      "inflows": [
+        {"signal": "metric.readings", "via": "d1:ultrastable-org"},
+        {"signal": "scout.log", "via": "file:ops/scout/log.jsonl"},
+        {"signal": "rnd.log", "via": "file:ops/rnd/log.jsonl"}
+      ],
+      "outflows": [
+        {"signal": "issue.filed", "via": "github:issues"}
+      ],
+      "feedback": "a design variant is kept only when its metric moved beyond the pre-registered sample rule and no guard worsened (design experiments --evaluate); a lint finding that recurs files a Q-DESIGN item",
+      "bindings": []
     }
   },
   "implicit_producers": {
