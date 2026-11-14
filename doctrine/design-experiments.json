@@ -1,0 +1,124 @@
+{
+ "_doc": "DESIGN-LANGUAGE-1 experiments: R&D for design as data. Ideas (wild and blue-sky welcome) are promoted to experiments; experiments are decided by the pre-registered rule below, never by opinion. Consumed by foundation/design.py (design experiments --check|--assign|--evaluate) and read by the design-manager role each tick.",
+ "version": "1.0.0",
+ "policy": {
+  "alpha": 0.05,
+  "min_sample_per_arm": 400,
+  "max_days": 28,
+  "max_concurrent_per_surface": 1,
+  "bucketing": "sha256(experiment|visitor) modulo arms: sticky, equal split, nothing stored",
+  "no_peeking": "a verdict is computed only after min_sample_per_arm; before it the answer is continue",
+  "axes_allowed": [
+   "accent_seed",
+   "display",
+   "density",
+   "copy",
+   "section_order",
+   "primary_label",
+   "personality"
+  ],
+  "never_a_variant": [
+   "contrast floors",
+   "tap size",
+   "min text size",
+   "focus ring",
+   "reduced motion",
+   "dark mode",
+   "status colours",
+   "one primary action per screen"
+  ],
+  "kept_when": "variant beats control on the metric (p below alpha) and every guard metric holds; otherwise control stays and the reason is recorded",
+  "statuses": [
+   "proposed",
+   "running",
+   "kept",
+   "replaced",
+   "no-effect",
+   "inconclusive",
+   "retired"
+  ],
+  "sources": "the metric comes from first-party cookieless analytics (seed/analytics); a surface with no beacon cannot run an experiment and gets the beacon first",
+  "after_verdict": "kept: the variant becomes the product default in doctrine/design.json in the same change; every verdict writes its idea back to `ideas` with what was learned"
+ },
+ "experiments": [
+  {
+   "id": "DX-001-site-headline-face",
+   "surface": "ultrastable-site",
+   "hypothesis": "A sans display face on the front door reads as more practical to builders than the serif and raises the share who start the interview.",
+   "axis": "display",
+   "metric": "interview_started_rate",
+   "guard_metrics": [
+    "bounce_rate",
+    "time_to_first_input_ms"
+   ],
+   "arms": [
+    {
+     "id": "control"
+    },
+    {
+     "id": "sans-display",
+     "overrides": {
+      "display": "'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif"
+     }
+    }
+   ],
+   "prediction": "interview_started_rate > 0.02 within 672 h",
+   "status": "proposed"
+  },
+  {
+   "id": "DX-002-cockpit-density",
+   "surface": "ultrastable-cockpit",
+   "hypothesis": "The compact density lets a reader find the failing loop faster than the regular density.",
+   "axis": "density",
+   "metric": "time_to_first_action_s",
+   "guard_metrics": [
+    "misclick_rate"
+   ],
+   "arms": [
+    {
+     "id": "control"
+    },
+    {
+     "id": "regular",
+     "overrides": {
+      "density": "regular"
+     }
+    }
+   ],
+   "prediction": "time_to_first_action_s < 20 within 672 h",
+   "status": "proposed"
+  }
+ ],
+ "ideas": [
+  {
+   "id": "IDEA-voice-first-theme",
+   "idea": "The interview pill bar becomes the only element above the fold; the page theme is chosen by the first spoken sentence (the accent is inferred from the idea's domain).",
+   "blast_box": "a throwaway /lab route behind a flag; never the front door",
+   "promote_when": "the interview start rate is measured for two weeks and the inferred accent passes derive"
+  },
+  {
+   "id": "IDEA-live-system-skin",
+   "idea": "A product's accent drifts with its own health (calm cool when every loop closes, warm when a clock is late), always inside the contrast-proven range.",
+   "blast_box": "the cockpit only, one accent step, never the status colours",
+   "promote_when": "a guard shows no rise in misreads of good and bad"
+  },
+  {
+   "id": "IDEA-generated-marks",
+   "idea": "Each tenant system gets a generated mark from its loop graph, drawn by brand/tools/generate.py.",
+   "blast_box": "generated files under a tenant folder",
+   "promote_when": "two tenants exist"
+  },
+  {
+   "id": "IDEA-fluid-type",
+   "idea": "Replace the fixed type scale with a clamp()-based fluid scale holding the same ratios.",
+   "blast_box": "one product surface",
+   "promote_when": "reading-time analytics exist for that surface"
+  },
+  {
+   "id": "IDEA-screenshot-critic",
+   "idea": "A model of a different family critiques rendered phone screenshots of every changed surface against the invariants and files findings.",
+   "blast_box": "advisory only until its false-positive rate is measured",
+   "promote_when": "the first 20 critiques are scored against the lint"
+  }
+ ]
+}
