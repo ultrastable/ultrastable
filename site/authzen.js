@@ -3,8 +3,10 @@
 // Fail closed: no ledger row, an unreadable ledger or an unknown rung means decision=false.
 const ORIGIN = "https://ultrastable.io";
 const LADDER = ["observed", "assisted", "delegated", "autonomous", "self-directed", "self-modifying", "self-extending"];
-// Rung needed per action class; anything not listed needs "autonomous". The ladder never reaches secrets, the interrupt gate or the alignment floor (kernel reading o): those resource types are always denied.
-const NEEDS = { read: "observed", observe: "observed", propose: "assisted", comment: "assisted", intake: "assisted", execute: "delegated", deploy: "autonomous", merge: "autonomous", modify: "self-modifying", extend: "self-extending" };
+// Rung needed per action class (the classes seeded in the live trust_ledger, plus the generic verbs); anything not listed needs "autonomous".
+const NEEDS = { read: "observed", observe: "observed", draft: "observed", estimate_cost: "observed", propose: "assisted", comment: "assisted", intake: "assisted", request_binding: "assisted", add_record: "assisted", migrate_additive: "assisted", deploy_preview: "assisted", branch_commit_push: "delegated", open_pr: "delegated", merge_pr_green: "delegated", create_update_close: "delegated", claim_release: "delegated", post_report: "delegated", execute: "delegated", deploy: "autonomous", deploy_production: "autonomous", change_live_record: "autonomous", merge: "autonomous", modify: "self-modifying", extend: "self-extending" };
+// Irreversible or identity-bound action classes (the interrupt gate): no rung ever grants them. They go through a gate card with a default in effect, never through a decision point.
+const GATED = new Set(["spend", "send_as_owner", "publish_public", "sign_or_file", "mint_or_rotate_owner_credential", "delete_repo", "force_push_default_branch", "migrate_destructive", "delete_database_or_bucket", "transfer_or_delete_domain"]);
 const NEVER = /^(secret|credential|interrupt-gate|alignment-floor|permission)(:|$)/;
 const CORS = { "access-control-allow-origin": "*", "x-content-type-options": "nosniff" };
 const j = (o, status, extra) => new Response(JSON.stringify(o), { status: status || 200, headers: { ...CORS, "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...(extra || {}) } });
@@ -21,6 +23,7 @@ export async function decide(env, req) {
   const sub = req && req.subject, res = req && req.resource, act = req && req.action;
   if (!sub || !sub.type || !sub.id || !res || !res.type || !res.id || !act || !act.name) return { status: 400, error: "subject{type,id}, resource{type,id} and action{name} are required" };
   if (NEVER.test(res.type) || NEVER.test(String(res.id))) return { decision: false, context: { reason: "resource is outside every trust rung", rung_needed: null } };
+  if (GATED.has(String(act.name))) return { decision: false, context: { reason: "interrupt gate: irreversible or identity-bound; no trust rung grants it", rung_needed: null } };
   const surface = String(res.id), action = String(act.name), need = NEEDS[action] || "autonomous";
   let got; try { got = await ledgerRung(env, surface, action); } catch (e) { return { decision: false, context: { reason: "ledger unreadable; failing closed" } }; }
   if (!got) return { decision: false, context: { reason: "no ledger row for this surface and action; failing closed", rung_needed: need } };
