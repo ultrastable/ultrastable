@@ -40,6 +40,7 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | Web Bot Auth (signed agents) | IETF (HTTP Message Signatures based); Cloudflare | draft | planned | STD-3: verify signatures on inbound agent traffic at the edge and sign outbound agent requests |
 | x402 and pay per crawl (payable web) | x402 (open protocol); Cloudflare Monetization Gateway | draft | n/a | Money movement is identity-bound and irreversible (interrupt gate). Revisit only through a gate card. |
 | NLWeb and WebMCP (browser-side agent tools) | Microsoft (NLWeb); WebMCP community and browsers | proposal | n/a | The Worker serves no content site; the site repository adopts these when it publishes (tracked in its own register). |
+| OAuth 2.1 client for remote MCP servers and service connectors (PKCE, RFC 8414, RFC 8707, CIMD, RFC 7591, RFC 7009) | MCP / IETF OAuth WG | stable | supported | `remote MCP server links with no pasted token and no owner app (CIMD)`; `remote MCP server links with no pasted token and no owner app (DCR)`; `Google flow: consent, PKCE redirect with signed state, callback exchange, sealed tokens, refresh, revoke`; `our Client ID Metadata Document is served and matches the callback`; `SSRF guard refuses private and non-https servers; no CIMD and no DCR is reported, not guessed` |
 
 <!-- standards:end -->
 
