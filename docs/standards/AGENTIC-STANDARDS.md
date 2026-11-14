@@ -52,6 +52,7 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | AP2 mandates and UCP commerce | Google, Shopify, Linux Foundation | draft | planned | STD-12: n/a until funding; any payment is identity-bound and stays behind a gate card |
 | C2PA content credentials (ISO/IEC 21694) and EU AI Act Article 50 marking | C2PA; EU | stable | planned | STD-13: sign published artifacts with content credentials; legal-ip manager confirms scope |
 | ISO/IEC 42001 AI management system | ISO | stable | planned | STD-14: map existing ledgers (decision log, trust ledger, failure modes) to 42001 controls |
+| OAuth 2.1 client for remote MCP servers and service connectors (PKCE, RFC 8414, RFC 8707, CIMD, RFC 7591, RFC 7009) | MCP / IETF OAuth WG | stable | supported | `remote MCP server links with no pasted token and no owner app (CIMD)`; `remote MCP server links with no pasted token and no owner app (DCR)`; `Google flow: consent, PKCE redirect with signed state, callback exchange, sealed tokens, refresh, revoke`; `our Client ID Metadata Document is served and matches the callback`; `SSRF guard refuses private and non-https servers; no CIMD and no DCR is reported, not guessed` |
 
 <!-- standards:end -->
 
