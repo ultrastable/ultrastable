@@ -37,7 +37,7 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | TOML 1.0 client and platform configuration | toml-lang (spec); Codex and Cloudflare Wrangler consume it | stable | supported | `test_client_configs_parse_and_point_at_mcp` |
 | OpenTelemetry GenAI semantic conventions | OpenTelemetry (CNCF) | development | supported | `mcp: OTel execute_tool span` |
 | Cloudflare Agents SDK, remote MCP and AI Gateway | Cloudflare | stable | planned | STD-2: McpAgent/Durable Object adapter and AI Gateway for the BS-4 executor; the Worker runs plain fetch handlers today |
-| Web Bot Auth (signed agents) | IETF (HTTP Message Signatures based); Cloudflare | draft | planned | STD-3: verify signatures on inbound agent traffic at the edge and sign outbound agent requests |
+| Web Bot Auth (signed agents) | IETF (HTTP Message Signatures based); Cloudflare | draft | supported | `webbotauth: sign, verify and publish directory` |
 | x402 and pay per crawl (payable web) | x402 (open protocol); Cloudflare Monetization Gateway | draft | n/a | Money movement is identity-bound and irreversible (interrupt gate). Revisit only through a gate card. |
 | NLWeb and WebMCP (browser-side agent tools) | Microsoft (NLWeb); WebMCP community and browsers | proposal | n/a | The Worker serves no content site; the site repository adopts these when it publishes (tracked in its own register). |
 | MCP enterprise-managed authorization (ID-JAG, XAA) | MCP project; IETF OAuth WG (draft) | draft | planned | STD-4: accept ID-JAG assertions on our authorization server and present them as a client; extension is stable in MCP 2026-07-28 but ID-JAG itself is an IETF draft (-04) |
