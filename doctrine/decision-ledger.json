@@ -906,6 +906,14 @@
    "title": "CONNECT-1: one connector framework, no pasted tokens",
    "body": "Generic OAuth 2.1 connector flow (PKCE S256, signed one-time state, sealed per-tenant tokens, refresh via the oauth adapter, revoke) plus remote MCP servers as first-class connectors (RFC 9728, RFC 8414, CIMD then DCR, RFC 8707). Google, Microsoft and Buffer need only the single owner card oauth-apps; MCP servers need nothing. Dashboard reads /auth/connectors.",
    "probe": "file:seed/worker/src/auth/connectors.js"
+  },
+  {
+   "id": "decision-2026-11-14-issuesync-1-filed-roadmap-items-reach-the-work-queue-on-the-",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "ISSUESYNC-1: filed roadmap items reach the work queue on the server",
+   "body": "docs/issues/ROADMAP-*.json (label roadmap, Status open, with a done check) are inserted as open items by the tick Worker each pass (max 5, idempotent, no model call, no new cron). Before this, filed roadmap items only became queue items through the Actions issue workflow, which is billing-blocked, so originated improvements sat unworked. Items enter as open (not ready) so the product manager triages them and the cost-cap rule (no new paid model call) holds.",
+   "probe": "file:seed/worker/src/issuesync.js"
   }
  ]
 }
