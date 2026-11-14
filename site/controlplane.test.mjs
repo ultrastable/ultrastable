@@ -87,6 +87,16 @@ assert.equal(db.prepare("SELECT surface FROM items WHERE id = ?").get(atid).surf
 assert.equal((await a2a("GetTask", { id: atid })).body.result.task.id, atid);
 assert.equal((await a2a("GetTask", { id: "nope" })).body.error.message, "TaskNotFoundError");
 assert.equal((await J("https://ultrastable.io/.well-known/agent-card.json")).body.supportedInterfaces[0].protocolBinding, "JSONRPC");
+// PORTABILITY-1: export then replay into a clean slate is lossless and idempotent
+{
+  const X = (path, init) => J("https://ultrastable.io" + path, ENV, init), H = { authorization: "Bearer s3cret" };
+  assert.equal((await X("/api/v1/export")).status, 401);
+  const ex = (await X("/api/v1/export", { headers: H })).body; assert.equal(ex.schema, "ultrastable-export/v1"); assert.ok(ex.count >= 3); assert.ok(ex.items.every(i => i.source.startsWith("integration:companion")));
+  assert.ok(!JSON.stringify(ex).includes("s3cret"), "no token in a bundle");
+  const imp = () => X("/api/v1/import", { method: "POST", headers: H, body: JSON.stringify(ex) });
+  const a1 = (await imp()).body, a2 = (await imp()).body; assert.equal(a1.created, ex.count); assert.equal(a2.created, 0); assert.equal(a2.skipped, ex.count);
+  assert.equal((await X("/api/v1/import", { method: "POST", headers: H, body: JSON.stringify({ schema: "x" }) })).status, 422);
+}
 assert.equal((await J("https://ultrastable.io/api/v1/intake", { ORG })).status, 405, "GET on intake");
 assert.equal((await J("https://ultrastable.io/api/v1/intake", { ORG }, { method: "POST", headers: { authorization: "Bearer s3cret" }, body: "{}" })).status, 503, "no tokens configured");
 assert.equal((await J("https://ultrastable.io/api/v1/status", {})).status, 503, "no ORG binding is reported, not faked");

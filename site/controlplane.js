@@ -4,6 +4,7 @@
 // needs a bearer token listed in secret INTEGRATION_TOKENS ("name:sha256hex,name2:sha256hex"); tokens are compared by hash, never stored in clear.
 // Consumers: the owner's personal companion (/api/v1/companion/brief), other services, MCP clients (site/agentic.js), and the /ops page below.
 import { registerHandoff } from "../seed/worker/src/handoff.js";
+import { exportBundle, importBundle } from "./portability.js";
 import { SOP_VERSION, SOP_STEPS, SERVER_OWNS } from "./sop.js";
 export const API_VERSION = "1.1.0";
 const ORIGIN = "https://ultrastable.io";
@@ -225,6 +226,8 @@ export const OPENAPI_PATHS = {
   "/api/v1/handoffs": { get: { operationId: "listHandoffs", summary: "Work handed to the server and each state it moved through (open, merged, deployed, verified, rolled_back ...)", parameters: [{ name: "state", in: "query", schema: { type: "string" } }], responses: { "200": { description: "Handoffs" } } } },
   "/api/v1/handoff": { post: { operationId: "submitHandoff", summary: "Hand a PR to the server (bearer token); the server merges, deploys, probes and closes", security: [{ bearer: [] }], requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["repo", "pr"], properties: { repo: { type: "string" }, pr: { type: "integer" }, item: { type: "string" }, agent: { type: "string" }, verify: { type: "string" }, deploy: { type: "string" } } } } } }, responses: { "201": { description: "Registered" }, "401": { description: "No token" }, "422": { description: "Invalid" } } } },
   "/api/v1/work/{id}/claim": { post: { operationId: "claimWork", summary: "Claim a work order for a code agent (bearer token)", security: [{ bearer: [] }], parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { "201": { description: "Claimed" }, "409": { description: "Not claimable" } } } },
+  "/api/v1/export": { get: { operationId: "exportData", summary: "Everything this integration submitted, as portable JSON (schema ultrastable-export/v1)", security: [{ bearer: [] }], responses: { "200": { description: "Bundle" } } } },
+  "/api/v1/import": { post: { operationId: "importData", summary: "Replay an export bundle; idempotent", security: [{ bearer: [] }], responses: { "200": { description: "Counts" }, "422": { description: "Not an export bundle" } } } },
   "/api/v1/intake": { post: { operationId: "submitIntake", summary: "Submit an idea, request, bug or question as a backlog item (bearer token)", security: [{ bearer: [] }], requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["title"], properties: { title: { type: "string", maxLength: 200 }, detail: { type: "string", maxLength: 4000 }, kind: { type: "string", enum: ["idea", "request", "bug", "question"] }, priority: { type: "integer", minimum: 1, maximum: 90 } } } } } }, responses: { "201": { description: "Created" }, "401": { description: "No token" }, "403": { description: "Unknown token" }, "503": { description: "Intake not configured" } } } },
 };
 
@@ -237,6 +240,15 @@ export async function controlPlane(request, env, ctx) {
     if (request.method !== "POST") return json({ error: "use POST" }, 405, { allow: "POST, OPTIONS" });
     if (!env || !env.ORG) return json({ error: "org database not bound (ORG)" }, 503);
     return cm ? claimItem(request, env, decodeURIComponent(cm[1])) : postHandoff(request, env);
+  }
+  if (p === "/api/v1/export" || p === "/api/v1/import") {  // PORTABILITY-1
+    if (!env || !env.ORG) return json({ error: "org database not bound (ORG)" }, 503);
+    const auth = await authIntegration(request, env);
+    if (!auth.ok) return json({ error: auth.error }, auth.status, auth.status === 401 ? { "www-authenticate": "Bearer" } : undefined);
+    if (p === "/api/v1/export") return request.method === "GET" ? json(await exportBundle(env, auth.name)) : json({ error: "use GET" }, 405, { allow: "GET, OPTIONS" });
+    if (request.method !== "POST") return json({ error: "use POST" }, 405, { allow: "POST, OPTIONS" });
+    let b; try { b = await request.json(); } catch (e) { return json({ error: "body must be JSON" }, 400); }
+    const r = await importBundle(env, auth.name, b); return json(r.body, r.status);
   }
   if (p === "/api/v1/intake") {
     if (request.method !== "POST") return json({ error: "use POST" }, 405, { allow: "POST, OPTIONS" });
