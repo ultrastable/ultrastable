@@ -224,6 +224,7 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.equal(JSON.parse((await rpc("tools/call", { name: "get_scoreboard" })).result.content[0].text).a, 1);
   assert.equal((await rpc("nope")).error.code, -32601);
   assert.equal((await g3("/.well-known/mcp")).status, 200);
+  { const pg = await (await g3("/connect-agent")).text(); assert.match(pg, /vscode:mcp\/install\?/); assert.match(pg, /codex mcp add ultrastable --url https:\/\/ultrastable.io\/mcp/); assert.ok(!/token/i.test(pg.replace(/Nothing to copy or paste/, "")), "no token step"); } // CONNECT-PAGE-1
   assert.match(await (await g3("/connect-agent")).text(), /vscode:mcp\/install/); // one-click connect page
   assert.ok(JSON.parse((await rpc("tools/call", { name: "get_standards" })).result.content[0].text).entries.length > 15);
   assert.ok(JSON.parse((await rpc("tools/call", { name: "get_blind_spots" })).result.content[0].text).length > 5); // AGENT-HARNESS-1: well-known discovery
