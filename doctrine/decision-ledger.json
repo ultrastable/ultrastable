@@ -849,6 +849,15 @@
    "body": "The tick's dispatch step claimed items for roles and wrote dispatch rows that no code consumed, so roles existed on paper only and claims expired and re-dispatched in a loop; stale TICKFAIL items also never closed. seed/worker/src/work.js now works each dispatch against its closing probe every tick (file:, metric:, item_done:, successor:, TICKFAIL), records verified or needs_executor outcomes, and closes satisfied unclaimed items. A row nothing reads is a silent drop; every new table gets its consumer in the same change.",
    "probe": "grep:seed/worker/src/index.js::runRoleWork",
    "session": "wt-cp"
+  },
+  {
+   "id": "decision-2026-11-14-code-agent-sop-1-code-agents-produce-and-hand-off-the-server",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CODE-AGENT-SOP-1: code agents produce and hand off; the server owns checks, merge, deploy and close-out",
+   "body": "One six-step SOP for every code agent, served at GET /api/v1/sop; POST /api/v1/handoffs gives the server a PR (receipt HANDOFF-<repo>-<pr>, closed by role-work's pr_merged probe; a missing or closed-unmerged PR is cancelled with evidence). Agents never poll CI, merge or deploy. Server gaps that still force babysitting: SERVER-CHECKS-1 (checks run only on refused Actions), SERVER-DEPLOY-1 (deploys run only on Actions or a session).",
+   "probe": "grep:seed/worker/src/controlplane.js::CODE-AGENT-SOP-1",
+   "session": "wt-cp"
   }
  ]
 }

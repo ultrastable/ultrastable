@@ -80,3 +80,24 @@ test('events: refused without the secret, accepted once for a registered integra
   assert.equal((await post({ source: 'personal-companion', title: 'Remind me of the weekly review', id: 'r1' }, 'k')).status, 200);
   assert.ok(INTEGRATIONS.find(i => i.id === 'personal-companion'));
 });
+
+test('CODE-AGENT-SOP-1: the SOP is served; a handoff gives the server ownership and closes when the PR merges', async () => {
+  const db = makeDb(); seed(db);
+  const sop = await (await get(db, '/api/v1/sop')).json();
+  assert.equal(sop.id, 'CODE-AGENT-SOP-1'); assert.ok(sop.never.includes('merge a pull request'));
+  const post = body => controlPlane(new Request('https://ultrastable.io/api/v1/handoffs', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }), { DB: db, GITHUB_REPOS: 'o/r' }, { now: T0 });
+  assert.equal((await post({ repo: 'evil/x', pr: 1 })).status, 422);
+  assert.equal((await post({ repo: 'o/r', pr: 'x' })).status, 422);
+  const r = await post({ repo: 'o/r', pr: 7, item: 'CONTROL-PLANE-1', agent: 'claude-code' });
+  assert.equal(r.status, 202); assert.equal((await r.json()).receipt, 'HANDOFF-o-r-7');
+  assert.equal((await post({ repo: 'o/r', pr: 7 })).status, 200);
+  await post({ repo: 'o/r', pr: 8 });
+  let state = 'open';
+  const prState = async (repo, n) => (n === 7 ? state : 'missing');
+  await runRoleWork(db, { now: T0 + 60e3, prState });
+  assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='HANDOFF-o-r-7'").get().status, 'ready');   // open PR: the server keeps owning it
+  assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='HANDOFF-o-r-8'").get().status, 'cancelled');  // claim verified, not trusted
+  state = 'merged';
+  await runRoleWork(db, { now: T0 + 120e3, prState });
+  assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='HANDOFF-o-r-7'").get().status, 'done');
+});

@@ -16,7 +16,7 @@ const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 
 // Returns {state: 'pass'|'fail'|'unknown', evidence}. Pure over the db plus the injected fileExists(path) -> true|false|null.
-export async function evaluate(db, item, { fileExists = async () => null, lastTick = null } = {}) {
+export async function evaluate(db, item, { fileExists = async () => null, prState = async () => null, lastTick = null } = {}) {
   const tf = /^TICKFAIL-([a-z_]+)-/.exec(item.id || '');
   if (tf) {
     if (!lastTick) return { state: 'unknown', evidence: 'no finished tick yet' };
@@ -41,6 +41,13 @@ export async function evaluate(db, item, { fileExists = async () => null, lastTi
     if (r === true) return { state: 'pass', evidence: `file ${arg} present on main` };
     if (r === false) return { state: 'fail', evidence: `file ${arg} absent on main` };
     return { state: 'unknown', evidence: `file ${arg}: repository not readable from the worker` };
+  }
+  if (kind === 'pr_merged') {  // CODE-AGENT-SOP-1: a handed-off pull request closes when the server sees it merged
+    const m = /^([^#]+)#(\d+)$/.exec(arg);
+    const st = m ? await prState(m[1], Number(m[2])) : null;
+    if (st === 'merged') return { state: 'pass', evidence: `pull request ${arg} merged` };
+    if (st === 'closed' || st === 'missing') return { state: 'cancel', evidence: `pull request ${arg} ${st} without merge` };
+    return { state: 'unknown', evidence: st ? `pull request ${arg} ${st}; the server lane owns it` : `pull request ${arg} not readable from the worker` };
   }
   if (kind === 'successor') return { state: 'successor', evidence: arg };
   return { state: 'unknown', evidence: probe ? `probe ${probe} needs the executor` : 'no closing probe' };
@@ -69,7 +76,27 @@ async function fileSuccessor(db, item, role, nowIso, namer) {
   return `filed successor ${id}`;
 }
 
-export async function runRoleWork(db, { now = Date.now(), fileExists, namer } = {}) {
+async function cancelItem(db, id, evidence, nowIso, agent) {
+  await run(db, `UPDATE items SET status='cancelled', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, ('superseded: ' + evidence).slice(0, 400), nowIso, id);
+  await run(db, `DELETE FROM claims WHERE item_id=?`, id);
+  await run(db, `INSERT INTO outcomes (item_id, agent, surface, action_class, result, evidence, at) VALUES (?, ?, 'work_tracker', 'probe_close', 'cancelled', ?, ?)`, id, agent || 'role-work', evidence.slice(0, 400), nowIso);
+}
+
+// GitHub pull request state for pr_merged:<repo>#<n>: 'merged' | 'open' | 'closed' | 'missing', or null when unreadable (never guessed).
+export function githubPrState({ token, fetchImpl = fetch }) {
+  return async (repo, n) => {
+    if (!token) return null;
+    try {
+      const r = await fetchImpl(`https://api.github.com/repos/${repo}/pulls/${n}`, { headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-role-work' } });
+      if (r.status === 404) return 'missing';
+      if (!r.ok) return null;
+      const j = await r.json();
+      return j.merged_at ? 'merged' : j.state === 'open' ? 'open' : 'closed';
+    } catch (e) { console.error('prState', repo, n, e && e.message); return null; }
+  };
+}
+
+export async function runRoleWork(db, { now = Date.now(), fileExists, prState = async () => null, namer } = {}) {
   const nowIso = iso(new Date(now));
   const lastTick = await first(db, `SELECT id, steps_completed, steps_total, errors FROM tick_runs WHERE finished_at IS NOT NULL ORDER BY id DESC LIMIT 1`);
   const out = { worked: 0, done: 0, waiting: 0, superseded: 0, released: 0, closed_unclaimed: 0, successors: 0 };
@@ -83,7 +110,11 @@ export async function runRoleWork(db, { now = Date.now(), fileExists, namer } = 
     if (!d.iid || TERMINAL.has(d.istatus)) { await run(db, `UPDATE dispatches SET status='superseded' WHERE id=?`, d.id); out.superseded++; continue; }
     if (d.agent !== d.role_id) { await run(db, `UPDATE dispatches SET status='released' WHERE id=?`, d.id); out.released++; continue; }
     const role = (await first(db, `SELECT role FROM roles WHERE id=?`, d.role_id) || {}).role;
-    const ev = await evaluate(db, { id: d.iid, closing_probe: d.closing_probe }, { fileExists, lastTick });
+    const ev = await evaluate(db, { id: d.iid, closing_probe: d.closing_probe }, { fileExists, prState, lastTick });
+    if (ev.state === 'cancel') {
+      await cancelItem(db, d.iid, ev.evidence, nowIso, d.role_id);
+      await run(db, `UPDATE dispatches SET status='superseded' WHERE id=?`, d.id); out.superseded++; continue;
+    }
     if (ev.state === 'pass' || ev.state === 'successor') {
       const evidence = ev.state === 'pass' ? ev.evidence : await fileSuccessor(db, { id: d.iid, closing_probe: d.closing_probe, owner_role: d.owner_role }, role, nowIso, namer);
       if (ev.state === 'successor') out.successors++;
@@ -102,11 +133,12 @@ export async function runRoleWork(db, { now = Date.now(), fileExists, namer } = 
 
   // 2. Unclaimed items whose probe passes close without waiting for a dispatch (stale TICKFAIL rows, items already satisfied).
   const open = await all(db, `SELECT id, closing_probe FROM items WHERE status IN ('open','ready','blocked')
-      AND (id LIKE 'TICKFAIL-%' OR closing_probe LIKE 'metric:%' OR closing_probe LIKE 'item_done:%' OR closing_probe LIKE 'file:%')
+      AND (id LIKE 'TICKFAIL-%' OR closing_probe LIKE 'metric:%' OR closing_probe LIKE 'item_done:%' OR closing_probe LIKE 'file:%' OR closing_probe LIKE 'pr_merged:%')
       AND id NOT IN (SELECT item_id FROM claims) ORDER BY priority LIMIT ?`, MAX_PER_RUN);
   for (const it of open) {
-    const ev = await evaluate(db, it, { fileExists, lastTick });
+    const ev = await evaluate(db, it, { fileExists, prState, lastTick });
     if (ev.state === 'pass') { await closeItem(db, it, ev.evidence, nowIso, 'role-work'); out.closed_unclaimed++; }
+    else if (ev.state === 'cancel') { await cancelItem(db, it.id, ev.evidence, nowIso, 'role-work'); out.closed_unclaimed++; }
   }
   return out;
 }

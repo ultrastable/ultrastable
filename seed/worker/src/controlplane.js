@@ -30,6 +30,44 @@ export const INTEGRATIONS = [
   { id: 'agents', direction: 'read', reads: ['/api/v1/openapi.json', '/mcp'], writes: [], purpose: 'Any agent discovers the org through the API catalog, OpenAPI and MCP.' },
 ];
 
+// CODE-AGENT-SOP-1: the standard operating procedure for ANY code agent (Claude Code, Codex, Copilot, a hosted model, a person's editor).
+// Code agents produce work; the server owns it. An agent's job ends at the handoff: it never watches CI, re-runs checks, merges, deploys,
+// closes issues or polls. Served at GET /api/v1/sop so an agent reads it from the system, not from its own memory.
+export const SOP = {
+  id: 'CODE-AGENT-SOP-1', version: '1.0.0',
+  principle: 'Code agents are producers, not owners. Ultrastable (the server) owns every loop a change starts: checks, merge, deploy, probe, close-out and follow-up.',
+  steps: [
+    { n: 1, do: 'Read the work', how: 'GET /api/v1/sop, then GET /api/v1/backlog?status=ready; take one item id (or the item the owner named). Read AGENTS.md from the repository, never from tool memory.' },
+    { n: 2, do: 'Make the change', how: 'Branch agent/<item>-<slug> from main. Smallest complete change, tests for what you touched, a write-back record in the same change.' },
+    { n: 3, do: 'Run the fast tests you touched', how: 'Only the tests for the files you changed, once. The full checks are the server\'s job.' },
+    { n: 4, do: 'Push and open the pull request', how: 'Ready for review (not draft); the title starts with the item id; the body has the Self-audit section.' },
+    { n: 5, do: 'Hand off', how: 'POST /api/v1/handoffs {repo, pr, item, agent, summary, tests_run}. The answer is an ownership receipt (HANDOFF-<repo>-<pr>); from then on the server owns the PR.' },
+    { n: 6, do: 'Stop and close out locally', how: 'Remove the local worktree or end the session. Do not wait for, watch or poll anything.' },
+  ],
+  never: ['watch or poll CI', 're-run checks', 'merge a pull request', 'deploy from a local checkout', 'close issues or items', 'hold a session open waiting on the server', 'keep state in chat or tool memory'],
+  server_owns: ['required checks', 'merge (lane and sweeper)', 'deploy and live probe', 'closing the item when its probe passes', 'filing follow-ups and retries', 'reaping stale branches and sessions'],
+  receipt: 'GET /api/v1/backlog?status=all lists HANDOFF-<repo>-<pr>; it closes when the server sees the PR merged (probe pr_merged:<repo>#<n>).',
+};
+
+// POST /api/v1/handoffs {repo, pr, item?, agent?, summary?, tests_run?}. No secret: the claim is verified, not trusted. The repo must be one this org runs,
+// the row is idempotent on (repo, pr), and each tick's role-work reads the PR on GitHub (probe pr_merged); a PR that does not exist or closed unmerged is cancelled with evidence.
+export async function ingestHandoff(db, env, request, now = Date.now()) {
+  let b; try { b = await request.json(); } catch { return fail(400, 'bad_json', 'body must be JSON'); }
+  const repos = String(env.GITHUB_REPOS || env.GITHUB_REPO || '').split(',').map(s => s.trim()).filter(Boolean);
+  const repo = String(b.repo || '').trim(), pr = Number(b.pr);
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo) || (repos.length && !repos.includes(repo))) return fail(422, 'unknown_repo', repos.length ? `repo must be one of ${repos.join(', ')}` : 'repo must be owner/name');
+  if (!Number.isInteger(pr) || pr < 1 || pr > 1e6) return fail(422, 'bad_pr', 'pr must be a pull request number');
+  const id = `HANDOFF-${repo.replace(/[^A-Za-z0-9]+/g, '-')}-${pr}`;
+  const have = await first(db, `SELECT id, status FROM items WHERE id=?`, id);
+  if (have) return json({ ok: true, receipt: id, status: have.status, duplicate: true, owner: 'server' }, 200);
+  const nowIso = iso(new Date(now)), clean = (v, n) => String(v || '').replace(/\s+/g, ' ').trim().slice(0, n);
+  const title = `Server owns ${repo}#${pr}${b.item ? ` (${clean(b.item, 60)})` : ''}: ${clean(b.summary, 200) || 'handed off by ' + (clean(b.agent, 40) || 'a code agent')}`;
+  await db.prepare(`INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, created_at, updated_at) VALUES (?, ?, 'handoff', 'operations', ?, ?, 5, 'ready', ?, ?)`)
+    .bind(id, title.slice(0, 400), `the server lane runs the checks, merges ${repo}#${pr}, deploys it and the item it names passes its probe` + (b.tests_run ? ` (agent ran: ${clean(b.tests_run, 200)})` : ''), `pr_merged:${repo}#${pr}`, nowIso, nowIso).run();
+  await db.prepare(`INSERT INTO outcomes (item_id, agent, surface, action_class, result, evidence, at) VALUES (?, ?, 'code_agent', 'handoff', 'verified', ?, ?)`).bind(id, clean(b.agent, 40) || 'code-agent', `handoff accepted; server owns ${repo}#${pr}`, nowIso).run();
+  return json({ ok: true, receipt: id, owner: 'server', next: `stop: the server runs checks, merges, deploys and closes this; see ${new URL(request.url).origin}/api/v1/sop` }, 202);
+}
+
 export async function status(db, now = Date.now()) {
   const day = iso(new Date(now - 86400e3));
   const last = await first(db, `SELECT id, started_at, finished_at, steps_completed, steps_total, report, errors FROM tick_runs WHERE finished_at IS NOT NULL ORDER BY id DESC LIMIT 1`);
@@ -141,6 +179,10 @@ export function openapi(origin) {
     servers: [{ url: origin }],
     components: { securitySchemes: { integration: { type: 'http', scheme: 'bearer' } }, schemas: { Error: { type: 'object', properties: { error: { type: 'object', properties: { code: { type: 'string' }, message: { type: 'string' } } } } } } },
     paths: {
+      '/api/v1/sop': { get: { operationId: 'getCodeAgentSop', summary: 'Standard operating procedure for any code agent', responses: ok('SOP') } },
+      '/api/v1/handoffs': { post: { operationId: 'postHandoff', summary: 'A code agent hands a pull request to the server, which owns it from then on',
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['repo', 'pr'], properties: { repo: { type: 'string' }, pr: { type: 'integer' }, item: { type: 'string' }, agent: { type: 'string' }, summary: { type: 'string' }, tests_run: { type: 'string' } } } } } },
+        responses: { '202': { description: 'Ownership receipt' }, '200': { description: 'Already handed off' }, '422': { description: 'Invalid' } } } },
       '/api/v1/status': { get: { operationId: 'getStatus', summary: 'Heartbeat, counts and computed findings', responses: ok('Status') } },
       '/api/v1/agents': { get: { operationId: 'listAgents', summary: 'Every role with what it holds now and what it has closed', responses: ok('Agents') } },
       '/api/v1/backlog': { get: { operationId: 'listBacklog', summary: 'Items by status, totals included', parameters: [{ name: 'status', in: 'query', schema: { type: 'string', default: 'ready' } }, { name: 'limit', in: 'query', schema: { type: 'integer', default: 50, maximum: 200 } }], responses: { ...ok('Backlog'), '400': { description: 'Bad status', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } } } } },
@@ -197,15 +239,17 @@ export async function controlPlane(request, env, { org = 'ultrastable', now = Da
   if (!db) return fail(503, 'no_database', 'DB binding missing');
   const origin = u.origin;
   try {
+    if (p === '/api/v1/handoffs') return request.method === 'POST' ? ingestHandoff(db, env, request, now) : fail(405, 'method_not_allowed', 'use POST');
     if (p === '/api/v1/events') return request.method === 'POST' ? ingestEvent(db, env, request, now) : fail(405, 'method_not_allowed', 'use POST');
     if (request.method !== 'GET' && request.method !== 'HEAD') return fail(405, 'method_not_allowed', 'read-only resource');
     switch (p) {
-      case '/api/v1': return json({ api_version: API_VERSION, org, resources: ['status', 'agents', 'backlog', 'activity', 'integrations', 'events'].map(r => ({ name: r, href: `${origin}/api/v1/${r}` })), openapi: `${origin}/api/v1/openapi.json`, dashboard: `${origin}/ops` });
+      case '/api/v1': return json({ api_version: API_VERSION, org, resources: ['sop', 'status', 'agents', 'backlog', 'activity', 'integrations', 'events', 'handoffs'].map(r => ({ name: r, href: `${origin}/api/v1/${r}` })), openapi: `${origin}/api/v1/openapi.json`, dashboard: `${origin}/ops` });
       case '/api/v1/openapi.json': return json(openapi(origin), 200, { 'content-type': 'application/vnd.oai.openapi+json; charset=utf-8', 'cache-control': 'public, max-age=300' });
       case '/api/v1/status': return json(await status(db, now));
       case '/api/v1/agents': return json({ agents: await agents(db) });
       case '/api/v1/backlog': { const b = await backlog(db, { status: u.searchParams.get('status') || 'ready', limit: u.searchParams.get('limit') }); return b.error ? json(b, 400) : json(b); }
       case '/api/v1/activity': return json(await activity(db, { limit: u.searchParams.get('limit') }));
+      case '/api/v1/sop': return json(SOP, 200, { 'cache-control': 'public, max-age=300' });
       case '/api/v1/integrations': return json({ integrations: INTEGRATIONS, events: { href: `${origin}/api/v1/events`, auth: 'bearer INTEGRATION_TOKEN', configured: Boolean(env.INTEGRATION_TOKEN) } });
       case '/ops': {
         const [s, ags, deck, doing, waiting, act] = await Promise.all([status(db, now), agents(db), backlog(db, { status: 'ready', limit: 25 }), backlog(db, { status: 'claimed', limit: 50 }), backlog(db, { status: 'waiting', limit: 50 }), activity(db, { limit: 20 })]);
