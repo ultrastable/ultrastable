@@ -105,12 +105,12 @@
         "d1": {
           "DB": "ops"
         },
-        "services": {
-          "TICK": "ultrastable-tick"
-        },
         "ai": [
           "AI"
-        ]
+        ],
+        "services": {
+          "TICK": "ultrastable-tick"
+        }
       }
     },
     "ultrastable-ultrastable": {
