@@ -36,10 +36,14 @@ test("CSS stays in the core layer: tokens only, no colour, readable sizes, 44 px
   assert.ok(!/#[0-9a-fA-F]{3,8}\b/.test(css), "no raw hex colour");
   assert.ok(!/rgba?\(|hsla?\(/.test(css), "no literal colour function");
   for (const m of css.matchAll(/(\d+(?:\.\d+)?)px\/|font-size:(\d+(?:\.\d+)?)px/g)) assert.ok(Number(m[1] || m[2]) >= design.invariants.min_text_px, "text under " + design.invariants.min_text_px + " px: " + m[0]);
-  for (const sel of [".us-name", ".us-mark", ".us-defs summary"]) assert.match(css, new RegExp(sel.replace(".", "\.") + "\{[^}]*min-height:44px"), sel + " is a 44 px target");
+  for (const sel of [".us-top .us-name{", ".us-foot .us-mark{", ".us-defs summary{"]) assert.match(css.slice(css.indexOf(sel)), /^[^}]*min-height:44px/, sel + " is a 44 px target");
   assert.match(css, /:focus-visible\{outline:3px/);
   assert.match(css, /prefers-reduced-motion:reduce/);
   assert.equal((css.match(/--ds-accent/g) || []).length > 0, true, "the instance accent is the only identity colour");
+});
+
+test("the shell's own rules outrank a host's generic element rules (.ds a and .ds p are 0,1,1)", () => {
+  for (const sel of [".us-top .us-name{", ".us-top .us-mark,", ".us-foot .us-mark{", ".us-top .us-name:hover", ".us-status .us-sentence{", ".us-status .us-asof{"]) assert.ok(css.includes(sel), sel + " is scoped to two classes");
 });
 
 test("verdicts follow the vocabulary thresholds", () => {
@@ -67,7 +71,7 @@ test("the status sentence leads with the verdict and never invents a zero", () =
 test("the skeleton renders every slot, escapes input and marks the system", () => {
   const v = { k_eff: 0.84, open_ignition_gaps: 5, loops_running: 40, loops_total: 44, loops_stalled: 4, items_in_24h: 12, items_out_24h: 15, cost_vs_budget: 1.1 };
   const top = US.usTopBar({ name: "A <b>", sub: "plane", right: '<span id="x"></span>' });
-  assert.match(top, /class="us-top" data-us-shell="1\.0\.0"/);
+  assert.ok(top.includes('class="us-top" data-us-shell="' + contract.version + '"'));
   assert.ok(top.includes("A &lt;b&gt;") && top.includes('<span id="x"></span>') && top.includes(contract.mark.text) && top.includes(contract.mark.href));
   const panel = US.usStatusPanel(v, { as_of: "2026-11-14T12:00Z", sources: { k_eff: "deploy ledger" } });
   for (const s of contract.vocabulary) assert.ok(panel.includes('data-key="' + s.key + '"'), "tile for " + s.key);
