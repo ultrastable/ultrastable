@@ -52,6 +52,7 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | AP2 mandates and UCP commerce | Google, Shopify, Linux Foundation | draft | planned | STD-12: n/a until funding; any payment is identity-bound and stays behind a gate card |
 | C2PA content credentials (ISO/IEC 21694) and EU AI Act Article 50 marking | C2PA; EU | stable | planned | STD-13: sign published artifacts with content credentials; legal-ip manager confirms scope |
 | ISO/IEC 42001 AI management system | ISO | stable | planned | STD-14: map existing ledgers (decision log, trust ledger, failure modes) to 42001 controls |
+| WebAuthn Level 3 passkeys (FIDO2) | W3C; FIDO Alliance | stable | supported | `software authenticator`; `one-tap sign-in` |
 
 <!-- standards:end -->
 

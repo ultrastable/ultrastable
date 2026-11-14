@@ -802,6 +802,37 @@
           "accessed": "2026-11-14"
         }
       ]
+    },
+    {
+      "id": "webauthn-passkeys",
+      "name": "WebAuthn Level 3 passkeys (FIDO2)",
+      "body": "W3C; FIDO Alliance",
+      "status": "stable",
+      "tracked": "W3C WebAuthn Level 3",
+      "why": "One-tap, phishing-resistant sign-in for the owner and for the OAuth consent screens, with the email code as fallback and first enrolment.",
+      "support": "supported",
+      "how": [
+        "site/passkeys.js",
+        "site/worker.js"
+      ],
+      "tests": [
+        {
+          "file": "site/passkeys.test.mjs",
+          "name": "software authenticator"
+        },
+        {
+          "file": "site/passkeys.test.mjs",
+          "name": "one-tap sign-in"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Web Authentication Level 3",
+          "url": "https://www.w3.org/TR/webauthn-3/",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
     }
   ]
 }
