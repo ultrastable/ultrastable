@@ -1,0 +1,17 @@
+{
+ "_doc": "PROMOTE-1 fact bank. The only source of claims and numbers in application kits. Each fact has a probe that foundation/promote.py evaluates on every --check and --kits run; a fact whose probe fails cannot be rendered, so a kit never states something the repository does not prove. Probe kinds: file:PATH, grep:PATH::REGEX, nogrep:PATH::REGEX, jsonlen:PATH::KEY (with op and value), http:URL (live mode only). Edit by PR.",
+ "facts": {
+  "live_product": {"claim": "The product runs live at ultrastable.io", "probe": "grep:site/wrangler.toml::ultrastable\\.io", "live_probe": "http:https://ultrastable.io/"},
+  "public_mcp": {"claim": "a public read-only MCP endpoint at ultrastable.io/mcp", "probe": "grep:site/agentic.js::case \"/mcp\""},
+  "self_hosted": {"claim": "Ultrastable runs its own roadmap, issues and deploys with the same code it offers", "probe": "file:foundation/selfhost.py"},
+  "loops": {"claim": "registered closed loops", "probe": "jsonlen:instances/ultrastable/loop-registry.json::loops", "op": ">=", "value": 70},
+  "competitors_tracked": {"claim": "competitor profiles refreshed by code", "probe": "jsonlen:doctrine/competitors.json::competitors", "op": ">=", "value": 8},
+  "one_founder": {"claim": "the team is one founder", "probe": "grep:outreach/profiles.json::the team is one founder"},
+  "no_outside_customers": {"claim": "there are no outside customers yet", "probe": "grep:outreach/profiles.json::no outside customers yet"},
+  "source_available": {"claim": "source-available under USL-1.0, not open source", "probe": "grep:LICENSING.md::Source-available, not open source"},
+  "open_source_licence": {"claim": "released under an open-source licence", "probe": "nogrep:LICENSING.md::not open source"},
+  "commercial_terms": {"claim": "free for non-commercial use, commercial use under a revenue-share licence", "probe": "file:COMMERCIAL-TERMS.md"},
+  "public_repo": {"claim": "the code repositories are public", "probe": "nogrep:LICENSING.md::Repositories stay private"},
+  "legal_entity": {"claim": "an incorporated legal entity exists", "probe": "file:business/entity.json"}
+ }
+}

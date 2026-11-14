@@ -864,6 +864,15 @@
    "title": "A PR whose author walks away dies dirty unless the server owns it",
    "body": "PR #324 (Worker gate, the fix for dead Actions minutes) sat dirty for a day because the session that wrote it ended and nothing server-side rebased or re-did it; every other open PR was in the same state. Owning the post-PR loop server-side (handoffs) and recording conflicts as server-owned state is the remedy; a client that merges by hand hides the gap.",
    "probe": "file:seed/worker/test/handoff.test.js"
+  },
+  {
+   "id": "decision-2026-11-14-promote-1-strategy-and-promotion-as-a-closed-loop",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "PROMOTE-1: strategy and promotion as a closed loop",
+   "body": "Channels in doctrine/promotion.json scored from probed facts (outreach/facts.json). Source-available licence and private repos make NLnet/open-source programmes and Show HN not-a-fit until those facts change; accelerators and cloud credits fit. YC Winter 2027 late applications are open (read 2026-11-14); YC kit rendered.",
+   "probe": "grep:foundation/promote.py::def outcome",
+   "session": "session_0156nqDsGSkQrok8LwjeYziE"
   }
  ]
 }

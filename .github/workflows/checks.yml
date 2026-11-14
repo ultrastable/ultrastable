@@ -80,6 +80,7 @@ jobs:
           python3 -m foundation market --check
           python3 -m foundation scout --check
           python3 -m foundation rnd --check
+          python3 -m foundation promote --check
           python3 -m foundation agentstd --check
           python3 -m foundation crosswalk --check
           python3 -m foundation agents --check

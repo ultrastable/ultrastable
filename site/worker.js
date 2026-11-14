@@ -7,6 +7,7 @@ import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
 import { liveResponse } from "./live.js";
 import { agentic, withLinks, CONTENT_SIGNAL } from "./agentic.js";
+import { indexNow, keyFile, SITEMAP_PATHS } from "./promote.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
@@ -578,6 +579,7 @@ export async function tick(env, ctx, now) {
   const t = now || new Date(), out = { at: t.toISOString() }, h = await jget(env, "health:models");
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
+  { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
   await jput(env, "tick:last", out); return out;
 }
 async function statusData(env) {
@@ -751,7 +753,7 @@ const handler = {
       case "/agent.md": return new Response(AGENT_MD, { headers: { "Content-Type": "text/markdown; charset=utf-8", "Access-Control-Allow-Origin": "*" } });
       case "/robots.txt": return new Response(ROBOTS, { headers: { "Content-Type": "text/plain" } });
       case "/llms.txt": return new Response(LLMS, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
-      case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + ["/", "/ops", "/engineers", "/roadmap", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot", "/start", "/setup"].map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
+      case "/sitemap.xml": return new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" + SITEMAP_PATHS.map(function (p) { return "<url><loc>https://" + CANON + p + "</loc></url>"; }).join("") + "</urlset>", { headers: { "Content-Type": "application/xml" } });
       default: return new Response(shell({ path: u.pathname, title: "Not found - Ultrastable", description: "Page not found." }, "<div class=\"head\"><h1>Not found</h1><p>That page does not exist. <a href=\"/\">Go to the home page</a>.</p></div>"), { status: 404, headers: HTML });
     }
   }
@@ -760,4 +762,4 @@ const handler = {
 // TOPOLOGY-1: the owner dashboard is a separate worker reached through the OWNER service binding (doctrine/topology.json); only its own paths are forwarded.
 const OWNER_PATH = /^\/(owner|api\/owner\/[a-z]+)$/;
 const AUTH_PATH = /^\/(connect(\/[a-z-]+)?|auth\/(github\/(callback|installed)|health))$/;  // AUTH-1: the consent screen and provider callbacks live on the tick Worker; the public host forwards them so the person stays on one address
-export default { async scheduled(event, env, ctx) { ctx.waitUntil(tick(env, ctx).catch(e => console.error("tick failed", String(e)))); }, async fetch(request, env, ctx) { { const idp = await internalDeploy(request, env || {}); if (idp) return idp; } /* HANDOFF-1 */ if (env && env.TICK && AUTH_PATH.test(new URL(request.url).pathname)) { try { return await env.TICK.fetch(request); } catch (e) { return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Connect</title><body style="font:16px system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem"><h1>One moment</h1><p>The connection service is restarting. <a href="/connect/github">Try again</a>.</p>', { status: 503, headers: { 'content-type': 'text/html; charset=utf-8', 'retry-after': '10' } }); } } if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };
+export default { async scheduled(event, env, ctx) { ctx.waitUntil(tick(env, ctx).catch(e => console.error("tick failed", String(e)))); }, async fetch(request, env, ctx) { { const idp = await internalDeploy(request, env || {}); if (idp) return idp; } /* HANDOFF-1 */ if (env && env.TICK && AUTH_PATH.test(new URL(request.url).pathname)) { try { return await env.TICK.fetch(request); } catch (e) { return new Response('<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width"><title>Connect</title><body style="font:16px system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem"><h1>One moment</h1><p>The connection service is restarting. <a href="/connect/github">Try again</a>.</p>', { status: 503, headers: { 'content-type': 'text/html; charset=utf-8', 'retry-after': '10' } }); } } if (env && env.OWNER && OWNER_PATH.test(new URL(request.url).pathname.replace(/\/$/, ""))) return env.OWNER.fetch(request); { const kf = keyFile(new URL(request.url).pathname); if (kf) return kf; } const a = await agentic(request, env); if (a) return a; return withLinks(await handler.fetch(request, env, ctx), request); } };

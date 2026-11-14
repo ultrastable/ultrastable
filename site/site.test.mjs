@@ -271,3 +271,18 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
 { const s = await (await get("https://ultrastable.io/setup")).text();
   assert.ok(!/autopilot/i.test(s), "autopilot step is gone");
   assert.match(s, /api\.github\.com\/repos/); assert.match(s, /pages\.dev/); assert.match(s, /"tasks"/); }
+
+// PROMOTE-1: IndexNow channel (key file served, daily submission, failure recorded not thrown)
+{ /* PROMOTE-1 IndexNow: key file, daily cadence, failures recorded */
+  const P = await import("./promote.js");
+  const kf = P.keyFile("/" + P.INDEXNOW_KEY + ".txt");
+  assert.equal(await kf.text(), P.INDEXNOW_KEY);
+  assert.equal(P.keyFile("/other.txt"), null);
+  let sent = null;
+  const ok = await P.indexNow({ host: "ultrastable.io", now: new Date("2026-11-14T06:17:00Z"), fetchFn: async (u, o) => { sent = JSON.parse(o.body); return { status: 202 }; } });
+  assert.equal(ok.ok, true); assert.equal(sent.urlList.length, P.SITEMAP_PATHS.length); assert.ok(sent.keyLocation.endsWith(P.INDEXNOW_KEY + ".txt"));
+  assert.equal(await P.indexNow({ host: "ultrastable.io", now: new Date("2026-11-14T12:17:00Z"), last: ok, fetchFn: async () => { throw new Error("must not send"); } }), null);
+  const bad = await P.indexNow({ host: "ultrastable.io", now: new Date("2026-11-14T13:17:00Z"), last: { ...ok, ok: false }, fetchFn: async () => { throw new Error("net down"); } });
+  assert.equal(bad.ok, false); assert.match(bad.error, /net down/);
+}
+console.log("PROMOTE-1 indexnow ok");

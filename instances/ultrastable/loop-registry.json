@@ -2762,6 +2762,46 @@
         "foundation/team.py"
       ],
       "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "promote",
+      "kind": "governance",
+      "summary": "PROMOTE-1: strategy and promotion as a closed loop. Channels are scored from facts the repository proves; credential-free channels (MCP registry, IndexNow) run themselves; application kits are rendered from the fact bank; outcomes re-weight channels.",
+      "trigger": "hourly site tick (IndexNow, daily), push of server.json (mcp-registry.yml), every executor or cloud-session pass (promote --plan --apply, promote --kits)",
+      "owner": "marketing-manager",
+      "closes_by": "system",
+      "sla": "7d",
+      "done": "python3 -m foundation promote --check reports ok",
+      "paths": [
+        {
+          "id": "worker",
+          "how": "site Worker scheduled tick submits the sitemap to IndexNow daily (site/promote.js)",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation promote --plan --apply from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/promote.py::def outcome",
+      "writeback": [
+        "ops/promotion/plan.json",
+        "ops/promotion/outcomes.jsonl",
+        "ops/promotion/weights.json",
+        "outreach/applications",
+        "docs/issues"
+      ],
+      "system_path": [
+        "doctrine/promotion.json",
+        "foundation/promote.py",
+        "site/promote.js"
+      ],
+      "area": "governance",
+      "workflows": [
+        "mcp-registry.yml"
+      ],
+      "server_owner": "ultrastable-tick"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

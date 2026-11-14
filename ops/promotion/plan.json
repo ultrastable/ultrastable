@@ -1,0 +1,90 @@
+{
+ "generated_by": "python3 -m foundation promote --plan",
+ "channels": [
+  {
+   "id": "mcp-registry",
+   "kind": "registry",
+   "score": 3.0,
+   "state": "system-runs",
+   "blocked_by": [],
+   "gate": null,
+   "signal": "registry search returns io.github.ultrastable/ultrastable; agent hits on /mcp",
+   "route": ".github/workflows/mcp-registry.yml"
+  },
+  {
+   "id": "yc",
+   "kind": "application",
+   "score": 2.5,
+   "state": "kit-ready-identity-gate",
+   "blocked_by": [],
+   "gate": "statement-in-owners-name",
+   "signal": "YC decision email, recorded with scripts/outreach.py reply ultrastable:B-YC",
+   "route": "outreach/forms/yc.json"
+  },
+  {
+   "id": "cloud-credits",
+   "kind": "application",
+   "score": 2.0,
+   "state": "kit-ready-identity-gate",
+   "blocked_by": [],
+   "gate": "owner-account",
+   "signal": "credit grant email per programme (B-CF, B-GSTART, B-AWS, B-MSFT, B-NVIDIA)",
+   "route": null
+  },
+  {
+   "id": "indexnow",
+   "kind": "search-ping",
+   "score": 2.0,
+   "state": "system-runs",
+   "blocked_by": [],
+   "gate": null,
+   "signal": "search referrals in first-party hits",
+   "route": "site/worker.js /api/v1/promote/indexnow (tick and deploy)"
+  },
+  {
+   "id": "intro-email",
+   "kind": "intro-email",
+   "score": 2.0,
+   "state": "kit-ready-identity-gate",
+   "blocked_by": [],
+   "gate": "sender-postal-address",
+   "signal": "replies recorded with outreach_intro.py reply",
+   "route": "scripts/outreach_intro.py"
+  },
+  {
+   "id": "social",
+   "kind": "social",
+   "score": 2.0,
+   "state": "kit-ready-identity-gate",
+   "blocked_by": [],
+   "gate": "owner-account",
+   "signal": "referrals from bsky.app in first-party hits",
+   "route": "scripts/social_post.py"
+  },
+  {
+   "id": "nlnet",
+   "kind": "application",
+   "score": 0.0,
+   "state": "not-a-fit-now",
+   "blocked_by": [
+    "open_source_licence",
+    "public_repo"
+   ],
+   "gate": "statement-in-owners-name",
+   "signal": "NLnet reply, recorded with scripts/outreach.py reply ultrastable:A-NLNET",
+   "route": "outreach/forms/nlnet.json"
+  },
+  {
+   "id": "show-hn",
+   "kind": "launch-venue",
+   "score": 0.0,
+   "state": "not-a-fit-now",
+   "blocked_by": [
+    "public_repo"
+   ],
+   "gate": "owner-account",
+   "signal": "news.ycombinator.com referrals in first-party hits",
+   "route": null
+  }
+ ]
+}
