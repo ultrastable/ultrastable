@@ -1,0 +1,8 @@
+{
+  "id": "DOER-2",
+  "title": "DOER-2: parked needs-code backlog items reach a code route",
+  "body": "**Owner:** operations\n**Trigger:** every tick that parks an item with blocker needs-code:\n**Done check:** grep:seed/worker/src/doer.js::needs-code route\n**Status:** open\n\nDOER-1 (#344) makes every D1 dispatch end done, parked or waiting. Items the Workers AI triage marks needs_code (for example SG-2) are parked with a reason and a first step, but nothing turns them into a change: the Worker-native executor (seed/worker/src/nativeexec.js) reads docs/issues/*.json, not the D1 items table, and the tick has no GitHub token bound (EXEC-SPARK-UNREACHABLE). Build the bridge: when a GitHub token is available, the doer opens one worker/<item> PR per parked needs-code item through runNative's path guard (or mirrors the item into docs/issues/), and records the PR on the item; without a token, the D1 store stays the queue and the count of parked needs-code items is published on /health.\n\nsize: M\n\n**Closing probe:** GET https://ultrastable-tick.q08.workers.dev/health shows needs_code_parked and a worker/* PR exists for at least one parked item\n",
+  "labels": ["role:operations", "repair"],
+  "milestone": "Now",
+  "workstream": "Autonomy"
+}
