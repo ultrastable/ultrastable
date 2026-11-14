@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261114-2",
+  "title": "OL-20261114-2: CONNECT-2: dashboard panel for /auth/connectors and a per-tenant connect button",
+  "body": "**Owner:** product-manager\n**Trigger:** next executor pass\n**Done check:** grep:dashboard::auth/connectors\n**Status:** open\n\nThe status JSON exists; the owner dashboard does not render it yet, and connector tokens are not yet exposed to tenant tools through a getToken-backed API.",
+  "labels": [
+    "role:product-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

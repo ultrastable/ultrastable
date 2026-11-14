@@ -898,6 +898,14 @@
    "title": "AUTHZEN-1: site worker is an AuthZEN policy decision point",
    "body": "site/authzen.js serves /access/v1/evaluation, /access/v1/evaluations and /.well-known/authzen-configuration from trust_ledger; fails closed; secrets, interrupt gate and alignment floor are never granted by any rung.",
    "probe": "file:site/authzen.test.mjs"
+  },
+  {
+   "id": "decision-2026-11-14-connect-1-one-connector-framework-no-pasted-tokens",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CONNECT-1: one connector framework, no pasted tokens",
+   "body": "Generic OAuth 2.1 connector flow (PKCE S256, signed one-time state, sealed per-tenant tokens, refresh via the oauth adapter, revoke) plus remote MCP servers as first-class connectors (RFC 9728, RFC 8414, CIMD then DCR, RFC 8707). Google, Microsoft and Buffer need only the single owner card oauth-apps; MCP servers need nothing. Dashboard reads /auth/connectors.",
+   "probe": "file:seed/worker/src/auth/connectors.js"
   }
  ]
 }
