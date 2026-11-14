@@ -188,3 +188,7 @@ Session: session_0156nqDv8ijT11RmKre7xEmK (CRITICALITY-1, COST-GUARD-1).
 - Owner: promotion, applications and strategy are the system's job. `doctrine/promotion.json` lists channels; `foundation/promote.py` scores them from probed facts (`outreach/facts.json`), renders application kits (`outreach/applications/ultrastable/`), files `Q-PROMO-*` for credential-free channels, and re-weights from `--outcome`.
 - Facts today: source-available (USL-1.0), private repos, one founder, no outside customers. So NLnet and Show HN are not-a-fit-now; YC (Winter 2027 late applications open), cloud credits and intro email fit.
 - Live channels: IndexNow from the hourly site tick (daily, `site/promote.js`); MCP registry via `.github/workflows/mcp-registry.yml` (GitHub OIDC; blocked while Actions billing fails).
+
+## 2026-11-14: BLINDSPOT-1, the system knows what the owner does not (Session: session_0156nqDsGSkQrok8LwjeYziE)
+- Owner: "the system needs to know what the user can't know". `doctrine/blindspots.json` registers universal needs with probes; `foundation/blindspots.py` scans, files `Q-BLIND-*`, runs recurring domain sweeps, and learns new needs.
+- Fixed in the same change: /privacy, /accessibility, /.well-known/security.txt and footer links (site/legalpages.js). Found live: no DMARC on ultrastable.io (SPF for receiving only), so outreach would land in spam; terms, entity, backup restore, succession, domain renewal, tax calendar, name clearance and dependency licences are open gaps.

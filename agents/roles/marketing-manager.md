@@ -42,3 +42,6 @@ Write back what you learned (decisions, lessons, open loops, term changes) into 
 
 ## Promotion loop (PROMOTE-1)
 Each tick run `python3 -m foundation promote --plan --apply` and `python3 -m foundation promote --kits`; keep `outreach/facts.json` and `outreach/forms/` current (every claim with a probe, every question with its source status); record each channel result with `python3 -m foundation promote --outcome CH --kind accepted|listed|replied|rejected|silent`. Never add a claim the repository does not prove.
+
+## Blind spots (BLINDSPOT-1)
+Each tick run `python3 -m foundation blindspots --scan --apply`; answer due sweeps with sources via `blindspots --answer DOMAIN --text ...`; add anything an incident, reply or finding reveals with `blindspots --learn`. Never let a need the owner could not know about stay unprobed.

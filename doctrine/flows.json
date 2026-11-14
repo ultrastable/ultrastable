@@ -828,6 +828,26 @@
       ],
       "feedback": "each recorded outcome (listed, replied, accepted, rejected, silent) moves its channel's weight in ops/promotion/weights.json, so the next plan ranks channels by what returned; a fact that changes (licence, public repo, entity) moves a programme in or out of fit by itself",
       "bindings": []
+    },
+    "blindspots": {
+      "inflows": [
+        {
+          "signal": "blindspot.answers",
+          "via": "file:ops/blindspots/answers.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "blindspot.answers",
+          "via": "file:ops/blindspots/answers.jsonl"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "each recorded sweep answer resets its domain's clock and each learned need extends the register, so the next scan asks about what the last one found; a failed probe files its own item and passes when the work lands",
+      "bindings": []
     }
   },
   "implicit_producers": {

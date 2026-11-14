@@ -8,6 +8,7 @@ import IV from "./interview.js";
 import { liveResponse } from "./live.js";
 import { agentic, withLinks, CONTENT_SIGNAL } from "./agentic.js";
 import { indexNow, keyFile, SITEMAP_PATHS } from "./promote.js";
+import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
@@ -49,7 +50,7 @@ function shell(opts, body) {
     + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
     + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/ops\">Operations</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet hide-sm\" href=\"/team\">Team</a><a class=\"btn btn-quiet hide-sm\" href=\"/faq\">FAQ</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
-    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Every number on this site is read from a live system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
+    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Every number on this site is read from a live system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
     + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://orcid.org/0009-0002-4317-5604\">ORCID</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
     + "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"Ultrastable\",\"url\":\"https://ultrastable.io\",\"creator\":{\"@type\":\"Person\",\"name\":\"Rowan Brad Quni-Gudzinas\",\"jobTitle\":\"Founder and Director, Ultrastable\",\"url\":\"https://rwnq8.github.io\",\"sameAs\":[\"https://orcid.org/0009-0002-4317-5604\",\"https://github.com/rwnq8\",\"https://www.linkedin.com/in/rowan-quni\"]}}</script></main></body></html>";
 }
@@ -729,7 +730,7 @@ const handler = {
     { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
@@ -744,6 +745,9 @@ const handler = {
       case "/dashboard": { const t = u.searchParams.get("tenant") || "ultrastable"; const h = dashboard(t); return h ? new Response(h, { headers: HTML }) : new Response("No such tenant", { status: 404, headers: HTML }); }
       case "/roadmap.json": return new Response(JSON.stringify(ROAD), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
       case "/faq": return new Response(faq(), { headers: HTML });
+      case "/privacy": return new Response(shell({ path: "/privacy", title: "Privacy - Ultrastable", description: "What this site records and what it does not." }, PRIVACY), { headers: HTML });
+      case "/accessibility": return new Response(shell({ path: "/accessibility", title: "Accessibility - Ultrastable", description: "What we build to and how to report a barrier." }, ACCESSIBILITY), { headers: HTML });
+      case "/.well-known/security.txt": return new Response(SECURITY_TXT, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600" } });
       case "/contact": return new Response(contact(), { headers: HTML });
       case "/pilot": return new Response(pilot(), { headers: HTML });
       case "/start": return new Response(start(false), { headers: HTML });

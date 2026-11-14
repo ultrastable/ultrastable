@@ -286,3 +286,11 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.equal(bad.ok, false); assert.match(bad.error, /net down/);
 }
 console.log("PROMOTE-1 indexnow ok");
+
+{ /* BLINDSPOT-1: privacy, accessibility and security contact exist and match the code */
+  const pv = await get("https://ultrastable.io/privacy"), ac = await get("https://ultrastable.io/accessibility"), st = await get("https://ultrastable.io/.well-known/security.txt");
+  assert.equal(pv.status, 200); assert.match(await pv.text(), /no cookie/);
+  assert.equal(ac.status, 200); assert.match(await ac.text(), /WCAG 2\.2/);
+  const t = await st.text(); assert.equal(st.status, 200); assert.match(t, /^Contact: mailto:/); assert.match(t, /Expires: /);
+  console.log("BLINDSPOT-1 pages ok");
+}
