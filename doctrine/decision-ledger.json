@@ -882,6 +882,14 @@
    "body": "Register in doctrine/blindspots.json with probes; failed system needs file Q-BLIND items, identity-bound ones stay gates. Live finding 2026-11-14: ultrastable.io has SPF for receiving but no DMARC (checked over DNS-over-HTTPS), so outreach would be rejected or spam-foldered. Site had no privacy, accessibility or security contact page; added.",
    "probe": "grep:foundation/blindspots.py::def learn",
    "session": "session_0156nqDsGSkQrok8LwjeYziE"
+  },
+  {
+   "id": "decision-2026-11-14-webhooks-1-callbacks-as-first-class-standards",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "WEBHOOKS-1: callbacks as first-class standards",
+   "body": "Outbound callbacks (CloudEvents 1.0, Standard Webhooks signing) and inbound hooks (Standard Webhooks, GitHub X-Hub-Signature-256) live in site/webhooks.js. Delivery rides the hourly site tick (no new cron). Signing secrets are HMAC-derived from a stored salt, shown once, never stored or typed. Item events come from change detection in the tick; inbound events also deliver immediately.",
+   "probe": "grep:site/webhooks.js::export async function tickWebhooks"
   }
  ]
 }

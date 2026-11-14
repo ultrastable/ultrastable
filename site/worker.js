@@ -13,7 +13,8 @@ import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
 import ROAD from "./roadmap-data.js";
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
-import { controlPlane, opsPage, tenantDiscovery } from "./controlplane.js";
+import { controlPlane, opsPage, tenantDiscovery, authIntegration } from "./controlplane.js";
+import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
 import { internalDeploy } from "./deployer.js";
 var VERSION = "0.15.0";
 const CANON = "ultrastable.io";
@@ -582,6 +583,7 @@ export async function tick(env, ctx, now) {
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
   { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
+  out.webhooks = await tickWebhooks(env, t).catch(e => String(e).slice(0, 120)); // WEBHOOKS-1: outbound callbacks ride this tick, no new cron
   await jput(env, "tick:last", out); return out;
 }
 async function statusData(env) {
@@ -722,6 +724,7 @@ const handler = {
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
     if (request.method === "POST" && u.pathname === "/api/meta/ingest") return metaIngest(request, env); // META-SIGNAL-1
     if (request.method === "GET" && u.pathname === "/api/suggest") return suggestions(u, env);
+    { const wh = await webhooksRoute(request, env, ctx, authIntegration); if (wh) return wh; } // WEBHOOKS-1: /hooks/<provider>, /api/v1/webhooks, /api/v1/hooks
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/live" || u.pathname === "/api/live") return liveResponse(u, request, env, shell, HTML);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
