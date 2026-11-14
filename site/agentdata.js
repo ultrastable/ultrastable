@@ -20,6 +20,14 @@ export default {
     "tracked_by": null
    },
    {
+    "id": "mcp-auth-site",
+    "name": "MCP authorization on ultrastable.io (OAuth 2.1 server: PKCE, Client ID Metadata Documents, dynamic registration)",
+    "body": "MCP / IETF OAuth WG",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
     "id": "mcp-server-card",
     "name": "MCP server cards (SEP-2127)",
     "body": "MCP project",
@@ -200,8 +208,8 @@ export default {
     "name": "OpenID AuthZEN (policy decision point API)",
     "body": "OpenID Foundation",
     "status": "stable",
-    "support": "planned",
-    "tracked_by": "STD-9: expose the trust ledger as an AuthZEN decision endpoint"
+    "support": "supported",
+    "tracked_by": null
    },
    {
     "id": "a2a-signed",
@@ -250,6 +258,22 @@ export default {
     "status": "stable",
     "support": "planned",
     "tracked_by": "STD-14: map existing ledgers (decision log, trust ledger, failure modes) to 42001 controls"
+   },
+   {
+    "id": "webauthn-passkeys",
+    "name": "WebAuthn Level 3 passkeys (FIDO2)",
+    "body": "W3C; FIDO Alliance",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
+   },
+   {
+    "id": "mcp-auth-client",
+    "name": "OAuth 2.1 client for remote MCP servers and service connectors (PKCE, RFC 8414, RFC 8707, CIMD, RFC 7591, RFC 7009)",
+    "body": "MCP / IETF OAuth WG",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
    }
   ]
  },
