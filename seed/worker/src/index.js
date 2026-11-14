@@ -2,6 +2,7 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { runTick, lastTickForHealth } from './tick.js';
+import { claimsReleasedUnworked24h } from './doer.js';
 import { runExecutor, noteExecutor } from './executor.js';
 import { runLane } from './lane.js';
 import { ingestDeploys } from './selfaudit.js';
@@ -28,7 +29,7 @@ const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',
 
 export default {
   async scheduled(_event, env, ctx) {
-    ctx.waitUntil(runTick(env.DB, { config, env: presence(env) }));
+    ctx.waitUntil(runTick(env.DB, { config, env: presence(env), ai: env.AI || null }));  // DOER-1: the AI binding reaches the in-tick doer
     ctx.waitUntil((async () => {  // AUTH-1: one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback); refresh runs first so nothing lapses
       const tenant = env.TENANT || config.org_slug || 'default';
       await refreshDue(env.DB, env).catch(e => console.error('credentials', e && e.message));
@@ -55,7 +56,7 @@ export default {
       if (!(await verifySignature(env.GITHUB_WEBHOOK_SECRET, body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
       const hit = routeEvent(request.headers.get('x-github-event'), JSON.parse(body || '{}'), EVENT_TABLE);
       if (!hit) return Response.json({ routed: false }, { status: 202 });
-      const work = runTick(env.DB, { config, env: presence(env), wake: hit.role });
+      const work = runTick(env.DB, { config, env: presence(env), wake: hit.role, ai: env.AI || null });
       if (ctx && ctx.waitUntil) ctx.waitUntil(work); else await work;
       return Response.json({ routed: true, ...hit }, { status: 202 });
     }
@@ -76,7 +77,8 @@ export default {
     if (url.pathname === '/health') {
       const last = await lastTickForHealth(env.DB);
       const ok = Boolean(last && last.steps_completed === last.steps_total);
-      return Response.json({ ok, org: config.org_slug, last_tick: last || null }, { status: ok ? 200 : 503 });
+      const released = await claimsReleasedUnworked24h(env.DB, Date.now()).catch(() => null);  // workers#173 closing probe, target 0
+      return Response.json({ ok, org: config.org_slug, last_tick: last || null, claims_released_unworked_24h: released }, { status: ok ? 200 : 503 });
     }
     if (url.pathname === '/live' || url.pathname === '/metrics/criticality.json') {  // CRITICALITY-1: k_eff of the last tick
       const c = await readCriticality(env.DB);

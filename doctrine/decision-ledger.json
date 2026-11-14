@@ -831,6 +831,15 @@
    "title": "OUTREACH-INTRO-1: intro outreach lane",
    "body": "Rowan 2026-11-14: the system introduces the work to research institutes, funders, AI labs and third-sector organizations instead of waiting for postings. Contacts are role mailboxes the organization publishes on its own pages (resolved and re-verified by code), disclosed automated email, shared gate, dry-run default; live needs sender, postal address and secrets. Follow-up Q-INTRO-1.",
    "probe": "grep:scripts/outreach_intro.py::OUTREACH-INTRO-1"
+  },
+  {
+   "id": "lesson-2026-11-14-a-dispatch-row-is-not-execution-the-tick-needs-an-in-tick-do",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "A dispatch row is not execution: the tick needs an in-tick doer",
+   "body": "DOER-1 (workers#173): from 2026-11-10 to 2026-11-14 the tick wrote 288 claims+dispatches and no step acted on them; the reaper released each claim and the same items were re-claimed up to 30 times. runTick also got a presence-only env, so the AI binding never reached it. Fix: step execute (seed/worker/src/doer.js) runs after dispatch with env.AI and ends every claimed item done, parked with a reason, or waiting; probe claims_released_unworked_24h (target 0) on /health.",
+   "probe": "file:seed/worker/src/doer.js",
+   "session": "local_933d8bf1"
   }
  ]
 }
