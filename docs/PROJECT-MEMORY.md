@@ -8,7 +8,10 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-13
+Last updated: 2026-11-14
+
+- 2026-11-14: AGENT-READY-2: ultrastable.io serves Markdown for Agents (Accept: text/markdown), named AI-bot rules in robots.txt and WebMCP tools (site/readiness.js); OAuth discovery and commerce protocols declined with reasons in doctrine/agent-standards.json; WEB-BOT-AUTH-1 and Q-AGENT-OAUTH-1 filed. PR 343 overlaps PR 340: RECONCILE-343 keeps its role-work, SOP and handoffs.
+- 2026-11-14: Actions jobs are refused (billing), so `scripts/local_checks.py` runs checks.yml without Actions (LOCAL-CHECKS-1); PRIORITIZE-2 ranks the backlog as goal vectors with live shadow prices (cost over budget x3, Actions blocked x1.5) and Pareto fronts (`doctrine/priorities.json`).
 Maintained by: every agent, on every session end. Staleness is checked by `scripts/check_memory.py` (CI `memory-fresh`).
 
 ## 1. Standing rules (from Rowan)
@@ -177,3 +180,22 @@ Session: session_0156nqDv8ijT11RmKre7xEmK (CRITICALITY-1, COST-GUARD-1).
 - Measured: 2011 min used by day 13 of the month (projected 232% of the free quota); `checks` 1218 min, 958 of them failed runs. `checks.yml` now runs its most-failing steps first.
 - The tick Worker already runs lane merge, sweeper and executor dispatch (`seed/worker/src`), but D1 `sweeper_runs` shows `pulls 404` on every repo until the GitHub App covers the org (owner step: Connect GitHub in NEEDS-YOU.md).
 - Owner direction: GitHub stays master and public face; the Worker should own the loops, possibly with Git-in-Cloudflare storage and deploy providers for Cloudflare, AWS, GCP. Probes: `docs/issues/ZERO-MINUTES-1.json`, `docs/issues/GIT-IN-CLOUDFLARE-1.json`.
+
+## 2026-11-14: dispatches execute (DOER-1, workers#173)
+- The tick wrote 288 claims+dispatches from 2026-11-10 and no step acted on them; the reaper released each and items were re-claimed up to 30x. Tick step `execute` (`seed/worker/src/doer.js`, #344) now ends every claimed item done, parked with a reason, or waiting, using the Worker AI binding (max 3 model calls/tick). Owner-only items park behind gate `GATE-OWNER-ITEMS`. Probe `claims_released_unworked_24h` on `/health` (target 0; historical rows backfilled as released, aging out by 2026-11-15 15:10 UTC).
+- Live: tick 609 executed 5 items (2 done, 2 parked, 1 waiting). Deployed as an esbuild bundle via the Workers API because Actions is blocked by billing and wrangler hit out-of-memory on the session machine; the drift probe will report DRIFT until a canonical deploy. Next: DOER-2 (parked needs-code items reach a code route).
+
+## 2026-11-14: PROMOTE-1, strategy and promotion as a closed loop (Session: session_0156nqDsGSkQrok8LwjeYziE)
+- Owner: promotion, applications and strategy are the system's job. `doctrine/promotion.json` lists channels; `foundation/promote.py` scores them from probed facts (`outreach/facts.json`), renders application kits (`outreach/applications/ultrastable/`), files `Q-PROMO-*` for credential-free channels, and re-weights from `--outcome`.
+- Facts today: source-available (USL-1.0), private repos, one founder, no outside customers. So NLnet and Show HN are not-a-fit-now; YC (Winter 2027 late applications open), cloud credits and intro email fit.
+- Live channels: IndexNow from the hourly site tick (daily, `site/promote.js`); MCP registry via `.github/workflows/mcp-registry.yml` (GitHub OIDC; blocked while Actions billing fails).
+
+## 2026-11-14: BLINDSPOT-1, the system knows what the owner does not (Session: session_0156nqDsGSkQrok8LwjeYziE)
+- Owner: "the system needs to know what the user can't know". `doctrine/blindspots.json` registers universal needs with probes; `foundation/blindspots.py` scans, files `Q-BLIND-*`, runs recurring domain sweeps, and learns new needs.
+- Fixed in the same change: /privacy, /accessibility, /.well-known/security.txt and footer links (site/legalpages.js). Found live: no DMARC on ultrastable.io (SPF for receiving only), so outreach would land in spam; terms, entity, backup restore, succession, domain renewal, tax calendar, name clearance and dependency licences are open gaps.
+
+## 2026-11-14: MCP-OAUTH-1, MCP clients connect by browser consent, never a pasted token (Session: mcp-oauth-inbound)
+- Owner: "Tokens, copying and pasting tokens, never going to happen... link services through APIs, MCPs, OAuth and callbacks, supported natively." `site/oauth.js` makes ultrastable.io its own OAuth 2.1 authorization server for `/mcp`: RFC 9728 and 8414 metadata, `WWW-Authenticate` challenge on an unauthenticated `submit_work`, Client ID Metadata Documents plus RFC 7591 registration, authorization-code with mandatory PKCE S256, `iss`, resource binding (RFC 8707), refresh rotation with reuse detection. Consent sits behind the existing email-code owner session (`us_owner` cookie, same ops database; `dashboard/worker.js` returns the person to `/oauth/authorize` after sign-in). OAuth identity (client name, redirect host) becomes the `agent` and `harness` on the item; the integration bearer token stays as the legacy path for non-interactive callers.
+- Proof: `node site/oauth.test.mjs`; the official MCP TypeScript SDK client completed discovery, registration, consent, PKCE and `submit_work` in-process. Register row `mcp-auth-site` is supported; the tenant kit (`seed/worker`, row `mcp-auth`) still validates a static bearer and stays partial.
+- Open (filed as roadmap, outbound direction): connecting third-party services into a person's Ultrastable (Google, Microsoft, GitHub, MCP servers as clients) by the same consent pattern needs one OAuth app per provider registered under the owner's identity (the existing `oauth-apps` gate card); not buildable without it.
+- 2026-11-15 PLATFORM-AUDIT-1: `python3 -m foundation platformaudit --probe|--apply|--check` (foundation/platformaudit.py, weekly in org-settings.yml). Open: Cloudflare cutover incomplete (topology.json names quniverse account edb167; live ultrastable-account workers use different D1 ids), flagged each run.

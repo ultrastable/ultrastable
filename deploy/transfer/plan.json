@@ -2,15 +2,44 @@
   "_doc": "Staged, reversible move of Ultrastable assets from the QNFO (quniverse) account to the dedicated Ultrastable account. The source is never deleted by this plan; deletion is a later, separate item after a soak period. Driven by scripts/cf_account.py.",
   "assets": {
     "workers": [
-      "ultrastable-*"
+      "ultrastable-agents",
+      "ultrastable-tick",
+      "ultrastable-dashboard",
+      "ultrastable-site",
+      "us-idea-*"
     ],
     "d1": [
-      "ultrastable-org"
-    ]
+      "ultrastable-org",
+      "ultrastable-ops"
+    ],
+    "kv": [
+      "ultrastable-site-assets",
+      "ultrastable-private"
+    ],
+    "r2": [
+      "ultrastable-git"
+    ],
+    "zones": [
+      "ultrastable.io",
+      "ultrastable.app",
+      "ultrastable.net",
+      "ultrastable.org"
+    ],
+    "not_moved": {
+      "ultrastable-ultrastable": "retire candidate in doctrine/topology.json",
+      "demo-child-ultrastable": "demo tenant; redeployed by its own bootstrap"
+    }
   },
   "crons": {
     "ultrastable-tick": [
       "*/10 * * * *"
+    ],
+    "ultrastable-dashboard": [
+      "0 13 * * *",
+      "*/10 * * * *"
+    ],
+    "ultrastable-site": [
+      "17 * * * *"
     ]
   },
   "stages": [
@@ -48,5 +77,61 @@
   "manual_after_cutover": [
     "custom domains (ultrastable.io/.app/.net) are zone-bound: move the zone or re-attach the routes in the zone's account",
     "re-bind worker secrets by name from the repo secret store (values are never read from Cloudflare)"
+  ],
+  "id_map": {
+    "d1": {
+      "7468898a-b515-495f-9910-e91cb80f5810": "216e97ea-da5e-41e5-af52-af6c0484a7be",
+      "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd": "5cd83b52-864a-4510-b062-fc0d9402d06c"
+    },
+    "kv": {
+      "c6ca64dddec5489cbcee896113949eba": "eade26c7862a4f4cad4827baeb29e04e",
+      "f41303a09abc473faf41f9685ebb1a72": "41ef5a537ec24f598db2a1178a5e69e1"
+    }
+  },
+  "progress": {
+    "at": "2026-11-14",
+    "stage": "2-copy partly done: worker code on the target (byte-identical, crons off); data copy is stale (2026-11-12) and must be re-taken at cutover",
+    "evidence": "deploy/transfer/inventory-2026-11-14.json"
+  },
+  "blockers": [
+    {
+      "id": "target-token",
+      "what": "an API token for the target, bound as the GitHub secrets and as CF_DEPLOY_TOKEN; without it deploys after cutover still go to the old account",
+      "who": "owner go-ahead (creating a credential)",
+      "probe": "python3 scripts/cf_account.py probe"
+    },
+    {
+      "id": "worker-secrets",
+      "what": "tick CREDENTIAL_KEY and GITHUB_REPOS, site CF_ACCOUNT_ID and CF_DEPLOY_TOKEN cannot be read back from Cloudflare",
+      "who": "deploy/bind-worker-secrets.mjs after the token exists",
+      "probe": "GET /health on the target tick"
+    },
+    {
+      "id": "zones",
+      "what": "ultrastable.io/.app/.net/.org are zones of the old account; custom domains and send_email need them in the target",
+      "who": "owner (DNS and zone moves are human-gated)",
+      "probe": "GET /zones?account.id=<target> lists the four zones"
+    },
+    {
+      "id": "r2",
+      "what": "R2 not enabled on the target (error 10042); enabling accepts terms in the dashboard",
+      "who": "owner",
+      "probe": "GET /accounts/<target>/r2/buckets succeeds"
+    },
+    {
+      "id": "script-gaps",
+      "what": "scripts/cf_account.py copy uploads multi-module workers as one worker.js, ignores service-binding order, never refreshes a non-empty target D1",
+      "who": "infrastructure-manager (ACCOUNT-SPLIT-1)",
+      "probe": "tests with a multi-module fixture"
+    }
+  ],
+  "cutover_order": [
+    "target token bound",
+    "fresh D1 and KV copy",
+    "secrets bound on the target",
+    "doctrine/topology.json account_id and store ids switched in one PR",
+    "target crons on, source crons off (cf_account.py transfer cutover)",
+    "zones moved, custom domains and send_email re-attached",
+    "7-day soak, then retire source copies"
   ]
 }

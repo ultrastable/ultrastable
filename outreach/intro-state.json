@@ -1,0 +1,289 @@
+{
+ "targets": {
+  "intro:P-ALLENAI": {
+   "registry_id": "P-ALLENAI",
+   "name": "Allen Institute for AI",
+   "segment": "ai-lab",
+   "state": "verified",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://allenai.org"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "verified",
+     "detail": "info@allenai.org published at https://allenai.org/contact"
+    }
+   ]
+  },
+  "intro:P-ADALOVELACE": {
+   "registry_id": "P-ADALOVELACE",
+   "name": "Ada Lovelace Institute",
+   "segment": "research-institute",
+   "state": "form-only",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://www.adalovelaceinstitute.org"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://www.adalovelaceinstitute.org/contact. Forms are not submitted by the system"
+    }
+   ]
+  },
+  "intro:P-TURING": {
+   "registry_id": "P-TURING",
+   "name": "The Alan Turing Institute",
+   "segment": "research-institute",
+   "state": "no-public-route",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://www.turing.ac.uk"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "no-public-route",
+     "detail": "no contact page or role mailbox found"
+    }
+   ]
+  },
+  "intro:P-AINOW": {
+   "registry_id": "P-AINOW",
+   "name": "AI Now Institute",
+   "segment": "research-institute",
+   "state": "form-only",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://ainowinstitute.org"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://ainowinstitute.org/contact-us. Forms are not submitted by the system"
+    }
+   ]
+  },
+  "intro:P-DATASOCIETY": {
+   "registry_id": "P-DATASOCIETY",
+   "name": "Data & Society",
+   "segment": "research-institute",
+   "state": "form-only",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://datasociety.net"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://datasociety.net/contact. Forms are not submitted by the system"
+    }
+   ]
+  },
+  "intro:P-PAI": {
+   "registry_id": "P-PAI",
+   "name": "Partnership on AI",
+   "segment": "third-sector",
+   "state": "form-only",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://partnershiponai.org"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://partnershiponai.org/contact. Forms are not submitted by the system"
+    }
+   ]
+  },
+  "intro:P-CHT": {
+   "registry_id": "P-CHT",
+   "name": "Center for Humane Technology",
+   "segment": "third-sector",
+   "state": "verified",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://www.humanetech.com"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "verified",
+     "detail": "hello@humanetech.com published at https://www.humanetech.com"
+    }
+   ]
+  },
+  "intro:P-MOZILLA": {
+   "registry_id": "P-MOZILLA",
+   "name": "Mozilla Foundation",
+   "segment": "funder",
+   "state": "no-public-route",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://foundation.mozilla.org"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "no-public-route",
+     "detail": "no contact page or role mailbox found"
+    }
+   ]
+  },
+  "intro:P-ASTERA": {
+   "registry_id": "P-ASTERA",
+   "name": "Astera Institute",
+   "segment": "funder",
+   "state": "verified",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://astera.org"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "verified",
+     "detail": "info@astera.org published at https://astera.org"
+    }
+   ]
+  },
+  "intro:P-FORESIGHT": {
+   "registry_id": "P-FORESIGHT",
+   "name": "Foresight Institute",
+   "segment": "funder",
+   "state": "form-only",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://foresight.org"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://foresight.org/contact. Forms are not submitted by the system"
+    }
+   ]
+  },
+  "intro:P-EAI": {
+   "registry_id": "P-EAI",
+   "name": "EleutherAI",
+   "segment": "ai-lab",
+   "state": "verified",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://www.eleuther.ai"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "verified",
+     "detail": "contact@eleuther.ai published at https://www.eleuther.ai"
+    }
+   ]
+  },
+  "intro:P-GOVAI": {
+   "registry_id": "P-GOVAI",
+   "name": "Centre for the Governance of AI",
+   "segment": "research-institute",
+   "state": "verified",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://www.governance.ai"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "verified",
+     "detail": "contact@governance.ai published at https://www.governance.ai"
+    }
+   ]
+  },
+  "intro:P-CAIS": {
+   "registry_id": "P-CAIS",
+   "name": "Center for AI Safety",
+   "segment": "research-institute",
+   "state": "verified",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://safe.ai"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "verified",
+     "detail": "contact@safe.ai published at https://safe.ai"
+    }
+   ]
+  },
+  "intro:P-OPENPHIL": {
+   "registry_id": "P-OPENPHIL",
+   "name": "Open Philanthropy",
+   "segment": "funder",
+   "state": "form-only",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://www.openphilanthropy.org"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://www.openphilanthropy.org/contact. Forms are not submitted by the system"
+    }
+   ]
+  },
+  "intro:P-SCHMIDT": {
+   "registry_id": "P-SCHMIDT",
+   "name": "Schmidt Sciences",
+   "segment": "funder",
+   "state": "form-only",
+   "first_seen": "2026-11-14",
+   "events": [
+    {
+     "at": "2026-11-14",
+     "event": "discovered",
+     "detail": "https://www.schmidtsciences.org"
+    },
+    {
+     "at": "2026-11-14",
+     "event": "form-only",
+     "detail": "no published role mailbox; contact page https://www.schmidtsciences.org/contact. Forms are not submitted by the system"
+    }
+   ]
+  }
+ }
+}

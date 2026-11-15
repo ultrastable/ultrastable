@@ -11,11 +11,8 @@ import { consentScreen, doneScreen, failScreen } from './consent.js';
 import { probe, getToken } from './index.js';
 import { checkRepoAccess, readRepoAccess } from './access.js';
 
-const enc = s => new TextEncoder().encode(s);
-async function hmac(env, msg) {
-  const k = await crypto.subtle.importKey('raw', enc(env.CREDENTIAL_KEY || ''), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  return [...new Uint8Array(await crypto.subtle.sign('HMAC', k, enc(msg)))].map(b => b.toString(16).padStart(2, '0')).join('');
-}
+import { hmac } from './state.js';
+import { handleConnector } from './connectors.js';
 export const makeState = async (env, tenant, now = Date.now()) => `${tenant}.${now}.${await hmac(env, `${tenant}.${now}`)}`;
 export async function checkState(env, state, now = Date.now()) {
   const [tenant, ts, sig] = String(state || '').split('.');
@@ -37,7 +34,7 @@ export function manifest(origin, name) {
 async function route(request, env, opts = {}) {
   const { tenant = 'default', name = 'ultrastable', fetch: f = fetch, now = Date.now() } = opts;
   const url = new URL(request.url), origin = url.origin;
-  if (/^\/(connect|auth)\//.test(url.pathname) || url.pathname === '/connect') await store.ensureSchema(env.DB);  // the Worker brings up its own credential tables before any route touches them
+  if (/^\/(connect|auth|\.well-known\/oauth-client)\//.test(url.pathname) || url.pathname === '/connect') await store.ensureSchema(env.DB);  // the Worker brings up its own credential tables before any route touches them
   if (url.pathname === '/connect') { const r = await probe(env.DB, now); return Response.redirect(new URL(r.github_connected ? '/' : '/connect/github', url), 302); }
   if (url.pathname === '/auth/health') { const r = await probe(env.DB, now); return Response.json(r, { status: r.ok ? 200 : 503 }); }
   if (url.pathname === '/connect/repos') {  // REPO-ACCESS-1: the one click that widens the installation; GitHub sends the owner back to /auth/github/installed, which re-probes
@@ -78,7 +75,7 @@ async function route(request, env, opts = {}) {
     } catch (e) { await store.event(env.DB, t, 'github-app', 'failed', 're-probe: ' + String(e && e.message || e)); }
     return doneScreen('GitHub connected', 'Done. From here the system opens, checks, merges and deploys changes by itself.');
   }
-  return null;
+  return handleConnector(request, env, { tenant, fetch: f, now, allowInsecure: !!opts.allowInsecure });  // CONNECT-1: every other /connect/<provider> path
 }
 
 // Any failure inside an auth route is recorded as a credential event and answered with a retry screen, never a raw Worker exception.

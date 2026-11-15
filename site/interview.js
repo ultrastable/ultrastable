@@ -105,6 +105,11 @@ export const JS = String.raw`(function () {
   // ---- dictation: fills the pill live, sends when the person stops speaking ----
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition, rec = null;
   function micMsg(m) { hint.textContent = m === 'not-allowed' || m === 'service-not-allowed' ? 'The microphone is blocked for this site. Type instead, or allow the microphone in your browser and press it again.' : m === 'no-speech' ? 'I did not hear anything. Press the microphone and try again, or type.' : 'Dictation stopped. Press the microphone to try again, or type.'; }
+  // META-SIGNAL-1: microphone events (codes only, never audio or text) go to the server's meta loop, which files roadmap items from patterns.
+  function meta(code) { try { var b = JSON.stringify({ source: 'mic-event', code: code, surface: 'interview', at: new Date().toISOString() }); if (!(navigator.sendBeacon && navigator.sendBeacon('/api/meta/ingest', new Blob([b], { type: 'application/json' })))) fetch('/api/meta/ingest', { method: 'POST', body: b, keepalive: true, headers: { 'Content-Type': 'application/json' } }); } catch (e) { } }
+  var dictated = '';
+  inp.addEventListener('input', function () { if (dictated && inp.value !== dictated) { meta('edited-after-dictation'); dictated = ''; } });
+  if (!SR) meta('unsupported');
   if (SR) {
     mic.hidden = false;
     mic.onclick = function () {
@@ -112,9 +117,9 @@ export const JS = String.raw`(function () {
       try { rec = new SR(); rec.lang = navigator.language || 'en-US'; rec.interimResults = true; rec.maxAlternatives = 1; } catch (e) { micMsg('x'); return; }
       var heard = ''; mic.classList.add('live'); mic.setAttribute('aria-label', 'Listening. Press to stop');
       rec.onresult = function (e) { var t = ''; for (var k = 0; k < e.results.length; k++) t += e.results[k][0].transcript; heard = t; inp.value = t; };
-      rec.onerror = function (e) { micMsg(e.error); };
-      rec.onend = function () { mic.classList.remove('live'); mic.setAttribute('aria-label', 'Dictate'); if (heard.trim()) form.requestSubmit ? form.requestSubmit() : submit(); };
-      try { rec.start(); } catch (e) { mic.classList.remove('live'); micMsg('busy'); }
+      rec.onerror = function (e) { meta(e.error); micMsg(e.error); };
+      rec.onend = function () { mic.classList.remove('live'); mic.setAttribute('aria-label', 'Dictate'); dictated = heard.trim() ? heard : ''; if (heard.trim()) form.requestSubmit ? form.requestSubmit() : submit(); };
+      try { rec.start(); } catch (e) { mic.classList.remove('live'); meta('busy'); micMsg('busy'); }
     };
   }
 

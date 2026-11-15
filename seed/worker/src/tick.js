@@ -6,6 +6,7 @@
 
 import { criticalityStep } from './criticality.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
+import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 
 const TERMINAL = ['done', 'superseded', 'cancelled'];
 const OPS = {
@@ -39,6 +40,7 @@ export const METRICS = {
   objectives_without_probe: (db) => first(db,
     `SELECT COUNT(*) AS n FROM objectives o WHERE o.tenant_id IS NULL AND NOT EXISTS (SELECT 1 FROM metrics m WHERE m.tenant_id IS NULL AND m.objective_id = o.id AND m.kind = 'target' AND m.source IN ('builtin','sql','http'))`).then(r => r.n),
   metrics_in_breach: (db) => first(db, `SELECT COUNT(*) AS n FROM metrics WHERE breached = 1 AND tenant_id IS NULL`).then(r => r.n),
+  claims_released_unworked_24h: claimsReleasedUnworked24h,  // DOER-1 (workers#173): target 0
   silent_drops_7d: (db, now) => first(db,
     `SELECT COUNT(*) AS n FROM outcomes WHERE result='silent_drop' AND at >= ?`,
     iso(new Date(now - 7 * 86400e3))).then(r => r.n),
@@ -100,6 +102,7 @@ export const STEPS = {
     for (const c of stale) {
       await run(db, `DELETE FROM claims WHERE item_id=?`, c.item_id);
       await run(db, `UPDATE items SET status='ready', updated_at=? WHERE id=? AND status='claimed'`, ctx.nowIso, c.item_id);
+      await run(db, `UPDATE dispatches SET status='released' WHERE item_id=? AND status='queued'`, c.item_id);  // counted by claims_released_unworked_24h
     }
     if (stale.length) ctx.notes.push(`released ${stale.length} stale claim(s)`);
   },
@@ -112,6 +115,7 @@ export const STEPS = {
       const [kind, arg] = c.closing_probe.split(':');
       let ok = false;
       if (kind === 'env') ok = Boolean(ctx.env && ctx.env[arg]);
+      if (kind === 'owner_items') ok = !(await first(db, `SELECT 1 AS x FROM items WHERE status='blocked' AND blocker LIKE 'owner-only:%' LIMIT 1`));
       if (kind === 'item_done') ok = Boolean(await first(db, `SELECT 1 AS x FROM items WHERE id=? AND status='done'`, arg));
       if (ok) {
         await run(db, `UPDATE gate_cards SET status='closed', closed_at=? WHERE id=?`, ctx.nowIso, c.id);
@@ -241,6 +245,9 @@ export const STEPS = {
     ctx.notes.push(`dispatched ${n} item(s)`);
   },
 
+  // DOER-1: every claimed item ends done, parked with a reason, or waiting with its claim kept; nothing is left for the reaper to release unworked.
+  async execute(db, ctx) { await executeStep(db, ctx, ensureItem); },
+
   // Plus share over the last 20 closed items; below target opens a rebalance item for the portfolio manager.
   async check_plus_share(db, ctx) {
     const rows = await all(db, `SELECT kind FROM items WHERE status='done' ORDER BY updated_at DESC LIMIT 20`);
@@ -265,13 +272,13 @@ export const STEPS = {
   },
 };
 
-export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'dispatch', 'check_plus_share', 'criticality'];
+export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'dispatch', 'execute', 'check_plus_share', 'criticality'];
 
-export async function runTick(db, { config, env = {}, now = Date.now(), wake = null } = {}) {
+export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null } = {}) {
   const startedIso = iso(new Date(now));
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, STEP_ORDER.length);
   const tickId = ins.meta.last_row_id;
-  const ctx = { wake, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
+  const ctx = { wake, ai, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
   let completed = 0;
   for (const name of STEP_ORDER) {
     try {

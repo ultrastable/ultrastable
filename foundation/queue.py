@@ -2,7 +2,8 @@
 `OL-*` item in docs/issues/ with an owner, a trigger and a closing probe, worked by the scheduled executor and merge lane until the probe passes.
 
   python3 -m foundation queue --check     every item complete; every thread residual in doctrine/thread-residuals.json has an item
-  python3 -m foundation queue --run [--apply]   evaluate each open item's probe on every executor run and close the ones that pass
+  python3 -m foundation queue --run [--apply]   evaluate each open item's probe on every executor run and close the ones that pass (closing-probe contracts:
+                                                reopen on relapse, hold after a reopen; foundation/contracts.py)
 
 Probe kinds: file:<path>, grep:<path>::<regex>, cmd:<command> (allow-listed prefixes only, 60 s, argv without a shell).
 """
@@ -58,7 +59,7 @@ def protected_probe(probe: str) -> bool:
     return bool(m and m.group(1).startswith((".github/", "autonomy/")))
 
 
-def takeable(root=REPO) -> list[dict]:
+def takeable(root=REPO, gated=True) -> list[dict]:
     """QUEUE-1: open queue items in the shape the executor's pick() expects. Owner-held items (identity-bound, ROWAN) are not the executor's.
     An item whose last three executor log rows all failed is parked until a row of another result appears, so a bad item cannot starve the rest."""
     root = Path(root); fails: dict[str, int] = {}
@@ -66,6 +67,11 @@ def takeable(root=REPO) -> list[dict]:
         if r.get("issue") is not None:
             k = str(r["issue"]); fails[k] = fails.get(k, 0) + 1 if r.get("result") == "failed" else 0
     out = []
+    try:
+        from . import prioritize
+        scores = prioritize.score_map(root)
+    except Exception:  # the ranker must never block the queue; unscored items fall back to label order
+        scores = {}
     for it in items(root):
         j = it["json"]
         if it["status"] != "open" or re.search(r"ROWAN|identity-bound", it["owner"], re.I) or fails.get(str(it["id"]), 0) >= 3:
@@ -73,7 +79,9 @@ def takeable(root=REPO) -> list[dict]:
         if protected_probe(it["probe"]):  # the executor may not write .github/ or autonomy/, so an item whose done check lives there can only fail (it starved the queue head on 2026-11-12)
             continue
         out.append({"number": it["id"], "title": j.get("title", it["id"]), "body": j.get("body", ""), "labels": [{"name": n} for n in j.get("labels", [])],
-                    "updated_at": "1970-01-01T00:00:00Z"})
+                    "updated_at": "1970-01-01T00:00:00Z", **({"score": scores[str(it["id"])]} if str(it["id"]) in scores else {})})
+    if not gated:  # the executor's reach before the criticality gate: foundation/throughput.py asks whether any doer can take an item at all
+        return out
     from . import criticality
     return criticality.gate(out, root)
 
@@ -131,17 +139,11 @@ def check(root=REPO) -> list[str]:
 
 
 def run(root=REPO, apply=False) -> list[dict]:
-    rows = []
-    for it in items(root):
-        if it["status"] != "open":
-            continue
-        ok, ev = probe(root, it["probe"])
-        rows.append({"id": it["id"], "probe": it["probe"], "passed": ok, "evidence": ev})
-        if ok and apply:
-            j = it["json"]
-            j["body"] = j["body"].replace("**Status:** open", "**Status:** closed") + f"\n\n**Evidence:** probe passed: {ev}\n"
-            it["path"].write_text(json.dumps(j, indent=2) + "\n", encoding="utf-8")
-    return rows
+    """Every open item's probe, through the closing-probe contracts (foundation/contracts.py): an item closes only when its probe passes and,
+    after a reopen, only once the passes span the hold; a closed item whose probe fails again is reopened. Rows keep the old shape."""
+    from . import contracts
+    rows = contracts.tick(root, apply=apply)["rows"]
+    return [{"id": r["id"], "probe": r["probe"], "passed": r["verdict"] == "pass", "evidence": r["evidence"], "action": r["action"]} for r in rows if r["status_before"] == "open" or r["action"] == "reopen"]
 
 
 def main(argv: list[str]) -> int:

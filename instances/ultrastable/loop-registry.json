@@ -2106,6 +2106,45 @@
       "server_owner": "ultrastable-tick"
     },
     {
+      "id": "qnfo-sauce",
+      "kind": "governance",
+      "summary": "The loops that make a fleet close its own work (QNFO-PORT-1): closing-probe contracts close an item only on its own probe and reopen a relapse; tickets about another record fold when it resolves; per-family throughput files a build-the-doer item for a family that grows with nothing closing it; the metric loop files, judges and replaces remedies; the links that still do not close are ignition gaps next to k.",
+      "trigger": "each launch pass, before lifecycle; the queue run of the executor and fleet routes goes through the same contracts",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1 tick",
+      "done": "ops/ignition.json is from the last pass, every open item has a contract row from the last pass, and every breached metric has a running remedy",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "python3 -m foundation launch (sauce.loop) on every enabled host",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation sauce --tick --apply run by an agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/sauce.py::def tick",
+      "writeback": [
+        "docs/issues",
+        "ops/ignition.json"
+      ],
+      "system_path": [
+        "foundation/sauce.py",
+        "foundation/contracts.py",
+        "foundation/metafold.py",
+        "foundation/throughput.py",
+        "foundation/metricloop.py",
+        "doctrine/qnfo-port.json",
+        "doctrine/metric-loop.json",
+        "foundation/launch.py"
+      ],
+      "launch": "qnfo-sauce",
+      "server_owner": "ultrastable-tick"
+    },
+    {
       "id": "lifecycle",
       "kind": "manager",
       "summary": "No zombie sessions: leases, heartbeats, reaper; and loops that score and mutate themselves (the improver scores itself).",
@@ -2728,6 +2767,116 @@
       "identity_bound": "none",
       "default_in_effect": "the wizard no longer asks; first-run enables schedules",
       "server_owner": "github-actions"
+    },
+    {
+      "id": "role-design-manager",
+      "kind": "manager",
+      "summary": "Design manager: the design language across the portfolio and every product that rolls up to it (doctrine/design",
+      "trigger": "each tick of the design-manager role (tick_every 6)",
+      "owner": "design-manager",
+      "closes_by": "system",
+      "sla": "1 tick",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:agents/roles/design-manager.md",
+      "writeback": [
+        "docs/issues",
+        "docs/handoff"
+      ],
+      "system_path": [
+        "agents/roles/design-manager.md",
+        "seed/agents/roles/design-manager.md",
+        "doctrine/team.json",
+        "foundation/team.py"
+      ],
+      "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "promote",
+      "kind": "governance",
+      "summary": "PROMOTE-1: strategy and promotion as a closed loop. Channels are scored from facts the repository proves; credential-free channels (MCP registry, IndexNow) run themselves; application kits are rendered from the fact bank; outcomes re-weight channels.",
+      "trigger": "hourly site tick (IndexNow, daily), push of server.json (mcp-registry.yml), every executor or cloud-session pass (promote --plan --apply, promote --kits)",
+      "owner": "marketing-manager",
+      "closes_by": "system",
+      "sla": "7d",
+      "done": "python3 -m foundation promote --check reports ok",
+      "paths": [
+        {
+          "id": "worker",
+          "how": "site Worker scheduled tick submits the sitemap to IndexNow daily (site/promote.js)",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation promote --plan --apply from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/promote.py::def outcome",
+      "writeback": [
+        "ops/promotion/plan.json",
+        "ops/promotion/outcomes.jsonl",
+        "ops/promotion/weights.json",
+        "outreach/applications",
+        "docs/issues"
+      ],
+      "system_path": [
+        "doctrine/promotion.json",
+        "foundation/promote.py",
+        "site/promote.js"
+      ],
+      "area": "governance",
+      "workflows": [
+        "mcp-registry.yml"
+      ],
+      "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "blindspots",
+      "kind": "governance",
+      "summary": "BLINDSPOT-1: the system knows what the owner cannot know to ask for. A register of needs every system has (privacy, security contact, accessibility, email authentication, entity, backups, succession, renewals, tax) is probed against the repository; gaps become executor items, identity-bound ones become gates, and recurring domain sweeps keep asking what nobody thought to ask.",
+      "trigger": "every executor or cloud-session pass (blindspots --scan --apply) and on each new incident, reply or finding (blindspots --learn)",
+      "owner": "product-manager",
+      "closes_by": "system",
+      "sla": "7d",
+      "done": "python3 -m foundation blindspots --check reports ok",
+      "paths": [
+        {
+          "id": "worker",
+          "how": "the tick Worker runs the offline probes and files Q-BLIND items (ultrastable-tick)",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation blindspots --scan --apply --live from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/blindspots.py::def learn",
+      "writeback": [
+        "ops/blindspots/answers.jsonl",
+        "ops/blindspots/learned.json",
+        "docs/issues"
+      ],
+      "system_path": [
+        "doctrine/blindspots.json",
+        "foundation/blindspots.py",
+        "site/legalpages.js"
+      ],
+      "area": "governance",
+      "workflows": [],
+      "server_owner": "ultrastable-tick"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

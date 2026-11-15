@@ -12,6 +12,8 @@ MANTRA = "Ship. Verify. Spend less than it earns. Feed the next loop."  Each cla
 k = verified deploys in window / (normalized cost + human touches). When k < k_floor the executor's queue is filtered to items that raise deploys or cut cost.
 Control rods: when normalized cost exceeds 1 the queue narrows further, to items that cut cost, until the cost guard reads under budget. chain = share of declared flows on a feedback cycle.
 A tick whose state (the clause results and the numbers behind them) equals the previous tick's is a failure: it is logged as stalled and files Q-CRIT-STALL.
+Ignition (QNFO-PORT-1): open_ignition_gaps is the number of links that do not close on themselves (relapsed items, families with no doer, metrics with no
+lever left, guard regressions, unusable probes), written by foundation/sauce.py to ops/ignition.json. self_sustaining = k at or above its floor AND 0 gaps.
 """
 from __future__ import annotations
 import hashlib, json, re, sys
@@ -55,6 +57,16 @@ def human_touches(root=REPO) -> int:
     return sum(1 for it in queue.items(root) if it["status"] == "open" and re.search(r"ROWAN|identity-bound", it["owner"], re.I))
 
 
+def ignition(root=REPO) -> dict:
+    """The latest ignition-gap reading (foundation/sauce.py). None when no pass has written one: an unmeasured chain is not a closed chain."""
+    p = Path(root) / "ops/ignition.json"
+    try:
+        j = json.loads(p.read_text(encoding="utf-8"))
+        return {"open_ignition_gaps": int(j["open_ignition_gaps"]), "at": j.get("at")}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {"open_ignition_gaps": None, "at": None}
+
+
 def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None) -> dict:
     c, now = cfg(root), now or datetime.now(timezone.utc)
     since = now - timedelta(hours=c["window_hours"])
@@ -71,12 +83,14 @@ def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None)
         g = _fl.graph(_fl.load(root)[0]); chain = round(len(g["closed"]) / max(len(_fl.load(root)[0]["flows"]), 1), 3)
     except (OSError, KeyError, ValueError):
         chain = 0.0  # no declared flow graph: the chain reaction cannot be shown
+    ig = ignition(root)
     return {"chain": chain, "at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "mantra": MANTRA, "deploys": len(dep), "verified_deploys": len(verified),
-            "cost": cost, "human_touches": touches, "k": k, "clauses": clauses, "gate": "deploys-and-cost-only" if k < c["k_floor"] else "open"}
+            "cost": cost, "human_touches": touches, "k": k, "clauses": clauses, "gate": "deploys-and-cost-only" if k < c["k_floor"] else "open",
+            "open_ignition_gaps": ig["open_ignition_gaps"], "self_sustaining": k >= c["k_floor"] and ig["open_ignition_gaps"] == 0}
 
 
 def state_hash(r: dict) -> str:
-    keep = {k: r[k] for k in ("chain", "deploys", "verified_deploys", "cost", "human_touches", "k", "clauses")}
+    keep = {k: r.get(k) for k in ("chain", "deploys", "verified_deploys", "cost", "human_touches", "k", "clauses", "open_ignition_gaps")}
     return hashlib.sha256(json.dumps(keep, sort_keys=True).encode()).hexdigest()[:16]
 
 
@@ -103,13 +117,13 @@ def raises(item: dict, c: dict) -> bool:
     return bool(labels & set(c["raises_labels"])) or str(item.get("number", "")).startswith(tuple(c["raises_id_prefixes"]))
 
 
-def gate(items: list[dict], root=REPO) -> list[dict]:
+def gate(items: list[dict], root=REPO, now: datetime | None = None) -> list[dict]:
     """The queue under the invariant: with k below the floor only items that raise deploys or cut cost may be taken (features are deferred).
     When none qualify the full list is returned so the queue cannot starve; that fallback is itself logged by the tick as a clause failure."""
     if not (Path(root) / "doctrine/criticality.json").is_file():
         return items  # a scratch or seed tree without the invariant declared is not gated
     c = cfg(root)
-    r = compute(root, feed_ok=True)  # k does not depend on the feed clause
+    r = compute(root, now=now, feed_ok=True)  # k does not depend on the feed clause
     if r["cost"] > 1.0:  # control rods: cost has run away, so only items that cut cost may be taken until the guard reads under budget
         rods = [i for i in items if "cuts-cost" in {(l["name"] if isinstance(l, dict) else l) for l in i.get("labels", [])} or str(i.get("number", "")).startswith("Q-COST")]
         return rods or items

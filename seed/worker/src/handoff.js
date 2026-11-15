@@ -1,0 +1,213 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// Copyright (c) Ultrastable
+// HANDOFF-1 (owner 2026-11-14): "This is a server-side platform, not a local platform. Code agents do not own this. This is owned by Ultrastable completely."
+// A code agent (any vendor) ends its work at an open PR that carries the label `handoff` or a `## Handoff` block. From then on this module, run by the
+// tick Worker every 10 minutes, owns the loop: it records the handoff, notices the merge (the lane and sweeper gate, refresh and merge), deploys the
+// named workers from the merge commit, runs the PR's live probe, and then closes the backlog item or rolls the deploy back and reopens it.
+// Every state change is a row in D1 `handoff_events` and one comment on the PR, so the record lives server-side, not in a chat.
+const API = 'https://api.github.com';
+const MAX_ATTEMPTS = 3;
+
+async function gh(f, token, method, path, body) {
+  const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-handoff', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+  const t = await r.text();
+  let json = null; try { json = t ? JSON.parse(t) : null; } catch { json = t; }
+  return { ok: r.ok, status: r.status, json };
+}
+
+// "## Handoff" block: `key: value` lines until the next heading. Keys: item, agent, verify, deploy.
+export function parseHandoff(body) {
+  const m = /^##\s*Handoff\s*$([\s\S]*?)(?=^##\s)/im.exec(String(body || '') + '\n## ');
+  if (!m) return null;
+  const out = {};
+  for (const line of m[1].split('\n')) {
+    const kv = /^\s*[-*]?\s*`?(item|agent|verify|deploy)`?\s*:\s*(.+?)\s*$/i.exec(line.replace(/^```.*$/, ''));
+    if (kv) out[kv[1].toLowerCase()] = kv[2].replace(/^`|`$/g, '');
+  }
+  return out;
+}
+
+// verify syntax: "GET <url>" [expect "<text>"] | [status <code>]. Default: HTTP 200.
+export function parseVerify(spec) {
+  const m = /^\s*(GET|HEAD)\s+(https:\/\/\S+)(.*)$/i.exec(String(spec || ''));
+  if (!m) return null;
+  const rest = m[3] || '', ex = /expect\s+"([^"]+)"|expect\s+(\S+)/i.exec(rest), st = /status\s+(\d{3})/i.exec(rest);
+  return { method: m[1].toUpperCase(), url: m[2], expect: ex ? (ex[1] || ex[2]) : null, status: st ? Number(st[1]) : 200 };
+}
+
+export async function runProbe(spec, f = fetch) {
+  const v = parseVerify(spec);
+  if (!v) return { ok: false, detail: 'no runnable verify line (expected: GET https://... [expect "text"] [status 200])' };
+  try {
+    const sep = v.url.includes('?') ? '&' : '?';
+    const r = await f(v.url + sep + 'handoff_probe=' + Date.now(), { method: v.method, headers: { 'cache-control': 'no-cache', 'user-agent': 'ultrastable-handoff-probe' } });
+    const body = v.method === 'HEAD' ? '' : await r.text();
+    if (r.status !== v.status) return { ok: false, detail: `${v.method} ${v.url} -> ${r.status}, want ${v.status}` };
+    if (v.expect && !body.includes(v.expect)) return { ok: false, detail: `${v.method} ${v.url} -> ${r.status}, body lacks "${v.expect}"` };
+    return { ok: true, detail: `${v.method} ${v.url} -> ${r.status}${v.expect ? `, contains "${v.expect}"` : ''}` };
+  } catch (e) { return { ok: false, detail: `${v.method} ${v.url} failed: ${e && e.message}` }; }
+}
+
+async function event(db, id, state, detail) {
+  await db.prepare("UPDATE handoffs SET state = ?, detail = ?, updated_at = datetime('now') WHERE id = ?").bind(state, detail || null, id).run();
+  await db.prepare('INSERT INTO handoff_events (handoff_id, state, detail) VALUES (?, ?, ?)').bind(id, state, detail || null).run();
+}
+async function say(f, token, repo, pr, text) { await gh(f, token, 'POST', `/repos/${repo}/issues/${pr}/comments`, { body: 'Ultrastable (server side, HANDOFF-1): ' + text }); }
+async function setItem(db, item, status, blocker) {
+  if (!item) return;
+  await db.prepare("UPDATE items SET status = ?, blocker = ?, updated_at = datetime('now') WHERE id = ?").bind(status, blocker || null, item).run();
+  if (status === 'done') await db.prepare('DELETE FROM claims WHERE item_id = ?').bind(item).run();
+}
+
+// Upsert a handoff (also used by POST /api/v1/handoff on the site worker through the shared D1).
+export async function registerHandoff(db, h) {
+  const id = `${h.repo}#${h.pr}`;
+  await db.prepare(`INSERT INTO handoffs (id, repo, pr, title, item, agent, verify, deploy, head_sha) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET title = excluded.title, item = coalesce(excluded.item, handoffs.item), agent = coalesce(excluded.agent, handoffs.agent),
+      verify = coalesce(excluded.verify, handoffs.verify), deploy = coalesce(excluded.deploy, handoffs.deploy), head_sha = excluded.head_sha, updated_at = datetime('now')`)
+    .bind(id, h.repo, h.pr, h.title || null, h.item || null, h.agent || null, h.verify || null, h.deploy || null, h.head_sha || null).run();
+  return id;
+}
+
+// deployer(workerId, sha, repo) -> { ok, version?, detail }; rollback(workerId) -> { ok, detail }. Injected so the tick can route it through the site worker.
+export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, deployer = null, rollback = null, probe = runProbe, maxPerTick = 5, now = Date.now() }) {
+  const out = { status: 'ok', registered: [], merged: [], deployed: [], verified: [], failed: [], rolled_back: [], errors: [] };
+  if (!token) return { ...out, status: 'no-token' };
+  if (!db) return { ...out, status: 'no-db' };
+  // 1. discover: open PRs that declare a handoff, and ones merged in the last day before a tick saw them open (a fast merge must not escape the loop)
+  const heads = {};
+  for (const repo of repos) {
+    const prs = await gh(f, token, 'GET', `/repos/${repo}/pulls?state=open&per_page=50`);
+    if (!prs.ok) { out.errors.push(`${repo} pulls ${prs.status}`); continue; }
+    const closed = await gh(f, token, 'GET', `/repos/${repo}/pulls?state=closed&sort=updated&direction=desc&per_page=20`);
+    const recent = (closed.ok && Array.isArray(closed.json) ? closed.json : []).filter(p => p.merged_at && now - Date.parse(p.merged_at) < 864e5);
+    for (const p of [...prs.json, ...recent]) {
+      const block = parseHandoff(p.body), labelled = (p.labels || []).some(l => l.name === 'handoff');
+      if (!block && !labelled) continue;
+      const id = `${repo}#${p.number}`, known = await db.prepare('SELECT state FROM handoffs WHERE id = ?').bind(id).first();
+      if (known && p.merged_at) continue;
+      await registerHandoff(db, { repo, pr: p.number, title: p.title, head_sha: p.head && p.head.sha, ...(block || {}) });
+      if (!known) { await event(db, id, 'open', 'registered from PR'); out.registered.push(id); await say(f, token, repo, p.number, 'handoff received. From here the server gates, merges, deploys' + (block && block.deploy ? ' `' + block.deploy + '`' : '') + ', probes' + (block && block.verify ? ' `' + block.verify + '`' : '') + ' and closes' + (block && block.item ? ' `' + block.item + '`' : '') + '. The agent that opened this PR is done.'); }
+    }
+  }
+  // 2. advance every handoff the server owns
+  const rows = (await db.prepare("SELECT * FROM handoffs WHERE state IN ('open','conflict','merged','deployed','deploy_failed') ORDER BY updated_at LIMIT ?").bind(maxPerTick * 4).all()).results || [];
+  let worked = 0;
+  for (const h of rows) {
+    if (worked >= maxPerTick) break;
+    try {
+      if (h.state === 'open' || h.state === 'conflict') {
+        const d = await gh(f, token, 'GET', `/repos/${h.repo}/pulls/${h.pr}`);
+        if (!d.ok) { out.errors.push(`${h.id} ${d.status}`); continue; }
+        if (d.json.merged) { await db.prepare('UPDATE handoffs SET merge_sha = ? WHERE id = ?').bind(d.json.merge_commit_sha, h.id).run(); await event(db, h.id, 'merged', 'merged as ' + String(d.json.merge_commit_sha).slice(0, 7)); out.merged.push(h.id); h.state = 'merged'; h.merge_sha = d.json.merge_commit_sha; }
+        else if (d.json.state === 'closed') { await event(db, h.id, 'closed_unmerged', 'PR closed without merge'); continue; }
+        else if (d.json.mergeable_state === 'dirty' && h.state !== 'conflict') { await event(db, h.id, 'conflict', 'conflicts with the base branch; the sweeper files the open-loop item and the executor re-does the change'); await say(f, token, h.repo, h.pr, 'this PR conflicts with the base branch. The server owns it: the sweeper files the open-loop item and the executor rebuilds the change; no agent needs to come back.'); continue; }
+        else continue;
+      }
+      if (h.state === 'merged' || h.state === 'deploy_failed') {
+        worked++;
+        const targets = String(h.deploy || '').split(',').map(s => s.trim()).filter(Boolean);
+        if (!targets.length) { await event(db, h.id, 'deployed', 'nothing to deploy'); h.state = 'deployed'; }
+        else if (!deployer) { await event(db, h.id, 'deploy_failed', 'no deployer bound on this tick (site service binding or INTERNAL_DEPLOY_KEY missing)'); out.failed.push(h.id); continue; }
+        else {
+          // Deploy the base branch head, not the merge commit: an older merge must never roll production back past a newer one. The change is in it.
+          if (!heads[h.repo]) { const r = await gh(f, token, 'GET', `/repos/${h.repo}`), b = r.ok ? r.json.default_branch : 'main', c = await gh(f, token, 'GET', `/repos/${h.repo}/commits/${b}`); heads[h.repo] = c.ok && c.json.sha ? c.json.sha : h.merge_sha; }
+          const at = heads[h.repo], res = [];
+          for (const w of targets) res.push({ w, ...(await deployer(w, at, h.repo)) });
+          const bad = res.filter(r => !r.ok);
+          if (bad.length) {
+            const n = h.attempts + 1; await db.prepare('UPDATE handoffs SET attempts = ? WHERE id = ?').bind(n, h.id).run();
+            const msg = bad.map(b => `${b.w}: ${b.detail}`).join('; ');
+            if (n >= MAX_ATTEMPTS) { await event(db, h.id, 'blocked', 'deploy failed ' + n + ' times: ' + msg); await setItem(db, h.item, 'blocked', 'HANDOFF-1 deploy failed: ' + msg.slice(0, 300)); await say(f, token, h.repo, h.pr, 'deploy failed ' + n + ' times (' + msg + '). The item is blocked with that reason; the operations role owns it.'); }
+            else await event(db, h.id, 'deploy_failed', 'attempt ' + n + ': ' + msg);
+            out.failed.push(h.id); continue;
+          }
+          await event(db, h.id, 'deployed', res.map(r => `${r.w} ${r.version || ''}`.trim()).join(', ') + ' from ' + String(at).slice(0, 7)); out.deployed.push(h.id); h.state = 'deployed';
+        }
+      }
+      if (h.state === 'deployed') {
+        worked++;
+        const pr = h.verify ? await probe(h.verify, f) : { ok: true, detail: 'no verify line; deploy is the last step' };
+        if (pr.ok) {
+          await event(db, h.id, 'verified', pr.detail); await setItem(db, h.item, 'done'); out.verified.push(h.id);
+          await say(f, token, h.repo, h.pr, 'verified live: ' + pr.detail + (h.item ? '. Item `' + h.item + '` closed.' : '.'));
+        } else {
+          await event(db, h.id, 'verify_failed', pr.detail); out.failed.push(h.id);
+          const targets = String(h.deploy || '').split(',').map(s => s.trim()).filter(Boolean), rb = [];
+          if (rollback) for (const w of targets) rb.push(`${w}: ${(await rollback(w)).detail}`);
+          await event(db, h.id, 'rolled_back', rb.join('; ') || 'nothing deployed to roll back'); out.rolled_back.push(h.id);
+          await setItem(db, h.item, 'ready', null);
+          await say(f, token, h.repo, h.pr, 'the live probe failed (' + pr.detail + '). ' + (rb.length ? 'Rolled back: ' + rb.join('; ') + '. ' : '') + (h.item ? 'Item `' + h.item + '` is back to ready for the executor.' : ''));
+        }
+      }
+    } catch (e) { out.errors.push(`${h.id} ${e && e.message}`); }
+  }
+  if (out.errors.length) out.status = 'errors';
+  return out;
+}
+
+// ---- deploy from the merge commit, through the site worker's deploy endpoint ----
+// Reads doctrine/topology.json and the worker's modules at `sha` from GitHub, flattens relative imports (same method as deploy/deploy-site.mjs),
+// and asks the site worker (service binding SITE, header x-internal-key) to upload them with its CF_DEPLOY_TOKEN. No Cloudflare credential lives in the tick.
+async function raw(f, token, repo, sha, path) {
+  const r = await f(`${API}/repos/${repo}/contents/${path}?ref=${sha}`, { headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github.raw', 'user-agent': 'ultrastable-handoff' } });
+  if (!r.ok) throw new Error(`read ${path}@${String(sha).slice(0, 7)}: ${r.status}`);
+  return r.text();
+}
+const norm = (p) => { const out = []; for (const s of p.split('/')) { if (s === '..') out.pop(); else if (s && s !== '.') out.push(s); } return out.join('/'); };
+export async function collectModules(read, main) {
+  const mods = new Map(), names = new Map(), queue = [main];
+  // JSON imports become JS modules (`export default <json>`; the upload API has no JSON module type, error 10162), named <file>.json.js, and the
+  // `with { type: 'json' }` attribute is dropped from the importing statement, as a bundler would do.
+  const flat = (path) => { if (!names.has(path)) { const base = path.split('/').pop() + (/\.json$/.test(path) ? '.js' : ''); let n = base, i = 1; while ([...names.values()].includes(n)) n = base.replace(/(\.\w+)$/, `-${i++}$1`); names.set(path, n); } return names.get(path); };
+  flat(main);
+  while (queue.length) {
+    const path = queue.shift(); if (mods.has(path)) continue;
+    let src = await read(path); const dir = path.replace(/[^/]+$/, '');
+    if (/\.json$/.test(path)) { mods.set(path, 'export default ' + JSON.stringify(JSON.parse(src)) + ';\n'); continue; }
+    src = src.replace(/(\bfrom\s+["']|\bimport\s*\(\s*["']|\bimport\s+["'])(\.{1,2}\/[^"']+)(["'])(\s*(?:with|assert)\s*\{\s*type\s*:\s*["']json["']\s*\})?/g, (_, a, spec, c) => { const target = norm(dir + spec); if (!mods.has(target)) queue.push(target); return a + './' + flat(target) + c; });
+    mods.set(path, src);
+  }
+  return [...mods.entries()].map(([path, src]) => ({ name: names.get(path), path, src, type: 'application/javascript+module' }));
+}
+export function topologyBindings(topo, id) {
+  const w = (topo.workers || []).find(x => x.id === id); if (!w) return null;
+  const b = w.bindings || {}, st = (kind, n) => ((topo.stores || {})[kind] || []).find(s => s.name === n), live = (kind, n) => (st(kind, n) || {}).state === 'live', out = [];
+  for (const [bn, t] of Object.entries(b.d1 || {})) if (live('d1', t)) out.push({ type: 'd1', name: bn, id: st('d1', t).id });
+  for (const [bn, t] of Object.entries(b.kv || {})) if (live('kv', t) && st('kv', t).id) out.push({ type: 'kv_namespace', name: bn, namespace_id: st('kv', t).id });
+  for (const bn of b.ai || []) out.push({ type: 'ai', name: bn });
+  for (const [bn, t] of Object.entries(b.services || {})) if (((topo.workers || []).find(x => x.id === t) || {}).state === 'live') out.push({ type: 'service', name: bn, service: t });
+  for (const [bn, v] of Object.entries(b.vars || {})) out.push({ type: 'plain_text', name: bn, text: String(v) });
+  return { worker: w, bindings: out };
+}
+// The tick's config.js is generated, not in git. Same generator as deploy/deploy-workers.mjs, read from the repo at the deploy commit, so a policy change ships with its merge.
+export async function tickConfigSource(read) {
+  const j = async (p) => JSON.parse(await read(p));
+  const pol = await j('seed/autonomy/policy.json'), fm = await j('seed/autonomy/failure-modes.json'), ifm = await j('instances/ultrastable/failure-modes.json');
+  fm.modes = [...fm.modes, ...ifm.modes];
+  const cfg = { org_slug: 'ultrastable', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy: { trust: pol.trust, ladder: pol.ladder, surfaces: pol.surfaces }, criticality: await j('seed/autonomy/criticality.json'), failure_modes: fm, cost_budgets: (await j('instances/ultrastable/cost-budgets.json')).budgets };
+  return '// Generated on the server path (HANDOFF-1) from seed/autonomy at the deploy commit. Do not edit.\nexport default ' + JSON.stringify(cfg) + ';\n';
+}
+// generated: optional overrides for build-time paths not in git, mapped to their source text.
+export function makeDeployer({ token, fetch: f = fetch, site, key, generated = {} }) {
+  return async (id, sha, repo) => {
+    try {
+      const topo = JSON.parse(await raw(f, token, repo, sha, 'doctrine/topology.json'));
+      const tb = topologyBindings(topo, id); if (!tb) return { ok: false, detail: `${id} is not in doctrine/topology.json` };
+      if (tb.worker.state !== 'live') return { ok: false, detail: `${id} is ${tb.worker.state}, not live` };
+      const read = p => raw(f, token, repo, sha, p);
+      const gen = { 'seed/worker/src/config.js': () => tickConfigSource(read), ...Object.fromEntries(Object.entries(generated).map(([k, v]) => [k, () => v])) };
+      const modules = await collectModules(p => (p in gen ? Promise.resolve(gen[p]()) : read(p)), tb.worker.main);
+      const r = await site.fetch('https://internal/__internal/deploy', { method: 'POST', headers: { 'x-internal-key': key, 'content-type': 'application/json' },
+        body: JSON.stringify({ name: id, modules: modules.map(({ name, src, type }) => ({ name, src, type })), main: modules[0].name, compatibility_date: tb.worker.compatibility_date || topo.compatibility_date, bindings: tb.bindings, crons: tb.worker.crons || null, tag: String(sha).slice(0, 12) }) });
+      const j = await r.json().catch(() => ({}));
+      return r.ok && j.ok ? { ok: true, version: j.version || '', detail: 'uploaded' } : { ok: false, detail: j.error || ('site deploy ' + r.status) };
+    } catch (e) { return { ok: false, detail: String(e && e.message || e) }; }
+  };
+}
+export function makeRollback({ site, key }) {
+  return async (id) => {
+    try { const r = await site.fetch('https://internal/__internal/rollback', { method: 'POST', headers: { 'x-internal-key': key, 'content-type': 'application/json' }, body: JSON.stringify({ name: id }) }); const j = await r.json().catch(() => ({})); return { ok: !!j.ok, detail: j.detail || j.error || String(r.status) }; }
+    catch (e) { return { ok: false, detail: String(e && e.message || e) }; }
+  };
+}

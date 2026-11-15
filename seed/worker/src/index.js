@@ -2,10 +2,14 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { runTick, lastTickForHealth } from './tick.js';
+import { claimsReleasedUnworked24h } from './doer.js';
 import { runExecutor, noteExecutor } from './executor.js';
 import { runLane } from './lane.js';
 import { ingestDeploys } from './selfaudit.js';
 import { sampleCosts } from './costsample.js';
+import { runGate } from './worker-gate.js';
+import { runHandoffs, makeDeployer, makeRollback } from './handoff.js';
+import { syncIssues } from './issuesync.js';
 import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
@@ -28,15 +32,20 @@ const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',
 
 export default {
   async scheduled(_event, env, ctx) {
-    ctx.waitUntil(runTick(env.DB, { config, env: presence(env) }));
+    ctx.waitUntil(runTick(env.DB, { config, env: presence(env), ai: env.AI || null }));  // DOER-1: the AI binding reaches the in-tick doer
     ctx.waitUntil((async () => {  // AUTH-1: one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback); refresh runs first so nothing lapses
       const tenant = env.TENANT || config.org_slug || 'default';
       await refreshDue(env.DB, env).catch(e => console.error('credentials', e && e.message));
       const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));
       const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
-      const r = await runExecutor({ ...env, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN }); console.log('executor', JSON.stringify(r)); await noteExecutor(env.DB, r);
-      const l = await runLane({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []), issueWorkflow: null }); console.log('lane', JSON.stringify(l));
+      const r = await runExecutor({ ...env, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || (config.github_repos || String(env.GITHUB_REPOS || '').split(','))[0] }); console.log('executor', JSON.stringify(r)); await noteExecutor(env.DB, r);
+      const gateRepos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
+      const g = await runGate({ token, repos: gateRepos }); console.log('gate', JSON.stringify(g));  // ZERO-MINUTES-1
+      const l = await runLane({ token, repos: gateRepos, issueWorkflow: null, zeroActions: env.ZERO_ACTIONS === '1' }); console.log('lane', JSON.stringify(l));
+      const site = env.SITE && env.INTERNAL_DEPLOY_KEY ? env.SITE : null;  // HANDOFF-1: the server owns every handed-off PR after it opens: merge noticed, deploy, live probe, close or roll back
+      const ho = await runHandoffs({ db: env.DB, token, repos: gateRepos, deployer: site ? makeDeployer({ token, site, key: env.INTERNAL_DEPLOY_KEY }) : null, rollback: site ? makeRollback({ site, key: env.INTERNAL_DEPLOY_KEY }) : null }).catch(e => ({ status: 'error ' + (e && e.message) })); console.log('handoffs', JSON.stringify(ho));
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
+      const isy = await syncIssues({ db: env.DB, token, repo: repos.find(r => r.endsWith('/ultrastable')) || repos[0] }).catch(e => ({ status: 'error ' + (e && e.message) })); console.log('issuesync', JSON.stringify(isy));  // ISSUESYNC-1: filed roadmap items reach the queue on the server, no Actions needed
       const ra = await checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }).catch(e => ({ ok: false, error: e && e.message })); console.log('repo-access', JSON.stringify(ra));  // REPO-ACCESS-1
       const sw = await sweepOpenLoops({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) }); console.log('sweeper', JSON.stringify(sw)); await recordSweep(env.DB, sw);  // SERVER-OWNS-LOOPS-1
       const dep = await ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }).catch(e => ({ status: 'error ' + (e && e.message) })); console.log('deploy-evidence', JSON.stringify(dep));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
@@ -55,7 +64,7 @@ export default {
       if (!(await verifySignature(env.GITHUB_WEBHOOK_SECRET, body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
       const hit = routeEvent(request.headers.get('x-github-event'), JSON.parse(body || '{}'), EVENT_TABLE);
       if (!hit) return Response.json({ routed: false }, { status: 202 });
-      const work = runTick(env.DB, { config, env: presence(env), wake: hit.role });
+      const work = runTick(env.DB, { config, env: presence(env), wake: hit.role, ai: env.AI || null });
       if (ctx && ctx.waitUntil) ctx.waitUntil(work); else await work;
       return Response.json({ routed: true, ...hit }, { status: 202 });
     }
@@ -76,11 +85,12 @@ export default {
     if (url.pathname === '/health') {
       const last = await lastTickForHealth(env.DB);
       const ok = Boolean(last && last.steps_completed === last.steps_total);
-      return Response.json({ ok, org: config.org_slug, last_tick: last || null }, { status: ok ? 200 : 503 });
+      const released = await claimsReleasedUnworked24h(env.DB, Date.now()).catch(() => null);  // workers#173 closing probe, target 0
+      return Response.json({ ok, org: config.org_slug, last_tick: last || null, claims_released_unworked_24h: released }, { status: ok ? 200 : 503 });
     }
     if (url.pathname === '/live' || url.pathname === '/metrics/criticality.json') {  // CRITICALITY-1: k_eff of the last tick
       const c = await readCriticality(env.DB);
-      return Response.json(url.pathname === '/live' ? { ok: true, org: config.org_slug, k_eff: c ? c.k_eff : null, criticality: c, sweeper: await lastSweep(env.DB).catch(() => null), repo_access: await readRepoAccess(env.DB).catch(() => null) } : (c || {}), { headers: { 'cache-control': 'no-store' } });
+      return Response.json(url.pathname === '/live' ? { ok: true, org: config.org_slug, k_eff: c ? c.k_eff : null, open_ignition_gaps: c && c.open_ignition_gaps !== undefined ? c.open_ignition_gaps : null, self_sustaining: c ? Boolean(c.self_sustaining) : false, criticality: c, sweeper: await lastSweep(env.DB).catch(() => null), repo_access: await readRepoAccess(env.DB).catch(() => null) } : (c || {}), { headers: { 'cache-control': 'no-store' } });
     }
     if (url.pathname === '/api/criticality/sample' && request.method === 'POST') {  // collectors push GitHub-run, cost and owner-touch samples
       if (!env.CRITICALITY_TOKEN || request.headers.get('authorization') !== 'Bearer ' + env.CRITICALITY_TOKEN) return Response.json({ error: 'unauthorized' }, { status: 401 });

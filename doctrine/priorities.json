@@ -1,0 +1,126 @@
+{
+  "_doc": "PRIORITIZE-1: weights the ranker (foundation/prioritize.py) uses. Edit by reviewed PR; the ranker's output is docs/PRIORITY-QUEUE.md and the score the executor sorts by.",
+  "goals": [
+    {
+      "id": "run-on-cloudflare",
+      "weight": 100,
+      "why": "loops must not depend on GitHub Actions minutes or any person's machine; GitHub Actions is billing-blocked 2026-11-14",
+      "match": [
+        "ZERO-MINUTES",
+        "GIT-IN-CLOUDFLARE",
+        "Worker-native",
+        "sweeper",
+        "Q-TICK",
+        "PORT-EXEC",
+        "SERVER-OWNS",
+        "cloudflare worker"
+      ]
+    },
+    {
+      "id": "practical-solutions-on-platform",
+      "weight": 90,
+      "why": "second product must run entirely on the platform (bootstrap from idea, own cycle)",
+      "match": [
+        "practical-solutions",
+        "Practical Solutions",
+        "bootstrap",
+        "second-tenant",
+        "second tenant",
+        "fresh-account",
+        "GAP-SCAFFOLD",
+        "GAP-VENDOR",
+        "Q-GAP-second"
+      ]
+    },
+    {
+      "id": "criticality",
+      "weight": 80,
+      "why": "north star: verified deploys per day without human input",
+      "match": [
+        "criticality",
+        "CRIT",
+        "closed-loop",
+        "closed loop",
+        "self-sustain",
+        "sweep"
+      ]
+    },
+    {
+      "id": "cost",
+      "weight": 60,
+      "why": "spend under budget; budget breach steers to cheaper models",
+      "match": [
+        "COSTGUARD",
+        "budget",
+        "COST-",
+        "minutes"
+      ]
+    },
+    {
+      "id": "growth",
+      "weight": 30,
+      "why": "readers, pilots, funding after the loops sustain themselves",
+      "match": [
+        "GROW",
+        "PILOT",
+        "FUND",
+        "outreach",
+        "social",
+        "WEB-"
+      ]
+    }
+  ],
+  "owner_held_pattern": "ROWAN|identity-bound|IDENTITY-BOUND",
+  "size_divisor": {
+    "S": 1.0,
+    "M": 1.15,
+    "L": 1.5
+  },
+  "unblocks_weight": 12,
+  "age_weight_per_day": 0.5,
+  "age_cap": 20,
+  "label_bonus": {
+    "p0": 200,
+    "p1": 120,
+    "p2": 60,
+    "p3": 20
+  },
+  "pins": {
+    "_doc": "critical path, in order: each pinned item gets this bonus so it outranks any goal match until it closes",
+    "bonus": 150,
+    "ids": [
+      "ZERO-MINUTES-1",
+      "Q-TICK-DEPLOY",
+      "GIT-IN-CLOUDFLARE-1",
+      "PORT-EXEC-1",
+      "Q-GROW-second-tenant-deploying",
+      "Q-GAP-second-installation",
+      "Q-SYS-BOOT-REHEARSAL",
+      "Q-GAP-fresh-account-bootstrap",
+      "Q-SEED-1"
+    ]
+  },
+  "goal_match_fields": "id+title",
+  "secondary_share": 0.25,
+  "pareto_bonus": 10,
+  "constraints": [
+    {
+      "goal": "run-on-cloudflare",
+      "active": true,
+      "multiplier": 1.5,
+      "why": "GitHub Actions jobs refused since 2026-11-14 (billing); every loop on Actions is down until it runs on the Worker"
+    },
+    {
+      "goal": "cost",
+      "signal": "cost_over_budget",
+      "multiplier": 3.0,
+      "why": "control rods: spend over budget makes cost-cutting the binding constraint"
+    },
+    {
+      "goal": "criticality",
+      "signal": "k_below_floor",
+      "multiplier": 1.5,
+      "why": "k under floor: items that raise verified deploys come first"
+    }
+  ]
+}

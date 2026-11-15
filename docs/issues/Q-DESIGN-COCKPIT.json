@@ -1,0 +1,11 @@
+{
+  "id": "Q-DESIGN-COCKPIT",
+  "title": "Q-DESIGN-COCKPIT: move the dashboard onto its product theme and raise text to 14 px",
+  "body": "**Owner:** design-manager\n**Trigger:** every tick\n**Done check:** cmd:python3 -m foundation design --lint\n**Status:** closed\n\ndashboard/worker.js has text under 14 px and off-theme colours. Use design --css ultrastable-cockpit; delete each dashboard/worker.js baseline entry as it is fixed.\n\n**Evidence:** closing probe passed (first pass): design lint ok\n",
+  "labels": [
+    "role:design-manager",
+    "growth"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

@@ -9,6 +9,7 @@ export const oauth = {
     if (!m || !m.secret || !m.secret.refresh_token) return { ok: false, error: 'no refresh token (consent has not completed)' };
     const body = { grant_type: 'refresh_token', refresh_token: m.secret.refresh_token, client_id: m.meta.client_id };
     if (m.secret.client_secret) body.client_secret = m.secret.client_secret;
+    if (m.meta.resource) body.resource = m.meta.resource;  // CONNECT-1: RFC 8707 audience for MCP servers
     const r = await f(m.meta.token_url, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, body: form(body) });
     if (!r.ok) return { ok: false, error: `refresh HTTP ${r.status}` };
     const j = await r.json();

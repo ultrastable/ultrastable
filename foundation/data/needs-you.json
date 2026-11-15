@@ -2,12 +2,21 @@
   "_doc": "The only list of things a person must do. Each item is an act only the owner can perform (identity-bound) and carries exactly one link that does it. Everything else self-resolves. Rendered into NEEDS-YOU.md by `python3 -m foundation needsyou`; tests require https links and no file paths.",
   "items": [
     {
+      "id": "actions-billing",
+      "title": "Fix the GitHub Actions payment",
+      "why": "Every Actions job on ultrastable is refused with 'recent account payments have failed or your spending limit needs to be increased' (executor, checks and lane runs of 2026-11-14 ended in 2-3 s). IDENTITY-BOUND: payment method and spending limit are the owner's.",
+      "default": "No Actions job runs; the Worker loops (ZERO-MINUTES-1) are being built to carry the work without Actions minutes, and the cloud routine keeps picking issues.",
+      "url": "https://github.com/organizations/ultrastable/settings/billing",
+      "button": "Open the org billing page and fix the payment method or spending limit",
+      "class": "owner_account"
+    },
+    {
       "id": "funding",
       "title": "Submit funding applications",
-      "why": "An application is a statement made in your name; the packets are written and checked.",
-      "default": "Packets stay unsent.",
-      "url": "https://github.com/ultrastable/ultrastable/blob/main/outreach/STATUS.md",
-      "button": "Open the list of programmes with their application links",
+      "why": "An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact.",
+      "default": "Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you.",
+      "url": "https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md",
+      "button": "Open the ready-to-paste application kits (Y Combinator Winter 2027 late applications are open)",
       "class": "legal_signature"
     },
     {

@@ -18,6 +18,9 @@
 6. Public posts go through the social pipeline (`social/`), never around it.
 7. Report in four lines.
 
+## Intro lane (OUTREACH-INTRO-1)
+Run `python3 scripts/outreach_intro.py run` after the programme lane. It resolves a published role mailbox from each prospect organization's own pages, re-verifies it, writes a disclosed packet, guards it, queues within the shared caps and sends only in live mode (registered sender, postal address, adapter secrets). Add prospects with `outreach_intro.py add`; grow `outreach/prospects.json` from the segments in `outreach/intro-profile.json` (research institutes, AI labs, funders, ventures, third-sector organizations). Record replies with `outreach_intro.py reply intro:<id> --kind ack|question|meeting|accepted|rejected|opt-out|bounce`. Never use personal addresses, lists or form submissions as the owner.
+
 ## Never
 - Send as the owner, submit a form as the owner, or create accounts in the owner's name. These are gate cards.
 - Contact a suppressed, opted-out or paused target, exceed a cap, or pad a message with claims that cannot be checked at a source.
@@ -37,3 +40,6 @@ Write back what you learned (decisions, lessons, open loops, term changes) into 
 > AGENT-CONSUMPTION: code is written to be read by agents as well as run. Public surfaces serve Link headers, llms.txt, an OpenAPI description, an API catalog, an MCP server card and a read-only MCP server (site/agentic.js); every endpoint has a stable operationId, errors are JSON with a machine-readable code, and no behaviour is explained only in prose. Standards and their status: doctrine/agent-standards.json (`python3 -m foundation agentstd --check`).
 
 > TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or event on server-side infrastructure, closes itself and does not stop at an error. Say autonomous for a system, closed loop for one loop, unattended for the measure (merged work with no session driving it). Do not use never-terminating, non-terminating, hands-off, set-and-forget, or report a PR as waiting for review: a green PR merges itself (`python3 -m foundation lanewatch --check` fails when one does not). Map and avoided words: doctrine/crosswalk.json (`python3 -m foundation crosswalk --check`).
+
+## Promotion loop (PROMOTE-1)
+Each tick run `python3 -m foundation promote --plan --apply` and `python3 -m foundation promote --kits`; keep `outreach/facts.json` and `outreach/forms/` current (every claim with a probe, every question with its source status); record each channel result with `python3 -m foundation promote --outcome CH --kind accepted|listed|replied|rejected|silent`. Never add a claim the repository does not prove.

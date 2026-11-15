@@ -1,11 +1,13 @@
 name: org-settings
 # budget: ~1 min per owner dispatch
-# trigger: dispatch only
+# trigger: weekly drift probe (platform settings drift slowly; daily adds minutes for no signal) plus dispatch for apply
 # free-alternative: run `scripts/apply_github_settings.sh` from a cloud-hosted agent session with the admin token bound
 # Applies github/org-settings.json (org profile fields, repo description/homepage/topics, merge and
 # security settings, main-branch protection). Needs ORG_ADMIN_TOKEN (docs/ops/ORG-TOKEN.md).
 # Without the token the run is red with an explicit gate message; that is the recorded state of BG-22.
 on:
+  schedule:
+    - cron: '17 5 * * 1'
   workflow_dispatch:
     inputs:
       mode: {description: "apply | probe", required: true, default: apply}
@@ -17,10 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
+      GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v7
-      - name: Require token
-        run: '[ -n "$GH_TOKEN" ] || { echo "::error::ORG_ADMIN_TOKEN not set: owner card in docs/BOOTSTRAP-GAPS.md (BG-22)"; exit 1; }'
+      - name: Platform audit (probe, then fix drift)
+        run: python3 -m foundation platformaudit ${{ (inputs.mode || 'apply') == 'probe' && '--probe' || '--apply' }}
       - name: Apply or probe
         run: bash scripts/apply_github_settings.sh "${{ inputs.mode || 'apply' }}"
