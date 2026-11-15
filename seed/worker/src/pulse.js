@@ -37,6 +37,9 @@ export async function ensurePulseSchema(db) {
 
 // The loops the scheduled handler runs each tick. index.js runs exactly this list through beat(), so what is declared is what is wired.
 export const LANE_LOOPS = ['credentials', 'executor', 'gate', 'lane', 'handoffs', 'issuesync', 'repo-access', 'sweeper', 'deploy-evidence', 'cost-samples', 'analytics-selfcheck'];
+// Loops whose cadence is not the tick's. The watchdog is called by the site Worker (cron 17 * * * *, hourly) and by the dashboard Worker
+// (*/10); the cadence the system guarantees is the slower producer's, so an hourly beat is never judged against the 10-minute tick.
+export const DEFAULT_CADENCE = { watchdog: 60 };
 export const HUNG_MS = 300e3;
 const BAD = ['late', 'stopped', 'failing', 'hung', 'never'];
 
@@ -143,7 +146,8 @@ export async function pulseStep(db, ctx, ensureItem) {
   const byLoop = {};
   for (const b of beats) (byLoop[b.loop] = byLoop[b.loop] || []).push({ at: ms(b.started_at), ok: b.ok == null ? null : Number(b.ok) });
   const prev = Object.fromEntries((await all(db, `SELECT loop, every_min, bad_streak FROM loop_clock`)).map(r => [r.loop, r]));
-  const declared = new Set((ctx.config.pulse && ctx.config.pulse.loops) || LANE_LOOPS);
+  const cad = { ...DEFAULT_CADENCE, ...((ctx.config.pulse && ctx.config.pulse.cadence) || {}) };
+  const declared = new Set([...((ctx.config.pulse && ctx.config.pulse.loops) || LANE_LOOPS), ...Object.keys(cad)]);
   const loops = new Set([...declared, ...Object.keys(firsts)]);
   const judged = [];
   // The tick itself, from its own ledger. A tick is good only when it finished every step.
@@ -153,7 +157,7 @@ export async function pulseStep(db, ctx, ensureItem) {
     runs: ticks.map(t => ({ at: ms(t.started_at), ok: t.finished_at == null ? null : (t.steps_completed === t.steps_total ? 1 : 0) })) }) });
   for (const loop of loops) {
     const runs = byLoop[loop] || [];
-    let ev = every;
+    let ev = cad[loop] || every;
     if (!declared.has(loop)) {  // a loop seen but not declared (the watchdog, a webhook) keeps the cadence it shows: the median gap of its own runs
       const at = runs.map(r => r.at).sort((a, b) => a - b), gaps = [];
       for (let i = 1; i < at.length; i++) { const g = Math.round((at[i] - at[i - 1]) / 60e3); if (g >= 1) gaps.push(g); }

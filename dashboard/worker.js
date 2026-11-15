@@ -247,7 +247,15 @@ export function digestDue(cron, now = new Date()) { return cron === "0 13 * * *"
 // The snapshots table is part of schema.sql but the live D1 was seeded without it ("no such table: snapshots" in CF-OBS 85b2b062); create it on first use.
 const snapshotsReady = new WeakSet();
 export async function ensureSnapshots(env) { if (snapshotsReady.has(env.DB)) return; await env.DB.prepare("CREATE TABLE IF NOT EXISTS snapshots(key TEXT PRIMARY KEY, body TEXT NOT NULL, at INTEGER NOT NULL)").run(); snapshotsReady.add(env.DB); }
+// LOOPPROOF-1: the dashboard's */10 cron is the fast second producer of the org heartbeat (the site's hourly cron is the slow one). The tick Worker leaves a
+// watchdog beat and runs a tick itself only when its newest tick is older than two intervals. No binding or an unreachable tick Worker is logged, never thrown.
+export async function watchTick(env) {
+  if (!env || !env.TICK) return { status: "no-binding" };
+  try { const r = await env.TICK.fetch(new Request("https://tick.internal/pulse/watch", { method: "POST" })); return { status: r.ok ? "ok" : "http-" + r.status }; }
+  catch (e) { console.error("watchdog: tick worker unreachable", e && e.message); return { status: "unreachable" }; }
+}
 export async function tick(env, cron) {
+  try { await watchTick(env); } catch (e) { console.error("watchTick", e && e.message); }
   try { await ensureSnapshots(env); } catch (e) { console.error("ensureSnapshots", e && e.message); }
   try { await selfcheck(env, HOSTS[0]); } catch (e) { console.error("selfcheck", e && e.message); }
   const res = await runProbes(env); const day = new Date().toISOString().slice(0, 10);

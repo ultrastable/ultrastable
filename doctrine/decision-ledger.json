@@ -1290,6 +1290,14 @@
    "body": "With ZERO_ACTIONS=1 the lane merged any unstable PR that passed the diff gate, so PR 433 merged 20 s after checks failed. realRed reads the Actions jobs: a failed job with a failed step holds the PR; a failed job with no steps never started and the diff gate decides. The native executor refuses narration-only changes (substanceGuard).",
    "probe": "grep:seed/worker/src/lane.js::export async function realRed",
    "session": "session_0156nqDubjfeqNUcorAqKczF"
+  },
+  {
+   "id": "lesson-2026-11-15-a-loop-s-declared-cadence-must-be-the-slowest-producer-s-and",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "A loop's declared cadence must be the slowest producer's, and an empty metrics table is a finding",
+   "body": "First live reading of the ladder (2026-11-15 19:40 UTC): the watchdog producer on the site Worker runs hourly, so judging it at the tick's 10-minute cadence would file a false MISSED-watchdog; its cadence is now declared (DEFAULT_CADENCE) and the dashboard */10 cron is a faster second producer. The ladder also read 0 rows in the org metrics table: the live runtime was never seeded with liveness metrics, so measure has read nothing. IGNITE-instrumented files this with the numbers once looping holds.",
+   "probe": "grep:seed/worker/src/pulse.js::DEFAULT_CADENCE"
   }
  ]
 }
