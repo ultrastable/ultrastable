@@ -352,11 +352,54 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             # A public route exists: do not label executor-failed; release the claim so the next tick retries with public history in the prompt.
             row.update(result="retry-public", detail=row["detail"] + " | public unauthenticated read works; retrying next tick through it")
             gi(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL], root)
-        else:
-            gi(["gh", "issue", "edit", str(n), "-R", repo, "--add-label", "executor-failed"], root)
-            qmod.fail(root, n, row["detail"])
+            log(lroot, row)
+            return row
+        gi(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL, "--add-label", "executor-failed"], root)
+        gi(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"executor failed: {row['detail']}\n\nA failure is a backlog item: remove `executor-failed` to retry, or the next tick with a different provider takes it."], root)
         log(lroot, row)
-        sh(["git", "checkout", "main"], root) if not remote else None
-        return row
-    sh(["git", "checkout", "main"], root)
     return row
+
+
+def pick_row(repo: str, root=REPO) -> dict:
+    """The pick alone: what a model session (any host, no API key) should work next. Same driver order as run()."""
+    issue = pick(qmod.takeable(root) if queue_mode() else gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root))
+    if not issue:
+        return {"result": "idle", "detail": "no open issue the executor may take"}
+    return {"result": "picked", "issue": issue["number"], "title": issue["title"], "body": (issue.get("body") or "")[:6000]}
+
+
+def main(argv=None) -> int:
+    import argparse
+    ap = argparse.ArgumentParser(prog="foundation executor")
+    ap.add_argument("--apply", action="store_true"); ap.add_argument("--issue")
+    ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable"))
+    ap.add_argument("--pick", action="store_true", help="print the top takeable issue and exit; needs no model credential (Claude-session route)")
+    ap.add_argument("--record", action="store_true", help="append one provenance row for work done by a model session (with --issue --result [--pr --detail --host])")
+    ap.add_argument("--result"); ap.add_argument("--pr"); ap.add_argument("--detail", default=""); ap.add_argument("--host", default="claude-session")
+    a = ap.parse_args(argv)
+    if a.pick:
+        row = pick_row(a.repo)
+        print(json.dumps(row, indent=2)); return 0
+    if a.record:
+        if not (a.issue and a.result):
+            ap.error("--record needs --issue and --result")
+        row = {"issue": a.issue, "result": a.result, "detail": a.detail, "prediction": f"issue_{a.issue}_closed = 1 within 24 h"}
+        if a.pr:
+            row["pr"] = a.pr
+        os.environ["ULTRASTABLE_HOST"] = a.host
+        log(REPO, row); print(json.dumps(row, indent=2)); return 0
+    row = run(a.repo, a.apply, a.issue)
+    if row["result"] in ("idle", "failed", "no-model-credential") and not a.issue:  # EXEC-X: own queue empty or its top item failed (e.g. needs a protected path), so work the target repositories' issues (EXECUTOR_TARGET_REPOS)
+        for target in crossrepo.targets():
+            try:
+                root = crossrepo.clone(target) if a.apply else REPO
+                row = run(target, a.apply, None, root=root, remote=True)
+            except Exception as e:  # a target that cannot be reached must not hide the next one
+                row = {"result": "failed", "detail": f"{target}: {type(e).__name__}: {str(e)[:300]}"}
+                log(REPO, row)
+            if row["result"] not in ("idle", "failed"):
+                break
+    print(json.dumps(row, indent=2))
+    if row["result"] == "no-model-credential":
+        print("::warning::executor has no model credential on this host; recorded")
+    return 1 if row["result"] == "failed" else 0
