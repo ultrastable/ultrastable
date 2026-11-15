@@ -1,0 +1,18 @@
+{
+  "name": "Second Tenant",
+  "slug": "second-tenant",
+  "kind": "other",
+  "owner": {"name": "Rowan", "jurisdiction": "NL", "contact_binding": "OWNER_CONTACT", "contact_binding_backup": "OWNER_CONTACT_BACKUP"},
+  "brand": {"public_name": "Second Tenant", "tagline": "A maintained service run as an autonomous system on Ultrastable, the foundation for any autonomous system.", "separate_from": ["Ultrastable", "QNFO"]},
+  "idea": "A small service that must keep running: it deploys itself on its own loop, probes its own health and files its own repairs, with no dependence on tenant 0's loops.",
+  "goals": ["Deploy unattended on its own loop", "Probe its own health every cycle and file breaches", "Stay within a stated monthly budget"],
+  "positioning": "Second Tenant is the proof that the product runs beyond tenant 0: same kernel, its own manifest, its own deploy loop.",
+  "funding": {"routes": [], "individual_eligible_only": true},
+  "social": {"channels": [], "mode": "dry-run"},
+  "runtime": {"provider": "cloudflare"},
+  "repos": {"org": "ultrastable", "names": ["ultrastable"], "canonical": "ultrastable/ultrastable"},
+  "disclosure": {"public_allowed": true, "gate": "none", "safe_now_only": false},
+  "ip": {"has_invention": false, "priority_filed": false, "has_practitioner": false},
+  "budget": {"usd_per_month": 5, "actions_minutes_monthly": 100},
+  "facts": {"has_institution": false}
+}
