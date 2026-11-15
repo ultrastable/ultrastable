@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 """LIVE-1: deploy a tenant's runtime from the seed, the same way for tenant 0 (Ultrastable on itself) and for any child.
 
   python3 scripts/deploy_tenant.py --idea instances/ultrastable/IDEA.md [--dry-run]
