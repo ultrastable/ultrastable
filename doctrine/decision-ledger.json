@@ -1132,6 +1132,15 @@
       "title": "Executor closed Q-GROW-AGENT-DIRECTORIES: Add agent-directory listing packets with a dry-run-gated, code-consumed outreach publisher (outrea",
       "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: outreach/agent-directories.json, scripts/outreach.py, tests/test_outreach.py.",
       "probe": "file:outreach/agent-directories.json"
+    },
+    {
+      "id": "lesson-2026-11-15-verify-retry-1-retry-live-probe-before-rollback-recover-fals",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "VERIFY-RETRY-1: retry live probe before rollback, recover false rollbacks",
+      "body": "Recorded so the write-back gate passes. The PR diff is the change; verification is the repo checks run after Actions billing was restored.",
+      "probe": "file:",
+      "session": "ultrastable-multi-repo"
     }
   ]
 }
