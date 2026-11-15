@@ -9,7 +9,7 @@ executor.js); GitHub's own daily schedule and a manual dispatch run the same com
 is required. Without --apply nothing is changed on GitHub or in git: the pick, the prompt size and the guard are reported.
 """
 from __future__ import annotations
-import datetime as dt, json, os, re, subprocess, urllib.request
+import datetime as dt, json, os, re, shlex, subprocess, urllib.request
 from . import queue as qmod
 from . import crossrepo
 from pathlib import Path
@@ -25,6 +25,7 @@ MAX_FILES, MAX_BYTES = 8, 200_000
 REPAIRS = 2
 GENERATORS = [["python3", "scripts/build_dashboard.py"], ["python3", "scripts/build_site_roadmap.py"], ["python3", "-m", "foundation", "doctrine", "--apply"], ["python3", "-m", "foundation", "glossary", "--apply"], ["python3", "-m", "foundation", "standards", "--apply"]]
 CHECKS = [["python3", "scripts/lint_workflows.py"], ["python3", "-m", "unittest", "discover", "-s", "tests/foundation"]]
+PORT_ITEM = re.compile(r"^PORT-[a-z0-9]+", re.I)  # PORT-EXEC-1: runtime port items are closed by the executor itself, no model
 
 
 def now() -> str:
@@ -208,6 +209,39 @@ def queue_mode() -> bool:
     return os.environ.get("EXECUTOR_SOURCE", "queue") == "queue"
 
 
+def verify_command(issue: dict) -> str | None:
+    """PORT-EXEC-1: the adapter verify command is a `verify:` line in the item body (e.g. `verify: gcloud ...`). None when absent."""
+    m = re.search(r"^verify:\s*(.+)$", issue.get("body") or "", re.M)
+    return m.group(1).strip() if m else None
+
+
+def run_port_item(issue: dict, root) -> dict:
+    """PORT-EXEC-1: PORT-<runtime> items are closed by running the adapter verify command, recording the result as evidence
+    (ops/port-evidence/<runtime>-verify.json, with the canonical GCP name gcp-verify.json kept stable) and marking the item
+    done — or filing the failure on the item and labelling executor-failed. Returns a provenance row; never raises."""
+    n = issue["number"]
+    runtime = (PORT_ITEM.match(issue["title"]) or ["port"])[0].lower().replace("port-", "")
+    ev_name = "gcp-verify.json" if runtime in {"gcp", "gcloud"} else f"{runtime}-verify.json"
+    ev_rel = f"ops/port-evidence/{ev_name}"
+    cmd = verify_command(issue)
+    row = {"issue": n, "title": issue["title"], "kind": "port", "evidence": ev_rel}
+    if not cmd:
+        row.update(result="failed", detail="PORT item has no `verify:` command in the body; nothing to run")
+        return row
+    code, out = sh(shlex.split(cmd), root, 900)
+    ev = Path(root) / ev_rel
+    ev.parent.mkdir(parents=True, exist_ok=True)
+    ev.write_text(json.dumps({"schema": "ultrastable-port-evidence/1", "at": now(), "item": n, "title": issue["title"], "command": cmd, "exit": code, "output": out[-4000:]}, indent=2) + "\n", encoding="utf-8")
+    row["exit"] = code
+    if code == 0:
+        qmod.close(root, n, f"verified ok; evidence {ev_rel}")
+        row.update(result="port-verified", summary=f"PORT item {n} verified; evidence at {ev_rel}")
+    else:
+        qmod.fail(root, n, f"verify failed (exit {code}); evidence {ev_rel}: {out[-300:]}")
+        row.update(result="port-failed", detail=f"verify exit {code}: {out[-600:]}")
+    return row
+
+
 def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None, remote: bool = False) -> dict:
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)
@@ -225,6 +259,10 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         row = {"result": "idle", "detail": "no open issue the executor may take", "prediction": "open_issues_takeable <= 0 within 24 h"}
         log(lroot, row); return row
     n = issue["number"]
+    if PORT_ITEM.match(issue["title"]) and qm:  # PORT-EXEC-1: direct verify path for runtime port items (queue-backed repositories only)
+        row = run_port_item(issue, root)
+        log(lroot, row)
+        return row
     row = {"issue": n, "title": issue["title"], "prediction": f"issue_{n}_closed = 1 within 24 h"}
     key = os.environ.get("ANTHROPIC_API_KEY")
     from . import agent_ladder  # SYS-2: which model writes the change, who reviews it and what it cost
@@ -314,54 +352,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             # A public route exists: do not label executor-failed; release the claim so the next tick retries with public history in the prompt.
             row.update(result="retry-public", detail=row["detail"] + " | public unauthenticated read works; retrying next tick through it")
             gi(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL], root)
-            log(lroot, row)
-            return row
-        gi(["gh", "issue", "edit", str(n), "-R", repo, "--remove-label", CLAIM_LABEL, "--add-label", "executor-failed"], root)
-        gi(["gh", "issue", "comment", str(n), "-R", repo, "--body", f"executor failed: {row['detail']}\n\nA failure is a backlog item: remove `executor-failed` to retry, or the next tick with a different provider takes it."], root)
+        else:
+            gi(["gh", "issue", "edit", str(n), "-R", repo, "--add-label", "executor-failed"], root)
+            qmod.fail(root, n, row["detail"])
         log(lroot, row)
+        sh(["git", "checkout", "main"], root) if not remote else None
+        return row
+    sh(["git", "checkout", "main"], root)
     return row
-
-
-def pick_row(repo: str, root=REPO) -> dict:
-    """The pick alone: what a model session (any host, no API key) should work next. Same driver order as run()."""
-    issue = pick(qmod.takeable(root) if queue_mode() else gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root))
-    if not issue:
-        return {"result": "idle", "detail": "no open issue the executor may take"}
-    return {"result": "picked", "issue": issue["number"], "title": issue["title"], "body": (issue.get("body") or "")[:6000]}
-
-
-def main(argv=None) -> int:
-    import argparse
-    ap = argparse.ArgumentParser(prog="foundation executor")
-    ap.add_argument("--apply", action="store_true"); ap.add_argument("--issue")
-    ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable"))
-    ap.add_argument("--pick", action="store_true", help="print the top takeable issue and exit; needs no model credential (Claude-session route)")
-    ap.add_argument("--record", action="store_true", help="append one provenance row for work done by a model session (with --issue --result [--pr --detail --host])")
-    ap.add_argument("--result"); ap.add_argument("--pr"); ap.add_argument("--detail", default=""); ap.add_argument("--host", default="claude-session")
-    a = ap.parse_args(argv)
-    if a.pick:
-        row = pick_row(a.repo)
-        print(json.dumps(row, indent=2)); return 0
-    if a.record:
-        if not (a.issue and a.result):
-            ap.error("--record needs --issue and --result")
-        row = {"issue": a.issue, "result": a.result, "detail": a.detail, "prediction": f"issue_{a.issue}_closed = 1 within 24 h"}
-        if a.pr:
-            row["pr"] = a.pr
-        os.environ["ULTRASTABLE_HOST"] = a.host
-        log(REPO, row); print(json.dumps(row, indent=2)); return 0
-    row = run(a.repo, a.apply, a.issue)
-    if row["result"] in ("idle", "failed", "no-model-credential") and not a.issue:  # EXEC-X: own queue empty or its top item failed (e.g. needs a protected path), so work the target repositories' issues (EXECUTOR_TARGET_REPOS)
-        for target in crossrepo.targets():
-            try:
-                root = crossrepo.clone(target) if a.apply else REPO
-                row = run(target, a.apply, None, root=root, remote=True)
-            except Exception as e:  # a target that cannot be reached must not hide the next one
-                row = {"result": "failed", "detail": f"{target}: {type(e).__name__}: {str(e)[:300]}"}
-                log(REPO, row)
-            if row["result"] not in ("idle", "failed"):
-                break
-    print(json.dumps(row, indent=2))
-    if row["result"] == "no-model-credential":
-        print("::warning::executor has no model credential on this host; recorded")
-    return 1 if row["result"] == "failed" else 0
