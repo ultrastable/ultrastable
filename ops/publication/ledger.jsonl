@@ -1,0 +1,1 @@
+{"step": "audit", "result": "unmeasured: shallow clone", "audit": {"tree": [], "history": {"state": "unmeasured", "why": "shallow clone: history is incomplete"}, "tripwires": ["NEEDS-YOU.md", "business/", "data/", "external/", "ops/", "outreach/"]}, "at": "2026-11-15T19:05:55+00:00"}

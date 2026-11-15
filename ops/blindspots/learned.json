@@ -1,1 +1,20 @@
-{"learned": []}
+{
+ "learned": [
+  {
+   "id": "publication-history-scan",
+   "domain": "security",
+   "why": "Publishing exposes full history; shallow session clones cannot prove it is clean.",
+   "probe": "grep:foundation/publication.py::unmeasured",
+   "class": "system",
+   "action": "added by --learn; the executor fills the action"
+  },
+  {
+   "id": "publication-private-data",
+   "domain": "privacy",
+   "why": "Folders such as business, outreach and data may hold contacts or account ids that must not be public.",
+   "probe": "grep:doctrine/publication.json::private_data_tripwires",
+   "class": "system",
+   "action": "added by --learn; the executor fills the action"
+  }
+ ]
+}

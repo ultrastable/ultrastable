@@ -1,0 +1,35 @@
+{
+ "_doc": "PUBLICATION-1 (owner, 2026-11-15): every repository of the org is public under USL-1.0 (free for non-commercial use, commercial licence for commercial use, share-alike, no patents asserted, defensive disclosure), and publishing is a procedure the code runs, not a decision anyone re-makes. Read by foundation/publication.py: `python3 -m foundation publication --check|--audit|--plan|--flip`. `--check` is part of the doctrine step. A flip is refused until the audit is clean over full history; a history that cannot be read in full (shallow clone) is `unmeasured`, never clean. The procedure and lessons below are data the check enforces; changed only by a reviewed PR.",
+ "org": "ultrastable",
+ "visibility": "public",
+ "license_id": "LicenseRef-Ultrastable-USL-1.0",
+ "repos": [".github", "license", "spec", "workers", "seed", "ops", "ultrastable"],
+ "flip_order": [".github", "license", "spec", "workers", "seed", "ops", "ultrastable"],
+ "required_files": ["LICENSE", "NOTICE", "COMMERCIAL-TERMS.md", "CITATION.cff", "SECURITY.md"],
+ "secret_patterns": [
+  "AKIA[0-9A-Z]{16}",
+  "ghp_[A-Za-z0-9]{30,}",
+  "github_pat_[A-Za-z0-9_]{30,}",
+  "sk-ant-[A-Za-z0-9_-]{20,}",
+  "xox[baprs]-[A-Za-z0-9-]{10,}",
+  "-----BEGIN [A-Z ]*PRIVATE KEY-----",
+  "cfut_[A-Za-z0-9]{20,}"
+ ],
+ "secret_allow_paths": ["tests/foundation/test_publication.py", "doctrine/publication.json"],
+ "private_data_tripwires": ["NEEDS-YOU.md", "business/", "outreach/", "external/", "data/", "ops/", ".env"],
+ "procedure": [
+  {"step": "audit-history", "does": "scan every commit on every branch for secret patterns; shallow history is unmeasured", "gate": "none"},
+  {"step": "audit-private-data", "does": "list tripwire paths; each must be in ops/publication/reviewed.json with a disposition (publish, move, remove)", "gate": "none"},
+  {"step": "check-license", "does": "required files present, SPDX id present, licence text identical across repos (license/scripts/check-copies.mjs)", "gate": "none"},
+  {"step": "flip", "does": "gh repo edit <org>/<repo> --visibility public --accept-visibility-change-consequences, in flip_order, then verify unauthenticated", "gate": "IC-GATE-001 residue: needs an org-admin token; default in effect is stay private until the audit is clean"},
+  {"step": "record", "does": "append each result to ops/publication/ledger.jsonl", "gate": "none"}
+ ],
+ "credential": {"binding": "ORG_ADMIN_TOKEN", "routes": ["github-actions workflow with the binding", "tick Worker with the GitHub App consent screen (POINT-AND-CLICK-1)"], "default_in_effect": "repositories stay as they are; no step fails open"},
+ "lessons": [
+  {"id": "pub-no-visibility-tool", "lesson": "A cloud code session's GitHub tools cannot change repository visibility and gh is barred there; the flip is owned by a server-side route holding ORG_ADMIN_TOKEN, never by a session.", "probe": "grep:foundation/publication.py::def flip"},
+  {"id": "pub-shallow-history", "lesson": "Session clones are shallow; a secret scan of them proves nothing about history. Shallow means unmeasured.", "probe": "grep:foundation/publication.py::unmeasured"},
+  {"id": "pub-audit-before-flip", "lesson": "Publishing exposes full history and forks and caches cannot be undone; the flip refuses until the audit is clean.", "probe": "grep:foundation/publication.py::refused: audit"},
+  {"id": "pub-license-immutable", "lesson": "The licence text is immutable and a protected path; publication never edits it, and the copies must stay identical.", "probe": "grep:foundation/publication.py::LICENSE"},
+  {"id": "pub-refusal-is-input", "lesson": "A refused action is recorded and the next route taken; it is never re-worded past the same check.", "probe": "grep:foundation/publication.py::ledger"}
+ ]
+}

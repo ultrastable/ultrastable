@@ -31,6 +31,7 @@
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
   python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
+  python3 -m foundation publication [--check|--audit|--plan|--flip [--apply]]   PUBLICATION-1: every repo public under USL-1.0 by a code-run procedure
   python3 -m foundation blindspots [--check|--scan [--apply] [--live]|--answer D --text T|--learn ID ...]   BLINDSPOT-1: the system knows what the owner cannot know to ask for
   python3 -m foundation promote [--check|--kits|--plan [--apply]|--outcome CH --kind K]   PROMOTE-1: strategy and promotion as a closed loop
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
@@ -48,6 +49,9 @@ from . import boundary, closedloop, standards, doctrine, directive, filing, glos
 def main(argv=None) -> int:
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
+    if _av[:1] == ["publication"]:
+        from . import publication
+        return publication.main(_av[1:])
     if _av[:1] == ["blindspots"]:
         from . import blindspots
         return blindspots.main(_av[1:])

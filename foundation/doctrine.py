@@ -121,6 +121,7 @@ def check(root=REPO) -> list[str]:
     bad += framing_scan(root, d)
     from . import liveness; bad += [f"liveness: {x}" for x in liveness.check(root)] if (root / "instances/ultrastable/liveness.json").exists() else []
     from . import serverside; bad += [f"serverside: {x}" for x in serverside.check(root)] if (root / serverside.PATH).exists() else []
+    from . import publication; bad += [f"publication: {x}" for x in publication.check(root)] if (root / publication.PATH).exists() else []
     from . import kernel, loops, glossary, directive
     if (root / kernel.PATH).exists():
         bad += [f"kernel: {x}" for x in kernel.check(root)]
