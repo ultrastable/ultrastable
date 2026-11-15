@@ -1202,6 +1202,14 @@
       "title": "BOOT-KNOWS-1: bootstrapped and critical are stages the tick reads, never declares",
       "body": "Stages seeded, ticking, looping, closing, instrumented, critical, self-sustaining are computed each tick from the org database in seed/worker/src/ignition.js; bootstrapped means instrumented or above; critical means k_eff at or above k_min for six ticks in a row; self-sustaining adds 144 ticks, 0 ignition gaps and 0 human touches. Each change is a row in ignition_log; the first unmet stage is item IGNITE-<stage>. Live reading before this change, 2026-11-15 19:00 UTC: k_eff 0.068 (38 credited over 559 spent), 2 open ignition gaps, 127 of 144 ticks complete in 24 h.",
       "probe": "grep:seed/worker/src/ignition.js::export function judge"
+    },
+    {
+      "id": "lesson-2026-11-15-local-uncommitted-work-is-a-loop-gap-land-it-or-file-it",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "Local uncommitted work is a loop gap: land it or file it",
+      "body": "40 local worktrees, 49 uncommitted files and a stash had never reached main; the live-feed work sat unlanded for 3 days. Every change goes through a PR with a Handoff block; policies, procedures and lessons live in the repo so the self-improving loops read them, never only in chat or on local disk.",
+      "probe": "grep:docs/issues/Q-LOOP-live-clock.json::Evidence"
     }
   ]
 }
