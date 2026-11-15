@@ -1307,6 +1307,15 @@
    "body": "PR #433 (worker-native) merged a spec document for ROADMAP-AGENT-AGENT-SCOREBOARD, which needs Worker code; it was an orphan document and failed orphans, docs_audit and launch checks on main. main's substanceGuard refuses narration-only change sets; the document is removed with a ledger row. Session: session_0156nqDt4ontnhzSFvT4PTB8",
    "probe": "grep:seed/worker/src/nativeexec.js::substanceGuard",
    "session": "session_0156nqDt4ontnhzSFvT4PTB8"
+  },
+  {
+   "id": "decision-2026-11-15-bootstrap-audit-1-every-deployment-builds-its-own-parked-wor",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "BOOTSTRAP-AUDIT-1: every deployment builds its own parked work; failure modes for the gaps found",
+   "body": "Audit of why builds waited on a prompt (2026-11-15): the doer parked code items as needs-code and nothing read them; the executor read one repo queue and reported idle; the tick copied a tier label into dispatch rows; two accounts were moved by hand with no controller; a new deployment starts without a GitHub App credential, so the Worker-native executor opens pull requests there only after install. Remedies in code: nativeexec.runDbQueue (D1 lane), cutover.js (one primary), deploy-oidc (no stored Cloudflare secret), scripts/needs_code_bridge.py wired into executor.yml (the Actions route on GitHub's built-in token turns needs-code items into docs/issues records the executor builds), and four generic failure modes in seed/autonomy/failure-modes.json (needs-code-undrained, executor-idle-with-queue, dispatch-model-label, primary-count) that file their own fix items on every deployment. Executor-owned and open: Q-GAP-fresh-account-bootstrap needs a real bootstrap.py --apply run recorded; the move of 2026-11-15 was a transfer. Session: session_0156nqDt4ontnhzSFvT4PTB8",
+   "probe": "grep:scripts/needs_code_bridge.py::NEEDS-CODE-BRIDGE-1",
+   "session": "session_0156nqDt4ontnhzSFvT4PTB8"
   }
  ]
 }
