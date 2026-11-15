@@ -44,6 +44,27 @@
       "--test",
       "--no-warnings",
       "seed/worker/test/*.test.js"
+    ],
+    [
+      "python3",
+      "-m",
+      "foundation",
+      "orphans",
+      "--check"
+    ],
+    [
+      "python3",
+      "-m",
+      "foundation",
+      "pins",
+      "--check"
+    ],
+    [
+      "python3",
+      "-m",
+      "foundation",
+      "queue",
+      "--check"
     ]
   ],
   "port_owner": "operations",

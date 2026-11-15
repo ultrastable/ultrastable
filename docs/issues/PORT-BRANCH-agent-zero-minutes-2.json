@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-agent-zero-minutes-2",
   "title": "PORT-BRANCH-agent-zero-minutes-2: carry agent/zero-minutes-2 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `agent/zero-minutes-2` at bc53a6cd99 holds work main lacks and cannot merge as is (conflicts in code: seed/worker/src/executor.js, seed/worker/src/index.js, seed/worker/src/lane.js, seed/worker/test/executor.test.js)\n**Done check:** probe:git rev-list --count origin/main..origin/agent/zero-minutes-2 is 0, or the branch's content is carried by a merged change\n**Status:** open\n\nPort the change by hand onto current main (it is 3 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for agent/zero-minutes-2",
+  "body": "**Owner:** operations\n**Trigger:** branch `agent/zero-minutes-2` at bc53a6cd99 holds work main lacks and cannot merge as is (conflicts in code: seed/worker/src/executor.js, seed/worker/src/index.js, seed/worker/src/lane.js, seed/worker/test/executor.test.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried agent/zero-minutes-2\n**Status:** open\n\nPort the change by hand onto current main (it is 3 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried agent/zero-minutes-2",
   "labels": [
     "role:operations",
     "agent-ready",

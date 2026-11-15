@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-ccr-67171792-ziqukd",
   "title": "PORT-BRANCH-ccr-67171792-ziqukd: carry ccr-67171792-ziqukd onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `ccr-67171792-ziqukd` at de5cc8f2aa holds work main lacks and cannot merge as is (conflicts in code: foundation/criticality.py)\n**Done check:** probe:git rev-list --count origin/main..origin/ccr-67171792-ziqukd is 0, or the branch's content is carried by a merged change\n**Status:** open\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for ccr-67171792-ziqukd",
+  "body": "**Owner:** operations\n**Trigger:** branch `ccr-67171792-ziqukd` at de5cc8f2aa holds work main lacks and cannot merge as is (conflicts in code: foundation/criticality.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried ccr-67171792-ziqukd\n**Status:** open\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried ccr-67171792-ziqukd",
   "labels": [
     "role:operations",
     "agent-ready",

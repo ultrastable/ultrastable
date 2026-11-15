@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-agent-analytics-1-site",
   "title": "PORT-BRANCH-parked-agent-analytics-1-site: carry parked/agent/analytics-1-site onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/analytics-1-site` at 3ccf39ecd5 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, site/worker.js)\n**Done check:** probe:git rev-list --count origin/main..origin/parked/agent/analytics-1-site is 0, or the branch's content is carried by a merged change\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for parked/agent/analytics-1-site",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/analytics-1-site` at 3ccf39ecd5 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/analytics-1-site\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/analytics-1-site",
   "labels": [
     "role:operations",
     "agent-ready",

@@ -15,6 +15,7 @@ reached main. This loop reads every remote branch (git only, so it runs on the b
 
   python3 -m foundation branchsweep --scan [--json]     plan every branch, read-only
   python3 -m foundation branchsweep --apply             merge into the current branch, run the gate after each merge, write the ledger and PORT items
+  python3 -m foundation branchsweep --carried NAME      closing probe of a PORT-BRANCH item: exit 0 once main holds the branch's work
   python3 -m foundation branchsweep --prune             delete remote branches whose tip is now an ancestor of origin/main
   python3 -m foundation branchsweep --check             policy and loop are declared
 
@@ -151,9 +152,9 @@ def port_item(p: dict, pol: dict) -> dict:
     iid = f"PORT-BRANCH-{slug}"
     return {"id": iid, "title": f"{iid}: carry {p['name']} onto main",
             "body": f"**Owner:** {pol['port_owner']}\n**Trigger:** branch `{p['name']}` at {p['sha'][:10]} holds work main lacks and cannot merge as is ({p['why']})\n"
-                    f"**Done check:** probe:git rev-list --count origin/main..origin/{p['name']} is 0, or the branch's content is carried by a merged change\n**Status:** open\n\n"
+                    f"**Done check:** cmd:python3 -m foundation branchsweep --carried {p['name']}\n**Status:** open\n\n"
                     f"Port the change by hand onto current main (it is {p.get('ahead', '?')} commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\n"
-                    f"size: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for {p['name']}",
+                    f"size: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried {p['name']}",
             "labels": ["role:" + pol["port_owner"], "agent-ready", "ws:branches"], "milestone": "Now", "workstream": "Operations"}
 
 
@@ -209,6 +210,15 @@ def prune(root=REPO, base="origin/main", dry=False) -> list[dict]:
     return out
 
 
+def carried(root, name: str, base="origin/main") -> tuple[bool, str]:
+    """The closing probe of a PORT-BRANCH item: true when the branch is gone, or main already holds everything it has (merged or superseded)."""
+    rc, _, _ = git(root, "rev-parse", "--verify", "-q", "origin/" + name)
+    if rc != 0:
+        return True, f"{name}: no such remote branch"
+    p = plan_one(root, "origin/" + name, base)
+    return p["action"] in ("merged", "superseded"), f"{name}: {p['action']}: {p['why']}"
+
+
 def check(root=REPO) -> list[str]:
     root, bad = Path(root), []
     try:
@@ -228,6 +238,8 @@ def main(argv=None) -> int:
     a = argv if argv is not None else sys.argv[1:]
     if "--check" in a:
         e = check(); print("\n".join(e) or "branchsweep ok"); return 1 if e else 0
+    if "--carried" in a:
+        i = a.index("--carried"); ok, why = carried(REPO, a[i + 1] if i + 1 < len(a) else ""); print(why); return 0 if ok else 1
     if "--scan" in a:
         r = scan()
         print(json.dumps(r, indent=1) if "--json" in a else "\n".join(f"{p['action']:10} {p['name']}  {p['why']}" for p in r)); return 0

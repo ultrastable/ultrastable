@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-ccr-571ca6f9-3g5jv9",
   "title": "PORT-BRANCH-ccr-571ca6f9-3g5jv9: carry ccr-571ca6f9-3g5jv9 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `ccr-571ca6f9-3g5jv9` at 7e74bf5b6b holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, agents/roles/product-manager.md, dashboard/agent.js, dashboard/worker.js, doctrine/flows.json, foundation/__main__.py)\n**Done check:** probe:git rev-list --count origin/main..origin/ccr-571ca6f9-3g5jv9 is 0, or the branch's content is carried by a merged change\n**Status:** open\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for ccr-571ca6f9-3g5jv9",
+  "body": "**Owner:** operations\n**Trigger:** branch `ccr-571ca6f9-3g5jv9` at 7e74bf5b6b holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, agents/roles/product-manager.md, dashboard/agent.js, dashboard/worker.js, doctrine/flows.json, foundation/__main__.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried ccr-571ca6f9-3g5jv9\n**Status:** open\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried ccr-571ca6f9-3g5jv9",
   "labels": [
     "role:operations",
     "agent-ready",

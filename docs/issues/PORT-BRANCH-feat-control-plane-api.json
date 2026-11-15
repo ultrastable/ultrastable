@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-feat-control-plane-api",
   "title": "PORT-BRANCH-feat-control-plane-api: carry feat/control-plane-api onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `feat/control-plane-api` at d3a50a11fd holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, agents/AGENTS.md, agents/PROJECT-INSTRUCTIONS.md, deploy/cost-probe.mjs, doctrine/market.json, foundation/__main__.py)\n**Done check:** probe:git rev-list --count origin/main..origin/feat/control-plane-api is 0, or the branch's content is carried by a merged change\n**Status:** open\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for feat/control-plane-api",
+  "body": "**Owner:** operations\n**Trigger:** branch `feat/control-plane-api` at d3a50a11fd holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, agents/AGENTS.md, agents/PROJECT-INSTRUCTIONS.md, deploy/cost-probe.mjs, doctrine/market.json, foundation/__main__.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried feat/control-plane-api\n**Status:** open\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried feat/control-plane-api",
   "labels": [
     "role:operations",
     "agent-ready",
