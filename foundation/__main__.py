@@ -28,6 +28,7 @@
   python3 -m foundation lifecycle [--open|--beat|--close|--reap|--check|--improve|--score|--report|--hooks]   no zombie sessions; loops that score and mutate themselves
   python3 -m foundation triggers [--check|--sync|--plan]   time (cron heartbeat) and event (webhook) triggers, drift-checked
   python3 -m foundation team [--gate|--check|--apply|--recommend --manifest F]   the phased virtual team (doctrine/team.json)
+  python3 -m foundation publication [--check|--baseline|--history DIR]   PUBLICATION-GUARD-1: license, notice files, no case collisions, SPDX ratchet, no private data
   python3 -m foundation pins [--check|--apply|--report]                  PINS-1: every status pin and roadmap item on the site is computed from code, proofs and issues
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
@@ -64,6 +65,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["metasignal"]:
         from . import metasignal
         return metasignal.main(_av[1:])
+    if _av[:1] == ["publication"]:
+        from . import publication
+        return publication.main(_av[1:])
     if _av[:1] == ["pins"]:
         from . import pins
         return pins.main(_av[1:])

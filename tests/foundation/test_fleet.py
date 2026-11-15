@@ -38,8 +38,8 @@ class Fleet(unittest.TestCase):
         self.assertTrue(rows[0]["merged"])
 
     def test_drift_and_dependent_issue(self):
-        files = {("workers", "LICENSE"): "A", ("ultrastable", "LICENSE"): "A", ("spec", "LICENSE"): "B", ("license", "LICENSE"): "A"}
-        d = [x for x in fleet.drift(CFG, lambda r, p: files.get((r, p), "CLOSED-LOOP-AXIOM")) if x["copy"] == "license-text"]
+        files = {("spec", "LICENSE"): "B"}
+        d = [x for x in fleet.drift(CFG, lambda r, p: files.get((r, p), "A")) if x["copy"] == "license-text"]
         self.assertEqual([(x["repo"], x["problem"]) for x in d], [("spec", "differs")])
         self.assertIn("spec", [i["repo"] for i in fleet.dependent_issues(CFG, d)])
 
