@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-26",
+  "title": "OL-20261115-26: Tripwire paths need a disposition, including content already public",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** daily lane sweep and any change to doctrine/publication.json\n**Done check:** grep:ops/publication/ledger.jsonl::\"ultrastable\": \"clean\"\n**Status:** open\n\nultrastable/ultrastable has been public since 2026-11-10 with NEEDS-YOU.md, business/ (investor, funding), data/, external/, ip/, ops/ and outreach/ in tree and history; workers has ops/. None has a disposition in ops/publication/reviewed.json (publish, move, remove). Removing a path from a public repo's history needs a rewrite and does not recall copies. Default in effect: nothing is removed and workers is not flipped.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

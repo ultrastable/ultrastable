@@ -50,6 +50,11 @@
    "reads": "writeback"
   },
   {
+   "glob": "docs/ops/PUBLICATION-RUNBOOK.md",
+   "consumer": "foundation/publication.py",
+   "reads": "runbook"
+  },
+  {
    "glob": "docs/ops/SITE-DEPLOY.md",
    "consumer": "foundation/loops.py",
    "reads": "writeback"

@@ -1089,6 +1089,24 @@
    "title": "Q-GROW-second-tenant-deploying: second tenant manifest",
    "body": "Second tenant has its own instance manifest (kind other, 5 USD/month), README and test. ops/second-tenant/latest.json still hard-asserts observed_value; follow-up: code-task repo=ultrastable path=ops/second-tenant/deploy-loop.sh to measure deploys.",
    "probe": "file:instances/second-tenant/instance.json"
+  },
+  {
+   "id": "lesson-2026-11-15-an-audit-covers-what-it-read-and-nothing-else",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "An audit covers what it read, and nothing else",
+   "body": "Ran the publication audit on full mirrors of all seven repos with org-admin gh. Measured: 0 history hits and 0 issue-text hits after two reviewed fixtures were added to history_allow; five repos lack required licence files; workers and ultrastable have tripwire paths with no disposition. Changed: publication --audit --org measures every repo, the flip is per repo and ends with an unauthenticated check and push protection. Tests: 13 pass in tests/foundation/test_publication.py.",
+   "probe": "grep:foundation/publication.py::def org_audit",
+   "session": "local-ef288e3f"
+  },
+  {
+   "id": "lesson-2026-11-15-publish-by-procedure-not-by-session",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "Publish by procedure, not by session",
+   "body": "PR 416 added doctrine/publication.json and foundation/publication.py: publishing is run by code, a shallow clone is unmeasured, and the flip waits for a clean audit. Evidence: publication --check prints publication ok.",
+   "probe": "grep:foundation/publication.py::unmeasured",
+   "session": "session_0156nqDvgbtniscFhCT1C3Rw"
   }
  ]
 }
