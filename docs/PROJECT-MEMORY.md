@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-15
 
+- 2026-11-15: LANE-RED-1: with ZERO_ACTIONS the tick lane merged PRs whose checks ran and failed (#433); `realRed` in seed/worker/src/lane.js now holds a PR when an Actions job has a failed step, and lets the diff gate decide only when the job never started. NATIVE-SUBSTANCE-1: the Worker-native executor refuses a change made only of new documents or subtask records (#431, #433 removed). tests/foundation/test_brand.py follows the current repo list
 - 2026-11-15: DEPLOY-OIDC-1: deploy the ultrastable account from Actions via OIDC; never upload to the retired account (#435)
 - 2026-11-15: ACCOUNT-SPLIT-2: two-account controller; the ultrastable-account tick promotes itself (#432)
 - 2026-11-15: ROADMAP-AGENT-AGENT-SCOREBOARD: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attri (#433)

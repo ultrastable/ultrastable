@@ -25,6 +25,21 @@ async function appendEvidence(f, token, repo, row) {
   if (!put.ok) throw new Error(`write ${put.status}`);
 }
 
+// LANE-RED-1: with ZERO_ACTIONS the lane used to merge any 'unstable' PR that passed the diff gate, including PRs whose checks ran and failed
+// (#433 merged 20 s after `checks` failed on an orphan document). A failed Actions job with a failed step really ran: it holds the PR. A failed job
+// with no steps never started (minutes exhausted), and only then does the Worker's diff gate decide. An unreadable answer holds: unknown is not green.
+export async function realRed(f, token, repo, sha) {
+  const runs = await gh(f, token, 'GET', `/repos/${repo}/actions/runs?head_sha=${sha}&per_page=30`);
+  if (!runs.ok) return `runs ${runs.status}`;
+  for (const run of (runs.json.workflow_runs || []).filter(r => r.conclusion === 'failure')) {
+    const jobs = await gh(f, token, 'GET', `/repos/${repo}/actions/runs/${run.id}/jobs?per_page=30`);
+    if (!jobs.ok) return `jobs ${jobs.status}`;
+    const bad = (jobs.json.jobs || []).find(j => j.conclusion === 'failure' && (j.steps || []).some(s => s.conclusion === 'failure'));
+    if (bad) return `${run.name || 'run'}/${bad.name} failed`;
+  }
+  return null;
+}
+
 export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkflow = 'issues.yml', maxIssues = 3, maxMerges = 5, zeroActions = false, evidenceRepo = null }) {
   if (!token) return { status: 'no-token', merged: [], dispatched: [], errors: [] };
   const out = { status: 'ok', merged: [], dispatched: [], held: [], errors: [] };
@@ -46,7 +61,7 @@ export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkfl
         let ready = d && d.mergeable_state === 'clean';
         if (!ready && d && zeroActions && ['unstable', 'blocked'].includes(d.mergeable_state)) { // ZERO-MINUTES-1: Actions minutes are exhausted, so the Worker's own diff gate decides
           const st = await gh(f, token, 'GET', `/repos/${repo}/commits/${d.head.sha}/status`);
-          ready = Boolean(st.ok && (st.json.statuses || []).some(s => s.context === 'worker-gate' && s.state === 'success'));
+          ready = Boolean(st.ok && (st.json.statuses || []).some(s => s.context === 'worker-gate' && s.state === 'success'));          if (ready) { const red = await realRed(f, token, repo, d.head.sha); if (red) { out.held.push(`${repo}#${pr.number} red: ${red}`); continue; } }
         }
         if (!ready) { out.held.push(`${repo}#${pr.number} ${d && d.mergeable_state}`); continue; }
         const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${pr.number}/merge`, { merge_method: 'squash' });

@@ -1,7 +1,7 @@
 {
   "id": "Q-METRIC-K",
   "title": "Q-METRIC-K: k 0.0 vs >= 1.0; lever ship-verified-deploy",
-  "body": "**Owner:** operations\n**Trigger:** metric loop pass: k outside its healthy condition\n**Done check:** cmd:python3 -m foundation metricloop --probe k\n**Status:** open\n\nMetric `k` (target) reads 0.0; healthy is >= 1.0. Criticality: verified deploys per unit of cost plus human touches over 24 hours (foundation/criticality.py).\nLever now: **ship-verified-deploy**: Take the top raises-deploys item and ship it through deploy/deploy-workers.mjs so ops/deploys.jsonl gains a row with live_matches_commit true.\nThe loop judges this lever after the efficacy window; a lever that did not move the metric is replaced here, not repeated.\n\nsize: S",
+  "body": "**Owner:** operations\n**Trigger:** metric loop pass: k outside its healthy condition\n**Done check:** cmd:python3 -m foundation metricloop --probe k\n**Status:** closed\n\nMetric `k` (target) reads 0.0; healthy is >= 1.0. Criticality: verified deploys per unit of cost plus human touches over 24 hours (foundation/criticality.py).\nLever now: **ship-verified-deploy**: Take the top raises-deploys item and ship it through deploy/deploy-workers.mjs so ops/deploys.jsonl gains a row with live_matches_commit true.\nThe loop judges this lever after the efficacy window; a lever that did not move the metric is replaced here, not repeated.\n\nsize: S\n\n**Evidence:** closing probe passed (first pass): k=1.285 (healthy >= 1.0)\n",
   "labels": [
     "role:operations",
     "agent-ready",
