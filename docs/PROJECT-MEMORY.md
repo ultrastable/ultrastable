@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-15
 
+- 2026-11-15: LANE-RED-1: with ZERO_ACTIONS the tick lane merged PRs whose checks ran and failed (#433); `realRed` in seed/worker/src/lane.js now holds a PR when an Actions job has a failed step, and lets the diff gate decide only when the job never started. NATIVE-SUBSTANCE-1: the Worker-native executor refuses a change made only of new documents or subtask records (#431, #433 removed). tests/foundation/test_brand.py follows the current repo list
 - 2026-11-15: MEMORY-REFRESH-1: scripts/memory_refresh.py (run by the lane) records merged work here so the memory check no longer fails every pull request; scripts/local_checks.py takes the literal fallback of context expressions
 - 2026-11-15: Q-GROW-second-tenant-deploying: second-tenant instance manifest (#408)
 - 2026-11-15: Carry claude/second-tenant-2a21ae onto main

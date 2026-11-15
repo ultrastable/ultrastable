@@ -25,9 +25,9 @@ class Brand(unittest.TestCase):
     def test_missing_tagline_and_link_fail(self):
         td = self._copy()
         f = td / "brand/repos/seed/README.block.md"
-        f.write_text(f.read_text().replace("foundation for any autonomous system", "tool").replace("github.com/ultrastable/site", "example.com"))
+        f.write_text(f.read_text().replace("foundation for any autonomous system", "tool").replace("github.com/ultrastable/workers", "example.com"))
         bad = brandcheck.check(td)
-        self.assertTrue(any("tagline" in b for b in bad) and any("link to ultrastable/site" in b for b in bad), bad)
+        self.assertTrue(any("tagline" in b for b in bad) and any("link to ultrastable/workers" in b for b in bad), bad)
 
     def test_unregistered_contact_fails(self):
         td = self._copy()

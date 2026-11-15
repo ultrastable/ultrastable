@@ -108,3 +108,12 @@ test('paths and deploy targets are read from the item text and the change', () =
   assert.deepEqual(pathsIn('edit site/agentic.js and seed/worker/src/tick.js, not x.js'), ['site/agentic.js', 'seed/worker/src/tick.js']);
   assert.equal(deployFor(['site/a.js', 'seed/worker/src/b.js', 'docs/c.md']), 'ultrastable-site, ultrastable-tick');
 });
+
+test('NATIVE-SUBSTANCE-1: a change that only adds documents or subtask records is refused', async () => {
+  const { substanceGuard } = await import('../src/nativeexec.js');
+  const fresh = () => true, old = () => false;
+  assert.throws(() => substanceGuard([{ path: 'specs/agent-scoreboard.md' }], fresh), /narration/);
+  assert.throws(() => substanceGuard([{ path: 'backlog/subtasks/X.subtask.json' }, { path: 'docs/x.md' }], fresh), /narration/);
+  assert.doesNotThrow(() => substanceGuard([{ path: 'docs/x.md' }], old));                                   // editing a consumed document is a change
+  assert.doesNotThrow(() => substanceGuard([{ path: 'docs/x.md' }, { path: 'site/worker.js' }], fresh));     // a document beside code is fine
+});
