@@ -78,3 +78,11 @@ test('retiring the source turns its crons off and makes its site forward', async
   assert.equal(out.length, 4); assert.ok(out.every(x => x.ok));
   assert.ok(seen.includes('PUT /workers/scripts/ultrastable-tick/schedules') && seen.includes('PUT /workers/scripts/ultrastable-site/secrets'));
 });
+
+test('a primary without its own GitHub credential keeps its gate open, and closes it when the credential arrives', async () => {
+  const db = makeDb(); const env = { SELF_ORIGIN: 'https://tick.dst' };
+  assert.equal((await decide(db, env, { fetch: peer(null), githubOk: async () => false })).run, true);
+  assert.equal(gate(db).status, 'open');
+  await decide(db, env, { fetch: peer(null), githubOk: async () => true });
+  assert.equal(gate(db).status, 'closed');
+});

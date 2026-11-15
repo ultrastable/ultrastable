@@ -13,5 +13,9 @@
     "id": "edb167b78c9fb901ea5bca3ce58ccc4b",
     "name": "quniverse",
     "state": "running everything: ultrastable-tick, -dashboard, -site, -agents crons and routes; D1 ultrastable-org, -ops; KV; R2 ultrastable-git; zones ultrastable.io/.app/.net/.org"
-  }
+  },
+  "retired_account_ids": [
+    "edb167b78c9fb901ea5bca3ce58ccc4b"
+  ],
+  "_retired_doc": "ACCOUNT-SPLIT-2 (owner directive 2026-11-15: Ultrastable runs exclusively in its own account): deploy scripts exit without uploading when CLOUDFLARE_ACCOUNT_ID is listed here; deploy-ultrastable.yml deploys the ultrastable account through the OIDC route"
 }
