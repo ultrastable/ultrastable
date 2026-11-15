@@ -1055,7 +1055,7 @@
    "date": "2026-11-15",
    "title": "WBA-OUTBOUND-1: sign outbound agent fetches, cache peer directories",
    "body": "Recorded so the write-back gate passes. The PR diff is the change; verification is the repo checks run after Actions billing was restored.",
-   "probe": "file:",
+   "probe": "file:site/webbotauth.js",
    "session": "ultrastable-multi-repo"
   }
  ]
