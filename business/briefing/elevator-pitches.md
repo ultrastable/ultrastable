@@ -1,4 +1,4 @@
-# Elevator pitches (SAFE NOW)
+# Elevator pitches
 
 ## 10 seconds
 "Coding agents write code. Ultrastable runs the system: it turns an idea into a managed, self-improving organization."
@@ -7,7 +7,7 @@
 "Agents are cheap now; managing them is the hard part. Ultrastable is the management layer. You give it an idea and it sets up the roles, does the work, checks it, and reports in four lines a day. It only interrupts you when a decision can't be undone, and it gets more independent as it proves itself. We run our own work on it. We're looking for design partners."
 
 ## 2 minutes
-"Most people with a good idea never get past the overhead: product, brand, legal protection, a search presence, marketing. Each one is a hire or an agency, and someone still has to pick every task and check every result. AI agents can now do the work, but they leave the manager's job undone. That's the bottleneck.
+"Most people with a good idea never get past the overhead: product, brand, licensing, a search presence, marketing. Each one is a hire or an agency, and someone still has to pick every task and check every result. AI agents can now do the work, but they leave the manager's job undone. That's the bottleneck.
 
 Ultrastable is that manager. Give it an idea and it stands up the whole set of roles, plans the work, does it, verifies it and reports back briefly. It interrupts you only for decisions that can't be undone. It becomes more independent where it has earned it. It plans improvement instead of only fixing what broke, and nothing falls through the cracks without a recorded reason.
 

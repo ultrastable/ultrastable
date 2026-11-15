@@ -1,23 +1,23 @@
 # Promotion plan
 
-*Voice: the marketing manager. Two phases split by the filing date. Before filing we build relationships quietly; after filing we tell the story loudly.*
+*Voice: the marketing manager. Three phases: prepare, launch, steady state.*
 
-## Phase 1: before filing (now until the provisional is filed)
+## Phase 1: prepare (now)
 
-Goal: be ready to launch the day after filing, without disclosing anything.
+Goal: be ready to launch with sourced claims and a working site.
 
 | Work | Owner | Done check |
 |---|---|---|
-| Write the launch kit privately: site copy, case study, demo video script, launch post, Show HN post, founder story | Marketing | All drafts in `docs/business/launch/`, reviewed by Rowan |
-| Build a list of 100 target people (founders, agency owners, engineering leads) and 30 investors | Sales + Finance | List in private `customers/` and `investors/` files |
-| Run 10 discovery calls with SAFE NOW language only | Sales prepares, Rowan talks | Notes in the discovery log |
-| Join communities as a listener: AI Engineer, AI Tinkerers meetups, Cloudflare and Google developer communities, relevant Discords | Marketing | Accounts exist; nothing about mechanisms posted |
-| Apply to events and programs whose applications are not public (accelerators, grants) | Finance + Events | Applications submitted with SAFE NOW wording |
-| Hold the gate: no new technical detail in public repos | Portfolio | Weekly check of `qnfo-workers` public changes |
+| Write the launch kit: site copy, case study, demo video script, launch post, Show HN post, founder story | Marketing | All drafts in `docs/business/launch/`, reviewed by Rowan |
+| Build a list of 100 target people (founders, agency owners, engineering leads) and 30 investors | Sales + Finance | List in `customers/` and `investors/` files |
+| Run 10 discovery calls with the plain-language pitch | Sales prepares, Rowan talks | Notes in the discovery log |
+| Join communities as a listener: AI Engineer, AI Tinkerers meetups, Cloudflare and Google developer communities, relevant Discords | Marketing | Accounts exist |
+| Apply to events and programs (accelerators, grants) | Finance + Events | Applications submitted with sourced wording |
+| Keep claims sourced: every public sentence cites the repository | Portfolio | Weekly claims check of site and posts |
 
-## Phase 2: launch week (the week after filing)
+## Phase 2: launch week
 
-1. Site goes live on the Ultrastable domain with "patent pending" (roadmap WEB-2).
+1. Site goes live on the Ultrastable domain with the licence line (roadmap WEB-2).
 2. Publish the QNFO case study with real numbers (PR-3).
 3. Launch post from Rowan: "I'm an ideas person. I built a manager so I wouldn't have to be one."
 4. Show HN and Product Hunt on separate days.
@@ -57,5 +57,5 @@ Targets are guesses to start the loop; the marketing manager revises them monthl
 ## Rules
 
 - Anything posted under Rowan's name is approved by Rowan until the marketing manager has a record of clean posts.
-- Every public piece is tagged SAFE NOW or AFTER FILING in its draft file; nothing tagged AFTER FILING ships before the filing receipt exists.
+- Every public piece cites its sources in its draft file; nothing ships with an unsourced number.
 - No outreach to people who did not ask for it in bulk; personal notes only, with an easy opt-out.

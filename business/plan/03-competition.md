@@ -17,19 +17,19 @@ Layer 3 and 4 entries are from general knowledge and were not re-checked on 2026
 
 | Difference | Others | Ultrastable | Say it |
 |---|---|---|---|
-| **Autonomy is earned, not configured** | Fixed approvals or a budget cap (Paperclip, Cofounder.co) or "act first, report after" (Polsia) | Each agent's freedom on each kind of work rises and falls with its verified record | SAFE NOW: "it gets more independent as it proves itself". AFTER FILING: the trust ledger and ladder |
-| **Interrupts only for what can't be undone** | Approve-many, or approve-nothing | One narrow gate: irreversible *and* tied to someone's identity, after trying to make the step reversible | SAFE NOW: "it only interrupts you for decisions that can't be undone". AFTER FILING: the classification and reversible-path step |
-| **Predict, then check** | Agents report success themselves | Every action has a checkable prediction beforehand and an independent check after | AFTER FILING |
-| **Improvement is planned (plussing)** | Agent teams drift into fixing whatever broke | Every finished item proposes a plus; a fixed share of capacity goes to them; drift into fix-only work is detected | SAFE NOW: "it plans improvement, not just fixes". AFTER FILING: the capacity rule and drift detector |
-| **Rules that improve themselves** | Static prompts | Repeated failures and human friction become versioned rule changes, tested against history | AFTER FILING |
-| **Nothing drops silently** | Tasks can vanish | Every item leaves only with a recorded disposition | SAFE NOW |
-| **Org kit** | Templates per company | The same roles, gates and rhythm reused for any new organization or project | SAFE NOW |
-| **Running in production** | Many are weeks old | QNFO has run this way on Cloudflare since 2026 | SAFE NOW: "we run our own work on it". Numbers: NDA ONLY until filed |
+| **Autonomy is earned, not configured** | Fixed approvals or a budget cap (Paperclip, Cofounder.co) or "act first, report after" (Polsia) | Each agent's freedom on each kind of work rises and falls with its verified record | In plain words: "it gets more independent as it proves itself". Mechanism: the trust ledger and ladder |
+| **Interrupts only for what can't be undone** | Approve-many, or approve-nothing | One narrow gate: irreversible *and* tied to someone's identity, after trying to make the step reversible | In plain words: "it only interrupts you for decisions that can't be undone". Mechanism: the classification and reversible-path step |
+| **Predict, then check** | Agents report success themselves | Every action has a checkable prediction beforehand and an independent check after | Scored predictions |
+| **Improvement is planned (plussing)** | Agent teams drift into fixing whatever broke | Every finished item proposes a plus; a fixed share of capacity goes to them; drift into fix-only work is detected | In plain words: "it plans improvement, not just fixes". Mechanism: the capacity rule and drift detector |
+| **Rules that improve themselves** | Static prompts | Repeated failures and human friction become versioned rule changes, tested against history | Versioned rule amendments |
+| **Nothing drops silently** | Tasks can vanish | Every item leaves only with a recorded disposition | Accounting invariant |
+| **Org kit** | Templates per company | The same roles, gates and rhythm reused for any new organization or project | Org kit |
+| **Running in production** | Many are weeks old | QNFO has run this way on Cloudflare since 2026 | "We run our own work on it". Numbers come from the live dashboard |
 
 ## What this means for the pitch
 
 - Never lead with "AI agents that run your company"; that sentence belongs to five other products.
 - Lead with the manager problem: agents are cheap, managing them is the new bottleneck.
 - Make the gate and earned autonomy the memorable part: "it asks less as it proves more".
-- Paperclip is free and open. Our answer is the management quality, the hosted service, and possibly an open core of our own (a Rowan + **[LAWYER]** decision).
-- Name overlap: agent.ceo uses "cybernetic organizations". Ultrastable's Ashby lineage is older and more precise; use it in the story after filing, and include it in the trademark search. **[LAWYER]**
+- Paperclip is free and open. Our answer is the management quality, the hosted service, and an open core of our own (a Rowan decision, now made: open, under the Ultrastable License).
+- Name overlap: agent.ceo uses "cybernetic organizations". Ultrastable's Ashby lineage is older and more precise; use it in the story, and include it in the trademark search.

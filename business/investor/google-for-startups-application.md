@@ -1,6 +1,6 @@
 # Google for Startups Cloud Program: application draft (2026-11-10)
 
-Status: DRAFT for Rowan. Every field marked `[FOUNDER CONFIRM]` must be checked by Rowan before pasting. Program tiers, amounts and eligibility change; the repo's funding notes say the large AI tier needs an institutional investor. Current amounts were NOT verified here: confirm on the program page before applying. The text below is outcome-only (no trust formulas, ladder rungs, scoring details or QNFO metrics) so it is safe to submit before the provisional patent is filed.
+Status: DRAFT for Rowan. Every field marked `[FOUNDER CONFIRM]` must be checked by Rowan before pasting. Program tiers, amounts and eligibility change; the repo's funding notes say the large AI tier needs an institutional investor. Current amounts were NOT verified here: confirm on the program page before applying. The text below is outcome-only (no trust formulas, ladder rungs, scoring details or QNFO metrics) and every claim traces to the repository.
 
 ## Target tier
 
@@ -11,10 +11,10 @@ Start tier (earliest stage, no institutional investor) is the realistic target. 
 - [ ] Company website live and public: https://ultrastable.io (live as of HANDOFF 2026-11-10, verified there; re-check it loads on the day).
 - [ ] Domain email on ultrastable.io (e.g. founder@ultrastable.io). Today only an Email Routing forward pilot@ultrastable.io exists; a sending-capable domain address is needed. `[FOUNDER CONFIRM]`
 - [ ] No paid Google Workspace subscription on the ultrastable domain within 31 days before applying (funding notes). Use Cloudflare Email Routing or another provider until after submission.
-- [ ] Entity: legal entity formed, or confirm the program accepts the applicant's status. Entity not formed per repo records. `[LAWYER]` `[ACCOUNTANT]`
+- [ ] Entity: legal entity formed, or confirm the program accepts the applicant's status. Entity not formed per repo records. `[ACCOUNTANT]`
 - [ ] A Google Cloud billing account / organization ready to receive credits `[FOUNDER CONFIRM]`.
 - [ ] Funding status answered honestly (below). No angel/institutional money claimed.
-- [ ] Website contains no non-public details (disclosure rule); /proof feed reviewed.
+- [ ] Website claims match the repository; /proof feed reviewed.
 - [ ] Rowan submits personally (identity-bound).
 
 ## Ready-to-paste answers
@@ -40,7 +40,7 @@ Ultrastable puts virtual managers (portfolio, project, product, operations, an i
 
 **Traction (truthful only):**
 - Working platform with passing tests and a dashboard.
-- Founder's own multi-project work (QNFO) runs on the earlier version of this system; it is the first internal user ("customer zero"). Specific figures are withheld pending IP filing.
+- Founder's own multi-project work (QNFO) runs on the earlier version of this system; it is the first internal user ("customer zero"). Figures are self-measured and labelled as such.
 - Public site live; design-partner pilot offer open (pilot@ultrastable.io). No pilots, revenue or users to report. `[FOUNDER CONFIRM]` nothing has changed.
 
 **Tech stack:** Python 3.11+, standard library only (no runtime dependencies), SQLite store today, HTTP server (stdlib) in a Docker container; Cloud Run, Cloud Scheduler, Secret Manager for deployment; Anthropic Messages API adapter; Cloudflare Workers currently host the public site.
@@ -64,15 +64,15 @@ Ultrastable puts virtual managers (portfolio, project, product, operations, an i
 
 `[FOUNDER CONFIRM]` plan matches the granted amount.
 
-**Team:** Rowan, solo founder: ideas, direction, product vision, and the identity-bound steps (signing, spending, filing). Development, marketing, funding preparation and operations are performed by the platform's virtual managers and AI coding agents, supervised by Rowan. Planned hires with funding: founding engineer, part-time commercial lead. Be prepared to state that this is a one-person company. `[FOUNDER CONFIRM]`
+**Team:** Rowan, solo founder: ideas, direction, product vision, and the identity-bound steps (signing, spending). Development, marketing, funding preparation and operations are performed by the platform's virtual managers and AI coding agents, supervised by Rowan. Planned hires with funding: founding engineer, part-time commercial lead. Be prepared to state that this is a one-person company. `[FOUNDER CONFIRM]`
 
-**Funding status:** Bootstrapped by the founder; no institutional round; no angel investment received `[FOUNDER CONFIRM]`. Planning a pre-seed round after the provisional patent filing. Applying to the Start tier; we understand the top tier requires an institutional investor.
+**Funding status:** Bootstrapped by the founder; no institutional round; no angel investment received `[FOUNDER CONFIRM]`. Planning a pre-seed round after the first design-partner pilots. Applying to the Start tier; we understand the top tier requires an institutional investor.
 
 **How much funding raised:** $0 external `[FOUNDER CONFIRM]`.
 
 **Ask / what credits unlock:** Run the first design-partner instances and the Vertex AI adapter without infrastructure spend.
 
-**Anything else (optional):** Founder is applying with an inventor-led, IP-protected product; patent application in preparation `[FOUNDER CONFIRM before stating it; do not say "patent pending" until filed]`.
+**Anything else (optional):** Founder is applying with an open product governed by the Ultrastable License (free for non-commercial use; Commercial License with revenue share for commercial use).
 
 ## After submission
 

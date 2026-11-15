@@ -1,6 +1,6 @@
 # Pitch deck variants (FN-5 draft, 2026-11-13)
 
-Base: [pitch-deck-outline.md](pitch-deck-outline.md), one story: Ultrastable is the manager for your AI workers. NDA-only until the provisional is filed. Only slides 4, 5, 9, 10 and 12 differ per variant; slides 1-3, 6-8, 11 are shared. No number below is new: each comes from the cited source.
+Base: [pitch-deck-outline.md](pitch-deck-outline.md), one story: Ultrastable is the manager for your AI workers. Only slides 4, 5, 9, 10 and 12 differ per variant; slides 1-3, 6-8, 11 are shared. No number below is new: each comes from the cited source.
 
 ## Cloudflare variant (Cloudflare for Startups, ultrastable/ops#26)
 - 4. Difference: runs entirely on Workers, D1, KV, Durable Objects and cron triggers; no servers for the customer to own.
@@ -17,4 +17,4 @@ Base: [pitch-deck-outline.md](pitch-deck-outline.md), one story: Ultrastable is 
 - 12. Ask: GCP credits for pilots; answers in `business/funding/applications/google-for-startups/ANSWERS.md`. No Workspace purchase within 31 days before applying (ops#12).
 
 ## Review
-Done check is "reviewed by Rowan" (owner step). Export to slides after review; keep NDA footer.
+Done check is "reviewed by Rowan" (owner step). Export to slides after review; keep the footer plain.

@@ -1,6 +1,6 @@
 # Financial model (structure only, issue #9)
 
-Status: model structure with measured inputs; every dollar input is blank until measured or sourced. **NEEDS ACCOUNTANT** before any external use. Nothing here is a forecast. Nothing here is public before the provisional filing.
+Status: model structure with measured inputs; every dollar input is blank until measured or sourced. **NEEDS ACCOUNTANT** before any external use. Nothing here is a forecast.
 
 ## Unit economics (per managed project per month)
 

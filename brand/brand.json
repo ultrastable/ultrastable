@@ -116,8 +116,8 @@
     {
       "name": "ip",
       "role": "Architecture and IP",
-      "line": "Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11).",
-      "audience": "Counsel, and engineers who want the precise design.",
+      "line": "Architecture specifications and the evidence log.",
+      "audience": "Engineers who want the precise design.",
       "quickstart": [
         "Start at README.md"
       ],

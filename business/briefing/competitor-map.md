@@ -12,4 +12,4 @@
 
 Talking rules: never lead with "AI agents run your company"; lead with the manager problem. Do not disparage named products. Quote no competitor figures externally.
 
-Acquirer/partner target list (do not contact before filing): cloud providers with agent platforms, developer-tool vendors, agent-platform vendors above.
+Acquirer/partner target list (contact once there is traction): cloud providers with agent platforms, developer-tool vendors, agent-platform vendors above.

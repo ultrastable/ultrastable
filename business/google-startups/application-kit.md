@@ -1,6 +1,6 @@
 # Google for Startups application kit (internal full version)
 
-Tag: NDA ONLY. The submit-ready, SAFE NOW answers are in [../../external/google-startups-answers.md](../../external/google-startups-answers.md); copy those, not this file, into the form. Source facts: [../../artifacts/funding-options.md](../../artifacts/funding-options.md). Program terms change: re-check before applying. Only the owner can submit.
+The submit-ready answers are in [../../external/google-startups-answers.md](../../external/google-startups-answers.md); copy those, not this file, into the form. Source facts: [../../artifacts/funding-options.md](../../artifacts/funding-options.md). Program terms change: re-check before applying. Only the owner can submit.
 
 ## Which program, when
 
@@ -26,9 +26,9 @@ G0 adapter skeleton and tests (done). G1 7-day live run on GCP, 1,000 ticks, no 
 ## Likely questions, with internal-grade answers
 - **Why will you use Gemini?** Role-based model ladder maps rungs to Gemini tiers; Vertex lets the reviewer be a different family. Honest: not built (PLANNED, G3).
 - **Traction?** One installation (the founder's fleet, self-scored, unaudited). No revenue. Pilots next.
-- **Defensibility?** A drafted, unfiled provisional covering the loop structure; the compounding record of scored outcomes. Do not state claims externally before filing.
+- **Defensibility?** The compounding record of scored outcomes, and the open Ultrastable License that governs use.
 - **Risks?** IP ownership (entity and assignment, issue #1), single customer, model cost. Answer on IP: the founder is assigning the technology to the company, and the related QNFO repository is under a license that prohibits commercial use without a separate grant.
 - **Biggest dependency on Google?** None technical (portable core); credits cut cost during validation.
 
 ## Pre-submit checklist (owner)
-Entity and IP assignment (#1) done. Provisional filed or counsel agrees to proceed. Domain email, billing account on company domain, no Workspace purchase within 31 days (Scale AI). Live site checked against `docs/CONFIDENTIALITY.md`. Copy answers from `external/` only.
+Entity and IP assignment (#1) done. Domain email, billing account on company domain, no Workspace purchase within 31 days (Scale AI). Live site claims checked against the repository. Copy answers from `external/` only.

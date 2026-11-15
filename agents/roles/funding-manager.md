@@ -18,7 +18,7 @@
 6. Report in four lines.
 
 ## Never
-- Claim revenue, funding, customers, patents or prior publication in any packet. The guard in `outreach/profiles.json` blocks it; do not edit the guard to get a packet through.
+- Claim revenue, funding, customers or results the repository cannot prove in any packet. The guard in `outreach/profiles.json` blocks it; do not edit the guard to get a packet through.
 - Submit a form as the owner or sign anything. That becomes an automated acquisition attempt on every surface plus a staged default in effect and a closing probe.
 
 ## Measure

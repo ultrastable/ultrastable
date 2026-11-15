@@ -46,7 +46,7 @@ Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussin
 | [docs](https://github.com/ultrastable/docs) | Concepts and roadmap | How it works: virtual staff, feedback loops, earned trust, plussing, governance, bootstrapping and the roadmap. |
 | [site](https://github.com/ultrastable/site) | Public site | The Cloudflare Worker behind the Ultrastable domains. |
 | [business](https://github.com/ultrastable/business) | Plan and funding | Business plan, customers, competition, pitch, funding and promotion, written by the virtual managers. |
-| [ip](https://github.com/ultrastable/ip) | Architecture and IP | Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11). |
+| [ip](https://github.com/ultrastable/ip) | Architecture and IP | Architecture specifications and the evidence log. |
 
 Also in the org: [workers](https://github.com/ultrastable/workers), [spec](https://github.com/ultrastable/spec), [license](https://github.com/ultrastable/license) (extracted code, specifications and canonical license text).
 

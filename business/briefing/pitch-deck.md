@@ -1,4 +1,4 @@
-# Pitch deck (SAFE NOW text)
+# Pitch deck
 
 One slide per section. Two variants of slides 8 and 9 for the two routes. No numbers about the product or finances.
 
@@ -26,7 +26,7 @@ One slide per section. Two variants of slides 8 and 9 for the two routes. No num
 
 **11. Platform stance.** Runs on any cloud: Cloudflare first, Google Cloud next, self-hosted always possible. No lock-in.
 
-**12. Honest limits.** Early. One installation. No financial back-end yet. Legal and patent outputs are drafts for professional review. Patent pending status will be stated only after filing.
+**12. Honest limits.** Early. One installation. No financial back-end yet. The code is open; the Ultrastable License governs use.
 
 **13. Close.** Coding agents write code. Ultrastable runs the system.
 

@@ -1,6 +1,6 @@
 # Who runs the agents: local, server-side, or both
 
-*Tag: NDA ONLY (design reasoning). The working system runs server-side on Cloudflare today. Platform-agnostic core with Cloudflare and Google Cloud adapters is the standing stance.*
+*The working system runs server-side on Cloudflare today. Platform-agnostic core with Cloudflare and Google Cloud adapters is the standing stance.*
 
 ## Comparison
 

@@ -35,9 +35,9 @@ The best first customer looks like Rowan: someone with more projects than people
 7. **Weekly review.** A four-line report per project: what happened, what was decided, what's next, what's open.
 8. **Make it repeatable.** Save the setup as the organization's own kit for its next project.
 
-Talking about step 6 in public: SAFE NOW as "it gets more independent as it proves itself". The method behind it is AFTER FILING.
+Talking about step 6 in public: "it gets more independent as it proves itself"; the method is in the open repositories.
 
-## Discovery call script (SAFE NOW)
+## Discovery call script
 
 - "How many projects are you running, and how many people?"
 - "How do you use AI coding agents today? Who manages them?"
@@ -45,4 +45,4 @@ Talking about step 6 in public: SAFE NOW as "it gets more independent as it prov
 - "What would you never let an agent do without asking?"
 - "If something ran your backlog and only asked about the things on that list, what would that be worth per month?"
 
-The sales manager logs each call's answers in `customers/discovery-log.md` (private) with date and segment.
+The sales manager logs each call's answers in `customers/discovery-log.md` with date and segment.

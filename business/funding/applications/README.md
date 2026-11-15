@@ -6,4 +6,4 @@ Statuses: `drafted` (answers done, not submittable yet), `ready` (all prerequisi
 
 Adding a program: copy `_template/packet.json`, set `registry_id`, fill answers from primary sources, run `python3 scripts/funding_packet.py`.
 
-Rules: truthful, generic, no financial claims, no QNFO or research framing, nothing about patents, no mechanism details, no prior-publication statements. Applicant identity (entity, email, signature, attestations, sign-in) is never invented; it comes from `applicant.json`, which the owner card fills.
+Rules: truthful, generic, no financial claims, no QNFO or research framing, no claim the repository cannot prove, no prior-publication statements. Applicant identity (entity, email, signature, attestations, sign-in) is never invented; it comes from `applicant.json`, which the owner card fills.

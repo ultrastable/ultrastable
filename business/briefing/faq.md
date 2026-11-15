@@ -1,4 +1,4 @@
-# FAQ (SAFE NOW)
+# FAQ
 
 **What is Ultrastable?** An autonomous system that takes an idea and runs the work of building and operating it, with a person steering when they choose.
 
@@ -18,11 +18,11 @@
 
 **Is my data safe?** Secrets are referenced by name and never read by agents. A security summary is in [external/security-summary.md](../../external/security-summary.md).
 
-**Does it make legal or financial decisions?** No. Legal and patent outputs are drafts for professional review. There is no financial back-end yet.
+**Does it make legal or financial decisions?** No. Anything it drafts that touches law or tax is a draft; Ultrastable does not give legal advice. There is no financial back-end yet.
 
 **What is its track record?** One production installation, self-reported, used as the first test case. We do not publish performance numbers yet.
 
-**Is there a patent?** We do not comment on filings. Statements about patent status will be made only once something is filed.
+**How is the work protected?** The code is open and the Ultrastable License governs use: free for non-commercial use, a Commercial License with revenue share for anything that makes or saves money.
 
 **Who is behind it?** Rowan, inventor and product direction. We are looking for a business co-founder and a founding engineer.
 
