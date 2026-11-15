@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-23",
   "title": "OL-20261115-23: ACCOUNT-SPLIT-1: cutover to the ultrastable Cloudflare account waits on the GitHub credential",
-  "body": "**Owner:** infrastructure-manager\n**Trigger:** GitHub credential present on the target tick\n**Done check:** grep:deploy/transfer/plan.json::2-copy done, 3-verify done\n**Status:** open\n\nCode and org data are live on the ultrastable account (workers.dev), crons still on quniverse. Cutover needs the GitHub App credential on the target tick; the in-Cloudflare re-seal was refused by the session permission check and reverted.",
+  "body": "**Owner:** infrastructure-manager\n**Trigger:** GitHub credential present on the target tick\n**Done check:** grep:deploy/transfer/plan.json::2-copy done, 3-verify done\n**Status:** open\n\nCode and org data are live on the ultrastable account (workers.dev), crons still on quniverse. Cutover needs the GitHub App credential on the target tick; the in-Cloudflare re-seal was refused by the session permission check and reverted.\n\nSession: session_0156nqDt4ontnhzSFvT4PTB8",
   "labels": [
     "role:infrastructure-manager",
     "open-loop"
