@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-15T19:19:31Z",
- "commit": "a95cd81",
+ "generated": "2026-11-15T19:25:07Z",
+ "commit": "b34693b",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 80,
@@ -18,18 +18,18 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 160,
-  "backlog_items": 203
+  "backlog_open": 163,
+  "backlog_items": 206
  },
  "throughput": {
   "queue": {
-   "items": 203,
+   "items": 206,
    "by_status": {
     "closed": 41,
-    "open": 160,
+    "open": 163,
     "done": 2
    },
-   "takeable_now": 7
+   "takeable_now": 8
   },
   "merged": {
    "total": 0,
@@ -81,8 +81,9 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
+    "": 1,
+    "cancelled": 20,
     "success": 5,
-    "cancelled": 21,
     "failure": 4
    },
    "prs_opened_unattended": 0,
@@ -110,7 +111,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 519.5,
+   "age_s": 252.3,
    "status": "fresh",
    "missed": 0
   },
@@ -134,15 +135,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 1088.5,
-   "status": "stale",
-   "missed": 1
+   "age_s": 204.3,
+   "status": "fresh",
+   "missed": 0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 194730.5,
+   "age_s": 195063.3,
    "status": "stale",
    "missed": 2
   }
@@ -176,7 +177,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-15T19:19:12Z",
+  "generated": "2026-11-15T19:24:47Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -221,7 +222,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-15T19:19:12Z",
+    "started": "2026-11-15T19:24:47Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -235,7 +236,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-15T19:19:12Z",
+     "at": "2026-11-15T19:24:47Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -282,8 +283,8 @@
    },
    {
     "id": "deploy",
-    "status": "stale",
-    "missed": 1
+    "status": "fresh",
+    "missed": 0
    },
    {
     "id": "publish",
@@ -304,7 +305,7 @@
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 0,
-  "items_takeable": 7,
+  "items_takeable": 8,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -349,7 +350,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 543.9,
+   "last_beat_age_s": 279.0,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -360,7 +361,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 23394.9,
+   "last_beat_age_s": 23730.0,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -371,7 +372,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 1376.9,
+   "last_beat_age_s": 1712.0,
    "expected_interval_s": 86400,
    "beats_24h": 20,
    "expected_24h": 1.0,
@@ -382,7 +383,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 256470.9,
+   "last_beat_age_s": 256806.0,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2041,6 +2042,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "b34693b",
+    "at": "2026-11-15T19:21:10+00:00",
+    "author": "Claude",
+    "subject": "PULSE-1: the tick decides from its own records whether it is bootstrapped, whether every loop ran, and whether it is critical",
+    "pr": null,
+    "item": "PULSE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/b34693b4e09777ff4c47178f075d1a288dbefe92"
+   },
+   {
     "sha": "a95cd81",
     "at": "2026-11-15T20:00:53+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2390,15 +2400,6 @@
     "pr": 374,
     "item": "CLOSELOOP-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/cd9e1b0b907e190028b9b9319768ba24dfbab17b"
-   },
-   {
-    "sha": "5ffb8a2",
-    "at": "2026-11-15T06:04:37+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "PORTABILITY-2: /my-data one-click export and restore, no token (#371)",
-    "pr": 371,
-    "item": "PORTABILITY-2",
-    "url": "https://github.com/ultrastable/ultrastable/commit/5ffb8a2f87b626ebb54d30b012ea532e5857b185"
    }
   ],
   "pull_requests": []
