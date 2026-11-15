@@ -1179,6 +1179,15 @@
       "session": "session_0156nqDsim2nV3ymxKLeFRQ1"
     },
     {
+      "id": "decision-2026-11-15-all-ultrastable-repositories-are-public-under-usl-1-0-2026-1",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "All ultrastable repositories are public under USL-1.0 (2026-11-15)",
+      "body": "workers, spec, license, seed and ops were made public on 2026-11-15 after a full-history audit (trufflehog verified secrets 0, gitleaks live credentials 0, issue and PR text scanned). LICENSE blob 650d3908 is identical in all seven repositories. Snapshot tag disclosure-2026-11-15 in each; Software Heritage save requests 2653133 to 2653139. Revert path: gh repo edit --visibility private (does not recall copies already made).",
+      "probe": "grep:docs/disclosure/2026-11-15.json::disclosure-2026-11-15",
+      "session": "claude-code-2026-11-15-publish"
+    },
+    {
       "id": "lesson-2026-11-15-local-uncommitted-work-is-a-loop-gap-land-it-or-file-it",
       "kind": "lesson",
       "date": "2026-11-15",
