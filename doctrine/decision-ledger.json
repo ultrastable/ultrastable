@@ -1059,6 +1059,14 @@
       "session": "ultrastable-multi-repo"
     },
     {
+      "id": "decision-2026-11-15-zero-minutes-1-worker-merge-evidence",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "ZERO-MINUTES-1 worker merge evidence",
+      "body": "Tick Worker lane appends each merge it makes to ops/worker-merge-evidence.jsonl (the item's done check). Remaining: drop lane.yml workflow_run after 7 days of Worker merges.",
+      "probe": "grep:seed/worker/src/lane.js::worker-merge-evidence"
+    },
+    {
       "id": "lesson-2026-11-15-git-in-cloudflare-1-the-worker-keeps-its-working-copy-in-clo",
       "kind": "lesson",
       "date": "2026-11-15",
