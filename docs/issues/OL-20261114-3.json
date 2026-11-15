@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261114-3",
+  "title": "OL-20261114-3: ROLE-WORK-2: waiting dispatches need the Worker-native executor",
+  "body": "**Owner:** staff\n**Trigger:** finding needs-executor on /api/v1/status\n**Done check:** grep:seed/worker/src/nativeexec.js::waiting\n**Status:** open\n\nItems whose probe needs a code change wait with dispatch status waiting until nativeexec takes them (docs/issues/ROLE-WORK-2.json).",
+  "labels": [
+    "role:staff",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

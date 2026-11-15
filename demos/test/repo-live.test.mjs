@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { parseGaps, parseOwnerTable, html, collect } from "../repo-live.mjs";
@@ -16,6 +17,6 @@ test("html escapes content", () => {
   assert.ok(!out.includes("<script>x"));
 });
 test("collect runs against this repository", () => {
-  const d = collect(new URL("../../", import.meta.url).pathname);
+  const d = collect(fileURLToPath(new URL("../../", import.meta.url)));
   assert.ok(d.gaps.length >= 5); assert.ok(d.ownerQueue.length >= 3); assert.ok(d.commits.length >= 1); assert.ok(Array.isArray(d.lint.findings));
 });

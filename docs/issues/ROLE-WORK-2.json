@@ -1,0 +1,11 @@
+{
+  "id": "ROLE-WORK-2",
+  "title": "ROLE-WORK-2: the Worker-native executor takes waiting dispatches, not only ops/priority-queue.json",
+  "body": "**Owner:** Staff (platform)\n**Trigger:** GET /api/v1/status reports finding needs-executor\n**Done check:** grep:seed/worker/src/nativeexec.js::waiting\n**Status:** open\n\nROLE-WORK-1 makes roles consume their dispatches: probes the Worker can evaluate (file:, metric:, item_done:, successor:, TICKFAIL) close the item with a verified outcome; the rest move to dispatch status waiting with one needs_executor outcome. The executor currently reads only ops/priority-queue.json, so D1 items whose probe needs a code change wait forever. This item makes runNative take the oldest waiting D1 dispatch first (title, done check and closing probe as the prompt), open the PR on worker/<item>, and leave closing to role-work when the probe passes after merge. Closing probe: needs-executor count falls and an item with a file: probe closes after a worker/* PR merges.",
+  "labels": [
+    "role:staff",
+    "ws:executor"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}
