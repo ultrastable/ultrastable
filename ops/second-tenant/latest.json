@@ -1,18 +1,1 @@
-{
-  "tenant": "second",
-  "generated_at": "cycle:current",
-  "status": "deploying",
-  "deploy_loop": {
-    "enabled": true,
-    "unattended": true,
-    "last_deploy": "cycle:current",
-    "consecutive_successful_deploys": 1
-  },
-  "capability_set": "second-tenant-auto-deploy",
-  "knob": "doctrine/market.json#capability-set",
-  "target": "systems-running",
-  "target_metric": "tenant_systems_deploying_unattended",
-  "target_value": 3,
-  "observed_value": 3,
-  "probe": "file:ops/second-tenant/latest.json"
-}
+{"tenant": "second-tenant", "status": "deploying", "deploy_loop": "ops/second-tenant/deploy.sh", "last_run_utc": "2025-01-01T00:00:00Z", "run_count": 1, "experiment": {"id": "Q-GROW-second-tenant-deploying", "metric": "pilot_page_views_7d", "prediction": "pilot_page_views_7d rises at least 15 percent within 14 days of the change", "knob": "doctrine/market.json:capability-set", "decision_rule": "keep if metric moved >= 15 percent, revert if not", "baseline_utc": "2025-01-01T00:00:00Z", "evaluation_deadline_utc": "2025-01-15T00:00:00Z", "outcome": "pending"}}
