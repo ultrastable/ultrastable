@@ -2995,8 +2995,8 @@
     {
       "id": "loop-proof",
       "kind": "governance",
-      "summary": "LOOPPROOF-1: the proof that every server-side loop ran every time. Each loop of the scheduled handler runs inside beat(), which writes a row before the loop starts and its result or error after; the tick step pulse counts expected against good slots over 24 h per loop and for the tick itself, writes loop_clock, files MISSED-<loop> for a loop that is late, stopped, failing, hung or never ran, and closes it when the loop ticks again. The site Worker is the second producer: it calls /pulse/watch every tick and the tick Worker runs a tick itself when the newest one is stale.",
-      "trigger": "every tick (cron */10 on ultrastable-tick) and every site Worker tick for the watchdog",
+      "summary": "LOOPPROOF-1: the proof that every server-side loop ran every time. Each loop of the scheduled handler runs inside beat(), which writes a row before the loop starts and its result or error after; the tick step pulse counts expected against good slots over 24 h per loop and for the tick itself, writes loop_clock, files MISSED-<loop> for a loop that is late, stopped, failing, hung or never ran, and closes it when the loop ticks again. The site Worker (hourly) and the dashboard Worker (*/10) are the second producers: each calls /pulse/watch and the tick Worker runs a tick itself when the newest one is stale.",
+      "trigger": "every tick (cron */10 on ultrastable-tick), the dashboard Worker cron (*/10) and the site Worker cron (hourly) for the watchdog",
       "owner": "operations",
       "closes_by": "system",
       "sla": "2 ticks",
@@ -3011,6 +3011,11 @@
           "id": "watchdog",
           "how": "site/worker.js watchTick calls POST /pulse/watch on the TICK service binding from its own cron",
           "class": "free"
+        },
+        {
+          "id": "watchdog-fast",
+          "how": "dashboard/worker.js watchTick calls POST /pulse/watch on the TICK binding from the */10 cron",
+          "class": "free"
         }
       ],
       "closing_probe": "grep:seed/worker/test/pulse.test.js::a loop that stops is found, filed as MISSED-<loop>, and closed when it runs again",
@@ -3018,9 +3023,10 @@
         "docs/PROJECT-MEMORY.md"
       ],
       "system_path": [
-        "seed/worker/src/pulse.js",
-        "seed/worker/src/index.js",
+        "dashboard/worker.js",
         "seed/worker/migrations/0013_pulse.sql",
+        "seed/worker/src/index.js",
+        "seed/worker/src/pulse.js",
         "site/worker.js"
       ],
       "area": "managers",
