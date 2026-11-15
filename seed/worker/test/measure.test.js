@@ -91,3 +91,14 @@ test('LIVE-1: PUBLIC_HEALTH_ONLY exposes GET /health and the signed webhook and 
   for (const [m, p] of [['GET', '/'], ['GET', '/api/analytics'], ['GET', '/mcp'], ['GET', '/llms.txt'], ['POST', '/mcp'], ['POST', '/health'], ['GET', '/hook/github']]) assert.equal(hidden(on, m, p), true, m + ' ' + p);
   assert.equal(hidden({}, 'GET', '/'), false, 'off by default: customers keep their full surface');
 });
+
+test('LIVENESS-SEED-1: a runtime with no metrics seeds the six liveness metrics itself, equal to the bootstrap set, and never overwrites a row', async () => {
+  const { LIVENESS } = await import('../src/tick.js');
+  const py = readFileSync(new URL('../../bootstrap/bootstrap.py', import.meta.url), 'utf8');
+  for (const [id, , spec, op, threshold] of LIVENESS) assert.ok(py.includes(`"${spec}", "${op}", ${threshold},`), `bootstrap.py differs for ${id}`);
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO metrics (id, tenant_id, name, kind, source, spec, op, threshold, grace_hours, owner_role, remedy) VALUES ('M-acting', NULL, 'owner row', 'liveness', 'builtin', 'dispatches_24h', '>=', 9, 0, 'operations', 'x')`);
+  await runTick(db, { config, now: Date.parse('2026-11-10T00:00:00Z') });
+  assert.equal(db.raw.prepare(`SELECT COUNT(*) AS n FROM metrics WHERE kind='liveness'`).get().n, LIVENESS.length);
+  assert.equal(db.raw.prepare(`SELECT threshold FROM metrics WHERE id='M-acting'`).get().threshold, 9);
+});
