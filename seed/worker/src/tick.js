@@ -254,7 +254,8 @@ export const STEPS = {
       if (!item) continue;
       await run(db, `INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES (?, ?, ?, ?)`, item.id, role.id, ctx.nowIso, ctx.nowIso);
       await run(db, `UPDATE items SET status='claimed', updated_at=? WHERE id=?`, ctx.nowIso, item.id);
-      await run(db, `INSERT INTO dispatches (tick_id, role_id, item_id, model) VALUES (?, ?, ?, ?)`, ctx.tickId, role.id, item.id, role.model);
+      // MODEL-TRUTH-1: roles.model is a configured tier label, not what runs; the doer writes the real model (or 'rules (no model)') when it settles.
+      await run(db, `INSERT INTO dispatches (tick_id, role_id, item_id, model) VALUES (?, ?, ?, 'pending')`, ctx.tickId, role.id, item.id);
       n++;
     }
     ctx.dispatched = n;

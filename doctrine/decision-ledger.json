@@ -1245,6 +1245,24 @@
       "body": "PR 419 deployed ultrastable-tick with a verify line against the public /live page, which the site Worker renders and which never carries the tick Worker's k_eff. The probe could only fail; the handoff would exhaust 3 retries and roll back. The registered verify line is kept from the first PR body (coalesce), and the API to re-register it needs a bearer token a session does not hold. Rule: when the change is not visible on a public URL, verify a URL that proves the deploy path is up and prove the behaviour in a test.",
       "probe": "grep:seed/worker/src/tick.js::LIVENESS-SEED-1",
       "session": "session_0156nqDrMeFrhJhvwuJ7tR64"
+    },
+    {
+      "id": "lesson-2026-11-15-model-truth-1-roles-model-is-a-tier-label-not-what-runs",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "MODEL-TRUTH-1: roles.model is a tier label, not what runs",
+      "body": "The tick copied roles.model (bootstrap tier alias claude-haiku-5-5) into every dispatch row and /ops showed it as the model. No Claude model was ever called by the tick: 205 dispatches ran on Workers AI @cf/zai-org/glm-5.3-flash, 78 were settled by rules, 283 were released unworked. The doer now writes the model that answered; migration 0014 rewrote history (backup table _backup_dispatch_model_20261115).",
+      "probe": "grep:seed/worker/src/doer.js::RULES_MODEL",
+      "session": "session_0156nqDt4ontnhzSFvT4PTB8"
+    },
+    {
+      "id": "decision-2026-11-15-code-queue-1-the-native-executor-takes-d1-needs-code-items",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "CODE-QUEUE-1: the native executor takes D1 needs-code items",
+      "body": "The doer parked 66 items as needs-code and nothing read them; the worker-native executor reported idle every tick because it read only ops/priority-queue.json. It now alternates each 10-minute slot between the repo queue and D1 needs-code items, marks a taken item in-pr with the PR url and model, and the PR Handoff block lets the handoff closer close the item after merge and deploy. A PR closed unmerged returns the item to needs-code.",
+      "probe": "grep:seed/worker/src/nativeexec.js::runDbQueue",
+      "session": "session_0156nqDt4ontnhzSFvT4PTB8"
     }
   ]
 }

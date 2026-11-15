@@ -125,3 +125,15 @@ test('owner-only matcher: identity-bound work yes, research and code no', () => 
   for (const t of ['FUND-3: OC-3 owner card: form entity and assign IP', 'FN-2: Google for Startups Cloud Program application Submission confirmation', 'FUND-1: OC-1 owner card: filing']) assert.ok(OWNER_ONLY.test(t), t);
   for (const t of ['FN-4: Other credit programs Ranked list with eligibility', 'WEB-4: robots, sitemap, OG tags, analytics', 'SG-1: stop depending on github']) assert.ok(!OWNER_ONLY.test(t), t);
 });
+
+// MODEL-TRUTH-1: a dispatch row names the model that really ran (or that a rule settled it), never the role's configured tier label.
+test('dispatch rows record the model that answered, or rules when no model ran', async () => {
+  const db = makeDb();
+  seed(db, [{ id: 'W-M', title: 'work m' }, { id: 'FN-9', title: 'FN-9: Cloudflare for Startups application', done_check: 'Submission confirmation', owner_role: 'operations' }]);
+  const ai = fakeAi({ verdict: 'needs_code', reason: 'r', first_step: 's' });
+  await runTick(db, { config, now: T0, ai });
+  const m = id => db.raw.prepare('SELECT model FROM dispatches WHERE item_id=?').get(id).model;
+  assert.match(m('W-M'), /^@cf\//, 'the Workers AI model that answered');
+  assert.equal(m('FN-9'), 'rules (no model)');
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM dispatches WHERE model='m'").get().n, 0, 'the roles.model label never reaches a dispatch row');
+});
