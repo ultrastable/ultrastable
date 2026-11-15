@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-23",
+  "title": "OL-20261115-23: Full-history audit and tripwire dispositions",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** next lane sweep\n**Done check:** grep:ops/publication/reviewed.json::reviewed\n**Status:** open\n\nRun publication --audit on a full clone of each repo; record a disposition for NEEDS-YOU.md, business/, data/, external/, ops/, outreach/ in ops/publication/reviewed.json; carry publication.json to workers, spec, license, .github, seed, ops.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

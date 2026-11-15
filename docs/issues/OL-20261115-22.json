@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-22",
+  "title": "OL-20261115-22: Publication flip needs ORG_ADMIN_TOKEN route",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** daily lane sweep and any change to doctrine/publication.json\n**Done check:** grep:foundation/publication.py::def flip\n**Status:** open\n\nAll seven ultrastable repos stay as they are until a server-side route holding ORG_ADMIN_TOKEN runs publication --flip --apply. Default in effect: no change. A cloud session cannot change visibility.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
