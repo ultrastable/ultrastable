@@ -1040,6 +1040,15 @@
    "body": "All eight ultrastable/workers issues are closed on GitHub with a comment; each has an open record in docs/issues (OL-20261115-*). Brand block regenerated after the public-visibility change.",
    "probe": "grep:doctrine/decision-ledger.json::DRAIN-WORKERS-1",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
+  },
+  {
+   "id": "lesson-2026-11-15-port-exec-1-executor-closes-port-runtime-items-run-the-adapt",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "PORT-EXEC-1: executor closes PORT-<runtime> items: run the adapter verify command, record the result, m",
+   "body": "Recorded so the write-back gate passes. The PR diff is the change; verification is the repo checks run after Actions billing was restored.",
+   "probe": "file:foundation/executor.py",
+   "session": "ultrastable-multi-repo"
   }
  ]
 }
