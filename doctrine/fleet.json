@@ -50,13 +50,17 @@
   {
    "id": "license-text",
    "files": [
-    "LICENSE"
+    "LICENSE",
+    "COMMERCIAL-TERMS.md"
    ],
    "repos": [
-    "ultrastable",
-    "workers",
+    ".github",
+    "license",
+    "ops",
+    "seed",
     "spec",
-    "license"
+    "ultrastable",
+    "workers"
    ],
    "rule": "identical"
   },
@@ -72,6 +76,23 @@
     "license"
    ],
    "rule": "contains:CLOSED-LOOP-AXIOM"
+  },
+  {
+   "id": "publication-files",
+   "files": [
+    "NOTICE",
+    "CITATION.cff"
+   ],
+   "repos": [
+    ".github",
+    "license",
+    "ops",
+    "seed",
+    "spec",
+    "ultrastable",
+    "workers"
+   ],
+   "rule": "contains:LicenseRef-Ultrastable-USL-1.0"
   }
  ],
  "dependencies": [
@@ -95,7 +116,14 @@
   }
  ],
  "public_read": [
-  "QNFO/qnfo-workers"
+  "QNFO/qnfo-workers",
+  "ultrastable/.github",
+  "ultrastable/license",
+  "ultrastable/ops",
+  "ultrastable/seed",
+  "ultrastable/spec",
+  "ultrastable/ultrastable",
+  "ultrastable/workers"
  ],
  "reach_error": "cannot reach|could not (read|reach|clone)|unreachable|not accessible|404|403|repository not found|permission denied|authentication",
  "_archived": "seed is archived (read-only); its live copy is ultrastable/ultrastable seed/. Archived repositories are skipped by fleet.py."
