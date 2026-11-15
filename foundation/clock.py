@@ -138,6 +138,21 @@ def attempts_last_24h(rows: list[dict], now: float) -> int:
     return n
 
 
+def daily_cap(cfg: dict, private: bool | None = None) -> tuple[int, str]:
+    """PUBLIC-MINUTES-1: the cap of 4 builder runs a day exists to protect a private repository's Actions quota. Standard runners are free on a
+    public repository, so there the cap is max_runs_per_day_public: a repository that went public kept starving its own builder at 4 items a day
+    (2026-11-15: 160+ takeable items, 4 attempts a day). Visibility is read from GitHub; an unreadable answer keeps the private cap."""
+    if private is None:
+        try:
+            r = subprocess.run(["gh", "api", f"repos/{GH}", "--jq", ".private"], capture_output=True, text=True, timeout=30, encoding="utf-8")
+            private = None if r.returncode else r.stdout.strip() != "false"
+        except (OSError, subprocess.SubprocessError):
+            private = None
+    if private is False:
+        return int(cfg.get("max_runs_per_day_public", cfg["max_runs_per_day"])), "public"
+    return int(cfg["max_runs_per_day"]), "private" if private else "unknown"
+
+
 def chain(root=REPO, apply=False, now: float | None = None) -> dict:
     cfg, now = load(root)["chain"], now or datetime.now(timezone.utc).timestamp()
     try:
@@ -151,8 +166,9 @@ def chain(root=REPO, apply=False, now: float | None = None) -> dict:
         used = attempts_last_24h(qmod.executor_rows(root), now)
     except Exception as e:  # an unreadable log must not open the cap: fall back to the run count, which can only be higher
         used = len([x for x in rows if _ts(x["createdAt"]) >= now - 86400])
-    ok, why = should_chain(used, cfg["max_runs_per_day"], takeable_count(root), done, cfg["backoff_after_failures"])
-    res = {"chain": ok, "why": why, "attempts_24h": used}
+    cap, vis = daily_cap(cfg)
+    ok, why = should_chain(used, cap, takeable_count(root), done, cfg["backoff_after_failures"])
+    res = {"chain": ok, "why": why, "attempts_24h": used, "cap": cap, "visibility": vis}
     if ok and apply:
         d = subprocess.run(["gh", "workflow", "run", cfg["workflow"] + ".yml", "--repo", GH], capture_output=True, text=True, timeout=60, encoding="utf-8")
         res["dispatched"] = d.returncode == 0
