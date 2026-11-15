@@ -701,6 +701,14 @@
    "date": "2026-11-12",
    "recover": "1ae316892261296388fb1ae2cf7df74b0c3dff71",
    "superseded_by": "docs/runbooks/any-tools/sqlite.md"
+  },
+  {
+   "path": "specs/agent-scoreboard.md",
+   "sha256": "7e1a9ed8c25f5f335b091c22afd9cac223d35e5c1bba3a5af05229ad94608187",
+   "reason": "written by the Worker-native executor (PR #433) for ROADMAP-AGENT-AGENT-SCOREBOARD, which needs Worker code; a document no loop consumes",
+   "date": "2026-11-15",
+   "recover": "1ef551c8e61b87a7058745a03fa2deea5f27e61b",
+   "evidence": "orphans --check and docs_audit --check named it; the item returns to needs-code and nativeexec.guard now refuses documentation-only changes"
   }
  ]
 }

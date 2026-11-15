@@ -28,6 +28,8 @@ test('guard refuses protected, traversal, oversized and too many files', () => {
   assert.throws(() => guard([{ path: '../x', content: '' }]), /unsafe/);
   assert.throws(() => guard([{ path: 'a', content: 'x'.repeat(70000) }]), /oversized/);
   assert.throws(() => guard([1, 2, 3, 4].map(i => ({ path: 'f' + i, content: '' }))), /too many/);
+  assert.throws(() => guard([{ path: 'specs/x.md', content: 'prose' }]), /documentation-only/);
+  assert.equal(guard([{ path: 'src/a.js', content: 'ok' }, { path: 'docs/x.md', content: 'with code' }]).length, 2, 'prose beside code is fine');
   assert.equal(guard([{ path: 'src/a.js', content: 'ok' }]).length, 1);
 });
 test('opens a branch, writes the file and opens a PR for the top item', async () => {

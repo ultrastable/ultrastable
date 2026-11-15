@@ -18,6 +18,9 @@ export function guard(files) {
     if (PROTECTED.some(x => p === x || p.startsWith(x))) throw new Error('protected path: ' + p);
     if (typeof f.content !== 'string' || f.content.length > MAX_BYTES) throw new Error('bad or oversized content: ' + p);
   }
+  // NATIVE-CODE-ONLY-1: the executor's job is code a loop runs. A change set that is only prose (specs/, docs/, *.md, *.txt) is an orphan document by
+  // doc-consumed rules; PR #433 merged one for an item that needed Worker code (see the removed ledger in doctrine/doc-consumers.json). Refused, so the item is retried.
+  if (files.every(f => /^(specs|docs)\//.test(String(f.path)) || /\.(md|txt)$/i.test(String(f.path)))) throw new Error('documentation-only change: the executor produces code, data or tests that a loop consumes');
   return files;
 }
 

@@ -1,44 +1,36 @@
 {
   "_doc": "SYS-1: the whole system as one declared topology. Every worker, store, queue, index and workflow, with its bindings, is listed here; `python3 -m foundation topology --render` writes each worker's wrangler config, `--check` validates the references, `--drift` compares this file with the live account. state=live means it must exist now; state=planned means the executor is building it (drift reports it as pending, not as a failure). Ids are not secrets; variable values and secrets never appear here (only their names). doctrine/system.json (SYSTEM-1) is GENERATED from this file by `python3 -m foundation topology --emit-system`; edit this file, never that one.",
   "version": "1.0.0",
-  "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
+  "account_id": "81e3a4efb4eb66e613529b87682911bb",
   "prefix": "ultrastable-",
   "stores": {
     "d1": [
       {
         "name": "ultrastable-org",
-        "id": "7468898a-b515-495f-9910-e91cb80f5810",
+        "id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
         "state": "live",
         "what": "the org's own records: items, claims, gate cards, trust ledger, tick runs",
         "key": "org"
       },
       {
         "name": "ultrastable-ops",
-        "id": "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd",
+        "id": "5cd83b52-864a-4510-b062-fc0d9402d06c",
         "state": "live",
         "what": "site analytics, dashboard state, the published transparency snapshot",
         "key": "ops"
-      },
-      {
-        "name": "ultrastable-ultrastable",
-        "state": "live",
-        "retire_candidate": true,
-        "what": "found in the account, owner unknown: created by an earlier bootstrap run; the drift loop retires it once nothing reads it",
-        "id": "a0227f92-04a7-4640-ae39-bb6a47fc9488",
-        "key": "ultrastable"
       }
     ],
     "kv": [
       {
         "name": "ultrastable-site-assets",
-        "id": "c6ca64dddec5489cbcee896113949eba",
+        "id": "eade26c7862a4f4cad4827baeb29e04e",
         "state": "live",
         "what": "site images and built-site state",
         "key": "assets"
       },
       {
         "name": "ultrastable-private",
-        "id": "f41303a09abc473faf41f9685ebb1a72",
+        "id": "41ef5a537ec24f598db2a1178a5e69e1",
         "state": "live",
         "what": "private worker state",
         "key": "private"
@@ -53,8 +45,8 @@
     "r2": [
       {
         "name": "ultrastable-git",
-        "state": "live",
-        "what": "bundles and backups of the repositories"
+        "state": "planned",
+        "what": "bundles and backups of the repositories (ACCOUNT-SPLIT-2: R2 is not yet enabled on the ultrastable account; the copy in the retired account is kept)"
       }
     ],
     "queues": [
@@ -200,23 +192,6 @@
       }
     },
     {
-      "id": "ultrastable-ultrastable",
-      "state": "live",
-      "retire_candidate": true,
-      "role": "found in the account, owner unknown: a bootstrap output (tenant 0 self-test); retired once nothing routes to it",
-      "main": "seed/worker/src/index.js",
-      "compatibility_date": "2026-11-12",
-      "public": false,
-      "bindings": {
-        "d1": {
-          "DB": "ultrastable-ultrastable"
-        },
-        "services": {},
-        "secrets": [],
-        "vars": {}
-      }
-    },
-    {
       "id": "ultrastable-agents",
       "state": "live",
       "role": "code agents (Workers AI adapters from doctrine/code-agents.json), probed live",
@@ -247,5 +222,6 @@
     "dashboard counts the deploy"
   ],
   "deploy_counter": "ops/deploys.jsonl",
-  "system_compatibility_date": "2026-11-12"
+  "system_compatibility_date": "2026-11-12",
+  "_account_split": "ACCOUNT-SPLIT-2 (2026-11-15): every id here is in the ultrastable account. The quniverse copies (ultrastable-ultrastable worker and D1, demo-child-ultrastable, the old platform workers) are retired: crons off, kept unmodified as the backup; see deploy/transfer/plan.json."
 }

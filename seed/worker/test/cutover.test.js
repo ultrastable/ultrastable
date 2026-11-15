@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // ACCOUNT-SPLIT-2: one primary across two Cloudflare accounts; the standby promotes itself when it holds a GitHub credential.
 import test from 'node:test';
 import assert from 'node:assert/strict';

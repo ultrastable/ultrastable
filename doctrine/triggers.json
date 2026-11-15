@@ -185,6 +185,13 @@
    ],
    "crons": []
   },
+  "deploy-ultrastable.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": []
+  },
   "deploy-workers.yml": {
    "events": [
     "push",
