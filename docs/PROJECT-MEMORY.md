@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-15
 
+<<<<<<< HEAD
 - 2026-11-15: Q-GROW-second-tenant-deploying: second-tenant instance manifest (#408)
 - 2026-11-15: Carry claude/second-tenant-2a21ae onto main
 - 2026-11-15: Carry claude/wba-outbound-directory-cache onto main
@@ -26,6 +27,9 @@ Last updated: 2026-11-15
 - 2026-11-15: VERIFY-RETRY-1: retry live probe before rollback, recover false rollbacks (#406)
 - 2026-11-15: Q-GROW-second-tenant-deploying: real second-tenant instance manifest, README and test
 - 2026-11-15: WBA-OUTBOUND-1: sign outbound agent fetches and cache peer key directories
+=======
+- 2026-11-15: PR queue drained: VERIFY-RETRY-1 (#406), dashboard rebuild in the lane commit (#410, LANE-DASHBOARD-1), PORT-EXEC-1 redone additively (#411, replaces #402), ZERO-MINUTES-1 (#409), second tenant manifest (#408) and bootstrap rehearsal (#405) merged; #403 and #404 closed by server review (unproven evidence, already met by DEPLOY-ALL-1); #407 WBA-OUTBOUND-1 open
+>>>>>>> origin/main
 - 2026-11-14: AGENT-READY-2: ultrastable.io serves Markdown for Agents (Accept: text/markdown), named AI-bot rules in robots.txt and WebMCP tools (site/readiness.js); OAuth discovery and commerce protocols declined with reasons in doctrine/agent-standards.json; WEB-BOT-AUTH-1 and Q-AGENT-OAUTH-1 filed. PR 343 overlaps PR 340: RECONCILE-343 keeps its role-work, SOP and handoffs.
 - 2026-11-14: CODE-AGENT-SOP-1 (owner): code agents produce and hand off, the server owns checks, merge, deploy and close-out. SOP at GET /api/v1/sop, handoff at POST /api/v1/handoffs (receipt HANDOFF-<repo>-<pr>, closed by the pr_merged probe). Server gaps that still force babysitting: SERVER-CHECKS-1, SERVER-DEPLOY-1.
 - 2026-11-15: PR 343 reconciled (RECONCILE-343): its tick-Worker control plane and work.js were dropped as superseded by site/controlplane.js (PR 340) and DOER-1 (seed/worker/src/doer.js); its issues CONTROL-PLANE-2, ROLE-WORK-2, OPS-DASH-2, SERVER-CHECKS-1, SERVER-DEPLOY-1 and OL-20261114-3 landed. seed/worker/src/codeagent.js regained ADAPTERS, invoke, parseJson, runCodeAgent and probe, which PR 352 dropped while doer.js, executor.js, nativeexec.js, pr-executor.js and index.js still import them (tick Worker failed to load).
