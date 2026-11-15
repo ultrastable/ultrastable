@@ -1,0 +1,50 @@
+{
+  "_doc": "BRANCH-SWEEP-1 policy. state_branches and state_prefixes are (parked/* is NOT state: parked work is merged or ported like any branch) written by the system itself (evidence ledgers) and are never merged or deleted by the sweep; the gate runs after every merge and a failure undoes that merge and files a PORT-BRANCH item.",
+  "state_branches": [
+    "session-evidence",
+    "loop-evidence",
+    "audit-evidence"
+  ],
+  "state_prefixes": [],
+  "gate": [
+    [
+      "python3",
+      "-m",
+      "foundation",
+      "loops",
+      "--verify"
+    ],
+    [
+      "python3",
+      "-m",
+      "foundation",
+      "flows",
+      "--check"
+    ],
+    [
+      "python3",
+      "-m",
+      "foundation",
+      "closedloop",
+      "--check"
+    ],
+    [
+      "python3",
+      "-m",
+      "foundation",
+      "docs_audit",
+      "--check"
+    ],
+    [
+      "python3",
+      "scripts/lint_workflows.py"
+    ],
+    [
+      "node",
+      "--test",
+      "--no-warnings",
+      "seed/worker/test/"
+    ]
+  ],
+  "port_owner": "operations"
+}
