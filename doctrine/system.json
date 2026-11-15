@@ -6,15 +6,11 @@
     "d1": {
       "org": {
         "name": "ultrastable-org",
-        "id": "7468898a-b515-495f-9910-e91cb80f5810"
+        "id": "216e97ea-da5e-41e5-af52-af6c0484a7be"
       },
       "ops": {
         "name": "ultrastable-ops",
-        "id": "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"
-      },
-      "ultrastable": {
-        "name": "ultrastable-ultrastable",
-        "id": "a0227f92-04a7-4640-ae39-bb6a47fc9488"
+        "id": "5cd83b52-864a-4510-b062-fc0d9402d06c"
       }
     },
     "kv": {
@@ -111,16 +107,6 @@
         ],
         "services": {
           "TICK": "ultrastable-tick"
-        }
-      }
-    },
-    "ultrastable-ultrastable": {
-      "main": "seed/worker/src/index.js",
-      "role": "found in the account, owner unknown: a bootstrap output (tenant 0 self-test); retired once nothing routes to it",
-      "crons": [],
-      "bindings": {
-        "d1": {
-          "DB": "ultrastable"
         }
       }
     },

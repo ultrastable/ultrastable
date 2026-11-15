@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
-// Copyright (c) Ultrastable
 // ACCOUNT-SPLIT-2: the two-account controller. The same tick code runs in the source account (quniverse) and the target account
 // (ultrastable). Each beat, a tick reads its peer's /health (env.CUTOVER_PEER) and decides whether it runs the loops:
 //   - a tick runs the loops only while it is 'primary' and no reachable peer is primary with a higher epoch (never two primaries);

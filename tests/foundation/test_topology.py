@@ -57,7 +57,8 @@ class Topology(unittest.TestCase):
 
     def test_system_json_is_generated_from_the_topology(self):
         self.assertEqual(json.loads((T.REPO / "doctrine/system.json").read_text(encoding="utf-8")), T.emit_system())
-        self.assertEqual(json.loads((T.REPO / "doctrine/system.json").read_text(encoding="utf-8"))["resources"]["d1"]["org"]["id"], "7468898a-b515-495f-9910-e91cb80f5810")
+        topo_org = next(d["id"] for d in json.loads((T.REPO / "doctrine/topology.json").read_text(encoding="utf-8"))["stores"]["d1"] if d.get("key") == "org")
+        self.assertEqual(json.loads((T.REPO / "doctrine/system.json").read_text(encoding="utf-8"))["resources"]["d1"]["org"]["id"], topo_org)
 
     def test_deploy_script_reads_the_same_declaration(self):
         src = (T.REPO / "deploy/deploy-site.mjs").read_text(encoding="utf-8")
