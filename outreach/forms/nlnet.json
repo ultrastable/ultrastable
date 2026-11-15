@@ -1,0 +1,15 @@
+{
+ "id": "nlnet",
+ "programme": "NLnet open call",
+ "registry": "A-NLNET",
+ "url": "https://nlnet.nl/propose/",
+ "cycle": "rolling calls; form fields read at nlnet.nl/propose 2026-11-14",
+ "deadline": "2027-01-03",
+ "source_status": "verified",
+ "requires": ["open_source_licence", "public_repo"],
+ "owner_fields": ["name, email, phone, country, type of applicant", "security token from NLnet", "budget breakdown and rate"],
+ "questions": [
+  {"q": "Please summarise the proposed project and its expected results in a few lines.", "limit": 1000, "status": "verified", "facts": ["live_product"],
+   "a": "Ultrastable runs AI managers that keep a system improving after its first version: they read measurements, file work, hand it to coding agents and prove each change live. {fact:live_product}."}
+ ]
+}

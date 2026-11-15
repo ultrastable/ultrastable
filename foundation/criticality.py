@@ -20,6 +20,8 @@ SELF-REFERENCE-1 (Rowan, 2026-11-14): "Ultrastable runs on Ultrastable. That sel
               is an external neutron source: it raises k, never k_self. Origin is read from the deployed commit (origin_of) or the row's `origin`.
   regime      self-sustaining (bootstrap and k_self >= k_floor), driven (k >= k_floor, k_self below it), subcritical (k < k_floor)
 In the driven regime the gate keeps every item but moves the ones that raise k_self (raises-self label or id prefix) to the front.
+Ignition (QNFO-PORT-1): open_ignition_gaps is the number of links that do not close on themselves (relapsed items, families with no doer, metrics with no
+lever left, guard regressions, unusable probes), written by foundation/sauce.py to ops/ignition.json. self_sustaining = k at or above its floor AND 0 gaps.
 """
 from __future__ import annotations
 import hashlib, json, re, subprocess, sys
@@ -101,6 +103,16 @@ def bootstrap_holds(root=REPO) -> bool | None:
         return False  # a broken registry is a broken fixed point
 
 
+def ignition(root=REPO) -> dict:
+    """The latest ignition-gap reading (foundation/sauce.py). None when no pass has written one: an unmeasured chain is not a closed chain."""
+    p = Path(root) / "ops/ignition.json"
+    try:
+        j = json.loads(p.read_text(encoding="utf-8"))
+        return {"open_ignition_gaps": int(j["open_ignition_gaps"]), "at": j.get("at")}
+    except (OSError, ValueError, KeyError, TypeError):
+        return {"open_ignition_gaps": None, "at": None}
+
+
 def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None) -> dict:
     c, now = cfg(root), now or datetime.now(timezone.utc)
     since = now - timedelta(hours=c["window_hours"])
@@ -125,14 +137,16 @@ def compute(root=REPO, now: datetime | None = None, feed_ok: bool | None = None)
         g = _fl.graph(_fl.load(root)[0]); chain = round(len(g["closed"]) / max(len(_fl.load(root)[0]["flows"]), 1), 3)
     except (OSError, KeyError, ValueError):
         chain = 0.0  # no declared flow graph: the chain reaction cannot be shown
+    ig = ignition(root)
     return {"chain": chain, "at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "mantra": MANTRA, "deploys": len(dep), "verified_deploys": len(verified),
             "cost": cost, "human_touches": touches, "k": k, "clauses": clauses, "gate": "deploys-and-cost-only" if k < c["k_floor"] else "open",
             "self_deploys": self_n, "origins": origins, "k_self": k_self, "self_share": round(self_n / len(verified), 3) if verified else 0.0,
-            "bootstrap": boot, "regime": regime}
+            "bootstrap": boot, "regime": regime,
+            "open_ignition_gaps": ig["open_ignition_gaps"], "self_sustaining": k >= c["k_floor"] and ig["open_ignition_gaps"] == 0}
 
 
 def state_hash(r: dict) -> str:
-    keep = {k: r[k] for k in ("chain", "deploys", "verified_deploys", "cost", "human_touches", "k", "clauses", "k_self", "bootstrap") if k in r}
+    keep = {k: r.get(k) for k in ("chain", "deploys", "verified_deploys", "cost", "human_touches", "k", "clauses", "open_ignition_gaps", "k_self", "bootstrap")}
     return hashlib.sha256(json.dumps(keep, sort_keys=True).encode()).hexdigest()[:16]
 
 

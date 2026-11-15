@@ -1,0 +1,203 @@
+{
+ "_doc": "BLINDSPOT-1 (owner, 2026-11-14): 'The system needs to know what the user can't know or doesn't know. Ignorance is something you can know that I don't know.' The owner supplies the idea and cannot be expected to know what every system needs. This register lists those needs as data, each with a probe the repository can run. `python3 -m foundation blindspots --scan --apply` files an executor item Q-BLIND-<id> for every failed probe the system can fix (class system), and leaves identity-bound ones (class owner-identity, a gate from gates_allowed) as machine-readable gates on the existing NEEDS-YOU surface, never as prose. `sweeps` are recurring questions per domain: if no answer is recorded within cadence_days, a Q-BLIND-SWEEP-<domain> item is filed, so what nobody thought to ask still gets asked. `--learn` adds a newly discovered blind spot (from an incident, a scout or competitor finding, a rejected application, a reply) so the register only grows. A probe that cannot run offline (dns, http) reports unmeasured, never pass.",
+ "gates_allowed": [
+  "statement-in-owners-name",
+  "owner-account",
+  "sender-postal-address",
+  "money",
+  "entity"
+ ],
+ "answers_file": "ops/blindspots/answers.jsonl",
+ "learned_file": "ops/blindspots/learned.json",
+ "needs": [
+  {
+   "id": "privacy-notice",
+   "domain": "privacy",
+   "why": "A site that takes free text and counts visits must say what it keeps; many laws and every app store expect it.",
+   "probe": "grep:site/legalpages.js::export const PRIVACY",
+   "class": "system",
+   "action": "site/legalpages.js, served at /privacy"
+  },
+  {
+   "id": "security-contact",
+   "domain": "security",
+   "why": "Researchers who find a flaw need a published route (RFC 9116) or they disclose publicly.",
+   "probe": "grep:site/legalpages.js::export const SECURITY_TXT",
+   "class": "system",
+   "action": "/.well-known/security.txt"
+  },
+  {
+   "id": "accessibility-statement",
+   "domain": "accessibility",
+   "why": "Accessibility law applies to sites regardless of size in many markets, and a statement gives a reporting route.",
+   "probe": "grep:site/legalpages.js::export const ACCESSIBILITY",
+   "class": "system",
+   "action": "/accessibility"
+  },
+  {
+   "id": "footer-links",
+   "domain": "privacy",
+   "why": "A policy nobody can find is not a policy.",
+   "probe": "grep:site/worker.js::href=\\\\\"/privacy\\\\\"",
+   "class": "system",
+   "action": "link privacy and accessibility from every page footer"
+  },
+  {
+   "id": "outreach-disclosure",
+   "domain": "outreach",
+   "why": "Automated outreach needs disclosure, opt-out and a postal address (CAN-SPAM, GDPR/PECR) before the first send.",
+   "probe": "grep:scripts/outreach_intro.py::opt-out",
+   "class": "system",
+   "action": "scripts/outreach_intro.py"
+  },
+  {
+   "id": "email-authentication",
+   "domain": "outreach",
+   "why": "Mail without SPF, DKIM and DMARC lands in spam or is rejected, so outreach silently does nothing.",
+   "probe": "dns:_dmarc.ultrastable.io:TXT::v=DMARC1",
+   "class": "system",
+   "action": "publish SPF, DKIM and DMARC records through the Cloudflare API from the tick Worker"
+  },
+  {
+   "id": "terms-of-use",
+   "domain": "legal",
+   "why": "Terms limit liability and set acceptable use; text published as the owner is a statement in the owner's name.",
+   "probe": "grep:site/worker.js::case \"/terms\"",
+   "class": "owner-identity",
+   "gate": "statement-in-owners-name",
+   "action": "draft is prepared by the system; publishing it is the owner's act"
+  },
+  {
+   "id": "legal-entity",
+   "domain": "legal",
+   "why": "Contracts, bank accounts, grants and liability protection need an entity; a person otherwise carries all liability personally.",
+   "probe": "file:business/entity.json",
+   "class": "owner-identity",
+   "gate": "entity",
+   "action": "entity formation is identity-bound; the system prepares comparison and filing data"
+  },
+  {
+   "id": "name-clearance",
+   "domain": "ip",
+   "why": "Another party may hold a trademark on the name; discovering that after launch forces a costly rename.",
+   "probe": "file:ip/name-clearance.md",
+   "class": "system",
+   "action": "search public trademark registers and record the result with sources"
+  },
+  {
+   "id": "dependency-licences",
+   "domain": "ip",
+   "why": "A dependency licence can forbid the commercial terms the product sells under.",
+   "probe": "file:doctrine/dependency-licences.json",
+   "class": "system",
+   "action": "inventory dependencies and their licences and check against USL-1.0 commercial use"
+  },
+  {
+   "id": "backup-restore",
+   "domain": "continuity",
+   "why": "A backup never restored is a hope; the founder is one person.",
+   "probe": "file:ops/backup/last-restore.json",
+   "class": "system",
+   "action": "export D1 and KV to R2 on a clock and restore into a scratch database, recording the result"
+  },
+  {
+   "id": "succession",
+   "domain": "continuity",
+   "why": "One founder is a single point of failure: if they are unreachable, who can renew the domain, pay the bill or shut a system down?",
+   "probe": "file:doctrine/succession.json",
+   "class": "owner-identity",
+   "gate": "owner-account",
+   "action": "system prepares a recovery map of every account and renewal; naming a person is the owner's act"
+  },
+  {
+   "id": "domain-renewal",
+   "domain": "continuity",
+   "why": "A lapsed domain takes the site, email and every registry listing with it.",
+   "probe": "file:ops/blindspots/domain-expiry.json",
+   "class": "system",
+   "action": "read RDAP expiry on a clock and file a money gate 60 days out"
+  },
+  {
+   "id": "ai-disclosure",
+   "domain": "legal",
+   "why": "Rules on AI-generated content and automated contact (EU AI Act transparency, platform policies) require telling people.",
+   "probe": "grep:outreach/intro-profile.json::automated",
+   "class": "system",
+   "action": "outreach messages and generated pages state they are automated"
+  },
+  {
+   "id": "cost-ceiling",
+   "domain": "finance",
+   "why": "Model calls and database reads can run up an unbounded bill.",
+   "probe": "file:doctrine/cost.json",
+   "class": "system",
+   "action": "budgets and a guard (COST-GUARD-1)"
+  },
+  {
+   "id": "tax-and-bookkeeping",
+   "domain": "finance",
+   "why": "Revenue, credits and grants create filing duties on dates the owner does not know.",
+   "probe": "file:business/tax-calendar.json",
+   "class": "owner-identity",
+   "gate": "money",
+   "action": "system builds the calendar from entity and jurisdiction; filing is the owner's act"
+  }
+ ],
+ "sweeps": [
+  {
+   "domain": "legal",
+   "question": "Which laws and platform rules apply to what this system now does that it did not do last quarter?",
+   "cadence_days": 90
+  },
+  {
+   "domain": "security",
+   "question": "What new way could this system be attacked, given what it added since the last sweep?",
+   "cadence_days": 30
+  },
+  {
+   "domain": "privacy",
+   "question": "What personal data does the system now touch, where does it go, and does the privacy page still say so?",
+   "cadence_days": 30
+  },
+  {
+   "domain": "finance",
+   "question": "What recurring costs, renewals and filing dates exist that the owner has not been shown?",
+   "cadence_days": 30
+  },
+  {
+   "domain": "continuity",
+   "question": "What breaks if the owner is unreachable for 30 days?",
+   "cadence_days": 60
+  },
+  {
+   "domain": "platform-risk",
+   "question": "Which platform, API or policy the system depends on changed terms or pricing?",
+   "cadence_days": 30
+  },
+  {
+   "domain": "reputation",
+   "question": "What is publicly said or shown about the system that the system did not put there?",
+   "cadence_days": 30
+  },
+  {
+   "domain": "users",
+   "question": "What would a user in their first minute not know to ask, and does the interview supply it?",
+   "cadence_days": 30
+  },
+  {
+   "domain": "outreach",
+   "question": "Which rule, provider policy or deliverability signal changed for the automated email and social channels, and is every send still disclosed, authenticated and suppressible?",
+   "cadence_days": 30
+  },
+  {
+   "domain": "accessibility",
+   "question": "Which pages or flows were added since the last sweep, and do they meet the design contract with keyboard, screen reader and zoom?",
+   "cadence_days": 60
+  },
+  {
+   "domain": "ip",
+   "question": "Does the name, the licence or any dependency conflict with another party's rights, and what changed in the licences we depend on?",
+   "cadence_days": 90
+  }
+ ]
+}

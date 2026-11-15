@@ -1,9 +1,9 @@
 {
   "id": "OL-20261114-1",
-  "title": "OL-20261114-1: seed carries the owner's outreach intro profile (upstream leaks fails on main)",
-  "body": "**Owner:** outreach-manager\n**Trigger:** upstream leaks fails on main (found 2026-11-14 while landing SELF-REFERENCE-1)\n**Done check:** cmd:python3 -m foundation upstream leaks\n**Status:** open\n\nseed/outreach/intro-profile.json is the instance's own profile (named owner, QNFO) copied into the kernel, so every new org would introduce itself as this owner and 'python3 -m foundation upstream leaks' fails on main since #339. Replace the seed copy with a template whose fields bootstrap fills from IDEA.md, keep outreach/intro-profile.json as the instance copy, and keep seed/scripts/test_outreach_intro.py green.",
+  "title": "OL-20261114-1: MCP registry publish waits on GitHub Actions billing",
+  "body": "**Owner:** marketing-manager\n**Trigger:** Actions jobs run again, or Q-PROMO-mcp-registry taken\n**Done check:** grep:ops/promotion/outcomes.jsonl::mcp-registry\n**Status:** open\n\nmcp-registry.yml publishes via GitHub OIDC; every Actions job is refused for billing (existing NEEDS-YOU card). Second route: DNS-key login for io.ultrastable from the tick Worker (Q-PROMO-mcp-registry).",
   "labels": [
-    "role:outreach-manager",
+    "role:marketing-manager",
     "open-loop"
   ],
   "milestone": "Now",

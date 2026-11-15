@@ -1,9 +1,9 @@
 {
   "id": "OL-20261114-2",
-  "title": "OL-20261114-2: test_repo_cleanup: test_metasignal makes temp directories nothing removes",
-  "body": "**Owner:** operations\n**Trigger:** foundation tests red on main at 1202e5d (found 2026-11-14 while landing SELF-REFERENCE-1)\n**Done check:** grep:tests/foundation/test_metasignal.py::from tests\\.foundation\\._repo import scratch\n**Status:** open\n\ntests/foundation/test_metasignal.py:17 and :29 call tempfile directly. Use the shared scratch() helper (tests/foundation/_repo.py), which removes its directories, so test_repo_cleanup passes.\n\nsize: S\n\n**Closing probe:** grep:tests/foundation/test_metasignal.py::from tests\\.foundation\\._repo import scratch",
+  "title": "OL-20261114-2: CONNECT-2: dashboard panel for /auth/connectors and a per-tenant connect button",
+  "body": "**Owner:** product-manager\n**Trigger:** next executor pass\n**Done check:** grep:dashboard::auth/connectors\n**Status:** open\n\nThe status JSON exists; the owner dashboard does not render it yet, and connector tokens are not yet exposed to tenant tools through a getToken-backed API.",
   "labels": [
-    "role:operations",
+    "role:product-manager",
     "open-loop"
   ],
   "milestone": "Now",

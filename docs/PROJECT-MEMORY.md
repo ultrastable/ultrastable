@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-14
 
+- 2026-11-14: AGENT-READY-2: ultrastable.io serves Markdown for Agents (Accept: text/markdown), named AI-bot rules in robots.txt and WebMCP tools (site/readiness.js); OAuth discovery and commerce protocols declined with reasons in doctrine/agent-standards.json; WEB-BOT-AUTH-1 and Q-AGENT-OAUTH-1 filed. PR 343 overlaps PR 340: RECONCILE-343 keeps its role-work, SOP and handoffs.
 - 2026-11-14: Actions jobs are refused (billing), so `scripts/local_checks.py` runs checks.yml without Actions (LOCAL-CHECKS-1); PRIORITIZE-2 ranks the backlog as goal vectors with live shadow prices (cost over budget x3, Actions blocked x1.5) and Pareto fronts (`doctrine/priorities.json`).
 Maintained by: every agent, on every session end. Staleness is checked by `scripts/check_memory.py` (CI `memory-fresh`).
 
@@ -191,3 +192,28 @@ Rowan: "Ultrastable runs on Ultrastable. That self-reference is key to bootstrap
 ## 2026-11-14: the system knows what the user does not know (IGNORANCE-1)
 
 Rowan: the system must know what the user cannot or does not know; ignorance is knowable. `foundation/ignorance.py` makes it a computed set, unknown = known - told, from the criticality regime, open loops and open gaps, with `ops/told.jsonl` as the told log (fingerprinted, so a changed fact is unknown again). 47 facts known at first run. The dashboard panel is `Q-IGNORANCE-REPORT`.
+## 2026-11-14: PROMOTE-1, strategy and promotion as a closed loop (Session: session_0156nqDsGSkQrok8LwjeYziE)
+- Owner: promotion, applications and strategy are the system's job. `doctrine/promotion.json` lists channels; `foundation/promote.py` scores them from probed facts (`outreach/facts.json`), renders application kits (`outreach/applications/ultrastable/`), files `Q-PROMO-*` for credential-free channels, and re-weights from `--outcome`.
+- Facts today: source-available (USL-1.0), private repos, one founder, no outside customers. So NLnet and Show HN are not-a-fit-now; YC (Winter 2027 late applications open), cloud credits and intro email fit.
+- Live channels: IndexNow from the hourly site tick (daily, `site/promote.js`); MCP registry via `.github/workflows/mcp-registry.yml` (GitHub OIDC; blocked while Actions billing fails).
+
+## 2026-11-14: BLINDSPOT-1, the system knows what the owner does not (Session: session_0156nqDsGSkQrok8LwjeYziE)
+- Owner: "the system needs to know what the user can't know". `doctrine/blindspots.json` registers universal needs with probes; `foundation/blindspots.py` scans, files `Q-BLIND-*`, runs recurring domain sweeps, and learns new needs.
+- Fixed in the same change: /privacy, /accessibility, /.well-known/security.txt and footer links (site/legalpages.js). Found live: no DMARC on ultrastable.io (SPF for receiving only), so outreach would land in spam; terms, entity, backup restore, succession, domain renewal, tax calendar, name clearance and dependency licences are open gaps.
+
+## 2026-11-14: MCP-OAUTH-1, MCP clients connect by browser consent, never a pasted token (Session: mcp-oauth-inbound)
+- Owner: "Tokens, copying and pasting tokens, never going to happen... link services through APIs, MCPs, OAuth and callbacks, supported natively." `site/oauth.js` makes ultrastable.io its own OAuth 2.1 authorization server for `/mcp`: RFC 9728 and 8414 metadata, `WWW-Authenticate` challenge on an unauthenticated `submit_work`, Client ID Metadata Documents plus RFC 7591 registration, authorization-code with mandatory PKCE S256, `iss`, resource binding (RFC 8707), refresh rotation with reuse detection. Consent sits behind the existing email-code owner session (`us_owner` cookie, same ops database; `dashboard/worker.js` returns the person to `/oauth/authorize` after sign-in). OAuth identity (client name, redirect host) becomes the `agent` and `harness` on the item; the integration bearer token stays as the legacy path for non-interactive callers.
+- Proof: `node site/oauth.test.mjs`; the official MCP TypeScript SDK client completed discovery, registration, consent, PKCE and `submit_work` in-process. Register row `mcp-auth-site` is supported; the tenant kit (`seed/worker`, row `mcp-auth`) still validates a static bearer and stays partial.
+- Open (filed as roadmap, outbound direction): connecting third-party services into a person's Ultrastable (Google, Microsoft, GitHub, MCP servers as clients) by the same consent pattern needs one OAuth app per provider registered under the owner's identity (the existing `oauth-apps` gate card); not buildable without it.
+- 2026-11-15 PLATFORM-AUDIT-1: `python3 -m foundation platformaudit --probe|--apply|--check` (foundation/platformaudit.py, weekly in org-settings.yml). Open: Cloudflare cutover incomplete (topology.json names quniverse account edb167; live ultrastable-account workers use different D1 ids), flagged each run.
+## 2026-11-14 INSIGHT-1: analytics are a feedback loop (owner directive)
+- Owner: analytics do not rely on an opt-in tag; they run on Cloudflare data and are feedback loops in both the Qniverse and Ultrastable.
+- Built: `foundation/insight.py` with `doctrine/insight.json` reads each content page's 7 days against the 7 before from the cookieless first-party hits, classifies rising, external_pull and fading, files at most two `Q-INSIGHT-*` growth items a day, settles each finding after 8 days against what the page really got (`ops/insight/findings.json`) and tunes its own `rise_min_views`. It runs inside the product manager pass (`foundation/pm.py`). Loop `insight-loop`, flow declared, check `python3 -m foundation insight --check`.
+- Live read of the hits table: `/proof` 994 views (264 outside-referred), `/pilot` 840 (183), `/` 660 (19); the first pass after merge files the top two as external_pull items. The live fetch itself needs the Cloudflare token bound in product-manager.yml.
+- Twin in the Qniverse: QNFO/qnfo-workers `migrations/2026-11-14-analytics-loop.sql` (ANALYTICS-LOOP-1). Probe: `grep:foundation/insight.py::def settle`.
+
+## 2026-11-14 CONSOLE-AGENT-1: the owner console is an agent (owner critique)
+- Owner: the command line should work like a top-tier server-side agent, with a usable phone UI; the critiques of the fleet command line apply to Ultrastable too.
+- Found: `dashboard/worker.js` ran exact registered commands only (anything else answered "Unknown command"), one input at the bottom of a long page, one `<pre>` overwritten per result, and its tests were not run in CI.
+- Built: `dashboard/agent.js` (a bounded tool loop on the Workers AI binding: one SELECT over an allow-list of tables, read-only commands, changing commands only after a code emailed in the last 15 minutes via the audited undoable path, a text answer always: synthesis pass, then a digest), the AI binding declared in `doctrine/system.json` and rendered, a stacked 16 px form with named chips, rendered tables and step counts, `dashboard/test/agent.test.mjs` (10 tests) and a `checks.yml` step that runs all dashboard tests.
+- Boundaries: the agent does not edit code itself. `delegate` and `dispatch` hand code work to the fleet and GitHub Actions, where the coding agents run. Probe: `grep:dashboard/agent.js::export async function ask`.

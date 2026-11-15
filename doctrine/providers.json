@@ -1,0 +1,80 @@
+{
+  "_doc": "PROVIDERS-1 (owner, 2026-11-14): code is canonical in GitHub; it runs on one cloud provider at a time per installation, Cloudflare first. The provider mirrors what the loops need (code, issues, records) so loops close there without waiting on GitHub. Ultrastable is tenant 0 and must run entirely on its own provider account. Other providers are ports of the same core contract (core-contract.json), never forks.",
+  "version": "1.0.0",
+  "canonical": {
+    "code": "github.com/ultrastable: ultrastable, seed, workers, spec, license, ops, .github",
+    "direction": "GitHub is master and public face; provider copies are mirrors rebuilt from it"
+  },
+  "layers": [
+    {
+      "id": "core",
+      "what": "seed and charter, self-closing loops, virtual managers, trust ledger, gates",
+      "where": "seed/, foundation/, doctrine/, core-contract.json",
+      "provider_specific": false
+    },
+    {
+      "id": "port",
+      "what": "one adapter per provider implementing the same six capabilities",
+      "where": "platform/adapters/",
+      "provider_specific": true
+    },
+    {
+      "id": "installation",
+      "what": "one running organisation on one provider account (tenant 0 is Ultrastable)",
+      "where": "instances/<org>/, doctrine/topology.json",
+      "provider_specific": true
+    }
+  ],
+  "capabilities": [
+    "scheduler (the tick)",
+    "relational store (records, issues mirror)",
+    "object or key store",
+    "model inference",
+    "http front door",
+    "git working copy and mirror"
+  ],
+  "providers": [
+    {
+      "id": "cloudflare",
+      "state": "first; running on the wrong account (deploy/cloudflare-accounts.json)",
+      "map": {
+        "scheduler": "Workers cron",
+        "relational store": "D1",
+        "object or key store": "KV, R2",
+        "model inference": "Workers AI",
+        "http front door": "Workers custom domains",
+        "git working copy and mirror": "unverified: GIT-IN-CLOUDFLARE-1; R2 bundles today"
+      }
+    },
+    {
+      "id": "gcp",
+      "state": "skeleton, tested, undeployed"
+    },
+    {
+      "id": "selfhost",
+      "state": "Python 3 and SQLite from a repo copy"
+    },
+    {
+      "id": "aws",
+      "state": "roadmap"
+    },
+    {
+      "id": "azure",
+      "state": "roadmap"
+    },
+    {
+      "id": "others",
+      "state": "roadmap: Fly.io, Vercel, Deno Deploy, VPS with Docker"
+    }
+  ],
+  "self_hosting_test": {
+    "claim": "Ultrastable runs entirely on Ultrastable",
+    "true_when": [
+      "every worker, store, cron and zone of tenant 0 is in the ultrastable account and none in quniverse",
+      "every deploy starts from a GitHub merge and lands on that account",
+      "the tick on that account closes a loop with no client session"
+    ],
+    "today": "false: see deploy/transfer/plan.json",
+    "probe": "python3 scripts/cf_account.py transfer verify"
+  }
+}

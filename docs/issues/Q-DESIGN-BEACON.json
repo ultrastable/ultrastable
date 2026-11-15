@@ -1,7 +1,7 @@
 {
   "id": "Q-DESIGN-BEACON",
   "title": "Q-DESIGN-BEACON: first-party beacon on every experiment surface",
-  "body": "**Owner:** design-manager\n**Trigger:** every tick\n**Done check:** cmd:python3 -m foundation design --lint\n**Status:** open\n\nAn experiment needs its metric. Ensure seed/analytics/analytics.js emits interview_started, time_to_first_action and misclick events on the site and cockpit so DX-001 and DX-002 can start; then set them to running.",
+  "body": "**Owner:** design-manager\n**Trigger:** every tick\n**Done check:** cmd:python3 -m foundation design --lint\n**Status:** closed\n\nAn experiment needs its metric. Ensure seed/analytics/analytics.js emits interview_started, time_to_first_action and misclick events on the site and cockpit so DX-001 and DX-002 can start; then set them to running.\n\n**Evidence:** closing probe passed (first pass): design lint ok\n",
   "labels": [
     "role:design-manager",
     "growth"

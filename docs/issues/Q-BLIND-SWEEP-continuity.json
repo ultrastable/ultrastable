@@ -1,0 +1,11 @@
+{
+  "id": "Q-BLIND-SWEEP-continuity",
+  "title": "Q-BLIND-SWEEP-continuity: answer the continuity sweep",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 60 days\n**Done check:** `python3 -m foundation blindspots --answer continuity --text <answer with evidence>` recorded\n**Status:** open\n\nQuestion: What breaks if the owner is unreachable for 30 days?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+  "labels": [
+    "role:product-manager",
+    "blindspot"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

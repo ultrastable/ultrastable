@@ -36,6 +36,7 @@ jobs:
           PYTHONPATH=products/gaplint python3 -m gaplint .
           node --test demos/test/*.test.mjs
           node --test deploy/cost-probe.test.mjs
+          node --test --no-warnings dashboard/test/*.test.mjs
       - name: Secret and key scan
         run: |
           if grep -rEIl --exclude-dir=.git -e '-----BEGIN [A-Z ]*PRIVATE KEY-----' -e 'gh[pousr]_[A-Za-z0-9]{36,}' -e 'AKIA[0-9A-Z]{16}' -e 'sk-ant-[A-Za-z0-9_-]{20,}' .; then echo "secret-like content found"; exit 1; fi
@@ -80,6 +81,8 @@ jobs:
           python3 -m foundation market --check
           python3 -m foundation scout --check
           python3 -m foundation rnd --check
+          python3 -m foundation promote --check
+          python3 -m foundation blindspots --check
           python3 -m foundation agentstd --check
           python3 -m foundation crosswalk --check
           python3 -m foundation agents --check
@@ -89,6 +92,7 @@ jobs:
           python3 -m foundation growth --check
           python3 -m foundation design --check
           python3 -m foundation design --lint
+          python3 -m foundation insight --check
           python3 -m foundation flows --check
           python3 -m foundation criticality --check
           python3 -m foundation cost --check
@@ -119,8 +123,12 @@ jobs:
         run: python3 scripts/check_routes.py
       - name: Guided set-up is plain-language and in sync (USER-PATH-1)
         run: python3 scripts/gen_userpath.py --check
+      - name: Site worker modules parse (a syntax error blocks every deploy)
+        run: for f in site/*.js; do node --check "$f" || exit 1; done
       - name: Site pins and gaps are tied to real issues and code (SITE-PINS-1)
         run: python3 scripts/build_site_roadmap.py --check
+      - name: Agent data is current
+        run: python3 scripts/build_site_agentdata.py --check
       - name: Platform brief is current
         run: python3 scripts/platform_brief.py --check
       - name: Project memory is current

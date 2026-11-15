@@ -1,0 +1,11 @@
+{
+  "id": "RECONCILE-343",
+  "title": "RECONCILE-343: rebase PR 343 onto main: keep ROLE-WORK-1, CODE-AGENT-SOP-1 and its issues; drop the read API that PR 340 shipped",
+  "body": "**Owner:** Staff (platform)\n**Trigger:** PR 343 open and conflicting with main after PR 340\n**Done check:** grep:site/controlplane.js::handoffs\n**Status:** open\n\nPR 340 (CONTROL-PLANE-1, site/controlplane.js) shipped /api/v1 and /ops on the public site while PR 343 built the same read API in seed/worker/src/controlplane.js with a site proxy; they conflict in site/worker.js. Unique to 343 and still needed (live /api/v1/status says none of 290 dispatches executed): seed/worker/src/work.js (roles consume dispatches, pr_merged probe), the SOP and POST /api/v1/handoffs (move both into site/controlplane.js next to intake), the CODE-AGENT-SOP-1 rule in the agent files, issues SERVER-CHECKS-1, SERVER-DEPLOY-1, ROLE-WORK-2. Drop 343's duplicate read endpoints and the site proxy. Closing probe: GET https://ultrastable.io/api/v1/sop answers 200 and dispatches leave status queued.",
+  "labels": [
+    "role:staff",
+    "ws:server-owns"
+  ],
+  "milestone": "Now",
+  "workstream": "Platform"
+}

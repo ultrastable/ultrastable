@@ -1,0 +1,15 @@
+// BLINDSPOT-1: pages every site needs and an owner never thinks to ask for. Each statement here is checked against code:
+// analytics (seed/analytics/analytics.js: cookieless, no IP stored, daily-rotating id, DNT and GPC honoured, raw hits kept RAW_KEEP_DAYS = 35),
+// security contact (SECURITY.md), accessibility (doctrine/design.json contract, proven by `python3 -m foundation design --check`).
+export const SECURITY_CONTACT = "pilot@ultrastable.io";
+export const SECURITY_TXT = "Contact: mailto:" + SECURITY_CONTACT + "\nExpires: 2027-11-14T00:00:00.000Z\nPreferred-Languages: en\nPolicy: https://github.com/ultrastable/ultrastable/blob/main/SECURITY.md\nCanonical: https://ultrastable.io/.well-known/security.txt\n";
+
+export const PRIVACY = "<div class=\"head\"><h1>Privacy</h1><p>What this site records, and what it does not.</p></div>"
+  + "<div class=\"card\"><h3 class=\"card-title\">Visits</h3><p>Page views are counted by our own first-party counter. It sets no cookie, loads no third-party script and stores no IP address. A visitor id is derived for one day only and then rotates, so a person cannot be followed from one day to the next. A browser that sends Do Not Track or Global Privacy Control is not counted. Raw hits are kept for 35 days; daily totals are kept longer.</p></div>"
+  + "<div class=\"card\"><h3 class=\"card-title\">Ideas and pages you submit</h3><p>If you describe an idea or ask for a change, the text is stored so the system can build and improve what you asked for. Do not include secrets or other people's personal data in it.</p></div>"
+  + "<div class=\"card\"><h3 class=\"card-title\">Email</h3><p>If you write to us, we keep the message to answer it. The system may send a short, labelled, automated introduction to an organisation at a role mailbox that organisation publishes on its own site. Every such message says who sent it and how to opt out, and an opt-out blocks the whole domain.</p></div>"
+  + "<div class=\"card\"><h3 class=\"card-title\">Your requests</h3><p>To see, correct or delete something you sent us, email <a href=\"mailto:" + SECURITY_CONTACT + "\">" + SECURITY_CONTACT + "</a> with the subject PRIVACY. This page describes what the code does today and is updated in the same change as the code.</p></div>";
+
+export const ACCESSIBILITY = "<div class=\"head\"><h1>Accessibility</h1><p>What we build to, and how to tell us it fell short.</p></div>"
+  + "<div class=\"card\"><h3 class=\"card-title\">What we aim for</h3><p>We aim for WCAG 2.2 level AA. The shared design rules require 16px body text, 14px minimum text, 44px touch targets, AA colour contrast in light and dark, a visible focus ring, reduced-motion support and one primary action per screen. A build fails if a theme breaks the contrast rule. We have not had an independent audit yet.</p></div>"
+  + "<div class=\"card\"><h3 class=\"card-title\">Tell us</h3><p>If something does not work with your assistive technology, email <a href=\"mailto:" + SECURITY_CONTACT + "\">" + SECURITY_CONTACT + "</a> with the subject ACCESSIBILITY and the page address.</p></div>";

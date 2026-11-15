@@ -1,0 +1,29 @@
+{
+ "id": "yc",
+ "programme": "Y Combinator",
+ "registry": "B-YC",
+ "url": "https://www.ycombinator.com/apply",
+ "cycle": "Winter 2027: on-time deadline 2026-11-02 passed, late applications accepted (read at ycombinator.com/apply 2026-11-14)",
+ "deadline": "rolling-late",
+ "source_status": "secondary",
+ "source_note": "The live form is behind sign-in. Questions marked verified are quoted on https://www.ycombinator.com/howtoapply; the others are YC's long-standing company questions and are checked against the form at submission.",
+ "owner_fields": ["founder names, emails, background and most impressive achievement", "equity split and incorporation", "one-minute founder video"],
+ "questions": [
+  {"q": "Describe what your company does in 50 characters or less.", "limit": 50, "status": "secondary", "facts": [],
+   "a": "AI managers that keep systems improving"},
+  {"q": "What is your company going to make? Please describe your product and what it does or will do.", "limit": 1500, "status": "verified", "facts": ["live_product", "self_hosted", "public_mcp"],
+   "a": "Ultrastable is the management layer after the first version. Coding agents and app builders produce a first draft and then wait to be told what to do next. Ultrastable runs AI managers (portfolio, product, project) that read the system's own measurements, decide what to improve, file the work, hand it to coding agents, prove each change live with a probe, and keep score. A person states the idea, the measure and a monthly budget; the system supplies the backlog and closes its own loops. It runs on Cloudflare Workers. {fact:live_product}, with {fact:public_mcp}. {fact:self_hosted}."},
+  {"q": "Why did you pick this idea to work on? Do you have domain expertise in this area? How do you know people need what you're making?", "limit": 1500, "status": "secondary", "facts": ["no_outside_customers"],
+   "a": "I am an ideas person. I kept starting systems that needed someone to run them after launch, and every tool I tried stopped at the first draft. So I built the managers I needed, and they run my own projects. The need is a hypothesis we are testing: {fact:no_outside_customers}, and the next step is pilots with people who run something that must keep improving."},
+  {"q": "What's new about what you're making? What substitutes do people resort to because it doesn't exist yet?", "limit": 1500, "status": "secondary", "facts": ["loops"],
+   "a": "What is new is that the system decides the next piece of work itself, from its own measures, and must prove each change live before it counts. Today people substitute a hired engineer, an agency retainer, or a coding agent they must direct task by task. Ultrastable itself runs on {fact:loops}, each with a trigger, an owner, a done check and a closing probe."},
+  {"q": "Who are your competitors? What do you understand about your business that they don't?", "limit": 1500, "status": "verified", "facts": ["competitors_tracked"],
+   "a": "GitHub Copilot coding agent, OpenAI Codex, Claude Code, Factory and OpenHands execute tasks someone wrote. Lovable, Bolt and Replit build the first version. LangGraph is a framework to build agents. We track {fact:competitors_tracked}. What we understand: the bottleneck is not writing code, it is knowing what to ask for next and proving it worked. Whoever owns the backlog and the proof owns the customer."},
+  {"q": "How do or will you make money? How much could you make?", "limit": 1500, "status": "secondary", "facts": ["commercial_terms"],
+   "a": "The software is {fact:commercial_terms}. Each system also carries a monthly running cost its owner accepts, and we plan a managed tier priced against that budget. Pricing is a hypothesis until pilots measure it."},
+  {"q": "How far along are you?", "limit": 1500, "status": "secondary", "facts": ["live_product", "one_founder", "no_outside_customers"],
+   "a": "{fact:live_product} and runs the founder's own projects unattended. {fact:one_founder}, and {fact:no_outside_customers}."},
+  {"q": "If you had any other ideas you considered applying with, please list them.", "limit": 1000, "status": "verified", "facts": [],
+   "a": "A signals desk that watches markets and news against an owner's own rules, and a companion that remembers and follows up. Both are systems Ultrastable could run."}
+ ]
+}
