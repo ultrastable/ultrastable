@@ -155,7 +155,8 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   const D = (await import("./dashboard-data.js")).default;
   const html = await (await get("https://ultrastable.io/dashboard")).text();
   for (const p of D.tenants.ultrastable.panels) { assert.ok(html.includes('id="panel-' + p.id + '"'), "panel " + p.id); assert.ok(html.includes(p.source), "source shown: " + p.source); }
-  assert.ok(html.includes("Q-LOOP-live-clock") && /live feed/i.test(html), "the pending live feed is stated, not faked");
+  assert.ok(html.includes('id="live"') && /live feed/i.test(html), "the live feed section renders");
+  for (const r of D.tenants.ultrastable.live_feed.runtimes) assert.ok(html.includes(r.tenant), "runtime listed: " + r.tenant);
   assert.ok(html.includes("bring-your-own-account") && html.includes('id="pilot"'));
   console.log("ultrastable-site dashboard ok");
 }

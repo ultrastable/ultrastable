@@ -7,6 +7,7 @@
   "d1_databases": [
     { "binding": "DB", "database_name": "{d1_database}", "database_id": "{d1_database_id}", "migrations_dir": "migrations" }
   ],
-  "workers_dev": false,
+  "workers_dev": {workers_dev},
+  "vars": { "PUBLIC_HEALTH_ONLY": "{public_health_only}" },
   "observability": { "enabled": true }
 }

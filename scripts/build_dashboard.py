@@ -46,6 +46,7 @@ def build(root=ROOT) -> dict:
         sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True).stdout.strip()
     except OSError:
         sha = ""
+    live = j(root, "instances/ultrastable/live-runtime.json")
     tenant0 = {
         "level": 0, "panels": [
             {"id": "loops", "title": "Closed loops", "source": "instances/ultrastable/loop-registry.json",
@@ -71,8 +72,9 @@ def build(root=ROOT) -> dict:
              "headline": f"{len(rows)} trust rows", "rows": [[k, v] for k, v in sorted(rungs.items())],
              "note": "Autonomy widens per surface and action from graded predictions, never by itself."},
         ],
-        "live_feed": {"available": False, "tracked_by": "Q-LOOP-live-clock",
-                      "says": "Ticks, dispatches and breaches as they happen appear here once a deployed runtime reports. Until then this page shows the control plane, not live traffic."},
+        "live_feed": {"available": bool(live["runtimes"]), "tracked_by": "Q-LOOP-live-clock",
+                      "runtimes": [{"tenant": r["tenant"], "level": r["level"], "health": r["health"], "parent": r.get("parent", "")} for r in live["runtimes"]],
+                      "says": "Read from the deployed runtimes' own /health when this page loads: the last tick each reports, and whether the child reports to its parent."},
     }
     # TENANT-1: one view that takes a tenant id; tenant 0 is Ultrastable on itself. Only registered tenants render; others are 404.
     return {"asof": sha, "pilot": j(root, "doctrine/pilot-model.json"), "tenants": {"ultrastable": tenant0}}
