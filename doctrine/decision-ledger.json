@@ -1188,6 +1188,22 @@
       "session": "claude-code-2026-11-15-publish"
     },
     {
+      "id": "lesson-2026-11-15-loopproof-1-a-loop-is-proven-by-a-row-written-before-it-runs",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "LOOPPROOF-1: a loop is proven by a row written before it runs",
+      "body": "What the QNFO fleet does that Ultrastable did not: its heartbeat is a database row with three independent producers, every loop has a clock row (cadence, last run, last good, missed in 24 h), producers measure each other's silence, and an unmeasured value is never read as healthy. Ultrastable had one producer, ten lane loops that only wrote to the console inside one try block (one throw stopped the rest unrecorded), and no count of missed slots: on 2026-11-15 the criticality step failed for hours on a missing table (code ahead of its migration) with nothing counting it. Now: beat() in seed/worker/src/pulse.js, loop_clock, MISSED-<loop>, the site Worker as second producer through /pulse/watch, and DDL carried by the Worker.",
+      "probe": "grep:seed/worker/src/pulse.js::export async function beat"
+    },
+    {
+      "id": "decision-2026-11-15-boot-knows-1-bootstrapped-and-critical-are-stages-the-tick-r",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "BOOT-KNOWS-1: bootstrapped and critical are stages the tick reads, never declares",
+      "body": "Stages seeded, ticking, looping, closing, instrumented, critical, self-sustaining are computed each tick from the org database in seed/worker/src/ignition.js; bootstrapped means instrumented or above; critical means k_eff at or above k_min for six ticks in a row; self-sustaining adds 144 ticks, 0 ignition gaps and 0 human touches. Each change is a row in ignition_log; the first unmet stage is item IGNITE-<stage>. Live reading before this change, 2026-11-15 19:00 UTC: k_eff 0.068 (38 credited over 559 spent), 2 open ignition gaps, 127 of 144 ticks complete in 24 h.",
+      "probe": "grep:seed/worker/src/ignition.js::export function judge"
+    },
+    {
       "id": "lesson-2026-11-15-local-uncommitted-work-is-a-loop-gap-land-it-or-file-it",
       "kind": "lesson",
       "date": "2026-11-15",

@@ -590,12 +590,29 @@ export async function consumeIdeas(env, fetcher) {
   }
   return out;
 }
+// LOOPPROOF-1: a clock cannot notice that it has stopped. Every site tick asks the org tick Worker (TICK service binding) whether its newest
+// tick is stale; the tick Worker runs one itself when it is, and leaves a beat that its own pulse step judges. An unreachable tick Worker is
+// kept in tick:last (published on /status) and counted, so the silence is a recorded number here as well.
+export async function watchTick(env) {
+  if (!env || !env.TICK) return { status: "no-binding" };
+  try {
+    const r = await env.TICK.fetch(new Request("https://tick.internal/pulse/watch", { method: "POST" }));
+    const j = await r.json().catch(() => null);
+    if (r.ok && j && j.ok) { await jput(env, "watchdog:fails", { n: 0 }); return { status: "ok", stale: Boolean(j.stale), ran_tick: j.ran_tick || null }; }
+    throw new Error("http " + r.status + (j && j.error ? " " + j.error : ""));
+  } catch (e) {
+    const f = (await jget(env, "watchdog:fails")) || { n: 0 }; f.n++; f.last = String(e && e.message || e).slice(0, 160); f.at = new Date().toISOString();
+    await jput(env, "watchdog:fails", f); console.error("watchdog: tick worker unreachable", f.n, f.last);
+    return { status: "unreachable", fails: f.n, error: f.last };
+  }
+}
 export async function tick(env, ctx, now) {
   const t = now || new Date(), out = { at: t.toISOString() }, h = await jget(env, "health:models");
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
   { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
   out.webhooks = await tickWebhooks(env, t).catch(e => String(e).slice(0, 120)); // WEBHOOKS-1: outbound callbacks ride this tick, no new cron
+  out.watchdog = await watchTick(env); // LOOPPROOF-1: this Worker is the second producer of the org heartbeat
   await jput(env, "tick:last", out); return out;
 }
 async function statusData(env) {
@@ -722,7 +739,7 @@ const handler = {
   async fetch(request, env, ctx) {
     const u = new URL(request.url);
     const host = u.hostname.replace(/^www\./, "");
-    if (u.pathname === "/health") return Response.json({ ok: true, worker: "ultrastable-site", version: VERSION });
+    if (u.pathname === "/health") { const lt = env && env.ASSETS ? await jget(env, "tick:last").catch(() => null) : null; return Response.json({ ok: true, worker: "ultrastable-site", version: VERSION, watchdog: lt && lt.watchdog ? { ...lt.watchdog, at: lt.at } : null }); } /* LOOPPROOF-1: the second producer's last reading of the org heartbeat */
     if (u.pathname === "/favicon.svg") return new Response(FAVICON, { headers: SVG });
     if (u.pathname === "/social-card.png") return png(env, "social-card.png");
     if (u.pathname === "/apple-touch-icon.png") return png(env, "apple-touch-icon.png");

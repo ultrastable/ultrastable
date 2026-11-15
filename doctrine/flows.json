@@ -955,6 +955,44 @@
       ],
       "feedback": "a merged branch leaves the next scan empty; a ported branch becomes a PORT-BRANCH item the executor takes, and the next scan stops listing the branch once main carries it",
       "bindings": []
+    },
+    "loop-proof": {
+      "inflows": [
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "loop.clock",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "backlog.ranked",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "feedback": "each tick reads the beats its own loops left in earlier slots; a loop that missed its slots becomes MISSED-<loop> at the head of the tick's queue and is closed by the same reading once the loop ticks again; the watchdog beat from the site Worker is judged like any other loop"
+    },
+    "ignition-ladder": {
+      "inflows": [
+        {
+          "signal": "loop.clock",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "backlog.ranked",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "feedback": "the stage read this tick is compared with the stage read last tick; a rise or fall is appended to ignition_log, and the first unmet stage is filed as IGNITE-<stage> in the tick's own queue with the numbers that block it, so the next ticks work on what keeps the system from criticality"
     }
   },
   "implicit_producers": {

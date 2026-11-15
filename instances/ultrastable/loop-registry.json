@@ -2991,6 +2991,73 @@
       ],
       "area": "managers",
       "server_owner": "github-actions"
+    },
+    {
+      "id": "loop-proof",
+      "kind": "governance",
+      "summary": "LOOPPROOF-1: the proof that every server-side loop ran every time. Each loop of the scheduled handler runs inside beat(), which writes a row before the loop starts and its result or error after; the tick step pulse counts expected against good slots over 24 h per loop and for the tick itself, writes loop_clock, files MISSED-<loop> for a loop that is late, stopped, failing, hung or never ran, and closes it when the loop ticks again. The site Worker is the second producer: it calls /pulse/watch every tick and the tick Worker runs a tick itself when the newest one is stale.",
+      "trigger": "every tick (cron */10 on ultrastable-tick) and every site Worker tick for the watchdog",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "2 ticks",
+      "done": "loop_clock reads ticking for every loop, the watchdog loop has a current beat, and no MISSED-* item is open",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "seed/worker/src/pulse.js step pulse in seed/worker/src/tick.js on the runtime scheduler",
+          "class": "free"
+        },
+        {
+          "id": "watchdog",
+          "how": "site/worker.js watchTick calls POST /pulse/watch on the TICK service binding from its own cron",
+          "class": "free"
+        }
+      ],
+      "closing_probe": "grep:seed/worker/test/pulse.test.js::a loop that stops is found, filed as MISSED-<loop>, and closed when it runs again",
+      "writeback": [
+        "docs/PROJECT-MEMORY.md"
+      ],
+      "system_path": [
+        "seed/worker/src/pulse.js",
+        "seed/worker/src/index.js",
+        "seed/worker/migrations/0013_pulse.sql",
+        "site/worker.js"
+      ],
+      "area": "managers",
+      "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "ignition-ladder",
+      "kind": "governance",
+      "summary": "BOOT-KNOWS-1: the system reads, from its own tables, the stage it has reached from bootstrap to criticality (seeded, ticking, looping, closing, instrumented, critical, self-sustaining). The stage is the highest whose condition and every one below it hold; each change is appended to ignition_log with its evidence; the first unmet stage is IGNITE-<stage> with the numbers that block it, closed only by the same reading. bootstrapped is instrumented or above; critical needs k_eff at or above k_min for six ticks in a row.",
+      "trigger": "every tick, after the criticality step",
+      "owner": "portfolio-manager",
+      "closes_by": "system",
+      "sla": "1 tick",
+      "done": "org.ignition is from the last tick and GET /live returns it; the stage reads self-sustaining",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "seed/worker/src/ignition.js step ignition in seed/worker/src/tick.js on the runtime scheduler",
+          "class": "free"
+        },
+        {
+          "id": "watchdog",
+          "how": "a tick the site Worker's watchdog starts through POST /pulse/watch runs the same step",
+          "class": "free"
+        }
+      ],
+      "closing_probe": "grep:seed/worker/test/pulse.test.js::ignition ladder: the stage is the highest whose condition and every one below it hold",
+      "writeback": [
+        "docs/PROJECT-MEMORY.md"
+      ],
+      "system_path": [
+        "seed/worker/src/ignition.js",
+        "seed/worker/src/tick.js",
+        "seed/worker/src/criticality.js"
+      ],
+      "area": "managers",
+      "server_owner": "ultrastable-tick"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

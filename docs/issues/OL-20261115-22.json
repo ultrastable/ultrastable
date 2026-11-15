@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-22",
+  "title": "OL-20261115-22: Raise k_eff from 0.068 to k_min: dispatch yield is the limiting term",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** every tick: seed/worker/src/ignition.js files IGNITE-critical\n**Done check:** grep:seed/worker/src/ignition.js::IGNITE-\n**Status:** open\n\nThe live runtime spends 556 dispatch units per 14 days for 18 verified deploys and 20 originated credits. IGNITE-critical is filed by the tick with the current numbers each tick and closes when k_eff holds at or above k_min for six ticks.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
