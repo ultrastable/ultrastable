@@ -1,11 +1,11 @@
 {
   "id": "Q-CRIT-DISPATCH-YIELD",
-  "title": "Q-CRIT-DISPATCH-YIELD: k_eff is 0.068 because 556 dispatches in 14 days produced 18 verified deploys; raise the yield of a dispatch",
-  "body": "**Owner:** portfolio-manager\n**Trigger:** ignition blocker is critical (GET /api/ignition, blocker.to_close)\n**Done check:** grep:seed/worker/src/tick.js::dispatch_yield_14d\n**Status:** open\n\nMeasured on the live org database 2026-11-15 19:00 UTC: k_eff = (18 verified deploys + 20 originated, capped) / (556 dispatches + 3 owner touches) = 0.068 against k_min 1. The tick files an idle error when it dispatches nothing, so it dispatches every slot (about 2000 in a 14 day window at one unit each), and 126 of 316 items sit parked as blocked. At this spend the window needs about 520 more verified deploys, or spend plus touches at or under 38. Build the builtin metric dispatch_yield_14d (verified deploys per dispatch over the window) in tick.js METRICS with a liveness threshold, so the yield is measured and breaches file their own item. The lever is yield per dispatch: stop dispatching items the doer can only park (126 blocked), give the doer items that end in a deploy, and count a dispatch that ends parked as waste to cut, not as work. Do not change k_min or dispatch_spend_units to make the reading pass.\n\nsize: M\n\n**Closing probe:** GET https://ultrastable.io/live shows ignition.blocker.to_close.verified_deploys_missing falling tick over tick, then ignition.critical true",
+  "title": "Q-CRIT-DISPATCH-YIELD: raise deploys per dispatch: 560 dispatches in 14 days produced 18 credited deploys and 128 parked items",
+  "body": "**Owner:** operations\n**Trigger:** ignition stage below critical (BOOT-KNOWS-1) with k_eff under k_min\n**Done check:** grep:seed/worker/src/criticality.js::dispatch_yield\n**Status:** open\n\ncode-task: repo=ultrastable/ultrastable path=seed/worker/src/criticality.js\ncode-anchor: export async function measureCriticality\n\nMeasured in D1 on 2026-11-15: k_eff 0.0679 against k_min 1; spend_units 557 is almost entirely dispatches (dispatch_spend_units 1 each); outcomes in the same window were 169 verified, 128 parked, 35 failed, 32 released, and 128 items sit blocked. The denominator is work handed out; the numerator is work that shipped. Add dispatch_yield = credited deploys / dispatches to the criticality snapshot, and stop re-dispatching an item whose last outcome was parked or failed with the same reason until its blocker item closes (one dispatch per changed state, not one per tick). Prediction: spend_units falls by more than half within 14 days and k_eff rises above 0.2 with no fall in verified outcomes; revert if verified outcomes fall.\n\nsize: M\n\n**Closing probe:** grep:seed/worker/src/criticality.js::dispatch_yield",
   "labels": [
-    "role:portfolio-manager",
+    "role:operations",
     "agent-ready",
-    "raises-deploys",
+    "raises-self",
     "cuts-cost"
   ],
   "milestone": "Now",

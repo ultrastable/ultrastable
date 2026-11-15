@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeDb } from './d1shim.js';
 import { runTick, STEP_ORDER } from '../src/tick.js';
-import { beat, judgeLoop, watch, readPulse, tickCadenceMin, PULSE_DDL, LANE_LOOPS, ensurePulseSchema } from '../src/pulse.js';
+import { beat, failed, judgeLoop, watch, readPulse, tickCadenceMin, PULSE_DDL, LANE_LOOPS, ensurePulseSchema } from '../src/pulse.js';
 import { judge, readIgnition, STAGES, DEFAULTS, REQUIRED_TABLES } from '../src/ignition.js';
 
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
@@ -32,6 +32,26 @@ test('beat leaves the proof: a good run, a thrown error and a returned error are
   assert.deepEqual(rows.map(r => [r.loop, r.ok]), [['a', 1], ['b', 0], ['c', 0]]);
   assert.equal(rows[1].error, 'boom');
   assert.ok(rows.every(r => r.finished_at));
+});
+
+test('IDLE-IS-NOT-OK-1: a loop that returns without doing its work is a failed beat, and one working route of several is a good one', async () => {
+  assert.equal(failed({ status: 'ok', merged: [] }), null);
+  assert.equal(failed(undefined), null);
+  assert.equal(failed({ status: 'no-token', merged: [] }), 'no-token');
+  assert.equal(failed({ status: 'error http-500' }), 'error http-500');
+  assert.equal(failed({ ok: false, error: 'installation suspended' }), 'installation suspended');
+  assert.equal(failed({ ok: false }), 'ok=false');
+  assert.equal(failed([{ ok: false, detail: 'github dispatch HTTP 403' }, { ok: true, detail: 'code agents answering: workers-ai' }]), null);
+  assert.equal(failed([{ ok: false, detail: 'github dispatch HTTP 403' }]), 'github dispatch HTTP 403');
+  assert.equal(failed([{ error: 'no analytics token' }, { error: 'no analytics token' }]), 'no analytics token');
+  assert.equal(failed([]), null);
+  assert.equal(failed({ status: 'errors', checked: [], errors: ['o/r#424 status 403', 'o/r#423 status 403'] }), 'errors: o/r#424 status 403');  // the gate's live result, 2026-11-15 19:40
+  assert.equal(failed({ status: 'errors', checked: ['o/r#1'], errors: ['o/r#2 status 403'] }), null);  // some work done: good, its errors stay in the detail
+  const db = makeDb();
+  await beat(db, 'lane', async () => ({ status: 'no-token', merged: [] }), { now: () => T0 });
+  await beat(db, 'executor', async () => [{ ok: false, detail: 'HTTP 403' }, { ok: true }], { now: () => T0 });
+  const rows = (await db.prepare(`SELECT loop, ok, error FROM loop_beats ORDER BY id`).all()).results;
+  assert.deepEqual(rows, [{ loop: 'lane', ok: 0, error: 'no-token' }, { loop: 'executor', ok: 1, error: null }]);
 });
 
 test('judgeLoop counts expected, ran, good and missed slots and names the state', () => {
