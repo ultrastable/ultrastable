@@ -48,7 +48,7 @@ Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussin
 | [docs](https://github.com/ultrastable/docs) | Concepts and roadmap | How it works: virtual staff, feedback loops, earned trust, plussing, governance, bootstrapping and the roadmap. |
 | [site](https://github.com/ultrastable/site) | Public site | The Cloudflare Worker behind the Ultrastable domains. |
 | [business](https://github.com/ultrastable/business) | Plan and funding | Business plan, customers, competition, pitch, funding and promotion, written by the virtual managers. |
-| [ip](https://github.com/ultrastable/ip) | Architecture and IP | Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11). |
+| [ip](https://github.com/ultrastable/ip) | Architecture and IP | Architecture specifications and the evidence log. |
 
 Also in the org: [workers](https://github.com/ultrastable/workers), [spec](https://github.com/ultrastable/spec), [license](https://github.com/ultrastable/license) (extracted code, specifications and canonical license text).
 
@@ -75,7 +75,7 @@ Code is the only memory. All project state lives in this repository (docs/PROJEC
 - [One core, many instances](docs/architecture/core-and-instances.md): how QNFO and any third party run on the same core, and how fixes flow both ways.
 
 ## This repository
-Private repository, system of record. If it is not here, it does not exist. **Nothing here leaves the repo except files in [external/](external/)** (no patent: the code and specifications are protected by the [hybrid license](LICENSE), free for non-commercial use and licensed for commercial use; the repository stays private until the owner publishes; rules in [docs/CONFIDENTIALITY.md](docs/CONFIDENTIALITY.md)).
+Open repository, system of record. If it is not here, it does not exist. **Nothing here leaves the repo except files in [external/](external/)** (the code and specifications are open and governed by the [Ultrastable License](LICENSE), free for non-commercial use and licensed for commercial use; rules in [docs/CONFIDENTIALITY.md](docs/CONFIDENTIALITY.md)).
 
 ## The idea in six lines
 1. **Virtual managers and staff:** portfolio, project and product managers, staff, reviewers, operations.
@@ -98,7 +98,7 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | Dashboard | **In `dashboard/`**; status per its README, not verified here |
 | Reference runtime in Python: 11-step loop, CLI, dashboard, Docker, Cloud Run deploy ([platform/core](platform/core/README.md)) | **Built**, 12 tests pass, default agents simulated, one real-model proof (Workers AI); deploy unrun |
 | Real-agent proof, Postgres store, multi-tenancy | **Planned** |
-| Outside customers, audit, entity | **None yet** (owner steps); no patent (dropped 2026-11-11) |
+| Outside customers, audit, entity | **None yet** (owner steps) |
 
 ## Map
 | Path | What |
@@ -111,7 +111,7 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | [LICENSE](LICENSE), [LICENSING.md](LICENSING.md), [COMMERCIAL-TERMS.md](COMMERCIAL-TERMS.md) | Ultrastable License v1.0 (decisions in [docs/legal/LICENSE-DECISIONS.md](docs/legal/LICENSE-DECISIONS.md)) |
 | [specs/](specs/README.md) | Pointer: specifications live in `ultrastable/spec` |
 | `ultrastable/workers`, `spec`, `license` | Code, specifications and canonical license live in their own repos |
-| [ip/](ip/ARCHIVED.md) | ARCHIVED patent drafts (not maintained, not deleted) |
+| [ip/](ip/ARCHIVED.md) | Archived early drafts (not maintained, not deleted) |
 | [site/](site/) | Site worker and starter |
 | [demos/self/](demos/self/index.html) | **Ultrastable on itself**: a dashboard generated from this repo's own records (`python3 scripts/self_dashboard.py`) |
 | [docs/ops/CONTACT.md](docs/ops/CONTACT.md) | Where contact email goes and where the owner reads it |

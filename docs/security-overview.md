@@ -16,7 +16,7 @@ Ultrastable runs agents that can change code and spend money. The risks are an a
 | Human override | Always wins, always recorded | BUILT in policy |
 | Audit | Every decision, prediction, outcome and trust change is a row | BUILT |
 | Data residency, tenancy | Per-tenant isolation not yet built; single org per deployment | PLANNED (platform P3) |
-| Certifications, pen test, DPA | None yet | PLANNED, **[LAWYER]** for terms |
+| Certifications, pen test, DPA | None yet | PLANNED |
 
 ## Known weaknesses
 SQLite on an object-store volume is single-writer (pinned to one instance). Dashboard and CLI authentication not built. No outside review of the policy or code. The trust numbers are self-scored.

@@ -1,6 +1,6 @@
 # Product scope and hard boundaries (decided 2026-11-11, Rowan)
 
-Ultrastable is **code**. Code can do many things (draft patents, write business plans), but those are modules built on it, not what it is.
+Ultrastable is **code**. Code can do many things (write business plans, draft specifications), but those are modules built on it, not what it is.
 
 ## What it does by default
 1. **Bootstraps** a working, server-side system from what a person says they want. The person need not write or read code, and need not know what they do not know.
@@ -8,7 +8,7 @@ Ultrastable is **code**. Code can do many things (draft patents, write business 
 3. **Runs it**: heartbeat, virtual managers and staff, trust ledger, predictions, plussing, interrupt gate.
 
 ## What it does not do by default
-Business plans, pitch decks, patents, marketing, fundraising, site building. Optional modules, separate repos, separate terms. Hard rule: scope grows only through the plus gate (see `seed/SCOPE.md`).
+Business plans, pitch decks, marketing, fundraising, site building. Optional modules, separate repos, separate terms. Hard rule: scope grows only through the plus gate (see `seed/SCOPE.md`).
 
 ## The user it is designed for
 Someone who can say what they want but does not know what to ask for. Therefore:

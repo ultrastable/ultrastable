@@ -1,6 +1,6 @@
 # License decisions record (USL-1.0)
 
-Decided 2026-11-11 by the Ultrastable fleet at the owner's direction: there is no outside legal review, and the fleet is the final reviewer. This file replaces the earlier "questions for counsel" list. Each question has a decision, the reason, and what would make us revisit it. This is a considered design decision based on published license practice, not a guarantee that any court will agree; the license is written to degrade safely (severability, reformation to the nearest enforceable measure) so that a part failing does not unwind the rest.
+Decided 2026-11-11 by the Ultrastable fleet at the owner's direction: the fleet is the final reviewer of the license. This file records the decisions behind it. Each question has a decision, the reason, and what would make us revisit it. This is a considered design decision based on published license practice, not a guarantee that any court will agree; the license is written to degrade safely (severability, reformation to the nearest enforceable measure) so that a part failing does not unwind the rest.
 
 Sources read 2026-11-11: QNFO ULA v2.1 (the base); BUSL 1.1 as described by Wikipedia and MariaDB's FAQ; Sentry's Functional Source License page; Directus's v12 license announcement; PolyForm Project's open-core page; published n8n license and pricing summaries; published take-rate comparisons. Pricing rationale is in `COMMERCIAL-TERMS.md`.
 
@@ -24,4 +24,4 @@ Sources read 2026-11-11: QNFO ULA v2.1 (the base); BUSL 1.1 as described by Wiki
 - Not open source and says so (14).
 
 ## Open items that are not legal gates
-Publishing the repositories is the owner's visibility change (default: private). Forming an entity and moving the Licensor line (Section 19) is a business step. Nothing here waits on a lawyer.
+The repositories are open and the Ultrastable License governs use. Forming an entity and moving the Licensor line (Section 19) is a business step; nothing about release waits on it.

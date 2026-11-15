@@ -21,7 +21,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 1. **If it is not in code, it does not exist.** GitHub org `ultrastable` is canonical for code, files, plans, issues, tasks, agents and instructions. Local files, Library copies, thread output and chat or platform memory are ephemeral. Repos are private.
 2. **No open loops.** Autonomy means no open loops, plus iteration. Work ends in completion, not handoff: deployed end to end, verified, recorded. An item leaves the active set only as done, superseded, cancelled, or blocked with owner, blocker and closing probe.
 3. **Autonomy first.** Agents act, verify and report as done. They do not ask questions the record can answer. Test every surface before reporting a blocker and say what each returned. Pauses only at steps both irreversible and identity-bound, after engineering reversibility.
-4. **SUPERSEDED 2026-11-11: confidentiality until a provisional patent is filed.** The patent track is dropped (see section 2, strategy pivot). Confidentiality now lasts until counsel has reviewed `LICENSE` and the owner has signed the entity and IP assignment; repositories stay private until then. Only talking points tagged SAFE NOW may be used publicly in the meantime. Legal drafts (license, specs notes) are working drafts for attorney review, not legal advice. Business figures are estimates until checked. (Project instruction rule 3 in the Claude project settings is the old wording; this file is canonical.)
+4. **The project is open (NO-PATENT-1, 2026-11-15).** No patent is filed; the Ultrastable License governs use and the repositories are public. Public copy leads with talking points tagged SAFE NOW. Business figures are estimates until checked. (Project instruction rule 3 in the Claude project settings is the old wording; this file is canonical.)
 5. **Platform-agnostic.** Portable core with Cloudflare and Google Cloud adapters; the working system runs on Cloudflare today.
 6. **Reporting.** Project-chat posts are a few plain lines, outcome first, threads linked by title.
 7. **Facts are checked at the source** before being stated (licences, disclosures, numbers).
@@ -48,9 +48,9 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 
 ## 3. Current status (2026-11-10)
 
-- Main repo `ultrastable/ultrastable` (private) holds the unified layout, the archived patent package (`ip/`, dropped 2026-11-11), business plan, the separate Ultrastable brand (orange/green/cream, not QNFO-like, no research framing), `agents/SELF-AWARENESS.md`, and bootstrap records (`docs/bootstrapping/`, `docs/BOOTSTRAP-GAPS.md`).
+- Main repo `ultrastable/ultrastable` (public) holds the unified layout, archived early drafts (`ip/`), business plan, the separate Ultrastable brand (orange/green/cream, not QNFO-like, no research framing), `agents/SELF-AWARENESS.md`, and bootstrap records (`docs/bootstrapping/`, `docs/BOOTSTRAP-GAPS.md`).
 - Separate org repos (`site`, `docs`, `platform`, `ip`, `business`, `seed`) exist but are archived duplicates; the monorepo is the system of record (see `docs/BOOTSTRAP-GAPS.md`).
-- Dashboard is live at `/owner` on ultrastable.io, .app and .net (Cloudflare worker `ultrastable-dashboard`, source in `dashboard/`). Public pages are a generic holding page.
+- Dashboard is live at `/owner` on ultrastable.io, .app and .net (Cloudflare worker `ultrastable-dashboard`, source in `dashboard/`). Public pages are outcome-level.
 - Brand/settings build-out (2026-11-10): settings are code in `github/org-settings.json` (workflow `org-settings`, BG-22), community files in `.github/`, site serves PNG social card (BG-24); UI-only brand items are owner card BG-23; audit in `docs/ops/GITHUB-SETTINGS-AUDIT.md`.
 - Public GitHub landing (profile and logo) is staged in `brand/public-profile/` but not live; it needs `ORG_ADMIN_TOKEN` (`docs/ops/ORG-TOKEN.md`), after which the `org-init` workflow runs.
 - Funding: unfunded; dual track (open source vs commercial) in `docs/funding/` and `business/plan/05-funding.md`. Big credit tiers need an institutional round and a live public site; order is file provisional, publish outcome-only site, apply to small tiers, NSF SBIR, raise. No paid Google Workspace on the ultrastable domain within 31 days before the Google AI program application.
@@ -74,15 +74,13 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 
 ## 4. Owner-only items (identity-bound; each has a default in effect)
 
-**2026-11-11:** the two patent-filing rows below are superseded (patent dropped). New owner-only rows follow them: license counsel sign-off and publication, and creating the split repositories.
+**2026-11-15:** owner-only rows: publication of the repositories and creating the split repositories; no step waits on counsel, an entity or a filing.
 
 | Item | Default in effect | Closing probe |
 |---|---|---|
-| (superseded 2026-11-11, patent dropped) File the priority application in Europe (identity-bound: sign and pay): `ip/europe/OWNER-CARD.md`; supersedes the US Patent Center walkthrough unless a practitioner is engaged. Default: no filing. Probe: receipt in `ip/evidence-log.md`) |
-| (superseded route) File the provisional patent (package ready: `ip/provisional/FILE-THIS-TODAY.md`; `tools/preflight.py` passes; attorney review is optional before filing) | Drafts stay private | Filing receipt recorded in `ip/evidence-log.md` |
 | Legal entity and IP assignment (BIZ-1) | `LICENSE` names the author as Licensor | Entity name in `LICENSE` (section 14.4 and the copyright line) |
-| Publish `workers`, `spec` and `license` (identity-bound: changing visibility; no lawyer review, decisions recorded in `docs/legal/LICENSE-DECISIONS.md`) | All repos private | `gh api repos/ultrastable/workers --jq .private` is `false` |
-| Mint `ORG_ADMIN_TOKEN` | Holding page only | `org-manage` probe passes; `curl -s https://github.com/ultrastable` shows profile |
+| Publish `workers`, `spec` and `license` (decisions recorded in `docs/legal/LICENSE-DECISIONS.md`) | Visibility flip | `gh api repos/ultrastable/workers --jq .private` is `false` |
+| Mint `ORG_ADMIN_TOKEN` | Profile content staged | `org-manage` probe passes; `curl -s https://github.com/ultrastable` shows profile |
 | Create/unarchive repos if the fleet cannot | Monorepo is canonical | `gh api repos/ultrastable/<name> --jq .archived` |
 | Org avatar upload | Default identicon | Avatar URL is not the identicon |
 | Create Bluesky and Mastodon accounts and add their tokens as repo secrets (SOC-1, SOC-2) | Social posting stays dry-run | Secrets listed; first run logs `posted` |
@@ -189,7 +187,7 @@ Session: session_0156nqDv8ijT11RmKre7xEmK (CRITICALITY-1, COST-GUARD-1).
 
 ## 2026-11-14: PROMOTE-1, strategy and promotion as a closed loop (Session: session_0156nqDsGSkQrok8LwjeYziE)
 - Owner: promotion, applications and strategy are the system's job. `doctrine/promotion.json` lists channels; `foundation/promote.py` scores them from probed facts (`outreach/facts.json`), renders application kits (`outreach/applications/ultrastable/`), files `Q-PROMO-*` for credential-free channels, and re-weights from `--outcome`.
-- Facts today: source-available (USL-1.0), private repos, one founder, no outside customers. So NLnet and Show HN are not-a-fit-now; YC (Winter 2027 late applications open), cloud credits and intro email fit.
+- Facts today: source-available (USL-1.0), open repos, one founder, no outside customers. So NLnet and Show HN are not-a-fit-now; YC (Winter 2027 late applications open), cloud credits and intro email fit.
 - Live channels: IndexNow from the hourly site tick (daily, `site/promote.js`); MCP registry via `.github/workflows/mcp-registry.yml` (GitHub OIDC; blocked while Actions billing fails).
 
 ## 2026-11-14: BLINDSPOT-1, the system knows what the owner does not (Session: session_0156nqDsGSkQrok8LwjeYziE)
@@ -219,3 +217,5 @@ Rowan: "Ultrastable runs on Ultrastable. That self-reference is key to bootstrap
 ## 2026-11-14: the system knows what the user does not know (IGNORANCE-1)
 
 Rowan: the system must know what the user cannot or does not know; ignorance is knowable. `foundation/ignorance.py` makes it a computed set, unknown = known - told, from the criticality regime, open loops and open gaps, with `ops/told.jsonl` as the told log (fingerprinted, so a changed fact is unknown again). 47 facts known at first run. The dashboard panel is `Q-IGNORANCE-REPORT`.
+
+- 2026-11-15 (Rowan, NO-PATENT-1): no patent filing; the license itself protects the IP; the repositories are public. Public copy no longer mentions patents, filing, counsel, holding pages or private repos; release depends on no counsel, entity or filing.

@@ -68,6 +68,6 @@
   "done_for_you": [
     "Work: a routine in Claude's cloud starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green. No API key is needed and no computer of yours has to be on.",
     "Old Cloudflare account: the tick, site and dashboard keep running there.",
-    "Entity, patent and the org admin token are not needed now; entity-only programmes stay deferred until you choose one."
+    "Entity and the org admin token are not needed now; entity-only programmes stay deferred until you choose one."
   ]
 }
