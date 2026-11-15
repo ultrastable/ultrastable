@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // DEPLOY-OIDC-1: the site accepts a deploy only with a GitHub-signed OIDC token for this repository's main branch (or the internal key).
 import assert from "node:assert/strict";
