@@ -1168,6 +1168,15 @@
    "title": "Executor closed Q-DOER-Q-TICK: Add a self-contained Q-TICK doer module that closes Q-TICK items from their own tick records, registered shap",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/doers/__init__.py, foundation/doers/q_tick.py, tests/test_q_tick_doer.py.",
    "probe": "file:foundation/doers/__init__.py"
+  },
+  {
+   "id": "lesson-2026-11-15-a-sweep-leaves-branches-another-session-touched-in-the-last-",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "A sweep leaves branches another session touched in the last 4 hours alone",
+   "body": "Right after the first sweep merged, 13 branches showed new commits from live sessions (the lane, the executor, other code agents). The sweep classifies a branch younger than min_idle_hours as live and never merges or deletes it; a squash merge leaves tip commits that are not ancestors of main, so superseded is decided by tree equality (git merge-tree) and by an empty merge after generated-file resolution, never by ancestry alone.",
+   "probe": "grep:foundation/branchsweep.py::min_idle_hours",
+   "session": "session_0156nqDsim2nV3ymxKLeFRQ1"
   }
  ]
 }
