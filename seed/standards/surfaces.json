@@ -338,6 +338,33 @@
    "discoverable": false,
    "description": "Collectors push GitHub-run, cost and owner-touch samples (CRITICALITY-1).",
    "reason": "machine-to-machine collector input; nothing for an agent to discover"
+  },
+  {
+   "id": "ignition",
+   "path": "/api/ignition",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "public",
+   "standards": [],
+   "discoverable": false,
+   "description": "The ignition ladder of the last tick: stage, bootstrapped, critical, the blocking stage, slot and loop ledgers, stage changes (PULSE-1).",
+   "reason": "operational self-knowledge telemetry (PULSE-1), not a capability for callers"
+  },
+  {
+   "id": "internal-pulse",
+   "path": "/internal/pulse",
+   "methods": [
+    "GET",
+    "POST"
+   ],
+   "kind": "rest",
+   "audience": "machine",
+   "standards": [],
+   "discoverable": false,
+   "description": "An outside watcher's call: leaves the watcher's beat and runs a tick when the newest one is older than two intervals (PULSE-1).",
+   "reason": "machine-to-machine watchdog input between Workers; nothing for an agent to discover"
   }
  ]
 }

@@ -7,6 +7,7 @@
 import { criticalityStep } from './criticality.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
+import { selfKnowStep, recordSteps } from './pulse.js';
 
 const TERMINAL = ['done', 'superseded', 'cancelled'];
 const OPS = {
@@ -270,9 +271,12 @@ export const STEPS = {
     if (!ctx.config.criticality) { ctx.notes.push('criticality: no thresholds configured'); return; }
     await criticalityStep(db, ctx, ctx.config.criticality, ensureItem);
   },
+
+  // PULSE-1: from its own records the system decides whether it is bootstrapped, whether every loop ran in every slot, and whether it is critical.
+  async selfknow(db, ctx) { await selfKnowStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'dispatch', 'execute', 'check_plus_share', 'criticality'];
+export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'dispatch', 'execute', 'check_plus_share', 'criticality', 'selfknow'];
 
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null } = {}) {
   const startedIso = iso(new Date(now));
@@ -280,11 +284,15 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
   const tickId = ins.meta.last_row_id;
   const ctx = { wake, ai, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
   let completed = 0;
+  const steps = [];  // PULSE-1: one row per step per tick, so "did step X run in tick N" is a lookup
   for (const name of STEP_ORDER) {
+    const t0 = Date.now();
     try {
       await STEPS[name](db, ctx);
       completed++;
+      steps.push({ step: name, ok: true, ms: Date.now() - t0 });
     } catch (e) {
+      steps.push({ step: name, ok: false, ms: Date.now() - t0, error: String(e.message).slice(0, 300) });
       ctx.errors.push(`${name}: ${e.message}`);
       try {
         await ensureItem(db, {
@@ -295,6 +303,7 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
       } catch { /* the database itself is down; the error is still in tick_runs */ }
     }
   }
+  try { await recordSteps(db, tickId, steps); } catch (e) { ctx.errors.push(`tick_steps: ${e.message}`); }
   const open = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status NOT IN ('done','superseded','cancelled')`);
   const report = [
     `Happened: tick ${tickId} ran ${completed}/${STEP_ORDER.length} steps; ${ctx.notes.join('; ') || 'no changes'}.`,

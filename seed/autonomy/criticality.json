@@ -64,5 +64,32 @@
     "id_prefix": "NEXT-",
     "title": "Successor of {id}: name the next improvement this unlocks, file it with an owner, a done check and a closing probe.",
     "doc": "Neutron emission: every closed item emits one successor while k_eff <= k_max. Above k_max the control rod drops: no successors, so the reaction cannot run away on filing noise."
+  },
+  "pulse": {
+    "doc": "PULSE-1: thresholds for the selfknow step (worker/src/pulse.js). interval_minutes is the tick cron; a window must hold window_hours*60/interval_minutes complete ticks. ticking needs bootstrap_ticks complete slots in a row and min_slot_coverage; self_sustaining needs k_eff >= k_min for hold_ticks ticks in a row and 0 open ignition gaps. loops are the beats index.js leaves each slot; watchers are the Workers that call /internal/pulse, with the minutes of silence allowed.",
+    "interval_minutes": 10,
+    "window_hours": 24,
+    "min_slot_coverage": 0.95,
+    "bootstrap_ticks": 6,
+    "hold_ticks": 6,
+    "loop_lookback_slots": 3,
+    "unfinished_after_minutes": 5,
+    "loops": [
+      "credentials",
+      "executor",
+      "gate",
+      "lane",
+      "handoffs",
+      "issuesync",
+      "repo-access",
+      "sweeper",
+      "deploy-evidence",
+      "cost-samples",
+      "analytics-selfcheck"
+    ],
+    "watchers": {
+      "dashboard": 30,
+      "site": 130
+    }
   }
 }

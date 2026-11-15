@@ -596,6 +596,7 @@ export async function tick(env, ctx, now) {
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
   { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
   out.webhooks = await tickWebhooks(env, t).catch(e => String(e).slice(0, 120)); // WEBHOOKS-1: outbound callbacks ride this tick, no new cron
+  if (env.TICK) out.tickwatch = await env.TICK.fetch(new Request("https://tick.internal/internal/pulse?from=site", { method: "POST" })).then(async r => ({ status: r.status, ...(await r.json().catch(() => ({}))) })).catch(e => ({ ok: false, error: String(e).slice(0, 120) })); // PULSE-1: second outside watcher of the tick clock; a stale tick is run on the spot
   await jput(env, "tick:last", out); return out;
 }
 async function statusData(env) {
@@ -740,6 +741,7 @@ const handler = {
     { const md = await mydata(request, env); if (md) return md; } // PORTABILITY-2: /my-data, one click, passkey session
     { const wh = await webhooksRoute(request, env, ctx, authIntegration); if (wh) return wh; } // WEBHOOKS-1: /hooks/<provider>, /api/v1/webhooks, /api/v1/hooks
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
+    if (u.pathname === "/api/ignition") { /* PULSE-1: the tick Worker's own verdict (bootstrapped, critical, blocking stage), read through the service binding */ if (!env.TICK) return Response.json({ error: "tick binding missing", code: "no_tick" }, { status: 503 }); const r = await env.TICK.fetch(new Request("https://tick.internal/api/ignition")); return new Response(r.body, { status: r.status, headers: { "content-type": "application/json", "cache-control": "no-store", "access-control-allow-origin": "*" } }); }
     if (u.pathname === "/live" || u.pathname === "/api/live") return liveResponse(u, request, env, shell, HTML);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/pilot") return pilotApplication(request, env);

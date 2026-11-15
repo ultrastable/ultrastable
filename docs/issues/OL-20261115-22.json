@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-22",
+  "title": "OL-20261115-22: Q-CRIT-DISPATCH-YIELD: k_eff 0.068, 556 dispatches for 18 verified deploys",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** ignition blocker is critical\n**Done check:** file:docs/issues/Q-CRIT-DISPATCH-YIELD.json\n**Status:** open\n\nLive reading 2026-11-15: after bootstrap the ignition blocker is criticality. 126 of 316 items are parked blocked and the doer is dispatched every slot. Item docs/issues/Q-CRIT-DISPATCH-YIELD.json.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
