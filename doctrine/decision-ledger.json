@@ -1031,6 +1031,15 @@
    "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/, agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship.",
    "probe": "grep:business/plan/README.md::Public by default",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
+  },
+  {
+   "id": "decision-2026-11-15-drain-workers-1-workers-issues-are-mirrors-repo-queue-holds-",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "DRAIN-WORKERS-1: workers issues are mirrors; repo queue holds the open work",
+   "body": "All eight ultrastable/workers issues are closed on GitHub with a comment; each has an open record in docs/issues (OL-20261115-*). Brand block regenerated after the public-visibility change.",
+   "probe": "grep:doctrine/decision-ledger.json::DRAIN-WORKERS-1",
+   "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   }
  ]
 }

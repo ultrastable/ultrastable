@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-20",
+  "title": "OL-20261115-20: workers#13 Self-hosting: Ultrastable improves Ultrastable on its own account",
+  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** workers#75 doors done\n**Done check:** file:org/started.json\n**Status:** open\n\nMoved from ultrastable/workers#13. Plan in docs/SELF-HOSTING.md. Owner steps: new Cloudflare account and scoped token, prepaid model credit and gateway spend limit, GitHub token. Closing probe: the self org ticks on its own account, an agent-authored PR is merged, spend under cap.",
+  "labels": [
+    "role:ROWAN (identity-bound)",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

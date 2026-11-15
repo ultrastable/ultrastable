@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-16",
+  "title": "OL-20261115-16: workers#166 Second installation on an account that is not the reference account",
+  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** second account door\n**Done check:** file:org/second-installation.json\n**Status:** open\n\nMoved from ultrastable/workers#166. IDENTITY-BOUND: sign in to a different Cloudflare or Google Cloud account and give the system a door. Same-account install is proven (workers#165, org/second-installation-live.json). Default in effect: the reference account keeps running.",
+  "labels": [
+    "role:ROWAN (identity-bound)",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
