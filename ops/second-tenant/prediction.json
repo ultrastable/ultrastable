@@ -1,0 +1,9 @@
+{
+  "experiment": "Q-GROW-second-tenant-deploying",
+  "metric": "pilot_page_views_7d",
+  "prediction": "pilot_page_views_7d rises at least 15 percent within 14 days of the change",
+  "adopted_from": "CLOCKWORK parallel branch",
+  "decision_rule": "keep if metric moved >=15% within 14 days; revert doctrine/market.json capability-set if not",
+  "owner": "product-manager",
+  "status": "shipped"
+}
