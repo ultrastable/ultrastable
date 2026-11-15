@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-15T19:28:08Z",
- "commit": "3fc0e4f",
+ "generated": "2026-11-15T19:30:25Z",
+ "commit": "9015e80",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 80,
@@ -68,23 +68,23 @@
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-15T19:27:04Z",
+    "createdAt": "2026-11-15T19:29:07Z",
     "event": "push",
-    "headSha": "ef015224487faed3f23c99fb9460ba093577c30e"
+    "headSha": "7e975b4922534048067fc39f92a1aa4ec5afb62b"
    },
    "per_day_success": {
-    "2026-11-13": 16,
+    "2026-11-13": 15,
     "2026-11-14": 0,
-    "2026-11-15": 6
+    "2026-11-15": 7
    }
   },
   "executor": {
    "runs": 30,
    "by_conclusion": {
     "": 1,
-    "success": 7,
     "failure": 4,
-    "cancelled": 18
+    "success": 8,
+    "cancelled": 17
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -122,7 +122,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 2.5,
+   "age_s": 10.9,
    "status": "fresh",
    "missed": 0
   },
@@ -146,16 +146,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 4.5,
+   "age_s": 12.9,
    "status": "fresh",
    "missed": 0,
-   "lag_s": 75.0
+   "lag_s": 202.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 195246.5,
+   "age_s": 195381.9,
    "status": "stale",
    "missed": 2
   }
@@ -189,7 +189,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-15T19:27:48Z",
+  "generated": "2026-11-15T19:30:05Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -234,7 +234,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-15T19:27:48Z",
+    "started": "2026-11-15T19:30:05Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -248,7 +248,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-15T19:27:48Z",
+     "at": "2026-11-15T19:30:05Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -362,7 +362,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 27.8,
+   "last_beat_age_s": 0.1,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -373,7 +373,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 23911.8,
+   "last_beat_age_s": 24048.1,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -384,9 +384,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 58.8,
+   "last_beat_age_s": 72.1,
    "expected_interval_s": 86400,
-   "beats_24h": 21,
+   "beats_24h": 22,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -395,7 +395,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 256987.8,
+   "last_beat_age_s": 257124.1,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2054,6 +2054,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "9015e80",
+    "at": "2026-11-15T19:28:25+00:00",
+    "author": "Claude",
+    "subject": "Q-PULSE-1: write-back citing the session; check evidence after merging main",
+    "pr": null,
+    "item": "Q-PULSE-",
+    "url": "https://github.com/ultrastable/ultrastable/commit/9015e8035ac11e310de8d8bfe3ed0f371ab40bb6"
+   },
+   {
     "sha": "3fc0e4f",
     "at": "2026-11-15T19:26:18+00:00",
     "author": "Claude",
@@ -2403,15 +2412,6 @@
     "pr": 376,
     "item": "AUTO-SHIP-CLEAN-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/9a1853a1869a5c4b91a6ec7c76e0122e7d9b9a55"
-   },
-   {
-    "sha": "238faad",
-    "at": "2026-11-15T06:06:12+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "QNFO-PORT-1: contracts, metric loop, family throughput and meta-ticket fold run as foundation loops (#353)",
-    "pr": 353,
-    "item": "QNFO-PORT-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/238faadf33124c120c63fcb6bb2c19d2eb3a7923"
    }
   ],
   "pull_requests": []
