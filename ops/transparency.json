@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-15T19:21:39Z",
- "commit": "4dd3868",
+ "generated": "2026-11-15T19:25:41Z",
+ "commit": "298ec73",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 82,
@@ -18,18 +18,18 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 160,
+  "backlog_open": 159,
   "backlog_items": 203
  },
  "throughput": {
   "queue": {
    "items": 203,
    "by_status": {
-    "closed": 41,
-    "open": 160,
+    "closed": 42,
+    "open": 159,
     "done": 2
    },
-   "takeable_now": 7
+   "takeable_now": 6
   },
   "merged": {
    "total": 0,
@@ -83,8 +83,8 @@
    "by_conclusion": {
     "": 1,
     "success": 5,
-    "failure": 4,
-    "cancelled": 20
+    "cancelled": 20,
+    "failure": 4
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -92,9 +92,20 @@
    "log_rows": 1
   },
   "model_cost": {
-   "calls": 0,
-   "usd": 0,
-   "by_model": {}
+   "calls": 2,
+   "usd": 0.001912,
+   "by_model": {
+    "@cf/zai-org/glm-5.3-flash": {
+     "calls": 1,
+     "failed": 0,
+     "usd": 0.001493
+    },
+    "@cf/meta/llama-3.3-70b-instruct-fp8-fast": {
+     "calls": 1,
+     "failed": 0,
+     "usd": 0.000419
+    }
+   }
   }
  },
  "stages": [
@@ -111,7 +122,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 43.8,
+   "age_s": 286.1,
    "status": "fresh",
    "missed": 0
   },
@@ -135,7 +146,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 93.8,
+   "age_s": 97.1,
    "status": "fresh",
    "missed": 0
   },
@@ -143,7 +154,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 194854.8,
+   "age_s": 195097.1,
    "status": "stale",
    "missed": 2
   }
@@ -172,7 +183,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-15T19:21:18Z",
+  "generated": "2026-11-15T19:25:20Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -217,7 +228,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-15T19:21:18Z",
+    "started": "2026-11-15T19:25:20Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -231,7 +242,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-15T19:21:18Z",
+     "at": "2026-11-15T19:25:20Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -300,7 +311,7 @@
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 0,
-  "items_takeable": 7,
+  "items_takeable": 6,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -345,7 +356,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 71.4,
+   "last_beat_age_s": 313.2,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -356,7 +367,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 23522.4,
+   "last_beat_age_s": 23764.2,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -367,7 +378,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 1504.4,
+   "last_beat_age_s": 1746.2,
    "expected_interval_s": 86400,
    "beats_24h": 20,
    "expected_24h": 1.0,
@@ -378,7 +389,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 256598.4,
+   "last_beat_age_s": 256840.2,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2068,6 +2079,24 @@
  "changes": {
   "commits": [
    {
+    "sha": "298ec73",
+    "at": "2026-11-15T19:23:31+00:00",
+    "author": "Claude",
+    "subject": "Merge main",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/298ec739ecbf2d7c20481b838c03368fe28762cb"
+   },
+   {
+    "sha": "1787ca3",
+    "at": "2026-11-15T19:23:16+00:00",
+    "author": "Claude",
+    "subject": "Merge main",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/1787ca3b11e737340049591356a49efbd04b404a"
+   },
+   {
     "sha": "4dd3868",
     "at": "2026-11-15T19:19:32+00:00",
     "author": "Claude",
@@ -2084,6 +2113,15 @@
     "pr": null,
     "item": "BRANCH-SWEEP-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/e48af99ae59156afaa2571f4b6e84fff49d68ab3"
+   },
+   {
+    "sha": "5e5b31e",
+    "at": "2026-11-15T19:10:57+00:00",
+    "author": "github-actions[bot]",
+    "subject": "Add a self-contained Q-TICK doer module that closes Q-TICK items from their own tick records, registered shape for config.doers.Q-TICK, with tests. (#Q-DOER-Q-TICK) (#414)",
+    "pr": 414,
+    "item": "Q-TICK",
+    "url": "https://github.com/ultrastable/ultrastable/commit/5e5b31e4740d2f765b7af992c4736450ec4bd2dd"
    },
    {
     "sha": "e7734af",
@@ -2399,33 +2437,6 @@
     "pr": null,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/4db7a79443d5e18784becee8e14aae6c5495b095"
-   },
-   {
-    "sha": "7e73f1d",
-    "at": "2026-11-15T19:40:52+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "ZERO-MINUTES-1: Worker records its own merges (done-check evidence) (#409)",
-    "pr": 409,
-    "item": "ZERO-MINUTES-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/7e73f1d9ef56af0590a26f038813b5edefc3667b"
-   },
-   {
-    "sha": "77ad08b",
-    "at": "2026-11-15T18:40:38+00:00",
-    "author": "ultrastable-lane",
-    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1)",
-    "pr": null,
-    "item": "SERVER-OWNS-LOOPS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/77ad08be72293a6d363837b4c034cf7a901ab4de"
-   },
-   {
-    "sha": "d940ab0",
-    "at": "2026-11-15T19:40:36+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "WBA-OUTBOUND-1: give the write-back lesson a real probe; rebuild dashboard",
-    "pr": null,
-    "item": "WBA-OUTBOUND-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/d940ab05fabd567fa4153e6371cc78ec11fa656d"
    }
   ],
   "pull_requests": []

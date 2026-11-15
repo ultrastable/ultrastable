@@ -11,6 +11,7 @@ reached main. This loop reads every remote branch (git only, so it runs on the b
                is filed for the executor; the branch is kept (never deleted with unmerged work)
   rejected     a branch whose pull request was closed on purpose (doctrine/branchsweep.json `rejected`, with the reason): never merged; its sha goes to
                the ledger and the branch is deleted (reversible by pushing the sha back)
+  live         its last commit is younger than `min_idle_hours`: another session is working on it, so the sweep leaves it alone
   state        a branch the system itself writes (doctrine/branchsweep.json `state_branches`): left alone, and counted
 
   python3 -m foundation branchsweep --scan [--json]     plan every branch, read-only
@@ -19,7 +20,7 @@ reached main. This loop reads every remote branch (git only, so it runs on the b
   python3 -m foundation branchsweep --prune             delete remote branches whose tip is now an ancestor of origin/main
   python3 -m foundation branchsweep --check             policy and loop are declared
 
-Accounting invariant: entered = merged + superseded + ported + rejected + state + skipped (every branch has one recorded disposition, never a silent drop).
+Accounting invariant: entered = merged + superseded + ported + rejected + live + state + skipped (every branch has one recorded disposition, never a silent drop).
 """
 from __future__ import annotations
 import json, re, subprocess, sys, time
@@ -100,6 +101,10 @@ def scan(root=REPO, base="origin/main") -> list[dict]:
         if name in state or any(name.startswith(p) for p in pol.get("state_prefixes", [])):
             out.append({"name": name, "sha": _g(root, "rev-parse", ref).strip(), "action": "state", "why": "written by the system itself"})
             continue
+        age_h = (time.time() - int(_g(root, "log", "-1", "--format=%ct", ref).strip() or 0)) / 3600
+        if age_h < float(pol.get("min_idle_hours", 4)) and name not in pol.get("held", {}) and name not in pol.get("rejected", {}):
+            out.append({"name": name, "sha": _g(root, "rev-parse", ref).strip(), "action": "live", "why": f"last commit {age_h:.1f} h ago: a session is working on it"})
+            continue
         try:
             out.append(plan_one(root, ref, base))
         except RuntimeError as e:
@@ -174,6 +179,8 @@ def apply(root=REPO, base="origin/main", dry=False, now=None) -> dict:
             left = resolve(root) if rc != 0 else []
             if left:
                 git(root, "merge", "--abort"); p.update(action="port", why=f"conflicts in code: {', '.join(left[:6])}")
+            elif git(root, "diff", "--cached", "--quiet")[0] == 0:  # after resolution main already holds everything: no empty merge commit
+                git(root, "merge", "--abort"); p.update(action="superseded", why="after resolving generated files the merge adds nothing")
             else:
                 msg = f"branchsweep: merge {p['name']} ({p.get('ahead', '?')} commit(s))\n\nBRANCH-SWEEP-1: this branch held work main lacked; sha {p['sha']}."
                 rc2, _, e2 = git(root, "commit", "-q", "--allow-empty", "-m", msg)
@@ -195,8 +202,8 @@ def apply(root=REPO, base="origin/main", dry=False, now=None) -> dict:
         done.append({k: p[k] for k in ("name", "sha", "action", "why")})
     n = lambda a: sum(1 for d in done if d["action"] == a)
     rec = {"at": int(now or time.time()), "entered": len(plans), "merged": n("merge") + n("merged"), "superseded": n("superseded"), "ported": n("port"),
-           "rejected": n("rejected"), "state": n("state"), "skipped": n("skipped"), "dispositions": done, "dry": dry}
-    rec["invariant"] = rec["entered"] == rec["merged"] + rec["superseded"] + rec["ported"] + rec["rejected"] + rec["state"] + rec["skipped"]
+           "rejected": n("rejected"), "live": n("live"), "state": n("state"), "skipped": n("skipped"), "dispositions": done, "dry": dry}
+    rec["invariant"] = rec["entered"] == rec["merged"] + rec["superseded"] + rec["ported"] + rec["rejected"] + rec["live"] + rec["state"] + rec["skipped"]
     if not dry:
         (root / LEDGER).parent.mkdir(parents=True, exist_ok=True)
         with (root / LEDGER).open("a", encoding="utf-8", newline="\n") as f:
