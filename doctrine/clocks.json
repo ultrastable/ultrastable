@@ -47,6 +47,16 @@
       "workflow": "scout",
       "expected_interval_s": 604800,
       "periodic": true
+    },
+    {
+      "id": "criticality-loop",
+      "what": "CRITICALITY-LOOP-1: one beat per tick from the tick Worker's criticality controller (act on k_eff, grade the last action)",
+      "source": "d1",
+      "d1_id": "7468898a-b515-495f-9910-e91cb80f5810",
+      "table": "criticality_history",
+      "column": "at",
+      "expected_interval_s": 600,
+      "periodic": true
     }
   ],
   "chain": {

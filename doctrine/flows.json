@@ -904,6 +904,33 @@
         "CLOUDFLARE_API_TOKEN",
         "LANE_PAT"
       ]
+    },
+    "criticality-loop": {
+      "inflows": [
+        {
+          "signal": "deploys.record",
+          "via": "d1:outcomes"
+        },
+        {
+          "signal": "cost.readings",
+          "via": "d1:criticality_samples"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "criticality.k",
+          "via": "d1:criticality_history"
+        },
+        {
+          "signal": "backlog.ranked",
+          "via": "d1:items"
+        }
+      ],
+      "feedback": "the lever changes which item each role takes next tick; the next measured k_eff grades the logged prediction, and a miss reverts the lever and files CRIT-LEVER",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN"
+      ]
     }
   },
   "implicit_producers": {
