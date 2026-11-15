@@ -1055,7 +1055,7 @@
    "date": "2026-11-15",
    "title": "ZERO-MINUTES-1 worker merge evidence",
    "body": "Tick Worker lane appends each merge it makes to ops/worker-merge-evidence.jsonl (the item's done check). Remaining: drop lane.yml workflow_run after 7 days of Worker merges.",
-   "probe": "file:ops/worker-merge-evidence.jsonl"
+   "probe": "grep:seed/worker/src/lane.js::worker-merge-evidence"
   }
  ]
 }
