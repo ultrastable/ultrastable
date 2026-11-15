@@ -15,13 +15,28 @@
   "flows": {
     "qnfo-sauce": {
       "inflows": [
-        {"signal": "issue.filed", "via": "file:docs/issues"},
-        {"signal": "main.merged", "via": "github:main"},
-        {"signal": "deploys.record", "via": "file:ops/deploys.jsonl"}
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
       ],
       "outflows": [
-        {"signal": "issue.filed", "via": "file:docs/issues"},
-        {"signal": "criticality.k", "via": "file:ops/criticality.jsonl"}
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
+        }
       ],
       "feedback": "a closed item whose probe fails again reopens; a remedy that did not move its metric in the window is replaced; a family that keeps growing gets a doer item; the ignition gap count is read next to k on the following pass",
       "bindings": []
@@ -861,13 +876,42 @@
       ],
       "feedback": "each recorded sweep answer resets its domain's clock and each learned need extends the register, so the next scan asks about what the last one found; a failed probe files its own item and passes when the work lands",
       "bindings": []
+    },
+    "insight-loop": {
+      "inflows": [
+        {
+          "signal": "site.hits",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "insight.ledger",
+          "via": "file:ops/insight/findings.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        },
+        {
+          "signal": "insight.ledger",
+          "via": "file:ops/insight/findings.json"
+        }
+      ],
+      "feedback": "each finding is settled 8 days later against what the page really got; the outcome tunes the rise threshold that classifies the next findings",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {
     "owner.goals": "ext.owner_goals",
     "actions.minutes": "ext.actions_quota",
     "frontier.releases": "ext.frontier",
-    "cf.analytics": "ext.cf_analytics"
+    "cf.analytics": "ext.cf_analytics",
+    "site.hits": "ext.site_visits"
   },
   "pending": [
     "role-portfolio-manager",
