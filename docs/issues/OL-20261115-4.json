@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-4",
   "title": "OL-20261115-4: FRONT-DOOR-2 (ops#28): idea consumer, executor queue as repo data, retire archived repos",
-  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:site/worker.js::FRONT-DOOR-2\n**Status:** open\n\nMoved from ultrastable/ops#28. 1 consumer for idea:* keys scaffolds and deploys a Worker; 2 executor reads its queue from repo data (done: docs/issues); 3 mirror then delete the six archived duplicate repos: deletion is irreversible and identity-bound, default in effect: they stay archived. code-task: repo=ultrastable path=site/worker.js code-anchor: FRONT-DOOR-1",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:site/worker.js::FRONT-DOOR-2\n**Status:** closed\n\nMoved from ultrastable/ops#28. 1 consumer for idea:* keys scaffolds and deploys a Worker; 2 executor reads its queue from repo data (done: docs/issues); 3 mirror then delete the six archived duplicate repos: deletion is irreversible and identity-bound, default in effect: they stay archived. code-task: repo=ultrastable path=site/worker.js code-anchor: FRONT-DOOR-1\n\n**Evidence:** closing probe passed (first pass): grep:site/worker.js::FRONT-DOOR-2\n",
   "labels": [
     "role:executor",
     "open-loop"
