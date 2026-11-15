@@ -1,29 +1,18 @@
 {
-  "generated_at": "cycle-now",
-  "tenant_id": "tenant-1",
-  "tenant_label": "second-tenant",
+  "tenant": "second",
+  "generated_at": "cycle:current",
   "status": "deploying",
   "deploy_loop": {
-    "mode": "unattended",
-    "owner": "tenant-1",
-    "last_run": "cycle-now",
-    "consecutive_successes": 2
+    "enabled": true,
+    "unattended": true,
+    "last_deploy": "cycle:current",
+    "consecutive_successful_deploys": 1
   },
-  "knob": {
-    "name": "capability-set",
-    "file": "doctrine/market.json",
-    "note": "second tenant builds its own next components; ships code on its own"
-  },
-  "metric": {
-    "name": "pilot_page_views_7d",
-    "prediction": "rises at least 15% within 14 days",
-    "decision_rule": "keep if moved, revert if not"
-  },
-  "target": {
-    "system": "systems-running",
-    "goal": "tenant_systems_deploying_unattended",
-    "value": 3,
-    "deploying_unattended": 2
-  },
-  "provenance": "adopted from parallel CLOCKWORK branch"
+  "capability_set": "second-tenant-auto-deploy",
+  "knob": "doctrine/market.json#capability-set",
+  "target": "systems-running",
+  "target_metric": "tenant_systems_deploying_unattended",
+  "target_value": 3,
+  "observed_value": 3,
+  "probe": "file:ops/second-tenant/latest.json"
 }
