@@ -1,0 +1,32 @@
+name: deploy-ultrastable
+# DEPLOY-OIDC-1: merge -> deploy of every live platform worker into the ultrastable Cloudflare account, authenticated by this run's GitHub
+# OIDC token (no stored Cloudflare secret; site/deployer.js verifies the token names this repository's main branch).
+# budget: ~2 min per run, only when worker sources change
+# trigger: push to main on worker sources, and manual dispatch; never faster than the merge rate
+# free-alternative: the tick's handoff loop deploys the same modules through the same endpoint (seed/worker/src/handoff.js) once it holds a GitHub credential
+on:
+  push:
+    branches: [main]
+    paths: ["seed/worker/**", "site/**", "dashboard/**", "doctrine/topology.json", "seed/autonomy/**", "seed/analytics/**", "deploy/deploy-oidc.mjs", ".github/workflows/deploy-ultrastable.yml"]
+  workflow_dispatch:
+    inputs:
+      workers:
+        description: "comma-separated worker ids (empty: every live worker)"
+        required: false
+        default: ""
+permissions:
+  contents: read
+  id-token: write
+concurrency: {group: deploy-ultrastable, cancel-in-progress: false}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: 22}
+      - name: Deploy through the ultrastable-site OIDC endpoint
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node deploy/deploy-oidc.mjs "${{ inputs.workers }}"

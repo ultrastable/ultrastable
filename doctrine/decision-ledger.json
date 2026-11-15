@@ -1272,6 +1272,15 @@
    "body": "The tick decides each beat from its peer's /health whether it runs the loops: only a primary with no higher-epoch primary peer runs. The ultrastable-account tick runs as standby, promotes itself the beat it holds a GitHub credential (final org D1 copy through the D1 API, epoch above the peer, source crons off, source site forwards via UPSTREAM_ORIGIN). A demoted tick resumes after 3 beats without a primary peer. The primary keeps gate GATE-TARGET-GITHUB open with the default in effect (source runs everything) and closes it when the target reports github_ok. Session: session_0156nqDt4ontnhzSFvT4PTB8",
    "probe": "grep:seed/worker/src/cutover.js::export async function decide",
    "session": "session_0156nqDt4ontnhzSFvT4PTB8"
+  },
+  {
+   "id": "decision-2026-11-15-deploy-oidc-1-deploys-into-the-ultrastable-account-need-no-s",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "DEPLOY-OIDC-1: deploys into the ultrastable account need no stored Cloudflare secret",
+   "body": "deploy-ultrastable.yml asks GitHub for this run's OIDC token (audience ultrastable-deploy) and posts flattened modules to ultrastable-site /__internal/deploy, which verifies the token (GitHub JWKS, repository ultrastable/ultrastable, ref main, unexpired) and uploads with its own CF_DEPLOY_TOKEN. deploy-workers.mjs and apply-d1-migrations.mjs exit without uploading when CLOUDFLARE_ACCOUNT_ID is a retired account (deploy/cloudflare-accounts.json). Session: session_0156nqDt4ontnhzSFvT4PTB8",
+   "probe": "grep:site/deployer.js::export async function verifyGithubOidc",
+   "session": "session_0156nqDt4ontnhzSFvT4PTB8"
   }
  ]
 }

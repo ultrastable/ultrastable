@@ -6,10 +6,35 @@ const ALLOWED = /^ultrastable-[a-z0-9-]{1,40}$/;  // only the platform's own wor
 
 function same(a, b) { a = String(a || ""); b = String(b || ""); if (!a || a.length !== b.length) return false; let x = 0; for (let i = 0; i < a.length; i++) x |= a.charCodeAt(i) ^ b.charCodeAt(i); return x === 0; }
 
+// DEPLOY-OIDC-1: a second caller with no stored credential. GitHub Actions presents its per-run OIDC token (audience ultrastable-deploy);
+// it is accepted only when GitHub signed it, it is unexpired, and it names this repository's main branch. GitHub mints the token for each
+// run; no person mints or stores anything, and the Cloudflare credential still never leaves this worker.
+export const OIDC_ISSUER = "https://token.actions.githubusercontent.com", OIDC_AUDIENCE = "ultrastable-deploy";
+const b64u = s => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(s.length / 4) * 4, "=")), c => c.charCodeAt(0));
+let jwksCache = null;
+export async function verifyGithubOidc(jwt, env, fetcher, now = Date.now()) {
+  const parts = String(jwt || "").split(".");
+  if (parts.length !== 3) return { ok: false, why: "not a JWT" };
+  let head, claims; try { head = JSON.parse(new TextDecoder().decode(b64u(parts[0]))); claims = JSON.parse(new TextDecoder().decode(b64u(parts[1]))); } catch (e) { return { ok: false, why: "unreadable JWT" }; }
+  if (head.alg !== "RS256") return { ok: false, why: "alg " + head.alg };
+  const repo = env.OIDC_REPO || "ultrastable/ultrastable", t = Math.floor(now / 1000);
+  if (claims.iss !== OIDC_ISSUER || claims.aud !== OIDC_AUDIENCE || claims.repository !== repo || claims.ref !== "refs/heads/main") return { ok: false, why: "claims do not name " + repo + " main" };
+  if (!(claims.exp > t) || (claims.nbf && claims.nbf > t + 60)) return { ok: false, why: "expired or not yet valid" };
+  if (!jwksCache || jwksCache.at < now - 3600e3 || !jwksCache.keys.some(k => k.kid === head.kid)) { const r = await (fetcher || fetch)(OIDC_ISSUER + "/.well-known/jwks"); jwksCache = { at: now, keys: (await r.json()).keys || [] }; }
+  const jwk = jwksCache.keys.find(k => k.kid === head.kid); if (!jwk) return { ok: false, why: "unknown key " + head.kid };
+  const key = await crypto.subtle.importKey("jwk", { kty: jwk.kty, n: jwk.n, e: jwk.e, alg: "RS256", ext: true }, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"]);
+  const good = await crypto.subtle.verify("RSASSA-PKCS1-v1_5", key, b64u(parts[2]), new TextEncoder().encode(parts[0] + "." + parts[1]));
+  return good ? { ok: true, run: claims.run_id, sha: claims.sha } : { ok: false, why: "bad signature" };
+}
+export const _resetJwks = () => { jwksCache = null; };
+
 export async function internalDeploy(request, env, fetcher) {
   const u = new URL(request.url);
   if (!u.pathname.startsWith("/__internal/")) return null;
-  if (request.method !== "POST" || !env.INTERNAL_DEPLOY_KEY || !same(request.headers.get("x-internal-key"), env.INTERNAL_DEPLOY_KEY)) return new Response("Not found", { status: 404 });
+  const bearer = /^Bearer (.+)$/.exec(request.headers.get("authorization") || "");
+  const byKey = env.INTERNAL_DEPLOY_KEY && same(request.headers.get("x-internal-key"), env.INTERNAL_DEPLOY_KEY);
+  const byOidc = !byKey && bearer ? (await verifyGithubOidc(bearer[1], env, fetcher).catch(e => ({ ok: false, why: String(e && e.message) }))).ok : false;
+  if (request.method !== "POST" || !(byKey || byOidc)) return new Response("Not found", { status: 404 });
   const f = fetcher || fetch, T = env.CF_DEPLOY_TOKEN, A = env.CF_ACCOUNT_ID;
   if (!T || !A) return J({ ok: false, error: "site has no CF_DEPLOY_TOKEN / CF_ACCOUNT_ID" }, 503);
   const api = (m, p, body, h) => f("https://api.cloudflare.com/client/v4" + p, { method: m, headers: { authorization: "Bearer " + T, ...(h || {}) }, body }).then(r => r.json());

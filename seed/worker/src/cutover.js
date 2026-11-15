@@ -40,7 +40,7 @@ async function ensureGate(db, open, peerUrl) {
     else await db.prepare('INSERT INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe) VALUES (?, ?, ?, ?, ?, ?)').bind(GATE_ID,
       `GitHub App credential for the tick in the ultrastable Cloudflare account (${peerUrl}/connect/github)`,
       "Installing a GitHub App on the owner's GitHub organization is an act in the owner's account (IC-GATE-001); moving the sealed key across accounts was refused by a permission check",
-      'The quniverse tick stays primary and runs every loop; the ultrastable tick is staged with code and data and promotes itself the beat it holds the credential',
+      'Every Cloudflare-side loop runs in the ultrastable account; merges run in GitHub Actions (lane.yml) and deploys through the OIDC route (deploy-ultrastable.yml); the tick lane, handoff and native executor resume the beat the tick holds the credential',
       'ACCOUNT-SPLIT-2 controller', `${peerUrl}/health shows cutover.github_ok = true`).run();
   } else if (!open && g && g.status === 'open') await db.prepare("UPDATE gate_cards SET status = 'closed', closed_at = datetime('now') WHERE id = ?").bind(GATE_ID).run();
 }
@@ -114,9 +114,12 @@ export async function decide(db, env, { fetch: f = fetch, githubOk = async () =>
     notes.push(`resumed as primary at epoch ${epoch}: peer absent for ${RESUME_BEATS} beats`);
   }
   // primary: mirror the target's readiness into one gate card while the peer is a standby without a credential
+  const gh = await githubOk().catch(() => false);
+  await set(db, 'github_ok', gh ? '1' : '0');
   if (peer && peer.reachable && peer.slot === 'standby') await ensureGate(db, !peer.github_ok, String(env.CUTOVER_PEER).replace(/\/$/, '')).catch(e => notes.push('gate: ' + e.message));
+  else if (env.SELF_ORIGIN) await ensureGate(db, !gh, String(env.SELF_ORIGIN).replace(/\/$/, '')).catch(e => notes.push('gate: ' + e.message));  // a primary without its own GitHub credential
   else await ensureGate(db, false, '').catch(() => null);
-  return { run: true, slot: 'primary', epoch: (await readState(db, env)).epoch, github_ok: me.github_ok, peer, notes };
+  return { run: true, slot: 'primary', epoch: (await readState(db, env)).epoch, github_ok: gh, peer, notes };
 }
 
 export async function healthView(db, env) {
