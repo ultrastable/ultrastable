@@ -946,6 +946,22 @@
       "title": "PORTABILITY-2: owner data export and restore at /my-data, passkey session, no token",
       "body": "Portability must not need a token: /my-data uses the passkey session cookie, exports items, connected apps, webhooks and passkey labels with no secrets, and restores idempotently. Bundle format ultrastable-export/v1 is shared with the integration API (/api/v1/export, /api/v1/import).",
       "probe": "grep:site/mydata.test.mjs::mydata ok"
+    },
+    {
+      "id": "decision-2026-11-15-auto-ship-clean-1-merge-and-deploy-every-change-automaticall",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "AUTO-SHIP-CLEAN-1: merge and deploy every change automatically; clean up on every platform and deployment",
+      "body": "Owner standing rule 2026-11-15. Conflicted PRs are reconciled by the server-side lane or filed as Q-OPENLOOP items; cleanup spans every tenant and installed deployment; nothing unmerged or unbacked is deleted.",
+      "probe": "grep:agents/AGENTS.md::AUTO-SHIP-CLEAN-1"
+    },
+    {
+      "id": "decision-2026-11-15-drain-all-1-complete-all-work-drain-all-issues-merge-all-prs",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "DRAIN-ALL-1: complete all work, drain all issues, merge all PRs with zero manual intervention",
+      "body": "Owner standing rule 2026-11-15. Server-side loops drain the issue queue and the PR list to zero; unreconcilable PRs are replaced from main; human_touches stays 0.",
+      "probe": "grep:agents/AGENTS.md::DRAIN-ALL-1"
     }
   ]
 }
