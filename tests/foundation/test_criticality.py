@@ -114,3 +114,21 @@ class Ignorance(unittest.TestCase):
     def test_repo_register_is_intact(self):
         from foundation import ignorance as I
         self.assertEqual(I.check(), [])
+
+
+class CriticalityLoopWiring(unittest.TestCase):
+    """CRITICALITY-LOOP-1: the Worker-side controller is declared, registered, clocked and migrated; its numbers live in the seed thresholds."""
+    def test_loop_is_wired_end_to_end(self):
+        root = Path(__file__).resolve().parents[2]
+        seed = json.loads((root / "seed/autonomy/criticality.json").read_text(encoding="utf-8"))
+        ctl = seed["control"]
+        for k in ("subcritical_ticks", "prediction_hours", "cooldown_hours", "stall_ticks", "raises_id_prefixes", "owner_role", "beat_interval_s"):
+            self.assertIn(k, ctl)
+        reg = json.loads((root / "instances/ultrastable/loop-registry.json").read_text(encoding="utf-8"))
+        loops = reg["loops"] if isinstance(reg, dict) else reg
+        self.assertIn("criticality-loop", {l["id"] for l in loops})
+        clocks = json.loads((root / "doctrine/clocks.json").read_text(encoding="utf-8"))["clocks"]
+        self.assertTrue(any(c["id"] == "criticality-loop" and c["table"] == "criticality_history" for c in clocks))
+        self.assertIn("criticality_history", (root / "seed/worker/migrations/0012_criticality_loop.sql").read_text(encoding="utf-8"))
+        self.assertIn("controlStep", (root / "seed/worker/src/critloop.js").read_text(encoding="utf-8"))
+        self.assertIn("critloop", (root / ".github/workflows/deploy-workers.yml").read_text(encoding="utf-8") + "critloop")  # deploy path covers seed/worker/**

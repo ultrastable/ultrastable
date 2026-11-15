@@ -2916,6 +2916,81 @@
       "area": "governance",
       "workflows": [],
       "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "criticality-loop",
+      "kind": "governance",
+      "summary": "k_eff is acted on, not only measured: after three subcritical beats the tick Worker's dispatch lever moves to raise-only, the move carries the prediction 'k_eff > k within 24 h', a miss reverts it and files CRIT-LEVER, a stall files CRIT-STALL; one criticality_history row per tick is the loop's clock.",
+      "trigger": "every tick (cron */10 on the tick Worker)",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "10m",
+      "done": "criticality_history has a row within 2 beat intervals and every action past its due time is graded (/live criticality_loop.beating true)",
+      "paths": [
+        {
+          "id": "tick-worker",
+          "how": "seed/worker/src/critloop.js controlStep inside the criticality tick step",
+          "class": "free"
+        },
+        {
+          "id": "github-cost-guard",
+          "how": "python3 -m foundation criticality --tick --apply in the daily cost-guard workflow (repo-side k and stall item)",
+          "class": "degraded"
+        }
+      ],
+      "closing_probe": "grep:seed/worker/src/critloop.js::export async function controlStep",
+      "writeback": [
+        "docs/issues"
+      ],
+      "system_path": [
+        "seed/worker/src/critloop.js",
+        "seed/worker/migrations/0012_criticality_loop.sql",
+        "seed/worker/test/critloop.test.js",
+        "seed/autonomy/criticality.json",
+        "deploy/probe-live.mjs"
+      ],
+      "workflows": [
+        "deploy-workers.yml"
+      ],
+      "area": "managers",
+      "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "branch-sweep",
+      "kind": "governance",
+      "summary": "No remote branch carries work main lacks. Every branch gets one recorded disposition (merged, superseded, ported as a PORT-BRANCH item, rejected on purpose, or state): generated-file conflicts resolve by rule, a merge that breaks the gate is undone, merged branches are pruned. Closes the blind spot of the session reaper, which only watched agent/ and claude/ branches.",
+      "trigger": "daily workflow and every lane run",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "python3 -m foundation branchsweep --scan shows no branch with action merge, and the ledger invariant entered = merged + superseded + ported + rejected + state + skipped holds",
+      "paths": [
+        {
+          "id": "github",
+          "how": "python3 -m foundation branchsweep --apply on the built-in token, opened as one PR the lane merges",
+          "class": "free"
+        },
+        {
+          "id": "cloud-session",
+          "how": "the same command from a cloud-hosted agent session",
+          "class": "degraded"
+        }
+      ],
+      "closing_probe": "grep:foundation/branchsweep.py::def apply",
+      "writeback": [
+        "docs/issues"
+      ],
+      "system_path": [
+        "foundation/branchsweep.py",
+        "doctrine/branchsweep.json",
+        "tests/foundation/test_branchsweep.py",
+        ".github/workflows/branchsweep.yml"
+      ],
+      "workflows": [
+        "branchsweep.yml"
+      ],
+      "area": "managers",
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

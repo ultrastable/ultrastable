@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-agent-project-memory-in-repo",
+  "title": "PORT-BRANCH-parked-agent-project-memory-in-repo: carry parked/agent/project-memory-in-repo onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/project-memory-in-repo` at 0ba623bb8e holds work main lacks and cannot merge as is (conflicts in code: agents/AGENTS.md, agents/PROJECT-INSTRUCTIONS.md, docs/BOOTSTRAP-GAPS.md, docs/bootstrapping/bootstrap-log.md, scripts/check_memory.py, seed/.github/workflows/memory-fresh.yml)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/project-memory-in-repo\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/project-memory-in-repo",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

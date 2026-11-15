@@ -9,7 +9,7 @@ executor.js); GitHub's own daily schedule and a manual dispatch run the same com
 is required. Without --apply nothing is changed on GitHub or in git: the pick, the prompt size and the guard are reported.
 """
 from __future__ import annotations
-import datetime as dt, json, os, re, subprocess, urllib.request
+import datetime as dt, json, os, re, shlex, subprocess, urllib.request
 from . import queue as qmod
 from . import crossrepo
 from pathlib import Path
@@ -208,6 +208,28 @@ def queue_mode() -> bool:
     return os.environ.get("EXECUTOR_SOURCE", "queue") == "queue"
 
 
+PORT_ITEM = re.compile(r"^PORT-([a-z0-9]+)", re.I)  # PORT-EXEC-1: a runtime port item is closed by running its adapter verify command, no model
+
+
+def verify_command(issue: dict) -> str | None:
+    """PORT-EXEC-1: the adapter verify command is a `verify:` line in the item body. None when absent."""
+    m = re.search(r"^verify:\s*(.+)$", issue.get("body") or "", re.M)
+    return m.group(1).strip() if m else None
+
+
+def port_call(issue: dict, root):
+    """PORT-EXEC-1: stands in for the model on a PORT-<runtime> item. Runs the verify command (argv, no shell) and returns the
+    evidence file as the change, so the item closes through the same checks, write-back, commit and pull request as any other.
+    A failing command raises: the item is recorded failed and stays open."""
+    runtime = PORT_ITEM.match(str(issue["number"])).group(1).lower()
+    cmd = verify_command(issue)
+    code, out = sh(shlex.split(cmd), root, 900)
+    if code:
+        raise RuntimeError(f"PORT verify failed (exit {code}): {cmd}: {out[-400:]}")
+    ev = {"schema": "ultrastable-port-evidence/1", "at": now(), "item": issue["number"], "command": cmd, "exit": code, "output": out[-4000:]}
+    return lambda _prompt: {"summary": f"{issue['number']}: adapter verify passed", "files": [{"path": f"ops/port-evidence/{runtime}-verify.json", "content": json.dumps(ev, indent=2) + chr(10)}]}
+
+
 def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None, remote: bool = False) -> dict:
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)
@@ -227,8 +249,9 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     n = issue["number"]
     row = {"issue": n, "title": issue["title"], "prediction": f"issue_{n}_closed = 1 within 24 h"}
     key = os.environ.get("ANTHROPIC_API_KEY")
+    port = bool(qm and model_call is None and PORT_ITEM.match(str(n)) and verify_command(issue))  # PORT-EXEC-1: queue items only; a remote issue body is never run as a command
     from . import agent_ladder  # SYS-2: which model writes the change, who reviews it and what it cost
-    if model_call is None and not key and not cf_ready() and not agent_ladder.rungs(root):
+    if model_call is None and not port and not key and not cf_ready() and not agent_ladder.rungs(root):
         row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (a cloud-hosted routine that starts a Claude session, which runs --pick and --record) takes the item without any key")
         log(lroot, row); return row
     if not apply:
@@ -241,6 +264,8 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         _, tree = sh(["git", "ls-files"], root)
         branch = f"agent/{n}-{re.sub(r'[^a-z0-9]+', '-', issue['title'].lower())[:40].strip('-')}"
         sh(["git", "checkout", "-B", branch], root)
+        if port:
+            model_call = port_call(issue, root)
         prompt, failed, files, out = build_prompt(issue, tree), [], [], {}
         for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
             failed = []
