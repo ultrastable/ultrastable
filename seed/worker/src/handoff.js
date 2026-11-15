@@ -200,7 +200,7 @@ export async function tickConfigSource(read) {
   return '// Generated on the server path (HANDOFF-1) from seed/autonomy at the deploy commit. Do not edit.\nexport default ' + JSON.stringify(cfg) + ';\n';
 }
 // generated: optional overrides for build-time paths not in git, mapped to their source text.
-export function makeDeployer({ token, fetch: f = fetch, site, key, generated = {} }) {
+export function makeDeployer({ token, fetch: f = fetch, site, key, oidc, generated = {} }) {  // oidc: a GitHub Actions OIDC token instead of the shared key (DEPLOY-OIDC-1)
   return async (id, sha, repo) => {
     try {
       const topo = JSON.parse(await raw(f, token, repo, sha, 'doctrine/topology.json'));
@@ -209,7 +209,7 @@ export function makeDeployer({ token, fetch: f = fetch, site, key, generated = {
       const read = p => raw(f, token, repo, sha, p);
       const gen = { 'seed/worker/src/config.js': () => tickConfigSource(read), ...Object.fromEntries(Object.entries(generated).map(([k, v]) => [k, () => v])) };
       const modules = await collectModules(p => (p in gen ? Promise.resolve(gen[p]()) : read(p)), tb.worker.main);
-      const r = await site.fetch('https://internal/__internal/deploy', { method: 'POST', headers: { 'x-internal-key': key, 'content-type': 'application/json' },
+      const r = await site.fetch('https://internal/__internal/deploy', { method: 'POST', headers: { ...(oidc ? { authorization: 'Bearer ' + oidc } : { 'x-internal-key': key }), 'content-type': 'application/json' },
         body: JSON.stringify({ name: id, modules: modules.map(({ name, src, type }) => ({ name, src, type })), main: modules[0].name, compatibility_date: tb.worker.compatibility_date || topo.compatibility_date, bindings: tb.bindings, crons: tb.worker.crons || null, tag: String(sha).slice(0, 12) }) });
       const j = await r.json().catch(() => ({}));
       return r.ok && j.ok ? { ok: true, version: j.version || '', detail: 'uploaded' } : { ok: false, detail: j.error || ('site deploy ' + r.status) };

@@ -84,6 +84,16 @@ async function readMetric(db, m, ctx) {
   return null; // declared: named but not probed
 }
 
+// The liveness set every system carries (seed/bootstrap/bootstrap.py LIVENESS; test/measure.test.js keeps the two equal).
+export const LIVENESS = [
+  ['M-tick-heartbeat', 'ticks completed in the last hour', 'tick_runs_completed_1h', '>=', 5, 1.5, 'operations', 'The clock is not turning. Check the Worker cron, the D1 binding and the last tick_runs.errors.'],
+  ['M-acting', 'dispatches in the last 24 hours', 'dispatches_24h', '>=', 1, 6, 'operations', 'Ticks run but nothing is handed to a role. Check ready items, role rows and the executor.'],
+  ['M-closing', 'items finished in the last 7 days', 'items_done_7d', '>=', 1, 48, 'portfolio-manager', 'Work starts but nothing closes. Find the stuck stage (review, merge, verify) and fix it.'],
+  ['M-verified', 'independently verified outcomes in the last 7 days', 'verified_outcomes_7d', '>=', 1, 48, 'reviewer', 'Nothing was verified by a second path. Check that the reviewer role is dispatched and records outcomes.'],
+  ['M-no-drops', 'silent drops in the last 7 days', 'silent_drops_7d', '<=', 0, 0, 'portfolio-manager', 'An item left the active set with no disposition. Find it and give it one.'],
+  ['M-instrumented', 'objectives without a probe-backed target metric', 'objectives_without_probe', '<=', 0, 1, 'product-manager', 'Insert a target metric with a builtin, sql or http probe for the objective.'],
+];
+
 export const STEPS = {
   // Every item that left the active set has a disposition; items whose trigger is done become ready.
   async reconcile(db, ctx) {
@@ -132,6 +142,12 @@ export const STEPS = {
   // OBJECTIVES-1: read every metric through its probe. Outside its healthy condition it files its own remedy item (owner, done check,
   // closing probe) and closes that item when the probe passes again. A new system gets grace_hours before liveness can breach.
   async measure(db, ctx) {
+    // LIVENESS-SEED-1: a runtime started without the bootstrap's liveness set (tenant 0 read "measured 0 metric(s)" with 144 of 144 ticks running)
+    // seeds the same six metrics itself. INSERT OR IGNORE: an owner's or a bootstrap's row with the same id is never touched.
+    for (const [id, name, spec, op, threshold, grace, owner, remedy] of LIVENESS) {
+      await run(db, `INSERT OR IGNORE INTO metrics (id, tenant_id, objective_id, name, kind, source, spec, op, threshold, grace_hours, owner_role, remedy)
+        VALUES (?, NULL, NULL, ?, 'liveness', 'builtin', ?, ?, ?, ?, ?, ?)`, id, name, spec, op, threshold, grace, owner, remedy);
+    }
     const first_tick = await first(db, `SELECT MIN(started_at) AS t FROM tick_runs`);
     const ageH = first_tick && first_tick.t ? (ctx.now - Date.parse(first_tick.t.replace(' ', 'T') + 'Z')) / 3600e3 : 0;
     // TENANT-1: a runtime measures only its own tenant's metrics. Rows of another tenant are never read, never breach, never file items here.
@@ -238,7 +254,8 @@ export const STEPS = {
       if (!item) continue;
       await run(db, `INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES (?, ?, ?, ?)`, item.id, role.id, ctx.nowIso, ctx.nowIso);
       await run(db, `UPDATE items SET status='claimed', updated_at=? WHERE id=?`, ctx.nowIso, item.id);
-      await run(db, `INSERT INTO dispatches (tick_id, role_id, item_id, model) VALUES (?, ?, ?, ?)`, ctx.tickId, role.id, item.id, role.model);
+      // MODEL-TRUTH-1: roles.model is a configured tier label, not what runs; the doer writes the real model (or 'rules (no model)') when it settles.
+      await run(db, `INSERT INTO dispatches (tick_id, role_id, item_id, model) VALUES (?, ?, ?, 'pending')`, ctx.tickId, role.id, item.id);
       n++;
     }
     ctx.dispatched = n;

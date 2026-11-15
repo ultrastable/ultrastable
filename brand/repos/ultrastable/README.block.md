@@ -11,7 +11,7 @@ The system of record: roadmap, doctrine, foundation code, agents, brand and the 
 
 ![visibility](https://img.shields.io/badge/repo-public-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
 
-**The organization:** **ultrastable** · [seed](https://github.com/ultrastable/seed) · [platform](https://github.com/ultrastable/platform) · [docs](https://github.com/ultrastable/docs) · [site](https://github.com/ultrastable/site) · [business](https://github.com/ultrastable/business) · [ip](https://github.com/ultrastable/ip) · [ultrastable.io](https://ultrastable.io)
+**The organization:** **ultrastable** · [workers](https://github.com/ultrastable/workers) · [spec](https://github.com/ultrastable/spec) · [license](https://github.com/ultrastable/license) · [ops](https://github.com/ultrastable/ops) · [seed](https://github.com/ultrastable/seed) · [.github](https://github.com/ultrastable/.github) · [ultrastable.io](https://ultrastable.io)
 
 ## What it is
 The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof. Ultrastable is an autonomous development platform: an organization of virtual managers and staff that runs projects, scores its own decisions, earns wider autonomy from its track record, and interrupts a person only for steps that cannot be undone.
@@ -41,14 +41,14 @@ Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussin
 | Repo | Role | What |
 |---|---|---|
 | [ultrastable](https://github.com/ultrastable/ultrastable) | System of record | The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof. |
+| [workers](https://github.com/ultrastable/workers) | Code | The code: the Cloudflare Worker tick, schema, bootstrapper, adapters and reference runtime. Public so its GitHub Actions run. |
+| [spec](https://github.com/ultrastable/spec) | Specifications | The numbered specifications and docs: what a conforming implementation must do. Dated 2026-11-11 and published openly as a public record of the design. |
+| [license](https://github.com/ultrastable/license) | Retired | Retired: the Ultrastable License now lives in ultrastable/spec. Kept public so existing links resolve. |
+| [ops](https://github.com/ultrastable/ops) | Owner tracker | Administration: owner cards, funding, legal and bootstrap gaps. Not code. Private. |
 | [seed](https://github.com/ultrastable/seed) | Bootstrapper | One idea file in, a running organization of virtual managers and staff out. |
-| [platform](https://github.com/ultrastable/platform) | Runtime and adapters | The tick, roles, trust ledger, prediction scorer and plussing queue, portable across Cloudflare and Google Cloud. |
-| [docs](https://github.com/ultrastable/docs) | Concepts and roadmap | How it works: virtual staff, feedback loops, earned trust, plussing, governance, bootstrapping and the roadmap. |
-| [site](https://github.com/ultrastable/site) | Public site | The Cloudflare Worker behind the Ultrastable domains. |
-| [business](https://github.com/ultrastable/business) | Plan and funding | Business plan, customers, competition, pitch, funding and promotion, written by the virtual managers. |
-| [ip](https://github.com/ultrastable/ip) | Architecture and IP | Architecture specifications and the evidence log. |
+| [.github](https://github.com/ultrastable/.github) | Org profile | Organization profile and community health defaults. |
 
-Also in the org: [workers](https://github.com/ultrastable/workers), [spec](https://github.com/ultrastable/spec), [license](https://github.com/ultrastable/license) (extracted code, specifications and canonical license text).
+Also in the org:  (extracted code, specifications and canonical license text).
 
 ## License
 Source-available. Free for non-commercial use: read it, run it, study it, change it, share it. Any commercial use needs a Commercial License with revenue share. Full terms: [Ultrastable License v1.0 (USL-1.0)](https://github.com/ultrastable/ultrastable/blob/main/LICENSING.md). Commercial licensing: pilot@ultrastable.io.

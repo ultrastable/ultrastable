@@ -110,7 +110,7 @@ Counts (rows): IMPLEMENTED LIVE 15 (some with qualifiers), PARTIAL 10, NOT IMPLE
 
 # Families E, F, G and dependents 41-45 (qnfo-workers HEAD 3eef0c5; old claim numbering)
 
-Portable equivalents are in C:\Users\LENOVO\Dev\ultrastable\repo-clone (rc). rc was only grep-checked: no fence, kill switch or two-family review gate was found in rc platform/core store.py (claims table has claimed_at/heartbeat_at only) or engine.py.
+Portable equivalents are in <owner-machine>\Dev\ultrastable\repo-clone (rc). rc was only grep-checked: no fence, kill switch or two-family review gate was found in rc platform/core store.py (claims table has claimed_at/heartbeat_at only) or engine.py.
 
 ## E: change path (claims 37-40)
 | Claim element | qnfo-workers location | Status | Entanglement | Portable equivalent / GAP |
@@ -142,7 +142,7 @@ Portable equivalents are in C:\Users\LENOVO\Dev\ultrastable\repo-clone (rc). rc 
 | Idea file as sole input; staged bootstrapper; credentials by presence | NOT FOUND in qnfo-workers | NOT FOUND | n/a | rc seed/bootstrap/bootstrap.py (`parse_idea` 63, `budget_from` 94, `main` 483) |
 | Policy validator, gated actions | NOT FOUND in qnfo-workers | NOT FOUND | n/a | rc bootstrap.py `validate_policy` 452, `gated_actions` 476; seed/autonomy/policy.json |
 | Provision DB and heartbeat worker; first tick | NOT FOUND in qnfo-workers | NOT FOUND | n/a | rc seed/worker/src/index.js, tick.js, wrangler.template.jsonc. First real cloud provisioning not yet run (CLAIM-STRATEGY) |
-| 48 non-overwriting sync to agent products | tools-sync-agent-configs.py is outside qnfo-workers (C:\Users\LENOVO\Dev); no script in repo scripts/ located | NOT FOUND in repo | n/a | rc seed/AGENTS.md, CLAUDE.md pointers (claim 49) |
+| 48 non-overwriting sync to agent products | tools-sync-agent-configs.py is outside qnfo-workers (<owner-machine>\Dev); no script in repo scripts/ located | NOT FOUND in repo | n/a | rc seed/AGENTS.md, CLAUDE.md pointers (claim 49) |
 | 50 bootstrap success stored as prediction | NOT FOUND | NOT FOUND | n/a | rc seed/bootstrap/cases.json unverified |
 | 51 stage failure becomes work item with owner, blocker, probe | NOT FOUND in qnfo-workers | NOT FOUND | n/a | rc bootstrap.py header lines 16-18 (stage never dies) |
 | 57 shared protocol plus per-role files | root AGENTS.md | PARTIAL | CLEAN | rc seed/agents/ |

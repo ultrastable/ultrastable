@@ -1220,6 +1220,69 @@
       "probe": "grep:seed/worker/src/pulse.js::export function failed"
     },
     {
+      "id": "lesson-2026-11-15-publishing-found-four-defects-a-check-now-catches",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "Publishing found four defects a check now catches",
+      "body": "Publishing seven repositories found: LICENSE deleted from spec by a case-insensitive collision with a license folder; source files without the SPDX header; stale document paths that failed docs_audit; and CI jobs that never started on private repositories because billing refused them, which looks like a test failure with zero steps. Fix: python3 -m foundation publication --check in checks.yml, fleet copies for LICENSE, COMMERCIAL-TERMS.md, NOTICE and CITATION.cff across all seven repositories, and the audit procedure kept as data in doctrine/publication.json.",
+      "probe": "grep:foundation/publication.py::def case_collisions",
+      "session": "claude-code-2026-11-15-publish"
+    },
+    {
+      "id": "lesson-2026-11-15-two-sessions-built-the-same-loop-proof-feature-in-parallel-t",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "Two sessions built the same loop-proof feature in parallel; the later one is superseded, not merged over",
+      "body": "PR 419 (PULSE-1) and PR 420 (LOOPPROOF-1 + BOOT-KNOWS-1) both added seed/worker/src/pulse.js within the hour. Main already carries 420 (loop beats, per-loop clock, site-called watchdog, ignition stages). 419 was closed as superseded; only what 420 lacked was carried: the six liveness metrics self-seeded by the measure step (LIVENESS-SEED-1) and Q-CRIT-DISPATCH-YIELD, the item that moves k_eff off 0.068. Claim before building (contract item 2) would have caught it.",
+      "probe": "grep:seed/worker/src/tick.js::LIVENESS-SEED-1",
+      "session": "session_0156nqDrMeFrhJhvwuJ7tR64"
+    },
+    {
+      "id": "lesson-2026-11-15-a-handoff-verify-line-must-name-a-public-url-the-change-actu",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "A handoff verify line must name a public URL the change actually moves, or the server rolls back a correct deploy",
+      "body": "PR 419 deployed ultrastable-tick with a verify line against the public /live page, which the site Worker renders and which never carries the tick Worker's k_eff. The probe could only fail; the handoff would exhaust 3 retries and roll back. The registered verify line is kept from the first PR body (coalesce), and the API to re-register it needs a bearer token a session does not hold. Rule: when the change is not visible on a public URL, verify a URL that proves the deploy path is up and prove the behaviour in a test.",
+      "probe": "grep:seed/worker/src/tick.js::LIVENESS-SEED-1",
+      "session": "session_0156nqDrMeFrhJhvwuJ7tR64"
+    },
+    {
+      "id": "lesson-2026-11-15-model-truth-1-roles-model-is-a-tier-label-not-what-runs",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "MODEL-TRUTH-1: roles.model is a tier label, not what runs",
+      "body": "The tick copied roles.model (bootstrap tier alias claude-haiku-5-5) into every dispatch row and /ops showed it as the model. No Claude model was ever called by the tick: 205 dispatches ran on Workers AI @cf/zai-org/glm-5.3-flash, 78 were settled by rules, 283 were released unworked. The doer now writes the model that answered; migration 0014 rewrote history (backup table _backup_dispatch_model_20261115).",
+      "probe": "grep:seed/worker/src/doer.js::RULES_MODEL",
+      "session": "session_0156nqDt4ontnhzSFvT4PTB8"
+    },
+    {
+      "id": "decision-2026-11-15-code-queue-1-the-native-executor-takes-d1-needs-code-items",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "CODE-QUEUE-1: the native executor takes D1 needs-code items",
+      "body": "The doer parked 66 items as needs-code and nothing read them; the worker-native executor reported idle every tick because it read only ops/priority-queue.json. It now alternates each 10-minute slot between the repo queue and D1 needs-code items, marks a taken item in-pr with the PR url and model, and the PR Handoff block lets the handoff closer close the item after merge and deploy. A PR closed unmerged returns the item to needs-code.",
+      "probe": "grep:seed/worker/src/nativeexec.js::runDbQueue",
+      "session": "session_0156nqDt4ontnhzSFvT4PTB8"
+    },
+    {
+      "id": "decision-2026-11-15-account-split-2-one-primary-across-two-cloudflare-accounts-t",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "ACCOUNT-SPLIT-2: one primary across two Cloudflare accounts; the standby promotes itself",
+      "body": "The tick decides each beat from its peer's /health whether it runs the loops: only a primary with no higher-epoch primary peer runs. The ultrastable-account tick runs as standby, promotes itself the beat it holds a GitHub credential (final org D1 copy through the D1 API, epoch above the peer, source crons off, source site forwards via UPSTREAM_ORIGIN). A demoted tick resumes after 3 beats without a primary peer. The primary keeps gate GATE-TARGET-GITHUB open with the default in effect (source runs everything) and closes it when the target reports github_ok. Session: session_0156nqDt4ontnhzSFvT4PTB8",
+      "probe": "grep:seed/worker/src/cutover.js::export async function decide",
+      "session": "session_0156nqDt4ontnhzSFvT4PTB8"
+    },
+    {
+      "id": "decision-2026-11-15-deploy-oidc-1-deploys-into-the-ultrastable-account-need-no-s",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "DEPLOY-OIDC-1: deploys into the ultrastable account need no stored Cloudflare secret",
+      "body": "deploy-ultrastable.yml asks GitHub for this run's OIDC token (audience ultrastable-deploy) and posts flattened modules to ultrastable-site /__internal/deploy, which verifies the token (GitHub JWKS, repository ultrastable/ultrastable, ref main, unexpired) and uploads with its own CF_DEPLOY_TOKEN. deploy-workers.mjs and apply-d1-migrations.mjs exit without uploading when CLOUDFLARE_ACCOUNT_ID is a retired account (deploy/cloudflare-accounts.json). Session: session_0156nqDt4ontnhzSFvT4PTB8",
+      "probe": "grep:site/deployer.js::export async function verifyGithubOidc",
+      "session": "session_0156nqDt4ontnhzSFvT4PTB8"
+    },
+    {
       "id": "lesson-2026-11-15-a-loop-s-declared-cadence-must-be-the-slowest-producer-s-and",
       "kind": "lesson",
       "date": "2026-11-15",

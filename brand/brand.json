@@ -33,6 +33,61 @@
       ]
     },
     {
+      "name": "workers",
+      "role": "Code",
+      "line": "The code: the Cloudflare Worker tick, schema, bootstrapper, adapters and reference runtime. Public so its GitHub Actions run.",
+      "audience": "Engineers who run or extend the core.",
+      "quickstart": [
+        "cd core && npm test",
+        "python bootstrap/bootstrap.py --dry-run"
+      ],
+      "topics": [
+        "agent-orchestration",
+        "cloudflare-workers",
+        "autonomous-agents",
+        "runtime"
+      ]
+    },
+    {
+      "name": "spec",
+      "role": "Specifications",
+      "line": "The numbered specifications and docs: what a conforming implementation must do. Dated 2026-11-11 and published openly as a public record of the design.",
+      "audience": "Engineers who want the precise design.",
+      "quickstart": [
+        "Start at SCOPE.md, then specs/README.md"
+      ],
+      "topics": [
+        "specifications",
+        "architecture",
+        "autonomous-agents",
+        "documentation"
+      ]
+    },
+    {
+      "name": "license",
+      "role": "Retired",
+      "line": "Retired: the Ultrastable License now lives in ultrastable/spec. Kept public so existing links resolve.",
+      "audience": "Anyone following an old link.",
+      "quickstart": [
+        "Go to ultrastable/spec"
+      ],
+      "topics": [
+        "license"
+      ]
+    },
+    {
+      "name": "ops",
+      "role": "Owner tracker",
+      "line": "Administration: owner cards, funding, legal and bootstrap gaps. Not code. Private.",
+      "audience": "The owner.",
+      "quickstart": [
+        "Open the issues"
+      ],
+      "topics": [
+        "administration"
+      ]
+    },
+    {
       "name": "seed",
       "role": "Bootstrapper",
       "line": "One idea file in, a running organization of virtual managers and staff out.",
@@ -46,92 +101,20 @@
         "cloudflare-workers",
         "autonomous-agents",
         "idea-to-organization"
-      ],
-      "archived": true
+      ]
     },
     {
-      "name": "platform",
-      "role": "Runtime and adapters",
-      "line": "The tick, roles, trust ledger, prediction scorer and plussing queue, portable across Cloudflare and Google Cloud.",
-      "audience": "Engineers who run or extend the core.",
+      "name": ".github",
+      "role": "Org profile",
+      "line": "Organization profile and community health defaults.",
+      "audience": "Visitors to github.com/ultrastable.",
       "quickstart": [
-        "pip install -e .",
-        "python -m pytest tests"
+        "See profile/README.md"
       ],
       "topics": [
-        "agent-orchestration",
-        "cloudflare-workers",
-        "google-cloud",
-        "runtime",
-        "autonomous-agents"
-      ],
-      "archived": true
-    },
-    {
-      "name": "docs",
-      "role": "Concepts and roadmap",
-      "line": "How it works: virtual staff, feedback loops, earned trust, plussing, governance, bootstrapping and the roadmap.",
-      "audience": "Readers who want to understand before they run anything.",
-      "quickstart": [
-        "Start at concepts/overview.md, then concepts/feedback-loops.md"
-      ],
-      "topics": [
-        "documentation",
-        "autonomous-agents",
-        "governance",
-        "roadmap"
-      ],
-      "archived": true
-    },
-    {
-      "name": "site",
-      "role": "Public site",
-      "line": "The Cloudflare Worker behind the Ultrastable domains.",
-      "audience": "Visitors, and whoever deploys the site.",
-      "quickstart": [
-        "npx wrangler dev"
-      ],
-      "topics": [
-        "cloudflare-workers",
-        "website",
-        "static-site"
-      ],
-      "archived": true
-    },
-    {
-      "name": "business",
-      "role": "Plan and funding",
-      "line": "Business plan, customers, competition, pitch, funding and promotion, written by the virtual managers.",
-      "audience": "Partners, funders and advisors.",
-      "quickstart": [
-        "Start at plan/README.md"
-      ],
-      "topics": [
-        "business-plan",
-        "funding",
-        "go-to-market"
-      ],
-      "archived": true
-    },
-    {
-      "name": "ip",
-      "role": "Architecture and IP",
-      "line": "Architecture specifications and the evidence log.",
-      "audience": "Engineers who want the precise design.",
-      "quickstart": [
-        "Start at README.md"
-      ],
-      "topics": [
-        "architecture",
-        "specifications",
-        "intellectual-property"
-      ],
-      "archived": true
+        "community-health"
+      ]
     }
   ],
-  "extraction_repos": [
-    "workers",
-    "spec",
-    "license"
-  ]
+  "extraction_repos": []
 }

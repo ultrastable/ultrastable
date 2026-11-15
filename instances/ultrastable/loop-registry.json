@@ -2574,7 +2574,7 @@
     {
       "id": "deploy-workers",
       "kind": "probe",
-      "summary": "Every merge deploys the tick and dashboard Workers and verifies the live code equals the commit (DEPLOY-ALL-1); the count of verified deploys in ops/deploys.jsonl is the criticality measure.",
+      "summary": "Every merge deploys the tick and dashboard Workers and verifies the live code equals the commit (DEPLOY-ALL-1); the count of verified deploys in ops/deploys.jsonl is the criticality measure. DEPLOY-OIDC-1: deploy-ultrastable.yml deploys the ultrastable account through the ultrastable-site OIDC endpoint (no stored Cloudflare secret).",
       "trigger": "automatic: merge to main touching worker code",
       "owner": "operations",
       "closes_by": "system",
@@ -2602,7 +2602,8 @@
         "ops/deploys.jsonl"
       ],
       "workflows": [
-        "deploy-workers.yml"
+        "deploy-workers.yml",
+        "deploy-ultrastable.yml"
       ],
       "server_owner": "github-actions"
     },
@@ -3064,6 +3065,44 @@
       ],
       "area": "managers",
       "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "publication-guard",
+      "kind": "governance",
+      "summary": "Every public repository keeps LICENSE (canonical blob), NOTICE, COMMERCIAL-TERMS.md, CITATION.cff, SECURITY.md, no case-colliding paths, the SPDX header on new source (shrink-only baseline) and no personal email or local path. Cross-repo copies are drift-checked by fleet. Procedure of the pre-publication audit is data in doctrine/publication.json.",
+      "trigger": "every PR (checks.yml) and the daily fleet drift run",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "python3 -m foundation publication --check exits 0 and fleet reports no drift for license-text and publication-files",
+      "paths": [
+        {
+          "id": "checks",
+          "how": "python3 -m foundation publication --check in the checks workflow",
+          "class": "free"
+        },
+        {
+          "id": "fleet",
+          "how": "python3 -m foundation fleet drift across all seven repositories",
+          "class": "free"
+        }
+      ],
+      "closing_probe": "grep:foundation/publication.py::def check",
+      "writeback": [
+        "doctrine/decision-ledger.json"
+      ],
+      "system_path": [
+        "foundation/publication.py",
+        "doctrine/publication.json",
+        "doctrine/fleet.json",
+        "tests/foundation/test_publication.py",
+        ".github/workflows/checks.yml"
+      ],
+      "workflows": [
+        "checks.yml"
+      ],
+      "area": "managers",
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

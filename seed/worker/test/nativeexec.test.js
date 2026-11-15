@@ -64,3 +64,47 @@ test('an item whose file: done check already passes is not re-worked', () => {
   assert.equal(doneOnMain('**Done check:** file:ops/x.json', p => p === 'ops/x.json'), true);
   assert.equal(doneOnMain('**Done check:** grep:a::b', () => true), false);
 });
+
+// CODE-QUEUE-1: items the doer parked as needs-code are worked by the executor; the PR carries a Handoff block that closes the item.
+import { makeDb } from './d1shim.js';
+import { runDbQueue, pathsIn, deployFor, reopenClosedUnmerged } from '../src/nativeexec.js';
+function codeDb() {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO items (id,title,owner_role,done_check,closing_probe,priority,status,blocker) VALUES
+    ('RM-1','RM-1: serve agent card','operations','site/agentic.js serves it','GET /x','20','blocked','needs-code: edit site/agentic.js'),
+    ('OW-1','OW-1: sign','operations','x',NULL,90,'blocked','owner-only: sign')`);
+  return db;
+}
+test('the D1 lane opens a PR for a needs-code item and marks it in-pr with the model', async () => {
+  const db = codeDb(), { f, log } = fakeGh();
+  const bodies = [];
+  const f2 = async (url, o = {}) => { if (o.method === 'POST' && url.endsWith('/pulls')) bodies.push(JSON.parse(o.body).body); return f(url, o); };
+  const ag = async () => ({ summary: 'card', adapter: 'workers-ai-glm', model: '@cf/zai-org/glm-5.3-flash', files: [{ path: 'site/agentic.js', content: 'new' }] });
+  const r = await runDbQueue({ ...env, DB: db }, { fetchImpl: f2, agent: ag, now: T });
+  assert.equal(r.ok, true, r.detail);
+  assert.ok(log.some(l => l.startsWith('POST /repos/o/r/git/refs')));
+  assert.match(bodies[0], /## Handoff\nitem: RM-1\nagent: worker-native \(workers-ai-glm\)\ndeploy: ultrastable-site/);
+  const it = db.raw.prepare("SELECT status, blocker FROM items WHERE id='RM-1'").get();
+  assert.equal(it.status, 'blocked'); assert.match(it.blocker, /^in-pr: https:\/\/github.com\/o\/r\/pull\/7 \| agent: worker-native \| model: @cf\/zai-org\/glm-5.3-flash/);
+  assert.match(db.raw.prepare("SELECT blocker FROM items WHERE id='OW-1'").get().blocker, /^owner-only/, 'owner-only items are never taken');
+  const again = await runDbQueue({ ...env, DB: db }, { fetchImpl: f, agent: ag, now: T });
+  assert.equal(again.idle, true, 'an in-pr item is not taken twice');
+});
+const T = Date.parse('2026-11-15T20:00:00Z');
+test('a failed model attempt keeps the item needs-code with the reason', async () => {
+  const db = codeDb(), { f } = fakeGh();
+  const r = await runDbQueue({ ...env, DB: db }, { fetchImpl: f, agent: async () => ({ summary: 's', adapter: 'a', files: [{ path: '.github/x.yml', content: '' }] }), now: T });
+  assert.equal(r.ok, false);
+  assert.match(db.raw.prepare("SELECT blocker FROM items WHERE id='RM-1'").get().blocker, /^needs-code: worker-native attempt failed \(protected path/);
+});
+test('a PR closed without merge returns its item to needs-code', async () => {
+  const db = codeDb();
+  db.raw.exec(`UPDATE items SET blocker='in-pr: u' WHERE id='RM-1'`);
+  db.raw.exec(`INSERT INTO handoffs (id, repo, pr, item, state) VALUES ('o/r#7','o/r',7,'RM-1','closed_unmerged')`);
+  assert.equal(await reopenClosedUnmerged(db), 1);
+  assert.match(db.raw.prepare("SELECT blocker FROM items WHERE id='RM-1'").get().blocker, /^needs-code: previous PR closed/);
+});
+test('paths and deploy targets are read from the item text and the change', () => {
+  assert.deepEqual(pathsIn('edit site/agentic.js and seed/worker/src/tick.js, not x.js'), ['site/agentic.js', 'seed/worker/src/tick.js']);
+  assert.equal(deployFor(['site/a.js', 'seed/worker/src/b.js', 'docs/c.md']), 'ultrastable-site, ultrastable-tick');
+});
