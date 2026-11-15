@@ -83,7 +83,7 @@ assert.equal((await oa.loadClient(ENV, CID, mk(doc))).name, "Cursor");
 assert.equal(await oa.loadClient(ENV, CID, mk({ ...doc, client_id: "https://other.example.com/x" })), null, "document must name itself");
 assert.equal(await oa.loadClient(ENV, CID, mk({ ...doc, redirect_uris: ["http://evil.example/cb"] })), null);
 assert.equal(await oa.loadClient(ENV, CID, mk({ ...doc, token_endpoint_auth_method: "client_secret_basic" })), null);
-for (const bad of ["https://localhost/x.json", "https://10.0.0.1/x.json", "https://intranet/x.json", "https://client.example.com/"]) assert.equal(await oa.loadClient(ENV, bad, mk(doc)), null, bad);
+for (const bad of ["https://localhost/x.json", "https://10.0.0.1/x.json", "https://intranet/x.json", "https://client.example.com/"]) assert.equal(await oa.loadClient(ENV, bad, mk(doc)), null, bad); // server-side only: SSRF guard, loopback is rejected, never a host
 assert.equal(await oa.loadClient(ENV, CID, async () => { throw new Error("net"); }), null);
 { const rr = await oa.oauthRoute(new Request("https://ultrastable.io/oauth/authorize" + q({ client_id: CID, redirect_uri: doc.redirect_uris[0] }), { headers: ck }), ENV, { fetch: mk(doc) }); assert.equal(rr.status, 200); assert.match(await rr.text(), /Connect Cursor\?/); }
 

@@ -5,7 +5,7 @@
 Credentials come from the consent screen (/connect/github): seed/worker/src/auth/.
 """
 from __future__ import annotations
-import json, re, sys
+import json, re, subprocess, sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -17,9 +17,12 @@ def scan(root=REPO) -> list[str]:
     pol = json.loads((root / PATH).read_text("utf-8"))
     pats = [re.compile(p, re.I) for p in pol["patterns"]]
     hits = []
+    # Gitignored files are build or test outputs (e.g. seed/worker/src/config.js written by a worker test), not product surfaces.
+    ign = subprocess.run(["git", "-C", str(root), "ls-files", "-oi", "--exclude-standard"], capture_output=True, text=True)
+    ignored = set(ign.stdout.split("\n")) if ign.returncode == 0 else set()
     for g in pol["scan_globs"]:
         for f in sorted(root.glob(g)):
-            if not f.is_file():
+            if not f.is_file() or str(f.relative_to(root)) in ignored:
                 continue
             for n, line in enumerate(f.read_text("utf-8", errors="replace").splitlines(), 1):
                 if any(p.search(line) for p in pats):

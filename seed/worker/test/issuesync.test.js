@@ -4,7 +4,7 @@ import { makeDb } from './d1shim.js';
 import { syncIssues, parseRoadmapIssue } from '../src/issuesync.js';
 
 const file = (o) => ({ content: Buffer.from(JSON.stringify(o)).toString('base64') });
-const issue = (id, over = {}) => ({ id, title: `ROADMAP-1: ${id}`, body: `code-task: repo=ultrastable path=x.js\n\n**Owner:** product-manager\n**Program:** QNFO.REACH\n**Metric it should move:** readers\n**Done check:** merged and verified live\n**Status:** open\n\nBody`, labels: ['roadmap'], milestone: 'Next', ...over });
+const issue = (id, over = {}) => ({ id, title: `ROADMAP-1: ${id}`, body: `code-task: repo=ultrastable path=x.js\n\n**Owner:** product-manager\n**Program:** PROGRAM.REACH\n**Metric it should move:** readers\n**Done check:** merged and verified live\n**Status:** open\n\nBody`, labels: ['roadmap'], milestone: 'Next', ...over });
 function gh(files) {
   const calls = [];
   const f = async (url) => {
@@ -33,7 +33,7 @@ test('syncIssues: inserts new roadmap items as open, idempotent, bounded per tic
   let r = await syncIssues({ db, token: 't', repo: 'o/r', fetch: f, max: 5 });
   assert.equal(r.inserted.length, 5); assert.equal(r.status, 'ok');
   const row = await db.prepare('SELECT * FROM items WHERE id = ?').bind('ROADMAP-T1').first();
-  assert.equal(row.status, 'open'); assert.equal(row.kind, 'roadmap'); assert.match(row.surface, /QNFO\.REACH metric:readers/);
+  assert.equal(row.status, 'open'); assert.equal(row.kind, 'roadmap'); assert.match(row.surface, /PROGRAM\.REACH metric:readers/);
   r = await syncIssues({ db, token: 't', repo: 'o/r', fetch: f, max: 5 });
   assert.equal(r.inserted.length, 2, 'the remaining two, nothing twice');
   r = await syncIssues({ db, token: 't', repo: 'o/r', fetch: f, max: 5 });

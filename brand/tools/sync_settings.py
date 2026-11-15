@@ -20,9 +20,11 @@ def desired():
     # settings file that brand.json does not name (workers, spec, license) are kept as written.
     repos = {k: v for k, v in cur["repos"].items() if k.split("/")[1] not in {r["name"] for r in cfg["repos"]}}
     for r in cfg["repos"]:
-        if r.get("archived"):
-            continue
         key = f"{cfg['org']}/{r['name']}"
+        if r.get("archived"):
+            if key in cur["repos"]:
+                repos[key] = cur["repos"][key]  # rendered as written; the appliers skip a repo GitHub reports archived
+            continue
         old = cur["repos"].get(key, base)
         repos[key] = {**old, "description": f"{r['line']} {pos['tagline']}"[:350], "homepage": cfg["site"], "topics": r["topics"]}
     cur["repos"] = repos

@@ -1,6 +1,7 @@
 # PROMOTE-1: strategy and promotion as a closed loop.
 import json, shutil, tempfile, unittest
 from pathlib import Path
+import _repo  # noqa: E402  (tests/foundation is on sys.path under discover)
 from foundation import promote
 
 REPO = Path(__file__).resolve().parents[2]
@@ -8,7 +9,7 @@ REPO = Path(__file__).resolve().parents[2]
 
 class Promote(unittest.TestCase):
     def setUp(self):
-        self.tmp = Path(tempfile.mkdtemp())
+        self.tmp = _repo.scratch()
         for p in ["doctrine/promotion.json", "outreach/facts.json", "outreach/profiles.json", "outreach/forms", "ops/promotion",
                   "outreach/applications", "LICENSING.md", "COMMERCIAL-TERMS.md", "site/wrangler.toml", "site/agentic.js",
                   "foundation/selfhost.py", "instances/ultrastable/loop-registry.json", "doctrine/competitors.json", "scripts", "foundation/promote.py", "foundation/growth.py"]:

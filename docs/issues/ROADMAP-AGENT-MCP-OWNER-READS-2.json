@@ -1,7 +1,7 @@
 {
   "id": "ROADMAP-AGENT-MCP-OWNER-READS-2",
   "title": "ROADMAP-1: QNFO.OPS #MCP-OWNER-READS-2: follow-up filed with a closing probe",
-  "body": "code-task: repo=ultrastable path=site/agentic.js\ncode-anchor: export const LIVE_TOOLS\n\n**Owner:** product-manager\n**Program:** QNFO.OPS\n**Metric it should move:** owner_load\n**Cost rule:** adds no worker, cron or paid model call.\n**Done check:** merged and verified live: POST https://ultrastable.io/mcp tools/list expect \"get_blind_spots\"\n**Status:** open\n\nExpose get_blind_spots and get_standards as MCP read tools by publishing doctrine/blindspots.json and seed/standards/standards.json into the snapshot the Worker already reads (no new cron: the existing snapshot job includes them).",
+  "body": "code-task: repo=ultrastable path=site/agentic.js\ncode-anchor: export const LIVE_TOOLS\n\n**Owner:** product-manager\n**Program:** QNFO.OPS\n**Metric it should move:** owner_load\n**Cost rule:** adds no worker, cron or paid model call.\n**Done check:** grep:site/agentic.js::get_standards ; merged and verified live: POST https://ultrastable.io/mcp tools/list expect \"get_blind_spots\"\n**Status:** open\n\nExpose get_blind_spots and get_standards as MCP read tools by publishing doctrine/blindspots.json and seed/standards/standards.json into the snapshot the Worker already reads (no new cron: the existing snapshot job includes them).",
   "labels": [
     "role:product-manager",
     "roadmap",

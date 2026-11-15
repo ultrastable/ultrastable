@@ -96,7 +96,7 @@ test('our Client ID Metadata Document is served and matches the callback', async
 });
 
 test('SSRF guard refuses private and non-https servers; no CIMD and no DCR is reported, not guessed', async () => {
-  for (const u of ['http://example.com/mcp', 'https://localhost/mcp', 'https://10.0.0.1/mcp', 'https://[::1]/mcp', 'https://intranet/mcp', 'https://u:p@example.com/mcp']) assert.equal(safeUrl(u), null, u);
+  for (const u of ['http://example.com/mcp', 'https://localhost/mcp', 'https://10.0.0.1/mcp', 'https://[::1]/mcp', 'https://intranet/mcp', 'https://u:p@example.com/mcp']) assert.equal(safeUrl(u), null, u); // server-side only: SSRF guard, loopback is rejected, never a host
   assert.ok(safeUrl('https://example.com/mcp'));
   assert.equal((await discoverMcp('https://127.0.0.1/mcp', { fetch: async () => { throw new Error('must not fetch'); } })).ok, false);
   const meta = pk => async u => String(u).includes('oauth-authorization-server') ? J({ authorization_endpoint: 'https://a.example.com/a', token_endpoint: 'https://a.example.com/t', code_challenge_methods_supported: pk }) : NF;
