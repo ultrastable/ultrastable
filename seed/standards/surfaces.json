@@ -310,7 +310,7 @@
    "audience": "public",
    "standards": [],
    "discoverable": false,
-   "description": "Liveness plus k_eff of the last tick (CRITICALITY-1).",
+   "description": "Liveness plus k_eff of the last tick (CRITICALITY-1), the ignition stage from bootstrap to criticality (BOOT-KNOWS-1) and every loop's clock (LOOPPROOF-1).",
    "reason": "operational criticality telemetry (CRITICALITY-1), not a capability for callers"
   },
   {
@@ -338,6 +338,19 @@
    "discoverable": false,
    "description": "Collectors push GitHub-run, cost and owner-touch samples (CRITICALITY-1).",
    "reason": "machine-to-machine collector input; nothing for an agent to discover"
+  },
+  {
+   "id": "pulse-watch",
+   "path": "/pulse/watch",
+   "methods": [
+    "POST"
+   ],
+   "kind": "rest",
+   "audience": "machine",
+   "standards": [],
+   "discoverable": false,
+   "description": "The second producer of the heartbeat (LOOPPROOF-1): leaves a watchdog beat and runs a tick only when the newest tick is older than two intervals.",
+   "reason": "machine-to-machine watchdog call from the site Worker's service binding; nothing for an agent to discover"
   }
  ]
 }

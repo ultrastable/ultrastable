@@ -168,7 +168,7 @@ export default {
    "id": "Q-LOOP-live-clock",
    "milestone": "Next",
    "owner": "operations",
-   "status": "open",
+   "status": "done",
    "title": "Run Ultrastable's own seed heartbeat on a deployed runtime and report it",
    "trigger": "every executor run"
   },
@@ -334,8 +334,8 @@ export default {
    ],
    "issue": "Q-LOOP-live-clock",
    "name": "Dashboard preview and pilot model",
-   "status": "testing",
-   "what": "A public dashboard computed from the repository (loops, objectives, failure modes, capabilities, roadmap, earned autonomy) and the bring-your-own-account pilot model with its revenue hypotheses as data. The live tick feed is pending a deployed runtime.",
+   "status": "live",
+   "what": "A public dashboard computed from the repository (loops, objectives, failure modes, capabilities, roadmap, earned autonomy) and the bring-your-own-account pilot model with its revenue hypotheses as data. The live tick feed reads each deployed runtime's /health when the page loads.",
    "where": "/dashboard"
   },
   {

@@ -8,6 +8,8 @@ import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
+import { pulseStep } from './pulse.js';
+import { ignitionStep } from './ignition.js';
 
 const TERMINAL = ['done', 'superseded', 'cancelled'];
 const OPS = {
@@ -268,9 +270,15 @@ export const STEPS = {
     if (!ctx.config.criticality) { ctx.notes.push('criticality: no thresholds configured'); return; }
     await criticalityStep(db, ctx, ctx.config.criticality, ensureItem);
   },
+
+  // LOOPPROOF-1: every loop's expected slots against the slots it ran in; a loop that did not run files MISSED-<loop>.
+  async pulse(db, ctx) { await pulseStep(db, ctx, ensureItem); },
+
+  // BOOT-KNOWS-1: the stage from bootstrap to criticality, read from the system's own tables; the first unmet stage is IGNITE-<stage>.
+  async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'dispatch', 'execute', 'check_plus_share', 'criticality'];
+export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
 
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null } = {}) {
   const startedIso = iso(new Date(now));

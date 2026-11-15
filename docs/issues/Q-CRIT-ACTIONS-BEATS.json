@@ -1,0 +1,12 @@
+{
+  "id": "Q-CRIT-ACTIONS-BEATS",
+  "title": "Q-CRIT-ACTIONS-BEATS: count scheduled GitHub workflows as beats in the Worker, so a workflow GitHub did not start is a missed slot",
+  "body": "**Owner:** operations\n**Trigger:** LOOPPROOF-1 merged\n**Done check:** grep:seed/worker/src/pulse.js::workflow:\n**Status:** open\n\ncode-task: repo=ultrastable/ultrastable path=seed/worker/src/pulse.js\ncode-anchor: export const LANE_LOOPS\n\ncost-guard (which ran the repository-side criticality tick) failed on schedule on 2026-11-14 and 2026-11-15 with the annotation 'The job was not started because recent account payments have failed or your spending limit needs to be increased', and nothing noticed. The Worker holds a GitHub token: add a loop `actions-watch` that, once an hour, lists the newest run of every workflow with a schedule (interval read from its cron), writes one beat `workflow:<file>` per expected slot with status ok or error (not started, failed), and judge them in the pulse step with their own interval (loop_clock every_min). A job GitHub refused to start for billing is an identity-bound gate: one gate card, default in effect = the Worker lane (ZERO-MINUTES-1), never a missed-slot repair item per day.\n\nsize: M\n\n**Closing probe:** grep:seed/worker/src/pulse.js::workflow:",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Autonomy"
+}

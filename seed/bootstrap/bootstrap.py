@@ -214,9 +214,11 @@ class Boot:
                     "kind": "target", "source": "declared", "spec": declared, "op": ">=", "threshold": 0, "grace_hours": 0,
                     "owner_role": ob["owner_role"], "remedy": "Declared by the owner; the metric exists only once a probe reads it."})
         if self.parent:  # a silent child must breach at the level above it, so the link is a metric from the first tick
-            self.metrics.append({"id": "M-parent-link", "objective_id": None, "name": f"reporting to parent {self.parent}", "kind": "liveness",
-                "source": "declared", "spec": f"https://{self.parent}.example/health reachable from this system", "op": ">=", "threshold": 1,
-                "grace_hours": 0, "owner_role": "operations", "remedy": "Give this system a probe that reads its parent health (http) and a path that reports its own liveness up."})
+            url = self.idea["front"].get("parent_health_url", "").strip()
+            self.metrics.append({"id": "M-parent-link", "objective_id": None, "name": f"parent {self.parent} is reachable", "kind": "liveness",
+                "source": "http" if url.startswith("https://") else "declared", "spec": url or f"parent {self.parent} health (no probe URL given)",
+                "op": ">=", "threshold": 1, "grace_hours": 0, "owner_role": "operations",
+                "remedy": "Give this system a probe that reads its parent health (http) and expose this system's own /health for the parent to read."})
         for mid, name, spec, op, thr, grace, owner, remedy in self.LIVENESS:
             self.metrics.append({"id": mid, "objective_id": None, "name": name, "kind": "liveness", "source": "builtin", "spec": spec,
                 "op": op, "threshold": thr, "grace_hours": grace, "owner_role": owner, "remedy": remedy})
@@ -352,6 +354,9 @@ class Boot:
         values = {**self.config["runtime"], "slug": self.slug}
         values = {k: fill(v, {"slug": self.slug}) if isinstance(v, str) else v for k, v in values.items()}
         values.setdefault("d1_database_id", "{d1_database_id}")
+        # LIVE-1: a tenant-0 runtime may publish only its /health (IDEA.md front matter: workers_dev: true, public_health_only: 1)
+        values["workers_dev"] = "true" if str(f.get("workers_dev", "false")).lower() == "true" else "false"
+        values["public_health_only"] = "1" if str(f.get("public_health_only", "0")) == "1" else "0"
         self.runtime = values
         worker = self.root / "worker"
         (worker / "wrangler.jsonc").write_text(fill((worker / "wrangler.template.jsonc").read_text(), values))
@@ -497,7 +502,8 @@ class Boot:
         return "ok", "Worker cron armed; KIT-3 closes when six complete ticks are observed in one hour (prediction P-KIT-3)"
 
     def run(self, cmd, cwd) -> str:
-        p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=600)
+        exe = shutil.which(cmd[0])  # Windows: npx and wrangler are .cmd shims that CreateProcess cannot find by bare name
+        p = subprocess.run([exe or cmd[0]] + list(cmd[1:]), cwd=cwd, capture_output=True, text=True, timeout=600)
         if p.returncode != 0:
             raise RuntimeError(f"{' '.join(cmd[:4])} exited {p.returncode}: {p.stderr.strip()[-400:]}")
         return p.stdout
