@@ -1307,6 +1307,15 @@
    "body": "PR #433 (worker-native) merged a spec document for ROADMAP-AGENT-AGENT-SCOREBOARD, which needs Worker code; it was an orphan document and failed orphans, docs_audit and launch checks on main. main's substanceGuard refuses narration-only change sets; the document is removed with a ledger row. Session: session_0156nqDt4ontnhzSFvT4PTB8",
    "probe": "grep:seed/worker/src/nativeexec.js::substanceGuard",
    "session": "session_0156nqDt4ontnhzSFvT4PTB8"
+  },
+  {
+   "id": "lesson-2026-11-15-public-minutes-1-a-cost-cap-must-follow-the-cost-it-protects",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "PUBLIC-MINUTES-1: a cost cap must follow the cost it protects",
+   "body": "The executor chain cap of 4 runs a day protected private-repo Actions minutes. The repo went public, minutes became free, and the cap stayed, so the builder took 4 of 160+ items a day. daily_cap() reads visibility each run.",
+   "probe": "grep:foundation/clock.py::def daily_cap",
+   "session": "session_0156nqDubjfeqNUcorAqKczF"
   }
  ]
 }

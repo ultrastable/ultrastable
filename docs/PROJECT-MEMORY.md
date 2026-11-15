@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-15
 
+- 2026-11-15: PUBLIC-MINUTES-1: root cause of the builder draining ~4 items a day while 160+ were takeable: the executor's daily chain cap (4) protects a private repo's Actions quota, but this repo is public and standard runners are free. foundation/clock.py daily_cap() reads visibility from GitHub and uses chain.max_runs_per_day_public (48) when public. Second root cause, still open: the primary tick on the ultrastable account has no GitHub credential since the 20:50 cutover (cutover.github_ok false; lane, sweeper, handoffs MISSED), tracked by GATE-TARGET-GITHUB / OL-20261115-13
 - 2026-11-15: LANE-RED-1: with ZERO_ACTIONS the tick lane merged PRs whose checks ran and failed (#433); `realRed` in seed/worker/src/lane.js now holds a PR when an Actions job has a failed step, and lets the diff gate decide only when the job never started. NATIVE-SUBSTANCE-1: the Worker-native executor refuses a change made only of new documents or subtask records (#431, #433 removed). tests/foundation/test_brand.py follows the current repo list
 - 2026-11-15: DEPLOY-OIDC-1: deploy the ultrastable account from Actions via OIDC; never upload to the retired account (#435)
 - 2026-11-15: ACCOUNT-SPLIT-2: two-account controller; the ultrastable-account tick promotes itself (#432)

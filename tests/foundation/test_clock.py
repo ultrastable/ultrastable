@@ -62,5 +62,13 @@ class Clock(unittest.TestCase):
         self.assertIn("github.token", t)
 
 
+class PublicMinutes(unittest.TestCase):
+    def test_public_repo_lifts_the_cap(self):
+        from foundation import clock as c
+        cfg = {"max_runs_per_day": 4, "max_runs_per_day_public": 48}
+        self.assertEqual(c.daily_cap(cfg, private=False), (48, "public"))
+        self.assertEqual(c.daily_cap(cfg, private=True), (4, "private"))
+        self.assertEqual(c.daily_cap({"max_runs_per_day": 4}, private=False)[0], 4)
+
 if __name__ == "__main__":
     unittest.main()
