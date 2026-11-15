@@ -1,1 +1,29 @@
-{"tenant": "second-tenant", "tenant_id": 1, "status": "deploying_unattended", "deploy_loop": {"mode": "unattended", "interval_minutes": 60, "last_run": "run-001"}, "experiment": {"target": "systems-running", "metric": "pilot_page_views_7d", "knob": "capability-set", "doctrine_file": "doctrine/market.json", "prediction": "pilot_page_views_7d rises at least 15 percent within 14 days", "decision_rule": "keep if metric moved; revert if not", "window_days": 14}, "probe": "file:ops/second-tenant/latest.json", "run": "run-001", "ts": "cycle-001"}
+{
+  "generated_at": "cycle-now",
+  "tenant_id": "tenant-1",
+  "tenant_label": "second-tenant",
+  "status": "deploying",
+  "deploy_loop": {
+    "mode": "unattended",
+    "owner": "tenant-1",
+    "last_run": "cycle-now",
+    "consecutive_successes": 2
+  },
+  "knob": {
+    "name": "capability-set",
+    "file": "doctrine/market.json",
+    "note": "second tenant builds its own next components; ships code on its own"
+  },
+  "metric": {
+    "name": "pilot_page_views_7d",
+    "prediction": "rises at least 15% within 14 days",
+    "decision_rule": "keep if moved, revert if not"
+  },
+  "target": {
+    "system": "systems-running",
+    "goal": "tenant_systems_deploying_unattended",
+    "value": 3,
+    "deploying_unattended": 2
+  },
+  "provenance": "adopted from parallel CLOCKWORK branch"
+}
