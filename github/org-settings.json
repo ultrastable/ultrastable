@@ -98,46 +98,6 @@
         "required_linear_history": true
       }
     },
-    "ultrastable/ultrastable": {
-      "description": "The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof. Ultrastable is the foundation for any autonomous system.",
-      "homepage": "https://ultrastable.io",
-      "topics": [
-        "autonomous-agents",
-        "ai-agents",
-        "agent-orchestration",
-        "developer-tools",
-        "automation",
-        "bootstrapping",
-        "self-hosting",
-        "cloudflare-workers"
-      ],
-      "settings": {
-        "has_issues": false,
-        "has_projects": true,
-        "has_wiki": false,
-        "has_discussions": false,
-        "allow_squash_merge": true,
-        "allow_merge_commit": false,
-        "allow_rebase_merge": false,
-        "allow_auto_merge": true,
-        "allow_update_branch": true,
-        "delete_branch_on_merge": true,
-        "squash_merge_commit_title": "PR_TITLE",
-        "squash_merge_commit_message": "PR_BODY"
-      },
-      "security": {
-        "vulnerability_alerts": true,
-        "automated_security_fixes": true,
-        "secret_scanning": "enabled",
-        "secret_scanning_push_protection": "enabled"
-      },
-      "branch_protection": {
-        "branch": "main",
-        "allow_force_pushes": false,
-        "allow_deletions": false,
-        "required_linear_history": true
-      }
-    },
     "ultrastable/.github": {
       "description": "Organization profile and community health defaults",
       "homepage": "https://ultrastable.io",
@@ -196,25 +156,36 @@
         "required_linear_history": true
       }
     },
-    "ultrastable/seed": {
-      "description": "Seed kernel for new organizations (private)",
+    "ultrastable/ultrastable": {
+      "description": "The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof. Ultrastable is the foundation for any autonomous system.",
       "homepage": "https://ultrastable.io",
       "topics": [
-        "autonomous-agents"
+        "autonomous-agents",
+        "ai-agents",
+        "agent-orchestration",
+        "developer-tools",
+        "automation",
+        "bootstrapping",
+        "self-hosting",
+        "cloudflare-workers"
       ],
       "settings": {
-        "has_issues": true,
+        "has_issues": false,
+        "has_projects": true,
         "has_wiki": false,
-        "delete_branch_on_merge": true,
+        "has_discussions": false,
         "allow_squash_merge": true,
         "allow_merge_commit": false,
         "allow_rebase_merge": false,
         "allow_auto_merge": true,
-        "allow_update_branch": true
+        "allow_update_branch": true,
+        "delete_branch_on_merge": true,
+        "squash_merge_commit_title": "PR_TITLE",
+        "squash_merge_commit_message": "PR_BODY"
       },
       "security": {
         "vulnerability_alerts": true,
-        "automated_security_fixes": false,
+        "automated_security_fixes": true,
         "secret_scanning": "enabled",
         "secret_scanning_push_protection": "enabled"
       },

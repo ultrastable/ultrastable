@@ -1006,6 +1006,15 @@
    "body": "Removed patent, filing, counsel, private-repo and holding-page wording from public docs and site copy; the project is open and the Ultrastable License governs use.",
    "probe": "grep:docs/PROJECT-MEMORY.md::NO-PATENT-1",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
+  },
+  {
+   "id": "decision-2026-11-15-no-patent-1-wording-sweep-business-brand-agents-outreach",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "NO-PATENT-1 wording sweep: business, brand, agents, outreach",
+   "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/ (regenerated cards and repo blocks), agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship; the project is open and the Ultrastable License governs use.",
+   "probe": "grep:business/plan/README.md::Public by default",
+   "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   }
  ]
 }
