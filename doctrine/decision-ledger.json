@@ -1236,6 +1236,15 @@
       "body": "PR 419 (PULSE-1) and PR 420 (LOOPPROOF-1 + BOOT-KNOWS-1) both added seed/worker/src/pulse.js within the hour. Main already carries 420 (loop beats, per-loop clock, site-called watchdog, ignition stages). 419 was closed as superseded; only what 420 lacked was carried: the six liveness metrics self-seeded by the measure step (LIVENESS-SEED-1) and Q-CRIT-DISPATCH-YIELD, the item that moves k_eff off 0.068. Claim before building (contract item 2) would have caught it.",
       "probe": "grep:seed/worker/src/tick.js::LIVENESS-SEED-1",
       "session": "session_0156nqDrMeFrhJhvwuJ7tR64"
+    },
+    {
+      "id": "lesson-2026-11-15-a-handoff-verify-line-must-name-a-public-url-the-change-actu",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "A handoff verify line must name a public URL the change actually moves, or the server rolls back a correct deploy",
+      "body": "PR 419 deployed ultrastable-tick with a verify line against the public /live page, which the site Worker renders and which never carries the tick Worker's k_eff. The probe could only fail; the handoff would exhaust 3 retries and roll back. The registered verify line is kept from the first PR body (coalesce), and the API to re-register it needs a bearer token a session does not hold. Rule: when the change is not visible on a public URL, verify a URL that proves the deploy path is up and prove the behaviour in a test.",
+      "probe": "grep:seed/worker/src/tick.js::LIVENESS-SEED-1",
+      "session": "session_0156nqDrMeFrhJhvwuJ7tR64"
     }
   ]
 }
