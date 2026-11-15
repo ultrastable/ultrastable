@@ -1,10 +1,10 @@
 {
   "id": "OL-20261115-5",
-  "title": "OL-20261115-5: PUBLIC-RELEASE (ops#1): counsel review of USL-1.0, rate card, flip workers/spec/license public",
-  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** counsel review recorded\n**Done check:** grep:docs/PROJECT-MEMORY.md::USL-1.0 counsel review done\n**Status:** open\n\nMoved from ultrastable/ops#1. IDENTITY-BOUND: counsel review of License sections 5, 7.2, 15, 17; confirm COMMERCIAL-TERMS numbers; trademark filing. Default in effect: the three repos stay private.",
+  "title": "OL-20261115-5: PUBLIC-RELEASE: flip repositories public (counsel gate dropped)",
+  "body": "**Owner:** the fleet\n**Trigger:** repository visibility is public\n**Done check:** grep:github/org-settings.json::\"visibility\": \"public\" ; gh api repos/ultrastable/<repo> shows private=false for workers, spec, license, seed, ops, ultrastable\n**Status:** open\n\nSuperseded gate: owner decision 2026-11-15 drops the counsel review; the license is the protection and the repositories are public. All wording was removed in PRs ultrastable#394 and workers. Remaining step is the visibility setting itself, which the session proxy refuses (repository settings writes); it is the only open part and carries the default in effect: repositories stay private until flipped. ultrastable additionally needs its git history cleaned of the removed qnfo-platform-thread archive first.",
   "labels": [
-    "role:ROWAN (identity-bound)",
-    "open-loop"
+    "open-loop",
+    "role:fleet"
   ],
   "milestone": "Now",
   "workstream": "Open loops"

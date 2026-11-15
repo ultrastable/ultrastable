@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-14",
-  "title": "OL-20261115-14: Second installation on an account that is not the reference account (identity-bound) (workers#166)",
-  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:deploy/cloudflare-accounts.json::second_install\n**Status:** open\n\nMoved from ultrastable/workers#166 (DRAIN-FLEET-1). Gate (IC-GATE-001): a sign-in to a different Cloudflare or Google Cloud account is the owner's. Default in effect: same-account installs (proved by workers#165) stay the tested path.",
+  "title": "OL-20261115-14: GATE: start Ultrastable on Ultrastable (owner steps) (workers#75)",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:doctrine/topology.json::81e3a4efb4eb66e613529b87682911bb\n**Status:** open\n\nMoved from ultrastable/workers#75 (DRAIN-FLEET-1). The tick Worker (seed/worker) already runs live; what remains is moving the declared topology to the dedicated account. Default in effect: the old account keeps running everything.",
   "labels": [
     "role:executor",
     "open-loop"

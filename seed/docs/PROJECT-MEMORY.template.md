@@ -41,8 +41,8 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 
 | Item | Default in effect | Closing probe |
 |---|---|---|
-| Publish the repositories (changes visibility) | Everything stays private | Repository visibility is public |
-| Legal entity and IP assignment (BIZ-1) | `LICENSE` placeholder, proprietary | Entity name in `LICENSE` |
+| Publish the repositories (changes visibility) | Repositories stay as they are | Repository visibility is public |
+| Legal entity and IP assignment (BIZ-1) | `LICENSE` placeholder | Entity name in `LICENSE` |
 | Mint `ORG_ADMIN_TOKEN` | Holding page only | `org-manage` probe passes; `curl -s https://github.com/ultrastable` shows profile |
 | Create/unarchive repos if the fleet cannot | Monorepo is canonical | `gh api repos/ultrastable/<name> --jq .archived` |
 | Org avatar upload | Default identicon | Avatar URL is not the identicon |
@@ -57,7 +57,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 | Business, customers, competition, funding | `business/`, `docs/funding/`, `research/` |
 | Brand and public profile | `brand/` |
 | Site and dashboard | `site/`, `dashboard/`, `deploy/` |
-| Platform core | `platform/`, `core-manifest/`, `qnfo-platform-thread/` |
+| Platform core | `platform/`, `core-manifest/` |
 | Seed (idea to organization) | `seed/` |
 | Agent rules | `agents/AGENTS.md`, `agents/PROJECT-INSTRUCTIONS.md`, `seed/agents/AGENTS.md` |
 | Bootstrap log and gaps | `docs/bootstrapping/bootstrap-log.md`, `docs/BOOTSTRAP-GAPS.md` |

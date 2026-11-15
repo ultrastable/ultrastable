@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-17",
-  "title": "OL-20261115-17: Door A: web launcher that puts a live preview online with no terminal (US-SPEC-19) (workers#19)",
-  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:site/worker.js::temporary-accounts\n**Status:** open\n\nMoved from ultrastable/workers#19 (DRAIN-FLEET-1). Worker that asks the US-SPEC-16 questions, shows the licence summary and Cloudflare terms, uses the temporary-accounts REST API and returns an address plus a private claim link.",
+  "title": "OL-20261115-17: Self-hosting: Ultrastable improves Ultrastable on its own Cloudflare account, with hard cost caps (workers#13)",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:doctrine/topology.json::81e3a4efb4eb66e613529b87682911bb\n**Status:** open\n\nMoved from ultrastable/workers#13 (DRAIN-FLEET-1). Workers run in the dedicated account since 2026-11-14 (platformaudit, 2026-11-15) but the topology still names the old one; cost caps live in doctrine/cost.json.",
   "labels": [
     "role:executor",
     "open-loop"

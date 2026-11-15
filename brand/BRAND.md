@@ -26,7 +26,7 @@ Sub-line: *From one idea to an organization that improves itself.*
 Confident, plain, practical, a little bold. Speak to builders with ideas, not to researchers. Say what it does for them. No academic or research language, no hype words, no unverifiable numbers. Label what is running versus planned when detail matters.
 
 ## Public versus private
-Everything is private today and written ready to flip: no secrets, no owner data, nothing that needs a person's consent. The patent gate is gone (dropped 2026-11-11); publication waits on the owner's decision and the attorney review of the license, per `docs/CONFIDENTIALITY.md`. Never make a repo public from a session.
+The repositories are public under the Ultrastable License (owner decision, 2026-11-15): no secrets, no owner data. The license is the protection; no patent is pursued and no outside review gates publication.
 
 ## Color (deliberately unlike QNFO's blue-on-white)
 | Token | Hex | Use |

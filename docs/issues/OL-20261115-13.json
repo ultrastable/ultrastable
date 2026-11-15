@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-13",
-  "title": "OL-20261115-13: GAP-BOOTSTRAP-QACCT: bootstrap deploys to the target Cloudflare account with no person's session (workers#181)",
-  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:deploy/cloudflare-accounts.json::\"state\": \"running\"\n**Status:** open\n\nMoved from ultrastable/workers#181 (DRAIN-FLEET-1). Bootstrap must deploy to the named target account through a server-side credential, never a local wrangler OAuth session. Closes with the account cutover (platformaudit flags 'cloudflare cutover').",
+  "title": "OL-20261115-13: Second installation on an account that is not the reference account (identity-bound) (workers#166)",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:deploy/cloudflare-accounts.json::second_install\n**Status:** open\n\nMoved from ultrastable/workers#166 (DRAIN-FLEET-1). Gate (IC-GATE-001): a sign-in to a different Cloudflare or Google Cloud account is the owner's. Default in effect: same-account installs (proved by workers#165) stay the tested path.",
   "labels": [
     "role:executor",
     "open-loop"
