@@ -86,6 +86,39 @@ export async function originate(db, t, m, ctx, ensureItem) {
   return null;
 }
 
+// Q-CRIT-IGNITION: the links this runtime can see that do not close on themselves. Each derived link is upserted open; a derived link no longer
+// present is closed with its time (never deleted). Rows pushed by collectors (source 'external') are left to their collector.
+export async function deriveIgnitionGaps(db, nowIso) {
+  const links = [];
+  for (const c of await all(db, `SELECT id, what FROM gate_cards WHERE status='open'`))
+    links.push({ link: `gate:${c.id}`, owner: 'operations', closing_probe: `gate card ${c.id} closes by its own probe or a staged default` });
+  for (const m of await all(db, `SELECT id FROM metrics WHERE tenant_id IS NULL AND source='declared'`))
+    links.push({ link: `metric:${m.id}:unprobed`, owner: 'operations', closing_probe: `metric ${m.id} reads through a builtin, sql or http probe` });
+  const un = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status IN ('open','ready') AND owner_role NOT IN (SELECT role FROM roles)`);
+  if (un && un.n) links.push({ link: 'items:unowned', owner: 'portfolio-manager', closing_probe: 'every open item names an existing role' });
+  for (const l of links)
+    await db.prepare(`INSERT INTO ignition_gaps (link, owner, closing_probe, source, status, opened_at) VALUES (?,?,?,'tick','open',?)
+      ON CONFLICT(link) DO UPDATE SET status='open', closed_at=NULL, owner=excluded.owner, closing_probe=excluded.closing_probe`).bind(l.link, l.owner, l.closing_probe, nowIso).run();
+  const keep = links.map(l => l.link);
+  await db.prepare(`UPDATE ignition_gaps SET status='closed', closed_at=? WHERE source='tick' AND status='open'${keep.length ? ` AND link NOT IN (${marks(keep)})` : ''}`).bind(nowIso, ...keep).run();
+  const open = await all(db, `SELECT link, owner, closing_probe, source FROM ignition_gaps WHERE status='open' ORDER BY link`);
+  return { open_ignition_gaps: open.length, ignition_gaps: open.slice(0, 20) };
+}
+
+export async function addIgnitionGaps(db, gaps, nowIso) {
+  if (!Array.isArray(gaps)) return 0;
+  const seen = [];
+  for (const g of gaps.slice(0, 200)) {
+    if (!g || !g.link) continue;
+    const link = String(g.link).slice(0, 300); seen.push(link);
+    await db.prepare(`INSERT INTO ignition_gaps (link, owner, closing_probe, source, status, opened_at) VALUES (?,?,?,'external','open',?)
+      ON CONFLICT(link) DO UPDATE SET status='open', closed_at=NULL`).bind(link, String(g.owner || 'operations').slice(0, 60), String(g.closing_probe || '').slice(0, 300), nowIso).run();
+  }
+  // a collector's sample is its full list: an external link it no longer reports has closed
+  await db.prepare(`UPDATE ignition_gaps SET status='closed', closed_at=? WHERE source='external' AND status='open'${seen.length ? ` AND link NOT IN (${marks(seen)})` : ''}`).bind(nowIso, ...seen).run();
+  return seen.length;
+}
+
 // The tick step. Never lets a tick end idle: an idle tick files its own repair.
 export async function criticalityStep(db, ctx, t, ensureItem) {
   const m = await measureCriticality(db, t, ctx.now);
@@ -109,10 +142,12 @@ export async function criticalityStep(db, ctx, t, ensureItem) {
     }
   }
   const emitted = m.k_eff <= t.k_max ? await emitSuccessors(db, t, ctx, ensureItem) : 0; // control rod: above k_max nothing is emitted
-  const snap = { ...m, emitted_successors: emitted, queue_open: queued.n, idle, reasons, originated_now: origin };
+  const ign = await deriveIgnitionGaps(db, ctx.nowIso);
+  const snap = { ...m, emitted_successors: emitted, queue_open: queued.n, idle, reasons, originated_now: origin, ...ign,
+    self_sustaining: m.k_eff >= t.k_min && ign.open_ignition_gaps === 0 };
   ctx.criticality = snap;
   await db.prepare(`INSERT INTO org (key, value) VALUES ('criticality', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(JSON.stringify(snap)).run();
-  ctx.notes.push(`k_eff ${m.k_eff}${m.guard.tripped ? ' (guard: deploy rise not credited)' : ''}${origin ? `; originated ${origin.id}` : ''}`);
+  ctx.notes.push(`k_eff ${m.k_eff}${m.guard.tripped ? ' (guard: deploy rise not credited)' : ''}; open_ignition_gaps ${ign.open_ignition_gaps}${origin ? `; originated ${origin.id}` : ''}`);
   return snap;
 }
 
@@ -136,6 +171,7 @@ export async function readCriticality(db) {
 
 export async function addSample(db, s, nowIsoStr) {
   const n = k => Number.isFinite(Number(s[k])) ? Number(s[k]) : 0;
+  if (Array.isArray(s.ignition_gaps)) await addIgnitionGaps(db, s.ignition_gaps, s.at || nowIsoStr);
   await db.prepare(`INSERT INTO criticality_samples (at, source, deploys_ok, deploys_fail, spend_units, human_touches, cap_breached) VALUES (?,?,?,?,?,?,?)`)
     .bind(s.at || nowIsoStr, String(s.source || 'external').slice(0, 40), n('deploys_ok'), n('deploys_fail'), n('spend_units'), n('human_touches'), s.cap_breached ? 1 : 0).run();
 }

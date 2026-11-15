@@ -10,7 +10,7 @@ from foundation import launch  # noqa: E402
 class Launch(unittest.TestCase):
     def test_registry_lists_every_loop_and_host(self):
         r = launch.registry(ROOT)
-        self.assertEqual({l["id"] for l in r["loops"]}, {"tick", "plussing", "probes", "funding-outreach", "write-back", "transparency"})
+        self.assertEqual({l["id"] for l in r["loops"]}, {"tick", "plussing", "probes", "funding-outreach", "write-back", "transparency", "qnfo-sauce"})
         self.assertEqual({h["id"] for h in r["hosts"]}, set(launch.SURFACES))
         for h in r["hosts"]:
             self.assertTrue((ROOT / h["adapter"]).exists(), h["adapter"])
@@ -28,11 +28,12 @@ class Launch(unittest.TestCase):
         self.assertIn("not both set", cf["detail"])
 
     def test_run_once_ticks_real_records_and_writes_back(self):
-        rec = launch.run_once(ROOT, skip_outreach=True, now="2026-01-01T00:00:00Z", liveness=False)   # liveness reads live evidence; tests/foundation/test_liveness.py covers it
+        rec = launch.run_once(ROOT, skip_outreach=True, now="2026-01-01T00:00:00Z", liveness=False, sauce_apply=False)   # liveness reads live evidence (test_liveness.py); the sauce pass would close real items (test_sauce.py)
         self.assertTrue(all(r["ok"] for r in rec["loops"]), rec["loops"])
         tick = rec["loops"][0]
         self.assertGreater(tick["counts"]["items"], 40)
         self.assertEqual(len(rec["report"]), 4)
+        self.assertIn("qnfo-sauce", [r["loop"] for r in rec["loops"]], "the ported loops run on the launch clock")
         with tempfile.TemporaryDirectory() as d:
             (Path(d) / "ops").mkdir()
             paths = launch.write_back(rec, d)

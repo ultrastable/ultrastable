@@ -1,7 +1,7 @@
 {
   "id": "OL-20261113-1",
   "title": "OL-20261113-1: Tick Worker credential binding",
-  "body": "**Owner:** infrastructure-manager\n**Trigger:** each deploy-workers run\n**Done check:** file:ops/bindings.jsonl\n**Status:** open\n\nRoot gap: deployed ultrastable-tick has no GITHUB_TOKEN or GITHUB_DISPATCH_TOKEN, so lane and executor providers report no-token. deploy/bind-worker-secrets.mjs copies LANE_PAT into Worker secrets each deploy and logs ops/bindings.jsonl. Minting LANE_PAT is the one identity-bound step (default in effect: Actions-hosted lane keeps merging). Session: session_0156nqDv8ijT11RmKre7xEmK",
+  "body": "**Owner:** infrastructure-manager\n**Trigger:** each deploy-workers run\n**Done check:** file:ops/bindings.jsonl\n**Status:** closed\n\nRoot gap: deployed ultrastable-tick has no GITHUB_TOKEN or GITHUB_DISPATCH_TOKEN, so lane and executor providers report no-token. deploy/bind-worker-secrets.mjs copies LANE_PAT into Worker secrets each deploy and logs ops/bindings.jsonl. Minting LANE_PAT is the one identity-bound step (default in effect: Actions-hosted lane keeps merging). Session: session_0156nqDv8ijT11RmKre7xEmK\n\n**Evidence:** closing probe passed (first pass): file:ops/bindings.jsonl\n",
   "labels": [
     "role:infrastructure-manager",
     "open-loop"
