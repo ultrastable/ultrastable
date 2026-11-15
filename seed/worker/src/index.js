@@ -41,7 +41,7 @@ export default {
       const r = await runExecutor({ ...env, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || (config.github_repos || String(env.GITHUB_REPOS || '').split(','))[0] }); console.log('executor', JSON.stringify(r)); await noteExecutor(env.DB, r);
       const gateRepos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
       const g = await runGate({ token, repos: gateRepos }); console.log('gate', JSON.stringify(g));  // ZERO-MINUTES-1
-      const l = await runLane({ token, repos: gateRepos, issueWorkflow: null, zeroActions: env.ZERO_ACTIONS === '1' }); console.log('lane', JSON.stringify(l));
+      const l = await runLane({ token, repos: gateRepos, issueWorkflow: null, zeroActions: env.ZERO_ACTIONS === '1', evidenceRepo: env.EVIDENCE_REPO || gateRepos[0] || null }); console.log('lane', JSON.stringify(l));
       const site = env.SITE && env.INTERNAL_DEPLOY_KEY ? env.SITE : null;  // HANDOFF-1: the server owns every handed-off PR after it opens: merge noticed, deploy, live probe, close or roll back
       const ho = await runHandoffs({ db: env.DB, token, repos: gateRepos, deployer: site ? makeDeployer({ token, site, key: env.INTERNAL_DEPLOY_KEY }) : null, rollback: site ? makeRollback({ site, key: env.INTERNAL_DEPLOY_KEY }) : null }).catch(e => ({ status: 'error ' + (e && e.message) })); console.log('handoffs', JSON.stringify(ho));
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
