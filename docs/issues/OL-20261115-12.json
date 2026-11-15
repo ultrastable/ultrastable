@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-12",
+  "title": "OL-20261115-12: GAP-LOOP-GITHUB: the tick opens issues and PRs for a downstream loop and merges on its own review (workers#183)",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:seed/worker/src/tick.js::downstream\n**Status:** open\n\nMoved from ultrastable/workers#183 (DRAIN-FLEET-1). Wire the core GitHub App route into downstream cycles so a downstream loop's briefs become issues and PRs through the tick, review and trust code rather than a per-repo Actions step.",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

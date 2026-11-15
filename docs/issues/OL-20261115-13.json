@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-13",
+  "title": "OL-20261115-13: GAP-BOOTSTRAP-QACCT: bootstrap deploys to the target Cloudflare account with no person's session (workers#181)",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:deploy/cloudflare-accounts.json::\"state\": \"running\"\n**Status:** open\n\nMoved from ultrastable/workers#181 (DRAIN-FLEET-1). Bootstrap must deploy to the named target account through a server-side credential, never a local wrangler OAuth session. Closes with the account cutover (platformaudit flags 'cloudflare cutover').",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-15",
+  "title": "OL-20261115-15: GATE: start Ultrastable on Ultrastable (owner steps) (workers#75)",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:doctrine/topology.json::81e3a4efb4eb66e613529b87682911bb\n**Status:** open\n\nMoved from ultrastable/workers#75 (DRAIN-FLEET-1). The tick Worker (seed/worker) already runs live; what remains is moving the declared topology to the dedicated account. Default in effect: the old account keeps running everything.",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

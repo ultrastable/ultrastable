@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-16",
+  "title": "OL-20261115-16: Start Ultrastable on Ultrastable: the self-start loop (workers#73)",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:doctrine/topology.json::81e3a4efb4eb66e613529b87682911bb\n**Status:** open\n\nMoved from ultrastable/workers#73 (DRAIN-FLEET-1). Superseded in practice by the ultrastable-tick Worker deployed from ultrastable/ultrastable; closes when the topology names the dedicated account.",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
