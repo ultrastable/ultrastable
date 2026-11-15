@@ -1,6 +1,6 @@
 # Open-core release plan (FUND-9, DRAFT)
 
-Status: planning files only. Nothing here is published. The open-core release waits on three gates: the provisional is filed (FUND-1), the attorney session has chosen the licence and cleared the nine flags in `business/funding/decision-memo.md` (FUND-2), and the owner approves publication. Until then the repository stays private and `platform/` carries no licence file, so no rights are granted. Not legal advice.
+Status: the repositories are public under the Ultrastable License (2026-11-15). The provisional-patent and attorney gates that earlier drafts listed are dropped.
 
 Contents:
 - [GOVERNANCE.md](GOVERNANCE.md): who decides, how changes land (the agent lane), how the rules change.

@@ -12,7 +12,7 @@
   },
   "repos": {
     "ultrastable/workers": {
-      "description": "Proprietary product core (private until counsel review)",
+      "description": "Ultrastable code: Worker core, console, bootstrapper and adapters (source-available, USL-1.0)",
       "homepage": "https://ultrastable.io",
       "topics": [
         "autonomous-agents"
@@ -41,7 +41,7 @@
       }
     },
     "ultrastable/spec": {
-      "description": "Specification (private until counsel review)",
+      "description": "Ultrastable specifications and documentation (source-available, USL-1.0)",
       "homepage": "https://ultrastable.io",
       "topics": [
         "autonomous-agents"
@@ -70,7 +70,7 @@
       }
     },
     "ultrastable/license": {
-      "description": "Licence text (private until counsel review)",
+      "description": "The Ultrastable License (USL-1.0) and commercial terms",
       "homepage": "https://ultrastable.io",
       "topics": [
         "autonomous-agents"
@@ -128,7 +128,7 @@
       }
     },
     "ultrastable/ops": {
-      "description": "Operations records (private)",
+      "description": "Operations records",
       "homepage": "https://ultrastable.io",
       "topics": [
         "autonomous-agents"
@@ -197,7 +197,7 @@
       }
     },
     "ultrastable/seed": {
-      "description": "Seed kernel for new organizations (private)",
+      "description": "Seed kernel for new organizations",
       "homepage": "https://ultrastable.io",
       "topics": [
         "autonomous-agents"

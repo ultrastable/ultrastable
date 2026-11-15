@@ -14,7 +14,7 @@ The code (`workers`) and documentation (`spec`, `license`) repositories are publ
 
 ## Two forms of everything that leaves
 
-| Internal full version (this repo, private) | External non-enabling version (`external/`) |
+| Internal full version (this repo) | External non-enabling version (`external/`) |
 |---|---|
 | `docs/overview.md` | `external/overview.md` |
 | `docs/customer-story.md` | `external/customer-story.md` |

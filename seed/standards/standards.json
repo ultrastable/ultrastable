@@ -197,7 +197,7 @@
       "tracked": "registry preview",
       "why": "Public discoverability of the server by directory-based clients.",
       "support": "planned",
-      "tracked_by": "STD-1: publish after the owner verifies the namespace; held until the license review allows public listing",
+      "tracked_by": "STD-1: publish after the namespace is verified",
       "acl": "seed/worker/src/agentic/acl/discovery.js",
       "sources": [
         {

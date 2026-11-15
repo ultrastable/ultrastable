@@ -12,4 +12,4 @@ Status: draft (2026-11-11). The binding text is [`LICENSE`](LICENSE) and must be
 
 Why this shape: the code is public so anyone can read, learn from and trust it, and the project makes money only when someone else does. This replaces the earlier patent plan (see `docs/strategy/licensing-and-ip-pivot.md` in the docs repo). The license is the protection; the architecture specifications are published, dated documentation of the design.
 
-Open points for an attorney: governing law and venue, enforceability by country, the commercial fee or revenue-share model (not yet set), contributor terms, whether earlier QNFO public material affects anything. Owner-only: choose the legal entity, set the contact, sign.
+Governing law and venue, the commercial terms and contributor terms are set in the license and `COMMERCIAL-TERMS.md`.
