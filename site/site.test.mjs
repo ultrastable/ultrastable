@@ -59,6 +59,13 @@ r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.m
   assert.equal((await add("ultrastable.io", [1])).status, 400); assert.equal((await add("ultrastable.io", { x: "y".repeat(2100) })).status, 413);
   assert.equal((await api("ultrastable.io", "/s/" + id + "/api?coll=BAD NAME")).status, 400);
   assert.equal((await api("ultrastable.io", "/s/0000000000/api?coll=signups")).status, 404);
+  { // BUILD-2b: 30 rapid POSTs from one client hit 429 before the per-site cap; another client is not affected
+    const from = (ip) => api("ultrastable.io", "/s/" + id + "/api", { method: "POST", headers: { "content-type": "application/json", "cf-connecting-ip": ip }, body: JSON.stringify({ coll: "flood", data: { a: 1 } }) });
+    const codes = []; for (let i = 0; i < 30; i++) codes.push((await from("203.0.113.9")).status);
+    assert.ok(codes.includes(429), "rate limit must trip"); assert.ok(codes.filter(c => c === 201).length <= 20, "at most 20 writes a minute");
+    const last = await from("203.0.113.9"); assert.equal((await last.json()).code, "rate_limited"); assert.equal(last.headers.get("retry-after"), "60");
+    assert.equal((await from("203.0.113.10")).status, 201);
+  }
   r = await api(id + ".ultrastable.io", "/"); assert.equal(r.status, 200); const sp = await r.text();
   assert.match(sp, /window\.US=/); assert.match(sp, new RegExp("https://" + id + "\.ultrastable\.io/s/" + id + "/api"));
   assert.match(r.headers.get("content-security-policy"), /allow-same-origin/); assert.match(r.headers.get("content-security-policy"), /connect-src 'self'/);
