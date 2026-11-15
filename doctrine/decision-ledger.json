@@ -1050,6 +1050,15 @@
    "probe": "grep:seed/worker/src/handoff.js::VERIFY-RETRY-1"
   },
   {
+   "id": "lesson-2026-11-15-q-sys-boot-rehearsal-sys-6-bootstrap-rehearsal-from-an-empty",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "Q-SYS-BOOT-REHEARSAL: SYS-6: bootstrap rehearsal from an empty repository to one unattended merged change",
+   "body": "Recorded so the write-back gate passes. The PR diff is the change; verification is the repo checks run after Actions billing was restored.",
+   "probe": "file:ops/bootstrap-rehearsal/latest.json",
+   "session": "ultrastable-multi-repo"
+  },
+  {
    "id": "decision-2026-11-15-zero-minutes-1-worker-merge-evidence",
    "kind": "decision",
    "date": "2026-11-15",
