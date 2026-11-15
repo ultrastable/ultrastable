@@ -39,6 +39,12 @@
       "what": "public read-only snapshot of managers, loops, claim checks and the change feed, published to ultrastable.io/live",
       "mode": "live",
       "probe": "file:foundation/transparency.py"
+    },
+    {
+      "id": "qnfo-sauce",
+      "what": "closing-probe contracts, meta-ticket fold, family throughput, metric loop, ignition gaps and the criticality tick (foundation/sauce.py)",
+      "mode": "live",
+      "probe": "file:foundation/sauce.py"
     }
   ],
   "hosts": [

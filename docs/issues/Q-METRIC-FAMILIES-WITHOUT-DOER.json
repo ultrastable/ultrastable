@@ -1,0 +1,13 @@
+{
+  "id": "Q-METRIC-FAMILIES-WITHOUT-DOER",
+  "title": "Q-METRIC-FAMILIES-WITHOUT-DOER: families_without_doer 2 vs <= 0; lever build-doers",
+  "body": "**Owner:** operations\n**Trigger:** metric loop pass: families_without_doer outside its healthy condition\n**Done check:** cmd:python3 -m foundation metricloop --probe families_without_doer\n**Status:** open\n\nMetric `families_without_doer` (target) reads 2; healthy is <= 0. Item families with net inflow, an open backlog and nothing closing them (foundation/throughput.py).\nLever now: **build-doers**: Take the open Q-DOER-* items in queue order and build each family's closer.\nThe loop judges this lever after the efficacy window; a lever that did not move the metric is replaced here, not repeated.\n\nsize: S",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ignition",
+    "metric-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Metrics"
+}

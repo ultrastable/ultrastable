@@ -1,7 +1,7 @@
 {
   "id": "OL-20261113-3",
   "title": "OL-20261113-3: VIDEO-2 post the demo video",
-  "body": "**Owner:** outreach-coordinator\n**Trigger:** demo-video release updated\n**Done check:** file:scripts/social_post.py\n**Status:** open\n\nSocial adapters post text only and channels are dry-run; extend scripts/social_post.py to attach releases/download/demo-video/demo.mp4.",
+  "body": "**Owner:** outreach-coordinator\n**Trigger:** demo-video release updated\n**Done check:** file:scripts/social_post.py\n**Status:** closed\n\nSocial adapters post text only and channels are dry-run; extend scripts/social_post.py to attach releases/download/demo-video/demo.mp4.\n\n**Evidence:** closing probe passed (first pass): file:scripts/social_post.py\n",
   "labels": [
     "role:outreach-coordinator",
     "open-loop"

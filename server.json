@@ -1,0 +1,9 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.ultrastable/ultrastable",
+  "title": "Ultrastable",
+  "description": "Read Ultrastable's live record: scoreboard, loops, managers, shipped-code throughput and claim checks.",
+  "version": "1.0.0",
+  "websiteUrl": "https://ultrastable.io",
+  "remotes": [{"type": "streamable-http", "url": "https://ultrastable.io/mcp"}]
+}

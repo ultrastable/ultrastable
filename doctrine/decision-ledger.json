@@ -833,6 +833,154 @@
    "probe": "grep:scripts/outreach_intro.py::OUTREACH-INTRO-1"
   },
   {
+   "id": "decision-2026-11-14-qnfo-port-1-the-qnfo-loops-that-close-the-fleet-s-own-work-r",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "QNFO-PORT-1: the QNFO loops that close the fleet's own work run as foundation code",
+   "body": "Closing-probe contracts (close on the item's own probe, reopen on relapse, 60/120 min hold after a reopen), the metric closed loop (registry, breach item, 7-day efficacy, replace a remedy that did not move), per-family throughput with a lifecycle ledger (build-the-doer items, silent drops) and the meta-ticket fold now run every launch pass (foundation/sauce.py) and through queue --run. Their open links are ignition gaps in ops/ignition.json, read by criticality next to k; self_sustaining needs k at its floor and 0 gaps. The Worker keeps the same gaps as rows (migration 0010, /live open_ignition_gaps). First real pass 2026-11-14: 28 items closed on passing probes that no route had persisted, 3 OL-PR tickets folded, 2 doer items and 3 metric items filed. Inventory: doctrine/qnfo-port.json; QNFO declares its implementations in instances/qnfo/foundation-loops.json.",
+   "probe": "grep:foundation/sauce.py::def tick"
+  },
+  {
+   "id": "lesson-2026-11-14-a-dispatch-row-is-not-execution-the-tick-needs-an-in-tick-do",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "A dispatch row is not execution: the tick needs an in-tick doer",
+   "body": "DOER-1 (workers#173): from 2026-11-10 to 2026-11-14 the tick wrote 288 claims+dispatches and no step acted on them; the reaper released each claim and the same items were re-claimed up to 30 times. runTick also got a presence-only env, so the AI binding never reached it. Fix: step execute (seed/worker/src/doer.js) runs after dispatch with env.AI and ends every claimed item done, parked with a reason, or waiting; probe claims_released_unworked_24h (target 0) on /health.",
+   "probe": "file:seed/worker/src/doer.js",
+   "session": "local_933d8bf1"
+  },
+  {
+   "id": "decision-2026-11-13-zero-minutes-1-executor-diff-gate-and-lane-merge-run-in-the-",
+   "kind": "decision",
+   "date": "2026-11-13",
+   "title": "ZERO-MINUTES-1: executor, diff gate and lane merge run in the tick Worker, zero Actions minutes",
+   "body": "Measured: 2011 of 2000 free minutes used by day 13; checks 1218 min of which 958 failed. Worker unit tests 99 pass. Actions stays the second route.",
+   "probe": "file:seed/worker/src/pr-executor.js"
+  },
+  {
+   "id": "decision-2026-11-14-code-agent-sop-1-handoff-1-code-agents-hand-off-at-an-open-p",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CODE-AGENT-SOP-1 + HANDOFF-1: code agents hand off at an open PR; the tick Worker merges, deploys, probes, closes or rolls back",
+   "body": "Rowan 2026-11-14: 'This is a server-side platform, not a local platform. Code agents do not own this.' Measured before: all 5 open PRs were dirty and unowned (including #324, the Worker gate), every merge and deploy in the last day was done by a local Claude Code session, and 288 agent dispatches sat queued. Now: one SOP for any agent (site/sop.js, /api/v1/sop, Agent Skill), claim and handoff APIs, D1 handoffs + handoff_events, seed/worker/src/handoff.js run each tick after the worker-gate and lane (ZERO_ACTIONS=1 lands #324's gate), deploys from the merge commit via site/deployer.js so the Cloudflare credential stays server-side, verify line probed, item closed or rolled back and reopened.",
+   "probe": "file:seed/worker/src/handoff.js"
+  },
+  {
+   "id": "lesson-2026-11-14-a-pr-whose-author-walks-away-dies-dirty-unless-the-server-ow",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "A PR whose author walks away dies dirty unless the server owns it",
+   "body": "PR #324 (Worker gate, the fix for dead Actions minutes) sat dirty for a day because the session that wrote it ended and nothing server-side rebased or re-did it; every other open PR was in the same state. Owning the post-PR loop server-side (handoffs) and recording conflicts as server-owned state is the remedy; a client that merges by hand hides the gap.",
+   "probe": "file:seed/worker/test/handoff.test.js"
+  },
+  {
+   "id": "decision-2026-11-14-promote-1-strategy-and-promotion-as-a-closed-loop",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "PROMOTE-1: strategy and promotion as a closed loop",
+   "body": "Channels in doctrine/promotion.json scored from probed facts (outreach/facts.json). Source-available licence and private repos make NLnet/open-source programmes and Show HN not-a-fit until those facts change; accelerators and cloud credits fit. YC Winter 2027 late applications are open (read 2026-11-14); YC kit rendered.",
+   "probe": "grep:foundation/promote.py::def outcome",
+   "session": "session_0156nqDsGSkQrok8LwjeYziE"
+  },
+  {
+   "id": "decision-2026-11-14-blindspot-1-a-register-of-needs-the-owner-cannot-know-to-ask",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "BLINDSPOT-1: a register of needs the owner cannot know to ask for",
+   "body": "Register in doctrine/blindspots.json with probes; failed system needs file Q-BLIND items, identity-bound ones stay gates. Live finding 2026-11-14: ultrastable.io has SPF for receiving but no DMARC (checked over DNS-over-HTTPS), so outreach would be rejected or spam-foldered. Site had no privacy, accessibility or security contact page; added.",
+   "probe": "grep:foundation/blindspots.py::def learn",
+   "session": "session_0156nqDsGSkQrok8LwjeYziE"
+  },
+  {
+   "id": "decision-2026-11-14-webhooks-1-callbacks-as-first-class-standards",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "WEBHOOKS-1: callbacks as first-class standards",
+   "body": "Outbound callbacks (CloudEvents 1.0, Standard Webhooks signing) and inbound hooks (Standard Webhooks, GitHub X-Hub-Signature-256) live in site/webhooks.js. Delivery rides the hourly site tick (no new cron). Signing secrets are HMAC-derived from a stored salt, shown once, never stored or typed. Item events come from change detection in the tick; inbound events also deliver immediately.",
+   "probe": "grep:site/webhooks.js::export async function tickWebhooks"
+  },
+  {
+   "id": "decision-2026-11-14-authzen-1-site-worker-is-an-authzen-policy-decision-point",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "AUTHZEN-1: site worker is an AuthZEN policy decision point",
+   "body": "site/authzen.js serves /access/v1/evaluation, /access/v1/evaluations and /.well-known/authzen-configuration from trust_ledger; fails closed; secrets, interrupt gate and alignment floor are never granted by any rung.",
+   "probe": "file:site/authzen.test.mjs"
+  },
+  {
+   "id": "decision-2026-11-14-connect-1-one-connector-framework-no-pasted-tokens",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CONNECT-1: one connector framework, no pasted tokens",
+   "body": "Generic OAuth 2.1 connector flow (PKCE S256, signed one-time state, sealed per-tenant tokens, refresh via the oauth adapter, revoke) plus remote MCP servers as first-class connectors (RFC 9728, RFC 8414, CIMD then DCR, RFC 8707). Google, Microsoft and Buffer need only the single owner card oauth-apps; MCP servers need nothing. Dashboard reads /auth/connectors.",
+   "probe": "file:seed/worker/src/auth/connectors.js"
+  },
+  {
+   "id": "decision-2026-11-14-connections-1-one-owner-only-screen-to-see-and-revoke-every-",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CONNECTIONS-1: one owner-only screen to see and revoke every linked service and agent",
+   "body": "ultrastable.io/connections lists services (read from the tick Worker credential store over the TICK binding) and agents (OAuth clients with live tokens in site/oauth.js tables); one click revokes either. The /connect/* consent flow is proxied to the tick Worker for the signed-in owner; only the provider callback skips the session because it carries its own signed state. Mutations are same-origin only.",
+   "probe": "file:site/connections.js"
+  },
+  {
+   "id": "decision-2026-11-14-issuesync-1-filed-roadmap-items-reach-the-work-queue-on-the-",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "ISSUESYNC-1: filed roadmap items reach the work queue on the server",
+   "body": "docs/issues/ROADMAP-*.json (label roadmap, Status open, with a done check) are inserted as open items by the tick Worker each pass (max 5, idempotent, no model call, no new cron). Before this, filed roadmap items only became queue items through the Actions issue workflow, which is billing-blocked, so originated improvements sat unworked. Items enter as open (not ready) so the product manager triages them and the cost-cap rule (no new paid model call) holds.",
+   "probe": "file:seed/worker/src/issuesync.js"
+  },
+  {
+   "id": "lesson-2026-11-14-closeloop-1-every-session-s-tail-is-a-server-record-not-a-ch",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "CLOSELOOP-1: every session's tail is a server record, not a chat promise",
+   "body": "A session's open tail (PR 371 and 372 awaiting the handoff closer, three follow-ups) lives in the handoff table and docs/issues with closing probes; nothing depends on a local agent polling. Session archive is the only local step and carries no work.",
+   "probe": "grep:docs/issues/ROADMAP-AGENT-PORTABILITY-RESTORE.json::Done check"
+  },
+  {
+   "id": "lesson-2026-11-14-portability-2-owner-data-export-and-restore-at-my-data-passk",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "PORTABILITY-2: owner data export and restore at /my-data, passkey session, no token",
+   "body": "Portability must not need a token: /my-data uses the passkey session cookie, exports items, connected apps, webhooks and passkey labels with no secrets, and restores idempotently. Bundle format ultrastable-export/v1 is shared with the integration API (/api/v1/export, /api/v1/import).",
+   "probe": "grep:site/mydata.test.mjs::mydata ok"
+  },
+  {
+   "id": "decision-2026-11-15-auto-ship-clean-1-merge-and-deploy-every-change-automaticall",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "AUTO-SHIP-CLEAN-1: merge and deploy every change automatically; clean up on every platform and deployment",
+   "body": "Owner standing rule 2026-11-15. Conflicted PRs are reconciled by the server-side lane or filed as Q-OPENLOOP items; cleanup spans every tenant and installed deployment; nothing unmerged or unbacked is deleted.",
+   "probe": "grep:agents/AGENTS.md::AUTO-SHIP-CLEAN-1"
+  },
+  {
+   "id": "decision-2026-11-15-drain-all-1-complete-all-work-drain-all-issues-merge-all-prs",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "DRAIN-ALL-1: complete all work, drain all issues, merge all PRs with zero manual intervention",
+   "body": "Owner standing rule 2026-11-15. Server-side loops drain the issue queue and the PR list to zero; unreconcilable PRs are replaced from main; human_touches stays 0.",
+   "probe": "grep:agents/AGENTS.md::DRAIN-ALL-1"
+  },
+  {
+   "id": "decision-2026-11-15-drain-all-1-widened-0-open-issues-and-0-open-prs-fleetwide-c",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "DRAIN-ALL-1 widened: 0 open issues and 0 open PRs fleetwide, continuous execution",
+   "body": "Owner 2026-11-15. Scope is every repository of the org and every org built on Ultrastable; execution continues while either count is above 0.",
+   "probe": "grep:agents/AGENTS.md::0 open issues and 0 open PRs across every repository"
+  },
+  {
+   "id": "decision-2026-11-15-drain-zero-1-target-0-open-issues-and-0-open-prs-fleetwide",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "DRAIN-ZERO-1: target 0 open issues and 0 open PRs fleetwide",
+   "body": "Owner rule written into agents/AGENTS.md, seed/agents/AGENTS.md and agents/PROJECT-INSTRUCTIONS.md; held by the lane, sweeper and executor.",
+   "probe": "grep:agents/AGENTS.md::DRAIN-ZERO-1",
+   "session": "session_0156nqDuVY71gtRtDvjPaAgK"
+  },
+  {
    "id": "decision-2026-11-14-control-plane-1-one-versioned-control-plane-api-and-ops-dash",
    "kind": "decision",
    "date": "2026-11-14",

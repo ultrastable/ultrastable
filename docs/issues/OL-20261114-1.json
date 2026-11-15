@@ -1,9 +1,9 @@
 {
   "id": "OL-20261114-1",
-  "title": "OL-20261114-1: ROLE-WORK-2: waiting dispatches need the Worker-native executor",
-  "body": "**Owner:** staff\n**Trigger:** finding needs-executor on /api/v1/status\n**Done check:** grep:seed/worker/src/nativeexec.js::waiting\n**Status:** open\n\nItems whose probe needs a code change wait with dispatch status waiting until nativeexec takes them (docs/issues/ROLE-WORK-2.json).",
+  "title": "OL-20261114-1: MCP registry publish waits on GitHub Actions billing",
+  "body": "**Owner:** marketing-manager\n**Trigger:** Actions jobs run again, or Q-PROMO-mcp-registry taken\n**Done check:** grep:ops/promotion/outcomes.jsonl::mcp-registry\n**Status:** open\n\nmcp-registry.yml publishes via GitHub OIDC; every Actions job is refused for billing (existing NEEDS-YOU card). Second route: DNS-key login for io.ultrastable from the tick Worker (Q-PROMO-mcp-registry).",
   "labels": [
-    "role:staff",
+    "role:marketing-manager",
     "open-loop"
   ],
   "milestone": "Now",

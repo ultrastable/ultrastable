@@ -1,0 +1,87 @@
+{
+  "_doc": "METRIC-LOOP-1 registry, read by foundation/metricloop.py every launch pass (foundation/sauce.py). Each metric: a reader with code (metricloop.READERS), a healthy condition (op, threshold), kind target or guard (a target gain while a guard worsens is a regression), an owner and ordered levers. A breach files Q-METRIC-<ID> with the first untried lever; a lever that did not move its metric by min_move_share of the gap within efficacy_days is retired and replaced; no lever left files Q-METRIC-<ID>-LEVER. Add a lever here to re-arm an exhausted metric. `python3 -m foundation metricloop --check` (checks.yml) validates this file.",
+  "version": "1.0.0",
+  "efficacy_days": 7,
+  "min_move_share": 0.1,
+  "metrics": [
+    {
+      "id": "k",
+      "kind": "target",
+      "reader": "criticality_k",
+      "op": ">=",
+      "threshold": 1.0,
+      "owner": "operations",
+      "why": "Criticality: verified deploys per unit of cost plus human touches over 24 hours (foundation/criticality.py).",
+      "levers": [
+        {"id": "ship-verified-deploy", "action": "Take the top raises-deploys item and ship it through deploy/deploy-workers.mjs so ops/deploys.jsonl gains a row with live_matches_commit true."},
+        {"id": "close-owner-held", "action": "Turn an owner-held open item into a staged default with an automated acquisition attempt (CLOSED-LOOP-AXIOM), removing one human touch from the denominator."},
+        {"id": "cut-cost", "action": "Take the top cuts-cost item (Q-COST-*) and reduce rows read or neurons until ops/cost.jsonl reads under budget."}
+      ]
+    },
+    {
+      "id": "normalized_cost",
+      "kind": "guard",
+      "reader": "normalized_cost",
+      "op": "<=",
+      "threshold": 1.0,
+      "owner": "operations",
+      "why": "Latest cost reading over budget (foundation/cost.py); 1.0 is at budget.",
+      "levers": [
+        {"id": "largest-reader", "action": "Find the largest D1 reader in the latest ops/cost.jsonl row and add the index or cache that removes its scan."},
+        {"id": "cheaper-model", "action": "Route the largest AI caller to the cheapest capable model with a per-request fallback and automatic revert on empty replies."}
+      ]
+    },
+    {
+      "id": "open_items",
+      "kind": "target",
+      "reader": "open_items",
+      "op": "<=",
+      "threshold": 100,
+      "owner": "operations",
+      "why": "Open queue items (docs/issues OL-* and Q-*); the queue must drain faster than it fills.",
+      "levers": [
+        {"id": "probe-closable", "action": "Run `python3 -m foundation contracts --tick --apply` from the executor so every item whose closing probe passes closes in the same pass."},
+        {"id": "fold-meta", "action": "Give tickets about another record an **About:** line so foundation/metafold.py closes them when that record resolves."},
+        {"id": "doer-for-largest-family", "action": "Build the doer for the family with the largest open count in `python3 -m foundation throughput --report`."}
+      ]
+    },
+    {
+      "id": "relapse_rate_7d",
+      "kind": "guard",
+      "reader": "contract_relapse_rate",
+      "op": "<=",
+      "threshold": 0.2,
+      "owner": "operations",
+      "why": "Reopens over closes in 7 days (foundation/contracts.py); a close that does not stay closed is not a fix.",
+      "levers": [
+        {"id": "longer-hold", "action": "Raise hold_minutes of closing-probe-contracts in doctrine/qnfo-port.json for items reopened three or more times."},
+        {"id": "probe-measures-done", "action": "Rewrite the closing probe of the most-reopened item so it measures its definition of done, not a file that exists either way."}
+      ]
+    },
+    {
+      "id": "families_without_doer",
+      "kind": "target",
+      "reader": "families_without_doer",
+      "op": "<=",
+      "threshold": 0,
+      "owner": "operations",
+      "why": "Item families with net inflow, an open backlog and nothing closing them (foundation/throughput.py).",
+      "levers": [
+        {"id": "build-doers", "action": "Take the open Q-DOER-* items in queue order and build each family's closer."}
+      ]
+    },
+    {
+      "id": "executor_success_share_7d",
+      "kind": "target",
+      "reader": "executor_success_share",
+      "op": ">=",
+      "threshold": 0.5,
+      "owner": "operations",
+      "why": "Executor runs in 7 days that opened a pull request or verified a no-change, over all runs that attempted a change (ops/executor-log.jsonl on loop-evidence).",
+      "levers": [
+        {"id": "park-failing", "action": "Read the last failed executor rows, fix the shared cause (credential, prompt size, path guard) in foundation/executor.py."},
+        {"id": "smaller-items", "action": "Split the items the executor failed on twice into size S items with one file each."}
+      ]
+    }
+  ]
+}

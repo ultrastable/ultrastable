@@ -1,7 +1,7 @@
 {
   "id": "OL-20261112-1",
   "title": "OL-20261112-1: QNFO runtime config and replace PR owed by the QNFO lane",
-  "body": "**Owner:** qnfo-lane\n**Trigger:** workers cutover stages 1 and 6\n**Done check:** grep:scripts/upstream_scan.py::dependencies\n**Status:** open\n\nRecorded in instances/qnfo/dependencies.json with owner, trigger and closing probes (an upstream check passing in the QNFO checkout); scripts/upstream_scan.py prints them in every weekly drift scan. Workers release tag workflow is workers PR #107.",
+  "body": "**Owner:** qnfo-lane\n**Trigger:** workers cutover stages 1 and 6\n**Done check:** grep:scripts/upstream_scan.py::dependencies\n**Status:** closed\n\nRecorded in instances/qnfo/dependencies.json with owner, trigger and closing probes (an upstream check passing in the QNFO checkout); scripts/upstream_scan.py prints them in every weekly drift scan. Workers release tag workflow is workers PR #107.\n\n**Evidence:** closing probe passed (first pass): grep:scripts/upstream_scan.py::dependencies\n",
   "labels": [
     "role:qnfo-lane",
     "open-loop"

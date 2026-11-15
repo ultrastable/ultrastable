@@ -1,0 +1,11 @@
+{
+  "id": "Q-BLIND-SWEEP-ip",
+  "title": "Q-BLIND-SWEEP-ip: answer the ip sweep",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 90 days\n**Done check:** `python3 -m foundation blindspots --answer ip --text <answer with evidence>` recorded\n**Status:** open\n\nQuestion: Does the name, the licence or any dependency conflict with another party's rights, and what changed in the licences we depend on?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+  "labels": [
+    "role:product-manager",
+    "blindspot"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

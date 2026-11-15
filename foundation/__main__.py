@@ -31,7 +31,14 @@
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
   python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
+  python3 -m foundation blindspots [--check|--scan [--apply] [--live]|--answer D --text T|--learn ID ...]   BLINDSPOT-1: the system knows what the owner cannot know to ask for
+  python3 -m foundation promote [--check|--kits|--plan [--apply]|--outcome CH --kind K]   PROMOTE-1: strategy and promotion as a closed loop
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
+  python3 -m foundation sauce [--tick [--apply]|--check|--parity SLUG DIR]  QNFO-PORT-1: contracts, fold, throughput, metric loop, ignition gaps
+  python3 -m foundation contracts [--tick [--apply]|--report]             CONTRACTS-1: close on the item's own probe, reopen on relapse, hold after a reopen
+  python3 -m foundation metricloop [--tick [--apply]|--probe ID|--check]  METRIC-LOOP-1: breach -> remedy item -> efficacy -> replace a remedy that did not move
+  python3 -m foundation throughput [--tick [--apply]|--report|--doer FAM] THROUGHPUT-1: net inflow per family; a family with no doer gets a build-the-doer item
+  python3 -m foundation metafold [--tick [--apply]]                       META-FOLD-1: tickets about another record close when that record resolves
 """
 import argparse, datetime as dt, json, os, sys
 
@@ -41,6 +48,12 @@ from . import boundary, closedloop, standards, doctrine, directive, filing, glos
 def main(argv=None) -> int:
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
+    if _av[:1] == ["blindspots"]:
+        from . import blindspots
+        return blindspots.main(_av[1:])
+    if _av[:1] == ["promote"]:
+        from . import promote
+        return promote.main(_av[1:])
     if _av[:1] == ["rnd"]:
         from . import rnd
         return rnd.main(_av[1:])
@@ -71,12 +84,18 @@ def main(argv=None) -> int:
     if _av[:1] == ["design"]:
         from . import design
         return design.main(_av[1:])
+    if _av[:1] == ["insight"]:
+        from . import insight
+        return insight.main(_av[1:])
     if _av[:1] == ["growth"]:
         from . import growth
         return growth.main(_av[1:])
     if _av[:1] == ["flows"]:
         from . import flows
         return flows.main(_av[1:])
+    if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold"):
+        import importlib
+        return importlib.import_module("foundation." + _av[0]).main(_av[1:])
     if _av[:1] == ["criticality"]:
         from . import criticality
         return criticality.main(_av[1:])
@@ -92,6 +111,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["clock"]:
         from . import clock
         return clock.main(_av[1:])
+    if _av[:1] == ["platformaudit"]:
+        from . import platformaudit
+        return platformaudit.main(_av[1:])
     if _av[:1] == ["topology"]:
         from . import topology
         return topology.main(_av[1:])

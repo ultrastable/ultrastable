@@ -1,7 +1,7 @@
 {
   "id": "Q-DESIGN-SITE",
   "title": "Q-DESIGN-SITE: move the front door onto the portfolio theme",
-  "body": "**Owner:** design-manager\n**Trigger:** every tick\n**Done check:** cmd:python3 -m foundation design --lint\n**Status:** open\n\nReplace the hand-picked colours in site/worker.js with the product theme (python3 -m foundation design --css ultrastable-site). Remove every site/worker.js entry from doctrine/design-baseline.json as it is fixed.",
+  "body": "**Owner:** design-manager\n**Trigger:** every tick\n**Done check:** cmd:python3 -m foundation design --lint\n**Status:** closed\n\nReplace the hand-picked colours in site/worker.js with the product theme (python3 -m foundation design --css ultrastable-site). Remove every site/worker.js entry from doctrine/design-baseline.json as it is fixed.\n\n**Evidence:** closing probe passed (first pass): design lint ok\n",
   "labels": [
     "role:design-manager",
     "growth"

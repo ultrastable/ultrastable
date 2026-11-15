@@ -44,7 +44,7 @@ for (const w of deploy) {
   const want = bundle(w);
   if (!verifyOnly) {
     // --keep-vars: owner-set variables (OWNER_EMAIL) survive; secrets always survive. --tag ties the deployed version to this commit.
-    sh("npx", ["-y", "wrangler@4", "deploy", "-c", `deploy/wrangler/${w.id}.json`, "--keep-vars", "--tag", gitsha.slice(0, 12), "--message", "deploy-workers " + gitsha], { cwd: ROOT });
+    sh("npx", ["-y", "wrangler@4", "deploy", "-c", `deploy/wrangler/${w.id}.json`, "--keep-vars", "--tag", gitsha.slice(0, 12), "--message", "deploy-workers-" + gitsha], { cwd: ROOT });
   }
   let got = null;
   for (let i = 0; i < 6; i++) { got = await liveFiles(w.id); if (got && Object.entries(want).every(([k, h]) => got[k] === h)) break; if (verifyOnly) break; await new Promise(r => setTimeout(r, 5000)); }

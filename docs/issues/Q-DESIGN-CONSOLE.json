@@ -1,7 +1,7 @@
 {
   "id": "Q-DESIGN-CONSOLE",
   "title": "Q-DESIGN-CONSOLE: adopt the language in ultrastable/workers console-ui and the launcher",
-  "body": "**Owner:** design-manager\n**Trigger:** every tick\n**Done check:** cmd:python3 -m foundation design --lint\n**Status:** open\n\ncore/src/console-ui.js, apps/launcher/src/page.js and apps/demos hold their own palettes. Embed the generated --ds-* CSS for ultrastable-console, add a lint of those files to the workers repository checks, and keep the separation guard green.",
+  "body": "**Owner:** design-manager\n**Trigger:** every tick\n**Done check:** cmd:python3 -m foundation design --lint\n**Status:** closed\n\ncore/src/console-ui.js, apps/launcher/src/page.js and apps/demos hold their own palettes. Embed the generated --ds-* CSS for ultrastable-console, add a lint of those files to the workers repository checks, and keep the separation guard green.\n\n**Evidence:** closing probe passed (first pass): design lint ok\n",
   "labels": [
     "role:design-manager",
     "growth"

@@ -7,8 +7,8 @@ Every Actions job on ultrastable is refused with 'recent account payments have f
 **[Open the org billing page and fix the payment method or spending limit](https://github.com/organizations/ultrastable/settings/billing)**
 
 ## Submit funding applications
-An application is a statement made in your name; the packets are written and checked. If you do nothing: Packets stay unsent.
-**[Open the list of programmes with their application links](https://github.com/ultrastable/ultrastable/blob/main/outreach/STATUS.md)**
+An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact. If you do nothing: Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you.
+**[Open the ready-to-paste application kits (Y Combinator Winter 2027 late applications are open)](https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md)**
 
 ## Let Claude reach the new Cloudflare account
 Your Cloudflare login is already a member of the ultrastable account (81e3a4ef...), but the connector was authorized for the quniverse account only; only you can grant it the second account. If you do nothing: The old account keeps running everything; nothing moves.

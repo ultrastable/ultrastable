@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeDb } from './d1shim.js';
 import { runTick } from '../src/tick.js';
-import { computeKEff, readCriticality, addSample } from '../src/criticality.js';
+import { computeKEff, readCriticality, addSample, deriveIgnitionGaps } from '../src/criticality.js';
 
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
 const crit = JSON.parse(readFileSync(new URL('../../autonomy/criticality.json', import.meta.url), 'utf8'));
@@ -127,4 +127,22 @@ test('control rod: above k_max no successors are emitted', async () => {
   await addSample(db, { source: 'github-runs', deploys_ok: 500, spend_units: 1 }, '2026-11-09 00:00:00');
   await runTick(db, { config, now: T0 });
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE id='NEXT-X'").get().n, 0);
+});
+
+test('Q-CRIT-IGNITION: open chain links are rows, open_ignition_gaps sits next to k_eff, self-sustaining only at 0', async () => {
+  const db = makeDb();
+  db.raw.exec("INSERT INTO gate_cards (id,what,why_gated,default_in_effect,closing_probe) VALUES ('G1','pay','identity-bound','dry run','manual')");
+  await addSample(db, { source: 'sauce', ignition_gaps: [{ link: 'family Q-X grows and nothing closes it', owner: 'operations', closing_probe: 'throughput --doer Q-X' }] }, '2026-11-09 00:00:00');
+  await runTick(db, { config, now: T0 });
+  const c = await readCriticality(db);
+  assert.deepEqual(c.ignition_gaps.map(g => g.link).sort(), ['family Q-X grows and nothing closes it', 'gate:G1', 'items:unowned'].sort(), 'tick-derived links (owner card, items whose role does not exist in an empty org) plus the collector link');
+  assert.equal(c.open_ignition_gaps, 3);
+  assert.equal(c.self_sustaining, false);
+  assert.ok(c.ignition_gaps.some(g => g.link === 'gate:G1' && g.source === 'tick'));
+  db.raw.exec("UPDATE gate_cards SET status='closed' WHERE id='G1'");
+  db.raw.exec("INSERT INTO roles (id, role, tick_every, model) SELECT DISTINCT owner_role, owner_role, 1, 'm' FROM items WHERE owner_role NOT IN (SELECT role FROM roles)");
+  await addSample(db, { source: 'sauce', ignition_gaps: [] }, '2026-11-09 01:00:00');
+  const r = await deriveIgnitionGaps(db, '2026-11-10 01:00:00');
+  assert.equal(r.open_ignition_gaps, 0);
+  assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM ignition_gaps WHERE status='closed' AND closed_at IS NOT NULL").get().n, 3, 'a closed link is kept with its time, never deleted');
 });

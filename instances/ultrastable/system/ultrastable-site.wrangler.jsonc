@@ -12,6 +12,11 @@
       "binding": "DB",
       "database_name": "ultrastable-ops",
       "database_id": "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"
+    },
+    {
+      "binding": "ORG",
+      "database_name": "ultrastable-org",
+      "database_id": "7468898a-b515-495f-9910-e91cb80f5810"
     }
   ],
   "ai": {
