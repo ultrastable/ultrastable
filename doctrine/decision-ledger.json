@@ -1089,6 +1089,14 @@
    "title": "Q-GROW-second-tenant-deploying: second tenant manifest",
    "body": "Second tenant has its own instance manifest (kind other, 5 USD/month), README and test. ops/second-tenant/latest.json still hard-asserts observed_value; follow-up: code-task repo=ultrastable path=ops/second-tenant/deploy-loop.sh to measure deploys.",
    "probe": "file:instances/second-tenant/instance.json"
+  },
+  {
+   "id": "decision-2026-11-15-executor-closed-q-doer-q-tick-add-a-self-contained-q-tick-do",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "Executor closed Q-DOER-Q-TICK: Add a self-contained Q-TICK doer module that closes Q-TICK items from their own tick records, registered shap",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/doers/__init__.py, foundation/doers/q_tick.py, tests/test_q_tick_doer.py.",
+   "probe": "file:foundation/doers/__init__.py"
   }
  ]
 }
