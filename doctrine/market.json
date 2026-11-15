@@ -1,1 +1,12 @@
-{"target": "systems-running", "metric": "tenant_systems_deploying_unattended", "goal": 3, "current": 1, "knob": "capability-set", "capability_set": ["second-tenant-deploy-loop", "unattended-shipping"], "active_experiments": [{"id": "Q-GROW-second-tenant-deploying", "change": "build second tenant system with own deploy loop", "metric": "pilot_page_views_7d", "prediction": "+15% within 14 days", "adopted_from": "CLOCKWORK", "status": "shipped_pending_metric"}], "note": "the product is systems that ship code on their own; which components are built next is decided here"}
+{
+  "capability-set": "second-tenant-auto-deploy",
+  "capabilities": [
+    "self-deploy",
+    "second-tenant-deploy-loop"
+  ],
+  "components_built_next": [
+    "tenant-1-deploy-runner",
+    "unattended-deploy-watchdog"
+  ],
+  "rationale": "Q-GROW-second-tenant-deploying: prove the product beyond tenant 0 with a second tenant running its own unattended deploy loop (target: tenant_systems_deploying_unattended = 3 on systems-running)."
+}
