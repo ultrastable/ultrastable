@@ -20,6 +20,19 @@ test('no token: reports it and touches nothing', async () => {
   assert.equal(r.status, 'no-token'); assert.equal(calls.length, 0);
 });
 
+test('records merge evidence on main when evidenceRepo matches', async () => {
+  const { f, calls } = fake({
+    'GET /repos/a/b/pulls?': [200, [{ number: 1, labels: [] }]],
+    'GET /repos/a/b/pulls/1': [200, { draft: false, mergeable_state: 'clean' }],
+    'GET /repos/a/b/issues/1/comments': [200, []],
+    'PUT /repos/a/b/pulls/1/merge': [200, { sha: 'abc' }],
+    'PUT /repos/a/b/contents/ops/worker-merge-evidence.jsonl': [201, {}],
+  });
+  const r = await runLane({ token: 't', repos: ['a/b'], fetch: f, issueWorkflow: null, evidenceRepo: 'a/b' });
+  assert.deepEqual(r.merged, ['a/b#1']);
+  assert.ok(calls.some(c => c.startsWith('PUT /repos/a/b/contents/ops/worker-merge-evidence.jsonl')));
+});
+
 test('merges a clean PR, holds a HOLD one, dispatches an unclaimed issue', async () => {
   const { f, calls } = fake({
     'GET /repos/a/b/pulls?': [200, [{ number: 1, labels: [] }, { number: 2, labels: [] }]],

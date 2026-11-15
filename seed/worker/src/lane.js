@@ -13,7 +13,19 @@ async function gh(f, token, method, path, body) {
   return { ok: r.ok, status: r.status, json: text ? JSON.parse(text) : null };
 }
 
-export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkflow = 'issues.yml', maxIssues = 3, maxMerges = 5, zeroActions = false }) {
+export const EVIDENCE_PATH = 'ops/worker-merge-evidence.jsonl';
+
+// Appends one JSON line to the evidence file on main through the contents API (done check of ZERO-MINUTES-1).
+async function appendEvidence(f, token, repo, row) {
+  const cur = await gh(f, token, 'GET', `/repos/${repo}/contents/${EVIDENCE_PATH}?ref=main`);
+  if (!cur.ok && cur.status !== 404) throw new Error(`read ${cur.status}`);
+  const old = cur.ok ? atob(String(cur.json.content || '').replace(/\n/g, '')) : '';
+  const content = btoa(old + JSON.stringify(row) + '\n');
+  const put = await gh(f, token, 'PUT', `/repos/${repo}/contents/${EVIDENCE_PATH}`, { message: `ZERO-MINUTES-1: worker merged #${row.pr}`, content, branch: 'main', ...(cur.ok ? { sha: cur.json.sha } : {}) });
+  if (!put.ok) throw new Error(`write ${put.status}`);
+}
+
+export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkflow = 'issues.yml', maxIssues = 3, maxMerges = 5, zeroActions = false, evidenceRepo = null }) {
   if (!token) return { status: 'no-token', merged: [], dispatched: [], errors: [] };
   const out = { status: 'ok', merged: [], dispatched: [], held: [], errors: [] };
   for (const repo of repos) {
@@ -39,6 +51,10 @@ export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkfl
         if (!ready) { out.held.push(`${repo}#${pr.number} ${d && d.mergeable_state}`); continue; }
         const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${pr.number}/merge`, { merge_method: 'squash' });
         (m.ok ? out.merged : out.errors).push(m.ok ? `${repo}#${pr.number}` : `${repo}#${pr.number} merge ${m.status}`);
+        if (m.ok && evidenceRepo === repo) { // ZERO-MINUTES-1 probe: the Worker merged this with no lane run on Actions
+          try { await appendEvidence(f, token, repo, { at: new Date().toISOString(), pr: pr.number, sha: (m.json && m.json.sha) || null, host: 'cloudflare-worker', via: zeroActions ? 'worker-gate' : 'clean' }); }
+          catch (e) { out.errors.push(`${repo}#${pr.number} evidence ${e.message}`); }
+        }
       }
       if (!issueWorkflow) continue; // issue work is dispatched by executor.js; the lane only merges
       const iss = await gh(f, token, 'GET', `/repos/${repo}/issues?state=open&per_page=30`);
