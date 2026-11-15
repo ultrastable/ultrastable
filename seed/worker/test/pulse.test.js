@@ -179,3 +179,22 @@ test('ignition step: the system records each stage it reaches or loses, and keep
   assert.deepEqual(REQUIRED_TABLES.filter(t => t === 'trust_ledger'), ['trust_ledger']);
   assert.equal(DEFAULTS.sustained_ticks, 144);
 });
+
+test('an hourly watchdog is judged against its own cadence: ticking, no MISSED-watchdog, and the ladder sees a watching producer', async () => {
+  const db = makeDb();
+  await runTick(db, { config, now: T0 - 10 * MIN });  // a heartbeat exists before the watchdog first looks
+  let last;
+  for (let i = 0; i < 14; i++) {
+    const now = T0 + i * 10 * MIN;
+    for (const l of LANE_LOOPS) await beat(db, l, async () => ({ status: 'ok' }), { now: () => now + 2000 });
+    if (i % 6 === 0) await watch(db, async () => { throw new Error('not stale'); }, { now: () => now + 5 * MIN, config }).catch(() => null);  // once an hour, like the site cron
+    last = await runTick(db, { config, now });
+  }
+  const p = await readPulse(db);
+  const w = p.clock.find(c => c.loop === 'watchdog');
+  assert.equal(w.every_min, 60);
+  assert.equal(w.state, 'ticking', JSON.stringify(w));
+  assert.equal(p.watchdog, true);
+  assert.equal(await db.prepare(`SELECT 1 AS x FROM items WHERE id='MISSED-watchdog'`).first(), null);
+  assert.equal(last.completed, STEP_ORDER.length);
+});
