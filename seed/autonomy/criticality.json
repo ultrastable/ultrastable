@@ -65,31 +65,32 @@
     "title": "Successor of {id}: name the next improvement this unlocks, file it with an owner, a done check and a closing probe.",
     "doc": "Neutron emission: every closed item emits one successor while k_eff <= k_max. Above k_max the control rod drops: no successors, so the reaction cannot run away on filing noise."
   },
-  "pulse": {
-    "doc": "PULSE-1: thresholds for the selfknow step (worker/src/pulse.js). interval_minutes is the tick cron; a window must hold window_hours*60/interval_minutes complete ticks. ticking needs bootstrap_ticks complete slots in a row and min_slot_coverage; self_sustaining needs k_eff >= k_min for hold_ticks ticks in a row and 0 open ignition gaps. loops are the beats index.js leaves each slot; watchers are the Workers that call /internal/pulse, with the minutes of silence allowed.",
-    "interval_minutes": 10,
-    "window_hours": 24,
-    "min_slot_coverage": 0.95,
-    "bootstrap_ticks": 6,
-    "hold_ticks": 6,
-    "loop_lookback_slots": 3,
-    "unfinished_after_minutes": 5,
-    "loops": [
-      "credentials",
-      "executor",
-      "gate",
-      "lane",
-      "handoffs",
-      "issuesync",
-      "repo-access",
-      "sweeper",
-      "deploy-evidence",
-      "cost-samples",
-      "analytics-selfcheck"
+  "control": {
+    "doc": "CRITICALITY-LOOP-1: the controller that acts on k_eff (worker/src/critloop.js). After subcritical_ticks beats under k_min the dispatch lever moves to raise-only: each role takes an item that raises k_eff first (these prefixes and kinds) and falls back to its full queue. The move carries the prediction 'k_eff > k at the move within prediction_hours h'; a miss reverts the lever, files CRIT-LEVER-<day> and blocks a retry for cooldown_hours. No rise in stall_ticks beats files CRIT-STALL-<day>. One criticality_history row per tick is the loop's clock (beat_interval_s).",
+    "subcritical_ticks": 3,
+    "prediction_hours": 24,
+    "cooldown_hours": 24,
+    "stall_ticks": 144,
+    "history_keep_days": 30,
+    "beat_interval_s": 600,
+    "owner_role": "operations",
+    "raises_id_prefixes": [
+      "ORIGIN-",
+      "BREACH-",
+      "TICKFAIL-",
+      "CRIT-",
+      "Q-CRIT",
+      "Q-COST",
+      "Q-DEPLOY",
+      "Q-DOER",
+      "Q-METRIC",
+      "Q-EXEC",
+      "Q-SELF",
+      "EXEC-",
+      "HANDOFF-"
     ],
-    "watchers": {
-      "dashboard": 30,
-      "site": 130
-    }
+    "raises_kinds": [
+      "fix"
+    ]
   }
 }

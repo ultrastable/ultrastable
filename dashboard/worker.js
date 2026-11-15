@@ -247,21 +247,9 @@ export function digestDue(cron, now = new Date()) { return cron === "0 13 * * *"
 // The snapshots table is part of schema.sql but the live D1 was seeded without it ("no such table: snapshots" in CF-OBS 85b2b062); create it on first use.
 const snapshotsReady = new WeakSet();
 export async function ensureSnapshots(env) { if (snapshotsReady.has(env.DB)) return; await env.DB.prepare("CREATE TABLE IF NOT EXISTS snapshots(key TEXT PRIMARY KEY, body TEXT NOT NULL, at INTEGER NOT NULL)").run(); snapshotsReady.add(env.DB); }
-// PULSE-1: the tick's clock is watched from outside it. Each run calls the tick Worker's /internal/pulse, which leaves this watcher's beat and
-// runs a tick on the spot when its newest one is older than two intervals. The answer is kept as snapshot "tickwatch".
-export async function watchTick(env, now = Date.now()) {
-  if (!env.TICK) return null;
-  let out;
-  try { const r = await env.TICK.fetch(new Request("https://tick.internal/internal/pulse?from=dashboard", { method: "POST" })); out = { status: r.status, ...(await r.json().catch(() => ({}))) }; }
-  catch (e) { out = { status: 0, ok: false, error: String(e && e.message || e).slice(0, 200) }; }
-  await env.DB.prepare("INSERT INTO snapshots(key, body, at) VALUES('tickwatch', ?1, ?2) ON CONFLICT(key) DO UPDATE SET body=excluded.body, at=excluded.at").bind(JSON.stringify(out), now).run();
-  if (!out.ok || out.rescued) console.error("tickwatch", JSON.stringify(out));
-  return out;
-}
 export async function tick(env, cron) {
   try { await ensureSnapshots(env); } catch (e) { console.error("ensureSnapshots", e && e.message); }
   try { await selfcheck(env, HOSTS[0]); } catch (e) { console.error("selfcheck", e && e.message); }
-  try { await watchTick(env); } catch (e) { console.error("tickwatch", e && e.message); }
   const res = await runProbes(env); const day = new Date().toISOString().slice(0, 10);
   for (const r of res.filter(x => !x.ok && x.name !== "github")) await notify(env, "fail:" + r.name + ":" + day, "Ultrastable check failing: " + r.name, r.name + " failed: " + r.detail + "\nOpen https://ultrastable.io/owner");
   try { const a = await report(env); for (const m of a.metrics.filter(x => x.hit)) await notify(env, "metric:" + m.name + ":" + day, "Ultrastable metric breach: " + m.name, m.name + " = " + m.value + " (" + m.why + ")\n" + m.label + "\nOpen https://ultrastable.io/owner"); } catch (e) { console.error("metrics", e && e.message); }

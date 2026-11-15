@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-feat-account-split-provider-arch",
+  "title": "PORT-BRANCH-feat-account-split-provider-arch: carry feat/account-split-provider-arch onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `feat/account-split-provider-arch` at fafdb9db35 holds work main lacks and cannot merge as is (conflicts in code: deploy/cloudflare-accounts.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried feat/account-split-provider-arch\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried feat/account-split-provider-arch",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

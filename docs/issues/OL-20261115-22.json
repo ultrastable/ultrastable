@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-22",
-  "title": "OL-20261115-22: Q-CRIT-DISPATCH-YIELD: k_eff 0.068, 556 dispatches for 18 verified deploys",
-  "body": "**Owner:** portfolio-manager\n**Trigger:** ignition blocker is critical\n**Done check:** file:docs/issues/Q-CRIT-DISPATCH-YIELD.json\n**Status:** open\n\nLive reading 2026-11-15: after bootstrap the ignition blocker is criticality. 126 of 316 items are parked blocked and the doer is dispatched every slot. Item docs/issues/Q-CRIT-DISPATCH-YIELD.json.",
+  "title": "OL-20261115-22: Raise k_eff from 0.068 to k_min: dispatch yield is the limiting term",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** every tick: seed/worker/src/ignition.js files IGNITE-critical\n**Done check:** grep:seed/worker/src/ignition.js::IGNITE-\n**Status:** open\n\nThe live runtime spends 556 dispatch units per 14 days for 18 verified deploys and 20 originated credits. IGNITE-critical is filed by the tick with the current numbers each tick and closes when k_eff holds at or above k_min for six ticks.",
   "labels": [
     "role:portfolio-manager",
     "open-loop"

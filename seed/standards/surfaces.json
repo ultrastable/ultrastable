@@ -310,7 +310,7 @@
    "audience": "public",
    "standards": [],
    "discoverable": false,
-   "description": "Liveness plus k_eff of the last tick (CRITICALITY-1).",
+   "description": "Liveness plus k_eff of the last tick (CRITICALITY-1), the ignition stage from bootstrap to criticality (BOOT-KNOWS-1) and every loop's clock (LOOPPROOF-1).",
    "reason": "operational criticality telemetry (CRITICALITY-1), not a capability for callers"
   },
   {
@@ -340,31 +340,17 @@
    "reason": "machine-to-machine collector input; nothing for an agent to discover"
   },
   {
-   "id": "ignition",
-   "path": "/api/ignition",
+   "id": "pulse-watch",
+   "path": "/pulse/watch",
    "methods": [
-    "GET"
-   ],
-   "kind": "rest",
-   "audience": "public",
-   "standards": [],
-   "discoverable": false,
-   "description": "The ignition ladder of the last tick: stage, bootstrapped, critical, the blocking stage, slot and loop ledgers, stage changes (PULSE-1).",
-   "reason": "operational self-knowledge telemetry (PULSE-1), not a capability for callers"
-  },
-  {
-   "id": "internal-pulse",
-   "path": "/internal/pulse",
-   "methods": [
-    "GET",
     "POST"
    ],
    "kind": "rest",
    "audience": "machine",
    "standards": [],
    "discoverable": false,
-   "description": "An outside watcher's call: leaves the watcher's beat and runs a tick when the newest one is older than two intervals (PULSE-1).",
-   "reason": "machine-to-machine watchdog input between Workers; nothing for an agent to discover"
+   "description": "The second producer of the heartbeat (LOOPPROOF-1): leaves a watchdog beat and runs a tick only when the newest tick is older than two intervals.",
+   "reason": "machine-to-machine watchdog call from the site Worker's service binding; nothing for an agent to discover"
   }
  ]
 }

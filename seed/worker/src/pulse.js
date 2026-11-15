@@ -1,264 +1,209 @@
-// PULSE-1: how the system knows, from its own records and with nobody telling it, that it has been bootstrapped, that every loop ran in
-// every slot, and whether it is critical. Four parts, each taken from a fleet that has run unattended for months:
-//   beat()         every loop run leaves a row BEFORE it starts and closes it when it ends (a cron fire log). A loop that was cut off
-//                  is a row that never finished; a loop that never started is a missing row. One loop failing cannot starve the next.
-//   slot ledger    the cron expression says how many ticks a window must hold; tick_runs says how many it held (expected
-//                  against observed, never declared). tick_steps keeps one row per step per tick.
-//   the ladder     seeded -> ticking -> instrumented -> loops -> acting -> closing -> verified (= bootstrapped) -> critical ->
-//                  self_sustaining. Each stage is a query with its evidence. The first stage that fails is the blocker and files its own
-//                  item; a change of stage is appended to ignition_log; a stage lost is filed as a regression.
-//   the watcher    a clock cannot notice that it stopped. Other Workers call /internal/pulse on their own crons (two producers for
-//                  one clock); a stale tick is run on the spot, and the tick in turn checks that its watchers still call.
-// Thresholds are data: `pulse` in autonomy/criticality.json. The schema creates itself, so no deploy route has to apply a migration first.
-
-async function all(db, sql, ...a) { return (await db.prepare(sql).bind(...a).all()).results || []; }
-async function first(db, sql, ...a) { return (await db.prepare(sql).bind(...a).first()) || null; }
+// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// Copyright (c) Ultrastable
+// LOOPPROOF-1: how the system verifies that its own loops ran, every time, with no outside observer.
+//   beat      every server-side loop runs inside beat(): a row is written BEFORE the body runs and completed after it. A loop that threw is
+//             a row with ok 0 and its error; a loop that never returned is a row with ok NULL; a loop that was never called is a missing
+//             slot. One loop failing never stops the loops after it.
+//   clock     the tick step `pulse` counts, per loop, the slots it should have run in over 24 h against the slots it did run in, writes
+//             the judged state to loop_clock (ticking, late, stopped, failing, hung, never) and files MISSED-<loop>, which only the same
+//             probe can close. The tick's own missed slots are counted the same way from tick_runs.
+//   watchdog  a clock cannot notice that it has stopped. watch() is called by a second producer on its own cron (the site Worker, through
+//             the TICK service binding): when the newest tick is older than two intervals it runs the tick itself, and it leaves a beat
+//             every call, so the tick in turn judges the watchdog. Each producer watches the other's silence.
+// Carried over from the fleet that already runs this way: the heartbeat is a database row with more than one producer, every loop has a
+// clock row with missed and good counts, and an unmeasured loop is never read as a healthy one.
+const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
+const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()) || null;
+const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
 const iso = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
 const ms = s => Date.parse(String(s).replace(' ', 'T') + 'Z');
-const marks = a => a.map(() => '?').join(',');
-const TERMINAL = `('done','superseded','cancelled')`;
 
-export const DEFAULTS = {
-  interval_minutes: 10, window_hours: 24, min_slot_coverage: 0.95, bootstrap_ticks: 6, hold_ticks: 6,
-  loop_lookback_slots: 3, unfinished_after_minutes: 5,
-  loops: ['credentials', 'executor', 'gate', 'lane', 'handoffs', 'issuesync', 'repo-access', 'sweeper', 'deploy-evidence', 'cost-samples', 'analytics-selfcheck'],
-  watchers: { dashboard: 30, site: 130 },
-};
-export const pulseConfig = config => ({ ...DEFAULTS, ...((config && config.criticality && config.criticality.pulse) || {}) });
-
-// The same statements as migrations/0012_pulse.sql (test/pulse.test.js fails when they differ).
-export const DDL = [
-  `CREATE TABLE IF NOT EXISTS loop_beats (id INTEGER PRIMARY KEY AUTOINCREMENT, loop TEXT NOT NULL, started_at TEXT NOT NULL, finished_at TEXT, ok INTEGER, ms INTEGER, evidence TEXT)`,
-  `CREATE INDEX IF NOT EXISTS loop_beats_loop ON loop_beats (loop, started_at)`,
-  `CREATE TABLE IF NOT EXISTS tick_steps (tick_id INTEGER NOT NULL, step TEXT NOT NULL, ok INTEGER NOT NULL, ms INTEGER NOT NULL, error TEXT, PRIMARY KEY (tick_id, step))`,
-  `CREATE TABLE IF NOT EXISTS ignition_log (id INTEGER PRIMARY KEY AUTOINCREMENT, at TEXT NOT NULL, tick_id INTEGER, from_stage TEXT, to_stage TEXT NOT NULL, direction TEXT NOT NULL, evidence TEXT)`,
+// SCHEMA-SELF-1: the Worker carries the DDL of the tables this module needs and applies it itself (idempotent), so code deployed ahead of
+// its migration cannot fail on a missing table. Kept equal to migrations/0013_pulse.sql by test/pulse.test.js.
+export const PULSE_DDL = [
+  `CREATE TABLE IF NOT EXISTS loop_beats (id INTEGER PRIMARY KEY AUTOINCREMENT, loop TEXT NOT NULL, slot INTEGER NOT NULL, source TEXT NOT NULL DEFAULT 'cron', started_at TEXT NOT NULL, finished_at TEXT, ok INTEGER, error TEXT, detail TEXT)`,
+  `CREATE INDEX IF NOT EXISTS loop_beats_loop ON loop_beats (loop, slot)`,
+  `CREATE TABLE IF NOT EXISTS loop_clock (loop TEXT PRIMARY KEY, every_min INTEGER NOT NULL, declared INTEGER NOT NULL DEFAULT 0, state TEXT NOT NULL, why TEXT, last_run TEXT, last_good TEXT, expected_24h INTEGER NOT NULL DEFAULT 0, ran_24h INTEGER NOT NULL DEFAULT 0, good_24h INTEGER NOT NULL DEFAULT 0, missed_24h INTEGER NOT NULL DEFAULT 0, coverage REAL, bad_streak INTEGER NOT NULL DEFAULT 0, checked_at TEXT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS ignition_log (id INTEGER PRIMARY KEY AUTOINCREMENT, at TEXT NOT NULL, stage TEXT NOT NULL, prev TEXT, direction TEXT NOT NULL, evidence TEXT NOT NULL)`,
 ];
 const ready = new WeakSet();
-export async function ensureSchema(db) {
+export async function ensurePulseSchema(db) {
   if (ready.has(db)) return;
-  for (const s of DDL) await db.prepare(s).run();
+  for (const sql of PULSE_DDL) await db.prepare(sql).run();
   ready.add(db);
 }
 
-const brief = out => { try { return (typeof out === 'string' ? out : JSON.stringify(out === undefined ? null : out)).slice(0, 400); } catch { return 'unserializable result'; } };
-// A loop's own result says it did not do its job when it answers { status: 'error ...' } (it crashed), 'no-token' (it could not act) or
-// { ok: false, error }. 'errors' is a run that finished with item-level errors in its evidence: the loop itself executed.
-const failed = out => Boolean(out && typeof out === 'object' && ((typeof out.status === 'string' && /^(error( |$)|no-token$)/.test(out.status)) || (out.ok === false && out.error)));
+// The loops the scheduled handler runs each tick. index.js runs exactly this list through beat(), so what is declared is what is wired.
+export const LANE_LOOPS = ['credentials', 'executor', 'gate', 'lane', 'handoffs', 'issuesync', 'repo-access', 'sweeper', 'deploy-evidence', 'cost-samples', 'analytics-selfcheck'];
+export const HUNG_MS = 300e3;
+const BAD = ['late', 'stopped', 'failing', 'hung', 'never'];
 
-// Runs one loop and leaves its beat. Never throws: a failure is the row (ok = 0 and the message), which selfKnow turns into an ignition gap.
-export async function beat(db, loop, fn, now = Date.now) {
-  const t0 = now(); let id = null;
-  try { await ensureSchema(db); id = (await db.prepare(`INSERT INTO loop_beats (loop, started_at) VALUES (?, ?)`).bind(loop, iso(t0)).run()).meta.last_row_id; }
-  catch (e) { console.error('pulse beat open', loop, e && e.message); }
-  let ok = 1, out, evidence;
-  try { out = await fn(); evidence = brief(out); if (failed(out)) ok = 0; }
-  catch (e) { ok = 0; evidence = 'threw: ' + String((e && e.message) || e).slice(0, 380); console.error('loop', loop, evidence); }
-  if (id !== null) {
-    try { const t1 = now(); await db.prepare(`UPDATE loop_beats SET finished_at=?, ok=?, ms=?, evidence=? WHERE id=?`).bind(iso(t1), ok, t1 - t0, evidence, id).run(); }
-    catch (e) { console.error('pulse beat close', loop, e && e.message); }
+// Runs one loop and leaves the proof. Never throws: the caller's next loop always runs.
+export async function beat(db, loop, fn, { now = Date.now, source = 'cron', everyMin = 10 } = {}) {
+  let id = null;
+  const t0 = now();
+  try {
+    await ensurePulseSchema(db);
+    const r = await run(db, `INSERT INTO loop_beats (loop, slot, source, started_at) VALUES (?,?,?,?)`, loop, Math.floor(t0 / (everyMin * 60e3)), source, iso(t0));
+    id = r.meta && r.meta.last_row_id;
+  } catch (e) { console.error('pulse', loop, 'beat not recorded:', e && e.message); }  // the ledger is down: the loop still runs, and its missing slot is the record
+  let out, ok = 1, error = null;
+  try {
+    out = await fn();
+    if (out && typeof out === 'object' && typeof out.status === 'string' && /^error\b/.test(out.status)) { ok = 0; error = out.status; }
+  } catch (e) { ok = 0; error = String((e && e.message) || e); out = { status: 'error ' + error }; console.error('pulse', loop, error); }
+  if (id != null) {
+    let detail = null;
+    try { detail = JSON.stringify(out === undefined ? null : out).slice(0, 300); } catch { detail = null; }
+    try { await run(db, `UPDATE loop_beats SET finished_at=?, ok=?, error=?, detail=? WHERE id=?`, iso(now()), ok, error ? error.slice(0, 300) : null, detail, id); }
+    catch (e) { console.error('pulse', loop, 'beat not closed:', e && e.message); }
   }
   return out;
 }
 
-export async function recordSteps(db, tickId, steps) {
-  if (!steps.length) return;
-  await ensureSchema(db);
-  await db.prepare(`INSERT OR REPLACE INTO tick_steps (tick_id, step, ok, ms, error) VALUES ${steps.map(() => '(?,?,?,?,?)').join(',')}`)
-    .bind(...steps.flatMap(s => [tickId, s.step, s.ok ? 1 : 0, s.ms, s.error || null])).run();
+// The tick's own cadence, read from its own history (median gap of recent ticks) unless the config states it. A system that knows its interval.
+export async function tickCadenceMin(db, config = {}) {
+  if (Number(config.tick_every_min) > 0) return Number(config.tick_every_min);
+  const rows = await all(db, `SELECT started_at FROM tick_runs ORDER BY id DESC LIMIT 40`);
+  const gaps = [];
+  for (let i = 0; i + 1 < rows.length; i++) { const g = Math.round((ms(rows[i].started_at) - ms(rows[i + 1].started_at)) / 60e3); if (g >= 1) gaps.push(g); }
+  if (gaps.length < 3) return 10;
+  gaps.sort((a, b) => a - b);
+  return Math.min(1440, Math.max(1, gaps[Math.floor(gaps.length / 2)]));
 }
 
-// The liveness set every system carries (bootstrap.py LIVENESS). A runtime that was started without them seeds them itself.
-export const LIVENESS = [
-  ['M-tick-heartbeat', 'ticks completed in the last hour', 'tick_runs_completed_1h', '>=', 5, 1.5, 'operations', 'The clock is not turning. Check the Worker cron, the D1 binding and the last tick_runs.errors.'],
-  ['M-acting', 'dispatches in the last 24 hours', 'dispatches_24h', '>=', 1, 6, 'operations', 'Ticks run but nothing is handed to a role. Check ready items, role rows and the executor.'],
-  ['M-closing', 'items finished in the last 7 days', 'items_done_7d', '>=', 1, 48, 'portfolio-manager', 'Work starts but nothing closes. Find the stuck stage (review, merge, verify) and fix it.'],
-  ['M-verified', 'independently verified outcomes in the last 7 days', 'verified_outcomes_7d', '>=', 1, 48, 'reviewer', 'Nothing was verified by a second path. Check that the reviewer role is dispatched and records outcomes.'],
-  ['M-no-drops', 'silent drops in the last 7 days', 'silent_drops_7d', '<=', 0, 0, 'portfolio-manager', 'An item left the active set with no disposition. Find it and give it one.'],
-  ['M-instrumented', 'objectives without a probe-backed target metric', 'objectives_without_probe', '<=', 0, 1, 'product-manager', 'Insert a target metric with a builtin, sql or http probe for the objective.'],
-];
-export async function ensureLiveness(db) {
-  let n = 0;
-  for (const [id, name, spec, op, threshold, grace, owner, remedy] of LIVENESS) {
-    const r = await db.prepare(`INSERT OR IGNORE INTO metrics (id, tenant_id, objective_id, name, kind, source, spec, op, threshold, grace_hours, owner_role, remedy)
-      VALUES (?, NULL, NULL, ?, 'liveness', 'builtin', ?, ?, ?, ?, ?, ?)`).bind(id, name, spec, op, threshold, grace, owner, remedy).run();
-    n += (r.meta && r.meta.changes) || 0;
+// Pure: judge one loop from its runs. runs = [{ at (ms), ok (1|0|null) }] within the window, any order. firstAt = first run ever seen (ms) or null.
+export function judgeLoop({ everyMin, runs, firstAt, now, sinceMs, windowMs = 86400e3 }) {
+  const w = everyMin * 60e3, cur = Math.floor(now / w);
+  const from = Math.max(Math.floor((now - windowMs) / w), firstAt != null ? Math.floor(firstAt / w) : cur);
+  const expected = Math.max(0, cur - from);  // completed slots since the loop first ran, inside the window; the slot in progress is not judged
+  const ranSlots = new Set(), goodSlots = new Set();
+  let last = null, lastGood = null;
+  for (const r of runs) {
+    const s = Math.floor(r.at / w);
+    if (!last || r.at > last.at) last = r;
+    if (r.ok === 1 && (lastGood == null || r.at > lastGood)) lastGood = r.at;
+    if (s < from || s >= cur) continue;
+    ranSlots.add(s); if (r.ok === 1) goodSlots.add(s);
   }
-  return n;
+  const ran = ranSlots.size, good = goodSlots.size, missed = Math.max(0, expected - ran);
+  const coverage = expected ? Number((good / expected).toFixed(4)) : null;
+  let state = 'ticking', why;
+  if (!last) {
+    const waited = sinceMs != null ? now - sinceMs : 0;
+    state = waited > 2 * w ? 'never' : 'warming';
+    why = state === 'never' ? `declared and watched for ${Math.round(waited / 60e3)} min with no run recorded` : 'declared; no run due yet';
+  } else {
+    const age = now - last.at, ageMin = Math.round(age / 60e3);
+    if (age > 3 * w) { state = 'stopped'; why = `last run ${ageMin} min ago, due every ${everyMin}`; }
+    else if (age > 1.5 * w + 60e3) { state = 'late'; why = `last run ${ageMin} min ago, due every ${everyMin}`; }
+    else if (last.ok == null && age > HUNG_MS) { state = 'hung'; why = `run started ${ageMin} min ago and never returned`; }
+    else if (last.ok === 0) { state = 'failing'; why = 'last run failed'; }
+    else why = `ran ${ageMin} min ago; ${good}/${expected} slots good in 24 h`;
+  }
+  return { state, why, expected, ran, good, missed, coverage, last_run: last ? iso(last.at) : null, last_good: lastGood != null ? iso(lastGood) : null };
 }
 
-// Expected against observed. A slot is one cron interval; the slot being run now is not judged (its tick has not finished).
-export async function clockLedger(db, p, now) {
-  const I = p.interval_minutes * 60, cur = Math.floor(now / 1000 / I);
-  const born = await first(db, `SELECT MIN(started_at) AS t FROM tick_runs`);
-  const bornSlot = born && born.t ? Math.floor(ms(born.t) / 1000 / I) : cur;
-  const from = Math.max(cur - Math.round(p.window_hours * 3600 / I), bornSlot);
-  const expected = Math.max(cur - from, 0);
-  const rows = await all(db, `SELECT CAST(CAST(strftime('%s', started_at) AS INTEGER) / ? AS INTEGER) AS slot, MAX(CASE WHEN finished_at IS NOT NULL AND steps_completed = steps_total THEN 1 ELSE 0 END) AS good,
-      SUM(CASE WHEN finished_at IS NOT NULL AND steps_completed < steps_total THEN 1 ELSE 0 END) AS partial, SUM(CASE WHEN finished_at IS NULL THEN 1 ELSE 0 END) AS open
-    FROM tick_runs WHERE started_at >= ? AND started_at < ? GROUP BY 1`, I, iso(from * I * 1000), iso(cur * I * 1000));
-  const good = new Set(rows.filter(r => r.good).map(r => Number(r.slot)));
-  let consecutive = 0;
-  for (let s = cur - 1; s >= from && good.has(s); s--) consecutive++;
-  const missed = [];
-  for (let s = cur - 1; s >= from && missed.length < 12; s--) if (!good.has(s)) missed.push(iso(s * I * 1000));
-  return {
-    interval_minutes: p.interval_minutes, expected_slots: expected, complete_slots: good.size, missed_slots: expected - good.size,
-    coverage: expected ? Number((good.size / expected).toFixed(4)) : null, consecutive_complete: consecutive,
-    incomplete_ticks: rows.reduce((n, r) => n + Number(r.partial || 0), 0), unfinished_ticks: rows.reduce((n, r) => n + Number(r.open || 0), 0),
-    last_missed: missed,
-  };
+async function setOrg(db, key, value) {
+  await run(db, `INSERT INTO org (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, key, JSON.stringify(value));
+}
+export async function readOrg(db, key) {
+  const r = await first(db, `SELECT value FROM org WHERE key=?`, key).catch(() => null);
+  try { return r ? JSON.parse(r.value) : null; } catch { return null; }
 }
 
-// Each declared loop over the last few slots: ok, failed (its last beat says so), unfinished (started and never closed), silent (no beat),
-// or warming (beats began less than the lookback ago, so absence proves nothing yet).
-export async function loopLedger(db, p, now) {
-  const span = p.loop_lookback_slots * p.interval_minutes * 60e3, since = iso(now - span);
-  const begun = await first(db, `SELECT MIN(started_at) AS t FROM loop_beats WHERE loop NOT LIKE 'watch:%' AND loop <> 'tick-rescue'`);
-  const warming = !begun || !begun.t || ms(begun.t) > now - span;
-  const out = {};
-  const judge = async (name, sinceIso) => {
-    const b = await first(db, `SELECT started_at, finished_at, ok, ms, evidence FROM loop_beats WHERE loop = ? AND started_at >= ? ORDER BY id DESC LIMIT 1`, name, sinceIso);
-    if (!b) return { state: 'silent' };
-    if (b.ok === null) return ms(b.started_at) < now - p.unfinished_after_minutes * 60e3 ? { state: 'unfinished', last: b.started_at } : { state: 'ok', last: b.started_at, running: true };
-    return { state: b.ok ? 'ok' : 'failed', last: b.started_at, ms: b.ms, ...(b.ok ? {} : { evidence: String(b.evidence || '').slice(0, 160) }) };
-  };
-  for (const name of p.loops) { const j = await judge(name, since); out[name] = warming && j.state === 'silent' ? { state: 'warming' } : j; }
-  for (const [w, maxAgeMin] of Object.entries(p.watchers || {})) {
-    const any = await first(db, `SELECT 1 AS x FROM loop_beats WHERE loop LIKE 'watch:%' LIMIT 1`);
-    const j = await judge('watch:' + w, iso(now - maxAgeMin * 60e3));
-    out['watch:' + w] = (warming || !any) && j.state === 'silent' ? { state: 'warming' } : j;
+// The tick step. Judges every loop (declared, or ever seen) and the tick itself, writes loop_clock, files and closes MISSED-<loop>.
+export async function pulseStep(db, ctx, ensureItem) {
+  await ensurePulseSchema(db);
+  const now = ctx.now, every = await tickCadenceMin(db, ctx.config);
+  const sinceRow = await readOrg(db, 'pulse_since');
+  const since = sinceRow && sinceRow.at ? ms(sinceRow.at) : now;
+  if (!sinceRow) await setOrg(db, 'pulse_since', { at: ctx.nowIso });
+  const cut = iso(now - 86400e3 - every * 60e3);
+  const beats = await all(db, `SELECT loop, started_at, ok FROM loop_beats WHERE started_at >= ?`, cut);
+  const firsts = Object.fromEntries((await all(db, `SELECT loop, MIN(started_at) AS f FROM loop_beats GROUP BY loop`)).map(r => [r.loop, ms(r.f)]));
+  const byLoop = {};
+  for (const b of beats) (byLoop[b.loop] = byLoop[b.loop] || []).push({ at: ms(b.started_at), ok: b.ok == null ? null : Number(b.ok) });
+  const prev = Object.fromEntries((await all(db, `SELECT loop, every_min, bad_streak FROM loop_clock`)).map(r => [r.loop, r]));
+  const declared = new Set((ctx.config.pulse && ctx.config.pulse.loops) || LANE_LOOPS);
+  const loops = new Set([...declared, ...Object.keys(firsts)]);
+  const judged = [];
+  // The tick itself, from its own ledger. A tick is good only when it finished every step.
+  const ticks = await all(db, `SELECT started_at, steps_completed, steps_total, finished_at FROM tick_runs WHERE started_at >= ? AND id <> ?`, cut, ctx.tickId);
+  const tf = await first(db, `SELECT MIN(started_at) AS f FROM tick_runs`);
+  judged.push({ loop: 'tick', every_min: every, declared: 1, ...judgeLoop({ everyMin: every, now, sinceMs: since, firstAt: tf && tf.f ? ms(tf.f) : null,
+    runs: ticks.map(t => ({ at: ms(t.started_at), ok: t.finished_at == null ? null : (t.steps_completed === t.steps_total ? 1 : 0) })) }) });
+  for (const loop of loops) {
+    const runs = byLoop[loop] || [];
+    let ev = every;
+    if (!declared.has(loop)) {  // a loop seen but not declared (the watchdog, a webhook) keeps the cadence it shows: the median gap of its own runs
+      const at = runs.map(r => r.at).sort((a, b) => a - b), gaps = [];
+      for (let i = 1; i < at.length; i++) { const g = Math.round((at[i] - at[i - 1]) / 60e3); if (g >= 1) gaps.push(g); }
+      gaps.sort((a, b) => a - b);
+      ev = gaps.length >= 3 ? gaps[Math.floor(gaps.length / 2)] : (prev[loop] ? prev[loop].every_min : every);
+    }
+    judged.push({ loop, every_min: ev, declared: declared.has(loop) ? 1 : 0, ...judgeLoop({ everyMin: ev, now, sinceMs: since, firstAt: firsts[loop] ?? null, runs }) });
   }
-  return out;
+  const filed = [], closed = [];
+  for (const j of judged) {
+    const bad = BAD.includes(j.state);
+    j.bad_streak = bad ? ((prev[j.loop] ? prev[j.loop].bad_streak : 0) + 1) : 0;
+    await run(db, `INSERT INTO loop_clock (loop, every_min, declared, state, why, last_run, last_good, expected_24h, ran_24h, good_24h, missed_24h, coverage, bad_streak, checked_at)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(loop) DO UPDATE SET every_min=excluded.every_min, declared=excluded.declared, state=excluded.state, why=excluded.why,
+        last_run=excluded.last_run, last_good=excluded.last_good, expected_24h=excluded.expected_24h, ran_24h=excluded.ran_24h, good_24h=excluded.good_24h, missed_24h=excluded.missed_24h,
+        coverage=excluded.coverage, bad_streak=excluded.bad_streak, checked_at=excluded.checked_at`,
+      j.loop, j.every_min, j.declared, j.state, j.why, j.last_run, j.last_good, j.expected, j.ran, j.good, j.missed, j.coverage, j.bad_streak, ctx.nowIso);
+    const id = `MISSED-${j.loop}`.slice(0, 80);
+    if (bad && j.bad_streak >= 2) {  // one bad reading is a late run; two in a row is a loop that is not executing
+      const made = await ensureItem(db, { id, kind: 'fix', owner_role: 'operations', priority: -1,
+        title: `Loop ${j.loop} is ${j.state}: ${j.why}. ${j.missed} of ${j.expected} slots missed in 24 h. Find why it did not run (loop_beats.error) and fix the cause.`.slice(0, 400),
+        done_check: `loop_clock.state of ${j.loop} is ticking`, closing_probe: `pulse:${j.loop}` });
+      if (made) filed.push(id);
+      else {
+        const r = await run(db, `UPDATE items SET status='ready', disposition=NULL, updated_at=? WHERE id=? AND status IN ('done','superseded','cancelled')`, ctx.nowIso, id);
+        if (r.meta && r.meta.changes) { await run(db, `INSERT INTO outcomes (item_id, surface, action_class, result, evidence) VALUES (?, 'pulse', 'probe', 'failed', ?)`, id, `reopened: pulse:${j.loop} ${j.state} at ${ctx.nowIso}`); filed.push(id); }
+      }
+    } else if (j.state === 'ticking') {
+      const r = await run(db, `UPDATE items SET status='done', disposition=?, updated_at=? WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, `probe green: pulse:${j.loop} ticking`, ctx.nowIso, id);
+      if (r.meta && r.meta.changes) {
+        await run(db, `DELETE FROM claims WHERE item_id=?`, id);
+        await run(db, `INSERT INTO outcomes (item_id, surface, action_class, result, evidence) VALUES (?, 'pulse', 'probe', 'verified', ?)`, id, `probe:pulse:${j.loop} ticking at ${ctx.nowIso}`);
+        closed.push(id);
+      }
+    }
+  }
+  if (Math.floor(now / (every * 60e3)) % 36 === 0) await run(db, `DELETE FROM loop_beats WHERE started_at < ?`, iso(now - 8 * 86400e3));  // the ledger keeps 8 days
+  const exp = judged.reduce((s, j) => s + j.expected, 0), good = judged.reduce((s, j) => s + j.good, 0);
+  const notTicking = judged.filter(j => BAD.includes(j.state));
+  const tick = judged[0];
+  const snap = { at: ctx.nowIso, every_min: every, loops: judged.length, ticking: judged.filter(j => j.state === 'ticking').length,
+    warming: judged.filter(j => j.state === 'warming').length, not_ticking: notTicking.map(j => ({ loop: j.loop, state: j.state, why: j.why })),
+    expected_24h: exp, good_24h: good, missed_24h: judged.reduce((s, j) => s + j.missed, 0), coverage_24h: exp ? Number((good / exp).toFixed(4)) : null,
+    tick: { state: tick.state, expected_24h: tick.expected, good_24h: tick.good, missed_24h: tick.missed, coverage: tick.coverage },
+    watchdog: judged.some(j => j.loop === 'watchdog' && j.state === 'ticking') };
+  ctx.pulse = snap;
+  await setOrg(db, 'pulse', snap);
+  ctx.notes.push(`pulse: ${snap.ticking}/${snap.loops} loops ticking, coverage ${snap.coverage_24h ?? 'unmeasured'}, ${snap.missed_24h} missed slot(s)${filed.length ? `, filed ${filed.join(',')}` : ''}${closed.length ? `, closed ${closed.join(',')}` : ''}`);
+  return snap;
 }
 
-async function pulseGaps(db, links, nowIso) {
-  for (const l of links)
-    await db.prepare(`INSERT INTO ignition_gaps (link, owner, closing_probe, source, status, opened_at) VALUES (?,?,?,'pulse','open',?)
-      ON CONFLICT(link) DO UPDATE SET status='open', closed_at=NULL, closing_probe=excluded.closing_probe`).bind(l.link, 'operations', l.closing_probe, nowIso).run();
-  const keep = links.map(l => l.link);
-  await db.prepare(`UPDATE ignition_gaps SET status='closed', closed_at=? WHERE source='pulse' AND status='open'${keep.length ? ` AND link NOT IN (${marks(keep)})` : ''}`).bind(nowIso, ...keep).run();
+// The second producer. Leaves a beat every call; runs the tick itself when the newest tick is older than two intervals.
+export async function watch(db, runTickNow, { now = Date.now, config = {} } = {}) {
+  await ensurePulseSchema(db);
+  const every = await tickCadenceMin(db, config);
+  const last = await first(db, `SELECT MAX(started_at) AS t FROM tick_runs`);
+  const age = last && last.t ? now() - ms(last.t) : null;
+  const stale = age == null || age > 2 * every * 60e3;
+  const out = await beat(db, 'watchdog', async () => {
+    if (!stale) return { stale: false, age_min: Math.round(age / 60e3) };
+    const r = await runTickNow();
+    return { stale: true, age_min: age == null ? null : Math.round(age / 60e3), ran_tick: r && r.tickId, completed: r && r.completed, total: r && r.total };
+  }, { now, source: 'watchdog', everyMin: every });
+  return { ok: true, every_min: every, ...out };
 }
 
-export const STAGES = ['seeded', 'ticking', 'instrumented', 'loops', 'acting', 'closing', 'verified', 'critical', 'self_sustaining'];
-export const BOOTSTRAPPED_AT = 'verified';  // every stage up to and including this one holding is "bootstrapped"
-
-// The ladder from the records alone. `crit` is the criticality snapshot of this tick (or the stored one).
-export async function measureIgnition(db, config, now, crit) {
-  const p = pulseConfig(config), nowIso = iso(now), day = iso(now - 86400e3), week = iso(now - 7 * 86400e3);
-  const clock = await clockLedger(db, p, now), loops = await loopLedger(db, p, now);
-  const n = async (sql, ...a) => Number(((await first(db, sql, ...a)) || {}).n || 0);
-  const roles = await n(`SELECT COUNT(*) AS n FROM roles`), slug = await first(db, `SELECT value FROM org WHERE key='slug'`);
-  const live = await first(db, `SELECT COUNT(*) AS n, SUM(CASE WHEN last_at >= ? THEN 1 ELSE 0 END) AS fresh, SUM(breached) AS breached FROM metrics WHERE kind='liveness' AND tenant_id IS NULL`,
-    iso(now - 2 * p.interval_minutes * 60e3 - 1000));
-  const bad = Object.entries(loops).filter(([, v]) => v.state !== 'ok'), warming = bad.filter(([, v]) => v.state === 'warming');
-  const acted = await n(`SELECT COUNT(*) AS n FROM dispatches WHERE at >= ?`, day);
-  const closed = await n(`SELECT COUNT(*) AS n FROM items WHERE status='done' AND updated_at >= ?`, week);
-  const verified = await n(`SELECT COUNT(*) AS n FROM outcomes WHERE result='verified' AND evidence LIKE 'probe:%' AND at >= ?`, week);
-  const gaps = await n(`SELECT COUNT(*) AS n FROM ignition_gaps WHERE status='open'`);
-  const kEff = crit && Number.isFinite(crit.k_eff) ? crit.k_eff : null, kMin = crit && Number.isFinite(crit.k_min) ? crit.k_min : (config.criticality || {}).k_min ?? 1;
-  const prevRow = await first(db, `SELECT value FROM org WHERE key='ignition'`);
-  let prev = null; try { prev = prevRow ? JSON.parse(prevRow.value) : null; } catch { prev = null; }
-  const critical = kEff !== null && kEff >= kMin;
-  const streak = critical ? ((prev && prev.critical_streak) || 0) + 1 : 0;
-  const checks = {
-    seeded: [roles > 0 && Boolean(slug), `${roles} role(s), org ${slug ? slug.value : 'unnamed'}`],
-    ticking: [clock.coverage !== null && clock.consecutive_complete >= Math.min(p.bootstrap_ticks, clock.expected_slots) && clock.consecutive_complete >= p.bootstrap_ticks && clock.coverage >= p.min_slot_coverage,
-      `${clock.complete_slots}/${clock.expected_slots} slots complete (coverage ${clock.coverage}), ${clock.consecutive_complete} in a row; need ${p.bootstrap_ticks} in a row and coverage >= ${p.min_slot_coverage}`],
-    instrumented: [Number(live.n) >= LIVENESS.length && Number(live.fresh) >= LIVENESS.length, `${live.n} liveness metric(s), ${live.fresh || 0} read in the last 2 slots, ${live.breached || 0} in breach`],
-    loops: [bad.length === 0, bad.length ? bad.map(([k, v]) => `${k}: ${v.state}`).join(', ') : `${Object.keys(loops).length} loop(s) and watcher(s) ran and reported ok`],
-    acting: [acted > 0, `${acted} dispatch(es) in 24 h`],
-    closing: [closed > 0, `${closed} item(s) finished in 7 d`],
-    verified: [verified > 0, `${verified} outcome(s) verified by a probe in 7 d`],
-    critical: [critical, kEff === null ? 'k_eff not measured' : `k_eff ${kEff} against k_min ${kMin}`],
-    self_sustaining: [critical && streak >= p.hold_ticks && gaps === 0, `critical for ${streak} tick(s) (need ${p.hold_ticks}), ${gaps} open ignition gap(s)`],
-  };
-  const stages = STAGES.map(id => ({ id, ok: Boolean(checks[id][0]), evidence: checks[id][1] }));
-  const firstBad = stages.findIndex(s => !s.ok), index = firstBad === -1 ? STAGES.length : firstBad;
-  const stage = index === 0 ? 'none' : STAGES[index - 1];
-  const bootstrapped = index > STAGES.indexOf(BOOTSTRAPPED_AT);
-  const blocker = firstBad === -1 ? null : { ...stages[firstBad] };
-  if (blocker && blocker.id === 'critical' && crit && Number.isFinite(crit.spend_units)) {  // what it would take, in the terms k is made of
-    const denom = Math.max(crit.spend_units + crit.human_touches, 1), have = (crit.credited_deploys || 0) + (crit.originated_credited || 0);
-    blocker.to_close = { verified_deploys_missing: Math.max(Math.ceil(kMin * denom - have), 0), or_spend_plus_touches_at_most: Math.floor(have / kMin), spend_units: crit.spend_units, human_touches: crit.human_touches, credited: have };
-  }
-  return {
-    at: nowIso, stage, stage_index: index, stages, blocker, bootstrapped,
-    bootstrapped_at: bootstrapped ? ((prev && prev.bootstrapped && prev.bootstrapped_at) || nowIso) : null,
-    critical, critical_since: critical ? ((prev && prev.critical && prev.critical_since) || nowIso) : null, critical_streak: streak,
-    self_sustaining: index === STAGES.length, k_eff: kEff, k_min: kMin, open_ignition_gaps: gaps, clock, loops,
-    warming: warming.map(([k]) => k), prev_stage: prev ? prev.stage : null, prev_index: prev ? prev.stage_index : null,
-  };
-}
-
-// The tick step. Seeds what a bootstrap would have seeded, measures, writes the verdict, logs a change of stage, files the blocker.
-export async function selfKnowStep(db, ctx, ensureItem) {
-  await ensureSchema(db);
-  const seeded = await ensureLiveness(db);
-  const p = pulseConfig(ctx.config);
-  const g = await measureIgnition(db, ctx.config, ctx.now, ctx.criticality || null);
-  const links = [];
-  for (const [k, v] of Object.entries(g.loops)) if (!['ok', 'warming'].includes(v.state))
-    links.push({ link: `loop:${k}:${v.state}`, closing_probe: `loop_beats holds an ok beat for ${k} inside its window` });
-  if (g.clock.coverage !== null && g.clock.coverage < p.min_slot_coverage)
-    links.push({ link: 'clock:missed-slots', closing_probe: `tick slot coverage >= ${p.min_slot_coverage} over ${p.window_hours} h` });
-  await pulseGaps(db, links, ctx.nowIso);
-  g.open_ignition_gaps = Number((await first(db, `SELECT COUNT(*) AS n FROM ignition_gaps WHERE status='open'`)).n);
-  g.tick_id = ctx.tickId;
-  if (g.prev_stage !== g.stage) {
-    const dir = g.prev_index === null ? 'first' : g.stage_index > g.prev_index ? 'up' : 'down';
-    await db.prepare(`INSERT INTO ignition_log (at, tick_id, from_stage, to_stage, direction, evidence) VALUES (?,?,?,?,?,?)`)
-      .bind(ctx.nowIso, ctx.tickId, g.prev_stage, g.stage, dir, g.blocker ? `${g.blocker.id}: ${g.blocker.evidence}` : 'every stage holds').run();
-    if (dir === 'down') await ensureItem(db, {
-      id: `IGNITION-REGRESS-${g.blocker.id}-${ctx.nowIso.slice(0, 13).replace(' ', 'T')}`, kind: 'fix', owner_role: 'operations', priority: 0,
-      title: `Ignition fell from ${g.prev_stage} to ${g.stage}: stage ${g.blocker.id} stopped holding (${g.blocker.evidence}).`.slice(0, 400),
-      done_check: `ignition stage ${g.blocker.id} holds again`, closing_probe: `ignition:${g.blocker.id}`,
-    });
-  }
-  // The blocker files itself; a stage that holds closes its item. Below-critical work is already originated by the criticality step.
-  for (const s of g.stages) {
-    const id = `IGNITION-${s.id}`;
-    if (g.blocker && g.blocker.id === s.id && !['critical', 'self_sustaining'].includes(s.id)) await ensureItem(db, {
-      id, kind: 'fix', owner_role: 'operations', priority: 0, title: `Ignition is held at ${g.stage}: stage ${s.id} does not hold (${s.evidence}).`.slice(0, 400),
-      done_check: `ignition stage ${s.id} holds`, closing_probe: `ignition:${s.id}`,
-    });
-    else if (s.ok) await db.prepare(`UPDATE items SET status='done', disposition=?, updated_at=? WHERE (id = ? OR id LIKE ?) AND status NOT IN ${TERMINAL}`)
-      .bind(`fixed: ignition stage ${s.id} holds (${s.evidence})`.slice(0, 300), ctx.nowIso, id, `IGNITION-REGRESS-${s.id}-%`).run();
-  }
-  // keep a quarter of beats and steps: enough to judge every window, bounded so the ledger never becomes the cost
-  if (ctx.tickId % 144 === 0) {
-    await db.prepare(`DELETE FROM loop_beats WHERE started_at < ?`).bind(iso(ctx.now - 90 * 86400e3)).run();
-    await db.prepare(`DELETE FROM tick_steps WHERE tick_id < ?`).bind(ctx.tickId - 144 * 90).run();
-  }
-  await db.prepare(`INSERT INTO org (key, value) VALUES ('ignition', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(JSON.stringify(g)).run();
-  ctx.ignition = g;
-  ctx.notes.push(`ignition ${g.stage}${g.bootstrapped ? ' (bootstrapped)' : ''}; slots ${g.clock.complete_slots}/${g.clock.expected_slots}${g.blocker ? `; blocker ${g.blocker.id}` : ''}${seeded ? `; seeded ${seeded} liveness metric(s)` : ''}`);
-  return g;
-}
-
-export async function readIgnition(db) {
-  await ensureSchema(db);
-  const r = await first(db, `SELECT value FROM org WHERE key='ignition'`);
-  const log = await all(db, `SELECT at, tick_id, from_stage, to_stage, direction, evidence FROM ignition_log ORDER BY id DESC LIMIT 20`);
-  return { ignition: r ? JSON.parse(r.value) : null, transitions: log };
-}
-
-// The outside path. A watcher (another Worker on its own cron) calls this. It leaves the watcher's beat, and when the newest tick is older
-// than two intervals it runs one now: the clock is restarted by whoever notices first, with no credential and no person.
-export async function watchPulse(db, config, who, runTickNow, now = Date.now()) {
-  await ensureSchema(db);
-  const p = pulseConfig(config), name = Object.keys(p.watchers || {}).includes(who) ? who : null;
-  if (name) {
-    const recent = await first(db, `SELECT 1 AS x FROM loop_beats WHERE loop = ? AND started_at >= ? LIMIT 1`, 'watch:' + name, iso(now - 60e3));
-    if (!recent) await db.prepare(`INSERT INTO loop_beats (loop, started_at, finished_at, ok, ms, evidence) VALUES (?,?,?,1,0,'watcher called')`).bind('watch:' + name, iso(now), iso(now)).run();
-  }
-  const last = await first(db, `SELECT id, started_at FROM tick_runs ORDER BY id DESC LIMIT 1`);
-  const age = last ? Math.round((now - ms(last.started_at)) / 1000) : null;
-  const stale = age === null || age > 2 * p.interval_minutes * 60;
-  let rescued = false, error = null;
-  if (stale && runTickNow) {
-    const r = await beat(db, 'tick-rescue', async () => { const t = await runTickNow(); return { tick: t.tickId, completed: t.completed, total: t.total, by: who, tick_age_s: age }; }, () => now);
-    rescued = Boolean(r && r.completed === r.total); if (!rescued) error = 'rescue tick did not complete';
-  }
-  const ig = (await readIgnition(db)).ignition;
-  return { ok: !stale || rescued, watcher: name, tick_age_s: age, stale, rescued, error, stage: ig ? ig.stage : null, bootstrapped: ig ? ig.bootstrapped : false, critical: ig ? ig.critical : false };
+export async function readPulse(db) {
+  const snap = await readOrg(db, 'pulse');
+  const clock = await all(db, `SELECT loop, every_min, state, why, last_run, last_good, expected_24h, good_24h, missed_24h, coverage FROM loop_clock ORDER BY loop`).catch(() => []);
+  return snap ? { ...snap, clock } : null;
 }
