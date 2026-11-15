@@ -88,8 +88,10 @@ export async function originate(db, t, m, ctx, ensureItem) {
 
 // Q-CRIT-IGNITION: the links this runtime can see that do not close on themselves. Each derived link is upserted open; a derived link no longer
 // present is closed with its time (never deleted). Rows pushed by collectors (source 'external') are left to their collector.
-export async function deriveIgnitionGaps(db, nowIso) {
+export async function deriveIgnitionGaps(db, nowIso, pulse = null) {
   const links = [];
+  for (const l of (pulse && pulse.not_ticking) || [])  // LOOPPROOF-1: a loop that is not executing is a link that does not close
+    links.push({ link: `loop:${l.loop}:not-ticking`, owner: 'operations', closing_probe: `pulse:${l.loop} reads ticking` });
   for (const c of await all(db, `SELECT id, what FROM gate_cards WHERE status='open'`))
     links.push({ link: `gate:${c.id}`, owner: 'operations', closing_probe: `gate card ${c.id} closes by its own probe or a staged default` });
   for (const m of await all(db, `SELECT id FROM metrics WHERE tenant_id IS NULL AND source='declared'`))
@@ -142,7 +144,7 @@ export async function criticalityStep(db, ctx, t, ensureItem) {
     }
   }
   const emitted = m.k_eff <= t.k_max ? await emitSuccessors(db, t, ctx, ensureItem) : 0; // control rod: above k_max nothing is emitted
-  const ign = await deriveIgnitionGaps(db, ctx.nowIso);
+  const ign = await deriveIgnitionGaps(db, ctx.nowIso, ctx.pulse || null);
   const snap = { ...m, emitted_successors: emitted, queue_open: queued.n, idle, reasons, originated_now: origin, ...ign,
     self_sustaining: m.k_eff >= t.k_min && ign.open_ignition_gaps === 0 };
   ctx.criticality = snap;
