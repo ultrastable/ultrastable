@@ -85,7 +85,7 @@ def items(res) -> list[dict]:
     for s in res["sweeps"]:
         if s["due"]:
             out.append({"id": f"Q-BLIND-SWEEP-{s['domain']}", "title": f"Q-BLIND-SWEEP-{s['domain']}: answer the {s['domain']} sweep",
-                        "body": f"**Owner:** product-manager\n**Trigger:** sweep older than {s['cadence_days']} days\n**Done check:** `python3 -m foundation blindspots --answer {s['domain']} --text <answer with evidence>` recorded\n**Status:** open\n\nQuestion: {s['question']}\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+                        "body": f"**Owner:** product-manager\n**Trigger:** sweep older than {s['cadence_days']} days\n**Done check:** grep:ops/blindspots/answers.jsonl::\"domain\": \"{s['domain']}\" ; recorded with `python3 -m foundation blindspots --answer {s['domain']} --text <answer with evidence>`\n**Status:** open\n\nQuestion: {s['question']}\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
                         "labels": ["role:product-manager", "blindspot"], "milestone": "Next", "workstream": "Growth"})
     return out
 

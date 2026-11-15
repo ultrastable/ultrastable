@@ -1,0 +1,13 @@
+{
+  "id": "Q-METRIC-OPEN-ITEMS",
+  "title": "Q-METRIC-OPEN-ITEMS: open_items 127 vs <= 100; lever probe-closable",
+  "body": "**Owner:** operations\n**Trigger:** metric loop pass: open_items outside its healthy condition\n**Done check:** cmd:python3 -m foundation metricloop --probe open_items\n**Status:** open\n\nMetric `open_items` (target) reads 127; healthy is <= 100. Open queue items (docs/issues OL-* and Q-*); the queue must drain faster than it fills.\nLever now: **probe-closable**: Run `python3 -m foundation contracts --tick --apply` from the executor so every item whose closing probe passes closes in the same pass.\nThe loop judges this lever after the efficacy window; a lever that did not move the metric is replaced here, not repeated.\n\nsize: S",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ignition",
+    "metric-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Metrics"
+}

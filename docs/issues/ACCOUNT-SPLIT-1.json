@@ -1,0 +1,11 @@
+{
+  "id": "ACCOUNT-SPLIT-1",
+  "title": "ACCOUNT-SPLIT-1: tenant 0 runs only on the ultrastable Cloudflare account; nothing of Ultrastable is left in quniverse",
+  "body": "**Owner:** infrastructure-manager\n**Trigger:** now; cutover when a target-account token is bound\n**Done check:** cmd:python3 scripts/cf_account.py transfer verify\n**Status:** open\n\nOwner direction 2026-11-14 (doctrine/providers.json). Worker code is on the target byte-identical, crons off (deploy/transfer/inventory-2026-11-14.json); everything still runs in quniverse. Work per deploy/transfer/plan.json: fix cf_account.py copy (multi-module, service-binding order, D1 refresh, KV pagination) with tests; bind target token; fresh data copy, secrets, topology switch, cron cutover; zones and domains; soak and retire; drift probe fails when any ultrastable-* or us-idea-* resource remains in quniverse.",
+  "labels": [
+    "role:infrastructure-manager",
+    "ws:platform"
+  ],
+  "milestone": "Now",
+  "workstream": "Platform"
+}

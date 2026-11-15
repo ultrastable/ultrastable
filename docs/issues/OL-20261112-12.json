@@ -1,7 +1,7 @@
 {
   "id": "OL-20261112-12",
   "title": "OL-20261112-12: Cut workers release v0.1.0",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** cmd:python3 scripts/fleet_probe.py release-v0.1.0\n**Status:** open\n**Residual:** workers-release-v0-1-0\n\nNeeds workers#107 merged and the release workflow dispatched by the merge lane.",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** cmd:python3 scripts/fleet_probe.py release-v0.1.0\n**Status:** closed\n**Residual:** workers-release-v0-1-0\n\nNeeds workers#107 merged and the release workflow dispatched by the merge lane.\n\n**Evidence:** closing probe passed (first pass): ok {\"url\":\"https://api.github.com/repos/ultrastable/workers/releases/442761667\",\"assets_url\":\"https://api.github.com/repos/ultrastable/workers/releases/44276166\n",
   "labels": [
     "role:operations",
     "open-loop"

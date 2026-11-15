@@ -1,7 +1,7 @@
 {
   "id": "ROADMAP-AGENT-MCP-OWNER-READS",
   "title": "ROADMAP-1: QNFO.OPS #MCP-OWNER-READS: MCP tools get_blind_spots and get_standards so every agent sees what the owner cannot",
-  "body": "code-task: repo=ultrastable path=site/agentic.js\ncode-anchor: export const LIVE_TOOLS\n\n**Owner:** product-manager\n**Program:** QNFO.OPS\n**Metric it should move:** owner_load\n**Cost rule:** adds no worker, cron or paid model call (fleet_budget cap is breached; cost 426.89 vs 300).\n**Done check:** merged and verified live (VERIFY-LIVE-1) with a probe the author did not write\n**Status:** open\n\nExpose BLINDSPOT-1 register (open sweeps, learned gaps) and the standards register (supported/partial/planned with proof) as read tools, so any agent in any harness proposes the next improvement from the same facts. Prediction: agent sessions that file an originated item per turn rise from ~0; metric owner_load.",
+  "body": "code-task: repo=ultrastable path=site/agentic.js\ncode-anchor: export const LIVE_TOOLS\n\n**Owner:** product-manager\n**Program:** QNFO.OPS\n**Metric it should move:** owner_load\n**Cost rule:** adds no worker, cron or paid model call (fleet_budget cap is breached; cost 426.89 vs 300).\n**Done check:** grep:site/agentic.js::get_blind_spots ; merged and verified live (VERIFY-LIVE-1) with a probe the author did not write\n**Status:** open\n\nExpose BLINDSPOT-1 register (open sweeps, learned gaps) and the standards register (supported/partial/planned with proof) as read tools, so any agent in any harness proposes the next improvement from the same facts. Prediction: agent sessions that file an originated item per turn rise from ~0; metric owner_load.",
   "labels": [
     "role:product-manager",
     "roadmap",

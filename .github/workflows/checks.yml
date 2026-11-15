@@ -35,7 +35,7 @@ jobs:
           (cd products/gaplint && python3 -m unittest discover -s tests)
           PYTHONPATH=products/gaplint python3 -m gaplint .
           node --test demos/test/*.test.mjs
-          node --test deploy/cost-probe.test.mjs
+          node --test test/cost-probe.test.mjs
       - name: Secret and key scan
         run: |
           if grep -rEIl --exclude-dir=.git -e '-----BEGIN [A-Z ]*PRIVATE KEY-----' -e 'gh[pousr]_[A-Za-z0-9]{36,}' -e 'AKIA[0-9A-Z]{16}' -e 'sk-ant-[A-Za-z0-9_-]{20,}' .; then echo "secret-like content found"; exit 1; fi

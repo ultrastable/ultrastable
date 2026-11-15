@@ -1,0 +1,18 @@
+{
+  "_doc": "QNFO runs on Ultrastable: the foundation loops (doctrine/qnfo-port.json) this instance runs, and the QNFO-side code that satisfies each in the QNFO/qnfo-workers checkout. `python3 -m foundation sauce --check` fails a loop id the foundation does not know; `python3 -m foundation sauce --parity qnfo <qnfo-workers checkout>` fails when an impl path is missing there or a mechanism the foundation marks ported is not declared here (the sync that keeps the instance on the foundation runs it).",
+  "instance": "qnfo",
+  "runs_on": "ultrastable",
+  "loops": [
+    {"foundation_loop": "closing-probe-contracts", "impl": ["scripts/remediation_consumer.py", "migrations/2026-11-04-relapse-hold-1.sql"], "note": "remediation_contracts in qnfo-audit; autoclose triggers, REMEDIATION-REOPEN-2, RELAPSE-HOLD-1"},
+    {"foundation_loop": "metric-closed-loop", "impl": ["migrations/2026-10-02-metric-closed-loop.sql", "migrations/2026-10-02-integrity-guard-metrics.sql", "qnfo-fleet-control/worker.js"], "note": "metric_registry -> v_metric_trigger_state -> evaluateMetricTriggers -> remedy_efficacy_30d"},
+    {"foundation_loop": "family-throughput", "impl": ["migrations/2026-10-20-issue-throughput.sql"], "note": "v_issue_family_throughput, issue_lifecycle"},
+    {"foundation_loop": "meta-ticket-fold", "impl": ["migrations/issue-hygiene.test.mjs"], "note": "issue-meta-fold D1 workflow and issue_fold_ledger"},
+    {"foundation_loop": "failure-mode-detectors", "impl": ["migrations/2026-10-08-13-failure-modes.sql", "migrations/2026-11-04-closed-loops.sql"], "note": "failure_modes rows with fm-<key> detector contracts"},
+    {"foundation_loop": "prediction-calibration", "impl": ["migrations/2026-10-12-22-calibration-scorer.sql"], "note": "decision_log predicted_outcome, calibration_scorer_tick"},
+    {"foundation_loop": "work-claims", "impl": ["migrations/2026-10-02-work-claims.sql", "qnfo-deploy-guard/worker.js"], "note": "work-lock acquire/release, work_claims ledger"},
+    {"foundation_loop": "deploy-probes-revert", "impl": ["scripts/deploy_probes.py", "scripts/canary_revert.py"], "note": "per-worker probes.json, regression revert"},
+    {"foundation_loop": "review-gate-two-families", "impl": ["scripts/review_gate.py"], "note": "two disjoint model families, HOLD comment"},
+    {"foundation_loop": "queue-sla-oldest-age", "impl": ["migrations/2026-10-08-10-queue-sla.sql", "migrations/2026-10-13-issue-sla-2h.sql"], "note": "queue_sla, v_stuck_summary, 120-minute SLA"},
+    {"foundation_loop": "blocker-redteam", "impl": ["migrations/2026-10-11-blocker-redteam-auto.sql"], "note": "blocker_redteam, v_blocker_claims"}
+  ]
+}

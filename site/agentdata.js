@@ -274,6 +274,14 @@ export default {
     "status": "stable",
     "support": "supported",
     "tracked_by": null
+   },
+   {
+    "id": "data-portability",
+    "name": "Open-format data export and restore (GDPR Art. 20 style portability)",
+    "body": "EU GDPR Art. 20; Data Transfer Project norms",
+    "status": "stable",
+    "support": "supported",
+    "tracked_by": null
    }
   ]
  },

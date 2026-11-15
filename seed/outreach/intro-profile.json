@@ -1,10 +1,10 @@
 {
- "_doc": "Who is introducing the work, and the only words intro emails may contain (OUTREACH-INTRO-1). Wording comes from docs/BRAND.md and outreach/profiles.json; nothing here claims revenue, funding, customers, patents or results. The guard checks every field before anything is queued. Segment angles say what we want to learn, never what we have achieved.",
- "disclosure": "This message was sent by an automated outreach system on behalf of Rowan Quni-Gudzinas. Replies go to a person.",
- "who": "Rowan is a systems researcher studying autonomous AI systems: how they behave, fail and can be audited, drawing on twenty years of network and decision modeling in public-sector and third-sector settings.",
- "what": "Two connected efforts: Ultrastable, an autonomous system that sets up and then keeps running and improving an organized effort from one idea, and QNFO, an independent research programme that is run and documented by such a system so its decisions and results can be inspected. Both are early and run by one founder, with no outside customers yet.",
+ "_doc": "Seed template (instance fills it at bootstrap). Who is introducing the work, and the only words intro emails may contain (OUTREACH-INTRO-1). Wording comes from docs/BRAND.md and outreach/profiles.json; nothing here claims revenue, funding, customers, patents or results. The guard checks every field before anything is queued. Segment angles say what we want to learn, never what we have achieved.",
+ "disclosure": "This message was sent by an automated outreach system on behalf of the owner of this system. Replies go to a person.",
+ "who": "The owner runs an autonomous system built on Ultrastable and is introducing the work to organizations that could use it.",
+ "what": "An autonomous system that sets up and then keeps running and improving an organized effort from one idea. It is early, with no outside customers yet.",
  "offer": "This is not an application to a posted opening. The question is whether your organization has a need that this work, or a role built around it, could meet. If so, a short conversation would be welcome; if not, a pointer to someone who has that need is just as useful.",
- "signoff": "Rowan Quni-Gudzinas",
+ "signoff": "The system owner",
  "followup": "A brief follow-up to the introduction below. A short conversation, or a pointer to the right person, would be welcome.",
  "segments": {
   "research-institute": {
