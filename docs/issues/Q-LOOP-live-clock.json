@@ -1,11 +1,11 @@
 {
-  "id": "Q-LOOP-live-clock",
-  "title": "Q-LOOP-live-clock: Run Ultrastable's own seed heartbeat on a deployed runtime and report it",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:instances/ultrastable/live-runtime.json\n**Status:** open\n\nGap in component `self-host`: the local self-host tick passes (python3 -m foundation selfhost) but no deployed runtime of Ultrastable's own seed reports a tick. ultrastable.io/health is the site worker only. Record the runtime URL and its first reported tick in instances/ultrastable/live-runtime.json. Deploy the seed worker with instances/ultrastable/objectives.json seeded, add its /health URL to doctrine/detectors.json as a detector, and register M-site-up style http metrics against it. Requires the Cloudflare route in deploy/routes.json; an unavailable credential is a recorded failure with a staged default, not a wait.",
-  "labels": [
-    "role:operations",
-    "gap"
-  ],
-  "milestone": "Next",
-  "workstream": "Gaps"
+ "id": "Q-LOOP-live-clock",
+ "title": "Q-LOOP-live-clock: Run Ultrastable's own seed heartbeat on a deployed runtime and report it",
+ "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:instances/ultrastable/live-runtime.json\n**Status:** done\n\nGap in component `self-host`: the local self-host tick passes (python3 -m foundation selfhost) but no deployed runtime of Ultrastable's own seed reports a tick. ultrastable.io/health is the site worker only. Record the runtime URL and its first reported tick in instances/ultrastable/live-runtime.json. Deploy the seed worker with instances/ultrastable/objectives.json seeded, add its /health URL to doctrine/detectors.json as a detector, and register M-site-up style http metrics against it. Requires the Cloudflare route in deploy/routes.json; an unavailable credential is a recorded failure with a staged default, not a wait.\n\n**Evidence:** instances/ultrastable/live-runtime.json records two deployed runtimes; /health reports tick 461 (8/8 steps) for both on 2026-11-15; detectors runtime-tenant0 and runtime-child watch them; /dashboard live feed reads them on load.\n",
+ "labels": [
+  "role:operations",
+  "gap"
+ ],
+ "milestone": "Next",
+ "workstream": "Gaps"
 }
