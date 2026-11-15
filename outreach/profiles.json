@@ -1,5 +1,5 @@
 {
- "_doc": "Who is asking. A profile is the config an organization adopts to run outreach: the tracks of business/funding/registry.json it may use, its identity line and the only text its packets may contain. The QNFO fleet adopts this engine by copying outreach/ and scripts/outreach.py and editing the `qniverse` profile. Every text field is checked by the guard before anything is queued. Nothing here claims revenue, funding, customers, patents or prior publication.",
+ "_doc": "Who is asking. A profile is the config an organization adopts to run outreach: the tracks of business/funding/registry.json it may use, its identity line and the only text its packets may contain. The QNFO fleet adopts this engine by copying outreach/ and scripts/outreach.py and editing the `qniverse` profile. Every text field is checked by the guard before anything is queued. Nothing here claims revenue, funding, customers or prior publication.",
  "profiles": {
   "ultrastable": {
    "name": "Ultrastable",

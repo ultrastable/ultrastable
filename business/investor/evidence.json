@@ -73,7 +73,7 @@
    "status": "live"
   },
   "ip-legal": {
-   "what": "filing route planner and disclosure gate",
+   "what": "licence and compliance stewardship: licence terms, notices, trademark checks",
    "status": "live"
   },
   "research-publishing": {
@@ -81,7 +81,7 @@
    "status": "live"
   },
   "marketing-content": {
-   "what": "content calendar and social pipeline behind a disclosure gate",
+   "what": "content calendar and social pipeline with claim checks",
    "status": "live"
   },
   "customer-onboarding": {
@@ -494,7 +494,7 @@
     },
     {
      "id": "promotion-and-funding",
-     "story": "Funding applications and outreach run within caps, consent and suppression, with the disclosure gate before anything goes public.",
+     "story": "Funding applications and outreach run within caps, consent and suppression, with source-checked claims before anything goes public.",
      "passes": true
     }
    ]

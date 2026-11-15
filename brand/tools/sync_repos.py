@@ -5,7 +5,7 @@ Usage:
   python3 brand/tools/sync_repos.py                  # write the lint reference in brand/repos/<name>/ (README.block.md, CONTRIBUTING.md, SECURITY.md: the lint reference)
   python3 brand/tools/sync_repos.py --apply PARENT   # also write into PARENT/<name>/ checkouts (the monorepo is PARENT/ultrastable)
 The README block sits between `<!-- brand:start -->` and `<!-- brand:end -->`; text outside the markers is the repo's own and is kept.
-A README without markers has its H1 line replaced by the block. Images are copied to assets/brand/ so they render in a private repo.
+A README without markers has its H1 line replaced by the block. Images are copied to assets/brand/ so they render in any repo.
 """
 import argparse, json, pathlib, re, shutil
 
@@ -98,7 +98,7 @@ Other repositories: {nav(cfg, r['name'])}.
 def security(cfg, pos, r):
     return f"""# Security policy for {cfg['org']}/{r['name']}
 
-The source is private today. If you found a vulnerability in anything Ultrastable runs ({cfg['site']} or a pilot deployment), email **{cfg['security_contact']}** with the subject `SECURITY`. Include what you saw, where, and how to reproduce it.
+The source is open. If you found a vulnerability in anything Ultrastable runs ({cfg['site']} or a pilot deployment), email **{cfg['security_contact']}** with the subject `SECURITY`. Include what you saw, where, and how to reproduce it.
 
 - We acknowledge within two working days.
 - Give us a reasonable window to fix before disclosing.

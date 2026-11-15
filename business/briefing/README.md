@@ -1,18 +1,18 @@
 # Briefing set
 
-Everything needed to talk about Ultrastable to investors, grant reviewers, partners and press. Positioning: **an autonomous system that bootstraps any organized effort** (a company, an open-source project, a community, a lab) from one idea and runs the work of building and operating it; for-profit and open source (ultrastable.org) both stay open. Separate from QNFO; QNFO is only the first test case. No financial claims. Patent unfiled.
+Everything needed to talk about Ultrastable to investors, grant reviewers, partners and press. Positioning: **an autonomous system that bootstraps any organized effort** (a company, an open-source project, a community, a lab) from one idea and runs the work of building and operating it; for-profit and open source (ultrastable.org) both stay open. Separate from QNFO; QNFO is only the first test case. No financial claims. The project is open; the Ultrastable License governs use.
 
-| File | Audience | Tag |
+| File | Audience | Use |
 |---|---|---|
-| [pitch-deck.md](pitch-deck.md) | Investors, programs (slide-by-slide text) | SAFE NOW |
-| [one-pager.md](one-pager.md) | Anyone | SAFE NOW (mirrors [external/one-pager.md](../../external/one-pager.md)) |
-| [elevator-pitches.md](elevator-pitches.md) | Anyone, 10s / 30s / 2min, per audience | SAFE NOW |
-| [faq.md](faq.md) | Anyone | SAFE NOW |
-| [qa-investors-and-reviewers.md](qa-investors-and-reviewers.md) | Investors, grant reviewers | SAFE NOW answers; hard-question notes marked INTERNAL |
-| [competitor-map.md](competitor-map.md) | Internal prep; public facts only | Internal |
-| [objection-handling.md](objection-handling.md) | Internal prep | NDA ONLY |
+| [pitch-deck.md](pitch-deck.md) | Investors, programs (slide-by-slide text) | Public |
+| [one-pager.md](one-pager.md) | Anyone | Public (mirrors [external/one-pager.md](../../external/one-pager.md)) |
+| [elevator-pitches.md](elevator-pitches.md) | Anyone, 10s / 30s / 2min, per audience | Public |
+| [faq.md](faq.md) | Anyone | Public |
+| [qa-investors-and-reviewers.md](qa-investors-and-reviewers.md) | Investors, grant reviewers | Public answers; prep notes marked INTERNAL |
+| [competitor-map.md](competitor-map.md) | Prep; public facts only | Public |
+| [objection-handling.md](objection-handling.md) | Prep | Public |
 
-**Rule for SAFE NOW files:** name the outcome, not the mechanism. No schemas, thresholds, scoring rules, claim language, numbers from QNFO, or financial figures about Ultrastable. If a sentence would help a competitor rebuild it, it is not here. Mechanism language ("trust ledger", scored predictions, capacity rules) stays in `docs/` and `ip/` until the provisional is filed.
+**Rule for every file here:** every claim cites a source in the repository; no invented number, no QNFO figure without its label, no financial figure about Ultrastable that is not measured. Mechanism language ("trust ledger", scored predictions, capacity rules) may be used and is explained in `docs/`.
 
 Two routes are covered in every file: **open source** (the open core on ultrastable.org) and **commercial** (hosted layer). Which one a listener hears depends on the audience; the facts do not change.
 

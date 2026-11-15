@@ -17,7 +17,7 @@ A set of agent sessions (Claude Code and others) that act as virtual managers an
 ## 3. What the system can do (observed)
 
 - Create and edit files, branches, PRs and issues in attached repositories; merge green PRs when the owner has asked for merging.
-- Draft the patent specification, figures, business plan, funding plan and roadmap; keep them in git.
+- Draft the architecture specifications, figures, business plan, funding plan and roadmap; keep them in git.
 - Deploy to the owner's Cloudflare account through its API; run tests; read public web sources.
 - Route work between sessions by messages, with the owner's words attached where approval matters.
 
@@ -34,21 +34,20 @@ A set of agent sessions (Claude Code and others) that act as virtual managers an
 
 ## 5. The interrupt gate
 
-Stop only for a step that is both irreversible and identity-bound, with no engineerable reversible path: money, signing or filing, destroying unbacked data, sending as the owner, minting the owner's credentials. First make it reversible (draft, branch, preview, canary). If it is still gated, open a gate card: what, why it is gated, the default in effect, what the fleet prepared, and a closing probe. Then take the next item.
+Stop only for a step that is both irreversible and identity-bound, with no engineerable reversible path: money, signing or filing in the owner's name, destroying unbacked data, sending as the owner, minting the owner's credentials. First make it reversible (draft, branch, preview, canary). If it is still gated, open a gate card: what, why it is gated, the default in effect, what the fleet prepared, and a closing probe. Then take the next item.
 
 ## 6. Owner-only items (today)
 
 - Incorporation or confirming the owning entity, and the written licence or assignment from the author to it (`docs/ip/IP-REGISTER.md`).
-- Filing the provisional patent at the patent office and paying the fee, after attorney review.
 - Applications that need the owner's identity or payment details (startup credit programs).
 - Creating separate GitHub repositories or organization settings the sessions cannot reach.
-- Trademark filing.
+- Trademark registration in the owner's name.
 
 For each, the fleet prepares everything so the owner's step is a signature, a click or a decision.
 
 ## 7. How the system corrects itself
 
-Failures and owner friction become issues, then proposed amendments to `agents/AGENTS.md`, role files or the policy, reviewed by PR and versioned. Trust widens a session's scope only through such a PR. Day-one amendments: never assert a fact about a repository, licence or disclosure without checking it; never load duplicate issues another thread has already filed; do not work around a refusal.
+Failures and owner friction become issues, then proposed amendments to `agents/AGENTS.md`, role files or the policy, reviewed by PR and versioned. Trust widens a session's scope only through such a PR. Day-one amendments: never assert a fact about a repository, licence or number without checking it; never load duplicate issues another thread has already filed; do not work around a refusal.
 
 ## 8. Known gaps (honest)
 

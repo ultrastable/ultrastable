@@ -1,10 +1,10 @@
-# 5-minute demo script (internal / NDA audiences until filing)
+# 5-minute demo script
 
 Commands match `platform/core/ultrastable/cli.py` and were exercised on 2026-11-10 (demo run: 40 ticks; unit tests: 12 pass). Run from `platform/core` in a cloud workspace that has this repository checked out. Global flags `--db` and `--config` come BEFORE the subcommand. Use a throwaway DB path so you start clean.
 
 **Say up front (every time):** the agents in this demo are SIMULATED, deterministic stand-ins. The platform manages agents; this shows the control loop, not model quality. Command and Anthropic adapters exist but are not yet proven in production.
 
-**Disclosure:** for audiences without an NDA or before filing, do not narrate how trust is computed, the rung names, prediction scoring or the plus rule. Show the screens and say "that's the part we're patenting". The dashboard text itself shows rung names, so screen-share only under NDA or after filing.
+**Showing the dashboard:** the demo may narrate how trust is computed, the rung names, prediction scoring and the plus rule; the project is open and the Ultrastable License governs use. Every number shown must be the real one from the live dashboard.
 
 ## Setup (before the call)
 ```
@@ -38,7 +38,7 @@ python -m ultrastable --db demo.db resolve GATE-W-018
 ```
 python -m ultrastable --db demo.db trust
 ```
-Message (SAFE NOW): "It gets more independent as it proves itself; different kinds of work have different freedom." Do not explain the formula.
+Message: "It gets more independent as it proves itself; different kinds of work have different freedom." Do not explain the formula.
 
 ## 3:00-4:30 Live dashboard
 ```
@@ -51,7 +51,7 @@ Amendments: show the "Rule amendments" panel (after a demo run, repeated failure
 ## 4:30-5:00 Close
 - "Add your own work": `python -m ultrastable --db demo.db add "Write the pricing page" --project web --priority 20` (project must exist; use a seeded one).
 - Deployment: Google Cloud Run + Cloud Scheduler script is in `deploy/gcp/deploy.sh` (not run during the demo).
-- Ask: pilots with three teams; pre-seed conversation (NDA).
+- Ask: pilots with three teams; pre-seed conversation.
 
 ## If something fails
 Say so and show the test run instead: `python -m unittest discover -s tests` (12 tests, observed OK). Do not improvise claims about real agents.

@@ -4,7 +4,7 @@
   "site": "https://ultrastable.io",
   "contact": "pilot@ultrastable.io",
   "security_contact": "pilot@ultrastable.io",
-  "visibility": "private",
+  "visibility": "public",
   "license": {
     "name": "Ultrastable License v1.0 (USL-1.0)",
     "summary": "Source-available. Free for non-commercial use: read it, run it, study it, change it, share it. Any commercial use needs a Commercial License with revenue share.",
@@ -116,8 +116,8 @@
     {
       "name": "ip",
       "role": "Architecture and IP",
-      "line": "Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11).",
-      "audience": "Counsel, and engineers who want the precise design.",
+      "line": "Architecture specifications and the evidence log.",
+      "audience": "Engineers who want the precise design.",
       "quickstart": [
         "Start at README.md"
       ],

@@ -1,6 +1,6 @@
 # Q&A: investors and grant reviewers
 
-Answers are SAFE NOW. "Prep" lines are INTERNAL and must not be spoken or sent.
+Answers are public. "Prep" lines are internal notes for the speaker.
 
 ## Investor questions
 
@@ -9,19 +9,19 @@ Answers are SAFE NOW. "Prep" lines are INTERNAL and must not be spoken or sent.
 
 **Why you, why now?** Models can do the work; nobody owns the management layer yet. We run our own work on it. *Prep:* concede the team is one inventor; state the search for an operator openly.
 
-**What's the moat?** Management quality that compounds with use, a reusable organization kit, and a head start from running it in production. *Prep:* do not name mechanisms; say "we've applied for no protection we can talk about yet" only if asked, never "patent pending" before filing.
+**What's the moat?** Management quality that compounds with use, a reusable organization kit, and a head start from running it in production. *Prep:* the code is open and the Ultrastable License governs use.
 
 **Who else does this?** Several products sell "agents that run a company"; coding agents and frameworks are the substrate. We differ on how work is managed. See competitor map.
 
-**Traction?** One production installation, self-reported; design-partner pilots being recruited. No revenue claim. *Prep:* QNFO numbers are NDA ONLY.
+**Traction?** One production installation, self-reported; design-partner pilots being recruited. No revenue claim. *Prep:* QNFO numbers are self-measured; label them so.
 
-**Why open source and also a company?** Open core builds trust and distribution; hosted service and support pay for it. Same pattern as other infrastructure companies. *Prep:* licence is pending attorney review; say "to be decided".
+**Why open source and also a company?** Open core builds trust and distribution; hosted service and support pay for it. Same pattern as other infrastructure companies. *Prep:* the Ultrastable License governs use: free for non-commercial use, a Commercial License with revenue share for commercial use.
 
 **Who runs the business?** We are looking for a business co-founder or CEO; the founder is the inventor.
 
 **What do you need?** Design partners, credits, an operator, and later a small pre-seed.
 
-**Can I see the code or architecture?** After professional review and any needed protection, under a mutual NDA. *Prep:* only counsel-drafted NDA; log recipients in ip/evidence-log.md.
+**Can I see the code or architecture?** Yes: the repositories are open and the Ultrastable License governs use. *Prep:* point to the repository and the architecture specifications.
 
 **Risks?** Early; one installation; model costs; competitors with more funding; agents making mistakes. Mitigation: narrow interrupt gate, independent checks, design-partner pilots.
 

@@ -1,14 +1,14 @@
 # Pitch kit
 
-*Voice: the marketing manager. Everything in the SAFE NOW sections can be said today. The AFTER FILING sections are written and waiting; they switch on the day the provisional is filed.*
+*Voice: the marketing manager. Everything here can be said today; every claim traces to a source in the repository.*
 
 ## One-liner
 
-**SAFE NOW:** "Ultrastable is the manager for your AI workers. It runs your projects like a great team does, and only interrupts you for the decisions that can't be undone."
+"Ultrastable is the manager for your AI workers. It runs your projects like a great team does, and only interrupts you for the decisions that can't be undone."
 
 Shorter: "AI agents are cheap. Managing them isn't. Ultrastable is the manager."
 
-## 30-second pitch (SAFE NOW)
+## 30-second pitch
 
 > Everyone's using AI agents to write code now, and they're good. But somebody still has to manage them: keep the backlog, check their work, decide what matters. That somebody is usually the founder, all day.
 >
@@ -16,7 +16,7 @@ Shorter: "AI agents are cheap. Managing them isn't. Ultrastable is the manager."
 >
 > I built it to run my own projects, and it does. Now I'm turning it into a product.
 
-## 2-minute pitch (SAFE NOW version)
+## 2-minute pitch
 
 > **The problem.** AI coding agents went from novelty to normal in two years. The companies making them are worth tens of billions. But every one of them assumes a human manager: someone to hand out tasks, review results, and make the calls. For a founder, an agency, or a small team, that person is the bottleneck. The agents wait on you.
 >
@@ -28,7 +28,7 @@ Shorter: "AI agents are cheap. Managing them isn't. Ultrastable is the manager."
 >
 > **Ask.** [Pick one: "I'm looking for teams running several projects with AI agents who want to try it." / "I'm raising a pre-seed round to turn it into a product." / "I'd love an intro to someone who runs an agency."]
 
-## 2-minute pitch additions (AFTER FILING, say "patent pending")
+## 2-minute pitch additions (mechanism)
 
 - "Every action comes with a prediction that gets scored later, so the system knows how well-calibrated each agent is."
 - "Autonomy is computed per kind of work from the verified record, along a ladder from observed to self-directed."
@@ -38,16 +38,16 @@ Shorter: "AI agents are cheap. Managing them isn't. Ultrastable is the manager."
 
 ## Talking points for running into someone
 
-| If they are... | Say (SAFE NOW) |
+| If they are... | Say |
 |---|---|
 | A founder | "How much of your day is managing your AI tools? That's the part we take." |
 | An engineer | "It's the manager above Claude Code or Codex: backlog, assignment, independent review, and it only escalates irreversible steps." |
 | An investor | "Coding agents are a $25B+ category. Every one of them needs a manager. We're the manager, and it's running in production for us." |
 | An agency owner | "One lead can oversee many more client projects, with an audit trail per client." |
 | A big-company leader | "It's how you let agents act without approving everything: they earn scope, and humans only see the irreversible calls." |
-| Press or a podcast | Wait until after filing. Then: "The bottleneck in AI isn't the workers anymore, it's management." |
+| Press or a podcast | "The bottleneck in AI isn't the workers anymore, it's management." |
 
-**Never say before filing:** how trust is computed, the ladder rungs, how predictions are scored, the plus capacity rule or drift detector, how rules amend themselves, schemas, QNFO metrics. If asked: "That's the part we're patenting. Happy to go deeper once it's filed."
+**Rule:** mechanism may be explained in full (how trust is computed, the ladder rungs, how predictions are scored, the plus capacity rule, how rules amend themselves); never state a number that is not in the repository or on the live dashboard. If asked about the licence: "The code is open; the Ultrastable License governs use."
 
 ## Objection handling
 
@@ -56,8 +56,8 @@ Shorter: "AI agents are cheap. Managing them isn't. Ultrastable is the manager."
 | "Devin / Cursor / Claude Code already do this." | "They're the workers, and they're great. We're the manager above them. We work with whichever ones you use." |
 | "Paperclip does org charts for agents, and it's free." | "Org charts are the easy part. The hard part is knowing when an agent can be trusted to act alone. Ours earns that from its record, and only interrupts for irreversible steps." |
 | "I'd never let AI act without approval." | "You don't have to. It starts by asking about everything. You decide the short list it always asks about. It only stops asking about the rest once it has proven itself." |
-| "The big labs will just build this." | "Maybe a version. We're model-agnostic and cloud-agnostic, we already run it, and the method is patent pending (after filing)." |
+| "The big labs will just build this." | "Maybe a version. We're model-agnostic and cloud-agnostic, we already run it, and the method is open under the Ultrastable License." |
 | "You're a solo founder." | "So the product is the team. I run my company on it; that's the demo. Funding goes to a founding engineer and a commercial lead." |
 | "What if an agent breaks something?" | "Every change is checked independently and logged, irreversible steps always come to a person, and anything reversible can be rolled back." |
 | "What's the business model?" | "Priced per project managed, plus model usage at cost. Fewer seats is the point." |
-| "Show me numbers." | Before filing: "Happy to walk through it under NDA, or in a few weeks once our filing is in." After: the case study. |
+| "Show me numbers." | "Here is the live dashboard and the case study; the figures are self-measured and labelled that way." |

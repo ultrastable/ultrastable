@@ -7,19 +7,19 @@
 
 A system is autonomous if it has self-referential loops and the ability to close them.
 
-Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11).
+Architecture specifications and the evidence log.
 
-![visibility](https://img.shields.io/badge/repo-private-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
+![visibility](https://img.shields.io/badge/repo-public-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
 
 **The organization:** [ultrastable](https://github.com/ultrastable/ultrastable) · [seed](https://github.com/ultrastable/seed) · [platform](https://github.com/ultrastable/platform) · [docs](https://github.com/ultrastable/docs) · [site](https://github.com/ultrastable/site) · [business](https://github.com/ultrastable/business) · **ip** · [ultrastable.io](https://ultrastable.io)
 
 ## What it is
-Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11). Ultrastable is an autonomous development platform: an organization of virtual managers and staff that runs projects, scores its own decisions, earns wider autonomy from its track record, and interrupts a person only for steps that cannot be undone.
+Architecture specifications and the evidence log. Ultrastable is an autonomous development platform: an organization of virtual managers and staff that runs projects, scores its own decisions, earns wider autonomy from its track record, and interrupts a person only for steps that cannot be undone.
 
 <p align="center"><img src="assets/brand/loop.png" alt="The loop every manager runs: predict, execute, verify, score, plus" width="90%"></p>
 
 ## Who it is for
-Counsel, and engineers who want the precise design.
+Engineers who want the precise design.
 
 ## Quickstart
 - Start at README.md
@@ -43,7 +43,7 @@ The proof lives in [ultrastable/ultrastable](https://github.com/ultrastable/ultr
 | [docs](https://github.com/ultrastable/docs) | Concepts and roadmap | How it works: virtual staff, feedback loops, earned trust, plussing, governance, bootstrapping and the roadmap. |
 | [site](https://github.com/ultrastable/site) | Public site | The Cloudflare Worker behind the Ultrastable domains. |
 | [business](https://github.com/ultrastable/business) | Plan and funding | Business plan, customers, competition, pitch, funding and promotion, written by the virtual managers. |
-| [ip](https://github.com/ultrastable/ip) | Architecture and IP | Architecture specifications, the evidence log, and the archived patent drafts (patent track dropped 2026-11-11). |
+| [ip](https://github.com/ultrastable/ip) | Architecture and IP | Architecture specifications and the evidence log. |
 
 Also in the org: [workers](https://github.com/ultrastable/workers), [spec](https://github.com/ultrastable/spec), [license](https://github.com/ultrastable/license) (extracted code, specifications and canonical license text).
 

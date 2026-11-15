@@ -1,6 +1,6 @@
 # Security policy for ultrastable/seed
 
-The source is private today. If you found a vulnerability in anything Ultrastable runs (https://ultrastable.io or a pilot deployment), email **pilot@ultrastable.io** with the subject `SECURITY`. Include what you saw, where, and how to reproduce it.
+The source is open. If you found a vulnerability in anything Ultrastable runs (https://ultrastable.io or a pilot deployment), email **pilot@ultrastable.io** with the subject `SECURITY`. Include what you saw, where, and how to reproduce it.
 
 - We acknowledge within two working days.
 - Give us a reasonable window to fix before disclosing.

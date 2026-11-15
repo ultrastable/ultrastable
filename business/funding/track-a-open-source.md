@@ -1,10 +1,10 @@
 # Track A: open source and foundation routes
 
-*Voice: funding manager. Verified 2026-11-10 unless a row says otherwise. Source of truth for status: [registry.json](registry.json). Tag: NDA ONLY.*
+*Voice: funding manager. Verified 2026-11-10 unless a row says otherwise. Source of truth for status: [registry.json](registry.json).*
 
 ## The honest summary
 
-Almost every open-source funder wants **an existing, released project with users, a clear licence and governance**. Ultrastable has none of those publicly yet, and cannot until the provisional patent is filed. So Track A is mostly a **2027 track**: file, release an open core, collect adoption, then apply. The few things that work earlier are fiscal hosting, small credits and a neutral-home decision.
+Almost every open-source funder wants **an existing, released project with users, a clear licence and governance**. Ultrastable is public now but has no outside users yet, so Track A is mostly a **2027 track**: release an open core, collect adoption, then apply. The few things that work earlier are fiscal hosting, small credits and a neutral-home decision.
 
 ## Programs
 
@@ -28,18 +28,17 @@ Cloud OSS credit programs (Google Cloud, Cloudflare Project Alexandria, AWS Open
 
 What it can mean, in increasing commitment:
 
-1. **Project site and namespace only.** `ultrastable.org` hosts docs and the open core; the company keeps the `.io` / `.app` domains for the commercial layer. Zero legal cost. Do this first.
+1. **Project site and namespace only.** `ultrastable.org` hosts docs and the open core; the company keeps the `.io` / `.app` domains for the commercial layer. No cost. Do this first.
 2. **Fiscal host.** Open Source Collective or similar holds donations and sponsor money. Cheap, reversible.
-3. **Own foundation (nonprofit).** Real neutrality, but needs a legal entity, board, bylaws, trademark assignment. **[LAWYER]** Not worth it before there are outside contributors.
+3. **Own foundation (nonprofit).** Real neutrality, but needs a legal entity, board, bylaws, trademark assignment (the programme's own requirement). Not worth it before there are outside contributors.
 4. **Donate to an existing foundation** (Linux Foundation / AAIF, Apache). Gives credibility and neutrality; costs control of the trademark and roadmap. Decide only after traction.
 
 Recommendation: do (1) now, (2) at first public release, defer (3) and (4). Keep the **trademark** owned by the company until a deliberate transfer.
 
 ## Track A sequence
 
-1. File the provisional (gate for everything public). Owner step, see decision memo.
-2. Publish the open core under `ultrastable.org` with licence, governance file, security policy, contribution guide.
-3. Apply to GitHub Secure Open Source Fund and a fiscal host once there are outside users.
+1. Publish the open core under `ultrastable.org` with licence, governance file, security policy, contribution guide.
+2. Apply to GitHub Secure Open Source Fund and a fiscal host once there are outside users.
 4. Draft one Sovereign Tech Fund and one NSF POSE (if eligible) proposal around a **base component** (for example the portable core and its adapters), not the whole product.
 5. Revisit AAIF submission at the point where another project depends on the core.
 

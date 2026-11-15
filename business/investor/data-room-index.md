@@ -1,6 +1,6 @@
 # Investor data-room index (2026-11-10)
 
-Status codes: **HAVE** (exists, path given), **DRAFT** (working draft exists), **NEEDS LAWYER**, **NEEDS ACCOUNTANT**, **TODO** (nothing yet). Paths are relative to the root of the workspace that holds the repositories side by side. Owners are roles; Rowan alone signs, pays and files.
+Status codes: **HAVE** (exists, path given), **DRAFT** (working draft exists), **NEEDS ACCOUNTANT**, **TODO** (nothing yet). Paths are relative to the root of the workspace that holds the repositories side by side. Owners are roles; Rowan alone signs and pays.
 
 | # | Item | Status | Where / note | Owner |
 |---|---|---|---|---|
@@ -14,19 +14,17 @@ Status codes: **HAVE** (exists, path given), **DRAFT** (working draft exists), *
 | 8 | Funding plan | HAVE | `business/funding.md`, `docs/funding/funding-options.md` | Finance manager |
 | 9 | Use of funds / budget | DRAFT | One-pager + plan/05 percentages; 18-month budget model TODO | Finance manager, **NEEDS ACCOUNTANT** |
 | 10 | Financial model and runway | STRUCTURE ONLY | [financial-model.md](financial-model.md): formulas and measured inputs, dollar inputs blank | Finance manager, **NEEDS ACCOUNTANT** |
-| 11 | Entity formation documents | TODO | no entity recorded | Rowan, **NEEDS LAWYER** `[LAWYER]` `[ACCOUNTANT]` |
-| 12 | Cap table | TODO | after entity | Rowan, **NEEDS LAWYER** |
-| 13 | Founder IP assignment / licence of QNFO-origin code to the company | TODO | main investor risk (HANDOFF.md) | Rowan, **NEEDS LAWYER** |
-| 14 | Provisional patent drafts | DRAFT | `Dev/ultrastable/` local-workspace patent drafts (working drafts, not legal advice) | Legal/IP manager, **NEEDS LAWYER** |
-| 15 | Provisional filing receipt | TODO | not filed; file before 2027-08-10, sooner better | Rowan, **NEEDS LAWYER** |
-| 16 | Public-disclosure record of qnfo-workers (public since 2026-08-10, carries a QNFO licence (QNFO User License Agreement v2.1, no commercial use)) | HAVE (fact) | HANDOFF.md; counsel to assess | Legal/IP manager, **NEEDS LAWYER** |
-| 17 | Trademark search (Ultrastable; note "cybernetic organizations" overlap) | TODO | product doc section 7 partial only | Legal/IP manager, **NEEDS LAWYER** |
-| 18 | NDA template | TODO | needed before sharing this folder | Legal/IP manager, **NEEDS LAWYER** |
+| 11 | Entity formation documents | TODO | no entity recorded | Rowan `[ACCOUNTANT]` |
+| 12 | Cap table | TODO | after entity | Rowan |
+| 13 | Founder IP assignment / licence of QNFO-origin code to the company | TODO | main investor risk (HANDOFF.md) | Rowan |
+| 16 | Licence record of qnfo-workers (public since 2026-08-10, carries a QNFO licence (QNFO User License Agreement v2.1, no commercial use)) | HAVE (fact) | HANDOFF.md | Licence steward |
+| 17 | Trademark search (Ultrastable; note "cybernetic organizations" overlap) | TODO | product doc section 7 partial only | Licence steward |
+| 18 | NDA template | TODO | only for counterparties that require one | Licence steward |
 | 19 | Domains and site | HAVE | ultrastable.io/.app/.net, worker `ultrastable-site`, `us-remote/site/` (note: registered inside QNFO's Cloudflare account; transfer to the company later) | Operations |
-| 20 | GitHub repo | HAVE | private https://github.com/ultrastable/ultrastable (12 issues; Projects board missing) | Operations |
-| 21 | QNFO case study with real numbers | TODO (after filing) | source figures in product doc section 3, self-measured | Customer success + Legal review |
+| 20 | GitHub repo | HAVE | https://github.com/ultrastable/ultrastable (12 issues; Projects board missing) | Operations |
+| 21 | QNFO case study with real numbers | TODO | source figures in product doc section 3, self-measured | Customer success |
 | 22 | Customer pipeline / discovery log | TODO | `customers/discovery-log.md` not created; no calls logged | Sales manager |
-| 23 | Pilot terms / design-partner agreement | TODO | draft needed | Sales manager, **NEEDS LAWYER** |
+| 23 | Pilot terms / design-partner agreement | TODO | draft needed | Sales manager |
 | 24 | Credit program applications | DRAFT | `us-business-new/google-for-startups-application.md`; others not drafted | Finance manager |
 | 25 | Grant (NSF SBIR) materials | TODO | Project Pitch; full proposal 2027-03-04 or 2027-07-07 per funding notes (verify) | Finance manager |
 | 26 | Tax and accounting setup | TODO | **NEEDS ACCOUNTANT** | Rowan |
@@ -36,6 +34,6 @@ Status codes: **HAVE** (exists, path given), **DRAFT** (working draft exists), *
 | 30 | Cloud deployment evidence (Cloud Run URL) | TODO | `us-platform/deploy/gcp/deploy.sh` exists; no live deployment recorded | Operations |
 
 ## Rules
-- Share only after an NDA (#18) and, for AFTER FILING items, after the filing receipt (#15).
+- The folder is open; use an NDA (#18) only where a counterparty requires one.
 - Nothing in the room may claim a metric, customer or revenue that is not evidenced by a file here.
 - Update this index when an item changes status; the reviewer agent re-checks it monthly.

@@ -1,4 +1,4 @@
-# Funding and strategy package (INTERNAL, NDA ONLY)
+# Funding and strategy package
 
 **Ultrastable is the foundation for any autonomous system.**
 
@@ -10,7 +10,7 @@ Created 2026-11-10. Two routes, one decision: Ultrastable can be an open-source 
 
 | File | What it is |
 |---|---|
-| [decision-memo.md](decision-memo.md) | Recommended route (open-core hybrid), sequence, patent and licence flags for the attorney |
+| [decision-memo.md](decision-memo.md) | Recommended route (open-core hybrid), sequence, licence notes |
 | [track-a-open-source.md](track-a-open-source.md) | Grants, programs and foundation paths for open source; ultrastable.org as the neutral home |
 | [track-b-commercial.md](track-b-commercial.md) | Credits, SBIR, accelerators, angels, and the "someone else runs the business" path |
 | [agent-execution.md](agent-execution.md) | Who runs the agents: local, server-side, or both |
@@ -28,7 +28,7 @@ Builds on, and does not duplicate: [plan/05-funding.md](../plan/05-funding.md), 
 
 ## Rules this package follows
 
-- Patent is unfiled. Nothing here goes outside; the external-safe versions are in `../briefing/` and `../../external/`. See [../../docs/CONFIDENTIALITY.md](../../docs/CONFIDENTIALITY.md).
+- The project is open and the Ultrastable License governs use; every figure here is sourced or labelled an estimate.
 - QNFO appears only as a test case. QNFO's public repo carries the QNFO User License Agreement v2.1 (no commercial use); no file here says more than that about QNFO's repo.
 - No financial claims about Ultrastable. Figures are program terms or labelled planning assumptions.
-- Everything marked **[LAWYER]** or **[ACCOUNTANT]** needs a professional.
+- Everything marked or **[ACCOUNTANT]** needs a professional.

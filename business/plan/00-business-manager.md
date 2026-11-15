@@ -23,24 +23,24 @@ Ultrastable is a business, and the timing is right, but the moat is not "AI agen
 | Team | Agency or team, up to 20 projects | about $499 per month + usage | Priced on projects managed, not seats, since the point is fewer seats |
 | Enterprise | Larger orgs, own cloud | annual contract | Private deployment, audit export, SSO |
 
-The open-core decision is a Rowan call with a lawyer: it changes what the patent protects in practice. **[LAWYER]**
+Open core is decided: the code is open and the Ultrastable License governs use.
 
 ## The next 90 days (2026-11-10 to 2027-02-08)
 
-1. **File the provisional.** Everything public waits on it. Target: before 2026-12-31. Rowan with counsel (roadmap IP-4, IP-5).
-2. **Pick the entity.** Credits, grants and investors all need one (roadmap BIZ-1). **[LAWYER] [ACCOUNTANT]**
-3. **Write the QNFO case study privately now**, publish the day after filing (roadmap PR-3).
+1. **Launch publicly.** The repositories are open and the licence governs use; publish the site and the case study now.
+2. **Pick the entity.** Credits, grants and investors all need one (roadmap BIZ-1). ** [ACCOUNTANT]**
+3. **Publish the QNFO case study** with real, self-measured numbers (roadmap PR-3).
 4. **Apply for credits** (Google for Startups, Cloudflare for Startups, Anthropic, AWS Activate) once the entity, domain email and site exist (FN-2 to FN-4).
 5. **Submit an NSF SBIR Project Pitch** so a full proposal can make the 2027-03-04 deadline ([funding](05-funding.md)).
-6. **Run 10 discovery conversations** with target customers using only SAFE NOW language ([pitch kit](04-pitch-kit.md)).
+6. **Run 10 discovery conversations** with target customers using the plain-language pitch ([pitch kit](04-pitch-kit.md)).
 7. **Decide on YC Spring 2027** (deadline about 2027-02-08, unconfirmed) ([events](07-events.md)).
 
 ## Biggest risks
 
 | Risk | What we do about it |
 |---|---|
-| Filing not yet done; the key combination is not publicly disclosed | File the provisional promptly; keep technical detail out of public repos and posts; counsel advises on timing **[LAWYER]** |
-| Big platforms add "trust-based autonomy" themselves | Speed, the patent, and the org kit: we sell a way of running work, not a feature |
+| Others copy the open design | The Ultrastable License requires a Commercial License for commercial use; speed, the running record and the org kit are the moat |
+| Big platforms add "trust-based autonomy" themselves | Speed, the licence, the running record and the org kit: we sell a way of running work, not a feature |
 | Solo founder | The roster below is the team; first hire is a founding engineer or a commercial co-founder once funded |
-| Agents doing harm in a customer's systems | The narrow gate, full audit log, customer-set limits; contract terms **[LAWYER]** |
+| Agents doing harm in a customer's systems | The narrow gate, full audit log, customer-set limits; contract terms |
 | Model costs eat margin | Pass usage through at cost; route work to the cheapest model that passes review |

@@ -11,7 +11,7 @@ Vibe coding is a start, not a system. A system is many agents with separate duti
 Four claims, in this order, on every front page:
 1. **Foundation for any autonomous system.** An organization of virtual managers and staff that runs projects, scores its own decisions, earns wider autonomy from its track record, and interrupts a person only for steps that cannot be undone.
 2. **It runs on itself.** Its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the code it gives everyone else (`python3 -m foundation selfhost --verify`). Self-reference is the proof, and the demo is `demos/self/`.
-3. **Source-available, hybrid license.** Free for non-commercial use; commercial use needs a Commercial License with revenue share (LICENSING.md). No patent.
+3. **Source-available, hybrid license.** Free for non-commercial use; commercial use needs a Commercial License with revenue share (LICENSING.md). 
 4. **Code is the only memory.** If it is not in a repo, it does not exist.
 
 Perception becomes reality: the way we position this is what it becomes and how it is developed, so positioning lives in code and is lint-enforced, not retyped. Ultrastable is its own brand, separate from QNFO; QNFO is only the customer-zero story. Not claimed: financial back-end (accounting, payments, banking). Legal output is a working draft for professional review, not legal advice.
@@ -26,7 +26,7 @@ Sub-line: *From one idea to an organization that improves itself.*
 Confident, plain, practical, a little bold. Speak to builders with ideas, not to researchers. Say what it does for them. No academic or research language, no hype words, no unverifiable numbers. Label what is running versus planned when detail matters.
 
 ## Public versus private
-Everything is private today and written ready to flip: no secrets, no owner data, nothing that needs a person's consent. The patent gate is gone (dropped 2026-11-11); publication waits on the owner's decision and the attorney review of the license, per `docs/CONFIDENTIALITY.md`. Never make a repo public from a session.
+The project is open: the repositories are public and the Ultrastable License governs use. Nothing public holds secrets or owner data.
 
 ## Color (deliberately unlike QNFO's blue-on-white)
 | Token | Hex | Use |

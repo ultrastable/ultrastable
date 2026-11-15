@@ -1,6 +1,6 @@
 # Pitch deck outline: 12 slides (working draft, 2026-11-10)
 
-Deck is NDA-only until the provisional is filed; slides tagged (AFTER FILING) wait. Evidence paths are relative to the root of the workspace that holds the repositories side by side. Every number must come from the cited source; no invented metrics.
+Deck: one story, open to anyone. Evidence paths are relative to the root of the workspace that holds the repositories side by side. Every number must come from the cited source; no invented metrics.
 
 1. **Title: Ultrastable, the manager for your AI workers**
    - AI agents are cheap; managing them isn't.
@@ -20,11 +20,11 @@ Deck is NDA-only until the provisional is filed; slides tagged (AFTER FILING) wa
    - Weekly four-line report: happened, decided, next, open.
    - Evidence: `us-platform/ultrastable/engine.py` (`state()` managers), `org-repos/business/plan/01-management-roster.md`.
 
-4. **What makes it different (SAFE NOW wording)**
+4. **What makes it different**
    - Gets more independent as it proves itself.
    - Interrupts only for decisions that cannot be undone.
    - Plans improvement, not just fixes; nothing drops silently.
-   - Evidence: `plan/03-competition.md` difference table. Mechanics are AFTER FILING.
+   - Evidence: `plan/03-competition.md` difference table.
 
 5. **Product today: a working control loop**
    - 11-step tick, guarded per step; CLI, dashboard and JSON API; 12 tests pass.
@@ -38,9 +38,9 @@ Deck is NDA-only until the provisional is filed; slides tagged (AFTER FILING) wa
    - State clearly: simulated agents.
    - Evidence: `demo-script.md` in this folder; `us-platform/ultrastable/demo.py`.
 
-7. **Origin and proof: QNFO as customer zero (AFTER FILING)**
+7. **Origin and proof: QNFO as customer zero**
    - The founder's own multi-project fleet runs on the earlier system.
-   - Case study with real numbers, reviewed for disclosure; figures are self-measured.
+   - Case study with real numbers, figures are self-measured.
    - No external customer yet.
    - Evidence: `us-remote/docs/product-and-positioning.md` section 3-4; `us-remote/research/market-read.md`.
 
@@ -58,18 +58,18 @@ Deck is NDA-only until the provisional is filed; slides tagged (AFTER FILING) wa
 
 10. **Business model**
    - Per project managed, plus model usage at cost (hypothesis, unvalidated).
-   - Open-core option under consideration `[FOUNDER CONFIRM]` `[LAWYER]`.
+   - Open-core option under consideration `[FOUNDER CONFIRM]`.
    - Cloud-agnostic core; Google Cloud and Cloudflare adapters (Cloudflare adapter not yet built).
    - Evidence: `plan/04-pitch-kit.md` objection table; `us-platform/deploy/gcp/deploy.sh`.
 
 11. **Team, IP and risks**
    - Solo founder; platform agents do build/ops work; hires planned.
-   - Provisional patent in preparation, not filed; IP assignment to an entity pending `[LAWYER]`.
+   - The code is open and the Ultrastable License governs use. IP assignment to an entity pending.
    - Public QNFO repo without licence is the main investor risk.
    - Evidence: `us-remote/HANDOFF.md` (blocked section), `ultrastable/PROJECT-INSTRUCTIONS.md` rule 3.
 
 12. **Ask: $1.25M pre-seed SAFE (planning figure)**
    - 18 months: founder, founding engineer, part-time commercial lead.
-   - Use: people 60%, model/cloud 15%, legal/IP 10%, GTM 10%, reserve 5%.
-   - Milestones: filing, entity, 3 pilots, first paid conversions, real-adapter proof.
+   - Use: people 60%, model/cloud 15%, licence and compliance 10%, GTM 10%, reserve 5%.
+   - Milestones: entity, 3 pilots, first paid conversions, real-adapter proof.
    - Evidence: `us-remote/org-repos/business/plan/05-funding.md`, `org-repos/docs/funding/funding-options.md`.
