@@ -1,0 +1,11 @@
+{
+  "id": "PL-7",
+  "title": "PL-7: Container runtime: the whole system runs inside an enforced boundary",
+  "body": "**Owner:** Staff (platform)\n**Trigger:** `creation_destruction.boundary.status` is `declared` in `doctrine/positioning.json`\n**Done check:** `deploy/container/Dockerfile` exists, a test starts the system in it, destroys the container and shows nothing outside it changed, and the same PR sets `boundary.status` to `enforced` (`python3 -m foundation doctrine --check`)\n**Status:** open\n\nThe system has complete control to create and destroy its own parts. Today the boundary that makes that safe is policy (branches, previews, backups, the interrupt gate, standing limits) and agents run on hosts that also hold things that are not the system's own. Build the runtime: one image that holds the repository, the tick and the agents; credentials passed in as scoped, revocable bindings and never baked in; outbound access limited to registered adapters (`platform/adapters/registry.json`); state on a volume that is snapshotted before each tick so any destruction inside is undone by restoring it. Zero-fuss: one command or one tap starts it. Source of truth: `docs/roadmap-source.md` (item PL-7). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
+  "labels": [
+    "role:staff",
+    "ws:platform"
+  ],
+  "milestone": "Next",
+  "workstream": "Platform"
+}

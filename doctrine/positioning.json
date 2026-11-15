@@ -1,7 +1,7 @@
 {
   "_doc": "Source of truth for Ultrastable's positioning and memory rule. Prose elsewhere is generated or checked against this file: `python3 -m foundation doctrine --apply` injects the line into the markdown files listed under `inject`, `--check` (run by checks.yml and the tests) fails when any listed file lacks it or states a contradiction, and gaplint rules GL008 and GL009 read this file. The `autonomy` block carries the autonomy line, injected and checked like the tagline. `banned_framing` is checked across every tracked text file and every commit message. Changed only by a reviewed PR.",
   "id": "positioning",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "tagline": "Ultrastable is the foundation for any autonomous system.",
   "pattern": "foundation\\s+for\\s+any\\s+autonomous\\s+system",
   "contradictions": [
@@ -175,6 +175,56 @@
       "instances/ultrastable/loop-registry.json",
       "doctrine/glossary.json"
     ]
+  },
+  "creation_destruction": {
+    "_doc": "The vision behind the name (owner, 2026-11-12). An ultrastable system (Ashby, 1952) keeps a small set of essential variables inside limits and, when one leaves them, changes its own structure until they return. So the system is free to create and destroy anything that is its own: code, config, workers, loops, doctrine, whole components. The owner's image is the dance of creation and destruction; it stays in this note and out of product copy, because a living religion's deity is not a brand asset. Complete control is granted inside a boundary and the boundary is what makes that grant safe: it is a mechanism, never a slogan. `boundary.status` says what is true today and `foundation doctrine --check` fails when the claim outruns the mechanism (status `enforced` with no runtime definition). Injected and checked like the autonomy line.",
+    "tagline": "Ultrastable creates and destroys its own parts to stay stable.",
+    "pattern": "creates\\s+and\\s+destroys\\s+its\\s+own\\s+parts",
+    "line": "Ultrastable creates and destroys its own parts to stay stable: inside its boundary the system has complete control to build, replace, delete and rebuild itself, and the boundary, not a permission prompt, keeps a failure from reaching anything outside it (`python3 -m foundation doctrine --check`).",
+    "contradictions": [
+      "ultrastable (never|does not|doesn't|cannot|can't) (delete|destroy|remove|replace)s? (any of )?its own",
+      "nothing (bad )?(can|could|will) (ever )?(go wrong|happen)\\b"
+    ],
+    "essential_variables": {
+      "_doc": "What must stay inside limits while everything else may change. These are the existing limits, named once; this block adds none and removes none.",
+      "source": "seed/autonomy/policy.json",
+      "keys": [
+        "interrupt_gate",
+        "standing_limits"
+      ]
+    },
+    "boundary": {
+      "_doc": "`declared`: the boundary is policy (branches, previews, backups, the interrupt gate, standing limits) and the system runs on hosts that also hold things that are not its own. `enforced`: a runtime definition at `definition` confines the system so that destroying the whole container loses nothing outside it. Move to `enforced` only in the PR that adds the definition and its test.",
+      "status": "declared",
+      "definition": "deploy/container/Dockerfile",
+      "roadmap_item": "docs/issues/PL-7.json"
+    },
+    "md_files": [
+      "README.md",
+      "agents/AGENTS.md",
+      "agents/PROJECT-INSTRUCTIONS.md",
+      "agents/roles/*.md",
+      "seed/agents/AGENTS.md",
+      "seed/agents/roles/*.md",
+      "seed/README.md",
+      "docs/PROJECT-MEMORY.md",
+      "docs/FOUNDATION.md",
+      "external/overview.md",
+      "external/one-pager.md",
+      "external/customer-story.md",
+      "external/README.md",
+      "brand/public-profile/README.md",
+      "brand/public-profile/profile/README.md",
+      "business/funding/README.md",
+      "site/STAGED-COPY.md",
+      "demos/README.md",
+      "social/README.md",
+      "platform/README.md",
+      "products/README.md",
+      "docs/overview.md",
+      "instances/*/README.md"
+    ],
+    "check_only": []
   },
   "self_bootstrapped": {
     "_doc": "The doctrine is bootstrapped by the system itself: its own principles, self-reference, autonomy and self-improvement loops. That is all that is said about its origin. The kernel is doctrine/kernel-8.2.1.md.",

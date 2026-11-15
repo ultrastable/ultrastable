@@ -62,6 +62,8 @@ Code is the only memory. All project state lives in this repository (docs/PROJEC
 [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · contact pilot@ultrastable.io
 <!-- brand:end -->
 
+Ultrastable creates and destroys its own parts to stay stable: inside its boundary the system has complete control to build, replace, delete and rebuild itself, and the boundary, not a permission prompt, keeps a failure from reaching anything outside it (`python3 -m foundation doctrine --check`).
+
 ## Start here
 - [How Ultrastable actually starts its own agents](docs/HOW-IT-STARTS.md): plain language, one diagram, a traced example.
 - [One core, many instances](docs/architecture/core-and-instances.md): how QNFO and any third party run on the same core, and how fixes flow both ways.

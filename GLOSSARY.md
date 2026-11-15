@@ -49,6 +49,10 @@ Generated from `doctrine/glossary.json` by `python3 -m foundation glossary --app
 | [Guiding directive](#guiding-directive) | Rowan's directive of 2026-11-12 that governs all work: autonomy-first, self-directed and self-improving; no permission requests; the only pause is an action both irreversible and identity-bound after a reversible path was engineered; blockers are never owner issues; no loose ends or silent drops. | 1.0.0 |
 | [Memory is not storage](#memory-is-not-storage) | Project memory, tool memory and chat are not storage (Rowan, 2026-11-12). | 1.0.0 |
 | [Document consumed](#doc-consumed) | A document exists only if code, a check, an agent's loaded instructions or a loop consumes it. | 1.0.0 |
+| [Ultrastability](#ultrastability) | A system is ultrastable when it keeps its essential variables inside limits by changing its own structure: when a variable leaves its limits the system destroys and rebuilds parts of itself until the variable returns (Ashby, 1952). | 1.0.0 |
+| [Creation and destruction](#creation-and-destruction) | Ultrastable creates and destroys its own parts to stay stable. | 1.0.0 |
+| [Containment boundary](#containment-boundary) | The line between what is the system's own and everything else. | 1.0.0 |
+| [Essential variables](#essential-variables) | The few things that must stay inside limits while everything else may change: the interrupt gate and the standing limits in the autonomy policy (money, legal acts, the owner's accounts, secrets, consent and opt-out, unbacked data). | 1.0.0 |
 
 ## <a id="autonomy"></a>Autonomy
 
@@ -804,3 +808,73 @@ A document exists only if code, a check, an agent's loaded instructions or a loo
 **Lineage:**
 
 - 1.0.0 (2026-11-12): Owner: documents are not the point; this is a code-driven system and he does not read docs. Every document must be consumed by something. (`doctrine/doc-consumers.json`)
+
+## <a id="ultrastability"></a>Ultrastability
+
+A system is ultrastable when it keeps its essential variables inside limits by changing its own structure: when a variable leaves its limits the system destroys and rebuilds parts of itself until the variable returns (Ashby, 1952). The name is a claim the system has to meet about itself, not a brand.
+
+**Not:** Not uptime, not rigidity and not 'never changes': an ultrastable system is stable because it keeps changing itself.
+
+**Also called:** ultrastable system
+
+**Tested by:** `grep:tests/foundation/test_doctrine_lint.py::def test_boundary_claim_cannot_outrun_the_mechanism`; `grep:doctrine/positioning.json::creates and destroys its own parts`
+
+**Implemented by:** `doctrine/positioning.json`, `foundation/doctrine.py`, `seed/autonomy/policy.json`
+
+**Related:** [creation-and-destruction](#creation-and-destruction), [essential-variables](#essential-variables), [containment-boundary](#containment-boundary), [autonomy](#autonomy)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-12): Owner: the name is a philosophy and a self-referential test; the system must be what it says it is. (`doctrine/positioning.json`)
+
+## <a id="creation-and-destruction"></a>Creation and destruction
+
+Ultrastable creates and destroys its own parts to stay stable. Inside its boundary the system has complete control to build, replace, delete and rebuild code, config, workers, loops and doctrine without asking, because everything inside is its own and can be made again.
+
+**Not:** Not licence to destroy what is not the system's own: the owner's accounts, money, other people's data and anything outside the boundary are essential variables, not parts.
+
+**Also called:** create and destroy
+
+**Tested by:** `grep:tests/foundation/test_doctrine_lint.py::def test_missing_creation_line_fails`; `grep:tests/foundation/test_doctrine_lint.py::def test_creation_contradiction_fails`
+
+**Implemented by:** `doctrine/positioning.json`, `foundation/doctrine.py`
+
+**Related:** [ultrastability](#ultrastability), [containment-boundary](#containment-boundary), [essential-variables](#essential-variables), [closing-privilege](#closing-privilege)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-12): Owner: the defining feature is a level of autonomy that includes creating and destroying the system's own parts. (`doctrine/positioning.json`)
+
+## <a id="containment-boundary"></a>Containment boundary
+
+The line between what is the system's own and everything else. Complete control is granted inside it, and it is what keeps a failure inside from reaching anything outside. It has a recorded status: declared (policy, backups, branches and the interrupt gate) or enforced (a runtime that confines the system, so destroying the whole container loses nothing outside it).
+
+**Not:** Not a selling point and not the same as a closed system: closed system is about where knowledge lives, the containment boundary is about what a failure can reach. A boundary that is only asserted is recorded as declared.
+
+**Also called:** boundary, the container
+
+**Tested by:** `grep:tests/foundation/test_doctrine_lint.py::def test_boundary_claim_cannot_outrun_the_mechanism`; `grep:tests/foundation/test_doctrine_lint.py::def test_declared_boundary_needs_a_roadmap_item`
+
+**Implemented by:** `doctrine/positioning.json`, `foundation/doctrine.py`, `docs/issues/PL-7.json`
+
+**Related:** [creation-and-destruction](#creation-and-destruction), [closed-system](#closed-system), [interrupt-gate](#interrupt-gate), [essential-variables](#essential-variables)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-12): Owner: full system control is safe when the system is closed like a container; if the container blows up nothing outside is lost. Recorded with its honest status: declared, runtime on the roadmap (PL-7). (`doctrine/positioning.json`)
+
+## <a id="essential-variables"></a>Essential variables
+
+The few things that must stay inside limits while everything else may change: the interrupt gate and the standing limits in the autonomy policy (money, legal acts, the owner's accounts, secrets, consent and opt-out, unbacked data). The system may create or destroy anything except these.
+
+**Not:** Not a list of things the system is afraid to touch: it is the short, fixed list that makes touching everything else safe.
+
+**Tested by:** `grep:tests/foundation/test_doctrine_lint.py::def test_essential_variables_must_exist`
+
+**Implemented by:** `seed/autonomy/policy.json`, `doctrine/positioning.json`, `foundation/doctrine.py`
+
+**Related:** [ultrastability](#ultrastability), [interrupt-gate](#interrupt-gate), [containment-boundary](#containment-boundary)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-12): Named from Ashby's term and bound to the existing limits; no limit added or removed. (`doctrine/positioning.json`)

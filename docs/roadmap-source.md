@@ -88,6 +88,7 @@ The whole backlog is long; Rowan's part is nine items, and only the first three 
 | FN-4 | Other credit programs (Anthropic, AWS Activate, Microsoft for Startups, NVIDIA Inception) | Staff (research) | FN-1 | Ranked list with eligibility |
 | PL-1 | Inventory the QNFO fleet: workers, crons, D1 tables, views, metrics; map each to [architecture](../platform/docs/architecture.md) | Staff (platform) | CONN-1 | Mapping table, nothing unaccounted |
 | PL-2 | Org-chart config schema: roles, objectives, gates, connectors as data | Product mgr + Staff | PL-1 | Schema loads this roadmap as a test fixture |
+| PL-7 | Container runtime: the whole system runs inside an enforced boundary, so it can create and destroy its own parts and destroying the container loses nothing outside it | Staff (platform) | `boundary.status` is `declared` in `doctrine/positioning.json` | Destroy-the-container test passes; status set to `enforced` in the same PR |
 
 ## After filing (Gate: FILED)
 

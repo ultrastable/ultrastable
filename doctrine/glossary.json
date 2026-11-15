@@ -1282,6 +1282,134 @@
     "source": "doctrine/doc-consumers.json"
    }
   ]
+ },
+ {
+  "id": "ultrastability",
+  "term": "Ultrastability",
+  "aliases": [
+   "ultrastable system"
+  ],
+  "version": "1.0.0",
+  "definition": "A system is ultrastable when it keeps its essential variables inside limits by changing its own structure: when a variable leaves its limits the system destroys and rebuilds parts of itself until the variable returns (Ashby, 1952). The name is a claim the system has to meet about itself, not a brand.",
+  "not": "Not uptime, not rigidity and not 'never changes': an ultrastable system is stable because it keeps changing itself.",
+  "tested_by": [
+   "grep:tests/foundation/test_doctrine_lint.py::def test_boundary_claim_cannot_outrun_the_mechanism",
+   "grep:doctrine/positioning.json::creates and destroys its own parts"
+  ],
+  "implemented_by": [
+   "doctrine/positioning.json",
+   "foundation/doctrine.py",
+   "seed/autonomy/policy.json"
+  ],
+  "related": [
+   "creation-and-destruction",
+   "essential-variables",
+   "containment-boundary",
+   "autonomy"
+  ],
+  "lineage": [
+   {
+    "version": "1.0.0",
+    "date": "2026-11-12",
+    "change": "Owner: the name is a philosophy and a self-referential test; the system must be what it says it is.",
+    "source": "doctrine/positioning.json"
+   }
+  ]
+ },
+ {
+  "id": "creation-and-destruction",
+  "term": "Creation and destruction",
+  "aliases": [
+   "create and destroy"
+  ],
+  "version": "1.0.0",
+  "definition": "Ultrastable creates and destroys its own parts to stay stable. Inside its boundary the system has complete control to build, replace, delete and rebuild code, config, workers, loops and doctrine without asking, because everything inside is its own and can be made again.",
+  "not": "Not licence to destroy what is not the system's own: the owner's accounts, money, other people's data and anything outside the boundary are essential variables, not parts.",
+  "tested_by": [
+   "grep:tests/foundation/test_doctrine_lint.py::def test_missing_creation_line_fails",
+   "grep:tests/foundation/test_doctrine_lint.py::def test_creation_contradiction_fails"
+  ],
+  "implemented_by": [
+   "doctrine/positioning.json",
+   "foundation/doctrine.py"
+  ],
+  "related": [
+   "ultrastability",
+   "containment-boundary",
+   "essential-variables",
+   "closing-privilege"
+  ],
+  "lineage": [
+   {
+    "version": "1.0.0",
+    "date": "2026-11-12",
+    "change": "Owner: the defining feature is a level of autonomy that includes creating and destroying the system's own parts.",
+    "source": "doctrine/positioning.json"
+   }
+  ]
+ },
+ {
+  "id": "containment-boundary",
+  "term": "Containment boundary",
+  "aliases": [
+   "boundary",
+   "the container"
+  ],
+  "version": "1.0.0",
+  "definition": "The line between what is the system's own and everything else. Complete control is granted inside it, and it is what keeps a failure inside from reaching anything outside. It has a recorded status: declared (policy, backups, branches and the interrupt gate) or enforced (a runtime that confines the system, so destroying the whole container loses nothing outside it).",
+  "not": "Not a selling point and not the same as a closed system: closed system is about where knowledge lives, the containment boundary is about what a failure can reach. A boundary that is only asserted is recorded as declared.",
+  "tested_by": [
+   "grep:tests/foundation/test_doctrine_lint.py::def test_boundary_claim_cannot_outrun_the_mechanism",
+   "grep:tests/foundation/test_doctrine_lint.py::def test_declared_boundary_needs_a_roadmap_item"
+  ],
+  "implemented_by": [
+   "doctrine/positioning.json",
+   "foundation/doctrine.py",
+   "docs/issues/PL-7.json"
+  ],
+  "related": [
+   "creation-and-destruction",
+   "closed-system",
+   "interrupt-gate",
+   "essential-variables"
+  ],
+  "lineage": [
+   {
+    "version": "1.0.0",
+    "date": "2026-11-12",
+    "change": "Owner: full system control is safe when the system is closed like a container; if the container blows up nothing outside is lost. Recorded with its honest status: declared, runtime on the roadmap (PL-7).",
+    "source": "doctrine/positioning.json"
+   }
+  ]
+ },
+ {
+  "id": "essential-variables",
+  "term": "Essential variables",
+  "aliases": [],
+  "version": "1.0.0",
+  "definition": "The few things that must stay inside limits while everything else may change: the interrupt gate and the standing limits in the autonomy policy (money, legal acts, the owner's accounts, secrets, consent and opt-out, unbacked data). The system may create or destroy anything except these.",
+  "not": "Not a list of things the system is afraid to touch: it is the short, fixed list that makes touching everything else safe.",
+  "tested_by": [
+   "grep:tests/foundation/test_doctrine_lint.py::def test_essential_variables_must_exist"
+  ],
+  "implemented_by": [
+   "seed/autonomy/policy.json",
+   "doctrine/positioning.json",
+   "foundation/doctrine.py"
+  ],
+  "related": [
+   "ultrastability",
+   "interrupt-gate",
+   "containment-boundary"
+  ],
+  "lineage": [
+   {
+    "version": "1.0.0",
+    "date": "2026-11-12",
+    "change": "Named from Ashby's term and bound to the existing limits; no limit added or removed.",
+    "source": "doctrine/positioning.json"
+   }
+  ]
  }
 ]
 }

@@ -38,7 +38,7 @@ def apply(root=REPO) -> list[str]:
         lines[(i + 1 if i is not None else 0):(i + 1 if i is not None else 0)] = ["", line] if i is not None else [line, ""]
         (root / rel).write_text("\n".join(lines), encoding="utf-8")
         changed.append(rel)
-    for blk in ("autonomy", "runs_on_itself"):
+    for blk in ("autonomy", "runs_on_itself", "creation_destruction"):
         r = d.get(blk)
         if not r:
             continue
@@ -118,6 +118,7 @@ def check(root=REPO) -> list[str]:
         if (root / "instances/ultrastable/selfhost.json").exists():
             from . import selfhost
             bad += [f"selfhost: {x}" for x in selfhost.verify(root)]
+    bad += creation_destruction(root, d)
     bad += framing_scan(root, d)
     from . import kernel, loops, glossary, directive
     if (root / kernel.PATH).exists():
@@ -146,6 +147,38 @@ def check(root=REPO) -> list[str]:
                     bad.append(f"{rel}:{n}: makes the user do setup work (zero-fuss rule)")
     if not (root / d["memory"]["canonical"]).exists():
         bad.append(f"{d['memory']['canonical']}: canonical memory file missing")
+    return bad
+
+
+def creation_destruction(root, d=None) -> list[str]:
+    """The creation-and-destruction line, and the rule that the system is what it says it is: the boundary claim never outruns the mechanism."""
+    root = Path(root)
+    c = (d or load(root)).get("creation_destruction")
+    if not c:
+        return []
+    bad = []
+    cp = re.compile(c["pattern"], re.I | re.S)
+    cc = [re.compile(x, re.I) for x in c["contradictions"]]
+    for rel in files(root, c["md_files"]) + [x for x in c["check_only"] if (root / x).exists()]:
+        s = (root / rel).read_text(encoding="utf-8", errors="replace")
+        if not cp.search(s):
+            bad.append(f"{rel}: lacks the creation-and-destruction line ('{c['tagline']}')")
+        for x in cc:
+            if x.search(s):
+                bad.append(f"{rel}: contradicts the creation-and-destruction line ({x.pattern})")
+    ev = c["essential_variables"]
+    src = root / ev["source"]
+    pol = json.loads(src.read_text(encoding="utf-8")) if src.exists() else {}
+    for k in ev["keys"]:
+        if not pol.get(k):
+            bad.append(f"{ev['source']}: essential variable '{k}' is missing; the system may change anything except these")
+    b = c["boundary"]
+    if b["status"] not in ("declared", "enforced"):
+        bad.append(f"creation_destruction.boundary.status is '{b['status']}', not declared or enforced")
+    if b["status"] == "enforced" and not (root / b["definition"]).exists():
+        bad.append(f"boundary is claimed as enforced but {b['definition']} does not exist: the system is not what it says it is")
+    if b["status"] == "declared" and not (root / b["roadmap_item"]).exists():
+        bad.append(f"boundary is only declared and {b['roadmap_item']} does not exist: the gap has no owner, trigger or probe")
     return bad
 
 
