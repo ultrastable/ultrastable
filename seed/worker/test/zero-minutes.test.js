@@ -86,5 +86,11 @@ test('gate posts a status once per commit; lane merges on green worker-gate only
   let l = fake(routes);
   assert.deepEqual((await runLane({ token: 't', repos: ['o/r'], fetch: l.f, issueWorkflow: null })).merged, []);
   l = fake(routes);
-  assert.deepEqual((await runLane({ token: 't', repos: ['o/r'], fetch: l.f, issueWorkflow: null, zeroActions: true })).merged, ['o/r#1']);
+  assert.deepEqual((await runLane({ token: 't', repos: ['o/r'], fetch: l.f, issueWorkflow: null, zeroActions: true })).merged, []); // runs unreadable (404): unknown is not green
+  const ran = { ...routes, 'GET /repos/o/r/actions/runs?head_sha=s1': [200, { workflow_runs: [{ id: 7, name: 'checks', conclusion: 'failure' }] }] };
+  l = fake({ ...ran, 'GET /repos/o/r/actions/runs/7/jobs': [200, { jobs: [{ name: 'checks', conclusion: 'failure', steps: [] }] }] });
+  assert.deepEqual((await runLane({ token: 't', repos: ['o/r'], fetch: l.f, issueWorkflow: null, zeroActions: true })).merged, ['o/r#1']); // never started: the diff gate decides
+  l = fake({ ...ran, 'GET /repos/o/r/actions/runs/7/jobs': [200, { jobs: [{ name: 'checks', conclusion: 'failure', steps: [{ conclusion: 'success' }, { conclusion: 'failure' }] }] }] });
+  const red = await runLane({ token: 't', repos: ['o/r'], fetch: l.f, issueWorkflow: null, zeroActions: true });
+  assert.deepEqual(red.merged, []); assert.match(red.held[0], /red: checks\/checks failed/); // LANE-RED-1: checks that ran and failed hold the PR
 });

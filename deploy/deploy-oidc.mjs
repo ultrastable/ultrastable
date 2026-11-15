@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // DEPLOY-OIDC-1: deploys the platform workers into the ultrastable Cloudflare account with no stored Cloudflare credential. GitHub Actions
 // mints an OIDC token for this run (audience ultrastable-deploy); the ultrastable-site worker verifies it (site/deployer.js) and uploads with
