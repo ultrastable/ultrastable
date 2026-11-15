@@ -84,7 +84,8 @@ export async function measureDay({ fetchFn = fetch, token, account, date, databa
 // Discover Workers, D1, KV, R2 and diff against doctrine/topology.json.
 export async function discoverResources({ fetchFn = fetch, token, account, topologyPath = 'doctrine/topology.json' }) {
   const data = await gql(fetchFn, token, account, WORKERS_LIST, {});
-  const acct = data.viewer.accounts[0];
+  // WORKERS_LIST nests every resource list under accounts[0].workers.
+  const acct = (data.viewer.accounts[0] || {}).workers || {};
   const found = {
     workers: (acct.workers || []).map((w) => w.id),
     d1: (acct.d1Databases || []).map((d) => d.databaseId),
