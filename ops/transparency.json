@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-15T19:12:48Z",
- "commit": "e7734af",
+ "generated": "2026-11-15T19:21:39Z",
+ "commit": "4dd3868",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 82,
@@ -18,15 +18,15 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 159,
+  "backlog_open": 160,
   "backlog_items": 203
  },
  "throughput": {
   "queue": {
    "items": 203,
    "by_status": {
-    "closed": 42,
-    "open": 159,
+    "closed": 41,
+    "open": 160,
     "done": 2
    },
    "takeable_now": 7
@@ -82,9 +82,9 @@
    "runs": 30,
    "by_conclusion": {
     "": 1,
-    "cancelled": 21,
     "success": 5,
-    "failure": 3
+    "failure": 4,
+    "cancelled": 20
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -92,20 +92,9 @@
    "log_rows": 1
   },
   "model_cost": {
-   "calls": 2,
-   "usd": 0.002241,
-   "by_model": {
-    "@cf/zai-org/glm-5.3-flash": {
-     "calls": 1,
-     "failed": 0,
-     "usd": 0.001592
-    },
-    "@cf/meta/llama-3.3-70b-instruct-fp8-fast": {
-     "calls": 1,
-     "failed": 0,
-     "usd": 0.000649
-    }
-   }
+   "calls": 0,
+   "usd": 0,
+   "by_model": {}
   }
  },
  "stages": [
@@ -122,7 +111,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 113.8,
+   "age_s": 43.8,
    "status": "fresh",
    "missed": 0
   },
@@ -146,7 +135,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 275.8,
+   "age_s": 93.8,
    "status": "fresh",
    "missed": 0
   },
@@ -154,7 +143,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 194324.8,
+   "age_s": 194854.8,
    "status": "stale",
    "missed": 2
   }
@@ -183,7 +172,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-15T19:12:27Z",
+  "generated": "2026-11-15T19:21:18Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -207,7 +196,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 841.8,
+    "expected_today": 841.9,
     "value": null,
     "behind": null,
     "progress": null
@@ -216,7 +205,7 @@
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 336.0,
+    "expected_today": 336.1,
     "value": null,
     "behind": null,
     "progress": null
@@ -224,20 +213,11 @@
   ],
   "experiments": [
    {
-    "item": "Q-GROW-AGENT-DIRECTORIES",
-    "metric": "agent_hits_7d",
-    "baseline": null,
-    "predicted_pct": 10,
-    "started": "2026-11-15T19:12:27Z",
-    "check_after_days": 7,
-    "verdict": null
-   },
-   {
     "item": "Q-GROW-second-tenant-deploying",
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-15T19:12:27Z",
+    "started": "2026-11-15T19:21:18Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -251,7 +231,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-15T19:12:27Z",
+     "at": "2026-11-15T19:21:18Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -311,11 +291,11 @@
  },
  "growth": {
   "mix": {
-   "growth": 2,
-   "fix": 2,
-   "maintenance": 16,
+   "growth": 3,
+   "fix": 3,
+   "maintenance": 14,
    "total": 20,
-   "growth_share": 0.1,
+   "growth_share": 0.15,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -365,7 +345,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 140.4,
+   "last_beat_age_s": 71.4,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -376,7 +356,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 22991.4,
+   "last_beat_age_s": 23522.4,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -387,7 +367,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 973.4,
+   "last_beat_age_s": 1504.4,
    "expected_interval_s": 86400,
    "beats_24h": 20,
    "expected_24h": 1.0,
@@ -398,7 +378,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 256067.4,
+   "last_beat_age_s": 256598.4,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2088,6 +2068,24 @@
  "changes": {
   "commits": [
    {
+    "sha": "4dd3868",
+    "at": "2026-11-15T19:19:32+00:00",
+    "author": "Claude",
+    "subject": "BRANCH-SWEEP-1: undo the stale-rewrite merge, cap deletions, hold list, lesson",
+    "pr": null,
+    "item": "BRANCH-SWEEP-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/4dd3868c85a473a13084ca712f0c34456ba9c3dd"
+   },
+   {
+    "sha": "e48af99",
+    "at": "2026-11-15T19:14:56+00:00",
+    "author": "Claude",
+    "subject": "BRANCH-SWEEP-1: PORT items carry a runnable closing probe; gate adds orphans, pins and queue checks; drop a junk ledger row",
+    "pr": null,
+    "item": "BRANCH-SWEEP-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/e48af99ae59156afaa2571f4b6e84fff49d68ab3"
+   },
+   {
     "sha": "e7734af",
     "at": "2026-11-15T19:07:40+00:00",
     "author": "Claude",
@@ -2428,24 +2426,6 @@
     "pr": null,
     "item": "WBA-OUTBOUND-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/d940ab05fabd567fa4153e6371cc78ec11fa656d"
-   },
-   {
-    "sha": "e276ebb",
-    "at": "2026-11-15T19:40:29+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Merge main; regenerate dashboard data",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/e276ebbb709eae8edec4acf4c090f258d1a4ac53"
-   },
-   {
-    "sha": "cad9375",
-    "at": "2026-11-15T18:40:18+00:00",
-    "author": "ultrastable-lane",
-    "subject": "Merge remote-tracking branch 'origin/main' into HEAD",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/cad93751f2d04eac32f670c4301b7fac7b46ced3"
    }
   ],
   "pull_requests": []
