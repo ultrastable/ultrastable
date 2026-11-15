@@ -666,19 +666,25 @@ function roadmap() {
     "<div class=\"head\"><h1>Roadmap</h1><p>Each item here backs a claim on this site. It has an owner, a trigger and a closing probe the system runs; an item closes only when its probe passes. Machine-readable: <a href=\"/roadmap.json\">roadmap.json</a>.</p></div>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Item</th><th>What</th><th>State</th><th>Closing probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>");
 }
-function dashboard(tenantId) {
+async function dashboard(tenantId) {
   const T = DASH.tenants[tenantId];
   if (!T) return null;
   const panels = T.panels.map(function (p) {
     const rows = p.rows.map(function (r) { return "<tr><td>" + esc(r[0]) + "</td><td><small>" + esc(r[1]) + "</small></td></tr>"; }).join("");
     return "<div class=\"card\" id=\"panel-" + esc(p.id) + "\"><h3 class=\"card-title\">" + esc(p.title) + "</h3><p><strong>" + esc(p.headline) + "</strong></p><div class=\"us-wrap\"><table class=\"us-table\"><tbody>" + rows + "</tbody></table></div><p class=\"meta\">" + esc(p.note) + " Source: <code>" + esc(p.source) + "</code></p></div>";
   }).join("");
+  const lf = T.live_feed;
+  const probes = lf.available ? await Promise.all(lf.runtimes.map(async function (r) {
+    try { const res = await fetch(r.health, { signal: AbortSignal.timeout(3000), headers: { accept: "application/json" } }); const j = await res.json(); const t = j.last_tick; return { r: r, ok: !!j.ok, tick: t ? ("tick " + t.id + " at " + t.finished_at + " (" + t.steps_completed + "/" + t.steps_total + " steps)") : "no tick yet" }; }
+    catch (e) { return { r: r, ok: false, tick: "unreachable" }; }
+  })) : [];
+  const liveRows = probes.map(function (p) { return "<tr><td>" + esc(p.r.tenant) + " <small>(level " + p.r.level + (p.r.parent ? ", reports to " + esc(p.r.parent) : "") + ")</small></td><td class=\"" + (p.ok ? "us-pass" : "us-fail") + "\">" + (p.ok ? "healthy" : "not healthy") + "</td><td><small>" + esc(p.tick) + "</small></td></tr>"; }).join("");
   const pm = DASH.pilot;
   const opts = pm.options.map(function (o) { return "<tr><td><strong>" + esc(o.id) + "</strong></td><td><small>" + esc(o.runs_on) + "</small></td><td><small>" + esc(o.revenue) + "</small></td><td><small>" + esc(o.status) + "</small></td></tr>"; }).join("");
   return shell({ path: "/dashboard", title: "Ultrastable dashboard preview", description: "What the control plane looks like: loops, objectives and metrics, failure modes, capabilities, roadmap and earned autonomy, computed from the repository." },
     "<div class=\"head\"><h1>Dashboard preview</h1><p>This is the control plane Ultrastable runs on itself, computed from its own repository (tenant <code>" + esc(tenantId) + "</code>, level " + T.level + ", commit <code>" + esc(DASH.asof) + "</code>). No customer data is shown or held here: a pilot runs in your own account.</p></div>"
     + "<div class=\"us-grid c2\">" + panels + "</div>"
-    + "<h2>Live feed</h2><p>" + esc(T.live_feed.says) + " Tracked by <a href=\"/roadmap#" + esc(T.live_feed.tracked_by) + "\">" + esc(T.live_feed.tracked_by) + "</a>.</p>"
+    + "<h2 id=\"live\">Live feed</h2><p>" + esc(lf.says) + "</p>" + (liveRows ? "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Runtime</th><th>Status</th><th>Last tick</th></tr></thead><tbody>" + liveRows + "</tbody></table></div>" : "<p class=\"meta\">No runtime is recorded yet. Tracked by <a href=\"/roadmap#" + esc(lf.tracked_by) + "\">" + esc(lf.tracked_by) + "</a>.</p>")
     + "<h2 id=\"pilot\">Pilot model</h2><p>" + esc(pm.why) + "</p><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Option</th><th>Runs on</th><th>Revenue (hypothesis)</th><th>Status</th></tr></thead><tbody>" + opts + "</tbody></table></div>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/roadmap\">See the roadmap</a><a class=\"btn\" href=\"/engineers\">For engineers</a></div>");
 }
@@ -760,7 +766,7 @@ const handler = {
       case "/engineers": return new Response(engineers(), { headers: HTML });
       case "/roadmap": return new Response(roadmap(), { headers: HTML });
       case "/ops": return new Response(opsPage(shell), { headers: { ...HTML, "Cache-Control": "no-store" } });
-      case "/dashboard": { const t = u.searchParams.get("tenant") || "ultrastable"; const h = dashboard(t); return h ? new Response(h, { headers: HTML }) : new Response("No such tenant", { status: 404, headers: HTML }); }
+      case "/dashboard": { const t = u.searchParams.get("tenant") || "ultrastable"; const h = await dashboard(t); return h ? new Response(h, { headers: HTML }) : new Response("No such tenant", { status: 404, headers: HTML }); }
       case "/roadmap.json": return new Response(JSON.stringify(ROAD), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/privacy": return new Response(shell({ path: "/privacy", title: "Privacy - Ultrastable", description: "What this site records and what it does not." }, PRIVACY), { headers: HTML });

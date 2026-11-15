@@ -91,6 +91,28 @@
    "root_cause": "a public claim is not linked to code, proof or a probe-backed issue, or site/pins.js is stale",
    "owner": "product-manager",
    "remedy": "Write the missing probe or code link; run python3 -m foundation pins --apply."
+  },
+  {
+   "id": "runtime-tenant0",
+   "failure_mode": "fm-clock-silent",
+   "kind": "http",
+   "url": "https://ultrastable-ultrastable.q08.workers.dev/health",
+   "json_ok": true,
+   "timeout": 15,
+   "root_cause": "the deployed seed runtime of Ultrastable stopped ticking or its D1/cron binding broke",
+   "owner": "operations",
+   "remedy": "Read the runtime's last tick_runs.errors with wrangler d1 execute; redeploy with scripts/deploy_tenant.py; check the cron schedule."
+  },
+  {
+   "id": "runtime-child",
+   "failure_mode": "fm-clock-silent",
+   "kind": "http",
+   "url": "https://demo-child-ultrastable.q08.workers.dev/health",
+   "json_ok": true,
+   "timeout": 15,
+   "root_cause": "the demo child runtime stopped ticking, so the parent cannot see its child",
+   "owner": "operations",
+   "remedy": "Read the runtime's last tick_runs.errors with wrangler d1 execute; redeploy with scripts/deploy_tenant.py; check the cron schedule."
   }
  ]
 }
