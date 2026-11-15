@@ -908,6 +908,14 @@
    "probe": "file:seed/worker/src/auth/connectors.js"
   },
   {
+   "id": "lesson-2026-11-14-closeloop-1-every-session-s-tail-is-a-server-record-not-a-ch",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "CLOSELOOP-1: every session's tail is a server record, not a chat promise",
+   "body": "A session's open tail (PR 371 and 372 awaiting the handoff closer, three follow-ups) lives in the handoff table and docs/issues with closing probes; nothing depends on a local agent polling. Session archive is the only local step and carries no work.",
+   "probe": "grep:docs/issues/ROADMAP-AGENT-PORTABILITY-RESTORE.json::Done check"
+  },
+  {
    "id": "lesson-2026-11-14-portability-2-owner-data-export-and-restore-at-my-data-passk",
    "kind": "lesson",
    "date": "2026-11-14",
