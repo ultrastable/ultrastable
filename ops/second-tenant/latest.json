@@ -1,0 +1,15 @@
+{
+  "tenant": 1,
+  "tenant_label": "second-tenant",
+  "deployed_at": "2025-01-01T00:00:00Z",
+  "deploy_loop": "ops/second-tenant/deploy.sh",
+  "target": "systems-running",
+  "metric_target": {"name": "tenant_systems_deploying_unattended", "value": 3},
+  "knob": {"file": "doctrine/market.json", "key": "capability-set"},
+  "experiment": "Q-GROW-second-tenant-deploying",
+  "prediction": "pilot_page_views_7d rises at least 15 percent within 14 days of the change",
+  "status": "deploying",
+  "builds": [
+    {"seq": 1, "component": "deploy-loop-self-check", "result": "pass"}
+  ]
+}

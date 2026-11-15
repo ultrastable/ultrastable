@@ -9,6 +9,7 @@ import { liveResponse } from "./live.js";
 import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL } from "./agentic.js";
 import { passkeys } from "./passkeys.js";
+import { mydata } from "./mydata.js";
 import { authzen } from "./authzen.js";
 import { indexNow, keyFile, SITEMAP_PATHS } from "./promote.js";
 import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
@@ -727,7 +728,11 @@ const handler = {
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
     if (request.method === "POST" && u.pathname === "/api/meta/ingest") return metaIngest(request, env); // META-SIGNAL-1
     if (request.method === "GET" && u.pathname === "/api/suggest") return suggestions(u, env);
+<<<<<<< HEAD
     { const cn = await connectionsRoute(request, env); if (cn) return cn; } // CONNECTIONS-1: /connections and the owner-only /connect/* consent flow
+=======
+    { const md = await mydata(request, env); if (md) return md; } // PORTABILITY-2: /my-data, one click, passkey session
+>>>>>>> origin/main
     { const wh = await webhooksRoute(request, env, ctx, authIntegration); if (wh) return wh; } // WEBHOOKS-1: /hooks/<provider>, /api/v1/webhooks, /api/v1/hooks
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/live" || u.pathname === "/api/live") return liveResponse(u, request, env, shell, HTML);

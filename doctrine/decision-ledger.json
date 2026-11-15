@@ -914,6 +914,22 @@
    "title": "CONNECTIONS-1: one owner-only screen to see and revoke every linked service and agent",
    "body": "ultrastable.io/connections lists services (read from the tick Worker credential store over the TICK binding) and agents (OAuth clients with live tokens in site/oauth.js tables); one click revokes either. The /connect/* consent flow is proxied to the tick Worker for the signed-in owner; only the provider callback skips the session because it carries its own signed state. Mutations are same-origin only.",
    "probe": "file:site/connections.js"
+  },
+  {
+   "id": "lesson-2026-11-14-closeloop-1-every-session-s-tail-is-a-server-record-not-a-ch",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "CLOSELOOP-1: every session's tail is a server record, not a chat promise",
+   "body": "A session's open tail (PR 371 and 372 awaiting the handoff closer, three follow-ups) lives in the handoff table and docs/issues with closing probes; nothing depends on a local agent polling. Session archive is the only local step and carries no work.",
+   "probe": "grep:docs/issues/ROADMAP-AGENT-PORTABILITY-RESTORE.json::Done check"
+  },
+  {
+   "id": "lesson-2026-11-14-portability-2-owner-data-export-and-restore-at-my-data-passk",
+   "kind": "lesson",
+   "date": "2026-11-14",
+   "title": "PORTABILITY-2: owner data export and restore at /my-data, passkey session, no token",
+   "body": "Portability must not need a token: /my-data uses the passkey session cookie, exports items, connected apps, webhooks and passkey labels with no secrets, and restores idempotently. Bundle format ultrastable-export/v1 is shared with the integration API (/api/v1/export, /api/v1/import).",
+   "probe": "grep:site/mydata.test.mjs::mydata ok"
   }
  ]
 }

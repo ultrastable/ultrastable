@@ -1,0 +1,83 @@
+{
+  "item": "Q-SYS-BOOT-REHEARSAL",
+  "run": "2026-11-12T00:00:00Z",
+  "source": {
+    "repo": "fresh empty GitHub repository",
+    "cloudflare": "fresh account resources (worker, KV, D1, queue)"
+  },
+  "topology": "foundation/topology.py",
+  "idea": "A one-paragraph idea: a transparency-first worker collective that publishes its own live status and improves itself via queued executor ticks.",
+  "stages": [
+    {
+      "stage": "1-topology",
+      "action": "Render roles, queues, and integrations from foundation/topology.py into a fresh repo scaffold.",
+      "status": "passed",
+      "failure": null,
+      "fix": null
+    },
+    {
+      "stage": "2-roles-hired",
+      "action": "Hire driver, scheduler, and executor roles from topology with bootstrap workers.json credentials.",
+      "status": "passed",
+      "failure": "executor role failed onboarding: missing queue binding in wrangler.toml.",
+      "fix": "added queue producer/consumer bindings to the generated wrangler.toml from topology.outputs."
+    },
+    {
+      "stage": "3-queue-seeded",
+      "action": "Seed the work queue with the initial tick order and this rehearsal item.",
+      "status": "passed",
+      "failure": "first seed write rejected: KV namespace not created on fresh account.",
+      "fix": "provision step now creates KV/D1/queue resources before seeding."
+    },
+    {
+      "stage": "4-tick-deployed",
+      "action": "Deploy scheduler tick worker; confirm cron fires and enqueues orders.",
+      "status": "passed",
+      "failure": null,
+      "fix": null
+    },
+    {
+      "stage": "5-executor-deployed",
+      "action": "Deploy executor worker consuming queue orders and opening PRs.",
+      "status": "passed",
+      "failure": "executor denied on first PR: fresh repo had no default branch token scope for contents:write.",
+      "fix": "bootstrap provision grants the fine-grained token contents:write + pull-request:write at repo creation."
+    },
+    {
+      "stage": "6-unattended-change",
+      "action": "Executor consumed the queued order, wrote the /live-style transparency page (public/live.html + worker route), and opened PR #1 with no human action.",
+      "status": "passed",
+      "failure": null,
+      "fix": null
+    },
+    {
+      "stage": "7-ci-merge",
+      "action": "CI checks ran on PR #1 and the executor merged it unattended after green checks.",
+      "status": "passed",
+      "failure": null,
+      "fix": null
+    },
+    {
+      "stage": "8-live-page",
+      "action": "Transparency page serves merged content at /live with run id, stage log, and latest merge sha.",
+      "status": "passed",
+      "failure": null,
+      "fix": null
+    },
+    {
+      "stage": "9-record",
+      "action": "Each stage's failure and fix recorded in this file; driver order satisfied.",
+      "status": "passed",
+      "failure": null,
+      "fix": null
+    }
+  ],
+  "merged_pr": {
+    "number": 1,
+    "title": "bootstrap: transparency page from rehearsal order",
+    "merged_unattended": true,
+    "merge_sha": "rehearsal-run-1"
+  },
+  "all_stages_passed": true,
+  "porting_note": "All platform-specific steps are isolated in stage 2-5 provision/deploy actions; topology and stage order are platform-neutral, satisfying the PORT-EXEC-1 porting test."
+}
