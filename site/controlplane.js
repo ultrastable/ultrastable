@@ -60,34 +60,60 @@ export async function status(env, now = Date.now()) {
   };
 }
 
+// MODEL-TRUTH-1: roles.model is a configured tier label from bootstrap (it said claude-haiku-5-5 while no Claude model was ever called);
+// the model shown is what the dispatch rows record as having run in the last 24 h. The code executor (worker-native) is listed as an
+// agent too: it is the only one that changes code, and its work is the items marked in-pr (CODE-QUEUE-1).
+const TICK_S = 600, LINED_UP = 3;
+export const CODE_AGENT = { id: "code-executor", role: "code-executor", ticks_every: 1, fallback_model: "Workers AI: @cf/zai-org/glm-5.3-flash, then @cf/meta/llama-3.3-70b-instruct-fp8-fast, then @cf/qwen/qwen2.5-coder-32b-instruct" };
+const isoAfter = (s, sec) => { const t = ts(s); return t == null ? null : new Date(t + sec * 1000).toISOString().replace("T", " ").slice(0, 19); };
+const prOf = b => { const m = /^in-pr:\s*(\S+)(?:.*?model:\s*(\S+))?/.exec(b || ""); return m ? { url: m[1], model: m[2] || null } : null; };
+
 export async function agents(env, now = Date.now()) {
-  const db = env.ORG;
-  const roles = await all(db, "SELECT id, role, project, tick_every, model, last_tick_at FROM roles ORDER BY role, id");
+  const db = env.ORG, since = Math.floor(now / 1000) - 86400;
+  const roles = await all(db, "SELECT id, role, project, tick_every, last_tick_at FROM roles ORDER BY role, id");
   const claims = await all(db, "SELECT c.agent, c.item_id, c.claimed_at, c.heartbeat_at, i.title, i.status FROM claims c LEFT JOIN items i ON i.id = c.item_id");
-  const stats = await all(db, "SELECT role_id, count(*) AS total, sum(CASE WHEN status NOT IN ('queued','running') THEN 1 ELSE 0 END) AS settled, sum(CASE WHEN at >= datetime(?, 'unixepoch') THEN 1 ELSE 0 END) AS last_24h, max(at) AS last_at FROM dispatches GROUP BY role_id", Math.floor(now / 1000) - 86400);
-  const last = await all(db, "SELECT d.role_id, d.item_id, d.status, d.at, i.title FROM dispatches d LEFT JOIN items i ON i.id = d.item_id WHERE d.id IN (SELECT max(id) FROM dispatches GROUP BY role_id)");
-  const owned = await all(db, "SELECT owner_role, count(*) AS n FROM items WHERE status IN ('ready','open') GROUP BY owner_role");
-  const S = Object.fromEntries(stats.map(s => [s.role_id, s])), L = Object.fromEntries(last.map(l => [l.role_id, l])), O = Object.fromEntries(owned.map(o => [o.owner_role, o.n]));
-  return {
-    api_version: API_VERSION, generated: new Date(now).toISOString(),
-    agents: roles.map(r => {
-      const mine = claims.filter(c => c.agent === r.id), s = S[r.id] || {}, l = L[r.id], a = ageS(r.last_tick_at, now);
-      return {
-        id: r.id, role: r.role, model: r.model, project: r.project || null, ticks_every: r.tick_every,
-        state: a == null ? "never ran" : a > ACTIVE_AGENT_S ? "idle" : mine.length ? "working" : "waiting",
-        last_tick_at: r.last_tick_at, last_tick_age_s: a,
-        working_on: mine.map(c => ({ item: c.item_id, title: c.title, item_status: c.status, since: c.claimed_at, heartbeat_age_s: ageS(c.heartbeat_at, now) })),
-        last_dispatch: l ? { item: l.item_id, title: l.title, status: l.status, at: l.at } : null,
-        dispatches: { total: s.total || 0, settled: s.settled || 0, last_24h: s.last_24h || 0 },
-        on_deck_for_role: O[r.role] || 0,
-      };
-    }),
-  };
+  const stats = await all(db, "SELECT role_id, count(*) AS total, sum(CASE WHEN status NOT IN ('queued','running') THEN 1 ELSE 0 END) AS settled, sum(CASE WHEN at >= datetime(?, 'unixepoch') THEN 1 ELSE 0 END) AS last_24h, max(at) AS last_at FROM dispatches GROUP BY role_id", since);
+  const used = await all(db, "SELECT role_id, model, count(*) AS n FROM dispatches WHERE at >= datetime(?, 'unixepoch') AND model IS NOT NULL AND model <> 'pending' GROUP BY role_id, model ORDER BY n DESC", since);
+  const last = await all(db, "SELECT d.role_id, d.item_id, d.status, d.model, d.at, i.title, i.blocker FROM dispatches d LEFT JOIN items i ON i.id = d.item_id WHERE d.id IN (SELECT max(id) FROM dispatches GROUP BY role_id)");
+  const queue = await all(db, "SELECT i.id, i.title, i.owner_role, i.priority FROM items i LEFT JOIN claims c ON c.item_id = i.id WHERE i.status IN ('ready','open') AND c.item_id IS NULL ORDER BY i.priority DESC, CASE i.status WHEN 'ready' THEN 0 ELSE 1 END, i.created_at ASC LIMIT 400");
+  const inPr = await all(db, "SELECT id, title, blocker, updated_at FROM items WHERE status = 'blocked' AND blocker LIKE 'in-pr:%' ORDER BY updated_at DESC LIMIT 20");
+  const codeQ = await all(db, "SELECT id, title, priority FROM items WHERE status = 'blocked' AND blocker LIKE 'needs-code:%' ORDER BY priority DESC, updated_at ASC LIMIT ?", LINED_UP);
+  const codeN = await first(db, "SELECT count(*) AS n FROM items WHERE status = 'blocked' AND blocker LIKE 'needs-code:%'");
+  const tick = await first(db, "SELECT started_at FROM tick_runs ORDER BY id DESC LIMIT 1");
+  const S = Object.fromEntries(stats.map(s => [s.role_id, s])), L = Object.fromEntries(last.map(l => [l.role_id, l]));
+  const U = {}; for (const u of used) (U[u.role_id] = U[u.role_id] || []).push({ model: u.model, dispatches: u.n });
+  const Q = {}; for (const q of queue) (Q[q.owner_role] = Q[q.owner_role] || []).push(q);
+  const list = roles.map(r => {
+    const mine = claims.filter(c => c.agent === r.id), s = S[r.id] || {}, l = L[r.id], a = ageS(r.last_tick_at, now), q = Q[r.role] || [];
+    const models = U[r.id] || [];
+    return {
+      id: r.id, role: r.role, project: r.project || null, ticks_every: r.tick_every,
+      model: models.length ? models.map(m => m.model).join(", ") : "none in 24 h", models_24h: models,
+      state: a == null ? "never ran" : a > ACTIVE_AGENT_S ? "idle" : mine.length ? "working" : "waiting",
+      last_tick_at: r.last_tick_at, last_tick_age_s: a, next_tick_at: isoAfter(r.last_tick_at, (r.tick_every || 1) * TICK_S),
+      working_on: mine.map(c => ({ item: c.item_id, title: c.title, item_status: c.status, since: c.claimed_at, heartbeat_age_s: ageS(c.heartbeat_at, now) })),
+      lined_up: q.slice(0, LINED_UP).map(x => ({ item: x.id, title: x.title, priority: x.priority })),
+      last_dispatch: l ? { item: l.item_id, title: l.title, status: l.status, model: l.model, at: l.at, result: l.blocker ? String(l.blocker).slice(0, 200) : null } : null,
+      dispatches: { total: s.total || 0, settled: s.settled || 0, last_24h: s.last_24h || 0 },
+      on_deck_for_role: q.length,
+    };
+  });
+  const prModels = [...new Set(inPr.map(i => (prOf(i.blocker) || {}).model).filter(Boolean))];
+  list.push({
+    id: CODE_AGENT.id, role: CODE_AGENT.role, project: null, ticks_every: 1,
+    model: prModels.length ? prModels.join(", ") : CODE_AGENT.fallback_model, models_24h: prModels.map(m => ({ model: m })),
+    state: inPr.length ? "working" : (codeN && codeN.n) ? "waiting" : "idle",
+    last_tick_at: tick ? tick.started_at : null, last_tick_age_s: tick ? ageS(tick.started_at, now) : null, next_tick_at: tick ? isoAfter(tick.started_at, TICK_S) : null,
+    working_on: inPr.map(i => ({ item: i.id, title: i.title, item_status: "in PR", pr: (prOf(i.blocker) || {}).url || null, since: i.updated_at })),
+    lined_up: codeQ.map(x => ({ item: x.id, title: x.title, priority: x.priority })),
+    last_dispatch: null, dispatches: { total: inPr.length, settled: 0, last_24h: inPr.length }, on_deck_for_role: codeN ? codeN.n : 0,
+  });
+  return { api_version: API_VERSION, generated: new Date(now).toISOString(), agents: list };
 }
 
 export async function work(env, view = "on_deck", limit = 50) {
   const db = env.ORG, lim = Math.max(1, Math.min(200, Number(limit) || 50));
-  const where = { on_deck: "i.status IN ('ready','open') AND c.item_id IS NULL", in_progress: "(i.status = 'claimed' OR c.item_id IS NOT NULL) AND i.status NOT IN ('done')", blocked: "i.status = 'blocked'", done: "i.status = 'done'", all: "1=1" }[view];
+  const where = { on_deck: "i.status IN ('ready','open') AND c.item_id IS NULL", in_progress: "((i.status = 'claimed' OR c.item_id IS NOT NULL) AND i.status NOT IN ('done') OR (i.status = 'blocked' AND i.blocker LIKE 'in-pr:%'))", blocked: "i.status = 'blocked' AND coalesce(i.blocker, '') NOT LIKE 'in-pr:%'", done: "i.status = 'done'", all: "1=1" }[view];
   if (!where) return null;
   const order = view === "done" ? "i.updated_at DESC" : "i.priority DESC, CASE i.status WHEN 'ready' THEN 0 ELSE 1 END, i.created_at ASC";
   const rows = await all(db, `SELECT i.id, i.title, i.kind, i.owner_role, i.priority, i.status, i.blocker, i.disposition, i.action_class, i.done_check, i.created_at, i.updated_at, c.agent, c.claimed_at,
@@ -294,7 +320,7 @@ async function draw(){try{
  const g=el('div','kpis');[['Agents active (1 h)',s.agents.active_last_hour+' / '+s.agents.total],['In progress',prog.count],['On deck',deck.count],['Blocked',w.blocked||0],['Done',w.done||0],['Dispatches executed',d.settled+' / '+d.total],['Needs you',s.owner.open_gate_cards],['Handoffs verified',(s.handoffs&&s.handoffs.verified||0)+' / '+Object.values(s.handoffs||{}).reduce((x,y)=>x+y,0)]].forEach(([l,n])=>{const b=el('div','kpi');b.appendChild(el('div','n',String(n)));b.appendChild(el('div','l',l));g.appendChild(b)});k.appendChild(g);
  if(s.reasons.length){const ul=el('ul','reasons');s.reasons.forEach(r=>ul.appendChild(el('li',null,r)));k.appendChild(ul)}
  if(s.heartbeat)k.appendChild(el('p','meta',s.heartbeat.report));
- card('c-agents','Agents','Each virtual agent, the model it runs on, and what it holds now.').appendChild(table(['Agent','Role','Model','State','Working on','Last dispatch','Dispatches (executed / total, 24 h)','Last tick'],a.agents.map(x=>[x.id,x.role,x.model,{t:x.state,pill:x.state==='working'?'good':x.state==='waiting'?'warn':'bad'},x.working_on.map(i=>i.item).join(', ')||'-',x.last_dispatch?x.last_dispatch.item+' ('+x.last_dispatch.status+')':'-',x.dispatches.settled+' / '+x.dispatches.total+' ('+x.dispatches.last_24h+')',x.last_tick_at?ago(x.last_tick_age_s):'never'])));
+ card('c-agents','Agents','Each role picks the top item for its role on its tick. One in-tick doer settles every pick: rules first, then Workers AI when a rule cannot. Items that need a code change go to the code executor, which opens a pull request. Model is what actually ran in the last 24 hours, read from the dispatch records.').appendChild(table(['Agent','Model (actually ran, 24 h)','State','Working on','Lined up next','Last result','Dispatches (executed / total, 24 h)','Last tick','Next tick'],a.agents.map(x=>[x.id,x.model,{t:x.state,pill:x.state==='working'?'good':x.state==='waiting'?'warn':'bad'},x.working_on.map(i=>i.item+(i.pr?' ('+i.pr.replace(/^https:\/\/github.com\//,'')+')':'')).join(', ')||'-',(x.lined_up||[]).map(i=>i.item).join(', ')||'-',x.last_dispatch?x.last_dispatch.item+' ('+x.last_dispatch.status+(x.last_dispatch.model?', '+x.last_dispatch.model:'')+')':'-',x.dispatches.settled+' / '+x.dispatches.total+' ('+x.dispatches.last_24h+')',x.last_tick_at?ago(x.last_tick_age_s):'never',x.next_tick_at||'-'])));
  card('c-prog','In progress','Claimed items and the agent that holds each.').appendChild(table(['Item','Title','Agent','Since','Dispatches'],prog.items.map(i=>[it(i.id),i.title,i.agent||'-',i.claimed_at||'-',i.dispatch_count])));
  card('c-deck','On deck','Ranked: priority, then ready before open, then oldest first. '+deck.count+' items.').appendChild(table(['#','Item','Title','Owner','Priority','Status'],deck.items.map(i=>[i.rank,it(i.id),i.title,i.owner_role,i.priority,i.status])));
  card('c-blk','Blocked',blk.count+' items waiting on something.').appendChild(table(['Item','Title','Owner','Blocker'],blk.items.map(i=>[it(i.id),i.title,i.owner_role,i.blocker||i.disposition||'-'])));

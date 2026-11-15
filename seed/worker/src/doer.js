@@ -14,6 +14,8 @@ const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
 
 export const DOER = 'doer-v1';
+// MODEL-TRUTH-1: what a dispatch row says ran when a rule settled the item with no model call.
+export const RULES_MODEL = 'rules (no model)';
 export const MAX_ITEMS = 8, MAX_AI = 3;
 
 // Identity-bound work (IC-GATE-001): filing, signing, applying, entity and IP decisions, anything only the owner can review or submit.
@@ -28,7 +30,8 @@ async function ask(ctx, prompt, maxTokens = 900) {
   for (const a of [...ADAPTERS].sort((x, y) => x.price - y.price)) {
     try {
       const t = textOf(await ctx.ai.run(a.model, { messages: [{ role: 'user', content: prompt }], ...a.extra, max_tokens: maxTokens }));
-      return { json: parseJson(t), adapter: a.id };
+      ctx.itemModel = a.model;  // MODEL-TRUTH-1: the dispatch row records the model that answered, never a config label
+      return { json: parseJson(t), adapter: a.id, model: a.model };
     } catch (e) { tried.push(a.id + ': ' + String(e && e.message).slice(0, 80)); }
   }
   ctx.notes.push('doer: no model answered (' + tried.join('; ').slice(0, 200) + ')');
@@ -53,7 +56,7 @@ async function settle(db, ctx, item, state, evidence, extra = {}) {
   }
   if (state !== 'waiting') {
     await run(db, `DELETE FROM claims WHERE item_id=?`, item.id);
-    await run(db, `UPDATE dispatches SET status=? WHERE item_id=? AND status='queued'`, state, item.id);
+    await run(db, `UPDATE dispatches SET status=?, model=? WHERE item_id=? AND status='queued'`, state, ctx.itemModel || RULES_MODEL, item.id);
   }
   ctx.doer[state] = (ctx.doer[state] || 0) + 1;
   return state;
@@ -169,6 +172,7 @@ export async function executeStep(db, ctx, ensureItem) {
   await recheck(db, ctx);
   const items = await all(db, `SELECT i.* FROM items i JOIN claims c ON c.item_id = i.id WHERE i.status='claimed' ORDER BY i.priority, c.claimed_at LIMIT ?`, ctx.config.doer_max_items ?? MAX_ITEMS);
   for (const it of items) {
+    ctx.itemModel = null;
     try {
       (await tickfail(db, ctx, it)) || (await loopbreak(db, ctx, it)) || (await ownerOnly(db, ctx, it)) || (await selfCheck(db, ctx, it))
         || (await probeGated(db, ctx, it)) || (await successor(db, ctx, it, ensureItem)) || (await triage(db, ctx, it));

@@ -45,6 +45,19 @@ r = await J("https://ultrastable.io/api/v1/agents");
 const byId = Object.fromEntries(r.body.agents.map(a => [a.id, a]));
 assert.equal(byId["staff-1"].state, "working"); assert.equal(byId["staff-1"].working_on[0].item, "C"); assert.equal(byId["staff-1"].dispatches.total, 2); assert.equal(byId["staff-1"].dispatches.settled, 0);
 assert.equal(byId["reviewer-1"].state, "idle"); assert.equal(byId["ops-1"].state, "never ran"); assert.equal(byId["staff-1"].on_deck_for_role, 2);
+// MODEL-TRUTH-1: the roles.model label ('claude-haiku-5-5') is never shown; the model is what the dispatch rows say ran.
+assert.ok(!JSON.stringify(r.body).includes("claude-haiku-5-5"), "config tier label never reported as the model");
+assert.equal(byId["staff-1"].model, "m"); assert.equal(byId["ops-1"].model, "none in 24 h");
+assert.deepEqual(byId["staff-1"].lined_up.map(i => i.item), ["A", "B"]); assert.ok(byId["staff-1"].next_tick_at);
+// CODE-QUEUE-1: the code executor is an agent; its work is the in-pr items and its queue the needs-code items.
+db.exec(`INSERT INTO items (id,title,owner_role,done_check,priority,status,blocker) VALUES ('P','P: in pr','operations','x',40,'blocked','in-pr: https://github.com/o/r/pull/9 | agent: worker-native | model: @cf/zai-org/glm-5.3-flash'),('Q','Q: needs code','operations','x',30,'blocked','needs-code: edit x')`);
+r = await J("https://ultrastable.io/api/v1/agents");
+const ce = r.body.agents.find(a => a.id === "code-executor");
+assert.equal(ce.state, "working"); assert.equal(ce.working_on[0].pr, "https://github.com/o/r/pull/9"); assert.equal(ce.model, "@cf/zai-org/glm-5.3-flash"); assert.deepEqual(ce.lined_up.map(i => i.item), ["Q"]);
+assert.deepEqual((await J("https://ultrastable.io/api/v1/work?view=in_progress")).body.items.map(i => i.id).sort(), ["C", "P"]);
+assert.ok(!(await J("https://ultrastable.io/api/v1/work?view=blocked")).body.items.some(i => i.id === "P"), "an item in a PR is in progress, not blocked");
+db.exec(`DELETE FROM items WHERE id IN ('P','Q')`);
+r = await J("https://ultrastable.io/api/v1/agents");
 
 r = await J("https://ultrastable.io/api/v1/work");
 assert.deepEqual(r.body.items.map(i => i.id), ["A", "B"], "on deck: ranked by priority, unclaimed only"); assert.equal(r.body.items[0].rank, 1);

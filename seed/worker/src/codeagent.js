@@ -135,7 +135,7 @@ export function parseJson(t) {
 export async function runCodeAgent(env, prompt, adapters = ADAPTERS) {
   const tried = [];
   for (const a of [...adapters].sort((x, y) => x.price - y.price)) {
-    try { return { ...parseJson(await invoke(env, a, prompt)), adapter: a.id, tried }; }
+    try { return { ...parseJson(await invoke(env, a, prompt)), adapter: a.id, model: a.model, tried }; }
     catch (e) { tried.push({ adapter: a.id, error: String(e && e.message).slice(0, 120) }); }
   }
   throw new Error('no code agent produced a change: ' + JSON.stringify(tried));
