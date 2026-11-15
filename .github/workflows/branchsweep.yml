@@ -1,0 +1,47 @@
+name: branchsweep
+# BRANCH-SWEEP-1: no remote branch carries work main lacks. Merges every branch that merges (generated-file conflicts resolved by rule, gate after each
+# merge), files PORT-BRANCH items for the rest, and opens one pull request the lane merges. Evidence stays on the PR and in ops/branchsweep-ledger.jsonl.
+# budget: ~4 min per run, once a day (~120 min per month)
+# trigger: daily schedule; branches go stale over hours, so a faster event buys nothing; manual dispatch for a drain
+# free-alternative: run `python3 -m foundation branchsweep --apply` from a cloud-hosted agent session, or from the lane run on the Cloudflare tick Worker
+on:
+  schedule:
+    - cron: "41 5 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: branchsweep
+  cancel-in-progress: false
+jobs:
+  sweep:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - run: python3 scripts/actions_guard.py branchsweep
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/setup-node@v7
+        with: {node-version: 22}
+      - name: Sweep into one branch
+        run: |
+          git config user.name "ultrastable-branchsweep"; git config user.email "actions@users.noreply.github.com"
+          git checkout -B agent/branchsweep-$(date -u +%Y%m%d) origin/main
+          python3 -m foundation branchsweep --apply
+          python3 scripts/build_dashboard.py
+          git add -A; git diff --cached --quiet || git commit -m "branchsweep: ledger, PORT items and dashboard"
+      - name: Open the pull request the lane merges, then prune what main holds
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          b=$(git rev-parse --abbrev-ref HEAD)
+          if [ "$(git rev-list --count origin/main..HEAD)" -gt 0 ]; then
+            git push -f origin "$b"
+            gh pr create --base main --head "$b" --title "branchsweep: merge the branches main lacks" --body "BRANCH-SWEEP-1. Disposition per branch: ops/branchsweep-ledger.jsonl. Handoff: item: BRANCH-SWEEP-1" --label server-owned || echo "pull request already open"
+          fi
+          python3 -m foundation branchsweep --prune

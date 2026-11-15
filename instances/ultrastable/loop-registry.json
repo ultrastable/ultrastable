@@ -2954,6 +2954,43 @@
       ],
       "area": "managers",
       "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "branch-sweep",
+      "kind": "governance",
+      "summary": "No remote branch carries work main lacks. Every branch gets one recorded disposition (merged, superseded, ported as a PORT-BRANCH item, rejected on purpose, or state): generated-file conflicts resolve by rule, a merge that breaks the gate is undone, merged branches are pruned. Closes the blind spot of the session reaper, which only watched agent/ and claude/ branches.",
+      "trigger": "daily workflow and every lane run",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "python3 -m foundation branchsweep --scan shows no branch with action merge, and the ledger invariant entered = merged + superseded + ported + rejected + state + skipped holds",
+      "paths": [
+        {
+          "id": "github",
+          "how": "python3 -m foundation branchsweep --apply on the built-in token, opened as one PR the lane merges",
+          "class": "free"
+        },
+        {
+          "id": "cloud-session",
+          "how": "the same command from a cloud-hosted agent session",
+          "class": "degraded"
+        }
+      ],
+      "closing_probe": "grep:foundation/branchsweep.py::def apply",
+      "writeback": [
+        "docs/issues"
+      ],
+      "system_path": [
+        "foundation/branchsweep.py",
+        "doctrine/branchsweep.json",
+        "tests/foundation/test_branchsweep.py",
+        ".github/workflows/branchsweep.yml"
+      ],
+      "workflows": [
+        "branchsweep.yml"
+      ],
+      "area": "managers",
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

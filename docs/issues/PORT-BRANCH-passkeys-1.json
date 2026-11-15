@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-passkeys-1",
+  "title": "PORT-BRANCH-passkeys-1: carry passkeys-1 onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `passkeys-1` at f954ef5fa7 holds work main lacks and cannot merge as is (conflicts in code: dashboard/worker.js, site/passkeys.js, site/worker.js)\n**Done check:** probe:git rev-list --count origin/main..origin/passkeys-1 is 0, or the branch's content is carried by a merged change\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for passkeys-1",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

@@ -9,6 +9,8 @@ reached main. This loop reads every remote branch (git only, so it runs on the b
                into the sweep branch, which the lane merges as one pull request
   port         it conflicts in code, or its merge breaks the gate: the merge is undone and one PORT-BRANCH-<slug> item (owner, trigger, closing probe)
                is filed for the executor; the branch is kept (never deleted with unmerged work)
+  rejected     a branch whose pull request was closed on purpose (doctrine/branchsweep.json `rejected`, with the reason): never merged; its sha goes to
+               the ledger and the branch is deleted (reversible by pushing the sha back)
   state        a branch the system itself writes (doctrine/branchsweep.json `state_branches`): left alone, and counted
 
   python3 -m foundation branchsweep --scan [--json]     plan every branch, read-only
@@ -16,7 +18,7 @@ reached main. This loop reads every remote branch (git only, so it runs on the b
   python3 -m foundation branchsweep --prune             delete remote branches whose tip is now an ancestor of origin/main
   python3 -m foundation branchsweep --check             policy and loop are declared
 
-Accounting invariant: entered = merged + superseded + ported + state + skipped (every branch has one recorded disposition, never a silent drop).
+Accounting invariant: entered = merged + superseded + ported + rejected + state + skipped (every branch has one recorded disposition, never a silent drop).
 """
 from __future__ import annotations
 import json, re, subprocess, sys, time
@@ -88,6 +90,9 @@ def scan(root=REPO, base="origin/main") -> list[dict]:
         name = ref[len("origin/"):]
         if name == me:
             continue  # the sweep never merges its own branch into itself
+        if name in pol.get("rejected", {}):
+            out.append({"name": name, "sha": _g(root, "rev-parse", ref).strip(), "action": "rejected", "why": pol["rejected"][name]})
+            continue
         if name in state or any(name.startswith(p) for p in pol.get("state_prefixes", [])):
             out.append({"name": name, "sha": _g(root, "rev-parse", ref).strip(), "action": "state", "why": "written by the system itself"})
             continue
@@ -174,14 +179,16 @@ def apply(root=REPO, base="origin/main", dry=False, now=None) -> dict:
                     p.update(action="port", why="merge breaks the gate: " + why)
         if p["action"] == "port" and not dry:
             f = root / "docs/issues" / (port_item(p, pol)["id"] + ".json")
+            f.parent.mkdir(parents=True, exist_ok=True)
             if not f.exists():
                 f.write_text(json.dumps(port_item(p, pol), indent=2) + "\n", encoding="utf-8", newline="\n")
         done.append({k: p[k] for k in ("name", "sha", "action", "why")})
     n = lambda a: sum(1 for d in done if d["action"] == a)
     rec = {"at": int(now or time.time()), "entered": len(plans), "merged": n("merge") + n("merged"), "superseded": n("superseded"), "ported": n("port"),
-           "state": n("state"), "skipped": n("skipped"), "dispositions": done, "dry": dry}
-    rec["invariant"] = rec["entered"] == rec["merged"] + rec["superseded"] + rec["ported"] + rec["state"] + rec["skipped"]
+           "rejected": n("rejected"), "state": n("state"), "skipped": n("skipped"), "dispositions": done, "dry": dry}
+    rec["invariant"] = rec["entered"] == rec["merged"] + rec["superseded"] + rec["ported"] + rec["rejected"] + rec["state"] + rec["skipped"]
     if not dry:
+        (root / LEDGER).parent.mkdir(parents=True, exist_ok=True)
         with (root / LEDGER).open("a", encoding="utf-8", newline="\n") as f:
             f.write(json.dumps(rec) + "\n")
     return rec
@@ -191,11 +198,12 @@ def prune(root=REPO, base="origin/main", dry=False) -> list[dict]:
     """Delete remote branches that carry nothing main lacks. The sha goes to the ledger first, so the deletion is reversible."""
     root, out = Path(root), []
     for p in scan(root, base):
-        if p["action"] in ("merged", "superseded"):
+        if p["action"] in ("merged", "superseded", "rejected"):
             if not dry:
                 git(root, "push", "origin", "--delete", p["name"])
             out.append({"name": p["name"], "sha": p["sha"], "action": "deleted", "why": p["why"]})
     if out and not dry:
+        (root / LEDGER).parent.mkdir(parents=True, exist_ok=True)
         with (root / LEDGER).open("a", encoding="utf-8", newline="\n") as f:
             f.write(json.dumps({"at": int(time.time()), "pruned": out}) + "\n")
     return out

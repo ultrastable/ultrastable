@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-agent-gitignore-wrangler",
+  "title": "PORT-BRANCH-parked-agent-gitignore-wrangler: carry parked/agent/gitignore-wrangler onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/gitignore-wrangler` at 65aaeceecb holds work main lacks and cannot merge as is (conflicts in code: .gitignore, site/worker.js)\n**Done check:** probe:git rev-list --count origin/main..origin/parked/agent/gitignore-wrangler is 0, or the branch's content is carried by a merged change\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for parked/agent/gitignore-wrangler",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

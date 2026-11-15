@@ -93,6 +93,10 @@
         {
           "signal": "criticality.k",
           "via": "file:ops/criticality.jsonl"
+        },
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
         }
       ],
       "outflows": [
@@ -931,6 +935,26 @@
         "CLOUDFLARE_ACCOUNT_ID",
         "CLOUDFLARE_API_TOKEN"
       ]
+    },
+    "branch-sweep": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:branches"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "session.ledger",
+          "via": "file:ops/branchsweep-ledger.jsonl"
+        },
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a merged branch leaves the next scan empty; a ported branch becomes a PORT-BRANCH item the executor takes, and the next scan stops listing the branch once main carries it",
+      "bindings": []
     }
   },
   "implicit_producers": {

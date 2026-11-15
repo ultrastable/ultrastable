@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-agent-sys-reconcile",
+  "title": "PORT-BRANCH-parked-agent-sys-reconcile: carry parked/agent/SYS-RECONCILE onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/SYS-RECONCILE` at 3660b1ee89 holds work main lacks and cannot merge as is (conflicts in code: doctrine/code-agents.json, doctrine/system.json, doctrine/topology.json, foundation/__main__.py, foundation/agent_ladder.py, instances/ultrastable/system/ultrastable-agents.wrangler.jsonc)\n**Done check:** probe:git rev-list --count origin/main..origin/parked/agent/SYS-RECONCILE is 0, or the branch's content is carried by a merged change\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for parked/agent/SYS-RECONCILE",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

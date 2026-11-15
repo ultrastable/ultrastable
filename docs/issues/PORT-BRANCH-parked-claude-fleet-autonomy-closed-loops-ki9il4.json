@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-fleet-autonomy-closed-loops-ki9il4",
+  "title": "PORT-BRANCH-parked-claude-fleet-autonomy-closed-loops-ki9il4: carry parked/claude/fleet-autonomy-closed-loops-ki9il4 onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/fleet-autonomy-closed-loops-ki9il4` at 306dbbbe49 holds work main lacks and cannot merge as is (conflicts in code: agents/PROJECT-INSTRUCTIONS.md, seed/agents/AGENTS.md)\n**Done check:** probe:git rev-list --count origin/main..origin/parked/claude/fleet-autonomy-closed-loops-ki9il4 is 0, or the branch's content is carried by a merged change\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for parked/claude/fleet-autonomy-closed-loops-ki9il4",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-agent-clockwork",
+  "title": "PORT-BRANCH-parked-agent-clockwork: carry parked/agent/CLOCKWORK onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/CLOCKWORK` at 965a566192 holds work main lacks and cannot merge as is (conflicts in code: doctrine/growth.json, foundation/__main__.py, foundation/clockwork.py, instances/ultrastable/loop-registry.json)\n**Done check:** probe:git rev-list --count origin/main..origin/parked/agent/CLOCKWORK is 0, or the branch's content is carried by a merged change\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --scan --json shows no `port` for parked/agent/CLOCKWORK",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
