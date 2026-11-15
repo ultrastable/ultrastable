@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-10",
   "title": "OL-20261115-10: PF-1-DECISION (ops#14): public site vs patent disclosure gate",
-  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** FUND-1\n**Done check:** grep:ip/evidence-log.md::filing receipt\n**Status:** open\n\nMoved from ultrastable/ops#14. ultrastable.io has been public since 2026-11-10 and QNFO/qnfo-workers since 2026-08-10, while PF-1 says nothing public until the provisional is filed. IDENTITY-BOUND: file first and keep the site, or serve a holding page; counsel confirms time bars. Default in effect: site stays up.",
+  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** FUND-1\n**Done check:** grep:ip/evidence-log.md::filing receipt\n**Status:** closed\n\nMoved from ultrastable/ops#14. ultrastable.io has been public since 2026-11-10 and QNFO/qnfo-workers since 2026-08-10, while PF-1 says nothing public until the provisional is filed. IDENTITY-BOUND: file first and keep the site, or serve a holding page; counsel confirms time bars. Default in effect: site stays up.\n\n**Evidence:** superseded by owner decision 2026-11-15: no patent filing; the licence protects the IP and the repositories go public (decision-ledger).",
   "labels": [
     "role:ROWAN (identity-bound)",
     "open-loop"
