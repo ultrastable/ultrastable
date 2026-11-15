@@ -23,7 +23,7 @@ class Sweep(unittest.TestCase):
         subprocess.run(["git", "clone", "-q", str(self.origin), str(self.w)], check=True, capture_output=True)
         for k, v in (("user.email", "t@t"), ("user.name", "t")):
             sh(self.w, "config", k, v)
-        write(self.w, "doctrine/branchsweep.json", json.dumps({"state_branches": ["evidence"], "state_prefixes": [], "gate": [], "port_owner": "operations", "rejected": {"bad": "closed on purpose"}}))
+        write(self.w, "doctrine/branchsweep.json", json.dumps({"state_branches": ["evidence"], "state_prefixes": [], "gate": [], "min_idle_hours": 0, "port_owner": "operations", "rejected": {"bad": "closed on purpose"}}))
         write(self.w, "doctrine/decision-ledger.json", json.dumps({"rows": [{"id": "a"}]}))
         write(self.w, "ops/x.jsonl", '{"n":1}\n'); write(self.w, "code.py", "x = 1\n")
         sh(self.w, "add", "-A"); sh(self.w, "commit", "-qm", "base"); sh(self.w, "push", "-q", "origin", "main")
@@ -70,6 +70,17 @@ class Sweep(unittest.TestCase):
         rec = B.apply(self.w)
         self.assertEqual({d["name"]: d["action"] for d in rec["dispositions"]}["breaks"], "port")
         self.assertFalse((self.w / "new.py").exists()); self.assertTrue((self.w / "docs/issues/PORT-BRANCH-breaks.json").is_file())
+
+    def test_a_branch_a_session_just_touched_is_live_and_a_residue_only_branch_is_superseded(self):
+        self.branch("fresh", {"f.py": "f\n"})
+        pol = json.loads((self.w / "doctrine/branchsweep.json").read_text()); pol["min_idle_hours"] = 4
+        write(self.w, "doctrine/branchsweep.json", json.dumps(pol)); sh(self.w, "add", "-A"); sh(self.w, "commit", "-qm", "p"); sh(self.w, "push", "-q", "origin", "main")
+        sh(self.w, "fetch", "-q", "origin")
+        self.assertEqual({p["name"]: p["action"] for p in B.scan(self.w)}["fresh"], "live")
+        pol["min_idle_hours"] = 0
+        write(self.w, "doctrine/branchsweep.json", json.dumps(pol)); sh(self.w, "add", "-A"); sh(self.w, "commit", "-qm", "p0")
+        rec = B.apply(self.w)
+        self.assertTrue(rec["invariant"], rec)
 
     def test_prune_deletes_only_what_main_already_holds(self):
         self.branch("done", {"new.py": "y = 2\n"}); sh(self.w, "checkout", "-q", "main"); sh(self.w, "merge", "-q", "--no-ff", "origin/done", "-m", "m"); sh(self.w, "push", "-q", "origin", "main")

@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-preserve-main-ahead",
+  "title": "PORT-BRANCH-preserve-main-ahead: carry preserve-main-ahead onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `preserve-main-ahead` at c1cdbde709 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml)\n**Done check:** cmd:python3 -m foundation branchsweep --carried preserve-main-ahead\n**Status:** open\n\nPort the change by hand onto current main (it is 8 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried preserve-main-ahead",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
