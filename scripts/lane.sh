@@ -119,7 +119,9 @@ if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
   if (cd "$root" && python3 -m foundation loopowner --adopt --apply); then
     if [ -n "$(git -C "$root" status --porcelain docs/issues)" ]; then
       git -C "$root" config user.name "ultrastable-lane"; git -C "$root" config user.email "actions@users.noreply.github.com"
-      git -C "$root" add docs/issues
+      # LANE-DASHBOARD-1: the adoption items change the issue count the dashboard carries; rebuild it in the same commit, or main fails its own stale check
+      (cd "$root" && python3 scripts/build_dashboard.py >/dev/null) || echo "lane: dashboard rebuild failed" >&2
+      git -C "$root" add docs/issues site/dashboard-data.js
       git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
       pushed=0
       for try in 1 2 3 4 5; do
