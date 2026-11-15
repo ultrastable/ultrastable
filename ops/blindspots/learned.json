@@ -15,6 +15,46 @@
    "probe": "grep:doctrine/publication.json::private_data_tripwires",
    "class": "system",
    "action": "added by --learn; the executor fills the action"
+  },
+  {
+   "id": "publication-other-repos-unread",
+   "domain": "security",
+   "why": "An audit that runs in one repo says nothing about the other six that the same flip publishes.",
+   "probe": "grep:foundation/publication.py::def org_audit",
+   "class": "system",
+   "action": "org_audit mirrors and audits every repo; flip is per repo"
+  },
+  {
+   "id": "publication-issue-text",
+   "domain": "privacy",
+   "why": "Issue, pull request and comment text becomes public with the repo and is not in git history.",
+   "probe": "grep:foundation/publication.py::def text_surfaces",
+   "class": "system",
+   "action": "text_surfaces scans it"
+  },
+  {
+   "id": "publication-recorded-vs-live-visibility",
+   "domain": "security",
+   "why": "A repo recorded as private was public from creation, with secret scanning off.",
+   "probe": "grep:foundation/publication.py::def settings",
+   "class": "system",
+   "action": "settings() reads live visibility and protection"
+  },
+  {
+   "id": "publication-run-logs",
+   "domain": "security",
+   "why": "Actions run logs of a private repo become public on flip and are not scanned.",
+   "probe": "grep:doctrine/publication.json::actions-run-logs",
+   "class": "system",
+   "action": "listed as unmeasured; OL-20261115-24"
+  },
+  {
+   "id": "handoff-in-scratchpad",
+   "domain": "continuity",
+   "why": "A hand-off written to a session scratchpad does not exist for the next session.",
+   "probe": "grep:doctrine/publication.json::PUBLICATION-RUNBOOK",
+   "class": "system",
+   "action": "runbook in the repo"
   }
  ]
 }

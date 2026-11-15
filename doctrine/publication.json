@@ -3,9 +3,31 @@
  "org": "ultrastable",
  "visibility": "public",
  "license_id": "LicenseRef-Ultrastable-USL-1.0",
- "repos": [".github", "license", "spec", "workers", "seed", "ops", "ultrastable"],
- "flip_order": [".github", "license", "spec", "workers", "seed", "ops", "ultrastable"],
- "required_files": ["LICENSE", "NOTICE", "COMMERCIAL-TERMS.md", "CITATION.cff", "SECURITY.md"],
+ "repos": [
+  ".github",
+  "license",
+  "spec",
+  "workers",
+  "seed",
+  "ops",
+  "ultrastable"
+ ],
+ "flip_order": [
+  ".github",
+  "license",
+  "spec",
+  "workers",
+  "seed",
+  "ops",
+  "ultrastable"
+ ],
+ "required_files": [
+  "LICENSE",
+  "NOTICE",
+  "COMMERCIAL-TERMS.md",
+  "CITATION.cff",
+  "SECURITY.md"
+ ],
  "secret_patterns": [
   "AKIA[0-9A-Z]{16}",
   "ghp_[A-Za-z0-9]{30,}",
@@ -13,23 +35,178 @@
   "sk-ant-[A-Za-z0-9_-]{20,}",
   "xox[baprs]-[A-Za-z0-9-]{10,}",
   "-----BEGIN [A-Z ]*PRIVATE KEY-----",
-  "cfut_[A-Za-z0-9]{20,}"
+  "cfut_[A-Za-z0-9]{20,}",
+  "gh[ousr]_[A-Za-z0-9]{36,}",
+  "(?:sk|rk)_live_[A-Za-z0-9]{16,}",
+  "AIza[0-9A-Za-z_-]{35}",
+  "whsec_[A-Za-z0-9]{24,}"
  ],
- "secret_allow_paths": ["tests/foundation/test_publication.py", "doctrine/publication.json"],
- "private_data_tripwires": ["NEEDS-YOU.md", "business/", "outreach/", "external/", "data/", "ops/", ".env"],
+ "secret_allow_paths": [
+  "tests/foundation/test_publication.py",
+  "doctrine/publication.json"
+ ],
+ "private_data_tripwires": [
+  "NEEDS-YOU.md",
+  "business/",
+  "outreach/",
+  "external/",
+  "data/",
+  "ops/",
+  ".env",
+  "ip/"
+ ],
  "procedure": [
-  {"step": "audit-history", "does": "scan every commit on every branch for secret patterns; shallow history is unmeasured", "gate": "none"},
-  {"step": "audit-private-data", "does": "list tripwire paths; each must be in ops/publication/reviewed.json with a disposition (publish, move, remove)", "gate": "none"},
-  {"step": "check-license", "does": "required files present, SPDX id present, licence text identical across repos (license/scripts/check-copies.mjs)", "gate": "none"},
-  {"step": "flip", "does": "gh repo edit <org>/<repo> --visibility public --accept-visibility-change-consequences, in flip_order, then verify unauthenticated", "gate": "IC-GATE-001 residue: needs an org-admin token; default in effect is stay private until the audit is clean"},
-  {"step": "record", "does": "append each result to ops/publication/ledger.jsonl", "gate": "none"}
+  {
+   "step": "audit-history",
+   "does": "for EVERY repo in `repos`, on a full mirror (all branches, tags, pull refs): scan every commit for secret patterns; a hit is cleared only by an exact history_allow entry (path + sha256 + reason); shallow or unreadable is unmeasured",
+   "gate": "none"
+  },
+  {
+   "step": "audit-private-data",
+   "does": "per repo, list tripwire paths at HEAD; each needs a disposition (publish, move, remove) in ops/publication/reviewed.json, keyed `<repo>:<path>` (bare path for this repo)",
+   "gate": "none"
+  },
+  {
+   "step": "audit-text",
+   "does": "scan issue, pull request and comment text of every repo (text_surfaces) with the same patterns",
+   "gate": "none"
+  },
+  {
+   "step": "audit-settings",
+   "does": "read live visibility; a repo that is already public must have secret scanning and push protection on",
+   "gate": "none"
+  },
+  {
+   "step": "check-license",
+   "does": "required files present in EVERY repo, SPDX id present, licence text identical across repos (license/scripts/check-copies.mjs)",
+   "gate": "none"
+  },
+  {
+   "step": "flip",
+   "does": "per repo in flip_order, only on that repo's own clean audit: gh repo edit <org>/<repo> --visibility public --accept-visibility-change-consequences, then verify unauthenticated and turn on secret scanning and push protection",
+   "gate": "IC-GATE-001 residue: needs an org-admin token; default in effect is stay private until the audit is clean"
+  },
+  {
+   "step": "record",
+   "does": "append each result to ops/publication/ledger.jsonl",
+   "gate": "none"
+  }
  ],
- "credential": {"binding": "ORG_ADMIN_TOKEN", "routes": ["github-actions workflow with the binding", "tick Worker with the GitHub App consent screen (POINT-AND-CLICK-1)"], "default_in_effect": "repositories stay as they are; no step fails open"},
+ "credential": {
+  "binding": "ORG_ADMIN_TOKEN",
+  "routes": [
+   "github-actions workflow with the binding",
+   "tick Worker with the GitHub App consent screen (POINT-AND-CLICK-1)"
+  ],
+  "default_in_effect": "repositories stay as they are; no step fails open"
+ },
  "lessons": [
-  {"id": "pub-no-visibility-tool", "lesson": "A cloud code session's GitHub tools cannot change repository visibility and gh is barred there; the flip is owned by a server-side route holding ORG_ADMIN_TOKEN, never by a session.", "probe": "grep:foundation/publication.py::def flip"},
-  {"id": "pub-shallow-history", "lesson": "Session clones are shallow; a secret scan of them proves nothing about history. Shallow means unmeasured.", "probe": "grep:foundation/publication.py::unmeasured"},
-  {"id": "pub-audit-before-flip", "lesson": "Publishing exposes full history and forks and caches cannot be undone; the flip refuses until the audit is clean.", "probe": "grep:foundation/publication.py::refused: audit"},
-  {"id": "pub-license-immutable", "lesson": "The licence text is immutable and a protected path; publication never edits it, and the copies must stay identical.", "probe": "grep:foundation/publication.py::LICENSE"},
-  {"id": "pub-refusal-is-input", "lesson": "A refused action is recorded and the next route taken; it is never re-worded past the same check.", "probe": "grep:foundation/publication.py::ledger"}
- ]
+  {
+   "id": "pub-no-visibility-tool",
+   "lesson": "A cloud code session's GitHub tools cannot change repository visibility and gh is barred there; the flip is owned by a server-side route holding ORG_ADMIN_TOKEN, never by a session.",
+   "probe": "grep:foundation/publication.py::def flip"
+  },
+  {
+   "id": "pub-shallow-history",
+   "lesson": "Session clones are shallow; a secret scan of them proves nothing about history. Shallow means unmeasured.",
+   "probe": "grep:foundation/publication.py::unmeasured"
+  },
+  {
+   "id": "pub-audit-before-flip",
+   "lesson": "Publishing exposes full history and forks and caches cannot be undone; the flip refuses until the audit is clean.",
+   "probe": "grep:foundation/publication.py::refused: audit"
+  },
+  {
+   "id": "pub-license-immutable",
+   "lesson": "The licence text is immutable and a protected path; publication never edits it, and the copies must stay identical.",
+   "probe": "grep:foundation/publication.py::LICENSE"
+  },
+  {
+   "id": "pub-refusal-is-input",
+   "lesson": "A refused action is recorded and the next route taken; it is never re-worded past the same check.",
+   "probe": "grep:foundation/publication.py::ledger"
+  },
+  {
+   "id": "pub-audit-every-repo",
+   "lesson": "The audit read only the repo it ran in while the flip covered seven. Each repo is flipped only on its own full-mirror audit; one repo never vouches for another.",
+   "probe": "grep:foundation/publication.py::def org_audit"
+  },
+  {
+   "id": "pub-text-surfaces",
+   "lesson": "Issues, pull request bodies and comments become public with the repo and are scanned like history.",
+   "probe": "grep:foundation/publication.py::def text_surfaces"
+  },
+  {
+   "id": "pub-required-files-every-repo",
+   "lesson": "ops and seed had no licence files and spec no top-level LICENSE while this repo passed; required files are checked in every repo.",
+   "probe": "grep:foundation/publication.py::required_missing"
+  },
+  {
+   "id": "pub-allow-is-exact",
+   "lesson": "A placeholder token in history cannot be removed without a rewrite. It is cleared only by an exact entry (path, sha256 of the match, reason), never by loosening a pattern or allowing a folder.",
+   "probe": "grep:foundation/publication.py::def _allowed"
+  },
+  {
+   "id": "pub-read-live-visibility",
+   "lesson": "ultrastable/ultrastable was public from creation with secret scanning off while the record said private. Visibility and scanning state are read from the API, never assumed; a public repo without push protection is not clean.",
+   "probe": "grep:foundation/publication.py::secret_scanning_push_protection"
+  },
+  {
+   "id": "pub-ip-is-a-tripwire",
+   "lesson": "ip/ (127 files) was not a tripwire although the standing rule is never to publish ip, business, funding or investor material without a recorded disposition.",
+   "probe": "grep:doctrine/publication.json::\"ip/\""
+  },
+  {
+   "id": "pub-verify-after-flip",
+   "lesson": "The procedure said verify unauthenticated and the code did not. A flip is done only when the repo answers an unauthenticated request and protection is on.",
+   "probe": "grep:foundation/publication.py::def verify_public"
+  },
+  {
+   "id": "pub-handoff-in-repo",
+   "lesson": "The hand-off prompt for this work was saved in a cloud session scratchpad and was gone when the next session looked. What a later session must run lives in the repo.",
+   "probe": "exists:docs/ops/PUBLICATION-RUNBOOK.md"
+  },
+  {
+   "id": "pub-name-the-unmeasured",
+   "lesson": "Actions run logs also become public and are not scanned yet. A surface nobody measures is listed as unmeasured in the policy and the ledger, with an open loop, never left out.",
+   "probe": "grep:doctrine/publication.json::actions-run-logs"
+  },
+  {
+   "id": "pub-refusal-per-repo",
+   "lesson": "Five clean repos were held by tripwires in a repo that was already public. Refusal is per repo with its reasons in the ledger.",
+   "probe": "grep:foundation/publication.py::def reasons"
+  }
+ ],
+ "text_surfaces": [
+  "issues?state=all",
+  "issues/comments",
+  "pulls/comments"
+ ],
+ "unmeasured_surfaces": [
+  "actions-run-logs"
+ ],
+ "history_allow": [
+  {
+   "path": "workers:core/packs/packs.test.js",
+   "sha256": "3021d90eb9437b2d8f30e8363695c4418b5e5f1870801b5c317e9398ee0f572d",
+   "commit": "148ba3954575",
+   "reason": "test input to the redaction guard: the header line only, no key body",
+   "reviewed": "2026-11-15"
+  },
+  {
+   "path": "ultrastable:platform/cloudflare-reference/scripts/review_gate.py",
+   "sha256": "03aafb028d538b06c4341bf8cf2a692a3c6d1f36e34e0e0b376f407c6117a246",
+   "commit": "12203cdf0d59",
+   "reason": "placeholder token (alphabet then digits) in the review gate self-test string",
+   "reviewed": "2026-11-15"
+  },
+  {
+   "path": "platform/cloudflare-reference/scripts/review_gate.py",
+   "sha256": "03aafb028d538b06c4341bf8cf2a692a3c6d1f36e34e0e0b376f407c6117a246",
+   "commit": "12203cdf0d59",
+   "reason": "same match, as seen by the in-repo audit of this repo",
+   "reviewed": "2026-11-15"
+  }
+ ],
+ "runbook": "docs/ops/PUBLICATION-RUNBOOK.md"
 }

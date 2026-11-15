@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-25",
+  "title": "OL-20261115-25: Required licence files missing in five repos",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** daily lane sweep and any change to doctrine/publication.json\n**Done check:** grep:ops/publication/ledger.jsonl::\"seed\": \"clean\"\n**Status:** open\n\nMeasured 2026-11-15 by `publication --audit --org`: .github lacks LICENSE, NOTICE, COMMERCIAL-TERMS.md, CITATION.cff; license lacks NOTICE, CITATION.cff, SECURITY.md; spec lacks LICENSE, SECURITY.md; seed and ops lack all five. Each repo is refused until its files are present (copies from the license repo, text unchanged). Default in effect: those repos are not flipped.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

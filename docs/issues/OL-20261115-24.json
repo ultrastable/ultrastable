@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-24",
+  "title": "OL-20261115-24: Actions run logs are an unmeasured publication surface",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** daily lane sweep and any change to doctrine/publication.json\n**Done check:** nogrep:doctrine/publication.json::actions-run-logs\n**Status:** open\n\nRun logs of workers, license, spec, seed and ops become public when the repo does. `publication --audit --org` does not read them; the policy lists them under `unmeasured_surfaces`. Close by adding a log scan (or a recorded deletion of logs older than the flip) to foundation/publication.py and removing the entry.",
+  "labels": [
+    "role:portfolio-manager",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
