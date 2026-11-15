@@ -1,7 +1,7 @@
 {
   "id": "Q-TICK-DEPLOY",
   "title": "Q-TICK-DEPLOY: deploy ultrastable-tick with the AI binding from a workflow",
-  "body": "**Owner:** operations\n**Trigger:** every push to main touching seed/worker\n**Done check:** grep:.github/workflows/deploy-tick.yml::deploy\n**Status:** open\n\nThe tick worker binds only D1 and no workflow deploys it. Add a deploy workflow (built-in token route plus a cloud-session route), bind AI, probe the live route. Filed at thread close; the executor works it in driver order.",
+  "body": "**Owner:** operations\n**Trigger:** every push to main touching seed/worker\n**Done check:** grep:.github/workflows/deploy-tick.yml::deploy\n**Status:** closed\n\nThe tick worker binds only D1 and no workflow deploys it. Add a deploy workflow (built-in token route plus a cloud-session route), bind AI, probe the live route. Filed at thread close; the executor works it in driver order.\n\n**Evidence:** superseded by DEPLOY-ALL-1: .github/workflows/deploy-workers.yml deploys ultrastable-tick on every push to main touching seed/worker/** (and by lane dispatch), doctrine/topology.json binds AI on that worker, and ops/deploys.jsonl records a live-verified tick deploy at 2026-11-15T18:34:58Z (live_matches_commit true). Pull request #404 closed unmerged: it added a stub entry point and a wrangler.toml that would have replaced the real tick Worker. Probe: grep:.github/workflows/deploy-workers.yml::seed/worker\n",
   "labels": [
     "role:operations",
     "repair"
