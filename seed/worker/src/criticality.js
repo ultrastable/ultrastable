@@ -2,6 +2,8 @@
 // over a rolling window. Thresholds come from autonomy/criticality.json, never from this file. A tick may not finish idle: if the queue is empty,
 // k_eff is under k_min, or nothing was dispatched, the step originates the highest-value item at the head of the queue.
 
+import { controlStep } from './critloop.js';
+
 async function all(db, sql, ...args) { return (await db.prepare(sql).bind(...args).all()).results || []; }
 async function first(db, sql, ...args) { return (await db.prepare(sql).bind(...args).first()) || null; }
 const iso = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
@@ -145,9 +147,10 @@ export async function criticalityStep(db, ctx, t, ensureItem) {
   const ign = await deriveIgnitionGaps(db, ctx.nowIso);
   const snap = { ...m, emitted_successors: emitted, queue_open: queued.n, idle, reasons, originated_now: origin, ...ign,
     self_sustaining: m.k_eff >= t.k_min && ign.open_ignition_gaps === 0 };
+  snap.control = await controlStep(db, ctx, t, snap, ensureItem); // CRITICALITY-LOOP-1: act on the measurement, grade the last action, beat
   ctx.criticality = snap;
   await db.prepare(`INSERT INTO org (key, value) VALUES ('criticality', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(JSON.stringify(snap)).run();
-  ctx.notes.push(`k_eff ${m.k_eff}${m.guard.tripped ? ' (guard: deploy rise not credited)' : ''}; open_ignition_gaps ${ign.open_ignition_gaps}${origin ? `; originated ${origin.id}` : ''}`);
+  ctx.notes.push(`k_eff ${m.k_eff}${m.guard.tripped ? ' (guard: deploy rise not credited)' : ''}; open_ignition_gaps ${ign.open_ignition_gaps}${origin ? `; originated ${origin.id}` : ''}${snap.control.action ? `; lever ${snap.control.action.from} -> ${snap.control.action.to} (${snap.control.action.reason})` : ''}${snap.control.stalled ? '; stalled' : ''}`);
   return snap;
 }
 

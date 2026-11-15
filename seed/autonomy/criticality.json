@@ -64,5 +64,33 @@
     "id_prefix": "NEXT-",
     "title": "Successor of {id}: name the next improvement this unlocks, file it with an owner, a done check and a closing probe.",
     "doc": "Neutron emission: every closed item emits one successor while k_eff <= k_max. Above k_max the control rod drops: no successors, so the reaction cannot run away on filing noise."
+  },
+  "control": {
+    "doc": "CRITICALITY-LOOP-1: the controller that acts on k_eff (worker/src/critloop.js). After subcritical_ticks beats under k_min the dispatch lever moves to raise-only: each role takes an item that raises k_eff first (these prefixes and kinds) and falls back to its full queue. The move carries the prediction 'k_eff > k at the move within prediction_hours h'; a miss reverts the lever, files CRIT-LEVER-<day> and blocks a retry for cooldown_hours. No rise in stall_ticks beats files CRIT-STALL-<day>. One criticality_history row per tick is the loop's clock (beat_interval_s).",
+    "subcritical_ticks": 3,
+    "prediction_hours": 24,
+    "cooldown_hours": 24,
+    "stall_ticks": 144,
+    "history_keep_days": 30,
+    "beat_interval_s": 600,
+    "owner_role": "operations",
+    "raises_id_prefixes": [
+      "ORIGIN-",
+      "BREACH-",
+      "TICKFAIL-",
+      "CRIT-",
+      "Q-CRIT",
+      "Q-COST",
+      "Q-DEPLOY",
+      "Q-DOER",
+      "Q-METRIC",
+      "Q-EXEC",
+      "Q-SELF",
+      "EXEC-",
+      "HANDOFF-"
+    ],
+    "raises_kinds": [
+      "fix"
+    ]
   }
 }

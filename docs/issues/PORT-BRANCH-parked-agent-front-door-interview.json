@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-agent-front-door-interview",
+  "title": "PORT-BRANCH-parked-agent-front-door-interview: carry parked/agent/front-door-interview onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/front-door-interview` at 1ed11d0a0b holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, agents/PROJECT-INSTRUCTIONS.md, agents/roles/customer-success.md, agents/roles/legal-ip-manager.md, agents/roles/marketing-manager.md, agents/roles/org-designer.md)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/front-door-interview\n**Status:** open\n\nPort the change by hand onto current main (it is 12 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/front-door-interview",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

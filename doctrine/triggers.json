@@ -133,6 +133,14 @@
     "37 6 * * 1"
    ]
   },
+  "branchsweep.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 5 * * *"
+   ]
+  },
   "cf-account.yml": {
    "events": [
     "workflow_dispatch"
