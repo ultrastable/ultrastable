@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-2",
+  "title": "OL-20261115-2: DRAIN-1: PRs 333, 343, 359, 305 still open (session_0156nqDuVY71gtRtDvjPaAgK)",
+  "body": "**Owner:** executor\n**Trigger:** lane tick, driver order\n**Done check:** file:docs/issues/DRAIN-1.json\n**Status:** open\n\nMerged 338, 345, 314, 375 via scripts/resolve_generated.py plus hand merge of site/worker.js. Left: 333 and 343 (workflows, AGENTS, worker.js), 359 (criticality.py overlaps ignition), 305 (unrelated history, criticality already on main: supersede). Hosted Actions fail in 2-4 s on every run incl. main; local checks stood in.",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
