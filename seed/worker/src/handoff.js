@@ -188,6 +188,7 @@ export function topologyBindings(topo, id) {
   for (const [bn, t] of Object.entries(b.kv || {})) if (live('kv', t) && st('kv', t).id) out.push({ type: 'kv_namespace', name: bn, namespace_id: st('kv', t).id });
   for (const bn of b.ai || []) out.push({ type: 'ai', name: bn });
   for (const [bn, t] of Object.entries(b.services || {})) if (((topo.workers || []).find(x => x.id === t) || {}).state === 'live') out.push({ type: 'service', name: bn, service: t });
+  for (const bn of b.send_email || []) out.push({ type: 'send_email', name: bn });  // the dashboard's sign-in mail; dropping it on deploy broke sign-in
   for (const [bn, v] of Object.entries(b.vars || {})) out.push({ type: 'plain_text', name: bn, text: String(v) });
   return { worker: w, bindings: out };
 }

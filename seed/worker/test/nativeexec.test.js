@@ -28,7 +28,7 @@ test('guard refuses protected, traversal, oversized and too many files', () => {
   assert.throws(() => guard([{ path: '../x', content: '' }]), /unsafe/);
   assert.throws(() => guard([{ path: 'a', content: 'x'.repeat(70000) }]), /oversized/);
   assert.throws(() => guard([1, 2, 3, 4].map(i => ({ path: 'f' + i, content: '' }))), /too many/);
-  assert.equal(guard([{ path: 'src/a.js', content: 'ok' }]).length, 1);
+    assert.equal(guard([{ path: 'src/a.js', content: 'ok' }]).length, 1);
 });
 test('opens a branch, writes the file and opens a PR for the top item', async () => {
   const { f, log } = fakeGh();
@@ -112,7 +112,7 @@ test('paths and deploy targets are read from the item text and the change', () =
 test('NATIVE-SUBSTANCE-1: a change that only adds documents or subtask records is refused', async () => {
   const { substanceGuard } = await import('../src/nativeexec.js');
   const fresh = () => true, old = () => false;
-  assert.throws(() => substanceGuard([{ path: 'specs/agent-scoreboard.md' }], fresh), /narration/);
+  assert.throws(() => substanceGuard([{ path: 'specs/example-narration.md' }], fresh), /narration/);
   assert.throws(() => substanceGuard([{ path: 'backlog/subtasks/X.subtask.json' }, { path: 'docs/x.md' }], fresh), /narration/);
   assert.doesNotThrow(() => substanceGuard([{ path: 'docs/x.md' }], old));                                   // editing a consumed document is a change
   assert.doesNotThrow(() => substanceGuard([{ path: 'docs/x.md' }, { path: 'site/worker.js' }], fresh));     // a document beside code is fine
