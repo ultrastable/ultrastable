@@ -1,0 +1,13 @@
+{
+  "id": "Q-CRIT-DISPATCH-YIELD",
+  "title": "Q-CRIT-DISPATCH-YIELD: k_eff is 0.068 because 556 dispatches in 14 days produced 18 verified deploys; raise the yield of a dispatch",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** ignition blocker is critical (GET /api/ignition, blocker.to_close)\n**Done check:** grep:seed/worker/src/tick.js::dispatch_yield_14d\n**Status:** open\n\nMeasured on the live org database 2026-11-15 19:00 UTC: k_eff = (18 verified deploys + 20 originated, capped) / (556 dispatches + 3 owner touches) = 0.068 against k_min 1. The tick files an idle error when it dispatches nothing, so it dispatches every slot (about 2000 in a 14 day window at one unit each), and 126 of 316 items sit parked as blocked. At this spend the window needs about 520 more verified deploys, or spend plus touches at or under 38. Build the builtin metric dispatch_yield_14d (verified deploys per dispatch over the window) in tick.js METRICS with a liveness threshold, so the yield is measured and breaches file their own item. The lever is yield per dispatch: stop dispatching items the doer can only park (126 blocked), give the doer items that end in a deploy, and count a dispatch that ends parked as waste to cut, not as work. Do not change k_min or dispatch_spend_units to make the reading pass.\n\nsize: M\n\n**Closing probe:** GET https://ultrastable.io/live shows ignition.blocker.to_close.verified_deploys_missing falling tick over tick, then ignition.critical true",
+  "labels": [
+    "role:portfolio-manager",
+    "agent-ready",
+    "raises-deploys",
+    "cuts-cost"
+  ],
+  "milestone": "Now",
+  "workstream": "Autonomy"
+}
