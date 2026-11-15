@@ -1067,6 +1067,14 @@
    "probe": "grep:seed/worker/src/lane.js::worker-merge-evidence"
   },
   {
+   "id": "lesson-2026-11-15-lane-dashboard-1-lane-rebuilds-the-dashboard-with-adoption-i",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "LANE-DASHBOARD-1 lane rebuilds the dashboard with adoption items",
+   "body": "The lane committed docs/issues adoption items to main without rebuilding site/dashboard-data.js, so main and every open PR failed the stale-dashboard check. The lane now rebuilds the dashboard in the same commit.",
+   "probe": "grep:scripts/lane.sh::LANE-DASHBOARD-1"
+  },
+  {
    "id": "decision-2026-11-15-port-exec-1-port-items-close-through-the-normal-executor-pip",
    "kind": "decision",
    "date": "2026-11-15",
