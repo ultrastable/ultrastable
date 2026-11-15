@@ -8,8 +8,24 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
+- 2026-11-15: Q-GROW-second-tenant-deploying: second-tenant instance manifest (#408)
+- 2026-11-15: Carry claude/second-tenant-2a21ae onto main
+- 2026-11-15: Carry claude/wba-outbound-directory-cache onto main
+- 2026-11-15: Q-TICK-DEPLOY closed as superseded; GIT-IN-CLOUDFLARE-1 requires measured evidence (#412)
+- 2026-11-15: PORT-EXEC-1: PORT items close on their adapter verify command (replaces #402) (#411)
+- 2026-11-15: LANE-DASHBOARD-1: main green again; lane rebuilds the dashboard with adoption items (#410)
+- 2026-11-15: ZERO-MINUTES-1: Worker records its own merges (done-check evidence) (#409)
+- 2026-11-15: WBA-OUTBOUND-1: give the write-back lesson a real probe; rebuild dashboard
+- 2026-11-15: Q-SYS-BOOT-REHEARSAL: SYS-6: bootstrap rehearsal from an empty repository to one unattended merged change (#405)
+- 2026-11-15: Regenerate site/dashboard-data.js
+- 2026-11-15: Rebuild dashboard data
+- 2026-11-15: Write-back record for PR 407
+- 2026-11-15: Q-GROW-second-tenant-deploying: write-back decision record
+- 2026-11-15: VERIFY-RETRY-1: retry live probe before rollback, recover false rollbacks (#406)
+- 2026-11-15: Q-GROW-second-tenant-deploying: real second-tenant instance manifest, README and test
+- 2026-11-15: WBA-OUTBOUND-1: sign outbound agent fetches and cache peer key directories
 - 2026-11-14: AGENT-READY-2: ultrastable.io serves Markdown for Agents (Accept: text/markdown), named AI-bot rules in robots.txt and WebMCP tools (site/readiness.js); OAuth discovery and commerce protocols declined with reasons in doctrine/agent-standards.json; WEB-BOT-AUTH-1 and Q-AGENT-OAUTH-1 filed. PR 343 overlaps PR 340: RECONCILE-343 keeps its role-work, SOP and handoffs.
 - 2026-11-14: CODE-AGENT-SOP-1 (owner): code agents produce and hand off, the server owns checks, merge, deploy and close-out. SOP at GET /api/v1/sop, handoff at POST /api/v1/handoffs (receipt HANDOFF-<repo>-<pr>, closed by the pr_merged probe). Server gaps that still force babysitting: SERVER-CHECKS-1, SERVER-DEPLOY-1.
 - 2026-11-15: PR 343 reconciled (RECONCILE-343): its tick-Worker control plane and work.js were dropped as superseded by site/controlplane.js (PR 340) and DOER-1 (seed/worker/src/doer.js); its issues CONTROL-PLANE-2, ROLE-WORK-2, OPS-DASH-2, SERVER-CHECKS-1, SERVER-DEPLOY-1 and OL-20261114-3 landed. seed/worker/src/codeagent.js regained ADAPTERS, invoke, parseJson, runCodeAgent and probe, which PR 352 dropped while doer.js, executor.js, nativeexec.js, pr-executor.js and index.js still import them (tick Worker failed to load).
