@@ -5,7 +5,7 @@ Usage: python3 scripts/self_dashboard.py [--out demos/self]
 Writes snapshot.json and index.html (one self-contained page, no network, no secrets). Every number is computed from a file or from
 `git log` in this repository, so it is exactly as true as the repo; a source that cannot be read is listed under `problems`, never
 filled in. The QNFO fleet dashboard is the model for the owner-side view (dashboard/); this one shows the same loops running on
-Ultrastable's own work, which is the self-referential demo. Private until the owner publishes.
+Ultrastable's own work, which is the self-referential demo.
 """
 import argparse, collections, datetime, html, json, pathlib, re, subprocess, sys
 

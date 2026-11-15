@@ -50,7 +50,6 @@
   {"path": ".selfhost", "reason": "scratch databases written by the selfhost run, never committed"},
   {"path": "__pycache__", "reason": "bytecode caches, never committed"},
   {"path": "ip", "reason": "archived patent drafts kept verbatim as a record; nothing runs from them"},
-  {"path": "qnfo-platform-thread", "reason": "a frozen import of another project's thread, kept byte-identical for its verifier"},
   {"path": "repo-backups", "reason": "backup bundles of other repositories, not this system's code"}
  ],
  "exclude": [

@@ -1,7 +1,7 @@
 {
   "id": "ROADMAP-AGENT-MCP-STATELESS",
   "title": "ROADMAP-1: QNFO.INFRA #MCP-STATELESS: MCP 2026-07-28 stateless revision on the site worker, plus agent-readiness as a tracked metric",
-  "body": "code-task: repo=ultrastable path=site/agentic.js\ncode-anchor: async function mcp(request, env)\n\n**Owner:** product-manager\n**Program:** QNFO.INFRA\n**Metric it should move:** reliability\n**Cost rule:** adds no worker, cron or paid model call (fleet_budget cap is breached; cost 426.89 vs 300).\n**Done check:** merged and verified live (VERIFY-LIVE-1) with a probe the author did not write\n**Status:** open\n\nThe site /mcp negotiates only 2025-06-18; the seed worker already speaks 2026-07-28 (server/discover, no session ids). Port it, and track the isitagentready.com score as a metric with a breach trigger so interoperability regressions page the loop. Prediction: score up, zero client-version failures.",
+  "body": "code-task: repo=ultrastable path=site/agentic.js\ncode-anchor: async function mcp(request, env)\n\n**Owner:** product-manager\n**Program:** QNFO.INFRA\n**Metric it should move:** reliability\n**Cost rule:** adds no worker, cron or paid model call (fleet_budget cap is breached; cost 426.89 vs 300).\n**Done check:** grep:site/agentic.js::2026-07-28 ; merged and verified live (VERIFY-LIVE-1) with a probe the author did not write\n**Status:** open\n\nThe site /mcp negotiates only 2025-06-18; the seed worker already speaks 2026-07-28 (server/discover, no session ids). Port it, and track the isitagentready.com score as a metric with a breach trigger so interoperability regressions page the loop. Prediction: score up, zero client-version failures.",
   "labels": [
     "role:product-manager",
     "roadmap",

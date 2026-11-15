@@ -1,5 +1,6 @@
 import shutil, sys, tempfile, unittest
 from pathlib import Path
+import _repo  # noqa: E402  (tests/foundation is on sys.path under discover)
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from foundation import metasignal as m
@@ -14,7 +15,7 @@ class MetaSignal(unittest.TestCase):
         self.assertTrue({"frustration", "idea"} <= kinds)
 
     def test_ingest_files_issue_once_and_dedupes(self):
-        d = Path(tempfile.mkdtemp())
+        d = _repo.scratch()
         self.addCleanup(shutil.rmtree, d, True)
         cfg = m.load()
         rows = m.scan("how many times do I have to say it\nthat is perfect", "dictation", cfg, "2026-11-14T00:00:00+00:00")
@@ -26,7 +27,7 @@ class MetaSignal(unittest.TestCase):
         self.assertEqual(len((d / cfg["sink"]).read_text().splitlines()), 2)
 
     def test_mic_events_file_after_threshold(self):
-        d = Path(tempfile.mkdtemp())
+        d = _repo.scratch()
         self.addCleanup(shutil.rmtree, d, True)
         cfg = m.load()
         rows = [r for i in range(3) for r in m.mic_event("not-allowed", cfg, f"2026-11-14T00:00:0{i}+00:00")]

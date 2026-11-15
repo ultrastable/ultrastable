@@ -36,7 +36,7 @@ describe('cost probe', () => {
   it('discovers resources and reports drift', async () => {
     const dir = mkdtempSync(join(tmpdir(), 'cp-'));
     writeFileSync(join(dir, 'topology.json'), JSON.stringify({ workers: ['known-worker'], d1: [], kv: [], r2: [] }));
-    const data = { viewer: { accounts: [{ workers: { workers: [{ id: 'known-worker' }, { id: 'stray-worker' }], d1Databases: [{ databaseId: 'db1', name: 'd' }], kvNamespaces: [{ id: 'kv1', title: 'k' }], r2Buckets: [{ name: 'b1' }] } }] } };
+    const data = { viewer: { accounts: [{ workers: [{ id: 'known-worker' }, { id: 'stray-worker' }], d1Databases: [{ databaseId: 'db1', name: 'd' }], kvNamespaces: [{ id: 'kv1', title: 'k' }], r2Buckets: [{ name: 'b1' }] }] } };
     const { found, items } = await discoverResources({ fetchFn: gqlFetchFactory(data), token: 't', account: 'a', topologyPath: join(dir, 'topology.json') });
     assert.deepEqual(found.workers, ['known-worker', 'stray-worker']);
     assert.ok(items.some((i) => i.kind === 'workers' && i.id === 'stray-worker'));

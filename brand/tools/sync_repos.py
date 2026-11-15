@@ -98,7 +98,7 @@ Other repositories: {nav(cfg, r['name'])}.
 def security(cfg, pos, r):
     return f"""# Security policy for {cfg['org']}/{r['name']}
 
-The source is open. If you found a vulnerability in anything Ultrastable runs ({cfg['site']} or a pilot deployment), email **{cfg['security_contact']}** with the subject `SECURITY`. Include what you saw, where, and how to reproduce it.
+If you found a vulnerability in anything Ultrastable runs ({cfg['site']} or a pilot deployment), email **{cfg['security_contact']}** with the subject `SECURITY`. Include what you saw, where, and how to reproduce it.
 
 - We acknowledge within two working days.
 - Give us a reasonable window to fix before disclosing.

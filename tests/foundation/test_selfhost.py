@@ -8,7 +8,7 @@ from foundation import doctrine, selfhost  # noqa: E402
 import sys as _sys; _sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent))
 from _repo import scratch  # noqa: E402  (scratch directories are removed when the run ends)
 
-SKIP = shutil.ignore_patterns(".git", "node_modules", "kit", "ip", "artifacts", "research", ".selfhost", "__pycache__", "qnfo-platform-thread")
+SKIP = shutil.ignore_patterns(".git", "node_modules", "kit", "ip", "artifacts", "research", ".selfhost", "__pycache__")
 
 
 def copy_repo():

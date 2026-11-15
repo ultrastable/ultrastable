@@ -1,6 +1,7 @@
 # BLINDSPOT-1: the system knows what the owner cannot know to ask for.
 import json, shutil, tempfile, unittest, datetime as dt
 from pathlib import Path
+import _repo  # noqa: E402  (tests/foundation is on sys.path under discover)
 from foundation import blindspots
 
 REPO = Path(__file__).resolve().parents[2]
@@ -8,7 +9,7 @@ REPO = Path(__file__).resolve().parents[2]
 
 class Blindspots(unittest.TestCase):
     def setUp(self):
-        self.tmp = Path(tempfile.mkdtemp())
+        self.tmp = _repo.scratch()
         for p in ["doctrine/blindspots.json", "ops/blindspots", "site/legalpages.js", "site/worker.js", "scripts/outreach_intro.py", "outreach/intro-profile.json", "doctrine/cost.json", "docs/issues"]:
             s, d = REPO / p, self.tmp / p
             d.parent.mkdir(parents=True, exist_ok=True)

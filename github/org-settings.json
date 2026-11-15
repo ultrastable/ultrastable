@@ -12,7 +12,7 @@
   },
   "repos": {
     "ultrastable/workers": {
-      "description": "Proprietary product core (private until counsel review)",
+      "description": "Ultrastable code: Worker core, console, bootstrapper and adapters (source-available, USL-1.0)",
       "homepage": "https://ultrastable.io",
       "topics": [
         "autonomous-agents"
@@ -41,7 +41,7 @@
       }
     },
     "ultrastable/spec": {
-      "description": "Specification (private until counsel review)",
+      "description": "Ultrastable specifications and documentation (source-available, USL-1.0)",
       "homepage": "https://ultrastable.io",
       "topics": [
         "autonomous-agents"
@@ -70,7 +70,7 @@
       }
     },
     "ultrastable/license": {
-      "description": "Licence text (private until counsel review)",
+      "description": "The Ultrastable License (USL-1.0) and commercial terms",
       "homepage": "https://ultrastable.io",
       "topics": [
         "autonomous-agents"
@@ -128,7 +128,7 @@
       }
     },
     "ultrastable/ops": {
-      "description": "Operations records (private)",
+      "description": "Operations records",
       "homepage": "https://ultrastable.io",
       "topics": [
         "autonomous-agents"
@@ -186,6 +186,35 @@
       "security": {
         "vulnerability_alerts": true,
         "automated_security_fixes": true,
+        "secret_scanning": "enabled",
+        "secret_scanning_push_protection": "enabled"
+      },
+      "branch_protection": {
+        "branch": "main",
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "required_linear_history": true
+      }
+    },
+    "ultrastable/seed": {
+      "description": "Seed kernel for new organizations",
+      "homepage": "https://ultrastable.io",
+      "topics": [
+        "autonomous-agents"
+      ],
+      "settings": {
+        "has_issues": true,
+        "has_wiki": false,
+        "delete_branch_on_merge": true,
+        "allow_squash_merge": true,
+        "allow_merge_commit": false,
+        "allow_rebase_merge": false,
+        "allow_auto_merge": true,
+        "allow_update_branch": true
+      },
+      "security": {
+        "vulnerability_alerts": true,
+        "automated_security_fixes": false,
         "secret_scanning": "enabled",
         "secret_scanning_push_protection": "enabled"
       },

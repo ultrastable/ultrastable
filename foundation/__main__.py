@@ -114,6 +114,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["clock"]:
         from . import clock
         return clock.main(_av[1:])
+    if _av[:1] == ["drainwatch"]:
+        from . import drainwatch
+        return drainwatch.main(_av[1:])
+    if _av[:1] == ["checksrun"]:
+        from . import checksrun
+        return checksrun.main(_av[1:])
     if _av[:1] == ["platformaudit"]:
         from . import platformaudit
         return platformaudit.main(_av[1:])

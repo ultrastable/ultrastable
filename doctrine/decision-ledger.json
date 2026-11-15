@@ -936,7 +936,7 @@
    "kind": "lesson",
    "date": "2026-11-14",
    "title": "CLOSELOOP-1: every session's tail is a server record, not a chat promise",
-   "body": "A session's open tail (PR 371 and 372 awaiting the handoff closer, three follow-ups) lives in the handoff table and docs/issues with closing probes; nothing depends on a local agent polling. Session archive is the only local step and carries no work.",
+   "body": "A session's open tail (PR 371 and 372 awaiting the handoff closer, three follow-ups) lives in the handoff table and docs/issues with closing probes; nothing depends on a local agent polling (server-side only). Session archive is the only local step and carries no work.",
    "probe": "grep:docs/issues/ROADMAP-AGENT-PORTABILITY-RESTORE.json::Done check"
   },
   {
@@ -1008,11 +1008,27 @@
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   },
   {
+   "id": "lesson-2026-11-15-platform-settings-are-measured-not-only-applied",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "Platform settings are measured, not only applied",
+   "body": "foundation/platformaudit.py probes live GitHub repo settings and Cloudflare accounts against github/org-settings.json and the topology, weekly via org-settings.yml. Found 2026-11-15: auto-merge off in 6 repos; .github repo allowed merge commits and was unprotected; topology still names the old Cloudflare account while the live system runs in the ultrastable account. Session proxies refuse settings writes, so apply runs server-side.",
+   "probe": "file:foundation/platformaudit.py"
+  },
+  {
+   "id": "lesson-2026-11-15-worker-executor-writes-whole-files-guard-shrink-and-finished",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "Worker executor writes whole files; guard shrink and finished items",
+   "body": "The Workers AI executor answers with full file contents. It dropped codeagent.js exports (#352) and cut doctrine/market.json to four keys three times (#348, #379, #389) on an item whose file probe already passed, and the lane merged them because hosted CI could not start (billing), leaving main red and every PR blocked. NATIVE-SHRINK-GUARD-1 refuses writes that lose half a file, a JSON key or a JS export, and skips items whose file: probe passes; checksrun is the session route for checks.",
+   "probe": "grep:seed/worker/src/nativeexec.js::export function shrinkGuard"
+  },
+  {
    "id": "decision-2026-11-15-no-patent-1-wording-sweep-business-brand-agents-outreach",
    "kind": "decision",
    "date": "2026-11-15",
    "title": "NO-PATENT-1 wording sweep: business, brand, agents, outreach",
-   "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/ (regenerated cards and repo blocks), agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship; the project is open and the Ultrastable License governs use.",
+   "body": "Removed patent, provisional filing, counsel, private-repo and disclosure-gate wording from business/, brand/, agents/ roles and outreach copy; legal-ip-manager role is now licence and compliance stewardship.",
    "probe": "grep:business/plan/README.md::Public by default",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   }

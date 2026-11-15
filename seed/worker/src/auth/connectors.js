@@ -30,13 +30,13 @@ const rand = n => [...crypto.getRandomValues(new Uint8Array(n))].map(b => b.toSt
 const b64u = u8 => btoa(String.fromCharCode(...u8)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 export const pkce = async () => { const verifier = b64u(crypto.getRandomValues(new Uint8Array(32))); return { verifier, challenge: b64u(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)))) }; };
 
-// Outbound fetches only to public https hosts (SSRF guard); tests may pass allowInsecure for a fake provider on localhost.
+// Outbound fetches only to public https hosts (SSRF guard); tests may pass allowInsecure for a fake provider on localhost. // server-side only: SSRF guard, loopback is rejected, never a host
 export function safeUrl(u, allowInsecure = false) {
   let x; try { x = new URL(u); } catch (_) { return null; }
   if (allowInsecure) return x;
   const h = x.hostname;
   if (x.protocol !== 'https:' || x.username || x.password) return null;
-  if (h === 'localhost' || h.endsWith('.localhost') || h.endsWith('.local') || h.endsWith('.internal') || h.includes(':') || /^\d+\.\d+\.\d+\.\d+$/.test(h) || !h.includes('.')) return null;
+  if (h === 'localhost' || h.endsWith('.localhost') || h.endsWith('.local') || h.endsWith('.internal') || h.includes(':') || /^\d+\.\d+\.\d+\.\d+$/.test(h) || !h.includes('.')) return null; // server-side only: SSRF guard, loopback is rejected, never a host
   return x;
 }
 

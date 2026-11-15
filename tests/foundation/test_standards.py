@@ -63,11 +63,13 @@ class Standards(unittest.TestCase):
         td = copy()
         def f(d):
             next(e for e in d["entries"] if e["id"] == "otel-genai").pop("acl")
-            next(e for e in d["entries"] if e["id"] == "web-bot-auth").pop("tracked_by")
+            planned.append(next(e for e in d["entries"] if e.get("support") == "planned" and e.get("tracked_by")))
+            planned[-1].pop("tracked_by")
+        planned = []
         edit(td, standards.REG, f)
         bad = standards.check(td)
         self.assertTrue(any("otel-genai" in b and "anti-corruption" in b for b in bad))
-        self.assertTrue(any("web-bot-auth" in b and "tracked_by" in b for b in bad))
+        self.assertTrue(any(planned[0]["id"] in b and "tracked_by" in b for b in bad))
 
     def test_stale_register_fails(self):
         import datetime as dt

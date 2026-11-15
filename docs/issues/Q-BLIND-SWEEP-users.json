@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-SWEEP-users",
   "title": "Q-BLIND-SWEEP-users: answer the users sweep",
-  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** `python3 -m foundation blindspots --answer users --text <answer with evidence>` recorded\n**Status:** open\n\nQuestion: What would a user in their first minute not know to ask, and does the interview supply it?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** grep:ops/blindspots/answers.jsonl::\"domain\": \"users\" ; recorded with `python3 -m foundation blindspots --answer users --text <answer with evidence>`\n**Status:** open\n\nQuestion: What would a user in their first minute not know to ask, and does the interview supply it?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
   "labels": [
     "role:product-manager",
     "blindspot"

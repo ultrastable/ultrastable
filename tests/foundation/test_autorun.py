@@ -49,7 +49,8 @@ class Autorun(unittest.TestCase):
         cards = con.execute("SELECT default_in_effect, closing_probe FROM gate_cards").fetchall()
         self.assertTrue(cards)
         for d, p in cards:
-            self.assertTrue(d and p.startswith("item_done:"))
+            # per-item cards (item_done:<id>) or the consolidated DOER-1 card (owner_items:0, evaluated in seed/worker/src/tick.js)
+            self.assertTrue(d and (p.startswith("item_done:") or p == "owner_items:0"))
 
     def test_predictions_are_logged_and_scored_next_tick(self):
         scored = [t["prediction_scored"] for t in self.log["ticks"] if t.get("prediction_scored")]

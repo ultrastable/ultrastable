@@ -84,18 +84,26 @@ export async function measureDay({ fetchFn = fetch, token, account, date, databa
 // Discover Workers, D1, KV, R2 and diff against doctrine/topology.json.
 export async function discoverResources({ fetchFn = fetch, token, account, topologyPath = 'doctrine/topology.json' }) {
   const data = await gql(fetchFn, token, account, WORKERS_LIST, {});
-  // WORKERS_LIST nests every resource list under accounts[0].workers.
-  const acct = (data.viewer.accounts[0] || {}).workers || {};
+  const acct = data.viewer.accounts[0];
   const found = {
-    workers: (acct.workers || []).map((w) => w.id),
+    workers: (Array.isArray(acct.workers) ? acct.workers : (acct.workers && acct.workers.workers) || []).map((w) => w.id),
     d1: (acct.d1Databases || []).map((d) => d.databaseId),
     kv: (acct.kvNamespaces || []).map((k) => k.id),
     r2: (acct.r2Buckets || []).map((b) => b.name)
   };
   const topo = loadJson(topologyPath, { workers: [], d1: [], kv: [], r2: [] });
+  // Accept the real doctrine/topology.json shape (workers[].id, stores.{d1,kv}[].id, stores.r2[].name) and a flat {kind: [ids]} shape.
+  const ids = (xs, k) => (xs || []).map((x) => (typeof x === 'string' ? x : x[k] || x.id || x.name));
+  const st = topo.stores || {};
+  const declaredBy = {
+    workers: ids(topo.workers, 'id'),
+    d1: ids(st.d1 || topo.d1, 'id'),
+    kv: ids(st.kv || topo.kv, 'id'),
+    r2: ids(st.r2 || topo.r2, 'name')
+  };
   const drift = {};
   for (const kind of Object.keys(found)) {
-    const declared = new Set(topo[kind] || []);
+    const declared = new Set(declaredBy[kind] || []);
     drift[kind] = found[kind].filter((id) => !declared.has(id));
   }
   const items = [];

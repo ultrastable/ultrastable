@@ -260,6 +260,13 @@
     "41 5 * * *"
    ]
   },
+  "mcp-registry.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": []
+  },
   "org-manage.yml": {
    "events": [
     "workflow_dispatch"
@@ -278,7 +285,9 @@
    "events": [
     "workflow_dispatch"
    ],
-   "crons": []
+   "crons": [
+    "17 5 * * 1"
+   ]
   },
   "outreach.yml": {
    "events": [
