@@ -41,6 +41,21 @@ export const DEFAULT_CADENCE = { watchdog: 60 };
 export const HUNG_MS = 300e3;
 const BAD = ['late', 'stopped', 'failing', 'hung', 'never'];
 
+// IDLE-IS-NOT-OK-1: a loop that returned without throwing has not thereby done its work. Its own result says so: { status: 'error ...' },
+// { status: 'no-token' } (it had no credential, so it did nothing), { status: 'errors' } with nothing else done, { ok: false } and { error } are
+// failures (a run with some errors and some work done stays good: its errors are in the detail); a list of routes or samples (the
+// executor's dispatchers, the cost samples) fails only when every entry failed. Returns the reason, or null when the result is good. Without
+// this a loop with no credential beats ok in every slot and the ladder reads `looping` over loops that do nothing.
+export function failed(out) {
+  const empty = x => Object.entries(x).every(([k, v]) => k === 'errors' || !Array.isArray(v) || v.length === 0);  // errors, and nothing else done
+  const idle = x => typeof x.status === 'string' && (/^(error\b|no-token)/.test(x.status) || (x.status === 'errors' && empty(x)));
+  const one = x => Boolean(x) && typeof x === 'object' && !Array.isArray(x) && (x.ok === false || Boolean(x.error) || idle(x));
+  const bad = Array.isArray(out) ? (out.length && out.every(one) ? out[0] : null) : one(out) ? out : null;
+  if (!bad) return null;
+  if (idle(bad)) return String(bad.status === 'errors' ? 'errors: ' + [].concat(bad.errors || [])[0] : bad.status).slice(0, 300);
+  return String(bad.error || bad.detail || 'ok=false').slice(0, 300);
+}
+
 // Runs one loop and leaves the proof. Never throws: the caller's next loop always runs.
 export async function beat(db, loop, fn, { now = Date.now, source = 'cron', everyMin = 10 } = {}) {
   let id = null;
@@ -53,7 +68,8 @@ export async function beat(db, loop, fn, { now = Date.now, source = 'cron', ever
   let out, ok = 1, error = null;
   try {
     out = await fn();
-    if (out && typeof out === 'object' && typeof out.status === 'string' && /^error\b/.test(out.status)) { ok = 0; error = out.status; }
+    const why = failed(out);
+    if (why) { ok = 0; error = why; }
   } catch (e) { ok = 0; error = String((e && e.message) || e); out = { status: 'error ' + error }; console.error('pulse', loop, error); }
   if (id != null) {
     let detail = null;

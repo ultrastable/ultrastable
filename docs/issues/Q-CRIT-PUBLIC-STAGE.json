@@ -1,0 +1,12 @@
+{
+  "id": "Q-CRIT-PUBLIC-STAGE",
+  "title": "Q-CRIT-PUBLIC-STAGE: serve the stage the system reads for itself on ultrastable.io",
+  "body": "**Owner:** operations\n**Trigger:** BOOT-KNOWS-1 merged\n**Done check:** grep:site/worker.js::/api/v1/ignition\n**Status:** open\n\ncode-task: repo=ultrastable/ultrastable path=site/worker.js\ncode-anchor: https://tick.internal/pulse/watch\n\nThe tick reads its own stage (ignition_log; live at 2026-11-15 19:40:16: stage ticking, blocked at looping, k_eff 0.071) but the tick Worker has no public route and GET https://ultrastable.io/api/v1/ignition answers not found. The site Worker already calls the tick through the TICK service binding (/pulse/watch): add GET /api/v1/ignition and a row on /live that return the tick's readIgnition and readPulse through the same binding, with the time of the reading, and answer 503 with code stale_reading when the newest tick is older than two intervals, so a stopped tick cannot show its last stage.\n\nsize: M\n\n**Closing probe:** grep:site/worker.js::/api/v1/ignition",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Autonomy"
+}
