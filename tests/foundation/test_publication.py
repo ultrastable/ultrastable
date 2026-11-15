@@ -3,7 +3,7 @@ import json, unittest
 from pathlib import Path
 from unittest import mock
 from foundation import publication
-from ._repo import ROOT, copy_repo
+from _repo import ROOT, copy_repo
 
 
 class Publication(unittest.TestCase):
