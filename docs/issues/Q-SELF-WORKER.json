@@ -1,0 +1,12 @@
+{
+  "id": "Q-SELF-WORKER",
+  "title": "Q-SELF-WORKER: the tick Worker reports k_self and the regime next to k_eff (SELF-REFERENCE-1 parity)",
+  "body": "**Owner:** operations\n**Trigger:** SELF-REFERENCE-1 merged (deploy rows carry `origin`)\n**Done check:** grep:seed/worker/src/criticality.js::k_self\n**Status:** open\n\ncode-task: repo=ultrastable/ultrastable path=seed/worker/src/criticality.js\ncode-anchor: export function computeKEff\n\nfoundation/criticality.py now computes k_self (verified deploys the system originated on itself: origin executor or self-agent) and the regime (self-sustaining, driven, subcritical). deploy/deploy-workers.mjs writes `origin` on every ops/deploys.jsonl row. Carry `origin` through ingestDeploys (seed/worker/src/selfaudit.js) into the outcome evidence, count self-originated verified deploys in windowFigures, return k_self and regime from computeKEff, show both in /live next to k_eff, and add a worker test that an outside-origin deploy raises k_eff but not k_self.\n\nsize: S\n\n**Closing probe:** grep:seed/worker/src/criticality.js::k_self",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "deploys"
+}

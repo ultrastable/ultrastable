@@ -483,7 +483,8 @@
    "related": [
     "seed",
     "self-hosting",
-    "ignorance"
+    "ignorance",
+    "self-reference"
    ],
    "lineage": [
     {
@@ -514,7 +515,8 @@
    "related": [
     "closed-system",
     "gap-register",
-    "bootstrapping"
+    "bootstrapping",
+    "self-reference"
    ],
    "lineage": [
     {
@@ -560,16 +562,18 @@
    "aliases": [
     "the person who does not know what to ask"
    ],
-   "version": "1.0.0",
-   "definition": "The state of a user who does not know what to ask for, or what is possible. The system treats it as the normal starting condition, not a failure: it interviews, infers direction from the record, proposes and acts, and asks no question the record can answer.",
+   "version": "2.0.0",
+   "definition": "What the user does not know, held by the system as a computed set: unknown = known - told. Known facts come from measured sources (criticality regime, open loops, open gaps); told is an append-only log keyed by a fingerprint of the statement, so a changed fact is unknown again. It is also the starting condition of a user who does not know what to ask for or what is possible: the system interviews, infers direction from the record, proposes and acts, asks no question the record can answer, and leads its report with what the user cannot yet know.",
    "not": "Not a defect of the user and not a reason to hand work back.",
    "tested_by": [
     "grep:agents/AGENTS.md::Do it, do not describe it",
-    "file:seed/bootstrap/cases.json"
+    "file:seed/bootstrap/cases.json",
+    "grep:tests/foundation/test_criticality.py::def test_unknown_is_known_minus_told"
    ],
    "implemented_by": [
     "seed/bootstrap/cases.json",
-    "seed/bootstrap/bootstrap.py"
+    "seed/bootstrap/bootstrap.py",
+    "foundation/ignorance.py"
    ],
    "related": [
     "bootstrapping",
@@ -581,6 +585,12 @@
      "date": "2026-11-11",
      "change": "Defined from the owner's description: a user who does not know what to ask.",
      "source": "doctrine/glossary.json"
+    },
+    {
+     "version": "2.0.0",
+     "date": "2026-11-14",
+     "change": "Ignorance becomes a computed set: what the system knows and the user has not been told",
+     "source": "foundation/ignorance.py"
     }
    ]
   },
@@ -1396,6 +1406,41 @@
      "date": "2026-11-12",
      "change": "Owner: this must all keep ticking like clockwork; a stopped or inaccurate clock is not a working clock.",
      "source": "doctrine/clocks.json"
+    }
+   ]
+  },
+  {
+   "id": "self-reference",
+   "term": "Self-reference",
+   "aliases": [
+    "runs on Ultrastable",
+    "k_self"
+   ],
+   "version": "1.0.0",
+   "definition": "Ultrastable runs on Ultrastable, and that self-reference is what bootstrapping and criticality rest on. Bootstrapping: the bootstrap that boots any system boots Ultrastable from its own repository (the fixed point, foundation.selfhost.verify empty). Criticality: k_self counts only the verified deploys the system originated and executed on itself (its executor or its own server-side code agent). A deploy an outside session drove raises k but never k_self. The regime is self-sustaining when the fixed point holds and k_self >= k_floor, driven when only k reaches the floor, and subcritical below it.",
+   "not": "Not a tagline and not k: a chain reaction kept up by an outside source is driven, not self-sustaining.",
+   "tested_by": [
+    "grep:tests/foundation/test_criticality.py::def test_self_reference_regime",
+    "grep:foundation/criticality.py::def bootstrap_holds"
+   ],
+   "implemented_by": [
+    "foundation/criticality.py",
+    "doctrine/criticality.json",
+    "deploy/deploy-workers.mjs",
+    "foundation/selfhost.py"
+   ],
+   "related": [
+    "self-hosting",
+    "bootstrapping",
+    "autonomy",
+    "unattended"
+   ],
+   "lineage": [
+    {
+     "version": "1.0.0",
+     "date": "2026-11-14",
+     "change": "Owner: 'Ultrastable runs on Ultrastable. That self-reference is key to bootstrapping and criticality.' Made a computed invariant in criticality (k_self, bootstrap, regime).",
+     "source": "foundation/criticality.py"
     }
    ]
   }
