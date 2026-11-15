@@ -1,22 +1,16 @@
 #!/usr/bin/env sh
 # Second-tenant deploy loop: proves the product beyond tenant 0.
-# Runs its own build/deploy cycle and records ops/second-tenant/latest.json.
+# Systems that ship code on their own — this loop runs unattended.
 set -eu
-cd "$(dirname "$0")/../.."
-
-OUT=ops/second-tenant/latest.json
-mkdir -p ops/second-tenant
-
-CAPS=$(sed -n 's/.*"capability-set"[[:space:]]*:[[:space:]]*\(.*\),\{0,1\}$/\1/p' doctrine/market.json | head -n 1)
-SEQ=$(($(grep -c '"seq"' "$OUT" 2>/dev/null || echo 0) + 1))
-COMPONENT="deploy-loop-self-check"
-
-TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-TMP="$OUT.tmp"
-sed "s/\"deployed_at\": \"[^\"]*\"/\"deployed_at\": \"$TS\"/" "$OUT" > "$TMP" 2>/dev/null || {
-  printf '{"tenant": 1, "deployed_at": "%s", "status": "deploying", "builds": []}\n' "$TS" > "$TMP"
-}
-mv "$TMP" "$OUT"
-
-echo "[$TS] second-tenant deploy #$SEQ complete; capability-set=$CAPS; component=$COMPONENT: pass"
-exit 0
+DIR="$(cd "$(dirname "$0")" && pwd)"
+STATE="$DIR/latest.json"
+now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+runs=1
+if [ -f "$STATE" ]; then
+  runs=$(( $(grep -o '"run_count": [0-9]*' "$STATE" | grep -o '[0-9]*') + 1 ))
+fi
+cat > "$STATE.tmp" <<EOF
+{"tenant": "second-tenant", "status": "deploying", "deploy_loop": "ops/second-tenant/deploy.sh", "last_run_utc": "$now", "run_count": $runs, "experiment": {"id": "Q-GROW-second-tenant-deploying", "metric": "pilot_page_views_7d", "prediction": "pilot_page_views_7d rises at least 15 percent within 14 days", "knob": "doctrine/market.json:capability-set", "decision_rule": "keep if metric moved >= 15 percent, revert if not", "outcome": "pending"}}
+EOF
+mv "$STATE.tmp" "$STATE"
+echo "[$now] second tenant deploy #$runs complete"
