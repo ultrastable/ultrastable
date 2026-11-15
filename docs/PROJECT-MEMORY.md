@@ -11,6 +11,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 Last updated: 2026-11-14
 
 - 2026-11-14: AGENT-READY-2: ultrastable.io serves Markdown for Agents (Accept: text/markdown), named AI-bot rules in robots.txt and WebMCP tools (site/readiness.js); OAuth discovery and commerce protocols declined with reasons in doctrine/agent-standards.json; WEB-BOT-AUTH-1 and Q-AGENT-OAUTH-1 filed. PR 343 overlaps PR 340: RECONCILE-343 keeps its role-work, SOP and handoffs.
+- 2026-11-14: CODE-AGENT-SOP-1 (owner): code agents produce and hand off, the server owns checks, merge, deploy and close-out. SOP at GET /api/v1/sop, handoff at POST /api/v1/handoffs (receipt HANDOFF-<repo>-<pr>, closed by the pr_merged probe). Server gaps that still force babysitting: SERVER-CHECKS-1, SERVER-DEPLOY-1.
+- 2026-11-15: PR 343 reconciled (RECONCILE-343): its tick-Worker control plane and work.js were dropped as superseded by site/controlplane.js (PR 340) and DOER-1 (seed/worker/src/doer.js); its issues CONTROL-PLANE-2, ROLE-WORK-2, OPS-DASH-2, SERVER-CHECKS-1, SERVER-DEPLOY-1 and OL-20261114-3 landed. seed/worker/src/codeagent.js regained ADAPTERS, invoke, parseJson, runCodeAgent and probe, which PR 352 dropped while doer.js, executor.js, nativeexec.js, pr-executor.js and index.js still import them (tick Worker failed to load).
 - 2026-11-14: Actions jobs are refused (billing), so `scripts/local_checks.py` runs checks.yml without Actions (LOCAL-CHECKS-1); PRIORITIZE-2 ranks the backlog as goal vectors with live shadow prices (cost over budget x3, Actions blocked x1.5) and Pareto fronts (`doctrine/priorities.json`).
 Maintained by: every agent, on every session end. Staleness is checked by `scripts/check_memory.py` (CI `memory-fresh`).
 
