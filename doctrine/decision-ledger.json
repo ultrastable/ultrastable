@@ -798,8 +798,8 @@
       "title": "Executor closed Q-COST-PROOF-1: Add deploy/cost-probe.mjs recording D1 rows read (d1AnalyticsAdaptiveGroups) and AI neurons daily, appending",
       "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: deploy/cost-probe.mjs, data/cost-thresholds.json, test/cost-probe.test.mjs.",
       "probe": "file:deploy/cost-probe.mjs"
-  },
-  {
+    },
+    {
       "id": "decision-2026-11-14-design-language-1-four-layer-design-language-with-enforcemen",
       "kind": "decision",
       "date": "2026-11-14",
@@ -1124,6 +1124,14 @@
       "body": "Output of python3 scripts/local_checks.py --keep-going on main with pull requests 407 and 408 carried onto it: one FAIL, step 'Project memory is current', 28 commits since the last memory update against a limit of 15. Fix landed: scripts/memory_refresh.py records merged commit subjects under Last updated, scripts/lane.sh runs it on every pass, tests/test_memory_refresh.py passes 4 of 4. local_checks.py also no longer turns the base ref expression into origin/.",
       "probe": "grep:scripts/lane.sh::memory_refresh.py",
       "session": "session_0156nqDrgHBE9fapyRJBus2N"
+    },
+    {
+      "id": "decision-2026-11-13-executor-closed-q-grow-agent-directories-add-agent-directory",
+      "kind": "decision",
+      "date": "2026-11-13",
+      "title": "Executor closed Q-GROW-AGENT-DIRECTORIES: Add agent-directory listing packets with a dry-run-gated, code-consumed outreach publisher (outrea",
+      "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: outreach/agent-directories.json, scripts/outreach.py, tests/test_outreach.py.",
+      "probe": "file:outreach/agent-directories.json"
     }
   ]
 }
