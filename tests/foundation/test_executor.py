@@ -140,3 +140,25 @@ class RepairLoop(unittest.TestCase):
         self.assertTrue(q.protected_probe("file:autonomy/x.json"))
         self.assertFalse(q.protected_probe("file:foundation/x.py"))
         self.assertFalse(q.protected_probe(""))
+
+
+class PortItems(unittest.TestCase):
+    """PORT-EXEC-1: a PORT-<runtime> item closes on its adapter verify command; the evidence file is the change."""
+
+    def test_verify_command_is_read_from_the_item_body(self):
+        from foundation import executor
+        self.assertEqual(executor.verify_command({"body": "x\nverify: python3 -c pass\ny"}), "python3 -c pass")
+        self.assertIsNone(executor.verify_command({"body": "no command"}))
+
+    def test_passing_verify_yields_the_evidence_file_and_failing_verify_raises(self):
+        import sys
+        from foundation import executor
+        with tempfile.TemporaryDirectory() as d:
+            ok = {"number": "PORT-gcp", "title": "t", "body": f"verify: {Path(sys.executable).as_posix()} -c pass"}
+            out = executor.port_call(ok, d)("")
+            self.assertEqual(out["files"][0]["path"], "ops/port-evidence/gcp-verify.json")
+            self.assertEqual(json.loads(out["files"][0]["content"])["exit"], 0)
+            self.assertIsNone(executor.safe_path(out["files"][0]["path"]))
+            bad = {"number": "PORT-gcp", "title": "t", "body": f"verify: {Path(sys.executable).as_posix()} -c raise(SystemExit(3))"}
+            with self.assertRaises(RuntimeError):
+                executor.port_call(bad, d)
