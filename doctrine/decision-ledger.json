@@ -997,6 +997,15 @@
    "body": "Owner, 2026-11-15: a patent is not worth it for software; the licence itself protects the IP, so open the repositories publicly. Supersedes PF-1 (nothing public until filed), FUND-1, IP-4, IP-6, IP-7 and the PF-1 decision item. Visibility is flipped by the owner in each repository's settings: this session has no tool for it. Pre-publication history scan 2026-11-15 of ultrastable, workers, spec, license, ops, .github, seed: only test-fixture strings match secret patterns. USL-1.0 has had no counsel review.",
    "probe": "grep:doctrine/decision-ledger.json::NO-PATENT-1",
    "session": "session_0156nqDuVY71gtRtDvjPaAgK"
+  },
+  {
+   "id": "decision-2026-11-15-no-patent-1-public-copy-cleanup-docs-site-roadmap",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "NO-PATENT-1 public copy cleanup (docs, site, roadmap)",
+   "body": "Removed patent, filing, counsel, private-repo and holding-page wording from public docs and site copy; the project is open and the Ultrastable License governs use.",
+   "probe": "grep:docs/PROJECT-MEMORY.md::NO-PATENT-1",
+   "session": "session_0156nqDuVY71gtRtDvjPaAgK"
   }
  ]
 }

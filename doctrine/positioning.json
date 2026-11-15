@@ -44,7 +44,7 @@
     ]
   },
   "licensing": {
-    "decision": "2026-11-11 (Rowan): no patent. Source-available hybrid license: free for non-commercial use, a Commercial License with revenue share for any commercial use. Specs live in ultrastable/spec and replace the patent drafts; the patent drafts are archived in ip/.",
+    "decision": "2026-11-15 (Rowan, NO-PATENT-1): no patent filing; the license itself protects the IP and the repositories are public. Source-available hybrid license (2026-11-11): free for non-commercial use, a Commercial License with revenue share for any commercial use. Specs live in ultrastable/spec and are the architectural record.",
     "license_file": "LICENSE",
     "required_patterns": [
       "LicenseRef-Ultrastable-USL-1.0",

@@ -1,4 +1,4 @@
-# Staged site copy (PRIVATE, NOT PUBLISHED)
+# Staged site copy
 
 **Ultrastable is the foundation for any autonomous system.**
 
@@ -6,7 +6,7 @@ A system is autonomous if it has self-referential loops and the ability to close
 
 **Ultrastable runs on itself.** Its own planning, work tracking and reporting are run by the system it gives to others.
 
-Status: draft for Rowan's review. Do not publish until the provisional is filed (see brand/BRAND.md, "Public versus private"). Voice: plain, calm, no hype, claims labeled RUNNING, BUILT or PLANNED. This is about an autonomous system for any kind of organization, not research. QNFO appears only as the proof case.
+Status: draft; the project is open and the Ultrastable License governs use. Voice: plain, calm, no hype, claims labeled RUNNING, BUILT or PLANNED. This is about an autonomous system for any kind of organization, not research. QNFO appears only as the proof case.
 
 ## Headline
 **Software that stays up.** Autonomous software development, built to keep running.
@@ -20,7 +20,7 @@ Start with an idea. Ultrastable sets up the organization around it: it builds th
 | Bootstrap from an idea | Describe the idea; the system proposes and starts the organization | BUILT (seed), first cloud run PLANNED |
 | It manages itself | Managers and staff work in continuous loops; they find gaps you did not name | RUNNING (on the test case) |
 | Light collaboration | You can steer, approve or ignore; one email code and one tap, no meetings | RUNNING (dashboard) |
-| Everything around the code | Branding, site, business plan, a provisional patent draft anyone can file (not only a professional) | BUILT (drafts), filing support PLANNED |
+| Everything around the code | Branding, site, business plan, a licence and trademark plan | BUILT (drafts) |
 | Findable | Google Search Console and analytics wired from the back end, no marketing firm | PLANNED (steps documented in the roadmap) |
 | One dashboard | Everything at a glance on your own infrastructure, with owner email notifications | RUNNING |
 | Portable | Runs on Cloudflare today; Google Cloud adapter planned | RUNNING / PLANNED |
@@ -28,7 +28,7 @@ Start with an idea. Ultrastable sets up the organization around it: it builds th
 Not offered: financial operations (accounting, payments). Out of scope for now.
 
 ## Proof
-"Built and tested on a real operating organization (QNFO), which runs on it today." Link to live numbers only after filing, and only numbers the system can show itself.
+"Built and tested on a real operating organization (QNFO), which runs on it today." Link to live numbers, and only numbers the system can show itself.
 
 ## Sections for the page (order)
 1. Hero: headline, descriptor, one button (join the pilot).
@@ -38,5 +38,5 @@ Not offered: financial operations (accounting, payments). Out of scope for now.
 5. Proof (the test case).
 6. Pilot sign-up.
 
-## Words to avoid on any public page before filing
-probe, revert, prediction, trust ledger, plussing, work claim, virtual manager, self-governing. The dashboard's `disclosure_guard` check fails if the public home page contains any of them. The "virtual managers" idea can appear only after filing; until then say "software that keeps improving itself".
+## Words to avoid on the public home page
+probe, revert, prediction, trust ledger, plussing, work claim, virtual manager, self-governing. The dashboard's `disclosure_guard` check fails if the public home page contains any of them. The home page says "software that keeps improving itself"; the managers are described on the team page.

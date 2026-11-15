@@ -41,4 +41,4 @@ From the QNFO fleet (customer zero): ledgers instead of claims (every decision, 
 - NOT built: multi-tenant packaging, installer, product dashboard, unified CLI, model executor, Postgres dialect, any deployment on Google Cloud, any outside customer, any outside audit.
 
 ## Match to the IP
-The seven parts above correspond to the provisional specification's figures: FIG 1 system, 2 virtual staff, 3 manager tick, 4 plus loop, 5 predict-verify, 6 trust gate, 7 self-amend, 8 root cause, 9 any organization, 10 work claims, 11 reconcile queue, 12 change path, 13 model ladder, 14 deployment, 15 bootstrap ([ip/provisional/](../ip/provisional/README.md)). The patent is an unfiled draft for attorney review, not legal advice.
+The seven parts above correspond to the specification's figures: FIG 1 system, 2 virtual staff, 3 manager tick, 4 plus loop, 5 predict-verify, 6 trust gate, 7 self-amend, 8 root cause, 9 any organization, 10 work claims, 11 reconcile queue, 12 change path, 13 model ladder, 14 deployment, 15 bootstrap ([ip/provisional/](../ip/provisional/README.md)). The patent is an unfiled draft for attorney review, not legal advice.
