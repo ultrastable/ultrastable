@@ -18,6 +18,8 @@ import { handleAuth } from './auth/routes.js';
 import { getToken, refreshDue } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
 import { readCriticality, addSample } from './criticality.js';
+import { beat, watch, readPulse } from './pulse.js';
+import { readIgnition } from './ignition.js';
 import { loopHealth } from './critloop.js';
 import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
 import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
@@ -34,25 +36,28 @@ const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',
 export default {
   async scheduled(_event, env, ctx) {
     ctx.waitUntil(runTick(env.DB, { config, env: presence(env), ai: env.AI || null }));  // DOER-1: the AI binding reaches the in-tick doer
-    ctx.waitUntil((async () => {  // AUTH-1: one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback); refresh runs first so nothing lapses
+    // LOOPPROOF-1: every loop below runs inside beat(): a row before it starts, its result or error after. One loop failing never stops the next,
+    // and the tick's pulse step counts the slots each one ran in. The names are pulse.js LANE_LOOPS.
+    ctx.waitUntil((async () => {
+      const b = (loop, fn) => beat(env.DB, loop, fn).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
       const tenant = env.TENANT || config.org_slug || 'default';
-      await refreshDue(env.DB, env).catch(e => console.error('credentials', e && e.message));
-      const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));
-      const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
-      const r = await runExecutor({ ...env, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || (config.github_repos || String(env.GITHUB_REPOS || '').split(','))[0] }); console.log('executor', JSON.stringify(r)); await noteExecutor(env.DB, r);
-      const gateRepos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
-      const g = await runGate({ token, repos: gateRepos }); console.log('gate', JSON.stringify(g));  // ZERO-MINUTES-1
-      const l = await runLane({ token, repos: gateRepos, issueWorkflow: null, zeroActions: env.ZERO_ACTIONS === '1', evidenceRepo: env.EVIDENCE_REPO || gateRepos[0] || null }); console.log('lane', JSON.stringify(l));
-      const site = env.SITE && env.INTERNAL_DEPLOY_KEY ? env.SITE : null;  // HANDOFF-1: the server owns every handed-off PR after it opens: merge noticed, deploy, live probe, close or roll back
-      const ho = await runHandoffs({ db: env.DB, token, repos: gateRepos, deployer: site ? makeDeployer({ token, site, key: env.INTERNAL_DEPLOY_KEY }) : null, rollback: site ? makeRollback({ site, key: env.INTERNAL_DEPLOY_KEY }) : null }).catch(e => ({ status: 'error ' + (e && e.message) })); console.log('handoffs', JSON.stringify(ho));
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
-      const isy = await syncIssues({ db: env.DB, token, repo: repos.find(r => r.endsWith('/ultrastable')) || repos[0] }).catch(e => ({ status: 'error ' + (e && e.message) })); console.log('issuesync', JSON.stringify(isy));  // ISSUESYNC-1: filed roadmap items reach the queue on the server, no Actions needed
-      const ra = await checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }).catch(e => ({ ok: false, error: e && e.message })); console.log('repo-access', JSON.stringify(ra));  // REPO-ACCESS-1
-      const sw = await sweepOpenLoops({ token, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) }); console.log('sweeper', JSON.stringify(sw)); await recordSweep(env.DB, sw);  // SERVER-OWNS-LOOPS-1
-      const dep = await ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }).catch(e => ({ status: 'error ' + (e && e.message) })); console.log('deploy-evidence', JSON.stringify(dep));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
-      const cs = await sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }).catch(e => [{ error: e && e.message }]); console.log('cost-samples', JSON.stringify(cs));  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
+      const main = repos.find(r => r.endsWith('/ultrastable')) || repos[0];
+      await b('credentials', () => refreshDue(env.DB, env));  // AUTH-1: refresh runs first so nothing lapses
+      const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));  // one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback)
+      const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
+      await b('executor', async () => { const r = await runExecutor({ ...env, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
+      await b('gate', () => runGate({ token, repos }));  // ZERO-MINUTES-1
+      await b('lane', () => runLane({ token, repos, issueWorkflow: null, zeroActions: env.ZERO_ACTIONS === '1', evidenceRepo: env.EVIDENCE_REPO || repos[0] || null }));
+      const site = env.SITE && env.INTERNAL_DEPLOY_KEY ? env.SITE : null;  // HANDOFF-1: the server owns every handed-off PR after it opens: merge noticed, deploy, live probe, close or roll back
+      await b('handoffs', () => runHandoffs({ db: env.DB, token, repos, deployer: site ? makeDeployer({ token, site, key: env.INTERNAL_DEPLOY_KEY }) : null, rollback: site ? makeRollback({ site, key: env.INTERNAL_DEPLOY_KEY }) : null }));
+      await b('issuesync', () => syncIssues({ db: env.DB, token, repo: main }));  // ISSUESYNC-1: filed roadmap items reach the queue on the server, no Actions needed
+      await b('repo-access', () => checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }));  // REPO-ACCESS-1
+      await b('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); return sw; });  // SERVER-OWNS-LOOPS-1
+      await b('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
+      await b('cost-samples', () => sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }));  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
     })().catch(e => console.error('lane', e && e.message)));
-    ctx.waitUntil(selfcheck(env, hosts(env)[0]).catch(e => console.error('analytics selfcheck', e && e.message)));
+    ctx.waitUntil(beat(env.DB, 'analytics-selfcheck', () => selfcheck(env, hosts(env)[0])));
   },
 
   async fetch(request, env, ctx) {
@@ -83,6 +88,10 @@ export default {
       return Response.json(await report(env));
     }
     if (url.pathname === '/agents/probe') { const r = await probeAgents(env); return Response.json(r, { status: r.ok ? 200 : 503 }); }
+    if (url.pathname === '/pulse/watch' && request.method === 'POST') {  // LOOPPROOF-1: the second producer of the heartbeat. Safe to call by anyone: it runs a tick only when the newest one is older than two intervals
+      const r = await watch(env.DB, () => runTick(env.DB, { config, env: presence(env), ai: env.AI || null }), { config }).catch(e => ({ ok: false, error: String(e && e.message).slice(0, 200) }));
+      return Response.json(r, { status: r.ok ? 200 : 503, headers: { 'cache-control': 'no-store' } });
+    }
     if (url.pathname === '/health') {
       const last = await lastTickForHealth(env.DB);
       const ok = Boolean(last && last.steps_completed === last.steps_total);
@@ -91,7 +100,7 @@ export default {
     }
     if (url.pathname === '/live' || url.pathname === '/metrics/criticality.json') {  // CRITICALITY-1: k_eff of the last tick
       const c = await readCriticality(env.DB);
-      return Response.json(url.pathname === '/live' ? { ok: true, org: config.org_slug, k_eff: c ? c.k_eff : null, open_ignition_gaps: c && c.open_ignition_gaps !== undefined ? c.open_ignition_gaps : null, self_sustaining: c ? Boolean(c.self_sustaining) : false, criticality: c, criticality_loop: await loopHealth(env.DB, config.criticality, Date.now()).catch(() => null), sweeper: await lastSweep(env.DB).catch(() => null), repo_access: await readRepoAccess(env.DB).catch(() => null) } : { ...(c || {}), loop: await loopHealth(env.DB, config.criticality, Date.now()).catch(() => null) }, { headers: { 'cache-control': 'no-store' } });
+      return Response.json(url.pathname === '/live' ? { ok: true, org: config.org_slug, k_eff: c ? c.k_eff : null, open_ignition_gaps: c && c.open_ignition_gaps !== undefined ? c.open_ignition_gaps : null, self_sustaining: c ? Boolean(c.self_sustaining) : false, criticality: c, criticality_loop: await loopHealth(env.DB, config.criticality, Date.now()).catch(() => null), ignition: await readIgnition(env.DB).catch(() => null), pulse: await readPulse(env.DB).catch(() => null), sweeper: await lastSweep(env.DB).catch(() => null), repo_access: await readRepoAccess(env.DB).catch(() => null) } : { ...(c || {}), loop: await loopHealth(env.DB, config.criticality, Date.now()).catch(() => null) }, { headers: { 'cache-control': 'no-store' } });
     }
     if (url.pathname === '/api/criticality/sample' && request.method === 'POST') {  // collectors push GitHub-run, cost and owner-touch samples
       if (!env.CRITICALITY_TOKEN || request.headers.get('authorization') !== 'Bearer ' + env.CRITICALITY_TOKEN) return Response.json({ error: 'unauthorized' }, { status: 401 });

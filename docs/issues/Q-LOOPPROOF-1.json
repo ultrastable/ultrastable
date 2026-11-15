@@ -1,0 +1,8 @@
+{
+  "id": "Q-LOOPPROOF-1",
+  "title": "Q-LOOPPROOF-1: the tick proves its loops ran and reads its own stage from bootstrap to criticality",
+  "body": "**Owner:** operations\n**Trigger:** every tick of ultrastable-tick (cron */10) and every site Worker tick (watchdog)\n**Done check:** grep:seed/worker/src/pulse.js::export async function pulseStep\n**Status:** open\n\nRead from the live org database on 2026-11-15 19:00 UTC: k_eff 0.068 against k_min 1, 2 open ignition gaps, 127 of 144 ticks complete in 24 h (the criticality step failed on a table whose migration had not run, uncounted). The ten lane loops ran in one try block and wrote only to the console; the heartbeat had one producer; no record of the stage between bootstrap and criticality existed.\n\nAcceptance: every lane loop runs inside beat() (seed/worker/src/pulse.js); tick step pulse writes loop_clock and files or closes MISSED-<loop>; the site Worker calls POST /pulse/watch and the tick Worker restarts a stale heartbeat; tick step ignition writes the stage, ignition_log and IGNITE-<stage>; the Worker carries the DDL of its new tables; GET /live on the tick Worker returns ignition and pulse.\n\nsize: M\n\n**Closing probe:** GET https://ultrastable.io/health expect \"watchdog\":{\"status\":\"ok\"",
+  "labels": ["role:operations", "agent-ready", "raises-self", "ignition"],
+  "milestone": "Now",
+  "workstream": "deploys"
+}
