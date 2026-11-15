@@ -5,6 +5,7 @@
 // recorded in the tick's errors and as a backlog item; the remaining steps still run.
 
 import { criticalityStep } from './criticality.js';
+import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep } from './pulse.js';
@@ -232,10 +233,7 @@ export const STEPS = {
       if (ctx.wake !== role.role && ctx.tickId % Math.max(1, role.tick_every) !== 0) continue;  // an event wakes its role out of turn
       const wip = await first(db, `SELECT COUNT(*) AS n FROM claims WHERE agent=?`, role.id);
       if (wip.n >= ctx.config.max_wip_per_role) continue;
-      const item = await first(db, `SELECT id FROM items WHERE status='ready' AND owner_role=?
-          AND (project IS NULL OR project = ? OR ? IS NULL)
-          AND id NOT IN (SELECT item_id FROM claims) ORDER BY priority, created_at LIMIT 1`,
-        role.role, role.project, role.project);
+      const item = await pickForRole(db, role, ctx.config.criticality);  // CRITICALITY-LOOP-1: raising items first while k_eff is under k_min
       await run(db, `UPDATE roles SET last_tick_at=? WHERE id=?`, ctx.nowIso, role.id);
       if (!item) continue;
       await run(db, `INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES (?, ?, ?, ?)`, item.id, role.id, ctx.nowIso, ctx.nowIso);

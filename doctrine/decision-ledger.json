@@ -792,6 +792,14 @@
       "probe": "file:.github/workflows/first-run.yml"
     },
     {
+      "id": "decision-2026-11-13-executor-closed-q-cost-proof-1-add-deploy-cost-probe-mjs-rec",
+      "kind": "decision",
+      "date": "2026-11-13",
+      "title": "Executor closed Q-COST-PROOF-1: Add deploy/cost-probe.mjs recording D1 rows read (d1AnalyticsAdaptiveGroups) and AI neurons daily, appending",
+      "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: deploy/cost-probe.mjs, data/cost-thresholds.json, test/cost-probe.test.mjs.",
+      "probe": "file:deploy/cost-probe.mjs"
+    },
+    {
       "id": "decision-2026-11-14-design-language-1-four-layer-design-language-with-enforcemen",
       "kind": "decision",
       "date": "2026-11-14",
@@ -1083,6 +1091,15 @@
       "probe": "grep:foundation/executor.py::def port_call"
     },
     {
+      "id": "decision-2026-11-15-criticality-loop-1-the-tick-worker-closes-the-loop-around-k-",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "CRITICALITY-LOOP-1: the tick Worker closes the loop around k_eff",
+      "body": "k_eff was measured but nothing acted on it (live k_eff 0.0647 with k_min 1 for the whole window, no deploys sampled). The controller in seed/worker/src/critloop.js moves a dispatch lever to raise-only after 3 subcritical beats, logs 'k_eff > k within 24 h', grades it, reverts and files CRIT-LEVER on a miss, files CRIT-STALL on a stall, and writes one criticality_history row per tick (clock criticality-loop). Tested in seed/worker/test/critloop.test.js; deploy-workers applies migration 0012 and the live probe fails if the loop stops beating.",
+      "probe": "grep:seed/worker/src/critloop.js::export async function controlStep",
+      "session": "session_0156nqDsim2nV3ymxKLeFRQ1"
+    },
+    {
       "id": "decision-2026-11-15-q-grow-second-tenant-deploying-second-tenant-manifest",
       "kind": "decision",
       "date": "2026-11-15",
@@ -1109,12 +1126,57 @@
       "session": "session_0156nqDrgHBE9fapyRJBus2N"
     },
     {
+      "id": "lesson-2026-11-15-branches-outside-agent-and-claude-were-invisible-to-every-re",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "Branches outside agent/ and claude/ were invisible to every reaper",
+      "body": "47 remote branches held work main lacked: the session reaper only scans agent/ and claude/, evidence branches never merged, and parked/ was a permanent exit. foundation/branchsweep.py now gives every remote branch one recorded disposition (merged, superseded, ported, rejected, state) with a ledger invariant; doctrine/branchsweep.json holds the policy.",
+      "probe": "grep:foundation/branchsweep.py::def apply",
+      "session": "session_0156nqDsim2nV3ymxKLeFRQ1"
+    },
+    {
+      "id": "lesson-2026-11-15-a-sweep-must-never-merge-a-branch-whose-pull-request-was-clo",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "A sweep must never merge a branch whose pull request was closed on purpose",
+      "body": "The first sweep merged worker/q-tick-deploy and worker/git-in-cloudflare-1, which main had closed as harmful (a stub entry point replacing the tick Worker; evidence from a probe that cannot run). Both merges were reverted. Rejections are data (doctrine/branchsweep.json rejected, with reason): such branches are never merged and are deleted with their sha in the ledger. A gate command that fails on the baseline (a directory passed to node --test) reads as every branch breaking: the gate is run against the baseline in tests, and gate globs are expanded by the tool.",
+      "probe": "grep:tests/foundation/test_branchsweep.py::test_failing_gate_undoes_the_merge_and_files_a_port_item",
+      "session": "session_0156nqDsim2nV3ymxKLeFRQ1"
+    },
+    {
+      "id": "lesson-2026-11-15-generated-and-append-only-files-conflict-on-every-merge-reso",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "Generated and append-only files conflict on every merge; resolution is a rule, not a hand edit",
+      "body": "decision-ledger rows union by id, *.jsonl union of lines, docs/issues, project memory, standards tables, transparency and dashboard data take main's side and the dashboard is regenerated (scripts/build_dashboard.py). Registering a loop needs four edits that checks enforce together: loop-registry row with a server_owner in {ultrastable-tick, github-actions, cloud-routine}, a flows.json entry on a feedback cycle (flows --sync fills bindings), a clock for D1 beats, and a regenerated dashboard.",
+      "probe": "grep:foundation/branchsweep.py::def resolve",
+      "session": "session_0156nqDsim2nV3ymxKLeFRQ1"
+    },
+    {
+      "id": "lesson-2026-11-15-a-clean-merge-can-still-be-a-stale-rewrite-cap-deletions-and",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "A clean merge can still be a stale rewrite: cap deletions and hold the branch",
+      "body": "Merging agent/Q-GROW-AGENT-DIRECTORIES replaced scripts/outreach.py (343 lines deleted, 49 added) and passed every gate. The sweep now undoes a merge that deletes more than max_deleted_lines of a non-generated file and files a PORT-BRANCH item; doctrine/branchsweep.json held keeps a branch out of merge and prune with the reason. Ledger rows a branch brings must have probes that pass on the merged tree (the orphans check is in the gate).",
+      "probe": "grep:foundation/branchsweep.py::max_deleted_lines",
+      "session": "session_0156nqDsim2nV3ymxKLeFRQ1"
+    },
+    {
       "id": "decision-2026-11-15-executor-closed-q-doer-q-tick-add-a-self-contained-q-tick-do",
       "kind": "decision",
       "date": "2026-11-15",
       "title": "Executor closed Q-DOER-Q-TICK: Add a self-contained Q-TICK doer module that closes Q-TICK items from their own tick records, registered shap",
       "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/doers/__init__.py, foundation/doers/q_tick.py, tests/test_q_tick_doer.py.",
       "probe": "file:foundation/doers/__init__.py"
+    },
+    {
+      "id": "lesson-2026-11-15-a-sweep-leaves-branches-another-session-touched-in-the-last-",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "A sweep leaves branches another session touched in the last 4 hours alone",
+      "body": "Right after the first sweep merged, 13 branches showed new commits from live sessions (the lane, the executor, other code agents). The sweep classifies a branch younger than min_idle_hours as live and never merges or deletes it; a squash merge leaves tip commits that are not ancestors of main, so superseded is decided by tree equality (git merge-tree) and by an empty merge after generated-file resolution, never by ancestry alone.",
+      "probe": "grep:foundation/branchsweep.py::min_idle_hours",
+      "session": "session_0156nqDsim2nV3ymxKLeFRQ1"
     },
     {
       "id": "lesson-2026-11-15-loopproof-1-a-loop-is-proven-by-a-row-written-before-it-runs",

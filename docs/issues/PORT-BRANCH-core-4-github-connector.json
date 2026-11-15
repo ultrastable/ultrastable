@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-core-4-github-connector",
+  "title": "PORT-BRANCH-core-4-github-connector: carry core-4-github-connector onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `core-4-github-connector` at 223183a0e9 holds work main lacks and cannot merge as is (conflicts in code: platform/core/tests/test_vertex.py, platform/core/ultrastable/agents.py, platform/core/ultrastable/config.py, platform/core/ultrastable/engine.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried core-4-github-connector\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried core-4-github-connector",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

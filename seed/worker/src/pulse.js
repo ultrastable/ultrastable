@@ -19,7 +19,7 @@ const iso = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
 const ms = s => Date.parse(String(s).replace(' ', 'T') + 'Z');
 
 // SCHEMA-SELF-1: the Worker carries the DDL of the tables this module needs and applies it itself (idempotent), so code deployed ahead of
-// its migration cannot fail on a missing table. Kept equal to migrations/0012_pulse.sql by test/pulse.test.js.
+// its migration cannot fail on a missing table. Kept equal to migrations/0013_pulse.sql by test/pulse.test.js.
 export const PULSE_DDL = [
   `CREATE TABLE IF NOT EXISTS loop_beats (id INTEGER PRIMARY KEY AUTOINCREMENT, loop TEXT NOT NULL, slot INTEGER NOT NULL, source TEXT NOT NULL DEFAULT 'cron', started_at TEXT NOT NULL, finished_at TEXT, ok INTEGER, error TEXT, detail TEXT)`,
   `CREATE INDEX IF NOT EXISTS loop_beats_loop ON loop_beats (loop, slot)`,

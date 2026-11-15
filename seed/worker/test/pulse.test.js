@@ -13,7 +13,7 @@ const T0 = Date.parse('2026-11-10T00:00:00Z'), MIN = 60e3;
 const norm = s => s.replace(/\s+/g, ' ').trim();
 
 test('SCHEMA-SELF-1: the DDL the Worker carries equals the migration, and the Worker can create its own tables', async () => {
-  const mig = readFileSync(new URL('../migrations/0012_pulse.sql', import.meta.url), 'utf8').split('\n').filter(l => !l.startsWith('--')).join('\n').split(';').map(norm).filter(Boolean);
+  const mig = readFileSync(new URL('../migrations/0013_pulse.sql', import.meta.url), 'utf8').split('\n').filter(l => !l.startsWith('--')).join('\n').split(';').map(norm).filter(Boolean);
   assert.deepEqual(mig, PULSE_DDL.map(norm));
   const db = makeDb();
   for (const t of ['loop_beats', 'loop_clock', 'ignition_log']) db.raw.exec(`DROP TABLE ${t}`);
