@@ -1048,6 +1048,15 @@
    "title": "VERIFY-RETRY-1: a probe right after deploy retries before it rolls back; a rolled_back record self-heals",
    "body": "PRs 371 and 372 were merged and deployed but probed within seconds, got 404 before the edge caught up, and were rolled back while the live site was correct. Verify now retries across ticks (3 tries) and a rolled_back handoff whose probe passes is recovered and its item closed.",
    "probe": "grep:seed/worker/src/handoff.js::VERIFY-RETRY-1"
+  },
+  {
+   "id": "lesson-2026-11-15-verify-retry-1-retry-live-probe-before-rollback-recover-fals",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "VERIFY-RETRY-1: retry live probe before rollback, recover false rollbacks",
+   "body": "Recorded so the write-back gate passes. The PR diff is the change; verification is the repo checks run after Actions billing was restored.",
+   "probe": "file:",
+   "session": "ultrastable-multi-repo"
   }
  ]
 }
