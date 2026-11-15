@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-9",
+  "title": "OL-20261115-9: BOOTSTRAP-GAPS (ops#13): BG-1 to BG-9 initialization steps not yet autonomous",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** grep:docs/BOOTSTRAP-GAPS.md::BG-9: closed\n**Status:** open\n\nMoved from ultrastable/ops#13. Tracks docs/BOOTSTRAP-GAPS.md. Public landing page is gated on the org admin token (identity-bound); default in effect: holding page.",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

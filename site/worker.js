@@ -247,6 +247,7 @@ let siteTable = null;
 const ensureSiteTable = (env) => siteTable || (siteTable = env.DB.batch([env.DB.prepare("CREATE TABLE IF NOT EXISTS site_data (id INTEGER PRIMARY KEY AUTOINCREMENT, site TEXT NOT NULL, coll TEXT NOT NULL, at TEXT NOT NULL, data TEXT NOT NULL)"), env.DB.prepare("CREATE INDEX IF NOT EXISTS site_data_site ON site_data (site, coll, id)")]).catch(e => { siteTable = null; throw e; }));
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Access-Control-Allow-Headers": "content-type", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" };
 const apiJson = (o, status) => new Response(JSON.stringify(o), { status: status || 200, headers: Object.assign({ "Content-Type": "application/json; charset=utf-8" }, CORS) });
+const SITEDB_POSTS_PER_MIN = 20;  // BUILD-2b
 async function siteApi(request, env, id) {
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
   if (!env || !env.DB || !env.ASSETS) return apiJson({ error: "the site database is not connected", code: "no_database" }, 503);
@@ -260,6 +261,12 @@ async function siteApi(request, env, id) {
     return apiJson({ site: id, coll: c, items: (r.results || []).map(x => { let d = null; try { d = JSON.parse(x.data); } catch (e) { d = null; } return { id: x.id, at: x.at, data: d }; }) });
   }
   if (request.method !== "POST") return apiJson({ error: "method not allowed", code: "method" }, 405);
+  { // BUILD-2b: one client cannot fill a site. Per client address and site, SITEDB_POSTS_PER_MIN writes a minute; the counter lives in KV like limited().
+    const ip = request.headers.get("cf-connecting-ip") || "x", key = "rls:" + id + ":" + ip + ":" + new Date().toISOString().slice(0, 16);
+    const n = Number(await env.ASSETS.get(key) || 0);
+    if (n >= SITEDB_POSTS_PER_MIN) return new Response(JSON.stringify({ error: "too many writes from your connection; try again in a minute", code: "rate_limited" }), { status: 429, headers: Object.assign({ "Content-Type": "application/json; charset=utf-8", "Retry-After": "60" }, CORS) });
+    await env.ASSETS.put(key, String(n + 1), { expirationTtl: 120 });
+  }
   const data = body && body.data;
   if (!data || typeof data !== "object" || Array.isArray(data)) return apiJson({ error: "data must be a JSON object", code: "bad_data" }, 400);
   const txt = JSON.stringify(data);

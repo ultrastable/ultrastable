@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-6",
+  "title": "OL-20261115-6: IP-ATTORNEY (ops#2): attorney review items and qnfo-workers visibility",
+  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** FUND-1\n**Done check:** grep:ip/evidence-log.md::filing receipt\n**Status:** open\n\nMoved from ultrastable/ops#2. IDENTITY-BOUND: decide QNFO/qnfo-workers visibility; verify real push and visibility dates; claim gaps G, D, H, A, C before the non-provisional; review public endpoints for claim-revealing output; entity and IP assignment; file provisional. Default in effect: nothing changes visibility.",
+  "labels": [
+    "role:ROWAN (identity-bound)",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-1",
   "title": "OL-20261115-1: DRAIN-1: PRs 333, 343, 359, 305 still open (session_0156nqDuPWx4R3fr7wdjeorV)",
-  "body": "**Owner:** executor\n**Trigger:** lane tick, driver order\n**Done check:** file:docs/issues/DRAIN-1.json\n**Status:** open\n\nMerged 338, 345, 314, 375 via scripts/resolve_generated.py plus hand merge of site/worker.js. Left: 333 and 343 (workflows, AGENTS, worker.js), 359 (criticality.py overlaps ignition), 305 (unrelated history, criticality already on main: supersede). Hosted Actions fail in 2-4 s on every run incl. main; local checks stood in.",
+  "body": "**Owner:** executor\n**Trigger:** lane tick, driver order\n**Done check:** file:docs/issues/DRAIN-1.json\n**Status:** closed\n\nMerged 338, 345, 314, 375 via scripts/resolve_generated.py plus hand merge of site/worker.js. Left: 333 and 343 (workflows, AGENTS, worker.js), 359 (criticality.py overlaps ignition), 305 (unrelated history, criticality already on main: supersede). Hosted Actions fail in 2-4 s on every run incl. main; local checks stood in.\n\n**Evidence:** 333 landed as #382, 343 as #384, 359 as #386; 305 closed as superseded. Hosted Actions are refused for billing (NEEDS-YOU actions-billing).",
   "labels": [
     "role:executor",
     "open-loop"
