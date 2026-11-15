@@ -1081,6 +1081,15 @@
    "title": "PORT-EXEC-1 port items close through the normal executor pipeline",
    "body": "A PORT-<runtime> queue item with a verify: line runs that command (argv, no shell, queue items only) in place of the model; the evidence file ops/port-evidence/<runtime>-verify.json is the change and goes through the same checks, write-back, commit and PR. Replaces PR 402, whose rewrite deleted main() and pick_row() and called a queue.fail that does not exist. Measured: tests/foundation/test_executor.py 17 passed.",
    "probe": "grep:foundation/executor.py::def port_call"
+  },
+  {
+   "id": "decision-2026-11-15-criticality-loop-1-the-tick-worker-closes-the-loop-around-k-",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "CRITICALITY-LOOP-1: the tick Worker closes the loop around k_eff",
+   "body": "k_eff was measured but nothing acted on it (live k_eff 0.0647 with k_min 1 for the whole window, no deploys sampled). The controller in seed/worker/src/critloop.js moves a dispatch lever to raise-only after 3 subcritical beats, logs 'k_eff > k within 24 h', grades it, reverts and files CRIT-LEVER on a miss, files CRIT-STALL on a stall, and writes one criticality_history row per tick (clock criticality-loop). Tested in seed/worker/test/critloop.test.js; deploy-workers applies migration 0012 and the live probe fails if the loop stops beating.",
+   "probe": "grep:seed/worker/src/critloop.js::export async function controlStep",
+   "session": "session_0156nqDsim2nV3ymxKLeFRQ1"
   }
  ]
 }
