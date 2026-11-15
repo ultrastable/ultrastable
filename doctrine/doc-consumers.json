@@ -312,10 +312,10 @@
   {
    "path": "kit/repos/business/funding.md",
    "sha256": "7e4e5393138737070907917c55d22d6ba233bcba1527a8de93efa8b46e4d8469",
-   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere",
+   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere; the live copy was edited after removal (NO-PATENT-1, 2026-11-15), so it supersedes rather than duplicates; original bytes are at the recover commit",
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
-   "duplicate_of": "business/funding.md"
+   "superseded_by": "business/funding.md"
   },
   {
    "path": "kit/repos/business/plan/00-business-manager.md",
@@ -328,58 +328,58 @@
   {
    "path": "kit/repos/business/plan/01-management-roster.md",
    "sha256": "dbf78f937f18467b4d0287573ca04effaebab52e9f20eb84646b780f4ecd758b",
-   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere",
+   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere; the live copy was edited after removal (NO-PATENT-1, 2026-11-15), so it supersedes rather than duplicates; original bytes are at the recover commit",
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
-   "duplicate_of": "business/plan/01-management-roster.md"
+   "superseded_by": "business/plan/01-management-roster.md"
   },
   {
    "path": "kit/repos/business/plan/02-customers.md",
    "sha256": "b998bb9db82b451c2563ba10802da1c50d8616d6c84d0a0703307a747e029c9f",
-   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere",
+   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere; the live copy was edited after removal (NO-PATENT-1, 2026-11-15), so it supersedes rather than duplicates; original bytes are at the recover commit",
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
-   "duplicate_of": "business/plan/02-customers.md"
+   "superseded_by": "business/plan/02-customers.md"
   },
   {
    "path": "kit/repos/business/plan/03-competition.md",
    "sha256": "dc87e1f2dbd2a2135d85eab453b657e170cce3b020f6557e2a959ff682d93799",
-   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere",
+   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere; the live copy was edited after removal (NO-PATENT-1, 2026-11-15), so it supersedes rather than duplicates; original bytes are at the recover commit",
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
-   "duplicate_of": "business/plan/03-competition.md"
+   "superseded_by": "business/plan/03-competition.md"
   },
   {
    "path": "kit/repos/business/plan/04-pitch-kit.md",
    "sha256": "8ac955a74ef1b67489dd323a1f6b5985bf2fb5867b87410dbd82f7f0d0e12f88",
-   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere",
+   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere; the live copy was edited after removal (NO-PATENT-1, 2026-11-15), so it supersedes rather than duplicates; original bytes are at the recover commit",
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
-   "duplicate_of": "business/plan/04-pitch-kit.md"
+   "superseded_by": "business/plan/04-pitch-kit.md"
   },
   {
    "path": "kit/repos/business/plan/05-funding.md",
    "sha256": "75de9832a2bd47c257a9407ac965dff9a9b9c109e3e61510202fff56a95cd94c",
-   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere",
+   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere; the live copy was edited after removal (NO-PATENT-1, 2026-11-15), so it supersedes rather than duplicates; original bytes are at the recover commit",
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
-   "duplicate_of": "business/plan/05-funding.md"
+   "superseded_by": "business/plan/05-funding.md"
   },
   {
    "path": "kit/repos/business/plan/06-promotion.md",
    "sha256": "79dff1d10993b0baff4cbab4742c489fb21fd8b352ae5f2f2484b3e8cd07ab40",
-   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere",
+   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere; the live copy was edited after removal (NO-PATENT-1, 2026-11-15), so it supersedes rather than duplicates; original bytes are at the recover commit",
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
-   "duplicate_of": "business/plan/06-promotion.md"
+   "superseded_by": "business/plan/06-promotion.md"
   },
   {
    "path": "kit/repos/business/plan/07-events.md",
    "sha256": "d00b335b0351b973d9e984ded0e93458f601a627508f6a372c32a594642edcc3",
-   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere",
+   "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere; the live copy was edited after removal (NO-PATENT-1, 2026-11-15), so it supersedes rather than duplicates; original bytes are at the recover commit",
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",
-   "duplicate_of": "business/plan/07-events.md"
+   "superseded_by": "business/plan/07-events.md"
   },
   {
    "path": "kit/repos/business/plan/README.md",

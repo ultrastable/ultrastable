@@ -41,7 +41,7 @@ export default {
     "body": "MCP project",
     "status": "draft",
     "support": "planned",
-    "tracked_by": "STD-1: publish after the owner verifies the namespace; held until the license review allows public listing"
+    "tracked_by": "STD-1: publish after the namespace is verified"
    },
    {
     "id": "a2a",
