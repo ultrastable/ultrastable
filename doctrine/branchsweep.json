@@ -72,5 +72,9 @@
     "worker/q-tick-deploy": "PR 404 was closed on purpose: it would have replaced the tick Worker with a stub entry point (main 3c29c8c)",
     "worker/git-in-cloudflare-1": "PR 403 was closed on purpose: it recorded results from a probe whose imports do not exist (main 3c29c8c)",
     "worker/port-exec-1": "PR 402 was replaced by 411: it deleted main() and pick_row() from foundation/executor.py (main 447a4c8)"
+  },
+  "max_deleted_lines": 80,
+  "held": {
+    "agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare": "merging it replaces scripts/outreach.py (343 lines deleted, 49 added): a stale rewrite; carry only outreach/agent-directories.json and its tests onto the current engine"
   }
 }

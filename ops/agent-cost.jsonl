@@ -1,2 +1,0 @@
-{"at":"2026-11-13T08:39:18Z","role":"author","ok":true,"adapter":"workers-ai-glm","model":"@cf/zai-org/glm-5.3-flash","family":"glm","usd":0.001592,"priced":true}
-{"at":"2026-11-13T08:40:51Z","role":"reviewer","ok":true,"adapter":"workers-ai-llama","model":"@cf/meta/llama-3.3-70b-instruct-fp8-fast","family":"llama","usd":0.000649,"priced":true}

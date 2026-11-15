@@ -91,6 +91,9 @@ def scan(root=REPO, base="origin/main") -> list[dict]:
         name = ref[len("origin/"):]
         if name == me:
             continue  # the sweep never merges its own branch into itself
+        if name in pol.get("held", {}):
+            out.append({"name": name, "sha": _g(root, "rev-parse", ref).strip(), "action": "port", "why": pol["held"][name], "ahead": 0})
+            continue
         if name in pol.get("rejected", {}):
             out.append({"name": name, "sha": _g(root, "rev-parse", ref).strip(), "action": "rejected", "why": pol["rejected"][name]})
             continue
@@ -108,7 +111,7 @@ def _union_ledger(root) -> None:
     ours = json.loads(_g(root, "show", ":2:" + LEDGER_FILE)); theirs = json.loads(_g(root, "show", ":3:" + LEDGER_FILE))
     ids = {r["id"] for r in ours["rows"]}
     ours["rows"] += [r for r in theirs["rows"] if r["id"] not in ids]
-    (Path(root) / LEDGER_FILE).write_text(json.dumps(ours, indent=2) + "\n", encoding="utf-8", newline="\n")
+    (Path(root) / LEDGER_FILE).write_text(json.dumps(ours, indent=1) + "\n", encoding="utf-8", newline="\n")
 
 
 def _union_lines(root, path) -> None:
@@ -175,6 +178,12 @@ def apply(root=REPO, base="origin/main", dry=False, now=None) -> dict:
                 msg = f"branchsweep: merge {p['name']} ({p.get('ahead', '?')} commit(s))\n\nBRANCH-SWEEP-1: this branch held work main lacked; sha {p['sha']}."
                 rc2, _, e2 = git(root, "commit", "-q", "--allow-empty", "-m", msg)
                 ok, why = gate(root, pol) if rc2 == 0 else (False, e2.strip()[:200])
+                if ok:  # a merge that deletes a large part of a code file is a stale rewrite, not a contribution
+                    cap = int(pol.get("max_deleted_lines", 80))
+                    for ln in _g(root, "diff", "--numstat", "HEAD^1", "HEAD").splitlines():
+                        add, dele, path = (ln.split("\t") + ["", "", ""])[:3]
+                        if dele.isdigit() and int(dele) > cap and not generated(path):
+                            ok, why = False, f"merge deletes {dele} lines of {path} (cap {cap}): a stale rewrite"; break
                 if not ok:
                     git(root, "merge", "--abort"); git(root, "reset", "-q", "--hard", head)
                     p.update(action="port", why="merge breaks the gate: " + why)
@@ -199,7 +208,7 @@ def prune(root=REPO, base="origin/main", dry=False) -> list[dict]:
     """Delete remote branches that carry nothing main lacks. The sha goes to the ledger first, so the deletion is reversible."""
     root, out = Path(root), []
     for p in scan(root, base):
-        if p["action"] in ("merged", "superseded", "rejected"):
+        if p["action"] in ("merged", "superseded", "rejected") and p["name"] not in policy(root).get("held", {}):
             if not dry:
                 git(root, "push", "origin", "--delete", p["name"])
             out.append({"name": p["name"], "sha": p["sha"], "action": "deleted", "why": p["why"]})
