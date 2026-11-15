@@ -1,13 +1,1 @@
-{
-  "capability-set": {
-    "description": "Which components are built next for the second tenant (systems that ship code on their own).",
-    "experiment": "Q-GROW-second-tenant-deploying",
-    "adopted_from": "parallel CLOCKWORK branch",
-    "next_components": [
-      "deploy-loop-self-check",
-      "unattended-ship-report",
-      "tenant-isolation-guard"
-    ],
-    "revert_if": "pilot_page_views_7d does not rise at least 15 percent within 14 days"
-  }
-}
+{"target": "systems-running", "metric": "tenant_systems_deploying_unattended", "goal": 3, "current": 1, "knob": "capability-set", "capability_set": ["second-tenant-deploy-loop", "unattended-shipping"], "active_experiments": [{"id": "Q-GROW-second-tenant-deploying", "change": "build second tenant system with own deploy loop", "metric": "pilot_page_views_7d", "prediction": "+15% within 14 days", "adopted_from": "CLOCKWORK", "status": "shipped_pending_metric"}], "note": "the product is systems that ship code on their own; which components are built next is decided here"}
