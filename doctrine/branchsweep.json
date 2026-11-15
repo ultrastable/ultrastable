@@ -43,7 +43,7 @@
       "node",
       "--test",
       "--no-warnings",
-      "seed/worker/test/"
+      "seed/worker/test/*.test.js"
     ]
   ],
   "port_owner": "operations"

@@ -132,7 +132,9 @@ def resolve(root) -> list[str]:
 
 
 def gate(root, pol) -> tuple[bool, str]:
+    import glob
     for cmd in pol.get("gate", []):
+        cmd = [x for a in cmd for x in (sorted(str(Path(g).relative_to(root)) for g in glob.glob(str(Path(root) / a))) if "*" in a else [a])]
         p = subprocess.run(cmd, cwd=root, shell=False, capture_output=True, text=True, errors="replace", timeout=900)
         if p.returncode != 0:
             return False, f"{' '.join(cmd)} -> exit {p.returncode}: {(p.stdout + p.stderr).strip()[-300:]}"
