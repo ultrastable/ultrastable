@@ -10,7 +10,7 @@ for f in list(conf):
     if f == "doctrine/decision-ledger.json":
         a = json.loads(sh("git", "show", "HEAD:" + f)); b = json.loads(sh("git", "show", "origin/main:" + f))
         ids = {r["id"] for r in b["rows"]}; b["rows"] += [r for r in a["rows"] if r["id"] not in ids]
-        open(f, "w").write(json.dumps(b, indent=2) + "\n")
+        open(f, "w").write(json.dumps(b, indent=1, ensure_ascii=False) + "\n")
     elif f.endswith(".jsonl") or f == "docs/PROJECT-MEMORY.md":  # append-only: keep both sides
         t = open(f).read(); open(f, "w").write("\n".join(l for l in t.splitlines() if not re.match(r"^(<<<<<<<|=======|>>>>>>>)", l)) + "\n")
     elif f in ("ops/transparency.json", "site/dashboard-data.js"):

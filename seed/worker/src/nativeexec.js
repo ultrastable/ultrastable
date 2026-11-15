@@ -26,6 +26,12 @@ export function guard(files) {
 
 // NATIVE-SHRINK-GUARD-1: the model answers with whole files, and a small model drops what it did not see (#352 removed codeagent.js exports,
 // #348/#379/#389 cut doctrine/market.json to four keys). A change that removes most of an existing file, a JSON top-level key or a JS export is refused.
+// NATIVE-SUBSTANCE-1: a change made only of new documents or subtask records is narration, not production (#431 wrote a subtask record saying
+// "the doer cannot write code", #433 a spec nothing reads, and both merged). Such a change is refused, so the item stays in the queue for a doer that can.
+export const NARRATION_RE = /\.(?:md|txt)$|^backlog\/subtasks\/|^specs\//;
+export function substanceGuard(files, isNew) {
+  if (files.every(f => isNew(f.path) && NARRATION_RE.test(String(f.path)))) throw new Error('narration: the change only adds documents or subtask records (' + files.map(f => f.path).join(', ').slice(0, 120) + ')');
+}
 const exportsOf = t => new Set([...t.matchAll(/export\s+(?:async\s+)?(?:function\*?|const|let|class)\s+([A-Za-z_$][\w$]*)/g)].map(m => m[1]));
 export function shrinkGuard(path, before, after) {
   if (before == null) return;
@@ -56,7 +62,7 @@ const unb64 = s => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
 export function buildPrompt(item, current) {
   return `You are the Ultrastable executor. Make the smallest complete change that closes this item.\n\nITEM ${item.id}: ${item.title}\n${item.body}\n\n` +
     (current ? `CURRENT ${current.path}:\n${current.content.slice(0, 20000)}\n\n` : '') +
-    `Answer with one JSON object only: {"summary": string, "files": [{"path": string, "content": string}]} (full file contents, at most ${MAX_FILES} files, never under .github/ or autonomy/).`;
+    `Answer with one JSON object only: {"summary": string, "files": [{"path": string, "content": string}]} (full file contents, at most ${MAX_FILES} files, never under .github/ or autonomy/). The change must be code, tests or data that code reads: a change that only adds documents, specs or subtask records is refused.`;
 }
 
 export const nativeProvider = {
@@ -131,7 +137,9 @@ export async function runDbQueue(env, { fetchImpl = fetch, agent = runCodeAgent,
   let change;
   try {
     change = await agent(env, buildPrompt({ id: it.id, title: it.title, body }, cur)); guard(change.files);
-    for (const f of change.files) { const old = await gh.file(f.path); shrinkGuard(f.path, old && old.content, f.content); }
+    const fresh = new Set();
+    for (const f of change.files) { const old = await gh.file(f.path); if (!old) fresh.add(f.path); shrinkGuard(f.path, old && old.content, f.content); }
+    substanceGuard(change.files, p => fresh.has(p));
   } catch (e) {
     const why = String(e && e.message).slice(0, 200);
     await db.prepare(`UPDATE items SET blocker = ?, updated_at = datetime('now') WHERE id = ?`).bind(`needs-code: worker-native attempt failed (${why}); retried after the other candidates`, it.id).run();
@@ -171,7 +179,9 @@ async function runRepoQueue(env, { fetchImpl = fetch, agent = runCodeAgent } = {
     let change;
     try {
       change = await agent(env, buildPrompt({ id: row.id, title: item.title, body: item.body }, cur)); guard(change.files);
-      for (const f of change.files) { const old = await file(f.path); shrinkGuard(f.path, old && old.content, f.content); }
+      const fresh = new Set();
+      for (const f of change.files) { const old = await file(f.path); if (!old) fresh.add(f.path); shrinkGuard(f.path, old && old.content, f.content); }
+      substanceGuard(change.files, p => fresh.has(p));
     }
     catch (e) { return { ok: false, detail: `${row.id}: ${String(e && e.message).slice(0, 200)}` }; }
     const main = await call('GET', `/repos/${repo}/git/ref/heads/main`);

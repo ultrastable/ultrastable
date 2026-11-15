@@ -1,7 +1,7 @@
 {
   "id": "OL-20261114-5",
   "title": "OL-20261114-5: seed carries the owner's outreach intro profile (upstream leaks fails on main)",
-  "body": "**Owner:** outreach-manager\n**Trigger:** upstream leaks fails on main (found 2026-11-14 while landing SELF-REFERENCE-1)\n**Done check:** cmd:python3 -m foundation upstream leaks\n**Status:** open\n\nseed/outreach/intro-profile.json is the instance's own profile (named owner, QNFO) copied into the kernel, so every new org would introduce itself as this owner and 'python3 -m foundation upstream leaks' fails on main since #339. Replace the seed copy with a template whose fields bootstrap fills from IDEA.md, keep outreach/intro-profile.json as the instance copy, and keep seed/scripts/test_outreach_intro.py green.",
+  "body": "**Owner:** outreach-manager\n**Trigger:** upstream leaks fails on main (found 2026-11-14 while landing SELF-REFERENCE-1)\n**Done check:** cmd:python3 -m foundation upstream leaks\n**Status:** closed\n\nseed/outreach/intro-profile.json is the instance's own profile (named owner, QNFO) copied into the kernel, so every new org would introduce itself as this owner and 'python3 -m foundation upstream leaks' fails on main since #339. Replace the seed copy with a template whose fields bootstrap fills from IDEA.md, keep outreach/intro-profile.json as the instance copy, and keep seed/scripts/test_outreach_intro.py green.\n\n**Evidence:** closing probe passed (first pass): kernel is free of instance-specific values\n",
   "labels": [
     "role:outreach-manager",
     "open-loop"

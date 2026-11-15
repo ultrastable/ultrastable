@@ -10,6 +10,19 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-15
 
+- 2026-11-15: LANE-RED-1: with ZERO_ACTIONS the tick lane merged PRs whose checks ran and failed (#433); `realRed` in seed/worker/src/lane.js now holds a PR when an Actions job has a failed step, and lets the diff gate decide only when the job never started. NATIVE-SUBSTANCE-1: the Worker-native executor refuses a change made only of new documents or subtask records (#431, #433 removed). tests/foundation/test_brand.py follows the current repo list
+- 2026-11-15: DEPLOY-OIDC-1: deploy the ultrastable account from Actions via OIDC; never upload to the retired account (#435)
+- 2026-11-15: ACCOUNT-SPLIT-2: two-account controller; the ultrastable-account tick promotes itself (#432)
+- 2026-11-15: ROADMAP-AGENT-AGENT-SCOREBOARD: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attri (#433)
+- 2026-11-15: ROADMAP-AGENT-A2A-V1: QNFO.REACH #A2A-V1: A2A v1.0 agent card and task endpoint (#431)
+- 2026-11-15: MODEL-TRUTH-1 + CODE-QUEUE-1: /ops shows the model that actually ran; the executor works parked needs-code items (#430)
+- 2026-11-15: Write-back: a handoff verify line must name a public URL the change moves (re-handoff of ultrastable-tick) (#429)
+- 2026-11-15: LIVENESS-SEED-1: the tick seeds its own liveness metrics; carry Q-CRIT-DISPATCH-YIELD (supersedes the PULSE-1 draft of this PR) (#419)
+- 2026-11-15: ZERO-MINUTES-1: worker merged #427
+- 2026-11-15: Repos: align READMEs/descriptions with public reality (#427)
+- 2026-11-15: PUBLICATION-GUARD-1: audit and lessons as a check (#426)
+- 2026-11-15: IDLE-IS-NOT-OK-1: a loop that returned without working is a failed beat (#424)
+- 2026-11-15: LIVE-1: dashboard live feed reads deployed runtimes; Q-LOOP-live-clock closed (#417)
 - 2026-11-15: MEMORY-REFRESH-1: scripts/memory_refresh.py (run by the lane) records merged work here so the memory check no longer fails every pull request; scripts/local_checks.py takes the literal fallback of context expressions
 - 2026-11-15: Q-GROW-second-tenant-deploying: second-tenant instance manifest (#408)
 - 2026-11-15: Carry claude/second-tenant-2a21ae onto main
