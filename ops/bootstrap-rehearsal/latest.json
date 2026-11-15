@@ -1,0 +1,90 @@
+{
+  "rehearsal_id": "Q-SYS-BOOT-REHEARSAL",
+  "date": "2026-11-12",
+  "source": "fresh GitHub repo + fresh Cloudflare resources, from topology + one-paragraph idea",
+  "stages": [
+    {
+      "stage": 1,
+      "name": "repo-provision",
+      "description": "Create fresh empty GitHub repository from topology spec (foundation/topology.py) and one-paragraph idea.",
+      "status": "passed",
+      "failures": [
+        {
+          "error": "initial push rejected: branch protection required linear history",
+          "fix": "seeded bootstrap commit on main before enabling protection rules"
+        }
+      ]
+    },
+    {
+      "stage": 2,
+      "name": "roles-hired",
+      "description": "Hire roles per topology: driver (tick scheduler), executor (change implementer), audit (merge gate).",
+      "status": "passed",
+      "failures": [
+        {
+          "error": "executor role initially spawned without GitHub token scope to create branches",
+          "fix": "re-issued fine-grained PAT with contents:write on the fresh repo"
+        }
+      ]
+    },
+    {
+      "stage": 3,
+      "name": "queue-seeded",
+      "description": "Seed work queue with initial items derived from the idea paragraph.",
+      "status": "passed",
+      "failures": [
+        {
+          "error": "Cloudflare Queue not yet created in fresh account",
+          "fix": "created queue via wrangler queues create and bound producer/consumer in wrangler.toml"
+        }
+      ]
+    },
+    {
+      "stage": 4,
+      "name": "tick-deployed",
+      "description": "Deploy tick worker on fresh Cloudflare resources (KV namespace, Queue, Durable Object).",
+      "status": "passed",
+      "failures": [
+        {
+          "error": "DO binding failed: class not exported from worker entry",
+          "fix": "exported DO class and added migrations tag v1 with new_sqlite_classes"
+        }
+      ]
+    },
+    {
+      "stage": 5,
+      "name": "executor-deployed",
+      "description": "Deploy executor worker consuming queue, opening branches and PRs.",
+      "status": "passed",
+      "failures": [
+        {
+          "error": "first queue delivery failed auth against GitHub API (401)",
+          "fix": "stored token as Cloudflare secret, not plaintext var"
+        }
+      ]
+    },
+    {
+      "stage": 6,
+      "name": "unattended-merge",
+      "description": "Executor implemented first queued item autonomously, opened PR, audit gate approved, merged with no human intervention.",
+      "status": "passed",
+      "pr": "https://github.com/bootstrap-rehearsal/system/pull/1",
+      "failures": [
+        {
+          "error": "first PR attempt blocked: required status check not configured on fresh repo",
+          "fix": "added CI check name to branch protection required contexts before retry"
+        }
+      ]
+    },
+    {
+      "stage": 7,
+      "name": "transparency-page",
+      "description": "/live-style transparency page serving live state: roles, queue depth, merged PR, tick log.",
+      "status": "passed",
+      "failures": []
+    }
+  ],
+  "all_stages_passed": true,
+  "merged_change_pr": "https://github.com/bootstrap-rehearsal/system/pull/1",
+  "port_test_note": "Stage/fix pairs form the porting checklist for PORT-EXEC-1 (other platforms)."
+}
