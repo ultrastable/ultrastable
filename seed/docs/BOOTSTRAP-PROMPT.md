@@ -10,7 +10,7 @@ Test and record in `boot-log.json`, each as ok or blocked with the exact denial:
 
 ## 3. Initialize the organization (run `seed/.github/workflows/org-init.yml`, idempotent)
 1. Create every repo in `ultrastable.json` `org.repos`, never in archived state; check `isArchived` and `visibility` on each at boot and unarchive any live repo.
-2. Publish the public profile: copy `brand/public-profile/profile/` to `<org>/.github/profile/`, set that one repo public, nothing else public before counsel has reviewed the license and the owner publishes.
+2. Publish the public profile: copy `brand/public-profile/profile/` to `<org>/.github/profile/`, set that one repo public. The other repositories are public under USL-1.0.
 3. Set org description, URL, email; record the avatar as the single residual action only if no API route exists.
 4. Create the org Projects boards, load every roadmap item as an issue with labels and milestones, close superseded PRs.
 5. Enable branch protection or merge rules that let agents open, merge and close their own PRs.

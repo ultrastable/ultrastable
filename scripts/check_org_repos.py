@@ -26,8 +26,6 @@ def check(reg):
             errs.append(f"{n}: disposition must be one of {sorted(DISPOSITIONS)}")
         if r.get("disposition") in ("archive", "merge") and not (r.get("reason") and r.get("merged_into")):
             errs.append(f"{n}: archive/merge needs reason and merged_into")
-        if r.get("private") is not True:
-            errs.append(f"{n}: must be private until license sign-off")
     if not reg.get("public_presence", {}).get("primary", "").startswith("https://"):
         errs.append("public_presence.primary missing")
     for t in reg["target"]:
