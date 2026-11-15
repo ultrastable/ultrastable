@@ -1,0 +1,13 @@
+{
+  "id": "Q-CRIT-DISPATCH-YIELD",
+  "title": "Q-CRIT-DISPATCH-YIELD: raise deploys per dispatch: 560 dispatches in 14 days produced 18 credited deploys and 128 parked items",
+  "body": "**Owner:** operations\n**Trigger:** ignition stage below critical (BOOT-KNOWS-1) with k_eff under k_min\n**Done check:** grep:seed/worker/src/criticality.js::dispatch_yield\n**Status:** open\n\ncode-task: repo=ultrastable/ultrastable path=seed/worker/src/criticality.js\ncode-anchor: export async function measureCriticality\n\nMeasured in D1 on 2026-11-15: k_eff 0.0679 against k_min 1; spend_units 557 is almost entirely dispatches (dispatch_spend_units 1 each); outcomes in the same window were 169 verified, 128 parked, 35 failed, 32 released, and 128 items sit blocked. The denominator is work handed out; the numerator is work that shipped. Add dispatch_yield = credited deploys / dispatches to the criticality snapshot, and stop re-dispatching an item whose last outcome was parked or failed with the same reason until its blocker item closes (one dispatch per changed state, not one per tick). Prediction: spend_units falls by more than half within 14 days and k_eff rises above 0.2 with no fall in verified outcomes; revert if verified outcomes fall.\n\nsize: M\n\n**Closing probe:** grep:seed/worker/src/criticality.js::dispatch_yield",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "raises-self",
+    "cuts-cost"
+  ],
+  "milestone": "Now",
+  "workstream": "Autonomy"
+}
