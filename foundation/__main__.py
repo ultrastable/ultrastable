@@ -84,6 +84,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["design"]:
         from . import design
         return design.main(_av[1:])
+    if _av[:1] == ["insight"]:
+        from . import insight
+        return insight.main(_av[1:])
     if _av[:1] == ["growth"]:
         from . import growth
         return growth.main(_av[1:])
@@ -93,6 +96,9 @@ def main(argv=None) -> int:
     if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold"):
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
+    if _av[:1] == ["ignorance"]:
+        from . import ignorance
+        return ignorance.main(_av[1:])
     if _av[:1] == ["criticality"]:
         from . import criticality
         return criticality.main(_av[1:])

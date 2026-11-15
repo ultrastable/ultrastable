@@ -2456,6 +2456,45 @@
       "server_owner": "github-actions"
     },
     {
+      "id": "insight-loop",
+      "kind": "manager",
+      "summary": "INSIGHT-1: analytics as a feedback loop. Per-page trends from the cookieless first-party hits become findings, capped growth items, outcomes settled against what the page really got, and a self-tuned rise threshold. No opt-in gate and no third-party tag.",
+      "trigger": "daily, inside the product manager pass (product-manager.yml)",
+      "owner": "product-manager",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "the pass reports measured true, every finding older than 8 days is settled with an outcome, and growth items for rising or outside-referred pages are filed within the daily cap",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "python3 -m foundation pm --run --apply --pr in product-manager.yml",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation insight --run --apply from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/insight.py::def settle",
+      "cycle_metric": "precision_28d",
+      "last_plus": "each settled finding feeds the rise threshold (ops/insight/findings.json knob_log); precision_28d is printed in every pass so the next run is comparable",
+      "writeback": [
+        "ops/insight/findings.json"
+      ],
+      "system_path": [
+        "foundation/insight.py",
+        "foundation/pm.py",
+        "doctrine/insight.json",
+        "seed/analytics/analytics.js",
+        "tests/foundation/test_insight.py"
+      ],
+      "workflows": [
+        "product-manager.yml"
+      ],
+      "server_owner": "github-actions"
+    },
+    {
       "id": "scout",
       "kind": "governance",
       "summary": "SCOUT-1: the growth product manager scouts the state of the art weekly, scores findings against the gap register, files growth items and re-weights its sources from what was adopted.",

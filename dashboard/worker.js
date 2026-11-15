@@ -5,7 +5,8 @@
 // Portable core: every platform touch goes through env.DB (SQL), env.SEND_EMAIL (mail) and fetch, so a Google Cloud adapter only
 // has to supply those three. Cloudflare adapter = this file + wrangler.toml.
 import { handleAnalytics, record, selfcheck, report, summary } from "../seed/analytics/analytics.js";
-const VERSION = "0.2.0";
+import { ask, ASK_PER_HOUR } from "./agent.js";
+const VERSION = "0.3.0";
 const COOKIE = "us_owner";
 const OTP_MS = 10 * 60e3, SESSION_MS = 30 * 864e5, STEPUP_MS = 15 * 60e3;
 const HOSTS = ["ultrastable.io", "ultrastable.app", "ultrastable.net"];
@@ -200,12 +201,24 @@ const COMMANDS = {
 
 export async function runCommand(env, session, line) {
   const parts = String(line || "").trim().split(/\s+/).filter(Boolean); if (!parts.length) return { status: 400, body: { error: "empty command" } };
-  const cmd = COMMANDS[parts[0]]; if (!cmd) return { status: 404, body: { ok: false, out: "Unknown command. Type help." } };
+  const cmd = COMMANDS[parts[0]];
+  // CONSOLE-AGENT-1: a line that is not a registered command is a plain-English request for the agent (dashboard/agent.js) when the worker has the Workers AI binding.
+  if (!cmd) return env.AI ? askCommand(env, session, String(line).trim()) : { status: 404, body: { ok: false, out: "Unknown command. Type help. (Plain-English requests need this worker's AI binding, which this deployment does not have.)" } };
   if (cmd.mut && !session.fresh) return { status: 200, body: { ok: false, needs_code: true, out: "This changes things, so it needs a code emailed in the last 15 minutes." } };
   const ctx = { env, fresh: session.fresh, undo: null }; let res;
   try { res = await cmd.run(ctx, parts.slice(1)); } catch (e) { res = { ok: false, out: "error: " + String(e.message || e).slice(0, 200) }; }
   await env.DB.prepare("INSERT INTO audit(at,cmd,ok,result,undo) VALUES(?1,?2,?3,?4,?5)").bind(Date.now(), line.slice(0, 200), res.ok ? 1 : 0, String(res.out).slice(0, 500), ctx.undo ? JSON.stringify(ctx.undo) : null).run();
   return { status: 200, body: res };
+}
+
+// The agent answers read questions for any signed-in session and runs changing commands only with a fresh code, always through runCommand (audited, undoable).
+async function askCommand(env, session, line) {
+  const n = (await env.DB.prepare("SELECT COUNT(*) c FROM audit WHERE cmd LIKE 'ask: %' AND at>?1").bind(Date.now() - 3600e3).first()).c;
+  if (n >= ASK_PER_HOUR) return { status: 429, body: { ok: false, out: "That is " + ASK_PER_HOUR + " plain-English requests in the last hour. Try again later, or type a command (help lists them)." } };
+  const exec = async l => (await runCommand(env, session, l)).body;
+  const r = await ask(env, line, { commands: COMMANDS, exec, fresh: !!session.fresh });
+  await env.DB.prepare("INSERT INTO audit(at,cmd,ok,result,undo) VALUES(?1,?2,?3,?4,NULL)").bind(Date.now(), ("ask: " + line).slice(0, 200), r.ok ? 1 : 0, String(r.out).slice(0, 500)).run();
+  return { status: 200, body: { ...r, agent: true, scope: session.fresh ? "write" : "read" } };
 }
 
 // ---------- state for the dashboard ----------
@@ -256,7 +269,12 @@ const LOGO = "<img src=\"/favicon.svg\" alt=\"\" width=\"40\" height=\"40\" styl
 function publicPage() {
   return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable</title>" + ICON + "<style>" + THEME + "main{min-height:100vh;display:grid;place-content:center;text-align:center;padding:16px}h1{font-size:34px;margin:0 0 8px}p{color:var(--ink2);margin:0}</style></head><body><main><h1>" + LOGO + "ultrastable</h1><p>Coding agents write code. Ultrastable runs the system.</p><p style=\"margin-top:8px\">Coming soon.</p></main></body></html>");
 }
-const OWNER_CSS = "main{max-width:980px;margin:0 auto;padding:16px 16px 80px}h1{font-size:22px;margin:0}h2{font-size:17px;margin:24px 0 8px}.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.sp{margin-left:auto}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:14px;margin:0 0 10px}.card h3{margin:0 0 4px;font-size:16px}.meta{color:var(--ink2);font-size:14px}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}button,.btn{min-height:48px;min-width:48px;padding:10px 16px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 15px system-ui;cursor:pointer}button.p{background:var(--ac);border-color:var(--ac);color:var(--on)}input{min-height:48px;padding:10px 12px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:16px system-ui;width:100%}.grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}.ok{color:var(--good);font-weight:700}.bad{color:var(--bad);font-weight:700}pre{background:var(--sf);border:1px solid var(--line);border-radius:6px;padding:10px;white-space:pre-wrap;word-break:break-word;font-size:13px;max-height:280px;overflow:auto;margin:8px 0 0}.pill{border-radius:99px;padding:4px 12px;font-weight:700;font-size:14px;border:1px solid var(--line)}.tag{font-size:12px;color:var(--warn);font-weight:700}a{color:var(--ac)}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}";
+const OWNER_CSS = "main{max-width:980px;margin:0 auto;padding:16px 16px 80px}h1{font-size:22px;margin:0}h2{font-size:17px;margin:24px 0 8px}.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.sp{margin-left:auto}.card{background:var(--sf);border:1px solid var(--line);border-radius:8px;padding:14px;margin:0 0 10px}.card h3{margin:0 0 4px;font-size:16px}.meta{color:var(--ink2);font-size:14px}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}button,.btn{min-height:48px;min-width:48px;padding:10px 16px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:600 15px system-ui;cursor:pointer}button.p{background:var(--ac);border-color:var(--ac);color:var(--on)}input{min-height:48px;padding:10px 12px;border-radius:6px;border:1px solid var(--line);background:var(--sf);color:var(--ink);font:16px system-ui;width:100%}.grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}.ok{color:var(--good);font-weight:700}.bad{color:var(--bad);font-weight:700}pre{background:var(--sf);border:1px solid var(--line);border-radius:6px;padding:10px;white-space:pre-wrap;word-break:break-word;font-size:13px;max-height:280px;overflow:auto;margin:8px 0 0}.pill{border-radius:99px;padding:4px 12px;font-weight:700;font-size:14px;border:1px solid var(--line)}.tag{font-size:12px;color:var(--warn);font-weight:700}a{color:var(--ac)}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}"
+  + "textarea{width:100%;min-height:96px;padding:12px 14px;border-radius:10px;border:1px solid var(--ink);background:var(--sf);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;resize:vertical}"
+  + ".crow{display:flex;align-items:center;gap:10px;margin-top:10px}.crow .meta{flex:1;min-width:0}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.chips button{font-weight:500;font-size:14px}"
+  + ".co .q{font-weight:600;margin:0 0 4px}.ans{margin:6px 0 0}.ans p{margin:6px 0}.ans .h{font-weight:600;margin:10px 0 2px}.ans ul,.ans ol{margin:4px 0 4px 1.2em;padding:0}.ans code{font:14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);padding:1px 5px;border-radius:5px}"
+  + ".ans .codeblock{font:13.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-x:auto;white-space:pre;margin:6px 0}.ans .tw{overflow-x:auto;margin:6px 0}.ans table{border-collapse:collapse;font-size:14px;min-width:100%}.ans th,.ans td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}.ans th{font-weight:600}"
+  + "details.steps{margin:6px 0;font-size:14px;color:var(--ink2)}details.steps summary{cursor:pointer;min-height:32px;line-height:32px}details.steps div{padding-left:10px}";
 const OWNER_JS = `
 const $=s=>document.querySelector(s);const E=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function api(p,b){const r=await fetch(p,{method:b?'POST':'GET',headers:b?{'content-type':'application/json','x-us-ui':'1'}:{},body:b?JSON.stringify(b):undefined,credentials:'same-origin'});let j={};try{j=await r.json()}catch(e){}return{s:r.status,j}}
@@ -264,8 +282,27 @@ let pending=null;
 function codeBox(msg,after){$('#gate').innerHTML='<div class="card"><h3>'+E(msg)+'</h3><div class="row"><button class="p" id="send">Email me a code</button></div><div id="cbox" class="row" hidden><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" aria-label="6-digit code"><button class="p" id="ver">Verify</button></div><p class="meta" id="gm" role="status"></p></div>';
 $('#send').onclick=async()=>{$('#gm').textContent='Sending...';const r=await api('/api/owner/code',{});$('#gm').textContent=r.s==200?'Code sent. Check your inbox.':(r.j.error||'Could not send.');if(r.s==200){$('#cbox').hidden=false;$('#code').focus()}};
 $('#ver').onclick=async()=>{const r=await api('/api/owner/verify',{code:$('#code').value});if(r.s==200){const nx=new URLSearchParams(location.search).get('next');if(nx&&nx.indexOf('/oauth/authorize?')===0){location.href=nx;return}$('#gate').innerHTML='';after()}else $('#gm').textContent=r.j.error||'Wrong code.'}}
-async function run(line,quiet){const r=await api('/api/owner/run',{cmd:line});if(r.j.needs_code){pending=line;codeBox('Confirm it is you: email yourself a code to make this change.',async()=>{const l=pending;pending=null;await run(l)});return}
-if(!quiet){$('#out').textContent='> '+line+'\\n'+(r.j.out||r.j.error||'')}await load();return r}
+const NL=String.fromCharCode(10),BT=String.fromCharCode(96);
+function mk(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function md(t){const d=mk('div','ans'),ls=String(t||'').split(NL);let list=null,code=null,tb=null;
+function inl(p,s){const a=s.split(BT);for(let k=0;k<a.length;k++){if(k%2===1){p.appendChild(mk('code',null,a[k]))}else{const b=a[k].split('**');for(let m=0;m<b.length;m++){if(m%2===1)p.appendChild(mk('strong',null,b[m]));else if(b[m])p.appendChild(document.createTextNode(b[m]))}}}}
+for(let i=0;i<ls.length;i++){const ln=ls[i],tr=ln.trim();
+if(tr.indexOf(BT+BT+BT)===0){if(code){d.appendChild(code);code=null}else{code=mk('pre','codeblock','');list=null;tb=null}continue}
+if(code){code.textContent+=(code.textContent?NL:'')+ln;continue}
+if(!tr){list=null;tb=null;continue}
+if(tr.charAt(0)==='|'){if(tr.indexOf('---')>=0)continue;let cells=tr.split('|');cells=cells.slice(1,cells.length-(tr.charAt(tr.length-1)==='|'?1:0));
+if(!tb){const tw=mk('div','tw');tb=mk('table');tw.appendChild(tb);d.appendChild(tw);const hr=mk('tr');cells.forEach(x=>{const th=mk('th');inl(th,x.trim());hr.appendChild(th)});tb.appendChild(hr)}else{const rr=mk('tr');cells.forEach(x=>{const td=mk('td');inl(td,x.trim());rr.appendChild(td)});tb.appendChild(rr)}list=null;continue}
+tb=null;const bl=tr.indexOf('- ')===0||tr.indexOf('* ')===0,dot=tr.indexOf('. '),nu=dot>0&&dot<4&&tr.charCodeAt(0)>=48&&tr.charCodeAt(0)<=57;
+if(bl||nu){const tg=bl?'ul':'ol';if(!list||list.tagName.toLowerCase()!==tg){list=mk(tg);d.appendChild(list)}const li=mk('li');inl(li,bl?tr.slice(2):tr.slice(dot+2));list.appendChild(li);continue}
+list=null;if(tr.charAt(0)==='#'){let hs=tr;while(hs.charAt(0)==='#')hs=hs.slice(1);const hh=mk('div','h');inl(hh,hs.trim());d.appendChild(hh);continue}
+const pp=mk('p');inl(pp,tr);d.appendChild(pp)}
+if(code)d.appendChild(code);return d}
+function copyBtn(t){const b=mk('button',null,'Copy');b.type='button';b.onclick=()=>{try{navigator.clipboard.writeText(t).then(()=>{b.textContent='Copied'},()=>{b.textContent='Copy failed'})}catch(e){b.textContent='Copy failed'}};return b}
+function scopeBadge(s){const e=$('#scope');if(!e)return;e.textContent='';if(s==='write'){e.appendChild(mk('b',null,'Can read, change and run'))}else{e.appendChild(document.createTextNode('Read-only. '));const a=mk('a',null,'Allow changes');a.href='#';a.onclick=ev=>{ev.preventDefault();pending=null;codeBox('Email yourself a code to let the console change things.',load)};e.appendChild(a)}}
+function card(q){const c=mk('div','card co');c.appendChild(mk('p','q','> '+q));const th=$('#thread');th.insertBefore(c,th.firstChild);while(th.children.length>6)th.removeChild(th.lastChild);return c}
+function fill(c,j){const w=c.querySelector('.wait');if(w)c.removeChild(w);const steps=j.steps||[];if(steps.length){const d=mk('details','steps');d.appendChild(mk('summary',null,steps.length+(steps.length>1?' steps taken':' step taken')));steps.forEach(x=>d.appendChild(mk('div',null,'- '+x.label+(x.ok?'':' (failed)'))));c.appendChild(d)}const t=j.out||j.error||'No answer came back. Ask again, or type help.';c.appendChild(md(t));c.appendChild(copyBtn(t));if(j.scope)scopeBadge(j.scope)}
+async function run(line,quiet){const c=quiet?null:card(line);if(c)c.appendChild(mk('p','meta wait','Working...'));const r=await api('/api/owner/run',{cmd:line});if(r.j.needs_code){pending=line;if(c)fill(c,Object.assign({},r.j,{out:r.j.out||'This needs a fresh code.'}));codeBox('Confirm it is you: email yourself a code to make this change.',async()=>{const l=pending;pending=null;await run(l)});return r}
+if(c)fill(c,r.j);await load();return r}
 function task(t,own){const id=E(t.id);return '<div class="card"><h3>'+E(t.title)+'</h3>'+(t.identity?'<div class="tag">ONLY YOU CAN DO THIS</div>':'')+(t.why?'<div class="meta">'+E(t.why)+'</div>':'')+(t.if_wait?'<div class="meta"><b>If you wait:</b> '+E(t.if_wait)+'</div>':'')+(t.url?'<div class="meta"><a href="'+E(t.url)+'" rel="noopener">Open</a></div>':'')+'<div class="row"><button class="p" data-c="done '+id+'">Done</button>'+(t.identity?'':'<button data-c="fix '+id+'">'+(t.fix_cmd?'Fix it':'Hand to fleet')+'</button>')+'<button data-c="snooze '+id+' 3">Snooze 3d</button><button data-c="snooze '+id+' 7">7d</button><button data-c="dismiss '+id+'">Not doing</button></div></div>'}
 async function load(){const r=await api('/api/owner/state');if(r.s==401){$('#app').hidden=true;codeBox('Owner sign-in. A code is emailed to the owner address.',load);return}
 $('#app').hidden=false;const s=r.j;const bad=s.checks.filter(c=>!c.ok).length;
@@ -282,10 +319,12 @@ $('#notes').textContent=s.notes.map(n=>new Date(n.at).toISOString().slice(0,16)+
 $('#gate').dataset.gate=s.gate;$('#gatetxt').textContent=s.gate;
 document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>run(b.dataset.c))}
 $('#cmd').onsubmit=e=>{e.preventDefault();const v=$('#line').value.trim();if(v){run(v);$('#line').value=''}};
+$('#line').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('#cmd').requestSubmit?$('#cmd').requestSubmit():$('#go').click()}};
+document.querySelectorAll('#chips button').forEach(b=>b.onclick=()=>run(b.dataset.q));
 $('#logout').onclick=async()=>{await api('/api/owner/logout',{});location.reload()};
 load();`;
 function ownerPage() {
-  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><a class=\"sp\" href=\"/auth/passkey/add\">Add a passkey</a><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><h2>Needs you</h2><div id=\"owner\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Command line</h2><form id=\"cmd\"><div class=\"row\"><input id=\"line\" placeholder=\"type help\" aria-label=\"command\" autocapitalize=\"off\" autocomplete=\"off\"><button class=\"p\">Run</button></div></form><pre id=\"out\">Commands marked * ask for a fresh emailed code.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
+  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><a class=\"sp\" href=\"/auth/passkey/add\">Add a passkey</a><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><h2>Needs you</h2><div id=\"owner\"></div><h2>Ask or tell Ultrastable</h2><form id=\"cmd\"><textarea id=\"line\" rows=\"3\" maxlength=\"2000\" placeholder=\"Ask a question, or tell Ultrastable what to do\" aria-label=\"Ask or tell Ultrastable\" autocomplete=\"off\"></textarea><div class=\"crow\"><span class=\"meta\" id=\"scope\" aria-live=\"polite\">Signed in. Changes ask for a fresh emailed code.</span><button class=\"p\" id=\"go\">Run</button></div></form><div class=\"chips\" id=\"chips\"><button type=\"button\" data-q=\"Which pages got the most views in the last 7 days?\">Top pages this week</button><button type=\"button\" data-q=\"tasks owner\">What needs me</button><button type=\"button\" data-q=\"status\">Status</button><button type=\"button\" data-q=\"analytics\">Analytics</button><button type=\"button\" data-q=\"probe\">Run checks</button><button type=\"button\" data-q=\"help\">Help</button></div><div id=\"thread\" aria-live=\"polite\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
 }
 
 // ---------- router ----------

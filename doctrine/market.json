@@ -791,15 +791,14 @@
       ]
     }
   ],
-  "capability-set": {
-    "description": "Which components are built next for the second tenant (systems that ship code on their own).",
-    "experiment": "Q-GROW-second-tenant-deploying",
-    "adopted_from": "parallel CLOCKWORK branch",
-    "next_components": [
-      "deploy-loop-self-check",
-      "unattended-ship-report",
-      "tenant-isolation-guard"
-    ],
-    "revert_if": "pilot_page_views_7d does not rise at least 15 percent within 14 days"
-  }
+  "capability-set": "second-tenant-auto-deploy",
+  "capabilities": [
+    "self-deploy",
+    "second-tenant-deploy-loop"
+  ],
+  "components_built_next": [
+    "tenant-1-deploy-runner",
+    "unattended-deploy-watchdog"
+  ],
+  "rationale": "Q-GROW-second-tenant-deploying: prove the product beyond tenant 0 with a second tenant running its own unattended deploy loop (target: tenant_systems_deploying_unattended = 3 on systems-running)."
 }

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { guard, runNative, nativeProvider } from '../src/nativeexec.js';
+import { guard, runNative, nativeProvider, shrinkGuard, doneOnMain } from '../src/nativeexec.js';
 
 const b64 = s => Buffer.from(s).toString('base64');
 function fakeGh({ branches = [] } = {}) {
@@ -49,4 +49,18 @@ test('a protected-path answer opens nothing and says why', async () => {
 test('provider needs a token and the AI binding', () => {
   assert.equal(nativeProvider.available({}), false);
   assert.equal(nativeProvider.available(env), true);
+});
+
+test('shrink guard refuses gutted files, dropped JSON keys and dropped exports', () => {
+  const big = JSON.stringify({ a: 1, b: 2, features: [1, 2, 3], gaps: 'x'.repeat(200) });
+  assert.throws(() => shrinkGuard('doctrine/market.json', big, JSON.stringify({ a: 1 })), /shrink/);
+  assert.throws(() => shrinkGuard('x.json', '{"a":1,"b":2}', '{"a":1,"c":3}'), /drops keys b/);
+  assert.throws(() => shrinkGuard('src/c.js', 'export const ADAPTERS = [];\nexport function parseJson() {}\n', 'export async function runExecutor() {}\nexport const ADAPTERS = [];\n'), /drops exports parseJson/);
+  assert.doesNotThrow(() => shrinkGuard('new.js', null, 'x'));
+  assert.doesNotThrow(() => shrinkGuard('a.json', '{"a":1}', '{"a":1,"b":2}'));
+});
+
+test('an item whose file: done check already passes is not re-worked', () => {
+  assert.equal(doneOnMain('**Done check:** file:ops/x.json', p => p === 'ops/x.json'), true);
+  assert.equal(doneOnMain('**Done check:** grep:a::b', () => true), false);
 });

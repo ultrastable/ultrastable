@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-8",
+  "title": "OL-20261115-8: BIZ-4 (ops#12): founder-only submissions checklist",
+  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** FUND-3\n**Done check:** grep:ip/evidence-log.md::filing receipt\n**Status:** open\n\nMoved from ultrastable/ops#12. IDENTITY-BOUND: entity docs, IP assignment, GCP billing, domain email, applications, provisional filing. Do not buy Google Workspace on the domain within 31 days before applying. Default in effect: nothing submitted; kits in outreach/applications.",
+  "labels": [
+    "role:ROWAN (identity-bound)",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

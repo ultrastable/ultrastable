@@ -1,0 +1,1 @@
+{"at": "2026-11-15T05:33:35+00:00", "sha": "e63e72ef329f1d69ab48fec959b359d67b9ecc33", "steps": 29, "failed": ["Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)", "Foundation tests, new-system end-to-end (one job, no matrix)"]}

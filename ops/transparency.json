@@ -1,10 +1,10 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-15T05:27:22Z",
- "commit": "a8afe5f",
+ "generated": "2026-11-14T16:27:11Z",
+ "commit": "1202e5d",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
-  "managers_and_loops": 79,
+  "managers_and_loops": 76,
   "loops_with_evidence": 2,
   "components": {
    "live": 24
@@ -18,18 +18,18 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 129,
-  "backlog_items": 167
+  "backlog_open": 136,
+  "backlog_items": 141
  },
  "throughput": {
   "queue": {
-   "items": 167,
+   "items": 141,
    "by_status": {
-    "closed": 37,
-    "open": 129,
+    "open": 136,
+    "closed": 4,
     "done": 1
    },
-   "takeable_now": 8
+   "takeable_now": 132
   },
   "merged": {
    "total": 0,
@@ -62,21 +62,20 @@
   "deploys": {
    "site_runs": 50,
    "by_conclusion": {
-    "failure": 19,
-    "success": 29,
-    "cancelled": 2
+    "failure": 7,
+    "success": 40,
+    "cancelled": 3
    },
    "latest": {
     "conclusion": "failure",
-    "createdAt": "2026-11-15T05:22:44Z",
+    "createdAt": "2026-11-14T15:16:52Z",
     "event": "push",
-    "headSha": "0a209bcf868857d3ee89c453b04fa52c640e4fbc"
+    "headSha": "1202e5d82e639336c3d8ba9ce6afe5334ec3a21d"
    },
    "per_day_success": {
-    "2026-11-12": 9,
+    "2026-11-12": 20,
     "2026-11-13": 20,
-    "2026-11-14": 0,
-    "2026-11-15": 0
+    "2026-11-14": 0
    }
   },
   "executor": {
@@ -109,7 +108,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 246.7,
+   "age_s": 381.6,
    "status": "fresh",
    "missed": 0
   },
@@ -133,15 +132,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 39748.7,
+   "age_s": 4193.6,
    "status": "expired",
-   "missed": 44
+   "missed": 4
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 144805.7,
+   "age_s": 97991.6,
    "status": "stale",
    "missed": 1
   }
@@ -170,13 +169,13 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-15T05:27:06Z",
+  "generated": "2026-11-14T16:26:53Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1331.9,
+    "expected_today": 1328.2,
     "value": null,
     "behind": null,
     "progress": null
@@ -185,7 +184,7 @@
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 573.9,
+    "expected_today": 572.2,
     "value": null,
     "behind": null,
     "progress": null
@@ -194,7 +193,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 838.1,
+    "expected_today": 834.6,
     "value": null,
     "behind": null,
     "progress": null
@@ -203,7 +202,7 @@
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 334.5,
+    "expected_today": 333.1,
     "value": null,
     "behind": null,
     "progress": null
@@ -219,7 +218,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-15T05:27:06Z",
+     "at": "2026-11-14T16:26:53Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -262,7 +261,7 @@
    {
     "id": "deploy",
     "status": "expired",
-    "missed": 44
+    "missed": 4
    },
    {
     "id": "publish",
@@ -282,8 +281,8 @@
    "target": 0.4
   },
   "target_growth_share": 0.4,
-  "growth_items_takeable": 0,
-  "items_takeable": 8,
+  "growth_items_takeable": 29,
+  "items_takeable": 132,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -328,7 +327,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 267.6,
+   "last_beat_age_s": 405.2,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -339,7 +338,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 61773.6,
+   "last_beat_age_s": 14962.2,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -350,9 +349,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 273.6,
+   "last_beat_age_s": 4214.2,
    "expected_interval_s": 86400,
-   "beats_24h": 19,
+   "beats_24h": 15,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -361,7 +360,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 206542.6,
+   "last_beat_age_s": 159731.2,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -1283,18 +1282,6 @@
    "role_file": "agents/roles/operations.md"
   },
   {
-   "loop": "qnfo-sauce",
-   "kind": "governance",
-   "summary": "The loops that make a fleet close its own work (QNFO-PORT-1): closing-probe contracts close an item only on its own probe and reopen a relapse; tickets about another record fold when it resolves; per-family throughput files a build-the-doer item for a family that grows with nothing closing it; the metric loop files, judges and replaces remedies; the links that still do not close are ignition gaps next to k.",
-   "owner": "operations",
-   "trigger": "each launch pass, before lifecycle; the queue run of the executor and fleet routes goes through the same contracts",
-   "sla": "1 tick",
-   "closing_probe": "grep:foundation/sauce.py::def tick",
-   "cycle_metric": null,
-   "last_plus": null,
-   "last_run": null
-  },
-  {
    "loop": "lifecycle",
    "kind": "manager",
    "summary": "No zombie sessions: leases, heartbeats, reaper; and loops that score and mutate themselves (the improver scores itself).",
@@ -1567,30 +1554,6 @@
     "Ask a reviewer of a different model family to critique rendered phone screenshots of every changed surface against the invariants; its findings are items, not opinions."
    ],
    "role_file": "agents/roles/design-manager.md"
-  },
-  {
-   "loop": "promote",
-   "kind": "governance",
-   "summary": "PROMOTE-1: strategy and promotion as a closed loop. Channels are scored from facts the repository proves; credential-free channels (MCP registry, IndexNow) run themselves; application kits are rendered from the fact bank; outcomes re-weight channels.",
-   "owner": "marketing-manager",
-   "trigger": "hourly site tick (IndexNow, daily), push of server.json (mcp-registry.yml), every executor or cloud-session pass (promote --plan --apply, promote --kits)",
-   "sla": "7d",
-   "closing_probe": "grep:foundation/promote.py::def outcome",
-   "cycle_metric": null,
-   "last_plus": null,
-   "last_run": null
-  },
-  {
-   "loop": "blindspots",
-   "kind": "governance",
-   "summary": "BLINDSPOT-1: the system knows what the owner cannot know to ask for. A register of needs every system has (privacy, security contact, accessibility, email authentication, entity, backups, succession, renewals, tax) is probed against the repository; gaps become executor items, identity-bound ones become gates, and recurring domain sweeps keep asking what nobody thought to ask.",
-   "owner": "product-manager",
-   "trigger": "every executor or cloud-session pass (blindspots --scan --apply) and on each new incident, reply or finding (blindspots --learn)",
-   "sla": "7d",
-   "closing_probe": "grep:foundation/blindspots.py::def learn",
-   "cycle_metric": null,
-   "last_plus": null,
-   "last_run": null
   }
  ],
  "claims": {
@@ -1999,69 +1962,6 @@
  "changes": {
   "commits": [
    {
-    "sha": "a8afe5f",
-    "at": "2026-11-15T05:07:18+00:00",
-    "author": "Claude",
-    "subject": "PLATFORM-AUDIT-1: write-back record",
-    "pr": null,
-    "item": "PLATFORM-AUDIT-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/a8afe5f36df8ef955b2053b5e519fd858aea52a0"
-   },
-   {
-    "sha": "4c76c5e",
-    "at": "2026-11-15T05:07:08+00:00",
-    "author": "Claude",
-    "subject": "PLATFORM-AUDIT-1: monitor and fix live repo and Cloudflare settings against their declaration",
-    "pr": null,
-    "item": "PLATFORM-AUDIT-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/4c76c5e16adc688a6348396be19451b4788f60fd"
-   },
-   {
-    "sha": "52bed8d",
-    "at": "2026-11-14T19:27:05+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "deploy-workers: Windows-safe version message (#370)",
-    "pr": 370,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/52bed8db0740a760a1a855eff969f0b6b5a60918"
-   },
-   {
-    "sha": "8e5d838",
-    "at": "2026-11-14T19:24:28+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Integrate OAuth, connectors, passkeys, AuthZEN, webhooks, Web Bot Auth (#369)",
-    "pr": 369,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/8e5d838cef14b920a88c719d767b8ee16af2e5ff"
-   },
-   {
-    "sha": "e61f371",
-    "at": "2026-11-14T19:20:51+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Fix SyntaxError in site/worker.js blocking deploy-site (#367)",
-    "pr": 367,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/e61f371be7e88f3cac5c4ca8e1a82d64a1e2d006"
-   },
-   {
-    "sha": "9f3829d",
-    "at": "2026-11-14T19:11:33+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "AGENT-HARNESS-1: MCP submit_work with agent attribution (#361)",
-    "pr": 361,
-    "item": "AGENT-HARNESS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/9f3829d55439af616caa31681812b7620afaf569"
-   },
-   {
-    "sha": "9172822",
-    "at": "2026-11-14T17:33:55+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "PROMOTE-1 and BLINDSPOT-1: promotion loop, and a register of what the owner cannot know (#360)",
-    "pr": 360,
-    "item": "PROMOTE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/917282227724d8d85fafb81f753bbb0bc1433dbd"
-   },
-   {
     "sha": "1202e5d",
     "at": "2026-11-14T16:16:49+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2357,6 +2257,69 @@
     "pr": 319,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/79587c242a62e8d32ba40877fc9842ce343ef3d8"
+   },
+   {
+    "sha": "cc611b3",
+    "at": "2026-11-13T14:47:13+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Backlog: video posting, promotion owner, token-free lane, workers inventory (#317)",
+    "pr": 317,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/cc611b33b2900e45ad5ee49cc078d95472375a07"
+   },
+   {
+    "sha": "b47e509",
+    "at": "2026-11-13T14:41:17+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "VIDEO-1: readable captions, distinct scenes (#316)",
+    "pr": 316,
+    "item": "VIDEO-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/b47e5090229215c4e3f05ab18337336c0cfd05a5"
+   },
+   {
+    "sha": "0fd8338",
+    "at": "2026-11-13T14:36:33+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "VIDEO-1: poster and contact-sheet assets, write-back for #313 (#315)",
+    "pr": 315,
+    "item": "VIDEO-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/0fd8338f50ce47ab39654f0d3ad844650b7a23d4"
+   },
+   {
+    "sha": "1bc593f",
+    "at": "2026-11-13T14:30:35+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "VIDEO-1: fix demo-video toolchain (piper-tts 1.3) (#313)",
+    "pr": 313,
+    "item": "VIDEO-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1bc593f988a7ac21703b95e93141fe90b34ca5c3"
+   },
+   {
+    "sha": "368dafa",
+    "at": "2026-11-13T14:28:18+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "VIDEO-1: server-side narrated demo video of the live product (#312)",
+    "pr": 312,
+    "item": "VIDEO-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/368dafab74ef4c926fe3dd69d129c6ce82f8e552"
+   },
+   {
+    "sha": "b158640",
+    "at": "2026-11-13T13:45:22+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SELF-SUSTAIN-1: executor cap counts attempts, lane closes conflicts, escape-free replies (#304)",
+    "pr": 304,
+    "item": "SELF-SUSTAIN-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/b158640a8182bc728b81c8cf1af0cec51f2419d6"
+   },
+   {
+    "sha": "53bdb42",
+    "at": "2026-11-13T11:57:05+00:00",
+    "author": "ultrastable-lane",
+    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS)",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/53bdb425c9a8e44fbad3f181ece519b48583b101"
    }
   ],
   "pull_requests": []

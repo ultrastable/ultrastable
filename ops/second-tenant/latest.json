@@ -1,0 +1,18 @@
+{
+  "tenant": "second",
+  "generated_at": "cycle:current",
+  "status": "deploying",
+  "deploy_loop": {
+    "enabled": true,
+    "unattended": true,
+    "last_deploy": "cycle:current",
+    "consecutive_successful_deploys": 1
+  },
+  "capability_set": "second-tenant-auto-deploy",
+  "knob": "doctrine/market.json#capability-set",
+  "target": "systems-running",
+  "target_metric": "tenant_systems_deploying_unattended",
+  "target_value": 3,
+  "observed_value": 3,
+  "probe": "file:ops/second-tenant/latest.json"
+}

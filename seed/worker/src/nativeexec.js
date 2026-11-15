@@ -21,6 +21,32 @@ export function guard(files) {
   return files;
 }
 
+// NATIVE-SHRINK-GUARD-1: the model answers with whole files, and a small model drops what it did not see (#352 removed codeagent.js exports,
+// #348/#379/#389 cut doctrine/market.json to four keys). A change that removes most of an existing file, a JSON top-level key or a JS export is refused.
+const exportsOf = t => new Set([...t.matchAll(/export\s+(?:async\s+)?(?:function\*?|const|let|class)\s+([A-Za-z_$][\w$]*)/g)].map(m => m[1]));
+export function shrinkGuard(path, before, after) {
+  if (before == null) return;
+  if (after.length < before.length * 0.5) throw new Error(`shrink: ${path} would lose ${before.length - after.length} of ${before.length} bytes`);
+  if (/\.json$/.test(path)) {
+    let a, b;
+    try { a = JSON.parse(before); b = JSON.parse(after); } catch { throw new Error(`shrink: ${path} is not valid JSON after the change`); }
+    if (a && b && typeof a === 'object' && !Array.isArray(a)) {
+      const lost = Object.keys(a).filter(k => !(k in b));
+      if (lost.length) throw new Error(`shrink: ${path} drops keys ${lost.slice(0, 5).join(', ')}`);
+    }
+  }
+  if (/\.(m?js)$/.test(path)) {
+    const now = exportsOf(after), lost = [...exportsOf(before)].filter(n => !now.has(n));
+    if (lost.length) throw new Error(`shrink: ${path} drops exports ${lost.slice(0, 5).join(', ')}`);
+  }
+}
+
+// A file: done check that already passes on main means the item is finished; re-working it only churns (Q-GROW-second-tenant-deploying ran 4 times).
+export function doneOnMain(body, exists) {
+  const m = /\*\*Done check:\*\*\s*file:(\S+)/.exec(body || '');
+  return Boolean(m && exists(m[1].replace(/[;,.]$/, '')));
+}
+
 const b64 = s => btoa(unescape(encodeURIComponent(s)));
 const unb64 = s => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
 
@@ -53,11 +79,16 @@ export async function runNative(env, { fetchImpl = fetch, agent = runCodeAgent }
     const rec = await file(`docs/issues/${row.id}.json`);
     if (!rec) continue;
     const item = JSON.parse(rec.content); item.body = item.body || '';
-    if (/\*\*Status:\*\*\s*closed/i.test(item.body)) continue;
+    if (/\*\*Status:\*\*\s*(closed|done|superseded)/i.test(item.body)) continue;
+    const fm = /\*\*Done check:\*\*\s*file:(\S+)/.exec(item.body);
+    if (fm && await file(fm[1].replace(/[;,.]$/, ''))) continue;                          // probe already passes on main: the closer closes it
     const ct = /code-task:\s*repo=\S+\s+path=(\S+)/.exec(item.body);
     const cur = ct ? await file(ct[1]) : null;
     let change;
-    try { change = await agent(env, buildPrompt({ id: row.id, title: item.title, body: item.body }, cur)); guard(change.files); }
+    try {
+      change = await agent(env, buildPrompt({ id: row.id, title: item.title, body: item.body }, cur)); guard(change.files);
+      for (const f of change.files) { const old = await file(f.path); shrinkGuard(f.path, old && old.content, f.content); }
+    }
     catch (e) { return { ok: false, detail: `${row.id}: ${String(e && e.message).slice(0, 200)}` }; }
     const main = await call('GET', `/repos/${repo}/git/ref/heads/main`);
     if (!main.ok) return { ok: false, detail: 'cannot read main ref ' + main.status };
