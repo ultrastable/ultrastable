@@ -108,6 +108,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["clock"]:
         from . import clock
         return clock.main(_av[1:])
+    if _av[:1] == ["platformaudit"]:
+        from . import platformaudit
+        return platformaudit.main(_av[1:])
     if _av[:1] == ["topology"]:
         from . import topology
         return topology.main(_av[1:])

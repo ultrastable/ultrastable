@@ -16,13 +16,13 @@
   "standards": [
     {
       "id": "markdown-for-agents",
-      "status": "pending",
-      "what": "Accept: text/markdown and .md suffix return page content as Markdown with Vary: Accept",
+      "status": "implemented",
+      "what": "Accept: text/markdown (preferred over text/html) returns the page as Markdown with Vary: Accept and x-markdown-tokens",
       "source": "https://blog.cloudflare.com/agent-readiness/",
       "read": "2026-11-12",
       "published": "2026-04-17",
-      "trigger": "Accept: text/markdown negotiation is added to site/agentic.js withLinks",
-      "probe": "grep:doctrine/agent-standards.json::markdown-for-agents"
+      "code": "site/readiness.js",
+      "proof": "grep:site/site.test.mjs::text/markdown"
     },
     {
       "id": "link-headers",
@@ -105,6 +105,53 @@
       "read": "2026-11-12",
       "code": "site/agentic.js",
       "proof": "grep:site/site.test.mjs::agent-skills"
+    },
+    {
+      "id": "robots-ai-bot-rules",
+      "status": "implemented",
+      "what": "robots.txt names AI crawlers: search and user agents allowed, training-only crawlers disallowed, matching the Content-Signal",
+      "source": "https://blog.cloudflare.com/agent-readiness/",
+      "read": "2026-11-14",
+      "code": "site/readiness.js",
+      "proof": "grep:site/site.test.mjs::GPTBot"
+    },
+    {
+      "id": "webmcp",
+      "status": "implemented",
+      "what": "navigator.modelContext tools (status, agents, work, brief) on every page, read-only, calling the public /api/v1",
+      "source": "https://blog.cloudflare.com/the-agentic-internet/",
+      "read": "2026-11-14",
+      "code": "site/readiness.js",
+      "proof": "grep:site/site.test.mjs::webmcp"
+    },
+    {
+      "id": "oauth-protected-resource",
+      "status": "declined",
+      "what": "RFC 9728 protected-resource metadata and RFC 8414 server discovery",
+      "source": "https://blog.cloudflare.com/agent-readiness/",
+      "read": "2026-11-14",
+      "reason": "no OAuth authorization server exists: reads are public and /api/v1/intake uses a bearer key; publishing OAuth metadata would be false",
+      "trigger": "an OAuth authorization server fronts /api/v1/intake (Q-AGENT-OAUTH-1)",
+      "probe": "grep:doctrine/agent-standards.json::oauth-protected-resource"
+    },
+    {
+      "id": "web-bot-auth",
+      "status": "pending",
+      "what": "Ultrastable's own outbound agents (scout, rnd, outreach resolver) sign requests (HTTP Message Signatures) and publish /.well-known/http-message-signatures-directory",
+      "source": "https://blog.cloudflare.com/agent-readiness/",
+      "read": "2026-11-14",
+      "trigger": "a signing key is bound to the tick Worker as a secret",
+      "probe": "grep:doctrine/agent-standards.json::web-bot-auth"
+    },
+    {
+      "id": "agentic-commerce",
+      "status": "declined",
+      "what": "x402, Universal Commerce Protocol, Agentic Commerce Protocol (non-scoring commerce checks)",
+      "source": "https://blog.cloudflare.com/agent-readiness/",
+      "read": "2026-11-14",
+      "reason": "VISION: Ultrastable does not sell online; no checkout to expose",
+      "trigger": "a paid API tier exists",
+      "probe": "grep:doctrine/agent-standards.json::agentic-commerce"
     }
   ]
 }
