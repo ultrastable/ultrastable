@@ -1160,6 +1160,14 @@
    "body": "Merging agent/Q-GROW-AGENT-DIRECTORIES replaced scripts/outreach.py (343 lines deleted, 49 added) and passed every gate. The sweep now undoes a merge that deletes more than max_deleted_lines of a non-generated file and files a PORT-BRANCH item; doctrine/branchsweep.json held keeps a branch out of merge and prune with the reason. Ledger rows a branch brings must have probes that pass on the merged tree (the orphans check is in the gate).",
    "probe": "grep:foundation/branchsweep.py::max_deleted_lines",
    "session": "session_0156nqDsim2nV3ymxKLeFRQ1"
+  },
+  {
+   "id": "decision-2026-11-15-executor-closed-q-doer-q-tick-add-a-self-contained-q-tick-do",
+   "kind": "decision",
+   "date": "2026-11-15",
+   "title": "Executor closed Q-DOER-Q-TICK: Add a self-contained Q-TICK doer module that closes Q-TICK items from their own tick records, registered shap",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/doers/__init__.py, foundation/doers/q_tick.py, tests/test_q_tick_doer.py.",
+   "probe": "file:foundation/doers/__init__.py"
   }
  ]
 }
