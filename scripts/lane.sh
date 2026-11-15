@@ -117,11 +117,13 @@ echo "lane: needs-pat merged=$wf_merged waiting=$wf_waiting credential=$wf_sourc
 if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
   root="$(cd "$here/.." && pwd)"
   if (cd "$root" && python3 -m foundation loopowner --adopt --apply); then
-    if [ -n "$(git -C "$root" status --porcelain docs/issues)" ]; then
+    # MEMORY-REFRESH-1: record merged work in the project memory before it goes stale and fails every pull request's memory check
+    (cd "$root" && python3 scripts/memory_refresh.py) || echo "lane: memory refresh failed" >&2
+    if [ -n "$(git -C "$root" status --porcelain docs/issues docs/PROJECT-MEMORY.md)" ]; then
       git -C "$root" config user.name "ultrastable-lane"; git -C "$root" config user.email "actions@users.noreply.github.com"
       # LANE-DASHBOARD-1: the adoption items change the issue count the dashboard carries; rebuild it in the same commit, or main fails its own stale check
       (cd "$root" && python3 scripts/build_dashboard.py >/dev/null) || echo "lane: dashboard rebuild failed" >&2
-      git -C "$root" add docs/issues site/dashboard-data.js
+      git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md
       git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
       pushed=0
       for try in 1 2 3 4 5; do
