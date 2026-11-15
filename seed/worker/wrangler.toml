@@ -1,0 +1,21 @@
+name = "ultrastable-tick"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# Deploy routes:
+# 1. Built-in token route: Workers Builds / wrangler-action uses CLOUDFLARE_API_TOKEN.
+# 2. Cloud-session route: operations deploys via `wrangler deploy` under an authenticated cloud session.
+# NOTE: ITEM Q-TICK-DEPLOY also requires .github/workflows/deploy-tick.yml with a deploy job
+# (trigger: push to main touching seed/worker). That file must be added by an executor permitted
+# to write under .github/; this config is deploy-ready for it.
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ultrastable"
+database_id = "REPLACE_WITH_D1_ID"
+
+[ai]
+binding = "AI"
+
+[triggers]
+crons = ["*/5 * * * *"]
