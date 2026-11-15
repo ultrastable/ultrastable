@@ -908,6 +908,14 @@
    "probe": "file:seed/worker/src/auth/connectors.js"
   },
   {
+   "id": "decision-2026-11-14-connections-1-one-owner-only-screen-to-see-and-revoke-every-",
+   "kind": "decision",
+   "date": "2026-11-14",
+   "title": "CONNECTIONS-1: one owner-only screen to see and revoke every linked service and agent",
+   "body": "ultrastable.io/connections lists services (read from the tick Worker credential store over the TICK binding) and agents (OAuth clients with live tokens in site/oauth.js tables); one click revokes either. The /connect/* consent flow is proxied to the tick Worker for the signed-in owner; only the provider callback skips the session because it carries its own signed state. Mutations are same-origin only.",
+   "probe": "file:site/connections.js"
+  },
+  {
    "id": "decision-2026-11-14-issuesync-1-filed-roadmap-items-reach-the-work-queue-on-the-",
    "kind": "decision",
    "date": "2026-11-14",
