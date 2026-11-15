@@ -2801,6 +2801,82 @@
         "foundation/team.py"
       ],
       "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "promote",
+      "kind": "governance",
+      "summary": "PROMOTE-1: strategy and promotion as a closed loop. Channels are scored from facts the repository proves; credential-free channels (MCP registry, IndexNow) run themselves; application kits are rendered from the fact bank; outcomes re-weight channels.",
+      "trigger": "hourly site tick (IndexNow, daily), push of server.json (mcp-registry.yml), every executor or cloud-session pass (promote --plan --apply, promote --kits)",
+      "owner": "marketing-manager",
+      "closes_by": "system",
+      "sla": "7d",
+      "done": "python3 -m foundation promote --check reports ok",
+      "paths": [
+        {
+          "id": "worker",
+          "how": "site Worker scheduled tick submits the sitemap to IndexNow daily (site/promote.js)",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation promote --plan --apply from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/promote.py::def outcome",
+      "writeback": [
+        "ops/promotion/plan.json",
+        "ops/promotion/outcomes.jsonl",
+        "ops/promotion/weights.json",
+        "outreach/applications",
+        "docs/issues"
+      ],
+      "system_path": [
+        "doctrine/promotion.json",
+        "foundation/promote.py",
+        "site/promote.js"
+      ],
+      "area": "governance",
+      "workflows": [
+        "mcp-registry.yml"
+      ],
+      "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "blindspots",
+      "kind": "governance",
+      "summary": "BLINDSPOT-1: the system knows what the owner cannot know to ask for. A register of needs every system has (privacy, security contact, accessibility, email authentication, entity, backups, succession, renewals, tax) is probed against the repository; gaps become executor items, identity-bound ones become gates, and recurring domain sweeps keep asking what nobody thought to ask.",
+      "trigger": "every executor or cloud-session pass (blindspots --scan --apply) and on each new incident, reply or finding (blindspots --learn)",
+      "owner": "product-manager",
+      "closes_by": "system",
+      "sla": "7d",
+      "done": "python3 -m foundation blindspots --check reports ok",
+      "paths": [
+        {
+          "id": "worker",
+          "how": "the tick Worker runs the offline probes and files Q-BLIND items (ultrastable-tick)",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation blindspots --scan --apply --live from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/blindspots.py::def learn",
+      "writeback": [
+        "ops/blindspots/answers.jsonl",
+        "ops/blindspots/learned.json",
+        "docs/issues"
+      ],
+      "system_path": [
+        "doctrine/blindspots.json",
+        "foundation/blindspots.py",
+        "site/legalpages.js"
+      ],
+      "area": "governance",
+      "workflows": [],
+      "server_owner": "ultrastable-tick"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

@@ -1,0 +1,28 @@
+name: mcp-registry
+# budget: ~1 min x 1/month (runs only when server.json changes, plus dispatch)
+# trigger: push to main touching server.json; the listing changes only when the server description does, so no schedule is needed
+# free-alternative: none needed for minutes; the registry accepts GitHub OIDC only from Actions, a DNS-key login from the tick Worker is the second route (Q-PROMO-mcp-registry)
+on:
+  push: {branches: [main], paths: [server.json]}
+  workflow_dispatch: {}
+permissions: {contents: read, id-token: write, actions: read}
+concurrency: {group: mcp-registry, cancel-in-progress: false}
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py mcp-registry
+      - name: Publish to the official MCP registry (PROMOTE-1, GitHub OIDC, no stored credential)
+        run: |
+          set -euo pipefail
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish
+      - name: Probe the listing
+        run: |
+          set -euo pipefail
+          curl -fsS "https://registry.modelcontextprotocol.io/v0/servers?search=io.github.ultrastable" | grep -q '"io.github.ultrastable/ultrastable"'

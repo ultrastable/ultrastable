@@ -13,10 +13,10 @@
     {
       "id": "funding",
       "title": "Submit funding applications",
-      "why": "An application is a statement made in your name; the packets are written and checked.",
-      "default": "Packets stay unsent.",
-      "url": "https://github.com/ultrastable/ultrastable/blob/main/outreach/STATUS.md",
-      "button": "Open the list of programmes with their application links",
+      "why": "An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact.",
+      "default": "Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you.",
+      "url": "https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md",
+      "button": "Open the ready-to-paste application kits (Y Combinator Winter 2027 late applications are open)",
       "class": "legal_signature"
     },
     {

@@ -153,6 +153,15 @@
    "consumer": "platform/core/tests/test_boundary.py",
    "needle": "docs",
    "how": "boundary test walks platform/core"
+  },
+  {
+   "id": "promotion-kits",
+   "paths": [
+    "outreach/applications/ultrastable/*.md"
+   ],
+   "consumer": "foundation/promote.py",
+   "needle": "outreach/applications",
+   "how": "promote --kits renders them from forms and facts and promote --check fails on any byte of drift"
   }
  ],
  "verified": {

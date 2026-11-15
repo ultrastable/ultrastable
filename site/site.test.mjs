@@ -220,9 +220,15 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.match(await (await g3("/robots.txt")).text(), /Content-Signal:/);
   assert.match((await g3("/")).headers.get("link"), /api-catalog/);
   const rpc = async (m, params) => (await (await g3("/mcp", { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: m, params }) })).json());
-  assert.equal((await rpc("tools/list")).result.tools.length, 11);
+  assert.equal((await rpc("tools/list")).result.tools.length, 20); // 11 snapshot tools + 6 live control-plane tools (CONTROL-PLANE-1) + submit_work (AGENT-HARNESS-1)
   assert.equal(JSON.parse((await rpc("tools/call", { name: "get_scoreboard" })).result.content[0].text).a, 1);
   assert.equal((await rpc("nope")).error.code, -32601);
+  assert.equal((await g3("/.well-known/mcp")).status, 200);
+  { const pg = await (await g3("/connect-agent")).text(); assert.match(pg, /vscode:mcp\/install\?/); assert.match(pg, /codex mcp add ultrastable --url https:\/\/ultrastable.io\/mcp/); assert.ok(!/token/i.test(pg.replace(/Nothing to copy or paste/, "")), "no token step"); } // CONNECT-PAGE-1
+  assert.match(await (await g3("/connect-agent")).text(), /vscode:mcp\/install/); // one-click connect page
+  assert.ok(JSON.parse((await rpc("tools/call", { name: "get_standards" })).result.content[0].text).entries.length > 15);
+  assert.ok(JSON.parse((await rpc("tools/call", { name: "get_blind_spots" })).result.content[0].text).length > 5); // AGENT-HARNESS-1: well-known discovery
+  assert.equal((await g3("/mcp", { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "submit_work", arguments: { title: "t", agent: "a", harness: "h" } } }) })).status >= 400, true, "submit_work without a token is refused");
   assert.equal((await g3("/mcp")).status, 405); assert.equal((await g3("/mcp", { method: "DELETE" })).status, 405);
 }
 // TOPOLOGY-1: the owner dashboard is reached through the OWNER service binding, only on its own paths
@@ -271,3 +277,26 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
 { const s = await (await get("https://ultrastable.io/setup")).text();
   assert.ok(!/autopilot/i.test(s), "autopilot step is gone");
   assert.match(s, /api\.github\.com\/repos/); assert.match(s, /pages\.dev/); assert.match(s, /"tasks"/); }
+
+// PROMOTE-1: IndexNow channel (key file served, daily submission, failure recorded not thrown)
+{ /* PROMOTE-1 IndexNow: key file, daily cadence, failures recorded */
+  const P = await import("./promote.js");
+  const kf = P.keyFile("/" + P.INDEXNOW_KEY + ".txt");
+  assert.equal(await kf.text(), P.INDEXNOW_KEY);
+  assert.equal(P.keyFile("/other.txt"), null);
+  let sent = null;
+  const ok = await P.indexNow({ host: "ultrastable.io", now: new Date("2026-11-14T06:17:00Z"), fetchFn: async (u, o) => { sent = JSON.parse(o.body); return { status: 202 }; } });
+  assert.equal(ok.ok, true); assert.equal(sent.urlList.length, P.SITEMAP_PATHS.length); assert.ok(sent.keyLocation.endsWith(P.INDEXNOW_KEY + ".txt"));
+  assert.equal(await P.indexNow({ host: "ultrastable.io", now: new Date("2026-11-14T12:17:00Z"), last: ok, fetchFn: async () => { throw new Error("must not send"); } }), null);
+  const bad = await P.indexNow({ host: "ultrastable.io", now: new Date("2026-11-14T13:17:00Z"), last: { ...ok, ok: false }, fetchFn: async () => { throw new Error("net down"); } });
+  assert.equal(bad.ok, false); assert.match(bad.error, /net down/);
+}
+console.log("PROMOTE-1 indexnow ok");
+
+{ /* BLINDSPOT-1: privacy, accessibility and security contact exist and match the code */
+  const pv = await get("https://ultrastable.io/privacy"), ac = await get("https://ultrastable.io/accessibility"), st = await get("https://ultrastable.io/.well-known/security.txt");
+  assert.equal(pv.status, 200); assert.match(await pv.text(), /no cookie/);
+  assert.equal(ac.status, 200); assert.match(await ac.text(), /WCAG 2\.2/);
+  const t = await st.text(); assert.equal(st.status, 200); assert.match(t, /^Contact: mailto:/); assert.match(t, /Expires: /);
+  console.log("BLINDSPOT-1 pages ok");
+}

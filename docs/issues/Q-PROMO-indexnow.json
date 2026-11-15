@@ -1,0 +1,12 @@
+{
+  "id": "Q-PROMO-indexnow",
+  "title": "Q-PROMO-indexnow: keep the indexnow promotion channel live",
+  "body": "**Owner:** marketing-manager\n**Trigger:** every promote --plan pass\n**Done check:** grep:ops/promotion/outcomes.jsonl::\"channel\": \"indexnow\"\n**Prediction:** promotion_outcomes_recorded >= 1 within 336 h\n**Status:** open\n\nRoute: site/worker.js /api/v1/promote/indexnow (tick and deploy). Signal back: search referrals in first-party hits. Record the result with `python3 -m foundation promote --outcome indexnow --kind listed|silent`; the outcome re-weights the channel.",
+  "labels": [
+    "role:marketing-manager",
+    "growth",
+    "promotion"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

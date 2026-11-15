@@ -81,7 +81,7 @@
     {
       "id": "ultrastable-tick",
       "state": "live",
-      "role": "heartbeat, executor dispatch, in-Worker code agents, lane",
+      "role": "heartbeat, executor dispatch, in-Worker code agents, lane, worker gate and handoffs (merge -> deploy -> probe -> close or roll back)",
       "main": "seed/worker/src/index.js",
       "compatibility_date": "2026-11-12",
       "crons": [
@@ -115,15 +115,18 @@
         "secrets": [
           "GITHUB_DISPATCH_TOKEN",
           "GITHUB_WEBHOOK_SECRET",
-          "ANALYTICS_TOKEN"
+          "ANALYTICS_TOKEN",
+          "INTERNAL_DEPLOY_KEY"
         ],
-        "vars": {}
+        "vars": {
+          "ZERO_ACTIONS": "1"
+        }
       }
     },
     {
       "id": "ultrastable-site",
       "state": "live",
-      "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents)",
+      "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents), control-plane API /api/v1 and /ops dashboard (reads ORG live)",
       "main": "site/worker.js",
       "compatibility_date": "2026-11-12",
       "routes": [
@@ -137,7 +140,8 @@
       "public": true,
       "bindings": {
         "d1": {
-          "DB": "ultrastable-ops"
+          "DB": "ultrastable-ops",
+          "ORG": "ultrastable-org"
         },
         "kv": {
           "ASSETS": "ultrastable-site-assets"
@@ -149,7 +153,12 @@
           "OWNER": "ultrastable-dashboard",
           "TICK": "ultrastable-tick"
         },
-        "secrets": [],
+        "secrets": [
+          "INTEGRATION_TOKENS",
+          "INTERNAL_DEPLOY_KEY",
+          "CF_DEPLOY_TOKEN",
+          "CF_ACCOUNT_ID"
+        ],
         "vars": {}
       }
     },

@@ -1,0 +1,17 @@
+{
+ "_doc": "PROMOTE-1 (owner, 2026-11-14): strategy and promotion are the system's job, never the owner's. Every route that can carry Ultrastable to people or to other systems is a channel here. foundation/promote.py scores each channel (reach x fit x weight / cost), where fit is computed from the channel's `requires` against outreach/facts.json (a failed requirement makes the channel not-a-fit-now with that fact as its re-entry trigger), runs or files the credential-free ones as executor items (docs/issues/Q-PROMO-*.json), and folds identity-bound ones into the single existing NEEDS-YOU card with a prepared kit. Outcomes (`promote --outcome`) re-weight channels. `needs` is none (system runs it), or owner-identity with a `gate` naming the identity-bound act (statement in the owner's name, owner account, sender postal address, money).",
+ "weights_file": "ops/promotion/weights.json",
+ "outcomes_file": "ops/promotion/outcomes.jsonl",
+ "plan_file": "ops/promotion/plan.json",
+ "gates_allowed": ["statement-in-owners-name", "owner-account", "sender-postal-address", "money", "entity"],
+ "channels": [
+  {"id": "yc", "kind": "application", "form": "outreach/forms/yc.json", "needs": "owner-identity", "gate": "statement-in-owners-name", "requires": ["live_product"], "reach": 5, "cost": 2, "signal": "YC decision email, recorded with scripts/outreach.py reply ultrastable:B-YC", "consumer": "scripts/outreach.py"},
+  {"id": "nlnet", "kind": "application", "form": "outreach/forms/nlnet.json", "needs": "owner-identity", "gate": "statement-in-owners-name", "requires": ["open_source_licence", "public_repo"], "reach": 3, "cost": 2, "signal": "NLnet reply, recorded with scripts/outreach.py reply ultrastable:A-NLNET", "consumer": "scripts/outreach.py"},
+  {"id": "cloud-credits", "kind": "application", "needs": "owner-identity", "gate": "owner-account", "requires": ["live_product"], "reach": 2, "cost": 1, "signal": "credit grant email per programme (B-CF, B-GSTART, B-AWS, B-MSFT, B-NVIDIA)", "consumer": "scripts/outreach.py"},
+  {"id": "mcp-registry", "kind": "registry", "needs": "none", "route": ".github/workflows/mcp-registry.yml", "requires": ["public_mcp"], "reach": 3, "cost": 1, "signal": "registry search returns io.github.ultrastable/ultrastable; agent hits on /mcp", "probe": "http:https://registry.modelcontextprotocol.io/v0/servers?search=ultrastable", "consumer": "foundation/promote.py"},
+  {"id": "indexnow", "kind": "search-ping", "needs": "none", "route": "site/worker.js /api/v1/promote/indexnow (tick and deploy)", "requires": ["live_product"], "reach": 2, "cost": 1, "signal": "search referrals in first-party hits", "consumer": "foundation/growth.py"},
+  {"id": "intro-email", "kind": "intro-email", "needs": "owner-identity", "gate": "sender-postal-address", "route": "scripts/outreach_intro.py", "requires": ["live_product"], "reach": 4, "cost": 2, "signal": "replies recorded with outreach_intro.py reply", "consumer": "scripts/outreach_intro.py"},
+  {"id": "social", "kind": "social", "needs": "owner-identity", "gate": "owner-account", "route": "scripts/social_post.py", "requires": ["live_product"], "reach": 2, "cost": 1, "signal": "referrals from bsky.app in first-party hits", "consumer": "scripts/social_post.py"},
+  {"id": "show-hn", "kind": "launch-venue", "needs": "owner-identity", "gate": "owner-account", "requires": ["public_repo"], "reach": 5, "cost": 1, "signal": "news.ycombinator.com referrals in first-party hits", "consumer": "foundation/growth.py"}
+ ]
+}

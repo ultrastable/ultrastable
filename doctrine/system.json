@@ -44,7 +44,7 @@
   "workers": {
     "ultrastable-tick": {
       "main": "seed/worker/src/index.js",
-      "role": "heartbeat, executor dispatch, in-Worker code agents, lane",
+      "role": "heartbeat, executor dispatch, in-Worker code agents, lane, worker gate and handoffs (merge -> deploy -> probe -> close or roll back)",
       "crons": [
         "*/10 * * * *"
       ],
@@ -76,11 +76,12 @@
     },
     "ultrastable-site": {
       "main": "site/worker.js",
-      "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents)",
+      "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents), control-plane API /api/v1 and /ops dashboard (reads ORG live)",
       "crons": [],
       "bindings": {
         "d1": {
-          "DB": "ops"
+          "DB": "ops",
+          "ORG": "org"
         },
         "ai": [
           "AI"
