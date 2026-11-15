@@ -999,6 +999,15 @@
       "session": "session_0156nqDuVY71gtRtDvjPaAgK"
     },
     {
+      "id": "decision-2026-11-15-no-patent-1-public-copy-cleanup-docs-site-roadmap",
+      "kind": "decision",
+      "date": "2026-11-15",
+      "title": "NO-PATENT-1 public copy cleanup (docs, site, roadmap)",
+      "body": "Removed patent, filing, counsel, private-repo and holding-page wording from public docs and site copy; the project is open and the Ultrastable License governs use.",
+      "probe": "grep:docs/PROJECT-MEMORY.md::NO-PATENT-1",
+      "session": "session_0156nqDuVY71gtRtDvjPaAgK"
+    },
+    {
       "id": "lesson-2026-11-15-platform-settings-are-measured-not-only-applied",
       "kind": "lesson",
       "date": "2026-11-15",

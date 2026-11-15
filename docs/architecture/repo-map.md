@@ -5,9 +5,9 @@
 | `seed` | The first code base: Cloudflare Workers runtime (tick, UI, D1), the bootstrapper and interview, policy, agent roles, tests. The thing a user copies. | UULA (see LICENSE) |
 | `platform` | Portable core and adapters (Python reference today; Google Cloud adapter next). Generalizes seed's runtime once a second adapter exists. | Proprietary until relicensed under UULA |
 | `docs` | All documentation: product scope, architecture specs, research, roadmap, strategy. No runnable code. | UULA |
-| `ip` | Becoming `docs/architecture` specs; the patent drafts are archived, not filed. | private |
+| `ip` | Becoming `docs/architecture` specs; early drafts are archived. | public |
 | `business`, `site` | Optional modules and the public site. Out of default scope. | separate terms |
-| `ultrastable` | Canonical private monorepo and QNFO-derived history. | private |
+| `ultrastable` | Canonical monorepo and QNFO-derived history. | public |
 
 Rule: code lives only in `seed` (and later `platform`); specs and decisions live only in `docs`. A spec change and its code change reference each other by path.
 

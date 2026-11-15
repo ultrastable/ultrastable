@@ -585,7 +585,7 @@
   },
   {
    "path": "kit/repos/site/README.md",
-   "sha256": "00ae856268329950296327c466233c4a61413ecc3c77af2aa5ee177a62964c92",
+   "sha256": "fa1927b6eb8623e109bc4da0cc4c3dfb7450f79759e6849d52ca9d8b9726f193",
    "reason": "kit/ was a mirror of the project Library files (its README says so); same bytes live elsewhere",
    "date": "2026-11-12",
    "recover": "59a285d92572890115015950609dbe82bb321bdf",

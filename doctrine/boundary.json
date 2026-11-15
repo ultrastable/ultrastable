@@ -13,7 +13,7 @@
   {"id": "credentials", "class": "secret", "gate": "interrupt", "default": "automated acquisition across every surface, then staged default", "probe": "file:foundation/data/owner-steps.json"},
   {"id": "money", "class": "irreversible-identity", "gate": "interrupt", "default": "simulate and stage; never spend", "probe": "file:foundation/data/owner-steps.json"},
   {"id": "owner-accounts", "class": "identity", "gate": "interrupt", "default": "prepare and stage", "probe": "file:foundation/data/owner-steps.json"},
-  {"id": "public-publishing", "class": "disclosure", "gate": "confidentiality", "default": "private until the disclosure gate in doctrine/positioning.json allows", "probe": "file:doctrine/positioning.json"},
+  {"id": "public-publishing", "class": "disclosure", "gate": "confidentiality", "default": "open under the Ultrastable License; operating data stays internal", "probe": "file:doctrine/positioning.json"},
   {"id": "third-party-systems", "class": "other-people", "gate": "scope", "default": "read-only unless the system is in doctrine/fleet.json", "probe": "file:doctrine/fleet.json"}
  ],
  "rebuild": {

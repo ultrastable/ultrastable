@@ -175,7 +175,7 @@ function product() {
 function team() {
   return shell({ path: "/team", title: "About the Ultrastable team", description: "Who builds Ultrastable: a founder and a staff of AI agents with defined roles, run by the product itself." },
     "<div class=\"head\"><h1>About</h1><p>A founder sets the direction. A staff of AI agents does the work, under the same rules the product sells.</p></div>"
-    + "<div class=\"card\"><h3 class=\"card-title\">Founder</h3><p class=\"meta\">Sets direction and approves the few steps that need a person: signing, payments and legal filings. Everything else is done, verified and reported by the staff.</p></div>"
+    + "<div class=\"card\"><h3 class=\"card-title\">Founder</h3><p class=\"meta\">Sets direction and approves the few steps that need a person: signing and payments. Everything else is done, verified and reported by the staff.</p></div>"
     + "<h2>The staff</h2><div class=\"us-grid c2\">"
     + card("Portfolio manager", "Decides which projects get capacity and keeps a protected share of it for improvements.")
     + card("Project manager", "Turns the plan into issues, each with an owner, a trigger and a check that proves it is done.")
@@ -194,7 +194,7 @@ function org() {
     + card("Code", "The portable core, platform adapters and the bootstrapper that turns an idea file into a running organization.")
     + card("Specifications", "Architectural specifications, product documentation and the license: free for non-commercial use, revenue share for commercial use.")
     + card("Profile", "The public face of the organization on GitHub.")
-    + "</div><p class=\"meta\">Repositories are private until the license is released. Superseded early splits are archived, never deleted.</p>");
+    + "</div><p class=\"meta\">The repositories are open and the Ultrastable License governs use. Superseded early splits are archived, never deleted.</p>");
 }
 function faq() {
   const q = [
@@ -686,7 +686,7 @@ function contact() {
   return shell({ path: "/contact", title: "Contact Ultrastable", description: "How to reach the Ultrastable team about pilots, partnerships and press." },
     "<div class=\"head\"><h1>Contact</h1><p>One address; a person replies within two working days.</p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">Pilots, partnerships and press</h3><p class=\"meta\"><a href=\"mailto:" + PILOT_MAIL + "\">" + PILOT_MAIL + "</a></p></div>"
-    + "<div class=\"card\"><h3 class=\"card-title\">Online</h3><p class=\"meta\">ultrastable.io. Source code is private for now.</p></div>"
+    + "<div class=\"card\"><h3 class=\"card-title\">Online</h3><p class=\"meta\">ultrastable.io. The source is open; the Ultrastable License governs use.</p></div>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");
 }
 
