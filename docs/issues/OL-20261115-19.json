@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-19",
+  "title": "OL-20261115-19: workers#19 Door A: hosted web launcher",
+  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** hosting account available\n**Done check:** file:apps/launcher/test/launcher.test.js\n**Status:** open\n\nMoved from ultrastable/workers#19. Launcher code merged (tests in apps/launcher/test). Remaining: host it on a permanent Cloudflare account that is not the QNFO account, TURNSTILE_SECRET, release bundle, claim-time heartbeat. The hosting account is an identity-bound step (NEEDS-YOU cloudflare-new-account).",
+  "labels": [
+    "role:ROWAN (identity-bound)",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

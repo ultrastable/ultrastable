@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-14",
+  "title": "OL-20261115-14: workers#181 GAP-BOOTSTRAP-QACCT: bootstrap deploy into the target account",
+  "body": "**Owner:** ROWAN (identity-bound: Cloudflare account access)\n**Trigger:** access granted\n**Done check:** file:org/bootstrap-live-trial.json\n**Status:** open\n\nMoved from ultrastable/workers#181. Code merged in workers#189: the ladder detects account mismatch, sets aside a token for another account, refuses before provisioning, records code account_mismatch. Remaining: a real bootstrap from an empty repo deploying to the target account, which needs access to that account (NEEDS-YOU cloudflare-new-account).",
+  "labels": [
+    "role:ROWAN (identity-bound: Cloudflare account access)",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

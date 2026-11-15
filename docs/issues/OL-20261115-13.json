@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-13",
+  "title": "OL-20261115-13: workers#183 GAP-LOOP-GITHUB: live cycle through the GitHub App",
+  "body": "**Owner:** ROWAN (identity-bound: GitHub App install)\n**Trigger:** App installed\n**Done check:** grep:docs/PROJECT-MEMORY.md::codeloop live cycle verified\n**Status:** open\n\nMoved from ultrastable/workers#183. Code merged in workers#190: opt-in codeloop_merge tick step, merges a runner PR only under the trust ladder. Remaining: install the GitHub App on the repo (NEEDS-YOU lane-credential, https://ultrastable.io/connect/github) and run one live cycle that opens an issue and a PR and merges it. A fresh ledger starts below autonomous, so first live merges are refused by design until the rung or merge_min_rung is set.",
+  "labels": [
+    "role:ROWAN (identity-bound: GitHub App install)",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-17",
+  "title": "OL-20261115-17: workers#75 GATE: start Ultrastable on Ultrastable (owner steps)",
+  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** any one door done\n**Done check:** file:org/started.json\n**Status:** open\n\nMoved from ultrastable/workers#75. Owner steps: a Cloudflare door (sign-in, launcher, git import or scoped token), GITHUB_TOKEN, a model key, a spending approval, the org admin token. Default in effect: dry run, nothing spent; reference tenants keep ticking on the old account. Closing probe file_exists:org/started.json.",
+  "labels": [
+    "role:ROWAN (identity-bound)",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

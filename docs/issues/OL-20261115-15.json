@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261115-15",
+  "title": "OL-20261115-15: workers#173 Worker backlog has no doer: deploy and probe",
+  "body": "**Owner:** ROWAN (identity-bound: Cloudflare account access)\n**Trigger:** Worker deployed\n**Done check:** grep:docs/PROJECT-MEMORY.md::claims_released_unworked_24h 0\n**Status:** open\n\nMoved from ultrastable/workers#173. Code merged in workers#188: execute tick step closes dispatched items whose probe the tick can read. Remaining: deploy this Worker to the ultrastable Cloudflare account (NEEDS-YOU cloudflare-new-account), then /health shows claims_released_unworked_24h 0 (reference Worker read 34 on 2026-11-15).",
+  "labels": [
+    "role:ROWAN (identity-bound: Cloudflare account access)",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
