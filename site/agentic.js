@@ -3,7 +3,8 @@
 // checksums, Link headers (RFC 8288), Content Signals in robots.txt. Every tool reads the published snapshot; nothing here can change state.
 import { load } from "./live.js";
 import AGENTDATA from "./agentdata.js";
-import { directory as wbaDirectory, DIRECTORY_PATH, DIRECTORY_TYPE, verifyRequest, fetchDirectory } from "./webbotauth.js";
+import { directory as wbaDirectory, DIRECTORY_PATH, DIRECTORY_TYPE, verifyRequest, fetchDirectory, directoryCache } from "./webbotauth.js";
+const PEER_DIRECTORIES = directoryCache(); // WBA-OUTBOUND-1: one signed directory fetch per peer origin per hour, not one per request
 import { SOP_MD } from "./sop.js";
 import { oauthRoute, verifyAccess, CHALLENGE } from "./oauth.js";
 import { OPENAPI_PATHS, API_VERSION, status as cpStatus, agents as cpAgents, work as cpWork, activity as cpActivity, products as cpProducts, companionBrief, authIntegration, submitIntake, workItem } from "./controlplane.js";
@@ -102,7 +103,7 @@ async function mcp(request, env) {
         let a = { ...((m.params || {}).arguments || {}) };
         if (auth.via === "oauth") { a.agent = a.agent || auth.agent; a.harness = a.harness || auth.harness; }  // identity comes from the client the owner approved
         if (!String(a.agent || "").trim() || !String(a.harness || "").trim()) return ok({ isError: true, content: [{ type: "text", text: "agent and harness are required" }] });
-        const wb = await verifyRequest(request, o => fetchDirectory(o)).catch(() => ({ ok: false })); // WEB-BOT-AUTH-1: a verified signature adds the agent origin to the harness record
+        const wb = await verifyRequest(request, o => PEER_DIRECTORIES(o, x => fetchDirectory(x, fetch, env))).catch(() => ({ ok: false })); // WEB-BOT-AUTH-1: a verified signature adds the agent origin to the harness record
         const r = await submitIntake(env, auth.name, wb.ok ? { ...a, harness: String(a.harness) + "+wba-" + new URL(wb.agent).hostname } : a);
         return ok({ isError: r.status >= 400, content: [{ type: "text", text: JSON.stringify(r.body) }] });
       }

@@ -1089,6 +1089,24 @@
    "title": "Q-GROW-second-tenant-deploying: second tenant manifest",
    "body": "Second tenant has its own instance manifest (kind other, 5 USD/month), README and test. ops/second-tenant/latest.json still hard-asserts observed_value; follow-up: code-task repo=ultrastable path=ops/second-tenant/deploy-loop.sh to measure deploys.",
    "probe": "file:instances/second-tenant/instance.json"
+  },
+  {
+   "id": "lesson-2026-11-15-wba-outbound-1-sign-outbound-agent-fetches-cache-peer-direct",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "WBA-OUTBOUND-1: sign outbound agent fetches, cache peer directories",
+   "body": "Recorded so the write-back gate passes. The PR diff is the change; verification is the repo checks run after Actions billing was restored.",
+   "probe": "file:site/webbotauth.js",
+   "session": "ultrastable-multi-repo"
+  },
+  {
+   "id": "lesson-2026-11-15-memory-refresh-1-a-stale-project-memory-failed-every-pull-re",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "MEMORY-REFRESH-1: a stale project memory failed every pull request",
+   "body": "Output of python3 scripts/local_checks.py --keep-going on main with pull requests 407 and 408 carried onto it: one FAIL, step 'Project memory is current', 28 commits since the last memory update against a limit of 15. Fix landed: scripts/memory_refresh.py records merged commit subjects under Last updated, scripts/lane.sh runs it on every pass, tests/test_memory_refresh.py passes 4 of 4. local_checks.py also no longer turns the base ref expression into origin/.",
+   "probe": "grep:scripts/lane.sh::memory_refresh.py",
+   "session": "session_0156nqDrgHBE9fapyRJBus2N"
   }
  ]
 }

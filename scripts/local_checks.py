@@ -17,6 +17,12 @@ import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXPR = re.compile(r"\$\{\{[^}]*\}\}")
+DEFAULT = re.compile(r"\|\|\s*'([^']*)'\s*\}\}$")
+
+
+def expr(text):
+    """Outside Actions a context value is empty, so `${{ x || 'main' }}` takes its literal fallback (the base branch would otherwise become `origin/`)."""
+    return EXPR.sub(lambda m: (DEFAULT.search(m.group(0)) or [None, ""])[1], text)
 
 
 def steps(workflow):
@@ -29,9 +35,9 @@ def steps(workflow):
             yield {
                 "job": job_name,
                 "name": st.get("name") or st["run"].strip().splitlines()[0][:70],
-                "run": EXPR.sub("", st["run"]),
+                "run": expr(st["run"]),
                 "cwd": os.path.join(ROOT, st.get("working-directory", ".")),
-                "env": {k: EXPR.sub("", str(v)) for k, v in (st.get("env") or {}).items()},
+                "env": {k: expr(str(v)) for k, v in (st.get("env") or {}).items()},
                 "continue": bool(st.get("continue-on-error")),
             }
 

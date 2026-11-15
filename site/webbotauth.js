@@ -68,6 +68,44 @@ export async function verifyRequest(request, getDirectory, now = Date.now()) {
   return good ? { ok: true, agent: agentOrigin, keyid: meta.keyid } : { ok: false, reason: "signature does not verify" };
 }
 
-export async function fetchDirectory(origin, f = fetch) {
-  const r = await f(origin + DIRECTORY_PATH, { headers: { accept: DIRECTORY_TYPE } }); return r.ok ? r.json() : null;
+// WBA-OUTBOUND-1: every outbound agent fetch carries a Web Bot Auth signature when the org key store is reachable; without it the request
+// still goes out unsigned (signing never blocks a fetch). `f` is injected so tests and callers control the transport.
+export async function signedFetch(env, url, init = {}, f = fetch, now = Date.now()) {
+  const headers = new Headers(init.headers || {});
+  if (env && env.ORG) {
+    try { for (const [k, v] of Object.entries(await signRequest(env, String(url), now))) headers.set(k, v); } catch (e) { /* unsigned fallback */ }
+  }
+  return f(url, { ...init, headers });
+}
+
+export async function fetchDirectory(origin, f = fetch, env = null) {
+  const init = { headers: { accept: DIRECTORY_TYPE }, signal: AbortSignal.timeout(4000) };
+  const r = env ? await signedFetch(env, origin + DIRECTORY_PATH, init, f) : await f(origin + DIRECTORY_PATH, init);
+  if (!r.ok) return null;
+  const d = await r.json().catch(() => null);
+  return d && Array.isArray(d.keys) ? d : null;
+}
+
+// WBA-OUTBOUND-1: peer key directories, cached per origin so a burst of signed requests from one agent costs one directory fetch.
+// A found directory is kept `ttlMs`, a miss (null or error) `missTtlMs` so a dead peer is not refetched per request; concurrent lookups for
+// one origin share one fetch; the oldest origin is dropped past `max`. Returns get(origin, fetcher) -> directory | null.
+export function directoryCache({ ttlMs = 3600e3, missTtlMs = 300e3, max = 256, clock = () => Date.now() } = {}) {
+  const hits = new Map(), inflight = new Map();
+  const get = async (origin, fetcher) => {
+    const t = clock(), e = hits.get(origin);
+    if (e && t >= e.at && t - e.at < (e.dir ? ttlMs : missTtlMs)) return e.dir;
+    if (inflight.has(origin)) return inflight.get(origin);
+    const p = (async () => {
+      let dir = null;
+      try { dir = await fetcher(origin); } catch (err) { dir = null; }
+      hits.delete(origin); hits.set(origin, { at: clock(), dir: dir || null });
+      while (hits.size > max) hits.delete(hits.keys().next().value);
+      return dir || null;
+    })();
+    inflight.set(origin, p);
+    try { return await p; } finally { inflight.delete(origin); }
+  };
+  get.size = () => hits.size;
+  get.clear = () => { hits.clear(); inflight.clear(); };
+  return get;
 }
