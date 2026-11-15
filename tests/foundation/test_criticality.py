@@ -63,3 +63,54 @@ class Criticality(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SelfReference(unittest.TestCase):
+    """SELF-REFERENCE-1: Ultrastable runs on Ultrastable; only the system's own work counts toward k_self."""
+
+    def test_origin_of_reads_the_commit(self):
+        c = C.cfg()
+        self.assertEqual(C.origin_of("Closes #9\n\nExecutor run 2026-11-14T00:00Z. Checks passed", c), "executor")
+        self.assertEqual(C.origin_of("X\n## Handoff\nitem: A\nagent: workers-ai-glm\n", c), "self-agent")
+        self.assertEqual(C.origin_of("X\n## Handoff\nitem: A\nagent: claude-code\n", c), "outside")
+        self.assertEqual(C.origin_of("AUTH-1: fix callback (#309)", c), "outside")
+        self.assertEqual(C.origin_of(None, c), "unknown")
+
+    def test_self_reference_regime(self):
+        out = dict(GOOD, origin="outside")
+        own = dict(GOOD, origin="executor")
+        driven = C.compute(repo([out]), NOW, feed_ok=True)
+        self.assertEqual((driven["k_self"], driven["regime"], driven["bootstrap"]), (0.0, "driven", None))
+        self.assertGreater(driven["k"], 1.0)
+        selfs = C.compute(repo([own, dict(own, worker="v")]), NOW, feed_ok=True)
+        self.assertEqual((selfs["self_deploys"], selfs["regime"]), (2, "self-sustaining"))
+        self.assertEqual(C.compute(repo([]), NOW, feed_ok=True)["regime"], "subcritical")
+
+    def test_driven_regime_puts_self_raising_work_first_and_drops_nothing(self):
+        d = repo([dict(GOOD, origin="outside")])
+        items = [{"number": "F-1", "labels": []}, {"number": "Q-EXEC-2", "labels": []}, {"number": "G", "labels": ["raises-self"]}]
+        self.assertEqual([i["number"] for i in C.gate(items, d, NOW)], ["Q-EXEC-2", "G", "F-1"])
+        d2 = repo([dict(GOOD, origin="executor")])
+        self.assertEqual([i["number"] for i in C.gate(items, d2, NOW)], ["F-1", "Q-EXEC-2", "G"])
+
+    def test_bootstrap_fixed_point_holds_in_this_repository(self):
+        self.assertIs(C.bootstrap_holds(), True)
+
+
+class Ignorance(unittest.TestCase):
+    """IGNORANCE-1: unknown = known - told; a changed statement is unknown again."""
+
+    def test_unknown_is_known_minus_told(self):
+        from foundation import ignorance as I
+        d = repo([dict(GOOD, origin="outside")])
+        (d / "ops/told.jsonl").write_text("", encoding="utf-8")
+        before = {f["id"] for f in I.unknown(d)}
+        self.assertIn("criticality-regime", before)
+        I.record_told(d, ["criticality-regime"])
+        self.assertNotIn("criticality-regime", {f["id"] for f in I.unknown(d)})
+        with self.assertRaises(KeyError):
+            I.record_told(d, ["criticality-regime"])
+
+    def test_repo_register_is_intact(self):
+        from foundation import ignorance as I
+        self.assertEqual(I.check(), [])

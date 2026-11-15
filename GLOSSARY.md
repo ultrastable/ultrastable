@@ -24,7 +24,7 @@ Generated from `doctrine/glossary.json` by `python3 -m foundation glossary --app
 | [Bootstrapping](#bootstrapping) | Starting a working, self-managing system from an idea in a seed repository, with the person supplying only the wish. | 1.0.0 |
 | [Self-hosting](#self-hosting) | Ultrastable runs its own planning, issues, managers, trust ledger, plussing budget and specs with the same code it gives everyone else, from this repository alone, with any tools. | 1.0.0 |
 | [Gap register](#gap-register) | The list of outside tools the system still depends on, each with a plan, an owner role and a closing probe. | 1.0.0 |
-| [Ignorance](#ignorance) | The state of a user who does not know what to ask for, or what is possible. | 1.0.0 |
+| [Ignorance](#ignorance) | What the user does not know, held by the system as a computed set: unknown = known - told. | 2.0.0 |
 | [Core](#core) | The part that bootstraps a working, server-side, self-managing system: the tick, managers and staff, trust ladder, predictions, plussing, interrupt gate and the specifications they run on. | 1.0.0 |
 | [Plugin](#plugin) | An optional tier outside the core path (e-mail, social, mailing list, GCP, branding): disabled and dry-run by default, going live only with enabled, mode live, kill switch off, credentials by binding name, a sufficient trust rung and a passing guard. | 1.0.0 |
 | [Write-back](#write-back) | Before a session or loop ends, everything it learned (decisions, lessons, open loops, term changes) is written into the repository: docs/lessons, docs/PROJECT-MEMORY.md, the loop registry, the glossary or an issue. | 1.0.0 |
@@ -52,6 +52,7 @@ Generated from `doctrine/glossary.json` by `python3 -m foundation glossary --app
 | [Document consumed](#doc-consumed) | A document exists only if code, a check, an agent's loaded instructions or a loop consumes it. | 1.0.0 |
 | [Unattended](#unattended) | The crosswalk for the words the owner and the agents use for the same property. | 1.0.0 |
 | [Clockwork](#clockwork) | A loop behaves as clockwork when it is a clock: it has an expected interval, its beats are recorded, and its measured status is ticking (a beat within 1.5 intervals) and accurate (small median distance from schedule). | 1.0.0 |
+| [Self-reference](#self-reference) | Ultrastable runs on Ultrastable, and that self-reference is what bootstrapping and criticality rest on. | 1.0.0 |
 
 ## <a id="autonomy"></a>Autonomy
 
@@ -326,7 +327,7 @@ Starting a working, self-managing system from an idea in a seed repository, with
 
 **Implemented by:** `seed/bootstrap/bootstrap.py`, `docs/bootstrapping`, `docs/BOOTSTRAP-GAPS.md`
 
-**Related:** [seed](#seed), [self-hosting](#self-hosting), [ignorance](#ignorance)
+**Related:** [seed](#seed), [self-hosting](#self-hosting), [ignorance](#ignorance), [self-reference](#self-reference)
 
 **Lineage:**
 
@@ -344,7 +345,7 @@ Ultrastable runs its own planning, issues, managers, trust ledger, plussing budg
 
 **Implemented by:** `foundation/selfhost.py`, `instances/ultrastable/selfhost.json`, `instances/ultrastable/gaps.json`
 
-**Related:** [closed-system](#closed-system), [gap-register](#gap-register), [bootstrapping](#bootstrapping)
+**Related:** [closed-system](#closed-system), [gap-register](#gap-register), [bootstrapping](#bootstrapping), [self-reference](#self-reference)
 
 **Lineage:**
 
@@ -370,21 +371,22 @@ The list of outside tools the system still depends on, each with a plan, an owne
 
 ## <a id="ignorance"></a>Ignorance
 
-The state of a user who does not know what to ask for, or what is possible. The system treats it as the normal starting condition, not a failure: it interviews, infers direction from the record, proposes and acts, and asks no question the record can answer.
+What the user does not know, held by the system as a computed set: unknown = known - told. Known facts come from measured sources (criticality regime, open loops, open gaps); told is an append-only log keyed by a fingerprint of the statement, so a changed fact is unknown again. It is also the starting condition of a user who does not know what to ask for or what is possible: the system interviews, infers direction from the record, proposes and acts, asks no question the record can answer, and leads its report with what the user cannot yet know.
 
 **Not:** Not a defect of the user and not a reason to hand work back.
 
 **Also called:** the person who does not know what to ask
 
-**Tested by:** `grep:agents/AGENTS.md::Do it, do not describe it`; `file:seed/bootstrap/cases.json`
+**Tested by:** `grep:agents/AGENTS.md::Do it, do not describe it`; `file:seed/bootstrap/cases.json`; `grep:tests/foundation/test_criticality.py::def test_unknown_is_known_minus_told`
 
-**Implemented by:** `seed/bootstrap/cases.json`, `seed/bootstrap/bootstrap.py`
+**Implemented by:** `seed/bootstrap/cases.json`, `seed/bootstrap/bootstrap.py`, `foundation/ignorance.py`
 
 **Related:** [bootstrapping](#bootstrapping), [autonomy](#autonomy)
 
 **Lineage:**
 
 - 1.0.0 (2026-11-11): Defined from the owner's description: a user who does not know what to ask. (`doctrine/glossary.json`)
+- 2.0.0 (2026-11-14): Ignorance becomes a computed set: what the system knows and the user has not been told (`foundation/ignorance.py`)
 
 ## <a id="core"></a>Core
 
@@ -862,3 +864,21 @@ A loop behaves as clockwork when it is a clock: it has an expected interval, its
 **Lineage:**
 
 - 1.0.0 (2026-11-12): Owner: this must all keep ticking like clockwork; a stopped or inaccurate clock is not a working clock. (`doctrine/clocks.json`)
+
+## <a id="self-reference"></a>Self-reference
+
+Ultrastable runs on Ultrastable, and that self-reference is what bootstrapping and criticality rest on. Bootstrapping: the bootstrap that boots any system boots Ultrastable from its own repository (the fixed point, foundation.selfhost.verify empty). Criticality: k_self counts only the verified deploys the system originated and executed on itself (its executor or its own server-side code agent). A deploy an outside session drove raises k but never k_self. The regime is self-sustaining when the fixed point holds and k_self >= k_floor, driven when only k reaches the floor, and subcritical below it.
+
+**Not:** Not a tagline and not k: a chain reaction kept up by an outside source is driven, not self-sustaining.
+
+**Also called:** runs on Ultrastable, k_self
+
+**Tested by:** `grep:tests/foundation/test_criticality.py::def test_self_reference_regime`; `grep:foundation/criticality.py::def bootstrap_holds`
+
+**Implemented by:** `foundation/criticality.py`, `doctrine/criticality.json`, `deploy/deploy-workers.mjs`, `foundation/selfhost.py`
+
+**Related:** [self-hosting](#self-hosting), [bootstrapping](#bootstrapping), [autonomy](#autonomy), [unattended](#unattended)
+
+**Lineage:**
+
+- 1.0.0 (2026-11-14): Owner: 'Ultrastable runs on Ultrastable. That self-reference is key to bootstrapping and criticality.' Made a computed invariant in criticality (k_self, bootstrap, regime). (`foundation/criticality.py`)
