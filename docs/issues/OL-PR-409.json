@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-409",
+  "title": "OL-PR-409: land or supersede pull request #409 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #409 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 409\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #409 (`claude/zero-minutes-1-b2286e` at 06afed4cd2, opened by rwnq8): ZERO-MINUTES-1: Worker records its own merges (done-check evidence). The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (4): doctrine/decision-ledger.json, seed/worker/src/index.js, seed/worker/src/lane.js, seed/worker/test/lane.test.js. Closing probe: pull request #409 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
