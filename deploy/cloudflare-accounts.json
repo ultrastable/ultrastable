@@ -3,7 +3,7 @@
   "target": {
     "id": "81e3a4efb4eb66e613529b87682911bb",
     "named_by": "Rowan 2026-11-11",
-    "state": "shadow copy 2026-11-14: reachable through the owner's Cloudflare connector (full API); workers ultrastable-agents, ultrastable-tick, ultrastable-dashboard, ultrastable-site and eight us-idea-* built sites uploaded byte-identical to the source, crons off, workers.dev off for the four core workers; D1 ultrastable-org and ultrastable-ops and KV ultrastable-site-assets and ultrastable-private exist but hold 2026-11-12 data; no zones, no secrets, R2 not enabled. Nothing runs here yet: see deploy/transfer/plan.json blockers",
+    "state": "partly running (observed 2026-11-15 via platform connector): ultrastable-site, -tick, -dashboard, -agents and 8 us-idea-* workers and D1 ultrastable-org/-ops exist in this account with ids that differ from doctrine/topology.json; the topology still names the old account, so the cutover is incomplete. platformaudit flags this each run until topology.json and the D1 ids are moved together",
     "gate": "IC-GATE-001 identity-bound, narrowed 2026-11-14: the connector reaches the account, but no API token for it exists, so GitHub (secrets CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID) and the site worker (CF_DEPLOY_TOKEN) still deploy to the old account. Minting a token is creating a credential in the owner's account. Default in effect: the old account keeps running everything. Closing probe: `python3 scripts/cf_account.py probe` with DST_CLOUDFLARE_API_TOKEN bound reports target_reachable true.",
     "move": "see deploy/transfer/plan.json assets",
     "name": "ultrastable",
