@@ -906,6 +906,14 @@
    "title": "CONNECT-1: one connector framework, no pasted tokens",
    "body": "Generic OAuth 2.1 connector flow (PKCE S256, signed one-time state, sealed per-tenant tokens, refresh via the oauth adapter, revoke) plus remote MCP servers as first-class connectors (RFC 9728, RFC 8414, CIMD then DCR, RFC 8707). Google, Microsoft and Buffer need only the single owner card oauth-apps; MCP servers need nothing. Dashboard reads /auth/connectors.",
    "probe": "file:seed/worker/src/auth/connectors.js"
+  },
+  {
+   "id": "lesson-2026-11-15-platform-settings-are-measured-not-only-applied",
+   "kind": "lesson",
+   "date": "2026-11-15",
+   "title": "Platform settings are measured, not only applied",
+   "body": "foundation/platformaudit.py probes live GitHub repo settings and Cloudflare accounts against github/org-settings.json and the topology, weekly via org-settings.yml. Found 2026-11-15: auto-merge off in 6 repos; .github repo allowed merge commits and was unprotected; topology still names the old Cloudflare account while the live system runs in the ultrastable account. Session proxies refuse settings writes, so apply runs server-side.",
+   "probe": "file:foundation/platformaudit.py"
   }
  ]
 }
