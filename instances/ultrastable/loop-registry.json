@@ -2574,7 +2574,7 @@
     {
       "id": "deploy-workers",
       "kind": "probe",
-      "summary": "Every merge deploys the tick and dashboard Workers and verifies the live code equals the commit (DEPLOY-ALL-1); the count of verified deploys in ops/deploys.jsonl is the criticality measure.",
+      "summary": "Every merge deploys the tick and dashboard Workers and verifies the live code equals the commit (DEPLOY-ALL-1); the count of verified deploys in ops/deploys.jsonl is the criticality measure. DEPLOY-OIDC-1: deploy-ultrastable.yml deploys the ultrastable account through the ultrastable-site OIDC endpoint (no stored Cloudflare secret).",
       "trigger": "automatic: merge to main touching worker code",
       "owner": "operations",
       "closes_by": "system",
@@ -2602,7 +2602,8 @@
         "ops/deploys.jsonl"
       ],
       "workflows": [
-        "deploy-workers.yml"
+        "deploy-workers.yml",
+        "deploy-ultrastable.yml"
       ],
       "server_owner": "github-actions"
     },
