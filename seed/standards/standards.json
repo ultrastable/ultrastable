@@ -959,6 +959,34 @@
           "accessed": "2026-11-14"
         }
       ]
+    },
+    {
+      "id": "data-portability",
+      "name": "Open-format data export and restore (GDPR Art. 20 style portability)",
+      "body": "EU GDPR Art. 20; Data Transfer Project norms",
+      "status": "stable",
+      "tracked": "ultrastable-export/v1",
+      "why": "A person can take everything held for them as one open JSON file and restore it, with one click and no token.",
+      "support": "supported",
+      "how": [
+        "site/mydata.js",
+        "site/portability.js"
+      ],
+      "acl": "site/mydata.js",
+      "tests": [
+        {
+          "file": "site/mydata.test.mjs",
+          "name": "mydata ok"
+        }
+      ],
+      "sources": [
+        {
+          "title": "GDPR Article 20, right to data portability",
+          "url": "https://gdpr-info.eu/art-20-gdpr/",
+          "published": null,
+          "accessed": "2026-11-14"
+        }
+      ]
     }
   ]
 }
