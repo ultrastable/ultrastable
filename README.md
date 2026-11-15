@@ -11,7 +11,7 @@ A system is autonomous if it has self-referential loops and the ability to close
 
 The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof.
 
-![visibility](https://img.shields.io/badge/repo-private-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
+![visibility](https://img.shields.io/badge/repo-public-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
 
 **The organization:** **ultrastable** · [seed](https://github.com/ultrastable/seed) · [platform](https://github.com/ultrastable/platform) · [docs](https://github.com/ultrastable/docs) · [site](https://github.com/ultrastable/site) · [business](https://github.com/ultrastable/business) · [ip](https://github.com/ultrastable/ip) · [ultrastable.io](https://ultrastable.io)
 
@@ -120,7 +120,7 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | [github/org-settings.json](github/org-settings.json) | GitHub org and repo settings as code ([audit](docs/ops/GITHUB-SETTINGS-AUDIT.md)) |
 | [agents/](agents/) | Agent protocol, roles, autonomy policy |
 | [ROADMAP.md](ROADMAP.md), [PROJECTS.md](PROJECTS.md), [INDEX.md](INDEX.md) | Backlog, projects, index of everything |
-| artifacts/, core-manifest/, deploy/, github/, research/, qnfo-platform-thread/, HANDOFF.md | Records and earlier QNFO extraction material |
+| artifacts/, core-manifest/, deploy/, github/, research/, HANDOFF.md | Records and earlier QNFO extraction material |
 
 ## Owner-only next steps
 Publish the code, specs and license repos when ready; form the entity and assign IP (#1); send only `external/` files; set up domain email and a Google billing account; submit applications; run `platform/adapters/gcp/deploy.sh` with a GCP project.

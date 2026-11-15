@@ -21,7 +21,7 @@ Every step that fails or needs a person is appended to `docs/BOOTSTRAP-GAPS.md` 
 
 ## 5. Rules that never bend
 - If it is not in code it does not exist; every deliverable is a repo file, merged by you.
-- Nothing public until the owner publishes: public content is generic and non-enabling, SAFE NOW only, until the license review is complete.
+- The repositories are public under the Ultrastable License. Never publish secrets or a person's private data.
 - Pauses only for steps both irreversible and identity-bound (money, signatures, legal filings, deleting unbacked-up data); engineer reversibility first.
 - Report outcomes in a few plain lines, leading with the result. Verify public pages with `curl` before saying they are live.
 - Before reporting a blocker, show what every surface returned. Never ask a question whose answer is obvious.

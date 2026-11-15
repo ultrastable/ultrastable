@@ -57,7 +57,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 | Business, customers, competition, funding | `business/`, `docs/funding/`, `research/` |
 | Brand and public profile | `brand/` |
 | Site and dashboard | `site/`, `dashboard/`, `deploy/` |
-| Platform core | `platform/`, `core-manifest/`, `qnfo-platform-thread/` |
+| Platform core | `platform/`, `core-manifest/` |
 | Seed (idea to organization) | `seed/` |
 | Agent rules | `agents/AGENTS.md`, `agents/PROJECT-INSTRUCTIONS.md`, `seed/agents/AGENTS.md` |
 | Bootstrap log and gaps | `docs/bootstrapping/bootstrap-log.md`, `docs/BOOTSTRAP-GAPS.md` |

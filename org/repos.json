@@ -2,7 +2,7 @@
   "_doc": "Registry of every repository in the ultrastable GitHub org. Source of truth for purpose, disposition and visibility. Checked by scripts/check_org_repos.py (in `checks`); live drift is detected by `python3 scripts/check_org_repos.py --live`. Archive is reversible; nothing is deleted.",
   "updated": "2026-11-12",
   "why": "Threads on 2026-11-10 created split repos (site, docs, platform, ip, business, seed) in parallel while the monorepo became the system of record, with no single page declaring it. They were archived as SUPERSEDED duplicates the same day. On 2026-11-11 the scope and license pivot split code from docs (workers, spec, license) and made patent drafts historical (ip).",
-  "visibility_rule": "All repos private until the license is signed off (docs/legal/LICENSE-DECISIONS.md). workers, spec and license go public first; ultrastable stays private.",
+  "visibility_rule": "All repos are public under the Ultrastable License (owner decision 2026-11-15).",
   "target": [
     "ultrastable/ultrastable",
     "ultrastable/workers",

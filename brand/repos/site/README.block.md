@@ -9,7 +9,7 @@ A system is autonomous if it has self-referential loops and the ability to close
 
 The Cloudflare Worker behind the Ultrastable domains.
 
-![visibility](https://img.shields.io/badge/repo-private-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
+![visibility](https://img.shields.io/badge/repo-public-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
 
 **The organization:** [ultrastable](https://github.com/ultrastable/ultrastable) · [seed](https://github.com/ultrastable/seed) · [platform](https://github.com/ultrastable/platform) · [docs](https://github.com/ultrastable/docs) · **site** · [business](https://github.com/ultrastable/business) · [ip](https://github.com/ultrastable/ip) · [ultrastable.io](https://ultrastable.io)
 

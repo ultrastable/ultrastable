@@ -18,7 +18,6 @@ jobs:
         run: python3 scripts/actions_guard.py index
       - run: python3 tools/build_index.py
         env: {GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"}
-      - run: python3 qnfo-platform-thread/verify.py
       - name: Commit if changed
         run: |
           git config user.name "ultrastable-index"; git config user.email "actions@users.noreply.github.com"
