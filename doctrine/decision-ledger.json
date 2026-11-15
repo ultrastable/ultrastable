@@ -1210,6 +1210,14 @@
       "title": "Local uncommitted work is a loop gap: land it or file it",
       "body": "40 local worktrees, 49 uncommitted files and a stash had never reached main; the live-feed work sat unlanded for 3 days. Every change goes through a PR with a Handoff block; policies, procedures and lessons live in the repo so the self-improving loops read them, never only in chat or on local disk.",
       "probe": "grep:docs/issues/Q-LOOP-live-clock.json::Evidence"
+    },
+    {
+      "id": "lesson-2026-11-15-idle-is-not-ok-1-a-loop-that-returned-has-not-thereby-worked",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "IDLE-IS-NOT-OK-1: a loop that returned has not thereby worked",
+      "body": "First live slot of LOOPPROOF-1 (2026-11-15 19:40): the gate loop beat ok while its own result was status errors, checked [], GitHub 403 on every open pull request. A beat is now failed when the loop's result says no-token, ok false, an error, or errors with nothing else done. From the QNFO fleet (RED on its own endpoint, 22820 reopens in 7 days): measured is not healthy, and running is not converging.",
+      "probe": "grep:seed/worker/src/pulse.js::export function failed"
     }
   ]
 }
