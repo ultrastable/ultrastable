@@ -1,0 +1,18 @@
+{
+  "id": "ROADMAP-AGENT-A2A-V1-IMPL",
+  "parent": "ROADMAP-AGENT-A2A-V1",
+  "title": "Implement A2A v1.0 agent card and task endpoint",
+  "assigned_role": "developer",
+  "description": "Expose an A2A v1.0 compliant agent card at /.well-known/agent.json and implement the A2A tasks endpoint (POST /tasks or per spec: /tasks/send) accepting JSON-RPC task requests and returning valid task responses. Must not be implemented by the verification author.",
+  "acceptance_criteria": [
+    "agent card served at /.well-known/agent.json with name, version, capabilities, endpoint URLs",
+    "tasks endpoint accepts A2A v1.0 JSON-RPC task requests and returns valid responses",
+    "merged PR to main"
+  ],
+  "verification": {
+    "verify_item": "VERIFY-LIVE-1",
+    "requirement": "A separate developer (not the implementer) authors and runs a live probe against the deployed agent card and task endpoint; probe result recorded before closing ROADMAP-AGENT-A2A-V1.",
+    "assigned_role": "developer-independent-verifier"
+  },
+  "status": "open"
+}
