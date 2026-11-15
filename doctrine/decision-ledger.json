@@ -1220,6 +1220,15 @@
       "probe": "grep:seed/worker/src/pulse.js::export function failed"
     },
     {
+      "id": "lesson-2026-11-15-publishing-found-four-defects-a-check-now-catches",
+      "kind": "lesson",
+      "date": "2026-11-15",
+      "title": "Publishing found four defects a check now catches",
+      "body": "Publishing seven repositories found: LICENSE deleted from spec by a case-insensitive collision with a license folder; source files without the SPDX header; stale document paths that failed docs_audit; and CI jobs that never started on private repositories because billing refused them, which looks like a test failure with zero steps. Fix: python3 -m foundation publication --check in checks.yml, fleet copies for LICENSE, COMMERCIAL-TERMS.md, NOTICE and CITATION.cff across all seven repositories, and the audit procedure kept as data in doctrine/publication.json.",
+      "probe": "grep:foundation/publication.py::def case_collisions",
+      "session": "claude-code-2026-11-15-publish"
+    },
+    {
       "id": "lesson-2026-11-15-two-sessions-built-the-same-loop-proof-feature-in-parallel-t",
       "kind": "lesson",
       "date": "2026-11-15",

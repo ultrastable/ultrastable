@@ -39,7 +39,7 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
         rid = f"{kind}-{day}-{_slug(title)}"
         rows["rows"] = [r for r in rows["rows"] if r["id"] != rid] + [{"id": rid, "kind": kind, "date": day, "title": title.strip(), "body": body.strip(), "probe": probe, **({"session": session} if session else {})}]
         led.parent.mkdir(parents=True, exist_ok=True)
-        led.write_text(json.dumps(rows, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+        led.write_text(json.dumps(rows, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
         return f"{LEDGER} ({rid})"
     if kind == "open-loop":
         if not (owner and trigger and probe):
@@ -54,7 +54,7 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
             raise ValueError(f"{iid} already exists; refusing to overwrite an open item")
         body_txt = f"**Owner:** {owner}\n**Trigger:** {trigger}\n**Done check:** {probe}\n**Status:** open\n\n{body.strip()}"
         item = {"id": iid, "title": f"{iid}: {title.strip()}", "body": body_txt, "labels": [f"role:{owner}", "open-loop"], "milestone": "Now", "workstream": "Open loops"}
-        (root / "docs/issues" / f"{iid}.json").write_text(json.dumps(item, indent=2) + "\n", encoding="utf-8")
+        (root / "docs/issues" / f"{iid}.json").write_text(json.dumps(item, indent=2) + "\n", encoding="utf-8", newline="\n")
         return f"docs/issues/{iid}.json"
     if kind == "term":
         t = glossary.term_change(root, term, body, title, source, day)

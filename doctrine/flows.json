@@ -993,6 +993,22 @@
         }
       ],
       "feedback": "the stage read this tick is compared with the stage read last tick; a rise or fall is appended to ignition_log, and the first unmet stage is filed as IGNITE-<stage> in the tick's own queue with the numbers that block it, so the next ticks work on what keeps the system from criticality"
+    },
+    "publication-guard": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:branches"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a violation fails checks and the fleet drift run files an issue in the repository that lost the file; the next run passes only when the file is restored, and the SPDX baseline only shrinks",
+      "bindings": []
     }
   },
   "implicit_producers": {
