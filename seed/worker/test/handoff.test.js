@@ -71,7 +71,11 @@ test('a red probe rolls the deploy back and puts the item back to ready', async 
   const db = makeDb(); seedItem(db);
   const st = { prs: [{ number: 7, title: 'Fix', body: BODY, head: { sha: 'aaa' }, labels: [] }], detail: { merged: true, merge_commit_sha: 'mmm', state: 'closed' } };
   const { f, calls } = gh(st); const rolled = [];
-  const r = await runHandoffs({ db, token: 't', repos: ['o/r'], fetch: f, deployer: async () => ({ ok: true }), rollback: async (w) => { rolled.push(w); return { ok: true, detail: 'rolled back to v8' }; }, probe: async () => ({ ok: false, detail: 'GET ... -> 500' }) });
+  const run = () => runHandoffs({ db, token: 't', repos: ['o/r'], fetch: f, deployer: async () => ({ ok: true }), rollback: async (w) => { rolled.push(w); return { ok: true, detail: 'rolled back to v8' }; }, probe: async () => ({ ok: false, detail: 'GET ... -> 500' }) });
+  const t1 = await run(); assert.deepEqual(t1.retried, ['o/r#7'], 'VERIFY-RETRY-1: the first red probe is a retry, not a rollback'); assert.deepEqual(rolled, []);
+  assert.equal((await db.prepare('SELECT state FROM handoffs').first()).state, 'deployed');
+  await run();
+  const r = await run();
   assert.deepEqual(r.rolled_back, ['o/r#7']); assert.deepEqual(rolled, ['ultrastable-tick']);
   assert.equal((await db.prepare('SELECT state FROM handoffs').first()).state, 'rolled_back');
   assert.equal((await db.prepare("SELECT status FROM items WHERE id='SG-2'").first()).status, 'ready');
@@ -120,4 +124,26 @@ test('collectModules flattens nested relative imports and the deployer posts the
   const cs = await tickConfigSource(async p => cfgFiles[p]);
   const cfg = JSON.parse(cs.slice(cs.indexOf('export default ') + 15, cs.lastIndexOf(';')));
   assert.equal(cfg.org_slug, 'ultrastable'); assert.deepEqual(cfg.failure_modes.modes.map(m => m.id), ['a', 'b']); assert.equal(cfg.criticality.floor, 0.5); assert.deepEqual(cfg.cost_budgets, [{ id: 'd1' }]); assert.equal(posted.body.modules.find(m => m.name === 'b.js').src, 'export const b = 9');
+});
+
+test('VERIFY-RETRY-1: a transient 404 right after deploy is retried and verifies, with no rollback', async () => {
+  const db = makeDb(); seedItem(db);
+  const st = { prs: [{ number: 7, title: 'Fix', body: BODY, head: { sha: 'aaa' }, labels: [] }], detail: { merged: true, merge_commit_sha: 'mmm', state: 'closed' } };
+  const { f } = gh(st); let n = 0, rolled = 0;
+  const run = () => runHandoffs({ db, token: 't', repos: ['o/r'], fetch: f, deployer: async () => ({ ok: true }), rollback: async () => { rolled++; return { ok: true, detail: 'x' }; }, probe: async () => (++n < 2 ? { ok: false, detail: 'GET -> 404' } : { ok: true, detail: 'GET -> 200' }) });
+  await run(); const r = await run();
+  assert.deepEqual(r.verified, ['o/r#7']); assert.equal(rolled, 0);
+  assert.equal((await db.prepare("SELECT status FROM items WHERE id='SG-2'").first()).status, 'done');
+});
+
+test('VERIFY-RETRY-1: a handoff recorded as rolled_back whose probe passes later is recovered and its item closed', async () => {
+  const db = makeDb(); seedItem(db);
+  const st = { prs: [{ number: 7, title: 'Fix', body: BODY, head: { sha: 'aaa' }, labels: [] }], detail: { merged: true, merge_commit_sha: 'mmm', state: 'closed' } };
+  const { f } = gh(st);
+  const red = () => runHandoffs({ db, token: 't', repos: ['o/r'], fetch: f, deployer: async () => ({ ok: true }), rollback: async () => ({ ok: true, detail: 'x' }), probe: async () => ({ ok: false, detail: 'GET -> 404' }) });
+  await red(); await red(); await red();
+  assert.equal((await db.prepare('SELECT state FROM handoffs').first()).state, 'rolled_back');
+  const r = await runHandoffs({ db, token: 't', repos: ['o/r'], fetch: f, probe: async () => ({ ok: true, detail: 'GET -> 200' }) });
+  assert.deepEqual(r.recovered, ['o/r#7']); assert.equal((await db.prepare('SELECT state FROM handoffs').first()).state, 'verified');
+  assert.equal((await db.prepare("SELECT status FROM items WHERE id='SG-2'").first()).status, 'done');
 });

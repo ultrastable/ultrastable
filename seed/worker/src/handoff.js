@@ -7,6 +7,7 @@
 // Every state change is a row in D1 `handoff_events` and one comment on the PR, so the record lives server-side, not in a chat.
 const API = 'https://api.github.com';
 const MAX_ATTEMPTS = 3;
+const VERIFY_TRIES = 3;  // VERIFY-RETRY-1: a fresh deploy takes a moment to reach the edge; one early 404 must not roll production back
 
 async function gh(f, token, method, path, body) {
   const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-handoff', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
@@ -71,7 +72,7 @@ export async function registerHandoff(db, h) {
 
 // deployer(workerId, sha, repo) -> { ok, version?, detail }; rollback(workerId) -> { ok, detail }. Injected so the tick can route it through the site worker.
 export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, deployer = null, rollback = null, probe = runProbe, maxPerTick = 5, now = Date.now() }) {
-  const out = { status: 'ok', registered: [], merged: [], deployed: [], verified: [], failed: [], rolled_back: [], errors: [] };
+  const out = { status: 'ok', registered: [], merged: [], deployed: [], verified: [], failed: [], rolled_back: [], retried: [], recovered: [], errors: [] };
   if (!token) return { ...out, status: 'no-token' };
   if (!db) return { ...out, status: 'no-db' };
   // 1. discover: open PRs that declare a handoff, and ones merged in the last day before a tick saw them open (a fast merge must not escape the loop)
@@ -131,6 +132,9 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
         if (pr.ok) {
           await event(db, h.id, 'verified', pr.detail); await setItem(db, h.item, 'done'); out.verified.push(h.id);
           await say(f, token, h.repo, h.pr, 'verified live: ' + pr.detail + (h.item ? '. Item `' + h.item + '` closed.' : '.'));
+        } else if ((((await db.prepare("SELECT COUNT(*) AS n FROM handoff_events WHERE handoff_id = ? AND detail LIKE 'verify retry %'").bind(h.id).first()) || {}).n || 0) + 1 < VERIFY_TRIES) {
+          const n = (((await db.prepare("SELECT COUNT(*) AS n FROM handoff_events WHERE handoff_id = ? AND detail LIKE 'verify retry %'").bind(h.id).first()) || {}).n || 0) + 1;
+          await event(db, h.id, 'deployed', `verify retry ${n}/${VERIFY_TRIES}: ${pr.detail}`); out.retried.push(h.id);  // state stays deployed: the next tick probes again
         } else {
           await event(db, h.id, 'verify_failed', pr.detail); out.failed.push(h.id);
           const targets = String(h.deploy || '').split(',').map(s => s.trim()).filter(Boolean), rb = [];
@@ -140,6 +144,13 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
           await say(f, token, h.repo, h.pr, 'the live probe failed (' + pr.detail + '). ' + (rb.length ? 'Rolled back: ' + rb.join('; ') + '. ' : '') + (h.item ? 'Item `' + h.item + '` is back to ready for the executor.' : ''));
         }
       }
+    } catch (e) { out.errors.push(`${h.id} ${e && e.message}`); }
+  }
+  // 3. VERIFY-RETRY-1 self-heal: a handoff recorded as rolled_back whose probe passes now was a propagation race, not a bad change. Record the truth and close the item.
+  const rb = (await db.prepare("SELECT * FROM handoffs WHERE state = 'rolled_back' AND merge_sha IS NOT NULL AND verify IS NOT NULL ORDER BY updated_at DESC LIMIT 2").all()).results || [];
+  for (const h of rb) {
+    try { const pr = await probe(h.verify, f); if (!pr.ok) continue;
+      await event(db, h.id, 'verified', 'recovered: ' + pr.detail + ' (the earlier probe ran before the deploy reached the edge)'); await setItem(db, h.item, 'done'); out.verified.push(h.id); out.recovered.push(h.id);
     } catch (e) { out.errors.push(`${h.id} ${e && e.message}`); }
   }
   if (out.errors.length) out.status = 'errors';
