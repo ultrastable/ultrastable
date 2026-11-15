@@ -15,7 +15,7 @@ Account ids come from deploy/cloudflare-accounts.json (target, current). Secrets
 stage lists secret NAMES per worker for re-binding from the repo's secret store; values are never handled.
 """
 from __future__ import annotations
-import json, os, sys, time, urllib.request, urllib.error
+import json, re, os, sys, time, urllib.request, urllib.error
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,6 +80,30 @@ def in_scope(name, plan):
     return any(name == p or (p.endswith("*") and name.startswith(p[:-1])) for p in plan["assets"]["workers"])
 
 
+def parse_modules(raw):
+    """Split a content/v2 multipart response into (name, content-type, bytes); a bare script becomes one worker.js."""
+    if not raw.startswith(b"--"):
+        return [("worker.js", "application/javascript+module", raw)]
+    nl = bytes([13, 10])
+    b = raw[:raw.index(nl)]
+    out = []
+    for part in raw.split(b)[1:-1]:
+        head, _, data = part.partition(nl + nl)
+        h = head.decode(errors="replace")
+        n = re.search(r'name="([^"]+)"', h).group(1)
+        m = re.search(r"Content-Type: ([^" + chr(13) + chr(10) + "]+)", h)
+        out.append((n, m.group(1) if m else "application/javascript+module", data[:-2] if data.endswith(nl) else data))
+    return out
+
+
+def main_module(mods):
+    cands = [m for m in mods if re.search(rb"export\s+default|export\s*\{[^}]*as\s+default", m[2])]
+    for m in cands:
+        if re.match(r"(index|worker|_worker)\.m?js$", m[0]):
+            return m[0]
+    return (cands or mods)[0][0]
+
+
 def copy(api, src, dst, apply, plan) -> dict:
     st = load_state()
     inv = inventory(api, src)
@@ -119,20 +143,27 @@ def copy(api, src, dst, apply, plan) -> dict:
         steps.append(f"worker {w['name']}: upload code with bindings remapped; crons NOT enabled until cutover")
         rebind[w["name"]] = w["secret_names"]
         if apply:
-            code = api("GET", f"/accounts/{src}/workers/scripts/{w['name']}/content/v2", raw=True)
-            binds = []
-            for b in w["bindings"]:
-                b = dict(b)
-                if b.get("type") == "d1":
-                    b["id"] = st["d1_map"].get(b["id"], b["id"])
-                if b.get("type") == "kv_namespace":
-                    b["namespace_id"] = st["kv_map"].get(b["namespace_id"], b["namespace_id"])
-                binds.append(b)
-            meta = {"main_module": "worker.js", "bindings": [b for b in binds if b.get("type") != "secret_text"], "compatibility_date": w["compat"] or "2026-10-01"}
-            boundary = "----us" + str(int(time.time()))
-            body = (f'--{boundary}\r\nContent-Disposition: form-data; name="metadata"\r\nContent-Type: application/json\r\n\r\n{json.dumps(meta)}\r\n'
-                    f'--{boundary}\r\nContent-Disposition: form-data; name="worker.js"; filename="worker.js"\r\nContent-Type: application/javascript+module\r\n\r\n').encode() + code + f"\r\n--{boundary}--\r\n".encode()
-            api("PUT", f"/accounts/{dst}/workers/scripts/{w['name']}", body, headers={"content-type": f"multipart/form-data; boundary={boundary}"})
+            raw = api("GET", f"/accounts/{src}/workers/scripts/{w['name']}/content/v2", raw=True)
+            mods = parse_modules(raw)
+            for with_services in (False, True):   # pass 1 without service bindings (targets may not exist yet), pass 2 with
+                binds = []
+                for b in w["bindings"]:
+                    b = dict(b)
+                    if b.get("type") in ("secret_text", "send_email") or (b.get("type") == "service" and not with_services):
+                        continue
+                    if b.get("type") == "d1":
+                        b["id"] = st["d1_map"].get(b["id"], plan.get("id_map", {}).get("d1", {}).get(b["id"], b["id"]))
+                    if b.get("type") == "kv_namespace":
+                        b["namespace_id"] = st["kv_map"].get(b["namespace_id"], plan.get("id_map", {}).get("kv", {}).get(b["namespace_id"], b["namespace_id"]))
+                    binds.append(b)
+                meta = {"main_module": main_module(mods), "bindings": binds, "compatibility_date": w["compat"] or "2026-10-01"}
+                boundary = "----us" + str(int(time.time()))
+                nl = chr(13) + chr(10)
+                body = (f"--{boundary}{nl}Content-Disposition: form-data; name=" + chr(34) + "metadata" + chr(34) + f"{nl}Content-Type: application/json{nl}{nl}{json.dumps(meta)}{nl}").encode()
+                for n, ct, data in mods:
+                    body += (f"--{boundary}{nl}Content-Disposition: form-data; name=" + chr(34) + n + chr(34) + "; filename=" + chr(34) + n + chr(34) + f"{nl}Content-Type: {ct}{nl}{nl}").encode() + data + nl.encode()
+                body += f"--{boundary}--{nl}".encode()
+                api("PUT", f"/accounts/{dst}/workers/scripts/{w['name']}", body, headers={"content-type": f"multipart/form-data; boundary={boundary}"})
     st["stage"] = "copied" if apply else st["stage"]
     st["log"].append({"stage": "copy", "apply": apply, "steps": len(steps)})
     save_state(st, apply)
