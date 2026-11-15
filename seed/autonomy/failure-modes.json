@@ -91,6 +91,78 @@
       "trigger": "every tick",
       "probe": "SELECT CASE WHEN COALESCE((SELECT json_extract(value,'$.ok') FROM org WHERE key='repo_access'),0)=1 THEN 1 ELSE 0 END",
       "remedy": "keep gate card GATE-REPO-ACCESS open with its default in effect and the consent screen (/connect/github) served; checkRepoAccess re-probes every tick and adopts the installation by code once it exists. Never ask for a token."
+    },
+    {
+      "id": "needs-code-undrained",
+      "failure": "Items the doer parked as needs-code sit in the backlog with nothing building them.",
+      "root_cause": "The in-tick doer can only edit the backlog database, and no executor read the items it parked: 66 needs-code items waited while the code executor reported idle (2026-11-15). Spec and roadmap items were never built unless a person prompted for them.",
+      "spof": false,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE 0 END FROM items WHERE status='blocked' AND blocker LIKE 'needs-code:%' AND updated_at < datetime('now','-24 hours')",
+      "remedy": "every needs-code item is taken by the executor (nativeexec runDbQueue) within a day; if the executor has no GitHub credential, the credential route is the next fix, never a person's prompt.",
+      "fixes": [
+        {
+          "id": "needs-code-undrained-route",
+          "title": "Give the executor a second route that does not need the Worker's GitHub credential, so needs-code items are built on every deployment",
+          "done_check": "an item blocked needs-code is marked in-pr within 24 h of parking on a deployment with no GitHub App credential",
+          "closing_probe": "selfaudit:needs-code-undrained"
+        }
+      ]
+    },
+    {
+      "id": "executor-idle-with-queue",
+      "failure": "The code executor ticks and reports idle or failed while needs-code items wait.",
+      "root_cause": "The executor read one repo queue file; the backlog database was not a source, so a full queue looked like idle (2026-11-15). Also idle when the Worker holds no GitHub credential.",
+      "spof": false,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN (SELECT COUNT(*) FROM items WHERE status='blocked' AND blocker LIKE 'needs-code:%')=0 OR EXISTS (SELECT 1 FROM loop_beats WHERE loop='executor' AND started_at >= datetime('now','-24 hours') AND detail LIKE '%opened %') THEN 1 ELSE 0 END",
+      "remedy": "the executor opens a pull request for a needs-code item at least once a day while any waits; a day of idle beats with a queue is a defect with a fix item, not a quiet state.",
+      "fixes": [
+        {
+          "id": "executor-idle-with-queue-cause",
+          "title": "Read the executor beat detail, name why it opened no pull request (credential, model refusal, guard) and fix that cause in code",
+          "done_check": "the executor opens a pull request for a needs-code item",
+          "closing_probe": "selfaudit:executor-idle-with-queue"
+        }
+      ]
+    },
+    {
+      "id": "dispatch-model-label",
+      "failure": "A dispatch record or the operations page names a configured tier label instead of the model that ran.",
+      "root_cause": "roles.model is a bootstrap tier alias (claude-haiku-5-5, small); the tick copied it into every dispatch row and /ops showed it as the model, while no Claude model was ever called (2026-11-15).",
+      "spof": false,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN COUNT(*)=0 THEN 1 ELSE 0 END FROM dispatches WHERE model IN ('claude-haiku-5-5','claude-sonnet-5-5','claude-opus-5-5','small','medium','large')",
+      "remedy": "the doer writes the model that answered, or 'rules (no model)', when it settles an item; /ops reads dispatch rows only.",
+      "fixes": [
+        {
+          "id": "dispatch-model-label-fix",
+          "title": "Find the writer of a tier label into dispatches.model and make it record the real model",
+          "done_check": "no dispatch row carries a tier label",
+          "closing_probe": "selfaudit:dispatch-model-label"
+        }
+      ]
+    },
+    {
+      "id": "primary-count",
+      "failure": "A tick has been standby or demoted for a day, so no loop runs in its account.",
+      "root_cause": "Two deployments (two Cloudflare accounts) were moved by hand; nothing guaranteed exactly one primary (2026-11-15). The controller (cutover.js) now records slot and epoch every beat.",
+      "spof": true,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN EXISTS (SELECT 1 FROM cutover_state WHERE k='slot' AND v<>'primary' AND at < datetime('now','-24 hours')) THEN 0 ELSE 1 END",
+      "remedy": "a demoted tick resumes after three beats without a primary peer (cutover.js RESUME_BEATS); a standby promotes itself when it holds a GitHub credential.",
+      "fixes": [
+        {
+          "id": "primary-count-resume",
+          "title": "Resume as primary at an epoch above the last seen when the peer is absent, and record why",
+          "done_check": "cutover_state slot is primary, or the peer account is verifiably primary and this account is intentionally standby",
+          "closing_probe": "selfaudit:primary-count"
+        }
+      ]
     }
   ],
   "max_redispatch": 3
