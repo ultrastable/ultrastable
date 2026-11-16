@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // SPEND-GOVERNOR-1: the owner's one number (budget.usd_per_month) bounds every model call, with a hard stop.
 import test from 'node:test';
 import assert from 'node:assert/strict';

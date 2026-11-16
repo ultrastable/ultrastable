@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-16T08:48:06Z",
- "commit": "f1855dd",
+ "generated": "2026-11-16T08:53:10Z",
+ "commit": "12d3aaf",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 85,
@@ -18,15 +18,15 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 163,
-  "backlog_items": 216
+  "backlog_open": 164,
+  "backlog_items": 217
  },
  "throughput": {
   "queue": {
-   "items": 216,
+   "items": 217,
    "by_status": {
     "closed": 50,
-    "open": 163,
+    "open": 164,
     "done": 3
    },
    "takeable_now": 1
@@ -81,7 +81,8 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "success": 22,
+    "": 2,
+    "success": 20,
     "cancelled": 8
    },
    "prs_opened_unattended": 0,
@@ -120,7 +121,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 1340.0,
+   "age_s": 149.0,
    "status": "fresh",
    "missed": 0
   },
@@ -144,15 +145,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 1528.0,
-   "status": "stale",
-   "missed": 1
+   "age_s": 256.0,
+   "status": "fresh",
+   "missed": 0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 243235.0,
+   "age_s": 243541.0,
    "status": "stale",
    "missed": 2
   }
@@ -206,13 +207,13 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-16T08:47:40Z",
+  "generated": "2026-11-16T08:52:47Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1339.6,
+    "expected_today": 1339.7,
     "value": null,
     "behind": null,
     "progress": null
@@ -230,7 +231,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 845.5,
+    "expected_today": 845.6,
     "value": null,
     "behind": null,
     "progress": null
@@ -251,7 +252,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-16T08:47:40Z",
+    "started": "2026-11-16T08:52:47Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -301,8 +302,8 @@
    },
    {
     "id": "deploy",
-    "status": "stale",
-    "missed": 1
+    "status": "fresh",
+    "missed": 0
    },
    {
     "id": "publish",
@@ -314,11 +315,11 @@
  },
  "growth": {
   "mix": {
-   "growth": 2,
+   "growth": 3,
    "fix": 0,
-   "maintenance": 3,
-   "total": 5,
-   "growth_share": 0.4,
+   "maintenance": 4,
+   "total": 7,
+   "growth_share": 0.429,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -368,7 +369,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 1372.3,
+   "last_beat_age_s": 179.7,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -379,7 +380,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 71907.3,
+   "last_beat_age_s": 72211.7,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -390,7 +391,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 41417.3,
+   "last_beat_age_s": 41721.7,
    "expected_interval_s": 86400,
    "beats_24h": 20,
    "expected_24h": 1.0,
@@ -401,7 +402,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 304983.3,
+   "last_beat_age_s": 305287.7,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2120,6 +2121,24 @@
  ],
  "changes": {
   "commits": [
+   {
+    "sha": "12d3aaf",
+    "at": "2026-11-16T08:49:46+00:00",
+    "author": "Claude",
+    "subject": "Q-BUDGET-SURFACES: queue the dashboard agent and site worker for the spend governor",
+    "pr": null,
+    "item": "Q-BUDGET-SURFACES",
+    "url": "https://github.com/ultrastable/ultrastable/commit/12d3aaf5133ff88774960703713aa4ce0975b30e"
+   },
+   {
+    "sha": "f7b0974",
+    "at": "2026-11-16T08:48:16+00:00",
+    "author": "Claude",
+    "subject": "SPEND-GOVERNOR-1: the owner's monthly budget is a hard ceiling on model calls; plan limits as checks",
+    "pr": null,
+    "item": "SPEND-GOVERNOR-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f7b0974a339887c66fd5d178b285b7d26a587c4a"
+   },
    {
     "sha": "f1855dd",
     "at": "2026-11-16T08:24:51+00:00",

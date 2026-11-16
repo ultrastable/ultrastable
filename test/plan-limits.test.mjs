@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
-// Copyright (c) Ultrastable
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // PLAN-LIMITS-1 (2026-11-16): lessons from the QNFO/Quniverse fleet, frozen that day because its Cloudflare bill became unaffordable, held as checks.
 //  - Cron proliferation: 37 workers fired every 2 to 30 minutes, so work (and AI spend) scaled with the clock, not with value. Here the whole
 //    account's cron triggers fit the plan (the Workers free plan allows 5 per account) and none fires more often than every 10 minutes.

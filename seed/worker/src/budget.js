@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
-// Copyright (c) Ultrastable
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // SPEND-GOVERNOR-1 (2026-11-16): the owner decides one thing, how much the system may spend a month all-in (budget.usd_per_month). Everything
 // else is derived here and enforced in code, every tick, with no person in the loop.
 //
