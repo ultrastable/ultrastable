@@ -50,6 +50,11 @@ export async function internalDeploy(request, env, fetcher) {
     if (Array.isArray(b.crons)) { const cr = await api("PUT", `/accounts/${A}/workers/scripts/${b.name}/schedules`, JSON.stringify(b.crons.map(cron => ({ cron }))), { "content-type": "application/json" }); if (!cr.success) return J({ ok: false, error: "schedules: " + JSON.stringify(cr.errors || []).slice(0, 300) }, 502); }
     return J({ ok: true, version: (up.result && (up.result.deployment_id || up.result.etag || up.result.id)) || "" });
   }
+  if (u.pathname === "/__internal/version") {  // DEPLOY-VERSION-1: the live deployment of a worker, read after a handoff deploy to prove the code changed
+    const d = await api("GET", `/accounts/${A}/workers/scripts/${b.name}/deployments`);
+    const dep = d.success && d.result && (d.result.deployments || [])[0];
+    return J(dep ? { ok: true, version: dep.id, version_ids: (dep.versions || []).map(v => v.version_id), created_on: dep.created_on || null } : { ok: false, detail: "no deployment: " + JSON.stringify(d.errors || []).slice(0, 300) });
+  }
   if (u.pathname === "/__internal/rollback") {
     const v = await api("GET", `/accounts/${A}/workers/scripts/${b.name}/versions?per_page=5`);
     const items = (v.result && (v.result.items || v.result)) || [];
