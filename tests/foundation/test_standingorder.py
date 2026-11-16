@@ -4,7 +4,8 @@
 import json, shutil, unittest
 from pathlib import Path
 from foundation import standingorder as so
-from ._repo import scratch
+import _repo
+scratch = _repo.scratch
 
 REPO = Path(__file__).resolve().parents[2]
 
