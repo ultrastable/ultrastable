@@ -107,7 +107,7 @@ async function setCheck(env, name, ok, detail) {
 }
 export async function runProbes(env) {
   const out = [];
-  const rec = async (n, ok, d) => { await setCheck(env, n, ok, d); out.push({ name: n, ok, detail: d }); };
+  const rec = async (n, ok, d) => { try { await setCheck(env, n, ok, d); } catch (e) { /* a down database must still report itself */ } out.push({ name: n, ok, detail: d }); };
   try { await env.DB.prepare("SELECT 1").first(); await rec("database", true, "D1 answers"); } catch (e) { await rec("database", false, String(e.message || e)); }
   await rec("owner_email", !!(env.OWNER_EMAIL && (env.SEND_EMAIL || env.MAILER)), env.OWNER_EMAIL ? "owner address and sender configured" : "OWNER_EMAIL missing");
   const paths = ownerAddresses(env).length;
@@ -239,12 +239,15 @@ export function staticPanels() {
     plan_note: "Everything runs on free tiers. Nothing here upgrades a plan; paid options below are your decision, with the cost.",
   };
 }
+const RESET_NOTE = () => { const n = new Date(), h = 24 - n.getUTCHours() - (n.getUTCMinutes() ? 1 : 0); return h <= 0 ? "within the hour" : "in about " + h + " hour" + (h > 1 ? "s" : ""); };
+export const DB_LIMIT_NOTE = () => "Ultrastable's database has used its free allowance for today, so live checks and tasks are paused. Nothing is lost. The allowance resets at 00:00 UTC (" + RESET_NOTE() + "), and the system resumes by itself then. Meanwhile it keeps its reads low and no plan is upgraded. What needs you, tenant status and paid options below come from the saved copy.";
+export const isLimitError = m => /free tier|row read limit|7500|exceeded/i.test(String(m || ""));
 export async function stateOf(env) {
   const base = staticPanels();
   try { return await stateFromDb(env, base); }
   catch (e) {
     const m = String(e && e.message || e);
-    return { version: VERSION, degraded: /free tier|row read limit|7500/i.test(m) ? "D1 is at its free daily read limit; live checks and tasks return after 00:00 UTC. The panels below are from the bundle." : "Database unavailable: " + m.slice(0, 200), ...base, tenants: base.tenants.map(t => ({ ...t, live: null })), checks: [], owner: [], fleet: [], counts: { owner: 0, fleet: 0, queued: 0, done: 0 }, audit: [], notes: [], snapshot: null, analytics: null, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
+    return { version: VERSION, degraded: isLimitError(m) ? DB_LIMIT_NOTE() : "The database did not answer, so live checks are paused. The system retries by itself every hour.", ...base, tenants: base.tenants.map(t => ({ ...t, live: null })), checks: [], owner: [], fleet: [], counts: { owner: 0, fleet: 0, queued: 0, done: 0 }, audit: [], notes: [], snapshot: null, analytics: null, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
   }
 }
 async function stateFromDb(env, base) {
@@ -285,6 +288,8 @@ export async function tick(env, cron) {
   try { await ensureSnapshots(env); } catch (e) { console.error("ensureSnapshots", e && e.message); }
   try { await selfcheck(env, HOSTS[0]); } catch (e) { console.error("selfcheck", e && e.message); }
   const res = await runProbes(env); const day = new Date().toISOString().slice(0, 10);
+  const dbc = res.find(x => x.name === "database");
+  if (dbc && !dbc.ok) { /* mail needs no database: tell the owner in plain words, at most every 6 hours (the hourly cron makes the slot the dedup) */ if (new Date().getUTCHours() % 6 === 0) { try { await sendMail(env, "Ultrastable: database resting", isLimitError(dbc.detail) ? DB_LIMIT_NOTE() : "The database did not answer (" + String(dbc.detail).slice(0, 120) + "). The system retries every hour."); } catch (e) { console.error("db-down mail", e && e.message); } } return; }
   for (const r of res.filter(x => !x.ok && x.name !== "github")) await notify(env, "fail:" + r.name + ":" + day, "Ultrastable check failing: " + r.name, r.name + " failed: " + r.detail + "\nOpen https://ultrastable.io/owner");
   try { const a = await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }); for (const m of a.metrics.filter(x => x.hit)) await notify(env, "metric:" + m.name + ":" + day, "Ultrastable metric breach: " + m.name, m.name + " = " + m.value + " (" + m.why + ")\n" + m.label + "\nOpen https://ultrastable.io/owner"); } catch (e) { console.error("metrics", e && e.message); }
   const fresh = (await env.DB.prepare("SELECT id,title FROM tasks WHERE kind='owner' AND state='open' AND id NOT IN (SELECT substr(key,6) FROM notifications WHERE key LIKE 'task:%') ORDER BY priority LIMIT 50").all()).results;
@@ -338,7 +343,15 @@ function fill(c,j){const w=c.querySelector('.wait');if(w)c.removeChild(w);const 
 async function run(line,quiet){const c=quiet?null:card(line);if(c)c.appendChild(mk('p','meta wait','Working...'));const r=await api('/api/owner/run',{cmd:line});if(r.j.needs_code){pending=line;if(c)fill(c,Object.assign({},r.j,{out:r.j.out||'This needs a fresh code.'}));codeBox('Confirm it is you: email yourself a code to make this change.',async()=>{const l=pending;pending=null;await run(l)});return r}
 if(c)fill(c,r.j);await load();return r}
 function task(t,own){const id=E(t.id);return '<div class="card"><h3>'+E(t.title)+'</h3>'+(t.identity?'<div class="tag">ONLY YOU CAN DO THIS</div>':'')+(t.why?'<div class="meta">'+E(t.why)+'</div>':'')+(t.if_wait?'<div class="meta"><b>If you wait:</b> '+E(t.if_wait)+'</div>':'')+(t.url?'<div class="meta"><a href="'+E(t.url)+'" rel="noopener">Open</a></div>':'')+'<div class="row"><button class="p" data-c="done '+id+'">Done</button>'+(t.identity?'':'<button data-c="fix '+id+'">'+(t.fix_cmd?'Fix it':'Hand to fleet')+'</button>')+'<button data-c="snooze '+id+' 3">Snooze 3d</button><button data-c="snooze '+id+' 7">7d</button><button data-c="dismiss '+id+'">Not doing</button></div></div>'}
-async function load(){const r=await api('/api/owner/state');if(r.s==401){$('#app').hidden=true;codeBox('Owner sign-in. A code is emailed to the owner address.',load);return}
+function paintStatic(s){$('#degraded').hidden=!s.degraded;$('#degraded').textContent=s.degraded||'';
+$('#needs').innerHTML=(s.needs||[]).map(n=>'<div class="card"><div class="tag">ONLY YOU CAN DO THIS</div><h3>'+E(n.title)+'</h3><div class="meta">'+E(n.why)+'</div><div class="meta"><b>If you wait:</b> '+E(n.default)+'</div><div class="row"><a class="btn p" href="'+E(n.url)+'" rel="noopener">'+E(n.button||'Open')+'</a></div></div>').join('')||'<p class="meta">Nothing waiting on you.</p>';
+$('#tenants').innerHTML=(s.tenants||[]).map(t=>{const st=t.live?(t.live.ok?'ok':'bad'):(t.status=='live'?'meta':'tag');const lb=t.live?(t.live.ok?'LIVE':'DOWN'):(t.status=='live'?'LIVE (not probed yet)':'PENDING');return '<div class="card"><span class="'+st+'">'+lb+'</span> <b>'+E(t.name)+'</b><div class="meta">'+E(t.note)+'</div><div class="meta">Database: '+E(t.db)+(t.web?' · Web: '+E(t.web):'')+'</div><div class="meta">Next: '+E(t.next)+'</div>'+(t.live?'<div class="meta">Probe: '+E(t.live.detail)+'</div>':'')+'</div>'}).join('');
+$('#plan').textContent=(s.plan_note||'')+' Prices checked '+(s.options_checked||'')+'.';
+$('#options').innerHTML=(s.options||[]).map(o=>'<div class="card"><h3>'+E(o.title)+'</h3><div class="meta"><b>Cost:</b> '+E(o.cost)+'</div><div class="meta"><b>Unlocks:</b> '+E(o.unlocks)+'</div><div class="meta"><b>Default in effect:</b> '+E(o.default)+'</div></div>').join('');
+}
+async function load(){const ov=await api('/api/owner/overview');if(ov.s==200){$('#app').hidden=false;paintStatic(ov.j)}
+const r=await api('/api/owner/state');if(r.s==401){$('#app').hidden=true;codeBox('Owner sign-in. A code is emailed to the owner address.',load);return}
+if(r.s!=200||!r.j||!r.j.checks){$('#app').hidden=false;$('#pill').textContent='Resting';$('#pill').className='pill';const d=$('#degraded');d.hidden=false;d.textContent=(r.j&&r.j.degraded)||ov.j&&ov.j.degraded||'Live data is not available right now. The system retries by itself; this page checks again in a minute.';setTimeout(load,60000);return}
 $('#app').hidden=false;const s=r.j;const bad=s.checks.filter(c=>!c.ok).length;
 $('#pill').textContent=bad?bad+' check'+(bad>1?'s':'')+' failing':'All checks passing';$('#pill').className='pill '+(bad?'bad':'ok');
 $('#checks').innerHTML=s.checks.map(c=>'<div class="card"><span class="'+(c.ok?'ok':'bad')+'">'+(c.ok?'OK':'FAIL')+'</span> <b>'+E(c.name)+'</b><div class="meta">'+E(c.detail)+'</div></div>').join('')||'<p class="meta">No checks yet. Type probe.</p>';
@@ -346,11 +359,7 @@ const sn=s.snapshot;$('#snapmeta').textContent=sn&&sn.panels?('Snapshot of the r
 $('#snap').innerHTML=sn&&sn.panels?sn.panels.map(p=>'<div class="card"><h3>'+E(p.title)+'</h3>'+p.rows.map(r=>'<div class="meta"><span class="'+(r[2]=='ok'?'ok':r[2]=='warn'?'bad':'')+'">'+(r[2]=='ok'?'OK ':r[2]=='warn'?'OPEN ':'')+'</span><b>'+E(r[0])+'</b> '+E(r[1])+'</div>').join('')+'</div>').join(''):'';
 const an=s.analytics;$('#an').innerHTML=an&&an.metrics?'<p class="meta">Collecting for '+an.age_days+' days. '+an.breaches+' breach(es).</p><div class="grid">'+an.metrics.map(m=>'<div class="card"><span class="'+(m.hit?'bad':'ok')+'">'+(m.hit?'BREACH':'OK')+'</span> <b>'+E(m.name)+'</b> '+E(m.value)+'<div class="meta">'+E(m.label)+' ('+E(m.kind)+'; '+E(m.why)+')</div></div>').join('')+'</div><div class="meta">Top pages, 7 days: '+(an.top.map(t=>E(t.host+t.path)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Referrers: '+(an.refs.map(t=>E(t.ref)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Daily views: '+(an.daily.map(d=>E(d.day.slice(5))+' '+d.views).join(' · ')||'none yet')+'</div>':'<p class="meta">Analytics unavailable.</p>';
 $('#counts').textContent='Your queue: '+s.counts.owner+' open. Fleet: '+s.counts.fleet+' open, '+s.counts.queued+' queued, '+s.counts.done+' done.';
-$('#degraded').hidden=!s.degraded;$('#degraded').textContent=s.degraded||'';
-$('#needs').innerHTML=(s.needs||[]).map(n=>'<div class="card"><div class="tag">ONLY YOU CAN DO THIS</div><h3>'+E(n.title)+'</h3><div class="meta">'+E(n.why)+'</div><div class="meta"><b>If you wait:</b> '+E(n.default)+'</div><div class="row"><a class="btn p" href="'+E(n.url)+'" rel="noopener">'+E(n.button||'Open')+'</a></div></div>').join('')||'<p class="meta">Nothing waiting on you.</p>';
-$('#tenants').innerHTML=(s.tenants||[]).map(t=>{const st=t.live?(t.live.ok?'ok':'bad'):(t.status=='live'?'meta':'tag');const lb=t.live?(t.live.ok?'LIVE':'DOWN'):(t.status=='live'?'LIVE (not probed yet)':'PENDING');return '<div class="card"><span class="'+st+'">'+lb+'</span> <b>'+E(t.name)+'</b><div class="meta">'+E(t.note)+'</div><div class="meta">Database: '+E(t.db)+(t.web?' · Web: '+E(t.web):'')+'</div><div class="meta">Next: '+E(t.next)+'</div>'+(t.live?'<div class="meta">Probe: '+E(t.live.detail)+'</div>':'')+'</div>'}).join('');
-$('#plan').textContent=(s.plan_note||'')+' Prices checked '+(s.options_checked||'')+'.';
-$('#options').innerHTML=(s.options||[]).map(o=>'<div class="card"><h3>'+E(o.title)+'</h3><div class="meta"><b>Cost:</b> '+E(o.cost)+'</div><div class="meta"><b>Unlocks:</b> '+E(o.unlocks)+'</div><div class="meta"><b>Default in effect:</b> '+E(o.default)+'</div></div>').join('');
+paintStatic(s);
 $('#owner').innerHTML=s.owner.map(t=>task(t,1)).join('')||'<p class="meta">Nothing waiting on you.</p>';
 $('#fleet').innerHTML=s.fleet.map(t=>'<div class="card"><b>'+E(t.title)+'</b> <span class="meta">'+E(t.area||'')+(t.state=='delegated'?' · with the fleet':'')+'</span><div class="row">'+(t.state=='delegated'?'':'<button data-c="fix '+E(t.id)+'">'+(t.fix_cmd?'Fix it':'Hand to fleet')+'</button>')+'<button data-c="done '+E(t.id)+'">Done</button><button data-c="dismiss '+E(t.id)+'">Not doing</button>'+(t.url?'<a class="btn" href="'+E(t.url)+'" rel="noopener">Open</a>':'')+'</div></div>').join('')||'<p class="meta">No fleet tasks.</p>';
 $('#audit').textContent=s.audit.map(a=>a.id+' '+new Date(a.at).toISOString().slice(0,19)+' '+(a.ok?'ok ':'err')+' '+a.cmd).join('\\n')||'Empty.';
@@ -379,7 +388,9 @@ export async function route(req, env) {
     if (req.method === "POST" && req.headers.get("x-us-ui") !== "1") return json({ error: "missing x-us-ui header" }, 400);
     if (p === "/api/owner/code" && req.method === "POST") { const r = await requestCode(env); return json(r.body, r.status); }
     if (p === "/api/owner/verify" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const r = await verifyCode(env, req, b.code); return json(r.body, r.status, r.cookie ? { "Set-Cookie": r.cookie } : undefined); }
-    const s = await getSession(env, req); if (!s) return json({ error: "sign in" }, 401);
+    if (p === "/api/owner/overview") return json({ ...staticPanels(), version: VERSION });
+    let s; try { s = await getSession(env, req); } catch (e) { return json({ ...staticPanels(), version: VERSION, degraded: isLimitError(e && e.message) ? DB_LIMIT_NOTE() : "The database did not answer, so sign-in cannot be checked. The saved panels are shown." }, 200); }
+    if (!s) return json({ error: "sign in" }, 401);
     if (p === "/api/owner/logout" && req.method === "POST") { await env.DB.prepare("UPDATE sessions SET revoked=1 WHERE hash=?1").bind(s.hash).run(); return json({ ok: true }, 200, { "Set-Cookie": COOKIE + "=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict" }); }
     if (p === "/api/owner/state") return json(await stateOf(env));
     if (p === "/api/owner/run" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const r = await runCommand(env, s, b.cmd); return json(r.body, r.status); }
