@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-16T09:47:59Z",
- "commit": "ca73dbf",
+ "generated": "2026-11-16T09:50:04Z",
+ "commit": "d2d7869",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 85,
@@ -121,7 +121,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 536.1,
+   "age_s": 659.9,
    "status": "fresh",
    "missed": 0
   },
@@ -145,7 +145,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 567.1,
+   "age_s": 690.9,
    "status": "fresh",
    "missed": 0
   },
@@ -153,7 +153,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 246834.1,
+   "age_s": 246957.9,
    "status": "stale",
    "missed": 2
   }
@@ -207,7 +207,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-16T09:47:38Z",
+  "generated": "2026-11-16T09:49:42Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -240,7 +240,7 @@
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 337.6,
+    "expected_today": 337.7,
     "value": null,
     "behind": null,
     "progress": null
@@ -252,7 +252,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-16T09:47:38Z",
+    "started": "2026-11-16T09:49:42Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -316,10 +316,10 @@
  "growth": {
   "mix": {
    "growth": 1,
-   "fix": 1,
+   "fix": 2,
    "maintenance": 13,
-   "total": 15,
-   "growth_share": 0.067,
+   "total": 16,
+   "growth_share": 0.062,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -369,7 +369,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 563.6,
+   "last_beat_age_s": 688.8,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -380,7 +380,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 75501.6,
+   "last_beat_age_s": 75626.8,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -391,7 +391,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 1120.6,
+   "last_beat_age_s": 1245.8,
    "expected_interval_s": 86400,
    "beats_24h": 26,
    "expected_24h": 1.0,
@@ -402,7 +402,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 308577.6,
+   "last_beat_age_s": 308702.8,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2121,6 +2121,15 @@
  ],
  "changes": {
   "commits": [
+   {
+    "sha": "d2d7869",
+    "at": "2026-11-16T09:48:11+00:00",
+    "author": "Claude",
+    "subject": "SPDX headers on new files; write-back for the six lesson fixes",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/d2d7869df0bf2118a4e4ead67976472dd1ca0bac"
+   },
    {
     "sha": "ca73dbf",
     "at": "2026-11-16T09:42:00+00:00",
