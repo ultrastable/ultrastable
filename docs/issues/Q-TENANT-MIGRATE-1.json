@@ -1,0 +1,11 @@
+{
+  "id": "Q-TENANT-MIGRATE-1",
+  "title": "Q-TENANT-MIGRATE-1: move QNFO high-read tables off scans (steps M1 to M6 in doctrine/tenant-storage.json)",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** file:ops/tenant-storage/top-queries.json\n**Status:** open\n\nTENANT-STORAGE-1. Work the steps M1 to M6 in order; each step's probe is in doctrine/tenant-storage.json. Free-plan daily read limit took /ops down 2026-11-16; qnfo-audit read 29.0 B rows in 30 days.\nPaths: doctrine/tenant-storage.json, workers core/tenantstore.\nAcceptance: M1 list exists, then rows read per day on qnfo-audit stays under 5 M for 3 days.\n\nsize: L\n\n**Closing probe:** file:ops/tenant-storage/top-queries.json exists and python3 -m foundation tenantstorage --check passes.",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Free plan budget"
+}

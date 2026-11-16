@@ -1,0 +1,42 @@
+{
+  "_doc": "TENANT-STORAGE-1 (Rowan, 2026-11-16): tenant apps need sandboxed storage, vector search and a hard cost cap. Decision, budgets and the QNFO migration plan as data; foundation/tenantstorage.py checks it. Spec: spec repo US-SPEC-25. Code: workers core/tenantstore. Every dollar figure is an ESTIMATE from list prices dated in price_as_of.",
+  "version": "1.0.0",
+  "price_as_of": "2026-11-16",
+  "decision": {
+    "store": "one SQLite-backed Durable Object per tenant behind the SqlPort",
+    "vectors": "int8 embeddings in the tenant store up to max_vectors, then a per-tenant Vectorize index (planned)",
+    "blobs": "R2, per-tenant prefix",
+    "hot_reads": "KV or Cache read-through, stale served when the budget is spent",
+    "aggregates": "write-time rollups, read as one row",
+    "control_plane": "one small shared D1 (registry, trust ledger, queue), never tenant data",
+    "portable": "core/tenantstore plus adapters/sqlite (any host) and adapters/cloudflare (Durable Object)"
+  },
+  "monthly_ceiling_usd": 8,
+  "plan_base_usd": 5,
+  "default_budget": {
+    "day": { "reads": 20000000, "writes": 200000, "requests": 200000 },
+    "month": { "reads": 400000000, "writes": 3000000, "requests": 3000000 },
+    "per_query_reads": 50000,
+    "max_storage_bytes": 1073741824,
+    "max_vectors": 20000
+  },
+  "tenants": [
+    { "id": "ultrastable", "kind": "self", "source": "ultrastable D1 (control plane stays in D1)", "wave": 3 },
+    { "id": "practical-solutions", "kind": "app", "source": "QNFO estate", "wave": 1 },
+    { "id": "me", "kind": "app", "source": "QNFO estate (personal companion)", "wave": 2 },
+    { "id": "jobs", "kind": "app", "source": "QNFO estate", "wave": 2 },
+    { "id": "travel", "kind": "app", "source": "QNFO estate; reads the me tenant only through its public interface", "wave": 2 }
+  ],
+  "migration": {
+    "target": "QNFO high-read tables off scans",
+    "evidence": "30-day reads at 2026-11-13: qnfo-audit 29.0 B (16.5 M queries, about 1,750 rows per query), living-paper 5.0 B, qnfo-graph 1.0 B; suspects qnfo-fleet-control, qnfo-ops, qnfo-fleet-dashboard; free-plan daily read limit exhausted 2026-11-16 and took /ops down",
+    "steps": [
+      { "id": "M1", "title": "Rank queries by rows read", "action": "export per-query rows_read from D1 query analytics for the three databases; list the top 20 statements and the table each scans", "probe": "ops/tenant-storage/top-queries.json exists and lists at least 10 statements with rows_read", "owner": "executor" },
+      { "id": "M2", "title": "Stop the bleeding", "action": "add the missing index or LIMIT for each statement in the top list; set a per-statement read ceiling in the QNFO fleet clients", "probe": "rows read per day on qnfo-audit under 5 M for 3 consecutive days", "owner": "executor" },
+      { "id": "M3", "title": "Rollups for the tick", "action": "replace each fleet_tick trigger that scans a whole view with a rollup table updated by the writer in the same batch; dual-run and compare for 48 hours", "probe": "rollup equals the view result on every sampled tick; trigger rows read per tick under 100", "owner": "executor" },
+      { "id": "M4", "title": "Archive cold rows", "action": "export rows older than 30 days to R2 as NDJSON, verify count and checksum, then delete from D1", "probe": "R2 object count and row checksum match before any delete; D1 table row count falls", "owner": "executor" },
+      { "id": "M5", "title": "Move tenants", "action": "export each app's tables, import into its tenant store, switch reads by flag, keep D1 read-only for 7 days", "probe": "row counts equal and /ops answers from the tenant store", "owner": "executor" },
+      { "id": "M6", "title": "Guard on", "action": "run the spend probe in the tick; breach files a queue item and degrades the heaviest tenant to cache-only", "probe": "python3 -m foundation tenantstorage --check passes and the probe's last reading is ok or warn", "owner": "executor" }
+    ]
+  }
+}
