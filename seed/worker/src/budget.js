@@ -83,6 +83,15 @@ export function budgetEnv(env, share) {
 }
 
 // Per database handle, not per isolate: a worker or test may hold more than one database.
+// HALT-1: one stop for every recurring and self-triggering path. The worker variable HALT ('1' or '0') wins over the committed ops/halt.json
+// (config.halt), so the owner can stop or resume without a deploy.
+export function halted(config, env) {
+  const e = env && env.HALT !== undefined && env.HALT !== null ? String(env.HALT).trim().toLowerCase() : '';
+  if (e === '1' || e === 'true' || e === 'on') return true;
+  if (e === '0' || e === 'false' || e === 'off') return false;
+  return Boolean(config && config.halt && config.halt.halted);
+}
+
 let ensured = new WeakSet();
 export async function ensureLedger(db) {
   if (ensured.has(db)) return;

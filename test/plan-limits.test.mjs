@@ -65,3 +65,20 @@ test('every table the tick worker creates has a retention rule (RETENTION-1)', (
   const missing = [...created].filter((t) => !rules[t]);
   assert.deepEqual(missing, [], 'tables with no retention rule in seed/autonomy/retention.json');
 });
+
+test('HALT-1: every workflow job honours the repository variable HALT, and every worker cron honours the worker variable', () => {
+  const dir = new URL('../.github/workflows/', import.meta.url);
+  const bad = [];
+  for (const f of readdirSync(dir).filter((x) => /\.ya?ml$/.test(x))) {
+    const text = read('.github/workflows/' + f);
+    const jobs = text.split(/^jobs:\s*$/m)[1] || '';
+    const ids = [...jobs.matchAll(/^  ([A-Za-z0-9_-]+):\s*$/gm)].map((m) => m[1]);
+    const guarded = (jobs.match(/^    if: \$\{\{ vars\.HALT != '1'/gm) || []).length;
+    if (ids.length !== guarded) bad.push(`${f}: ${guarded} of ${ids.length} jobs guarded`);
+  }
+  assert.deepEqual(bad, []);
+  assert.match(read('seed/worker/src/index.js'), /async scheduled\(_event, env, ctx\) \{\n    if \(halted\(config, env\)\)/);
+  assert.match(read('dashboard/worker.js'), /async scheduled\(ev, env, ctx\) \{ if \(halted\(null, env\)\) return;/);
+  assert.match(read('site/worker.js'), /async scheduled\(event, env, ctx\) \{ if \(env && env\.UPSTREAM_ORIGIN\) return; if \(halted\(null, env\)\) return;/);
+  assert.equal(typeof JSON.parse(read('ops/halt.json')).halted, 'boolean');
+});

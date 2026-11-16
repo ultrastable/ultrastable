@@ -92,7 +92,7 @@ test('no AI binding means no AI handle, and the view reports the knob, the allow
 
 test('the tick worker never hands a loop the raw AI binding', () => {
   const src = readFileSync(new URL('../src/index.js', import.meta.url), 'utf8');
-  const raw = src.split('\n').filter(l => /env\.AI\b/.test(l) && !/aiFor = \(env\) => governedAI\(env\.DB, env\.AI/.test(l));
+  const raw = src.split('\n').filter(l => /env\.AI\b/.test(l) && !/^const aiFor = \(env\) =>.*governedAI\(env\.DB, env\.AI/.test(l));
   assert.deepEqual(raw, [], 'only the governor reads env.AI');
 });
 
@@ -144,7 +144,7 @@ test('every Workers AI call site in the workers goes through the governor', () =
   const read = (p) => readFileSync(new URL('../../../' + p, import.meta.url), 'utf8');
   assert.match(read('site/worker.js'), /env = budgetEnv\(env, SHARES\.site\)/);
   assert.match(read('dashboard/worker.js'), /async fetch\(req, env\) \{ env = budgetEnv\(env, SHARES\.dashboard\)/);
-  assert.match(read('dashboard/worker.js'), /async scheduled\(ev, env, ctx\) \{ env = budgetEnv\(env, SHARES\.dashboard\)/);
+  assert.match(read('dashboard/worker.js'), /async scheduled\(ev, env, ctx\) \{ if \(halted\(null, env\)\) return;  \/\* HALT-1 \*\/ env = budgetEnv\(env, SHARES\.dashboard\)/);
   assert.match(read('seed/worker/src/index.js'), /probeAgents\(\{ \.\.\.env, AI: \(await aiFor\(env\)\)\.ai \|\| undefined \}\)/);
 });
 
@@ -162,5 +162,31 @@ test('D1-LIMIT-503: /health and /api/budget answer 503 with a code when D1 refus
       assert.equal(r.status, 503, p);
       assert.equal((await r.json()).code, 'd1_read_limit', p);
     }
+  } finally { if (made) rmSync(cfg); }
+});
+
+test('HALT-1: the worker variable wins over the committed file, and a halted tick runs nothing but its beat', async () => {
+  const { halted } = await import('../src/budget.js');
+  assert.equal(halted({ halt: { halted: true } }, {}), true);
+  assert.equal(halted({ halt: { halted: true } }, { HALT: '0' }), false, 'HALT=0 resumes without a deploy');
+  assert.equal(halted({}, { HALT: '1' }), true);
+  assert.equal(halted(null, {}), false);
+  const { writeFileSync, existsSync, rmSync } = await import('node:fs');
+  const cfg = new URL('../src/config.js', import.meta.url);
+  const made = !existsSync(cfg);
+  if (made) writeFileSync(cfg, 'export default ' + JSON.stringify({ org_slug: 'test' }) + ';\n');
+  try {
+    const mod = await import('../src/index.js');
+    const sqls = [];
+    const DB = { prepare(sql) { sqls.push(sql); const o = { bind() { return o; }, first: async () => null, all: async () => ({ results: [] }), run: async () => ({ meta: {} }) }; return o; } };
+    const ai = fakeAI(); const waits = [];
+    await mod.default.scheduled({}, { DB, AI: ai, HALT: '1' }, { waitUntil(p) { waits.push(p); } });
+    await Promise.allSettled(waits);
+    assert.equal(ai.calls.length, 0, 'no model call');
+    assert.ok(sqls.every(s => /loop_beats|loop_clock|ignition_log|CREATE (TABLE|INDEX)/i.test(s)), 'only the halted beat touches the database: ' + sqls.filter(s => !/loop_beats|loop_clock|ignition_log|CREATE/i.test(s)).join(' | ').slice(0, 300));
+    const h = await mod.default.fetch(new Request('https://x/health'), { DB, AI: ai, HALT: '1' }, { waitUntil() {} });
+    assert.equal((await h.json()).halted, true);
+    const w = await mod.default.fetch(new Request('https://x/pulse/watch', { method: 'POST' }), { DB, AI: ai, HALT: '1' }, { waitUntil() {} });
+    assert.equal(w.status, 202);
   } finally { if (made) rmSync(cfg); }
 });

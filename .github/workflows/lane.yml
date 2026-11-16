@@ -23,7 +23,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   lane:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    if: ${{ vars.HALT != '1' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}  # HALT-1
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     steps:

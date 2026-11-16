@@ -6,7 +6,7 @@
 // has to supply those three. Cloudflare adapter = this file + wrangler.toml.
 import { handleAnalytics, record, selfcheck, report, summary, REPORT_CACHE_MINUTES } from "../seed/analytics/analytics.js";
 import { ask, ASK_PER_HOUR } from "./agent.js";
-import { budgetEnv, SHARES } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: the console agent spends from the owner's budget
+import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: the console agent spends from the owner's budget
 const VERSION = "0.3.0";
 const COOKIE = "us_owner";
 const OTP_MS = 10 * 60e3, SESSION_MS = 30 * 864e5, STEPUP_MS = 15 * 60e3;
@@ -372,5 +372,5 @@ export async function route(req, env) {
 }
 export default {
   async fetch(req, env) { env = budgetEnv(env, SHARES.dashboard); try { return await route(req, env); } catch (e) { console.error("unhandled", e && e.stack || e); return json({ error: "internal" }, 500); } },
-  async scheduled(ev, env, ctx) { env = budgetEnv(env, SHARES.dashboard); ctx.waitUntil(tick(env, ev.cron).catch(e => console.error("tick", e && e.stack || e))); }
+  async scheduled(ev, env, ctx) { if (halted(null, env)) return;  /* HALT-1 */ env = budgetEnv(env, SHARES.dashboard); ctx.waitUntil(tick(env, ev.cron).catch(e => console.error("tick", e && e.stack || e))); }
 };

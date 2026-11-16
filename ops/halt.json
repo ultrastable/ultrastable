@@ -1,0 +1,6 @@
+{
+  "_doc": "HALT-1 (2026-11-16): the owner's stop. halted: true stops every recurring and self-triggering path: the tick worker's cron runs only a halted beat (no executor, lane, sweeper, handoff deploys or model calls), its webhook and watch routes run no tick, and the dashboard and site crons return at once; pages keep serving. Faster than a commit: set the variable HALT=1 on the workers in Cloudflare (no deploy needed) and the repository variable HALT=1 in GitHub, which every workflow job checks. HALT=0 on a worker overrides this file. Lesson from an earlier fleet: a freeze that removed its crons was undone within the hour by its own merge lane, deploy workflows and a self-healing cron.",
+  "halted": false,
+  "reason": "",
+  "set_at": null
+}

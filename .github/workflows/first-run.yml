@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   start:
-    if: github.repository != 'ultrastable/ultrastable'
+    if: ${{ vars.HALT != '1' && (github.repository != 'ultrastable/ultrastable') }}  # HALT-1
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     env:

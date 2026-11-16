@@ -9,6 +9,7 @@ permissions: {contents: write, actions: write}
 concurrency: {group: scout, cancel-in-progress: false}
 jobs:
   scout:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
