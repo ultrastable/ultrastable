@@ -1,8 +1,13 @@
 {
   "_doc": "Actions minute budget and kill switch. See docs/ops/ACTIONS-BUDGET.md. Private-repo minutes bill 1x for Linux; public repos are free.",
-  "paused": false,
+  "paused": true,
   "paused_workflows": [],
-  "essential": ["checks", "lane", "deploy-site", "actions-budget"],
+  "essential": [
+    "checks",
+    "lane",
+    "deploy-site",
+    "actions-budget"
+  ],
   "monthly_free_minutes": 2000,
   "plan": "GitHub Free (verify at https://docs.github.com/en/billing/managing-billing-for-your-products/managing-billing-for-github-actions/about-billing-for-github-actions)",
   "warn_at_pct": 60,
