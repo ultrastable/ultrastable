@@ -38,8 +38,14 @@
  "ledger": "doctrine/decision-ledger.json",
  "ledger_consumer_suffixes": [".py", ".js", ".mjs", ".json", ".yml", ".yaml", ".sh", ".sql"],
  "ledger_baseline": "doctrine/standing-order-baseline.json",
+ "prompt_sources": [
+  "foundation/executor.py"
+ ],
  "report_globs": [
   "HANDOFF.md",
+  "docs/failures/*.md",
+  "docs/PROJECT-MEMORY.md",
+  "ops/**/*.md",
   "docs/handoff/*.md",
   "docs/lessons/*.md",
   "ops/reports/*.md"

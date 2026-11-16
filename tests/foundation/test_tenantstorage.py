@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """TENANT-STORAGE-1: declaration complete; worst case bounded by the ceiling."""
 import sys, unittest
 from pathlib import Path

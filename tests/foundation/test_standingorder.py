@@ -1,7 +1,10 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """CODE-ONLY-ORDER: decisions live in code the system consumes; no report hands a decision to the owner."""
-import json, shutil, tempfile, unittest
+import json, shutil, unittest
 from pathlib import Path
 from foundation import standingorder as so
+from ._repo import scratch
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -18,8 +21,8 @@ class StandingOrder(unittest.TestCase):
         self.assertEqual(so.lint("Decided: ship A. Deployed and verified live at /health."), [])
 
     def test_ledger_row_without_code_consumer_fails(self):
-        tmp = Path(tempfile.mkdtemp())
-        try:
+        tmp = scratch()
+        if True:
             (tmp / "doctrine").mkdir(); (tmp / "notes.md").write_text("x")
             shutil.copy(REPO / so.PATH, tmp / so.PATH)
             (tmp / "doctrine/decision-ledger.json").write_text(json.dumps({"rows": [
@@ -27,8 +30,6 @@ class StandingOrder(unittest.TestCase):
             d = so.load(tmp)
             self.assertEqual(so.consumerless(tmp, d), ["d1"])
             self.assertTrue(so.ledger_failures(tmp, d))
-        finally:
-            shutil.rmtree(tmp)
 
     def test_seed_copy_matches(self):
         self.assertEqual((REPO / so.PATH).read_text(), (REPO / "seed/doctrine/standing-order.json").read_text())
