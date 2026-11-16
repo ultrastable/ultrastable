@@ -82,3 +82,37 @@ test('HALT-1: every workflow job honours the repository variable HALT, and every
   assert.match(read('site/worker.js'), /async scheduled\(event, env, ctx\) \{ if \(env && env\.UPSTREAM_ORIGIN\) return; if \(halted\(null, env\)\) return;/);
   assert.equal(typeof JSON.parse(read('ops/halt.json')).halted, 'boolean');
 });
+
+// SILENT-CATCH (Q-LESSON-SILENT-CATCH, LESSONS-1): 35 fleet failure modes were silent drops, empty catches and 'ok' answers that hid failures.
+// A catch block in seed/worker/src whose body is empty or only console.* calls fails, unless the block carries `allow-silent: <reason>`.
+// Shrink-only baseline: the count of such blocks per file when the rule landed. A new one fails; removing one fails until the baseline is lowered.
+const SILENT_CATCH_BASELINE = { 'pulse.js': 2, 'tick.js': 1 };
+function silentCatches(src) {
+  const lines = [];
+  for (const m of src.matchAll(/\bcatch\s*(?:\([^)]*\))?\s*\{/g)) {
+    let i = m.index + m[0].length, depth = 1;
+    while (i < src.length && depth) { if (src[i] === '{') depth++; else if (src[i] === '}') depth--; i++; }
+    const body = src.slice(m.index + m[0].length, i - 1);
+    if (/allow-silent:\s*\S/.test(body)) continue;
+    const code = body.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '').trim();
+    const stmts = code.split(/;\s*|\n/).map((s) => s.trim()).filter(Boolean);
+    if (stmts.every((s) => /^console\.\w+\(/.test(s))) lines.push(src.slice(0, m.index).split('\n').length);
+  }
+  return lines;
+}
+
+test('SILENT-CATCH: no new catch block in seed/worker/src drops its error (empty or console-only) without an allow-silent reason', () => {
+  assert.deepEqual(silentCatches('try { a(); } catch (e) {}'), [1]);
+  assert.deepEqual(silentCatches('try { a(); } catch {\n  console.error(e); // gone\n}'), [1]);
+  assert.deepEqual(silentCatches('try { a(); } catch (e) { /* allow-silent: best-effort cache warm */ }'), []);
+  assert.deepEqual(silentCatches('try { a(); } catch (e) { notes.push(e.message); }'), []);
+  const found = {};
+  for (const f of readdirSync(new URL('../seed/worker/src/', import.meta.url)).filter((x) => x.endsWith('.js'))) {
+    const n = silentCatches(read('seed/worker/src/' + f)).length;
+    if (n) found[f] = n;
+  }
+  const over = Object.entries(found).filter(([f, n]) => n > (SILENT_CATCH_BASELINE[f] || 0)).map(([f, n]) => `${f}: ${n} (baseline ${SILENT_CATCH_BASELINE[f] || 0})`);
+  assert.deepEqual(over, [], 'new silent catch blocks: record the error where a caller or loop reads it, or add `allow-silent: <reason>`');
+  const stale = Object.entries(SILENT_CATCH_BASELINE).filter(([f, n]) => (found[f] || 0) < n).map(([f, n]) => `${f}: ${found[f] || 0} (baseline ${n})`);
+  assert.deepEqual(stale, [], 'silent catches were removed: lower SILENT_CATCH_BASELINE to match (shrink-only)');
+});

@@ -71,7 +71,8 @@ test('gate posts a status once per commit; lane merges on green worker-gate only
   const g = fake({
     'GET /repos/o/r/pulls?': [200, [{ number: 1, head: { sha: 's1', ref: 'agent/1' }, body: '' }]],
     'GET /repos/o/r/commits/s1/statuses': [200, []],
-    'GET /repos/o/r/pulls/1/files': [200, [{ filename: 'docs/a.md', patch: '+x' }]],
+    'GET /repos/o/r/pulls/1/files': [200, [{ filename: 'docs/a.md', status: 'added', patch: '+x' }]],
+    'GET /repos/o/r/contents/docs/a.md?ref=s1': [200, { size: 1, encoding: 'base64', content: 'eA==' }],
     'POST /repos/o/r/statuses/s1': [201, {}],
   });
   const out = await runGate({ token: 't', repos: ['o/r'], fetch: g.f });

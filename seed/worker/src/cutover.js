@@ -67,10 +67,11 @@ export async function copyFromSource(env, db, f = fetch) {
     }
     copied[t.name] = n;
   }
+  const skipped = []; // SILENT-CATCH: a schema object that would not recreate (an index on a local-only table) is skipped and reported, not lost
   for (const o of await q("SELECT sql FROM sqlite_master WHERE type IN ('index','trigger','view') AND sql IS NOT NULL AND name NOT LIKE 'sqlite_%'")) {
-    try { await db.prepare(o.sql.replace(/^CREATE (UNIQUE )?INDEX (?!IF)/i, 'CREATE $1INDEX IF NOT EXISTS ').replace(/^CREATE (VIEW|TRIGGER) (?!IF)/i, 'CREATE $1 IF NOT EXISTS ')).run(); } catch (e) { /* an index on a local-only table: skipped, recorded below */ }
+    try { await db.prepare(o.sql.replace(/^CREATE (UNIQUE )?INDEX (?!IF)/i, 'CREATE $1INDEX IF NOT EXISTS ').replace(/^CREATE (VIEW|TRIGGER) (?!IF)/i, 'CREATE $1 IF NOT EXISTS ')).run(); } catch (e) { skipped.push(`${String(o.sql).slice(0, 60)}: ${String(e && e.message).slice(0, 80)}`); }
   }
-  return { ok: true, tables: Object.keys(copied).length, rows: Object.values(copied).reduce((a, b) => a + b, 0) };
+  return { ok: true, tables: Object.keys(copied).length, rows: Object.values(copied).reduce((a, b) => a + b, 0), skipped };
 }
 
 // The source's crons off and its site forwarding to this account. Each step is recorded; a failed step never blocks promotion,
