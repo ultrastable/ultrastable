@@ -1,7 +1,7 @@
 // SELF-SUSTAIN-1 / AUTH-1: bind what the deployed tick Worker needs to run its own credential layer, with no person minting or pasting anything.
 // CREDENTIAL_KEY (the sealing key for stored credentials) is generated here once and never printed; GITHUB_REPOS names the repositories the lane serves. GitHub access itself is never a bound
 // secret: the Worker holds a GitHub App (registered and installed through the one-click consent screen, /connect/github) and mints short-lived installation tokens from it.
-import { appendFileSync } from "node:fs";
+import { appendFileSync, readFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 const API = "https://api.cloudflare.com/client/v4";
 const url = (env, tail = "") => `${API}/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${env.TICK_WORKER || "ultrastable-tick"}/secrets${tail}`;
@@ -22,6 +22,8 @@ export async function bind(env, f = fetch) {
 }
 if (process.argv[1] && process.argv[1].endsWith("bind-worker-secrets.mjs")) {
   if (!process.env.CLOUDFLARE_ACCOUNT_ID || !process.env.CLOUDFLARE_API_TOKEN) { console.error("Cloudflare credentials missing"); process.exit(1); }
+  // ACCOUNT-SPLIT-3: never bind secrets into the retired account's tick.
+  { const acc = JSON.parse(readFileSync(new URL("./cloudflare-accounts.json", import.meta.url), "utf8")); if ((acc.retired_account_ids || []).includes(process.env.CLOUDFLARE_ACCOUNT_ID)) { console.log("skip: account " + process.env.CLOUDFLARE_ACCOUNT_ID + " is retired"); process.exit(0); } }
   const r = await bind(process.env);
   appendFileSync(new URL("../ops/bindings.jsonl", import.meta.url), JSON.stringify({ at: new Date().toISOString(), worker: process.env.TICK_WORKER || "ultrastable-tick", ...r }) + "\n");
   console.log("bind-worker-secrets:", r.status, r.bound.join(","));

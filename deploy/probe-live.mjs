@@ -4,6 +4,8 @@
 import { readFileSync } from "node:fs";
 const T = process.env.CLOUDFLARE_API_TOKEN, A = process.env.CLOUDFLARE_ACCOUNT_ID;
 if (!T || !A) { console.error("set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID"); process.exit(1); }
+// ACCOUNT-SPLIT-3: the repository secrets still name the retired account; skip instead of failing against it (deploy-ultrastable.yml deploys the ultrastable account).
+{ const acc = JSON.parse(readFileSync(new URL("./cloudflare-accounts.json", import.meta.url), "utf8")); if ((acc.retired_account_ids || []).includes(A)) { console.log("skip: account " + A + " is retired; deploy-ultrastable.yml deploys the ultrastable account"); process.exit(0); } }
 const arg = (n, d) => { const i = process.argv.indexOf("--" + n); return i > 0 ? Number(process.argv[i + 1]) : d; };
 const maxAge = arg("max-age-min", 30), waitMin = arg("wait-min", 0);
 const db = JSON.parse(readFileSync(new URL("../doctrine/topology.json", import.meta.url), "utf8")).stores.d1.find(d => d.key === "org").id;
