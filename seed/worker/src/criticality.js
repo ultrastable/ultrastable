@@ -128,7 +128,8 @@ export async function criticalityStep(db, ctx, t, ensureItem) {
   const m = await measureCriticality(db, t, ctx.now);
   // SPEND-GOVERNOR-1: a frozen AI budget is a breached spend cap: only a cost cut may be originated, and no idle item is filed (lesson from an earlier fleet: loops that
   // filed work about their own metrics grew agent_issues to ~7,500 rows and spent AI fixing them).
-  const frozen = Boolean(ctx.budget && ctx.budget.mode === 'frozen');
+  // Q-LESSON-COST-SAMPLE-ACT: a D1 rows-read budget over its hourly cap (ctx.costBreach, set by runTick from costsample.js over_budget) is the same breached cap.
+  const frozen = Boolean(ctx.budget && ctx.budget.mode === 'frozen') || Boolean(ctx.costBreach && ctx.costBreach.over);
   if (frozen) m.cap_breached = 1;
   const queued = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status IN ('open','ready')`);
   const claimed = await first(db, `SELECT COUNT(*) AS n FROM claims`);

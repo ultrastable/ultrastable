@@ -103,3 +103,49 @@ test('HEALTH-INFLIGHT-1: health ignores a tick in flight, but an unfinished tick
   const stuck = await lastTickForHealth(db, T0 + 10 * 60e3 + 301e3);
   assert.notEqual(stuck.steps_completed, stuck.steps_total); // stuck for over 5 minutes: 503
 });
+
+// Q-LESSON-COST-SAMPLE-ACT: a D1 rows-read sample over its hourly cap holds the next tick to its essential steps for the hour.
+test('over_budget reads the latest sample per budget within the hour; a failed sample is not a breach', async () => {
+  const { over_budget } = await import('../src/costsample.js');
+  const db = makeDb();
+  const at = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
+  const budgets = [{ id: 'org', max_rows_read_per_hour: 100 }, { id: 'ops', max_rows_read_per_hour: 50 }];
+  assert.deepEqual(await over_budget(db, budgets, T0), { over: false, breaches: [] }, 'no samples, no breach');
+  db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h) VALUES (?,?,?)').run(at(T0 - 7200e3), 'org', 999);
+  assert.equal((await over_budget(db, budgets, T0)).over, false, 'a sample older than the hour has expired');
+  db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h) VALUES (?,?,?)').run(at(T0 - 600e3), 'org', 150);
+  db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h, error) VALUES (?,?,?,?)').run(at(T0 - 300e3), 'ops', null, 'graphql 500');
+  const r = await over_budget(db, budgets, T0);
+  assert.equal(r.over, true); assert.deepEqual(r.breaches.map(b => [b.target, b.rows_read_1h, b.max_rows_read_per_hour]), [['org', 150, 100]]);
+  db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h) VALUES (?,?,?)').run(at(T0 - 60e3), 'org', 90);
+  assert.equal((await over_budget(db, budgets, T0)).over, false, 'a newer sample back under the cap releases it');
+  assert.equal((await over_budget(db, null, T0)).over, false, 'no budgets configured');
+});
+
+test('a breached D1 budget skips the non-essential steps, records the breach and caps origination to a cost cut', async () => {
+  const { COST_ESSENTIAL_STEPS } = await import('../src/tick.js');
+  const crit = JSON.parse(readFileSync(new URL('../../autonomy/criticality.json', import.meta.url), 'utf8'));
+  const db = makeDb(); seed(db);
+  const at = new Date(T0 - 600e3).toISOString().replace('T', ' ').slice(0, 19);
+  db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h) VALUES (?,?,?)').run(at, 'org', 500000);
+  const cfg = { ...config, criticality: crit, cost_budgets: [{ id: 'org', max_rows_read_per_hour: 120000 }] };
+  const r = await runTick(db, { config: cfg, now: T0 });
+  assert.deepEqual(COST_ESSENTIAL_STEPS, ['reconcile', 'measure', 'criticality']);
+  assert.equal(r.completed, STEP_ORDER.length, 'a skip is a decision, not a failure: health stays green');
+  assert.deepEqual(r.errors, []);
+  assert.equal(db.raw.prepare('SELECT COUNT(*) n FROM claims').get().n, 0, 'dispatch was skipped');
+  assert.equal(db.raw.prepare('SELECT COUNT(*) n FROM dispatches').get().n, 0);
+  assert.match(r.report, /cost breach: org read 500000 rows\/h > 120000; skipped non-essential steps \(reap_claims, probe_gates/);
+  assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='A'").get().status, 'ready', 'reconcile still ran');
+  const breach = JSON.parse(db.raw.prepare("SELECT value FROM org WHERE key='cost_breach'").get().value);
+  assert.equal(breach.breaches[0].target, 'org');
+  const snap = JSON.parse(db.raw.prepare("SELECT value FROM org WHERE key='criticality'").get().value);
+  assert.equal(snap.cap_breached, 1, 'criticality treats it as a breached spend cap');
+  assert.equal(db.raw.prepare("SELECT COUNT(*) n FROM items WHERE id LIKE 'IDLE-%'").get().n, 0, 'a lean tick files no idle item');
+  assert.equal(snap.originated_now && snap.originated_now.kind, 'cost_cut', 'only a cost cut is originated while the budget is breached');
+
+  const T1 = T0 + 3700e3;  // the hour passes with no new breach: the full tick runs again
+  const r2 = await runTick(db, { config: cfg, now: T1 });
+  assert.doesNotMatch(r2.report, /cost breach/);
+  assert.ok(db.raw.prepare('SELECT COUNT(*) n FROM dispatches').get().n >= 1, 'dispatch resumed');
+});

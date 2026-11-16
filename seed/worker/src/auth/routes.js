@@ -8,7 +8,7 @@
 //   GET  /auth/health               credential probe (no secrets)
 import * as store from './store.js';
 import { consentScreen, doneScreen, failScreen } from './consent.js';
-import { probe, getToken } from './index.js';
+import { probe, getToken, SCOPE_ALLOWLIST } from './index.js';
 import { checkRepoAccess, readRepoAccess } from './access.js';
 
 import { hmac } from './state.js';
@@ -27,7 +27,7 @@ export function manifest(origin, name) {
   return {
     name, url: origin, redirect_url: origin + '/auth/github/callback', setup_url: origin + '/auth/github/installed', public: false, setup_on_update: true,
     hook_attributes: { url: origin + '/hook/github', active: true }, default_events: ['pull_request', 'push', 'check_suite', 'workflow_run', 'issues'],
-    default_permissions: { contents: 'write', pull_requests: 'write', issues: 'write', actions: 'write', checks: 'read', workflows: 'write', metadata: 'read' },
+    default_permissions: { ...SCOPE_ALLOWLIST['github-app'] },  // Q-LESSON-CRED-SCOPE: exactly the allowlist
   };
 }
 

@@ -17,7 +17,7 @@ import config from './config.js';
 import { governedAI, budgetView, SHARES, halted } from './budget.js';
 import { pruneAll } from './retention.js';  // RETENTION-1  // SPEND-GOVERNOR-1: every model call goes through the owner's monthly budget
 import { handleAuth } from './auth/routes.js';
-import { getToken, refreshDue } from './auth/index.js';
+import { getToken, refreshDue, pathGuard } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
 import { readCriticality, addSample } from './criticality.js';
 import { beat, watch, readPulse } from './pulse.js';
@@ -83,6 +83,7 @@ export default {
 
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    const pg = pathGuard(request); if (pg) return pg;  // Q-LESSON-CRED-SCOPE: //x, /x/ and /x%2Fy never reach a route as themselves
     if (hiddenByHealthOnly(env, request.method, url.pathname)) return new Response('Not found', { status: 404 });
     const au = await handleAuth(request, env, { tenant: env.TENANT || config.org_slug || 'default', name: config.org_slug, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) });
     if (au) return au;

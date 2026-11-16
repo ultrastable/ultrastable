@@ -10,6 +10,35 @@ export const ADAPTERS = { 'github-app': githubApp, oauth, cloudflare };
 export const MARGIN_MS = 10 * 60 * 1000;
 export const adapterFor = provider => ADAPTERS[provider.split(':')[0]];
 
+// Q-LESSON-CRED-SCOPE: the one allowlist of what the GitHub App asks for. The earlier fleet ran on a 22-scope token; here the manifest
+// (routes.js manifest) requests exactly these permissions and nothing else, and auth.test.js fails when the request and this list differ.
+// Widening it is a reviewed change to this constant, never a field added at the call site.
+export const SCOPE_ALLOWLIST = Object.freeze({
+  'github-app': Object.freeze({ contents: 'write', pull_requests: 'write', issues: 'write', actions: 'write', checks: 'read', workflows: 'write', metadata: 'read' }),
+});
+
+// Q-LESSON-CRED-SCOPE: an auth bypass through path normalization was one of the earlier fleet's credential failures. Every route compares
+// url.pathname exactly, so a variant (//x, /x/, /x%2Fy, /a/%2e%2e/x) must never reach a handler as itself: canonicalPath decodes encoded
+// slashes, backslashes and dots (twice-encoded too), collapses repeated slashes, resolves dot segments and drops a trailing slash.
+export function canonicalPath(pathname) {
+  let s = String(pathname || '/');
+  for (let i = 0; i < 4; i++) {
+    const d = s.replace(/%25/gi, '%').replace(/%2f/gi, '/').replace(/%5c/gi, '/').replace(/%2e/gi, '.').replace(/\\/g, '/');
+    if (d === s) break; s = d;
+  }
+  const out = [];
+  for (const seg of s.split('/')) { if (seg === '' || seg === '.') continue; if (seg === '..') out.pop(); else out.push(seg); }
+  return '/' + out.join('/');
+}
+// The router's first check: a non-canonical path is redirected (308 keeps the method and body) to its canonical form, where the route's own
+// authentication applies. A variant is never answered by a handler.
+export function pathGuard(request) {
+  const url = new URL(request.url);
+  const canon = canonicalPath(url.pathname);
+  if (canon === url.pathname) return null;
+  return new Response(null, { status: 308, headers: { location: canon + url.search, 'cache-control': 'no-store' } });
+}
+
 export async function getToken(db, env, tenant, provider, opts = {}) {
   const now = opts.now || Date.now();
   const m = await store.material(db, env, tenant, provider);

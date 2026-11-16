@@ -4,7 +4,8 @@
 // Lesson from AIOS ("PID 1 must never die"): every step is guarded. A failing step is
 // recorded in the tick's errors and as a backlog item; the remaining steps still run.
 
-import { ensureLedger } from './budget.js';  // ORIGINATE-CAP-1: the daily cap is counted in the budget ledger
+import { ensureLedger } from './budget.js';
+import { over_budget } from './costsample.js';  // Q-LESSON-COST-SAMPLE-ACT: a D1 rows-read breach holds the tick lean  // ORIGINATE-CAP-1: the daily cap is counted in the budget ledger
 import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
@@ -311,13 +312,29 @@ export const STEPS = {
 
 export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
 
+// Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
+// only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,
+// criticality records the breach as a capped spend (only a cost cut may be originated), and the tick_runs row itself is the heartbeat. Every
+// other step either reads wide (probe_gates, score_predictions, accrue_trust, selfaudit, pulse, ignition, check_plus_share) or starts new work
+// that reads more (reap_claims feeds dispatch, dispatch, execute), so it waits for the hour to pass. A skipped step counts as completed: it is
+// a decision, not a failure, so the health probe and the ignition streak stay green.
+export const COST_ESSENTIAL_STEPS = ['reconcile', 'measure', 'criticality'];
+
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null, budget = null } = {}) {
   const startedIso = iso(new Date(now));
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, STEP_ORDER.length);
   const tickId = ins.meta.last_row_id;
   const ctx = { wake, ai, budget, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
   let completed = 0;
+  try { ctx.costBreach = await over_budget(db, config && config.cost_budgets, now); } catch (e) { ctx.costBreach = null; ctx.notes.push(`cost check failed: ${String(e && e.message).slice(0, 120)}`); }
+  const lean = Boolean(ctx.costBreach && ctx.costBreach.over);
+  if (lean) {
+    const b = ctx.costBreach.breaches;
+    ctx.notes.push(`cost breach: ${b.map(x => `${x.target} read ${x.rows_read_1h} rows/h > ${x.max_rows_read_per_hour}`).join(', ')}; skipped non-essential steps (${STEP_ORDER.filter(n => !COST_ESSENTIAL_STEPS.includes(n)).join(', ')})`);
+    try { await run(db, `INSERT INTO org (key, value) VALUES ('cost_breach', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, JSON.stringify({ at: startedIso, until: iso(new Date(now + 3600e3)), breaches: b })); } catch { /* the note in the report still shows it */ }
+  }
   for (const name of STEP_ORDER) {
+    if (lean && !COST_ESSENTIAL_STEPS.includes(name)) { completed++; continue; }
     try {
       await STEPS[name](db, ctx);
       completed++;
