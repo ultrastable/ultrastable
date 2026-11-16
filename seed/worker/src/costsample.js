@@ -24,3 +24,20 @@ export async function sampleCosts(db, { token, budgets, fetch: f = fetch, now = 
   }
   return out;
 }
+
+// Q-LESSON-COST-SAMPLE-ACT: a sample is only worth taking if a breach acts. over_budget reads the latest sample per budget taken in the last
+// hour and reports each one whose rows_read_1h exceeds max_rows_read_per_hour; the tick skips its non-essential steps while it is breached
+// (tick.js COST_ESSENTIAL_STEPS) and the criticality step treats it as a breached spend cap. The sampler runs hourly, so one breached sample
+// holds the tick lean for the following hour and a sample back under the cap releases it. A failed sample (rows NULL) is not a breach.
+export async function over_budget(db, budgets, now = Date.now()) {
+  const since = new Date(now - 3600e3).toISOString().replace('T', ' ').slice(0, 19);
+  const breaches = [];
+  for (const b of budgets || []) {
+    const max = Number(b.max_rows_read_per_hour);
+    if (!b.id || !Number.isFinite(max) || max <= 0) continue;
+    const s = await db.prepare(`SELECT at, rows_read_1h FROM cost_samples WHERE target = ? AND at >= ? AND rows_read_1h IS NOT NULL ORDER BY at DESC, id DESC LIMIT 1`)
+      .bind(b.id, since).first();
+    if (s && Number(s.rows_read_1h) > max) breaches.push({ target: b.id, rows_read_1h: Number(s.rows_read_1h), max_rows_read_per_hour: max, at: s.at });
+  }
+  return { over: breaches.length > 0, breaches };
+}

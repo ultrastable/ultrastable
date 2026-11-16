@@ -106,3 +106,60 @@ test('every consent visit prefills a unique GitHub App name so a taken name is n
   const a = uniqueName('ultrastable'), b = uniqueName('ultrastable');
   assert.notEqual(a, b); assert.match(a, /^ultrastable-[0-9a-f]{6}$/); assert.ok(uniqueName('x'.repeat(60)).length <= 34);
 });
+
+// Q-LESSON-CRED-SCOPE: the GitHub App asks for exactly the allowlist, in the manifest the consent screen posts to GitHub.
+test('the GitHub App requests exactly SCOPE_ALLOWLIST and nothing more', async () => {
+  const { SCOPE_ALLOWLIST } = await import('../src/auth/index.js');
+  const { manifest } = await import('../src/auth/routes.js');
+  assert.deepEqual(manifest('https://x.test', 'n').default_permissions, { ...SCOPE_ALLOWLIST['github-app'] });
+  const page = await (await handleAuth(new Request('https://x.test/connect/github'), { ...env(), DB: makeDb() }, { tenant: 't', name: 'org' })).text();
+  const field = /name="manifest" value="([^"]*)"/.exec(page);
+  assert.ok(field, 'the consent form carries the manifest');
+  const posted = JSON.parse(field[1].replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'));
+  assert.deepEqual(posted.default_permissions, { ...SCOPE_ALLOWLIST['github-app'] });
+  assert.ok(Object.isFrozen(SCOPE_ALLOWLIST['github-app']), 'the allowlist cannot be widened at runtime');
+  assert.ok(!Object.values(SCOPE_ALLOWLIST['github-app']).includes('admin'), 'no admin permission');
+});
+
+// Q-LESSON-CRED-SCOPE: a path variant of a protected route never reaches a handler as itself; it is redirected to the canonical path,
+// where that route's own authentication runs. The worker calls pathGuard before any other route (index.js).
+const PROTECTED = [['GET', '/api/analytics'], ['POST', '/api/criticality/sample'], ['POST', '/hook/github'], ['GET', '/auth/connectors'], ['POST', '/connect/google/disconnect']];
+const variants = p => {
+  const [, a, ...rest] = p.split('/'); const tail = rest.join('/');
+  return ['/' + p, p + '/', p + '//', p.replace(/\//g, '//'), '/' + a + '%2F' + tail, '/' + a + '%2f' + tail, '/' + a + '%252F' + tail,
+    '/' + a + '/./' + tail, '/' + a + '/%2e/' + tail, '/x/%2e%2e' + p, '/x/..%2F' + p.slice(1), '/' + a + '%5C' + tail];
+};
+test('canonicalPath folds every variant of a protected route back to the route', async () => {
+  const { canonicalPath } = await import('../src/auth/index.js');
+  for (const [, p] of PROTECTED) for (const v of variants(p)) assert.equal(canonicalPath(new URL('https://x.test' + v).pathname), p, v);
+  assert.equal(canonicalPath('/'), '/'); assert.equal(canonicalPath('//'), '/'); assert.equal(canonicalPath('/../..'), '/');
+});
+test('pathGuard redirects every variant to the canonical path and lets the canonical path through', async () => {
+  const { pathGuard } = await import('../src/auth/index.js');
+  for (const [method, p] of PROTECTED) {
+    assert.equal(pathGuard(new Request('https://x.test' + p + '?q=1', { method })), null, p);
+    for (const v of variants(p)) {
+      const req = new Request('https://x.test' + v + '?q=1', { method });
+      if (new URL(req.url).pathname === p) continue;  // the URL parser already folded it (./ segments)
+      const r = pathGuard(req);
+      assert.ok(r, 'variant reached the router: ' + v);
+      assert.equal(r.status, 308, v); assert.equal(r.headers.get('location'), p + '?q=1', v);
+    }
+  }
+});
+test('the worker runs pathGuard before any route, and the auth router never answers a variant as the route', async () => {
+  const { readFileSync } = await import('node:fs');
+  const src = readFileSync(new URL('../src/index.js', import.meta.url), 'utf8');
+  const fetchAt = src.indexOf('async fetch(request, env, ctx)');
+  const body = src.slice(fetchAt);
+  assert.ok(fetchAt > 0 && body.indexOf('pathGuard(request)') > 0, 'fetch calls pathGuard');
+  assert.ok(body.indexOf('pathGuard(request)') < body.indexOf('hiddenByHealthOnly('), 'pathGuard runs first');
+  assert.ok(body.indexOf('pathGuard(request)') < body.indexOf('handleAuth('), 'pathGuard runs before the auth routes');
+  // Defense in depth: handed a variant directly, the auth router does not serve the protected connector status or a disconnect.
+  const e = { ...env(), DB: makeDb() };
+  for (const v of variants('/auth/connectors')) {
+    const r = await handleAuth(new Request('https://x.test' + v), e, { tenant: 't' });
+    if (new URL('https://x.test' + v).pathname === '/auth/connectors') continue;
+    assert.ok(!r || r.headers.get('content-type') !== 'application/json', 'variant served connector status: ' + v);
+  }
+});
