@@ -4,7 +4,9 @@ REMEDIATION-REOPEN-2, RELAPSE-HOLD-1). Ultrastable is the foundation for any aut
 An item closes only when its own closing probe passes, and a closed item whose probe fails again is reopened. Rules (doctrine/qnfo-port.json,
 mechanism `closing-probe-contracts`, `config`):
 
-  pass        the probe ran and passed. An item never reopened closes on its first pass. An item reopened before closes only after
+  pass        the probe ran and passed. An item closes only when the ledger recorded its probe failing on this item before the passes
+              began (else the action is `vacuous`: a probe that never saw the defect proves nothing, so the item is marked and stays open;
+              Q-LESSON-VACUOUS-CLOSE) and after `passes_to_close` (2) consecutive passes. An item reopened before closes only after
               `passes_after_reopen` consecutive passes whose first pass is at least the hold old (`hold_minutes` 60 after one or two reopens,
               120 after three or more), so a flapping fix cannot close and reopen every tick.
   fail        the probe ran and failed. An open item stays open; a closed item that this ledger has seen pass is reopened (relapse).
@@ -31,8 +33,8 @@ from . import ledger
 REPO = Path(__file__).resolve().parents[1]
 LEDGER = "ops/contracts.jsonl"
 CLOSED = ("closed", "done")
-FRESH = {"reopens": 0, "last_reopen": None, "streak": 0, "streak_from": None, "seen_pass": False, "closed_by_contract": False, "last_checked": None, "last_verdict": None}
-DEFAULT = {"passes_after_reopen": 2, "hold_minutes": {"1": 60, "3": 120}, "relapse_cmd_per_pass": 5, "window_days": 7}
+FRESH = {"reopens": 0, "last_reopen": None, "streak": 0, "streak_from": None, "seen_pass": False, "seen_fail": False, "closed_by_contract": False, "last_checked": None, "last_verdict": None}
+DEFAULT = {"passes_to_close": 2, "passes_after_reopen": 2, "hold_minutes": {"1": 60, "3": 120}, "relapse_cmd_per_pass": 5, "window_days": 7}
 
 
 def cfg(root=REPO) -> dict:
@@ -89,7 +91,7 @@ def state(rows: list[dict]) -> dict:
                 s["streak_from"] = r["at"]
             s["streak"] += 1
         elif r.get("verdict") == "fail":
-            s["streak"] = 0; s["streak_from"] = None
+            s["streak"] = 0; s["streak_from"] = None; s["seen_fail"] = True
         if r.get("action") == "close":
             s["closed_by_contract"] = True
     return st
@@ -104,9 +106,15 @@ def hold_minutes(reopens: int, c: dict) -> int:
 
 
 def may_close(s: dict, now: datetime, c: dict) -> tuple[bool, str]:
-    """An item that was never reopened closes on its first pass; a reopened one needs the streak and the hold (RELAPSE-HOLD-1)."""
+    """No close without a recorded failure first (vacuous) and `passes_to_close` consecutive passes; a reopened item also needs the
+    hold (RELAPSE-HOLD-1). The first element is True (close), False (hold) or "vacuous"."""
+    if not s.get("seen_fail"):
+        return "vacuous", "vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone"
     if s["reopens"] == 0:
-        return True, "first pass"
+        need = c.get("passes_to_close", 2)
+        if s["streak"] < need:
+            return False, f"hold: {s['streak']} of {need} consecutive passes"
+        return True, f"{s['streak']} consecutive passes after a recorded failure"
     need, hold = c["passes_after_reopen"], hold_minutes(s["reopens"], c)
     if s["streak"] < need:
         return False, f"hold: {s['streak']} of {need} consecutive passes after {s['reopens']} reopen(s)"
@@ -120,6 +128,13 @@ def _close(it: dict, why: str) -> None:
     j = it["json"]
     j["body"] = re.sub(r"\*\*Status:\*\*\s*open", "**Status:** closed", j["body"], count=1) + f"\n\n**Evidence:** {why}\n"
     it["path"].write_text(json.dumps(j, indent=2) + "\n", encoding="utf-8")
+
+
+def _mark_vacuous(it: dict, why: str) -> None:
+    j = it["json"]
+    if "**Vacuous:**" not in j["body"]:
+        j["body"] += f"\n\n**Vacuous:** {why}\n"
+        it["path"].write_text(json.dumps(j, indent=2) + "\n", encoding="utf-8")
 
 
 def _reopen(it: dict, why: str) -> None:
@@ -150,11 +165,13 @@ def tick(root=REPO, apply=False, now=None, probe=None) -> dict:
         if verdict == "pass":
             s = {**s, "streak": s["streak"] + 1, "streak_from": s["streak_from"] or at, "seen_pass": True}
         elif verdict == "fail":
-            s = {**s, "streak": 0, "streak_from": None}
+            s = {**s, "streak": 0, "streak_from": None, "seen_fail": True}
         if not is_closed and verdict == "pass":
             ok, why = may_close(s, now, c)
-            row["action"], row["why"] = ("close", why) if ok else ("hold", why)
-            if ok and apply:
+            row["action"], row["why"] = ("vacuous" if ok == "vacuous" else "close" if ok else "hold"), why
+            if apply and ok == "vacuous":
+                _mark_vacuous(it, f"{at} {why}; rewrite the probe so it fails while the defect exists")
+            elif ok is True and apply:
                 _close(it, f"closing probe passed ({why}): {ev}")
         elif is_closed and verdict == "fail":
             if s["seen_pass"]:
@@ -183,8 +200,9 @@ def summary(root=REPO, out_rows=None, now=None) -> dict:
     st = state(rows)
     relapsed_open = sorted(i for i, r in last.items() if st[i]["reopens"] > 0 and after(r) == "open")
     unusable = sorted(i for i, r in last.items() if r.get("verdict") == "unusable" and r.get("status_before") == "open")
+    vacuous = sorted(i for i, r in last.items() if r.get("action") == "vacuous")
     return {"closes": closes, "reopens": reopens, "relapse_rate": round(reopens / closes, 3) if closes else 0.0,
-            "relapsed_open": relapsed_open, "unusable_open": unusable}
+            "relapsed_open": relapsed_open, "unusable_open": unusable, "vacuous_open": vacuous}
 
 
 def main(argv=None) -> int:
@@ -193,7 +211,7 @@ def main(argv=None) -> int:
         r = tick(apply="--apply" in a)
         acts = [f"{x['action']:<8} {x['id']}: {x.get('why', x['verdict'])}" for x in r["rows"] if x["action"] != "none"]
         print("\n".join(acts) or "no contract changed state")
-        print(json.dumps({k: r[k] for k in ("closes", "reopens", "relapse_rate", "relapsed_open", "unusable_open")}))
+        print(json.dumps({k: r[k] for k in ("closes", "reopens", "relapse_rate", "relapsed_open", "unusable_open", "vacuous_open")}))
         return 0
     if "--report" in a:
         print(json.dumps(summary(), indent=1)); return 0

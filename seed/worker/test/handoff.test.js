@@ -2,7 +2,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeDb } from './d1shim.js';
-import { parseHandoff, parseVerify, runHandoffs, collectModules, topologyBindings, makeDeployer } from '../src/handoff.js';
+import { parseHandoff, parseVerify, runHandoffs, collectModules, topologyBindings, makeDeployer, meetsVersion, compareVersions } from '../src/handoff.js';
+import { githubBudget } from '../src/lane.js';
 
 const BODY = 'Fix\n\n## Handoff\nitem: SG-2\nagent: codex\nverify: GET https://ultrastable.io/api/v1/status expect "settled"\ndeploy: ultrastable-tick\n\n## Self-audit\nReal output: x';
 
@@ -146,4 +147,49 @@ test('VERIFY-RETRY-1: a handoff recorded as rolled_back whose probe passes later
   const r = await runHandoffs({ db, token: 't', repos: ['o/r'], fetch: f, probe: async () => ({ ok: true, detail: 'GET -> 200' }) });
   assert.deepEqual(r.recovered, ['o/r#7']); assert.equal((await db.prepare('SELECT state FROM handoffs').first()).state, 'verified');
   assert.equal((await db.prepare("SELECT status FROM items WHERE id='SG-2'").first()).status, 'done');
+});
+
+// DEPLOY-VERSION-1: a deploy is verified by the version the worker reports after it, with min_version semantics, never an exact string.
+test('meetsVersion: min_version for dotted versions, inequality for opaque deployment ids', () => {
+  assert.ok(compareVersions('1.10.0', '1.9.9') > 0, 'numeric, not lexical');
+  assert.equal(meetsVersion({ reported: '1.4.2', min_version: '1.4.0' }).ok, true, 'above the minimum passes');
+  assert.equal(meetsVersion({ reported: '1.5.0', min_version: '1.4.0' }).ok, true, 'a later deploy than expected still passes (never exact)');
+  assert.equal(meetsVersion({ reported: '1.3.9', min_version: '1.4.0' }).ok, false, 'below the minimum fails');
+  assert.equal(meetsVersion({ reported: 'dep-b', before: 'dep-a' }).ok, true, 'a new deployment id proves the code changed');
+  assert.equal(meetsVersion({ reported: 'dep-a', before: 'dep-a' }).ok, false, 'the same deployment id means nothing changed');
+  assert.equal(meetsVersion({ reported: null, before: 'dep-a' }).ok, false, 'no reported version is not a verified deploy');
+});
+
+test('a deploy whose live deployment did not change is rolled back through the rollback path', async () => {
+  const db = makeDb(); seedItem(db);
+  const st = { prs: [{ number: 7, title: 'Fix', body: BODY, head: { sha: 'aaa' }, labels: [] }], detail: { merged: true, merge_commit_sha: 'mmm', state: 'closed' } };
+  const { f, calls } = gh(st);
+  const rolled = []; let probed = 0;
+  const r = await runHandoffs({ db, token: 't', repos: ['o/r'], fetch: f, deployer: async () => ({ ok: true, version: 'dep-new' }), rollback: async (w) => { rolled.push(w); return { ok: true, detail: 'rolled back to dep-old' }; },
+    versionOf: async () => ({ ok: true, version: 'dep-old' }), probe: async () => { probed++; return { ok: true, detail: 'ok' }; } });
+  assert.deepEqual(r.rolled_back, ['o/r#7']); assert.deepEqual(rolled, ['ultrastable-tick']); assert.equal(probed, 0, 'no live probe on unproven code');
+  assert.equal((await db.prepare('SELECT state FROM handoffs').first()).state, 'rolled_back');
+  assert.match((await db.prepare("SELECT detail FROM handoff_events WHERE state='verify_failed'").first()).detail, /version check: ultrastable-tick: deployment still dep-old/);
+  assert.equal((await db.prepare("SELECT status FROM items WHERE id='SG-2'").first()).status, 'ready');
+  assert.ok(calls.some(c => c.includes('version check failed')));
+});
+
+test('a deploy whose live deployment changed passes the version check and goes on to the probe', async () => {
+  const db = makeDb(); seedItem(db);
+  const st = { prs: [{ number: 7, title: 'Fix', body: BODY, head: { sha: 'aaa' }, labels: [] }], detail: { merged: true, merge_commit_sha: 'mmm', state: 'closed' } };
+  const { f } = gh(st); let live = 'dep-old';
+  const r = await runHandoffs({ db, token: 't', repos: ['o/r'], fetch: f, deployer: async () => { live = 'dep-new'; return { ok: true, version: 'dep-new' }; }, rollback: async () => assert.fail('no rollback'),
+    versionOf: async () => ({ ok: true, version: live }), probe: async () => ({ ok: true, detail: 'ok' }) });
+  assert.deepEqual(r.verified, ['o/r#7']); assert.deepEqual(r.rolled_back, []);
+  assert.match((await db.prepare("SELECT detail FROM handoff_events WHERE detail LIKE 'version check:%'").first()).detail, /dep-old -> dep-new/);
+});
+
+// GITHUB-BUDGET-1: a 429 with Retry-After stops the handoff loop for the tick and records why.
+test('a 429 with Retry-After stops the handoffs for this tick', async () => {
+  const db = makeDb(); const calls = [];
+  const f = async (url, o = {}) => { calls.push((o.method || 'GET') + ' ' + url); return { ok: false, status: 429, headers: new Headers({ 'retry-after': '60' }), text: async () => '{"message":"rate limited"}' }; };
+  const budget = githubBudget(150);
+  const r = await runHandoffs({ db, token: 't', repos: ['o/r', 'o/s'], fetch: f, budget });
+  assert.equal(calls.length, 1, 'no call after the 429'); assert.equal(r.status, 'errors');
+  assert.equal(r.github.stopped, true); assert.equal(r.github.retry_after_s, 60); assert.match(r.github.why, /429.*Retry-After 60s/);
 });

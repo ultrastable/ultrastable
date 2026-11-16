@@ -1,4 +1,5 @@
-"""CONTRACTS-1: an item closes only on its own probe, a relapse reopens it, and a reopened item closes again only after the hold."""
+"""CONTRACTS-1: an item closes only on its own probe, after a recorded failure and two consecutive passes (Q-LESSON-VACUOUS-CLOSE); a relapse
+reopens it, and a reopened item closes again only after the hold."""
 import json, shutil, sys, unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -40,21 +41,49 @@ class Contracts(unittest.TestCase):
         self.assertEqual(C.run_probe(d, "cmd:rm -rf /")[0], "unusable", "a command outside the allow-list never runs")
         self.assertEqual(C.run_probe(d, "")[0], "unusable")
 
-    def test_closes_on_first_pass_only_when_probe_passes(self):
+    def test_closes_after_failure_then_two_passes(self):
         d = repo(); item(d, "OL-1"); item(d, "OL-2", probe="pending:x"); item(d, "OL-3", probe="probe:not-runnable")
         r = C.tick(d, apply=True, now=T0)
         self.assertEqual(status(d, "OL-1"), "open", "failing probe keeps it open")
         (d / "marker.txt").write_text("x")
         r = C.tick(d, apply=True, now=T0 + timedelta(minutes=10))
-        self.assertEqual(status(d, "OL-1"), "closed")
+        self.assertEqual((status(d, "OL-1"), r["rows"][0]["action"]), ("open", "hold"), "a single pass never closes")
+        r = C.tick(d, apply=True, now=T0 + timedelta(minutes=20))
+        self.assertEqual((status(d, "OL-1"), r["rows"][0]["action"]), ("closed", "close"))
         self.assertIn("**Evidence:** closing probe passed", json.loads((d / "docs/issues/OL-1.json").read_text())["body"])
         self.assertEqual(status(d, "OL-2"), "open"); self.assertEqual(status(d, "OL-3"), "open")
         self.assertEqual(r["unusable_open"], ["OL-3"], "a probe that cannot run is a gap, never a pass")
         self.assertEqual(queue.check(d), [], "closed with evidence: the queue check accepts it")
 
-    def test_relapse_reopens_and_hold_blocks_flapping_close(self):
+    def test_vacuous_probe_never_closes(self):
         d = repo(); item(d, "OL-1"); (d / "marker.txt").write_text("x")
+        for m in (0, 10, 20):
+            r = C.tick(d, apply=True, now=T0 + timedelta(minutes=m))
+            self.assertEqual((status(d, "OL-1"), r["rows"][0]["action"]), ("open", "vacuous"), "a probe never seen failing proves nothing")
+        body = json.loads((d / "docs/issues/OL-1.json").read_text())["body"]
+        self.assertEqual(body.count("**Vacuous:**"), 1, "marked once, not on every pass")
+        self.assertEqual(r["vacuous_open"], ["OL-1"])
+        (d / "marker.txt").unlink(); C.tick(d, apply=True, now=T0 + timedelta(minutes=30))
+        (d / "marker.txt").write_text("x")
+        C.tick(d, apply=True, now=T0 + timedelta(minutes=40)); C.tick(d, apply=True, now=T0 + timedelta(minutes=50))
+        self.assertEqual(status(d, "OL-1"), "closed", "once the probe is seen failing, two passes close it")
+
+    def test_single_pass_after_failure_holds(self):
+        d = repo(); item(d, "OL-1")
         C.tick(d, apply=True, now=T0)
+        (d / "marker.txt").write_text("x")
+        r = C.tick(d, apply=True, now=T0 + timedelta(minutes=10))
+        self.assertEqual((status(d, "OL-1"), r["rows"][0]["action"]), ("open", "hold"))
+        self.assertIn("1 of 2", r["rows"][0]["why"])
+        (d / "marker.txt").unlink(); C.tick(d, apply=True, now=T0 + timedelta(minutes=20))
+        (d / "marker.txt").write_text("x")
+        r = C.tick(d, apply=True, now=T0 + timedelta(minutes=30))
+        self.assertEqual((status(d, "OL-1"), r["rows"][0]["action"]), ("open", "hold"), "the passes must be consecutive")
+
+    def test_relapse_reopens_and_hold_blocks_flapping_close(self):
+        d = repo(); item(d, "OL-1")
+        C.tick(d, apply=True, now=T0 - timedelta(minutes=20)); (d / "marker.txt").write_text("x")
+        C.tick(d, apply=True, now=T0 - timedelta(minutes=10)); C.tick(d, apply=True, now=T0)
         self.assertEqual(status(d, "OL-1"), "closed")
         (d / "marker.txt").unlink()
         r = C.tick(d, apply=True, now=T0 + timedelta(minutes=10))
@@ -83,7 +112,7 @@ class Contracts(unittest.TestCase):
     def test_dry_run_writes_nothing(self):
         d = repo(); item(d, "OL-1"); (d / "marker.txt").write_text("x")
         r = C.tick(d, apply=False, now=T0)
-        self.assertEqual(r["rows"][0]["action"], "close")
+        self.assertEqual(r["rows"][0]["action"], "vacuous")
         self.assertEqual(status(d, "OL-1"), "open"); self.assertFalse((d / C.LEDGER).exists())
 
     def test_closed_command_probes_are_budgeted(self):
@@ -95,7 +124,8 @@ class Contracts(unittest.TestCase):
         self.assertEqual(len(calls), C.cfg(d)["relapse_cmd_per_pass"], "relapse re-probing of command probes is capped per pass")
 
     def test_queue_run_goes_through_contracts(self):
-        d = repo(); item(d, "OL-1"); (d / "marker.txt").write_text("x")
+        d = repo(); item(d, "OL-1")
+        queue.run(d, apply=True); (d / "marker.txt").write_text("x"); queue.run(d, apply=True)
         rows = queue.run(d, apply=True)
         self.assertEqual((rows[0]["passed"], rows[0]["action"]), (True, "close"))
         self.assertTrue((d / C.LEDGER).exists(), "the executor's queue run leaves contract evidence")

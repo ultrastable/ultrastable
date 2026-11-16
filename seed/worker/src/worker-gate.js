@@ -5,6 +5,71 @@ import { safePath } from './pr-executor.js';
 
 export const SECRET_RES = [/-----BEGIN [A-Z ]*PRIVATE KEY-----/, /gh[pousr]_[A-Za-z0-9]{36,}/, /AKIA[0-9A-Z]{16}/, /sk-ant-[A-Za-z0-9_-]{20,}/];
 export const MAX_PR_FILES = 60, MAX_ADDED_BYTES = 400000;
+// Q-LESSON-PATCH-GATE (LESSONS-1): 93 fleet failure modes came from a model editing very large files that were checked for syntax only.
+// A model-authored branch passes only when no file over MAX_MODEL_EDIT_BYTES (before or after) is edited and every changed .js file parses.
+export const MAX_MODEL_EDIT_BYTES = 60 * 1024;
+export const JS_RE = /\.(m|c)?js$/;
+
+// The strongest syntax check a Worker can run. `node --check` is the real one, but a Worker has no child process, and eval and
+// new Function are refused (and cannot parse module syntax anyway). This scanner walks strings, template literals (with nested ${}),
+// comments and regex literals and requires every bracket to close in order. Limit: it catches truncated files, unbalanced splices and
+// unterminated strings, not grammar errors inside balanced code (a missing comma, a call to an undefined helper). The Actions route
+// (`checks`, or `python3 -m foundation checksrun`) and the injectable `syntax` option of checkModelEdits run `node --check` where Node exists.
+// Follow-up (named in the item's evidence): running the tests next to a changed file needs a Node runtime, so it stays with `checks`.
+export function jsShapeCheck(src) {
+  const stack = [], pairs = { ')': '(', ']': '[', '}': '{' };
+  const REGEX_AFTER_WORD = /(?:^|[^\w$.])(?:return|typeof|instanceof|in|of|new|delete|void|throw|case|do|else|yield|await)$/;
+  let i = 0, line = 1, last = ''; // last significant token kind: 'v' value (division follows), 'o' operator (regex may follow)
+  const fail = (why) => `line ${line}: ${why}`;
+  while (i < src.length) {
+    const c = src[i], n = src[i + 1];
+    if (c === '\n') { line++; i++; continue; }
+    if (/\s/.test(c)) { i++; continue; }
+    if (c === '/' && n === '/') { while (i < src.length && src[i] !== '\n') i++; continue; }
+    if (c === '/' && n === '*') { const e = src.indexOf('*/', i + 2); if (e < 0) return fail('unterminated comment'); line += (src.slice(i, e).match(/\n/g) || []).length; i = e + 2; continue; }
+    if (c === '"' || c === "'") {
+      i++; while (i < src.length && src[i] !== c) { if (src[i] === '\n') return fail('unterminated string'); i += src[i] === '\\' ? 2 : 1; }
+      if (i >= src.length) return fail('unterminated string'); i++; last = 'v'; continue;
+    }
+    if (c === '`' || (c === '}' && stack[stack.length - 1] === '${')) {
+      if (c === '}') stack.pop();
+      i++; while (i < src.length && src[i] !== '`' && !(src[i] === '$' && src[i + 1] === '{')) { if (src[i] === '\n') line++; i += src[i] === '\\' ? 2 : 1; }
+      if (i >= src.length) return fail('unterminated template literal');
+      if (src[i] === '`') { i++; last = 'v'; } else { stack.push('${'); i += 2; last = 'o'; }
+      continue;
+    }
+    if (c === '/' && (last !== 'v' || REGEX_AFTER_WORD.test(src.slice(Math.max(0, i - 12), i).trimEnd()))) {
+      let cls = false; i++;
+      while (i < src.length && (cls || src[i] !== '/')) { if (src[i] === '\n') return fail('unterminated regex'); if (src[i] === '[') cls = true; else if (src[i] === ']') cls = false; i += src[i] === '\\' ? 2 : 1; }
+      if (i >= src.length) return fail('unterminated regex'); i++; while (/[a-z]/i.test(src[i] || '')) i++; last = 'v'; continue;
+    }
+    if (c === '(' || c === '[' || c === '{') { stack.push(c); i++; last = 'o'; continue; }
+    if (c === ')' || c === ']' || c === '}') { if (stack.pop() !== pairs[c]) return fail(`unbalanced '${c}'`); i++; last = c === '}' ? 'o' : 'v'; continue; }
+    if (/[\w$]/.test(c)) { while (i < src.length && /[\w$.]/.test(src[i])) i++; last = 'v'; continue; }
+    i++; last = 'o';
+  }
+  return stack.length ? fail(`unclosed '${stack[stack.length - 1]}'`) : null;
+}
+
+// contents: { [path]: { head: string|null (null when unreadable), headSize, baseSize } } for every non-removed file of a model branch.
+// syntax(path, src) returns an error string or null; the Worker passes jsShapeCheck, a Node host may pass a `node --check` runner.
+export function checkModelEdits(files, contents, { syntax = (_p, src) => jsShapeCheck(src) } = {}) {
+  const bad = [];
+  for (const f of files) {
+    const p = f.filename || '';
+    if (f.status === 'removed') continue;
+    const c = contents[p];
+    if (!c) { bad.push(`${p}: content unreadable, cannot verify`); continue; }
+    const size = Math.max(c.headSize || 0, c.baseSize || 0);
+    if (size > MAX_MODEL_EDIT_BYTES) bad.push(`${p}: ${size} bytes is over the ${MAX_MODEL_EDIT_BYTES}-byte limit for model edits`);
+    if (JS_RE.test(p)) {
+      if (typeof c.head !== 'string') { bad.push(`${p}: content unreadable, cannot syntax-check`); continue; }
+      const why = syntax(p, c.head);
+      if (why) bad.push(`${p}: syntax ${why}`);
+    }
+  }
+  return { ok: bad.length === 0, bad };
+}
 
 export function evaluate(files, { agentBranch = false, body = '' } = {}) {
   const bad = [];
@@ -20,6 +85,27 @@ export function evaluate(files, { agentBranch = false, body = '' } = {}) {
   }
   if (added > MAX_ADDED_BYTES) bad.push('diff larger than the gate limit');
   return { ok: bad.length === 0, bad };
+}
+
+const decode = (b64) => new TextDecoder().decode(Uint8Array.from(atob((b64 || '').replace(/\n/g, '')), (ch) => ch.charCodeAt(0)));
+// Reads each changed file at the head (content and size) and, when it existed before, its size at the base. An unreadable file is left out,
+// so checkModelEdits refuses it: unknown is not green.
+async function readContents(gh, repo, files, headSha, baseSha) {
+  const out = {};
+  for (const f of files) {
+    if (f.status === 'removed') continue;
+    const p = f.filename || '', enc = p.split('/').map(encodeURIComponent).join('/');
+    const h = await gh('GET', `/repos/${repo}/contents/${enc}?ref=${headSha}`);
+    if (!h.ok || !h.json || Array.isArray(h.json)) continue;
+    const entry = { headSize: h.json.size || 0, head: h.json.encoding === 'base64' && h.json.content ? decode(h.json.content) : null, baseSize: 0 };
+    if (f.status !== 'added' && baseSha) {
+      const was = f.previous_filename || p;
+      const b = await gh('GET', `/repos/${repo}/contents/${was.split('/').map(encodeURIComponent).join('/')}?ref=${baseSha}`);
+      if (b.ok && b.json && !Array.isArray(b.json)) entry.baseSize = b.json.size || 0;
+    }
+    out[p] = entry;
+  }
+  return out;
 }
 
 export async function runGate({ token, repos = [], fetch: f = fetch, context = 'worker-gate', maxPrs = 10 }) {
@@ -38,7 +124,13 @@ export async function runGate({ token, repos = [], fetch: f = fetch, context = '
       if (st.ok && st.json.some(s => s.context === context)) continue; // already judged this commit
       const files = await gh('GET', `/repos/${repo}/pulls/${pr.number}/files?per_page=100`);
       if (!files.ok) { out.errors.push(`${repo}#${pr.number} files ${files.status}`); continue; }
-      const v = evaluate(files.json, { agentBranch: /^(agent|claude)\//.test(pr.head.ref), body: pr.body || '' });
+      const agentBranch = /^(agent|claude)\//.test(pr.head.ref);
+      const v = evaluate(files.json, { agentBranch, body: pr.body || '' });
+      if (agentBranch) {
+        const contents = await readContents(gh, repo, files.json, sha, pr.base && pr.base.sha);
+        const m = checkModelEdits(files.json, contents);
+        if (!m.ok) { v.ok = false; v.bad.push(...m.bad); }
+      }
       const post = await gh('POST', `/repos/${repo}/statuses/${sha}`, { state: v.ok ? 'success' : 'failure', context, description: (v.ok ? 'diff gate passed' : v.bad.join('; ')).slice(0, 140) });
       if (!post.ok) { out.errors.push(`${repo}#${pr.number} status ${post.status}`); continue; }
       out.checked.push(`${repo}#${pr.number} ${v.ok ? 'success' : 'failure'}`);
