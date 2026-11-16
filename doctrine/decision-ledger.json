@@ -1420,6 +1420,15 @@
    "title": "CODE-ONLY-ORDER: decisions live in code, never only in a thread",
    "body": "Rowan 2026-11-16: threads are temporary; every decision and standing rule is code the system consumes (seed, agent instructions, doctrine, policy, checks, loops). Agents decide, deploy and verify; they never present decisions to the owner. standingorder --check fails a ledger decision with no code consumer or a report that hands a decision to the owner, and files Q-ORDER items; tenants inherit via seed/.",
    "probe": "grep:foundation/standingorder.py::def consumerless"
+  },
+  {
+   "id": "lesson-2026-11-16-owner-dash-3-a-blank-owner-page-and-a-silent-probe-at-the-d1",
+   "kind": "lesson",
+   "date": "2026-11-16",
+   "title": "OWNER-DASH-3: a blank owner page and a silent probe at the D1 cap; analytics reads were the burn",
+   "body": "At the free D1 daily read cap the page sat on Loading because the session lookup threw. Now: /api/owner/overview needs no database, state degrades to plain words, the probe records itself and mails the owner without D1. Reads: the 30-day hits aggregates (about 12k rows each, 4.3M rows read today) now cache for 6 hours.",
+   "probe": "grep:dashboard/worker.js::api/owner/overview",
+   "session": "session_0156nqDvMAbVMSqHGLmTNKiK"
   }
  ]
 }

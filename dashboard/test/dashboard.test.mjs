@@ -141,5 +141,20 @@ test("OWNER-DASH-2: at the D1 free read cap the page still answers from the bund
   const real = e.DB.prepare;
   e.DB.prepare = sql => /FROM tasks|FROM checks/.test(sql) ? { bind: () => ({ all: async () => { throw new Error("D1 free tier daily row read limit exceeded (7500)"); }, first: async () => { throw new Error("7500"); }, run: async () => { throw new Error("7500"); } }) } : real(sql);
   const r = await call(e, "/api/owner/state", null, ck); assert.equal(r.status, 200);
-  const s = await r.json(); assert.match(s.degraded, /free daily read limit/); assert.ok(s.needs.length && s.options.length);
+  const s = await r.json(); assert.match(s.degraded, /free allowance/); assert.ok(s.needs.length && s.options.length);
+});
+
+test("OWNER-DASH-3: overview needs no database or session; a dead database gives plain words, never a 500", async () => {
+  const e = env(); const real = e.DB.prepare;
+  e.DB.prepare = () => { throw new Error("D1 free tier daily row read limit exceeded (7500)"); };
+  const o = await call(e, "/api/owner/overview"); assert.equal(o.status, 200);
+  const oj = await o.json(); assert.ok(oj.needs.length && oj.tenants.length && oj.options.length);
+  const r = await call(e, "/api/owner/state", null, "us_owner=x"); assert.equal(r.status, 200);
+  const j = await r.json(); assert.match(j.degraded, /resets at 00:00 UTC|resets by itself|allowance/); assert.ok(j.needs.length);
+  assert.ok(!/7500|Error|SQL/.test(j.degraded));
+  e.DB.prepare = real;
+});
+test("OWNER-DASH-3: a database that is down is reported by the probe and mailed without the database", async () => {
+  const e = env(); sent.length = 0; e.DB.prepare = () => { throw new Error("D1 free tier daily row read limit exceeded (7500)"); };
+  const res = await runProbes(e); assert.equal(res.find(x => x.name === "database").ok, false);
 });
