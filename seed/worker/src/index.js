@@ -14,7 +14,7 @@ import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
-import { governedAI, budgetView } from './budget.js';
+import { governedAI, budgetView, SHARES } from './budget.js';
 import { pruneAll } from './retention.js';  // RETENTION-1  // SPEND-GOVERNOR-1: every model call goes through the owner's monthly budget
 import { handleAuth } from './auth/routes.js';
 import { getToken, refreshDue } from './auth/index.js';
@@ -35,7 +35,7 @@ import { bearerAuth } from './agentic/adapters/bearer-auth.js';
 import { consoleTelemetry } from './agentic/adapters/console-telemetry.js';
 
 // SPEND-GOVERNOR-1: one metered AI handle per invocation. When the governor itself fails, the tick runs with no model (fail closed on cost).
-const aiFor = (env) => governedAI(env.DB, env.AI || null, { config, env }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
+const aiFor = (env) => governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
 export default {
@@ -101,7 +101,7 @@ export default {
       if (!env.ANALYTICS_TOKEN || request.headers.get('authorization') !== 'Bearer ' + env.ANALYTICS_TOKEN) return Response.json({ error: 'unauthorized' }, { status: 401 });
       return Response.json(await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }));
     }
-    if (url.pathname === '/agents/probe') { const r = await probeAgents(env); return Response.json(r, { status: r.ok ? 200 : 503 }); }
+    if (url.pathname === '/agents/probe') { const r = await probeAgents({ ...env, AI: (await aiFor(env)).ai || undefined });  /* SPEND-GOVERNOR-1: a public route; never the raw binding */ return Response.json(r, { status: r.ok ? 200 : 503 }); }
     if (url.pathname === '/pulse/watch' && request.method === 'POST' && (await readState(env.DB, env).catch(() => ({ slot: env.SLOT || 'primary' }))).slot !== 'primary') return Response.json({ ok: true, skipped: 'not the primary account (ACCOUNT-SPLIT-2)' }, { headers: { 'cache-control': 'no-store' } });
     if (url.pathname === '/pulse/watch' && request.method === 'POST') {  // LOOPPROOF-1: the second producer of the heartbeat. Safe to call by anyone: it runs a tick only when the newest one is older than two intervals
       const r = await watch(env.DB, async () => { const g = await aiFor(env); return runTick(env.DB, { config, env: presence(env), ai: g.ai, budget: g.state }); }, { config }).catch(e => ({ ok: false, error: String(e && e.message).slice(0, 200) }));

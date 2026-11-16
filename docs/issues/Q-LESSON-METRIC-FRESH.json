@@ -1,0 +1,11 @@
+{
+  "id": "Q-LESSON-METRIC-FRESH",
+  "title": "Q-LESSON-METRIC-FRESH: Every metric has a producer and a fresh reading",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/tick.js::stale_metric\n**Status:** open\n\nLESSONS-1 (2026-11-16): from the failure-mode register of the fleet this org was split from (638 entries, classified by root cause).\n\n18 failure modes were metrics registered with no producer or a refresher that stopped, and the class was rising in November.\n\nPath: seed/worker/src/tick.js\n\nAcceptance: tick.js measure files a liveness breach for a metric whose last reading is older than twice its cadence, and a test asserts every metric row names a producer.\n\nsize: S\n\n**Closing probe:** grep:seed/worker/src/tick.js::stale_metric\n\n**Evidence:** pending\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Free plan budget"
+}

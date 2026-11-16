@@ -1367,6 +1367,15 @@
    "body": "RETENTION-1: seed/autonomy/retention.json lists every table the tick worker creates, with keep_days for history (tick_runs 30, dispatches 30, outcomes 365, samples 30-60, webhook_seen 14, budget_ledger 400) or keep: state with a reason. seed/worker/src/retention.js prunes once a day, at most 5,000 rows per table. test/plan-limits.test.mjs fails when a new table has no rule. Source: an earlier fleet's audit database reached 1,011 tables, 266 of them backup copies never removed.",
    "probe": "grep:seed/worker/src/retention.js::export async function pruneAll",
    "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
+  },
+  {
+   "id": "lesson-2026-11-16-every-model-call-in-every-worker-is-metered-self-originated-",
+   "kind": "lesson",
+   "date": "2026-11-16",
+   "title": "Every model call in every worker is metered; self-originated work and model replies are bounded",
+   "body": "From the earlier fleet's 638-entry failure-mode register (14 root-cause classes): the dashboard console agent, the site worker and the public /agents/probe route called Workers AI outside the governor; all now go through budgetEnv or the governed handle, with shares tick 0.6, dashboard 0.2, site 0.2 so separately metered workers stay within one allowance. ensureItem files at most 20 self-originated items a day (ORIGINATE-CAP-1). The doer rejects empty, truncated and repeated model replies before use (REPLY-GATE-1). Eight larger gaps are queue items Q-LESSON-*.",
+   "probe": "grep:seed/worker/src/budget.js::export function budgetEnv",
+   "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
   }
  ]
 }
