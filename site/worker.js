@@ -57,8 +57,8 @@ function shell(opts, body) {
     + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
     + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/ops\">Operations</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet hide-sm\" href=\"/team\">Team</a><a class=\"btn btn-quiet hide-sm\" href=\"/faq\">FAQ</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
-    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Every number on this site is read from a live system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
-    + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://orcid.org/0009-0002-4317-5604\">ORCID</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
+    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
+    + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
     + "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"Ultrastable\",\"url\":\"https://ultrastable.io\",\"creator\":{\"@type\":\"Person\",\"name\":\"Rowan Brad Quni-Gudzinas\",\"jobTitle\":\"Founder and Director, Ultrastable\",\"url\":\"https://rwnq8.github.io\",\"sameAs\":[\"https://orcid.org/0009-0002-4317-5604\",\"https://github.com/rwnq8\",\"https://www.linkedin.com/in/rowan-quni\"]}}</script></main><script src=\"/webmcp.js\" defer></script></body></html>";
 }
 
@@ -99,7 +99,7 @@ function home(d) {
     + "</div>"
     + "<h2>Works with the agents you already use</h2><p>Ultrastable is the layer around coding agents, not another one. Open models on its own code loop, GitHub Copilot and Claude Code sessions all take work through one claim ledger, so two agents never edit the same file.</p>"
     + "<h2>Where it fits</h2>" + marketTable()
-    + "<h2>Proven in production</h2><p>It has run a live system since August 2026: thousands of merged pull requests, a hundreds-strong set of failure detectors and a scored prediction history. It is one installation, and the <a href=\"/how#gaps\">honest gaps</a> are listed on this site.</p>"
+    + "<h2>Proven in production</h2><p>It has run a live system since August 2026, with merged pull requests, failure detectors and a scored prediction history that you can check on the <a href=\"/proof\">live proof page</a>. It is one installation, and the <a href=\"/how#gaps\">honest gaps</a> are listed on this site.</p>"
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/pilot\">Join the pilot</a></div>");
 }
 
@@ -187,12 +187,13 @@ function team() {
 }
 
 function org() {
-  return shell({ path: "/org", title: "Ultrastable organization", description: "How the Ultrastable organization is laid out: four repositories, each with one purpose." },
-    "<div class=\"head\"><h1>Organization</h1><p>Four repositories, each with one purpose. Ultrastable runs on itself, so this layout is itself checked by code.</p></div>"
+  return shell({ path: "/org", title: "Ultrastable organization", description: "How the Ultrastable organization is laid out: a few repositories, each with one purpose." },
+    "<div class=\"head\"><h1>Organization</h1><p>A few repositories, each with one purpose. Ultrastable runs on itself, so this layout is itself checked by code.</p></div>"
     + "<div class=\"us-grid c2\">"
     + card("System of record", "Roadmap, doctrine, agents, operations and the self-hosting proof.")
     + card("Code", "The portable core, platform adapters and the bootstrapper that turns an idea file into a running organization.")
-    + card("Specifications", "Architectural specifications, product documentation and the license: free for non-commercial use, revenue share for commercial use.")
+    + card("Specifications", "The numbered specifications, product documentation and the Ultrastable License: free for non-commercial use, a commercial license with revenue share for commercial use.")
+    + card("Bootstrapper", "One idea file in, a running organization of virtual managers and staff out.")
     + card("Profile", "The public face of the organization on GitHub.")
     + "</div><p class=\"meta\">The repositories are open and the Ultrastable License governs use. Superseded early splits are archived, never deleted.</p>");
 }

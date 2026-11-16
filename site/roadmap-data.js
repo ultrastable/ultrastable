@@ -7,7 +7,7 @@ export default {
   },
   {
    "issue": "PIN-core-db-separation",
-   "text": "The core still shares a database with QNFO's research applications; separating it is the first pilot milestone."
+   "text": "The core still shares a database with QNFO's other applications; separating it is the first pilot milestone."
   },
   {
    "issue": "PIN-outside-audit",
@@ -303,7 +303,7 @@ export default {
    "issue": "PIN-core-db-separation",
    "name": "Core separated from QNFO's database",
    "status": "pinned",
-   "what": "The core still shares a database with QNFO's research applications.",
+   "what": "The core still shares a database with QNFO's other applications.",
    "where": "docs/migrations/core-db-split.json"
   },
   {

@@ -167,4 +167,11 @@ assert.match((await get("https://ultrastable.io/")).headers.get("link") || "", /
   assert.deepEqual(calls.map(c => c[0] + " " + c[1].replace("https://api.cloudflare.com/client/v4", "")), ["PUT /accounts/acct/workers/scripts/ultrastable-tick", "PUT /accounts/acct/workers/scripts/ultrastable-tick/schedules"]);
   globalThis.fetch = realFetch;
 }
+// OPS-SYNTAX-1: the /ops inline script must parse (a template literal once turned a regex escape into a syntax error and blanked the page).
+{
+  const html = String(cp.opsPage((o, body) => body));
+  const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
+  assert.ok(scripts.length >= 1, "ops page has an inline script");
+  for (const sc of scripts) new Function(sc);
+}
 console.log("controlplane ok");
