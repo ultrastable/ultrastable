@@ -9,7 +9,7 @@ import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
-import { pulseStep } from './pulse.js';
+import { pulseStep, tickCadenceMin } from './pulse.js';
 import { ignitionStep } from './ignition.js';
 
 const TERMINAL = ['done', 'superseded', 'cancelled'];
@@ -166,14 +166,33 @@ export const STEPS = {
     const ageH = first_tick && first_tick.t ? (ctx.now - Date.parse(first_tick.t.replace(' ', 'T') + 'Z')) / 3600e3 : 0;
     // TENANT-1: a runtime measures only its own tenant's metrics. Rows of another tenant are never read, never breach, never file items here.
     const ms = await all(db, `SELECT * FROM metrics WHERE tenant_id IS NULL OR tenant_id = ?`, ctx.config.org_slug || '');
-    let breached = 0, warming = 0;
+    let breached = 0, warming = 0, stale = 0;
+    // Q-LESSON-METRIC-FRESH: a metric whose last good reading is older than twice the tick's cadence has lost its producer (the refresher
+    // stopped, or its probe keeps failing). That is a liveness breach of its own, item STALE-<id> (stale_metric), closed once a reading is fresh.
+    const staleMs = 2 * (await tickCadenceMin(db, ctx.config)) * 60e3;
     for (const m of ms) {
+      const staleId = `STALE-${m.id}`;
+      const lastMs = m.last_at ? Date.parse(String(m.last_at).replace(' ', 'T') + (/[zZ]|[+-]\d\d:?\d\d$/.test(m.last_at) ? '' : 'Z')) : NaN;
+      if (Number.isFinite(lastMs) && ctx.now - lastMs > staleMs && ageH >= m.grace_hours) {
+        stale++;
+        await run(db, `UPDATE items SET status='ready', disposition=NULL, updated_at=? WHERE id=? AND status IN ('done','superseded','cancelled')`, ctx.nowIso, staleId);
+        await ensureItem(db, {
+          id: staleId, kind: 'fix', priority: 0, owner_role: m.owner_role,
+          title: `stale_metric: ${m.name} has no reading since ${m.last_at} (more than ${Math.round(staleMs / 60e3)} minutes, twice the tick cadence). Restore its producer (${m.source}: ${m.spec}).`.slice(0, 400),
+          done_check: `metric ${m.id} has a reading newer than twice the tick cadence`, closing_probe: `metric:${m.id}`,
+        });
+      } else if (Number.isFinite(lastMs)) {
+        await run(db, `UPDATE items SET status='done', disposition='fixed: metric ${m.id} reading is fresh again', updated_at=?
+                       WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, ctx.nowIso, staleId);
+      }
       let value = null, bad;
       try { value = await readMetric(db, m, ctx); } catch (e) { ctx.notes.push(`metric ${m.id}: ${e.message}`); }
       if (m.source === 'declared' || value === null || Number.isNaN(value)) bad = true; // an unprobed measure is a breach, not a pass
       else bad = !OPS[m.op](value, m.threshold);
       if (bad && ageH < m.grace_hours) { warming++; bad = false; }
-      await run(db, `UPDATE metrics SET last_value=?, last_at=?, breached=? WHERE id=?`, value, ctx.nowIso, bad ? 1 : 0, m.id);
+      // last_at is the time of the last good reading, so a probe that keeps failing goes stale instead of looking fresh.
+      const good = value !== null && !Number.isNaN(value);
+      await run(db, `UPDATE metrics SET last_value=?, last_at=CASE WHEN ? THEN ? ELSE last_at END, breached=? WHERE id=?`, value, good ? 1 : 0, ctx.nowIso, bad ? 1 : 0, m.id);
       const itemId = `BREACH-${m.id}`;
       if (bad) {
         breached++;
@@ -190,7 +209,7 @@ export const STEPS = {
                        WHERE id=? AND status NOT IN ('done','superseded','cancelled')`, ctx.nowIso, itemId);
       }
     }
-    ctx.notes.push(`measured ${ms.length} metric(s): ${breached} in breach${warming ? `, ${warming} warming up` : ''}`);
+    ctx.notes.push(`measured ${ms.length} metric(s): ${breached} in breach${warming ? `, ${warming} warming up` : ''}${stale ? `, ${stale} stale` : ''}`);
   },
 
   // Predictions due now are graded against built-in metrics.
