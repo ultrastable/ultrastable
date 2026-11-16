@@ -117,7 +117,7 @@
   {
    "status": "pinned",
    "name": "Core separated from QNFO's database",
-   "what": "The core still shares a database with QNFO's research applications.",
+   "what": "The core still shares a database with QNFO's other applications.",
    "where": "docs/migrations/core-db-split.json",
    "issue": "PIN-core-db-separation",
    "code": [
@@ -188,7 +188,7 @@
    "Q-GAP-second-installation"
   ],
   [
-   "The core still shares a database with QNFO's research applications; separating it is the first pilot milestone.",
+   "The core still shares a database with QNFO's other applications; separating it is the first pilot milestone.",
    "PIN-core-db-separation"
   ],
   [
