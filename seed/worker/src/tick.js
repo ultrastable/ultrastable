@@ -4,6 +4,7 @@
 // Lesson from AIOS ("PID 1 must never die"): every step is guarded. A failing step is
 // recorded in the tick's errors and as a backlog item; the remaining steps still run.
 
+import { ensureLedger } from './budget.js';  // ORIGINATE-CAP-1: the daily cap is counted in the budget ledger
 import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
@@ -54,13 +55,26 @@ export function reliability(successes, outcomes, trust) {
   return (successes + b * w) / (outcomes + w);
 }
 
-export async function ensureItem(db, item) {
+// ORIGINATE-CAP-1 (2026-11-16): the system files at most this many items of its own a day (owner- and GitHub-filed items come in through issuesync,
+// not here). Lesson from an earlier fleet whose loops filed work about their own metrics and tickets until it held ~7,500 open issues and spent
+// model calls working them. Past the cap an item is not filed; the refusal is counted in budget_ledger (kind 'originated', refused).
+export const ORIGINATE_MAX_PER_DAY = 20;
+export async function ensureItem(db, item, { cap = ORIGINATE_MAX_PER_DAY, now = Date.now() } = {}) {
   const existing = await first(db, `SELECT id FROM items WHERE id = ?`, item.id);
   if (existing) return false;
+  await ensureLedger(db);
+  const day = new Date(now).toISOString().slice(0, 10);
+  const today = await first(db, `SELECT COALESCE(SUM(calls),0) AS n FROM budget_ledger WHERE day = ? AND kind = 'originated'`, day);
+  if ((today && today.n) >= cap) {
+    await run(db, `INSERT INTO budget_ledger (day, kind, units, calls, refused) VALUES (?, 'originated', 0, 0, 1) ON CONFLICT(day, kind) DO UPDATE SET refused = refused + 1`, day);
+    console.log('originate cap reached; not filed', item.id);
+    return false;
+  }
   await run(db, `INSERT INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, surface, action_class)
                  VALUES (?, ?, ?, ?, ?, ?, ?, 'ready', ?, ?)`,
     item.id, item.title, item.kind || 'fix', item.owner_role, item.done_check,
     item.closing_probe || null, item.priority ?? 10, item.surface || null, item.action_class || null);
+  await run(db, `INSERT INTO budget_ledger (day, kind, units, calls, refused) VALUES (?, 'originated', 0, 1, 0) ON CONFLICT(day, kind) DO UPDATE SET calls = calls + 1`, day);
   return true;
 }
 

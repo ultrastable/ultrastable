@@ -1,0 +1,11 @@
+{
+  "id": "Q-LESSON-SILENT-CATCH",
+  "title": "Q-LESSON-SILENT-CATCH: Lint catch blocks that only log",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** grep:test/plan-limits.test.mjs::SILENT-CATCH\n**Status:** open\n\nLESSONS-1 (2026-11-16): from the failure-mode register of the fleet this org was split from (638 entries, classified by root cause).\n\n35 failure modes were silent drops: empty catches and 'ok' answers for failed sends hid failures.\n\nPath: test/plan-limits.test.mjs\n\nAcceptance: a test fails when a catch block in seed/worker/src has an empty body or only console.* calls, unless it carries an allow-silent comment with a reason; existing ones are listed in a shrink-only baseline.\n\nsize: S\n\n**Closing probe:** grep:test/plan-limits.test.mjs::SILENT-CATCH\n\n**Evidence:** pending\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Free plan budget"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "Q-LESSON-GITHUB-BUDGET",
+  "title": "Q-LESSON-GITHUB-BUDGET: A per-tick GitHub API call budget with Retry-After",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/lane.js::Retry-After\n**Status:** open\n\nLESSONS-1 (2026-11-16): from the failure-mode register of the fleet this org was split from (638 entries, classified by root cause).\n\n25 failure modes were external quotas: the shared user's GitHub quota spent, Copilot credits exhausted, null mergeable states retried without limit.\n\nPath: seed/worker/src/lane.js\n\nAcceptance: lane.js and handoff.js count GitHub API calls per tick and stop at a configured cap, and honour Retry-After on 403/429; a test with a mocked 429 proves the backoff.\n\nsize: S\n\n**Closing probe:** grep:seed/worker/src/lane.js::Retry-After\n\n**Evidence:** pending\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Free plan budget"
+}

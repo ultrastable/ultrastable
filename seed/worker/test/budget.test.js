@@ -106,3 +106,44 @@ test('a frozen budget lets the criticality step originate only a cost cut and fi
   const idx = readFileSync(new URL('../src/index.js', import.meta.url), 'utf8');
   assert.equal((idx.match(/budget: (gov|g)\.state/g) || []).length, 3, 'every runTick call carries the budget state');
 });
+
+test('REPLY-GATE-1: empty, truncated and repeated replies are rejected before use', async () => {
+  const { replyProblem } = await import('../src/doer.js');
+  assert.equal(replyProblem({}, '  '), 'empty reply');
+  assert.equal(replyProblem({ choices: [{ finish_reason: 'length', message: { content: 'abc' } }] }, 'abc'), 'cut off at max_tokens');
+  assert.equal(replyProblem({}, Array(12).fill('same line').join('\n')), 'repeated lines');
+  assert.equal(replyProblem({}, 'the same twenty chars! '.repeat(5)), 'repeated text');
+  assert.equal(replyProblem({}, '{"action":"done","evidence":"tests pass"}'), null);
+});
+
+test('ORIGINATE-CAP-1: the system files at most ORIGINATE_MAX_PER_DAY items of its own a day', async () => {
+  const { raw, db } = mkdb();
+  raw.exec("CREATE TABLE items (id TEXT PRIMARY KEY, title TEXT, kind TEXT, owner_role TEXT, done_check TEXT, closing_probe TEXT, priority INTEGER, status TEXT, surface TEXT, action_class TEXT)");
+  const { ensureItem } = await import('../src/tick.js');
+  const mk = (i) => ({ id: 'X-' + i, title: 't', owner_role: 'operations', done_check: 'grep:a::b' });
+  let filed = 0;
+  for (let i = 0; i < 5; i++) if (await ensureItem(db, mk(i), { cap: 3, now: NOW })) filed++;
+  assert.equal(filed, 3);
+  assert.equal(raw.prepare("SELECT refused FROM budget_ledger WHERE kind='originated'").get().refused, 2);
+  assert.equal(await ensureItem(db, mk(9), { cap: 3, now: NOW + 864e5 }), true, 'a new day has a new allowance');
+});
+
+test('lazy governed env: a request with no model call reads nothing; a frozen budget refuses the call', async () => {
+  const { budgetEnv } = await import('../src/budget.js');
+  const { raw, db } = mkdb(); const ai = fakeAI();
+  const env = budgetEnv({ DB: db, AI: ai }, 0.2);
+  assert.notEqual(env.AI, ai); assert.equal(raw.prepare("SELECT COUNT(*) c FROM sqlite_master WHERE name='budget_ledger'").get().c, 0, 'nothing read until a model call');
+  await env.AI.run('m', {});
+  assert.equal(ai.calls.length, 1);
+  raw.prepare("UPDATE budget_ledger SET units = 1e9 WHERE kind='ai_neurons'").run();
+  const env2 = budgetEnv({ DB: db, AI: ai }, 0.2);
+  await assert.rejects(() => env2.AI.run('m', {}), BudgetExhausted);
+});
+
+test('every Workers AI call site in the workers goes through the governor', () => {
+  const read = (p) => readFileSync(new URL('../../../' + p, import.meta.url), 'utf8');
+  assert.match(read('site/worker.js'), /env = budgetEnv\(env, SHARES\.site\)/);
+  assert.match(read('dashboard/worker.js'), /async fetch\(req, env\) \{ env = budgetEnv\(env, SHARES\.dashboard\)/);
+  assert.match(read('dashboard/worker.js'), /async scheduled\(ev, env, ctx\) \{ env = budgetEnv\(env, SHARES\.dashboard\)/);
+  assert.match(read('seed/worker/src/index.js'), /probeAgents\(\{ \.\.\.env, AI: \(await aiFor\(env\)\)\.ai \|\| undefined \}\)/);
+});

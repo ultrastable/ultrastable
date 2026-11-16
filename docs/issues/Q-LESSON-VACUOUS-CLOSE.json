@@ -1,0 +1,11 @@
+{
+  "id": "Q-LESSON-VACUOUS-CLOSE",
+  "title": "Q-LESSON-VACUOUS-CLOSE: Refuse a close the probe never saw fail",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** grep:foundation/contracts.py::vacuous\n**Status:** open\n\nLESSONS-1 (2026-11-16): from the failure-mode register of the fleet this org was split from (638 entries, classified by root cause).\n\n101 of the earlier fleet's 638 failure modes were closing probes that passed while the defect existed, or items closed on one pass; the class still recurred on 2026-11-14. Ultrastable's contracts fail closed on probes they cannot run but still close a never-reopened item on its first pass.\n\nPath: foundation/contracts.py\n\nAcceptance: foundation/contracts.py refuses a close unless the ledger recorded this probe failing on this item before it passed (else the item is marked vacuous and stays open), and every close needs two consecutive passes; tests in tests/foundation/test_contracts.py cover a vacuous probe and a single pass.\n\nsize: S\n\n**Closing probe:** grep:foundation/contracts.py::vacuous\n\n**Evidence:** pending\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Free plan budget"
+}

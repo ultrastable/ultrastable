@@ -59,13 +59,37 @@ export function estimateNeurons(model, usage, text, rates = {}) {
   return Math.ceil((String(text || '').length / 4) * outRate + 200 * inRate);  // no usage reported: charge the output length plus a small prompt
 }
 
-let ensured = false;
-export async function ensureLedger(db) {
-  if (ensured) return;
-  await db.prepare("CREATE TABLE IF NOT EXISTS budget_ledger (day TEXT NOT NULL, kind TEXT NOT NULL, units REAL NOT NULL DEFAULT 0, calls INTEGER NOT NULL DEFAULT 0, refused INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, kind))").run();
-  ensured = true;
+// Several workers meter into their own ledgers; each gets a share of the account's daily allowance so together they never exceed it.
+export const SHARES = { tick: 0.6, dashboard: 0.2, site: 0.2 };
+function withShare(a, share) {
+  const s = Math.min(1, Math.max(0, Number(share) || 0));
+  return s === 1 ? a : { ...a, share: s, ai_neurons_day: Math.floor(a.ai_neurons_day * s), variable_usd_month: +(a.variable_usd_month * s).toFixed(2) };
 }
-export const _resetForTests = () => { ensured = false; };
+
+// For workers that call Workers AI only on some requests: returns env with AI replaced by a lazy governed handle. The governor reads the
+// ledger on the first model call of the request only, so requests that never call a model cost no D1 read.
+export function budgetEnv(env, share) {
+  if (!env || !env.AI || !env.DB || env.__budgeted) return env;
+  let gov = null;
+  const raw = env.AI;
+  const AI = {
+    async run(model, input, opts) {
+      if (!gov) gov = await governedAI(env.DB, raw, { env, share }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: { why: 'governor unavailable' } }; });
+      if (!gov.ai) throw new BudgetExhausted('AI budget: ' + ((gov.state && gov.state.why) || 'frozen'));
+      return gov.ai.run(model, input, opts);
+    },
+  };
+  return { ...env, AI, __budgeted: true };
+}
+
+// Per database handle, not per isolate: a worker or test may hold more than one database.
+let ensured = new WeakSet();
+export async function ensureLedger(db) {
+  if (ensured.has(db)) return;
+  await db.prepare("CREATE TABLE IF NOT EXISTS budget_ledger (day TEXT NOT NULL, kind TEXT NOT NULL, units REAL NOT NULL DEFAULT 0, calls INTEGER NOT NULL DEFAULT 0, refused INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, kind))").run();
+  ensured.add(db);
+}
+export const _resetForTests = () => { ensured = new WeakSet(); };
 
 export async function usage(db, now = Date.now()) {
   await ensureLedger(db);
@@ -88,9 +112,9 @@ export class BudgetExhausted extends Error { constructor(msg) { super(msg); this
 
 // The AI handle every loop receives. Returns null when frozen, so callers take their existing "no model" path; otherwise a metered wrapper that
 // refuses a call (BudgetExhausted) once the per-tick or per-day allowance is reached and records every call in the ledger.
-export async function governedAI(db, ai, { config = {}, env = {}, now = Date.now() } = {}) {
+export async function governedAI(db, ai, { config = {}, env = {}, now = Date.now(), share = 1 } = {}) {
   if (!ai) return { ai: null, state: null };
-  const b = budgetConfig(config, env), a = allowance(b, now), u = await usage(db, now), d = decide(a, u);
+  const b = budgetConfig(config, env), a = withShare(allowance(b, now), share), u = await usage(db, now), d = decide(a, u);
   const state = { budget: b.usd_per_month, plan: b.plan, allowance: a, usage: u, ...d };
   if (d.mode === 'frozen') { await bump(db, dayOf(now), 0, 0, 1).catch(e => console.error('budget ledger', e && e.message)); return { ai: null, state }; }
   let used = u.ai_neurons_today, callsThisTick = 0;

@@ -1,0 +1,11 @@
+{
+  "id": "Q-LESSON-CRED-SCOPE",
+  "title": "Q-LESSON-CRED-SCOPE: Token scopes are an allowlist; auth paths are normalized",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/auth/index.js::SCOPE_ALLOWLIST\n**Status:** open\n\nLESSONS-1 (2026-11-16): from the failure-mode register of the fleet this org was split from (638 entries, classified by root cause).\n\n24 failure modes were credentials: committed secrets, a 22-scope token, an auth bypass through path normalization.\n\nPath: seed/worker/src/auth/index.js\n\nAcceptance: a test asserts the GitHub App's requested permissions equal an allowlist, and an auth test covers path variants (//x, /x/, encoded slashes).\n\nsize: S\n\n**Closing probe:** grep:seed/worker/src/auth/index.js::SCOPE_ALLOWLIST\n\n**Evidence:** pending\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Free plan budget"
+}

@@ -23,16 +23,33 @@ export const OWNER_ONLY = /\bowner card\b|\bOC-\d|submission confirmation|confir
 
 const textOf = r => (r && (r.response || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || '';
 
+// REPLY-GATE-1 (2026-11-16): a deterministic check on every model reply before it is used, no model involved. An earlier fleet's register held 142
+// failure modes in model output (empty, truncated at max_tokens, degenerate repetition) that reached its tables because the text was used as returned.
+export function replyProblem(res, text) {
+  const t = String(text || '').trim();
+  if (!t) return 'empty reply';
+  const fr = res && ((res.choices && res.choices[0] && res.choices[0].finish_reason) || res.finish_reason);
+  if (fr === 'length') return 'cut off at max_tokens';
+  const lines = t.split('\n').map(l => l.trim()).filter(Boolean);
+  if (lines.length >= 10 && new Set(lines).size / lines.length < 0.3) return 'repeated lines';
+  const m = t.match(/(.{20,}?)\1{3,}/s);
+  if (m) return 'repeated text';
+  return null;
+}
+
 async function ask(ctx, prompt, maxTokens = 900) {
   if (!ctx.ai || ctx.aiCalls >= ctx.maxAi) return null;
   ctx.aiCalls++;
   const tried = [];
   for (const a of [...ADAPTERS].sort((x, y) => x.price - y.price)) {
     try {
-      const t = textOf(await ctx.ai.run(a.model, { messages: [{ role: 'user', content: prompt }], ...a.extra, max_tokens: maxTokens }));
+      const res = await ctx.ai.run(a.model, { messages: [{ role: 'user', content: prompt }], ...a.extra, max_tokens: maxTokens });
+      const t = textOf(res);
+      const bad = replyProblem(res, t);
+      if (bad) throw new Error('reply rejected: ' + bad);
       ctx.itemModel = a.model;  // MODEL-TRUTH-1: the dispatch row records the model that answered, never a config label
       return { json: parseJson(t), adapter: a.id, model: a.model };
-    } catch (e) { tried.push(a.id + ': ' + String(e && e.message).slice(0, 80)); }
+    } catch (e) { tried.push(a.id + ': ' + String(e && e.message).slice(0, 80)); if (e && e.name === 'BudgetExhausted') break; }
   }
   ctx.notes.push('doer: no model answered (' + tried.join('; ').slice(0, 200) + ')');
   return null;
