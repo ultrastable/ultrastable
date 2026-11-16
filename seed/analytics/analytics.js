@@ -2,8 +2,12 @@
 // First-party and cookieless: no third-party script, no IP stored, no cookie, no cross-day visitor id. Honors Do Not Track and Global Privacy Control.
 // Portable core: touches the platform only through env.DB (SQL) and fetch/Request/Response. Schema: analytics/schema.sql.
 // Every metric in REGISTRY has a trigger or a named exemption (rule from the original scoreboard); test/analytics.test.mjs enforces it.
-export const VERSION = "0.1.0";
-const DAY = 864e5, RAW_KEEP_DAYS = 35;
+export const VERSION = "0.2.0";
+const DAY = 864e5, RAW_KEEP_DAYS = 35, SELFCHECK_KEEP_DAYS = 2;
+// READ-BUDGET-1 (2026-11-16): on the Cloudflare free plan D1 allows 5 million rows read a day, and these queries had used it up by 08:00 UTC
+// (nine full scans of hits per dashboard load and per 10-minute tick, ~7k rows each). Reads are now bounded: one aggregate pass for the
+// windowed counts, an index for the self-check lookup, pruning once a day, and an optional cache that dashboard callers use.
+export const REPORT_CACHE_MINUTES = 60;
 const BOT_RE = /bot|crawl|spider|slurp|preview|monitor|uptime|curl|wget|python-requests|httpclient|headless|lighthouse|facebookexternalhit|node-fetch|undici|go-http|java\//i;
 const enc = new TextEncoder();
 async function sha(s) { const b = await crypto.subtle.digest("SHA-256", enc.encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
@@ -59,19 +63,32 @@ export async function handleAnalytics(req, env, opts) {
 export async function selfcheck(env, host) {
   const req = new Request("https://" + host + "/", { headers: { "user-agent": "ultrastable-selfcheck/bot" } });
   await record(env, req, { host, path: "/", name: "selfcheck" });
-  await env.DB.prepare("DELETE FROM hits WHERE at<?1").bind(Date.now() - RAW_KEEP_DAYS * DAY).run();
+  await prune(env);
+}
+// Once a day: raw rows past RAW_KEEP_DAYS, and synthetic self-check rows past SELFCHECK_KEEP_DAYS (they were most of the table).
+export async function prune(env, now) {
+  now = now || Date.now();
+  const day = new Date(now).toISOString().slice(0, 10);
+  const last = await env.DB.prepare("SELECT value v FROM analytics_meta WHERE key='pruned_day'").first();
+  if (last && last.v === day) return false;
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS hits_name_at ON hits(name, at)").run();
+  await env.DB.prepare("DELETE FROM hits WHERE at<?1").bind(now - RAW_KEEP_DAYS * DAY).run();
+  await env.DB.prepare("DELETE FROM hits WHERE name='selfcheck' AND at<?1").bind(now - SELFCHECK_KEEP_DAYS * DAY).run();
+  await env.DB.prepare("INSERT INTO analytics_meta(key,value) VALUES('pruned_day',?1) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(day).run();
+  return true;
 }
 
 export async function measure(env, now) {
   now = now || Date.now();
   const one = async (sql, ...b) => (await env.DB.prepare(sql).bind(...b).first()) || {};
   const w7 = now - 7 * DAY, w30 = now - 30 * DAY, real = "name='pageview' AND bot=0";
-  const pv7 = (await one("SELECT COUNT(*) c FROM hits WHERE at>=?1 AND " + real, w7)).c || 0;
-  const pv30 = (await one("SELECT COUNT(*) c FROM hits WHERE at>=?1 AND " + real, w30)).c || 0;
+  // One pass over the 30-day window replaces six separate scans.
+  const agg = await one("SELECT SUM(CASE WHEN at>=?1 AND " + real + " THEN 1 ELSE 0 END) pv7, SUM(CASE WHEN " + real + " THEN 1 ELSE 0 END) pv30, " +
+    "SUM(CASE WHEN at>=?1 AND ref<>'' AND " + real + " THEN 1 ELSE 0 END) rf7, SUM(CASE WHEN ref<>'' AND " + real + " THEN 1 ELSE 0 END) rf30, " +
+    "SUM(CASE WHEN at>=?1 AND name='pageview' THEN 1 ELSE 0 END) all7, SUM(CASE WHEN at>=?1 AND name='pageview' AND bot=1 THEN 1 ELSE 0 END) bot7 " +
+    "FROM hits WHERE at>=?2", w7, w30);
+  const pv7 = agg.pv7 || 0, pv30 = agg.pv30 || 0, rf7 = agg.rf7 || 0, rf30 = agg.rf30 || 0, all7 = { c: agg.all7 || 0, b: agg.bot7 || 0 };
   const vis7 = (await one("SELECT COUNT(*) c FROM (SELECT DISTINCT vid, substr(datetime(at/1000,'unixepoch'),1,10) d FROM hits WHERE at>=?1 AND " + real + ")", w7)).c || 0;
-  const rf7 = (await one("SELECT COUNT(*) c FROM hits WHERE at>=?1 AND ref<>'' AND " + real, w7)).c || 0;
-  const rf30 = (await one("SELECT COUNT(*) c FROM hits WHERE at>=?1 AND ref<>'' AND " + real, w30)).c || 0;
-  const all7 = (await one("SELECT COUNT(*) c, SUM(bot) b FROM hits WHERE at>=?1 AND name='pageview'", w7));
   const sc = (await one("SELECT MAX(at) t FROM hits WHERE name='selfcheck'")).t || 0;
   const started = +((await one("SELECT value v FROM analytics_meta WHERE key='started'")).v || now);
   return { now, age_days: (now - started) / DAY, hits7: all7.c || 0,
@@ -89,7 +106,19 @@ export function evaluate(m) {
     return { name: r.name, kind: r.kind, label: r.label, value, hit, why };
   });
 }
-export async function report(env, now) {
+// opts.cacheMinutes: reuse a report computed within that many minutes (stored in analytics_meta). Callers that render pages or run on a clock pass
+// REPORT_CACHE_MINUTES; a caller that needs the exact current value (tests, a probe) omits it.
+export async function report(env, now, opts) {
+  const ttl = opts && opts.cacheMinutes ? opts.cacheMinutes * 60e3 : 0;
+  if (ttl) {
+    const c = await env.DB.prepare("SELECT value v FROM analytics_meta WHERE key='report_cache'").first();
+    if (c) { try { const o = JSON.parse(c.v); if (Date.now() - o.at < ttl) return Object.assign(o.body, { cached_at: new Date(o.at).toISOString() }); } catch (e) { console.error("analytics report cache unreadable", e && e.message); } }
+  }
+  const body = await compute(env, now);
+  if (ttl) await env.DB.prepare("INSERT INTO analytics_meta(key,value) VALUES('report_cache',?1) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(JSON.stringify({ at: Date.now(), body })).run();
+  return body;
+}
+async function compute(env, now) {
   const m = await measure(env, now), rows = evaluate(m);
   const top = (await env.DB.prepare("SELECT host,path,COUNT(*) views FROM hits WHERE at>=?1 AND name='pageview' AND bot=0 GROUP BY host,path ORDER BY views DESC LIMIT 8").bind(m.now - 7 * DAY).all()).results;
   const refs = (await env.DB.prepare("SELECT ref,COUNT(*) views FROM hits WHERE at>=?1 AND name='pageview' AND bot=0 AND ref<>'' GROUP BY ref ORDER BY views DESC LIMIT 6").bind(m.now - 7 * DAY).all()).results;

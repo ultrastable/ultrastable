@@ -36,6 +36,7 @@ jobs:
           PYTHONPATH=products/gaplint python3 -m gaplint .
           node --test demos/test/*.test.mjs
           node --test test/cost-probe.test.mjs
+          node --test test/plan-limits.test.mjs
           node --test --no-warnings dashboard/test/*.test.mjs
       - name: Secret and key scan
         run: |

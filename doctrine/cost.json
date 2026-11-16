@@ -1,7 +1,7 @@
 {
-  "_doc": "COST-GUARD-1 and CRITICALITY-1 (Rowan, 2026-11-13). Standing goal and measured cost findings as data; foundation/cost.py reads them (python3 -m foundation cost --check|--probe|--guard). Priority order: ultrastable works and deploys its own workers, then cost, then new features.",
+  "_doc": "COST-GUARD-1 and CRITICALITY-1 (Rowan, 2026-11-13). Standing goal and measured cost findings as data; foundation/cost.py reads them (python3 -m foundation cost --check|--probe|--guard). Priority order: ultrastable works and deploys its own workers, then cost, then new features. The account is Ultrastable's own (READ-BUDGET-1, 2026-11-16); the 2026-11-13 baseline and findings below describe the Quniverse account it used to share and are kept as history.",
   "version": "1.0.0",
-  "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
+  "account_id": "81e3a4efb4eb66e613529b87682911bb",
   "standing_goal": {
     "id": "CRITICALITY-1",
     "north_star": "Ultrastable's loops produce more verified deploys than they consume in cost and attention.",

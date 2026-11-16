@@ -297,11 +297,11 @@ export const STEPS = {
 
 export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
 
-export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null } = {}) {
+export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null, budget = null } = {}) {
   const startedIso = iso(new Date(now));
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, STEP_ORDER.length);
   const tickId = ins.meta.last_row_id;
-  const ctx = { wake, ai, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
+  const ctx = { wake, ai, budget, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
   let completed = 0;
   for (const name of STEP_ORDER) {
     try {

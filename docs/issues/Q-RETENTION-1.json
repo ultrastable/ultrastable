@@ -1,0 +1,11 @@
+{
+  "id": "Q-RETENTION-1",
+  "title": "Q-RETENTION-1: every append-only table declares a retention, and a daily prune enforces it",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/retention.js::export async function pruneAll\n**Status:** open\n\nLesson from the fleet this account was split from (frozen 2026-11-16): its audit database grew to 1,011 tables. 266 of them were `bak_*` copies made before deletes and never removed, and append-only ledgers kept every row forever. Storage cost little, but every view and trigger over them read more rows each tick. Ultrastable keeps the same kinds of ledgers (tick_runs, dispatches, outcomes, budget_ledger, cost_samples, criticality_samples, handoff_events, loop_beats, hits) with no stated retention.\n\nAcceptance: a table in seed/autonomy/retention.json lists each append-only table with keep_days (or `forever` with a reason); seed/worker/src/retention.js deletes older rows once a day (gated like seed/analytics prune) and writes one row per table to a prune log; a backup table made by a migration carries an expiry and is dropped after it; test/plan-limits.test.mjs fails when a migration creates a table that retention.json does not list.\n\nTest plan: node tests for the prune (rows past keep_days removed, newer kept, once a day) and the listing check.\n\nsize: S\n\n**Closing probe:** grep:seed/worker/src/retention.js::export async function pruneAll\n\n**Evidence:** pending\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Free plan budget"
+}

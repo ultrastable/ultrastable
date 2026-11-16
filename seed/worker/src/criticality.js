@@ -126,6 +126,10 @@ export async function addIgnitionGaps(db, gaps, nowIso) {
 // The tick step. Never lets a tick end idle: an idle tick files its own repair.
 export async function criticalityStep(db, ctx, t, ensureItem) {
   const m = await measureCriticality(db, t, ctx.now);
+  // SPEND-GOVERNOR-1: a frozen AI budget is a breached spend cap: only a cost cut may be originated, and no idle item is filed (lesson from an earlier fleet: loops that
+  // filed work about their own metrics grew agent_issues to ~7,500 rows and spent AI fixing them).
+  const frozen = Boolean(ctx.budget && ctx.budget.mode === 'frozen');
+  if (frozen) m.cap_breached = 1;
   const queued = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status IN ('open','ready')`);
   const claimed = await first(db, `SELECT COUNT(*) AS n FROM claims`);
   const idle = ctx.dispatched === 0 && claimed.n === 0;
@@ -136,7 +140,7 @@ export async function criticalityStep(db, ctx, t, ensureItem) {
   let origin = null;
   if (reasons.length) {
     origin = await originate(db, t, m, ctx, ensureItem);
-    if (idle) {
+    if (idle && !frozen) {
       await ensureItem(db, {
         id: `IDLE-${ctx.nowIso.slice(0, 13).replace(' ', 'T')}`, kind: 'fix', owner_role: 'operations', priority: t.origination.head_priority,
         title: `Idle tick ${ctx.tickId}: nothing dispatched and nothing claimed. File why the queue could not feed a doer and fix it.`,

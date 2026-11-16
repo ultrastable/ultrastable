@@ -4,7 +4,7 @@
 // a command line that runs registered commands, step-up codes for changes, an audit log with undo, and owner email notifications.
 // Portable core: every platform touch goes through env.DB (SQL), env.SEND_EMAIL (mail) and fetch, so a Google Cloud adapter only
 // has to supply those three. Cloudflare adapter = this file + wrangler.toml.
-import { handleAnalytics, record, selfcheck, report, summary } from "../seed/analytics/analytics.js";
+import { handleAnalytics, record, selfcheck, report, summary, REPORT_CACHE_MINUTES } from "../seed/analytics/analytics.js";
 import { ask, ASK_PER_HOUR } from "./agent.js";
 const VERSION = "0.3.0";
 const COOKIE = "us_owner";
@@ -237,7 +237,7 @@ export async function stateOf(env) {
   await ensureSnapshots(env);
   const sn = await env.DB.prepare("SELECT body,at FROM snapshots WHERE key='repo'").first();
   let snapshot = null; if (sn) { try { snapshot = { ...JSON.parse(sn.body), received: sn.at }; } catch (e) { snapshot = { error: "stored snapshot is not valid JSON" }; } }
-  let analytics = null; try { analytics = await report(env); } catch (e) { analytics = { error: String(e.message || e) }; }
+  let analytics = null; try { analytics = await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }); } catch (e) { analytics = { error: String(e.message || e) }; }
   return { version: VERSION, snapshot, analytics, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
 }
 
@@ -260,7 +260,7 @@ export async function tick(env, cron) {
   try { await selfcheck(env, HOSTS[0]); } catch (e) { console.error("selfcheck", e && e.message); }
   const res = await runProbes(env); const day = new Date().toISOString().slice(0, 10);
   for (const r of res.filter(x => !x.ok && x.name !== "github")) await notify(env, "fail:" + r.name + ":" + day, "Ultrastable check failing: " + r.name, r.name + " failed: " + r.detail + "\nOpen https://ultrastable.io/owner");
-  try { const a = await report(env); for (const m of a.metrics.filter(x => x.hit)) await notify(env, "metric:" + m.name + ":" + day, "Ultrastable metric breach: " + m.name, m.name + " = " + m.value + " (" + m.why + ")\n" + m.label + "\nOpen https://ultrastable.io/owner"); } catch (e) { console.error("metrics", e && e.message); }
+  try { const a = await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }); for (const m of a.metrics.filter(x => x.hit)) await notify(env, "metric:" + m.name + ":" + day, "Ultrastable metric breach: " + m.name, m.name + " = " + m.value + " (" + m.why + ")\n" + m.label + "\nOpen https://ultrastable.io/owner"); } catch (e) { console.error("metrics", e && e.message); }
   const fresh = (await env.DB.prepare("SELECT id,title FROM tasks WHERE kind='owner' AND state='open' AND id NOT IN (SELECT substr(key,6) FROM notifications WHERE key LIKE 'task:%') ORDER BY priority LIMIT 50").all()).results;
   if (fresh.length) {
     const sent = await notify(env, "task:" + fresh[0].id, fresh.length + " new item(s) in your Ultrastable queue", fresh.map(t => "- " + t.title).join("\n") + "\nOpen https://ultrastable.io/owner and tap Done, Snooze or Hand to fleet.");

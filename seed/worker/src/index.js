@@ -14,6 +14,7 @@ import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
+import { governedAI, budgetView } from './budget.js';  // SPEND-GOVERNOR-1: every model call goes through the owner's monthly budget
 import { handleAuth } from './auth/routes.js';
 import { getToken, refreshDue } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
@@ -25,13 +26,15 @@ import { loopHealth } from './critloop.js';
 import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
 import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
 import { nowScreen, nextScreen, needsScreen, questionScreen, doneScreen } from './ui.js';
-import { handleAnalytics, selfcheck, report } from '../../analytics/analytics.js';
+import { handleAnalytics, selfcheck, report, REPORT_CACHE_MINUTES } from '../../analytics/analytics.js';
 import { createAgenticHandler, DEFAULT_IDENTITY } from './agentic/handler.js';
 import { d1Store } from './agentic/adapters/d1-store.js';
 import { staticRegistries } from './agentic/adapters/memory.js';
 import { bearerAuth } from './agentic/adapters/bearer-auth.js';
 import { consoleTelemetry } from './agentic/adapters/console-telemetry.js';
 
+// SPEND-GOVERNOR-1: one metered AI handle per invocation. When the governor itself fails, the tick runs with no model (fail closed on cost).
+const aiFor = (env) => governedAI(env.DB, env.AI || null, { config, env }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
 export default {
@@ -42,7 +45,9 @@ export default {
     const cut = await decide(env.DB, env, { githubOk }).catch(e => ({ run: (env.SLOT || 'primary') !== 'standby', notes: ['cutover check failed: ' + String(e && e.message).slice(0, 160)] }));
     await beat(env.DB, 'cutover', async () => ({ run: cut.run, slot: cut.slot, epoch: cut.epoch, promoted: Boolean(cut.promoted), notes: cut.notes })).catch(e => console.error('cutover beat', e && e.message));
     if (!cut.run) { if (env.SLOT === 'standby' || cut.slot !== 'primary') ctx.waitUntil(refreshDue(env.DB, env).catch(() => null)); return; }
-    ctx.waitUntil(runTick(env.DB, { config, env: presence(env), ai: env.AI || null }));  // DOER-1: the AI binding reaches the in-tick doer
+    const gov = await aiFor(env);
+    if (gov.state) console.log('budget', JSON.stringify({ mode: gov.state.mode, why: gov.state.why, neurons_today: Math.round(gov.state.usage.ai_neurons_today), cap: gov.state.allowance.ai_neurons_day }));
+    ctx.waitUntil(runTick(env.DB, { config, env: presence(env), ai: gov.ai, budget: gov.state }));  // DOER-1: the AI binding reaches the in-tick doer
     // LOOPPROOF-1: every loop below runs inside beat(): a row before it starts, its result or error after. One loop failing never stops the next,
     // and the tick's pulse step counts the slots each one ran in. The names are pulse.js LANE_LOOPS.
     ctx.waitUntil((async () => {
@@ -53,7 +58,7 @@ export default {
       await b('credentials', () => refreshDue(env.DB, env));  // AUTH-1: refresh runs first so nothing lapses
       const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));  // one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback)
       const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
-      await b('executor', async () => { const r = await runExecutor({ ...env, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
+      await b('executor', async () => { const r = await runExecutor({ ...env, AI: gov.ai || undefined, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
       await b('gate', () => runGate({ token, repos }));  // ZERO-MINUTES-1
       await b('lane', () => runLane({ token, repos, issueWorkflow: null, zeroActions: env.ZERO_ACTIONS === '1', evidenceRepo: env.EVIDENCE_REPO || repos[0] || null }));
       const site = env.SITE && env.INTERNAL_DEPLOY_KEY ? env.SITE : null;  // HANDOFF-1: the server owns every handed-off PR after it opens: merge noticed, deploy, live probe, close or roll back
@@ -77,7 +82,7 @@ export default {
       if (!(await verifySignature(env.GITHUB_WEBHOOK_SECRET, body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
       const hit = routeEvent(request.headers.get('x-github-event'), JSON.parse(body || '{}'), EVENT_TABLE);
       if (!hit) return Response.json({ routed: false }, { status: 202 });
-      const work = runTick(env.DB, { config, env: presence(env), wake: hit.role, ai: env.AI || null });
+      const work = aiFor(env).then(g => runTick(env.DB, { config, env: presence(env), wake: hit.role, ai: g.ai, budget: g.state }));
       if (ctx && ctx.waitUntil) ctx.waitUntil(work); else await work;
       return Response.json({ routed: true, ...hit }, { status: 202 });
     }
@@ -86,18 +91,19 @@ export default {
       store: d1Store(env.DB), registries: staticRegistries(config.registries || {}), auth: bearerAuth, telemetry: consoleTelemetry,
       identity: { ...DEFAULT_IDENTITY, slug: config.org_slug, name: config.org_slug },
     });
+    if (url.pathname === '/api/budget') return Response.json(await budgetView(env.DB, { config, env }), { headers: { 'cache-control': 'no-store' } });  // SPEND-GOVERNOR-1: the knob, what it buys, what was used, the mode
     const ag = await agentic(request, env);
     if (ag) return ag;
     const an = await handleAnalytics(request, env, { hosts: hosts(env) });
     if (an) return an;
     if (url.pathname === '/api/analytics') {
       if (!env.ANALYTICS_TOKEN || request.headers.get('authorization') !== 'Bearer ' + env.ANALYTICS_TOKEN) return Response.json({ error: 'unauthorized' }, { status: 401 });
-      return Response.json(await report(env));
+      return Response.json(await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }));
     }
     if (url.pathname === '/agents/probe') { const r = await probeAgents(env); return Response.json(r, { status: r.ok ? 200 : 503 }); }
     if (url.pathname === '/pulse/watch' && request.method === 'POST' && (await readState(env.DB, env).catch(() => ({ slot: env.SLOT || 'primary' }))).slot !== 'primary') return Response.json({ ok: true, skipped: 'not the primary account (ACCOUNT-SPLIT-2)' }, { headers: { 'cache-control': 'no-store' } });
     if (url.pathname === '/pulse/watch' && request.method === 'POST') {  // LOOPPROOF-1: the second producer of the heartbeat. Safe to call by anyone: it runs a tick only when the newest one is older than two intervals
-      const r = await watch(env.DB, () => runTick(env.DB, { config, env: presence(env), ai: env.AI || null }), { config }).catch(e => ({ ok: false, error: String(e && e.message).slice(0, 200) }));
+      const r = await watch(env.DB, async () => { const g = await aiFor(env); return runTick(env.DB, { config, env: presence(env), ai: g.ai, budget: g.state }); }, { config }).catch(e => ({ ok: false, error: String(e && e.message).slice(0, 200) }));
       return Response.json(r, { status: r.ok ? 200 : 503, headers: { 'cache-control': 'no-store' } });
     }
     if (url.pathname === '/health') {
