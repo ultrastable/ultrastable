@@ -1,0 +1,13 @@
+{
+ "_doc": "Shrink-only list of ledger decisions that had no code consumer when CODE-ONLY-ORDER landed (2026-11-16). `standingorder --file-items` files one work item per entry; a new entry fails CI.",
+ "rows": [
+  "decision-2026-11-13-auto-improve-1-quniverse-automation-parity-is-a-standing-que",
+  "decision-2026-11-13-front-door-2-idea-consumer-deploys-a-worker-per-idea-archive",
+  "decision-2026-11-15-auto-ship-clean-1-merge-and-deploy-every-change-automaticall",
+  "decision-2026-11-15-drain-all-1-complete-all-work-drain-all-issues-merge-all-prs",
+  "decision-2026-11-15-drain-all-1-widened-0-open-issues-and-0-open-prs-fleetwide-c",
+  "decision-2026-11-15-drain-zero-1-target-0-open-issues-and-0-open-prs-fleetwide",
+  "decision-2026-11-15-no-patent-1-public-copy-cleanup-docs-site-roadmap",
+  "decision-2026-11-15-no-patent-1-wording-sweep-business-brand-agents-outreach"
+ ]
+}
