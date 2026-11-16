@@ -1412,6 +1412,14 @@
    "body": "The Ultrastable account hit the free D1 daily read cap on 2026-11-16. The owner dashboard now serves needs-you, tenants and paid options from bundled JSON and degrades with a banner. Paid upgrades are listed as owner decisions with cost; the system never upgrades a plan.",
    "probe": "grep:dashboard/worker.js::staticPanels",
    "session": "session_0156nqDvMAbVMSqHGLmTNKiK"
+  },
+  {
+   "id": "decision-2026-11-16-code-only-order-decisions-live-in-code-never-only-in-a-threa",
+   "kind": "decision",
+   "date": "2026-11-16",
+   "title": "CODE-ONLY-ORDER: decisions live in code, never only in a thread",
+   "body": "Rowan 2026-11-16: threads are temporary; every decision and standing rule is code the system consumes (seed, agent instructions, doctrine, policy, checks, loops). Agents decide, deploy and verify; they never present decisions to the owner. standingorder --check fails a ledger decision with no code consumer or a report that hands a decision to the owner, and files Q-ORDER items; tenants inherit via seed/.",
+   "probe": "grep:foundation/standingorder.py::def consumerless"
   }
  ]
 }
