@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-16T09:37:02Z",
- "commit": "03184dc",
+ "generated": "2026-11-16T09:41:38Z",
+ "commit": "59e367d",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 85,
@@ -18,15 +18,15 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 170,
+  "backlog_open": 164,
   "backlog_items": 226
  },
  "throughput": {
   "queue": {
    "items": 226,
    "by_status": {
-    "closed": 53,
-    "open": 170,
+    "closed": 59,
+    "open": 164,
     "done": 3
    },
    "takeable_now": 1
@@ -81,9 +81,9 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "": 1,
-    "cancelled": 17,
-    "success": 12
+    "": 2,
+    "success": 11,
+    "cancelled": 17
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -121,7 +121,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 290.7,
+   "age_s": 148.6,
    "status": "fresh",
    "missed": 0
   },
@@ -145,16 +145,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 400.7,
+   "age_s": 179.6,
    "status": "fresh",
-   "missed": 0,
-   "lag_s": 22.0
+   "missed": 0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 246160.7,
+   "age_s": 246446.6,
    "status": "stale",
    "missed": 2
   }
@@ -208,7 +207,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-16T09:36:33Z",
+  "generated": "2026-11-16T09:41:12Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -253,7 +252,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-16T09:36:33Z",
+    "started": "2026-11-16T09:41:12Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -316,11 +315,11 @@
  },
  "growth": {
   "mix": {
-   "growth": 2,
-   "fix": 2,
-   "maintenance": 16,
-   "total": 20,
-   "growth_share": 0.1,
+   "growth": 1,
+   "fix": 1,
+   "maintenance": 12,
+   "total": 14,
+   "growth_share": 0.071,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -370,7 +369,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 334.7,
+   "last_beat_age_s": 181.6,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -381,7 +380,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 74844.7,
+   "last_beat_age_s": 75119.6,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -392,7 +391,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 463.7,
+   "last_beat_age_s": 738.6,
    "expected_interval_s": 86400,
    "beats_24h": 26,
    "expected_24h": 1.0,
@@ -403,7 +402,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 307920.7,
+   "last_beat_age_s": 308195.6,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2123,6 +2122,69 @@
  "changes": {
   "commits": [
    {
+    "sha": "59e367d",
+    "at": "2026-11-16T09:39:45+00:00",
+    "author": "Claude",
+    "subject": "Merge remote-tracking branch 'origin/claude/lesson-c' into claude/lessons-abc",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/59e367d9c71cb3bdb7c9e971f3f4f09c3c1d2dfc"
+   },
+   {
+    "sha": "ffff3ba",
+    "at": "2026-11-16T09:39:45+00:00",
+    "author": "Claude",
+    "subject": "Merge remote-tracking branch 'origin/claude/lesson-b' into claude/lessons-abc",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/ffff3ba7c075b2c3d242370d7474a88b5b49351c"
+   },
+   {
+    "sha": "81ef896",
+    "at": "2026-11-16T09:39:45+00:00",
+    "author": "Claude",
+    "subject": "Merge remote-tracking branch 'origin/claude/lesson-a' into claude/lessons-abc",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/81ef896d83a11de40007cd3526e4b42b3e85b983"
+   },
+   {
+    "sha": "af4b6ea",
+    "at": "2026-11-16T09:37:58+00:00",
+    "author": "Claude",
+    "subject": "Q-LESSON-DEPLOY-VERSION + Q-LESSON-GITHUB-BUDGET: version-proven deploys, migration drift, per-tick GitHub budget",
+    "pr": null,
+    "item": "Q-LESSON-DEPLOY-VERSION",
+    "url": "https://github.com/ultrastable/ultrastable/commit/af4b6eaab087827537e29b903d885c7146bb77f3"
+   },
+   {
+    "sha": "97f9afe",
+    "at": "2026-11-16T09:37:58+00:00",
+    "author": "Claude",
+    "subject": "Q-LESSON-PATCH-GATE, Q-LESSON-SILENT-CATCH: model-edit gate and silent-catch lint",
+    "pr": null,
+    "item": "Q-LESSON-PATCH-GATE",
+    "url": "https://github.com/ultrastable/ultrastable/commit/97f9afe1e01a8d1bdff9c53b426939169996b078"
+   },
+   {
+    "sha": "3213180",
+    "at": "2026-11-16T10:37:55+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Q-LESSON-COST-SAMPLE-ACT + Q-LESSON-CRED-SCOPE: a D1 cost breach acts; scopes are an allowlist; auth paths are canonical (#446)",
+    "pr": 446,
+    "item": "Q-LESSON-COST-SAMPLE-ACT",
+    "url": "https://github.com/ultrastable/ultrastable/commit/32131805c678cd648edcb641b0a2af1a6b18f0fb"
+   },
+   {
+    "sha": "507354c",
+    "at": "2026-11-16T09:37:55+00:00",
+    "author": "Claude",
+    "subject": "Q-LESSON-VACUOUS-CLOSE, Q-LESSON-METRIC-FRESH: no close without a recorded failure and two passes; stale metrics file a liveness breach",
+    "pr": null,
+    "item": "Q-LESSON-VACUOUS-CLOSE",
+    "url": "https://github.com/ultrastable/ultrastable/commit/507354c13c6f03545140f2a985f8a8a2314012c6"
+   },
+   {
     "sha": "03184dc",
     "at": "2026-11-16T10:29:09+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2211,96 +2273,6 @@
     "pr": 436,
     "item": "ACCOUNT-SPLIT-2",
     "url": "https://github.com/ultrastable/ultrastable/commit/ee54c1d99ec40187481f09afa20d86a6478e02ac"
-   },
-   {
-    "sha": "f8f367e",
-    "at": "2026-11-15T22:10:19+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "LOOPPROOF-1 follow-up: declare the watchdog's cadence; dashboard cron as the fast producer (#428)",
-    "pr": 428,
-    "item": "LOOPPROOF-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/f8f367e2df42d53b7a8fb4ffdbdcb1b8466e3cfc"
-   },
-   {
-    "sha": "2204e10",
-    "at": "2026-11-15T22:06:21+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "LANE-RED-1: the lane holds a PR whose checks ran and failed; native executor refuses narration-only changes (#434)",
-    "pr": 434,
-    "item": "LANE-RED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/2204e10021b806de5dc4d729aef6c0586a2eed3a"
-   },
-   {
-    "sha": "7ceaca6",
-    "at": "2026-11-15T20:57:38+00:00",
-    "author": "ultrastable-lane",
-    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1)",
-    "pr": null,
-    "item": "SERVER-OWNS-LOOPS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/7ceaca619929972637021b45da35f4b7afed125d"
-   },
-   {
-    "sha": "6d386ab",
-    "at": "2026-11-15T20:56:21+00:00",
-    "author": "ultrastable-ops",
-    "subject": "deploy-workers: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/6d386ab1d124ab75d9b7041308442110f8982485"
-   },
-   {
-    "sha": "4000c1b",
-    "at": "2026-11-15T21:56:05+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "DEPLOY-OIDC-1: deploy the ultrastable account from Actions via OIDC; never upload to the retired account (#435)",
-    "pr": 435,
-    "item": "DEPLOY-OIDC-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/4000c1b95ea023d23909217d7dde751e4ef731bf"
-   },
-   {
-    "sha": "5632c5f",
-    "at": "2026-11-15T20:46:36+00:00",
-    "author": "ultrastable-ops",
-    "subject": "deploy-workers: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/5632c5f9978a0162a7cb6e6c5a862ec665562d30"
-   },
-   {
-    "sha": "c74f9e5",
-    "at": "2026-11-15T21:45:52+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "ACCOUNT-SPLIT-2: two-account controller; the ultrastable-account tick promotes itself (#432)",
-    "pr": 432,
-    "item": "ACCOUNT-SPLIT-2",
-    "url": "https://github.com/ultrastable/ultrastable/commit/c74f9e53d483b7a193df05330501c4d7914411c5"
-   },
-   {
-    "sha": "1ef551c",
-    "at": "2026-11-15T20:41:10+00:00",
-    "author": "ultrastable-96edaa[bot]",
-    "subject": "ROADMAP-AGENT-AGENT-SCOREBOARD: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attri (#433)",
-    "pr": 433,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/1ef551c8e61b87a7058745a03fa2deea5f27e61b"
-   },
-   {
-    "sha": "6228a19",
-    "at": "2026-11-15T20:31:11+00:00",
-    "author": "ultrastable-96edaa[bot]",
-    "subject": "ROADMAP-AGENT-A2A-V1: QNFO.REACH #A2A-V1: A2A v1.0 agent card and task endpoint (#431)",
-    "pr": 431,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/6228a190fa786ced7d6fdb5a842c96b20af79744"
-   },
-   {
-    "sha": "bb152e2",
-    "at": "2026-11-15T20:24:33+00:00",
-    "author": "ultrastable-ops",
-    "subject": "deploy-workers: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/bb152e25ee7c7a0b7e033aeec303d619ce097f3a"
    }
   ],
   "pull_requests": []

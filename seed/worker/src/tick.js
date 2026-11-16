@@ -350,7 +350,7 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
   if (lean) {
     const b = ctx.costBreach.breaches;
     ctx.notes.push(`cost breach: ${b.map(x => `${x.target} read ${x.rows_read_1h} rows/h > ${x.max_rows_read_per_hour}`).join(', ')}; skipped non-essential steps (${STEP_ORDER.filter(n => !COST_ESSENTIAL_STEPS.includes(n)).join(', ')})`);
-    try { await run(db, `INSERT INTO org (key, value) VALUES ('cost_breach', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, JSON.stringify({ at: startedIso, until: iso(new Date(now + 3600e3)), breaches: b })); } catch { /* the note in the report still shows it */ }
+    try { await run(db, `INSERT INTO org (key, value) VALUES ('cost_breach', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, JSON.stringify({ at: startedIso, until: iso(new Date(now + 3600e3)), breaches: b })); } catch (e) { ctx.errors.push(`cost_breach record: ${String(e && e.message).slice(0, 120)}`); }
   }
   for (const name of STEP_ORDER) {
     if (lean && !COST_ESSENTIAL_STEPS.includes(name)) { completed++; continue; }
