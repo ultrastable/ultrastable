@@ -105,7 +105,8 @@
      "secrets_on_target": "tick: CREDENTIAL_KEY (new, random), INTERNAL_DEPLOY_KEY, GITHUB_REPOS; site: INTERNAL_DEPLOY_KEY, CF_ACCOUNT_ID. Generated inside Cloudflare, never printed",
      "probe": "GET https://ultrastable-tick.ultrastable.workers.dev/health returns ok true; GET https://ultrastable-site.ultrastable.workers.dev/api/v1/status returns heartbeat"
     }
-   }
+   },
+   "interim_cadence": "2026-11-16 08:5xZ: ultrastable-dashboard cron on the target changed from */10 to hourly at :07 (the 13:00 digest trigger kept; the site's hourly cron still produces the heartbeat) until READ-BUDGET-1 is deployed there; revert: PUT /workers/scripts/ultrastable-dashboard/schedules [\"0 13 * * *\", \"*/10 * * * *\"]"
   }
  },
  "blockers": [
