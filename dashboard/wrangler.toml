@@ -13,7 +13,8 @@ routes = [
 ]
 
 [triggers]
-crons = ["*/10 * * * *"]
+# READ-BUDGET-1 (2026-11-16): hourly, not every 10 minutes (free-plan D1 reads); the daily digest has its own 13:00 trigger.
+crons = ["0 13 * * *", "7 * * * *"]
 
 [[d1_databases]]
 binding = "DB"

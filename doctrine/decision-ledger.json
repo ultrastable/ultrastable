@@ -1341,6 +1341,23 @@
    "title": "Ultrastable budgets only its own Cloudflare account",
    "body": "The cost sampler, the 7-day cost probe and doctrine/cost.json name only account 81e3a4efb4eb66e613529b87682911bb with free-plan limits. Owner directive 2026-11-16: the Ultrastable code base shall not overlap with the Quniverse.",
    "probe": "grep:instances/ultrastable/cost-budgets.json::81e3a4efb4eb66e613529b87682911bb"
+  },
+  {
+   "id": "lesson-2026-11-16-quniverse-lessons-held-as-checks-cron-count-cron-frequency-n",
+   "kind": "lesson",
+   "date": "2026-11-16",
+   "title": "Quniverse lessons held as checks: cron count, cron frequency, no D1 triggers",
+   "body": "QNFO ran 37 workers on 2-to-30-minute crons and one qnfo-audit table carried 67 AFTER INSERT triggers (one insert read ~860k rows). test/plan-limits.test.mjs (in checks) fails when live crons exceed the free plan's 5 triggers, any cron fires more often than every 10 minutes, the dashboard config drifts from the topology, or a schema declares a D1 trigger.",
+   "probe": "grep:test/plan-limits.test.mjs::PLAN-LIMITS-1"
+  },
+  {
+   "id": "decision-2026-11-16-the-owner-s-monthly-budget-is-a-hard-ceiling-on-model-calls",
+   "kind": "decision",
+   "date": "2026-11-16",
+   "title": "The owner's monthly budget is a hard ceiling on model calls",
+   "body": "SPEND-GOVERNOR-1: budget.usd_per_month in the instance manifest, or the BUDGET_USD_PER_MONTH variable, is the one spending decision the owner makes. seed/worker/src/budget.js turns it into a daily Workers AI allowance from published prices with an 80% margin, meters every call in budget_ledger, goes lean at 70% of the day (one model call per tick) and frozen at 100% (no model handle; a frozen budget counts as a breached spend cap, so only a cost cut is originated). Measured by seed/worker/test/budget.test.js: 10 tests, 0 failures. GET /api/budget reports the knob, the allowance, the use and the mode.",
+   "probe": "grep:seed/worker/src/budget.js::export async function governedAI",
+   "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
   }
  ]
 }

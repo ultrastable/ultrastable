@@ -197,7 +197,7 @@ export async function tickConfigSource(read) {
   const j = async (p) => JSON.parse(await read(p));
   const pol = await j('seed/autonomy/policy.json'), fm = await j('seed/autonomy/failure-modes.json'), ifm = await j('instances/ultrastable/failure-modes.json');
   fm.modes = [...fm.modes, ...ifm.modes];
-  const cfg = { org_slug: 'ultrastable', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy: { trust: pol.trust, ladder: pol.ladder, surfaces: pol.surfaces }, criticality: await j('seed/autonomy/criticality.json'), failure_modes: fm, cost_budgets: (await j('instances/ultrastable/cost-budgets.json')).budgets };
+  const cfg = { org_slug: 'ultrastable', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy: { trust: pol.trust, ladder: pol.ladder, surfaces: pol.surfaces }, criticality: await j('seed/autonomy/criticality.json'), failure_modes: fm, cost_budgets: (await j('instances/ultrastable/cost-budgets.json')).budgets, budget: await j('instances/ultrastable/instance.json').then(m => m.budget || {}, () => ({})) };  // SPEND-GOVERNOR-1: no manifest means budget 0, the free-tier default
   return '// Generated on the server path (HANDOFF-1) from seed/autonomy at the deploy commit. Do not edit.\nexport default ' + JSON.stringify(cfg) + ';\n';
 }
 // generated: optional overrides for build-time paths not in git, mapped to their source text.

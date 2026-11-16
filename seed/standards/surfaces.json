@@ -351,6 +351,20 @@
    "discoverable": false,
    "description": "The second producer of the heartbeat (LOOPPROOF-1): leaves a watchdog beat and runs a tick only when the newest tick is older than two intervals.",
    "reason": "machine-to-machine watchdog call from the site Worker's service binding; nothing for an agent to discover"
+  },
+  {
+   "id": "budget",
+   "path": "/api/budget",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "public",
+   "standards": [
+    "openapi"
+   ],
+   "discoverable": true,
+   "description": "Spend governor (SPEND-GOVERNOR-1): the owner's monthly budget (usd_per_month), the daily Workers AI allowance it buys, today's metered use, and the mode (normal, lean, frozen) with its reason."
   }
  ]
 }

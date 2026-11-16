@@ -152,7 +152,10 @@
           "CF_ACCOUNT_ID"
         ],
         "vars": {}
-      }
+      },
+      "crons": [
+        "17 * * * *"
+      ]
     },
     {
       "id": "ultrastable-dashboard",
@@ -162,7 +165,7 @@
       "compatibility_date": "2026-11-12",
       "crons": [
         "0 13 * * *",
-        "*/10 * * * *"
+        "7 * * * *"
       ],
       "public": false,
       "bindings": {

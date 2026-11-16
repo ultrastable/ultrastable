@@ -73,7 +73,9 @@
     "ultrastable-site": {
       "main": "site/worker.js",
       "role": "public site, read-only live record, agent surfaces (/mcp, discovery documents), control-plane API /api/v1 and /ops dashboard (reads ORG live)",
-      "crons": [],
+      "crons": [
+        "17 * * * *"
+      ],
       "bindings": {
         "d1": {
           "DB": "ops",
@@ -96,7 +98,7 @@
       "role": "owner dashboard: e-mailed-code login, task queue, audit log, and a plain-English console agent (read-only until a fresh code; changes go through the audited command path); reached only through the site's OWNER service binding",
       "crons": [
         "0 13 * * *",
-        "*/10 * * * *"
+        "7 * * * *"
       ],
       "bindings": {
         "d1": {

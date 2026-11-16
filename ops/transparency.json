@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-16T08:21:44Z",
- "commit": "65d0de7",
+ "generated": "2026-11-16T08:48:06Z",
+ "commit": "f1855dd",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 85,
@@ -120,7 +120,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 39696.3,
+   "age_s": 1340.0,
    "status": "fresh",
    "missed": 0
   },
@@ -144,16 +144,15 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 39782.3,
-   "status": "fresh",
-   "missed": 0,
-   "lag_s": 24.0
+   "age_s": 1528.0,
+   "status": "stale",
+   "missed": 1
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 241653.3,
+   "age_s": 243235.0,
    "status": "stale",
    "missed": 2
   }
@@ -207,13 +206,13 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-16T08:21:19Z",
+  "generated": "2026-11-16T08:47:40Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1339.5,
+    "expected_today": 1339.6,
     "value": null,
     "behind": null,
     "progress": null
@@ -231,7 +230,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 845.4,
+    "expected_today": 845.5,
     "value": null,
     "behind": null,
     "progress": null
@@ -252,7 +251,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-16T08:21:19Z",
+    "started": "2026-11-16T08:47:40Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -302,8 +301,8 @@
    },
    {
     "id": "deploy",
-    "status": "fresh",
-    "missed": 0
+    "status": "stale",
+    "missed": 1
    },
    {
     "id": "publish",
@@ -315,11 +314,11 @@
  },
  "growth": {
   "mix": {
-   "growth": 0,
+   "growth": 2,
    "fix": 0,
-   "maintenance": 1,
-   "total": 1,
-   "growth_share": 0.0,
+   "maintenance": 3,
+   "total": 5,
+   "growth_share": 0.4,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -369,18 +368,18 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 39729.3,
+   "last_beat_age_s": 1372.3,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
    "median_jitter_s": null,
-   "status": "late"
+   "status": "ticking"
   },
   {
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 70326.3,
+   "last_beat_age_s": 71907.3,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -391,7 +390,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 39836.3,
+   "last_beat_age_s": 41417.3,
    "expected_interval_s": 86400,
    "beats_24h": 20,
    "expected_24h": 1.0,
@@ -402,7 +401,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 303402.3,
+   "last_beat_age_s": 304983.3,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2122,6 +2121,24 @@
  "changes": {
   "commits": [
    {
+    "sha": "f1855dd",
+    "at": "2026-11-16T08:24:51+00:00",
+    "author": "Claude",
+    "subject": "READ-BUDGET-1: record the interim hourly dashboard cadence on the target account",
+    "pr": null,
+    "item": "READ-BUDGET-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f1855dd5c4cd2e291e7583ab1be179ddbf95e90f"
+   },
+   {
+    "sha": "524dc24",
+    "at": "2026-11-16T08:21:58+00:00",
+    "author": "Claude",
+    "subject": "READ-BUDGET-1: fit Ultrastable inside its own free-plan account; budget only that account",
+    "pr": null,
+    "item": "READ-BUDGET-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/524dc242a732bfdcc5da17bbcc4c0687d37add35"
+   },
+   {
     "sha": "65d0de7",
     "at": "2026-11-15T22:17:38+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2129,6 +2146,24 @@
     "pr": 438,
     "item": "BOOTSTRAP-AUDIT-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/65d0de7c8bfc8efd2e261d639028887fc97e15ae"
+   },
+   {
+    "sha": "f0669a7",
+    "at": "2026-11-15T22:14:45+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PUBLIC-MINUTES-1: the builder's daily cap follows repository visibility (#437)",
+    "pr": 437,
+    "item": "PUBLIC-MINUTES-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f0669a7c00fd689f87a0c9f19761967612bbb456"
+   },
+   {
+    "sha": "ee54c1d",
+    "at": "2026-11-15T22:12:04+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "ACCOUNT-SPLIT-2: topology moves to the ultrastable account; remove the orphan spec (#436)",
+    "pr": 436,
+    "item": "ACCOUNT-SPLIT-2",
+    "url": "https://github.com/ultrastable/ultrastable/commit/ee54c1d99ec40187481f09afa20d86a6478e02ac"
    }
   ],
   "pull_requests": []
