@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // MIGRATION-DRIFT-1 (Q-LESSON-DEPLOY-VERSION): the fleet this org was split from re-applied migrations whose file was edited after it ran.
 // The ledger (_migrations: file, sha256) is the truth: a new file is applied; an applied file with the same sha256 is skipped; an applied file whose
 // sha256 changed is drift: it is reported and never run again (a change to an applied migration ships as a new file).

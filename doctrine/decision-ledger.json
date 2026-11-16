@@ -1394,6 +1394,15 @@
    "body": "HALT-1: measured 2026-11-16 on an earlier fleet: after its crons were removed, its merge lane merged a pull request, the merge redeployed 29 workers within 4 minutes, and a self-healing loop restored a cron. Ultrastable now has one halt: worker variable HALT=1 or ops/halt.json for the tick, dashboard and site crons and the tick's webhook and watch routes; repository variable HALT=1 for all 32 workflow jobs, lane and deploys included. test/plan-limits.test.mjs checks every job and cron entry; seed/worker/test/budget.test.js checks a halted tick makes no model call and touches only its beat.",
    "probe": "grep:seed/worker/src/budget.js::export function halted",
    "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
+  },
+  {
+   "id": "lesson-2026-11-16-six-fleet-lessons-enforced-in-code-vacuous-close-metric-fres",
+   "kind": "lesson",
+   "date": "2026-11-16",
+   "title": "Six fleet lessons enforced in code: vacuous close, metric freshness, model-edit gate, silent catch lint, version-proven deploys, per-tick GitHub budget",
+   "body": "Contracts close an item only after its probe was recorded failing and then passed twice in a row. A metric whose last good reading is older than two tick cadences files STALE-<id>. The worker gate rejects model edits to files over 60 KB or with unbalanced syntax. New silent catch blocks fail plan-limits against a shrink-only baseline. Handoff deploys are proven by min_version or a changed deployment id, with rollback on mismatch, and migration drift is reported and never re-run. GitHub calls share a 150-per-tick budget that stops on a 429 or Retry-After.",
+   "probe": "grep:seed/worker/src/lane.js:githubBudget",
+   "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
   }
  ]
 }

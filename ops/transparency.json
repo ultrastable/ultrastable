@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-16T09:41:38Z",
- "commit": "59e367d",
+ "generated": "2026-11-16T09:47:59Z",
+ "commit": "ca73dbf",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 85,
@@ -81,8 +81,8 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "": 2,
-    "success": 11,
+    "": 1,
+    "success": 12,
     "cancelled": 17
    },
    "prs_opened_unattended": 0,
@@ -121,7 +121,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 148.6,
+   "age_s": 536.1,
    "status": "fresh",
    "missed": 0
   },
@@ -145,7 +145,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 179.6,
+   "age_s": 567.1,
    "status": "fresh",
    "missed": 0
   },
@@ -153,7 +153,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 246446.6,
+   "age_s": 246834.1,
    "status": "stale",
    "missed": 2
   }
@@ -207,7 +207,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-16T09:41:12Z",
+  "generated": "2026-11-16T09:47:38Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -252,7 +252,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-16T09:41:12Z",
+    "started": "2026-11-16T09:47:38Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -317,9 +317,9 @@
   "mix": {
    "growth": 1,
    "fix": 1,
-   "maintenance": 12,
-   "total": 14,
-   "growth_share": 0.071,
+   "maintenance": 13,
+   "total": 15,
+   "growth_share": 0.067,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -369,7 +369,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 181.6,
+   "last_beat_age_s": 563.6,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -380,7 +380,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 75119.6,
+   "last_beat_age_s": 75501.6,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -391,7 +391,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 738.6,
+   "last_beat_age_s": 1120.6,
    "expected_interval_s": 86400,
    "beats_24h": 26,
    "expected_24h": 1.0,
@@ -402,7 +402,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 308195.6,
+   "last_beat_age_s": 308577.6,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2121,6 +2121,15 @@
  ],
  "changes": {
   "commits": [
+   {
+    "sha": "ca73dbf",
+    "at": "2026-11-16T09:42:00+00:00",
+    "author": "Claude",
+    "subject": "SILENT-CATCH: record the cost_breach write failure in tick errors",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/ca73dbf1a5d4d513a771fe8359b7eec03d0507ec"
+   },
    {
     "sha": "59e367d",
     "at": "2026-11-16T09:39:45+00:00",

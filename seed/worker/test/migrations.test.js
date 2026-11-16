@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // MIGRATION-DRIFT-1 (Q-LESSON-DEPLOY-VERSION): deploy/apply-d1-migrations.mjs applies a file once; an applied file whose sha256 changed is drift, never re-run.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
