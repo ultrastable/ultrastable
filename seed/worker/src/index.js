@@ -25,7 +25,7 @@ import { loopHealth } from './critloop.js';
 import { routeEvent, verifySignature, EVENT_TABLE } from './events.js';
 import { loadAnswers, saveAnswer, nextQuestion, QUESTIONS } from './interview.js';
 import { nowScreen, nextScreen, needsScreen, questionScreen, doneScreen } from './ui.js';
-import { handleAnalytics, selfcheck, report } from '../../analytics/analytics.js';
+import { handleAnalytics, selfcheck, report, REPORT_CACHE_MINUTES } from '../../analytics/analytics.js';
 import { createAgenticHandler, DEFAULT_IDENTITY } from './agentic/handler.js';
 import { d1Store } from './agentic/adapters/d1-store.js';
 import { staticRegistries } from './agentic/adapters/memory.js';
@@ -92,7 +92,7 @@ export default {
     if (an) return an;
     if (url.pathname === '/api/analytics') {
       if (!env.ANALYTICS_TOKEN || request.headers.get('authorization') !== 'Bearer ' + env.ANALYTICS_TOKEN) return Response.json({ error: 'unauthorized' }, { status: 401 });
-      return Response.json(await report(env));
+      return Response.json(await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }));
     }
     if (url.pathname === '/agents/probe') { const r = await probeAgents(env); return Response.json(r, { status: r.ok ? 200 : 503 }); }
     if (url.pathname === '/pulse/watch' && request.method === 'POST' && (await readState(env.DB, env).catch(() => ({ slot: env.SLOT || 'primary' }))).slot !== 'primary') return Response.json({ ok: true, skipped: 'not the primary account (ACCOUNT-SPLIT-2)' }, { headers: { 'cache-control': 'no-store' } });

@@ -1325,6 +1325,22 @@
    "body": "Audit of why builds waited on a prompt (2026-11-15): the doer parked code items as needs-code and nothing read them; the executor read one repo queue and reported idle; the tick copied a tier label into dispatch rows; two accounts were moved by hand with no controller; a new deployment starts without a GitHub App credential, so the Worker-native executor opens pull requests there only after install. Remedies in code: nativeexec.runDbQueue (D1 lane), cutover.js (one primary), deploy-oidc (no stored Cloudflare secret), scripts/needs_code_bridge.py wired into executor.yml (the Actions route on GitHub's built-in token turns needs-code items into docs/issues records the executor builds), and four generic failure modes in seed/autonomy/failure-modes.json (needs-code-undrained, executor-idle-with-queue, dispatch-model-label, primary-count) that file their own fix items on every deployment. Executor-owned and open: Q-GAP-fresh-account-bootstrap needs a real bootstrap.py --apply run recorded; the move of 2026-11-15 was a transfer. Session: session_0156nqDt4ontnhzSFvT4PTB8",
    "probe": "grep:scripts/needs_code_bridge.py::NEEDS-CODE-BRIDGE-1",
    "session": "session_0156nqDt4ontnhzSFvT4PTB8"
+  },
+  {
+   "id": "lesson-2026-11-16-quniverse-cost-runaway-budgets-that-never-stop-and-reads-tha",
+   "kind": "lesson",
+   "date": "2026-11-16",
+   "title": "Quniverse cost runaway: budgets that never stop, and reads that scale with calls",
+   "body": "Rowan, 2026-11-16: the Quniverse fleet was frozen because its Cloudflare bill (Workers AI and billions of D1 rows read a week) became unaffordable. Causes measured that day: 37 workers on 2-to-30-minute crons, a budget rule that only steered models and never stopped work (BUDGET-SOFT-ROUTE-1), and aggregate queries re-run on every tick and page load over growing tables (qnfo-audit 8.6 billion rows read in 7 days). Ultrastable applies it: its own account's free-plan limits are the budget, the sampler watches only Ultrastable's own databases, and analytics reads are bounded (analytics 0.2.0, migration 0016_read_indexes.sql).",
+   "probe": "grep:seed/analytics/analytics.js::READ-BUDGET-1"
+  },
+  {
+   "id": "decision-2026-11-16-ultrastable-budgets-only-its-own-cloudflare-account",
+   "kind": "decision",
+   "date": "2026-11-16",
+   "title": "Ultrastable budgets only its own Cloudflare account",
+   "body": "The cost sampler, the 7-day cost probe and doctrine/cost.json name only account 81e3a4efb4eb66e613529b87682911bb with free-plan limits. Owner directive 2026-11-16: the Ultrastable code base shall not overlap with the Quniverse.",
+   "probe": "grep:instances/ultrastable/cost-budgets.json::81e3a4efb4eb66e613529b87682911bb"
   }
  ]
 }

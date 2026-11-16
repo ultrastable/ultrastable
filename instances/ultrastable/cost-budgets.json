@@ -1,13 +1,21 @@
 {
-  "doc": "COSTGUARD-1: external D1 budgets the tick Worker samples hourly (worker/src/costsample.js). Each budget has a probed failure mode in failure-modes.json. QNFO lives on the quniverse Cloudflare account; the read-only analytics token is bound to the Worker as CF_ANALYTICS_TOKEN.",
+  "doc": "COSTGUARD-1: D1 budgets the tick Worker samples hourly (seed/worker/src/costsample.js). Ultrastable runs on its own Cloudflare account (81e3a4ef..., free plan: 5 million D1 rows read a day across the account, 10,000 Workers AI neurons a day). The hourly caps below add up to about 4.1 million rows a day, under the free allowance. READ-BUDGET-1 (2026-11-16): the account hit its daily read limit by 08:00 UTC that day; the quniverse database this file used to budget is not Ultrastable's and is no longer sampled (no overlap with the Quniverse).",
   "budgets": [
     {
-      "id": "qnfo-audit",
-      "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
-      "database_id": "35e2e573-92f3-46ac-83c6-22f6429fc5e5",
-      "database_name": "qnfo-audit",
-      "max_rows_read_per_hour": 15000000,
-      "note": "30d baseline 29.0B rows read (about 40M/hr); debounce trigger from QNFO/qnfo-workers PR 11618 applied 2026-11-13."
+      "id": "ultrastable-org",
+      "account_id": "81e3a4efb4eb66e613529b87682911bb",
+      "database_id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
+      "database_name": "ultrastable-org",
+      "max_rows_read_per_hour": 120000,
+      "note": "2026-11-15 read 1.72M rows in the day; READ-BUDGET-1 indexes (migration 0016) target under 1M."
+    },
+    {
+      "id": "ultrastable-ops",
+      "account_id": "81e3a4efb4eb66e613529b87682911bb",
+      "database_id": "5cd83b52-864a-4510-b062-fc0d9402d06c",
+      "database_name": "ultrastable-ops",
+      "max_rows_read_per_hour": 50000,
+      "note": "2026-11-16 read 4.33M rows by 08:00 UTC, almost all analytics scans of hits; analytics 0.2.0 bounds them."
     }
   ]
 }

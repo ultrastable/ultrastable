@@ -10,9 +10,9 @@ Every Actions job on ultrastable is refused with 'recent account payments have f
 An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact. If you do nothing: Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you.
 **[Open the ready-to-paste application kits (Y Combinator Winter 2027 late applications are open)](https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md)**
 
-## Let Claude reach the new Cloudflare account
-Your Cloudflare login is already a member of the ultrastable account (81e3a4ef...), but the connector was authorized for the quniverse account only; only you can grant it the second account. If you do nothing: The old account keeps running everything; nothing moves.
-**[Reconnect the Cloudflare connector and tick the ultrastable account](https://claude.ai/settings/connectors)**
+## Move the four ultrastable domains to the Ultrastable account
+ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is off on all four (expiry 2027-11-10). If you do nothing: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.
+**[Open the registrar domains (available from 2026-11-20)](https://dash.cloudflare.com/?to=/edb167b78c9fb901ea5bca3ce58ccc4b/registrar/domains)**
 
 ## Upload the org avatar and pin repos
 GitHub has no API for these. If you do nothing: Generated identicon, no pins.

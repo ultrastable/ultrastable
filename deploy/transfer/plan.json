@@ -89,13 +89,23 @@
   }
  },
  "progress": {
-  "at": "2026-11-15T20:35Z",
-  "stage": "2-copy done, 3-verify done; 4-cutover not started (crons still on the source)",
+  "at": "2026-11-16T08:40Z",
+  "stage": "4-cutover done for crons (tick */10, dashboard */10 and 13:00, site :17 run on the target; the source copies have none); public domains still served by the source (zones); ops D1 copy pending",
   "evidence": {
-   "code": "agents, dashboard, tick, site copied byte-for-byte from the source's live versions (deployed 2026-11-15T20:24Z) with bindings remapped by id_map; workers.dev on (*.ultrastable.workers.dev); no crons on the target",
-   "data": "org D1 copied table by table at 2026-11-15T20:33Z (items 321/321, dispatches 567/567, outcomes 381/381, tick_runs 785/785, roles 11/11, handoffs 46/46); credentials, credential_events, agent_keys and webhook_subscriptions deliberately not copied; ops D1 not yet copied; ledger table _copy_progress on the target",
-   "secrets_on_target": "tick: CREDENTIAL_KEY (new, random), INTERNAL_DEPLOY_KEY, GITHUB_REPOS; site: INTERNAL_DEPLOY_KEY, CF_ACCOUNT_ID. Generated inside Cloudflare, never printed",
-   "probe": "GET https://ultrastable-tick.ultrastable.workers.dev/health returns ok true; GET https://ultrastable-site.ultrastable.workers.dev/api/v1/status returns heartbeat"
+   "crons": "GET /workers/scripts/{name}/schedules on both accounts, 2026-11-16 08:20Z",
+   "traffic": "target: ultrastable-site 1,821 requests and ultrastable-tick 110 on 2026-11-16; source: ultrastable-site serves ultrastable.io/.app/.net custom domains",
+   "free_plan": "the target account is on the Workers free plan; D1 refused queries at 08:2xZ with code 7500 (daily row-read limit, 5 million). Reads that day: ultrastable-ops 4.33M (analytics scans of hits), ultrastable-org 1.23M. READ-BUDGET-1 (analytics 0.2.0, migration 0016_read_indexes.sql) bounds them",
+   "ops_d1": "not copied: the target refused reads for the rest of the day (free plan limit); retried after 00:00 UTC. Auth tables (otp, sessions, passkeys, passkey_challenges, oauth_codes, oauth_tokens) are copied as schema only",
+   "previous": {
+    "at": "2026-11-15T20:35Z",
+    "stage": "2-copy done, 3-verify done; 4-cutover not started (crons still on the source)",
+    "evidence": {
+     "code": "agents, dashboard, tick, site copied byte-for-byte from the source's live versions (deployed 2026-11-15T20:24Z) with bindings remapped by id_map; workers.dev on (*.ultrastable.workers.dev); no crons on the target",
+     "data": "org D1 copied table by table at 2026-11-15T20:33Z (items 321/321, dispatches 567/567, outcomes 381/381, tick_runs 785/785, roles 11/11, handoffs 46/46); credentials, credential_events, agent_keys and webhook_subscriptions deliberately not copied; ops D1 not yet copied; ledger table _copy_progress on the target",
+     "secrets_on_target": "tick: CREDENTIAL_KEY (new, random), INTERNAL_DEPLOY_KEY, GITHUB_REPOS; site: INTERNAL_DEPLOY_KEY, CF_ACCOUNT_ID. Generated inside Cloudflare, never printed",
+     "probe": "GET https://ultrastable-tick.ultrastable.workers.dev/health returns ok true; GET https://ultrastable-site.ultrastable.workers.dev/api/v1/status returns heartbeat"
+    }
+   }
   }
  },
  "blockers": [
@@ -113,8 +123,8 @@
   },
   {
    "id": "zones",
-   "what": "ultrastable.io/.app/.net/.org are zones of the old account; custom domains and send_email need them in the target",
-   "who": "owner (DNS and zone moves are human-gated)",
+   "what": "ultrastable.io/.app/.net/.org are Cloudflare Registrar domains on the old account (registered 2026-11-10, auto-renew off, expiry 2027-11-10). Cloudflare moves a Registrar domain between accounts only by a request from the source account's Manage Domain page, confirmed by the target account, once the registration is 10 days old (from 2026-11-20). All zone settings are lost in the move, so the DNS records and Workers custom domains are recreated on the target first",
+   "who": "owner: the two Cloudflare confirmations (needs-you item domains-move)",
    "probe": "GET /zones?account.id=<target> lists the four zones"
   },
   {
