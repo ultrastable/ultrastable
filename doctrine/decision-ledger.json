@@ -1376,6 +1376,15 @@
    "body": "From the earlier fleet's 638-entry failure-mode register (14 root-cause classes): the dashboard console agent, the site worker and the public /agents/probe route called Workers AI outside the governor; all now go through budgetEnv or the governed handle, with shares tick 0.6, dashboard 0.2, site 0.2 so separately metered workers stay within one allowance. ensureItem files at most 20 self-originated items a day (ORIGINATE-CAP-1). The doer rejects empty, truncated and repeated model replies before use (REPLY-GATE-1). Eight larger gaps are queue items Q-LESSON-*.",
    "probe": "grep:seed/worker/src/budget.js::export function budgetEnv",
    "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
+  },
+  {
+   "id": "lesson-2026-11-16-routes-that-read-d1-answer-503-with-a-code-at-the-free-plan-",
+   "kind": "lesson",
+   "date": "2026-11-16",
+   "title": "Routes that read D1 answer 503 with a code at the free-plan read limit",
+   "body": "D1-LIMIT-503: measured 2026-11-16, the tick's /health and /api/budget returned Cloudflare error 1101 while D1 was at its daily 5M rows-read limit. Both now return 503 with code d1_read_limit and Retry-After, the shape the site's /api/v1/status uses. Covered by seed/worker/test/budget.test.js: 204 tests pass.",
+   "probe": "grep:seed/worker/src/index.js::export const d1Unavailable",
+   "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
   }
  ]
 }

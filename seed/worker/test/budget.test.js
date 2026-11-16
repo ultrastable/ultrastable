@@ -147,3 +147,20 @@ test('every Workers AI call site in the workers goes through the governor', () =
   assert.match(read('dashboard/worker.js'), /async scheduled\(ev, env, ctx\) \{ env = budgetEnv\(env, SHARES\.dashboard\)/);
   assert.match(read('seed/worker/src/index.js'), /probeAgents\(\{ \.\.\.env, AI: \(await aiFor\(env\)\)\.ai \|\| undefined \}\)/);
 });
+
+test('D1-LIMIT-503: /health and /api/budget answer 503 with a code when D1 refuses every query', async () => {
+  const { writeFileSync, existsSync, rmSync } = await import('node:fs');
+  const cfg = new URL('../src/config.js', import.meta.url);
+  const made = !existsSync(cfg);
+  if (made) writeFileSync(cfg, 'export default ' + JSON.stringify({ org_slug: 'test', budget: { usd_per_month: 0 } }) + ';\n');
+  try {
+    const mod = await import('../src/index.js');
+    const refuse = () => { throw new Error("D1_ERROR: Your account has exceeded D1's free tier daily row read limit"); };
+    const DB = { prepare() { const o = { bind() { return o; }, first: async () => refuse(), all: async () => refuse(), run: async () => refuse() }; return o; } };
+    for (const p of ['/health', '/api/budget']) {
+      const r = await mod.default.fetch(new Request('https://x' + p), { DB, AI: fakeAI() }, { waitUntil() {} });
+      assert.equal(r.status, 503, p);
+      assert.equal((await r.json()).code, 'd1_read_limit', p);
+    }
+  } finally { if (made) rmSync(cfg); }
+});

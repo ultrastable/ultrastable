@@ -35,6 +35,13 @@ import { bearerAuth } from './agentic/adapters/bearer-auth.js';
 import { consoleTelemetry } from './agentic/adapters/console-telemetry.js';
 
 // SPEND-GOVERNOR-1: one metered AI handle per invocation. When the governor itself fails, the tick runs with no model (fail closed on cost).
+// D1-LIMIT-503 (2026-11-16): on the free plan D1 refuses every query once the day's read allowance is used. A route that reads D1 answers
+// 503 with a machine-readable code instead of throwing (error 1101), the same shape as the site's /api/v1/status.
+export const d1Unavailable = (e) => {
+  const msg = String(e && e.message || e);
+  const limit = /daily row read limit|exceeded D1|7500/i.test(msg);
+  return Response.json(limit ? { error: 'the daily database read allowance is used up; live data returns at 00:00 UTC', code: 'd1_read_limit' } : { error: 'database unavailable', code: 'd1_unavailable', detail: msg.slice(0, 160) }, { status: 503, headers: { 'cache-control': 'no-store', 'retry-after': '600' } });
+};
 const aiFor = (env) => governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
@@ -92,7 +99,7 @@ export default {
       store: d1Store(env.DB), registries: staticRegistries(config.registries || {}), auth: bearerAuth, telemetry: consoleTelemetry,
       identity: { ...DEFAULT_IDENTITY, slug: config.org_slug, name: config.org_slug },
     });
-    if (url.pathname === '/api/budget') return Response.json(await budgetView(env.DB, { config, env }), { headers: { 'cache-control': 'no-store' } });  // SPEND-GOVERNOR-1: the knob, what it buys, what was used, the mode
+    if (url.pathname === '/api/budget') { try { return Response.json(await budgetView(env.DB, { config, env }), { headers: { 'cache-control': 'no-store' } }); } catch (e) { return d1Unavailable(e); } }  // SPEND-GOVERNOR-1: the knob, what it buys, what was used, the mode
     const ag = await agentic(request, env);
     if (ag) return ag;
     const an = await handleAnalytics(request, env, { hosts: hosts(env) });
@@ -108,7 +115,7 @@ export default {
       return Response.json(r, { status: r.ok ? 200 : 503, headers: { 'cache-control': 'no-store' } });
     }
     if (url.pathname === '/health') {
-      const last = await lastTickForHealth(env.DB);
+      let last; try { last = await lastTickForHealth(env.DB); } catch (e) { return d1Unavailable(e); }
       const ok = Boolean(last && last.steps_completed === last.steps_total);
       const released = await claimsReleasedUnworked24h(env.DB, Date.now()).catch(() => null);  // workers#173 closing probe, target 0
       const cutover = await healthView(env.DB, env).catch(() => null);  // ACCOUNT-SPLIT-2: read by the peer account's tick every beat
