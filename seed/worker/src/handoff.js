@@ -9,11 +9,27 @@ const API = 'https://api.github.com';
 const MAX_ATTEMPTS = 3;
 const VERIFY_TRIES = 3;  // VERIFY-RETRY-1: a fresh deploy takes a moment to reach the edge; one early 404 must not roll production back
 
-async function gh(f, token, method, path, body) {
-  const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-handoff', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
-  const t = await r.text();
-  let json = null; try { json = t ? JSON.parse(t) : null; } catch { json = t; }
-  return { ok: r.ok, status: r.status, json };
+// One GitHub wrapper for the tick (lane.js), counted against the tick's shared budget (GITHUB-BUDGET-1). `ghb` is bound per run with that budget.
+import { gh as laneGh, githubBudget } from './lane.js';
+let ghb = null;
+const gh = (f, token, method, path, body) => laneGh(f, token, method, path, body, ghb, 'ultrastable-handoff');
+
+// DEPLOY-VERSION-1 (Q-LESSON-DEPLOY-VERSION): the fleet this org was split from had 36 failure modes from deploy drift (merges never deployed,
+// exact-string version probes). A deploy is verified by the version the worker reports after it, with min_version semantics, never string equality:
+// a dotted version (1.4.0) passes when reported >= min_version; an opaque id (a Cloudflare deployment id) passes when it differs from the one live
+// before the deploy, which proves the code really changed. No reported version fails: an unprovable deploy is not a deploy.
+export function compareVersions(a, b) {
+  const pa = String(a).replace(/^v/, '').split(/[.+-]/).map(Number), pb = String(b).replace(/^v/, '').split(/[.+-]/).map(Number);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) { const x = pa[i] || 0, y = pb[i] || 0; if (x !== y) return x > y ? 1 : -1; }
+  return 0;
+}
+const DOTTED = /^v?\d+(\.\d+)+$/;
+export function meetsVersion({ reported, before = null, min_version = null }) {
+  if (!reported) return { ok: false, detail: 'the worker reports no version after the deploy' };
+  if (min_version && DOTTED.test(String(min_version)) && DOTTED.test(String(reported)))
+    return compareVersions(reported, min_version) >= 0 ? { ok: true, detail: `version ${reported} >= min_version ${min_version}` } : { ok: false, detail: `version ${reported} < min_version ${min_version}` };
+  if (before && String(reported) === String(before)) return { ok: false, detail: `deployment still ${reported}: the code did not change` };
+  return { ok: true, detail: `deployment ${String(before || 'none').slice(0, 12)} -> ${String(reported).slice(0, 12)}` };
 }
 
 // "## Handoff" block: `key: value` lines until the next heading. Keys: item, agent, verify, deploy.
@@ -71,13 +87,28 @@ export async function registerHandoff(db, h) {
 }
 
 // deployer(workerId, sha, repo) -> { ok, version?, detail }; rollback(workerId) -> { ok, detail }. Injected so the tick can route it through the site worker.
-export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, deployer = null, rollback = null, probe = runProbe, maxPerTick = 5, now = Date.now() }) {
+// versionOf(workerId) -> { ok, version } reads the live version (DEPLOY-VERSION-1); without it the version check is recorded as skipped.
+// budget: the tick's shared GitHub budget (GITHUB-BUDGET-1); the run stops advancing once it is spent or rate limited.
+export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, deployer = null, rollback = null, versionOf = null, probe = runProbe, maxPerTick = 5, now = Date.now(), budget = githubBudget() }) {
   const out = { status: 'ok', registered: [], merged: [], deployed: [], verified: [], failed: [], rolled_back: [], retried: [], recovered: [], errors: [] };
   if (!token) return { ...out, status: 'no-token' };
   if (!db) return { ...out, status: 'no-db' };
+  ghb = budget;
+  try { return await advance(); } finally { ghb = null; out.github = budget.report(); if (budget.stopped && out.status === 'ok') out.status = 'stopped'; }
+  async function advance() {
+  // the existing rollback path: roll every target back, record it, return the item to ready
+  const rollBack = async (h, why, what = 'live probe') => {
+    await event(db, h.id, 'verify_failed', what === 'live probe' ? why : what + ': ' + why); out.failed.push(h.id);
+    const targets = String(h.deploy || '').split(',').map(s => s.trim()).filter(Boolean), rb = [];
+    if (rollback) for (const w of targets) rb.push(`${w}: ${(await rollback(w)).detail}`);
+    await event(db, h.id, 'rolled_back', rb.join('; ') || 'nothing deployed to roll back'); out.rolled_back.push(h.id);
+    await setItem(db, h.item, 'ready', null);
+    await say(f, token, h.repo, h.pr, 'the ' + what + ' failed (' + why + '). ' + (rb.length ? 'Rolled back: ' + rb.join('; ') + '. ' : '') + (h.item ? 'Item `' + h.item + '` is back to ready for the executor.' : ''));
+  };
   // 1. discover: open PRs that declare a handoff, and ones merged in the last day before a tick saw them open (a fast merge must not escape the loop)
   const heads = {};
   for (const repo of repos) {
+    if (budget.stopped) break;
     const prs = await gh(f, token, 'GET', `/repos/${repo}/pulls?state=open&per_page=50`);
     if (!prs.ok) { out.errors.push(`${repo} pulls ${prs.status}`); continue; }
     const closed = await gh(f, token, 'GET', `/repos/${repo}/pulls?state=closed&sort=updated&direction=desc&per_page=20`);
@@ -95,7 +126,7 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
   const rows = (await db.prepare("SELECT * FROM handoffs WHERE state IN ('open','conflict','merged','deployed','deploy_failed') ORDER BY updated_at LIMIT ?").bind(maxPerTick * 4).all()).results || [];
   let worked = 0;
   for (const h of rows) {
-    if (worked >= maxPerTick) break;
+    if (worked >= maxPerTick || budget.stopped) break;
     try {
       if (h.state === 'open' || h.state === 'conflict') {
         const d = await gh(f, token, 'GET', `/repos/${h.repo}/pulls/${h.pr}`);
@@ -113,8 +144,9 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
         else {
           // Deploy the base branch head, not the merge commit: an older merge must never roll production back past a newer one. The change is in it.
           if (!heads[h.repo]) { const r = await gh(f, token, 'GET', `/repos/${h.repo}`), b = r.ok ? r.json.default_branch : 'main', c = await gh(f, token, 'GET', `/repos/${h.repo}/commits/${b}`); heads[h.repo] = c.ok && c.json.sha ? c.json.sha : h.merge_sha; }
-          const at = heads[h.repo], res = [];
-          for (const w of targets) res.push({ w, ...(await deployer(w, at, h.repo)) });
+          if (budget.stopped) break;  // GITHUB-BUDGET-1: never deploy from a fallback sha because the head lookup was refused
+          const at = heads[h.repo], res = [], before = {};
+          for (const w of targets) { if (versionOf) before[w] = ((await versionOf(w)) || {}).version || null; res.push({ w, ...(await deployer(w, at, h.repo)) }); }
           const bad = res.filter(r => !r.ok);
           if (bad.length) {
             const n = h.attempts + 1; await db.prepare('UPDATE handoffs SET attempts = ? WHERE id = ?').bind(n, h.id).run();
@@ -124,6 +156,18 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
             out.failed.push(h.id); continue;
           }
           await event(db, h.id, 'deployed', res.map(r => `${r.w} ${r.version || ''}`.trim()).join(', ') + ' from ' + String(at).slice(0, 7)); out.deployed.push(h.id); h.state = 'deployed';
+          if (versionOf) {  // DEPLOY-VERSION-1: the worker must report a version that proves the new code is live, else roll back
+            const checks = [];
+            for (const r of res) {
+              const live = (await versionOf(r.w)) || {};
+              // a reader that cannot answer (site not yet serving /__internal/version) is recorded, not taken as proof of a bad deploy
+              if (live.ok === false && !live.version) { checks.push({ w: r.w, ok: true, detail: 'version unreadable (' + (live.detail || 'no answer') + '), not checked' }); continue; }
+              checks.push({ w: r.w, ...meetsVersion({ reported: live.version, before: before[r.w], min_version: r.min_version || null }) });
+            }
+            const off = checks.filter(c => !c.ok);
+            if (off.length) { await rollBack(h, off.map(c => `${c.w}: ${c.detail}`).join('; '), 'version check'); continue; }
+            await event(db, h.id, 'deployed', 'version check: ' + checks.map(c => `${c.w}: ${c.detail}`).join('; '));
+          }
         }
       }
       if (h.state === 'deployed') {
@@ -135,19 +179,13 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
         } else if ((((await db.prepare("SELECT COUNT(*) AS n FROM handoff_events WHERE handoff_id = ? AND detail LIKE 'verify retry %'").bind(h.id).first()) || {}).n || 0) + 1 < VERIFY_TRIES) {
           const n = (((await db.prepare("SELECT COUNT(*) AS n FROM handoff_events WHERE handoff_id = ? AND detail LIKE 'verify retry %'").bind(h.id).first()) || {}).n || 0) + 1;
           await event(db, h.id, 'deployed', `verify retry ${n}/${VERIFY_TRIES}: ${pr.detail}`); out.retried.push(h.id);  // state stays deployed: the next tick probes again
-        } else {
-          await event(db, h.id, 'verify_failed', pr.detail); out.failed.push(h.id);
-          const targets = String(h.deploy || '').split(',').map(s => s.trim()).filter(Boolean), rb = [];
-          if (rollback) for (const w of targets) rb.push(`${w}: ${(await rollback(w)).detail}`);
-          await event(db, h.id, 'rolled_back', rb.join('; ') || 'nothing deployed to roll back'); out.rolled_back.push(h.id);
-          await setItem(db, h.item, 'ready', null);
-          await say(f, token, h.repo, h.pr, 'the live probe failed (' + pr.detail + '). ' + (rb.length ? 'Rolled back: ' + rb.join('; ') + '. ' : '') + (h.item ? 'Item `' + h.item + '` is back to ready for the executor.' : ''));
-        }
+        } else await rollBack(h, pr.detail);
       }
     } catch (e) { out.errors.push(`${h.id} ${e && e.message}`); }
   }
   // 3. VERIFY-RETRY-1 self-heal: a handoff recorded as rolled_back whose probe passes now was a propagation race, not a bad change. Record the truth and close the item.
-  const rb = (await db.prepare("SELECT * FROM handoffs WHERE state = 'rolled_back' AND merge_sha IS NOT NULL AND verify IS NOT NULL ORDER BY updated_at DESC LIMIT 2").all()).results || [];
+  // A rollback for a failed version check is not a propagation race (the old code is what the probe would see), so it never self-heals here.
+  const rb = (await db.prepare("SELECT * FROM handoffs h WHERE state = 'rolled_back' AND merge_sha IS NOT NULL AND verify IS NOT NULL AND NOT EXISTS (SELECT 1 FROM handoff_events e WHERE e.handoff_id = h.id AND e.state = 'verify_failed' AND e.detail LIKE 'version check:%') ORDER BY updated_at DESC LIMIT 2").all()).results || [];
   for (const h of rb) {
     try { const pr = await probe(h.verify, f); if (!pr.ok) continue;
       await event(db, h.id, 'verified', 'recovered: ' + pr.detail + ' (the earlier probe ran before the deploy reached the edge)'); await setItem(db, h.item, 'done'); out.verified.push(h.id); out.recovered.push(h.id);
@@ -155,6 +193,7 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
   }
   if (out.errors.length) out.status = 'errors';
   return out;
+  }
 }
 
 // ---- deploy from the merge commit, through the site worker's deploy endpoint ----
@@ -215,6 +254,13 @@ export function makeDeployer({ token, fetch: f = fetch, site, key, oidc, generat
       const j = await r.json().catch(() => ({}));
       return r.ok && j.ok ? { ok: true, version: j.version || '', detail: 'uploaded' } : { ok: false, detail: j.error || ('site deploy ' + r.status) };
     } catch (e) { return { ok: false, detail: String(e && e.message || e) }; }
+  };
+}
+// DEPLOY-VERSION-1: the live deployment id of a worker, read through the site worker (it holds the Cloudflare credential).
+export function makeVersionReader({ site, key }) {
+  return async (id) => {
+    try { const r = await site.fetch('https://internal/__internal/version', { method: 'POST', headers: { 'x-internal-key': key, 'content-type': 'application/json' }, body: JSON.stringify({ name: id }) }); const j = await r.json().catch(() => ({})); return { ok: !!j.ok, version: j.ok ? (j.version || null) : null, detail: j.detail || j.error || String(r.status) }; }
+    catch (e) { return { ok: false, version: null, detail: String(e && e.message || e) }; }
   };
 }
 export function makeRollback({ site, key }) {
