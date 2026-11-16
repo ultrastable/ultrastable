@@ -1414,6 +1414,14 @@
    "session": "session_0156nqDvMAbVMSqHGLmTNKiK"
   },
   {
+   "id": "decision-2026-11-16-code-only-order-decisions-live-in-code-never-only-in-a-threa",
+   "kind": "decision",
+   "date": "2026-11-16",
+   "title": "CODE-ONLY-ORDER: decisions live in code, never only in a thread",
+   "body": "Rowan 2026-11-16: threads are temporary; every decision and standing rule is code the system consumes (seed, agent instructions, doctrine, policy, checks, loops). Agents decide, deploy and verify; they never present decisions to the owner. standingorder --check fails a ledger decision with no code consumer or a report that hands a decision to the owner, and files Q-ORDER items; tenants inherit via seed/.",
+   "probe": "grep:foundation/standingorder.py::def consumerless"
+  },
+  {
    "id": "lesson-2026-11-16-owner-dash-3-a-blank-owner-page-and-a-silent-probe-at-the-d1",
    "kind": "lesson",
    "date": "2026-11-16",

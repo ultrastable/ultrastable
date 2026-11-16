@@ -312,5 +312,14 @@
     "rollback_when": "metric below baseline after experiment_measure_after_days",
     "owner_role": "product-manager",
     "enforced_by": "python3 -m foundation growth --check"
+  },
+  "standing_order": {
+    "id": "code-only-order",
+    "rule": "CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction and standing rule lives in the system itself as code the system consumes: the seed, agent instructions, doctrine and policy files, checks and loops. A rule that exists only in a thread or a report does not count. Agents decide on their own, implement, deploy to production and verify live; they never present a decision to the owner. A merged change that records a decision with no code consumer, or an agent report that hands a decision to the owner, fails a check and files a work item.",
+    "thread_is_storage": false,
+    "present_decisions_to_owner": false,
+    "decide_implement_deploy_verify": true,
+    "decision_needs_code_consumer": true,
+    "enforced_by": "python3 -m foundation standingorder --check (checks.yml and the fleet pass); a decision with no code consumer or a report that hands a decision to the owner fails and files a Q-ORDER item"
   }
 }

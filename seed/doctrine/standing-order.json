@@ -1,0 +1,75 @@
+{
+ "_doc": "CODE-ONLY-ORDER as data (Rowan, 2026-11-16). Loaded by foundation/standingorder.py and `python3 -m foundation standingorder --check` (a step in checks.yml and the fleet pass). Prose is never the enforcement; this file is. Seed copy: seed/doctrine/standing-order.json (every tenant inherits it).",
+ "id": "code-only-order",
+ "version": "1.0.0",
+ "marker": "CODE-ONLY-ORDER",
+ "order": "CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction and standing rule lives in the system itself as code the system consumes: the seed, agent instructions, doctrine and policy files, checks and loops. A rule that exists only in a thread or a report does not count. Agents decide on their own, implement, deploy to production and verify live; they never present a decision to the owner. A merged change that records a decision with no code consumer, or an agent report that hands a decision to the owner, fails a check and files a work item.",
+ "instruction_files": [
+  "AGENTS.md",
+  "agents/AGENTS.md",
+  "agents/PROJECT-INSTRUCTIONS.md",
+  "seed/AGENTS.md",
+  "seed/agents/AGENTS.md",
+  "seed/agents/PROJECT-INSTRUCTIONS.md",
+  ".github/copilot-instructions.md",
+  "seed/.github/copilot-instructions.md"
+ ],
+ "optional_instruction_files": [
+  "agents/PROJECT-INSTRUCTIONS.md",
+  "seed/agents/PROJECT-INSTRUCTIONS.md",
+  ".github/copilot-instructions.md",
+  "seed/.github/copilot-instructions.md"
+ ],
+ "directive_section": "## 22. Code-only order",
+ "directive_files": [
+  "docs/doctrine/GUIDING-DIRECTIVE.md",
+  "seed/doctrine/GUIDING-DIRECTIVE.md"
+ ],
+ "policy_files": [
+  "seed/autonomy/policy.json"
+ ],
+ "policy_key": "standing_order",
+ "inherited_by_tenants": [
+  "seed/agents/AGENTS.md",
+  "seed/autonomy/policy.json",
+  "seed/doctrine/standing-order.json",
+  "seed/doctrine/GUIDING-DIRECTIVE.md"
+ ],
+ "ledger": "doctrine/decision-ledger.json",
+ "ledger_consumer_suffixes": [".py", ".js", ".mjs", ".json", ".yml", ".yaml", ".sh", ".sql"],
+ "ledger_baseline": "doctrine/standing-order-baseline.json",
+ "report_globs": [
+  "HANDOFF.md",
+  "docs/handoff/*.md",
+  "docs/lessons/*.md",
+  "ops/reports/*.md"
+ ],
+ "lint_exempt": [
+  "doctrine/**",
+  "docs/doctrine/**",
+  "seed/doctrine/**",
+  "tests/**",
+  "foundation/**"
+ ],
+ "excused_by": "\\b(CODE-ONLY-ORDER|never|not present|fails?|flags?|forbidden|lint|defect)\\b",
+ "decision_handoff": [
+  {"id": "asks-owner-to-choose", "patterns": [
+   "\\b(your|owner'?s?) (call|decision|choice|go-?ahead)\\b",
+   "\\b(which|what) would you (prefer|like|want)\\b",
+   "\\bdo you want me to\\b",
+   "\\bwould you like (me )?to\\b",
+   "\\bshould I (proceed|go ahead|continue|merge|deploy)\\b",
+   "\\blet me know (if|which|whether|how)\\b"
+  ]},
+  {"id": "waits-for-owner", "patterns": [
+   "\\bawait(s|ing)? (your|the owner'?s?|rowan'?s?) (decision|approval|go-?ahead|answer|reply)\\b",
+   "\\b(needs|requires) (your|owner|rowan'?s?) (decision|approval|sign-?off)\\b",
+   "\\bdecision (is )?(for|with|up to) (the )?(owner|rowan|you)\\b",
+   "\\bpending (owner|rowan) (decision|approval)\\b"
+  ]},
+  {"id": "menu-to-owner", "patterns": [
+   "\\boptions? for (the )?(owner|rowan|you)\\b",
+   "\\b(choose|pick) (one of|between) (the )?(options|A and B)\\b"
+  ]}
+ ]
+}
