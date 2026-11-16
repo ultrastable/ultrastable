@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 """TENANT-STORAGE-1: the tenant storage decision, budgets and QNFO migration plan are declared and bounded.
 # Design record this check enforces: docs/architecture/tenant-storage.md
 
