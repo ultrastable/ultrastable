@@ -10,6 +10,15 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-16
 
+- 2026-11-16: CODE-ONLY-ORDER: decisions live in code, enforced by check and inherited by tenants (#451)
+- 2026-11-16: TENANT-STORAGE-1: decision, budgets, QNFO migration plan and check (#448)
+- 2026-11-16: OWNER-DASH-2: owner dashboard shows what needs you, tenant status and paid options (#449)
+- 2026-11-16: Six fleet lessons in code: vacuous close, metric freshness, model-edit gate, silent catch, version-proven deploys, GitHub budget (#447)
+- 2026-11-16: Q-LESSON-COST-SAMPLE-ACT + Q-LESSON-CRED-SCOPE: a D1 cost breach acts; scopes are an allowlist; auth paths are canonical (#446)
+- 2026-11-16: HALT-1: one halt stops every recurring and self-triggering path; nothing is exempt (#445)
+- 2026-11-16: D1-LIMIT-503: /health and /api/budget answer 503 with a code at the D1 daily read limit (#444)
+- 2026-11-16: RETENTION-1 + LESSONS-1: declared retention; every model call metered; self-originated work capped (#443)
+- 2026-11-16: /ops: report the D1 daily read limit plainly (#442)
 - 2026-11-16: ACCOUNT-SPLIT-3: root cause of the red deploy-system and deploy-workers runs on main: the repository secrets still name the retired account, and deploy-system.mjs, probe-live.mjs and bind-worker-secrets.mjs lacked the retired-account guard that deploy-workers.mjs has, so they queried D1 ids that exist only in the ultrastable account (code 7404 and 10181) or would have bound secrets into the retired tick. All three now skip; deploy-ultrastable.yml (OIDC) owns the ultrastable account. Cost finding (qnfo-audit, 24 h: 850M rows read): AFTER INSERT triggers on fleet_tick (doctrine_tick_10m runs v_doctrine_scorecard four times, agent_issues_normalise_tick scans agent_issues) cost ~49k rows per tick insert; the issue-1000431 probe reads 2.5M rows per run; the agent_issues queue query reads 270k per run. Source is in QNFO/qnfo-workers (outside this repo set); filed as open loop OL-20261116-QNFO-AUDIT-SCANS.
 - 2026-11-15: PUBLIC-MINUTES-1: root cause of the builder draining ~4 items a day while 160+ were takeable: the executor's daily chain cap (4) protects a private repo's Actions quota, but this repo is public and standard runners are free. foundation/clock.py daily_cap() reads visibility from GitHub and uses chain.max_runs_per_day_public (48) when public. Second root cause, still open: the primary tick on the ultrastable account has no GitHub credential since the 20:50 cutover (cutover.github_ok false; lane, sweeper, handoffs MISSED), tracked by GATE-TARGET-GITHUB / OL-20261115-13
 - 2026-11-15: LANE-RED-1: with ZERO_ACTIONS the tick lane merged PRs whose checks ran and failed (#433); `realRed` in seed/worker/src/lane.js now holds a PR when an Actions job has a failed step, and lets the diff gate decide only when the job never started. NATIVE-SUBSTANCE-1: the Worker-native executor refuses a change made only of new documents or subtask records (#431, #433 removed). tests/foundation/test_brand.py follows the current repo list
