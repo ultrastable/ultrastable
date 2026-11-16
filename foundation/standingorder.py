@@ -61,6 +61,9 @@ def instruction_failures(root, d) -> list[str]:
             continue
         if d["marker"] not in p.read_text(encoding="utf-8"):
             bad.append(f"{rel}: lacks {d['marker']}")
+    for rel in d["prompt_sources"]:
+        if "standing-order.json" not in (root / rel).read_text(encoding="utf-8"):
+            bad.append(f"{rel}: the agent prompt does not load the standing order")
     for rel in d["directive_files"]:
         p = root / rel
         if not p.exists() or d["directive_section"] not in p.read_text(encoding="utf-8") or d["marker"] not in p.read_text(encoding="utf-8"):
@@ -145,6 +148,9 @@ def file_items(root=REPO) -> list[str]:
 
 def main(argv: list[str]) -> int:
     root = REPO
+    if argv[:1] == ["--lint-stdin"]:
+        found = [f"stdin:{x['line']}: {x['rule']}: {x['text']}" for x in lint(sys.stdin.read())]
+        print("\n".join(found) or "standing-order lint ok"); return 1 if found else 0
     if argv[:1] == ["--lint"]:
         found = [f"{fn}:{x['line']}: {x['rule']}: {x['text']}" for fn in argv[1:] for x in lint(Path(fn).read_text(encoding="utf-8"))]
         print("\n".join(found) or "standing-order lint ok"); return 1 if found else 0

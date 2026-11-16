@@ -70,6 +70,8 @@ jobs:
       - name: Pins (every status pin and roadmap item on the site is computed from code, proofs and probe-backed issues)
         run: python3 -m foundation pins --check
       - name: Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           python3 -m foundation loops --verify
           python3 -m foundation glossary --check
@@ -78,6 +80,7 @@ jobs:
           python3 -m foundation closedloop --check
           python3 -m foundation standingorder --check
           python3 -m foundation standingorder --lint HANDOFF.md
+          printf '%s' "$PR_BODY" | python3 -m foundation standingorder --lint-stdin
           python3 -m foundation selfimprove --check
           python3 -m foundation boundary --check
           python3 -m foundation market --check

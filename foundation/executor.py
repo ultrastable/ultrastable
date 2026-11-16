@@ -110,7 +110,7 @@ def axiom() -> str:
 def build_prompt(issue: dict, tree: str) -> str:
     from . import kb  # reference documents are consumed here: the best matches for this issue are read by the agent
     ref = kb.retrieve(f"{issue['title']} {issue.get('body') or ''}")
-    return (axiom() + "\n\n" + json.loads((REPO / "doctrine/self-improvement.json").read_text(encoding="utf-8"))["axiom"] + "\n\nYou are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. "
+    return (axiom() + "\n\n" + json.loads((REPO / "doctrine/standing-order.json").read_text(encoding="utf-8"))["order"] + "\n\n" + json.loads((REPO / "doctrine/self-improvement.json").read_text(encoding="utf-8"))["axiom"] + "\n\nYou are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. "
             'Reply with ONLY JSON: {"summary":"one line","files":[{"path":"relative/path","content":"full new file content"}]}. '
             "Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code. "
             "Every new Markdown file must contain the exact line: Ultrastable is the foundation for any autonomous system. Do not write about memory or chat as storage. Server-side only: never reference localhost, 127.0.0.1 or a listening port; code runs as a Cloudflare Worker or a plain function with injected fetch.\n\n"
