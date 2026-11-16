@@ -297,13 +297,13 @@ export async function controlPlane(request, env, ctx) {
     if (p === "/api/v1/work") { const r = await work(env, u.searchParams.get("view") || "on_deck", u.searchParams.get("limit")); return r ? json(r) : json({ error: "view must be one of " + Object.keys(WORK_VIEWS).join(", ") }, 400); }
     const m = /^\/api\/v1\/work\/([A-Za-z0-9._:-]{1,120})$/.exec(p);
     if (m) { const r = await workItem(env, decodeURIComponent(m[1])); return r ? json(r) : json({ error: "no such item" }, 404); }
-  } catch (e) { console.error("control-plane", String(e && e.stack || e)); return json({ error: "query failed", detail: String(e && e.message || e) }, 500); }
+  } catch (e) { console.error("control-plane", String(e && e.stack || e)); const msg = String(e && e.message || e); if (/row read limit|free tier/i.test(msg)) { const r = json({ error: "the daily database read allowance is used up; live data returns at 00:00 UTC", code: "d1_read_limit" }, 503); r.headers.set("retry-after", "3600"); return r; } return json({ error: "query failed", detail: msg }, 500); }
   return json({ error: "not found", index: ORIGIN + "/api/v1" }, 404);
 }
 
 // ---- /ops: the operations dashboard (also the root of dashboard.ultrastable.io). Client-side render of /api/v1, refreshed every 30 s. ----
 const OPS_JS = `
-const $=s=>document.querySelector(s),api=p=>fetch('/api/v1/'+p,{cache:'no-store'}).then(r=>r.json());
+const $=s=>document.querySelector(s),api=p=>fetch('/api/v1/'+p,{cache:'no-store'}).then(r=>r.json().then(j=>{if(!r.ok)throw new Error(j.error||r.status);return j}));
 function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function ago(s){if(s==null)return'never';if(s<90)return s+' s ago';if(s<5400)return Math.round(s/60)+' min ago';if(s<172800)return Math.round(s/3600)+' h ago';return Math.round(s/86400)+' d ago'}
 function table(head,rows){const w=el('div','us-wrap'),t=el('table','us-table'),h=el('tr');head.forEach(x=>h.appendChild(el('th',null,x)));t.appendChild(h);
@@ -328,7 +328,7 @@ async function draw(){try{
  document.getElementById('c-act').appendChild(table(['Tick','When','Steps','Summary'],act.ticks.map(t=>[t.id,t.at,t.steps,t.summary])));
  card('c-ho','Handoffs','Work code agents handed to the server. The server merges, deploys, probes and closes; no agent comes back.').appendChild(table(['PR','Agent','Item','State','Last step','Updated'],(ho.handoffs||[]).map(h=>[{t:h.repo.split('/')[1]+'#'+h.pr,href:h.url},h.agent||'-',h.item||'-',{t:h.state,pill:h.state==='verified'?'good':/fail|rolled|conflict/.test(h.state)?'bad':'warn'},h.detail||'-',h.updated_at])));
  card('c-done','Recently done').appendChild(table(['Item','Title','Updated'],done.items.map(i=>[it(i.id),i.title,i.updated_at])));
-}catch(e){$('#asof').textContent='Could not reach the API: '+e}}
+}catch(e){$('#asof').textContent='Live data is unavailable right now: '+(e&&e.message||e)}}
 draw();setInterval(draw,30000);`;
 const OPS_CSS = "<style>.pill{display:inline-block;padding:2px 8px;border-radius:99px;font:600 13px system-ui;border:1px solid var(--line)}.pill.good{color:var(--good);border-color:var(--good)}.pill.warn{color:var(--ac);border-color:var(--ac)}.pill.bad{color:var(--bad);border-color:var(--bad)}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:8px 0}.kpi{background:var(--sf2);border-radius:6px;padding:10px}.kpi .n{font:700 24px system-ui}.kpi .l{color:var(--ink2);font-size:13px}.reasons{margin:8px 0;padding-left:20px;color:var(--bad)}.us-wrap{overflow-x:auto}</style>";
 
