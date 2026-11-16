@@ -54,3 +54,14 @@ test('schemas declare no D1 triggers', () => {
     'dashboard/schema.sql', 'seed/analytics/schema.sql'];
   for (const f of files) assert.ok(!/CREATE\s+TRIGGER/i.test(read(f)), `${f} creates a D1 trigger`);
 });
+
+test('every table the tick worker creates has a retention rule (RETENTION-1)', () => {
+  const rules = JSON.parse(read('seed/autonomy/retention.json')).tables;
+  const dir = new URL('../seed/worker/', import.meta.url);
+  const sources = [...readdirSync(new URL('migrations/', dir)).filter((f) => f.endsWith('.sql')).map((f) => 'seed/worker/migrations/' + f),
+    ...readdirSync(new URL('src/', dir)).filter((f) => f.endsWith('.js')).map((f) => 'seed/worker/src/' + f)];
+  const created = new Set();
+  for (const f of sources) for (const m of read(f).matchAll(/CREATE TABLE(?: IF NOT EXISTS)?\s+([a-z_][a-z0-9_]*)/gi)) created.add(m[1]);
+  const missing = [...created].filter((t) => !rules[t]);
+  assert.deepEqual(missing, [], 'tables with no retention rule in seed/autonomy/retention.json');
+});

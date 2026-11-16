@@ -1358,6 +1358,15 @@
    "body": "SPEND-GOVERNOR-1: budget.usd_per_month in the instance manifest, or the BUDGET_USD_PER_MONTH variable, is the one spending decision the owner makes. seed/worker/src/budget.js turns it into a daily Workers AI allowance from published prices with an 80% margin, meters every call in budget_ledger, goes lean at 70% of the day (one model call per tick) and frozen at 100% (no model handle; a frozen budget counts as a breached spend cap, so only a cost cut is originated). Measured by seed/worker/test/budget.test.js: 10 tests, 0 failures. GET /api/budget reports the knob, the allowance, the use and the mode.",
    "probe": "grep:seed/worker/src/budget.js::export async function governedAI",
    "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
+  },
+  {
+   "id": "lesson-2026-11-16-history-tables-have-a-declared-retention-pruned-daily",
+   "kind": "lesson",
+   "date": "2026-11-16",
+   "title": "History tables have a declared retention, pruned daily",
+   "body": "RETENTION-1: seed/autonomy/retention.json lists every table the tick worker creates, with keep_days for history (tick_runs 30, dispatches 30, outcomes 365, samples 30-60, webhook_seen 14, budget_ledger 400) or keep: state with a reason. seed/worker/src/retention.js prunes once a day, at most 5,000 rows per table. test/plan-limits.test.mjs fails when a new table has no rule. Source: an earlier fleet's audit database reached 1,011 tables, 266 of them backup copies never removed.",
+   "probe": "grep:seed/worker/src/retention.js::export async function pruneAll",
+   "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
   }
  ]
 }
