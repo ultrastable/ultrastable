@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-worker-roadmap-agent-agent-scoreboard-2026111520",
+  "title": "PORT-BRANCH-worker-roadmap-agent-agent-scoreboard-2026111520: carry worker/roadmap-agent-agent-scoreboard-202611152040 onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `worker/roadmap-agent-agent-scoreboard-202611152040` at 2f64ce4b73 holds work main lacks and cannot merge as is (merge breaks the gate: python3 -m foundation docs_audit --check -> exit 1: orphan document (nothing consumes it): specs/agent-scoreboard.md: wire it, convert it to data, merge it, or remove it with a ledger row\nremoved ledger: specs/agent-scoreboard.md is listed as removed but still exists)\n**Done check:** cmd:python3 -m foundation branchsweep --carried worker/roadmap-agent-agent-scoreboard-202611152040\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried worker/roadmap-agent-agent-scoreboard-202611152040",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
