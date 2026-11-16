@@ -1385,6 +1385,15 @@
    "body": "D1-LIMIT-503: measured 2026-11-16, the tick's /health and /api/budget returned Cloudflare error 1101 while D1 was at its daily 5M rows-read limit. Both now return 503 with code d1_read_limit and Retry-After, the shape the site's /api/v1/status uses. Covered by seed/worker/test/budget.test.js: 204 tests pass.",
    "probe": "grep:seed/worker/src/index.js::export const d1Unavailable",
    "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
+  },
+  {
+   "id": "lesson-2026-11-16-one-halt-stops-every-recurring-and-self-triggering-path",
+   "kind": "lesson",
+   "date": "2026-11-16",
+   "title": "One halt stops every recurring and self-triggering path",
+   "body": "HALT-1: measured 2026-11-16 on an earlier fleet: after its crons were removed, its merge lane merged a pull request, the merge redeployed 29 workers within 4 minutes, and a self-healing loop restored a cron. Ultrastable now has one halt: worker variable HALT=1 or ops/halt.json for the tick, dashboard and site crons and the tick's webhook and watch routes; repository variable HALT=1 for all 32 workflow jobs, lane and deploys included. test/plan-limits.test.mjs checks every job and cron entry; seed/worker/test/budget.test.js checks a halted tick makes no model call and touches only its beat.",
+   "probe": "grep:seed/worker/src/budget.js::export function halted",
+   "session": "session_0156nqDrvMmY8jiTLfyeYzZY"
   }
  ]
 }

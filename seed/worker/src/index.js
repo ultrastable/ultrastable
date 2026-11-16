@@ -14,7 +14,7 @@ import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
-import { governedAI, budgetView, SHARES } from './budget.js';
+import { governedAI, budgetView, SHARES, halted } from './budget.js';
 import { pruneAll } from './retention.js';  // RETENTION-1  // SPEND-GOVERNOR-1: every model call goes through the owner's monthly budget
 import { handleAuth } from './auth/routes.js';
 import { getToken, refreshDue } from './auth/index.js';
@@ -42,11 +42,12 @@ export const d1Unavailable = (e) => {
   const limit = /daily row read limit|exceeded D1|7500/i.test(msg);
   return Response.json(limit ? { error: 'the daily database read allowance is used up; live data returns at 00:00 UTC', code: 'd1_read_limit' } : { error: 'database unavailable', code: 'd1_unavailable', detail: msg.slice(0, 160) }, { status: 503, headers: { 'cache-control': 'no-store', 'retry-after': '600' } });
 };
-const aiFor = (env) => governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
+const aiFor = (env) => halted(config, env) ? Promise.resolve({ ai: null, state: { mode: 'halted', why: 'HALT-1' } }) : governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
 export default {
   async scheduled(_event, env, ctx) {
+    if (halted(config, env)) { ctx.waitUntil(beat(env.DB, 'halted', async () => ({ halted: true })).catch(e => console.error('halted beat', e && e.message))); return; }  // HALT-1: no loops, lane, executor, deploys or model calls
     // ACCOUNT-SPLIT-2: decide first whether this account's tick runs the loops (one primary across both Cloudflare accounts).
     const tenantId = env.TENANT || config.org_slug || 'default';
     const githubOk = async () => { const t = await getToken(env.DB, env, tenantId, 'github-app').catch(() => null); return Boolean((t && t.ok && t.token) || env.GITHUB_TOKEN); };
@@ -85,6 +86,7 @@ export default {
     if (hiddenByHealthOnly(env, request.method, url.pathname)) return new Response('Not found', { status: 404 });
     const au = await handleAuth(request, env, { tenant: env.TENANT || config.org_slug || 'default', name: config.org_slug, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) });
     if (au) return au;
+    if (halted(config, env) && (url.pathname === '/hook/github' || url.pathname === '/pulse/watch')) return Response.json({ halted: true }, { status: 202 });  // HALT-1
     if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now
       const body = await request.text();
       if (!(await verifySignature(env.GITHUB_WEBHOOK_SECRET, body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
@@ -115,6 +117,7 @@ export default {
       return Response.json(r, { status: r.ok ? 200 : 503, headers: { 'cache-control': 'no-store' } });
     }
     if (url.pathname === '/health') {
+      if (halted(config, env)) return Response.json({ ok: true, halted: true, org: config.org_slug, why: 'HALT-1: the owner stopped every loop; pages keep serving' });
       let last; try { last = await lastTickForHealth(env.DB); } catch (e) { return d1Unavailable(e); }
       const ok = Boolean(last && last.steps_completed === last.steps_total);
       const released = await claimsReleasedUnworked24h(env.DB, Date.now()).catch(() => null);  // workers#173 closing probe, target 0

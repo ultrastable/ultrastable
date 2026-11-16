@@ -12,6 +12,7 @@ permissions:
 concurrency: {group: org-profile-probe, cancel-in-progress: true}
 jobs:
   probe:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:

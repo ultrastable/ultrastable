@@ -19,6 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   sweep:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:

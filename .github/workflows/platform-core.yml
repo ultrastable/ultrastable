@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   test:
-    if: github.event.pull_request.draft != true
+    if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults: { run: { working-directory: platform/core } }
