@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-# Copyright (c) Ultrastable
 """TENANT-STORAGE-1: the tenant storage decision, budgets and QNFO migration plan are declared and bounded.
+# Design record this check enforces: docs/architecture/tenant-storage.md
 
-  (docs/architecture/tenant-storage.md is its document)
   python3 -m foundation tenantstorage --check    declaration is complete and the worst case of every tenant at full budget stays under the monthly ceiling
   python3 -m foundation tenantstorage --worst    that worst case in USD (an ESTIMATE from list prices)
 
+Note: docs/architecture/tenant-storage.md describes this decision.
 The same bound is enforced at run time by workers core/tenantstore (BudgetGuard); this module keeps the declaration honest.
 """
 from __future__ import annotations
