@@ -76,6 +76,8 @@ jobs:
           python3 -m foundation kernel --check
           python3 -m foundation directive --check
           python3 -m foundation closedloop --check
+          python3 -m foundation standingorder --check
+          python3 -m foundation standingorder --lint HANDOFF.md
           python3 -m foundation selfimprove --check
           python3 -m foundation boundary --check
           python3 -m foundation market --check
