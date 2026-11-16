@@ -1,11 +1,11 @@
 # Outreach status
 
-Generated 2026-11-12. Mode **dry-run**, kill switch **off**, sender identity not registered.
+Generated 2026-11-16. Mode **dry-run**, kill switch **off**, sender identity not registered.
 
 | State | Count |
 |---|---|
-| packet-ready | 13 |
-| awaiting-owner | 15 |
+| packet-ready | 11 |
+| awaiting-owner | 17 |
 | expired | 1 |
 
 Sent: 0. Replies: 0. Packet-ready but waiting on source verification: 11.
@@ -15,7 +15,7 @@ Sent: 0. Replies: 0. Packet-ready but waiting on source verification: 11.
 One page lists it: [NEEDS-YOU.md](../NEEDS-YOU.md).
 
 - OUT-SEND-qniverse: 1
-- OUT-SEND-ultrastable: 14
+- OUT-SEND-ultrastable: 16
 - OUT-SENDER: 1
 
 ## Trust (per profile)
@@ -56,5 +56,5 @@ One page lists it: [NEEDS-YOU.md](../NEEDS-YOU.md).
 | ultrastable:B-MSFT | Microsoft for Startups Founders Hub | awaiting-owner | form | verified |  |
 | ultrastable:B-NSFSBIR | NSF SBIR/STTR (America's Seed Fund) | awaiting-owner | form | secondary |  |
 | ultrastable:B-NVIDIA | NVIDIA Inception | awaiting-owner | form | verified |  |
-| ultrastable:B-TECHSTARS | Techstars | packet-ready | form | secondary |  |
-| ultrastable:B-YC | Y Combinator | packet-ready | form | secondary |  |
+| ultrastable:B-TECHSTARS | Techstars | awaiting-owner | form | secondary |  |
+| ultrastable:B-YC | Y Combinator | awaiting-owner | form | secondary |  |

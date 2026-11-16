@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-11",
- "commit": "3e0d734",
+ "generated": "2026-11-16",
+ "commit": "ff6230f",
  "problems": [],
  "panels": [
   {
@@ -24,7 +24,7 @@
     ],
     [
      "Targets",
-     "29 in pipeline: queued 0, awaiting owner 15, sent 0, replies 0",
+     "29 in pipeline: queued 0, awaiting owner 17, sent 0, replies 0",
      "info"
     ],
     [
@@ -98,31 +98,21 @@
   },
   {
    "id": "cards",
-   "title": "Open owner cards (identity-bound)",
+   "title": "Needs you (identity-bound; one page: NEEDS-YOU.md)",
    "rows": [
-    [
-     "(superseded 2026-11-11, patent dropped) File the priority application in Europe (identity-bound: sign and pay): `ip/europe/OWNER-CARD.md`; s",
-     "default: ",
-     "warn"
-    ],
-    [
-     "(superseded route) File the provisional patent (package ready: `ip/provisional/FILE-THIS-TODAY.md`; `tools/preflight.py` passes; attorney re",
-     "default: Drafts stay private | probe: Filing receipt recorded in `ip/evidence-log.md`",
-     "warn"
-    ],
     [
      "Legal entity and IP assignment (BIZ-1)",
      "default: `LICENSE` names the author as Licensor | probe: Entity name in `LICENSE` (section 14.4 and the copyright line)",
      "warn"
     ],
     [
-     "Publish `workers`, `spec` and `license` (identity-bound: changing visibility; no lawyer review, decisions recorded in `docs/legal/LICENSE-DE",
-     "default: All repos private | probe: `gh api repos/ultrastable/workers --jq .private` is `false`",
+     "Publish `workers`, `spec` and `license` (decisions recorded in `docs/legal/LICENSE-DECISIONS.md`)",
+     "default: Visibility flip | probe: `gh api repos/ultrastable/workers --jq .private` is `false`",
      "warn"
     ],
     [
      "Mint `ORG_ADMIN_TOKEN`",
-     "default: Holding page only | probe: `org-manage` probe passes; `curl -s https://github.com/ultrastable` shows profile",
+     "default: Profile content staged | probe: `org-manage` probe passes; `curl -s https://github.com/ultrastable` shows profile",
      "warn"
     ],
     [
@@ -157,17 +147,17 @@
     ],
     [
      "OUT-SEND-qniverse (1)",
-     "outreach card; default in effect: not sent. NEEDS-YOU.md",
+     "default in effect: not sent. See NEEDS-YOU.md",
      "warn"
     ],
     [
-     "OUT-SEND-ultrastable (14)",
-     "outreach card; default in effect: not sent. NEEDS-YOU.md",
+     "OUT-SEND-ultrastable (16)",
+     "default in effect: not sent. See NEEDS-YOU.md",
      "warn"
     ],
     [
      "OUT-SENDER (1)",
-     "outreach card; default in effect: not sent. NEEDS-YOU.md",
+     "default in effect: not sent. See NEEDS-YOU.md",
      "warn"
     ]
    ]
@@ -343,8 +333,8 @@
      "info"
     ],
     [
-     "Ignorance v1.0.0",
-     "The state of a user who does not know what to ask for, or what is possible.",
+     "Ignorance v2.0.0",
+     "What the user does not know, held by the system as a computed set: unknown = known - told.",
      "info"
     ],
     [
@@ -438,8 +428,13 @@
      "info"
     ],
     [
-     "Fallback classes v1.0.0",
-     "A paid path never ends work while a free path exists, and an external provider never ends work while a local, cached or degraded path exists; the path that ran is reported.",
+     "Fallback classes v1.1.0",
+     "A paid path never ends work while a free path exists, and an external provider never ends work while an in-system, cached or degraded path exists; the path that ran is reported.",
+     "info"
+    ],
+    [
+     "Server-side only v1.0.0",
+     "Ultrastable runs server-side only.",
      "info"
     ],
     [
@@ -451,6 +446,36 @@
      "Proactive programs v1.0.0",
      "Bug fixes are the floor.",
      "info"
+    ],
+    [
+     "Guiding directive v1.0.0",
+     "Rowan's directive of 2026-11-12 that governs all work: autonomy-first, self-directed and self-improving; no permission requests; the only pause is an action both irreversible and identity-bound after a reversible path was engineered; blockers are never owner issues; no loose ends or silent drops.",
+     "info"
+    ],
+    [
+     "Memory is not storage v1.0.0",
+     "Project memory, tool memory and chat are not storage (Rowan, 2026-11-12).",
+     "info"
+    ],
+    [
+     "Document consumed v1.0.0",
+     "A document exists only if code, a check, an agent's loaded instructions or a loop consumes it.",
+     "info"
+    ],
+    [
+     "Unattended v1.0.0",
+     "The crosswalk for the words the owner and the agents use for the same property.",
+     "info"
+    ],
+    [
+     "Clockwork v1.0.0",
+     "A loop behaves as clockwork when it is a clock: it has an expected interval, its beats are recorded, and its measured status is ticking (a beat within 1.5 intervals) and accurate (small median distance from schedule).",
+     "info"
+    ],
+    [
+     "Self-reference v1.0.0",
+     "Ultrastable runs on Ultrastable, and that self-reference is what bootstrapping and criticality rest on.",
+     "info"
     ]
    ]
   },
@@ -460,7 +485,7 @@
    "rows": [
     [
      "Loops registered",
-     "37; 33 close by the system, 4 by an owner card",
+     "85; 85 close by the system, 0 by an owner card",
      "ok"
     ],
     [

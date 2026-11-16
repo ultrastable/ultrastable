@@ -8,6 +8,9 @@ Deadline: none stated
 ## What we do
 QNFO is an independent research programme that is run, documented and improved by an autonomous agent system, so its decisions and results are recorded and can be inspected. The programme is led by one researcher based in the Netherlands.
 
+## Positioning
+An independent research programme run and documented by an autonomous system.
+
 ## Where we are
 Ongoing independent work without institutional or grant funding to date.
 

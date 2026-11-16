@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-14",
+ "generated": "2026-11-16",
  "mode": "dry-run",
  "kill": false,
  "live_blockers": [
@@ -12,10 +12,10 @@
   "intro_state_unresolved": 0,
   "intro_state_no-public-route": 2,
   "intro_state_form-only": 7,
-  "intro_state_verified": 6,
-  "intro_state_packet-ready": 0,
+  "intro_state_verified": 0,
+  "intro_state_packet-ready": 1,
   "intro_state_guard-failed": 0,
-  "intro_state_queued": 0,
+  "intro_state_queued": 5,
   "intro_state_sent": 0,
   "intro_state_replied": 0,
   "intro_state_accepted": 0,
@@ -47,29 +47,29 @@
    "key": "intro:P-ALLENAI",
    "name": "Allen Institute for AI",
    "segment": "ai-lab",
-   "state": "verified",
-   "last_event": "verified"
+   "state": "queued",
+   "last_event": "dry-run-send"
   },
   {
    "key": "intro:P-ASTERA",
    "name": "Astera Institute",
    "segment": "funder",
-   "state": "verified",
-   "last_event": "verified"
+   "state": "queued",
+   "last_event": "dry-run-send"
   },
   {
    "key": "intro:P-CAIS",
    "name": "Center for AI Safety",
    "segment": "research-institute",
-   "state": "verified",
-   "last_event": "verified"
+   "state": "queued",
+   "last_event": "dry-run-send"
   },
   {
    "key": "intro:P-CHT",
    "name": "Center for Humane Technology",
    "segment": "third-sector",
-   "state": "verified",
-   "last_event": "verified"
+   "state": "queued",
+   "last_event": "dry-run-send"
   },
   {
    "key": "intro:P-DATASOCIETY",
@@ -82,8 +82,8 @@
    "key": "intro:P-EAI",
    "name": "EleutherAI",
    "segment": "ai-lab",
-   "state": "verified",
-   "last_event": "verified"
+   "state": "queued",
+   "last_event": "dry-run-send"
   },
   {
    "key": "intro:P-FORESIGHT",
@@ -96,8 +96,8 @@
    "key": "intro:P-GOVAI",
    "name": "Centre for the Governance of AI",
    "segment": "research-institute",
-   "state": "verified",
-   "last_event": "verified"
+   "state": "packet-ready",
+   "last_event": "packet-ready"
   },
   {
    "key": "intro:P-MOZILLA",

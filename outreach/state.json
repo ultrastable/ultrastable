@@ -458,7 +458,7 @@
    "profile": "ultrastable",
    "registry_id": "B-YC",
    "program": "Y Combinator",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "first_seen": "2026-11-10",
    "events": [
@@ -471,16 +471,27 @@
      "at": "2026-11-10",
      "event": "packet-ready",
      "detail": "outreach/packets/ultrastable/B-YC.md"
+    },
+    {
+     "at": "2026-11-16",
+     "event": "queued",
+     "detail": "guard clean, source secondary"
+    },
+    {
+     "at": "2026-11-16",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
     }
    ],
    "source_status": "secondary",
-   "guard": []
+   "guard": [],
+   "needs": "form-submission"
   },
   "ultrastable:B-TECHSTARS": {
    "profile": "ultrastable",
    "registry_id": "B-TECHSTARS",
    "program": "Techstars",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "first_seen": "2026-11-10",
    "events": [
@@ -493,10 +504,21 @@
      "at": "2026-11-10",
      "event": "packet-ready",
      "detail": "outreach/packets/ultrastable/B-TECHSTARS.md"
+    },
+    {
+     "at": "2026-11-16",
+     "event": "queued",
+     "detail": "guard clean, source secondary"
+    },
+    {
+     "at": "2026-11-16",
+     "event": "awaiting-owner",
+     "detail": "form route: included in the profile's owner card"
     }
    ],
    "source_status": "secondary",
-   "guard": []
+   "guard": [],
+   "needs": "form-submission"
   },
   "ultrastable:B-EIC": {
    "profile": "ultrastable",

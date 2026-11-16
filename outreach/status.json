@@ -1,15 +1,15 @@
 {
- "generated": "2026-11-12",
+ "generated": "2026-11-16",
  "mode": "dry-run",
  "kill": false,
  "sender_registered": false,
  "metrics": {
   "targets": 29,
   "state_discovered": 0,
-  "state_packet-ready": 13,
+  "state_packet-ready": 11,
   "state_guard-failed": 0,
   "state_queued": 0,
-  "state_awaiting-owner": 15,
+  "state_awaiting-owner": 17,
   "state_sent": 0,
   "state_replied": 0,
   "state_accepted": 0,
@@ -51,7 +51,7 @@
   },
   {
    "id": "OUT-SEND-ultrastable",
-   "count": 14,
+   "count": 16,
    "file": "NEEDS-YOU.md"
   },
   {
@@ -318,20 +318,20 @@
   {
    "key": "ultrastable:B-TECHSTARS",
    "program": "Techstars",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "source": "secondary",
    "blocked_by": null,
-   "last_event": "packet-ready"
+   "last_event": "awaiting-owner"
   },
   {
    "key": "ultrastable:B-YC",
    "program": "Y Combinator",
-   "state": "packet-ready",
+   "state": "awaiting-owner",
    "route": "form",
    "source": "secondary",
    "blocked_by": null,
-   "last_event": "packet-ready"
+   "last_event": "awaiting-owner"
   }
  ]
 }
