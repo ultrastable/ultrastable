@@ -1,4 +1,5 @@
 """TENANT-STORAGE-1: the tenant storage decision, budgets and QNFO migration plan are declared and bounded.
+# Design record this check enforces: docs/architecture/tenant-storage.md
 
   python3 -m foundation tenantstorage --check    declaration is complete and the worst case of every tenant at full budget stays under the monthly ceiling
   python3 -m foundation tenantstorage --worst    that worst case in USD (an ESTIMATE from list prices)
