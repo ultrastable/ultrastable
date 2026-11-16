@@ -1,0 +1,27 @@
+{
+  "_doc": "Tenant apps that run on Ultrastable's Cloudflare account, read by dashboard/worker.js (OWNER-DASH-2). One row per tenant: where it runs, its database, its status and what is next. A row with a url is probed hourly (check tenant:<id>); a row without one is shown as pending. Change a status by PR: the dashboard serves what is here, so a stale row is a defect the tenant's own probe replaces.",
+  "tenants": [
+    {
+      "id": "jobs",
+      "name": "Jobs agent",
+      "repo": "rwnq8/jobs-agent",
+      "db": "tenant-jobs-db",
+      "web": null,
+      "url": null,
+      "status": "pending",
+      "note": "Moving out of QNFO. The empty database exists; the data copy is scheduled for 00:10 UTC on 2026-11-17, after the free D1 daily limit resets (rwnq8/jobs-agent PR 15).",
+      "next": "Data copy, then the tenant web Worker."
+    },
+    {
+      "id": "ps",
+      "name": "Practical Solutions",
+      "repo": "ultrastable/ultrastable",
+      "db": "tenant-ps-db",
+      "web": "tenant-ps-web",
+      "url": "https://tenant-ps-web.ultrastable.workers.dev/",
+      "status": "live",
+      "note": "Web Worker and database are on the Ultrastable account.",
+      "next": "None."
+    }
+  ]
+}

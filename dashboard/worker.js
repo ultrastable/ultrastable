@@ -7,7 +7,10 @@
 import { handleAnalytics, record, selfcheck, report, summary, REPORT_CACHE_MINUTES } from "../seed/analytics/analytics.js";
 import { ask, ASK_PER_HOUR } from "./agent.js";
 import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: the console agent spends from the owner's budget
-const VERSION = "0.3.0";
+import NEEDS from "../foundation/data/needs-you.json" with { type: "json" };
+import TENANTS from "../foundation/data/tenants.json" with { type: "json" };
+import PAID from "../foundation/data/paid-options.json" with { type: "json" };
+const VERSION = "0.4.0";
 const COOKIE = "us_owner";
 const OTP_MS = 10 * 60e3, SESSION_MS = 30 * 864e5, STEPUP_MS = 15 * 60e3;
 const HOSTS = ["ultrastable.io", "ultrastable.app", "ultrastable.net"];
@@ -119,6 +122,10 @@ export async function runProbes(env) {
       const hit = GUARD_WORDS.filter(w => t.includes(w));
       await rec("disclosure_guard", hit.length === 0, hit.length ? "public page contains: " + hit.join(", ") : "public page carries no mechanism words");
     } catch (e) { await rec("disclosure_guard", false, String(e.message || e)); }
+    for (const t of TENANTS.tenants.filter(x => x.url)) {
+      try { const r = await fetch(t.url, { signal: AbortSignal.timeout(5000) }); await rec("tenant:" + t.id, r.status >= 200 && r.status < 400, "HTTP " + r.status); }
+      catch (e) { await rec("tenant:" + t.id, false, String(e.message || e)); }
+    }
     if (env.GITHUB_TOKEN) {
       try { const r = await gh(env, "GET", ""); await rec("github", r.ok, "repo API HTTP " + r.status); } catch (e) { await rec("github", false, String(e.message || e)); }
     } else await rec("github", false, "no GITHUB_TOKEN set: issues are not syncing (owner task own-gh-token)");
@@ -223,7 +230,24 @@ async function askCommand(env, session, line) {
 }
 
 // ---------- state for the dashboard ----------
+// OWNER-DASH-2: the static panels (what needs the owner, tenants, paid options) come from files in the bundle, so the page still answers when D1 is at its free daily read cap.
+export function staticPanels() {
+  return {
+    needs: NEEDS.items.map(i => ({ id: i.id, title: i.title, why: i.why, default: i.default, url: i.url, button: i.button })),
+    tenants: TENANTS.tenants,
+    options: PAID.options, options_checked: PAID.checked,
+    plan_note: "Everything runs on free tiers. Nothing here upgrades a plan; paid options below are your decision, with the cost.",
+  };
+}
 export async function stateOf(env) {
+  const base = staticPanels();
+  try { return await stateFromDb(env, base); }
+  catch (e) {
+    const m = String(e && e.message || e);
+    return { version: VERSION, degraded: /free tier|row read limit|7500/i.test(m) ? "D1 is at its free daily read limit; live checks and tasks return after 00:00 UTC. The panels below are from the bundle." : "Database unavailable: " + m.slice(0, 200), ...base, tenants: base.tenants.map(t => ({ ...t, live: null })), checks: [], owner: [], fleet: [], counts: { owner: 0, fleet: 0, queued: 0, done: 0 }, audit: [], notes: [], snapshot: null, analytics: null, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
+  }
+}
+async function stateFromDb(env, base) {
   const now = Date.now();
   await env.DB.prepare("UPDATE tasks SET state='open' WHERE state='snoozed' AND snooze_until<?1").bind(now).run();
   const q = async (sql, ...b) => (await env.DB.prepare(sql).bind(...b).all()).results;
@@ -239,7 +263,8 @@ export async function stateOf(env) {
   const sn = await env.DB.prepare("SELECT body,at FROM snapshots WHERE key='repo'").first();
   let snapshot = null; if (sn) { try { snapshot = { ...JSON.parse(sn.body), received: sn.at }; } catch (e) { snapshot = { error: "stored snapshot is not valid JSON" }; } }
   let analytics = null; try { analytics = await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }); } catch (e) { analytics = { error: String(e.message || e) }; }
-  return { version: VERSION, snapshot, analytics, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
+  const tenants = base.tenants.map(t => { const ck = checks.find(c => c.name === "tenant:" + t.id); return { ...t, live: ck ? { ok: !!ck.ok, detail: ck.detail, at: ck.at } : null }; });
+  return { version: VERSION, ...base, tenants, snapshot, analytics, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
 }
 
 // ---------- scheduled tick: probes, notifications, daily digest ----------
@@ -321,6 +346,11 @@ const sn=s.snapshot;$('#snapmeta').textContent=sn&&sn.panels?('Snapshot of the r
 $('#snap').innerHTML=sn&&sn.panels?sn.panels.map(p=>'<div class="card"><h3>'+E(p.title)+'</h3>'+p.rows.map(r=>'<div class="meta"><span class="'+(r[2]=='ok'?'ok':r[2]=='warn'?'bad':'')+'">'+(r[2]=='ok'?'OK ':r[2]=='warn'?'OPEN ':'')+'</span><b>'+E(r[0])+'</b> '+E(r[1])+'</div>').join('')+'</div>').join(''):'';
 const an=s.analytics;$('#an').innerHTML=an&&an.metrics?'<p class="meta">Collecting for '+an.age_days+' days. '+an.breaches+' breach(es).</p><div class="grid">'+an.metrics.map(m=>'<div class="card"><span class="'+(m.hit?'bad':'ok')+'">'+(m.hit?'BREACH':'OK')+'</span> <b>'+E(m.name)+'</b> '+E(m.value)+'<div class="meta">'+E(m.label)+' ('+E(m.kind)+'; '+E(m.why)+')</div></div>').join('')+'</div><div class="meta">Top pages, 7 days: '+(an.top.map(t=>E(t.host+t.path)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Referrers: '+(an.refs.map(t=>E(t.ref)+' '+t.views).join(', ')||'none yet')+'</div><div class="meta">Daily views: '+(an.daily.map(d=>E(d.day.slice(5))+' '+d.views).join(' · ')||'none yet')+'</div>':'<p class="meta">Analytics unavailable.</p>';
 $('#counts').textContent='Your queue: '+s.counts.owner+' open. Fleet: '+s.counts.fleet+' open, '+s.counts.queued+' queued, '+s.counts.done+' done.';
+$('#degraded').hidden=!s.degraded;$('#degraded').textContent=s.degraded||'';
+$('#needs').innerHTML=(s.needs||[]).map(n=>'<div class="card"><div class="tag">ONLY YOU CAN DO THIS</div><h3>'+E(n.title)+'</h3><div class="meta">'+E(n.why)+'</div><div class="meta"><b>If you wait:</b> '+E(n.default)+'</div><div class="row"><a class="btn p" href="'+E(n.url)+'" rel="noopener">'+E(n.button||'Open')+'</a></div></div>').join('')||'<p class="meta">Nothing waiting on you.</p>';
+$('#tenants').innerHTML=(s.tenants||[]).map(t=>{const st=t.live?(t.live.ok?'ok':'bad'):(t.status=='live'?'meta':'tag');const lb=t.live?(t.live.ok?'LIVE':'DOWN'):(t.status=='live'?'LIVE (not probed yet)':'PENDING');return '<div class="card"><span class="'+st+'">'+lb+'</span> <b>'+E(t.name)+'</b><div class="meta">'+E(t.note)+'</div><div class="meta">Database: '+E(t.db)+(t.web?' · Web: '+E(t.web):'')+'</div><div class="meta">Next: '+E(t.next)+'</div>'+(t.live?'<div class="meta">Probe: '+E(t.live.detail)+'</div>':'')+'</div>'}).join('');
+$('#plan').textContent=(s.plan_note||'')+' Prices checked '+(s.options_checked||'')+'.';
+$('#options').innerHTML=(s.options||[]).map(o=>'<div class="card"><h3>'+E(o.title)+'</h3><div class="meta"><b>Cost:</b> '+E(o.cost)+'</div><div class="meta"><b>Unlocks:</b> '+E(o.unlocks)+'</div><div class="meta"><b>Default in effect:</b> '+E(o.default)+'</div></div>').join('');
 $('#owner').innerHTML=s.owner.map(t=>task(t,1)).join('')||'<p class="meta">Nothing waiting on you.</p>';
 $('#fleet').innerHTML=s.fleet.map(t=>'<div class="card"><b>'+E(t.title)+'</b> <span class="meta">'+E(t.area||'')+(t.state=='delegated'?' · with the fleet':'')+'</span><div class="row">'+(t.state=='delegated'?'':'<button data-c="fix '+E(t.id)+'">'+(t.fix_cmd?'Fix it':'Hand to fleet')+'</button>')+'<button data-c="done '+E(t.id)+'">Done</button><button data-c="dismiss '+E(t.id)+'">Not doing</button>'+(t.url?'<a class="btn" href="'+E(t.url)+'" rel="noopener">Open</a>':'')+'</div></div>').join('')||'<p class="meta">No fleet tasks.</p>';
 $('#audit').textContent=s.audit.map(a=>a.id+' '+new Date(a.at).toISOString().slice(0,19)+' '+(a.ok?'ok ':'err')+' '+a.cmd).join('\\n')||'Empty.';
@@ -333,7 +363,7 @@ document.querySelectorAll('#chips button').forEach(b=>b.onclick=()=>run(b.datase
 $('#logout').onclick=async()=>{await api('/api/owner/logout',{});location.reload()};
 load();`;
 function ownerPage() {
-  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><a class=\"sp\" href=\"/auth/passkey/add\">Add a passkey</a><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><h2>Needs you</h2><div id=\"owner\"></div><h2>Ask or tell Ultrastable</h2><form id=\"cmd\"><textarea id=\"line\" rows=\"3\" maxlength=\"2000\" placeholder=\"Ask a question, or tell Ultrastable what to do\" aria-label=\"Ask or tell Ultrastable\" autocomplete=\"off\"></textarea><div class=\"crow\"><span class=\"meta\" id=\"scope\" aria-live=\"polite\">Signed in. Changes ask for a fresh emailed code.</span><button class=\"p\" id=\"go\">Run</button></div></form><div class=\"chips\" id=\"chips\"><button type=\"button\" data-q=\"Which pages got the most views in the last 7 days?\">Top pages this week</button><button type=\"button\" data-q=\"tasks owner\">What needs me</button><button type=\"button\" data-q=\"status\">Status</button><button type=\"button\" data-q=\"analytics\">Analytics</button><button type=\"button\" data-q=\"probe\">Run checks</button><button type=\"button\" data-q=\"help\">Help</button></div><div id=\"thread\" aria-live=\"polite\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
+  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><a class=\"sp\" href=\"/auth/passkey/add\">Add a passkey</a><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><p class=\"meta bad\" id=\"degraded\" role=\"alert\" hidden></p><h2>Needs you</h2><div id=\"needs\"></div><div id=\"owner\"></div><h2>Tenant apps</h2><div id=\"tenants\" class=\"grid\"></div><h2>Paid options (you decide; default is stay free)</h2><p class=\"meta\" id=\"plan\"></p><div id=\"options\"></div><h2>Ask or tell Ultrastable</h2><form id=\"cmd\"><textarea id=\"line\" rows=\"3\" maxlength=\"2000\" placeholder=\"Ask a question, or tell Ultrastable what to do\" aria-label=\"Ask or tell Ultrastable\" autocomplete=\"off\"></textarea><div class=\"crow\"><span class=\"meta\" id=\"scope\" aria-live=\"polite\">Signed in. Changes ask for a fresh emailed code.</span><button class=\"p\" id=\"go\">Run</button></div></form><div class=\"chips\" id=\"chips\"><button type=\"button\" data-q=\"Which pages got the most views in the last 7 days?\">Top pages this week</button><button type=\"button\" data-q=\"tasks owner\">What needs me</button><button type=\"button\" data-q=\"status\">Status</button><button type=\"button\" data-q=\"analytics\">Analytics</button><button type=\"button\" data-q=\"probe\">Run checks</button><button type=\"button\" data-q=\"help\">Help</button></div><div id=\"thread\" aria-live=\"polite\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
 }
 
 // ---------- router ----------

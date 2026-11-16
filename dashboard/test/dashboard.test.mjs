@@ -127,3 +127,19 @@ test("MAIL-PATHS-1: one address is a failing probe, two are a passing one", asyn
   const pick = async env => (await runProbes(env)).find(x => x.name === "owner_email_paths");
   assert.equal((await pick(one)).ok, false); assert.equal((await pick(two)).ok, true);
 });
+
+test("OWNER-DASH-2: state carries needs, tenants and paid options with costs; free default stated", async () => {
+  const e = env(); const ck = await login(e);
+  const s = await (await call(e, "/api/owner/state", null, ck)).json();
+  assert.ok(s.needs.length > 0 && s.needs.every(n => n.url.startsWith("https://")));
+  assert.ok(s.tenants.some(t => t.id === "jobs" && t.status === "pending"));
+  assert.ok(s.options.length > 0 && s.options.every(o => o.cost && o.default));
+  assert.match(s.plan_note, /free tiers/);
+});
+test("OWNER-DASH-2: at the D1 free read cap the page still answers from the bundle", async () => {
+  const e = env(); const ck = await login(e);
+  const real = e.DB.prepare;
+  e.DB.prepare = sql => /FROM tasks|FROM checks/.test(sql) ? { bind: () => ({ all: async () => { throw new Error("D1 free tier daily row read limit exceeded (7500)"); }, first: async () => { throw new Error("7500"); }, run: async () => { throw new Error("7500"); } }) } : real(sql);
+  const r = await call(e, "/api/owner/state", null, ck); assert.equal(r.status, 200);
+  const s = await r.json(); assert.match(s.degraded, /free daily read limit/); assert.ok(s.needs.length && s.options.length);
+});
