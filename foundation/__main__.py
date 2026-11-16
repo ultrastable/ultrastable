@@ -113,6 +113,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["loopowner"]:
         from . import loopowner
         return loopowner.main(_av[1:])
+    if _av[:1] == ["tenantstorage"]:
+        from . import tenantstorage
+        return tenantstorage.main(_av[1:])
     if _av[:1] == ["cost"]:
         from . import cost
         return cost.main(_av[1:])
