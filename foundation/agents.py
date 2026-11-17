@@ -59,6 +59,9 @@ def build_request(a: dict, prompt: str, env=None) -> tuple[str, dict, dict]:
         url = f"https://api.cloudflare.com/client/v4/accounts/{env['CLOUDFLARE_ACCOUNT_ID']}/ai/run/{a['model']}"
         body = {"messages": [{"role": "user", "content": prompt}], "max_tokens": 7000, **a.get("extra", {})}
         return url, {"authorization": "Bearer " + env["CLOUDFLARE_API_TOKEN"], "content-type": "application/json"}, body
+    if a["route"] == "github-models":  # SELFCODE-1: GitHub Models through the workflow's own token (permissions: models: read); no secret to mint, free within rate limits
+        body = {"model": a["model"], "messages": [{"role": "user", "content": prompt}], "max_tokens": 8000, **a.get("extra", {})}
+        return "https://models.github.ai/inference/chat/completions", {"authorization": "Bearer " + env["GITHUB_MODELS_TOKEN"], "accept": "application/vnd.github+json", "content-type": "application/json", "x-github-api-version": "2022-11-28"}, body
     if a["route"] == "anthropic":
         return "https://api.anthropic.com/v1/messages", {"x-api-key": env["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01", "content-type": "application/json"}, \
             {"model": a["model"], "max_tokens": 16000, "messages": [{"role": "user", "content": prompt}]}
@@ -69,6 +72,8 @@ def parse_text(a: dict, resp: dict) -> str:
     if a["route"] == "workers-ai":
         r = resp["result"]
         return r.get("response") or (r.get("choices") or [{}])[0].get("message", {}).get("content") or ""
+    if a["route"] == "github-models":
+        return (resp.get("choices") or [{}])[0].get("message", {}).get("content") or ""
     return resp["content"][0]["text"]
 
 

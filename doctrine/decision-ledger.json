@@ -1474,6 +1474,14 @@
    "body": "Every input and change is a row with origin class, actor, channel, affected and settled effect; the public changelog shows only rows marked public with contact details removed; selfimprove reads kept rate per origin.",
    "probe": "grep:foundation/provenance.py::def public_view",
    "session": "provenance-thread"
+  },
+  {
+   "id": "decision-2026-11-17-selfcode-1-signals-file-work-free-models-write-it-settle-rev",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: signals file work, free models write it, settle reverts regressions and learns per kind",
+   "body": "The executor only worked the queue and went idle when empty. foundation/selfcode.py senses failing tests, failing main CI, open unknowns, unused imports, swallowed errors, TODOs and trusted agent-task issues, files Q-SELF/Q-INTAKE items with closing probes, the ladder adds free GitHub Models routes (Actions token, models: read), and settle scores each merged change against its signal, reverts a break and pauses kinds with a low kept rate. Kill switch: doctrine/selfcode.json enabled, SELFCODE_OFF, HALT.",
+   "probe": "file:foundation/selfcode.py"
   }
  ]
 }

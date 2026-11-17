@@ -1476,6 +1476,7 @@
       ],
       "system_path": [
         "foundation/executor.py",
+        "foundation/selfcode.py",
         "seed/worker/src/executor.js",
         "scripts/executor_evidence.sh",
         "seed/worker/src/lane.js"
