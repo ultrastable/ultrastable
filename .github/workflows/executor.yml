@@ -63,7 +63,7 @@ jobs:
         run: python3 scripts/needs_code_bridge.py
       - name: Sense code signals and trusted issues, file self-code items (SELFCODE-1)
         if: steps.spark.outputs.go == 'true' && steps.work.outputs.agent_go != 'false'
-        run: python3 -m foundation selfcode --sense --apply --tests
+        run: python3 -m foundation selfcode --sense --apply
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Execute one item
