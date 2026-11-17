@@ -309,7 +309,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if model_call:
                     out, meta = model_call(prompt), {}
                 else:
-                    out, meta = agent_ladder.call(prompt, attempt, root=lroot)
+                    out, meta = ladder_call(prompt, attempt, lroot)
                     row.setdefault("models", []).append(meta["model"])
                 if str(n).startswith(("Q-SELF-", "Q-INTAKE-")):  # SELFCODE-1 (every Q-SELF item, hand-filed ones too): the self-code loop writes only inside the allowlist of doctrine/selfcode.json, checked before anything is written
                     from . import selfcode
@@ -317,7 +317,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                     if bad:
                         raise ValueError("outside the self-code scope: " + ", ".join(bad))
                 files = apply_edits(out["files"], root)
-            except (ValueError, KeyError, TypeError, OSError, AttributeError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
+            except (ValueError, KeyError, TypeError, OSError, AttributeError, RuntimeError) as e:  # FREE-LLM-3: a provider failure (RuntimeError) also moves to the next rung instead of ending the run; unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
                 failed.append("the reply was not valid JSON with a files list: " + type(e).__name__ + ": " + str(e)[:300])
                 row.setdefault("attempts", []).append([failed[-1][:400]])
                 if attempt < REPAIRS:
