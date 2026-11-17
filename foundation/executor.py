@@ -283,6 +283,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 else:
                     out, meta = agent_ladder.call(prompt, attempt, root=lroot)
                     row.setdefault("models", []).append(meta["model"])
+                if str(n).startswith(("Q-SELF-", "Q-INTAKE-")):  # SELFCODE-1: the self-code loop writes only inside the allowlist of doctrine/selfcode.json, checked before anything is written
+                    from . import selfcode
+                    bad = selfcode.scope_violation([e.get("path", "") for e in out["files"]], lroot)
+                    if bad:
+                        raise ValueError("outside the self-code scope: " + ", ".join(bad))
                 files = apply_edits(out["files"], root)
             except (ValueError, KeyError, TypeError, OSError, AttributeError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
                 failed.append("the reply was not valid JSON with a files list: " + type(e).__name__ + ": " + str(e)[:300])

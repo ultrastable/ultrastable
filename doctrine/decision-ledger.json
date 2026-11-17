@@ -1499,6 +1499,14 @@
    "body": "The budget pause is for private-repo minutes only; ciwatch now detects red runs on every repo.",
    "probe": "file:scripts/actions_guard.py",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-selfcode-1-code-signals-file-work-settle-reverts-regressions",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: code signals file work, settle reverts regressions and learns per kind",
+   "body": "Free GitHub Models routing, CI-failure items and unknown-fact items already come from FREE-LLM-1, ciwatch and agentwork. foundation/selfcode.py adds the missing part: code signals (failing tests, unused imports, swallowed errors, TODOs, trusted agent-task issues) filed as Q-SELF/Q-INTAKE items with closing probes, a write allowlist, and settle that re-measures after merge, reverts a break and pauses kinds with a low kept rate. Kill switch: doctrine/selfcode.json enabled, SELFCODE_OFF, HALT, AGENT_KILL gate.",
+   "probe": "file:foundation/selfcode.py"
   }
  ]
 }
