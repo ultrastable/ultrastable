@@ -44,12 +44,24 @@ async function sendOne(env, to, subject, text) {
   const raw = ["From: Ultrastable <" + from + ">", "To: " + to, "Subject: " + subject, "Message-ID: <" + hex(12) + "@ultrastable.io>", "Date: " + new Date().toUTCString(), "MIME-Version: 1.0", "Content-Type: text/plain; charset=utf-8", "", text].join("\r\n");
   await env.SEND_EMAIL.send(new EmailMessage(from, to, raw));
 }
+// MAIL-RELAY-1 (2026-11-17): Cloudflare Email Sending only lets a worker send as a domain that its own account owns. ultrastable.io lives in one
+// account and a worker may run in another, so the native send fails with "domain is not owned by the same account". The second route hands the
+// message to a dashboard worker in the account that owns the zone, over HTTPS with a shared bearer secret (MAIL_RELAY_TOKEN, never in git).
+async function relayOne(env, to, subject, text) {
+  if (!env.MAIL_RELAY_URL || !env.MAIL_RELAY_TOKEN) throw new Error("no relay configured");
+  const r = await fetch(env.MAIL_RELAY_URL.replace(/\/$/, "") + "/api/mail/relay", { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer " + env.MAIL_RELAY_TOKEN }, body: JSON.stringify({ to, subject, text }), signal: AbortSignal.timeout(10000) });
+  if (!r.ok) throw new Error("relay HTTP " + r.status);
+}
+async function sendVia(env, to, subject, text) {
+  try { await sendOne(env, to, subject, text); return "native"; }
+  catch (e) { const first = String(e && e.message || e).slice(0, 120); try { await relayOne(env, to, subject, text); return "relay"; } catch (e2) { throw new Error(first + " ; " + String(e2 && e2.message || e2).slice(0, 80)); } }
+}
 export async function sendMail(env, subject, text) {
   const to = ownerAddresses(env);
   if (!to.length) throw new Error("OWNER_EMAIL is not set");
   const errs = [];
   for (const a of to) {
-    try { await sendOne(env, a, subject, text); return { to: a }; }
+    try { const via = await sendVia(env, a, subject, text); return { to: a, via }; }
     catch (e) { errs.push(maskAddr(a) + ": " + String(e && e.message || e).slice(0, 120)); }
   }
   throw new Error("no owner address accepted the mail (" + errs.join(" | ") + ")");
@@ -111,6 +123,14 @@ export async function runProbes(env) {
   const rec = async (n, ok, d) => { try { await setCheck(env, n, ok, d); } catch (e) { /* a down database must still report itself */ } out.push({ name: n, ok, detail: d }); };
   try { await env.DB.prepare("SELECT 1").first(); await rec("database", true, "D1 answers"); } catch (e) { await rec("database", false, String(e.message || e)); }
   await rec("owner_email", !!(env.OWNER_EMAIL && (env.SEND_EMAIL || env.MAILER)), env.OWNER_EMAIL ? "owner address and sender configured" : "OWNER_EMAIL missing");
+  // MAIL-PROBE-1: a real test send, at most once a day, recorded with the route that carried it.
+  try {
+    const last = await env.DB.prepare("SELECT at,ok FROM checks WHERE name='mail_send'").first();
+    if (!last || Date.now() - last.at > 86400000 || (!last.ok && Date.now() - last.at > 3600000)) {
+      try { const r = await sendMail(env, "Ultrastable mail probe", "Daily delivery probe. No action needed."); await rec("mail_send", true, "delivered to " + maskAddr(r.to) + " via " + (r.via || "native")); }
+      catch (e) { await rec("mail_send", false, String(e && e.message || e)); }
+    } else out.push({ name: "mail_send", ok: !!last.ok, detail: "last real send under 24 h ago" });
+  } catch (e) { /* the checks table may not exist yet */ }
   const paths = ownerAddresses(env).length;
   await rec("owner_email_paths", paths >= 2, paths >= 2 ? paths + " owner addresses: a suppressed one does not lock the owner out" : "only " + paths + " owner address: set OWNER_EMAIL_BACKUP to an address at a different provider (single point of failure, MAIL-PATHS-1)");
   if (!env.NO_NET) {
@@ -390,6 +410,13 @@ export async function route(req, env) {
   if (p === "/changelog") { const v = await PV.publicView(env, { tenant: u.searchParams.get("tenant") || "" }); return page(PV.changelogHtml(v, { title: "Ultrastable changelog", css: THEME, icon: ICON })); }
   if (p === "/api/changelog") return json(await PV.publicView(env, { tenant: u.searchParams.get("tenant") || "" }));
   if (p === "/api/suggest" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const tn = String(b.tenant || "ultrastable").replace(/[^a-z0-9-]/g, "").slice(0, 40) || "ultrastable"; const r = await PV.suggest(env, b, tn); return json(r.body, r.status); }
+  if (p === "/api/mail/relay" && req.method === "POST") {
+    if (!env.MAIL_RELAY_TOKEN || !constEq(await sha256(req.headers.get("authorization") || ""), await sha256("Bearer " + env.MAIL_RELAY_TOKEN))) return json({ error: "unauthorized" }, 401);
+    let b = {}; try { b = await req.json(); } catch (e) { }
+    if (!ownerAddresses(env).includes(String(b.to || ""))) return json({ error: "recipient is not an owner address" }, 403);
+    try { await sendOne(env, b.to, String(b.subject || "").slice(0, 200), String(b.text || "").slice(0, 4000)); return json({ ok: true }); }
+    catch (e) { return json({ error: String(e && e.message || e).slice(0, 200) }, 502); }
+  }
   if (p === "/owner") return ownerPage();
   if (p.startsWith("/api/owner/")) {
     if (req.method === "POST" && req.headers.get("x-us-ui") !== "1") return json({ error: "missing x-us-ui header" }, 400);

@@ -176,3 +176,18 @@ test("provenance: owner commands are recorded, visitors' suggestions stay privat
   const tl = await (await call(e, "/api/owner/provenance", undefined, cookie)).json();
   const sug = tl.entries.find(x => x.class === "end_user"); assert.ok(sug && sug.public === 0 && !sug.summary.includes("jane@") && sug.affected[0] === "/problems/x");
 });
+
+test("MAIL-RELAY-1: a native send refused for domain ownership goes out through the relay; the relay only mails owner addresses", async () => {
+  const { sendMail } = await import("../worker.js");
+  const realFetch = globalThis.fetch; let seen;
+  globalThis.fetch = async (u, o) => { seen = { u, o }; return new Response("{}", { status: 200 }); };
+  try {
+    const env = { OWNER_EMAIL: "a@one.example", MAILER: async () => { throw new Error("email from ultrastable.io not allowed because domain is not owned by the same account"); }, MAIL_RELAY_URL: "https://relay.example", MAIL_RELAY_TOKEN: "t" };
+    const r = await sendMail(env, "s", "t"); assert.equal(r.via, "relay"); assert.match(seen.u, /\/api\/mail\/relay$/);
+  } finally { globalThis.fetch = realFetch; }
+  const e = { ...mkdb(), OWNER_EMAIL: "a@one.example", MAIL_RELAY_TOKEN: "t", MAILER: async () => {} };
+  const bad = await e_call(e, { to: "x@evil.example" }); assert.equal(bad.status, 403);
+  const ok = await e_call(e, { to: "a@one.example" }); assert.equal(ok.status, 200);
+  const noauth = await call(e, "/api/mail/relay", { to: "a@one.example" }); assert.equal(noauth.status, 401);
+});
+async function e_call(e, body) { return e.__h ? null : (await import("../worker.js")).default.fetch(new Request("https://d.example/api/mail/relay", { method: "POST", headers: { authorization: "Bearer t", "content-type": "application/json" }, body: JSON.stringify(body) }), e); }
