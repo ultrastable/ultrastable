@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
-// VENDORED from ultrastable/workers core/airouter/index.js (TENANT-SYNC-1): edit it there, then copy. Never diverge.
+// VENDORED from ultrastable workers/core/airouter/index.js (the standalone workers repo is archived) (TENANT-SYNC-1): edit it there, then copy. Never diverge.
 // core/airouter (AI-ROUTER-1, 2026-11-17): the one place every tenant's model calls go through, so AI cost stays near zero and quality stays high.
 //  1. cache + dedupe: an identical prompt of the same kind is answered from D1 (ttl) or from the call already in flight; no model, no neurons.
 //  2. cheapest first: free Workers AI models are tried before any paid one, ordered by learned pass rate then cost.
