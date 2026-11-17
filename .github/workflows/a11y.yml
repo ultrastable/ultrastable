@@ -1,0 +1,25 @@
+name: a11y
+# budget: ~3 min x 4/month
+# trigger: weekly and on a change under site/ is caught by the site tests; a design regression needs days, not minutes, to matter, so weekly; dispatch on demand
+# free-alternative: a cloud-hosted agent session runs `node scripts/a11y_audit.mjs` (Playwright is preinstalled there)
+on:
+  schedule: [{cron: "41 5 * * 3"}]
+  workflow_dispatch: {}
+permissions: {contents: read}
+concurrency: {group: a11y, cancel-in-progress: false}
+jobs:
+  a11y:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py a11y
+      - name: Install the browser and axe-core
+        run: |
+          npm i --no-save --no-audit --no-fund playwright@1.49.1 axe-core@4.10.2
+          npx playwright install --with-deps chromium
+      - name: Audit every public page at phone and desktop width, light and dark (A11Y-LOOP-1)
+        run: node scripts/a11y_audit.mjs

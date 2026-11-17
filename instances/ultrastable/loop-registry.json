@@ -3103,6 +3103,41 @@
       ],
       "area": "managers",
       "server_owner": "github-actions"
+    },
+    {
+      "id": "a11y",
+      "kind": "governance",
+      "summary": "A11Y-LOOP-1: every public page is rendered at phone and desktop width, light and dark, and checked with axe-core, horizontal scroll and 44px targets; a failure files an issue.",
+      "trigger": "weekly (a11y.yml) and on demand",
+      "owner": "design-manager",
+      "closes_by": "system",
+      "sla": "7d",
+      "done": "node scripts/a11y_audit.mjs reports ok",
+      "paths": [
+        {
+          "id": "ci",
+          "how": "node scripts/a11y_audit.mjs in a11y.yml",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "node scripts/a11y_audit.mjs from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:scripts/a11y_audit.mjs::axe-core",
+      "writeback": [
+        "docs/issues"
+      ],
+      "system_path": [
+        "scripts/a11y_audit.mjs",
+        ".github/workflows/a11y.yml"
+      ],
+      "area": "governance",
+      "workflows": [
+        "a11y.yml"
+      ],
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"
