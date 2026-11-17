@@ -245,6 +245,7 @@ def main(argv):
         print(f"DRIFT {r['id']} [{r['kind']}] {r['surface']}: {r['detail']}")
     if "--live" in a:
         lrows, ldrift = live(root)
+        print(f"live: {len(lrows) - len(ldrift)} of {len(lrows)} deployed surfaces match the registry: " + ", ".join(r["id"] + ("=ok" if r["pass"] else "=DRIFT") for r in lrows))
         for r in ldrift:
             print(f"LIVE DRIFT {r['id']} {r['url']}: {r['detail']}")
         drift = drift + [{"id": "live-" + r["id"], "surface": r["url"], "claim": r["url"], "detail": r["detail"], "kind": "live"} for r in ldrift]
