@@ -42,11 +42,12 @@ A missing credential never stops the boot. The step is recorded as a backlog ite
 | [`bootstrap/bootstrap.py`](bootstrap/bootstrap.py) | The bootstrapper: read, detect, select, plan, provision, start, report. Stdlib only, idempotent. |
 | [`worker/`](worker/) | The server-side runtime: Cloudflare Worker with the tick, D1 migrations, tests. |
 | [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided communication flow). Dry-run by default, never in the core path. Spec: `docs/architecture/plugins.md`. |
-| [`tests/`](tests/) | Bootstrapper and policy tests (`python3 -m unittest discover tests`). |
+| [`tests/`](tests/) | Bootstrapper and policy tests, <!-- claim:seed-py-tests -->35<!-- /claim --> in all (`python3 -m unittest discover tests`). |
 | [`docs/bootstrapping.md`](docs/bootstrapping.md) | The boot sequence, stage by stage, and what each stage learned from AIOS. |
 
 ## Rules the seed carries into every org it starts
 
+- **Words match code (CLAIMS-1).** Every public statement is a probed sentence, a block generated from code, or an inventory checked in reverse (`doctrine/claims.json`; `python3 scripts/claims.py --check` on every change, `--fix` rewrites generated blocks, `--file` files one item per drift). A new claim is registered in the same change that makes it.
 - **If it is not in code, it does not exist.** Every output of every role is a commit, an issue or a database row. Chat is never the record.
 - **The fleet is the actor.** People set direction and take only identity-bound steps (money, signing, credentials only they hold, their own accounts). Each of those is a gate card, never an instruction in prose.
 - **Narrow interrupt gate.** An agent stops only for a step that is irreversible and identity-bound with no reversible path. Everything else runs, is verified and reported.
