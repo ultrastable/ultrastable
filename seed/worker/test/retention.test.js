@@ -46,7 +46,7 @@ test('no rules means nothing runs; names are checked before they reach SQL', asy
 
 test('the tick runs the prune and the config carries the rules', () => {
   const idx = readFileSync(new URL('../src/index.js', import.meta.url), 'utf8');
-  assert.match(idx, /pruneAll\(env\.DB, \{ rules: config\.retention \}\)/);
+  assert.match(idx, /pruneAll\(env\.DB, \{ rules: config\.retention, archive:/);
   assert.match(readFileSync(new URL('../src/handoff.js', import.meta.url), 'utf8'), /retention: await j\('seed\/autonomy\/retention\.json'\)/);
   const rules = JSON.parse(readFileSync(new URL('../../autonomy/retention.json', import.meta.url), 'utf8'));
   for (const [t, r] of Object.entries(rules.tables)) assert.ok((r.keep_days > 0 && r.column) || (r.keep && r.reason), t + ' needs keep_days and column, or keep and a reason');

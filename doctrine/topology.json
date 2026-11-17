@@ -47,6 +47,11 @@
         "name": "ultrastable-git",
         "state": "planned",
         "what": "bundles and backups of the repositories (ACCOUNT-SPLIT-2: R2 is not yet enabled on the ultrastable account; the copy in the retired account is kept)"
+      },
+      {
+        "name": "ultrastable-audit",
+        "state": "planned",
+        "what": "AUDIT-CHAIN-1: sealed, hash-chained audit segments (R2 needs enabling on the account; until then the same segments go to the ops repository under ledger/)"
       }
     ],
     "queues": [
@@ -113,6 +118,9 @@
         ],
         "vars": {
           "ZERO_ACTIONS": "1"
+        },
+        "r2": {
+          "AUDIT": "ultrastable-audit"
         }
       }
     },
