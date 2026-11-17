@@ -83,6 +83,36 @@ export default {
      ],
      "unit": "clocks",
      "why": "A clock that stops halts the loop it drives; the system is viable only while every clock keeps ticking, and a watchdog that goes silent reads as unmeasured."
+    },
+    {
+     "first_order": [
+      "uiux-audit",
+      "self-coding-agent"
+     ],
+     "id": "ui_findings",
+     "max": 0,
+     "min": 0,
+     "name": "Front-end findings that block a user",
+     "steps": [
+      "restructure: move the failing rule into the shared component or design token so each page inherits the fix"
+     ],
+     "unit": "findings",
+     "why": "A page that fails accessibility, leaks backend detail, breaks its structure or its brand is a front end drifting into a mishmash; the UI/UX loop (UIUX-1) must keep this at zero, and a variable that cannot be read from a fresh audit is unmeasured and so not in bounds."
+    },
+    {
+     "first_order": [
+      "uiux-audit",
+      "uiux-funnels"
+     ],
+     "id": "happy_paths",
+     "max": 1.0,
+     "min": 1.0,
+     "name": "User paths that still walk end to end",
+     "steps": [
+      "restructure: repair the broken step or change the path in doctrine/stakeholders.json so it matches the page"
+     ],
+     "unit": "of paths",
+     "why": "A path in doctrine/stakeholders.json that no longer clicks through is a user who cannot get from entry to the next step; every audience path must walk, and the UI/UX loop runs each as a browser flow."
     }
    ],
    "what": "Ultrastable running on itself (tenant 0)"

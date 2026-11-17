@@ -122,6 +122,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["reach"]:
         from . import reach
         return reach.main(_av[1:])
+    if _av[:1] == ["uiux"]:
+        from . import uiux
+        return uiux.main(_av[1:])
     if _av[:1] == ["insight"]:
         from . import insight
         return insight.main(_av[1:])

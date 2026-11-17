@@ -100,6 +100,7 @@ jobs:
           python3 -m foundation design --check
           python3 -m foundation design --lint
           python3 -m foundation insight --check
+          python3 -m foundation uiux --check
           python3 -m foundation flows --check
           python3 -m foundation criticality --check
           python3 -m foundation ultrastability --check
