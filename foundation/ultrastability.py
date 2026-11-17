@@ -2,7 +2,7 @@
 # Copyright (c) Ultrastable
 """ULTRASTABILITY-1: Ashby's two loops, as code. Ultrastable is the foundation for any autonomous system.
 
-  python3 -m foundation ultrastability [--tick [--apply] | --check | --data [--apply] | --status]
+  python3 -m foundation ultrastability [--tick [--apply] | --check | --data [--apply] | --status | --tenants [--apply]]
 
 ESSENTIAL VARIABLES  doctrine/ultrastability.json declares, per scope (platform, tenant), the variables whose bounds are the system's viability limits.
 FIRST ORDER          the existing loops (probe-and-revert, cost probe, claims check, executor) correct disturbance without changing the system.
@@ -76,6 +76,20 @@ def tenant_readings(root=REPO, fetch=None) -> dict:
             have = json.loads(own.read_text(encoding="utf-8")) if own.is_file() else {}
             out[slug] = {"uptime": get(a["url"]), "spend": have.get("spend_vs_budget"), "claims_drift": have.get("claims_drift"), "value": have.get("declared_metric")}
     return out
+
+
+def write_tenants(root=REPO, fetch=None, now=None) -> list[str]:
+    """Write ops/tenants/<slug>.json for every live tenant: the uptime probe now, and the other readings kept from the tenant's own loop (null until it writes them)."""
+    root, now = Path(root), (now or datetime.now(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    done = []
+    for slug, r in tenant_readings(root, fetch).items():
+        p = root / "ops/tenants" / (slug + ".json")
+        have = json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {}
+        p.parent.mkdir(parents=True, exist_ok=True)
+        doc = {"slug": slug, "at": now, "uptime": r["uptime"], "spend_vs_budget": have.get("spend_vs_budget"), "claims_drift": have.get("claims_drift"), "declared_metric": have.get("declared_metric")}
+        p.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+        done.append(slug)
+    return done
 
 
 def _get(url):
@@ -316,6 +330,8 @@ def main(argv=None) -> int:
         else:
             print(render())
         return 0
+    if "--tenants" in a:
+        print(json.dumps(write_tenants(REPO) if "--apply" in a else tenant_readings(REPO), indent=1)); return 0
     if "--tick" in a or "--status" in a:
         print(json.dumps(tick(apply="--apply" in a and "--tick" in a), indent=2)); return 0
     print(__doc__); return 2

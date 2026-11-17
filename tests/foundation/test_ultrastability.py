@@ -85,3 +85,11 @@ class Tenants(T):
             r = u.tick(self.d, True, read=GOOD, fetch=lambda url: 0.0)
         self.assertEqual([s["var"] for s in r["steps"]], ["demo:uptime"])
         self.assertTrue((self.d / "docs/issues/Q-ULTRA-demo-uptime-1.json").is_file())
+
+
+class Write(T):
+    def test_tenant_file_written_with_probe(self):
+        (self.d / "ops/spinoff").mkdir()
+        (self.d / "ops/spinoff/ledger.jsonl").write_text(json.dumps({"slug": "demo", "url": "https://demo.example", "event": "launch"}) + "\n")
+        self.assertEqual(u.write_tenants(self.d, fetch=lambda url: 1.0), ["demo"])
+        self.assertEqual(json.loads((self.d / "ops/tenants/demo.json").read_text())["uptime"], 1.0)
