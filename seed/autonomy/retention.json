@@ -25,6 +25,7 @@
     "budget_ledger": { "column": "day", "keep_days": 400 },
     "retention_runs": { "column": "day", "keep_days": 90 },
     "hits": { "keep": "managed", "reason": "pruned by seed/analytics/analytics.js (35 days raw, 2 days self-check rows)" },
+    "_migrations": { "keep": "state", "reason": "which migrations have been applied; a record of schema state, never history to prune" },
     "analytics_meta": { "keep": "state", "reason": "analytics settings and the report cache" },
     "org": { "keep": "state", "reason": "the organization record" },
     "roles": { "keep": "state", "reason": "current roles" },

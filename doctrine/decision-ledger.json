@@ -1509,6 +1509,15 @@
    "probe": "file:foundation/selfcode.py"
   },
   {
+   "id": "lesson-2026-11-17-record-transport-failures-of-each-code-agent-rung-free-llm-1",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Record transport failures of each code-agent rung (FREE-LLM-1)",
+   "body": "The first Actions executor run skipped both GitHub Models rungs with no recorded reason; the ladder now writes status and provider message for every failed call to ops/agent-cost.jsonl.",
+   "probe": "grep:foundation/agent_ladder.py::transport failure",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
    "id": "lesson-2026-11-17-retention-1-unknowns-1-added-unknown-questions-without-a-ret",
    "kind": "lesson",
    "date": "2026-11-17",
