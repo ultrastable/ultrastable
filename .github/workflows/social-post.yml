@@ -1,12 +1,12 @@
 name: social-post
-# budget: ~1 min x 8/month
-# trigger: twice weekly at most; dry-run until live
+# budget: ~1 min x 30/month
+# trigger: daily; caps in social/gate.json decide how many posts go out
 # free-alternative: Cloudflare cron worker
 # Publishes at most one guard-clean post per run. Dry-run until social/gate.json mode=live and channel secrets exist.
 # Kill switch: social/gate.json "kill": true. Owner cards: docs/ops/SOCIAL-ACCOUNTS.md.
 on:
   schedule:
-    - cron: "17 15 * * 2,5"
+    - cron: "17 15 * * *"
   workflow_dispatch:
 permissions:
   actions: write
@@ -29,6 +29,14 @@ jobs:
       - name: Refill calendar
         working-directory: scripts
         run: python3 social_generate.py
+      - name: Reach loop (events to posts, metrics, weights)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          MASTODON_INSTANCE: ${{ secrets.MASTODON_INSTANCE }}
+          MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
+        run: python3 -m foundation reach --run --apply
       - name: Post due item
         working-directory: scripts
         env:
@@ -41,7 +49,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: |
-          git add social/calendar.json
+          git add social/calendar.json ops/reach docs/issues
           if [ -f social/state.json ]; then git add social/state.json; fi
           if git diff --cached --quiet; then echo "no state change"; exit 0; fi
           git config user.name "ultrastable-social"; git config user.email "social@ultrastable.io"

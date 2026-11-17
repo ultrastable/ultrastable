@@ -1,0 +1,12 @@
+{
+  "id": "Q-REACH-external_referrals_7d",
+  "title": "Q-REACH-external_referrals_7d: reach target missed (outside-referred human page views in 7 days: 25 < 60)",
+  "body": "**Owner:** marketing-manager\n**Trigger:** reach --run\n**Done check:** grep:ops/reach/metrics.jsonl::\"external_referrals_7d\"\n**Prediction:** external_referrals_7d >= 60 within 168 h\n**Status:** open\n\nRead ops/reach/weights.json and the arm outcomes, post more of the arm that works or add a surface (feed, listing, page). Owned channels only; no cold outreach to individuals.",
+  "labels": [
+    "role:marketing-manager",
+    "growth",
+    "reach"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

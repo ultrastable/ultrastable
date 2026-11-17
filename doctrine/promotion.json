@@ -3,19 +3,194 @@
  "weights_file": "ops/promotion/weights.json",
  "outcomes_file": "ops/promotion/outcomes.jsonl",
  "plan_file": "ops/promotion/plan.json",
- "gates_allowed": ["statement-in-owners-name", "owner-account", "sender-postal-address", "money", "entity"],
+ "gates_allowed": [
+  "statement-in-owners-name",
+  "owner-account",
+  "sender-postal-address",
+  "money",
+  "entity"
+ ],
  "channels": [
-  {"id": "yc", "kind": "application", "form": "outreach/forms/yc.json", "needs": "owner-identity", "gate": "statement-in-owners-name", "requires": ["live_product"], "reach": 5, "cost": 2, "signal": "YC decision email, recorded with scripts/outreach.py reply ultrastable:B-YC", "consumer": "scripts/outreach.py"},
-  {"id": "nlnet", "kind": "application", "form": "outreach/forms/nlnet.json", "needs": "owner-identity", "gate": "statement-in-owners-name", "requires": ["open_source_licence", "public_repo"], "reach": 3, "cost": 2, "signal": "NLnet reply, recorded with scripts/outreach.py reply ultrastable:A-NLNET", "consumer": "scripts/outreach.py"},
-  {"id": "cloud-credits", "kind": "application", "needs": "owner-identity", "gate": "owner-account", "requires": ["live_product"], "reach": 2, "cost": 1, "signal": "credit grant email per programme (B-CF, B-GSTART, B-AWS, B-MSFT, B-NVIDIA)", "consumer": "scripts/outreach.py"},
-  {"id": "mcp-registry", "kind": "registry", "needs": "none", "route": ".github/workflows/mcp-registry.yml", "requires": ["public_mcp"], "reach": 3, "cost": 1, "signal": "registry search returns io.github.ultrastable/ultrastable; agent hits on /mcp", "probe": "http:https://registry.modelcontextprotocol.io/v0/servers?search=ultrastable", "consumer": "foundation/promote.py"},
-  {"id": "indexnow", "kind": "search-ping", "needs": "none", "route": "site/worker.js /api/v1/promote/indexnow (tick and deploy)", "requires": ["live_product"], "reach": 2, "cost": 1, "signal": "search referrals in first-party hits", "consumer": "foundation/growth.py"},
-  {"id": "intro-email", "kind": "intro-email", "needs": "owner-identity", "gate": "sender-postal-address", "route": "scripts/outreach_intro.py", "requires": ["live_product"], "reach": 4, "cost": 2, "signal": "replies recorded with outreach_intro.py reply", "consumer": "scripts/outreach_intro.py"},
-  {"id": "social", "kind": "social", "needs": "owner-identity", "gate": "owner-account", "route": "scripts/social_post.py", "requires": ["live_product"], "reach": 2, "cost": 1, "signal": "referrals from bsky.app in first-party hits", "consumer": "scripts/social_post.py"},
-  {"id": "show-hn", "kind": "launch-venue", "needs": "owner-identity", "gate": "owner-account", "requires": ["public_repo"], "reach": 5, "cost": 1, "signal": "news.ycombinator.com referrals in first-party hits", "consumer": "foundation/growth.py"},
-  {"id": "ps-community-orgs", "audience": "Nonprofits, mutual-aid groups, libraries and community centres with small teams and routine work (intake, scheduling, newsletters)", "route": "intro-email segment third-sector, role mailboxes published on each organization's own pages", "reach": 3, "signal": "replies recorded with scripts/outreach_intro.py reply", "kind": "outreach-audience", "needs": "owner-identity", "gate": "owner-account", "requires": ["live_product"], "cost": 1, "consumer": "foundation/promote.py"},
-  {"id": "ps-civic-tech", "audience": "Civic-tech and open-source-for-good communities (Code for America brigades, Open Collective projects, volunteer developer groups)", "route": "a post or Show-and-tell in their public forums, drafted by the system and posted only after the owner consents in the owner's own account", "reach": 3, "signal": "referrals and replies from those forums in first-party hits", "kind": "outreach-audience", "needs": "owner-identity", "gate": "owner-account", "requires": ["live_product"], "cost": 1, "consumer": "foundation/promote.py"},
-  {"id": "ps-social-good", "audience": "People who follow do-good tech: Bluesky and Mastodon accounts and newsletters on tech-for-good, public-interest AI and small-nonprofit software", "route": "scripts/social_post.py drafts, staged until the owner consents", "reach": 2, "signal": "referrals from bsky.app and mastodon hosts in first-party hits", "kind": "outreach-audience", "needs": "owner-identity", "gate": "owner-account", "requires": ["live_product"], "cost": 1, "consumer": "foundation/promote.py"},
-  {"id": "ps-funders-for-good", "audience": "Foundations and programmes funding public-interest technology and AI for social good", "route": "applications through the existing funding kits (outreach/applications), submitted only with the owner's consent", "reach": 3, "signal": "programme replies recorded with scripts/outreach.py reply", "kind": "outreach-audience", "needs": "owner-identity", "gate": "owner-account", "requires": ["live_product"], "cost": 1, "consumer": "foundation/promote.py"}
+  {
+   "id": "yc",
+   "kind": "application",
+   "form": "outreach/forms/yc.json",
+   "needs": "owner-identity",
+   "gate": "statement-in-owners-name",
+   "requires": [
+    "live_product"
+   ],
+   "reach": 5,
+   "cost": 2,
+   "signal": "YC decision email, recorded with scripts/outreach.py reply ultrastable:B-YC",
+   "consumer": "scripts/outreach.py"
+  },
+  {
+   "id": "nlnet",
+   "kind": "application",
+   "form": "outreach/forms/nlnet.json",
+   "needs": "owner-identity",
+   "gate": "statement-in-owners-name",
+   "requires": [
+    "open_source_licence",
+    "public_repo"
+   ],
+   "reach": 3,
+   "cost": 2,
+   "signal": "NLnet reply, recorded with scripts/outreach.py reply ultrastable:A-NLNET",
+   "consumer": "scripts/outreach.py"
+  },
+  {
+   "id": "cloud-credits",
+   "kind": "application",
+   "needs": "owner-identity",
+   "gate": "owner-account",
+   "requires": [
+    "live_product"
+   ],
+   "reach": 2,
+   "cost": 1,
+   "signal": "credit grant email per programme (B-CF, B-GSTART, B-AWS, B-MSFT, B-NVIDIA)",
+   "consumer": "scripts/outreach.py"
+  },
+  {
+   "id": "mcp-registry",
+   "kind": "registry",
+   "needs": "none",
+   "route": ".github/workflows/mcp-registry.yml",
+   "requires": [
+    "public_mcp"
+   ],
+   "reach": 3,
+   "cost": 1,
+   "signal": "registry search returns io.github.ultrastable/ultrastable; agent hits on /mcp",
+   "probe": "http:https://registry.modelcontextprotocol.io/v0/servers?search=ultrastable",
+   "consumer": "foundation/promote.py"
+  },
+  {
+   "id": "indexnow",
+   "kind": "search-ping",
+   "needs": "none",
+   "route": "site/worker.js /api/v1/promote/indexnow (tick and deploy)",
+   "requires": [
+    "live_product"
+   ],
+   "reach": 2,
+   "cost": 1,
+   "signal": "search referrals in first-party hits",
+   "consumer": "foundation/growth.py"
+  },
+  {
+   "id": "intro-email",
+   "kind": "intro-email",
+   "needs": "owner-identity",
+   "gate": "sender-postal-address",
+   "route": "scripts/outreach_intro.py",
+   "requires": [
+    "live_product"
+   ],
+   "reach": 4,
+   "cost": 2,
+   "signal": "replies recorded with outreach_intro.py reply",
+   "consumer": "scripts/outreach_intro.py"
+  },
+  {
+   "id": "social",
+   "kind": "social",
+   "needs": "none",
+   "route": "scripts/social_post.py fed by foundation/reach.py (events to posts); posts when the account bindings exist",
+   "requires": [
+    "live_product"
+   ],
+   "reach": 2,
+   "cost": 1,
+   "signal": "social referrals in first-party hits (reach metric social_referrals_7d)",
+   "consumer": "foundation/reach.py"
+  },
+  {
+   "id": "show-hn",
+   "kind": "launch-venue",
+   "needs": "owner-identity",
+   "gate": "owner-account",
+   "requires": [
+    "public_repo"
+   ],
+   "reach": 5,
+   "cost": 1,
+   "signal": "news.ycombinator.com referrals in first-party hits",
+   "consumer": "foundation/growth.py"
+  },
+  {
+   "id": "ps-community-orgs",
+   "audience": "Nonprofits, mutual-aid groups, libraries and community centres with small teams and routine work (intake, scheduling, newsletters)",
+   "route": "intro-email segment third-sector, role mailboxes published on each organization's own pages",
+   "reach": 3,
+   "signal": "replies recorded with scripts/outreach_intro.py reply",
+   "kind": "outreach-audience",
+   "needs": "owner-identity",
+   "gate": "owner-account",
+   "requires": [
+    "live_product"
+   ],
+   "cost": 1,
+   "consumer": "foundation/promote.py"
+  },
+  {
+   "id": "ps-civic-tech",
+   "audience": "Civic-tech and open-source-for-good communities (Code for America brigades, Open Collective projects, volunteer developer groups)",
+   "route": "a post or Show-and-tell in their public forums, drafted by the system and posted only after the owner consents in the owner's own account",
+   "reach": 3,
+   "signal": "referrals and replies from those forums in first-party hits",
+   "kind": "outreach-audience",
+   "needs": "owner-identity",
+   "gate": "owner-account",
+   "requires": [
+    "live_product"
+   ],
+   "cost": 1,
+   "consumer": "foundation/promote.py"
+  },
+  {
+   "id": "ps-social-good",
+   "audience": "People who follow do-good tech: Bluesky and Mastodon accounts and newsletters on tech-for-good, public-interest AI and small-nonprofit software",
+   "route": "scripts/social_post.py fed by foundation/reach.py (events to posts); posts when the account bindings exist",
+   "reach": 2,
+   "signal": "social referrals in first-party hits (reach metric social_referrals_7d)",
+   "kind": "outreach-audience",
+   "needs": "none",
+   "requires": [
+    "live_product"
+   ],
+   "cost": 1,
+   "consumer": "foundation/reach.py"
+  },
+  {
+   "id": "ps-funders-for-good",
+   "audience": "Foundations and programmes funding public-interest technology and AI for social good",
+   "route": "applications through the existing funding kits (outreach/applications), submitted only with the owner's consent",
+   "reach": 3,
+   "signal": "programme replies recorded with scripts/outreach.py reply",
+   "kind": "outreach-audience",
+   "needs": "owner-identity",
+   "gate": "owner-account",
+   "requires": [
+    "live_product"
+   ],
+   "cost": 1,
+   "consumer": "foundation/promote.py"
+  },
+  {
+   "id": "feed",
+   "kind": "feed",
+   "needs": "none",
+   "route": "site/worker.js /feed.xml (Atom of the public changelog)",
+   "requires": [
+    "live_product"
+   ],
+   "reach": 2,
+   "cost": 1,
+   "signal": "reach metric feed_hits_7d",
+   "consumer": "foundation/reach.py"
+  }
  ]
 }

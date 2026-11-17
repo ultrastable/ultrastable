@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
+// Copyright (c) Ultrastable
 // MIGRATE-SELF-1: the tick applies its own D1 migrations. Root cause closed: deploy-workers.yml applied migrations with a token for the retired
 // account (it skips there), and no token exists for the live account, so 0015 and 0016 were never recorded live and 0017 needed a hand-run.
 // The tick holds the D1 binding, so it needs no credential: config.migrations (file, sql) is generated at the deploy commit from

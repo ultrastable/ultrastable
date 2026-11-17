@@ -1509,12 +1509,65 @@
    "probe": "file:foundation/selfcode.py"
   },
   {
+   "id": "lesson-2026-11-17-record-transport-failures-of-each-code-agent-rung-free-llm-1",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Record transport failures of each code-agent rung (FREE-LLM-1)",
+   "body": "The first Actions executor run skipped both GitHub Models rungs with no recorded reason; the ladder now writes status and provider message for every failed call to ops/agent-cost.jsonl.",
+   "probe": "grep:foundation/agent_ladder.py::transport failure",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-retention-1-unknowns-1-added-unknown-questions-without-a-ret",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "RETENTION-1: UNKNOWNS-1 added unknown_questions without a retention rule",
+   "body": "plan-limits RETENTION-1 failed on every PR after UNKNOWNS-1 merged because table unknown_questions had no rule in seed/autonomy/retention.json. Added a 30-day rule. Verified: plan-limits tests pass 7 of 7. ciwatch (CIWATCH-1) already watches red runs, so the duplicate ci-doctor job from this thread was dropped.",
+   "probe": "grep:seed/autonomy/retention.json::unknown_questions",
+   "session": "session_0156nqDuXJWyM65c8uChpjTM"
+  },
+  {
+   "id": "lesson-2026-11-17-retention-1-migrations-also-needs-a-rule",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "RETENTION-1: _migrations also needs a rule",
+   "body": "Main gained a _migrations table without a retention rule; added keep:state. Verified: plan-limits tests pass.",
+   "probe": "grep:seed/autonomy/retention.json::_migrations",
+   "session": "session_0156nqDuXJWyM65c8uChpjTM"
+  },
+  {
+   "id": "lesson-2026-11-17-publication-migrate-js-landed-without-the-spdx-header",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "PUBLICATION: migrate.js landed without the SPDX header",
+   "body": "seed/worker/src/migrate.js carried a non-standard licence line and its test had none, so the publication check failed on every PR after it merged. Both now carry the USL-1.0 SPDX header. Verified: publication check ok and migrate tests pass 5 of 5.",
+   "probe": "grep:seed/worker/src/migrate.js::LicenseRef-Ultrastable-USL-1.0",
+   "session": "session_0156nqDrN6YKkuiXK6LyZoAa"
+  },
+  {
+   "id": "lesson-2026-11-17-selfcode-1-self-code-items-must-pass-the-criticality-gate-fa",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: self-code items must pass the criticality gate; failing tests stay with ciwatch",
+   "body": "First live run filed a Q-SELF item and the executor reported idle: with k under the floor the gate admits only raises-deploys items. Q-SELF items now carry raises-deploys and raises-self (a merged agent change is a deploy the system originated). The in-job test run took 3 of 12 minutes and duplicated ciwatch, so failing_test is off in doctrine/selfcode.json.",
+   "probe": "file:foundation/selfcode.py"
+  },
+  {
    "id": "lesson-2026-11-17-deploy-workers-yml-cannot-apply-d1-migrations-its-token-is-f",
    "kind": "lesson",
    "date": "2026-11-17",
    "title": "deploy-workers.yml cannot apply D1 migrations: its token is for the retired account",
    "body": "MIGRATE-SELF-1: migrations 0015 to 0017 never reached the live ledger because the migration step skips on the retired account id and no token exists for the live account. The tick now applies its own migrations through its D1 binding and the failure mode migrations-pending probes org.migrations_pending.",
    "probe": "grep:seed/worker/src/migrate.js::migrations_pending"
+  },
+  {
+   "id": "decision-2026-11-17-unknowns-1-the-ignorance-audit-is-a-core-loop-with-its-own-d",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "UNKNOWNS-1: the ignorance audit is a core loop with its own daily reserve",
+   "body": "Decided and merged in PRs 479 to 493: foundation/unknowns.py and seed/worker/src/unknowns.js question every loop with the Universal Ignorance Audit lenses, the tick files 3 a day from a reserve of its own, and gap answers file Q-OBJ growth items. Evidence: the worker tests pass (240), unknowns --check passes, and the live org D1 was probed after the 15:30 UTC tick: migrations_pending 0 and migrations 0015 to 0017 recorded.",
+   "probe": "grep:foundation/unknowns.py::def answer",
+   "session": "session_0156nqDvPzm1VZsCCoweiBKT"
   }
  ]
 }
