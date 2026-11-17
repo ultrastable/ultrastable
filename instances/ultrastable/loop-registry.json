@@ -3401,6 +3401,43 @@
         "workers-tests.yml"
       ],
       "server_owner": "github-actions"
+    },
+    {
+      "id": "issue-loop",
+      "kind": "probe",
+      "summary": "Every open GitHub issue carries a probe; a passing probe closes the issue with its evidence, a failing one stays for the executor, a missing one is a defect (ISSUE-LOOP-1).",
+      "trigger": "daily workflow issueloop.yml",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "10m",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:foundation/issueloop.py",
+      "writeback": [
+        "instances/ultrastable/gaps.json",
+        "docs/handoff/selfhost.md"
+      ],
+      "system_path": [
+        "foundation/issueloop.py",
+        ".github/workflows/issueloop.yml",
+        "tests/foundation/test_issueloop.py"
+      ],
+      "launch": "issueloop",
+      "workflows": [
+        "issueloop.yml"
+      ],
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

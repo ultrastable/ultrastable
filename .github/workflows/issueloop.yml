@@ -1,0 +1,26 @@
+name: issueloop
+# budget: ~0.5 min x 1 per day = ~15 min per month
+# trigger: daily schedule (issues change by filing, which the lane and executor already trigger on; daily is the slowest honest clock) and manual dispatch
+# free-alternative: `python3 -m foundation issueloop --apply` from any launch host, or the Cloudflare tick worker
+# ISSUE-LOOP-1: every open issue's probe is evaluated and a passing one is closed with its evidence.
+on:
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: issueloop
+  cancel-in-progress: true
+jobs:
+  loop:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Probe and close issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 -m foundation issueloop --apply
