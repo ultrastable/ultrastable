@@ -2,6 +2,7 @@
   "doc": "RETENTION-1 (2026-11-16): every table the tick worker creates is listed here. A table with keep_days is pruned once a day by seed/worker/src/retention.js (rows whose time column is older than keep_days, at most max_rows_per_run per table per day); a table marked keep: state holds current state, not history, and is never pruned. test/plan-limits.test.mjs fails when a migration or the worker creates a table that is not listed. Lesson from the fleet this org was split from: its audit database reached 1,011 tables, 266 of them backup copies never removed, and append-only ledgers kept every row forever. Windows: criticality reads 14 days (seed/autonomy/criticality.json window_days); the trust ledger reads every outcome, so outcomes are kept a year.",
   "max_rows_per_run": 5000,
   "tables": {
+    "social_posted": { "column": "at", "keep_days": 400, "reason": "REACH-1: one row per post and channel; the publisher reads this week, the reach loop reads a year" },
     "_migrations": { "keep": "state", "reason": "applied-migration ledger" },
     "unknown_questions": { "column": "at", "keep_days": 30 },
     "tick_runs": { "column": "started_at", "keep_days": 30 },

@@ -30,10 +30,31 @@ def scan(root=REPO) -> list[str]:
     return hits
 
 
+def connect_links(root, pol) -> list[str]:
+    """CONNECT-LINK-1: every owner card carries one point-and-click link; deep links to a provider page only while on the shrink-only baseline."""
+    cl, out = pol.get("connect_link", {}), []
+    p = Path(root) / "foundation/data/needs-you.json"
+    if not cl or not p.is_file():
+        return out
+    for i in json.loads(p.read_text("utf-8")).get("items", []):
+        link, kind = i.get("connect"), i.get("connect_kind")
+        if not link or not str(link).startswith("https://"):
+            out.append(f"owner card {i.get('id')}: no connect link (CONNECT-LINK-1)")
+        elif kind == "connect-flow":
+            if not str(link).startswith("https://ultrastable.io/connect"):
+                out.append(f"owner card {i.get('id')}: connect-flow link must be an ultrastable.io/connect page")
+        elif kind == "provider-deep-link":
+            if i.get("id") not in cl["deep_link_baseline"]:
+                out.append(f"owner card {i.get('id')}: a new card must use a /connect flow, not a provider deep link (CONNECT-LINK-1)")
+        else:
+            out.append(f"owner card {i.get('id')}: connect_kind must be connect-flow or provider-deep-link")
+    return out
+
+
 def check(root=REPO) -> list[str]:
     pol = json.loads((Path(root) / PATH).read_text("utf-8"))
     base = set(pol["baseline"])
-    return [f"{h}: tells a person to handle a token, secret or setting (POINT-AND-CLICK-1)" for h in scan(root) if h not in base]
+    return [f"{h}: tells a person to handle a token, secret or setting (POINT-AND-CLICK-1)" for h in scan(root) if h not in base] + connect_links(root, pol)
 
 
 def main(argv):

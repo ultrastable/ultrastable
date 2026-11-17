@@ -20,7 +20,7 @@ GitHub has no API for these. If you do nothing: Generated identicon, no pins.
 
 ## Create the Bluesky account
 Account creation accepts terms in your name. If you do nothing: Posting stays dry-run; the repo, registry pull requests and feeds carry the work.
-**[Create the account](https://bsky.app)**
+**[Sign in to Bluesky (or Mastodon at /connect/mastodon); the system stores and renews the access](https://ultrastable.io/connect/bluesky)**
 
 ## Connect GitHub
 One approval on GitHub's own page lets the system open, check, merge and deploy changes by itself, including changes to its own workflows. The system then handles every callback, token exchange and renewal. If you do nothing: Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.

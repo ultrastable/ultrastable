@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """Independent probes for connector health: expiry watch, silent refresh,
 auto reconnect card."""
 from src.qnfo.connector_health import ConnectorHealthMonitor
