@@ -76,7 +76,7 @@ export default {
     },
     {
      "label": "Open the live catalogue",
-     "href": "https://tenant-ps-web.ultrastable.workers.dev/"
+     "href": "https://ultrastable.org/"
     },
     {
      "label": "Read how it checks itself",
@@ -89,7 +89,7 @@ export default {
    ],
    "cta": {
     "label": "Open the live catalogue",
-    "href": "https://tenant-ps-web.ultrastable.workers.dev/"
+    "href": "https://ultrastable.org/"
    },
    "domain": "org"
   },
@@ -272,7 +272,7 @@ export default {
     }
    ],
    "domain": "org",
-   "home": "https://tenant-ps-web.ultrastable.workers.dev/",
+   "home": "https://ultrastable.org/",
    "homeLabel": "Open the live catalogue"
   }
  ],
@@ -295,7 +295,7 @@ export default {
    "audiences": [
     "communities"
    ],
-   "live_home": "https://tenant-ps-web.ultrastable.workers.dev/"
+   "live_home": "https://ultrastable.org/"
   }
  }
 };
