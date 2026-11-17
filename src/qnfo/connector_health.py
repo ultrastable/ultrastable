@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """Connector health: expiry watch, silent refresh, auto reconnect card."""
 from __future__ import annotations
 
