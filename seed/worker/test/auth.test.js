@@ -176,3 +176,30 @@ test('REPOS-1: /connect/github-admin registers an administration-only app and st
   const m = await store.material(db, e, 't', 'github-admin');
   assert.equal(m.meta.installation_id, 7); assert.equal(m.meta.app_id, 9);
 });
+
+test('REPOS-1: the admin install archives every retired repository, and the list mirrors brand.json', async () => {
+  const { RETIRED, archiveRetired } = await import('../src/auth/archive.js');
+  const { readFileSync } = await import('node:fs');
+  const brand = JSON.parse(readFileSync(new URL('../../../brand/brand.json', import.meta.url), 'utf8'));
+  assert.deepEqual([...RETIRED].sort(), brand.repos.filter(r => r.status === 'retired').map(r => 'ultrastable/' + r.name).sort());
+  const db = makeDb(), e = { ...env(), DB: db };
+  await store.put(db, e, 't', 'github-admin', { secret: { pem: 'x' }, meta: { app_id: 1, installation_id: 2 }, status: 'pending' });
+  const calls = [];
+  const f = async (url, o) => { calls.push([url, o.method, o.body]); return { status: 200 }; };
+  const r = await archiveRetired(db, e, 't', { fetch: f, token: 'tok' });
+  assert.ok(r.ok); assert.equal(calls.length, RETIRED.length);
+  assert.ok(calls.every(c => c[1] === 'PATCH' && c[2] === '{"archived":true}'));
+});
+
+test('REPOS-1: the tick resolver archives once and then stops', async () => {
+  const { archiveDue } = await import('../src/auth/archive.js');
+  const db = makeDb(), e = { ...env(), DB: db };
+  await store.put(db, e, 't', 'github-admin', { secret: { pem: 'x' }, meta: { app_id: 1, installation_id: 2 }, status: 'ok' });
+  let n = 0;
+  const f = async () => { n++; return { status: 200 }; };
+  const { archiveRetired } = await import('../src/auth/archive.js');
+  assert.ok((await archiveRetired(db, e, 't', { fetch: f, token: 'tok' })).ok);
+  const before = n;
+  const r = await archiveDue(db, e, { fetch: f });
+  assert.equal(r[0].action, 'done'); assert.equal(n, before, 'no second pass');
+});
