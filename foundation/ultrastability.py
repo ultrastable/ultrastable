@@ -43,8 +43,9 @@ def readings(root=REPO) -> dict:
     except (OSError, ValueError, KeyError):
         drift = None
     cost = fresh_cost(root, c["cost"])
-    from . import resilience
-    return {"criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"], "resilience.stalled": resilience.stalled_reading(root)}
+    from . import resilience, uiux
+    return {"criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"], "resilience.stalled": resilience.stalled_reading(root),
+            "uiux.findings": uiux.status_reading(root, "findings_blocking"), "uiux.happy_paths": uiux.status_reading(root, "happy_path_pass_share")}
 
 
 def fresh_cost(root, value, now=None, max_age_days=3):
@@ -303,7 +304,7 @@ def check(root=REPO) -> list[str]:
 
 
 def readings_keys():
-    return ("criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled")
+    return ("criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled", "uiux.findings", "uiux.happy_paths")
 
 
 def data(root=REPO) -> dict:

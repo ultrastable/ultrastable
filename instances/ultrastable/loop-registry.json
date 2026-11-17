@@ -2496,6 +2496,53 @@
       "server_owner": "github-actions"
     },
     {
+      "id": "uiux-loop",
+      "kind": "manager",
+      "summary": "UIUX-1: the UI/UX manager as a closed loop. Every user page on ultrastable.io, .org, .app and every tenant app is audited (accessibility, user/system boundary, structure, copy, performance, visual fingerprint); every user path in doctrine/stakeholders.json is walked as a click-through flow; first-party funnels show where a path loses people; A/B experiments on path steps are decided at their pre-registered sample and the winner is promoted automatically; every finding becomes a fix item for the self-coding agent with a closing probe. Its two essential variables feed the slow loop in foundation/ultrastability.py.",
+      "trigger": "weekly browser audit (.github/workflows/uiux.yml) and daily inside the product manager pass (product-manager.yml)",
+      "owner": "uiux-manager",
+      "closes_by": "system",
+      "sla": "7d",
+      "done": "ops/uiux/status.json is fresh, every blocking finding has an open Q-UIUX item or is fixed, every running experiment is decided at its sample, and ui_findings and happy_paths are inside their bounds",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "python3 -m foundation uiux --tick --apply --pr in uiux.yml (browser audit) and in the product manager pass (funnels, experiments)",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "node scripts/uiux_audit.mjs --write then python3 -m foundation uiux --tick --apply --pr from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/uiux.py::def settle_experiments",
+      "cycle_metric": "ui_findings",
+      "last_plus": "each experiment verdict and each settled fix item feeds the next audit; the status file prints ui_findings and happy_path_pass_share so the next run is comparable",
+      "writeback": [
+        "ops/uiux/status.json",
+        "ops/uiux/ledger.jsonl",
+        "ops/uiux/funnels.json"
+      ],
+      "system_path": [
+        "foundation/uiux.py",
+        "scripts/uiux_audit.mjs",
+        "doctrine/uiux.json",
+        "site/uiux.js",
+        "site/uiux-data.js",
+        "doctrine/stakeholders.json",
+        "doctrine/design-experiments.json",
+        "agents/roles/uiux-manager.md",
+        "tests/foundation/test_uiux.py",
+        "site/uiux.test.mjs"
+      ],
+      "workflows": [
+        "uiux.yml",
+        "product-manager.yml"
+      ],
+      "server_owner": "github-actions"
+    },
+    {
       "id": "scout",
       "kind": "governance",
       "summary": "SCOUT-1: the growth product manager scouts the state of the art weekly, scores findings against the gap register, files growth items and re-weights its sources from what was adopted.",
@@ -2838,6 +2885,40 @@
       "system_path": [
         "agents/roles/design-manager.md",
         "seed/agents/roles/design-manager.md",
+        "doctrine/team.json",
+        "foundation/team.py"
+      ],
+      "server_owner": "ultrastable-tick"
+    },
+    {
+      "id": "role-uiux-manager",
+      "kind": "manager",
+      "summary": "UI/UX manager: the front end as a measured, continuously audited surface (UIUX-1): audits, user paths, funnels and A/B experiments on path steps",
+      "trigger": "each tick of the uiux-manager role (tick_every 6)",
+      "owner": "uiux-manager",
+      "closes_by": "system",
+      "sla": "1 tick",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:agents/roles/uiux-manager.md",
+      "writeback": [
+        "docs/issues",
+        "docs/handoff"
+      ],
+      "system_path": [
+        "agents/roles/uiux-manager.md",
+        "seed/agents/roles/uiux-manager.md",
         "doctrine/team.json",
         "foundation/team.py"
       ],

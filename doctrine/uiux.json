@@ -1,0 +1,105 @@
+{
+ "_doc": "UIUX-1 (Rowan, 2026-11-17): the UI/UX manager is a closed loop in code. QNFO's front end barely changed while its back end moved, and it drifted into a mishmash; this loop makes that impossible by auditing every front-end surface on a clock, walking the user paths as executable tests, reading first-party path analytics, running pre-registered A/B experiments on path steps with automatic promotion, and filing a fix item for every failed audit or fallen path that the self-coding agent works and the loop re-probes. Read by foundation/uiux.py; browser half in scripts/uiux_audit.mjs (Playwright, free tier, run by .github/workflows/uiux.yml and by any cloud session); checked by `python3 -m foundation uiux --check`. Its two essential variables (ui_findings, happy_paths) are declared in doctrine/ultrastability.json so the slow loop can restructure when they stay out of bounds. Never relax a rule or a budget to clear a finding: fix the page, or change this file by PR with a lineage note.",
+ "id": "uiux",
+ "version": "1.0.0",
+ "marker": "UIUX-1",
+ "item_prefix": "Q-UIUX",
+ "ledger": "ops/uiux/ledger.jsonl",
+ "status": "ops/uiux/status.json",
+ "audit_report": "ops/uiux/audit.json",
+ "baseline": "ops/uiux/baseline.json",
+ "funnels": "ops/uiux/funnels.json",
+ "served": "site/uiux-data.js",
+ "fresh_days": 9,
+ "surfaces": {
+  "_doc": "Every origin a person can land on. io, org and app come from doctrine/stakeholders.json domains plus the app host; tenant and spinoff apps come from ops/spinoff/ledger.jsonl (live, not retired). The offline audit renders the site Worker in-process; --live audits the real hosts.",
+  "hosts": ["ultrastable.io", "ultrastable.org", "ultrastable.app"],
+  "tenants_from": "ops/spinoff/ledger.jsonl",
+  "viewports": [["phone", 375], ["desktop", 1280]],
+  "schemes": ["light", "dark"]
+ },
+ "audits": {
+  "_doc": "kind -> severity. blocking findings count against the ui_findings variable; warnings are filed as items on repeat but do not move the slow loop.",
+  "a11y": "blocking",
+  "boundary": "blocking",
+  "happy-path": "blocking",
+  "design": "blocking",
+  "brand": "blocking",
+  "claims": "blocking",
+  "structure": "blocking",
+  "path-drop": "blocking",
+  "copy": "warning",
+  "performance": "warning",
+  "visual-drift": "warning"
+ },
+ "boundary": {
+  "_doc": "USER-SYSTEM-BOUNDARY: a person sees their idea and the front end. Backend detail (storage names, queue ids, stack traces, raw nulls) never reaches a user page. Engineer and owner lanes are named exempt, each with its reason.",
+  "forbidden": ["\\bD1\\b", "\\bKV namespace\\b", "Durable Object", "\\bwrangler\\b", "stack ?trace", "\\bundefined\\b", "\\bNaN\\b", "\\[object Object\\]", "\\bnull\\b", "Traceback", "TypeError", "ReferenceError", "\\bQ-[A-Z]+-[A-Za-z0-9-]+", "ops/[a-z-]+\\.jsonl?", "\\bHTTP 5\\d\\d\\b", "ECONN[A-Z]+", "\\bsqlite\\b"],
+  "exempt_paths": {
+   "/engineers": "the engineer lane lists every capability and its trigger by design",
+   "/how": "explains the mechanism to engineers",
+   "/proof": "live proof shows ledger rows by design",
+   "/live": "operations status for engineers",
+   "/claims": "the claims register names probes and files",
+   "/roadmap": "the public roadmap names item ids",
+   "/org": "the organisation map names loops and files",
+   "/ops": "operations page",
+   "/dashboard": "tenant dashboard for the owner of that tenant",
+   "/dashboard-owner": "owner console"
+  }
+ },
+ "structure": {
+  "_doc": "Page invariants every user page keeps (DESIGN-LANGUAGE-1 core): one h1, a lang attribute, a viewport meta, a title, no empty links or buttons, at most one primary action.",
+  "single_h1": true,
+  "max_primary_actions": 1,
+  "primary_selector": "main .btn-primary, .main .btn-primary",
+  "exempt_primary": ["/pilot", "/setup", "/start", "/dashboard-owner", "/dashboard", "/ops", "/live"]
+ },
+ "copy": {
+  "_doc": "Copy lint on user pages: placeholders and unfinished text. Claims drift is checked by foundation/claims.py and counted as its own kind.",
+  "placeholders": ["lorem ipsum", "\\bTODO\\b", "\\bTBD\\b", "\\bFIXME\\b", "coming soon", "\\bXXX\\b"],
+  "max_h1_words": 14
+ },
+ "performance": {
+  "_doc": "Size and structure budgets measured offline (HTML bytes, DOM nodes, inline script bytes); --live adds real navigation timing against the same loop.",
+  "html_bytes": 170000,
+  "dom_nodes": 2600,
+  "inline_script_bytes": 70000,
+  "live": {"ttfb_ms": 800, "lcp_ms": 2500, "cls": 0.1}
+ },
+ "visual": {
+  "_doc": "Visual-regression without storing images: each page at each width is fingerprinted by the rounded boxes and computed colour/type tokens of its headings, links, buttons, inputs and landmarks, and compared with ops/uiux/baseline.json. A page below min_similarity is drift; an intended redesign re-baselines in the same PR (`node scripts/uiux_audit.mjs --rebaseline`).",
+  "min_similarity": 0.82,
+  "max_elements": 80,
+  "tolerance_px": 6
+ },
+ "paths": {
+  "_doc": "User paths come from doctrine/stakeholders.json: each audience's entry page (/for/<id>) and its ordered steps. extra holds paths that are not an audience's (the idea-to-start happy path). Funnel completion = share of a day's visitors who reached the entry and then each later step in order, read from first-party hits (a visitor id rotates daily, so a path is measured within one day).",
+  "extra": [
+   {"id": "home-to-setup", "audience": "developers", "entry": "/", "steps": ["/setup"], "label": "Home to guided set-up"},
+   {"id": "home-to-proof", "audience": "funders", "entry": "/", "steps": ["/proof"], "label": "Home to live proof"}
+  ],
+  "window_days": 7,
+  "min_entries": 30,
+  "drop_ratio": 0.6,
+  "baseline_min_days": 3,
+  "stale_after_days": 21
+ },
+ "experiments": {
+  "_doc": "A/B experiments on path steps reuse doctrine/design-experiments.json (pre-registered metric, guards, sample, no peeking). An experiment with a `slot` is served by site/worker.js from site/uiux-data.js (generated); exposure is one first-party event `exp:<id>:<arm>` per visitor-day; conversion is the visitor reaching `convert_on` after exposure. The loop evaluates running experiments with design.evaluate, promotes a kept arm into `defaults` (served as the new control) and records the verdict, or leaves the control.",
+  "measurable_guards": ["bounce_rate"],
+  "guard_tolerance": 0.05,
+  "defaults": {}
+ },
+ "item": {
+  "labels": ["p1", "agent-ready"],
+  "workstream": "Design",
+  "owner": "uiux-manager",
+  "max_new_per_run": 3,
+  "max_pages_listed": 8
+ },
+ "essential_variables": {
+  "ui_findings": "ops/uiux/status.json findings_blocking",
+  "happy_paths": "ops/uiux/status.json happy_path_pass_share"
+ }
+}
