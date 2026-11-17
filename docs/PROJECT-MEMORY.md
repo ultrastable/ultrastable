@@ -10,6 +10,12 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-17
 
+- 2026-11-17: FREE-LLM-5: skip a dead model rung for the rest of the run (#521)
+- 2026-11-17: SELFCODE-1: refile an item until the agent has worked it (#522)
+- 2026-11-17: COVERAGE-1: drop a nonexistent page from the live list, raise the floor (#519)
+- 2026-11-17: COVERAGE-1: claims coverage across source files and every live page (#515)
+- 2026-11-17: FREE-LLM-4: fix NameError ladder_call in the executor (#517)
+- 2026-11-17: executor: restore ladder_call, lost when two parallel fixes merged (#518)
 - 2026-11-17: Bump actions/setup-node from 6 to 7 (#458)
 - 2026-11-17: ROADMAP-AGENT-CONNECT-PAGE: QNFO.REACH #CONNECT-PAGE: One-click Add to VS Code / Claude / Codex / Cursor page (#460)
 - 2026-11-17: ROADMAP-AGENT-CARD-SIGNED: QNFO.REACH #CARD-SIGNED: follow-up filed with a closing probe (#467)
