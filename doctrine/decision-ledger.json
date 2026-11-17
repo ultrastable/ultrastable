@@ -1804,6 +1804,24 @@
    "body": "Coverage = claim-like statements bound / found, over source files and every live page (sitemap, ultrastable.org, blindspot.ultrastable.app). Target 100%; the registry floor only rises. Each unbound file or page files a Q-CLAIM-COVER item; an unreachable live page is drift.",
    "probe": "grep:doctrine/claims.json::\"coverage\"",
    "session": "session_0156nqDtuMnUidA26votychB"
+  },
+  {
+   "id": "lesson-2026-11-17-selfcode-1-a-filed-item-was-blocked-from-re-filing-while-its",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: a filed item was blocked from re-filing while its file did not survive the run",
+   "body": "Cooldown applies to settled items only; daily cap counts distinct items; one filed ledger row per item per hour.",
+   "probe": "grep:foundation/selfcode.py::only filed never reached a PR",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
+   "id": "lesson-2026-11-17-a-dead-free-tier-rung-is-skipped-for-the-rest-of-the-run-fre",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "A dead free-tier rung is skipped for the rest of the run (FREE-LLM-5)",
+   "body": "GitHub Models answered 200 text/plain OK on both its rungs, spending two of three attempts, so Workers AI got one try and no repair. A rung whose transport fails is now marked down for the process and the ladder moves on, leaving the repair attempts to a working model.",
+   "probe": "grep:foundation/agent_ladder.py::FREE-LLM-5",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
