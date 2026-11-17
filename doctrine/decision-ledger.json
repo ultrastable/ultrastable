@@ -1986,6 +1986,14 @@
    "title": "TENANT-SYNC-1: core is the system of record",
    "body": "Session session_0156nqDuXJWyM65c8uChpjTM. Tenants pin workers/ by hash and lift generic code through the tenant-sync loop. Hosted checks skip draft PRs by design. Generated data (dashboard, claims, self, ultrastability) goes stale whenever main moves, so regenerate after merging main before pushing.",
    "probe": "grep:foundation/tenantsync.py::def run"
+  },
+  {
+   "id": "decision-2026-11-17-regen-generated-1-generated-data-is-refreshed-by-a-bot-after",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "REGEN-GENERATED-1: generated data is refreshed by a bot after merge",
+   "body": "Session session_0156nqDuXJWyM65c8uChpjTM. PR checks still fail on drift; a post-merge workflow runs scripts/regen_generated.py and commits the result to main so pull requests stop racing each other.",
+   "probe": "grep:scripts/regen_generated.py::def run_all"
   }
  ]
 }
