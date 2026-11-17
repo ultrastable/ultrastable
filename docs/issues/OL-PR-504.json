@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-504",
+  "title": "OL-PR-504: land or supersede pull request #504 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #504 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 504\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #504 (`claude/project-thread-by4mkv` at cbd8aa606d, opened by rwnq8): CLAIMS-1: words must match code, probed in both directions. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (30): .github/workflows/checks.yml, .github/workflows/claims.yml, README.md, agents/AGENTS.md, docs/PROJECT-MEMORY.md, doctrine/claims.json, doctrine/clocks.json, doctrine/decision-ledger.json, doctrine/flows.json, doctrine/triggers.json, foundation/__main__.py, foundation/claims.py, foundation/executor.py, instances/ultrastable/loop-registry.json, ops/improvements.jsonl, ops/provenance.jsonl, ops/transparency.json, platform/adapters/README.md, seed/README.md, seed/agents/AGENTS.md, seed/docs/claims.json, seed/doctrine/claims.json, seed/scripts/claims.py, seed/tests/test_claims.py, site/claims-data.js, site/dashboard-data.js, site/promote.js, site/site.test.mjs, site/worker.js, tests/foundation/test_claims.py. Closing probe: pull request #504 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
