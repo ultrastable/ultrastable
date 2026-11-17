@@ -13,28 +13,18 @@ export default {
    "id": "Q-REPOS-MERGE-WORKERS",
    "repo": "workers",
    "into": "ultrastable"
-  },
-  {
-   "id": "Q-REPOS-MERGE-SPEC",
-   "repo": "spec",
-   "into": "ultrastable"
   }
  ],
  "repos": [
   {
    "name": "ultrastable",
    "visibility": "public",
-   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, and seed/ (the starting kit for a new system). It is a GitHub template, so \"Use this template\" copies it."
+   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). It is a GitHub template, so \"Use this template\" copies it."
   },
   {
    "name": "workers",
    "visibility": "public",
    "holds": "The reusable core engine and its tests. Overlaps seed/ in the main repository; folding it in is tracked as Q-REPOS-MERGE-WORKERS."
-  },
-  {
-   "name": "spec",
-   "visibility": "public",
-   "holds": "US-SPEC-* specifications, SCOPE, and the canonical LICENSE, COMMERCIAL-TERMS and FAQ. Folding it in is tracked as Q-REPOS-MERGE-SPEC."
   },
   {
    "name": "ops",
@@ -49,8 +39,12 @@ export default {
  ],
  "retired": [
   {
+   "name": "spec",
+   "moved_to": "ultrastable"
+  },
+  {
    "name": "license",
-   "moved_to": "spec"
+   "moved_to": "ultrastable"
   },
   {
    "name": "seed",
