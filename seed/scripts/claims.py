@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """CLAIMS-1: words must match code, continuously and without a person (Rowan, 2026-11-17).
 
   python3 -m foundation claims [--check|--fix|--apply|--file|--live|--report]
@@ -178,7 +180,7 @@ def out_path(root):
 def js(d, out=OUT):
     if out.endswith(".json"):
         return json.dumps(d, indent=1, sort_keys=True) + "\n"
-    return "// " + d["_note"] + "\nexport default " + json.dumps(d, indent=1, sort_keys=True) + ";\n"
+    return "// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0\n// " + d["_note"] + "\nexport default " + json.dumps(d, indent=1, sort_keys=True) + ";\n"
 
 
 def live(root=REPO, fetch=None):

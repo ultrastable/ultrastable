@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """CLAIMS-1 in the seed: every tenant ships the checker, a registry and the rule."""
 import subprocess, sys, unittest
 from pathlib import Path

@@ -171,6 +171,14 @@
     "17 5 * * *"
    ]
   },
+  "claims.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 6 * * *"
+   ]
+  },
   "cost-guard.yml": {
    "events": [
     "workflow_dispatch"
