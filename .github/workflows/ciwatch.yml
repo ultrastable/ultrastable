@@ -12,6 +12,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  pull-requests: write  # CIWATCH-2: the item PR is opened with the built-in token when LANE_PAT is not bound (was: GraphQL 'Resource not accessible by integration')
   actions: write
 concurrency:
   group: ciwatch
@@ -48,7 +49,7 @@ jobs:
             git checkout -q -b "$b"; git add docs/issues
             git commit -q -m "ciwatch: file failing-workflow items (CIWATCH-1)"
             git push -q origin "$b"
-            pr=$(gh pr create --base main --head "$b" --title "ciwatch: failing-workflow items" --body "Closes nothing; files Q-CIFAIL items so the executor fixes red workflows. Provenance: ops/ciwatch.jsonl on branch ciwatch-evidence.")
+            pr=$(gh api "repos/${{ github.repository }}/pulls" -f base=main -f head="$b" -f title="ciwatch: failing-workflow items" -f body="Closes nothing; files Q-CIFAIL items so the executor fixes red workflows. Provenance: ops/ciwatch.jsonl on branch ciwatch-evidence." --jq .html_url)
             gh workflow run checks.yml --ref "$b" || echo "::warning::checks dispatch failed; the lane picks the PR up on its next run"
             echo "$pr"
           fi
