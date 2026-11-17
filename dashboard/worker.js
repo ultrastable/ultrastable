@@ -143,7 +143,7 @@ export async function runProbes(env) {
     } else out.push({ name: "mail_send", ok: !!last.ok, detail: "last real send under 24 h ago" });
   } catch (e) { /* the checks table may not exist yet */ }
   const idLinks = await OID.linkCount(env);
-  const paths = ownerAddresses(env).length + (idLinks > 0 ? 1 : 0) + (OID.configured(env) ? 1 : 0);
+  const paths = ownerAddresses(env).length + (idLinks > 0 ? 1 : 0) + ((await OID.configured(env)) ? 1 : 0);
   await rec("owner_email_paths", paths >= 2, paths >= 2 ? paths + " owner addresses: a suppressed one does not lock the owner out" : "only " + paths + " owner address: set OWNER_EMAIL_BACKUP to an address at a different provider (single point of failure, MAIL-PATHS-1)");
   if (!env.NO_NET) {
     for (const h of HOSTS) {
@@ -431,6 +431,8 @@ export async function route(req, env) {
   }
   if (p === "/api/owner/github" && req.method === "GET") { const r = await OID.start(env, u.origin); return r.location ? new Response(null, { status: 302, headers: { location: r.location, ...SEC } }) : json(r.body, r.status); }
   if (p === "/api/owner/github/callback" && req.method === "GET") { const r = await OID.callback(env, u, mintSession); return r.location ? new Response(null, { status: 302, headers: { location: r.location, "Set-Cookie": r.cookie, ...SEC } }) : json(r.body, r.status); }
+  if (p === "/connect/github-signin") return OID.connectPage(env, u.origin);
+  if (p === "/auth/github-signin/callback") return OID.appCallback(env, u);
   if (p === "/owner") return ownerPage();
   if (p.startsWith("/api/owner/")) {
     if (req.method === "POST" && req.headers.get("x-us-ui") !== "1") return json({ error: "missing x-us-ui header" }, 400);

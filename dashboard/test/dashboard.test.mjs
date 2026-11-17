@@ -210,5 +210,12 @@ test("OWNER-IDENTITY-1: GitHub sign-in checks org ownership, links verified emai
   assert.ok((await ok.DB.prepare("SELECT COUNT(*) c FROM owner_audit WHERE event='github_signin'").first()).c === 1);
   const bad = mk("stranger"); const r2 = await run(bad);
   assert.equal(r2.status, 401); assert.doesNotMatch(await r2.text(), /stranger|owner/i);
-  const none = { ...mkdb(), NO_NET: 1 }; const r3 = await w.fetch(new Request("https://d.example/api/owner/github"), none); assert.equal(r3.status, 503);
+  const none = { ...mkdb(), NO_NET: 1, MAIL_RELAY_TOKEN: "k" }; const r3 = await w.fetch(new Request("https://d.example/api/owner/github"), none); assert.equal(r3.status, 302); assert.match(r3.headers.get("location"), /connect\/github-signin$/);
+  const pg = await (await w.fetch(new Request("https://d.example/connect/github-signin"), none)).text(); assert.match(pg, /Approve on GitHub/);
+  const stt = /state=([0-9a-f]{32})/.exec(pg)[1];
+  none.FETCH = async () => Response.json({ client_id: "cid", client_secret: "sec", slug: "app" }, { status: 201 });
+  const cb = await w.fetch(new Request("https://d.example/auth/github-signin/callback?code=c&state=" + stt), none);
+  assert.equal(cb.status, 302);
+  const row = await none.DB.prepare("SELECT secret_sealed FROM owner_oauth_app WHERE id=1").first(); assert.ok(row && !row.secret_sealed.includes("sec"));
+  const again = await w.fetch(new Request("https://d.example/api/owner/github"), none); assert.match(again.headers.get("location"), /github\.com\/login\/oauth\/authorize\?client_id=cid/);
 });
