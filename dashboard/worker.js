@@ -6,6 +6,7 @@
 // has to supply those three. Cloudflare adapter = this file + wrangler.toml.
 import { handleAnalytics, record, selfcheck, report, summary, REPORT_CACHE_MINUTES } from "../seed/analytics/analytics.js";
 import { ask, ASK_PER_HOUR } from "./agent.js";
+import * as PV from "./provenance.js";  // PROVENANCE-1: origin, effect and history of every input and change
 import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: the console agent spends from the owner's budget
 import NEEDS from "../foundation/data/needs-you.json" with { type: "json" };
 import TENANTS from "../foundation/data/tenants.json" with { type: "json" };
@@ -216,6 +217,8 @@ export async function runCommand(env, session, line) {
   const ctx = { env, fresh: session.fresh, undo: null }; let res;
   try { res = await cmd.run(ctx, parts.slice(1)); } catch (e) { res = { ok: false, out: "error: " + String(e.message || e).slice(0, 200) }; }
   await env.DB.prepare("INSERT INTO audit(at,cmd,ok,result,undo) VALUES(?1,?2,?3,?4,?5)").bind(Date.now(), line.slice(0, 200), res.ok ? 1 : 0, String(res.out).slice(0, 500), ctx.undo ? JSON.stringify(ctx.undo) : null).run();
+  // PROVENANCE-1: every owner command that changed something is a provenance row (origin owner, channel command); a read leaves none.
+  if (cmd.mut && res.ok) { try { await PV.add(env, { class: "owner", actor: "owner", channel: "command", kind: parts[0] === "note" ? "input" : "change", summary: line.slice(0, 200), affected: ["dashboard"], public: false }); } catch (e) { console.error("provenance", e && e.message); } }
   return { status: 200, body: res };
 }
 
@@ -362,6 +365,7 @@ $('#counts').textContent='Your queue: '+s.counts.owner+' open. Fleet: '+s.counts
 paintStatic(s);
 $('#owner').innerHTML=s.owner.map(t=>task(t,1)).join('')||'<p class="meta">Nothing waiting on you.</p>';
 $('#fleet').innerHTML=s.fleet.map(t=>'<div class="card"><b>'+E(t.title)+'</b> <span class="meta">'+E(t.area||'')+(t.state=='delegated'?' · with the fleet':'')+'</span><div class="row">'+(t.state=='delegated'?'':'<button data-c="fix '+E(t.id)+'">'+(t.fix_cmd?'Fix it':'Hand to fleet')+'</button>')+'<button data-c="done '+E(t.id)+'">Done</button><button data-c="dismiss '+E(t.id)+'">Not doing</button>'+(t.url?'<a class="btn" href="'+E(t.url)+'" rel="noopener">Open</a>':'')+'</div></div>').join('')||'<p class="meta">No fleet tasks.</p>';
+fetch('/api/owner/provenance').then(r=>r.json()).then(j=>{$('#prov').textContent=(j.entries||[]).slice(0,40).map(x=>new Date(x.at).toISOString().slice(0,16)+' '+x.tenant+' '+x.class+'/'+x.actor+' '+x.kind+' '+x.effect+' '+x.summary).join('\\n')||'Nothing recorded yet.'}).catch(()=>{$('#prov').textContent='Could not load.'});
 $('#audit').textContent=s.audit.map(a=>a.id+' '+new Date(a.at).toISOString().slice(0,19)+' '+(a.ok?'ok ':'err')+' '+a.cmd).join('\\n')||'Empty.';
 $('#notes').textContent=s.notes.map(n=>new Date(n.at).toISOString().slice(0,16)+' '+(n.sent?'sent':'FAILED '+(n.error||''))+' '+n.subject).join('\\n')||'None yet.';
 $('#gate').dataset.gate=s.gate;$('#gatetxt').textContent=s.gate;
@@ -372,7 +376,7 @@ document.querySelectorAll('#chips button').forEach(b=>b.onclick=()=>run(b.datase
 $('#logout').onclick=async()=>{await api('/api/owner/logout',{});location.reload()};
 load();`;
 function ownerPage() {
-  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><a class=\"sp\" href=\"/auth/passkey/add\">Add a passkey</a><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><p class=\"meta bad\" id=\"degraded\" role=\"alert\" hidden></p><h2>Needs you</h2><div id=\"needs\"></div><div id=\"owner\"></div><h2>Tenant apps</h2><div id=\"tenants\" class=\"grid\"></div><h2>Paid options (you decide; default is stay free)</h2><p class=\"meta\" id=\"plan\"></p><div id=\"options\"></div><h2>Ask or tell Ultrastable</h2><form id=\"cmd\"><textarea id=\"line\" rows=\"3\" maxlength=\"2000\" placeholder=\"Ask a question, or tell Ultrastable what to do\" aria-label=\"Ask or tell Ultrastable\" autocomplete=\"off\"></textarea><div class=\"crow\"><span class=\"meta\" id=\"scope\" aria-live=\"polite\">Signed in. Changes ask for a fresh emailed code.</span><button class=\"p\" id=\"go\">Run</button></div></form><div class=\"chips\" id=\"chips\"><button type=\"button\" data-q=\"Which pages got the most views in the last 7 days?\">Top pages this week</button><button type=\"button\" data-q=\"tasks owner\">What needs me</button><button type=\"button\" data-q=\"status\">Status</button><button type=\"button\" data-q=\"analytics\">Analytics</button><button type=\"button\" data-q=\"probe\">Run checks</button><button type=\"button\" data-q=\"help\">Help</button></div><div id=\"thread\" aria-live=\"polite\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
+  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><a class=\"sp\" href=\"/auth/passkey/add\">Add a passkey</a><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><p class=\"meta bad\" id=\"degraded\" role=\"alert\" hidden></p><h2>Needs you</h2><div id=\"needs\"></div><div id=\"owner\"></div><h2>Tenant apps</h2><div id=\"tenants\" class=\"grid\"></div><h2>Paid options (you decide; default is stay free)</h2><p class=\"meta\" id=\"plan\"></p><div id=\"options\"></div><h2>Ask or tell Ultrastable</h2><form id=\"cmd\"><textarea id=\"line\" rows=\"3\" maxlength=\"2000\" placeholder=\"Ask a question, or tell Ultrastable what to do\" aria-label=\"Ask or tell Ultrastable\" autocomplete=\"off\"></textarea><div class=\"crow\"><span class=\"meta\" id=\"scope\" aria-live=\"polite\">Signed in. Changes ask for a fresh emailed code.</span><button class=\"p\" id=\"go\">Run</button></div></form><div class=\"chips\" id=\"chips\"><button type=\"button\" data-q=\"Which pages got the most views in the last 7 days?\">Top pages this week</button><button type=\"button\" data-q=\"tasks owner\">What needs me</button><button type=\"button\" data-q=\"status\">Status</button><button type=\"button\" data-q=\"analytics\">Analytics</button><button type=\"button\" data-q=\"probe\">Run checks</button><button type=\"button\" data-q=\"help\">Help</button></div><div id=\"thread\" aria-live=\"polite\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Provenance: where changes came from</h2><p class=\"meta\">Origin, what it touched and its effect. <a href=\"/changelog\">Public changelog</a></p><pre id=\"prov\">Loading.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
 }
 
 // ---------- router ----------
@@ -383,6 +387,9 @@ export async function route(req, env) {
   if (p === "/favicon.svg") return new Response(FAVICON, { headers: { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age=86400" } });
   const an = await handleAnalytics(req, env, { hosts: HOSTS }); if (an) return an;
   if (p === "/") { if (req.method === "GET") { try { await record(env, req, { host: u.hostname, path: "/", ref: req.headers.get("referer") }); } catch (e) { console.error("record", e && e.message); } } return publicPage(); }
+  if (p === "/changelog") { const v = await PV.publicView(env, { tenant: u.searchParams.get("tenant") || "" }); return page(PV.changelogHtml(v, { title: "Ultrastable changelog", css: THEME, icon: ICON })); }
+  if (p === "/api/changelog") return json(await PV.publicView(env, { tenant: u.searchParams.get("tenant") || "" }));
+  if (p === "/api/suggest" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const tn = String(b.tenant || "ultrastable").replace(/[^a-z0-9-]/g, "").slice(0, 40) || "ultrastable"; const r = await PV.suggest(env, b, tn); return json(r.body, r.status); }
   if (p === "/owner") return ownerPage();
   if (p.startsWith("/api/owner/")) {
     if (req.method === "POST" && req.headers.get("x-us-ui") !== "1") return json({ error: "missing x-us-ui header" }, 400);
@@ -393,6 +400,7 @@ export async function route(req, env) {
     if (!s) return json({ error: "sign in" }, 401);
     if (p === "/api/owner/logout" && req.method === "POST") { await env.DB.prepare("UPDATE sessions SET revoked=1 WHERE hash=?1").bind(s.hash).run(); return json({ ok: true }, 200, { "Set-Cookie": COOKIE + "=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict" }); }
     if (p === "/api/owner/state") return json(await stateOf(env));
+    if (p === "/api/owner/provenance") return json({ entries: await PV.timeline(env, { tenant: u.searchParams.get("tenant") || "", cls: u.searchParams.get("origin") || "" }) });
     if (p === "/api/owner/run" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const r = await runCommand(env, s, b.cmd); return json(r.body, r.status); }
     return json({ error: "not found" }, 404);
   }
@@ -406,6 +414,7 @@ export async function route(req, env) {
       await env.DB.prepare("INSERT INTO snapshots(key,body,at) VALUES('repo',?1,?2) ON CONFLICT(key) DO UPDATE SET body=?1,at=?2").bind(raw, Date.now()).run();
       return json({ ok: true, panels: b.panels.length });
     }
+    if (p === "/api/fleet/provenance" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { return json({ error: "body must be JSON" }, 400); } try { return json({ ok: true, row: await PV.add(env, b) }); } catch (e) { return json({ error: String(e.message || e) }, 400); } }
     if (p === "/api/fleet/queue") return json({ queue: (await env.DB.prepare("SELECT q.id,q.task_id,t.title,t.url,t.why FROM fleet_queue q JOIN tasks t ON t.id=q.task_id WHERE q.status='queued' ORDER BY q.id LIMIT 20").all()).results });
     if (p === "/api/fleet/ack" && req.method === "POST") { const b = await req.json(); await env.DB.prepare("UPDATE fleet_queue SET status=?2,result=?3,done_at=?4 WHERE id=?1").bind(+b.id, b.status === "done" ? "done" : "failed", String(b.result || "").slice(0, 500), Date.now()).run(); if (b.status === "done") await env.DB.prepare("UPDATE tasks SET state='done',updated_at=?2 WHERE id=(SELECT task_id FROM fleet_queue WHERE id=?1)").bind(+b.id, Date.now()).run(); return json({ ok: true }); }
   }

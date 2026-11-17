@@ -44,6 +44,20 @@ def rank(cands: list, d: dict | None = None) -> list:
     return sorted(out, key=lambda r: -r["priority"])
 
 
+def provenance_candidates(root=REPO) -> list:
+    """PROVENANCE-1 feeds the ranker: the kept rate of settled changes per (origin, actor, area) becomes a change-effect candidate; levers the record says to retire
+    are marked retired so rank() drops them, and reinforced ones carry a heavier weight."""
+    from . import provenance
+    sig = next(s for s in load(root)["signals"] if s["id"] == "change-effect")
+    out = []
+    for l in provenance.lessons(root):
+        if l["kept_rate"] is None:
+            continue
+        out.append({"loop": f"{l['origin']}:{l['actor']}:{l['area']}", "signal": "change-effect", "value": l["kept_rate"], "tries": l["kept"] + l["reverted"],
+                    "retired": l["verdict"] == "retire", "weight": sig["weight"] * (1.25 if l["verdict"] == "reinforce" else 1.0)})
+    return out
+
+
 def choose(ranked: list, d: dict | None = None, rng=random) -> dict | None:
     """Top candidate, or with probability explore_epsilon one of the top explore_pool (escape a local optimum)."""
     d = d or load()
@@ -92,6 +106,9 @@ def check(root=REPO) -> list:
 
 
 def main(argv: list) -> int:
+    if argv[:1] == ["--sense-provenance"]:
+        print(json.dumps(rank(provenance_candidates(REPO)), indent=1))
+        return 0
     if argv[:1] == ["--rank"] and len(argv) > 1:
         print(json.dumps(rank(json.loads(Path(argv[1]).read_text(encoding="utf-8"))), indent=1))
         return 0

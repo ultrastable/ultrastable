@@ -1465,6 +1465,15 @@
    "body": "A policy change (no patent) left IP-1..7, QA-1, FUND-2 open in docs/issues, so the priority queue still ranked them. Close or reword every issue file a decision supersedes in the same PR, then run prioritize --apply. Session: session_0156nqDtJ4GJA7WRUu2BBRaW",
    "probe": "grep:docs/issues/IP-5.json::superseded by owner decision",
    "session": "session_0156nqDtJ4GJA7WRUu2BBRaW"
+  },
+  {
+   "id": "decision-2026-11-17-provenance-is-a-first-class-ledger-public-view-redacted",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Provenance is a first-class ledger, public view redacted",
+   "body": "Every input and change is a row with origin class, actor, channel, affected and settled effect; the public changelog shows only rows marked public with contact details removed; selfimprove reads kept rate per origin.",
+   "probe": "grep:foundation/provenance.py::def public_view",
+   "session": "provenance-thread"
   }
  ]
 }

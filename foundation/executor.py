@@ -9,7 +9,7 @@ executor.js); GitHub's own daily schedule and a manual dispatch run the same com
 is required. Without --apply nothing is changed on GitHub or in git: the pick, the prompt size and the guard are reported.
 """
 from __future__ import annotations
-import datetime as dt, json, os, re, shlex, subprocess, urllib.request
+import datetime as dt, json, os, re, shlex, subprocess, sys, urllib.request
 from . import queue as qmod
 from . import crossrepo
 from pathlib import Path
@@ -200,6 +200,14 @@ def log(root, row: dict) -> None:
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("a", encoding="utf-8") as f:
         f.write(json.dumps({"schema": "ultrastable-executor/1", "at": now(), "host": os.environ.get("ULTRASTABLE_HOST", "unspecified"), **row}) + "\n")
+    # PROVENANCE-1: each executor outcome is a change row (origin loop, actor executor); a failure to record never stops the loop but is printed, not swallowed.
+    try:
+        from . import provenance
+        provenance.record(root, {"class": "loop", "actor": "executor", "channel": "pr"}, "change" if row.get("result") in (None, "pr", "verified", "merged") else "incident",
+                          f"executor {row.get('result') or row.get('status') or 'run'}: {str(row.get('title') or row.get('item') or row.get('issue') or '')[:120]}",
+                          ref=str(row.get("pr") or row.get("issue") or ""), affected=[str(row.get("item") or "queue")], effect={"status": "pending"})
+    except Exception as e:  # noqa: BLE001
+        print(f"provenance record failed: {e}", file=sys.stderr)
 
 
 def queue_mode() -> bool:
