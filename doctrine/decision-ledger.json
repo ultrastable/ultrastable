@@ -1969,6 +1969,15 @@
    "title": "Deploy gateway redeploys itself on merge",
    "body": "Owner chose option A 2026-11-17 18:59 UTC: gateway rule lets ultrastable/ultrastable main deploy ultrastable-deploy-gateway; .github/workflows/deploy-gateway.yml tests, builds, deploys via OIDC and checks /health. Session: session_0156nqDrYNAtihJTa31nvsqc",
    "probe": "file:.github/workflows/deploy-gateway.yml"
+  },
+  {
+   "id": "decision-2026-11-17-generated-file-drift-self-heals-in-checks-regen-1",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Generated-file drift self-heals in checks (REGEN-1)",
+   "body": "PRs went red only because main moved a generated count, ledger, self model or dashboard under them. checks.yml runs scripts/regen_generated.sh first and pushes the result back to a same-repo PR branch with LANE_PAT; ultrastability writes runnable cmd: probes; .example fixture addresses pass the publication guard.",
+   "probe": "file:scripts/regen_generated.sh",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }

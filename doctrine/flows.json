@@ -132,7 +132,9 @@
         }
       ],
       "feedback": "failing checks return to the executor as items",
-      "bindings": []
+      "bindings": [
+        "LANE_PAT"
+      ]
     },
     "merge-lane": {
       "inflows": [
@@ -1088,7 +1090,9 @@
         }
       ],
       "feedback": "a violation fails checks and the fleet drift run files an issue in the repository that lost the file; the next run passes only when the file is restored, and the SPDX baseline only shrinks",
-      "bindings": []
+      "bindings": [
+        "LANE_PAT"
+      ]
     },
     "unknowns": {
       "inflows": [
