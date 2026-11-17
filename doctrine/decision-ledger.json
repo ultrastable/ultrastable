@@ -1474,6 +1474,22 @@
    "body": "Every input and change is a row with origin class, actor, channel, affected and settled effect; the public changelog shows only rows marked public with contact details removed; selfimprove reads kept rate per origin.",
    "probe": "grep:foundation/provenance.py::def public_view",
    "session": "provenance-thread"
+  },
+  {
+   "id": "decision-2026-11-17-ciwatch-1-and-agent-work-1-budget-guard-exempts-public-repos",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "CIWATCH-1 and AGENT-WORK-1: budget guard exempts public repos; ciwatch files failing-workflow items; free GitHub Models rung with caps and kill switch",
+   "body": "Measured: ciwatch live scan of 7 repos, 24 workflows, 6 red before the guard fix; unit tests for ciwatch, agentwork and GitHub Models adapters pass.",
+   "probe": "file:foundation/ciwatch.py"
+  },
+  {
+   "id": "lesson-2026-11-17-a-pause-guard-that-cannot-cancel-must-not-fail-the-run-ciwat",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "A pause guard that cannot cancel must not fail the run (CIWATCH-1)",
+   "body": "A budget kill switch built for private-repo minutes turned every non-essential workflow red once its cancel call got 403, and cancelled the code agent for days. Fix: public repos exempt, ciwatch detects red default-branch runs. Session: session_0156nqDtewcdaLGsDYbhGs22",
+   "probe": "file:scripts/actions_guard.py"
   }
  ]
 }
