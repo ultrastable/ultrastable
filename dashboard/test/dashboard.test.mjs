@@ -119,7 +119,7 @@ test("MAIL-PATHS-1: a suppressed first address falls through to the backup; both
   assert.ok(/code is \d{6}/.test(got[0].text));
   const bad = { ...mkdb(), OWNER_EMAIL: "a@one.example", OWNER_EMAIL_BACKUP: "b@two.example", NO_NET: 1, MAILER: async () => { throw new Error("suppressed"); } };
   const rb = await call(bad, "/api/owner/code", {}); const jb = await rb.json();
-  assert.equal(rb.status, 502); assert.match(jb.error, /any owner address/);
+  assert.equal(rb.status, 502); assert.match(jb.error, /could not send your sign-in code/); assert.doesNotMatch(jb.error, /suppressed|owner address/);
 });
 test("MAIL-PATHS-1: one address is a failing probe, two are a passing one", async () => {
   const one = { ...mkdb(), OWNER_EMAIL: "a@one.example", NO_NET: 1, MAILER: async () => {} };
@@ -175,4 +175,47 @@ test("provenance: owner commands are recorded, visitors' suggestions stay privat
   assert.equal((await call(e, "/api/owner/provenance")).status, 401);
   const tl = await (await call(e, "/api/owner/provenance", undefined, cookie)).json();
   const sug = tl.entries.find(x => x.class === "end_user"); assert.ok(sug && sug.public === 0 && !sug.summary.includes("jane@") && sug.affected[0] === "/problems/x");
+});
+
+test("MAIL-RELAY-1: a native send refused for domain ownership goes out through the relay; the relay only mails owner addresses", async () => {
+  const { sendMail } = await import("../worker.js");
+  const realFetch = globalThis.fetch; let seen;
+  globalThis.fetch = async (u, o) => { seen = { u, o }; return new Response("{}", { status: 200 }); };
+  try {
+    const env = { OWNER_EMAIL: "a@one.example", MAILER: async () => { throw new Error("email from ultrastable.io not allowed because domain is not owned by the same account"); }, MAIL_RELAY_URL: "https://relay.example", MAIL_RELAY_TOKEN: "t" };
+    const r = await sendMail(env, "s", "t"); assert.equal(r.via, "relay"); assert.match(seen.u, /\/api\/mail\/relay$/);
+  } finally { globalThis.fetch = realFetch; }
+  const e = { ...mkdb(), OWNER_EMAIL: "a@one.example", MAIL_RELAY_TOKEN: "t", MAILER: async () => {} };
+  const bad = await e_call(e, { to: "x@evil.example" }); assert.equal(bad.status, 403);
+  const ok = await e_call(e, { to: "a@one.example" }); assert.equal(ok.status, 200);
+  const noauth = await call(e, "/api/mail/relay", { to: "a@one.example" }); assert.equal(noauth.status, 401);
+});
+async function e_call(e, body) { return e.__h ? null : (await import("../worker.js")).default.fetch(new Request("https://d.example/api/mail/relay", { method: "POST", headers: { authorization: "Bearer t", "content-type": "application/json" }, body: JSON.stringify(body) }), e); }
+
+test("OWNER-IDENTITY-1: GitHub sign-in checks org ownership, links verified emails, audits, and denies non-owners", async () => {
+  const { default: w } = await import("../worker.js");
+  const mk = login => {
+    const e = { ...mkdb(), GITHUB_CLIENT_ID: "id", GITHUB_CLIENT_SECRET: "s", GITHUB_REPO: "ultrastable/ultrastable", NO_NET: 1 };
+    e.FETCH = async u => String(u).includes("access_token") ? Response.json({ access_token: "t" }) : String(u).endsWith("/user") ? Response.json({ login }) : String(u).includes("/memberships/") ? Response.json({ role: "member", state: "active" }) : Response.json([{ email: "me@gmail.example", verified: true }, { email: "me@outlook.example", verified: true }, { email: "x@users.noreply.github.com", verified: true }]);
+    return e;
+  };
+  const run = async e => {
+    const st = await w.fetch(new Request("https://d.example/api/owner/github"), e); assert.equal(st.status, 302);
+    const state = new URL(st.headers.get("location")).searchParams.get("state");
+    return w.fetch(new Request("https://d.example/api/owner/github/callback?code=c&state=" + state), e);
+  };
+  const ok = mk("rwnq8"); const r = await run(ok);
+  assert.equal(r.status, 302); assert.match(r.headers.get("set-cookie"), /HttpOnly/);
+  assert.equal((await ok.DB.prepare("SELECT COUNT(*) c FROM owner_links").first()).c, 2);
+  assert.ok((await ok.DB.prepare("SELECT COUNT(*) c FROM owner_audit WHERE event='github_signin'").first()).c === 1);
+  const bad = mk("stranger"); const r2 = await run(bad);
+  assert.equal(r2.status, 401); assert.doesNotMatch(await r2.text(), /stranger|owner/i);
+  const none = { ...mkdb(), NO_NET: 1, MAIL_RELAY_TOKEN: "k" }; const r3 = await w.fetch(new Request("https://d.example/api/owner/github"), none); assert.equal(r3.status, 302); assert.match(r3.headers.get("location"), /connect\/github-signin$/);
+  const pg = await (await w.fetch(new Request("https://d.example/connect/github-signin"), none)).text(); assert.match(pg, /Approve on GitHub/);
+  const stt = /state=([0-9a-f]{32})/.exec(pg)[1];
+  none.FETCH = async () => Response.json({ client_id: "cid", client_secret: "sec", slug: "app" }, { status: 201 });
+  const cb = await w.fetch(new Request("https://d.example/auth/github-signin/callback?code=c&state=" + stt), none);
+  assert.equal(cb.status, 302);
+  const row = await none.DB.prepare("SELECT secret_sealed FROM owner_oauth_app WHERE id=1").first(); assert.ok(row && !row.secret_sealed.includes("sec"));
+  const again = await w.fetch(new Request("https://d.example/api/owner/github"), none); assert.match(again.headers.get("location"), /github\.com\/login\/oauth\/authorize\?client_id=cid/);
 });

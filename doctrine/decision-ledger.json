@@ -1921,6 +1921,14 @@
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
   },
   {
+   "id": "lesson-2026-11-17-resilience-1-every-clock-has-a-probe-a-restart-route-and-a-w",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "RESILIENCE-1: every clock has a probe, a restart route and a watcher that is itself watched",
+   "body": "Stalled ticks and red checks silently stopped QNFO's process. foundation/resilience.py probes every clock (including every scheduled workflow, interval derived from its cron), restarts stopped ones within bounds, escalates stubborn ones as Q-STALL items; GitHub watchdog and Worker watchdog-gh loop restart each other; stalled_clocks is an Ashby essential variable.",
+   "probe": "grep:foundation/resilience.py::def restart"
+  },
+  {
    "id": "lesson-2026-11-17-core-ensemble-lifted-from-the-practical-solutions-test-bed",
    "kind": "lesson",
    "date": "2026-11-17",

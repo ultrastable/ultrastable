@@ -1,0 +1,61 @@
+{
+  "_doc": "RESILIENCE-1 (Rowan, 2026-11-17): a clock that stops must be rewound by the system, not noticed by a person. Ultrastable is built to keep ticking: every clock (doctrine/clocks.json, plus every scheduled workflow, whose interval is derived from its own cron) has a liveness probe, stall detection and a restart route; every watcher is itself watched by another independent watcher; a restart that does not take is escalated through the queue (Q-STALL-*), never by email. Read by foundation/resilience.py; checked by `python3 -m foundation resilience --check`; the stalled-clock count is the essential variable `stalled_clocks` in doctrine/ultrastability.json, so a stall becomes an Ashby second-order event. Never raise a bound or drop a route to clear a stall.",
+  "version": "1.0.0",
+  "marker": "RESILIENCE-1",
+  "ledger": "ops/resilience.jsonl",
+  "item_prefix": "Q-STALL",
+  "stalled_after_intervals": 3,
+  "max_restarts_per_clock_per_day": 3,
+  "max_restarts_per_run": 4,
+  "escalate_after_failed_restarts": 2,
+  "beat_fresh_s": 43200,
+  "restart_routes": {
+    "tick-heartbeat": {
+      "kind": "http",
+      "why": "POST /pulse/watch runs a tick only when the newest one is older than two intervals; safe to call by anyone, and each account's Worker is an independent route",
+      "urls": [
+        "https://ultrastable-tick.ultrastable.workers.dev/pulse/watch",
+        "https://ultrastable-ultrastable.q08.workers.dev/pulse/watch"
+      ],
+      "idempotent": true
+    },
+    "criticality-loop": {
+      "kind": "http",
+      "why": "the criticality tick runs inside the same Worker tick, so waking the tick restarts it",
+      "urls": [
+        "https://ultrastable-tick.ultrastable.workers.dev/pulse/watch",
+        "https://ultrastable-ultrastable.q08.workers.dev/pulse/watch"
+      ],
+      "idempotent": true
+    }
+  },
+  "watchers": [
+    {
+      "id": "gh-watchdog",
+      "what": "the GitHub Actions watchdog (.github/workflows/watchdog.yml): measures every clock, restarts what stopped",
+      "host": "github-actions",
+      "workflow": "watchdog",
+      "expected_interval_s": 43200,
+      "watched_by": "worker-watchdog-gh",
+      "restarted_by": "worker-watchdog-gh"
+    },
+    {
+      "id": "worker-watchdog-gh",
+      "what": "the tick Worker's watchdog loop (seed/worker/src/watchdog.js): dispatches watchdog.yml when its last run is older than two intervals, and beats every tick",
+      "host": "cloudflare-worker",
+      "loop": "watchdog-gh",
+      "expected_interval_s": 2400,
+      "watched_by": "gh-watchdog",
+      "restarted_by": "gh-watchdog"
+    },
+    {
+      "id": "site-pulse-watch",
+      "what": "the site Worker's hourly watchTick: wakes the tick through the TICK binding when it is stale",
+      "host": "cloudflare-worker",
+      "loop": "watchdog",
+      "expected_interval_s": 3600,
+      "watched_by": "worker-watchdog-gh",
+      "restarted_by": "gh-watchdog"
+    }
+  ]
+}

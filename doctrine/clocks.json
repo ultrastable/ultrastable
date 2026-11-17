@@ -73,6 +73,14 @@
       "workflow": "claims",
       "expected_interval_s": 86400,
       "periodic": false
+    },
+    {
+      "id": "watchdog",
+      "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
+      "source": "workflow",
+      "workflow": "watchdog",
+      "expected_interval_s": 43200,
+      "periodic": false
     }
   ],
   "chain": {

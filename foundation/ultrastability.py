@@ -43,7 +43,8 @@ def readings(root=REPO) -> dict:
     except (OSError, ValueError, KeyError):
         drift = None
     cost = fresh_cost(root, c["cost"])
-    return {"criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"]}
+    from . import resilience
+    return {"criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"], "resilience.stalled": resilience.stalled_reading(root)}
 
 
 def fresh_cost(root, value, now=None, max_age_days=3):
@@ -302,7 +303,7 @@ def check(root=REPO) -> list[str]:
 
 
 def readings_keys():
-    return ("criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k")
+    return ("criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled")
 
 
 def data(root=REPO) -> dict:

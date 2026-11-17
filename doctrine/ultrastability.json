@@ -66,7 +66,13 @@
       {"kind": "param", "file": "doctrine/clocks.json", "path": "chain.max_runs_per_day", "delta": 1, "min": 1, "max": 8, "what": "wake the executor more often"},
       {"kind": "item", "labels": ["p0", "agent-ready", "raises-deploys"], "workstream": "deploys", "what": "restructure: remove what keeps deploys from shipping"}
      ]
-    }
+    },
+    {"id": "stalled_clocks", "name": "Clocks that stopped", "reading": "resilience.stalled", "min": 0, "max": 0, "unit": "clocks", "first_order": ["watchdog", "restart-route"],
+     "why": "A clock that stops halts the loop it drives; the system is viable only while every clock keeps ticking, and a watchdog that goes silent reads as unmeasured.",
+     "ladder": [
+      {"kind": "param", "file": "doctrine/resilience.json", "path": "stalled_after_intervals", "delta": -1, "min": 2, "max": 3, "what": "declare a stall sooner so the restart comes earlier"},
+      {"kind": "item", "labels": ["p0", "agent-ready", "raises-deploys"], "workstream": "Resilience", "what": "restructure: add an independent trigger to the clock that keeps stopping"}
+    ]}
    ]
   },
   "tenant": {
