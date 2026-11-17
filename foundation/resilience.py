@@ -117,16 +117,48 @@ def probe(clock: dict, now: float, beats_of, cfg: dict) -> dict:
     return {"id": clock["id"], "status": st, "last_beat_age_s": age, "expected_interval_s": exp}
 
 
-def _gh_beats(clock, root=REPO):
+def health_beats(urls, fetch=None):
+    """Beats from public /health endpoints (no credential): last_tick.started_at of each that answers. None when none answered."""
+    fetch = fetch or _get_json
+    out, answered = [], False
+    for u in urls:
+        j = fetch(u)
+        if not isinstance(j, dict):
+            continue
+        answered = True
+        at = (j.get("last_tick") or {}).get("started_at")
+        if at:
+            out.append(C._ts(at))
+    return out if answered else None
+
+
+def _get_json(url):
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"user-agent": "ultrastable-watchdog"}), timeout=30) as r:
+            return json.loads(r.read() or b"null")
+    except urllib.error.HTTPError as e:  # /health answers 503 with a body when the last tick did not complete; that body still carries last_tick
+        try:
+            return json.loads(e.read() or b"null")
+        except ValueError:
+            return None
+    except (OSError, ValueError):
+        return None
+
+
+def _gh_beats(clock, root=REPO, fetch=None):
     import os
     if clock["source"] == "d1":
+        beats, read = health_beats(clock.get("health_urls", []), fetch), False
+        read = beats is not None
+        beats = beats or []
         tok = os.environ.get("CLOUDFLARE_API_TOKEN")
-        if not tok:
-            return None
-        try:
-            return C.d1_beats(clock, tok, C.load(root).get("account_id"))
-        except Exception:
-            return None
+        if tok:
+            try:
+                beats += C.d1_beats_any(clock, tok, C.load(root).get("account_id"))
+                read = True
+            except Exception:  # unreadable database: the health URLs may still have answered
+                pass
+        return beats if read else None
     if clock["source"] == "workflow":
         try:
             r = subprocess.run(["gh", "run", "list", "--repo", C.GH, "--workflow", clock["workflow"], "--limit", "60", "--json", "createdAt,event,status"], capture_output=True, text=True, timeout=60, encoding="utf-8")
@@ -233,14 +265,16 @@ def run(root=REPO, apply=False, now=None, beats_of=None, poke=http_poke, dispatc
         rec = {"at": out["at"], "kind": "restart", "clock": clock["id"], "age_s": v.get("last_beat_age_s"), **res}
         out["restarts"].append(rec)
         new.append(rec)
-        recent = [r for r in rows + new if r.get("kind") == "restart" and r.get("clock") == clock["id"]]
-        tail = recent[-cfg["escalate_after_failed_restarts"]:]
-        if apply and len(tail) >= cfg["escalate_after_failed_restarts"] and not any(r.get("ok") for r in tail):
-            out["escalated"].append(_item(root, cfg, clock, v, len(tail)))
+        # a route that answers 200 has not proved the clock restarted: the clock is still stopped now, so every restart in this stall counts against it
+        recent = [r for r in rows + new if r.get("kind") == "restart" and r.get("clock") == clock["id"] and r["at"] >= _iso(now - 86400)]
+        if apply and len(recent) > cfg["escalate_after_failed_restarts"]:
+            out["escalated"].append(_item(root, cfg, clock, v, len(recent) - 1))
     stalled = [c["id"] for c in out["clocks"] if c["status"] == "stopped"]
     unmeasured = [c["id"] for c in out["clocks"] if c["status"] == "unmeasured"]
     beat = {"at": out["at"], "kind": "beat", "clocks": len(out["clocks"]), "stalled": len(stalled), "unmeasured": len(unmeasured), "stalled_ids": stalled}
     out["beat"] = beat
+    prev = next((r for r in reversed(rows) if r.get("kind") == "beat"), None)
+    out["changed"] = bool(new or out["escalated"]) or prev is None or prev.get("stalled_ids") != stalled or out["at"][:10] != prev["at"][:10]
     if apply:
         for i, r in enumerate(new + [beat]):
             r["seq"] = len(rows) + i
@@ -318,7 +352,10 @@ def main(argv=None) -> int:
         print(json.dumps(row))
         return 0 if row and row["status"] in ("ticking", "late", "idle") else 1
     if "--report" in a or "--run" in a:
-        print(json.dumps(run(apply="--apply" in a and "--run" in a), indent=1))
+        r = run(apply="--apply" in a and "--run" in a)
+        print(json.dumps(r, indent=1))
+        if "--changed-file" in a:  # the workflow commits the ledger only when something changed, so its own commit never feeds back into a run
+            Path(a[a.index("--changed-file") + 1]).write_text("1" if r["changed"] else "0", encoding="utf-8")
         return 0
     print(__doc__)
     return 2

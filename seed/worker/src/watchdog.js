@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 // RESILIENCE-1: the Worker's half of the watchdog-of-watchdogs. The GitHub watchdog (.github/workflows/watchdog.yml, every 6 h) restarts a stalled tick through
 // POST /pulse/watch; this loop does the reverse: when the GitHub watchdog's newest run is older than `maxAgeMs` (two of its intervals), the tick dispatches it

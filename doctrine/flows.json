@@ -1246,6 +1246,32 @@
         "CLOUDFLARE_API_TOKEN",
         "LANE_PAT"
       ]
+    },
+    "tenant-sync": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "tenant.drift",
+          "via": "file:ops/tenant-sync/ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "tenant.drift",
+          "via": "file:ops/tenant-sync/ledger.jsonl"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "each run reads the ledger of its own earlier runs; a tenant still needing a PR after the previous run, or a lift PR that never merged, is counted again and the lane merges the PRs it opened",
+      "bindings": [
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {

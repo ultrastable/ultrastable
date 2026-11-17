@@ -1,0 +1,10 @@
+{
+  "id": "Q-WORKERS-242",
+  "title": "Q-WORKERS-242: OWNERLINK-1: every owner action is one point-and-click link (owner page, OAuth flows, preflight enforcement)",
+  "body": "**Owner:** executor\n**Trigger:** issueloop and queue --run, daily\n**Done check:** file:workers/core/ownerlink/ownerlink.test.js\n**Status:** open\n\nMoved from ultrastable/workers#242 (workers repo archived; code now under workers/ here, issues disabled on this repo).\n\nOwner role: operations. Trigger: any gate card or access ask.\n\nProblem: when something truly needs the owner, the owner must never copy values or follow steps. Standing rule (Rowan, 2026-11-17): one link, sign in, then OAuth/OIDC and callbacks do the rest, as with the GitHub App.\n\nDone check:\n- `core/ownerlink`: `/owner` page behind owner sign-in (GitHub App session or Cloudflare Access JWT) listing every open owner action, one button each.\n- Flows: Mastodon (dynamic app registration, authorize, callback, token into the vault; signup link), Bluesky (atproto OAuth: PKCE, PAR, DPoP, callback, tokens into the vault), PR approvals (open PRs waiting on a human reviewer, one link each).\n- Preflight hook: a database trigger refuses any access gate card without a link row; `askOwner` files the link with the card, or the ask is refused and a staff item is filed to build the flow.\n- Tests: `core/ownerlink/ownerlink.test.js`.\n\nClosing probe: `node --test core/ownerlink/ownerlink.test.js core/access/access.test.js`, then GET `/owner` on the live org returns the sign-in button without a session.\n\n**Closing probe:** `file:workers/core/ownerlink/ownerlink.test.js`\n",
+  "labels": [
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Workers"
+}

@@ -102,6 +102,7 @@ jobs:
           python3 -m foundation flows --check
           python3 -m foundation criticality --check
           python3 -m foundation ultrastability --check
+          python3 -m foundation selfmodel --check
           python3 -m foundation cost --check
           python3 -m foundation loopowner --check
           python3 -m foundation pointclick --check
@@ -138,6 +139,8 @@ jobs:
         run: python3 scripts/build_site_roadmap.py --check
       - name: Words match code, CLAIMS-1, both directions
         run: python3 -m foundation claims --check
+      - name: Tenant sync registry, TENANT-SYNC-1
+        run: python3 -m foundation.tenantsync --check
       - name: Agent data is current
         run: python3 scripts/build_site_agentdata.py --check
       - name: Platform brief is current

@@ -1,0 +1,67 @@
+{
+ "_doc": "TENANT-SYNC-1 (Rowan, 2026-11-17): the core in workers/ is the only source of generic code; tenants are test beds that pin it by hash and never diverge. Every repository of the organization has a role here; `python3 -m foundation.tenantsync --check` fails on an unclassified repository. The backend does all of this and records it in ops/tenant-sync/ledger.jsonl; a user of any system never sees it.",
+ "core": {
+  "repo": "ultrastable/ultrastable",
+  "dir": "workers",
+  "tool": "workers/tools/tenant_sync.py"
+ },
+ "ledger": "ops/tenant-sync/ledger.jsonl",
+ "max_prs_per_day": 2,
+ "repos": {
+  "ultrastable": {
+   "role": "core",
+   "why": "holds workers/, the only source of generic code"
+  },
+  "practical-solutions": {
+   "role": "tenant",
+   "clone": "qnfo/practical-solutions",
+   "pr_repo": "ultrastable/practical-solutions",
+   "vendor_dir": "vendor/ultrastable"
+  },
+  "ops": {
+   "role": "tracker",
+   "why": "owner tracker; holds no code"
+  },
+  "workers": {
+   "role": "pointer",
+   "why": "retired 2026-11-17; core lives in ultrastable/ultrastable workers/"
+  },
+  "spec": {
+   "role": "pointer",
+   "why": "retired; specifications live in ultrastable/ultrastable"
+  },
+  "seed": {
+   "role": "pointer",
+   "why": "retired; seed/ lives in ultrastable/ultrastable"
+  },
+  "license": {
+   "role": "pointer",
+   "why": "retired; licensing/ lives in ultrastable/ultrastable"
+  },
+  ".github": {
+   "role": "org-profile",
+   "why": "organization profile and shared workflow templates"
+  },
+  "business": {
+   "role": "pointer",
+   "why": "archived; its content lives in ultrastable/ultrastable"
+  },
+  "docs": {
+   "role": "pointer",
+   "why": "archived; its content lives in ultrastable/ultrastable"
+  },
+  "ip": {
+   "role": "pointer",
+   "why": "archived; its content lives in ultrastable/ultrastable"
+  },
+  "platform": {
+   "role": "pointer",
+   "why": "archived; its content lives in ultrastable/ultrastable"
+  },
+  "site": {
+   "role": "pointer",
+   "why": "archived; its content lives in ultrastable/ultrastable"
+  }
+ },
+ "future_tenant_rule": "A new system built on Ultrastable is a tenant: add it here and give it upstream.json; the bootstrap does both (seed/bootstrap)."
+}

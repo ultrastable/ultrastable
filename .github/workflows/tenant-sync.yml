@@ -1,0 +1,38 @@
+name: tenant-sync
+# budget: ~1 min per day
+# trigger: daily (TENANT-SYNC-1: drift between core and tenants is measured daily, never faster) and a push to workers/ so a core change reaches tenants the same day
+# free-alternative: `python3 -m foundation.tenantsync --run --apply` from a Cloudflare cron worker or a cloud-hosted agent session
+# Backend loop: clones each tenant, checks pins and unregistered generic code, opens a core PR (lift) or a tenant PR (re-vendor). Ledger: ops/tenant-sync/ledger.jsonl.
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  push:
+    branches: [main]
+    paths: ["workers/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: tenant-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - run: python3 scripts/actions_guard.py tenant-sync
+        env: { GH_TOKEN: "${{ github.token }}" }
+      - run: python3 -m foundation.tenantsync --check
+      - name: Check, lift and re-vendor every tenant
+        run: python3 -m foundation.tenantsync --run --apply
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          LANE_PAT: ${{ secrets.LANE_PAT }}
+      - name: Record the ledger
+        run: |
+          git config user.name tenant-sync; git config user.email tenant-sync@users.noreply.github.com
+          git add ops/tenant-sync/ledger.jsonl
+          git diff --cached --quiet || (git commit -qm "tenant-sync: ledger" && git push origin HEAD:main)
