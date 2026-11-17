@@ -18,5 +18,6 @@
  "0016_read_indexes.sql",
  "0017_unknowns.sql",
  "0018_audit_chain.sql",
- "0019_free_tier.sql"
+ "0019_free_tier.sql",
+ "0020_read_indexes_2.sql"
 ]

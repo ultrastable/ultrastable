@@ -2084,6 +2084,15 @@
    "title": "FREE-TIER-1 and AI-ROUTER-1: free-plan governor and shared AI cost router",
    "body": "ultrastable-ops was never the volume problem (one analytics refresh spike per 6 h, about 0.3M of 5M rows a day); the per-hour cap misread a spike as overage. Fixed with an account-wide daily free-plan level (seed/worker/src/freetier.js) and a shared AI router (workers/core/airouter, vendored to seed/worker/src/airouter.js) with a default monthly paid cap of 0. The product-manager decision-ledger probe named a report file that is never written; it now names ops/growth/experiments.json. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
    "probe": "file:seed/worker/src/freetier.js"
+  },
+  {
+   "id": "lesson-2026-11-17-ai-router-1-on-every-model-caller-pulse-reads-24-h-of-beats-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "AI-ROUTER-1 on every model caller; pulse reads 24 h of beats once",
+   "body": "Every direct env.AI.run caller (site worker runAny, console agent, code agent invoke and legacy executor, tick doer) now goes through seed/worker/src/airoute.js routeChat over core/airouter, with messages support; a Worker with no DB falls back to its first model. core/modelservice (CI gateway, no DB port, allowlist and token caps) and core/ignorance models.js (tenant port, no DB) are not yet routed. ultrastable-org query analytics: loop_beats 24 h re-reads were about half of all rows read; pulse.js now keeps the beats as one org row and reads only new rows, stores first-seen once; migration 0020 indexes dispatches.model, items(status,updated_at), tick_runs.finished_at. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
+   "probe": "file:seed/worker/src/airoute.js",
+   "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
   }
  ]
 }

@@ -7,6 +7,7 @@
 //          note and undo, through runCommand, so every change is audited and undoable and `delegate`/`dispatch` hand the real work to the fleet and GitHub Actions.
 // Never empty: a loop that ends without text gets one tool-less synthesis pass over what its tools returned; if that also gives nothing, a digest of the last results is the answer.
 // Model list mirrors doctrine/code-agents.json (cheapest first). Inlined: seed/worker/src/codeagent.js no longer exports ADAPTERS on main (ZERO-MINUTES-1 rewrite).
+import { routeChat } from "../seed/worker/src/airoute.js";
 const ADAPTERS = [
   { id: "workers-ai-glm", model: "@cf/zai-org/glm-5.3-flash", family: "glm", price: 0.65, extra: { reasoning_effort: "low", max_tokens: 8000 } },
   { id: "workers-ai-llama", model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", family: "llama", price: 2.546, extra: { max_tokens: 3000 } },
@@ -75,15 +76,14 @@ function systemPrompt(commands, fresh, nowSec) {
 }
 
 async function callModel(env, messages, adapters) {
-  const errs = [];
-  for (const a of adapters) {
-    try {
-      const r = await env.AI.run(a.model, { messages, ...a.extra });
-      const text = (r && (r.response || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || "";
-      return { text: String(text), model: a.model };
-    } catch (e) { errs.push(a.id + ": " + String(e && e.message || e).slice(0, 100)); }
+  // AI-ROUTER-1: through core/airouter (free first, learned order, cost and pass rate recorded). cache:false because each turn carries live tool results.
+  try {
+    const r = await routeChat(env, { kind: "console", models: adapters.map(a => ({ id: a.id, model: a.model, extra: a.extra })), messages, maxTokens: 1500, cache: false, config: { neurons_day_cap: 1500 } });
+    return { text: r.text, model: r.model };
+  } catch (e) {
+    if (e && e.code === "airouter_exhausted" && !/error:/.test(String(e.message))) return { text: "", model: "" };  // every model answered with nothing: the caller's synthesis step handles an empty reply
+    throw new Error("no model answered (" + String(e && e.message || e).slice(0, 200) + ")");
   }
-  throw new Error("no model answered (" + errs.join("; ") + ")");
 }
 
 export async function ask(env, text, { commands, exec, fresh, now = Date.now(), adapters } = {}) {
