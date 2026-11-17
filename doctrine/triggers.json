@@ -367,6 +367,13 @@
     "11 7 * * *"
    ]
   },
+  "regen-generated.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": []
+  },
   "retriage.yml": {
    "events": [
     "workflow_dispatch"

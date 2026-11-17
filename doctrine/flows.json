@@ -1336,6 +1336,22 @@
       ],
       "feedback": "a path or audit finding becomes a Q-UIUX item with a probe; an experiment arm is kept only past the pre-registered sample with its guard intact (uiux --experiments); the next audit shows whether the fix held",
       "bindings": []
+    },
+    "regen-generated": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "the bot's commit changes main, and the next merge's run finds the data current (no commit) or refreshes it again; a generator that fails fails the run and is seen by the workflow watch",
+      "bindings": []
     }
   },
   "implicit_producers": {
