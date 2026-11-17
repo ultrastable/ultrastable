@@ -196,6 +196,7 @@
       "bindings": [
         "BLUESKY_APP_PASSWORD",
         "BLUESKY_HANDLE",
+        "CLOUDFLARE_API_TOKEN",
         "LANE_PAT",
         "MASTODON_INSTANCE",
         "MASTODON_TOKEN"

@@ -60,6 +60,9 @@ class Unknowns(unittest.TestCase):
         cands = json.loads((self.tmp / "ops/unknowns/objective-candidates.json").read_text())["candidates"]
         self.assertEqual([c["from"] for c in cands], [a])
         self.assertEqual(cands[0]["status"], "probationary")
+        obj = json.loads((self.tmp / "docs/issues" / ("Q-OBJ-" + a.replace("|", "-").replace(":", "-") + ".json")).read_text())
+        self.assertIn("growth", obj["labels"])
+        self.assertFalse((self.tmp / "docs/issues" / ("Q-OBJ-" + b.replace("|", "-").replace(":", "-") + ".json")).exists())
         s = unknowns.status(self.tmp)
         self.assertEqual((s["answered"], s["surprise_rate"]), (2, 0.5))
         self.assertTrue(unknowns.check(self.tmp) == [])
