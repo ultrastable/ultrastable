@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-17
 
+- 2026-11-17: UNSTICK-1: ciwatch reconciles PRs stuck in conflict with main (scripts/unstick_prs.sh); CIWATCH-2 opens its item PR over REST
 - 2026-11-17: regen-generated: refresh generated data after merge (REGEN-GENERATED-1)
 - 2026-11-17: REGEN-GENERATED-1: regenerate generated data after merge (#570)
 - 2026-11-17: CIWATCH-2: ciwatch opens its item PR over REST (#571)

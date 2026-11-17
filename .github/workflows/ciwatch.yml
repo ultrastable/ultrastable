@@ -53,3 +53,7 @@ jobs:
             gh workflow run checks.yml --ref "$b" || echo "::warning::checks dispatch failed; the lane picks the PR up on its next run"
             echo "$pr"
           fi
+      - name: Reconcile PRs stuck in conflict with main (UNSTICK-1)
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: git reset -q --hard origin/main && ./scripts/unstick_prs.sh
