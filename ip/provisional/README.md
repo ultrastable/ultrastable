@@ -1,3 +1,5 @@
+> **SUPERSEDED (Rowan, 2026-11-17): no patent filing.** Protection is the Ultrastable License only. This file is kept as a record (see [ip/ARCHIVED.md](../ARCHIVED.md)); it lists no open step, deadline or owner action.
+
 # Ultrastable IP: provisional patent application (private)
 
 Draft US provisional patent application for Ultrastable: an organization run by a hierarchy of virtual manager agents with closed feedback loops, scored predictions, earned autonomy, plussing and bootstrapping from a seed. Drawn from the QNFO fleet (customer zero). Draft for attorney review, not legal advice. Keep this repository private.

@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-16",
- "commit": "ff6230f",
+ "generated": "2026-11-17",
+ "commit": "eed92ee",
  "problems": [],
  "panels": [
   {
@@ -41,27 +41,17 @@
   },
   {
    "id": "ip",
-   "title": "IP status",
+   "title": "IP protection",
    "rows": [
     [
-     "Priority application",
-     "not filed (the owner's signature and payment; owner card FILE-PRIORITY)",
-     "warn"
+     "Protection",
+     "Ultrastable License (source-available; non-commercial use free, commercial use licensed). No patent is filed (NO-PATENT-1).",
+     "ok"
     ],
     [
-     "Filing receipts in evidence log",
-     "0",
-     "warn"
-    ],
-    [
-     "Filing package",
-     "ip/provisional (spec, drawings) and ip/europe (Dutch filing set); not legal advice, attorney questions open in ip/europe/DECISION-MEMO.md",
-     "info"
-    ],
-    [
-     "Public content rule",
-     "generic only until a filing receipt is recorded; nothing is asserted about prior publication",
-     "info"
+     "License file",
+     "present",
+     "ok"
     ]
    ]
   },
@@ -173,7 +163,7 @@
     ],
     [
      "Bootstrap case library",
-     "13 starting conditions with routes and at most one owner card each (seed/bootstrap/cases.json)",
+     "10 starting conditions with routes and at most one owner card each (seed/bootstrap/cases.json)",
      "info"
     ],
     [

@@ -5,3 +5,6 @@ Rowan decided on 2026-11-11 not to pursue a patent. Reasons: the system has alre
 Everything below this folder is kept as history and is **not maintained** and **not part of CI** (the provisional pre-flight step was removed from `checks`). Nothing was deleted: the provisional specification (v5, 137 pages), figures, the Dutch filing set in `europe/`, claim strategy, claim-to-code map and evidence log stay here for counsel and for the record. The specs reference sections of the provisional text as "archive §n".
 
 If the decision is ever reversed, `ip/europe/OWNER-CARD.md` and `ip/provisional/FILE-THIS-TODAY.md` are the starting points; any filing is an owner step. Do not describe the system as patent pending anywhere.
+
+
+Update 2026-11-17 (Rowan): no patent filing, ever. The reversal path above is withdrawn; the Ultrastable License is the only IP protection. Files here are records, carry no open owner step, and the ip repository may be public.

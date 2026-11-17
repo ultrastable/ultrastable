@@ -14,7 +14,7 @@
 1. Read the research queue (docs/research, ROADMAP items labelled research). Rank by the objective in org/charter.md.
 2. Draft the next piece from the repository's own records and measured results; every claim cites a file, a probe or a source. Nothing unverified is stated as fact.
 3. Hand the draft to the reviewer role; revise until the review passes. At least two versions per flagship piece.
-4. Publish only what the disclosure gate allows (SAFE NOW before the filing receipt, anything after). Update CITATION.cff and the site page in the same change.
+4. Publish under the Ultrastable License; no patent filing gates publication. Update CITATION.cff and the site page in the same change.
 5. Hand each published piece to the marketing manager as a content item with its audience.
 
 ## Never
