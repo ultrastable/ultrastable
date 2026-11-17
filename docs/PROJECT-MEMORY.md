@@ -8,8 +8,17 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-16
+Last updated: 2026-11-17
 
+- 2026-11-17: READ-BUDGET-2: open loop for the tick Worker's heavy D1 reads (#457)
+- 2026-11-17: Doer: accept object model replies, skip plan-blocked models (#456)
+- 2026-11-16: actions-budget: pause non-essential workflows (projected minutes near the free quota)
+- 2026-11-16: outreach: record run state
+- 2026-11-16: index: refresh issues-by-area and IP register from issues
+- 2026-11-16: branchsweep: merge the branches main lacks (#455)
+- 2026-11-16: Regenerate stale dashboard data (red on main) (#454)
+- 2026-11-16: CODE-ONLY-ORDER: cover agent prompts and PR bodies; fix docs_audit and SPDX failures (#453)
+- 2026-11-16: OWNER-DASH-3: owner page never blank at the D1 cap, plain-language status, DB-down mail (#450)
 - 2026-11-16: CODE-ONLY-ORDER: decisions live in code, enforced by check and inherited by tenants (#451)
 - 2026-11-16: TENANT-STORAGE-1: decision, budgets, QNFO migration plan and check (#448)
 - 2026-11-16: OWNER-DASH-2: owner dashboard shows what needs you, tenant status and paid options (#449)
