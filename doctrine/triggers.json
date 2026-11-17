@@ -274,6 +274,14 @@
     "17 6 * * 1"
    ]
   },
+  "issueloop.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "17 7 * * *"
+   ]
+  },
   "issues.yml": {
    "events": [
     "issues",
@@ -408,6 +416,13 @@
    "crons": [
     "47 5 * * 3"
    ]
+  },
+  "workers-tests.yml": {
+   "events": [
+    "pull_request",
+    "workflow_dispatch"
+   ],
+   "crons": []
   }
  }
 }

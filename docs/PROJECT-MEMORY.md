@@ -10,6 +10,15 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-17
 
+- 2026-11-17: deploy-ultrastable: record live-verified deploy
+- 2026-11-17: Q-TENANT-TOPOLOGY-1: deploy lane owns ultrastable-tenants; tick reads its self-test (#535)
+- 2026-11-17: EFFECT-2: claim-coverage items rank after code-changing items (#534)
+- 2026-11-17: deploy-ultrastable: record live-verified deploy
+- 2026-11-17: Claims: regenerate deploy count after recorded deploys (#533)
+- 2026-11-17: deploy-ultrastable: record live-verified deploy
+- 2026-11-17: DEPLOY-RECORD-1: the live deploy path records its verified deploys (#532)
+- 2026-11-17: ULTRASTABILITY-1: stale readings are unmeasured; tenant variables run (#531)
+- 2026-11-17: EFFECT-1: executor takes executable-effect items first, rejects changes no code reads (#529)
 - 2026-11-17: FREE-LLM-5: skip a dead model rung for the rest of the run (#521)
 - 2026-11-17: SELFCODE-1: refile an item until the agent has worked it (#522)
 - 2026-11-17: COVERAGE-1: drop a nonexistent page from the live list, raise the floor (#519)

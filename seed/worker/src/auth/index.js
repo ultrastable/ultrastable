@@ -68,6 +68,7 @@ export async function refreshDue(db, env, opts = {}) {
     const res = await getToken(db, env, r.tenant, r.provider, { ...opts, now });
     out.push({ tenant: r.tenant, provider: r.provider, action: res.ok ? 'renewed' : 'failed', error: res.error });
   }
+  if (rows.some(r => r.provider === 'github-admin')) { const { archiveDue } = await import('./archive.js'); out.push(...(await archiveDue(db, env, opts)).map(a => ({ ...a, provider: 'github-admin' }))); }  // REPOS-1 resolver
   return out;
 }
 
