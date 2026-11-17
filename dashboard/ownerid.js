@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // OWNER-IDENTITY-1 (Rowan 2026-11-17): identity, not email, is the root of trust. The owner is whoever controls the GitHub owner account of the org.
 // Sign-in is GitHub OAuth; the callback proves the GitHub login is an owner (org admin, or listed in OWNER_GITHUB_LOGINS) and then mints the session.
 // Email addresses of any provider are verified contact identifiers LINKED to that identity (owner_links); every link and sign-in is appended to owner_audit.
