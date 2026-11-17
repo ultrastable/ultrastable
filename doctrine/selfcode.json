@@ -1,0 +1,24 @@
+{
+  "_doc": "SELFCODE-1 (owner, 2026-11-17): the self-improving code loop. Signals the repository can measure about itself become queue items (Q-SELF-*, Q-INTAKE-*); the executor (foundation/executor.py) works them with the cheapest free model route (GitHub Models through the Actions token, then Workers AI), the checks and an independent reviewer gate the PR, the lane merges, and foundation/selfcode.py settles each change against the signal that caused it, reverting a regression and learning which kinds of change keep working. Code: foundation/selfcode.py, tests tests/foundation/test_selfcode.py, workflow .github/workflows/executor.yml.",
+  "enabled": true,
+  "scope": {
+    "write": ["foundation/*", "scripts/*", "tests/*", "products/*", "site/*", "docs/issues/*", "seed/*"],
+    "read_globs": ["foundation/*.py", "scripts/*.py", "products/**/*.py"]
+  },
+  "rails": {
+    "max_new_per_run": 1,
+    "max_open": 3,
+    "max_filed_per_day": 8,
+    "refile_cooldown_hours": 48,
+    "settle_after_minutes": 20,
+    "trusted_issue_authors": ["OWNER", "MEMBER", "COLLABORATOR"],
+    "intake_label": "agent-task"
+  },
+  "learning": {"min_settled": 3, "min_kept_rate": 0.5, "pause_hours": 72},
+  "kinds": {
+    "failing_test": {"enabled": true, "weight": 10},
+    "bare_except": {"enabled": true, "weight": 4},
+    "unused_import": {"enabled": true, "weight": 3},
+    "todo": {"enabled": true, "weight": 1}
+  }
+}

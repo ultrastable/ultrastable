@@ -10,6 +10,12 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-17
 
+- 2026-11-17: MIGRATE-SELF-1: the tick applies its own D1 migrations; probe for pending ones (#488)
+- 2026-11-17: UNKNOWNS-1: do not record questions the originate cap refused (#486)
+- 2026-11-17: CIWATCH-1 + AGENT-WORK-1: green main, red-X watcher, free-LLM code agent with caps (#484)
+- 2026-11-17: UNKNOWNS-1: unknowns step carries its own DDL (SCHEMA-SELF-1) (#483)
+- 2026-11-17: UNKNOWNS-1: UIA lenses, owner-console panel, site story, dashboard-data fix (#482)
+- 2026-11-17: UNKNOWNS-1: ignorance-audit loop (what we don't know as a feedback loop) (#479)
 - 2026-11-17: READ-BUDGET-2: open loop for the tick Worker's heavy D1 reads (#457)
 - 2026-11-17: Doer: accept object model replies, skip plan-blocked models (#456)
 - 2026-11-16: actions-budget: pause non-essential workflows (projected minutes near the free quota)
