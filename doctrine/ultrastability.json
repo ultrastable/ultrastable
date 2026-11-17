@@ -20,11 +20,31 @@
      "min": 0,
      "max": 1.0,
      "unit": "of budget",
-     "first_order": ["cost-probe", "executor"],
+     "first_order": [
+      "cost-guard",
+      "tick-heartbeat"
+     ],
      "why": "Past 1.0 the system costs more than its owner accepts, so it is no longer viable.",
      "ladder": [
-      {"kind": "param", "file": "doctrine/clocks.json", "path": "chain.max_runs_per_day", "delta": -1, "min": 1, "max": 8, "what": "wake the executor less often"},
-      {"kind": "item", "labels": ["p0", "agent-ready", "cuts-cost"], "workstream": "cost", "what": "restructure: find and cut the spend source"}
+      {
+       "kind": "param",
+       "file": "doctrine/clocks.json",
+       "path": "chain.max_runs_per_day",
+       "delta": -1,
+       "min": 1,
+       "max": 8,
+       "what": "wake the executor less often"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "cuts-cost"
+       ],
+       "workstream": "cost",
+       "what": "restructure: find and cut the spend source"
+      }
      ]
     },
     {
@@ -34,10 +54,23 @@
      "min": 1.0,
      "max": 1.0,
      "unit": "of deploys",
-     "first_order": ["probe-and-revert", "handoff-closer"],
+     "first_order": [
+      "deploy-workers",
+      "site-deploy",
+      "ciwatch"
+     ],
      "why": "A deploy whose live code differs from its commit means the loop that ships is not closing.",
      "ladder": [
-      {"kind": "item", "labels": ["p0", "agent-ready", "raises-deploys"], "workstream": "deploys", "what": "restructure: repair the deploy path that failed verification"}
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-deploys"
+       ],
+       "workstream": "deploys",
+       "what": "restructure: repair the deploy path that failed verification"
+      }
      ]
     },
     {
@@ -47,10 +80,20 @@
      "min": 0,
      "max": 0,
      "unit": "claims",
-     "first_order": ["claims-check"],
+     "first_order": [
+      "claims-conformance"
+     ],
      "why": "A public statement the code no longer makes true breaks the system's own record of itself.",
      "ladder": [
-      {"kind": "item", "labels": ["p1", "agent-ready"], "workstream": "Claims", "what": "restructure: bind or regenerate the drifting statements"}
+      {
+       "kind": "item",
+       "labels": [
+        "p1",
+        "agent-ready"
+       ],
+       "workstream": "Claims",
+       "what": "restructure: bind or regenerate the drifting statements"
+      }
      ]
     },
     {
@@ -60,11 +103,113 @@
      "min": 1.0,
      "max": null,
      "unit": "k",
-     "first_order": ["executor", "criticality-gate"],
+     "first_order": [
+      "agent-executor",
+      "criticality-loop"
+     ],
      "why": "Below the floor the system ships less than it costs to run, so the work stops compounding.",
      "ladder": [
-      {"kind": "param", "file": "doctrine/clocks.json", "path": "chain.max_runs_per_day", "delta": 1, "min": 1, "max": 8, "what": "wake the executor more often"},
-      {"kind": "item", "labels": ["p0", "agent-ready", "raises-deploys"], "workstream": "deploys", "what": "restructure: remove what keeps deploys from shipping"}
+      {
+       "kind": "param",
+       "file": "doctrine/clocks.json",
+       "path": "chain.max_runs_per_day",
+       "delta": 1,
+       "min": 1,
+       "max": 8,
+       "what": "wake the executor more often"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-deploys"
+       ],
+       "workstream": "deploys",
+       "what": "restructure: remove what keeps deploys from shipping"
+      }
+     ]
+    },
+    {
+     "id": "stalled_clocks",
+     "name": "Clocks that stopped",
+     "reading": "resilience.stalled",
+     "min": 0,
+     "max": 0,
+     "unit": "clocks",
+     "first_order": [
+      "watchdog",
+      "resilience"
+     ],
+     "why": "A clock that stops halts the loop it drives; the system is viable only while every clock keeps ticking, and a watchdog that goes silent reads as unmeasured.",
+     "ladder": [
+      {
+       "kind": "param",
+       "file": "doctrine/resilience.json",
+       "path": "stalled_after_intervals",
+       "delta": -1,
+       "min": 2,
+       "max": 3,
+       "what": "declare a stall sooner so the restart comes earlier"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-deploys"
+       ],
+       "workstream": "Resilience",
+       "what": "restructure: add an independent trigger to the clock that keeps stopping"
+      }
+     ]
+    },
+    {
+     "id": "ui_findings",
+     "name": "Front-end findings that block a user",
+     "reading": "uiux.findings",
+     "min": 0,
+     "max": 0,
+     "unit": "findings",
+     "first_order": [
+      "uiux-audit",
+      "self-coding-agent"
+     ],
+     "why": "A page that fails accessibility, leaks backend detail, breaks its structure or its brand is a front end drifting into a mishmash; the UI/UX loop (UIUX-1) must keep this at zero, and a variable that cannot be read from a fresh audit is unmeasured and so not in bounds.",
+     "ladder": [
+      {
+       "kind": "item",
+       "labels": [
+        "p1",
+        "agent-ready"
+       ],
+       "workstream": "Design",
+       "what": "restructure: move the failing rule into the shared component or design token so each page inherits the fix"
+      }
+     ]
+    },
+    {
+     "id": "happy_paths",
+     "name": "User paths that still walk end to end",
+     "reading": "uiux.happy_paths",
+     "min": 1.0,
+     "max": 1.0,
+     "unit": "of paths",
+     "first_order": [
+      "uiux-audit",
+      "uiux-funnels"
+     ],
+     "why": "A path in doctrine/stakeholders.json that no longer clicks through is a user who cannot get from entry to the next step; every audience path must walk, and the UI/UX loop runs each as a browser flow.",
+     "ladder": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready"
+       ],
+       "workstream": "Design",
+       "what": "restructure: repair the broken step or change the path in doctrine/stakeholders.json so it matches the page"
+      }
      ]
     }
    ]
@@ -73,11 +218,125 @@
    "status": "declared",
    "what": "Every system built on Ultrastable declares the same four variables at bootstrap; the platform loop runs them for tenant 0 only",
    "variables": [
-    {"id": "uptime", "name": "Uptime", "reading": "tenant.probe_pass_rate", "min": 0.99, "max": 1.0, "unit": "of probes", "first_order": ["probe-and-revert"], "why": "The system has to be reachable to be improved.", "ladder": [{"kind": "spinoff", "verb": "iterate", "what": "iterate: change the app"}, {"kind": "spinoff", "verb": "retire", "what": "retire: stop spending on what cannot stay up"}]},
-    {"id": "spend", "name": "Spend against the declared monthly budget", "reading": "tenant.spend_vs_budget", "min": 0, "max": 1.0, "unit": "of budget", "first_order": ["cost-probe"], "why": "The owner accepted a running cost; past it the system is not viable.", "ladder": [{"kind": "spinoff", "verb": "iterate", "what": "iterate: cut the spend source"}, {"kind": "spinoff", "verb": "retire", "what": "retire: stop spending"}]},
-    {"id": "claims_drift", "name": "Words that no longer match code", "reading": "tenant.claims_drift", "min": 0, "max": 0, "unit": "claims", "first_order": ["claims-check"], "why": "A tenant's public statements stay true.", "ladder": [{"kind": "spinoff", "verb": "iterate", "what": "iterate: regenerate the statements from code"}]},
-    {"id": "value", "name": "The tenant's own declared value metric", "reading": "tenant.declared_metric", "min": null, "max": null, "unit": "per its objective", "first_order": ["objective-measure"], "why": "A system with no measure that can be wrong cannot be improved.", "ladder": [{"kind": "spinoff", "verb": "iterate", "what": "iterate: change what the app does"}, {"kind": "spinoff", "verb": "retire", "what": "retire: the measured value does not justify the cost"}]}
+    {
+     "id": "uptime",
+     "name": "Uptime",
+     "reading": "tenant.probe_pass_rate",
+     "min": 0.99,
+     "max": 1.0,
+     "unit": "of probes",
+     "first_order": [
+      "spinoff",
+      "liveness"
+     ],
+     "why": "The system has to be reachable to be improved.",
+     "ladder": [
+      {
+       "kind": "spinoff",
+       "verb": "iterate",
+       "what": "iterate: change the app"
+      },
+      {
+       "kind": "spinoff",
+       "verb": "retire",
+       "what": "retire: stop spending on what cannot stay up"
+      }
+     ]
+    },
+    {
+     "id": "spend",
+     "name": "Spend against the declared monthly budget",
+     "reading": "tenant.spend_vs_budget",
+     "min": 0,
+     "max": 1.0,
+     "unit": "of budget",
+     "first_order": [
+      "cost-guard"
+     ],
+     "why": "The owner accepted a running cost; past it the system is not viable.",
+     "ladder": [
+      {
+       "kind": "spinoff",
+       "verb": "iterate",
+       "what": "iterate: cut the spend source"
+      },
+      {
+       "kind": "spinoff",
+       "verb": "retire",
+       "what": "retire: stop spending"
+      }
+     ]
+    },
+    {
+     "id": "claims_drift",
+     "name": "Words that no longer match code",
+     "reading": "tenant.claims_drift",
+     "min": 0,
+     "max": 0,
+     "unit": "claims",
+     "first_order": [
+      "claims-conformance"
+     ],
+     "why": "A tenant's public statements stay true.",
+     "ladder": [
+      {
+       "kind": "spinoff",
+       "verb": "iterate",
+       "what": "iterate: regenerate the statements from code"
+      }
+     ]
+    },
+    {
+     "id": "value",
+     "name": "The tenant's own declared value metric",
+     "reading": "tenant.declared_metric",
+     "min": null,
+     "max": null,
+     "unit": "per its objective",
+     "first_order": [
+      "spinoff",
+      "predict-verify"
+     ],
+     "why": "A system with no measure that can be wrong cannot be improved.",
+     "ladder": [
+      {
+       "kind": "spinoff",
+       "verb": "iterate",
+       "what": "iterate: change what the app does"
+      },
+      {
+       "kind": "spinoff",
+       "verb": "retire",
+       "what": "retire: the measured value does not justify the cost"
+      }
+     ]
+    }
    ]
+  }
+ },
+ "self": {
+  "name": "ultrastable",
+  "is": "A system that keeps its own essential variables inside bounds with two loops: a fast loop that corrects ordinary disturbance without changing the system, and a slow loop that changes the system's own parameters or structure when a variable stays out of bounds, and keeps the change only if the variable returns.",
+  "does": [
+   "reads every essential variable against its bounds on a clock, from ledgers its own loops write",
+   "corrects disturbance with its regulators (the fast loop) without changing itself",
+   "when a variable stays out of bounds, takes one discrete step on that variable's ladder (the slow loop), then keeps or undoes it by the next readings",
+   "records every reading, step and verdict with provenance, and treats an unreadable variable as unmeasured, never as fine",
+   "declares what it is and what it consists of in this model, and fails its own build when running code and this model differ"
+  ],
+  "not": "It does not wait on a person to close a loop. The only pauses are the irreversible, identity-bound acts listed under the boundary.",
+  "boundary_ref": "doctrine/boundary.json",
+  "clocks_ref": "doctrine/clocks.json",
+  "inheritance": {
+   "rule": "Improve once, improve all: a change to the foundation or the seed reaches every system built on Ultrastable, because tenants are bootstrapped from the same kit and declare the same essential variables.",
+   "carriers": [
+    "seed/agents/AGENTS.md",
+    "seed/autonomy/policy.json",
+    "seed/ultrastable.json",
+    "seed/scripts/claims.py",
+    "doctrine/ultrastability.json"
+   ],
+   "tenant_scope": "tenant"
   }
  }
 }

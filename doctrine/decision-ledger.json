@@ -1919,6 +1919,40 @@
    "body": "The first EFFECT-1 run took a claim-coverage item whose fix was a wording change, which the consumer gate rejects; coverage items now rank after failing checks, unknowns, self-code findings, bugs and criticality items.",
    "probe": "grep:foundation/executor.py::Q-CLAIM-COVER",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-resilience-1-every-clock-has-a-probe-a-restart-route-and-a-w",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "RESILIENCE-1: every clock has a probe, a restart route and a watcher that is itself watched",
+   "body": "Stalled ticks and red checks silently stopped QNFO's process. foundation/resilience.py probes every clock (including every scheduled workflow, interval derived from its cron), restarts stopped ones within bounds, escalates stubborn ones as Q-STALL items; GitHub watchdog and Worker watchdog-gh loop restart each other; stalled_clocks is an Ashby essential variable.",
+   "probe": "grep:foundation/resilience.py::def restart"
+  },
+  {
+   "id": "decision-2026-11-17-capped-sparks-no-longer-cancel-executor-runs-spark-queue-1",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Capped sparks no longer cancel executor runs (SPARK-QUEUE-1)",
+   "body": "The executor's spark gate is its own job outside the executor concurrency group, so a workflow_run spark that hit its daily cap ends there instead of displacing a queued manual or Worker dispatch (measured 2026-11-17 18:08-18:14 UTC).",
+   "probe": "grep:.github/workflows/executor.yml::SPARK-QUEUE-1",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-self-model-1-the-self-model-is-code-served-at-self-checked-i",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "SELF-MODEL-1: the self-model is code, served at /self, checked in CI, consulted by the tick",
+   "body": "foundation/selfmodel.py builds one model from doctrine/ultrastability.json and the live declarations (loop registry, topology, workflows, clocks, boundary). site/self-data.js is generated and served at /self and /.well-known/ultrastable. selfmodel --check fails on an unresolved regulator, a missing file, a workflow in no loop or a stale served model, and the ultrastability tick skips a variable whose regulators the model does not know and files an UNREGISTERED item. Verified by 29 passing tests in tests/foundation and claims 27 of 27; live check of /self follows the site deploy.",
+   "probe": "file:foundation/selfmodel.py",
+   "session": "session_0156nqDvqvENNWfEYLQjbFyC"
+  },
+  {
+   "id": "decision-2026-11-17-uiux-1-the-ui-ux-manager-is-a-closed-loop-audit-paths-funnel",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "UIUX-1: the UI/UX manager is a closed loop (audit, paths, funnels, A/B, fix items)",
+   "body": "foundation/uiux.py with scripts/uiux_audit.mjs audits every user page and walks every stakeholder path in a browser; funnels and experiment verdicts come from first-party hits; findings become agent-ready Q-UIUX items with a re-audit probe; UX-001-home-setup-label is the first live experiment (site/uiux.js); ui_findings and happy_paths are essential variables in doctrine/ultrastability.json.",
+   "probe": "file:ops/uiux/status.json"
   }
  ]
 }

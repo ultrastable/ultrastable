@@ -1,0 +1,43 @@
+name: watchdog
+# budget: ~1 min per run, one scheduled run a day (~30 min per month), plus one per failed lane, deploy-site or executor run (bounded by the concurrency group)
+# trigger: daily (never faster), plus a failed lane, deploy-site or executor run, so any failure is another independent wake; the Cloudflare tick (free) also dispatches this workflow whenever it is older than 12 h, which is the frequent path (watchdog-of-watchdogs)
+# free-alternative: the Cloudflare cron worker already runs the tick watchdog loop (seed/worker/src/watchdog.js) at zero Actions minutes; this workflow is the credential-free second route
+# Probes every clock (doctrine/clocks.json and every scheduled workflow), restarts the stopped ones (workflow dispatch, or POST /pulse/watch on each Cloudflare account),
+# files Q-STALL-* when a restart did not take, and records ops/resilience.jsonl, which feeds the essential variable stalled_clocks.
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_run:
+    workflows: [lane, deploy-site, executor]
+    types: [completed]
+  workflow_dispatch: {}
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: watchdog
+  cancel-in-progress: false
+jobs:
+  watchdog:
+    if: ${{ vars.HALT != '1' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure') }}  # HALT-1; a finished run wakes the watchdog only when it failed (a busy main would otherwise wake it dozens of times a day)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Probe, restart, escalate
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: python3 -m foundation resilience --run --apply --changed-file "$RUNNER_TEMP/changed"
+      - name: Ultrastability tick (a stall is a second-order event)
+        run: python3 -m foundation ultrastability --tick --apply
+      - name: Record
+        # only when a restart, an escalation or the set of stalled clocks changed (or once a day); [skip ci] keeps this commit from waking deploy-site, whose completion would wake this workflow again
+        run: |
+          [ "$(cat "$RUNNER_TEMP/changed")" = "1" ] || { echo "nothing changed; ledger not committed"; exit 0; }
+          git config user.name "ultrastable-watchdog"; git config user.email "actions@users.noreply.github.com"
+          git add ops/resilience.jsonl ops/ultrastability.jsonl docs/issues
+          git diff --cached --quiet || { git commit -q -m "watchdog: clock probe (RESILIENCE-1) [skip ci]"; git push -q origin HEAD:main || { git pull -q --rebase origin main && git push -q origin HEAD:main; }; }

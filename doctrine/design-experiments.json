@@ -87,6 +87,33 @@
    ],
    "prediction": "time_to_first_action_s < 20 within 672 h",
    "status": "proposed"
+  },
+  {
+   "id": "UX-001-home-setup-label",
+   "surface": "ultrastable-site",
+   "slot": "home.setup_label",
+   "path": "/",
+   "convert_on": "/setup",
+   "started": "2026-11-17",
+   "hypothesis": "A label that names the outcome (start a system) gets more people from the home page into the guided set-up than the label that names the chore (set up).",
+   "axis": "primary_label",
+   "metric": "setup_click_rate",
+   "guard_metrics": [
+    "bounce_rate"
+   ],
+   "arms": [
+    {
+     "id": "control"
+    },
+    {
+     "id": "start-mine",
+     "overrides": {
+      "primary_label": "Start my own system"
+     }
+    }
+   ],
+   "prediction": "setup_click_rate > 0.03 within 672 h",
+   "status": "running"
   }
  ],
  "ideas": [

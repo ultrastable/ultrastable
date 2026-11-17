@@ -285,6 +285,12 @@ def run(root=REPO, apply=False, now=None, use_live=True, env=None, vals=None, st
         ins = insight.run(root, apply=apply, now=now, use_live=use_live, env=env)
     except Exception as e:  # an unmeasured loop is a finding, never a crash of the pass
         ins = {"measured": False, "why": type(e).__name__ + ": " + str(e)[:160], "filed": []}
+    # UIUX-1: the UI/UX manager (audit status, path funnels, A/B verdicts, front-end fix items) runs in the same daily pass.
+    from . import uiux
+    try:
+        ui = uiux.tick(root, apply=apply)
+    except Exception as e:  # an unmeasured loop is a finding, never a crash of the pass
+        ui = {"status": {"unmeasured": [type(e).__name__ + ": " + str(e)[:160]]}, "filed": []}
     # CODE-ONLY-ORDER: a decision recorded without a code consumer becomes a work item in the same pass.
     from . import standingorder
     try:
@@ -292,7 +298,7 @@ def run(root=REPO, apply=False, now=None, use_live=True, env=None, vals=None, st
     except Exception as e:  # never crash the pass; the CI check still fails the change
         order_filed = [f"error: {type(e).__name__}"]
     rep = {"generated": _iso(now), "targets": tgt, "experiments": ex, "knobs": {"values": {k["id"]: knob_value(root, k) for k in _read(root, KNOBS, {"knobs": []})["knobs"]}, "last": tuned},
-           "filed": {"growth": growth_filed, "repair": repair_filed, "insight": ins.get("filed", []), "order": order_filed}, "insight": ins, "stages": [{"id": s["id"], "status": s["status"], "missed": s["missed"]} for s in stage_rows]}
+           "filed": {"growth": growth_filed, "repair": repair_filed, "insight": ins.get("filed", []), "uiux": ui.get("filed", []), "order": order_filed}, "insight": ins, "uiux": {"filed": ui.get("filed", []), "blocking": ui["status"].get("findings_blocking"), "happy_path_pass_share": ui["status"].get("happy_path_pass_share"), "unmeasured": ui["status"].get("unmeasured", [])}, "stages": [{"id": s["id"], "status": s["status"], "missed": s["missed"]} for s in stage_rows]}
     if apply and ex != _read(root, EXPERIMENTS, {"experiments": []}).get("experiments"):
         _write(root, EXPERIMENTS, {"experiments": ex})   # state that persists; the report itself is recomputed from live measurements, so a quiet day changes no file
     return rep
@@ -304,7 +310,7 @@ def publish(root=REPO, rep=None) -> dict:
     st = subprocess.run(["git", "-C", str(root), "status", "--porcelain"], capture_output=True, text=True, encoding="utf-8").stdout.strip()
     if not st:
         return {"pr": None, "why": "nothing changed"}
-    n = len((rep or {}).get("filed", {}).get("growth", [])) + len((rep or {}).get("filed", {}).get("repair", [])) + len((rep or {}).get("filed", {}).get("insight", []))
+    n = len((rep or {}).get("filed", {}).get("growth", [])) + len((rep or {}).get("filed", {}).get("repair", [])) + len((rep or {}).get("filed", {}).get("insight", [])) + len((rep or {}).get("filed", {}).get("uiux", []))
     day = datetime.now(timezone.utc).strftime("%Y%m%d%H")
     wc, wo = subprocess.run(["python3", "-m", "foundation", "writeback", "record", "--kind", "decision", "--title", f"Product manager pass {day}: {n} item(s) filed", "--body",
                              "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.", "--owner", "product-manager",

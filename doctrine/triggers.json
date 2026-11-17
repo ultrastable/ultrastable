@@ -400,12 +400,29 @@
     "41 6 * * *"
    ]
   },
+  "tenant-sync.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 6 * * *"
+   ]
+  },
   "transparency.yml": {
    "events": [
     "workflow_dispatch"
    ],
    "crons": [
     "17 5 * * *"
+   ]
+  },
+  "uiux.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "27 5 * * 3"
    ]
   },
   "upstream.yml": {
@@ -415,6 +432,15 @@
    ],
    "crons": [
     "47 5 * * 3"
+   ]
+  },
+  "watchdog.yml": {
+   "events": [
+    "workflow_dispatch",
+    "workflow_run"
+   ],
+   "crons": [
+    "23 6 * * *"
    ]
   },
   "workers-tests.yml": {

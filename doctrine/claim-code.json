@@ -14,7 +14,8 @@
     "\\.test\\.",
     "/test/",
     "STAGED",
-    "node_modules"
+    "node_modules",
+    "self-data\\.js"
   ],
   "min_len": 40,
   "claim_patterns": [
@@ -119,7 +120,6 @@
     "site/stakeholders.js::e4426faa78a2",
     "site/userpath.js::d3a8370d7865",
     "site/userpath.js::eac0cdb7b2e4",
-    "site/worker.js::1d0202540e48",
     "site/worker.js::242a6d3c9328",
     "site/worker.js::2f7a8c27c3f8",
     "site/worker.js::2f8cd2cb26f3",
@@ -130,6 +130,7 @@
     "site/worker.js::7f9c11590eec",
     "site/worker.js::7fc1f51c7eb6",
     "site/worker.js::888a1d5fbd61",
+    "site/worker.js::88e4ac4418ab",
     "site/worker.js::92538928373c",
     "site/worker.js::a1d1cb1a2944",
     "site/worker.js::a3dbae472ff2",
@@ -142,5 +143,8 @@
     "site/worker.js::f1c6cc2e941f",
     "site/worker.js::f3c13722dcc2"
   ],
-  "closing_probe": "python3 -m foundation claimcode --check"
+  "closing_probe": "python3 -m foundation claimcode --check",
+  "skip_reasons": {
+    "self-data\\.js": "SELF-MODEL-1: a generated mirror of the loop registry, clocks and boundary declarations (the code's own statements about itself), kept equal to them by `foundation selfmodel --check`; it authors no statement of its own."
+  }
 }

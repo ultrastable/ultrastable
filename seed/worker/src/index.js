@@ -21,6 +21,7 @@ import { handleAuth } from './auth/routes.js';
 import { getToken, refreshDue, pathGuard } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
 import { readCriticality, addSample } from './criticality.js';
+import { watchGithub } from './watchdog.js';
 import { beat, watch, readPulse, HEAVY_CADENCE_MIN } from './pulse.js';
 import { decide, healthView, readState } from './cutover.js';
 import { readIgnition } from './ignition.js';
@@ -46,7 +47,7 @@ export const d1Unavailable = (e) => {
 const aiFor = (env) => halted(config, env) ? Promise.resolve({ ai: null, state: { mode: 'halted', why: 'HALT-1' } }) : governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
-const LOOP_PHASE = { executor: 0, gate: 1, lane: 1, handoffs: 2, issuesync: 2, 'repo-access': 2, sweeper: 3, 'deploy-evidence': 3, social: 3 };  // SUBREQUEST-ROTATION-2: executor alone, four phases
+const LOOP_PHASE = { executor: 0, gate: 1, lane: 1, handoffs: 2, issuesync: 2, 'repo-access': 2, sweeper: 3, 'deploy-evidence': 3, social: 3, 'watchdog-gh': 3 };  // SUBREQUEST-ROTATION-2: executor alone, four phases
 
 export default {
   async scheduled(_event, env, ctx) {
@@ -83,6 +84,7 @@ export default {
       await b('social', () => runSocial({ db: env.DB, env, tenant }));  // REACH-1: posts the due calendar item to the channels linked at /connect
       await b('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); return sw; });  // SERVER-OWNS-LOOPS-1
       await b('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
+      await b('watchdog-gh', () => watchGithub({ token, repo: main }));  // RESILIENCE-1: the Worker restarts the GitHub watchdog when it stalls; the GitHub watchdog restarts this tick
       await b('cost-samples', async () => ({ samples: await sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }), retention: await pruneAll(env.DB, { rules: config.retention }) }));  // RETENTION-1: the daily prune rides the hourly cost beat (once a day by its own gate)  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
     })().catch(e => console.error('lane', e && e.message)));
     ctx.waitUntil(beat(env.DB, 'analytics-selfcheck', () => selfcheck(env, hosts(env)[0])));
@@ -174,6 +176,9 @@ export default {
 function presence(env) {
   const out = {};
   for (const [k, v] of Object.entries(env)) if (typeof v === 'string' && v) out[k] = true;
+  // Service bindings are not secrets: the measure step's `service` metric source fetches through them (M-tenants-selftest read 0 while
+  // presence() reduced env to string flags and dropped TENANTS).
+  for (const [k, v] of Object.entries(env)) if (v && typeof v === 'object' && typeof v.fetch === 'function' && !(k in out) && /^[A-Z][A-Z0-9_]*$/.test(k)) out[k] = v;
   return out;
 }
 
