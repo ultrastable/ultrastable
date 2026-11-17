@@ -1223,6 +1223,29 @@
       ],
       "feedback": "a passing probe closes the issue and the open count falls; a failing or missing probe stays open and the executor takes it next",
       "bindings": []
+    },
+    "resilience": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a restart is graded by the next beat: the clock is ticking again or the restart counts toward escalation (Q-STALL item after two failures); the stalled count is the essential variable stalled_clocks, so a stall that persists becomes an Ashby second-order step",
+      "bindings": [
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {
