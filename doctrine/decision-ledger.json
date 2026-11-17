@@ -1849,6 +1849,14 @@
    "body": "A shell loop that merged main, ran resolve_generated and then git add -A committed conflict markers in foundation/agent_ladder.py when the conflict was in code, and the PR merged (#524). Retry loops check git diff --diff-filter=U and stop when code conflicts remain; the fix keeps FREE-LLM-6.",
    "probe": "grep:foundation/agent_ladder.py::the whole provider route",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-ultrastability-1-the-name-is-ashby-s-design-rule-run-as-code",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "ULTRASTABILITY-1: the name is Ashby's design rule, run as code",
+   "body": "Essential variables with bounds live in doctrine/ultrastability.json (platform running, tenant declared). Existing loops are the first-order loop; foundation/ultrastability.py is the second-order loop: out of bounds two ticks in a row takes one discrete step, kept only if the variable returns, else undone and the next step taken; an exhausted ladder files a redesign item. /how section is generated from the doctrine. First reading: spend is out of bounds, so the loop will act on it. The article page was unreachable from the cloud sandbox and is not cited.",
+   "probe": "file:doctrine/ultrastability.json"
   }
  ]
 }
