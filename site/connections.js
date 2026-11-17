@@ -35,9 +35,10 @@ const sameOrigin = (request, u) => { const o = request.headers.get("origin"); re
 
 export async function connectionsRoute(request, env, { subject = currentSubject, now = Date.now() } = {}) {
   const u = new URL(request.url), p = u.pathname.replace(/\/$/, "");
-  const mine = p === "/connections" || p.startsWith("/connections/") || p === "/connect" || p.startsWith("/connect/");
+  const wk = p === "/.well-known/oauth-client/bluesky.json"; /* REACH-1: atproto client metadata, public */
+  const mine = wk || p === "/connections" || p.startsWith("/connections/") || p === "/connect" || p.startsWith("/connect/");
   if (!mine || !HOSTS(u.hostname)) return null;
-  const isCallback = /^\/connect\/[a-z0-9-]+\/callback$/.test(p);
+  const isCallback = wk || /^\/connect\/[a-z0-9-]+\/callback$/.test(p);
   if (!isCallback) {
     const s = await subject(request, env);
     if (!s) return Response.redirect(new URL("/auth/signin?next=" + encodeURIComponent("/connections"), u).toString(), 302);
@@ -56,6 +57,6 @@ export async function connectionsRoute(request, env, { subject = currentSubject,
     }
     return page("<h1>Not found</h1>", 404);
   }
-  if (p === "/connect" || p.startsWith("/connect/")) return env.TICK ? env.TICK.fetch(request) : page("<h1>Connections are not available on this deployment</h1>", 503);  // the consent flow itself lives in the tick Worker
+  if (wk || p === "/connect" || p.startsWith("/connect/")) return env.TICK ? env.TICK.fetch(request) : page("<h1>Connections are not available on this deployment</h1>", 503);  // the consent flow itself lives in the tick Worker
   return null;
 }

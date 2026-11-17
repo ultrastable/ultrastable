@@ -1,45 +1,165 @@
 {
  "_doc": "REACH-1 (Rowan, 2026-11-17): promotion and outreach run themselves; the owner supplies ideas only. Events the system already records become posts, feeds and pings; reach is measured from first-party hits; the weights of what is posted move toward what readers actually act on. Read by foundation/reach.py (python3 -m foundation reach --check|--run [--apply]). Twin of QNFO qnfo-social (Thompson-style learner, per-channel caps, engagement over volume).",
  "version": "1.0.0",
- "consent": {"at": "2026-11-17", "by": "Rowan", "source": "project thread 'Make promotion and outreach autonomous'", "scope": "owned-channel publishing (own site feeds, search pings, own social accounts) leaves dry-run; cold outreach to individuals is never in scope"},
+ "consent": {
+  "at": "2026-11-17",
+  "by": "Rowan",
+  "source": "project thread 'Make promotion and outreach autonomous'",
+  "scope": "owned-channel publishing (own site feeds, search pings, own social accounts) leaves dry-run; cold outreach to individuals is never in scope"
+ },
  "site": "https://ultrastable.io",
  "lookback_days": 21,
  "max_new_per_run": 4,
- "owned_domains": ["ultrastable.io", "ultrastable.app", "ultrastable.net", "ultrastable.org", "dashboard.ultrastable.io", "fleet.qnfo.org", "qnfo.org", "q08.org", "markets.q08.org", "rwnq8.github.io"],
- "social_hosts": ["bsky.app", "bsky.social", "mastodon.social", "mastodon.online", "hachyderm.io", "fosstodon.org", "linkedin.com", "lnkd.in", "x.com", "twitter.com", "t.co", "news.ycombinator.com", "reddit.com", "lobste.rs"],
- "search_hosts": ["google.com", "bing.com", "duckduckgo.com", "baidu.com", "yandex.com", "ecosia.org", "search.brave.com"],
- "ps_path_prefixes": ["/showcase/practical-solutions", "/for/communities"],
+ "owned_domains": [
+  "ultrastable.io",
+  "ultrastable.app",
+  "ultrastable.net",
+  "ultrastable.org",
+  "dashboard.ultrastable.io",
+  "fleet.qnfo.org",
+  "qnfo.org",
+  "q08.org",
+  "markets.q08.org",
+  "rwnq8.github.io"
+ ],
+ "social_hosts": [
+  "bsky.app",
+  "bsky.social",
+  "mastodon.social",
+  "mastodon.online",
+  "hachyderm.io",
+  "fosstodon.org",
+  "linkedin.com",
+  "lnkd.in",
+  "x.com",
+  "twitter.com",
+  "t.co",
+  "news.ycombinator.com",
+  "reddit.com",
+  "lobste.rs"
+ ],
+ "search_hosts": [
+  "google.com",
+  "bing.com",
+  "duckduckgo.com",
+  "baidu.com",
+  "yandex.com",
+  "ecosia.org",
+  "search.brave.com"
+ ],
+ "ps_path_prefixes": [
+  "/showcase/practical-solutions",
+  "/for/communities"
+ ],
  "arms": {
-  "shipped": {"path": "/live", "what": "a change the system shipped, from the public changelog"},
-  "proof": {"path": "/proof", "what": "a check the live system passes, from its own records"},
-  "ps": {"path": "/showcase/practical-solutions", "what": "Practical Solutions, the public-benefit demo"},
-  "systems": {"path": "/for/founders", "what": "what kind of system it runs and what it is not for"}
+  "shipped": {
+   "path": "/live",
+   "what": "a change the system shipped, from the public changelog"
+  },
+  "proof": {
+   "path": "/proof",
+   "what": "a check the live system passes, from its own records"
+  },
+  "ps": {
+   "path": "/showcase/practical-solutions",
+   "what": "Practical Solutions, the public-benefit demo"
+  },
+  "systems": {
+   "path": "/for/founders",
+   "what": "what kind of system it runs and what it is not for"
+  }
  },
  "evergreen": [
-  {"id": "ev-ps-1", "arm": "ps", "text": "Practical Solutions is a public-benefit demo: small teams get routine work (intake, scheduling, newsletters) handled by an autonomous system."},
-  {"id": "ev-sys-1", "arm": "systems", "text": "Ultrastable is for systems that keep running and keep needing work. It is not for one-off pages or weekend apps."},
+  {
+   "id": "ev-ps-1",
+   "arm": "ps",
+   "text": "Practical Solutions is a public-benefit demo: small teams get routine work (intake, scheduling, newsletters) handled by an autonomous system."
+  },
+  {
+   "id": "ev-sys-1",
+   "arm": "systems",
+   "text": "Ultrastable is for systems that keep running and keep needing work. It is not for one-off pages or weekend apps."
+  },
   {
    "id": "ev-app-blindspot-1",
    "arm": "shipped",
    "text": "Ultrastable launched its first app on its own: Blindspot Check, a free read of what your website's public face does not tell people (security contact, email authentication, privacy and terms links). https://blindspot.ultrastable.app"
   },
-  {"id": "ev-proof-1", "arm": "proof", "text": "Every claim on ultrastable.io is re-checked against the system's own records, and the checks are public."}
+  {
+   "id": "ev-proof-1",
+   "arm": "proof",
+   "text": "Every claim on ultrastable.io is re-checked against the system's own records, and the checks are public."
+  }
  ],
  "targets": [
-  {"id": "external_referrals_7d", "what": "outside-referred human page views in 7 days", "floor": 60, "direction": ">="},
-  {"id": "social_referrals_7d", "what": "views referred from social hosts in 7 days", "floor": 10, "direction": ">="},
-  {"id": "search_referrals_7d", "what": "views referred from search engines in 7 days", "floor": 40, "direction": ">="},
-  {"id": "feed_hits_7d", "what": "requests to /feed.xml in 7 days", "floor": 10, "direction": ">="},
-  {"id": "ps_page_views_7d", "what": "human views of Practical Solutions pages in 7 days", "floor": 50, "direction": ">="},
-  {"id": "posts_published_7d", "what": "posts actually published to owned channels in 7 days", "floor": 3, "direction": ">="},
-  {"id": "suggestions_7d", "what": "visitor suggestions received in 7 days (/api/suggest)", "floor": 1, "direction": ">="}
+  {
+   "id": "external_referrals_7d",
+   "what": "outside-referred human page views in 7 days",
+   "floor": 60,
+   "direction": ">="
+  },
+  {
+   "id": "social_referrals_7d",
+   "what": "views referred from social hosts in 7 days",
+   "floor": 10,
+   "direction": ">="
+  },
+  {
+   "id": "search_referrals_7d",
+   "what": "views referred from search engines in 7 days",
+   "floor": 40,
+   "direction": ">="
+  },
+  {
+   "id": "feed_hits_7d",
+   "what": "requests to /feed.xml in 7 days",
+   "floor": 10,
+   "direction": ">="
+  },
+  {
+   "id": "ps_page_views_7d",
+   "what": "human views of Practical Solutions pages in 7 days",
+   "floor": 50,
+   "direction": ">="
+  },
+  {
+   "id": "posts_published_7d",
+   "what": "posts actually published to owned channels in 7 days",
+   "floor": 3,
+   "direction": ">="
+  },
+  {
+   "id": "suggestions_7d",
+   "what": "visitor suggestions received in 7 days (/api/suggest)",
+   "floor": 1,
+   "direction": ">="
+  }
  ],
  "raise_when_met_runs": 2,
  "raise_factor": 1.25,
- "weight_bounds": [0.25, 4.0],
+ "weight_bounds": [
+  0.25,
+  4.0
+ ],
  "revert_if_total_below": 0.8,
  "acquisition": [
-  {"channel": "bluesky", "secrets": ["BLUESKY_HANDLE", "BLUESKY_APP_PASSWORD"], "note": "account creation is the one owner-identity act; the pipeline posts the moment both bindings exist"},
-  {"channel": "mastodon", "secrets": ["MASTODON_INSTANCE", "MASTODON_TOKEN"], "note": "same"}
+  {
+   "channel": "bluesky",
+   "secrets": [
+    "BLUESKY_HANDLE",
+    "BLUESKY_APP_PASSWORD"
+   ],
+   "connect": "https://ultrastable.io/connect/bluesky",
+   "note": "one click at the connect link; the tick Worker posts as soon as the account is linked"
+  },
+  {
+   "channel": "mastodon",
+   "secrets": [
+    "MASTODON_INSTANCE",
+    "MASTODON_TOKEN"
+   ],
+   "note": "one click at the connect link; the tick Worker posts as soon as the account is linked",
+   "connect": "https://ultrastable.io/connect/mastodon"
+  }
  ]
 }

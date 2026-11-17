@@ -1597,6 +1597,15 @@
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
   },
   {
+   "id": "decision-2026-11-17-connect-link-1-every-owner-action-is-one-connect-link",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "CONNECT-LINK-1: every owner action is one /connect link",
+   "body": "Rowan 2026-11-17: any must-do owner action is a single link to a web UI that runs OAuth/OIDC and callbacks server-side. Built /connect index, /connect/bluesky (atproto OAuth), /connect/mastodon, a server-side publisher in the tick Worker, and a pointclick check that fails a needs-you item without a connect link.",
+   "probe": "grep:foundation/pointclick.py::CONNECT-LINK-1",
+   "session": "session_0156nqDtKVpn3hxk4cBwg9BD"
+  },
+  {
    "id": "decision-2026-11-17-spinoff-1-the-system-generates-launches-measures-and-prunes-",
    "kind": "decision",
    "date": "2026-11-17",
