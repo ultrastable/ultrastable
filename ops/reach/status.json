@@ -1,0 +1,31 @@
+{
+ "targets": {},
+ "met_runs": {},
+ "last": {
+  "feed_entries": 40,
+  "at": "2026-11-17T15:42:16.027506+00:00",
+  "added": [
+   {
+    "id": "ev:pv-5cef1ac32309",
+    "arm": "shipped"
+   },
+   {
+    "id": "ev:pv-350da2c5447e",
+    "arm": "shipped"
+   },
+   {
+    "id": "ev:pv-74f3090e23be",
+    "arm": "shipped"
+   },
+   {
+    "id": "ev:pv-100f600942c1",
+    "arm": "shipped"
+   }
+  ],
+  "metrics": "unmeasured",
+  "channels": {
+   "bluesky": "awaiting-account",
+   "mastodon": "awaiting-account"
+  }
+ }
+}
