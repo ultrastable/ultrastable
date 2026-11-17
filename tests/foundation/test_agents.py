@@ -28,6 +28,10 @@ class Agents(unittest.TestCase):
             c = []; out = agents.invoke(A[i], "p", {"GITHUB_TOKEN": "g"}, fake_gh(c))
             self.assertEqual(c[0][0], "https://models.github.ai/inference/chat/completions"); self.assertEqual(c[0][1]["authorization"], "Bearer g"); self.assertIn("summary", out)
 
+    def test_free_tier_prompt_is_trimmed_to_its_cap(self):
+        c = []; agents.invoke(A["github-models-gpt"], "H" * 30000 + "TAIL", {"GITHUB_TOKEN": "g"}, fake_gh(c))
+        sent = c[0][2]["messages"][0]["content"]; self.assertLessEqual(len(sent), 24000); self.assertTrue(sent.endswith("TAIL"))
+
     def test_free_route_is_first_and_needs_only_the_builtin_token(self):
         self.assertEqual(agents.route_authors({"GITHUB_TOKEN": "g"}, REPO)[0]["id"], "github-models-gpt")
         self.assertEqual(agents.ensemble("openai", {"GITHUB_TOKEN": "g"}, REPO)[0]["family"], "llama")

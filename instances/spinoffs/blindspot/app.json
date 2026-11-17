@@ -1,0 +1,89 @@
+{
+ "slug": "blindspot",
+ "name": "Blindspot Check",
+ "tagline": "What does your website not tell people? Type a domain, see the gaps in a minute.",
+ "archetype": "domain-check",
+ "status": "live",
+ "launched": "2026-11-17T15:45:58Z",
+ "need_ids": [
+  "security-contact",
+  "email-authentication",
+  "privacy-notice",
+  "terms-of-use",
+  "accessibility-statement",
+  "footer-links"
+ ],
+ "reach": 5,
+ "impact": 4,
+ "score": 10.0,
+ "checks": [
+  {
+   "id": "https",
+   "title": "Serves over HTTPS",
+   "fix": "Redirect http to https and serve a valid certificate."
+  },
+  {
+   "id": "hsts",
+   "title": "Sends Strict-Transport-Security",
+   "fix": "Add the header Strict-Transport-Security: max-age=31536000."
+  },
+  {
+   "id": "security-txt",
+   "title": "Publishes /.well-known/security.txt (RFC 9116)",
+   "fix": "Publish a security.txt with a Contact line so researchers can report a flaw privately."
+  },
+  {
+   "id": "spf",
+   "title": "Has an SPF record",
+   "fix": "Add a TXT record starting v=spf1 that lists who may send mail for the domain."
+  },
+  {
+   "id": "dmarc",
+   "title": "Has a DMARC record",
+   "fix": "Add a TXT record at _dmarc with at least v=DMARC1; p=none; rua=mailto:you@yourdomain."
+  },
+  {
+   "id": "privacy",
+   "title": "Links a privacy notice from the home page",
+   "fix": "Say what you keep and link it in the footer."
+  },
+  {
+   "id": "terms",
+   "title": "Links terms of use from the home page",
+   "fix": "Publish terms and link them in the footer."
+  },
+  {
+   "id": "accessibility",
+   "title": "Links an accessibility statement from the home page",
+   "fix": "Publish an accessibility statement and link it in the footer."
+  }
+ ],
+ "metrics": {
+  "reach": [
+   "uses_7d",
+   "unique_visitors_7d",
+   "visitors_with_a_gap_7d",
+   "referrer_domains_7d"
+  ],
+  "impact": [
+   "verified_fixes_7d",
+   "gap_closed_share",
+   "return_share"
+  ],
+  "guard": [
+   "error_share",
+   "abuse_blocks",
+   "requests_vs_daily_cap"
+  ],
+  "targets": {
+   "uses_7d": 100,
+   "visitors_with_a_gap_7d": 50,
+   "verified_fixes_7d": 20,
+   "return_share": 0.2
+  },
+  "gap": "share of checked public safeguards that are missing",
+  "value": "Value is a problem moved toward its target, counted as a verified outcome for a person, not attention. Each app names th",
+  "prediction": "verified_fixes_7d >= 20 within 336 h",
+  "input": "a public domain name"
+ }
+}
