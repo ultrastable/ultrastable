@@ -34,5 +34,6 @@ jobs:
       - name: Record the verified deploy (DEPLOY-RECORD-1)
         run: |
           git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
-          git add ops/deploys.jsonl
+          python3 -m foundation claims --fix --apply
+          git add ops/deploys.jsonl README.md platform/adapters/README.md site/claims-data.js
           git diff --cached --quiet || { git commit -m "deploy-ultrastable: record live-verified deploy" && for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done; }
