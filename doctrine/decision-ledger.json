@@ -1978,6 +1978,15 @@
    "body": "PRs went red only because main moved a generated count, ledger, self model or dashboard under them. checks.yml runs scripts/regen_generated.sh first and pushes the result back to a same-repo PR branch with LANE_PAT; ultrastability writes runnable cmd: probes; .example fixture addresses pass the publication guard.",
    "probe": "file:scripts/regen_generated.sh",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-ciwatch-could-not-open-its-item-pr-ciwatch-2",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "ciwatch could not open its item PR (CIWATCH-2)",
+   "body": "gh pr create (GraphQL) with the built-in token failed 'Resource not accessible by integration' because the workflow had no pull-requests permission and LANE_PAT is not bound; it now declares pull-requests: write and opens the PR over REST.",
+   "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-2",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
