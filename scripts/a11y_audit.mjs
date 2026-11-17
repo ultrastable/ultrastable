@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-USL-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // A11Y-LOOP-1: render every public page from the site Worker in a headless browser at phone and desktop width and run axe-core.
 // Fails on any serious or critical violation, on horizontal scroll, and on tap targets under 44px for links and buttons in main.
 // Needs playwright (preinstalled in cloud sessions) and axe-core (npm i --no-save axe-core@4.10.2). Usage: node scripts/a11y_audit.mjs [--json]
