@@ -193,3 +193,15 @@ test('a 429 with Retry-After stops the handoffs for this tick', async () => {
   assert.equal(calls.length, 1, 'no call after the 429'); assert.equal(r.status, 'errors');
   assert.equal(r.github.stopped, true); assert.equal(r.github.retry_after_s, 60); assert.match(r.github.why, /429.*Retry-After 60s/);
 });
+
+test('OWNER-EMAIL-1: the owner address is read from the admin committer, never a noreply or bot address', async () => {
+  const { resolveOwnerEmail } = await import('../src/handoff.js');
+  const commit = (login, email, type = 'User') => ({ author: { login, type }, commit: { author: { email } } });
+  const f = async (url) => {
+    if (url.includes('/commits')) return { ok: true, json: async () => [commit('bot', 'x@users.noreply.github.com', 'Bot'), commit('dev', 'dev@example.org'), commit('own', 'Own@Example.com'), commit('own', 'own@example.com'), commit('own', '1+own@users.noreply.github.com')] };
+    if (url.includes('/collaborators/own/')) return { ok: true, json: async () => ({ permission: 'admin' }) };
+    return { ok: true, json: async () => ({ permission: 'write' }) };
+  };
+  assert.equal(await resolveOwnerEmail(f, 't', 'o/r'), 'own@example.com');
+  assert.equal(await resolveOwnerEmail(async () => ({ ok: false }), 't', 'o/r'), '');
+});
