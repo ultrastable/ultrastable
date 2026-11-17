@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261117-2",
+  "title": "OL-20261117-2: SPINOFF archetypes: template-generator and status-board",
+  "body": "**Owner:** executor\n**Trigger:** portfolio has fewer than 2 launchable archetypes\n**Done check:** grep:doctrine/spinoff.json::template-generator\n**Status:** open\n\nOnly domain-check is implemented, so the portfolio can launch one app. Build template-generator and status-board in spinoffs/worker.js with per-archetype checks, tests and metric sets; feasibility in doctrine/spinoff.json rises from 0.3 when each passes its tests.",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
