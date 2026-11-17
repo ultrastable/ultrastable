@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-practical-solutions-redteam",
+  "title": "Q-CIFAIL-practical-solutions-redteam: redteam is failing in ultrastable/practical-solutions",
+  "body": "**Owner:** staff\n**Trigger:** every executor run and every ciwatch run\n**Done check:** cmd:python3 -m foundation ciwatch --probe ultrastable/practical-solutions redteam\n**Status:** open\n\nCIWATCH-1: workflow `redteam` in ultrastable/practical-solutions is red on its default branch (failure, 2026-11-17T15:38:14Z): https://github.com/ultrastable/practical-solutions/actions/runs/44116599987\n\nFix the root cause in the repository where the defect lives; do not skip or weaken the check. Failed log tail:\n\n```\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t\ufeff2026-11-17T15:38:25.9723900Z ##[group]Run node --no-warnings tools/redteam.mjs --budget 4\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:38:25.9724409Z ^[[36;1mnode --no-warnings tools/redteam.mjs --budget 4^[[0m\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:38:25.9781169Z shell: /usr/bin/bash -e {0}\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:38:25.9781476Z env:\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:38:25.9784134Z   GITHUB_TOKEN: ***\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:38:25.9784360Z ##[endgroup]\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:38:27.7958526Z {\"at\":\"2026-11-17T15:38:26.020Z\",\"challenged\":0,\"errors\":[{\"subject\":\"cash\",\"error\":\"endpoint failed: Unexpected token 'O', \\\"OK\\r\\n\\\" is not valid JSON\"},{\"subject\":\"chlorine\",\"error\":\"endpoint failed: Unexpected token 'O', \\\"OK\\r\\n\\\" is not valid JSON\"},{\"subject\":\"clean-cooking\",\"error\":\"endpoint failed: Unexpected token 'O', \\\"OK\\r\\n\\\" is not valid JSON\"},{\"subject\":\"deworming\",\"error\":\"endpoint failed: Unexpected token 'O', \\\"OK\\r\\n\\\" is not valid JSON\"}]}\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:38:27.8024237Z ##[error]Process completed with exit code 1.\n```",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
