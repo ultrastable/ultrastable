@@ -4,6 +4,7 @@
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: site model calls spend from the owner's budget
 import USER_PATH from "./userpath.js";
+import SH from "./stakeholders.js"; // STAKEHOLDERS-1
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
 import { liveResponse } from "./live.js";
@@ -46,6 +47,7 @@ const CSS = [
   ".us-table{width:100%;border-collapse:collapse;font-size:15px}.us-table th,.us-table td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}",
   ".us-table th{font-size:14px;color:var(--ink2)}.us-wrap{overflow-x:auto}.us-us td{background:var(--soft);font-weight:600}",
   ".us-foot{border-top:1px solid var(--line);margin-top:32px;padding-top:16px;color:var(--ink2);font-size:14px}",
+  ".us-case{display:block;text-decoration:none;color:inherit}.us-case:hover,.us-case:focus-visible{border-color:var(--accent,currentColor)}.us-tag{display:inline-block;font-size:14px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:6px}.us-more{display:inline-block;margin-top:8px;font-weight:600;min-height:44px;line-height:44px}.crumbs{font-size:14px;color:var(--ink2);margin:8px 0}.us-stories li,.us-path li{margin:8px 0}.us-path a{display:inline-block;min-height:44px;line-height:44px}",
   ".us-pass{color:var(--good);font-weight:700}.us-fail{color:var(--bad);font-weight:700}"
 ].join("\n") + "\n" + IV.CSS;
 
@@ -56,7 +58,7 @@ function shell(opts, body) {
   return "<!doctype html><html lang=\"en\"><head>" + dsHead(opts.title, opts.description, CSS)
     + "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><meta property=\"og:image\" content=\"https://" + CANON + "/social-card.png\"><meta property=\"og:image:width\" content=\"640\"><meta property=\"og:image:height\" content=\"320\"><meta property=\"og:image:alt\" content=\"Coding agents write code. Ultrastable runs the system.\"><meta property=\"og:site_name\" content=\"Ultrastable\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"" + esc(opts.title) + "\"><meta name=\"twitter:description\" content=\"" + esc(opts.description) + "\"><meta name=\"twitter:image\" content=\"https://" + CANON + "/social-card.png\"><meta name=\"theme-color\" content=\"#12342A\"><link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\"><link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
     + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
-    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/ops\">Operations</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet hide-sm\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/team\">Team</a><a class=\"btn btn-quiet hide-sm\" href=\"/faq\">FAQ</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
+    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
     + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
     + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
@@ -89,6 +91,8 @@ function home(d) {
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">Set up my own</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine(d) + "</div></section>"
     + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
+    + "<h2>Who are you?</h2><div class=\"us-grid c3\">" + SH.audiences.map(audienceCard).join("") + "</div>"
+    + "<h2>Test cases</h2><div class=\"us-grid c2\">" + SH.showcases.map(caseCard).join("") + "</div>"
     + "<h2>What it is not for</h2><div class=\"us-grid c2\">"
     + card("Not for things you build once and forget", "An invitation, a packing list or a weekend page does not need managers, probes or a paid back end. Use a site builder.")
     + card("Not a substitute for a goal", "It needs setup and commitment: a named objective, a budget and a short list of steps a person always decides. From a bare skeleton it works out the next improvement; it does not invent your purpose.")
@@ -160,21 +164,52 @@ function pilot() {
     + "<p class=\"meta\">Replies come from a person within two working days. The form above is the interview: it scores your answers against the four system-test questions.</p>");
 }
 
+function lis(a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; }
+function crumbs(items) { return "<nav class=\"crumbs\" aria-label=\"Breadcrumb\">" + items.map(function (i, k) { return k < items.length - 1 ? "<a href=\"" + i[1] + "\">" + esc(i[0]) + "</a> / " : "<span aria-current=\"page\">" + esc(i[0]) + "</span>"; }).join("") + "</nav>"; }
+function caseCard(c) { return "<a class=\"card us-case\" href=\"/showcase/" + esc(c.id) + "\"><span class=\"us-tag\">" + esc(c.tag) + "</span><h3 class=\"card-title\">" + esc(c.name) + "</h3><p class=\"meta\">" + esc(c.summary) + "</p><span class=\"us-more\">Read the case</span></a>"; }
+
 function showcase() {
   return shell({ path: "/showcase", title: "Test cases: QNFO and Practical Solutions", description: "Ultrastable develops its own platform and the products on it with one closed loop. QNFO was the testbed; Practical Solutions is the next system built on it." },
-    "<div class=\"head\"><h1>Test cases</h1><p>Ultrastable is an autonomous development platform. What it develops (code, practical solutions) and how it develops itself are one loop.</p></div>"
-    + "<h2>One loop, not two</h2><p>The loop that finds a failing probe in a product, files the work, hands it to an agent, proves the change live and scores its own prediction is the same loop that improves Ultrastable. The platform is its own first product, and every product on it is run the same way, so each fix to the loop improves every system and each system's problems improve the loop. It keeps closing its own loops, including the loop that watches the loops (a strange loop, in Hofstadter's sense).</p>"
-    + "<div class=\"us-grid c2\">"
-    + card("QNFO: the testbed, now being sunset", "QNFO was a large fleet of services that Ultrastable ran as customer zero. It served its purpose: it exposed real failures, real cost and real limits. Ultrastable found and fixed its own problems there, then carried the fixes into the platform. Services move to Ultrastable's own account as their loops are proven.")
-    + card("Practical Solutions: the do-good use case", "Practical Solutions is bootstrapped from an idea on Ultrastable, with its own database and web Worker on Ultrastable's account. It is a practical-help project meant to do some good, and it is the test of whether a system can be started from an idea and kept improving without its owner handling code.")
-    + "</div>"
-    + "<h2>What Ultrastable fixed in its own testbed</h2><ul>"
-    + "<li><strong>Database reads cut by about 95%.</strong> The cost loop measured QNFO's audit database at billions of rows read per week, traced it to triggers and scans that ran on every tick, and removed them. The 95% is an estimate from the loop's own readings; the measured series is in <code>doctrine/cost.json</code> and <code>ops/cost.jsonl</code>.</li>"
-    + "<li><strong>Scoped deploys.</strong> A deploy touches only the workers a change names, with a cap on how many one change may deploy, so a small fix no longer redeploys a fleet. The cap is in QNFO's own deploy path and is verified by a probe after each deploy.</li>"
-    + "<li><strong>Failures become backlog.</strong> A D1 limit, a stale credential or a red deploy files its own issue with an owner, a trigger and a closing probe.</li></ul>"
-    + "<h2>How we test it</h2><ul><li>Every claim on this site is a query against a live record: see <a href=\"/proof\">Live proof</a>.</li><li>Each decision logs a prediction first (metric, comparison, number, hours) and is scored later.</li><li>Changes are proven live after deploy and revert on regression.</li><li>The same checks run on the platform and on each product, so a pass means the same thing everywhere.</li></ul>"
-    + "<h2>Status, honestly</h2><p>Early stage. Figures marked as estimates are estimates. The code is source-available under the Ultrastable License: free for non-commercial use, a commercial licence for commercial use. <a href=\"/how#gaps\">Read the gaps.</a></p>"
-    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/how\">How it works</a></div>");
+    crumbs([["Home", "/"], ["Test cases", "/showcase"]])
+    + "<div class=\"head\"><h1>Test cases</h1><p>Ultrastable is an autonomous development platform. What it develops (code, practical solutions) and how it develops itself are one loop.</p></div>"
+    + "<div class=\"us-grid c2\">" + SH.showcases.map(caseCard).join("") + "</div>"
+    + "<h2>One loop, not two</h2><p>The loop that finds a failing probe in a product, files the work, hands it to an agent, proves the change live and scores its own prediction is the same loop that improves Ultrastable. Each fix to the loop improves every system, and each system's problems improve the loop. It keeps closing its own loops, including the loop that watches the loops (a strange loop, in Hofstadter's sense).</p>"
+    + "<h2>How we test it</h2>" + lis(["Every claim on this site is a query against a live record: see Live proof.", "Each decision logs a prediction first (metric, comparison, number, hours) and is scored later.", "Changes are proven live after deploy and revert on regression.", "The same checks run on the platform and on each product, so a pass means the same thing everywhere."])
+    + "<p class=\"meta\">Early stage. Estimates are labelled as estimates. The code is source-available under the Ultrastable License: free for non-commercial use, a commercial licence for commercial use. <a href=\"/how#gaps\">Read the gaps.</a></p>"
+    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/for\">Find your path</a><a class=\"btn\" href=\"/how\">How it works</a></div>");
+}
+
+function showcaseCase(id) {
+  const c = SH.showcases.find(function (x) { return x.id === id; });
+  if (!c) return null;
+  return shell({ path: "/showcase/" + c.id, title: c.name + ": test case", description: c.summary },
+    crumbs([["Home", "/"], ["Test cases", "/showcase"], [c.name, "/showcase/" + c.id]])
+    + "<div class=\"head\"><span class=\"us-tag\">" + esc(c.tag) + "</span><h1>" + esc(c.name) + "</h1><p>" + esc(c.summary) + "</p></div>"
+    + "<h2>The problem</h2><p>" + esc(c.problem) + "</p><h2>What the loop did</h2><p>" + esc(c.loop) + "</p><h2>Results</h2>" + lis(c.results)
+    + "<h2>What we learned</h2><p>" + esc(c.learned) + "</p>"
+    + "<div class=\"us-actions\">" + c.links.map(function (l, k) { return "<a class=\"btn" + (k === 0 ? " btn-primary" : "") + "\" href=\"" + esc(l.href) + "\">" + esc(l.label) + "</a>"; }).join("") + "</div>");
+}
+
+function audienceCard(a) { return "<a class=\"card us-case\" href=\"/for/" + esc(a.id) + "\"><h3 class=\"card-title\">" + esc(a.name) + "</h3><p class=\"meta\">" + esc(a.promise) + "</p><span class=\"us-more\">" + esc(a.nav) + "</span></a>"; }
+
+function forIndex() {
+  return shell({ path: "/for", title: "Find your path: who Ultrastable is for", description: "Pick who you are and see what Ultrastable offers you, with the steps to take." },
+    crumbs([["Home", "/"], ["Find your path", "/for"]])
+    + "<div class=\"head\"><h1>Who are you?</h1><p>Pick the closest match. Each page shows what you get, what you need to do and how to check it.</p></div>"
+    + "<div class=\"us-grid c2\">" + SH.audiences.map(audienceCard).join("") + "</div>");
+}
+
+function forAudience(id) {
+  const a = SH.audiences.find(function (x) { return x.id === id; });
+  if (!a) return null;
+  return shell({ path: "/for/" + a.id, title: a.name + ": Ultrastable", description: a.promise },
+    crumbs([["Home", "/"], ["Find your path", "/for"], [a.name, "/for/" + a.id]])
+    + "<div class=\"head\"><h1>" + esc(a.name) + "</h1><p>" + esc(a.promise) + "</p></div>"
+    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"" + esc(a.cta.href) + "\">" + esc(a.cta.label) + "</a></div>"
+    + "<h2>What you probably need</h2><p>" + esc(a.needs) + "</p>"
+    + "<h2>What you can do here</h2><ul class=\"us-stories\">" + a.stories.map(function (t) { return "<li>As " + esc(t.as) + ", I want " + esc(t.want) + ", so " + esc(t.so) + ".</li>"; }).join("") + "</ul>"
+    + "<h2>Your path</h2><ol class=\"us-path\">" + a.path.map(function (st) { return "<li><a href=\"" + esc(st.href) + "\">" + esc(st.label) + "</a></li>"; }).join("") + "</ol>"
+    + "<h2>Other paths</h2><p>" + SH.audiences.filter(function (x) { return x.id !== a.id; }).map(function (x) { return "<a href=\"/for/" + esc(x.id) + "\">" + esc(x.name) + "</a>"; }).join(" · ") + "</p>");
 }
 
 function product() {
@@ -791,12 +826,14 @@ const handler = {
     { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/showcase", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/showcase", "/for", "/proof", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
+    { const m = /^\/(for|showcase)\/([a-z0-9-]+)\/?$/.exec(u.pathname); if (m) { const h = m[1] === "for" ? forAudience(m[2]) : showcaseCase(m[2]); if (h) return new Response(h, { headers: HTML }); } }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": return new Response(home(await claims()), { headers: HTML });
       case "/how": return new Response(how(), { headers: HTML });
       case "/showcase": return new Response(showcase(), { headers: HTML });
+      case "/for": return new Response(forIndex(), { headers: HTML });
       case "/proof": return new Response(await proof(), { headers: HTML });
       case "/product": return new Response(product(), { headers: HTML });
       case "/team": return new Response(team(), { headers: HTML });
