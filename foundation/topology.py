@@ -50,7 +50,7 @@ def check(root=REPO) -> list[str]:
             bad.append(f"worker {wid}: state must be live or planned")
         if not (REPO / w["main"]).exists() and w["state"] == "live":
             bad.append(f"worker {wid}: main {w['main']} does not exist in the repository")
-        for kind, key in (("d1", "d1"), ("kv", "kv"), ("vectorize", "vectorize")):
+        for kind, key in (("d1", "d1"), ("kv", "kv"), ("vectorize", "vectorize"), ("r2", "r2")):
             for bn, target in (b.get(key) or {}).items():
                 if target not in st[kind]:
                     bad.append(f"worker {wid}: binding {bn} -> {kind} {target} is not declared")
@@ -90,6 +90,8 @@ def bindings(t, wid: str, only_live=True) -> tuple[list[dict], list[str]]:
         (out.append({"type": "d1", "name": bn, "id": st["d1"][tg]["id"]}) if _live(t, "d1", tg) or not only_live else pending.append(f"d1 {bn} -> {tg}"))
     for bn, tg in (b.get("kv") or {}).items():
         (out.append({"type": "kv_namespace", "name": bn, "namespace_id": st["kv"][tg]["id"]}) if _live(t, "kv", tg) or not only_live else pending.append(f"kv {bn} -> {tg}"))
+    for bn, tg in (b.get("r2") or {}).items():
+        (out.append({"type": "r2_bucket", "name": bn, "bucket_name": tg}) if _live(t, "r2", tg) or not only_live else pending.append(f"r2 {bn} -> {tg}"))
     for bn in b.get("ai") or []:
         out.append({"type": "ai", "name": bn})
     for bn in b.get("send_email") or []:
@@ -121,6 +123,7 @@ def wrangler_config(t, w: dict) -> dict:
         c["routes"] = [{"pattern": r, "custom_domain": True} for r in w["routes"]]
     c["d1_databases"] = [{"binding": b["name"], "database_name": next(n for n, s in stores(t)["d1"].items() if s["id"] == b["id"]), "database_id": b["id"]} for b in live if b["type"] == "d1"]
     c["kv_namespaces"] = [{"binding": b["name"], "id": b["namespace_id"]} for b in live if b["type"] == "kv_namespace"]
+    c["r2_buckets"] = [{"binding": b["name"], "bucket_name": b["bucket_name"]} for b in live if b["type"] == "r2_bucket"]
     if any(b["type"] == "ai" for b in live):
         c["ai"] = {"binding": next(b["name"] for b in live if b["type"] == "ai")}
     c["services"] = [{"binding": b["name"], "service": b["service"]} for b in live if b["type"] == "service"]

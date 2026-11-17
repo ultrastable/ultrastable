@@ -34,6 +34,22 @@
       "trigger": "every tick",
       "probe": "SELECT CASE WHEN (SELECT value FROM org WHERE key='migrations_pending') = '0' THEN 1 ELSE 0 END",
       "remedy": "ship the failing change as a new migration file; never edit an applied one."
+    },
+    {
+      "id": "audit-chain-seal-lag",
+      "failure": "Audit rows older than 10 days are still in the hot D1 table, so sealing to the archive is failing and the table is growing.",
+      "root_cause": "No archive sink took the segment (R2 not enabled and the ops repository write refused), or the chain is broken.",
+      "spof": false,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN (SELECT rec FROM audit_log ORDER BY seq LIMIT 1) IS NULL OR (SELECT rec FROM audit_log ORDER BY seq LIMIT 1) > (strftime('%s','now') - 10*86400) * 1000 THEN 1 ELSE 0 END",
+      "remedy": "read the audit beat result in the cost-samples loop, fix the failing sink, then run GET /api/audit/verify.",
+      "fixes": [
+        {
+          "id": "audit-seal-fix-sink",
+          "title": "Bind the AUDIT R2 bucket (topology store ultrastable-audit to live) or grant the app write on the ops repository so seal() has a sink."
+        }
+      ]
     }
   ]
 }
