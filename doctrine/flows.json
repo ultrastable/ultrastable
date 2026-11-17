@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "quote": "How is this information flowing in? And what are we doing with it flowing out? And that applies to any workflow, any.",
   "external_sources": {
-    "ext.app_users": "people who use a spun-off app on *.ultrastable.app (returned by app.launched as aggregate usage and verified-fix metrics, never personal data)", "ext.site_visits": "readers of the public site (Cloudflare Web Analytics, returned by site.page)",
+    "ext.app_users": "people who use a spun-off app on *.ultrastable.app (returned by app.launched as aggregate usage and verified-fix metrics, never personal data)",
+    "ext.site_visits": "readers of the public site (Cloudflare Web Analytics, returned by site.page)",
     "ext.post_engagement": "replies, reposts and clicks on posts (returned by social.post)",
     "ext.owner_goals": "IDEA.md and the owner's standing directives (instance manifest)",
     "ext.outreach_replies": "funding programmes and recipients answering outreach (recorded by scripts/outreach.py reply)",
@@ -1080,20 +1081,40 @@
       "bindings": []
     },
     "spinoff": {
-   "inflows": [
-    {"signal": "issue.filed", "via": "file:docs/issues"},
-    {"signal": "app.metrics", "via": "http:https://<slug>.ultrastable.app/api/metrics"},
-    {"signal": "app.launched", "via": "file:instances/spinoffs"},
-    {"signal": "portfolio.decision", "via": "file:ops/spinoff/ledger.jsonl"}
-   ],
-   "outflows": [
-    {"signal": "app.launched", "via": "file:instances/spinoffs"},
-    {"signal": "portfolio.decision", "via": "file:ops/spinoff/ledger.jsonl"}
-   ],
-   "feedback": "each app's verified fixes, retention and reach to people with the gap are read back by the next tick; a retired app lowers its archetype's bandit weight and a promoted one raises it, so the next ideation ranks differently",
-   "bindings": ["LANE_PAT"]
-  },
-  "ciwatch": {
+      "inflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "app.metrics",
+          "via": "http:https://<slug>.ultrastable.app/api/metrics"
+        },
+        {
+          "signal": "app.launched",
+          "via": "file:instances/spinoffs"
+        },
+        {
+          "signal": "portfolio.decision",
+          "via": "file:ops/spinoff/ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "app.launched",
+          "via": "file:instances/spinoffs"
+        },
+        {
+          "signal": "portfolio.decision",
+          "via": "file:ops/spinoff/ledger.jsonl"
+        }
+      ],
+      "feedback": "each app's verified fixes, retention and reach to people with the gap are read back by the next tick; a retired app lowers its archetype's bandit weight and a promoted one raises it, so the next ideation ranks differently",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "ciwatch": {
       "inflows": [
         {
           "signal": "main.merged",
@@ -1143,7 +1164,8 @@
     }
   },
   "implicit_producers": {
-    "owner.goals": "ext.owner_goals", "app.metrics": "ext.app_users",
+    "owner.goals": "ext.owner_goals",
+    "app.metrics": "ext.app_users",
     "actions.minutes": "ext.actions_quota",
     "frontier.releases": "ext.frontier",
     "cf.analytics": "ext.cf_analytics",
