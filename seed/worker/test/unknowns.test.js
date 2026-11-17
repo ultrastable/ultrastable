@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -23,7 +25,9 @@ test('a question is not repeated within cadence and returns after it', async () 
   const db = makeDb();
   await ensureItem(db, { id: 'A', kind: 'work', owner_role: 'operations', title: 'A', done_check: 'x', closing_probe: 'manual' });
   const a = (await unknownsStep(db, ctx('17'), cfg, ensureItem)).filed;
+  assert.deepEqual((await unknownsStep(db, ctx('17'), cfg, ensureItem)).filed, [], 'the daily reserve is spent');
   const b = (await unknownsStep(db, ctx('18'), cfg, ensureItem)).filed;
+  assert.equal(b.length, cfg.max_new_per_day);
   assert.equal(a.filter(x => b.includes(x)).length, 0);
   const asked = db.raw.prepare('SELECT key, at FROM unknown_questions').all();
   const keys = pickQuestions(cfg, [{ id: 'A', kind: 'default' }], asked, '2026-11-30 00:00:00').map(q => q.key);
@@ -49,4 +53,12 @@ test('ORIGINATE-CAP-1: a question the cap refused is not recorded as asked', asy
   const r = await unknownsStep(db, ctx('17'), cfg, async () => false);
   assert.deepEqual(r.filed, []);
   assert.equal(db.raw.prepare('SELECT COUNT(*) n FROM unknown_questions').get().n, 0);
+});
+
+test('the reserve files questions even when the general originate cap is spent', async () => {
+  const db = makeDb();
+  await ensureItem(db, { id: 'A', kind: 'work', owner_role: 'operations', title: 'A', done_check: 'x', closing_probe: 'manual' });
+  db.raw.exec("INSERT INTO budget_ledger (day, kind, units, calls, refused) VALUES ('2026-11-17','originated',0,999,0) ON CONFLICT(day, kind) DO UPDATE SET calls=999");
+  const r = await unknownsStep(db, ctx('17'), cfg, (d, item, o) => ensureItem(d, item, { ...o, now: Date.parse('2026-11-17T12:00:00Z') }));
+  assert.equal(r.filed.length, cfg.max_new_per_day);
 });
