@@ -1779,6 +1779,15 @@
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
   },
   {
+   "id": "lesson-2026-11-17-executor-nameerror-after-two-parallel-fixes-merged-call-site",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Executor NameError after two parallel fixes merged: call site kept, definition lost",
+   "body": "ladder_call is defined again and pinned by test_executor.Ladder; RuntimeError escalation stays in run() (FREE-LLM-3).",
+   "probe": "grep:foundation/executor.py::def ladder_call",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
    "id": "lesson-2026-11-17-two-threads-fixed-one-bug-and-a-merge-dropped-a-helper-free-",
    "kind": "lesson",
    "date": "2026-11-17",
