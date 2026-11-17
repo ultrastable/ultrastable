@@ -29,3 +29,7 @@ Update 15:45Z: the first live run filed a Q-SELF item that the criticality gate 
 
 ## 2026-11-17 restore ladder_call (Session: session_0156nqDtPUh62FutsmGkcuTa)
 - #513 and #512 (FREE-LLM-3, another thread) fixed the same defect at the same time; the squash kept #513's call site `ladder_call(...)` and lost its definition, so every executor run at 16:58 failed with `NameError: name 'ladder_call' is not defined`. Restored the definition; the RuntimeError handling stays with #512's `except (..., RuntimeError)`. A test now pins the name so it cannot go missing again.
+
+## 2026-11-17 refile until worked (Session: session_0156nqDtPUh62FutsmGkcuTa)
+- Live rows after the ladder fixes show the executor taking Q-CONSOLE-SESSION-1 and Q-REACH-* (glm rung writes changes, checks fail on those items) and no Q-SELF item at all. Cause: the sense step writes `docs/issues/Q-SELF-*.json` inside the run only (never committed), and the refile cooldown counted `filed` rows, so an item filed once was blocked from being filed again for 48 h while its file was already gone from the next checkout.
+- Fix: the cooldown now guards only items the agent already settled (kept, reverted, failed); an item that was only filed is filed again next run. The daily cap counts distinct items and the ledger gets one `filed` row per item per hour. Probe: `python3 -m unittest tests.foundation.test_selfcode`.
