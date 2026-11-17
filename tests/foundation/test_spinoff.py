@@ -1,15 +1,17 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-import atexit, datetime as dt, json, shutil, tempfile, unittest
+import datetime as dt, json, shutil, sys, unittest
 from pathlib import Path
-from foundation import spinoff
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from foundation import spinoff  # noqa: E402
+from _repo import scratch  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 
 
 def sandbox():
-    d = Path(tempfile.mkdtemp())
-    atexit.register(shutil.rmtree, d, True)
+    d = scratch()
     (d / "doctrine").mkdir()
     shutil.copy(REPO / "doctrine/spinoff.json", d / "doctrine/spinoff.json")
     shutil.copy(REPO / "doctrine/blindspots.json", d / "doctrine/blindspots.json")
