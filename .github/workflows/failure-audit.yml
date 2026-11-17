@@ -5,16 +5,12 @@ name: failure-audit
 # free-alternative: run `python3 -m foundation failure_audit --run` from a cloud-hosted agent session or the Cloudflare cron worker
 # Runs doctrine/detectors.json, appends ops/failure-audit.jsonl and files or clears docs/issues/AUDIT-*.json; the evidence is committed to
 # branch audit-evidence, which the next run starts from so streaks (same signature twice = change approach, three = incident) persist.
-# Job `doctor` (CI-DOCTOR-1) files, diagnoses with GitHub Models and closes an issue per failing workflow across the fleet (scripts/ci_doctor.py).
 on:
   schedule:
     - cron: "41 5 * * *"
   workflow_dispatch:
 permissions:
   contents: write
-  issues: write
-  actions: read
-  models: read
 concurrency:
   group: failure-audit
   cancel-in-progress: false
@@ -48,17 +44,3 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add ops/failure-audit.jsonl docs/issues
           if git diff --cached --quiet; then echo "no change"; else git commit -m "failure-audit: ledger and findings" && git push origin HEAD:refs/heads/audit-evidence --force; fi
-  doctor:
-    if: ${{ vars.HALT != '1' }}  # HALT-1
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: main
-      - run: python3 scripts/actions_guard.py failure-audit
-        env:
-          GH_TOKEN: ${{ github.token }}
-      - run: python3 scripts/ci_doctor.py
-        env:
-          GH_TOKEN: ${{ github.token }}

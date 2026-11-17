@@ -1476,15 +1476,6 @@
    "session": "provenance-thread"
   },
   {
-<<<<<<< HEAD
-   "id": "lesson-2026-11-17-ci-doctor-1-paused-budget-turned-scheduled-runs-red-doctor-f",
-   "kind": "lesson",
-   "date": "2026-11-17",
-   "title": "CI-DOCTOR-1: paused budget turned scheduled runs red; doctor files failing workflows",
-   "body": "Scheduled runs loop 44108035777, failure-audit 44107612741, branchsweep 44107601818 and transparency 44105168749 failed at actions_guard.py: paused:true in actions-budget.json made each try to cancel itself without actions:write. The guard now skips the pause on public repos, and ci_doctor.py (job doctor in failure-audit.yml) opens one ci-doctor issue per failing workflow across four repos, diagnoses with GitHub Models, and closes it when green. Also fixed unknown_questions retention and the stale dashboard-data.js. Verified: tests pass for plan-limits, dashboard check ok, ci_doctor unit test passes.",
-   "probe": "grep:scripts/ci_doctor.py::def failing_workflows",
-   "session": "session_0156nqDuXJWyM65c8uChpjTM"
-=======
    "id": "decision-2026-11-17-ciwatch-1-and-agent-work-1-budget-guard-exempts-public-repos",
    "kind": "decision",
    "date": "2026-11-17",
@@ -1508,7 +1499,24 @@
    "body": "The budget pause is for private-repo minutes only; ciwatch now detects red runs on every repo.",
    "probe": "file:scripts/actions_guard.py",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
->>>>>>> origin/main
+  },
+  {
+   "id": "lesson-2026-11-17-retention-1-unknowns-1-added-unknown-questions-without-a-ret",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "RETENTION-1: UNKNOWNS-1 added unknown_questions without a retention rule",
+   "body": "plan-limits RETENTION-1 failed on every PR after UNKNOWNS-1 merged because table unknown_questions had no rule in seed/autonomy/retention.json. Added a 30-day rule. Verified: plan-limits tests pass 7 of 7. ciwatch (CIWATCH-1) already watches red runs, so the duplicate ci-doctor job from this thread was dropped.",
+   "probe": "grep:seed/autonomy/retention.json::unknown_questions",
+   "session": "session_0156nqDuXJWyM65c8uChpjTM"
+  },
+  {
+   "id": "lesson-2026-11-17-retention-1-migrations-also-needs-a-rule",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "RETENTION-1: _migrations also needs a rule",
+   "body": "Main gained a _migrations table without a retention rule; added keep:state. Verified: plan-limits tests pass.",
+   "probe": "grep:seed/autonomy/retention.json::_migrations",
+   "session": "session_0156nqDuXJWyM65c8uChpjTM"
   }
  ]
 }
