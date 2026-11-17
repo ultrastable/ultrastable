@@ -26,6 +26,7 @@ jobs:
       - name: Free-tier headroom, then ideas (SPINOFF-IDEAS-1)
         env:
           CF_ANALYTICS_TOKEN: ${{ secrets.CF_ANALYTICS_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           python3 -m foundation ideas --headroom --apply
           python3 -m foundation ideas --brainstorm --apply
