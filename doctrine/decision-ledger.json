@@ -1551,6 +1551,23 @@
    "title": "SELFCODE-1: self-code items must pass the criticality gate; failing tests stay with ciwatch",
    "body": "First live run filed a Q-SELF item and the executor reported idle: with k under the floor the gate admits only raises-deploys items. Q-SELF items now carry raises-deploys and raises-self (a merged agent change is a deploy the system originated). The in-job test run took 3 of 12 minutes and duplicated ciwatch, so failing_test is off in doctrine/selfcode.json.",
    "probe": "file:foundation/selfcode.py"
+  },
+  {
+   "id": "lesson-2026-11-17-deploy-workers-yml-cannot-apply-d1-migrations-its-token-is-f",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "deploy-workers.yml cannot apply D1 migrations: its token is for the retired account",
+   "body": "MIGRATE-SELF-1: migrations 0015 to 0017 never reached the live ledger because the migration step skips on the retired account id and no token exists for the live account. The tick now applies its own migrations through its D1 binding and the failure mode migrations-pending probes org.migrations_pending.",
+   "probe": "grep:seed/worker/src/migrate.js::migrations_pending"
+  },
+  {
+   "id": "decision-2026-11-17-unknowns-1-the-ignorance-audit-is-a-core-loop-with-its-own-d",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "UNKNOWNS-1: the ignorance audit is a core loop with its own daily reserve",
+   "body": "Decided and merged in PRs 479 to 493: foundation/unknowns.py and seed/worker/src/unknowns.js question every loop with the Universal Ignorance Audit lenses, the tick files 3 a day from a reserve of its own, and gap answers file Q-OBJ growth items. Evidence: the worker tests pass (240), unknowns --check passes, and the live org D1 was probed after the 15:30 UTC tick: migrations_pending 0 and migrations 0015 to 0017 recorded.",
+   "probe": "grep:foundation/unknowns.py::def answer",
+   "session": "session_0156nqDvPzm1VZsCCoweiBKT"
   }
  ]
 }
