@@ -1,0 +1,11 @@
+{
+  "id": "Q-CLAIM-COVER-README-md",
+  "title": "Q-CLAIM-COVER-README-md: unbound claim-like statements on README.md",
+  "body": "**Owner:** executor\n**Trigger:** claims coverage, every PR and daily\n**Done check:** coverage of README.md is 100%\n**Status:** open\n\nCOVERAGE-1: 10 claim-like lines (first 4) on `README.md` state a number, cadence or guarantee with no registered claim and probe.\n\nBind each to a probe in `doctrine/claims.json` (or generate the sentence from code), or change the words to what the code does.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation claims --coverage` lists none for this surface.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Claims"
+}

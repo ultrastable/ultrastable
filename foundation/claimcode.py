@@ -22,13 +22,13 @@ def _pol(root): return json.loads((Path(root) / PATH).read_text("utf-8"))
 def _key(rel, line): return rel + "::" + hashlib.sha1(re.sub(r"\s+", " ", line).strip().encode()).hexdigest()[:12]
 
 
-def scan(root=REPO) -> list[tuple[str, int, str, str]]:
+def scan(root=REPO, extra_globs=()) -> list[tuple[str, int, str, str]]:
     root = Path(root); pol = _pol(root)
     pats = [re.compile(p, re.I) for p in pol["claim_patterns"]]
     ign = subprocess.run(["git", "-C", str(root), "ls-files", "-oi", "--exclude-standard"], capture_output=True, text=True)
     ignored = set(ign.stdout.split("\n")) if ign.returncode == 0 else set()
     out = []
-    for g in pol["scan_globs"]:
+    for g in list(pol["scan_globs"]) + list(extra_globs):
         for f in sorted(root.glob(g)):
             rel = str(f.relative_to(root))
             if not f.is_file() or rel in ignored or any(re.search(x, rel) for x in pol["skip"]):

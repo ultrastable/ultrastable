@@ -1777,6 +1777,15 @@
    "body": "GitHub Models answered HTTP 200 text/plain 'OK' on 24k-char prompts and the RuntimeError ended the run before Workers AI was tried; RuntimeError now counts as a failed attempt so the ladder escalates, and the GitHub Models prompt cap is 12000 chars.",
    "probe": "grep:foundation/executor.py::FREE-LLM-3",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-coverage-1-claims-coverage-metric",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "COVERAGE-1: claims coverage metric",
+   "body": "Coverage = claim-like statements bound / found, over source files and every live page (sitemap, ultrastable.org, blindspot.ultrastable.app). Target 100%; the registry floor only rises. Each unbound file or page files a Q-CLAIM-COVER item; an unreachable live page is drift.",
+   "probe": "grep:doctrine/claims.json::\"coverage\"",
+   "session": "session_0156nqDtuMnUidA26votychB"
   }
  ]
 }

@@ -207,6 +207,80 @@ def live(root=REPO, fetch=None):
     return rows, drift
 
 
+def _bound_texts(root):
+    reg = load(root)
+    cc = {}
+    try:
+        cc = json.loads((Path(root) / "doctrine/claim-code.json").read_text("utf-8"))
+    except (OSError, ValueError):
+        pass
+    return [c["text"] for c in reg["claims"]] + [c["quote"] for c in cc.get("claims", [])]
+
+
+def coverage(root=REPO, fetch=None):
+    """COVERAGE-1: claim-like sentences found / bound, on source files and on every live page. Target 1.0; the registry floor is a ratchet."""
+    root = Path(root); reg = load(root); cov = reg.get("coverage", {})
+    bound_t = _bound_texts(root)
+    pats = [re.compile(x, re.I) for x in cov["patterns"]]
+    src_found, src_unbound = 0, {}
+    for g in cov["src_globs"]:
+        for f in sorted(root.glob(g)):
+            rel = str(f.relative_to(root))
+            if not f.is_file() or any(re.search(x, rel) for x in cov["skip"]):
+                continue
+            for n, line in enumerate(f.read_text("utf-8", errors="replace").splitlines(), 1):
+                if len(line) < 40 or not re.search(r"[A-Za-z]{3,} [A-Za-z]{2,} [A-Za-z]{2,}", line) or re.match(r"\s*(//|\*|#)", line) or not any(p.search(line) for p in pats):
+                    continue
+                src_found += 1
+                if not (any(q in line for q in bound_t) or "<!-- claim:" in line):
+                    src_unbound.setdefault(rel, []).append(n)
+    live_found, live_unbound, pages = 0, {}, []
+    for u in cov.get("live_pages", []):
+        try:
+            body = fetch(u) if fetch else _get(u)
+        except Exception as e:  # unreachable is unmeasured and reported, never counted as covered
+            pages.append({"url": u, "ok": False, "detail": f"unmeasured: {e}"}); continue
+        pages.append({"url": u, "ok": True, "detail": ""})
+        text = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", body, flags=re.S | re.I)
+        text = re.sub(r"<[^>]+>", "\n", text)
+        for sent in re.split(r"(?<=[.!?])\s+|\n+", text):
+            sent = re.sub(r"\s+", " ", sent).strip()
+            if len(sent) < 40 or not re.search(r"[A-Za-z]{3,} [A-Za-z]{2,} [A-Za-z]{2,}", sent) or not any(p.search(sent) for p in pats):
+                continue
+            live_found += 1
+            if not any(q in sent for q in bound_t):
+                live_unbound.setdefault(u, []).append(sent[:100])
+    found = src_found + live_found
+    unb = sum(len(v) for v in src_unbound.values()) + sum(len(v) for v in live_unbound.values())
+    return {"found": found, "bound": found - unb, "ratio": round((found - unb) / found, 4) if found else 1.0, "target": cov.get("target", 1.0),
+            "floor": cov.get("floor", 0.0), "src_unbound": src_unbound, "live_unbound": live_unbound, "pages": pages}
+
+
+def _get(url):
+    import urllib.request
+    with urllib.request.urlopen(urllib.request.Request(url, headers={"user-agent": "ultrastable-claims/1"}), timeout=20) as r:
+        return r.read().decode("utf-8", "replace")
+
+
+def file_coverage(root, c):
+    out = []
+    groups = {**{k: f"{len(v)} claim-like lines (first {v[0]})" for k, v in c["src_unbound"].items()},
+              **{k: f"{len(v)} claim-like sentences, e.g. {v[0]!r}" for k, v in c["live_unbound"].items()}}
+    for k, what in groups.items():
+        i = "Q-CLAIM-COVER-" + re.sub(r"[^A-Za-z0-9]+", "-", k).strip("-")[:70]
+        p = Path(root) / "docs/issues" / f"{i}.json"
+        if p.exists():
+            continue
+        p.parent.mkdir(parents=True, exist_ok=True)
+        body = (f"**Owner:** executor\n**Trigger:** claims coverage, every PR and daily\n**Done check:** coverage of {k} is 100%\n**Status:** open\n\n"
+                f"COVERAGE-1: {what} on `{k}` state a number, cadence or guarantee with no registered claim and probe.\n\n"
+                "Bind each to a probe in `doctrine/claims.json` (or generate the sentence from code), or change the words to what the code does.\n\n"
+                "size: S\n\n**Closing probe:** `python3 -m foundation claims --coverage` lists none for this surface.\n")
+        p.write_text(json.dumps({"id": i, "title": f"{i}: unbound claim-like statements on {k}", "body": body, "labels": ["p2", "agent-ready"], "milestone": "Now", "workstream": "Claims"}, indent=2) + "\n", encoding="utf-8")
+        out.append(i)
+    return out
+
+
 def file_items(root, drift):
     out = []
     for d in drift:
@@ -249,11 +323,25 @@ def main(argv):
         for r in ldrift:
             print(f"LIVE DRIFT {r['id']} {r['url']}: {r['detail']}")
         drift = drift + [{"id": "live-" + r["id"], "surface": r["url"], "claim": r["url"], "detail": r["detail"], "kind": "live"} for r in ldrift]
+    if "--coverage" in a or "--live" in a:
+        c = coverage(root)
+        print(f"coverage: {c['bound']} of {c['found']} claim-like statements bound ({c['ratio']*100:.1f}%, target {c['target']*100:.0f}%, floor {c['floor']*100:.1f}%)")
+        for pg in c["pages"]:
+            if not pg["ok"]:
+                print(f"COVERAGE UNMEASURED {pg['url']}: {pg['detail']}")
+                if "--live" in a:
+                    drift.append({"id": "coverage-" + pg["url"], "surface": pg["url"], "claim": pg["url"], "detail": pg["detail"], "kind": "live"})
+        if c["ratio"] < c["floor"]:
+            print("COVERAGE DRIFT: ratio fell below the registry floor")
+            drift.append({"id": "coverage-floor", "surface": "coverage", "claim": "coverage floor", "detail": f"{c['ratio']} < {c['floor']}", "kind": "coverage"})
+        if "--file" in a:
+            for i in file_coverage(root, c):
+                print("filed", i)
     if "--file" in a:
         for i in file_items(root, drift):
             print("filed", i)
     print(f"claims: {sum(r['pass'] for r in rows)} verified of {len(rows)}; {len(drift)} drift")
-    return 1 if (drift or stale) and ("--check" in a or "--live" in a) else 0
+    return 1 if (drift or stale) and ("--check" in a or "--live" in a or "--coverage" in a) else 0
 
 
 if __name__ == "__main__":
