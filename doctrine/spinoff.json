@@ -1,0 +1,306 @@
+{
+ "_doc": "SPINOFF-1 (owner, 2026-11-17): Ultrastable generates its own seeds. An unsupervised loop ideates apps, scores them for expected impact and reach, launches the best on *.ultrastable.app, measures each with metrics it generates itself, and a portfolio manager allocates, iterates, promotes or retires them by measured value. Read by foundation/spinoff.py; checked by `python3 -m foundation spinoff --check`. Weights, caps and thresholds are hypotheses the loop re-tunes from settled outcomes (ops/spinoff/outcomes.jsonl); never hand-edit a number to clear a breach.",
+ "id": "spinoff",
+ "version": "1.0.0",
+ "marker": "SPINOFF-1",
+ "domain": "ultrastable.app",
+ "registry": "instances/spinoffs",
+ "ledger": "ops/spinoff/ledger.jsonl",
+ "metrics_ledger": "ops/spinoff/metrics.jsonl",
+ "outcomes_ledger": "ops/spinoff/outcomes.jsonl",
+ "worker": "spinoffs/worker.js",
+ "sources": [
+  {
+   "id": "blindspots",
+   "kind": "register",
+   "path": "doctrine/blindspots.json",
+   "what": "system needs a small owner does not know to ask for; the public checkable ones are apps"
+  },
+  {
+   "id": "ignorance",
+   "kind": "computed",
+   "what": "python3 -m foundation ignorance: known minus told"
+  },
+  {
+   "id": "provenance",
+   "kind": "ledger",
+   "path": "ops/provenance.jsonl",
+   "what": "what inputs and changes recur; repeated end_user suggestions are demand"
+  },
+  {
+   "id": "practical-solutions",
+   "kind": "tenant",
+   "path": "instances/second-tenant",
+   "what": "tenant data; used only in aggregate and only if public"
+  },
+  {
+   "id": "public-signals",
+   "kind": "scout",
+   "path": "ops/scout",
+   "what": "scout findings and competitor gaps"
+  }
+ ],
+ "archetypes": {
+  "domain-check": {
+   "implemented": true,
+   "input": "a public domain name",
+   "collects": [],
+   "audience": 5,
+   "cost_per_use": 1,
+   "what": "reads only public pages and DNS of the domain the visitor types and reports what is missing"
+  },
+  "template-generator": {
+   "implemented": false,
+   "input": "a few choices",
+   "collects": [],
+   "audience": 4,
+   "cost_per_use": 1,
+   "what": "fills a draft document from choices; nothing stored"
+  },
+  "status-board": {
+   "implemented": false,
+   "input": "none",
+   "collects": [],
+   "audience": 3,
+   "cost_per_use": 1,
+   "what": "a public read-only board of a measured public fact"
+  }
+ },
+ "score": {
+  "formula": "reach * impact * feasibility * novelty * bandit / (1 + cost)",
+  "reach_scale": "1 to 5, log of plausible monthly users: 1 under 100, 2 under 1k, 3 under 10k, 4 under 100k, 5 above",
+  "impact_scale": "1 to 5: 1 curiosity, 3 saves an hour or avoids a mistake, 5 prevents a loss or a legal exposure",
+  "min_score": 8,
+  "bandit": {
+   "floor": 0.5,
+   "ceiling": 2.0,
+   "step": 0.15
+  },
+  "diversity_cap": 0.5
+ },
+ "safety": {
+  "deny_domains": [
+   "medical",
+   "health",
+   "legal-advice",
+   "financial-advice",
+   "investment",
+   "tax-advice",
+   "children",
+   "minors",
+   "adult",
+   "gambling",
+   "weapons",
+   "political",
+   "election",
+   "biometric",
+   "face",
+   "identity",
+   "people-search",
+   "background-check",
+   "surveillance",
+   "credit",
+   "lending",
+   "insurance",
+   "employment-screening",
+   "immigration",
+   "mental-health",
+   "crypto-trading",
+   "scraping-personal-data",
+   "impersonation"
+  ],
+  "deny_collect": [
+   "name",
+   "email",
+   "phone",
+   "address",
+   "ip",
+   "location",
+   "account",
+   "payment",
+   "free-text-about-a-person"
+  ],
+  "allowed_inputs": [
+   "a public domain name",
+   "a few choices",
+   "none"
+  ],
+  "rules": [
+   "an app may read only public pages and public DNS of a domain the visitor types, never anything behind a login",
+   "an app stores aggregate counts, a daily-salted visitor hash, and the typed public domain only as a one-way keyed hash with a bitmask of failed checks (to tell a fix from a first look); never an address, name, IP or the readable domain",
+   "an app states what it did and does not give legal, medical or financial advice",
+   "an app that fails any rule is not launched and the rejection is recorded with the rule that failed"
+  ]
+ },
+ "budget": {
+  "max_live": 6,
+  "max_launches_per_week": 1,
+  "max_requests_per_app_per_day": 20000,
+  "subrequests_per_use": 8,
+  "monthly_usd_ceiling": 0,
+  "note": "free tier only: Cloudflare Workers free requests, one shared D1, no paid model calls; the ceiling is zero until cost.json says there is headroom"
+ },
+ "portfolio": {
+  "min_age_days": 14,
+  "weights": {
+   "gap_closed": 0.6,
+   "retained": 0.25,
+   "reached_with_gap": 0.15
+  },
+  "kill_below_value": 0.15,
+  "promote_above_value": 0.6,
+  "iterate_between": [
+   0.15,
+   0.6
+  ],
+  "budget_share_floor": 0.05,
+  "retire_status": 410
+ },
+ "reach_metrics": [
+  "uses_7d",
+  "unique_visitors_7d",
+  "visitors_with_a_gap_7d",
+  "referrer_domains_7d"
+ ],
+ "impact_metrics": [
+  "verified_fixes_7d",
+  "gap_closed_share",
+  "return_share"
+ ],
+ "guard_metrics": [
+  "error_share",
+  "abuse_blocks",
+  "requests_vs_daily_cap"
+ ],
+ "check_library": [
+  {
+   "id": "https",
+   "title": "Serves over HTTPS",
+   "fix": "Redirect http to https and serve a valid certificate.",
+   "needs": [
+    "security-contact"
+   ]
+  },
+  {
+   "id": "hsts",
+   "title": "Sends Strict-Transport-Security",
+   "fix": "Add the header Strict-Transport-Security: max-age=31536000.",
+   "needs": [
+    "security-contact"
+   ]
+  },
+  {
+   "id": "security-txt",
+   "title": "Publishes /.well-known/security.txt (RFC 9116)",
+   "fix": "Publish a security.txt with a Contact line so researchers can report a flaw privately.",
+   "needs": [
+    "security-contact"
+   ]
+  },
+  {
+   "id": "spf",
+   "title": "Has an SPF record",
+   "fix": "Add a TXT record starting v=spf1 that lists who may send mail for the domain.",
+   "needs": [
+    "email-authentication"
+   ]
+  },
+  {
+   "id": "dmarc",
+   "title": "Has a DMARC record",
+   "fix": "Add a TXT record at _dmarc with at least v=DMARC1; p=none; rua=mailto:you@yourdomain.",
+   "needs": [
+    "email-authentication"
+   ]
+  },
+  {
+   "id": "privacy",
+   "title": "Links a privacy notice from the home page",
+   "fix": "Say what you keep and link it in the footer.",
+   "needs": [
+    "privacy-notice",
+    "footer-links"
+   ]
+  },
+  {
+   "id": "terms",
+   "title": "Links terms of use from the home page",
+   "fix": "Publish terms and link them in the footer.",
+   "needs": [
+    "terms-of-use",
+    "footer-links"
+   ]
+  },
+  {
+   "id": "accessibility",
+   "title": "Links an accessibility statement from the home page",
+   "fix": "Publish an accessibility statement and link it in the footer.",
+   "needs": [
+    "accessibility-statement",
+    "footer-links"
+   ]
+  }
+ ],
+ "need_archetype": {
+  "domain-check": [
+   "security-contact",
+   "email-authentication",
+   "privacy-notice",
+   "terms-of-use",
+   "accessibility-statement",
+   "footer-links"
+  ],
+  "template-generator": [
+   "succession",
+   "ai-disclosure",
+   "outreach-disclosure"
+  ],
+  "status-board": [
+   "domain-renewal"
+  ]
+ },
+ "domain_impact": {
+  "security": 4,
+  "privacy": 4,
+  "legal": 3,
+  "outreach": 3,
+  "accessibility": 3,
+  "continuity": 3,
+  "finance": 3,
+  "ip": 3
+ },
+ "domain_reach": {
+  "security": 5,
+  "privacy": 5,
+  "legal": 4,
+  "outreach": 4,
+  "accessibility": 4,
+  "continuity": 3,
+  "finance": 3,
+  "ip": 2
+ },
+ "value": {
+  "definition": "Value is a problem moved toward its target, counted as a verified outcome for a person, not attention. Each app names the gap it works on (share of public safeguards missing), and value is how much of that gap its users verifiably closed, whether they came back, and whether it reached people who actually had the gap. Same shape as Practical Solutions' gap-to-target ranking (worker/src/problems.js: shortfall to a stated target in [0,1]), applied to the apps' own problems.",
+  "weights": {
+   "gap_closed": 0.6,
+   "retained": 0.25,
+   "reached_with_gap": 0.15
+  },
+  "excluded": [
+   "impressions",
+   "page_views",
+   "eyeballs",
+   "money",
+   "raw visits"
+  ],
+  "measured_by": {
+   "gap_closed": "verified_fixes_7d: checks that failed on an earlier use of a domain and pass on a recheck",
+   "retained": "return_share: rechecks / uses",
+   "reached_with_gap": "visitors_with_a_gap_7d: unique visitors whose result had at least one failing check"
+  }
+ },
+ "lineage": {
+  "qnfo-idea-hub": "mined from QNFO/qnfo-workers idea-hub (public): kept IDEA-DIVERSITY-CAP-1 (no topic over half of accepts), the feasibility and risk gates beside the score, IDEA-NOVELTY-1 (screen against what already exists), REENTRY (a shipped output's own open questions become new signals) and REACH-IDEATION-1 (live checks of one's own public surfaces file fix items; done here as Q-BLINDSPOT-SELF-*). Superseded: scored papers; now deployed apps scored on verified outcomes.",
+  "reentry_todo": "feed each live app's most-failed check ids back as candidate needs (needs per-check failure counts in /api/metrics)"
+ }
+}

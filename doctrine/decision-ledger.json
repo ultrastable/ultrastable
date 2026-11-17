@@ -1606,6 +1606,32 @@
    "session": "session_0156nqDtKVpn3hxk4cBwg9BD"
   },
   {
+   "id": "decision-2026-11-17-spinoff-1-the-system-generates-launches-measures-and-prunes-",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "SPINOFF-1: the system generates, launches, measures and prunes its own apps",
+   "body": "Rowan 2026-11-17: Ultrastable generates its own seeds. foundation/spinoff.py ideates from the blindspot register, scores reach*impact*feasibility*novelty*bandit, gates safety (doctrine/spinoff.json), launches on *.ultrastable.app via one Worker (spinoffs/worker.js, bundle generated from instances/spinoffs), generates each app's metrics, and a daily portfolio tick keeps, iterates, promotes or retires by VALUE = verified gap closed (0.6) + retention (0.25) + reach to people who had the gap (0.15); impressions and money are excluded. Supersedes QNFO's Ask QWave and ideas board, which only produced papers. First app: blindspot.ultrastable.app. The ultrastable.app zone belongs to the quniverse Cloudflare account, so the Worker and its D1 (ultrastable-spinoffs) live there until the zone transfer in deploy/transfer/plan.json.",
+   "probe": "file:foundation/spinoff.py"
+  },
+  {
+   "id": "lesson-2026-11-17-spinoff-1-session-write-back-session-0156nqdpcl7ak6msa",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SPINOFF-1 session write-back (session_0156nqDpCL7Ak6MSA)",
+   "body": "Session built and launched the first spun-off app (blindspot.ultrastable.app). Lessons: the ultrastable.app zone sits in the quniverse Cloudflare account, so a Worker route there needs the Worker and D1 in that account; Registrar zones move only by the owner's two confirmations from 2026-11-20 (staged in deploy/transfer/plan.json). New generated files need the SPDX header, a trigger-register row, a probe the pins check can run, and tests must use _repo.scratch().",
+   "probe": "file:foundation/spinoff.py",
+   "session": "session_0156nqDpCL7Ak6MSA"
+  },
+  {
+   "id": "lesson-2026-11-17-spinoff-1-session-write-back-session-0156nqdts9vlym9u9hcm38f",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SPINOFF-1 session write-back (session_0156nqDtS9vLYM9u9HCM38Fp)",
+   "body": "Session built and launched the first spun-off app (blindspot.ultrastable.app). Lessons: the ultrastable.app zone sits in the quniverse Cloudflare account, so a Worker route there needs the Worker and D1 in that account; Registrar zones move only by the owner's two confirmations from 2026-11-20 (staged in deploy/transfer/plan.json). New generated files need the SPDX header, a trigger-register row, a probe the pins check can run, and tests must use _repo.scratch().",
+   "probe": "file:foundation/spinoff.py",
+   "session": "session_0156nqDtS9vLYM9u9HCM38Fp"
+  },
+  {
    "id": "lesson-2026-11-17-selfcode-1-unscored-self-code-items-starved-behind-the-score",
    "kind": "lesson",
    "date": "2026-11-17",
