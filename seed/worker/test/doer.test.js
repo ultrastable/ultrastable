@@ -137,3 +137,13 @@ test('dispatch rows record the model that answered, or rules when no model ran',
   assert.equal(m('FN-9'), 'rules (no model)');
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM dispatches WHERE model='m'").get().n, 0, 'the roles.model label never reaches a dispatch row');
 });
+
+// MODEL-REPLY-1 + PLAN-SKIP-1: an object `response` is accepted, and a model the plan lacks is skipped without blocking the next one.
+test('object replies and plan-blocked models do not stop the doer', async () => {
+  const db = makeDb();
+  seed(db, [{ id: 'PR-5', title: 'PR-5: Pricing hypotheses', done_check: 'see roadmap' }]);
+  const ai = { calls: [], async run(model) { ai.calls.push(model); if (/glm/.test(model)) throw new Error('5035: Model is not available on the Workers Free plan.'); return { response: { verdict: 'needs_research', reason: 'needs data', first_step: 'list three' } }; } };
+  await runTick(db, { config, now: T0, ai });
+  const s = status(db, 'PR-5');
+  assert.equal(s.status, 'blocked'); assert.match(s.blocker, /^needs-research: needs data/);
+});

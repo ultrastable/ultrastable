@@ -118,7 +118,8 @@ export const ADAPTERS = [
   { id: 'workers-ai-qwen-coder', model: '@cf/qwen/qwen2.5-coder-32b-instruct', family: 'qwen', price: 1e6, extra: { max_tokens: 7000 } },
 ];
 
-const text = r => (r && (r.response || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || '';
+// MODEL-REPLY-1: Workers AI may return an already-parsed object in `response`; callers need a string (parseJson called t.indexOf on it).
+const text = r => { const v = (r && (r.response || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || ''; return typeof v === 'string' ? v : JSON.stringify(v); };
 
 export async function invoke(env, adapter, prompt) {
   const r = await env.AI.run(adapter.model, { messages: [{ role: 'user', content: prompt }], ...adapter.extra });
