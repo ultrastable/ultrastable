@@ -151,7 +151,19 @@ export async function runProbes(env) {
   if (!env.NO_NET) {
     const links = [...OWNER_LINKS, ...NEEDS.map(n => n.url || n.connect).filter(x => /^https:\/\//.test(String(x || "")))].filter((x, i, a) => a.indexOf(x) === i).slice(0, 20);
     const dead = [];
-    for (const l of links) { try { const r = await fetch(l, { redirect: "manual", signal: AbortSignal.timeout(5000) }); if (r.status >= 400) dead.push(l + " HTTP " + r.status); } catch (e) { dead.push(l + " " + String(e && e.message || e).slice(0, 40)); } }
+    // OWNER-LINKS-2: status alone passed a blank placeholder page. Each link must answer with the content it promises, never a worker placeholder.
+    const EXPECT = { "https://ultrastable.io/connect/github-signin": /sign-in|signin|github/i, "https://ultrastable.io/owner": /owner|sign in|code/i };
+    for (const l of links) {
+      try {
+        const r = await fetch(l, { redirect: "manual", signal: AbortSignal.timeout(5000) });
+        if (r.status >= 400) { dead.push(l + " HTTP " + r.status); continue; }
+        const loc = r.headers.get("location") || "";
+        const body = r.status >= 300 ? "" : (await r.text()).slice(0, 20000);
+        if (/seed worker/i.test(body)) dead.push(l + " placeholder body");
+        else if (r.status < 300 && body.trim().length < 80) dead.push(l + " blank body");
+        else if (EXPECT[l] && !EXPECT[l].test(r.status >= 300 ? loc : body)) dead.push(l + " unexpected content");
+      } catch (e) { dead.push(l + " " + String(e && e.message || e).slice(0, 40)); }
+    }
     await rec("owner_links", dead.length === 0, dead.length ? "dead: " + dead.join(" | ") : links.length + " owner links answer");
   }
   const idLinks = await OID.linkCount(env);

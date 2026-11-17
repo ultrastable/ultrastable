@@ -2013,6 +2013,30 @@
    "probe": "file:workers/core/modelservice/index.js"
   },
   {
+   "id": "lesson-2026-11-17-owner-routes-before-auth-path",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Owner routes before AUTH_PATH",
+   "body": "/connect/github-signin matched AUTH_PATH first and reached the tick placeholder; OWNER_PATH now first, owner_links checks body content (OWNER-ROUTE-1, OWNER-LINKS-2)",
+   "probe": "file:site/forward.test.mjs"
+  },
+  {
+   "id": "decision-2026-11-17-unstick-1-failing-runs-watcher-merges-main-into-conflicted-p",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "UNSTICK-1: failing-runs watcher merges main into conflicted PRs",
+   "body": "scripts/unstick_prs.sh runs at the end of each ciwatch run. Every same-repo open PR that GitHub reports as not mergeable gets main merged in; generated and append-only conflicts take the regenerated side and the generators rerun, then the branch is pushed and checks are dispatched. A conflict in hand-written code is logged as a warning with its files. Verified by lint_workflows (0 problems), plan-limits, bash -n and a main checksrun (32 steps, 0 failed); merged as ultrastable PR 575.",
+   "probe": "file:scripts/unstick_prs.sh"
+  },
+  {
+   "id": "lesson-2026-11-17-resilience-1-a-public-site-answering-503-is-redeployed-by-th",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "RESILIENCE-1: a public site answering 503 is redeployed by the watchdog",
+   "body": "The Practical Solutions tenant site returned 503 with no probe watching it. doctrine/resilience.json site_probes now lists its URL; each watchdog pass GETs it and dispatches the named deploy workflow when the status is not 200, bounded per day, with a ledger row per failed probe. Verified by tests/foundation/test_resilience.py (SiteProbe) and resilience --check.",
+   "probe": "grep:doctrine/resilience.json::site_probes"
+  },
+  {
    "id": "decision-2026-11-17-product-manager-pass-2026111716-3-item-s-filed",
    "kind": "decision",
    "date": "2026-11-17",
