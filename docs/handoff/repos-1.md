@@ -19,3 +19,8 @@ The workers repository moved here as `workers/` with its standalone layout (its 
 Session: session_0156nqDvjKMRKDZZN7ARH5mX
 
 `/connect/github-admin` registers an administration-only GitHub App; finishing its install runs `archiveRetired` (`seed/worker/src/auth/archive.js`), which archives seed, license, spec and workers (list mirrors `brand/brand.json`, tested). A failed archive is recorded as a credential event and the page still completes. Q-REPOS-ADMIN-APPLY closes when the four repositories show archived.
+
+## Resolvers and probes for this thread's items
+Session: session_0156nqDvjKMRKDZZN7ARH5mX
+
+Q-REPOS-ADMIN-APPLY: resolver `archiveDue` (seed/worker/src/auth/archive.js) runs from `refreshDue` on every tick and retries until the `archived` credential event exists; probe `grep:...archiveDue`. Q-REPOS-RECONCILE-SEED-WORKERS: probe `cmd:python3 scripts/repos_reconcile_check.py` fails while a module name lives in both seed/worker/src and workers/core (auth, criticality, ui today); the executor takes the item and closes it when the probe passes.
