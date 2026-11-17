@@ -61,7 +61,7 @@ Each stage of the bootstrapper, what it needs, and what happens when it is missi
 
 ## Documentation that ships inside the product
 
-Documentation is part of the system, not a separate site you have to find.
+Documentation is part of the system, not a separate site to look up.
 
 | Requirement | Status |
 |---|---|

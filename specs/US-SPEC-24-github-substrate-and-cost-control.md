@@ -149,7 +149,7 @@ The practical consequence: the repositories are public, so the public-repository
 - **US-24-R40 [L2]** Unlimited standard-runner minutes on public repositories MUST NOT relax any rule in 7.2 to 7.4.
 - **US-24-R41 [L2]** `pull_request_target` MUST NOT be used, and secrets MUST NOT be reachable from a job triggered by a pull request from a fork (lint rule W07).
 - **US-24-R42 [L2]** The workflow token MUST carry least privilege, and write scopes MUST be granted per job only.
-- **US-24-R43 [L2]** Before a repository goes public the owner MUST be shown a checklist covering: secret history scan, enabling push protection and secret scanning, Pages source, rulesets for the default branch, and fork approval policy.
+- **US-24-R43 [L2]** Before a repository goes public, a checklist MUST be generated and shown, covering: secret history scan, enabling push protection and secret scanning, Pages source, rulesets for the default branch, and fork approval policy.
 - **US-24-R44 [L3]** No recurring duty MAY depend on a repository's scheduled workflows, because a public repository's schedules stop after 60 days without activity.
 
 ### 7.6 Lessons as requirements

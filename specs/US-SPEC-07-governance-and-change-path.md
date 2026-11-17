@@ -55,7 +55,7 @@ Applied to each draft output, before or after emission.
 | Blocker without surface coverage | "can't", "refused", "no access" | enumerate surfaces, test each, then report |
 | Stop not interrupt-eligible | pause, ask, wait, confirm | classify; if false, re-execute the abandoned path |
 | Principal as executor | "you could run" | dispatch from the roster |
-| Principal as actor | "needs you to", "you should" | rewrite in first person and execute; else dispatch |
+| Principal as actor | second-person next-action phrasing | rewrite in first person and execute; else dispatch |
 | Silent drop | item leaves active set with no disposition | log disposition or reopen |
 | Friction | "I shouldn't have to", "every time" | generate, red-team, adopt an amendment |
 | Narration | "the fix is to" | produce the changed artifact in the same output |

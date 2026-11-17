@@ -46,7 +46,7 @@ AI coding agents multiply effort, but a person still has to pick the work, check
 - BUILT in the seed: bootstrapper (12 Python tests), seven-step tick, schema, policy, role files (9 JavaScript tests). Verified 2026-11-11.
 - Not built: multi-tenant packaging, installer, product dashboard, a model-calling executor in the seed, any outside customer, any outside audit.
 
-## Failure modes you should expect
+## Failure modes to expect
 
 - Self-scored numbers can flatter: the system measures itself. Treat every figure as a statement for you to re-measure.
 - Autonomy that is too eager is as much a defect as autonomy that is too timid; both are measured, neither is assumed away.
