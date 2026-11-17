@@ -365,6 +365,45 @@
    ],
    "discoverable": true,
    "description": "Spend governor (SPEND-GOVERNOR-1): the owner's monthly budget (usd_per_month), the daily Workers AI allowance it buys, today's metered use, and the mode (normal, lean, frozen) with its reason."
+  },
+  {
+   "id": "audit-head",
+   "path": "/api/audit/head",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "public",
+   "standards": [],
+   "discoverable": false,
+   "reason": "Audit chain read for the owner and the verifier loop (AUDIT-CHAIN-1); not part of the agent contract.",
+   "description": "Audit chain head."
+  },
+  {
+   "id": "audit-verify",
+   "path": "/api/audit/verify",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "owner",
+   "standards": [],
+   "discoverable": false,
+   "reason": "Audit chain read for the owner and the verifier loop (AUDIT-CHAIN-1); not part of the agent contract.",
+   "description": "Audit chain verify."
+  },
+  {
+   "id": "audit-trace",
+   "path": "/api/audit/trace",
+   "methods": [
+    "GET"
+   ],
+   "kind": "rest",
+   "audience": "owner",
+   "standards": [],
+   "discoverable": false,
+   "reason": "Audit chain read for the owner and the verifier loop (AUDIT-CHAIN-1); not part of the agent contract.",
+   "description": "Audit chain trace."
   }
  ]
 }
