@@ -158,3 +158,21 @@ test("OWNER-DASH-3: a database that is down is reported by the probe and mailed 
   const e = env(); sent.length = 0; e.DB.prepare = () => { throw new Error("D1 free tier daily row read limit exceeded (7500)"); };
   const res = await runProbes(e); assert.equal(res.find(x => x.name === "database").ok, false);
 });
+
+test("provenance: owner commands are recorded, visitors' suggestions stay private, the public changelog is redacted", async () => {
+  const e = env(); const cookie = await login(e);
+  const raw = "add a map, write to jane@example.org or +31 6 1234 5678";
+  assert.equal((await call(e, "/api/suggest", { tenant: "practical-solutions", text: raw, page: "/problems/x" })).status, 200);
+  assert.equal((await call(e, "/api/suggest", { tenant: "practical-solutions", text: "x" })).status, 400);
+  const fleet = { ...e, FLEET_TOKEN: "t" };
+  const post = (b) => route(new Request("https://ultrastable.io/api/fleet/provenance", { method: "POST", headers: { authorization: "Bearer t", "content-type": "application/json" }, body: JSON.stringify(b) }), fleet);
+  assert.equal((await post({ class: "loop", actor: "insight-loop", channel: "loop-run", kind: "change", summary: "raised threshold; contact ops@example.org", affected: ["doctrine/insight.json"], public: true })).status, 200);
+  assert.equal((await post({ class: "robot", actor: "x", channel: "api", kind: "change", summary: "s" })).status, 400);
+  const pub = await (await call(e, "/api/changelog")).json(); const txt = JSON.stringify(pub);
+  assert.equal(pub.entries.length, 1); assert.equal(pub.entries[0].origin, "loop");
+  for (const leak of ["jane@", "ops@", "5678", "add a map"]) assert.ok(!txt.includes(leak), leak);
+  const html = await (await call(e, "/changelog")).text(); assert.ok(html.includes("An automated loop") && !html.includes("example.org"));
+  assert.equal((await call(e, "/api/owner/provenance")).status, 401);
+  const tl = await (await call(e, "/api/owner/provenance", undefined, cookie)).json();
+  const sug = tl.entries.find(x => x.class === "end_user"); assert.ok(sug && sug.public === 0 && !sug.summary.includes("jane@") && sug.affected[0] === "/problems/x");
+});

@@ -3174,6 +3174,45 @@
         "a11y.yml"
       ],
       "server_owner": "github-actions"
+    },
+    {
+      "id": "provenance-loop",
+      "kind": "manager",
+      "summary": "PROVENANCE-1: every input and change is a row with origin class, actor, channel, what it touched and its effect; the public changelog is redacted; settled effects feed the improvement ranker.",
+      "trigger": "every executor result, write-back and owner command; daily settle pass in product-manager.yml",
+      "owner": "product-manager",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "every pending change older than the window is settled kept or reverted from git history, the public changelog regenerates, and the change-effect signal is read by selfimprove",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "python3 -m foundation provenance --settle-due && python3 -m foundation provenance --changelog --apply from product-manager.yml",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation provenance --settle-due from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/provenance.py::def settle_due",
+      "cycle_metric": "change_effect_kept_rate",
+      "last_plus": "settled outcomes retire or reinforce levers in selfimprove.provenance_candidates; the kept rate is printed by provenance --signal so the next run is comparable",
+      "writeback": [
+        "ops/provenance.jsonl",
+        "ops/changelog.json"
+      ],
+      "system_path": [
+        "foundation/provenance.py",
+        "dashboard/provenance.js",
+        "doctrine/provenance.json",
+        "tests/foundation/test_provenance.py"
+      ],
+      "workflows": [
+        "product-manager.yml"
+      ],
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

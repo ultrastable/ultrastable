@@ -21,6 +21,13 @@ def _slug(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:60] or "note"
 
 
+def _prov(root, kind: str, title: str, session: str, ref: str) -> str:
+    """PROVENANCE-1: a write-back is a decision/lesson row; origin is the agent session that wrote it."""
+    from . import provenance
+    provenance.record(root, {"class": "agent", "actor": (session or "code-agent")[:40], "channel": "thread"}, "decision" if kind in ("decision", "lesson", "term") else "input", f"{kind}: {title.strip()}"[:200], ref=ref, affected=[ref.split(" ")[0]])
+    return ref
+
+
 def record(root, kind: str, title: str, body: str, *, session: str = "", owner: str = "", trigger: str = "", probe: str = "", term: str = "", source: str = "doctrine/glossary.json", today: str | None = None) -> str:
     from . import kernel, glossary
     root, day = Path(root), today or dt.date.today().isoformat()
@@ -40,7 +47,7 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
         rows["rows"] = [r for r in rows["rows"] if r["id"] != rid] + [{"id": rid, "kind": kind, "date": day, "title": title.strip(), "body": body.strip(), "probe": probe, **({"session": session} if session else {})}]
         led.parent.mkdir(parents=True, exist_ok=True)
         led.write_text(json.dumps(rows, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
-        return f"{LEDGER} ({rid})"
+        return _prov(root, kind, title, session, f"{LEDGER} ({rid})")
     if kind == "open-loop":
         if not (owner and trigger and probe):
             raise ValueError("an open loop needs an owner role, a trigger and a closing probe")
@@ -55,10 +62,10 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
         body_txt = f"**Owner:** {owner}\n**Trigger:** {trigger}\n**Done check:** {probe}\n**Status:** open\n\n{body.strip()}"
         item = {"id": iid, "title": f"{iid}: {title.strip()}", "body": body_txt, "labels": [f"role:{owner}", "open-loop"], "milestone": "Now", "workstream": "Open loops"}
         (root / "docs/issues" / f"{iid}.json").write_text(json.dumps(item, indent=2) + "\n", encoding="utf-8", newline="\n")
-        return f"docs/issues/{iid}.json"
+        return _prov(root, kind, title, session, f"docs/issues/{iid}.json")
     if kind == "term":
         t = glossary.term_change(root, term, body, title, source, day)
-        return f"doctrine/glossary.json ({t['id']} v{t['version']})"
+        return _prov(root, kind, title, session, f"doctrine/glossary.json ({t['id']} v{t['version']})")
     raise ValueError(f"unknown kind {kind!r}")
 
 
