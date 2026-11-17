@@ -106,6 +106,7 @@ def file_items(root, res):
         p = Path(root) / "docs/issues" / f"{i}.json"
         if p.exists():
             continue
+        p.parent.mkdir(parents=True, exist_ok=True)
         probe = f"cmd:python3 -m foundation issueloop --closed {r['repo']}#{r['number']}"
         body = (f"**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** {probe}\n**Status:** open\n\n"
                 f"ISSUE-LOOP-1: {r['repo']}#{r['number']} ({r['title']}) is {r['verdict']}: {r['evidence']}. Fix it in code and close it, or add a "
