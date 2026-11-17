@@ -375,7 +375,7 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
   const startedIso = iso(new Date(now));
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, STEP_ORDER.length);
   const tickId = ins.meta.last_row_id;
-  const ctx = { wake, ai, budget, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
+  const ctx = { db, wake, ai, budget, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
   let completed = 0;
   try { ctx.costBreach = await over_budget(db, config && config.cost_budgets, now); } catch (e) { ctx.costBreach = null; ctx.notes.push(`cost check failed: ${String(e && e.message).slice(0, 120)}`); }
   try { ctx.freeTier = await freeTierLevel(db, now); } catch (e) { ctx.freeTier = null; ctx.notes.push(`free-tier check failed: ${String(e && e.message).slice(0, 120)}`); }
