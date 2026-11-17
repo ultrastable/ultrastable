@@ -249,7 +249,8 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     if qm and not issue_no:
         from . import growth  # GROWTH-1: a product manager keeps the backlog from devolving into bug fixes
         from . import rnd  # RND-1: competitor gaps and adopted findings carry a priority the loop computed
-        issues = rnd.boost(growth.prefer(issues, root), root)
+        from . import selfcode  # SELFCODE-1: a share of runs goes to the code agent's own findings and trusted issue intake; it runs first so growth.prefer cannot filter them out
+        issues = rnd.boost(growth.prefer(selfcode.prefer(issues, root), root), root)
     issue = next((i for i in issues if str(i["number"]) == str(issue_no)), None) if issue_no else pick(issues)
     if not issue:
         row = {"result": "idle", "detail": "no open issue the executor may take", "prediction": "open_issues_takeable <= 0 within 24 h"}
@@ -283,7 +284,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 else:
                     out, meta = agent_ladder.call(prompt, attempt, root=lroot)
                     row.setdefault("models", []).append(meta["model"])
-                if str(n).startswith(("Q-SELF-", "Q-INTAKE-")):  # SELFCODE-1: the self-code loop writes only inside the allowlist of doctrine/selfcode.json, checked before anything is written
+                if str(n).startswith(("Q-SELF-", "Q-INTAKE-")):  # SELFCODE-1 (every Q-SELF item, hand-filed ones too): the self-code loop writes only inside the allowlist of doctrine/selfcode.json, checked before anything is written
                     from . import selfcode
                     bad = selfcode.scope_violation([e.get("path", "") for e in out["files"]], lroot)
                     if bad:

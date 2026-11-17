@@ -1,0 +1,11 @@
+{
+ "id": "Q-BLINDSPOT-SELF-TERMS",
+ "title": "Q-BLINDSPOT-SELF-TERMS: ultrastable.io home page links no terms of use",
+ "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-BLINDSPOT-SELF-TERMS.json::Status:\\*\\* closed\n**Status:** open\n\nFound by the first spun-off app run on its own platform (SPINOFF-1, 2026-11-17). Link the terms from the footer (blindspot terms-of-use).\n\nsize: S\n\n**Closing probe:** grep:docs/issues/Q-BLINDSPOT-SELF-TERMS.json::Status:\\*\\* closed (closes when the live check passes)\n\n**Live check:** GET https://blindspot.ultrastable.app/api/check?domain=ultrastable.io expect \"pass\":true for id terms",
+ "labels": [
+  "role:operations",
+  "ws:growth"
+ ],
+ "milestone": "Now",
+ "workstream": "Growth"
+}

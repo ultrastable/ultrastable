@@ -384,6 +384,14 @@
     "17 15 * * *"
    ]
   },
+  "spinoff.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 6 * * *"
+   ]
+  },
   "transparency.yml": {
    "events": [
     "workflow_dispatch"

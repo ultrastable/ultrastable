@@ -85,7 +85,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "seed-tests: 35 Python and 240 Worker tests",
+   "claim": "seed-tests: 35 Python and 247 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -94,7 +94,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 240 Worker tests",
+   "claim": "seed-worker-tests: 247 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",

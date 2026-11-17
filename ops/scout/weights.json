@@ -1,47 +1,47 @@
 {
  "claude-code": {
-  "counted": 5,
-  "quiet": 3,
-  "weight": 1.953
+  "counted": 7,
+  "quiet": 1,
+  "weight": 1.25
  },
  "cloudflare-agents": {
   "counted": 1,
-  "quiet": 3,
-  "weight": 1.25
+  "quiet": 1,
+  "weight": 1.0
  },
  "cloudflare-blog": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 2,
   "weight": 0.8
  },
  "cloudflare-workers-sdk": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 2,
   "weight": 0.8
  },
  "google-adk": {
   "counted": 1,
-  "quiet": 3,
-  "weight": 0.8
+  "quiet": 1,
+  "weight": 0.64
  },
  "langgraph": {
-  "counted": 0,
-  "quiet": 0,
-  "weight": 0.8
+  "counted": 1,
+  "quiet": 1,
+  "weight": 0.64
  },
  "mcp-spec": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 2,
   "weight": 0.8
  },
  "openai-codex": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 2,
   "weight": 0.8
  },
  "openhands": {
   "counted": 0,
-  "quiet": 0,
+  "quiet": 2,
   "weight": 0.8
  }
 }
