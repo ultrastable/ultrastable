@@ -1,30 +1,29 @@
 [
  {
-  "id": "Q-GROW-second-tenant-deploying",
-  "title": "Q-GROW-second-tenant-deploying: A second tenant system with its own deploy loop proves the product beyond tenant 0.",
-  "goal": "practical-solutions-on-platform",
-  "goals": [
-   "practical-solutions-on-platform",
-   "growth"
-  ],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 319.57,
-  "front": 3
- },
- {
   "id": "ZERO-MINUTES-1",
   "title": "ZERO-MINUTES-1: run the loops on the Cloudflare tick Worker, not on Actions minutes (projected 232% of the free quota)",
-  "goal": "run-on-cloudflare",
+  "goal": "cost",
   "goals": [
-   "run-on-cloudflare",
-   "cost"
+   "cost",
+   "run-on-cloudflare"
   ],
-  "unblocks": 2,
+  "unblocks": 5,
   "size": "M",
   "held": false,
-  "score": 304.79,
+  "score": 381.74,
+  "front": 0
+ },
+ {
+  "id": "Q-BUDGET-SURFACES",
+  "title": "Q-BUDGET-SURFACES: put the dashboard console agent and the site worker under the spend governor",
+  "goal": "cost",
+  "goals": [
+   "cost"
+  ],
+  "unblocks": 0,
+  "size": "S",
+  "held": false,
+  "score": 310.0,
   "front": 0
  },
  {
@@ -34,11 +33,11 @@
   "goals": [
    "run-on-cloudflare"
   ],
-  "unblocks": 1,
+  "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 271.31,
-  "front": 1
+  "score": 283.52,
+  "front": 2
  },
  {
   "id": "GIT-IN-CLOUDFLARE-1",
@@ -47,114 +46,23 @@
   "goals": [
    "run-on-cloudflare"
   ],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 260.87,
-  "front": 2
- },
- {
-  "id": "Q-TICK-DEPLOY",
-  "title": "Q-TICK-DEPLOY: deploy ultrastable-tick with the AI binding from a workflow",
-  "goal": "run-on-cloudflare",
-  "goals": [
-   "run-on-cloudflare"
-  ],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 260.87,
-  "front": 2
- },
- {
-  "id": "Q-SYS-BOOT-REHEARSAL",
-  "title": "Q-SYS-BOOT-REHEARSAL: SYS-6: bootstrap rehearsal from an empty repository to one unattended merged change",
-  "goal": "practical-solutions-on-platform",
-  "goals": [
-   "practical-solutions-on-platform"
-  ],
-  "unblocks": 0,
-  "size": "L",
-  "held": false,
-  "score": 240.0,
-  "front": 5
- },
- {
-  "id": "Q-GAP-fresh-account-bootstrap",
-  "title": "Q-GAP-fresh-account-bootstrap: First real --apply of a brand-new organization on an empty Cloudflare account",
-  "goal": "practical-solutions-on-platform",
-  "goals": [
-   "practical-solutions-on-platform"
-  ],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 208.7,
-  "front": 4
- },
- {
-  "id": "Q-GAP-second-installation",
-  "title": "Q-GAP-second-installation: A second independent installation",
-  "goal": "practical-solutions-on-platform",
-  "goals": [
-   "practical-solutions-on-platform"
-  ],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 208.7,
-  "front": 4
- },
- {
-  "id": "Q-COST-ROWS-LIVING-PAPER",
-  "title": "Q-COST-ROWS-LIVING-PAPER: D1 living-paper read 1784402502 rows in 7 days (limit 500000000)",
-  "goal": "cost",
-  "goals": [
-   "cost"
-  ],
-  "unblocks": 0,
-  "size": "S",
-  "held": false,
-  "score": 190.0,
-  "front": 0
- },
- {
-  "id": "Q-COST-ROWS-QNFO-AUDIT",
-  "title": "Q-COST-ROWS-QNFO-AUDIT: D1 qnfo-audit read 9594224751 rows in 7 days (limit 500000000)",
-  "goal": "cost",
-  "goals": [
-   "cost"
-  ],
-  "unblocks": 0,
-  "size": "S",
-  "held": false,
-  "score": 190.0,
-  "front": 0
- },
- {
-  "id": "Q-PARITY-3",
-  "title": "Q-PARITY-3: Metric breach files its own work item with a code-task and closes it on recovery (QNFO METRIC-CLOSED-LOOP-1)",
-  "goal": "criticality",
-  "goals": [
-   "criticality"
-  ],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 184.35,
-  "front": 2
+  "score": 271.3,
+  "front": 3
  },
  {
-  "id": "Q-COST-PROOF-1",
-  "title": "Q-COST-PROOF-1: record Quniverse D1 rows read and Workers AI neurons daily and discover account resources without hand-holding",
+  "id": "Q-PARITY-4",
+  "title": "Q-PARITY-4: Issue-age SLA ladder: nothing older than 120 minutes without action (QNFO SLA-120M)",
   "goal": "cost",
   "goals": [
    "cost"
   ],
-  "unblocks": 1,
+  "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 166.96,
+  "score": 262.65,
   "front": 3
  },
  {
@@ -167,12 +75,80 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 156.52,
-  "front": 6
+  "score": 260.87,
+  "front": 3
  },
  {
-  "id": "Q-PARITY-4",
-  "title": "Q-PARITY-4: Issue-age SLA ladder: nothing older than 120 minutes without action (QNFO SLA-120M)",
+  "id": "Q-GAP-fresh-account-bootstrap",
+  "title": "Q-GAP-fresh-account-bootstrap: First real --apply of a brand-new organization on an empty Cloudflare account",
+  "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 210.48,
+  "front": 8
+ },
+ {
+  "id": "Q-GAP-second-installation",
+  "title": "Q-GAP-second-installation: A second independent installation",
+  "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 210.48,
+  "front": 8
+ },
+ {
+  "id": "ZERO-MINUTES-WORKER-1",
+  "title": "ZERO-MINUTES-WORKER-1: Worker executor, diff gate and lane merge cost zero Actions minutes (live verification pending)",
+  "goal": "cost",
+  "goals": [
+   "cost",
+   "run-on-cloudflare"
+  ],
+  "unblocks": 2,
+  "size": "M",
+  "held": false,
+  "score": 210.0,
+  "front": 1
+ },
+ {
+  "id": "PORT-BRANCH-agent-zero-minutes-2",
+  "title": "PORT-BRANCH-agent-zero-minutes-2: carry agent/zero-minutes-2 onto main",
+  "goal": "cost",
+  "goals": [
+   "cost",
+   "run-on-cloudflare"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 189.13,
+  "front": 2
+ },
+ {
+  "id": "PORT-BRANCH-claude-zero-minutes-1-b2286e",
+  "title": "PORT-BRANCH-claude-zero-minutes-1-b2286e: carry claude/zero-minutes-1-b2286e onto main",
+  "goal": "cost",
+  "goals": [
+   "cost",
+   "run-on-cloudflare"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 189.13,
+  "front": 2
+ },
+ {
+  "id": "OL-20261117-1",
+  "title": "OL-20261117-1: READ-BUDGET-2: tick Worker reads on ultrastable-org",
   "goal": "cost",
   "goals": [
    "cost"
@@ -181,17 +157,30 @@
   "size": "M",
   "held": false,
   "score": 156.52,
-  "front": 6
+  "front": 3
  },
  {
   "id": "Q-SEED-1",
   "title": "Q-SEED-1: charter.json per system whose vectors generate the ranker's goals; a revision is versioned and re-ranks the backlog",
   "goal": null,
   "goals": [],
-  "unblocks": 2,
+  "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 151.3,
+  "score": 140.87,
+  "front": 6
+ },
+ {
+  "id": "ROLE-WORK-2",
+  "title": "ROLE-WORK-2: the Worker-native executor takes waiting dispatches, not only ops/priority-queue.json",
+  "goal": "run-on-cloudflare",
+  "goals": [
+   "run-on-cloudflare"
+  ],
+  "unblocks": 1,
+  "size": "M",
+  "held": false,
+  "score": 140.87,
   "front": 3
  },
  {
@@ -201,11 +190,11 @@
   "goals": [
    "growth"
   ],
-  "unblocks": 1,
+  "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 140.87,
-  "front": 4
+  "score": 132.22,
+  "front": 9
  },
  {
   "id": "Q-GROW-CASE-STUDY",
@@ -217,8 +206,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44,
-  "front": 7
+  "score": 132.22,
+  "front": 9
  },
  {
   "id": "Q-GROW-CHANGELOG-FEED",
@@ -230,8 +219,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44,
-  "front": 7
+  "score": 132.22,
+  "front": 9
  },
  {
   "id": "Q-GROW-DEMO-DASHBOARD",
@@ -243,8 +232,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44,
-  "front": 7
+  "score": 132.22,
+  "front": 9
  },
  {
   "id": "Q-GROW-PILOT-OFFER",
@@ -256,8 +245,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44,
-  "front": 7
+  "score": 132.22,
+  "front": 9
  },
  {
   "id": "Q-GROW-WEEKLY-REPORT",
@@ -269,8 +258,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44,
-  "front": 7
+  "score": 132.22,
+  "front": 9
  },
  {
   "id": "Q-GROW-adaptive-follow-ups",
@@ -282,8 +271,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44,
-  "front": 7
+  "score": 132.22,
+  "front": 9
  },
  {
   "id": "Q-GROW-front-door-example-systems",
@@ -295,8 +284,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44,
-  "front": 7
+  "score": 132.22,
+  "front": 9
  },
  {
   "id": "Q-GROW-shorter-pilot-form",
@@ -308,8 +297,34 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 130.44,
-  "front": 7
+  "score": 132.22,
+  "front": 9
+ },
+ {
+  "id": "OL-20261114-3",
+  "title": "OL-20261114-3: ROLE-WORK-2: waiting dispatches need the Worker-native executor",
+  "goal": "run-on-cloudflare",
+  "goals": [
+   "run-on-cloudflare"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 130.43,
+  "front": 4
+ },
+ {
+  "id": "Q-INTRO-1",
+  "title": "Q-INTRO-1: Intro outreach goes live: sender worker on Cloudflare Email Service, inbound reply capture, prospect growth",
+  "goal": "growth",
+  "goals": [
+   "growth"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 130.43,
+  "front": 9
  },
  {
   "id": "Q-CLOCK-LANE-HOOK",
@@ -319,7 +334,7 @@
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 120.0,
+  "score": 122.05,
   "front": 1
  },
  {
@@ -330,18 +345,34 @@
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 120.0,
+  "score": 122.05,
   "front": 1
  },
  {
-  "id": "Q-PARITY-6",
-  "title": "Q-PARITY-6: Second-family review gate on risky diffs (QNFO REVIEW-GATE-1)",
-  "goal": null,
-  "goals": [],
+  "id": "Q-CRIT-DISPATCH-YIELD",
+  "title": "Q-CRIT-DISPATCH-YIELD: raise deploys per dispatch: 560 dispatches in 14 days produced 18 credited deploys and 128 parked items",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 114.79,
+  "score": 114.78,
+  "front": 4
+ },
+ {
+  "id": "Q-BLIND-SWEEP-outreach",
+  "title": "Q-BLIND-SWEEP-outreach: answer the outreach sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality",
+   "growth"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 110.87,
   "front": 5
  },
  {
@@ -352,8 +383,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 104.35,
-  "front": 8
+  "score": 106.13,
+  "front": 10
  },
  {
   "id": "Q-PARITY-2",
@@ -363,8 +394,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 104.35,
-  "front": 8
+  "score": 106.13,
+  "front": 10
  },
  {
   "id": "Q-PARITY-5",
@@ -374,8 +405,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 104.35,
-  "front": 8
+  "score": 106.13,
+  "front": 10
  },
  {
   "id": "Q-PARITY-7",
@@ -385,8 +416,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 104.35,
-  "front": 8
+  "score": 106.13,
+  "front": 10
  },
  {
   "id": "Q-SYS-DEPLOY-ALL",
@@ -396,8 +427,250 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
+  "score": 106.13,
+  "front": 10
+ },
+ {
+  "id": "OPS-DASH-2",
+  "title": "OPS-DASH-2: /ops shows cost, criticality k and clocks beside the agents",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
   "score": 104.35,
-  "front": 8
+  "front": 6
+ },
+ {
+  "id": "PORT-BRANCH-parked-claude-fleet-autonomy-closed-loops-ki9il4",
+  "title": "PORT-BRANCH-parked-claude-fleet-autonomy-closed-loops-ki9il4: carry parked/claude/fleet-autonomy-closed-loops-ki9il4 onto main",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-BLIND-SWEEP-accessibility",
+  "title": "Q-BLIND-SWEEP-accessibility: answer the accessibility sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-BLIND-SWEEP-continuity",
+  "title": "Q-BLIND-SWEEP-continuity: answer the continuity sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-BLIND-SWEEP-finance",
+  "title": "Q-BLIND-SWEEP-finance: answer the finance sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-BLIND-SWEEP-ip",
+  "title": "Q-BLIND-SWEEP-ip: answer the ip sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-BLIND-SWEEP-legal",
+  "title": "Q-BLIND-SWEEP-legal: answer the legal sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-BLIND-SWEEP-platform-risk",
+  "title": "Q-BLIND-SWEEP-platform-risk: answer the platform-risk sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-BLIND-SWEEP-privacy",
+  "title": "Q-BLIND-SWEEP-privacy: answer the privacy sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-BLIND-SWEEP-reputation",
+  "title": "Q-BLIND-SWEEP-reputation: answer the reputation sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-BLIND-SWEEP-security",
+  "title": "Q-BLIND-SWEEP-security: answer the security sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-BLIND-SWEEP-users",
+  "title": "Q-BLIND-SWEEP-users: answer the users sweep",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-CONSOLE-SESSION-1",
+  "title": "Q-CONSOLE-SESSION-1: console agent proposes a code change as a fleet task (fresh code, audited, undoable)",
+  "goal": null,
+  "goals": [],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 10
+ },
+ {
+  "id": "Q-CRIT-ACTIONS-BEATS",
+  "title": "Q-CRIT-ACTIONS-BEATS: count scheduled GitHub workflows as beats in the Worker, so a workflow GitHub did not start is a missed slot",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-CRIT-PUBLIC-STAGE",
+  "title": "Q-CRIT-PUBLIC-STAGE: serve the stage the system reads for itself on ultrastable.io",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "Q-SELFIMPROVE-SENSE",
+  "title": "Q-SELFIMPROVE-SENSE: sensing adapters and weekly driver for SELF-IMPROVE-1",
+  "goal": null,
+  "goals": [],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 10
+ },
+ {
+  "id": "Q-TENANT-TOPOLOGY-1",
+  "title": "Q-TENANT-TOPOLOGY-1: declare ultrastable-tenants in doctrine/topology.json so the deploy lane owns it, and probe /health from the tick",
+  "goal": null,
+  "goals": [],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 10
+ },
+ {
+  "id": "RUNS-ON-IP-1",
+  "title": "RUNS-ON-IP-1: brand/shell public text must not state the criticality formula (blocks QNFO/qnfo-workers#11907)",
+  "goal": "criticality",
+  "goals": [
+   "criticality"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 104.35,
+  "front": 6
+ },
+ {
+  "id": "PORT-BRANCH-worker-q-grow-second-tenant-deploying",
+  "title": "PORT-BRANCH-worker-q-grow-second-tenant-deploying: carry worker/q-grow-second-tenant-deploying onto main",
+  "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform",
+   "growth"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 84.78,
+  "front": 7
  },
  {
   "id": "OL-20261112-93",
@@ -409,8 +682,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26,
-  "front": 4
+  "score": 80.05,
+  "front": 8
  },
  {
   "id": "PIN-fresh-account-bootstrap",
@@ -422,8 +695,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26,
-  "front": 4
+  "score": 80.05,
+  "front": 8
  },
  {
   "id": "Q-48",
@@ -435,8 +708,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26,
-  "front": 7
+  "score": 80.05,
+  "front": 9
  },
  {
   "id": "Q-50",
@@ -448,8 +721,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26,
-  "front": 7
+  "score": 80.05,
+  "front": 9
  },
  {
   "id": "Q-6",
@@ -461,8 +734,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 78.26,
-  "front": 7
+  "score": 80.05,
+  "front": 9
  },
  {
   "id": "Q-SYS-FAILURE-REGISTRY",
@@ -474,34 +747,45 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
+  "score": 80.05,
+  "front": 8
+ },
+ {
+  "id": "Q-TENANT-MIGRATE-1",
+  "title": "Q-TENANT-MIGRATE-1: move QNFO high-read tables off scans (steps M1 to M6 in doctrine/tenant-storage.json)",
+  "goal": null,
+  "goals": [],
+  "unblocks": 0,
+  "size": "L",
+  "held": false,
+  "score": 80.0,
+  "front": 11
+ },
+ {
+  "id": "OL-20261115-9",
+  "title": "OL-20261115-9: BOOTSTRAP-GAPS (ops#13): BG-1 to BG-9 initialization steps not yet autonomous",
+  "goal": "practical-solutions-on-platform",
+  "goals": [
+   "practical-solutions-on-platform"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
   "score": 78.26,
-  "front": 4
+  "front": 8
  },
  {
-  "id": "Q-CRIT-COLLECTORS",
-  "title": "Q-CRIT-COLLECTORS: push GitHub-run, ops/cost.jsonl and workflow_dispatch samples to /api/criticality/sample and mirror /metrics/criticality.json into ultrastable/seed",
-  "goal": "criticality",
+  "id": "PORT-BRANCH-parked-claude-ultra-stable-cloudflare-bootstrap-",
+  "title": "PORT-BRANCH-parked-claude-ultra-stable-cloudflare-bootstrap-: carry parked/claude/ultra-stable-cloudflare-bootstrap-jyvn8i onto main",
+  "goal": "practical-solutions-on-platform",
   "goals": [
-   "criticality"
+   "practical-solutions-on-platform"
   ],
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 69.57,
-  "front": 5
- },
- {
-  "id": "Q-CRIT-IGNITION",
-  "title": "Q-CRIT-IGNITION: ignition check: every open chain link as a data row, open_ignition_gaps next to k_eff",
-  "goal": "criticality",
-  "goals": [
-   "criticality"
-  ],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 69.57,
-  "front": 5
+  "score": 78.26,
+  "front": 8
  },
  {
   "id": "Q-11",
@@ -511,7 +795,7 @@
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 60.0,
+  "score": 62.05,
   "front": 1
  },
  {
@@ -522,7 +806,7 @@
   "unblocks": 0,
   "size": "S",
   "held": false,
-  "score": 60.0,
+  "score": 62.05,
   "front": 1
  },
  {
@@ -533,8 +817,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18,
-  "front": 8
+  "score": 53.96,
+  "front": 10
  },
  {
   "id": "Q-185",
@@ -544,8 +828,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18,
-  "front": 8
+  "score": 53.96,
+  "front": 10
  },
  {
   "id": "Q-35",
@@ -555,8 +839,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18,
-  "front": 8
+  "score": 53.96,
+  "front": 10
  },
  {
   "id": "Q-7",
@@ -566,8 +850,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18,
-  "front": 8
+  "score": 53.96,
+  "front": 10
  },
  {
   "id": "Q-8",
@@ -577,8 +861,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18,
-  "front": 8
+  "score": 53.96,
+  "front": 10
  },
  {
   "id": "Q-90",
@@ -588,8 +872,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18,
-  "front": 8
+  "score": 53.96,
+  "front": 10
  },
  {
   "id": "Q-91",
@@ -599,8 +883,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18,
-  "front": 8
+  "score": 53.96,
+  "front": 10
  },
  {
   "id": "Q-93",
@@ -610,8 +894,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18,
-  "front": 8
+  "score": 53.96,
+  "front": 10
  },
  {
   "id": "Q-94",
@@ -621,8 +905,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 52.18,
-  "front": 8
+  "score": 53.96,
+  "front": 10
  },
  {
   "id": "WEB-1",
@@ -634,8 +918,8 @@
   "unblocks": 2,
   "size": "M",
   "held": false,
-  "score": 46.96,
-  "front": 2
+  "score": 48.74,
+  "front": 3
  },
  {
   "id": "Q-3",
@@ -645,8 +929,8 @@
   "unblocks": 0,
   "size": "L",
   "held": false,
-  "score": 40.0,
-  "front": 9
+  "score": 41.37,
+  "front": 11
  },
  {
   "id": "Q-SYS-AGENT-READINESS",
@@ -656,8 +940,8 @@
   "unblocks": 0,
   "size": "L",
   "held": false,
-  "score": 40.0,
-  "front": 9
+  "score": 41.37,
+  "front": 11
  },
  {
   "id": "Q-SYS-VECTOR-KB",
@@ -667,21 +951,8 @@
   "unblocks": 0,
   "size": "L",
   "held": false,
-  "score": 40.0,
-  "front": 9
- },
- {
-  "id": "WEB-2",
-  "title": "WEB-2: Attach the ultrastable domains to the site, remove `noindex`, switch footer to \"Patent pending\"",
-  "goal": "growth",
-  "goals": [
-   "growth"
-  ],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 36.52,
-  "front": 4
+  "score": 41.37,
+  "front": 11
  },
  {
   "id": "WEB-4",
@@ -693,8 +964,8 @@
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 36.52,
-  "front": 4
+  "score": 38.31,
+  "front": 5
  },
  {
   "id": "WEB-6",
@@ -706,8 +977,21 @@
   "unblocks": 1,
   "size": "M",
   "held": false,
+  "score": 38.31,
+  "front": 5
+ },
+ {
+  "id": "WEB-2",
+  "title": "WEB-2: Attach the ultrastable domains to the site, remove `noindex`, switch footer to the license notice",
+  "goal": "growth",
+  "goals": [
+   "growth"
+  ],
+  "unblocks": 1,
+  "size": "M",
+  "held": false,
   "score": 36.52,
-  "front": 4
+  "front": 5
  },
  {
   "id": "GH-2",
@@ -717,8 +1001,8 @@
   "unblocks": 3,
   "size": "M",
   "held": false,
-  "score": 31.31,
-  "front": 2
+  "score": 33.09,
+  "front": 1
  },
  {
   "id": "PL-1",
@@ -728,8 +1012,8 @@
   "unblocks": 3,
   "size": "M",
   "held": false,
-  "score": 31.31,
-  "front": 2
+  "score": 33.09,
+  "front": 1
  },
  {
   "id": "BIZ-2",
@@ -741,8 +1025,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09,
-  "front": 7
+  "score": 27.87,
+  "front": 9
  },
  {
   "id": "FUND-10",
@@ -754,8 +1038,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09,
-  "front": 7
+  "score": 27.87,
+  "front": 9
  },
  {
   "id": "FUND-11",
@@ -767,8 +1051,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09,
-  "front": 7
+  "score": 27.87,
+  "front": 9
  },
  {
   "id": "FUND-6",
@@ -780,8 +1064,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09,
-  "front": 7
+  "score": 27.87,
+  "front": 9
  },
  {
   "id": "FUND-7",
@@ -793,8 +1077,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09,
-  "front": 7
+  "score": 27.87,
+  "front": 9
  },
  {
   "id": "FUND-8",
@@ -806,8 +1090,47 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 26.09,
-  "front": 7
+  "score": 27.87,
+  "front": 9
+ },
+ {
+  "id": "Q-FLOW-RESUME-JOBS",
+  "title": "Q-FLOW-RESUME-JOBS: bring the jobs, outreach and resume system under the flow map",
+  "goal": "growth",
+  "goals": [
+   "growth"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 27.87,
+  "front": 9
+ },
+ {
+  "id": "Q-METRIC-declared-probes",
+  "title": "Q-METRIC-declared-probes: Give the declared metrics M-generator and M-outreach real probes",
+  "goal": "growth",
+  "goals": [
+   "growth"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 27.87,
+  "front": 9
+ },
+ {
+  "id": "Q-PILOT-first-agreement",
+  "title": "Q-PILOT-first-agreement: First pilot agreement on the bring-your-own-account model",
+  "goal": "growth",
+  "goals": [
+   "growth"
+  ],
+  "unblocks": 0,
+  "size": "M",
+  "held": false,
+  "score": 27.87,
+  "front": 9
  },
  {
   "id": "FUND-9",
@@ -820,11 +1143,11 @@
   "size": "M",
   "held": false,
   "score": 26.09,
-  "front": 7
+  "front": 9
  },
  {
-  "id": "OL-20261113-5",
-  "title": "OL-20261113-5: PROMO-1 promotion manager owns video and social reach",
+  "id": "OL-20261115-11",
+  "title": "OL-20261115-11: OUTREACH-1 (ops#34): foundation outreach module with selftest and segment learner",
   "goal": "growth",
   "goals": [
    "growth"
@@ -833,11 +1156,11 @@
   "size": "M",
   "held": false,
   "score": 26.09,
-  "front": 7
+  "front": 9
  },
  {
-  "id": "Q-FLOW-RESUME-JOBS",
-  "title": "Q-FLOW-RESUME-JOBS: bring the jobs, outreach and resume system under the flow map",
+  "id": "PORT-BRANCH-agent-q-grow-agent-directories-q-grow-agent-dire",
+  "title": "PORT-BRANCH-agent-q-grow-agent-directories-q-grow-agent-dire: carry agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare onto main",
   "goal": "growth",
   "goals": [
    "growth"
@@ -846,11 +1169,11 @@
   "size": "M",
   "held": false,
   "score": 26.09,
-  "front": 7
+  "front": 9
  },
  {
-  "id": "Q-METRIC-declared-probes",
-  "title": "Q-METRIC-declared-probes: Give the declared metrics M-generator and M-outreach real probes",
+  "id": "PORT-BRANCH-web-bot-auth-1",
+  "title": "PORT-BRANCH-web-bot-auth-1: carry web-bot-auth-1 onto main",
   "goal": "growth",
   "goals": [
    "growth"
@@ -859,11 +1182,11 @@
   "size": "M",
   "held": false,
   "score": 26.09,
-  "front": 7
+  "front": 9
  },
  {
-  "id": "Q-PILOT-first-agreement",
-  "title": "Q-PILOT-first-agreement: First pilot agreement on the bring-your-own-account model",
+  "id": "WEB-BOT-AUTH-1",
+  "title": "WEB-BOT-AUTH-1: Ultrastable's outbound agents sign their requests (Web Bot Auth) and publish the key directory",
   "goal": "growth",
   "goals": [
    "growth"
@@ -872,62 +1195,18 @@
   "size": "M",
   "held": false,
   "score": 26.09,
-  "front": 7
+  "front": 9
  },
  {
-  "id": "IP-1",
-  "title": "IP-1: Provisional draft: full spec, claims, figures",
+  "id": "ROADMAP-GH-NATIVE-1",
+  "title": "ROADMAP-GH-NATIVE-1: Run the whole system on GitHub alone (long-term option; Cloudflare stays the runtime until then)",
   "goal": null,
   "goals": [],
   "unblocks": 2,
   "size": "M",
   "held": false,
   "score": 20.87,
-  "front": 3
- },
- {
-  "id": "Q-GAP-cross-model-rescoring",
-  "title": "Q-GAP-cross-model-rescoring: Re-score predictions with a second model",
-  "goal": null,
-  "goals": [],
-  "unblocks": 2,
-  "size": "M",
-  "held": false,
-  "score": 20.87,
-  "front": 3
- },
- {
-  "id": "Q-SCOUT-claude-code-865f57db",
-  "title": "Q-SCOUT-claude-code-865f57db: v2.1.314 (claude-code)",
-  "goal": null,
-  "goals": [],
-  "unblocks": 2,
-  "size": "M",
-  "held": false,
-  "score": 20.87,
-  "front": 3
- },
- {
-  "id": "Q-SCOUT-claude-code-c35a8e45",
-  "title": "Q-SCOUT-claude-code-c35a8e45: v2.1.321 (claude-code)",
-  "goal": null,
-  "goals": [],
-  "unblocks": 2,
-  "size": "M",
-  "held": false,
-  "score": 20.87,
-  "front": 3
- },
- {
-  "id": "Q-SCOUT-cloudflare-agents-cb441d6b",
-  "title": "Q-SCOUT-cloudflare-agents-cb441d6b: agents@0.31.0 (cloudflare-agents)",
-  "goal": null,
-  "goals": [],
-  "unblocks": 2,
-  "size": "M",
-  "held": false,
-  "score": 20.87,
-  "front": 3
+  "front": 4
  },
  {
   "id": "Q-38",
@@ -937,8 +1216,8 @@
   "unblocks": 0,
   "size": "M",
   "held": false,
-  "score": 17.39,
-  "front": 8
+  "score": 19.18,
+  "front": 10
  },
  {
   "id": "INTERVIEW-2",
@@ -948,8 +1227,8 @@
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44,
-  "front": 5
+  "score": 12.22,
+  "front": 6
  },
  {
   "id": "INTERVIEW-4",
@@ -959,238 +1238,7 @@
   "unblocks": 1,
   "size": "M",
   "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "IP-6",
-  "title": "IP-6: Put the 12-month conversion deadline (non-provisional / PCT) on the calendar with 90/60/30-day reminders",
-  "goal": null,
-  "goals": [],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "OL-20261112-1",
-  "title": "OL-20261112-1: QNFO runtime config and replace PR owed by the QNFO lane",
-  "goal": null,
-  "goals": [],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "OL-20261112-12",
-  "title": "OL-20261112-12: Cut workers release v0.1.0",
-  "goal": null,
-  "goals": [],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "OL-20261112-2",
-  "title": "OL-20261112-2: Workers release tag v0.1.0 is a scan-evaluated dependency",
-  "goal": null,
-  "goals": [],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "PL-4",
-  "title": "PL-4: Ultrastable runs its own backlog: this roadmap as tenant #1, managers on a tick",
-  "goal": null,
-  "goals": [],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "Q-ADOPT-fable-reviewer",
-  "title": "Q-ADOPT-fable-reviewer: roster a second model family member as reviewer",
-  "goal": null,
-  "goals": [],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "Q-ADOPT-write-containment",
-  "title": "Q-ADOPT-write-containment: executor refuses writes that resolve outside the working tree",
-  "goal": null,
-  "goals": [],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "Q-SCOUT-claude-code-d1bbd9e0",
-  "title": "Q-SCOUT-claude-code-d1bbd9e0: v2.1.316 (claude-code)",
-  "goal": null,
-  "goals": [],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "Q-SCOUT-google-adk-7a45defe",
-  "title": "Q-SCOUT-google-adk-7a45defe: v2.12.0 (google-adk)",
-  "goal": null,
-  "goals": [],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "QA-1",
-  "title": "QA-1: Independent review: patent draft vs disclosure vs docs say the same thing",
-  "goal": null,
-  "goals": [],
-  "unblocks": 1,
-  "size": "M",
-  "held": false,
-  "score": 10.44,
-  "front": 5
- },
- {
-  "id": "BND-1",
-  "title": "BND-1: Package the containment boundary as a container or sandbox (the selling point)",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
- },
- {
-  "id": "FN-4",
-  "title": "FN-4: Other credit programs (Anthropic, AWS Activate, Microsoft for Startups, NVIDIA Inception)",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
- },
- {
-  "id": "FN-5",
-  "title": "FN-5: Pitch deck, one story with a Cloudflare variant and a GCP variant",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
- },
- {
-  "id": "GH-3",
-  "title": "GH-3: Labels, issue templates, a GitHub Project board; load this file as issues",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
- },
- {
-  "id": "INTERVIEW-3",
-  "title": "INTERVIEW-3: Feed the interview profile into the build prompt and seed repo",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
- },
- {
-  "id": "IP-2",
-  "title": "IP-2: Prior-art search with differentiators",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
- },
- {
-  "id": "IP-3",
-  "title": "IP-3: Fill the evidence log with dated QNFO commits and migrations",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
- },
- {
-  "id": "OL-20261112-10",
-  "title": "OL-20261112-10: CF-ACTIONS-TOKEN: move deploy, tick and dashboard to the ultrastable account",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
- },
- {
-  "id": "OL-20261112-11",
-  "title": "OL-20261112-11: Cloudflare account 81e3 transfer",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
- },
- {
-  "id": "OL-20261112-13",
-  "title": "OL-20261112-13: Archive license repo and publish .github profile",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
- },
- {
-  "id": "OL-20261112-14",
-  "title": "OL-20261112-14: external dependencies X-1 and X-3",
-  "goal": null,
-  "goals": [],
-  "unblocks": 0,
-  "size": "M",
-  "held": false,
-  "score": 0.0,
-  "front": 8
+  "score": 12.22,
+  "front": 6
  }
 ]

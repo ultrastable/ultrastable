@@ -39,6 +39,7 @@ class Team(unittest.TestCase):
     def test_recommend_scales_with_the_manifest(self):
         from foundation import manifest as mf
         m = mf.resolve(json.loads((ROOT / "instances/ultrastable/instance.json").read_text()))
+        m["ip"]["has_invention"] = True  # a tenant that does file; Ultrastable itself files nothing (NO-PATENT-1)
         r = team.recommend(m, ROOT)
         self.assertIn("legal-ip-manager", r["phase_1"])
         m["ip"]["has_invention"] = False

@@ -11,7 +11,7 @@
   "social": {"channels": ["bluesky", "mastodon"], "mode": "dry-run"},
   "runtime": {"provider": "cloudflare"},
   "repos": {"org": "ultrastable", "names": ["ultrastable"], "canonical": "ultrastable/ultrastable"},
-  "disclosure": {"public_allowed": false, "gate": "filed", "safe_now_only": true},
-  "ip": {"has_invention": true, "priority_filed": false, "has_practitioner": false},
+  "disclosure": {"public_allowed": true, "gate": "none", "safe_now_only": false},
+  "ip": {"has_invention": false, "priority_filed": false, "has_practitioner": false},
   "budget": {"usd_per_month": 0, "actions_minutes_monthly": 2000}
 }

@@ -260,7 +260,7 @@ class Boot:
         fp = self.root / "facts.json"
         if fp.exists():
             facts.update(json.loads(fp.read_text()))
-        for k, v in self.idea["front"].items():  # IDEA.md front matter may state a fact, e.g. `us_domiciled: false`
+        for k, v in self.idea["front"].items():  # IDEA.md front matter may state a fact, e.g. `has_entity: false`
             if k in case_library.load_library()["defaults"]:
                 facts[k] = {"true": True, "false": False}.get(v.lower(), int(v) if v.isdigit() else v)
         facts.setdefault("budget_usd_per_month", self.budget)

@@ -5,7 +5,7 @@ consumer: <repo path of the code, check, lint, generator or agent instruction th
 
 > <One-line summary.>
 
-**Status:** RUNNING | BUILT | PLANNED · **Owner:** <role> · **Updated:** YYYY-MM-DD · **Confidentiality:** SAFE NOW | PRIVATE
+**Status:** RUNNING | BUILT | PLANNED · **Owner:** <role> · **Updated:** YYYY-MM-DD · **Visibility:** PUBLIC | PRIVATE (secrets and personal data only)
 
 A document exists because something reads it. If this text tells a person to do something, delete that sentence and file an automatic
 backlog item instead (owner, trigger, verification): `python3 -m foundation writeback record --kind open-loop ...`.

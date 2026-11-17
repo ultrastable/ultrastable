@@ -54,14 +54,9 @@ def build(today):
     panels.append({"id": "funding", "title": "Funding and outreach pipeline", "rows": rows})
 
     # ---- IP
-    gate = jload("social/gate.json", problems) or {}
-    ev = (ROOT / "ip/evidence-log.md").read_text() if (ROOT / "ip/evidence-log.md").exists() else ""
-    receipts = [r for r in table_rows(ev, "|---") if re.search(r"filing receipt|application number", " ".join(r), re.I)]
-    panels.append({"id": "ip", "title": "IP status", "rows": [
-        ["Priority application", "filed" if gate.get("provisional_filed") else "not filed (the owner's signature and payment; owner card FILE-PRIORITY)", "ok" if gate.get("provisional_filed") else "warn"],
-        ["Filing receipts in evidence log", str(len(receipts)), "ok" if receipts else "warn"],
-        ["Filing package", "ip/provisional (spec, drawings) and ip/europe (Dutch filing set); not legal advice, attorney questions open in ip/europe/DECISION-MEMO.md", "info"],
-        ["Public content rule", "generic only until a filing receipt is recorded; nothing is asserted about prior publication", "info"]]})
+    panels.append({"id": "ip", "title": "IP protection", "rows": [
+        ["Protection", "Ultrastable License (source-available; non-commercial use free, commercial use licensed). No patent is filed (NO-PATENT-1).", "ok"],
+        ["License file", "present" if (ROOT / "LICENSE").exists() else "missing", "ok" if (ROOT / "LICENSE").exists() else "warn"]]})
 
     # ---- trust
     rows = [[k, f"reliability {v['reliability']} from {v['outcomes']} outcomes", "info"] for k, v in sorted(st.get("trust", {}).items())]

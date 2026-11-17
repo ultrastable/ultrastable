@@ -1446,6 +1446,24 @@
    "title": "SUBREQUEST-ROTATION-1: Free plan 50 subrequests per invocation",
    "body": "The tick Worker's heavy GitHub loops all failed with Too many subrequests in every slot after the org App install. They now rotate over three ticks (index.js LOOP_PHASE), each every 30 min; the GitHub call budget default is 40.",
    "probe": "grep:seed/worker/src/index.js::SUBREQUEST-ROTATION-1"
+  },
+  {
+   "id": "decision-2026-11-17-license-only-ip-stance-no-patent-filing",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "License-only IP stance (no patent filing)",
+   "body": "Rowan 2026-11-17: no patent filing; the Ultrastable License is the only IP protection. Removed bootstrap cases BC-1/BC-2/BC-8 and FILE-PRIORITY card and the provisional_filed social gate; ip/ drafts superseded, not deleted. Session: session_0156nqDtJ4GJA7WRUu2BBRaW",
+   "probe": "grep:instances/ultrastable/instance.json::\"has_invention\": false",
+   "session": "session_0156nqDtJ4GJA7WRUu2BBRaW"
+  },
+  {
+   "id": "lesson-2026-11-17-closing-a-decision-means-closing-its-queue-items",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Closing a decision means closing its queue items",
+   "body": "A policy change (no patent) left IP-1..7, QA-1, FUND-2 open in docs/issues, so the priority queue still ranked them. Close or reword every issue file a decision supersedes in the same PR, then run prioritize --apply. Session: session_0156nqDtJ4GJA7WRUu2BBRaW",
+   "probe": "grep:docs/issues/IP-5.json::superseded by owner decision",
+   "session": "session_0156nqDtJ4GJA7WRUu2BBRaW"
   }
  ]
 }

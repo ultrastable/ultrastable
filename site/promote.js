@@ -2,7 +2,7 @@
 // IndexNow: the key is public by design (the protocol proves site ownership by serving it at /<key>.txt), so it is not a secret.
 // Once a day the hourly site tick submits every sitemap URL to api.indexnow.org, which shares it with Bing, Yandex, Seznam, Naver and others.
 export const INDEXNOW_KEY = "ultrastable-indexnow-7f3a9c2e4b1d";
-export const SITEMAP_PATHS = ["/", "/ops", "/engineers", "/roadmap", "/product", "/how", "/proof", "/team", "/org", "/faq", "/contact", "/pilot", "/start", "/setup", "/privacy", "/accessibility"];
+export const SITEMAP_PATHS = ["/", "/ops", "/engineers", "/roadmap", "/product", "/how", "/showcase", "/proof", "/team", "/org", "/faq", "/contact", "/pilot", "/start", "/setup", "/privacy", "/accessibility"];
 export const DAY_MS = 23 * 3600e3;
 
 export function keyFile(pathname) {
