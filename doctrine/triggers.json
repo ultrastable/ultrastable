@@ -162,6 +162,15 @@
    ],
    "crons": []
   },
+  "ciwatch.yml": {
+   "events": [
+    "workflow_dispatch",
+    "workflow_run"
+   ],
+   "crons": [
+    "17 5 * * *"
+   ]
+  },
   "cost-guard.yml": {
    "events": [
     "workflow_dispatch"

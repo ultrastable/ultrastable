@@ -10,8 +10,12 @@ def main(name):
         return 0
     if not (cfg.get("paused") or name in cfg.get("paused_workflows", [])):
         return 0
-    print(f"::notice::actions-budget.json pauses '{name}'; cancelling this run")
     repo, run = os.environ["GITHUB_REPOSITORY"], os.environ["GITHUB_RUN_ID"]
+    v = subprocess.run(["gh", "api", f"repos/{repo}", "--jq", ".private"], capture_output=True, text=True)
+    if v.returncode == 0 and v.stdout.strip() == "false":
+        print(f"::notice::{repo} is public: Actions minutes are free, so the budget pause does not apply to '{name}'")
+        return 0  # the budget exists for private-repo minutes; a public repo never pauses (a red X here was the whole failure)
+    print(f"::notice::actions-budget.json pauses '{name}'; cancelling this run")
     r = subprocess.run(["gh", "api", "-X", "POST", f"repos/{repo}/actions/runs/{run}/cancel"], capture_output=True, text=True)
     if r.returncode:
         print(f"::warning::cancel failed ({r.stderr.strip()}); stopping with failure so no work runs")
