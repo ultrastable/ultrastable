@@ -7,22 +7,22 @@
 
 A system is autonomous if it has self-referential loops and the ability to close them.
 
-The numbered specifications, the docs and the Ultrastable License text: what a conforming implementation must do, and the terms for using it.
+Retired: the specifications, SCOPE and license text now live in ultrastable/ultrastable (specs/, SCOPE.md, licensing/). Kept public so existing links resolve.
 
 ![visibility](https://img.shields.io/badge/repo-public-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
 
 **The organization:** [ultrastable](https://github.com/ultrastable/ultrastable) · [workers](https://github.com/ultrastable/workers) · **spec** · [license](https://github.com/ultrastable/license) · [ops](https://github.com/ultrastable/ops) · [seed](https://github.com/ultrastable/seed) · [.github](https://github.com/ultrastable/.github) · [ultrastable.io](https://ultrastable.io)
 
 ## What it is
-The numbered specifications, the docs and the Ultrastable License text: what a conforming implementation must do, and the terms for using it. Ultrastable is an autonomous development platform: an organization of virtual managers and staff that runs projects, scores its own decisions, earns wider autonomy from its track record, and interrupts a person only for steps that cannot be undone.
+Retired: the specifications, SCOPE and license text now live in ultrastable/ultrastable (specs/, SCOPE.md, licensing/). Kept public so existing links resolve. Ultrastable is an autonomous development platform: an organization of virtual managers and staff that runs projects, scores its own decisions, earns wider autonomy from its track record, and interrupts a person only for steps that cannot be undone.
 
 <p align="center"><img src="assets/brand/loop.png" alt="The loop every manager runs: predict, execute, verify, score, plus" width="90%"></p>
 
 ## Who it is for
-Engineers who want the precise design.
+Anyone following an old link.
 
 ## Quickstart
-- Start at SCOPE.md, then specs/README.md
+- Go to ultrastable/ultrastable, folder specs/
 
 ## It runs on itself
 Ultrastable runs on itself: its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else, from this repository alone, with any tools (`python3 -m foundation selfhost`).
@@ -37,13 +37,12 @@ One main repository holds what Ultrastable is. A separate repository exists only
 
 | Repository | Visibility | What it holds |
 |---|---|---|
-| [ultrastable](https://github.com/ultrastable/ultrastable) | public | Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, and seed/ (the starting kit for a new system). It is a GitHub template, so "Use this template" copies it. |
+| [ultrastable](https://github.com/ultrastable/ultrastable) | public | Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). It is a GitHub template, so "Use this template" copies it. |
 | [workers](https://github.com/ultrastable/workers) | public | The reusable core engine and its tests. Overlaps seed/ in the main repository; folding it in is tracked as Q-REPOS-MERGE-WORKERS. |
-| [spec](https://github.com/ultrastable/spec) | public | US-SPEC-* specifications, SCOPE, and the canonical LICENSE, COMMERCIAL-TERMS and FAQ. Folding it in is tracked as Q-REPOS-MERGE-SPEC. |
 | [ops](https://github.com/ultrastable/ops) | private | The few steps only the owner can take (accounts, money, signatures), one card each. Private on purpose. |
 | [practical-solutions](https://github.com/ultrastable/practical-solutions) | public | An autonomous bright-spot finder that runs on Ultrastable. The first system built on it, in its own repository. |
 
-The organization's profile page is [.github](https://github.com/ultrastable/.github). Retired, kept only so old links work: [`license`](https://github.com/ultrastable/license) is now in `spec`; [`seed`](https://github.com/ultrastable/seed) is now in `ultrastable`. Still to fold into the main repository: `workers` into `ultrastable` (Q-REPOS-MERGE-WORKERS), `spec` into `ultrastable` (Q-REPOS-MERGE-SPEC). The target set is `ultrastable`, `ops`, `practical-solutions`.
+The organization's profile page is [.github](https://github.com/ultrastable/.github). Retired, kept only so old links work: [`spec`](https://github.com/ultrastable/spec) is now in `ultrastable`; [`license`](https://github.com/ultrastable/license) is now in `ultrastable`; [`seed`](https://github.com/ultrastable/seed) is now in `ultrastable`. Still to fold into the main repository: `workers` into `ultrastable` (Q-REPOS-MERGE-WORKERS). The target set is `ultrastable`, `ops`, `practical-solutions`.
 
 ## License
 Source-available. Free for non-commercial use: read it, run it, study it, change it, share it. Any commercial use needs a Commercial License with revenue share. Full terms: [Ultrastable License v1.0 (USL-1.0)](https://github.com/ultrastable/ultrastable/blob/main/LICENSING.md). Commercial licensing: pilot@ultrastable.io.
