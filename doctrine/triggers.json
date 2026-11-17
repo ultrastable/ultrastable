@@ -373,7 +373,7 @@
     "workflow_dispatch"
    ],
    "crons": [
-    "17 15 * * 2,5"
+    "17 15 * * *"
    ]
   },
   "transparency.yml": {
