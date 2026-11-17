@@ -23,7 +23,7 @@ DOWN: set[str] = set()  # FREE-LLM-5: adapters whose transport failed in this pr
 
 def rungs(root=REPO, env=None) -> list[dict]:
     rs = agents.route_authors(env, root)
-    return [a for a in rs if a["id"] not in DOWN] or rs
+    return [a for a in rs if a["id"] not in DOWN and a.get("route") not in DOWN] or rs
 
 
 def transport(a: dict, prompt: str, env=None) -> tuple[str, dict]:
@@ -76,7 +76,7 @@ def call(prompt: str, attempt: int = 0, role: str = "author", root=REPO, env=Non
                 body = f"(error body unreadable: {type(e2).__name__})"
         log_cost(root, {"role": role, "adapter": a["id"], "model": a["model"], "family": a["family"], "ok": False, "why": f"{type(e).__name__}: {str(e)[:120]} {body}".strip(), "usd": 0})
         if not adapter:
-            DOWN.add(a["id"])
+            DOWN.update({a["id"], a.get("route")})  # the whole provider route: both GitHub Models rungs failed the same way
         raise
     meta = {"adapter": a["id"], "model": a["model"], "family": a["family"], "usd": cost_usd(a, usage, prompt, text), "priced": a.get("usd_per_m_in") is not None}
     log_cost(root, {"role": role, "ok": True, **meta})
