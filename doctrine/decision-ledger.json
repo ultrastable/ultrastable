@@ -1568,6 +1568,15 @@
    "body": "Decided and merged in PRs 479 to 493: foundation/unknowns.py and seed/worker/src/unknowns.js question every loop with the Universal Ignorance Audit lenses, the tick files 3 a day from a reserve of its own, and gap answers file Q-OBJ growth items. Evidence: the worker tests pass (240), unknowns --check passes, and the live org D1 was probed after the 15:30 UTC tick: migrations_pending 0 and migrations 0015 to 0017 recorded.",
    "probe": "grep:foundation/unknowns.py::def answer",
    "session": "session_0156nqDvPzm1VZsCCoweiBKT"
+  },
+  {
+   "id": "decision-2026-11-17-connect-link-1-every-owner-action-is-one-connect-link",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "CONNECT-LINK-1: every owner action is one /connect link",
+   "body": "Rowan 2026-11-17: any must-do owner action is a single link to a web UI that runs OAuth/OIDC and callbacks server-side. Built /connect index, /connect/bluesky (atproto OAuth), /connect/mastodon, a server-side publisher in the tick Worker, and a pointclick check that fails a needs-you item without a connect link.",
+   "probe": "grep:foundation/pointclick.py::CONNECT-LINK-1",
+   "session": "session_0156nqDtKVpn3hxk4cBwg9BD"
   }
  ]
 }
