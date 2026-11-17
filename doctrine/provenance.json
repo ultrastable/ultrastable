@@ -1,0 +1,30 @@
+{
+ "_doc": "PROVENANCE-1 as data (owner, 2026-11-17). Every input and every change records where it came from, what it touched and what it did. Read by foundation/provenance.py, `python3 -m foundation provenance --check`, the dashboard (/changelog, /api/provenance) and doctrine/self-improvement.json (signal change-effect). Prose is never the enforcement; this file and its checker are.",
+ "id": "provenance",
+ "version": "1.0.0",
+ "marker": "PROVENANCE-1",
+ "axiom": "PROVENANCE-1: To improve itself the system must know where it has been. Every input and every change is a row with an origin class (system, loop, owner, end_user, agent, external), an actor, a channel, what it affected and, once measured, its effect. Rows are append-only and event-sourced; a later row settles an earlier one. The public view shows only rows marked public, with contact details and secrets stripped; private detail never leaves the ledger. The improvement loops read the rows: a lever that keeps being reverted is retired, one that keeps being kept is reinforced.",
+ "ledger": "ops/provenance.jsonl",
+ "public_view": "ops/changelog.json",
+ "origin_classes": {
+  "system": "started by the system itself with no loop id (bootstrap, migration, self-amendment)",
+  "loop": "an automated code loop; actor is the loop id from instances/ultrastable/loop-registry.json",
+  "owner": "typed or spoken by the owner (console note, project thread, command)",
+  "end_user": "submitted by a tenant's visitor or customer (suggestion, correction, form); actor is the tenant surface, never a person",
+  "agent": "a code agent session working a work order; actor is the agent name",
+  "external": "a signal from outside (scout finding, funder reply, competitor change)"
+ },
+ "channels": ["commit", "pr", "issue", "command", "thread", "form", "api", "loop-run", "deploy", "migration", "scout"],
+ "kinds": ["change", "input", "decision", "deploy", "suggestion", "incident", "settlement"],
+ "effects": ["pending", "kept", "reverted", "none"],
+ "tenants": ["ultrastable", "practical-solutions"],
+ "git_rules": [
+  {"match": "Requested by", "class": "owner", "channel": "thread"},
+  {"match": "Claude-Session:", "class": "agent", "channel": "pr"},
+  {"match": "executor", "class": "loop", "channel": "pr"},
+  {"match": "bootstrap", "class": "system", "channel": "commit"}
+ ],
+ "redact": ["email", "token", "ip", "phone", "url_query"],
+ "max_public_summary": 200,
+ "improve": {"min_settled": 3, "retire_below": 0.34, "reinforce_above": 0.67}
+}

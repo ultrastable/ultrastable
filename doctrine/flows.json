@@ -897,6 +897,34 @@
       "feedback": "each recorded sweep answer resets its domain's clock and each learned need extends the register, so the next scan asks about what the last one found; a failed probe files its own item and passes when the work lands",
       "bindings": []
     },
+    "provenance-loop": {
+      "inflows": [
+        {
+          "signal": "provenance.ledger",
+          "via": "file:ops/provenance.jsonl"
+        },
+        {
+          "signal": "changelog.public",
+          "via": "file:ops/changelog.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "provenance.ledger",
+          "via": "file:ops/provenance.jsonl"
+        },
+        {
+          "signal": "changelog.public",
+          "via": "file:ops/changelog.json"
+        }
+      ],
+      "feedback": "each change is settled kept or reverted from git history after the window; the kept rate per origin and actor retires or reinforces levers in the improvement ranker, so the next change is chosen from what the record says worked",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
     "insight-loop": {
       "inflows": [
         {

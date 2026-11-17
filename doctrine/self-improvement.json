@@ -28,6 +28,7 @@
   "decay": 0.2
  },
  "signals": [
+  {"id": "change-effect", "class": "outcome", "source": "ops/provenance.jsonl", "consumer": "foundation/provenance.py", "better": "higher", "target": 0.8, "weight": 0.9, "note": "share of settled changes that were kept, by origin class and actor (PROVENANCE-1); a lever whose changes keep being reverted is retired, one that is kept is reinforced"},
   {"id": "loop-pass-rate", "class": "outcome", "source": "ops/loop-evidence", "consumer": "foundation/lifecycle.py", "better": "higher", "target": 0.95, "weight": 1.0, "note": "did the loop do its job; same-signature failures twice trigger a mutation"},
   {"id": "executor-result", "class": "outcome", "source": "ops/executor-log.jsonl", "consumer": "foundation/executor.py", "better": "higher", "target": 0.9, "weight": 1.0, "note": "share of items ending verified, not no-change or error; each row carries its prediction"},
   {"id": "prediction-calibration", "class": "calibration", "source": "ops/improvements.jsonl", "consumer": "foundation/lifecycle.py", "better": "higher", "target": 0.7, "weight": 0.8, "note": "predictions that came true; a worker that cannot predict cannot improve"},

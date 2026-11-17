@@ -36,6 +36,7 @@
   python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
   python3 -m foundation blindspots [--check|--scan [--apply] [--live]|--answer D --text T|--learn ID ...]   BLINDSPOT-1: the system knows what the owner cannot know to ask for
   python3 -m foundation promote [--check|--kits|--plan [--apply]|--outcome CH --kind K]   PROMOTE-1: strategy and promotion as a closed loop
+  python3 -m foundation provenance [--check|--record JSON|--settle ID kept|reverted|none|--ingest-git [--apply]|--timeline|--changelog [--apply]|--lessons|--signal]  PROVENANCE-1: origin, effect and history of every input and change
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
   python3 -m foundation sauce [--tick [--apply]|--check|--parity SLUG DIR]  QNFO-PORT-1: contracts, fold, throughput, metric loop, ignition gaps
   python3 -m foundation contracts [--tick [--apply]|--report]             CONTRACTS-1: close on the item's own probe, reopen on relapse, hold after a reopen
@@ -93,6 +94,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["design"]:
         from . import design
         return design.main(_av[1:])
+    if _av[:1] == ["provenance"]:
+        from . import provenance
+        return provenance.main(_av[1:])
     if _av[:1] == ["insight"]:
         from . import insight
         return insight.main(_av[1:])
