@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 // REPOS-1 (Q-REPOS-ADMIN-APPLY): archive the retired repositories with the administration-only app from /connect/github-admin. Idempotent: an already archived repository is skipped.
 // RETIRED mirrors brand/brand.json (status "retired"); seed/worker/test/auth.test.js fails when the two differ.
