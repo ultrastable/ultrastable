@@ -1440,6 +1440,15 @@
    "session": "session_0156nqDrr5Hzb7VHb1BY2uwj"
   },
   {
+   "id": "lesson-2026-11-17-subrequest-rotation-1-free-plan-50-subrequests-per-invocatio",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SUBREQUEST-ROTATION-1: Free plan 50 subrequests per invocation",
+   "body": "The tick Worker's heavy GitHub loops all failed with Too many subrequests in every slot after the org App install. They now rotate over three ticks (index.js LOOP_PHASE), each every 30 min; the GitHub call budget default is 40.",
+   "probe": "grep:seed/worker/src/index.js::SUBREQUEST-ROTATION-1",
+   "session": "session_0156nqDtNcrLC8CK1fyHgmaP"
+  },
+  {
    "id": "decision-2026-11-17-license-only-ip-stance-no-patent-filing",
    "kind": "decision",
    "date": "2026-11-17",

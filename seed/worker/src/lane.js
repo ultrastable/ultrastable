@@ -8,7 +8,7 @@ const API = 'https://api.github.com';
 // null mergeable states retried without limit). One budget is shared by every GitHub caller of a tick (lane, handoffs): it counts calls, stops at
 // `cap` (default 150 per tick), and on a 403 or 429 that carries Retry-After or x-ratelimit-remaining: 0 / x-ratelimit-reset it stops for the rest of
 // the tick and records why. A stopped budget answers every later call with { ok: false, status: 0, stopped: true } without touching the network.
-export const GITHUB_CALLS_PER_TICK = 150;
+export const GITHUB_CALLS_PER_TICK = 40;  // SUBREQUEST-ROTATION-1: the Workers Free plan allows 50 subrequests per invocation (was 150)
 export function githubBudget(cap = GITHUB_CALLS_PER_TICK, now = () => Date.now()) {
   const b = { cap: Number(cap) > 0 ? Number(cap) : GITHUB_CALLS_PER_TICK, calls: 0, stopped: false, why: null, retry_after_s: null,
     // true when a call may go out; counts it
