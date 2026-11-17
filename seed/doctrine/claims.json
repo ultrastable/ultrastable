@@ -1,0 +1,21 @@
+{
+  "_doc": "CLAIMS-1, inherited by every tenant: words must match code. A claim is a sentence on a surface plus probes; a generated block (<!-- claim:ID -->...<!-- /claim -->) is rewritten from code by `python3 scripts/claims.py --fix`; an inventory is checked in reverse (what the code ships must be described). `python3 scripts/claims.py --check` runs on every change; add every new public statement here in the same change.",
+  "version": 1,
+  "output": "docs/claims.json",
+  "ledgers": [
+    {"id": "predictions", "name": "predictions", "probe": "grep:worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS predictions"},
+    {"id": "trust", "name": "trust", "probe": "grep:worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS trust_ledger"},
+    {"id": "work-claims", "name": "work claims", "probe": "grep:worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS claims"}
+  ],
+  "claims": [
+    {"id": "seed-bootstrapper", "surface": "README.md", "text": "The bootstrapper: read, detect, select, plan, provision, start, report.",
+     "probe": ["file:bootstrap/bootstrap.py"]},
+    {"id": "seed-tick", "surface": "README.md", "text": "The server-side runtime: Cloudflare Worker with the tick, D1 migrations, tests.",
+     "probe": ["file:worker/src/tick.js", "glob:worker/migrations/*.sql>=1", "glob:worker/test/*.test.js>=1"]}
+  ],
+  "generated": [
+    {"id": "seed-py-tests", "surface": "README.md", "measure": {"n": {"py_tests": ["tests"]}}, "template": "{n}"}
+  ],
+  "inventory": [],
+  "live": []
+}

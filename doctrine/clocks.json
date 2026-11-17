@@ -65,6 +65,14 @@
       "column": "at",
       "expected_interval_s": 600,
       "periodic": true
+    },
+    {
+      "id": "claims",
+      "what": "words checked against code and the deployed site",
+      "source": "workflow",
+      "workflow": "claims",
+      "expected_interval_s": 86400,
+      "periodic": false
     }
   ],
   "chain": {

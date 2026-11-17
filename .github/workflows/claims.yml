@@ -1,0 +1,25 @@
+name: claims
+# budget: ~0.5 min x 1 per day = ~15 min per month
+# trigger: daily schedule (the deployed words can drift from the registry only when a deploy or an edit lands; the per-PR check is in checks.yml) and manual dispatch
+# free-alternative: `python3 -m foundation claims --live --file` from any launch host, or the Cloudflare tick worker
+# CLAIMS-1: fetches the deployed surfaces, compares them with doctrine/claims.json, and files a Q-CLAIM-* item per drift (idempotent). Read-only on the site.
+on:
+  schedule:
+    - cron: "41 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: claims
+  cancel-in-progress: true
+jobs:
+  live:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Static claims (words against code)
+        run: python3 -m foundation claims --check
+      - name: Live claims (deployed words against the registry)
+        run: python3 -m foundation claims --live --file
