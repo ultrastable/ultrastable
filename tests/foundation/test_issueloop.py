@@ -34,3 +34,11 @@ class IssueLoop(unittest.TestCase):
     def test_metrics(self):
         m = il.metrics({"rows": [{"verdict": "unprobed", "closed": False}, {"verdict": "pass", "closed": True}], "unreadable": ["x"]})
         self.assertEqual((m["unprobed"], m["closed"], m["unreadable_repos"]), (1, 1, 1))
+
+    def test_file_items(self):
+        import tempfile, pathlib
+        with tempfile.TemporaryDirectory() as d:
+            got = il.file_items(d, {"rows": [{"repo": "o/r", "number": 7, "title": "t", "verdict": "unprobed", "evidence": "x"},
+                                             {"repo": "o/r", "number": 8, "title": "t", "verdict": "pass", "evidence": "x"}]})
+            self.assertEqual(got, ["Q-ISSUE-r-7"])
+            self.assertIn("issueloop --closed o/r#7", (pathlib.Path(d) / "docs/issues/Q-ISSUE-r-7.json").read_text())

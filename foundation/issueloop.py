@@ -95,8 +95,40 @@ def run(root=REPO, apply=False, issues=gh_issues, fetch=_fetch, closer=close):
     return {"rows": rows, "unreadable": unread}
 
 
+def file_items(root, res):
+    """--file: every unprobed or failing issue becomes a queue item (docs/issues/Q-ISSUE-*.json) the executor takes in driver order;
+    its probe passes once the issue is closed, so the item and the issue close together. Idempotent."""
+    out = []
+    for r in res["rows"]:
+        if r["verdict"] not in ("unprobed", "fail"):
+            continue
+        i = "Q-ISSUE-" + re.sub(r"[^A-Za-z0-9]+", "-", f"{r['repo'].split('/')[1]}-{r['number']}")
+        p = Path(root) / "docs/issues" / f"{i}.json"
+        if p.exists():
+            continue
+        p.parent.mkdir(parents=True, exist_ok=True)
+        probe = f"cmd:python3 -m foundation issueloop --closed {r['repo']}#{r['number']}"
+        body = (f"**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** {probe}\n**Status:** open\n\n"
+                f"ISSUE-LOOP-1: {r['repo']}#{r['number']} ({r['title']}) is {r['verdict']}: {r['evidence']}. Fix it in code and close it, or add a "
+                "`Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n")
+        p.write_text(json.dumps({"id": i, "title": f"{i}: {r['title']}"[:200], "body": body, "labels": ["p2", "agent-ready"], "milestone": "Now", "workstream": "Issues"}, indent=2) + "\n", encoding="utf-8")
+        out.append(i)
+    return out
+
+
+def is_closed(ref):
+    """--closed OWNER/REPO#N: exit 0 only when the issue is closed (the queue item's closing probe; REST, no GraphQL)."""
+    repo, _, n = ref.partition("#")
+    r = subprocess.run(["gh", "api", f"repos/{repo}/issues/{n}", "--jq", ".state"], capture_output=True, text=True, timeout=60)
+    return r.returncode == 0 and r.stdout.strip() == "closed"
+
+
 def main(argv):
+    if argv[:1] == ["--closed"]:
+        ok = is_closed(argv[1]); print("closed" if ok else "open or unreadable"); return 0 if ok else 1
     res = run(apply="--apply" in argv)
+    if "--file" in argv:
+        print("filed: " + ", ".join(file_items(REPO, res) or ["none"]))
     if "--json" in argv:
         print(json.dumps(res, indent=1))
     else:
