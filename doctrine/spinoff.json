@@ -58,12 +58,12 @@
    "what": "fills a draft document from choices; nothing stored"
   },
   "status-board": {
-   "implemented": false,
+   "implemented": true,
    "input": "none",
    "collects": [],
    "audience": 3,
    "cost_per_use": 1,
-   "what": "a public read-only board of a measured public fact"
+   "what": "a public read-only board of measured facts from committed files; no database, no input, no personal data"
   }
  },
  "score": {
@@ -133,12 +133,13 @@
   ]
  },
  "budget": {
-  "max_live": 6,
-  "max_launches_per_week": 1,
+  "max_live": 12,
+  "max_launches_per_week": 21,
   "max_requests_per_app_per_day": 20000,
   "subrequests_per_use": 8,
   "monthly_usd_ceiling": 0,
-  "note": "free tier only: Cloudflare Workers free requests, one shared D1, no paid model calls; the ceiling is zero until cost.json says there is headroom"
+  "note": "free tier only: Cloudflare Workers free requests, one shared D1, no paid model calls; the ceiling is zero. The daily launch count is set by the free-tier governor level (doctrine/spinoff-ideas.json cadence), so the loop fills headroom and never spends past it.",
+  "max_launches_per_day": 3
  },
  "portfolio": {
   "min_age_days": 14,

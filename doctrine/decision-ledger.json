@@ -2084,6 +2084,24 @@
    "title": "FREE-TIER-1 and AI-ROUTER-1: free-plan governor and shared AI cost router",
    "body": "ultrastable-ops was never the volume problem (one analytics refresh spike per 6 h, about 0.3M of 5M rows a day); the per-hour cap misread a spike as overage. Fixed with an account-wide daily free-plan level (seed/worker/src/freetier.js) and a shared AI router (workers/core/airouter, vendored to seed/worker/src/airouter.js) with a default monthly paid cap of 0. The product-manager decision-ledger probe named a report file that is never written; it now names ops/growth/experiments.json. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
    "probe": "file:seed/worker/src/freetier.js"
+  },
+  {
+   "id": "decision-2026-11-17-spinoff-ideas-1-idea-loop-fills-free-plan-headroom",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "SPINOFF-IDEAS-1: idea loop fills free-plan headroom",
+   "body": "Spinoff loop proposes, scores (value over cost share) and queues spinoffs and loop-scope items against ops/free-tier.json; launches per day follow the governor level (ok 3, degrade 1, shed 0, stale snapshot degrade); status-board archetype launched with no storage; roadmap at /roadmap and /roadmap.json from generated site/spinoff-roadmap-data.js.",
+   "probe": "grep:foundation/ideas.py::def daily_cap",
+   "session": "session_0156nqDsaJJFaaGybW6PCbfG"
+  },
+  {
+   "id": "decision-2026-11-17-ops-queue-1-advisory-budgets-no-longer-hold-the-tick",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "OPS-QUEUE-1: advisory budgets no longer hold the tick",
+   "body": "Budgets with gates_tick false are advisory (ultrastable-ops); new failure mode work-queue-stalled; /ops labels items by app. Superseded PR 583 carried this; recorded again so the range cites its session.",
+   "probe": "grep:seed/worker/src/freetier.js::export function evaluate",
+   "session": "session_0156nqDuqSRhg3XdymKRy7AC"
   }
  ]
 }

@@ -1,0 +1,349 @@
+{
+ "_doc": "SPINOFF-IDEAS-1 (owner, 2026-11-17): 'use the maximum resources possible, but stay cost constrained; brainstorm new ideas automatically; keep increasing scope and loops'. Ultrastable proposes, scores and queues its own spinoffs and loop scope increases against the free-plan headroom the FREE-TIER-1 governor measures (ops/free-tier.json). Read by foundation/ideas.py; checked by `python3 -m foundation ideas --check`. Numbers are hypotheses re-tuned from settled outcomes; never edit one to clear a breach.",
+ "id": "spinoff-ideas",
+ "marker": "SPINOFF-IDEAS-1",
+ "headroom": "ops/free-tier.json",
+ "stale_after_hours": 48,
+ "queue": "ops/spinoff/queue.jsonl",
+ "roadmap_out": "site/spinoff-roadmap-data.js",
+ "reserve": {
+  "d1_rows_read": 0.25,
+  "d1_rows_written": 0.25,
+  "workers_requests": 0.25,
+  "ai_neurons": 0.4
+ },
+ "cadence": {
+  "_doc": "launches per day by governor level; a stale snapshot counts as degrade",
+  "ok": 3,
+  "degrade": 1,
+  "shed": 0
+ },
+ "min_score": 6,
+ "max_new_per_run": 4,
+ "scope_ideas_per_run": 1,
+ "weights": {
+  "showcase_bonus": 1.5,
+  "cost_penalty": 10
+ },
+ "board_stale_hours": 72,
+ "bank": [
+  {
+   "id": "free-tier-meter",
+   "kind": "spinoff",
+   "archetype": "status-board",
+   "name": "Free-Tier Meter",
+   "tagline": "How much of Cloudflare's free plan does a whole autonomous system use today? Live, from the loop that spends it.",
+   "showcases": "the budget governor: doing the most with the least",
+   "reach": 4,
+   "impact": 3,
+   "showcase": true,
+   "cost": {
+    "workers_requests": 3000,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   },
+   "fact": {
+    "path": "ops/free-tier.json",
+    "kind": "json",
+    "rows": [
+     {
+      "label": "Governor level",
+      "ptr": "level"
+     },
+     {
+      "label": "D1 rows read today",
+      "ptr": "resources.d1_rows_read.used",
+      "of": "resources.d1_rows_read.limit"
+     },
+     {
+      "label": "D1 rows written today",
+      "ptr": "resources.d1_rows_written.used",
+      "of": "resources.d1_rows_written.limit"
+     },
+     {
+      "label": "Workers requests today",
+      "ptr": "resources.workers_requests.used",
+      "of": "resources.workers_requests.limit"
+     },
+     {
+      "label": "AI neurons today",
+      "ptr": "resources.ai_neurons.used",
+      "of": "resources.ai_neurons.limit"
+     }
+    ]
+   }
+  },
+  {
+   "id": "numbers-board",
+   "kind": "spinoff",
+   "archetype": "status-board",
+   "name": "Ultrastable by the Numbers",
+   "tagline": "Loops running, edges wired, stories passing and what the system does not know yet, straight from its own ledger.",
+   "showcases": "self-measurement and transparency",
+   "reach": 4,
+   "impact": 3,
+   "showcase": true,
+   "cost": {
+    "workers_requests": 2000,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   },
+   "fact": {
+    "path": "ops/transparency.json",
+    "kind": "json",
+    "rows": [
+     {
+      "label": "Managers and loops",
+      "ptr": "scoreboard.managers_and_loops"
+     },
+     {
+      "label": "Loops with evidence",
+      "ptr": "scoreboard.loops_with_evidence"
+     },
+     {
+      "label": "Edges wired",
+      "ptr": "scoreboard.edges_wired",
+      "of": "scoreboard.edges_total"
+     },
+     {
+      "label": "Stories passing",
+      "ptr": "scoreboard.stories_passing",
+      "of": "scoreboard.stories_total"
+     },
+     {
+      "label": "Open gaps",
+      "ptr": "scoreboard.open_gaps"
+     },
+     {
+      "label": "Unknowns questioned",
+      "ptr": "unknowns.units_questioned",
+      "of": "unknowns.units"
+     }
+    ]
+   }
+  },
+  {
+   "id": "what-changed",
+   "kind": "spinoff",
+   "archetype": "status-board",
+   "name": "What Changed",
+   "tagline": "Every change the system made to itself, by who or what originated it. No person in the path.",
+   "showcases": "provenance: where every change came from",
+   "reach": 3,
+   "impact": 3,
+   "showcase": true,
+   "cost": {
+    "workers_requests": 1500,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   },
+   "fact": {
+    "path": "ops/changelog.json",
+    "kind": "json",
+    "rows": [
+     {
+      "label": "Public changes recorded",
+      "ptr": "entries#len"
+     },
+     {
+      "label": "Made by loops",
+      "ptr": "counts_by_origin.loop"
+     },
+     {
+      "label": "Made by agents",
+      "ptr": "counts_by_origin.agent"
+     },
+     {
+      "label": "Made by the system",
+      "ptr": "counts_by_origin.system"
+     },
+     {
+      "label": "Made by the owner",
+      "ptr": "counts_by_origin.owner"
+     }
+    ]
+   }
+  },
+  {
+   "id": "loop-ledger",
+   "kind": "spinoff",
+   "archetype": "status-board",
+   "name": "Loop Ledger",
+   "tagline": "How many closed loops keep this system running, and which ones are on a clock.",
+   "showcases": "closed loops and clockwork",
+   "reach": 3,
+   "impact": 3,
+   "showcase": true,
+   "cost": {
+    "workers_requests": 1500,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   },
+   "fact": {
+    "path": "instances/ultrastable/loop-registry.json",
+    "kind": "json",
+    "rows": [
+     {
+      "label": "Registered loops",
+      "ptr": "loops#len"
+     },
+     {
+      "label": "Credentials with a probe",
+      "ptr": "credentials#len"
+     }
+    ]
+   }
+  },
+  {
+   "id": "portfolio-board",
+   "kind": "spinoff",
+   "archetype": "status-board",
+   "name": "Spinoff Portfolio",
+   "tagline": "The apps Ultrastable launched on its own, what they cost and how many it retired.",
+   "showcases": "autonomous idea-to-app launching with a portfolio manager",
+   "reach": 4,
+   "impact": 3,
+   "showcase": true,
+   "cost": {
+    "workers_requests": 2000,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   },
+   "fact": {
+    "path": "spinoffs/registry.json",
+    "kind": "json",
+    "rows": [
+     {
+      "label": "Live apps",
+      "ptr": "apps#len"
+     },
+     {
+      "label": "Retired apps",
+      "ptr": "retired#len"
+     },
+     {
+      "label": "Live cap",
+      "ptr": "caps.max_live"
+     },
+     {
+      "label": "Launches per day cap",
+      "ptr": "caps.max_launches_per_day"
+     }
+    ]
+   }
+  },
+  {
+   "id": "security-txt-writer",
+   "kind": "spinoff",
+   "archetype": "template-generator",
+   "name": "security.txt Writer",
+   "tagline": "Answer three choices, get a ready RFC 9116 security.txt. Closes the gap Blindspot Check finds.",
+   "showcases": "check, fix, re-check: the loop closed for a stranger",
+   "reach": 4,
+   "impact": 4,
+   "showcase": false,
+   "cost": {
+    "workers_requests": 2000,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   }
+  },
+  {
+   "id": "email-auth-writer",
+   "kind": "spinoff",
+   "archetype": "template-generator",
+   "name": "SPF and DMARC Writer",
+   "tagline": "Pick your mail provider, get the exact SPF and DMARC records to publish.",
+   "showcases": "check, fix, re-check: the loop closed for a stranger",
+   "reach": 4,
+   "impact": 4,
+   "showcase": false,
+   "cost": {
+    "workers_requests": 2000,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   }
+  },
+  {
+   "id": "privacy-notice-draft",
+   "kind": "spinoff",
+   "archetype": "template-generator",
+   "name": "Plain Privacy Page Draft",
+   "tagline": "A few choices become a plain-language privacy page draft. Not legal advice; says so.",
+   "showcases": "blind-spot register turned into a product",
+   "reach": 5,
+   "impact": 3,
+   "showcase": false,
+   "cost": {
+    "workers_requests": 2500,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   }
+  }
+ ],
+ "scope_templates": [
+  {
+   "id": "scope-implement-template-generator",
+   "title": "Implement the template-generator archetype in the spinoff Worker so the queued writers (security.txt, SPF/DMARC, privacy page) can launch",
+   "resource": "workers_requests",
+   "cost": {
+    "workers_requests": 0
+   },
+   "why": "three queued ideas with the highest impact are blocked only by this archetype; it adds no storage and no model calls"
+  },
+  {
+   "id": "scope-collect-cadence",
+   "title": "Collect every live app's metrics twice a day instead of once",
+   "resource": "workers_requests",
+   "cost": {
+    "workers_requests": 40
+   },
+   "why": "more measurement points per app for the portfolio manager at a few requests"
+  },
+  {
+   "id": "scope-recheck-boards",
+   "title": "Refresh every status board's facts on each loop run, not only on launch",
+   "resource": "workers_requests",
+   "cost": {
+    "workers_requests": 0
+   },
+   "why": "boards stay current for free; the bundle is rebuilt from committed files"
+  },
+  {
+   "id": "scope-claims-live-daily",
+   "title": "Check every live app against its own claims once a day",
+   "resource": "workers_requests",
+   "cost": {
+    "workers_requests": 60
+   },
+   "why": "words match code at the cost of a request per claim"
+  },
+  {
+   "id": "scope-scout-more-sources",
+   "title": "Add scout sources while neurons sit under the reserve",
+   "resource": "ai_neurons",
+   "cost": {
+    "ai_neurons": 300
+   },
+   "why": "neuron headroom is the least used free resource"
+  }
+ ],
+ "private_ledgers": [
+  "provenance",
+  "bindings",
+  "told",
+  "contracts",
+  "agent-cost",
+  "outreach",
+  "cost"
+ ],
+ "max_live_boards": 12
+}

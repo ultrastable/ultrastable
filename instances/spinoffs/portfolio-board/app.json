@@ -1,0 +1,59 @@
+{
+ "slug": "portfolio-board",
+ "name": "Spinoff Portfolio",
+ "tagline": "The apps Ultrastable launched on its own, what they cost and how many it retired.",
+ "archetype": "status-board",
+ "status": "live",
+ "launched": "2026-11-17T21:21:28Z",
+ "need_ids": [],
+ "reach": 4,
+ "impact": 3,
+ "score": 15.0,
+ "checks": [],
+ "idea": "portfolio-board",
+ "fact": {
+  "path": "spinoffs/registry.json",
+  "kind": "json",
+  "rows": [
+   {
+    "label": "Live apps",
+    "ptr": "apps#len"
+   },
+   {
+    "label": "Retired apps",
+    "ptr": "retired#len"
+   },
+   {
+    "label": "Live cap",
+    "ptr": "caps.max_live"
+   },
+   {
+    "label": "Launches per day cap",
+    "ptr": "caps.max_launches_per_day"
+   }
+  ]
+ },
+ "showcase": true,
+ "cost": {
+  "d1_rows_read": 0,
+  "d1_rows_written": 0,
+  "workers_requests": 2000,
+  "ai_neurons": 0
+ },
+ "metrics": {
+  "reach": [
+   "board_age_hours"
+  ],
+  "impact": [],
+  "guard": [
+   "error_share"
+  ],
+  "targets": {
+   "board_age_hours": 30
+  },
+  "showcase": true,
+  "value": "a showcase board is kept while its facts stay fresh and its cost inside the headroom",
+  "prediction": "board_age_hours <= 30 within 48 h",
+  "input": "none"
+ }
+}

@@ -1,7 +1,7 @@
 name: spinoff
-# SPINOFF-1: the portfolio loop of spun-off apps. Collects each live app's public aggregate metrics, scores measured value, keeps, iterates, promotes or retires, and launches the next best idea within the weekly cap.
+# SPINOFF-1: the portfolio loop of spun-off apps. Collects each live app's public aggregate metrics, scores measured value, keeps, iterates, promotes or retires, and launches the next best ideas up to the daily count the free-tier governor level allows (SPINOFF-IDEAS-1).
 # budget: ~1 min per run, free (public repository); 1 scheduled run a day
-# trigger: daily; never faster, because an app's value is a 7-day measure and launches are capped at one a week
+# trigger: daily; the clock stays daily and the loop fills the day instead: up to 3 launches per run when the governor level is ok, 1 at degrade, 0 at shed
 # free-alternative: `python3 -m foundation spinoff --collect --apply && python3 -m foundation spinoff --tick --apply` from a cloud-hosted agent session or the Cloudflare cron worker
 on:
   schedule:
@@ -23,9 +23,19 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+      - name: Free-tier headroom, then ideas (SPINOFF-IDEAS-1)
+        env:
+          CF_ANALYTICS_TOKEN: ${{ secrets.CF_ANALYTICS_TOKEN }}
+        run: |
+          python3 -m foundation ideas --headroom --apply
+          python3 -m foundation ideas --brainstorm --apply
       - run: python3 -m foundation spinoff --collect --apply
       - run: python3 -m foundation spinoff --tick --apply
-      - run: python3 -m foundation spinoff --launch --apply
+      - name: Launch up to the governor's daily count
+        run: |
+          for i in 1 2 3; do python3 -m foundation spinoff --launch --apply; done
+      - run: python3 -m foundation spinoff --rebuild
+      - run: python3 -m foundation ideas --roadmap --apply
       - run: python3 -m foundation spinoff --promote --apply
       - name: Ledgers and registry to a PR the lane merges
         env:
@@ -33,9 +43,9 @@ jobs:
         run: |
           git config user.name "ultrastable-spinoff"
           git config user.email "actions@users.noreply.github.com"
-          if [ -n "$(git status --porcelain ops instances spinoffs)" ]; then
+          if [ -n "$(git status --porcelain ops instances spinoffs site docs)" ]; then
             b="agent/spinoff-${GITHUB_RUN_ID}"
-            git checkout -q -b "$b"; git add ops instances spinoffs
+            git checkout -q -b "$b"; git add ops instances spinoffs site/spinoff-roadmap-data.js docs/issues
             git commit -q -m "spinoff: metrics, portfolio decisions and launches (SPINOFF-1)"
             git push -q origin "$b"
             gh pr create --base main --head "$b" --title "spinoff: portfolio tick" --body "Metrics, decisions and launches recorded by the SPINOFF-1 loop. Evidence: ops/spinoff/ledger.jsonl."
