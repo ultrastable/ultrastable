@@ -197,7 +197,7 @@ test('content rules: empty, over the channel limit, secret patterns, missing sen
   assert.equal((await guard.send(msg({ content: 'hi', idempotencyKey: '3' }))).reason, 'sender_identification_missing');
   const ok = await guard.send(msg({ content: 'hi Sent by Example', idempotencyKey: '4' }));
   assert.equal(ok.decision, 'sent');
-  for (const [i, s] of ['ghp_' + 'a'.repeat(30), 'AKIA' + 'B'.repeat(16), 'password=hunter2hunter2', '-----BEGIN PRIVATE KEY-----', 'Bearer ' + 'z'.repeat(30)].entries()) {
+  for (const [i, s] of ['ghp_' + 'a'.repeat(30), 'AKIA' + 'B'.repeat(16), 'password=hunter2hunter2', '-----BEGIN ' + 'PRIVATE KEY-----', 'Bearer ' + 'z'.repeat(30)].entries()) {
     const channel2 = fakeChannel();
     const r = await guard.send(msg({ content: `see ${s}`, idempotencyKey: `s${i}` }));
     assert.equal(r.reason === 'content_secret_pattern' || r.reason === 'content_too_long', true, s);
