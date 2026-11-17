@@ -18,7 +18,7 @@
       "repo": "ultrastable/ultrastable",
       "db": "tenant-ps-db",
       "web": "tenant-ps-web",
-      "url": "https://tenant-ps-web.ultrastable.workers.dev/",
+      "url": "https://ultrastable.org/",
       "status": "live",
       "note": "Web Worker and database are on the Ultrastable account.",
       "next": "None."
