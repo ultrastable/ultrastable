@@ -282,7 +282,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if model_call:
                     out, meta = model_call(prompt), {}
                 else:
-                    out, meta = agent_ladder.call(prompt, attempt, root=lroot)
+                    out, meta = ladder_call(prompt, attempt, lroot)
                     row.setdefault("models", []).append(meta["model"])
                 if str(n).startswith(("Q-SELF-", "Q-INTAKE-")):  # SELFCODE-1 (every Q-SELF item, hand-filed ones too): the self-code loop writes only inside the allowlist of doctrine/selfcode.json, checked before anything is written
                     from . import selfcode
