@@ -1507,6 +1507,14 @@
    "title": "SELFCODE-1: code signals file work, settle reverts regressions and learns per kind",
    "body": "Free GitHub Models routing, CI-failure items and unknown-fact items already come from FREE-LLM-1, ciwatch and agentwork. foundation/selfcode.py adds the missing part: code signals (failing tests, unused imports, swallowed errors, TODOs, trusted agent-task issues) filed as Q-SELF/Q-INTAKE items with closing probes, a write allowlist, and settle that re-measures after merge, reverts a break and pauses kinds with a low kept rate. Kill switch: doctrine/selfcode.json enabled, SELFCODE_OFF, HALT, AGENT_KILL gate.",
    "probe": "file:foundation/selfcode.py"
+  },
+  {
+   "id": "lesson-2026-11-17-deploy-workers-yml-cannot-apply-d1-migrations-its-token-is-f",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "deploy-workers.yml cannot apply D1 migrations: its token is for the retired account",
+   "body": "MIGRATE-SELF-1: migrations 0015 to 0017 never reached the live ledger because the migration step skips on the retired account id and no token exists for the live account. The tick now applies its own migrations through its D1 binding and the failure mode migrations-pending probes org.migrations_pending.",
+   "probe": "grep:seed/worker/src/migrate.js::migrations_pending"
   }
  ]
 }
