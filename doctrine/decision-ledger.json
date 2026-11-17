@@ -1779,8 +1779,6 @@
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
   },
   {
-<<<<<<< HEAD
-=======
    "id": "lesson-2026-11-17-executor-nameerror-after-two-parallel-fixes-merged-call-site",
    "kind": "lesson",
    "date": "2026-11-17",
@@ -1799,7 +1797,6 @@
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
   },
   {
->>>>>>> origin/main
    "id": "decision-2026-11-17-coverage-1-claims-coverage-metric",
    "kind": "decision",
    "date": "2026-11-17",
