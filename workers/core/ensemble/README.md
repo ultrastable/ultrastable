@@ -3,7 +3,7 @@
 
 # core/ensemble: cross-model proposals, verification and automatic updates
 
-Tenant-agnostic. First run by the Practical Solutions tenant (test bed); every Ultrastable system can use it by passing its own pool and rules. Status: BUILT unless marked.
+Tenant-agnostic. First run by a tenant test bed; every Ultrastable system can use it by passing its own pool and rules. Status: BUILT unless marked.
 
 | Piece | Status |
 |---|---|
