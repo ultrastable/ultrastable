@@ -3022,7 +3022,11 @@
    "system_path": [
     "foundation/ultrastability.py",
     "doctrine/ultrastability.json",
-    "tests/foundation/test_ultrastability.py"
+    "tests/foundation/test_ultrastability.py",
+    "foundation/selfmodel.py",
+    "doctrine/self-baseline.json",
+    "site/self-data.js",
+    "tests/foundation/test_selfmodel.py"
    ],
    "workflows": [],
    "area": "managers",

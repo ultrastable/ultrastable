@@ -39,19 +39,20 @@ export async function connectPage(env, origin, signedIn) {
   const org = String(env.GITHUB_REPO || "ultrastable/ultrastable").split("/")[0];
   return hold("Turn on GitHub sign-in", "<p>One approval on GitHub creates a private sign-in app for this system. Nothing to copy or paste.</p><form method=\"post\" action=\"https://github.com/organizations/" + jsq(org) + "/settings/apps/new?state=" + state + "\"><input type=\"hidden\" name=\"manifest\" value=\"" + jsq(JSON.stringify(manifest(origin))) + "\"><button type=\"submit\">Approve on GitHub</button></form>");
 }
-export async function appCallback(env, url) {
+export async function appCallback(env, url, origin) {
+  origin = origin || url.origin;
   const f = env.FETCH || fetch; await ensure(env);
   const state = url.searchParams.get("state") || "", code = url.searchParams.get("code") || "";
   const row = state ? await env.DB.prepare("SELECT created_at FROM oauth_state WHERE id=?1").bind(await sha("app:" + state)).first() : null;
   if (!row || Date.now() - row.created_at > 3600000 || !code) { await audit(env, "signin_app_denied", "unknown", "bad or expired state"); return hold("That link expired", "<p><a href=\"/connect/github-signin\">Start again</a></p>"); }
   await env.DB.prepare("DELETE FROM oauth_state WHERE id=?1").bind(await sha("app:" + state)).run();
-  if (await configured(env)) return Response.redirect(url.origin + "/api/owner/github", 302);
+  if (await configured(env)) return Response.redirect(origin + "/api/owner/github", 302);
   const r = await f("https://api.github.com/app-manifests/" + encodeURIComponent(code) + "/conversions", { method: "POST", headers: { accept: "application/vnd.github+json", "user-agent": "ultrastable-dashboard" } });
   if (r.status !== 201) { await audit(env, "signin_app_failed", "system", "manifest conversion HTTP " + r.status); return hold("GitHub did not finish", "<p><a href=\"/connect/github-signin\">Try again</a></p>"); }
   const j = await r.json();
   await env.DB.prepare("INSERT OR REPLACE INTO owner_oauth_app(id,client_id,secret_sealed,slug,created_at) VALUES(1,?1,?2,?3,?4)").bind(j.client_id, await sealText(env, j.client_secret), j.slug || "", Date.now()).run();
   await audit(env, "signin_app_registered", "system", "GitHub sign-in app " + (j.slug || "") + " registered; secret sealed");
-  return Response.redirect(url.origin + "/api/owner/github", 302);
+  return Response.redirect(origin + "/api/owner/github", 302);
 }
 export async function start(env, origin) {
   const cr = await creds(env);

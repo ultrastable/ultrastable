@@ -8,8 +8,8 @@ export default {
    "variables": [
     {
      "first_order": [
-      "cost-probe",
-      "executor"
+      "cost-guard",
+      "tick-heartbeat"
      ],
      "id": "spend",
      "max": 1.0,
@@ -24,8 +24,9 @@ export default {
     },
     {
      "first_order": [
-      "probe-and-revert",
-      "handoff-closer"
+      "deploy-workers",
+      "site-deploy",
+      "ciwatch"
      ],
      "id": "deploy_health",
      "max": 1.0,
@@ -39,7 +40,7 @@ export default {
     },
     {
      "first_order": [
-      "claims-check"
+      "claims-conformance"
      ],
      "id": "claims_drift",
      "max": 0,
@@ -53,8 +54,8 @@ export default {
     },
     {
      "first_order": [
-      "executor",
-      "criticality-gate"
+      "agent-executor",
+      "criticality-loop"
      ],
      "id": "value",
      "max": null,
@@ -70,7 +71,7 @@ export default {
     {
      "first_order": [
       "watchdog",
-      "restart-route"
+      "resilience"
      ],
      "id": "stalled_clocks",
      "max": 0,
@@ -91,7 +92,8 @@ export default {
    "variables": [
     {
      "first_order": [
-      "probe-and-revert"
+      "spinoff",
+      "liveness"
      ],
      "id": "uptime",
      "max": 1.0,
@@ -106,7 +108,7 @@ export default {
     },
     {
      "first_order": [
-      "cost-probe"
+      "cost-guard"
      ],
      "id": "spend",
      "max": 1.0,
@@ -121,7 +123,7 @@ export default {
     },
     {
      "first_order": [
-      "claims-check"
+      "claims-conformance"
      ],
      "id": "claims_drift",
      "max": 0,
@@ -135,7 +137,8 @@ export default {
     },
     {
      "first_order": [
-      "objective-measure"
+      "spinoff",
+      "predict-verify"
      ],
      "id": "value",
      "max": null,
