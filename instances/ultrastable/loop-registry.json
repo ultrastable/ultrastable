@@ -3438,6 +3438,46 @@
         "issueloop.yml"
       ],
       "server_owner": "github-actions"
+    },
+    {
+      "id": "resilience",
+      "kind": "governance",
+      "summary": "RESILIENCE-1: every clock keeps ticking. The watchdog probes every clock (doctrine/clocks.json and every scheduled workflow), restarts the stopped ones (workflow dispatch, or POST /pulse/watch on each Cloudflare account), escalates a restart that did not take as a Q-STALL item, and feeds the essential variable stalled_clocks. The GitHub watchdog and the tick Worker's watchdog loop restart each other.",
+      "trigger": "every 40 minutes from the tick Worker (watchdog-gh loop), daily and on every finished lane, deploy-site or executor run from GitHub Actions",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "every clock is ticking, idle or unmeasured with an open item, and the newest watchdog beat is younger than 12 hours",
+      "paths": [
+        {
+          "id": "cloudflare-worker",
+          "how": "seed/worker/src/watchdog.js runs as loop watchdog-gh inside the tick and dispatches watchdog.yml when its last run is older than 12 h",
+          "class": "free"
+        },
+        {
+          "id": "github",
+          "how": ".github/workflows/watchdog.yml runs python3 -m foundation resilience --run --apply on its own token",
+          "class": "free"
+        }
+      ],
+      "closing_probe": "grep:foundation/resilience.py::def restart",
+      "writeback": [
+        "ops/resilience.jsonl",
+        "docs/issues"
+      ],
+      "system_path": [
+        "foundation/resilience.py",
+        "doctrine/resilience.json",
+        "seed/worker/src/watchdog.js",
+        "seed/worker/test/watchdog.test.js",
+        "tests/foundation/test_resilience.py",
+        ".github/workflows/watchdog.yml"
+      ],
+      "workflows": [
+        "watchdog.yml"
+      ],
+      "area": "managers",
+      "server_owner": "cloudflare-worker"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"
