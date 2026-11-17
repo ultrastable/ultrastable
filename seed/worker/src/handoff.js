@@ -65,9 +65,12 @@ export async function runProbe(spec, f = fetch) {
   } catch (e) { return { ok: false, detail: `${v.method} ${v.url} failed: ${e && e.message}` }; }
 }
 
+import { record } from './auditchain.js';
 async function event(db, id, state, detail) {
   await db.prepare("UPDATE handoffs SET state = ?, detail = ?, updated_at = datetime('now') WHERE id = ?").bind(state, detail || null, id).run();
   await db.prepare('INSERT INTO handoff_events (handoff_id, state, detail) VALUES (?, ?, ?)').bind(id, state, detail || null).run();
+  // AUDIT-CHAIN-1: every merge, deploy, probe and rollback also lands in the tamper-evident trail (a failure here is logged, never hidden)
+  await record(db, { kind: 'handoff:' + state, actor: 'handoff', ref: String(id), summary: String(detail || state).slice(0, 300), data: { state } }).catch(e => console.error('audit record', e && e.message));
 }
 async function say(f, token, repo, pr, text) { await gh(f, token, 'POST', `/repos/${repo}/issues/${pr}/comments`, { body: 'Ultrastable (server side, HANDOFF-1): ' + text }); }
 async function setItem(db, item, status, blocker) {
