@@ -2058,7 +2058,7 @@
    "date": "2026-11-17",
    "title": "AUDIT-1 build: roll-up keeps the log small; main's ledger probe pointed at a missing file",
    "body": "Only the primary key is indexed on audit_events so an append writes one row; days roll to one batch. A ledger probe must name an existing file.",
-   "probe": "file:workers/core/audit/README.md",
+   "probe": "file:workers/core/audit/audit.test.js",
    "session": "session_0156nqDvx8HgX8Ubut9xXoKx"
   }
  ]
