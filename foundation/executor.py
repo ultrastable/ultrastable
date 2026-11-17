@@ -272,6 +272,12 @@ def port_call(issue: dict, root):
     return lambda _prompt: {"summary": f"{issue['number']}: adapter verify passed", "files": [{"path": f"ops/port-evidence/{runtime}-verify.json", "content": json.dumps(ev, indent=2) + chr(10)}]}
 
 
+def ladder_call(prompt: str, attempt: int, root):
+    """One rung of the author ladder (#513, FREE-LLM-3). A transport failure is a RuntimeError, which run() counts as a failed attempt, so the next attempt uses the next rung."""
+    from . import agent_ladder
+    return agent_ladder.call(prompt, attempt, root=root)
+
+
 def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None, remote: bool = False) -> dict:
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)

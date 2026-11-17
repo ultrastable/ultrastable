@@ -21,6 +21,27 @@ def copy():
     return td
 
 
+class Coverage(unittest.TestCase):
+    def test_coverage_counts_unbound_live_sentences_and_unreachable_pages(self):
+        td = copy()
+        reg = json.loads((td / "doctrine/claims.json").read_text("utf-8"))
+        reg["coverage"]["live_pages"] = ["https://x.test/a", "https://x.test/down"]
+        reg["coverage"]["src_globs"] = []
+        (td / "doctrine/claims.json").write_text(json.dumps(reg), "utf-8")
+        def fetch(u):
+            if u.endswith("down"):
+                raise OSError("unreachable")
+            return "<p>The loop runs every 10 minutes without anyone watching it.</p><p>Plain words here.</p>"
+        c = claims.coverage(td, fetch)
+        self.assertEqual((c["found"], c["bound"]), (1, 0))
+        self.assertFalse([p for p in c["pages"] if p["url"].endswith("down")][0]["ok"])
+        self.assertTrue(claims.file_coverage(td, c))
+
+    def test_repo_coverage_is_at_or_above_its_floor(self):
+        c = claims.coverage(ROOT, lambda u: "")
+        self.assertGreaterEqual(c["ratio"], c["floor"])
+
+
 class Claims(unittest.TestCase):
     def test_repo_has_no_drift_and_data_is_fresh(self):
         self.assertEqual(claims.main(["--check"]), 0)
