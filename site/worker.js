@@ -14,6 +14,7 @@ import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } fr
 import VERIFIED from "./claims-data.js";
 import ULTRA from "./ultrastability-data.js";
 import { experimentFor, slotText, exposureName } from "./uiux.js"; // UIUX-1: A/B experiments on path steps
+import SELF from "./self-data.js";
 import { passkeys } from "./passkeys.js";
 import { mydata } from "./mydata.js";
 import { authzen } from "./authzen.js";
@@ -165,6 +166,7 @@ function ultrastability() {
     + "<p>The essential variables of " + esc(P.what) + " (" + esc(P.status) + "):</p>"
     + "<table><thead><tr><th>Variable</th><th>Bounds</th><th>Second-order steps, in order</th></tr></thead><tbody>" + P.variables.map(row).join("") + "</tbody></table>"
     + "<p>" + esc(T.what) + " (" + esc(T.status) + "): " + T.variables.map(function (v) { return esc(v.name.toLowerCase()); }).join(", ") + ".</p>"
+    + "<p>The system describes itself in code: what it is, its regulators, its variables and bounds, its clocks and its boundary are served as JSON at <a href=\"/self\">/self</a>.</p>"
     + "<p class=\"meta\">After " + esc(ULTRA.credit) + ". Every reading, step and verdict is a row in the ultrastability ledger and a provenance row.</p>";
 }
 
@@ -884,6 +886,7 @@ const handler = {
       case "/for": return new Response(forIndex(), { headers: HTML });
       case "/proof": return new Response(await proof(), { headers: HTML });
       case "/claims": return new Response(claimsPage(), { headers: HTML });
+      case "/self": case "/.well-known/ultrastable": return new Response(JSON.stringify(SELF, null, 1), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300", "Link": "</self>; rel=\"describedby\"" } });
       case "/api/claims": return new Response(JSON.stringify(VERIFIED), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/product": return new Response(product(), { headers: HTML });
       case "/team": return new Response(team(), { headers: HTML });

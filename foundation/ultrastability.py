@@ -165,7 +165,12 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
     now = (now or datetime.now(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
     vals = read if read is not None else readings(root)
     rows = _rows(root, c)
-    out = {"at": now, "variables": {}, "steps": [], "verdicts": [], "unmeasured": []}
+    out = {"at": now, "variables": {}, "steps": [], "verdicts": [], "unmeasured": [], "unregistered": []}
+    try:  # SELF-MODEL-1: the tick consults what the system says it is before it changes anything
+        from . import selfmodel
+        known = set(selfmodel.build(root, readings=False)["index"])
+    except (OSError, KeyError, ValueError):
+        known = None  # no self-model in this checkout (a bare test root): nothing to consult
     targets = [(v["id"], v, vals.get(v["reading"])) for v in c["scopes"]["platform"]["variables"]]
     for slug, tv in (tenant_readings(root, fetch) if tenants else {}).items():
         for v in c["scopes"]["tenant"]["variables"]:
@@ -177,6 +182,13 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
             if apply:
                 _append(root, c, {"at": now, "ev": "reading", "var": key, "value": None, "ok": False, "unmeasured": True})
                 _unmeasured(root, c, key, v)
+            continue
+        lost = [x for x in v["first_order"] if known is not None and x not in known]
+        if lost:  # a system that cannot name the regulators of a variable does not change itself on that variable
+            out["unregistered"].append(key)
+            out["variables"][key] = {"value": value, "ok": in_bounds(v, value), "unregistered_regulators": lost}
+            if apply:
+                _unregistered(root, c, key, lost)
             continue
         ok = in_bounds(v, value)
         hist = [r for r in rows if r.get("ev") == "reading" and r["var"] == key and not r.get("unmeasured")]
@@ -222,7 +234,7 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
             else:
                 step = v["ladder"][idx]
                 row = {"at": now, "ev": "step", "var": key, "idx": idx, "kind": step["kind"], "value": value, "what": step["what"],
-                       "id": f"{key}-{idx}-{now}", "n": len(hist) + 1, "prediction": f"{v['reading']} within bounds within {c['settle_ticks']} ticks"}
+                       "id": f"{key}-{idx}-{now}", "n": len(hist) + 1, "consulted": v["first_order"], "prediction": f"{v['reading']} within bounds within {c['settle_ticks']} ticks"}
                 if apply:
                     if step["kind"] == "param":
                         row["before"], row["after"] = _param(root, step)
@@ -246,6 +258,13 @@ def _unmeasured(root, c, key, v):
     p = Path(root) / "docs/issues" / (iid + ".json")
     if not p.exists():
         p.write_text(json.dumps({"id": iid, "title": f"{iid}: essential variable {key} cannot be read", "body": f"**Owner:** executor\n**Trigger:** `{key}` has no fresh reading (source {v['reading']})\n**Done check:** probe:python3 -m foundation ultrastability --status\n**Status:** open\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `{key}` with a value.\n", "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
+
+
+def _unregistered(root, c, key, lost):
+    iid = f"{c['item_prefix']}-{_slug(key)}-UNREGISTERED"
+    p = Path(root) / "docs/issues" / (iid + ".json")
+    if not p.exists():
+        p.write_text(json.dumps({"id": iid, "title": f"{iid}: the self-model cannot resolve the regulators of {key}", "body": f"**Owner:** executor\n**Trigger:** `{key}` names regulators the self-model does not know: {', '.join(lost)}\n**Done check:** probe:python3 -m foundation selfmodel --check\n**Status:** open\n\nRegister the regulator as a loop, clock or worker, or correct the variable's first_order list in doctrine/ultrastability.json.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation selfmodel --check` exits 0.\n", "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
 
 
 def _provenance(root, row, v, key=None):

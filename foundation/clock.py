@@ -64,6 +64,20 @@ def d1_beats(c: dict, token: str, acct: str) -> list[float]:
     return [_ts(x["t"]) for x in r["result"][0]["results"]]
 
 
+def d1_beats_any(c: dict, token: str, acct: str) -> list[float]:
+    """Beats from every replica of a d1 clock; the newest from any account counts. Raises only when no replica could be read."""
+    reps = c.get("replicas") or [{"account_id": acct, "d1_id": c["d1_id"]}]
+    out, errs = [], []
+    for r in reps:
+        try:
+            out += d1_beats({**c, "d1_id": r["d1_id"]}, token, r.get("account_id") or acct)
+        except Exception as e:  # one unreadable account is recorded and the others still count
+            errs.append(f"{r['d1_id'][:8]}: {type(e).__name__}")
+    if errs and len(errs) == len(reps):
+        raise RuntimeError("no replica readable: " + ", ".join(errs))
+    return out
+
+
 def gh_run_beats(workflow: str, root=REPO, events=None) -> list[float]:
     try:
         r = subprocess.run(["gh", "run", "list", "--repo", GH, "--workflow", workflow, "--limit", "60", "--json", "createdAt,event"], capture_output=True, text=True, timeout=60, encoding="utf-8")
@@ -90,7 +104,7 @@ def report(root=REPO, now: float | None = None, env=None) -> list[dict]:
             if c["source"] == "d1":
                 if not tok:
                     out.append({**row, "status": "unmeasured", "why": "no CLOUDFLARE_API_TOKEN on this host"}); continue
-                beats = d1_beats(c, tok, acct)
+                beats = d1_beats_any(c, tok, acct)
             elif c["source"] == "workflow":
                 beats = gh_run_beats(c["workflow"], root, c.get("events"))
             else:

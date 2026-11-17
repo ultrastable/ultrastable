@@ -14,7 +14,8 @@
     "\\.test\\.",
     "/test/",
     "STAGED",
-    "node_modules"
+    "node_modules",
+    "self-data\\.js"
   ],
   "min_len": 40,
   "claim_patterns": [
@@ -142,5 +143,8 @@
     "site/worker.js::f1c6cc2e941f",
     "site/worker.js::f3c13722dcc2"
   ],
-  "closing_probe": "python3 -m foundation claimcode --check"
+  "closing_probe": "python3 -m foundation claimcode --check",
+  "skip_reasons": {
+    "self-data\\.js": "SELF-MODEL-1: a generated mirror of the loop registry, clocks and boundary declarations (the code's own statements about itself), kept equal to them by `foundation selfmodel --check`; it authors no statement of its own."
+  }
 }
