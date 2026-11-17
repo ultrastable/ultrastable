@@ -22,3 +22,13 @@
 {"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": false, "seq": 21, "unmeasured": true, "value": null, "var": "blindspot:spend"}
 {"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": false, "seq": 22, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
 {"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": false, "seq": 23, "unmeasured": true, "value": null, "var": "blindspot:value"}
+{"at": "2026-11-17T18:30:31Z", "ev": "reading", "ok": true, "seq": 24, "value": 0.497, "var": "spend"}
+{"at": "2026-11-17T18:30:31Z", "ev": "reading", "ok": true, "seq": 25, "value": 1.0, "var": "deploy_health"}
+{"at": "2026-11-17T18:30:31Z", "ev": "step", "id": "claims_drift-0-2026-11-17T18:30:31Z", "idx": 0, "item": "Q-ULTRA-claims_drift-1", "kind": "item", "n": 4, "prediction": "claims.drift within bounds within 3 ticks", "seq": 26, "value": 1, "var": "claims_drift", "what": "restructure: bind or regenerate the drifting statements"}
+{"at": "2026-11-17T18:30:31Z", "ev": "reading", "ok": false, "seq": 27, "value": 1, "var": "claims_drift"}
+{"at": "2026-11-17T18:30:31Z", "ev": "reading", "ok": true, "seq": 28, "value": 4.573, "var": "value"}
+{"at": "2026-11-17T18:30:31Z", "ev": "reading", "ok": false, "seq": 29, "value": 2, "var": "stalled_clocks"}
+{"at": "2026-11-17T18:30:31Z", "ev": "reading", "ok": false, "seq": 30, "value": 0.0, "var": "blindspot:uptime"}
+{"at": "2026-11-17T18:30:31Z", "ev": "reading", "ok": false, "seq": 31, "unmeasured": true, "value": null, "var": "blindspot:spend"}
+{"at": "2026-11-17T18:30:31Z", "ev": "reading", "ok": false, "seq": 32, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
+{"at": "2026-11-17T18:30:31Z", "ev": "reading", "ok": false, "seq": 33, "unmeasured": true, "value": null, "var": "blindspot:value"}
