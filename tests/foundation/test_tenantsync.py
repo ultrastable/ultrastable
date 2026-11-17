@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 """TENANT-SYNC-1: every organization repository has a role, and the core tool the tenants vendor is present."""
 import sys, unittest
 from pathlib import Path

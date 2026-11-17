@@ -28,7 +28,7 @@ class Sync(unittest.TestCase):
         r = Path(self.t.name)
         self.core, self.ten = r / "core", r / "ten"
         mk({"core/a/index.js": "export const a = 1;\n", "package.json": "{}", "LICENSE": "x"}, self.core)
-        mk({"ps/own.js": "// practical-solutions wellby countries\n" * 12, "ps/generic.js": BODY,
+        mk({"ps/own.js": "// tenant-only wellby countries\n" * 12, "ps/generic.js": BODY,
             "upstream.json": json.dumps({"schema": ts.SCHEMA, "scan_roots": ["ps"], "tokens": ["wellby"]})}, self.ten)
         ts.revendor(self.ten, self.core, apply=True)
 

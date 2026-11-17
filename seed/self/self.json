@@ -17,7 +17,8 @@
   "org-designer: which roles an organization needs. Maps an instance manifest (kind, facts, goals, budget) to the phased role catalog, so a new system gets the right virtual team and not the whole zoo. One per org.",
   "program-manager: the set of projects that serve one portfolio constraint: sequencing, dependencies and the plus share across projects.",
   "infrastructure-manager: Cloudflare resources, bindings, secrets and deploys: discovery against `doctrine/topology.json`, cost budgets in `ops/cost-thresholds.json`, and the deploy count in `ops/deploys.jsonl`.",
-  "design-manager: the design language across the portfolio and every product that rolls up to it (doctrine/design.json), its enforcement, and design R&D: experiments, A/B tests and blue-sky ideas (doctrine/design-experiments.json). One per org."
+  "design-manager: the design language across the portfolio and every product that rolls up to it (doctrine/design.json), its enforcement, and design R&D: experiments, A/B tests and blue-sky ideas (doctrine/design-experiments.json). One per org.",
+  "uiux-manager: the front end as a measured, continuously audited surface (UIUX-1): how every page across ultrastable.io, .org and .app, and every tenant and spinoff app, looks, reads and works for a person, and whether the user paths in `doctrine/stakeholders.json` still get people where they are going. It keeps the front end from drifting into a mishmash while the back end moves. Works beside the design manager (the token and theme rules, `doctrine/design.json`) and the product manager (the first-party analytics loop, `foundation/insight.py`). One per org."
  ],
  "reach": {
   "communicate": [
