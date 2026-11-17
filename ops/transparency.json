@@ -1,10 +1,10 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-17T18:47:46Z",
- "commit": "ae2d7f9",
+ "generated": "2026-11-17T19:04:07Z",
+ "commit": "2c2f114",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
-  "managers_and_loops": 96,
+  "managers_and_loops": 98,
   "loops_with_evidence": 2,
   "components": {
    "live": 24
@@ -18,13 +18,13 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 294,
-  "backlog_items": 358
+  "backlog_open": 297,
+  "backlog_items": 361
  },
  "unknowns": {
-  "units": 112,
+  "units": 114,
   "units_questioned": 3,
-  "coverage": 0.027,
+  "coverage": 0.026,
   "asked": 3,
   "answered": 0,
   "open": 3,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 358,
+   "items": 361,
    "by_status": {
     "closed": 60,
-    "open": 294,
+    "open": 297,
     "done": 4
    },
-   "takeable_now": 266
+   "takeable_now": 269
   },
   "merged": {
    "total": 0,
@@ -100,9 +100,9 @@
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-17T18:42:18Z",
+    "createdAt": "2026-11-17T19:01:58Z",
     "event": "push",
-    "headSha": "b4ff892fb159dd581837ff8253010e03ee97feb5"
+    "headSha": "3b1c993a9135d0a425b7e9ed732907a79bed199c"
    },
    "per_day_success": {
     "2026-11-17": 47
@@ -111,8 +111,8 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "success": 29,
-    "failure": 1
+    "failure": 1,
+    "success": 29
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -155,7 +155,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 248.1,
+   "age_s": 33.2,
    "status": "fresh",
    "missed": 0
   },
@@ -179,16 +179,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 253.1,
+   "age_s": 58.2,
    "status": "fresh",
    "missed": 0,
-   "lag_s": 43.0
+   "lag_s": 99.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 12228.1,
+   "age_s": 13215.2,
    "status": "fresh",
    "missed": 0
   }
@@ -198,7 +198,7 @@
    "merged": 0,
    "closed": 0,
    "parked": 17,
-   "failed": 3,
+   "failed": 2,
    "expired": 0,
    "open": 0
   },
@@ -297,23 +297,18 @@
     "name": "Q-CLAIM-COVER-seed-docs-BOOTSTRAP-PROMPT-md",
     "state": "failed",
     "failures": 1
-   },
-   {
-    "name": "Q-CIFAIL-practical-solutions-bootstrap",
-    "state": "failed",
-    "failures": 1
    }
   ],
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-17T18:47:05Z",
+  "generated": "2026-11-17T19:03:29Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1349.2,
+    "expected_today": 1349.3,
     "value": null,
     "behind": null,
     "progress": null
@@ -331,7 +326,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 854.8,
+    "expected_today": 854.9,
     "value": null,
     "behind": null,
     "progress": null
@@ -352,7 +347,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-17T18:47:05Z",
+    "started": "2026-11-17T19:03:29Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -366,7 +361,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-17T18:47:05Z",
+     "at": "2026-11-17T19:03:29Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -383,6 +378,7 @@
    "growth": [],
    "repair": [],
    "insight": [],
+   "uiux": [],
    "order": []
   },
   "insight": {
@@ -390,6 +386,14 @@
    "measured": false,
    "why": "no hits source (no CLOUDFLARE_API_TOKEN and no rows)",
    "filed": []
+  },
+  "uiux": {
+   "filed": [],
+   "blocking": 0,
+   "happy_path_pass_share": 1.0,
+   "unmeasured": [
+    "analytics: no CLOUDFLARE_API_TOKEN, funnels and experiments not read"
+   ]
   },
   "stages": [
    {
@@ -427,16 +431,16 @@
  },
  "growth": {
   "mix": {
-   "growth": 4,
-   "fix": 3,
-   "maintenance": 13,
+   "growth": 0,
+   "fix": 1,
+   "maintenance": 19,
    "total": 20,
-   "growth_share": 0.2,
+   "growth_share": 0.0,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 24,
-  "items_takeable": 266,
+  "items_takeable": 269,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -481,7 +485,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 301.3,
+   "last_beat_age_s": 81.2,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -492,7 +496,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 12281.3,
+   "last_beat_age_s": 13263.2,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -503,7 +507,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 316.3,
+   "last_beat_age_s": 118.2,
    "expected_interval_s": 86400,
    "beats_24h": 60,
    "expected_24h": 1.0,
@@ -514,7 +518,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 9136.3,
+   "last_beat_age_s": 10118.2,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -525,7 +529,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 1129.3,
+   "last_beat_age_s": 2111.2,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -543,7 +547,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 6158.3,
+   "last_beat_age_s": 7140.2,
    "expected_interval_s": 86400,
    "beats_24h": 3,
    "expected_24h": 1.0,
@@ -554,7 +558,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 274.3,
+   "last_beat_age_s": 60.2,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -1646,6 +1650,29 @@
    "role_file": "agents/roles/product-manager.md"
   },
   {
+   "loop": "uiux-loop",
+   "kind": "manager",
+   "summary": "UIUX-1: the UI/UX manager as a closed loop. Every user page on ultrastable.io, .org, .app and every tenant app is audited (accessibility, user/system boundary, structure, copy, performance, visual fingerprint); every user path in doctrine/stakeholders.json is walked as a click-through flow; first-party funnels show where a path loses people; A/B experiments on path steps are decided at their pre-registered sample and the winner is promoted automatically; every finding becomes a fix item for the self-coding agent with a closing probe. Its two essential variables feed the slow loop in foundation/ultrastability.py.",
+   "owner": "uiux-manager",
+   "trigger": "weekly browser audit (.github/workflows/uiux.yml) and daily inside the product manager pass (product-manager.yml)",
+   "sla": "7d",
+   "closing_probe": "grep:foundation/uiux.py::def settle_experiments",
+   "cycle_metric": "ui_findings",
+   "last_plus": "each experiment verdict and each settled fix item feeds the next audit; the status file prints ui_findings and happy_path_pass_share so the next run is comparable",
+   "last_run": null,
+   "owns": "the front end as a measured, continuously audited surface (UIUX-1): how every page across ultrastable.io, .org and .app, and every tenant and spinoff app, looks, reads and works for a person, and whether the user paths in `doctrine/stakeholders.json` still get people where they are going. It keeps the front end from drifting into a mishmash while the back end moves. Works beside the design manager (the token and theme rules, `doctrine/design.json`) and the product manager (the first-party analytics loop, `foundation/insight.py`). One per org.",
+   "cadence": "daily inside the product manager pass (funnels, experiments, items) and weekly in `.github/workflows/uiux.yml` (the browser audit). Code: `foundation/uiux.py`, `scripts/uiux_audit.mjs`, `doctrine/uiux.json`.",
+   "each_tick": [
+    "Run `python3 -m foundation uiux --tick --apply` after a fresh `node scripts/uiux_audit.mjs --write` (accessibility in light and dark at phone and desktop width, the user/system boundary, page structure, copy, size budget",
+    "Read the path funnels (`python3 -m foundation uiux --funnels`): a path whose completion fell below `drop_ratio` of its own trailing median is a finding and an item, not a report.",
+    "Decide running experiments only at their pre-registered sample (`python3 -m foundation uiux --experiments --apply`): a kept arm becomes the served default in the same change; a guard breach or no effect keeps the control",
+    "After an intended redesign, re-baseline the visual fingerprint in the same PR (`node scripts/uiux_audit.mjs --rebaseline`); never to clear drift that nobody intended.",
+    "For every new tenant or spinoff app, make sure it is listed in `ops/spinoff/ledger.jsonl` so `--live` audits it, and that it carries the first-party counter so its funnels exist.",
+    "Report in four lines."
+   ],
+   "role_file": "agents/roles/uiux-manager.md"
+  },
+  {
    "loop": "scout",
    "kind": "governance",
    "summary": "SCOUT-1: the growth product manager scouts the state of the art weekly, scores findings against the gap register, files growth items and re-weights its sources from what was adopted.",
@@ -1781,6 +1808,29 @@
     "Ask a reviewer of a different model family to critique rendered phone screenshots of every changed surface against the invariants; its findings are items, not opinions."
    ],
    "role_file": "agents/roles/design-manager.md"
+  },
+  {
+   "loop": "role-uiux-manager",
+   "kind": "manager",
+   "summary": "UI/UX manager: the front end as a measured, continuously audited surface (UIUX-1): audits, user paths, funnels and A/B experiments on path steps",
+   "owner": "uiux-manager",
+   "trigger": "each tick of the uiux-manager role (tick_every 6)",
+   "sla": "1 tick",
+   "closing_probe": "file:agents/roles/uiux-manager.md",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null,
+   "owns": "the front end as a measured, continuously audited surface (UIUX-1): how every page across ultrastable.io, .org and .app, and every tenant and spinoff app, looks, reads and works for a person, and whether the user paths in `doctrine/stakeholders.json` still get people where they are going. It keeps the front end from drifting into a mishmash while the back end moves. Works beside the design manager (the token and theme rules, `doctrine/design.json`) and the product manager (the first-party analytics loop, `foundation/insight.py`). One per org.",
+   "cadence": "daily inside the product manager pass (funnels, experiments, items) and weekly in `.github/workflows/uiux.yml` (the browser audit). Code: `foundation/uiux.py`, `scripts/uiux_audit.mjs`, `doctrine/uiux.json`.",
+   "each_tick": [
+    "Run `python3 -m foundation uiux --tick --apply` after a fresh `node scripts/uiux_audit.mjs --write` (accessibility in light and dark at phone and desktop width, the user/system boundary, page structure, copy, size budget",
+    "Read the path funnels (`python3 -m foundation uiux --funnels`): a path whose completion fell below `drop_ratio` of its own trailing median is a finding and an item, not a report.",
+    "Decide running experiments only at their pre-registered sample (`python3 -m foundation uiux --experiments --apply`): a kept arm becomes the served default in the same change; a guard breach or no effect keeps the control",
+    "After an intended redesign, re-baseline the visual fingerprint in the same PR (`node scripts/uiux_audit.mjs --rebaseline`); never to clear drift that nobody intended.",
+    "For every new tenant or spinoff app, make sure it is listed in `ops/spinoff/ledger.jsonl` so `--live` audits it, and that it carries the first-party counter so its funnels exist.",
+    "Report in four lines."
+   ],
+   "role_file": "agents/roles/uiux-manager.md"
   },
   {
    "loop": "promote",
@@ -2414,31 +2464,121 @@
  "changes": {
   "commits": [
    {
-    "sha": "ae2d7f9",
-    "at": "2026-11-17T18:42:48+00:00",
+    "sha": "2c2f114",
+    "at": "2026-11-17T19:00:31+00:00",
     "author": "Claude",
-    "subject": "Bind TENANT-SYNC-1 vendor claim to its probe",
-    "pr": null,
-    "item": "TENANT-SYNC-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/ae2d7f98e82389e552618cac4d037959803b5ff0"
-   },
-   {
-    "sha": "ee29f0d",
-    "at": "2026-11-17T18:41:45+00:00",
-    "author": "Claude",
-    "subject": "Merge main; SPDX headers on tenantsync; regenerate",
+    "subject": "Green core: regulators resolve to real loops, seed text free of tenant terms, regenerated data",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/ee29f0d893e467f0d96a9b37ee60f086460c4922"
+    "url": "https://github.com/ultrastable/ultrastable/commit/2c2f11417b5d0205cf5dd5165391d216e7130e4b"
    },
    {
-    "sha": "c1fd8ca",
-    "at": "2026-11-17T18:40:31+00:00",
-    "author": "Claude",
-    "subject": "Fix main's red checks (SPDX, publication, claims coverage, memory) and record write-back",
+    "sha": "91ddcdd",
+    "at": "2026-11-17T18:57:45+00:00",
+    "author": "ultrastable-bot",
+    "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/c1fd8ca8208344374c7e96cfb1183531ac2227e6"
+    "url": "https://github.com/ultrastable/ultrastable/commit/91ddcdd68985116f40c30f24c6f8783a70b6b098"
+   },
+   {
+    "sha": "fc7a23e",
+    "at": "2026-11-17T18:57:15+00:00",
+    "author": "tenant-sync",
+    "subject": "tenant-sync: ledger",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/fc7a23eb314b9ae920bd026f059777a60af939d7"
+   },
+   {
+    "sha": "b23864f",
+    "at": "2026-11-17T19:56:53+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "core/ensemble (cross-model ensemble from the Practical Solutions test bed) and deploygate ai binding (#538)",
+    "pr": 538,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/b23864f43ae573885105bcfa44d5e00eac8fad27"
+   },
+   {
+    "sha": "2427a42",
+    "at": "2026-11-17T18:55:22+00:00",
+    "author": "ultrastable-lane",
+    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1)",
+    "pr": null,
+    "item": "SERVER-OWNS-LOOPS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/2427a42574bdcd4fe235da69347f4df2c7b99cab"
+   },
+   {
+    "sha": "51721fd",
+    "at": "2026-11-17T18:52:53+00:00",
+    "author": "ultrastable-bot",
+    "subject": "deploy-ultrastable: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/51721fd1b42bff26c7c20a483091d1ef0cb145f7"
+   },
+   {
+    "sha": "ad30d60",
+    "at": "2026-11-17T18:52:16+00:00",
+    "author": "ultrastable-lane",
+    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1)",
+    "pr": null,
+    "item": "SERVER-OWNS-LOOPS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/ad30d60ab5b6ab85cb0f2e39289cb1433a1758c1"
+   },
+   {
+    "sha": "c195d73",
+    "at": "2026-11-17T19:52:08+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "UIUX-1: the UI/UX manager as a closed loop (#562)",
+    "pr": 562,
+    "item": "UIUX-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/c195d73231132b65945faa1fcca94822aafd6478"
+   },
+   {
+    "sha": "41ab392",
+    "at": "2026-11-17T18:51:31+00:00",
+    "author": "ultrastable-bot",
+    "subject": "deploy-ultrastable: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/41ab392887561390a0d86103fc576f204d151fdf"
+   },
+   {
+    "sha": "6776405",
+    "at": "2026-11-17T19:50:48+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Tick passes service bindings to the measure step (#561)",
+    "pr": 561,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/6776405f7172433482dedf716ce23657ba22b654"
+   },
+   {
+    "sha": "c4f4662",
+    "at": "2026-11-17T18:43:02+00:00",
+    "author": "ultrastable-bot",
+    "subject": "deploy-ultrastable: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/c4f46622c3163a2fbb7b03529c7d22073ecd432e"
+   },
+   {
+    "sha": "fbc4501",
+    "at": "2026-11-17T18:42:51+00:00",
+    "author": "ultrastable-watchdog",
+    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
+    "pr": null,
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/fbc4501837ab3eb3462be8b518b8509c3cd5c053"
+   },
+   {
+    "sha": "b4ff892",
+    "at": "2026-11-17T19:42:14+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "RESILIENCE-1: tick clock via public /health; watchdog wakes only on failures (#559)",
+    "pr": 559,
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/b4ff892fb159dd581837ff8253010e03ee97feb5"
    },
    {
     "sha": "bc34e81",
@@ -2567,15 +2707,6 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/08b143581933e1e6c0761a00286b7ef340acd05d"
    },
    {
-    "sha": "bb9945d",
-    "at": "2026-11-17T18:35:16+00:00",
-    "author": "Claude",
-    "subject": "Regenerate self model data",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/bb9945d64be55f6c30d2df33ae55130f9dc15f10"
-   },
-   {
     "sha": "87bb591",
     "at": "2026-11-17T19:35:11+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2612,24 +2743,6 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/3ea4a9e2f29c434d7b884108629c87666029a467"
    },
    {
-    "sha": "6a50cf1",
-    "at": "2026-11-17T18:34:25+00:00",
-    "author": "Claude",
-    "subject": "Merge main; regenerate",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/6a50cf1220138a4286fafc37541e11ad26e93b83"
-   },
-   {
-    "sha": "a1ac25d",
-    "at": "2026-11-17T18:34:24+00:00",
-    "author": "Claude",
-    "subject": "Merge remote-tracking branch 'origin/main' into claude/project-thread-k2dob2",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/a1ac25da55bb0befba2c44dc3d74fc6c56f6a8a5"
-   },
-   {
     "sha": "eda74c5",
     "at": "2026-11-17T18:34:14+00:00",
     "author": "ultrastable-watchdog",
@@ -2648,15 +2761,6 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/938c728d17279a93423570092488bb934ffd125a"
    },
    {
-    "sha": "27f2673",
-    "at": "2026-11-17T18:33:43+00:00",
-    "author": "Claude",
-    "subject": "Fix resilience loop server_owner so loopowner passes",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/27f2673f783240420f7e0500135a5dc8dbcdb878"
-   },
-   {
     "sha": "2d0e284",
     "at": "2026-11-17T18:33:41+00:00",
     "author": "ultrastable-watchdog",
@@ -2673,42 +2777,6 @@
     "pr": null,
     "item": "RESILIENCE-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/83bba69991b834c9d4ae38bd857036ecabaf5d84"
-   },
-   {
-    "sha": "89fae18",
-    "at": "2026-11-17T18:32:41+00:00",
-    "author": "Claude",
-    "subject": "Rewrite new ultrastability items to runnable cmd: probes",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/89fae18c6ad27e2a04f13fee726b7d47d229cb0b"
-   },
-   {
-    "sha": "e53a33c",
-    "at": "2026-11-17T18:32:30+00:00",
-    "author": "Claude",
-    "subject": "Regenerate dashboard data after merge",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/e53a33cf39c336789f5db80e400c8b08241cb588"
-   },
-   {
-    "sha": "201b239",
-    "at": "2026-11-17T18:32:30+00:00",
-    "author": "Claude",
-    "subject": "Merge remote-tracking branch 'origin/main' into claude/project-thread-k2dob2",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/201b23974b1998694115e36204779d2415b89578"
-   },
-   {
-    "sha": "4c7a99d",
-    "at": "2026-11-17T18:31:52+00:00",
-    "author": "Claude",
-    "subject": "Merge main; make ultrastability items carry a runnable cmd: probe so pins passes",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/4c7a99d97ef89b59d3fbe988f6cf70a66b163ab2"
    },
    {
     "sha": "af24906",
@@ -2747,31 +2815,13 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/9e1b2ceca4ba6b797f8773b4281100c875f85ff8"
    },
    {
-    "sha": "caa5661",
-    "at": "2026-11-17T18:30:22+00:00",
-    "author": "Claude",
-    "subject": "Merge remote-tracking branch 'origin/main' into claude/project-thread-k2dob2",
+    "sha": "73ffa88",
+    "at": "2026-11-17T18:29:47+00:00",
+    "author": "ultrastable-watchdog",
+    "subject": "watchdog: clock probe (RESILIENCE-1)",
     "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/caa5661246422ffe4d9929e658b094e00d948f6e"
-   },
-   {
-    "sha": "97845a2",
-    "at": "2026-11-17T18:29:57+00:00",
-    "author": "Claude",
-    "subject": "Merge main; regenerate generated files",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/97845a2a80d1f22969f5d9836bfea5e8e6295d2d"
-   },
-   {
-    "sha": "dc206be",
-    "at": "2026-11-17T18:29:48+00:00",
-    "author": "Claude",
-    "subject": "Fix claims drift and keep core/ensemble tenant-agnostic",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/dc206be99861c33b5bfdb24bbc69fb365b1df776"
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/73ffa88492eab72cef7099e8edfbc1bf196a0c9d"
    }
   ],
   "pull_requests": []
