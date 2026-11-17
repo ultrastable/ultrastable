@@ -1997,6 +1997,14 @@
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
   },
   {
+   "id": "decision-2026-11-17-regen-generated-1-generated-data-is-refreshed-by-a-bot-after",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "REGEN-GENERATED-1: generated data is refreshed by a bot after merge",
+   "body": "Session session_0156nqDuXJWyM65c8uChpjTM. PR checks still fail on drift; a post-merge workflow runs scripts/regen_generated.py and commits the result to main so pull requests stop racing each other.",
+   "probe": "grep:scripts/regen_generated.py::def run_all"
+  },
+  {
    "id": "decision-2026-11-17-product-manager-pass-2026111716-3-item-s-filed",
    "kind": "decision",
    "date": "2026-11-17",
