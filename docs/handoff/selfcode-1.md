@@ -22,3 +22,7 @@ Update 15:45Z: the first live run filed a Q-SELF item that the criticality gate 
 - Probe: `python3 -m unittest tests.foundation.test_executor`.
 ## 2026-11-17 order fix (Session: session_0156nqDtPUh62FutsmGkcuTa)
 - Live rows after #499 still took Q-GROW-*: `growth.prefer` ran first and kept only growth items, so `selfcode.prefer` had nothing to reserve. It now runs before `growth.prefer` in `executor.run`.
+
+## 2026-11-17 ladder resilience (Session: session_0156nqDtPUh62FutsmGkcuTa)
+- After BASELINE-1 the self-code ledger reaches loop-evidence (filed rows at 16:43-16:45). The executor then failed Q-SELF-bare-except-foundation-clockwork-py on its first rung: GitHub Models answered HTTP 200 text/plain "OK", `agent_ladder.call` raised RuntimeError, and the executor did not catch it, so the item aborted without escalating to the next rung.
+- Fix: `executor.ladder_call` turns a rung's transport failure into a failed attempt, so the next attempt uses the next rung. Probe: `python3 -m unittest tests.foundation.test_executor`.
