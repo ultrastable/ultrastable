@@ -15,6 +15,7 @@ import { checkRepoAccess, readRepoAccess } from './access.js';
 import { hmac } from './state.js';
 import { handleConnector } from './connectors.js';
 import { handleSocial } from './social.js';
+import { archiveRetired } from './archive.js';
 export const makeState = async (env, tenant, now = Date.now()) => `${tenant}.${now}.${await hmac(env, `${tenant}.${now}`)}`;
 export async function checkState(env, state, now = Date.now()) {
   const [tenant, ts, sig] = String(state || '').split('.');
@@ -78,7 +79,9 @@ async function route(request, env, opts = {}) {
     if (!t || !inst) return failScreen('Allow repository archiving', 'The installation did not complete.', '/connect/github-admin');
     await store.put(env.DB, env, t, 'github-admin', { meta: { installation_id: Number(inst) }, status: 'pending' });
     await store.event(env.DB, t, 'github-admin', 'consent', 'installed ' + inst);
-    return doneScreen('Repository archiving allowed', 'Done. The server archives the retired repositories by itself.');
+    let msg = 'Done. The server archives the retired repositories by itself.';
+    try { const a = await archiveRetired(env.DB, env, t, { fetch: f, now }); msg = a.ok ? 'Done. The retired repositories are archived.' : 'Connected. Archiving will be retried automatically.'; } catch (e) { await store.event(env.DB, t, 'github-admin', 'failed', 'archive: ' + String(e && e.message || e)); }  // never fails the page; the tick retries
+    return doneScreen('Repository archiving allowed', msg);
   }
   if (url.pathname === '/auth/github/callback') {
     const t = await checkState(env, url.searchParams.get('state'), now);
