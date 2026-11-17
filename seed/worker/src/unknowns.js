@@ -7,6 +7,14 @@ const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
 const fill = (q, u) => q.replace(/\{(id|done|probe|trigger)\}/g, (_, k) => u[k] || '(none recorded)');
 
+// SCHEMA-SELF-1: the Worker carries this DDL (kept equal to migrations/0017_unknowns.sql by test/unknowns.test.js) so a deploy ahead of its migration cannot fail.
+export const UNKNOWNS_DDL = [
+  `CREATE TABLE IF NOT EXISTS unknown_questions ( key TEXT NOT NULL, at TEXT NOT NULL, lens TEXT NOT NULL, unit TEXT NOT NULL, item_id TEXT NOT NULL )`,
+  `CREATE INDEX IF NOT EXISTS unknown_questions_key ON unknown_questions(key, at)`,
+];
+const ready = new WeakSet();
+async function ensureSchema(db) { if (ready.has(db)) return; for (const q of UNKNOWNS_DDL) await db.prepare(q).run(); ready.add(db); }
+
 export function pickQuestions(cfg, units, asked, nowIso) {
   const day = Date.parse(nowIso.replace(' ', 'T') + (nowIso.includes('Z') ? '' : 'Z'));
   const last = new Map(); const perUnit = new Map();
@@ -24,6 +32,7 @@ export function pickQuestions(cfg, units, asked, nowIso) {
 
 export async function unknownsStep(db, ctx, cfg, ensureItem) {
   if (!cfg || !Array.isArray(cfg.lenses)) return { filed: [] };
+  await ensureSchema(db);
   const units = (await all(db, `SELECT id, kind, done_check AS done, closing_probe AS probe FROM items WHERE id NOT LIKE 'UNK-%' AND id NOT LIKE 'FM-%' ORDER BY updated_at DESC LIMIT 60`)).map(r => ({ ...r, trigger: 'tick' }));
   const asked = await all(db, `SELECT key, at FROM unknown_questions`);
   const filed = [];
