@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-17T13:23:11Z",
- "commit": "eed92ee",
+ "generated": "2026-11-17T13:27:57Z",
+ "commit": "90106fb",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 85,
@@ -82,8 +82,8 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "success": 10,
-    "cancelled": 20
+    "success": 7,
+    "cancelled": 23
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -121,7 +121,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 53.5,
+   "age_s": 0.2,
    "status": "fresh",
    "missed": 0
   },
@@ -145,7 +145,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 8745.5,
+   "age_s": 9033.2,
    "status": "fresh",
    "missed": 0,
    "lag_s": 26.0
@@ -154,7 +154,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 84962.5,
+   "age_s": 85250.2,
    "status": "fresh",
    "missed": 0
   }
@@ -178,7 +178,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-17T13:22:45Z",
+  "generated": "2026-11-17T13:27:33Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -223,7 +223,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-17T13:22:45Z",
+    "started": "2026-11-17T13:27:33Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -341,9 +341,9 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 87.5,
+   "last_beat_age_s": 31.9,
    "expected_interval_s": 21600,
-   "beats_24h": 13,
+   "beats_24h": 18,
    "expected_24h": 4.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -352,7 +352,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 84996.5,
+   "last_beat_age_s": 85281.9,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -363,7 +363,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 8801.5,
+   "last_beat_age_s": 9086.9,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -374,7 +374,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 407889.5,
+   "last_beat_age_s": 408174.9,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -2094,6 +2094,33 @@
  "changes": {
   "commits": [
    {
+    "sha": "402eacf",
+    "at": "2026-11-17T13:26:23+00:00",
+    "author": "Claude",
+    "subject": "plugins: regenerate self-description",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/402eacf7c15254972312174361290013fe31f3f9"
+   },
+   {
+    "sha": "540f3f3",
+    "at": "2026-11-17T13:25:21+00:00",
+    "author": "Claude",
+    "subject": "test_team: keep Ultrastable's own manifest invention-free",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/540f3f3ba25860468b779a3f09530166b9ebda5e"
+   },
+   {
+    "sha": "35d7a10",
+    "at": "2026-11-17T13:24:37+00:00",
+    "author": "Claude",
+    "subject": "License-only IP stance: retire patent gating, filing cases and owner filing card",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/35d7a108156ad0b40d0193fa1e1280c2a17688ff"
+   },
+   {
     "sha": "eed92ee",
     "at": "2026-11-17T11:56:19+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2425,33 +2452,6 @@
     "pr": 430,
     "item": "MODEL-TRUTH-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/90da3850768e12143500badd47301e504a3c182f"
-   },
-   {
-    "sha": "ef29f1c",
-    "at": "2026-11-15T21:20:54+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Write-back: a handoff verify line must name a public URL the change moves (re-handoff of ultrastable-tick) (#429)",
-    "pr": 429,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/ef29f1c7a66241bdc1d6132ca04f9247eef0d6dc"
-   },
-   {
-    "sha": "55eb1e5",
-    "at": "2026-11-15T19:52:48+00:00",
-    "author": "ultrastable-ops",
-    "subject": "deploy-workers: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/55eb1e5cc7309285e7fef7e8e7adfe2941048145"
-   },
-   {
-    "sha": "fe9ccf0",
-    "at": "2026-11-15T20:52:06+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "LIVENESS-SEED-1: the tick seeds its own liveness metrics; carry Q-CRIT-DISPATCH-YIELD (supersedes the PULSE-1 draft of this PR) (#419)",
-    "pr": 419,
-    "item": "LIVENESS-SEED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/fe9ccf0f856842ba4d6b66930c521ef34a03f37a"
    }
   ],
   "pull_requests": []

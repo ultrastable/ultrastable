@@ -1445,7 +1445,7 @@
    "date": "2026-11-17",
    "title": "License-only IP stance (no patent filing)",
    "body": "Rowan 2026-11-17: no patent filing; the Ultrastable License is the only IP protection. Removed bootstrap cases BC-1/BC-2/BC-8 and FILE-PRIORITY card and the provisional_filed social gate; ip/ drafts superseded, not deleted. Session: session_0156nqDtJ4GJA7WRUu2BBRaW",
-   "probe": "file:ip/ARCHIVED.md",
+   "probe": "grep:instances/ultrastable/instance.json::\"has_invention\": false",
    "session": "session_0156nqDtJ4GJA7WRUu2BBRaW"
   }
  ]
