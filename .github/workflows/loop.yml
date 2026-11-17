@@ -30,7 +30,7 @@ jobs:
       - name: Failover gate (is another host alive?)
         id: gate
         run: ULTRASTABLE_HOST=github-actions python3 -m foundation launch --failover --decide
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         if: steps.gate.outputs.run == 'true' || github.event_name == 'workflow_dispatch'
         with:
           node-version: 22
