@@ -5,7 +5,8 @@
   "deploy/sibling-patches/",
   "docs/issues/",
   "dashboard/snapshot.json",
-  "demos/"
+  "demos/",
+  "ops/branchsweep-ledger.jsonl"
  ],
  "consumers": [
   {
