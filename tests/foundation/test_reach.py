@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 # REACH-1: events become posts, reach is measured, weights move and revert.
 import json, shutil, datetime as dt
 import unittest
@@ -63,3 +65,19 @@ class Reach(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ConnectLink(unittest.TestCase):
+    """CONNECT-LINK-1: an owner card without a connect link, or a new provider deep link, fails the check."""
+    def test_cards(self):
+        from foundation import pointclick
+        pol = json.loads((REPO / "doctrine/point-and-click.json").read_text())
+        tmp = _repo.scratch(); (tmp / "foundation/data").mkdir(parents=True)
+        def run(items):
+            (tmp / "foundation/data/needs-you.json").write_text(json.dumps({"items": items}))
+            return pointclick.connect_links(tmp, pol)
+        self.assertEqual(run([{"id": "x", "connect": "https://ultrastable.io/connect/bluesky", "connect_kind": "connect-flow"}]), [])
+        self.assertTrue(run([{"id": "x"}]))
+        self.assertTrue(run([{"id": "new", "connect": "https://example.com", "connect_kind": "provider-deep-link"}]))
+        self.assertEqual(run([{"id": "funding", "connect": "https://example.com", "connect_kind": "provider-deep-link"}]), [])
+        self.assertEqual(pointclick.connect_links(REPO, pol), [])

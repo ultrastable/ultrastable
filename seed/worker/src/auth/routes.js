@@ -13,6 +13,7 @@ import { checkRepoAccess, readRepoAccess } from './access.js';
 
 import { hmac } from './state.js';
 import { handleConnector } from './connectors.js';
+import { handleSocial } from './social.js';
 export const makeState = async (env, tenant, now = Date.now()) => `${tenant}.${now}.${await hmac(env, `${tenant}.${now}`)}`;
 export async function checkState(env, state, now = Date.now()) {
   const [tenant, ts, sig] = String(state || '').split('.');
@@ -35,7 +36,7 @@ async function route(request, env, opts = {}) {
   const { tenant = 'default', name = 'ultrastable', fetch: f = fetch, now = Date.now() } = opts;
   const url = new URL(request.url), origin = url.origin;
   if (/^\/(connect|auth|\.well-known\/oauth-client)\//.test(url.pathname) || url.pathname === '/connect') await store.ensureSchema(env.DB);  // the Worker brings up its own credential tables before any route touches them
-  if (url.pathname === '/connect') { const r = await probe(env.DB, now); return Response.redirect(new URL(r.github_connected ? '/' : '/connect/github', url), 302); }
+  if (url.pathname === '/connect') { const r = await probe(env.DB, now); if (!r.github_connected) return Response.redirect(new URL('/connect/github', url), 302); }  // REACH-1: once GitHub is linked /connect is the index of every channel (social.js)
   if (url.pathname === '/auth/health') { const r = await probe(env.DB, now); return Response.json(r, { status: r.ok ? 200 : 503 }); }
   if (url.pathname === '/connect/repos') {  // REPO-ACCESS-1: the one click that widens the installation; GitHub sends the owner back to /auth/github/installed, which re-probes
     const a = await readRepoAccess(env.DB);
@@ -75,6 +76,7 @@ async function route(request, env, opts = {}) {
     } catch (e) { await store.event(env.DB, t, 'github-app', 'failed', 're-probe: ' + String(e && e.message || e)); }
     return doneScreen('GitHub connected', 'Done. From here the system opens, checks, merges and deploys changes by itself.');
   }
+  { const sr = await handleSocial(request, env, { tenant, fetch: f, now, allowInsecure: !!opts.allowInsecure }); if (sr) return sr; }  // REACH-1: /connect, /connect/bluesky, /connect/mastodon
   return handleConnector(request, env, { tenant, fetch: f, now, allowInsecure: !!opts.allowInsecure });  // CONNECT-1: every other /connect/<provider> path
 }
 

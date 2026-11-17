@@ -2,7 +2,16 @@
   "id": "POINT-AND-CLICK-1",
   "rule": "The product works point and click, always. No bootstrap step, doc, report, card or error tells a person to create, copy, paste or save a token, secret, key or setting, or to run a command. Credentials arrive through a consent screen (OAuth / GitHub App) and are stored and refreshed by the Worker.",
   "owner_directive": "Rowan, 2026-11-13: the user never has to do these manual actions; point and click for everything, always.",
-  "scan_globs": ["seed/bootstrap/**/*.py", "seed/bootstrap/**/*.md", "seed/IDEA.md", "seed/worker/src/**/*.js", "site/**/*.html", "docs/BOOTSTRAP*.md", "foundation/data/needs-you.json", "NEEDS-YOU.md"],
+  "scan_globs": [
+    "seed/bootstrap/**/*.py",
+    "seed/bootstrap/**/*.md",
+    "seed/IDEA.md",
+    "seed/worker/src/**/*.js",
+    "site/**/*.html",
+    "docs/BOOTSTRAP*.md",
+    "foundation/data/needs-you.json",
+    "NEEDS-YOU.md"
+  ],
   "patterns": [
     "\\b(create|generate|mint|make) (a|an|your|the) [\\w -]{0,30}(token|secret|api key|password)\\b",
     "\\b(copy|paste|save|put|add|set) (it|the|your|this) [\\w -]{0,30}(token|secret|api key|env(ironment)? var\\w*)\\b",
@@ -11,5 +20,15 @@
     "\\bexport [A-Z_]{4,}="
   ],
   "baseline": [],
-  "closing_probe": "python3 -m foundation pointclick --check"
+  "closing_probe": "python3 -m foundation pointclick --check",
+  "connect_link": {
+    "rule": "CONNECT-LINK-1 (Rowan, 2026-11-17): every owner action is one link to a web UI that runs OAuth/OIDC and its callbacks behind the scenes (like /connect/github). A card without `connect` and `connect_kind` fails the check. connect_kind is `connect-flow` (a page on ultrastable.io under /connect) or `provider-deep-link` (a deep link to a provider's own page, allowed only for the ids in `deep_link_baseline`, which only shrinks as flows replace them).",
+    "deep_link_baseline": [
+      "actions-billing",
+      "funding",
+      "domains-move",
+      "org-brand",
+      "oauth-apps"
+    ]
+  }
 }
