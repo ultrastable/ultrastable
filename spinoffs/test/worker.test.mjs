@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
-// SPDX-FileCopyrightText: Ultrastable
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 import test from "node:test";
 import assert from "node:assert/strict";
 import { handle, cleanDomain, runChecks } from "../worker.js";

@@ -1,7 +1,7 @@
 {
  "id": "Q-BLINDSPOT-SELF-DMARC",
  "title": "Q-BLINDSPOT-SELF-DMARC: ultrastable.io has no DMARC record",
- "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** GET https://blindspot.ultrastable.app/api/check?domain=ultrastable.io reports dmarc pass\n**Status:** open\n\nFound by the first spun-off app run on its own platform (SPINOFF-1, 2026-11-17). Add a _dmarc TXT record with rua to the owner contact binding.\n\nsize: S\n\n**Closing probe:** GET https://blindspot.ultrastable.app/api/check?domain=ultrastable.io expect \"pass\":true for id dmarc",
+ "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-BLINDSPOT-SELF-DMARC.json::Status:\\*\\* closed\n**Status:** open\n\nFound by the first spun-off app run on its own platform (SPINOFF-1, 2026-11-17). Add a _dmarc TXT record with rua to the owner contact binding.\n\nsize: S\n\n**Closing probe:** grep:docs/issues/Q-BLINDSPOT-SELF-DMARC.json::Status:\\*\\* closed (closes when the live check passes)\n\n**Live check:** GET https://blindspot.ultrastable.app/api/check?domain=ultrastable.io expect \"pass\":true for id dmarc",
  "labels": [
   "role:operations",
   "ws:growth"

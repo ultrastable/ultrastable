@@ -1,6 +1,6 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
-# SPDX-FileCopyrightText: Ultrastable
-import datetime as dt, json, shutil, tempfile, unittest
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
+import atexit, datetime as dt, json, shutil, tempfile, unittest
 from pathlib import Path
 from foundation import spinoff
 
@@ -9,6 +9,7 @@ REPO = Path(__file__).resolve().parents[2]
 
 def sandbox():
     d = Path(tempfile.mkdtemp())
+    atexit.register(shutil.rmtree, d, True)
     (d / "doctrine").mkdir()
     shutil.copy(REPO / "doctrine/spinoff.json", d / "doctrine/spinoff.json")
     shutil.copy(REPO / "doctrine/blindspots.json", d / "doctrine/blindspots.json")

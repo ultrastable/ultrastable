@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // SPINOFF-1: one Worker serves every spun-off app at <slug>.ultrastable.app from the generated bundle (spinoffs/registry.json).
 // Ultrastable is the foundation for any autonomous system. Archetype "domain-check": reads only public pages and public DNS of the
 // domain a visitor types. Stores aggregate counts, a daily-salted visitor hash and the domain only as a keyed one-way hash (to tell a fix
