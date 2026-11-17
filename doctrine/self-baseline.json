@@ -1,0 +1,4 @@
+{
+ "_doc": "SELF-MODEL-1: workflows that belong to no loop yet. Shrink-only: foundation/selfmodel.py --check fails a new workflow outside a loop and a listed workflow that gained one. Drain it by declaring the workflow in a loop's workflows in instances/ultrastable/loop-registry.json.",
+ "workflows_without_loop": []
+}

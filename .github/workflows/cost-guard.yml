@@ -32,8 +32,9 @@ jobs:
         run: |
           python3 -m foundation ultrastability --tenants --apply
           python3 -m foundation ultrastability --tick --apply
+          python3 -m foundation selfmodel --apply
       - name: Record
         run: |
           git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
-          git add ops/cost.jsonl ops/criticality.jsonl ops/ultrastability.jsonl ops/tenants doctrine/clocks.json ops/provenance.jsonl docs/issues
+          git add ops/cost.jsonl ops/criticality.jsonl ops/ultrastability.jsonl site/self-data.js ops/tenants doctrine/clocks.json ops/provenance.jsonl docs/issues
           git diff --cached --quiet || { git commit -m "cost-guard: daily reading"; git push; }

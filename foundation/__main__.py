@@ -138,6 +138,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["resilience"]:
         from . import resilience
         return resilience.main(_av[1:])
+    if _av[:1] == ["selfmodel"]:
+        from . import selfmodel
+        return selfmodel.main(_av[1:])
     if _av[:1] == ["ultrastability"]:
         from . import ultrastability
         return ultrastability.main(_av[1:])
