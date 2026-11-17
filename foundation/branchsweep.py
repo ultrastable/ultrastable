@@ -226,6 +226,68 @@ def prune(root=REPO, base="origin/main", dry=False) -> list[dict]:
     return out
 
 
+def _api(token, method, path, fetch=None):
+    """GitHub REST call. fetch is injectable for tests: fetch(method, url, headers) -> (status, json)."""
+    url = "https://api.github.com" + path
+    headers = {"authorization": "Bearer " + token, "accept": "application/vnd.github+json", "user-agent": "ultrastable-branchsweep"}
+    if fetch:
+        return fetch(method, url, headers)
+    import urllib.request, urllib.error
+    req = urllib.request.Request(url, method=method, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            body = r.read()
+            return r.status, (json.loads(body) if body else None)
+    except urllib.error.HTTPError as e:
+        return e.code, None
+    except (urllib.error.URLError, TimeoutError) as e:
+        return 0, {"error": str(e)[:120]}
+
+
+def remote_prune(repos, token, prefixes=("claude/", "agent/"), dry=False, fetch=None, root=REPO, now=None) -> dict:
+    """BRANCH-SWEEP-2: the stale session branches of every fleet repository, by API (no checkout). A branch is deleted only when the
+    default branch already holds it (ahead_by 0) or its pull request merged with this exact head sha (squash merges). Any other branch
+    is kept and counted, never deleted. The sha goes to the ledger before the delete, so every deletion can be restored."""
+    out = {"at": int(now or time.time()), "remote": []}
+    for repo in repos:
+        st, info = _api(token, "GET", f"/repos/{repo}", fetch)
+        if st != 200 or not info:
+            out["remote"].append({"repo": repo, "unreadable": st}); continue
+        default = info.get("default_branch", "main")
+        st, brs = _api(token, "GET", f"/repos/{repo}/branches?per_page=100", fetch)
+        if st != 200 or not isinstance(brs, list):
+            out["remote"].append({"repo": repo, "unreadable": st}); continue
+        rows = []
+        for b in brs:
+            name, sha = b.get("name", ""), (b.get("commit") or {}).get("sha", "")
+            if name == default or not name.startswith(tuple(prefixes)) or b.get("protected"):
+                continue
+            why = None
+            st, cmp = _api(token, "GET", f"/repos/{repo}/compare/{default}...{name}", fetch)
+            if st == 200 and cmp and cmp.get("ahead_by") == 0:
+                why = f"{default} holds every commit"
+            else:
+                owner = repo.split("/")[0]
+                st2, prs = _api(token, "GET", f"/repos/{repo}/pulls?state=all&head={owner}:{name}&per_page=10", fetch)
+                open_pr = any(p.get("state") == "open" for p in (prs or []))
+                merged = [p for p in (prs or []) if p.get("merged_at") and (p.get("head") or {}).get("sha") == sha]
+                if merged and not open_pr:
+                    why = f"pull request #{merged[0]['number']} merged with this head"
+            if not why:
+                rows.append({"name": name, "sha": sha, "action": "kept", "why": "holds work the default branch lacks"}); continue
+            if not dry:
+                ds, _ = _api(token, "DELETE", f"/repos/{repo}/git/refs/heads/{name}", fetch)
+                rows.append({"name": name, "sha": sha, "action": "deleted" if ds == 204 else "delete_failed", "why": why + ("" if ds == 204 else f" (HTTP {ds})")})
+            else:
+                rows.append({"name": name, "sha": sha, "action": "would_delete", "why": why})
+        out["remote"].append({"repo": repo, "branches": rows})
+    if not dry:
+        (Path(root) / LEDGER).parent.mkdir(parents=True, exist_ok=True)
+        with (Path(root) / LEDGER).open("a", encoding="utf-8", newline="\n") as f:
+            f.write(json.dumps(out) + "\n")
+    return out
+
+
 def carried(root, name: str, base="origin/main") -> tuple[bool, str]:
     """The closing probe of a PORT-BRANCH item: true when the branch is gone, or main already holds everything it has (merged or superseded)."""
     rc, _, _ = git(root, "rev-parse", "--verify", "-q", "origin/" + name)
@@ -261,6 +323,12 @@ def main(argv=None) -> int:
         print(json.dumps(r, indent=1) if "--json" in a else "\n".join(f"{p['action']:10} {p['name']}  {p['why']}" for p in r)); return 0
     if "--apply" in a:
         r = apply(); print(json.dumps({k: v for k, v in r.items() if k != "dispositions"})); return 0 if r["invariant"] else 1
+    if "--remote" in a:
+        import os
+        tok = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
+        if not tok:
+            print("branchsweep --remote: no token in GH_TOKEN or GITHUB_TOKEN"); return 1
+        r = remote_prune(policy().get("fleet_repos", []), tok, dry="--dry" in a); print(json.dumps(r, indent=1)); return 0
     if "--prune" in a:
         print(json.dumps(prune(), indent=1)); return 0
     print(__doc__); return 2
