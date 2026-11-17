@@ -1,0 +1,42 @@
+name: spinoff
+# SPINOFF-1: the portfolio loop of spun-off apps. Collects each live app's public aggregate metrics, scores measured value, keeps, iterates, promotes or retires, and launches the next best idea within the weekly cap.
+# budget: ~1 min per run, free (public repository); 1 scheduled run a day
+# trigger: daily; never faster, because an app's value is a 7-day measure and launches are capped at one a week
+# free-alternative: `python3 -m foundation spinoff --collect --apply && python3 -m foundation spinoff --tick --apply` from a cloud-hosted agent session or the Cloudflare cron worker
+on:
+  schedule:
+    - cron: "41 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: spinoff
+  cancel-in-progress: false
+jobs:
+  spinoff:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - run: python3 -m foundation spinoff --collect --apply
+      - run: python3 -m foundation spinoff --tick --apply
+      - run: python3 -m foundation spinoff --launch --apply
+      - run: python3 -m foundation spinoff --promote --apply
+      - name: Ledgers and registry to a PR the lane merges
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "ultrastable-spinoff"
+          git config user.email "actions@users.noreply.github.com"
+          if [ -n "$(git status --porcelain ops instances spinoffs)" ]; then
+            b="agent/spinoff-${GITHUB_RUN_ID}"
+            git checkout -q -b "$b"; git add ops instances spinoffs
+            git commit -q -m "spinoff: metrics, portfolio decisions and launches (SPINOFF-1)"
+            git push -q origin "$b"
+            gh pr create --base main --head "$b" --title "spinoff: portfolio tick" --body "Metrics, decisions and launches recorded by the SPINOFF-1 loop. Evidence: ops/spinoff/ledger.jsonl."
+          fi

@@ -53,6 +53,7 @@
   {"path": "repo-backups", "reason": "backup bundles of other repositories, not this system's code"}
  ],
  "exclude": [
+  {"path": "spinoffs/**", "reason": "the spun-off apps' Worker refuses loopback and private names as SSRF guards for the public domain a visitor types; it never connects to a person's computer"},
   {"path": "doctrine/server-side.json", "reason": "this file holds the banned patterns themselves"},
   {"path": "doctrine/doc-consumers.json", "reason": "its removed ledger must name the deleted desktop task definition by its old path so the removal stays recoverable"},
   {"path": "deploy/sibling-patches/*.patch", "reason": "patch files quote the removed lines of sibling repositories byte for byte; editing them breaks the patch"},

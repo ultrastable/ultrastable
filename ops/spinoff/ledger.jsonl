@@ -1,0 +1,1 @@
+{"at": "2026-11-17T15:45:58Z", "event": "launch", "impact": 4, "needs": ["security-contact", "email-authentication", "privacy-notice", "terms-of-use", "accessibility-statement", "footer-links"], "prediction": "verified_fixes_7d >= 20 within 336 h", "reach": 5, "score": 10.0, "slug": "blindspot", "url": "https://blindspot.ultrastable.app"}

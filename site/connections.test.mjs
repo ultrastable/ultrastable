@@ -63,3 +63,14 @@ r = await connectionsRoute(R("/connect/google/start"), env, { subject: signedIn 
 r = await connectionsRoute(R("/connect/google/callback?code=x&state=y"), env, { subject: anon }); assert.equal(await r.text(), "tick:/connect/google/callback");
 assert.equal(renderConnections({ linked: [], available: [] }, []).includes("No services linked yet"), true);
 console.log("connections ok");
+
+// REACH-1: behind the gateway the Worker sees a workers.dev host; the consent flow must still get the canonical origin (redirect_uri, client_id)
+{
+  let seen = null;
+  const e2 = { DB: env.DB, TICK: { fetch: async (req) => { seen = req.url; return new Response("ok"); } } };
+  await connectionsRoute(new Request("https://ultrastable-site.ultrastable.workers.dev/.well-known/oauth-client/bluesky.json"), e2, { subject: anon });
+  assert.equal(seen, "https://ultrastable.io/.well-known/oauth-client/bluesky.json");
+  await connectionsRoute(new Request("https://ultrastable-site.ultrastable.workers.dev/connect/bluesky/callback?code=a&state=b"), e2, { subject: anon });
+  assert.equal(seen, "https://ultrastable.io/connect/bluesky/callback?code=a&state=b");
+  console.log("canonical origin for the consent flow ok");
+}
