@@ -193,7 +193,7 @@ def _item(root, cfg, clock, verdict, fails) -> str:
     p = Path(root) / "docs/issues" / (iid + ".json")
     if not p.exists():
         body = (f"**Owner:** executor\n**Trigger:** clock `{clock['id']}` stopped (last beat age {verdict.get('last_beat_age_s')} s, expected every {clock['expected_interval_s']} s) and {fails} restarts did not take\n"
-                f"**Done check:** probe:python3 -m foundation resilience --probe {clock['id']}\n**Status:** open\n\nRESILIENCE-1: find why the clock stopped (disabled schedule, failing job, dead route), "
+                f"**Done check:** cmd:python3 -m foundation resilience --probe {clock['id']}\n**Status:** open\n\nRESILIENCE-1: find why the clock stopped (disabled schedule, failing job, dead route), "
                 f"fix the cause, and add a second independent trigger so it cannot stop silently again. Escalated through the queue, never by email.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation resilience --probe {clock['id']}` reports ticking.\n")
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps({"id": iid, "title": f"{iid}: clock {clock['id']} stopped and restarts did not take", "body": body, "labels": ["p0", "agent-ready"], "milestone": "Now", "workstream": "Resilience"}, indent=2) + "\n", encoding="utf-8")

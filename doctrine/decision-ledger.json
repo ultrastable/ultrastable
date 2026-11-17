@@ -1929,12 +1929,13 @@
    "probe": "grep:foundation/resilience.py::def restart"
   },
   {
-   "id": "lesson-2026-11-17-core-ensemble-lifted-from-the-practical-solutions-test-bed",
-   "kind": "lesson",
+   "id": "decision-2026-11-17-capped-sparks-no-longer-cancel-executor-runs-spark-queue-1",
+   "kind": "decision",
    "date": "2026-11-17",
-   "title": "core/ensemble lifted from the Practical Solutions test bed",
-   "body": "Cross-vendor model ensemble: one vendor per panel seat, never the author's family, deterministic evidence checks first, unanimous verification applies a change, disagreement stays as uncertainty, an outage fails closed, correlation measured. The tenant keeps only its pool, ledger view and apply flow. deploygate rule flag ai:true lets a tenant model Worker deploy through the gateway. Session: session_0156nqDrYNAtihJTa31nvsqc",
-   "probe": "file:workers/core/ensemble/index.js"
+   "title": "Capped sparks no longer cancel executor runs (SPARK-QUEUE-1)",
+   "body": "The executor's spark gate is its own job outside the executor concurrency group, so a workflow_run spark that hit its daily cap ends there instead of displacing a queued manual or Worker dispatch (measured 2026-11-17 18:08-18:14 UTC).",
+   "probe": "grep:.github/workflows/executor.yml::SPARK-QUEUE-1",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }

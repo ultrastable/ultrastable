@@ -161,7 +161,7 @@ def tick(root=REPO, apply=False, now=None, feed_ok=None) -> dict:
             c = cfg(root); p = root / "docs/issues" / (c["stall_item"] + ".json")
             if not p.exists():
                 p.write_text(json.dumps({"id": c["stall_item"], "title": f"{c['stall_item']}: a tick changed no state; the mantra is not being fed",
-                    "body": "**Owner:** executor\n**Trigger:** two consecutive criticality ticks with identical state\n**Done check:** probe:python3 -m foundation criticality --check\n**Status:** open\n\nIdentify which clause has not moved (ops/criticality.jsonl) and ship a deploy or a cost cut that moves it.\n\nsize: S\n\n**Closing probe:** python3 -m foundation criticality --check",
+                    "body": "**Owner:** executor\n**Trigger:** two consecutive criticality ticks with identical state\n**Done check:** cmd:python3 -m foundation criticality --check\n**Status:** open\n\nIdentify which clause has not moved (ops/criticality.jsonl) and ship a deploy or a cost cut that moves it.\n\nsize: S\n\n**Closing probe:** python3 -m foundation criticality --check",
                     "labels": ["p0", "agent-ready", "raises-deploys"], "milestone": "Now", "workstream": "deploys"}, indent=2) + "\n", encoding="utf-8")
     return r
 
