@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """PROVENANCE-1: where every input and change came from, what it touched, what it did. Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation provenance [--check | --record JSON | --settle ID kept|reverted|none [NOTE] | --ingest-git [--since REV] [--apply]

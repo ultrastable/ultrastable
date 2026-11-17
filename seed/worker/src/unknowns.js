@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 // UNKNOWNS-1: the tick questions what the system does not know. Twin of foundation/unknowns.py, driven by the same doctrine/unknowns.json
 // (config.unknowns). Units are items the org has opened (their done_check and closing_probe are the assumptions); one inverted question per

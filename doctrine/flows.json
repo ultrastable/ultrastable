@@ -1077,6 +1077,28 @@
       ],
       "feedback": "each answer (gap, new objective, none, cannot-know) is a ledger row that lowers that question's novelty and raises the score of its loop when a gap was found; a gap or new objective becomes a probationary objective candidate and seeds the next pass, so the questions move toward where the system was wrong",
       "bindings": []
+    },
+    "ciwatch": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a Q-CIFAIL item closes only when its workflow's newest default-branch run is green (probe), a red run that reappears reopens it, and the ledger is read on the next pass to rerun transient failures at most once",
+      "bindings": [
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {

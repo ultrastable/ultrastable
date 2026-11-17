@@ -1,0 +1,9 @@
+{
+  "_doc": "AGENT-BUDGET-1: caps and kill switch for the Actions-hosted code agent (foundation/agentwork.py, gate in .github/workflows/executor.yml). Any cap reached, or any kill switch set, makes the run a no-op that records why; nothing is deleted. Raise a cap by editing this file in a PR.",
+  "max_open_agent_prs": 3,
+  "max_runs_per_day": 24,
+  "max_usd_per_day": 1.0,
+  "max_unknown_items_per_run": 2,
+  "kill_switches": ["repository variable HALT=1 (stops the whole workflow)", "repository variable AGENT_KILL=1", "ops/agent-kill (a committed file)", "ops/halt.json"],
+  "log": "ops/agentwork.jsonl"
+}

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # UNKNOWNS-1: the system audits what it does not know and feeds the answers back.
 import json, shutil, datetime as dt
 import unittest
