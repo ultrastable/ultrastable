@@ -13,7 +13,7 @@ from foundation import claims  # noqa: E402
 
 def copy():
     td = _repo.scratch()
-    for f in ("doctrine/claims.json", "README.md", "platform/adapters/README.md", "site/worker.js", "site/promote.js", "site/agentic.js", "site/claims-data.js"):
+    for f in ("doctrine/claims.json", "README.md", "platform/adapters/README.md", "site/worker.js", "site/promote.js", "site/agentic.js", "site/claims-data.js", ".github/workflows/claims.yml", "tests/foundation/test_claims.py", "agents/AGENTS.md"):
         (td / f).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / f, td / f)
     for d in ("seed", "platform", "ops", "foundation", "instances", "doctrine", "site"):
