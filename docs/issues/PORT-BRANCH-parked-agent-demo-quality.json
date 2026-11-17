@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-agent-demo-quality",
+  "title": "PORT-BRANCH-parked-agent-demo-quality: carry parked/agent/demo-quality onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/demo-quality` at 0eea00b42d holds work main lacks and cannot merge as is (conflicts in code: scripts/build_dashboard.py, scripts/deploy_tenant.py, seed/worker/src/index.js, seed/worker/src/visibility.js, seed/worker/test/measure.test.js, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/demo-quality\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/demo-quality",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

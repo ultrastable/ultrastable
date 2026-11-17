@@ -27,7 +27,7 @@ jobs:
       - run: python3 scripts/actions_guard.py failure-audit
         env:
           GH_TOKEN: ${{ github.token }}
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - name: Start from the loop's own evidence when it exists

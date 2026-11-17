@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-publication-org-audit",
+  "title": "PORT-BRANCH-parked-claude-publication-org-audit: carry parked/claude/publication-org-audit onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/publication-org-audit` at f1c4bfa0f2 holds work main lacks and cannot merge as is (conflicts in code: doctrine/LESSONS.md, doctrine/publication.json, foundation/__main__.py, foundation/publication.py, instances/ultrastable/loop-registry.json, tests/foundation/test_publication.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/publication-org-audit\n**Status:** open\n\nPort the change by hand onto current main (it is 6 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/publication-org-audit",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

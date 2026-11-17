@@ -53,8 +53,18 @@ def ensemble(author_family: str, env=None, root=REPO) -> list[dict]:
     return out
 
 
+def fit(a: dict, prompt: str) -> str:
+    """FREE-LLM-1: a rung with a request cap gets the head (instructions, issue) and the tail (repair feedback) of the prompt, never an over-limit request."""
+    cap = a.get("max_prompt_chars")
+    if not cap or len(prompt) <= cap:
+        return prompt
+    head = cap * 2 // 3
+    return prompt[:head] + "\n[... trimmed to fit this model's request limit ...]\n" + prompt[-(cap - head - 60):]
+
+
 def build_request(a: dict, prompt: str, env=None) -> tuple[str, dict, dict]:
     env = os.environ if env is None else env
+    prompt = fit(a, prompt)
     if a["route"] == "workers-ai":
         url = f"https://api.cloudflare.com/client/v4/accounts/{env['CLOUDFLARE_ACCOUNT_ID']}/ai/run/{a['model']}"
         body = {"messages": [{"role": "user", "content": prompt}], "max_tokens": 7000, **a.get("extra", {})}
@@ -80,7 +90,10 @@ def parse_text(a: dict, resp: dict) -> str:
 def http(url, headers, body, timeout=300) -> dict:
     req = urllib.request.Request(url, method="POST", data=json.dumps(body).encode(), headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read())
+        raw = r.read()
+        if not raw.strip():  # seen live from the free tier: HTTP 200 with an empty body; say so instead of a bare JSONDecodeError
+            raise RuntimeError(f"empty response body (HTTP {r.status}) from {url}")
+        return json.loads(raw)
 
 
 def invoke(a: dict, prompt: str, env=None, transport=http) -> str:

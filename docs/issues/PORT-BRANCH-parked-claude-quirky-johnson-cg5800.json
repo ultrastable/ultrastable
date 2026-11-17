@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-quirky-johnson-cg5800",
+  "title": "PORT-BRANCH-parked-claude-quirky-johnson-cg5800: carry parked/claude/quirky-johnson-cg5800 onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/quirky-johnson-cg5800` at 30261a9f61 holds work main lacks and cannot merge as is (conflicts in code: scripts/resolve_generated.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/quirky-johnson-cg5800\n**Status:** open\n\nPort the change by hand onto current main (it is 23 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/quirky-johnson-cg5800",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
