@@ -93,3 +93,12 @@
 {"at": "2026-11-17T18:34:52Z", "ev": "reading", "ok": false, "seq": 92, "unmeasured": true, "value": null, "var": "blindspot:spend"}
 {"at": "2026-11-17T18:34:52Z", "ev": "reading", "ok": false, "seq": 93, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
 {"at": "2026-11-17T18:34:52Z", "ev": "reading", "ok": false, "seq": 94, "unmeasured": true, "value": null, "var": "blindspot:value"}
+{"at": "2026-11-17T18:35:35Z", "ev": "reading", "ok": true, "seq": 95, "value": 0.497, "var": "spend"}
+{"at": "2026-11-17T18:35:35Z", "ev": "reading", "ok": true, "seq": 96, "value": 1.0, "var": "deploy_health"}
+{"at": "2026-11-17T18:35:35Z", "ev": "reading", "ok": false, "seq": 97, "value": 1, "var": "claims_drift"}
+{"at": "2026-11-17T18:35:35Z", "ev": "reading", "ok": true, "seq": 98, "value": 5.049, "var": "value"}
+{"at": "2026-11-17T18:35:35Z", "ev": "reading", "ok": false, "seq": 99, "value": 2, "var": "stalled_clocks"}
+{"at": "2026-11-17T18:35:35Z", "ev": "reading", "ok": false, "seq": 100, "value": 0.0, "var": "blindspot:uptime"}
+{"at": "2026-11-17T18:35:35Z", "ev": "reading", "ok": false, "seq": 101, "unmeasured": true, "value": null, "var": "blindspot:spend"}
+{"at": "2026-11-17T18:35:35Z", "ev": "reading", "ok": false, "seq": 102, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
+{"at": "2026-11-17T18:35:35Z", "ev": "reading", "ok": false, "seq": 103, "unmeasured": true, "value": null, "var": "blindspot:value"}

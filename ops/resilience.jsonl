@@ -15,3 +15,4 @@
 {"at": "2026-11-17T18:33:15Z", "clocks": 29, "kind": "beat", "seq": 14, "stalled": 2, "stalled_ids": ["tick-heartbeat", "criticality-loop"], "unmeasured": 0}
 {"at": "2026-11-17T18:33:52Z", "clocks": 29, "kind": "beat", "seq": 15, "stalled": 2, "stalled_ids": ["tick-heartbeat", "criticality-loop"], "unmeasured": 0}
 {"at": "2026-11-17T18:34:25Z", "clocks": 29, "kind": "beat", "seq": 16, "stalled": 2, "stalled_ids": ["tick-heartbeat", "criticality-loop"], "unmeasured": 0}
+{"at": "2026-11-17T18:35:11Z", "clocks": 29, "kind": "beat", "seq": 17, "stalled": 2, "stalled_ids": ["tick-heartbeat", "criticality-loop"], "unmeasured": 0}
