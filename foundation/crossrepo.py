@@ -8,7 +8,7 @@ from __future__ import annotations
 import datetime as dt, json, os, re, subprocess, tempfile
 from pathlib import Path
 
-DEFAULT_TARGETS = "ultrastable/workers"
+DEFAULT_TARGETS = ""
 MAX_PRS_PER_DAY = int(os.environ.get("EXECUTOR_MAX_PRS_PER_DAY", "4"))
 CHECKS = [["npm", "test"]]
 SKIP = {"hold", "blocked", "owner", "gate", "identity-bound", "wontfix", "in-progress", "executor-failed", "protected-change", "extraction-epic"}

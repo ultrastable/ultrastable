@@ -1,7 +1,7 @@
 {
   "id": "Q-FLOW-RESUME-JOBS",
   "title": "Q-FLOW-RESUME-JOBS: bring the jobs, outreach and resume system under the flow map",
-  "body": "**Owner:** operations\n**Trigger:** weekly\n**Done check:** file:doctrine/flows-external.json\n**Status:** open\n\nThe resume and job-search system (rwnq8.github.io, rwnq8.github.io/ultrastable, repository rwnq8/resume) is outside this repository's access. Declare its loops (ingest, answer bank, job-search state, surface audit) in a flows-external file with inflows, outflows and the returning signal (replies, interviews, page visits) that updates the resume and next applications; the flow check reads it. The Ultrastable funding outreach loop already returns replies to its registry and next run.",
+  "body": "**Owner:** operations\n**Trigger:** weekly\n**Done check:** file:doctrine/flows-external.json\n**Status:** closed\n\nThe resume and job-search system (rwnq8.github.io, rwnq8.github.io/ultrastable, repository rwnq8/resume) is outside this repository's access. Declare its loops (ingest, answer bank, job-search state, surface audit) in a flows-external file with inflows, outflows and the returning signal (replies, interviews, page visits) that updates the resume and next applications; the flow check reads it. The Ultrastable funding outreach loop already returns replies to its registry and next run.\n\n**Evidence:** closed by the pull request that carries this change\n",
   "labels": [
     "role:operations",
     "growth"
