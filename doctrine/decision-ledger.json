@@ -1518,6 +1518,33 @@
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
   },
   {
+   "id": "lesson-2026-11-17-retention-1-unknowns-1-added-unknown-questions-without-a-ret",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "RETENTION-1: UNKNOWNS-1 added unknown_questions without a retention rule",
+   "body": "plan-limits RETENTION-1 failed on every PR after UNKNOWNS-1 merged because table unknown_questions had no rule in seed/autonomy/retention.json. Added a 30-day rule. Verified: plan-limits tests pass 7 of 7. ciwatch (CIWATCH-1) already watches red runs, so the duplicate ci-doctor job from this thread was dropped.",
+   "probe": "grep:seed/autonomy/retention.json::unknown_questions",
+   "session": "session_0156nqDuXJWyM65c8uChpjTM"
+  },
+  {
+   "id": "lesson-2026-11-17-retention-1-migrations-also-needs-a-rule",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "RETENTION-1: _migrations also needs a rule",
+   "body": "Main gained a _migrations table without a retention rule; added keep:state. Verified: plan-limits tests pass.",
+   "probe": "grep:seed/autonomy/retention.json::_migrations",
+   "session": "session_0156nqDuXJWyM65c8uChpjTM"
+  },
+  {
+   "id": "lesson-2026-11-17-publication-migrate-js-landed-without-the-spdx-header",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "PUBLICATION: migrate.js landed without the SPDX header",
+   "body": "seed/worker/src/migrate.js carried a non-standard licence line and its test had none, so the publication check failed on every PR after it merged. Both now carry the USL-1.0 SPDX header. Verified: publication check ok and migrate tests pass 5 of 5.",
+   "probe": "grep:seed/worker/src/migrate.js::LicenseRef-Ultrastable-USL-1.0",
+   "session": "session_0156nqDrN6YKkuiXK6LyZoAa"
+  },
+  {
    "id": "lesson-2026-11-17-selfcode-1-self-code-items-must-pass-the-criticality-gate-fa",
    "kind": "lesson",
    "date": "2026-11-17",
