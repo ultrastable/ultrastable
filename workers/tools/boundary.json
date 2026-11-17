@@ -325,6 +325,10 @@
       "class": "core",
       "role": "Cross-model ensemble: other-vendor proposals, evidence checks, unanimous verification and measured correlation apply updates automatically; disagreement stays as uncertainty; cross-vendor review of agent code; tenant-agnostic (ENSEMBLE-1)"
     },
+    "core/modelservice": {
+      "class": "core",
+      "role": "Keyless model route: OIDC-verified CI runs call Workers AI with allow-listed models; tenants pass configuration only (MODELSERVICE-1)"
+    },
     "core/deploygate": {
       "class": "core",
       "role": "Deploy gate: hash read-back of the stored module before a deploy counts as verified"

@@ -2005,6 +2005,14 @@
    "probe": "grep:scripts/regen_generated.py::def run_all"
   },
   {
+   "id": "lesson-2026-11-17-core-modelservice-keyless-oidc-model-route-lifted-from-the-t",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "core/modelservice: keyless OIDC model route lifted from the tenant",
+   "body": "Live ensemble runs showed reasoning models empty (OpenAI choices shape, budget spent thinking) and bare 500s. Core reads every shape, retries a truncated reply with the full budget, returns model errors as JSON. Session: session_0156nqDrYNAtihJTa31nvsqc",
+   "probe": "file:workers/core/modelservice/index.js"
+  },
+  {
    "id": "decision-2026-11-17-product-manager-pass-2026111716-3-item-s-filed",
    "kind": "decision",
    "date": "2026-11-17",
