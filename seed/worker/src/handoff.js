@@ -231,6 +231,26 @@ export function topologyBindings(topo, id) {
   for (const [bn, v] of Object.entries(b.vars || {})) out.push({ type: 'plain_text', name: bn, text: String(v) });
   return { worker: w, bindings: out };
 }
+// OWNER-EMAIL-1 (Rowan 2026-11-17): the owner's sign-in address is never typed in. It is read from the repository the code lives in: the
+// human committer with admin permission (most commits first) and the address on their commits, never a noreply or bot address. Plain
+// variables are replaced on every deploy, so the deployer resolves it each time. A miss returns '' and the deploy goes on (the dashboard
+// probe `owner_email` then reports it); nothing is guessed.
+export async function resolveOwnerEmail(f, token, repo) {
+  const h = { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-handoff' };
+  const r = await f(`${API}/repos/${repo}/commits?per_page=100`, { headers: h }); if (!r.ok) return '';
+  const by = new Map();
+  for (const c of await r.json()) {
+    const login = c.author && c.author.login, email = String((c.commit && c.commit.author && c.commit.author.email) || '').toLowerCase();
+    if (!login || (c.author.type && c.author.type !== 'User') || !email || /noreply|\[bot\]/.test(email)) continue;
+    const e = by.get(login) || { n: 0, emails: new Map() }; e.n++; e.emails.set(email, (e.emails.get(email) || 0) + 1); by.set(login, e);
+  }
+  const ranked = [...by.entries()].sort((a, b) => b[1].n - a[1].n);
+  for (const [login, e] of ranked) {
+    const p = await f(`${API}/repos/${repo}/collaborators/${login}/permission`, { headers: h }).then(x => x.ok ? x.json() : null).catch(() => null);
+    if (p && p.permission === 'admin') return [...e.emails.entries()].sort((a, b) => b[1] - a[1])[0][0];
+  }
+  return '';
+}
 // The tick's config.js is generated, not in git. Same generator as deploy/deploy-workers.mjs, read from the repo at the deploy commit, so a policy change ships with its merge.
 export async function tickConfigSource(read) {
   const j = async (p) => JSON.parse(await read(p));
@@ -247,6 +267,9 @@ export function makeDeployer({ token, fetch: f = fetch, site, key, oidc, generat
       const tb = topologyBindings(topo, id); if (!tb) return { ok: false, detail: `${id} is not in doctrine/topology.json` };
       if (tb.worker.state !== 'live') return { ok: false, detail: `${id} is ${tb.worker.state}, not live` };
       const read = p => raw(f, token, repo, sha, p);
+      if (((tb.worker.bindings || {}).var_names || []).includes('OWNER_EMAIL') && !tb.bindings.some(x => x.name === 'OWNER_EMAIL')) {
+        const em = await resolveOwnerEmail(f, token, repo).catch(() => ''); if (em) tb.bindings.push({ type: 'plain_text', name: 'OWNER_EMAIL', text: em });
+      }
       const gen = { 'seed/worker/src/config.js': () => tickConfigSource(read), ...Object.fromEntries(Object.entries(generated).map(([k, v]) => [k, () => v])) };
       const modules = await collectModules(p => (p in gen ? Promise.resolve(gen[p]()) : read(p)), tb.worker.main);
       const r = await site.fetch('https://internal/__internal/deploy', { method: 'POST', headers: { ...(oidc ? { authorization: 'Bearer ' + oidc } : { 'x-internal-key': key }), 'content-type': 'application/json' },
