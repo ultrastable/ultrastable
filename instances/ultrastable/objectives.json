@@ -95,6 +95,19 @@
    "grace_hours": 0,
    "owner_role": "product-manager-3",
    "remedy": "Expose the ledger count as a probe."
+  },
+  {
+   "id": "M-tenants-selftest",
+   "objective_id": "OBJ-2",
+   "name": "tenant store self-test passes (1 = pass)",
+   "kind": "guard",
+   "source": "service",
+   "spec": "TENANTS /health",
+   "op": ">=",
+   "threshold": 1,
+   "grace_hours": 2,
+   "owner_role": "product-manager-2",
+   "remedy": "ultrastable-tenants /health reports a failed self-test. Read its selftest result, fix tenants/src or tenants/tenantstore, and let deploy-workers redeploy it."
   }
  ]
 }
