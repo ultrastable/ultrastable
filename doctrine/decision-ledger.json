@@ -31,7 +31,7 @@
    "kind": "decision",
    "date": "2026-11-12",
    "title": "Fleet skips archived repositories",
-   "body": "ultrastable/seed is archived and read-only; its live copy is the seed directory of this repository. The fleet lane lists live repositories only and records an archived one instead of failing or opening a card.",
+   "body": "ultrastable/seed is a retired pointer repo (its live copy is the seed directory of this repository; archiving it waits on Q-REPOS-ADMIN-APPLY). The fleet lane lists live repositories only and records an archived one instead of failing or opening a card.",
    "probe": "grep:foundation/fleet.py::archived"
   },
   {
@@ -1604,6 +1604,22 @@
    "body": "Rowan 2026-11-17: any must-do owner action is a single link to a web UI that runs OAuth/OIDC and callbacks server-side. Built /connect index, /connect/bluesky (atproto OAuth), /connect/mastodon, a server-side publisher in the tick Worker, and a pointclick check that fails a needs-you item without a connect link.",
    "probe": "grep:foundation/pointclick.py::CONNECT-LINK-1",
    "session": "session_0156nqDtKVpn3hxk4cBwg9BD"
+  },
+  {
+   "id": "decision-2026-11-17-repos-consolidation",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Fewer repositories: the main repository holds what Ultrastable is",
+   "body": "Rowan found the repository count confusing. Rule (brand/brand.json structure): one main repository, plus a separate repository only for a different license or visibility, an owner-only tracker, or a system built on Ultrastable. Target: ultrastable, ops, practical-solutions. seed and license are retired pointers (seed is public under USL-1.0 on Rowan's instruction); workers and spec fold in via Q-REPOS-MERGE-WORKERS and Q-REPOS-MERGE-SPEC. The README section and the /how page are generated from the manifest; `python3 brand/tools/sync_repos.py --check` fails on drift.",
+   "probe": "grep:brand/tools/sync_repos.py::--check"
+  },
+  {
+   "id": "decision-2026-11-17-repos-1-fewer-repositories",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "REPOS-1 fewer repositories",
+   "body": "One main repository; seed and license retired to pointers; workers and spec fold-ins backlogged as Q-REPOS-MERGE-WORKERS and Q-REPOS-MERGE-SPEC; seed visibility via org-settings (Q-REPOS-ADMIN-APPLY).",
+   "probe": "grep:brand/tools/sync_repos.py::--check"
   }
  ]
 }

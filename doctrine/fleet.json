@@ -103,12 +103,6 @@
    "open": "Spec change in {from}: verify status labels in {to} (tools/spec_truth.py)"
   },
   {
-   "from": "ultrastable",
-   "to": "seed",
-   "on": "foundation/",
-   "open": "Foundation change in {from}: sync the seed kernel copy"
-  },
-  {
    "from": "license",
    "to": "workers",
    "on": "LICENSE",

@@ -32,20 +32,18 @@ The proof lives in [ultrastable/ultrastable](https://github.com/ultrastable/ultr
 
 <p align="center"><img src="assets/brand/self-reference.png" alt="Ultrastable runs on itself" width="80%"></p>
 
-## All repositories
-<p align="center"><img src="assets/brand/repo-map.png" alt="Seven repositories, one system" width="90%"></p>
+## How Ultrastable is organized
+One main repository holds what Ultrastable is. A separate repository exists only for a different license or visibility, an owner-only tracker, or a system built on top of Ultrastable.
 
-| Repo | Role | What |
+| Repository | Visibility | What it holds |
 |---|---|---|
-| [ultrastable](https://github.com/ultrastable/ultrastable) | System of record | The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof. |
-| [workers](https://github.com/ultrastable/workers) | Code | The code: the Cloudflare Worker tick, schema, bootstrapper, adapters and reference runtime. Public so its GitHub Actions run. |
-| [spec](https://github.com/ultrastable/spec) | Specifications | The numbered specifications and docs: what a conforming implementation must do. Dated 2026-11-11 and published openly as a public record of the design. |
-| [license](https://github.com/ultrastable/license) | Retired | Retired: the Ultrastable License now lives in ultrastable/spec. Kept public so existing links resolve. |
-| [ops](https://github.com/ultrastable/ops) | Owner tracker | Administration: owner cards, funding, legal and bootstrap gaps. Not code. Private. |
-| [seed](https://github.com/ultrastable/seed) | Bootstrapper | One idea file in, a running organization of virtual managers and staff out. |
-| [.github](https://github.com/ultrastable/.github) | Org profile | Organization profile and community health defaults. |
+| [ultrastable](https://github.com/ultrastable/ultrastable) | public | Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, and seed/ (the starting kit for a new system). It is a GitHub template, so "Use this template" copies it. |
+| [workers](https://github.com/ultrastable/workers) | public | The reusable core engine and its tests. Overlaps seed/ in the main repository; folding it in is tracked as Q-REPOS-MERGE-WORKERS. |
+| [spec](https://github.com/ultrastable/spec) | public | US-SPEC-* specifications, SCOPE, and the canonical LICENSE, COMMERCIAL-TERMS and FAQ. Folding it in is tracked as Q-REPOS-MERGE-SPEC. |
+| [ops](https://github.com/ultrastable/ops) | private | The few steps only the owner can take (accounts, money, signatures), one card each. Private on purpose. |
+| [practical-solutions](https://github.com/ultrastable/practical-solutions) | public | An autonomous bright-spot finder that runs on Ultrastable. The first system built on it, in its own repository. |
 
-Also in the org:  (extracted code, specifications and canonical license text).
+The organization's profile page is [.github](https://github.com/ultrastable/.github). Retired, kept only so old links work: [`license`](https://github.com/ultrastable/license) is now in `spec`; [`seed`](https://github.com/ultrastable/seed) is now in `ultrastable`. Still to fold into the main repository: `workers` into `ultrastable` (Q-REPOS-MERGE-WORKERS), `spec` into `ultrastable` (Q-REPOS-MERGE-SPEC). The target is 3 repositories: `ultrastable`, `ops`, `practical-solutions`.
 
 ## License
 Source-available. Free for non-commercial use: read it, run it, study it, change it, share it. Any commercial use needs a Commercial License with revenue share. Full terms: [Ultrastable License v1.0 (USL-1.0)](https://github.com/ultrastable/ultrastable/blob/main/LICENSING.md). Commercial licensing: pilot@ultrastable.io.

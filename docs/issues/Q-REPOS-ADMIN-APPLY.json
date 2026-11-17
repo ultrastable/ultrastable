@@ -1,0 +1,5 @@
+{
+  "id": "Q-REPOS-ADMIN-APPLY",
+  "title": "Q-REPOS-ADMIN-APPLY: make seed public and archive the retired repositories through the server-side settings route",
+  "body": "**Owner:** operations\n**Trigger:** org-settings workflow run with ORG_ADMIN_TOKEN bound (or a platformaudit apply)\n**Status:** open\n**Done check:** probe:gh api repos/ultrastable/seed --jq .private == false\n\ncode-task: repo=ultrastable/ultrastable path=github/org-settings.json\ncode-anchor: Q-REPOS-ADMIN-APPLY\n\nSurfaces tested 2026-11-17: gh PATCH repos/ultrastable/seed from a cloud session returned 403 'Repository settings writes are not permitted through this proxy'; the GitHub MCP tools expose no repository-settings call; the owner's device bridge was not connected. github/org-settings.json now declares seed `visibility: public` (license USL-1.0, audited history, disclosure record docs/disclosure of the seed repo); scripts/apply_github_settings.sh applies it. After that run: archive `seed` and `license` (read-only pointer repos)."
+}
