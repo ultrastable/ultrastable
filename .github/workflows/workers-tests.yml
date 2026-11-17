@@ -1,0 +1,24 @@
+name: workers-tests
+# budget: ~2 min per change under workers/, cancel-in-progress
+# trigger: a pull request or push that touches workers/ (REPOS-1: the folded-in core is tested where it lives); never on a timer
+# free-alternative: a cloud-hosted agent session runs `cd workers && npm test`
+on:
+  pull_request:
+    paths: ["workers/**"]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch: {}
+permissions: {contents: read}
+concurrency: {group: "workers-tests-${{ github.ref }}", cancel-in-progress: true}
+jobs:
+  workers-tests:
+    if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py workers-tests
+      - name: Test the folded-in core
+        working-directory: workers
+        run: npm test

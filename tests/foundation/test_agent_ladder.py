@@ -38,7 +38,8 @@ class Ladder(unittest.TestCase):
             raise RuntimeError("non-JSON response (HTTP 200, text/plain)")
         with self.assertRaises(RuntimeError):
             L.call("p", 0, root=self.d, env=CF, send=boom)
-        self.assertNotIn(first, [a["id"] for a in L.rungs(self.d, CF)])
+        self.assertIn(first, L.DOWN)
+        self.assertIn(agents.route_authors(CF)[0]["route"], L.DOWN)  # the whole provider route is down; with every route down the full list comes back rather than nothing
         L.DOWN.clear()
 
     def test_unusable_reply_is_logged_and_raised(self):

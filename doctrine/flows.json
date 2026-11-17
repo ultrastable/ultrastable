@@ -982,6 +982,34 @@
         "CLOUDFLARE_API_TOKEN"
       ]
     },
+    "ultrastability-loop": {
+      "inflows": [
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
+        },
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "ultrastability.readings",
+          "via": "file:ops/ultrastability.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "ultrastability.readings",
+          "via": "file:ops/ultrastability.jsonl"
+        },
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a step changes a parameter or files a restructure item; the next readings grade the logged prediction, keep the step when the variable is back inside its bounds and otherwise undo it and take the next step",
+      "bindings": []
+    },
     "branch-sweep": {
       "inflows": [
         {
@@ -1162,6 +1190,22 @@
         }
       ],
       "feedback": "a drift files a Q-CLAIM item the executor fixes by merging a change; the next check reads the fixed words and the claim count rises",
+      "bindings": []
+    },
+    "workers-tests": {
+      "inflows": [
+        {
+          "signal": "adoption.outcomes",
+          "via": "file:ops/scout/adopted.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a failed run is filed as an issue by the failure audit and taken by the executor; the next change under workers/ re-runs the tests, so a fix stops failing and a regression files again",
       "bindings": []
     }
   },

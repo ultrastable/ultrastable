@@ -6,7 +6,7 @@ import { githubApp } from './github-app.js';
 import { oauth } from './oauth.js';
 import { cloudflare } from './cloudflare.js';
 import * as store from './store.js';
-export const ADAPTERS = { 'github-app': githubApp, oauth, cloudflare };
+export const ADAPTERS = { 'github-app': githubApp, 'github-admin': githubApp, oauth, cloudflare };  // REPOS-1: the admin app mints installation tokens the same way
 export const MARGIN_MS = 10 * 60 * 1000;
 export const adapterFor = provider => ADAPTERS[provider.split(':')[0]];
 
@@ -15,6 +15,7 @@ export const adapterFor = provider => ADAPTERS[provider.split(':')[0]];
 // Widening it is a reviewed change to this constant, never a field added at the call site.
 export const SCOPE_ALLOWLIST = Object.freeze({
   'github-app': Object.freeze({ contents: 'write', pull_requests: 'write', issues: 'write', actions: 'write', checks: 'read', workflows: 'write', metadata: 'read' }),
+  'github-admin': Object.freeze({ administration: 'write', metadata: 'read' }),  // REPOS-1: repository settings only (archive a retired repository); no code, no workflows
 });
 
 // Q-LESSON-CRED-SCOPE: an auth bypass through path normalization was one of the earlier fleet's credential failures. Every route compares

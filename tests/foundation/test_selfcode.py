@@ -61,6 +61,14 @@ class Rails(unittest.TestCase):
         self.assertIn(found[0], selfcode.pick_findings(found[:1], only_filed, set(), d))  # filed but never worked: the next run files it again (its file is not in the checkout)
         self.assertEqual(selfcode.pick_findings(found[:1], [], {iid}, d), [])  # already open
 
+    def test_daily_cap_limits_new_items_not_an_unworked_one(self):
+        d = tree({})
+        found = [self.f(key=f"foundation/{i}.py") for i in range(10)]
+        rows = [{"id": selfcode.item_for(f)["id"], "kind": "unused_import", "status": "filed", "at": selfcode.stamp()} for f in found[:8]]  # the cap (8) is spent
+        got = selfcode.pick_findings(found, rows, set(), d)
+        self.assertEqual(len(got), 1)
+        self.assertIn(got[0], found[:8])  # an item filed before and never worked is taken again, ahead of any new one
+
     def test_higher_weight_kind_first_and_item_has_probe(self):
         d = tree({})
         found = [self.f("todo"), self.f("bare_except", "foundation/b.py"), self.f("failing_test", "test_x")]
@@ -70,6 +78,18 @@ class Rails(unittest.TestCase):
         self.assertIn("cmd:python3 -m foundation selfcode --probe bare_except foundation/b.py", it["body"])
         self.assertIn("raises-deploys", it["labels"])  # a merged agent change is a deploy the system originated, so the criticality gate lets it through
         self.assertIn("**Status:** open", it["body"])
+
+    def test_an_item_parked_by_the_executor_gives_way_to_the_next_finding(self):
+        import unittest.mock as m
+        from foundation import queue as qmod
+        d = tree({"foundation/a.py": "import os\n", "foundation/b.py": "import re\n"})
+        first = selfcode.run_sense(d, apply=False, ci=False)["filed"]
+        self.assertEqual(len(first), 1)
+        with m.patch.object(qmod, "fail_counts", return_value={first[0]: 3}):
+            res = selfcode.run_sense(d, apply=True, ci=False)
+        self.assertEqual(len(res["filed"]), 1)
+        self.assertNotEqual(res["filed"][0], first[0])  # the parked item is on cooldown, the other file is filed
+        self.assertTrue(any(r["id"] == first[0] and r["status"] == "failed" for r in selfcode.ledger_rows(d)))
 
     def test_kill_switch(self):
         d = tree({})

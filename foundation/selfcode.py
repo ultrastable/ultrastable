@@ -312,12 +312,14 @@ def pick_findings(found: list[dict], rows: list[dict], open_ids: set[str], root=
     c, at = cfg(root), at or now()
     R = c["rails"]
     today = len({r["id"] for r in rows if r.get("status") == "filed" and r.get("at", "") >= stamp(at - timedelta(hours=24))})  # distinct items: a re-file of the same item is not a new one
-    room = min(R["max_new_per_run"], R["max_open"] - len(open_ids), R["max_filed_per_day"] - today)
+    filed_ever = {r["id"] for r in rows if r.get("status") == "filed"}
+    room = min(R["max_new_per_run"], R["max_open"] - len(open_ids))
+    new_room = R["max_filed_per_day"] - today  # the daily cap limits NEW items; an item filed before and never worked is taken again without using it (the cap was spent by items whose files had not survived a run)
     # The cooldown guards an item the agent already settled (kept, reverted, dropped). An item only filed never reached a PR, and the executor's checkout does not carry
     # the item file (it is written inside the run, not committed), so it must be filed again on the next run or it is never taken.
     last = {r["id"]: r["at"] for r in sorted(rows, key=lambda r: r.get("at", "")) if r.get("status") != "filed"}
     out = []
-    for f in sorted(found, key=lambda f: -score(f, rows, root)):
+    for f in sorted(found, key=lambda f: (item_for(f)["id"] not in filed_ever, -score(f, rows, root))):  # items filed before and never worked first
         if room <= 0:
             break
         k = c["kinds"].get(f["kind"])
@@ -326,6 +328,10 @@ def pick_findings(found: list[dict], rows: list[dict], open_ids: set[str], root=
             continue
         if iid in last and last[iid] > stamp(at - timedelta(hours=R["refile_cooldown_hours"])):
             continue
+        if iid not in filed_ever:
+            if new_room <= 0:
+                continue
+            new_room -= 1
         out.append(f); room -= 1
     return out
 
@@ -365,6 +371,11 @@ def run_sense(root=REPO, apply=False, tests=False, ci=True) -> dict:
     rows = ledger_rows(root)
     open_ids = open_self_ids(root)
     backlog = len([i for i in qmod.takeable(root) if not is_own(i["number"])])
+    for iid, n in qmod.fail_counts(root).items():  # an item the executor parked after 3 failed runs is recorded as failed, so its cooldown applies and the next finding gets the run
+        if is_own(iid) and n >= 3 and not any(r["id"] == iid and r.get("status") == "failed" for r in rows):
+            if apply:
+                append(root, {"id": iid, "kind": "parked", "key": iid, "before": 0, "status": "failed"})
+            rows = rows + [{"id": iid, "kind": "parked", "status": "failed", "at": stamp(now())}]
     found, unmeasured = sense(root, tests=tests, ci=ci)
     res = {"result": "sensed", "findings": len(found), "unmeasured": unmeasured, "backlog": backlog, "filed": [], "by_kind": {}}
     for f in found:

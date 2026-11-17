@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
+# Cost rules (US-SPEC-24): read-only token, one run per ref (superseded PR runs cancelled), every job time-boxed,
+# docs-only changes skip the test job, no schedule trigger (scheduled work runs from the Cloudflare tick), Linux only.
+name: ci
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Provision Cloudflare resources from IDEA.md (bootstrap-apply)
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths-ignore: ['docs/**', 'README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'COMMERCIAL-TERMS.md', 'CITATION.cff']
+  pull_request:
+    paths-ignore: ['docs/**', 'README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'COMMERCIAL-TERMS.md', 'CITATION.cff']
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Workflow lint (cost and security rules, US-SPEC-24)
+        run: python tools/workflow_lint.py
+      - run: node --test --no-warnings "core/**/*.test.js" "packs/**/*.test.js"
+      - run: python -m unittest discover tests
+      - run: node --test --no-warnings adapters/gcp/test/*.js
+      - run: cd runtimes/python && python -m unittest discover tests
+      - run: cd products/gaplint && python -m unittest discover tests
+      - run: node --test --no-warnings apps/demos/test/*.mjs
+      - name: License files match the canonical text
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ultrastable/license/main/LICENSE -o /tmp/LICENSE || { echo "canonical license not reachable yet; skipping"; exit 0; }
+          diff -u /tmp/LICENSE LICENSE
+  bootstrap-apply:
+    # Manual only, and only when asked for: a plain dispatch of ci runs the tests and nothing else, so `ci_green:main` can be re-probed by dispatch
+    # (a dispatch without the Cloudflare secret used to fail here and keep the red-main incident open). Needs the two secrets below.
+    if: github.event_name == 'workflow_dispatch' && inputs.apply
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: python3 bootstrap/bootstrap.py --apply
