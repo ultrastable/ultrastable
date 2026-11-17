@@ -332,7 +332,7 @@ console.log("PROMOTE-1 indexnow ok");
     assert.ok(a.stories.length >= 3, a.id + " has stories");
     for (const t of a.stories) assert.ok(t.as && t.want && t.so, a.id + " story is as/want/so");
     assert.ok(a.path.length >= 3, a.id + " has a path");
-    for (const st of [...a.path, a.cta]) await ok(st.href);
+    for (const st of [...a.path, a.cta]) { if (/^https:\/\//.test(st.href)) { assert.ok(new URL(st.href).hostname.endsWith(".ultrastable.workers.dev") || /^ultrastable\.(io|org)$/.test(new URL(st.href).hostname), "external steps stay in the family: " + st.href); continue; } await ok(st.href); }
     const h = await ok("/for/" + a.id);
     assert.match(h, /As [^<]*, I want [^<]*, so [^<]*\./);
     assert.equal(((h.replace(/<style>[\s\S]*?<\/style>/, "")).match(/class="btn btn-primary"/g) || []).length, 1, a.id + " one primary action");
@@ -341,6 +341,10 @@ console.log("PROMOTE-1 indexnow ok");
   assert.equal((await get("https://ultrastable.io/for/nope")).status, 404);
   assert.equal((await get("https://ultrastable.io/showcase/nope")).status, 404);
   const home = await ok("/"); for (const a of SHD.audiences) assert.ok(home.includes("/for/" + a.id), "home links " + a.id);
+  const fam = await (await get("https://ultrastable.io/family.json")).json();
+  assert.ok(fam.family.io && fam.family.org && fam.nav.length >= 5, "family.json carries both homes and the shared nav");
+  for (const c of SHD.showcases) { assert.ok(["io", "org"].includes(c.domain), c.id + " has a domain"); if (c.home) assert.match(await (await get("https://ultrastable.io/showcase/" + c.id)).text(), new RegExp(c.home.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))); }
+  assert.match(await (await get("https://ultrastable.io/")).text(), /The Ultrastable family:/);
   console.log("STAKEHOLDERS-1 ok");
 }
 
