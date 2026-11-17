@@ -1786,6 +1786,15 @@
    "body": "ladder_call is defined again and pinned by test_executor.Ladder; RuntimeError escalation stays in run() (FREE-LLM-3).",
    "probe": "grep:foundation/executor.py::def ladder_call",
    "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
+   "id": "lesson-2026-11-17-selfcode-1-a-filed-item-was-blocked-from-re-filing-while-its",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: a filed item was blocked from re-filing while its file did not survive the run",
+   "body": "Cooldown applies to settled items only; daily cap counts distinct items; one filed ledger row per item per hour.",
+   "probe": "grep:foundation/selfcode.py::only filed never reached a PR",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
   }
  ]
 }
