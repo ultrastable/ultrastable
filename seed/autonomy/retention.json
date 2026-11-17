@@ -2,6 +2,10 @@
   "doc": "RETENTION-1 (2026-11-16): every table the tick worker creates is listed here. A table with keep_days is pruned once a day by seed/worker/src/retention.js (rows whose time column is older than keep_days, at most max_rows_per_run per table per day); a table marked keep: state holds current state, not history, and is never pruned. test/plan-limits.test.mjs fails when a migration or the worker creates a table that is not listed. Lesson from the fleet this org was split from: its audit database reached 1,011 tables, 266 of them backup copies never removed, and append-only ledgers kept every row forever. Windows: criticality reads 14 days (seed/autonomy/criticality.json window_days); the trust ledger reads every outcome, so outcomes are kept a year.",
   "max_rows_per_run": 5000,
   "tables": {
+  "free_tier_samples": { "column": "at", "keep_days": 7, "reason": "FREE-TIER-1: hourly account-wide usage samples; the tick reads the latest two hours" },
+  "airouter_cache": { "keep": "managed", "reason": "AI-ROUTER-1: cached model replies, pruned by core/airouter (7 days)" },
+  "airouter_calls": { "keep": "managed", "reason": "AI-ROUTER-1: one row per model call, pruned by core/airouter (30 days); integer-millisecond time column, so retention.js cannot prune it" },
+  "airouter_stats": { "keep": "state", "reason": "AI-ROUTER-1: one row per kind and model, the routing memory" },
     "social_posted": {
       "column": "at",
       "keep_days": 400,
