@@ -362,3 +362,17 @@ console.log("PROMOTE-1 indexnow ok");
   assert.match(await (await get("https://ultrastable.io/showcase/qnfo")).text(), /separate, earlier project and is not Ultrastable/);
   console.log("BRAND-SEPARATION-1 ok");
 }
+{ // CLAIMS-1 (Rowan, 2026-11-17): words match code. llms.txt lists exactly the MCP tools the worker serves; /claims and /api/claims serve the verified registry
+  const { TOOLS, LIVE_TOOLS, WRITE_TOOLS } = await import(pathToFileURL(fileURLToPath(new URL("./agentic.js", import.meta.url))).href);
+  const all = [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].map((t) => t.name);
+  const llms = await (await get("https://ultrastable.io/llms.txt")).text();
+  for (const n of all) assert.ok(llms.includes(n), "llms.txt describes tool " + n);
+  assert.ok(llms.includes("(" + all.length + " tools,"), "llms.txt tool count is the real count");
+  const api = await (await get("https://ultrastable.io/api/claims")).json();
+  assert.equal(api.summary.drift, 0, "the served registry has no drift");
+  assert.equal(api.summary.total, api.claims.length);
+  const page = await (await get("https://ultrastable.io/claims")).text();
+  assert.match(page, /Verified claims/); assert.match(await (await get("https://ultrastable.io/how")).text(), new RegExp("One loop, " + api.ledgers.length + " ledgers"));
+  assert.match(await (await get("https://ultrastable.io/sitemap.xml")).text(), /\/claims</);
+  console.log("CLAIMS-1 ok");
+}
