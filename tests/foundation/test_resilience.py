@@ -132,3 +132,16 @@ class Truth(T):
         for c in j.loads((REPO / "doctrine/clocks.json").read_text())["clocks"]:
             if c["source"] == "d1":
                 self.assertEqual(len({r["account_id"] for r in c["replicas"]}), 2)
+
+
+class Health(T):
+    def test_health_urls_need_no_credential(self):
+        got = R.health_beats(["a", "b"], lambda u: {"last_tick": {"started_at": "2026-11-17 18:30:34"}} if u == "b" else None)
+        self.assertEqual(len(got), 1)
+        self.assertIsNone(R.health_beats(["a"], lambda u: None))
+        self.assertEqual(R.health_beats(["a"], lambda u: {"ok": False}), [])
+
+    def test_repo_tick_clock_has_two_health_urls(self):
+        import json as j
+        c = next(x for x in j.loads((REPO / "doctrine/clocks.json").read_text())["clocks"] if x["id"] == "tick-heartbeat")
+        self.assertEqual(len(c["health_urls"]), 2)

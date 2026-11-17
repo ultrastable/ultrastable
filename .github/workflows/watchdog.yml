@@ -1,6 +1,6 @@
 name: watchdog
-# budget: ~1 min per run, one scheduled run a day (~30 min per month), plus one per finished lane, deploy-site or executor run (bounded by the concurrency group)
-# trigger: daily (never faster), plus the completion of lane, deploy-site and executor so any finished run is another independent wake; the Cloudflare tick (free) also dispatches this workflow whenever it is older than 12 h, which is the frequent path (watchdog-of-watchdogs)
+# budget: ~1 min per run, one scheduled run a day (~30 min per month), plus one per failed lane, deploy-site or executor run (bounded by the concurrency group)
+# trigger: daily (never faster), plus a failed lane, deploy-site or executor run, so any failure is another independent wake; the Cloudflare tick (free) also dispatches this workflow whenever it is older than 12 h, which is the frequent path (watchdog-of-watchdogs)
 # free-alternative: the Cloudflare cron worker already runs the tick watchdog loop (seed/worker/src/watchdog.js) at zero Actions minutes; this workflow is the credential-free second route
 # Probes every clock (doctrine/clocks.json and every scheduled workflow), restarts the stopped ones (workflow dispatch, or POST /pulse/watch on each Cloudflare account),
 # files Q-STALL-* when a restart did not take, and records ops/resilience.jsonl, which feeds the essential variable stalled_clocks.
@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   watchdog:
-    if: ${{ vars.HALT != '1' && (github.event_name != 'workflow_run' || !startsWith(github.event.workflow_run.head_commit.message, 'watchdog:')) }}  # HALT-1; a run woken by the watchdog's own ledger commit is skipped (no self-loop)
+    if: ${{ vars.HALT != '1' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure') }}  # HALT-1; a finished run wakes the watchdog only when it failed (a busy main would otherwise wake it dozens of times a day)
     runs-on: ubuntu-24.04
     timeout-minutes: 6
     steps:
