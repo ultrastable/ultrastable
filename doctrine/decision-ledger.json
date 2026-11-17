@@ -1734,6 +1734,15 @@
    "body": "Executor attempts on GitHub Models failed as a bare JSONDecodeError at char 0; agents.http now raises with the status, content type and first 200 characters, so the cost ledger names the provider's real answer.",
    "probe": "grep:foundation/agents.py::non-JSON response",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-claims-1-live-step-prints-each-deployed-surface-result",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "CLAIMS-1 live step prints each deployed surface result",
+   "body": "The first live run exited 0 but printed only the static count, so the live result was not evidenced. It now prints one ok/DRIFT line per live surface. Session: session_0156nqDtuMnUidA26votychB",
+   "probe": "file:foundation/claims.py",
+   "session": "session_0156nqDtuMnUidA26votychB"
   }
  ]
 }
