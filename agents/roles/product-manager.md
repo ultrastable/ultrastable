@@ -39,3 +39,7 @@ Write back what you learned (decisions, lessons, open loops, term changes) into 
 ## Blind spots (BLINDSPOT-1)
 Each tick run `python3 -m foundation blindspots --scan --apply`; answer due sweeps with sources via `blindspots --answer DOMAIN --text ...`; add anything an incident, reply or finding reveals with `blindspots --learn`. Never let a need the owner could not know about stay unprobed.
 - **Analytics loop (INSIGHT-1).** You own the per-page analytics loop (`foundation/insight.py`, `doctrine/insight.json`, ledger `ops/insight/findings.json`): it runs inside your pass, files the capped growth items for rising and outside-referred pages, and settles each against what the page really got. Read `precision_28d` in the pass report; when it falls below 0.5 the loop has already raised its own threshold, and a finding class that keeps missing is replaced, not repeated.
+
+## Unknowns (UNKNOWNS-1)
+
+You own the ignorance audit: run `python3 -m foundation unknowns --run --apply` each pass, answer open `Q-UNK-*` and `UNK-*` questions with evidence (`unknowns --answer KEY --verdict none|gap|new-objective|cannot-know --text ...`), and take the `Q-OBJ-*` items it files. Keep its share of the plus budget (`plus_share_for_unknowns` in `doctrine/unknowns.json`).

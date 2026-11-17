@@ -61,10 +61,12 @@ class Rails(unittest.TestCase):
 
     def test_higher_weight_kind_first_and_item_has_probe(self):
         d = tree({})
-        top = selfcode.pick_findings([self.f("todo"), self.f("failing_test", "tests.foundation.test_x")], [], set(), d)[0]
-        self.assertEqual(top["kind"], "failing_test")
+        found = [self.f("todo"), self.f("bare_except", "foundation/b.py"), self.f("failing_test", "test_x")]
+        top = selfcode.pick_findings(found, [], set(), d)[0]
+        self.assertEqual(top["kind"], "bare_except")  # failing_test is switched off in the config (ciwatch files those), so it is never picked
         it = selfcode.item_for(top)
-        self.assertIn("cmd:python3 -m foundation selfcode --probe failing_test tests.foundation.test_x", it["body"])
+        self.assertIn("cmd:python3 -m foundation selfcode --probe bare_except foundation/b.py", it["body"])
+        self.assertIn("raises-deploys", it["labels"])  # a merged agent change is a deploy the system originated, so the criticality gate lets it through
         self.assertIn("**Status:** open", it["body"])
 
     def test_kill_switch(self):
