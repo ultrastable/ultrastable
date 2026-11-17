@@ -1,0 +1,11 @@
+{
+  "id": "Q-ORDER-drain-all-1-widened-0-open-issues-and-0-open-prs-fleetwide-c",
+  "title": "CODE-ONLY-ORDER: give decision decision-2026-11-15-drain-all-1-widened-0-open-iss a code consumer",
+  "body": "**Owner:** product-manager\n**Trigger:** ledger row has no code consumer\n**Done check:** grep:doctrine/decision-ledger.json::decision-2026-11-15-drain-all-1-widened-0-open-issues-and-0-open-prs-fleetwide-c ; its probe names an existing code or data file that enforces the decision, and the id leaves doctrine/standing-order-baseline.json\n**Status:** open\n\nTurn the decision into a check, policy value or loop, repoint the probe, then run `python3 -m foundation standingorder --baseline`.",
+  "labels": [
+    "role:product-manager",
+    "code-only-order"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}
