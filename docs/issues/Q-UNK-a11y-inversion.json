@@ -1,0 +1,12 @@
+{
+  "id": "Q-UNK-a11y-inversion",
+  "title": "Q-UNK-a11y-inversion: question the unknown (inversion) in a11y",
+  "body": "**Owner:** product-manager\n**Trigger:** unknowns run, score 4.0\n**Done check:** grep:ops/unknowns/ledger.jsonl::\"key\": \"a11y|inversion\", \"kind\": \"answered\"\n**Prediction:** unknown_questions_answered_7d >= 1 within 168 h\n**Status:** open\n\nMethod: pre-mortem / inversion (known-unknown). Funded from the plus budget (plus_share_for_unknowns).\n\nAssume loop 'a11y' has failed completely a month from now without anyone noticing. Write the most likely cause, then name what in the system would have detected it. If nothing would, that is the gap.\n\nAnswer with evidence: `python3 -m foundation unknowns --answer a11y|inversion --verdict none|gap|new-objective|cannot-know --text <findings and evidence>`. 'We do not know' is a valid answer (cannot-know).",
+  "labels": [
+    "role:product-manager",
+    "plus",
+    "unknowns"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

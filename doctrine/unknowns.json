@@ -1,0 +1,27 @@
+{
+ "_doc": "UNKNOWNS-1 (Rowan, 2026-11-17): what the system does not know is a core feedback loop, not a side task. Improving only what is known shrinks the solution space; this loop keeps it growing by questioning the system itself. Method sources: Universal Ignorance Audit (Rowan, Sciforum 35457 and QNFO/ignorance-audit: fifteen questions in five phases, three regions known unknowns / unknown unknowns / ignorance about ignorance, categories scaffold, map-territory, protected ignorance, the last answer seeds the next pass, separated roles, 'we do not know' is a normal outcome), Rumsfeld/Johari matrix, assumption audit, inversion and pre-mortem (Klein), red teaming. `python3 -m foundation unknowns --run --apply` inventories every loop and blind-spot need, generates inverted questions per lens, scores them, files the top ones as plus items (Q-UNK-*) and records every step in the append-only ledger ops/unknowns/ledger.jsonl (the provenance record). `--answer` closes a question with evidence; a gap or new objective is appended to ops/unknowns/objective-candidates.json (probationary, read back by `--run` and by the product manager) and seeds the next pass (UIA rule 6).",
+ "cadence_days": 7,
+ "max_new_per_run": 3,
+ "plus_share_for_unknowns": 0.25,
+ "min_answer_chars": 40,
+ "ledger": "ops/unknowns/ledger.jsonl",
+ "candidates": "ops/unknowns/objective-candidates.json",
+ "summary": "ops/unknowns/summary.json",
+ "verdicts": ["none", "gap", "new-objective", "cannot-know"],
+ "kind_impact": {"governance": 5, "growth": 4, "deploy": 5, "default": 3},
+ "regions": ["known-unknown", "unknown-unknown", "ignorance-about-ignorance"],
+ "lenses": [
+  {"id": "inversion", "method": "pre-mortem / inversion", "region": "known-unknown",
+   "q": "Assume loop '{id}' has failed completely a month from now without anyone noticing. Write the most likely cause, then name what in the system would have detected it. If nothing would, that is the gap."},
+  {"id": "assumption", "method": "assumption audit", "region": "known-unknown",
+   "q": "List every assumption that must be true for the done check '{done}' to mean the outcome really happened. Which has never been tested, and by what independent path could it be?"},
+  {"id": "red-team", "method": "red team", "region": "unknown-unknown",
+   "q": "How could the closing probe '{probe}' pass while the real outcome is false (map and territory differ)? Build the case, then the probe that would catch it."},
+  {"id": "blind-side", "method": "Rumsfeld matrix", "region": "unknown-unknown",
+   "q": "What does '{id}' never observe? Its trigger is '{trigger}'. Name one signal outside that trigger that would change what it does, and who or what already holds it."},
+  {"id": "protected", "method": "UIA protected ignorance", "region": "ignorance-about-ignorance",
+   "q": "What shields '{id}' from being questioned (a default, an SLA, a kill switch, a past success)? What would we ask if that shield did not exist?"},
+  {"id": "scaffold", "method": "UIA scaffold ignorance", "region": "ignorance-about-ignorance",
+   "q": "Which questions about '{id}' have we never written down because the loop's own structure made them unaskable? Write three, then answer 'we do not know' where true."}
+ ]
+}

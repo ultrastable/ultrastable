@@ -1053,6 +1053,30 @@
       ],
       "feedback": "a violation fails checks and the fleet drift run files an issue in the repository that lost the file; the next run passes only when the file is restored, and the SPDX baseline only shrinks",
       "bindings": []
+    },
+    "unknowns": {
+      "inflows": [
+        {
+          "signal": "loop.registry",
+          "via": "file:instances/ultrastable/loop-registry.json"
+        },
+        {
+          "signal": "unknowns.answers",
+          "via": "file:ops/unknowns/ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "unknowns.answers",
+          "via": "file:ops/unknowns/ledger.jsonl"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "each answer (gap, new objective, none, cannot-know) is a ledger row that lowers that question's novelty and raises the score of its loop when a gap was found; a gap or new objective becomes a probationary objective candidate and seeds the next pass, so the questions move toward where the system was wrong",
+      "bindings": []
     }
   },
   "implicit_producers": {
@@ -1060,7 +1084,8 @@
     "actions.minutes": "ext.actions_quota",
     "frontier.releases": "ext.frontier",
     "cf.analytics": "ext.cf_analytics",
-    "site.hits": "ext.site_visits"
+    "site.hits": "ext.site_visits",
+    "loop.registry": "ext.loop_registry"
   },
   "pending": [
     "role-portfolio-manager",

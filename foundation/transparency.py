@@ -235,10 +235,23 @@ def snapshot(root=REPO, use_gh=True):
             "prs_merged_total": (th.get("merged") or {}).get("total"), "prs_merged_unattended": ((th.get("merged") or {}).get("by_origin") or {}).get("unattended executor", {}).get("prs"),
             "backlog_open": (th.get("queue") or {}).get("by_status", {}).get("open"), "backlog_items": (th.get("queue") or {}).get("items"),
         },
+        "unknowns": _unknowns(root),
         "throughput": th, "stages": stg, "settlement": sett, "product_manager": pm_rep, "growth": gr, "clocks": clocks, "topology": top, "managers": mg, "claims": cl, "gaps": gp, "changes": ch, "loop_improvements": improvements(root),
         "feedback_loop": "claim (site/doctrine) -> probe (components, gap register, loops) -> gap item -> branch/draft PR by an agent -> merge on green checks -> deploy -> probe again; each row above links the step to its record.",
     }
     return scrub(s)
+
+
+def _unknowns(root):
+    """UNKNOWNS-1: what the system does not know, as questions asked and answered (never the answer text, which can name private findings)."""
+    try:
+        from . import unknowns
+        st = unknowns.status(root)
+        led = unknowns.ledger(root)
+        recent = [{"at": r["at"], "key": r["key"], "kind": r["kind"], "verdict": r.get("verdict")} for r in led[-8:]][::-1]
+        return {**st, "recent": recent, "method": "pre-mortem, assumption audit, red team, Rumsfeld blind side, Universal Ignorance Audit"}
+    except (OSError, ValueError, KeyError) as e:  # recorded, never swallowed
+        return {"error": str(e)[:200]}
 
 
 PART = 50000  # D1 refuses very large single statements, so the snapshot is stored as parts of this many characters
