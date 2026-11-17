@@ -61,6 +61,14 @@ class Rails(unittest.TestCase):
         self.assertIn(found[0], selfcode.pick_findings(found[:1], only_filed, set(), d))  # filed but never worked: the next run files it again (its file is not in the checkout)
         self.assertEqual(selfcode.pick_findings(found[:1], [], {iid}, d), [])  # already open
 
+    def test_daily_cap_limits_new_items_not_an_unworked_one(self):
+        d = tree({})
+        found = [self.f(key=f"foundation/{i}.py") for i in range(10)]
+        rows = [{"id": selfcode.item_for(f)["id"], "kind": "unused_import", "status": "filed", "at": selfcode.stamp()} for f in found[:8]]  # the cap (8) is spent
+        got = selfcode.pick_findings(found, rows, set(), d)
+        self.assertEqual(len(got), 1)
+        self.assertIn(got[0], found[:8])  # an item filed before and never worked is taken again, ahead of any new one
+
     def test_higher_weight_kind_first_and_item_has_probe(self):
         d = tree({})
         found = [self.f("todo"), self.f("bare_except", "foundation/b.py"), self.f("failing_test", "test_x")]
