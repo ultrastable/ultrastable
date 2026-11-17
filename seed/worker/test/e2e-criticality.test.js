@@ -19,7 +19,7 @@ test('empty DB -> scheduled tick -> all steps complete, k_eff measured, sweeper 
   const pending = [];
   globalThis.fetch = async () => ({ ok: true, status: 200, headers: new Headers(), text: async () => '[]', json: async () => [] });
   const env = { DB: db, GITHUB_TOKEN: 'x', GITHUB_REPOS: 'o/r' };
-  await worker.scheduled({ scheduledTime: 2 * 600e3 }, env, { waitUntil: p => pending.push(p) });
+  await worker.scheduled({ scheduledTime: 3 * 600e3 }, env, { waitUntil: p => pending.push(p) });
   await Promise.all(pending);
   const res = await worker.fetch(new Request('https://org.example/live'), env, { waitUntil() {} });
   const live = await res.json();
