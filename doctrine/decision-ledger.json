@@ -1777,6 +1777,14 @@
    "body": "GitHub Models answered HTTP 200 text/plain 'OK' on 24k-char prompts and the RuntimeError ended the run before Workers AI was tried; RuntimeError now counts as a failed attempt so the ladder escalates, and the GitHub Models prompt cap is 12000 chars.",
    "probe": "grep:foundation/executor.py::FREE-LLM-3",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-product-manager-pass-2026111716-3-item-s-filed",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Product manager pass 2026111716: 3 item(s) filed",
+   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+   "probe": "file:ops/growth/pm-report.json"
   }
  ]
 }

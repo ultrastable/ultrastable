@@ -1,0 +1,12 @@
+{
+  "id": "Q-REPAIR-STAGE-HEARTBEAT",
+  "title": "Q-REPAIR-STAGE-HEARTBEAT: repair the heartbeat stage",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** cmd:python3 -m foundation clock --check\n**Status:** open\n\nThe pipeline stage `heartbeat` (the Cloudflare tick ran) has missed 176 SLAs (age 159114.4 s, SLA 900 s) and reached the incident step of the escalation ladder. Find the earliest cause, fix it at the root and leave a test; the stage must be fresh in the next stage report.\n\nsize: M\n\n**Closing probe:** cmd:python3 -m foundation clock --check.",
+  "labels": [
+    "p0",
+    "repair",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Clockwork"
+}
