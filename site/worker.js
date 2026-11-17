@@ -61,6 +61,7 @@ function shell(opts, body) {
     + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
     + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
+    + "<div class=\"us-foot\" id=\"family\">The Ultrastable family: <a href=\"https://" + CANON + "/\">" + esc(SH.domains.io.host) + "</a> (platform and product) · <a href=\"/showcase/practical-solutions\">" + esc(SH.domains.org.host) + "</a> (public-benefit demos) · <a href=\"/family.json\">family.json</a></div>"
     + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
     + "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"Ultrastable\",\"url\":\"https://ultrastable.io\",\"creator\":{\"@type\":\"Person\",\"name\":\"Rowan Brad Quni-Gudzinas\",\"jobTitle\":\"Founder and Director, Ultrastable\",\"url\":\"https://rwnq8.github.io\",\"sameAs\":[\"https://orcid.org/0009-0002-4317-5604\",\"https://github.com/rwnq8\",\"https://www.linkedin.com/in/rowan-quni\"]}}</script></main><script src=\"/webmcp.js\" defer></script></body></html>";
 }
@@ -166,7 +167,8 @@ function pilot() {
 
 function lis(a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; }
 function crumbs(items) { return "<nav class=\"crumbs\" aria-label=\"Breadcrumb\">" + items.map(function (i, k) { return k < items.length - 1 ? "<a href=\"" + i[1] + "\">" + esc(i[0]) + "</a> / " : "<span aria-current=\"page\">" + esc(i[0]) + "</span>"; }).join("") + "</nav>"; }
-function caseCard(c) { return "<a class=\"card us-case\" href=\"/showcase/" + esc(c.id) + "\"><span class=\"us-tag\">" + esc(c.tag) + "</span><h3 class=\"card-title\">" + esc(c.name) + "</h3><p class=\"meta\">" + esc(c.summary) + "</p><span class=\"us-more\">Read the case</span></a>"; }
+function domLabel(k) { const x = SH.domains[k]; return x ? x.host : ""; }
+function caseCard(c) { return "<a class=\"card us-case\" href=\"/showcase/" + esc(c.id) + "\"><span class=\"us-tag\">" + esc(c.tag) + "</span> <span class=\"us-tag\">" + esc(domLabel(c.domain)) + "</span><h3 class=\"card-title\">" + esc(c.name) + "</h3><p class=\"meta\">" + esc(c.summary) + "</p><span class=\"us-more\">Read the case</span></a>"; }
 
 function showcase() {
   return shell({ path: "/showcase", title: "Test cases: QNFO and Practical Solutions", description: "Ultrastable develops its own platform and the products on it with one closed loop. QNFO was the testbed; Practical Solutions is the next system built on it." },
@@ -188,7 +190,8 @@ function showcaseCase(id) {
     + (c.separate ? "<p class=\"us-note\" role=\"note\">" + esc(c.separate) + "</p>" : "")
     + "<h2>The problem</h2><p>" + esc(c.problem) + "</p><h2>What the loop did</h2><p>" + esc(c.loop) + "</p><h2>Results</h2>" + lis(c.results)
     + "<h2>What we learned</h2><p>" + esc(c.learned) + "</p>"
-    + "<div class=\"us-actions\">" + c.links.map(function (l, k) { return "<a class=\"btn" + (k === 0 ? " btn-primary" : "") + "\" href=\"" + esc(l.href) + "\">" + esc(l.label) + "</a>"; }).join("") + "</div>");
+    + "<div class=\"us-actions\">" + (c.home ? "<a class=\"btn btn-primary\" href=\"" + esc(c.home) + "\" rel=\"noopener\">" + esc(c.homeLabel || "Open it") + "</a>" : "") + c.links.map(function (l, k) { return "<a class=\"btn" + (k === 0 && !c.home ? " btn-primary" : "") + "\" href=\"" + esc(l.href) + "\">" + esc(l.label) + "</a>"; }).join("") + "</div>"
+    + "<p class=\"meta\">Part of the Ultrastable family: " + (c.domain === "org" ? "a public-benefit demo, homed on " + esc(domLabel("org")) + " and described here on " + esc(domLabel("io")) + "." : "a case study on " + esc(domLabel("io")) + ".") + " <a href=\"/for\">Find your path</a></p>");
 }
 
 function audienceCard(a) { return "<a class=\"card us-case\" href=\"/for/" + esc(a.id) + "\"><h3 class=\"card-title\">" + esc(a.name) + "</h3><p class=\"meta\">" + esc(a.promise) + "</p><span class=\"us-more\">" + esc(a.nav) + "</span></a>"; }
@@ -197,7 +200,9 @@ function forIndex() {
   return shell({ path: "/for", title: "Find your path: who Ultrastable is for", description: "Pick who you are and see what Ultrastable offers you, with the steps to take." },
     crumbs([["Home", "/"], ["Find your path", "/for"]])
     + "<div class=\"head\"><h1>Who are you?</h1><p>Pick the closest match. Each page shows what you get, what you need to do and how to check it.</p></div>"
-    + "<div class=\"us-grid c2\">" + SH.audiences.map(audienceCard).join("") + "</div>");
+    + "<div class=\"us-grid c2\">" + SH.audiences.map(audienceCard).join("") + "</div>"
+    + "<h2>Two homes, one system</h2><p>Like WordPress.com and WordPress.org, Ultrastable has two homes that suit different audiences and share one design and one way of working.</p><div class=\"us-grid c2\">"
+    + Object.keys(SH.domains).map(function (k) { const x = SH.domains[k]; return card(x.host + ": " + x.name, x.role); }).join("") + "</div>");
 }
 
 function forAudience(id) {
@@ -205,7 +210,7 @@ function forAudience(id) {
   if (!a) return null;
   return shell({ path: "/for/" + a.id, title: a.name + ": Ultrastable", description: a.promise },
     crumbs([["Home", "/"], ["Find your path", "/for"], [a.name, "/for/" + a.id]])
-    + "<div class=\"head\"><h1>" + esc(a.name) + "</h1><p>" + esc(a.promise) + "</p></div>"
+    + "<div class=\"head\"><span class=\"us-tag\">" + esc(domLabel(a.domain)) + "</span><h1>" + esc(a.name) + "</h1><p>" + esc(a.promise) + "</p></div>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"" + esc(a.cta.href) + "\">" + esc(a.cta.label) + "</a></div>"
     + "<h2>What you probably need</h2><p>" + esc(a.needs) + "</p>"
     + "<h2>What you can do here</h2><ul class=\"us-stories\">" + a.stories.map(function (t) { return "<li>As " + esc(t.as) + ", I want " + esc(t.want) + ", so " + esc(t.so) + ".</li>"; }).join("") + "</ul>"
@@ -834,6 +839,7 @@ const handler = {
       case "/": return new Response(home(await claims()), { headers: HTML });
       case "/how": return new Response(how(), { headers: HTML });
       case "/showcase": return new Response(showcase(), { headers: HTML });
+      case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/proof"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/for": return new Response(forIndex(), { headers: HTML });
       case "/proof": return new Response(await proof(), { headers: HTML });
       case "/product": return new Response(product(), { headers: HTML });
