@@ -196,6 +196,13 @@
     "41 6 * * 1"
    ]
   },
+  "deploy-gateway.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": []
+  },
   "deploy-site.yml": {
    "events": [
     "push",
