@@ -130,6 +130,15 @@ export default {
    "surface": "site/worker.js"
   },
   {
+   "claim": "The system describes itself in code: what it is, its regulators, its variables and bounds, its clocks and its boundary are served as JSON at",
+   "detail": "",
+   "how": "file:foundation/selfmodel.py + file:site/self-data.js + grep:site/worker.js::case \"/self\"",
+   "id": "how-self-endpoint",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
    "claim": "seed-tests: 35 Python and 261 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
@@ -175,7 +184,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 75",
+   "claim": "live-deploys: 80",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -263,7 +272,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 26,
-  "total": 26
+  "pass": 27,
+  "total": 27
  }
 };
