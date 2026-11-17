@@ -2011,6 +2011,14 @@
    "title": "core/modelservice: keyless OIDC model route lifted from the tenant",
    "body": "Live ensemble runs showed reasoning models empty (OpenAI choices shape, budget spent thinking) and bare 500s. Core reads every shape, retries a truncated reply with the full budget, returns model errors as JSON. Session: session_0156nqDrYNAtihJTa31nvsqc",
    "probe": "file:workers/core/modelservice/index.js"
+  },
+  {
+   "id": "lesson-2026-11-17-owner-routes-before-auth-path",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Owner routes before AUTH_PATH",
+   "body": "/connect/github-signin matched AUTH_PATH first and reached the tick placeholder; OWNER_PATH now first, owner_links checks body content (OWNER-ROUTE-1, OWNER-LINKS-2)",
+   "probe": "file:site/forward.test.mjs"
   }
  ]
 }
