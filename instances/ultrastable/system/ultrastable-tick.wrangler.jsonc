@@ -59,6 +59,10 @@
     {
       "binding": "AGENTS",
       "service": "ultrastable-agents"
+    },
+    {
+      "binding": "TENANTS",
+      "service": "ultrastable-tenants"
     }
   ]
 }

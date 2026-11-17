@@ -102,7 +102,8 @@
         "services": {
           "SITE": "ultrastable-site",
           "DASHBOARD": "ultrastable-dashboard",
-          "AGENTS": "ultrastable-agents"
+          "AGENTS": "ultrastable-agents",
+          "TENANTS": "ultrastable-tenants"
         },
         "secrets": [
           "GITHUB_DISPATCH_TOKEN",
@@ -211,6 +212,33 @@
         "services": {},
         "secrets": [],
         "vars": {}
+      }
+    },
+    {
+      "id": "ultrastable-tenants",
+      "state": "live",
+      "role": "tenant store (US-SPEC-25): per-tenant SQLite Durable Objects with free-plan budgets, vectors and rollups; /health runs a self-test the tick reads",
+      "main": "tenants/src/index.js",
+      "compatibility_date": "2026-11-12",
+      "public": false,
+      "bindings": {
+        "durable_objects": {
+          "TENANT": "TenantDO"
+        },
+        "migrations": [
+          {
+            "tag": "v1",
+            "new_sqlite_classes": [
+              "TenantDO"
+            ]
+          }
+        ],
+        "secrets": [
+          "TENANT_TOKEN"
+        ],
+        "vars": {
+          "TENANT_BUDGETS": "{\"selftest\":{\"day\":{\"requests\":2000,\"reads\":100000,\"writes\":2000}}}"
+        }
       }
     }
   ],

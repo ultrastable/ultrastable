@@ -84,7 +84,7 @@ export async function ensureItem(db, item, { cap = ORIGINATE_MAX_PER_DAY, now = 
 
 
 // Reads a metric through its probe. sql must be one read-only SELECT; http is healthy (1) on a 2xx answer, else 0.
-async function readMetric(db, m, ctx) {
+export async function readMetric(db, m, ctx) {
   if (m.source === 'builtin') {
     const f = METRICS[m.spec];
     if (!f) throw new Error(`unknown builtin ${m.spec}`);
@@ -97,6 +97,17 @@ async function readMetric(db, m, ctx) {
   }
   if (m.source === 'http') {
     try { const res = await (ctx.env.fetch || fetch)(m.spec, { signal: AbortSignal.timeout(8000) }); return res.ok ? 1 : 0; } catch { return 0; }
+  }
+  if (m.source === 'service') {
+    // Q-TENANT-TOPOLOGY-1: spec "<BINDING> <path>" is fetched through a service binding; healthy (1) only when the body says ok and its self-test passed.
+    const [bn, path = '/health'] = String(m.spec).split(' ');
+    const b = ctx.env && ctx.env[bn];
+    if (!b || typeof b.fetch !== 'function') return 0;
+    try {
+      const res = await b.fetch('https://service.invalid' + path, { signal: AbortSignal.timeout(8000) });
+      const j = await res.json();
+      return res.ok && j.ok === true && (!j.selftest || j.selftest.result === 'pass') ? 1 : 0;
+    } catch { return 0; }
   }
   return null; // declared: named but not probed
 }
