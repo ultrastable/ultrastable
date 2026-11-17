@@ -10,6 +10,21 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-17
 
+- 2026-11-17: Tick passes service bindings to the measure step (#561)
+- 2026-11-17: watchdog: clock probe (RESILIENCE-1) [skip ci]
+- 2026-11-17: RESILIENCE-1: tick clock via public /health; watchdog wakes only on failures (#559)
+- 2026-11-17: tenant-sync: ledger
+- 2026-11-17: tenant-sync: record tool failures with their error (#558)
+- 2026-11-17: tenant-sync: ledger
+- 2026-11-17: ISSUE-LOOP-1: skip archived repositories (#557)
+- 2026-11-17: SELF-FIX-1: failing checks become fleet tasks, not owner mail (#556)
+- 2026-11-17: TENANT-SYNC-1: core is the system of record for tenants (#547)
+- 2026-11-17: Move workers issues into the queue (Q-WORKERS-*) (#555)
+- 2026-11-17: RESILIENCE-1: watchdog passes repo guards (#554)
+- 2026-11-17: OWNER-LINKS-1: owner links on ultrastable.io and a dead-link probe (#553)
+- 2026-11-17: INSTANCE-METRICS-SEED-1: tick seeds instance metrics from config (#551)
+- 2026-11-17: watchdog: clock probe (RESILIENCE-1)
+- 2026-11-17: ISSUE-LOOP-1: count unprobed issues as a metric, not a red run (#550)
 - 2026-11-17: deploy-ultrastable: record live-verified deploy
 - 2026-11-17: Q-TENANT-TOPOLOGY-1: deploy lane owns ultrastable-tenants; tick reads its self-test (#535)
 - 2026-11-17: EFFECT-2: claim-coverage items rank after code-changing items (#534)
