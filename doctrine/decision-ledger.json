@@ -2045,6 +2045,14 @@
    "probe": "file:ops/growth/pm-report.json"
   },
   {
+   "id": "decision-2026-11-17-audit-chain-1",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "AUDIT-CHAIN-1",
+   "body": "Hash-chained hot audit_log in D1, sealed daily to R2 and ops repo segments; D1 stays small.",
+   "probe": "file:seed/worker/src/auditchain.js"
+  },
+  {
    "id": "lesson-2026-11-17-ops-queue-1-analytics-breach-froze-the-work-queue",
    "kind": "lesson",
    "date": "2026-11-17",
