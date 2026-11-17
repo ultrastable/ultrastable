@@ -39,6 +39,7 @@
   python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
   python3 -m foundation unknowns [--check|--run [--apply]|--answer KEY --verdict V --text T|--status]   UNKNOWNS-1: audit what the system does not know; inverted questions feed the objective space
   python3 -m foundation blindspots [--check|--scan [--apply] [--live]|--answer D --text T|--learn ID ...]   BLINDSPOT-1: the system knows what the owner cannot know to ask for
+  python3 -m foundation spinoff [--ideate|--launch [--apply]|--metrics SLUG|--collect [--apply]|--tick [--apply]|--check]   SPINOFF-1: the system generates, launches, measures and prunes its own apps
   python3 -m foundation promote [--check|--kits|--plan [--apply]|--outcome CH --kind K]   PROMOTE-1: strategy and promotion as a closed loop
   python3 -m foundation provenance [--check|--record JSON|--settle ID kept|reverted|none|--ingest-git [--apply]|--timeline|--changelog [--apply]|--lessons|--signal]  PROVENANCE-1: origin, effect and history of every input and change
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
@@ -62,6 +63,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["blindspots"]:
         from . import blindspots
         return blindspots.main(_av[1:])
+    if _av[:1] == ["spinoff"]:
+        from . import spinoff
+        return spinoff.main(_av[1:])
     if _av[:1] == ["promote"]:
         from . import promote
         return promote.main(_av[1:])

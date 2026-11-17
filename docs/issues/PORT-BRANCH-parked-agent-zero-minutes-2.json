@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-agent-zero-minutes-2",
+  "title": "PORT-BRANCH-parked-agent-zero-minutes-2: carry parked/agent/zero-minutes-2 onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/zero-minutes-2` at bc53a6cd99 holds work main lacks and cannot merge as is (conflicts in code: seed/worker/src/executor.js, seed/worker/src/index.js, seed/worker/src/lane.js, seed/worker/src/worker-gate.js, seed/worker/test/executor.test.js, seed/worker/test/zero-minutes.test.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/zero-minutes-2\n**Status:** open\n\nPort the change by hand onto current main (it is 3 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/zero-minutes-2",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

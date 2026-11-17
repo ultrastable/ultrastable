@@ -3254,6 +3254,45 @@
       ],
       "area": "managers",
       "server_owner": "github-actions"
+    },
+    {
+      "id": "spinoff",
+      "kind": "governance",
+      "summary": "The system generates its own apps: ideates from its own records, scores reach and impact, gates safety, launches on *.ultrastable.app, and a portfolio manager scores measured value (verified gap closed, retention, reach to people with the gap) to keep, iterate, promote or retire each app.",
+      "trigger": "daily",
+      "owner": "portfolio-manager",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "every live app has a measurement within a day or an open item, and every decision is a ledger row and a provenance row",
+      "paths": [
+        {
+          "id": "github",
+          "how": ".github/workflows/spinoff.yml runs python3 -m foundation spinoff --collect/--tick/--launch --apply",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same commands from any machine with the repo",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/spinoff.py::def tick",
+      "writeback": [
+        "ops/spinoff",
+        "instances/spinoffs"
+      ],
+      "system_path": [
+        "foundation/spinoff.py",
+        "doctrine/spinoff.json",
+        "spinoffs/worker.js",
+        "tests/foundation/test_spinoff.py",
+        ".github/workflows/spinoff.yml"
+      ],
+      "workflows": [
+        "spinoff.yml"
+      ],
+      "area": "managers",
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

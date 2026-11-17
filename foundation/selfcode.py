@@ -107,13 +107,23 @@ def _swallowed(src: str) -> list[str]:
     return out
 
 
+def _todos(src: str) -> list[str]:
+    """Markers in real comment tokens only: a pattern or a string that mentions the marker is not a finding."""
+    import io, tokenize
+    try:
+        toks = list(tokenize.generate_tokens(io.StringIO(src).readline))
+    except (tokenize.TokenError, IndentationError):
+        return []
+    return [f"line {t.start[0]}: {t.string.strip()[:100]}" for t in toks if t.type == tokenize.COMMENT and re.search(r"\b(TODO|FIXME|XXX)\b", t.string)]
+
+
 def sense_files(root=REPO) -> list[dict]:
     root, found = Path(root), []
     for p in _py_files(root):
         try:
             src = p.read_text(encoding="utf-8")
             per = {"unused_import": _unused_imports(src) if p.name != "__init__.py" else [], "bare_except": _swallowed(src),
-                   "todo": [f"line {i}: {l.strip()[:100]}" for i, l in enumerate(src.splitlines(), 1) if re.search(r"#.*\b(TODO|FIXME|XXX)\b", l)]}
+                   "todo": _todos(src)}
         except (SyntaxError, UnicodeDecodeError) as e:
             found.append({"kind": "failing_test", "key": _rel(p, root), "count": 1, "detail": [f"{_rel(p, root)} does not parse: {e}"]}); continue
         for kind, details in per.items():
@@ -250,7 +260,25 @@ def paused(rows: list[dict], kind: str, root=REPO, at: datetime | None = None) -
 
 def score(f: dict, rows: list[dict], root=REPO) -> float:
     n, rate = kept_rate(rows, f["kind"])
-    return cfg(root)["kinds"][f["kind"]]["weight"] * (1 + min(f["count"], 5) / 5) * (0.5 + (rate if rate is not None else 0.5))  # proven kinds rise, unproven stay neutral
+    base = cfg(root)["kinds"][f["kind"]]["weight"] * (1 + min(f["count"], 5) / 5) * (0.5 + (rate if rate is not None else 0.5))  # proven kinds rise, unproven stay neutral
+    p = Path(root) / f["key"]
+    size = p.stat().st_size if p.is_file() else 0
+    return base / (1 + size / cfg(root)["rails"].get("tractable_bytes", 8000))  # the agent rewrites whole files, so a small file is the change most likely to pass its checks
+
+
+def prefer(issues: list[dict], root=REPO, rows: list[dict] | None = None) -> list[dict]:
+    """Executor hook (capacity share): self-code items carry no ranker score, so behind a long scored queue they were never taken. When the share of the
+    last `share_window` executor rows spent on Q-SELF/Q-INTAKE items is below `capacity_share`, only those items are candidates for this run."""
+    R = cfg(root)["rails"]
+    own = [i for i in issues if is_own(i["number"])]
+    if not own or not enabled(root):
+        return issues
+    if rows is None:
+        from . import queue as qmod
+        rows = qmod.executor_rows(root)
+    recent = [r for r in rows if r.get("issue") is not None][-R.get("share_window", 6):]
+    spent = sum(1 for r in recent if is_own(r["issue"]))
+    return own if spent < R.get("capacity_share", 0.34) * max(len(recent), 1) else issues
 
 
 # ---- filing ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -317,9 +345,14 @@ def intake(root=REPO) -> list[dict]:
     return items
 
 
+def is_own(iid) -> bool:
+    """This loop's items: Q-INTAKE-* and Q-SELF-<signal kind>-*. Other Q-SELF-* items (hand-filed self-reference work) are not the code agent's."""
+    return str(iid).startswith(("Q-INTAKE-",) + tuple(f"Q-SELF-{k.replace('_', '-')}-" for k in ("failing_test", "bare_except", "unused_import", "todo", "ci_failure", "unknown")))
+
+
 def open_self_ids(root=REPO) -> set[str]:
     from . import queue as qmod
-    return {it["id"] for it in qmod.items(root) if it["status"] == "open" and str(it["id"]).startswith(("Q-SELF-", "Q-INTAKE-"))}
+    return {it["id"] for it in qmod.items(root) if it["status"] == "open" and is_own(it["id"])}
 
 
 def run_sense(root=REPO, apply=False, tests=False, ci=True) -> dict:
@@ -329,7 +362,7 @@ def run_sense(root=REPO, apply=False, tests=False, ci=True) -> dict:
     from . import queue as qmod
     rows = ledger_rows(root)
     open_ids = open_self_ids(root)
-    backlog = len([i for i in qmod.takeable(root) if not str(i["number"]).startswith(("Q-SELF-", "Q-INTAKE-"))])
+    backlog = len([i for i in qmod.takeable(root) if not is_own(i["number"])])
     found, unmeasured = sense(root, tests=tests, ci=ci)
     res = {"result": "sensed", "findings": len(found), "unmeasured": unmeasured, "backlog": backlog, "filed": [], "by_kind": {}}
     for f in found:
