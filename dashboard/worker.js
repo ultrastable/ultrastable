@@ -301,7 +301,7 @@ export async function tick(env, cron) {
 }
 
 // ---------- pages ----------
-const THEME = ":root{color-scheme:light dark;--bg:#f6f1e7;--sf:#fffdf8;--ink:#14120f;--ink2:#5b574f;--line:#ddd5c5;--ac:#c93d00;--on:#fff;--good:#0a7a3d;--bad:#b3261e;--warn:#8a5a00}@media(prefers-color-scheme:dark){:root{--bg:#0b1a15;--sf:#12342a;--ink:#f6f1e7;--ink2:#c9d4cc;--line:#1f4a3c;--ac:#ff5b1f;--on:#0b1a15;--good:#4cc38a;--bad:#ff8a80;--warn:#f0b64a}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}h1,h2{font-family:Fraunces,Georgia,serif}";
+const THEME = ":root{color-scheme:light dark;--bg:#f6f1e7;--sf:#fffdf8;--ink:#14120f;--ink2:#5b574f;--line:#ddd5c5;--ac:#b83800;--on:#fff;--good:#0a7a3d;--bad:#b3261e;--warn:#8a5a00}@media(prefers-color-scheme:dark){:root{--bg:#0b1a15;--sf:#12342a;--ink:#f6f1e7;--ink2:#c9d4cc;--line:#1f4a3c;--ac:#ff7f4d;--on:#0b1a15;--good:#4cc38a;--bad:#ff8a80;--warn:#f0b64a}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}h1,h2{font-family:Fraunces,Georgia,serif}";
 const FAVICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"ultrastable\"><title>ultrastable</title><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></svg>";
 const ICON = "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\">";
 const LOGO = "<img src=\"/favicon.svg\" alt=\"\" width=\"40\" height=\"40\" style=\"vertical-align:middle;margin-right:10px\">";
