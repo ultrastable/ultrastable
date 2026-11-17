@@ -16,5 +16,6 @@
  "0014_model_truth.sql",
  "0015_cutover_state.sql",
  "0016_read_indexes.sql",
- "0017_unknowns.sql"
+ "0017_unknowns.sql",
+ "0018_free_tier.sql"
 ]
