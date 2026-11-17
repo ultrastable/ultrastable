@@ -84,7 +84,14 @@ export async function requestCode(env) {
   await env.DB.prepare("INSERT INTO otp(id,code_hash,created_at,expires_at,attempts,used) VALUES(?1,?2,?3,?4,0,0)").bind(id, await sha256(id + ":" + code), now, now + OTP_MS).run();
   let sent;
   try { sent = await sendMail(env, "Your Ultrastable code: " + code, "Your Ultrastable owner code is " + code + ".\nIt works for 10 minutes. If you did not ask for it, ignore this message.\n"); }
-  catch (e) { await env.DB.prepare("UPDATE otp SET used=1 WHERE id=?1").bind(id).run(); console.error("mail failed", e && e.message); return { status: 502, body: { error: "could not send the code email to any owner address (" + String(e && e.message || e).slice(0, 200) + "). The probe records this; try again in a few minutes." } }; }
+  catch (e) {
+    await env.DB.prepare("UPDATE otp SET used=1 WHERE id=?1").bind(id).run();
+    // ERROR-LEDGER-1: backend detail goes to the provenance ledger (owner-only, /api/owner/provenance) as an incident keyed by error class; the person sees plain words.
+    const msg = String(e && e.message || e), cls = /not owned by the same account/i.test(msg) ? "mail-domain-account" : /suppress|bounce/i.test(msg) ? "mail-suppressed" : /relay/i.test(msg) ? "mail-relay" : "mail-other";
+    try { await PV.add(env, { class: "system", actor: "owner-signin", channel: "api", kind: "incident", summary: "sign-in code email failed [" + cls + "]: " + msg.slice(0, 300), ref: cls, affected: ["owner sign-in"] }); } catch (e2) { console.error("ledger", e2 && e2.message); }
+    try { await setCheck(env, "mail_send", false, cls + ": " + msg); } catch (e3) { /* the next probe records it */ }
+    return { status: 502, body: { error: "We could not send your sign-in code just now. We are fixing it automatically; try again in a few minutes or use a passkey." } };
+  }
   return { status: 200, body: { ok: true, sent: true, to: maskAddr(sent.to) } };
 }
 export async function verifyCode(env, req, code) {

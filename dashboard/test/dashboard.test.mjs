@@ -119,7 +119,7 @@ test("MAIL-PATHS-1: a suppressed first address falls through to the backup; both
   assert.ok(/code is \d{6}/.test(got[0].text));
   const bad = { ...mkdb(), OWNER_EMAIL: "a@one.example", OWNER_EMAIL_BACKUP: "b@two.example", NO_NET: 1, MAILER: async () => { throw new Error("suppressed"); } };
   const rb = await call(bad, "/api/owner/code", {}); const jb = await rb.json();
-  assert.equal(rb.status, 502); assert.match(jb.error, /any owner address/);
+  assert.equal(rb.status, 502); assert.match(jb.error, /could not send your sign-in code/); assert.doesNotMatch(jb.error, /suppressed|owner address/);
 });
 test("MAIL-PATHS-1: one address is a failing probe, two are a passing one", async () => {
   const one = { ...mkdb(), OWNER_EMAIL: "a@one.example", NO_NET: 1, MAILER: async () => {} };
