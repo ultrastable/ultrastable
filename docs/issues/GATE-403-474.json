@@ -1,0 +1,11 @@
+{
+  "id": "GATE-403-474",
+  "title": "GATE-403-474: gate loop gets HTTP 403 on executor-opened PR #474",
+  "body": "**Owner:** lane\n**Trigger:** loop_beats gate ok=0 with status 403 (D1 ultrastable-org)\n**Done check:** grep:docs/issues/GATE-403-474.json::Status:\\*\\* closed\n**Status:** open\n\nAfter SUBREQUEST-ROTATION-2 the tick Worker no longer hits Too many subrequests; the gate loop now ends `errors: ultrastable/ultrastable#474 status 403`. #474 was opened by the executor (ROADMAP-AGENT-CONNECTOR-HEALTH) and adds src/qnfo/connector_health.py, a QNFO-named path that does not belong in this repository.\n\nFix: the gate records a 403 on one PR as that PR's disposition instead of failing the loop; #474 closes as superseded or moves to a tenant path; the executor refuses QNFO-named paths here.\n\nsize: S\n\n**Closing probe:** loop_beats gate ok=1 in two consecutive slots and #474 closed with a recorded disposition.\n",
+  "labels": [
+    "p2",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}
