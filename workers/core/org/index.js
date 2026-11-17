@@ -28,6 +28,7 @@ import { createAgents } from '../agents/index.js';
 import { createContainers } from '../containers/index.js';
 import { createInfra, heartbeat } from '../infra/index.js';
 import { createElicit } from '../elicit/index.js';
+import { createAudit } from '../audit/index.js';
 import { ignoranceStep } from '../ignorance/org.js';
 import { step as specloopStep } from '../specloop/index.js';
 import { steps as criticalitySteps } from '../criticality/index.js';
@@ -135,6 +136,8 @@ export function createOrg({
     : null;
   if (agents) for (const [name, def] of Object.entries(agentDefs)) agents.define(name, def);
   const elicit = on('elicit') ? createElicit({ db, now: clock, config: config.elicit }) : null;
+  // AUDIT-1: hash-chained action log (core/audit). Off unless config.audit.enabled; config.audit.bucket_binding names an optional R2 binding in env.
+  const audit = on('audit') ? createAudit({ db, now: clock, config: { tenant: config.org_slug || 'org', ...config.audit }, bucket: env[config.audit.bucket_binding || 'AUDIT_BUCKET'] || null }) : null;
   const containersFor = e => (on('containers') && executors.length
     ? createContainers({ db, now: clock, config: config.containers, executors, secrets: (config.containers.secret_env || []).map(n => e[n]).filter(Boolean) }) : null);
   const infraRoutes = () => {
@@ -261,6 +264,7 @@ export function createOrg({
     if (config.ownerlink && config.ownerlink.enabled !== false) steps.push({ name: 'ownerlink', run: async (_db, ctx) => { env_cache = env_; const r = await ownerlink().step(); ctx.notes.push(`ownerlink: ${JSON.stringify(r)}`); } });
     if (on('ignorance')) steps.push(ignoranceStep({ db, now: clock, config, env: env_, fetch: doFetch }));
     if (agents) steps.push({ name: 'agents', run: async (_db, ctx) => { await agents.expire(); ctx.notes.push('agents: expired approvals swept'); } });
+    if (audit) steps.push(audit.step());
     if (elicit) steps.push({ name: 'elicit', run: async (_db, ctx) => {
       let n = 0; for (const r of (await db.prepare(`SELECT DISTINCT project FROM elicit_needs WHERE state='asked'`).all()).results || []) n += await elicit.expire(r.project);
       ctx.notes.push(`elicit: ${n} asks defaulted on timeout`);
@@ -305,6 +309,7 @@ export function createOrg({
       const r = await createInfra({ routes: infraRoutes(), env: e, db, now: clock, config: config.infra, checks }).dispatch(request);
       if (r) return r;
     }
+    if (audit && (p === '/audit' || p.startsWith('/audit/'))) { const e = await mergedEnv(), tok = e.AUDIT_TOKEN || e.CONSOLE_TOKEN; const r = await audit.handle(request, { authorize: rq => Boolean(tok) && rq.headers.get('authorization') === 'Bearer ' + tok }); if (r) return r; }
     if (on('public_metrics')) { const r = await handlePublicMetrics(request, { db, now: clock(), config }); if (r) return r; }
     if (ROUTES.has(p.replace(/\/+$/, '') || '/')) {
       return describeHandle(request, { db, now: clock(), specStatus: describeSpec, packs: await describePacks(), scope: describeScope, compose, voiceRules: describeVoice });
@@ -312,5 +317,5 @@ export function createOrg({
     return null;
   }
 
-  return { extraSteps, tick, handle, packs, agents, elicit, stewardRollup: () => stewardRollup({ db }) };
+  return { extraSteps, tick, handle, packs, agents, elicit, audit, stewardRollup: () => stewardRollup({ db }) };
 }

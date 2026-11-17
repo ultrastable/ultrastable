@@ -40,4 +40,5 @@ Each directory here is one module of the Ultrastable core, written to the specif
 | rest | see [extraction/INVENTORY.md](../extraction/INVENTORY.md) | PLANNED |
 | `ignorance/` | registry of known unknowns, red-team, inversion and pre-mortem passes, frontier of new questions | BUILT (see its README); org-tick step and model route BUILT |
 | `promote/` | autonomous promotion: channel publishers, caps, kill switch, referral tuning, reach targets, idea intake | BUILT (see its README) |
+| `audit/` | hash-chained, rolled-up, tamper-evident action log (AUDIT-1) | BUILT (see its README) |
 | `principles/` | Principles register: tagline, glossary, owner directives with their enforcers; renders `docs/GLOSSARY.md` | US-SPEC-23, BUILT |

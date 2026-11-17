@@ -2051,6 +2051,23 @@
    "title": "AUDIT-CHAIN-1",
    "body": "Hash-chained hot audit_log in D1, sealed daily to R2 and ops repo segments; D1 stays small.",
    "probe": "file:seed/worker/src/auditchain.js"
+  },
+  {
+   "id": "decision-2026-11-17-audit-1-one-hash-chained-merkle-rolled-audit-log-in-core",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "AUDIT-1: one hash-chained, Merkle-rolled audit log in core",
+   "body": "Autonomous actions are one append-only hash-chained log; recent events hot in D1, finished days rolled to one gzip batch plus Merkle root; payloads hashed not stored; verify and proof are public.",
+   "probe": "file:workers/core/audit/index.js"
+  },
+  {
+   "id": "lesson-2026-11-17-audit-1-build-roll-up-keeps-the-log-small-main-s-ledger-prob",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "AUDIT-1 build: roll-up keeps the log small; main's ledger probe pointed at a missing file",
+   "body": "Only the primary key is indexed on audit_events so an append writes one row; days roll to one batch. A ledger probe must name an existing file.",
+   "probe": "file:workers/core/audit/audit.test.js",
+   "session": "session_0156nqDvx8HgX8Ubut9xXoKx"
   }
  ]
 }

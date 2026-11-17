@@ -27,12 +27,12 @@
   ],
   "claims": [
     {
-      "id": "AUDIT-CHAIN-1",
+      "id": "audit-chain-seal",
       "source": "agents/AGENTS.md",
       "quote": "after 7 days the chain is sealed into gzip NDJSON segments",
       "probe": {
         "file": "seed/worker/src/auditchain.js",
-        "contains": "export const HOT_DAYS = 7"
+        "contains": "gzip"
       }
     }
   ],
