@@ -1639,6 +1639,15 @@
    "body": "executor.pick ranks by ranker score; Q-SELF items had none and were never taken. selfcode.prefer reserves a capacity share (doctrine/selfcode.json rails.capacity_share) and score favours small files.",
    "probe": "grep:foundation/selfcode.py::def prefer",
    "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
+   "id": "lesson-2026-11-17-consent-flows-must-use-the-canonical-origin-behind-the-gatew",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Consent flows must use the canonical origin behind the gateway",
+   "body": "The site Worker sees a workers.dev host behind the gateway, so atproto client_id and redirect URIs were built on it; site/connections.js now forwards /connect and the bluesky client metadata with the https://ultrastable.io origin.",
+   "probe": "grep:site/connections.js::canonical",
+   "session": "session_0156nqDtKVpn3hxk4cBwg9BD"
   }
  ]
 }
