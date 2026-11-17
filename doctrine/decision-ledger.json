@@ -1474,6 +1474,15 @@
    "body": "Every input and change is a row with origin class, actor, channel, affected and settled effect; the public changelog shows only rows marked public with contact details removed; selfimprove reads kept rate per origin.",
    "probe": "grep:foundation/provenance.py::def public_view",
    "session": "provenance-thread"
+  },
+  {
+   "id": "lesson-2026-11-17-ci-doctor-1-paused-budget-turned-scheduled-runs-red-doctor-f",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "CI-DOCTOR-1: paused budget turned scheduled runs red; doctor files failing workflows",
+   "body": "Scheduled runs loop 44108035777, failure-audit 44107612741, branchsweep 44107601818 and transparency 44105168749 failed at actions_guard.py: paused:true in actions-budget.json made each try to cancel itself without actions:write. The guard now skips the pause on public repos, and ci_doctor.py (job doctor in failure-audit.yml) opens one ci-doctor issue per failing workflow across four repos, diagnoses with GitHub Models, and closes it when green. Also fixed unknown_questions retention and the stale dashboard-data.js. Verified: tests pass for plan-limits, dashboard check ok, ci_doctor unit test passes.",
+   "probe": "grep:scripts/ci_doctor.py::def failing_workflows",
+   "session": "session_0156nqDuXJWyM65c8uChpjTM"
   }
  ]
 }
