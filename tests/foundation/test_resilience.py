@@ -92,3 +92,40 @@ class T(unittest.TestCase):
         for w in by.values():
             self.assertNotEqual(w["watched_by"], w["id"]); self.assertNotEqual(by[w["watched_by"]]["host"], w["host"] if w["host"] == "github-actions" else None)
         self.assertEqual({w["host"] for w in by.values()}, {"github-actions", "cloudflare-worker"})
+
+
+class Truth(T):
+    def test_a_200_that_does_not_restart_the_clock_escalates(self):
+        for i in range(3):
+            self.run_({"tick-heartbeat"}, poke_status=200, now=NOW + i * 600)
+        self.assertTrue((self.d / "docs/issues/Q-STALL-tick-heartbeat.json").exists())
+
+    def test_d1_clock_reads_every_account(self):
+        from foundation import clock as C
+        seen = []
+        orig = C.d1_beats
+        try:
+            def fake(c, tok, acct):
+                seen.append(acct)
+                if acct == "dead":
+                    raise OSError("x")
+                return [NOW]
+            C.d1_beats = fake
+            c = {"d1_id": "a", "replicas": [{"account_id": "dead", "d1_id": "a"}, {"account_id": "live", "d1_id": "b"}]}
+            self.assertEqual(C.d1_beats_any(c, "t", "x"), [NOW]); self.assertEqual(seen, ["dead", "live"])
+            C.d1_beats = lambda *a: (_ for _ in ()).throw(OSError("x"))
+            with self.assertRaises(RuntimeError):
+                C.d1_beats_any(c, "t", "x")
+        finally:
+            C.d1_beats = orig
+
+    def test_unchanged_run_is_not_committed(self):
+        self.run_(set())
+        self.assertFalse(self.run_(set(), now=NOW + 60)["changed"])
+        self.assertTrue(self.run_({"wf:cost-guard"}, now=NOW + 120)["changed"])
+
+    def test_repo_d1_clocks_have_both_accounts(self):
+        import json as j
+        for c in j.loads((REPO / "doctrine/clocks.json").read_text())["clocks"]:
+            if c["source"] == "d1":
+                self.assertEqual(len({r["account_id"] for r in c["replicas"]}), 2)
