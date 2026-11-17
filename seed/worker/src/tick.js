@@ -9,6 +9,7 @@ import { over_budget } from './costsample.js';  // Q-LESSON-COST-SAMPLE-ACT: a D
 import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
+import { unknownsStep } from './unknowns.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
 import { ignitionStep } from './ignition.js';
@@ -275,6 +276,13 @@ export const STEPS = {
     await selfAuditStep(db, ctx, ctx.config.failure_modes, ensureItem);
   },
 
+  // UNKNOWNS-1: question what the system does not know; the questions are plus items.
+  async unknowns(db, ctx) {
+    if (!ctx.config.unknowns) { ctx.notes.push('unknowns: no doctrine configured'); return; }
+    const r = await unknownsStep(db, ctx, ctx.config.unknowns, ensureItem);
+    if (r.filed.length) ctx.notes.push(`unknowns: filed ${r.filed.join(', ')}`);
+  },
+
   // Roles whose tick is due pull the top ready item for their role and get a dispatch row.
   async dispatch(db, ctx) {
     const roles = await all(db, `SELECT * FROM roles`);
@@ -329,7 +337,7 @@ export const STEPS = {
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
+export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,
