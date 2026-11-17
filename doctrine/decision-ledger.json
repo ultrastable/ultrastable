@@ -1656,6 +1656,14 @@
    "title": "WORDS-MATCH-CODE-1",
    "body": "Published statements must be true by code. core/statements (ultrastable/workers) renders tenant pages from config with a probe per statement and fails on unbound prose; foundation claimcode binds platform surfaces and ratchets a shrink-only baseline that the executor drains.",
    "probe": "grep:foundation/claimcode.py::WORDS-MATCH-CODE-1"
+  },
+  {
+   "id": "decision-2026-11-17-branch-sweep-2-prune-stale-session-branches-fleetwide",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "BRANCH-SWEEP-2: prune stale session branches fleetwide",
+   "body": "The daily branch sweep also prunes stale claude/ and agent/ branches of every repository in doctrine/branchsweep.json fleet_repos by API: only branches the default branch holds, or whose pull request merged with that exact head, are deleted, each sha recorded in the ledger first; anything else is kept.",
+   "probe": "grep:foundation/branchsweep.py::def remote_prune"
   }
  ]
 }
