@@ -81,7 +81,7 @@ assert.equal(kv.get("state:" + id2), "failed"); assert.match(await r.text(), /So
 r = await mod.fetch(new Request("https://ultrastable.io/s/0000000000"), E2); assert.equal(r.status, 404);
 r = await get("https://ultrastable.net/"); assert.equal(r.headers.get("location"), "https://ultrastable.io/proof");
 r = await get("https://www.ultrastable.io/how"); assert.equal(r.headers.get("location"), "https://ultrastable.io/how");
-for (const p of ["/", "/engineers", "/dashboard", "/roadmap", "/how", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
+for (const p of ["/", "/engineers", "/dashboard", "/roadmap", "/how", "/showcase", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
   r = await get("https://ultrastable.io" + p); assert.equal(r.status, 200, p);
   const h = await r.text(); assert.match(h, /<body/); assert.match(h, /rel="canonical"/);
   assert.ok(((h.replace(/<style>[\s\S]*?<\/style>/, "")).match(/class="btn btn-primary"/g) || []).length <= 1, p + " has at most one primary action");
