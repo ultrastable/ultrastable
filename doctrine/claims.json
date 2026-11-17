@@ -110,6 +110,34 @@
         "grep:site/worker.js::\\[\\.\\.\\.LIVE_TOOLS, \\.\\.\\.TOOLS, \\.\\.\\.WRITE_TOOLS\\]\\.map",
         "grep:site/agentic.js::tools/list.*LIVE_TOOLS, \\.\\.\\.TOOLS, \\.\\.\\.WRITE_TOOLS"
       ]
+    },
+    {
+      "id": "how-ledgers-count",
+      "surface": "site/worker.js",
+      "text": "One loop, \" + VERIFIED.ledgers.length + \" ledgers (",
+      "probe": [
+        "json:doctrine/claims.json::ledgers.0.id==work-claims",
+        "file:site/claims-data.js"
+      ]
+    },
+    {
+      "id": "claims-page-bound",
+      "surface": "site/worker.js",
+      "text": "Every statement on the Ultrastable surfaces is bound to a probe in the code",
+      "probe": [
+        "file:foundation/claims.py",
+        "file:doctrine/claims.json",
+        "cron:.github/workflows/claims.yml"
+      ]
+    },
+    {
+      "id": "rule-claims-1",
+      "surface": "agents/AGENTS.md",
+      "text": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
+      "probe": [
+        "file:foundation/claims.py",
+        "file:tests/foundation/test_claims.py"
+      ]
     }
   ],
   "generated": [

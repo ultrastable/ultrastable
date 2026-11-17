@@ -85,6 +85,33 @@ export default {
    "surface": "site/worker.js"
   },
   {
+   "claim": "One loop, \" + VERIFIED.ledgers.length + \" ledgers (",
+   "detail": "",
+   "how": "json:doctrine/claims.json::ledgers.0.id==work-claims + file:site/claims-data.js",
+   "id": "how-ledgers-count",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Every statement on the Ultrastable surfaces is bound to a probe in the code",
+   "detail": "",
+   "how": "file:foundation/claims.py + file:doctrine/claims.json + cron:.github/workflows/claims.yml",
+   "id": "claims-page-bound",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
+   "detail": "",
+   "how": "file:foundation/claims.py + file:tests/foundation/test_claims.py",
+   "id": "rule-claims-1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "seed-tests: 35 Python and 247 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
@@ -218,7 +245,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 21,
-  "total": 21
+  "pass": 24,
+  "total": 24
  }
 };
