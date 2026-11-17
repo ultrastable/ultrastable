@@ -86,8 +86,8 @@ export default {
     },
     {
      "first_order": [
-      "uiux-audit",
-      "self-coding-agent"
+      "uiux-loop",
+      "agent-executor"
      ],
      "id": "ui_findings",
      "max": 0,
@@ -101,8 +101,7 @@ export default {
     },
     {
      "first_order": [
-      "uiux-audit",
-      "uiux-funnels"
+      "uiux-loop"
      ],
      "id": "happy_paths",
      "max": 1.0,

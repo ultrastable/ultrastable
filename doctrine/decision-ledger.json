@@ -1978,6 +1978,14 @@
    "body": "PRs went red only because main moved a generated count, ledger, self model or dashboard under them. checks.yml runs scripts/regen_generated.sh first and pushes the result back to a same-repo PR branch with LANE_PAT; ultrastability writes runnable cmd: probes; .example fixture addresses pass the publication guard.",
    "probe": "file:scripts/regen_generated.sh",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-tenant-sync-1-core-is-the-system-of-record",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "TENANT-SYNC-1: core is the system of record",
+   "body": "Session session_0156nqDuXJWyM65c8uChpjTM. Tenants pin workers/ by hash and lift generic code through the tenant-sync loop. Hosted checks skip draft PRs by design. Generated data (dashboard, claims, self, ultrastability) goes stale whenever main moves, so regenerate after merging main before pushing.",
+   "probe": "grep:foundation/tenantsync.py::def run"
   }
  ]
 }

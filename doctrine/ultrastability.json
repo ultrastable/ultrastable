@@ -172,8 +172,8 @@
      "max": 0,
      "unit": "findings",
      "first_order": [
-      "uiux-audit",
-      "self-coding-agent"
+      "uiux-loop",
+      "agent-executor"
      ],
      "why": "A page that fails accessibility, leaks backend detail, breaks its structure or its brand is a front end drifting into a mishmash; the UI/UX loop (UIUX-1) must keep this at zero, and a variable that cannot be read from a fresh audit is unmeasured and so not in bounds.",
      "ladder": [
@@ -196,8 +196,7 @@
      "max": 1.0,
      "unit": "of paths",
      "first_order": [
-      "uiux-audit",
-      "uiux-funnels"
+      "uiux-loop"
      ],
      "why": "A path in doctrine/stakeholders.json that no longer clicks through is a user who cannot get from entry to the next step; every audience path must walk, and the UI/UX loop runs each as a browser flow.",
      "ladder": [
