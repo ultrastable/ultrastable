@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-17T16:12:19Z",
- "commit": "1ef34be",
+ "generated": "2026-11-17T16:16:06Z",
+ "commit": "ec912f3",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 89,
@@ -101,22 +101,22 @@
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-17T16:10:12Z",
-    "event": "push",
-    "headSha": "9c7512f2643730e6f628bddf7f9be4a38dbb83c2"
+    "createdAt": "2026-11-17T16:14:02Z",
+    "event": "workflow_dispatch",
+    "headSha": "4ba2c8a7fea86b81effb1a87bb97d8c574f795b3"
    },
    "per_day_success": {
-    "2026-11-15": 16,
+    "2026-11-15": 14,
     "2026-11-16": 9,
-    "2026-11-17": 21
+    "2026-11-17": 23
    }
   },
   "executor": {
    "runs": 30,
    "by_conclusion": {
     "": 2,
-    "success": 4,
-    "cancelled": 24
+    "cancelled": 24,
+    "success": 4
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -154,7 +154,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": -8.6,
+   "age_s": 26.7,
    "status": "fresh",
    "missed": 0
   },
@@ -178,16 +178,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 74.4,
+   "age_s": 71.7,
    "status": "fresh",
    "missed": 0,
-   "lag_s": 999.0
+   "lag_s": 1229.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 2924.4,
+   "age_s": 3151.7,
    "status": "fresh",
    "missed": 0
   }
@@ -226,7 +226,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-17T16:11:52Z",
+  "generated": "2026-11-17T16:15:40Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -271,7 +271,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-17T16:11:52Z",
+    "started": "2026-11-17T16:15:40Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -285,7 +285,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-17T16:11:52Z",
+     "at": "2026-11-17T16:15:40Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -346,11 +346,11 @@
  },
  "growth": {
   "mix": {
-   "growth": 1,
-   "fix": 6,
+   "growth": 2,
+   "fix": 5,
    "maintenance": 13,
    "total": 20,
-   "growth_share": 0.05,
+   "growth_share": 0.1,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -400,7 +400,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 24.7,
+   "last_beat_age_s": 60.3,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -411,7 +411,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 2957.7,
+   "last_beat_age_s": 3185.3,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -422,9 +422,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 27.7,
+   "last_beat_age_s": 116.3,
    "expected_interval_s": 86400,
-   "beats_24h": 26,
+   "beats_24h": 27,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -433,11 +433,11 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 418035.7,
+   "last_beat_age_s": 40.3,
    "expected_interval_s": 604800,
-   "beats_24h": 0,
+   "beats_24h": 1,
    "expected_24h": 0.1,
-   "median_jitter_s": 604010.0,
+   "median_jitter_s": 395293.5,
    "status": "ticking"
   },
   {
@@ -2221,6 +2221,24 @@
  "changes": {
   "commits": [
    {
+    "sha": "ec912f3",
+    "at": "2026-11-17T16:12:22+00:00",
+    "author": "Claude",
+    "subject": "writeback: WORDS-MATCH-CODE-1 decision",
+    "pr": null,
+    "item": "WORDS-MATCH-CODE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/ec912f30c436a9c7e1203ddbeff99785e7a95024"
+   },
+   {
+    "sha": "1ef34be",
+    "at": "2026-11-17T16:12:15+00:00",
+    "author": "Claude",
+    "subject": "WORDS-MATCH-CODE-1: claimcode check binds public-surface claims to probes; rule in every agent file",
+    "pr": null,
+    "item": "WORDS-MATCH-CODE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1ef34bea6a1a76e2da90498b5cdd3ae4637b6431"
+   },
+   {
     "sha": "d89e4c7",
     "at": "2026-11-17T16:53:44+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2561,24 +2579,6 @@
     "pr": 457,
     "item": "READ-BUDGET-2",
     "url": "https://github.com/ultrastable/ultrastable/commit/eed92ee0bfd2d833f97d701c8febdd535db4cf5d"
-   },
-   {
-    "sha": "a345810",
-    "at": "2026-11-17T01:17:39+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Doer: accept object model replies, skip plan-blocked models (#456)",
-    "pr": 456,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/a345810926ba70974830a3f61033ef346b71a2d5"
-   },
-   {
-    "sha": "7476903",
-    "at": "2026-11-16T16:21:26+00:00",
-    "author": "ultrastable-budget",
-    "subject": "actions-budget: pause non-essential workflows (projected minutes near the free quota)",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/7476903ff319df419c14ba6db475a6713175d03d"
    }
   ],
   "pull_requests": []

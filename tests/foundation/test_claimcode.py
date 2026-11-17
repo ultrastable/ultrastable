@@ -1,12 +1,14 @@
-import json, shutil, tempfile, unittest
+import json, sys, unittest
 from pathlib import Path
 from foundation import claimcode
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 
 
 def _tree(claims=None):
-    d = Path(tempfile.mkdtemp()); (d / "doctrine").mkdir(); (d / "site").mkdir(); (d / "t").mkdir()
+    d = scratch(); (d / "doctrine").mkdir(); (d / "site").mkdir(); (d / "t").mkdir()
     pol = json.loads((REPO / "doctrine/claim-code.json").read_text()); pol["claims"] = claims or []; pol["baseline"] = []
     (d / "doctrine/claim-code.json").write_text(json.dumps(pol))
     return d
@@ -17,14 +19,14 @@ class ClaimCode(unittest.TestCase):
         self.assertEqual(claimcode.check(REPO), [])
 
     def test_an_unbound_claim_fails(self):
-        d = _tree(); self.addCleanup(shutil.rmtree, d, True)
+        d = _tree(); 
         (d / "site/page.js").write_text('const t = "The loop runs every 10 minutes and always fixes what it finds.";\n')
         errs = claimcode.check(d); self.assertEqual(len(errs), 1); self.assertIn("site/page.js:1", errs[0])
 
     def test_a_bound_claim_passes_and_a_changed_sentence_fails(self):
         q = "The loop runs every 10 minutes"
         d = _tree([{"id": "loop-cadence", "source": "site/page.js", "quote": q, "probe": {"file": "t/cadence.test.js", "contains": "every 10 minutes"}}])
-        self.addCleanup(shutil.rmtree, d, True)
+        
         (d / "site/page.js").write_text(f'const t = "{q} and always fixes what it finds.";\n'); (d / "t/cadence.test.js").write_text("// asserts every 10 minutes\n")
         self.assertEqual(claimcode.check(d), [])
         (d / "site/page.js").write_text('const t = "The loop runs every 5 minutes and always fixes what it finds.";\n')
@@ -32,6 +34,6 @@ class ClaimCode(unittest.TestCase):
 
     def test_a_claim_whose_probe_is_missing_fails(self):
         d = _tree([{"id": "x", "source": "site/page.js", "quote": "runs every 10 minutes", "probe": {"file": "t/none.test.js", "contains": "z"}}])
-        self.addCleanup(shutil.rmtree, d, True)
+        
         (d / "site/page.js").write_text('const t = "The loop runs every 10 minutes and always fixes things.";\n')
         self.assertTrue(any("probe" in e for e in claimcode.check(d)))
