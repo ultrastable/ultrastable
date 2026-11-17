@@ -16,7 +16,7 @@
   },
   "learning": {"min_settled": 3, "min_kept_rate": 0.5, "pause_hours": 72},
   "kinds": {
-    "failing_test": {"enabled": true, "weight": 10},
+    "failing_test": {"enabled": false, "weight": 10, "why": "failing checks on main are already filed as Q-CIFAIL items by foundation/ciwatch.py; enable here only for suites that workflow does not run"},
     "bare_except": {"enabled": true, "weight": 4},
     "unused_import": {"enabled": true, "weight": 3},
     "todo": {"enabled": true, "weight": 1}

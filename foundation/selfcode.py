@@ -177,7 +177,7 @@ def probe(kind: str, key: str, root=REPO) -> bool:
     if kind == "failing_test":
         if key.endswith(".py"):
             return not any(f["key"] == key for f in sense_files(root))
-        return sh(["python3", "-m", "unittest", key], root, 600)[0] == 0
+        return sh(["python3", "-m", "unittest", "discover", "-s", "tests/foundation", "-p", key.split(".")[-1] + ".py"], root, 600)[0] == 0
     if kind == "ci_failure":
         c = sense_ci(root)
         return c is not None and not any(f["key"] == key for f in c)
@@ -269,7 +269,7 @@ def item_for(f: dict) -> dict:
     body = (f"**Owner:** code-agent\n**Trigger:** signal {f['kind']} fires for {where}\n**Done check:** cmd:python3 -m foundation selfcode --probe {f['kind']} {where}\n**Status:** open\n\n"
             f"SELFCODE-1 signal `{f['kind']}` on `{where}` ({f['count']} finding(s)).\n\n{ask}\n\nFindings:\n" + "\n".join(f"- {d}" for d in f["detail"]) +
             "\n\nScope: only foundation/, scripts/, tests/, products/, site/, seed/ and docs/issues/. A change that does not make the done check pass is reverted.")
-    return {"id": iid, "title": f"{iid}: {f['kind'].replace('_', ' ')} in {where}", "body": body, "labels": ["role:code-agent", "ws:self", "p6"], "milestone": "Now", "workstream": "Self"}
+    return {"id": iid, "title": f"{iid}: {f['kind'].replace('_', ' ')} in {where}", "body": body, "labels": ["role:code-agent", "ws:self", "p6", "raises-deploys", "raises-self"], "milestone": "Now", "workstream": "Self"}
 
 
 def write_item(root, item: dict) -> Path:

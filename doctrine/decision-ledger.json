@@ -1516,6 +1516,14 @@
    "body": "The first Actions executor run skipped both GitHub Models rungs with no recorded reason; the ladder now writes status and provider message for every failed call to ops/agent-cost.jsonl.",
    "probe": "grep:foundation/agent_ladder.py::transport failure",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-selfcode-1-self-code-items-must-pass-the-criticality-gate-fa",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: self-code items must pass the criticality gate; failing tests stay with ciwatch",
+   "body": "First live run filed a Q-SELF item and the executor reported idle: with k under the floor the gate admits only raises-deploys items. Q-SELF items now carry raises-deploys and raises-self (a merged agent change is a deploy the system originated). The in-job test run took 3 of 12 minutes and duplicated ciwatch, so failing_test is off in doctrine/selfcode.json.",
+   "probe": "file:foundation/selfcode.py"
   }
  ]
 }
