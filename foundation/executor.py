@@ -36,10 +36,13 @@ EFFECT_LABELS = {"bug", "failing-check", "raises-self"}
 CODE_EXT = (".py", ".js", ".mjs", ".cjs", ".ts", ".sh", ".sql")
 
 
-def effect_tier(issue: dict) -> int:
+def effect_tier(issue: dict) -> float:
     """EFFECT-1: 0 for an item with executable effect (a failing check, a claim drift, an unknown, a bug), else 1. The picker takes tier 0 first."""
     names = {(l["name"] if isinstance(l, dict) else l) for l in issue.get("labels", [])}
-    return 0 if str(issue.get("number", "")).startswith(EFFECT_PREFIXES) or names & EFFECT_LABELS else 1
+    n = str(issue.get("number", ""))
+    if n.startswith("Q-CLAIM-COVER"):  # a coverage item is often a wording change; it comes after items that change code
+        return 0.5
+    return 0 if n.startswith(EFFECT_PREFIXES) or names & EFFECT_LABELS else 1
 
 
 def consumer_gap(files: list[str], root=REPO) -> str | None:
@@ -318,7 +321,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         from . import growth  # GROWTH-1: a product manager keeps the backlog from devolving into bug fixes
         from . import rnd  # RND-1: competitor gaps and adopted findings carry a priority the loop computed
         from . import selfcode  # SELFCODE-1: a share of runs goes to the code agent's own findings and trusted issue intake; it runs first so growth.prefer cannot filter them out
-        eff = [i for i in issues if effect_tier(i) == 0]  # EFFECT-1: failing checks, claim drift, unknowns and bugs go before the growth mix and R&D boost
+        eff = [i for i in issues if effect_tier(i) < 1]  # EFFECT-1: failing checks, claim drift, unknowns and bugs go before the growth mix and R&D boost
         issues = eff if eff else rnd.boost(growth.prefer(selfcode.prefer(issues, root), root), root)
     issue = next((i for i in issues if str(i["number"]) == str(issue_no)), None) if issue_no else pick(issues)
     if not issue:
