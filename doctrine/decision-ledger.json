@@ -2041,8 +2041,16 @@
    "kind": "decision",
    "date": "2026-11-17",
    "title": "Product manager pass 2026111716: 3 item(s) filed",
-   "body": "Growth and repair items, experiment verdicts and knob review recorded by foundation/pm.py (experiments in ops/growth/experiments.json); tests pass.",
-   "probe": "file:ops/growth/experiments.json"
+   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+   "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "decision-2026-11-17-audit-chain-1",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "AUDIT-CHAIN-1",
+   "body": "Hash-chained hot audit_log in D1, sealed daily to R2 and ops repo segments; D1 stays small.",
+   "probe": "file:seed/worker/src/auditchain.js"
   },
   {
    "id": "lesson-2026-11-17-ops-queue-1-analytics-breach-froze-the-work-queue",

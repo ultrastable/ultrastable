@@ -18,7 +18,9 @@ import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
 import { backendRecord } from './errors.js';  // USER-BACKEND-1
 import { governedAI, budgetView, SHARES, halted } from './budget.js';
-import { pruneAll } from './retention.js';  // RETENTION-1  // SPEND-GOVERNOR-1: every model call goes through the owner's monthly budget
+import { pruneAll } from './retention.js';
+import { seal, verify, trace, head, r2Sink, githubSink, archiveRows } from './auditchain.js';  // AUDIT-CHAIN-1
+import { bearerOk } from './auditauth.js';  // RETENTION-1  // SPEND-GOVERNOR-1: every model call goes through the owner's monthly budget
 import { handleAuth } from './auth/routes.js';
 import { getToken, refreshDue, pathGuard } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
@@ -51,6 +53,9 @@ const aiFor = (env) => halted(config, env) ? Promise.resolve({ ai: null, state: 
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
 const LOOP_PHASE = { executor: 0, gate: 1, lane: 1, handoffs: 2, issuesync: 2, 'repo-access': 2, sweeper: 3, 'deploy-evidence': 3, social: 3, 'watchdog-gh': 3 };  // SUBREQUEST-ROTATION-2: executor alone, four phases
+
+// AUDIT-CHAIN-1: archive sinks, every one that is available. R2 when the AUDIT bucket is bound; the repository as the independent second copy.
+const auditSinks = (env, token, repos) => [...(env.AUDIT ? [r2Sink(env.AUDIT)] : []), ...(token && (env.AUDIT_REPO || repos[0]) ? [githubSink({ token, repo: env.AUDIT_REPO || (repos.find(r => r.endsWith('/ops')) || repos[0]), prefix: 'ledger/' })] : [])];
 
 export default {
   async scheduled(_event, env, ctx) {
@@ -88,7 +93,7 @@ export default {
       await b('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); return sw; });  // SERVER-OWNS-LOOPS-1
       await b('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
       await b('watchdog-gh', () => watchGithub({ token, repo: main }));  // RESILIENCE-1: the Worker restarts the GitHub watchdog when it stalls; the GitHub watchdog restarts this tick
-      await b('cost-samples', async () => ({ free_tier: await sampleFreeTier(env.DB, { token: env.CF_ANALYTICS_TOKEN, account_id: (config.cost_budgets && config.cost_budgets[0] && config.cost_budgets[0].account_id) || env.CF_ACCOUNT_ID }), samples: await sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }), retention: await pruneAll(env.DB, { rules: config.retention }) }));  // RETENTION-1: the daily prune rides the hourly cost beat (once a day by its own gate)  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
+      await b('cost-samples', async () => ({ free_tier: await sampleFreeTier(env.DB, { token: env.CF_ANALYTICS_TOKEN, account_id: (config.cost_budgets && config.cost_budgets[0] && config.cost_budgets[0].account_id) || env.CF_ACCOUNT_ID }), samples: await sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }), retention: await pruneAll(env.DB, { rules: config.retention, archive: (table, rows) => archiveRows(env.DB, table)(rows) }), audit: await seal(env.DB, auditSinks(env, token, repos)) }));  // AUDIT-CHAIN-1: aged rows are chained, then sealed to the archive  // RETENTION-1: the daily prune rides the hourly cost beat (once a day by its own gate)  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
     })().catch(e => console.error('lane', e && e.message)));
     ctx.waitUntil(beat(env.DB, 'analytics-selfcheck', () => selfcheck(env, hosts(env)[0])));
   },
@@ -114,6 +119,16 @@ export default {
       store: d1Store(env.DB), registries: staticRegistries(config.registries || {}), auth: bearerAuth, telemetry: consoleTelemetry,
       identity: { ...DEFAULT_IDENTITY, slug: config.org_slug, name: config.org_slug },
     });
+    if (url.pathname === '/api/audit/head') { try { return Response.json(await head(env.DB), { headers: { 'cache-control': 'no-store' } }); } catch (e) { return d1Unavailable(e); } }  // public: the hash anyone can write down to anchor the trail
+    if (url.pathname === '/api/audit/verify' || url.pathname === '/api/audit/trace') {  // owner-only (bearer ANALYTICS_TOKEN or INTERNAL_DEPLOY_KEY)
+      if (!bearerOk(request, env)) return Response.json({ error: 'unauthorized' }, { status: 401 });
+      try {
+        const q = url.searchParams, t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null), sinks = auditSinks(env, (t && t.ok && t.token) || env.GITHUB_TOKEN || '', config.github_repos || []);
+        const r = url.pathname.endsWith('verify') ? await verify(env.DB, sinks, { deep: q.get('deep') === '1', fromSeq: Number(q.get('from_seq')) || 0 })
+          : await trace(env.DB, sinks, { ref: q.get('ref') || undefined, kind: q.get('kind') || undefined, from: Number(q.get('from')) || 0, to: Number(q.get('to')) || undefined, limit: q.get('limit') });
+        return Response.json(r, { headers: { 'cache-control': 'no-store' } });
+      } catch (e) { return d1Unavailable(e); }
+    }
     if (url.pathname === '/api/budget') { try { return Response.json(await budgetView(env.DB, { config, env }), { headers: { 'cache-control': 'no-store' } }); } catch (e) { return d1Unavailable(e); } }  // SPEND-GOVERNOR-1: the knob, what it buys, what was used, the mode
     const ag = await agentic(request, env);
     if (ag) return ag;
