@@ -23,7 +23,7 @@ class T(unittest.TestCase):
         self.assertEqual(ids, set(sm.workflows(REPO)))
 
     def test_new_workflow_without_a_loop_fails_and_stale_data_fails(self):
-        d = Path(tempfile.mkdtemp())
+        d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, d, True)
         for f in ("doctrine/ultrastability.json", "doctrine/topology.json", "doctrine/boundary.json", "doctrine/clocks.json", "doctrine/self-baseline.json", "site/self-data.js", "instances/ultrastable/loop-registry.json"):
             (d / f).parent.mkdir(parents=True, exist_ok=True); shutil.copy(REPO / f, d / f)
         shutil.copytree(REPO / ".github/workflows", d / ".github/workflows")
