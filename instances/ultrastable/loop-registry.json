@@ -3481,7 +3481,7 @@
     "watchdog.yml"
    ],
    "area": "managers",
-   "server_owner": "cloudflare-worker"
+   "server_owner": "ultrastable-tick"
   },
   {
    "id": "tenant-sync",

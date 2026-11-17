@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-import json, shutil, tempfile, unittest
+import json, shutil, unittest
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _repo  # noqa: E402
 from foundation import resilience as R
 
 REPO = Path(__file__).resolve().parents[2]
@@ -9,7 +12,7 @@ NOW = 1_800_000_000.0
 
 class T(unittest.TestCase):
     def setUp(self):
-        self.d = Path(tempfile.mkdtemp())
+        self.d = _repo.scratch()
         for f in ("doctrine/resilience.json", "doctrine/clocks.json"):
             (self.d / f).parent.mkdir(parents=True, exist_ok=True); shutil.copy(REPO / f, self.d / f)
         shutil.copytree(REPO / ".github/workflows", self.d / ".github/workflows")
