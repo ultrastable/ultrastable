@@ -228,6 +228,7 @@ export default {
     "Worst single query: 2.5 million rows down to under 6,000.",
     "Issue-accounting view: 40,151 rows down to 7,738."
    ],
+   "separate": "QNFO is a separate, earlier project and is not Ultrastable. It is no longer in active development; its papers and pages stay online at qnfo.org. It appears here only as the testbed Ultrastable was first proven on.",
    "learned": "Cost is a loop to close like any failure. The fixes now live in the platform, not in QNFO.",
    "links": [
     {

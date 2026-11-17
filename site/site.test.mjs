@@ -343,3 +343,12 @@ console.log("PROMOTE-1 indexnow ok");
   const home = await ok("/"); for (const a of SHD.audiences) assert.ok(home.includes("/for/" + a.id), "home links " + a.id);
   console.log("STAKEHOLDERS-1 ok");
 }
+
+{ // BRAND-SEPARATION-1 (Rowan, 2026-11-17): QNFO is an earlier, separate project; it is named only on its case study, the showcase, the proof source line and the generated honest-gaps list on /how
+  for (const pth of ["/", "/product", "/team", "/org", "/faq", "/contact", "/pilot", "/for", "/for/founders", "/for/communities", "/for/developers", "/for/funders", "/for/partners", "/llms.txt"]) {
+    const h = await (await get("https://ultrastable.io" + pth)).text();
+    assert.doesNotMatch(h, /QNFO/, pth + " does not name QNFO");
+  }
+  assert.match(await (await get("https://ultrastable.io/showcase/qnfo")).text(), /separate, earlier project and is not Ultrastable/);
+  console.log("BRAND-SEPARATION-1 ok");
+}
