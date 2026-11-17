@@ -311,9 +311,11 @@ def pick_findings(found: list[dict], rows: list[dict], open_ids: set[str], root=
     """The findings to file this run, best first, after the rails: kind enabled and not paused, not already open, not re-filed inside the cooldown, caps on open and per day."""
     c, at = cfg(root), at or now()
     R = c["rails"]
-    today = sum(1 for r in rows if r.get("status") == "filed" and r.get("at", "") >= stamp(at - timedelta(hours=24)))
+    today = len({r["id"] for r in rows if r.get("status") == "filed" and r.get("at", "") >= stamp(at - timedelta(hours=24))})  # distinct items: a re-file of the same item is not a new one
     room = min(R["max_new_per_run"], R["max_open"] - len(open_ids), R["max_filed_per_day"] - today)
-    last = {r["id"]: r["at"] for r in rows if r.get("status") == "filed"}
+    # The cooldown guards an item the agent already settled (kept, reverted, dropped). An item only filed never reached a PR, and the executor's checkout does not carry
+    # the item file (it is written inside the run, not committed), so it must be filed again on the next run or it is never taken.
+    last = {r["id"]: r["at"] for r in sorted(rows, key=lambda r: r.get("at", "")) if r.get("status") != "filed"}
     out = []
     for f in sorted(found, key=lambda f: -score(f, rows, root)):
         if room <= 0:
@@ -378,7 +380,9 @@ def run_sense(root=REPO, apply=False, tests=False, ci=True) -> dict:
         it = item_for(f)
         res["filed"].append(it["id"])
         if apply:
-            write_item(root, it); append(root, {"id": it["id"], "kind": f["kind"], "key": f["key"], "before": f["count"], "status": "filed"})
+            write_item(root, it)
+            if not any(r["id"] == it["id"] and r.get("status") == "filed" and r.get("at", "") >= stamp(now() - timedelta(hours=1)) for r in rows):
+                append(root, {"id": it["id"], "kind": f["kind"], "key": f["key"], "before": f["count"], "status": "filed"})  # one ledger row per item per hour, not one per run
     return res
 
 
