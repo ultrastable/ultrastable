@@ -1,50 +1,180 @@
 {
-  "doc": "RETENTION-1 (2026-11-16): every table the tick worker creates is listed here. A table with keep_days is pruned once a day by seed/worker/src/retention.js (rows whose time column is older than keep_days, at most max_rows_per_run per table per day); a table marked keep: state holds current state, not history, and is never pruned. test/plan-limits.test.mjs fails when a migration or the worker creates a table that is not listed. Lesson from the fleet this org was split from: its audit database reached 1,011 tables, 266 of them backup copies never removed, and append-only ledgers kept every row forever. Windows: criticality reads 14 days (seed/autonomy/criticality.json window_days); the trust ledger reads every outcome, so outcomes are kept a year.",
-  "max_rows_per_run": 5000,
-  "tables": {
-    "social_posted": { "column": "at", "keep_days": 400, "reason": "REACH-1: one row per post and channel; the publisher reads this week, the reach loop reads a year" },
-    "_migrations": { "keep": "state", "reason": "applied-migration ledger" },
-    "unknown_questions": { "column": "at", "keep_days": 30 },
-    "tick_runs": { "column": "started_at", "keep_days": 30 },
-    "dispatches": { "column": "at", "keep_days": 30 },
-    "unknown_questions": {"column": "at", "keep_days": 90},
-    "outcomes": { "column": "at", "keep_days": 365 },
-    "predictions": { "column": "due_at", "keep_days": 180 },
-    "criticality_samples": { "column": "at", "keep_days": 60 },
-    "criticality_history": { "column": "at", "keep_days": 60 },
-    "criticality_actions": { "column": "at", "keep_days": 90 },
-    "cost_samples": { "column": "at", "keep_days": 30 },
-    "sweeper_runs": { "column": "at", "keep_days": 30 },
-    "failure_probe_runs": { "column": "at", "keep_days": 30 },
-    "credential_events": { "column": "at", "keep_days": 180 },
-    "handoff_events": { "column": "at", "keep_days": 90 },
-    "webhook_events": { "column": "created_at", "keep_days": 30 },
-    "webhook_deliveries": { "column": "created_at", "keep_days": 30 },
-    "webhook_seen": { "column": "at", "keep_days": 14 },
-    "loop_beats": { "column": "started_at", "keep_days": 30 },
-    "ignition_log": { "column": "at", "keep_days": 60 },
-    "budget_ledger": { "column": "day", "keep_days": 400 },
-    "retention_runs": { "column": "day", "keep_days": 90 },
-    "hits": { "keep": "managed", "reason": "pruned by seed/analytics/analytics.js (35 days raw, 2 days self-check rows)" },
-    "_migrations": { "keep": "state", "reason": "which migrations have been applied; a record of schema state, never history to prune" },
-    "analytics_meta": { "keep": "state", "reason": "analytics settings and the report cache" },
-    "org": { "keep": "state", "reason": "the organization record" },
-    "roles": { "keep": "state", "reason": "current roles" },
-    "items": { "keep": "state", "reason": "the work queue and its dispositions (the no-silent-drop record)" },
-    "claims": { "keep": "state", "reason": "live claims; released claims are deleted by the claim reaper" },
-    "gate_cards": { "keep": "state", "reason": "open and closed owner gates" },
-    "trust_ledger": { "keep": "state", "reason": "one row per surface and action class" },
-    "doctrine_lineage": { "keep": "state", "reason": "one row per doctrine version" },
-    "interview_answers": { "keep": "state", "reason": "the owner's answers" },
-    "objectives": { "keep": "state", "reason": "current objectives" },
-    "metrics": { "keep": "state", "reason": "one row per metric" },
-    "credentials": { "keep": "state", "reason": "sealed credentials, one per connection" },
-    "handoffs": { "keep": "state", "reason": "one row per handed-off pull request" },
-    "ignition_gaps": { "keep": "state", "reason": "one row per ignition stage" },
-    "webhook_subscriptions": { "keep": "state", "reason": "current subscriptions" },
-    "webhook_inbound": { "keep": "state", "reason": "one row per inbound provider" },
-    "webhook_state": { "keep": "state", "reason": "key-value state" },
-    "loop_clock": { "keep": "state", "reason": "one row per loop" },
-    "cutover_state": { "keep": "state", "reason": "the two-account controller's state" }
+ "doc": "RETENTION-1 (2026-11-16): every table the tick worker creates is listed here. A table with keep_days is pruned once a day by seed/worker/src/retention.js (rows whose time column is older than keep_days, at most max_rows_per_run per table per day); a table marked keep: state holds current state, not history, and is never pruned. test/plan-limits.test.mjs fails when a migration or the worker creates a table that is not listed. Lesson from the fleet this org was split from: its audit database reached 1,011 tables, 266 of them backup copies never removed, and append-only ledgers kept every row forever. Windows: criticality reads 14 days (seed/autonomy/criticality.json window_days); the trust ledger reads every outcome, so outcomes are kept a year.",
+ "max_rows_per_run": 5000,
+ "tables": {
+  "social_posted": {
+   "column": "at",
+   "keep_days": 400,
+   "reason": "REACH-1: one row per post and channel; the publisher reads this week, the reach loop reads a year"
+  },
+  "_migrations": {
+   "keep": "state",
+   "reason": "which migrations have been applied; a record of schema state, never history to prune"
+  },
+  "unknown_questions": {
+   "column": "at",
+   "keep_days": 90
+  },
+  "tick_runs": {
+   "column": "started_at",
+   "keep_days": 30
+  },
+  "dispatches": {
+   "column": "at",
+   "keep_days": 30
+  },
+  "outcomes": {
+   "column": "at",
+   "keep_days": 365
+  },
+  "predictions": {
+   "column": "due_at",
+   "keep_days": 180
+  },
+  "criticality_samples": {
+   "column": "at",
+   "keep_days": 60
+  },
+  "criticality_history": {
+   "column": "at",
+   "keep_days": 60
+  },
+  "criticality_actions": {
+   "column": "at",
+   "keep_days": 90
+  },
+  "cost_samples": {
+   "column": "at",
+   "keep_days": 30
+  },
+  "sweeper_runs": {
+   "column": "at",
+   "keep_days": 30
+  },
+  "failure_probe_runs": {
+   "column": "at",
+   "keep_days": 30
+  },
+  "credential_events": {
+   "column": "at",
+   "keep_days": 180
+  },
+  "handoff_events": {
+   "column": "at",
+   "keep_days": 90
+  },
+  "webhook_events": {
+   "column": "created_at",
+   "keep_days": 30
+  },
+  "webhook_deliveries": {
+   "column": "created_at",
+   "keep_days": 30
+  },
+  "webhook_seen": {
+   "column": "at",
+   "keep_days": 14
+  },
+  "loop_beats": {
+   "column": "started_at",
+   "keep_days": 30
+  },
+  "ignition_log": {
+   "column": "at",
+   "keep_days": 60
+  },
+  "budget_ledger": {
+   "column": "day",
+   "keep_days": 400
+  },
+  "retention_runs": {
+   "column": "day",
+   "keep_days": 90
+  },
+  "hits": {
+   "keep": "managed",
+   "reason": "pruned by seed/analytics/analytics.js (35 days raw, 2 days self-check rows)"
+  },
+  "analytics_meta": {
+   "keep": "state",
+   "reason": "analytics settings and the report cache"
+  },
+  "org": {
+   "keep": "state",
+   "reason": "the organization record"
+  },
+  "roles": {
+   "keep": "state",
+   "reason": "current roles"
+  },
+  "items": {
+   "keep": "state",
+   "reason": "the work queue and its dispositions (the no-silent-drop record)"
+  },
+  "claims": {
+   "keep": "state",
+   "reason": "live claims; released claims are deleted by the claim reaper"
+  },
+  "gate_cards": {
+   "keep": "state",
+   "reason": "open and closed owner gates"
+  },
+  "trust_ledger": {
+   "keep": "state",
+   "reason": "one row per surface and action class"
+  },
+  "doctrine_lineage": {
+   "keep": "state",
+   "reason": "one row per doctrine version"
+  },
+  "interview_answers": {
+   "keep": "state",
+   "reason": "the owner's answers"
+  },
+  "objectives": {
+   "keep": "state",
+   "reason": "current objectives"
+  },
+  "metrics": {
+   "keep": "state",
+   "reason": "one row per metric"
+  },
+  "credentials": {
+   "keep": "state",
+   "reason": "sealed credentials, one per connection"
+  },
+  "handoffs": {
+   "keep": "state",
+   "reason": "one row per handed-off pull request"
+  },
+  "ignition_gaps": {
+   "keep": "state",
+   "reason": "one row per ignition stage"
+  },
+  "webhook_subscriptions": {
+   "keep": "state",
+   "reason": "current subscriptions"
+  },
+  "webhook_inbound": {
+   "keep": "state",
+   "reason": "one row per inbound provider"
+  },
+  "webhook_state": {
+   "keep": "state",
+   "reason": "key-value state"
+  },
+  "loop_clock": {
+   "keep": "state",
+   "reason": "one row per loop"
+  },
+  "cutover_state": {
+   "keep": "state",
+   "reason": "the two-account controller's state"
+  },
+  "free_tier_samples": {
+   "column": "at",
+   "keep_days": 14,
+   "reason": "FREE-TIER-1: hourly usage samples; the governor reads the last 2 hours and a trend needs days, not months"
   }
+ }
 }

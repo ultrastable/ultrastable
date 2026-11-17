@@ -47,14 +47,96 @@
    "name": "Blindspot Check",
    "slug": "blindspot",
    "tagline": "What does your website not tell people? Type a domain, see the gaps in a minute."
+  },
+  "numbers-board": {
+   "archetype": "status-board",
+   "checks": [],
+   "name": "Ultrastable by the Numbers",
+   "showcase": true,
+   "slug": "numbers-board",
+   "tagline": "Loops running, edges wired, stories passing and what the system does not know yet, straight from its own ledger."
+  },
+  "portfolio-board": {
+   "archetype": "status-board",
+   "checks": [],
+   "name": "Spinoff Portfolio",
+   "showcase": true,
+   "slug": "portfolio-board",
+   "tagline": "The apps Ultrastable launched on its own, what they cost and how many it retired."
   }
  },
+ "boards": {
+  "numbers-board": {
+   "as_of": "2026-11-17T21:17:26Z",
+   "rows": [
+    {
+     "label": "Managers and loops",
+     "of": null,
+     "value": 99
+    },
+    {
+     "label": "Loops with evidence",
+     "of": null,
+     "value": 2
+    },
+    {
+     "label": "Edges wired",
+     "of": 19,
+     "value": 19
+    },
+    {
+     "label": "Stories passing",
+     "of": 9,
+     "value": 9
+    },
+    {
+     "label": "Open gaps",
+     "of": null,
+     "value": 3
+    },
+    {
+     "label": "Unknowns questioned",
+     "of": 115,
+     "value": 3
+    }
+   ],
+   "source": "ops/transparency.json"
+  },
+  "portfolio-board": {
+   "as_of": "2026-11-17T21:21:28Z",
+   "rows": [
+    {
+     "label": "Live apps",
+     "of": null,
+     "value": 3
+    },
+    {
+     "label": "Retired apps",
+     "of": null,
+     "value": 0
+    },
+    {
+     "label": "Live cap",
+     "of": null,
+     "value": 12
+    },
+    {
+     "label": "Launches per day cap",
+     "of": null,
+     "value": 3
+    }
+   ],
+   "source": "spinoffs/registry.json"
+  }
+ },
+ "built_at": "2026-11-17T21:21:32Z",
  "caps": {
-  "max_launches_per_week": 1,
-  "max_live": 6,
+  "max_launches_per_day": 3,
+  "max_launches_per_week": 21,
+  "max_live": 12,
   "max_requests_per_app_per_day": 20000,
   "monthly_usd_ceiling": 0,
-  "note": "free tier only: Cloudflare Workers free requests, one shared D1, no paid model calls; the ceiling is zero until cost.json says there is headroom",
+  "note": "free tier only: Cloudflare Workers free requests, one shared D1, no paid model calls; the ceiling is zero. The daily launch count is set by the free-tier governor level (doctrine/spinoff-ideas.json cadence), so the loop fills headroom and never spends past it.",
   "subrequests_per_use": 8
  },
  "domain": "ultrastable.app",

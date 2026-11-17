@@ -1,0 +1,70 @@
+{
+ "slug": "numbers-board",
+ "name": "Ultrastable by the Numbers",
+ "tagline": "Loops running, edges wired, stories passing and what the system does not know yet, straight from its own ledger.",
+ "archetype": "status-board",
+ "status": "live",
+ "launched": "2026-11-17T21:21:28Z",
+ "need_ids": [],
+ "reach": 4,
+ "impact": 3,
+ "score": 15.0,
+ "checks": [],
+ "idea": "numbers-board",
+ "fact": {
+  "path": "ops/transparency.json",
+  "kind": "json",
+  "rows": [
+   {
+    "label": "Managers and loops",
+    "ptr": "scoreboard.managers_and_loops"
+   },
+   {
+    "label": "Loops with evidence",
+    "ptr": "scoreboard.loops_with_evidence"
+   },
+   {
+    "label": "Edges wired",
+    "ptr": "scoreboard.edges_wired",
+    "of": "scoreboard.edges_total"
+   },
+   {
+    "label": "Stories passing",
+    "ptr": "scoreboard.stories_passing",
+    "of": "scoreboard.stories_total"
+   },
+   {
+    "label": "Open gaps",
+    "ptr": "scoreboard.open_gaps"
+   },
+   {
+    "label": "Unknowns questioned",
+    "ptr": "unknowns.units_questioned",
+    "of": "unknowns.units"
+   }
+  ]
+ },
+ "showcase": true,
+ "cost": {
+  "d1_rows_read": 0,
+  "d1_rows_written": 0,
+  "workers_requests": 2000,
+  "ai_neurons": 0
+ },
+ "metrics": {
+  "reach": [
+   "board_age_hours"
+  ],
+  "impact": [],
+  "guard": [
+   "error_share"
+  ],
+  "targets": {
+   "board_age_hours": 30
+  },
+  "showcase": true,
+  "value": "a showcase board is kept while its facts stay fresh and its cost inside the headroom",
+  "prediction": "board_age_hours <= 30 within 48 h",
+  "input": "none"
+ }
+}

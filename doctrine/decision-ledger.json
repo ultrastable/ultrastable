@@ -2051,6 +2051,33 @@
    "title": "OPS-QUEUE-1 analytics breach froze the work queue",
    "body": "A cost breach on the analytics DB ultrastable-ops (52.5k vs 50k rows/h) held dispatch lean for the hour, claims were released unworked and issues stayed open. Breaches on DBs the tick does not read are advisory (gates_tick:false); /ops items carry an app label and filter; probe selfaudit:work-queue-stalled.",
    "probe": "grep:seed/worker/src/costsample.js::gates_tick"
+  },
+  {
+   "id": "decision-2026-11-17-spinoff-ideas-1-idea-loop-fills-free-plan-headroom",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "SPINOFF-IDEAS-1: idea loop fills free-plan headroom",
+   "body": "Spinoff loop now proposes, scores (value over cost share) and queues spinoffs and loop-scope items against ops/free-tier.json; launches per day follow the governor level (ok 3, degrade 1, shed 0, stale snapshot degrade); status-board archetype launched (zero storage); roadmap served at /roadmap and /roadmap.json from generated site/spinoff-roadmap-data.js.",
+   "probe": "grep:foundation/ideas.py::def daily_cap",
+   "session": "session_0156nqDsaJJFaaGybW6PCbfG"
+  },
+  {
+   "id": "decision-2026-11-17-ops-queue-1-advisory-budgets-no-longer-hold-the-tick",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "OPS-QUEUE-1: advisory budgets no longer hold the tick",
+   "body": "Budgets with gates_tick false are advisory (ultrastable-ops); new failure mode work-queue-stalled; /ops labels items by app. Recorded by the SPINOFF-IDEAS-1 session on behalf of PR 583.",
+   "probe": "grep:seed/worker/src/freetier.js::export function evaluate",
+   "session": "session_0156nqDuqSRhg3XdymKRy7AC"
+  },
+  {
+   "id": "decision-2026-11-17-free-tier-1-account-wide-daily-free-plan-governor",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "FREE-TIER-1: account-wide daily free-plan governor",
+   "body": "Hourly sampler of D1 rows, Workers requests and AI neurons against the free plan's daily limits; levels ok, degrade at 80 percent, shed at 95. Recorded by the SPINOFF-IDEAS-1 session on behalf of PR 584.",
+   "probe": "grep:seed/worker/src/freetier.js::export function evaluate",
+   "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
   }
  ]
 }
