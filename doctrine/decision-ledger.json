@@ -1822,6 +1822,14 @@
    "body": "GitHub Models answered 200 text/plain OK on both its rungs, spending two of three attempts, so Workers AI got one try and no repair. A rung whose transport fails is now marked down for the process and the ladder moves on, leaving the repair attempts to a working model.",
    "probe": "grep:foundation/agent_ladder.py::FREE-LLM-5",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-executor-closed-q-flow-resume-jobs-add-flows-external-json-t",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Executor closed Q-FLOW-RESUME-JOBS: add flows-external.json to declare loops for the resume and job-search system",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: doctrine/flows-external.json.",
+   "probe": "file:doctrine/flows-external.json"
   }
  ]
 }
