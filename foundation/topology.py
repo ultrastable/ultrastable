@@ -104,6 +104,8 @@ def bindings(t, wid: str, only_live=True) -> tuple[list[dict], list[str]]:
     live_workers = {x["id"] for x in t["workers"] if x["state"] == "live"}
     for bn, tg in (b.get("services") or {}).items():
         (out.append({"type": "service", "name": bn, "service": tg}) if tg in live_workers or not only_live else pending.append(f"service {bn} -> {tg}"))
+    for bn, cls in (b.get("durable_objects") or {}).items():
+        out.append({"type": "durable_object_namespace", "name": bn, "class_name": cls})
     for vn, v in (b.get("vars") or {}).items():
         out.append({"type": "plain_text", "name": vn, "text": v})
     return out, pending
@@ -132,6 +134,9 @@ def wrangler_config(t, w: dict) -> dict:
         c["workflows"] = [{"binding": b["name"], "name": b["workflow_name"], "class_name": b["class_name"]} for b in live if b["type"] == "workflow"]
     if any(b["type"] == "send_email" for b in live):
         c["send_email"] = [{"name": b["name"]} for b in live if b["type"] == "send_email"]
+    if any(b["type"] == "durable_object_namespace" for b in live):
+        c["durable_objects"] = {"bindings": [{"name": b["name"], "class_name": b["class_name"]} for b in live if b["type"] == "durable_object_namespace"]}
+        c["migrations"] = w.get("bindings", {}).get("migrations") or []
     vars_ = {b["name"]: b["text"] for b in live if b["type"] == "plain_text"}
     if vars_:
         c["vars"] = vars_
