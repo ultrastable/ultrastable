@@ -291,6 +291,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 files = apply_edits(out["files"], root)
             except (ValueError, KeyError, TypeError, OSError, AttributeError) as e:  # unusable reply (bad JSON, missing files): counts as a failed attempt, not a crash
                 failed.append("the reply was not valid JSON with a files list: " + type(e).__name__ + ": " + str(e)[:300])
+                row.setdefault("attempts", []).append([failed[-1][:400]])
                 if attempt < REPAIRS:
                     prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED (" + failed[0] + "). Do NOT reply with JSON this time. Reply in exactly this format instead:" + chr(10) + agents_block_format()
                 continue
@@ -308,6 +309,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                     failed.append("independent reviewer (" + str(rv.get("model")) + ") vetoed the change: " + "; ".join(rv["reasons"]))
             if not failed:
                 break
+            row.setdefault("attempts", []).append([f[:400] for f in failed][:3])  # FREE-LLM-1: every failed attempt's reasons, not only the last
             sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd"], root)
             prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS; fix exactly these problems and reply with the full JSON again:" + chr(10) + chr(10).join(failed)[:5000]
         if failed:

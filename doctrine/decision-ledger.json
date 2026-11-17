@@ -1551,6 +1551,15 @@
    "title": "SELFCODE-1: self-code items must pass the criticality gate; failing tests stay with ciwatch",
    "body": "First live run filed a Q-SELF item and the executor reported idle: with k under the floor the gate admits only raises-deploys items. Q-SELF items now carry raises-deploys and raises-self (a merged agent change is a deploy the system originated). The in-job test run took 3 of 12 minutes and duplicated ciwatch, so failing_test is off in doctrine/selfcode.json.",
    "probe": "file:foundation/selfcode.py"
+  },
+  {
+   "id": "lesson-2026-11-17-executor-rows-carry-every-failed-attempt-and-model-call-outc",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Executor rows carry every failed attempt and model-call outcome (FREE-LLM-1)",
+   "body": "Two live runs fell to Workers AI with no trace of why the free rungs failed; the row now lists each attempt's reasons and the evidence branch carries ops/agent-cost.jsonl.",
+   "probe": "grep:scripts/executor_evidence.sh::agent-cost",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
