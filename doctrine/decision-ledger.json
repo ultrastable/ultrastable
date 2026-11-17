@@ -1986,6 +1986,15 @@
    "title": "TENANT-SYNC-1: core is the system of record",
    "body": "Session session_0156nqDuXJWyM65c8uChpjTM. Tenants pin workers/ by hash and lift generic code through the tenant-sync loop. Hosted checks skip draft PRs by design. Generated data (dashboard, claims, self, ultrastability) goes stale whenever main moves, so regenerate after merging main before pushing.",
    "probe": "grep:foundation/tenantsync.py::def run"
+  },
+  {
+   "id": "lesson-2026-11-17-ciwatch-could-not-open-its-item-pr-ciwatch-2",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "ciwatch could not open its item PR (CIWATCH-2)",
+   "body": "gh pr create (GraphQL) with the built-in token failed 'Resource not accessible by integration' because the workflow had no pull-requests permission and LANE_PAT is not bound; it now declares pull-requests: write and opens the PR over REST.",
+   "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-2",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
