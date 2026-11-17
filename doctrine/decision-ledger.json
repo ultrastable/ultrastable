@@ -1883,6 +1883,15 @@
    "body": "foundation/ledger.rows drops identical lines, so two ticks in one second wrote one reading. ultrastability rows carry a seq number. Any new event-sourced ledger needs a unique field per row.",
    "probe": "grep:foundation/ultrastability.py::seq",
    "session": "session_0156nqDvqvENNWfEYLQjbFyC"
+  },
+  {
+   "id": "decision-2026-11-17-executor-takes-executable-effect-items-first-and-rejects-cha",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Executor takes executable-effect items first and rejects changes no code reads (EFFECT-1)",
+   "body": "PR 527 added a data file nothing reads. The picker now takes failing checks, claim drift, unknowns, self-code findings and bugs first, and a change that touches no code and writes files no code names fails as a check the model must repair.",
+   "probe": "grep:foundation/executor.py::def consumer_gap",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
