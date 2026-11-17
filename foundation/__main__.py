@@ -11,6 +11,7 @@
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
+  python3 -m foundation claims [--check|--fix|--apply|--file|--live]     CLAIMS-1: every claim on a surface is probed against code, both directions; /claims
   python3 -m foundation serverside [--check|--scan]                       server-side only: no host, scheduler, agent or route on a person's computer
   python3 -m foundation selfhost [--verify|--gaps|--no-node] [--db PATH]   Ultrastable boots its own organization from this repo
   python3 -m foundation glossary [--check|--apply|--show [ID]]            the owner's keywords, with tests, code and lineage
@@ -209,6 +210,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["liveness"]:
         from . import liveness
         return liveness.main(_av[1:])
+    if _av[:1] == ["claims"]:
+        from . import claims
+        return claims.main(_av[1:])
     if _av[:1] == ["serverside"]:
         from . import serverside
         return serverside.main(_av[1:])

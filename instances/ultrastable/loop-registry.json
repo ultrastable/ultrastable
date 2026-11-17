@@ -3254,6 +3254,44 @@
       ],
       "area": "managers",
       "server_owner": "github-actions"
+    },
+    {
+      "id": "claims-conformance",
+      "kind": "probe",
+      "summary": "Every claim on a public surface is a probed sentence, a block generated from code, or an inventory checked in reverse; drift fails the check, files a Q-CLAIM item and shows at /claims.",
+      "trigger": "every pull request (checks.yml) and daily workflow claims.yml",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "10m",
+      "done": "the closing probe passes and the result is recorded at the write-back target",
+      "paths": [
+        {
+          "id": "primary",
+          "how": "the loop's own workflow or command",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command run by a cloud-hosted agent session from the repository",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:foundation/claims.py",
+      "writeback": [
+        "instances/ultrastable/gaps.json",
+        "docs/handoff/selfhost.md"
+      ],
+      "system_path": [
+        "foundation/claims.py",
+        "doctrine/claims.json",
+        "site/claims-data.js",
+        ".github/workflows/claims.yml"
+      ],
+      "launch": "claims",
+      "workflows": [
+        "claims.yml"
+      ],
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

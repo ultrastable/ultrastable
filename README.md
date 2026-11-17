@@ -93,10 +93,10 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | Piece | Status |
 |---|---|
 | QNFO fleet (customer zero, owner's own) | **Running**; numbers self-scored, unaudited ([customer story](docs/customer-story.md)) |
-| Seed bootstrapper, 7-step tick, schema, policy | **Built**, 12 Python + 9 Worker tests pass; no real cloud `--apply` yet |
-| Google Cloud adapter (Cloud Run, Scheduler) | **Skeleton built**, 2 tests pass, deploy script unrun |
+| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->35 Python and 240 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->32<!-- /claim --> recorded live deploys of its Worker and siblings |
+| Google Cloud adapter (Cloud Run, Scheduler) | **Skeleton built**, <!-- claim:gcp-tests -->2 tests<!-- /claim --> in CI, deploy script unrun |
 | Dashboard | **In `dashboard/`**; status per its README, not verified here |
-| Reference runtime in Python: 11-step loop, CLI, dashboard, Docker, Cloud Run deploy ([platform/core](platform/core/README.md)) | **Built**, 12 tests pass, default agents simulated, one real-model proof (Workers AI); deploy unrun |
+| Reference runtime in Python: 11-step loop, CLI, dashboard, Docker, Cloud Run deploy ([platform/core](platform/core/README.md)) | **Built**, <!-- claim:core-tests -->44 tests<!-- /claim --> in CI, default agents simulated, one real-model proof (Workers AI); deploy unrun |
 | Real-agent proof, Postgres store, multi-tenancy | **Planned** |
 | Outside customers, audit, entity | **None yet** (owner steps) |
 

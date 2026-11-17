@@ -1595,6 +1595,14 @@
    "body": "Live executor attempts on GitHub Models came back empty (JSONDecodeError at char 0) on prompts far over the free tier's ~8k-token request cap; adapters now carry max_prompt_chars and an empty body is reported with its HTTP status.",
    "probe": "grep:foundation/agents.py::def fit",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-claims-1-words-must-match-code-both-directions-continuously",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "CLAIMS-1: words must match code, both directions, continuously",
+   "body": "Every public statement is a probed sentence, a block generated from code, or part of a reverse inventory; checked per PR and daily live; drift files Q-CLAIM items; /claims is the public status; seed inherits it.",
+   "probe": "file:foundation/claims.py"
   }
  ]
 }
