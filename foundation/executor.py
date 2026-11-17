@@ -164,6 +164,33 @@ def sh(argv, root=REPO, timeout=600):
         return 127, f"{type(e).__name__}: {e}"
 
 
+FAIL_ID = re.compile(r"^(?:FAIL|ERROR): (\S+) \(([\w.]+)\)", re.M)
+KEEP_ON_CLEAN = ["-e", "docs/issues/Q-SELF-*", "-e", "docs/issues/Q-INTAKE-*", "-e", "ops/selfcode"]  # SELFCODE-1: a retry must not delete the item it is working or the ledger
+
+
+def failing_tests(output: str) -> list[tuple[str, str]]:
+    """(method, dotted id) of every failed or errored unittest in a runner's output."""
+    return list(dict.fromkeys(FAIL_ID.findall(output or "")))
+
+
+def preexisting_failures(tests: list[tuple[str, str]], root=REPO) -> set[str]:
+    """BASELINE-1: which of these tests also fail on the committed tree, without the change under test. A red main must not block every agent change:
+    only a failure the change introduced counts. The tests are run in a clean worktree of HEAD (a few tests, not the whole suite)."""
+    import tempfile
+    tmp = tempfile.mkdtemp(prefix="exec-baseline-")
+    code, _ = sh(["git", "worktree", "add", "--detach", tmp + "/wt", "HEAD"], root)
+    if code:
+        return set()
+    try:
+        argv = ["python3", "-m", "unittest", "discover", "-s", "tests/foundation"]
+        for name in dict.fromkeys(m for m, _ in tests):
+            argv += ["-k", name]
+        _, out = sh(argv, tmp + "/wt", timeout=300)
+        return {i for _, i in failing_tests(out)} & {i for _, i in tests}
+    finally:
+        sh(["git", "worktree", "remove", "--force", tmp + "/wt"], root)
+
+
 REPO_SLUG = os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable")
 
 
@@ -303,7 +330,12 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             for c in (checks if checks is not None else CHECKS):
                 code, o = sh(c, root)
                 if code:
-                    failed.append(f"{' '.join(c)}: {o[-2500:]}")
+                    tests = failing_tests(o)
+                    if tests and checks is None and set(i for _, i in tests) <= preexisting_failures(tests, root):
+                        row.setdefault("baseline_failures", sorted(i for _, i in tests))  # BASELINE-1: red before the change, so not this change's failure
+                        continue
+                    heads = "; ".join(i for _, i in tests)[:600]
+                    failed.append(f"{' '.join(c)}: " + (f"FAILING TESTS: {heads}. " if heads else "") + o[-2500:])
             if not failed and model_call is None:
                 rv = agent_ladder.review(issue, out, meta.get("family", ""), root=lroot)
                 row["review"] = rv
@@ -312,7 +344,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             if not failed:
                 break
             row.setdefault("attempts", []).append([f[:400] for f in failed][:3])  # FREE-LLM-1: every failed attempt's reasons, not only the last
-            sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd"], root)
+            sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd", *KEEP_ON_CLEAN], root)
             prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS; fix exactly these problems and reply with the full JSON again:" + chr(10) + chr(10).join(failed)[:5000]
         if failed:
             raise RuntimeError("checks failed after " + str(REPAIRS + 1) + " attempts: " + " | ".join(failed))
