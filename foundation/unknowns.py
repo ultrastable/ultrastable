@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """UNKNOWNS-1: what the system does not know is a core feedback loop. Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation unknowns --check                       doctrine and ledger are well formed (CI)

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // PROVENANCE-1 on the edge: where every input and change came from, what it touched, what it did (doctrine/provenance.json, foundation/provenance.py).
 // One D1 table, the same row shape as the repo ledger. Public views carry only rows marked public, with contact details, tokens and query strings removed.
 // Capture points: owner commands (worker.js runCommand), tenant visitor suggestions (POST /api/suggest), loops and tenants (POST /api/fleet/provenance, FLEET_TOKEN).
