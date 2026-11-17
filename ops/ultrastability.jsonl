@@ -11,3 +11,14 @@
 {"at": "2026-11-17T18:29:07Z", "ev": "reading", "ok": false, "seq": 10, "unmeasured": true, "value": null, "var": "blindspot:spend"}
 {"at": "2026-11-17T18:29:07Z", "ev": "reading", "ok": false, "seq": 11, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
 {"at": "2026-11-17T18:29:07Z", "ev": "reading", "ok": false, "seq": 12, "unmeasured": true, "value": null, "var": "blindspot:value"}
+{"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": true, "seq": 13, "value": 0.497, "var": "spend"}
+{"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": true, "seq": 14, "value": 1.0, "var": "deploy_health"}
+{"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": false, "seq": 15, "value": 1, "var": "claims_drift"}
+{"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": true, "seq": 16, "value": 4.573, "var": "value"}
+{"after": 2, "at": "2026-11-17T18:29:46Z", "before": 3, "ev": "step", "id": "stalled_clocks-0-2026-11-17T18:29:46Z", "idx": 0, "kind": "param", "n": 2, "prediction": "resilience.stalled within bounds within 3 ticks", "seq": 17, "value": 2, "var": "stalled_clocks", "what": "declare a stall sooner so the restart comes earlier"}
+{"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": false, "seq": 18, "value": 2, "var": "stalled_clocks"}
+{"at": "2026-11-17T18:29:46Z", "ev": "step", "id": "blindspot:uptime-0-2026-11-17T18:29:46Z", "idx": 0, "item": "Q-ULTRA-blindspot-uptime-1", "kind": "spinoff", "n": 2, "prediction": "tenant.probe_pass_rate within bounds within 3 ticks", "seq": 19, "value": 0.0, "var": "blindspot:uptime", "what": "iterate: change the app"}
+{"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": false, "seq": 20, "value": 0.0, "var": "blindspot:uptime"}
+{"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": false, "seq": 21, "unmeasured": true, "value": null, "var": "blindspot:spend"}
+{"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": false, "seq": 22, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
+{"at": "2026-11-17T18:29:46Z", "ev": "reading", "ok": false, "seq": 23, "unmeasured": true, "value": null, "var": "blindspot:value"}
