@@ -94,3 +94,33 @@ class Sweep(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RemoteSweep(unittest.TestCase):
+    """BRANCH-SWEEP-2: stale session branches of every fleet repository are pruned by API; unmerged work is never deleted."""
+    def test_deletes_only_held_or_merged_heads_and_records_every_sha(self):
+        calls = []
+        def fetch(method, url, headers):
+            calls.append((method, url)); p = url.replace("https://api.github.com", "")
+            if p == "/repos/o/a": return 200, {"default_branch": "main"}
+            if p == "/repos/o/gone": return 404, None
+            if p.startswith("/repos/o/a/branches"): return 200, [{"name": "main", "commit": {"sha": "m"}}, {"name": "claude/held", "commit": {"sha": "h1"}},
+                {"name": "claude/squashed", "commit": {"sha": "s1"}}, {"name": "agent/work", "commit": {"sha": "w1"}}, {"name": "release", "commit": {"sha": "r"}}]
+            if p == "/repos/o/a/compare/main...claude/held": return 200, {"ahead_by": 0}
+            if p.startswith("/repos/o/a/compare/"): return 200, {"ahead_by": 3}
+            if "head=o:claude/squashed" in p: return 200, [{"number": 9, "state": "closed", "merged_at": "x", "head": {"sha": "s1"}}]
+            if "head=o:agent/work" in p: return 200, [{"number": 10, "state": "open", "merged_at": None, "head": {"sha": "w1"}}]
+            if method == "DELETE": return 204, None
+            return 404, None
+        tmp = Path(tempfile.mkdtemp(prefix="ultrastable-test-bs2-")); self.addCleanup(shutil.rmtree, tmp, True)
+        out = B.remote_prune(["o/a", "o/gone"], "t", fetch=fetch, root=tmp, now=1)
+        a = {r["name"]: r for r in out["remote"][0]["branches"]}
+        self.assertEqual(a["claude/held"]["action"], "deleted"); self.assertEqual(a["claude/squashed"]["action"], "deleted")
+        self.assertEqual(a["agent/work"]["action"], "kept"); self.assertNotIn("release", a)
+        self.assertEqual(out["remote"][1], {"repo": "o/gone", "unreadable": 404})
+        self.assertEqual(sorted(u for m, u in calls if m == "DELETE"), ["https://api.github.com/repos/o/a/git/refs/heads/claude/held", "https://api.github.com/repos/o/a/git/refs/heads/claude/squashed"])
+        ledger = (tmp / B.LEDGER).read_text().strip().splitlines()
+        self.assertIn('"sha": "s1"', ledger[-1])
+
+    def test_policy_lists_the_fleet(self):
+        self.assertIn("ultrastable/practical-solutions", B.policy().get("fleet_repos", []))
