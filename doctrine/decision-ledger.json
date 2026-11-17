@@ -2041,8 +2041,8 @@
    "kind": "decision",
    "date": "2026-11-17",
    "title": "Product manager pass 2026111716: 3 item(s) filed",
-   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
-   "probe": "file:ops/growth/pm-report.json"
+   "body": "Growth and repair items, experiment verdicts and knob review recorded by foundation/pm.py (experiments in ops/growth/experiments.json); tests pass.",
+   "probe": "file:ops/growth/experiments.json"
   },
   {
    "id": "lesson-2026-11-17-ops-queue-1-analytics-breach-froze-the-work-queue",
@@ -2051,6 +2051,14 @@
    "title": "OPS-QUEUE-1 analytics breach froze the work queue",
    "body": "A cost breach on the analytics DB ultrastable-ops (52.5k vs 50k rows/h) held dispatch lean for the hour, claims were released unworked and issues stayed open. Breaches on DBs the tick does not read are advisory (gates_tick:false); /ops items carry an app label and filter; probe selfaudit:work-queue-stalled.",
    "probe": "grep:seed/worker/src/costsample.js::gates_tick"
+  },
+  {
+   "id": "lesson-2026-11-17-free-tier-1-and-ai-router-1-free-plan-governor-and-shared-ai",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "FREE-TIER-1 and AI-ROUTER-1: free-plan governor and shared AI cost router",
+   "body": "ultrastable-ops was never the volume problem (one analytics refresh spike per 6 h, about 0.3M of 5M rows a day); the per-hour cap misread a spike as overage. Fixed with an account-wide daily free-plan level (seed/worker/src/freetier.js) and a shared AI router (workers/core/airouter, vendored to seed/worker/src/airouter.js) with a default monthly paid cap of 0. The product-manager decision-ledger probe named a report file that is never written; it now names ops/growth/experiments.json. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
+   "probe": "file:seed/worker/src/freetier.js"
   }
  ]
 }
