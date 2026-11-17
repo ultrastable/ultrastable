@@ -44,7 +44,7 @@ export function plain(e, opts = {}) {
 }
 export function backendRecord(e, where = 'unknown', opts = {}) {
   const rec = { at: new Date().toISOString(), where, code: classify(e), detail: raw(e).slice(0, 600), user_safe: Boolean(e && e.userSafe) };
-  try { console.error('backend_error', JSON.stringify(rec)); } catch (_) { /* console is best effort */ }
+  try { console.error('backend_error', JSON.stringify(rec)); } catch (_) { /* allow-silent: the console itself failed; the audit hook below still records it */ }
   if (typeof opts.audit === 'function') Promise.resolve().then(() => opts.audit(rec)).catch(x => console.error('backend_error audit failed', raw(x).slice(0, 160)));
   return rec;
 }
