@@ -5,6 +5,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from foundation import executor  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402  (removed when the run ends)
 
 I = lambda n, labels=(), **k: {"number": n, "title": f"t{n}", "labels": [{"name": l} for l in labels], "updated_at": "2026-11-12T00:00:00Z", **k}
 
@@ -64,7 +66,7 @@ class Baseline(unittest.TestCase):
 
     def test_only_failures_that_predate_the_change_are_baseline(self):
         import subprocess
-        d = Path(tempfile.mkdtemp(prefix="bl-")); (d / "tests/foundation").mkdir(parents=True)
+        d = Path(scratch()); (d / "tests/foundation").mkdir(parents=True)
         (d / "tests/foundation/test_m.py").write_text("import unittest\nclass C(unittest.TestCase):\n    def test_old(self): self.fail('red on main')\n    def test_new(self): pass\n")
         g = lambda *a: subprocess.run(["git", *a], cwd=d, check=True, capture_output=True)
         g("init", "-q"); g("add", "-A"); g("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x")
@@ -117,7 +119,7 @@ class Baseline(unittest.TestCase):
 
     def test_only_failures_that_predate_the_change_are_baseline(self):
         import subprocess
-        d = Path(tempfile.mkdtemp(prefix="bl-")); (d / "tests/foundation").mkdir(parents=True)
+        d = Path(scratch()); (d / "tests/foundation").mkdir(parents=True)
         (d / "tests/foundation/test_m.py").write_text("import unittest\nclass C(unittest.TestCase):\n    def test_old(self): self.fail('red on main')\n    def test_new(self): pass\n")
         g = lambda *a: subprocess.run(["git", *a], cwd=d, check=True, capture_output=True)
         g("init", "-q"); g("add", "-A"); g("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x")

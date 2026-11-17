@@ -1,0 +1,24 @@
+{
+ "since": "2026-10-30",
+ "days": {
+  "2026-11-12": {
+   "deploy_ok": 116,
+   "deploy_fail": 5,
+   "human_triggered": 5
+  },
+  "2026-11-13": {
+   "deploy_ok": 3,
+   "deploy_fail": 1,
+   "human_triggered": 0
+  }
+ },
+ "total_verified_deploys": 119,
+ "spend": {
+  "month_minutes": 1506.0,
+  "free_minutes": 2000,
+  "projected_month_minutes": 3475,
+  "gross_usd": 9.04,
+  "net_usd": 0.0,
+  "over_budget_projected": true
+ }
+}

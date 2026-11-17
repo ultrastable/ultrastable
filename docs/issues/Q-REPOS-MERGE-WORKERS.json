@@ -1,0 +1,5 @@
+{
+  "id": "Q-REPOS-MERGE-WORKERS",
+  "title": "Q-REPOS-MERGE-WORKERS: fold the workers repository into ultrastable/ultrastable, then archive it",
+  "body": "**Owner:** operations\n**Trigger:** REPOS-1 merged (brand/brand.json `structure.pending`)\n**Status:** open\n**Done check:** grep:brand/brand.json::\"status\": \"retired\"\n\ncode-task: repo=ultrastable/ultrastable path=brand/brand.json\ncode-anchor: Q-REPOS-MERGE-WORKERS\n\nworkers/ and ultrastable/seed/ hold diverged copies of the core (bootstrap/, core/). Reconcile to one copy (newer wins per file, tests from both kept), import workers history under seed/ (git subtree), repoint deploy/deploy-workers.mjs, spec_truth --code-dir and every `ultrastable/workers` reference (103), keep deploy-workers and deploy-site green, then set workers `status: retired` in brand.json and archive it with a README pointer.\n\nClosing probe: `python3 brand/tools/sync_repos.py --check` and `python3 -m foundation drainwatch`; live probe `GET https://ultrastable.io/how` lists no workers row."
+}

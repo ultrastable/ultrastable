@@ -1,120 +1,170 @@
 {
-  "_doc": "Source of truth for every repo's public-facing presence. brand/tools/generate.py draws the images from it, brand/tools/sync_repos.py renders each repo's README, CONTRIBUTING and SECURITY from it, foundation/brandcheck.py lints the result. Positioning text comes from doctrine/positioning.json, never retyped here. Edit this file, not the generated output.",
-  "org": "ultrastable",
-  "site": "https://ultrastable.io",
-  "contact": "pilot@ultrastable.io",
-  "security_contact": "pilot@ultrastable.io",
-  "visibility": "public",
-  "license": {
-    "name": "Ultrastable License v1.0 (USL-1.0)",
-    "summary": "Source-available. Free for non-commercial use: read it, run it, study it, change it, share it. Any commercial use needs a Commercial License with revenue share.",
-    "file": "LICENSING.md"
+ "_doc": "Source of truth for every repo's public-facing presence. brand/tools/generate.py draws the images from it, brand/tools/sync_repos.py renders each repo's README, CONTRIBUTING and SECURITY from it, foundation/brandcheck.py lints the result. Positioning text comes from doctrine/positioning.json, never retyped here. Edit this file, not the generated output.",
+ "org": "ultrastable",
+ "site": "https://ultrastable.io",
+ "contact": "pilot@ultrastable.io",
+ "security_contact": "pilot@ultrastable.io",
+ "visibility": "public",
+ "license": {
+  "name": "Ultrastable License v1.0 (USL-1.0)",
+  "summary": "Source-available. Free for non-commercial use: read it, run it, study it, change it, share it. Any commercial use needs a Commercial License with revenue share.",
+  "file": "LICENSING.md"
+ },
+ "proof": "Ultrastable runs on itself. Its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else. Verify it: `python3 -m foundation selfhost --verify` in ultrastable/ultrastable.",
+ "repos": [
+  {
+   "name": "ultrastable",
+   "role": "The main repository",
+   "line": "The main repository: the platform, the website, the owner dashboard, the doctrine, the docs and the seed template that new systems start from.",
+   "audience": "Anyone who wants the whole picture, and the agents that run it.",
+   "quickstart": [
+    "python3 -m foundation selfhost --verify",
+    "python3 -m foundation new-system --manifest instances/ultrastable/instance.json --out /tmp/ultrastable-instance"
+   ],
+   "topics": [
+    "autonomous-agents",
+    "ai-agents",
+    "agent-orchestration",
+    "developer-tools",
+    "automation",
+    "bootstrapping",
+    "self-hosting",
+    "cloudflare-workers"
+   ],
+   "status": "live",
+   "visibility": "public",
+   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, and seed/ (the starting kit for a new system). It is a GitHub template, so \"Use this template\" copies it."
   },
-  "proof": "Ultrastable runs on itself. Its roadmap, issues, managers, trust ledger, plussing budget and specs are run by the same code it gives everyone else. Verify it: `python3 -m foundation selfhost --verify` in ultrastable/ultrastable.",
-  "repos": [
-    {
-      "name": "ultrastable",
-      "role": "System of record",
-      "line": "The system of record: roadmap, doctrine, foundation code, agents, brand and the self-hosting proof.",
-      "audience": "Anyone who wants the whole picture, and the agents that run it.",
-      "quickstart": [
-        "python3 -m foundation selfhost --verify",
-        "python3 -m foundation new-system --manifest instances/ultrastable/instance.json --out /tmp/ultrastable-instance"
-      ],
-      "topics": [
-        "autonomous-agents",
-        "ai-agents",
-        "agent-orchestration",
-        "developer-tools",
-        "automation",
-        "bootstrapping",
-        "self-hosting",
-        "cloudflare-workers"
-      ]
-    },
-    {
-      "name": "workers",
-      "role": "Code",
-      "line": "The code: the Cloudflare Worker tick, schema, bootstrapper, adapters and reference runtime. Public so its GitHub Actions run.",
-      "audience": "Engineers who run or extend the core.",
-      "quickstart": [
-        "cd core && npm test",
-        "python bootstrap/bootstrap.py --dry-run"
-      ],
-      "topics": [
-        "agent-orchestration",
-        "cloudflare-workers",
-        "autonomous-agents",
-        "runtime"
-      ]
-    },
-    {
-      "name": "spec",
-      "role": "Specifications",
-      "line": "The numbered specifications and docs: what a conforming implementation must do. Dated 2026-11-11 and published openly as a public record of the design.",
-      "audience": "Engineers who want the precise design.",
-      "quickstart": [
-        "Start at SCOPE.md, then specs/README.md"
-      ],
-      "topics": [
-        "specifications",
-        "architecture",
-        "autonomous-agents",
-        "documentation"
-      ]
-    },
-    {
-      "name": "license",
-      "role": "Retired",
-      "line": "Retired: the Ultrastable License now lives in ultrastable/spec. Kept public so existing links resolve.",
-      "audience": "Anyone following an old link.",
-      "quickstart": [
-        "Go to ultrastable/spec"
-      ],
-      "topics": [
-        "license"
-      ]
-    },
-    {
-      "name": "ops",
-      "role": "Owner tracker",
-      "line": "Administration: owner cards, funding, legal and bootstrap gaps. Not code. Private.",
-      "audience": "The owner.",
-      "quickstart": [
-        "Open the issues"
-      ],
-      "topics": [
-        "administration"
-      ]
-    },
-    {
-      "name": "seed",
-      "role": "Bootstrapper",
-      "line": "One idea file in, a running organization of virtual managers and staff out.",
-      "audience": "Founders and makers with an idea and no team.",
-      "quickstart": [
-        "python3 bootstrap/bootstrap.py --dry-run"
-      ],
-      "topics": [
-        "bootstrapping",
-        "ai-agents",
-        "cloudflare-workers",
-        "autonomous-agents",
-        "idea-to-organization"
-      ]
-    },
-    {
-      "name": ".github",
-      "role": "Org profile",
-      "line": "Organization profile and community health defaults.",
-      "audience": "Visitors to github.com/ultrastable.",
-      "quickstart": [
-        "See profile/README.md"
-      ],
-      "topics": [
-        "community-health"
-      ]
-    }
+  {
+   "name": "workers",
+   "role": "Core code",
+   "line": "The core code: the Cloudflare Worker tick, schema, bootstrapper, adapters and reference runtime. Public so its GitHub Actions run.",
+   "audience": "Engineers who run or extend the core.",
+   "quickstart": [
+    "cd core && npm test",
+    "python bootstrap/bootstrap.py --dry-run"
+   ],
+   "topics": [
+    "agent-orchestration",
+    "cloudflare-workers",
+    "autonomous-agents",
+    "runtime"
+   ],
+   "status": "live",
+   "visibility": "public",
+   "holds": "The reusable core engine and its tests. Overlaps seed/ in the main repository; folding it in is tracked as Q-REPOS-MERGE-WORKERS."
+  },
+  {
+   "name": "spec",
+   "role": "Specifications and license",
+   "line": "The numbered specifications, the docs and the Ultrastable License text: what a conforming implementation must do, and the terms for using it.",
+   "audience": "Engineers who want the precise design.",
+   "quickstart": [
+    "Start at SCOPE.md, then specs/README.md"
+   ],
+   "topics": [
+    "specifications",
+    "architecture",
+    "autonomous-agents",
+    "documentation"
+   ],
+   "status": "live",
+   "visibility": "public",
+   "holds": "US-SPEC-* specifications, SCOPE, and the canonical LICENSE, COMMERCIAL-TERMS and FAQ. Folding it in is tracked as Q-REPOS-MERGE-SPEC."
+  },
+  {
+   "name": "license",
+   "role": "Retired",
+   "line": "Retired: the Ultrastable License now lives in ultrastable/spec. Kept public so existing links resolve.",
+   "audience": "Anyone following an old link.",
+   "quickstart": [
+    "Go to ultrastable/spec"
+   ],
+   "topics": [
+    "license"
+   ],
+   "status": "retired",
+   "visibility": "public",
+   "moved_to": "spec",
+   "holds": "Nothing. A pointer to ultrastable/spec so old links keep working."
+  },
+  {
+   "name": "ops",
+   "role": "Owner tracker",
+   "line": "Administration: owner cards, funding, legal and bootstrap gaps. Not code. Private.",
+   "audience": "The owner.",
+   "quickstart": [
+    "Open the issues"
+   ],
+   "topics": [
+    "administration"
+   ],
+   "status": "live",
+   "visibility": "private",
+   "holds": "The few steps only the owner can take (accounts, money, signatures), one card each. Private on purpose."
+  },
+  {
+   "name": "seed",
+   "role": "Retired",
+   "line": "Retired: the seed template now lives in ultrastable/ultrastable under seed/. Kept public with the Ultrastable License so old links resolve.",
+   "audience": "Anyone following an old link.",
+   "quickstart": [
+    "Go to ultrastable/ultrastable, folder seed/"
+   ],
+   "topics": [
+    "bootstrapping",
+    "ai-agents",
+    "cloudflare-workers",
+    "autonomous-agents",
+    "idea-to-organization"
+   ],
+   "status": "retired",
+   "visibility": "public",
+   "moved_to": "ultrastable",
+   "holds": "Nothing. A pointer to the seed/ folder of the main repository."
+  },
+  {
+   "name": ".github",
+   "role": "Org profile",
+   "line": "Organization profile and community health defaults.",
+   "audience": "Visitors to github.com/ultrastable.",
+   "quickstart": [
+    "See profile/README.md"
+   ],
+   "topics": [
+    "community-health"
+   ],
+   "status": "live",
+   "visibility": "public",
+   "holds": "The organization profile page on GitHub. Not a project."
+  }
+ ],
+ "extraction_repos": [],
+ "tenants": [
+  {
+   "name": "practical-solutions",
+   "line": "An autonomous bright-spot finder that runs on Ultrastable. The first system built on it, in its own repository.",
+   "visibility": "public"
+  }
+ ],
+ "structure": {
+  "rule": "One main repository holds what Ultrastable is. A separate repository exists only for a different license or visibility, an owner-only tracker, or a system built on top of Ultrastable.",
+  "target": [
+   "ultrastable",
+   "ops",
+   "practical-solutions"
   ],
-  "extraction_repos": []
+  "pending": [
+   {
+    "id": "Q-REPOS-MERGE-WORKERS",
+    "repo": "workers",
+    "into": "ultrastable"
+   },
+   {
+    "id": "Q-REPOS-MERGE-SPEC",
+    "repo": "spec",
+    "into": "ultrastable"
+   }
+  ]
+ }
 }
