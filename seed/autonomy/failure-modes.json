@@ -163,6 +163,24 @@
           "closing_probe": "selfaudit:primary-count"
         }
       ]
+    },
+    {
+      "id": "work-queue-stalled",
+      "failure": "Ready or open items wait for hours while the dispatch loop settles nothing.",
+      "root_cause": "A cost breach on a database the tick never reads (the analytics DB ultrastable-ops, 52.5k vs 50k rows/h, 2026-11-17) held the tick lean for the hour, so dispatch and execute were skipped, claims were released unworked and issues stayed open (OPS-QUEUE-1).",
+      "spof": false,
+      "owner_role": "operations",
+      "trigger": "every tick",
+      "probe": "SELECT CASE WHEN (SELECT COUNT(*) FROM items WHERE status IN ('ready','open') AND priority > 0 AND created_at < datetime('now','-6 hours'))=0 OR EXISTS (SELECT 1 FROM dispatches WHERE status IN ('done','parked') AND at >= datetime('now','-6 hours')) THEN 1 ELSE 0 END",
+      "remedy": "while a takeable item is older than 6 hours, at least one dispatch settles (done or parked) every 6 hours; a window with none is a defect with a fix item, and only a breach of a database the tick reads (gates_tick) may hold dispatch.",
+      "fixes": [
+        {
+          "id": "work-queue-stalled-fix",
+          "title": "Find why no dispatch settled in 6 hours (lean mode, released claims, doer errors) and fix the cause",
+          "done_check": "a dispatch settled done or parked within the last 6 hours",
+          "closing_probe": "selfaudit:work-queue-stalled"
+        }
+      ]
     }
   ],
   "max_redispatch": 3

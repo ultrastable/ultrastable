@@ -37,7 +37,11 @@ export async function over_budget(db, budgets, now = Date.now()) {
     if (!b.id || !Number.isFinite(max) || max <= 0) continue;
     const s = await db.prepare(`SELECT at, rows_read_1h FROM cost_samples WHERE target = ? AND at >= ? AND rows_read_1h IS NOT NULL ORDER BY at DESC, id DESC LIMIT 1`)
       .bind(b.id, since).first();
-    if (s && Number(s.rows_read_1h) > max) breaches.push({ target: b.id, rows_read_1h: Number(s.rows_read_1h), max_rows_read_per_hour: max, at: s.at });
+    if (s && Number(s.rows_read_1h) > max) breaches.push({ target: b.id, rows_read_1h: Number(s.rows_read_1h), max_rows_read_per_hour: max, at: s.at, gates_tick: b.gates_tick !== false });
   }
-  return { over: breaches.length > 0, breaches };
+  // OPS-QUEUE-1: only a breach of a database the tick itself reads may hold the tick lean. A budget with gates_tick:false (the analytics DB
+  // ultrastable-ops, which no tick step reads) is advisory: it stays in `breaches` and `advisory`, but dispatch and execute keep running.
+  // Before this, a 5% overage on the analytics DB froze the work queue for the hour, claims were released unworked and issues sat open.
+  const gating = breaches.filter(x => x.gates_tick);
+  return { over: gating.length > 0, breaches: gating, advisory: breaches.filter(x => !x.gates_tick) };
 }

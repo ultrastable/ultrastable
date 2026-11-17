@@ -2043,6 +2043,14 @@
    "title": "Product manager pass 2026111716: 3 item(s) filed",
    "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
    "probe": "file:ops/growth/pm-report.json"
+  },
+  {
+   "id": "lesson-2026-11-17-ops-queue-1-analytics-breach-froze-the-work-queue",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "OPS-QUEUE-1 analytics breach froze the work queue",
+   "body": "A cost breach on the analytics DB ultrastable-ops (52.5k vs 50k rows/h) held dispatch lean for the hour, claims were released unworked and issues stayed open. Breaches on DBs the tick does not read are advisory (gates_tick:false); /ops items carry an app label and filter; probe selfaudit:work-queue-stalled.",
+   "probe": "grep:seed/worker/src/costsample.js::gates_tick"
   }
  ]
 }

@@ -110,7 +110,7 @@ test('over_budget reads the latest sample per budget within the hour; a failed s
   const db = makeDb();
   const at = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
   const budgets = [{ id: 'org', max_rows_read_per_hour: 100 }, { id: 'ops', max_rows_read_per_hour: 50 }];
-  assert.deepEqual(await over_budget(db, budgets, T0), { over: false, breaches: [] }, 'no samples, no breach');
+  assert.deepEqual(await over_budget(db, budgets, T0), { over: false, breaches: [], advisory: [] }, 'no samples, no breach');
   db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h) VALUES (?,?,?)').run(at(T0 - 7200e3), 'org', 999);
   assert.equal((await over_budget(db, budgets, T0)).over, false, 'a sample older than the hour has expired');
   db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h) VALUES (?,?,?)').run(at(T0 - 600e3), 'org', 150);
@@ -120,6 +120,15 @@ test('over_budget reads the latest sample per budget within the hour; a failed s
   db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h) VALUES (?,?,?)').run(at(T0 - 60e3), 'org', 90);
   assert.equal((await over_budget(db, budgets, T0)).over, false, 'a newer sample back under the cap releases it');
   assert.equal((await over_budget(db, null, T0)).over, false, 'no budgets configured');
+});
+
+test('OPS-QUEUE-1: a breach of a database the tick does not read (gates_tick:false) is advisory and never holds dispatch', async () => {
+  const { over_budget } = await import('../src/costsample.js');
+  const db = makeDb();
+  const at = new Date(T0 - 60e3).toISOString().replace('T', ' ').slice(0, 19);
+  db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h) VALUES (?,?,?)').run(at, 'ops', 52524);
+  const r = await over_budget(db, [{ id: 'ops', max_rows_read_per_hour: 50000, gates_tick: false }], T0);
+  assert.equal(r.over, false); assert.deepEqual(r.breaches, []); assert.equal(r.advisory[0].target, 'ops');
 });
 
 test('a breached D1 budget skips the non-essential steps, records the breach and caps origination to a cost cut', async () => {

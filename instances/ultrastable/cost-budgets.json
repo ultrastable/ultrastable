@@ -15,6 +15,7 @@
       "database_id": "5cd83b52-864a-4510-b062-fc0d9402d06c",
       "database_name": "ultrastable-ops",
       "max_rows_read_per_hour": 50000,
+      "gates_tick": false,
       "note": "2026-11-16 read 4.33M rows by 08:00 UTC, almost all analytics scans of hits; analytics 0.2.0 bounds them."
     }
   ]
