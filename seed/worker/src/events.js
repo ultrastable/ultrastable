@@ -235,6 +235,14 @@ export const EVENT_TABLE = [
       "wake:staff"
     ],
     "role": "staff"
+  },
+  {
+    "id": "wake-uiux-manager",
+    "event": "repository_dispatch",
+    "actions": [
+      "wake:uiux-manager"
+    ],
+    "role": "uiux-manager"
   }
 ];
 

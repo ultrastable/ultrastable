@@ -11,6 +11,21 @@ This file is the single source of truth for project memory. Chat memory, tool me
 Last updated: 2026-11-17
 
 - 2026-11-17: core/ensemble (cross-vendor model ensemble, from the Practical Solutions test bed) and core/deploygate `ai: true` rule flag; gateway ALLOW has the tenant-ps-llm rule (owner yes 18:31 UTC). Generated ULTRA items carry runnable cmd: probes (#538)
+- 2026-11-17: Tick passes service bindings to the measure step (#561)
+- 2026-11-17: watchdog: clock probe (RESILIENCE-1) [skip ci]
+- 2026-11-17: RESILIENCE-1: tick clock via public /health; watchdog wakes only on failures (#559)
+- 2026-11-17: tenant-sync: ledger
+- 2026-11-17: tenant-sync: record tool failures with their error (#558)
+- 2026-11-17: tenant-sync: ledger
+- 2026-11-17: ISSUE-LOOP-1: skip archived repositories (#557)
+- 2026-11-17: SELF-FIX-1: failing checks become fleet tasks, not owner mail (#556)
+- 2026-11-17: TENANT-SYNC-1: core is the system of record for tenants (#547)
+- 2026-11-17: Move workers issues into the queue (Q-WORKERS-*) (#555)
+- 2026-11-17: RESILIENCE-1: watchdog passes repo guards (#554)
+- 2026-11-17: OWNER-LINKS-1: owner links on ultrastable.io and a dead-link probe (#553)
+- 2026-11-17: INSTANCE-METRICS-SEED-1: tick seeds instance metrics from config (#551)
+- 2026-11-17: watchdog: clock probe (RESILIENCE-1)
+- 2026-11-17: ISSUE-LOOP-1: count unprobed issues as a metric, not a red run (#550)
 - 2026-11-17: deploy-ultrastable: record live-verified deploy
 - 2026-11-17: Q-TENANT-TOPOLOGY-1: deploy lane owns ultrastable-tenants; tick reads its self-test (#535)
 - 2026-11-17: EFFECT-2: claim-coverage items rank after code-changing items (#534)
@@ -338,4 +353,7 @@ The platform name is W. Ross Ashby's ultrastability, run as code: `doctrine/ultr
 
 ## 2026-11-17: resilience (RESILIENCE-1)
 Rowan: the clock never stops; Ultrastable must itself run ultrastably (QNFO lost days to stalled ticks and red checks nobody noticed). Shared primitive `foundation/resilience.py` + `doctrine/resilience.json`: every clock (doctrine/clocks.json and EVERY scheduled workflow, interval derived from its cron) is probed; a stopped one is restarted (workflow dispatch, or POST /pulse/watch on each Cloudflare account), bounded per clock per day and per run, HALT and the Actions kill switch win; a restart that does not take twice files Q-STALL-* (escalation through the queue, never email). Watchdog-of-watchdogs: `.github/workflows/watchdog.yml` restarts the Cloudflare tick, and the tick Worker's loop `watchdog-gh` (`seed/worker/src/watchdog.js`) dispatches the workflow when it is older than 12 h; `resilience --check` fails a watcher watched by itself or by nobody. The newest beat is the essential variable `stalled_clocks` (min 0, max 0) in `doctrine/ultrastability.json`; a beat older than 12 h reads unmeasured, so a silent watchdog is out of bounds. Unmeasured is never healthy and never restarted (except the idempotent tick wake). Tests: `tests/foundation/test_resilience.py`, `seed/worker/test/watchdog.test.js`.
+
+## 2026-11-17: UI/UX manager (UIUX-1)
+Rowan: QNFO's front end barely changed while its back end moved and drifted into a mishmash; the front end is a loop too. `foundation/uiux.py` + `doctrine/uiux.json` + `scripts/uiux_audit.mjs` (Playwright, free tier) audit every user page (accessibility in light and dark at phone and desktop width, user/system boundary, structure, copy, size budgets, visual fingerprint in `ops/uiux/baseline.json`) and walk every path in `doctrine/stakeholders.json` as a click-through flow; `--live` audits the real hosts and tenant apps. First-party hits give per-path funnels and drop detection; A/B experiments on path steps (first: `UX-001-home-setup-label`, served by `site/uiux.js`) are decided at their pre-registered sample and the winner is promoted into the served defaults. Findings become one agent-ready `Q-UIUX-*` item per rule with a re-audit probe. Essential variables `ui_findings` and `happy_paths` are in `doctrine/ultrastability.json`. Runs weekly in `.github/workflows/uiux.yml` and daily inside the product manager pass. Role: `agents/roles/uiux-manager.md`. First real audit found and fixed one accessibility defect (unlabelled textarea on /setup). Not yet measured: path funnels and the experiment need live traffic and CLOUDFLARE_API_TOKEN in the run (unmeasured, never passing, until then).
 - RESILIENCE-1 first live run (2026-11-17): the d1 clocks read only the standby (quniverse) database and reported a 45 h tick stall while the primary (ultrastable account, D1 216e97ea) ticked every 10 minutes and the new `watchdog-gh` loop already beat ok there. Fixed: d1 clocks carry `replicas` (both accounts) and the newest beat from any counts (`clock.d1_beats_any`). A 200 from /pulse/watch is not proof: a clock still stopped after more than two restarts in 24 h escalates as Q-STALL. The watchdog commits its ledger only on change, with [skip ci], and skips runs woken by its own commit (it had looped through deploy-site).

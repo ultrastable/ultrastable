@@ -1,0 +1,297 @@
+{
+ "at": "2026-11-17T18:46:57.420Z",
+ "mode": "offline",
+ "pages": 22,
+ "hosts": [
+  "https://ultrastable.io"
+ ],
+ "axe": true,
+ "findings": [],
+ "paths": [
+  {
+   "id": "audience-founders",
+   "audience": "founders",
+   "entry": "/for/founders",
+   "steps_total": 3,
+   "steps_ok": 3,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "id": "audience-communities",
+   "audience": "communities",
+   "entry": "/for/communities",
+   "steps_total": 3,
+   "steps_ok": 3,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "id": "audience-developers",
+   "audience": "developers",
+   "entry": "/for/developers",
+   "steps_total": 3,
+   "steps_ok": 3,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "id": "audience-funders",
+   "audience": "funders",
+   "entry": "/for/funders",
+   "steps_total": 3,
+   "steps_ok": 3,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "id": "audience-partners",
+   "audience": "partners",
+   "entry": "/for/partners",
+   "steps_total": 3,
+   "steps_ok": 3,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "id": "home-to-setup",
+   "audience": "developers",
+   "entry": "/",
+   "steps_total": 1,
+   "steps_ok": 1,
+   "ok": true,
+   "detail": []
+  },
+  {
+   "id": "home-to-proof",
+   "audience": "funders",
+   "entry": "/",
+   "steps_total": 1,
+   "steps_ok": 1,
+   "ok": true,
+   "detail": []
+  }
+ ],
+ "perf": {
+  "/@phone": {
+   "html_bytes": 36158,
+   "dom_nodes": 181,
+   "inline_script_bytes": 17209
+  },
+  "/@desktop": {
+   "html_bytes": 36152,
+   "dom_nodes": 181,
+   "inline_script_bytes": 17209
+  },
+  "/for@phone": {
+   "html_bytes": 12789,
+   "dom_nodes": 94,
+   "inline_script_bytes": 364
+  },
+  "/for@desktop": {
+   "html_bytes": 12789,
+   "dom_nodes": 94,
+   "inline_script_bytes": 364
+  },
+  "/showcase@phone": {
+   "html_bytes": 13146,
+   "dom_nodes": 90,
+   "inline_script_bytes": 364
+  },
+  "/showcase@desktop": {
+   "html_bytes": 13146,
+   "dom_nodes": 90,
+   "inline_script_bytes": 364
+  },
+  "/how@phone": {
+   "html_bytes": 16545,
+   "dom_nodes": 165,
+   "inline_script_bytes": 364
+  },
+  "/how@desktop": {
+   "html_bytes": 16545,
+   "dom_nodes": 165,
+   "inline_script_bytes": 364
+  },
+  "/product@phone": {
+   "html_bytes": 12240,
+   "dom_nodes": 86,
+   "inline_script_bytes": 364
+  },
+  "/product@desktop": {
+   "html_bytes": 12240,
+   "dom_nodes": 86,
+   "inline_script_bytes": 364
+  },
+  "/proof@phone": {
+   "html_bytes": 11962,
+   "dom_nodes": 74,
+   "inline_script_bytes": 1080
+  },
+  "/proof@desktop": {
+   "html_bytes": 11962,
+   "dom_nodes": 74,
+   "inline_script_bytes": 1080
+  },
+  "/team@phone": {
+   "html_bytes": 12078,
+   "dom_nodes": 83,
+   "inline_script_bytes": 364
+  },
+  "/team@desktop": {
+   "html_bytes": 12078,
+   "dom_nodes": 83,
+   "inline_script_bytes": 364
+  },
+  "/faq@phone": {
+   "html_bytes": 12520,
+   "dom_nodes": 87,
+   "inline_script_bytes": 364
+  },
+  "/faq@desktop": {
+   "html_bytes": 12520,
+   "dom_nodes": 87,
+   "inline_script_bytes": 364
+  },
+  "/contact@phone": {
+   "html_bytes": 10946,
+   "dom_nodes": 70,
+   "inline_script_bytes": 364
+  },
+  "/contact@desktop": {
+   "html_bytes": 10946,
+   "dom_nodes": 70,
+   "inline_script_bytes": 364
+  },
+  "/pilot@phone": {
+   "html_bytes": 15264,
+   "dom_nodes": 117,
+   "inline_script_bytes": 799
+  },
+  "/pilot@desktop": {
+   "html_bytes": 15264,
+   "dom_nodes": 117,
+   "inline_script_bytes": 799
+  },
+  "/engineers@phone": {
+   "html_bytes": 18763,
+   "dom_nodes": 277,
+   "inline_script_bytes": 364
+  },
+  "/engineers@desktop": {
+   "html_bytes": 18763,
+   "dom_nodes": 277,
+   "inline_script_bytes": 364
+  },
+  "/start@phone": {
+   "html_bytes": 29154,
+   "dom_nodes": 79,
+   "inline_script_bytes": 17209
+  },
+  "/start@desktop": {
+   "html_bytes": 29164,
+   "dom_nodes": 79,
+   "inline_script_bytes": 17209
+  },
+  "/setup@phone": {
+   "html_bytes": 19851,
+   "dom_nodes": 76,
+   "inline_script_bytes": 8782
+  },
+  "/setup@desktop": {
+   "html_bytes": 19851,
+   "dom_nodes": 76,
+   "inline_script_bytes": 8782
+  },
+  "/privacy@phone": {
+   "html_bytes": 11996,
+   "dom_nodes": 74,
+   "inline_script_bytes": 364
+  },
+  "/privacy@desktop": {
+   "html_bytes": 11996,
+   "dom_nodes": 74,
+   "inline_script_bytes": 364
+  },
+  "/accessibility@phone": {
+   "html_bytes": 11151,
+   "dom_nodes": 68,
+   "inline_script_bytes": 364
+  },
+  "/accessibility@desktop": {
+   "html_bytes": 11151,
+   "dom_nodes": 68,
+   "inline_script_bytes": 364
+  },
+  "/for/founders@phone": {
+   "html_bytes": 11981,
+   "dom_nodes": 89,
+   "inline_script_bytes": 364
+  },
+  "/for/founders@desktop": {
+   "html_bytes": 11981,
+   "dom_nodes": 89,
+   "inline_script_bytes": 364
+  },
+  "/for/communities@phone": {
+   "html_bytes": 12315,
+   "dom_nodes": 91,
+   "inline_script_bytes": 364
+  },
+  "/for/communities@desktop": {
+   "html_bytes": 12315,
+   "dom_nodes": 91,
+   "inline_script_bytes": 364
+  },
+  "/for/developers@phone": {
+   "html_bytes": 12123,
+   "dom_nodes": 89,
+   "inline_script_bytes": 364
+  },
+  "/for/developers@desktop": {
+   "html_bytes": 12123,
+   "dom_nodes": 89,
+   "inline_script_bytes": 364
+  },
+  "/for/funders@phone": {
+   "html_bytes": 11890,
+   "dom_nodes": 89,
+   "inline_script_bytes": 364
+  },
+  "/for/funders@desktop": {
+   "html_bytes": 11890,
+   "dom_nodes": 89,
+   "inline_script_bytes": 364
+  },
+  "/for/partners@phone": {
+   "html_bytes": 11944,
+   "dom_nodes": 89,
+   "inline_script_bytes": 364
+  },
+  "/for/partners@desktop": {
+   "html_bytes": 11944,
+   "dom_nodes": 89,
+   "inline_script_bytes": 364
+  },
+  "/showcase/qnfo@phone": {
+   "html_bytes": 12448,
+   "dom_nodes": 82,
+   "inline_script_bytes": 364
+  },
+  "/showcase/qnfo@desktop": {
+   "html_bytes": 12448,
+   "dom_nodes": 82,
+   "inline_script_bytes": 364
+  },
+  "/showcase/practical-solutions@phone": {
+   "html_bytes": 12919,
+   "dom_nodes": 83,
+   "inline_script_bytes": 364
+  },
+  "/showcase/practical-solutions@desktop": {
+   "html_bytes": 12919,
+   "dom_nodes": 83,
+   "inline_script_bytes": 364
+  }
+ }
+}

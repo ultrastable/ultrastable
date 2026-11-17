@@ -1,0 +1,16 @@
+{
+ "at": "2026-11-17T18:48:17Z",
+ "audit_at": "2026-11-17T18:46:57.420Z",
+ "audit_fresh": true,
+ "audit_mode": "offline",
+ "by_kind": {},
+ "experiments": [],
+ "findings_blocking": 0,
+ "findings_total": 0,
+ "happy_path_pass_share": 1.0,
+ "pages": 22,
+ "paths": {},
+ "unmeasured": [
+  "analytics: no CLOUDFLARE_API_TOKEN, funnels and experiments not read"
+ ]
+}
