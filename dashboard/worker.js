@@ -6,7 +6,8 @@
 // has to supply those three. Cloudflare adapter = this file + wrangler.toml.
 import { handleAnalytics, record, selfcheck, report, summary, REPORT_CACHE_MINUTES } from "../seed/analytics/analytics.js";
 import { ask, ASK_PER_HOUR } from "./agent.js";
-import * as PV from "./provenance.js";  // PROVENANCE-1: origin, effect and history of every input and change
+import * as PV from "./provenance.js";
+import * as OID from "./ownerid.js";  // PROVENANCE-1: origin, effect and history of every input and change
 import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: the console agent spends from the owner's budget
 import NEEDS from "../foundation/data/needs-you.json" with { type: "json" };
 import TENANTS from "../foundation/data/tenants.json" with { type: "json" };
@@ -109,9 +110,12 @@ export async function verifyCode(env, req, code) {
   await env.DB.prepare("UPDATE otp SET used=1 WHERE id=?1").bind(row.id).run();
   const cur = await getSession(env, req);
   if (cur) { await env.DB.prepare("UPDATE sessions SET stepup_at=?2 WHERE hash=?1").bind(cur.hash, now).run(); return { status: 200, body: { ok: true, stepup: true } }; }
-  const tok = hex(32);
+  return { status: 200, body: { ok: true }, cookie: await mintSession(env) };
+}
+export async function mintSession(env) {
+  const tok = hex(32), now = Date.now();
   await env.DB.prepare("INSERT INTO sessions(hash,created_at,stepup_at,revoked) VALUES(?1,?2,?2,0)").bind(await sha256(tok), now).run();
-  return { status: 200, body: { ok: true }, cookie: COOKIE + "=" + tok + "; Path=/; Max-Age=" + (SESSION_MS / 1000) + "; HttpOnly; Secure; SameSite=Strict" };
+  return COOKIE + "=" + tok + "; Path=/; Max-Age=" + (SESSION_MS / 1000) + "; HttpOnly; Secure; SameSite=Strict";
 }
 export async function getSession(env, req) {
   const tok = cookie(req, COOKIE); if (!tok) return null;
@@ -138,7 +142,8 @@ export async function runProbes(env) {
       catch (e) { await rec("mail_send", false, String(e && e.message || e)); }
     } else out.push({ name: "mail_send", ok: !!last.ok, detail: "last real send under 24 h ago" });
   } catch (e) { /* the checks table may not exist yet */ }
-  const paths = ownerAddresses(env).length;
+  const idLinks = await OID.linkCount(env);
+  const paths = ownerAddresses(env).length + (idLinks > 0 ? 1 : 0) + ((await OID.configured(env)) ? 1 : 0);
   await rec("owner_email_paths", paths >= 2, paths >= 2 ? paths + " owner addresses: a suppressed one does not lock the owner out" : "only " + paths + " owner address: set OWNER_EMAIL_BACKUP to an address at a different provider (single point of failure, MAIL-PATHS-1)");
   if (!env.NO_NET) {
     for (const h of HOSTS) {
@@ -348,7 +353,7 @@ const OWNER_JS = `
 const $=s=>document.querySelector(s);const E=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function api(p,b){const r=await fetch(p,{method:b?'POST':'GET',headers:b?{'content-type':'application/json','x-us-ui':'1'}:{},body:b?JSON.stringify(b):undefined,credentials:'same-origin'});let j={};try{j=await r.json()}catch(e){}return{s:r.status,j}}
 let pending=null;
-function codeBox(msg,after){$('#gate').innerHTML='<div class="card"><h3>'+E(msg)+'</h3><div class="row"><button class="p" id="send">Email me a code</button></div><div id="cbox" class="row" hidden><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" aria-label="6-digit code"><button class="p" id="ver">Verify</button></div><p class="meta" id="gm" role="status"></p></div>';
+function codeBox(msg,after){$('#gate').innerHTML='<div class="card"><h3>'+E(msg)+'</h3><div class="row"><a class="btn p" href="/api/owner/github">Sign in with GitHub</a><button id="send">Email me a code</button></div><div id="cbox" class="row" hidden><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" aria-label="6-digit code"><button class="p" id="ver">Verify</button></div><p class="meta" id="gm" role="status"></p></div>';
 $('#send').onclick=async()=>{$('#gm').textContent='Sending...';const r=await api('/api/owner/code',{});$('#gm').textContent=r.s==200?'Code sent. Check your inbox.':(r.j.error||'Could not send.');if(r.s==200){$('#cbox').hidden=false;$('#code').focus()}};
 $('#ver').onclick=async()=>{const r=await api('/api/owner/verify',{code:$('#code').value});if(r.s==200){const nx=new URLSearchParams(location.search).get('next');if(nx&&nx.indexOf('/oauth/authorize?')===0){location.href=nx;return}$('#gate').innerHTML='';after()}else $('#gm').textContent=r.j.error||'Wrong code.'}}
 const NL=String.fromCharCode(10),BT=String.fromCharCode(96);
@@ -424,11 +429,16 @@ export async function route(req, env) {
     try { await sendOne(env, b.to, String(b.subject || "").slice(0, 200), String(b.text || "").slice(0, 4000)); return json({ ok: true }); }
     catch (e) { return json({ error: String(e && e.message || e).slice(0, 200) }, 502); }
   }
+  if (p === "/api/owner/github" && req.method === "GET") { const r = await OID.start(env, u.origin); return r.location ? new Response(null, { status: 302, headers: { location: r.location, ...SEC } }) : json(r.body, r.status); }
+  if (p === "/api/owner/github/callback" && req.method === "GET") { const r = await OID.callback(env, u, mintSession); return r.location ? new Response(null, { status: 302, headers: { location: r.location, "Set-Cookie": r.cookie, ...SEC } }) : json(r.body, r.status); }
+  if (p === "/connect/github-signin") return OID.connectPage(env, u.origin);
+  if (p === "/auth/github-signin/callback") return OID.appCallback(env, u);
   if (p === "/owner") return ownerPage();
   if (p.startsWith("/api/owner/")) {
     if (req.method === "POST" && req.headers.get("x-us-ui") !== "1") return json({ error: "missing x-us-ui header" }, 400);
     if (p === "/api/owner/code" && req.method === "POST") { const r = await requestCode(env); return json(r.body, r.status); }
     if (p === "/api/owner/verify" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const r = await verifyCode(env, req, b.code); return json(r.body, r.status, r.cookie ? { "Set-Cookie": r.cookie } : undefined); }
+    if (p === "/api/owner/identity-audit") { const sx = await getSession(env, req).catch(() => null); if (!sx) return json({ error: "sign in" }, 401); return json({ links: await OID.linkCount(env), events: await OID.auditTail(env) }); }
     if (p === "/api/owner/overview") return json({ ...staticPanels(), version: VERSION });
     let s; try { s = await getSession(env, req); } catch (e) { return json({ ...staticPanels(), version: VERSION, degraded: isLimitError(e && e.message) ? DB_LIMIT_NOTE() : "The database did not answer, so sign-in cannot be checked. The saved panels are shown." }, 200); }
     if (!s) return json({ error: "sign in" }, 401);
