@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# REGEN-1: regenerate every file a generator owns, so a PR is never red only because main moved a count, a ledger or the dashboard under it.
+# Used by checks.yml before the freshness checks, and by any agent before it opens a PR. Each generator's failure is reported, never swallowed.
+set -u
+rc=0
+for g in "python3 -m foundation publication --fix" "python3 -m foundation claims --fix --apply" "python3 scripts/build_dashboard.py" \
+         "python3 scripts/build_site_roadmap.py" "python3 -m foundation doctrine --apply" "python3 -m foundation glossary --apply" \
+         "python3 -m foundation standards --apply" "python3 -m foundation selfmodel --apply" "python3 -m foundation needsyou" "python3 -m foundation triggers --sync"; do
+  if ! out=$($g 2>&1); then echo "::warning::REGEN-1 generator failed: $g: ${out: -300}"; rc=1; fi
+done
+git status --short
+exit $rc

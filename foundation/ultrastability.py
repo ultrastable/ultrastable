@@ -264,7 +264,7 @@ def _unregistered(root, c, key, lost):
     iid = f"{c['item_prefix']}-{_slug(key)}-UNREGISTERED"
     p = Path(root) / "docs/issues" / (iid + ".json")
     if not p.exists():
-        p.write_text(json.dumps({"id": iid, "title": f"{iid}: the self-model cannot resolve the regulators of {key}", "body": f"**Owner:** executor\n**Trigger:** `{key}` names regulators the self-model does not know: {', '.join(lost)}\n**Done check:** probe:python3 -m foundation selfmodel --check\n**Status:** open\n\nRegister the regulator as a loop, clock or worker, or correct the variable's first_order list in doctrine/ultrastability.json.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation selfmodel --check` exits 0.\n", "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
+        p.write_text(json.dumps({"id": iid, "title": f"{iid}: the self-model cannot resolve the regulators of {key}", "body": f"**Owner:** executor\n**Trigger:** `{key}` names regulators the self-model does not know: {', '.join(lost)}\n**Done check:** cmd:python3 -m foundation selfmodel --check\n**Status:** open\n\nRegister the regulator as a loop, clock or worker, or correct the variable's first_order list in doctrine/ultrastability.json.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation selfmodel --check` exits 0.\n", "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
 
 
 def _provenance(root, row, v, key=None):

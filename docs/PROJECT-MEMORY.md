@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-17
 
+- 2026-11-17: REGEN-1: checks regenerate generated files (scripts/regen_generated.sh) and push them back to the PR; SPARK-QUEUE-1 executor spark gate outside its concurrency group; EFFECT-1 executor takes executable-effect items first and rejects changes no code reads
 - 2026-11-17: Tick passes service bindings to the measure step (#561)
 - 2026-11-17: watchdog: clock probe (RESILIENCE-1) [skip ci]
 - 2026-11-17: RESILIENCE-1: tick clock via public /health; watchdog wakes only on failures (#559)
