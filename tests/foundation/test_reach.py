@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-# Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
+# Copyright (c) Ultrastable
 # REACH-1: events become posts, reach is measured, weights move and revert.
 import json, shutil, datetime as dt
 import unittest

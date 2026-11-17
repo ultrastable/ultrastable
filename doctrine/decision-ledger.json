@@ -1570,6 +1570,33 @@
    "session": "session_0156nqDvPzm1VZsCCoweiBKT"
   },
   {
+   "id": "lesson-2026-11-17-executor-rows-carry-every-failed-attempt-and-model-call-outc",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Executor rows carry every failed attempt and model-call outcome (FREE-LLM-1)",
+   "body": "Two live runs fell to Workers AI with no trace of why the free rungs failed; the row now lists each attempt's reasons and the evidence branch carries ops/agent-cost.jsonl.",
+   "probe": "grep:scripts/executor_evidence.sh::agent-cost",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-spdx-autofix-1-publication-fix-adds-missing-headers-the-exec",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "SPDX-AUTOFIX-1: publication --fix adds missing headers; the executor runs it",
+   "body": "New files landed on main without SPDX headers four times today and turned checks red for every PR.",
+   "probe": "grep:foundation/publication.py::def fix_headers",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-free-tier-models-need-prompts-that-fit-their-request-cap-fre",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Free-tier models need prompts that fit their request cap (FREE-LLM-1)",
+   "body": "Live executor attempts on GitHub Models came back empty (JSONDecodeError at char 0) on prompts far over the free tier's ~8k-token request cap; adapters now carry max_prompt_chars and an empty body is reported with its HTTP status.",
+   "probe": "grep:foundation/agents.py::def fit",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
    "id": "decision-2026-11-17-connect-link-1-every-owner-action-is-one-connect-link",
    "kind": "decision",
    "date": "2026-11-17",
