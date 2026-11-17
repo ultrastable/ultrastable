@@ -2651,7 +2651,8 @@
    ],
    "workflows": [
     "deploy-workers.yml",
-    "deploy-ultrastable.yml"
+    "deploy-ultrastable.yml",
+        "deploy-gateway.yml"
    ],
    "server_owner": "github-actions"
   },
