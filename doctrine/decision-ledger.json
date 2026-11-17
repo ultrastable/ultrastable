@@ -1656,6 +1656,15 @@
    "title": "WORDS-MATCH-CODE-1",
    "body": "Published statements must be true by code. core/statements (ultrastable/workers) renders tenant pages from config with a probe per statement and fails on unbound prose; foundation claimcode binds platform surfaces and ratchets a shrink-only baseline that the executor drains.",
    "probe": "grep:foundation/claimcode.py::WORDS-MATCH-CODE-1"
+  },
+  {
+   "id": "decision-2026-11-17-owner-email-1-owner-address-derived-from-the-repo",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "OWNER-EMAIL-1: owner address derived from the repo",
+   "body": "The owner sign-in address is never set by hand: every deploy resolves it from the repository's admin committer (non-noreply commit address) and binds it as OWNER_EMAIL, since plain vars are replaced on deploy.",
+   "probe": "grep:seed/worker/src/handoff.js::resolveOwnerEmail",
+   "session": "session_0156nqDtKVpn3hxk4cBwg9BD"
   }
  ]
 }
