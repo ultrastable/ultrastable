@@ -5,6 +5,7 @@
 //   POST /auth/passkey/login/options|verify  assertion (discoverable credentials, no username)
 //   POST /auth/passkey/register/options|verify   needs an owner session (enrol first via the email code)
 //   GET  /auth/passkey/list, POST /auth/passkey/remove, POST /auth/signout
+import { say, userJson } from "../seed/worker/src/errors.js";  // USER-BACKEND-1
 const COOKIE = "us_owner", SESSION_MS = 30 * 864e5, STEPUP_MS = 15 * 60e3, CHALLENGE_MS = 5 * 60e3, MAX_PASSKEYS = 10;
 const enc = new TextEncoder();
 const hexOf = u8 => [...u8].map(x => x.toString(16).padStart(2, "0")).join("");
@@ -85,14 +86,14 @@ async function ensure(env) {
 }
 async function newChallenge(env, kind, now) {
   const n = (await env.DB.prepare("SELECT COUNT(*) c FROM passkey_challenges WHERE expires_at>?1").bind(now).first()).c;
-  if (n >= 50) throw Object.assign(new Error("too many sign-in attempts; wait a few minutes"), { status: 429 });
+  if (n >= 50) throw say("too many sign-in attempts; wait a few minutes", 429, "limit");
   await env.DB.prepare("DELETE FROM passkey_challenges WHERE expires_at<=?1").bind(now).run();
   const c = b64u(rnd(32)); await env.DB.prepare("INSERT INTO passkey_challenges(id,kind,expires_at) VALUES(?1,?2,?3)").bind(c, kind, now + CHALLENGE_MS).run(); return c;
 }
 async function takeChallenge(env, id, kind, now) { // single use
   const r = await env.DB.prepare("SELECT kind,expires_at FROM passkey_challenges WHERE id=?1").bind(id).first();
   await env.DB.prepare("DELETE FROM passkey_challenges WHERE id=?1").bind(id).run();
-  if (!r || r.kind !== kind || r.expires_at <= now) throw new Error("that sign-in expired; try again");
+  if (!r || r.kind !== kind || r.expires_at <= now) throw say("that sign-in expired; try again");
 }
 
 // ---- sessions (shared with the dashboard worker) ----
@@ -125,7 +126,7 @@ async function registerVerify(request, env, now) {
   if (!ad.up || !ad.uv || !ad.at) throw new Error("user verification is required");
   const jwk = coseToJwk(ad.cose); const id = b64u(ad.credId);
   if (b.id && b.id !== id) throw new Error("credential id mismatch");
-  if (await env.DB.prepare("SELECT id FROM passkeys WHERE id=?1").bind(id).first()) throw new Error("that passkey is already registered");
+  if (await env.DB.prepare("SELECT id FROM passkeys WHERE id=?1").bind(id).first()) throw say("that passkey is already registered");
   await env.DB.prepare("INSERT INTO passkeys(id,sealed,sign_count,label,created_at) VALUES(?1,?2,?3,?4,?5)").bind(id, await seal(env, { jwk, bs: ad.bs }), ad.signCount, String(b.label || "passkey").slice(0, 60), now).run();
   return json({ ok: true, id });
 }
@@ -137,7 +138,7 @@ async function loginVerify(request, env, now) {
   const rp = rpOf(request, env); const b = await request.json(); const cdj = unb64u(b.response.clientDataJSON);
   const cd = JSON.parse(new TextDecoder().decode(cdj)); await takeChallenge(env, cd.challenge, "login", now);
   checkClient(cdj, "webauthn.get", cd.challenge, rp);
-  const row = await env.DB.prepare("SELECT id,sealed,sign_count FROM passkeys WHERE id=?1").bind(String(b.id || "")).first(); if (!row) throw new Error("this passkey is not registered here");
+  const row = await env.DB.prepare("SELECT id,sealed,sign_count FROM passkeys WHERE id=?1").bind(String(b.id || "")).first(); if (!row) throw say("this passkey is not registered here");
   const authData = unb64u(b.response.authenticatorData), ad = parseAuthData(authData);
   if (!eq(ad.rpIdHash, await sha256(rp.id))) throw new Error("rp id mismatch");
   if (!ad.up || !ad.uv) throw new Error("user verification is required");
@@ -186,6 +187,6 @@ export async function passkeys(request, env) {
       const b = await request.json(); await env.DB.prepare("DELETE FROM passkeys WHERE id=?1").bind(String(b.id || "")).run(); return json({ ok: true });
     }
     return json({ error: "not found" }, 404);
-  } catch (e) { return json({ error: String(e && e.message || e).slice(0, 200) }, e && e.status ? e.status : 400); }
+  } catch (e) { return userJson(e, "passkeys", { fallback: { code: "not_verified", status: 400, message: "That sign-in could not be verified. Please try again." } }); }  // USER-BACKEND-1: backend detail goes to the log, the person gets plain words
 }
 export const _test = { b64u, unb64u, cbor, sha256 };

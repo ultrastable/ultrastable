@@ -1953,6 +1953,14 @@
    "title": "UIUX-1: the UI/UX manager is a closed loop (audit, paths, funnels, A/B, fix items)",
    "body": "foundation/uiux.py with scripts/uiux_audit.mjs audits every user page and walks every stakeholder path in a browser; funnels and experiment verdicts come from first-party hits; findings become agent-ready Q-UIUX items with a re-audit probe; UX-001-home-setup-label is the first live experiment (site/uiux.js); ui_findings and happy_paths are essential variables in doctrine/ultrastability.json.",
    "probe": "file:ops/uiux/status.json"
+  },
+  {
+   "id": "decision-2026-11-17-user-backend-1-the-user-does-the-idea-the-system-does-the-backend-one-fix-improves-every-system",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "USER-BACKEND-1: the user does the idea; the system does the backend; one fix improves every system",
+   "body": "Rowan 2026-11-17: a hard line between what the user does (idea, front end) and what the system does (errors, credentials, deploys, identity, retries); backend is auditable in the owner-only log and never burdens the user; a fix learned anywhere lives in shared code every tenant inherits. userbackend --check fails raw backend error text in a user-facing response and a Worker that does not consume the shared modules or forks one.",
+   "probe": "grep:foundation/userbackend.py::def check"
   }
  ]
 }
