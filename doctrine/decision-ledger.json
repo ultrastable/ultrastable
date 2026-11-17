@@ -1892,6 +1892,15 @@
    "body": "PR 527 added a data file nothing reads. The picker now takes failing checks, claim drift, unknowns, self-code findings and bugs first, and a change that touches no code and writes files no code names fails as a check the model must repair.",
    "probe": "grep:foundation/executor.py::def consumer_gap",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-ultrastability-1-a-stale-reading-must-be-unmeasured-not-a-br",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "ULTRASTABILITY-1: a stale reading must be unmeasured, not a breach",
+   "body": "The first tick read spend 127x budget from a single ops/cost.jsonl row dated 2026-11-13 taken on the old shared account (8.9M neurons). Real figures for the ultrastable account over 7 days: about 8,068 neurons (0.115 of the free-plan cap) and 6.95M D1 rows read on the busiest database (0.497 of cap), roughly zero dollars. Readings older than 3 days are now None; unmeasured variables never trigger a step and file one UNMEASURED item. Tenant variables now run per spinoff app.",
+   "probe": "grep:foundation/ultrastability.py::def fresh_cost",
+   "session": "session_0156nqDvqvENNWfEYLQjbFyC"
   }
  ]
 }
