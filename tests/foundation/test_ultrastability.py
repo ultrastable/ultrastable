@@ -95,3 +95,20 @@ class Write(T):
         (self.d / "ops/spinoff/ledger.jsonl").write_text(json.dumps({"slug": "demo", "url": "https://demo.example", "event": "launch"}) + "\n")
         self.assertEqual(u.write_tenants(self.d, fetch=lambda url: 1.0), ["demo"])
         self.assertEqual(json.loads((self.d / "ops/tenants/demo.json").read_text())["uptime"], 1.0)
+
+
+class Consult(T):
+    def test_unresolved_regulator_blocks_a_step_and_files_an_item(self):
+        for f in ("doctrine/topology.json", "doctrine/boundary.json"):
+            shutil.copy(REPO / f, self.d / f)
+        (self.d / "instances/ultrastable").mkdir(parents=True)
+        shutil.copy(REPO / "instances/ultrastable/loop-registry.json", self.d / "instances/ultrastable/loop-registry.json")
+        shutil.copy(REPO / "doctrine/clocks.json", self.d / "doctrine/clocks.json")
+        doc = json.loads((self.d / "doctrine/ultrastability.json").read_text())
+        doc["scopes"]["platform"]["variables"][0]["first_order"] = ["no-such-regulator"]
+        (self.d / "doctrine/ultrastability.json").write_text(json.dumps(doc))
+        (self.d / ".github/workflows").mkdir(parents=True)
+        for _ in range(3):
+            r = u.tick(self.d, True, read=BAD)
+        self.assertIn("spend", r["unregistered"]); self.assertEqual(r["steps"], [])
+        self.assertTrue((self.d / "docs/issues/Q-ULTRA-spend-UNREGISTERED.json").is_file())

@@ -11,3 +11,6 @@
 {"at": "2026-11-17T18:29:58Z", "clocks": 29, "kind": "beat", "seq": 10, "stalled": 2, "stalled_ids": ["tick-heartbeat", "criticality-loop"], "unmeasured": 0}
 {"at": "2026-11-17T18:30:49Z", "clocks": 29, "kind": "beat", "seq": 11, "stalled": 2, "stalled_ids": ["tick-heartbeat", "criticality-loop"], "unmeasured": 0}
 {"at": "2026-11-17T18:31:23Z", "clocks": 29, "kind": "beat", "seq": 12, "stalled": 2, "stalled_ids": ["tick-heartbeat", "criticality-loop"], "unmeasured": 0}
+{"at": "2026-11-17T18:32:34Z", "clocks": 29, "kind": "beat", "seq": 13, "stalled": 2, "stalled_ids": ["tick-heartbeat", "criticality-loop"], "unmeasured": 0}
+{"at": "2026-11-17T18:33:15Z", "clocks": 29, "kind": "beat", "seq": 14, "stalled": 2, "stalled_ids": ["tick-heartbeat", "criticality-loop"], "unmeasured": 0}
+{"at": "2026-11-17T18:33:52Z", "clocks": 29, "kind": "beat", "seq": 15, "stalled": 2, "stalled_ids": ["tick-heartbeat", "criticality-loop"], "unmeasured": 0}
