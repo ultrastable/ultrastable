@@ -112,7 +112,7 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "seed-tests: 35 Python and 249 Worker tests",
+   "claim": "seed-tests: 35 Python and 250 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -121,7 +121,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 249 Worker tests",
+   "claim": "seed-worker-tests: 250 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
