@@ -3,6 +3,7 @@
 // PROVENANCE-1 on the edge: where every input and change came from, what it touched, what it did (doctrine/provenance.json, foundation/provenance.py).
 // One D1 table, the same row shape as the repo ledger. Public views carry only rows marked public, with contact details, tokens and query strings removed.
 // Capture points: owner commands (worker.js runCommand), tenant visitor suggestions (POST /api/suggest), loops and tenants (POST /api/fleet/provenance, FLEET_TOKEN).
+import { say } from "../seed/worker/src/errors.js";  // USER-BACKEND-1: validation text is written for people
 export const CLASSES = ["system", "loop", "owner", "end_user", "agent", "external"];
 export const CHANNELS = ["commit", "pr", "issue", "command", "thread", "form", "api", "loop-run", "deploy", "migration", "scout"];
 export const KINDS = ["change", "input", "decision", "deploy", "suggestion", "incident", "settlement"];
@@ -28,12 +29,12 @@ async function sha(s) { const b = await crypto.subtle.digest("SHA-256", new Text
 /** Validate and append one row. Summaries are stored redacted (the raw text of a visitor never rests here); returns the row. */
 export async function add(env, o) {
   const cls = o.class, ch = o.channel, kind = o.kind;
-  if (!CLASSES.includes(cls)) throw new Error("origin class must be one of " + CLASSES.join(", "));
-  if (!CHANNELS.includes(ch)) throw new Error("channel must be one of " + CHANNELS.join(", "));
-  if (!KINDS.includes(kind)) throw new Error("kind must be one of " + KINDS.join(", "));
-  const effect = o.effect || "pending"; if (!EFFECTS.includes(effect)) throw new Error("effect must be one of " + EFFECTS.join(", "));
-  const actor = redact(o.actor).slice(0, 60); if (!actor) throw new Error("an actor is required");
-  const summary = redact(o.summary).slice(0, 500); if (!summary) throw new Error("a summary is required");
+  if (!CLASSES.includes(cls)) throw say("origin class must be one of " + CLASSES.join(", "));
+  if (!CHANNELS.includes(ch)) throw say("channel must be one of " + CHANNELS.join(", "));
+  if (!KINDS.includes(kind)) throw say("kind must be one of " + KINDS.join(", "));
+  const effect = o.effect || "pending"; if (!EFFECTS.includes(effect)) throw say("effect must be one of " + EFFECTS.join(", "));
+  const actor = redact(o.actor).slice(0, 60); if (!actor) throw say("an actor is required");
+  const summary = redact(o.summary).slice(0, 500); if (!summary) throw say("a summary is required");
   const at = o.at || Date.now(), tenant = String(o.tenant || "ultrastable").replace(/[^a-z0-9-]/g, "").slice(0, 40) || "ultrastable";
   const affected = JSON.stringify((o.affected || []).slice(0, 8).map(a => redact(a).slice(0, 80)));
   const id = "pv-" + (await sha([tenant, cls, actor, ch, kind, summary, o.ref || "", o.parent || "", at].join("|"))).slice(0, 12);

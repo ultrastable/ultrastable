@@ -6,6 +6,7 @@
 //   POST /t/<tenant>/vec/upsert { id, vector, ns, meta }   POST /t/<tenant>/vec/query { vector, k, ns }
 //   POST /t/<tenant>/rollup     { name, key, n, sum, val } GET /t/<tenant>/status
 import { DurableObject } from 'cloudflare:workers';
+import { userError } from '../../seed/worker/src/errors.js';
 import { makeTenantDO, tenantStub } from './tenant-do.js';
 export const TenantDO = makeTenantDO(DurableObject);
 
@@ -41,7 +42,7 @@ async function health(env) {
 export default {
   async scheduled(_e, env) { await health(env); },
   async fetch(req, env) {
-    try { return await route(req, env); } catch (e) { return json({ code: 'internal', message: String(e && e.message || e).slice(0, 300) }, 500); }
+    try { return await route(req, env); } catch (e) { const r = userError(e, 'tenants'); return json({ code: r.code, message: r.error }, r.status); }  // USER-BACKEND-1
   },
 };
 

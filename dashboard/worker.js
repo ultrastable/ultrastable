@@ -7,6 +7,8 @@
 import { handleAnalytics, record, selfcheck, report, summary, REPORT_CACHE_MINUTES } from "../seed/analytics/analytics.js";
 import { ask, ASK_PER_HOUR } from "./agent.js";
 import * as PV from "./provenance.js";
+import { userJson } from "../seed/worker/src/errors.js";  // USER-BACKEND-1: raw backend text stays in the owner-only audit, never in a response
+const auditBackend = env => r => PV.add(env, { class: "system", actor: "backend", channel: "loop-run", kind: "change", summary: (r.where + ": " + r.code + " " + r.detail).slice(0, 200), affected: [r.where], public: false });
 import * as OID from "./ownerid.js";  // PROVENANCE-1: origin, effect and history of every input and change
 import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: the console agent spends from the owner's budget
 import NEEDS from "../foundation/data/needs-you.json" with { type: "json" };
@@ -427,7 +429,7 @@ export async function route(req, env) {
     let b = {}; try { b = await req.json(); } catch (e) { }
     if (!ownerAddresses(env).includes(String(b.to || ""))) return json({ error: "recipient is not an owner address" }, 403);
     try { await sendOne(env, b.to, String(b.subject || "").slice(0, 200), String(b.text || "").slice(0, 4000)); return json({ ok: true }); }
-    catch (e) { return json({ error: String(e && e.message || e).slice(0, 200) }, 502); }
+    catch (e) { return userJson(e, "mail-relay", { audit: auditBackend(env) }); }
   }
   if (p === "/api/owner/github" && req.method === "GET") { const r = await OID.start(env, u.origin); return r.location ? new Response(null, { status: 302, headers: { location: r.location, ...SEC } }) : json(r.body, r.status); }
   if (p === "/api/owner/github/callback" && req.method === "GET") { const r = await OID.callback(env, u, mintSession); return r.location ? new Response(null, { status: 302, headers: { location: r.location, "Set-Cookie": r.cookie, ...SEC } }) : json(r.body, r.status); }
@@ -458,7 +460,7 @@ export async function route(req, env) {
       await env.DB.prepare("INSERT INTO snapshots(key,body,at) VALUES('repo',?1,?2) ON CONFLICT(key) DO UPDATE SET body=?1,at=?2").bind(raw, Date.now()).run();
       return json({ ok: true, panels: b.panels.length });
     }
-    if (p === "/api/fleet/provenance" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { return json({ error: "body must be JSON" }, 400); } try { return json({ ok: true, row: await PV.add(env, b) }); } catch (e) { return json({ error: String(e.message || e) }, 400); } }
+    if (p === "/api/fleet/provenance" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { return json({ error: "body must be JSON" }, 400); } try { return json({ ok: true, row: await PV.add(env, b) }); } catch (e) { return userJson(e, "provenance-ingest", { audit: auditBackend(env) }); } }
     if (p === "/api/fleet/queue") return json({ queue: (await env.DB.prepare("SELECT q.id,q.task_id,t.title,t.url,t.why FROM fleet_queue q JOIN tasks t ON t.id=q.task_id WHERE q.status='queued' ORDER BY q.id LIMIT 20").all()).results });
     if (p === "/api/fleet/ack" && req.method === "POST") { const b = await req.json(); await env.DB.prepare("UPDATE fleet_queue SET status=?2,result=?3,done_at=?4 WHERE id=?1").bind(+b.id, b.status === "done" ? "done" : "failed", String(b.result || "").slice(0, 500), Date.now()).run(); if (b.status === "done") await env.DB.prepare("UPDATE tasks SET state='done',updated_at=?2 WHERE id=(SELECT task_id FROM fleet_queue WHERE id=?1)").bind(+b.id, Date.now()).run(); return json({ ok: true }); }
   }

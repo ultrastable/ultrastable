@@ -427,7 +427,7 @@ async function audit(env, id, brief, html) {
     const a = await aiJson(env, ASKERS, "You are a strict reviewer. Compare the HTML page with the brief. Reply with only JSON {\"met\":[\"short plain sentences of what is done\"],\"gaps\":[{\"what\":\"plain sentence\",\"critical\":true|false}]}. Be honest; list a gap when something asked for is missing or likely broken.", brief + "\n\nPAGE:\n" + html.slice(0, 9000), 700);
     const rec = { met: ((a && a.met) || []).slice(0, 8).map(String), gaps: ((a && a.gaps) || []).slice(0, 6).map(g => ({ what: String(g.what || g), critical: !!g.critical })), limits: ALWAYS_LIMITS, at: new Date().toISOString() };
     await jput(env, "audit:" + id, rec); return rec;
-  } catch (e) { console.error("audit failed", id, String(e)); const rec = { met: [], gaps: [], limits: ALWAYS_LIMITS, note: "The automatic check could not run this time.", error: String(e).slice(0, 300), at: new Date().toISOString() }; await jput(env, "audit:" + id, rec); return rec; }
+  } catch (e) { console.error("audit failed", id, String(e)); const rec = { met: [], gaps: [], limits: ALWAYS_LIMITS, note: "The automatic check could not run this time. It will run again by itself.", at: new Date().toISOString() }; await jput(env, "audit:" + id, rec); return rec; }
 }
 async function build(env, id, brief, prev, change) {
   try {

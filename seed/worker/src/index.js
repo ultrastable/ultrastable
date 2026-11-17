@@ -15,6 +15,7 @@ import { runSocial } from './social.js';  // REACH-1
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
+import { backendRecord } from './errors.js';  // USER-BACKEND-1
 import { governedAI, budgetView, SHARES, halted } from './budget.js';
 import { pruneAll } from './retention.js';  // RETENTION-1  // SPEND-GOVERNOR-1: every model call goes through the owner's monthly budget
 import { handleAuth } from './auth/routes.js';
@@ -42,7 +43,8 @@ import { consoleTelemetry } from './agentic/adapters/console-telemetry.js';
 export const d1Unavailable = (e) => {
   const msg = String(e && e.message || e);
   const limit = /daily row read limit|exceeded D1|7500/i.test(msg);
-  return Response.json(limit ? { error: 'the daily database read allowance is used up; live data returns at 00:00 UTC', code: 'd1_read_limit' } : { error: 'database unavailable', code: 'd1_unavailable', detail: msg.slice(0, 160) }, { status: 503, headers: { 'cache-control': 'no-store', 'retry-after': '600' } });
+  backendRecord(e, 'd1-unavailable');  // USER-BACKEND-1: the detail goes to the log, not to the caller
+  return Response.json(limit ? { error: 'the daily database read allowance is used up; live data returns at 00:00 UTC', code: 'd1_read_limit' } : { error: 'database unavailable', code: 'd1_unavailable' }, { status: 503, headers: { 'cache-control': 'no-store', 'retry-after': '600' } });
 };
 const aiFor = (env) => halted(config, env) ? Promise.resolve({ ai: null, state: { mode: 'halted', why: 'HALT-1' } }) : governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
