@@ -28,8 +28,10 @@ jobs:
         run: node deploy/cost-probe.mjs
       - name: Criticality tick (CRITICALITY-1)
         run: python3 -m foundation criticality --tick --apply
+      - name: Ultrastability tick (ULTRASTABILITY-1)
+        run: python3 -m foundation ultrastability --tick --apply
       - name: Record
         run: |
           git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
-          git add ops/cost.jsonl ops/criticality.jsonl docs/issues
+          git add ops/cost.jsonl ops/criticality.jsonl ops/ultrastability.jsonl doctrine/clocks.json ops/provenance.jsonl docs/issues
           git diff --cached --quiet || { git commit -m "cost-guard: daily reading"; git push; }
