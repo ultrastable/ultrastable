@@ -1691,6 +1691,15 @@
    "probe": "file:doctrine/point-and-click.json"
   },
   {
+   "id": "lesson-2026-11-17-executor-a-red-main-blocked-every-agent-change-and-a-failed-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Executor: a red main blocked every agent change, and a failed attempt deleted the self-code item and ledger",
+   "body": "BASELINE-1: failures that also fail on the committed tree no longer count against a change; git clean keeps Q-SELF/Q-INTAKE items and ops/selfcode.",
+   "probe": "grep:foundation/executor.py::def preexisting_failures",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
    "id": "lesson-2026-11-17-the-daily-spinoff-pr-must-pass-writeback-on-its-own",
    "kind": "lesson",
    "date": "2026-11-17",

@@ -55,6 +55,23 @@ class Executor(unittest.TestCase):
         self.assertEqual(needsyou.check(), [])
 
 
+class Baseline(unittest.TestCase):
+    OUT = "FAIL: test_a (test_m.C.test_a)\n---\nERROR: test_b (test_m.C.test_b)\nFAIL: test_a (test_m.C.test_a)\n"
+
+    def test_failing_tests_are_parsed_once_each(self):
+        self.assertEqual(executor.failing_tests(self.OUT), [("test_a", "test_m.C.test_a"), ("test_b", "test_m.C.test_b")])
+        self.assertEqual(executor.failing_tests("OK"), [])
+
+    def test_only_failures_that_predate_the_change_are_baseline(self):
+        import subprocess
+        d = Path(tempfile.mkdtemp(prefix="bl-")); (d / "tests/foundation").mkdir(parents=True)
+        (d / "tests/foundation/test_m.py").write_text("import unittest\nclass C(unittest.TestCase):\n    def test_old(self): self.fail('red on main')\n    def test_new(self): pass\n")
+        g = lambda *a: subprocess.run(["git", *a], cwd=d, check=True, capture_output=True)
+        g("init", "-q"); g("add", "-A"); g("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x")
+        got = executor.preexisting_failures([("test_old", "test_m.C.test_old"), ("test_new", "test_m.C.test_new")], d)
+        self.assertEqual(got, {"test_m.C.test_old"})  # test_new passes on the committed tree, so a failure of it would be the change's own
+
+
 if __name__ == "__main__":
     unittest.main()
 
@@ -89,6 +106,23 @@ class QueueMode(unittest.TestCase):
             queue.close(d, "Q-1", "closed by the pull request that carries this change")
             self.assertEqual(queue.takeable(d), [])
             self.assertNotIn("Q-1: closed without evidence", "".join(queue.check(d)))
+
+
+class Baseline(unittest.TestCase):
+    OUT = "FAIL: test_a (test_m.C.test_a)\n---\nERROR: test_b (test_m.C.test_b)\nFAIL: test_a (test_m.C.test_a)\n"
+
+    def test_failing_tests_are_parsed_once_each(self):
+        self.assertEqual(executor.failing_tests(self.OUT), [("test_a", "test_m.C.test_a"), ("test_b", "test_m.C.test_b")])
+        self.assertEqual(executor.failing_tests("OK"), [])
+
+    def test_only_failures_that_predate_the_change_are_baseline(self):
+        import subprocess
+        d = Path(tempfile.mkdtemp(prefix="bl-")); (d / "tests/foundation").mkdir(parents=True)
+        (d / "tests/foundation/test_m.py").write_text("import unittest\nclass C(unittest.TestCase):\n    def test_old(self): self.fail('red on main')\n    def test_new(self): pass\n")
+        g = lambda *a: subprocess.run(["git", *a], cwd=d, check=True, capture_output=True)
+        g("init", "-q"); g("add", "-A"); g("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x")
+        got = executor.preexisting_failures([("test_old", "test_m.C.test_old"), ("test_new", "test_m.C.test_new")], d)
+        self.assertEqual(got, {"test_m.C.test_old"})  # test_new passes on the committed tree, so a failure of it would be the change's own
 
 
 if __name__ == "__main__":
