@@ -13,6 +13,7 @@ import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
 import VERIFIED from "./claims-data.js";
 import ULTRA from "./ultrastability-data.js";
+import { experimentFor, slotText, exposureName } from "./uiux.js"; // UIUX-1: A/B experiments on path steps
 import SELF from "./self-data.js";
 import { passkeys } from "./passkeys.js";
 import { mydata } from "./mydata.js";
@@ -90,11 +91,11 @@ function statusLine(d) {
   return d.passing + " of " + d.total + " claims pass their live check right now (checked " + esc(String(d.checked_at || "").slice(0, 16).replace("T", " ")) + " UTC).";
 }
 
-function home(d) {
+function home(d, ux) {
   return shell({ path: "/", title: "Ultrastable: the foundation for any autonomous system", description: "Ultrastable is the foundation for any autonomous system. Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live and keeps score of how often it was right." },
     "<section class=\"us-hero\"><h1>Start with a bare idea. We keep improving it.</h1><p class=\"us-lede\">Vibe coding stops at a thin first draft and a coding agent waits to be told what to do. Behind the scenes, Ultrastable's portfolio, program and product managers measure what you run, decide what to improve next and keep shipping it, on a back end you budget for. Ultrastable is the foundation for any autonomous system.</p>"
     + IV.askBar("Tell me what is on your mind…")
-    + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">Set up my own</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
+    + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">" + esc(slotText("home.setup_label", "primary_label", "Set up my own", ux)) + "</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine(d) + "</div></section>"
     + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
     + "<h2>Who are you?</h2><div class=\"us-grid c3\">" + SH.audiences.map(audienceCard).join("") + "</div>"
@@ -763,7 +764,7 @@ function setup() {
     + "if(k=='site'&&p)fetch('https://'+p+'.pages.dev/',{mode:'no-cors'}).then(function(){st.i++;st.p=null;save();draw()}).catch(function(){})}"
     + "draw();detect()})();";
   return shell({ path: "/setup", title: "Set up - Ultrastable", description: "Set up your own Ultrastable project one simple question at a time." },
-    "<div class=\"head\"><h1>Let's get you set up</h1><p>One question at a time. Everything is a click. Nothing to install or type.</p></div><div class=\"card\"><h3 class=\"card-title\">Easiest: let an assistant do it</h3><p class=\"meta\">Press Copy, then paste into any AI assistant (Claude, ChatGPT, Gemini, Copilot). No account needed to start.</p><textarea id=\"us-ap\" readonly rows=\"4\" style=\"width:100%;font-size:1rem;padding:.6rem\"></textarea><p><button type=\"button\" class=\"btn btn-primary\" id=\"us-cp\">Copy</button> <span id=\"us-cpm\" class=\"meta\"></span></p></div><div id=\"us-wiz\" class=\"card\"><noscript>This page needs JavaScript to guide you.</noscript></div><script>var P=" + JSON.stringify(AGENT_PROMPT) + ";var t=document.getElementById('us-ap');t.value=P;document.getElementById('us-cp').onclick=function(){t.select();try{navigator.clipboard.writeText(P)}catch(e){document.execCommand('copy')}document.getElementById('us-cpm').textContent='Copied. Paste it into your assistant.'};" + js + "</script>");
+    "<div class=\"head\"><h1>Let's get you set up</h1><p>One question at a time. Everything is a click. Nothing to install or type.</p></div><div class=\"card\"><h3 class=\"card-title\">Easiest: let an assistant do it</h3><p class=\"meta\">Press Copy, then paste into any AI assistant (Claude, ChatGPT, Gemini, Copilot). No account needed to start.</p><textarea id=\"us-ap\" aria-label=\"The message to paste into your assistant\" readonly rows=\"4\" style=\"width:100%;font-size:1rem;padding:.6rem\"></textarea><p><button type=\"button\" class=\"btn btn-primary\" id=\"us-cp\">Copy</button> <span id=\"us-cpm\" class=\"meta\"></span></p></div><div id=\"us-wiz\" class=\"card\"><noscript>This page needs JavaScript to guide you.</noscript></div><script>var P=" + JSON.stringify(AGENT_PROMPT) + ";var t=document.getElementById('us-ap');t.value=P;document.getElementById('us-cp').onclick=function(){t.select();try{navigator.clipboard.writeText(P)}catch(e){document.execCommand('copy')}document.getElementById('us-cpm').textContent='Copied. Paste it into your assistant.'};" + js + "</script>");
 }
 function engineers() {
   const tag = { live: "us-pass", testing: "meta", pinned: "us-fail" }, lab = { live: "Live", testing: "Testing", pinned: "Pinned" };
@@ -872,10 +873,13 @@ const handler = {
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
     const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/showcase", "/for", "/proof", "/claims", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
-    if (env && env.DB && request.method === "GET" && PAGES.includes(pth)) { const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
+    if (env && env.DB && request.method === "GET" && (PAGES.includes(pth) || /^\/(for|showcase)\/[a-z0-9-]+$/.test(pth))) { /* UIUX-1: audience and case pages are path steps, so they are counted too */ const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     { const m = /^\/(for|showcase)\/([a-z0-9-]+)\/?$/.exec(u.pathname); if (m) { const h = m[1] === "for" ? forAudience(m[2]) : showcaseCase(m[2]); if (h) return new Response(h, { headers: HTML }); } }
     switch (u.pathname.replace(/\/$/, "") || "/") {
-      case "/": return new Response(home(await claims()), { headers: HTML });
+      case "/": { // UIUX-1: the running experiment on this step picks the wording; exposure is one first-party event, bots and Do Not Track are served the control and not counted
+        const ux = await experimentFor(request, env, "/");
+        if (ux && ux.record && env && env.DB) { const w = record(env, request, { host: CANON, path: "/", ref: request.headers.get("referer"), name: exposureName(ux) }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
+        return new Response(home(await claims(), ux), { headers: ux ? { ...HTML, "Cache-Control": "private, no-cache", "X-Experiment": ux.id + ":" + ux.arm } : HTML }); }
       case "/how": return new Response(how(), { headers: HTML });
       case "/showcase": return new Response(showcase(), { headers: HTML });
       case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/proof"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });

@@ -163,6 +163,54 @@
        "what": "restructure: add an independent trigger to the clock that keeps stopping"
       }
      ]
+    },
+    {
+     "id": "ui_findings",
+     "name": "Front-end findings that block a user",
+     "reading": "uiux.findings",
+     "min": 0,
+     "max": 0,
+     "unit": "findings",
+     "first_order": [
+      "uiux-audit",
+      "self-coding-agent"
+     ],
+     "why": "A page that fails accessibility, leaks backend detail, breaks its structure or its brand is a front end drifting into a mishmash; the UI/UX loop (UIUX-1) must keep this at zero, and a variable that cannot be read from a fresh audit is unmeasured and so not in bounds.",
+     "ladder": [
+      {
+       "kind": "item",
+       "labels": [
+        "p1",
+        "agent-ready"
+       ],
+       "workstream": "Design",
+       "what": "restructure: move the failing rule into the shared component or design token so each page inherits the fix"
+      }
+     ]
+    },
+    {
+     "id": "happy_paths",
+     "name": "User paths that still walk end to end",
+     "reading": "uiux.happy_paths",
+     "min": 1.0,
+     "max": 1.0,
+     "unit": "of paths",
+     "first_order": [
+      "uiux-audit",
+      "uiux-funnels"
+     ],
+     "why": "A path in doctrine/stakeholders.json that no longer clicks through is a user who cannot get from entry to the next step; every audience path must walk, and the UI/UX loop runs each as a browser flow.",
+     "ladder": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready"
+       ],
+       "workstream": "Design",
+       "what": "restructure: repair the broken step or change the path in doctrine/stakeholders.json so it matches the page"
+      }
+     ]
     }
    ]
   },
