@@ -164,6 +164,13 @@ def sh(argv, root=REPO, timeout=600):
         return 127, f"{type(e).__name__}: {e}"
 
 
+def ladder_call(prompt: str, attempt: int, root=REPO):
+    """LADDER-RESILIENCE-1: the model call for one attempt; a rung's transport failure surfaces as a RuntimeError that run() counts as a failed attempt (FREE-LLM-3),
+    so the next attempt escalates to the next rung."""
+    from . import agent_ladder
+    return agent_ladder.call(prompt, attempt, root=root)
+
+
 FAIL_ID = re.compile(r"^(?:FAIL|ERROR): (\S+) \(([\w.]+)\)", re.M)
 KEEP_ON_CLEAN = ["-e", "docs/issues/Q-SELF-*", "-e", "docs/issues/Q-INTAKE-*", "-e", "ops/selfcode"]  # SELFCODE-1: a retry must not delete the item it is working or the ledger
 
@@ -263,6 +270,12 @@ def port_call(issue: dict, root):
         raise RuntimeError(f"PORT verify failed (exit {code}): {cmd}: {out[-400:]}")
     ev = {"schema": "ultrastable-port-evidence/1", "at": now(), "item": issue["number"], "command": cmd, "exit": code, "output": out[-4000:]}
     return lambda _prompt: {"summary": f"{issue['number']}: adapter verify passed", "files": [{"path": f"ops/port-evidence/{runtime}-verify.json", "content": json.dumps(ev, indent=2) + chr(10)}]}
+
+
+def ladder_call(prompt: str, attempt: int, root):
+    """One rung of the author ladder (#513, FREE-LLM-3). A transport failure is a RuntimeError, which run() counts as a failed attempt, so the next attempt uses the next rung."""
+    from . import agent_ladder
+    return agent_ladder.call(prompt, attempt, root=root)
 
 
 def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None, remote: bool = False) -> dict:

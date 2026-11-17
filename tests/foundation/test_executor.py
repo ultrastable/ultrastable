@@ -131,6 +131,15 @@ if __name__ == "__main__":
     unittest.main()
 
 
+class Ladder(unittest.TestCase):
+    def test_ladder_call_is_defined_and_passes_the_attempt_to_the_rung(self):
+        import unittest.mock as m
+        from foundation import agent_ladder
+        with m.patch.object(agent_ladder, "call", return_value=({"files": []}, {"model": "x"})) as c:
+            self.assertEqual(executor.ladder_call("p", 2, ROOT)[1]["model"], "x")
+        self.assertEqual(c.call_args.args[:2], ("p", 2))
+
+
 class RepairLoop(unittest.TestCase):
     def test_repairs_and_server_side_constraint_are_in_the_code(self):
         from foundation import executor
