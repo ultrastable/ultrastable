@@ -1604,6 +1604,15 @@
    "body": "Rowan 2026-11-17: any must-do owner action is a single link to a web UI that runs OAuth/OIDC and callbacks server-side. Built /connect index, /connect/bluesky (atproto OAuth), /connect/mastodon, a server-side publisher in the tick Worker, and a pointclick check that fails a needs-you item without a connect link.",
    "probe": "grep:foundation/pointclick.py::CONNECT-LINK-1",
    "session": "session_0156nqDtKVpn3hxk4cBwg9BD"
+  },
+  {
+   "id": "lesson-2026-11-17-a-200-reply-that-is-not-json-is-reported-with-its-body-free-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "A 200 reply that is not JSON is reported with its body (FREE-LLM-2)",
+   "body": "Executor attempts on GitHub Models failed as a bare JSONDecodeError at char 0; agents.http now raises with the status, content type and first 200 characters, so the cost ledger names the provider's real answer.",
+   "probe": "grep:foundation/agents.py::non-JSON response",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
