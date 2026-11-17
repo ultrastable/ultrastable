@@ -205,3 +205,8 @@ test('OWNER-EMAIL-1: the owner address is read from the admin committer, never a
   assert.equal(await resolveOwnerEmail(f, 't', 'o/r'), 'own@example.com');
   assert.equal(await resolveOwnerEmail(async () => ({ ok: false }), 't', 'o/r'), '');
 });
+
+test('topologyBindings keeps a Durable Object namespace so a handoff upload never drops it', () => {
+  const topo = { workers: [{ id: 'ultrastable-tenants', state: 'live', bindings: { durable_objects: { TENANT: 'TenantDO' }, vars: { A: '1' } } }], stores: {} };
+  assert.deepEqual(topologyBindings(topo, 'ultrastable-tenants').bindings, [{ type: 'durable_object_namespace', name: 'TENANT', class_name: 'TenantDO' }, { type: 'plain_text', name: 'A', text: '1' }]);
+});

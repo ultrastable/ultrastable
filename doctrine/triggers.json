@@ -274,6 +274,14 @@
     "17 6 * * 1"
    ]
   },
+  "issueloop.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "17 7 * * *"
+   ]
+  },
   "issues.yml": {
    "events": [
     "issues",
