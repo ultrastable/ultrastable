@@ -1,28 +1,59 @@
 {
  "targets": {},
- "met_runs": {},
+ "met_runs": {
+  "external_referrals_7d": 0,
+  "social_referrals_7d": 0,
+  "search_referrals_7d": 0,
+  "feed_hits_7d": 0,
+  "ps_page_views_7d": 0,
+  "posts_published_7d": 0
+ },
  "last": {
   "feed_entries": 40,
-  "at": "2026-11-17T15:42:16.027506+00:00",
+  "at": "2026-11-17T15:44:07.777790+00:00",
   "added": [
    {
-    "id": "ev:pv-5cef1ac32309",
-    "arm": "shipped"
+    "id": "ev:ev-ps-1",
+    "arm": "ps"
    },
    {
-    "id": "ev:pv-350da2c5447e",
-    "arm": "shipped"
+    "id": "ev:ev-sys-1",
+    "arm": "systems"
    },
    {
-    "id": "ev:pv-74f3090e23be",
-    "arm": "shipped"
+    "id": "ev:ev-proof-1",
+    "arm": "proof"
    },
    {
-    "id": "ev:pv-100f600942c1",
+    "id": "ev:pv-61fed64d577f",
     "arm": "shipped"
    }
   ],
-  "metrics": "unmeasured",
+  "metrics": {
+   "external_referrals_7d": 25,
+   "social_referrals_7d": 0,
+   "search_referrals_7d": 10,
+   "feed_hits_7d": 0,
+   "ps_page_views_7d": 0,
+   "posts_published_7d": 0,
+   "suggestions_7d": null
+  },
+  "breaches": [
+   "external_referrals_7d",
+   "social_referrals_7d",
+   "search_referrals_7d",
+   "feed_hits_7d",
+   "ps_page_views_7d",
+   "posts_published_7d"
+  ],
+  "filed": [
+   "Q-REACH-external_referrals_7d",
+   "Q-REACH-social_referrals_7d",
+   "Q-REACH-search_referrals_7d",
+   "Q-REACH-feed_hits_7d",
+   "Q-REACH-ps_page_views_7d",
+   "Q-REACH-posts_published_7d"
+  ],
   "channels": {
    "bluesky": "awaiting-account",
    "mastodon": "awaiting-account"
