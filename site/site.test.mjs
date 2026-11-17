@@ -150,10 +150,10 @@ const pilot = await (await get("https://ultrastable.io/pilot")).text();
 assert.match(pilot, /og:image" content="https:\/\/ultrastable\.io\/social-card\.png/);
 assert.match(pilot, /twitter:card" content="summary_large_image/);
 
-// Generic public pages: no research framing, no prior-disclosure or patent-mechanism wording (docs/CONFIDENTIALITY.md).
+// Generic public pages: no research framing, no patent wording. QNFO may be named since Rowan's 2026-11-17 SHOWCASE-1 directive (it is a test case); /showcase carries it.
 for (const p of ["/", "/product", "/team", "/org", "/faq", "/contact"]) {
   const h = await (await get("https://ultrastable.io" + p)).text();
-  assert.doesNotMatch(h, /QNFO|patent|provisional|disclos|research/i, p + " stays generic");
+  assert.doesNotMatch(h, /patent|provisional|disclos|research/i, p + " stays generic");
 }
 console.log("ultrastable-site pages ok");
 
@@ -322,4 +322,24 @@ console.log("PROMOTE-1 indexnow ok");
   const wm = await get("https://ultrastable.io/webmcp.js");
   assert.match(wm.headers.get("content-type"), /javascript/);
   const js = await wm.text(); assert.match(js, /navigator\.modelContext/); assert.match(js, /ultrastable_status/); assert.ok(!/method:\s*'POST'/.test(js), "webmcp tools are read-only");
+}
+
+{ // STAKEHOLDERS-1: every audience path resolves, stories are well formed, one primary action per page
+  const SHD = JSON.parse(readFileSync(new URL("../doctrine/stakeholders.json", import.meta.url), "utf8"));
+  assert.ok(SHD.audiences.length >= 5 && SHD.showcases.length >= 2);
+  const ok = async (href) => { const r = await get("https://ultrastable.io" + href.split("#")[0]); assert.equal(r.status, 200, href); return r.text(); };
+  for (const a of SHD.audiences) {
+    assert.ok(a.stories.length >= 3, a.id + " has stories");
+    for (const t of a.stories) assert.ok(t.as && t.want && t.so, a.id + " story is as/want/so");
+    assert.ok(a.path.length >= 3, a.id + " has a path");
+    for (const st of [...a.path, a.cta]) await ok(st.href);
+    const h = await ok("/for/" + a.id);
+    assert.match(h, /As [^<]*, I want [^<]*, so [^<]*\./);
+    assert.equal(((h.replace(/<style>[\s\S]*?<\/style>/, "")).match(/class="btn btn-primary"/g) || []).length, 1, a.id + " one primary action");
+  }
+  for (const c of SHD.showcases) { const h = await ok("/showcase/" + c.id); assert.match(h, /<h1>/); for (const l of c.links) await ok(l.href); }
+  assert.equal((await get("https://ultrastable.io/for/nope")).status, 404);
+  assert.equal((await get("https://ultrastable.io/showcase/nope")).status, 404);
+  const home = await ok("/"); for (const a of SHD.audiences) assert.ok(home.includes("/for/" + a.id), "home links " + a.id);
+  console.log("STAKEHOLDERS-1 ok");
 }
