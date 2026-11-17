@@ -1,0 +1,61 @@
+{
+ "_doc": "STAKEHOLDERS-1 (Rowan, 2026-11-17): who the site is for, what each of them needs, and the path each takes. Source of truth for /for, /for/<id>, /showcase and /showcase/<id> and for the home entry points; site/stakeholders.js is generated from this file by scripts/gen_stakeholders.py and site/site.test.mjs fails if a path step does not resolve, a story is malformed or an audience has no single primary action. To add a domain or a showcase, add a row here; no page code changes. Figures that are estimates say so. No secrets, no unverified claims.",
+ "audiences": [
+  {"id": "founders", "name": "Founders and idea people", "nav": "Start an idea", "promise": "Start with a rough idea. The system works out what to build next and keeps shipping it.",
+   "needs": "Direction without code, a clear budget and proof that it is working.",
+   "stories": [
+    {"as": "an ideas person", "want": "to say my idea out loud or in a sentence", "so": "I do not have to know what to ask for"},
+    {"as": "a founder", "want": "to know if my idea is a fit before anything is built", "so": "I do not pay for machinery I do not need"},
+    {"as": "an owner", "want": "to see what changed, why and whether it worked", "so": "I can trust the system without reading code"}],
+   "path": [{"label": "See what it is for", "href": "/product"}, {"label": "Check a real case", "href": "/showcase"}, {"label": "Tell it your idea", "href": "/start"}],
+   "cta": {"label": "Tell it your idea", "href": "/start"}},
+  {"id": "communities", "name": "Nonprofits and communities", "nav": "For communities", "promise": "Practical help for small teams and good causes, run by a system that keeps improving it.",
+   "needs": "Plain words, low cost, nothing to install and a way to see that it does good.",
+   "stories": [
+    {"as": "a community organizer", "want": "routine work handled and kept up to date", "so": "our few people can focus on the cause"},
+    {"as": "a volunteer", "want": "to see how the practical-help project is doing", "so": "I can decide whether to help or to use it"},
+    {"as": "a small charity", "want": "to know the cost and the limits up front", "so": "we are never surprised"}],
+   "path": [{"label": "Meet Practical Solutions", "href": "/showcase/practical-solutions"}, {"label": "Read the honest limits", "href": "/how"}, {"label": "Get in touch", "href": "/contact"}],
+   "cta": {"label": "Talk to us about your community", "href": "/contact"}},
+  {"id": "developers", "name": "Developers and engineering teams", "nav": "For developers", "promise": "A control loop around the coding agents you already use: it picks the work, proves each change live and reverts regressions.",
+   "needs": "Source, an API, agent hooks and an audit trail.",
+   "stories": [
+    {"as": "an engineer", "want": "to connect my coding agent in one click", "so": "it takes work from the shared queue"},
+    {"as": "a team lead", "want": "an audit trail of every agent change and its prediction", "so": "I can review decisions, not diffs"},
+    {"as": "an SRE", "want": "failed deploys to revert and file their own issue", "so": "nobody pages me for a known failure"}],
+   "path": [{"label": "How the loop works", "href": "/how"}, {"label": "Live proof", "href": "/proof"}, {"label": "Engineers lane", "href": "/engineers"}],
+   "cta": {"label": "Open the engineers lane", "href": "/engineers"}},
+  {"id": "funders", "name": "Funders and investors", "nav": "For funders", "promise": "One operating system with two live test cases and its own cost and failure record.",
+   "needs": "Evidence, status without hype, risks and the licence terms.",
+   "stories": [
+    {"as": "a funder", "want": "to see measured results, not claims", "so": "I can judge the work on evidence"},
+    {"as": "an investor", "want": "the licence and commercial terms plainly stated", "so": "I know what can and cannot be done with it"},
+    {"as": "a programme officer", "want": "the honest gaps listed", "so": "I know what stage this is at"}],
+   "path": [{"label": "Test cases and results", "href": "/showcase"}, {"label": "Live proof", "href": "/proof"}, {"label": "Honest gaps", "href": "/how#gaps"}],
+   "cta": {"label": "Read the test cases", "href": "/showcase"}},
+  {"id": "partners", "name": "Partners and press", "nav": "For partners", "promise": "A system that develops itself and its products with one loop. The story, the evidence and a person to ask.",
+   "needs": "A short story, citable facts and a contact.",
+   "stories": [
+    {"as": "a journalist", "want": "a plain explanation with checkable facts", "so": "I can write it accurately"},
+    {"as": "a potential partner", "want": "to see where the work fits mine", "so": "I can propose a pilot"},
+    {"as": "a researcher", "want": "the decision records and failure history", "so": "I can study how autonomous systems behave"}],
+   "path": [{"label": "The one-loop story", "href": "/showcase"}, {"label": "Who runs it", "href": "/team"}, {"label": "Join the pilot", "href": "/pilot"}],
+   "cta": {"label": "Join the pilot", "href": "/pilot"}}
+ ],
+ "showcases": [
+  {"id": "qnfo", "name": "QNFO", "tag": "Testbed, being sunset", "status": "sunsetting",
+   "summary": "A large service fleet that Ultrastable ran as customer zero. It exposed real failures, real cost and real limits, then handed the fixes to the platform.",
+   "problem": "The audit database read billions of rows a week, mostly from triggers and scans that ran on every tick, and every deploy touched more workers than the change needed.",
+   "loop": "The cost loop measured reads per query, traced them to their source, filed the work with a closing probe, and the executor shipped it. Deploys now name the workers they touch and are capped.",
+   "results": ["Audit database daily rows read: 1.37 billion on 11-12, 0.32 billion on 11-16, about 63 million a day over the latest six hours. Part of the drop is a deploy freeze, so \"about 95%\" is an estimate until the next unfrozen reading.", "Worst single query: 2.5 million rows down to under 6,000.", "Issue-accounting view: 40,151 rows down to 7,738."],
+   "learned": "Cost is a loop to close like any failure. The fixes now live in the platform, not in QNFO.",
+   "links": [{"label": "Live proof", "href": "/proof"}]},
+  {"id": "practical-solutions", "name": "Practical Solutions", "tag": "Do-good use case, live", "status": "live",
+   "summary": "A practical-help project bootstrapped from an idea on Ultrastable, with its own database and web Worker on the platform's account.",
+   "problem": "A good idea with no team: it needs building, running and improving without its owner handling code or infrastructure.",
+   "loop": "The same loop that runs the platform runs this system: it states a charter, measures itself, files its own work and proves each change live.",
+   "results": ["Live web Worker and database on the Ultrastable account (see the operations dashboard).", "Bootstrapped from an idea file; no code written by the owner."],
+   "learned": "A second system on the platform shows the loop is general, not specific to one product.",
+   "links": [{"label": "Operations dashboard", "href": "/ops"}, {"label": "Get in touch", "href": "/contact"}]}
+ ]
+}
