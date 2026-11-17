@@ -1,10 +1,10 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-17T13:47:45Z",
- "commit": "3fc2567",
+ "generated": "2026-11-17T14:11:53Z",
+ "commit": "19180fa",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
-  "managers_and_loops": 85,
+  "managers_and_loops": 86,
   "loops_with_evidence": 2,
   "components": {
    "live": 24
@@ -18,15 +18,15 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 169,
-  "backlog_items": 231
+  "backlog_open": 171,
+  "backlog_items": 233
  },
  "throughput": {
   "queue": {
-   "items": 231,
+   "items": 233,
    "by_status": {
     "closed": 59,
-    "open": 169,
+    "open": 171,
     "done": 3
    },
    "takeable_now": 1
@@ -62,21 +62,20 @@
   "deploys": {
    "site_runs": 50,
    "by_conclusion": {
-    "failure": 18,
-    "success": 31,
+    "success": 36,
+    "failure": 13,
     "cancelled": 1
    },
    "latest": {
-    "conclusion": "failure",
-    "createdAt": "2026-11-17T13:43:22Z",
+    "conclusion": "success",
+    "createdAt": "2026-11-17T14:01:51Z",
     "event": "push",
-    "headSha": "5bf291c46a6ce789195d712b39d7372fc60114b7"
+    "headSha": "57831886d32196ccd17b7c5492b188c36d990d6c"
    },
    "per_day_success": {
-    "2026-11-14": 0,
     "2026-11-15": 19,
     "2026-11-16": 9,
-    "2026-11-17": 3
+    "2026-11-17": 8
    }
   },
   "executor": {
@@ -120,7 +119,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 60.9,
+   "age_s": 58.6,
    "status": "fresh",
    "missed": 0
   },
@@ -144,15 +143,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 165.9,
+   "age_s": 547.6,
    "status": "fresh",
-   "missed": 0
+   "missed": 0,
+   "lag_s": 17.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 86434.9,
+   "age_s": 87884.6,
    "status": "fresh",
    "missed": 0
   }
@@ -176,13 +176,13 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-17T13:47:17Z",
+  "generated": "2026-11-17T14:11:27Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1347.8,
+    "expected_today": 1347.9,
     "value": null,
     "behind": null,
     "progress": null
@@ -191,7 +191,7 @@
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 581.1,
+    "expected_today": 581.2,
     "value": null,
     "behind": null,
     "progress": null
@@ -200,7 +200,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 853.4,
+    "expected_today": 853.5,
     "value": null,
     "behind": null,
     "progress": null
@@ -209,7 +209,7 @@
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 340.7,
+    "expected_today": 340.8,
     "value": null,
     "behind": null,
     "progress": null
@@ -221,7 +221,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-17T13:47:17Z",
+    "started": "2026-11-17T14:11:27Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -285,11 +285,11 @@
  },
  "growth": {
   "mix": {
-   "growth": 1,
-   "fix": 3,
-   "maintenance": 16,
+   "growth": 2,
+   "fix": 4,
+   "maintenance": 14,
    "total": 20,
-   "growth_share": 0.05,
+   "growth_share": 0.1,
    "target": 0.4
   },
   "target_growth_share": 0.4,
@@ -339,9 +339,9 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 95.4,
+   "last_beat_age_s": 91.5,
    "expected_interval_s": 21600,
-   "beats_24h": 42,
+   "beats_24h": 60,
    "expected_24h": 4.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -350,7 +350,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 86469.4,
+   "last_beat_age_s": 87917.5,
    "expected_interval_s": 86400,
    "beats_24h": 0,
    "expected_24h": 1.0,
@@ -361,9 +361,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 255.4,
+   "last_beat_age_s": 594.5,
    "expected_interval_s": 86400,
-   "beats_24h": 5,
+   "beats_24h": 11,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -372,12 +372,23 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 409362.4,
+   "last_beat_age_s": 410810.5,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
    "median_jitter_s": 604010.0,
    "status": "ticking"
+  },
+  {
+   "id": "a11y",
+   "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
+   "source": "workflow",
+   "last_beat_age_s": null,
+   "expected_interval_s": 604800,
+   "beats_24h": 0,
+   "expected_24h": 0.1,
+   "median_jitter_s": null,
+   "status": "stopped"
   },
   {
    "id": "criticality-loop",
@@ -1684,6 +1695,18 @@
    "cycle_metric": null,
    "last_plus": null,
    "last_run": null
+  },
+  {
+   "loop": "a11y",
+   "kind": "governance",
+   "summary": "A11Y-LOOP-1: every public page is rendered at phone and desktop width, light and dark, and checked with axe-core, horizontal scroll and 44px targets; a failure files an issue.",
+   "owner": "design-manager",
+   "trigger": "weekly (a11y.yml) and on demand",
+   "sla": "7d",
+   "closing_probe": "grep:scripts/a11y_audit.mjs::axe-core",
+   "cycle_metric": null,
+   "last_plus": null,
+   "last_run": null
   }
  ],
  "claims": {
@@ -2092,31 +2115,103 @@
  "changes": {
   "commits": [
    {
-    "sha": "998f658",
-    "at": "2026-11-17T13:44:21+00:00",
+    "sha": "19180fa",
+    "at": "2026-11-17T14:08:33+00:00",
     "author": "Claude",
-    "subject": "Merge branch 'claude/subrequest-rotation' of https://github.com/ultrastable/ultrastable into claude/subrequest-rotation",
+    "subject": "Design baseline: swap the replaced accent colours (same debt, new values)",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/998f658a3d5d8f68b51170b0f0b2e35e1999898b"
+    "url": "https://github.com/ultrastable/ultrastable/commit/19180fa1f34cec6aec3cfc78ac0209570740bec7"
    },
    {
-    "sha": "0e44378",
-    "at": "2026-11-17T13:44:17+00:00",
+    "sha": "edcc576",
+    "at": "2026-11-17T14:07:32+00:00",
     "author": "Claude",
-    "subject": "Merge main into SUBREQUEST-ROTATION-1",
+    "subject": "Shrink design baseline for fixed off-theme colour",
     "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/edcc5763b312c5326bec8d5662984498b65138d8"
+   },
+   {
+    "sha": "3980df5",
+    "at": "2026-11-17T14:06:21+00:00",
+    "author": "Claude",
+    "subject": "Cite session in write-back; fix SPDX header on a11y audit",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/3980df5cbfbc70559a8731629db9afe866f295c9"
+   },
+   {
+    "sha": "515b69b",
+    "at": "2026-11-17T14:05:18+00:00",
+    "author": "Claude",
+    "subject": "SUBREQUEST-ROTATION-2: executor runs alone, four phases of 40 min",
+    "pr": null,
+    "item": "SUBREQUEST-ROTATION-2",
+    "url": "https://github.com/ultrastable/ultrastable/commit/515b69b9f92dc60a14c267609cf7713155c6b1f1"
+   },
+   {
+    "sha": "5783188",
+    "at": "2026-11-17T15:01:48+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "FAMILY-2: link Practical Solutions at ultrastable.org (#475)",
+    "pr": 475,
+    "item": "FAMILY-2",
+    "url": "https://github.com/ultrastable/ultrastable/commit/57831886d32196ccd17b7c5492b188c36d990d6c"
+   },
+   {
+    "sha": "00542c9",
+    "at": "2026-11-17T14:55:09+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Two-domain family model and Practical Solutions copy (#473)",
+    "pr": 473,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/00542c97eef8051c8009b7c26b79e1082c07b9a4"
+   },
+   {
+    "sha": "3d3d28d",
+    "at": "2026-11-17T14:52:12+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Brand separation: QNFO only as the earlier testbed case study (#472)",
+    "pr": 472,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/3d3d28dfda47ab440961b6e6512358b12c6c0bde"
+   },
+   {
+    "sha": "ee75ce1",
+    "at": "2026-11-17T14:50:36+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Dashboard accent, audit it, deploy-site stops failing on a skipped deploy (#471)",
+    "pr": 471,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/ee75ce13146957759fed9e0516a5f5f90a0d4042"
+   },
+   {
+    "sha": "17e5d07",
+    "at": "2026-11-17T14:49:54+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SUBREQUEST-ROTATION-1: heavy GitHub loops rotate over three ticks (#464)",
+    "pr": 464,
     "item": "SUBREQUEST-ROTATION-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/0e4437883c810a1656ec7db377a1c78eea451612"
+    "url": "https://github.com/ultrastable/ultrastable/commit/17e5d0781fa3ec36720479940d1f7d152320a808"
    },
    {
-    "sha": "f0aa829",
-    "at": "2026-11-17T13:44:16+00:00",
-    "author": "ultrastable-lane",
-    "subject": "Merge remote-tracking branch 'origin/main' into HEAD",
-    "pr": null,
+    "sha": "8b61e04",
+    "at": "2026-11-17T14:48:44+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "A11y loop: axe audit of every page; fix accent contrast (#470)",
+    "pr": 470,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/f0aa829ff98b7d823897837b691050de510a08dd"
+    "url": "https://github.com/ultrastable/ultrastable/commit/8b61e0413fb7b88d6f2a5b9db1089c78042c9574"
+   },
+   {
+    "sha": "440e833",
+    "at": "2026-11-17T13:44:46+00:00",
+    "author": "ultrastable-lane",
+    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1)",
+    "pr": null,
+    "item": "SERVER-OWNS-LOOPS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/440e8336b26f3a5cdfae02e42525834fa0d8d90a"
    },
    {
     "sha": "5bf291c",
@@ -2137,33 +2232,6 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/e9403f0759835744e1146cbbd2d53c01668c4d49"
    },
    {
-    "sha": "a4b3d22",
-    "at": "2026-11-17T13:42:13+00:00",
-    "author": "Claude",
-    "subject": "Cite session in SUBREQUEST-ROTATION-1 write-back",
-    "pr": null,
-    "item": "SUBREQUEST-ROTATION-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/a4b3d228f28dd3c9c3eb08ad7d0b3b5613cf551e"
-   },
-   {
-    "sha": "21f0b2a",
-    "at": "2026-11-17T13:41:05+00:00",
-    "author": "Claude",
-    "subject": "Shrink pins baseline for items closed by the no-patent decision",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/21f0b2afaead0972d98fafb89d3c7f31bfbcc470"
-   },
-   {
-    "sha": "1879f94",
-    "at": "2026-11-17T13:40:10+00:00",
-    "author": "Claude",
-    "subject": "Regenerate dashboard data after merge",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/1879f943568d73236620b072c7e35940eeef37b6"
-   },
-   {
     "sha": "1af379e",
     "at": "2026-11-17T14:39:37+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2173,15 +2241,6 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/1af379e85d41d02858a6bb1d7bae6a78bfcfc531"
    },
    {
-    "sha": "62905c8",
-    "at": "2026-11-17T13:39:31+00:00",
-    "author": "Claude",
-    "subject": "Merge main into SUBREQUEST-ROTATION-1",
-    "pr": null,
-    "item": "SUBREQUEST-ROTATION-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/62905c8a2730d34f2bd8f5ac1e63e1e04bdefc04"
-   },
-   {
     "sha": "1c1c157",
     "at": "2026-11-17T14:38:08+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2189,24 +2248,6 @@
     "pr": 465,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/1c1c1579c14addbea8e6cc2bcbac2ff33357260e"
-   },
-   {
-    "sha": "f77c1f1",
-    "at": "2026-11-17T13:37:12+00:00",
-    "author": "Claude",
-    "subject": "writeback: SUBREQUEST-ROTATION-1 lesson",
-    "pr": null,
-    "item": "SUBREQUEST-ROTATION-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/f77c1f13940c0d6e811ca0fa5e91499d76028992"
-   },
-   {
-    "sha": "47fb5aa",
-    "at": "2026-11-17T13:37:05+00:00",
-    "author": "Claude",
-    "subject": "SUBREQUEST-ROTATION-1: rotate the heavy GitHub loops over three ticks to stay under 50 subrequests",
-    "pr": null,
-    "item": "SUBREQUEST-ROTATION-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/47fb5aa8f185bd4e0a0aac5bc621c7a3063a8d8c"
    },
    {
     "sha": "aa35b4b",
@@ -2243,24 +2284,6 @@
     "pr": 459,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/551fdf0a30cbc582db6ca801227e16a0e19abcbd"
-   },
-   {
-    "sha": "c725f48",
-    "at": "2026-11-17T13:26:46+00:00",
-    "author": "Claude",
-    "subject": "docs-audit: the append-only branch sweep ledger records history, so it may name removed documents",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/c725f484b04f9a363273b835cae46c580be914d4"
-   },
-   {
-    "sha": "2325bbd",
-    "at": "2026-11-17T13:17:31+00:00",
-    "author": "Claude",
-    "subject": "memory: freeze lift and no-patent confirmation (2026-11-17)",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/2325bbde9b587c98e7020a5c8b08fccc143ee9d4"
    },
    {
     "sha": "eed92ee",

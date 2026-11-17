@@ -125,6 +125,14 @@
   }
  ],
  "workflows": {
+  "a11y.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 5 * * 3"
+   ]
+  },
   "actions-budget.yml": {
    "events": [
     "workflow_dispatch"
