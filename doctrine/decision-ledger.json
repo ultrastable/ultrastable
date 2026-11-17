@@ -2043,6 +2043,14 @@
    "title": "Product manager pass 2026111716: 3 item(s) filed",
    "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
    "probe": "file:ops/growth/pm-report.json"
+  },
+  {
+   "id": "decision-2026-11-17-audit-1-one-hash-chained-merkle-rolled-audit-log-in-core",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "AUDIT-1: one hash-chained, Merkle-rolled audit log in core",
+   "body": "Autonomous actions are one append-only hash-chained log; recent events hot in D1, finished days rolled to one gzip batch plus Merkle root; payloads hashed not stored; verify and proof are public.",
+   "probe": "file:workers/core/audit/index.js"
   }
  ]
 }
