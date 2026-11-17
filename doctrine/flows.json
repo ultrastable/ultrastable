@@ -1000,7 +1000,9 @@
         }
       ],
       "feedback": "a merged branch leaves the next scan empty; a ported branch becomes a PORT-BRANCH item the executor takes, and the next scan stops listing the branch once main carries it",
-      "bindings": []
+      "bindings": [
+        "LANE_PAT"
+      ]
     },
     "loop-proof": {
       "inflows": [
