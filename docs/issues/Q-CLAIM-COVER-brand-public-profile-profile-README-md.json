@@ -1,7 +1,7 @@
 {
   "id": "Q-CLAIM-COVER-brand-public-profile-profile-README-md",
   "title": "Q-CLAIM-COVER-brand-public-profile-profile-README-md: unbound claim-like statements on brand/public-profile/profile/README.md",
-  "body": "**Owner:** executor\n**Trigger:** claims coverage, every PR and daily\n**Done check:** coverage of brand/public-profile/profile/README.md is 100%\n**Status:** open\n\nCOVERAGE-1: 1 claim-like lines (first 1) on `brand/public-profile/profile/README.md` state a number, cadence or guarantee with no registered claim and probe.\n\nBind each to a probe in `doctrine/claims.json` (or generate the sentence from code), or change the words to what the code does.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation claims --coverage` lists none for this surface.\n",
+  "body": "**Owner:** executor\n**Trigger:** claims coverage, every PR and daily\n**Done check:** grep:doctrine/claims.json::\"surface\": \"brand/public-profile/profile/README.md\"\n**Status:** open\n\nCOVERAGE-1: 1 claim-like lines (first 1) on `brand/public-profile/profile/README.md` state a number, cadence or guarantee with no registered claim and probe.\n\nBind each to a probe in `doctrine/claims.json` (or generate the sentence from code), or change the words to what the code does.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation claims --coverage` lists none for this surface.\n",
   "labels": [
     "p2",
     "agent-ready"

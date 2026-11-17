@@ -1,7 +1,7 @@
 {
   "id": "Q-CLAIM-COVER-seed-plugins-roles-outreach-md",
   "title": "Q-CLAIM-COVER-seed-plugins-roles-outreach-md: unbound claim-like statements on seed/plugins/roles/outreach.md",
-  "body": "**Owner:** executor\n**Trigger:** claims coverage, every PR and daily\n**Done check:** coverage of seed/plugins/roles/outreach.md is 100%\n**Status:** open\n\nCOVERAGE-1: 1 claim-like lines (first 5) on `seed/plugins/roles/outreach.md` state a number, cadence or guarantee with no registered claim and probe.\n\nBind each to a probe in `doctrine/claims.json` (or generate the sentence from code), or change the words to what the code does.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation claims --coverage` lists none for this surface.\n",
+  "body": "**Owner:** executor\n**Trigger:** claims coverage, every PR and daily\n**Done check:** grep:doctrine/claims.json::\"surface\": \"seed/plugins/roles/outreach.md\"\n**Status:** open\n\nCOVERAGE-1: 1 claim-like lines (first 5) on `seed/plugins/roles/outreach.md` state a number, cadence or guarantee with no registered claim and probe.\n\nBind each to a probe in `doctrine/claims.json` (or generate the sentence from code), or change the words to what the code does.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation claims --coverage` lists none for this surface.\n",
   "labels": [
     "p2",
     "agent-ready"

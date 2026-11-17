@@ -272,7 +272,7 @@ def file_coverage(root, c):
         if p.exists():
             continue
         p.parent.mkdir(parents=True, exist_ok=True)
-        body = (f"**Owner:** executor\n**Trigger:** claims coverage, every PR and daily\n**Done check:** coverage of {k} is 100%\n**Status:** open\n\n"
+        body = (f"**Owner:** executor\n**Trigger:** claims coverage, every PR and daily\n**Done check:** grep:{REG}::\"surface\": \"{k}\"\n**Status:** open\n\n"
                 f"COVERAGE-1: {what} on `{k}` state a number, cadence or guarantee with no registered claim and probe.\n\n"
                 "Bind each to a probe in `doctrine/claims.json` (or generate the sentence from code), or change the words to what the code does.\n\n"
                 "size: S\n\n**Closing probe:** `python3 -m foundation claims --coverage` lists none for this surface.\n")
