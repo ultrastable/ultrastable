@@ -59,13 +59,19 @@ def protected_probe(probe: str) -> bool:
     return bool(m and m.group(1).startswith((".github/", "autonomy/")))
 
 
-def takeable(root=REPO, gated=True) -> list[dict]:
-    """QUEUE-1: open queue items in the shape the executor's pick() expects. Owner-held items (identity-bound, ROWAN) are not the executor's.
-    An item whose last three executor log rows all failed is parked until a row of another result appears, so a bad item cannot starve the rest."""
-    root = Path(root); fails: dict[str, int] = {}
+def fail_counts(root=REPO) -> dict[str, int]:
+    """Consecutive failed executor rows per item (reset by any other result)."""
+    fails: dict[str, int] = {}
     for r in executor_rows(root):
         if r.get("issue") is not None:
             k = str(r["issue"]); fails[k] = fails.get(k, 0) + 1 if r.get("result") == "failed" else 0
+    return fails
+
+
+def takeable(root=REPO, gated=True) -> list[dict]:
+    """QUEUE-1: open queue items in the shape the executor's pick() expects. Owner-held items (identity-bound, ROWAN) are not the executor's.
+    An item whose last three executor log rows all failed is parked until a row of another result appears, so a bad item cannot starve the rest."""
+    root = Path(root); fails = fail_counts(root)
     out = []
     try:
         from . import prioritize

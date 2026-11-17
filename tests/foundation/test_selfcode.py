@@ -79,6 +79,18 @@ class Rails(unittest.TestCase):
         self.assertIn("raises-deploys", it["labels"])  # a merged agent change is a deploy the system originated, so the criticality gate lets it through
         self.assertIn("**Status:** open", it["body"])
 
+    def test_an_item_parked_by_the_executor_gives_way_to_the_next_finding(self):
+        import unittest.mock as m
+        from foundation import queue as qmod
+        d = tree({"foundation/a.py": "import os\n", "foundation/b.py": "import re\n"})
+        first = selfcode.run_sense(d, apply=False, ci=False)["filed"]
+        self.assertEqual(len(first), 1)
+        with m.patch.object(qmod, "fail_counts", return_value={first[0]: 3}):
+            res = selfcode.run_sense(d, apply=True, ci=False)
+        self.assertEqual(len(res["filed"]), 1)
+        self.assertNotEqual(res["filed"][0], first[0])  # the parked item is on cooldown, the other file is filed
+        self.assertTrue(any(r["id"] == first[0] and r["status"] == "failed" for r in selfcode.ledger_rows(d)))
+
     def test_kill_switch(self):
         d = tree({})
         c = json.loads((d / "doctrine/selfcode.json").read_text()); c["enabled"] = False

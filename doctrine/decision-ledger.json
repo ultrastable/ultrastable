@@ -1857,6 +1857,15 @@
    "title": "Executor closed Q-FLOW-RESUME-JOBS: add flows-external.json to declare loops for the resume and job-search system",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: doctrine/flows-external.json.",
    "probe": "file:doctrine/flows-external.json"
+  },
+  {
+   "id": "lesson-2026-11-17-selfcode-1-a-parked-self-code-item-kept-being-re-filed-and-b",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: a parked self-code item kept being re-filed and blocked the next finding",
+   "body": "sense records an own item parked by the executor (3 failed rows) as failed so cooldown applies and the next finding is filed; queue.fail_counts is shared.",
+   "probe": "grep:foundation/queue.py::def fail_counts",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
   }
  ]
 }
