@@ -75,10 +75,16 @@ def close(repo, number, evidence):
     return r.returncode == 0
 
 
+def repos(root=REPO):
+    from . import drainwatch
+    extra = json.loads((Path(root) / "doctrine/ciwatch.json").read_text(encoding="utf-8")).get("repos", [])
+    return sorted(set(drainwatch.repos(root)) | set(extra))
+
+
 def run(root=REPO, apply=False, issues=gh_issues, fetch=_fetch, closer=close):
     from . import drainwatch
     rows, unread = [], []
-    for repo in drainwatch.repos(root):
+    for repo in repos(root):
         got = issues(repo)
         if got is None:
             unread.append(repo); continue

@@ -886,6 +886,7 @@ const handler = {
       case "/for": return new Response(forIndex(), { headers: HTML });
       case "/proof": return new Response(await proof(), { headers: HTML });
       case "/claims": return new Response(claimsPage(), { headers: HTML });
+      case "/changelog": case "/api/changelog": return Response.redirect("https://dashboard.ultrastable.io" + pth + u.search, 302); // PROVENANCE-1: the public changelog is served by the dashboard worker
       case "/self": case "/.well-known/ultrastable": return new Response(JSON.stringify(SELF, null, 1), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300", "Link": "</self>; rel=\"describedby\"" } });
       case "/api/claims": return new Response(JSON.stringify(VERIFIED), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/product": return new Response(product(), { headers: HTML });
