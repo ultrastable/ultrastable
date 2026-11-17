@@ -1788,6 +1788,15 @@
    "session": "session_0156nqDtPUh62FutsmGkcuTa"
   },
   {
+   "id": "lesson-2026-11-17-two-threads-fixed-one-bug-and-a-merge-dropped-a-helper-free-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Two threads fixed one bug and a merge dropped a helper (FREE-LLM-4)",
+   "body": "#513 introduced ladder_call and #512 caught RuntimeError in place; the merge kept the call but not the definition, so the executor raised NameError on main. The call goes back to agent_ladder.call; RuntimeError escalation stays.",
+   "probe": "grep:foundation/executor.py::def ladder_call",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
    "id": "decision-2026-11-17-product-manager-pass-2026111716-3-item-s-filed",
    "kind": "decision",
    "date": "2026-11-17",
