@@ -10,6 +10,17 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-17
 
+- 2026-11-17: Bump actions/setup-node from 6 to 7 (#458)
+- 2026-11-17: ROADMAP-AGENT-CONNECT-PAGE: QNFO.REACH #CONNECT-PAGE: One-click Add to VS Code / Claude / Codex / Cursor page (#460)
+- 2026-11-17: ROADMAP-AGENT-CARD-SIGNED: QNFO.REACH #CARD-SIGNED: follow-up filed with a closing probe (#467)
+- 2026-11-17: ROADMAP-AGENT-CONNECTOR-HEALTH: QNFO.OPS #CONNECTOR-HEALTH: Connector health: expiry watch, silent refresh, auto reconnect (#474)
+- 2026-11-17: branchsweep: merge the branches main lacks (#487)
+- 2026-11-17: FREE-LLM-1: fit prompts to GitHub Models' free-tier cap (#497)
+- 2026-11-17: FREE-LLM-1: executor evidence keeps every failed attempt and model outcome (#494)
+- 2026-11-17: UNKNOWNS-1: daily reserve, Q-OBJ growth items, rule in agent instructions (#493)
+- 2026-11-17: REACH-1: regenerate dashboard data (fix red checks on main) (#492)
+- 2026-11-17: SELFCODE-1: self-code items pass the criticality gate (#490)
+- 2026-11-17: social: record post state
 - 2026-11-17: MIGRATE-SELF-1: the tick applies its own D1 migrations; probe for pending ones (#488)
 - 2026-11-17: UNKNOWNS-1: do not record questions the originate cap refused (#486)
 - 2026-11-17: CIWATCH-1 + AGENT-WORK-1: green main, red-X watcher, free-LLM code agent with caps (#484)
