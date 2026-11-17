@@ -1,0 +1,83 @@
+{
+ "_doc": "ULTRASTABILITY-1 (Rowan, 2026-11-17): the platform's name is a design rule from W. Ross Ashby (Design for a Brain, 1952). A system is ultrastable when two loops keep its essential variables inside bounds: a fast first-order loop that corrects ordinary disturbance without changing the system, and a slow second-order loop that, when a variable stays out of bounds, makes a discrete step change to the system's own parameters or structure and keeps the change only if the variable returns. Read by foundation/ultrastability.py; checked by `python3 -m foundation ultrastability --check`; rendered on /how from site/ultrastability-data.js (generated). Never edit a bound to clear a breach: bounds are the viability limits, changed only by a PR with a lineage note.",
+ "id": "ultrastability",
+ "version": "1.0.0",
+ "marker": "ULTRASTABILITY-1",
+ "credit": "W. Ross Ashby, Design for a Brain (1952)",
+ "ledger": "ops/ultrastability.jsonl",
+ "item_prefix": "Q-ULTRA",
+ "patience_ticks": 2,
+ "settle_ticks": 3,
+ "scopes": {
+  "platform": {
+   "status": "running",
+   "what": "Ultrastable running on itself (tenant 0)",
+   "variables": [
+    {
+     "id": "spend",
+     "name": "Spend against budget",
+     "reading": "criticality.cost",
+     "min": 0,
+     "max": 1.0,
+     "unit": "of budget",
+     "first_order": ["cost-probe", "executor"],
+     "why": "Past 1.0 the system costs more than its owner accepts, so it is no longer viable.",
+     "ladder": [
+      {"kind": "param", "file": "doctrine/clocks.json", "path": "chain.max_runs_per_day", "delta": -1, "min": 1, "max": 8, "what": "wake the executor less often"},
+      {"kind": "item", "labels": ["p0", "agent-ready", "cuts-cost"], "workstream": "cost", "what": "restructure: find and cut the spend source"}
+     ]
+    },
+    {
+     "id": "deploy_health",
+     "name": "Verified deploys",
+     "reading": "criticality.verified_share",
+     "min": 1.0,
+     "max": 1.0,
+     "unit": "of deploys",
+     "first_order": ["probe-and-revert", "handoff-closer"],
+     "why": "A deploy whose live code differs from its commit means the loop that ships is not closing.",
+     "ladder": [
+      {"kind": "item", "labels": ["p0", "agent-ready", "raises-deploys"], "workstream": "deploys", "what": "restructure: repair the deploy path that failed verification"}
+     ]
+    },
+    {
+     "id": "claims_drift",
+     "name": "Words that no longer match code",
+     "reading": "claims.drift",
+     "min": 0,
+     "max": 0,
+     "unit": "claims",
+     "first_order": ["claims-check"],
+     "why": "A public statement the code no longer makes true breaks the system's own record of itself.",
+     "ladder": [
+      {"kind": "item", "labels": ["p1", "agent-ready"], "workstream": "Claims", "what": "restructure: bind or regenerate the drifting statements"}
+     ]
+    },
+    {
+     "id": "value",
+     "name": "Verified deploys per unit of cost and human touch (k)",
+     "reading": "criticality.k",
+     "min": 1.0,
+     "max": null,
+     "unit": "k",
+     "first_order": ["executor", "criticality-gate"],
+     "why": "Below the floor the system ships less than it costs to run, so the work stops compounding.",
+     "ladder": [
+      {"kind": "param", "file": "doctrine/clocks.json", "path": "chain.max_runs_per_day", "delta": 1, "min": 1, "max": 8, "what": "wake the executor more often"},
+      {"kind": "item", "labels": ["p0", "agent-ready", "raises-deploys"], "workstream": "deploys", "what": "restructure: remove what keeps deploys from shipping"}
+     ]
+    }
+   ]
+  },
+  "tenant": {
+   "status": "declared",
+   "what": "Every system built on Ultrastable declares the same four variables at bootstrap; the platform loop runs them for tenant 0 only",
+   "variables": [
+    {"id": "uptime", "name": "Uptime", "reading": "tenant.probe_pass_rate", "min": 0.99, "max": 1.0, "unit": "of probes", "first_order": ["probe-and-revert"], "why": "The system has to be reachable to be improved.", "ladder": [{"kind": "spinoff", "verb": "iterate", "what": "iterate: change the app"}, {"kind": "spinoff", "verb": "retire", "what": "retire: stop spending on what cannot stay up"}]},
+    {"id": "spend", "name": "Spend against the declared monthly budget", "reading": "tenant.spend_vs_budget", "min": 0, "max": 1.0, "unit": "of budget", "first_order": ["cost-probe"], "why": "The owner accepted a running cost; past it the system is not viable.", "ladder": [{"kind": "spinoff", "verb": "iterate", "what": "iterate: cut the spend source"}, {"kind": "spinoff", "verb": "retire", "what": "retire: stop spending"}]},
+    {"id": "claims_drift", "name": "Words that no longer match code", "reading": "tenant.claims_drift", "min": 0, "max": 0, "unit": "claims", "first_order": ["claims-check"], "why": "A tenant's public statements stay true.", "ladder": [{"kind": "spinoff", "verb": "iterate", "what": "iterate: regenerate the statements from code"}]},
+    {"id": "value", "name": "The tenant's own declared value metric", "reading": "tenant.declared_metric", "min": null, "max": null, "unit": "per its objective", "first_order": ["objective-measure"], "why": "A system with no measure that can be wrong cannot be improved.", "ladder": [{"kind": "spinoff", "verb": "iterate", "what": "iterate: change what the app does"}, {"kind": "spinoff", "verb": "retire", "what": "retire: the measured value does not justify the cost"}]}
+   ]
+  }
+ }
+}

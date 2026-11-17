@@ -12,6 +12,7 @@ import { feedResponse } from "./feed.js"; // REACH-1
 import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
 import VERIFIED from "./claims-data.js";
+import ULTRA from "./ultrastability-data.js";
 import { passkeys } from "./passkeys.js";
 import { mydata } from "./mydata.js";
 import { authzen } from "./authzen.js";
@@ -147,9 +148,23 @@ function how() {
     + "</div>"
     + "<h2>The platform and the product are one loop</h2><p>What Ultrastable develops (code, practical solutions) and how it develops itself run on the same process, so the two improve each other. See the <a href=\"/showcase\">test cases</a>: the earlier testbed and Practical Solutions.</p>"
     + orgSection()
-    + "<h2>Why the name</h2><p>W. Ross Ashby's ultrastable system (1952) changes its own settings when an essential variable leaves its limits, so it stays viable without an operator. The trust ledger, doctrine amendments and probe-and-revert loops do that for software.</p>"
+    + ultrastability()
     + "<h2 id=\"gaps\">Honest gaps</h2>" + "<ul>" + ROAD.gaps.map(function (g) { return "<li>" + esc(g.text) + " <a href=\"/roadmap#" + esc(g.issue) + "\">" + esc(g.issue) + "</a></li>"; }).join("") + "</ul>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");
+}
+
+function bound(v) { return v.min !== null && v.max !== null ? (v.min === v.max ? "exactly " + v.min : v.min + " to " + v.max) : v.min !== null ? v.min + " or more" : v.max !== null ? "at most " + v.max : "its own declared target"; }
+
+function ultrastability() {
+  const P = ULTRA.scopes.platform, T = ULTRA.scopes.tenant;
+  const row = function (v) { return "<tr><td>" + esc(v.name) + "</td><td>" + esc(bound(v)) + " " + esc(v.unit) + "</td><td>" + esc(v.steps.join("; ")) + "</td></tr>"; };
+  return "<h2 id=\"why-ultrastable\">Why ultrastable</h2>"
+    + "<p>A system is ultrastable, in W. Ross Ashby's sense, when two loops keep its essential variables inside bounds: a fast loop that corrects disturbance, and a slow loop that changes the system itself when the fast loop cannot.</p>"
+    + "<p>The fast loop is the probes, the cost check, the claims check and the executor. The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.</p>"
+    + "<p>The essential variables of " + esc(P.what) + " (" + esc(P.status) + "):</p>"
+    + "<table><thead><tr><th>Variable</th><th>Bounds</th><th>Second-order steps, in order</th></tr></thead><tbody>" + P.variables.map(row).join("") + "</tbody></table>"
+    + "<p>" + esc(T.what) + " (" + esc(T.status) + "): " + T.variables.map(function (v) { return esc(v.name.toLowerCase()); }).join(", ") + ".</p>"
+    + "<p class=\"meta\">After " + esc(ULTRA.credit) + ". Every reading, step and verdict is a row in the ultrastability ledger and a provenance row.</p>";
 }
 
 function claimsPage() {
