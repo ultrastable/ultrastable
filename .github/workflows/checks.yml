@@ -21,6 +21,19 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      - name: Regenerate generated files and push them to the PR (REGEN-1)
+        # self-heal: a count, ledger or dashboard that main moved under the PR is regenerated here instead of failing the freshness checks below;
+        # on a same-repository PR the result is pushed back (LANE_PAT, so the push starts a fresh run), otherwise this run checks the regenerated tree
+        env:
+          LANE_PAT: ${{ secrets.LANE_PAT }}
+          HEAD_REF: ${{ github.head_ref }}
+          SAME_REPO: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          ./scripts/regen_generated.sh
+          if [ -n "$(git status --porcelain)" ] && [ "$SAME_REPO" = "true" ] && [ -n "$LANE_PAT" ] && [ -n "$HEAD_REF" ]; then
+            git config user.name ultrastable-regen; git config user.email regen@users.noreply.github.com
+            git add -A && git commit -m "REGEN-1: regenerate generated files" && git push "https://x-access-token:${LANE_PAT}@github.com/${{ github.repository }}.git" "HEAD:refs/heads/${HEAD_REF}"
+          fi
       - name: Workflow minute-budget lint (cheap, runs first)
         run: python3 scripts/lint_workflows.py
       - name: Workflow YAML parses

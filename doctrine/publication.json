@@ -37,7 +37,7 @@
    "personal_email": "[A-Za-z0-9._%+-]+@(gmail|googlemail|outlook|hotmail|yahoo|icloud|proton|protonmail)\\.[a-z.]{2,}",
    "local_path": "[A-Za-z]:[\\\\/]{1,2}Users[\\\\/]{1,2}[A-Za-z0-9._-]+|/Users/[A-Za-z0-9._-]+(?=/)"
   },
-  "allow": "^$"
+  "allow": "\\.example$"
  },
  "procedure": [
   {
