@@ -21,7 +21,8 @@ export const MAX_ITEMS = 8, MAX_AI = 3;
 // Identity-bound work (IC-GATE-001): filing, signing, applying, entity and IP decisions, anything only the owner can review or submit.
 export const OWNER_ONLY = /\bowner card\b|\bOC-\d|submission confirmation|confirmation emails?|submit(ted)? applications?|\bapplication\b.*\b(program|startups?)\b|form (an )?entity|\bassign ip\b|choose owning entity|attorney|filing receipt|\bfiling\b|reviewed by rowan|deck reviewed|approve operator outreach|first conversations logged|jurisdiction|install claude app|trademark registration/i;
 
-const textOf = r => (r && (r.response || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || '';
+// MODEL-REPLY-1: Workers AI may return an already-parsed object in `response`; callers need a string (parseJson called t.indexOf on it).
+const textOf = r => { const v = (r && (r.response || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || ''; return typeof v === 'string' ? v : JSON.stringify(v); };
 
 // REPLY-GATE-1 (2026-11-16): a deterministic check on every model reply before it is used, no model involved. An earlier fleet's register held 142
 // failure modes in model output (empty, truncated at max_tokens, degenerate repetition) that reached its tables because the text was used as returned.
@@ -37,11 +38,14 @@ export function replyProblem(res, text) {
   return null;
 }
 
+// PLAN-SKIP-1: a model the account's plan does not include (error 5035, 'not available on the Workers Free plan') is skipped for the life of the isolate.
+const PLAN_BLOCKED = new Set();
 async function ask(ctx, prompt, maxTokens = 900) {
   if (!ctx.ai || ctx.aiCalls >= ctx.maxAi) return null;
   ctx.aiCalls++;
   const tried = [];
   for (const a of [...ADAPTERS].sort((x, y) => x.price - y.price)) {
+    if (PLAN_BLOCKED.has(a.id)) continue;
     try {
       const res = await ctx.ai.run(a.model, { messages: [{ role: 'user', content: prompt }], ...a.extra, max_tokens: maxTokens });
       const t = textOf(res);
@@ -49,7 +53,7 @@ async function ask(ctx, prompt, maxTokens = 900) {
       if (bad) throw new Error('reply rejected: ' + bad);
       ctx.itemModel = a.model;  // MODEL-TRUTH-1: the dispatch row records the model that answered, never a config label
       return { json: parseJson(t), adapter: a.id, model: a.model };
-    } catch (e) { tried.push(a.id + ': ' + String(e && e.message).slice(0, 80)); if (e && e.name === 'BudgetExhausted') break; }
+    } catch (e) { if (/not available on the Workers Free plan/i.test(String(e && e.message))) PLAN_BLOCKED.add(a.id); tried.push(a.id + ': ' + String(e && e.message).slice(0, 80)); if (e && e.name === 'BudgetExhausted') break; }
   }
   ctx.notes.push('doer: no model answered (' + tried.join('; ').slice(0, 200) + ')');
   return null;
