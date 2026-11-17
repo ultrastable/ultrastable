@@ -57,5 +57,14 @@
       "watched_by": "worker-watchdog-gh",
       "restarted_by": "gh-watchdog"
     }
+  ],
+  "site_probes": [
+    {
+      "id": "practical-solutions",
+      "url": "https://tenant-ps-web.ultrastable.workers.dev/",
+      "repo": "ultrastable/practical-solutions",
+      "workflow": "deploy-tenant",
+      "why": "a 503 on the tenant site is answered by redeploying it from its own workflow (LINK-LIVE-1: the same URL is the live link probe)"
+    }
   ]
 }
