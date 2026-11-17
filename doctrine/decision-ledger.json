@@ -1768,6 +1768,15 @@
    "body": "ladder_call converts a rung RuntimeError to a failed attempt so the ladder escalates to the next rung.",
    "probe": "grep:foundation/executor.py::def ladder_call",
    "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
+   "id": "lesson-2026-11-17-a-failed-free-model-hands-the-attempt-to-the-next-rung-free-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "A failed free model hands the attempt to the next rung (FREE-LLM-3)",
+   "body": "GitHub Models answered HTTP 200 text/plain 'OK' on 24k-char prompts and the RuntimeError ended the run before Workers AI was tried; RuntimeError now counts as a failed attempt so the ladder escalates, and the GitHub Models prompt cap is 12000 chars.",
+   "probe": "grep:foundation/executor.py::FREE-LLM-3",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
