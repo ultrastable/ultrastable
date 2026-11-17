@@ -982,6 +982,34 @@
         "CLOUDFLARE_API_TOKEN"
       ]
     },
+    "ultrastability-loop": {
+      "inflows": [
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
+        },
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "ultrastability.readings",
+          "via": "file:ops/ultrastability.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "ultrastability.readings",
+          "via": "file:ops/ultrastability.jsonl"
+        },
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a step changes a parameter or files a restructure item; the next readings grade the logged prediction, keep the step when the variable is back inside its bounds and otherwise undo it and take the next step",
+      "bindings": []
+    },
     "branch-sweep": {
       "inflows": [
         {

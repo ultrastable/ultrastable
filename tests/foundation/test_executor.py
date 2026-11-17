@@ -207,3 +207,18 @@ class PortItems(unittest.TestCase):
             bad = {"number": "PORT-gcp", "title": "t", "body": f"verify: {Path(sys.executable).as_posix()} -c raise(SystemExit(3))"}
             with self.assertRaises(RuntimeError):
                 executor.port_call(bad, d)
+
+
+class Effect(unittest.TestCase):
+    """EFFECT-1: items with executable effect are taken first; a change no code reads is rejected."""
+    def test_effect_items_sort_first(self):
+        a = {"number": "Q-GROW-x", "labels": [{"name": "p0"}]}
+        b = {"number": "Q-CIFAIL-y", "labels": [{"name": "p5"}]}
+        self.assertEqual(executor.pick([a, b])["number"], "Q-CIFAIL-y")
+        self.assertEqual(executor.effect_tier({"number": "OL-1", "labels": ["bug"]}), 0)
+
+    def test_data_file_nothing_reads_is_rejected(self):
+        self.assertIn("no code consumer", executor.consumer_gap(["doctrine/never-read-anywhere-xyz.json"], ROOT))
+        self.assertIn("no code consumer", executor.consumer_gap(["docs/issues/Q-X.json", "ops/x.jsonl"], ROOT))
+        self.assertIsNone(executor.consumer_gap(["foundation/executor.py"], ROOT))
+        self.assertIsNone(executor.consumer_gap(["doctrine/code-agents.json"], ROOT))  # read by foundation/agents.py

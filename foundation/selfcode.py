@@ -371,6 +371,11 @@ def run_sense(root=REPO, apply=False, tests=False, ci=True) -> dict:
     rows = ledger_rows(root)
     open_ids = open_self_ids(root)
     backlog = len([i for i in qmod.takeable(root) if not is_own(i["number"])])
+    for iid, n in qmod.fail_counts(root).items():  # an item the executor parked after 3 failed runs is recorded as failed, so its cooldown applies and the next finding gets the run
+        if is_own(iid) and n >= 3 and not any(r["id"] == iid and r.get("status") == "failed" for r in rows):
+            if apply:
+                append(root, {"id": iid, "kind": "parked", "key": iid, "before": 0, "status": "failed"})
+            rows = rows + [{"id": iid, "kind": "parked", "status": "failed", "at": stamp(now())}]
     found, unmeasured = sense(root, tests=tests, ci=ci)
     res = {"result": "sensed", "findings": len(found), "unmeasured": unmeasured, "backlog": backlog, "filed": [], "by_kind": {}}
     for f in found:

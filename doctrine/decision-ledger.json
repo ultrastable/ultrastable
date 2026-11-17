@@ -1857,6 +1857,41 @@
    "title": "Executor closed Q-FLOW-RESUME-JOBS: add flows-external.json to declare loops for the resume and job-search system",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: doctrine/flows-external.json.",
    "probe": "file:doctrine/flows-external.json"
+  },
+  {
+   "id": "lesson-2026-11-17-selfcode-1-a-parked-self-code-item-kept-being-re-filed-and-b",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: a parked self-code item kept being re-filed and blocked the next finding",
+   "body": "sense records an own item parked by the executor (3 failed rows) as failed so cooldown applies and the next finding is filed; queue.fail_counts is shared.",
+   "probe": "grep:foundation/queue.py::def fail_counts",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
+   "id": "decision-2026-11-17-ultrastability-1-the-name-is-ashby-s-design-rule-run-as-code",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "ULTRASTABILITY-1: the name is Ashby's design rule, run as code",
+   "body": "Essential variables with bounds live in doctrine/ultrastability.json (platform running, tenant declared). Existing loops are the first-order loop; foundation/ultrastability.py is the second-order loop: out of bounds two ticks in a row takes one discrete step, kept only if the variable returns, else undone and the next step taken; an exhausted ladder files a redesign item. /how section is generated from the doctrine. First reading: spend is out of bounds, so the loop will act on it. The article page was unreachable from the cloud sandbox and is not cited.",
+   "probe": "file:doctrine/ultrastability.json"
+  },
+  {
+   "id": "lesson-2026-11-17-ultrastability-1-a-same-second-ledger-row-is-dropped-by-the-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "ULTRASTABILITY-1: a same-second ledger row is dropped by the de-duplicating reader",
+   "body": "foundation/ledger.rows drops identical lines, so two ticks in one second wrote one reading. ultrastability rows carry a seq number. Any new event-sourced ledger needs a unique field per row.",
+   "probe": "grep:foundation/ultrastability.py::seq",
+   "session": "session_0156nqDvqvENNWfEYLQjbFyC"
+  },
+  {
+   "id": "decision-2026-11-17-executor-takes-executable-effect-items-first-and-rejects-cha",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Executor takes executable-effect items first and rejects changes no code reads (EFFECT-1)",
+   "body": "PR 527 added a data file nothing reads. The picker now takes failing checks, claim drift, unknowns, self-code findings and bugs first, and a change that touches no code and writes files no code names fails as a check the model must repair.",
+   "probe": "grep:foundation/executor.py::def consumer_gap",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
