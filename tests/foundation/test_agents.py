@@ -49,13 +49,6 @@ class Agents(unittest.TestCase):
         c = []; agents.invoke(A["anthropic-api"], "p", ENV, fake(c)); self.assertEqual(c[0][1]["x-api-key"], "k"); self.assertEqual(c[0][2]["model"], "claude-sonnet-5-5")
         c = []; agents.invoke(A["anthropic-api-fable"], "p", ENV, fake(c)); self.assertEqual(c[0][2]["model"], "claude-fable-5-2")  # RND-1: the second-model reviewer route
 
-    def test_invoke_github_models(self):  # SELFCODE-1: both free GitHub Models routes, authenticated by the Actions token
-        env = {"GITHUB_MODELS_TOKEN": "t"}
-        for aid, model in (("github-models-gpt", "openai/gpt-4.1"), ("github-models-deepseek", "deepseek/DeepSeek-V3-0324")):
-            c = []
-            agents.invoke(A[aid], "p", env, lambda u, h, b, timeout=300, c=c: c.append((u, h, b)) or {"choices": [{"message": {"content": "{}"}}]})
-            self.assertEqual(c[0][0], "https://models.github.ai/inference/chat/completions"); self.assertEqual(c[0][2]["model"], model)
-
     def test_claude_session_is_not_an_http_route(self):
         self.assertFalse(agents.available(A["claude-session"], ENV))
         with self.assertRaises(ValueError):

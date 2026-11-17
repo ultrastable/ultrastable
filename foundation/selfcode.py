@@ -163,15 +163,9 @@ def sense_unknowns(root=REPO) -> list[dict]:
 
 def sense(root=REPO, tests=False, ci=True) -> tuple[list[dict], list[str]]:
     """All findings plus the kinds that could not be measured (reported, never counted as clean)."""
-    found, unmeasured = sense_files(root) + sense_unknowns(root), []
+    found, unmeasured = sense_files(root), []  # CI failures (foundation/ciwatch.py) and unknown facts (foundation/agentwork.py) already file their own items
     if tests:
         found += sense_tests(root)
-    if ci:
-        c = sense_ci(root)
-        if c is None:
-            unmeasured.append("ci_failure")
-        else:
-            found += c
     return found, unmeasured
 
 

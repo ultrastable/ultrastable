@@ -17,8 +17,6 @@
   "learning": {"min_settled": 3, "min_kept_rate": 0.5, "pause_hours": 72},
   "kinds": {
     "failing_test": {"enabled": true, "weight": 10},
-    "ci_failure": {"enabled": true, "weight": 8},
-    "unknown": {"enabled": true, "weight": 6},
     "bare_except": {"enabled": true, "weight": 4},
     "unused_import": {"enabled": true, "weight": 3},
     "todo": {"enabled": true, "weight": 1}

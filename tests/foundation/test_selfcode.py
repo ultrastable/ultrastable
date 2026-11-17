@@ -8,10 +8,9 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from foundation import agents, selfcode  # noqa: E402
+from foundation import selfcode  # noqa: E402
 from tests.foundation import _repo  # noqa: E402
 
-ENV = {"GITHUB_MODELS_TOKEN": "t"}
 
 
 def tree(files: dict) -> Path:
@@ -40,10 +39,6 @@ class Sensors(unittest.TestCase):
         self.assertFalse(selfcode.probe("unused_import", "foundation/a.py", d))
         (d / "foundation/a.py").write_text("x = 1\n")
         self.assertTrue(selfcode.probe("unused_import", "foundation/a.py", d))
-
-    def test_unknowns_ledger_last_row_wins(self):
-        d = tree({"ops/unknowns/ledger.jsonl": '{"id":"U1","status":"open","question":"q"}\n{"id":"U2","status":"open"}\n{"id":"U2","status":"answered"}\n'})
-        self.assertEqual([f["key"] for f in selfcode.sense_unknowns(d)], ["U1"])
 
 
 class Rails(unittest.TestCase):
@@ -141,24 +136,6 @@ class Settle(unittest.TestCase):
     def test_runs_still_going_waits(self):
         res, _ = self.go(None)
         self.assertEqual(res["outcomes"], [])
-
-
-class GithubModels(unittest.TestCase):
-    def test_route_uses_actions_token_and_parses_chat_reply(self):
-        a = {x["id"]: x for x in agents.load(ROOT)["adapters"]}["github-models-gpt"]
-        u, h, b = agents.build_request(a, "p", ENV)
-        self.assertEqual(u, "https://models.github.ai/inference/chat/completions"); self.assertEqual(h["authorization"], "Bearer t"); self.assertEqual(b["model"], "openai/gpt-4.1")
-        self.assertEqual(agents.parse_text(a, {"choices": [{"message": {"content": "hi"}}]}), "hi")
-        ids = [x["id"] for x in agents.route_authors(ENV, ROOT)]
-        self.assertEqual(ids[:2], ["github-models-gpt", "github-models-deepseek"])  # free routes first
-        self.assertEqual(agents.route_authors({}, ROOT), [])
-        self.assertEqual({x["family"] for x in agents.ensemble("openai", ENV, ROOT)}, {"deepseek"})
-
-    def test_invoke_github_models_deepseek(self):
-        a = {x["id"]: x for x in agents.load(ROOT)["adapters"]}["github-models-deepseek"]
-        calls = []
-        agents.invoke(a, "p", ENV, lambda u, h, b, timeout=300: calls.append(b) or {"choices": [{"message": {"content": "{}"}}]})
-        self.assertEqual(calls[0]["model"], "deepseek/DeepSeek-V3-0324")
 
 
 if __name__ == "__main__":

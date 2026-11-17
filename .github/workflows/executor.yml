@@ -21,11 +21,7 @@ permissions:
   pull-requests: write
   issues: write
   actions: write
-<<<<<<< HEAD
-  models: read  # SELFCODE-1: GitHub Models through this token, no secret to mint
-=======
   models: read  # FREE-LLM-1: GitHub Models over the built-in token, the first and free rung of the code-agent ladder
->>>>>>> origin/main
 concurrency:
   group: executor
   cancel-in-progress: false
@@ -65,8 +61,8 @@ jobs:
       - name: Bridge parked needs-code items into the queue (NEEDS-CODE-BRIDGE-1)
         if: steps.spark.outputs.go == 'true'
         run: python3 scripts/needs_code_bridge.py
-      - name: Sense signals and file self-code items (SELFCODE-1)
-        if: steps.spark.outputs.go == 'true'
+      - name: Sense code signals and trusted issues, file self-code items (SELFCODE-1)
+        if: steps.spark.outputs.go == 'true' && steps.work.outputs.agent_go != 'false'
         run: python3 -m foundation selfcode --sense --apply --tests
         env:
           GH_TOKEN: ${{ github.token }}
@@ -75,15 +71,11 @@ jobs:
         run: ULTRASTABLE_HOST="github-actions:${{ github.event_name }}" python3 -m foundation executor --apply ${{ inputs.issue && format('--issue {0}', inputs.issue) || '' }}
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
-<<<<<<< HEAD
-          GITHUB_MODELS_TOKEN: ${{ github.token }}
-=======
           GITHUB_TOKEN: ${{ github.token }}
->>>>>>> origin/main
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - name: Settle merged agent changes against their signal; revert a regression (SELFCODE-1)
+      - name: Settle merged agent changes against their signal and revert a regression (SELFCODE-1)
         if: always() && steps.spark.outputs.go == 'true'
         run: python3 -m foundation selfcode --settle --apply
         env:
