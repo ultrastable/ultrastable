@@ -1892,6 +1892,33 @@
    "body": "PR 527 added a data file nothing reads. The picker now takes failing checks, claim drift, unknowns, self-code findings and bugs first, and a change that touches no code and writes files no code names fails as a check the model must repair.",
    "probe": "grep:foundation/executor.py::def consumer_gap",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-ultrastability-1-a-stale-reading-must-be-unmeasured-not-a-br",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "ULTRASTABILITY-1: a stale reading must be unmeasured, not a breach",
+   "body": "The first tick read spend 127x budget from a single ops/cost.jsonl row dated 2026-11-13 taken on the old shared account (8.9M neurons). Real figures for the ultrastable account over 7 days: about 8,068 neurons (0.115 of the free-plan cap) and 6.95M D1 rows read on the busiest database (0.497 of cap), roughly zero dollars. Readings older than 3 days are now None; unmeasured variables never trigger a step and file one UNMEASURED item. Tenant variables now run per spinoff app.",
+   "probe": "grep:foundation/ultrastability.py::def fresh_cost",
+   "session": "session_0156nqDvqvENNWfEYLQjbFyC"
+  },
+  {
+   "id": "lesson-2026-11-17-deploy-record-1-the-oidc-deploy-path-wrote-deploy-rows-in-a-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "DEPLOY-RECORD-1: the OIDC deploy path wrote deploy rows in a runner and never committed them",
+   "body": "deploy-ultrastable.yml (the live deploy owner since the account split) had contents: read and no record step, so ops/deploys.jsonl froze on 2026-11-15 and k read 0 although deploys ran. Rows now carry live_matches_commit only when Cloudflare returned the upload's deployment id and the tick answered /health, and the workflow commits them. A backfill of past runs as verified rows was declined by the permission check as manufactured evidence; k reads true from the next real deploy. Tenant files are written by the daily cost-guard workflow.",
+   "probe": "grep:deploy/deploy-oidc.mjs::live_matches_commit",
+   "session": "session_0156nqDvqvENNWfEYLQjbFyC"
+  },
+  {
+   "id": "decision-2026-11-17-claim-coverage-items-come-after-items-that-change-code-effec",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Claim-coverage items come after items that change code (EFFECT-2)",
+   "body": "The first EFFECT-1 run took a claim-coverage item whose fix was a wording change, which the consumer gate rejects; coverage items now rank after failing checks, unknowns, self-code findings, bugs and criticality items.",
+   "probe": "grep:foundation/executor.py::Q-CLAIM-COVER",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
