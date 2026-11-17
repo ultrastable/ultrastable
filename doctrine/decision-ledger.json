@@ -1604,6 +1604,15 @@
    "body": "Rowan 2026-11-17: any must-do owner action is a single link to a web UI that runs OAuth/OIDC and callbacks server-side. Built /connect index, /connect/bluesky (atproto OAuth), /connect/mastodon, a server-side publisher in the tick Worker, and a pointclick check that fails a needs-you item without a connect link.",
    "probe": "grep:foundation/pointclick.py::CONNECT-LINK-1",
    "session": "session_0156nqDtKVpn3hxk4cBwg9BD"
+  },
+  {
+   "id": "lesson-2026-11-17-selfcode-1-unscored-self-code-items-starved-behind-the-score",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: unscored self-code items starved behind the scored queue",
+   "body": "executor.pick ranks by ranker score; Q-SELF items had none and were never taken. selfcode.prefer reserves a capacity share (doctrine/selfcode.json rails.capacity_share) and score favours small files.",
+   "probe": "grep:foundation/selfcode.py::def prefer",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
   }
  ]
 }
