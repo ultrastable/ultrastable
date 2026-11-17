@@ -14,6 +14,7 @@ export const DDL = [
   'CREATE TABLE IF NOT EXISTS airouter_cache (key TEXT PRIMARY KEY, kind TEXT NOT NULL, text TEXT NOT NULL, model TEXT NOT NULL, at INTEGER NOT NULL, hits INTEGER NOT NULL DEFAULT 0)',
   'CREATE TABLE IF NOT EXISTS airouter_calls (id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, kind TEXT NOT NULL, model TEXT NOT NULL, tier TEXT NOT NULL, neurons REAL NOT NULL DEFAULT 0, usd REAL NOT NULL DEFAULT 0, ok INTEGER NOT NULL, reason TEXT)',
   'CREATE INDEX IF NOT EXISTS airouter_calls_at ON airouter_calls (at)',
+  'CREATE INDEX IF NOT EXISTS airouter_cache_at ON airouter_cache (at)',
   'CREATE TABLE IF NOT EXISTS airouter_stats (kind TEXT NOT NULL, model TEXT NOT NULL, calls INTEGER NOT NULL DEFAULT 0, passes INTEGER NOT NULL DEFAULT 0, usd REAL NOT NULL DEFAULT 0, PRIMARY KEY (kind, model))',
 ];
 const ensured = new WeakSet();
@@ -49,6 +50,8 @@ const day = ms => new Date(ms).toISOString().slice(0, 10), month = ms => new Dat
 // models: [{ id, model, tier:'free'|'paid', neurons_in?, neurons_out?, usd_in_per_m?, usd_out_per_m?, extra?, run?(input) }]. A free model runs on ai.run(model, input).
 export function createRouter({ db, ai, models, now = () => Date.now(), config = {}, onFail = null }) {
   const cfg = { ...DEFAULTS, ...config }, inflight = new Map();
+  let prunedDay = null;  // once a day per isolate: cache rows past 7 days and call rows past 30 days (stats are one row per kind and model, kept)
+  const prune = async () => { const d = day(now()); if (prunedDay === d) return; prunedDay = d; await db.prepare('DELETE FROM airouter_cache WHERE at<?1').bind(now() - 7 * 864e5).run(); await db.prepare('DELETE FROM airouter_calls WHERE at<?1').bind(now() - 30 * 864e5).run(); };
   const spent = async () => { const r = await db.prepare('SELECT COALESCE(SUM(usd),0) u FROM airouter_calls WHERE at>=?1').bind(Date.parse(month(now()) + '-01T00:00:00Z')).first(); return Number(r && r.u) || 0; };
   const neuronsToday = async () => { const r = await db.prepare("SELECT COALESCE(SUM(neurons),0) n FROM airouter_calls WHERE at>=?1 AND tier='free'").bind(Date.parse(day(now()) + 'T00:00:00Z')).first(); return Number(r && r.n) || 0; };
   const stats = async kind => { const r = await db.prepare('SELECT model, calls, passes FROM airouter_stats WHERE kind=?1').bind(kind).all(); return Object.fromEntries((r.results || []).map(x => [x.model, x])); };
@@ -73,7 +76,7 @@ export function createRouter({ db, ai, models, now = () => Date.now(), config = 
   }
 
   async function call({ kind = 'general', prompt, maxTokens = 600, verify = null, cache = true, system = null }) {
-    await ensure(db);
+    await ensure(db); await prune();
     const key = await cacheKey(kind, (system || '') + '\n' + prompt);
     if (cache) {
       const c = await db.prepare('SELECT text, model, at FROM airouter_cache WHERE key=?1').bind(key).first();
@@ -96,7 +99,7 @@ export function createRouter({ db, ai, models, now = () => Date.now(), config = 
         const neurons = m.tier === 'paid' ? 0 : neuronsOf(m, res, text, prompt), usd = usdOf(m, res, text, prompt);
         neuronsUsed += neurons; if (capSpent !== null) capSpent += usd;
         await record(kind, m, neurons, usd, !reason, reason);
-        if (reason && onFail) { try { onFail(m, reason); } catch (e) { tried.push('hook: ' + String(e && e.message).slice(0, 60)); }  // a hook never breaks routing; its error is in the exhausted message }
+        if (reason && onFail) { try { onFail(m, reason); } catch (e) { tried.push('hook: ' + String(e && e.message).slice(0, 60)); } }  // a hook never breaks routing; its error is in the exhausted message
         if (!reason) { if (cache) await db.prepare('INSERT INTO airouter_cache (key,kind,text,model,at,hits) VALUES (?1,?2,?3,?4,?5,0) ON CONFLICT(key) DO UPDATE SET text=excluded.text, model=excluded.model, at=excluded.at').bind(key, kind, text, m.model, now()).run(); return { text, model: m.model, cached: false, usd, neurons, escalated: tried.length > 0 }; }
         tried.push(m.id + ': ' + reason);
         if (stop) break;
