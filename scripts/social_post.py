@@ -46,8 +46,15 @@ def main(now=None):
         print("nothing due"); return 0
     if day_n >= gate["max_posts_per_day"] or wk_n >= gate["max_posts_per_week"]:
         print("rate limit reached; deferring"); return 0
-    post = due[0]  # oldest due first, one per run
-    bad = guard(post["text"], post["source"])
+    due.sort(key=lambda p: p.get("kind") != "event")  # REACH-1: fresh events first, evergreen excerpts fill the gaps (sort is stable)
+    post = due[0]
+    if post.get("kind") == "event":
+        import sys as _s; _s.path.insert(0, str(ROOT))
+        from foundation import reach
+        ev = {c["id"]: c["event"] for c in reach.candidates(ROOT)}.get(post["id"][3:], post["text"])
+        bad = reach.guard(post["text"], ev, ROOT)
+    else:
+        bad = guard(post["text"], post["source"])
     if bad:
         print(f"GUARD BLOCKED {post['id']}: {bad}"); return 1
     live = gate["mode"] == "live"

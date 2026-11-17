@@ -48,3 +48,4 @@
 {"at": "2026-11-16T09:50:05+00:00", "sha": "d2d7869df0bf2118a4e4ead67976472dd1ca0bac", "steps": 29, "failed": ["Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)", "Foundation tests, new-system end-to-end (one job, no matrix)"]}
 {"at": "2026-11-16T09:52:20+00:00", "sha": "6160f15cbcff7d1084c381c1122377d282077f64", "steps": 29, "failed": []}
 {"at": "2026-11-16T09:35:59+00:00", "sha": "03184dcccc93f2fdf4cb9b79ace4f7754b98e9ca", "steps": 29, "failed": []}
+{"at": "2026-11-17T15:36:20+00:00", "sha": "aaa78519afefd0b5e58fe0b506175638f167a3ca", "steps": 29, "failed": ["Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)", "Foundation tests, new-system end-to-end (one job, no matrix)"]}
