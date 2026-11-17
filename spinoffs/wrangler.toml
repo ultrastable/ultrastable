@@ -1,0 +1,9 @@
+name = "ultrastable-spinoffs"
+main = "worker.js"
+compatibility_date = "2026-11-04"
+routes = [{ pattern = "*.ultrastable.app/*", zone_name = "ultrastable.app" }]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ultrastable-ops"
+database_id = "5cd83b52-864a-4510-b062-fc0d9402d06c"

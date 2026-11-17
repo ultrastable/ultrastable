@@ -140,5 +140,24 @@ class Settle(unittest.TestCase):
         self.assertEqual(res["outcomes"], [])
 
 
+class Share(unittest.TestCase):
+    def test_self_items_take_the_run_until_their_share_is_spent(self):
+        own = {"number": "Q-SELF-unused-import-a", "labels": []}; other = {"number": "Q-OTHER", "labels": [], "score": 9}
+        rows = [{"issue": "Q-OTHER", "result": "failed"}] * 6
+        self.assertEqual(selfcode.prefer([other, own], rows=rows), [own])
+        rows = rows[:3] + [{"issue": "Q-SELF-todo-x", "result": "failed"}] * 3
+        self.assertEqual(selfcode.prefer([other, own], rows=rows), [other, own])
+        self.assertEqual(selfcode.prefer([other], rows=[]), [other])
+
+    def test_todo_is_a_comment_token_and_small_files_score_higher(self):
+        self.assertEqual(selfcode._todos('x = "# TODO not a comment"\n'), [])
+        self.assertEqual(len(selfcode._todos("x = 1  # TODO real\n")), 1)
+        d = _repo.scratch()
+        (d / "doctrine").mkdir(exist_ok=True); (d / "doctrine/selfcode.json").write_text((selfcode.REPO / "doctrine/selfcode.json").read_text())
+        (d / "small.py").write_text("import os\n"); (d / "big.py").write_text("import os\n" + "x = 1\n" * 5000)
+        f = lambda k: {"kind": "unused_import", "key": k, "count": 1}
+        self.assertGreater(selfcode.score(f("small.py"), [], d), selfcode.score(f("big.py"), [], d))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -8,6 +8,7 @@
   python3 -m foundation launch [--commit --push | --probe | --export-d1 F | --install SURFACE | --failover [--decide]]   start the loops on this repo (server-side hosts only)
   python3 -m foundation liveness [--json|--check|--file-items|--static|--probe ID]   are the autonomous loops actually running (evidence, not files)
   python3 -m foundation criticality [--tick [--apply]|--check|--gate]     the mantra as a computed invariant (CRITICALITY-1)
+  python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
@@ -38,6 +39,7 @@
   python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
   python3 -m foundation unknowns [--check|--run [--apply]|--answer KEY --verdict V --text T|--status]   UNKNOWNS-1: audit what the system does not know; inverted questions feed the objective space
   python3 -m foundation blindspots [--check|--scan [--apply] [--live]|--answer D --text T|--learn ID ...]   BLINDSPOT-1: the system knows what the owner cannot know to ask for
+  python3 -m foundation spinoff [--ideate|--launch [--apply]|--metrics SLUG|--collect [--apply]|--tick [--apply]|--check]   SPINOFF-1: the system generates, launches, measures and prunes its own apps
   python3 -m foundation promote [--check|--kits|--plan [--apply]|--outcome CH --kind K]   PROMOTE-1: strategy and promotion as a closed loop
   python3 -m foundation provenance [--check|--record JSON|--settle ID kept|reverted|none|--ingest-git [--apply]|--timeline|--changelog [--apply]|--lessons|--signal]  PROVENANCE-1: origin, effect and history of every input and change
   python3 -m foundation writeback record|check|outputs                    knowledge write-back into the repository
@@ -61,6 +63,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["blindspots"]:
         from . import blindspots
         return blindspots.main(_av[1:])
+    if _av[:1] == ["spinoff"]:
+        from . import spinoff
+        return spinoff.main(_av[1:])
     if _av[:1] == ["promote"]:
         from . import promote
         return promote.main(_av[1:])
@@ -130,6 +135,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["criticality"]:
         from . import criticality
         return criticality.main(_av[1:])
+    if _av[:1] == ["claimcode"]:
+        from . import claimcode
+        return claimcode.main(_av[1:])
     if _av[:1] == ["pointclick"]:
         from . import pointclick
         return pointclick.main(_av[1:])
