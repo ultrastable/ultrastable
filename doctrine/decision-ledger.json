@@ -1840,6 +1840,15 @@
    "body": "The cap limits new items only; items filed before and not yet worked are re-filed first without using it.",
    "probe": "grep:foundation/selfcode.py::filed_ever",
    "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
+   "id": "lesson-2026-11-17-a-merge-retry-loop-must-stop-on-conflicts-never-commit-them-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "A merge retry loop must stop on conflicts, never commit them (MERGE-SAFE-1)",
+   "body": "A shell loop that merged main, ran resolve_generated and then git add -A committed conflict markers in foundation/agent_ladder.py when the conflict was in code, and the PR merged (#524). Retry loops check git diff --diff-filter=U and stop when code conflicts remain; the fix keeps FREE-LLM-6.",
+   "probe": "grep:foundation/agent_ladder.py::the whole provider route",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
