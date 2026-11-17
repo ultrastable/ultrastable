@@ -109,6 +109,12 @@ class Contracts(unittest.TestCase):
         r = C.tick(d, apply=True, now=T0)
         self.assertEqual((status(d, "OL-9"), r["rows"][0]["action"]), ("done", "baseline"), "the first run reopens nothing it never saw pass")
 
+    def test_vacuous_item_closes_after_hold(self):
+        d = repo(); item(d, "OL-1"); (d / "marker.txt").write_text("x")
+        for m in (0, 60 * 24 + 1):
+            r = C.tick(d, apply=True, now=T0 + timedelta(minutes=m))
+        self.assertEqual((status(d, "OL-1"), r["rows"][0]["action"]), ("closed", "close"), "already-built code closes after the hold")
+
     def test_dry_run_writes_nothing(self):
         d = repo(); item(d, "OL-1"); (d / "marker.txt").write_text("x")
         r = C.tick(d, apply=False, now=T0)

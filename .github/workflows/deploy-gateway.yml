@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
+# budget: about 1 minute per deploy; runs only when the gateway code changes on main.
+# trigger: a change to workers/core/deploygate on main, or manual dispatch; never on a timer.
+# free-alternative: none needed; the gateway deploys itself with the run's own OIDC token, no secret is stored here.
+# The deploy gateway redeploys itself (gateway rule { repo: ultrastable/ultrastable, refs: [refs/heads/main], script: ultrastable-deploy-gateway }).
+# Its tests gate the deploy; the live /health check proves the new code answers.
+name: deploy-gateway
+on:
+  push: { branches: [main], paths: ['workers/core/deploygate/**', '.github/workflows/deploy-gateway.yml'] }
+  workflow_dispatch: {}
+concurrency: { group: deploy-gateway, cancel-in-progress: false }
+permissions: { contents: read, id-token: write }
+env:
+  GATEWAY: https://ultrastable-deploy-gateway.ultrastable.workers.dev
+jobs:
+  deploy:
+    if: ${{ vars.HALT != '1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node --test workers/core/deploygate/index.test.js
+      - name: build
+        run: npx --yes esbuild@0.24.0 workers/core/deploygate/worker.js --bundle --format=esm --platform=neutral --minify --outfile=.build-gateway.js
+      - name: deploy via the gateway itself
+        run: |
+          tok=$(curl -fsS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$GATEWAY" | jq -r .value)
+          curl -sS -X POST "$GATEWAY/deploy" -H "Authorization: Bearer $tok" -F script=ultrastable-deploy-gateway -F worker.js=@.build-gateway.js -o out.json -w '%{http_code}\n' | tee code.txt
+          cat out.json; echo; [ "$(cat code.txt)" = 200 ]
+      - name: live check
+        run: |
+          for try in 1 2 3 4 5 6; do curl -fsS "$GATEWAY/health" | grep -q '"ok":true' && exit 0; sleep 5; done; exit 1

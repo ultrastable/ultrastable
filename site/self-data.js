@@ -1440,7 +1440,8 @@ export default {
     "trigger": "automatic: merge to main touching worker code",
     "workflows": [
      "deploy-workers",
-     "deploy-ultrastable"
+     "deploy-ultrastable",
+     "deploy-gateway"
     ]
    },
    {
@@ -1825,6 +1826,12 @@ export default {
     "id": "demo-video",
     "loops": [
      "demo-video"
+    ]
+   },
+   {
+    "id": "deploy-gateway",
+    "loops": [
+     "deploy-workers"
     ]
    },
    {

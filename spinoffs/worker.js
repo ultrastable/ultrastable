@@ -5,6 +5,7 @@
 // domain a visitor types. Stores aggregate counts, a daily-salted visitor hash and the domain only as a keyed one-way hash (to tell a fix
 // from a first look). No address, name, IP or readable domain is kept. Metrics are public at /api/metrics.
 import bundle from "./registry.js";
+import { userError } from "../seed/worker/src/errors.js";  // USER-BACKEND-1
 
 const J = (o, s = 200, h = {}) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json; charset=utf-8", "access-control-allow-origin": "*", ...h } });
 const sha = async s => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)))].map(b => b.toString(16).padStart(2, "0")).join("");
@@ -124,4 +125,4 @@ export async function handle(request, env, f = fetch) {
   return new Response("Not found", { status: 404 });
 }
 
-export default { fetch: (req, env) => handle(req, env).catch(e => J({ ok: false, code: "internal", error: "Something went wrong; try again." }, 500)) };
+export default { fetch: (req, env) => handle(req, env).catch(e => { const r = userError(e, "spinoffs"); return J({ ok: false, code: r.code, error: r.error }, r.status); }) };
