@@ -43,7 +43,7 @@ One main repository holds what Ultrastable is. A separate repository exists only
 | [ops](https://github.com/ultrastable/ops) | private | The few steps only the owner can take (accounts, money, signatures), one card each. Private on purpose. |
 | [practical-solutions](https://github.com/ultrastable/practical-solutions) | public | An autonomous bright-spot finder that runs on Ultrastable. The first system built on it, in its own repository. |
 
-The organization's profile page is [.github](https://github.com/ultrastable/.github). Retired, kept only so old links work: [`license`](https://github.com/ultrastable/license) is now in `spec`; [`seed`](https://github.com/ultrastable/seed) is now in `ultrastable`. Still to fold into the main repository: `workers` into `ultrastable` (Q-REPOS-MERGE-WORKERS), `spec` into `ultrastable` (Q-REPOS-MERGE-SPEC). The target is 3 repositories: `ultrastable`, `ops`, `practical-solutions`.
+The organization's profile page is [.github](https://github.com/ultrastable/.github). Retired, kept only so old links work: [`license`](https://github.com/ultrastable/license) is now in `spec`; [`seed`](https://github.com/ultrastable/seed) is now in `ultrastable`. Still to fold into the main repository: `workers` into `ultrastable` (Q-REPOS-MERGE-WORKERS), `spec` into `ultrastable` (Q-REPOS-MERGE-SPEC). The target set is `ultrastable`, `ops`, `practical-solutions`.
 
 ## License
 Source-available. Free for non-commercial use: read it, run it, study it, change it, share it. Any commercial use needs a Commercial License with revenue share. Full terms: [Ultrastable License v1.0 (USL-1.0)](https://github.com/ultrastable/ultrastable/blob/main/LICENSING.md). Commercial licensing: pilot@ultrastable.io.

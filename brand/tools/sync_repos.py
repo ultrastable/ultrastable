@@ -36,7 +36,7 @@ def organized(cfg):
 |---|---|---|
 {rows}
 
-The organization's profile page is [.github](https://github.com/{org}/.github). Retired, kept only so old links work: {old}. Still to fold into the main repository: {pend}. The target is {len(st['target'])} repositories: {', '.join(f'`{t}`' for t in st['target'])}.
+The organization's profile page is [.github](https://github.com/{org}/.github). Retired, kept only so old links work: {old}. Still to fold into the main repository: {pend}. The target set is {', '.join(f'`{t}`' for t in st['target'])}.
 """
 
 
