@@ -2994,6 +2994,41 @@
       "server_owner": "ultrastable-tick"
     },
     {
+      "id": "ultrastability-loop",
+      "kind": "governance",
+      "summary": "Ashby's second loop: every tick reads each essential variable against its bounds; one out of bounds for two ticks takes one discrete step (a parameter change within limits, or a restructure item), kept only if the variable returns, otherwise undone and the next step taken; an exhausted ladder files a redesign item.",
+      "trigger": "daily cost-guard workflow and the criticality tick",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "24h",
+      "done": "ops/ultrastability.jsonl has a reading row for every essential variable within 48 h and every step has a verdict within its settle window",
+      "paths": [
+        {
+          "id": "github-cost-guard",
+          "how": "python3 -m foundation ultrastability --tick --apply in the daily cost-guard workflow (built-in token)",
+          "class": "free"
+        },
+        {
+          "id": "executor-pass",
+          "how": "python3 -m foundation ultrastability --tick --apply from the executor pass on any checkout",
+          "class": "degraded"
+        }
+      ],
+      "closing_probe": "grep:foundation/ultrastability.py::def tick",
+      "writeback": [
+        "docs/issues",
+        "ops/ultrastability.jsonl"
+      ],
+      "system_path": [
+        "foundation/ultrastability.py",
+        "doctrine/ultrastability.json",
+        "tests/foundation/test_ultrastability.py"
+      ],
+      "workflows": [],
+      "area": "managers",
+      "server_owner": "ultrastable-tick"
+    },
+    {
       "id": "branch-sweep",
       "kind": "governance",
       "summary": "No remote branch carries work main lacks. Every branch gets one recorded disposition (merged, superseded, ported as a PORT-BRANCH item, rejected on purpose, or state): generated-file conflicts resolve by rule, a merge that breaks the gate is undone, merged branches are pruned. Closes the blind spot of the session reaper, which only watched agent/ and claude/ branches.",

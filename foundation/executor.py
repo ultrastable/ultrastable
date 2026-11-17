@@ -31,16 +31,44 @@ def now() -> str:
     return dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+EFFECT_PREFIXES = ("Q-CIFAIL-", "Q-CLAIM", "Q-UNK-", "Q-SELF-", "Q-BUG", "BREACH-", "Q-CRIT")  # EFFECT-1: items whose fix changes running behaviour
+EFFECT_LABELS = {"bug", "failing-check", "raises-self"}
+CODE_EXT = (".py", ".js", ".mjs", ".cjs", ".ts", ".sh", ".sql")
+
+
+def effect_tier(issue: dict) -> int:
+    """EFFECT-1: 0 for an item with executable effect (a failing check, a claim drift, an unknown, a bug), else 1. The picker takes tier 0 first."""
+    names = {(l["name"] if isinstance(l, dict) else l) for l in issue.get("labels", [])}
+    return 0 if str(issue.get("number", "")).startswith(EFFECT_PREFIXES) or names & EFFECT_LABELS else 1
+
+
+def consumer_gap(files: list[str], root=REPO) -> str | None:
+    """EFFECT-1 / CLOSED-LOOP-1: a change must alter running behaviour. It passes when it touches a code file outside docs/, or when every data file it
+    writes is named by existing code. Otherwise the reason, fed back to the model as a failed check."""
+    real = [f for f in files if not f.startswith(("docs/issues/", "ops/")) and f != "doctrine/decision-ledger.json"]
+    if any(f.endswith(CODE_EXT) and not f.startswith("docs/") for f in real):
+        return None
+    orphans = []
+    for f in real:
+        r = subprocess.run(["git", "grep", "-l", "-F", f, "--", *[f"*{e}" for e in CODE_EXT], ":(exclude)tests/", ":(exclude)*/test/*"], cwd=root, capture_output=True, text=True)
+        if not r.stdout.strip():
+            orphans.append(f)
+    if orphans or not real:
+        return ("the change has no code consumer (CLOSED-LOOP-1): " + (", ".join(orphans) if orphans else "it writes only queue or ops files")
+                + ". Change code that runs (a .py or .js file and its test), or make existing code read the file")
+    return None
+
+
 def priority(issue: dict) -> tuple:
-    """Driver order: p0..p9 label (lower first), then oldest number. Unlabelled issues sort after labelled ones."""
+    """Driver order: items with executable effect first (EFFECT-1), then p0..p9 label (lower first), then oldest number."""
     if "score" in issue:  # PRIORITIZE-1: the ranker's score (goal weight, dependency centrality, size, age) replaces label-then-age order
-        return (0, -issue["score"], str(issue["number"]))
+        return (effect_tier(issue), 0, -issue["score"], str(issue["number"]))
     p = 5
     for l in issue.get("labels", []):
         m = re.fullmatch(r"(?:p|priority[:/ -]?)(\d)", l["name"] if isinstance(l, dict) else l, re.I)
         if m:
             p = min(p, int(m.group(1)))
-    return (p, issue["number"])
+    return (effect_tier(issue), p, issue["number"])
 
 
 def pick(issues: list[dict], at: dt.datetime | None = None):
@@ -290,7 +318,8 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         from . import growth  # GROWTH-1: a product manager keeps the backlog from devolving into bug fixes
         from . import rnd  # RND-1: competitor gaps and adopted findings carry a priority the loop computed
         from . import selfcode  # SELFCODE-1: a share of runs goes to the code agent's own findings and trusted issue intake; it runs first so growth.prefer cannot filter them out
-        issues = rnd.boost(growth.prefer(selfcode.prefer(issues, root), root), root)
+        eff = [i for i in issues if effect_tier(i) == 0]  # EFFECT-1: failing checks, claim drift, unknowns and bugs go before the growth mix and R&D boost
+        issues = eff if eff else rnd.boost(growth.prefer(selfcode.prefer(issues, root), root), root)
     issue = next((i for i in issues if str(i["number"]) == str(issue_no)), None) if issue_no else pick(issues)
     if not issue:
         row = {"result": "idle", "detail": "no open issue the executor may take", "prediction": "open_issues_takeable <= 0 within 24 h"}
@@ -336,10 +365,13 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if attempt < REPAIRS:
                     prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED (" + failed[0] + "). Do NOT reply with JSON this time. Reply in exactly this format instead:" + chr(10) + agents_block_format()
                 continue
-            if checks is None:
+            gap = consumer_gap(files, root) if checks is None and not port else None
+            if gap:
+                failed.append(gap)
+            if checks is None and not gap:
                 for g in GENERATORS:
                     sh(g, root)
-            for c in (checks if checks is not None else CHECKS):
+            for c in ([] if gap else checks if checks is not None else CHECKS):
                 code, o = sh(c, root)
                 if code:
                     tests = failing_tests(o)

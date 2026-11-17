@@ -112,6 +112,24 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "A system is ultrastable, in W. Ross Ashby's sense, when two loops keep its essential variables inside bounds: a fast loop that corrects disturbance, and a slow loop that changes the system itself when the fast loop cannot.",
+   "detail": "",
+   "how": "file:foundation/ultrastability.py + file:doctrine/ultrastability.json + grep:foundation/ultrastability.py::SECOND ORDER",
+   "id": "how-ultrastable-two-loops",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.",
+   "detail": "",
+   "how": "json:doctrine/ultrastability.json::patience_ticks==2 + grep:foundation/ultrastability.py::revert_to=pending + grep:foundation/ultrastability.py::verdict = \"kept\"",
+   "id": "how-ultrastable-second-order",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
    "claim": "seed-tests: 35 Python and 250 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
@@ -245,7 +263,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 24,
-  "total": 24
+  "pass": 26,
+  "total": 26
  }
 };
