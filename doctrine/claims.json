@@ -266,5 +266,66 @@
         "/claims"
       ]
     }
-  ]
+  ],
+  "coverage": {
+    "target": 1.0,
+    "floor": 0.035,
+    "live_pages": [
+      "https://blindspot.ultrastable.app/",
+      "https://ultrastable.io/",
+      "https://ultrastable.io/accessibility",
+      "https://ultrastable.io/changelog",
+      "https://ultrastable.io/claims",
+      "https://ultrastable.io/connect",
+      "https://ultrastable.io/contact",
+      "https://ultrastable.io/engineers",
+      "https://ultrastable.io/faq",
+      "https://ultrastable.io/for",
+      "https://ultrastable.io/for/communities",
+      "https://ultrastable.io/for/developers",
+      "https://ultrastable.io/for/founders",
+      "https://ultrastable.io/for/funders",
+      "https://ultrastable.io/for/partners",
+      "https://ultrastable.io/how",
+      "https://ultrastable.io/live",
+      "https://ultrastable.io/ops",
+      "https://ultrastable.io/org",
+      "https://ultrastable.io/pilot",
+      "https://ultrastable.io/privacy",
+      "https://ultrastable.io/product",
+      "https://ultrastable.io/proof",
+      "https://ultrastable.io/roadmap",
+      "https://ultrastable.io/setup",
+      "https://ultrastable.io/showcase",
+      "https://ultrastable.io/showcase/practical-solutions",
+      "https://ultrastable.io/showcase/qnfo",
+      "https://ultrastable.io/start",
+      "https://ultrastable.io/team",
+      "https://ultrastable.org/"
+    ],
+    "src_globs": [
+      "site/*.js",
+      "site/**/*.html",
+      "seed/site/**/*.js",
+      "seed/site/**/*.html",
+      "README.md",
+      "agents/AGENTS.md",
+      "**/README.md",
+      "seed/**/*.md",
+      "docs/doctrine/VISION.md"
+    ],
+    "patterns": [
+      "\\bevery \\d+ (minutes?|hours?|days?)\\b",
+      "\\b\\d[\\d,]*(\\.\\d+)? ?(%|percent)",
+      "\\b\\d[\\d,]* (draws|checks|probes|tests|sources|repositories|workers|tenants|loops|agents|roles)\\b",
+      "\\b(100%|always|never|automatically|guarantee[sd]?|every (change|deploy|merge|claim|statement|page))\\b",
+      "\\bwithin \\d+ ?(minutes?|hours?|seconds?|days?)\\b"
+    ],
+    "skip": [
+      "\\.test\\.",
+      "/test/",
+      "STAGED",
+      "node_modules"
+    ]
+  }
 }

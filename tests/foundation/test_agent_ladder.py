@@ -11,7 +11,7 @@ CF = {"CLOUDFLARE_API_TOKEN": "t", "CLOUDFLARE_ACCOUNT_ID": "a"}
 
 class Ladder(unittest.TestCase):
     def setUp(self):
-        self.d = str(_repo.scratch())
+        self.d = str(_repo.scratch()); L.DOWN.clear()
 
     def test_registry_is_valid(self):
         self.assertEqual(L.check(), [])
@@ -31,6 +31,15 @@ class Ladder(unittest.TestCase):
             L.call("p", att, root=self.d, env=CF, send=send)
         expected = [a["id"] for a in L.rungs(self.d, CF)]
         self.assertEqual(seen, [expected[0], expected[1], expected[n - 1]])
+
+    def test_a_dead_rung_is_skipped_for_the_rest_of_the_run(self):
+        first = L.rungs(self.d, CF)[0]["id"]
+        def boom(a, p, e):
+            raise RuntimeError("non-JSON response (HTTP 200, text/plain)")
+        with self.assertRaises(RuntimeError):
+            L.call("p", 0, root=self.d, env=CF, send=boom)
+        self.assertNotIn(first, [a["id"] for a in L.rungs(self.d, CF)])
+        L.DOWN.clear()
 
     def test_unusable_reply_is_logged_and_raised(self):
         with self.assertRaises(ValueError):
