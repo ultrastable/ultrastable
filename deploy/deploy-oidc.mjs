@@ -25,9 +25,10 @@ for (const id of ids) {
   const r = await makeDeployer({ token: gh, site, oidc: await oidc() })(id, sha, repo);
   console.log(r.ok ? "OK    " : "FAIL  ", id, r.ok ? (r.version || "uploaded") : r.detail);
   results.push({ worker: id, ...r });
-  appendFileSync(new URL("../ops/deploys.jsonl", import.meta.url), JSON.stringify({ at: new Date().toISOString(), worker: id, uploaded: r.ok, route: "oidc", account: topo.account_id, sha }) + "\n");
 }
+// DEPLOY-RECORD-1: live_matches_commit is true only when Cloudflare returned the deployment id of this upload (built from this commit) and the deployed tick then answered /health; the workflow commits the rows.
 // The live probe: the tick in the target account answers and names its controller state.
 const h = await fetch(SITE.replace("ultrastable-site", "ultrastable-tick") + "/health").then(r => r.json()).catch(() => null);
 console.log("tick health:", h ? JSON.stringify(h.cutover) : "unreachable");
+for (const x of results) appendFileSync(new URL("../ops/deploys.jsonl", import.meta.url), JSON.stringify({ at: new Date().toISOString(), worker: x.worker, uploaded: x.ok, live_matches_commit: !!(x.ok && x.version && h), version: x.version || "", route: "oidc", account: topo.account_id, sha }) + "\n");
 process.exit(results.every(r => r.ok) ? 0 : 1);

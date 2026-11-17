@@ -1901,6 +1901,15 @@
    "body": "The first tick read spend 127x budget from a single ops/cost.jsonl row dated 2026-11-13 taken on the old shared account (8.9M neurons). Real figures for the ultrastable account over 7 days: about 8,068 neurons (0.115 of the free-plan cap) and 6.95M D1 rows read on the busiest database (0.497 of cap), roughly zero dollars. Readings older than 3 days are now None; unmeasured variables never trigger a step and file one UNMEASURED item. Tenant variables now run per spinoff app.",
    "probe": "grep:foundation/ultrastability.py::def fresh_cost",
    "session": "session_0156nqDvqvENNWfEYLQjbFyC"
+  },
+  {
+   "id": "lesson-2026-11-17-deploy-record-1-the-oidc-deploy-path-wrote-deploy-rows-in-a-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "DEPLOY-RECORD-1: the OIDC deploy path wrote deploy rows in a runner and never committed them",
+   "body": "deploy-ultrastable.yml (the live deploy owner since the account split) had contents: read and no record step, so ops/deploys.jsonl froze on 2026-11-15 and k read 0 although deploys ran. Rows now carry live_matches_commit only when Cloudflare returned the upload's deployment id and the tick answered /health, and the workflow commits them. A backfill of past runs as verified rows was declined by the permission check as manufactured evidence; k reads true from the next real deploy. Tenant files are written by the daily cost-guard workflow.",
+   "probe": "grep:deploy/deploy-oidc.mjs::live_matches_commit",
+   "session": "session_0156nqDvqvENNWfEYLQjbFyC"
   }
  ]
 }
