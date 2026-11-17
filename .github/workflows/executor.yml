@@ -16,29 +16,27 @@ on:
       issue:
         description: "issue number to work (default, top of driver order)"
         required: false
+concurrency:  # per run: the executor job holds the real `executor` group (SPARK-QUEUE-1)
+  group: executor-run-${{ github.run_id }}
+  cancel-in-progress: false
 permissions:
   contents: write
   pull-requests: write
   issues: write
   actions: write
   models: read  # FREE-LLM-1: GitHub Models over the built-in token, the first and free rung of the code-agent ladder
-concurrency:
-  group: executor
-  cancel-in-progress: false
 jobs:
-  executor:
-    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+  # SPARK-QUEUE-1: the chain cap is decided outside the executor's concurrency group, so a capped spark never displaces a queued dispatch (measured 2026-11-17: capped workflow_run sparks cancelled manual and Worker dispatches)
+  spark:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
     runs-on: ubuntu-24.04
-    timeout-minutes: 12
+    timeout-minutes: 3
+    outputs:
+      go: ${{ steps.spark.outputs.go }}
     steps:
       - uses: actions/checkout@v7
         with:
           ref: main
-          fetch-depth: 0
-      - run: python3 scripts/actions_guard.py executor
-        env:
-          GH_TOKEN: ${{ github.token }}
-      - run: pip install pyyaml
       - name: Spark gate (EXEC-SPARK-1)
         id: spark
         run: |
@@ -50,24 +48,41 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ github.token }}
+  executor:
+    needs: spark
+    if: ${{ vars.HALT != '1' && needs.spark.outputs.go == 'true' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    concurrency:
+      group: executor
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - run: python3 scripts/actions_guard.py executor
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: pip install pyyaml
       - name: Gate and feed the agent (budget caps, kill switch, Q-UNK work)
         id: work
-        if: steps.spark.outputs.go == 'true'
+        if: needs.spark.outputs.go == 'true'
         run: python3 -m foundation agentwork --apply
         env:
           HALT: ${{ vars.HALT }}
           AGENT_KILL: ${{ vars.AGENT_KILL }}
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
       - name: Bridge parked needs-code items into the queue (NEEDS-CODE-BRIDGE-1)
-        if: steps.spark.outputs.go == 'true'
+        if: needs.spark.outputs.go == 'true'
         run: python3 scripts/needs_code_bridge.py
       - name: Sense code signals and trusted issues, file self-code items (SELFCODE-1)
-        if: steps.spark.outputs.go == 'true' && steps.work.outputs.agent_go != 'false'
+        if: needs.spark.outputs.go == 'true' && steps.work.outputs.agent_go != 'false'
         run: python3 -m foundation selfcode --sense --apply
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Execute one item
-        if: steps.spark.outputs.go == 'true' && steps.work.outputs.agent_go != 'false'
+        if: needs.spark.outputs.go == 'true' && steps.work.outputs.agent_go != 'false'
         run: ULTRASTABLE_HOST="github-actions:${{ github.event_name }}" python3 -m foundation executor --apply ${{ inputs.issue && format('--issue {0}', inputs.issue) || '' }}
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
@@ -76,20 +91,20 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Settle merged agent changes against their signal and revert a regression (SELFCODE-1)
-        if: always() && steps.spark.outputs.go == 'true'
+        if: always() && needs.spark.outputs.go == 'true'
         run: python3 -m foundation selfcode --settle --apply
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
       - name: Commit provenance to loop-evidence
-        if: always() && steps.spark.outputs.go == 'true'
+        if: always() && needs.spark.outputs.go == 'true'
         run: bash scripts/executor_evidence.sh
       - name: Keep the clock ticking (CLOCKWORK-1)
-        if: always() && steps.spark.outputs.go == 'true'
+        if: always() && needs.spark.outputs.go == 'true'
         run: python3 -m foundation clock --chain --apply
         env:
           GH_TOKEN: ${{ github.token }}
       - name: "Heal the clocks (CLOCKWORK-2: catch-up, settlement, escalation)"
-        if: always() && steps.spark.outputs.go == 'true'
+        if: always() && needs.spark.outputs.go == 'true'
         run: python3 -m foundation clock --heal --apply
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
