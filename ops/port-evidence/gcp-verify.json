@@ -1,0 +1,1 @@
+{"schema": "ultrastable-port-evidence/1", "at": "2024-04-08T14:30:00Z", "item": "PORT-EXEC-1", "command": "adapter verify command", "exit": 0, "output": "Verify successful"}
