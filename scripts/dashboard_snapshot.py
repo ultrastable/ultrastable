@@ -104,6 +104,17 @@ def build(today):
     except (OSError, subprocess.SubprocessError) as e:
         problems.append(f"git: {e}")
         head = ""
+    try:  # UNKNOWNS-1: what the system does not know, in the owner console
+        from foundation import unknowns
+        u = unknowns.status(ROOT)
+        panels.append({"id": "unknowns", "title": "What we do not know (UNKNOWNS-1)", "rows": [
+            ["Loops and needs questioned", f"{u['units_questioned']} of {u['units']} ({round(u['coverage'] * 100)}%)", "info"],
+            ["Questions asked / answered / open", f"{u['asked']} / {u['answered']} / {u['open']}", "warn" if u["open"] else "ok"],
+            ["Surprise rate (answers that found a gap)", f"{round(u['surprise_rate'] * 100)}%", "info"],
+            ["Objective candidates / seeds for the next pass", f"{u['objective_candidates']} / {u['seeds']}", "info"],
+            ["Answered with 'we cannot know'", str(u["cannot_know"]), "info"]]})
+    except (OSError, ValueError, KeyError, ImportError) as e:
+        problems.append(f"unknowns panel: {type(e).__name__}: {e}")
     return {"generated": today.isoformat(), "commit": head, "problems": problems, "panels": panels}
 
 
