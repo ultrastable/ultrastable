@@ -328,6 +328,16 @@ export async function watchTick(env) {
   try { const r = await env.TICK.fetch(new Request("https://tick.internal/pulse/watch", { method: "POST" })); return { status: r.ok ? "ok" : "http-" + r.status }; }
   catch (e) { console.error("watchdog: tick worker unreachable", e && e.message); return { status: "unreachable" }; }
 }
+export async function selfFix(env, r, day) {
+  const id = "fix-" + String(r.name).replace(/[^a-z0-9_:-]/gi, "-").slice(0, 60);
+  const fresh = await env.DB.prepare("INSERT OR IGNORE INTO notifications(key,at,subject) VALUES(?1,?2,?3)").bind("selffix:" + r.name + ":" + day, Date.now(), "self-fix " + r.name).run();
+  if (!fresh.meta || !fresh.meta.changes) return false;
+  await PV.add(env, { class: "system", actor: "dashboard-probe", channel: "loop-run", kind: "incident", summary: "check " + r.name + " failing: " + String(r.detail || "").slice(0, 300), ref: "check:" + r.name, affected: [r.name] });
+  await env.DB.prepare("INSERT INTO tasks(id,title,kind,state,why,source,priority,updated_at) VALUES(?1,?2,'fleet','open',?3,'check',3,?4) ON CONFLICT(id) DO UPDATE SET state='open',why=?3,updated_at=?4").bind(id, "Fix failing check " + r.name, String(r.detail || "").slice(0, 300), Date.now()).run();
+  const q = await env.DB.prepare("SELECT 1 x FROM fleet_queue WHERE task_id=?1 AND status='queued'").bind(id).first();
+  if (!q) await env.DB.prepare("INSERT INTO fleet_queue(task_id,status,queued_at) VALUES(?1,'queued',?2)").bind(id, Date.now()).run();
+  return true;
+}
 export async function tick(env, cron) {
   try { await watchTick(env); } catch (e) { console.error("watchTick", e && e.message); }
   try { await ensureSnapshots(env); } catch (e) { console.error("ensureSnapshots", e && e.message); }
@@ -335,7 +345,9 @@ export async function tick(env, cron) {
   const res = await runProbes(env); const day = new Date().toISOString().slice(0, 10);
   const dbc = res.find(x => x.name === "database");
   if (dbc && !dbc.ok) { /* mail needs no database: tell the owner in plain words, at most every 6 hours (the hourly cron makes the slot the dedup) */ if (new Date().getUTCHours() % 6 === 0) { try { await sendMail(env, "Ultrastable: database resting", isLimitError(dbc.detail) ? DB_LIMIT_NOTE() : "The database did not answer (" + String(dbc.detail).slice(0, 120) + "). The system retries every hour."); } catch (e) { console.error("db-down mail", e && e.message); } } return; }
-  for (const r of res.filter(x => !x.ok && x.name !== "github")) await notify(env, "fail:" + r.name + ":" + day, "Ultrastable check failing: " + r.name, r.name + " failed: " + r.detail + "\nOpen https://ultrastable.io/owner");
+  // SELF-FIX-1 (Rowan 2026-11-17: backend work stays invisible to the owner): a failing check is never mailed. It is written to the owner-only
+  // provenance ledger as an incident and queued once per day as a fleet task, which the fleet takes from /api/fleet/queue and closes by the probe.
+  for (const r of res.filter(x => !x.ok && x.name !== "github")) { try { await selfFix(env, r, day); } catch (e) { console.error("selfFix", r.name, e && e.message); } }
   try { const a = await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }); for (const m of a.metrics.filter(x => x.hit)) await notify(env, "metric:" + m.name + ":" + day, "Ultrastable metric breach: " + m.name, m.name + " = " + m.value + " (" + m.why + ")\n" + m.label + "\nOpen https://ultrastable.io/owner"); } catch (e) { console.error("metrics", e && e.message); }
   const fresh = (await env.DB.prepare("SELECT id,title FROM tasks WHERE kind='owner' AND state='open' AND id NOT IN (SELECT substr(key,6) FROM notifications WHERE key LIKE 'task:%') ORDER BY priority LIMIT 50").all()).results;
   if (fresh.length) {
