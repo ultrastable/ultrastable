@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """TENANT-SYNC-1: every organization repository has a role, and the core tool the tenants vendor is present."""
 import sys, unittest
 from pathlib import Path

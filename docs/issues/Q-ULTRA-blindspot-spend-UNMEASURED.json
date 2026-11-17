@@ -1,7 +1,7 @@
 {
   "id": "Q-ULTRA-blindspot-spend-UNMEASURED",
   "title": "Q-ULTRA-blindspot-spend-UNMEASURED: essential variable blindspot:spend cannot be read",
-  "body": "**Owner:** executor\n**Trigger:** `blindspot:spend` has no fresh reading (source tenant.spend_vs_budget)\n**Done check:** probe:python3 -m foundation ultrastability --status\n**Status:** open\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `blindspot:spend` with a value.\n",
+  "body": "**Owner:** executor\n**Trigger:** `blindspot:spend` has no fresh reading (source tenant.spend_vs_budget)\n**Done check:** cmd:python3 -m foundation ultrastability --status\n**Status:** open\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `blindspot:spend` with a value.\n",
   "labels": [
     "p1",
     "agent-ready"

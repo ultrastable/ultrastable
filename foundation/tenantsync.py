@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """TENANT-SYNC-1: core is the system of record; tenants pin it by hash and every generic capability they build flows up.
 
 Backend only. A person using a system never sees any of this; every decision is one line in ops/tenant-sync/ledger.jsonl.

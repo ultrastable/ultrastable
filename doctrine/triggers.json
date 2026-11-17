@@ -400,6 +400,15 @@
     "41 6 * * *"
    ]
   },
+  "tenant-sync.yml": {
+   "events": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 6 * * *"
+   ]
+  },
   "transparency.yml": {
    "events": [
     "workflow_dispatch"

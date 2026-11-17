@@ -16,7 +16,7 @@ def copy():
     for f in ("doctrine/claims.json", "README.md", "platform/adapters/README.md", "site/worker.js", "site/promote.js", "site/agentic.js", "site/claims-data.js", ".github/workflows/claims.yml", "tests/foundation/test_claims.py", "agents/AGENTS.md"):
         (td / f).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / f, td / f)
-    for d in ("seed", "platform", "ops", "foundation", "instances", "doctrine", "site"):
+    for d in ("seed", "platform", "ops", "foundation", "instances", "doctrine", "site", "scripts"):
         shutil.copytree(ROOT / d, td / d, dirs_exist_ok=True, ignore=shutil.ignore_patterns("node_modules", "__pycache__", "assets"))
     return td
 

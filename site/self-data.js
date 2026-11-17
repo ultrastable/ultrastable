@@ -500,6 +500,7 @@ export default {
   "social-post",
   "spinoff",
   "strange-loop-hygiene",
+  "tenant-sync",
   "terms-crosswalk",
   "tick-heartbeat",
   "transparency",
@@ -1651,12 +1652,25 @@ export default {
     "id": "resilience",
     "kind": "governance",
     "owner": "operations",
-    "server_owner": "cloudflare-worker",
+    "server_owner": "ultrastable-tick",
     "sla": "1d",
     "summary": "RESILIENCE-1: every clock keeps ticking. The watchdog probes every clock (doctrine/clocks.json and every scheduled workflow), restarts the stopped ones (workflow dispatch, or POST /pulse/watch on each Cloudflare account), escalates a restart that did not take as a Q-STALL item, and feeds the essential variable stalled_clocks. The GitHub watchdog and the tick Worker's watchdog loop restart each other.",
     "trigger": "every 40 minutes from the tick Worker (watchdog-gh loop), daily and on every finished lane, deploy-site or executor run from GitHub Actions",
     "workflows": [
      "watchdog"
+    ]
+   },
+   {
+    "closing_probe": "grep:foundation/tenantsync.py::def run",
+    "id": "tenant-sync",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "1d",
+    "summary": "Core is the system of record: every tenant pins workers/ by hash, never forks it, and every generic capability it builds is lifted into the core by a core PR; the core's changes flow back by re-vendor PRs. Backend only; each action is a ledger line.",
+    "trigger": "daily workflow and every push to workers/",
+    "workflows": [
+     "tenant-sync"
     ]
    }
   ],
@@ -1900,6 +1914,12 @@ export default {
     ]
    },
    {
+    "id": "tenant-sync",
+    "loops": [
+     "tenant-sync"
+    ]
+   },
+   {
     "id": "transparency",
     "loops": [
      "public-transparency"
@@ -1927,58 +1947,58 @@ export default {
  },
  "readings": {
   "blindspot:claims_drift": {
-   "at": "2026-11-17T18:30:31Z",
+   "at": "2026-11-17T18:35:35Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-17T18:30:31Z",
+   "at": "2026-11-17T18:35:35Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:uptime": {
-   "at": "2026-11-17T18:30:31Z",
+   "at": "2026-11-17T18:35:35Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-17T18:30:31Z",
+   "at": "2026-11-17T18:35:35Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "claims_drift": {
-   "at": "2026-11-17T18:30:31Z",
+   "at": "2026-11-17T18:35:35Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 1
   },
   "deploy_health": {
-   "at": "2026-11-17T18:30:31Z",
+   "at": "2026-11-17T18:35:35Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "spend": {
-   "at": "2026-11-17T18:30:31Z",
+   "at": "2026-11-17T18:35:35Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.497
   },
   "stalled_clocks": {
-   "at": "2026-11-17T18:30:31Z",
+   "at": "2026-11-17T18:35:35Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 2
   },
   "value": {
-   "at": "2026-11-17T18:30:31Z",
+   "at": "2026-11-17T18:35:35Z",
    "in_bounds": true,
    "unmeasured": false,
-   "value": 4.573
+   "value": 5.049
   }
  },
  "self": {
