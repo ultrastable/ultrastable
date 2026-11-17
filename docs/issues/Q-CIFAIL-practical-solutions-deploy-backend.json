@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-practical-solutions-deploy-backend",
+  "title": "Q-CIFAIL-practical-solutions-deploy-backend: deploy-backend is failing in ultrastable/practical-solutions",
+  "body": "**Owner:** staff\n**Trigger:** every executor run and every ciwatch run\n**Done check:** cmd:python3 -m foundation ciwatch --probe ultrastable/practical-solutions deploy-backend\n**Status:** open\n\nCIWATCH-1: workflow `deploy-backend` in ultrastable/practical-solutions is red on its default branch (failure, 2026-11-17T18:25:29Z): https://github.com/ultrastable/practical-solutions/actions/runs/44147678015\n\nFix the root cause in the repository where the defect lives; do not skip or weaken the check. Failed log tail:\n\n```\ndeploy\tdeploy via gateway\t\ufeff2026-11-17T18:26:29.3760587Z ##[group]Run tok=$(curl -fsS -H \"Authorization: ***\" \"$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$GATEWAY\" | jq -r .value)\ndeploy\tdeploy via gateway\t2026-11-17T18:26:29.3761639Z ^[[36;1mtok=$(curl -fsS -H \"Authorization: ***\" \"$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$GATEWAY\" | jq -r .value)^[[0m\ndeploy\tdeploy via gateway\t2026-11-17T18:26:29.3762677Z ^[[36;1mcurl -sS -X POST \"$GATEWAY/deploy\" -H \"Authorization: ***\" -F script=tenant-ps-core -F worker.js=@.build-backend.js -o out.json -w '%{http_code}\\n' | tee code.txt^[[0m\ndeploy\tdeploy via gateway\t2026-11-17T18:26:29.3763461Z ^[[36;1mcat out.json; echo; [ \"$(cat code.txt)\" = 200 ]^[[0m\ndeploy\tdeploy via gateway\t2026-11-17T18:26:29.3813600Z shell: /usr/bin/bash -e {0}\ndeploy\tdeploy via gateway\t2026-11-17T18:26:29.3813878Z env:\ndeploy\tdeploy via gateway\t2026-11-17T18:26:29.3814242Z   GATEWAY: https://ultrastable-deploy-gateway.ultrastable.workers.dev\ndeploy\tdeploy via gateway\t2026-11-17T18:26:29.3814711Z ##[endgroup]\ndeploy\tdeploy via gateway\t2026-11-17T18:26:30.9088984Z 502\ndeploy\tdeploy via gateway\t2026-11-17T18:26:30.9134140Z {\"error\":\"read-back mismatch\",\"sha256\":\"b3e2724079ede963dd2fff6be94e68e166e73bc1e14aec51987ba5ad8b230a5c\"}\ndeploy\tdeploy via gateway\t2026-11-17T18:26:30.9176257Z ##[error]Process completed with exit code 1.\n```",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
