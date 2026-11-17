@@ -1114,6 +1114,32 @@
       "bindings": [
         "LANE_PAT"
       ]
+    },
+    "claims-conformance": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:prs"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "site.page",
+          "via": "pages:ultrastable.io",
+          "to": "ext.site_visits",
+          "returns": "site.visits"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a drift files a Q-CLAIM item the executor fixes by merging a change; the next check reads the fixed words and the claim count rises",
+      "bindings": []
     }
   },
   "implicit_producers": {
