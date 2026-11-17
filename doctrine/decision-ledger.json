@@ -1822,6 +1822,15 @@
    "body": "GitHub Models answered 200 text/plain OK on both its rungs, spending two of three attempts, so Workers AI got one try and no repair. A rung whose transport fails is now marked down for the process and the ladder moves on, leaving the repair attempts to a working model.",
    "probe": "grep:foundation/agent_ladder.py::FREE-LLM-5",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-a-dead-provider-route-is-skipped-whole-free-llm-6",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "A dead provider route is skipped whole (FREE-LLM-6)",
+   "body": "Both GitHub Models rungs failed the same way in one run, still spending two of three attempts; a transport failure now marks the provider route down for the process, so Workers AI gets all repair attempts.",
+   "probe": "grep:foundation/agent_ladder.py::the whole provider route",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
