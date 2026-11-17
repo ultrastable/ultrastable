@@ -52,7 +52,7 @@ class Promote(unittest.TestCase):
         after = {r["id"]: r["score"] for r in promote.plan(self.tmp)["channels"]}
         self.assertGreater(after["indexnow"], before["indexnow"])
         ids = {i["id"] for i in promote.items(promote.plan(self.tmp))}
-        self.assertEqual(ids, {"Q-PROMO-mcp-registry", "Q-PROMO-indexnow"})
+        self.assertEqual(ids, {"Q-PROMO-mcp-registry", "Q-PROMO-indexnow", "Q-PROMO-feed", "Q-PROMO-social", "Q-PROMO-ps-social-good"})
 
 
 if __name__ == "__main__":
