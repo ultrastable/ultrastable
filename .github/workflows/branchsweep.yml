@@ -46,3 +46,7 @@ jobs:
             gh pr create --base main --head "$b" --title "branchsweep: merge the branches main lacks" --body "BRANCH-SWEEP-1. Disposition per branch: ops/branchsweep-ledger.jsonl. Handoff: item: BRANCH-SWEEP-1" --label server-owned || echo "pull request already open"
           fi
           python3 -m foundation branchsweep --prune
+      - name: Prune stale session branches in every fleet repository (BRANCH-SWEEP-2)
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || github.token }}
+        run: python3 -m foundation branchsweep --remote
