@@ -15,7 +15,7 @@ on:
         required: false
         default: ""
 permissions:
-  contents: read
+  contents: write  # DEPLOY-RECORD-1: the record step commits ops/deploys.jsonl
   id-token: write
 concurrency: {group: deploy-ultrastable, cancel-in-progress: false}
 jobs:
@@ -31,3 +31,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node deploy/deploy-oidc.mjs "${{ inputs.workers }}"
+      - name: Record the verified deploy (DEPLOY-RECORD-1)
+        run: |
+          git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
+          git add ops/deploys.jsonl
+          git diff --cached --quiet || { git commit -m "deploy-ultrastable: record live-verified deploy" && for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done; }

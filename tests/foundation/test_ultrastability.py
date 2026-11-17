@@ -63,3 +63,33 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Tenants(T):
+    def test_stale_cost_is_unmeasured(self):
+        (self.d / "ops/cost.jsonl").write_text(json.dumps({"at": "2026-11-13T10:51:42Z"}) + "\n")
+        from datetime import datetime, timezone
+        self.assertIsNone(u.fresh_cost(self.d, 127.0, now=datetime(2026, 11, 17, tzinfo=timezone.utc)))
+        self.assertEqual(u.fresh_cost(self.d, 0.5, now=datetime(2026, 11, 14, tzinfo=timezone.utc)), 0.5)
+
+    def test_unmeasured_never_acts_and_files_one_item(self):
+        r = u.tick(self.d, True, read={**GOOD, "criticality.cost": None})
+        r = u.tick(self.d, True, read={**GOOD, "criticality.cost": None})
+        self.assertIn("spend", r["unmeasured"]); self.assertEqual(r["steps"], [])
+        self.assertTrue((self.d / "docs/issues/Q-ULTRA-spend-UNMEASURED.json").is_file())
+
+    def test_tenant_down_takes_a_spinoff_step(self):
+        (self.d / "ops/spinoff").mkdir()
+        (self.d / "ops/spinoff/ledger.jsonl").write_text(json.dumps({"slug": "demo", "url": "https://demo.example", "event": "launch"}) + "\n")
+        for _ in range(2):
+            r = u.tick(self.d, True, read=GOOD, fetch=lambda url: 0.0)
+        self.assertEqual([s["var"] for s in r["steps"]], ["demo:uptime"])
+        self.assertTrue((self.d / "docs/issues/Q-ULTRA-demo-uptime-1.json").is_file())
+
+
+class Write(T):
+    def test_tenant_file_written_with_probe(self):
+        (self.d / "ops/spinoff").mkdir()
+        (self.d / "ops/spinoff/ledger.jsonl").write_text(json.dumps({"slug": "demo", "url": "https://demo.example", "event": "launch"}) + "\n")
+        self.assertEqual(u.write_tenants(self.d, fetch=lambda url: 1.0), ["demo"])
+        self.assertEqual(json.loads((self.d / "ops/tenants/demo.json").read_text())["uptime"], 1.0)
