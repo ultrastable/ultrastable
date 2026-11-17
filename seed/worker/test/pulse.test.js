@@ -91,18 +91,18 @@ test('pulse: every loop that runs every slot is ticking; a loop that stops is fo
   assert.equal(p.not_ticking.length, 0, JSON.stringify(p.not_ticking));
   assert.equal(p.watchdog, true);
   assert.equal(p.tick.missed_24h, 0);
-  await drive(db, 6, { start: T0 + 160 * MIN, skip: l => l === 'sweeper' });
+  await drive(db, 6, { start: T0 + 160 * MIN, skip: l => l === 'cost-samples' });
   p = await readPulse(db);
-  assert.deepEqual(p.not_ticking.map(x => x.loop), ['sweeper']);
-  assert.equal(p.clock.find(c => c.loop === 'sweeper').state, 'stopped');
-  const it = await db.prepare(`SELECT status, closing_probe FROM items WHERE id='MISSED-sweeper'`).first();
-  assert.equal(it.closing_probe, 'pulse:sweeper');
+  assert.deepEqual(p.not_ticking.map(x => x.loop), ['cost-samples']);
+  assert.equal(p.clock.find(c => c.loop === 'cost-samples').state, 'stopped');
+  const it = await db.prepare(`SELECT status, closing_probe FROM items WHERE id='MISSED-cost-samples'`).first();
+  assert.equal(it.closing_probe, 'pulse:cost-samples');
   assert.notEqual(it.status, 'done');
-  assert.ok(await db.prepare(`SELECT 1 AS x FROM ignition_gaps WHERE link='loop:sweeper:not-ticking' AND status='open'`).first());
+  assert.ok(await db.prepare(`SELECT 1 AS x FROM ignition_gaps WHERE link='loop:cost-samples:not-ticking' AND status='open'`).first());
   await drive(db, 3, { start: T0 + 220 * MIN });
-  assert.equal((await db.prepare(`SELECT status FROM items WHERE id='MISSED-sweeper'`).first()).status, 'done');
-  assert.equal((await db.prepare(`SELECT status FROM ignition_gaps WHERE link='loop:sweeper:not-ticking'`).first()).status, 'closed');
-  assert.ok((await readPulse(db)).clock.find(c => c.loop === 'sweeper').missed_24h >= 5);  // the missed slots stay counted for 24 h
+  assert.equal((await db.prepare(`SELECT status FROM items WHERE id='MISSED-cost-samples'`).first()).status, 'done');
+  assert.equal((await db.prepare(`SELECT status FROM ignition_gaps WHERE link='loop:cost-samples:not-ticking'`).first()).status, 'closed');
+  assert.ok((await readPulse(db)).clock.find(c => c.loop === 'cost-samples').missed_24h >= 5);  // the missed slots stay counted for 24 h
 });
 
 test('pulse: a loop that keeps throwing is failing, not ticking, and the loops after it still ran', async () => {

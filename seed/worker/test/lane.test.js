@@ -70,8 +70,8 @@ test('a 403 with an exhausted x-ratelimit window stops; a plain 403 does not', a
   assert.equal(b.stopped, true); assert.equal(b.retry_after_s, 300);
 });
 
-test('the lane stops at the per-tick call cap (default 150)', async () => {
-  assert.equal(githubBudget().cap, 150);
+test('the lane stops at the per-tick call cap (default 40)', async () => {
+  assert.equal(githubBudget().cap, 40);
   const { f, calls } = fake({ 'GET /repos/a/b/pulls?': [200, [{ number: 1, labels: [] }, { number: 2, labels: [] }]], 'GET /repos/a/b/pulls/': [200, { draft: false, mergeable_state: 'dirty' }], 'GET /repos/a/b/issues/': [200, []] });
   const r = await runLane({ token: 't', repos: ['a/b'], fetch: f, issueWorkflow: null, budget: githubBudget(3) });
   assert.equal(calls.length, 3); assert.equal(r.status, 'stopped'); assert.match(r.github.why, /cap 3 GitHub calls per tick/);

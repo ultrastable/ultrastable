@@ -20,7 +20,7 @@ import { handleAuth } from './auth/routes.js';
 import { getToken, refreshDue, pathGuard } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
 import { readCriticality, addSample } from './criticality.js';
-import { beat, watch, readPulse } from './pulse.js';
+import { beat, watch, readPulse, HEAVY_CADENCE_MIN } from './pulse.js';
 import { decide, healthView, readState } from './cutover.js';
 import { readIgnition } from './ignition.js';
 import { loopHealth } from './critloop.js';
@@ -45,6 +45,8 @@ export const d1Unavailable = (e) => {
 const aiFor = (env) => halted(config, env) ? Promise.resolve({ ai: null, state: { mode: 'halted', why: 'HALT-1' } }) : governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
+const LOOP_PHASE = { executor: 0, gate: 0, lane: 1, handoffs: 1, issuesync: 2, 'repo-access': 2, sweeper: 2, 'deploy-evidence': 2 };  // SUBREQUEST-ROTATION-1
+
 export default {
   async scheduled(_event, env, ctx) {
     if (halted(config, env)) { ctx.waitUntil(beat(env.DB, 'halted', async () => ({ halted: true })).catch(e => console.error('halted beat', e && e.message))); return; }  // HALT-1: no loops, lane, executor, deploys or model calls
@@ -60,7 +62,9 @@ export default {
     // LOOPPROOF-1: every loop below runs inside beat(): a row before it starts, its result or error after. One loop failing never stops the next,
     // and the tick's pulse step counts the slots each one ran in. The names are pulse.js LANE_LOOPS.
     ctx.waitUntil((async () => {
-      const b = (loop, fn) => beat(env.DB, loop, fn).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
+      // SUBREQUEST-ROTATION-1: three groups share the 50 subrequests of a Free-plan invocation, one group per tick (pulse.js HEAVY_LOOPS, every 30 min each).
+      const phase = Math.floor((Number(_event && _event.scheduledTime) || Date.now()) / 600e3) % 3;
+      const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase) ? Promise.resolve(undefined) : beat(env.DB, loop, fn, { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
       const tenant = env.TENANT || config.org_slug || 'default';
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
       const main = repos.find(r => r.endsWith('/ultrastable')) || repos[0];
@@ -69,7 +73,7 @@ export default {
       const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
       await b('executor', async () => { const r = await runExecutor({ ...env, AI: gov.ai || undefined, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
       await b('gate', () => runGate({ token, repos }));  // ZERO-MINUTES-1
-      const ghBudget = githubBudget(env.GITHUB_CALLS_PER_TICK || config.github_calls_per_tick);  // GITHUB-BUDGET-1: one GitHub call budget for the lane and the handoffs of this tick (default 150)
+      const ghBudget = githubBudget(env.GITHUB_CALLS_PER_TICK || config.github_calls_per_tick);  // GITHUB-BUDGET-1: one GitHub call budget for the lane and the handoffs of this tick (default 40)
       await b('lane', () => runLane({ token, repos, issueWorkflow: null, zeroActions: env.ZERO_ACTIONS === '1', evidenceRepo: env.EVIDENCE_REPO || repos[0] || null, budget: ghBudget }));
       const site = env.SITE && env.INTERNAL_DEPLOY_KEY ? env.SITE : null;  // HANDOFF-1: the server owns every handed-off PR after it opens: merge noticed, deploy, live probe, close or roll back
       await b('handoffs', () => runHandoffs({ db: env.DB, token, repos, deployer: site ? makeDeployer({ token, site, key: env.INTERNAL_DEPLOY_KEY }) : null, rollback: site ? makeRollback({ site, key: env.INTERNAL_DEPLOY_KEY }) : null, versionOf: site ? makeVersionReader({ site, key: env.INTERNAL_DEPLOY_KEY }) : null, budget: ghBudget }));  // DEPLOY-VERSION-1
