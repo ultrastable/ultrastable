@@ -1759,6 +1759,15 @@
    "body": "The first live run exited 0 but printed only the static count, so the live result was not evidenced. It now prints one ok/DRIFT line per live surface. Session: session_0156nqDtuMnUidA26votychB",
    "probe": "file:foundation/claims.py",
    "session": "session_0156nqDtuMnUidA26votychB"
+  },
+  {
+   "id": "lesson-2026-11-17-executor-aborted-an-item-when-its-first-model-rung-returned-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Executor aborted an item when its first model rung returned a transport error",
+   "body": "ladder_call converts a rung RuntimeError to a failed attempt so the ladder escalates to the next rung.",
+   "probe": "grep:foundation/executor.py::def ladder_call",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
   }
  ]
 }
