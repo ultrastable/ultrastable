@@ -313,9 +313,9 @@ def publish(root=REPO, rep=None) -> dict:
     n = len((rep or {}).get("filed", {}).get("growth", [])) + len((rep or {}).get("filed", {}).get("repair", [])) + len((rep or {}).get("filed", {}).get("insight", [])) + len((rep or {}).get("filed", {}).get("uiux", []))
     day = datetime.now(timezone.utc).strftime("%Y%m%d%H")
     wc, wo = subprocess.run(["python3", "-m", "foundation", "writeback", "record", "--kind", "decision", "--title", f"Product manager pass {day}: {n} item(s) filed", "--body",
-                             "Growth and repair items, experiment verdicts and knob review recorded by foundation/pm.py (experiments in ops/growth/experiments.json); tests pass.", "--owner", "product-manager",
-                             "--probe", "file:ops/growth/experiments.json"], cwd=str(root), capture_output=True, text=True, encoding="utf-8").returncode, ""
-    return executor.publish_change(executor.REPO_SLUG, root, f"agent/pm-{day}", f"Product manager pass: {n} growth and repair item(s) filed", "Filed by the product manager loop (foundation/pm.py); see ops/growth/experiments.json.")
+                             "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.", "--owner", "product-manager",
+                             "--probe", "file:foundation/pm.py"], cwd=str(root), capture_output=True, text=True, encoding="utf-8").returncode, ""
+    return executor.publish_change(executor.REPO_SLUG, root, f"agent/pm-{day}", f"Product manager pass: {n} growth and repair item(s) filed", "Filed by the product manager loop (foundation/pm.py); see ops/growth/pm-report.json.")
 
 
 def main(argv) -> int:

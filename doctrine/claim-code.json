@@ -27,12 +27,12 @@
   ],
   "claims": [
     {
-      "id": "audit-chain-traceable",
+      "id": "audit-chain-seal",
       "source": "agents/AGENTS.md",
-      "quote": "Every deploy, handoff step and decision lands in the hash-chained D1 `audit_log` (seed/worker/src/auditchain.js)",
+      "quote": "after 7 days the chain is sealed into gzip NDJSON segments",
       "probe": {
         "file": "seed/worker/src/auditchain.js",
-        "contains": "audit_log"
+        "contains": "gzip"
       }
     }
   ],
