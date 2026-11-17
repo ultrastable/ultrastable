@@ -12,3 +12,9 @@ assert.equal(forwardTo(new Request("https://ultrastable-site.ultrastable.workers
 let ran = false; await mod.scheduled({}, { UPSTREAM_ORIGIN: "https://x" }, { waitUntil: () => { ran = true; } });
 assert.equal(ran, false, "a forwarding site runs no cron");
 console.log("forward ok");
+
+// OWNER-ROUTE-1: /connect/github-signin must reach OWNER, not TICK.
+{ const mod2 = await import("./worker.js"); const hit = [];
+  const env = { OWNER: { fetch: async () => { hit.push("owner"); return new Response("ok"); } }, TICK: { fetch: async () => { hit.push("tick"); return new Response("ultrastable seed worker"); } } };
+  for (const p of ["/connect/github-signin", "/owner", "/auth/github-signin/callback"]) await mod2.default.fetch(new Request("https://ultrastable.io" + p), env, {});
+  if (hit.join() !== "owner,owner,owner") throw new Error("owner paths misrouted: " + hit.join()); console.log("owner routing ok"); }
