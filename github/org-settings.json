@@ -191,8 +191,7 @@
         "allow_merge_commit": false,
         "allow_rebase_merge": false,
         "allow_auto_merge": true,
-        "allow_update_branch": true,
-        "visibility": "public"
+        "allow_update_branch": true
       },
       "security": {
         "vulnerability_alerts": true,
