@@ -19,6 +19,7 @@ import { indexNow, keyFile, SITEMAP_PATHS } from "./promote.js";
 import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
 import { negotiate, robots, WEBMCP_JS } from "./readiness.js";  // AGENT-READY-2
 import ROAD from "./roadmap-data.js";
+import ORGMAP from "./orgmap.js"; // ORGMAP-1: generated from brand/brand.json
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
 import { controlPlane, opsPage, tenantDiscovery, authIntegration } from "./controlplane.js";
@@ -127,6 +128,14 @@ function marketTable() {
     + "</tbody></table></div>";
 }
 
+function orgSection() {
+  const rows = ORGMAP.repos.map(function (r) { return "<tr><td><a href=\"https://github.com/" + ORGMAP.org + "/" + esc(r.name) + "\">" + esc(r.name) + "</a></td><td>" + esc(r.visibility) + "</td><td>" + esc(r.holds) + "</td></tr>"; }).join("");
+  const gone = ORGMAP.retired.map(function (r) { return "<code>" + esc(r.name) + "</code> is now in <code>" + esc(r.moved_to) + "</code>"; }).join("; ");
+  return "<h2 id=\"organized\">How Ultrastable is organized</h2><p>" + esc(ORGMAP.rule) + "</p>"
+    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Repository</th><th>Visibility</th><th>What it holds</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
+    + "<p class=\"meta\">Retired, kept only so old links work: " + gone + ".</p>";
+}
+
 function how() {
   return shell({ path: "/how", title: "How Ultrastable works", description: "The loop, the ledgers, and the honest gaps of the self-governing development platform." },
     "<div class=\"head\"><h1>How it works</h1><p>One loop, " + VERIFIED.ledgers.length + " ledgers (" + VERIFIED.ledgers.map(function (l) { return esc(l.name); }).join(", ") + "), and what it does not do yet. <a href=\"/claims\">Every claim here is probed</a>.</p></div>"
@@ -137,6 +146,7 @@ function how() {
     + card("4. Score the decision", "Each decision logs a prediction before it acts; the outcome is scored later and feeds a trust score per kind of action.")
     + "</div>"
     + "<h2>The platform and the product are one loop</h2><p>What Ultrastable develops (code, practical solutions) and how it develops itself run on the same process, so the two improve each other. See the <a href=\"/showcase\">test cases</a>: the earlier testbed and Practical Solutions.</p>"
+    + orgSection()
     + "<h2>Why the name</h2><p>W. Ross Ashby's ultrastable system (1952) changes its own settings when an essential variable leaves its limits, so it stays viable without an operator. The trust ledger, doctrine amendments and probe-and-revert loops do that for software.</p>"
     + "<h2 id=\"gaps\">Honest gaps</h2>" + "<ul>" + ROAD.gaps.map(function (g) { return "<li>" + esc(g.text) + " <a href=\"/roadmap#" + esc(g.issue) + "\">" + esc(g.issue) + "</a></li>"; }).join("") + "</ul>"
     + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Join the pilot</a></div>");

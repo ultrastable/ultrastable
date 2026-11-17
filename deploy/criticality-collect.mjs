@@ -1,5 +1,5 @@
 // Q-CRIT-COLLECTORS: push the signals the tick Worker cannot read itself to /api/criticality/sample, then mirror the live
-// /metrics/criticality.json into ultrastable/seed metrics/criticality.json.
+// /metrics/criticality.json into ultrastable/ultrastable metrics/criticality.json.
 //   node deploy/criticality-collect.mjs          build the sample, POST it, mirror the reading
 //   node deploy/criticality-collect.mjs --dry    build and print the sample only; sends and writes nothing
 // One sample per run: verified and failed deploys in the last 24 h (ops/deploys.jsonl, live_matches_commit), spend units from the latest
@@ -36,7 +36,7 @@ async function dispatchTouches(fetchFn, token, now) {
 }
 
 export async function mirror(fetchFn, token, reading) {
-  const url = "https://api.github.com/repos/ultrastable/seed/contents/metrics/criticality.json";
+  const url = "https://api.github.com/repos/ultrastable/ultrastable/contents/metrics/criticality.json";
   const h = { authorization: "Bearer " + token, accept: "application/vnd.github+json" };
   const cur = await fetchFn(url, { headers: h });
   const sha = cur.ok ? (await cur.json()).sha : undefined;
