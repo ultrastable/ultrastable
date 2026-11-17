@@ -139,6 +139,15 @@ export default {
    "surface": "site/worker.js"
   },
   {
+   "claim": "resource is outside every trust rung",
+   "detail": "",
+   "how": "grep:site/authzen.js::outside every trust rung + grep:site/authzen.test.mjs::secrets are outside every rung",
+   "id": "authzen-never-rung",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/authzen.js"
+  },
+  {
    "claim": "seed-tests: 35 Python and 268 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
@@ -184,7 +193,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 110",
+   "claim": "live-deploys: 115",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -272,7 +281,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 27,
-  "total": 27
+  "pass": 28,
+  "total": 28
  }
 };

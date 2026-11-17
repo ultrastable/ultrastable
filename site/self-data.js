@@ -287,6 +287,54 @@ export default {
      ],
      "unit": "clocks",
      "why": "A clock that stops halts the loop it drives; the system is viable only while every clock keeps ticking, and a watchdog that goes silent reads as unmeasured."
+    },
+    {
+     "id": "ui_findings",
+     "max": 0,
+     "min": 0,
+     "name": "Front-end findings that block a user",
+     "reading": "uiux.findings",
+     "regulators": [
+      "uiux-audit",
+      "self-coding-agent"
+     ],
+     "steps": [
+      {
+       "kind": "item",
+       "labels": [
+        "p1",
+        "agent-ready"
+       ],
+       "what": "restructure: move the failing rule into the shared component or design token so each page inherits the fix",
+       "workstream": "Design"
+      }
+     ],
+     "unit": "findings",
+     "why": "A page that fails accessibility, leaks backend detail, breaks its structure or its brand is a front end drifting into a mishmash; the UI/UX loop (UIUX-1) must keep this at zero, and a variable that cannot be read from a fresh audit is unmeasured and so not in bounds."
+    },
+    {
+     "id": "happy_paths",
+     "max": 1.0,
+     "min": 1.0,
+     "name": "User paths that still walk end to end",
+     "reading": "uiux.happy_paths",
+     "regulators": [
+      "uiux-audit",
+      "uiux-funnels"
+     ],
+     "steps": [
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready"
+       ],
+       "what": "restructure: repair the broken step or change the path in doctrine/stakeholders.json so it matches the page",
+       "workstream": "Design"
+      }
+     ],
+     "unit": "of paths",
+     "why": "A path in doctrine/stakeholders.json that no longer clicks through is a user who cannot get from entry to the next step; every audience path must walk, and the UI/UX loop runs each as a browser flow."
     }
    ],
    "what": "Ultrastable running on itself (tenant 0)"
@@ -402,9 +450,12 @@ export default {
    "liveness",
    "predict-verify",
    "resilience",
+   "self-coding-agent",
    "site-deploy",
    "spinoff",
    "tick-heartbeat",
+   "uiux-audit",
+   "uiux-funnels",
    "watchdog"
   ],
   "what": "the regulators: loops that correct disturbance without changing the system"
@@ -492,6 +543,7 @@ export default {
   "role-research-publisher",
   "role-reviewer",
   "role-staff",
+  "role-uiux-manager",
   "running-system",
   "scout",
   "server-side-only",
@@ -506,6 +558,7 @@ export default {
   "transparency",
   "triggers",
   "trust-ledger",
+  "uiux-loop",
   "ultrastability-loop",
   "ultrastable-agents",
   "ultrastable-dashboard",
@@ -1340,6 +1393,20 @@ export default {
     ]
    },
    {
+    "closing_probe": "grep:foundation/uiux.py::def settle_experiments",
+    "id": "uiux-loop",
+    "kind": "manager",
+    "owner": "uiux-manager",
+    "server_owner": "github-actions",
+    "sla": "7d",
+    "summary": "UIUX-1: the UI/UX manager as a closed loop. Every user page on ultrastable.io, .org, .app and every tenant app is audited (accessibility, user/system boundary, structure, copy, performance, visual fingerprint); every user path in doctrine/stakeholders.json is walked as a click-through flow; first-party funnels show where a path loses people; A/B experiments on path steps are decided at their pre-registered sample and the winner is promoted automatically; every finding becomes a fix item for the self-coding agent with a closing probe. Its two essential variables feed the slow loop in foundation/ultrastability.py.",
+    "trigger": "weekly browser audit (.github/workflows/uiux.yml) and daily inside the product manager pass (product-manager.yml)",
+    "workflows": [
+     "uiux",
+     "product-manager"
+    ]
+   },
+   {
     "closing_probe": "grep:foundation/scout.py::def reweight",
     "id": "scout",
     "kind": "governance",
@@ -1447,6 +1514,17 @@ export default {
     "sla": "1 tick",
     "summary": "Design manager: the design language across the portfolio and every product that rolls up to it (doctrine/design",
     "trigger": "each tick of the design-manager role (tick_every 6)",
+    "workflows": []
+   },
+   {
+    "closing_probe": "file:agents/roles/uiux-manager.md",
+    "id": "role-uiux-manager",
+    "kind": "manager",
+    "owner": "uiux-manager",
+    "server_owner": "ultrastable-tick",
+    "sla": "1 tick",
+    "summary": "UI/UX manager: the front end as a measured, continuously audited surface (UIUX-1): audits, user paths, funnels and A/B experiments on path steps",
+    "trigger": "each tick of the uiux-manager role (tick_every 6)",
     "workflows": []
    },
    {
@@ -1880,6 +1958,7 @@ export default {
     "loops": [
      "product-manager-pass",
      "insight-loop",
+     "uiux-loop",
      "provenance-loop"
     ]
    },
@@ -1923,6 +2002,12 @@ export default {
     "id": "transparency",
     "loops": [
      "public-transparency"
+    ]
+   },
+   {
+    "id": "uiux",
+    "loops": [
+     "uiux-loop"
     ]
    },
    {
