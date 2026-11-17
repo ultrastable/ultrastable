@@ -1490,6 +1490,15 @@
    "title": "A pause guard that cannot cancel must not fail the run (CIWATCH-1)",
    "body": "A budget kill switch built for private-repo minutes turned every non-essential workflow red once its cancel call got 403, and cancelled the code agent for days. Fix: public repos exempt, ciwatch detects red default-branch runs. Session: session_0156nqDtewcdaLGsDYbhGs22",
    "probe": "file:scripts/actions_guard.py"
+  },
+  {
+   "id": "lesson-2026-11-17-public-repos-need-no-minute-budget-ciwatch-1",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Public repos need no minute budget (CIWATCH-1)",
+   "body": "The budget pause is for private-repo minutes only; ciwatch now detects red runs on every repo.",
+   "probe": "file:scripts/actions_guard.py",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
