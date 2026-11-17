@@ -55,6 +55,9 @@ def evaluate(repo: str, issue: dict, root=REPO, fetch=_fetch):
 
 
 def gh_issues(repo):
+    a = subprocess.run(["gh", "api", f"repos/{repo}", "--jq", ".archived"], capture_output=True, text=True, timeout=60)
+    if a.returncode == 0 and a.stdout.strip() == "true":
+        return []  # an archived repository is read-only: its issues moved to the queue (Q-WORKERS-*), nothing here can close them
     p = subprocess.run(["gh", "api", "--paginate", f"repos/{repo}/issues?state=open&per_page=100"], capture_output=True, text=True, timeout=120)
     if p.returncode:
         return None
