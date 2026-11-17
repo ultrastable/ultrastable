@@ -80,14 +80,14 @@ class Ideas(unittest.TestCase):
         self.assertEqual(r["rows"], [])
         self.assertIn("error", r)
 
-    def test_roadmap_is_generated_and_a_stale_file_fails_the_check(self):
+    def test_roadmap_is_generated_and_a_malformed_file_fails_the_check(self):
         d = sandbox()
         (d / "site").mkdir()
         ideas.write_roadmap(d)
         self.assertEqual(ideas.check(d), [])
         p = d / "site/spinoff-roadmap-data.js"
-        p.write_text(p.read_text() + "// drift\n")
-        self.assertTrue(any("stale" in b for b in ideas.check(d)))
+        p.write_text("export default {};\n")
+        self.assertTrue(any("malformed" in b for b in ideas.check(d)))
 
     def test_token_is_never_leaked_and_no_token_keeps_the_snapshot(self):
         d = sandbox()
