@@ -1507,6 +1507,15 @@
    "title": "SELFCODE-1: code signals file work, settle reverts regressions and learns per kind",
    "body": "Free GitHub Models routing, CI-failure items and unknown-fact items already come from FREE-LLM-1, ciwatch and agentwork. foundation/selfcode.py adds the missing part: code signals (failing tests, unused imports, swallowed errors, TODOs, trusted agent-task issues) filed as Q-SELF/Q-INTAKE items with closing probes, a write allowlist, and settle that re-measures after merge, reverts a break and pauses kinds with a low kept rate. Kill switch: doctrine/selfcode.json enabled, SELFCODE_OFF, HALT, AGENT_KILL gate.",
    "probe": "file:foundation/selfcode.py"
+  },
+  {
+   "id": "lesson-2026-11-17-record-transport-failures-of-each-code-agent-rung-free-llm-1",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Record transport failures of each code-agent rung (FREE-LLM-1)",
+   "body": "The first Actions executor run skipped both GitHub Models rungs with no recorded reason; the ladder now writes status and provider message for every failed call to ops/agent-cost.jsonl.",
+   "probe": "grep:foundation/agent_ladder.py::transport failure",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }

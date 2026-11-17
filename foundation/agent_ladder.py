@@ -63,6 +63,15 @@ def call(prompt: str, attempt: int = 0, role: str = "author", root=REPO, env=Non
     except ValueError:
         log_cost(root, {"role": role, "adapter": a["id"], "model": a["model"], "family": a["family"], "ok": False, "why": "unusable reply", "usd": cost_usd(a, usage, prompt, text)})
         raise
+    except Exception as e:  # a transport failure (HTTP 401/403/429, timeout) is evidence too: record the status and the provider's own words, then let the ladder escalate
+        body = ""
+        if hasattr(e, "read"):
+            try:
+                body = e.read().decode("utf-8", "replace")[:300]
+            except Exception as e2:  # an unreadable error body is recorded, not hidden
+                body = f"(error body unreadable: {type(e2).__name__})"
+        log_cost(root, {"role": role, "adapter": a["id"], "model": a["model"], "family": a["family"], "ok": False, "why": f"{type(e).__name__}: {str(e)[:120]} {body}".strip(), "usd": 0})
+        raise
     meta = {"adapter": a["id"], "model": a["model"], "family": a["family"], "usd": cost_usd(a, usage, prompt, text), "priced": a.get("usd_per_m_in") is not None}
     log_cost(root, {"role": role, "ok": True, **meta})
     return out, meta
