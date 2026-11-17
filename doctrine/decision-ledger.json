@@ -1969,6 +1969,14 @@
    "title": "Deploy gateway redeploys itself on merge",
    "body": "Owner chose option A 2026-11-17 18:59 UTC: gateway rule lets ultrastable/ultrastable main deploy ultrastable-deploy-gateway; .github/workflows/deploy-gateway.yml tests, builds, deploys via OIDC and checks /health. Session: session_0156nqDrYNAtihJTa31nvsqc",
    "probe": "file:.github/workflows/deploy-gateway.yml"
+  },
+  {
+   "id": "lesson-2026-11-17-tenant-sync-1-core-is-the-system-of-record",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "TENANT-SYNC-1: core is the system of record",
+   "body": "Session session_0156nqDuXJWyM65c8uChpjTM. Tenants pin workers/ by hash and lift generic code through the tenant-sync loop. Hosted checks skip draft PRs by design. Generated data (dashboard, claims, self, ultrastability) goes stale whenever main moves, so regenerate after merging main before pushing.",
+   "probe": "grep:foundation/tenantsync.py::def run"
   }
  ]
 }
