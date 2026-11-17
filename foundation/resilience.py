@@ -117,16 +117,48 @@ def probe(clock: dict, now: float, beats_of, cfg: dict) -> dict:
     return {"id": clock["id"], "status": st, "last_beat_age_s": age, "expected_interval_s": exp}
 
 
-def _gh_beats(clock, root=REPO):
+def health_beats(urls, fetch=None):
+    """Beats from public /health endpoints (no credential): last_tick.started_at of each that answers. None when none answered."""
+    fetch = fetch or _get_json
+    out, answered = [], False
+    for u in urls:
+        j = fetch(u)
+        if not isinstance(j, dict):
+            continue
+        answered = True
+        at = (j.get("last_tick") or {}).get("started_at")
+        if at:
+            out.append(C._ts(at))
+    return out if answered else None
+
+
+def _get_json(url):
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"user-agent": "ultrastable-watchdog"}), timeout=30) as r:
+            return json.loads(r.read() or b"null")
+    except urllib.error.HTTPError as e:  # /health answers 503 with a body when the last tick did not complete; that body still carries last_tick
+        try:
+            return json.loads(e.read() or b"null")
+        except ValueError:
+            return None
+    except (OSError, ValueError):
+        return None
+
+
+def _gh_beats(clock, root=REPO, fetch=None):
     import os
     if clock["source"] == "d1":
+        beats, read = health_beats(clock.get("health_urls", []), fetch), False
+        read = beats is not None
+        beats = beats or []
         tok = os.environ.get("CLOUDFLARE_API_TOKEN")
-        if not tok:
-            return None
-        try:
-            return C.d1_beats_any(clock, tok, C.load(root).get("account_id"))
-        except Exception:
-            return None
+        if tok:
+            try:
+                beats += C.d1_beats_any(clock, tok, C.load(root).get("account_id"))
+                read = True
+            except Exception:  # unreadable database: the health URLs may still have answered
+                pass
+        return beats if read else None
     if clock["source"] == "workflow":
         try:
             r = subprocess.run(["gh", "run", "list", "--repo", C.GH, "--workflow", clock["workflow"], "--limit", "60", "--json", "createdAt,event,status"], capture_output=True, text=True, timeout=60, encoding="utf-8")

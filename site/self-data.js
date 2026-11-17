@@ -1947,58 +1947,58 @@ export default {
  },
  "readings": {
   "blindspot:claims_drift": {
-   "at": "2026-11-17T18:35:35Z",
+   "at": "2026-11-17T18:42:51Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-17T18:35:35Z",
+   "at": "2026-11-17T18:42:51Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:uptime": {
-   "at": "2026-11-17T18:35:35Z",
+   "at": "2026-11-17T18:42:51Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-17T18:35:35Z",
+   "at": "2026-11-17T18:42:51Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "claims_drift": {
-   "at": "2026-11-17T18:35:35Z",
-   "in_bounds": false,
+   "at": "2026-11-17T18:42:51Z",
+   "in_bounds": true,
    "unmeasured": false,
-   "value": 1
+   "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-17T18:35:35Z",
+   "at": "2026-11-17T18:42:51Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "spend": {
-   "at": "2026-11-17T18:35:35Z",
+   "at": "2026-11-17T18:42:51Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.497
   },
   "stalled_clocks": {
-   "at": "2026-11-17T18:35:35Z",
-   "in_bounds": false,
-   "unmeasured": false,
-   "value": 2
-  },
-  "value": {
-   "at": "2026-11-17T18:35:35Z",
+   "at": "2026-11-17T18:42:51Z",
    "in_bounds": true,
    "unmeasured": false,
-   "value": 5.049
+   "value": 0
+  },
+  "value": {
+   "at": "2026-11-17T18:42:51Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 5.48
   }
  },
  "self": {
