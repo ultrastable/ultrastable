@@ -130,7 +130,7 @@ test('a breached D1 budget skips the non-essential steps, records the breach and
   db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h) VALUES (?,?,?)').run(at, 'org', 500000);
   const cfg = { ...config, criticality: crit, cost_budgets: [{ id: 'org', max_rows_read_per_hour: 120000 }] };
   const r = await runTick(db, { config: cfg, now: T0 });
-  assert.deepEqual(COST_ESSENTIAL_STEPS, ['reconcile', 'measure', 'criticality']);
+  assert.deepEqual(COST_ESSENTIAL_STEPS, ['migrate', 'reconcile', 'measure', 'criticality']);
   assert.equal(r.completed, STEP_ORDER.length, 'a skip is a decision, not a failure: health stays green');
   assert.deepEqual(r.errors, []);
   assert.equal(db.raw.prepare('SELECT COUNT(*) n FROM claims').get().n, 0, 'dispatch was skipped');
