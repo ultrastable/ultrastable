@@ -97,7 +97,7 @@ export function createRouter({ db, ai, models, now = () => Date.now(), config = 
         const neurons = m.tier === 'paid' ? 0 : neuronsOf(m, res, text, prompt), usd = usdOf(m, res, text, prompt);
         neuronsUsed += neurons; if (capSpent !== null) capSpent += usd;
         await record(kind, m, neurons, usd, !reason, reason);
-        if (reason && onFail) { try { onFail(m, reason); } catch (e) { /* a hook never breaks routing */ } }
+        if (reason && onFail) { try { onFail(m, reason); } catch (e) { tried.push('hook: ' + String(e && e.message).slice(0, 60)); }  // a hook never breaks routing; its error is in the exhausted message }
         if (!reason) { if (cache) await db.prepare('INSERT INTO airouter_cache (key,kind,text,model,at,hits) VALUES (?1,?2,?3,?4,?5,0) ON CONFLICT(key) DO UPDATE SET text=excluded.text, model=excluded.model, at=excluded.at').bind(key, kind, text, m.model, now()).run(); return { text, model: m.model, cached: false, usd, neurons, escalated: tried.length > 0 }; }
         tried.push(m.id + ': ' + reason);
         if (stop) break;
