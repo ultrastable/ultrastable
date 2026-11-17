@@ -1,6 +1,6 @@
 name: checks
 # COST-ZERO-1: the steps that fail most often (measured over the last 25 failed runs: gaplint/demo tests, outreach tests, dashboard preview) run first, so a failing PR stops in seconds, not after the full run; 958 of 1218 minutes this month were failed runs
-# budget: ~3 min per ready PR update, cancel-in-progress
+# budget: ~5 min per ready PR update (the folded-in workers/ tree lengthened the scan steps), cancel-in-progress
 # trigger: PR gate; drafts skipped
 # free-alternative: none needed; `scripts/lint_workflows.py` and the tests run in the cloud-hosted agent session first
 on:
@@ -16,7 +16,7 @@ jobs:
   checks:
     if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v7
         with:

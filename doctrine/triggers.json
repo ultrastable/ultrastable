@@ -408,6 +408,13 @@
    "crons": [
     "47 5 * * 3"
    ]
+  },
+  "workers-tests.yml": {
+   "events": [
+    "pull_request",
+    "workflow_dispatch"
+   ],
+   "crons": []
   }
  }
 }
