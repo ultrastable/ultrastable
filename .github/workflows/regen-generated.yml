@@ -1,0 +1,43 @@
+name: regen-generated
+# budget: ~1 min per merge to main, serialized
+# trigger: push to main (REGEN-GENERATED-1: generated data goes stale whenever main moves, so it is refreshed after the merge, not by every PR); pushes that touch only the generated files are ignored so the bot never retriggers itself
+# free-alternative: `python3 scripts/regen_generated.py` from a cloud-hosted agent session, or the tick Worker's lane
+# Backend loop: runs every generator, commits the result to main when anything changed. PR checks still fail on real drift; this only heals main after a merge.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "README.md"
+      - "platform/adapters/README.md"
+      - "site/claims-data.js"
+      - "site/dashboard-data.js"
+      - "site/self-data.js"
+      - "site/ultrastability-data.js"
+      - "core-contract.json"
+      - "doctrine/triggers.json"
+      - "seed/self/SELF.md"
+      - "seed/self/self.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: regen-generated
+  cancel-in-progress: false
+jobs:
+  regen:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - run: python3 scripts/actions_guard.py regen-generated
+        env: { GH_TOKEN: "${{ github.token }}" }
+      - name: Regenerate every generated file
+        run: python3 scripts/regen_generated.py
+      - name: Commit the regenerated data
+        run: |
+          git config user.name regen-generated; git config user.email regen-generated@users.noreply.github.com
+          git add -A
+          git diff --cached --quiet && echo "generated data already current" && exit 0
+          git commit -qm "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)"
+          git push origin HEAD:main
