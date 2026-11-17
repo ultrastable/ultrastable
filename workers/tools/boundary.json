@@ -229,6 +229,10 @@
       "class": "core",
       "role": "The principles register: the system's own memory of what autonomy means and what the owner has directed"
     },
+    "core/audit": {
+      "class": "core",
+      "role": "Hash-chained, Merkle-rolled, tamper-evident log of autonomous actions: hot events in D1, one compressed batch per day, verify and proof; tenant-agnostic (AUDIT-1)"
+    },
     "core/promote": {
       "class": "core",
       "role": "Autonomous promotion: channel publishers, caps, kill switch, referral tuning, reach targets, idea intake; tenant-agnostic (PROMOTE-1)"
