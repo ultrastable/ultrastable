@@ -21,7 +21,11 @@ permissions:
   pull-requests: write
   issues: write
   actions: write
+<<<<<<< HEAD
   models: read  # SELFCODE-1: GitHub Models through this token, no secret to mint
+=======
+  models: read  # FREE-LLM-1: GitHub Models over the built-in token, the first and free rung of the code-agent ladder
+>>>>>>> origin/main
 concurrency:
   group: executor
   cancel-in-progress: false
@@ -50,6 +54,14 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: Gate and feed the agent (budget caps, kill switch, Q-UNK work)
+        id: work
+        if: steps.spark.outputs.go == 'true'
+        run: python3 -m foundation agentwork --apply
+        env:
+          HALT: ${{ vars.HALT }}
+          AGENT_KILL: ${{ vars.AGENT_KILL }}
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
       - name: Bridge parked needs-code items into the queue (NEEDS-CODE-BRIDGE-1)
         if: steps.spark.outputs.go == 'true'
         run: python3 scripts/needs_code_bridge.py
@@ -59,11 +71,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Execute one item
-        if: steps.spark.outputs.go == 'true'
+        if: steps.spark.outputs.go == 'true' && steps.work.outputs.agent_go != 'false'
         run: ULTRASTABLE_HOST="github-actions:${{ github.event_name }}" python3 -m foundation executor --apply ${{ inputs.issue && format('--issue {0}', inputs.issue) || '' }}
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+<<<<<<< HEAD
           GITHUB_MODELS_TOKEN: ${{ github.token }}
+=======
+          GITHUB_TOKEN: ${{ github.token }}
+>>>>>>> origin/main
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

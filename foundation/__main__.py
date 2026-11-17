@@ -31,9 +31,12 @@
   python3 -m foundation team [--gate|--check|--apply|--recommend --manifest F]   the phased virtual team (doctrine/team.json)
   python3 -m foundation publication [--check|--baseline|--history DIR]   PUBLICATION-GUARD-1: license, notice files, no case collisions, SPDX ratchet, no private data
   python3 -m foundation pins [--check|--apply|--report]                  PINS-1: every status pin and roadmap item on the site is computed from code, proofs and issues
+  python3 -m foundation agentwork [--apply|--probe-kill|--check]            AGENT-WORK-1: caps and kill switch for the Actions code agent; files Q-UNK work
+  python3 -m foundation ciwatch [--run [--apply]|--probe REPO WORKFLOW|--check]  CIWATCH-1: red X's on any watched repo are rerun or filed as queue items
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
   python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
+  python3 -m foundation unknowns [--check|--run [--apply]|--answer KEY --verdict V --text T|--status]   UNKNOWNS-1: audit what the system does not know; inverted questions feed the objective space
   python3 -m foundation blindspots [--check|--scan [--apply] [--live]|--answer D --text T|--learn ID ...]   BLINDSPOT-1: the system knows what the owner cannot know to ask for
   python3 -m foundation promote [--check|--kits|--plan [--apply]|--outcome CH --kind K]   PROMOTE-1: strategy and promotion as a closed loop
   python3 -m foundation provenance [--check|--record JSON|--settle ID kept|reverted|none|--ingest-git [--apply]|--timeline|--changelog [--apply]|--lessons|--signal]  PROVENANCE-1: origin, effect and history of every input and change
@@ -76,6 +79,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["pins"]:
         from . import pins
         return pins.main(_av[1:])
+    if _av[:1] == ["agentwork"]:
+        from . import agentwork
+        return agentwork.main(_av[1:])
+    if _av[:1] == ["ciwatch"]:
+        from . import ciwatch
+        return ciwatch.main(_av[1:])
     if _av[:1] == ["failure_audit"]:
         from . import failure_audit
         return failure_audit.main(_av[1:])
@@ -109,6 +118,9 @@ def main(argv=None) -> int:
     if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold"):
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
+    if _av[:1] == ["unknowns"]:
+        from . import unknowns
+        return unknowns.main(_av[1:])
     if _av[:1] == ["ignorance"]:
         from . import ignorance
         return ignorance.main(_av[1:])

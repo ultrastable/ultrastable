@@ -4,6 +4,7 @@
   "tables": {
     "tick_runs": { "column": "started_at", "keep_days": 30 },
     "dispatches": { "column": "at", "keep_days": 30 },
+    "unknown_questions": {"column": "at", "keep_days": 90},
     "outcomes": { "column": "at", "keep_days": 365 },
     "predictions": { "column": "due_at", "keep_days": 180 },
     "criticality_samples": { "column": "at", "keep_days": 60 },

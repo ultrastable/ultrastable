@@ -15,7 +15,23 @@ def fake(calls, text='{"summary":"s","files":[]}'):
     return t
 
 
+def fake_gh(calls, text='{"summary":"s","files":[]}'):
+    def t(url, headers, body, timeout=300):
+        calls.append((url, headers, body))
+        return {"choices": [{"message": {"content": text}}]}
+    return t
+
+
 class Agents(unittest.TestCase):
+    def test_invoke_github_models_free_tier(self):
+        for i in ("github-models-gpt", "github-models-llama"):
+            c = []; out = agents.invoke(A[i], "p", {"GITHUB_TOKEN": "g"}, fake_gh(c))
+            self.assertEqual(c[0][0], "https://models.github.ai/inference/chat/completions"); self.assertEqual(c[0][1]["authorization"], "Bearer g"); self.assertIn("summary", out)
+
+    def test_free_route_is_first_and_needs_only_the_builtin_token(self):
+        self.assertEqual(agents.route_authors({"GITHUB_TOKEN": "g"}, REPO)[0]["id"], "github-models-gpt")
+        self.assertEqual(agents.ensemble("openai", {"GITHUB_TOKEN": "g"}, REPO)[0]["family"], "llama")
+
     def test_registry_is_clean(self):
         self.assertEqual(agents.check(REPO), [])
 

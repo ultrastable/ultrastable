@@ -1,0 +1,54 @@
+name: ciwatch
+# CIWATCH-1: the system watches its own red X's. Scans every watched repository's default-branch runs, reruns transient failures once, files a Q-CIFAIL item (probe included) for the rest; the executor (code agent) fixes them.
+# budget: ~1 min per run, free (public repositories); ~30 scheduled runs a month plus one per failed workflow completion
+# trigger: daily fallback, and a completed checks, lane or deploy run (a red X is noticed within minutes of appearing, gated by the concurrency group)
+# free-alternative: `python3 -m foundation ciwatch --run --apply` from a cloud-hosted agent session or the Cloudflare cron worker
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_run:
+    workflows: [checks, lane, deploy-site, deploy-workers, deploy-ultrastable, executor]
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: ciwatch
+  cancel-in-progress: false
+jobs:
+  ciwatch:
+    if: ${{ vars.HALT != '1' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure') }}  # HALT-1: the owner's halt stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - run: python3 scripts/actions_guard.py ciwatch
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: python3 -m foundation ciwatch --run --apply
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+      - name: Ledger to the evidence branch; new items to a PR the lane merges
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "ultrastable-ciwatch"
+          git config user.email "actions@users.noreply.github.com"
+          git add ops/ciwatch.jsonl
+          git diff --cached --quiet || { git commit -q -m "ciwatch: ledger"; git push -q origin HEAD:refs/heads/ciwatch-evidence --force; }
+          git reset -q --hard origin/main
+          python3 -m foundation ciwatch --run --apply > /dev/null
+          git checkout -q -- ops/ciwatch.jsonl
+          if [ -n "$(git status --porcelain docs/issues)" ]; then
+            b="agent/ciwatch-${GITHUB_RUN_ID}"
+            git checkout -q -b "$b"; git add docs/issues
+            git commit -q -m "ciwatch: file failing-workflow items (CIWATCH-1)"
+            git push -q origin "$b"
+            pr=$(gh pr create --base main --head "$b" --title "ciwatch: failing-workflow items" --body "Closes nothing; files Q-CIFAIL items so the executor fixes red workflows. Provenance: ops/ciwatch.jsonl on branch ciwatch-evidence.")
+            gh workflow run checks.yml --ref "$b" || echo "::warning::checks dispatch failed; the lane picks the PR up on its next run"
+            echo "$pr"
+          fi
