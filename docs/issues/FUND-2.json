@@ -1,7 +1,7 @@
 {
   "id": "FUND-2",
   "title": "FUND-2: OC-2 owner card: attorney session on licence and patent flags",
-  "body": "**Owner:** ROWAN\n**Trigger:** FUND-1 scheduled\n**Done check:** Licence file committed with attorney note (decision-memo.md flags 1-9)\n**Status:** open\n**Default in effect:** Default: open core not published; Apache-2.0 assumed for planning only.\n\nSource: business/funding/decision-memo.md. Closing probe is the done check.",
+  "body": "**Owner:** ROWAN\n**Trigger:** FUND-1 scheduled\n**Done check:** Licence file committed with attorney note (decision-memo.md flags 1-9)\n**Status:** closed\n**Evidence:** superseded by owner decision 2026-11-17 (Rowan): no patent filing; the Ultrastable License is the only IP protection (doctrine/decision-ledger.json decision-2026-11-17-license-only-ip-stance-no-patent-filing; ip/ARCHIVED.md).\n**Default in effect:** Default: open core not published; Apache-2.0 assumed for planning only.\n\nSource: business/funding/decision-memo.md. Closing probe is the done check.",
   "labels": [
     "owner:rowan",
     "ws:business"
