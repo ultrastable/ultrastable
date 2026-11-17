@@ -1681,6 +1681,14 @@
    "title": "BRANCH-SWEEP-2: prune stale session branches fleetwide",
    "body": "The daily branch sweep also prunes stale claude/ and agent/ branches of every repository in doctrine/branchsweep.json fleet_repos by API: only branches the default branch holds, or whose pull request merged with that exact head, are deleted, each sha recorded in the ledger first; anything else is kept.",
    "probe": "grep:foundation/branchsweep.py::def remote_prune"
+  },
+  {
+   "id": "lesson-2026-11-17-owner-links-deep-links-to-provider-settings-are-refused-by-c",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Owner links: deep links to provider settings are refused by CONNECT-LINK-1",
+   "body": "A GitHub organization policy (Models access) has no OAuth or API flow, so it cannot be a /connect card; pointclick --check refuses new provider deep links. Such needs stay as issues with a default in effect and a probe (practical-solutions#59) until a flow exists. Session: session_0156nqDsRjLzRMvp3Dem8HUx",
+   "probe": "file:doctrine/point-and-click.json"
   }
  ]
 }
