@@ -93,7 +93,10 @@ def http(url, headers, body, timeout=300) -> dict:
         raw = r.read()
         if not raw.strip():  # seen live from the free tier: HTTP 200 with an empty body; say so instead of a bare JSONDecodeError
             raise RuntimeError(f"empty response body (HTTP {r.status}) from {url}")
-        return json.loads(raw)
+        try:
+            return json.loads(raw)
+        except ValueError:  # a provider answering 200 with text or HTML (rate-limit page, gateway notice): say what came back, not a bare JSONDecodeError
+            raise RuntimeError(f"non-JSON response (HTTP {r.status}, {r.headers.get('content-type')}) from {url}: {raw[:200].decode('utf-8', 'replace')}") from None
 
 
 def invoke(a: dict, prompt: str, env=None, transport=http) -> str:

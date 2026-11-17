@@ -21,7 +21,7 @@ test("without CRITICALITY_URL and CRITICALITY_TOKEN nothing is sent", async () =
   assert.equal(code, 0); assert.equal(called, 0);
 });
 
-test("posts the sample with the bearer and mirrors the live reading into the seed repo", async () => {
+test("posts the sample with the bearer and mirrors the live reading into the main repo", async () => {
   const calls = [];
   const fake = async (url, init = {}) => {
     calls.push([url, init.method || "GET", init.headers?.authorization]);
@@ -33,5 +33,5 @@ test("posts the sample with the bearer and mirrors the live reading into the see
   const code = await main([], { CRITICALITY_URL: "https://tick.example", CRITICALITY_TOKEN: "t0k", GH_TOKEN: "g" }, fake, NOW);
   assert.equal(code, 0);
   assert.ok(calls.some(([u, m, a]) => u === "https://tick.example/api/criticality/sample" && m === "POST" && a === "Bearer t0k"));
-  assert.ok(calls.some(([u, m]) => u.endsWith("ultrastable/seed/contents/metrics/criticality.json") && m === "PUT"));
+  assert.ok(calls.some(([u, m]) => u.endsWith("ultrastable/ultrastable/contents/metrics/criticality.json") && m === "PUT"));
 });
