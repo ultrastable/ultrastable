@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 // UIUX-1: the experiment server. The arm matches foundation/design.py assign(), bots and Do Not Track get the control and are not counted, promoted defaults are served.
 import assert from "node:assert/strict";
 import { pathToFileURL, fileURLToPath } from "node:url";

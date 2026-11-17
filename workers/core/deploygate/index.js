@@ -3,7 +3,7 @@
 // Deploy gateway: lets a CI run deploy a Worker with no stored secret. The run presents its OIDC identity token (audience = the
 // gateway origin); the gateway verifies the signature against the issuer's keys and deploys only what a configured rule allows.
 // createGate({ fetch, now, config: { rules, token, accountId, issuer? } }) -> { handle(req) }.
-// rules: [{ repo, refs: [..], script, compat?, compat_flags? }]. token is the account-scoped deploy credential, held only by the gateway's host.
+// rules: [{ repo, refs: [..], script, compat?, compat_flags?, ai? }]. A rule with ai: true gives a new script the Workers AI binding `AI` (the only binding a rule can add; keep_bindings only keeps what a script already has). token is the account-scoped deploy credential, held only by the gateway's host.
 const ISSUER = 'https://token.actions.githubusercontent.com';
 const b64u = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json' } });
@@ -44,7 +44,7 @@ export function createGate({ fetch = globalThis.fetch, now = Date.now, config })
     const rule = (config.rules || []).find(r => r.repo === claims.repository && r.script === script && (r.refs || []).includes(claims.ref));
     if (!rule) return json({ error: 'not allowed', repository: claims.repository, ref: claims.ref, script }, 403);
     const text = await form.get('worker.js').text();
-    const meta = { main_module: 'worker.js', compatibility_date: rule.compat || '2026-10-01', compatibility_flags: rule.compat_flags || [], keep_bindings: KEEP };
+    const meta = { main_module: 'worker.js', compatibility_date: rule.compat || '2026-10-01', compatibility_flags: rule.compat_flags || [], keep_bindings: KEEP, ...(rule.ai === true ? { bindings: [{ type: 'ai', name: 'AI' }] } : {}) };
     const out = new FormData();
     out.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
     out.append('worker.js', new Blob([text], { type: 'application/javascript+module' }), 'worker.js');
@@ -53,6 +53,11 @@ export function createGate({ fetch = globalThis.fetch, now = Date.now, config })
     const put = await fetch(base, { method: 'PUT', headers: auth, body: out });
     const j = await put.json();
     if (!put.ok || !j.success) return json({ error: 'deploy failed', status: put.status, errors: j.errors }, 502);
+    // DEPLOYGATE-WORKERSDEV-1: a new script answers on workers.dev unless its rule sets workers_dev: false, so a first deploy needs no manual step.
+    if (rule.workers_dev !== false) {
+      const sd = await fetch(base + '/subdomain', { method: 'POST', headers: { ...auth, 'content-type': 'application/json' }, body: JSON.stringify({ enabled: true, previews_enabled: false }) });
+      if (!sd.ok) return json({ deployed: true, verified: false, error: 'workers.dev not enabled', status: sd.status, script }, 502);
+    }
     const sha256 = await hex(text);
     // Read-back (DEPLOYGATE-READBACK-1): compare the stored module by hash. A read the token cannot make is reported, not called a mismatch:
     // the upload already succeeded, and the caller's own live check is the independent verification.

@@ -8,7 +8,7 @@ on:
     - cron: "17 7 * * *"
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write  # files Q-ISSUE-* queue items for issues it cannot close and commits them, like the deploy record step
   issues: write
 concurrency:
   group: issueloop
@@ -23,4 +23,9 @@ jobs:
       - name: Probe and close issues
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 -m foundation issueloop --apply
+        run: python3 -m foundation issueloop --apply --file
+      - name: Commit filed queue items
+        run: |
+          git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
+          git add docs/issues
+          git diff --cached --quiet || { git commit -m "issueloop: file Q-ISSUE items for unprobed or failing issues" && for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done; }
