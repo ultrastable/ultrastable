@@ -1833,6 +1833,15 @@
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
   },
   {
+   "id": "lesson-2026-11-17-selfcode-1-the-daily-filing-cap-was-spent-by-items-whose-fil",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: the daily filing cap was spent by items whose files never survived a run",
+   "body": "The cap limits new items only; items filed before and not yet worked are re-filed first without using it.",
+   "probe": "grep:foundation/selfcode.py::filed_ever",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
    "id": "lesson-2026-11-17-a-merge-retry-loop-must-stop-on-conflicts-never-commit-them-",
    "kind": "lesson",
    "date": "2026-11-17",
