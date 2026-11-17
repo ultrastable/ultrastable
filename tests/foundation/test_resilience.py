@@ -145,3 +145,14 @@ class Health(T):
         import json as j
         c = next(x for x in j.loads((REPO / "doctrine/clocks.json").read_text())["clocks"] if x["id"] == "tick-heartbeat")
         self.assertEqual(len(c["health_urls"]), 2)
+
+
+class SiteProbe(unittest.TestCase):
+    def test_503_redeploys_and_200_is_quiet(self):
+        cfg = {"site_probes": [{"id": "s", "url": "u", "repo": "o/r", "workflow": "deploy-tenant"}], "max_restarts_per_clock_per_day": 3}
+        calls = []
+        bad = R.site_probes(cfg, [], 1.0, True, None, get=lambda u: 503, dispatch=lambda r, w: (calls.append((r, w)) or (True, "")))
+        self.assertEqual(calls, [("o/r", "deploy-tenant")]); self.assertTrue(bad[0]["redeploy"])
+        calls.clear()
+        good = R.site_probes(cfg, [], 1.0, True, None, get=lambda u: 200, dispatch=lambda r, w: calls.append(1))
+        self.assertTrue(good[0]["ok"]); self.assertEqual(calls, [])

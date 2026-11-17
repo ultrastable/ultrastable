@@ -181,6 +181,37 @@ def http_poke(url: str, timeout=45):
         return 0
 
 
+def http_get(url: str, timeout=30) -> int:
+    req = urllib.request.Request(url, headers={"user-agent": "ultrastable-watchdog"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return r.status
+    except urllib.error.HTTPError as e:
+        return e.code
+    except (OSError, ValueError):
+        return 0
+
+
+def gh_dispatch_repo(repo: str, workflow: str) -> tuple[bool, str]:
+    r = subprocess.run(["gh", "workflow", "run", workflow + ".yml", "--repo", repo], capture_output=True, text=True, timeout=60, encoding="utf-8")
+    return r.returncode == 0, (r.stderr or r.stdout).strip()[-160:]
+
+
+def site_probes(cfg, rows, now, apply, halted, get=http_get, dispatch=gh_dispatch_repo) -> list[dict]:
+    """A public site that answers anything but 200 (a 503 is the case that happened) is redeployed by its own deploy workflow, bounded per day; every probe is a ledger row."""
+    out = []
+    for sp in cfg.get("site_probes", []):
+        st = get(sp["url"])
+        rec = {"at": _iso(now), "kind": "site", "site": sp["id"], "status": st, "ok": st == 200}
+        if st != 200 and apply and not halted:
+            day = [r for r in rows if r.get("kind") == "site" and r.get("site") == sp["id"] and r.get("redeploy") and r["at"] >= _iso(now - 86400)]
+            if len(day) < cfg["max_restarts_per_clock_per_day"] * 2:
+                ok, d = dispatch(sp["repo"], sp["workflow"])
+                rec.update({"redeploy": True, "dispatch_ok": ok, "detail": d})
+        out.append(rec)
+    return out
+
+
 def gh_dispatch(workflow: str, root=REPO) -> tuple[bool, str]:
     r = subprocess.run(["gh", "workflow", "run", workflow + ".yml", "--repo", C.GH], capture_output=True, text=True, timeout=60, encoding="utf-8")
     return r.returncode == 0, (r.stderr or r.stdout).strip()[-160:]
@@ -232,7 +263,7 @@ def _item(root, cfg, clock, verdict, fails) -> str:
     return iid
 
 
-def run(root=REPO, apply=False, now=None, beats_of=None, poke=http_poke, dispatch=gh_dispatch) -> dict:
+def run(root=REPO, apply=False, now=None, beats_of=None, poke=http_poke, dispatch=gh_dispatch, get=None) -> dict:
     """One watchdog pass: probe every clock, restart the stopped ones within bounds, escalate the stubborn ones, write the beat."""
     root, cfg = Path(root), load(root)
     now = now or _now()
@@ -269,6 +300,9 @@ def run(root=REPO, apply=False, now=None, beats_of=None, poke=http_poke, dispatc
         recent = [r for r in rows + new if r.get("kind") == "restart" and r.get("clock") == clock["id"] and r["at"] >= _iso(now - 86400)]
         if apply and len(recent) > cfg["escalate_after_failed_restarts"]:
             out["escalated"].append(_item(root, cfg, clock, v, len(recent) - 1))
+    sites = site_probes(cfg, rows, now, apply, halted, get=get or http_get) if (get or poke is http_poke) else []
+    out["sites"] = sites
+    new.extend(r for r in sites if not r["ok"])  # only a failing probe is a ledger row; a healthy site adds no noise
     stalled = [c["id"] for c in out["clocks"] if c["status"] == "stopped"]
     unmeasured = [c["id"] for c in out["clocks"] if c["status"] == "unmeasured"]
     beat = {"at": out["at"], "kind": "beat", "clocks": len(out["clocks"]), "stalled": len(stalled), "unmeasured": len(unmeasured), "stalled_ids": stalled}
@@ -314,6 +348,10 @@ def check(root=REPO) -> list[str]:
             errs.append(f"watcher {w['id']}: workflow {w['workflow']} does not exist")
         if w.get("loop") and not re.search(re.escape(w["loop"]), (root / "seed/worker/src/pulse.js").read_text(encoding="utf-8")):
             errs.append(f"watcher {w['id']}: loop {w['loop']!r} is not declared in seed/worker/src/pulse.js")
+    for sp in cfg.get("site_probes", []):
+        for k in ("id", "url", "repo", "workflow"):
+            if not sp.get(k):
+                errs.append(f"site probe {sp.get('id')}: missing {k}")
     hosts = {w["host"] for w in cfg["watchers"]}
     if len(hosts) < 2:
         errs.append("watchers run on one host only; a watcher needs a watcher on an independent host")
