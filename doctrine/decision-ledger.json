@@ -1664,6 +1664,15 @@
    "title": "CLAIMS-1: words must match code, both directions, continuously",
    "body": "Every public statement is a probed sentence, a block generated from code, or part of a reverse inventory; checked per PR and daily live; drift files Q-CLAIM items; /claims is the public status; seed inherits it.",
    "probe": "file:foundation/claims.py"
+  },
+  {
+   "id": "lesson-2026-11-17-claims-1-two-claim-checks-must-agree",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "CLAIMS-1: two claim checks must agree",
+   "body": "claims (probed sentences, generated blocks, reverse inventory) and claimcode (unbound-line ratchet) now share one binding rule: a line is bound by a CLAIMS-1 sentence or marker. Session: session_0156nqDtuMnUidA26votychB",
+   "probe": "file:foundation/claims.py",
+   "session": "session_0156nqDtuMnUidA26votychB"
   }
  ]
 }
