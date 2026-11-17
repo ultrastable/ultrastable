@@ -11,7 +11,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 1. **If it is not in code, it does not exist.** GitHub org `ultrastable` is canonical for code, files, plans, issues, tasks, agents and instructions. Local files, Library copies, thread output and chat or platform memory are ephemeral. Repos are private.
 2. **No open loops.** Autonomy means no open loops, plus iteration. Work ends in completion, not handoff: deployed end to end, verified, recorded. An item leaves the active set only as done, superseded, cancelled, or blocked with owner, blocker and closing probe.
 3. **Autonomy first.** Agents act, verify and report as done. They do not ask questions the record can answer. Test every surface before reporting a blocker and say what each returned. Pauses only at steps both irreversible and identity-bound, after engineering reversibility.
-4. **Nothing public until the owner says so.** Site and details stay off public domains, repos and posts until the owner publishes. Only talking points tagged SAFE NOW may be used publicly. Legal texts (licenses, specs notes) are written and reviewed by the fleet; decisions are recorded in the repo. Business figures are estimates until checked.
+4. **Public by default under the license.** Repositories may be public; the Ultrastable License (source-available, non-commercial use free, commercial use licensed) is the protection. No patent is filed; no content waits on a filing. Legal texts (licenses, specs notes) are written and reviewed by the fleet; decisions are recorded in the repo. Business figures are estimates until checked.
 5. **Platform-agnostic.** Portable core with Cloudflare and Google Cloud adapters; the working system runs on Cloudflare today.
 6. **Reporting.** Project-chat posts are a few plain lines, outcome first, threads linked by title.
 7. **Facts are checked at the source** before being stated (licences, disclosures, numbers).
@@ -30,7 +30,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 
 ## 3. Current status (2026-11-10)
 
-- Main repo `ultrastable/ultrastable` (private) holds the unified layout, patent package (`ip/provisional/`, draft, unfiled, currently v5), business plan, the separate Ultrastable brand (orange/green/cream, not QNFO-like, no research framing), `agents/SELF-AWARENESS.md`, and bootstrap records (`docs/bootstrapping/`, `docs/BOOTSTRAP-GAPS.md`).
+- Main repo `ultrastable/ultrastable` (private) holds the unified layout, archived patent drafts (`ip/`, superseded, never filed), business plan, the separate Ultrastable brand (orange/green/cream, not QNFO-like, no research framing), `agents/SELF-AWARENESS.md`, and bootstrap records (`docs/bootstrapping/`, `docs/BOOTSTRAP-GAPS.md`).
 - Separate org repos (`site`, `docs`, `platform`, `ip`, `business`, `seed`) exist but are archived duplicates; the monorepo is the system of record (see `docs/BOOTSTRAP-GAPS.md`).
 - Dashboard is live at `/owner` on ultrastable.io, .app and .net (Cloudflare worker `ultrastable-dashboard`, source in `dashboard/`). Public pages are a generic holding page.
 - Public GitHub landing (profile and logo) is staged in `brand/public-profile/` but not live; it needs `ORG_ADMIN_TOKEN` (`docs/ops/ORG-TOKEN.md`), after which the `org-init` workflow runs.
@@ -53,7 +53,7 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 | Workstream | Where |
 |---|---|
 | Roadmap and tasks | `ROADMAP.md`, `PROJECTS.md`, GitHub milestones and issues (`docs/ISSUES-BY-AREA.md`) |
-| Intellectual property | `ip/`, `ip/provisional/`, `docs/ip/IP-REGISTER.md` |
+| Intellectual property | `LICENSE`, `LICENSING.md`, `docs/ip/IP-REGISTER.md`; archived drafts in `ip/` |
 | Business, customers, competition, funding | `business/`, `docs/funding/`, `research/` |
 | Brand and public profile | `brand/` |
 | Site and dashboard | `site/`, `dashboard/`, `deploy/` |

@@ -12,4 +12,4 @@ labels: ''
 
 **Done when** (a check anyone can run):
 
-**Confidentiality:** SAFE NOW | PRIVATE
+**Visibility:** PUBLIC | PRIVATE (secrets and personal data only)

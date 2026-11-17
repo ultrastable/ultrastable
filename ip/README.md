@@ -1,8 +1,10 @@
+> **SUPERSEDED (Rowan, 2026-11-17): no patent filing.** Protection is the Ultrastable License only. This file is kept as a record (see [ip/ARCHIVED.md](ARCHIVED.md)); it lists no open step, deadline or owner action.
+
 > **ARCHIVED 2026-11-11: the patent track is dropped.** See [ARCHIVED.md](ARCHIVED.md). Active replacement: [../LICENSE](../LICENSE) and `ultrastable/spec`.
 
 # ultrastable/ip (owner only)
 
-Working file for the provisional patent application. Keep this repo restricted to the owner and counsel.
+Historical working files for a patent application that was never filed.
 
 - [invention-disclosure.md](invention-disclosure.md): what the invention is, in enough detail to support claims.
 - [evidence-log.md](evidence-log.md): dated record of conception and reduction to practice (commits, deployments).

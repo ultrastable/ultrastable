@@ -1,3 +1,5 @@
+> **SUPERSEDED (Rowan, 2026-11-17): no patent filing.** Protection is the Ultrastable License only. This file is kept as a record (see [ip/ARCHIVED.md](../ARCHIVED.md)); it lists no open step, deadline or owner action.
+
 # Ultrastable provisional patent: filing checklist
 
 Prepared 2026-11-10. This is a working checklist, not legal advice. Have a registered patent attorney or agent review the specification before filing; the most valuable hour of their time is on the §101 framing and the claim-style summaries.

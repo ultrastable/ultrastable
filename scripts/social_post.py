@@ -48,8 +48,6 @@ def main(now=None):
         print("rate limit reached; deferring"); return 0
     post = due[0]  # oldest due first, one per run
     bad = guard(post["text"], post["source"])
-    if post.get("tag") != "SAFE NOW" and not gate["provisional_filed"]:
-        bad.append("not SAFE NOW and provisional not filed")
     if bad:
         print(f"GUARD BLOCKED {post['id']}: {bad}"); return 1
     live = gate["mode"] == "live"

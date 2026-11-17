@@ -1,3 +1,5 @@
+> **SUPERSEDED (Rowan, 2026-11-17): no patent filing.** Protection is the Ultrastable License only. This file is kept as a record (see [ip/ARCHIVED.md](../ARCHIVED.md)); it lists no open step, deadline or owner action.
+
 # Europe: priority-securing filing (US provisional not available to Rowan without a practitioner)
 
 Prepared 2026-11-10. **Not legal advice.** Every rule and fee here comes from the primary sources linked in `FEE-TABLE.md` and `DECISION-MEMO.md`, read on 2026-11-10; confirm on the filing day. Items an attorney must answer are collected in `DECISION-MEMO.md` section 7.
