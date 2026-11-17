@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-17
 
+- 2026-11-17: core/ensemble (cross-vendor model ensemble, from the Practical Solutions test bed) and core/deploygate `ai: true` rule flag; gateway ALLOW has the tenant-ps-llm rule (owner yes 18:31 UTC). Generated ULTRA items carry runnable cmd: probes (#538)
 - 2026-11-17: deploy-ultrastable: record live-verified deploy
 - 2026-11-17: Q-TENANT-TOPOLOGY-1: deploy lane owns ultrastable-tenants; tick reads its self-test (#535)
 - 2026-11-17: EFFECT-2: claim-coverage items rank after code-changing items (#534)

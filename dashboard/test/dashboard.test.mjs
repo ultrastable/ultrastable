@@ -196,7 +196,7 @@ test("OWNER-IDENTITY-1: GitHub sign-in checks org ownership, links verified emai
   const { default: w } = await import("../worker.js");
   const mk = login => {
     const e = { ...mkdb(), GITHUB_CLIENT_ID: "id", GITHUB_CLIENT_SECRET: "s", GITHUB_REPO: "ultrastable/ultrastable", NO_NET: 1 };
-    e.FETCH = async u => String(u).includes("access_token") ? Response.json({ access_token: "t" }) : String(u).endsWith("/user") ? Response.json({ login }) : String(u).includes("/memberships/") ? Response.json({ role: "member", state: "active" }) : Response.json([{ email: "me@gmail.example", verified: true }, { email: "me@outlook.example", verified: true }, { email: "x@users.noreply.github.com", verified: true }]);
+    e.FETCH = async u => String(u).includes("access_token") ? Response.json({ access_token: "t" }) : String(u).endsWith("/user") ? Response.json({ login }) : String(u).includes("/memberships/") ? Response.json({ role: "member", state: "active" }) : Response.json([{ email: "a@mail-one.example", verified: true }, { email: "b@mail-two.example", verified: true }, { email: "x@users.noreply.github.com", verified: true }]);
     return e;
   };
   const run = async e => {

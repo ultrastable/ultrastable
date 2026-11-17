@@ -1945,6 +1945,14 @@
    "body": "foundation/selfmodel.py builds one model from doctrine/ultrastability.json and the live declarations (loop registry, topology, workflows, clocks, boundary). site/self-data.js is generated and served at /self and /.well-known/ultrastable. selfmodel --check fails on an unresolved regulator, a missing file, a workflow in no loop or a stale served model, and the ultrastability tick skips a variable whose regulators the model does not know and files an UNREGISTERED item. Verified by 29 passing tests in tests/foundation and claims 27 of 27; live check of /self follows the site deploy.",
    "probe": "file:foundation/selfmodel.py",
    "session": "session_0156nqDvqvENNWfEYLQjbFyC"
+  },
+  {
+   "id": "lesson-2026-11-17-ensemble-and-gateway-ai-binding-lifted-into-core-generated-i",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Ensemble and gateway ai binding lifted into core; generated issue probes must be runnable",
+   "body": "core/ensemble and deploygate ai flag come from the Practical Solutions test bed. ultrastability/resilience/criticality items now emit cmd: probes so pins passes. Session: session_0156nqDrYNAtihJTa31nvsqc",
+   "probe": "file:workers/core/ensemble/index.js"
   }
  ]
 }

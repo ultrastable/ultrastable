@@ -49,3 +49,5 @@
 {"at": "2026-11-16T09:52:20+00:00", "sha": "6160f15cbcff7d1084c381c1122377d282077f64", "steps": 29, "failed": []}
 {"at": "2026-11-16T09:35:59+00:00", "sha": "03184dcccc93f2fdf4cb9b79ace4f7754b98e9ca", "steps": 29, "failed": []}
 {"at": "2026-11-17T15:36:20+00:00", "sha": "aaa78519afefd0b5e58fe0b506175638f167a3ca", "steps": 29, "failed": ["Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)", "Foundation tests, new-system end-to-end (one job, no matrix)"]}
+{"at": "2026-11-17T18:36:08+00:00", "sha": "bb9945d64be55f6c30d2df33ae55130f9dc15f10", "steps": 30, "failed": ["Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)", "Foundation tests, new-system end-to-end (one job, no matrix)", "Project memory is current"]}
+{"at": "2026-11-17T18:37:03+00:00", "sha": "bb9945d64be55f6c30d2df33ae55130f9dc15f10", "steps": 30, "failed": ["Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)", "Foundation tests, new-system end-to-end (one job, no matrix)", "Project memory is current"]}
