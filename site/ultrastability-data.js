@@ -66,6 +66,22 @@ export default {
      ],
      "unit": "k",
      "why": "Below the floor the system ships less than it costs to run, so the work stops compounding."
+    },
+    {
+     "first_order": [
+      "watchdog",
+      "restart-route"
+     ],
+     "id": "stalled_clocks",
+     "max": 0,
+     "min": 0,
+     "name": "Clocks that stopped",
+     "steps": [
+      "declare a stall sooner so the restart comes earlier",
+      "restructure: add an independent trigger to the clock that keeps stopping"
+     ],
+     "unit": "clocks",
+     "why": "A clock that stops halts the loop it drives; the system is viable only while every clock keeps ticking, and a watchdog that goes silent reads as unmeasured."
     }
    ],
    "what": "Ultrastable running on itself (tenant 0)"
