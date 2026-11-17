@@ -113,6 +113,12 @@
       "count": 1,
       "instructions": "agents/roles/design-manager.md",
       "tick_every": 6
+    },
+    {
+      "id": "uiux-manager",
+      "count": 1,
+      "instructions": "agents/roles/uiux-manager.md",
+      "tick_every": 6
     }
   ],
   "model_ladder": {
