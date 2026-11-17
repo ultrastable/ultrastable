@@ -1,0 +1,10 @@
+{
+  "id": "Q-WORKERS-219",
+  "title": "Q-WORKERS-219: core/deploygate: per-rule compat_flags and send_email kept",
+  "body": "**Owner:** executor\n**Trigger:** issueloop and queue --run, daily\n**Done check:** file:workers/core/deploygate/index.test.js\n**Status:** open\n\nMoved from ultrastable/workers#219 (workers repo archived; code now under workers/ here, issues disabled on this repo).\n\nOwner role: operations\nDone check: a rule's compat_flags are sent on upload and send_email bindings survive a deploy; tenant-ps-core deploys through the gateway.\nClosing probe: `node --test core/deploygate/index.test.js`; a deploy-backend run on the tenant repo returns 200.\n\nclaim: claude-code 2026-11-17T13:40Z\n\n**Closing probe:** `file:workers/core/deploygate/index.test.js`\n",
+  "labels": [
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Workers"
+}

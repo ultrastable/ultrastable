@@ -124,7 +124,7 @@ def _gh_beats(clock, root=REPO):
         if not tok:
             return None
         try:
-            return C.d1_beats(clock, tok, C.load(root).get("account_id"))
+            return C.d1_beats_any(clock, tok, C.load(root).get("account_id"))
         except Exception:
             return None
     if clock["source"] == "workflow":
@@ -233,14 +233,16 @@ def run(root=REPO, apply=False, now=None, beats_of=None, poke=http_poke, dispatc
         rec = {"at": out["at"], "kind": "restart", "clock": clock["id"], "age_s": v.get("last_beat_age_s"), **res}
         out["restarts"].append(rec)
         new.append(rec)
-        recent = [r for r in rows + new if r.get("kind") == "restart" and r.get("clock") == clock["id"]]
-        tail = recent[-cfg["escalate_after_failed_restarts"]:]
-        if apply and len(tail) >= cfg["escalate_after_failed_restarts"] and not any(r.get("ok") for r in tail):
-            out["escalated"].append(_item(root, cfg, clock, v, len(tail)))
+        # a route that answers 200 has not proved the clock restarted: the clock is still stopped now, so every restart in this stall counts against it
+        recent = [r for r in rows + new if r.get("kind") == "restart" and r.get("clock") == clock["id"] and r["at"] >= _iso(now - 86400)]
+        if apply and len(recent) > cfg["escalate_after_failed_restarts"]:
+            out["escalated"].append(_item(root, cfg, clock, v, len(recent) - 1))
     stalled = [c["id"] for c in out["clocks"] if c["status"] == "stopped"]
     unmeasured = [c["id"] for c in out["clocks"] if c["status"] == "unmeasured"]
     beat = {"at": out["at"], "kind": "beat", "clocks": len(out["clocks"]), "stalled": len(stalled), "unmeasured": len(unmeasured), "stalled_ids": stalled}
     out["beat"] = beat
+    prev = next((r for r in reversed(rows) if r.get("kind") == "beat"), None)
+    out["changed"] = bool(new or out["escalated"]) or prev is None or prev.get("stalled_ids") != stalled or out["at"][:10] != prev["at"][:10]
     if apply:
         for i, r in enumerate(new + [beat]):
             r["seq"] = len(rows) + i
@@ -318,7 +320,10 @@ def main(argv=None) -> int:
         print(json.dumps(row))
         return 0 if row and row["status"] in ("ticking", "late", "idle") else 1
     if "--report" in a or "--run" in a:
-        print(json.dumps(run(apply="--apply" in a and "--run" in a), indent=1))
+        r = run(apply="--apply" in a and "--run" in a)
+        print(json.dumps(r, indent=1))
+        if "--changed-file" in a:  # the workflow commits the ledger only when something changed, so its own commit never feeds back into a run
+            Path(a[a.index("--changed-file") + 1]).write_text("1" if r["changed"] else "0", encoding="utf-8")
         return 0
     print(__doc__)
     return 2

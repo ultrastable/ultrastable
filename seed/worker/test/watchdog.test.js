@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-// Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
+// Copyright (c) Ultrastable
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
