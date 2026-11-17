@@ -33,3 +33,7 @@ Update 15:45Z: the first live run filed a Q-SELF item that the criticality gate 
 ## 2026-11-17 refile until worked (Session: session_0156nqDtPUh62FutsmGkcuTa)
 - Live rows after the ladder fixes show the executor taking Q-CONSOLE-SESSION-1 and Q-REACH-* (glm rung writes changes, checks fail on those items) and no Q-SELF item at all. Cause: the sense step writes `docs/issues/Q-SELF-*.json` inside the run only (never committed), and the refile cooldown counted `filed` rows, so an item filed once was blocked from being filed again for 48 h while its file was already gone from the next checkout.
 - Fix: the cooldown now guards only items the agent already settled (kept, reverted, failed); an item that was only filed is filed again next run. The daily cap counts distinct items and the ledger gets one `filed` row per item per hour. Probe: `python3 -m unittest tests.foundation.test_selfcode`.
+
+## 2026-11-17 daily cap counts new items only (Session: session_0156nqDtPUh62FutsmGkcuTa)
+- The sense step filed a different item on each earlier run (the item file did not survive), so the 24 h cap of 8 distinct items was spent and `pick_findings` returned nothing: live sense runs after #522 reported `filed: []` and the executor never had a Q-SELF item.
+- Fix: the cap limits new items only; an item filed before and never worked is taken again without using it and is ordered first. Probe: `python3 -m unittest tests.foundation.test_selfcode`.

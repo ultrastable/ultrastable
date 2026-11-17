@@ -5,6 +5,7 @@
 //   GET  /connect/github            consent screen
 //   GET  /auth/github/callback      ?code&state  manifest conversion -> store app -> send the person to the install page
 //   GET  /auth/github/installed     ?installation_id&state -> store installation -> done
+//   GET  /connect/github-admin      REPOS-1: consent for the administration-only app (+ /auth/github-admin/callback and /installed)
 //   GET  /auth/health               credential probe (no secrets)
 import * as store from './store.js';
 import { consentScreen, doneScreen, failScreen } from './consent.js';
@@ -24,11 +25,12 @@ export async function checkState(env, state, now = Date.now()) {
 // GitHub App names are global, so every visit gets its own prefilled name (never a form field for the person): <name>-<6 random hex>, capped at GitHub's 34 characters.
 export const uniqueName = (name, rnd = () => crypto.randomUUID().replace(/-/g, '').slice(0, 6)) => `${String(name || 'ultrastable').slice(0, 27)}-${rnd()}`;
 
-export function manifest(origin, name) {
+export function manifest(origin, name, kind = 'github-app') {
+  const admin = kind === 'github-admin', seg = admin ? 'github-admin' : 'github';  // REPOS-1: the admin app has its own callbacks, no webhook and no events
   return {
-    name, url: origin, redirect_url: origin + '/auth/github/callback', setup_url: origin + '/auth/github/installed', public: false, setup_on_update: true,
-    hook_attributes: { url: origin + '/hook/github', active: true }, default_events: ['pull_request', 'push', 'check_suite', 'workflow_run', 'issues'],
-    default_permissions: { ...SCOPE_ALLOWLIST['github-app'] },  // Q-LESSON-CRED-SCOPE: exactly the allowlist
+    name, url: origin, redirect_url: `${origin}/auth/${seg}/callback`, setup_url: `${origin}/auth/${seg}/installed`, public: false, setup_on_update: true,
+    ...(admin ? {} : { hook_attributes: { url: origin + '/hook/github', active: true }, default_events: ['pull_request', 'push', 'check_suite', 'workflow_run', 'issues'] }),
+    default_permissions: { ...SCOPE_ALLOWLIST[kind] },  // Q-LESSON-CRED-SCOPE: exactly the allowlist
   };
 }
 
@@ -51,6 +53,32 @@ async function route(request, env, opts = {}) {
       why: 'This is a one-time approval. After it, the system does all of the work on its own.',
       action: { method: 'POST', url: (opts.repos && opts.repos[0] ? `https://github.com/organizations/${opts.repos[0].split('/')[0]}/settings/apps/new` : 'https://github.com/settings/apps/new') + '?state=' + encodeURIComponent(state), fields: { manifest: JSON.stringify(manifest(origin, uniqueName(name))) } },
     });
+  }
+  if (url.pathname === '/connect/github-admin') {  // REPOS-1 + CONNECT-LINK-1: one click registers a second, administration-only app so retired repositories can be archived server-side
+    const state = await makeState(env, tenant, now), org = opts.repos && opts.repos[0] ? opts.repos[0].split('/')[0] : '';
+    return consentScreen({
+      provider: 'GitHub', title: 'Allow repository archiving', button: 'Authorize on GitHub',
+      will: ['Create a second private GitHub App that can change repository settings only (it cannot read or write code).', 'Use it to archive the retired repositories, once, from the server.', 'Keep its access renewed by itself, with nothing for you to copy or paste.'],
+      why: 'Archiving a repository is a settings change the code-writing app is not allowed to make.',
+      action: { method: 'POST', url: (org ? `https://github.com/organizations/${org}/settings/apps/new` : 'https://github.com/settings/apps/new') + '?state=' + encodeURIComponent(state), fields: { manifest: JSON.stringify(manifest(origin, uniqueName((name || 'ultrastable') + '-admin'), 'github-admin')) } },
+    });
+  }
+  if (url.pathname === '/auth/github-admin/callback') {
+    const t = await checkState(env, url.searchParams.get('state'), now);
+    if (!t) return failScreen('Allow repository archiving', 'That approval link expired.', '/connect/github-admin');
+    const r = await f(`https://api.github.com/app-manifests/${encodeURIComponent(url.searchParams.get('code') || '')}/conversions`, { method: 'POST', headers: { accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-auth' } });
+    if (r.status !== 201) { await store.event(env.DB, t, 'github-admin', 'failed', 'manifest conversion HTTP ' + r.status); return failScreen('Allow repository archiving', 'GitHub did not finish creating the app.', '/connect/github-admin'); }
+    const j = await r.json();
+    await store.put(env.DB, env, t, 'github-admin', { secret: { pem: j.pem, webhook_secret: j.webhook_secret, client_secret: j.client_secret }, meta: { app_id: j.id, slug: j.slug, client_id: j.client_id }, status: 'pending' });
+    await store.event(env.DB, t, 'github-admin', 'consent', 'app registered ' + j.slug);
+    return Response.redirect(`https://github.com/apps/${j.slug}/installations/new?state=${encodeURIComponent(await makeState(env, t, now))}`, 302);
+  }
+  if (url.pathname === '/auth/github-admin/installed') {
+    const t = await checkState(env, url.searchParams.get('state'), now), inst = url.searchParams.get('installation_id');
+    if (!t || !inst) return failScreen('Allow repository archiving', 'The installation did not complete.', '/connect/github-admin');
+    await store.put(env.DB, env, t, 'github-admin', { meta: { installation_id: Number(inst) }, status: 'pending' });
+    await store.event(env.DB, t, 'github-admin', 'consent', 'installed ' + inst);
+    return doneScreen('Repository archiving allowed', 'Done. The server archives the retired repositories by itself.');
   }
   if (url.pathname === '/auth/github/callback') {
     const t = await checkState(env, url.searchParams.get('state'), now);

@@ -29,6 +29,7 @@ def organized(cfg):
     rows += "".join(f"\n| [{t['name']}](https://github.com/{org}/{t['name']}) | {t['visibility']} | {t['line']} |" for t in cfg.get("tenants", []))
     old = "; ".join(f"[`{r['name']}`](https://github.com/{org}/{r['name']}) is now in `{r['moved_to']}`" for r in gone)
     pend = ", ".join(f"`{x['repo']}` into `{x['into']}` ({x['id']})" for x in st["pending"])
+    pend_txt = f"Still to fold into the main repository: {pend}. " if st["pending"] else "Every code, specification and license repository is folded into the main one. "
     return f"""## How Ultrastable is organized
 {st['rule']}
 
@@ -36,7 +37,7 @@ def organized(cfg):
 |---|---|---|
 {rows}
 
-The organization's profile page is [.github](https://github.com/{org}/.github). Retired, kept only so old links work: {old}. Still to fold into the main repository: {pend}. The target set is {', '.join(f'`{t}`' for t in st['target'])}.
+The organization's profile page is [.github](https://github.com/{org}/.github). Retired, kept only so old links work: {old}. {pend_txt}The target set is {', '.join(f'`{t}`' for t in st['target'])}.
 """
 
 

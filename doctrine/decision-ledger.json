@@ -1824,6 +1824,33 @@
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
   },
   {
+   "id": "lesson-2026-11-17-a-dead-provider-route-is-skipped-whole-free-llm-6",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "A dead provider route is skipped whole (FREE-LLM-6)",
+   "body": "Both GitHub Models rungs failed the same way in one run, still spending two of three attempts; a transport failure now marks the provider route down for the process, so Workers AI gets all repair attempts.",
+   "probe": "grep:foundation/agent_ladder.py::the whole provider route",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-selfcode-1-the-daily-filing-cap-was-spent-by-items-whose-fil",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "SELFCODE-1: the daily filing cap was spent by items whose files never survived a run",
+   "body": "The cap limits new items only; items filed before and not yet worked are re-filed first without using it.",
+   "probe": "grep:foundation/selfcode.py::filed_ever",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
+   "id": "lesson-2026-11-17-a-merge-retry-loop-must-stop-on-conflicts-never-commit-them-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "A merge retry loop must stop on conflicts, never commit them (MERGE-SAFE-1)",
+   "body": "A shell loop that merged main, ran resolve_generated and then git add -A committed conflict markers in foundation/agent_ladder.py when the conflict was in code, and the PR merged (#524). Retry loops check git diff --diff-filter=U and stop when code conflicts remain; the fix keeps FREE-LLM-6.",
+   "probe": "grep:foundation/agent_ladder.py::the whole provider route",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
    "id": "decision-2026-11-17-executor-closed-q-flow-resume-jobs-add-flows-external-json-t",
    "kind": "decision",
    "date": "2026-11-17",

@@ -1163,6 +1163,22 @@
       ],
       "feedback": "a drift files a Q-CLAIM item the executor fixes by merging a change; the next check reads the fixed words and the claim count rises",
       "bindings": []
+    },
+    "workers-tests": {
+      "inflows": [
+        {
+          "signal": "adoption.outcomes",
+          "via": "file:ops/scout/adopted.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a failed run is filed as an issue by the failure audit and taken by the executor; the next change under workers/ re-runs the tests, so a fix stops failing and a regression files again",
+      "bindings": []
     }
   },
   "implicit_producers": {

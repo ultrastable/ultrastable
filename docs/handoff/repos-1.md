@@ -11,3 +11,6 @@ The repository list is now one manifest (`brand/brand.json`: `structure`, `statu
 
 ## Spec folded in (Session: session_0156nqDvjKMRKDZZN7ARH5mX)
 The spec repository moved here (`specs/`, `SCOPE.md`, `licensing/`, `docs/spec/`) and is a retired pointer. Open: Q-REPOS-MERGE-WORKERS, Q-REPOS-ADMIN-APPLY (archive + admin link).
+
+## Workers folded in (Session: session_0156nqDvjKMRKDZZN7ARH5mX)
+The workers repository moved here as `workers/` with its standalone layout (its tests pass in place: `cd workers && npm test`). `workers/.github/workflows` is inert (Actions reads only the root). Open: Q-REPOS-ADMIN-APPLY (archive writes), instance pins of `ultrastable/workers` tags (upstream.py runtime_core) keep resolving while the archived repo stays readable.
