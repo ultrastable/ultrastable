@@ -1,0 +1,5 @@
+{
+  "id": "Q-REPOS-RECONCILE-SEED-WORKERS",
+  "title": "Q-REPOS-RECONCILE-SEED-WORKERS: merge the duplicated code in seed/ and workers/ into one tree",
+  "body": "**Owner:** engineering\n**Trigger:** the executor takes it in driver order\n**Status:** open\n**Done check:** file:workers/core/README.md\n\ncode-task: repo=ultrastable/ultrastable path=workers\ncode-anchor: Q-REPOS-RECONCILE-SEED-WORKERS\n\nREPOS-1 folded the standalone workers repository in as `workers/` unchanged, so `seed/` and `workers/` overlap (worker core, bootstrap, adapters). Reconcile into one tree: keep the newer behaviour of each module, point imports and the deploy topology at the single copy, keep `npm test` in `workers/` and the seed bootstrap tests green, then remove the duplicate and drop the `workers` skip_dirs entry in doctrine/server-side.json. Probe: workers-tests workflow and the seed tests both pass after the removal.\n"
+}
