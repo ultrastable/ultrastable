@@ -75,7 +75,8 @@
    "floor": 0.5,
    "ceiling": 2.0,
    "step": 0.15
-  }
+  },
+  "diversity_cap": 0.5
  },
  "safety": {
   "deny_domains": [
@@ -297,5 +298,9 @@
    "retained": "return_share: rechecks / uses",
    "reached_with_gap": "visitors_with_a_gap_7d: unique visitors whose result had at least one failing check"
   }
+ },
+ "lineage": {
+  "qnfo-idea-hub": "mined from QNFO/qnfo-workers idea-hub (public): kept IDEA-DIVERSITY-CAP-1 (no topic over half of accepts), the feasibility and risk gates beside the score, IDEA-NOVELTY-1 (screen against what already exists), REENTRY (a shipped output's own open questions become new signals) and REACH-IDEATION-1 (live checks of one's own public surfaces file fix items; done here as Q-BLINDSPOT-SELF-*). Superseded: scored papers; now deployed apps scored on verified outcomes.",
+  "reentry_todo": "feed each live app's most-failed check ids back as candidate needs (needs per-check failure counts in /api/metrics)"
  }
 }

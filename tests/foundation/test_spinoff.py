@@ -56,6 +56,16 @@ class Spinoff(unittest.TestCase):
         self.assertEqual(json.loads((d / "ops/spinoff/outcomes.jsonl").read_text().splitlines()[0])["decision"], "retire")
         self.assertLess(spinoff.bandit(d, spinoff.load(d), "domain-check"), 1.0)
 
+    def test_promote_submits_each_live_host_and_records_failures(self):
+        d, t = sandbox(), dt.datetime(2026, 11, 17, tzinfo=dt.timezone.utc)
+        spinoff.launch(d, True, t)
+        seen = []
+        rows = spinoff.promote(d, True, t, post=lambda b: seen.append(b["host"]) or 202)
+        self.assertEqual(seen, ["blindspot.ultrastable.app"])
+        self.assertEqual(rows[0]["status"], 202)
+        bad = spinoff.promote(d, False, t, post=lambda b: (_ for _ in ()).throw(OSError("down")))
+        self.assertEqual(bad[0]["status"], 0)
+
     def test_promote(self):
         d, t = sandbox(), dt.datetime(2026, 11, 17, tzinfo=dt.timezone.utc)
         spinoff.launch(d, True, t)

@@ -8,6 +8,7 @@ import bundle from "./registry.js";
 
 const J = (o, s = 200, h = {}) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json; charset=utf-8", "access-control-allow-origin": "*", ...h } });
 const sha = async s => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)))].map(b => b.toString(16).padStart(2, "0")).join("");
+const INDEXNOW_KEY = "ultrastable-indexnow-7f3a9c2e4b1d";  // public by design (IndexNow proves ownership by serving it); same key as site/promote.js
 const UA = "ultrastable-blindspot (+https://blindspot.ultrastable.app; reads public pages only)";
 
 export function cleanDomain(raw) {
@@ -111,6 +112,7 @@ export async function handle(request, env, f = fetch) {
   if (bundle.retired.includes(sub)) return new Response("This app was retired by the portfolio manager.", { status: 410 });
   const app = bundle.apps[sub];
   if (!app) return new Response("Not found", { status: 404 });
+  if (u.pathname === "/" + INDEXNOW_KEY + ".txt") return new Response(INDEXNOW_KEY, { headers: { "content-type": "text/plain; charset=utf-8" } });
   if (u.pathname === "/api/metrics") return J(await metrics(env, sub), 200, { "cache-control": "public, max-age=300" });
   if (u.pathname === "/api/check") {
     if (request.method === "GET") return check(env, app, u.searchParams.get("domain"), request, f);

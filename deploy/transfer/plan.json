@@ -3,6 +3,7 @@
  "assets": {
   "workers": [
    "ultrastable-agents",
+    "ultrastable-spinoffs",
    "ultrastable-tick",
    "ultrastable-dashboard",
    "ultrastable-site",
@@ -10,7 +11,8 @@
   ],
   "d1": [
    "ultrastable-org",
-   "ultrastable-ops"
+   "ultrastable-ops",
+    "ultrastable-spinoffs"
   ],
   "kv": [
    "ultrastable-site-assets",

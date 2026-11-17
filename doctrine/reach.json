@@ -18,6 +18,11 @@
  "evergreen": [
   {"id": "ev-ps-1", "arm": "ps", "text": "Practical Solutions is a public-benefit demo: small teams get routine work (intake, scheduling, newsletters) handled by an autonomous system."},
   {"id": "ev-sys-1", "arm": "systems", "text": "Ultrastable is for systems that keep running and keep needing work. It is not for one-off pages or weekend apps."},
+  {
+   "id": "ev-app-blindspot-1",
+   "arm": "shipped",
+   "text": "Ultrastable launched its first app on its own: Blindspot Check, a free read of what your website's public face does not tell people (security contact, email authentication, privacy and terms links). https://blindspot.ultrastable.app"
+  },
   {"id": "ev-proof-1", "arm": "proof", "text": "Every claim on ultrastable.io is re-checked against the system's own records, and the checks are public."}
  ],
  "targets": [

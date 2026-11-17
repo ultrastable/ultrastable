@@ -39,3 +39,8 @@ test("a check works end to end without a DB and stores nothing readable", async 
   const j = await res.json();
   assert.equal(j.ok, true); assert.equal(j.missing, 3); assert.ok(j.results.every(x => typeof x.title === "string"));
 });
+
+test("serves the IndexNow key file on an app host", async () => {
+  const r = await handle(new Request("https://blindspot.ultrastable.app/ultrastable-indexnow-7f3a9c2e4b1d.txt"), {});
+  assert.equal(await r.text(), "ultrastable-indexnow-7f3a9c2e4b1d");
+});

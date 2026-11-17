@@ -26,6 +26,7 @@ jobs:
       - run: python3 -m foundation spinoff --collect --apply
       - run: python3 -m foundation spinoff --tick --apply
       - run: python3 -m foundation spinoff --launch --apply
+      - run: python3 -m foundation spinoff --promote --apply
       - name: Ledgers and registry to a PR the lane merges
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}

@@ -48,7 +48,7 @@
   "#1",
   "\\$",
   "%",
-  "https?://(?!ultrastable\\.(io|app|net|org))"
+  "https?://(?!(ultrastable\\.(io|app|net|org)|[a-z0-9-]+\\.ultrastable\\.app))"
  ],
  "digits_allowed": [
   "30-day"

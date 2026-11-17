@@ -10,6 +10,7 @@ promotes or retires every app. Every decision is a provenance row and a ledger r
   python3 -m foundation spinoff --launch [--apply]  launch the best candidate within the weekly cap (writes registry, bundle, ledgers)
   python3 -m foundation spinoff --metrics SLUG      the metric set and targets generated for an app
   python3 -m foundation spinoff --collect [--apply] pull each live app's aggregate metrics (public, no personal data) into the ledger
+  python3 -m foundation spinoff --promote [--apply] submit each live app's host to IndexNow (credential-free promotion)
   python3 -m foundation spinoff --tick [--apply]    portfolio: value, decision (iterate/promote/retire), budget share, bandit update
   python3 -m foundation spinoff --check             the doctrine, registry, bundle and safety gate agree
 """
@@ -85,6 +86,9 @@ def candidates(root=REPO) -> list[dict]:
         reach = round((a["audience"] + sum(cfg["domain_reach"].get(n["domain"], 2) for n in have) / len(have)) / 2)
         fresh = [n for n in have if n["id"] not in seen]
         novelty = len(fresh) / len(have)
+        apps = registry(root)
+        if apps and sum(1 for x in apps if x["archetype"] == arch) / len(apps) > cfg["score"]["diversity_cap"]:
+            novelty *= 0.5  # IDEA-DIVERSITY-CAP-1, kept from QNFO's idea hub: no one kind of app takes more than the cap of the portfolio
         feas = 1.0 if a["implemented"] else 0.3
         sc = reach * impact * feas * novelty * bandit(root, cfg, arch) / (1 + a["cost_per_use"])
         slug = "blindspot" if arch == "domain-check" else arch.split("-")[0] + "-" + hashlib.sha256("|".join(sorted(n["id"] for n in have)).encode()).hexdigest()[:6]
@@ -177,6 +181,29 @@ def launch(root=REPO, apply=False, now=None) -> dict:
                 _append(root / cfg["ledger"], {"event": "provenance-failed", "at": _iso(t), "slug": c["slug"], "error": str(e)})
         return {"launched": meta, "applied": apply}
     return {"launched": None, "why": "no candidate passed score, novelty, implementation and the safety gate", "ranked": [(c["slug"], c["score"], c["gate"]["ok"]) for c in ranked]}
+
+
+def promote(root=REPO, apply=False, now=None, post=None) -> list[dict]:
+    """Credential-free promotion of every live app: submit its host to IndexNow (the key file is served by the app Worker). Outcomes feed the app's own referrer metric."""
+    cfg, root, t = load(root), Path(root), _now(now)
+    key = "ultrastable-indexnow-7f3a9c2e4b1d"  # public by design; same key as site/promote.js
+    def _post(body):
+        r = urllib.request.Request("https://api.indexnow.org/indexnow", data=json.dumps(body).encode(), headers={"content-type": "application/json; charset=utf-8"}, method="POST")
+        return urllib.request.urlopen(r, timeout=20).status
+    post, rows = post or _post, []
+    for a in registry(root):
+        if a.get("status") == "retired":
+            continue
+        host = f"{a['slug']}.{cfg['domain']}"
+        body = {"host": host, "key": key, "keyLocation": f"https://{host}/{key}.txt", "urlList": [f"https://{host}/", f"https://{host}/llms.txt"]}
+        try:
+            row = {"event": "promote", "at": _iso(t), "slug": a["slug"], "channel": "indexnow", "status": post(body)}
+        except Exception as e:  # recorded, never swallowed
+            row = {"event": "promote", "at": _iso(t), "slug": a["slug"], "channel": "indexnow", "status": 0, "error": f"{type(e).__name__}: {e}"[:200]}
+        rows.append(row)
+        if apply:
+            _append(root / cfg["ledger"], row)
+    return rows
 
 
 # ---- measurement and portfolio -------------------------------------------------------------------------------------------
@@ -305,6 +332,10 @@ def main(argv=None) -> int:
         app = next((x for x in registry() if x["slug"] == a[a.index("--metrics") + 1]), None)
         print(json.dumps(metric_set(app, cfg), indent=1) if app else "no such app")
         return 0 if app else 1
+    if "--promote" in a:
+        for r in promote(apply=apply):
+            print(json.dumps(r))
+        return 0
     if "--collect" in a:
         for r in collect(apply=apply):
             print(json.dumps(r))
