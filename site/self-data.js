@@ -295,8 +295,8 @@ export default {
      "name": "Front-end findings that block a user",
      "reading": "uiux.findings",
      "regulators": [
-      "uiux-audit",
-      "self-coding-agent"
+      "uiux-loop",
+      "agent-executor"
      ],
      "steps": [
       {
@@ -319,8 +319,7 @@ export default {
      "name": "User paths that still walk end to end",
      "reading": "uiux.happy_paths",
      "regulators": [
-      "uiux-audit",
-      "uiux-funnels"
+      "uiux-loop"
      ],
      "steps": [
       {
@@ -450,12 +449,10 @@ export default {
    "liveness",
    "predict-verify",
    "resilience",
-   "self-coding-agent",
    "site-deploy",
    "spinoff",
    "tick-heartbeat",
-   "uiux-audit",
-   "uiux-funnels",
+   "uiux-loop",
    "watchdog"
   ],
   "what": "the regulators: loops that correct disturbance without changing the system"
