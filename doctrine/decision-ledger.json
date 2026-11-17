@@ -1586,6 +1586,15 @@
    "body": "New files landed on main without SPDX headers four times today and turned checks red for every PR.",
    "probe": "grep:foundation/publication.py::def fix_headers",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-free-tier-models-need-prompts-that-fit-their-request-cap-fre",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Free-tier models need prompts that fit their request cap (FREE-LLM-1)",
+   "body": "Live executor attempts on GitHub Models came back empty (JSONDecodeError at char 0) on prompts far over the free tier's ~8k-token request cap; adapters now carry max_prompt_chars and an empty body is reported with its HTTP status.",
+   "probe": "grep:foundation/agents.py::def fit",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
