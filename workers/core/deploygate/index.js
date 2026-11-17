@@ -53,6 +53,11 @@ export function createGate({ fetch = globalThis.fetch, now = Date.now, config })
     const put = await fetch(base, { method: 'PUT', headers: auth, body: out });
     const j = await put.json();
     if (!put.ok || !j.success) return json({ error: 'deploy failed', status: put.status, errors: j.errors }, 502);
+    // DEPLOYGATE-WORKERSDEV-1: a new script answers on workers.dev unless its rule sets workers_dev: false, so a first deploy needs no manual step.
+    if (rule.workers_dev !== false) {
+      const sd = await fetch(base + '/subdomain', { method: 'POST', headers: { ...auth, 'content-type': 'application/json' }, body: JSON.stringify({ enabled: true, previews_enabled: false }) });
+      if (!sd.ok) return json({ deployed: true, verified: false, error: 'workers.dev not enabled', status: sd.status, script }, 502);
+    }
     const sha256 = await hex(text);
     // Read-back (DEPLOYGATE-READBACK-1): compare the stored module by hash. A read the token cannot make is reported, not called a mismatch:
     // the upload already succeeded, and the caller's own live check is the independent verification.
