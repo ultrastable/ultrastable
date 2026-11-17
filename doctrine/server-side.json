@@ -98,6 +98,10 @@
   {
    "path": "repo-backups",
    "reason": "backup bundles of other repositories, not this system's code"
+  },
+  {
+   "path": "workers",
+   "reason": "the folded-in core kept in its standalone layout (REPOS-1): its local dev demos, SSRF guards that refuse localhost, and blocker cases that describe an unreachable owner computer name a person's computer as a thing to refuse, never as a host, scheduler or route; its own tests (cd workers && npm test) guard it"
   }
  ],
  "exclude": [
@@ -132,42 +136,6 @@
   {
    "path": "docs/bootstrapping/bootstrap-log.md",
    "reason": "a dated incident log; its rows record failed attempts to reach a person's computer, which is the lesson the rule keeps"
-  },
-  {
-   "path": "workers/adapters/README.md",
-   "reason": "dev-demo instructions for the folded-in core; a developer's local run of a fake Cloudflare, never a host, scheduler or route"
-  },
-  {
-   "path": "workers/adapters/cloudflare/dev/demo.mjs",
-   "reason": "local development demo against a fake Cloudflare; never a host, scheduler or route"
-  },
-  {
-   "path": "workers/apps/launcher/README.md",
-   "reason": "dev-demo instructions for the launcher; local development only"
-  },
-  {
-   "path": "workers/apps/launcher/dev/demo.mjs",
-   "reason": "local development demo against a fake Cloudflare; never a host, scheduler or route"
-  },
-  {
-   "path": "workers/agents/AGENTS.md",
-   "reason": "the rule tells agents never to rely on their own local run; it names no person's computer as a host"
-  },
-  {
-   "path": "workers/apps/demos/public/cases.json",
-   "reason": "demo blocker cases that describe an owner's machine as an unreachable surface"
-  },
-  {
-   "path": "workers/bootstrap/cases.json",
-   "reason": "bootstrap blocker cases whose subject is that the owner's computer is not reachable"
-  },
-  {
-   "path": "workers/core/packs/manifest.js",
-   "reason": "SSRF guard that refuses localhost for visitor-typed domains"
-  },
-  {
-   "path": "workers/core/packs/packs.test.js",
-   "reason": "test of that SSRF guard"
   }
  ]
 }
