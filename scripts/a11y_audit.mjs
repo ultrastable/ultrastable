@@ -15,6 +15,17 @@ globalThis.fetch = async () => { throw new Error("offline"); };
 const SH = JSON.parse(readFileSync(new URL("../doctrine/stakeholders.json", import.meta.url), "utf8"));
 const PATHS = ["/", "/for", "/showcase", "/how", "/product", "/proof", "/team", "/faq", "/contact", "/pilot", "/engineers",
   ...SH.audiences.map(a => "/for/" + a.id), ...SH.showcases.map(c => "/showcase/" + c.id)];
+// the owner dashboard's public page, served from an in-memory database seeded like the dashboard tests
+const dash = (await import(pathToFileURL(fileURLToPath(new URL("../dashboard/worker.js", import.meta.url))).href)).route;
+const { DatabaseSync } = await import("node:sqlite");
+function dashEnv() {
+  const db = new DatabaseSync(":memory:");
+  db.exec(readFileSync(new URL("../dashboard/schema.sql", import.meta.url), "utf8")); db.exec(readFileSync(new URL("../dashboard/seed.sql", import.meta.url), "utf8"));
+  const wrap = sql => { let a = []; const o = { bind: (...x) => { a = x; return o; }, first: async () => db.prepare(sql).get(...a) || null, all: async () => ({ results: db.prepare(sql).all(...a) }), run: async () => { const r = db.prepare(sql).run(...a); return { meta: { changes: r.changes, last_row_id: Number(r.lastInsertRowid) } }; } }; return o; };
+  return { DB: { prepare: wrap }, NO_NET: 1 };
+}
+const render = async (p) => p === "/dashboard-owner" ? await dash(new Request("https://dashboard.ultrastable.io/"), dashEnv()) : await mod.fetch(new Request("https://ultrastable.io" + p), ENV);
+PATHS.push("/dashboard-owner");
 const browser = await chromium.launch();
 const findings = [];
 for (const [label, width] of [["phone", 375], ["desktop", 1280]]) {
@@ -22,7 +33,7 @@ for (const [label, width] of [["phone", 375], ["desktop", 1280]]) {
   for (const scheme of ["light", "dark"]) {
     const page = await ctx.newPage(); await page.emulateMedia({ colorScheme: scheme });
     for (const p of PATHS) {
-      const res = await mod.fetch(new Request("https://ultrastable.io" + p), ENV);
+      const res = await render(p);
       if (res.status !== 200) { findings.push({ p, label, scheme, rule: "status", detail: String(res.status) }); continue; }
       await page.setContent(await res.text(), { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(350); // let opacity transitions settle so contrast is read on the final state

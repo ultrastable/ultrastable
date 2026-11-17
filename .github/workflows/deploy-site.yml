@@ -29,8 +29,12 @@ jobs:
       - name: Require credentials
         run: '[ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Cloudflare secrets not set (BG-25)"; exit 1; }'
       - name: Deploy
-        run: node deploy/deploy-site.mjs
+        run: |
+          set -o pipefail
+          node deploy/deploy-site.mjs | tee deploy.log
       - name: Verify live
         run: |
+          # a skipped deploy (retired account; deploy-ultrastable.yml deploys and probes the ultrastable account) has nothing to verify here
+          if grep -q '^skip:' deploy.log; then echo "deploy skipped on this account; deploy-ultrastable.yml owns the live deploy and its probe"; exit 0; fi
           sleep 10
           curl -fsSI https://ultrastable.io/social-card.png | grep -i 'content-type: image/png'
