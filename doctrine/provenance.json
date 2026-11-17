@@ -24,6 +24,9 @@
   {"match": "executor", "class": "loop", "channel": "pr"},
   {"match": "bootstrap", "class": "system", "channel": "commit"}
  ],
+ "sources": [
+  {"path": "ops/unknowns/ledger.jsonl", "actor": "ignorance-audit", "class": "loop", "kind": "input", "summary_field": "summary", "public": false}
+ ],
  "redact": ["email", "token", "ip", "phone", "url_query"],
  "max_public_summary": 200,
  "improve": {"min_settled": 3, "retire_below": 0.34, "reinforce_above": 0.67}

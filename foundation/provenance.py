@@ -196,6 +196,26 @@ def ingest_git(root=REPO, since="", apply=False) -> list:
     return rows
 
 
+def ingest_ledgers(root=REPO, apply=False) -> list:
+    """Other append-only ledgers are sources: each row becomes a provenance row (origin loop, actor = its loop id). Missing ledgers are skipped, not errors.
+    Sources are listed in doctrine/provenance.json `sources` (ops/unknowns/ledger.jsonl from the ignorance-audit loop first)."""
+    from . import ledger
+    cfg, out = load(root), []
+    for src in cfg.get("sources", []):
+        for r in ledger.rows(root, src["path"], branch=False):
+            at = str(r.get("at") or r.get("ts") or r.get("time") or _now())
+            summ = str(r.get(src.get("summary_field", "summary")) or r.get("title") or r.get("unknown") or r.get("id") or "").strip()
+            if not summ:
+                continue
+            aff = r.get("affected") or r.get("paths") or [src["path"]]
+            out.append(make({"class": src.get("class", "loop"), "actor": str(r.get("actor") or r.get("loop") or src["actor"]), "channel": "loop-run"}, src.get("kind", "input"), summ[:200],
+                            ref=str(r.get("id") or ""), affected=aff if isinstance(aff, list) else [aff], effect={"status": r.get("effect") if r.get("effect") in cfg["effects"] else "pending"}, public=bool(src.get("public", False)), at=at, cfg=cfg))
+    if apply:
+        for r in out:
+            record(root, r)
+    return out
+
+
 def push(root=REPO, url="https://ultrastable.io/api/fleet/provenance", token_env="FLEET_TOKEN", tenant=None) -> int:
     """Send every repo-ledger row to the dashboard's D1 table (idempotent: ids are content hashes). The token is read from the named environment variable, never printed."""
     import os, urllib.request
@@ -247,6 +267,8 @@ def main(argv) -> int:
         if flag("--apply"):
             (root / load(root)["public_view"]).write_text(text, encoding="utf-8", newline="\n")
         print(f"{len(c['entries'])} public entries"); return 0
+    if flag("--ingest-ledgers"):
+        print(len(ingest_ledgers(root, apply=flag("--apply"))), "rows"); return 0
     if flag("--push"):
         print(push(root, val("--push") if val("--push", ) and val("--push").startswith("http") else "https://ultrastable.io/api/fleet/provenance"), "rows pushed"); return 0
     if flag("--settle-due"):

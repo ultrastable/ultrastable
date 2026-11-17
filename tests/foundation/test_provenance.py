@@ -44,6 +44,14 @@ class Prov(unittest.TestCase):
             self.assertNotIn(leak, txt)
         self.assertEqual(v["counts_by_origin"], {"owner": 1, "end_user": 1})
 
+    def test_unknowns_ledger_is_a_source(self):
+        self.assertEqual(P.ingest_ledgers(self.root), [])                              # absent ledger is skipped
+        led = self.root / "ops/unknowns"; led.mkdir(parents=True)
+        (led / "ledger.jsonl").write_text(json.dumps({"id": "u1", "at": "2026-11-17T10:00:00Z", "summary": "unknown: who reads the changelog", "actor": "ignorance-audit"}) + "\n")
+        rows = P.ingest_ledgers(self.root, apply=True)
+        self.assertEqual((rows[0]["origin"]["class"], rows[0]["public"]), ("loop", False))
+        self.assertEqual(len(P.entries(self.root)), 1)
+
     def test_signal_and_lessons_retire_and_reinforce(self):
         self.assertIsNone(P.signal(self.root))                                        # no reading is not a pass
         for i in range(3):
