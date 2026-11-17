@@ -33,16 +33,15 @@
    ],
    "status": "live",
    "visibility": "public",
-   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). It is a GitHub template, so \"Use this template\" copies it."
+   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the core code (workers/), the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). It is a GitHub template, so \"Use this template\" copies it."
   },
   {
    "name": "workers",
-   "role": "Core code",
-   "line": "The core code: the Cloudflare Worker tick, schema, bootstrapper, adapters and reference runtime. Public so its GitHub Actions run.",
-   "audience": "Engineers who run or extend the core.",
+   "role": "Retired",
+   "line": "Retired: the core code now lives in ultrastable/ultrastable under workers/. Kept public so existing links resolve.",
+   "audience": "Anyone following an old link.",
    "quickstart": [
-    "cd core && npm test",
-    "python bootstrap/bootstrap.py --dry-run"
+    "Go to ultrastable/ultrastable, folder workers/"
    ],
    "topics": [
     "agent-orchestration",
@@ -50,9 +49,10 @@
     "autonomous-agents",
     "runtime"
    ],
-   "status": "live",
+   "status": "retired",
    "visibility": "public",
-   "holds": "The reusable core engine and its tests. Overlaps seed/ in the main repository; folding it in is tracked as Q-REPOS-MERGE-WORKERS."
+   "holds": "Nothing. A pointer to workers/ in the main repository.",
+   "moved_to": "ultrastable"
   },
   {
    "name": "spec",
@@ -155,12 +155,6 @@
    "ops",
    "practical-solutions"
   ],
-  "pending": [
-   {
-    "id": "Q-REPOS-MERGE-WORKERS",
-    "repo": "workers",
-    "into": "ultrastable"
-   }
-  ]
+  "pending": []
  }
 }

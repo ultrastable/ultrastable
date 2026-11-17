@@ -43,7 +43,7 @@ jobs:
       - name: Bind the tick Worker's credentials (SELF-SUSTAIN-1)
         if: ${{ inputs.verify != 'true' }}
         env:
-          GITHUB_REPOS: ultrastable/ultrastable,ultrastable/workers,ultrastable/spec
+          GITHUB_REPOS: ultrastable/ultrastable
         run: node deploy/bind-worker-secrets.mjs
       - name: Record the deploy
         if: ${{ inputs.verify != 'true' }}

@@ -176,7 +176,8 @@
    "artifacts/**",
    "specs/**",
    "licensing/**",
-   "SCOPE.md"
+   "SCOPE.md",
+   "workers/**"
   ],
   "how": "foundation/kb.py ranks these for every issue; foundation/executor.py build_prompt adds the best matches to the agent's prompt"
  },
@@ -198,7 +199,9 @@
   "brand/repos/**",
   "ip/provisional/archive/**",
   "ip/provisional/provisional-specification.md",
-  "seed/**"
+  "seed/**",
+  "workers/agent-setup/SKILL.md",
+  "workers/docs/GLOSSARY.md"
  ],
  "human_action_baseline": {
   "business/investor/README.md": 1,
