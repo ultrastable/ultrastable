@@ -1224,29 +1224,42 @@
       "feedback": "a passing probe closes the issue and the open count falls; a failing or missing probe stays open and the executor takes it next",
       "bindings": []
     },
-<<<<<<< HEAD
-    "tenant-sync": {
-=======
     "resilience": {
->>>>>>> origin/main
       "inflows": [
         {
           "signal": "main.merged",
           "via": "github:main"
         },
         {
-<<<<<<< HEAD
-          "signal": "tenant.drift",
-          "via": "file:ops/tenant-sync/ledger.jsonl"
-=======
           "signal": "deploys.record",
           "via": "file:ops/deploys.jsonl"
->>>>>>> origin/main
         }
       ],
       "outflows": [
         {
-<<<<<<< HEAD
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a restart is graded by the next beat: the clock is ticking again or the restart counts toward escalation (Q-STALL item after two failures); the stalled count is the essential variable stalled_clocks, so a stall that persists becomes an Ashby second-order step",
+      "bindings": [
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "tenant-sync": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "tenant.drift",
+          "via": "file:ops/tenant-sync/ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
           "signal": "tenant.drift",
           "via": "file:ops/tenant-sync/ledger.jsonl"
         },
@@ -1257,15 +1270,6 @@
       ],
       "feedback": "each run reads the ledger of its own earlier runs; a tenant still needing a PR after the previous run, or a lift PR that never merged, is counted again and the lane merges the PRs it opened",
       "bindings": [
-=======
-          "signal": "issue.filed",
-          "via": "file:docs/issues"
-        }
-      ],
-      "feedback": "a restart is graded by the next beat: the clock is ticking again or the restart counts toward escalation (Q-STALL item after two failures); the stalled count is the essential variable stalled_clocks, so a stall that persists becomes an Ashby second-order step",
-      "bindings": [
-        "CLOUDFLARE_API_TOKEN",
->>>>>>> origin/main
         "LANE_PAT"
       ]
     }
