@@ -1,0 +1,270 @@
+{
+  "_doc": "CLAIMS-1 (Rowan, 2026-11-17): words must match code, continuously and without a person. Every statement on a public surface is a literal claim with a probe, a generated block rewritten from code, or part of an inventory checked in the reverse direction (shipped behaviour no surface describes). `python3 -m foundation claims --check` runs on every change (checks.yml) and --live daily (claims.yml). Prefer a generated block to a hand-written number; a probe that cannot run is unmeasured, never passed.",
+  "version": 1,
+  "ledgers": [
+    {
+      "id": "work-claims",
+      "name": "work claims",
+      "probe": "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS claims"
+    },
+    {
+      "id": "predictions",
+      "name": "predictions",
+      "probe": "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS predictions"
+    },
+    {
+      "id": "trust",
+      "name": "trust",
+      "probe": "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS trust_ledger"
+    },
+    {
+      "id": "deploys",
+      "name": "deploys",
+      "probe": "file:ops/deploys.jsonl"
+    },
+    {
+      "id": "provenance",
+      "name": "provenance",
+      "probe": "file:ops/provenance.jsonl"
+    }
+  ],
+  "claims": [
+    {
+      "id": "how-probe-revert",
+      "surface": "site/worker.js",
+      "text": "Each deploy declares probes. A probe that passed before and fails after reverts the push on its own.",
+      "probe": [
+        "json:site/probes.json::mode==revert",
+        "grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path"
+      ]
+    },
+    {
+      "id": "how-find-work",
+      "surface": "site/worker.js",
+      "text": "Metric triggers and failure detectors file issues that carry a code task and a closing probe.",
+      "probe": [
+        "file:doctrine/triggers.json",
+        "file:doctrine/detectors.json",
+        "file:foundation/triggers.py"
+      ]
+    },
+    {
+      "id": "how-claim-ledger",
+      "surface": "site/worker.js",
+      "text": "A work-claim ledger gives each file to one agent at a time",
+      "probe": [
+        "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS claims",
+        "file:foundation/agentwork.py"
+      ]
+    },
+    {
+      "id": "how-score",
+      "surface": "site/worker.js",
+      "text": "Each decision logs a prediction before it acts; the outcome is scored later and feeds a trust score per kind of action.",
+      "probe": [
+        "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS predictions",
+        "grep:seed/worker/migrations/0001_init.sql::CREATE TABLE IF NOT EXISTS trust_ledger",
+        "file:foundation/trust.py"
+      ]
+    },
+    {
+      "id": "market-two-family",
+      "surface": "site/worker.js",
+      "text": "a two-family review and scored predictions",
+      "probe": [
+        "grep:foundation/agent_ladder.py::reviewer of a family"
+      ]
+    },
+    {
+      "id": "llms-self-hosted",
+      "surface": "site/worker.js",
+      "text": "Ultrastable runs on itself.",
+      "probe": [
+        "file:foundation/selfhost.py",
+        "file:instances/ultrastable/loop-registry.json"
+      ]
+    },
+    {
+      "id": "llms-api",
+      "surface": "site/worker.js",
+      "text": "POST /api/v1/intake submits a backlog item with an integration bearer token",
+      "probe": [
+        "grep:site/controlplane.js::intake"
+      ]
+    },
+    {
+      "id": "unknowns-audit",
+      "surface": "site/worker.js",
+      "text": "Coverage and findings are on the <a href=\\\"/live\\\">live page</a>.",
+      "probe": [
+        "file:foundation/unknowns.py",
+        "file:foundation/transparency.py",
+        "grep:site/worker.js::u.pathname === \"/live\""
+      ]
+    },
+    {
+      "id": "llms-tools-generated",
+      "surface": "site/worker.js",
+      "text": "tools, generated from the code that serves them",
+      "probe": [
+        "grep:site/worker.js::\\[\\.\\.\\.LIVE_TOOLS, \\.\\.\\.TOOLS, \\.\\.\\.WRITE_TOOLS\\]\\.map",
+        "grep:site/agentic.js::tools/list.*LIVE_TOOLS, \\.\\.\\.TOOLS, \\.\\.\\.WRITE_TOOLS"
+      ]
+    },
+    {
+      "id": "how-ledgers-count",
+      "surface": "site/worker.js",
+      "text": "One loop, \" + VERIFIED.ledgers.length + \" ledgers (",
+      "probe": [
+        "json:doctrine/claims.json::ledgers.0.id==work-claims",
+        "file:site/claims-data.js"
+      ]
+    },
+    {
+      "id": "claims-page-bound",
+      "surface": "site/worker.js",
+      "text": "Every statement on the Ultrastable surfaces is bound to a probe in the code",
+      "probe": [
+        "file:foundation/claims.py",
+        "file:doctrine/claims.json",
+        "cron:.github/workflows/claims.yml"
+      ]
+    },
+    {
+      "id": "rule-claims-1",
+      "surface": "agents/AGENTS.md",
+      "text": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
+      "probe": [
+        "file:foundation/claims.py",
+        "file:tests/foundation/test_claims.py"
+      ]
+    }
+  ],
+  "generated": [
+    {
+      "id": "seed-tests",
+      "surface": "README.md",
+      "measure": {
+        "py": {
+          "py_tests": [
+            "seed/tests"
+          ]
+        },
+        "js": {
+          "js_tests": [
+            "seed/worker/test"
+          ]
+        }
+      },
+      "template": "{py} Python and {js} Worker tests"
+    },
+    {
+      "id": "seed-worker-tests",
+      "surface": "platform/adapters/README.md",
+      "measure": {
+        "js": {
+          "js_tests": [
+            "seed/worker/test"
+          ]
+        }
+      },
+      "template": "{js} Worker tests"
+    },
+    {
+      "id": "gcp-tests",
+      "surface": "README.md",
+      "measure": {
+        "js": {
+          "js_tests": [
+            "platform/adapters/gcp/test"
+          ]
+        }
+      },
+      "template": "{js} tests"
+    },
+    {
+      "id": "gcp-tests-adapters",
+      "surface": "platform/adapters/README.md",
+      "measure": {
+        "js": {
+          "js_tests": [
+            "platform/adapters/gcp/test"
+          ]
+        }
+      },
+      "template": "{js} tests"
+    },
+    {
+      "id": "core-tests",
+      "surface": "README.md",
+      "measure": {
+        "py": {
+          "py_tests": [
+            "platform/core/tests"
+          ]
+        }
+      },
+      "template": "{py} tests"
+    },
+    {
+      "id": "live-deploys",
+      "surface": "README.md",
+      "measure": {
+        "n": {
+          "jsonl_count": {
+            "file": "ops/deploys.jsonl",
+            "where": {
+              "uploaded": true,
+              "live_matches_commit": true
+            }
+          }
+        }
+      },
+      "template": "{n}"
+    }
+  ],
+  "inventory": [
+    {
+      "id": "inv-pages-in-sitemap",
+      "set": {
+        "file": "site/worker.js",
+        "within": "const PAGES = \\[(.*?)\\]",
+        "regex": "\"(/[a-z]*)\""
+      },
+      "surfaces": [
+        "site/promote.js"
+      ],
+      "mention": "\"{item}\"",
+      "note": "Every public page the worker serves is in the sitemap and the daily IndexNow submission.",
+      "exempt": {
+        "/dashboard": "redirects to dashboard.ultrastable.io, which carries its own sitemap"
+      }
+    }
+  ],
+  "live": [
+    {
+      "id": "live-how",
+      "url": "https://ultrastable.io/how",
+      "contains": [
+        "How it works",
+        "Honest gaps"
+      ]
+    },
+    {
+      "id": "live-claims",
+      "url": "https://ultrastable.io/api/claims",
+      "contains": [
+        "\"claims\"",
+        "\"summary\""
+      ]
+    },
+    {
+      "id": "live-llms",
+      "url": "https://ultrastable.io/llms.txt",
+      "contains": [
+        "tools, generated from the code that serves them",
+        "/claims"
+      ]
+    }
+  ]
+}

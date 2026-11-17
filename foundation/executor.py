@@ -23,7 +23,7 @@ DENY_NAMES = (".env", "id_rsa", "credentials")
 MAX_FILES, MAX_BYTES = 8, 200_000
 # Generated files are derived from the queue and docs, so any change makes them stale; the executor regenerates them instead of failing its own checks.
 REPAIRS = 2
-GENERATORS = [["python3", "-m", "foundation", "publication", "--fix"], ["python3", "scripts/build_dashboard.py"], ["python3", "scripts/build_site_roadmap.py"], ["python3", "-m", "foundation", "doctrine", "--apply"], ["python3", "-m", "foundation", "glossary", "--apply"], ["python3", "-m", "foundation", "standards", "--apply"]]
+GENERATORS = [["python3", "-m", "foundation", "publication", "--fix"], ["python3", "-m", "foundation", "claims", "--fix", "--apply"], ["python3", "scripts/build_dashboard.py"], ["python3", "scripts/build_site_roadmap.py"], ["python3", "-m", "foundation", "doctrine", "--apply"], ["python3", "-m", "foundation", "glossary", "--apply"], ["python3", "-m", "foundation", "standards", "--apply"]]
 CHECKS = [["python3", "scripts/lint_workflows.py"], ["python3", "-m", "unittest", "discover", "-s", "tests/foundation"]]
 
 
@@ -249,9 +249,8 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     if qm and not issue_no:
         from . import growth  # GROWTH-1: a product manager keeps the backlog from devolving into bug fixes
         from . import rnd  # RND-1: competitor gaps and adopted findings carry a priority the loop computed
-        issues = rnd.boost(growth.prefer(issues, root), root)
-        from . import selfcode  # SELFCODE-1: a share of runs goes to the code agent's own findings and trusted issue intake
-        issues = selfcode.prefer(issues, root)
+        from . import selfcode  # SELFCODE-1: a share of runs goes to the code agent's own findings and trusted issue intake; it runs first so growth.prefer cannot filter them out
+        issues = rnd.boost(growth.prefer(selfcode.prefer(issues, root), root), root)
     issue = next((i for i in issues if str(i["number"]) == str(issue_no)), None) if issue_no else pick(issues)
     if not issue:
         row = {"result": "idle", "detail": "no open issue the executor may take", "prediction": "open_issues_takeable <= 0 within 24 h"}
