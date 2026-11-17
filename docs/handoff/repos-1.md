@@ -14,3 +14,8 @@ The spec repository moved here (`specs/`, `SCOPE.md`, `licensing/`, `docs/spec/`
 
 ## Workers folded in (Session: session_0156nqDvjKMRKDZZN7ARH5mX)
 The workers repository moved here as `workers/` with its standalone layout (its tests pass in place: `cd workers && npm test`). `workers/.github/workflows` is inert (Actions reads only the root). Open: Q-REPOS-ADMIN-APPLY (archive writes), instance pins of `ultrastable/workers` tags (upstream.py runtime_core) keep resolving while the archived repo stays readable.
+
+## Archive step (Q-REPOS-ADMIN-APPLY)
+Session: session_0156nqDvjKMRKDZZN7ARH5mX
+
+`/connect/github-admin` registers an administration-only GitHub App; finishing its install runs `archiveRetired` (`seed/worker/src/auth/archive.js`), which archives seed, license, spec and workers (list mirrors `brand/brand.json`, tested). A failed archive is recorded as a credential event and the page still completes. Q-REPOS-ADMIN-APPLY closes when the four repositories show archived.
