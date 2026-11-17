@@ -173,7 +173,10 @@
    "site/**",
    "outreach/README.md",
    "instances/*/README.md",
-   "artifacts/**"
+   "artifacts/**",
+   "specs/**",
+   "licensing/**",
+   "SCOPE.md"
   ],
   "how": "foundation/kb.py ranks these for every issue; foundation/executor.py build_prompt adds the best matches to the agent's prompt"
  },
