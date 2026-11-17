@@ -65,6 +65,12 @@ def candidates(root=REPO, today=None) -> list[dict]:
             out.append({"key": key, "unit": u["id"], "lens": lens["id"], "method": lens["method"], "region": lens["region"],
                         "question": lens["q"].format(**{k: (u[k] or "(none recorded)") for k in ("id", "done", "probe", "trigger")}),
                         "score": score, "_tie": _tie(key, today.isocalendar()[1])})
+    for i, c in enumerate(json.loads((Path(root) / d["candidates"]).read_text(encoding="utf-8"))["candidates"]):
+        if c["kind"] == "seed":  # UIA rule 6: a meta-question answer seeds the next pass, asked before anything else
+            key = f"{c['from'].split('|')[0]}|seed-{i}"
+            if not any(r["key"] == key for r in asked):
+                out.append({"key": key, "unit": c["from"].split("|")[0], "lens": "seed", "method": "UIA meta-question seed", "region": "ignorance-about-ignorance",
+                            "question": c["text"], "score": d["seed_score"], "_tie": 1.0})
     return sorted(out, key=lambda c: (-c["score"], -c["_tie"]))
 
 
@@ -105,7 +111,12 @@ def answer(root, key, verdict, text):
     with (root / d["ledger"]).open("a", encoding="utf-8") as f:
         f.write(json.dumps(_row("answered", key=key, verdict=verdict, assumption="answer recorded", action=f"verdict {verdict}",
                                 evidence=text, outcome="closed", capability_gain=0 if verdict == "none" else 1), sort_keys=True) + "\n")
-    if verdict in ("gap", "new-objective"):  # UIA rule 6: the answer seeds the next pass
+    if key.endswith("|meta") and verdict != "cannot-know":
+        cp = root / d["candidates"]
+        cur = json.loads(cp.read_text(encoding="utf-8"))
+        cur["candidates"].append({"from": key, "kind": "seed", "text": text, "status": "seed", "at": dt.date.today().isoformat()})
+        cp.write_text(json.dumps(cur, indent=1) + "\n", encoding="utf-8")
+    elif verdict in ("gap", "new-objective"):  # UIA rule 6: the answer seeds the next pass
         cp = root / d["candidates"]
         cur = json.loads(cp.read_text(encoding="utf-8"))
         cur["candidates"].append({"from": key, "kind": verdict, "text": text, "status": "probationary", "at": dt.date.today().isoformat()})
@@ -124,7 +135,7 @@ def status(root=REPO) -> dict:
     cands = json.loads((root / d["candidates"]).read_text(encoding="utf-8"))["candidates"]
     return {"units": len(units), "units_questioned": len(covered & units), "coverage": round(len(covered & units) / max(1, len(units)), 3),
             "asked": len(asked), "answered": len(ans), "open": len(asked) - len({r["key"] for r in ans}),
-            "surprise_rate": round(len(surprise) / max(1, len(ans)), 3), "objective_candidates": len(cands),
+            "surprise_rate": round(len(surprise) / max(1, len(ans)), 3), "objective_candidates": sum(1 for c in cands if c["kind"] != "seed"), "seeds": sum(1 for c in cands if c["kind"] == "seed"),
             "cannot_know": sum(1 for r in ans if r["verdict"] == "cannot-know")}
 
 
