@@ -10,6 +10,7 @@ import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
 import { unknownsStep } from './unknowns.js';
+import { migrateStep } from './migrate.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
 import { ignitionStep } from './ignition.js';
@@ -276,6 +277,9 @@ export const STEPS = {
     await selfAuditStep(db, ctx, ctx.config.failure_modes, ensureItem);
   },
 
+  // MIGRATE-SELF-1: apply pending D1 migrations through the tick's own binding (no credential), ledgered in _migrations.
+  async migrate(db, ctx) { await migrateStep(db, ctx, ctx.config.migrations, ensureItem); },
+
   // UNKNOWNS-1: question what the system does not know; the questions are plus items.
   async unknowns(db, ctx) {
     if (!ctx.config.unknowns) { ctx.notes.push('unknowns: no doctrine configured'); return; }
@@ -337,7 +341,7 @@ export const STEPS = {
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
+export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,
@@ -345,7 +349,7 @@ export const STEP_ORDER = ['reconcile', 'reap_claims', 'probe_gates', 'score_pre
 // other step either reads wide (probe_gates, score_predictions, accrue_trust, selfaudit, pulse, ignition, check_plus_share) or starts new work
 // that reads more (reap_claims feeds dispatch, dispatch, execute), so it waits for the hour to pass. A skipped step counts as completed: it is
 // a decision, not a failure, so the health probe and the ignition streak stay green.
-export const COST_ESSENTIAL_STEPS = ['reconcile', 'measure', 'criticality'];
+export const COST_ESSENTIAL_STEPS = ['migrate', 'reconcile', 'measure', 'criticality'];
 
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null, budget = null } = {}) {
   const startedIso = iso(new Date(now));
