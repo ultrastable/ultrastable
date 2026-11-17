@@ -9,12 +9,26 @@
   "external": "a signal from outside (scout finding, funder reply, competitor change)"
  },
  "counts_by_origin": {
+  "loop": 8,
   "owner": 26,
-  "loop": 7,
   "agent": 14,
   "system": 3
  },
  "entries": [
+  {
+   "id": "pv-9d0ec8116fbe",
+   "at": "2026-11-17T15:45:58Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "launched blindspot.ultrastable.app: score 10.0 (reach 5, impact 4) from needs security-contact, email-authentication, privacy-notice, terms-of-use, accessibility-statement, footer-links; prediction ve",
+   "affected": [
+    "instances/spinoffs/blindspot"
+   ],
+   "effect": "pending"
+  },
   {
    "id": "pv-5cef1ac32309",
    "at": "2026-11-17T15:22:07+01:00",
