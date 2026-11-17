@@ -1,7 +1,7 @@
 {
   "id": "OL-20261117-3",
   "title": "OL-20261117-3: SPINOFF IndexNow key file on the live app host",
-  "body": "**Owner:** executor\n**Trigger:** next daily spinoff run\n**Done check:** grep:spinoffs/worker.js::indexnow\n**Status:** open\n\nReading blindspot.ultrastable.app/ultrastable-indexnow-7f3a9c2e4b1d.txt did not succeed from the session. Probe it from the spinoff workflow and file a fix item if it is not served.",
+  "body": "**Owner:** executor\n**Trigger:** next daily spinoff run\n**Done check:** grep:spinoffs/worker.js::indexnow\n**Status:** open\n\nReading blindspot.ultrastable.app/ultrastable-indexnow-7f3a9c2e4b1d.txt did not succeed from the session. Probe it from the spinoff workflow and file a fix item if it is not served.\n\nSession: session_0156nqDuxJS2RpGCL7Ak6MSA",
   "labels": [
     "role:executor",
     "open-loop"
