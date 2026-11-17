@@ -154,6 +154,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["topology"]:
         from . import topology
         return topology.main(_av[1:])
+    if _av[:1] == ["selfcode"]:
+        from . import selfcode
+        return selfcode.main(_av[1:])
     if _av[:1] == ["agent_ladder"]:
         from . import agent_ladder
         return agent_ladder.main(_av[1:])
