@@ -2013,6 +2013,14 @@
    "probe": "file:workers/core/modelservice/index.js"
   },
   {
+   "id": "lesson-2026-11-17-owner-routes-before-auth-path",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Owner routes before AUTH_PATH",
+   "body": "/connect/github-signin matched AUTH_PATH first and reached the tick placeholder; OWNER_PATH now first, owner_links checks body content (OWNER-ROUTE-1, OWNER-LINKS-2)",
+   "probe": "file:site/forward.test.mjs"
+  },
+  {
    "id": "decision-2026-11-17-unstick-1-failing-runs-watcher-merges-main-into-conflicted-p",
    "kind": "decision",
    "date": "2026-11-17",
