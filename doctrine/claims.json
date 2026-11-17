@@ -158,6 +158,16 @@
         "grep:foundation/ultrastability.py::revert_to=pending",
         "grep:foundation/ultrastability.py::verdict = \"kept\""
       ]
+    },
+    {
+      "id": "how-self-endpoint",
+      "surface": "site/worker.js",
+      "text": "The system describes itself in code: what it is, its regulators, its variables and bounds, its clocks and its boundary are served as JSON at",
+      "probe": [
+        "file:foundation/selfmodel.py",
+        "file:site/self-data.js",
+        "grep:site/worker.js::case \"/self\""
+      ]
     }
   ],
   "generated": [

@@ -219,3 +219,13 @@ test("OWNER-IDENTITY-1: GitHub sign-in checks org ownership, links verified emai
   const row = await none.DB.prepare("SELECT secret_sealed FROM owner_oauth_app WHERE id=1").first(); assert.ok(row && !row.secret_sealed.includes("sec"));
   const again = await w.fetch(new Request("https://d.example/api/owner/github"), none); assert.match(again.headers.get("location"), /github\.com\/login\/oauth\/authorize\?client_id=cid/);
 });
+
+test("SELF-FIX-1: a failing check is queued as a fleet task and logged, never mailed", async () => {
+  const { selfFix } = await import("../worker.js");
+  const e = env(); const before = sent.length;
+  assert.equal(await selfFix(e, { name: "owner_links", ok: false, detail: "dead: x" }, "2026-11-17"), true);
+  assert.equal(await selfFix(e, { name: "owner_links", ok: false, detail: "dead: x" }, "2026-11-17"), false);
+  assert.equal(sent.length, before);
+  assert.equal((await e.DB.prepare("SELECT COUNT(*) c FROM fleet_queue WHERE task_id='fix-owner_links' AND status='queued'").first()).c, 1);
+  assert.equal((await e.DB.prepare("SELECT COUNT(*) c FROM provenance WHERE kind='incident'").first()).c, 1);
+});

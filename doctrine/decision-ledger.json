@@ -1929,6 +1929,24 @@
    "probe": "grep:foundation/resilience.py::def restart"
   },
   {
+   "id": "decision-2026-11-17-capped-sparks-no-longer-cancel-executor-runs-spark-queue-1",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Capped sparks no longer cancel executor runs (SPARK-QUEUE-1)",
+   "body": "The executor's spark gate is its own job outside the executor concurrency group, so a workflow_run spark that hit its daily cap ends there instead of displacing a queued manual or Worker dispatch (measured 2026-11-17 18:08-18:14 UTC).",
+   "probe": "grep:.github/workflows/executor.yml::SPARK-QUEUE-1",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-self-model-1-the-self-model-is-code-served-at-self-checked-i",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "SELF-MODEL-1: the self-model is code, served at /self, checked in CI, consulted by the tick",
+   "body": "foundation/selfmodel.py builds one model from doctrine/ultrastability.json and the live declarations (loop registry, topology, workflows, clocks, boundary). site/self-data.js is generated and served at /self and /.well-known/ultrastable. selfmodel --check fails on an unresolved regulator, a missing file, a workflow in no loop or a stale served model, and the ultrastability tick skips a variable whose regulators the model does not know and files an UNREGISTERED item. Verified by 29 passing tests in tests/foundation and claims 27 of 27; live check of /self follows the site deploy.",
+   "probe": "file:foundation/selfmodel.py",
+   "session": "session_0156nqDvqvENNWfEYLQjbFyC"
+  },
+  {
    "id": "decision-2026-11-17-user-backend-1-the-user-does-the-idea-the-system-does-the-backend-one-fix-improves-every-system",
    "kind": "decision",
    "date": "2026-11-17",

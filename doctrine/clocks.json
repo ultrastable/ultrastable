@@ -11,7 +11,23 @@
       "table": "tick_runs",
       "column": "started_at",
       "expected_interval_s": 600,
-      "periodic": true
+      "periodic": true,
+      "replicas": [
+        {
+          "account_id": "81e3a4efb4eb66e613529b87682911bb",
+          "d1_id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
+          "why": "ultrastable account, primary since the 2026-11-15 cutover (ACCOUNT-SPLIT-2)"
+        },
+        {
+          "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
+          "d1_id": "7468898a-b515-495f-9910-e91cb80f5810",
+          "why": "quniverse account, standby"
+        }
+      ],
+      "health_urls": [
+        "https://ultrastable-tick.ultrastable.workers.dev/health",
+        "https://ultrastable-ultrastable.q08.workers.dev/health"
+      ]
     },
     {
       "id": "executor",
@@ -64,7 +80,23 @@
       "table": "criticality_history",
       "column": "at",
       "expected_interval_s": 600,
-      "periodic": true
+      "periodic": true,
+      "replicas": [
+        {
+          "account_id": "81e3a4efb4eb66e613529b87682911bb",
+          "d1_id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
+          "why": "ultrastable account, primary since the 2026-11-15 cutover (ACCOUNT-SPLIT-2)"
+        },
+        {
+          "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
+          "d1_id": "7468898a-b515-495f-9910-e91cb80f5810",
+          "why": "quniverse account, standby"
+        }
+      ],
+      "health_urls": [
+        "https://ultrastable-tick.ultrastable.workers.dev/health",
+        "https://ultrastable-ultrastable.q08.workers.dev/health"
+      ]
     },
     {
       "id": "claims",
@@ -174,5 +206,7 @@
       "expired"
     ],
     "close_comment": "Settled as expired by CLOCKWORK-1: no merge within the settlement window; the item returns to the queue under its own name."
-  }
+  },
+  "_doc_replicas": "A d1 clock reads every replica (one per Cloudflare account; ACCOUNT-SPLIT-2 runs the tick on whichever is primary) and the newest beat from any of them counts. Found 2026-11-17 by RESILIENCE-1: the clock read only the standby database and reported a 45 h stall while the primary ticked every 10 minutes.",
+  "_doc_health": "A d1 clock may also name public /health URLs (one per account); the started_at of last_tick from any of them is a beat. This needs no credential, so a host without access to the primary account's database still sees the primary tick (RESILIENCE-1, 2026-11-17: the GitHub token read only the standby database)."
 }

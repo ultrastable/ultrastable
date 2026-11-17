@@ -178,6 +178,9 @@ export default {
 function presence(env) {
   const out = {};
   for (const [k, v] of Object.entries(env)) if (typeof v === 'string' && v) out[k] = true;
+  // Service bindings are not secrets: the measure step's `service` metric source fetches through them (M-tenants-selftest read 0 while
+  // presence() reduced env to string flags and dropped TENANTS).
+  for (const [k, v] of Object.entries(env)) if (v && typeof v === 'object' && typeof v.fetch === 'function' && !(k in out) && /^[A-Z][A-Z0-9_]*$/.test(k)) out[k] = v;
   return out;
 }
 

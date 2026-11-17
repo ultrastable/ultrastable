@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-import json, shutil, tempfile, unittest
+import json, shutil, unittest
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _repo  # noqa: E402
 from foundation import resilience as R
 
 REPO = Path(__file__).resolve().parents[2]
@@ -9,7 +12,7 @@ NOW = 1_800_000_000.0
 
 class T(unittest.TestCase):
     def setUp(self):
-        self.d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, self.d, True)
+        self.d = _repo.scratch()
         for f in ("doctrine/resilience.json", "doctrine/clocks.json"):
             (self.d / f).parent.mkdir(parents=True, exist_ok=True); shutil.copy(REPO / f, self.d / f)
         shutil.copytree(REPO / ".github/workflows", self.d / ".github/workflows")
@@ -92,3 +95,53 @@ class T(unittest.TestCase):
         for w in by.values():
             self.assertNotEqual(w["watched_by"], w["id"]); self.assertNotEqual(by[w["watched_by"]]["host"], w["host"] if w["host"] == "github-actions" else None)
         self.assertEqual({w["host"] for w in by.values()}, {"github-actions", "cloudflare-worker"})
+
+
+class Truth(T):
+    def test_a_200_that_does_not_restart_the_clock_escalates(self):
+        for i in range(3):
+            self.run_({"tick-heartbeat"}, poke_status=200, now=NOW + i * 600)
+        self.assertTrue((self.d / "docs/issues/Q-STALL-tick-heartbeat.json").exists())
+
+    def test_d1_clock_reads_every_account(self):
+        from foundation import clock as C
+        seen = []
+        orig = C.d1_beats
+        try:
+            def fake(c, tok, acct):
+                seen.append(acct)
+                if acct == "dead":
+                    raise OSError("x")
+                return [NOW]
+            C.d1_beats = fake
+            c = {"d1_id": "a", "replicas": [{"account_id": "dead", "d1_id": "a"}, {"account_id": "live", "d1_id": "b"}]}
+            self.assertEqual(C.d1_beats_any(c, "t", "x"), [NOW]); self.assertEqual(seen, ["dead", "live"])
+            C.d1_beats = lambda *a: (_ for _ in ()).throw(OSError("x"))
+            with self.assertRaises(RuntimeError):
+                C.d1_beats_any(c, "t", "x")
+        finally:
+            C.d1_beats = orig
+
+    def test_unchanged_run_is_not_committed(self):
+        self.run_(set())
+        self.assertFalse(self.run_(set(), now=NOW + 60)["changed"])
+        self.assertTrue(self.run_({"wf:cost-guard"}, now=NOW + 120)["changed"])
+
+    def test_repo_d1_clocks_have_both_accounts(self):
+        import json as j
+        for c in j.loads((REPO / "doctrine/clocks.json").read_text())["clocks"]:
+            if c["source"] == "d1":
+                self.assertEqual(len({r["account_id"] for r in c["replicas"]}), 2)
+
+
+class Health(T):
+    def test_health_urls_need_no_credential(self):
+        got = R.health_beats(["a", "b"], lambda u: {"last_tick": {"started_at": "2026-11-17 18:30:34"}} if u == "b" else None)
+        self.assertEqual(len(got), 1)
+        self.assertIsNone(R.health_beats(["a"], lambda u: None))
+        self.assertEqual(R.health_beats(["a"], lambda u: {"ok": False}), [])
+
+    def test_repo_tick_clock_has_two_health_urls(self):
+        import json as j
+        c = next(x for x in j.loads((REPO / "doctrine/clocks.json").read_text())["clocks"] if x["id"] == "tick-heartbeat")
+        self.assertEqual(len(c["health_urls"]), 2)

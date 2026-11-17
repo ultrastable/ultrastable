@@ -18,6 +18,9 @@ const VERSION = "0.4.0";
 const COOKIE = "us_owner";
 const OTP_MS = 10 * 60e3, SESSION_MS = 30 * 864e5, STEPUP_MS = 15 * 60e3;
 const HOSTS = ["ultrastable.io", "ultrastable.app", "ultrastable.net"];
+// OWNER-LINKS-1: links the owner is handed use the public domain the request came in on (x-forwarded-host from the site's forwarder, trusted only for HOSTS), never a workers.dev name.
+export function publicOrigin(req, u) { const h = (req.headers.get("x-forwarded-host") || "").toLowerCase(); return HOSTS.includes(h) ? "https://" + h : u.origin; }
+export const OWNER_LINKS = ["https://ultrastable.io/owner", "https://ultrastable.io/connect/github-signin"];
 // Words that must never appear on the public pages before filing (disclosure guard, checked by the cron probe).
 const GUARD_WORDS = ["probe", "revert", "prediction", "trust ledger", "plussing", "work claim", "virtual manager", "self-governing"];
 
@@ -144,6 +147,13 @@ export async function runProbes(env) {
       catch (e) { await rec("mail_send", false, String(e && e.message || e)); }
     } else out.push({ name: "mail_send", ok: !!last.ok, detail: "last real send under 24 h ago" });
   } catch (e) { /* the checks table may not exist yet */ }
+  // OWNER-LINKS-1: every link the system hands the owner answers (2xx or 3xx); a dead one fails this probe and is mailed like any other failing check.
+  if (!env.NO_NET) {
+    const links = [...OWNER_LINKS, ...NEEDS.map(n => n.url || n.connect).filter(x => /^https:\/\//.test(String(x || "")))].filter((x, i, a) => a.indexOf(x) === i).slice(0, 20);
+    const dead = [];
+    for (const l of links) { try { const r = await fetch(l, { redirect: "manual", signal: AbortSignal.timeout(5000) }); if (r.status >= 400) dead.push(l + " HTTP " + r.status); } catch (e) { dead.push(l + " " + String(e && e.message || e).slice(0, 40)); } }
+    await rec("owner_links", dead.length === 0, dead.length ? "dead: " + dead.join(" | ") : links.length + " owner links answer");
+  }
   const idLinks = await OID.linkCount(env);
   const paths = ownerAddresses(env).length + (idLinks > 0 ? 1 : 0) + ((await OID.configured(env)) ? 1 : 0);
   await rec("owner_email_paths", paths >= 2, paths >= 2 ? paths + " owner addresses: a suppressed one does not lock the owner out" : "only " + paths + " owner address: set OWNER_EMAIL_BACKUP to an address at a different provider (single point of failure, MAIL-PATHS-1)");
@@ -320,6 +330,16 @@ export async function watchTick(env) {
   try { const r = await env.TICK.fetch(new Request("https://tick.internal/pulse/watch", { method: "POST" })); return { status: r.ok ? "ok" : "http-" + r.status }; }
   catch (e) { console.error("watchdog: tick worker unreachable", e && e.message); return { status: "unreachable" }; }
 }
+export async function selfFix(env, r, day) {
+  const id = "fix-" + String(r.name).replace(/[^a-z0-9_:-]/gi, "-").slice(0, 60);
+  const fresh = await env.DB.prepare("INSERT OR IGNORE INTO notifications(key,at,subject) VALUES(?1,?2,?3)").bind("selffix:" + r.name + ":" + day, Date.now(), "self-fix " + r.name).run();
+  if (!fresh.meta || !fresh.meta.changes) return false;
+  await PV.add(env, { class: "system", actor: "dashboard-probe", channel: "loop-run", kind: "incident", summary: "check " + r.name + " failing: " + String(r.detail || "").slice(0, 300), ref: "check:" + r.name, affected: [r.name] });
+  await env.DB.prepare("INSERT INTO tasks(id,title,kind,state,why,source,priority,updated_at) VALUES(?1,?2,'fleet','open',?3,'check',3,?4) ON CONFLICT(id) DO UPDATE SET state='open',why=?3,updated_at=?4").bind(id, "Fix failing check " + r.name, String(r.detail || "").slice(0, 300), Date.now()).run();
+  const q = await env.DB.prepare("SELECT 1 x FROM fleet_queue WHERE task_id=?1 AND status='queued'").bind(id).first();
+  if (!q) await env.DB.prepare("INSERT INTO fleet_queue(task_id,status,queued_at) VALUES(?1,'queued',?2)").bind(id, Date.now()).run();
+  return true;
+}
 export async function tick(env, cron) {
   try { await watchTick(env); } catch (e) { console.error("watchTick", e && e.message); }
   try { await ensureSnapshots(env); } catch (e) { console.error("ensureSnapshots", e && e.message); }
@@ -327,7 +347,9 @@ export async function tick(env, cron) {
   const res = await runProbes(env); const day = new Date().toISOString().slice(0, 10);
   const dbc = res.find(x => x.name === "database");
   if (dbc && !dbc.ok) { /* mail needs no database: tell the owner in plain words, at most every 6 hours (the hourly cron makes the slot the dedup) */ if (new Date().getUTCHours() % 6 === 0) { try { await sendMail(env, "Ultrastable: database resting", isLimitError(dbc.detail) ? DB_LIMIT_NOTE() : "The database did not answer (" + String(dbc.detail).slice(0, 120) + "). The system retries every hour."); } catch (e) { console.error("db-down mail", e && e.message); } } return; }
-  for (const r of res.filter(x => !x.ok && x.name !== "github")) await notify(env, "fail:" + r.name + ":" + day, "Ultrastable check failing: " + r.name, r.name + " failed: " + r.detail + "\nOpen https://ultrastable.io/owner");
+  // SELF-FIX-1 (Rowan 2026-11-17: backend work stays invisible to the owner): a failing check is never mailed. It is written to the owner-only
+  // provenance ledger as an incident and queued once per day as a fleet task, which the fleet takes from /api/fleet/queue and closes by the probe.
+  for (const r of res.filter(x => !x.ok && x.name !== "github")) { try { await selfFix(env, r, day); } catch (e) { console.error("selfFix", r.name, e && e.message); } }
   try { const a = await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }); for (const m of a.metrics.filter(x => x.hit)) await notify(env, "metric:" + m.name + ":" + day, "Ultrastable metric breach: " + m.name, m.name + " = " + m.value + " (" + m.why + ")\n" + m.label + "\nOpen https://ultrastable.io/owner"); } catch (e) { console.error("metrics", e && e.message); }
   const fresh = (await env.DB.prepare("SELECT id,title FROM tasks WHERE kind='owner' AND state='open' AND id NOT IN (SELECT substr(key,6) FROM notifications WHERE key LIKE 'task:%') ORDER BY priority LIMIT 50").all()).results;
   if (fresh.length) {
@@ -431,10 +453,10 @@ export async function route(req, env) {
     try { await sendOne(env, b.to, String(b.subject || "").slice(0, 200), String(b.text || "").slice(0, 4000)); return json({ ok: true }); }
     catch (e) { return userJson(e, "mail-relay", { audit: auditBackend(env) }); }
   }
-  if (p === "/api/owner/github" && req.method === "GET") { const r = await OID.start(env, u.origin); return r.location ? new Response(null, { status: 302, headers: { location: r.location, ...SEC } }) : json(r.body, r.status); }
+  if (p === "/api/owner/github" && req.method === "GET") { const r = await OID.start(env, publicOrigin(req, u)); return r.location ? new Response(null, { status: 302, headers: { location: r.location, ...SEC } }) : json(r.body, r.status); }
   if (p === "/api/owner/github/callback" && req.method === "GET") { const r = await OID.callback(env, u, mintSession); return r.location ? new Response(null, { status: 302, headers: { location: r.location, "Set-Cookie": r.cookie, ...SEC } }) : json(r.body, r.status); }
-  if (p === "/connect/github-signin") return OID.connectPage(env, u.origin);
-  if (p === "/auth/github-signin/callback") return OID.appCallback(env, u);
+  if (p === "/connect/github-signin") return OID.connectPage(env, publicOrigin(req, u));
+  if (p === "/auth/github-signin/callback") return OID.appCallback(env, u, publicOrigin(req, u));
   if (p === "/owner") return ownerPage();
   if (p.startsWith("/api/owner/")) {
     if (req.method === "POST" && req.headers.get("x-us-ui") !== "1") return json({ error: "missing x-us-ui header" }, 400);

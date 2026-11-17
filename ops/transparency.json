@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-17T18:37:18Z",
- "commit": "d723ee9",
+ "generated": "2026-11-17T18:33:35Z",
+ "commit": "b8ba7b2",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 95,
@@ -18,8 +18,8 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 278,
-  "backlog_items": 342
+  "backlog_open": 275,
+  "backlog_items": 339
  },
  "unknowns": {
   "units": 111,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 342,
+   "items": 339,
    "by_status": {
     "closed": 60,
-    "open": 278,
+    "open": 275,
     "done": 4
    },
-   "takeable_now": 251
+   "takeable_now": 248
   },
   "merged": {
    "total": 0,
@@ -100,9 +100,9 @@
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-17T18:34:08Z",
+    "createdAt": "2026-11-17T18:28:40Z",
     "event": "push",
-    "headSha": "938c728d17279a93423570092488bb934ffd125a"
+    "headSha": "ccc2eb7c35335be87120241dedd13e623db10d00"
    },
    "per_day_success": {
     "2026-11-17": 47
@@ -111,8 +111,8 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "cancelled": 4,
-    "success": 26
+    "cancelled": 9,
+    "success": 21
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -155,7 +155,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": -3.5,
+   "age_s": 24.7,
    "status": "fresh",
    "missed": 0
   },
@@ -179,15 +179,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 30.5,
+   "age_s": 234.7,
    "status": "fresh",
-   "missed": 0
+   "missed": 0,
+   "lag_s": 47.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 11608.5,
+   "age_s": 11393.7,
    "status": "fresh",
    "missed": 0
   }
@@ -301,7 +302,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-17T18:36:42Z",
+  "generated": "2026-11-17T18:33:04Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -346,7 +347,7 @@
     "metric": "pilot_page_views_7d",
     "baseline": null,
     "predicted_pct": 15,
-    "started": "2026-11-17T18:36:42Z",
+    "started": "2026-11-17T18:33:04Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -360,7 +361,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-17T18:36:42Z",
+     "at": "2026-11-17T18:33:04Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -421,16 +422,16 @@
  },
  "growth": {
   "mix": {
-   "growth": 1,
+   "growth": 2,
    "fix": 2,
-   "maintenance": 17,
+   "maintenance": 16,
    "total": 20,
-   "growth_share": 0.05,
+   "growth_share": 0.1,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 24,
-  "items_takeable": 251,
+  "items_takeable": 248,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -475,7 +476,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 10.1,
+   "last_beat_age_s": 20.8,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -486,7 +487,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 11654.1,
+   "last_beat_age_s": 11432.8,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -497,9 +498,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 18.1,
+   "last_beat_age_s": 285.8,
    "expected_interval_s": 86400,
-   "beats_24h": 60,
+   "beats_24h": 58,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -508,7 +509,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 8509.1,
+   "last_beat_age_s": 8287.8,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -519,7 +520,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 502.1,
+   "last_beat_age_s": 280.8,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -537,7 +538,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 5531.1,
+   "last_beat_age_s": 5309.8,
    "expected_interval_s": 86400,
    "beats_24h": 3,
    "expected_24h": 1.0,
@@ -548,9 +549,9 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": -8.9,
+   "last_beat_age_s": 19.8,
    "expected_interval_s": 43200,
-   "beats_24h": 57,
+   "beats_24h": 24,
    "expected_24h": 2.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -2396,49 +2397,13 @@
  "changes": {
   "commits": [
    {
-    "sha": "d723ee9",
-    "at": "2026-11-17T18:35:51+00:00",
+    "sha": "b8ba7b2",
+    "at": "2026-11-17T18:28:05+00:00",
     "author": "Claude",
-    "subject": "USER-BACKEND-1: raw backend errors never reach a user; one shared errors module, checked",
-    "pr": null,
-    "item": "USER-BACKEND-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/d723ee9b05213df778311706e497360a3525f01f"
-   },
-   {
-    "sha": "7b7d6bc",
-    "at": "2026-11-17T18:29:08+00:00",
-    "author": "ultrastable-watchdog",
-    "subject": "watchdog: clock probe (RESILIENCE-1)",
+    "subject": "Merge main into RESILIENCE-1 branch",
     "pr": null,
     "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/7b7d6bcdff37297277b678e58f60d3ba7058724a"
-   },
-   {
-    "sha": "c1ad13d",
-    "at": "2026-11-17T18:28:52+00:00",
-    "author": "ultrastable-bot",
-    "subject": "deploy-ultrastable: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/c1ad13d77464f464a2685f090858349a058b2ee8"
-   },
-   {
-    "sha": "ccc2eb7",
-    "at": "2026-11-17T19:28:37+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "OWNER-IDENTITY-1: one-click GitHub sign-in app registration (#545)",
-    "pr": 545,
-    "item": "OWNER-IDENTITY-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/ccc2eb7c35335be87120241dedd13e623db10d00"
-   },
-   {
-    "sha": "6b1cee0",
-    "at": "2026-11-17T19:28:12+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "RESILIENCE-1: every clock self-restarts; watchdogs watch each other (#544)",
-    "pr": 544,
-    "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/6b1cee04602b495deeb25dc55dba75c21eb4a9ad"
+    "url": "https://github.com/ultrastable/ultrastable/commit/b8ba7b2ea67541daf34107caec4d3b2566994379"
    },
    {
     "sha": "c139b0b",
@@ -2448,6 +2413,15 @@
     "pr": null,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/c139b0b4f00643ea4d8af3cb162edc40c893d117"
+   },
+   {
+    "sha": "db19bc1",
+    "at": "2026-11-17T18:27:36+00:00",
+    "author": "Claude",
+    "subject": "RESILIENCE-1: every clock has a probe, a restart route and a watcher that is itself watched",
+    "pr": null,
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/db19bc1102b30b5356257684ace1e06eca064f8b"
    },
    {
     "sha": "661027f",
@@ -2754,6 +2728,33 @@
     "pr": 522,
     "item": "SELFCODE-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/04cc7628ff4ba7ee0c234ed564ac45ee61023933"
+   },
+   {
+    "sha": "a15c70c",
+    "at": "2026-11-17T18:10:39+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "COVERAGE-1: drop a nonexistent page from the live list, raise the floor (#519)",
+    "pr": 519,
+    "item": "COVERAGE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/a15c70cce348ba29148c1c211fe19f86380d6501"
+   },
+   {
+    "sha": "2010b15",
+    "at": "2026-11-17T18:04:50+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "COVERAGE-1: claims coverage across source files and every live page (#515)",
+    "pr": 515,
+    "item": "COVERAGE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/2010b15728be531ae62b07af005d0dd83266da9a"
+   },
+   {
+    "sha": "95d2b62",
+    "at": "2026-11-17T18:02:21+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "FREE-LLM-4: fix NameError ladder_call in the executor (#517)",
+    "pr": 517,
+    "item": "FREE-LLM-4",
+    "url": "https://github.com/ultrastable/ultrastable/commit/95d2b6250d6da9c54693359225f5ed6636d27447"
    }
   ],
   "pull_requests": []

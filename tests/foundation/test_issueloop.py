@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
-import unittest
+import subprocess, sys, unittest
 from foundation import issueloop as il
 
 
@@ -26,3 +26,11 @@ class IssueLoop(unittest.TestCase):
                      closer=lambda r, n, e: closed.append(n) or True)
         self.assertEqual(closed, [1])
         self.assertEqual([r["closed"] for r in res["rows"]], [True, False])
+
+    def test_cli_registered(self):
+        r = subprocess.run([sys.executable, "-m", "foundation", "issueloop", "--help-unknown"], capture_output=True, text=True)
+        self.assertNotIn("invalid choice", r.stderr)
+
+    def test_metrics(self):
+        m = il.metrics({"rows": [{"verdict": "unprobed", "closed": False}, {"verdict": "pass", "closed": True}], "unreadable": ["x"]})
+        self.assertEqual((m["unprobed"], m["closed"], m["unreadable_repos"]), (1, 1, 1))

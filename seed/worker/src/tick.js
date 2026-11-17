@@ -176,6 +176,13 @@ export const STEPS = {
       await run(db, `INSERT OR IGNORE INTO metrics (id, tenant_id, objective_id, name, kind, source, spec, op, threshold, grace_hours, owner_role, remedy)
         VALUES (?, NULL, NULL, ?, 'liveness', 'builtin', ?, ?, ?, ?, ?, ?)`, id, name, spec, op, threshold, grace, owner, remedy);
     }
+    // INSTANCE-METRICS-SEED-1: probe-backed metrics an instance declares (config.seed_metrics, built by deploy/deploy-workers.mjs from
+    // instances/<slug>/objectives.json) are seeded the same way, so a metric added in code is measured after the next deploy with no manual step.
+    for (const m of ctx.config.seed_metrics || []) {
+      if (!['builtin', 'sql', 'http', 'service'].includes(m.source)) continue;
+      await run(db, `INSERT OR IGNORE INTO metrics (id, tenant_id, objective_id, name, kind, source, spec, op, threshold, grace_hours, owner_role, remedy)
+        VALUES (?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, m.id, m.objective_id || null, m.name, m.kind, m.source, m.spec, m.op, m.threshold, m.grace_hours || 0, m.owner_role, m.remedy);
+    }
     const first_tick = await first(db, `SELECT MIN(started_at) AS t FROM tick_runs`);
     const ageH = first_tick && first_tick.t ? (ctx.now - Date.parse(first_tick.t.replace(' ', 'T') + 'Z')) / 3600e3 : 0;
     // TENANT-1: a runtime measures only its own tenant's metrics. Rows of another tenant are never read, never breach, never file items here.
