@@ -10,6 +10,13 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-17
 
+- 2026-11-17: Self-filing issue loop, already-built items close, deploy retries transient errors (#569)
+- 2026-11-17: ISSUE-LOOP-1: unprobed issues and unbound claim surfaces become queue items (#568)
+- 2026-11-17: deploygate: enable workers.dev on deploy unless the rule opts out (#567)
+- 2026-11-17: Deploy gateway redeploys itself on merge (#566)
+- 2026-11-17: Fix /changelog 404, stop deploy-count claim drift, cover practical-solutions in the issue loop (#564)
+- 2026-11-17: USER-BACKEND-1: the user does the idea, the system does the backend; one fix improves every system (#552)
+- 2026-11-17: core/ensemble (cross-model ensemble from the Practical Solutions test bed) and deploygate ai binding (#538)
 - 2026-11-17: Tick passes service bindings to the measure step (#561)
 - 2026-11-17: watchdog: clock probe (RESILIENCE-1) [skip ci]
 - 2026-11-17: RESILIENCE-1: tick clock via public /health; watchdog wakes only on failures (#559)
