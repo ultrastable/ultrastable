@@ -1,0 +1,13 @@
+{
+  "id": "Q-EXP-a5633f27",
+  "title": "Q-EXP-a5633f27: close the other-cloud gap with a measured change",
+  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** file:docs/bootstrapping/other-cloud-proof.json\n**Prediction:** pageviews_7d >= baseline within 336 h\n**Status:** open\n\nExperiment from R&D finding `gap:other-cloud`.\nHypothesis: 3 competitors evidence 'runs on more than one cloud'; building it should move the metric\nMetric: pageviews_7d. Ship the smallest change the done check proves, then compare the metric against its baseline in doctrine/growth.json; a miss reverts the change and lowers the finding's priority.",
+  "labels": [
+    "role:product-manager",
+    "growth",
+    "rnd",
+    "experiment"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}
