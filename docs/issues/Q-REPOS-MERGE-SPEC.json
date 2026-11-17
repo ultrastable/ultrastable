@@ -1,5 +1,0 @@
-{
-  "id": "Q-REPOS-MERGE-SPEC",
-  "title": "Q-REPOS-MERGE-SPEC: fold the spec repository into ultrastable/ultrastable, then archive it",
-  "body": "**Owner:** operations\n**Trigger:** Q-REPOS-MERGE-WORKERS closed (spec_truth needs the code tree it checks)\n**Status:** open\n**Done check:** grep:brand/brand.json::\"into\"\n\ncode-task: repo=ultrastable/ultrastable path=brand/brand.json\ncode-anchor: Q-REPOS-MERGE-SPEC\n\nspec/specs and ultrastable/specs differ in 27 files. Reconcile, move SCOPE, LICENSE, COMMERCIAL-TERMS, FAQ and the licensing record into the main repository (the license must stay byte-identical wherever it is copied: foundation fleet `identical` rule), repoint canonical-text links, archive spec with a pointer README.\n\nClosing probe: `python3 brand/tools/sync_repos.py --check`; `python3 tools/spec_truth.py` in the main repository."
-}

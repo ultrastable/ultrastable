@@ -33,7 +33,7 @@
    ],
    "status": "live",
    "visibility": "public",
-   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, and seed/ (the starting kit for a new system). It is a GitHub template, so \"Use this template\" copies it."
+   "holds": "Everything you run or read: platform code, ultrastable.io, dashboard, doctrine, docs, the specifications (specs/), the license text (licensing/), and seed/ (the starting kit for a new system). It is a GitHub template, so \"Use this template\" copies it."
   },
   {
    "name": "workers",
@@ -56,11 +56,11 @@
   },
   {
    "name": "spec",
-   "role": "Specifications and license",
-   "line": "The numbered specifications, the docs and the Ultrastable License text: what a conforming implementation must do, and the terms for using it.",
-   "audience": "Engineers who want the precise design.",
+   "role": "Retired",
+   "line": "Retired: the specifications, SCOPE and license text now live in ultrastable/ultrastable (specs/, SCOPE.md, licensing/). Kept public so existing links resolve.",
+   "audience": "Anyone following an old link.",
    "quickstart": [
-    "Start at SCOPE.md, then specs/README.md"
+    "Go to ultrastable/ultrastable, folder specs/"
    ],
    "topics": [
     "specifications",
@@ -68,14 +68,15 @@
     "autonomous-agents",
     "documentation"
    ],
-   "status": "live",
+   "status": "retired",
    "visibility": "public",
-   "holds": "US-SPEC-* specifications, SCOPE, and the canonical LICENSE, COMMERCIAL-TERMS and FAQ. Folding it in is tracked as Q-REPOS-MERGE-SPEC."
+   "holds": "Nothing. A pointer to specs/ in the main repository.",
+   "moved_to": "ultrastable"
   },
   {
    "name": "license",
    "role": "Retired",
-   "line": "Retired: the Ultrastable License now lives in ultrastable/spec. Kept public so existing links resolve.",
+   "line": "Retired: the Ultrastable License and commercial terms live in ultrastable/ultrastable (LICENSE, licensing/). Kept public so existing links resolve.",
    "audience": "Anyone following an old link.",
    "quickstart": [
     "Go to ultrastable/spec"
@@ -85,7 +86,7 @@
    ],
    "status": "retired",
    "visibility": "public",
-   "moved_to": "spec",
+   "moved_to": "ultrastable",
    "holds": "Nothing. A pointer to ultrastable/spec so old links keep working."
   },
   {
@@ -158,11 +159,6 @@
    {
     "id": "Q-REPOS-MERGE-WORKERS",
     "repo": "workers",
-    "into": "ultrastable"
-   },
-   {
-    "id": "Q-REPOS-MERGE-SPEC",
-    "repo": "spec",
     "into": "ultrastable"
    }
   ]
