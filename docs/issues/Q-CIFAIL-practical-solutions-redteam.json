@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-practical-solutions-redteam",
+  "title": "Q-CIFAIL-practical-solutions-redteam: redteam is failing in ultrastable/practical-solutions",
+  "body": "**Owner:** staff\n**Trigger:** every executor run and every ciwatch run\n**Done check:** cmd:python3 -m foundation ciwatch --probe ultrastable/practical-solutions redteam\n**Status:** open\n\nCIWATCH-1: workflow `redteam` in ultrastable/practical-solutions is red on its default branch (failure, 2026-11-17T15:45:50Z): https://github.com/ultrastable/practical-solutions/actions/runs/44118041888\n\nFix the root cause in the repository where the defect lives; do not skip or weaken the check. Failed log tail:\n\n```\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t\ufeff2026-11-17T15:45:57.1920623Z ##[group]Run node --no-warnings tools/redteam.mjs --budget 4\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:45:57.1921444Z ^[[36;1mnode --no-warnings tools/redteam.mjs --budget 4^[[0m\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:45:57.2046549Z shell: /usr/bin/bash -e {0}\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:45:57.2047160Z env:\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:45:57.2051546Z   GITHUB_TOKEN: ***\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:45:57.2052054Z ##[endgroup]\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:45:57.8801384Z {\"at\":\"2026-11-17T15:45:57.248Z\",\"challenged\":0,\"errors\":[{\"subject\":\"cash\",\"error\":\"endpoint failed: fetch failed\"},{\"subject\":\"chlorine\",\"error\":\"endpoint failed: fetch failed\"},{\"subject\":\"clean-cooking\",\"error\":\"endpoint failed: fetch failed\"},{\"subject\":\"deworming\",\"error\":\"endpoint failed: fetch failed\"}]}\nredteam\tRun node --no-warnings tools/redteam.mjs --budget 4\t2026-11-17T15:45:57.8868118Z ##[error]Process completed with exit code 1.\n```",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
