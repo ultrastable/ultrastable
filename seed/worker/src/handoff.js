@@ -228,6 +228,7 @@ export function topologyBindings(topo, id) {
   for (const bn of b.ai || []) out.push({ type: 'ai', name: bn });
   for (const [bn, t] of Object.entries(b.services || {})) if (((topo.workers || []).find(x => x.id === t) || {}).state === 'live') out.push({ type: 'service', name: bn, service: t });
   for (const bn of b.send_email || []) out.push({ type: 'send_email', name: bn });  // the dashboard's sign-in mail; dropping it on deploy broke sign-in
+  for (const [bn, cls] of Object.entries(b.durable_objects || {})) out.push({ type: 'durable_object_namespace', name: bn, class_name: cls });  // an upload without it drops the namespace (ultrastable-tenants lost TENANT on its first handoff deploy)
   for (const [bn, v] of Object.entries(b.vars || {})) out.push({ type: 'plain_text', name: bn, text: String(v) });
   return { worker: w, bindings: out };
 }

@@ -1207,6 +1207,22 @@
       ],
       "feedback": "a failed run is filed as an issue by the failure audit and taken by the executor; the next change under workers/ re-runs the tests, so a fix stops failing and a regression files again",
       "bindings": []
+    },
+    "issue-loop": {
+      "inflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a passing probe closes the issue and the open count falls; a failing or missing probe stays open and the executor takes it next",
+      "bindings": []
     }
   },
   "implicit_producers": {

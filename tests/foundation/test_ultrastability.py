@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
-import json, shutil, tempfile, unittest
+import json, shutil, sys, unittest
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _repo import scratch  # removed when the test ends
 from foundation import ultrastability as u
 
 REPO = Path(__file__).resolve().parents[2]
@@ -10,7 +12,7 @@ GOOD = {**BAD, "criticality.cost": 0.5}
 
 class T(unittest.TestCase):
     def setUp(self):
-        self.d = Path(tempfile.mkdtemp())
+        self.d = Path(scratch())
         (self.d / "doctrine").mkdir()
         (self.d / "docs/issues").mkdir(parents=True)
         for f in ("doctrine/ultrastability.json", "doctrine/clocks.json"):
