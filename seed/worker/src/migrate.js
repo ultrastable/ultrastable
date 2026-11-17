@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 // MIGRATE-SELF-1: the tick applies its own D1 migrations. Root cause closed: deploy-workers.yml applied migrations with a token for the retired
 // account (it skips there), and no token exists for the live account, so 0015 and 0016 were never recorded live and 0017 needed a hand-run.
