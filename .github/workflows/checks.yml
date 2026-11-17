@@ -79,6 +79,7 @@ jobs:
           python3 -m foundation directive --check
           python3 -m foundation closedloop --check
           python3 -m foundation standingorder --check
+          python3 -m foundation userbackend --check
           python3 -m foundation standingorder --lint HANDOFF.md
           printf '%s' "$PR_BODY" | python3 -m foundation standingorder --lint-stdin
           python3 -m foundation selfimprove --check

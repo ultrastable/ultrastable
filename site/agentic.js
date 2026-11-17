@@ -2,6 +2,7 @@
 // API Catalog (RFC 9727, /.well-known/api-catalog), OpenAPI, MCP Server Card + a real read-only MCP endpoint (/mcp, JSON-RPC over HTTP), Agent Skills index with
 // checksums, Link headers (RFC 8288), Content Signals in robots.txt. Every tool reads the published snapshot; nothing here can change state.
 import { load } from "./live.js";
+import { userError } from "../seed/worker/src/errors.js";  // USER-BACKEND-1
 import AGENTDATA from "./agentdata.js";
 import { directory as wbaDirectory, DIRECTORY_PATH, DIRECTORY_TYPE, verifyRequest, fetchDirectory, directoryCache } from "./webbotauth.js";
 const PEER_DIRECTORIES = directoryCache(); // WBA-OUTBOUND-1: one signed directory fetch per peer origin per hour, not one per request
@@ -108,7 +109,7 @@ async function mcp(request, env) {
         return ok({ isError: r.status >= 400, content: [{ type: "text", text: JSON.stringify(r.body) }] });
       }
       const lt = LIVE_TOOLS.find(x => x.name === (m.params || {}).name);
-      if (lt) { if (!env || !env.ORG) return ok({ isError: true, content: [{ type: "text", text: "Org database not bound." }] }); try { return ok({ content: [{ type: "text", text: JSON.stringify(await lt.run(env, (m.params || {}).arguments || {})) }] }); } catch (e) { return ok({ isError: true, content: [{ type: "text", text: String(e && e.message || e) }] }); } }
+      if (lt) { if (!env || !env.ORG) return ok({ isError: true, content: [{ type: "text", text: "Org database not bound." }] }); try { return ok({ content: [{ type: "text", text: JSON.stringify(await lt.run(env, (m.params || {}).arguments || {})) }] }); } catch (e) { return ok({ isError: true, content: [{ type: "text", text: userError(e, "mcp-tool").error }] }); } }
       const t = TOOLS.find(x => x.name === (m.params || {}).name); if (!t) return err(-32602, "Unknown tool");
       const r = await load(env); if (!r) return ok({ isError: true, content: [{ type: "text", text: "No snapshot published yet." }] });
       return ok({ content: [{ type: "text", text: JSON.stringify(t.pick(JSON.parse(r.body)) ?? null) }] });
