@@ -68,6 +68,17 @@
    "connect_kind": "connect-flow"
   },
   {
+   "id": "repo-archive",
+   "title": "Allow repository archiving",
+   "why": "One approval on GitHub's own page registers a second app that can change repository settings only, so the server can archive the retired repositories (seed, license, spec, workers). The system handles every callback, token and renewal.",
+   "default": "The retired repositories stay unarchived, each with a README pointing to the main repository; nothing else is blocked.",
+   "url": "https://ultrastable.io/connect/github-admin",
+   "button": "Authorize on GitHub",
+   "class": "owner_account",
+   "connect": "https://ultrastable.io/connect/github-admin",
+   "connect_kind": "connect-flow"
+  },
+  {
    "id": "oauth-apps",
    "title": "Register the Google and Buffer sign-in apps",
    "why": "Connecting Google and Buffer by their consent screens (tokens stored in each person's own Cloudflare, never typed) needs one OAuth app registered in each service under your identity, with redirect https://ultrastable.io/connect/<service>/callback. IDENTITY-BOUND: registering an app accepts the provider's terms in your name.",

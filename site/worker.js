@@ -896,7 +896,7 @@ const handler = {
 // AGENTIC-1: machine-readable discovery and a read-only MCP endpoint in front of every page.
 // TOPOLOGY-1: the owner dashboard is a separate worker reached through the OWNER service binding (doctrine/topology.json); only its own paths are forwarded.
 const OWNER_PATH = /^\/(owner|api\/owner\/[a-z]+)$/;
-const AUTH_PATH = /^\/(connect(\/[a-z-]+)?|auth\/(github\/(callback|installed)|health))$/;  // AUTH-1: the consent screen and provider callbacks live on the tick Worker; the public host forwards them so the person stays on one address
+const AUTH_PATH = /^\/(connect(\/[a-z-]+)?|auth\/(github(-admin)?\/(callback|installed)|health))$/;  // AUTH-1: the consent screen and provider callbacks live on the tick Worker; the public host forwards them so the person stays on one address
 // ACCOUNT-SPLIT-2: once the ultrastable account is primary, the old account's site forwards every request there (secret UPSTREAM_ORIGIN, set by
 // the promoting tick) and runs no cron. The custom domains stay on the old account's zones until the zones move.
 export function forwardTo(request, upstream) {

@@ -3331,6 +3331,41 @@
         "claims.yml"
       ],
       "server_owner": "github-actions"
+    },
+    {
+      "id": "workers-tests",
+      "kind": "governance",
+      "summary": "REPOS-1: the folded-in workers/ core is tested in Actions on every change under workers/.",
+      "trigger": "a pull request touching workers/ (workers-tests.yml) and on demand",
+      "owner": "infrastructure-manager",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "npm test in workers/ passes",
+      "paths": [
+        {
+          "id": "ci",
+          "how": "npm test in workers-tests.yml",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "cd workers && npm test from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "file:workers/package.json",
+      "writeback": [
+        "docs/issues"
+      ],
+      "system_path": [
+        "workers/package.json",
+        ".github/workflows/workers-tests.yml"
+      ],
+      "area": "governance",
+      "workflows": [
+        "workers-tests.yml"
+      ],
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

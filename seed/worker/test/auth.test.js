@@ -163,3 +163,16 @@ test('the worker runs pathGuard before any route, and the auth router never answ
     assert.ok(!r || r.headers.get('content-type') !== 'application/json', 'variant served connector status: ' + v);
   }
 });
+
+test('REPOS-1: /connect/github-admin registers an administration-only app and stores it under its own provider', async () => {
+  const db = makeDb(), e = { ...env(), DB: db };
+  const page = await (await handleAuth(new Request('https://x.test/connect/github-admin'), e, { tenant: 't', name: 'org', repos: ['acme/main'] })).text();
+  assert.match(page, /organizations\/acme\/settings\/apps\/new/); assert.match(page, /administration/); assert.ok(!/contents/.test(page.replace(/&quot;/g, '"')), 'no code permission is requested');
+  const state = await makeState(e, 't');
+  const f = async () => ({ status: 201, json: async () => ({ id: 9, slug: 'org-admin', pem: 'PEM', webhook_secret: 'w', client_id: 'c', client_secret: 's' }) });
+  const cb = await handleAuth(new Request('https://x.test/auth/github-admin/callback?code=abc&state=' + encodeURIComponent(state)), e, { tenant: 't', fetch: f });
+  assert.match(cb.headers.get('location'), /apps\/org-admin\/installations\/new/);
+  await handleAuth(new Request('https://x.test/auth/github-admin/installed?installation_id=7&state=' + encodeURIComponent(state)), e, { tenant: 't' });
+  const m = await store.material(db, e, 't', 'github-admin');
+  assert.equal(m.meta.installation_id, 7); assert.equal(m.meta.app_id, 9);
+});
