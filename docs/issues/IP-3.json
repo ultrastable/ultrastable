@@ -1,7 +1,7 @@
 {
   "id": "IP-3",
   "title": "IP-3: Fill the evidence log with dated QNFO commits and migrations",
-  "body": "**Owner:** Staff (IP)\n**Trigger:** CONN-1\n**Done check:** Every claimed element has a dated reduction-to-practice entry\n**Status:** open\n\nSource of truth: `docs/roadmap.md` (item IP-3). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
+  "body": "**Owner:** Staff (IP)\n**Trigger:** CONN-1\n**Done check:** Every claimed element has a dated reduction-to-practice entry\n**Status:** closed\n**Evidence:** superseded by owner decision 2026-11-17 (Rowan): no patent filing; the Ultrastable License is the only IP protection (doctrine/decision-ledger.json decision-2026-11-17-license-only-ip-stance-no-patent-filing; ip/ARCHIVED.md).\n\nSource of truth: `docs/roadmap.md` (item IP-3). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
   "labels": [
     "role:staff",
     "ws:patent"
