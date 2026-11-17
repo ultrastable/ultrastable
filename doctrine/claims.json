@@ -168,6 +168,15 @@
         "file:site/self-data.js",
         "grep:site/worker.js::case \"/self\""
       ]
+    },
+    {
+      "id": "authzen-never-rung",
+      "surface": "site/authzen.js",
+      "text": "resource is outside every trust rung",
+      "probe": [
+        "grep:site/authzen.js::outside every trust rung",
+        "grep:site/authzen.test.mjs::secrets are outside every rung"
+      ]
     }
   ],
   "generated": [

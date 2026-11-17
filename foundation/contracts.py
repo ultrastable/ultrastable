@@ -109,6 +109,10 @@ def may_close(s: dict, now: datetime, c: dict) -> tuple[bool, str]:
     """No close without a recorded failure first (vacuous) and `passes_to_close` consecutive passes; a reopened item also needs the
     hold (RELAPSE-HOLD-1). The first element is True (close), False (hold) or "vacuous"."""
     if not s.get("seen_fail"):
+        hold = c.get("vacuous_close_minutes", 1440)
+        age = (now - _ts(s["streak_from"])).total_seconds() / 60 if s.get("streak_from") else 0
+        if s["streak"] >= c.get("passes_to_close", 2) and age >= hold:
+            return True, f"already built: the probe passed from filing and held for {s['streak']} passes over {int(age)} minutes (VACUOUS-CLOSE-1)"
         return "vacuous", "vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone"
     if s["reopens"] == 0:
         need = c.get("passes_to_close", 2)

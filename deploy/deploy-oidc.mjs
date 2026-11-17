@@ -22,7 +22,12 @@ const ids = [...ORDER.filter(i => wanted.includes(i)), ...wanted.filter(i => !OR
 const site = { fetch: (url, init) => fetch(String(url).replace("https://internal", SITE), init) };
 const results = [];
 for (const id of ids) {
-  const r = await makeDeployer({ token: gh, site, oidc: await oidc() })(id, sha, repo);
+  let r;
+  for (let a = 1; a <= 3; a++) {  // DEPLOY-RETRY-1: a transient network error ("fetch failed", 5xx) on one worker failed run 44153697286; retry with backoff
+    r = await makeDeployer({ token: gh, site, oidc: await oidc() })(id, sha, repo);
+    if (r.ok || !/fetch failed|ECONNRESET|ETIMEDOUT|HTTP 5\d\d|timeout/i.test(String(r.detail))) break;
+    console.log("RETRY ", id, a, r.detail); await new Promise(z => setTimeout(z, 5000 * a));
+  }
   console.log(r.ok ? "OK    " : "FAIL  ", id, r.ok ? (r.version || "uploaded") : r.detail);
   results.push({ worker: id, ...r });
 }

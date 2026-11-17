@@ -69,3 +69,18 @@ test('per-rule compatibility flags are sent and send_email bindings are kept', a
   assert.deepEqual(meta.compatibility_flags, ['nodejs_compat']);
   assert.ok(meta.keep_bindings.includes('send_email'));
 });
+
+test('a rule with ai: true adds the Workers AI binding; without it no binding is added', async () => {
+  const meta = async rule => { const { gate, calls } = setup({ rule }); await post(gate, await token()); return JSON.parse(await calls.find(c => c.method === 'PUT').body.get('metadata').text()); };
+  assert.deepEqual((await meta({ ai: true })).bindings, [{ type: 'ai', name: 'AI' }]);
+  assert.equal((await meta({})).bindings, undefined);
+  assert.equal((await meta({ ai: 'yes' })).bindings, undefined);
+});
+
+test('a deploy enables workers.dev unless the rule sets workers_dev: false', async () => {
+  const on = setup(); assert.equal((await post(on.gate, await token())).status, 200);
+  const sd = on.calls.find(c => c.u.endsWith('/subdomain'));
+  assert.equal(sd.method, 'POST'); assert.deepEqual(JSON.parse(sd.body), { enabled: true, previews_enabled: false });
+  const off = setup({ rule: { workers_dev: false } }); assert.equal((await post(off.gate, await token())).status, 200);
+  assert.equal(off.calls.some(c => c.u.endsWith('/subdomain')), false);
+});

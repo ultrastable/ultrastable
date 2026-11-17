@@ -153,7 +153,7 @@ def _item(root, c, key, v, idx, step, value) -> str:
     p = Path(root) / "docs/issues" / (iid + ".json")
     if not p.exists():
         body = (f"**Owner:** executor\n**Trigger:** essential variable `{key}` out of bounds (reading {value}; limits {v.get('min')} to {v.get('max')})\n"
-                f"**Done check:** probe:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: {step['what']}. {v['why']}\n\n"
+                f"**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: {step['what']}. {v['why']}\n\n"
                 f"size: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `{v['id']}` inside its bounds.\n")
         p.write_text(json.dumps({"id": iid, "title": f"{iid}: {v['name']} out of bounds: {step['what']}", "body": body, "labels": step["labels"], "milestone": "Now", "workstream": step["workstream"]}, indent=2) + "\n", encoding="utf-8")
     return iid
@@ -230,7 +230,7 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
                 if apply:
                     p = Path(root) / "docs/issues" / (inc + ".json")
                     if not p.exists():
-                        p.write_text(json.dumps({"id": inc, "title": f"{inc}: every second-order step failed to bring {v['name']} back in bounds; redesign", "body": f"**Owner:** executor\n**Trigger:** ladder exhausted for `{key}`\n**Done check:** probe:python3 -m foundation ultrastability --check\n**Status:** open\n\nThe same failure three times is a design defect (GUIDING-DIRECTIVE section 2): change the structure, not the parameter.\n\nsize: L\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `{key}` inside its bounds.\n", "labels": ["p0", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
+                        p.write_text(json.dumps({"id": inc, "title": f"{inc}: every second-order step failed to bring {v['name']} back in bounds; redesign", "body": f"**Owner:** executor\n**Trigger:** ladder exhausted for `{key}`\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nThe same failure three times is a design defect (GUIDING-DIRECTIVE section 2): change the structure, not the parameter.\n\nsize: L\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `{key}` inside its bounds.\n", "labels": ["p0", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
             else:
                 step = v["ladder"][idx]
                 row = {"at": now, "ev": "step", "var": key, "idx": idx, "kind": step["kind"], "value": value, "what": step["what"],
@@ -257,14 +257,14 @@ def _unmeasured(root, c, key, v):
     iid = f"{c['item_prefix']}-{_slug(key)}-UNMEASURED"
     p = Path(root) / "docs/issues" / (iid + ".json")
     if not p.exists():
-        p.write_text(json.dumps({"id": iid, "title": f"{iid}: essential variable {key} cannot be read", "body": f"**Owner:** executor\n**Trigger:** `{key}` has no fresh reading (source {v['reading']})\n**Done check:** probe:python3 -m foundation ultrastability --status\n**Status:** open\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `{key}` with a value.\n", "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
+        p.write_text(json.dumps({"id": iid, "title": f"{iid}: essential variable {key} cannot be read", "body": f"**Owner:** executor\n**Trigger:** `{key}` has no fresh reading (source {v['reading']})\n**Done check:** cmd:python3 -m foundation ultrastability --status\n**Status:** open\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `{key}` with a value.\n", "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
 
 
 def _unregistered(root, c, key, lost):
     iid = f"{c['item_prefix']}-{_slug(key)}-UNREGISTERED"
     p = Path(root) / "docs/issues" / (iid + ".json")
     if not p.exists():
-        p.write_text(json.dumps({"id": iid, "title": f"{iid}: the self-model cannot resolve the regulators of {key}", "body": f"**Owner:** executor\n**Trigger:** `{key}` names regulators the self-model does not know: {', '.join(lost)}\n**Done check:** probe:python3 -m foundation selfmodel --check\n**Status:** open\n\nRegister the regulator as a loop, clock or worker, or correct the variable's first_order list in doctrine/ultrastability.json.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation selfmodel --check` exits 0.\n", "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
+        p.write_text(json.dumps({"id": iid, "title": f"{iid}: the self-model cannot resolve the regulators of {key}", "body": f"**Owner:** executor\n**Trigger:** `{key}` names regulators the self-model does not know: {', '.join(lost)}\n**Done check:** cmd:python3 -m foundation selfmodel --check\n**Status:** open\n\nRegister the regulator as a loop, clock or worker, or correct the variable's first_order list in doctrine/ultrastability.json.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation selfmodel --check` exits 0.\n", "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
 
 
 def _provenance(root, row, v, key=None):

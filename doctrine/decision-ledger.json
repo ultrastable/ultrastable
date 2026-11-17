@@ -1955,6 +1955,31 @@
    "probe": "file:ops/uiux/status.json"
   },
   {
+   "id": "decision-2026-11-17-user-backend-1-the-user-does-the-idea-the-system-does-the-backend-one-fix-improves-every-system",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "USER-BACKEND-1: the user does the idea; the system does the backend; one fix improves every system",
+   "body": "Rowan 2026-11-17: a hard line between what the user does (idea, front end) and what the system does (errors, credentials, deploys, identity, retries); backend is auditable in the owner-only log and never burdens the user; a fix learned anywhere lives in shared code every tenant inherits. userbackend --check fails raw backend error text in a user-facing response and a Worker that does not consume the shared modules or forks one.",
+   "probe": "grep:foundation/userbackend.py::def check"
+  },
+  {
+   "id": "decision-2026-11-17-deploy-gateway-redeploys-itself-on-merge",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Deploy gateway redeploys itself on merge",
+   "body": "Owner chose option A 2026-11-17 18:59 UTC: gateway rule lets ultrastable/ultrastable main deploy ultrastable-deploy-gateway; .github/workflows/deploy-gateway.yml tests, builds, deploys via OIDC and checks /health. Session: session_0156nqDrYNAtihJTa31nvsqc",
+   "probe": "file:.github/workflows/deploy-gateway.yml"
+  },
+  {
+   "id": "decision-2026-11-17-generated-file-drift-self-heals-in-checks-regen-1",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Generated-file drift self-heals in checks (REGEN-1)",
+   "body": "PRs went red only because main moved a generated count, ledger, self model or dashboard under them. checks.yml runs scripts/regen_generated.sh first and pushes the result back to a same-repo PR branch with LANE_PAT; ultrastability writes runnable cmd: probes; .example fixture addresses pass the publication guard.",
+   "probe": "file:scripts/regen_generated.sh",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
    "id": "decision-2026-11-17-product-manager-pass-2026111716-3-item-s-filed",
    "kind": "decision",
    "date": "2026-11-17",

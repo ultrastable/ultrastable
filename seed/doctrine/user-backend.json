@@ -1,0 +1,85 @@
+{
+ "_doc": "USER-BACKEND-1 as data (Rowan, 2026-11-17). Two rules, one check: `python3 -m foundation userbackend --check` (a step in checks.yml). Rule 1, the user/system boundary: the user does their idea and their front end; the system does everything behind it (errors, credentials, deploys, identity linking, retries). Backend work is fully auditable in the owner-only provenance and audit log and never burdens or leaks to the user: no raw backend error text in a user-facing response (the two patterns below match a response or page that carries a caught error; internal records for loops and ledgers are not user-facing and stay raw for the audit). Rule 2, one improvement improves every system: a fix learned anywhere lives in one shared module that every Worker (site, dashboard, tenants, spinoffs, tick, and every tenant built from the seed) imports; a fork fails the check. Consumers: foundation/userbackend.py, tests/foundation/test_userbackend.py, seed/worker/test/errors.test.js. Seed copy: seed/doctrine/user-backend.json.",
+ "id": "user-backend",
+ "version": "1.0.0",
+ "marker": "USER-BACKEND-1",
+ "shared_errors_module": "seed/worker/src/errors.js",
+ "surface_globs": [
+  "site/*.js",
+  "tenants/src/*.js",
+  "spinoffs/worker.js",
+  "dashboard/*.js",
+  "seed/worker/src/*.js",
+  "seed/worker/src/auth/*.js",
+  "seed/worker/src/agentic/*.js",
+  "deploy/agents-worker.js"
+ ],
+ "surface_exclude_globs": [
+  "**/*.test.js",
+  "**/*.test.mjs",
+  "site/*-data.js",
+  "site/pins.json",
+  "seed/worker/src/config.js",
+  "seed/worker/src/errors.js"
+ ],
+ "leak_patterns": [
+  {
+   "id": "response-carries-raw-error",
+   "re": "(json|Response\\.json|new Response|J|ok)\\([^\\n]*\\b(error|message|text|detail)\\s*:\\s*[^\\n]*\\b(String\\(\\s*(e|err|error|x)\\b|(e|err|error|e2)\\.(message|stack))"
+  },
+  {
+   "id": "page-shows-raw-error",
+   "re": "(textContent|innerHTML|alert)\\s*[=(][^\\n]*\\b(e|err|error)\\.(message|stack)"
+  }
+ ],
+ "leak_ignore_line": "console\\.(error|warn|log)|USER-BACKEND-OK:",
+ "leak_ok_marker": "USER-BACKEND-OK: <reason>  (on the same line; only for a response that never reaches a user, such as an owner-only panel or a service-binding call)",
+ "shared_consumers": [
+  {
+   "id": "errors",
+   "module": "seed/worker/src/errors.js",
+   "must_reach_from": [
+    "seed/worker/src/index.js",
+    "site/worker.js",
+    "dashboard/worker.js",
+    "tenants/src/index.js",
+    "spinoffs/worker.js"
+   ],
+   "fork_patterns": [
+    "\\b(function|const|let)\\s+(plainError|userError|userJson|friendlyError|safeError|publicError|backendRecord)\\b"
+   ]
+  },
+  {
+   "id": "resilience",
+   "module": "foundation/resilience.py",
+   "must_reach_from": [],
+   "fork_patterns": [
+    "max_restarts_per_clock_per_day\\s*[=:]\\s*\\d"
+   ],
+   "fork_exempt": [
+    "doctrine/resilience.json",
+    "foundation/resilience.py",
+    "tests/foundation/test_resilience.py"
+   ]
+  },
+  {
+   "id": "identity",
+   "module": "dashboard/ownerid.js",
+   "must_reach_from": [],
+   "fork_patterns": [
+    "CREATE TABLE IF NOT EXISTS owner_oauth_app"
+   ],
+   "fork_exempt": [
+    "dashboard/ownerid.js"
+   ]
+  }
+ ],
+ "service_binding_exempt": {
+  "deploy/agents-worker.js": "reached only through the tick's service binding; no user-facing route"
+ },
+ "inherited_by_tenants": [
+  "seed/worker/src/errors.js",
+  "seed/doctrine/user-backend.json",
+  "seed/agents/AGENTS.md"
+ ]
+}

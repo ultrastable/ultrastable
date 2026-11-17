@@ -49,4 +49,5 @@ jobs:
         if: ${{ inputs.verify != 'true' }}
         run: |
           git config user.name "ultrastable-ops"; git config user.email "actions@users.noreply.github.com"
-          git add ops/deploys.jsonl ops/bindings.jsonl; git diff --cached --quiet || { git commit -m "deploy-workers: record live-verified deploy" && git pull --rebase -q && git push; }
+          python3 -m foundation claims --fix --apply
+          git add ops/deploys.jsonl ops/bindings.jsonl README.md platform/adapters/README.md site/claims-data.js; git diff --cached --quiet || { git commit -m "deploy-workers: record live-verified deploy" && git pull --rebase -q && git push; }
