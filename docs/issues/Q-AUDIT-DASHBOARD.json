@@ -1,1 +1,8 @@
-{"id":"Q-AUDIT-DASHBOARD","title":"Chain the dashboard's ops-D1 audit and provenance rows into the AUDIT-CHAIN-1 trail","owner_role":"operations","trigger":"next executor pass","done_check":"dashboard audit and provenance rows reach audit_log (kind dashboard:*) and age out of ultrastable-ops only after sealing","closing_probe":"GET /api/audit/trace?kind=dashboard:audit returns rows","size":"M","priority":40}
+{
+  "id": "Q-AUDIT-DASHBOARD",
+  "title": "Q-AUDIT-DASHBOARD: chain the dashboard audit and provenance rows into the audit trail",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:dashboard/worker.js::dashboard:audit\n**Status:** open\n\nAUDIT-CHAIN-1 chains the tick worker's D1 (ultrastable-org). The dashboard's ops D1 `audit` and `provenance` tables are not chained yet: send them to the tick through the TICK service binding as kind `dashboard:audit` and `dashboard:provenance`, and let them age out of ultrastable-ops only after sealing.\n\nsize: M\n\n**Closing probe:** grep:dashboard/worker.js::dashboard:audit\n",
+  "labels": ["p2", "agent-ready"],
+  "milestone": "Now",
+  "workstream": "Executor queue"
+}
