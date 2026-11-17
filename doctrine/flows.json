@@ -995,6 +995,10 @@
         {
           "signal": "ultrastability.readings",
           "via": "file:ops/ultrastability.jsonl"
+        },
+        {
+          "signal": "uiux.status",
+          "via": "file:ops/uiux/status.json"
         }
       ],
       "outflows": [
@@ -1272,6 +1276,62 @@
       "bindings": [
         "LANE_PAT"
       ]
+    },
+    "uiux-loop": {
+      "inflows": [
+        {
+          "signal": "site.hits",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "uiux.audit",
+          "via": "file:ops/uiux/audit.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        },
+        {
+          "signal": "uiux.audit",
+          "via": "file:ops/uiux/audit.json"
+        },
+        {
+          "signal": "uiux.status",
+          "via": "file:ops/uiux/status.json"
+        }
+      ],
+      "feedback": "a front-end fix item closes only when its probe re-runs the audit for the pages it names and the finding no longer reproduces; an experiment arm is promoted only when its metric moved past the pre-registered sample with the guard intact; the two essential variables (ui_findings, happy_paths) feed the slow loop that restructures when they stay out of bounds",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "role-uiux-manager": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "scout.log",
+          "via": "file:ops/scout/log.jsonl"
+        },
+        {
+          "signal": "rnd.log",
+          "via": "file:ops/rnd/log.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a path or audit finding becomes a Q-UIUX item with a probe; an experiment arm is kept only past the pre-registered sample with its guard intact (uiux --experiments); the next audit shows whether the fix held",
+      "bindings": []
     }
   },
   "implicit_producers": {

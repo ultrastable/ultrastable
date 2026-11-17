@@ -1,0 +1,45 @@
+name: uiux
+# budget: ~5 min x 4/month = ~20 min
+# trigger: weekly (Wednesday, after the weekly a11y run); the front end drifts over days, not minutes, and a daily pass without a browser (funnels, experiments, items) already runs inside the product manager pass; dispatch on demand
+# free-alternative: a cloud-hosted agent session runs `node scripts/uiux_audit.mjs --write` (Playwright is preinstalled there) and `python3 -m foundation uiux --tick --apply --pr`
+# UIUX-1: the browser audit of every user page and every user path (offline, in process), then the same audit of the real hosts and tenant apps, then the loop pass that
+# turns findings into fix items for the self-coding agent and records the two essential variables the slow loop reads.
+on:
+  schedule: [{cron: "27 5 * * 3"}]
+  workflow_dispatch: {}
+permissions: {contents: write, pull-requests: write, actions: write}
+concurrency: {group: uiux, cancel-in-progress: false}
+jobs:
+  audit:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: main, fetch-depth: 0}
+      - name: Budget kill switch
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: python3 scripts/actions_guard.py uiux
+      - name: Install the browser and axe-core
+        run: |
+          npm i --no-save --no-audit --no-fund playwright@1.49.1 axe-core@4.10.2
+          npx playwright install --with-deps chromium
+      - name: Audit every user page and walk every user path (accessibility, boundary, structure, copy, performance, visual fingerprint)
+        id: offline
+        continue-on-error: true  # findings are recorded and filed by the pass below, which also fails this job
+        run: node scripts/uiux_audit.mjs --write
+      - name: Audit the real hosts and tenant apps (live timing)
+        id: live
+        continue-on-error: true
+        run: node scripts/uiux_audit.mjs --live --write --no-axe
+      - name: Loop pass (fix items, funnels, experiment verdicts, status) as a pull request the lane merges
+        run: python3 -m foundation uiux --tick --apply --pr
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Fail the run when an audit found something (the items are already filed)
+        if: ${{ steps.offline.outcome == 'failure' || steps.live.outcome == 'failure' }}
+        run: |
+          echo "::error::UI/UX audit found blocking findings or could not run; see ops/uiux/audit.json and the filed Q-UIUX items"
+          exit 1
