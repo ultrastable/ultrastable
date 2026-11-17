@@ -105,6 +105,12 @@ assert.ok(road.pins.length >= 10);
 for (const p of road.pins) { assert.ok(road.issues[p.issue], "pin without issue: " + p.name); assert.ok(p.code.length, "pin without code: " + p.name); assert.ok(eng.includes("/roadmap#" + p.issue)); assert.ok(roadHtml.includes("id=\"" + p.issue + "\"")); }
 const howHtml = await (await get("https://ultrastable.io/how")).text();
 for (const g of road.gaps) { assert.ok(road.issues[g.issue]); assert.ok(howHtml.includes("/roadmap#" + g.issue)); }
+{ // ORGMAP-1: /how lists exactly the repositories brand/brand.json declares live, so the page cannot drift from the manifest
+  const om = (await import("./orgmap.js")).default;
+  assert.ok(howHtml.includes("How Ultrastable is organized"));
+  for (const r of om.repos) assert.ok(howHtml.includes("github.com/" + om.org + "/" + r.name), "/how misses " + r.name);
+  for (const r of om.retired) assert.ok(howHtml.includes("<code>" + r.name + "</code> is now in <code>" + r.moved_to + "</code>"));
+}
 const fp = new FormData(); fp.set("idea", "bins. for other people"); fp.set("profile", JSON.stringify({ space: { who: "B" } }));
 r = await mod.fetch(new Request("https://ultrastable.io/api/idea", { method: "POST", body: fp }), E2); assert.equal(r.status, 303);
 assert.ok([...kv.keys()].some((k) => k.startsWith("profile:")), "interview profile is stored with the idea");

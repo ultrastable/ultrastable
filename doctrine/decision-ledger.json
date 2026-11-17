@@ -1707,6 +1707,49 @@
    "body": "The first daily spinoff run opened a PR that failed writeback check because ops/spinoff ledgers were not counted as write-back. ops/spinoff/ is now a write-back prefix, so the loop's PRs merge without a person.",
    "probe": "grep:foundation/writeback.py::ops/spinoff/",
    "session": "session_0156nqDuxJS2RpGCL7Ak6MSA"
+  },
+  {
+   "id": "decision-2026-11-17-owner-email-1-owner-address-derived-from-the-repo",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "OWNER-EMAIL-1: owner address derived from the repo",
+   "body": "The owner sign-in address is never set by hand: every deploy resolves it from the repository's admin committer (non-noreply commit address) and binds it as OWNER_EMAIL, since plain vars are replaced on deploy.",
+   "probe": "grep:seed/worker/src/handoff.js::resolveOwnerEmail",
+   "session": "session_0156nqDtKVpn3hxk4cBwg9BD"
+  },
+  {
+   "id": "lesson-2026-11-17-conflict-markers-in-ops-improvements-jsonl-on-main",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Conflict markers in ops/improvements.jsonl on main",
+   "body": "A merge left conflict markers in an append-only ledger; lifecycle.improve failed with JSONDecodeError and test_launch went red on main. Markers removed, both sides kept.",
+   "probe": "grep:foundation/lifecycle.py::def improve",
+   "session": "session_0156nqDtKVpn3hxk4cBwg9BD"
+  },
+  {
+   "id": "lesson-2026-11-17-a-200-reply-that-is-not-json-is-reported-with-its-body-free-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "A 200 reply that is not JSON is reported with its body (FREE-LLM-2)",
+   "body": "Executor attempts on GitHub Models failed as a bare JSONDecodeError at char 0; agents.http now raises with the status, content type and first 200 characters, so the cost ledger names the provider's real answer.",
+   "probe": "grep:foundation/agents.py::non-JSON response",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-repos-consolidation",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Fewer repositories: the main repository holds what Ultrastable is",
+   "body": "Rowan found the repository count confusing. Rule (brand/brand.json structure): one main repository, plus a separate repository only for a different license or visibility, an owner-only tracker, or a system built on Ultrastable. Target: ultrastable, ops, practical-solutions. seed and license are retired pointers (seed is public under USL-1.0 on Rowan's instruction); workers and spec fold in via Q-REPOS-MERGE-WORKERS and Q-REPOS-MERGE-SPEC. The README section and the /how page are generated from the manifest; `python3 brand/tools/sync_repos.py --check` fails on drift.",
+   "probe": "grep:brand/tools/sync_repos.py::--check"
+  },
+  {
+   "id": "decision-2026-11-17-repos-1-fewer-repositories",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "REPOS-1 fewer repositories",
+   "body": "One main repository; seed and license retired to pointers; workers and spec fold-ins backlogged as Q-REPOS-MERGE-WORKERS and Q-REPOS-MERGE-SPEC; seed visibility via org-settings (Q-REPOS-ADMIN-APPLY).",
+   "probe": "grep:brand/tools/sync_repos.py::--check"
   }
  ]
 }
