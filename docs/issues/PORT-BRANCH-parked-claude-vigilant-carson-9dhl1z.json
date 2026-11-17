@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-vigilant-carson-9dhl1z",
+  "title": "PORT-BRANCH-parked-claude-vigilant-carson-9dhl1z: carry parked/claude/vigilant-carson-9dhl1z onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/vigilant-carson-9dhl1z` at 36c6f8fcb9 holds work main lacks and cannot merge as is (conflicts in code: doctrine/LESSONS.md, doctrine/publication.json, foundation/__main__.py, foundation/publication.py, instances/ultrastable/loop-registry.json, tests/foundation/test_publication.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/vigilant-carson-9dhl1z\n**Status:** open\n\nPort the change by hand onto current main (it is 4 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/vigilant-carson-9dhl1z",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

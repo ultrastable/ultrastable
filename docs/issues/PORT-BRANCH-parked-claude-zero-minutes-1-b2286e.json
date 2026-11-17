@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-zero-minutes-1-b2286e",
+  "title": "PORT-BRANCH-parked-claude-zero-minutes-1-b2286e: carry parked/claude/zero-minutes-1-b2286e onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/zero-minutes-1-b2286e` at e276ebbb70 holds work main lacks and cannot merge as is (conflicts in code: seed/worker/src/index.js, seed/worker/src/lane.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/zero-minutes-1-b2286e\n**Status:** open\n\nPort the change by hand onto current main (it is 8 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/zero-minutes-1-b2286e",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
