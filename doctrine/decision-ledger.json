@@ -1525,6 +1525,15 @@
    "body": "Main gained a _migrations table without a retention rule; added keep:state. Verified: plan-limits tests pass.",
    "probe": "grep:seed/autonomy/retention.json::_migrations",
    "session": "session_0156nqDuXJWyM65c8uChpjTM"
+  },
+  {
+   "id": "lesson-2026-11-17-publication-migrate-js-landed-without-the-spdx-header",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "PUBLICATION: migrate.js landed without the SPDX header",
+   "body": "seed/worker/src/migrate.js carried a non-standard licence line and its test had none, so the publication check failed on every PR after it merged. Both now carry the USL-1.0 SPDX header. Verified: publication check ok and migrate tests pass 5 of 5.",
+   "probe": "grep:seed/worker/src/migrate.js::LicenseRef-Ultrastable-USL-1.0",
+   "session": "session_0156nqDrN6YKkuiXK6LyZoAa"
   }
  ]
 }
