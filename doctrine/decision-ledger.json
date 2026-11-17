@@ -1750,6 +1750,15 @@
    "title": "REPOS-1 fewer repositories",
    "body": "One main repository; seed and license retired to pointers; workers and spec fold-ins backlogged as Q-REPOS-MERGE-WORKERS and Q-REPOS-MERGE-SPEC; seed visibility via org-settings (Q-REPOS-ADMIN-APPLY).",
    "probe": "grep:brand/tools/sync_repos.py::--check"
+  },
+  {
+   "id": "lesson-2026-11-17-claims-1-live-step-prints-each-deployed-surface-result",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "CLAIMS-1 live step prints each deployed surface result",
+   "body": "The first live run exited 0 but printed only the static count, so the live result was not evidenced. It now prints one ok/DRIFT line per live surface. Session: session_0156nqDtuMnUidA26votychB",
+   "probe": "file:foundation/claims.py",
+   "session": "session_0156nqDtuMnUidA26votychB"
   }
  ]
 }
