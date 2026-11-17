@@ -2,7 +2,7 @@
 # Copyright (c) Ultrastable
 """ULTRASTABILITY-1: Ashby's two loops, as code. Ultrastable is the foundation for any autonomous system.
 
-  python3 -m foundation ultrastability [--tick [--apply] | --check | --data [--apply] | --status]
+  python3 -m foundation ultrastability [--tick [--apply] | --check | --data [--apply] | --status | --tenants [--apply]]
 
 ESSENTIAL VARIABLES  doctrine/ultrastability.json declares, per scope (platform, tenant), the variables whose bounds are the system's viability limits.
 FIRST ORDER          the existing loops (probe-and-revert, cost probe, claims check, executor) correct disturbance without changing the system.
@@ -13,7 +13,7 @@ SECOND ORDER         when a variable has been out of bounds for `patience_ticks`
 Every reading, step and verdict is a row in ops/ultrastability.jsonl. Tests: tests/foundation/test_ultrastability.py.
 """
 from __future__ import annotations
-import json, sys
+import json, re, sys, urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -42,7 +42,64 @@ def readings(root=REPO) -> dict:
         drift = len(claims.evaluate(root)[2])
     except (OSError, ValueError, KeyError):
         drift = None
-    return {"criticality.cost": c["cost"], "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"]}
+    cost = fresh_cost(root, c["cost"])
+    return {"criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"]}
+
+
+def fresh_cost(root, value, now=None, max_age_days=3):
+    """Cost is judged only from a recent reading of this account: a stale row (or none) is unmeasured, never a breach."""
+    p = Path(root) / "ops/cost.jsonl"
+    rows = [json.loads(x) for x in p.read_text(encoding="utf-8").splitlines() if x.strip()] if p.is_file() else []
+    if not rows:
+        return None
+    at = datetime.fromisoformat(rows[-1]["at"].replace("Z", "+00:00"))
+    return value if ((now or datetime.now(timezone.utc)) - at).total_seconds() <= max_age_days * 86400 else None
+
+
+def tenant_readings(root=REPO, fetch=None) -> dict:
+    """Per live tenant (spinoff apps not retired), the tenant variables that can be read now: uptime from a live probe of its URL, the rest from
+    ops/tenants/<slug>.json when the tenant's own loop writes it. A value nothing can read is None (unmeasured)."""
+    root, out = Path(root), {}
+    get = fetch or _get
+    for led in (root / "ops/spinoff/ledger.jsonl",):
+        apps = {}
+        if led.is_file():
+            for ln in led.read_text(encoding="utf-8").splitlines():
+                if ln.strip():
+                    r = json.loads(ln)
+                    if r.get("slug"):
+                        apps[r["slug"]] = {**apps.get(r["slug"], {}), **{k: r[k] for k in ("url", "event") if k in r}}
+        for slug, a in sorted(apps.items()):
+            if a.get("event") == "retire" or not a.get("url"):
+                continue
+            own = root / "ops/tenants" / (slug + ".json")
+            have = json.loads(own.read_text(encoding="utf-8")) if own.is_file() else {}
+            out[slug] = {"uptime": get(a["url"]), "spend": have.get("spend_vs_budget"), "claims_drift": have.get("claims_drift"), "value": have.get("declared_metric")}
+    return out
+
+
+def write_tenants(root=REPO, fetch=None, now=None) -> list[str]:
+    """Write ops/tenants/<slug>.json for every live tenant: the uptime probe now, and the other readings kept from the tenant's own loop (null until it writes them)."""
+    root, now = Path(root), (now or datetime.now(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    done = []
+    for slug, r in tenant_readings(root, fetch).items():
+        p = root / "ops/tenants" / (slug + ".json")
+        have = json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {}
+        p.parent.mkdir(parents=True, exist_ok=True)
+        doc = {"slug": slug, "at": now, "uptime": r["uptime"], "spend_vs_budget": have.get("spend_vs_budget"), "claims_drift": have.get("claims_drift"), "declared_metric": have.get("declared_metric")}
+        p.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+        done.append(slug)
+    return done
+
+
+def _get(url):
+    try:
+        with urllib.request.urlopen(url, timeout=15) as r:
+            return 1.0 if r.status < 400 else 0.0
+    except urllib.error.HTTPError:
+        return 0.0
+    except (OSError, ValueError):
+        return None  # cannot reach from here: unmeasured, not down
 
 
 def _rows(root, c) -> list[dict]:
@@ -83,35 +140,51 @@ def _param(root, step, revert_to=None):
     return cur, new
 
 
-def _item(root, c, v, idx, step, value) -> str:
-    iid = f"{c['item_prefix']}-{v['id']}-{idx + 1}"
+def _slug(key: str) -> str:
+    return re.sub(r"[^A-Za-z0-9_-]+", "-", key)
+
+
+def _item(root, c, key, v, idx, step, value) -> str:
+    iid = f"{c['item_prefix']}-{_slug(key)}-{idx + 1}"
+    if step["kind"] == "spinoff":
+        step = {**step, "labels": ["p1", "agent-ready"], "workstream": "Ultrastability", "what": f"{step['what']} ({key.split(':')[0]}; verb {step['verb']})"}
     p = Path(root) / "docs/issues" / (iid + ".json")
     if not p.exists():
-        body = (f"**Owner:** executor\n**Trigger:** essential variable `{v['id']}` out of bounds (reading {value}; limits {v.get('min')} to {v.get('max')})\n"
+        body = (f"**Owner:** executor\n**Trigger:** essential variable `{key}` out of bounds (reading {value}; limits {v.get('min')} to {v.get('max')})\n"
                 f"**Done check:** probe:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: {step['what']}. {v['why']}\n\n"
                 f"size: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `{v['id']}` inside its bounds.\n")
         p.write_text(json.dumps({"id": iid, "title": f"{iid}: {v['name']} out of bounds: {step['what']}", "body": body, "labels": step["labels"], "milestone": "Now", "workstream": step["workstream"]}, indent=2) + "\n", encoding="utf-8")
     return iid
 
 
-def tick(root=REPO, apply=False, now=None, read=None) -> dict:
+def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) -> dict:
     root = Path(root)
     c = load(root)
     now = (now or datetime.now(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
     vals = read if read is not None else readings(root)
     rows = _rows(root, c)
-    out = {"at": now, "variables": {}, "steps": [], "verdicts": []}
-    for v in c["scopes"]["platform"]["variables"]:
-        value = vals.get(v["reading"])
+    out = {"at": now, "variables": {}, "steps": [], "verdicts": [], "unmeasured": []}
+    targets = [(v["id"], v, vals.get(v["reading"])) for v in c["scopes"]["platform"]["variables"]]
+    for slug, tv in (tenant_readings(root, fetch) if tenants else {}).items():
+        for v in c["scopes"]["tenant"]["variables"]:
+            targets.append((f"{slug}:{v['id']}", v, tv.get(v["id"])))
+    for key, v, value in targets:
+        if value is None:  # unmeasured is never in bounds and never a reason to act: one item names what cannot be read
+            out["unmeasured"].append(key)
+            out["variables"][key] = {"value": None, "ok": False, "unmeasured": True}
+            if apply:
+                _append(root, c, {"at": now, "ev": "reading", "var": key, "value": None, "ok": False, "unmeasured": True})
+                _unmeasured(root, c, key, v)
+            continue
         ok = in_bounds(v, value)
-        hist = [r for r in rows if r.get("ev") == "reading" and r["var"] == v["id"]]
+        hist = [r for r in rows if r.get("ev") == "reading" and r["var"] == key and not r.get("unmeasured")]
         recent_out = 0
         for r in reversed(hist):
             if r["ok"]:
                 break
             recent_out += 1
         consecutive = 0 if ok else recent_out + 1
-        steps = [r for r in rows if r.get("ev") == "step" and r["var"] == v["id"]]
+        steps = [r for r in rows if r.get("ev") == "step" and r["var"] == key]
         verdicts = {r["step_id"] for r in rows if r.get("ev") == "verdict"}
         pending = next((s for s in reversed(steps) if s["id"] not in verdicts), None)
         # episode = steps since the variable was last in bounds; a ladder position is spent when its step was reverted
@@ -127,7 +200,7 @@ def tick(root=REPO, apply=False, now=None, read=None) -> dict:
             else:
                 verdict = None
             if verdict:
-                vr = {"at": now, "ev": "verdict", "var": v["id"], "step_id": pending["id"], "verdict": verdict, "value": value}
+                vr = {"at": now, "ev": "verdict", "var": key, "step_id": pending["id"], "verdict": verdict, "value": value}
                 if verdict == "reverted" and pending["kind"] == "param" and apply:
                     _param(root, v["ladder"][pending["idx"]], revert_to=pending["before"])
                 out["verdicts"].append(vr)
@@ -138,27 +211,27 @@ def tick(root=REPO, apply=False, now=None, read=None) -> dict:
         if not ok and not pending and consecutive >= c["patience_ticks"]:
             idx = next((i for i in range(len(v["ladder"])) if not _taken(episode, i)), None)
             if idx is None:
-                inc = f"{c['item_prefix']}-{v['id']}-REDESIGN"
+                inc = f"{c['item_prefix']}-{_slug(key)}-REDESIGN"
                 entry["exhausted"] = inc
                 if apply:
                     p = Path(root) / "docs/issues" / (inc + ".json")
                     if not p.exists():
-                        p.write_text(json.dumps({"id": inc, "title": f"{inc}: every second-order step failed to bring {v['name']} back in bounds; redesign", "body": f"**Owner:** executor\n**Trigger:** ladder exhausted for `{v['id']}`\n**Done check:** probe:python3 -m foundation ultrastability --check\n**Status:** open\n\nThe same failure three times is a design defect (GUIDING-DIRECTIVE section 2): change the structure, not the parameter.\n\nsize: L\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `{v['id']}` inside its bounds.\n", "labels": ["p0", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
+                        p.write_text(json.dumps({"id": inc, "title": f"{inc}: every second-order step failed to bring {v['name']} back in bounds; redesign", "body": f"**Owner:** executor\n**Trigger:** ladder exhausted for `{key}`\n**Done check:** probe:python3 -m foundation ultrastability --check\n**Status:** open\n\nThe same failure three times is a design defect (GUIDING-DIRECTIVE section 2): change the structure, not the parameter.\n\nsize: L\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `{key}` inside its bounds.\n", "labels": ["p0", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
             else:
                 step = v["ladder"][idx]
-                row = {"at": now, "ev": "step", "var": v["id"], "idx": idx, "kind": step["kind"], "value": value, "what": step["what"],
-                       "id": f"{v['id']}-{idx}-{now}", "n": len(hist) + 1, "prediction": f"{v['reading']} within bounds within {c['settle_ticks']} ticks"}
+                row = {"at": now, "ev": "step", "var": key, "idx": idx, "kind": step["kind"], "value": value, "what": step["what"],
+                       "id": f"{key}-{idx}-{now}", "n": len(hist) + 1, "prediction": f"{v['reading']} within bounds within {c['settle_ticks']} ticks"}
                 if apply:
                     if step["kind"] == "param":
                         row["before"], row["after"] = _param(root, step)
                     else:
-                        row["item"] = _item(root, c, v, idx, step, value)
+                        row["item"] = _item(root, c, key, v, idx, step, value)
                     _append(root, c, row)
-                    _provenance(root, row, v)
+                    _provenance(root, row, v, key)
                 out["steps"].append(row)
-        out["variables"][v["id"]] = entry
+        out["variables"][key] = entry
         if apply:
-            _append(root, c, {"at": now, "ev": "reading", "var": v["id"], "value": value, "ok": ok})
+            _append(root, c, {"at": now, "ev": "reading", "var": key, "value": value, "ok": ok})
     return out
 
 
@@ -166,10 +239,17 @@ def _taken(episode, idx) -> bool:
     return any(s["idx"] == idx for s in episode)
 
 
-def _provenance(root, row, v):
+def _unmeasured(root, c, key, v):
+    iid = f"{c['item_prefix']}-{_slug(key)}-UNMEASURED"
+    p = Path(root) / "docs/issues" / (iid + ".json")
+    if not p.exists():
+        p.write_text(json.dumps({"id": iid, "title": f"{iid}: essential variable {key} cannot be read", "body": f"**Owner:** executor\n**Trigger:** `{key}` has no fresh reading (source {v['reading']})\n**Done check:** probe:python3 -m foundation ultrastability --status\n**Status:** open\n\nAn unmeasured variable is never in bounds and never a reason to change the system. Make the reading (probe, writer or fresh ledger row) so the loop can judge it.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation ultrastability --status` shows `{key}` with a value.\n", "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Ultrastability"}, indent=2) + "\n", encoding="utf-8")
+
+
+def _provenance(root, row, v, key=None):
     from . import provenance
     provenance.record(root, {"class": "loop", "actor": "ultrastability", "channel": "loop-run"}, "change",
-                      f"second-order step on {v['id']}: {row['what']}", ref=row["id"], affected=[v["id"]], effect={"status": "pending", "metric": v["reading"], "note": row["prediction"]})
+                      f"second-order step on {key or v['id']}: {row['what']}", ref=row["id"], affected=[key or v["id"]], effect={"status": "pending", "metric": v["reading"], "note": row["prediction"]})
     return row
 
 
@@ -250,6 +330,8 @@ def main(argv=None) -> int:
         else:
             print(render())
         return 0
+    if "--tenants" in a:
+        print(json.dumps(write_tenants(REPO) if "--apply" in a else tenant_readings(REPO), indent=1)); return 0
     if "--tick" in a or "--status" in a:
         print(json.dumps(tick(apply="--apply" in a and "--tick" in a), indent=2)); return 0
     print(__doc__); return 2
