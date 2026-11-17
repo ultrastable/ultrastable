@@ -2003,6 +2003,14 @@
    "title": "REGEN-GENERATED-1: generated data is refreshed by a bot after merge",
    "body": "Session session_0156nqDuXJWyM65c8uChpjTM. PR checks still fail on drift; a post-merge workflow runs scripts/regen_generated.py and commits the result to main so pull requests stop racing each other.",
    "probe": "grep:scripts/regen_generated.py::def run_all"
+  },
+  {
+   "id": "lesson-2026-11-17-core-modelservice-keyless-oidc-model-route-lifted-from-the-t",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "core/modelservice: keyless OIDC model route lifted from the tenant",
+   "body": "Live ensemble runs showed reasoning models empty (OpenAI choices shape, budget spent thinking) and bare 500s. Core reads every shape, retries a truncated reply with the full budget, returns model errors as JSON. Session: session_0156nqDrYNAtihJTa31nvsqc",
+   "probe": "file:workers/core/modelservice/index.js"
   }
  ]
 }
