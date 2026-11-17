@@ -41,3 +41,16 @@
 {"at": "2026-11-17T18:31:13Z", "ev": "reading", "ok": false, "seq": 40, "unmeasured": true, "value": null, "var": "blindspot:spend"}
 {"at": "2026-11-17T18:31:13Z", "ev": "reading", "ok": false, "seq": 41, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
 {"at": "2026-11-17T18:31:13Z", "ev": "reading", "ok": false, "seq": 42, "unmeasured": true, "value": null, "var": "blindspot:value"}
+{"at": "2026-11-17T18:31:47Z", "ev": "reading", "ok": true, "seq": 43, "value": 0.497, "var": "spend"}
+{"at": "2026-11-17T18:31:47Z", "ev": "reading", "ok": true, "seq": 44, "value": 1.0, "var": "deploy_health"}
+{"at": "2026-11-17T18:31:47Z", "ev": "reading", "ok": false, "seq": 45, "value": 1, "var": "claims_drift"}
+{"at": "2026-11-17T18:31:47Z", "ev": "reading", "ok": true, "seq": 46, "value": 4.573, "var": "value"}
+{"at": "2026-11-17T18:31:47Z", "ev": "verdict", "seq": 47, "step_id": "stalled_clocks-0-2026-11-17T18:29:46Z", "value": 2, "var": "stalled_clocks", "verdict": "reverted"}
+{"at": "2026-11-17T18:31:47Z", "ev": "step", "id": "stalled_clocks-1-2026-11-17T18:31:47Z", "idx": 1, "item": "Q-ULTRA-stalled_clocks-2", "kind": "item", "n": 5, "prediction": "resilience.stalled within bounds within 3 ticks", "seq": 48, "value": 2, "var": "stalled_clocks", "what": "restructure: add an independent trigger to the clock that keeps stopping"}
+{"at": "2026-11-17T18:31:47Z", "ev": "reading", "ok": false, "seq": 49, "value": 2, "var": "stalled_clocks"}
+{"at": "2026-11-17T18:31:47Z", "ev": "verdict", "seq": 50, "step_id": "blindspot:uptime-0-2026-11-17T18:29:46Z", "value": 0.0, "var": "blindspot:uptime", "verdict": "reverted"}
+{"at": "2026-11-17T18:31:47Z", "ev": "step", "id": "blindspot:uptime-1-2026-11-17T18:31:47Z", "idx": 1, "item": "Q-ULTRA-blindspot-uptime-2", "kind": "spinoff", "n": 5, "prediction": "tenant.probe_pass_rate within bounds within 3 ticks", "seq": 51, "value": 0.0, "var": "blindspot:uptime", "what": "retire: stop spending on what cannot stay up"}
+{"at": "2026-11-17T18:31:47Z", "ev": "reading", "ok": false, "seq": 52, "value": 0.0, "var": "blindspot:uptime"}
+{"at": "2026-11-17T18:31:47Z", "ev": "reading", "ok": false, "seq": 53, "unmeasured": true, "value": null, "var": "blindspot:spend"}
+{"at": "2026-11-17T18:31:47Z", "ev": "reading", "ok": false, "seq": 54, "unmeasured": true, "value": null, "var": "blindspot:claims_drift"}
+{"at": "2026-11-17T18:31:47Z", "ev": "reading", "ok": false, "seq": 55, "unmeasured": true, "value": null, "var": "blindspot:value"}
