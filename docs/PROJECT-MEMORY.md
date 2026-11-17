@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-17
 
+- 2026-11-17: regen-generated: refresh generated data after merge (REGEN-GENERATED-1)
+- 2026-11-17: REGEN-GENERATED-1: regenerate generated data after merge (#570)
+- 2026-11-17: CIWATCH-2: ciwatch opens its item PR over REST (#571)
+- 2026-11-17: Green core: fix the full-suite failures on current main (#565)
 - 2026-11-17: REGEN-1: checks regenerate generated files (scripts/regen_generated.sh) and push them back to the PR; SPARK-QUEUE-1 executor spark gate outside its concurrency group; EFFECT-1 executor takes executable-effect items first and rejects changes no code reads
 - 2026-11-17: Self-filing issue loop, already-built items close, deploy retries transient errors (#569)
 - 2026-11-17: ISSUE-LOOP-1: unprobed issues and unbound claim surfaces become queue items (#568)
