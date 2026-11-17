@@ -1568,6 +1568,24 @@
    "body": "Decided and merged in PRs 479 to 493: foundation/unknowns.py and seed/worker/src/unknowns.js question every loop with the Universal Ignorance Audit lenses, the tick files 3 a day from a reserve of its own, and gap answers file Q-OBJ growth items. Evidence: the worker tests pass (240), unknowns --check passes, and the live org D1 was probed after the 15:30 UTC tick: migrations_pending 0 and migrations 0015 to 0017 recorded.",
    "probe": "grep:foundation/unknowns.py::def answer",
    "session": "session_0156nqDvPzm1VZsCCoweiBKT"
+  },
+  {
+   "id": "lesson-2026-11-17-executor-rows-carry-every-failed-attempt-and-model-call-outc",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Executor rows carry every failed attempt and model-call outcome (FREE-LLM-1)",
+   "body": "Two live runs fell to Workers AI with no trace of why the free rungs failed; the row now lists each attempt's reasons and the evidence branch carries ops/agent-cost.jsonl.",
+   "probe": "grep:scripts/executor_evidence.sh::agent-cost",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-spdx-autofix-1-publication-fix-adds-missing-headers-the-exec",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "SPDX-AUTOFIX-1: publication --fix adds missing headers; the executor runs it",
+   "body": "New files landed on main without SPDX headers four times today and turned checks red for every PR.",
+   "probe": "grep:foundation/publication.py::def fix_headers",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }

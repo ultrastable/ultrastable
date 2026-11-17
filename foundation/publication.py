@@ -120,8 +120,30 @@ def history(clone, pol: dict) -> dict:
     return {"hits": sum(files.values()), "by_file": [{"kind": k, "file": f, "n": n} for (k, f), n in files.most_common(40)]}
 
 
+def fix_headers(root=REPO) -> list[str]:
+    """SPDX-AUTOFIX-1: prepend the header to every new source file the check flags (a comment line in the file's own syntax). Run by the executor's generators,
+    so a change any agent opens carries its headers; files were landing on main without them several times a day."""
+    root, done = Path(root), []
+    for msg in check(root):
+        if "new source file without the SPDX header" not in msg:
+            continue
+        p = root / msg.split(":", 1)[0]
+        c = "#" if p.suffix in (".py", ".sh", ".toml", ".yml", ".yaml") else "//"
+        t = p.read_text(encoding="utf-8")
+        head = f"{c} SPDX-License-Identifier: {load(root)['spdx'].split(': ', 1)[-1]}\n{c} Copyright (c) Ultrastable\n"
+        if t.startswith("#!"):
+            first, rest = t.split("\n", 1)
+            t = first + "\n" + head + rest
+        else:
+            t = head + t
+        p.write_text(t, encoding="utf-8"); done.append(str(p.relative_to(root)))
+    return done
+
+
 def main(argv=None) -> int:
     argv = list(argv or [])
+    if "--fix" in argv:
+        print("\n".join(fix_headers()) or "no header to add"); return 0
     if "--baseline" in argv:
         a, b = baseline()
         print(f"publication: SPDX baseline {a} -> {b}")
