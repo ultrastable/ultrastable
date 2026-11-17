@@ -130,7 +130,7 @@ export default {
    "surface": "site/worker.js"
   },
   {
-   "claim": "seed-tests: 35 Python and 250 Worker tests",
+   "claim": "seed-tests: 35 Python and 254 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -139,7 +139,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 250 Worker tests",
+   "claim": "seed-worker-tests: 254 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -175,7 +175,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 40",
+   "claim": "live-deploys: 45",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
