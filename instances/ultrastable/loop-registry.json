@@ -2920,6 +2920,42 @@
       "server_owner": "ultrastable-tick"
     },
     {
+      "id": "unknowns",
+      "kind": "governance",
+      "summary": "UNKNOWNS-1: what the system does not know is a core feedback loop. Every loop and blind-spot need is questioned through inverted lenses (pre-mortem, assumption audit, red team, Rumsfeld blind side, UIA protected and scaffold ignorance), scored, and filed as plus items; answers with evidence record a gap or new objective, which becomes a probationary objective candidate and seeds the next pass, so the solution space keeps expanding instead of shrinking around what is known.",
+      "trigger": "every executor or cloud-session pass (unknowns --run --apply), weekly per question; on each answer (unknowns --answer)",
+      "owner": "product-manager",
+      "closes_by": "system",
+      "sla": "7d",
+      "done": "python3 -m foundation unknowns --check reports ok",
+      "paths": [
+        {
+          "id": "worker",
+          "how": "the tick Worker files Q-UNK items from the same doctrine (ultrastable-tick)",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "python3 -m foundation unknowns --run --apply from a cloud-hosted agent session",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/unknowns.py::def answer",
+      "writeback": [
+        "ops/unknowns/ledger.jsonl",
+        "ops/unknowns/objective-candidates.json",
+        "ops/unknowns/summary.json",
+        "docs/issues"
+      ],
+      "system_path": [
+        "doctrine/unknowns.json",
+        "foundation/unknowns.py"
+      ],
+      "area": "governance",
+      "workflows": [],
+      "server_owner": "ultrastable-tick"
+    },
+    {
       "id": "criticality-loop",
       "kind": "governance",
       "summary": "k_eff is acted on, not only measured: after three subcritical beats the tick Worker's dispatch lever moves to raise-only, the move carries the prediction 'k_eff > k within 24 h', a miss reverts it and files CRIT-LEVER, a stall files CRIT-STALL; one criticality_history row per tick is the loop's clock.",

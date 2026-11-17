@@ -34,6 +34,7 @@
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
   python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
+  python3 -m foundation unknowns [--check|--run [--apply]|--answer KEY --verdict V --text T|--status]   UNKNOWNS-1: audit what the system does not know; inverted questions feed the objective space
   python3 -m foundation blindspots [--check|--scan [--apply] [--live]|--answer D --text T|--learn ID ...]   BLINDSPOT-1: the system knows what the owner cannot know to ask for
   python3 -m foundation promote [--check|--kits|--plan [--apply]|--outcome CH --kind K]   PROMOTE-1: strategy and promotion as a closed loop
   python3 -m foundation provenance [--check|--record JSON|--settle ID kept|reverted|none|--ingest-git [--apply]|--timeline|--changelog [--apply]|--lessons|--signal]  PROVENANCE-1: origin, effect and history of every input and change
@@ -109,6 +110,9 @@ def main(argv=None) -> int:
     if _av[:1] and _av[0] in ("sauce", "contracts", "metricloop", "throughput", "metafold"):
         import importlib
         return importlib.import_module("foundation." + _av[0]).main(_av[1:])
+    if _av[:1] == ["unknowns"]:
+        from . import unknowns
+        return unknowns.main(_av[1:])
     if _av[:1] == ["ignorance"]:
         from . import ignorance
         return ignorance.main(_av[1:])
