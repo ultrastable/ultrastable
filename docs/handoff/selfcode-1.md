@@ -37,3 +37,7 @@ Update 15:45Z: the first live run filed a Q-SELF item that the criticality gate 
 ## 2026-11-17 daily cap counts new items only (Session: session_0156nqDtPUh62FutsmGkcuTa)
 - The sense step filed a different item on each earlier run (the item file did not survive), so the 24 h cap of 8 distinct items was spent and `pick_findings` returned nothing: live sense runs after #522 reported `filed: []` and the executor never had a Q-SELF item.
 - Fix: the cap limits new items only; an item filed before and never worked is taken again without using it and is ordered first. Probe: `python3 -m unittest tests.foundation.test_selfcode`.
+
+## 2026-11-17 parked items give way (Session: session_0156nqDtPUh62FutsmGkcuTa)
+- With the earlier fixes live an agent-authored PR opens (#527, Q-FLOW-RESUME-JOBS: the glm rung, baseline failures excluded). The Q-SELF item itself stays out of the queue: `Q-SELF-unused-import-foundation-preflight-py` collected 3 failed executor rows while the ladder and refile bugs were live, so `queue.takeable` parks it, and sense kept re-filing that same top-scored item.
+- Fix: `queue.fail_counts` is shared; sense records an own item parked after 3 failed rows as `failed` in the self-code ledger, so its 48 h cooldown applies and the next finding is filed. Probe: `python3 -m unittest tests.foundation.test_selfcode`.
