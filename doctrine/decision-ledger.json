@@ -1777,6 +1777,33 @@
    "body": "GitHub Models answered HTTP 200 text/plain 'OK' on 24k-char prompts and the RuntimeError ended the run before Workers AI was tried; RuntimeError now counts as a failed attempt so the ladder escalates, and the GitHub Models prompt cap is 12000 chars.",
    "probe": "grep:foundation/executor.py::FREE-LLM-3",
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "lesson-2026-11-17-executor-nameerror-after-two-parallel-fixes-merged-call-site",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Executor NameError after two parallel fixes merged: call site kept, definition lost",
+   "body": "ladder_call is defined again and pinned by test_executor.Ladder; RuntimeError escalation stays in run() (FREE-LLM-3).",
+   "probe": "grep:foundation/executor.py::def ladder_call",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
+   "id": "lesson-2026-11-17-two-threads-fixed-one-bug-and-a-merge-dropped-a-helper-free-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Two threads fixed one bug and a merge dropped a helper (FREE-LLM-4)",
+   "body": "#513 introduced ladder_call and #512 caught RuntimeError in place; the merge kept the call but not the definition, so the executor raised NameError on main. The call goes back to agent_ladder.call; RuntimeError escalation stays.",
+   "probe": "grep:foundation/executor.py::def ladder_call",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+   "id": "decision-2026-11-17-coverage-1-claims-coverage-metric",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "COVERAGE-1: claims coverage metric",
+   "body": "Coverage = claim-like statements bound / found, over source files and every live page (sitemap, ultrastable.org, blindspot.ultrastable.app). Target 100%; the registry floor only rises. Each unbound file or page files a Q-CLAIM-COVER item; an unreachable live page is drift.",
+   "probe": "grep:doctrine/claims.json::\"coverage\"",
+   "session": "session_0156nqDtuMnUidA26votychB"
   }
  ]
 }
