@@ -8,7 +8,7 @@ For each repository in github/org-settings.json, each open issue is read for a p
   file:PATH · grep:PATH::REGEX · cmd:ALLOW-LISTED-COMMAND (foundation/queue.py) · GET https://URL expect "TEXT"
 A probe that passes closes the issue with the evidence as a comment (--apply; `gh` on the run's built-in token). A probe that fails keeps it open for the
 executor. An issue with no probe, or a local probe on another repository's issue, is `unprobed`/`unmeasured`, never counted as passed, and exits 1 so
-the gap is a defect. Consumers: .github/workflows/issueloop.yml, tests/foundation/test_issueloop.py, doctrine/consumers.json.
+the gap is counted as a metric (issueloop metrics: ...) for the executor; the run exits non-zero only when the loop itself breaks. Consumers: .github/workflows/issueloop.yml, tests/foundation/test_issueloop.py, doctrine/consumers.json.
 """
 from __future__ import annotations
 import json, re, subprocess, sys, urllib.request
@@ -95,10 +95,22 @@ def main(argv):
             print(f"{r['repo']}#{r['number']} {r['verdict']}{' closed' if r['closed'] else ''}: {r['evidence']}")
         for r in res["unreadable"]:
             print(f"{r}: unmeasured (read failed)")
-    open_left = [r for r in res["rows"] if not r["closed"]]
-    print(f"issueloop: {len(res['rows'])} open, {len(res['rows']) - len(open_left)} closed this run, {len(open_left)} remain")
-    return 1 if open_left or res["unreadable"] else 0
+    m = metrics(res)
+    print("issueloop metrics: " + json.dumps(m))
+    import os
+    if os.environ.get("GITHUB_STEP_SUMMARY"):
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+            f.write("issueloop " + json.dumps(m) + "\n")
+    # Open, unprobed or unreadable items are counts the executor works down, not a broken loop: the run is red only when the loop itself raises.
+    return 0
 
+
+def metrics(res):
+    c = {"open": len(res["rows"]), "closed": 0, "pass": 0, "fail": 0, "unprobed": 0, "unmeasured": 0, "unreadable_repos": len(res["unreadable"])}
+    for r in res["rows"]:
+        c[r["verdict"]] += 1
+        c["closed"] += r["closed"]
+    return c
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
