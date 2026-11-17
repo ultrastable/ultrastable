@@ -42,6 +42,8 @@ export async function unknownsStep(db, ctx, cfg, ensureItem) {
       title: `Question the unknown (${q.method}) in ${q.unit}: ${q.question}`.slice(0, 400),
       done_check: 'an answer with evidence (none, gap, new-objective or cannot-know) is recorded in ops/unknowns/ledger.jsonl',
       closing_probe: 'manual' });
+    // ORIGINATE-CAP-1: when the daily cap refuses the item, the question was not asked; it stays eligible for the next tick.
+    if (!made && !(await db.prepare(`SELECT 1 AS x FROM items WHERE id = ?`).bind(id).first())) continue;
     await run(db, `INSERT INTO unknown_questions (key, at, lens, unit, item_id) VALUES (?,?,?,?,?)`, q.key, ctx.nowIso, q.lens, q.unit, id);
     if (made) filed.push(id);
   }

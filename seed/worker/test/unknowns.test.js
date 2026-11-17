@@ -42,3 +42,11 @@ test('SCHEMA-SELF-1: the DDL the Worker carries equals the migration and the ste
   await ensureItem(db, { id: 'A', kind: 'work', owner_role: 'operations', title: 'A', done_check: 'x', closing_probe: 'manual' });
   assert.equal((await unknownsStep(db, ctx('17'), cfg, ensureItem)).filed.length, cfg.max_new_per_run);
 });
+
+test('ORIGINATE-CAP-1: a question the cap refused is not recorded as asked', async () => {
+  const db = makeDb();
+  await ensureItem(db, { id: 'A', kind: 'work', owner_role: 'operations', title: 'A', done_check: 'x', closing_probe: 'manual' });
+  const r = await unknownsStep(db, ctx('17'), cfg, async () => false);
+  assert.deepEqual(r.filed, []);
+  assert.equal(db.raw.prepare('SELECT COUNT(*) n FROM unknown_questions').get().n, 0);
+});
