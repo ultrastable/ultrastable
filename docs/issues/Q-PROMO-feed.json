@@ -1,0 +1,12 @@
+{
+  "id": "Q-PROMO-feed",
+  "title": "Q-PROMO-feed: keep the feed promotion channel live",
+  "body": "**Owner:** marketing-manager\n**Trigger:** every promote --plan pass\n**Done check:** grep:ops/promotion/outcomes.jsonl::\"channel\": \"feed\"\n**Prediction:** promotion_outcomes_recorded >= 1 within 336 h\n**Status:** open\n\nRoute: site/worker.js /feed.xml (Atom of the public changelog). Signal back: reach metric feed_hits_7d. Record the result with `python3 -m foundation promote --outcome feed --kind listed|silent`; the outcome re-weights the channel.",
+  "labels": [
+    "role:marketing-manager",
+    "growth",
+    "promotion"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}

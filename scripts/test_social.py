@@ -5,6 +5,7 @@ import social_post
 class T(unittest.TestCase):
     def test_calendar_all_clean(self):
         for p in load("calendar.json")["posts"]:
+            if p.get("kind") == "event": continue  # REACH-1 event posts are checked by foundation.reach.guard (tests/foundation/test_reach.py)
             self.assertEqual(guard(p["text"], p["source"]), [], p["text"])
     def test_blocks_invented_text(self):
         self.assertTrue(guard("Ultrastable now has 500 customers.", "external/one-pager.md"))

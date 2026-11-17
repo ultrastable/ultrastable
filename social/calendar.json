@@ -132,6 +132,42 @@
    "text": "That is how Ultrastable is built: multi-agent, self-referential loops, not a single code agent.",
    "source": "external/overview.md",
    "tag": "SAFE NOW"
+  },
+  {
+   "id": "ev:pv-5cef1ac32309",
+   "date": "2026-11-17",
+   "text": "Shipped by the system itself: record the Practical Solutions move and gateway fix. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-350da2c5447e",
+   "date": "2026-11-17",
+   "text": "Shipped by the system itself: executor runs alone, four phases. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-74f3090e23be",
+   "date": "2026-11-17",
+   "text": "Shipped by the system itself: link Practical Solutions at ultrastable.org. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-100f600942c1",
+   "date": "2026-11-17",
+   "text": "Shipped by the system itself: Two-domain family model and Practical Solutions copy. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
   }
  ]
 }

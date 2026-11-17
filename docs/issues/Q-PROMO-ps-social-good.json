@@ -1,0 +1,12 @@
+{
+  "id": "Q-PROMO-ps-social-good",
+  "title": "Q-PROMO-ps-social-good: keep the ps-social-good promotion channel live",
+  "body": "**Owner:** marketing-manager\n**Trigger:** every promote --plan pass\n**Done check:** grep:ops/promotion/outcomes.jsonl::\"channel\": \"ps-social-good\"\n**Prediction:** promotion_outcomes_recorded >= 1 within 336 h\n**Status:** open\n\nRoute: scripts/social_post.py fed by foundation/reach.py (events to posts); posts when the account bindings exist. Signal back: social referrals in first-party hits (reach metric social_referrals_7d). Record the result with `python3 -m foundation promote --outcome ps-social-good --kind listed|silent`; the outcome re-weights the channel.",
+  "labels": [
+    "role:marketing-manager",
+    "growth",
+    "promotion"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}
