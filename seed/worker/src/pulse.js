@@ -41,8 +41,8 @@ export const LANE_LOOPS = ['credentials', 'executor', 'gate', 'lane', 'handoffs'
 // (*/10); the cadence the system guarantees is the slower producer's, so an hourly beat is never judged against the 10-minute tick.
 // SUBREQUEST-ROTATION-1 (2026-11-17): the Workers Free plan allows 50 subrequests per invocation, and the heavy GitHub loops together made more than that
 // ("Too many subrequests by single Worker invocation" failed gate, lane, handoffs, issuesync, repo-access, sweeper and deploy-evidence in every slot).
-// They now rotate over three ticks (index.js LOOP_PHASE), so each runs every 30 minutes, inside the 120 minute SLA, and each tick stays under the limit.
-export const HEAVY_CADENCE_MIN = 30;
+// They now rotate over four ticks (index.js LOOP_PHASE), so each runs every 40 minutes, inside the 120 minute SLA, and each tick stays under the limit.
+export const HEAVY_CADENCE_MIN = 40;
 export const HEAVY_LOOPS = ['executor', 'gate', 'lane', 'handoffs', 'issuesync', 'repo-access', 'sweeper', 'deploy-evidence'];
 export const DEFAULT_CADENCE = { watchdog: 60, ...Object.fromEntries(HEAVY_LOOPS.map(l => [l, HEAVY_CADENCE_MIN])) };
 export const HUNG_MS = 300e3;
