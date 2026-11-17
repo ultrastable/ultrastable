@@ -45,6 +45,17 @@ def _run(args, cwd=None):
     return r.returncode, (r.stdout + r.stderr).strip()
 
 
+def _tool_json(tool, cmd, d, core_dir):
+    """Run a tenant_sync command; a failure is a ledger row with the error, never a crash or a swallowed one."""
+    r = subprocess.run([sys.executable, str(tool), cmd, "--tenant", str(d), "--core", str(core_dir)], capture_output=True, text=True)
+    if r.returncode:
+        return {"error": (r.stderr or r.stdout).strip()[-400:]}
+    try:
+        return json.loads(r.stdout or "{}")
+    except ValueError:
+        return {"error": "non-JSON output: " + r.stdout.strip()[-200:]}
+
+
 def run(root=REPO, apply=False, only=None) -> list[dict]:
     root, c, rows = Path(root), cfg(root), []
     tool = root / c["core"]["tool"]
@@ -59,7 +70,9 @@ def run(root=REPO, apply=False, only=None) -> list[dict]:
             rows.append({"tenant": name, "status": "unreachable", "detail": out[-200:]}); ledger(root, rows[-1]); continue
         rc, report = _run([sys.executable, str(tool), "check", "--tenant", str(d), "--core", str(core_dir)])
         up = _run([sys.executable, str(tool), "send-up", "--tenant", str(d), "--core", str(core_dir)])[1]
-        down = json.loads(_run([sys.executable, str(tool), "revendor", "--tenant", str(d), "--core", str(core_dir)])[1] or "{}")
+        down = _tool_json(tool, "revendor", d, core_dir)
+        if down.get("error"):
+            rows.append({"tenant": name, "status": "tool-error", "detail": down["error"]}); ledger(root, rows[-1]); print(rows[-1], file=sys.stderr); continue
         row = {"tenant": name, "check": "ok" if rc == 0 else "fail", "findings": report.split("\n")[:20] if rc else [],
                "send_up": [] if up.startswith("nothing") else up.split("\n"), "revendor": down}
         row["status"] = "in-sync" if rc == 0 and not row["send_up"] and not down.get("changed") and not down.get("removed") else "needs-pr"
