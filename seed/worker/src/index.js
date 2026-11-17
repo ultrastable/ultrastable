@@ -45,7 +45,7 @@ export const d1Unavailable = (e) => {
 const aiFor = (env) => halted(config, env) ? Promise.resolve({ ai: null, state: { mode: 'halted', why: 'HALT-1' } }) : governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
-const LOOP_PHASE = { executor: 0, gate: 0, lane: 1, handoffs: 1, issuesync: 2, 'repo-access': 2, sweeper: 2, 'deploy-evidence': 2 };  // SUBREQUEST-ROTATION-1
+const LOOP_PHASE = { executor: 0, gate: 1, lane: 1, handoffs: 2, issuesync: 2, 'repo-access': 2, sweeper: 3, 'deploy-evidence': 3 };  // SUBREQUEST-ROTATION-2: executor alone, four phases
 
 export default {
   async scheduled(_event, env, ctx) {
@@ -63,7 +63,7 @@ export default {
     // and the tick's pulse step counts the slots each one ran in. The names are pulse.js LANE_LOOPS.
     ctx.waitUntil((async () => {
       // SUBREQUEST-ROTATION-1: three groups share the 50 subrequests of a Free-plan invocation, one group per tick (pulse.js HEAVY_LOOPS, every 30 min each).
-      const phase = Math.floor((Number(_event && _event.scheduledTime) || Date.now()) / 600e3) % 3;
+      const phase = Math.floor((Number(_event && _event.scheduledTime) || Date.now()) / 600e3) % 4;
       const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase) ? Promise.resolve(undefined) : beat(env.DB, loop, fn, { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
       const tenant = env.TENANT || config.org_slug || 'default';
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
