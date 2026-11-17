@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # REACH-1: events become posts, reach is measured, weights move and revert.
 import json, shutil, datetime as dt
 import unittest

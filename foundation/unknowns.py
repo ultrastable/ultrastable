@@ -123,6 +123,12 @@ def answer(root, key, verdict, text):
         cur = json.loads(cp.read_text(encoding="utf-8"))
         cur["candidates"].append({"from": key, "kind": verdict, "text": text, "status": "probationary", "at": dt.date.today().isoformat()})
         cp.write_text(json.dumps(cur, indent=1) + "\n", encoding="utf-8")
+    if verdict in ("gap", "new-objective") and not key.endswith("|meta"):  # the objective space grows: the executor takes this item
+        oid = "Q-OBJ-" + key.replace("|", "-").replace(":", "-")
+        item = {"id": oid, "title": f"{oid}: {'close the gap' if verdict == 'gap' else 'adopt the objective'} found by questioning {key.split('|')[0]}",
+                "body": f"**Owner:** product-manager\n**Trigger:** unknowns answer with verdict {verdict}\n**Done check:** a merged change names {oid} and adds a probe or metric for it\n**Prediction:** unknown_objective_candidates_open <= 0 within 336 h\n**Status:** open\n\nFound by the ignorance audit ({key}). Evidence recorded with the answer:\n\n{text}\n\nAdd the probe, metric or objective that makes this visible, then the fix.",
+                "labels": ["role:product-manager", "growth", "unknowns"], "milestone": "Next", "workstream": "Growth"}
+        (root / "docs/issues" / f"{oid}.json").write_text(json.dumps(item, indent=2) + "\n", encoding="utf-8")
     status_file(root)
 
 

@@ -23,7 +23,7 @@ DENY_NAMES = (".env", "id_rsa", "credentials")
 MAX_FILES, MAX_BYTES = 8, 200_000
 # Generated files are derived from the queue and docs, so any change makes them stale; the executor regenerates them instead of failing its own checks.
 REPAIRS = 2
-GENERATORS = [["python3", "scripts/build_dashboard.py"], ["python3", "scripts/build_site_roadmap.py"], ["python3", "-m", "foundation", "doctrine", "--apply"], ["python3", "-m", "foundation", "glossary", "--apply"], ["python3", "-m", "foundation", "standards", "--apply"]]
+GENERATORS = [["python3", "-m", "foundation", "publication", "--fix"], ["python3", "scripts/build_dashboard.py"], ["python3", "scripts/build_site_roadmap.py"], ["python3", "-m", "foundation", "doctrine", "--apply"], ["python3", "-m", "foundation", "glossary", "--apply"], ["python3", "-m", "foundation", "standards", "--apply"]]
 CHECKS = [["python3", "scripts/lint_workflows.py"], ["python3", "-m", "unittest", "discover", "-s", "tests/foundation"]]
 
 
