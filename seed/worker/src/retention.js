@@ -16,7 +16,7 @@ export function cutoff(keepDays, now = Date.now()) {
 const SAFE = /^[a-z_][a-z0-9_]*$/;
 
 // Runs once a day (the retention_runs row for today is the gate). Returns one entry per pruned table.
-export async function pruneAll(db, { rules, now = Date.now() } = {}) {
+export async function pruneAll(db, { rules, now = Date.now(), archive = null } = {}) {
   if (!rules || !rules.tables) return { ran: false, reason: 'no retention rules in config' };
   await ensureRetentionLog(db);
   const day = new Date(now).toISOString().slice(0, 10);
@@ -30,8 +30,18 @@ export async function pruneAll(db, { rules, now = Date.now() } = {}) {
     const limit = cutoff(Number(r.keep_days), now);
     let deleted = 0, error = null;
     try {
-      const res = await db.prepare(`DELETE FROM ${table} WHERE rowid IN (SELECT rowid FROM ${table} WHERE ${r.column} < ?1 ORDER BY ${r.column} LIMIT ?2)`).bind(limit, max).run();
-      deleted = Number((res && res.meta && res.meta.changes) || 0);
+      if (r.archive && archive) {
+        // AUDIT-CHAIN-1: rows go into the tamper-evident chain first; if that fails nothing is deleted.
+        const rows = (await db.prepare(`SELECT rowid AS _rid, * FROM ${table} WHERE ${r.column} < ?1 ORDER BY ${r.column} LIMIT ?2`).bind(limit, max).all()).results || [];
+        if (rows.length) {
+          await archive(table, rows.map(({ _rid, ...rest }) => rest));
+          for (const x of rows) await db.prepare(`DELETE FROM ${table} WHERE rowid = ?1`).bind(x._rid).run();
+          deleted = rows.length;
+        }
+      } else {
+        const res = await db.prepare(`DELETE FROM ${table} WHERE rowid IN (SELECT rowid FROM ${table} WHERE ${r.column} < ?1 ORDER BY ${r.column} LIMIT ?2)`).bind(limit, max).run();
+        deleted = Number((res && res.meta && res.meta.changes) || 0);
+      }
     } catch (e) {
       const msg = String(e && e.message || e);
       if (/no such table/i.test(msg)) continue;  // a table this deployment never created

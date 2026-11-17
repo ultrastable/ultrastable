@@ -70,7 +70,7 @@ export default {
  },
  "boards": {
   "numbers-board": {
-   "as_of": "2026-11-17T21:17:26Z",
+   "as_of": "2026-11-17T22:09:49Z",
    "rows": [
     {
      "label": "Managers and loops",
@@ -106,7 +106,7 @@ export default {
    "source": "ops/transparency.json"
   },
   "portfolio-board": {
-   "as_of": "2026-11-17T21:21:28Z",
+   "as_of": "2026-11-17T21:22:56Z",
    "rows": [
     {
      "label": "Live apps",
@@ -132,7 +132,7 @@ export default {
    "source": "spinoffs/registry.json"
   }
  },
- "built_at": "2026-11-17T21:21:32Z",
+ "built_at": "2026-11-17T22:09:57Z",
  "caps": {
   "max_launches_per_day": 3,
   "max_launches_per_week": 21,

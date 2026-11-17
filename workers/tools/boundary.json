@@ -189,6 +189,10 @@
       "class": "core",
       "role": "the Models port and the Role runtime port"
     },
+    "core/airouter": {
+      "class": "core",
+      "role": "AI cost router: cache and dedupe, free models first, reply gate, paid escalation only inside a hard monthly cap, every call recorded and learned from; tenant-agnostic (AI-ROUTER-1)"
+    },
     "core/modelservice": {
       "class": "core",
       "role": "Keyless model route: OIDC-verified CI runs call Workers AI with allow-listed models; tenants pass configuration only (MODELSERVICE-1)"
@@ -228,6 +232,10 @@
     "core/principles": {
       "class": "core",
       "role": "The principles register: the system's own memory of what autonomy means and what the owner has directed"
+    },
+    "core/audit": {
+      "class": "core",
+      "role": "Hash-chained, Merkle-rolled, tamper-evident log of autonomous actions: hot events in D1, one compressed batch per day, verify and proof; tenant-agnostic (AUDIT-1)"
     },
     "core/promote": {
       "class": "core",
