@@ -77,7 +77,8 @@ def headroom(root=REPO, now=None) -> dict:
 def refresh_headroom(root=REPO, apply=False, now=None, fetch=None, token=None) -> dict:
     """Credential-free first: with no CF_ANALYTICS_TOKEN the snapshot is kept and the failure is recorded, never turned into zero use."""
     cfg, root, t = load(root), Path(root), _now(now)
-    token = token if token is not None else os.environ.get("CF_ANALYTICS_TOKEN", "")
+    # CF_ANALYTICS_TOKEN first, then the deploy token the workflows already hold (never a new credential to mint).
+    token = token if token is not None else (os.environ.get("CF_ANALYTICS_TOKEN") or os.environ.get("CLOUDFLARE_API_TOKEN") or "")
     acct = os.environ.get("CF_ACCOUNT_ID", "81e3a4efb4eb66e613529b87682911bb")  # the ultrastable account; an id is not a secret
     if not token:
         return {"refreshed": False, "why": "no CF_ANALYTICS_TOKEN bound; snapshot kept", "headroom": headroom(root, t)}
@@ -88,6 +89,7 @@ def refresh_headroom(root=REPO, apply=False, now=None, fetch=None, token=None) -
         r = urllib.request.Request("https://api.cloudflare.com/client/v4/graphql", data=json.dumps({"query": body}).encode(),
                                    headers={"authorization": "Bearer " + token, "content-type": "application/json"}, method="POST")
         return json.loads(urllib.request.urlopen(r, timeout=30).read())
+    basis = "cloudflare-graphql"
     try:
         j = (fetch or _post)(q)
         if j.get("errors"):
@@ -99,15 +101,36 @@ def refresh_headroom(root=REPO, apply=False, now=None, fetch=None, token=None) -
     except Exception as e:  # recorded, never swallowed; the old snapshot stands
         err = f"{type(e).__name__}: {e}".replace(token, "***")[:200]
         _append(root / "ops/spinoff/ledger.jsonl", {"event": "headroom-failed", "at": _iso(t), "error": err})
-        return {"refreshed": False, "why": err, "headroom": headroom(root, t)}
+        used = _tick_samples(acct, token, t) if fetch is None else None  # the tick's own hourly free_tier_samples
+        basis = "tick-free-tier-samples"
+        if not used:
+            return {"refreshed": False, "why": err, "headroom": headroom(root, t)}
     f = root / cfg["headroom"]
     s = json.loads(f.read_text(encoding="utf-8"))
     for k, v in used.items():
         s["resources"][k] = {"used": v, "limit": s["resources"][k]["limit"], "basis": "measured"}
-    s["at"], s["basis"], s["level"] = _iso(t), "cloudflare-graphql", level_of(s["resources"])
+    s["at"], s["basis"], s["level"] = _iso(t), basis, level_of(s["resources"])
     if apply:
         f.write_text(json.dumps(s, indent=1) + "\n", encoding="utf-8")
     return {"refreshed": True, "headroom": headroom(root, t)}
+
+
+def _tick_samples(acct, token, t):
+    """Fallback when the token lacks analytics scope: latest of today's samples the tick wrote to D1 (ultrastable-org). {} on any failure."""
+    def call(path, body=None):
+        r = urllib.request.Request("https://api.cloudflare.com/client/v4/accounts/%s/d1/database%s" % (acct, path),
+                                   data=json.dumps(body).encode() if body else None, method="POST" if body else "GET",
+                                   headers={"authorization": "Bearer " + token, "content-type": "application/json"})
+        return json.loads(urllib.request.urlopen(r, timeout=30).read())
+    try:
+        dbs = call("?name=ultrastable-org")["result"]
+        sql = ("SELECT resource, used_today u FROM free_tier_samples WHERE at>=? AND used_today IS NOT NULL ORDER BY at, id")
+        rows = call("/%s/query" % dbs[0]["uuid"], {"sql": sql, "params": [t.strftime("%Y-%m-%d")]})["result"][0]["results"]
+        latest = {r["resource"]: int(r["u"]) for r in rows}
+        return {k: v for k, v in latest.items() if k in ("d1_rows_read", "d1_rows_written", "workers_requests")}
+    except Exception as e:  # recorded, never swallowed
+        _append(Path(REPO) / "ops/spinoff/ledger.jsonl", {"event": "tick-samples-failed", "at": _iso(t), "error": str(e).replace(token, "***")[:150]})
+        return {}
 
 
 def daily_cap(root=REPO, now=None) -> int:
