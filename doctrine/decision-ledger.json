@@ -1476,6 +1476,7 @@
    "session": "provenance-thread"
   },
   {
+<<<<<<< HEAD
    "id": "lesson-2026-11-17-ci-doctor-1-paused-budget-turned-scheduled-runs-red-doctor-f",
    "kind": "lesson",
    "date": "2026-11-17",
@@ -1483,6 +1484,31 @@
    "body": "Scheduled runs loop 44108035777, failure-audit 44107612741, branchsweep 44107601818 and transparency 44105168749 failed at actions_guard.py: paused:true in actions-budget.json made each try to cancel itself without actions:write. The guard now skips the pause on public repos, and ci_doctor.py (job doctor in failure-audit.yml) opens one ci-doctor issue per failing workflow across four repos, diagnoses with GitHub Models, and closes it when green. Also fixed unknown_questions retention and the stale dashboard-data.js. Verified: tests pass for plan-limits, dashboard check ok, ci_doctor unit test passes.",
    "probe": "grep:scripts/ci_doctor.py::def failing_workflows",
    "session": "session_0156nqDuXJWyM65c8uChpjTM"
+=======
+   "id": "decision-2026-11-17-ciwatch-1-and-agent-work-1-budget-guard-exempts-public-repos",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "CIWATCH-1 and AGENT-WORK-1: budget guard exempts public repos; ciwatch files failing-workflow items; free GitHub Models rung with caps and kill switch",
+   "body": "Measured: ciwatch live scan of 7 repos, 24 workflows, 6 red before the guard fix; unit tests for ciwatch, agentwork and GitHub Models adapters pass.",
+   "probe": "file:foundation/ciwatch.py"
+  },
+  {
+   "id": "lesson-2026-11-17-a-pause-guard-that-cannot-cancel-must-not-fail-the-run-ciwat",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "A pause guard that cannot cancel must not fail the run (CIWATCH-1)",
+   "body": "A budget kill switch built for private-repo minutes turned every non-essential workflow red once its cancel call got 403, and cancelled the code agent for days. Fix: public repos exempt, ciwatch detects red default-branch runs. Session: session_0156nqDtewcdaLGsDYbhGs22",
+   "probe": "file:scripts/actions_guard.py"
+  },
+  {
+   "id": "lesson-2026-11-17-public-repos-need-no-minute-budget-ciwatch-1",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Public repos need no minute budget (CIWATCH-1)",
+   "body": "The budget pause is for private-repo minutes only; ciwatch now detects red runs on every repo.",
+   "probe": "file:scripts/actions_guard.py",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+>>>>>>> origin/main
   }
  ]
 }

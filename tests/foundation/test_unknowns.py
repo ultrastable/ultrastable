@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # UNKNOWNS-1: the system audits what it does not know and feeds the answers back.
 import json, shutil, datetime as dt
 import unittest
@@ -61,6 +63,20 @@ class Unknowns(unittest.TestCase):
         s = unknowns.status(self.tmp)
         self.assertEqual((s["answered"], s["surprise_rate"]), (2, 0.5))
         self.assertTrue(unknowns.check(self.tmp) == [])
+
+    def test_meta_answer_seeds_the_next_pass_first(self):
+        led = self.tmp / "ops/unknowns/ledger.jsonl"
+        led.write_text(json.dumps({"at": dt.date.today().isoformat(), "kind": "asked", "key": "a11y|meta"}) + "\n")
+        unknowns.answer(self.tmp, "a11y|meta", "none", "We never ask whether the loop's own clock can be wrong for a month unseen.")
+        top = unknowns.candidates(self.tmp, dt.date.today())[0]
+        self.assertEqual((top["lens"], top["unit"]), ("seed", "a11y"))
+        self.assertIn("clock", top["question"])
+        self.assertEqual(unknowns.status(self.tmp)["seeds"], 1)
+
+    def test_lenses_cite_the_instrument(self):
+        d = unknowns.load(self.tmp)
+        self.assertTrue({"meta", "wobble", "falsifiability", "externalized", "willful"} <= {l["id"] for l in d["lenses"]})
+        self.assertEqual({l["id"]: l.get("uia") for l in d["lenses"]}["meta"], 15)
 
     def test_gap_raises_the_score_of_its_loop(self):
         k = unknowns.run(self.tmp, apply=True)[0]["key"]

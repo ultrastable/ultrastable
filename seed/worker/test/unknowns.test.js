@@ -1,9 +1,11 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { makeDb } from './d1shim.js';
 import { ensureItem } from '../src/tick.js';
-import { unknownsStep, pickQuestions } from '../src/unknowns.js';
+import { unknownsStep, pickQuestions, UNKNOWNS_DDL } from '../src/unknowns.js';
 
 const cfg = JSON.parse(readFileSync(new URL('../../../doctrine/unknowns.json', import.meta.url), 'utf8'));
 const ctx = d => ({ nowIso: `2026-11-${d} 12:00:00`, notes: [] });
@@ -30,4 +32,21 @@ test('a question is not repeated within cadence and returns after it', async () 
 
 test('no doctrine configured files nothing', async () => {
   assert.deepEqual(await unknownsStep(makeDb(), ctx('17'), null, ensureItem), { filed: [] });
+});
+
+test('SCHEMA-SELF-1: the DDL the Worker carries equals the migration and the step creates its own table', async () => {
+  const norm = x => x.replace(/\s+/g, ' ').trim();
+  const mig = readFileSync(new URL('../migrations/0017_unknowns.sql', import.meta.url), 'utf8').split('\n').filter(l => !l.startsWith('--')).join('\n').split(';').map(norm).filter(Boolean);
+  assert.deepEqual(mig, UNKNOWNS_DDL.map(norm));
+  const db = makeDb(); db.raw.exec('DROP TABLE unknown_questions');
+  await ensureItem(db, { id: 'A', kind: 'work', owner_role: 'operations', title: 'A', done_check: 'x', closing_probe: 'manual' });
+  assert.equal((await unknownsStep(db, ctx('17'), cfg, ensureItem)).filed.length, cfg.max_new_per_run);
+});
+
+test('ORIGINATE-CAP-1: a question the cap refused is not recorded as asked', async () => {
+  const db = makeDb();
+  await ensureItem(db, { id: 'A', kind: 'work', owner_role: 'operations', title: 'A', done_check: 'x', closing_probe: 'manual' });
+  const r = await unknownsStep(db, ctx('17'), cfg, async () => false);
+  assert.deepEqual(r.filed, []);
+  assert.equal(db.raw.prepare('SELECT COUNT(*) n FROM unknown_questions').get().n, 0);
 });

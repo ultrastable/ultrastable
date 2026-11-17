@@ -62,6 +62,9 @@ def build_request(a: dict, prompt: str, env=None) -> tuple[str, dict, dict]:
     if a["route"] == "anthropic":
         return "https://api.anthropic.com/v1/messages", {"x-api-key": env["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01", "content-type": "application/json"}, \
             {"model": a["model"], "max_tokens": 16000, "messages": [{"role": "user", "content": prompt}]}
+    if a["route"] == "github-models":  # FREE-LLM-1: OpenAI-compatible chat endpoint, authenticated by the Actions token itself
+        return "https://models.github.ai/inference/chat/completions", {"authorization": "Bearer " + env["GITHUB_TOKEN"], "content-type": "application/json", "accept": "application/vnd.github+json"}, \
+            {"model": a["model"], "max_tokens": 4000, "messages": [{"role": "user", "content": prompt}]}
     raise ValueError("route " + a["route"] + " is not invoked over HTTP")
 
 
@@ -69,6 +72,8 @@ def parse_text(a: dict, resp: dict) -> str:
     if a["route"] == "workers-ai":
         r = resp["result"]
         return r.get("response") or (r.get("choices") or [{}])[0].get("message", {}).get("content") or ""
+    if a["route"] == "github-models":
+        return resp["choices"][0]["message"]["content"]
     return resp["content"][0]["text"]
 
 

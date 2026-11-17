@@ -3213,6 +3213,46 @@
         "product-manager.yml"
       ],
       "server_owner": "github-actions"
+    },
+    {
+      "id": "ciwatch",
+      "kind": "governance",
+      "summary": "The system watches every red X on its repositories' default branches: transient failures are rerun once, every other failure becomes a Q-CIFAIL queue item with its log tail and a closing probe, which the Actions-hosted code agent fixes; green runs are recorded too.",
+      "trigger": "daily, and a failed checks, lane, deploy or executor run",
+      "owner": "operations",
+      "closes_by": "system",
+      "sla": "1d",
+      "done": "every watched workflow's newest default-branch run is green, or has an open Q-CIFAIL item with a probe",
+      "paths": [
+        {
+          "id": "github",
+          "how": ".github/workflows/ciwatch.yml runs python3 -m foundation ciwatch --run --apply",
+          "class": "free"
+        },
+        {
+          "id": "session",
+          "how": "the same command from any machine with the repo",
+          "class": "session"
+        }
+      ],
+      "closing_probe": "grep:foundation/ciwatch.py::def scan",
+      "writeback": [
+        "docs/issues",
+        "ops/ciwatch.jsonl"
+      ],
+      "system_path": [
+        "foundation/ciwatch.py",
+        "foundation/agentwork.py",
+        "doctrine/ciwatch.json",
+        "doctrine/agent-budget.json",
+        "tests/foundation/test_ciwatch.py",
+        ".github/workflows/ciwatch.yml"
+      ],
+      "workflows": [
+        "ciwatch.yml"
+      ],
+      "area": "managers",
+      "server_owner": "github-actions"
     }
   ],
   "launch_registry": "instances/ultrastable/loops.json"

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """PROVENANCE-1: schema validation, append-only event-sourced settlement, public redaction, and the learning signal that plussing/self-amend read."""
 import json, sys, tempfile, unittest
 from pathlib import Path

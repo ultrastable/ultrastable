@@ -1,0 +1,20 @@
+[
+ "0001_init.sql",
+ "0002_analytics.sql",
+ "0003_interview.sql",
+ "0004_objectives.sql",
+ "0005_criticality.sql",
+ "0006_credentials.sql",
+ "0007_sweeper_runs.sql",
+ "0008_selfaudit.sql",
+ "0009_cost_samples.sql",
+ "0010_handoffs.sql",
+ "0010_ignition_gaps.sql",
+ "0011_webhooks.sql",
+ "0012_criticality_loop.sql",
+ "0013_pulse.sql",
+ "0014_model_truth.sql",
+ "0015_cutover_state.sql",
+ "0016_read_indexes.sql",
+ "0017_unknowns.sql"
+]
