@@ -55,8 +55,10 @@ class Rails(unittest.TestCase):
         self.assertEqual(len(selfcode.pick_findings(found, [], set(), d)), 1)  # max_new_per_run
         self.assertEqual(selfcode.pick_findings(found, [], {"a", "b", "c"}, d), [])  # max_open
         iid = selfcode.item_for(found[0])["id"]
-        recent = [{"id": iid, "kind": "unused_import", "status": "filed", "at": selfcode.stamp()}]
-        self.assertNotIn(found[0], selfcode.pick_findings(found[:1], recent, set(), d))  # cooldown
+        settled = [{"id": iid, "kind": "unused_import", "status": "kept", "at": selfcode.stamp()}]
+        self.assertNotIn(found[0], selfcode.pick_findings(found[:1], settled, set(), d))  # cooldown after a settled change
+        only_filed = [{"id": iid, "kind": "unused_import", "status": "filed", "at": selfcode.stamp()}]
+        self.assertIn(found[0], selfcode.pick_findings(found[:1], only_filed, set(), d))  # filed but never worked: the next run files it again (its file is not in the checkout)
         self.assertEqual(selfcode.pick_findings(found[:1], [], {iid}, d), [])  # already open
 
     def test_higher_weight_kind_first_and_item_has_probe(self):
