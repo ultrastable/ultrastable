@@ -49,6 +49,14 @@
       "periodic": true
     },
     {
+      "id": "a11y",
+      "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
+      "source": "workflow",
+      "workflow": "a11y",
+      "expected_interval_s": 604800,
+      "periodic": true
+    },
+    {
       "id": "criticality-loop",
       "what": "CRITICALITY-LOOP-1: one beat per tick from the tick Worker's criticality controller (act on k_eff, grade the last action)",
       "source": "d1",

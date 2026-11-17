@@ -706,6 +706,22 @@
       "feedback": "an adopted finding raises its source's weight and a declined or quiet one lowers it, so the next pass reads better sources and files fewer misses; shipped and stalled adoptions re-weight the source and set item priority (rnd.priorities), which the executor reads",
       "bindings": []
     },
+    "a11y": {
+      "inflows": [
+        {
+          "signal": "adoption.outcomes",
+          "via": "file:ops/scout/adopted.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a failed audit run is filed as an issue by the failure audit and taken by the executor; the next weekly run re-audits every page, so a fixed finding stops appearing and a returning one files again",
+      "bindings": []
+    },
     "cost-guard": {
       "inflows": [
         {
