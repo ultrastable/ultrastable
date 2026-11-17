@@ -13,15 +13,21 @@
  "platforms": {
   "cloudflare": {
    "what": "the Cloudflare worker ultrastable-tick (cron) with D1 ultrastable-org",
-   "adapters": ["deploy/loops/cloudflare.md"]
+   "adapters": [
+    "deploy/loops/cloudflare.md"
+   ]
   },
   "github-actions": {
    "what": "GitHub Actions workflows in this repository; the built-in token is the credential no person mints",
-   "adapters": [".github/workflows/*.yml"]
+   "adapters": [
+    ".github/workflows/*.yml"
+   ]
   },
   "claude-cloud": {
    "what": "a cloud-hosted Claude routine or session (scheduler, container and session on Anthropic's servers)",
-   "adapters": ["deploy/loops/claude-routine.md"]
+   "adapters": [
+    "deploy/loops/claude-routine.md"
+   ]
   }
  },
  "registries": {
@@ -31,12 +37,36 @@
   "local_token": "(^|[^a-z])local([^a-z]|$)"
  },
  "banned": [
-  {"id": "windows-scheduler", "pattern": "schtasks|task[ -]scheduler|windows-task", "why": "the Windows scheduler runs on a person's computer"},
-  {"id": "unix-scheduler", "pattern": "\\bcrontab\\b|\\bsystemd\\b|\\bsystemctl\\b|\\blaunchd\\b|\\blaunchctl\\b", "why": "cron tables, systemd and launchd units are schedulers on a computer somebody owns and keeps on"},
-  {"id": "desktop-scheduled-task", "pattern": "scheduled-tasks?\\b|(desktop|local) scheduled tasks?\\b", "why": "a scheduled task of the desktop app runs only while that app is open; the server-side form is a cloud-hosted routine. Cloud scheduled tasks of any vendor are not matched"},
-  {"id": "host-on-a-computer", "pattern": "\\blocal[- ](scheduler|cron|agent|runs?|hosts?|loop|route|machine|computer|laptop|shell)\\b", "why": "a host, agent, loop or route on a person's computer"},
-  {"id": "personal-computer", "pattern": "on the laptop|owner(['\\u2019]s)? (machine|laptop|computer|pc)\\b|[A-Za-z]:\\\\Users\\\\|desktop app (that )?(must|has to|needs to) be open", "why": "names a particular person's computer or a path on it"},
-  {"id": "loopback", "pattern": "\\blocalhost\\b", "why": "an address that only means something on the computer it is typed on"}
+  {
+   "id": "windows-scheduler",
+   "pattern": "schtasks|task[ -]scheduler|windows-task",
+   "why": "the Windows scheduler runs on a person's computer"
+  },
+  {
+   "id": "unix-scheduler",
+   "pattern": "\\bcrontab\\b|\\bsystemd\\b|\\bsystemctl\\b|\\blaunchd\\b|\\blaunchctl\\b",
+   "why": "cron tables, systemd and launchd units are schedulers on a computer somebody owns and keeps on"
+  },
+  {
+   "id": "desktop-scheduled-task",
+   "pattern": "scheduled-tasks?\\b|(desktop|local) scheduled tasks?\\b",
+   "why": "a scheduled task of the desktop app runs only while that app is open; the server-side form is a cloud-hosted routine. Cloud scheduled tasks of any vendor are not matched"
+  },
+  {
+   "id": "host-on-a-computer",
+   "pattern": "\\blocal[- ](scheduler|cron|agent|runs?|hosts?|loop|route|machine|computer|laptop|shell)\\b",
+   "why": "a host, agent, loop or route on a person's computer"
+  },
+  {
+   "id": "personal-computer",
+   "pattern": "on the laptop|owner(['\\u2019]s)? (machine|laptop|computer|pc)\\b|[A-Za-z]:\\\\Users\\\\|desktop app (that )?(must|has to|needs to) be open",
+   "why": "names a particular person's computer or a path on it"
+  },
+  {
+   "id": "loopback",
+   "pattern": "\\blocalhost\\b",
+   "why": "an address that only means something on the computer it is typed on"
+  }
  ],
  "excused_by": "server-side[- ]only",
  "excused_note": "A line may name a banned thing only to state the rule, and then it cites the rule on the same line (the phrase 'server-side only'). Nothing else excuses a line.",
@@ -45,21 +75,67 @@
  ],
  "max_bytes": 2000000,
  "skip_dirs": [
-  {"path": ".git", "reason": "git's own storage, not the tree"},
-  {"path": "node_modules", "reason": "installed packages, never committed"},
-  {"path": ".selfhost", "reason": "scratch databases written by the selfhost run, never committed"},
-  {"path": "__pycache__", "reason": "bytecode caches, never committed"},
-  {"path": "ip", "reason": "archived patent drafts kept verbatim as a record; nothing runs from them"},
-  {"path": "repo-backups", "reason": "backup bundles of other repositories, not this system's code"}
+  {
+   "path": ".git",
+   "reason": "git's own storage, not the tree"
+  },
+  {
+   "path": "node_modules",
+   "reason": "installed packages, never committed"
+  },
+  {
+   "path": ".selfhost",
+   "reason": "scratch databases written by the selfhost run, never committed"
+  },
+  {
+   "path": "__pycache__",
+   "reason": "bytecode caches, never committed"
+  },
+  {
+   "path": "ip",
+   "reason": "archived patent drafts kept verbatim as a record; nothing runs from them"
+  },
+  {
+   "path": "repo-backups",
+   "reason": "backup bundles of other repositories, not this system's code"
+  },
+  {
+   "path": "workers",
+   "reason": "the folded-in core kept in its standalone layout (REPOS-1): its local dev demos, SSRF guards that refuse localhost, and blocker cases that describe an unreachable owner computer name a person's computer as a thing to refuse, never as a host, scheduler or route; its own tests (cd workers && npm test) guard it"
+  }
  ],
  "exclude": [
-  {"path": "spinoffs/**", "reason": "the spun-off apps' Worker refuses loopback and private names as SSRF guards for the public domain a visitor types; it never connects to a person's computer"},
-  {"path": "doctrine/server-side.json", "reason": "this file holds the banned patterns themselves"},
-  {"path": "doctrine/doc-consumers.json", "reason": "its removed ledger must name the deleted desktop task definition by its old path so the removal stays recoverable"},
-  {"path": "deploy/sibling-patches/*.patch", "reason": "patch files quote the removed lines of sibling repositories byte for byte; editing them breaks the patch"},
-  {"path": ".github/workflows/platform-core.yml", "reason": "the loopback address is the Postgres service container inside the GitHub Actions runner, which is server-side"},
-  {"path": "seed/worker/src/agentic/adapters/memory.js", "reason": "an in-memory adapter that exists as a test fixture; its comment describes in-process test runs, not a host"},
-  {"path": "demos/public/cases.json", "reason": "published case studies of what was tried on 2026-11-10; they narrate dated history and define no host or route"},
-  {"path": "docs/bootstrapping/bootstrap-log.md", "reason": "a dated incident log; its rows record failed attempts to reach a person's computer, which is the lesson the rule keeps"}
+  {
+   "path": "spinoffs/**",
+   "reason": "the spun-off apps' Worker refuses loopback and private names as SSRF guards for the public domain a visitor types; it never connects to a person's computer"
+  },
+  {
+   "path": "doctrine/server-side.json",
+   "reason": "this file holds the banned patterns themselves"
+  },
+  {
+   "path": "doctrine/doc-consumers.json",
+   "reason": "its removed ledger must name the deleted desktop task definition by its old path so the removal stays recoverable"
+  },
+  {
+   "path": "deploy/sibling-patches/*.patch",
+   "reason": "patch files quote the removed lines of sibling repositories byte for byte; editing them breaks the patch"
+  },
+  {
+   "path": ".github/workflows/platform-core.yml",
+   "reason": "the loopback address is the Postgres service container inside the GitHub Actions runner, which is server-side"
+  },
+  {
+   "path": "seed/worker/src/agentic/adapters/memory.js",
+   "reason": "an in-memory adapter that exists as a test fixture; its comment describes in-process test runs, not a host"
+  },
+  {
+   "path": "demos/public/cases.json",
+   "reason": "published case studies of what was tried on 2026-11-10; they narrate dated history and define no host or route"
+  },
+  {
+   "path": "docs/bootstrapping/bootstrap-log.md",
+   "reason": "a dated incident log; its rows record failed attempts to reach a person's computer, which is the lesson the rule keeps"
+  }
  ]
 }
