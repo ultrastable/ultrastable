@@ -1857,6 +1857,15 @@
    "title": "Executor closed Q-FLOW-RESUME-JOBS: add flows-external.json to declare loops for the resume and job-search system",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: doctrine/flows-external.json.",
    "probe": "file:doctrine/flows-external.json"
+  },
+  {
+   "id": "decision-2026-11-17-executor-takes-executable-effect-items-first-and-rejects-cha",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Executor takes executable-effect items first and rejects changes no code reads (EFFECT-1)",
+   "body": "PR 527 added a data file nothing reads. The picker now takes failing checks, claim drift, unknowns, self-code findings and bugs first, and a change that touches no code and writes files no code names fails as a check the model must repair.",
+   "probe": "grep:foundation/executor.py::def consumer_gap",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
   }
  ]
 }
