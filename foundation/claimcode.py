@@ -41,6 +41,16 @@ def scan(root=REPO) -> list[tuple[str, int, str, str]]:
     return out
 
 
+def _claims1_bound(root) -> list[str]:
+    """CLAIMS-1 (doctrine/claims.json) binds a line when its registered sentence is on it (the claims check runs the probes) or a generated claim marker is."""
+    p = Path(root) / "doctrine/claims.json"
+    try:
+        reg = json.loads(p.read_text("utf-8")) if p.is_file() else {"claims": []}
+    except ValueError:
+        return []
+    return [c["text"] for c in reg["claims"]] + ["<!-- claim:"]
+
+
 def check(root=REPO) -> list[str]:
     root = Path(root); pol = _pol(root); errs = []
     bound = []
@@ -52,6 +62,7 @@ def check(root=REPO) -> list[str]:
         if not pf.is_file() or c["probe"]["contains"] not in pf.read_text("utf-8", errors="replace"):
             errs.append(f"{c['id']}: probe {c['probe']['file']} does not contain {c['probe']['contains']!r}"); continue
         bound.append(c["quote"])
+    bound += _claims1_bound(root)
     base = set(pol["baseline"])
     for rel, n, line, key in scan(root):
         if any(q in line for q in bound) or key in base:
