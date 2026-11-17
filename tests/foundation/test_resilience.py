@@ -9,7 +9,7 @@ NOW = 1_800_000_000.0
 
 class T(unittest.TestCase):
     def setUp(self):
-        self.d = Path(tempfile.mkdtemp())
+        self.d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, self.d, True)
         for f in ("doctrine/resilience.json", "doctrine/clocks.json"):
             (self.d / f).parent.mkdir(parents=True, exist_ok=True); shutil.copy(REPO / f, self.d / f)
         shutil.copytree(REPO / ".github/workflows", self.d / ".github/workflows")
