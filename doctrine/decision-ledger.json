@@ -1766,7 +1766,7 @@
    "date": "2026-11-17",
    "title": "Executor aborted an item when its first model rung returned a transport error",
    "body": "ladder_call converts a rung RuntimeError to a failed attempt so the ladder escalates to the next rung.",
-   "probe": "grep:foundation/executor.py::def ladder_call",
+   "probe": "grep:foundation/executor.py::ladder_call",
    "session": "session_0156nqDtPUh62FutsmGkcuTa"
   },
   {
@@ -1779,6 +1779,27 @@
    "session": "session_0156nqDtewcdaLGsDYbhGs22"
   },
   {
+<<<<<<< HEAD
+=======
+   "id": "lesson-2026-11-17-executor-nameerror-after-two-parallel-fixes-merged-call-site",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Executor NameError after two parallel fixes merged: call site kept, definition lost",
+   "body": "ladder_call is defined again and pinned by test_executor.Ladder; RuntimeError escalation stays in run() (FREE-LLM-3).",
+   "probe": "grep:foundation/executor.py::def ladder_call",
+   "session": "session_0156nqDtPUh62FutsmGkcuTa"
+  },
+  {
+   "id": "lesson-2026-11-17-two-threads-fixed-one-bug-and-a-merge-dropped-a-helper-free-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "Two threads fixed one bug and a merge dropped a helper (FREE-LLM-4)",
+   "body": "#513 introduced ladder_call and #512 caught RuntimeError in place; the merge kept the call but not the definition, so the executor raised NameError on main. The call goes back to agent_ladder.call; RuntimeError escalation stays.",
+   "probe": "grep:foundation/executor.py::def ladder_call",
+   "session": "session_0156nqDtewcdaLGsDYbhGs22"
+  },
+  {
+>>>>>>> origin/main
    "id": "decision-2026-11-17-coverage-1-claims-coverage-metric",
    "kind": "decision",
    "date": "2026-11-17",

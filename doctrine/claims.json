@@ -269,7 +269,7 @@
   ],
   "coverage": {
     "target": 1.0,
-    "floor": 0.03,
+    "floor": 0.035,
     "live_pages": [
       "https://blindspot.ultrastable.app/",
       "https://ultrastable.io/",
@@ -297,7 +297,6 @@
       "https://ultrastable.io/roadmap",
       "https://ultrastable.io/setup",
       "https://ultrastable.io/showcase",
-      "https://ultrastable.io/showcase/blindspot-check",
       "https://ultrastable.io/showcase/practical-solutions",
       "https://ultrastable.io/showcase/qnfo",
       "https://ultrastable.io/start",
