@@ -55,6 +55,17 @@ class Rules(unittest.TestCase):
         self.assertEqual(R.p_no_secrets(root, d)[0], "violated")
         self.assertEqual(R.p_no_qnfo(root, d)[0], "violated")
 
+    def test_qnfo_live_probe_reads_rendered_pages(self):
+        root = copy_repo()
+        d = json.loads((root / "doctrine/rules.json").read_text())
+        d["qnfo_live_pages"] = ["/a", "/b"]
+        pages = {"/a": "clean page", "/b": "shows QNFO data"}
+        self.assertEqual(R.p_qnfo_live(root, d, fetch=lambda u: pages[u.replace(d["qnfo_live_origin"], "")])[0], "violated")
+        pages["/b"] = "clean"
+        self.assertEqual(R.p_qnfo_live(root, d, fetch=lambda u: pages[u.replace(d["qnfo_live_origin"], "")])[0], "ok")
+        def down(u): raise OSError("down")
+        self.assertEqual(R.p_qnfo_live(root, d, fetch=down)[0], "unmeasured")
+
     def test_pages_live_slot(self):
         root = copy_repo(); d = json.loads((root / R.REG).read_text())
         import urllib.request
