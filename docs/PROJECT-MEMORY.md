@@ -442,3 +442,7 @@ The goal tree seeded once the server-side config carried it, but a cost breach m
 Session: session_0156nqDuHvMTexrWLrHHsEaw
 
 Commit trailers in this branch cite Session: session_0156nqJbrGYaSnypwjTPL2bes and Session: session_0156nqDJbrGYaSnypwjTPL2bes (two spellings of one session; both cited so the write-back check resolves).
+
+## 2026-11-18: Every goal has a measured variable, a deadline and a knob (rule in code)
+Each target in `seed/autonomy/goals.json` now carries a deadline, and `python3 -m foundation goalscheck --check` (in `checks.yml`, rule `every-goal-has-knob` in `doctrine/rules.json`) fails a target without a measured variable, a numeric target, a deadline or a knob. Targets with a deadline but no knob yet are listed in `doctrine/goals-baseline.json`, which only shrinks; the tick controller files a backlog item for each one it cannot move.
+Session: session_0156nqDuHvMTexrWLrHHsEaw

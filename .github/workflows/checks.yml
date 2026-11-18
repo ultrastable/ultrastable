@@ -94,6 +94,7 @@ jobs:
           python3 -m foundation standingorder --check
           python3 -m foundation rules --check
           python3 -m foundation decisions --check
+          python3 -m foundation goalscheck --check
           python3 -m foundation rules --probe no-qnfo-pages
           python3 -m foundation rules --probe no-secrets
           python3 -m foundation mergeaudit --check
