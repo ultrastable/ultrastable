@@ -1,16 +1,113 @@
 {
- "at": "2026-11-17T18:48:17Z",
- "audit_at": "2026-11-17T18:46:57.420Z",
+ "at": "2026-11-18T14:21:50Z",
+ "audit_at": "2026-11-18T14:21:27.854Z",
  "audit_fresh": true,
  "audit_mode": "offline",
- "by_kind": {},
- "experiments": [],
- "findings_blocking": 0,
- "findings_total": 0,
+ "by_kind": {
+  "performance": 1,
+  "structure": 9,
+  "visual-drift": 42
+ },
+ "experiments": [
+  {
+   "arms": {
+    "control": {
+     "bounce": 0,
+     "conv": 0,
+     "n": 0
+    },
+    "start-mine": {
+     "bounce": 0,
+     "conv": 0,
+     "n": 0
+    }
+   },
+   "days": 1,
+   "guards_ok": true,
+   "id": "UX-001-home-setup-label",
+   "reason": "sample 0 of 400 per arm",
+   "unmeasured_guards": [],
+   "verdict": "continue"
+  }
+ ],
+ "findings_blocking": 9,
+ "findings_total": 52,
  "happy_path_pass_share": 1.0,
- "pages": 22,
- "paths": {},
- "unmeasured": [
-  "analytics: no CLOUDFLARE_API_TOKEN, funnels and experiments not read"
- ]
+ "pages": 21,
+ "paths": {
+  "audience-communities": {
+   "completion": null,
+   "drop": null,
+   "entries": 0,
+   "reached": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "audience-developers": {
+   "completion": null,
+   "drop": null,
+   "entries": 0,
+   "reached": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "audience-founders": {
+   "completion": null,
+   "drop": null,
+   "entries": 0,
+   "reached": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "audience-funders": {
+   "completion": null,
+   "drop": null,
+   "entries": 0,
+   "reached": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "audience-partners": {
+   "completion": null,
+   "drop": null,
+   "entries": 0,
+   "reached": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "home-to-proof": {
+   "completion": 0.0,
+   "drop": null,
+   "entries": 434,
+   "reached": [
+    434,
+    0
+   ]
+  },
+  "home-to-setup": {
+   "completion": 0.0346,
+   "drop": null,
+   "entries": 434,
+   "reached": [
+    434,
+    15
+   ]
+  }
+ },
+ "unmeasured": []
 }

@@ -1,0 +1,112 @@
+{
+ "at": "2026-11-18T14:21:50.155Z",
+ "mode": "live",
+ "pages": 6,
+ "hosts": [
+  "https://ultrastable.io",
+  "https://ultrastable.org",
+  "https://ultrastable.app",
+  "https://blindspot.ultrastable.app",
+  "https://numbers-board.ultrastable.app",
+  "https://portfolio-board.ultrastable.app"
+ ],
+ "axe": false,
+ "findings": [
+  {
+   "kind": "performance",
+   "path": "ultrastable.org/",
+   "viewport": "phone",
+   "rule": "ttfb",
+   "detail": "1700ms > 800"
+  },
+  {
+   "kind": "structure",
+   "path": "numbers-board.ultrastable.app/",
+   "viewport": "phone",
+   "rule": "status",
+   "detail": "404"
+  },
+  {
+   "kind": "structure",
+   "path": "numbers-board.ultrastable.app/",
+   "viewport": "desktop",
+   "rule": "status",
+   "detail": "404"
+  },
+  {
+   "kind": "structure",
+   "path": "numbers-board.ultrastable.app/",
+   "viewport": "phone",
+   "rule": "status",
+   "detail": "404"
+  },
+  {
+   "kind": "structure",
+   "path": "numbers-board.ultrastable.app/",
+   "viewport": "desktop",
+   "rule": "status",
+   "detail": "404"
+  },
+  {
+   "kind": "structure",
+   "path": "portfolio-board.ultrastable.app/",
+   "viewport": "phone",
+   "rule": "status",
+   "detail": "404"
+  },
+  {
+   "kind": "structure",
+   "path": "portfolio-board.ultrastable.app/",
+   "viewport": "desktop",
+   "rule": "status",
+   "detail": "404"
+  },
+  {
+   "kind": "structure",
+   "path": "portfolio-board.ultrastable.app/",
+   "viewport": "phone",
+   "rule": "status",
+   "detail": "404"
+  },
+  {
+   "kind": "structure",
+   "path": "portfolio-board.ultrastable.app/",
+   "viewport": "desktop",
+   "rule": "status",
+   "detail": "404"
+  }
+ ],
+ "paths": [],
+ "perf": {
+  "ultrastable.io/@phone": {
+   "ttfb": 276,
+   "lcp": 310,
+   "cls": 0.055
+  },
+  "ultrastable.io/@desktop": {
+   "ttfb": 142,
+   "lcp": 167,
+   "cls": 0.025
+  },
+  "ultrastable.org/@phone": {
+   "ttfb": 1700,
+   "lcp": 1734,
+   "cls": 0
+  },
+  "ultrastable.org/@desktop": {
+   "ttfb": 1,
+   "lcp": 33,
+   "cls": 0
+  },
+  "blindspot.ultrastable.app/@phone": {
+   "ttfb": 115,
+   "lcp": 139,
+   "cls": 0
+  },
+  "blindspot.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 12,
+   "cls": 0
+  }
+ }
+}

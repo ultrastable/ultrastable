@@ -1,1 +1,38 @@
-{"paths": {}}
+{
+ "at": "2026-11-18T14:21:50Z",
+ "paths": {
+  "audience-communities": {
+   "history": []
+  },
+  "audience-developers": {
+   "history": []
+  },
+  "audience-founders": {
+   "history": []
+  },
+  "audience-funders": {
+   "history": []
+  },
+  "audience-partners": {
+   "history": []
+  },
+  "home-to-proof": {
+   "history": [
+    {
+     "completion": 0.0,
+     "day": "2026-11-18",
+     "entries": 434
+    }
+   ]
+  },
+  "home-to-setup": {
+   "history": [
+    {
+     "completion": 0.0346,
+     "day": "2026-11-18",
+     "entries": 434
+    }
+   ]
+  }
+ }
+}

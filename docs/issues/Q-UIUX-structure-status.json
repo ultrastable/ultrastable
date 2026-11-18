@@ -1,0 +1,11 @@
+{
+  "id": "Q-UIUX-structure-status",
+  "title": "Q-UIUX-structure-status: front-end structure: status",
+  "body": "**Owner:** uiux-manager\n**Trigger:** the UI/UX audit found `status` (structure) on 8 page view(s)\n**Done check:** cmd:python3 -m foundation uiux --probe structure-status\n**Status:** open\n\nUIUX-1 finding. 404\n\nPages: numbers-board.ultrastable.app/ (desktop), numbers-board.ultrastable.app/ (phone), portfolio-board.ultrastable.app/ (desktop), portfolio-board.ultrastable.app/ (phone)\n\nFix the page or the shared component that renders it (site/ and the design tokens), keep the single-primary-action, 44px tap, AA contrast and plain-language rules, and never relax doctrine/uiux.json to clear the finding. Re-run `node scripts/uiux_audit.mjs --only <path>` to confirm.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation uiux --probe structure-status` exits 0 (the finding no longer reproduces).\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Design"
+}
