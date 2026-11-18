@@ -2315,6 +2315,14 @@
    "body": "The worker-native executor merged a change with a stray character that made site/webbotauth.js a syntax error, turning deploy-site red. Restored in #616. Executor output must pass node --check on every touched JS file before the lane merges.",
    "probe": "file:site/webbotauth.js",
    "session": "session_0156nqDsv1wrVeZRDrJu8sFu"
+  },
+  {
+   "id": "lesson-2026-11-18-merge-audit-1-pr-619-merged-by-a-session-token-over-a-red-ch",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "MERGE-AUDIT-1: PR 619 merged by a session token over a red checks run",
+   "body": "Measured: run 44218787437 failed claimcode on site/worker.js AGENT_MD two seconds after PR 619 was merged by a session's own token, a path greenguard and lane.sh cannot see. Fixed: the claim is registered with a probe (claimcode ok), and foundation/mergeaudit.py now files an item for any merge without a green checks run on every lane pass (2 tests pass).",
+   "probe": "file:foundation/mergeaudit.py"
   }
  ]
 }

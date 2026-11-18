@@ -7,3 +7,5 @@ What changed: server-side merges require a green full `checks` run (`seed/worker
 Open: #597 (PACE-1) and #598 (audit converge) carry their own red checks; #598 fails with "Q-AUDIT-CONVERGE-1: closed without evidence". Archived-repo workflows disabled by API (spec, workers, license); `.github` and `ops` were not reachable from this session.
 
 Session: session_0156nqDts967bbXQmkB7DpSY — ciwatch now also watches ultrastable/.github (unreadable = unmeasured finding).
+
+Session: session_0156nqDts967bbXQmkB7DpSY — MERGE-AUDIT-1 added after #619.
