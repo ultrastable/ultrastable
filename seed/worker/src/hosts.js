@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 // HOSTS-1: one adapter interface for every system that runs or hosts an Ultrastable system, and the two-way wiring between the repository and them.
+let prunedDay = null;  // RETENTION-1: host_events keeps 30 days; pruned once a day per isolate (integer time column, so retention.js cannot prune it)
 //   repo -> host: a signed push/workflow event deploys the workers it touched through the first healthy host (failover down the list), no polling.
 //   host -> repo: every deploy, failure, health change and inbound host webhook becomes a commit status (and a check run when the credential allows) on the commit.
 // A host is { id, kind, health(), deploy({worker, sha, repo}), version?(worker) }. Cloudflare, GitHub Actions (the credential-free route) and Google Cloud plug in below;
@@ -55,7 +56,7 @@ export function createHosts(list, { db = null, now = Date.now } = {}) {
 }
 async function record(db, now, e) {
   if (!db) return;
-  try { await db.prepare('INSERT INTO host_events (at, host, kind, worker, repo, sha, ok, detail) VALUES (?,?,?,?,?,?,?,?)').bind(now(), e.host, e.kind, e.worker || null, e.repo || null, e.sha || null, e.ok === false ? 0 : 1, String(e.detail || '').slice(0, 300)).run(); } catch (err) { console.error('host_events', err && err.message); /* allow-silent: recording a host event must never fail the deploy or webhook it describes; the console line is the trace */ }
+  try { await db.prepare('INSERT INTO host_events (at, host, kind, worker, repo, sha, ok, detail) VALUES (?,?,?,?,?,?,?,?)').bind(now(), e.host, e.kind, e.worker || null, e.repo || null, e.sha || null, e.ok === false ? 0 : 1, String(e.detail || '').slice(0, 300)).run(); if (prunedDay !== (prunedDay = Math.floor(now() / 864e5))) await db.prepare('DELETE FROM host_events WHERE at < ?').bind(now() - 30 * 864e5).run(); return { recorded: true }; } catch (err) { console.error('host_events', err && err.message); return { recorded: false, error: String(err && err.message).slice(0, 120) }; }  // allow-silent: the event ledger cannot record its own write failure; the caller gets it back and the Worker log keeps it
 }
 export const recordHostEvent = record;
 
