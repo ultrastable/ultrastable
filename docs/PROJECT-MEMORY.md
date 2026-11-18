@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-18
 
+- 2026-11-18: GREEN-GUARD-1: no merge without a green full checks run; fix lane, regen and executor failure classes (#600)
+- 2026-11-18: FREE-TIER-1: usage sample first in the tick; fix HOSTS-1 red checks (surface, retention, silent catch) (#599)
+- 2026-11-18: HOSTS-1: wire the repo to every hosting system, both ways (#603)
 - 2026-11-18: SELFCODE-1: self-code capacity share applies inside the EFFECT-1 tier (#602)
 - 2026-11-18: PACE-1: live loop pace metrics in the tick Worker (#597)
 - 2026-11-18: Converge seed audit chain onto core/audit (Q-AUDIT-CONVERGE-1) (#598)
