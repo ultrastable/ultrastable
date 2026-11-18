@@ -446,3 +446,7 @@ Commit trailers in this branch cite Session: session_0156nqJbrGYaSnypwjTPL2bes a
 ## 2026-11-18: Every goal has a measured variable, a deadline and a knob (rule in code)
 Each target in `seed/autonomy/goals.json` now carries a deadline, and `python3 -m foundation goalscheck --check` (in `checks.yml`, rule `every-goal-has-knob` in `doctrine/rules.json`) fails a target without a measured variable, a numeric target, a deadline or a knob. Targets with a deadline but no knob yet are listed in `doctrine/goals-baseline.json`, which only shrinks; the tick controller files a backlog item for each one it cannot move.
 Session: session_0156nqDuHvMTexrWLrHHsEaw
+
+## 2026-11-18: A launched spinoff is served only after the spinoffs Worker is deployed and probed (SPINOFF-DEPLOY-1)
+numbers-board and portfolio-board returned 404: the `ultrastable-spinoffs` Worker (quniverse account, zone `ultrastable.app`) had been deployed once by hand and its bundle held only blindspot; `spinoffs/wrangler.toml` also bound the wrong D1. Redeployed live (all three apps 200); `spinoff.yml` now deploys after each rebuild and `scripts/probe_spinoffs.py` fails on any app not 200. Account id changes with the zone transfer (OL-20261117-4).
+Session: session_0156nqDJbrGYaSnypwjTPL2bes

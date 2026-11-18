@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-18-spinoff-deploy-1-a-launched-spinoff-must-be-deployed-and-pro",
+  "kind": "lesson",
+  "date": "2026-11-18",
+  "title": "SPINOFF-DEPLOY-1: a launched spinoff must be deployed and probed",
+  "body": "numbers-board and portfolio-board answered 404 because the ultrastable-spinoffs Worker (quniverse account, zone ultrastable.app) was deployed once by hand and never redeployed, and spinoffs/wrangler.toml bound the wrong D1 (ultrastable-ops instead of ultrastable-spinoffs 9e05f27a). Verified live after redeploy: blindspot, numbers-board and portfolio-board all answer 200 (verify-live: GET https://numbers-board.ultrastable.app/api/board expect Managers and loops). spinoff.yml now deploys after rebuild and scripts/probe_spinoffs.py fails on any app not 200. Update the account id when the zone transfer (OL-20261117-4) lands.",
+  "probe": "file:scripts/probe_spinoffs.py"
+ },
+ "kind": "lesson",
+ "title": "SPINOFF-DEPLOY-1: a launched spinoff must be deployed and probed",
+ "session": ""
+}
