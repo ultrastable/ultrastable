@@ -1,1 +1,2 @@
 {"at":"2026-11-18T00:50:00Z","kind":"host-seed","subject":"ops/hosting","summary":"HOSTSYNC-1 started; the first host-sync run fills state.json"}
+{"at":"2026-11-18T00:47:58.047Z","kind":"host-state","host":"cloudflare-gateway","subject":"ops/hosting/state.json","summary":"runtime state written back to the repository","data":{"scripts":1,"at":"2026-11-18T00:47:58.047Z"}}
