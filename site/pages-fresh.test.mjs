@@ -21,3 +21,16 @@ test("a bundle with no build time is stale, never assumed fresh", async () => {
   const d = await overlay({}, { TICK: tick("2026-11-18T13:00:00Z") }, gen, NOW, null);
   assert.equal(d.freshness.pages.stale, true);
 });
+
+// LIVE-FRESH-2: the snapshot ingest writes parts into the site's own D1, part 0 last.
+import { ingestTransparency } from "./deployer.js";
+test("ingestTransparency writes part 0 last and rejects bad input", async () => {
+  const calls = [];
+  const db = { prepare: (q) => ({ bind: (...a) => ({ run: async () => calls.push([q.slice(0, 20), ...a]) }), run: async () => calls.push([q.slice(0, 20)]) }) };
+  const mk = (b) => new Request("https://x/__internal/transparency", { method: "POST", body: JSON.stringify(b) });
+  const ok = await ingestTransparency(mk({ generated: "2026-11-18T15:00:00Z", parts: ["a", "b", "c"] }), { DB: db });
+  assert.equal(ok.status, 200);
+  const inserts = calls.filter(c => c[0].startsWith("INSERT")).map(c => c[2]);
+  assert.deepEqual(inserts, [1, 2, 0]);
+  assert.equal((await ingestTransparency(mk({ generated: "nope", parts: ["a"] }), { DB: db })).status, 400);
+});
