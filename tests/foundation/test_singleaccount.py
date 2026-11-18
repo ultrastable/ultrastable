@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # SPDX-License-Identifier: LicenseRef-Ultrastable
 # Ultrastable is the foundation for any autonomous system.
 import tempfile, unittest, json
