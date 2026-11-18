@@ -2393,7 +2393,7 @@
    "date": "2026-11-18",
    "title": "Carry stuck PR 627 onto main; close loops automatically (Rowan 2026-11-18)",
    "body": "Carried MAIN-WRITER-1 (#627, conflicted on generated site/dashboard-data.js) onto main from a fresh branch; tools/push_main.py keeps git push as second route.",
-   "probe": "grep:agents/AGENTS.md::Restated by Rowan, 2026-11-18"
+   "probe": "grep:tools/push_main.py::fallback git push"
   }
  ]
 }
