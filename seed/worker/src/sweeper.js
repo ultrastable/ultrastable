@@ -3,6 +3,7 @@
 // SERVER-OWNS-LOOPS-1: the tick Worker closes every loop a client session (code agent, chat, person) leaves open. A client only produces work; this sweeper owns closing it.
 // For each open PR on a client branch: refresh a stale branch, merge when green, and once it is older than maxAgeH file one tracked item (Q-OPENLOOP-<repo>-<n>) with owner, trigger and probe.
 // For each issue still labelled claimed/dispatched past maxAgeH: release the claim so the executor re-takes it. Returns open_loop_age_hours, the probe value (target 0).
+import { notGreen } from './greenguard.js';
 const API = 'https://api.github.com';
 const CLIENT_PREFIX = ['claude/', 'agent/'];
 async function gh(f, token, method, path, body) {
@@ -24,7 +25,9 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
         let d = (await gh(f, token, 'GET', `/repos/${repo}/pulls/${p.number}`)).json || p;
         if (d.draft) { const r = await gh(f, token, 'POST', `/repos/${repo}/pulls/${p.number}/ready_for_review`); if (r.ok) d = (await gh(f, token, 'GET', `/repos/${repo}/pulls/${p.number}`)).json || d; }
         if (d.mergeable_state === 'behind') { const u = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/update-branch`); if (u.ok) out.refreshed.push(tag); }
-        if (d.mergeable_state === 'clean') {
+        const hold = d.mergeable_state === 'clean' ? await notGreen(f, token, repo, d.head && d.head.sha, (ff, t, m, path) => gh(ff, t, m, path)) : null;  // GREEN-GUARD-1
+        if (hold) out.held = [...(out.held || []), `${tag} ${hold}`];
+        if (d.mergeable_state === 'clean' && !hold) {
           const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/merge`, { merge_method: 'squash' });
           if (m.ok) { out.merged.push(tag); continue; }
         }

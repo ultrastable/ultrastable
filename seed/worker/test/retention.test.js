@@ -51,3 +51,13 @@ test('the tick runs the prune and the config carries the rules', () => {
   const rules = JSON.parse(readFileSync(new URL('../../autonomy/retention.json', import.meta.url), 'utf8'));
   for (const [t, r] of Object.entries(rules.tables)) assert.ok((r.keep_days > 0 && r.column) || (r.keep && r.reason), t + ' needs keep_days and column, or keep and a reason');
 });
+
+test('a table with unit "ms" is pruned by its integer-millisecond time column (host_events)', async () => {
+  const { raw, db } = mkdb();
+  raw.exec('CREATE TABLE host_events (at INTEGER NOT NULL, host TEXT)');
+  raw.prepare('INSERT INTO host_events VALUES (?, ?)').run(NOW - 40 * 864e5, 'old');
+  raw.prepare('INSERT INTO host_events VALUES (?, ?)').run(NOW - 1 * 864e5, 'new');
+  const r = await pruneAll(db, { rules: { max_rows_per_run: 10, tables: { host_events: { column: 'at', unit: 'ms', keep_days: 30 } } }, now: NOW });
+  assert.deepEqual(r.tables, [{ table: 'host_events', deleted: 1 }]);
+  assert.equal(raw.prepare('SELECT host FROM host_events').get().host, 'new');
+});

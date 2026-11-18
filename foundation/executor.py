@@ -36,6 +36,17 @@ EFFECT_LABELS = {"bug", "failing-check", "raises-self"}
 CODE_EXT = (".py", ".js", ".mjs", ".cjs", ".ts", ".sh", ".sql")
 
 
+FOREIGN_CIFAIL = re.compile(r"is failing in ([\w.-]+/[\w.-]+)")
+
+
+def foreign_cifail(issue: dict, repo: str) -> bool:
+    """FOREIGN-FIX-1: a Q-CIFAIL item about another repository's workflow cannot be fixed by editing this repository's files. The executor took
+    Q-CIFAIL-practical-solutions-deploy-tenant, patched style.css here, and merged #595 over a red `checks`. Such an item belongs to that
+    repository's own lane (ciwatch closes it by probe when that workflow is green); it is never takeable here."""
+    m = FOREIGN_CIFAIL.search(str(issue.get("title", ""))) if str(issue.get("number", "")).startswith("Q-CIFAIL-") else None
+    return bool(m and m.group(1) != repo)
+
+
 def effect_tier(issue: dict) -> float:
     """EFFECT-1: 0 for an item with executable effect (a failing check, a claim drift, an unknown, a bug), else 1. The picker takes tier 0 first."""
     names = {(l["name"] if isinstance(l, dict) else l) for l in issue.get("labels", [])}
@@ -317,6 +328,8 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     if remote and checks is None:
         checks = crossrepo.CHECKS
     issues = crossrepo.takeable(repo, root) if remote else qmod.takeable(root) if qm else gh_json(["api", f"repos/{repo}/issues?state=open&per_page=100"], root)
+    if not remote:
+        issues = [i for i in issues if not foreign_cifail(i, repo)]  # FOREIGN-FIX-1
     if qm and not issue_no:
         from . import growth  # GROWTH-1: a product manager keeps the backlog from devolving into bug fixes
         from . import rnd  # RND-1: competitor gaps and adopted findings carry a priority the loop computed

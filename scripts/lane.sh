@@ -59,6 +59,10 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
     echo "#$n ci-failed"; continue
   fi
   if [ "$pending" -gt 0 ]; then echo "#$n pending"; continue; fi
+  # GREEN-GUARD-1: other check-runs can be done while the full suite has not started or has not passed (#595, #596 merged that way). Never merge without it.
+  if [ "$repo" = "ultrastable/ultrastable" ] && [ "$(jq '[.[]|select(.name=="checks" and .conclusion=="success")]|length' <<<"$runs")" -eq 0 ]; then
+    echo "#$n waiting: the full checks suite has not passed on ${sha:0:7}"; continue
+  fi
   case "$labels" in
     *,ci-failed,*|*,conflict,*) gh pr edit "$n" -R "$repo" --remove-label ci-failed --remove-label conflict >/dev/null 2>&1;;
   esac
@@ -128,6 +132,14 @@ if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
       pushed=0
       for try in 1 2 3 4 5; do
         if git -C "$root" pull --rebase --autostash -q origin main && git -C "$root" push -q origin HEAD:main; then pushed=1; break; fi
+        # LANE-REBASE-1: main moved under the commit and a generated file (the dashboard, the memory) conflicted; a half-finished rebase made every later pull fail
+        # ("unmerged files", run 1061). Leave no rebase behind, restart from main and redo the adoption on top of it: it is idempotent and regenerates the files.
+        git -C "$root" rebase --abort || echo "lane: no rebase to abort"
+        git -C "$root" fetch -q origin main && git -C "$root" reset -q --hard origin/main || { echo "lane: reset to main failed" >&2; break; }
+        (cd "$root" && python3 -m foundation loopowner --adopt --apply && python3 scripts/memory_refresh.py && python3 scripts/build_dashboard.py >/dev/null) || echo "lane: redo on fresh main failed" >&2
+        git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md
+        git -C "$root" diff --cached --quiet && { echo "lane: adoption already on main"; pushed=1; break; }
+        git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
         sleep $((try * 3))
       done
       if [ "$pushed" = 1 ]; then
