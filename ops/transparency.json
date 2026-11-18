@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-18T11:16:58Z",
- "commit": "07694dd",
+ "generated": "2026-11-18T11:23:30Z",
+ "commit": "5e13c65",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 101,
@@ -18,8 +18,8 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 353,
-  "backlog_items": 419
+  "backlog_open": 354,
+  "backlog_items": 420
  },
  "unknowns": {
   "units": 117,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 419,
+   "items": 420,
    "by_status": {
     "closed": 61,
-    "open": 353,
+    "open": 354,
     "done": 5
    },
-   "takeable_now": 324
+   "takeable_now": 325
   },
   "merged": {
    "total": 0,
@@ -113,7 +113,8 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "cancelled": 14,
+    "": 1,
+    "cancelled": 13,
     "success": 16
    },
    "prs_opened_unattended": 0,
@@ -162,7 +163,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 56.4,
+   "age_s": 98.6,
    "status": "fresh",
    "missed": 0
   },
@@ -186,7 +187,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 118.4,
+   "age_s": 266.6,
    "status": "fresh",
    "missed": 0
   },
@@ -194,7 +195,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 71573.4,
+   "age_s": 71965.6,
    "status": "fresh",
    "missed": 0
   }
@@ -318,7 +319,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-18T11:16:13Z",
+  "generated": "2026-11-18T11:22:44Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -377,7 +378,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-18T11:16:13Z",
+     "at": "2026-11-18T11:22:44Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -501,7 +502,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 115.2,
+   "last_beat_age_s": 158.1,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -512,7 +513,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 71632.2,
+   "last_beat_age_s": 72025.1,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -523,7 +524,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 8945.2,
+   "last_beat_age_s": 9338.1,
    "expected_interval_s": 86400,
    "beats_24h": 60,
    "expected_24h": 1.0,
@@ -534,7 +535,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 68487.2,
+   "last_beat_age_s": 68880.1,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -545,7 +546,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 60480.2,
+   "last_beat_age_s": 60873.1,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -563,7 +564,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 65509.2,
+   "last_beat_age_s": 65902.1,
    "expected_interval_s": 86400,
    "beats_24h": 3,
    "expected_24h": 1.0,
@@ -574,7 +575,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 97.2,
+   "last_beat_age_s": 257.1,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2517,6 +2518,33 @@
  "changes": {
   "commits": [
    {
+    "sha": "5e13c65",
+    "at": "2026-11-18T11:17:52+00:00",
+    "author": "Claude",
+    "subject": "decision ledger: probe names the code that carries the decision",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/5e13c659b4f84ca9b41b039f027e9bc597e58e57"
+   },
+   {
+    "sha": "07694dd",
+    "at": "2026-11-18T11:16:56+00:00",
+    "author": "Claude",
+    "subject": "memory: write-back for the 2026-11-18 carry and time-bomb fix",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/07694dd595d5399b41ab10503ff8bcb0304be1c9"
+   },
+   {
+    "sha": "774ad31",
+    "at": "2026-11-18T11:16:43+00:00",
+    "author": "Claude",
+    "subject": "cloud pack test: clock relative to now (7-day probe window aged out a fixed date); file Q-TEST-TIMEBOMB-1",
+    "pr": null,
+    "item": "Q-TEST-TIMEBOMB-",
+    "url": "https://github.com/ultrastable/ultrastable/commit/774ad315ca1a53508cf59e3e4fc86f3ba778df13"
+   },
+   {
     "sha": "2767e3a",
     "at": "2026-11-18T11:13:48+00:00",
     "author": "Claude",
@@ -2848,33 +2876,6 @@
     "pr": 617,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/cad2dad4c516a62c004106961381385ad28996f0"
-   },
-   {
-    "sha": "c4f2400",
-    "at": "2026-11-18T01:40:14+00:00",
-    "author": "regen-generated",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/c4f240015a76ba527a5fc585e35dc74cda7756c6"
-   },
-   {
-    "sha": "cdd70bc",
-    "at": "2026-11-18T02:39:57+01:00",
-    "author": "github-actions[bot]",
-    "subject": "ciwatch: failing-workflow items (#615)",
-    "pr": 615,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/cdd70bcf5ce9e6eb3b22107f62c6d263f7b71108"
-   },
-   {
-    "sha": "6ecc8e6",
-    "at": "2026-11-18T01:29:17+00:00",
-    "author": "regen-generated",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/6ecc8e648b193681204607d1add3b8eff65628c8"
    }
   ],
   "pull_requests": []
