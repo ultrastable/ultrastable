@@ -44,8 +44,9 @@ def build(root=ROOT) -> dict:
         rungs[k] = rungs.get(k, 0) + 1
     try:
         sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True).stdout.strip()
+        asof_at = subprocess.run(["git", "log", "-1", "--format=%cI"], cwd=root, capture_output=True, text=True).stdout.strip()
     except OSError:
-        sha = ""
+        sha, asof_at = "", ""
     cl = [json.loads(x) for x in (root / "ops/criticality.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()] if (root / "ops/criticality.jsonl").is_file() else []
     last = cl[-1] if cl else None
     crit_head = f"k = {last['k']} ({last['gate']})" if last else "no tick recorded yet"
@@ -84,7 +85,7 @@ def build(root=ROOT) -> dict:
                       "says": "Read from the deployed runtimes' own /health when this page loads: the last tick each reports, and whether the child reports to its parent."},
     }
     # TENANT-1: one view that takes a tenant id; tenant 0 is Ultrastable on itself. Only registered tenants render; others are 404.
-    return {"asof": sha, "pilot": j(root, "doctrine/pilot-model.json"), "tenants": {"ultrastable": tenant0}}
+    return {"asof": sha, "asof_at": asof_at, "pilot": j(root, "doctrine/pilot-model.json"), "tenants": {"ultrastable": tenant0}}
 
 
 def render(d) -> str:
@@ -108,7 +109,7 @@ def check(root=ROOT) -> list:
     else:
         old = cur.read_text(encoding="utf-8").replace("\r\n", "\n")
         new = render(d)
-        strip = lambda t: "\n".join(l for l in t.splitlines() if '"asof"' not in l)  # the commit id moves on every commit; the data may not
+        strip = lambda t: "\n".join(l for l in t.splitlines() if '"asof"' not in l and '"asof_at"' not in l)  # the commit id moves on every commit; the data may not
         if strip(old) != strip(new):
             bad.append(f"{OUT} is stale; run python3 scripts/build_dashboard.py")
     return bad

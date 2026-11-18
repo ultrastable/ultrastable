@@ -21,7 +21,7 @@ export async function load(env) {
 // `freshness` states the age of each source against its cadence so a stale page says so and the probe (/api/freshness) can fail.
 export const CADENCE_S = { snapshot: 26 * 3600, changes: 30 * 60 };
 const ageS = (iso, now) => { const t = Date.parse(String(iso || "").replace(" ", "T") + (/[zZ]|[+-]\d\d:?\d\d$/.test(String(iso || "")) ? "" : "Z")); return isNaN(t) ? null : Math.max(0, Math.round((now - t) / 1000)); };
-export async function overlay(d, env, generated, now = Date.now()) {
+export async function overlay(d, env, generated, now = Date.now(), bundleAt = null) {
   let live = null;
   try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/live/changes")); if (r.ok) live = await r.json(); } } catch (e) { live = null; }
   const f = { snapshot: { at: generated, age_s: ageS(generated, now), cadence_s: CADENCE_S.snapshot }, changes: { at: live && live.refreshed_at || null, age_s: live ? ageS(live.refreshed_at, now) : null, cadence_s: CADENCE_S.changes } };
@@ -33,8 +33,14 @@ export async function overlay(d, env, generated, now = Date.now()) {
     for (const c of by.values()) (days[c.date] = days[c.date] || []).push(c);
     th.changelog = Object.keys(days).sort().reverse().slice(0, 14).map(date => ({ date, changes: days[date].sort((a, b) => b.n - a.n) }));
   }
-  for (const k of Object.keys(f)) f[k].stale = f[k].age_s == null || f[k].age_s > f[k].cadence_s;
-  d.freshness = { ...f, ok: !f.snapshot.stale && !f.changes.stale, checked_at: new Date(now).toISOString() };
+  // PAGES-FRESH-1: every page served from a bundled generated file (roadmap, claims, self, ultrastability, spinoffs, dashboard preview, feed) is only as new as the
+  // deploy that carried it. The bundle states the commit time it was built at; a merged change newer than that by more than an hour has not reached those pages.
+  const newest = live && live.changes && live.changes.length ? Math.max(...live.changes.map(c => Date.parse(c.merged_at)).filter(t => !isNaN(t))) : null;
+  const bt = Date.parse(bundleAt || "");
+  f.pages = { at: bundleAt || null, behind_s: newest != null && !isNaN(bt) ? Math.max(0, Math.round((newest - bt) / 1000)) : null, cadence_s: 3600 };
+  for (const k of ["snapshot", "changes"]) f[k].stale = f[k].age_s == null || f[k].age_s > f[k].cadence_s;
+  f.pages.stale = isNaN(bt) || (f.pages.behind_s != null && f.pages.behind_s > f.pages.cadence_s);
+  d.freshness = { ...f, ok: !f.snapshot.stale && !f.changes.stale && !f.pages.stale, checked_at: new Date(now).toISOString() };
   return d;
 }
 
@@ -100,17 +106,17 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
  sec('The feedback loop').appendChild(el('p',null,d.feedback_loop));
 }).catch(()=>{$('#live').textContent='The snapshot could not be loaded.'});`;
 
-export async function liveResponse(u, request, env, shell, HTML) {
+export async function liveResponse(u, request, env, shell, HTML, bundleAt = null) {
   if (request.method !== "GET" && request.method !== "HEAD") return new Response(JSON.stringify({ error: "read-only" }), { status: 405, headers: { ...JSON_H, allow: "GET, HEAD" } });
   if (u.pathname === "/api/freshness") {
     const r = await load(env);
-    const d = r ? await overlay({}, env, r.generated) : { freshness: { ok: false, snapshot: { stale: true, at: null }, changes: { stale: true } } };
+    const d = r ? await overlay({}, env, r.generated, Date.now(), bundleAt) : { freshness: { ok: false, snapshot: { stale: true, at: null }, changes: { stale: true } } };
     return new Response(JSON.stringify(d.freshness), { status: d.freshness.ok ? 200 : 503, headers: { ...JSON_H, "cache-control": "no-store" } });
   }
   if (u.pathname === "/api/live") {
     const r = await load(env);
     if (!r) return new Response(JSON.stringify({ error: "No snapshot published yet." }), { status: 503, headers: JSON_H });
-    return new Response(JSON.stringify(await overlay(JSON.parse(r.body), env, r.generated)), { headers: JSON_H });
+    return new Response(JSON.stringify(await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt)), { headers: JSON_H });
   }
   const body = "<div class=\"head\"><h1>Ultrastable running on Ultrastable</h1><p>Everything here is read-only and open to everyone. It is the same record the managers and agents work from.</p><p class=\"meta\" id=\"asof\">Loading...</p></div><div id=\"live\"></div><script>" + JS + "</script>";
   return new Response(shell({ path: "/live", title: "Live: Ultrastable running on Ultrastable", description: "Read-only view of the managers, loops, claim checks and code changes behind Ultrastable." }, body), { headers: HTML });

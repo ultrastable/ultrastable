@@ -1,0 +1,10 @@
+{
+  "id": "Q-RULE-gap-pages-audit",
+  "title": "Q-RULE-gap-pages-audit: Practical Solutions generated bundles (*.gen.js) must read live data or report freshness",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** grep:site/live.js::PAGES-FRESH-1\n**Status:** open\n\nRULES-1 audit (2026-11-18). Done: every page of ultrastable.io served from a bundled generated file (roadmap, claims, self, ultrastability, spinoffs, dashboard preview, feed) now reports its bundle build time to /api/freshness (PAGES-FRESH-1: 503 when a merged change is over an hour newer than the bundle); /live and the owner dashboard already read D1 live.\nRemaining: ultrastable/practical-solutions serves precomputed bundles (worker/src/*.gen.js: ensemble ledger, bca, selfmigrate). Each must read its ledger live from D1 or report its build age through a /api/freshness route the pages-live rule probes.",
+  "labels": [
+    "role:staff"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

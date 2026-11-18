@@ -1,0 +1,314 @@
+{
+ "_doc": "RULES-1 (Rowan, 2026-11-18): every standing rule is enforced by deployed code, never by words. This is the one machine-readable registry. Each rule names the CI checks that fail a change (cmd must appear in a workflow file) and the runtime probes the tick runs on main (`python3 -m foundation rules --run --apply`): a violation files one Q-RULE item with the probe as its done check and runs the declared fix. A rule with no CI check, no runtime probe, or an unfiled gap fails `python3 -m foundation rules --check`. Status is published on the owner ops view (dashboard snapshot panel `rules`). Consumers: foundation/rules.py, scripts/dashboard_snapshot.py, scripts/lane.sh, .github/workflows/checks.yml.",
+ "version": "1.0.0",
+ "workflows": [
+  ".github/workflows/checks.yml"
+ ],
+ "interval_h": 6,
+ "rules": [
+  {
+   "id": "closed-loops",
+   "statement": "Every open item has an owner, a trigger and a closing probe; every loop closes itself (CLOSED-LOOP-1, SERVER-OWNS-LOOPS-1).",
+   "source": "agents/AGENTS.md; doctrine/closed-loop.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation closedloop --check"
+    },
+    {
+     "cmd": "python3 -m foundation loopowner --check"
+    },
+    {
+     "cmd": "python3 -m foundation queue --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "closedloop",
+     "cmd": "python3 -m foundation closedloop --check"
+    },
+    {
+     "id": "item-fields",
+     "cmd": "python3 -m foundation queue --check"
+    },
+    {
+     "id": "loop-owner",
+     "cmd": "python3 -m foundation loopowner --check"
+    }
+   ]
+  },
+  {
+   "id": "autonomy-first",
+   "statement": "No decision, question or step is handed to the owner; agents decide, deploy and verify (GUIDING-DIRECTIVE, CODE-ONLY-ORDER).",
+   "source": "docs/doctrine/GUIDING-DIRECTIVE.md; doctrine/standing-order.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation standingorder --check"
+    },
+    {
+     "cmd": "python3 -m foundation directive --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "standing-order",
+     "cmd": "python3 -m foundation standingorder --check",
+     "fix": "python3 -m foundation standingorder --file-items"
+    },
+    {
+     "id": "directive",
+     "cmd": "python3 -m foundation directive --check"
+    }
+   ]
+  },
+  {
+   "id": "front-end-matches-back-end",
+   "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1).",
+   "source": "doctrine/claims.json; doctrine/claim-code.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation claims --check"
+    },
+    {
+     "cmd": "python3 -m foundation claimcode --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "claims",
+     "cmd": "python3 -m foundation claims --check"
+    },
+    {
+     "id": "claimcode",
+     "cmd": "python3 -m foundation claimcode --check"
+    },
+    {
+     "id": "pages-live",
+     "cmd": "python3 -m foundation rules --probe pages-live"
+    }
+   ],
+   "gaps": [
+    {
+     "what": "Practical Solutions *.gen.js bundles do not yet report freshness",
+     "item": "Q-RULE-gap-pages-audit"
+    }
+   ]
+  },
+  {
+   "id": "no-merge-over-red",
+   "statement": "A PR merges only on a green full `checks` run; a merge that skipped it is filed and fixed (MERGE-AUDIT-1, LANE-1).",
+   "source": "foundation/mergeaudit.py; scripts/lane.sh",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation mergeaudit --check"
+    },
+    {
+     "cmd": "python3 -m foundation ciwatch --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "mergeaudit",
+     "cmd": "python3 -m foundation rules --probe merged-green",
+     "needs_network": true
+    },
+    {
+     "id": "ciwatch",
+     "cmd": "python3 -m foundation ciwatch --check"
+    }
+   ]
+  },
+  {
+   "id": "free-tier",
+   "statement": "Ultrastable stays inside the free plans; every workflow declares a minute budget; spend is measured (FREE-TIER-1, cost, actions budget).",
+   "source": "doctrine/cost.json; seed/worker/src/budget.js; scripts/lint_workflows.py",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation cost --check"
+    },
+    {
+     "cmd": "python3 scripts/lint_workflows.py"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "cost",
+     "cmd": "python3 -m foundation cost --check"
+    },
+    {
+     "id": "ideas-headroom",
+     "cmd": "python3 -m foundation ideas --check"
+    },
+    {
+     "id": "workflow-budgets",
+     "cmd": "python3 scripts/lint_workflows.py"
+    }
+   ]
+  },
+  {
+   "id": "no-qnfo-on-pages",
+   "statement": "No QNFO data on Ultrastable pages: the brand and its data stay separate (shrink-only baseline per page source).",
+   "source": "doctrine/rules-baseline.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation rules --probe no-qnfo-pages"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "no-qnfo-pages",
+     "cmd": "python3 -m foundation rules --probe no-qnfo-pages"
+    }
+   ],
+   "gaps": [
+    {
+     "what": "rendered live pages are not yet scanned, only their source",
+     "item": "Q-RULE-gap-qnfo-live"
+    }
+   ]
+  },
+  {
+   "id": "license-notice",
+   "statement": "Every repository carries the LICENSE and the README license notice (IP protection is the license only).",
+   "source": "scripts/check_license.py; scripts/check_org_repos.py",
+   "ci": [
+    {
+     "cmd": "python3 scripts/check_license.py"
+    },
+    {
+     "cmd": "python3 scripts/check_org_repos.py"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "license-local",
+     "cmd": "python3 scripts/check_license.py"
+    },
+    {
+     "id": "license-fleet",
+     "cmd": "python3 -m foundation rules --probe license-notice",
+     "needs_network": true
+    }
+   ]
+  },
+  {
+   "id": "no-secrets-in-logs",
+   "statement": "No secret value in a committed file, ledger or log; secrets are referenced by binding name only.",
+   "source": "agents/AGENTS.md (never handle secret values)",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation rules --probe no-secrets"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "no-secrets",
+     "cmd": "python3 -m foundation rules --probe no-secrets"
+    }
+   ]
+  },
+  {
+   "id": "server-side-only",
+   "statement": "Every loop runs server-side; nothing depends on a person's computer (SERVER-SIDE ONLY).",
+   "source": "doctrine/server-side.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation serverside --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "serverside",
+     "cmd": "python3 -m foundation serverside --check"
+    }
+   ]
+  },
+  {
+   "id": "clock-never-stops",
+   "statement": "Every clock is probed, a stopped one is restarted, no single point of failure (RESILIENCE-1, CLOCKWORK-1).",
+   "source": "doctrine/resilience.json; doctrine/clocks.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation resilience --check"
+    },
+    {
+     "cmd": "python3 -m foundation clock --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "resilience",
+     "cmd": "python3 -m foundation resilience --check"
+    },
+    {
+     "id": "clock",
+     "cmd": "python3 -m foundation clock --check"
+    }
+   ]
+  },
+  {
+   "id": "user-backend-boundary",
+   "statement": "Users see their idea and front end; backend work stays invisible, audited and in shared code (USER-BACKEND-1, POINT-AND-CLICK-1).",
+   "source": "doctrine/user-backend.json; doctrine/point-and-click.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation userbackend --check"
+    },
+    {
+     "cmd": "python3 -m foundation pointclick --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "userbackend",
+     "cmd": "python3 -m foundation userbackend --check"
+    },
+    {
+     "id": "pointclick",
+     "cmd": "python3 -m foundation pointclick --check"
+    }
+   ]
+  }
+ ],
+ "repos": [
+  "ultrastable",
+  "seed",
+  "workers",
+  "spec",
+  "license",
+  "ops",
+  "practical-solutions",
+  ".github"
+ ],
+ "org": "ultrastable",
+ "notice_pattern": "Ultrastable License|USL-1\\.0",
+ "secret_patterns": [
+  "ghp_[A-Za-z0-9]{30,}",
+  "github_pat_[A-Za-z0-9_]{30,}",
+  "sk-ant-[A-Za-z0-9_-]{30,}",
+  "AKIA[0-9A-Z]{16}",
+  "-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----",
+  "xox[abp]-[A-Za-z0-9-]{20,}"
+ ],
+ "secret_exempt_globs": [
+  "tests/**",
+  "**/test/**",
+  "**/*.test.*",
+  "docs/doctrine/**",
+  "doctrine/rules.json",
+  "foundation/rules.py",
+  "workers/**",
+  "seed/worker/src/auth/**"
+ ],
+ "qnfo_scan_globs": [
+  "site/*.js",
+  "site/*.json",
+  "site/*.html",
+  "public/**/*.html",
+  "public/**/*.js",
+  "dashboard/worker.js"
+ ],
+ "qnfo_exempt_globs": [
+  "site/*.test.mjs",
+  "site/STAGED-COPY.md"
+ ]
+}

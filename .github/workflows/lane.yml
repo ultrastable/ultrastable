@@ -35,6 +35,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
           LANE_PAT: ${{ secrets.LANE_PAT }}
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
+          FLEET_TOKEN: ${{ secrets.FLEET_TOKEN }}
           LANE_APP_ID: ${{ secrets.LANE_APP_ID }}
           LANE_APP_PRIVATE_KEY: ${{ secrets.LANE_APP_PRIVATE_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
