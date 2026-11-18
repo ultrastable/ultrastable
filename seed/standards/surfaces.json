@@ -366,6 +366,19 @@
       "reason": "machine-to-machine watchdog call from the site Worker's service binding; nothing for an agent to discover"
     },
     {
+      "id": "main-commit",
+      "path": "/api/main/commit",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "machine",
+      "standards": [],
+      "discoverable": false,
+      "description": "MAIN-WRITER-1: commits a workflow's data files to main with the org's GitHub App, after verifying the run's GitHub Actions OIDC token (audience ultrastable-main); protected paths are refused.",
+      "reason": "called only by tools/push_main.py inside this repository's workflows with a per-run token; nothing for an agent to discover"
+    },
+    {
       "id": "budget",
       "path": "/api/budget",
       "methods": [
