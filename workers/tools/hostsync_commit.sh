@@ -23,7 +23,7 @@ for i in 1 2 3 4 5; do
   git add ops/hosting
   git diff --cached --quiet && exit 0
   git commit -q -m "$msg"
-  git push -q origin HEAD:main && exit 0
+  python3 tools/push_main.py && exit 0  # MAIN-WRITER-1: the ruleset on main exempts only the org's own GitHub App
   sleep $((i * 3))
 done
 echo "hostsync_commit: push to main did not land after 5 attempts" >&2

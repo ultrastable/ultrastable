@@ -55,7 +55,7 @@
           "name": "main-requires-checks",
           "target": "branch",
           "enforcement": "active",
-          "_doc": "DIRECT-MERGE-GATE-1: #619 was merged by a direct merge call 30 s before its checks run failed; the lane and sweeper gates cannot see that route. GitHub itself refuses a merge to main without a green `checks` run. The Actions app (integration 15368) bypasses, so regen-generated, lane, deploy-record and watchdog pushes made with the workflow token keep working.",
+          "_doc": "DIRECT-MERGE-GATE-1: #619 was merged by a direct merge call 30 s before its checks run failed; the lane and sweeper gates cannot see that route. GitHub itself refuses a merge to main without a green `checks` run. GitHub refuses the Actions app (15368) as a bypass actor, so the fleet's data commits to main go through the tick Worker (MAIN-WRITER-1, tools/push_main.py, POST /api/main/commit), which writes with the org's own GitHub App; the applier adds that app as the only bypass actor.",
           "conditions": {
             "ref_name": {
               "include": [
@@ -87,13 +87,7 @@
               }
             }
           ],
-          "bypass_actors": [
-            {
-              "actor_id": 15368,
-              "actor_type": "Integration",
-              "bypass_mode": "always"
-            }
-          ]
+          "bypass_actors": []
         }
       ]
     },

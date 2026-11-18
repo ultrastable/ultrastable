@@ -5,7 +5,7 @@ name: index
 on:
   schedule: [{cron: "17 6 * * 1"}]
   workflow_dispatch: {}
-permissions: {contents: write, issues: read, actions: write}
+permissions: {id-token: write, contents: write, issues: read, actions: write}
 concurrency: {group: index, cancel-in-progress: false}
 jobs:
   build:
@@ -23,4 +23,4 @@ jobs:
         run: |
           git config user.name "ultrastable-index"; git config user.email "actions@users.noreply.github.com"
           git add docs/ISSUES-BY-AREA.md docs/ip/IP-REGISTER.md
-          git diff --cached --quiet || { git commit -m "index: refresh issues-by-area and IP register from issues"; git push; }
+          git diff --cached --quiet || { git commit -m "index: refresh issues-by-area and IP register from issues"; python3 tools/push_main.py; }
