@@ -55,7 +55,9 @@ export function createHosts(list, { db = null, now = Date.now } = {}) {
 }
 async function record(db, now, e) {
   if (!db) return;
-  try { await db.prepare('INSERT INTO host_events (at, host, kind, worker, repo, sha, ok, detail) VALUES (?,?,?,?,?,?,?,?)').bind(now(), e.host, e.kind, e.worker || null, e.repo || null, e.sha || null, e.ok === false ? 0 : 1, String(e.detail || '').slice(0, 300)).run(); } catch (err) { console.error('host_events', err && err.message); }
+  try { await db.prepare('INSERT INTO host_events (at, host, kind, worker, repo, sha, ok, detail) VALUES (?,?,?,?,?,?,?,?)').bind(now(), e.host, e.kind, e.worker || null, e.repo || null, e.sha || null, e.ok === false ? 0 : 1, String(e.detail || '').slice(0, 300)).run();
+    if (e.kind === 'hooks') await db.prepare('DELETE FROM host_events WHERE at < ?').bind(now() - 14 * 86400000).run();  // RETENTION-1: managed here, `at` is integer milliseconds
+  } catch (err) { console.error('host_events', err && err.message); /* allow-silent: the event log's own write failed, so it cannot be recorded there; the Worker log carries it */ }
 }
 export const recordHostEvent = record;
 
