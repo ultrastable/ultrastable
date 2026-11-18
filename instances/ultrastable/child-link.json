@@ -1,0 +1,27 @@
+{
+ "_doc": "Q-LAYER-child-reporting: the first working parent-child link (doctrine/pilot-model.json layers). The child answers the child health contract at /health; the parent reads it with the http metric M-child-blindspot-link (instances/ultrastable/objectives.json) and a silent child breaches there.",
+ "parent": "ultrastable",
+ "level": 1,
+ "children": [
+  {
+   "child": "blindspot",
+   "health_url": "https://blindspot.ultrastable.app/health",
+   "parent_metric": "M-child-blindspot-link",
+   "contract": {"ok": true, "parent": "ultrastable", "level": 1},
+   "code": ["spinoffs/worker.js", "spinoffs/test/worker.test.mjs"],
+   "verified": true,
+   "verified_at": "2026-11-18T20:08:09Z",
+   "evidence": "GET https://blindspot.ultrastable.app/health returned {\"ok\":true,\"child\":\"blindspot\",\"parent\":\"ultrastable\",\"level\":1} after the spinoff deploy of PR 673"
+  },
+  {
+   "child": "numbers-board",
+   "health_url": "https://numbers-board.ultrastable.app/health",
+   "parent_metric": null,
+   "contract": {"ok": true, "parent": "ultrastable", "level": 1},
+   "code": ["spinoffs/worker.js"],
+   "verified": true,
+   "verified_at": "2026-11-18T20:08:09Z",
+   "evidence": "GET https://numbers-board.ultrastable.app/health returned the same contract"
+  }
+ ]
+}
