@@ -3,6 +3,7 @@
   "max_rows_per_run": 5000,
   "tables": {
   "free_tier_samples": { "column": "at", "keep_days": 7, "reason": "FREE-TIER-1: hourly account-wide usage samples; the tick reads the latest two hours" },
+  "host_events": { "keep": "managed", "reason": "HOSTS-1: one row per hosting action or event, pruned by hosts.js record() after 30 days; integer-millisecond time column, so retention.js cannot prune it" },
   "airouter_cache": { "keep": "managed", "reason": "AI-ROUTER-1: cached model replies, pruned by core/airouter (7 days)" },
   "airouter_calls": { "keep": "managed", "reason": "AI-ROUTER-1: one row per model call, pruned by core/airouter (30 days); integer-millisecond time column, so retention.js cannot prune it" },
   "airouter_stats": { "keep": "state", "reason": "AI-ROUTER-1: one row per kind and model, the routing memory" },

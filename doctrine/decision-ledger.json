@@ -2171,6 +2171,15 @@
    "title": "HOSTS-1 host adapter wiring",
    "body": "One host adapter interface (Cloudflare, GitHub Actions, GCP) with failover; push/workflow_run webhooks deploy and report commit statuses; /hook/host takes inbound host events; hosts loop probes health, detects stalls, reconciles stuck handoffs.",
    "probe": "grep:seed/worker/test/hosts.test.js::a push to main deploys touched workers once"
+  },
+  {
+   "id": "lesson-2026-11-18-free-tier-1-usage-sample-runs-first-in-the-tick",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "FREE-TIER-1: usage sample runs first in the tick",
+   "body": "The free-tier usage sample ran in the last beat of the invocation and failed with Too many subrequests when earlier loops used the 50 allowed (00:10 UTC 2026-11-18), leaving d1 and request usage null. seed/worker/src/index.js now reads it before every other loop. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
+   "probe": "grep:seed/worker/src/index.js::const freeTier = await sampleFreeTier",
+   "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
   }
  ]
 }

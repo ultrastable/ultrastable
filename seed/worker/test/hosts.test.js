@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // HOSTS-1
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
