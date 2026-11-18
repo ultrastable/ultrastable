@@ -28,7 +28,7 @@ INSERT INTO gate_cards (id,what,why_gated,default_in_effect,closing_probe) VALUE
 INSERT INTO tick_runs (started_at,finished_at,steps_completed,steps_total,report) VALUES (datetime('now','-2 minutes'),datetime('now','-2 minutes'),10,10,'Happened: tick ran 10/10 steps; selfaudit: 7 green, 2 red (k-below-min,qnfo-audit-d1-budget); dispatched 0 item(s)');`);
 const ORG = d1(db);
 const tokenHash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode("s3cret")))).map(x => x.toString(16).padStart(2, "0")).join("");
-const ENV = { ORG, INTEGRATION_TOKENS: "companion:" + tokenHash, ASSETS: { get: async () => null, list: async () => ({ keys: [{ name: "state:abcdef0123" }, { name: "state:bad" }] }) } };
+const ENV = { READ_MEMO_MS: 0, ORG, INTEGRATION_TOKENS: "companion:" + tokenHash, ASSETS: { get: async () => null, list: async () => ({ keys: [{ name: "state:abcdef0123" }, { name: "state:bad" }] }) } };
 const get = async (u, env = ENV, init) => mod.fetch(new Request(u, init), env);
 const J = async (u, env, init) => { const r = await get(u, env, init); return { status: r.status, body: await r.json(), headers: r.headers }; };
 
