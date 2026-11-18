@@ -60,3 +60,13 @@ test("a status board serves its facts with no database, no input and a freshness
   assert.equal(typeof m.board_age_hours, "number");
   assert.equal((await handle(new Request(h + "/api/check?domain=example.org"), {})).status, 404);  // a board takes no input
 });
+
+test("CHILD-LINK-1: every live spinoff answers the child health contract for its parent", async () => {
+  for (const slug of Object.keys(bundle.apps)) {
+    if (bundle.retired.includes(slug)) continue;
+    const r = await handle(new Request("https://" + slug + ".ultrastable.app/health"), {});
+    assert.equal(r.status, 200, slug); const j = await r.json();
+    assert.equal(j.ok, true); assert.equal(j.child, slug); assert.equal(j.parent, "ultrastable"); assert.equal(j.level, 1);
+  }
+  assert.equal((await handle(new Request("https://nope.ultrastable.app/health"), {})).status, 404, "an unknown child has no health");
+});

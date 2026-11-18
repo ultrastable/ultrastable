@@ -3,6 +3,7 @@
 // SELFAUDIT-1: the tick audits its own failure modes. Every mode in autonomy/failure-modes.json has a read-only SELECT probe (1 = healthy).
 // Red: item FM-<id> is filed (owner role, closing probe selfaudit:<id>) or reopened. Green: the item closes WITH evidence. An item whose
 // closing probe is selfaudit:<id> can never stay done while that probe is red: resolving is gated by the probe, not by a message.
+import { tenantOf } from './tenant.js';  // Q-TENANT-row-isolation
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()) || null;
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
@@ -66,7 +67,7 @@ export async function selfAuditStep(db, ctx, register, ensureItem) {
     }
   }
   // Any other item that names a selfaudit probe may not stay closed while that probe is red.
-  for (const it of await all(db, `SELECT id, closing_probe FROM items WHERE closing_probe LIKE 'selfaudit:%' AND status='done' AND id NOT LIKE 'FM-%'`)) {
+  for (const it of await all(db, `SELECT id, closing_probe FROM items WHERE closing_probe LIKE 'selfaudit:%' AND status='done' AND id NOT LIKE 'FM-%' AND (tenant_id IS NULL OR tenant_id = ?)`, tenantOf(ctx))) {
     const mid = it.closing_probe.slice('selfaudit:'.length);
     if (red.includes(mid)) {
       await run(db, `UPDATE items SET status='ready', disposition=NULL, updated_at=? WHERE id=?`, ctx.nowIso, it.id);
@@ -81,7 +82,7 @@ export async function selfAuditStep(db, ctx, register, ensureItem) {
 // Loop-breaker for dispatch: an item dispatched max times with no outcome is blocked and a LOOPBREAK item (a different approach) takes its place.
 export async function loopBreak(db, ctx, max, ensureItem) {
   const rows = await all(db, `SELECT d.item_id AS id, COUNT(*) AS n FROM dispatches d JOIN items i ON i.id=d.item_id
-      WHERE i.status IN ('ready','claimed','open') AND d.item_id NOT IN (SELECT item_id FROM outcomes WHERE item_id IS NOT NULL) GROUP BY d.item_id HAVING COUNT(*) >= ?`, max);
+      WHERE i.status IN ('ready','claimed','open') AND (i.tenant_id IS NULL OR i.tenant_id = ?) AND d.item_id NOT IN (SELECT item_id FROM outcomes WHERE item_id IS NOT NULL) GROUP BY d.item_id HAVING COUNT(*) >= ?`, tenantOf(ctx), max);
   for (const r of rows) {
     await run(db, `UPDATE items SET status='blocked', blocker=?, updated_at=? WHERE id=?`, `loop-breaker: dispatched ${r.n} times with no outcome`, ctx.nowIso, r.id);
     await run(db, `DELETE FROM claims WHERE item_id=?`, r.id);

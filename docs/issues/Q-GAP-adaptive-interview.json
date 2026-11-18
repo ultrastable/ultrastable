@@ -1,7 +1,7 @@
 {
   "id": "Q-GAP-adaptive-interview",
   "title": "Q-GAP-adaptive-interview: Adaptive follow-up questions",
-  "body": "**Owner:** staff\n**Trigger:** every executor run\n**Done check:** grep:site/worker.js::adaptiveQuestion\n**Status:** open\n\nGap in component `planning-forks`: Adaptive follow-up questions. Questions come from a fixed bank. Source: doctrine/market.json (MARKET-1).",
+  "body": "**Owner:** staff\n**Trigger:** every executor run\n**Done check:** grep:site/worker.js::adaptiveQuestion\n**Status:** closed\n**Evidence:** adaptiveQuestion in site/worker.js picks the next question from the answers (model first, rule table floor, cap 4); site/site.test.mjs passes\n\nGap in component `planning-forks`: Adaptive follow-up questions. Questions come from a fixed bank. Source: doctrine/market.json (MARKET-1).",
   "labels": [
     "role:staff",
     "gap"

@@ -135,13 +135,25 @@
    ]
   },
   {
-   "status": "pinned",
+   "status": "live",
    "name": "Adaptive interview",
-   "what": "Pick the next question from the answers so far with a small model instead of a fixed bank.",
+   "what": "After each answer the next question is chosen from what was said: a bound model proposes it, a rule table is the floor, at most four questions.",
    "where": "site/worker.js adaptiveQuestion",
    "issue": "Q-GAP-adaptive-interview",
    "code": [
+    "site/worker.js",
     "site/interview.js"
+   ]
+  },
+  {
+   "status": "live",
+   "name": "Default policy pack",
+   "what": "A short buyer-facing pack of eight plain rules over the full policy; the bootstrapper loads it, refuses a pack that promises more than the policy allows, and writes org/policy-pack.json.",
+   "where": "seed/autonomy/default-policy-pack.json",
+   "issue": "PIN-default-policy-pack",
+   "code": [
+    "seed/autonomy/default-policy-pack.json",
+    "seed/bootstrap/bootstrap.py"
    ]
   },
   {
@@ -170,13 +182,15 @@
    ]
   },
   {
-   "status": "testing",
+   "status": "live",
    "name": "Tenant isolation",
-   "what": "Tenant 0 (Ultrastable on itself) and customer tenants share one shape; the dashboard takes a tenant id and unknown tenants 404; a runtime measures only its own tenant's metrics. Tenant ids on the remaining core tables and per-tenant credentials are pending.",
+   "what": "Tenant 0 (Ultrastable on itself) and customer tenants share one shape; the dashboard takes a tenant id and unknown tenants 404; items, claims, gate cards and trust rows carry a tenant id, and a runtime measures, claims, closes and counts only its own tenant's rows. The trust table's primary key does not carry the tenant yet, so a foreign trust row at the same key is left untouched rather than shared.",
    "where": "/dashboard?tenant=ultrastable",
    "issue": "Q-TENANT-row-isolation",
    "code": [
     "seed/worker/migrations/0004_objectives.sql",
+    "seed/worker/migrations/0026_tenant_core.sql",
+    "seed/worker/src/tenant.js",
     "seed/worker/src/tick.js",
     "scripts/build_dashboard.py"
    ]
@@ -194,10 +208,6 @@
   [
    "The prediction match rate is scored by the system itself. An outside audit is a pilot goal.",
    "PIN-outside-audit"
-  ],
-  [
-   "A buyer needs a short default policy pack; today the policy is long and written as owner directives.",
-   "PIN-default-policy-pack"
   ]
  ]
 }

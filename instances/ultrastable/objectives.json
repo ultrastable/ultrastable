@@ -108,6 +108,19 @@
    "grace_hours": 2,
    "owner_role": "product-manager-2",
    "remedy": "ultrastable-tenants /health reports a failed self-test. Read its selftest result, fix tenants/src or tenants/tenantstore, and let deploy-workers redeploy it."
+  },
+  {
+   "id": "M-child-blindspot-link",
+   "objective_id": null,
+   "name": "child blindspot answers the parent's health probe",
+   "kind": "liveness",
+   "source": "http",
+   "spec": "https://blindspot.ultrastable.app/health",
+   "op": ">=",
+   "threshold": 1,
+   "grace_hours": 6,
+   "owner_role": "operations",
+   "remedy": "The level-1 child blindspot stopped answering /health. Check the ultrastable-spinoffs Worker route and the child registry (spinoffs/registry.js); a silent child must breach here, at its parent."
   }
  ]
 }

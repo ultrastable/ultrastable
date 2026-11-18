@@ -379,6 +379,36 @@ async function questionsFor(env, idea) {
     return qs.length === 2 ? qs : FALLBACK_QS;
   } catch (e) { console.error("questions failed", String(e)); return FALLBACK_QS; }
 }
+// ADAPTIVE-1 (Q-GAP-adaptive-interview): the question bank is only the opening. After each answer the next question is chosen from what the person
+// already said: a bound model proposes it, and a deterministic rule table is the floor so it works with no model. At most MAX_QS questions, never a repeat.
+const MAX_QS = 4;
+const FOLLOW_UPS = [
+  { ask: /add or save|their own information|sign-up/i, on: "yes", q: "Should what people add be visible to every visitor, not just themselves?", cue: "Yes for a shared list or guestbook; no for private notes." },
+  { ask: /add or save|their own information|sign-up/i, on: "no", q: "Is it mainly something people read and look at?", cue: "For example an information page, a menu or a price list." },
+  { ask: /visible to every visitor/i, on: "yes", q: "Should someone be able to remove a wrong entry?", cue: "We will add a delete button next to each entry." },
+  { ask: /phone/i, on: "yes", q: "Will people use it outdoors or on the move?", cue: "We will use larger text and higher contrast." },
+  { ask: /phone/i, on: "no", q: "Will people mostly use it on a large screen or a laptop?", cue: "We will use the wider layout first." },
+  { ask: /read and look at/i, on: "yes", q: "Does it need to stay up to date with prices, hours or dates?", cue: "We will put those in one easy place to change." }];
+export function adaptiveRule(a) {
+  const asked = new Set((a.qs || []).map(x => x.q));
+  for (let i = a.ans.length - 1; i >= 0; i--) {
+    const hit = FOLLOW_UPS.find(f => f.on === a.ans[i] && f.ask.test(a.qs[i].q) && !asked.has(f.q));
+    if (hit) return { q: hit.q, cue: hit.cue };
+  }
+  return null;
+}
+export async function adaptiveQuestion(env, a) {
+  if (!a || !Array.isArray(a.qs) || a.ans.length < a.qs.length || a.qs.length >= MAX_QS) return null;
+  const told = a.qs.map((x, i) => "- " + x.q + " " + (a.ans[i] || "").toUpperCase()).join("\n");
+  if (env && env.AI) {
+    try {
+      const r = await aiJson(env, ASKERS, "You are interviewing someone about a new web idea. Using their answers so far, reply with only JSON {\"q\":\"one new yes/no question in plain words that would change what gets built\",\"cue\":\"one short example\"}, or {\"done\":true} when nothing important is unknown. Never repeat a question already asked. No jargon.", "Idea: " + a.idea + "\nAnswers so far:\n" + told, 300);
+      if (r && r.done) return null;
+      if (r && typeof r.q === "string" && r.q.length < 200 && !a.qs.some(x => x.q.toLowerCase() === r.q.toLowerCase())) return { q: r.q, cue: String(r.cue || "").slice(0, 160) };
+    } catch (e) { console.error("adaptive question failed", String(e)); }
+  }
+  return adaptiveRule(a);
+}
 function briefOf(a) {
   const lines = a.qs.map((x, i) => "- " + x.q + " " + ({ yes: "YES", no: "NO", unsure: "NOT SURE (pick the safest sensible default and say nothing)" }[a.ans[i]] || "NOT ASKED"));
   return "Idea: " + a.idea + "\nWhat the person told us:\n" + lines.join("\n");
@@ -534,6 +564,7 @@ async function takeAnswer(request, env, ctx) {
   const a = okId(id) ? await jget(env, "ask:" + id) : null;
   if (!a || !["yes", "no", "unsure"].includes(v)) return new Response(start("That question was not found."), { status: 404, headers: HTML });
   if (a.ans.length < a.qs.length) a.ans.push(v);
+  if (a.ans.length === a.qs.length) { const next = await adaptiveQuestion(env, a); if (next) a.qs.push(next); }  // ADAPTIVE-1
   await jput(env, "ask:" + id, a);
   return a.ans.length < a.qs.length ? goto(id, "/ask") : launch(env, ctx, id, briefOf(a), null, null);
 }
