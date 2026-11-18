@@ -45,19 +45,24 @@ def main():
         except urllib.error.HTTPError as e:
             detail = e.read().decode()[:300]
             print(f"push_main: HTTP {e.code} (try {attempt}): {detail}", file=sys.stderr)
-            if e.code not in (409, 502, 503): return 1
+            if e.code not in (409, 502, 503): return fallback()
+        except (urllib.error.URLError, TimeoutError) as e:
+            print(f"push_main: {e} (try {attempt})", file=sys.stderr)
         time.sleep(attempt * 3)
-    return 1
+    return fallback()
 
 def fallback():
-    """Second route (no single route): while the ruleset still lets the run's own token write, a plain push lands the same commit."""
-    r = subprocess.run(["git", "push", "origin", "HEAD:main"], capture_output=True)
-    print("push_main: fallback git push " + ("landed" if r.returncode == 0 else "refused: " + r.stderr.decode()[-200:]), file=sys.stderr)
-    return r.returncode
+    # Rollout safety: until the ruleset on main is active a plain push still lands. Once it is active GitHub refuses this and the step fails loudly.
+    print("push_main: the Worker route did not land the commit; trying a direct push", file=sys.stderr)
+    for _ in range(3):
+        if subprocess.run(["git", "pull", "--rebase", "-q", "origin", "main"]).returncode == 0 and subprocess.run(["git", "push", "-q", "origin", "HEAD:main"]).returncode == 0:
+            return 0
+        time.sleep(3)
+    return 1
 
 if __name__ == "__main__":
     try:
         rc = main()
-    except (SystemExit, Exception) as e:  # no OIDC token, network error, Worker not deployed yet
-        print(f"push_main: worker route failed: {e}", file=sys.stderr); rc = 1
-    sys.exit(rc and fallback())
+    except SystemExit as e:  # no OIDC token in this job: the Worker route cannot start, so the second route still runs
+        print(f"push_main: worker route unavailable: {e}", file=sys.stderr); rc = fallback()
+    sys.exit(rc)

@@ -60,6 +60,8 @@ export async function rulesetsDue(db, env, opts = {}) {
   for (const { tenant } of rows) {
     const done = await db.prepare("SELECT 1 AS x FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'rulesets' LIMIT 1").bind(tenant).first();
     if (done) { out.push({ tenant, action: 'done' }); continue; }
+    // MAIN-WRITER-1 rollout guard: with the rule active only the org's own app may write to main, so wait until a workflow commit has landed through it.
+    if (!opts.token && !(await db.prepare("SELECT 1 AS x FROM credential_events WHERE provider = 'github-app' AND event = 'main-writer' LIMIT 1").first())) { out.push({ tenant, action: 'await-main-writer' }); continue; }
     const recent = await db.prepare("SELECT 1 AS x FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'failed' AND detail LIKE 'ruleset %' AND at > ? LIMIT 1").bind(tenant, new Date((opts.now || Date.now()) - 3600e3).toISOString().slice(0, 19) + 'Z').first();
     if (recent) { out.push({ tenant, action: 'backoff' }); continue; }  // a refused rule is retried hourly, not every tick
     const r = await applyRulesets(db, env, tenant, opts).catch(e => ({ ok: false, error: String(e && e.message || e) }));
