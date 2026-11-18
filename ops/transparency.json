@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-18T13:49:37Z",
- "commit": "14b39e7",
+ "generated": "2026-11-18T13:58:07Z",
+ "commit": "0226079",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 101,
@@ -18,8 +18,8 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 360,
-  "backlog_items": 427
+  "backlog_open": 361,
+  "backlog_items": 428
  },
  "unknowns": {
   "units": 117,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 427,
+   "items": 428,
    "by_status": {
     "closed": 62,
-    "open": 360,
+    "open": 361,
     "done": 5
    },
-   "takeable_now": 331
+   "takeable_now": 332
   },
   "merged": {
    "total": 0,
@@ -100,9 +100,9 @@
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-18T13:30:11Z",
+    "createdAt": "2026-11-18T13:55:58Z",
     "event": "push",
-    "headSha": "1787bbef2b877e14b4c7946db83de8eed0600d4b"
+    "headSha": "42dae52b74c6ed71555d9fc4f4e81ad6e2b19fc3"
    },
    "per_day_success": {
     "2026-11-18": 47
@@ -111,7 +111,8 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "success": 30
+    "": 2,
+    "success": 28
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -159,7 +160,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 100.4,
+   "age_s": -3.3,
    "status": "fresh",
    "missed": 0
   },
@@ -183,15 +184,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 276.4,
+   "age_s": 18.7,
    "status": "fresh",
-   "missed": 0
+   "missed": 0,
+   "lag_s": 4.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 80714.4,
+   "age_s": 81227.7,
    "status": "fresh",
    "missed": 0
   }
@@ -315,13 +317,13 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-18T13:48:40Z",
+  "generated": "2026-11-18T13:57:12Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1354.6,
+    "expected_today": 1354.7,
     "value": null,
     "behind": null,
     "progress": null
@@ -374,7 +376,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-18T13:48:40Z",
+     "at": "2026-11-18T13:57:12Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -444,16 +446,16 @@
  },
  "growth": {
   "mix": {
-   "growth": 2,
+   "growth": 0,
    "fix": 0,
-   "maintenance": 18,
+   "maintenance": 20,
    "total": 20,
-   "growth_share": 0.1,
+   "growth_share": 0.0,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 26,
-  "items_takeable": 331,
+  "items_takeable": 332,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -498,7 +500,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 175.3,
+   "last_beat_age_s": 68.5,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -509,7 +511,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 80789.3,
+   "last_beat_age_s": 81299.5,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -520,7 +522,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 1151.3,
+   "last_beat_age_s": 114.5,
    "expected_interval_s": 86400,
    "beats_24h": 60,
    "expected_24h": 1.0,
@@ -531,7 +533,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 77644.3,
+   "last_beat_age_s": 78154.5,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -542,7 +544,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 69637.3,
+   "last_beat_age_s": 70147.5,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -560,7 +562,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 74666.3,
+   "last_beat_age_s": 75176.5,
    "expected_interval_s": 86400,
    "beats_24h": 3,
    "expected_24h": 1.0,
@@ -571,7 +573,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 148.3,
+   "last_beat_age_s": 38.5,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2514,58 +2516,76 @@
  "changes": {
   "commits": [
    {
-    "sha": "14b39e7",
-    "at": "2026-11-18T13:46:01+00:00",
+    "sha": "d2d7166",
+    "at": "2026-11-18T13:56:25+00:00",
     "author": "Claude",
-    "subject": "USE-COUNT-1: aggregate daily use counter per live app (count only), reported as uses_7d for BENEFIT-1",
+    "subject": "DECISIONS-1: write-back for the session",
     "pr": null,
-    "item": "USE-COUNT-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/14b39e79723de14945809c9513196fa99ee06f62"
+    "item": "DECISIONS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/d2d7166127e98b0bf53d3c7c0965a108f71f2e8e"
    },
    {
-    "sha": "1f54468",
-    "at": "2026-11-18T13:43:31+00:00",
+    "sha": "51793ed",
+    "at": "2026-11-18T13:56:18+00:00",
     "author": "Claude",
-    "subject": "BENEFIT-1: public-benefit score ranks ideas; swap US-only apps for global sources (World Bank, Open-Meteo)",
+    "subject": "Merge main into DECISIONS-1",
     "pr": null,
-    "item": "BENEFIT-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/1f54468d32976bb414e3912f99a938c1661daa0e"
+    "item": "DECISIONS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/51793edc776a284bce92f3ead309a815db6ed9f6"
    },
    {
-    "sha": "58b4dd8",
-    "at": "2026-11-18T13:39:34+00:00",
-    "author": "Claude",
-    "subject": "SPINOFF-GOOD-1: regenerate dashboard data after merge",
+    "sha": "034161f",
+    "at": "2026-11-18T13:56:09+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
     "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/034161f3c432a77499a5f10c7aba5f90b781053d"
+   },
+   {
+    "sha": "42dae52",
+    "at": "2026-11-18T14:55:55+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SPINOFF-GOOD-1: Ultrastable for good, four live public-benefit apps (#648)",
+    "pr": 648,
     "item": "SPINOFF-GOOD-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/58b4dd886a625d1db7673a4f488dfae27492b847"
+    "url": "https://github.com/ultrastable/ultrastable/commit/42dae52b74c6ed71555d9fc4f4e81ad6e2b19fc3"
    },
    {
-    "sha": "3f517e0",
-    "at": "2026-11-18T13:39:23+00:00",
+    "sha": "24eac23",
+    "at": "2026-11-18T13:55:49+00:00",
     "author": "Claude",
-    "subject": "SPINOFF-GOOD-1: merge main; spinoff-live freshness probe registered in rules.json",
+    "subject": "DECISIONS-1: use the design token for the page bars, no off-theme colour",
     "pr": null,
-    "item": "SPINOFF-GOOD-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/3f517e0c2166466f50fdc5937c2fbf309d71ee74"
+    "item": "DECISIONS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/24eac232841d8b22fb5a6dcc3d208581d07c4315"
    },
    {
-    "sha": "e17fd60",
-    "at": "2026-11-18T13:38:28+00:00",
+    "sha": "012995b",
+    "at": "2026-11-18T13:52:40+00:00",
     "author": "Claude",
-    "subject": "SPINOFF-GOOD-1: launch test accepts live archetypes",
+    "subject": "DECISIONS-1: register /api/decisions in the standards surfaces",
     "pr": null,
-    "item": "SPINOFF-GOOD-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/e17fd60b38568001b5bcad54a8ce242f264375d7"
+    "item": "DECISIONS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/012995b2b2c1ff9b7a1d39df6c418f0e6f832b8d"
    },
    {
-    "sha": "fb3ac43",
-    "at": "2026-11-18T13:34:50+00:00",
+    "sha": "59c6ae4",
+    "at": "2026-11-18T13:51:32+00:00",
     "author": "Claude",
-    "subject": "SPINOFF-GOOD-1: four public-benefit live apps (Open Comment, Quake Watch, Nonprofit Check, Access Check)",
+    "subject": "REGEN-1: regenerate generated files for the /decisions page",
     "pr": null,
-    "item": "SPINOFF-GOOD-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/fb3ac4381ec5704e1efb406071852240161a1067"
+    "item": "REGEN-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/59c6ae45b7c313dc61dbd71fc501e5cd0b308cd2"
+   },
+   {
+    "sha": "63504ea",
+    "at": "2026-11-18T13:50:41+00:00",
+    "author": "Claude",
+    "subject": "DECISIONS-1: every autonomous decision is measured (metric, prediction, scored outcome, /decisions)",
+    "pr": null,
+    "item": "DECISIONS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/63504ea32038c264809ea1df1d6dcc63ec33c11d"
    },
    {
     "sha": "6b2e962",
@@ -2854,24 +2874,6 @@
     "pr": null,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/9872ddef1a6c9798c748f98d6add71ef1e5fd69f"
-   },
-   {
-    "sha": "f08d52a",
-    "at": "2026-11-18T13:04:18+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/f08d52a3ef4e2e7d196bf5254f43a603c26e2a5a"
-   },
-   {
-    "sha": "9ae344a",
-    "at": "2026-11-18T13:04:07+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "deploy-ultrastable: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/9ae344a2c8cd8afc0dbe43dce313810f928815ee"
    }
   ],
   "pull_requests": []

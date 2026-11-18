@@ -23,6 +23,7 @@ import { indexNow, keyFile, SITEMAP_PATHS } from "./promote.js";
 import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
 import { negotiate, robots, WEBMCP_JS } from "./readiness.js";  // AGENT-READY-2
 import ROAD from "./roadmap-data.js";
+import DEC from "./decisions-data.js";  // DECISIONS-1: generated from ops/decisions/*.jsonl
 import SPIN from "./spinoff-roadmap-data.js";  // SPINOFF-IDEAS-1: generated from the idea queue and the free-tier headroom
 import ORGMAP from "./orgmap.js"; // ORGMAP-1: generated from brand/brand.json
 import SG from "./suggest.js";
@@ -765,6 +766,38 @@ function spinRoadmap() {
     + "<h3>Live apps</h3><ul>" + live + "</ul><h3>Next, ranked by value over cost</h3><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Idea</th><th>Kind</th><th>Score</th><th>State</th></tr></thead><tbody>" + q + "</tbody></table></div>"
     + "<h3>Free-plan headroom, today</h3><div class=\"us-wrap\"><table class=\"us-table\"><tbody>" + h + "</tbody></table></div><h3>Loop scope increases</h3><ul>" + sc + "</ul>";
 }
+// DECISIONS-1: every decision point, the metric it optimizes, and whether its decisions improved that metric. Repo-side points come from the generated module;
+// Worker-side points (AI router, free-tier governor) are read live from the tick Worker's D1 (7-day window) on each request.
+async function decisionsData(env) {
+  const out = JSON.parse(JSON.stringify(DEC));
+  let live = null;
+  try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/decisions")); if (r.ok) live = await r.json(); } } catch (e) { live = null; }
+  out.live_as_of = live ? live.as_of : null;
+  out.points.forEach(function (p) {
+    if (p.store !== "d1") return;
+    const l = live && live.points && live.points[p.id];
+    if (l) Object.assign(p, { decisions: l.decisions, scored: l.scored, hits: l.hits, hit_rate: l.hit_rate, mean_abs_error: l.mean_abs_error, last_at: l.last_at, by_day: l.by_day, trend: l.trend, source: "live D1 (7-day window; older rows are hash-chained archives)" });
+    else p.source = "live D1 not reachable from this request";
+  });
+  return out;
+}
+function decisionsPage(d) {
+  const tag = { improving: "ok", flat: "info", worse: "warn", insufficient: "info", unmeasured: "warn" };
+  const rows = d.points.map(function (p) {
+    const hr = p.hit_rate == null ? "not scored yet" : Math.round(p.hit_rate * 100) + "% of " + p.scored + " scored";
+    const days = (p.by_day || []).map(function (x) { return "<span title=\"" + esc(x.day) + ": " + x.decisions + " decisions, " + x.scored + " scored, " + x.hits + " hit\" style=\"display:inline-block;width:10px;margin-right:2px;background:var(--ds-accent);height:" + Math.max(3, Math.min(28, x.decisions * 4)) + "px;vertical-align:bottom\"></span>"; }).join("");
+    return "<tr><td><strong>" + esc(p.name) + "</strong><br><small>" + esc(p.why) + "</small></td>"
+      + "<td><code>" + esc(p.metric) + " " + esc(p.target) + "</code><br><small>" + esc(p.metric_says) + "</small></td>"
+      + "<td><small>" + esc(p.predict) + "</small></td>"
+      + "<td>" + p.decisions + " made<br>" + esc(hr) + (p.mean_abs_error == null ? "" : "<br><small>mean prediction error " + esc(p.mean_abs_error) + "</small>") + "<br><span aria-hidden=\"true\">" + days + "</span></td>"
+      + "<td class=\"" + (tag[p.trend.verdict] || "info") + "\">" + esc(p.trend.verdict) + "<br><small>" + (p.trend.older_mean != null ? esc(p.trend.older_mean) + " then " + esc(p.trend.newer_mean) : p.trend.have != null ? p.trend.have + " of " + p.trend.need + " scored decisions needed" : "") + "</small></td>"
+      + "<td><small>" + esc(p.source) + "</small></td></tr>";
+  }).join("");
+  return shell({ path: "/decisions", title: "Decision metrics - Ultrastable", description: "Every autonomous decision Ultrastable makes, the metric it optimizes, its predicted effect, the measured outcome and whether the decisions improved the metric." },
+    "<div class=\"head\"><h1>Decision metrics</h1><p>Measure what we improve and improve what we measure. Each automatic decision records the metric it optimizes and its predicted effect, then is scored against what really happened. Nothing here is typed by hand: repo-side rows are generated from the decision ledger after a merge and the Worker-side rows are read live. Machine-readable: <a href=\"/api/decisions\">/api/decisions</a>.</p></div>"
+    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Decision point</th><th>Metric it optimizes</th><th>Predicted effect</th><th>Decisions and scoring</th><th>Did decisions improve it?</th><th>Source</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
+    + "<p class=\"meta\">Generated " + esc(d.as_of) + (d.live_as_of ? "; live read " + esc(d.live_as_of) : "; live read unavailable") + ". The verdict compares the older half of scored decisions with the newer half and says insufficient until enough are scored. A code path that makes a decision without a declared metric fails the build (<code>python3 -m foundation decisions --check</code>).</p>");
+}
 function roadmap() {
   const done = (i) => /^done/i.test(i.status), ids = Object.keys(ROAD.issues).sort();
   const rows = ids.map(function (k) { const i = ROAD.issues[k]; return "<tr id=\"" + esc(k) + "\"><td><strong>" + esc(k) + "</strong><br><small>" + esc(i.milestone) + "</small></td><td>" + esc(i.title) + "<br><small>Owner: " + esc(i.owner) + ". Trigger: " + esc(i.trigger) + "</small></td><td class=\"" + (done(i) ? "us-pass" : "us-fail") + "\">" + (done(i) ? "Done" : "Open") + "</td><td><small><code>" + esc(i.done) + "</code></small></td></tr>"; }).join("");
@@ -862,7 +895,7 @@ const handler = {
     { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/showcase", "/for", "/claims", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/decisions", "/org", "/how", "/showcase", "/for", "/claims", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && (PAGES.includes(pth) || /^\/(for|showcase)\/[a-z0-9-]+$/.test(pth))) { /* UIUX-1: audience and case pages are path steps, so they are counted too */ const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     { const m = /^\/(for|showcase)\/([a-z0-9-]+)\/?$/.exec(u.pathname); if (m) { const h = m[1] === "for" ? forAudience(m[2]) : showcaseCase(m[2]); if (h) return new Response(h, { headers: HTML }); } }
     switch (u.pathname.replace(/\/$/, "") || "/") {
@@ -883,6 +916,8 @@ const handler = {
       case "/org": return new Response(org(), { headers: HTML });
       case "/engineers": return new Response(engineers(), { headers: HTML });
       case "/roadmap": return new Response(roadmap(), { headers: HTML });
+      case "/decisions": return new Response(decisionsPage(await decisionsData(env)), { headers: { ...HTML, "Cache-Control": "public, max-age=60" } });
+      case "/api/decisions": return new Response(JSON.stringify(await decisionsData(env)), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } });
       case "/ops": return new Response(opsPage(shell), { headers: { ...HTML, "Cache-Control": "no-store" } });
       case "/dashboard": { const t = u.searchParams.get("tenant") || "ultrastable"; const h = await dashboard(t); return h ? new Response(h, { headers: HTML }) : new Response("No such tenant", { status: 404, headers: HTML }); }
       case "/roadmap.json": return new Response(JSON.stringify({ ...ROAD, spinoffs: SPIN }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });

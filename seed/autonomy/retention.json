@@ -216,6 +216,13 @@
       "column": "refreshed_at",
       "keep_days": 60,
       "reason": "LIVE-FRESH-1: one row per repository, rewritten every pass"
+    },
+    "decision_log": {
+      "column": "at",
+      "unit": "ms",
+      "keep_days": 7,
+      "reason": "DECISIONS-1: one row per Worker-side decision (AI router model pick, free-tier governor level) with its metric, prediction and outcome; the public page reads 7 days, older rows are hash-chained archives",
+      "archive": true
     }
   }
 }

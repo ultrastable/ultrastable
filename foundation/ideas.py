@@ -268,6 +268,7 @@ def candidates(root=REPO, now=None) -> list[dict]:
 
 # ---- brainstorm --------------------------------------------------------------------------------------------------------
 
+# DECISION-METRIC: idea-loop
 def brainstorm(root=REPO, apply=False, now=None) -> dict:
     """Generate ideas from the repository's own data: a board for every public ledger nobody shows yet, and the next loop-scope increases the headroom can pay for."""
     cfg, root, t = load(root), Path(root), _now(now)
@@ -305,8 +306,12 @@ def brainstorm(root=REPO, apply=False, now=None) -> dict:
             f.write_text(json.dumps({"id": iid, "title": f"{iid}: {s['title']}", "body": body, "labels": ["role:product-manager", "ws:growth", "raises-self"], "milestone": "Now", "workstream": "Growth"}, indent=1) + "\n", encoding="utf-8")
             _append(root / cfg["queue"], {"event": "scope", "at": _iso(t), "id": iid, "cost": s["cost"]})
     if apply:
+        from . import decisions  # DECISIONS-1: each queued idea is a decision with a predicted effect, scored against the free-tier level a day later
         for i in new:
             _append(root / cfg["queue"], {"event": "idea", "at": _iso(t), "idea": i})
+            decisions.record(root, "idea-loop", i["id"], i["id"], 1.0, f"priced {json.dumps(i['cost'])} against headroom {json.dumps({k: head['left'].get(k) for k in i['cost']})}", now=t)
+        for s in scope:
+            decisions.record(root, "idea-loop", s["id"], s["id"], 1.0, f"scope increase priced {json.dumps(s['cost'])} against headroom {json.dumps({k: head['left'].get(k) for k in s['cost']})}", now=t)
     return {"new_ideas": [i["id"] for i in new], "scope_items": [s["id"] for s in scope], "applied": apply}
 
 

@@ -271,6 +271,24 @@
      "cmd": "python3 -m foundation pointclick --check"
     }
    ]
+  },
+  {
+   "id": "every-decision-measured",
+   "statement": "Every autonomous decision records the metric it optimizes, its predicted effect and the measured outcome, and the outcomes are scored (DECISIONS-1: measure what we improve, improve what we measure).",
+   "source": "doctrine/decisions.json; agents/AGENTS.md",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation decisions --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "decisions-scored",
+     "cmd": "python3 -m foundation decisions --probe",
+     "needs_network": true,
+     "fix": "python3 -m foundation decisions --settle --apply"
+    }
+   ]
   }
  ],
  "repos": [

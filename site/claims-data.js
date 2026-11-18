@@ -148,7 +148,7 @@ export default {
    "surface": "site/authzen.js"
   },
   {
-   "claim": "seed-tests: 35 Python and 323 Worker tests",
+   "claim": "seed-tests: 35 Python and 327 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -157,7 +157,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 323 Worker tests",
+   "claim": "seed-worker-tests: 327 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -249,7 +249,7 @@ export default {
   {
    "claim": "Every public page the worker serves is in the sitemap and the daily IndexNow submission.",
    "detail": "",
-   "how": "19 items in site/worker.js each on the surface or exempt",
+   "how": "20 items in site/worker.js each on the surface or exempt",
    "id": "inv-pages-in-sitemap",
    "kind": "inventory",
    "pass": true,

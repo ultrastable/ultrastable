@@ -1,0 +1,165 @@
+{
+ "_doc": "DECISIONS-1 (Rowan, 2026-11-18): \"Measure what we improve and improve what we measure.\" Every autonomous decision point declares the metric it optimizes; each decision it makes is logged with its predicted effect and later scored against the measured outcome (foundation/decisions.py, ledger ops/decisions/ledger.jsonl, outcomes ops/decisions/outcomes.jsonl; Worker-side points in D1 decision_log, 7 days then chain-archived). A code path marked `DECISION-METRIC: <id>` must name a registered point; a registered point's files must carry the marker; a decision-shaped function in a file with no marker must be on the shrink-only `uninstrumented` list (filed as Q-DECISION-COVERAGE-1). Runtime probe: `python3 -m foundation decisions --probe` (outcomes scored, not just logged). Public page: /decisions and /api/decisions. Consumers: foundation/decisions.py, doctrine/rules.json (rule every-decision-measured), site/worker.js, seed/worker/src/decisions.js, scripts/regen_generated.py.",
+ "version": "1.0.0",
+ "ledger": "ops/decisions/ledger.jsonl",
+ "outcomes": "ops/decisions/outcomes.jsonl",
+ "page_data": "site/decisions-data.js",
+ "probe": {
+  "min_settled_share": 0.5,
+  "min_due_to_judge": 3,
+  "grace_h": 24,
+  "live_url": "https://ultrastable.io/api/decisions"
+ },
+ "trend": {
+  "min_settled_to_judge": 4,
+  "flat_band": 0.05
+ },
+ "points": [
+  {
+   "id": "idea-loop",
+   "name": "Idea loop: which new spinoff ideas and loop-scope increases to queue",
+   "store": "repo",
+   "files": [
+    "foundation/ideas.py"
+   ],
+   "metric": "headroom_not_shed",
+   "metric_says": "1 when the free-plan level is still below shed a day after the idea was queued",
+   "op": ">=",
+   "target": 1,
+   "window_h": 24,
+   "predict": "1 (the idea was priced inside the day's headroom, so the level should stay below shed)",
+   "measure": {
+    "kind": "free_tier_not_shed"
+   },
+   "why": "An idea is queued only if its priced cost fits the free-plan headroom, so the outcome that proves the pick was sound is that the plan was not pushed to shed."
+  },
+  {
+   "id": "spinoff-launch",
+   "name": "Spinoff launch: which queued app to launch next",
+   "store": "repo",
+   "files": [
+    "foundation/spinoff.py"
+   ],
+   "metric": "uses_7d",
+   "metric_says": "real uses of the launched app in its first 7 days (ops/spinoff/metrics.jsonl)",
+   "op": ">=",
+   "target": 1,
+   "window_h": 168,
+   "predict": "the app's reach score (1 to 5), read as an ordinal prior of weekly uses; calibration shows how far it sits from measured uses",
+   "measure": {
+    "kind": "jsonl_latest",
+    "path": "ops/spinoff/metrics.jsonl",
+    "match": "slug",
+    "field": "uses_7d"
+   },
+   "why": "Launch order is the score reach x impact x feasibility; the measure of whether the pick was good is whether anyone used the app."
+  },
+  {
+   "id": "work-queue-priority",
+   "name": "Work queue: which open item the executor takes next",
+   "store": "repo",
+   "files": [
+    "foundation/executor.py"
+   ],
+   "metric": "item_closed",
+   "metric_says": "1 when the picked item is closed (verified, merged or closed by its probe) inside one cycle",
+   "op": ">=",
+   "target": 1,
+   "window_h": 24,
+   "predict": "1 (driver order picks the item the loop expects to close inside one cycle)",
+   "measure": {
+    "kind": "item_closed"
+   },
+   "why": "Driver order exists to close the most valuable item fastest; an item that is picked and not closed is a measured miss in the priority function."
+  },
+  {
+   "id": "ai-router",
+   "name": "AI router: which model answers a call",
+   "store": "d1",
+   "files": [
+    "seed/worker/src/airoute.js",
+    "seed/worker/src/decisions.js"
+   ],
+   "metric": "reply_pass_rate",
+   "metric_says": "1 when the chosen model's reply passed the deterministic quality gate and the task's own verify, else 0",
+   "op": ">=",
+   "target": 1,
+   "window_h": 0,
+   "predict": "the model's learned pass rate for this kind of call (0.5 until it has 8 calls)",
+   "measure": {
+    "kind": "d1_settled"
+   },
+   "why": "The router tries the cheapest free model with the best learned pass rate first; each call scores that choice immediately, so the learned order is calibrated by real replies."
+  },
+  {
+   "id": "plussing",
+   "name": "Plussing: which improvement lever to pull",
+   "store": "repo",
+   "files": [
+    "foundation/selfimprove.py"
+   ],
+   "metric": "change_kept",
+   "metric_says": "1 when the improvement the lever produced was kept after scoring (target moved, no guard worsened), 0 when it was reverted",
+   "op": ">=",
+   "target": 1,
+   "window_h": 168,
+   "predict": "1 (the ranked gap is expected to move its target)",
+   "measure": {
+    "kind": "improvement_kept"
+   },
+   "why": "The protected improvement budget is spent on the weighted largest gap; the measure of the choice is the share of changes that survive scoring."
+  },
+  {
+   "id": "free-tier-governor",
+   "name": "Free-tier governor: ok, degrade or shed",
+   "store": "d1",
+   "files": [
+    "seed/worker/src/freetier.js",
+    "seed/worker/src/decisions.js"
+   ],
+   "metric": "worst_resource_share",
+   "metric_says": "the largest share of any free-plan daily allowance in use at the next sample (must stay under 0.95, the shed line)",
+   "op": "<",
+   "target": 0.95,
+   "window_h": 1,
+   "predict": "the worst share at the time of the decision (a persistence forecast; the governor must beat it by acting)",
+   "measure": {
+    "kind": "d1_settled"
+   },
+   "why": "The governor sets the level that throttles every loop; each level it sets is scored by whether the account stayed below the shed line."
+  }
+ ],
+ "discover": {
+  "globs": [
+   "foundation/*.py",
+   "seed/worker/src/*.js"
+  ],
+  "py_pattern": "^\\s*def (choose|decide|select|pick|route|rank|launch|prioriti[sz]e|plan)[A-Za-z_]*\\(",
+  "js_pattern": "function (choose|decide|pick|route|rank|plan|select|prioriti[sz]e)[A-Za-z]*\\(",
+  "marker": "DECISION-METRIC:"
+ },
+ "uninstrumented": {
+  "foundation/agents.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/boundary.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/branchsweep.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/conflicts.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/design.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/failover.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/filing.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/prioritize.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/promote.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/reach.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/selfcode.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/triggers.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "foundation/uiux.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "seed/worker/src/airouter.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "seed/worker/src/budget.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "seed/worker/src/critloop.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "seed/worker/src/cutover.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "seed/worker/src/events.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "seed/worker/src/pace.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "seed/worker/src/pr-executor.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
+  "seed/worker/src/unknowns.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)"
+ },
+ "gap_item": "Q-DECISION-COVERAGE-1"
+}

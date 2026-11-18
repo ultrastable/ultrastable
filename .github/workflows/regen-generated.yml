@@ -13,6 +13,8 @@ on:
       - "site/dashboard-data.js"
       - "site/self-data.js"
       - "site/ultrastability-data.js"
+      - "site/decisions-data.js"
+      - "ops/decisions/outcomes.jsonl"
       - "core-contract.json"
       - "doctrine/triggers.json"
       - "seed/self/SELF.md"
