@@ -74,6 +74,6 @@ export async function readRoi(db, { env = {}, now = new Date() } = {}) {
     for (const r of rows) (byDay[r.day] ??= { day: r.day, resources: {} }).resources[k] = { peak: r.peak, n: r.n, over80: r.o || 0 };
   }
   const days = Object.values(byDay).sort((a, b) => b.day.localeCompare(a.day));
-  let refused = 0; try { refused = Number(((await db.prepare("SELECT COALESCE(SUM(refused),0) r FROM budget_ledger WHERE day>=?1 AND kind='ai_neurons'").bind(since).first()) || {}).r || 0); } catch (e) { /* ledger absent until the first model call */ }
-  return analyze({ days, refused, mode: env.FREE_ONLY === '0' ? 'paid-allowed' : 'free-only', now });
+  let refused = 0, ledger_error = null; try { refused = Number(((await db.prepare("SELECT COALESCE(SUM(refused),0) r FROM budget_ledger WHERE day>=?1 AND kind='ai_neurons'").bind(since).first()) || {}).r || 0); } catch (e) { ledger_error = String(e && e.message).slice(0, 120); }  // ledger absent until the first model call: shown, never silent
+  return { ...analyze({ days, refused, mode: env.FREE_ONLY === '0' ? 'paid-allowed' : 'free-only', now }), ledger_error };
 }
