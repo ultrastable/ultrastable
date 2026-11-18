@@ -12,10 +12,6 @@ export default {
   {
    "issue": "PIN-outside-audit",
    "text": "The prediction match rate is scored by the system itself. An outside audit is a pilot goal."
-  },
-  {
-   "issue": "PIN-default-policy-pack",
-   "text": "A buyer needs a short default policy pack; today the policy is long and written as owner directives."
   }
  ],
  "issues": {
@@ -31,9 +27,9 @@ export default {
   "PIN-default-policy-pack": {
    "done": "file:seed/autonomy/default-policy-pack.json",
    "id": "PIN-default-policy-pack",
-   "milestone": "Next",
+   "milestone": "Done",
    "owner": "product-manager",
-   "status": "open",
+   "status": "done: live; verified by the done check on every build",
    "title": "Short default policy pack for a buyer",
    "trigger": "pilot milestone 1"
   },
@@ -114,7 +110,7 @@ export default {
    "id": "Q-GAP-adaptive-interview",
    "milestone": "Next",
    "owner": "staff",
-   "status": "open",
+   "status": "closed",
    "title": "Adaptive follow-up questions",
    "trigger": "every executor run"
   },
@@ -173,11 +169,11 @@ export default {
    "trigger": "every executor run"
   },
   "Q-TENANT-row-isolation": {
-   "done": "file:seed/worker/migrations/0005_tenant_core.sql",
+   "done": "file:seed/worker/migrations/0026_tenant_core.sql",
    "id": "Q-TENANT-row-isolation",
    "milestone": "Now",
    "owner": "platform",
-   "status": "open",
+   "status": "closed",
    "title": "tenant_id on core rows and scoped tick queries",
    "trigger": "every PR (checks.yml)"
   }
@@ -318,13 +314,25 @@ export default {
   },
   {
    "code": [
+    "site/worker.js",
     "site/interview.js"
    ],
    "issue": "Q-GAP-adaptive-interview",
    "name": "Adaptive interview",
-   "status": "pinned",
-   "what": "Pick the next question from the answers so far with a small model instead of a fixed bank.",
+   "status": "live",
+   "what": "After each answer the next question is chosen from what was said: a bound model proposes it, a rule table is the floor, at most four questions.",
    "where": "site/worker.js adaptiveQuestion"
+  },
+  {
+   "code": [
+    "seed/autonomy/default-policy-pack.json",
+    "seed/bootstrap/bootstrap.py"
+   ],
+   "issue": "PIN-default-policy-pack",
+   "name": "Default policy pack",
+   "status": "live",
+   "what": "A short buyer-facing pack of eight plain rules over the full policy; the bootstrapper loads it, refuses a pack that promises more than the policy allows, and writes org/policy-pack.json.",
+   "where": "seed/autonomy/default-policy-pack.json"
   },
   {
    "code": [
@@ -354,13 +362,15 @@ export default {
   {
    "code": [
     "seed/worker/migrations/0004_objectives.sql",
+    "seed/worker/migrations/0026_tenant_core.sql",
+    "seed/worker/src/tenant.js",
     "seed/worker/src/tick.js",
     "scripts/build_dashboard.py"
    ],
    "issue": "Q-TENANT-row-isolation",
    "name": "Tenant isolation",
-   "status": "testing",
-   "what": "Tenant 0 (Ultrastable on itself) and customer tenants share one shape; the dashboard takes a tenant id and unknown tenants 404; a runtime measures only its own tenant's metrics. Tenant ids on the remaining core tables and per-tenant credentials are pending.",
+   "status": "live",
+   "what": "Tenant 0 (Ultrastable on itself) and customer tenants share one shape; the dashboard takes a tenant id and unknown tenants 404; items, claims, gate cards and trust rows carry a tenant id, and a runtime measures, claims, closes and counts only its own tenant's rows. The trust table's primary key does not carry the tenant yet, so a foreign trust row at the same key is left untouched rather than shared.",
    "where": "/dashboard?tenant=ultrastable"
   }
  ]

@@ -118,6 +118,8 @@ export async function handle(request, env, f = fetch) {
   if (bundle.retired.includes(sub)) return new Response("This app was retired by the portfolio manager.", { status: 410 });
   const app = bundle.apps[sub];
   if (!app) return new Response("Not found", { status: 404 });
+  // CHILD-LINK-1 (Q-LAYER-child-reporting): every spinoff is a level-1 child of tenant 0 and answers the child health contract, so the parent's http probe can read it and a silent child breaches there.
+  if (u.pathname === "/health") return J({ ok: true, child: sub, parent: "ultrastable", level: 1, name: app.name, archetype: app.archetype, at: new Date().toISOString() }, 200, { "cache-control": "no-store" });
   if (u.pathname === "/" + INDEXNOW_KEY + ".txt") return new Response(INDEXNOW_KEY, { headers: { "content-type": "text/plain; charset=utf-8" } });
   if (app.archetype === "live-feed" || app.archetype === "live-lookup") return handleLive(sub, app, u, f, env);
   if (app.archetype === "status-board") {

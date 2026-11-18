@@ -40,6 +40,30 @@ class PolicyTests(unittest.TestCase):
         self.assertTrue(bs.validate_policy(p))
 
 
+class DefaultPolicyPackTests(unittest.TestCase):
+    """PIN-default-policy-pack: the short pack is a view over the policy and the seed loads it."""
+    PACK = json.loads((ROOT / "autonomy/default-policy-pack.json").read_text())
+
+    def test_pack_is_short_and_valid(self):
+        self.assertEqual(bs.validate_default_pack(self.PACK, POLICY), [])
+        self.assertLessEqual(len(self.PACK["rules"]), 12)
+
+    def test_pack_cannot_promise_more_than_the_policy(self):
+        p = json.loads(json.dumps(self.PACK))
+        p["rules"][2]["ceiling"] = "execute"  # R3 money/legal may only propose
+        self.assertTrue(bs.validate_default_pack(p, POLICY))
+
+    def test_safety_rules_are_locked(self):
+        p = json.loads(json.dumps(self.PACK))
+        p["buyer_may_not_change"].remove("R3")
+        self.assertTrue(bs.validate_default_pack(p, POLICY))
+
+    def test_unknown_surface_is_caught(self):
+        p = json.loads(json.dumps(self.PACK))
+        p["rules"][0]["surfaces"].append("nope")
+        self.assertTrue(bs.validate_default_pack(p, POLICY))
+
+
 class BootTests(unittest.TestCase):
     def boot(self, tmp: Path, env=None):
         copy_seed(tmp)

@@ -67,6 +67,8 @@ export async function runProbe(spec, f = fetch) {
 }
 
 import { record } from './auditchain.js';
+import { tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a handoff block can name any item id; only this runtime's own items (tenant_id NULL or its slug) are advanced or closed
+let handoffTenant = '';
 async function event(db, id, state, detail) {
   await db.prepare("UPDATE handoffs SET state = ?, detail = ?, updated_at = datetime('now') WHERE id = ?").bind(state, detail || null, id).run();
   await db.prepare('INSERT INTO handoff_events (handoff_id, state, detail) VALUES (?, ?, ?)').bind(id, state, detail || null).run();
@@ -76,8 +78,8 @@ async function event(db, id, state, detail) {
 async function say(f, token, repo, pr, text) { await gh(f, token, 'POST', `/repos/${repo}/issues/${pr}/comments`, { body: 'Ultrastable (server side, HANDOFF-1): ' + text }); }
 async function setItem(db, item, status, blocker) {
   if (!item) return;
-  await db.prepare("UPDATE items SET status = ?, blocker = ?, updated_at = datetime('now') WHERE id = ?").bind(status, blocker || null, item).run();
-  if (status === 'done') await db.prepare('DELETE FROM claims WHERE item_id = ?').bind(item).run();
+  const r = await db.prepare("UPDATE items SET status = ?, blocker = ?, updated_at = datetime('now') WHERE id = ? AND (tenant_id IS NULL OR tenant_id = ?)").bind(status, blocker || null, item, handoffTenant).run();
+  if (status === 'done' && r && r.meta && r.meta.changes) await db.prepare('DELETE FROM claims WHERE item_id = ?').bind(item).run();  // only when the item was this runtime's own
 }
 
 // Upsert a handoff (also used by POST /api/v1/handoff on the site worker through the shared D1).
@@ -93,11 +95,11 @@ export async function registerHandoff(db, h) {
 // deployer(workerId, sha, repo) -> { ok, version?, detail }; rollback(workerId) -> { ok, detail }. Injected so the tick can route it through the site worker.
 // versionOf(workerId) -> { ok, version } reads the live version (DEPLOY-VERSION-1); without it the version check is recorded as skipped.
 // budget: the tick's shared GitHub budget (GITHUB-BUDGET-1); the run stops advancing once it is spent or rate limited.
-export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, deployer = null, rollback = null, versionOf = null, probe = runProbe, maxPerTick = 5, now = Date.now(), budget = githubBudget() }) {
+export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, deployer = null, rollback = null, versionOf = null, probe = runProbe, maxPerTick = 5, now = Date.now(), budget = githubBudget(), tenant = '' }) {
   const out = { status: 'ok', registered: [], merged: [], deployed: [], verified: [], failed: [], rolled_back: [], retried: [], recovered: [], deferred: [], errors: [] };
   if (!token) return { ...out, status: 'no-token' };
   if (!db) return { ...out, status: 'no-db' };
-  ghb = budget; let worked = 0; const seen = new Set();  // a handoff is advanced once per run
+  ghb = budget; handoffTenant = tenantOf(tenant); let worked = 0; const seen = new Set();  // a handoff is advanced once per run
   try { return await advance(); } finally { ghb = null; out.github = budget.report(); if (budget.stopped && out.status === 'ok') out.status = 'stopped'; }
   async function advance() {
   // the existing rollback path: roll every target back, record it, return the item to ready
