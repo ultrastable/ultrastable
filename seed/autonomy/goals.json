@@ -1,0 +1,134 @@
+{
+  "_doc": "GOALS-1 (Rowan, 2026-11-18): the goals Ultrastable works toward and the knobs it may turn to reach them. Read by deploy/deploy-workers.mjs into config.goals and consumed by seed/worker/src/goals.js (tick step goals). level: mission > objective > target. A target has a source (builtin = a name in tick.js METRICS, metric = a row of the metrics table), an op, a target and optionally a deadline. A knob has bounds, a step, a cooldown and review time (hours), effect = +1 when raising the knob raises the goal's metric and -1 when it lowers it, and config_path when it overrides a real config value the Worker reads (pace.idle_runs, pace.max_stride). The loop moves at most one knob one step per goal per cooldown, keeps the change only if the goal moved toward target by review time, and logs each step to the audit chain. Anything not listed here is not a knob. Tenants register theirs at POST /api/goals/register; nothing tenant-specific belongs in this file. tenant_feeds: public JSON feeds (tenant, goals, knobs, readings) core reads each tick; a tenant needs no credential for core. Tenant goals never file items in core's queue.",
+  "control": {
+    "stale_days": 14,
+    "achieve_after": 12,
+    "max_adjust_per_run": 3,
+    "max_stretch_per_day": 2
+  },
+  "goals": [
+    {
+      "id": "core.mission",
+      "level": "mission",
+      "statement": "Any autonomous system built on Ultrastable closes its own loops and gets better without a person in the path, at a cost it can afford."
+    },
+    {
+      "id": "core.close",
+      "parent_id": "core.mission",
+      "level": "objective",
+      "statement": "Every loop closes itself: it runs on time, finishes, and its output is consumed by code."
+    },
+    {
+      "id": "core.close.loops",
+      "parent_id": "core.close",
+      "level": "target",
+      "statement": "Share of loops that finished ok in at least 90% of their runs over 24 hours.",
+      "source": "builtin",
+      "spec": "loops_closing_share_24h",
+      "unit": "share",
+      "op": ">=",
+      "target": 0.9
+    },
+    {
+      "id": "core.close.drops",
+      "parent_id": "core.close",
+      "level": "target",
+      "statement": "Items that left the active set with no recorded disposition in 7 days.",
+      "source": "builtin",
+      "spec": "silent_drops_7d",
+      "unit": "items",
+      "op": "<=",
+      "target": 0
+    },
+    {
+      "id": "core.close.breaches",
+      "parent_id": "core.close",
+      "level": "target",
+      "statement": "Metrics in breach right now.",
+      "source": "builtin",
+      "spec": "metrics_in_breach",
+      "unit": "metrics",
+      "op": "<=",
+      "target": 0
+    },
+    {
+      "id": "core.cost",
+      "parent_id": "core.mission",
+      "level": "objective",
+      "statement": "Run inside the free Cloudflare plan: spend less than it earns."
+    },
+    {
+      "id": "core.cost.peak",
+      "parent_id": "core.cost",
+      "level": "target",
+      "statement": "Largest share of any free daily limit used today.",
+      "source": "builtin",
+      "spec": "free_tier_peak_share",
+      "unit": "share of free day",
+      "op": "<=",
+      "target": 0.6
+    },
+    {
+      "id": "core.cost.productive",
+      "parent_id": "core.cost",
+      "level": "target",
+      "statement": "Share of loop runs in 24 hours that returned work (idle runs cost the free plan and change nothing).",
+      "source": "builtin",
+      "spec": "beats_productive_share_24h",
+      "unit": "share",
+      "op": ">=",
+      "target": 0.5
+    },
+    {
+      "id": "core.reach",
+      "parent_id": "core.mission",
+      "level": "objective",
+      "statement": "Every system built on Ultrastable states its own goals and knobs, so the whole portfolio is steered by the same loop."
+    },
+    {
+      "id": "core.reach.tenants",
+      "parent_id": "core.reach",
+      "level": "target",
+      "statement": "Tenants that have registered goals (Practical Solutions first).",
+      "source": "builtin",
+      "spec": "goal_tenants",
+      "unit": "tenants",
+      "op": ">=",
+      "target": 1
+    }
+  ],
+  "knobs": [
+    {
+      "id": "core.pace.idle_runs",
+      "goal_id": "core.cost.productive",
+      "what": "Consecutive idle runs before a heavy loop backs off (lower backs off sooner, so fewer idle runs).",
+      "config_path": "pace.idle_runs",
+      "value": 4,
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "effect": -1,
+      "cooldown_h": 24,
+      "review_h": 24
+    },
+    {
+      "id": "core.pace.max_stride",
+      "goal_id": "core.cost.peak",
+      "what": "Most cycles an idle heavy loop may skip (higher lowers daily usage).",
+      "config_path": "pace.max_stride",
+      "value": 4,
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "effect": -1,
+      "cooldown_h": 24,
+      "review_h": 24
+    }
+  ],
+  "tenant_feeds": [
+    {
+      "tenant": "ps",
+      "url": "https://ultrastable.org/goals.json"
+    }
+  ]
+}

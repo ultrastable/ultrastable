@@ -2,8 +2,9 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { paced } from './pace.js';
+import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
-import { runTick, lastTickForHealth } from './tick.js';
+import { runTick, lastTickForHealth, METRICS } from './tick.js';
 import { claimsReleasedUnworked24h } from './doer.js';
 import { runExecutor, noteExecutor } from './executor.js';
 import { runLane, githubBudget } from './lane.js';
@@ -97,9 +98,10 @@ export default {
       const phase = Math.floor((Number(_event && _event.scheduledTime) || Date.now()) / 600e3) % 4;
       const cycle = Math.floor((Number(_event && _event.scheduledTime) || Date.now()) / (HEAVY_CADENCE_MIN * 60e3));
       // PACE-2: a heavy loop whose recent runs returned nothing skips cycles (pace.js); the skipped slot is still a beat, so the clock sees a decision.
+      const knobConfig = await withKnobs(env.DB, config);  // GOALS-1: knob values the control loop set (pace.idle_runs, pace.max_stride) are what paced() reads
       const carried = new Set(await readDeferred(env.DB)), deferred = new Set(), guard = guarded(meter, deferred, failed);  // SUBREQUEST-METER-1: a loop that was deferred runs first next time, in any phase
       const tuningNow = await freeTierLevel(env.DB).then(l => (l && l.resources) ? tune(Object.fromEntries(Object.entries(l.resources).map(([k, r]) => [k, r.frac]))) : null).catch(e => { console.error('tuning unread:', e && e.message); return null; });  // BOUNDARIES-1: applied to every paceable loop below
-      const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase && !carried.has(loop)) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, config, tuningNow)) || guard(loop, fn), { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
+      const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase && !carried.has(loop)) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, knobConfig, tuningNow)) || guard(loop, fn), { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
       const steps = [], step = (loop, fn) => { steps.push([loop, fn]); };
       const tenant = env.TENANT || config.org_slug || 'default';
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
@@ -201,6 +203,16 @@ export default {
     if (url.pathname === '/api/live/changes') { try { return Response.json(await readLiveChanges(env.DB), { headers: { 'cache-control': 'public, max-age=60' } }); } catch (e) { return d1Unavailable(e); } }  // LIVE-FRESH-1
     if (url.pathname === '/api/roi') { try { return Response.json(await readRoi(env.DB, { env }), { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // ROI-1
     if (url.pathname === '/api/decisions') { try { return Response.json(await readDecisions(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // DECISIONS-1
+    if (url.pathname === '/api/goals' && request.method === 'GET') { try { return Response.json(await readGoals(env.DB, { builtins: METRICS }), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // GOALS-1: public, read-only
+    if (url.pathname === '/api/goals/knobs' && request.method === 'GET') { try { return Response.json(await knobValues(env.DB, url.searchParams.get('tenant') || 'core'), { headers: { 'cache-control': 'no-store', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // GOALS-1: a tenant reads the knob values core set and applies them in its own code
+    if ((url.pathname === '/api/goals/register' || url.pathname === '/api/goals/report') && request.method === 'POST') {  // GOALS-1: the tenant interface (bearer ANALYTICS_TOKEN or INTERNAL_DEPLOY_KEY)
+      if (!bearerOk(request, env)) return Response.json({ error: 'unauthorized' }, { status: 401 });
+      let body; try { body = await request.json(); } catch { return Response.json({ error: 'body must be JSON' }, { status: 400 }); }
+      try {
+        if (url.pathname.endsWith('register')) { const r = await registerTenant(env.DB, String(body.tenant || ''), body); return Response.json(r, { status: r.ok ? 200 : 422 }); }
+        return Response.json({ ok: true, readings: await reportReadings(env.DB, String(body.tenant || ''), body.readings) });
+      } catch (e) { return d1Unavailable(e); }
+    }
     if (url.pathname === '/api/budget') { try { return Response.json(await budgetView(env.DB, { config, env }), { headers: { 'cache-control': 'no-store' } }); } catch (e) { return d1Unavailable(e); } }  // SPEND-GOVERNOR-1: the knob, what it buys, what was used, the mode
     const ag = await agentic(request, env);
     if (ag) return ag;

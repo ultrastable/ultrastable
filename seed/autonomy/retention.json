@@ -223,6 +223,27 @@
       "keep_days": 7,
       "reason": "DECISIONS-1: one row per Worker-side decision (AI router model pick, free-tier governor level) with its metric, prediction and outcome; the public page reads 7 days, older rows are hash-chained archives",
       "archive": true
+    },
+    "goal_samples": {
+      "column": "at",
+      "unit": "ms",
+      "keep_days": 30,
+      "reason": "GOALS-1: one reading per goal per tick for the trend line; the page shows 14 days"
+    },
+    "goal_adjustments": {
+      "column": "at",
+      "unit": "ms",
+      "keep_days": 90,
+      "reason": "GOALS-1: every knob change with its prediction and verdict; each is also a hash-chained audit row",
+      "archive": true
+    },
+    "goals": {
+      "keep": "state",
+      "reason": "GOALS-1: one row per goal; retired goals stay so a goal's history is never lost"
+    },
+    "goal_knobs": {
+      "keep": "state",
+      "reason": "GOALS-1: one row per knob with its current value; bounded by the tenant limit of 80"
     }
   }
 }

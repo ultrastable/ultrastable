@@ -38,7 +38,6 @@
   python3 -m foundation publication [--check|--baseline|--history DIR]   PUBLICATION-GUARD-1: license, notice files, no case collisions, SPDX ratchet, no private data
   python3 -m foundation pins [--check|--apply|--report]                  PINS-1: every status pin and roadmap item on the site is computed from code, proofs and issues
   python3 -m foundation agentwork [--apply|--probe-kill|--check]            AGENT-WORK-1: caps and kill switch for the Actions code agent; files Q-UNK work
-  python3 -m foundation goals [--tick [--apply]|--status|--propose [--apply]|--check|--page [--apply]]  GOALS-1: the goal tree with measured variables, deadlines and the knobs the system turns
   python3 -m foundation decisions [--check|--settle|--backfill|--probe|--status|--page|--baseline] [--apply]  DECISIONS-1: every decision logs its metric, predicted effect and measured outcome; /decisions
   python3 -m foundation rules [--check|--run [--apply] [--due]|--probe NAME|--status|--panel]  RULES-1: every standing rule maps to a CI check and a runtime probe; violations file and fix themselves
   python3 -m foundation mergeaudit [--run [--apply]|--probe N|--check]  MERGE-AUDIT-1: a PR merged without a green `checks` run becomes a queue item
@@ -103,9 +102,6 @@ def main(argv=None) -> int:
     if _av[:1] == ["agentwork"]:
         from . import agentwork
         return agentwork.main(_av[1:])
-    if _av[:1] == ["goals"]:
-        from . import goals
-        return goals.main(_av[1:])
     if _av[:1] == ["decisions"]:
         from . import decisions
         return decisions.main(_av[1:])

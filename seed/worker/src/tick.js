@@ -11,6 +11,7 @@ import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
 import { unknownsStep } from './unknowns.js';
+import { goalsStep, seedGoals } from './goals.js';  // GOALS-1
 import { migrateStep } from './migrate.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
@@ -49,6 +50,10 @@ export const METRICS = {
   // PACE-2: cost per day against the free plan. The largest share of any free daily limit used today (freetier.js samples; 1 = the whole free day).
   // No fresh sample is 0 here and stays visible as its own breach in freetier.js, never as a healthy cost.
   free_tier_peak_share: (db, now) => freeTierLevel(db, now).then(l => Math.round(1000 * Math.max(0, ...Object.values((l && l.resources) || {}).map(r => Number(r.frac)).filter(Number.isFinite))) / 1000).catch(() => 0),
+  // GOALS-1: the share of loops that closed (an ok run in at least 90% of their runs) in the last 24 h. A loop with no run is not counted: pulse.js reports the missing ones.
+  loops_closing_share_24h: (db, now) => first(db, `SELECT COUNT(*) AS n, SUM(CASE WHEN good >= 0.9 THEN 1 ELSE 0 END) AS c FROM (SELECT loop, 1.0 * SUM(CASE WHEN ok = 1 THEN 1 ELSE 0 END) / COUNT(*) AS good FROM loop_beats WHERE started_at >= ? AND finished_at IS NOT NULL GROUP BY loop)`,
+    iso(new Date(now - 86400e3))).then(r => (r.n ? Math.round(1000 * (r.c || 0) / r.n) / 1000 : 0)).catch(() => 0),
+  goal_tenants: (db) => first(db, `SELECT COUNT(DISTINCT tenant) AS n FROM goals WHERE tenant != 'core' AND status = 'active'`).then(r => r.n).catch(() => 0),
   items_done: (db) => first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done'`).then(r => r.n),
   open_gate_cards: (db) => first(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE status='open'`).then(r => r.n),
   dispatches_24h: (db, now) => first(db, `SELECT COUNT(*) AS n FROM dispatches WHERE at >= ?`, iso(new Date(now - 86400e3))).then(r => r.n),
@@ -312,6 +317,13 @@ export const STEPS = {
   async migrate(db, ctx) { await migrateStep(db, ctx, ctx.config.migrations, ensureItem); },
 
   // UNKNOWNS-1: question what the system does not know; the questions are plus items.
+  // GOALS-1: read every goal, sample it, move at most one knob per goal toward its target, review earlier moves, propose stretch goals, retire stale ones.
+  async goals(db, ctx) {
+    if (!ctx.config.goals) { ctx.notes.push('goals: none configured'); return; }
+    const r = await goalsStep(db, ctx, ctx.config.goals, { builtins: METRICS, ensureItem });
+    ctx.notes.push(`goals: ${r.read} read, ${r.met} met, ${r.off} off target${r.adjusted.length ? `, moved ${r.adjusted.map(a => `${a.knob} ${a.old}->${a.new}`).join(', ')}` : ''}${r.reviewed.length ? `, reviewed ${r.reviewed.length}` : ''}${r.stretch.length ? `, proposed ${r.stretch.join(', ')}` : ''}${r.retired.length ? `, retired ${r.retired.join(', ')}` : ''}`);
+  },
+
   async unknowns(db, ctx) {
     if (!ctx.config.unknowns) { ctx.notes.push('unknowns: no doctrine configured'); return; }
     const r = await unknownsStep(db, ctx, ctx.config.unknowns, ensureItem);
@@ -372,7 +384,7 @@ export const STEPS = {
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
+export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,
@@ -380,7 +392,7 @@ export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates',
 // other step either reads wide (probe_gates, score_predictions, accrue_trust, selfaudit, pulse, ignition, check_plus_share) or starts new work
 // that reads more (reap_claims feeds dispatch, dispatch, execute), so it waits for the hour to pass. A skipped step counts as completed: it is
 // a decision, not a failure, so the health probe and the ignition streak stay green.
-export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share'];  // FREE-TIER-1
+export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals'];  // FREE-TIER-1
 export const COST_ESSENTIAL_STEPS = ['migrate', 'reconcile', 'measure', 'criticality'];
 
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null, budget = null } = {}) {
@@ -400,6 +412,13 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
     try { await run(db, `INSERT INTO org (key, value) VALUES ('cost_breach', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, JSON.stringify({ at: startedIso, until: iso(new Date(now + 3600e3)), breaches: b })); } catch (e) { ctx.errors.push(`cost_breach record: ${String(e && e.message).slice(0, 120)}`); }
   }
   for (const name of STEP_ORDER) {
+    if (name === 'goals' && (lean || degrade) && ctx.config && ctx.config.goals) {  // GOALS-1: a skipped step must never leave the goal tree empty (it was never seeded under degrade), and control still runs once an hour
+      try {
+        const have = await first(db, `SELECT COUNT(*) AS n FROM goals`).then(r => r.n).catch(() => 0);
+        if (!have) { const n = await seedGoals(db, ctx.config.goals, { now }); ctx.notes.push(`goals: seeded ${n} rows while the free tier is ${lean ? 'lean' : 'degraded'}`); }
+      } catch (e) { ctx.errors.push(`goals seed: ${String(e && e.message).slice(0, 120)}`); }
+      if (!lean && new Date(now).getUTCMinutes() < 10) { try { await STEPS[name](db, ctx); } catch (e) { ctx.errors.push(`goals: ${String(e && e.message).slice(0, 160)}`); } completed++; continue; }  // one tick in six: the control step at a sixth of the reads
+    }
     if ((lean && !COST_ESSENTIAL_STEPS.includes(name)) || (degrade && FREE_TIER_WIDE_STEPS.includes(name))) { completed++; continue; }
     try {
       await STEPS[name](db, ctx);

@@ -1400,38 +1400,6 @@
       ],
       "feedback": "each run compares the host with the expected hashes its earlier runs and deploys recorded; drift that survives a redeploy is read again and counted by the next run",
       "bindings": []
-    },
-    "goals-loop": {
-      "inflows": [
-        {
-          "signal": "criticality.k",
-          "via": "file:ops/criticality.jsonl"
-        },
-        {
-          "signal": "portfolio.decision",
-          "via": "file:ops/spinoff/ledger.jsonl"
-        },
-        {
-          "signal": "goals.ledger",
-          "via": "file:ops/goals/ledger.jsonl"
-        },
-        {
-          "signal": "port.items",
-          "via": "file:docs/issues"
-        }
-      ],
-      "outflows": [
-        {
-          "signal": "goals.ledger",
-          "via": "file:ops/goals/ledger.jsonl"
-        },
-        {
-          "signal": "port.items",
-          "via": "file:docs/issues"
-        }
-      ],
-      "feedback": "a knob turn is a logged decision with a prediction; the next readings keep the step when the variable moved toward its target and otherwise restore the knob and mark it spent, and a goal whose knobs are all spent files a re-plan item",
-      "bindings": []
     }
   },
   "implicit_producers": {

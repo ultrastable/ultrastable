@@ -24,7 +24,6 @@ import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
 import { negotiate, robots, WEBMCP_JS } from "./readiness.js";  // AGENT-READY-2
 import ROAD from "./roadmap-data.js";
 import DEC from "./decisions-data.js";  // DECISIONS-1: generated from ops/decisions/*.jsonl
-import GOALS from "./goals-data.js";  // GOALS-1: generated from doctrine/goals.json and ops/goals/*.jsonl
 import SPIN from "./spinoff-roadmap-data.js";  // SPINOFF-IDEAS-1: generated from the idea queue and the free-tier headroom
 import ORGMAP from "./orgmap.js"; // ORGMAP-1: generated from brand/brand.json
 import SG from "./suggest.js";
@@ -767,40 +766,6 @@ function spinRoadmap() {
     + "<h3>Live apps</h3><ul>" + live + "</ul><h3>Next, ranked by value over cost</h3><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Idea</th><th>Kind</th><th>Score</th><th>State</th></tr></thead><tbody>" + q + "</tbody></table></div>"
     + "<h3>Free-plan headroom, today</h3><div class=\"us-wrap\"><table class=\"us-table\"><tbody>" + h + "</tbody></table></div><h3>Loop scope increases</h3><ul>" + sc + "</ul>";
 }
-// GOALS-1: what the system is working toward. Everything shown is generated from doctrine/goals.json, the goal ledgers and the live ledgers after every merge and tick;
-// the age of the data is computed on each request so a stale page says so.
-function goalsPage(d) {
-  const fmt = function (v) { return v == null ? "unmeasured" : String(Math.round(v * 1000) / 1000); };
-  const tag = { met: "ok", behind: "warn", overdue: "warn", unmeasured: "info" };
-  const ageH = Math.max(0, Math.round((Date.now() - Date.parse(d.as_of)) / 36e5));
-  const byId = {}; d.goals.forEach(function (g) { byId[g.id] = g; });
-  const depth = function (g) { let n = 0, p = g; while (p && p.parent && byId[p.parent]) { n++; p = byId[p.parent]; } return n; };
-  const knobs = function (g) {
-    return g.knobs.map(function (k) {
-      if (k.min == null) return "<li><code>" + esc(k.id) + "</code> <small>" + esc(k.what) + "</small></li>";
-      const pos = k.max === k.min ? 0 : Math.round(100 * (k.value - k.min) / (k.max - k.min));
-      return "<li><code>" + esc(k.id) + "</code> = <strong>" + esc(fmt(k.value)) + "</strong> <small>(safe range " + esc(k.min) + " to " + esc(k.max) + ", step " + esc(k.step) + "; raising it moves the variable " + esc(k.up_moves) + ")</small>"
-        + "<br><span aria-hidden=\"true\" style=\"display:block;max-width:220px;height:6px;background:var(--line);border-radius:3px\"><span style=\"display:block;width:" + pos + "%;height:6px;background:var(--ds-accent);border-radius:3px\"></span></span><small>" + esc(k.what) + "</small></li>";
-    }).join("");
-  };
-  const adj = function (g) {
-    return g.adjustments.length ? "<ul>" + g.adjustments.map(function (a) { return "<li>" + esc(a.at.slice(0, 16).replace("T", " ")) + " <code>" + esc(a.knob) + "</code> " + esc(a.before) + " to " + esc(a.after) + ": <strong>" + esc(a.verdict) + "</strong><br><small>predicted: " + esc(a.prediction) + "</small></li>"; }).join("") + "</ul>" : "<small>No knob turned yet.</small>";
-  };
-  const rows = d.goals.map(function (g) {
-    const pad = depth(g) * 18;
-    return "<tr><td style=\"padding-left:" + (8 + pad) + "px\"><strong>" + esc(g.name) + "</strong><br><small>" + esc(g.why) + "</small><br><small>Set by " + esc(g.proposed_by) + (g.revised_at ? "; target revised by the system " + esc(g.revised_at.slice(0, 10)) : "") + (g.added_at ? "; added by the system " + esc(g.added_at.slice(0, 10)) : "") + (g.level === 0 ? "; blue sky" : g.level === 1 ? "" : "; small goal") + "</small></td>"
-      + "<td><strong>" + esc(fmt(g.value)) + "</strong> now<br><code>" + esc(g.op) + " " + esc(g.target) + "</code><br><small>" + esc(g.unit) + "<br>read from <code>" + esc(g.reading) + "</code></small></td>"
-      + "<td class=\"" + (tag[g.state] || "info") + "\">" + esc(g.state) + "<br><small>" + (g.days_left >= 0 ? g.days_left + " days to " : "deadline passed ") + esc(g.deadline) + "</small></td>"
-      + "<td><ul>" + knobs(g) + "</ul></td><td>" + adj(g) + "</td></tr>";
-  }).join("");
-  const props = (d.proposals || []).map(function (p) { return "<li>" + esc(p.at.slice(0, 16).replace("T", " ")) + " " + esc(p.ev) + (p.kind ? " (" + esc(p.kind) + ")" : "") + " <code>" + esc(typeof p.goal === "string" ? p.goal : p.goal && p.goal.id) + "</code>: " + esc(p.basis || (p.why || []).join("; ")) + "</li>"; }).join("");
-  return shell({ path: "/goals", title: "Goals - Ultrastable", description: "What Ultrastable is working toward: a goal tree from bootstrap to criticality down to small goals, each with a measured variable, a deadline and the knobs the system turns to reach it." },
-    "<div class=\"head\"><h1>What Ultrastable is working toward</h1><p>The standing goal is to bootstrap to criticality: a self-sustaining Ultrastable. Below it are bold goals the system set for itself and small goals down to single measurements. Each has a variable read from live data, a target, a deadline and the knobs the system may turn, inside safe limits, when the variable leaves its bound (W. Ross Ashby's ultrastability, see <a href=\"/how\">how it works</a>). Machine-readable: <a href=\"/api/goals\">/api/goals</a>.</p></div>"
-    + "<div class=\"us-wrap\"><p><strong>" + d.counts.met + "</strong> met, <strong>" + d.counts.behind + "</strong> behind, <strong>" + d.counts.overdue + "</strong> past deadline, <strong>" + d.counts.unmeasured + "</strong> unmeasured. Knob turns so far: <strong>" + d.knob_turns + "</strong> (" + d.kept + " kept, " + d.reverted + " restored).</p>"
-    + "<table class=\"us-table\"><thead><tr><th>Goal</th><th>Variable and target</th><th>State</th><th>Knobs it can turn</th><th>Recent adjustments</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
-    + "<h2>Goals the system revised or re-planned</h2>" + (props ? "<ul>" + props + "</ul>" : "<p>None yet. A goal met for a long streak gets a tighter target; a goal whose knobs are all spent gets a re-plan item that names a new knob or sub-goal.</p>")
-    + "<p class=\"meta\">Generated " + esc(d.as_of) + " (" + ageH + " hours old) from <code>doctrine/goals.json</code>, <code>ops/goals/ledger.jsonl</code> and the live ledgers; refreshed when the watchdog ticks and when changes merge. Each knob turn is also a scored decision on <a href=\"/decisions\">/decisions</a>. A goal with no measured variable or no knob fails the build (<code>python3 -m foundation goals --check</code>).</p>");
-}
 // DECISIONS-1: every decision point, the metric it optimizes, and whether its decisions improved that metric. Repo-side points come from the generated module;
 // Worker-side points (AI router, free-tier governor) are read live from the tick Worker's D1 (7-day window) on each request.
 async function decisionsData(env) {
@@ -832,6 +797,39 @@ function decisionsPage(d) {
     "<div class=\"head\"><h1>Decision metrics</h1><p>Measure what we improve and improve what we measure. Each automatic decision records the metric it optimizes and its predicted effect, then is scored against what really happened. Nothing here is typed by hand: repo-side rows are generated from the decision ledger after a merge and the Worker-side rows are read live. Machine-readable: <a href=\"/api/decisions\">/api/decisions</a>.</p></div>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Decision point</th><th>Metric it optimizes</th><th>Predicted effect</th><th>Decisions and scoring</th><th>Did decisions improve it?</th><th>Source</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
     + "<p class=\"meta\">Generated " + esc(d.as_of) + (d.live_as_of ? "; live read " + esc(d.live_as_of) : "; live read unavailable") + ". The verdict compares the older half of scored decisions with the newer half and says insufficient until enough are scored. A code path that makes a decision without a declared metric fails the build (<code>python3 -m foundation decisions --check</code>).</p>");
+}
+// GOALS-1: what the system works toward, the knobs it may turn, what it changed and whether each loop closed. Read live from the tick Worker (/api/goals).
+async function goalsData(env) {
+  try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/goals")); if (r.ok) return await r.json(); } } catch (e) { console.error("goals", e && e.message); }
+  return null;
+}
+function goalsPage(d) {
+  if (!d) return shell({ path: "/goals", title: "Goals - Ultrastable", description: "The goals Ultrastable works toward, its knobs and its loops." }, "<div class=\"head\"><h1>Goals</h1><p>The live goal data could not be read just now. The system retries on its next request; machine-readable: <a href=\"/api/goals\">/api/goals</a>.</p></div>");
+  const f = function (v) { return v == null ? "no reading" : (Math.abs(v) >= 100 ? Math.round(v) : Math.round(v * 1000) / 1000); };
+  const spark = function (a) { if (!a || a.length < 2) return ""; const lo = Math.min.apply(null, a), hi = Math.max.apply(null, a), w = 90, h = 22; const pts = a.map(function (y, i) { return Math.round(i * w / (a.length - 1)) + "," + Math.round(h - 2 - (hi === lo ? 0.5 : (y - lo) / (hi - lo)) * (h - 4)); }).join(" "); return "<svg width=\"" + w + "\" height=\"" + h + "\" viewBox=\"0 0 " + w + " " + h + "\" role=\"img\" aria-label=\"last " + a.length + " readings\"><polyline points=\"" + pts + "\" fill=\"none\" stroke=\"var(--ds-accent)\" stroke-width=\"2\"/></svg>"; };
+  const kn = d.knobs || [], byGoal = {};
+  kn.forEach(function (k) { (byGoal[k.goal_id] = byGoal[k.goal_id] || []).push(k); });
+  const kview = function (k) { return "<li><code>" + esc(k.id) + "</code> = <strong>" + esc(f(k.value)) + "</strong> (bounds " + esc(k.min) + " to " + esc(k.max) + ", step " + esc(k.step) + ", default " + esc(k.default) + (k.resting_until ? ", resting until " + esc(k.resting_until.slice(0, 16)) : "") + ")" + (k.what ? "<br><small>" + esc(k.what) + "</small>" : "") + "</li>"; };
+  const goals = d.goals || [], kids = function (id) { return goals.filter(function (g) { return g.parent_id === id; }); };
+  const row = function (g, depth) {
+    if (g.level !== "target") return "<tr><td style=\"padding-left:" + (depth * 16) + "px\"><strong>" + esc(g.level) + "</strong>: " + esc(g.statement) + "<br><small><code>" + esc(g.id) + "</code>" + (g.tenant !== "core" ? " (tenant " + esc(g.tenant) + ")" : "") + "</small></td><td colspan=\"4\"></td></tr>";
+    const tone = g.value == null ? "warn" : g.met ? "ok" : "warn";
+    return "<tr><td style=\"padding-left:" + (depth * 16) + "px\">" + esc(g.statement) + "<br><small><code>" + esc(g.id) + "</code>" + (g.tenant !== "core" ? " (tenant " + esc(g.tenant) + ")" : "") + (g.origin === "system" ? ", set by the system" : "") + (g.deadline ? ", by " + esc(g.deadline) : "") + "</small></td>"
+      + "<td class=\"" + tone + "\"><strong>" + esc(f(g.value)) + "</strong> " + esc(g.unit || "") + "<br><small>" + (g.value == null ? "not reported yet" : g.met ? "target met" : "off target") + "</small></td>"
+      + "<td><code>" + esc(g.op) + " " + esc(g.target) + "</code></td><td>" + spark(g.spark) + "<br><small>" + esc(g.trend) + "</small></td>"
+      + "<td>" + ((byGoal[g.id] || []).length ? "<ul>" + byGoal[g.id].map(kview).join("") + "</ul>" : "<small>no knob; an unmet goal files a backlog item</small>") + "</td></tr>";
+  };
+  const tree = function (parent, depth) { return goals.filter(function (g) { return (g.parent_id || null) === parent; }).map(function (g) { return row(g, depth) + tree(g.id, depth + 1); }).join(""); };
+  const ids = new Set(goals.map(function (g) { return g.id; }));
+  const roots = goals.filter(function (g) { return g.parent_id && !ids.has(g.parent_id); }).map(function (g) { return row(g, 0) + tree(g.id, 1); }).join("");
+  const adj = (d.adjustments || []).map(function (a) { return "<tr><td><small>" + esc(a.at.slice(0, 16).replace("T", " ")) + "</small></td><td><code>" + esc(a.knob) + "</code> " + esc(a.old) + " to " + esc(a.new) + "</td><td><small>" + esc(a.why) + "<br>Predicted: " + esc(a.prediction) + "</small></td><td class=\"" + (a.verdict === "kept" ? "ok" : a.verdict === "reverted" ? "warn" : "info") + "\">" + esc(a.verdict) + (a.measured != null ? "<br><small>" + esc(f(a.baseline)) + " to " + esc(f(a.measured)) + "</small>" : "") + "</td></tr>"; }).join("");
+  const loops = (d.loops || []).map(function (l) { return "<tr><td><code>" + esc(l.loop) + "</code></td><td>" + l.runs_24h + "</td><td>" + l.ok_runs_24h + "</td><td>" + l.acted_24h + "</td><td class=\"" + (l.closed === "closing" ? "ok" : "warn") + "\">" + esc(l.closed) + "</td></tr>"; }).join("");
+  return shell({ path: "/goals", title: "Goals - Ultrastable", description: "What Ultrastable works toward: every goal with its value against its target, the knobs the system may turn, what it changed, and whether each loop closed." },
+    "<div class=\"head\"><h1>Goals</h1><p>A system that improves itself has to know what it is working toward. Each target below has a metric, a number and the knobs the system may turn within safe bounds. Each tick it measures, moves at most one knob one step, checks a day later whether the goal moved and reverts the change if it did not, and writes every step to the hash-chained audit log. Tenants such as Practical Solutions register their own goals through the same interface. Machine-readable: <a href=\"/api/goals\">/api/goals</a>.</p></div>"
+    + "<h2>Goals and knobs</h2><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Goal</th><th>Now</th><th>Target</th><th>Trend</th><th>Knobs</th></tr></thead><tbody>" + (tree(null, 0) + roots) + "</tbody></table></div>"
+    + "<h2>Recent knob changes</h2>" + (adj ? "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>When (UTC)</th><th>Change</th><th>Why and prediction</th><th>Verdict</th></tr></thead><tbody>" + adj + "</tbody></table></div>" : "<p>No knob has been turned yet. A knob moves only when its goal is off target and its cooldown has passed.</p>")
+    + "<h2>Loops: did they close?</h2><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Loop</th><th>Runs, 24 h</th><th>Finished ok</th><th>Returned work</th><th>State</th></tr></thead><tbody>" + loops + "</tbody></table></div>"
+    + "<p class=\"meta\">Read live " + esc(d.as_of) + ". closing means finished ok in nearly all runs; degraded means some failures; not closing means none finished ok. " + esc(d.audit) + "</p>");
 }
 function roadmap() {
   const done = (i) => /^done/i.test(i.status), ids = Object.keys(ROAD.issues).sort();
@@ -951,8 +949,8 @@ const handler = {
       case "/org": return new Response(org(), { headers: HTML });
       case "/engineers": return new Response(engineers(), { headers: HTML });
       case "/roadmap": return new Response(roadmap(), { headers: HTML });
-      case "/goals": return new Response(goalsPage(GOALS), { headers: { ...HTML, "Cache-Control": "public, max-age=60" } });
-      case "/api/goals": return new Response(JSON.stringify(GOALS), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } });
+      case "/goals": return new Response(goalsPage(await goalsData(env)), { headers: { ...HTML, "Cache-Control": "public, max-age=60" } });
+      case "/api/goals": { const g = await goalsData(env); return new Response(JSON.stringify(g || { error: "goals unavailable" }), { status: g ? 200 : 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } }); }
       case "/decisions": return new Response(decisionsPage(await decisionsData(env)), { headers: { ...HTML, "Cache-Control": "public, max-age=60" } });
       case "/api/roi": { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/roi")); j = await r.json(); st = r.status; } } catch (e) { /* reported as 503 */ } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); }  // ROI-1
       case "/api/decisions": return new Response(JSON.stringify(await decisionsData(env)), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } });

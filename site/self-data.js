@@ -492,7 +492,6 @@ export default {
   "funding-verify",
   "gap-register",
   "glossary",
-  "goals-loop",
   "guiding-directive",
   "host-sync",
   "hosts",
@@ -1589,17 +1588,6 @@ export default {
     "workflows": []
    },
    {
-    "closing_probe": "grep:foundation/goals.py::def tick",
-    "id": "goals-loop",
-    "kind": "governance",
-    "owner": "portfolio-manager",
-    "server_owner": "ultrastable-tick",
-    "sla": "24h",
-    "summary": "GOALS-1: the goal tree. The standing goal (bootstrap to criticality), bold goals the system set for itself and small goals each have a measured variable, a target, a deadline and knobs; a goal out of bounds for two ticks gets one knob turned one step inside its safe range, logged as a scored decision (goal-knob), kept only if the variable moves toward target and otherwise restored; spent knobs file a re-plan; met streaks ratchet the target; shown at /goals.",
-    "trigger": "watchdog workflow tick and the regen after every merge",
-    "workflows": []
-   },
-   {
     "closing_probe": "grep:foundation/branchsweep.py::def apply",
     "id": "branch-sweep",
     "kind": "governance",
@@ -2100,118 +2088,118 @@ export default {
  },
  "readings": {
   "blindspot:claims_drift": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:uptime": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "claims_drift": {
-   "at": "2026-11-18T00:09:32Z",
-   "in_bounds": false,
+   "at": "2026-11-18T15:29:54Z",
+   "in_bounds": true,
    "unmeasured": false,
-   "value": 2
+   "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "happy_paths": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:uptime": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "numbers-board:value": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:uptime": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "spend": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.497
   },
   "stalled_clocks": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "ui_findings": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "value": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
-   "value": 12.003
+   "value": 50.274
   }
  },
  "self": {

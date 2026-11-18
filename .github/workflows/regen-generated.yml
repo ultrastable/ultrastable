@@ -14,7 +14,6 @@ on:
       - "site/self-data.js"
       - "site/ultrastability-data.js"
       - "site/decisions-data.js"
-      - "site/goals-data.js"
       - "ops/decisions/outcomes.jsonl"
       - "core-contract.json"
       - "doctrine/triggers.json"
