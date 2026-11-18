@@ -120,7 +120,7 @@ def gate(c: dict, cfg: dict) -> dict:
 def metric_set(app: dict, cfg: dict) -> dict:
     """Each app declares its own reach, impact and guard metrics and targets, generated from its archetype and its score."""
     a = cfg["archetypes"][app["archetype"]]
-    if app.get("fact"):  # a status board has no visitors-with-a-gap; it is measured by the freshness of what it shows (and by requests, once the platform meters them)
+    if app.get("fact") or app.get("live"):  # a status board or a live public-data app (SPINOFF-GOOD-1) has no visitors-with-a-gap; it is measured by the freshness of what it shows (and by requests, once the platform meters them)
         return {"reach": ["board_age_hours"], "impact": [], "guard": ["error_share"], "targets": {"board_age_hours": 30}, "showcase": True,
                 "value": "a showcase board is kept while its facts stay fresh and its cost inside the headroom", "prediction": "board_age_hours <= 30 within 48 h", "input": a["input"]}
     reach_target = 10 ** max(1, app.get("reach", 3) - 3)  # reach 5 -> 100 uses a week as the first bar; the portfolio re-tunes it
@@ -141,7 +141,7 @@ def rebuild_bundle(root=REPO, now=None) -> dict:
     cfg, root = load(root), Path(root)
     from . import ideas
     apps = [a for a in registry(root) if a.get("status") in ("live", "iterating", "promoted")]
-    b = {"domain": cfg["domain"], "apps": {a["slug"]: {k: a[k] for k in ("slug", "name", "tagline", "archetype", "checks", "showcase") if k in a} for a in apps},
+    b = {"domain": cfg["domain"], "apps": {a["slug"]: {k: a[k] for k in ("slug", "name", "tagline", "archetype", "checks", "showcase", "live") if k in a} for a in apps},
          "retired": sorted(a["slug"] for a in registry(root) if a.get("status") == "retired"), "caps": cfg["budget"],
          "built_at": _iso(_now(now)), "boards": {a["slug"]: ideas.resolve_fact(root, a["fact"], now) for a in apps if a.get("fact")}}
     txt = json.dumps(b, indent=1, sort_keys=True)
@@ -178,7 +178,7 @@ def launch(root=REPO, apply=False, now=None) -> dict:
                 "archetype": c["archetype"], "status": "live", "launched": _iso(t), "need_ids": c["need_ids"], "reach": c["reach"], "impact": c["impact"],
                 "score": c["score"], "checks": _checks(c, cfg)}
         if c.get("idea"):
-            meta.update({"idea": c["idea"], "fact": c.get("fact"), "showcase": bool(c.get("showcase")), "cost": c.get("cost")})
+            meta.update({"idea": c["idea"], "fact": c.get("fact"), "live": c.get("live"), "showcase": bool(c.get("showcase")), "cost": c.get("cost")})
         meta["metrics"] = metric_set(meta, cfg)
         if apply:
             d = root / cfg["registry"] / c["slug"]

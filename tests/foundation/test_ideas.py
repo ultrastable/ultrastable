@@ -13,7 +13,7 @@ T = dt.datetime(2026, 11, 17, 21, 30, tzinfo=dt.timezone.utc)
 
 def sandbox():
     d = scratch()
-    for f in ("doctrine/spinoff.json", "doctrine/blindspots.json", "doctrine/spinoff-ideas.json", "ops/free-tier.json", "ops/transparency.json", "ops/changelog.json", "spinoffs/registry.json"):
+    for f in ("doctrine/spinoff.json", "doctrine/blindspots.json", "doctrine/spinoff-ideas.json", "ops/free-tier.json", "ops/transparency.json", "ops/changelog.json", "spinoffs/registry.json", "spinoffs/live.js"):
         (d / f).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(REPO / f, d / f)
     (d / "instances/ultrastable").mkdir(parents=True)
@@ -57,10 +57,10 @@ class Ideas(unittest.TestCase):
     def test_launches_boards_up_to_the_daily_cap_with_facts(self):
         d = sandbox()
         got = [spinoff.launch(d, True, T)["launched"] for _ in range(3)]
-        self.assertTrue(all(g and g["archetype"] == "status-board" for g in got))
+        self.assertTrue(all(g and g["archetype"] in ("status-board", "live-feed", "live-lookup") for g in got))  # SPINOFF-GOOD-1: live apps rank among boards
         self.assertIn("daily launch cap 3", spinoff.launch(d, True, T)["why"])
         b = json.loads((d / "spinoffs/registry.json").read_text())
-        self.assertEqual(len(b["boards"]), 3)
+        self.assertEqual(len(b["boards"]), sum(1 for g in got if g["archetype"] == "status-board"))  # a live app has no bundled board: it reads its source at request time
         self.assertTrue(all(v["rows"] for v in b["boards"].values()))
         self.assertEqual(spinoff.check(d), [])
 
@@ -101,3 +101,23 @@ class Ideas(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_live_public_benefit_ideas_have_sources_and_pass_the_gate():
+    """SPINOFF-GOOD-1: the four public-benefit ideas are live archetypes with a source in spinoffs/live.js and clear the safety gate."""
+    from foundation import ideas, spinoff
+    live = [i for i in ideas.ideas() if i.get("live")]
+    assert {i["id"] for i in live} >= {"country-snapshot", "air-quality", "quake-watch", "access-check"}
+    assert all(i["archetype"].startswith("live-") for i in live)
+    assert ideas.check() == [] and spinoff.check() == []
+
+
+def test_public_benefit_score_prefers_global_reach_and_treats_unmeasured_use_as_neutral():
+    """BENEFIT-1: region x need x use; a single-country idea scores 0.4 of a global one with the same need, and no use data never scores zero."""
+    from foundation import ideas
+    cfg = ideas.load()
+    g = ideas.benefit(REPO, cfg, {"id": "zz-a", "regions": "global", "need": 4})
+    one = ideas.benefit(REPO, cfg, {"id": "zz-b", "regions": ["US"], "need": 4})
+    two = ideas.benefit(REPO, cfg, {"id": "zz-c", "regions": ["US", "CA"], "need": 4})
+    assert g == 20.0 and one == 8.0 and two == 14.0
+    assert ideas.benefit(REPO, cfg, {"id": "old", "reach": 3}) is None

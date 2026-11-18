@@ -5,7 +5,7 @@
 One registry (doctrine/rules.json) maps each rule to the CI checks that fail a change and the runtime probes the tick runs on main.
   python3 -m foundation rules --check            registry complete: each rule has a CI check present in a workflow, a runtime probe that resolves, no unfiled gap
   python3 -m foundation rules --run [--apply] [--due]   run every runtime probe; a violation files Q-RULE-<rule>-<probe> (done check = the probe) and runs the declared fix once
-  python3 -m foundation rules --probe NAME       builtin probes: no-secrets, no-qnfo-pages, license-notice, merged-green, pages-live (exit 0 ok, 1 violated, 2 unmeasured)
+  python3 -m foundation rules --probe NAME       builtin probes: no-secrets, no-qnfo-pages, license-notice, merged-green, pages-live, spinoff-live (exit 0 ok, 1 violated, 2 unmeasured)
   python3 -m foundation rules --status | --panel | --baseline
 Unmeasured is never healthy: a probe that cannot read its source reports unmeasured and the rule shows it.
 Consumers: .github/workflows/checks.yml, scripts/lane.sh (--run --apply --due), scripts/dashboard_snapshot.py (panel), tests/foundation/test_rules.py."""
@@ -16,7 +16,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 REG, BASE, STATUS, LEDGER = "doctrine/rules.json", "doctrine/rules-baseline.json", "ops/rules/status.json", "ops/rules/ledger.jsonl"
 REQUIRED = ["closed-loops", "autonomy-first", "front-end-matches-back-end", "no-merge-over-red", "free-tier", "no-qnfo-on-pages", "license-notice", "no-secrets-in-logs"]
-BUILTIN = {"no-secrets", "no-qnfo-pages", "license-notice", "merged-green", "pages-live"}
+BUILTIN = {"no-secrets", "no-qnfo-pages", "license-notice", "merged-green", "pages-live", "spinoff-live"}
 
 
 def jl(root, rel, default=None):
@@ -174,9 +174,29 @@ def p_pages_live(root, d, now=None):
     return ("violated", "pages not live: " + ", ".join(map(str, s["failing"][:5]))) if s.get("failing") else ("ok", "every checked page is live and fresh")
 
 
+def p_spinoff_live(root, d, now=None):
+    """SPINOFF-GOOD-1: every launched live-feed/live-lookup app answers /api/freshness 200 (503 = its public source failed). None launched yet is unmeasured, never ok."""
+    import urllib.request, urllib.error
+    apps = [a for a in (json.loads(p.read_text(encoding="utf-8")) for p in sorted((Path(root) / "instances/spinoffs").glob("*/app.json")))
+            if a.get("live") and a.get("status") in ("live", "iterating", "promoted")]
+    if not apps:
+        return "unmeasured", "no live public-benefit app is launched yet"
+    bad, unreach = [], []
+    for a in apps:
+        try:
+            urllib.request.urlopen(f"https://{a['slug']}.ultrastable.app/api/freshness", timeout=15)
+        except urllib.error.HTTPError as e:
+            (bad if e.code == 503 else unreach).append(a["slug"])
+        except (urllib.error.URLError, OSError):
+            unreach.append(a["slug"])
+    if bad:
+        return "violated", "source not live: " + ", ".join(bad)
+    return ("unmeasured", "unreachable: " + ", ".join(unreach)) if unreach else ("ok", f"{len(apps)} public-benefit apps live and fresh")
+
+
 def builtin(name, root=REPO):
     d = jl(root, REG)
-    return {"no-secrets": p_no_secrets, "no-qnfo-pages": p_no_qnfo, "license-notice": p_license, "merged-green": p_merged_green, "pages-live": p_pages_live}[name](root, d)
+    return {"no-secrets": p_no_secrets, "no-qnfo-pages": p_no_qnfo, "license-notice": p_license, "merged-green": p_merged_green, "pages-live": p_pages_live, "spinoff-live": p_spinoff_live}[name](root, d)
 
 
 # ---- runtime tick

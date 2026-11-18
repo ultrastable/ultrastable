@@ -2455,6 +2455,15 @@
    "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-3"
   },
   {
+   "id": "decision-2026-11-18-public-benefit-is-scored-in-code-benefit-1",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "Public benefit is scored in code (BENEFIT-1)",
+   "body": "region x need x use over cost; US-only apps dropped for global sources",
+   "probe": "grep:doctrine/spinoff-ideas.json::\"benefit\"",
+   "session": "session_0156nqJbrGYaSnypwjTPL2bes"
+  },
+  {
    "id": "decision-2026-11-18-decisions-1-every-autonomous-decision-is-measured",
    "kind": "decision",
    "date": "2026-11-18",
