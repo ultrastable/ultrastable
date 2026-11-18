@@ -35,10 +35,12 @@ jobs:
         run: python3 -m foundation resilience --run --apply --changed-file "$RUNNER_TEMP/changed"
       - name: Ultrastability tick (a stall is a second-order event)
         run: python3 -m foundation ultrastability --tick --apply
+      - name: Goals tick (a goal out of bounds gets one knob turned; GOALS-1)
+        run: python3 -m foundation goals --tick --apply && python3 -m foundation goals --propose --apply && python3 -m foundation goals --page --apply
       - name: Record
         # only when a restart, an escalation or the set of stalled clocks changed (or once a day); [skip ci] keeps this commit from waking deploy-site, whose completion would wake this workflow again
         run: |
           [ "$(cat "$RUNNER_TEMP/changed")" = "1" ] || { echo "nothing changed; ledger not committed"; exit 0; }
           git config user.name "ultrastable-watchdog"; git config user.email "actions@users.noreply.github.com"
-          git add ops/resilience.jsonl ops/ultrastability.jsonl docs/issues
+          git add ops/resilience.jsonl ops/ultrastability.jsonl ops/goals site/goals-data.js docs/issues doctrine ops/provenance.jsonl ops/decisions seed/ultrastable.json
           git diff --cached --quiet || { git commit -q -m "watchdog: clock probe (RESILIENCE-1) [skip ci]"; python3 tools/push_main.py; }

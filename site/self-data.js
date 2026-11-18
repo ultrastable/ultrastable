@@ -492,6 +492,7 @@ export default {
   "funding-verify",
   "gap-register",
   "glossary",
+  "goals-loop",
   "guiding-directive",
   "host-sync",
   "hosts",
@@ -1585,6 +1586,17 @@ export default {
     "sla": "24h",
     "summary": "Ashby's second loop: every tick reads each essential variable against its bounds; one out of bounds for two ticks takes one discrete step (a parameter change within limits, or a restructure item), kept only if the variable returns, otherwise undone and the next step taken; an exhausted ladder files a redesign item.",
     "trigger": "daily cost-guard workflow and the criticality tick",
+    "workflows": []
+   },
+   {
+    "closing_probe": "grep:foundation/goals.py::def tick",
+    "id": "goals-loop",
+    "kind": "governance",
+    "owner": "portfolio-manager",
+    "server_owner": "ultrastable-tick",
+    "sla": "24h",
+    "summary": "GOALS-1: the goal tree. The standing goal (bootstrap to criticality), bold goals the system set for itself and small goals each have a measured variable, a target, a deadline and knobs; a goal out of bounds for two ticks gets one knob turned one step inside its safe range, logged as a scored decision (goal-knob), kept only if the variable moves toward target and otherwise restored; spent knobs file a re-plan; met streaks ratchet the target; shown at /goals.",
+    "trigger": "watchdog workflow tick and the regen after every merge",
     "workflows": []
    },
    {

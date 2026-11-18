@@ -289,6 +289,23 @@
      "fix": "python3 -m foundation decisions --settle --apply"
     }
    ]
+  },
+  {
+   "id": "every-goal-has-knob",
+   "statement": "Every goal Ultrastable works toward has a measured variable read from live data, a target and deadline, and at least one knob the system may turn to reach it; a goal whose knobs are all spent is re-planned, never dropped (GOALS-1).",
+   "source": "doctrine/goals.json; agents/AGENTS.md",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation goals --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "goals-measured",
+     "cmd": "python3 -m foundation goals --tick",
+     "fix": "python3 -m foundation goals --tick --apply"
+    }
+   ]
   }
  ],
  "repos": [

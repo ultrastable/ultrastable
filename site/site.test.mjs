@@ -379,3 +379,10 @@ console.log("PROMOTE-1 indexnow ok");
   assert.match(await (await get("https://ultrastable.io/sitemap.xml")).text(), /\/claims</);
   console.log("CLAIMS-1 ok");
 }
+// GOALS-1: /goals renders the goal tree from generated data and /api/goals serves the same data
+{
+  const gp = await mod.fetch(new Request("https://ultrastable.io/goals"), ENV); const gt = await gp.text();
+  assert.equal(gp.status, 200); assert.match(gt, /What Ultrastable is working toward/); assert.match(gt, /Bootstrap to criticality/); assert.match(gt, /Knobs it can turn/);
+  const gj = await (await mod.fetch(new Request("https://ultrastable.io/api/goals"), ENV)).json();
+  assert.ok(gj.goals.length >= 8); assert.ok(gj.goals.every((g) => g.knobs.length >= 1 && g.reading && g.deadline), "every goal carries a variable, a deadline and a knob");
+}

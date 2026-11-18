@@ -127,6 +127,24 @@
     "kind": "d1_settled"
    },
    "why": "The governor sets the level that throttles every loop; each level it sets is scored by whether the account stayed below the shed line."
+  },
+  {
+   "id": "goal-knob",
+   "name": "Goals: which knob to turn when a goal's variable is out of bounds",
+   "store": "repo",
+   "files": [
+    "foundation/goals.py"
+   ],
+   "metric": "goal_moved_toward_target",
+   "metric_says": "1 when the goal's measured variable moved toward its target (or is inside it) after the knob was turned, 0 when it did not and the knob was restored",
+   "op": ">=",
+   "target": 1,
+   "window_h": 24,
+   "predict": "1 (the knob is expected to move its goal's variable toward the target within the settle window)",
+   "measure": {
+    "kind": "goal_improved"
+   },
+   "why": "A knob is turned only to bring a goal's variable back toward its target; the measure of the choice is whether the variable moved, and a knob that does not move it is restored and counted as spent (GOALS-1)."
   }
  ],
  "discover": {

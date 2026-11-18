@@ -116,6 +116,16 @@ def measure(root, cfg: dict, row: dict, due: bool):
         return float(rows[-1][m["field"]]) if rows else None
     if k == "item_closed":
         return _closed_item(root, row["ref"])
+    if k == "goal_improved":  # GOALS-1: 1 when the goal's variable moved toward its target (or is inside it) after the knob was turned
+        from . import goals
+        gid = row["ref"].split(":", 1)[0]
+        g = next((x for x in goals.tree(root) if x["id"] == gid), None)
+        rs = [r for r in _lines(root / "ops/goals/ledger.jsonl") if r.get("ev") == "reading" and r.get("goal") == gid and not r.get("unmeasured")]
+        before = [r for r in rs if r["at"] <= row["at"]]
+        after = [r for r in rs if r["at"] > row["at"]]
+        if not g or not before or not after:
+            return None
+        return 1.0 if goals.toward(g, before[-1]["value"], after[-1]["value"]) else 0.0
     if k == "improvement_kept":
         for r in _lines(root / "ops/improvements.jsonl"):
             if r.get("ev") == "verdict" and r.get("loop") == row["ref"] and r.get("at", "") >= row["at"]:

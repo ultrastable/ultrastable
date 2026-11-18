@@ -3115,6 +3115,43 @@
    "server_owner": "ultrastable-tick"
   },
   {
+   "id": "goals-loop",
+   "kind": "governance",
+   "summary": "GOALS-1: the goal tree. The standing goal (bootstrap to criticality), bold goals the system set for itself and small goals each have a measured variable, a target, a deadline and knobs; a goal out of bounds for two ticks gets one knob turned one step inside its safe range, logged as a scored decision (goal-knob), kept only if the variable moves toward target and otherwise restored; spent knobs file a re-plan; met streaks ratchet the target; shown at /goals.",
+   "trigger": "watchdog workflow tick and the regen after every merge",
+   "owner": "portfolio-manager",
+   "closes_by": "system",
+   "sla": "24h",
+   "done": "ops/goals/ledger.jsonl has a reading row for every goal within 48 h and every knob turn has a verdict within its settle window",
+   "paths": [
+    {
+     "id": "github-watchdog",
+     "how": "python3 -m foundation goals --tick --apply in the watchdog workflow (built-in token)",
+     "class": "free"
+    },
+    {
+     "id": "executor-pass",
+     "how": "python3 -m foundation goals --tick --apply from the executor pass on any checkout",
+     "class": "degraded"
+    }
+   ],
+   "closing_probe": "grep:foundation/goals.py::def tick",
+   "writeback": [
+    "docs/issues",
+    "ops/goals",
+    "site/goals-data.js"
+   ],
+   "system_path": [
+    "foundation/goals.py",
+    "doctrine/goals.json",
+    "tests/foundation/test_goals.py",
+    "site/goals-data.js"
+   ],
+   "workflows": [],
+   "area": "managers",
+   "server_owner": "ultrastable-tick"
+  },
+  {
    "id": "branch-sweep",
    "kind": "governance",
    "summary": "No remote branch carries work main lacks. Every branch gets one recorded disposition (merged, superseded, ported as a PORT-BRANCH item, rejected on purpose, or state): generated-file conflicts resolve by rule, a merge that breaks the gate is undone, merged branches are pruned. Closes the blind spot of the session reaper, which only watched agent/ and claude/ branches.",

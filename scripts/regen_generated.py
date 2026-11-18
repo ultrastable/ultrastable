@@ -21,13 +21,14 @@ GENERATORS = [
     (["python3", "-m", "foundation", "ultrastability", "--data", "--apply"], "."),
     (["python3", "-m", "foundation", "decisions", "--settle", "--apply"], "."),
     (["python3", "-m", "foundation", "decisions", "--page", "--apply"], "."),
+    (["python3", "-m", "foundation", "goals", "--page", "--apply"], "."),
     (["python3", "-m", "foundation", "upstream", "contract", "--apply"], "."),
     (["python3", "-m", "foundation", "triggers", "--sync"], "."),
     (["python3", "-m", "plugins", "self", "--write"], "seed"),
 ]
 # Files the generators write; the workflow ignores pushes that touch only these, so the bot's own commit cannot retrigger it.
 OUTPUTS = ["README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js",
-           "site/ultrastability-data.js", "site/decisions-data.js", "ops/decisions/outcomes.jsonl", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
+           "site/ultrastability-data.js", "site/decisions-data.js", "site/goals-data.js", "ops/decisions/outcomes.jsonl", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
 
 
 def run_all(root: Path = ROOT) -> list[str]:
