@@ -80,3 +80,8 @@ test('a token without hook rights is recorded plainly and the db gates reruns ho
   assert.equal(r.status, 'no-rights'); assert.match(r.repos['o/r'], /polling path stays/);
   assert.equal((await reconcileHooks({ db, token: 't', repos: ['o/r'], secret: 's', fetch: HJ([], 403), now: () => 1e6 + 60e3 })).status, 'fresh');
 });
+test('HOSTS-SUBREQ-1: a probe refused by the invocation subrequest limit is unmeasured, never a host down', async () => {
+  const db = makeDb(), starved = { id: 'a', kind: 'x', health: async () => { throw new Error('Too many subrequests by single Worker invocation.'); }, deploy: async () => ({ ok: true }) };
+  const r = await watchHosts({ db, registry: createHosts([starved, host('b', true)], { db }), now: () => Date.now() });
+  assert.equal(r.status, 'ok'); assert.deepEqual(r.unmeasured, ['a']); assert.equal(r.down, undefined);
+});

@@ -57,3 +57,12 @@ test('gatewayHost asks /state with the run token for the named script', async ()
   assert.equal((await host.observe('app')).script, 'app');
   assert.deepEqual(seen, [['https://g.example/state?script=app', 'Bearer tok-for-https://g.example/']]);
 });
+
+test('diff: domains, routes and D1 migrations are compared; a pending migration is repo-to-host drift', () => {
+  const o = obs({ domains: ['a.example'], routes: ['a.example/*'], migrations: { db1: ['0001', '0002'] } });
+  assert.deepEqual(diff({ script: 'app', domains: ['a.example'], routes: ['a.example/*'], migrations: { db1: ['0001', '0002'] } }, o), []);
+  const d = diff({ script: 'app', domains: ['b.example'], routes: [], migrations: { db1: ['0001', '0002', '0003'], db2: ['0001'] } }, o);
+  assert.deepEqual(d.map(i => i.field).sort(), ['domains', 'migrations', 'migrations', 'routes']);
+  assert.deepEqual(d.find(i => i.database === 'db1').missing, ['0003']);
+  assert.equal(d.find(i => i.database === 'db2').observed, null);
+});

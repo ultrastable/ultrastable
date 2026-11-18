@@ -1,0 +1,14 @@
+{
+  "_doc": "PACE-2: how the tick Worker paces its own loops and orders ready work. Read by deploy/deploy-workers.mjs into config.pace; consumed by seed/worker/src/pace.js. An instance overrides any value in instances/<slug>/pace.json. idle_runs: consecutive real runs that returned nothing before a heavy loop's stride doubles. max_stride: the most 40-minute cycles a loop may skip to (4 = one real run every 160 minutes). never_pace: loops that always run. rank: within one priority, ready items are ordered by reach / cost of the first matching id prefix; an item no prefix matches keeps reach 1, cost 1.",
+  "idle_runs": 4,
+  "max_stride": 4,
+  "never_pace": ["executor", "lane", "handoffs"],
+  "rank": [
+    { "prefix": "Q-PROMO", "reach": 5, "cost": 1 },
+    { "prefix": "Q-GROW", "reach": 4, "cost": 2 },
+    { "prefix": "Q-CLAIM", "reach": 3, "cost": 1 },
+    { "prefix": "Q-UIUX", "reach": 3, "cost": 2 },
+    { "prefix": "Q-SELF", "reach": 2, "cost": 1 },
+    { "prefix": "Q-UNK", "reach": 1, "cost": 2 }
+  ]
+}

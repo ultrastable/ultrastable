@@ -11,6 +11,7 @@
 //   release   k_eff back at or over k_min -> the lever returns to 'open' and the open prediction is graded hit
 //   stall     subcritical and k_eff no higher than control.stall_ticks beats ago -> CRIT-STALL-<day> is filed at the head of the queue
 // Thresholds come from autonomy/criticality.json (`control`), never from this file. A config without `control` leaves the lever open.
+import { rankRows } from './pace.js';
 
 async function all(db, sql, ...args) { return (await db.prepare(sql).bind(...args).all()).results || []; }
 async function first(db, sql, ...args) { return (await db.prepare(sql).bind(...args).first()) || null; }
@@ -35,10 +36,10 @@ export function raisesK(item, c) {
 
 // The dispatch step's view of the lever: the role's next item under the current mode. Raising items first while the lever is 'raise-only';
 // the role's ordinary head when none qualifies, so the queue cannot starve.
-export async function pickForRole(db, role, t) {
-  const rows = await all(db, `SELECT id, kind FROM items WHERE status='ready' AND owner_role=?
+export async function pickForRole(db, role, t, rank = []) {
+  const rows = rankRows(await all(db, `SELECT id, kind, priority FROM items WHERE status='ready' AND owner_role=?
       AND (project IS NULL OR project = ? OR ? IS NULL)
-      AND id NOT IN (SELECT item_id FROM claims) ORDER BY priority, created_at LIMIT 50`, role.role, role.project, role.project);
+      AND id NOT IN (SELECT item_id FROM claims) ORDER BY priority, created_at LIMIT 50`, role.role, role.project, role.project), rank);  // PACE-2: reach per cost within one priority
   if (!rows.length) return null;
   const c = t && t.control;
   if (!c || (await readControl(db)).mode !== RAISE) return rows[0];

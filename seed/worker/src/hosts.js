@@ -51,7 +51,10 @@ export function createHosts(list, { db = null, now = Date.now } = {}) {
       }
       return { ok: false, detail: tried.join('; ') || 'no host registered', tried };
     },
-    async probe() { const out = []; for (const h of hosts) { let r; try { r = await h.health(); } catch (e) { r = { ok: false, detail: String(e && e.message || e) }; } out.push({ host: h.id, ...r }); await record(db, now, { host: h.id, kind: 'health', ok: r.ok, detail: r.detail }); } return out; },
+    async probe() { const out = []; for (const h of hosts) { let r; try { r = await h.health(); } catch (e) { r = { ok: false, detail: String(e && e.message || e) }; }
+      // HOSTS-SUBREQ-1: a probe that failed on this invocation's own subrequest limit says nothing about the host. It is recorded as unmeasured ('health-skip'), never as a host down.
+      if (!r.ok && /Too many subrequests/i.test(String(r.detail))) r = { ok: false, unmeasured: true, detail: 'not probed: this invocation had no subrequests left' };
+      out.push({ host: h.id, ...r }); await record(db, now, { host: h.id, kind: r.unmeasured ? 'health-skip' : 'health', ok: r.ok, detail: r.detail }); } return out; },
   };
 }
 async function record(db, now, e) {
@@ -129,7 +132,8 @@ export async function onHostEvent({ db, token, fetch: f = fetch, event, now = Da
 export async function watchHosts({ db, registry, token, repo, fetch: f = fetch, now = Date.now, stallMs = STALL_MS }) {
   const health = await registry.probe(), out = { status: 'ok', health, stalled: [] };
   if (!db) return out;
-  const down = health.filter(h => !h.ok).map(h => h.host);
+  const down = health.filter(h => !h.ok && !h.unmeasured).map(h => h.host);
+  if (health.some(h => h.unmeasured)) out.unmeasured = health.filter(h => h.unmeasured).map(h => h.host);
   // stall: the newest push to the default branch has no successful deploy event after stallMs although a host is healthy
   const push = await db.prepare("SELECT at, sha FROM host_events WHERE kind = 'inbound' AND worker IS NULL AND host = 'github' ORDER BY at DESC LIMIT 1").first().catch(() => null);
   if (push) {

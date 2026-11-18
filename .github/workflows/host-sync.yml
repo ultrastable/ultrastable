@@ -26,7 +26,4 @@ jobs:
         env: { GITHUB_TOKEN: "${{ github.token }}" }
         run: node workers/tools/hostsync.mjs run --declared deploy/hosting.json
       - name: write the runtime state back to the repository
-        run: |
-          git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
-          git add ops/hosting
-          git diff --cached --quiet || { git commit -m "host-sync: runtime state of the host (HOSTSYNC-1)" && for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done; }
+        run: bash workers/tools/hostsync_commit.sh 'host-sync - runtime state of the host (HOSTSYNC-1)'

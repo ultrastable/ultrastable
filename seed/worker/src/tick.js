@@ -44,8 +44,11 @@ export const METRICS = {
   // not exist yet reports 0, never throws.
   beats_24h: (db, now) => first(db, `SELECT COUNT(*) AS n FROM loop_beats WHERE started_at >= ?`, iso(new Date(now - 86400e3))).then(r => r.n).catch(() => 0),
   beats_productive_share_24h: (db, now) => first(db,
-    `SELECT COUNT(*) AS n, SUM(CASE WHEN ok = 1 AND detail IS NOT NULL AND detail NOT IN ('null','{}','[]') THEN 1 ELSE 0 END) AS p FROM loop_beats WHERE started_at >= ?`,
+    `SELECT COUNT(*) AS n, SUM(CASE WHEN ok = 1 AND detail IS NOT NULL AND detail NOT IN ('null','{}','[]') AND detail NOT LIKE '{"paced"%' THEN 1 ELSE 0 END) AS p FROM loop_beats WHERE started_at >= ?`,
     iso(new Date(now - 86400e3))).then(r => (r.n ? Math.round(1000 * (r.p || 0) / r.n) / 1000 : 0)).catch(() => 0),
+  // PACE-2: cost per day against the free plan. The largest share of any free daily limit used today (freetier.js samples; 1 = the whole free day).
+  // No fresh sample is 0 here and stays visible as its own breach in freetier.js, never as a healthy cost.
+  free_tier_peak_share: (db, now) => freeTierLevel(db, now).then(l => Math.round(1000 * Math.max(0, ...Object.values((l && l.resources) || {}).map(r => Number(r.frac)).filter(Number.isFinite))) / 1000).catch(() => 0),
   items_done: (db) => first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done'`).then(r => r.n),
   open_gate_cards: (db) => first(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE status='open'`).then(r => r.n),
   dispatches_24h: (db, now) => first(db, `SELECT COUNT(*) AS n FROM dispatches WHERE at >= ?`, iso(new Date(now - 86400e3))).then(r => r.n),
@@ -128,6 +131,7 @@ export const LIVENESS = [
   ['M-verified', 'independently verified outcomes in the last 7 days', 'verified_outcomes_7d', '>=', 1, 48, 'reviewer', 'Nothing was verified by a second path. Check that the reviewer role is dispatched and records outcomes.'],
   ['M-no-drops', 'silent drops in the last 7 days', 'silent_drops_7d', '<=', 0, 0, 'portfolio-manager', 'An item left the active set with no disposition. Find it and give it one.'],
   ['M-pace', 'share of loop runs in 24 hours that returned work (idle runs are not progress)', 'beats_productive_share_24h', '>=', 0.05, 24, 'operations', 'Most loop runs return nothing. Lengthen the cadence of idle loops and shorten productive ones (core/pace plan).'],
+  ['M-cost', 'largest share of a free daily limit used today (1 = the whole free day)', 'free_tier_peak_share', '<=', 0.8, 0, 'operations', 'A free daily limit is nearly spent. Lengthen idle loops (pace.json) and cut the heaviest reader before the plan sheds work.'],
   ['M-instrumented', 'objectives without a probe-backed target metric', 'objectives_without_probe', '<=', 0, 1, 'product-manager', 'Insert a target metric with a builtin, sql or http probe for the objective.'],
 ];
 
@@ -322,7 +326,7 @@ export const STEPS = {
       if (ctx.wake !== role.role && ctx.tickId % Math.max(1, role.tick_every) !== 0) continue;  // an event wakes its role out of turn
       const wip = await first(db, `SELECT COUNT(*) AS n FROM claims WHERE agent=?`, role.id);
       if (wip.n >= ctx.config.max_wip_per_role) continue;
-      const item = await pickForRole(db, role, ctx.config.criticality);  // CRITICALITY-LOOP-1: raising items first while k_eff is under k_min
+      const item = await pickForRole(db, role, ctx.config.criticality, (ctx.config.pace || {}).rank);  // CRITICALITY-LOOP-1: raising items first while k_eff is under k_min
       await run(db, `UPDATE roles SET last_tick_at=? WHERE id=?`, ctx.nowIso, role.id);
       if (!item) continue;
       await run(db, `INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES (?, ?, ?, ?)`, item.id, role.id, ctx.nowIso, ctx.nowIso);
