@@ -38,7 +38,7 @@ def main():
     msg = git("log", "-1", "--format=%s").decode().strip()
     body = json.dumps({"message": msg, "files": changes()}).encode()
     for attempt in range(1, 5):
-        req = urllib.request.Request(URL, data=body, method="POST", headers={"authorization": "Bearer " + oidc(), "content-type": "application/json"})
+        req = urllib.request.Request(URL, data=body, method="POST", headers={"authorization": "Bearer " + oidc(), "content-type": "application/json", "user-agent": "ultrastable-push-main/1"}  # Cloudflare answers 403 (error 1010) to the default Python-urllib agent)
         try:
             res = json.load(urllib.request.urlopen(req, timeout=40))
             print("push_main: landed", res.get("sha")); return 0
