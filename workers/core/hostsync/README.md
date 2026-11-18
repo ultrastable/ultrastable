@@ -8,4 +8,4 @@
 
 - Repo to host: the gateway deploy workflow records each verified deploy in the expected-hashes file under ops/hosting; a host whose module hash differs is redeployed by dispatching the declared workflow.
 - Host to repo: the host-state file under ops/hosting and the events log are written by the `host-sync` workflow (after a deploy, on a `host-changed` callback, daily).
-- BUILT: gateway `/state`, diff, reconcile, workflow, tests. NOT COVERED: zone routes and D1 migration state, other hosts' adapters, wiring the tenant repositories (they declare their scripts in their own hosting declaration).
+- BUILT: gateway `/state`, diff, reconcile, workflow, tests. Also read and compared: account custom domains, zone routes (rule `zones`) and applied D1 migration file names (rule `d1`). NOT COVERED: other hosts' adapters.

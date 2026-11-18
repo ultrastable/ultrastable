@@ -2230,6 +2230,15 @@
    "body": "Heavy loops whose last 4 real runs returned nothing run every 2nd then 4th cycle (seed/worker/src/pace.js, seed/autonomy/pace.json); a paced slot is still a beat. Ready items of one priority are ordered by reach/cost of their id prefix. Metric free_tier_peak_share and liveness metric M-cost (<= 0.8) read free_tier_samples.",
    "probe": "grep:seed/worker/src/pace.js::export async function strideFor",
    "session": "session_0156nqDu3CafCLkNfgmXspHr"
+  },
+  {
+   "id": "lesson-2026-11-18-hostsync-1-commit-host-state-with-reset-and-append-never-reb",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "HOSTSYNC-1: commit host state with reset-and-append, never rebase",
+   "body": "The first live deploy-gateway run raced the host-sync run; git pull --rebase conflicted on append-only ops/hosting/events.jsonl and the retry loop exited green without pushing, so expected.json never landed. workers/tools/hostsync_commit.sh resets to main, copies the whole-file state, appends only new event lines and fails loudly if the push never lands.",
+   "probe": "grep:workers/tools/hostsync_commit.sh::hostsync_commit: push to main did not land",
+   "session": "session_0156nqDrtJzL18qgzyo9Tcgz"
   }
  ]
 }
