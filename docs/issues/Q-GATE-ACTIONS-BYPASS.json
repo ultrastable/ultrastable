@@ -1,0 +1,8 @@
+{
+  "id": "Q-GATE-ACTIONS-BYPASS",
+  "title": "Q-GATE-ACTIONS-BYPASS: let GitHub enforce checks on main without blocking the fleet's own pushes",
+  "body": "**Owner:** operations\n**Trigger:** the tick Worker applier (`seed/worker/src/auth/rulesets.js`) is refused by GitHub, HTTP 422: \"Actor GitHub Actions integration must be part of the ruleset source or owner organization\" (credential_events, 2026-11-18T08:20Z). The Actions app (15368) cannot be a bypass actor, so a rule that requires `checks` on main would also refuse the workflow-token pushes of regen-generated, lane, deploy-record and watchdog.\n**Done check:** cmd:python3 -m foundation mergeaudit --check\n**Status:** open\n\nPlan: move those pushes onto a bypass-capable identity or to pull requests, then drop the 15368 bypass entry from `github/org-settings.json` and `RULESETS`; the applier already exempts the Worker's own app from its stored install id. Until then the rule stays unapplied (the 422 is the safe state) and MERGE-AUDIT-1 (#622) audits direct merges after the fact. Do not remove the 15368 entry alone: the rule would be accepted and the fleet's write-backs to main would stop.\n\n**Closing probe:** `GET /repos/ultrastable/ultrastable/rulesets` lists `main-requires-checks` active and a regen-generated push to main still lands.\n",
+  "labels": ["role:operations", "open-loop", "server-owned"],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

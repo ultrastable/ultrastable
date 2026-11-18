@@ -2368,6 +2368,15 @@
    "body": "Rowan picked the card option that requires the checks job on main with bots exempt. The Worker applier had been refused by GitHub with HTTP 422 on every pass; it now records GitHub's refusal text, exempts the tick Worker's own app from the stored install id, and retries a refused rule hourly. Ran the seed Worker auth tests, 18 pass.",
    "probe": "file:seed/worker/src/auth/rulesets.js",
    "session": "session_0156nqDt1FUj9Xw7a54KPPUk"
+  },
+  {
+   "id": "lesson-2026-11-18-github-does-not-let-the-actions-app-bypass-a-ruleset",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "GitHub does not let the Actions app bypass a ruleset",
+   "body": "The applier recorded GitHub's refusal: the GitHub Actions integration must be part of the ruleset source, so it cannot be a bypass actor. Removing it alone would make the rule accepted and stop every workflow-token push to main, so the rule stays unapplied and Q-GATE-ACTIONS-BYPASS tracks moving those pushes. Read the credential_events row and ran the checks to verify.",
+   "probe": "file:docs/issues/Q-GATE-ACTIONS-BYPASS.json",
+   "session": "session_0156nqDt1FUj9Xw7a54KPPUk"
   }
  ]
 }
