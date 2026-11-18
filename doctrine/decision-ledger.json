@@ -2315,6 +2315,15 @@
    "body": "The worker-native executor merged a change with a stray character that made site/webbotauth.js a syntax error, turning deploy-site red. Restored in #616. Executor output must pass node --check on every touched JS file before the lane merges.",
    "probe": "file:site/webbotauth.js",
    "session": "session_0156nqDsv1wrVeZRDrJu8sFu"
+  },
+  {
+   "id": "lesson-2026-11-18-claimcode-baseline-key-follows-an-edited-line",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "claimcode baseline key follows an edited line",
+   "body": "Change 619 edited the AGENT_MD line in site/worker.js (proof link to live), which changed its baseline hash, so claimcode failed on main. The baseline row now carries the new hash; count stays 115. Verified: ran claimcode --check (ok) and tests.foundation.test_claimcode (tests pass). 619 was merged by a client session 30 seconds before its checks run completed with failure; the lane and sweeper gates do not cover a direct merge call.",
+   "probe": "file:doctrine/claim-code.json",
+   "session": "session_0156nqDt1FUj9Xw7a54KPPUk"
   }
  ]
 }

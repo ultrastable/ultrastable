@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """PROOF-OWN-1: Ultrastable's proof surfaces show only Ultrastable's own records.
 
 QNFO was the prototype; its metrics must never be presented as Ultrastable's.
