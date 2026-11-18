@@ -9,6 +9,7 @@ on:
     - cron: "17 15 * * *"
   workflow_dispatch:
 permissions:
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
   actions: write
   contents: write
 concurrency:
@@ -54,4 +55,4 @@ jobs:
           if git diff --cached --quiet; then echo "no state change"; exit 0; fi
           git config user.name "ultrastable-social"; git config user.email "social@ultrastable.io"
           git commit -m "social: record post state"
-          git push origin HEAD:main || { echo "::error::state push failed; see docs/BOOTSTRAP-GAPS.md BG-25"; exit 1; }
+          python3 tools/push_main.py || { echo "::error::state push failed; see docs/BOOTSTRAP-GAPS.md BG-25"; exit 1; }

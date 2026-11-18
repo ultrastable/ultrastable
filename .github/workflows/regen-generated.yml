@@ -19,6 +19,7 @@ on:
       - "seed/self/self.json"
   workflow_dispatch:
 permissions:
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
   contents: write
 concurrency:
   group: regen-generated
@@ -43,7 +44,7 @@ jobs:
             git add -A
             git diff --cached --quiet && { echo "generated data already current"; exit 0; }
             git commit -qm "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)"
-            if git push origin HEAD:main; then exit 0; fi
+            if python3 tools/push_main.py; then exit 0; fi
             echo "push rejected (try $try): main moved; regenerating on the new main"
             git fetch -q origin main && git reset -q --hard origin/main && python3 scripts/regen_generated.py
             sleep $((try * 3))

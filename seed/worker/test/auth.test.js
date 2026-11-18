@@ -235,8 +235,10 @@ test('DIRECT-MERGE-GATE-1: the Worker app is exempt too, a refusal records why, 
   const f = async (url, o = {}) => { if (!o.method) return { status: 200, json: async () => [] }; sent = JSON.parse(o.body); return { status: 422, json: async () => ({ message: 'Validation Failed', errors: ['Actor must be installed'] }) }; };
   const r = await applyRulesets(db, e, 't', { fetch: f, token: 'tok' });
   assert.equal(r.ok, false);
-  assert.deepEqual(sent.bypass_actors.map(x => x.actor_id), [15368, 77]);
+  assert.deepEqual(sent.bypass_actors.map(x => x.actor_id), [77]);  // the Actions app (15368) is refused by GitHub; MAIN-WRITER-1 commits through the org's own app
   const row = await db.prepare("SELECT detail FROM credential_events WHERE provider = 'github-admin' AND event = 'failed' ORDER BY id DESC LIMIT 1").first();
   assert.match(row.detail, /HTTP 422 Validation Failed; Actor must be installed/);
+  assert.deepEqual((await rulesetsDue(db, e, { fetch: f })).map(x => x.action), ['await-main-writer']);  // MAIN-WRITER-1: no rule before a workflow commit has landed through the app
+  await store.event(db, 't', 'github-app', 'main-writer', 'abc');
   assert.deepEqual((await rulesetsDue(db, e, { fetch: f })).map(x => x.action), ['backoff']);
 });

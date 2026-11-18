@@ -17,6 +17,7 @@ on:
       reply_kind: {description: "ack, question, accepted, rejected, opt-out or bounce", required: false}
       reply_note: {description: "Short note (optional)", required: false}
 permissions:
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
   contents: write
 concurrency:
   group: outreach
@@ -64,4 +65,4 @@ jobs:
           if git diff --cached --quiet; then echo "no state change"; exit 0; fi
           git config user.name "ultrastable-outreach"; git config user.email "outreach@ultrastable.io"
           git commit -m "outreach: record run state"
-          git push origin HEAD:main || { echo "::error::state push failed; see docs/BOOTSTRAP-GAPS.md BG-25 and BG-29"; exit 1; }
+          python3 tools/push_main.py || { echo "::error::state push failed; see docs/BOOTSTRAP-GAPS.md BG-25 and BG-29"; exit 1; }

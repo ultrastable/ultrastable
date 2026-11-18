@@ -12,7 +12,7 @@ export const RULESETS = Object.freeze({ 'ultrastable/ultrastable': [{
     { type: 'pull_request', parameters: { required_approving_review_count: 0, dismiss_stale_reviews_on_push: false, require_code_owner_review: false, require_last_push_approval: false, required_review_thread_resolution: false } },
     { type: 'required_status_checks', parameters: { strict_required_status_checks_policy: false, required_status_checks: [{ context: 'checks' }] } },
   ],
-  bypass_actors: [{ actor_id: 15368, actor_type: 'Integration', bypass_mode: 'always' }],
+  bypass_actors: [],  // the Actions app (15368) cannot be a bypass actor (HTTP 422); applyRulesets adds the org's own app, and workflows commit to main through it (MAIN-WRITER-1)
 }] });
 
 export async function applyRulesets(db, env, tenant, { fetch: f = fetch, now = Date.now(), rulesets = RULESETS, token } = {}) {
@@ -60,6 +60,8 @@ export async function rulesetsDue(db, env, opts = {}) {
   for (const { tenant } of rows) {
     const done = await db.prepare("SELECT 1 AS x FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'rulesets' LIMIT 1").bind(tenant).first();
     if (done) { out.push({ tenant, action: 'done' }); continue; }
+    // MAIN-WRITER-1 rollout guard: with the rule active only the org's own app may write to main, so wait until a workflow commit has landed through it.
+    if (!opts.token && !(await db.prepare("SELECT 1 AS x FROM credential_events WHERE provider = 'github-app' AND event = 'main-writer' LIMIT 1").first())) { out.push({ tenant, action: 'await-main-writer' }); continue; }
     const recent = await db.prepare("SELECT 1 AS x FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'failed' AND detail LIKE 'ruleset %' AND at > ? LIMIT 1").bind(tenant, new Date((opts.now || Date.now()) - 3600e3).toISOString().slice(0, 19) + 'Z').first();
     if (recent) { out.push({ tenant, action: 'backoff' }); continue; }  // a refused rule is retried hourly, not every tick
     const r = await applyRulesets(db, env, tenant, opts).catch(e => ({ ok: false, error: String(e && e.message || e) }));

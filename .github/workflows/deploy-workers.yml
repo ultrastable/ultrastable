@@ -15,6 +15,7 @@ on:
         required: false
         default: "false"
 permissions:
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
   contents: write
 concurrency: {group: deploy-workers, cancel-in-progress: false}
 jobs:
@@ -50,4 +51,4 @@ jobs:
         run: |
           git config user.name "ultrastable-ops"; git config user.email "actions@users.noreply.github.com"
           python3 -m foundation claims --fix --apply
-          git add ops/deploys.jsonl ops/bindings.jsonl README.md platform/adapters/README.md site/claims-data.js; git diff --cached --quiet || { git commit -m "deploy-workers: record live-verified deploy" && git pull --rebase -q && git push; }
+          git add ops/deploys.jsonl ops/bindings.jsonl README.md platform/adapters/README.md site/claims-data.js; git diff --cached --quiet || { git commit -m "deploy-workers: record live-verified deploy" && git pull --rebase -q && python3 tools/push_main.py; }
