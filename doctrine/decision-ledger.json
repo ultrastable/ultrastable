@@ -2359,6 +2359,15 @@
    "title": "MERGE-AUDIT-1: PR 619 merged by a session token over a red checks run",
    "body": "Measured: run 44218787437 failed claimcode on site/worker.js AGENT_MD two seconds after PR 619 was merged by a session's own token, a path greenguard and lane.sh cannot see. Fixed: the claim is registered with a probe (claimcode ok), and foundation/mergeaudit.py now files an item for any merge without a green checks run on every lane pass (2 tests pass).",
    "probe": "file:foundation/mergeaudit.py"
+  },
+  {
+   "id": "decision-2026-11-18-direct-merge-gate-1-is-on-owner-chose-required-checks-with-b",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "DIRECT-MERGE-GATE-1 is on: owner chose required checks with bots exempt",
+   "body": "Rowan picked the card option that requires the checks job on main with bots exempt. The Worker applier had been refused by GitHub with HTTP 422 on every pass; it now records GitHub's refusal text, exempts the tick Worker's own app from the stored install id, and retries a refused rule hourly. Ran the seed Worker auth tests, 18 pass.",
+   "probe": "file:seed/worker/src/auth/rulesets.js",
+   "session": "session_0156nqDt1FUj9Xw7a54KPPUk"
   }
  ]
 }
