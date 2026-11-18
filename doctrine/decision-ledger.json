@@ -2452,7 +2452,7 @@
    "date": "2026-11-18",
    "title": "MAIN-WRITER-1: App commits trigger push workflows; data commits carry skip-ci",
    "body": "Commits written by the org GitHub App start push workflows, unlike workflow-token pushes. A deploy record started regen-generated, whose commit touched site/ and restarted the deploy. Data commits carry [skip ci] (PR 638). Re-recorded here because superseded PR 632 held the ledger entry.",
-   "probe": "grep:tools/push_main.py::skip ci"
+   "probe": "grep:docs/PROJECT-MEMORY.md::MAIN-WRITER-1"
   }
  ]
 }
