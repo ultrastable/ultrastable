@@ -70,3 +70,14 @@ test('PACE-2: free_tier_peak_share is the largest free-limit share of the latest
   assert.equal(await METRICS.free_tier_peak_share(db, now), 0.4);
   assert.ok(LIVENESS.some(l => l[0] === 'M-cost' && l[2] === 'free_tier_peak_share'));
 });
+
+test('PACE-2: the sweeper\'s real result (a gauge that moves between runs) is idle; a deferred run is skipped when counting', async () => {
+  const sweeper = g => ({ status: 'ok', merged: [], refreshed: [], filed: [], lane_owned: [], released: [], errors: [], open_loop_age_hours: g });
+  assert.equal(isIdle(JSON.stringify(sweeper(1.4))), true);
+  assert.equal(isIdle(JSON.stringify({ ...sweeper(0), merged: ['#1'] })), false);
+  const db = makeDb(); let t = T0;
+  const run = (loop, out) => beat(db, loop, async () => out, { now: () => (t += 60e3) });
+  for (const g of [0.3, 0, 0.7, 1.4]) await run('sweeper', sweeper(g));
+  await run('sweeper', { status: 'deferred', reason: 'needs 8 subrequests, 3 left', used: 43, limit: 46, refused: 0 });
+  assert.equal(await strideFor(db, 'sweeper', cfg), 2);
+});
