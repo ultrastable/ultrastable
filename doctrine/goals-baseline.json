@@ -1,0 +1,4 @@
+{
+ "_doc": "GOALS-1 shrink-only list of targets that have a measured variable and a deadline but no knob yet. The tick controller files one backlog item per goal it cannot move (seed/worker/src/goals.js), and removing an id here is how that item closes. Never add an id; attach a knob in seed/autonomy/goals.json instead. Checked by `python3 -m foundation goalscheck --check`.",
+ "no_knob": ["core.close.loops", "core.close.drops", "core.close.breaches", "core.reach.tenants"]
+}

@@ -16,6 +16,7 @@
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation issueloop [--apply|--json]                       ISSUE-LOOP-1: every open issue's probe is run; a passing probe closes it
   python3 -m foundation claims [--check|--fix|--apply|--file|--live]     CLAIMS-1: every claim on a surface is probed against code, both directions; /claims
+  python3 -m foundation goalscheck [--check]                              GOALS-1: every goal has a measured variable, a deadline and a knob
   python3 -m foundation singleaccount [--check|--scan]                    SINGLE-ACCOUNT-1: nothing references the retired quniverse Cloudflare account
   python3 -m foundation serverside [--check|--scan]                       server-side only: no host, scheduler, agent or route on a person's computer
   python3 -m foundation selfhost [--verify|--gaps|--no-node] [--db PATH]   Ultrastable boots its own organization from this repo
@@ -263,6 +264,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["claims"]:
         from . import claims
         return claims.main(_av[1:])
+    if _av[:1] == ["goalscheck"]:
+        from . import goalscheck
+        return goalscheck.main(_av[1:])
     if _av[:1] == ["singleaccount"]:
         from . import singleaccount
         return singleaccount.main(_av[1:])
