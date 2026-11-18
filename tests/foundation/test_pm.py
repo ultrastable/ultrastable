@@ -170,6 +170,22 @@ class Clockwork(unittest.TestCase):
         i = src.index("def publish_change")
         self.assertNotIn("Executor run", src[i:src.index("def gh_json")])
 
+    def test_publish_change_kicks_checks_without_a_name_error(self):
+        """PM-PUBLISH-1: run 44346775629 died with NameError ('remote' undefined) after the PR was opened, so every product manager pass ended red."""
+        from foundation import executor
+        calls = []
+        def fake(argv, root=None, *a, **k):
+            calls.append(argv)
+            return (0, "https://github.com/x/y/pull/1" if argv[:3] == ["gh", "pr", "create"] else "")
+        old = executor.sh
+        executor.sh = fake
+        try:
+            res = executor.publish_change("x/y", ".", "agent/pm-x", "s", "b")
+        finally:
+            executor.sh = old
+        self.assertEqual(res["pr"], "https://github.com/x/y/pull/1")
+        self.assertTrue(any(c[:3] == ["gh", "workflow", "run"] and c[3] == "checks.yml" for c in calls))
+
     def test_workflows_run_heal_and_pm(self):
         ex = (REPO / ".github/workflows/executor.yml").read_text(encoding="utf-8")
         self.assertIn("foundation clock --heal --apply", ex)
