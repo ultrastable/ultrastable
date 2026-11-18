@@ -1,0 +1,11 @@
+{
+  "id": "Q-ULTRA-numbers-board-uptime-1",
+  "title": "Q-ULTRA-numbers-board-uptime-1: Uptime out of bounds: iterate: change the app (numbers-board; verb iterate)",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `numbers-board:uptime` out of bounds (reading 0.0; limits 0.99 to 1.0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: iterate: change the app (numbers-board; verb iterate). The system has to be reachable to be improved.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `uptime` inside its bounds.\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
