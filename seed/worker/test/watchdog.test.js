@@ -40,6 +40,6 @@ test('a refused dispatch and a missing token are failures, never healthy', async
 test('the loop is declared, rotated and wired in the scheduled handler', () => {
   assert.ok(LANE_LOOPS.includes('watchdog-gh')); assert.ok(HEAVY_LOOPS.includes('watchdog-gh'));
   const idx = readFileSync(new URL('../src/index.js', import.meta.url), 'utf8');
-  assert.match(idx, /b\('watchdog-gh'/); assert.match(idx, /'watchdog-gh': 3/);
+  assert.match(idx, /(b|step)\('watchdog-gh'/); assert.match(idx, /'watchdog-gh': 3/);
   assert.ok(WATCHDOG_MAX_AGE_MS >= 2 * 6 * 3600e3);
 });

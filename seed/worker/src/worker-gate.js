@@ -108,17 +108,25 @@ async function readContents(gh, repo, files, headSha, baseSha) {
   return out;
 }
 
-export async function runGate({ token, repos = [], fetch: f = fetch, context = 'worker-gate', maxPrs = 10 }) {
+export async function runGate({ token, repos = [], fetch: f = fetch, context = 'worker-gate', maxPrs = 10, maxCalls = 30 }) {
   if (!token) return { status: 'no-token', checked: [], errors: [] };
   const gh = async (method, path, body) => {
     const r = await f('https://api.github.com' + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-gate', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
     const t = await r.text(); return { ok: r.ok, status: r.status, json: t ? JSON.parse(t) : null };
   };
-  const out = { status: 'ok', checked: [], errors: [] };
+  // SUBREQUEST-METER-1: the gate spends at most `maxCalls` GitHub calls a run. A PR not reached is judged next run (a judged commit is skipped, so the work resumes by itself).
+  let calls = 0; const rawGh = gh; const out = { status: 'ok', checked: [], errors: [], deferred: [], forbidden: [] };
+  const budgeted = async (...a) => { calls++; return rawGh(...a); };
+  const room = () => calls < maxCalls;
+  return runGateWith(budgeted, room, { repos, context, maxPrs, out });
+}
+
+async function runGateWith(gh, room, { repos, context, maxPrs, out }) {
   for (const repo of repos) {
     const prs = await gh('GET', `/repos/${repo}/pulls?state=open&per_page=30`);
     if (!prs.ok) { out.errors.push(`${repo} pulls ${prs.status}`); continue; }
     for (const pr of prs.json.slice(0, maxPrs)) {
+      if (!room()) { out.deferred.push(`${repo}#${pr.number}`); continue; }
       const sha = pr.head.sha;
       const st = await gh('GET', `/repos/${repo}/commits/${sha}/statuses?per_page=30`);
       if (st.ok && st.json.some(s => s.context === context)) continue; // already judged this commit
@@ -132,6 +140,7 @@ export async function runGate({ token, repos = [], fetch: f = fetch, context = '
         if (!m.ok) { v.ok = false; v.bad.push(...m.bad); }
       }
       const post = await gh('POST', `/repos/${repo}/statuses/${sha}`, { state: v.ok ? 'success' : 'failure', context, description: (v.ok ? 'diff gate passed' : v.bad.join('; ')).slice(0, 140) });
+      if (post.status === 403) { out.forbidden.push(`${repo}#${pr.number}`); continue; }  // a 403 on one PR (the App cannot write statuses there) is that PR's recorded disposition, not a failed loop
       if (!post.ok) { out.errors.push(`${repo}#${pr.number} status ${post.status}`); continue; }
       out.checked.push(`${repo}#${pr.number} ${v.ok ? 'success' : 'failure'}`);
     }

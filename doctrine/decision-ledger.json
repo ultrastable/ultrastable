@@ -2247,6 +2247,15 @@
    "title": "App webhook secret verifies hook deliveries",
    "body": "Every delivery to /hook/github was answered 401 since 00:30 on 2026-11-18: the delivering hook is the GitHub App's own webhook, signed with the App's manifest webhook_secret, while the tick verified only a derived secret. /hook/github now accepts the bound, App and derived secrets.",
    "probe": "grep:seed/worker/test/hosts.test.js::deliveries signed with the GitHub App webhook secret are accepted"
+  },
+  {
+   "id": "lesson-2026-11-18-subrequest-meter-1-meter-every-fetch-per-invocation-defer-ne",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "SUBREQUEST-METER-1: meter every fetch per invocation; defer, never fail",
+   "body": "Rotation alone did not hold: loops share 50 subrequests with the tick steps. A per-invocation meter counts every fetch, defers a loop that no longer fits (carried first to the next tick), issuesync remembers judged files by sha, the gate caps its calls and records a 403 per PR.",
+   "probe": "file:seed/worker/src/subreq.js",
+   "session": "session_0156nqCrGE5EXqCmJ11EwNYK"
   }
  ]
 }
