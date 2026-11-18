@@ -20,5 +20,6 @@
  "0018_audit_chain.sql",
  "0019_free_tier.sql",
  "0020_read_indexes_2.sql",
- "0021_host_events.sql"
+ "0021_host_events.sql",
+ "0022_live_changes.sql"
 ]
