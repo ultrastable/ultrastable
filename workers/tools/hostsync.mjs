@@ -32,7 +32,9 @@ if (cmd !== 'run') { console.error('usage: hostsync.mjs run|expect'); process.ex
 
 const declaredFile = JSON.parse(rd(arg('declared', 'deploy/hosting.json')));
 const exp = expected();
-const declared = { scripts: Object.fromEntries(Object.entries(declaredFile.scripts).map(([n, d]) => [n, { ...d, ...(exp[n] ? { sha256: exp[n].sha256 } : {}) }])) };
+// A script's `migrations: { databaseId: "dir" }` means every *.sql file in that directory must be recorded in the host database's _migrations ledger.
+const migs = m => Object.fromEntries(Object.entries(m || {}).map(([db, dir]) => [db, fs.existsSync(path.join(root, dir)) ? fs.readdirSync(path.join(root, dir)).filter(f => f.endsWith('.sql')).sort() : []]));
+const declared = { scripts: Object.fromEntries(Object.entries(declaredFile.scripts).map(([n, d]) => [n, { ...d, ...(d.migrations ? { migrations: migs(d.migrations) } : {}), ...(exp[n] ? { sha256: exp[n].sha256 } : {}) }])) };
 const oidc = async aud => {
   const r = await fetch(process.env.ACTIONS_ID_TOKEN_REQUEST_URL + '&audience=' + encodeURIComponent(aud), { headers: { authorization: 'Bearer ' + process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN } });
   if (!r.ok) throw new Error('oidc ' + r.status);

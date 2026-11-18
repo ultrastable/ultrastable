@@ -14,6 +14,8 @@ export function sanitize(s) {
     script: s.script, found: !!s.found, sha256: s.sha256 || null,
     bindings: (s.bindings || []).map(b => ({ type: String(b.type), name: String(b.name) })).sort((a, b) => (a.name + a.type).localeCompare(b.name + b.type)),
     crons: (s.crons || []).slice().sort(), workers_dev: s.workers_dev == null ? null : !!s.workers_dev,
+    domains: (s.domains || []).slice().sort(), routes: (s.routes || []).slice().sort(),
+    migrations: Object.fromEntries(Object.entries(s.migrations || {}).map(([k, v]) => [k, (v || []).map(String)])),
     compat_date: s.compat_date || null, compat_flags: (s.compat_flags || []).slice().sort(),
     deployment: s.deployment ? { id: s.deployment.id, created_on: s.deployment.created_on } : null,
     read_errors: (s.read_errors || []).slice(),
@@ -36,6 +38,14 @@ export function diff(desired, observed) {
     const missing = want.filter(n => !have.includes(n)), extra = have.filter(n => !want.includes(n));
     if (missing.length) out.push({ script, field: 'bindings', expected: want, observed: have, missing, direction: 'repo-to-host' });
     if (extra.length) out.push({ script, field: 'bindings', expected: want, observed: have, extra, direction: 'host-to-repo' });
+  }
+  for (const f of ['domains', 'routes']) if (d[f] && j([...d[f]].sort()) !== j(observed[f] || [])) out.push({ script, field: f, expected: [...d[f]].sort(), observed: observed[f] || [], direction: 'repo-to-host' });
+  // D1 migrations: every migration the repository ships (desired.migrations: { databaseId: [names] }) must be applied on the host.
+  for (const [db, want] of Object.entries(d.migrations || {})) {
+    const have = (observed.migrations || {})[db];
+    if (!have) { out.push({ script, field: 'migrations', database: db, observed: null, direction: 'repo-to-host' }); continue; }
+    const missing = want.filter(n => !have.includes(n));
+    if (missing.length) out.push({ script, field: 'migrations', database: db, missing, direction: 'repo-to-host' });
   }
   if (typeof d.workers_dev === 'boolean' && observed.workers_dev !== null && d.workers_dev !== observed.workers_dev) out.push({ script, field: 'workers_dev', expected: d.workers_dev, observed: observed.workers_dev, direction: 'repo-to-host' });
   return out;
