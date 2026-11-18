@@ -218,6 +218,42 @@
    "arm": "shipped",
    "kind": "event",
    "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-9a78ea309e1a",
+   "date": "2026-11-18",
+   "text": "Shipped by the system itself: heavy GitHub loops rotate over three ticks. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-208b78abd256",
+   "date": "2026-11-18",
+   "text": "Shipped by the system itself: A11y loop: axe audit of every page; fix accent contrast. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-01440b8b280a",
+   "date": "2026-11-18",
+   "text": "Shipped by the system itself: Regenerate stale dashboard data. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-a81038208038",
+   "date": "2026-11-18",
+   "text": "Shipped by the system itself: Stakeholder-driven site: audience paths and case-study template. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
   }
  ]
 }
