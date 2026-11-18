@@ -39,3 +39,9 @@ export async function mydata(request, env, subject = currentSubject) {
   let b; try { b = await request.json(); } catch (e) { return j({ error: "body must be JSON" }, 400); }
   const r = await importBundle(env, "owner", b); return j(r.body, r.status);
 }
+
+export async function restoreWebhooks(request, env, subject = currentSubject) {
+  const s = await subject(request, env);
+  if (!s) return j({ error: "sign in first" }, 401);
+  // Additional logic for restoring webhooks can be added here
+}
