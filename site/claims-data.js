@@ -148,7 +148,7 @@ export default {
    "surface": "site/authzen.js"
   },
   {
-   "claim": "seed-tests: 35 Python and 284 Worker tests",
+   "claim": "seed-tests: 35 Python and 296 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -157,7 +157,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 284 Worker tests",
+   "claim": "seed-worker-tests: 296 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",

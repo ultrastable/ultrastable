@@ -6,6 +6,7 @@ import http from 'node:http';
 import { readFileSync } from 'node:fs';
 import { timingSafeEqual } from 'node:crypto';
 import { runTick } from '../../../seed/worker/src/tick.js';
+import { routeEvent, verifySignature, EVENT_TABLE } from '../../../seed/worker/src/events.js';
 import { openDb } from '../sqlite/d1-sqlite.js';
 
 const HERE = fileURLToPath(new URL('.', import.meta.url));
@@ -43,6 +44,14 @@ export function createServer({ db, config, env = process.env, now = () => Date.n
         if (!authorized(req, env.TICK_TOKEN)) return send(401, { error: 'unauthorized' });
         const r = await runTick(db, { config, env: presence(env), now: now() });
         return send(200, r);
+      }
+      if (req.url === '/hook/github' && req.method === 'POST') {  // HOSTS-1: repo events wake this host too, signed, no polling
+        const chunks = []; for await (const c of req) chunks.push(c); const body = Buffer.concat(chunks).toString();
+        if (!(await verifySignature(env.GITHUB_WEBHOOK_SECRET, body, req.headers['x-hub-signature-256']))) return send(401, { error: 'bad signature' });
+        const hit = routeEvent(req.headers['x-github-event'], JSON.parse(body || '{}'), EVENT_TABLE);
+        if (!hit) return send(202, { routed: false });
+        runTick(db, { config, env: presence(env), wake: hit.role, now: now() }).catch(e => console.error('hook tick', e.message));
+        return send(202, { routed: true, ...hit });
       }
       send(404, { error: 'not found' });
     } catch (e) { send(500, { error: e.message }); }
