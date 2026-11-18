@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // PAGES-FRESH-1: a bundled page is stale when a merged change is more than an hour newer than the bundle it was built from.
 import test from "node:test";
 import assert from "node:assert/strict";

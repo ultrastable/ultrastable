@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-18T13:45:44Z",
- "commit": "1f54468",
+ "generated": "2026-11-18T13:49:37Z",
+ "commit": "14b39e7",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 101,
@@ -111,8 +111,7 @@
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "": 1,
-    "success": 29
+    "success": 30
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -160,7 +159,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 8.3,
+   "age_s": 100.4,
    "status": "fresh",
    "missed": 0
   },
@@ -184,7 +183,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 37.3,
+   "age_s": 276.4,
    "status": "fresh",
    "missed": 0
   },
@@ -192,7 +191,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 80475.3,
+   "age_s": 80714.4,
    "status": "fresh",
    "missed": 0
   }
@@ -316,7 +315,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-18T13:44:43Z",
+  "generated": "2026-11-18T13:48:40Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -375,7 +374,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-18T13:44:43Z",
+     "at": "2026-11-18T13:48:40Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -499,7 +498,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 86.8,
+   "last_beat_age_s": 175.3,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -510,7 +509,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 80553.8,
+   "last_beat_age_s": 80789.3,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -521,18 +520,18 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": null,
+   "last_beat_age_s": 1151.3,
    "expected_interval_s": 86400,
-   "beats_24h": 0,
+   "beats_24h": 60,
    "expected_24h": 1.0,
    "median_jitter_s": null,
-   "status": "idle"
+   "status": "ticking"
   },
   {
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 77408.8,
+   "last_beat_age_s": 77644.3,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -543,7 +542,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 69401.8,
+   "last_beat_age_s": 69637.3,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -561,7 +560,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 74430.8,
+   "last_beat_age_s": 74666.3,
    "expected_interval_s": 86400,
    "beats_24h": 3,
    "expected_24h": 1.0,
@@ -572,7 +571,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 55.8,
+   "last_beat_age_s": 148.3,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2515,6 +2514,15 @@
  "changes": {
   "commits": [
    {
+    "sha": "14b39e7",
+    "at": "2026-11-18T13:46:01+00:00",
+    "author": "Claude",
+    "subject": "USE-COUNT-1: aggregate daily use counter per live app (count only), reported as uses_7d for BENEFIT-1",
+    "pr": null,
+    "item": "USE-COUNT-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/14b39e79723de14945809c9513196fa99ee06f62"
+   },
+   {
     "sha": "1f54468",
     "at": "2026-11-18T13:43:31+00:00",
     "author": "Claude",
@@ -2864,15 +2872,6 @@
     "pr": null,
     "item": null,
     "url": "https://github.com/ultrastable/ultrastable/commit/9ae344a2c8cd8afc0dbe43dce313810f928815ee"
-   },
-   {
-    "sha": "0c3ebfd",
-    "at": "2026-11-18T13:03:39+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/0c3ebfd798985cac76fd6956010b46a0e3e0683b"
    }
   ],
   "pull_requests": []
