@@ -26,6 +26,7 @@ import { getToken, refreshDue, pathGuard } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
 import { readCriticality, addSample } from './criticality.js';
 import { watchGithub } from './watchdog.js';
+import { createHosts, cloudflareHost, githubActionsHost, gcpHost, reporting, onPush, onWorkflowRun, onHostEvent, watchHosts, recordHostEvent, hookSecret, reconcileHooks } from './hosts.js';  // HOSTS-1
 import { beat, watch, readPulse, HEAVY_CADENCE_MIN } from './pulse.js';
 import { decide, healthView, readState } from './cutover.js';
 import { readIgnition } from './ignition.js';
@@ -56,6 +57,15 @@ const LOOP_PHASE = { executor: 0, gate: 1, lane: 1, handoffs: 2, issuesync: 2, '
 
 // AUDIT-CHAIN-1: archive sinks, every one that is available. R2 when the AUDIT bucket is bound; the repository as the independent second copy.
 const auditSinks = (env, token, repos) => [...(env.AUDIT ? [r2Sink(env.AUDIT)] : []), ...(token && (env.AUDIT_REPO || repos[0]) ? [githubSink({ token, repo: env.AUDIT_REPO || (repos.find(r => r.endsWith('/ops')) || repos[0]), prefix: 'ledger/' })] : [])];
+
+function hostRegistry(env, token, repo) {  // HOSTS-1: every host that can run this system, one interface, failover in this order
+  const site = env.SITE && env.INTERNAL_DEPLOY_KEY ? env.SITE : null;
+  const versionOf = site ? makeVersionReader({ site, key: env.INTERNAL_DEPLOY_KEY }) : null;
+  const deployer = site ? reporting(makeDeployer({ token, site, key: env.INTERNAL_DEPLOY_KEY }), { token }) : null;
+  const list = [cloudflareHost({ site, key: env.INTERNAL_DEPLOY_KEY, deployer, versionOf }), githubActionsHost({ token, repo })];
+  if (env.GCP_ADAPTER_URL) list.push(gcpHost({ url: env.GCP_ADAPTER_URL, token: env.GCP_TICK_TOKEN }));
+  return createHosts(list, { db: env.DB });
+}
 
 export default {
   async scheduled(_event, env, ctx) {
@@ -88,12 +98,14 @@ export default {
       const ghBudget = githubBudget(env.GITHUB_CALLS_PER_TICK || config.github_calls_per_tick);  // GITHUB-BUDGET-1: one GitHub call budget for the lane and the handoffs of this tick (default 40)
       await b('lane', () => runLane({ token, repos, issueWorkflow: null, zeroActions: env.ZERO_ACTIONS === '1', evidenceRepo: env.EVIDENCE_REPO || repos[0] || null, budget: ghBudget }));
       const site = env.SITE && env.INTERNAL_DEPLOY_KEY ? env.SITE : null;  // HANDOFF-1: the server owns every handed-off PR after it opens: merge noticed, deploy, live probe, close or roll back
-      await b('handoffs', () => runHandoffs({ db: env.DB, token, repos, deployer: site ? makeDeployer({ token, site, key: env.INTERNAL_DEPLOY_KEY }) : null, rollback: site ? makeRollback({ site, key: env.INTERNAL_DEPLOY_KEY }) : null, versionOf: site ? makeVersionReader({ site, key: env.INTERNAL_DEPLOY_KEY }) : null, budget: ghBudget }));  // DEPLOY-VERSION-1
+      await b('handoffs', () => runHandoffs({ db: env.DB, token, repos, deployer: site ? reporting(makeDeployer({ token, site, key: env.INTERNAL_DEPLOY_KEY }), { token }) : null, rollback: site ? makeRollback({ site, key: env.INTERNAL_DEPLOY_KEY }) : null, versionOf: site ? makeVersionReader({ site, key: env.INTERNAL_DEPLOY_KEY }) : null, budget: ghBudget }));  // DEPLOY-VERSION-1
       await b('issuesync', () => syncIssues({ db: env.DB, token, repo: main }));  // ISSUESYNC-1: filed roadmap items reach the queue on the server, no Actions needed
       await b('repo-access', () => checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }));  // REPO-ACCESS-1
       await b('social', () => runSocial({ db: env.DB, env, tenant }));  // REACH-1: posts the due calendar item to the channels linked at /connect
       await b('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); return sw; });  // SERVER-OWNS-LOOPS-1
       await b('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
+      await b('host-hooks', async () => reconcileHooks({ db: env.DB, token, repos, origin: env.PUBLIC_ORIGIN || 'https://ultrastable.io', secret: await hookSecret(env, 'github') }));  // HOSTS-1: the server creates, repairs and re-checks its own repo webhook; nothing is set up by hand
+      await b('hosts', () => watchHosts({ db: env.DB, registry: hostRegistry(env, token, main), token, repo: main }));  // HOSTS-1: health probe of every host, stall detection, failover redispatch
       await b('watchdog-gh', () => watchGithub({ token, repo: main }));  // RESILIENCE-1: the Worker restarts the GitHub watchdog when it stalls; the GitHub watchdog restarts this tick
       await b('cost-samples', async () => ({ free_tier: freeTier, samples: await sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }), retention: await pruneAll(env.DB, { rules: config.retention, archive: (table, rows) => archiveRows(env.DB, table)(rows) }), audit: await seal(env.DB, auditSinks(env, token, repos)) }));  // AUDIT-CHAIN-1: aged rows are chained, then sealed to the archive  // RETENTION-1: the daily prune rides the hourly cost beat (once a day by its own gate)  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
     })().catch(e => console.error('lane', e && e.message)));
@@ -106,15 +118,30 @@ export default {
     if (hiddenByHealthOnly(env, request.method, url.pathname)) return new Response('Not found', { status: 404 });
     const au = await handleAuth(request, env, { tenant: env.TENANT || config.org_slug || 'default', name: config.org_slug, repos: config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []) });
     if (au) return au;
-    if (halted(config, env) && (url.pathname === '/hook/github' || url.pathname === '/pulse/watch')) return Response.json({ halted: true }, { status: 202 });  // HALT-1
+    if (halted(config, env) && (url.pathname === '/hook/github' || url.pathname === '/hook/host' || url.pathname === '/pulse/watch')) return Response.json({ halted: true }, { status: 202 });  // HALT-1
     if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now
       const body = await request.text();
-      if (!(await verifySignature(env.GITHUB_WEBHOOK_SECRET, body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
-      const hit = routeEvent(request.headers.get('x-github-event'), JSON.parse(body || '{}'), EVENT_TABLE);
+      if (!(await verifySignature(await hookSecret(env, 'github'), body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
+      const ev = request.headers.get('x-github-event'), payload = JSON.parse(body || '{}');
+      if (ev === 'push' || ev === 'workflow_run') {  // HOSTS-1: repo -> host without polling; host status flows back onto the commit
+        const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null), tok = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
+        const job = ev === 'push'
+          ? recordHostEvent(env.DB, Date.now, { host: 'github', kind: 'inbound', repo: payload.repository && payload.repository.full_name, sha: payload.after, detail: 'push ' + payload.ref }).then(() => onPush({ db: env.DB, registry: hostRegistry(env, tok, payload.repository && payload.repository.full_name), token: tok, payload }))
+          : onWorkflowRun({ token: tok, payload });
+        if (ctx && ctx.waitUntil) ctx.waitUntil(job.catch(e => console.error('hosts hook', e && e.message))); else await job;
+      }
+      const hit = routeEvent(ev, payload, EVENT_TABLE);
       if (!hit) return Response.json({ routed: false }, { status: 202 });
       const work = aiFor(env).then(g => runTick(env.DB, { config, env: presence(env), wake: hit.role, ai: g.ai, budget: g.state }));
       if (ctx && ctx.waitUntil) ctx.waitUntil(work); else await work;
       return Response.json({ routed: true, ...hit }, { status: 202 });
+    }
+    if (url.pathname === '/hook/host' && request.method === 'POST') {  // HOSTS-1: host -> repo. Any hosting system reports a deploy/runtime event, signed with HOST_WEBHOOK_SECRET
+      const body = await request.text();
+      if (!(await verifySignature(await hookSecret(env, 'host'), body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
+      const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
+      let event; try { event = JSON.parse(body || '{}'); } catch { return Response.json({ error: 'bad json' }, { status: 400 }); }
+      return Response.json(await onHostEvent({ db: env.DB, token: (t && t.ok && t.token) || env.GITHUB_TOKEN || '', event }), { status: 202 });
     }
     // Agent-facing surfaces (MCP, discovery documents) are registered in seed/standards/surfaces.json.
     const agentic = createAgenticHandler({

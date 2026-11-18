@@ -8,8 +8,11 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-17
+Last updated: 2026-11-18
 
+- 2026-11-18: SELFCODE-1: self-code capacity share applies inside the EFFECT-1 tier (#602)
+- 2026-11-18: PACE-1: live loop pace metrics in the tick Worker (#597)
+- 2026-11-18: Converge seed audit chain onto core/audit (Q-AUDIT-CONVERGE-1) (#598)
 - 2026-11-17: RESILIENCE-1: watchdog probes the Practical Solutions site; ledger entry for #575 (#581)
 - 2026-11-17: OWNER-ROUTE-1: owner sign-in paths reach the dashboard; owner_links checks body (#579)
 - 2026-11-17: checksrun evidence: main green at b54609f; regenerate dashboard (#577)
