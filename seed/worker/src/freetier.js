@@ -68,3 +68,25 @@ export async function freeTierLevel(db, now = Date.now()) {
   }
   return evaluate(used, new Date(now));
 }
+
+// READ-BUDGET-8: an alert before the allowance is spent. When any free daily limit is projected to pass EARLY_ALERT_AT of the day (at the current pace)
+// or is already at the degrade level, one backlog item per resource per day is filed (INSERT OR IGNORE on the id), with a closing probe. The level that
+// throttles the tick is not the only signal: the day's cap was spent on 2026-11-18 while the governor was reading. Never throws; a refused write is logged.
+export const EARLY_ALERT_AT = 0.7;
+export async function alertFreeTier(db, result, now = new Date()) {
+  const filed = [];
+  try {
+    const day = now.toISOString().slice(0, 10);
+    for (const [k, r] of Object.entries((result && result.resources) || {})) {
+      if (!r || r.used == null) continue;
+      const at = Math.max(r.frac || 0, r.projected_frac || 0);
+      if (at < EARLY_ALERT_AT && r.level === 'ok') continue;
+      const id = `FREE-TIER-ALERT-${k}-${day}`;
+      const res = await db.prepare("INSERT OR IGNORE INTO items (id, title, kind, owner_role, done_check, closing_probe, priority, status, surface) VALUES (?,?,?,?,?,?,?,'ready',?)")
+        .bind(id, `Free-tier alert: ${FREE_LIMITS[k] ? FREE_LIMITS[k].label : k} at ${Math.round((r.frac || 0) * 100)}% of the day, projected ${Math.round((r.projected_frac || 0) * 100)}%`, 'fix', 'operations',
+          `${k} stays under its free daily limit for the rest of the UTC day`, `free_tier_samples latest ${k} used_today / ${FREE_LIMITS[k] ? FREE_LIMITS[k].per_day : '?'} < 1 at 23:50 UTC`, 1, 'cost').run();
+      if (res && res.meta && res.meta.changes) filed.push(id);
+    }
+  } catch (e) { filed.error = String(e && e.message).slice(0, 150); console.error('free-tier alert:', filed.error); }  // the caller reads .error
+  return filed;
+}

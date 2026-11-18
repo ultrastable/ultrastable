@@ -371,6 +371,39 @@ export const STEPS = {
     }
   },
 
+  // Q-PARITY-4 (SLA-120M): an item open past 120 minutes is raised to the top, and the cause is filed once a day; nothing ages silently.
+  // One indexed COUNT-first read (status, created_at); the per-item work only runs when the count is above zero.
+  async age_sla(db, ctx) {
+    const cutoff = new Date(ctx.now - 120 * 60e3).toISOString().replace('T', ' ').slice(0, 19);
+    const c = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status IN ('open','ready') AND created_at < ?`, cutoff);
+    ctx.over_120m = c ? c.n : 0;
+    if (!ctx.over_120m) return;
+    await run(db, `UPDATE items SET priority = MIN(priority, 5) WHERE status IN ('open','ready') AND created_at < ? AND priority > 5`, cutoff);
+    const made = await ensureItem(db, {
+      id: `AGE-120M-${ctx.nowIso.slice(0, 10)}`,
+      title: `${ctx.over_120m} item(s) open past 120 minutes (items_open_over_120m target 0): raised to priority 5, find the cause`,
+      kind: 'fix', owner_role: 'operations',
+      done_check: 'items_open_over_120m back to 0', priority: 5,
+    });
+    ctx.notes.push(`over_120m: ${ctx.over_120m} item(s) raised${made ? ', cause item filed' : ''}`);
+  },
+
+  // Q-COST-PROOF-2 (cost-probe): once a day, only while the free tier is ok, turn each breached cost sample into a queue item. It adds one
+  // indexed read per budget and nothing when the account is degraded (FREE_TIER_WIDE_STEPS), so it can never add reads to a read breach.
+  async cost_probe(db, ctx) {
+    if (ctx.freeTier && ctx.freeTier.level !== 'ok') return;
+    if (new Date(ctx.now).getUTCHours() !== 0 || new Date(ctx.now).getUTCMinutes() >= 10) return;
+    const r = await over_budget(db, (ctx.config && ctx.config.cost_budgets) || [], ctx.now);
+    for (const b of [...r.breaches, ...r.advisory]) {
+      await ensureItem(db, {
+        id: `COST-BREACH-${b.target}-${ctx.nowIso.slice(0, 10)}`,
+        title: `Cost probe: ${b.target} read ${b.rows_read_1h} rows/h over ${b.max_rows_read_per_hour}`.slice(0, 300),
+        kind: 'fix', owner_role: 'operations', done_check: 'next cost sample under max_rows_read_per_hour', priority: 5,
+      });
+    }
+    if (r.breaches.length || r.advisory.length) ctx.notes.push(`cost-probe: ${r.breaches.length + r.advisory.length} breach item(s)`);
+  },
+
   // CRITICALITY-1: k_eff over the rolling window; a tick may not end idle or under k_min without originating the highest-value item at the head.
   async criticality(db, ctx) {
     if (!ctx.config.criticality) { ctx.notes.push('criticality: no thresholds configured'); return; }
@@ -384,7 +417,7 @@ export const STEPS = {
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
+export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,
@@ -392,7 +425,7 @@ export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates',
 // other step either reads wide (probe_gates, score_predictions, accrue_trust, selfaudit, pulse, ignition, check_plus_share) or starts new work
 // that reads more (reap_claims feeds dispatch, dispatch, execute), so it waits for the hour to pass. A skipped step counts as completed: it is
 // a decision, not a failure, so the health probe and the ignition streak stay green.
-export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals'];  // FREE-TIER-1
+export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals', 'age_sla', 'cost_probe'];  // FREE-TIER-1
 export const COST_ESSENTIAL_STEPS = ['migrate', 'reconcile', 'measure', 'criticality'];
 
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null, budget = null } = {}) {

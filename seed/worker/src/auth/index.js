@@ -40,10 +40,22 @@ export function pathGuard(request) {
   return new Response(null, { status: 308, headers: { location: canon + url.search, 'cache-control': 'no-store' } });
 }
 
+// READ-BUDGET-7: a live token is also kept in isolate memory. When the daily D1 allowance is spent the credential row cannot be read, and every
+// App-backed route (the main-writer, the lane, the executor) then answered 401 for the rest of the day (watchdog run 44373626830, 'read main 401').
+// A warm isolate keeps serving its token until the margin before expiry; D1 is read only when the memo is empty or about to lapse.
+const memos = new WeakMap();  // per database handle: one per isolate in production, one per test
+const memoOf = db => { let m = memos.get(db); if (!m) memos.set(db, m = new Map()); return m; };
 export async function getToken(db, env, tenant, provider, opts = {}) {
   const now = opts.now || Date.now();
-  const m = await store.material(db, env, tenant, provider);
-  if (m && m.access && m.expiresAt && Date.parse(m.expiresAt) - now > MARGIN_MS) return { ok: true, token: m.access, cached: true };
+  const memo = memoOf(db), key = tenant + '|' + provider, hit = memo.get(key);
+  if (hit && hit.expiresAt - now > MARGIN_MS) return { ok: true, token: hit.token, cached: true, memo: true };
+  let m;
+  try { m = await store.material(db, env, tenant, provider); }
+  catch (e) {
+    if (hit && hit.expiresAt > now) return { ok: true, token: hit.token, cached: true, memo: true, degraded: 'credential store unreadable: ' + String(e && e.message).slice(0, 100) };
+    throw e;
+  }
+  if (m && m.access && m.expiresAt && Date.parse(m.expiresAt) - now > MARGIN_MS) { memo.set(key, { token: m.access, expiresAt: Date.parse(m.expiresAt) }); return { ok: true, token: m.access, cached: true }; }
   const a = adapterFor(provider);
   if (!a) return { ok: false, error: 'unknown provider ' + provider };
   const r = await a.mint(m, { ...opts, env, now });
@@ -52,6 +64,7 @@ export async function getToken(db, env, tenant, provider, opts = {}) {
     await store.event(db, tenant, provider, 'failed', r.error);
     return r;
   }
+  if (r.token && r.expiresAt) memo.set(key, { token: r.token, expiresAt: typeof r.expiresAt === 'number' ? r.expiresAt : Date.parse(r.expiresAt) });
   await store.put(db, env, tenant, provider, { access: r.token || null, expiresAt: r.expiresAt || null, status: 'ok', error: null, ...(r.rotatedRefresh ? { secret: { ...m.secret, refresh_token: r.rotatedRefresh } } : {}) });
   await store.event(db, tenant, provider, m && m.access ? 'refreshed' : 'minted', r.expiresAt ? 'expires ' + new Date(r.expiresAt).toISOString() : 'no expiry');
   return { ok: true, token: r.token, cached: false };
