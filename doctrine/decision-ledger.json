@@ -2137,6 +2137,15 @@
    "body": "The worker-native executor commit ddce890 flipped mcp-registry and cloudflare-agents to supported, deleted 673 lines of the researched standards register and added two tests for code that does not exist (buildDiscovery, cloudflare-agents.js, seed/standards/server.json); both tests failed on main and regen-generated stayed red. Reverted; the register is back to its researched state and standards --check passes. Lesson: a status flip needs a named existing file and a passing test, and the lane must not merge a change whose own tests fail. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
    "probe": "file:seed/standards/standards.json",
    "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
+  },
+  {
+   "id": "decision-2026-11-18-pace-1-loop-pace-is-a-live-metric",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "PACE-1: loop pace is a live metric",
+   "body": "The tick Worker computes beats_24h and beats_productive_share_24h from loop_beats and seeds liveness metric M-pace; idle runs are not progress. core/pace plans cadence from the same quantities. Tenant agent backlog check moved from 6 hours to 2 hours (public repo).",
+   "probe": "grep:seed/worker/src/tick.js::beats_productive_share_24h",
+   "session": "session_0156nqDu3CafCLkNfgmXspHr"
   }
  ]
 }
