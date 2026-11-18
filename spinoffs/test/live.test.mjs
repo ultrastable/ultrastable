@@ -2,24 +2,11 @@
 // Copyright (c) Ultrastable
 import test from "node:test";
 import assert from "node:assert/strict";
-import { handleLive, SOURCES, a11y, cleanEin, lookup } from "../live.js";
+import { handleLive, SOURCES, a11y, cleanCountry, cleanPlace } from "../live.js";
 
 const app = id => ({ name: id, tagline: "t", live: id });
 const ok = body => new Response(typeof body === "string" ? body : JSON.stringify(body));
 const get = (id, path, f) => handleLive(id, app(id), new URL("https://x.ultrastable.app" + path), f);
-
-test("open-comment keeps only proposals still open, soonest first, from a live fetch", async () => {
-  const f = async () => ok({ results: [
-    { title: "Later", agency_names: ["A"], comments_close_on: "2999-02-01", html_url: "https://u/2" },
-    { title: "Closed", agency_names: ["B"], comments_close_on: "2000-01-01", html_url: "https://u/0" },
-    { title: "Soon", agency_names: ["C"], comments_close_on: "2999-01-01", html_url: "https://u/1" },
-    { title: "No period", agency_names: [], comments_close_on: null, html_url: "https://u/3" }] });
-  const j = await (await get("open-comment", "/api/data", f)).json();
-  assert.deepEqual(j.rows.map(r => r.cells[0]), ["Soon", "Later"]);
-  assert.ok(j.fetched_at);
-  const fr = await get("open-comment", "/api/freshness", f);
-  assert.equal(fr.status, 200); assert.equal((await fr.json()).ok, true);
-});
 
 test("a failing upstream makes freshness 503 and the data call a plain 502", async () => {
   const f = async () => new Response("no", { status: 500 });
@@ -34,13 +21,22 @@ test("quake-watch lists events newest first", async () => {
   assert.equal(j.rows[0].cells[0], "New"); assert.equal(j.rows[0].cells[1], "unknown");
 });
 
-test("nonprofit-check validates the EIN, shows filings, maps 404 to not_found", async () => {
-  assert.equal(cleanEin("53-0196605"), "530196605"); assert.equal(cleanEin("12"), null);
-  assert.equal((await get("nonprofit-check", "/api/lookup?q=abc", async () => ok({}))).status, 400);
-  const f = async u => { assert.ok(u.endsWith("/530196605.json")); return ok({ organization: { name: "Org", city: "X", state: "VA" }, filings_with_data: [{ tax_prd_yr: 2022, totrevenue: 1500, totfuncexpns: 1000, totassetsend: null }] }); };
-  const j = await (await get("nonprofit-check", "/api/lookup?q=53-0196605", f)).json();
-  assert.equal(j.title, "Org"); assert.deepEqual(j.rows[0].cells, ["2022", "$1,500", "$1,000", "not reported"]);
-  assert.equal((await get("nonprofit-check", "/api/lookup?q=530196605", async () => new Response("", { status: 404 }))).status, 404);
+test("country-snapshot validates the code, reads four World Bank measures, maps an unknown code to not_found", async () => {
+  assert.equal(cleanCountry("ke"), "KE"); assert.equal(cleanCountry("Kenya"), null);
+  assert.equal((await get("country-snapshot", "/api/lookup?q=12", async () => ok([]))).status, 400);
+  const f = async u => ok([{ page: 1 }, [{ country: { value: "Kenya" }, date: "2022", value: 76.54 }]]);
+  const j = await (await get("country-snapshot", "/api/lookup?q=ke", f)).json();
+  assert.equal(j.title, "Kenya"); assert.equal(j.rows.length, 4); assert.deepEqual(j.rows[0].cells.slice(1), ["76.5%", "2022"]);
+  const none = async () => ok([{ message: [{ id: "120", key: "Invalid value" }] }]);
+  assert.equal((await get("country-snapshot", "/api/lookup?q=ZZ", none)).status, 404);
+});
+
+test("air-quality geocodes any city anywhere then reads current air quality", async () => {
+  assert.equal(cleanPlace("São Paulo"), "São Paulo"); assert.equal(cleanPlace("x"), null); assert.equal(cleanPlace("a<b>"), null);
+  const f = async u => String(u).includes("geocoding") ? ok({ results: [{ name: "Nairobi", country: "Kenya", latitude: -1.28, longitude: 36.8 }] }) : ok({ current: { time: "2026-11-18T12:00", european_aqi: 31, us_aqi: 44, pm2_5: 9.1, pm10: 15 } });
+  const j = await (await get("air-quality", "/api/lookup?q=Nairobi", f)).json();
+  assert.equal(j.title, "Nairobi, Kenya"); assert.equal(j.rows[0].cells[1], "31");
+  assert.equal((await get("air-quality", "/api/lookup?q=Nowhereville", async () => ok({}))).status, 404);
 });
 
 test("access-check rejects non-public names and scores a page", async () => {

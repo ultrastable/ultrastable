@@ -14,8 +14,8 @@ export function cleanDomain(raw) {
   if (/^(localhost|.*\.(local|internal|localdomain|lan|home|corp|test|invalid|example))$/.test(d)) return null;
   return d;
 }
-export const cleanEin = raw => { const d = String(raw || "").replace(/[\s-]/g, ""); return /^\d{9}$/.test(d) ? d : null; };
-const usd = v => v == null ? "not reported" : "$" + Math.round(v).toLocaleString("en-US");
+export const cleanCountry = raw => { const d = String(raw || "").trim().toUpperCase(); return /^[A-Z]{2,3}$/.test(d) ? d : null; };
+export const cleanPlace = raw => { const d = String(raw || "").trim().replace(/\s+/g, " "); return /^[\p{L}\p{M}' .,-]{2,80}$/u.test(d) ? d : null; };
 
 async function getJson(f, url) {
   const c = new AbortController(), t = setTimeout(() => c.abort(), 8000);
@@ -46,13 +46,6 @@ export function a11y(html) {
 
 // One entry per live app; key = the idea id in doctrine/spinoff-ideas.json, mirrored with its freshness bound in doctrine/spinoff-live.json.
 export const SOURCES = {
-  "open-comment": {
-    kind: "feed", name: "Federal Register", home: "https://www.federalregister.gov/", columns: ["Proposal", "Agency", "Comments close"],
-    url: () => "https://www.federalregister.gov/api/v1/documents.json?per_page=100&order=newest&conditions[type][]=PRORULE&fields[]=title&fields[]=agency_names&fields[]=comments_close_on&fields[]=html_url",
-    rows: (j, now = today()) => (j.results || []).filter(x => x.comments_close_on && x.comments_close_on >= now).sort((a, b) => a.comments_close_on.localeCompare(b.comments_close_on)).slice(0, 30)
-      .map(x => ({ cells: [x.title, (x.agency_names || []).join(", "), x.comments_close_on], url: x.html_url })),
-    empty: "No proposed rules with an open comment period were found in the latest 100 published.",
-  },
   "quake-watch": {
     kind: "feed", name: "USGS Earthquake Hazards Program", home: "https://earthquake.usgs.gov/", columns: ["Where", "Magnitude", "When (UTC)"],
     url: () => "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson",
@@ -60,21 +53,33 @@ export const SOURCES = {
       .map(p => ({ cells: [p.place, p.mag == null ? "unknown" : String(p.mag), new Date(p.time).toISOString().replace("T", " ").slice(0, 16)], url: p.url })),
     empty: "No significant earthquakes in the past 7 days.",
   },
-  "nonprofit-check": {
-    kind: "lookup", name: "ProPublica Nonprofit Explorer (IRS filings)", home: "https://projects.propublica.org/nonprofits/", label: "Nonprofit EIN", placeholder: "53-0196605", clean: cleanEin,
-    bad: "Type a nine-digit EIN such as 53-0196605. It is the public tax id of an organization.",
-    url: q => `https://projects.propublica.org/nonprofits/api/v2/organizations/${q}.json`,
-    shape: (j, q) => {
-      const o = j.organization || {};
-      return { title: o.name || "Unknown organization", sub: [o.city, o.state].filter(Boolean).join(", ") + (o.ntee_code ? " · NTEE " + o.ntee_code : ""), source_url: `https://projects.propublica.org/nonprofits/organizations/${q}`,
-        columns: ["Tax year", "Revenue", "Expenses", "Assets"],
-        rows: (j.filings_with_data || []).slice(0, 10).map(x => ({ cells: [String(x.tax_prd_yr), usd(x.totrevenue), usd(x.totfuncexpns), usd(x.totassetsend)], url: x.pdf_url || null })) };
+  "country-snapshot": {
+    kind: "lookup", name: "World Bank Open Data", home: "https://data.worldbank.org/", label: "Country code", placeholder: "KE", clean: cleanCountry,
+    bad: "Type a two or three letter country code such as KE, BR or IND.",
+    fetch: async (q, f) => {
+      const IND = [["EG.ELC.ACCS.ZS", "Population with electricity"], ["SH.H2O.BASW.ZS", "Population with basic drinking water"], ["IT.NET.USER.ZS", "Population using the internet"], ["SE.ADT.LITR.ZS", "Literacy rate, ages 15 and over"]];
+      const res = await Promise.all(IND.map(async ([id, label]) => { const j = await getJson(f, `https://api.worldbank.org/v2/country/${q}/indicator/${id}?format=json&mrnev=1`); return { label, rec: Array.isArray(j) && Array.isArray(j[1]) ? j[1][0] : null, msg: Array.isArray(j) ? null : j }; }));
+      const first = res.find(r => r.rec);
+      return first ? { country: first.rec.country.value, rows: res.map(r => ({ cells: [r.label, r.rec && r.rec.value != null ? r.rec.value.toFixed(1) + "%" : "not reported", r.rec ? String(r.rec.date) : "-"] })) } : null;
     },
+    shape: (d, q) => ({ title: d.country, sub: "Latest reported value for each measure, with its year.", source_url: `https://data.worldbank.org/country/${q}`, columns: ["Measure", "Latest value", "Year"], rows: d.rows }),
+  },
+  "air-quality": {
+    kind: "lookup", name: "Open-Meteo air quality and geocoding", home: "https://open-meteo.com/", label: "City", placeholder: "Nairobi", clean: cleanPlace,
+    bad: "Type a city or town name such as Nairobi or Lima.",
+    fetch: async (q, f) => {
+      const g = await getJson(f, `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1`), p = (g.results || [])[0];
+      if (!p) return null;
+      const a = await getJson(f, `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${p.latitude}&longitude=${p.longitude}&current=european_aqi,us_aqi,pm2_5,pm10`), c = a.current || {};
+      const v = (x, u) => x == null ? "not reported" : x + u;
+      return { place: [p.name, p.admin1, p.country].filter(Boolean).join(", "), at: c.time, rows: [{ cells: ["European air quality index", v(c.european_aqi, ""), c.time || "-"] }, { cells: ["US air quality index", v(c.us_aqi, ""), c.time || "-"] }, { cells: ["Fine particles (PM2.5)", v(c.pm2_5, " µg/m³"), c.time || "-"] }, { cells: ["Coarse particles (PM10)", v(c.pm10, " µg/m³"), c.time || "-"] }] };
+    },
+    shape: d => ({ title: d.place, sub: "Modelled current conditions for the nearest grid point, not a ground measurement.", source_url: "https://open-meteo.com/en/docs/air-quality-api", columns: ["Measure", "Now", "Time (UTC)"], rows: d.rows }),
   },
   "access-check": {
     kind: "lookup", name: "the public home page you name", home: null, label: "Website domain", placeholder: "example.org", clean: cleanDomain,
     bad: "Type a public domain such as example.org (no address, port or path).",
-    url: q => `https://${q}/`, raw: true,
+    url: q => `https://${q}/`,
     shape: (html, q) => ({ title: "Basic accessibility signals for " + q, sub: "Automated read of the home page HTML. Passing these does not make a site accessible.", source_url: `https://${q}/`, columns: ["Check", "Result", "Detail"], rows: a11y(html) }),
   },
 };
@@ -93,15 +98,20 @@ async function feed(src, f) {
 export async function lookup(src, q, f) {
   const clean = src.clean(q);
   if (!clean) return { status: 400, body: { ok: false, code: "bad_input", error: src.bad } };
-  const c = new AbortController(), t = setTimeout(() => c.abort(), 8000);
   try {
-    const r = await f(src.url(clean), { headers: { "user-agent": UA, accept: src.raw ? "text/html" : "application/json" }, signal: c.signal });
-    if (r.status === 404) return { status: 404, body: { ok: false, code: "not_found", error: "Nothing public was found for that. Check the number or the domain." } };
-    if (!r.ok) return { status: 502, body: { ok: false, code: "upstream", error: "The public source did not answer. Try again in a minute." } };
-    const data = src.raw ? await r.text() : await r.json();
+    let data;
+    if (src.fetch) { data = await src.fetch(clean, f); if (!data) return { status: 404, body: { ok: false, code: "not_found", error: "Nothing public was found for that. Check the spelling or the code." } }; }
+    else {
+      const c = new AbortController(), t = setTimeout(() => c.abort(), 8000);
+      try {
+        const r = await f(src.url(clean), { headers: { "user-agent": UA, accept: "text/html" }, signal: c.signal });
+        if (r.status === 404) return { status: 404, body: { ok: false, code: "not_found", error: "Nothing public was found for that. Check the spelling or the code." } };
+        if (!r.ok) return { status: 502, body: { ok: false, code: "upstream", error: "The public source did not answer. Try again in a minute." } };
+        data = await r.text();
+      } finally { clearTimeout(t); }
+    }
     return { status: 200, body: { ok: true, fetched_at: new Date().toISOString(), source: src.name, ...src.shape(data, clean) } };
   } catch (e) { return { status: 502, body: { ok: false, code: "upstream", error: "The public source did not answer. Try again in a minute." } }; }
-  finally { clearTimeout(t); }
 }
 
 const PAGE = (app, src) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(app.name)}</title><meta name="description" content="${esc(app.tagline)}">
@@ -110,7 +120,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-
 form{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}input,button{font:inherit;min-height:44px;border-radius:10px;border:1px solid var(--line);padding:0 14px;background:var(--bg);color:var(--fg)}button{background:var(--acc);color:#fff;border:0;font-weight:600;cursor:pointer}
 @media(min-width:560px){form{flex-direction:row}input{flex:1}}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{text-align:left;padding:10px 8px 10px 0;border-top:1px solid var(--line);vertical-align:top}a{color:var(--acc)}.m{color:var(--mute);font-size:14px}.pass{color:var(--ok)}.look{color:var(--bad)}</style></head>
 <body><main><h1>${esc(app.name)}</h1><p class="s">${esc(app.tagline)}</p>
-${src.kind === "lookup" ? `<form id="f"><input id="q" inputmode="${src.clean === cleanEin ? "numeric" : "url"}" autocomplete="off" placeholder="${esc(src.placeholder)}" aria-label="${esc(src.label)}" required><button>Look up</button></form>` : ""}
+${src.kind === "lookup" ? `<form id="f"><input id="q" inputmode="${src.clean === cleanDomain ? "url" : "text"}" autocomplete="off" placeholder="${esc(src.placeholder)}" aria-label="${esc(src.label)}" required><button>Look up</button></form>` : ""}
 <div id="o" aria-live="polite">Loading live data…</div>
 <p class="m">Source: ${src.home ? `<a href="${esc(src.home)}">${esc(src.name)}</a>` : esc(src.name)}, read live when you open this page; nothing is stored about you. Information only, not legal, financial or professional advice. <a href="/api/freshness">Freshness</a> · <a href="/llms.txt">For agents</a></p></main>
 <script>const o=document.getElementById("o"),E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));

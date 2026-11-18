@@ -75,11 +75,11 @@
   },
   "live-lookup": {
    "implemented": true,
-   "input": "a public domain name or a public organization tax id",
+   "input": "a public domain name or a public country code or place name",
    "collects": [],
    "audience": 4,
    "cost_per_use": 2,
-   "what": "SPINOFF-GOOD-1: one lookup against a public source for a public domain or an organization's public tax id, answered live and stored nowhere"
+   "what": "SPINOFF-GOOD-1: one lookup against a public source for a public domain, a country code or a place name, answered live and stored nowhere"
   }
  },
  "score": {
@@ -140,14 +140,15 @@
    "a public domain name",
    "a few choices",
    "none",
-   "a public domain name or a public organization tax id"
+   "a public country code or place name",
+   "a public domain name or a public country code or place name"
   ],
   "rules": [
    "an app may read only public pages and public DNS of a domain the visitor types, never anything behind a login",
    "an app stores aggregate counts, a daily-salted visitor hash, and the typed public domain only as a one-way keyed hash with a bitmask of failed checks (to tell a fix from a first look); never an address, name, IP or the readable domain",
    "an app states what it did and does not give legal, medical or financial advice",
    "an app that fails any rule is not launched and the rejection is recorded with the rule that failed",
-   "a live app (SPINOFF-GOOD-1) shows only what its named public source returns at request time, links that source, serves /api/freshness, stores nothing about the visitor, takes only a public domain or an organization's public tax id as input, and states that it is information, not advice"
+   "a live app (SPINOFF-GOOD-1) shows only what its named public source returns at request time, links that source, serves /api/freshness, stores nothing about the visitor, takes only a public domain, country code or place name as input, and states that it is information, not advice"
   ]
  },
  "budget": {

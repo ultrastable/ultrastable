@@ -289,18 +289,42 @@
    }
   },
   {
-   "id": "open-comment",
+   "id": "country-snapshot",
    "kind": "spinoff",
-   "archetype": "live-feed",
-   "name": "Open Comment",
-   "tagline": "Federal proposed rules still open for public comment, soonest deadline first, read live from the Federal Register.",
-   "showcases": "civic transparency: public input while it still counts",
-   "reach": 5,
+   "archetype": "live-lookup",
+   "name": "Country Snapshot",
+   "tagline": "Type a country code, see its latest World Bank figures for electricity, drinking water, internet use and literacy.",
+   "showcases": "an open public-data dashboard for any country",
+   "reach": 4,
    "impact": 4,
-   "showcase": true,
-   "live": "open-comment",
+   "showcase": false,
+   "live": "country-snapshot",
+   "regions": "global",
+   "need": 4,
+   "need_evidence": "The World Bank publishes these for 200+ economies; gaps in basic services are the core development measures. Need is a stated judgment.",
    "cost": {
     "workers_requests": 3000,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   }
+  },
+  {
+   "id": "air-quality",
+   "kind": "spinoff",
+   "archetype": "live-lookup",
+   "name": "Air Quality Check",
+   "tagline": "Type a city anywhere, see its air quality right now and the current particle levels, from open forecast data.",
+   "showcases": "global open environmental data, live",
+   "reach": 4,
+   "impact": 5,
+   "showcase": false,
+   "live": "air-quality",
+   "regions": "global",
+   "need": 5,
+   "need_evidence": "Outdoor air pollution is a leading environmental cause of early death worldwide per WHO. Need is a stated judgment.",
+   "cost": {
+    "workers_requests": 2500,
     "d1_rows_read": 0,
     "d1_rows_written": 0,
     "ai_neurons": 0
@@ -311,32 +335,17 @@
    "kind": "spinoff",
    "archetype": "live-feed",
    "name": "Quake Watch",
-   "tagline": "Significant earthquakes of the past week, read live from the USGS, with a link to each event page.",
-   "showcases": "an open public-data dashboard with no snapshot",
+   "tagline": "Significant earthquakes anywhere in the world this week, read live from the USGS, with a link to each event page.",
+   "showcases": "global hazard awareness from open data",
    "reach": 4,
    "impact": 3,
-   "showcase": true,
+   "showcase": false,
    "live": "quake-watch",
+   "regions": "global",
+   "need": 3,
+   "need_evidence": "Earthquakes strike on every continent; the feed is worldwide. Need is a stated judgment.",
    "cost": {
     "workers_requests": 3000,
-    "d1_rows_read": 0,
-    "d1_rows_written": 0,
-    "ai_neurons": 0
-   }
-  },
-  {
-   "id": "nonprofit-check",
-   "kind": "spinoff",
-   "archetype": "live-lookup",
-   "name": "Nonprofit Check",
-   "tagline": "Type a nonprofit's EIN, see its name and recent IRS-reported revenue, expenses and assets from public filings.",
-   "showcases": "nonprofit transparency for donors and volunteers",
-   "reach": 4,
-   "impact": 4,
-   "showcase": true,
-   "live": "nonprofit-check",
-   "cost": {
-    "workers_requests": 2500,
     "d1_rows_read": 0,
     "d1_rows_written": 0,
     "ai_neurons": 0
@@ -347,12 +356,15 @@
    "kind": "spinoff",
    "archetype": "live-lookup",
    "name": "Access Check",
-   "tagline": "Name a website, get a plain read of basic accessibility signals on its home page: language, alt text, labels, zoom.",
+   "tagline": "Name any website, get a plain read of basic accessibility signals on its home page: language, alt text, labels, zoom.",
    "showcases": "accessibility: check, fix, check again",
-   "reach": 5,
+   "reach": 4,
    "impact": 4,
-   "showcase": true,
+   "showcase": false,
    "live": "access-check",
+   "regions": "global",
+   "need": 4,
+   "need_evidence": "WHO estimates about 1.3 billion people live with a significant disability; inaccessible sites exclude them. Need is a stated judgment.",
    "cost": {
     "workers_requests": 2500,
     "d1_rows_read": 0,
@@ -417,5 +429,21 @@
   "outreach",
   "cost"
  ],
- "max_live_boards": 12
+ "max_live_boards": 12,
+ "benefit": {
+  "_doc": "BENEFIT-1 (Rowan, 2026-11-18: 'How are you measuring public benefit?'). Public-benefit score of an idea = scale * region * need * use, then divided by (1 + cost_penalty * cost_share) like every idea. region: how many people in how many places it can serve (global or 3+ regions 1.0, two regions 0.7, one country 0.4). need: 1-5 size of the unmet need, a stated hypothesis with its evidence in the idea. use: measured, 0.5 to 1.5 from the app's uses_7d once the metrics ledger has it; unmeasured is 1.0, never zero. Hypotheses re-tuned from settled outcomes; never edit a number to clear a breach.",
+  "scale": 5,
+  "region": {
+   "global_at": 3,
+   "global": 1.0,
+   "multi": 0.7,
+   "single": 0.4
+  },
+  "use": {
+   "floor": 0.5,
+   "ceiling": 1.5,
+   "unmeasured": 1.0,
+   "uses_for_ceiling": 1000
+  }
+ }
 }

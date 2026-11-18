@@ -55,6 +55,36 @@ export default {
  ],
  "queue": [
   {
+   "archetype": "live-lookup",
+   "cost_share": 0.025,
+   "fits": true,
+   "id": "air-quality",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Air Quality Check",
+   "score": 20.0
+  },
+  {
+   "archetype": "live-lookup",
+   "cost_share": 0.025,
+   "fits": true,
+   "id": "access-check",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Access Check",
+   "score": 16.0
+  },
+  {
+   "archetype": "live-lookup",
+   "cost_share": 0.03,
+   "fits": true,
+   "id": "country-snapshot",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Country Snapshot",
+   "score": 15.38
+  },
+  {
    "archetype": "status-board",
    "cost_share": 0.03,
    "fits": true,
@@ -83,6 +113,16 @@ export default {
    "kind": "spinoff",
    "name": "What Changed",
    "score": 11.74
+  },
+  {
+   "archetype": "live-feed",
+   "cost_share": 0.03,
+   "fits": true,
+   "id": "quake-watch",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Quake Watch",
+   "score": 11.54
   },
   {
    "archetype": "status-board",

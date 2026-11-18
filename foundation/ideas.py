@@ -14,7 +14,7 @@ The FREE-TIER-1 governor measures the day's free-plan use (seed/worker/src/freet
   python3 -m foundation ideas --check                doctrine, snapshot and generated roadmap agree
 """
 from __future__ import annotations
-import datetime as dt, hashlib, json, os, sys, urllib.request
+import datetime as dt, hashlib, json, math, os, sys, urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -175,6 +175,26 @@ def _cost_vec(c: dict) -> dict:
     return {k: int(c.get(k, 0)) for k in RES}
 
 
+def use_factor(root, slug: str, cfg: dict) -> float:
+    """BENEFIT-1 measured use: from the app's latest uses_7d in the spinoff metrics ledger; unmeasured stays at the neutral value, never zero."""
+    u = cfg["benefit"]["use"]
+    rows = [r for r in _lines(Path(root) / "ops/spinoff/metrics.jsonl") if r.get("slug") == slug and r.get("ok") and "uses_7d" in r]
+    if not rows:
+        return u["unmeasured"]
+    x = min(1.0, math.log10(1 + max(0, rows[-1]["uses_7d"])) / math.log10(1 + u["uses_for_ceiling"]))
+    return round(u["floor"] + (u["ceiling"] - u["floor"]) * x, 3)
+
+
+def benefit(root, cfg: dict, i: dict):
+    """BENEFIT-1 public-benefit value of an idea, or None when it declares no region and need (then the older reach x impact value applies)."""
+    if "need" not in i or "regions" not in i:
+        return None
+    b, r = cfg["benefit"], i["regions"]
+    n = 99 if r == "global" else len(r)
+    region = b["region"]["global"] if n >= b["region"]["global_at"] else b["region"]["multi"] if n == 2 else b["region"]["single"]
+    return round(b["scale"] * region * i["need"] * use_factor(root, i["id"], cfg), 2)
+
+
 def ideas(root=REPO) -> list[dict]:
     """The bank plus every brainstormed idea in the queue ledger, deduplicated by id (the latest row wins)."""
     cfg, root = load(root), Path(root)
@@ -216,8 +236,9 @@ def rank(root=REPO, now=None) -> list[dict]:
         feas = 1.0 if arch.get("implemented") else 0.3
         cost = _cost_vec(i.get("cost", {}))
         share = max([cost[k] / r["limit"] for k, r in head["resources"].items() if k in cost] or [0])
-        value = i.get("reach", 1) * i.get("impact", 1) * feas * (cfg["weights"]["showcase_bonus"] if i.get("showcase") else 1.0)
-        out.append({**i, "feasibility": feas, "implemented": bool(arch.get("implemented")), "cost": cost, "cost_share": round(share, 4),
+        ben = benefit(root, cfg, i)
+        value = (ben * feas) if ben is not None else i.get("reach", 1) * i.get("impact", 1) * feas * (cfg["weights"]["showcase_bonus"] if i.get("showcase") else 1.0)
+        out.append({**i, "benefit": ben, "feasibility": feas, "implemented": bool(arch.get("implemented")), "cost": cost, "cost_share": round(share, 4),
                     "score": round(value / (1 + cfg["weights"]["cost_penalty"] * share), 2)})
     out.sort(key=lambda x: (-x["score"], x["id"]))
     for i in out:
@@ -330,6 +351,8 @@ def check(root=REPO) -> list[str]:
             lj = root / "spinoffs/live.js"
             if not i.get("live") or not lj.is_file() or f'"{i["live"]}": {{' not in lj.read_text(encoding="utf-8"):
                 bad.append(f"{i['id']}: live app has no source entry in spinoffs/live.js")
+        if i.get("live") and not (i.get("regions") and i.get("need") and i.get("need_evidence")):
+            bad.append(f"{i['id']}: a live public-benefit idea needs regions, need and need_evidence (BENEFIT-1)")
         if i.get("fact") and not (root / i["fact"]["path"]).is_file():
             bad.append(f"{i['id']}: fact source {i['fact']['path']} missing")
     if not (root / cfg["headroom"]).is_file():
