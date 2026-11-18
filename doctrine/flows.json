@@ -1354,6 +1354,30 @@
       ],
       "feedback": "the bot's commit changes main, and the next merge's run finds the data current (no commit) or refreshes it again; a generator that fails fails the run and is seen by the workflow watch",
       "bindings": []
+    },
+    "host-sync": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "host.state",
+          "via": "file:ops/hosting/state.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "host.state",
+          "via": "file:ops/hosting/state.json"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "each run compares the host with the expected hashes its earlier runs and deploys recorded; drift that survives a redeploy is read again and counted by the next run",
+      "bindings": []
     }
   },
   "implicit_producers": {
