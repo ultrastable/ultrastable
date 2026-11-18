@@ -7,7 +7,7 @@ import { runExecutor, noteExecutor } from './executor.js';
 import { runLane, githubBudget } from './lane.js';
 import { ingestDeploys } from './selfaudit.js';
 import { sampleCosts } from './costsample.js';
-import { sampleFreeTier } from './freetier.js';  // FREE-TIER-1
+import { sampleFreeTier, freeTierLevel } from './freetier.js';  // FREE-TIER-1
 import { runGate } from './worker-gate.js';
 import { runHandoffs, makeDeployer, makeRollback, makeVersionReader } from './handoff.js';
 import { syncIssues } from './issuesync.js';
@@ -132,6 +132,8 @@ export default {
       }
       const hit = routeEvent(ev, payload, EVENT_TABLE);
       if (!hit) return Response.json({ routed: false }, { status: 202 });
+      const ft = await freeTierLevel(env.DB).catch(() => null);  // FREE-TIER-1: an event never wakes an extra tick (model calls, D1 reads) once the day's free allowance is at risk; the 10-minute tick still takes the item
+      if (ft && ft.level !== 'ok') return Response.json({ routed: false, throttled: ft.level, ...hit }, { status: 202 });
       const work = aiFor(env).then(g => runTick(env.DB, { config, env: presence(env), wake: hit.role, ai: g.ai, budget: g.state }));
       if (ctx && ctx.waitUntil) ctx.waitUntil(work); else await work;
       return Response.json({ routed: true, ...hit }, { status: 202 });

@@ -2213,6 +2213,14 @@
    "title": "ciwatch watches ultrastable/.github",
    "body": "Measured: doctrine/ciwatch.json lists six repositories including ultrastable/.github, and ciwatch --check passes. A repository the token cannot read is recorded as unmeasured, never green, so the daily run surfaces it.",
    "probe": "grep:doctrine/ciwatch.json::ultrastable/.github"
+  },
+  {
+   "id": "lesson-2026-11-18-webhook-deliveries-count-against-the-free-request-allowance-",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Webhook deliveries count against the free request allowance twice",
+   "body": "HOSTS-1 subscribed the repository webhook to workflow_run. Each workflow run sends three deliveries and each delivery is one request on the site Worker and one on the tick Worker, so the repository's own workflows cost about 9,000 requests an hour against 100,000 a day from 00:31 UTC 2026-11-18. HOOK_EVENTS no longer lists workflow_run, reconcileHooks narrows a hook that subscribes to more than HOOK_EVENTS on the next tick, and /hook/github does not wake an extra tick when the free-tier level is degrade or shed.",
+   "probe": "grep:seed/worker/src/hosts.js::HOOKS_TAG"
   }
  ]
 }

@@ -4,7 +4,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { makeDb } from './d1shim.js';
-import { assertHost, createHosts, reportStatus, reporting, workersTouched, onPush, onHostEvent, watchHosts, githubActionsHost } from '../src/hosts.js';
+import { assertHost, createHosts, reportStatus, reporting, workersTouched, onPush, onHostEvent, watchHosts, githubActionsHost, HOOK_EVENTS } from '../src/hosts.js';
 
 const R = (status, j = {}) => ({ ok: status < 300, status, text: async () => JSON.stringify(j), json: async () => j });
 const TOPO = { workers: [{ id: 'ultrastable-tick', main: 'seed/worker/src/index.js', state: 'live' }, { id: 'ultrastable-site', main: 'site/worker.js', state: 'live' }] };
@@ -69,9 +69,11 @@ test('webhook secrets are derived inside the Worker, stable and distinct', async
 });
 test('the reconciler creates a missing hook, repairs a failing one, and leaves a healthy one', async () => {
   calls = []; let r = await reconcileHooks({ token: 't', repos: ['o/r'], secret: 's', fetch: HJ([]) }); assert.equal(r.repos['o/r'], 'created');
-  const hook = { id: 1, active: true, events: ['push', 'workflow_run', 'pull_request', 'issues', 'issue_comment', 'release'], config: { url: 'https://ultrastable.io/hook/github' } };
+  const hook = { id: 1, active: true, events: ['push', 'pull_request', 'issues', 'issue_comment', 'release'], config: { url: 'https://ultrastable.io/hook/github' } };
   calls = []; r = await reconcileHooks({ token: 't', repos: ['o/r'], secret: 's', fetch: HJ([{ ...hook, last_response: { code: 401 } }]) }); assert.match(r.repos['o/r'], /repaired.*401/); assert.ok(calls.includes('PATCH'));
   calls = []; r = await reconcileHooks({ token: 't', repos: ['o/r'], secret: 's', fetch: HJ([hook]) }); assert.equal(r.repos['o/r'], 'present'); assert.ok(!calls.includes('PATCH'));
+  // FREE-TIER-1: a hook still subscribed to workflow_run is narrowed, so the delivery storm stops without a person editing the hook
+  calls = []; r = await reconcileHooks({ token: 't', repos: ['o/r'], secret: 's', fetch: HJ([{ ...hook, events: [...hook.events, 'workflow_run'] }]) }); assert.ok(calls.includes('PATCH'), 'extra events are drift'); assert.ok(!HOOK_EVENTS.includes('workflow_run'));
 });
 test('a token without hook rights is recorded plainly and the db gates reruns hourly', async () => {
   const db = makeDb(); let r = await reconcileHooks({ db, token: 't', repos: ['o/r'], secret: 's', fetch: HJ([], 403), now: () => 1e6 });
