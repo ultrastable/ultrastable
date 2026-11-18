@@ -2088,118 +2088,118 @@ export default {
  },
  "readings": {
   "blindspot:claims_drift": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:uptime": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "claims_drift": {
-   "at": "2026-11-18T00:09:32Z",
-   "in_bounds": false,
+   "at": "2026-11-18T15:29:54Z",
+   "in_bounds": true,
    "unmeasured": false,
-   "value": 2
+   "value": 0
   },
   "deploy_health": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "happy_paths": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:uptime": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "numbers-board:value": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:uptime": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "spend": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0.497
   },
   "stalled_clocks": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "ui_findings": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "value": {
-   "at": "2026-11-18T00:09:32Z",
+   "at": "2026-11-18T15:29:54Z",
    "in_bounds": true,
    "unmeasured": false,
-   "value": 12.003
+   "value": 50.274
   }
  },
  "self": {
