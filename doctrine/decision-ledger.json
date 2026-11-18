@@ -2306,6 +2306,15 @@
    "body": "A write-back record must carry the exact session id of the commits (a mistyped id fails the writeback check); copy it from the commit trailer.",
    "probe": "file:seed/worker/src/subreq.js",
    "session": "session_0156nqDrGE5EXqCmJ11EwNYK"
+  },
+  {
+   "id": "lesson-2026-11-18-workers-ai-executor-change-broke-site-webbotauth-js-614",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Workers AI executor change broke site/webbotauth.js (#614)",
+   "body": "The worker-native executor merged a change with a stray character that made site/webbotauth.js a syntax error, turning deploy-site red. Restored in #616. Executor output must pass node --check on every touched JS file before the lane merges.",
+   "probe": "file:site/webbotauth.js",
+   "session": "session_0156nqDsv1wrVeZRDrJu8sFu"
   }
  ]
 }
