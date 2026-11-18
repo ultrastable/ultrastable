@@ -96,21 +96,10 @@
    "id": "runtime-tenant0",
    "failure_mode": "fm-clock-silent",
    "kind": "http",
-   "url": "https://ultrastable-ultrastable.q08.workers.dev/health",
+   "url": "https://ultrastable-tick.ultrastable.workers.dev/health",
    "json_ok": true,
    "timeout": 15,
    "root_cause": "the deployed seed runtime of Ultrastable stopped ticking or its D1/cron binding broke",
-   "owner": "operations",
-   "remedy": "Read the runtime's last tick_runs.errors with wrangler d1 execute; redeploy with scripts/deploy_tenant.py; check the cron schedule."
-  },
-  {
-   "id": "runtime-child",
-   "failure_mode": "fm-clock-silent",
-   "kind": "http",
-   "url": "https://demo-child-ultrastable.q08.workers.dev/health",
-   "json_ok": true,
-   "timeout": 15,
-   "root_cause": "the demo child runtime stopped ticking, so the parent cannot see its child",
    "owner": "operations",
    "remedy": "Read the runtime's last tick_runs.errors with wrangler d1 execute; redeploy with scripts/deploy_tenant.py; check the cron schedule."
   }

@@ -154,6 +154,15 @@
    "consumer": "foundation/promote.py",
    "needle": "outreach/applications",
    "how": "promote --kits renders them from forms and facts and promote --check fails on any byte of drift"
+  },
+  {
+   "id": "demo-child-idea",
+   "paths": [
+    "instances/demo-child/IDEA.md"
+   ],
+   "consumer": "deploy/transfer/plan.json",
+   "needle": "demo-child-ultrastable",
+   "how": "the retired demo tenant's idea file; the move plan records it as redeployed by its own bootstrap (ACCOUNT-SPLIT-3)"
   }
  ],
  "verified": {

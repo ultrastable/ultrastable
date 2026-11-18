@@ -1,13 +1,13 @@
 {
   "_doc": "CLOCKWORK-1: every loop is a clock with an expected interval and a source of beats; `python3 -m foundation clock --report` measures them (ticking, late, stopped, idle) and the result is published on /live. A stopped or inaccurate clock is a defect. `chain` is how the executor keeps ticking between its daily cron: a run that ends with takeable work wakes the next run, capped per day and backed off after failures; the Actions budget guard still applies.",
   "version": "1.0.0",
-  "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
+  "account_id": "81e3a4efb4eb66e613529b87682911bb",
   "clocks": [
     {
       "id": "tick-heartbeat",
       "what": "the org's heartbeat on Cloudflare (cron every 10 minutes): reconcile, claims, gates, predictions, dispatch",
       "source": "d1",
-      "d1_id": "7468898a-b515-495f-9910-e91cb80f5810",
+      "d1_id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
       "table": "tick_runs",
       "column": "started_at",
       "expected_interval_s": 600,
@@ -17,16 +17,10 @@
           "account_id": "81e3a4efb4eb66e613529b87682911bb",
           "d1_id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
           "why": "ultrastable account, primary since the 2026-11-15 cutover (ACCOUNT-SPLIT-2)"
-        },
-        {
-          "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
-          "d1_id": "7468898a-b515-495f-9910-e91cb80f5810",
-          "why": "quniverse account, standby"
         }
       ],
       "health_urls": [
-        "https://ultrastable-tick.ultrastable.workers.dev/health",
-        "https://ultrastable-ultrastable.q08.workers.dev/health"
+        "https://ultrastable-tick.ultrastable.workers.dev/health"
       ]
     },
     {
@@ -76,7 +70,7 @@
       "id": "criticality-loop",
       "what": "CRITICALITY-LOOP-1: one beat per tick from the tick Worker's criticality controller (act on k_eff, grade the last action)",
       "source": "d1",
-      "d1_id": "7468898a-b515-495f-9910-e91cb80f5810",
+      "d1_id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
       "table": "criticality_history",
       "column": "at",
       "expected_interval_s": 600,
@@ -86,16 +80,10 @@
           "account_id": "81e3a4efb4eb66e613529b87682911bb",
           "d1_id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
           "why": "ultrastable account, primary since the 2026-11-15 cutover (ACCOUNT-SPLIT-2)"
-        },
-        {
-          "account_id": "edb167b78c9fb901ea5bca3ce58ccc4b",
-          "d1_id": "7468898a-b515-495f-9910-e91cb80f5810",
-          "why": "quniverse account, standby"
         }
       ],
       "health_urls": [
-        "https://ultrastable-tick.ultrastable.workers.dev/health",
-        "https://ultrastable-ultrastable.q08.workers.dev/health"
+        "https://ultrastable-tick.ultrastable.workers.dev/health"
       ]
     },
     {
