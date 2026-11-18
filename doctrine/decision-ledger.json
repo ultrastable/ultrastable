@@ -2437,6 +2437,14 @@
    "title": "FRONT-BACKED-1 front end backed by back end",
    "body": "Rowan 2026-11-18: front end must always match the back end. Added to agents/AGENTS.md and the seed copy; /api/freshness enforces data age. Session: session_0156nqDsqGCaorJAUs6hPGox",
    "probe": "file:site/live.js"
+  },
+  {
+   "id": "lesson-2026-11-18-main-writer-1-app-commits-trigger-push-workflows-data-commit",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "MAIN-WRITER-1: App commits trigger push workflows; data commits carry skip-ci",
+   "body": "Commits written by the org GitHub App start push workflows, unlike workflow-token pushes. A deploy record started regen-generated, whose commit touched site/ and restarted the deploy, without end. Data commits carry [skip ci].",
+   "probe": "grep:tools/push_main.py::skip ci"
   }
  ]
 }
