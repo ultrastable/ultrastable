@@ -120,10 +120,11 @@ test('collectModules flattens nested relative imports and the deployer posts the
   files['site/b.js'] = undefined; delete files['site/b.js'];
   const g = await makeDeployer({ token: 't', fetch: read, site, key: 'K', generated: { 'site/b.js': 'export const b = 9' } })('ultrastable-site', 'abc123', 'o/r');
   assert.equal(g.ok, true, 'a generated module not in git is supplied by the tick');
-  const cfgFiles = { 'seed/autonomy/policy.json': '{"trust":{"t":1},"ladder":{"l":1},"surfaces":{}}', 'seed/autonomy/failure-modes.json': '{"modes":[{"id":"a"}]}', 'instances/ultrastable/failure-modes.json': '{"modes":[{"id":"b"}]}', 'seed/autonomy/criticality.json': '{"floor":0.5}', 'instances/ultrastable/cost-budgets.json': '{"budgets":[{"id":"d1"}]}', 'seed/worker/migrations/index.json': '["0001_a.sql"]', 'seed/worker/migrations/0001_a.sql': 'CREATE TABLE a (x);', 'doctrine/unknowns.json': '{"lenses":[]}' };
+  const cfgFiles = { 'seed/autonomy/goals.json': '{"goals":[{"id":"g"}]}', 'seed/autonomy/pace.json': '{"p":1}', 'seed/autonomy/policy.json': '{"trust":{"t":1},"ladder":{"l":1},"surfaces":{}}', 'seed/autonomy/failure-modes.json': '{"modes":[{"id":"a"}]}', 'instances/ultrastable/failure-modes.json': '{"modes":[{"id":"b"}]}', 'seed/autonomy/criticality.json': '{"floor":0.5}', 'instances/ultrastable/cost-budgets.json': '{"budgets":[{"id":"d1"}]}', 'seed/worker/migrations/index.json': '["0001_a.sql"]', 'seed/worker/migrations/0001_a.sql': 'CREATE TABLE a (x);', 'doctrine/unknowns.json': '{"lenses":[]}' };
   const { tickConfigSource } = await import('../src/handoff.js');
   const cs = await tickConfigSource(async p => cfgFiles[p]);
   const cfg = JSON.parse(cs.slice(cs.indexOf('export default ') + 15, cs.lastIndexOf(';')));
+  assert.deepEqual(cfg.goals.goals, [{ id: 'g' }], 'GOALS-1: the generated tick config carries the goal tree'); assert.deepEqual(cfg.pace, { p: 1 });
   assert.equal(cfg.org_slug, 'ultrastable'); assert.deepEqual(cfg.failure_modes.modes.map(m => m.id), ['a', 'b']); assert.equal(cfg.criticality.floor, 0.5); assert.deepEqual(cfg.cost_budgets, [{ id: 'd1' }]); assert.equal(posted.body.modules.find(m => m.name === 'b.js').src, 'export const b = 9');
 });
 
