@@ -21,14 +21,14 @@ const fakeAI = (outTok = 500) => { const calls = []; return { calls, async run(m
 test('a budget of 0 stays inside the free AI allocation, with a safety margin', () => {
   const a = allowance(budgetConfig({}, {}), NOW);
   assert.equal(a.variable_usd_month, 0);
-  assert.equal(a.ai_neurons_day, Math.floor(PRICES.ai_free_neurons_day * 0.8));
+  assert.equal(a.ai_neurons_day, Math.floor(PRICES.ai_free_neurons_day * 0.95));  // BUDGET-TUNE-1: the free plan refuses an overrun, it never bills one
 });
 
 test('the monthly number buys a daily allowance after fixed costs', () => {
   const a = allowance(budgetConfig({ budget: { usd_per_month: 30, plan: 'paid' } }, {}), NOW);
   assert.equal(a.fixed_usd_month, 5);
   assert.equal(a.variable_usd_month, 25);
-  const perDay = 25 / 30, expected = Math.floor((10000 + (perDay / 0.011) * 1000) * 0.8);
+  const perDay = 25 / 30, expected = Math.floor((10000 + (perDay / 0.011) * 1000) * 0.8);  // paid plan keeps the 80% margin
   assert.equal(a.ai_neurons_day, expected);
   const low = allowance(budgetConfig({ budget: { usd_per_month: 3, plan: 'paid' } }, {}), NOW);
   assert.equal(low.variable_usd_month, 0); assert.match(low.notes[0], /below the fixed costs/);
@@ -46,10 +46,10 @@ test('neurons are estimated from reported usage, or from the text when none is r
   assert.ok(estimateNeurons('m', null, 'x'.repeat(4000)) > 0);
 });
 
-test('modes: normal, lean above 70% of the day, frozen at the cap and when the month is spent', () => {
+test('modes: normal, lean above 90% of the day, frozen at the cap and when the month is spent', () => {
   const a = { ai_neurons_day: 1000, variable_usd_month: 10 };
   assert.equal(decide(a, { ai_neurons_today: 100, ai_usd_month_to_date: 0 }).mode, 'normal');
-  assert.equal(decide(a, { ai_neurons_today: 750, ai_usd_month_to_date: 0 }).mode, 'lean');
+  assert.equal(decide(a, { ai_neurons_today: 950, ai_usd_month_to_date: 0 }).mode, 'lean');
   assert.equal(decide(a, { ai_neurons_today: 1000, ai_usd_month_to_date: 0 }).mode, 'frozen');
   assert.equal(decide(a, { ai_neurons_today: 0, ai_usd_month_to_date: 10 }).mode, 'frozen');
 });
@@ -75,7 +75,7 @@ test('every call is metered in the ledger, and the day cap is a hard stop (Budge
 test('lean mode allows one model call per tick', async () => {
   const { raw, db } = mkdb(); const ai = fakeAI();
   await governedAI(db, ai, { config: {}, now: NOW });
-  raw.prepare("INSERT INTO budget_ledger (day, kind, units, calls, refused) VALUES ('2026-11-16','ai_neurons',?,1,0) ON CONFLICT(day,kind) DO UPDATE SET units=excluded.units").run(Math.floor(8000 * 0.75));
+  raw.prepare("INSERT INTO budget_ledger (day, kind, units, calls, refused) VALUES ('2026-11-16','ai_neurons',?,1,0) ON CONFLICT(day,kind) DO UPDATE SET units=excluded.units").run(Math.floor(9500 * 0.95));
   const g = await governedAI(db, ai, { config: {}, now: NOW });
   assert.equal(g.state.mode, 'lean');
   await g.ai.run('m', {});
@@ -189,4 +189,12 @@ test('HALT-1: the worker variable wins over the committed file, and a halted tic
     const w = await mod.default.fetch(new Request('https://x/pulse/watch', { method: 'POST' }), { DB, AI: ai, HALT: '1' }, { waitUntil() {} });
     assert.equal(w.status, 202);
   } finally { if (made) rmSync(cfg); }
+});
+
+test('BUDGET-TUNE-1: a day that used 52% of the free neurons refuses nothing, and the tick share leaves room', () => {
+  const a = allowance(budgetConfig({}, {}), NOW);
+  const tick = Math.floor(a.ai_neurons_day * 0.7);
+  assert.ok(tick > PRICES.ai_free_neurons_day * 0.6, 'the tick share covers 60% of the free neurons');
+  assert.equal(decide(a, { ai_neurons_today: PRICES.ai_free_neurons_day * 0.52, ai_usd_month_to_date: 0 }).mode, 'normal');
+  assert.equal(allowance(budgetConfig({ budget: { plan: 'paid' } }, {}), NOW).ai_neurons_day, Math.floor(PRICES.ai_free_neurons_day * 0.8));
 });
