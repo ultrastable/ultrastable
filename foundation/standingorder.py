@@ -93,11 +93,9 @@ def instruction_failures(root, d) -> list[str]:
 def consumerless(root, d) -> list[str]:
     """Ledger rows whose probe is not code or data the system reads (a document, or no probe at all)."""
     root = Path(root)
-    p = root / d["ledger"]
-    if not p.exists():
-        return []
+    from . import writeback
     suffixes, out = tuple(d["ledger_consumer_suffixes"]), []
-    for r in json.loads(p.read_text(encoding="utf-8")).get("rows", []):
+    for r in writeback.ledger_rows(root):
         spec = r.get("probe") or ""
         m = re.match(r"(?:file|grep):([^:\s]+?)(?:::.*)?$", spec)
         target = m.group(1) if m else ""

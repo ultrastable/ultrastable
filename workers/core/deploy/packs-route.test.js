@@ -12,7 +12,7 @@ import { createPacksRoute } from './packs-route.js';
 
 const DEPLOY_MIG = fileURLToPath(new URL('./migrations/', import.meta.url));
 const EXAMPLE_DIR = fileURLToPath(new URL('../packs/example/', import.meta.url));
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now', '-N days'), so a fixed date fails once it ages out
 const one = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
 const rows = (db, sql, ...a) => db.raw.prepare(sql).all(...a).map(r => ({ ...r }));
 

@@ -5,7 +5,7 @@
 One registry (doctrine/rules.json) maps each rule to the CI checks that fail a change and the runtime probes the tick runs on main.
   python3 -m foundation rules --check            registry complete: each rule has a CI check present in a workflow, a runtime probe that resolves, no unfiled gap
   python3 -m foundation rules --run [--apply] [--due]   run every runtime probe; a violation files Q-RULE-<rule>-<probe> (done check = the probe) and runs the declared fix once
-  python3 -m foundation rules --probe NAME       builtin probes: no-secrets, no-qnfo-pages, license-notice, merged-green, pages-live, spinoff-live (exit 0 ok, 1 violated, 2 unmeasured)
+  python3 -m foundation rules --probe NAME       builtin probes: no-secrets, no-qnfo-pages, qnfo-live, license-notice, merged-green, pages-live, spinoff-live (exit 0 ok, 1 violated, 2 unmeasured)
   python3 -m foundation rules --status | --panel | --baseline
 Unmeasured is never healthy: a probe that cannot read its source reports unmeasured and the rule shows it.
 Consumers: .github/workflows/checks.yml, scripts/lane.sh (--run --apply --due), scripts/dashboard_snapshot.py (panel), tests/foundation/test_rules.py."""
@@ -16,7 +16,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 REG, BASE, STATUS, LEDGER = "doctrine/rules.json", "doctrine/rules-baseline.json", "ops/rules/status.json", "ops/rules/ledger.jsonl"
 REQUIRED = ["closed-loops", "autonomy-first", "front-end-matches-back-end", "no-merge-over-red", "free-tier", "no-qnfo-on-pages", "license-notice", "no-secrets-in-logs"]
-BUILTIN = {"no-secrets", "no-qnfo-pages", "license-notice", "merged-green", "pages-live", "spinoff-live"}
+BUILTIN = {"no-secrets", "no-qnfo-pages", "qnfo-live", "license-notice", "merged-green", "pages-live", "spinoff-live"}
 
 
 def jl(root, rel, default=None):
@@ -126,6 +126,34 @@ def p_no_qnfo(root, d):
     return ("violated", "QNFO grew on " + ", ".join(f"{k} {a}>{b}" for k, (a, b) in over.items())) if over else ("ok", "QNFO mentions on page sources at or below baseline")
 
 
+def _fetch_text(url):
+    import urllib.request
+    with urllib.request.urlopen(url, timeout=15) as r:
+        return r.read().decode("utf-8", errors="replace")
+
+
+def p_qnfo_live(root, d, fetch=_fetch_text):
+    """Rendered pages, not only sources: each page in qnfo_live_pages is fetched from the deployed site and the QNFO mentions it renders are
+    compared with its baseline (rules-baseline.json qnfo.live, default 0, shrink-only). Data the sources do not carry (a feed, a ledger, a D1 row) is caught here.
+    A page that cannot be fetched is unmeasured, never ok."""
+    base = ((jl(root, BASE, {}) or {}).get("qnfo_live", {}))
+    origin = d.get("qnfo_live_origin", "https://ultrastable.io")
+    over, unreach = [], []
+    for path in d.get("qnfo_live_pages", []):
+        try:
+            n = len(re.findall(r"qnfo", fetch(origin + path), re.I))
+        except Exception as e:  # network, DNS, HTTP status: the page was not measured
+            unreach.append(f"{path} ({type(e).__name__})")
+            continue
+        if n > base.get(path, 0):
+            over.append(f"{path} {n}>{base.get(path, 0)}")
+    if over:
+        return "violated", "QNFO rendered on live pages: " + ", ".join(over)
+    if unreach:
+        return "unmeasured", "pages not fetched: " + ", ".join(unreach[:5])
+    return "ok", f"{len(d.get('qnfo_live_pages', []))} rendered pages carry no QNFO beyond baseline"
+
+
 def _gh(*a):
     r = subprocess.run(["gh", *a], capture_output=True, text=True, encoding="utf-8", timeout=60)
     return r.returncode, r.stdout + r.stderr
@@ -159,15 +187,22 @@ def p_merged_green(root, d):
 def p_pages_live(root, d, now=None):
     """Slot for the page-freshness probe (thread 'Make every site page truly live'): it writes ops/pages-live.json {at, failing: [...]}."""
     s = jl(root, "ops/pages-live.json")
-    if not s:  # the deployed site answers for itself: /api/freshness is 200 when every source is inside its cadence, 503 when stale
+    if not s:  # each deployed site answers for itself: /api/freshness is 200 when every source is inside its cadence, 503 when stale
         import urllib.request, urllib.error
-        try:
-            urllib.request.urlopen("https://ultrastable.io/api/freshness", timeout=15)
-            return "ok", "https://ultrastable.io/api/freshness answered 200"
-        except urllib.error.HTTPError as e:
-            return ("violated", "/api/freshness answered 503: a page source is stale") if e.code == 503 else ("unmeasured", f"/api/freshness answered {e.code}")
-        except (urllib.error.URLError, OSError) as e:
-            return "unmeasured", f"/api/freshness unreachable: {type(e).__name__}"
+        urls = d.get("pages_live_urls") or ["https://ultrastable.io/api/freshness"]
+        stale, unmeasured = [], []
+        for u in urls:
+            try:
+                urllib.request.urlopen(u, timeout=15)
+            except urllib.error.HTTPError as e:
+                (stale if e.code == 503 else unmeasured).append(f"{u} ({e.code})")
+            except (urllib.error.URLError, OSError) as e:
+                unmeasured.append(f"{u} ({type(e).__name__})")
+        if stale:
+            return "violated", "a page source is stale: " + ", ".join(stale)
+        if unmeasured:
+            return "unmeasured", "not measured: " + ", ".join(unmeasured)
+        return "ok", f"{len(urls)} /api/freshness route(s) answered 200"
     now = now or dt.datetime.now(dt.timezone.utc)
     if (now - dt.datetime.fromisoformat(s["at"].replace("Z", "+00:00"))).total_seconds() > 26 * 3600:
         return "unmeasured", "page-freshness result is older than 26 h"
@@ -196,7 +231,7 @@ def p_spinoff_live(root, d, now=None):
 
 def builtin(name, root=REPO):
     d = jl(root, REG)
-    return {"no-secrets": p_no_secrets, "no-qnfo-pages": p_no_qnfo, "license-notice": p_license, "merged-green": p_merged_green, "pages-live": p_pages_live, "spinoff-live": p_spinoff_live}[name](root, d)
+    return {"no-secrets": p_no_secrets, "no-qnfo-pages": p_no_qnfo, "qnfo-live": p_qnfo_live, "license-notice": p_license, "merged-green": p_merged_green, "pages-live": p_pages_live, "spinoff-live": p_spinoff_live}[name](root, d)
 
 
 # ---- runtime tick

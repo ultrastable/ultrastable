@@ -1,16 +1,4 @@
 {
  "note": "Q-TEST-TIMEBOMB-1 shrink-only baseline: tests that pin a calendar date and load a real-clock SQL window. Drained by Q-TEST-TIMEBOMB-2; a fixed test must leave this list.",
- "tests": [
-  "core/deploy/packs-route.test.js",
-  "core/packs/bounce.test.js",
-  "core/packs/loader.test.js",
-  "core/packs/packs.test.js",
-  "core/packs/redact.test.js",
-  "core/packs/sandbox.test.js",
-  "packs/analytics/analytics.test.js",
-  "packs/drafts/drafts.test.js",
-  "packs/email/email.test.js",
-  "packs/social/social.test.js",
-  "packs/video/video.test.js"
- ]
+ "tests": []
 }

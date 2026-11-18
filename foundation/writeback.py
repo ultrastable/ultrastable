@@ -12,9 +12,42 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 LEDGER = "doctrine/decision-ledger.json"
+SHARDS = "doctrine/writeback"  # WRITEBACK-SHARD-1: one file per row, so two PRs never edit the same file (the ledger and provenance are folded on main by regen)
 LEDGER_DOC = "CLOSED-LOOP-1 write-back: every lesson and decision as a row with a closing probe (file:<path> or grep:<path>::<regex>) that `python3 -m foundation orphans --check` executes on every PR and loop pass. Written by `python3 -m foundation writeback record --kind lesson|decision --probe SPEC`."
-WB_PREFIXES = (LEDGER, "doctrine/closed-loop", "doctrine/orphans", "docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loop-registry.json", "docs/issues/OL-", "ops/spinoff/")
+WB_PREFIXES = (LEDGER, SHARDS + "/", "doctrine/closed-loop", "doctrine/orphans", "docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loop-registry.json", "docs/issues/OL-", "ops/spinoff/")
 DOC_ONLY = re.compile(r"^(docs/|doctrine/|GLOSSARY\.md$|.*\.md$)")
+
+
+def ledger_rows(root=REPO) -> list[dict]:
+    """Every ledger row: the folded ledger plus shards not yet folded (a PR branch carries its rows as shards)."""
+    root = Path(root)
+    led = root / LEDGER
+    rows = {r["id"]: r for r in (json.loads(led.read_text(encoding="utf-8")).get("rows", []) if led.exists() else [])}
+    for f in sorted((root / SHARDS).glob("*.json")):
+        r = json.loads(f.read_text(encoding="utf-8"))["row"]
+        rows[r["id"]] = r
+    return list(rows.values())
+
+
+def fold(root=REPO) -> dict:
+    """Fold shards into doctrine/decision-ledger.json (union by id) and append each one's provenance row, then remove the shards. Idempotent."""
+    root = Path(root)
+    shards = sorted((root / SHARDS).glob("*.json"))
+    if not shards:
+        return {"folded": 0}
+    led = root / LEDGER
+    doc = json.loads(led.read_text(encoding="utf-8")) if led.exists() else {"_doc": LEDGER_DOC, "rows": []}
+    have = {r["id"] for r in doc["rows"]}
+    for f in shards:
+        s = json.loads(f.read_text(encoding="utf-8"))
+        r = s["row"]
+        if r["id"] not in have:
+            doc["rows"].append(r)
+            _prov(root, s.get("kind", r["kind"]), s.get("title", r["title"]), s.get("session", ""), f"{LEDGER} ({r['id']})")
+    led.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    for f in shards:
+        f.unlink()
+    return {"folded": len(shards)}
 
 
 def _slug(s: str) -> str:
@@ -41,13 +74,14 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
         # never a Markdown page written for a reader.
         if probe.split(":", 1)[0] not in ("file", "grep"):
             raise ValueError("a lesson or decision needs --probe file:<path> or grep:<path>::<regex>: the code or policy that carries it (CLOSED-LOOP-1)")
-        led = root / LEDGER
-        rows = json.loads(led.read_text(encoding="utf-8")) if led.exists() else {"_doc": LEDGER_DOC, "rows": []}
         rid = f"{kind}-{day}-{_slug(title)}"
-        rows["rows"] = [r for r in rows["rows"] if r["id"] != rid] + [{"id": rid, "kind": kind, "date": day, "title": title.strip(), "body": body.strip(), "probe": probe, **({"session": session} if session else {})}]
-        led.parent.mkdir(parents=True, exist_ok=True)
-        led.write_text(json.dumps(rows, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
-        return _prov(root, kind, title, session, f"{LEDGER} ({rid})")
+        row = {"id": rid, "kind": kind, "date": day, "title": title.strip(), "body": body.strip(), "probe": probe, **({"session": session} if session else {})}
+        # WRITEBACK-SHARD-1 (root cause of every PR conflicting): the ledger and provenance are single shared files that each PR appended to, so any two PRs
+        # conflicted. A row is now its own file; `fold` (run by regen-generated on main) merges shards into the ledger and provenance and removes them.
+        sp = root / SHARDS / f"{rid}.json"
+        sp.parent.mkdir(parents=True, exist_ok=True)
+        sp.write_text(json.dumps({"row": row, "kind": kind, "title": title.strip(), "session": session}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        return f"{SHARDS}/{rid}.json"
     if kind == "open-loop":
         if not (owner and trigger and probe):
             raise ValueError("an open loop needs an owner role, a trigger and a closing probe")

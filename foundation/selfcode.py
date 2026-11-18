@@ -307,6 +307,7 @@ def write_item(root, item: dict) -> Path:
     return p
 
 
+# DECISION-METRIC: self-code-finding (each filed finding is logged with its score and scored by whether its item closes)
 def pick_findings(found: list[dict], rows: list[dict], open_ids: set[str], root=REPO, at: datetime | None = None) -> list[dict]:
     """The findings to file this run, best first, after the rails: kind enabled and not paused, not already open, not re-filed inside the cooldown, caps on open and per day."""
     c, at = cfg(root), at or now()
@@ -392,6 +393,8 @@ def run_sense(root=REPO, apply=False, tests=False, ci=True) -> dict:
         res["filed"].append(it["id"])
         if apply:
             write_item(root, it)
+            from . import decisions
+            decisions.record(root, "self-code-finding", f["kind"], it["id"], 1.0, f"score {score(f, rows, root)} of {len(found)} sensed findings: {it['title'][:120]}", alternatives=max(0, len(found) - 1))
             if not any(r["id"] == it["id"] and r.get("status") == "filed" and r.get("at", "") >= stamp(now() - timedelta(hours=1)) for r in rows):
                 append(root, {"id": it["id"], "kind": f["kind"], "key": f["key"], "before": f["count"], "status": "filed"})  # one ledger row per item per hour, not one per run
     return res

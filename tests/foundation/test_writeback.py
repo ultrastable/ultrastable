@@ -11,9 +11,15 @@ class Record(unittest.TestCase):
         with self.assertRaises(ValueError):  # CLOSED-LOOP-1: no probe, no record
             writeback.record(r, "lesson", "Probe before closing", "The migration was verified by a probe that passes on the live page.")
         p = writeback.record(r, "lesson", "Probe before closing", "The migration was verified by a probe that passes on the live page.", session="session_abc", probe="file:foundation/writeback.py", today="2026-12-01")
-        self.assertEqual(p, "doctrine/decision-ledger.json (lesson-2026-12-01-probe-before-closing)")
-        rows = json.loads((r / writeback.LEDGER).read_text())["rows"]
-        self.assertEqual(rows[-1]["session"], "session_abc")
+        self.assertEqual(p, "doctrine/writeback/lesson-2026-12-01-probe-before-closing.json")
+        before = (r / writeback.LEDGER).read_text()
+        self.assertEqual(before, (r / writeback.LEDGER).read_text(), "a record never edits the shared ledger (WRITEBACK-SHARD-1)")
+        rows = writeback.ledger_rows(r)
+        self.assertEqual([x for x in rows if x["id"] == "lesson-2026-12-01-probe-before-closing"][0]["session"], "session_abc")
+        self.assertGreaterEqual(writeback.fold(r)["folded"], 1)  # (the copied repo may carry other shards) main folds shards into the ledger and provenance, then removes them
+        self.assertFalse(list((r / writeback.SHARDS).glob("*.json")))
+        self.assertIn("lesson-2026-12-01-probe-before-closing", [x["id"] for x in json.loads((r / writeback.LEDGER).read_text())["rows"]])
+        self.assertEqual(writeback.fold(r)["folded"], 0)
         d = writeback.record(r, "decision", "Use the free path", "Chose the free path; revert by restoring the previous file, verified by the tests that pass.", probe="grep:foundation/writeback.py::LEDGER", today="2026-12-01")
         self.assertIn("decision-2026-12-01-use-the-free-path", d)
         self.assertFalse((r / "docs/decisions/2026-12-01-use-the-free-path.md").exists())

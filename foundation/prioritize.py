@@ -122,6 +122,7 @@ def load_open(root=REPO) -> list[dict]:
     return out
 
 
+# DECISION-METRIC: work-queue-priority (the ranking the executor takes from; the pick is logged and scored in foundation/executor.py)
 def rank(root=REPO, now=None, signals=None) -> list[dict]:
     return score_items(load_open(root), load(root), now, live_signals(root) if signals is None else signals)
 

@@ -12,7 +12,7 @@ import { KERNEL_DIR } from '../kernel/testkit.js';
 import { createPacks, loadManifest, MIGRATIONS_DIR, checkSql, sandboxDb, scanPackSource } from './index.js';
 
 const EXAMPLE_DIR = fileURLToPath(new URL('./example/', import.meta.url));
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now', '-N days'), so a fixed date fails once it ages out
 
 test('checkSql allows own-table writes and shared reads, refuses everything else', () => {
   const ok = [
@@ -61,7 +61,7 @@ function evilPack(body) {
 }
 async function runLoop(db, packs) {
   const [step] = await packs.packSteps();
-  const ctx = { tickId: 1, notes: [], errors: [], env: { SECRET_TOKEN: 'super-secret-value' }, config: { x: 1 }, now: T0, nowIso: '2026-11-11 10:00:00' };
+  const ctx = { tickId: 1, notes: [], errors: [], env: { SECRET_TOKEN: 'super-secret-value' }, config: { x: 1 }, now: T0, nowIso: new Date(T0).toISOString().slice(0, 19).replace('T', ' ') };
   await step.run(db, ctx);
   return ctx;
 }

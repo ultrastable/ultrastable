@@ -13,7 +13,7 @@ import { submitVideo, checkVideo, guardPort, provenanceHash, sha256 } from './in
 const DIR = fileURLToPath(new URL('./', import.meta.url));
 const DESCRIBE_MIG = fileURLToPath(new URL('../../core/describe/migrations/', import.meta.url));
 const VIDEO_MIG = fileURLToPath(new URL('./migrations/', import.meta.url));
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now', '-N days'), so a fixed date fails once it ages out
 const H = 3600e3;
 const iso = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
 const rows = (db, sql, ...a) => db.raw.prepare(sql).all(...a);
