@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261118-3",
+  "title": "OL-20261118-3: After 00:00 UTC confirm watchdog lands via main-writer",
+  "body": "**Owner:** operations\n**Trigger:** 00:00 UTC D1 reset\n**Done check:** cmd:python3 -m foundation drainwatch\n**Status:** open\n\nConfirm the next watchdog run succeeds and open PRs trend to 0 after the D1 reset.",
+  "labels": [
+    "role:operations",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
