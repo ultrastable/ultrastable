@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-18
 
+- 2026-11-18: LIVE-FRESH-1: live changelog, freshness probe, mobile table fix (#631)
+- 2026-11-18: MAIN-WRITER-1: send a user-agent so Cloudflare accepts push_main (#630)
 - 2026-11-18: Carry #628 onto main (decision probe bound to code, no-OIDC push fallback); TIMEBOMB guard for pinned-date tests over real-clock SQL windows (Q-TEST-TIMEBOMB-1 closed, Q-TEST-TIMEBOMB-2 drains 11 baselined); practical-solutions bright-spot issues close with their prediction disposition (ISSUE-LOOP-1)
 - 2026-11-18: DIRECT-MERGE-GATE-1: record why GitHub refuses the ruleset, exempt the Worker app, hourly retry (#624)
 - 2026-11-18: MERGE-AUDIT-1: audit merges the code cannot gate; fix claimcode red on main (#622)
