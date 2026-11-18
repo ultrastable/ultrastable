@@ -2146,6 +2146,15 @@
    "body": "One sha256 and Merkle implementation; seed auditchain.js imports workers/core/audit.",
    "probe": "file:seed/worker/src/auditchain.js",
    "session": "session_0156nqDvx8HgX8Ubut9xXoKx"
+  },
+  {
+   "id": "lesson-2026-11-18-free-tier-1-usage-sample-runs-first-in-the-tick",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "FREE-TIER-1: usage sample runs first in the tick",
+   "body": "The free-tier usage sample ran in the last beat of the invocation and failed with Too many subrequests when earlier loops used the 50 allowed (00:10 UTC 2026-11-18), leaving d1 and request usage null. seed/worker/src/index.js now reads it before every other loop. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
+   "probe": "grep:seed/worker/src/index.js::const freeTier = await sampleFreeTier",
+   "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
   }
  ]
 }
