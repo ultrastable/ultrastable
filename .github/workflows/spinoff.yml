@@ -51,3 +51,13 @@ jobs:
             git push -q origin "$b"
             gh pr create --base main --head "$b" --title "spinoff: portfolio tick" --body "Metrics, decisions and launches recorded by the SPINOFF-1 loop. Evidence: ops/spinoff/ledger.jsonl."
           fi
+      - name: Deploy the spinoffs Worker from the rebuilt bundle and probe every app (SPINOFF-DEPLOY-1)
+        # The ultrastable.app zone and the ultrastable-spinoffs Worker live in the quniverse account until the zone transfer (deploy/transfer/plan.json).
+        # Without this step a launched app was recorded live but never served (numbers-board and portfolio-board answered 404).
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Cloudflare secrets not set; spinoffs not deployed"; exit 1; }
+          (cd spinoffs && npx --yes wrangler@4 deploy)
+          python3 scripts/probe_spinoffs.py
