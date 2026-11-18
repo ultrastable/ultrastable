@@ -101,6 +101,10 @@
       "class": "core",
       "role": "Deploy gate: hash read-back of the stored module before a deploy counts as verified"
     },
+    "core/hostsync": {
+      "class": "core",
+      "role": "Repository and host runtime state reconcile: names and hashes written back to the repo, drift redeployed"
+    },
     "core/describe": {
       "class": "core",
       "role": "self-description and the claims registry"
