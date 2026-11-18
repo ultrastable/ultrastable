@@ -2470,6 +2470,15 @@
    "title": "DECISIONS-1: every autonomous decision is measured",
    "body": "Rowan 2026-11-18: measure what we improve. Six decision points (idea loop, spinoff launch, work-queue pick, AI router, plussing, free-tier governor) declare a metric in doctrine/decisions.json, log each decision with a predicted effect and are scored against the measured outcome (ops/decisions, D1 decision_log). CI fails an unmarked decision function; the rule every-decision-measured has a runtime probe; /decisions shows trend and whether decisions improved the metric.",
    "probe": "grep:foundation/decisions.py::DECISIONS-1"
+  },
+  {
+   "id": "lesson-2026-11-18-a-new-worker-route-needs-a-standards-surface-entry-and-a-des",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "A new Worker route needs a standards surface entry and a design token",
+   "body": "DECISIONS-1 CI failed twice: /api/decisions was not registered in seed/standards/surfaces.json (standards --apply fails regen) and the page used a hard-coded accent hex. Both are now checked locally with standards --check and design --lint before pushing.",
+   "probe": "grep:seed/standards/surfaces.json::/api/decisions",
+   "session": "session_0156nqDtg2N1X7K61HZReweE"
   }
  ]
 }
