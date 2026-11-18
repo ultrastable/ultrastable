@@ -20,24 +20,37 @@ export async function applyRulesets(db, env, tenant, { fetch: f = fetch, now = D
   if (!tk.ok) { await store.event(db, tenant, 'github-admin', 'failed', 'rulesets: ' + tk.error); return { ok: false, error: tk.error, results: [] }; }
   const h = { authorization: 'Bearer ' + tk.token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-auth', 'content-type': 'application/json' };
   const results = [];
+  // The tick Worker's own app writes to main through the contents API, so it is exempt as well; its id comes from the stored install, never from a literal.
+  const own = await db.prepare("SELECT meta FROM credentials WHERE tenant = ? AND provider = 'github-app'").bind(tenant).first();
+  let ownId = 0;
+  try { ownId = Number(JSON.parse((own && own.meta) || '{}').app_id) || 0; } catch (e) { ownId = 0; /* unreadable meta: apply without the extra exemption and let the event row show the result */ }
   for (const [repo, list] of Object.entries(rulesets)) {
     const cur = await f(`https://api.github.com/repos/${repo}/rulesets`, { headers: h });
     const have = cur.status === 200 ? await cur.json() : null;
     for (const rs of list) {
-      let status = cur.status;
+      let status = cur.status, why = '';
       if (Array.isArray(have)) {
         const old = have.find(x => x.name === rs.name);
-        const r = await f(`https://api.github.com/repos/${repo}/rulesets${old ? '/' + old.id : ''}`, { method: old ? 'PUT' : 'POST', headers: h, body: JSON.stringify(rs) });
+        const bypass = [...(rs.bypass_actors || [])];
+        if (ownId && !bypass.some(x => x.actor_id === ownId)) bypass.push({ actor_id: ownId, actor_type: 'Integration', bypass_mode: 'always' });
+        const r = await f(`https://api.github.com/repos/${repo}/rulesets${old ? '/' + old.id : ''}`, { method: old ? 'PUT' : 'POST', headers: h, body: JSON.stringify({ ...rs, bypass_actors: bypass }) });
         status = r.status;
+        if (status !== 200 && status !== 201) why = await reason(r);
       }
       const ok = status === 200 || status === 201;
       results.push({ repo, name: rs.name, status, ok });
-      await store.event(db, tenant, 'github-admin', ok ? 'ok' : 'failed', `ruleset ${repo} ${rs.name} HTTP ${status}`);
+      await store.event(db, tenant, 'github-admin', ok ? 'ok' : 'failed', `ruleset ${repo} ${rs.name} HTTP ${status}${why ? ' ' + why : ''}`);
     }
   }
   const ok = results.length > 0 && results.every(x => x.ok);
   if (ok) await store.event(db, tenant, 'github-admin', 'rulesets', 'all rulesets applied');  // the resolver below stops once this row exists
   return { ok, results };
+}
+
+// GitHub's own refusal text (a validation message, never a credential), cut short so the event row says why a rule was refused.
+async function reason(r) {
+  try { const j = await r.json(); return [j.message, ...(j.errors || []).map(e => typeof e === 'string' ? e : e.message || e.code)].filter(Boolean).join('; ').slice(0, 300); }
+  catch (e) { return 'no readable body'; /* the status code is already recorded */ }
 }
 
 // Resolver: every tick retries for each tenant with the admin app until the 'rulesets' event exists, so a failed first pass heals itself.
@@ -47,6 +60,8 @@ export async function rulesetsDue(db, env, opts = {}) {
   for (const { tenant } of rows) {
     const done = await db.prepare("SELECT 1 AS x FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'rulesets' LIMIT 1").bind(tenant).first();
     if (done) { out.push({ tenant, action: 'done' }); continue; }
+    const recent = await db.prepare("SELECT 1 AS x FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'failed' AND detail LIKE 'ruleset %' AND at > ? LIMIT 1").bind(tenant, new Date((opts.now || Date.now()) - 3600e3).toISOString().slice(0, 19) + 'Z').first();
+    if (recent) { out.push({ tenant, action: 'backoff' }); continue; }  // a refused rule is retried hourly, not every tick
     const r = await applyRulesets(db, env, tenant, opts).catch(e => ({ ok: false, error: String(e && e.message || e) }));
     out.push({ tenant, action: r.ok ? 'rulesets-applied' : 'retry', error: r.error });
   }

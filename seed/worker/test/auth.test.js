@@ -225,3 +225,18 @@ test('DIRECT-MERGE-GATE-1: the admin install upserts the main ruleset, and the l
   const denied = await applyRulesets(makeDb(), e, 't', { fetch: async () => ({ status: 403, json: async () => ({}) }), token: 'tok' });
   assert.equal(denied.ok, false);
 });
+
+test('DIRECT-MERGE-GATE-1: the Worker app is exempt too, a refusal records why, and a refused rule backs off', async () => {
+  const { applyRulesets, rulesetsDue } = await import('../src/auth/rulesets.js');
+  const db = makeDb(), e = { ...env(), DB: db };
+  await store.put(db, e, 't', 'github-admin', { secret: { pem: 'x' }, meta: { app_id: 1, installation_id: 2 }, status: 'pending' });
+  await store.put(db, e, 't', 'github-app', { secret: { pem: 'x' }, meta: { app_id: 77, installation_id: 3 }, status: 'ok' });
+  let sent = null;
+  const f = async (url, o = {}) => { if (!o.method) return { status: 200, json: async () => [] }; sent = JSON.parse(o.body); return { status: 422, json: async () => ({ message: 'Validation Failed', errors: ['Actor must be installed'] }) }; };
+  const r = await applyRulesets(db, e, 't', { fetch: f, token: 'tok' });
+  assert.equal(r.ok, false);
+  assert.deepEqual(sent.bypass_actors.map(x => x.actor_id), [15368, 77]);
+  const row = await db.prepare("SELECT detail FROM credential_events WHERE provider = 'github-admin' AND event = 'failed' ORDER BY id DESC LIMIT 1").first();
+  assert.match(row.detail, /HTTP 422 Validation Failed; Actor must be installed/);
+  assert.deepEqual((await rulesetsDue(db, e, { fetch: f })).map(x => x.action), ['backoff']);
+});
