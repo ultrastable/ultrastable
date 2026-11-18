@@ -2205,6 +2205,15 @@
    "body": "The deploy gateway serves read-only GET /state (names and hashes only). core/hostsync reconciles declared scripts in deploy/hosting.json with the host, writes ops/hosting/state.json back to the repo and redeploys on drift; the host-sync workflow runs after deploy-gateway, on a host-changed callback and daily. Complements HOSTS-1 (webhooks and health). Open: wire tenant repos with their own hosting declaration; D1 migration state and zone routes.",
    "probe": "grep:workers/core/hostsync/index.js::export async function reconcile",
    "session": "session_0156nqDrtJzL18qgzyo9Tcgz"
+  },
+  {
+   "id": "lesson-2026-11-18-hostsync-1-commit-host-state-with-reset-and-append-never-reb",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "HOSTSYNC-1: commit host state with reset-and-append, never rebase",
+   "body": "The first live deploy-gateway run raced the host-sync run; git pull --rebase conflicted on append-only ops/hosting/events.jsonl and the retry loop exited green without pushing, so expected.json never landed. workers/tools/hostsync_commit.sh resets to main, copies the whole-file state, appends only new event lines and fails loudly if the push never lands.",
+   "probe": "grep:workers/tools/hostsync_commit.sh::hostsync_commit: push to main did not land",
+   "session": "session_0156nqDrtJzL18qgzyo9Tcgz"
   }
  ]
 }
