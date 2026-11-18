@@ -287,10 +287,8 @@ def check(root=REPO) -> list[str]:
     pg = root / cfg["page_data"]
     if not pg.is_file():
         bad.append(f"{cfg['page_data']} missing: run `python3 -m foundation decisions --page --apply`")
-    else:
-        have = re.findall(r'"id": "([a-z0-9-]+)",\s*"name"', pg.read_text(encoding="utf-8"))
-        if have != ids:
-            bad.append(f"{cfg['page_data']} lists {have}, registry has {ids}: run `python3 -m foundation decisions --page --apply`")
+    # PAGE-REGEN-1: the page file carries a timestamp and settled outcomes, so every merge to main changes it and any PR that also committed it conflicted.
+    # regen-generated (scripts/regen_generated.py: `decisions --page --apply`) rebuilds it after every merge, so a PR needs only the file to exist.
     return bad
 
 
