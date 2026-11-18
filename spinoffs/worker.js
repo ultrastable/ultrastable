@@ -119,7 +119,7 @@ export async function handle(request, env, f = fetch) {
   const app = bundle.apps[sub];
   if (!app) return new Response("Not found", { status: 404 });
   if (u.pathname === "/" + INDEXNOW_KEY + ".txt") return new Response(INDEXNOW_KEY, { headers: { "content-type": "text/plain; charset=utf-8" } });
-  if (app.archetype === "live-feed" || app.archetype === "live-lookup") return handleLive(sub, app, u, f);
+  if (app.archetype === "live-feed" || app.archetype === "live-lookup") return handleLive(sub, app, u, f, env);
   if (app.archetype === "status-board") {
     const b = (bundle.boards || {})[sub] || { source: "", rows: [] };
     if (u.pathname === "/api/metrics") return J({ app: sub, kind: "board", board_age_hours: boardAge(), error_share: 0 }, 200, { "cache-control": "public, max-age=300" });

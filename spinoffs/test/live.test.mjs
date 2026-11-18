@@ -56,3 +56,17 @@ test("every page renders, links its source and states it is not advice; every li
   }
   assert.equal((await get("nope", "/")).status, 404);
 });
+
+test("use is counted as one aggregate row per app per day and reported as uses_7d; no DB is harmless", async () => {
+  const rows = new Map(), run = { run: async () => ({}) };
+  const DB = { prepare: q => ({ bind: (...a) => ({ q, a, first: async () => ({ n: [...rows.values()].reduce((x, y) => x + y, 0) }), run: async () => ({}) }), run: async () => ({}), q }),
+    batch: async st => { const ins = st[1]; const k = ins.a.join("|"); rows.set(k, (rows.get(k) || 0) + 1); } };
+  const f = async () => ok({ features: [] });
+  await handleLive("quake-watch", app("quake-watch"), new URL("https://x/"), f, { DB });
+  await handleLive("quake-watch", app("quake-watch"), new URL("https://x/api/data"), f, { DB });
+  assert.equal([...rows.values()][0], 2); assert.equal(rows.size, 1);
+  assert.match([...rows.keys()][0], /^quake-watch\|\d{4}-\d{2}-\d{2}$/);  // app and day only
+  const m = await (await handleLive("quake-watch", app("quake-watch"), new URL("https://x/api/metrics"), f, { DB })).json();
+  assert.equal(m.uses_7d, 2);
+  assert.equal((await handleLive("quake-watch", app("quake-watch"), new URL("https://x/"), f, {})).status, 200);
+});

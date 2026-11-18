@@ -84,6 +84,24 @@ export const SOURCES = {
   },
 };
 
+// USE-COUNT-1: one aggregate row per app per UTC day (a count and nothing else: no visitor, address, query or time of day). It is the measured
+// "use" in BENEFIT-1. A counter failure is logged and never breaks the page.
+const DDL = "CREATE TABLE IF NOT EXISTS spinoff_daily (app TEXT NOT NULL, day TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (app, day))";
+export async function countUse(env, slug) {
+  if (!env || !env.DB) return;
+  try { await env.DB.batch([env.DB.prepare(DDL), env.DB.prepare("INSERT INTO spinoff_daily (app, day, n) VALUES (?, ?, 1) ON CONFLICT(app, day) DO UPDATE SET n = n + 1").bind(slug, today())]); }
+  catch (e) { console.error("spinoff use counter failed", slug, String(e).slice(0, 120)); }
+}
+export async function uses7d(env, slug) {
+  if (!env || !env.DB) return null;
+  try {
+    const since = new Date(Date.now() - 6 * 864e5).toISOString().slice(0, 10);
+    await env.DB.prepare(DDL).run();
+    const r = await env.DB.prepare("SELECT COALESCE(SUM(n), 0) n FROM spinoff_daily WHERE app = ? AND day >= ?").bind(slug, since).first();
+    return r ? r.n : 0;
+  } catch (e) { console.error("spinoff use read failed", slug, String(e).slice(0, 120)); return null; }
+}
+
 const J = (o, s = 200, h = {}) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json; charset=utf-8", "access-control-allow-origin": "*", "cache-control": "public, max-age=60", ...h } });
 const esc = x => String(x == null ? "" : x).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
@@ -128,22 +146,23 @@ const T=(cols,rows)=>"<table><thead><tr>"+cols.map(c=>"<th scope='col'>"+E(c)+"<
 const show=j=>{if(!j.ok){o.textContent=j.error;return}o.innerHTML=(j.title?"<h2>"+E(j.title)+"</h2><p class='m'>"+E(j.sub)+"</p>":"")+(j.rows.length?T(j.columns,j.rows):"<p>"+E(j.empty||"Nothing to show.")+"</p>")+"<p class='m'>Fetched live "+E(j.fetched_at)+"</p>"};
 ${src.kind === "feed" ? `fetch("/api/data").then(r=>r.json()).then(show).catch(()=>{o.textContent="The public source is not answering right now. Try again in a minute."});` : `o.textContent="Type above to look something up.";document.getElementById("f").onsubmit=e=>{e.preventDefault();o.textContent="Looking up…";fetch("/api/lookup?q="+encodeURIComponent(document.getElementById("q").value)).then(r=>r.json()).then(show).catch(()=>{o.textContent="The public source is not answering right now. Try again in a minute."})}`}</script></body></html>`;
 
-export async function handleLive(sub, app, u, f = fetch) {
+export async function handleLive(sub, app, u, f = fetch, env = {}) {
   const src = SOURCES[app.live];
   if (!src) return new Response("Not found", { status: 404 });
   const p = u.pathname;
-  if (p === "/") return new Response(PAGE(app, src), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
+  if (p === "/") { await countUse(env, sub); return new Response(PAGE(app, src), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } }); }
   if (p === "/llms.txt") return new Response(`# ${app.name}\n${app.tagline}\n${src.kind === "feed" ? "GET /api/data returns the current rows as JSON." : "GET /api/lookup?q=... returns the result as JSON."}\nGET /api/freshness states the age of the live source. Source: ${src.name}. Nothing about any person is stored.\n`, { headers: { "content-type": "text/plain; charset=utf-8" } });
   if (p === "/api/freshness" || p === "/api/metrics") {
     try {
       const d = src.kind === "feed" ? await feed(src, f) : null, age = d ? Math.max(0, Math.round((Date.now() - Date.parse(d.fetched_at)) / 1000)) : 0;
-      return J({ app: sub, kind: src.kind, source: src.name, ok: true, fetched_at: d ? d.fetched_at : "per request", age_seconds: age, max_age_seconds: TTL, board_age_hours: +(age / 3600).toFixed(3), error_share: 0 }, 200, { "cache-control": "no-store" });
+      return J({ app: sub, kind: src.kind, source: src.name, ok: true, fetched_at: d ? d.fetched_at : "per request", age_seconds: age, max_age_seconds: TTL, board_age_hours: +(age / 3600).toFixed(3), error_share: 0, ...(await uses7d(env, sub).then(n => n == null ? {} : { uses_7d: n })) }, 200, { "cache-control": "no-store" });
     } catch (e) { return J({ app: sub, kind: src.kind, source: src.name, ok: false, error: "upstream unavailable", board_age_hours: null, error_share: 1 }, 503, { "cache-control": "no-store" }); }
   }
   if (p === "/api/data" && src.kind === "feed") {
+    await countUse(env, sub);
     try { const d = await feed(src, f); return J({ ok: true, source: src.name, columns: src.columns, empty: src.empty, ...d }); }
     catch (e) { return J({ ok: false, code: "upstream", error: "The public source did not answer. Try again in a minute." }, 502); }
   }
-  if (p === "/api/lookup" && src.kind === "lookup") { const r = await lookup(src, u.searchParams.get("q"), f); return J(r.body, r.status, { "cache-control": "no-store" }); }
+  if (p === "/api/lookup" && src.kind === "lookup") { await countUse(env, sub); const r = await lookup(src, u.searchParams.get("q"), f); return J(r.body, r.status, { "cache-control": "no-store" }); }
   return new Response("Not found", { status: 404 });
 }
