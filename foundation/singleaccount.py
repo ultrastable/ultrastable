@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """Single Cloudflare account, as code (SINGLE-ACCOUNT-1, Rowan 2026-11-18). Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation singleaccount --check    no file names the quniverse account or one of its Ultrastable assets
