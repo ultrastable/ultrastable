@@ -12,7 +12,7 @@ export const RULESETS = Object.freeze({ 'ultrastable/ultrastable': [{
     { type: 'pull_request', parameters: { required_approving_review_count: 0, dismiss_stale_reviews_on_push: false, require_code_owner_review: false, require_last_push_approval: false, required_review_thread_resolution: false } },
     { type: 'required_status_checks', parameters: { strict_required_status_checks_policy: false, required_status_checks: [{ context: 'checks' }] } },
   ],
-  bypass_actors: [{ actor_id: 15368, actor_type: 'Integration', bypass_mode: 'always' }],
+  bypass_actors: [],  // the Actions app (15368) cannot be a bypass actor (HTTP 422); applyRulesets adds the org's own app, and workflows commit to main through it (MAIN-WRITER-1)
 }] });
 
 export async function applyRulesets(db, env, tenant, { fetch: f = fetch, now = Date.now(), rulesets = RULESETS, token } = {}) {

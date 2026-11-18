@@ -11,6 +11,7 @@ on:
     paths: ["workers/**"]
   workflow_dispatch:
 permissions:
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
   contents: write
   pull-requests: write
 concurrency:
@@ -35,4 +36,4 @@ jobs:
         run: |
           git config user.name tenant-sync; git config user.email tenant-sync@users.noreply.github.com
           git add ops/tenant-sync/ledger.jsonl
-          git diff --cached --quiet || (git commit -qm "tenant-sync: ledger" && git push origin HEAD:main)
+          git diff --cached --quiet || (git commit -qm "tenant-sync: ledger" && python3 tools/push_main.py)

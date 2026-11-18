@@ -2377,6 +2377,15 @@
    "body": "The applier recorded GitHub's refusal: the GitHub Actions integration must be part of the ruleset source, so it cannot be a bypass actor. Removing it alone would make the rule accepted and stop every workflow-token push to main, so the rule stays unapplied and Q-GATE-ACTIONS-BYPASS tracks moving those pushes. Read the credential_events row and ran the checks to verify.",
    "probe": "file:docs/issues/Q-GATE-ACTIONS-BYPASS.json",
    "session": "session_0156nqDt1FUj9Xw7a54KPPUk"
+  },
+  {
+   "id": "decision-2026-11-18-main-writer-1-fleet-data-commits-to-main-go-through-the-tick",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "MAIN-WRITER-1: fleet data commits to main go through the tick Worker's GitHub App",
+   "body": "GitHub refuses the Actions app as a ruleset bypass actor (422). Workflows call tools/push_main.py, which posts the last commit's files to POST /api/main/commit on the tick Worker with a GitHub OIDC token (audience ultrastable-main); the Worker verifies repo and main ref, refuses protected paths, applies ledger appends to newest main and commits with the org's own app, which the applier exempts. The 15368 bypass entry is removed. Closing probe: rulesets lists main-requires-checks active and a regen-generated push lands.",
+   "probe": "file:seed/worker/src/maincommit.js",
+   "session": "session_0156nqDtxpefT1d2NKQyUFFV"
   }
  ]
 }
