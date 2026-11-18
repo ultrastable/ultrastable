@@ -27,12 +27,29 @@ async function sha256(text) { const b = await crypto.subtle.digest("SHA-256", ne
 // ---- readers (exported so the MCP endpoint and tests use the same code) ----
 // READ-BUDGET-4: the public readers below were the top readers of the org database (each /ops load scanned dispatches and items several times).
 // One read per isolate per key every 30 s serves every visitor; the key is per env object so tests and tenants never share an entry.
-const MEMO_MS = 30e3, memos = new WeakMap();
+const MEMO_MS = 60e3, EDGE_FRESH_S = 120, EDGE_KEEP_S = 7 * 86400, memos = new WeakMap();
+// READ-BUDGET-5: three layers. The isolate map (60 s) and the edge cache (120 s, shared by every isolate in the data centre) keep each reader to
+// about one database read per two minutes; a last-known copy kept a week serves when the database refuses (daily free read allowance used
+// up), so /ops shows the last data with its age instead of a 503.
+const edge = () => (typeof caches !== "undefined" && caches.default) || null;
+const edgeKey = (k, tier) => new Request("https://cache.ultrastable.internal/cp/" + tier + "/" + encodeURIComponent(k));
+async function edgeGet(k, tier) { try { const c = edge(); const r = c && await c.match(edgeKey(k, tier)); return r ? await r.json() : null; } catch (e) { console.error("cp cache read", e && e.message); return null; } }
+async function edgePut(k, tier, v, ttl) { try { const c = edge(); if (c) await c.put(edgeKey(k, tier), new Response(JSON.stringify(v), { headers: { "content-type": "application/json", "cache-control": "max-age=" + ttl } })); } catch (e) { console.error("cp cache write", e && e.message); } }
 async function memo(env, key, fn) {
   let m = memos.get(env); if (!m) { m = new Map(); memos.set(env, m); }
   const ttl = env.READ_MEMO_MS !== undefined ? Number(env.READ_MEMO_MS) : MEMO_MS;
   const hit = m.get(key); if (hit && Date.now() - hit.at < ttl) return hit.v;
-  const v = await fn(); m.set(key, { at: Date.now(), v }); return v;
+  const useEdge = ttl > 0;
+  if (useEdge) { const e = await edgeGet(key, "fresh"); if (e) { m.set(key, { at: Date.now(), v: e }); return e; } }
+  try {
+    const v = await fn(); m.set(key, { at: Date.now(), v });
+    if (useEdge) { await edgePut(key, "fresh", v, EDGE_FRESH_S); await edgePut(key, "last", v, EDGE_KEEP_S); }
+    return v;
+  } catch (err) {
+    const last = (hit && hit.v) || (useEdge && await edgeGet(key, "last"));
+    if (last) { console.error("cp serving last-known data", err && err.message); return last; }
+    throw err;
+  }
 }
 export const status = (env, now = Date.now()) => memo(env, "status", () => statusRaw(env, now));
 export const agents = (env, now = Date.now()) => memo(env, "agents", () => agentsRaw(env, now));
