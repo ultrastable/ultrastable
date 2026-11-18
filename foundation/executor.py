@@ -335,7 +335,8 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         from . import rnd  # RND-1: competitor gaps and adopted findings carry a priority the loop computed
         from . import selfcode  # SELFCODE-1: a share of runs goes to the code agent's own findings and trusted issue intake; it runs first so growth.prefer cannot filter them out
         eff = [i for i in issues if effect_tier(i) < 1]  # EFFECT-1: failing checks, claim drift, unknowns and bugs go before the growth mix and R&D boost
-        issues = eff if eff else rnd.boost(growth.prefer(selfcode.prefer(issues, root), root), root)
+        issues = selfcode.prefer(eff, root) if eff else rnd.boost(  # SELFCODE-1 share applies inside the effect tier too
+            growth.prefer(selfcode.prefer(issues, root), root), root)
     issue = next((i for i in issues if str(i["number"]) == str(issue_no)), None) if issue_no else pick(issues)
     if not issue:
         row = {"result": "idle", "detail": "no open issue the executor may take", "prediction": "open_issues_takeable <= 0 within 24 h"}

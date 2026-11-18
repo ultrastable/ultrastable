@@ -2157,6 +2157,22 @@
    "session": "session_0156nqDu3CafCLkNfgmXspHr"
   },
   {
+   "id": "lesson-2026-11-18-effect-tier-bypassed-self-code-share",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "EFFECT tier bypassed self-code share",
+   "body": "EFFECT-1 tier skipped selfcode.prefer, so Q-CIFAIL items took every run; the share now applies inside the effect tier",
+   "probe": "grep:foundation/executor.py::selfcode.prefer\\(eff"
+  },
+  {
+   "id": "decision-2026-11-18-hosts-1-host-adapter-wiring",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "HOSTS-1 host adapter wiring",
+   "body": "One host adapter interface (Cloudflare, GitHub Actions, GCP) with failover; push/workflow_run webhooks deploy and report commit statuses; /hook/host takes inbound host events; hosts loop probes health, detects stalls, reconciles stuck handoffs.",
+   "probe": "grep:seed/worker/test/hosts.test.js::a push to main deploys touched workers once"
+  },
+  {
    "id": "lesson-2026-11-18-green-guard-1-clean-is-not-green-lane-rebase-and-regen-push-",
    "kind": "lesson",
    "date": "2026-11-18",

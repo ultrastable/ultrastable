@@ -493,6 +493,7 @@ export default {
   "gap-register",
   "glossary",
   "guiding-directive",
+  "hosts",
   "ignition-ladder",
   "index-refresh",
   "insight-loop",
@@ -1762,6 +1763,17 @@ export default {
     "workflows": [
      "regen-generated"
     ]
+   },
+   {
+    "closing_probe": "grep:seed/worker/test/hosts.test.js::the reconciler creates a missing hook, repairs a failing one, and leaves a healthy one",
+    "id": "hosts",
+    "kind": "probe",
+    "owner": "operations",
+    "server_owner": "ultrastable-tick",
+    "sla": "1 tick",
+    "summary": "HOSTS-1: one adapter interface (seed/worker/src/hosts.js) for Cloudflare, GitHub Actions and Google Cloud. Signed push and workflow_run webhooks deploy the touched workers through the first healthy host with failover; every deploy, failure and inbound host event (POST /hook/host) lands as a commit status or check run; the hosts loop probes each host's health and redispatches through the credential-free GitHub Actions host when a push has no deploy after 30 minutes. The host-hooks loop (hourly) derives the webhook secrets inside the Worker from CREDENTIAL_KEY and creates, repairs and re-checks the repository webhook itself through the GitHub App token; the site Worker forwards /hook/github and /hook/host to the tick. A token without hook rights is recorded plainly and the polling path stays.",
+    "trigger": "push and workflow_run webhooks on /hook/github, POST /hook/host, and every tick (loop 'hosts')",
+    "workflows": []
    }
   ],
   "workers": [
