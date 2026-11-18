@@ -127,11 +127,12 @@ class Truth(T):
         self.assertFalse(self.run_(set(), now=NOW + 60)["changed"])
         self.assertTrue(self.run_({"wf:cost-guard"}, now=NOW + 120)["changed"])
 
-    def test_repo_d1_clocks_have_both_accounts(self):
+    def test_repo_d1_clocks_are_in_the_ultrastable_account_only(self):
+        # SINGLE-ACCOUNT-1 (2026-11-18): the quniverse standby replica is gone; every beat source is in the ultrastable account.
         import json as j
         for c in j.loads((REPO / "doctrine/clocks.json").read_text())["clocks"]:
             if c["source"] == "d1":
-                self.assertEqual(len({r["account_id"] for r in c["replicas"]}), 2)
+                self.assertEqual({r["account_id"] for r in c["replicas"]}, {"81e3a4efb4eb66e613529b87682911bb"})
 
 
 class Health(T):
@@ -141,10 +142,12 @@ class Health(T):
         self.assertIsNone(R.health_beats(["a"], lambda u: None))
         self.assertEqual(R.health_beats(["a"], lambda u: {"ok": False}), [])
 
-    def test_repo_tick_clock_has_two_health_urls(self):
+    def test_repo_tick_clock_health_urls_are_in_the_ultrastable_account(self):
+        # SINGLE-ACCOUNT-1: the second route is the site worker's watchTick (doctrine/resilience.json restart_routes), not a quniverse URL.
         import json as j
         c = next(x for x in j.loads((REPO / "doctrine/clocks.json").read_text())["clocks"] if x["id"] == "tick-heartbeat")
-        self.assertEqual(len(c["health_urls"]), 2)
+        self.assertTrue(c["health_urls"])
+        self.assertTrue(all(u.endswith(".ultrastable.workers.dev/health") for u in c["health_urls"]))
 
 
 class SiteProbe(unittest.TestCase):
