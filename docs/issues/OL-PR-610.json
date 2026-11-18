@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-610",
+  "title": "OL-PR-610: land or supersede pull request #610 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #610 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 610\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #610 (`claude/project-thread-agu3pj` at 1c16ed260a, opened by rwnq8): FREE-TIER-1, HANDOFF-SUBREQ-2, HOSTS-SUBREQ-1: stop the delivery storm; deploys never blocked by the tick's subrequest limit. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (14): README.md, doctrine/decision-ledger.json, instances/ultrastable/loop-registry.json, ops/provenance.jsonl, platform/adapters/README.md, seed/worker/src/handoff.js, seed/worker/src/hosts.js, seed/worker/src/index.js, seed/worker/test/handoff.test.js, seed/worker/test/hosts.test.js, site/claims-data.js, site/forward.test.mjs, site/self-data.js, site/worker.js. Closing probe: pull request #610 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

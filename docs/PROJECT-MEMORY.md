@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-18
 
+- 2026-11-18: HOSTS-1: accept GitHub App webhook deliveries (all were 401) (#611)
+- 2026-11-18: host-sync - runtime state of the host (HOSTSYNC-1)
+- 2026-11-18: host-sync - record deployed gateway module
+- 2026-11-18: HOSTSYNC-1: conflict-free host state commits (#608)
 - 2026-11-18: PACE-2: adaptive loop stride, reach-per-cost ranking, free-tier cost metric (#607)
 - 2026-11-18: HOSTS-1: rotate host probes into a subrequest phase (#609)
 - 2026-11-18: ciwatch: watch ultrastable/.github (#606)
