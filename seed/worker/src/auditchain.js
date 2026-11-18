@@ -7,10 +7,9 @@
 // every later hash; verify() finds it. Deletion from D1 happens only after the segment is read back from a sink and matches.
 export const HOT_DAYS = 7, SEAL_MAX_ROWS = 5000, GENESIS = '0'.repeat(64);
 
-export async function sha256(input) {
-  const b = typeof input === 'string' ? new TextEncoder().encode(input) : input;
-  return [...new Uint8Array(await crypto.subtle.digest('SHA-256', b))].map(x => x.toString(16).padStart(2, '0')).join('');
-}
+// One hash and Merkle implementation for every audit log (Q-AUDIT-CONVERGE-1): the core module owns it.
+import { sha256 as coreSha256, merkleLevels } from '../../../workers/core/audit/index.js';
+export const sha256 = coreSha256;
 const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()) || null;
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
 
@@ -52,12 +51,7 @@ export async function record(db, events, { now = Date.now() } = {}) {
   throw new Error('audit chain busy: could not append after 4 attempts');
 }
 
-export async function merkleRoot(hashes) {
-  if (!hashes.length) return GENESIS;
-  let level = hashes.slice();
-  while (level.length > 1) { const nx = []; for (let i = 0; i < level.length; i += 2) nx.push(await sha256(level[i] + (level[i + 1] || level[i]))); level = nx; }
-  return level[0];
-}
+export async function merkleRoot(hashes) { const lv = await merkleLevels(hashes); return lv[lv.length - 1][0]; }
 
 // A small Bloom filter over refs lets a lookup open only the segments that may mention a ref. False positives cost one fetch, never a miss.
 const bitsFor = (n) => { let m = 1024; while (m < n * 16 && m < 65536) m *= 2; return m; };

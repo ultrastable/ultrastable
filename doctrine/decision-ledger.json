@@ -2139,6 +2139,15 @@
    "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
   },
   {
+   "id": "lesson-2026-11-18-seed-audit-chain-now-imports-core-audit-hash-and-merkle",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Seed audit chain now imports core/audit hash and Merkle",
+   "body": "One sha256 and Merkle implementation; seed auditchain.js imports workers/core/audit.",
+   "probe": "file:seed/worker/src/auditchain.js",
+   "session": "session_0156nqDvx8HgX8Ubut9xXoKx"
+  },
+  {
    "id": "decision-2026-11-18-pace-1-loop-pace-is-a-live-metric",
    "kind": "decision",
    "date": "2026-11-18",
