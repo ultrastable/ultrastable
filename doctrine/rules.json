@@ -289,6 +289,22 @@
      "fix": "python3 -m foundation decisions --settle --apply"
     }
    ]
+  },
+  {
+   "id": "single-account",
+   "statement": "Ultrastable runs only in the Cloudflare account `ultrastable`; nothing in the repositories references the retired quniverse account or its Ultrastable assets (SINGLE-ACCOUNT-1).",
+   "source": "doctrine/single-account.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation singleaccount --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "singleaccount",
+     "cmd": "python3 -m foundation singleaccount --check"
+    }
+   ]
   }
  ],
  "repos": [

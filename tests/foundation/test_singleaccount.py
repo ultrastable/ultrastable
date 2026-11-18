@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable
+# Ultrastable is the foundation for any autonomous system.
+import tempfile, unittest, json
+from pathlib import Path
+from foundation import singleaccount as sa
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+class SingleAccount(unittest.TestCase):
+    def test_repo_is_clean(self):
+        self.assertEqual(sa.check(ROOT), [])
+
+    def test_a_reference_fails(self):
+        with tempfile.TemporaryDirectory() as t:
+            r = Path(t); (r / "doctrine").mkdir(); (r / "deploy").mkdir()
+            (r / PATHS).write_text((ROOT / PATHS).read_text())
+            (r / "deploy/cloudflare-accounts.json").write_text(json.dumps({"target": {"id": "81e3a4efb4eb66e613529b87682911bb"}}))
+            (r / "x.json").write_text('{"account": "edb167b78c9fb901ea5bca3ce58ccc4b"}')
+            self.assertEqual(len(sa.check(r)), 1)
+            (r / "x.json").write_text('{"account": "81e3a4efb4eb66e613529b87682911bb"}')
+            self.assertEqual(sa.check(r), [])
+
+
+PATHS = "doctrine/single-account.json"
+if __name__ == "__main__":
+    unittest.main()

@@ -1,24 +1,24 @@
 {
   "_note": "DEPLOY-PROBES-1: what must still work after ultrastable-site deploys.",
   "mode": "revert",
-  "health": "https://ultrastable-site.q08.workers.dev/health",
+  "health": "https://ultrastable-site.ultrastable.workers.dev/health",
   "http": [
     {
-      "url": "https://ultrastable-site.q08.workers.dev/health",
+      "url": "https://ultrastable-site.ultrastable.workers.dev/health",
       "contains": [
         "\"worker\":\"ultrastable-site\"",
         "\"ok\":true"
       ]
     },
     {
-      "url": "https://ultrastable-site.q08.workers.dev/pilot",
+      "url": "https://ultrastable-site.ultrastable.workers.dev/pilot",
       "contains": [
         "Join the pilot",
         "Email the pilot team"
       ]
     },
     {
-      "url": "https://ultrastable-site.q08.workers.dev/api/suggest?n=4&seed=1",
+      "url": "https://ultrastable-site.ultrastable.workers.dev/api/suggest?n=4&seed=1",
       "contains": [
         "\"s\":["
       ]

@@ -97,7 +97,7 @@ def snapshot(root=REPO, use_live=True, env=None) -> dict:
     metrics = {}
     if use_live and env.get("CLOUDFLARE_API_TOKEN"):
         try:
-            metrics = hits_metrics(env["CLOUDFLARE_API_TOKEN"], "edb167b78c9fb901ea5bca3ce58ccc4b", "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd")
+            metrics = hits_metrics(env["CLOUDFLARE_API_TOKEN"], "81e3a4efb4eb66e613529b87682911bb", "5cd83b52-864a-4510-b062-fc0d9402d06c")
         except Exception as e:  # recorded: an unmeasured metric is a finding
             d["metrics_error"] = type(e).__name__ + ": " + str(e)[:120]
     d["metrics"] = evaluate(metrics, cfg)

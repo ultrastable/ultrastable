@@ -15,7 +15,7 @@
       "why": "POST /pulse/watch runs a tick only when the newest one is older than two intervals; safe to call by anyone, and each account's Worker is an independent route",
       "urls": [
         "https://ultrastable-tick.ultrastable.workers.dev/pulse/watch",
-        "https://ultrastable-ultrastable.q08.workers.dev/pulse/watch"
+        "https://ultrastable-site.ultrastable.workers.dev/pulse/watch"
       ],
       "idempotent": true
     },
@@ -24,7 +24,7 @@
       "why": "the criticality tick runs inside the same Worker tick, so waking the tick restarts it",
       "urls": [
         "https://ultrastable-tick.ultrastable.workers.dev/pulse/watch",
-        "https://ultrastable-ultrastable.q08.workers.dev/pulse/watch"
+        "https://ultrastable-site.ultrastable.workers.dev/pulse/watch"
       ],
       "idempotent": true
     }
