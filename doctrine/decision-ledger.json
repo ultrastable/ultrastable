@@ -2439,6 +2439,14 @@
    "probe": "file:site/live.js"
   },
   {
+   "id": "lesson-2026-11-18-main-writer-1-app-commits-trigger-push-workflows-data-commit",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "MAIN-WRITER-1: App commits trigger push workflows; data commits carry skip-ci",
+   "body": "Commits written by the org GitHub App start push workflows, unlike workflow-token pushes. A deploy record started regen-generated, whose commit touched site/ and restarted the deploy, without end. Data commits carry [skip ci].",
+   "probe": "grep:tools/push_main.py::skip ci"
+  },
+  {
    "id": "lesson-2026-11-18-ciwatch-3-one-open-ciwatch-items-pr-at-a-time",
    "kind": "lesson",
    "date": "2026-11-18",
