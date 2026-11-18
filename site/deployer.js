@@ -41,7 +41,7 @@ export async function ingestTransparency(request, env) {
     await env.DB.prepare("CREATE TABLE IF NOT EXISTS transparency_parts (generated TEXT NOT NULL, part INTEGER NOT NULL, total INTEGER NOT NULL, body TEXT NOT NULL, PRIMARY KEY (generated, part))").run();
     for (const n of order) await ins(n).run();
     await env.DB.prepare("DELETE FROM transparency_parts WHERE generated < ?").bind(b.generated).run();
-  } catch (e) { return J({ ok: false, error: String(e && e.message).slice(0, 200) }, 502); }
+  } catch (e) { console.error("transparency ingest failed", e && e.message); return J({ ok: false, error: "the snapshot could not be stored; the publisher retries and the tick re-dispatches it" }, 502); }
   return J({ ok: true, generated: b.generated, parts: parts.length });
 }
 
