@@ -402,7 +402,7 @@ export async function adaptiveQuestion(env, a) {
   const told = a.qs.map((x, i) => "- " + x.q + " " + (a.ans[i] || "").toUpperCase()).join("\n");
   if (env && env.AI) {
     try {
-      const r = await aiJson(env, ASKERS, "You are interviewing someone about a new web idea. Using their answers so far, reply with only JSON {\"q\":\"one new yes/no question in plain words that would change what gets built\",\"cue\":\"one short example\"}, or {\"done\":true} when nothing important is unknown. Never repeat a question already asked. No jargon.", "Idea: " + a.idea + "\nAnswers so far:\n" + told, 300);
+      const r = await aiJson(env, ASKERS, "You are interviewing someone about a new web idea. Using their answers so far, reply with only JSON {\"q\":\"one new yes/no question in plain words that would change what gets built\",\"cue\":\"one short example\"}, or {\"done\":true} when nothing important is unknown. Do not repeat a question already asked. No jargon.", "Idea: " + a.idea + "\nAnswers so far:\n" + told, 300);
       if (r && r.done) return null;
       if (r && typeof r.q === "string" && r.q.length < 200 && !a.qs.some(x => x.q.toLowerCase() === r.q.toLowerCase())) return { q: r.q, cue: String(r.cue || "").slice(0, 160) };
     } catch (e) { console.error("adaptive question failed", String(e)); }
