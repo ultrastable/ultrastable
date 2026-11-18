@@ -1,4 +1,5 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // GREEN-GUARD-1: `mergeable_state: clean` only means no REQUIRED check is red, and main has no required checks, so a PR was merged while its
 // `checks` run was still starting or had failed (#595, #596 on 2026-11-18). Every server-side merge asks this first: every check-run on the head
 // commit is finished and green, and the repositories listed in REQUIRED must also show their full-suite run (`checks`) as success.
