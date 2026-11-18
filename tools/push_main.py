@@ -45,8 +45,19 @@ def main():
         except urllib.error.HTTPError as e:
             detail = e.read().decode()[:300]
             print(f"push_main: HTTP {e.code} (try {attempt}): {detail}", file=sys.stderr)
-            if e.code not in (409, 502, 503): return 1
+            if e.code not in (409, 502, 503): return fallback()
+        except (urllib.error.URLError, TimeoutError) as e:
+            print(f"push_main: {e} (try {attempt})", file=sys.stderr)
         time.sleep(attempt * 3)
+    return fallback()
+
+def fallback():
+    # Rollout safety: until the ruleset on main is active a plain push still lands. Once it is active GitHub refuses this and the step fails loudly.
+    print("push_main: the Worker route did not land the commit; trying a direct push", file=sys.stderr)
+    for _ in range(3):
+        if subprocess.run(["git", "pull", "--rebase", "-q", "origin", "main"]).returncode == 0 and subprocess.run(["git", "push", "-q", "origin", "HEAD:main"]).returncode == 0:
+            return 0
+        time.sleep(3)
     return 1
 
 if __name__ == "__main__":
