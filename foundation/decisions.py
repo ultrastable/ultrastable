@@ -264,8 +264,18 @@ def check(root=REPO) -> list[str]:
     for rel, found in marked.items():
         bad += [f"{rel}: marker names unregistered decision point {i}" for i in sorted(found - set(ids))]
     base = cfg.get("uninstrumented", {})
+    nd = cfg.get("not_decisions", {})
+    for rel, why in nd.items():
+        if len(str(why).split()) < 6:
+            bad.append(f"{rel}: not_decisions needs a reason of at least six words")
+        if rel in marked:
+            bad.append(f"{rel}: is now instrumented; remove it from not_decisions")
+        elif rel in base:
+            bad.append(f"{rel}: is in both uninstrumented and not_decisions")
+        elif rel not in shaped:
+            bad.append(f"{rel}: no longer has a decision-shaped function; remove it from not_decisions")
     for rel in shaped:
-        if rel not in marked and rel not in base:
+        if rel not in marked and rel not in base and rel not in nd:
             bad.append(f"{rel}: has a decision-shaped function with no declared metric; add `{cfg['discover']['marker']} <point>` (and register the point) or, if it is not a decision, list it with a reason")
     for rel in base:
         if rel in marked:
@@ -288,8 +298,9 @@ def baseline(root=REPO) -> dict:
     root = Path(root)
     cfg = load(root)
     marked, shaped = _scan(root, cfg)
+    nd = cfg.get("not_decisions", {})
     cfg["uninstrumented"] = {rel: "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)"
-                             for rel in shaped if rel not in marked}
+                             for rel in shaped if rel not in marked and rel not in nd}
     (root / REG).write_text(json.dumps(cfg, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
     return {"uninstrumented": len(cfg["uninstrumented"])}
 

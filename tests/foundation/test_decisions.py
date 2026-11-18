@@ -25,6 +25,13 @@ class Decisions(unittest.TestCase):
         p = root / "foundation/spinoff.py"; p.write_text(p.read_text().replace("DECISION-METRIC: spinoff-launch", "x"))
         self.assertTrue(any("spinoff-launch" in b and "lacks the marker" in b for b in D.check(root)))
 
+    def test_not_decisions_needs_reason_and_goes_stale(self):
+        root = copy_repo()
+        cfg = json.loads((root / "doctrine/decisions.json").read_text())
+        cfg["not_decisions"]["foundation/conflicts.py"] = "too short"
+        (root / "doctrine/decisions.json").write_text(json.dumps(cfg))
+        self.assertTrue(any("conflicts.py" in b and "six words" in b for b in D.check(root)))
+
     def test_record_settle_and_trend(self):
         root = copy_repo()
         for f in ("ops/decisions/ledger.jsonl", "ops/decisions/outcomes.jsonl"):
