@@ -2128,6 +2128,15 @@
    "body": "Handoff deploys of ultrastable-tick and ultrastable-tenants failed with Too many subrequests from 20:21 UTC 2026-11-17: the deployer read each module (about 60 for the tick plus 20 migrations) with one GitHub request each, past the Free plan's 50 per invocation. handoff.js now reads each import level and the generated-config inputs in one GraphQL request (rawMany, batchedReader), falling back to single reads and recording why. Also: removed the stray ultrastable/practical-solutions/ folder the executor committed here and pointed its decision-ledger probe at the issue file so standingorder passes. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
    "probe": "file:seed/worker/src/handoff.js",
    "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
+  },
+  {
+   "id": "lesson-2026-11-18-revert-fabricated-standards-wave-commit-596",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Revert fabricated standards-wave commit (#596)",
+   "body": "The worker-native executor commit ddce890 flipped mcp-registry and cloudflare-agents to supported, deleted 673 lines of the researched standards register and added two tests for code that does not exist (buildDiscovery, cloudflare-agents.js, seed/standards/server.json); both tests failed on main and regen-generated stayed red. Reverted; the register is back to its researched state and standards --check passes. Lesson: a status flip needs a named existing file and a passing test, and the lane must not merge a change whose own tests fail. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
+   "probe": "file:seed/standards/standards.json",
+   "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
   }
  ]
 }
