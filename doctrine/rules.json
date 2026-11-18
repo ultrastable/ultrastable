@@ -85,6 +85,12 @@
      "id": "pages-live",
      "cmd": "python3 -m foundation rules --probe pages-live"
     }
+   ],
+   "gaps": [
+    {
+     "what": "only /live reports its freshness; other generated pages are not yet registered in /api/freshness",
+     "item": "Q-RULE-gap-pages-audit"
+    }
    ]
   },
   {

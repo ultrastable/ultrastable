@@ -1,0 +1,10 @@
+{
+  "id": "Q-RULE-gap-pages-audit",
+  "title": "Q-RULE-gap-pages-audit: register every generated page source in /api/freshness",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** grep:site/live.js::roadmap\n**Status:** open\n\nRULES-1 gap (Rowan, 2026-11-18): /api/freshness covers only /live. Every other page fed by a generated bundle (site/*-data.js: roadmap, feed, claims, self, uiux, ultrastability, spinoff roadmap; dashboard; Practical Solutions site) must be served from live data or removed, and report its age to /api/freshness so the pages-live rule fails on a stale one.",
+  "labels": [
+    "role:staff"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

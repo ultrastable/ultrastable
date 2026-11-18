@@ -159,8 +159,15 @@ def p_merged_green(root, d):
 def p_pages_live(root, d, now=None):
     """Slot for the page-freshness probe (thread 'Make every site page truly live'): it writes ops/pages-live.json {at, failing: [...]}."""
     s = jl(root, "ops/pages-live.json")
-    if not s:
-        return "unmeasured", "ops/pages-live.json not written yet by the page-freshness probe"
+    if not s:  # the deployed site answers for itself: /api/freshness is 200 when every source is inside its cadence, 503 when stale
+        import urllib.request, urllib.error
+        try:
+            urllib.request.urlopen("https://ultrastable.io/api/freshness", timeout=15)
+            return "ok", "https://ultrastable.io/api/freshness answered 200"
+        except urllib.error.HTTPError as e:
+            return ("violated", "/api/freshness answered 503: a page source is stale") if e.code == 503 else ("unmeasured", f"/api/freshness answered {e.code}")
+        except (urllib.error.URLError, OSError) as e:
+            return "unmeasured", f"/api/freshness unreachable: {type(e).__name__}"
     now = now or dt.datetime.now(dt.timezone.utc)
     if (now - dt.datetime.fromisoformat(s["at"].replace("Z", "+00:00"))).total_seconds() > 26 * 3600:
         return "unmeasured", "page-freshness result is older than 26 h"

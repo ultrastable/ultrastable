@@ -1,0 +1,11 @@
+{
+  "id": "Q-RULE-closed-loops-item-fields",
+  "title": "Q-RULE-closed-loops-item-fields: standing rule closed-loops violated (item-fields)",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass (rules --run --due)\n**Done check:** cmd:python3 -m foundation queue --check\n**Status:** open\n\nRULES-1: the standing rule `closed-loops` is violated: Every open item has an owner, a trigger and a closing probe; every loop closes itself (CLOSED-LOOP-1, SERVER-OWNS-LOOPS-1).\nProbe `item-fields` says: Q-RULE-gap-pages-audit: status '' is not open, closed or done\n\nFix the cause in code so the probe passes; the tick re-runs it every pass. Never weaken the probe or the registry.",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

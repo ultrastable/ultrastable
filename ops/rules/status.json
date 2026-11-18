@@ -1,5 +1,5 @@
 {
- "at": "2026-11-18T12:19:46Z",
+ "at": "2026-11-18T13:00:29Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -45,7 +45,7 @@
   },
   "front-end-matches-back-end/pages-live": {
    "status": "unmeasured",
-   "detail": "ops/pages-live.json not written yet by the page-freshness probe",
+   "detail": "/api/freshness unreachable: URLError",
    "fixed": false,
    "item": null
   },
@@ -134,9 +134,7 @@
    "item": null
   }
  },
- "filed": [
-  "Q-RULE-license-notice-license-fleet"
- ],
+ "filed": [],
  "rules": {
   "closed-loops": {
    "status": "enforced",
@@ -156,7 +154,9 @@
    "status": "unmeasured",
    "ci": 2,
    "probes": 3,
-   "gaps": [],
+   "gaps": [
+    "only /live reports its freshness; other generated pages are not yet registered in /api/freshness"
+   ],
    "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1)."
   },
   "no-merge-over-red": {

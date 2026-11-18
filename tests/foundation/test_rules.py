@@ -57,7 +57,13 @@ class Rules(unittest.TestCase):
 
     def test_pages_live_slot(self):
         root = copy_repo(); d = json.loads((root / R.REG).read_text())
-        self.assertEqual(R.p_pages_live(root, d, NOW)[0], "unmeasured")
+        import urllib.request
+        orig = urllib.request.urlopen
+        urllib.request.urlopen = lambda *a, **k: (_ for _ in ()).throw(OSError("offline"))
+        try:
+            self.assertEqual(R.p_pages_live(root, d, NOW)[0], "unmeasured")
+        finally:
+            urllib.request.urlopen = orig
         (root / "ops/pages-live.json").write_text(json.dumps({"at": "2026-11-18T11:00:00Z", "failing": ["/live"]}))
         self.assertEqual(R.p_pages_live(root, d, NOW)[0], "violated")
         (root / "ops/pages-live.json").write_text(json.dumps({"at": "2026-11-18T11:00:00Z", "failing": []}))
