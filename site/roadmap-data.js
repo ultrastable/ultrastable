@@ -153,9 +153,9 @@ export default {
   "Q-LAYER-child-reporting": {
    "done": "file:instances/ultrastable/child-link.json",
    "id": "Q-LAYER-child-reporting",
-   "milestone": "Next",
+   "milestone": "Done",
    "owner": "operations",
-   "status": "open",
+   "status": "closed",
    "title": "A child system reports its liveness to its parent",
    "trigger": "every executor run"
   },
@@ -351,12 +351,13 @@ export default {
     "doctrine/pilot-model.json",
     "seed/bootstrap/bootstrap.py",
     "seed/worker/src/tick.js",
-    "docs/doctrine/VISION.md"
+    "docs/doctrine/VISION.md",
+    "spinoffs/worker.js"
    ],
    "issue": "Q-LAYER-child-reporting",
    "name": "Pilot applications and layered systems",
-   "status": "testing",
-   "what": "The pilot is an application program whose form scores answers against the four system-test questions; the bootstrapper records parent and level and the measure step is scoped to its own tenant. The first child reporting to a parent is pending.",
+   "status": "live",
+   "what": "The pilot is an application program whose form scores answers against the four system-test questions; the bootstrapper records parent and level and the measure step is scoped to its own tenant. Every spinoff is a level-1 child that answers /health; the parent probes it (instances/ultrastable/child-link.json).",
    "where": "/pilot"
   },
   {
