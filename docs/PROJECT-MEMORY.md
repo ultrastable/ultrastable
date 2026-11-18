@@ -431,5 +431,6 @@ Public-benefit spinoffs run on new archetypes `live-feed` and `live-lookup` (`sp
 
 ## 2026-11-18: Goals with knobs (GOALS-1)
 The goal tree is `doctrine/goals.json`: standing goal bootstrap-to-criticality, bold goals the system proposed (public-benefit apps used, tenants on the free plan) and small goals mirrored from essential variables. `foundation/goals.py --tick` turns one registered knob one step when a goal stays out of bounds (scored decision point `goal-knob`), restores it when the variable does not move, files `Q-GOAL-<id>-REPLAN` when every knob is spent, and ratchets targets after a met streak (`--propose`). Page /goals and /api/goals from `site/goals-data.js`. The infrastructure-boundary optimizer's interval stretch registers here as one more knob in `doctrine/goals.json` `knobs` when it lands.
+Session: session_0156nqDuHvMTexrWLrHHsEaw
 
 Commit trailers in this branch cite Session: session_0156nqJbrGYaSnypwjTPL2bes and Session: session_0156nqDJbrGYaSnypwjTPL2bes (two spellings of one session; both cited so the write-back check resolves).
