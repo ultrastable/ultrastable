@@ -61,4 +61,8 @@ def fallback():
     return 1
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        rc = main()
+    except SystemExit as e:  # no OIDC token in this job: the Worker route cannot start, so the second route still runs
+        print(f"push_main: worker route unavailable: {e}", file=sys.stderr); rc = fallback()
+    sys.exit(rc)
