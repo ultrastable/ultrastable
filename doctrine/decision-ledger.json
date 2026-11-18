@@ -2196,6 +2196,15 @@
    "title": "Main was red after HOSTS-1 (#603): surface, retention and silent-catch checks",
    "body": "Measured: node --test test/plan-limits.test.mjs seed/worker/test/retention.test.js seed/worker/test/hosts.test.js, 22 pass after the fix; before it, plan-limits failed 2 and the standards generator exited 1. The cause was a merge path that accepted clean without a green full checks run; GREEN-GUARD-1 closes it.",
    "probe": "file:seed/standards/surfaces.json"
+  },
+  {
+   "id": "decision-2026-11-18-hostsync-1-repo-and-host-state-reconcile-through-the-deploy-",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "HOSTSYNC-1: repo and host state reconcile through the deploy gateway",
+   "body": "The deploy gateway serves read-only GET /state (names and hashes only). core/hostsync reconciles declared scripts in deploy/hosting.json with the host, writes ops/hosting/state.json back to the repo and redeploys on drift; the host-sync workflow runs after deploy-gateway, on a host-changed callback and daily. Complements HOSTS-1 (webhooks and health). Open: wire tenant repos with their own hosting declaration; D1 migration state and zone routes.",
+   "probe": "grep:workers/core/hostsync/index.js::export async function reconcile",
+   "session": "session_0156nqDrtJzL18qgzyo9Tcgz"
   }
  ]
 }

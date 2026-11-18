@@ -3673,6 +3673,47 @@
    ],
    "area": "managers",
    "server_owner": "ultrastable-tick"
+  },
+  {
+   "id": "host-sync",
+   "kind": "governance",
+   "summary": "The repository and every host that runs a system stay one state (HOSTSYNC-1): each verified deploy is recorded as expected, the host's live runtime state (module hash, binding names, cron schedules, workers.dev; never a secret value) is read through the deploy gateway and written back to ops/hosting/state.json, and a host that differs from the repository is redeployed. Backend only.",
+   "trigger": "after the deploy-gateway workflow, a host-changed callback, and a daily run",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "ops/hosting/state.json equals the live host state and no declared script drifts from deploy/hosting.json and ops/hosting/expected.json",
+   "paths": [
+    {
+     "id": "github",
+     "how": ".github/workflows/host-sync.yml runs workers/tools/hostsync.mjs with the run's OIDC token",
+     "class": "free"
+    },
+    {
+     "id": "manual-tool",
+     "how": "node workers/tools/hostsync.mjs run from any cloud session that can mint an OIDC token or reach the gateway",
+     "class": "degraded"
+    }
+   ],
+   "closing_probe": "grep:workers/core/hostsync/index.js::export async function reconcile",
+   "writeback": [
+    "ops/hosting/state.json",
+    "ops/hosting/events.jsonl"
+   ],
+   "system_path": [
+    "workers/core/hostsync/index.js",
+    "workers/core/hostsync/gateway.js",
+    "workers/core/hostsync/hostsync.test.js",
+    "workers/tools/hostsync.mjs",
+    "workers/core/deploygate/index.js",
+    "deploy/hosting.json",
+    ".github/workflows/host-sync.yml"
+   ],
+   "workflows": [
+    "host-sync.yml"
+   ],
+   "area": "managers",
+   "server_owner": "github-actions"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
