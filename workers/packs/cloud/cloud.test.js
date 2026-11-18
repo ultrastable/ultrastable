@@ -14,7 +14,7 @@ import { requestDeploy, guardPort } from './index.js';
 const DIR = fileURLToPath(new URL('./', import.meta.url));
 const MIG = fileURLToPath(new URL('./migrations/', import.meta.url));
 const DEPLOY_MIG = fileURLToPath(new URL('../../core/deploy/migrations/', import.meta.url));
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: the pack's probes read datetime('now', '-7 days'), so a fixed date fails once it is a week old
 const rows = (db, sql, ...a) => db.raw.prepare(sql).all(...a).map(r => ({ ...r }));
 const one = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
 
