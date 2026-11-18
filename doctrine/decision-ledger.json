@@ -2247,6 +2247,15 @@
    "title": "App webhook secret verifies hook deliveries",
    "body": "Every delivery to /hook/github was answered 401 since 00:30 on 2026-11-18: the delivering hook is the GitHub App's own webhook, signed with the App's manifest webhook_secret, while the tick verified only a derived secret. /hook/github now accepts the bound, App and derived secrets.",
    "probe": "grep:seed/worker/test/hosts.test.js::deliveries signed with the GitHub App webhook secret are accepted"
+  },
+  {
+   "id": "lesson-2026-11-18-hostsync-1-merge-expected-hashes-per-script",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "HOSTSYNC-1: merge expected hashes per script",
+   "body": "Three tenant deploy jobs each wrote ops/hosting/expected.json from their own checkout; whole-file copy kept only the last writer. hostsync_commit.sh now merges keys over main's file.",
+   "probe": "grep:workers/tools/hostsync_commit.sh::merge ours over main",
+   "session": "session_0156nqDrtJzL18qgzyo9Tcgz"
   }
  ]
 }
