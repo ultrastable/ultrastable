@@ -1,8 +1,11 @@
 # SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
 # Ultrastable is the foundation for any autonomous system.
-import json, shutil, tempfile, unittest
+import json, shutil, sys, unittest
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _repo  # noqa: E402
 from foundation import goalscheck as gc
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -10,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 class GoalsCheck(unittest.TestCase):
     def tree(self):
-        t = Path(tempfile.mkdtemp()); (t / "seed/autonomy").mkdir(parents=True); (t / "doctrine").mkdir()
+        t = _repo.scratch(); (t / "seed/autonomy").mkdir(parents=True); (t / "doctrine").mkdir()
         shutil.copy(ROOT / gc.GOALS, t / gc.GOALS); shutil.copy(ROOT / gc.BASE, t / gc.BASE)
         return t
 
