@@ -265,6 +265,18 @@
    "status": "controlled",
    "cadence_ticks": 144,
    "probe": "grep:foundation/executor.py::def foreign_cifail"
+  },
+  {
+   "id": "fm-session-merge-bypass",
+   "trigger": "a session merges a PR with its own token while the full checks run is pending or red (#619, two seconds after the run started)",
+   "symptom": "main fails a check that the PR run had caught",
+   "blast_radius": "main and the next deploy",
+   "detection": "python3 -m foundation mergeaudit --check",
+   "root_cause": "branch protection cannot require checks without blocking the lane's direct pushes, so a token-level merge is not gated in code",
+   "remediation": "mergeaudit files Q-CIFAIL-mergeaudit-N for every merge without a green checks run, every lane pass",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:foundation/mergeaudit.py::def scan"
   }
  ],
  "controls": [

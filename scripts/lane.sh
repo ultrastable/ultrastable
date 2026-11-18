@@ -119,6 +119,8 @@ echo "lane: needs-pat merged=$wf_merged waiting=$wf_waiting credential=$wf_sourc
 # SERVER-OWNS-LOOPS: adopt what is still open and not mergeable and commit the queue items to main, so the executor sees them on its next run
 # (it starts from every finished lane). Runs only inside the lane workflow, or where LANE_ADOPT=1 is set by another server-side host.
 if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
+  # MERGE-AUDIT-1: a merge by any path this script cannot gate (a session's own token) is audited here and filed as an item the adoption commit carries
+  (cd "$(dirname "$0")/.." && python3 -m foundation mergeaudit --apply >/dev/null) || { echo "lane: merge audit failed" >&2; echo x >>"$_SAFE_FAILS"; }
   root="$(cd "$here/.." && pwd)"
   if (cd "$root" && python3 -m foundation loopowner --adopt --apply); then
     # MEMORY-REFRESH-1: record merged work in the project memory before it goes stale and fails every pull request's memory check

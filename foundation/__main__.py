@@ -38,6 +38,7 @@
   python3 -m foundation publication [--check|--baseline|--history DIR]   PUBLICATION-GUARD-1: license, notice files, no case collisions, SPDX ratchet, no private data
   python3 -m foundation pins [--check|--apply|--report]                  PINS-1: every status pin and roadmap item on the site is computed from code, proofs and issues
   python3 -m foundation agentwork [--apply|--probe-kill|--check]            AGENT-WORK-1: caps and kill switch for the Actions code agent; files Q-UNK work
+  python3 -m foundation mergeaudit [--run [--apply]|--probe N|--check]  MERGE-AUDIT-1: a PR merged without a green `checks` run becomes a queue item
   python3 -m foundation ciwatch [--run [--apply]|--probe REPO WORKFLOW|--check]  CIWATCH-1: red X's on any watched repo are rerun or filed as queue items
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
@@ -99,6 +100,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["agentwork"]:
         from . import agentwork
         return agentwork.main(_av[1:])
+    if _av[:1] == ["mergeaudit"]:
+        from . import mergeaudit
+        return mergeaudit.main(_av[1:])
     if _av[:1] == ["ciwatch"]:
         from . import ciwatch
         return ciwatch.main(_av[1:])

@@ -34,6 +34,15 @@
         "file": "seed/worker/src/auditchain.js",
         "contains": "gzip"
       }
+    },
+    {
+      "id": "agent-md-maintains-itself",
+      "source": "site/worker.js",
+      "quote": "it now maintains itself",
+      "probe": {
+        "file": ".github/workflows/executor.yml",
+        "contains": "name: executor"
+      }
     }
   ],
   "baseline": [

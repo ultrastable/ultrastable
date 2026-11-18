@@ -2351,6 +2351,14 @@
    "body": "Measured on the live D1 at 2026-11-18 01:55 UTC: the sweeper returns open_loop_age_hours (a reading) on every run, and counting it as work kept the sweeper at stride 1 after PACE-2 went live. isIdle now ignores config.pace.gauges and strideFor skips deferred beats; 315 worker tests pass, including the sweeper's real result.",
    "probe": "grep:seed/worker/src/pace.js::gauges",
    "session": "session_0156nqDu3CafCLkNfgmXspHr"
+  },
+  {
+   "id": "lesson-2026-11-18-merge-audit-1-pr-619-merged-by-a-session-token-over-a-red-ch",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "MERGE-AUDIT-1: PR 619 merged by a session token over a red checks run",
+   "body": "Measured: run 44218787437 failed claimcode on site/worker.js AGENT_MD two seconds after PR 619 was merged by a session's own token, a path greenguard and lane.sh cannot see. Fixed: the claim is registered with a probe (claimcode ok), and foundation/mergeaudit.py now files an item for any merge without a green checks run on every lane pass (2 tests pass).",
+   "probe": "file:foundation/mergeaudit.py"
   }
  ]
 }
