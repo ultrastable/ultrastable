@@ -59,7 +59,8 @@
    "name": "Work queue: which open item the executor takes next",
    "store": "repo",
    "files": [
-    "foundation/executor.py"
+    "foundation/executor.py",
+    "foundation/prioritize.py"
    ],
    "metric": "item_closed",
    "metric_says": "1 when the picked item is closed (verified, merged or closed by its probe) inside one cycle",
@@ -127,6 +128,24 @@
     "kind": "d1_settled"
    },
    "why": "The governor sets the level that throttles every loop; each level it sets is scored by whether the account stayed below the shed line."
+  },
+  {
+   "id": "self-code-finding",
+   "name": "Self-code finding: which sensed defect the agent files as work",
+   "store": "repo",
+   "files": [
+    "foundation/selfcode.py"
+   ],
+   "metric": "finding_item_closed",
+   "metric_says": "1 when the item filed for the sensed finding is closed (fixed or verified) within the window",
+   "op": ">=",
+   "target": 1,
+   "window_h": 168,
+   "predict": "1 (the finding passed the rails, so its item should close inside a week)",
+   "measure": {
+    "kind": "item_closed"
+   },
+   "why": "Findings are ranked by score and filed within caps; the outcome that proves the pick was worth filing is that its item reached a closed state."
   }
  ],
  "discover": {
@@ -139,27 +158,27 @@
   "marker": "DECISION-METRIC:"
  },
  "uninstrumented": {
-  "foundation/agents.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "foundation/boundary.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "foundation/branchsweep.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "foundation/conflicts.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "foundation/design.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "foundation/failover.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "foundation/filing.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "foundation/prioritize.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "foundation/promote.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "foundation/reach.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "foundation/selfcode.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "foundation/triggers.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "foundation/uiux.py": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "seed/worker/src/airouter.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/budget.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "seed/worker/src/critloop.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/cutover.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "seed/worker/src/events.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
-  "seed/worker/src/pace.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/pr-executor.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)",
   "seed/worker/src/unknowns.js": "decision-shaped function with no declared metric yet; owner staff, trigger executor tick, probe `python3 -m foundation decisions --check` (Q-DECISION-COVERAGE-1)"
  },
- "gap_item": "Q-DECISION-COVERAGE-1"
+ "gap_item": "Q-DECISION-COVERAGE-1",
+ "not_decisions": {
+  "foundation/agents.py": "route_authors maps author names to roles from environment variables, a fixed lookup with no alternatives to weigh",
+  "foundation/boundary.py": "decide looks a surface and action up in the boundary policy ledger, a deterministic rule with one allowed answer",
+  "foundation/branchsweep.py": "plan_one derives the disposition of a branch from its merge state, a fixed table, and the sweep ledger records every outcome",
+  "foundation/conflicts.py": "decide is a pure truth table over four booleans from the merge attempt, with no judgment or ranking",
+  "foundation/design.py": "select matches the idea's words to a personality by keyword score, deterministically, and design experiments score the looks themselves",
+  "foundation/filing.py": "plan fills a filing manifest from a fixed table, a mechanical transform whose result is identical on every run",
+  "foundation/triggers.py": "plan lists each role's tick period from the heartbeat cron and role files, derived arithmetic with no choice",
+  "seed/worker/src/airouter.js": "vendored copy of core/airouter; the routing decisions are logged and scored under ai-router by src/airoute.js and decisions.js",
+  "seed/worker/src/events.js": "routeEvent looks an event name up in EVENT_TABLE generated from doctrine, a table lookup with no ranking",
+  "seed/worker/src/pace.js": "rankRows sorts rows by the rank list already chosen by foundation/prioritize.py, which is the instrumented decision",
+  "seed/worker/src/critloop.js": "pickForRole takes the first role-matching item from the rank computed by foundation/prioritize.py, which carries the work-queue-priority metric"
+ }
 }

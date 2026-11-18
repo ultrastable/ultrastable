@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-18-decisions-page-is-regenerated-on-main-only",
+  "kind": "decision",
+  "date": "2026-11-18",
+  "title": "Decisions page is regenerated on main only",
+  "body": "The page data holds a timestamp and settled outcomes so it changed on every merge and conflicted every PR; the check now needs only the file, and regen-generated rebuilds it.",
+  "probe": "grep:foundation/decisions.py::PAGE-REGEN-1",
+  "session": "session_0156nqDtmBfktCuwqNU1X9oJ"
+ },
+ "kind": "decision",
+ "title": "Decisions page is regenerated on main only",
+ "session": "session_0156nqDtmBfktCuwqNU1X9oJ"
+}

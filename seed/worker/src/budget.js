@@ -19,8 +19,12 @@ export const PRICES = {
   neurons_per_input_token: 0.03,   // conservative defaults for mid-size text models; a model listed in model_rates overrides them
   neurons_per_output_token: 0.2,
 };
-export const SAFETY = 0.8;         // plan to 80% of every limit, so estimation error never crosses the real one
-export const LEAN_AT = 0.7;        // above 70% of the day's allowance: one model call per tick
+export const SAFETY = 0.8;         // paid plan: plan to 80% of every limit, so estimation error never crosses the real one (an overrun there is billed)
+// BUDGET-TUNE-1 (2026-11-18): /api/roi showed 87 calls refused with only 52% of the free neurons used. Cause: the free plan was planned to 80% and then split
+// 60/20/20 across workers that meter into separate ledgers, so the tick worker froze at 48% of the day while the other shares sat idle, and lean mode began at 70% of that.
+// On the free plan an overrun is refused by Cloudflare, never billed, so spend stays 0 with a 95% plan and a larger tick share.
+export const SAFETY_FREE = 0.95;
+export const LEAN_AT = 0.9;        // above 90% of the day's allowance: one model call per tick
 export const DEFAULTS = { usd_per_month: 0, plan: 'free', fixed_usd_month: 0, model_rates: {} };
 
 const DAY_MS = 864e5;
@@ -44,7 +48,7 @@ export function allowance(b, now = Date.now()) {
   const variableMonth = Math.max(0, b.usd_per_month - fixed);
   const variableDay = variableMonth / daysInMonth(now);
   const paidNeurons = (variableDay / PRICES.ai_usd_per_1k_neurons) * 1000;
-  const neuronsDay = Math.floor((PRICES.ai_free_neurons_day + paidNeurons) * SAFETY);
+  const neuronsDay = Math.floor((PRICES.ai_free_neurons_day + paidNeurons) * (b.plan === 'paid' ? SAFETY : SAFETY_FREE));
   const notes = [];
   if (b.usd_per_month < fixed) notes.push(`budget ${b.usd_per_month} USD is below the fixed costs (${fixed} USD a month); only the free AI allocation is used`);
   return { usd_per_month: b.usd_per_month, fixed_usd_month: fixed, variable_usd_month: +variableMonth.toFixed(2), ai_neurons_day: neuronsDay, notes };
@@ -60,7 +64,7 @@ export function estimateNeurons(model, usage, text, rates = {}) {
 }
 
 // Several workers meter into their own ledgers; each gets a share of the account's daily allowance so together they never exceed it.
-export const SHARES = { tick: 0.6, dashboard: 0.2, site: 0.2 };
+export const SHARES = { tick: 0.7, dashboard: 0.15, site: 0.15 };  // the tick worker makes nearly every model call; the console and the site call rarely
 function withShare(a, share) {
   const s = Math.min(1, Math.max(0, Number(share) || 0));
   return s === 1 ? a : { ...a, share: s, ai_neurons_day: Math.floor(a.ai_neurons_day * s), variable_usd_month: +(a.variable_usd_month * s).toFixed(2) };

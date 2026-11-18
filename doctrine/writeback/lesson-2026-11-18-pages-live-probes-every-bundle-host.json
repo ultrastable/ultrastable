@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-18-pages-live-probes-every-bundle-host",
+  "kind": "lesson",
+  "date": "2026-11-18",
+  "title": "pages-live probes every bundle host",
+  "body": "pages_live_urls lists each /api/freshness route; Practical Solutions now serves one reporting ensemble ledger age.",
+  "probe": "grep:doctrine/rules.json::pages_live_urls"
+ },
+ "kind": "lesson",
+ "title": "pages-live probes every bundle host",
+ "session": ""
+}

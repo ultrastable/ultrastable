@@ -16,7 +16,7 @@ const EXAMPLE_DIR = fileURLToPath(new URL('./example/', import.meta.url));
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
 const tickConfig = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy };
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now', '-N days'), so a fixed date fails once it ages out
 const one = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
 const rows = (db, sql, ...a) => db.raw.prepare(sql).all(...a);
 const exampleManifest = () => loadManifest(EXAMPLE_DIR);
@@ -66,7 +66,7 @@ test('T21-1 a pack is inert until enabled; enabling records who, when and the ca
   const r = await enable(packs, 'owner');
   assert.equal(r.ok, true);
   const reg = one(db, `SELECT * FROM packs_registry WHERE id='example'`);
-  assert.equal(reg.enabled, 1); assert.equal(reg.enabled_by, 'owner'); assert.equal(reg.enabled_at, '2026-11-11 10:00:00');
+  assert.equal(reg.enabled, 1); assert.equal(reg.enabled_by, 'owner'); assert.equal(reg.enabled_at, new Date(T0).toISOString().slice(0, 19).replace('T', ' '));
   assert.equal(reg.card_text_shown, exampleManifest().enable_gate);
   assert.equal(reg.decision_id, r.decisionId);
   const dec = one(db, `SELECT * FROM kernel_decisions WHERE id = ?`, r.decisionId);
@@ -326,7 +326,7 @@ test('T21 class C can never send, even if a manifest is forced into the registry
   const base = exampleManifest();
   for (const cls of ['C', 'D']) {
     const m = { ...base, id: `cls${cls.toLowerCase()}`, class: cls };
-    db.raw.prepare(`INSERT INTO packs_registry (id, class, manifest_hash, manifest_json, rung_ceiling, enabled, registered_at) VALUES (?,?,?,?,?,1,'2026-11-11 10:00:00')`)
+    db.raw.prepare(`INSERT INTO packs_registry (id, class, manifest_hash, manifest_json, rung_ceiling, enabled, registered_at) VALUES (?,?,?,?,?,1,datetime('now'))`)
       .run(m.id, cls, 'h', JSON.stringify(m), 'autonomous');
     db.raw.prepare(`INSERT INTO trust_ledger (surface, action_class, rung, reliability, outcomes) VALUES (?, 'notice', 'self-extending', 1, 99)`).run(`pack:${m.id}`);
     await guard.consent.grant({ channel: 'fake', recipient: 'person@example.com' });

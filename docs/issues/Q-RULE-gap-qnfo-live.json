@@ -1,7 +1,7 @@
 {
   "id": "Q-RULE-gap-qnfo-live",
   "title": "Q-RULE-gap-qnfo-live: scan rendered live pages for QNFO data, not only page sources",
-  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** grep:foundation/rules.py::def p_qnfo_live\n**Status:** open\n\nRULES-1 gap: the no-qnfo-on-pages rule scans page sources against a shrink-only baseline. Add a builtin probe `qnfo-live` that fetches the pages in site/probes.json from the deployed site and fails on QNFO data the sources do not carry, then register it as a runtime probe of the rule and delete this gap.",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** grep:foundation/rules.py::def p_qnfo_live\n**Status:** closed\n\nRULES-1 gap: the no-qnfo-on-pages rule scans page sources against a shrink-only baseline. Add a builtin probe `qnfo-live` that fetches the pages in site/probes.json from the deployed site and fails on QNFO data the sources do not carry, then register it as a runtime probe of the rule and delete this gap.\n\n**Evidence:** `def p_qnfo_live` in foundation/rules.py is a builtin runtime probe of no-qnfo-on-pages; the gap entry is removed from doctrine/rules.json.\n",
   "labels": [
     "role:staff"
   ],

@@ -15,7 +15,7 @@ const DIR = fileURLToPath(new URL('./', import.meta.url));
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const DESCRIBE_MIG = fileURLToPath(new URL('../../core/describe/migrations/', import.meta.url));
 const SOCIAL_MIG = fileURLToPath(new URL('./migrations/', import.meta.url));
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now', '-N days'), so a fixed date fails once it ages out
 const H = 3600e3;
 const iso = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
 const one = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
@@ -84,7 +84,7 @@ test('a claim-backed draft passes the checker, is tagged with UTM and enters the
   const ctx = await loop('compose');
   const q = rows(db, `SELECT * FROM social_queue`);
   assert.equal(q.length, 1);
-  assert.match(q[0].text, /^Ran 42 ticks \(as of 2026-11-11\)\./);
+  assert.match(q[0].text, new RegExp(`^Ran 42 ticks \\(as of ${new Date(T0).toISOString().slice(0, 10)}\\)\\.`));
   assert.ok(!q[0].text.includes('[claim:'));
   assert.match(q[0].text, /https:\/\/example\.org\/about\?utm_source=social&utm_medium=post&utm_campaign=claims/);
   assert.deepEqual(JSON.parse(q[0].claim_ids), ['operation.ticks']);
@@ -181,7 +181,7 @@ test('below the act rung a post is queued as a decision card showing its text; a
   const r = one(db, `SELECT * FROM social_queue`);
   assert.equal(r.status, 'awaiting_approval');
   const card = one(db, `SELECT * FROM gate_cards WHERE id = ?`, r.card_id);
-  assert.ok(card.what.includes('Ran 42 ticks (as of 2026-11-11)'));
+  assert.ok(card.what.includes(`Ran 42 ticks (as of ${new Date(T0).toISOString().slice(0, 10)})`));
   await loop('publish');                                                                     // no second card for the same post
   assert.equal(rows(db, `SELECT * FROM gate_cards`).length, 1);
   const out = await guard.approve(r.guard_queue_id, { by: 'owner' });

@@ -10,7 +10,7 @@ import { KERNEL_DIR } from '../kernel/testkit.js';
 import { createPacks, loadManifest, MIGRATIONS_DIR } from './index.js';
 
 const EXAMPLE_DIR = fileURLToPath(new URL('./example/', import.meta.url));
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now', '-N days'), so a fixed date fails once it ages out
 
 async function setup(config = {}) {
   const db = makeDb([KERNEL_DIR, MIGRATIONS_DIR]);

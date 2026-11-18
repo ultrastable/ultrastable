@@ -161,12 +161,10 @@
     {
      "id": "no-qnfo-pages",
      "cmd": "python3 -m foundation rules --probe no-qnfo-pages"
-    }
-   ],
-   "gaps": [
+    },
     {
-     "what": "rendered live pages are not yet scanned, only their source",
-     "item": "Q-RULE-gap-qnfo-live"
+     "id": "qnfo-live",
+     "cmd": "python3 -m foundation rules --probe qnfo-live"
     }
    ]
   },
@@ -348,5 +346,23 @@
  "qnfo_exempt_globs": [
   "site/*.test.mjs",
   "site/STAGED-COPY.md"
+ ],
+ "qnfo_live_origin": "https://ultrastable.io",
+ "qnfo_live_pages": [
+  "/",
+  "/live",
+  "/how",
+  "/roadmap",
+  "/claims",
+  "/self",
+  "/ultrastability",
+  "/decisions",
+  "/showcase",
+  "/changelog",
+  "/api/live/changes"
+ ],
+ "pages_live_urls": [
+  "https://ultrastable.io/api/freshness",
+  "https://tenant-ps-web.ultrastable.workers.dev/api/freshness"
  ]
 }

@@ -15,6 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 GENERATORS = [
+    (["python3", "-c", "from foundation import writeback; print(writeback.fold())"], "."),  # WRITEBACK-SHARD-1
     (["python3", "-m", "foundation", "claims", "--fix", "--apply"], "."),
     (["python3", "scripts/build_dashboard.py"], "."),
     (["python3", "-m", "foundation", "selfmodel", "--apply"], "."),
@@ -26,7 +27,7 @@ GENERATORS = [
     (["python3", "-m", "plugins", "self", "--write"], "seed"),
 ]
 # Files the generators write; the workflow ignores pushes that touch only these, so the bot's own commit cannot retrigger it.
-OUTPUTS = ["README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js",
+OUTPUTS = ["doctrine/decision-ledger.json", "ops/provenance.jsonl", "README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js",
            "site/ultrastability-data.js", "site/decisions-data.js", "ops/decisions/outcomes.jsonl", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
 
 
