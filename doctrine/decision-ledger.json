@@ -2165,6 +2165,14 @@
    "probe": "grep:foundation/executor.py::selfcode.prefer\\(eff"
   },
   {
+   "id": "decision-2026-11-18-hosts-1-host-adapter-wiring",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "HOSTS-1 host adapter wiring",
+   "body": "One host adapter interface (Cloudflare, GitHub Actions, GCP) with failover; push/workflow_run webhooks deploy and report commit statuses; /hook/host takes inbound host events; hosts loop probes health, detects stalls, reconciles stuck handoffs.",
+   "probe": "grep:seed/worker/test/hosts.test.js::a push to main deploys touched workers once"
+  },
+  {
    "id": "lesson-2026-11-18-merge-gate-1-merge-only-when-the-checks-job-succeeded",
    "kind": "lesson",
    "date": "2026-11-18",
