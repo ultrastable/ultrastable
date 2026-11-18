@@ -44,7 +44,9 @@ jobs:
           git reset -q --hard origin/main
           python3 -m foundation ciwatch --run --apply > /dev/null
           git checkout -q -- ops/ciwatch.jsonl
-          if [ -n "$(git status --porcelain docs/issues)" ]; then
+          open=$(gh api "repos/${{ github.repository }}/pulls?state=open&per_page=100" --jq '[.[]|select(.head.ref|startswith("agent/ciwatch-"))]|length')  # CIWATCH-3: one open items PR at a time; every run used to open another with the same file
+          if [ "${open:-0}" != "0" ]; then echo "ciwatch items PR already open; not opening another"
+          elif [ -n "$(git status --porcelain docs/issues)" ]; then
             b="agent/ciwatch-${GITHUB_RUN_ID}"
             git checkout -q -b "$b"; git add docs/issues
             git commit -q -m "ciwatch: file failing-workflow items (CIWATCH-1)"

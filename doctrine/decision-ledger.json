@@ -2437,6 +2437,22 @@
    "title": "FRONT-BACKED-1 front end backed by back end",
    "body": "Rowan 2026-11-18: front end must always match the back end. Added to agents/AGENTS.md and the seed copy; /api/freshness enforces data age. Session: session_0156nqDsqGCaorJAUs6hPGox",
    "probe": "file:site/live.js"
+  },
+  {
+   "id": "lesson-2026-11-18-ciwatch-3-one-open-ciwatch-items-pr-at-a-time",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "CIWATCH-3: one open ciwatch items PR at a time",
+   "body": "ciwatch opened a new agent/ciwatch-<run> PR on every run because the Q-CIFAIL file stays absent from main until the first PR merges; 7 identical PRs piled up. The step now skips when an agent/ciwatch-* PR is open. Root cause of the red item was an unregistered tenant file (practical-solutions#117).",
+   "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-3"
+  },
+  {
+   "id": "lesson-2026-11-18-main-writer-1-app-commits-trigger-push-workflows-data-commit",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "MAIN-WRITER-1: App commits trigger push workflows; data commits carry skip-ci",
+   "body": "Commits written by the org GitHub App start push workflows, unlike workflow-token pushes. A deploy record started regen-generated, whose commit touched site/ and restarted the deploy. Data commits carry [skip ci] (PR 638). Re-recorded here because superseded PR 632 held the ledger entry.",
+   "probe": "grep:tools/push_main.py::skip ci"
   }
  ]
 }
