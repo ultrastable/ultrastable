@@ -20,6 +20,7 @@
     },
     {
       "id": "core.close.loops",
+      "deadline": "2026-12-18",
       "parent_id": "core.close",
       "level": "target",
       "statement": "Share of loops that finished ok in at least 90% of their runs over 24 hours.",
@@ -31,6 +32,7 @@
     },
     {
       "id": "core.close.drops",
+      "deadline": "2026-12-04",
       "parent_id": "core.close",
       "level": "target",
       "statement": "Items that left the active set with no recorded disposition in 7 days.",
@@ -42,6 +44,7 @@
     },
     {
       "id": "core.close.breaches",
+      "deadline": "2026-12-11",
       "parent_id": "core.close",
       "level": "target",
       "statement": "Metrics in breach right now.",
@@ -59,6 +62,7 @@
     },
     {
       "id": "core.cost.peak",
+      "deadline": "2026-12-18",
       "parent_id": "core.cost",
       "level": "target",
       "statement": "Largest share of any free daily limit used today.",
@@ -70,6 +74,7 @@
     },
     {
       "id": "core.cost.productive",
+      "deadline": "2026-12-18",
       "parent_id": "core.cost",
       "level": "target",
       "statement": "Share of loop runs in 24 hours that returned work (idle runs cost the free plan and change nothing).",
@@ -87,6 +92,7 @@
     },
     {
       "id": "core.reach.tenants",
+      "deadline": "2026-12-31",
       "parent_id": "core.reach",
       "level": "target",
       "statement": "Tenants that have registered goals (Practical Solutions first).",

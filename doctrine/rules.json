@@ -303,6 +303,22 @@
      "cmd": "python3 -m foundation singleaccount --check"
     }
    ]
+  },
+  {
+   "id": "every-goal-has-knob",
+   "statement": "Every goal Ultrastable works toward has a measured variable, a target, a deadline and at least one knob the controller may turn; a goal with no knob is listed in a shrink-only baseline and filed as a backlog item (GOALS-1).",
+   "source": "seed/autonomy/goals.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation goalscheck --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "goalscheck",
+     "cmd": "python3 -m foundation goalscheck --check"
+    }
+   ]
   }
  ],
  "repos": [
