@@ -417,7 +417,7 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
         const have = await first(db, `SELECT COUNT(*) AS n FROM goals`).then(r => r.n).catch(() => 0);
         if (!have) { const n = await seedGoals(db, ctx.config.goals, { now }); ctx.notes.push(`goals: seeded ${n} rows while the free tier is ${lean ? 'lean' : 'degraded'}`); }
       } catch (e) { ctx.errors.push(`goals seed: ${String(e && e.message).slice(0, 120)}`); }
-      if (!lean && new Date(now).getUTCMinutes() < 10) { try { await STEPS[name](db, ctx); } catch (e) { ctx.errors.push(`goals: ${String(e && e.message).slice(0, 160)}`); } completed++; continue; }  // one tick in six: the control step at a sixth of the reads
+      if (new Date(now).getUTCMinutes() < 10) { try { await STEPS[name](db, ctx); } catch (e) { ctx.errors.push(`goals: ${String(e && e.message).slice(0, 160)}`); } completed++; continue; }  // one tick in six, lean or degraded: the control step at a sixth of the reads, so a cost breach cannot freeze the knobs that answer it
     }
     if ((lean && !COST_ESSENTIAL_STEPS.includes(name)) || (degrade && FREE_TIER_WIDE_STEPS.includes(name))) { completed++; continue; }
     try {

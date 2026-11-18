@@ -96,3 +96,9 @@ test('a degraded free tier never leaves the goal tree unseeded (the step is skip
   assert.equal((await db.prepare('SELECT COUNT(*) n FROM goals').first()).n, 1);
   assert.equal((await db.prepare('SELECT COUNT(*) n FROM goal_knobs').first()).n, 1);
 });
+test('the hourly control pass still runs when the tick is lean (a cost breach must not freeze the knobs)', async () => {
+  const db = makeDb(); const hour = Date.parse('2026-11-18T12:05:00Z');
+  const r = await runTick(db, { config: { org_slug: 't', policy: {}, goals: cfg, cost_budgets: [{ target: 'x', max_rows_read_per_hour: 0 }] }, now: hour });
+  assert.ok(r);
+  assert.equal((await db.prepare('SELECT COUNT(*) n FROM goals').first()).n, 1);
+});
