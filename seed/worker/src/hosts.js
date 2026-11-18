@@ -152,3 +152,34 @@ export async function watchHosts({ db, registry, token, repo, fetch: f = fetch, 
   if (token && repo && down.length) await reportStatus({ fetch: f, token, repo, sha: (push && push.sha) || undefined, context: 'ultrastable/hosts/health', state: 'failure', description: 'host(s) down: ' + down.join(', ') }).catch(() => null);
   return out;
 }
+
+// ---- integrations set up and kept by the server itself (no client agent, no pasted secret) ----
+// The webhook secrets are derived inside the Worker: HMAC(CREDENTIAL_KEY, purpose). Nothing is stored or printed; the Worker signs and verifies with the same derivation,
+// and the reconciler writes the derived value to GitHub when it creates or repairs the hook. A bound GITHUB_WEBHOOK_SECRET / HOST_WEBHOOK_SECRET still wins (legacy hooks).
+export async function hookSecret(env, purpose) {
+  const bound = purpose === 'github' ? env.GITHUB_WEBHOOK_SECRET : env.HOST_WEBHOOK_SECRET; if (bound) return bound;
+  if (!env.CREDENTIAL_KEY) return '';
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.CREDENTIAL_KEY), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return Array.from(new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('ultrastable-hook:' + purpose))), b => b.toString(16).padStart(2, '0')).join('');
+}
+export const HOOK_EVENTS = ['push', 'workflow_run', 'pull_request', 'issues', 'issue_comment', 'release'];
+// create the repository webhook when missing, repair it when GitHub says its last delivery failed or its url/events drifted; a token without hook rights is recorded plainly
+export async function reconcileHooks({ db = null, token, repos, origin = 'https://ultrastable.io', secret, fetch: f = fetch, now = Date.now, everyMs = 3600e3 }) {
+  const out = { status: 'ok', repos: {} };
+  if (!token || !secret) return { status: 'no-credential', why: !token ? 'no GitHub credential' : 'no derivable secret (CREDENTIAL_KEY unbound)' };
+  if (db) { const last = await db.prepare("SELECT at FROM host_events WHERE kind = 'hooks' ORDER BY at DESC LIMIT 1").first().catch(() => null); if (last && now() - last.at < everyMs) return { status: 'fresh' }; }
+  const url = origin.replace(/\/$/, '') + '/hook/github', body = { active: true, events: HOOK_EVENTS, config: { url, content_type: 'json', secret, insecure_ssl: '0' } };
+  for (const repo of repos) {
+    try {
+      const l = await gh(f, token, 'GET', `/repos/${repo}/hooks`);
+      if (l.status === 403 || l.status === 404) { out.repos[repo] = `no hook rights (HTTP ${l.status}); polling path stays in force`; out.status = 'no-rights'; continue; }
+      const mine = ((await l.json()) || []).find(h => h.config && h.config.url === url);
+      if (!mine) { const c = await gh(f, token, 'POST', `/repos/${repo}/hooks`, { name: 'web', ...body }); out.repos[repo] = c.status === 201 ? 'created' : 'create HTTP ' + c.status; if (c.status !== 201) out.status = 'error'; continue; }
+      const bad = mine.last_response && mine.last_response.code && (mine.last_response.code < 200 || mine.last_response.code >= 300), drift = !mine.active || HOOK_EVENTS.some(e => !(mine.events || []).includes(e));
+      if (bad || drift) { const c = await gh(f, token, 'PATCH', `/repos/${repo}/hooks/${mine.id}`, body); out.repos[repo] = (c.status === 200 ? 'repaired' : 'repair HTTP ' + c.status) + (bad ? ' (last delivery ' + mine.last_response.code + ')' : ' (drift)'); if (c.status !== 200) out.status = 'error'; }
+      else out.repos[repo] = 'present';
+    } catch (e) { out.repos[repo] = 'error: ' + String(e && e.message).slice(0, 100); out.status = 'error'; }
+  }
+  await record(db, now, { host: 'github', kind: 'hooks', ok: out.status !== 'error', detail: JSON.stringify(out.repos).slice(0, 280) });
+  return out;
+}

@@ -26,7 +26,7 @@ import { getToken, refreshDue, pathGuard } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
 import { readCriticality, addSample } from './criticality.js';
 import { watchGithub } from './watchdog.js';
-import { createHosts, cloudflareHost, githubActionsHost, gcpHost, reporting, onPush, onWorkflowRun, onHostEvent, watchHosts, recordHostEvent } from './hosts.js';  // HOSTS-1
+import { createHosts, cloudflareHost, githubActionsHost, gcpHost, reporting, onPush, onWorkflowRun, onHostEvent, watchHosts, recordHostEvent, hookSecret, reconcileHooks } from './hosts.js';  // HOSTS-1
 import { beat, watch, readPulse, HEAVY_CADENCE_MIN } from './pulse.js';
 import { decide, healthView, readState } from './cutover.js';
 import { readIgnition } from './ignition.js';
@@ -102,6 +102,7 @@ export default {
       await b('social', () => runSocial({ db: env.DB, env, tenant }));  // REACH-1: posts the due calendar item to the channels linked at /connect
       await b('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); return sw; });  // SERVER-OWNS-LOOPS-1
       await b('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
+      await b('host-hooks', async () => reconcileHooks({ db: env.DB, token, repos, origin: env.PUBLIC_ORIGIN || 'https://ultrastable.io', secret: await hookSecret(env, 'github') }));  // HOSTS-1: the server creates, repairs and re-checks its own repo webhook; nothing is set up by hand
       await b('hosts', () => watchHosts({ db: env.DB, registry: hostRegistry(env, token, main), token, repo: main }));  // HOSTS-1: health probe of every host, stall detection, failover redispatch
       await b('watchdog-gh', () => watchGithub({ token, repo: main }));  // RESILIENCE-1: the Worker restarts the GitHub watchdog when it stalls; the GitHub watchdog restarts this tick
       await b('cost-samples', async () => ({ free_tier: await sampleFreeTier(env.DB, { token: env.CF_ANALYTICS_TOKEN, account_id: (config.cost_budgets && config.cost_budgets[0] && config.cost_budgets[0].account_id) || env.CF_ACCOUNT_ID }), samples: await sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }), retention: await pruneAll(env.DB, { rules: config.retention, archive: (table, rows) => archiveRows(env.DB, table)(rows) }), audit: await seal(env.DB, auditSinks(env, token, repos)) }));  // AUDIT-CHAIN-1: aged rows are chained, then sealed to the archive  // RETENTION-1: the daily prune rides the hourly cost beat (once a day by its own gate)  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
@@ -118,7 +119,7 @@ export default {
     if (halted(config, env) && (url.pathname === '/hook/github' || url.pathname === '/hook/host' || url.pathname === '/pulse/watch')) return Response.json({ halted: true }, { status: 202 });  // HALT-1
     if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now
       const body = await request.text();
-      if (!(await verifySignature(env.GITHUB_WEBHOOK_SECRET, body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
+      if (!(await verifySignature(await hookSecret(env, 'github'), body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
       const ev = request.headers.get('x-github-event'), payload = JSON.parse(body || '{}');
       if (ev === 'push' || ev === 'workflow_run') {  // HOSTS-1: repo -> host without polling; host status flows back onto the commit
         const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null), tok = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
@@ -135,7 +136,7 @@ export default {
     }
     if (url.pathname === '/hook/host' && request.method === 'POST') {  // HOSTS-1: host -> repo. Any hosting system reports a deploy/runtime event, signed with HOST_WEBHOOK_SECRET
       const body = await request.text();
-      if (!(await verifySignature(env.HOST_WEBHOOK_SECRET, body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
+      if (!(await verifySignature(await hookSecret(env, 'host'), body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
       const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
       let event; try { event = JSON.parse(body || '{}'); } catch { return Response.json({ error: 'bad json' }, { status: 400 }); }
       return Response.json(await onHostEvent({ db: env.DB, token: (t && t.ok && t.token) || env.GITHUB_TOKEN || '', event }), { status: 202 });

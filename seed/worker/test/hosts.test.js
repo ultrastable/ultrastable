@@ -58,3 +58,21 @@ test('a handoff stuck in deploy_failed is returned to the lane once a host repor
   const r = await watchHosts({ db, registry: createHosts([host('a', true)], { db }), now: () => Date.now() });
   assert.deepEqual(r.reconciled, ['o/r#1']); assert.equal((await db.prepare("SELECT state FROM handoffs WHERE id='o/r#1'").first()).state, 'merged');
 });
+import { hookSecret, reconcileHooks } from '../src/hosts.js';
+const HJ = (hooks, s = 200) => async (u, o = {}) => { calls.push((o.method || 'GET')); return u.endsWith('/hooks') && o.method === 'GET' ? R(s, hooks) : R(o.method === 'POST' ? 201 : 200, {}); };
+let calls = [];
+test('webhook secrets are derived inside the Worker, stable and distinct', async () => {
+  const a = await hookSecret({ CREDENTIAL_KEY: 'k' }, 'github'), b = await hookSecret({ CREDENTIAL_KEY: 'k' }, 'host');
+  assert.equal(a, await hookSecret({ CREDENTIAL_KEY: 'k' }, 'github')); assert.notEqual(a, b); assert.equal(await hookSecret({}, 'github'), '');
+});
+test('the reconciler creates a missing hook, repairs a failing one, and leaves a healthy one', async () => {
+  calls = []; let r = await reconcileHooks({ token: 't', repos: ['o/r'], secret: 's', fetch: HJ([]) }); assert.equal(r.repos['o/r'], 'created');
+  const hook = { id: 1, active: true, events: ['push', 'workflow_run', 'pull_request', 'issues', 'issue_comment', 'release'], config: { url: 'https://ultrastable.io/hook/github' } };
+  calls = []; r = await reconcileHooks({ token: 't', repos: ['o/r'], secret: 's', fetch: HJ([{ ...hook, last_response: { code: 401 } }]) }); assert.match(r.repos['o/r'], /repaired.*401/); assert.ok(calls.includes('PATCH'));
+  calls = []; r = await reconcileHooks({ token: 't', repos: ['o/r'], secret: 's', fetch: HJ([hook]) }); assert.equal(r.repos['o/r'], 'present'); assert.ok(!calls.includes('PATCH'));
+});
+test('a token without hook rights is recorded plainly and the db gates reruns hourly', async () => {
+  const db = makeDb(); let r = await reconcileHooks({ db, token: 't', repos: ['o/r'], secret: 's', fetch: HJ([], 403), now: () => 1e6 });
+  assert.equal(r.status, 'no-rights'); assert.match(r.repos['o/r'], /polling path stays/);
+  assert.equal((await reconcileHooks({ db, token: 't', repos: ['o/r'], secret: 's', fetch: HJ([], 403), now: () => 1e6 + 60e3 })).status, 'fresh');
+});
