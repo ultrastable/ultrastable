@@ -2392,7 +2392,7 @@
    "kind": "decision",
    "date": "2026-11-18",
    "title": "Carry stuck PR 627 onto main; close loops automatically (Rowan 2026-11-18)",
-   "body": "Carried MAIN-WRITER-1 (#627, conflicted on generated site/dashboard-data.js) onto main from a fresh branch; tools/push_main.py keeps git push as second route.",
+   "body": "A PR stuck on a generated-file conflict is carried onto current main by the next session or lane that sees it; #627 landed by its own session first, and tools/push_main.py keeps git push as the second route.",
    "probe": "grep:tools/push_main.py::def fallback"
   },
   {
