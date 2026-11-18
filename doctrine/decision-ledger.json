@@ -2315,6 +2315,15 @@
    "body": "The worker-native executor merged a change with a stray character that made site/webbotauth.js a syntax error, turning deploy-site red. Restored in #616. Executor output must pass node --check on every touched JS file before the lane merges.",
    "probe": "file:site/webbotauth.js",
    "session": "session_0156nqDsv1wrVeZRDrJu8sFu"
+  },
+  {
+   "id": "lesson-2026-11-18-subrequest-meter-1-per-loop-share-first-loop-must-not-take-t",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "SUBREQUEST-METER-1: per-loop share, first loop must not take the budget",
+   "body": "Live after deploy: handoffs used 43-44 of 46 calls each tick and, carried first, starved issuesync, repo-access and sweeper into permanent deferral. Each loop now has a maximum share (LOOP_MAX_COST) enforced by the meter scope.",
+   "probe": "file:seed/worker/src/subreq.js",
+   "session": "session_0156nqDrGE5EXqCmJ11EwNYK"
   }
  ]
 }

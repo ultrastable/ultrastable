@@ -61,3 +61,12 @@ test('gate: a 403 on one PR is its disposition, and the run stops at its call ca
   r = await runGate({ token: 't', repos: ['o/r'], fetch: f, maxCalls: 4 });
   assert.ok(r.deferred.length >= 1 && r.status === 'ok');
 });
+
+test('guarded: a loop is held to its own share so the loops behind it still run', async () => {
+  const m = createMeter({ cap: 54, reserve: 4 }), d = new Set(), g = guarded(m, d, failed, {}, { hog: 5, next: 5 });
+  const f = m.wrap(async () => 'x');
+  const r1 = await g('hog', async () => { let n = 0; try { for (;;) { await f(); n++; } } catch { return { status: 'ok', calls: n }; } });
+  assert.equal(r1.calls, 5);
+  const r2 = await g('next', async () => { await f(); return { status: 'ok', merged: ['a'] }; });
+  assert.equal(r2.status, 'ok'); assert.equal(m.used, 6);
+});
