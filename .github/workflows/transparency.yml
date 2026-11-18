@@ -11,6 +11,7 @@ permissions:
   contents: read
   pull-requests: read
   actions: read
+  id-token: write  # LIVE-FRESH-2: OIDC route to the site worker, no stored credential
 concurrency:
   group: transparency
   cancel-in-progress: true

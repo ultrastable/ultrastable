@@ -28,6 +28,23 @@ export async function verifyGithubOidc(jwt, env, fetcher, now = Date.now()) {
 }
 export const _resetJwks = () => { jwksCache = null; };
 
+// LIVE-FRESH-2: the /live snapshot is written into this worker's own ops database through its binding, authenticated by the same OIDC token as deploys.
+// The old route (Cloudflare API token for the retired account) wrote to a database this site no longer reads, so the snapshot froze for days with a green run.
+export async function ingestTransparency(request, env) {
+  let b; try { b = await request.json(); } catch (e) { return J({ ok: false, error: "bad json" }, 400); }
+  const parts = b && b.parts;
+  if (!env.DB) return J({ ok: false, error: "no DB binding" }, 503);
+  if (!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/.test(String(b && b.generated)) || !Array.isArray(parts) || !parts.length || parts.length > 40 || parts.some(x => typeof x !== "string")) return J({ ok: false, error: "generated and parts are required" }, 400);
+  const ins = (n) => env.DB.prepare("INSERT OR REPLACE INTO transparency_parts (generated,part,total,body) VALUES (?,?,?,?)").bind(b.generated, n, parts.length, parts[n]);
+  const order = [...Array(parts.length).keys()].slice(1).concat([0]);  // part 0 last: the reader serves a generation only once part 0 exists
+  try {
+    await env.DB.prepare("CREATE TABLE IF NOT EXISTS transparency_parts (generated TEXT NOT NULL, part INTEGER NOT NULL, total INTEGER NOT NULL, body TEXT NOT NULL, PRIMARY KEY (generated, part))").run();
+    for (const n of order) await ins(n).run();
+    await env.DB.prepare("DELETE FROM transparency_parts WHERE generated < ?").bind(b.generated).run();
+  } catch (e) { return J({ ok: false, error: String(e && e.message).slice(0, 200) }, 502); }
+  return J({ ok: true, generated: b.generated, parts: parts.length });
+}
+
 export async function internalDeploy(request, env, fetcher) {
   const u = new URL(request.url);
   if (!u.pathname.startsWith("/__internal/")) return null;
@@ -35,6 +52,7 @@ export async function internalDeploy(request, env, fetcher) {
   const byKey = env.INTERNAL_DEPLOY_KEY && same(request.headers.get("x-internal-key"), env.INTERNAL_DEPLOY_KEY);
   const byOidc = !byKey && bearer ? (await verifyGithubOidc(bearer[1], env, fetcher).catch(e => ({ ok: false, why: String(e && e.message) }))).ok : false;
   if (request.method !== "POST" || !(byKey || byOidc)) return new Response("Not found", { status: 404 });
+  if (u.pathname === "/__internal/transparency") return ingestTransparency(request, env);
   const f = fetcher || fetch, T = env.CF_DEPLOY_TOKEN, A = env.CF_ACCOUNT_ID;
   if (!T || !A) return J({ ok: false, error: "site has no CF_DEPLOY_TOKEN / CF_ACCOUNT_ID" }, 503);
   const api = (m, p, body, h) => f("https://api.cloudflare.com/client/v4" + p, { method: m, headers: { authorization: "Bearer " + T, ...(h || {}) }, body }).then(r => r.json());
