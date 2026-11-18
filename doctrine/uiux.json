@@ -38,7 +38,6 @@
   "exempt_paths": {
    "/engineers": "the engineer lane lists every capability and its trigger by design",
    "/how": "explains the mechanism to engineers",
-   "/proof": "live proof shows ledger rows by design",
    "/live": "operations status for engineers",
    "/claims": "the claims register names probes and files",
    "/roadmap": "the public roadmap names item ids",
@@ -77,7 +76,7 @@
   "_doc": "User paths come from doctrine/stakeholders.json: each audience's entry page (/for/<id>) and its ordered steps. extra holds paths that are not an audience's (the idea-to-start happy path). Funnel completion = share of a day's visitors who reached the entry and then each later step in order, read from first-party hits (a visitor id rotates daily, so a path is measured within one day).",
   "extra": [
    {"id": "home-to-setup", "audience": "developers", "entry": "/", "steps": ["/setup"], "label": "Home to guided set-up"},
-   {"id": "home-to-proof", "audience": "funders", "entry": "/", "steps": ["/proof"], "label": "Home to live proof"}
+   {"id": "home-to-proof", "audience": "funders", "entry": "/", "steps": ["/live"], "label": "Home to live proof"}
   ],
   "window_days": 7,
   "min_entries": 30,

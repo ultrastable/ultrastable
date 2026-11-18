@@ -79,14 +79,15 @@ for (let i = 0; i < 2; i++) await post2("/api/answer", { id: id2, a: "yes" });
 for (let i = 0; i < 4; i++) { r = await mod.fetch(new Request("https://ultrastable.io/s/" + id2 + "/make"), bad); }
 assert.equal(kv.get("state:" + id2), "failed"); assert.match(await r.text(), /Something went wrong/);
 r = await mod.fetch(new Request("https://ultrastable.io/s/0000000000"), E2); assert.equal(r.status, 404);
-r = await get("https://ultrastable.net/"); assert.equal(r.headers.get("location"), "https://ultrastable.io/proof");
+r = await get("https://ultrastable.net/"); assert.equal(r.headers.get("location"), "https://ultrastable.io/live");
 r = await get("https://www.ultrastable.io/how"); assert.equal(r.headers.get("location"), "https://ultrastable.io/how");
-for (const p of ["/", "/engineers", "/dashboard", "/roadmap", "/how", "/showcase", "/proof", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
+for (const p of ["/", "/engineers", "/dashboard", "/roadmap", "/how", "/showcase", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
   r = await get("https://ultrastable.io" + p); assert.equal(r.status, 200, p);
   const h = await r.text(); assert.match(h, /<body/); assert.match(h, /rel="canonical"/);
   assert.ok(((h.replace(/<style>[\s\S]*?<\/style>/, "")).match(/class="btn btn-primary"/g) || []).length <= 1, p + " has at most one primary action");
 }
-assert.match(await (await get("https://ultrastable.io/")).text(), /Live checks are loading/, "offline claims fail soft");
+r = await get("https://ultrastable.io/proof"); assert.equal(r.status, 301); assert.equal(r.headers.get("location"), "https://ultrastable.io/live", "PROOF-OWN-1");
+assert.match(await (await get("https://ultrastable.io/")).text(), /claims verified against code/, "home status is Ultrastable's own");
 assert.match(await (await get("https://ultrastable.io/")).text(), /Directed by[^<]*<a[^>]*>Rowan Brad Quni-Gudzinas<\/a>, founder and director of Ultrastable/, "BRAND: the platform credits its director on every page");
 assert.equal((await get("https://ultrastable.io/nope")).status, 404);
 assert.equal((await (await get("https://ultrastable.io/health")).json()).worker, "ultrastable-site");

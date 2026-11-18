@@ -126,6 +126,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["reach"]:
         from . import reach
         return reach.main(_av[1:])
+    if _av[:1] == ["proofown"]:
+        from . import proofown
+        return proofown.main(_av[1:])
     if _av[:1] == ["uiux"]:
         from . import uiux
         return uiux.main(_av[1:])

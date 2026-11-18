@@ -1,6 +1,6 @@
 // ultrastable-site: the public presence of Ultrastable, the self-governing development platform (ULTRASTABLE-SITE-1, 2026-11-10).
-// Canonical host ultrastable.io; ultrastable.app and ultrastable.net redirect to it (/pilot and /proof). Live proof comes from
-// the platform claims QNFO publishes as customer zero. Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
+// Canonical host ultrastable.io; ultrastable.app and ultrastable.net redirect to it (/pilot and /live). Live proof (/live) shows only
+// Ultrastable's own records; /proof is a 301 to /live (PROOF-OWN-1). Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
 import { routeChat } from "../seed/worker/src/airoute.js"; // AI-ROUTER-1: cache, dedupe, free-first, learned routing for every site model call
 import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: site model calls spend from the owner's budget
@@ -33,7 +33,6 @@ import { connectionsRoute } from "./connections.js"; // CONNECTIONS-1
 import { internalDeploy } from "./deployer.js";
 var VERSION = "0.15.0";
 const CANON = "ultrastable.io";
-const CLAIMS_URL = "https://qnfo.org/api/platform-claims";
 const PILOT_MAIL = "pilot@ultrastable.io";
 
 const BASE = ":root{color-scheme:light dark;--bg:#f6f1e7;--sf:#fffdf8;--sf2:#efe8d9;--ink:#14120f;--ink2:#5b574f;--line:#ddd5c5;--ac:#b83800;--on:#fff;--soft:#fde6d9;--good:#0a7a3d;--bad:#b3261e}@media(prefers-color-scheme:dark){:root{--bg:#0b1a15;--sf:#12342a;--sf2:#0f2b22;--ink:#f6f1e7;--ink2:#c9d4cc;--line:#1f4a3c;--ac:#ff7f4d;--on:#0b1a15;--soft:#1b3d31;--good:#4cc38a;--bad:#ff8a80}}"
@@ -66,39 +65,26 @@ function shell(opts, body) {
   return "<!doctype html><html lang=\"en\"><head>" + dsHead(opts.title, opts.description, CSS)
     + "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><meta property=\"og:image\" content=\"https://" + CANON + "/social-card.png\"><meta property=\"og:image:width\" content=\"640\"><meta property=\"og:image:height\" content=\"320\"><meta property=\"og:image:alt\" content=\"Coding agents write code. Ultrastable runs the system.\"><meta property=\"og:site_name\" content=\"Ultrastable\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"" + esc(opts.title) + "\"><meta name=\"twitter:description\" content=\"" + esc(opts.description) + "\"><meta name=\"twitter:image\" content=\"https://" + CANON + "/social-card.png\"><meta name=\"theme-color\" content=\"#12342A\"><link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\"><link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
     + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
-    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/proof\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
+    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/live\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
-    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/proof\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
+    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/live\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
     + "<div class=\"us-foot\" id=\"family\">The Ultrastable family: <a href=\"https://" + CANON + "/\">" + esc(SH.domains.io.host) + "</a> (platform and product) · <a href=\"/showcase/practical-solutions\">" + esc(SH.domains.org.host) + "</a> (public-benefit demos) · <a href=\"/family.json\">family.json</a></div>"
     + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
     + "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"Ultrastable\",\"url\":\"https://ultrastable.io\",\"creator\":{\"@type\":\"Person\",\"name\":\"Rowan Brad Quni-Gudzinas\",\"jobTitle\":\"Founder and Director, Ultrastable\",\"url\":\"https://rwnq8.github.io\",\"sameAs\":[\"https://orcid.org/0009-0002-4317-5604\",\"https://github.com/rwnq8\",\"https://www.linkedin.com/in/rowan-quni\"]}}</script></main><script src=\"/webmcp.js\" defer></script></body></html>";
 }
 
-let CACHE = { at: 0, data: null };
-async function claims() {
-  const now = Date.now();
-  if (CACHE.data && now - CACHE.at < 300000) return CACHE.data;
-  try {
-    const r = await fetch(CLAIMS_URL, { headers: { accept: "application/json" }, signal: AbortSignal.timeout(4000) });
-    if (!r.ok) throw new Error("status " + r.status);
-    const d = await r.json();
-    if (!Array.isArray(d.claims)) throw new Error("no claims");
-    CACHE = { at: now, data: d };
-    return d;
-  } catch (e) { return CACHE.data; }
+function statusLine() {
+  // Own records only (PROOF-OWN-1): the count comes from Ultrastable's verified-claims register, never from another system.
+  const t = VERIFIED.summary;
+  return t.pass + " of " + t.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ".";
 }
 
-function statusLine(d) {
-  if (!d) return "Live checks are loading; reload in a minute.";
-  return d.passing + " of " + d.total + " claims pass their live check right now (checked " + esc(String(d.checked_at || "").slice(0, 16).replace("T", " ")) + " UTC).";
-}
-
-function home(d, ux) {
+function home(ux) {
   return shell({ path: "/", title: "Ultrastable: the foundation for any autonomous system", description: "Ultrastable is the foundation for any autonomous system. Vibe coding writes the code you ask for. Ultrastable decides what to build next, ships it, proves it live and keeps score of how often it was right." },
     "<section class=\"us-hero\"><h1>Start with a bare idea. We keep improving it.</h1><p class=\"us-lede\">Vibe coding stops at a thin first draft and a coding agent waits to be told what to do. Behind the scenes, Ultrastable's portfolio, program and product managers measure what you run, decide what to improve next and keep shipping it, on a back end you budget for. Ultrastable is the foundation for any autonomous system.</p>"
     + IV.askBar("Tell me what is on your mind…")
-    + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">" + esc(slotText("home.setup_label", "primary_label", "Set up my own", ux)) + "</a><a class=\"btn\" href=\"/proof\">See the live proof</a></div>"
-    + "<div class=\"us-status\" role=\"status\">" + statusLine(d) + "</div></section>"
+    + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">" + esc(slotText("home.setup_label", "primary_label", "Set up my own", ux)) + "</a><a class=\"btn\" href=\"/live\">See the live proof</a></div>"
+    + "<div class=\"us-status\" role=\"status\">" + statusLine() + "</div></section>"
     + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
     + "<h2>Who are you?</h2><div class=\"us-grid c3\">" + SH.audiences.map(audienceCard).join("") + "</div>"
     + "<h2>Test cases</h2><div class=\"us-grid c2\">" + SH.showcases.filter(function (c) { return c.status !== "sunsetting"; }).map(caseCard).join("") + "</div><p><a href=\"/showcase\">All test cases, including the earlier testbed</a></p>"
@@ -114,7 +100,7 @@ function home(d, ux) {
     + "<h2>It questions what it does not know</h2><p>Improving only what is known makes the solution space smaller each time. So the managers also audit their own ignorance: every loop is asked inverted questions (what if the opposite were true, what would a world look like where this was false, what are we pretending not to know) drawn from the Universal Ignorance Audit, pre-mortems and red teaming. Each answer, including 'we cannot know', is recorded, and a gap found becomes a new objective. Coverage and findings are on the <a href=\"/live\">live page</a>.</p>"
     + "<h2>Works with the agents you already use</h2><p>Ultrastable is the layer around coding agents, not another one. Open models on its own code loop, GitHub Copilot and Claude Code sessions all take work through one claim ledger, so two agents never edit the same file.</p>"
     + "<h2>Where it fits</h2>" + marketTable()
-    + "<h2>Proven in production</h2><p>It has run a live system since August 2026, with merged pull requests, failure detectors and a scored prediction history that you can check on the <a href=\"/proof\">live proof page</a>. It is one installation, and the <a href=\"/how#gaps\">honest gaps</a> are listed on this site.</p>"
+    + "<h2>Proven in production</h2><p>It has run a live system since August 2026, with merged pull requests, failure detectors and a scored prediction history that you can check on the <a href=\"/live\">live proof page</a>. It is one installation, and the <a href=\"/how#gaps\">honest gaps</a> are listed on this site.</p>"
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/pilot\">Join the pilot</a></div>");
 }
 
@@ -178,16 +164,6 @@ function claimsPage() {
     "<div class=\"head\"><h1>Verified claims</h1><p id=\"st\" role=\"status\">" + VERIFIED.summary.pass + " of " + VERIFIED.summary.total + " claims verified against code at commit " + esc(VERIFIED.commit) + ". Words must match code; a claim that stops matching fails the build and files its own fix item.</p></div>"
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Status</th><th>Claim, surface and probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
     + "<p class=\"meta\">Machine form: <a href=\"/api/claims\">/api/claims</a>. Registry: doctrine/claims.json; checker: python3 -m foundation claims --check. Generated copy (counts, tool lists) is rewritten from code, so it cannot drift; the reverse direction (shipped behaviour that no surface describes) is checked too.</p>");
-}
-
-async function proof() {
-  const d = await claims();
-  const rows = d ? d.claims.map(function (c) { return "<tr><td class=\"" + (c.pass ? "us-pass" : "us-fail") + "\">" + (c.pass ? "Pass" : "Fail") + "</td><td>" + esc(c.claim) + (c.detail ? "<br><small>" + esc(c.detail) + "</small>" : "") + "</td></tr>"; }).join("") : "";
-  return shell({ path: "/proof", title: "Live proof: Ultrastable claims checked now", description: "Every claim Ultrastable makes is a query against live records from its earlier testbed, run now." },
-    "<div class=\"head\"><h1>Live proof</h1><p id=\"st\" role=\"status\">" + statusLine(d) + "</p></div>"
-    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Check</th><th>Claim and what the check saw</th></tr></thead><tbody id=\"rows\">" + (rows || "<tr><td colspan=\"2\">Loading the checks from the testbed's records.</td></tr>") + "</tbody></table></div>"
-    + "<p class=\"meta\">The checks read records from the earlier testbed, a separate project (<a href=\"/showcase/qnfo\">test case</a>); source: <a href=\"" + CLAIMS_URL + "\">qnfo.org/api/platform-claims</a>. A claim that stops passing is fixed or removed from this site.</p>"
-    + (d ? "" : "<script>fetch(" + JSON.stringify(CLAIMS_URL) + ").then(function(r){return r.json()}).then(function(d){var e=function(s){return String(s==null?'':s).replace(/[&<>\"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]})};document.getElementById('st').textContent=d.passing+' of '+d.total+' claims pass their live check right now.';document.getElementById('rows').innerHTML=d.claims.map(function(c){return '<tr><td class=\"'+(c.pass?'us-pass':'us-fail')+'\">'+(c.pass?'Pass':'Fail')+'</td><td>'+e(c.claim)+(c.detail?'<br><small>'+e(c.detail)+'</small>':'')+'</td></tr>'}).join('')}).catch(function(){document.getElementById('st').textContent='The checks could not be read just now; reload in a minute.'})</script>"));
 }
 
 function pilot() {
@@ -741,7 +717,7 @@ async function statusPage(env) {
 const AGENT_PROMPT = "I want to start a project with Ultrastable (https://ultrastable.io), a system that runs itself so I do not have to code. "
   + "Read https://ultrastable.io/agent.md and follow it. Ask me, in plain words, what I want to make, then do every step you can yourself. "
   + "If a step needs me, give me one link and one thing to click, nothing else. Do not use technical words with me.";
-const AGENT_MD = "# Ultrastable: set-up instructions for an AI assistant\n\nYou are helping a person stand up an ongoing autonomous system (a service fleet, a data pipeline, a compliance or publishing operation). It needs setup, measurable objectives and a back end that costs money. If their idea is a one-off page, trip or hobby tool, say Ultrastable is not the right fit and stop. Goal: their system is live, measured and improving itself.\n\n1. Ask one question: what do they want to make or fix? Accept speech-to-text rambling; restate it in one sentence and confirm.\n2. Do everything you can with your own tools (create the GitHub project from the template, connect Cloudflare, open the first pull request). To run on another cloud, give that cloud's own assistant https://ultrastable.io/deploy.md and let it work out the deployment. Use their sign-ins only through the sign-in pages they approve; never ask them to paste passwords or keys into chat.\n3. If you cannot act, walk them through https://ultrastable.io/setup one question at a time. Each step is a single link and a single click.\n4. Speak plainly. No words like token, terminal, repo, API. Say what you are doing and what they should see.\n5. Finish by telling them where to watch their project (https://ultrastable.io/proof) and that it now maintains itself; they only need to come back with new ideas.\n";
+const AGENT_MD = "# Ultrastable: set-up instructions for an AI assistant\n\nYou are helping a person stand up an ongoing autonomous system (a service fleet, a data pipeline, a compliance or publishing operation). It needs setup, measurable objectives and a back end that costs money. If their idea is a one-off page, trip or hobby tool, say Ultrastable is not the right fit and stop. Goal: their system is live, measured and improving itself.\n\n1. Ask one question: what do they want to make or fix? Accept speech-to-text rambling; restate it in one sentence and confirm.\n2. Do everything you can with your own tools (create the GitHub project from the template, connect Cloudflare, open the first pull request). To run on another cloud, give that cloud's own assistant https://ultrastable.io/deploy.md and let it work out the deployment. Use their sign-ins only through the sign-in pages they approve; never ask them to paste passwords or keys into chat.\n3. If you cannot act, walk them through https://ultrastable.io/setup one question at a time. Each step is a single link and a single click.\n4. Speak plainly. No words like token, terminal, repo, API. Say what you are doing and what they should see.\n5. Finish by telling them where to watch their project (https://ultrastable.io/live) and that it now maintains itself; they only need to come back with new ideas.\n";
 // USER-PATH-1: guided set-up. One question per screen, every action one click, progress kept in this browser only.
 // Steps come from doctrine/user-path.json (generated into userpath.js); no step needs a command, a key or a file.
 function setup() {
@@ -827,7 +803,7 @@ function contact() {
 }
 
 const ROBOTS = robots(CONTENT_SIGNAL, "https://" + CANON + "/sitemap.xml");  // AGENT-READY-2: explicit AI-bot groups, same policy as Content-Signal
-const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. Ultrastable runs on itself. Its earlier testbed and a second system, Practical Solutions, are described under test cases.\n\n- [Connect your agent](https://ultrastable.io/connect-agent): one click for VS Code, Cursor, Claude, Codex\n- [Live proof](https://" + CANON + "/proof): claims checked against live records from the earlier testbed\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n\n\n## Control-plane API (live)\n\n- [API index](https://ultrastable.io/api/v1): status, agents, work (on_deck, in_progress, blocked, done), activity, products, companion brief; OpenAPI at /openapi.json\n- [Operations dashboard](https://dashboard.ultrastable.io/): the same data as a page, refreshed every 30 seconds\n- [A2A agent card](https://ultrastable.io/.well-known/agent-card.json), [API catalog](https://ultrastable.io/.well-known/api-catalog), MCP at /connect-agent (one-click add to VS Code, Cursor, Claude, Codex; no tokens), /mcp (" + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].length + " tools, generated from the code that serves them: " + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].map(function (t) { return t.name; }).join(", ") + ")\n- [Verified claims](https://" + CANON + "/claims): every statement on this site bound to a probe, checked on every change and daily against live\n- POST /api/v1/intake submits a backlog item with an integration bearer token\n";
+const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. Ultrastable runs on itself. Its earlier testbed and a second system, Practical Solutions, are described under test cases.\n\n- [Connect your agent](https://ultrastable.io/connect-agent): one click for VS Code, Cursor, Claude, Codex\n- [Live proof](https://" + CANON + "/live): changes the system shipped, from its own records\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n\n\n## Control-plane API (live)\n\n- [API index](https://ultrastable.io/api/v1): status, agents, work (on_deck, in_progress, blocked, done), activity, products, companion brief; OpenAPI at /openapi.json\n- [Operations dashboard](https://dashboard.ultrastable.io/): the same data as a page, refreshed every 30 seconds\n- [A2A agent card](https://ultrastable.io/.well-known/agent-card.json), [API catalog](https://ultrastable.io/.well-known/api-catalog), MCP at /connect-agent (one-click add to VS Code, Cursor, Claude, Codex; no tokens), /mcp (" + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].length + " tools, generated from the code that serves them: " + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].map(function (t) { return t.name; }).join(", ") + ")\n- [Verified claims](https://" + CANON + "/claims): every statement on this site bound to a probe, checked on every change and daily against live\n- POST /api/v1/intake submits a backlog item with an integration bearer token\n";
 
 const FAVICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"ultrastable\"><title>ultrastable</title><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></svg>";
 const SOCIAL = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1280 640\" width=\"1280\" height=\"640\"><title>ultrastable</title><defs><linearGradient id=\"g\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#12342A\"/><stop offset=\"1\" stop-color=\"#0B1A15\"/></linearGradient></defs><rect width=\"1280\" height=\"640\" fill=\"url(#g)\"/><g transform=\"translate(96 96) scale(2)\"><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></g><text x=\"96\" y=\"340\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#F6F1E7\">Coding agents write code.</text><text x=\"96\" y=\"430\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#FF5B1F\">Ultrastable runs the system.</text><text x=\"96\" y=\"530\" font-family=\"Georgia,serif\" font-size=\"32\" fill=\"#C9D4CC\">From one idea to a business that improves itself.</text><text x=\"1184\" y=\"590\" text-anchor=\"end\" font-family=\"Georgia,serif\" font-size=\"28\" fill=\"#FFC857\">ultrastable.io</text></svg>";
@@ -867,7 +843,7 @@ const handler = {
       if (u.pathname.startsWith("/s/" + sm[1] + "/api")) return siteRoutes(u, env, ctx, request);
       return Response.redirect("https://" + CANON + u.pathname, 302); } }
     if (host === "ultrastable.app") return Response.redirect("https://" + CANON + "/pilot", 301);
-    if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/proof", 301);
+    if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/live", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
     const an = env && env.DB ? await handleAnalytics(request, env, { hosts: [CANON] }) : null; if (an) return an;
     if (request.method === "POST" && u.pathname === "/api/meta/ingest") return metaIngest(request, env); // META-SIGNAL-1
@@ -877,6 +853,7 @@ const handler = {
     { const wh = await webhooksRoute(request, env, ctx, authIntegration); if (wh) return wh; } // WEBHOOKS-1: /hooks/<provider>, /api/v1/webhooks, /api/v1/hooks
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
+    if (u.pathname.replace(/\/$/, "") === "/proof") return Response.redirect("https://" + CANON + "/live", 301); // PROOF-OWN-1: /proof served the earlier testbed's records; deprecated
     if (u.pathname === "/live" || u.pathname === "/api/live") return liveResponse(u, request, env, shell, HTML);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/pilot") return pilotApplication(request, env);
@@ -885,19 +862,18 @@ const handler = {
     { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/showcase", "/for", "/proof", "/claims", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/org", "/how", "/showcase", "/for", "/claims", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && (PAGES.includes(pth) || /^\/(for|showcase)\/[a-z0-9-]+$/.test(pth))) { /* UIUX-1: audience and case pages are path steps, so they are counted too */ const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     { const m = /^\/(for|showcase)\/([a-z0-9-]+)\/?$/.exec(u.pathname); if (m) { const h = m[1] === "for" ? forAudience(m[2]) : showcaseCase(m[2]); if (h) return new Response(h, { headers: HTML }); } }
     switch (u.pathname.replace(/\/$/, "") || "/") {
       case "/": { // UIUX-1: the running experiment on this step picks the wording; exposure is one first-party event, bots and Do Not Track are served the control and not counted
         const ux = await experimentFor(request, env, "/");
         if (ux && ux.record && env && env.DB) { const w = record(env, request, { host: CANON, path: "/", ref: request.headers.get("referer"), name: exposureName(ux) }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
-        return new Response(home(await claims(), ux), { headers: ux ? { ...HTML, "Cache-Control": "private, no-cache", "X-Experiment": ux.id + ":" + ux.arm } : HTML }); }
+        return new Response(home(ux), { headers: ux ? { ...HTML, "Cache-Control": "private, no-cache", "X-Experiment": ux.id + ":" + ux.arm } : HTML }); }
       case "/how": return new Response(how(), { headers: HTML });
       case "/showcase": return new Response(showcase(), { headers: HTML });
-      case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/proof"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
+      case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/live"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/for": return new Response(forIndex(), { headers: HTML });
-      case "/proof": return new Response(await proof(), { headers: HTML });
       case "/claims": return new Response(claimsPage(), { headers: HTML });
       case "/changelog": case "/api/changelog": return Response.redirect("https://dashboard.ultrastable.io" + pth + u.search, 302); // PROVENANCE-1: the public changelog is served by the dashboard worker
       case "/self": case "/.well-known/ultrastable": return new Response(JSON.stringify(SELF, null, 1), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300", "Link": "</self>; rel=\"describedby\"" } });

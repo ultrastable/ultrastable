@@ -123,7 +123,7 @@ export default {
     },
     {
      "label": "Live proof",
-     "href": "/proof"
+     "href": "/live"
     },
     {
      "label": "Engineers lane",
@@ -166,7 +166,7 @@ export default {
     },
     {
      "label": "Live proof",
-     "href": "/proof"
+     "href": "/live"
     },
     {
      "label": "Honest gaps",
@@ -242,7 +242,7 @@ export default {
    "links": [
     {
      "label": "Live proof",
-     "href": "/proof"
+     "href": "/live"
     }
    ],
    "domain": "io"

@@ -13,7 +13,7 @@ const ASSET = (f) => readFileSync(new URL("../site/assets/" + f, import.meta.url
 const ENV = { ASSETS: { get: async (k) => { const b = ASSET(k); return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength); } } };
 globalThis.fetch = async () => { throw new Error("offline"); };
 const SH = JSON.parse(readFileSync(new URL("../doctrine/stakeholders.json", import.meta.url), "utf8"));
-const PATHS = ["/", "/for", "/showcase", "/how", "/product", "/proof", "/team", "/faq", "/contact", "/pilot", "/engineers",
+const PATHS = ["/", "/for", "/showcase", "/how", "/product", "/team", "/faq", "/contact", "/pilot", "/engineers",
   ...SH.audiences.map(a => "/for/" + a.id), ...SH.showcases.map(c => "/showcase/" + c.id)];
 // the owner dashboard's public page, served from an in-memory database seeded like the dashboard tests
 const dash = (await import(pathToFileURL(fileURLToPath(new URL("../dashboard/worker.js", import.meta.url))).href)).route;

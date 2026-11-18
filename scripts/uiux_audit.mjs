@@ -23,7 +23,7 @@ const LIVE = flag("--live");
 const ONLY = (argv[argv.indexOf("--only") + 1] || "").split(",").filter(x => x.startsWith("/"));
 
 // ---- what to audit ----
-const PAGES = ["/", "/for", "/showcase", "/how", "/product", "/proof", "/team", "/faq", "/contact", "/pilot", "/engineers", "/start", "/setup", "/privacy", "/accessibility",
+const PAGES = ["/", "/for", "/showcase", "/how", "/product", "/team", "/faq", "/contact", "/pilot", "/engineers", "/start", "/setup", "/privacy", "/accessibility",
   ...SH.audiences.map(a => "/for/" + a.id), ...SH.showcases.map(c => "/showcase/" + c.id)];
 const pages = ONLY.length ? ONLY : PAGES;
 const PATHS = [
