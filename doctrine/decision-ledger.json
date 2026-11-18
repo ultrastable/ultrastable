@@ -2503,6 +2503,14 @@
    "title": "qnfo-live rendered-page probe",
    "body": "Builtin runtime probe fetches deployed pages and compares rendered QNFO mentions with a baseline; unreachable pages are unmeasured.",
    "probe": "grep:foundation/rules.py::def p_qnfo_live"
+  },
+  {
+   "id": "lesson-2026-11-18-pages-live-probes-every-bundle-host",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "pages-live probes every bundle host",
+   "body": "pages_live_urls lists each /api/freshness route; Practical Solutions now serves one reporting ensemble ledger age.",
+   "probe": "grep:doctrine/rules.json::pages_live_urls"
   }
  ]
 }

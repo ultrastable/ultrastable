@@ -187,15 +187,22 @@ def p_merged_green(root, d):
 def p_pages_live(root, d, now=None):
     """Slot for the page-freshness probe (thread 'Make every site page truly live'): it writes ops/pages-live.json {at, failing: [...]}."""
     s = jl(root, "ops/pages-live.json")
-    if not s:  # the deployed site answers for itself: /api/freshness is 200 when every source is inside its cadence, 503 when stale
+    if not s:  # each deployed site answers for itself: /api/freshness is 200 when every source is inside its cadence, 503 when stale
         import urllib.request, urllib.error
-        try:
-            urllib.request.urlopen("https://ultrastable.io/api/freshness", timeout=15)
-            return "ok", "https://ultrastable.io/api/freshness answered 200"
-        except urllib.error.HTTPError as e:
-            return ("violated", "/api/freshness answered 503: a page source is stale") if e.code == 503 else ("unmeasured", f"/api/freshness answered {e.code}")
-        except (urllib.error.URLError, OSError) as e:
-            return "unmeasured", f"/api/freshness unreachable: {type(e).__name__}"
+        urls = d.get("pages_live_urls") or ["https://ultrastable.io/api/freshness"]
+        stale, unmeasured = [], []
+        for u in urls:
+            try:
+                urllib.request.urlopen(u, timeout=15)
+            except urllib.error.HTTPError as e:
+                (stale if e.code == 503 else unmeasured).append(f"{u} ({e.code})")
+            except (urllib.error.URLError, OSError) as e:
+                unmeasured.append(f"{u} ({type(e).__name__})")
+        if stale:
+            return "violated", "a page source is stale: " + ", ".join(stale)
+        if unmeasured:
+            return "unmeasured", "not measured: " + ", ".join(unmeasured)
+        return "ok", f"{len(urls)} /api/freshness route(s) answered 200"
     now = now or dt.datetime.now(dt.timezone.utc)
     if (now - dt.datetime.fromisoformat(s["at"].replace("Z", "+00:00"))).total_seconds() > 26 * 3600:
         return "unmeasured", "page-freshness result is older than 26 h"

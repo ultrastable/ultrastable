@@ -344,5 +344,9 @@
   "/showcase",
   "/changelog",
   "/api/live/changes"
+ ],
+ "pages_live_urls": [
+  "https://ultrastable.io/api/freshness",
+  "https://tenant-ps-web.ultrastable.workers.dev/api/freshness"
  ]
 }
