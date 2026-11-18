@@ -493,6 +493,7 @@ export default {
   "gap-register",
   "glossary",
   "guiding-directive",
+  "host-sync",
   "hosts",
   "ignition-ladder",
   "index-refresh",
@@ -1774,6 +1775,19 @@ export default {
     "summary": "HOSTS-1: one adapter interface (seed/worker/src/hosts.js) for Cloudflare, GitHub Actions and Google Cloud. Signed push and workflow_run webhooks deploy the touched workers through the first healthy host with failover; every deploy, failure and inbound host event (POST /hook/host) lands as a commit status or check run; the hosts loop probes each host's health and redispatches through the credential-free GitHub Actions host when a push has no deploy after 30 minutes. The host-hooks loop (hourly) derives the webhook secrets inside the Worker from CREDENTIAL_KEY and creates, repairs and re-checks the repository webhook itself through the GitHub App token; the site Worker forwards /hook/github and /hook/host to the tick. A token without hook rights is recorded plainly and the polling path stays.",
     "trigger": "push and workflow_run webhooks on /hook/github, POST /hook/host, and every tick (loop 'hosts')",
     "workflows": []
+   },
+   {
+    "closing_probe": "grep:workers/core/hostsync/index.js::export async function reconcile",
+    "id": "host-sync",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "1d",
+    "summary": "The repository and every host that runs a system stay one state (HOSTSYNC-1): each verified deploy is recorded as expected, the host's live runtime state (module hash, binding names, cron schedules, workers.dev; never a secret value) is read through the deploy gateway and written back to ops/hosting/state.json, and a host that differs from the repository is redeployed. Backend only.",
+    "trigger": "after the deploy-gateway workflow, a host-changed callback, and a daily run",
+    "workflows": [
+     "host-sync"
+    ]
    }
   ],
   "workers": [
@@ -1915,6 +1929,12 @@ export default {
     "id": "funding-maintenance",
     "loops": [
      "funding-verify"
+    ]
+   },
+   {
+    "id": "host-sync",
+    "loops": [
+     "host-sync"
     ]
    },
    {

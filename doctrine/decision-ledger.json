@@ -2198,6 +2198,15 @@
    "probe": "file:seed/standards/surfaces.json"
   },
   {
+   "id": "decision-2026-11-18-hostsync-1-repo-and-host-state-reconcile-through-the-deploy-",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "HOSTSYNC-1: repo and host state reconcile through the deploy gateway",
+   "body": "The deploy gateway serves read-only GET /state (names and hashes only). core/hostsync reconciles declared scripts in deploy/hosting.json with the host, writes ops/hosting/state.json back to the repo and redeploys on drift; the host-sync workflow runs after deploy-gateway, on a host-changed callback and daily. Complements HOSTS-1 (webhooks and health). Open: wire tenant repos with their own hosting declaration; D1 migration state and zone routes.",
+   "probe": "grep:workers/core/hostsync/index.js::export async function reconcile",
+   "session": "session_0156nqDrtJzL18qgzyo9Tcgz"
+  },
+  {
    "id": "decision-2026-11-18-ciwatch-watches-ultrastable-github",
    "kind": "decision",
    "date": "2026-11-18",

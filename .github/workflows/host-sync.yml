@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
+# HOSTSYNC-1: repository <-> host reconciliation. Authenticates to the host with this run's GitHub OIDC token (no stored secret).
+# budget: about 1 minute per run; runs after a deploy workflow finishes, on a host callback, and once a day.
+# trigger: workflow_run of the deploy workflows, repository_dispatch host-changed (the callback a host or its webhook can send), daily cron as the fallback; never faster than daily on a timer.
+# free-alternative: the same tools/hostsync.mjs can run from the tick Worker's cron against the gateway; no minutes needed.
+name: host-sync
+on:
+  workflow_run: { workflows: [deploy-gateway], types: [completed] }
+  repository_dispatch: { types: [host-changed] }
+  schedule: [{ cron: "17 5 * * *" }]
+  workflow_dispatch: {}
+concurrency: { group: host-sync, cancel-in-progress: false }
+permissions: { contents: write, id-token: write, actions: write }
+jobs:
+  sync:
+    if: ${{ vars.HALT != '1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node --test workers/core/hostsync/hostsync.test.js
+      - name: reconcile the host with the repository
+        env: { GITHUB_TOKEN: "${{ github.token }}" }
+        run: node workers/tools/hostsync.mjs run --declared deploy/hosting.json
+      - name: write the runtime state back to the repository
+        run: |
+          git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
+          git add ops/hosting
+          git diff --cached --quiet || { git commit -m "host-sync: runtime state of the host (HOSTSYNC-1)" && for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done; }

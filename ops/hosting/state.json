@@ -1,0 +1,33 @@
+{
+ "host": "cloudflare-gateway",
+ "scripts": {
+  "ultrastable-deploy-gateway": {
+   "script": "ultrastable-deploy-gateway",
+   "found": true,
+   "sha256": "927905a0eb7b213c955afb2d01eec58578bdadd24f7350985c893e0a98d91a1a",
+   "bindings": [
+    {
+     "type": "plain_text",
+     "name": "ALLOW"
+    },
+    {
+     "type": "plain_text",
+     "name": "CF_ACCOUNT_ID"
+    },
+    {
+     "type": "secret_text",
+     "name": "CF_DEPLOY_TOKEN"
+    }
+   ],
+   "crons": [],
+   "workers_dev": true,
+   "compat_date": "2026-10-01",
+   "compat_flags": [],
+   "deployment": {
+    "id": "257dcc02-89be-4c9b-851b-137b86922c3a",
+    "created_on": "2026-11-18T00:48:20.090869Z"
+   },
+   "read_errors": []
+  }
+ }
+}

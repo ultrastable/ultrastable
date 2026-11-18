@@ -273,6 +273,16 @@
     "0 7 * * 1"
    ]
   },
+  "host-sync.yml": {
+   "events": [
+    "repository_dispatch",
+    "workflow_dispatch",
+    "workflow_run"
+   ],
+   "crons": [
+    "17 5 * * *"
+   ]
+  },
   "index.yml": {
    "events": [
     "workflow_dispatch"
