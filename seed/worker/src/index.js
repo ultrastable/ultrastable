@@ -118,7 +118,7 @@ export default {
       step('watchdog-gh', () => watchGithub({ token, repo: main }));  // RESILIENCE-1: the Worker restarts the GitHub watchdog when it stalls; the GitHub watchdog restarts this tick
       for (const [loop, fn] of [...steps].sort((a, z) => carried.has(z[0]) - carried.has(a[0]))) await b(loop, fn);  // SUBREQUEST-METER-1: deferred loops first, then the phase's own
       await b('cost-samples', async () => ({ free_tier: freeTier, samples: await sampleCosts(env.DB, { token: env.CF_ANALYTICS_TOKEN, budgets: config.cost_budgets }), retention: await pruneAll(env.DB, { rules: config.retention, archive: (table, rows) => archiveRows(env.DB, table)(rows) }), audit: await seal(env.DB, auditSinks(env, token, repos)) }));  // AUDIT-CHAIN-1: aged rows are chained, then sealed to the archive  // RETENTION-1: the daily prune rides the hourly cost beat (once a day by its own gate)  // COSTGUARD-1: hourly D1 rows-read sample feeds the D1 budget failure modes
-      await writeDeferred(env.DB, deferred);
+      const wd = await writeDeferred(env.DB, deferred); if (wd && wd.error) console.error(wd.error);
     })().catch(e => console.error('lane', e && e.message));
     ctx.waitUntil(loopsDone);
     const selfDone = beat(env.DB, 'analytics-selfcheck', () => selfcheck(env, hosts(env)[0])).catch(e => console.error('selfcheck', e && e.message));

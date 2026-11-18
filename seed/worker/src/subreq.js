@@ -39,7 +39,7 @@ export async function readDeferred(db) {
   try { const r = await db.prepare(`SELECT value FROM org WHERE key=?`).bind(KEY).first(); const v = r && JSON.parse(r.value); return Array.isArray(v) ? v : []; } catch { return []; }
 }
 export async function writeDeferred(db, list) {
-  try { await db.prepare(`INSERT INTO org (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(KEY, JSON.stringify([...list])).run(); } catch (e) { console.error('deferred not recorded:', e && e.message); }
+  try { await db.prepare(`INSERT INTO org (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(KEY, JSON.stringify([...list])).run(); } catch (e) { return { error: 'deferred not recorded: ' + String((e && e.message) || e).slice(0, 160) }; }  // the caller's loop result carries it
 }
 
 // Wraps a loop body: deferral instead of failure. `deferred` (a Set) collects the loops to carry to the next invocation.
