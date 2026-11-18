@@ -16,7 +16,7 @@ export async function thumbprint(jwk) {  // RFC 7638 for OKP keys
 }
 
 async function loadKey(env) {
-  await env.ORG.prepare("CREATE TABLE IF NOT EXISTS agent_keys (id TEXT PRIMARY KEY, purpose TEXT NOT NULL, jwk_private TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')))").run();
+  await env.ORG.prepare("CREATE TABLE IF NOT EXISTS agent_keys (id TEXT PRIMARY KEY, purpose TEXT NOT NULL, jwk_private TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')))__).run();
   const row = await env.ORG.prepare("SELECT jwk_private FROM agent_keys WHERE purpose = 'web-bot-auth' ORDER BY created_at DESC LIMIT 1").first();
   let priv = row && JSON.parse(row.jwk_private);
   if (!priv) {
@@ -54,11 +54,11 @@ export async function verifyRequest(request, getDirectory, now = Date.now()) {
   if (!input || !sigH || !agent) return { ok: false, reason: "unsigned" };
   const m = /^sig1=(\(([^)]*)\)((?:;[^;]+)*))$/.exec(input.trim()); if (!m) return { ok: false, reason: "bad signature-input" };
   const params = m[1], comps = m[2].split(" ").filter(Boolean).map(s => s.replace(/"/g, ""));
-  const meta = Object.fromEntries(m[3].split(";").filter(Boolean).map(p => { const i = p.indexOf("="); return [p.slice(0, i), p.slice(i + 1).replace(/^"|"$/g, "")]; }));
+  const meta = Object.fromEntries(m[3].split(";").filter(Boolean).map(p => { const i = p.indexOf(""); return [p.slice(0, i), p.slice(i + 1).replace(/^"|"$/g, "")]; }));
   if (meta.tag !== "web-bot-auth" || meta.alg !== "ed25519") return { ok: false, reason: "not a web-bot-auth ed25519 signature" };
   if (!comps.includes("@authority") || !comps.includes("signature-agent")) return { ok: false, reason: "components must cover @authority and signature-agent" };
   const t = Math.floor(now / 1000); if (!(Number(meta.created) <= t + 30) || !(Number(meta.expires) > t)) return { ok: false, reason: "signature outside its validity window" };
-  const sm = /^sig1=:([A-Za-z0-9+/=]+):$/.exec(sigH.trim()); if (!sm) return { ok: false, reason: "bad signature" };
+  const sm = /^sig1=:(.*):$/.exec(sigH.trim()); if (!sm) return { ok: false, reason: "bad signature" };
   const agentOrigin = agent.replace(/^"|"$/g, ""); if (!/^https:\/\/[a-z0-9.-]+(:\d+)?$/i.test(agentOrigin)) return { ok: false, reason: "signature-agent must be an https origin" };
   const dir = await getDirectory(agentOrigin); const jwk = dir && (dir.keys || []).find(x => x.kid === meta.keyid);
   if (!jwk || await thumbprint(jwk) !== meta.keyid) return { ok: false, reason: "key not in the agent's directory" };
@@ -108,4 +108,18 @@ export function directoryCache({ ttlMs = 3600e3, missTtlMs = 300e3, max = 256, c
   get.size = () => hits.size;
   get.clear = () => { hits.clear(); inflight.clear(); };
   return get;
+}
+
+// Initialize directoryCache with default parameters
+const cache = directoryCache();
+
+// Modified fetchDirectory to use directoryCache
+export async function fetchDirectoryCached(origin, f = fetch, env = null) {
+  return cache(origin, async () => {
+    const init = { headers: { accept: DIRECTORY_TYPE }, signal: AbortSignal.timeout(4000) };
+    const r = env ? await signedFetch(env, origin + DIRECTORY_PATH, init, f) : await f(origin + DIRECTORY_PATH, init);
+    if (!r.ok) return null;
+    const d = await r.json().catch(() => null);
+    return d && Array.isArray(d.keys) ? d : null;
+  });
 }
