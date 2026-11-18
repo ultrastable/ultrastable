@@ -75,11 +75,11 @@ test("fleet snapshot: token required, stored, shown to the owner, and rendered t
   const page = await (await call(e, "/owner")).text(); assert.match(page, /Funding, IP, trust and bootstrap/);
   assert.equal((await post("x".repeat(200001), "Bearer tok")).status, 413);
 });
-test("snapshot built from the repo has the eight panels (glossary and loops included)", async () => {
+test("snapshot built from the repo has the nine panels (glossary and loops included)", async () => {
   const { execFileSync } = await import("node:child_process");
   const out = execFileSync("python3", ["../scripts/dashboard_snapshot.py", "--today", "2026-11-10", "--out", "/tmp/snap-test.json"], { cwd: new URL("..", import.meta.url).pathname, encoding: "utf8" });
   const snap = JSON.parse(readFileSync("/tmp/snap-test.json", "utf8"));
-  assert.deepEqual(snap.panels.map(p => p.id), ["funding", "ip", "trust", "cards", "bootstrap", "glossary", "loops", "unknowns"]); assert.deepEqual(snap.problems, []); assert.ok(out.includes("panels"));
+  assert.deepEqual(snap.panels.map(p => p.id), ["funding", "ip", "trust", "cards", "bootstrap", "glossary", "loops", "unknowns", "rules"]); assert.deepEqual(snap.problems, []); assert.ok(out.includes("panels"));
 });
 
 test("analytics: holding-page views and beacon hits show on the owner dashboard; breach is emailed", async () => {

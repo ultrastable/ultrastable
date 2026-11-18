@@ -1,1454 +1,1456 @@
 {
- "_doc": "FLOW-DIRECTIVE-1 (Rowan, 2026-11-12): every loop declares its typed inflows, outflows (with the binding each travels on) and its feedback path, so its outcomes return as signals that change its next output. Read by foundation/flows.py (python3 -m foundation flows --check). Fleet twin: QNFO/qnfo-workers _shared/flow-registry.js.",
- "id": "FLOW-DIRECTIVE-1",
- "version": "1.0.0",
- "quote": "How is this information flowing in? And what are we doing with it flowing out? And that applies to any workflow, any.",
- "external_sources": {
-  "ext.app_users": "people who use a spun-off app on *.ultrastable.app (returned by app.launched as aggregate usage and verified-fix metrics, never personal data)",
-  "ext.site_visits": "readers of the public site (Cloudflare Web Analytics, returned by site.page)",
-  "ext.post_engagement": "replies, reposts and clicks on posts (returned by social.post)",
-  "ext.owner_goals": "IDEA.md and the owner's standing directives (instance manifest)",
-  "ext.outreach_replies": "funding programmes and recipients answering outreach (recorded by scripts/outreach.py reply)",
-  "ext.actions_quota": "GitHub Actions minutes used against the monthly quota",
-  "ext.frontier": "releases and posts of the leading agent platforms, coding agents and standards (doctrine/scout.json sources)",
-  "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons per day (doctrine/cost.json budgets)"
- },
- "flows": {
-  "qnfo-sauce": {
-   "inflows": [
-    {
-     "signal": "issue.filed",
-     "via": "file:docs/issues"
-    },
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    },
-    {
-     "signal": "deploys.record",
-     "via": "file:ops/deploys.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "file:docs/issues"
-    },
-    {
-     "signal": "criticality.k",
-     "via": "file:ops/criticality.jsonl"
-    }
-   ],
-   "feedback": "a closed item whose probe fails again reopens; a remedy that did not move its metric in the window is replaced; a family that keeps growing gets a doer item; the ignition gap count is read next to k on the following pass",
-   "bindings": []
+  "_doc": "FLOW-DIRECTIVE-1 (Rowan, 2026-11-12): every loop declares its typed inflows, outflows (with the binding each travels on) and its feedback path, so its outcomes return as signals that change its next output. Read by foundation/flows.py (python3 -m foundation flows --check). Fleet twin: QNFO/qnfo-workers _shared/flow-registry.js.",
+  "id": "FLOW-DIRECTIVE-1",
+  "version": "1.0.0",
+  "quote": "How is this information flowing in? And what are we doing with it flowing out? And that applies to any workflow, any.",
+  "external_sources": {
+    "ext.app_users": "people who use a spun-off app on *.ultrastable.app (returned by app.launched as aggregate usage and verified-fix metrics, never personal data)",
+    "ext.site_visits": "readers of the public site (Cloudflare Web Analytics, returned by site.page)",
+    "ext.post_engagement": "replies, reposts and clicks on posts (returned by social.post)",
+    "ext.owner_goals": "IDEA.md and the owner's standing directives (instance manifest)",
+    "ext.outreach_replies": "funding programmes and recipients answering outreach (recorded by scripts/outreach.py reply)",
+    "ext.actions_quota": "GitHub Actions minutes used against the monthly quota",
+    "ext.frontier": "releases and posts of the leading agent platforms, coding agents and standards (doctrine/scout.json sources)",
+    "ext.cf_analytics": "Cloudflare GraphQL analytics: D1 rows read and Workers AI neurons per day (doctrine/cost.json budgets)"
   },
-  "tick-heartbeat": {
-   "inflows": [
-    {
-     "signal": "backlog.ranked",
-     "via": "d1:ultrastable-org"
+  "flows": {
+    "qnfo-sauce": {
+      "inflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
+        }
+      ],
+      "feedback": "a closed item whose probe fails again reopens; a remedy that did not move its metric in the window is replaced; a family that keeps growing gets a doer item; the ignition gap count is read next to k on the following pass",
+      "bindings": []
     },
-    {
-     "signal": "metric.readings",
-     "via": "d1:ultrastable-org"
+    "tick-heartbeat": {
+      "inflows": [
+        {
+          "signal": "backlog.ranked",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "trust.scope",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "dispatch.items",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "feedback": "verdicts and readings from its own past ticks re-rank the next pull"
     },
-    {
-     "signal": "trust.scope",
-     "via": "d1:ultrastable-org"
+    "agent-executor": {
+      "inflows": [
+        {
+          "signal": "dispatch.items",
+          "via": "github:issues"
+        },
+        {
+          "signal": "repo.index",
+          "via": "file"
+        },
+        {
+          "signal": "budget.state",
+          "via": "file"
+        },
+        {
+          "signal": "rnd.priorities",
+          "via": "file:ops/rnd/priorities.json"
+        },
+        {
+          "signal": "cost.items",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
+        },
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        },
+        {
+          "signal": "adoption.outcomes",
+          "via": "file:ops/scout/adopted.jsonl"
+        }
+      ],
+      "feedback": "a red check or a reverted merge files an item the next tick takes",
+      "bindings": [
+        "ANTHROPIC_API_KEY",
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "change-gate": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "failing checks return to the executor as items",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "merge-lane": {
+      "inflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "lanewatch measures time to merge and files a stuck PR",
+      "bindings": [
+        "ANTHROPIC_API_KEY",
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "DASHBOARD_URL",
+        "FLEET_TOKEN",
+        "LANE_APP_ID",
+        "LANE_APP_PRIVATE_KEY",
+        "LANE_PAT"
+      ]
+    },
+    "site-deploy": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "site.page",
+          "via": "pages:ultrastable.io",
+          "to": "ext.site_visits",
+          "returns": "site.visits"
+        }
+      ],
+      "feedback": "page visits return through the dashboard snapshot as metric readings",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN"
+      ]
+    },
+    "social-post": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "social.post",
+          "via": "api:social",
+          "to": "ext.post_engagement",
+          "returns": "post.engagement"
+        }
+      ],
+      "feedback": "engagement returns through the dashboard snapshot and steers the growth items",
+      "bindings": [
+        "BLUESKY_APP_PASSWORD",
+        "BLUESKY_HANDLE",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT",
+        "MASTODON_INSTANCE",
+        "MASTODON_TOKEN"
+      ]
+    },
+    "dashboard-snapshot": {
+      "inflows": [
+        {
+          "signal": "site.visits",
+          "via": "api:cloudflare-analytics"
+        },
+        {
+          "signal": "post.engagement",
+          "via": "api:social"
+        },
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "org.profile.state",
+          "via": "file"
+        },
+        {
+          "signal": "session.ledger",
+          "via": "file"
+        },
+        {
+          "signal": "deploy.count",
+          "via": "file"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "feedback": "its readings are the measures every other loop is judged by"
+    },
+    "predict-verify": {
+      "inflows": [
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "prediction.verdicts",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "feedback": "missed predictions lower trust and revert the change"
+    },
+    "trust-ledger": {
+      "inflows": [
+        {
+          "signal": "prediction.verdicts",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "trust.scope",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "feedback": "scope widens or narrows from verified outcomes"
+    },
+    "failure-audit": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a detector that keeps firing escalates and files its own redesign",
+      "bindings": []
+    },
+    "product-manager-pass": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "owner.goals",
+          "via": "repo:IDEA.md"
+        },
+        {
+          "signal": "scout.log",
+          "via": "file:ops/scout/log.jsonl"
+        },
+        {
+          "signal": "rnd.log",
+          "via": "file:ops/rnd/log.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a growth item is kept only if its metric moved",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "plussing": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "accepted pluses are scored by the metric they named"
+    },
+    "issue-triage": {
+      "inflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "backlog.ranked",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "feedback": "priority rises with age and with capability gain",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "planning-roadmap": {
+      "inflows": [
+        {
+          "signal": "owner.goals",
+          "via": "repo:IDEA.md"
+        },
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "roadmap items close only on their metric"
+    },
+    "funding-verify": {
+      "inflows": [
+        {
+          "signal": "outreach.replies",
+          "via": "file:outreach/state.json"
+        },
+        {
+          "signal": "owner.goals",
+          "via": "file:IDEA.md"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "funding.registry",
+          "via": "file:business/funding/registry.json"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a rejected or opt-out reply marks the registry row outreach:false, so the next verification and the next outreach run skip it",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "funding-outreach": {
+      "inflows": [
+        {
+          "signal": "funding.registry",
+          "via": "file:business/funding/registry.json"
+        },
+        {
+          "signal": "outreach.replies",
+          "via": "file:outreach/state.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "outreach.queued",
+          "via": "file:outreach/state.json"
+        }
+      ],
+      "feedback": "replies move a target to replied, accepted, rejected or suppressed, which changes what the next run queues and follows up",
+      "bindings": [
+        "DASHBOARD_URL",
+        "FLEET_TOKEN",
+        "LANE_PAT",
+        "OUTREACH_SEND_TOKEN",
+        "OUTREACH_SEND_URL"
+      ]
+    },
+    "outreach-send": {
+      "inflows": [
+        {
+          "signal": "outreach.queued",
+          "via": "file:outreach/state.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "outreach.sent",
+          "via": "api:outreach-send",
+          "to": "ext.outreach_replies",
+          "returns": "outreach.replies"
+        }
+      ],
+      "feedback": "each recorded reply returns to funding-outreach and funding-verify"
+    },
+    "fleet-lane": {
+      "inflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:prs"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "drift found across repositories is filed as items the executor and the lane work next",
+      "bindings": [
+        "FLEET_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "index-refresh": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "repo.index",
+          "via": "file:docs/index"
+        }
+      ],
+      "feedback": "the rebuilt index is the knowledge the executor reads for its next change",
+      "bindings": []
+    },
+    "org-profile": {
+      "inflows": [
+        {
+          "signal": "owner.goals",
+          "via": "file:IDEA.md"
+        },
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "org.profile.state",
+          "via": "github:org"
+        }
+      ],
+      "feedback": "the probe's state is read by the dashboard snapshot and a drift becomes a probe item",
+      "bindings": [
+        "ORG_ADMIN_TOKEN"
+      ]
+    },
+    "platform-core-tests": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:prs"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "a failing core test blocks the merge and the executor fixes the change",
+      "bindings": []
+    },
+    "actions-budget": {
+      "inflows": [
+        {
+          "signal": "actions.minutes",
+          "via": "api:github-actions"
+        },
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "budget.state",
+          "via": "file:actions-budget.json"
+        }
+      ],
+      "feedback": "the executor and the loops read the budget state and defer non-essential runs near the quota, which lowers the next reading",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "retriage": {
+      "inflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "backlog.ranked",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "feedback": "stale items are re-ranked or closed, which changes the next pull",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "branch-reaper": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:prs"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "session.ledger",
+          "via": "file:ops/session-ledger.jsonl"
+        }
+      ],
+      "feedback": "idle branches are closed or handed to the lane, which frees the executor's claims",
+      "bindings": []
+    },
+    "public-transparency": {
+      "inflows": [
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "live.snapshot",
+          "via": "api:cloudflare-d1",
+          "to": "ext.site_visits",
+          "returns": "site.visits"
+        }
+      ],
+      "feedback": "readers of /live return as site visits the product manager reads as growth metrics",
+      "bindings": [
+        "CLOUDFLARE_API_TOKEN"
+      ]
+    },
+    "core-instance-sync": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "instance drift against the core becomes an item the executor works",
+      "bindings": [
+        "INSTANCE_READ_TOKEN"
+      ]
+    },
+    "launch": {
+      "inflows": [
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "dispatch.items",
+          "via": "github:actions"
+        }
+      ],
+      "feedback": "when no host wrote evidence for 12 h the failover runs the loops, and its own evidence resets the gate",
+      "bindings": []
+    },
+    "running-system": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "deploy.count",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "feedback": "the deploy count is a first-class metric the product manager and the clock read",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN"
+      ]
+    },
+    "executor-session": {
+      "inflows": [
+        {
+          "signal": "dispatch.items",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:prs"
+        }
+      ],
+      "feedback": "an opened PR is checked, merged and its outcome scores the next dispatch",
+      "bindings": [
+        "ANTHROPIC_API_KEY",
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "scout": {
+      "inflows": [
+        {
+          "signal": "frontier.releases",
+          "via": "http:feeds"
+        },
+        {
+          "signal": "adoption.outcomes",
+          "via": "file:ops/scout/adopted.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        },
+        {
+          "signal": "scout.log",
+          "via": "file:ops/scout/log.jsonl"
+        },
+        {
+          "signal": "rnd.log",
+          "via": "file:ops/rnd/log.jsonl"
+        },
+        {
+          "signal": "rnd.priorities",
+          "via": "file:ops/rnd/priorities.json"
+        }
+      ],
+      "feedback": "an adopted finding raises its source's weight and a declined or quiet one lowers it, so the next pass reads better sources and files fewer misses; shipped and stalled adoptions re-weight the source and set item priority (rnd.priorities), which the executor reads",
+      "bindings": []
+    },
+    "a11y": {
+      "inflows": [
+        {
+          "signal": "adoption.outcomes",
+          "via": "file:ops/scout/adopted.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a failed audit run is filed as an issue by the failure audit and taken by the executor; the next weekly run re-audits every page, so a fixed finding stops appearing and a returning one files again",
+      "bindings": []
+    },
+    "cost-guard": {
+      "inflows": [
+        {
+          "signal": "cf.analytics",
+          "via": "cloudflare:graphql"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "cost.readings",
+          "via": "file:ops/cost.jsonl"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "cost.items",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "cost.readings",
+          "via": "file:ops/cost.jsonl"
+        },
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
+        }
+      ],
+      "feedback": "a merged fix lowers the next day's reading; a breach that persists files an item the executor takes first",
+      "bindings": [
+        "CLOUDFLARE_API_TOKEN"
+      ]
+    },
+    "deploy-workers": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "feedback": "a deploy whose live code differs from the commit files an item the executor takes next",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN"
+      ]
+    },
+    "open-loop-sweeper": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "a merged client PR shortens the next tick's open_loop_age_hours; a stuck one files a Q-OPENLOOP item the executor takes first",
+      "bindings": []
+    },
+    "demo-video": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "video.release",
+          "via": "github:release",
+          "to": "ext.post_engagement",
+          "returns": "post.engagement"
+        }
+      ],
+      "feedback": "views and engagement return through the dashboard snapshot and steer the marketing-manager storyboard edits",
+      "bindings": []
+    },
+    "first-run": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "the first check it starts joins the merge lane; a copy where schedules did not come on keeps the manual Enable fallback",
+      "bindings": []
+    },
+    "role-design-manager": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "scout.log",
+          "via": "file:ops/scout/log.jsonl"
+        },
+        {
+          "signal": "rnd.log",
+          "via": "file:ops/rnd/log.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a design variant is kept only when its metric moved beyond the pre-registered sample rule and no guard worsened (design experiments --evaluate); a lint finding that recurs files a Q-DESIGN item",
+      "bindings": []
+    },
+    "promote": {
+      "inflows": [
+        {
+          "signal": "promotion.outcomes",
+          "via": "file:ops/promotion/outcomes.jsonl"
+        },
+        {
+          "signal": "outreach.replies",
+          "via": "file:outreach/state.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "promotion.outcomes",
+          "via": "file:ops/promotion/outcomes.jsonl"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "each recorded outcome (listed, replied, accepted, rejected, silent) moves its channel's weight in ops/promotion/weights.json, so the next plan ranks channels by what returned; a fact that changes (licence, public repo, entity) moves a programme in or out of fit by itself",
+      "bindings": []
+    },
+    "blindspots": {
+      "inflows": [
+        {
+          "signal": "blindspot.answers",
+          "via": "file:ops/blindspots/answers.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "blindspot.answers",
+          "via": "file:ops/blindspots/answers.jsonl"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "each recorded sweep answer resets its domain's clock and each learned need extends the register, so the next scan asks about what the last one found; a failed probe files its own item and passes when the work lands",
+      "bindings": []
+    },
+    "provenance-loop": {
+      "inflows": [
+        {
+          "signal": "provenance.ledger",
+          "via": "file:ops/provenance.jsonl"
+        },
+        {
+          "signal": "changelog.public",
+          "via": "file:ops/changelog.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "provenance.ledger",
+          "via": "file:ops/provenance.jsonl"
+        },
+        {
+          "signal": "changelog.public",
+          "via": "file:ops/changelog.json"
+        }
+      ],
+      "feedback": "each change is settled kept or reverted from git history after the window; the kept rate per origin and actor retires or reinforces levers in the improvement ranker, so the next change is chosen from what the record says worked",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "insight-loop": {
+      "inflows": [
+        {
+          "signal": "site.hits",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "insight.ledger",
+          "via": "file:ops/insight/findings.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        },
+        {
+          "signal": "insight.ledger",
+          "via": "file:ops/insight/findings.json"
+        }
+      ],
+      "feedback": "each finding is settled 8 days later against what the page really got; the outcome tunes the rise threshold that classifies the next findings",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "criticality-loop": {
+      "inflows": [
+        {
+          "signal": "deploys.record",
+          "via": "d1:outcomes"
+        },
+        {
+          "signal": "cost.readings",
+          "via": "d1:criticality_samples"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "criticality.k",
+          "via": "d1:criticality_history"
+        },
+        {
+          "signal": "backlog.ranked",
+          "via": "d1:items"
+        }
+      ],
+      "feedback": "the lever changes which item each role takes next tick; the next measured k_eff grades the logged prediction, and a miss reverts the lever and files CRIT-LEVER",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN"
+      ]
+    },
+    "ultrastability-loop": {
+      "inflows": [
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
+        },
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "ultrastability.readings",
+          "via": "file:ops/ultrastability.jsonl"
+        },
+        {
+          "signal": "uiux.status",
+          "via": "file:ops/uiux/status.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "ultrastability.readings",
+          "via": "file:ops/ultrastability.jsonl"
+        },
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a step changes a parameter or files a restructure item; the next readings grade the logged prediction, keep the step when the variable is back inside its bounds and otherwise undo it and take the next step",
+      "bindings": []
+    },
+    "branch-sweep": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:branches"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "session.ledger",
+          "via": "file:ops/branchsweep-ledger.jsonl"
+        },
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a merged branch leaves the next scan empty; a ported branch becomes a PORT-BRANCH item the executor takes, and the next scan stops listing the branch once main carries it",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "loop-proof": {
+      "inflows": [
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "loop.clock",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "backlog.ranked",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "feedback": "each tick reads the beats its own loops left in earlier slots; a loop that missed its slots becomes MISSED-<loop> at the head of the tick's queue and is closed by the same reading once the loop ticks again; the watchdog beat from the site Worker is judged like any other loop"
+    },
+    "ignition-ladder": {
+      "inflows": [
+        {
+          "signal": "loop.clock",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "backlog.ranked",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "feedback": "the stage read this tick is compared with the stage read last tick; a rise or fall is appended to ignition_log, and the first unmet stage is filed as IGNITE-<stage> in the tick's own queue with the numbers that block it, so the next ticks work on what keeps the system from criticality"
+    },
+    "publication-guard": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:branches"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "port.items",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a violation fails checks and the fleet drift run files an issue in the repository that lost the file; the next run passes only when the file is restored, and the SPDX baseline only shrinks",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "unknowns": {
+      "inflows": [
+        {
+          "signal": "loop.registry",
+          "via": "file:instances/ultrastable/loop-registry.json"
+        },
+        {
+          "signal": "unknowns.answers",
+          "via": "file:ops/unknowns/ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "unknowns.answers",
+          "via": "file:ops/unknowns/ledger.jsonl"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "each answer (gap, new objective, none, cannot-know) is a ledger row that lowers that question's novelty and raises the score of its loop when a gap was found; a gap or new objective becomes a probationary objective candidate and seeds the next pass, so the questions move toward where the system was wrong",
+      "bindings": []
+    },
+    "spinoff": {
+      "inflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "app.metrics",
+          "via": "http:https://<slug>.ultrastable.app/api/metrics"
+        },
+        {
+          "signal": "app.launched",
+          "via": "file:instances/spinoffs"
+        },
+        {
+          "signal": "portfolio.decision",
+          "via": "file:ops/spinoff/ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "app.launched",
+          "via": "file:instances/spinoffs"
+        },
+        {
+          "signal": "portfolio.decision",
+          "via": "file:ops/spinoff/ledger.jsonl"
+        }
+      ],
+      "feedback": "each app's verified fixes, retention and reach to people with the gap are read back by the next tick; a retired app lowers its archetype's bandit weight and a promoted one raises it, so the next ideation ranks differently",
+      "bindings": [
+        "CF_ANALYTICS_TOKEN",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "ciwatch": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a Q-CIFAIL item closes only when its workflow's newest default-branch run is green (probe), a red run that reappears reopens it, and the ledger is read on the next pass to rerun transient failures at most once",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "claims-conformance": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:prs"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "site.page",
+          "via": "pages:ultrastable.io",
+          "to": "ext.site_visits",
+          "returns": "site.visits"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a drift files a Q-CLAIM item the executor fixes by merging a change; the next check reads the fixed words and the claim count rises",
+      "bindings": []
+    },
+    "workers-tests": {
+      "inflows": [
+        {
+          "signal": "adoption.outcomes",
+          "via": "file:ops/scout/adopted.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a failed run is filed as an issue by the failure audit and taken by the executor; the next change under workers/ re-runs the tests, so a fix stops failing and a regression files again",
+      "bindings": []
+    },
+    "issue-loop": {
+      "inflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a passing probe closes the issue and the open count falls; a failing or missing probe stays open and the executor takes it next",
+      "bindings": []
+    },
+    "resilience": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a restart is graded by the next beat: the clock is ticking again or the restart counts toward escalation (Q-STALL item after two failures); the stalled count is the essential variable stalled_clocks, so a stall that persists becomes an Ashby second-order step",
+      "bindings": [
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "tenant-sync": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "tenant.drift",
+          "via": "file:ops/tenant-sync/ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "tenant.drift",
+          "via": "file:ops/tenant-sync/ledger.jsonl"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "each run reads the ledger of its own earlier runs; a tenant still needing a PR after the previous run, or a lift PR that never merged, is counted again and the lane merges the PRs it opened",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "uiux-loop": {
+      "inflows": [
+        {
+          "signal": "site.hits",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "uiux.audit",
+          "via": "file:ops/uiux/audit.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        },
+        {
+          "signal": "uiux.audit",
+          "via": "file:ops/uiux/audit.json"
+        },
+        {
+          "signal": "uiux.status",
+          "via": "file:ops/uiux/status.json"
+        }
+      ],
+      "feedback": "a front-end fix item closes only when its probe re-runs the audit for the pages it names and the finding no longer reproduces; an experiment arm is promoted only when its metric moved past the pre-registered sample with the guard intact; the two essential variables (ui_findings, happy_paths) feed the slow loop that restructures when they stay out of bounds",
+      "bindings": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
+    },
+    "role-uiux-manager": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "scout.log",
+          "via": "file:ops/scout/log.jsonl"
+        },
+        {
+          "signal": "rnd.log",
+          "via": "file:ops/rnd/log.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "github:issues"
+        }
+      ],
+      "feedback": "a path or audit finding becomes a Q-UIUX item with a probe; an experiment arm is kept only past the pre-registered sample with its guard intact (uiux --experiments); the next audit shows whether the fix held",
+      "bindings": []
+    },
+    "regen-generated": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "the bot's commit changes main, and the next merge's run finds the data current (no commit) or refreshes it again; a generator that fails fails the run and is seen by the workflow watch",
+      "bindings": []
+    },
+    "hosts": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "feedback": "a push with no deploy event after 30 minutes is redispatched through the GitHub Actions host; a host that fails health or a deploy is skipped for the next host and its failure is a red commit status the lane reads; host events return through /hook/host as statuses",
+      "bindings": []
+    },
+    "host-sync": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "host.state",
+          "via": "file:ops/hosting/state.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "host.state",
+          "via": "file:ops/hosting/state.json"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "feedback": "each run compares the host with the expected hashes its earlier runs and deploys recorded; drift that survives a redeploy is read again and counted by the next run",
+      "bindings": []
     }
-   ],
-   "outflows": [
-    {
-     "signal": "dispatch.items",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "tick.evidence",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "feedback": "verdicts and readings from its own past ticks re-rank the next pull"
   },
-  "agent-executor": {
-   "inflows": [
-    {
-     "signal": "dispatch.items",
-     "via": "github:issues"
-    },
-    {
-     "signal": "repo.index",
-     "via": "file"
-    },
-    {
-     "signal": "budget.state",
-     "via": "file"
-    },
-    {
-     "signal": "rnd.priorities",
-     "via": "file:ops/rnd/priorities.json"
-    },
-    {
-     "signal": "cost.items",
-     "via": "file:docs/issues"
-    },
-    {
-     "signal": "criticality.k",
-     "via": "file:ops/criticality.jsonl"
-    },
-    {
-     "signal": "port.items",
-     "via": "file:docs/issues"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "pr.opened",
-     "via": "github:pulls"
-    },
-    {
-     "signal": "adoption.outcomes",
-     "via": "file:ops/scout/adopted.jsonl"
-    }
-   ],
-   "feedback": "a red check or a reverted merge files an item the next tick takes",
-   "bindings": [
-    "ANTHROPIC_API_KEY",
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN",
-    "LANE_PAT"
-   ]
+  "implicit_producers": {
+    "owner.goals": "ext.owner_goals",
+    "app.metrics": "ext.app_users",
+    "actions.minutes": "ext.actions_quota",
+    "frontier.releases": "ext.frontier",
+    "cf.analytics": "ext.cf_analytics",
+    "site.hits": "ext.site_visits",
+    "loop.registry": "ext.loop_registry"
   },
-  "change-gate": {
-   "inflows": [
-    {
-     "signal": "pr.opened",
-     "via": "github:pulls"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "pr.checked",
-     "via": "github:checks"
-    }
-   ],
-   "feedback": "failing checks return to the executor as items",
-   "bindings": [
-    "LANE_PAT"
-   ]
-  },
-  "merge-lane": {
-   "inflows": [
-    {
-     "signal": "pr.checked",
-     "via": "github:checks"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "feedback": "lanewatch measures time to merge and files a stuck PR",
-   "bindings": [
-    "ANTHROPIC_API_KEY",
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN",
-    "LANE_APP_ID",
-    "LANE_APP_PRIVATE_KEY",
-    "LANE_PAT"
-   ]
-  },
-  "site-deploy": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "site.page",
-     "via": "pages:ultrastable.io",
-     "to": "ext.site_visits",
-     "returns": "site.visits"
-    }
-   ],
-   "feedback": "page visits return through the dashboard snapshot as metric readings",
-   "bindings": [
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN"
-   ]
-  },
-  "social-post": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "social.post",
-     "via": "api:social",
-     "to": "ext.post_engagement",
-     "returns": "post.engagement"
-    }
-   ],
-   "feedback": "engagement returns through the dashboard snapshot and steers the growth items",
-   "bindings": [
-    "BLUESKY_APP_PASSWORD",
-    "BLUESKY_HANDLE",
-    "CLOUDFLARE_API_TOKEN",
-    "LANE_PAT",
-    "MASTODON_INSTANCE",
-    "MASTODON_TOKEN"
-   ]
-  },
-  "dashboard-snapshot": {
-   "inflows": [
-    {
-     "signal": "site.visits",
-     "via": "api:cloudflare-analytics"
-    },
-    {
-     "signal": "post.engagement",
-     "via": "api:social"
-    },
-    {
-     "signal": "tick.evidence",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "org.profile.state",
-     "via": "file"
-    },
-    {
-     "signal": "session.ledger",
-     "via": "file"
-    },
-    {
-     "signal": "deploy.count",
-     "via": "file"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "metric.readings",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "feedback": "its readings are the measures every other loop is judged by"
-  },
-  "predict-verify": {
-   "inflows": [
-    {
-     "signal": "tick.evidence",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "metric.readings",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "prediction.verdicts",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "feedback": "missed predictions lower trust and revert the change"
-  },
-  "trust-ledger": {
-   "inflows": [
-    {
-     "signal": "prediction.verdicts",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "trust.scope",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "feedback": "scope widens or narrows from verified outcomes"
-  },
-  "failure-audit": {
-   "inflows": [
-    {
-     "signal": "metric.readings",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "a detector that keeps firing escalates and files its own redesign",
-   "bindings": []
-  },
-  "product-manager-pass": {
-   "inflows": [
-    {
-     "signal": "metric.readings",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "owner.goals",
-     "via": "repo:IDEA.md"
-    },
-    {
-     "signal": "scout.log",
-     "via": "file:ops/scout/log.jsonl"
-    },
-    {
-     "signal": "rnd.log",
-     "via": "file:ops/rnd/log.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "a growth item is kept only if its metric moved",
-   "bindings": [
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN",
-    "LANE_PAT"
-   ]
-  },
-  "plussing": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "accepted pluses are scored by the metric they named"
-  },
-  "issue-triage": {
-   "inflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "backlog.ranked",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "feedback": "priority rises with age and with capability gain",
-   "bindings": [
-    "LANE_PAT"
-   ]
-  },
-  "planning-roadmap": {
-   "inflows": [
-    {
-     "signal": "owner.goals",
-     "via": "repo:IDEA.md"
-    },
-    {
-     "signal": "metric.readings",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "roadmap items close only on their metric"
-  },
-  "funding-verify": {
-   "inflows": [
-    {
-     "signal": "outreach.replies",
-     "via": "file:outreach/state.json"
-    },
-    {
-     "signal": "owner.goals",
-     "via": "file:IDEA.md"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "funding.registry",
-     "via": "file:business/funding/registry.json"
-    },
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "a rejected or opt-out reply marks the registry row outreach:false, so the next verification and the next outreach run skip it",
-   "bindings": [
-    "LANE_PAT"
-   ]
-  },
-  "funding-outreach": {
-   "inflows": [
-    {
-     "signal": "funding.registry",
-     "via": "file:business/funding/registry.json"
-    },
-    {
-     "signal": "outreach.replies",
-     "via": "file:outreach/state.json"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "outreach.queued",
-     "via": "file:outreach/state.json"
-    }
-   ],
-   "feedback": "replies move a target to replied, accepted, rejected or suppressed, which changes what the next run queues and follows up",
-   "bindings": [
-    "DASHBOARD_URL",
-    "FLEET_TOKEN",
-    "LANE_PAT",
-    "OUTREACH_SEND_TOKEN",
-    "OUTREACH_SEND_URL"
-   ]
-  },
-  "outreach-send": {
-   "inflows": [
-    {
-     "signal": "outreach.queued",
-     "via": "file:outreach/state.json"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "outreach.sent",
-     "via": "api:outreach-send",
-     "to": "ext.outreach_replies",
-     "returns": "outreach.replies"
-    }
-   ],
-   "feedback": "each recorded reply returns to funding-outreach and funding-verify"
-  },
-  "fleet-lane": {
-   "inflows": [
-    {
-     "signal": "pr.checked",
-     "via": "github:prs"
-    },
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    },
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "drift found across repositories is filed as items the executor and the lane work next",
-   "bindings": [
-    "FLEET_TOKEN",
-    "LANE_PAT"
-   ]
-  },
-  "index-refresh": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "repo.index",
-     "via": "file:docs/index"
-    }
-   ],
-   "feedback": "the rebuilt index is the knowledge the executor reads for its next change",
-   "bindings": []
-  },
-  "org-profile": {
-   "inflows": [
-    {
-     "signal": "owner.goals",
-     "via": "file:IDEA.md"
-    },
-    {
-     "signal": "metric.readings",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "org.profile.state",
-     "via": "github:org"
-    }
-   ],
-   "feedback": "the probe's state is read by the dashboard snapshot and a drift becomes a probe item",
-   "bindings": [
-    "ORG_ADMIN_TOKEN"
-   ]
-  },
-  "platform-core-tests": {
-   "inflows": [
-    {
-     "signal": "pr.opened",
-     "via": "github:prs"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "pr.checked",
-     "via": "github:checks"
-    }
-   ],
-   "feedback": "a failing core test blocks the merge and the executor fixes the change",
-   "bindings": []
-  },
-  "actions-budget": {
-   "inflows": [
-    {
-     "signal": "actions.minutes",
-     "via": "api:github-actions"
-    },
-    {
-     "signal": "tick.evidence",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "budget.state",
-     "via": "file:actions-budget.json"
-    }
-   ],
-   "feedback": "the executor and the loops read the budget state and defer non-essential runs near the quota, which lowers the next reading",
-   "bindings": [
-    "LANE_PAT"
-   ]
-  },
-  "retriage": {
-   "inflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "backlog.ranked",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "feedback": "stale items are re-ranked or closed, which changes the next pull",
-   "bindings": [
-    "LANE_PAT"
-   ]
-  },
-  "branch-reaper": {
-   "inflows": [
-    {
-     "signal": "pr.opened",
-     "via": "github:prs"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "session.ledger",
-     "via": "file:ops/session-ledger.jsonl"
-    }
-   ],
-   "feedback": "idle branches are closed or handed to the lane, which frees the executor's claims",
-   "bindings": []
-  },
-  "public-transparency": {
-   "inflows": [
-    {
-     "signal": "tick.evidence",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "metric.readings",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "live.snapshot",
-     "via": "api:cloudflare-d1",
-     "to": "ext.site_visits",
-     "returns": "site.visits"
-    }
-   ],
-   "feedback": "readers of /live return as site visits the product manager reads as growth metrics",
-   "bindings": [
-    "CLOUDFLARE_API_TOKEN"
-   ]
-  },
-  "core-instance-sync": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "instance drift against the core becomes an item the executor works",
-   "bindings": [
-    "INSTANCE_READ_TOKEN"
-   ]
-  },
-  "launch": {
-   "inflows": [
-    {
-     "signal": "tick.evidence",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "dispatch.items",
-     "via": "github:actions"
-    }
-   ],
-   "feedback": "when no host wrote evidence for 12 h the failover runs the loops, and its own evidence resets the gate",
-   "bindings": []
-  },
-  "running-system": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "deploy.count",
-     "via": "file:ops/deploys.jsonl"
-    }
-   ],
-   "feedback": "the deploy count is a first-class metric the product manager and the clock read",
-   "bindings": [
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN"
-   ]
-  },
-  "executor-session": {
-   "inflows": [
-    {
-     "signal": "dispatch.items",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "pr.opened",
-     "via": "github:prs"
-    }
-   ],
-   "feedback": "an opened PR is checked, merged and its outcome scores the next dispatch",
-   "bindings": [
-    "ANTHROPIC_API_KEY",
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN",
-    "LANE_PAT"
-   ]
-  },
-  "scout": {
-   "inflows": [
-    {
-     "signal": "frontier.releases",
-     "via": "http:feeds"
-    },
-    {
-     "signal": "adoption.outcomes",
-     "via": "file:ops/scout/adopted.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    },
-    {
-     "signal": "scout.log",
-     "via": "file:ops/scout/log.jsonl"
-    },
-    {
-     "signal": "rnd.log",
-     "via": "file:ops/rnd/log.jsonl"
-    },
-    {
-     "signal": "rnd.priorities",
-     "via": "file:ops/rnd/priorities.json"
-    }
-   ],
-   "feedback": "an adopted finding raises its source's weight and a declined or quiet one lowers it, so the next pass reads better sources and files fewer misses; shipped and stalled adoptions re-weight the source and set item priority (rnd.priorities), which the executor reads",
-   "bindings": []
-  },
-  "a11y": {
-   "inflows": [
-    {
-     "signal": "adoption.outcomes",
-     "via": "file:ops/scout/adopted.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "a failed audit run is filed as an issue by the failure audit and taken by the executor; the next weekly run re-audits every page, so a fixed finding stops appearing and a returning one files again",
-   "bindings": []
-  },
-  "cost-guard": {
-   "inflows": [
-    {
-     "signal": "cf.analytics",
-     "via": "cloudflare:graphql"
-    },
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    },
-    {
-     "signal": "cost.readings",
-     "via": "file:ops/cost.jsonl"
-    },
-    {
-     "signal": "deploys.record",
-     "via": "file:ops/deploys.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "cost.items",
-     "via": "file:docs/issues"
-    },
-    {
-     "signal": "cost.readings",
-     "via": "file:ops/cost.jsonl"
-    },
-    {
-     "signal": "criticality.k",
-     "via": "file:ops/criticality.jsonl"
-    }
-   ],
-   "feedback": "a merged fix lowers the next day's reading; a breach that persists files an item the executor takes first",
-   "bindings": [
-    "CLOUDFLARE_API_TOKEN"
-   ]
-  },
-  "deploy-workers": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "deploys.record",
-     "via": "file:ops/deploys.jsonl"
-    }
-   ],
-   "feedback": "a deploy whose live code differs from the commit files an item the executor takes next",
-   "bindings": [
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN"
-   ]
-  },
-  "open-loop-sweeper": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "feedback": "a merged client PR shortens the next tick's open_loop_age_hours; a stuck one files a Q-OPENLOOP item the executor takes first",
-   "bindings": []
-  },
-  "demo-video": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "video.release",
-     "via": "github:release",
-     "to": "ext.post_engagement",
-     "returns": "post.engagement"
-    }
-   ],
-   "feedback": "views and engagement return through the dashboard snapshot and steer the marketing-manager storyboard edits",
-   "bindings": []
-  },
-  "first-run": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "pr.checked",
-     "via": "github:checks"
-    }
-   ],
-   "feedback": "the first check it starts joins the merge lane; a copy where schedules did not come on keeps the manual Enable fallback",
-   "bindings": []
-  },
-  "role-design-manager": {
-   "inflows": [
-    {
-     "signal": "metric.readings",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "scout.log",
-     "via": "file:ops/scout/log.jsonl"
-    },
-    {
-     "signal": "rnd.log",
-     "via": "file:ops/rnd/log.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "a design variant is kept only when its metric moved beyond the pre-registered sample rule and no guard worsened (design experiments --evaluate); a lint finding that recurs files a Q-DESIGN item",
-   "bindings": []
-  },
-  "promote": {
-   "inflows": [
-    {
-     "signal": "promotion.outcomes",
-     "via": "file:ops/promotion/outcomes.jsonl"
-    },
-    {
-     "signal": "outreach.replies",
-     "via": "file:outreach/state.json"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "promotion.outcomes",
-     "via": "file:ops/promotion/outcomes.jsonl"
-    },
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "each recorded outcome (listed, replied, accepted, rejected, silent) moves its channel's weight in ops/promotion/weights.json, so the next plan ranks channels by what returned; a fact that changes (licence, public repo, entity) moves a programme in or out of fit by itself",
-   "bindings": []
-  },
-  "blindspots": {
-   "inflows": [
-    {
-     "signal": "blindspot.answers",
-     "via": "file:ops/blindspots/answers.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "blindspot.answers",
-     "via": "file:ops/blindspots/answers.jsonl"
-    },
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "each recorded sweep answer resets its domain's clock and each learned need extends the register, so the next scan asks about what the last one found; a failed probe files its own item and passes when the work lands",
-   "bindings": []
-  },
-  "provenance-loop": {
-   "inflows": [
-    {
-     "signal": "provenance.ledger",
-     "via": "file:ops/provenance.jsonl"
-    },
-    {
-     "signal": "changelog.public",
-     "via": "file:ops/changelog.json"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "provenance.ledger",
-     "via": "file:ops/provenance.jsonl"
-    },
-    {
-     "signal": "changelog.public",
-     "via": "file:ops/changelog.json"
-    }
-   ],
-   "feedback": "each change is settled kept or reverted from git history after the window; the kept rate per origin and actor retires or reinforces levers in the improvement ranker, so the next change is chosen from what the record says worked",
-   "bindings": [
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN",
-    "LANE_PAT"
-   ]
-  },
-  "insight-loop": {
-   "inflows": [
-    {
-     "signal": "site.hits",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "insight.ledger",
-     "via": "file:ops/insight/findings.json"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    },
-    {
-     "signal": "insight.ledger",
-     "via": "file:ops/insight/findings.json"
-    }
-   ],
-   "feedback": "each finding is settled 8 days later against what the page really got; the outcome tunes the rise threshold that classifies the next findings",
-   "bindings": [
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN",
-    "LANE_PAT"
-   ]
-  },
-  "criticality-loop": {
-   "inflows": [
-    {
-     "signal": "deploys.record",
-     "via": "d1:outcomes"
-    },
-    {
-     "signal": "cost.readings",
-     "via": "d1:criticality_samples"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "criticality.k",
-     "via": "d1:criticality_history"
-    },
-    {
-     "signal": "backlog.ranked",
-     "via": "d1:items"
-    }
-   ],
-   "feedback": "the lever changes which item each role takes next tick; the next measured k_eff grades the logged prediction, and a miss reverts the lever and files CRIT-LEVER",
-   "bindings": [
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN"
-   ]
-  },
-  "ultrastability-loop": {
-   "inflows": [
-    {
-     "signal": "criticality.k",
-     "via": "file:ops/criticality.jsonl"
-    },
-    {
-     "signal": "port.items",
-     "via": "file:docs/issues"
-    },
-    {
-     "signal": "ultrastability.readings",
-     "via": "file:ops/ultrastability.jsonl"
-    },
-    {
-     "signal": "uiux.status",
-     "via": "file:ops/uiux/status.json"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "ultrastability.readings",
-     "via": "file:ops/ultrastability.jsonl"
-    },
-    {
-     "signal": "port.items",
-     "via": "file:docs/issues"
-    }
-   ],
-   "feedback": "a step changes a parameter or files a restructure item; the next readings grade the logged prediction, keep the step when the variable is back inside its bounds and otherwise undo it and take the next step",
-   "bindings": []
-  },
-  "branch-sweep": {
-   "inflows": [
-    {
-     "signal": "pr.opened",
-     "via": "github:branches"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "session.ledger",
-     "via": "file:ops/branchsweep-ledger.jsonl"
-    },
-    {
-     "signal": "port.items",
-     "via": "file:docs/issues"
-    }
-   ],
-   "feedback": "a merged branch leaves the next scan empty; a ported branch becomes a PORT-BRANCH item the executor takes, and the next scan stops listing the branch once main carries it",
-   "bindings": [
-    "LANE_PAT"
-   ]
-  },
-  "loop-proof": {
-   "inflows": [
-    {
-     "signal": "tick.evidence",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "loop.clock",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "backlog.ranked",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "feedback": "each tick reads the beats its own loops left in earlier slots; a loop that missed its slots becomes MISSED-<loop> at the head of the tick's queue and is closed by the same reading once the loop ticks again; the watchdog beat from the site Worker is judged like any other loop"
-  },
-  "ignition-ladder": {
-   "inflows": [
-    {
-     "signal": "loop.clock",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "tick.evidence",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "backlog.ranked",
-     "via": "d1:ultrastable-org"
-    }
-   ],
-   "feedback": "the stage read this tick is compared with the stage read last tick; a rise or fall is appended to ignition_log, and the first unmet stage is filed as IGNITE-<stage> in the tick's own queue with the numbers that block it, so the next ticks work on what keeps the system from criticality"
-  },
-  "publication-guard": {
-   "inflows": [
-    {
-     "signal": "pr.opened",
-     "via": "github:branches"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "port.items",
-     "via": "file:docs/issues"
-    }
-   ],
-   "feedback": "a violation fails checks and the fleet drift run files an issue in the repository that lost the file; the next run passes only when the file is restored, and the SPDX baseline only shrinks",
-   "bindings": [
-    "LANE_PAT"
-   ]
-  },
-  "unknowns": {
-   "inflows": [
-    {
-     "signal": "loop.registry",
-     "via": "file:instances/ultrastable/loop-registry.json"
-    },
-    {
-     "signal": "unknowns.answers",
-     "via": "file:ops/unknowns/ledger.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "unknowns.answers",
-     "via": "file:ops/unknowns/ledger.jsonl"
-    },
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "each answer (gap, new objective, none, cannot-know) is a ledger row that lowers that question's novelty and raises the score of its loop when a gap was found; a gap or new objective becomes a probationary objective candidate and seeds the next pass, so the questions move toward where the system was wrong",
-   "bindings": []
-  },
-  "spinoff": {
-   "inflows": [
-    {
-     "signal": "issue.filed",
-     "via": "file:docs/issues"
-    },
-    {
-     "signal": "app.metrics",
-     "via": "http:https://<slug>.ultrastable.app/api/metrics"
-    },
-    {
-     "signal": "app.launched",
-     "via": "file:instances/spinoffs"
-    },
-    {
-     "signal": "portfolio.decision",
-     "via": "file:ops/spinoff/ledger.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "app.launched",
-     "via": "file:instances/spinoffs"
-    },
-    {
-     "signal": "portfolio.decision",
-     "via": "file:ops/spinoff/ledger.jsonl"
-    }
-   ],
-   "feedback": "each app's verified fixes, retention and reach to people with the gap are read back by the next tick; a retired app lowers its archetype's bandit weight and a promoted one raises it, so the next ideation ranks differently",
-   "bindings": [
-    "CF_ANALYTICS_TOKEN",
-    "CLOUDFLARE_API_TOKEN",
-    "LANE_PAT"
-   ]
-  },
-  "ciwatch": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    },
-    {
-     "signal": "deploys.record",
-     "via": "file:ops/deploys.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "file:docs/issues"
-    }
-   ],
-   "feedback": "a Q-CIFAIL item closes only when its workflow's newest default-branch run is green (probe), a red run that reappears reopens it, and the ledger is read on the next pass to rerun transient failures at most once",
-   "bindings": [
-    "LANE_PAT"
-   ]
-  },
-  "claims-conformance": {
-   "inflows": [
-    {
-     "signal": "pr.opened",
-     "via": "github:prs"
-    },
-    {
-     "signal": "issue.filed",
-     "via": "file:docs/issues"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "site.page",
-     "via": "pages:ultrastable.io",
-     "to": "ext.site_visits",
-     "returns": "site.visits"
-    },
-    {
-     "signal": "issue.filed",
-     "via": "file:docs/issues"
-    }
-   ],
-   "feedback": "a drift files a Q-CLAIM item the executor fixes by merging a change; the next check reads the fixed words and the claim count rises",
-   "bindings": []
-  },
-  "workers-tests": {
-   "inflows": [
-    {
-     "signal": "adoption.outcomes",
-     "via": "file:ops/scout/adopted.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "a failed run is filed as an issue by the failure audit and taken by the executor; the next change under workers/ re-runs the tests, so a fix stops failing and a regression files again",
-   "bindings": []
-  },
-  "issue-loop": {
-   "inflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "file:docs/issues"
-    }
-   ],
-   "feedback": "a passing probe closes the issue and the open count falls; a failing or missing probe stays open and the executor takes it next",
-   "bindings": []
-  },
-  "resilience": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    },
-    {
-     "signal": "deploys.record",
-     "via": "file:ops/deploys.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "file:docs/issues"
-    }
-   ],
-   "feedback": "a restart is graded by the next beat: the clock is ticking again or the restart counts toward escalation (Q-STALL item after two failures); the stalled count is the essential variable stalled_clocks, so a stall that persists becomes an Ashby second-order step",
-   "bindings": [
-    "CLOUDFLARE_API_TOKEN",
-    "LANE_PAT"
-   ]
-  },
-  "tenant-sync": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    },
-    {
-     "signal": "tenant.drift",
-     "via": "file:ops/tenant-sync/ledger.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "tenant.drift",
-     "via": "file:ops/tenant-sync/ledger.jsonl"
-    },
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "feedback": "each run reads the ledger of its own earlier runs; a tenant still needing a PR after the previous run, or a lift PR that never merged, is counted again and the lane merges the PRs it opened",
-   "bindings": [
-    "LANE_PAT"
-   ]
-  },
-  "uiux-loop": {
-   "inflows": [
-    {
-     "signal": "site.hits",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "uiux.audit",
-     "via": "file:ops/uiux/audit.json"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    },
-    {
-     "signal": "uiux.audit",
-     "via": "file:ops/uiux/audit.json"
-    },
-    {
-     "signal": "uiux.status",
-     "via": "file:ops/uiux/status.json"
-    }
-   ],
-   "feedback": "a front-end fix item closes only when its probe re-runs the audit for the pages it names and the finding no longer reproduces; an experiment arm is promoted only when its metric moved past the pre-registered sample with the guard intact; the two essential variables (ui_findings, happy_paths) feed the slow loop that restructures when they stay out of bounds",
-   "bindings": [
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_API_TOKEN",
-    "LANE_PAT"
-   ]
-  },
-  "role-uiux-manager": {
-   "inflows": [
-    {
-     "signal": "metric.readings",
-     "via": "d1:ultrastable-org"
-    },
-    {
-     "signal": "scout.log",
-     "via": "file:ops/scout/log.jsonl"
-    },
-    {
-     "signal": "rnd.log",
-     "via": "file:ops/rnd/log.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "issue.filed",
-     "via": "github:issues"
-    }
-   ],
-   "feedback": "a path or audit finding becomes a Q-UIUX item with a probe; an experiment arm is kept only past the pre-registered sample with its guard intact (uiux --experiments); the next audit shows whether the fix held",
-   "bindings": []
-  },
-  "regen-generated": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "feedback": "the bot's commit changes main, and the next merge's run finds the data current (no commit) or refreshes it again; a generator that fails fails the run and is seen by the workflow watch",
-   "bindings": []
-  },
-  "hosts": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    },
-    {
-     "signal": "deploys.record",
-     "via": "file:ops/deploys.jsonl"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "deploys.record",
-     "via": "file:ops/deploys.jsonl"
-    }
-   ],
-   "feedback": "a push with no deploy event after 30 minutes is redispatched through the GitHub Actions host; a host that fails health or a deploy is skipped for the next host and its failure is a red commit status the lane reads; host events return through /hook/host as statuses",
-   "bindings": []
-  },
-  "host-sync": {
-   "inflows": [
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    },
-    {
-     "signal": "host.state",
-     "via": "file:ops/hosting/state.json"
-    }
-   ],
-   "outflows": [
-    {
-     "signal": "host.state",
-     "via": "file:ops/hosting/state.json"
-    },
-    {
-     "signal": "main.merged",
-     "via": "github:main"
-    }
-   ],
-   "feedback": "each run compares the host with the expected hashes its earlier runs and deploys recorded; drift that survives a redeploy is read again and counted by the next run",
-   "bindings": []
-  }
- },
- "implicit_producers": {
-  "owner.goals": "ext.owner_goals",
-  "app.metrics": "ext.app_users",
-  "actions.minutes": "ext.actions_quota",
-  "frontier.releases": "ext.frontier",
-  "cf.analytics": "ext.cf_analytics",
-  "site.hits": "ext.site_visits",
-  "loop.registry": "ext.loop_registry"
- },
- "pending": [
-  "role-portfolio-manager",
-  "role-project-manager",
-  "role-product-manager",
-  "role-staff",
-  "role-reviewer",
-  "role-operations",
-  "role-funding-manager",
-  "role-outreach-manager",
-  "role-outreach-coordinator",
-  "memory-fresh",
-  "write-back",
-  "loop-registry",
-  "glossary",
-  "doctrine-check",
-  "recognition-lint",
-  "doctrine-amendment",
-  "gap-register",
-  "guiding-directive",
-  "durable-facts",
-  "doc-consumption",
-  "liveness",
-  "server-side-only",
-  "orphan-artifacts",
-  "containment-boundary",
-  "session-reaper",
-  "market-gaps",
-  "strange-loop-hygiene",
-  "role-research-publisher",
-  "role-marketing-manager",
-  "role-legal-ip-manager",
-  "role-customer-success",
-  "role-org-designer",
-  "triggers",
-  "lifecycle",
-  "components",
-  "agent-interop",
-  "terms-crosswalk",
-  "code-agents",
-  "role-program-manager",
-  "role-infrastructure-manager"
- ]
+  "pending": [
+    "role-portfolio-manager",
+    "role-project-manager",
+    "role-product-manager",
+    "role-staff",
+    "role-reviewer",
+    "role-operations",
+    "role-funding-manager",
+    "role-outreach-manager",
+    "role-outreach-coordinator",
+    "memory-fresh",
+    "write-back",
+    "loop-registry",
+    "glossary",
+    "doctrine-check",
+    "recognition-lint",
+    "doctrine-amendment",
+    "gap-register",
+    "guiding-directive",
+    "durable-facts",
+    "doc-consumption",
+    "liveness",
+    "server-side-only",
+    "orphan-artifacts",
+    "containment-boundary",
+    "session-reaper",
+    "market-gaps",
+    "strange-loop-hygiene",
+    "role-research-publisher",
+    "role-marketing-manager",
+    "role-legal-ip-manager",
+    "role-customer-success",
+    "role-org-designer",
+    "triggers",
+    "lifecycle",
+    "components",
+    "agent-interop",
+    "terms-crosswalk",
+    "code-agents",
+    "role-program-manager",
+    "role-infrastructure-manager"
+  ]
 }

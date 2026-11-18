@@ -1,0 +1,221 @@
+{
+ "at": "2026-11-18T13:00:29Z",
+ "probes": {
+  "closed-loops/closedloop": {
+   "status": "ok",
+   "detail": "closedloop ok",
+   "fixed": false,
+   "item": null
+  },
+  "closed-loops/item-fields": {
+   "status": "ok",
+   "detail": "queue ok",
+   "fixed": false,
+   "item": null
+  },
+  "closed-loops/loop-owner": {
+   "status": "ok",
+   "detail": "loopowner ok",
+   "fixed": false,
+   "item": null
+  },
+  "autonomy-first/standing-order": {
+   "status": "ok",
+   "detail": "standingorder ok",
+   "fixed": false,
+   "item": null
+  },
+  "autonomy-first/directive": {
+   "status": "ok",
+   "detail": "directive ok",
+   "fixed": false,
+   "item": null
+  },
+  "front-end-matches-back-end/claims": {
+   "status": "ok",
+   "detail": "claims: 28 verified of 28; 0 drift",
+   "fixed": false,
+   "item": null
+  },
+  "front-end-matches-back-end/claimcode": {
+   "status": "ok",
+   "detail": "claimcode ok",
+   "fixed": false,
+   "item": null
+  },
+  "front-end-matches-back-end/pages-live": {
+   "status": "unmeasured",
+   "detail": "/api/freshness unreachable: URLError",
+   "fixed": false,
+   "item": null
+  },
+  "no-merge-over-red/mergeaudit": {
+   "status": "ok",
+   "detail": "every recent merge had a green checks run",
+   "fixed": false,
+   "item": null
+  },
+  "no-merge-over-red/ciwatch": {
+   "status": "ok",
+   "detail": "ciwatch ok",
+   "fixed": false,
+   "item": null
+  },
+  "free-tier/cost": {
+   "status": "ok",
+   "detail": "cost declaration ok",
+   "fixed": false,
+   "item": null
+  },
+  "free-tier/ideas-headroom": {
+   "status": "ok",
+   "detail": "ideas: ok",
+   "fixed": false,
+   "item": null
+  },
+  "free-tier/workflow-budgets": {
+   "status": "ok",
+   "detail": "workflow budget lint: 0 problem(s)",
+   "fixed": false,
+   "item": null
+  },
+  "no-qnfo-on-pages/no-qnfo-pages": {
+   "status": "ok",
+   "detail": "QNFO mentions on page sources at or below baseline",
+   "fixed": false,
+   "item": null
+  },
+  "license-notice/license-local": {
+   "status": "ok",
+   "detail": "OK: license files consistent",
+   "fixed": false,
+   "item": null
+  },
+  "license-notice/license-fleet": {
+   "status": "violated",
+   "detail": "practical-solutions: README lacks the license notice; .github: README lacks the license notice",
+   "fixed": false,
+   "item": "Q-RULE-license-notice-license-fleet"
+  },
+  "no-secrets-in-logs/no-secrets": {
+   "status": "ok",
+   "detail": "no secret-shaped value in tracked files",
+   "fixed": false,
+   "item": null
+  },
+  "server-side-only/serverside": {
+   "status": "ok",
+   "detail": "serverside ok",
+   "fixed": false,
+   "item": null
+  },
+  "clock-never-stops/resilience": {
+   "status": "ok",
+   "detail": "resilience ok: every clock has a probe and a restart route, every watcher is watched by an independent one",
+   "fixed": false,
+   "item": null
+  },
+  "clock-never-stops/clock": {
+   "status": "ok",
+   "detail": "clock ok: tick-heartbeat, executor, transparency, deploy-site, scout, a11y, criticality-loop, claims, watchdog",
+   "fixed": false,
+   "item": null
+  },
+  "user-backend-boundary/userbackend": {
+   "status": "ok",
+   "detail": "userbackend ok",
+   "fixed": false,
+   "item": null
+  },
+  "user-backend-boundary/pointclick": {
+   "status": "ok",
+   "detail": "pointclick ok",
+   "fixed": false,
+   "item": null
+  }
+ },
+ "filed": [],
+ "rules": {
+  "closed-loops": {
+   "status": "enforced",
+   "ci": 3,
+   "probes": 3,
+   "gaps": [],
+   "statement": "Every open item has an owner, a trigger and a closing probe; every loop closes itself (CLOSED-LOOP-1, SERVER-OWNS-LOOPS-1)."
+  },
+  "autonomy-first": {
+   "status": "enforced",
+   "ci": 2,
+   "probes": 2,
+   "gaps": [],
+   "statement": "No decision, question or step is handed to the owner; agents decide, deploy and verify (GUIDING-DIRECTIVE, CODE-ONLY-ORDER)."
+  },
+  "front-end-matches-back-end": {
+   "status": "unmeasured",
+   "ci": 2,
+   "probes": 3,
+   "gaps": [
+    "only /live reports its freshness; other generated pages are not yet registered in /api/freshness"
+   ],
+   "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1)."
+  },
+  "no-merge-over-red": {
+   "status": "enforced",
+   "ci": 2,
+   "probes": 2,
+   "gaps": [],
+   "statement": "A PR merges only on a green full `checks` run; a merge that skipped it is filed and fixed (MERGE-AUDIT-1, LANE-1)."
+  },
+  "free-tier": {
+   "status": "enforced",
+   "ci": 2,
+   "probes": 3,
+   "gaps": [],
+   "statement": "Ultrastable stays inside the free plans; every workflow declares a minute budget; spend is measured (FREE-TIER-1, cost, actions budget)."
+  },
+  "no-qnfo-on-pages": {
+   "status": "partial",
+   "ci": 1,
+   "probes": 1,
+   "gaps": [
+    "rendered live pages are not yet scanned, only their source"
+   ],
+   "statement": "No QNFO data on Ultrastable pages: the brand and its data stay separate (shrink-only baseline per page source)."
+  },
+  "license-notice": {
+   "status": "violated",
+   "ci": 2,
+   "probes": 2,
+   "gaps": [],
+   "statement": "Every repository carries the LICENSE and the README license notice (IP protection is the license only)."
+  },
+  "no-secrets-in-logs": {
+   "status": "enforced",
+   "ci": 1,
+   "probes": 1,
+   "gaps": [],
+   "statement": "No secret value in a committed file, ledger or log; secrets are referenced by binding name only."
+  },
+  "server-side-only": {
+   "status": "enforced",
+   "ci": 1,
+   "probes": 1,
+   "gaps": [],
+   "statement": "Every loop runs server-side; nothing depends on a person's computer (SERVER-SIDE ONLY)."
+  },
+  "clock-never-stops": {
+   "status": "enforced",
+   "ci": 2,
+   "probes": 2,
+   "gaps": [],
+   "statement": "Every clock is probed, a stopped one is restarted, no single point of failure (RESILIENCE-1, CLOCKWORK-1)."
+  },
+  "user-backend-boundary": {
+   "status": "enforced",
+   "ci": 2,
+   "probes": 2,
+   "gaps": [],
+   "statement": "Users see their idea and front end; backend work stays invisible, audited and in shared code (USER-BACKEND-1, POINT-AND-CLICK-1)."
+  }
+ }
+}
