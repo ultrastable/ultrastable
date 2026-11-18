@@ -13,6 +13,7 @@ async function sha256(text) {
   const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
+const ADD_COLUMN = /^ALTER\s+TABLE\s+\S+\s+ADD\s+COLUMN\b/i;
 // Statements end at a line ending in ';' (a trigger body's inner ';' lines do not end it: it ends at its END;).
 function statements(sql) {
   const out = []; let cur = [], trig = false;
@@ -34,7 +35,12 @@ export async function migrateStep(db, ctx, migrations, ensureItem) {
     const h = await sha256(m.sql);
     if (ledger.has(m.file)) { if (ledger.get(m.file) !== h) drift.push(m.file); continue; }
     try {
-      for (const s of statements(m.sql)) await run(db, s);
+      for (const s of statements(m.sql)) {
+        // Q-TENANT-row-isolation: SQLite has no ADD COLUMN IF NOT EXISTS. A column that is already there (a partly applied file, or the other runner got there first) is the state the
+        // statement asks for, so it is skipped; any other error still fails the file. Every other statement kind is already idempotent (IF NOT EXISTS).
+        try { await run(db, s); }
+        catch (e) { if (ADD_COLUMN.test(s) && /duplicate column name/i.test(String(e && e.message))) continue; throw e; }
+      }
       await run(db, `INSERT OR IGNORE INTO _migrations (file, sha256) VALUES (?, ?)`, m.file, h);
       applied.push(m.file);
     } catch (e) {

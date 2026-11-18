@@ -26,13 +26,16 @@ const post = (path, o) => { const f = new FormData(); for (const k in o) f.set(k
 r = await get("https://ultrastable.io/start"); assert.equal(r.status, 200); assert.match(await r.text(), /Tell me what is on your mind/);
 r = await post("/api/idea", { idea: "an app for bin day" });
 assert.equal(r.status, 303); const id = /\/s\/([a-f0-9]{10})\/ask/.exec(r.headers.get("location"))[1];
-for (let i = 0; i < 2; i++) { // BUILD-2: at most two plain follow-up questions before the first build
+for (let i = 0; i < 2; i++) { // BUILD-2: two opening questions from the model; ADAPTIVE-1 may add a follow-up chosen from the answers
   r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/ask"), E2); assert.match(await r.text(), new RegExp("Question " + (i + 1) + " of 2"));
   r = await post("/api/answer", { id, a: ["yes", "no"][i] });
-  assert.equal(r.status, 303); assert.match(r.headers.get("location"), i < 1 ? /\/ask$/ : /\/make$/);
+  assert.equal(r.status, 303); assert.match(r.headers.get("location"), /\/ask$/);
 }
+// ADAPTIVE-1 (Q-GAP-adaptive-interview): "Phone first? NO" earns a follow-up that was not in the fixed bank; the interview then ends at the cap.
+r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/ask"), E2); assert.match(await r.text(), /Will people mostly use it on a large screen or a laptop\?/);
+r = await post("/api/answer", { id, a: "yes" }); assert.equal(r.status, 303); assert.match(r.headers.get("location"), /\/make$/);
 r = await mod.fetch(new Request("https://ultrastable.io/s/" + id + "/make"), E2); assert.equal(r.status, 302, "the /make request itself runs the build");
-assert.match(briefs[0], /Do neighbours sign up\? YES/); assert.match(briefs[0], /Phone first\? NO/); assert.ok(!/Calm look/.test(briefs[0]), "only two questions are asked");
+assert.match(briefs[0], /Do neighbours sign up\? YES/); assert.match(briefs[0], /Phone first\? NO/); assert.match(briefs[0], /large screen or a laptop\? YES/); assert.ok(!/Calm look/.test(briefs[0]), "the bank is not asked past its first two questions");
 assert.equal(builds, 1, "the build is its own stage; the audit and fix run in a later request");
 r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.equal(r.status, 200); assert.equal(builds, 2, "first view starts the audit, which fixes the critical gap");
 const page = await r.text(); assert.match(page, /<h1>fixed<\/h1>/); assert.match(page, /Change something/); assert.match(page, /What I checked/); assert.match(r.headers.get("content-security-policy"), /sandbox/);
@@ -75,7 +78,7 @@ r = await mod.fetch(new Request("https://ultrastable.io/s/" + id), E2); assert.m
 const bad = { ASSETS: mem, AI: { run: async () => { throw new Error("model down"); } } };
 const post2 = (path, o) => { const f = new FormData(); for (const k in o) f.set(k, o[k]); return mod.fetch(new Request("https://ultrastable.io" + path, { method: "POST", body: f }), bad); };
 r = await post2("/api/idea", { idea: "x" }); const id2 = /\/s\/([a-f0-9]{10})\/ask/.exec(r.headers.get("location"))[1];
-for (let i = 0; i < 2; i++) await post2("/api/answer", { id: id2, a: "yes" });
+for (let i = 0; i < 4; i++) await post2("/api/answer", { id: id2, a: "yes" });  // with the model down the rule table still asks follow-ups, up to the cap of four
 for (let i = 0; i < 4; i++) { r = await mod.fetch(new Request("https://ultrastable.io/s/" + id2 + "/make"), bad); }
 assert.equal(kv.get("state:" + id2), "failed"); assert.match(await r.text(), /Something went wrong/);
 r = await mod.fetch(new Request("https://ultrastable.io/s/0000000000"), E2); assert.equal(r.status, 404);

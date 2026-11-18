@@ -13,7 +13,7 @@ import { createMeter, guarded, readDeferred, writeDeferred } from './subreq.js';
 import { ingestDeploys } from './selfaudit.js';
 import { sampleCosts } from './costsample.js';
 import { readRoi } from './roi.js';  // ROI-1
-import { sampleFreeTier, freeTierLevel } from './freetier.js';  // FREE-TIER-1
+import { sampleFreeTier, freeTierLevel, alertFreeTier } from './freetier.js';  // FREE-TIER-1
 import { runGate } from './worker-gate.js';
 import { runHandoffs, makeDeployer, makeRollback, makeVersionReader } from './handoff.js';
 import { syncIssues } from './issuesync.js';
@@ -108,18 +108,19 @@ export default {
       const main = repos.find(r => r.endsWith('/ultrastable')) || repos[0];
       // FREE-TIER-1: the usage sample is read first. It ran last and was starved by the 50-subrequest limit ("Too many subrequests" at 00:10 UTC 2026-11-18), which left the governor without a reading.
       const freeTier = await sampleFreeTier(env.DB, { token: env.CF_ANALYTICS_TOKEN, account_id: (config.cost_budgets && config.cost_budgets[0] && config.cost_budgets[0].account_id) || env.CF_ACCOUNT_ID }).catch(e => ({ error: String(e && e.message).slice(0, 120) }));
+      { const al = await alertFreeTier(env.DB, freeTier); if (al.error) console.error('free-tier alert unfiled:', al.error); }  // READ-BUDGET-8: an item is filed once a day per resource when a free limit is projected to pass 70%
       await decisionSafely(() => recordGovernor(env.DB, freeTier));  // DECISIONS-1: the level just set is a decision, scored at a later sample
       await b('credentials', () => refreshDue(env.DB, env));  // AUTH-1: refresh runs first so nothing lapses
       const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));  // one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback)
       const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
       await b('live-changes', () => refreshLiveChanges({ db: env.DB, token, repo: main }));  // LIVE-FRESH-2: own early step; inside the sweeper it ran after 32 of 46 subrequests were spent and never wrote, so /live froze
       await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
-      step('executor', async () => { const r = await runExecutor({ ...env, AI: gov.ai || undefined, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
+      step('executor', async () => { const r = await runExecutor({ ...env, TENANT: env.TENANT || config.org_slug, AI: gov.ai || undefined, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
       step('gate', () => runGate({ token, repos }));  // ZERO-MINUTES-1
       const ghBudget = githubBudget(env.GITHUB_CALLS_PER_TICK || config.github_calls_per_tick);  // GITHUB-BUDGET-1: one GitHub call budget for the lane and the handoffs of this tick (default 40)
       step('lane', () => runLane({ token, repos, issueWorkflow: null, zeroActions: env.ZERO_ACTIONS === '1', evidenceRepo: env.EVIDENCE_REPO || repos[0] || null, budget: ghBudget }));
       const site = env.SITE && env.INTERNAL_DEPLOY_KEY ? env.SITE : null;  // HANDOFF-1: the server owns every handed-off PR after it opens: merge noticed, deploy, live probe, close or roll back
-      step('handoffs', () => runHandoffs({ db: env.DB, token, repos, deployer: site ? reporting(makeDeployer({ token, site, key: env.INTERNAL_DEPLOY_KEY }), { token }) : null, rollback: site ? makeRollback({ site, key: env.INTERNAL_DEPLOY_KEY }) : null, versionOf: site ? makeVersionReader({ site, key: env.INTERNAL_DEPLOY_KEY }) : null, budget: ghBudget }));  // DEPLOY-VERSION-1
+      step('handoffs', () => runHandoffs({ db: env.DB, token, repos, deployer: site ? reporting(makeDeployer({ token, site, key: env.INTERNAL_DEPLOY_KEY }), { token }) : null, rollback: site ? makeRollback({ site, key: env.INTERNAL_DEPLOY_KEY }) : null, versionOf: site ? makeVersionReader({ site, key: env.INTERNAL_DEPLOY_KEY }) : null, budget: ghBudget, tenant: env.TENANT || config.org_slug }));  // DEPLOY-VERSION-1
       step('issuesync', () => syncIssues({ db: env.DB, token, repo: main }));  // ISSUESYNC-1: filed roadmap items reach the queue on the server, no Actions needed
       step('repo-access', () => checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }));  // REPO-ACCESS-1
       step('social', () => runSocial({ db: env.DB, env, tenant }));  // REACH-1: posts the due calendar item to the channels linked at /connect

@@ -4,6 +4,7 @@
 // No Actions minutes and no person's machine. The lane/sweeper merge the PR on green. Needs the same installation token the lane uses; without one it
 // reports not-configured and the Actions executor stays the fallback.
 import { runCodeAgent } from './codeagent.js';
+import { tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: the D1 lane takes only this runtime's own needs-code items
 
 const API = 'https://api.github.com';
 export const PROTECTED = ['.github/', 'autonomy/', 'doctrine/server-side.json'];
@@ -77,10 +78,10 @@ const PATH_RE = /\b(?:[\w.-]+\/)+[\w.-]+\.(?:m?js|py|json|sql|toml|md)\b/g;
 export const pathsIn = text => [...new Set(String(text || '').match(PATH_RE) || [])].slice(0, 4);
 export const deployFor = paths => [...new Set(paths.map(p => p.startsWith('seed/worker/') ? 'ultrastable-tick' : p.startsWith('site/') ? 'ultrastable-site' : p.startsWith('dashboard/') ? 'ultrastable-dashboard' : null).filter(Boolean))].join(', ');
 
-export async function reopenClosedUnmerged(db) {
+export async function reopenClosedUnmerged(db, tenant = '') {
   if (!db) return 0;
   const r = await db.prepare(`UPDATE items SET blocker = 'needs-code: previous PR closed without merge; retried by worker-native', updated_at = datetime('now')
-    WHERE status = 'blocked' AND blocker LIKE 'in-pr:%' AND id IN (SELECT item FROM handoffs WHERE state = 'closed_unmerged' AND item IS NOT NULL)`).run().catch(() => null);
+    WHERE status = 'blocked' AND blocker LIKE 'in-pr:%' AND (tenant_id IS NULL OR tenant_id = ?) AND id IN (SELECT item FROM handoffs WHERE state = 'closed_unmerged' AND item IS NOT NULL)`).bind(tenantOf(tenant)).run().catch(() => null);
   return (r && r.meta && r.meta.changes) || 0;
 }
 
@@ -121,9 +122,10 @@ async function openPr({ repo, call, file }, { id, branch, change, title, extraBo
 export async function runDbQueue(env, { fetchImpl = fetch, agent = runCodeAgent, now = Date.now() } = {}) {
   const db = env.DB;
   if (!db) return { idle: true, ok: true, note: 'no DB binding' };
-  const reopened = await reopenClosedUnmerged(db);
-  const rows = (await db.prepare(`SELECT id, title, kind, owner_role, done_check, closing_probe, blocker FROM items WHERE status = 'blocked' AND blocker LIKE 'needs-code:%'
-    ORDER BY priority DESC, updated_at ASC LIMIT ?`).bind(DB_CANDIDATES).all()).results || [];
+  const own = tenantOf(env);
+  const reopened = await reopenClosedUnmerged(db, own);
+  const rows = (await db.prepare(`SELECT id, title, kind, owner_role, done_check, closing_probe, blocker FROM items WHERE status = 'blocked' AND blocker LIKE 'needs-code:%' AND (tenant_id IS NULL OR tenant_id = ?)
+    ORDER BY priority DESC, updated_at ASC LIMIT ?`).bind(own, DB_CANDIDATES).all()).results || [];
   if (!rows.length) return { idle: true, ok: true, note: reopened ? `${reopened} reopened` : '' };
   const gh = github(env, fetchImpl);
   const it = rows[0];

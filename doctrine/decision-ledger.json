@@ -2607,6 +2607,14 @@
    "probe": "file:seed/worker/migrations/0025_read_indexes_4.sql"
   },
   {
+   "id": "lesson-2026-11-18-q-tenant-row-isolation-tenant-id-on-core-rows",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Q-TENANT-row-isolation tenant_id on core rows and a column-tolerant migration runner",
+   "body": "Migration 0026_tenant_core.sql adds tenant_id (NULL = this runtime's own tenant, the convention of 0004) to items, claims, gate_cards and trust_ledger; the tick scopes its work path with (tenant_id IS NULL OR tenant_id = org_slug) on queries it already ran, so no new query and no scan on the exhausted D1 read budget (src/tenant.js). Lesson: three runners re-run every migration (d1-sqlite.js on every open, the tick's migrate.js, deploy/apply-d1-migrations.mjs) and SQLite has no ADD COLUMN IF NOT EXISTS, so the first ALTER TABLE migration broke tests/foundation/test_selfhost.py (duplicate column name: tenant_id) until each runner skipped only a duplicate ADD COLUMN. trust_ledger keeps PRIMARY KEY (surface, action_class): an additive migration cannot widen it, so the tick never overwrites a row of another tenant there (a foreign row at the same key blocks own accrual until a table rebuild). Evidence: seed/worker/test/tenant-isolation.test.js 14 of 14, 10 of them fail against the pre-change source; seed worker suite 365 of 365.",
+   "probe": "file:seed/worker/migrations/0026_tenant_core.sql"
+  },
+  {
    "id": "decision-2026-11-18-ui-ux-manager-pass-2026111814-3-fix-item-s-filed",
    "kind": "decision",
    "date": "2026-11-18",

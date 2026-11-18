@@ -25,3 +25,13 @@ test('sampler records usage, neurons from the ledger, and redacts the token on e
   const r2 = await sampleFreeTier(db, { token: 'secrettoken', account_id: 'a', fetch: bad, now: noon });
   assert.ok(!String(r2.error).includes('secrettoken'));
 });
+
+import { alertFreeTier } from '../src/freetier.js';
+test('READ-BUDGET-8: an item is filed once per resource per day when a free limit is projected past 70%', async () => {
+  const rows = new Map();
+  const db = { prepare: () => ({ bind: (...a) => ({ run: async () => { const had = rows.has(a[0]); if (!had) rows.set(a[0], a); return { meta: { changes: had ? 0 : 1 } }; } }) }) };
+  const res = { resources: { d1_rows_read: { used: 3_600_000, frac: 0.72, projected_frac: 0.9, level: 'ok' }, workers_requests: { used: 10, frac: 0.0001, projected_frac: 0.001, level: 'ok' } } };
+  const now = new Date('2026-11-18T12:00:00Z');
+  assert.deepEqual(await alertFreeTier(db, res, now), ['FREE-TIER-ALERT-d1_rows_read-2026-11-18']);
+  assert.deepEqual(await alertFreeTier(db, res, now), []);
+});
