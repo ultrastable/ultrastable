@@ -36,6 +36,10 @@ def oidc():
 
 def main():
     msg = git("log", "-1", "--format=%s").decode().strip()
+    # Commits by the GitHub App trigger push workflows (workflow-token pushes never did): a deploy record then starts regen-generated, whose commit
+    # touches site/ and starts the deploy again, without end (seen live 2026-11-18 12:17 UTC). Data commits therefore carry [skip ci].
+    if "[skip ci]" not in msg:
+        msg += " [skip ci]"
     body = json.dumps({"message": msg, "files": changes()}).encode()
     for attempt in range(1, 5):
         req = urllib.request.Request(URL, data=body, method="POST", headers={"authorization": "Bearer " + oidc(), "content-type": "application/json", "user-agent": "ultrastable-push-main/1"})  # Cloudflare answers 403 (error 1010) to the default Python-urllib agent
