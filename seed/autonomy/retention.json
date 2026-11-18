@@ -236,6 +236,14 @@
       "keep_days": 90,
       "reason": "GOALS-1: every knob change with its prediction and verdict; each is also a hash-chained audit row",
       "archive": true
+    },
+    "goals": {
+      "keep": "state",
+      "reason": "GOALS-1: one row per goal; retired goals stay so a goal's history is never lost"
+    },
+    "goal_knobs": {
+      "keep": "state",
+      "reason": "GOALS-1: one row per knob with its current value; bounded by the tenant limit of 80"
     }
   }
 }
