@@ -210,3 +210,21 @@ test('topologyBindings keeps a Durable Object namespace so a handoff upload neve
   const topo = { workers: [{ id: 'ultrastable-tenants', state: 'live', bindings: { durable_objects: { TENANT: 'TenantDO' }, vars: { A: '1' } } }], stores: {} };
   assert.deepEqual(topologyBindings(topo, 'ultrastable-tenants').bindings, [{ type: 'durable_object_namespace', name: 'TENANT', class_name: 'TenantDO' }, { type: 'plain_text', name: 'A', text: '1' }]);
 });
+
+test('HANDOFF-SUBREQ-1: a deploy reads each import level in one request, not one request per file', async () => {
+  const { batchedReader, rawMany } = await import('../src/handoff.js');
+  const files = { 'w/a.js': "import './b.js';\nimport './c.js';\n", 'w/b.js': "import './d.js';\n", 'w/c.js': "export const c = 1;\n", 'w/d.js': "export const d = 1;\n" };
+  let calls = 0;
+  const f = async (url, init) => {
+    calls++; assert.match(url, /graphql$/);
+    const q = JSON.parse(init.body).query, data = {};
+    for (const m of q.matchAll(/(f\d+): object\(expression: "[0-9a-f]+:([^"]+)"/g)) data[m[1]] = files[m[2]] == null ? null : { text: files[m[2]], isTruncated: false };
+    return { ok: true, json: async () => ({ data: { repository: data } }) };
+  };
+  let single = 0;
+  const br = batchedReader(async p => { single++; return files[p]; }, ps => rawMany(f, 't', 'o/r', 'abc1234', ps));
+  const mods = await collectModules(br.read, 'w/a.js', br.prefetch);
+  assert.equal(mods.length, 4); assert.equal(single, 0, 'every file came from a batch'); assert.equal(calls, 3, 'one request per import level');
+  const bad = batchedReader(async p => files[p], async () => { throw new Error('graphql 502'); });
+  await collectModules(bad.read, 'w/a.js', bad.prefetch); assert.match(bad.fallbacks[0], /graphql 502/, 'a failed batch falls back to single reads and says so');
+});

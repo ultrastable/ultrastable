@@ -138,6 +138,34 @@ export async function readOrg(db, key) {
   try { return r ? JSON.parse(r.value) : null; } catch { return null; }
 }
 
+// FREE-TIER-1: the beats of the last 24 h are kept as one org row and only the rows since the last read (plus any still in flight) are read again,
+// instead of re-reading every loop's 24 h of beats each tick (about 2,300 rows a read, 40 reads in 3 h). A beat still open after BEAT_REOPEN_MS is not re-read.
+const BEAT_REOPEN_MS = 30 * 60e3;
+async function recentBeats(db, now, cut) {
+  const cutMs = ms(cut), c = await readOrg(db, 'pulse_beats_cache');
+  let runs = {}, from = cut;
+  if (c && c.runs && c.read_at) {
+    runs = c.runs;
+    let f = ms(c.read_at);
+    for (const arr of Object.values(runs)) for (const [at, ok] of arr) if (ok == null && at < f && at > now - BEAT_REOPEN_MS) f = Math.min(f, at);
+    from = iso(Math.max(f, cutMs));
+  }
+  const fromMs = ms(from);
+  for (const k of Object.keys(runs)) { runs[k] = runs[k].filter(([at]) => at >= cutMs && at < fromMs); if (!runs[k].length) delete runs[k]; }
+  for (const b of await all(db, `SELECT loop, started_at, ok FROM loop_beats WHERE started_at >= ?`, from)) (runs[b.loop] = runs[b.loop] || []).push([ms(b.started_at), b.ok == null ? null : Number(b.ok)]);
+  await setOrg(db, 'pulse_beats_cache', { read_at: iso(now - 60e3), runs });
+  const out = {};
+  for (const [k, arr] of Object.entries(runs)) out[k] = arr.map(([at, ok]) => ({ at, ok }));
+  return out;
+}
+// First time a loop was seen: stored once and kept, so the table is never grouped each tick; only a loop with no stored first costs one indexed read.
+async function firstSeen(db, loops) {
+  const stored = (await readOrg(db, 'pulse_firsts')) || {}; let changed = false;
+  for (const l of new Set(loops)) if (stored[l] == null) { const r = await first(db, `SELECT MIN(started_at) AS f FROM loop_beats WHERE loop=?`, l); if (r && r.f) { stored[l] = ms(r.f); changed = true; } }
+  if (changed) await setOrg(db, 'pulse_firsts', stored);
+  return stored;
+}
+
 // The tick step. Judges every loop (declared, or ever seen) and the tick itself, writes loop_clock, files and closes MISSED-<loop>.
 export async function pulseStep(db, ctx, ensureItem) {
   await ensurePulseSchema(db);
@@ -146,14 +174,12 @@ export async function pulseStep(db, ctx, ensureItem) {
   const since = sinceRow && sinceRow.at ? ms(sinceRow.at) : now;
   if (!sinceRow) await setOrg(db, 'pulse_since', { at: ctx.nowIso });
   const cut = iso(now - 86400e3 - every * 60e3);
-  const beats = await all(db, `SELECT loop, started_at, ok FROM loop_beats WHERE started_at >= ?`, cut);
-  const firsts = Object.fromEntries((await all(db, `SELECT loop, MIN(started_at) AS f FROM loop_beats GROUP BY loop`)).map(r => [r.loop, ms(r.f)]));
-  const byLoop = {};
-  for (const b of beats) (byLoop[b.loop] = byLoop[b.loop] || []).push({ at: ms(b.started_at), ok: b.ok == null ? null : Number(b.ok) });
+  const byLoop = await recentBeats(db, now, cut);
   const prev = Object.fromEntries((await all(db, `SELECT loop, every_min, bad_streak FROM loop_clock`)).map(r => [r.loop, r]));
   const cad = { ...DEFAULT_CADENCE, ...((ctx.config.pulse && ctx.config.pulse.cadence) || {}) };
   const declared = new Set([...((ctx.config.pulse && ctx.config.pulse.loops) || LANE_LOOPS), ...Object.keys(cad)]);
-  const loops = new Set([...declared, ...Object.keys(firsts)]);
+  const firsts = await firstSeen(db, [...declared, ...Object.keys(byLoop)]);
+  const loops = new Set([...declared, ...Object.keys(byLoop), ...Object.keys(firsts).filter(l => firsts[l] > now - 8 * 86400e3)]);  // the ledger keeps 8 days
   const judged = [];
   // The tick itself, from its own ledger. A tick is good only when it finished every step.
   const ticks = await all(db, `SELECT started_at, steps_completed, steps_total, finished_at FROM tick_runs WHERE started_at >= ? AND id <> ?`, cut, ctx.tickId);
