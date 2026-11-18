@@ -89,7 +89,7 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | Piece | Status |
 |---|---|
 | QNFO fleet (customer zero, owner's own) | **Running**; numbers self-scored, unaudited ([customer story](docs/customer-story.md)) |
-| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->35 Python and 299 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->210<!-- /claim --> recorded live deploys of its Worker and siblings |
+| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->35 Python and 305 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->215<!-- /claim --> recorded live deploys of its Worker and siblings |
 | Google Cloud adapter (Cloud Run, Scheduler) | **Skeleton built**, <!-- claim:gcp-tests -->2 tests<!-- /claim --> in CI, deploy script unrun |
 | Dashboard | **In `dashboard/`**; status per its README, not verified here |
 | Reference runtime in Python: 11-step loop, CLI, dashboard, Docker, Cloud Run deploy ([platform/core](platform/core/README.md)) | **Built**, <!-- claim:core-tests -->44 tests<!-- /claim --> in CI, default agents simulated, one real-model proof (Workers AI); deploy unrun |

@@ -192,6 +192,8 @@ class Boot:
          "portfolio-manager", "An item left the active set with no disposition. Find it and give it one."),
         ("M-pace", "share of loop runs in 24 hours that returned work (idle runs are not progress)", "beats_productive_share_24h", ">=", 0.05, 24,
          "operations", "Most loop runs return nothing. Lengthen the cadence of idle loops and shorten productive ones (core/pace plan)."),
+        ("M-cost", "largest share of a free daily limit used today (1 = the whole free day)", "free_tier_peak_share", "<=", 0.8, 0,
+         "operations", "A free daily limit is nearly spent. Lengthen idle loops (pace.json) and cut the heaviest reader before the plan sheds work."),
         ("M-instrumented", "objectives without a probe-backed target metric", "objectives_without_probe", "<=", 0, 1,
          "product-manager", "Ask what the owner would check to know this objective is being met, then insert a target metric with a builtin, sql or http probe."),
     )

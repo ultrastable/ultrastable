@@ -1,6 +1,7 @@
 // Ultrastable seed Worker: the server-side heartbeat for one org.
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
+import { paced } from './pace.js';
 import { runTick, lastTickForHealth } from './tick.js';
 import { claimsReleasedUnworked24h } from './doer.js';
 import { runExecutor, noteExecutor } from './executor.js';
@@ -84,7 +85,9 @@ export default {
     ctx.waitUntil((async () => {
       // SUBREQUEST-ROTATION-1: three groups share the 50 subrequests of a Free-plan invocation, one group per tick (pulse.js HEAVY_LOOPS, every 30 min each).
       const phase = Math.floor((Number(_event && _event.scheduledTime) || Date.now()) / 600e3) % 4;
-      const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase) ? Promise.resolve(undefined) : beat(env.DB, loop, fn, { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
+      const cycle = Math.floor((Number(_event && _event.scheduledTime) || Date.now()) / (HEAVY_CADENCE_MIN * 60e3));
+      // PACE-2: a heavy loop whose recent runs returned nothing skips cycles (pace.js); the skipped slot is still a beat, so the clock sees a decision.
+      const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, config)) || fn(), { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
       const tenant = env.TENANT || config.org_slug || 'default';
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
       const main = repos.find(r => r.endsWith('/ultrastable')) || repos[0];
