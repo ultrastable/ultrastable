@@ -7,7 +7,8 @@ import vm from "node:vm";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 import { route } from "../worker.js";
-import { safeSelect, parseAction, fallbackAnswer, SQL_TABLES } from "../agent.js";
+import { safeSelect, parseAction, fallbackAnswer, SQL_TABLES, ask as askAgent } from "../agent.js";
+import { budgetEnv, ensureLedger, SHARES } from "../../seed/worker/src/budget.js";
 
 function mkdb() {
   const db = new DatabaseSync(":memory:");
@@ -144,4 +145,14 @@ test("the owner page: a stacked form, named chips, an answer thread, and an answ
   const flat = n => [n.tag, ...n.children.flatMap(flat)];
   assert.ok(!flat(evil).some(t => t === "img" || t === "script") && /<script>/.test(evil.textContent));
   assert.ok(!/innerHTML\s*=\s*[^;]*\bmd\(/.test(js), "answers are never written through innerHTML");
+});
+
+test("Q-BUDGET-SURFACES: a frozen budget makes the console answer without a model call", async () => {
+  const e = mkenv(["{\"answer\":\"model answer\"}"]);
+  await ensureLedger(e.DB);
+  await e.DB.prepare("INSERT INTO budget_ledger (day, kind, units, calls, refused) VALUES (?1,'ai_neurons',1000000000,1,0)").bind(new Date().toISOString().slice(0, 10)).run();
+  const calls = []; const raw = e.AI.run; e.AI = { run: async (...a) => { calls.push(a[0]); return raw(...a); } };
+  const r = await askAgent(budgetEnv(e, SHARES.dashboard), "how many tasks are there", { commands: {}, exec: async () => ({ ok: true, out: "" }) });
+  assert.equal(calls.length, 0, "no Workers AI call past the budget");
+  assert.ok(String(r.out).length > 0, "the answer is never empty");
 });

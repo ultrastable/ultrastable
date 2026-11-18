@@ -2511,6 +2511,14 @@
    "title": "pages-live probes every bundle host",
    "body": "pages_live_urls lists each /api/freshness route; Practical Solutions now serves one reporting ensemble ledger age.",
    "probe": "grep:doctrine/rules.json::pages_live_urls"
+  },
+  {
+   "id": "lesson-2026-11-18-budget-surfaces-already-governed",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Budget surfaces already governed",
+   "body": "Dashboard and site wrap env in budgetEnv with declared shares; closing probes pointed at a stale literal.",
+   "probe": "grep:dashboard/worker.js::budgetEnv"
   }
  ]
 }
