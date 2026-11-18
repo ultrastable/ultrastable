@@ -87,6 +87,6 @@ export async function alertFreeTier(db, result, now = new Date()) {
           `${k} stays under its free daily limit for the rest of the UTC day`, `free_tier_samples latest ${k} used_today / ${FREE_LIMITS[k] ? FREE_LIMITS[k].per_day : '?'} < 1 at 23:50 UTC`, 1, 'cost').run();
       if (res && res.meta && res.meta.changes) filed.push(id);
     }
-  } catch (e) { console.error('free-tier alert:', e && e.message); }
+  } catch (e) { filed.error = String(e && e.message).slice(0, 150); console.error('free-tier alert:', filed.error); }  // the caller reads .error
   return filed;
 }
