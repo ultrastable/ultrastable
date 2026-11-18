@@ -2591,6 +2591,14 @@
    "probe": "grep:workers/tools/timebomb-baseline.json::\"tests\": \\[\\]"
   },
   {
+   "id": "lesson-2026-11-18-read-budget-2-loop-beats-scan-put-the-tick-in-degrade",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "READ-BUDGET-2 loop_beats scan put the tick in degrade",
+   "body": "The measure step filtered loop_beats by started_at with only a (loop,slot) index, so four metrics scanned every beat per tick (250k rows/h vs 120k limit) and the tick skipped selfaudit, dispatch and execute. Added loop_beats(started_at) and tick_runs(finished_at) indexes. Session: session_0156nqDsqGCaorJAUs6hPGox",
+   "probe": "file:seed/worker/migrations/0024_read_indexes_3.sql"
+  },
+  {
    "id": "decision-2026-11-18-ui-ux-manager-pass-2026111814-3-fix-item-s-filed",
    "kind": "decision",
    "date": "2026-11-18",
