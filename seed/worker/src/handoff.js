@@ -208,18 +208,43 @@ async function raw(f, token, repo, sha, path) {
   return r.text();
 }
 const norm = (p) => { const out = []; for (const s of p.split('/')) { if (s === '..') out.pop(); else if (s && s !== '.') out.push(s); } return out.join('/'); };
-export async function collectModules(read, main) {
+// HANDOFF-SUBREQ-1: a deploy read every module of the tick Worker one request at a time (about 60 files), which alone passes the Free plan's 50
+// subrequests per invocation ("Too many subrequests", ultrastable-tick and ultrastable-tenants handoffs blocked from 20:21 UTC on 2026-11-17).
+// GitHub GraphQL returns many files in one request, so a deploy reads each import level in one call. A file GraphQL cannot return whole (binary, truncated)
+// is still read singly, and the reason a batch fell back is kept in `fallbacks`, never dropped.
+export async function rawMany(f, token, repo, sha, paths) {
+  const [owner, name] = String(repo).split('/');
+  const fields = paths.map((p, i) => `f${i}: object(expression: ${JSON.stringify(sha + ':' + p)}) { ... on Blob { text isTruncated } }`).join(' ');
+  const r = await f(`${API}/graphql`, { method: 'POST', headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json', 'user-agent': 'ultrastable-handoff' }, body: JSON.stringify({ query: `query { repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(name)}) { ${fields} } }` }) });
+  if (!r.ok) throw new Error('graphql ' + r.status);
+  const j = await r.json(), data = j && j.data && j.data.repository;
+  if (!data) throw new Error('graphql returned no repository: ' + JSON.stringify(j && j.errors || '').slice(0, 120));
+  const out = new Map();
+  paths.forEach((p, i) => { const o = data['f' + i]; if (o && typeof o.text === 'string' && !o.isTruncated) out.set(p, o.text); });
+  return out;
+}
+export function batchedReader(read, many) {
+  const cache = new Map(), fallbacks = [];
+  return { fallbacks,
+    prefetch: async (paths) => { const need = paths.filter(p => !cache.has(p)); if (!need.length) return; try { for (const [k, v] of await many(need)) cache.set(k, v); } catch (e) { fallbacks.push(String(e && e.message || e).slice(0, 120)); } },
+    read: async (p) => (cache.has(p) ? cache.get(p) : read(p)) };
+}
+export async function collectModules(read, main, prefetch = null) {  // prefetch(paths): optional, reads a whole import level in one request (Free plan: 50 subrequests per invocation)
   const mods = new Map(), names = new Map(), queue = [main];
   // JSON imports become JS modules (`export default <json>`; the upload API has no JSON module type, error 10162), named <file>.json.js, and the
   // `with { type: 'json' }` attribute is dropped from the importing statement, as a bundler would do.
   const flat = (path) => { if (!names.has(path)) { const base = path.split('/').pop() + (/\.json$/.test(path) ? '.js' : ''); let n = base, i = 1; while ([...names.values()].includes(n)) n = base.replace(/(\.\w+)$/, `-${i++}$1`); names.set(path, n); } return names.get(path); };
   flat(main);
   while (queue.length) {
-    const path = queue.shift(); if (mods.has(path)) continue;
+    const level = [...new Set(queue.splice(0))].filter(x => !mods.has(x));
+    if (prefetch && level.length) await prefetch(level);
+    for (const path of level) {
+    if (mods.has(path)) continue;
     let src = await read(path); const dir = path.replace(/[^/]+$/, '');
     if (/\.json$/.test(path)) { mods.set(path, 'export default ' + JSON.stringify(JSON.parse(src)) + ';\n'); continue; }
     src = src.replace(/(\bfrom\s+["']|\bimport\s*\(\s*["']|\bimport\s+["'])(\.{1,2}\/[^"']+)(["'])(\s*(?:with|assert)\s*\{\s*type\s*:\s*["']json["']\s*\})?/g, (_, a, spec, c) => { const target = norm(dir + spec); if (!mods.has(target)) queue.push(target); return a + './' + flat(target) + c; });
     mods.set(path, src);
+    }
   }
   return [...mods.entries()].map(([path, src]) => ({ name: names.get(path), path, src, type: 'application/javascript+module' }));
 }
@@ -270,12 +295,17 @@ export function makeDeployer({ token, fetch: f = fetch, site, key, oidc, generat
       const topo = JSON.parse(await raw(f, token, repo, sha, 'doctrine/topology.json'));
       const tb = topologyBindings(topo, id); if (!tb) return { ok: false, detail: `${id} is not in doctrine/topology.json` };
       if (tb.worker.state !== 'live') return { ok: false, detail: `${id} is ${tb.worker.state}, not live` };
-      const read = p => raw(f, token, repo, sha, p);
+      const br = batchedReader(p => raw(f, token, repo, sha, p), ps => rawMany(f, token, repo, sha, ps)), read = br.read;
+      if (String(tb.worker.main).startsWith('seed/worker/')) {  // the tick Worker: its generated config.js reads these files (and every migration), so they come in two requests, not about thirty
+        await br.prefetch([tb.worker.main, 'seed/autonomy/policy.json', 'seed/autonomy/failure-modes.json', 'instances/ultrastable/failure-modes.json', 'seed/autonomy/criticality.json', 'doctrine/unknowns.json', 'instances/ultrastable/cost-budgets.json', 'instances/ultrastable/instance.json', 'instances/ultrastable/objectives.json', 'ops/halt.json', 'seed/autonomy/retention.json', 'seed/worker/migrations/index.json']);
+        const idx = await read('seed/worker/migrations/index.json').then(JSON.parse, () => []);
+        await br.prefetch(idx.map(x => 'seed/worker/migrations/' + x));
+      }
       if (((tb.worker.bindings || {}).var_names || []).includes('OWNER_EMAIL') && !tb.bindings.some(x => x.name === 'OWNER_EMAIL')) {
         const em = await resolveOwnerEmail(f, token, repo).catch(() => ''); if (em) tb.bindings.push({ type: 'plain_text', name: 'OWNER_EMAIL', text: em });
       }
       const gen = { 'seed/worker/src/config.js': () => tickConfigSource(read), ...Object.fromEntries(Object.entries(generated).map(([k, v]) => [k, () => v])) };
-      const modules = await collectModules(p => (p in gen ? Promise.resolve(gen[p]()) : read(p)), tb.worker.main);
+      const modules = await collectModules(p => (p in gen ? Promise.resolve(gen[p]()) : read(p)), tb.worker.main, ps => br.prefetch(ps.filter(p => !(p in gen))));
       const r = await site.fetch('https://internal/__internal/deploy', { method: 'POST', headers: { ...(oidc ? { authorization: 'Bearer ' + oidc } : { 'x-internal-key': key }), 'content-type': 'application/json' },
         body: JSON.stringify({ name: id, modules: modules.map(({ name, src, type }) => ({ name, src, type })), main: modules[0].name, compatibility_date: tb.worker.compatibility_date || topo.compatibility_date, bindings: tb.bindings, crons: tb.worker.crons || null, tag: String(sha).slice(0, 12) }) });
       const j = await r.json().catch(() => ({}));
