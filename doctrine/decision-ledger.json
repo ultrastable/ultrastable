@@ -2412,6 +2412,31 @@
    "body": "#628 failed checks on a decision row whose probe named a document (agents/AGENTS.md). Rebound it to tools/push_main.py, merged main (which already had #627 and its own push fallback), kept main's fallback and added the no-OIDC fallback from #628; #628 closed as superseded.",
    "probe": "grep:tools/push_main.py::worker route unavailable",
    "session": "session_0156nqDuXUgEsPtAbbPEiehc"
+  },
+  {
+   "id": "lesson-2026-11-18-main-writer-1-cloudflare-refuses-the-default-python-urllib-a",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "MAIN-WRITER-1: Cloudflare refuses the default Python-urllib agent (403, error 1010)",
+   "body": "The first live call of tools/push_main.py to the tick Worker got HTTP 403 error code 1010 on the default urllib user agent; the direct-push fallback landed the commit. push_main now sends its own user-agent.",
+   "probe": "grep:tools/push_main.py::ultrastable-push-main",
+   "session": "session_0156nqDtxpefT1d2NKQyUFFV"
+  },
+  {
+   "id": "lesson-2026-11-18-live-pages-read-live-data",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Live pages read live data",
+   "body": "The /live changelog read a daily GitHub-scheduled snapshot that failed or skipped for days. Merged changes now come from a per-tick cache; /api/freshness fails when a source is older than its cadence (FRONT-BACKED-1).",
+   "probe": "file:seed/worker/src/livechanges.js"
+  },
+  {
+   "id": "decision-2026-11-18-front-backed-1-front-end-backed-by-back-end",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "FRONT-BACKED-1 front end backed by back end",
+   "body": "Rowan 2026-11-18: front end must always match the back end. Added to agents/AGENTS.md and the seed copy; /api/freshness enforces data age. Session: session_0156nqDsqGCaorJAUs6hPGox",
+   "probe": "file:site/live.js"
   }
  ]
 }

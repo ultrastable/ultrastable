@@ -214,7 +214,9 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   const snap = JSON.stringify({ generated: "2026-11-12T00:00:00Z", scoreboard: {} });
   const db = { prepare: (q) => ({ bind: () => ({ all: async () => ({ results: [{ body: snap.slice(0, 20) }, { body: snap.slice(20) }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 2 }) }) };
   let rr = await mod.fetch(new Request("https://ultrastable.io/api/live"), { ...ENV, DB: db });
-  assert.equal(rr.status, 200); assert.equal(await rr.text(), snap);
+  assert.equal(rr.status, 200); { const j = JSON.parse(await rr.text()); assert.equal(j.generated, "2026-11-12T00:00:00Z"); assert.equal(j.freshness.ok, false); /* LIVE-FRESH-1: a week-old snapshot is stale */ }
+  rr = await mod.fetch(new Request("https://ultrastable.io/api/freshness"), { ...ENV, DB: db });
+  assert.equal(rr.status, 503);
   rr = await mod.fetch(new Request("https://ultrastable.io/api/live"), ENV);
   assert.equal(rr.status, 503);
   for (const m of ["POST", "PUT", "DELETE", "PATCH"]) { rr = await mod.fetch(new Request("https://ultrastable.io/api/live", { method: m, body: "x" }), { ...ENV, DB: db }); assert.equal(rr.status, 405); }

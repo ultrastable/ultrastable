@@ -16,6 +16,28 @@ export async function load(env) {
   } catch (e) { return null; }
 }
 
+
+// LIVE-FRESH-1: the daily snapshot is only the base. Merged changes come live from the tick Worker (refreshed every pass) and are merged in by PR number;
+// `freshness` states the age of each source against its cadence so a stale page says so and the probe (/api/freshness) can fail.
+export const CADENCE_S = { snapshot: 26 * 3600, changes: 30 * 60 };
+const ageS = (iso, now) => { const t = Date.parse(String(iso || "").replace(" ", "T") + (/[zZ]|[+-]\d\d:?\d\d$/.test(String(iso || "")) ? "" : "Z")); return isNaN(t) ? null : Math.max(0, Math.round((now - t) / 1000)); };
+export async function overlay(d, env, generated, now = Date.now()) {
+  let live = null;
+  try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/live/changes")); if (r.ok) live = await r.json(); } } catch (e) { live = null; }
+  const f = { snapshot: { at: generated, age_s: ageS(generated, now), cadence_s: CADENCE_S.snapshot }, changes: { at: live && live.refreshed_at || null, age_s: live ? ageS(live.refreshed_at, now) : null, cadence_s: CADENCE_S.changes } };
+  if (live && live.changes && live.changes.length) {
+    const th = d.throughput = d.throughput || {}, by = new Map();
+    for (const g of th.changelog || []) for (const c of g.changes) by.set(c.n, { ...c, date: g.date });
+    for (const c of live.changes) { const old = by.get(c.n) || {}; by.set(c.n, { ...old, n: c.n, title: c.title, by: c.by, url: c.url, date: c.merged_at.slice(0, 10), plus: old.plus, minus: old.minus }); }
+    const days = {};
+    for (const c of by.values()) (days[c.date] = days[c.date] || []).push(c);
+    th.changelog = Object.keys(days).sort().reverse().slice(0, 14).map(date => ({ date, changes: days[date].sort((a, b) => b.n - a.n) }));
+  }
+  for (const k of Object.keys(f)) f[k].stale = f[k].age_s == null || f[k].age_s > f[k].cadence_s;
+  d.freshness = { ...f, ok: !f.snapshot.stale && !f.changes.stale, checked_at: new Date(now).toISOString() };
+  return d;
+}
+
 const JS = `
 const $=s=>document.querySelector(s);
 function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
@@ -25,7 +47,7 @@ function table(parent,head,rows){const w=el('div','us-wrap'),t=el('table','us-ta
 fetch('/api/live').then(r=>r.json()).then(d=>{
  if(d.error){$('#live').textContent=d.error;return}
  const s=d.scoreboard,c=d.claims||{};
- $('#asof').textContent='Snapshot '+d.generated+' from commit '+d.commit+'. '+d.access+'.';
+ const fr=d.freshness||{};$('#asof').textContent='Snapshot '+d.generated+' from commit '+d.commit+'. Merged changes refreshed '+((fr.changes||{}).at||'never')+'. '+d.access+'.'+(fr.ok===false?' STALE: '+['snapshot','changes'].filter(k=>(fr[k]||{}).stale).join(', ')+' older than its cadence; the freshness probe in the transparency workflow fails and files the repair.':'');
  const sb=sec('Scoreboard','Every number is computed from the repository and the live checks, not typed in.');
  table(sb,['Measure','Value'],[['Loops and managers in the registry',s.managers_and_loops],['...of which have a recorded run',s.loops_with_evidence+' (the rest are a gap and are listed below)'],['Components live',JSON.stringify(s.components)],['Wired connections',s.edges_wired+' of '+s.edges_total],['User stories passing',s.stories_passing+' of '+s.stories_total],['Open gaps',s.open_gaps],['Open pull requests',s.open_prs]]);
  const th=d.throughput||{},mg0=th.merged||{},oo=mg0.by_origin||{};
@@ -33,7 +55,7 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
  table(tp,['Origin','Merged PRs','Lines added','Lines removed'],Object.keys(oo).map(k=>[k,oo[k].prs,oo[k].lines_added,oo[k].lines_removed]));
  table(tp,['Measure','Value'],[['Merged PRs in total',mg0.total],['Median hours from open to merge',mg0.median_hours_open_to_merge],['Merged per day',JSON.stringify(mg0.per_day)],['Site deploys by outcome (last 50)',JSON.stringify((th.deploys||{}).by_conclusion)],['Backlog items by status',JSON.stringify((th.queue||{}).by_status)],['Backlog items the executor may take now',(th.queue||{}).takeable_now],['Model calls and estimated cost (USD)',JSON.stringify(th.model_cost)],['Executor runs by outcome',JSON.stringify((th.executor||{}).by_conclusion)],['PRs the executor opened unattended, by state',JSON.stringify((th.executor||{}).attempts)]]);
  const cg=sec('Changelog','Every merged change by day, with size. Repository contents and the backlog text stay private.');
- (th.changelog||[]).forEach(g=>{cg.appendChild(el('h3',null,g.date+' ('+g.changes.length+' changes)'));table(cg,['PR','Title','By','Size'],g.changes.map(x=>[x.n,x.title,x.by,'+'+x.plus+' -'+x.minus]))});
+ (th.changelog||[]).forEach(g=>{cg.appendChild(el('h3',null,g.date+' ('+g.changes.length+' changes)'));table(cg,['PR','Title','By','Size'],g.changes.map(x=>[x.url?{t:'#'+x.n,href:x.url}:x.n,x.title,x.by,x.plus==null?'':'+'+x.plus+' -'+x.minus]))});
  const gw=d.growth||{},gm=gw.mix||{};
  if(d.unknowns&&!d.unknowns.error){const u=d.unknowns,uk=sec('What we do not know','Improving only what is known shrinks the solution space, so the system also questions itself: every loop is asked inverted questions (pre-mortem, assumption audit, red team, Universal Ignorance Audit). A gap found becomes a new objective candidate.');
   table(uk,['Measure','Value'],[['Loops and needs questioned',u.units_questioned+' of '+u.units+' ('+Math.round(u.coverage*100)+'%)'],['Questions asked / answered / open',u.asked+' / '+u.answered+' / '+u.open],['Surprise rate (answers that found a gap)',Math.round(u.surprise_rate*100)+'%'],['New objective candidates',u.objective_candidates],['Answered with "we cannot know"',u.cannot_know]]);
@@ -80,9 +102,15 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
 
 export async function liveResponse(u, request, env, shell, HTML) {
   if (request.method !== "GET" && request.method !== "HEAD") return new Response(JSON.stringify({ error: "read-only" }), { status: 405, headers: { ...JSON_H, allow: "GET, HEAD" } });
+  if (u.pathname === "/api/freshness") {
+    const r = await load(env);
+    const d = r ? await overlay({}, env, r.generated) : { freshness: { ok: false, snapshot: { stale: true, at: null }, changes: { stale: true } } };
+    return new Response(JSON.stringify(d.freshness), { status: d.freshness.ok ? 200 : 503, headers: { ...JSON_H, "cache-control": "no-store" } });
+  }
   if (u.pathname === "/api/live") {
     const r = await load(env);
-    return new Response(r ? r.body : JSON.stringify({ error: "No snapshot published yet." }), { status: r ? 200 : 503, headers: JSON_H });
+    if (!r) return new Response(JSON.stringify({ error: "No snapshot published yet." }), { status: 503, headers: JSON_H });
+    return new Response(JSON.stringify(await overlay(JSON.parse(r.body), env, r.generated)), { headers: JSON_H });
   }
   const body = "<div class=\"head\"><h1>Ultrastable running on Ultrastable</h1><p>Everything here is read-only and open to everyone. It is the same record the managers and agents work from.</p><p class=\"meta\" id=\"asof\">Loading...</p></div><div id=\"live\"></div><script>" + JS + "</script>";
   return new Response(shell({ path: "/live", title: "Live: Ultrastable running on Ultrastable", description: "Read-only view of the managers, loops, claim checks and code changes behind Ultrastable." }, body), { headers: HTML });

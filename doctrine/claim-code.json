@@ -43,6 +43,24 @@
         "file": ".github/workflows/executor.yml",
         "contains": "name: executor"
       }
+    },
+    {
+      "id": "front-backed-freshness",
+      "source": "agents/AGENTS.md",
+      "quote": "returns 503 when one is older",
+      "probe": {
+        "file": "site/live.js",
+        "contains": "status: d.freshness.ok ? 200 : 503"
+      }
+    },
+    {
+      "id": "live-stale-banner",
+      "source": "site/live.js",
+      "quote": "older than its cadence; the freshness probe in the transparency workflow fails and files the repair",
+      "probe": {
+        "file": ".github/workflows/transparency.yml",
+        "contains": "api/freshness"
+      }
     }
   ],
   "baseline": [
