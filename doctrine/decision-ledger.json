@@ -2288,6 +2288,24 @@
    "title": "GitHub deliveries the tick ignores are answered at the first hop",
    "body": "Deliveries to /hook/github were answered 401 (the hook signs with a secret the tick does not hold and the App token has no hook rights to repair it) and still cost a request on every hop. The site Worker answers workflow_run, check_run, workflow_job and status deliveries itself and forwards only push, pull_request, issues, issue_comment, release and ping.",
    "probe": "grep:site/worker.js::hookEventFilter"
+  },
+  {
+   "id": "lesson-2026-11-18-subrequest-meter-1-meter-every-fetch-per-invocation-defer-ne",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "SUBREQUEST-METER-1: meter every fetch per invocation; defer, never fail",
+   "body": "Rotation alone did not hold: loops share 50 subrequests with the tick steps. A per-invocation meter counts every fetch, defers a loop that no longer fits (carried first to the next tick), issuesync remembers judged files by sha, the gate caps its calls and records a 403 per PR.",
+   "probe": "file:seed/worker/src/subreq.js",
+   "session": "session_0156nqCrGE5EXqCmJ11EwNYK"
+  },
+  {
+   "id": "lesson-2026-11-18-write-back-cites-the-session-id-verbatim",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Write-back cites the session id verbatim",
+   "body": "A write-back record must carry the exact session id of the commits (a mistyped id fails the writeback check); copy it from the commit trailer.",
+   "probe": "file:seed/worker/src/subreq.js",
+   "session": "session_0156nqDrGE5EXqCmJ11EwNYK"
   }
  ]
 }
