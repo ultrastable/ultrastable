@@ -2196,6 +2196,14 @@
    "title": "Main was red after HOSTS-1 (#603): surface, retention and silent-catch checks",
    "body": "Measured: node --test test/plan-limits.test.mjs seed/worker/test/retention.test.js seed/worker/test/hosts.test.js, 22 pass after the fix; before it, plan-limits failed 2 and the standards generator exited 1. The cause was a merge path that accepted clean without a green full checks run; GREEN-GUARD-1 closes it.",
    "probe": "file:seed/standards/surfaces.json"
+  },
+  {
+   "id": "decision-2026-11-18-ciwatch-watches-ultrastable-github",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "ciwatch watches ultrastable/.github",
+   "body": "Measured: doctrine/ciwatch.json lists six repositories including ultrastable/.github, and ciwatch --check passes. A repository the token cannot read is recorded as unmeasured, never green, so the daily run surfaces it.",
+   "probe": "grep:doctrine/ciwatch.json::ultrastable/.github"
   }
  ]
 }

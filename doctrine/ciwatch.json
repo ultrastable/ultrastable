@@ -1,6 +1,6 @@
 {
   "_doc": "CIWATCH-1: the repositories whose default-branch Actions runs the system watches for red X's, and the rules it remediates by. Read by foundation/ciwatch.py, run by .github/workflows/ciwatch.yml. Add a repository (an ultrastable org repo, or a QNFO repo still in use) by adding it here.",
-  "repos": ["ultrastable/ultrastable", "ultrastable/workers", "ultrastable/spec", "ultrastable/practical-solutions", "ultrastable/ops"],
+  "repos": ["ultrastable/ultrastable", "ultrastable/workers", "ultrastable/spec", "ultrastable/practical-solutions", "ultrastable/ops", "ultrastable/.github"],
   "failing": ["failure", "timed_out", "startup_failure"],
   "transient": ["HTTP 5\\d\\d", "ECONNRESET", "ETIMEDOUT", "rate limit", "Could not resolve host", "Connection reset", "TLS handshake", "runner.*lost", "502 Bad Gateway", "503 Service"],
   "max_reruns_per_run": 1,
