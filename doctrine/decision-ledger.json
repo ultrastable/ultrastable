@@ -2146,6 +2146,15 @@
    "body": "One sha256 and Merkle implementation; seed auditchain.js imports workers/core/audit.",
    "probe": "file:seed/worker/src/auditchain.js",
    "session": "session_0156nqDvx8HgX8Ubut9xXoKx"
+  },
+  {
+   "id": "lesson-2026-11-18-merge-gate-1-merge-only-when-the-checks-job-succeeded",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "MERGE-GATE-1: merge only when the checks job succeeded",
+   "body": "Root cause of #596 breaking main: the sweeper merged on mergeable_state clean, which is true when main has no required checks, and lane.sh treated skipped or missing checks as green. Both now require a check run named checks with conclusion success on the exact head sha. Also LANE-RETRY-1 (lane adoption retried pull --rebase inside a conflicted rebase; now resets to origin/main and reruns) and REGEN-NONFATAL-1 (REGEN-1 step no longer exits 1 before the authoritative checks). Guards: seed/worker/test/sweeper.test.js, tests/foundation/test_lane_merger.py. Workers repo is archived, its ci and self-hosting failures predate retirement.",
+   "probe": "file:seed/worker/src/sweeper.js",
+   "session": "session_0156nqDPUk"
   }
  ]
 }

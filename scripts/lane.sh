@@ -59,6 +59,14 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
     echo "#$n ci-failed"; continue
   fi
   if [ "$pending" -gt 0 ]; then echo "#$n pending"; continue; fi
+  # MERGE-GATE-1: "no check failed" is not "the gate passed". A skipped or missing `checks` job (draft, HALT, a workflow that never started) left only
+  # cheap checks green, and a change that broke main (#596) merged. Merge only when the `checks` job itself succeeded on this exact head commit.
+  gate=$(jq '[.[]|select(.name=="checks" and .conclusion=="success")]|length' <<<"$runs")
+  if [ "$gate" -eq 0 ]; then
+    age=$(( $(date +%s) - $(date -d "$(jq -r .updatedAt <<<"$v")" +%s) ))
+    if [ "$age" -gt 300 ] && gh workflow run checks.yml -R "$repo" --ref "$br" >/dev/null 2>&1; then echo "#$n gate: dispatched checks"; fi
+    echo "#$n gate: the checks job has not succeeded on ${sha:0:7}; not merged"; continue
+  fi
   case "$labels" in
     *,ci-failed,*|*,conflict,*) gh pr edit "$n" -R "$repo" --remove-label ci-failed --remove-label conflict >/dev/null 2>&1;;
   esac
@@ -116,28 +124,32 @@ echo "lane: needs-pat merged=$wf_merged waiting=$wf_waiting credential=$wf_sourc
 # (it starts from every finished lane). Runs only inside the lane workflow, or where LANE_ADOPT=1 is set by another server-side host.
 if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
   root="$(cd "$here/.." && pwd)"
-  if (cd "$root" && python3 -m foundation loopowner --adopt --apply); then
+  # LANE-RETRY-1: adoption output (issue files, dashboard counts, memory) is regenerated from main, so a conflict on push is never merged by hand:
+  # reset to the new origin/main and run the adoption again. The old loop retried `pull --rebase` inside the unresolved rebase and failed four more times (lane run 44205928490).
+  adopt_commit() {
+    (cd "$root" && python3 -m foundation loopowner --adopt --apply) || { echo "lane: loopowner adopt failed" >&2; return 2; }
     # MEMORY-REFRESH-1: record merged work in the project memory before it goes stale and fails every pull request's memory check
     (cd "$root" && python3 scripts/memory_refresh.py) || echo "lane: memory refresh failed" >&2
-    if [ -n "$(git -C "$root" status --porcelain docs/issues docs/PROJECT-MEMORY.md)" ]; then
-      git -C "$root" config user.name "ultrastable-lane"; git -C "$root" config user.email "actions@users.noreply.github.com"
-      # LANE-DASHBOARD-1: the adoption items change the issue count the dashboard carries; rebuild it in the same commit, or main fails its own stale check
-      (cd "$root" && python3 scripts/build_dashboard.py >/dev/null) || echo "lane: dashboard rebuild failed" >&2
-      git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md
-      git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
-      pushed=0
-      for try in 1 2 3 4 5; do
-        if git -C "$root" pull --rebase --autostash -q origin main && git -C "$root" push -q origin HEAD:main; then pushed=1; break; fi
-        sleep $((try * 3))
-      done
-      if [ "$pushed" = 1 ]; then
-        echo "lane: adoption items committed to main"
-      else
-        echo "lane: adoption items not pushed" >&2; echo x >>"$_SAFE_FAILS"
-      fi
-    fi
+    [ -n "$(git -C "$root" status --porcelain docs/issues docs/PROJECT-MEMORY.md)" ] || return 0
+    git -C "$root" config user.name "ultrastable-lane"; git -C "$root" config user.email "actions@users.noreply.github.com"
+    # LANE-DASHBOARD-1: the adoption items change the issue count the dashboard carries; rebuild it in the same commit, or main fails its own stale check
+    (cd "$root" && python3 scripts/build_dashboard.py >/dev/null) || echo "lane: dashboard rebuild failed" >&2
+    git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md
+    git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)" || return 0
+    git -C "$root" push -q origin HEAD:main
+  }
+  pushed=0; adopt_rc=0
+  for try in 1 2 3 4 5; do
+    adopt_commit; adopt_rc=$?
+    if [ "$adopt_rc" = 0 ]; then pushed=1; break; fi
+    [ "$adopt_rc" = 2 ] && break
+    git -C "$root" fetch -q origin main && git -C "$root" reset -q --hard origin/main
+    sleep $((try * 3))
+  done
+  if [ "$pushed" = 1 ]; then
+    echo "lane: adoption items committed to main (or nothing to adopt)"
   else
-    echo "lane: loopowner adopt failed" >&2; echo x >>"$_SAFE_FAILS"
+    echo "lane: adoption items not pushed" >&2; echo x >>"$_SAFE_FAILS"
   fi
 fi
 

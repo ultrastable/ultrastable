@@ -182,3 +182,12 @@ class Credential(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class MergeGateStatic(unittest.TestCase):
+    """MERGE-GATE-1 and LANE-RETRY-1: the lane merges only when the `checks` job succeeded, and retries adoption from a clean reset, never inside a conflicted rebase."""
+    def test_lane_requires_checks_job_and_resets_on_conflict(self):
+        s = (ROOT / "scripts" / "lane.sh").read_text()
+        self.assertIn('select(.name=="checks" and .conclusion=="success")', s)
+        self.assertIn("reset -q --hard origin/main", s)
+        self.assertNotIn("pull --rebase --autostash", s)

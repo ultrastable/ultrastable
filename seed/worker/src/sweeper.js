@@ -12,6 +12,14 @@ async function gh(f, token, method, path, body) {
 }
 const hours = (iso, now) => Math.max(0, (now - Date.parse(iso)) / 36e5);
 
+// MERGE-GATE-1: true only when a check run named `checks` completed with success on the given commit.
+export async function checksPassed(f, token, repo, sha) {
+  if (!sha) return false;
+  const r = await gh(f, token, 'GET', `/repos/${repo}/commits/${sha}/check-runs?per_page=100`);
+  if (!r.ok || !r.json || !Array.isArray(r.json.check_runs)) return false;
+  return r.json.check_runs.some(c => c.name === 'checks' && c.status === 'completed' && c.conclusion === 'success');
+}
+
 export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now = Date.now(), maxAgeH = 24 }) {
   const out = { status: 'ok', merged: [], refreshed: [], filed: [], lane_owned: [], released: [], errors: [], open_loop_age_hours: 0 };
   if (!token) return { ...out, status: 'no-token' };
@@ -24,7 +32,10 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
         let d = (await gh(f, token, 'GET', `/repos/${repo}/pulls/${p.number}`)).json || p;
         if (d.draft) { const r = await gh(f, token, 'POST', `/repos/${repo}/pulls/${p.number}/ready_for_review`); if (r.ok) d = (await gh(f, token, 'GET', `/repos/${repo}/pulls/${p.number}`)).json || d; }
         if (d.mergeable_state === 'behind') { const u = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/update-branch`); if (u.ok) out.refreshed.push(tag); }
-        if (d.mergeable_state === 'clean') {
+        // MERGE-GATE-1: `clean` only means GitHub has no required checks to wait for (main has none), so it was true while `checks` was failing,
+        // skipped or never started, and #596 merged and broke main. Merge only when the `checks` job succeeded on this exact head commit.
+        if (d.mergeable_state === 'clean' && !(await checksPassed(f, token, repo, d.head && d.head.sha))) { out.gated = (out.gated || []).concat(tag); }
+        else if (d.mergeable_state === 'clean') {
           const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/merge`, { merge_method: 'squash' });
           if (m.ok) { out.merged.push(tag); continue; }
         }

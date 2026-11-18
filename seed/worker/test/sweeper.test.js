@@ -9,6 +9,7 @@ function fake(state) {
     const R = (j, ok = true, status = 200) => ({ ok, status, text: async () => JSON.stringify(j) });
     if (m === 'GET' && path.startsWith('/repos/o/r/pulls?')) return R(state.prs);
     if (m === 'GET' && /pulls\/\d+$/.test(path)) return R(state.detail);
+    if (m === 'GET' && path.includes('/check-runs')) return R({ check_runs: state.checkRuns || [{ name: 'checks', status: 'completed', conclusion: 'success' }] });
     if (m === 'PUT' && path.endsWith('/merge')) return R({}, state.mergeOk !== false, state.mergeOk === false ? 405 : 200);
     if (state.issuesOff && path.includes('/issues')) return R({ message: 'Issues has been disabled in this repository.' }, false, 410);
     if (m === 'GET' && path.includes('labels=open-loop')) return R(state.filed || []);
@@ -19,7 +20,7 @@ function fake(state) {
   };
   return { f, calls };
 }
-const pr = { number: 5, head: { ref: 'claude/x' }, updated_at: '2026-11-10T00:00:00Z' };
+const pr = { number: 5, head: { ref: 'claude/x', sha: 'abc' }, updated_at: '2026-11-10T00:00:00Z' };
 test('a green client PR is merged by the server', async () => {
   const { f, calls } = fake({ prs: [pr], detail: { ...pr, mergeable_state: 'clean' } });
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
@@ -42,4 +43,11 @@ test('with issues off the sweep does not abort: the stuck PR is left to the lane
   const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
   assert.equal(r.status, 'ok'); assert.deepEqual(r.errors, []); assert.deepEqual(r.filed, []);
   assert.deepEqual(r.lane_owned, ['o/r#5', 'o/r#7']); assert.ok(calls.includes('GET /repos/o/r/pulls/7'));
+});
+test('MERGE-GATE-1: a clean PR whose checks job failed, was skipped or never ran is not merged', async () => {
+  for (const checkRuns of [[], [{ name: 'checks', status: 'completed', conclusion: 'failure' }], [{ name: 'checks', status: 'completed', conclusion: 'skipped' }], [{ name: 'start', status: 'completed', conclusion: 'success' }]]) {
+    const { f, calls } = fake({ prs: [pr], detail: { ...pr, mergeable_state: 'clean' }, checkRuns });
+    const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
+    assert.deepEqual(r.merged, []); assert.ok(!calls.includes('PUT /repos/o/r/pulls/5/merge')); assert.deepEqual(r.gated, ['o/r#5']);
+  }
 });
