@@ -13,7 +13,7 @@ import { createMeter, guarded, readDeferred, writeDeferred } from './subreq.js';
 import { ingestDeploys } from './selfaudit.js';
 import { sampleCosts } from './costsample.js';
 import { readRoi } from './roi.js';  // ROI-1
-import { sampleFreeTier, freeTierLevel } from './freetier.js';  // FREE-TIER-1
+import { sampleFreeTier, freeTierLevel, alertFreeTier } from './freetier.js';  // FREE-TIER-1
 import { runGate } from './worker-gate.js';
 import { runHandoffs, makeDeployer, makeRollback, makeVersionReader } from './handoff.js';
 import { syncIssues } from './issuesync.js';
@@ -108,6 +108,7 @@ export default {
       const main = repos.find(r => r.endsWith('/ultrastable')) || repos[0];
       // FREE-TIER-1: the usage sample is read first. It ran last and was starved by the 50-subrequest limit ("Too many subrequests" at 00:10 UTC 2026-11-18), which left the governor without a reading.
       const freeTier = await sampleFreeTier(env.DB, { token: env.CF_ANALYTICS_TOKEN, account_id: (config.cost_budgets && config.cost_budgets[0] && config.cost_budgets[0].account_id) || env.CF_ACCOUNT_ID }).catch(e => ({ error: String(e && e.message).slice(0, 120) }));
+      await alertFreeTier(env.DB, freeTier);  // READ-BUDGET-8: an item is filed once a day per resource when a free limit is projected to pass 70%
       await decisionSafely(() => recordGovernor(env.DB, freeTier));  // DECISIONS-1: the level just set is a decision, scored at a later sample
       await b('credentials', () => refreshDue(env.DB, env));  // AUTH-1: refresh runs first so nothing lapses
       const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));  // one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback)

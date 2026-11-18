@@ -133,6 +133,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const date = process.argv[2] || new Date().toISOString().slice(0, 10);
   const token = process.env.CLOUDFLARE_API_TOKEN;
   const account = process.env.CLOUDFLARE_ACCOUNT_ID;
+  if (!token || !account) {
+    // COST-PROBE-2: the runner has no Cloudflare credential bound (run 44337645276 died here with 'missing credentials' and turned cost-guard red every
+    // hour). The reading is recorded as unmeasured, never as zero, and the tick Worker's own free-tier sampler (CF_ANALYTICS_TOKEN) stays the source of record.
+    const record = { ts: new Date().toISOString(), date, unmeasured: `no ${!token ? 'CLOUDFLARE_API_TOKEN' : 'CLOUDFLARE_ACCOUNT_ID'} bound on this runner`, d1: [], neurons: null, breaches: [] };
+    appendRecord(record);
+    console.log(JSON.stringify({ record, queueItems: [] }));
+    process.exit(0);
+  }
   const result = await run({ token, account, date });
   console.log(JSON.stringify(result));
 }
