@@ -2429,6 +2429,14 @@
    "title": "Live pages read live data",
    "body": "The /live changelog read a daily GitHub-scheduled snapshot that failed or skipped for days. Merged changes now come from a per-tick cache; /api/freshness fails when a source is older than its cadence (FRONT-BACKED-1).",
    "probe": "file:seed/worker/src/livechanges.js"
+  },
+  {
+   "id": "decision-2026-11-18-front-backed-1-front-end-backed-by-back-end",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "FRONT-BACKED-1 front end backed by back end",
+   "body": "Rowan 2026-11-18: front end must always match the back end. Added to agents/AGENTS.md and the seed copy; /api/freshness enforces data age. Session: session_0156nqDsqGCaorJAUs6hPGox",
+   "probe": "file:site/live.js"
   }
  ]
 }
