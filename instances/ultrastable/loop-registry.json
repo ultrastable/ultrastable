@@ -3643,8 +3643,8 @@
   {
    "id": "hosts",
    "kind": "probe",
-   "summary": "HOSTS-1: one adapter interface (seed/worker/src/hosts.js) for Cloudflare, GitHub Actions and Google Cloud. Signed push and workflow_run webhooks deploy the touched workers through the first healthy host with failover; every deploy, failure and inbound host event (POST /hook/host) lands as a commit status or check run; the hosts loop probes each host's health and redispatches through the credential-free GitHub Actions host when a push has no deploy after 30 minutes. The host-hooks loop (hourly) derives the webhook secrets inside the Worker from CREDENTIAL_KEY and creates, repairs and re-checks the repository webhook itself through the GitHub App token; the site Worker forwards /hook/github and /hook/host to the tick. A token without hook rights is recorded plainly and the polling path stays.",
-   "trigger": "push and workflow_run webhooks on /hook/github, POST /hook/host, and every tick (loop 'hosts')",
+   "summary": "HOSTS-1: one adapter interface (seed/worker/src/hosts.js) for Cloudflare, GitHub Actions and Google Cloud. Signed push webhooks deploy the touched workers through the first healthy host with failover; every deploy, failure and inbound host event (POST /hook/host) lands as a commit status or check run; the hosts loop probes each host's health and redispatches through the credential-free GitHub Actions host when a push has no deploy after 30 minutes. The host-hooks loop (hourly) derives the webhook secrets inside the Worker from CREDENTIAL_KEY and creates, repairs and re-checks the repository webhook itself through the GitHub App token; the site Worker forwards /hook/github and /hook/host to the tick. A token without hook rights is recorded plainly and the polling path stays.",
+   "trigger": "push webhooks on /hook/github (workflow_run is not subscribed: FREE-TIER-1), POST /hook/host, and every tick (loop 'hosts')",
    "owner": "operations",
    "closes_by": "system",
    "sla": "1 tick",
