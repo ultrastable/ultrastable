@@ -2148,6 +2148,15 @@
    "session": "session_0156nqDvx8HgX8Ubut9xXoKx"
   },
   {
+   "id": "decision-2026-11-18-pace-1-loop-pace-is-a-live-metric",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "PACE-1: loop pace is a live metric",
+   "body": "The tick Worker computes beats_24h and beats_productive_share_24h from loop_beats and seeds liveness metric M-pace; idle runs are not progress. core/pace plans cadence from the same quantities. Tenant agent backlog check moved from 6 hours to 2 hours (public repo).",
+   "probe": "grep:seed/worker/src/tick.js::beats_productive_share_24h",
+   "session": "session_0156nqDu3CafCLkNfgmXspHr"
+  },
+  {
    "id": "lesson-2026-11-18-merge-gate-1-merge-only-when-the-checks-job-succeeded",
    "kind": "lesson",
    "date": "2026-11-18",
