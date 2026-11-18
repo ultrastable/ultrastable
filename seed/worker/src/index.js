@@ -3,6 +3,7 @@
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { paced } from './pace.js';
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
+import { tune } from './roi.js';  // BOUNDARIES-1
 import { runTick, lastTickForHealth, METRICS } from './tick.js';
 import { claimsReleasedUnworked24h } from './doer.js';
 import { runExecutor, noteExecutor } from './executor.js';
@@ -11,12 +12,14 @@ import { verifyOidc, commitToMain } from './maincommit.js';  // MAIN-WRITER-1
 import { createMeter, guarded, readDeferred, writeDeferred } from './subreq.js';  // SUBREQUEST-METER-1
 import { ingestDeploys } from './selfaudit.js';
 import { sampleCosts } from './costsample.js';
+import { readRoi } from './roi.js';  // ROI-1
 import { sampleFreeTier, freeTierLevel } from './freetier.js';  // FREE-TIER-1
 import { runGate } from './worker-gate.js';
 import { runHandoffs, makeDeployer, makeRollback, makeVersionReader } from './handoff.js';
 import { syncIssues } from './issuesync.js';
 import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
 import { refreshLiveChanges, readLiveChanges } from './livechanges.js'; // LIVE-FRESH-1
+import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
 import { recordGovernor, readDecisions, safely as decisionSafely } from './decisions.js'; // DECISIONS-1
 import { runSocial } from './social.js';  // REACH-1
 import { probe as probeAgents } from './codeagent.js';
@@ -97,7 +100,8 @@ export default {
       // PACE-2: a heavy loop whose recent runs returned nothing skips cycles (pace.js); the skipped slot is still a beat, so the clock sees a decision.
       const knobConfig = await withKnobs(env.DB, config);  // GOALS-1: knob values the control loop set (pace.idle_runs, pace.max_stride) are what paced() reads
       const carried = new Set(await readDeferred(env.DB)), deferred = new Set(), guard = guarded(meter, deferred, failed);  // SUBREQUEST-METER-1: a loop that was deferred runs first next time, in any phase
-      const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase && !carried.has(loop)) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, knobConfig)) || guard(loop, fn), { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
+      const tuningNow = await freeTierLevel(env.DB).then(l => (l && l.resources) ? tune(Object.fromEntries(Object.entries(l.resources).map(([k, r]) => [k, r.frac]))) : null).catch(e => { console.error('tuning unread:', e && e.message); return null; });  // BOUNDARIES-1: applied to every paceable loop below
+      const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase && !carried.has(loop)) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, knobConfig, tuningNow)) || guard(loop, fn), { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
       const steps = [], step = (loop, fn) => { steps.push([loop, fn]); };
       const tenant = env.TENANT || config.org_slug || 'default';
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
@@ -108,6 +112,8 @@ export default {
       await b('credentials', () => refreshDue(env.DB, env));  // AUTH-1: refresh runs first so nothing lapses
       const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));  // one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback)
       const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
+      await b('live-changes', () => refreshLiveChanges({ db: env.DB, token, repo: main }));  // LIVE-FRESH-2: own early step; inside the sweeper it ran after 32 of 46 subrequests were spent and never wrote, so /live froze
+      await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
       step('executor', async () => { const r = await runExecutor({ ...env, AI: gov.ai || undefined, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
       step('gate', () => runGate({ token, repos }));  // ZERO-MINUTES-1
       const ghBudget = githubBudget(env.GITHUB_CALLS_PER_TICK || config.github_calls_per_tick);  // GITHUB-BUDGET-1: one GitHub call budget for the lane and the handoffs of this tick (default 40)
@@ -117,7 +123,7 @@ export default {
       step('issuesync', () => syncIssues({ db: env.DB, token, repo: main }));  // ISSUESYNC-1: filed roadmap items reach the queue on the server, no Actions needed
       step('repo-access', () => checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }));  // REPO-ACCESS-1
       step('social', () => runSocial({ db: env.DB, env, tenant }));  // REACH-1: posts the due calendar item to the channels linked at /connect
-      step('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); sw.live_changes = await refreshLiveChanges({ db: env.DB, token, repo: main }).catch(e => ({ status: 'error', error: String(e && e.message).slice(0, 120) })); return sw; });  // SERVER-OWNS-LOOPS-1
+      step('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); return sw; });  // SERVER-OWNS-LOOPS-1
       step('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
       step('host-hooks', async () => reconcileHooks({ db: env.DB, token, repos, origin: env.PUBLIC_ORIGIN || 'https://ultrastable.io', secret: await hookSecret(env, 'github') }));  // HOSTS-1: the server creates, repairs and re-checks its own repo webhook; nothing is set up by hand
       step('hosts', () => watchHosts({ db: env.DB, registry: hostRegistry(env, token, main), token, repo: main }));  // HOSTS-1: health probe of every host, stall detection, failover redispatch
@@ -195,6 +201,7 @@ export default {
       } catch (e) { return d1Unavailable(e); }
     }
     if (url.pathname === '/api/live/changes') { try { return Response.json(await readLiveChanges(env.DB), { headers: { 'cache-control': 'public, max-age=60' } }); } catch (e) { return d1Unavailable(e); } }  // LIVE-FRESH-1
+    if (url.pathname === '/api/roi') { try { return Response.json(await readRoi(env.DB, { env }), { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // ROI-1
     if (url.pathname === '/api/decisions') { try { return Response.json(await readDecisions(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // DECISIONS-1
     if (url.pathname === '/api/goals' && request.method === 'GET') { try { return Response.json(await readGoals(env.DB, { builtins: METRICS }), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // GOALS-1: public, read-only
     if (url.pathname === '/api/goals/knobs' && request.method === 'GET') { try { return Response.json(await knobValues(env.DB, url.searchParams.get('tenant') || 'core'), { headers: { 'cache-control': 'no-store', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // GOALS-1: a tenant reads the knob values core set and applies them in its own code

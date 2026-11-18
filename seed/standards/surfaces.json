@@ -463,6 +463,19 @@
       "reason": "internal feed read by the site worker over a service binding; the public page and API are /decisions and /api/decisions on the site"
     },
     {
+      "id": "roi",
+      "path": "/api/roi",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "Pay-or-stay-free analysis from real free-tier usage and current Cloudflare prices; free-only is the default mode (ROI-1).",
+      "reason": "internal feed read by the owner dashboard and the site worker proxy; it recommends only and enables nothing"
+    },
+    {
       "id": "goals",
       "path": "/api/goals",
       "methods": [
