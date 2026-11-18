@@ -2,6 +2,7 @@
 // Cron fires runTick; GET /health shows the last tick's four-line report.
 // Standard issue: first-party web analytics (analytics/analytics.js): /a.js beacon, /a/e collector, GET /api/analytics (bearer ANALYTICS_TOKEN).
 import { paced } from './pace.js';
+import { tune } from './roi.js';  // BOUNDARIES-1
 import { runTick, lastTickForHealth } from './tick.js';
 import { claimsReleasedUnworked24h } from './doer.js';
 import { runExecutor, noteExecutor } from './executor.js';
@@ -96,7 +97,8 @@ export default {
       const cycle = Math.floor((Number(_event && _event.scheduledTime) || Date.now()) / (HEAVY_CADENCE_MIN * 60e3));
       // PACE-2: a heavy loop whose recent runs returned nothing skips cycles (pace.js); the skipped slot is still a beat, so the clock sees a decision.
       const carried = new Set(await readDeferred(env.DB)), deferred = new Set(), guard = guarded(meter, deferred, failed);  // SUBREQUEST-METER-1: a loop that was deferred runs first next time, in any phase
-      const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase && !carried.has(loop)) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, config)) || guard(loop, fn), { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
+      const tuningNow = await freeTierLevel(env.DB).then(l => (l && l.resources) ? tune(Object.fromEntries(Object.entries(l.resources).map(([k, r]) => [k, r.frac]))) : null).catch(e => { console.error('tuning unread:', e && e.message); return null; });  // BOUNDARIES-1: applied to every paceable loop below
+      const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase && !carried.has(loop)) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, config, tuningNow)) || guard(loop, fn), { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
       const steps = [], step = (loop, fn) => { steps.push([loop, fn]); };
       const tenant = env.TENANT || config.org_slug || 'default';
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
