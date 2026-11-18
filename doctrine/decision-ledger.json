@@ -2504,6 +2504,15 @@
    "title": "OIDC publish needs a user-agent",
    "body": "Cloudflare answers 403 to the default python-urllib agent; any server-side Python call into an ultrastable Worker sets a user-agent. Session: session_0156nqDsqGCaorJAUs6hPGox",
    "probe": "file:foundation/transparency.py"
+  },
+  {
+   "id": "decision-2026-11-18-goals-1-the-system-sets-goals-and-turns-knobs",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "GOALS-1: the system sets goals and turns knobs",
+   "body": "Goal hierarchy in seed/autonomy/goals.json; tick step goals measures, moves one knob per cooldown, reviews after review_h and reverts if the goal did not move; every step is an audit-chain row. Tenants publish /goals.json and read knob values from /api/goals/knobs; no credential for core. Live at /goals.",
+   "probe": "grep:seed/worker/src/goals.js::GOALS-1",
+   "session": "https://claude.ai/code/session_0156nqDvJuuZ8Nf9hzFAcUxM"
   }
  ]
 }

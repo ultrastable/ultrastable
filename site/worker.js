@@ -798,6 +798,39 @@ function decisionsPage(d) {
     + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Decision point</th><th>Metric it optimizes</th><th>Predicted effect</th><th>Decisions and scoring</th><th>Did decisions improve it?</th><th>Source</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
     + "<p class=\"meta\">Generated " + esc(d.as_of) + (d.live_as_of ? "; live read " + esc(d.live_as_of) : "; live read unavailable") + ". The verdict compares the older half of scored decisions with the newer half and says insufficient until enough are scored. A code path that makes a decision without a declared metric fails the build (<code>python3 -m foundation decisions --check</code>).</p>");
 }
+// GOALS-1: what the system works toward, the knobs it may turn, what it changed and whether each loop closed. Read live from the tick Worker (/api/goals).
+async function goalsData(env) {
+  try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/goals")); if (r.ok) return await r.json(); } } catch (e) { console.error("goals", e && e.message); }
+  return null;
+}
+function goalsPage(d) {
+  if (!d) return shell({ path: "/goals", title: "Goals - Ultrastable", description: "The goals Ultrastable works toward, its knobs and its loops." }, "<div class=\"head\"><h1>Goals</h1><p>The live goal data could not be read just now. The system retries on its next request; machine-readable: <a href=\"/api/goals\">/api/goals</a>.</p></div>");
+  const f = function (v) { return v == null ? "no reading" : (Math.abs(v) >= 100 ? Math.round(v) : Math.round(v * 1000) / 1000); };
+  const spark = function (a) { if (!a || a.length < 2) return ""; const lo = Math.min.apply(null, a), hi = Math.max.apply(null, a), w = 90, h = 22; const pts = a.map(function (y, i) { return Math.round(i * w / (a.length - 1)) + "," + Math.round(h - 2 - (hi === lo ? 0.5 : (y - lo) / (hi - lo)) * (h - 4)); }).join(" "); return "<svg width=\"" + w + "\" height=\"" + h + "\" viewBox=\"0 0 " + w + " " + h + "\" role=\"img\" aria-label=\"last " + a.length + " readings\"><polyline points=\"" + pts + "\" fill=\"none\" stroke=\"var(--ds-accent)\" stroke-width=\"2\"/></svg>"; };
+  const kn = d.knobs || [], byGoal = {};
+  kn.forEach(function (k) { (byGoal[k.goal_id] = byGoal[k.goal_id] || []).push(k); });
+  const kview = function (k) { return "<li><code>" + esc(k.id) + "</code> = <strong>" + esc(f(k.value)) + "</strong> (bounds " + esc(k.min) + " to " + esc(k.max) + ", step " + esc(k.step) + ", default " + esc(k.default) + (k.resting_until ? ", resting until " + esc(k.resting_until.slice(0, 16)) : "") + ")" + (k.what ? "<br><small>" + esc(k.what) + "</small>" : "") + "</li>"; };
+  const goals = d.goals || [], kids = function (id) { return goals.filter(function (g) { return g.parent_id === id; }); };
+  const row = function (g, depth) {
+    if (g.level !== "target") return "<tr><td style=\"padding-left:" + (depth * 16) + "px\"><strong>" + esc(g.level) + "</strong>: " + esc(g.statement) + "<br><small><code>" + esc(g.id) + "</code>" + (g.tenant !== "core" ? " (tenant " + esc(g.tenant) + ")" : "") + "</small></td><td colspan=\"4\"></td></tr>";
+    const tone = g.value == null ? "warn" : g.met ? "ok" : "warn";
+    return "<tr><td style=\"padding-left:" + (depth * 16) + "px\">" + esc(g.statement) + "<br><small><code>" + esc(g.id) + "</code>" + (g.tenant !== "core" ? " (tenant " + esc(g.tenant) + ")" : "") + (g.origin === "system" ? ", set by the system" : "") + (g.deadline ? ", by " + esc(g.deadline) : "") + "</small></td>"
+      + "<td class=\"" + tone + "\"><strong>" + esc(f(g.value)) + "</strong> " + esc(g.unit || "") + "<br><small>" + (g.value == null ? "not reported yet" : g.met ? "target met" : "off target") + "</small></td>"
+      + "<td><code>" + esc(g.op) + " " + esc(g.target) + "</code></td><td>" + spark(g.spark) + "<br><small>" + esc(g.trend) + "</small></td>"
+      + "<td>" + ((byGoal[g.id] || []).length ? "<ul>" + byGoal[g.id].map(kview).join("") + "</ul>" : "<small>no knob; an unmet goal files a backlog item</small>") + "</td></tr>";
+  };
+  const tree = function (parent, depth) { return goals.filter(function (g) { return (g.parent_id || null) === parent; }).map(function (g) { return row(g, depth) + tree(g.id, depth + 1); }).join(""); };
+  const ids = new Set(goals.map(function (g) { return g.id; }));
+  const roots = goals.filter(function (g) { return g.parent_id && !ids.has(g.parent_id); }).map(function (g) { return row(g, 0) + tree(g.id, 1); }).join("");
+  const adj = (d.adjustments || []).map(function (a) { return "<tr><td><small>" + esc(a.at.slice(0, 16).replace("T", " ")) + "</small></td><td><code>" + esc(a.knob) + "</code> " + esc(a.old) + " to " + esc(a.new) + "</td><td><small>" + esc(a.why) + "<br>Predicted: " + esc(a.prediction) + "</small></td><td class=\"" + (a.verdict === "kept" ? "ok" : a.verdict === "reverted" ? "warn" : "info") + "\">" + esc(a.verdict) + (a.measured != null ? "<br><small>" + esc(f(a.baseline)) + " to " + esc(f(a.measured)) + "</small>" : "") + "</td></tr>"; }).join("");
+  const loops = (d.loops || []).map(function (l) { return "<tr><td><code>" + esc(l.loop) + "</code></td><td>" + l.runs_24h + "</td><td>" + l.ok_runs_24h + "</td><td>" + l.acted_24h + "</td><td class=\"" + (l.closed === "closing" ? "ok" : "warn") + "\">" + esc(l.closed) + "</td></tr>"; }).join("");
+  return shell({ path: "/goals", title: "Goals - Ultrastable", description: "What Ultrastable works toward: every goal with its value against its target, the knobs the system may turn, what it changed, and whether each loop closed." },
+    "<div class=\"head\"><h1>Goals</h1><p>A system that improves itself has to know what it is working toward. Each target below has a metric, a number and the knobs the system may turn within safe bounds. Each tick it measures, moves at most one knob one step, checks a day later whether the goal moved and reverts the change if it did not, and writes every step to the hash-chained audit log. Tenants such as Practical Solutions register their own goals through the same interface. Machine-readable: <a href=\"/api/goals\">/api/goals</a>.</p></div>"
+    + "<h2>Goals and knobs</h2><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Goal</th><th>Now</th><th>Target</th><th>Trend</th><th>Knobs</th></tr></thead><tbody>" + (tree(null, 0) + roots) + "</tbody></table></div>"
+    + "<h2>Recent knob changes</h2>" + (adj ? "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>When (UTC)</th><th>Change</th><th>Why and prediction</th><th>Verdict</th></tr></thead><tbody>" + adj + "</tbody></table></div>" : "<p>No knob has been turned yet. A knob moves only when its goal is off target and its cooldown has passed.</p>")
+    + "<h2>Loops: did they close?</h2><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Loop</th><th>Runs, 24 h</th><th>Finished ok</th><th>Returned work</th><th>State</th></tr></thead><tbody>" + loops + "</tbody></table></div>"
+    + "<p class=\"meta\">Read live " + esc(d.as_of) + ". closing means finished ok in nearly all runs; degraded means some failures; not closing means none finished ok. " + esc(d.audit) + "</p>");
+}
 function roadmap() {
   const done = (i) => /^done/i.test(i.status), ids = Object.keys(ROAD.issues).sort();
   const rows = ids.map(function (k) { const i = ROAD.issues[k]; return "<tr id=\"" + esc(k) + "\"><td><strong>" + esc(k) + "</strong><br><small>" + esc(i.milestone) + "</small></td><td>" + esc(i.title) + "<br><small>Owner: " + esc(i.owner) + ". Trigger: " + esc(i.trigger) + "</small></td><td class=\"" + (done(i) ? "us-pass" : "us-fail") + "\">" + (done(i) ? "Done" : "Open") + "</td><td><small><code>" + esc(i.done) + "</code></small></td></tr>"; }).join("");
@@ -895,7 +928,7 @@ const handler = {
     { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/decisions", "/org", "/how", "/showcase", "/for", "/claims", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
+    const PAGES = ["/", "/engineers", "/dashboard", "/roadmap", "/decisions", "/goals", "/org", "/how", "/showcase", "/for", "/claims", "/product", "/team", "/faq", "/contact", "/pilot", "/start", "/setup", "/ops", "/privacy", "/accessibility"], pth = u.pathname.replace(/\/$/, "") || "/";
     if (env && env.DB && request.method === "GET" && (PAGES.includes(pth) || /^\/(for|showcase)\/[a-z0-9-]+$/.test(pth))) { /* UIUX-1: audience and case pages are path steps, so they are counted too */ const w = record(env, request, { host: CANON, path: pth, ref: request.headers.get("referer") }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
     { const m = /^\/(for|showcase)\/([a-z0-9-]+)\/?$/.exec(u.pathname); if (m) { const h = m[1] === "for" ? forAudience(m[2]) : showcaseCase(m[2]); if (h) return new Response(h, { headers: HTML }); } }
     switch (u.pathname.replace(/\/$/, "") || "/") {
@@ -916,6 +949,8 @@ const handler = {
       case "/org": return new Response(org(), { headers: HTML });
       case "/engineers": return new Response(engineers(), { headers: HTML });
       case "/roadmap": return new Response(roadmap(), { headers: HTML });
+      case "/goals": return new Response(goalsPage(await goalsData(env)), { headers: { ...HTML, "Cache-Control": "public, max-age=60" } });
+      case "/api/goals": { const g = await goalsData(env); return new Response(JSON.stringify(g || { error: "goals unavailable" }), { status: g ? 200 : 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } }); }
       case "/decisions": return new Response(decisionsPage(await decisionsData(env)), { headers: { ...HTML, "Cache-Control": "public, max-age=60" } });
       case "/api/roi": { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/roi")); j = await r.json(); st = r.status; } } catch (e) { /* reported as 503 */ } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); }  // ROI-1
       case "/api/decisions": return new Response(JSON.stringify(await decisionsData(env)), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } });
