@@ -2,6 +2,7 @@
 // Replaces executor.yml Actions minutes (156 min/day projected) with a tick-driven
 // code agent on the Cloudflare Worker. executor.yml stays as fallback only.
 
+import { routeChat } from './airoute.js';  // AI-ROUTER-1
 const MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 async function appToken(env) {
@@ -53,14 +54,11 @@ async function getTopItem(env) {
 }
 
 async function aiPatch(env, item) {
-  const res = await env.AI.run(MODEL, {
-    messages: [
+  const res = await routeChat(env, { kind: 'executor-legacy', models: [{ model: MODEL }], maxTokens: 4096, messages: [
       { role: "system", content: "You make the smallest complete change that closes the item. Reply with one JSON object: {\"files\":[{\"path\":string,\"content\":string}]}. Full file contents. Never touch .github/ or autonomy/." },
       { role: "user", content: `ITEM ${item.id}: ${item.title}\n${item.body || ""}` },
-    ],
-    max_tokens: 4096,
-  });
-  return JSON.parse(res.response);
+  ], verify: t => { JSON.parse(t); return true; } });
+  return JSON.parse(res.text);
 }
 
 async function writeFiles(env, token, repo, branch, files) {
@@ -122,8 +120,10 @@ export const ADAPTERS = [
 const text = r => { const v = (r && (r.response || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || ''; return typeof v === 'string' ? v : JSON.stringify(v); };
 
 export async function invoke(env, adapter, prompt) {
-  const r = await env.AI.run(adapter.model, { messages: [{ role: 'user', content: prompt }], ...adapter.extra });
-  return text(r);
+  // AI-ROUTER-1: one adapter through core/airouter: identical prompts come from cache, cost and pass rate are recorded. The JSON check is the quality gate (a bad reply is never cached).
+  const { max_tokens, ...extra } = adapter.extra || {};
+  const r = await routeChat(env, { kind: 'codeagent', models: [{ id: adapter.id, model: adapter.model, extra }], messages: [{ role: 'user', content: prompt }], maxTokens: max_tokens || 3000, verify: t => { parseJson(t); return true; } });
+  return r.text;
 }
 
 export function parseJson(t) {

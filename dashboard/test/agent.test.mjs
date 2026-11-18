@@ -91,16 +91,16 @@ test("a changing command needs a fresh code; with one it runs through the audite
 
 test("a model that returns nothing never produces an empty answer", async () => {
   const q = '{"tool":"sql","args":{"query":"SELECT COUNT(*) AS n FROM tasks"}}';
-  const e = mkenv([q, "", ""]); const ck = await login(e);          // a tool call, then no answer, then no synthesis
+  const e = mkenv([q, "", "", "", ""]); const ck = await login(e);      // a tool call, then no answer (the router tries the second model too), then no synthesis
   let r = await ask(e, ck, "how many tasks are there");
   assert.ok(r.out.trim().length > 40); assert.match(r.out, /could not write a conclusion/); assert.match(r.out, /Reading the database: \[\{"n":/);
   assert.ok(!/returned no text/.test(r.out));
   const e2 = mkenv([]); const ck2 = await login(e2);                 // nothing at all
   r = await ask(e2, ck2, "anything");
   assert.ok(r.out.trim().length > 20); assert.match(r.out, /could not answer/); assert.equal(r.ok, false);
-  const e3 = mkenv([q, "", '{"answer":"There are 9 tasks."}']); const ck3 = await login(e3);   // synthesis rescues it
+  const e3 = mkenv([q, "", "", '{"answer":"There are 9 tasks."}']); const ck3 = await login(e3);   // synthesis rescues it
   r = await ask(e3, ck3, "how many tasks are there"); assert.equal(r.out, "There are 9 tasks.");
-  assert.match(e3.seen[2].at(-1).content, /Answer the request now in plain text/);
+  assert.match(e3.seen[3].at(-1).content, /Answer the request now in plain text/);
   assert.match(fallbackAnswer([], "x"), /could not answer: x/);
 });
 
