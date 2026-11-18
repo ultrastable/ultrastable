@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 // MAIN-WRITER-1 (Q-GATE-ACTIONS-BYPASS): GitHub refuses the Actions app as a ruleset bypass actor, so a rule that requires `checks` on main would stop every
 // workflow-token push (regen-generated, deploy records, watchdog, ledgers). Workflows now send their data commits here instead: the run presents its GitHub

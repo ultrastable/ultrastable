@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 # Copyright (c) Ultrastable
 """MAIN-WRITER-1: replaces `git push origin HEAD:main` in workflows. Sends the files of the last local commit to the tick Worker, which verifies this run's
 GitHub Actions OIDC token and writes one commit to main with the org's GitHub App (exempt from the main ruleset). Needs `permissions: id-token: write`.
