@@ -2342,6 +2342,15 @@
    "body": "Direct merge calls go around the lane and sweeper gates. The ruleset is config in github/org-settings.json, applied by scripts/apply_github_settings.sh in the org-settings workflow; the Actions app bypasses so workflow-token pushes keep working. Ran bash -n on the script and the standingorder, closedloop and claimcode checks; all pass. Earlier commits on this branch carry a mistyped session trailer, cited here.",
    "probe": "file:scripts/apply_github_settings.sh",
    "session": "session_0156nqDPUk"
+  },
+  {
+   "id": "lesson-2026-11-18-pace-2-gauge-keys-do-not-make-a-loop-run-non-idle",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "PACE-2: gauge keys do not make a loop run non-idle",
+   "body": "Measured on the live D1 at 2026-11-18 01:55 UTC: the sweeper returns open_loop_age_hours (a reading) on every run, and counting it as work kept the sweeper at stride 1 after PACE-2 went live. isIdle now ignores config.pace.gauges and strideFor skips deferred beats; 315 worker tests pass, including the sweeper's real result.",
+   "probe": "grep:seed/worker/src/pace.js::gauges",
+   "session": "session_0156nqDu3CafCLkNfgmXspHr"
   }
  ]
 }
