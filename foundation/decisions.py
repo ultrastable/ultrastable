@@ -24,7 +24,9 @@ HDR = "// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0\n// Copyright 
 
 
 def load(root=REPO) -> dict:
-    return json.loads((Path(root) / REG).read_text(encoding="utf-8"))
+    """The registry is code configuration: a scratch or partial root without its own copy reads the repository's."""
+    p = Path(root) / REG
+    return json.loads((p if p.is_file() else REPO / REG).read_text(encoding="utf-8"))
 
 
 def _now(now=None) -> dt.datetime:
