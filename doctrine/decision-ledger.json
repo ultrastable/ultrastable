@@ -2137,6 +2137,14 @@
    "body": "The worker-native executor commit ddce890 flipped mcp-registry and cloudflare-agents to supported, deleted 673 lines of the researched standards register and added two tests for code that does not exist (buildDiscovery, cloudflare-agents.js, seed/standards/server.json); both tests failed on main and regen-generated stayed red. Reverted; the register is back to its researched state and standards --check passes. Lesson: a status flip needs a named existing file and a passing test, and the lane must not merge a change whose own tests fail. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
    "probe": "file:seed/standards/standards.json",
    "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
+  },
+  {
+   "id": "lesson-2026-11-18-green-guard-1-clean-is-not-green-lane-rebase-and-regen-push-",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "GREEN-GUARD-1: clean is not green; lane rebase and regen push races; foreign CI items",
+   "body": "Main has no required checks, so mergeable_state clean let #595 and #596 merge with a failed or absent full checks run. The tick lane and sweeper now ask greenguard.notGreen, scripts/lane.sh requires a green checks run, the lane aborts a wedged rebase and redoes adoption on fresh main, regen-generated retries its push on the moving main, and the executor no longer takes Q-CIFAIL items about other repositories. Archived repos spec, workers and license had their scheduled workflows disabled.",
+   "probe": "file:seed/worker/src/greenguard.js"
   }
  ]
 }

@@ -222,3 +222,13 @@ class Effect(unittest.TestCase):
         self.assertIn("no code consumer", executor.consumer_gap(["docs/issues/Q-X.json", "ops/x.jsonl"], ROOT))
         self.assertIsNone(executor.consumer_gap(["foundation/executor.py"], ROOT))
         self.assertIsNone(executor.consumer_gap(["doctrine/code-agents.json"], ROOT))  # read by foundation/agents.py
+
+
+class ForeignCifail(unittest.TestCase):
+    def test_other_repos_ci_item_is_not_takeable_here(self):  # FOREIGN-FIX-1
+        from foundation import executor
+        other = {"number": "Q-CIFAIL-practical-solutions-deploy-tenant", "title": "Q-CIFAIL-x: deploy-tenant is failing in ultrastable/practical-solutions"}
+        own = {"number": "Q-CIFAIL-ultrastable-checks", "title": "Q-CIFAIL-y: checks is failing in ultrastable/ultrastable"}
+        self.assertTrue(executor.foreign_cifail(other, "ultrastable/ultrastable"))
+        self.assertFalse(executor.foreign_cifail(own, "ultrastable/ultrastable"))
+        self.assertFalse(executor.foreign_cifail({"number": 5, "title": "something is failing in a/b"}, "ultrastable/ultrastable"))
