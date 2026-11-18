@@ -9,6 +9,7 @@
 // triage items no rule covers, at most `max_ai` calls per tick. Never touches GitHub and never handles a secret.
 import { ADAPTERS, parseJson } from './codeagent.js';
 import { createRouter } from './airouter.js';  // AI-ROUTER-1
+import { OWN_SQL, tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: the doer works, settles and re-checks only its own tenant's items, claims and gate cards
 
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()) || null;
@@ -88,7 +89,7 @@ async function tickfail(db, ctx, item) {
   const m = /^TICKFAIL-([a-z_]+)-/.exec(item.id);
   if (!m) return null;
   const step = m[1];
-  const newer = await first(db, `SELECT id FROM items WHERE id LIKE ? AND id > ? AND status NOT IN ('done','superseded','cancelled') ORDER BY id DESC LIMIT 1`, `TICKFAIL-${step}-%`, item.id);
+  const newer = await first(db, `SELECT id FROM items WHERE id LIKE ? AND id > ? AND status NOT IN ('done','superseded','cancelled') AND ${OWN_SQL()} ORDER BY id DESC LIMIT 1`, `TICKFAIL-${step}-%`, item.id, tenantOf(ctx));
   const ok = await first(db, `SELECT id, started_at FROM tick_runs WHERE started_at > ? AND finished_at IS NOT NULL AND (errors IS NULL OR errors NOT LIKE ?) ORDER BY id LIMIT 1`, item.created_at || '', `%${step}:%`);
   if (ok) return settle(db, ctx, item, 'done', `tick ${ok.id} (${ok.started_at}) completed step ${step} with no error`);
   if (newer) return settle(db, ctx, item, 'superseded', `same failure tracked by ${newer.id}`);
@@ -99,10 +100,10 @@ async function tickfail(db, ctx, item) {
 async function loopbreak(db, ctx, item) {
   if (!item.id.startsWith('LOOPBREAK-')) return null;
   const target = item.id.slice('LOOPBREAK-'.length);
-  const x = await first(db, `SELECT id, status, blocker FROM items WHERE id=?`, target);
+  const x = await first(db, `SELECT id, status, blocker FROM items WHERE id=? AND ${OWN_SQL()}`, target, tenantOf(ctx));
   if (!x) return settle(db, ctx, item, 'superseded', `target ${target} no longer exists`);
   if (x.status === 'blocked' && /^loop-breaker/.test(x.blocker || '')) {
-    await run(db, `UPDATE items SET status='ready', blocker=NULL, updated_at=? WHERE id=?`, ctx.nowIso, target);
+    await run(db, `UPDATE items SET status='ready', blocker=NULL, updated_at=? WHERE id=? AND ${OWN_SQL()}`, ctx.nowIso, target, tenantOf(ctx));
     await run(db, `INSERT INTO outcomes (item_id, agent, surface, action_class, result, evidence, at) VALUES (?, ?, 'work_tracker', 'execute', 'released', ?, ?)`, target, DOER, `unblocked by ${item.id}: dispatches now reach a doer (${DOER})`, ctx.nowIso);
   }
   const has = await first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE item_id=?`, target);
@@ -117,9 +118,10 @@ async function ownerOnly(db, ctx, item) {
 }
 
 export async function ensureOwnerGate(db, ctx) {
-  const g = await first(db, `SELECT status FROM gate_cards WHERE id='GATE-OWNER-ITEMS'`);
+  const T = tenantOf(ctx);
+  const g = await first(db, `SELECT status FROM gate_cards WHERE id='GATE-OWNER-ITEMS' AND ${OWN_SQL()}`, T);
   if (g && g.status === 'open') return;
-  if (g) { await run(db, `UPDATE gate_cards SET status='open', closed_at=NULL WHERE id='GATE-OWNER-ITEMS'`); return; }
+  if (g) { await run(db, `UPDATE gate_cards SET status='open', closed_at=NULL WHERE id='GATE-OWNER-ITEMS' AND ${OWN_SQL()}`, T); return; }
   await run(db, `INSERT INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe) VALUES ('GATE-OWNER-ITEMS', ?, ?, ?, ?, 'owner_items:0')`,
     'Backlog items only the owner can do (filings, applications, entity and IP decisions, reviews in the owner\'s name)',
     'Irreversible and identity-bound: they commit the owner\'s legal or financial identity',
@@ -153,7 +155,7 @@ async function successor(db, ctx, item, ensureItem) {
   const origin = item.id.startsWith('ORIGIN-') || /^criticality:/.test(item.closing_probe || '');
   if (!origin && !/^successor:/.test(item.closing_probe || '') && !item.id.startsWith('NEXT-')) return null;
   const base = item.id.replace(/^NEXT-/, '');
-  const src = origin ? null : await first(db, `SELECT id, title, done_check FROM items WHERE id=?`, base);
+  const src = origin ? null : await first(db, `SELECT id, title, done_check FROM items WHERE id=? AND ${OWN_SQL()}`, base, tenantOf(ctx));
   const roles = (await all(db, `SELECT DISTINCT role FROM roles`)).map(r => r.role);
   const lead = origin
     ? `You run the backlog of Ultrastable, a platform that runs autonomous systems on Cloudflare Workers + D1. Task: ${item.title}\nName the single highest-value concrete change (a cost cut or a verified deploy gain). It must be small (one day) and checkable by a probe.`
@@ -182,14 +184,14 @@ async function triage(db, ctx, item) {
 
 // Re-verifies parked items whose done check the Worker can evaluate (TICKFAIL waiting on a step), so they close without a new dispatch.
 async function recheck(db, ctx) {
-  const rows = await all(db, `SELECT * FROM items WHERE status='blocked' AND blocker LIKE 'waiting on probe:%' LIMIT 20`);
+  const rows = await all(db, `SELECT * FROM items WHERE status='blocked' AND blocker LIKE 'waiting on probe:%' AND ${OWN_SQL()} LIMIT 20`, tenantOf(ctx));
   for (const it of rows) await tickfail(db, ctx, it);
 }
 
 export async function executeStep(db, ctx, ensureItem) {
   ctx.doer = {}; ctx.aiCalls = 0; ctx.maxAi = ctx.config.doer_max_ai ?? MAX_AI;
   await recheck(db, ctx);
-  const items = await all(db, `SELECT i.* FROM items i JOIN claims c ON c.item_id = i.id WHERE i.status='claimed' ORDER BY i.priority, c.claimed_at LIMIT ?`, ctx.config.doer_max_items ?? MAX_ITEMS);
+  const items = await all(db, `SELECT i.* FROM items i JOIN claims c ON c.item_id = i.id WHERE i.status='claimed' AND (i.tenant_id IS NULL OR i.tenant_id = ?) AND (c.tenant_id IS NULL OR c.tenant_id = ?) ORDER BY i.priority, c.claimed_at LIMIT ?`, tenantOf(ctx), tenantOf(ctx), ctx.config.doer_max_items ?? MAX_ITEMS);
   for (const it of items) {
     ctx.itemModel = null;
     try {

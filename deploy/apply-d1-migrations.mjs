@@ -24,7 +24,16 @@ for (const m of planMigrations(files, ledger)) {
   if (m.action === "skip") { console.log("skip   ", m.file); continue; }
   // MIGRATION-DRIFT-1: an applied file was edited; never run it again. Restore the file and put the change in a new migration.
   if (m.action === "drift") { drift++; console.log(`::warning::DRIFT   ${m.file}: applied as sha256 ${m.was.slice(0, 12)}, file is now ${m.sha256.slice(0, 12)}; not re-applied`); continue; }
-  try { await q(src.get(m.file)); await q("INSERT INTO _migrations (file, sha256) VALUES (?, ?)", [m.file, m.sha256]); console.log("applied", m.file); }
+  try {
+    try { await q(src.get(m.file)); }
+    catch (e) {  // Q-TENANT-row-isolation: ADD COLUMN has no IF NOT EXISTS; if a column is already there, run the file statement by statement and skip only that duplicate
+      if (!/duplicate column name/i.test(e.message)) throw e;
+      const lines = src.get(m.file).split(/\r?\n/).filter(l => l.trim() && !l.trim().startsWith("--"));
+      for (const s of lines.join(" ").split(";").map(x => x.trim()).filter(Boolean)) {
+        try { await q(s); } catch (e2) { if (!(/^ALTER\s+TABLE\s+\S+\s+ADD\s+COLUMN\b/i.test(s) && /duplicate column name/i.test(e2.message))) throw e2; }
+      }
+    }
+    await q("INSERT INTO _migrations (file, sha256) VALUES (?, ?)", [m.file, m.sha256]); console.log("applied", m.file); }
   catch (e) { failed++; console.error("FAILED ", m.file, e.message); }  // migrations are idempotent (IF NOT EXISTS); a failure fails the deploy loudly
 }
 if (drift) console.log(`drift: ${drift} applied migration file(s) changed since they ran; not re-applied`);

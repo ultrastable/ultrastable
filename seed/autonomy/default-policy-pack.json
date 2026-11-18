@@ -1,0 +1,25 @@
+{
+  "$schema_version": "0.1.0",
+  "id": "DEFAULT-POLICY-PACK-1",
+  "doc": "The short default policy a new customer system starts with: eight plain rules and the few numbers a buyer may want to change. It is a view over autonomy/policy.json, never a second source of authority: bootstrap/bootstrap.py (validate_default_pack) fails the boot if a rule here promises more than the policy allows. Written to org/policy-pack.json on every bootstrap and served to the owner's dashboard.",
+  "applies_to": "a system built on Ultrastable, on first start; the owner changes it by editing this file or the copy in their own repository",
+  "rules": [
+    {"id": "R1", "say": "The system works on its own and does not ask you to approve ordinary work.", "surfaces": ["repo", "runtime", "work_tracker", "internal_chat"], "ceiling": "execute"},
+    {"id": "R2", "say": "It starts careful and earns more freedom only through verified results, and loses it after a failure.", "uses": "ladder"},
+    {"id": "R3", "say": "It never spends money, signs anything or sends a message as you without your yes. It prepares the step and waits only for that.", "surfaces": ["money", "legal"], "ceiling": "propose"},
+    {"id": "R4", "say": "It never reads, prints or moves a password or key. Secrets stay in the platform's secret store.", "surfaces": ["secrets"], "ceiling": "propose"},
+    {"id": "R5", "say": "Outreach to other people is drafted, never sent, until you have switched it on. Opt-outs always win.", "surfaces": ["outreach"], "ceiling": "propose"},
+    {"id": "R6", "say": "Every change can be undone: it deploys with a rollback and never deletes data that has no backup.", "uses": "interrupt_gate"},
+    {"id": "R7", "say": "It checks its own work with a test you can see, and keeps a change only if the number it aimed at moved.", "uses": "growth"},
+    {"id": "R8", "say": "Its own safety checks, refusals and your overrides always win, and it never works around a refusal.", "uses": "standing_limits"}
+  ],
+  "defaults": {
+    "monthly_budget_usd": 5,
+    "start_rung": "assisted",
+    "work_hours": "any",
+    "tick_every_minutes": 10,
+    "report": "one short summary a day"
+  },
+  "buyer_may_change": ["monthly_budget_usd", "work_hours", "tick_every_minutes", "report"],
+  "buyer_may_not_change": ["R3", "R4", "R6", "R8"]
+}

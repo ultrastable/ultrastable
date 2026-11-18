@@ -3,6 +3,7 @@
 // k_eff is under k_min, or nothing was dispatched, the step originates the highest-value item at the head of the queue.
 
 import { controlStep } from './critloop.js';
+import { tenantOf } from './tenant.js';  // Q-TENANT-row-isolation
 
 async function all(db, sql, ...args) { return (await db.prepare(sql).bind(...args).all()).results || []; }
 async function first(db, sql, ...args) { return (await db.prepare(sql).bind(...args).first()) || null; }
@@ -90,15 +91,15 @@ export async function originate(db, t, m, ctx, ensureItem) {
 
 // Q-CRIT-IGNITION: the links this runtime can see that do not close on themselves. Each derived link is upserted open; a derived link no longer
 // present is closed with its time (never deleted). Rows pushed by collectors (source 'external') are left to their collector.
-export async function deriveIgnitionGaps(db, nowIso, pulse = null) {
+export async function deriveIgnitionGaps(db, nowIso, pulse = null, tenant = '') {
   const links = [];
   for (const l of (pulse && pulse.not_ticking) || [])  // LOOPPROOF-1: a loop that is not executing is a link that does not close
     links.push({ link: `loop:${l.loop}:not-ticking`, owner: 'operations', closing_probe: `pulse:${l.loop} reads ticking` });
-  for (const c of await all(db, `SELECT id, what FROM gate_cards WHERE status='open'`))
+  for (const c of await all(db, `SELECT id, what FROM gate_cards WHERE status='open' AND (tenant_id IS NULL OR tenant_id = ?)`, tenantOf(tenant)))
     links.push({ link: `gate:${c.id}`, owner: 'operations', closing_probe: `gate card ${c.id} closes by its own probe or a staged default` });
   for (const m of await all(db, `SELECT id FROM metrics WHERE tenant_id IS NULL AND source='declared'`))
     links.push({ link: `metric:${m.id}:unprobed`, owner: 'operations', closing_probe: `metric ${m.id} reads through a builtin, sql or http probe` });
-  const un = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status IN ('open','ready') AND owner_role NOT IN (SELECT role FROM roles)`);
+  const un = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status IN ('open','ready') AND owner_role NOT IN (SELECT role FROM roles) AND (tenant_id IS NULL OR tenant_id = ?)`, tenantOf(tenant));
   if (un && un.n) links.push({ link: 'items:unowned', owner: 'portfolio-manager', closing_probe: 'every open item names an existing role' });
   for (const l of links)
     await db.prepare(`INSERT INTO ignition_gaps (link, owner, closing_probe, source, status, opened_at) VALUES (?,?,?,'tick','open',?)
@@ -131,8 +132,9 @@ export async function criticalityStep(db, ctx, t, ensureItem) {
   // Q-LESSON-COST-SAMPLE-ACT: a D1 rows-read budget over its hourly cap (ctx.costBreach, set by runTick from costsample.js over_budget) is the same breached cap.
   const frozen = Boolean(ctx.budget && ctx.budget.mode === 'frozen') || Boolean(ctx.costBreach && ctx.costBreach.over);
   if (frozen) m.cap_breached = 1;
-  const queued = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status IN ('open','ready')`);
-  const claimed = await first(db, `SELECT COUNT(*) AS n FROM claims`);
+  const T = tenantOf(ctx);  // Q-TENANT-row-isolation: the queue and claims this runtime counts are its own
+  const queued = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status IN ('open','ready') AND (tenant_id IS NULL OR tenant_id = ?)`, T);
+  const claimed = await first(db, `SELECT COUNT(*) AS n FROM claims WHERE tenant_id IS NULL OR tenant_id = ?`, T);
   const idle = ctx.dispatched === 0 && claimed.n === 0;
   const reasons = [];
   if (queued.n === 0) reasons.push('queue_empty');
@@ -151,7 +153,7 @@ export async function criticalityStep(db, ctx, t, ensureItem) {
     }
   }
   const emitted = m.k_eff <= t.k_max ? await emitSuccessors(db, t, ctx, ensureItem) : 0; // control rod: above k_max nothing is emitted
-  const ign = await deriveIgnitionGaps(db, ctx.nowIso, ctx.pulse || null);
+  const ign = await deriveIgnitionGaps(db, ctx.nowIso, ctx.pulse || null, T);
   const snap = { ...m, emitted_successors: emitted, queue_open: queued.n, idle, reasons, originated_now: origin, ...ign,
     self_sustaining: m.k_eff >= t.k_min && ign.open_ignition_gaps === 0 };
   snap.control = await controlStep(db, ctx, t, snap, ensureItem); // CRITICALITY-LOOP-1: act on the measurement, grade the last action, beat
@@ -164,8 +166,8 @@ export async function criticalityStep(db, ctx, t, ensureItem) {
 // Neutron emission: each closed item with no successor spawns one, so the reaction feeds itself from its own products.
 export async function emitSuccessors(db, t, ctx, ensureItem) {
   const sc = t.successor;
-  const done = await all(db, `SELECT id, owner_role, priority FROM items WHERE status='done' AND id NOT LIKE ? AND id NOT LIKE 'IDLE-%'
-      AND ('NEXT-' || id) NOT IN (SELECT id FROM items) ORDER BY updated_at DESC LIMIT ?`, sc.id_prefix + '%', sc.batch);
+  const done = await all(db, `SELECT id, owner_role, priority FROM items WHERE status='done' AND id NOT LIKE ? AND id NOT LIKE 'IDLE-%' AND (tenant_id IS NULL OR tenant_id = ?)
+      AND ('NEXT-' || id) NOT IN (SELECT id FROM items) ORDER BY updated_at DESC LIMIT ?`, sc.id_prefix + '%', tenantOf(ctx), sc.batch);
   let n = 0;
   for (const d of done) {
     if (await ensureItem(db, { id: sc.id_prefix + d.id, kind: 'plus', owner_role: d.owner_role, priority: d.priority,

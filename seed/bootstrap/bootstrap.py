@@ -136,6 +136,13 @@ class Boot:
         idea_path = self.root / "IDEA.md"
         self.config = json.loads((self.root / "ultrastable.json").read_text())
         self.policy = json.loads((self.root / "autonomy" / "policy.json").read_text())
+        # PIN-default-policy-pack: the short buyer-facing pack is loaded and held to the full policy; a pack that promises more than the policy allows stops the boot.
+        pack_path = self.root / "autonomy" / "default-policy-pack.json"
+        self.policy_pack = json.loads(pack_path.read_text()) if pack_path.exists() else None
+        if self.policy_pack is not None:
+            bad = validate_default_pack(self.policy_pack, self.policy)
+            if bad:
+                raise SystemExit("default-policy-pack.json breaks policy.json: " + "; ".join(bad))
         if not idea_path.exists():
             self.idea = parse_idea("---\norg_name: Unnamed\n---\n# Idea\n\n# First outcomes\n")
             self.org_name, self.slug, self.outcomes, self.budget = "Unnamed org", "unnamed", [], 0.0
@@ -354,6 +361,8 @@ class Boot:
         (self.out / "backlog.json").write_text(json.dumps(self.items, indent=2) + "\n")
         (self.out / "gate-cards.json").write_text(json.dumps(self.state["gate_cards"], indent=2) + "\n")
         (self.out / "objectives.json").write_text(json.dumps({"layer": {"level": getattr(self, "level", 0), "parent": getattr(self, "parent", "")}, "objectives": getattr(self, "objectives", []), "metrics": getattr(self, "metrics", [])}, indent=2) + "\n")
+        if getattr(self, "policy_pack", None) is not None:
+            (self.out / "policy-pack.json").write_text(json.dumps(self.policy_pack, indent=2) + "\n")
         (self.out / "seed.sql").write_text(self.seed_sql())
         values = {**self.config["runtime"], "slug": self.slug}
         values = {k: fill(v, {"slug": self.slug}) if isinstance(v, str) else v for k, v in values.items()}
@@ -564,6 +573,36 @@ def validate_policy(policy: dict) -> list[str]:
     for must in ("harness", "secret", "override"):
         if not any(must in l for l in policy["standing_limits"]["limits"]):
             problems.append(f"standing_limits missing '{must}'")
+    return problems
+
+
+def validate_default_pack(pack: dict, policy: dict) -> list[str]:
+    """PIN-default-policy-pack: the pack is a view over the policy. Every rule must name real surfaces or sections and may not claim a
+    ceiling above the policy's max_permission; the defaults must name a real rung and the buyer may not change the safety rules."""
+    problems, order = [], ["none", "propose", "execute"]
+    ids = {r.get("id") for r in pack.get("rules", [])}
+    if len(ids) < 5 or len(ids) > 12:
+        problems.append(f"a short pack has 5 to 12 rules, found {len(ids)}")
+    for r in pack.get("rules", []):
+        for s in r.get("surfaces", []):
+            if s not in policy["surfaces"]:
+                problems.append(f"{r['id']}: unknown surface {s}")
+            elif "ceiling" in r and order.index(r["ceiling"]) < order.index(policy["surfaces"][s]["max_permission"]):
+                pass  # a lower ceiling than the policy is always allowed (stricter)
+            elif "ceiling" in r and order.index(r["ceiling"]) > order.index(policy["surfaces"][s]["max_permission"]):
+                problems.append(f"{r['id']}: ceiling {r['ceiling']} on {s} is above the policy's {policy['surfaces'][s]['max_permission']}")
+        if r.get("uses") and r["uses"] not in policy:
+            problems.append(f"{r['id']}: policy has no section {r['uses']}")
+    if pack.get("defaults", {}).get("start_rung") not in policy["ladder"]["rungs"]:
+        problems.append("defaults.start_rung is not a rung of the ladder")
+    for rid in pack.get("buyer_may_not_change", []):
+        if rid not in ids:
+            problems.append(f"buyer_may_not_change names unknown rule {rid}")
+    if set(pack.get("buyer_may_change", [])) & set(pack.get("buyer_may_not_change", [])):
+        problems.append("a setting cannot be both changeable and locked")
+    for must in ("R3", "R4", "R8"):
+        if must not in pack.get("buyer_may_not_change", []):
+            problems.append(f"{must} must be locked")
     return problems
 
 

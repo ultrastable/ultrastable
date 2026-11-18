@@ -243,7 +243,7 @@ def preexisting_failures(tests: list[tuple[str, str]], root=REPO) -> set[str]:
 REPO_SLUG = os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable")
 
 
-def publish_change(repo: str, root, branch: str, subject: str, body: str) -> dict:
+def publish_change(repo: str, root, branch: str, subject: str, body: str, remote: bool = False) -> dict:
     """Commit the working tree on `branch` and open it the executor's way: draft PR, marked ready, checks dispatched on the branch (a PR opened with the workflow token
     raises no pull_request event); the lane merges on green. Used by the product manager loop for the items it files."""
     steps = [["git", "checkout", "-B", branch], ["git", "add", "-A", "--", ".", f":!{LOG}"],

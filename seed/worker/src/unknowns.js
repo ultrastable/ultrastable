@@ -3,6 +3,7 @@
 // UNKNOWNS-1: the tick questions what the system does not know. Twin of foundation/unknowns.py, driven by the same doctrine/unknowns.json
 // (config.unknowns). Units are items the org has opened (their done_check and closing_probe are the assumptions); one inverted question per
 // (unit, lens) is filed as a plus item UNK-<unit>-<lens>, never repeated within cadence_days, at most max_new_per_run per tick.
+import { tenantOf } from './tenant.js';  // Q-TENANT-row-isolation
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).results || [];
 const fill = (q, u) => q.replace(/\{(id|done|probe|trigger)\}/g, (_, k) => u[k] || '(none recorded)');
@@ -33,7 +34,7 @@ export function pickQuestions(cfg, units, asked, nowIso) {
 export async function unknownsStep(db, ctx, cfg, ensureItem) {
   if (!cfg || !Array.isArray(cfg.lenses)) return { filed: [] };
   await ensureSchema(db);
-  const units = (await all(db, `SELECT id, kind, done_check AS done, closing_probe AS probe FROM items WHERE id NOT LIKE 'UNK-%' AND id NOT LIKE 'FM-%' ORDER BY updated_at DESC LIMIT 60`)).map(r => ({ ...r, trigger: 'tick' }));
+  const units = (await all(db, `SELECT id, kind, done_check AS done, closing_probe AS probe FROM items WHERE id NOT LIKE 'UNK-%' AND id NOT LIKE 'FM-%' AND (tenant_id IS NULL OR tenant_id = ?) ORDER BY updated_at DESC LIMIT 60`, tenantOf(ctx))).map(r => ({ ...r, trigger: 'tick' }));
   const asked = await all(db, `SELECT key, at FROM unknown_questions`);
   // Reserve: at most max_new_per_day questions a day, outside the general originate cap (ORIGINATE-CAP-1), so repairs cannot starve them.
   const perDay = cfg.max_new_per_day || cfg.max_new_per_run;

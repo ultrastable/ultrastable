@@ -438,10 +438,10 @@
     {
       "id": "adaptive-interview",
       "name": "Next question chosen from the answers so far",
-      "status": "gap",
+      "status": "live",
       "proof": "grep:site/worker.js::adaptiveQuestion",
-      "test": "",
-      "note": "Question bank is static."
+      "test": "site/site.test.mjs",
+      "note": "The next question is chosen from the answers so far: a bound model proposes it, a deterministic rule table is the floor, at most four questions (ADAPTIVE-1)."
     }
   ],
   "gaps": [
@@ -475,14 +475,6 @@
       "why": "The thread builds a site; the organization around it is still set up through /setup.",
       "closing_probe": "grep:site/interview.js::setup-org",
       "component": "frontend-experience",
-      "owner": "staff"
-    },
-    {
-      "id": "adaptive-interview",
-      "title": "Adaptive follow-up questions",
-      "why": "Questions come from a fixed bank.",
-      "closing_probe": "grep:site/worker.js::adaptiveQuestion",
-      "component": "planning-forks",
       "owner": "staff"
     },
     {
@@ -562,11 +554,10 @@
           "id": "s14",
           "story": "As someone who is not sure what I want, the questions adapt to what I already said instead of following a fixed list.",
           "features": [
-            "suggestions"
-          ],
-          "gaps": [
+            "suggestions",
             "adaptive-interview"
-          ]
+          ],
+          "gaps": []
         }
       ]
     },

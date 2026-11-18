@@ -242,3 +242,13 @@ test('DIRECT-MERGE-GATE-1: the Worker app is exempt too, a refusal records why, 
   await store.event(db, 't', 'github-app', 'main-writer', 'abc');
   assert.deepEqual((await rulesetsDue(db, e, { fetch: f })).map(x => x.action), ['backoff']);
 });
+
+test('READ-BUDGET-7: a warm isolate keeps serving its token when the credential store refuses reads', async () => {
+  const db = makeDb(), e = env(), { pkcs1 } = await appKey();
+  await store.put(db, e, 'm', 'github-app', { secret: { pem: toPem(pkcs1, 'RSA PRIVATE KEY') }, meta: { app_id: 7, installation_id: 9 }, status: 'pending' });
+  const now = Date.parse('2026-11-13T12:00:00Z');
+  const f = async () => ({ status: 201, json: async () => ({ token: 'memo-tok', expires_at: new Date(now + 3600e3).toISOString() }) });
+  assert.equal((await getToken(db, e, 'm', 'github-app', { fetch: f, now })).token, 'memo-tok');
+  const r = await getToken(db, e, 'm', 'github-app', { fetch: async () => { throw new Error('no network'); }, now: now + 60e3 });
+  assert.equal(r.token, 'memo-tok'); assert.equal(r.memo, true);
+});

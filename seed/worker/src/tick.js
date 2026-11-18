@@ -16,6 +16,7 @@ import { migrateStep } from './migrate.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
 import { ignitionStep } from './ignition.js';
+import { OWN_SQL, tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a runtime acts only on rows with tenant_id NULL (own) or its own slug
 
 const TERMINAL = ['done', 'superseded', 'cancelled'];
 const OPS = {
@@ -54,10 +55,10 @@ export const METRICS = {
   loops_closing_share_24h: (db, now) => first(db, `SELECT COUNT(*) AS n, SUM(CASE WHEN good >= 0.9 THEN 1 ELSE 0 END) AS c FROM (SELECT loop, 1.0 * SUM(CASE WHEN ok = 1 THEN 1 ELSE 0 END) / COUNT(*) AS good FROM loop_beats WHERE started_at >= ? AND finished_at IS NOT NULL GROUP BY loop)`,
     iso(new Date(now - 86400e3))).then(r => (r.n ? Math.round(1000 * (r.c || 0) / r.n) / 1000 : 0)).catch(() => 0),
   goal_tenants: (db) => first(db, `SELECT COUNT(DISTINCT tenant) AS n FROM goals WHERE tenant != 'core' AND status = 'active'`).then(r => r.n).catch(() => 0),
-  items_done: (db) => first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done'`).then(r => r.n),
-  open_gate_cards: (db) => first(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE status='open'`).then(r => r.n),
+  items_done: (db, now, tenant) => first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done' AND ${OWN_SQL()}`, tenantOf(tenant)).then(r => r.n),
+  open_gate_cards: (db, now, tenant) => first(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE status='open' AND ${OWN_SQL()}`, tenantOf(tenant)).then(r => r.n),
   dispatches_24h: (db, now) => first(db, `SELECT COUNT(*) AS n FROM dispatches WHERE at >= ?`, iso(new Date(now - 86400e3))).then(r => r.n),
-  items_done_7d: (db, now) => first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done' AND updated_at >= ?`, iso(new Date(now - 7 * 86400e3))).then(r => r.n),
+  items_done_7d: (db, now, tenant) => first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done' AND updated_at >= ? AND ${OWN_SQL()}`, iso(new Date(now - 7 * 86400e3)), tenantOf(tenant)).then(r => r.n),
   verified_outcomes_7d: (db, now) => first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result='verified' AND at >= ?`, iso(new Date(now - 7 * 86400e3))).then(r => r.n),
   // An objective with no probe-backed target metric is not instrumented; the agents do not yet know how to tell whether they are winning.
   objectives_without_probe: (db) => first(db,
@@ -104,7 +105,7 @@ export async function readMetric(db, m, ctx) {
   if (m.source === 'builtin') {
     const f = METRICS[m.spec];
     if (!f) throw new Error(`unknown builtin ${m.spec}`);
-    return Number(await f(db, ctx.now));
+    return Number(await f(db, ctx.now, tenantOf(ctx)));
   }
   if (m.source === 'sql') {
     if (!/^\s*select\b/i.test(m.spec) || m.spec.includes(';')) throw new Error('sql probe must be one SELECT');
@@ -143,21 +144,22 @@ export const LIVENESS = [
 export const STEPS = {
   // Every item that left the active set has a disposition; items whose trigger is done become ready.
   async reconcile(db, ctx) {
+    const T = tenantOf(ctx);
     const drops = await all(db,
-      `SELECT id FROM items WHERE status IN ('done','superseded','cancelled') AND (disposition IS NULL OR disposition = '')`);
+      `SELECT id FROM items WHERE status IN ('done','superseded','cancelled') AND (disposition IS NULL OR disposition = '') AND ${OWN_SQL()}`, T);
     for (const d of drops) {
       await run(db, `UPDATE items SET status='open', updated_at=? WHERE id=?`, ctx.nowIso, d.id);
       await run(db, `INSERT INTO outcomes (item_id, surface, action_class, result, evidence) VALUES (?, 'work_tracker', 'create_update_close', 'silent_drop', 'reopened by reconcile: no disposition')`, d.id);
     }
     const r = await run(db, `UPDATE items SET status='ready', updated_at=?
-      WHERE status='open' AND (trigger_on IS NULL OR trigger_on IN (SELECT id FROM items WHERE status='done'))`, ctx.nowIso);
+      WHERE status='open' AND ${OWN_SQL()} AND (trigger_on IS NULL OR trigger_on IN (SELECT id FROM items WHERE status='done' AND ${OWN_SQL()}))`, ctx.nowIso, T, T);
     ctx.notes.push(`reconciled: ${drops.length} reopened, ${r.meta?.changes ?? 0} became ready`);
   },
 
   // Claims with no heartbeat for claim_ttl_minutes are released so work never stalls.
   async reap_claims(db, ctx) {
     const cutoff = iso(new Date(ctx.now - ctx.config.claim_ttl_minutes * 60e3));
-    const stale = await all(db, `SELECT item_id, agent FROM claims WHERE heartbeat_at < ?`, cutoff);
+    const stale = await all(db, `SELECT item_id, agent FROM claims WHERE heartbeat_at < ? AND ${OWN_SQL()}`, cutoff, tenantOf(ctx));
     for (const c of stale) {
       await run(db, `DELETE FROM claims WHERE item_id=?`, c.item_id);
       await run(db, `UPDATE items SET status='ready', updated_at=? WHERE id=? AND status='claimed'`, ctx.nowIso, c.item_id);
@@ -168,16 +170,17 @@ export const STEPS = {
 
   // Gate cards close themselves when their probe shows the owner's step is done.
   async probe_gates(db, ctx) {
-    const cards = await all(db, `SELECT id, closing_probe FROM gate_cards WHERE status='open'`);
+    const T = tenantOf(ctx);
+    const cards = await all(db, `SELECT id, closing_probe FROM gate_cards WHERE status='open' AND ${OWN_SQL()}`, T);
     let closed = 0;
     for (const c of cards) {
       const [kind, arg] = c.closing_probe.split(':');
       let ok = false;
       if (kind === 'env') ok = Boolean(ctx.env && ctx.env[arg]);
-      if (kind === 'owner_items') ok = !(await first(db, `SELECT 1 AS x FROM items WHERE status='blocked' AND blocker LIKE 'owner-only:%' LIMIT 1`));
-      if (kind === 'item_done') ok = Boolean(await first(db, `SELECT 1 AS x FROM items WHERE id=? AND status='done'`, arg));
+      if (kind === 'owner_items') ok = !(await first(db, `SELECT 1 AS x FROM items WHERE status='blocked' AND blocker LIKE 'owner-only:%' AND ${OWN_SQL()} LIMIT 1`, T));
+      if (kind === 'item_done') ok = Boolean(await first(db, `SELECT 1 AS x FROM items WHERE id=? AND status='done' AND ${OWN_SQL()}`, arg, T));
       if (ok) {
-        await run(db, `UPDATE gate_cards SET status='closed', closed_at=? WHERE id=?`, ctx.nowIso, c.id);
+        await run(db, `UPDATE gate_cards SET status='closed', closed_at=? WHERE id=? AND ${OWN_SQL()}`, ctx.nowIso, c.id, T);
         closed++;
       }
     }
@@ -262,7 +265,7 @@ export const STEPS = {
         ctx.notes.push(`prediction ${p.id}: unknown metric or op, scored miss`);
         continue;
       }
-      const observed = await metric(db, ctx.now);
+      const observed = await metric(db, ctx.now, tenantOf(ctx));
       const verdict = op(observed, p.target) ? 'hit' : 'miss';
       await run(db, `UPDATE predictions SET observed=?, verdict=? WHERE id=?`, observed, verdict, p.id);
       ctx.notes.push(`prediction ${p.id}: ${p.metric}=${observed} ${verdict}`);
@@ -279,12 +282,13 @@ export const STEPS = {
       FROM outcomes GROUP BY surface, action_class`);
     for (const r of rows) {
       const rel = reliability(r.ok, r.n, trust);
-      const cur = await first(db, `SELECT rung FROM trust_ledger WHERE surface=? AND action_class=?`, r.surface, r.action_class);
+      const cur = await first(db, `SELECT rung FROM trust_ledger WHERE surface=? AND action_class=? AND ${OWN_SQL()}`, r.surface, r.action_class, tenantOf(ctx));
       const rung = cur ? cur.rung : ctx.config.policy.surfaces[r.surface]?.start_rung || 'observed';
       await run(db, `INSERT INTO trust_ledger (surface, action_class, rung, reliability, outcomes, updated_at)
           VALUES (?, ?, ?, ?, ?, ?)
-          ON CONFLICT(surface, action_class) DO UPDATE SET reliability=excluded.reliability, outcomes=excluded.outcomes, updated_at=excluded.updated_at`,
-        r.surface, r.action_class, rung, rel, r.n, ctx.nowIso);
+          ON CONFLICT(surface, action_class) DO UPDATE SET reliability=excluded.reliability, outcomes=excluded.outcomes, updated_at=excluded.updated_at
+          WHERE trust_ledger.tenant_id IS NULL OR trust_ledger.tenant_id = ?`,  // the primary key cannot carry the tenant (additive migration): a row of another tenant at this key is never overwritten
+        r.surface, r.action_class, rung, rel, r.n, ctx.nowIso, tenantOf(ctx));
       const idx = ladder.rungs.indexOf(rung);
       const maxPerm = ctx.config.policy.surfaces[r.surface]?.max_permission || 'none';
       const ceilingIdx = ladder.rungs.indexOf(ladder.ceiling_by_max_permission[maxPerm] || 'observed');
@@ -336,9 +340,9 @@ export const STEPS = {
     let n = 0;
     for (const role of roles) {
       if (ctx.wake !== role.role && ctx.tickId % Math.max(1, role.tick_every) !== 0) continue;  // an event wakes its role out of turn
-      const wip = await first(db, `SELECT COUNT(*) AS n FROM claims WHERE agent=?`, role.id);
+      const wip = await first(db, `SELECT COUNT(*) AS n FROM claims WHERE agent=? AND ${OWN_SQL()}`, role.id, tenantOf(ctx));
       if (wip.n >= ctx.config.max_wip_per_role) continue;
-      const item = await pickForRole(db, role, ctx.config.criticality, (ctx.config.pace || {}).rank);  // CRITICALITY-LOOP-1: raising items first while k_eff is under k_min
+      const item = await pickForRole(db, role, ctx.config.criticality, (ctx.config.pace || {}).rank, tenantOf(ctx));  // CRITICALITY-LOOP-1: raising items first while k_eff is under k_min
       await run(db, `UPDATE roles SET last_tick_at=? WHERE id=?`, ctx.nowIso, role.id);
       if (!item) continue;
       await run(db, `INSERT INTO claims (item_id, agent, claimed_at, heartbeat_at) VALUES (?, ?, ?, ?)`, item.id, role.id, ctx.nowIso, ctx.nowIso);
@@ -356,7 +360,7 @@ export const STEPS = {
 
   // Plus share over the last 20 closed items; below target opens a rebalance item for the portfolio manager.
   async check_plus_share(db, ctx) {
-    const rows = await all(db, `SELECT kind FROM items WHERE status='done' ORDER BY updated_at DESC LIMIT 20`);
+    const rows = await all(db, `SELECT kind FROM items WHERE status='done' AND ${OWN_SQL()} ORDER BY updated_at DESC LIMIT 20`, tenantOf(ctx));
     if (rows.length < 10) return;
     const share = rows.filter(r => r.kind === 'plus').length / rows.length;
     ctx.plusShare = share;
@@ -369,6 +373,39 @@ export const STEPS = {
       });
       if (made) ctx.notes.push('rebalance item opened');
     }
+  },
+
+  // Q-PARITY-4 (SLA-120M): an item open past 120 minutes is raised to the top, and the cause is filed once a day; nothing ages silently.
+  // One indexed COUNT-first read (status, created_at); the per-item work only runs when the count is above zero.
+  async age_sla(db, ctx) {
+    const cutoff = new Date(ctx.now - 120 * 60e3).toISOString().replace('T', ' ').slice(0, 19);
+    const c = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status IN ('open','ready') AND created_at < ?`, cutoff);
+    ctx.over_120m = c ? c.n : 0;
+    if (!ctx.over_120m) return;
+    await run(db, `UPDATE items SET priority = MIN(priority, 5) WHERE status IN ('open','ready') AND created_at < ? AND priority > 5`, cutoff);
+    const made = await ensureItem(db, {
+      id: `AGE-120M-${ctx.nowIso.slice(0, 10)}`,
+      title: `${ctx.over_120m} item(s) open past 120 minutes (items_open_over_120m target 0): raised to priority 5, find the cause`,
+      kind: 'fix', owner_role: 'operations',
+      done_check: 'items_open_over_120m back to 0', priority: 5,
+    });
+    ctx.notes.push(`over_120m: ${ctx.over_120m} item(s) raised${made ? ', cause item filed' : ''}`);
+  },
+
+  // Q-COST-PROOF-2 (cost-probe): once a day, only while the free tier is ok, turn each breached cost sample into a queue item. It adds one
+  // indexed read per budget and nothing when the account is degraded (FREE_TIER_WIDE_STEPS), so it can never add reads to a read breach.
+  async cost_probe(db, ctx) {
+    if (ctx.freeTier && ctx.freeTier.level !== 'ok') return;
+    if (new Date(ctx.now).getUTCHours() !== 0 || new Date(ctx.now).getUTCMinutes() >= 10) return;
+    const r = await over_budget(db, (ctx.config && ctx.config.cost_budgets) || [], ctx.now);
+    for (const b of [...r.breaches, ...r.advisory]) {
+      await ensureItem(db, {
+        id: `COST-BREACH-${b.target}-${ctx.nowIso.slice(0, 10)}`,
+        title: `Cost probe: ${b.target} read ${b.rows_read_1h} rows/h over ${b.max_rows_read_per_hour}`.slice(0, 300),
+        kind: 'fix', owner_role: 'operations', done_check: 'next cost sample under max_rows_read_per_hour', priority: 5,
+      });
+    }
+    if (r.breaches.length || r.advisory.length) ctx.notes.push(`cost-probe: ${r.breaches.length + r.advisory.length} breach item(s)`);
   },
 
   // CRITICALITY-1: k_eff over the rolling window; a tick may not end idle or under k_min without originating the highest-value item at the head.
@@ -384,7 +421,7 @@ export const STEPS = {
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'pulse', 'criticality', 'ignition'];
+export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,
@@ -392,7 +429,7 @@ export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates',
 // other step either reads wide (probe_gates, score_predictions, accrue_trust, selfaudit, pulse, ignition, check_plus_share) or starts new work
 // that reads more (reap_claims feeds dispatch, dispatch, execute), so it waits for the hour to pass. A skipped step counts as completed: it is
 // a decision, not a failure, so the health probe and the ignition streak stay green.
-export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals'];  // FREE-TIER-1
+export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share', 'goals', 'age_sla', 'cost_probe'];  // FREE-TIER-1
 export const COST_ESSENTIAL_STEPS = ['migrate', 'reconcile', 'measure', 'criticality'];
 
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null, budget = null } = {}) {
@@ -434,7 +471,7 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
       } catch { /* the database itself is down; the error is still in tick_runs */ }
     }
   }
-  const open = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status NOT IN ('done','superseded','cancelled')`);
+  const open = await first(db, `SELECT COUNT(*) AS n FROM items WHERE status NOT IN ('done','superseded','cancelled') AND ${OWN_SQL()}`, tenantOf(ctx));
   const report = [
     `Happened: tick ${tickId} ran ${completed}/${STEP_ORDER.length} steps; ${ctx.notes.join('; ') || 'no changes'}.`,
     `Decided: dispatched ${ctx.dispatched} item(s) in driver order.`,
