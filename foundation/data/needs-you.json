@@ -69,9 +69,9 @@
   },
   {
    "id": "repo-archive",
-   "title": "Allow repository archiving",
-   "why": "One approval on GitHub's own page registers a second app that can change repository settings only, so the server can archive the retired repositories (seed, license, spec, workers). The system handles every callback, token and renewal.",
-   "default": "The retired repositories stay unarchived, each with a README pointing to the main repository; nothing else is blocked.",
+   "title": "Allow repository settings (archiving and the main-branch check rule)",
+   "why": "One approval on GitHub's own page registers a second app that can change repository settings only, so the server can archive the retired repositories (seed, license, spec, workers) and apply the rule that main only takes a change whose checks passed. The system handles every callback, token and renewal.",
+   "default": "The retired repositories stay unarchived, each with a README pointing to the main repository; the merge lane and sweeper keep refusing red changes, and a direct merge is not blocked by GitHub itself.",
    "url": "https://ultrastable.io/connect/github-admin",
    "button": "Authorize on GitHub",
    "class": "owner_account",

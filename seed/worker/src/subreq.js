@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // Copyright (c) Ultrastable
 // SUBREQUEST-METER-1: one generic guard against the Workers Free plan's 50 subrequests per invocation ("Too many subrequests by single Worker invocation").

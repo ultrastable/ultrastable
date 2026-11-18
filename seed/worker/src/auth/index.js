@@ -69,6 +69,7 @@ export async function refreshDue(db, env, opts = {}) {
     out.push({ tenant: r.tenant, provider: r.provider, action: res.ok ? 'renewed' : 'failed', error: res.error });
   }
   if (rows.some(r => r.provider === 'github-admin')) { const { archiveDue } = await import('./archive.js'); out.push(...(await archiveDue(db, env, opts)).map(a => ({ ...a, provider: 'github-admin' }))); }  // REPOS-1 resolver
+  if (rows.some(r => r.provider === 'github-admin')) { const { rulesetsDue } = await import('./rulesets.js'); out.push(...(await rulesetsDue(db, env, opts)).map(a => ({ ...a, provider: 'github-admin' }))); }  // DIRECT-MERGE-GATE-1 resolver
   return out;
 }
 

@@ -2324,6 +2324,24 @@
    "body": "Live after deploy: handoffs used 43-44 of 46 calls each tick and, carried first, starved issuesync, repo-access and sweeper into permanent deferral. Each loop now has a maximum share (LOOP_MAX_COST) enforced by the meter scope.",
    "probe": "file:seed/worker/src/subreq.js",
    "session": "session_0156nqDrGE5EXqCmJ11EwNYK"
+  },
+  {
+   "id": "lesson-2026-11-18-claimcode-baseline-key-follows-an-edited-line",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "claimcode baseline key follows an edited line",
+   "body": "Change 619 edited the AGENT_MD line in site/worker.js (proof link to live), which changed its baseline hash, so claimcode failed on main. The baseline row now carries the new hash; count stays 115. Verified: ran claimcode --check (ok) and tests.foundation.test_claimcode (tests pass). 619 was merged by a client session 30 seconds before its checks run completed with failure; the lane and sweeper gates do not cover a direct merge call.",
+   "probe": "file:doctrine/claim-code.json",
+   "session": "session_0156nqDt1FUj9Xw7a54KPPUk"
+  },
+  {
+   "id": "decision-2026-11-18-direct-merge-gate-1-github-ruleset-on-main-requires-the-chec",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "DIRECT-MERGE-GATE-1: GitHub ruleset on main requires the checks status",
+   "body": "Direct merge calls go around the lane and sweeper gates. The ruleset is config in github/org-settings.json, applied by scripts/apply_github_settings.sh in the org-settings workflow; the Actions app bypasses so workflow-token pushes keep working. Ran bash -n on the script and the standingorder, closedloop and claimcode checks; all pass. Earlier commits on this branch carry a mistyped session trailer, cited here.",
+   "probe": "file:scripts/apply_github_settings.sh",
+   "session": "session_0156nqDPUk"
   }
  ]
 }
