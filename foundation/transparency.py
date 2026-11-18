@@ -270,26 +270,35 @@ def sql(snap):
     return out
 
 
-ACCOUNT, DB_ID = "edb167b78c9fb901ea5bca3ce58ccc4b", "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"  # D1 ultrastable-ops (site/wrangler.toml)
+
+
+SITE = "https://ultrastable-site.ultrastable.workers.dev"
+
+
+def publish_oidc(snap, env=None) -> dict:
+    """LIVE-FRESH-2: post the snapshot to the site worker, which writes its own D1 binding. Authenticated by this run's GitHub OIDC token; no stored credential."""
+    import os, urllib.request
+    env = os.environ if env is None else env
+    u, t = env.get("ACTIONS_ID_TOKEN_REQUEST_URL"), env.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+    if not u or not t:
+        return {"published": False, "why": "no GitHub OIDC request URL (job needs permissions id-token: write)"}
+    try:
+        with urllib.request.urlopen(urllib.request.Request(u + "&audience=ultrastable-deploy", headers={"authorization": "bearer " + t}), timeout=30) as r:
+            jwt = json.loads(r.read())["value"]
+        txt = json.dumps(snap, separators=(",", ":"))
+        parts = [txt[i:i + PART] for i in range(0, len(txt), PART)] or [""]
+        req = urllib.request.Request(env.get("TARGET_SITE", SITE) + "/__internal/transparency", method="POST", data=json.dumps({"generated": snap["generated"], "parts": parts}).encode(),
+                                     headers={"authorization": "Bearer " + jwt, "content-type": "application/json"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            res = json.loads(r.read())
+        return {"published": bool(res.get("ok")), "generated": snap["generated"], "route": "oidc"} if res.get("ok") else {"published": False, "why": str(res)[:200]}
+    except Exception as e:  # recorded, never swallowed
+        return {"published": False, "why": ("oidc: " + str(e))[:200]}
 
 
 def publish(snap, token=None) -> dict:
-    """Upsert the snapshot into D1 over the Cloudflare API. Needs CLOUDFLARE_API_TOKEN in the environment; without it the loop records not-published."""
-    import os, urllib.request
-    token = token or os.environ.get("CLOUDFLARE_API_TOKEN")
-    if not token:
-        return {"published": False, "why": "no CLOUDFLARE_API_TOKEN in this host's environment"}
-    stmts = sql(snap)
-    for st in stmts:
-        req = urllib.request.Request(f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT}/d1/database/{DB_ID}/query", data=json.dumps({"sql": st}).encode(),
-                                     headers={"authorization": "Bearer " + token, "content-type": "application/json"})
-        try:
-            with urllib.request.urlopen(req, timeout=60) as r:
-                if not json.loads(r.read()).get("success"):
-                    return {"published": False, "why": "D1 refused the statement"}
-        except Exception as e:  # recorded, never swallowed
-            return {"published": False, "why": str(e)[:200]}
-    return {"published": True, "generated": snap["generated"]}
+    """Publish by the OIDC route only. The Cloudflare account the old API route wrote to is retired (ACCOUNT-SPLIT-2): it reported success while the site read another database."""
+    return publish_oidc(snap)
 
 
 def loop(root=REPO) -> dict:

@@ -2479,6 +2479,14 @@
    "body": "DECISIONS-1 CI failed twice: /api/decisions was not registered in seed/standards/surfaces.json (standards --apply fails regen) and the page used a hard-coded accent hex. Both are now checked locally with standards --check and design --lint before pushing.",
    "probe": "grep:seed/standards/surfaces.json::/api/decisions",
    "session": "session_0156nqDtg2N1X7K61HZReweE"
+  },
+  {
+   "id": "lesson-2026-11-18-live-fresh-2-root-cause-of-frozen-live",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "LIVE-FRESH-2 root cause of frozen /live",
+   "body": "/live froze 3 days: foundation/transparency.py published to the retired quniverse account's D1 (green run) while the site reads the ultrastable account's ultrastable-ops; the tick's live-changes refresh ran inside the sweeper after the subrequest budget was spent. Fix: OIDC publish to the site worker, live-changes and a self-repairing freshness probe as early tick steps.",
+   "probe": "file:seed/worker/src/freshness.js"
   }
  ]
 }
