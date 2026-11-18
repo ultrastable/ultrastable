@@ -785,7 +785,7 @@ function decisionsPage(d) {
   const tag = { improving: "ok", flat: "info", worse: "warn", insufficient: "info", unmeasured: "warn" };
   const rows = d.points.map(function (p) {
     const hr = p.hit_rate == null ? "not scored yet" : Math.round(p.hit_rate * 100) + "% of " + p.scored + " scored";
-    const days = (p.by_day || []).map(function (x) { return "<span title=\"" + esc(x.day) + ": " + x.decisions + " decisions, " + x.scored + " scored, " + x.hits + " hit\" style=\"display:inline-block;width:10px;margin-right:2px;background:var(--ds-accent,#2563eb);height:" + Math.max(3, Math.min(28, x.decisions * 4)) + "px;vertical-align:bottom\"></span>"; }).join("");
+    const days = (p.by_day || []).map(function (x) { return "<span title=\"" + esc(x.day) + ": " + x.decisions + " decisions, " + x.scored + " scored, " + x.hits + " hit\" style=\"display:inline-block;width:10px;margin-right:2px;background:var(--ds-accent);height:" + Math.max(3, Math.min(28, x.decisions * 4)) + "px;vertical-align:bottom\"></span>"; }).join("");
     return "<tr><td><strong>" + esc(p.name) + "</strong><br><small>" + esc(p.why) + "</small></td>"
       + "<td><code>" + esc(p.metric) + " " + esc(p.target) + "</code><br><small>" + esc(p.metric_says) + "</small></td>"
       + "<td><small>" + esc(p.predict) + "</small></td>"
