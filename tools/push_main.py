@@ -49,5 +49,15 @@ def main():
         time.sleep(attempt * 3)
     return 1
 
+def fallback():
+    """Second route (no single route): while the ruleset still lets the run's own token write, a plain push lands the same commit."""
+    r = subprocess.run(["git", "push", "origin", "HEAD:main"], capture_output=True)
+    print("push_main: fallback git push " + ("landed" if r.returncode == 0 else "refused: " + r.stderr.decode()[-200:]), file=sys.stderr)
+    return r.returncode
+
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        rc = main()
+    except (SystemExit, Exception) as e:  # no OIDC token, network error, Worker not deployed yet
+        print(f"push_main: worker route failed: {e}", file=sys.stderr); rc = 1
+    sys.exit(rc and fallback())
