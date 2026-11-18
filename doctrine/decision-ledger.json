@@ -2498,6 +2498,14 @@
    "session": "session_0156nqDsqgkBdiYtbLU4dWoq"
   },
   {
+   "id": "lesson-2026-11-18-oidc-publish-needs-a-user-agent",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "OIDC publish needs a user-agent",
+   "body": "Cloudflare answers 403 to the default python-urllib agent; any server-side Python call into an ultrastable Worker sets a user-agent. Session: session_0156nqDsqGCaorJAUs6hPGox",
+   "probe": "file:foundation/transparency.py"
+  },
+  {
    "id": "decision-2026-11-18-goals-1-the-system-sets-goals-and-turns-knobs",
    "kind": "decision",
    "date": "2026-11-18",
