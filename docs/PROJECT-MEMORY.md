@@ -433,4 +433,8 @@ Public-benefit spinoffs run on new archetypes `live-feed` and `live-lookup` (`sp
 The tick's `goals` step sits in FREE_TIER_WIDE_STEPS and the seeding lived inside it, so under free-tier degrade the goal tree was never seeded and /api/goals returned empty goals and knobs. Fix: seed when the table is empty on every tick; under degrade the control pass runs once an hour. Rule of thumb: a step skipped for cost must never be the only place its data is created.
 Session: session_0156nqDuHvMTexrWLrHHsEaw
 
+## 2026-11-18: Server-side deployer dropped the goals config (GOALS-1 lesson)
+The tick Worker is deployed by `tickConfigSource` in `seed/worker/src/handoff.js`, a second generator beside `deploy/deploy-workers.mjs`. It omitted `goals` and `pace`, so the deployed tick had no goal tree to seed. Both generators now carry them; a test asserts the generated config has `goals` and `pace`. Any new config key goes in both generators in the same change.
+Session: session_0156nqDuHvMTexrWLrHHsEaw
+
 Commit trailers in this branch cite Session: session_0156nqJbrGYaSnypwjTPL2bes and Session: session_0156nqDJbrGYaSnypwjTPL2bes (two spellings of one session; both cited so the write-back check resolves).
