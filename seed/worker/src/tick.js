@@ -39,6 +39,13 @@ export const METRICS = {
   tick_runs_completed_1h: (db, now) => first(db,
     `SELECT COUNT(*) AS n FROM tick_runs WHERE finished_at >= ? AND steps_completed = steps_total`,
     iso(new Date(now - 3600e3))).then(r => r.n),
+  // PACE-1: speed is measured, not asserted. beats_24h is how many loop runs the clock recorded; beats_productive_share_24h is the share of
+  // them that finished ok and returned something (an empty result {}, [] or null is an idle run). Both read loop_beats; a Worker whose table does
+  // not exist yet reports 0, never throws.
+  beats_24h: (db, now) => first(db, `SELECT COUNT(*) AS n FROM loop_beats WHERE started_at >= ?`, iso(new Date(now - 86400e3))).then(r => r.n).catch(() => 0),
+  beats_productive_share_24h: (db, now) => first(db,
+    `SELECT COUNT(*) AS n, SUM(CASE WHEN ok = 1 AND detail IS NOT NULL AND detail NOT IN ('null','{}','[]') THEN 1 ELSE 0 END) AS p FROM loop_beats WHERE started_at >= ?`,
+    iso(new Date(now - 86400e3))).then(r => (r.n ? Math.round(1000 * (r.p || 0) / r.n) / 1000 : 0)).catch(() => 0),
   items_done: (db) => first(db, `SELECT COUNT(*) AS n FROM items WHERE status='done'`).then(r => r.n),
   open_gate_cards: (db) => first(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE status='open'`).then(r => r.n),
   dispatches_24h: (db, now) => first(db, `SELECT COUNT(*) AS n FROM dispatches WHERE at >= ?`, iso(new Date(now - 86400e3))).then(r => r.n),
@@ -120,6 +127,7 @@ export const LIVENESS = [
   ['M-closing', 'items finished in the last 7 days', 'items_done_7d', '>=', 1, 48, 'portfolio-manager', 'Work starts but nothing closes. Find the stuck stage (review, merge, verify) and fix it.'],
   ['M-verified', 'independently verified outcomes in the last 7 days', 'verified_outcomes_7d', '>=', 1, 48, 'reviewer', 'Nothing was verified by a second path. Check that the reviewer role is dispatched and records outcomes.'],
   ['M-no-drops', 'silent drops in the last 7 days', 'silent_drops_7d', '<=', 0, 0, 'portfolio-manager', 'An item left the active set with no disposition. Find it and give it one.'],
+  ['M-pace', 'share of loop runs in 24 hours that returned work (idle runs are not progress)', 'beats_productive_share_24h', '>=', 0.05, 24, 'operations', 'Most loop runs return nothing. Lengthen the cadence of idle loops and shorten productive ones (core/pace plan).'],
   ['M-instrumented', 'objectives without a probe-backed target metric', 'objectives_without_probe', '<=', 0, 1, 'product-manager', 'Insert a target metric with a builtin, sql or http probe for the objective.'],
 ];
 
