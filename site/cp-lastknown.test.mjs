@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // READ-BUDGET-5: when the database refuses, the control-plane readers answer with the last data they held.
 import test from "node:test";
