@@ -1,0 +1,39 @@
+{
+ "slug": "air-quality",
+ "name": "Air Quality Check",
+ "tagline": "Type a city anywhere, see its air quality right now and the current particle levels, from open forecast data.",
+ "archetype": "live-lookup",
+ "status": "live",
+ "launched": "2026-11-18T20:06:49Z",
+ "need_ids": [],
+ "reach": 4,
+ "impact": 5,
+ "score": 20.0,
+ "checks": [],
+ "idea": "air-quality",
+ "fact": null,
+ "live": "air-quality",
+ "showcase": false,
+ "cost": {
+  "d1_rows_read": 0,
+  "d1_rows_written": 0,
+  "workers_requests": 2500,
+  "ai_neurons": 0
+ },
+ "metrics": {
+  "reach": [
+   "board_age_hours"
+  ],
+  "impact": [],
+  "guard": [
+   "error_share"
+  ],
+  "targets": {
+   "board_age_hours": 30
+  },
+  "showcase": true,
+  "value": "a showcase board is kept while its facts stay fresh and its cost inside the headroom",
+  "prediction": "board_age_hours <= 30 within 48 h",
+  "input": "a public domain name or a public country code or place name"
+ }
+}
