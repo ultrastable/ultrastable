@@ -2445,6 +2445,14 @@
    "title": "MAIN-WRITER-1: App commits trigger push workflows; data commits carry skip-ci",
    "body": "Commits written by the org GitHub App start push workflows, unlike workflow-token pushes. A deploy record started regen-generated, whose commit touched site/ and restarted the deploy, without end. Data commits carry [skip ci].",
    "probe": "grep:tools/push_main.py::skip ci"
+  },
+  {
+   "id": "lesson-2026-11-18-ciwatch-3-one-open-ciwatch-items-pr-at-a-time",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "CIWATCH-3: one open ciwatch items PR at a time",
+   "body": "ciwatch opened a new agent/ciwatch-<run> PR on every run because the Q-CIFAIL file stays absent from main until the first PR merges; 7 identical PRs piled up. The step now skips when an agent/ciwatch-* PR is open. Root cause of the red item was an unregistered tenant file (practical-solutions#117).",
+   "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-3"
   }
  ]
 }
