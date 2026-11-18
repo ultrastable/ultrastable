@@ -26,8 +26,8 @@ Account creation accepts terms in your name. If you do nothing: Posting stays dr
 One approval on GitHub's own page lets the system open, check, merge and deploy changes by itself, including changes to its own workflows. The system then handles every callback, token exchange and renewal. If you do nothing: Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.
 **[Authorize on GitHub](https://ultrastable.io/connect/github)**
 
-## Allow repository archiving
-One approval on GitHub's own page registers a second app that can change repository settings only, so the server can archive the retired repositories (seed, license, spec, workers). The system handles every callback, token and renewal. If you do nothing: The retired repositories stay unarchived, each with a README pointing to the main repository; nothing else is blocked.
+## Allow repository settings (archiving and the main-branch check rule)
+One approval on GitHub's own page registers a second app that can change repository settings only, so the server can archive the retired repositories (seed, license, spec, workers) and apply the rule that main only takes a change whose checks passed. The system handles every callback, token and renewal. If you do nothing: The retired repositories stay unarchived, each with a README pointing to the main repository; the merge lane and sweeper keep refusing red changes, and a direct merge is not blocked by GitHub itself.
 **[Authorize on GitHub](https://ultrastable.io/connect/github-admin)**
 
 ## Register the Google and Buffer sign-in apps
