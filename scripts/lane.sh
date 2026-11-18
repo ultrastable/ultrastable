@@ -121,15 +121,22 @@ echo "lane: needs-pat merged=$wf_merged waiting=$wf_waiting credential=$wf_sourc
 if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
   # MERGE-AUDIT-1: a merge by any path this script cannot gate (a session's own token) is audited here and filed as an item the adoption commit carries
   (cd "$(dirname "$0")/.." && python3 -m foundation mergeaudit --apply >/dev/null) || { echo "lane: merge audit failed" >&2; echo x >>"$_SAFE_FAILS"; }
+  # RULES-1: every standing rule's runtime probes run (at most every interval_h); a violation files Q-RULE-* and runs its fix; status feeds the owner ops view
+  (cd "$(dirname "$0")/.." && python3 -m foundation rules --run --apply --due >/dev/null) || { echo "lane: rules run failed" >&2; echo x >>"$_SAFE_FAILS"; }
+  if [ -n "${DASHBOARD_URL:-}" ] && [ -n "${FLEET_TOKEN:-}" ]; then
+    (cd "$(dirname "$0")/.." && python3 scripts/dashboard_snapshot.py >/dev/null && curl -fsS -o /dev/null -X POST "$DASHBOARD_URL/api/fleet/snapshot" -H "authorization: Bearer $FLEET_TOKEN" -H 'content-type: application/json' --data-binary @dashboard/snapshot.json) || { echo "lane: snapshot publish failed" >&2; echo x >>"$_SAFE_FAILS"; }
+  else
+    echo "lane: DASHBOARD_URL or FLEET_TOKEN not bound; rules status is committed, not published"
+  fi
   root="$(cd "$here/.." && pwd)"
   if (cd "$root" && python3 -m foundation loopowner --adopt --apply); then
     # MEMORY-REFRESH-1: record merged work in the project memory before it goes stale and fails every pull request's memory check
     (cd "$root" && python3 scripts/memory_refresh.py) || echo "lane: memory refresh failed" >&2
-    if [ -n "$(git -C "$root" status --porcelain docs/issues docs/PROJECT-MEMORY.md)" ]; then
+    if [ -n "$(git -C "$root" status --porcelain docs/issues docs/PROJECT-MEMORY.md ops/rules dashboard/snapshot.json)" ]; then
       git -C "$root" config user.name "ultrastable-lane"; git -C "$root" config user.email "actions@users.noreply.github.com"
       # LANE-DASHBOARD-1: the adoption items change the issue count the dashboard carries; rebuild it in the same commit, or main fails its own stale check
       (cd "$root" && python3 scripts/build_dashboard.py >/dev/null) || echo "lane: dashboard rebuild failed" >&2
-      git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md
+      git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md ops/rules dashboard/snapshot.json
       git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
       pushed=0
       for try in 1 2 3 4 5; do
@@ -139,7 +146,7 @@ if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
         git -C "$root" rebase --abort || echo "lane: no rebase to abort"
         git -C "$root" fetch -q origin main && git -C "$root" reset -q --hard origin/main || { echo "lane: reset to main failed" >&2; break; }
         (cd "$root" && python3 -m foundation loopowner --adopt --apply && python3 scripts/memory_refresh.py && python3 scripts/build_dashboard.py >/dev/null) || echo "lane: redo on fresh main failed" >&2
-        git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md
+        git -C "$root" add docs/issues site/dashboard-data.js docs/PROJECT-MEMORY.md ops/rules dashboard/snapshot.json
         git -C "$root" diff --cached --quiet && { echo "lane: adoption already on main"; pushed=1; break; }
         git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
         sleep $((try * 3))

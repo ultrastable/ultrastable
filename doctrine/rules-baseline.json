@@ -1,0 +1,13 @@
+{
+ "_doc": "RULES-1 no-qnfo-on-pages baseline, shrink-only: occurrences of the word QNFO per public page source. A count may fall, never rise; a new page source starts at 0. Fix by removing the mention, then lower the number (`python3 -m foundation rules --baseline`).",
+ "qnfo": {
+  "site/controlplane.js": 5,
+  "site/dashboard-data.js": 1,
+  "site/pins.json": 3,
+  "site/promote.js": 1,
+  "site/roadmap-data.js": 4,
+  "site/self-data.js": 3,
+  "site/stakeholders.js": 5,
+  "site/worker.js": 3
+ }
+}

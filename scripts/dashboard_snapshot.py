@@ -115,6 +115,12 @@ def build(today):
             ["Answered with 'we cannot know'", str(u["cannot_know"]), "info"]]})
     except (OSError, ValueError, KeyError, ImportError) as e:
         problems.append(f"unknowns panel: {type(e).__name__}: {e}")
+    try:
+        sys.path.insert(0, str(ROOT))
+        from foundation import rules
+        panels.append(rules.panel(ROOT))
+    except Exception as e:  # a failed panel is listed, never hidden
+        problems.append(f"rules panel: {type(e).__name__}: {e}")
     return {"generated": today.isoformat(), "commit": head, "problems": problems, "panels": panels}
 
 
