@@ -10,6 +10,10 @@ export const SUBREQUEST_RESERVE = 4;  // kept for the beat, the deferral record 
 // Minimum calls a loop needs to make progress; below it the loop is deferred before it starts. Measured from the loops' own call patterns.
 export const LOOP_MIN_COST = { gate: 10, lane: 10, handoffs: 12, issuesync: 4, 'repo-access': 5, sweeper: 8, 'deploy-evidence': 5, 'watchdog-gh': 3, 'host-hooks': 4, hosts: 4, social: 4, executor: 6 };
 
+// Most calls one loop may spend in one invocation. Without it the first loop to run (handoffs, ~40 calls) took the whole budget every tick and the loops behind it
+// were deferred forever (seen live 2026-11-18 01:41 and 01:51 UTC: used 43-44 of 46 by handoffs). A loop that hits its share stops with the work it did and resumes next tick.
+export const LOOP_MAX_COST = { handoffs: 16, lane: 12, gate: 12, issuesync: 8, 'repo-access': 8, sweeper: 10, 'deploy-evidence': 8, executor: 12, 'watchdog-gh': 4, 'host-hooks': 5, hosts: 5, social: 5 };
+
 export class SubrequestBudgetError extends Error { constructor(msg) { super(msg); this.name = 'SubrequestBudgetError'; } }
 const BUDGET_RE = /too many subrequests|subrequest budget/i;
 export const isBudgetError = e => e instanceof SubrequestBudgetError || BUDGET_RE.test(String((e && e.message) || e || ''));
@@ -21,7 +25,8 @@ export function createMeter({ cap = SUBREQUEST_CAP, reserve = SUBREQUEST_RESERVE
     cap: Number(cap), limit, used: 0, refused: 0,
     remaining: () => Math.max(0, limit - m.used),
     exhausted: () => m.refused > 0 || m.used >= limit,
-    take(n = 1) { if (m.used + n > limit) { m.refused++; return false; } m.used += n; return true; },
+    scope: null,  // { start, max }: the share of the invocation the running loop may spend
+    take(n = 1) { if (m.used + n > limit || (m.scope && m.used - m.scope.start + n > m.scope.max)) { m.refused++; return false; } m.used += n; return true; },
     wrap(f) { return (...a) => m.take() ? f(...a) : Promise.reject(new SubrequestBudgetError(`subrequest budget ${m.used}/${limit} used in this invocation`)); },
     // Counts every global fetch of this invocation, including the ones modules make without being handed a wrapped fetch. Returns the restore function.
     install(g = globalThis) {
@@ -43,13 +48,14 @@ export async function writeDeferred(db, list) {
 }
 
 // Wraps a loop body: deferral instead of failure. `deferred` (a Set) collects the loops to carry to the next invocation.
-export function guarded(meter, deferred, failed, costs = LOOP_MIN_COST) {
+export function guarded(meter, deferred, failed, costs = LOOP_MIN_COST, shares = LOOP_MAX_COST) {
   const defer = (loop, why, extra = {}) => { deferred.add(loop); return { status: 'deferred', reason: why, ...meter.report(), ...extra }; };
   return async (loop, fn) => {
     const need = costs[loop] || 0;
     if (meter.remaining() < need) return defer(loop, `needs ${need} subrequests, ${meter.remaining()} left`);
     let out;
-    try { out = await fn(); } catch (e) { if (isBudgetError(e)) return defer(loop, 'subrequest budget'); throw e; }
+    meter.scope = shares[loop] ? { start: meter.used, max: shares[loop] } : null;
+    try { out = await fn(); } catch (e) { if (isBudgetError(e)) return defer(loop, 'subrequest budget'); throw e; } finally { meter.scope = null; }
     if ((meter.refused > 0 || mentionsBudget(out)) && failed(out)) return defer(loop, 'subrequest budget', { partial: out });
     return out;
   };
