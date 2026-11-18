@@ -58,15 +58,18 @@ def provenance_candidates(root=REPO) -> list:
     return out
 
 
-def choose(ranked: list, d: dict | None = None, rng=random) -> dict | None:
+# DECISION-METRIC: plussing
+def choose(ranked: list, d: dict | None = None, rng=random, root=None) -> dict | None:
     """Top candidate, or with probability explore_epsilon one of the top explore_pool (escape a local optimum)."""
     d = d or load()
     if not ranked:
         return None
     p = d["params"]
-    if rng.random() < p["explore_epsilon"]:
-        return rng.choice(ranked[:p["explore_pool"]])
-    return ranked[0]
+    pick = rng.choice(ranked[:p["explore_pool"]]) if rng.random() < p["explore_epsilon"] else ranked[0]
+    if root is not None:  # DECISIONS-1: the lever is scored by whether the change it produced was kept
+        from . import decisions
+        decisions.record(root, "plussing", str(pick.get("loop")), str(pick.get("loop")), 1.0, f"ranked first of {len(ranked)} by weighted gap; signal {pick.get('signal')} value {pick.get('value')}", alternatives=len(ranked) - 1)
+    return pick
 
 
 def verdict(pred: dict, after: float, guards_before: dict, guards_after: dict, d: dict | None = None) -> dict:

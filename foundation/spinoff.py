@@ -150,6 +150,7 @@ def rebuild_bundle(root=REPO, now=None) -> dict:
     return b
 
 
+# DECISION-METRIC: spinoff-launch
 def launch(root=REPO, apply=False, now=None) -> dict:
     cfg, root, t = load(root), Path(root), _now(now)
     live = [a for a in registry(root) if a.get("status") in ("live", "iterating", "promoted")]
@@ -186,6 +187,8 @@ def launch(root=REPO, apply=False, now=None) -> dict:
             rebuild_bundle(root, t)
             _append(root / cfg["ledger"], {"event": "launch", "at": _iso(t), "slug": c["slug"], "score": c["score"], "reach": c["reach"], "impact": c["impact"],
                                            "needs": c["need_ids"], "prediction": meta["metrics"]["prediction"], "url": f"https://{c['slug']}.{cfg['domain']}"})
+            from . import decisions  # DECISIONS-1: the launch is scored by the app's measured uses a week later
+            decisions.record(root, "spinoff-launch", c["slug"], c["slug"], float(c["reach"]), f"score {c['score']} (reach {c['reach']}, impact {c['impact']}); {len(ranked)} candidates ranked", alternatives=len(ranked) - 1, now=t)
             try:
                 from . import provenance
                 provenance.record(root, {"class": "loop", "actor": "spinoff", "channel": "loop-run"}, "decision",

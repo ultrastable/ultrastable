@@ -320,6 +320,7 @@ def ladder_call(prompt: str, attempt: int, root):
     return agent_ladder.call(prompt, attempt, root=root)
 
 
+# DECISION-METRIC: work-queue-priority
 def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None, remote: bool = False) -> dict:
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)
@@ -343,6 +344,9 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         log(lroot, row); return row
     n = issue["number"]
     row = {"issue": n, "title": issue["title"], "prediction": f"issue_{n}_closed = 1 within 24 h"}
+    if apply and not remote:  # DECISIONS-1: the pick is scored by whether the item closes inside its window
+        from . import decisions
+        decisions.record(root, "work-queue-priority", f"issue {n}", str(n), 1.0, f"driver order pick of {len(issues)} takeable items: {str(issue['title'])[:120]}", alternatives=max(0, len(issues) - 1))
     key = os.environ.get("ANTHROPIC_API_KEY")
     port = bool(qm and model_call is None and PORT_ITEM.match(str(n)) and verify_command(issue))  # PORT-EXEC-1: queue items only; a remote issue body is never run as a command
     from . import agent_ladder  # SYS-2: which model writes the change, who reviews it and what it cost

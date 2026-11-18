@@ -3,6 +3,7 @@
 // FREE-TIER-1 (2026-11-17): the demo runs inside Cloudflare's free plan. The limits below are the plan's published DAILY allowances for the whole
 // account (https://developers.cloudflare.com/d1/platform/limits/ and /workers/platform/limits/, checked 2026-11-17). Hourly per-database caps
 // (cost_budgets) are advisory: one 50k-row analytics refresh is 1% of the day and must never pause the work queue (OPS-QUEUE-1).
+// DECISION-METRIC: free-tier-governor (the level set here is logged and scored by src/decisions.js recordGovernor)
 // Levels: ok < degrade (80% of the day, or projected to pass 100%) < shed (95%). Degrade and shed skip non-essential steps; the clock never stops.
 const API = 'https://api.cloudflare.com/client/v4/graphql';
 export const FREE_LIMITS = {
