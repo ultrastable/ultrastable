@@ -13,7 +13,7 @@ T = dt.datetime(2026, 11, 17, 21, 30, tzinfo=dt.timezone.utc)
 
 def sandbox():
     d = scratch()
-    for f in ("doctrine/spinoff.json", "doctrine/blindspots.json", "doctrine/spinoff-ideas.json", "ops/free-tier.json", "ops/transparency.json", "ops/changelog.json", "spinoffs/registry.json"):
+    for f in ("doctrine/spinoff.json", "doctrine/blindspots.json", "doctrine/spinoff-ideas.json", "ops/free-tier.json", "ops/transparency.json", "ops/changelog.json", "spinoffs/registry.json", "spinoffs/live.js"):
         (d / f).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(REPO / f, d / f)
     (d / "instances/ultrastable").mkdir(parents=True)
@@ -101,3 +101,12 @@ class Ideas(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_live_public_benefit_ideas_have_sources_and_pass_the_gate():
+    """SPINOFF-GOOD-1: the four public-benefit ideas are live archetypes with a source in spinoffs/live.js and clear the safety gate."""
+    from foundation import ideas, spinoff
+    live = [i for i in ideas.ideas() if i.get("live")]
+    assert {i["id"] for i in live} >= {"open-comment", "quake-watch", "nonprofit-check", "access-check"}
+    assert all(i["archetype"].startswith("live-") for i in live)
+    assert ideas.check() == [] and spinoff.check() == []

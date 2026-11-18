@@ -239,7 +239,7 @@ def candidates(root=REPO, now=None) -> list[dict]:
         a = scfg["archetypes"][i["archetype"]]
         c = {"slug": i["id"], "idea": i["id"], "archetype": i["archetype"], "need_ids": [], "domains": [], "reach": i["reach"], "impact": i["impact"], "feasibility": i["feasibility"],
              "novelty": 1.0, "score": i["score"], "collects": list(a["collects"]), "input": a["input"], "why": i["tagline"] + " " + i.get("showcases", ""), "name": i["name"],
-             "tagline": i["tagline"], "fact": i.get("fact"), "showcase": bool(i.get("showcase")), "cost": i["cost"]}
+             "tagline": i["tagline"], "fact": i.get("fact"), "live": i.get("live"), "showcase": bool(i.get("showcase")), "cost": i["cost"]}
         c["gate"] = spinoff.gate(c, scfg)
         out.append(c)
     return out
@@ -326,6 +326,10 @@ def check(root=REPO) -> list[str]:
             bad.append(f"{i['id']}: unknown archetype")
         g = spinoff.gate({"slug": i["id"], "archetype": i.get("archetype", ""), "why": i["tagline"], "domains": [], "need_ids": [], "collects": [], "input": scfg["archetypes"].get(i.get("archetype", ""), {}).get("input", "none")}, scfg)
         bad += [f"{i['id']}: safety gate: {r}" for r in g["reasons"]]
+        if scfg["archetypes"].get(i.get("archetype", ""), {}).get("what", "").startswith("SPINOFF-GOOD-1"):  # a live app names a source in spinoffs/live.js, which serves its /api/freshness
+            lj = root / "spinoffs/live.js"
+            if not i.get("live") or not lj.is_file() or f'"{i["live"]}": {{' not in lj.read_text(encoding="utf-8"):
+                bad.append(f"{i['id']}: live app has no source entry in spinoffs/live.js")
         if i.get("fact") and not (root / i["fact"]["path"]).is_file():
             bad.append(f"{i['id']}: fact source {i['fact']['path']} missing")
     if not (root / cfg["headroom"]).is_file():

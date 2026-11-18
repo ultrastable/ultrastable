@@ -64,6 +64,22 @@
    "audience": 3,
    "cost_per_use": 1,
    "what": "a public read-only board of measured facts from committed files; no database, no input, no personal data"
+  },
+  "live-feed": {
+   "implemented": true,
+   "input": "none",
+   "collects": [],
+   "audience": 4,
+   "cost_per_use": 1,
+   "what": "SPINOFF-GOOD-1: a public-benefit board read live from a public open-data source at request time; no database, no input, no personal data, no model call"
+  },
+  "live-lookup": {
+   "implemented": true,
+   "input": "a public domain name or a public organization tax id",
+   "collects": [],
+   "audience": 4,
+   "cost_per_use": 2,
+   "what": "SPINOFF-GOOD-1: one lookup against a public source for a public domain or an organization's public tax id, answered live and stored nowhere"
   }
  },
  "score": {
@@ -123,13 +139,15 @@
   "allowed_inputs": [
    "a public domain name",
    "a few choices",
-   "none"
+   "none",
+   "a public domain name or a public organization tax id"
   ],
   "rules": [
    "an app may read only public pages and public DNS of a domain the visitor types, never anything behind a login",
    "an app stores aggregate counts, a daily-salted visitor hash, and the typed public domain only as a one-way keyed hash with a bitmask of failed checks (to tell a fix from a first look); never an address, name, IP or the readable domain",
    "an app states what it did and does not give legal, medical or financial advice",
-   "an app that fails any rule is not launched and the rejection is recorded with the rule that failed"
+   "an app that fails any rule is not launched and the rejection is recorded with the rule that failed",
+   "a live app (SPINOFF-GOOD-1) shows only what its named public source returns at request time, links that source, serves /api/freshness, stores nothing about the visitor, takes only a public domain or an organization's public tax id as input, and states that it is information, not advice"
   ]
  },
  "budget": {

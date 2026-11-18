@@ -287,6 +287,78 @@
     "d1_rows_written": 0,
     "ai_neurons": 0
    }
+  },
+  {
+   "id": "open-comment",
+   "kind": "spinoff",
+   "archetype": "live-feed",
+   "name": "Open Comment",
+   "tagline": "Federal proposed rules still open for public comment, soonest deadline first, read live from the Federal Register.",
+   "showcases": "civic transparency: public input while it still counts",
+   "reach": 5,
+   "impact": 4,
+   "showcase": true,
+   "live": "open-comment",
+   "cost": {
+    "workers_requests": 3000,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   }
+  },
+  {
+   "id": "quake-watch",
+   "kind": "spinoff",
+   "archetype": "live-feed",
+   "name": "Quake Watch",
+   "tagline": "Significant earthquakes of the past week, read live from the USGS, with a link to each event page.",
+   "showcases": "an open public-data dashboard with no snapshot",
+   "reach": 4,
+   "impact": 3,
+   "showcase": true,
+   "live": "quake-watch",
+   "cost": {
+    "workers_requests": 3000,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   }
+  },
+  {
+   "id": "nonprofit-check",
+   "kind": "spinoff",
+   "archetype": "live-lookup",
+   "name": "Nonprofit Check",
+   "tagline": "Type a nonprofit's EIN, see its name and recent IRS-reported revenue, expenses and assets from public filings.",
+   "showcases": "nonprofit transparency for donors and volunteers",
+   "reach": 4,
+   "impact": 4,
+   "showcase": true,
+   "live": "nonprofit-check",
+   "cost": {
+    "workers_requests": 2500,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   }
+  },
+  {
+   "id": "access-check",
+   "kind": "spinoff",
+   "archetype": "live-lookup",
+   "name": "Access Check",
+   "tagline": "Name a website, get a plain read of basic accessibility signals on its home page: language, alt text, labels, zoom.",
+   "showcases": "accessibility: check, fix, check again",
+   "reach": 5,
+   "impact": 4,
+   "showcase": true,
+   "live": "access-check",
+   "cost": {
+    "workers_requests": 2500,
+    "d1_rows_read": 0,
+    "d1_rows_written": 0,
+    "ai_neurons": 0
+   }
   }
  ],
  "scope_templates": [
