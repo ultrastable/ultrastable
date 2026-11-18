@@ -84,3 +84,25 @@ test('a deploy enables workers.dev unless the rule sets workers_dev: false', asy
   const off = setup({ rule: { workers_dev: false } }); assert.equal((await post(off.gate, await token())).status, 200);
   assert.equal(off.calls.some(c => c.u.endsWith('/subdomain')), false);
 });
+
+test('GET /state returns names and hashes for an allowed script, refuses others, and never returns values', async () => {
+  const fetch = async u => {
+    u = String(u);
+    if (u.endsWith('/.well-known/jwks')) return new Response(JSON.stringify({ keys: [jwk] }));
+    if (u.endsWith('/content/v2')) return new Response('BUNDLE');
+    if (u.endsWith('/settings')) return new Response(JSON.stringify({ result: { compatibility_date: '2026-10-01', bindings: [{ type: 'secret_text', name: 'TOKEN', text: 'hunter2' }, { type: 'd1', name: 'DB', id: 'x' }] } }));
+    if (u.endsWith('/schedules')) return new Response(JSON.stringify({ result: { schedules: [{ cron: '*/10 * * * *' }] } }));
+    if (u.endsWith('/subdomain')) return new Response(JSON.stringify({ result: { enabled: true } }));
+    if (u.endsWith('/deployments')) return new Response(JSON.stringify({ result: { deployments: [{ id: 'dep1', created_on: 't' }] } }));
+    return new Response('{}', { status: 404 });
+  };
+  const gate = createGate({ fetch, now: () => NOW, config: { rules: [{ repo: 'org/app', refs: ['refs/heads/main'], script: 'app-web' }], accountId: 'acct', token: 't' } });
+  const get = async (tok, script = 'app-web') => gate.handle(new Request(ORIGIN + '/state?script=' + script, { headers: tok ? { authorization: 'Bearer ' + tok } : {} }));
+  const ok = await get(await token()); assert.equal(ok.status, 200);
+  const body = await ok.text(); assert.ok(!body.includes('hunter2')); const s = JSON.parse(body);
+  assert.equal(s.found, true); assert.match(s.sha256, /^[0-9a-f]{64}$/); assert.deepEqual(s.crons, ['*/10 * * * *']);
+  assert.deepEqual(s.bindings, [{ type: 'd1', name: 'DB' }, { type: 'secret_text', name: 'TOKEN' }]); assert.equal(s.workers_dev, true);
+  assert.equal((await get(null)).status, 401);
+  assert.equal((await get(await token(), 'other')).status, 403);
+  assert.equal((await get(await token({ repository: 'org/evil' }))).status, 403);
+});

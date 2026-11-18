@@ -2173,6 +2173,40 @@
    "probe": "grep:seed/worker/test/hosts.test.js::a push to main deploys touched workers once"
   },
   {
+   "id": "lesson-2026-11-18-free-tier-1-usage-sample-runs-first-in-the-tick",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "FREE-TIER-1: usage sample runs first in the tick",
+   "body": "The free-tier usage sample ran in the last beat of the invocation and failed with Too many subrequests when earlier loops used the 50 allowed (00:10 UTC 2026-11-18), leaving d1 and request usage null. seed/worker/src/index.js now reads it before every other loop. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
+   "probe": "grep:seed/worker/src/index.js::const freeTier = await sampleFreeTier",
+   "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
+  },
+  {
+   "id": "lesson-2026-11-18-green-guard-1-clean-is-not-green-lane-rebase-and-regen-push-",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "GREEN-GUARD-1: clean is not green; lane rebase and regen push races; foreign CI items",
+   "body": "Main has no required checks, so mergeable_state clean let #595 and #596 merge with a failed or absent full checks run. The tick lane and sweeper now ask greenguard.notGreen, scripts/lane.sh requires a green checks run, the lane aborts a wedged rebase and redoes adoption on fresh main, regen-generated retries its push on the moving main, and the executor no longer takes Q-CIFAIL items about other repositories. Archived repos spec, workers and license had their scheduled workflows disabled.",
+   "probe": "file:seed/worker/src/greenguard.js"
+  },
+  {
+   "id": "lesson-2026-11-18-main-was-red-after-hosts-1-603-surface-retention-and-silent-",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Main was red after HOSTS-1 (#603): surface, retention and silent-catch checks",
+   "body": "Measured: node --test test/plan-limits.test.mjs seed/worker/test/retention.test.js seed/worker/test/hosts.test.js, 22 pass after the fix; before it, plan-limits failed 2 and the standards generator exited 1. The cause was a merge path that accepted clean without a green full checks run; GREEN-GUARD-1 closes it.",
+   "probe": "file:seed/standards/surfaces.json"
+  },
+  {
+   "id": "decision-2026-11-18-hostsync-1-repo-and-host-state-reconcile-through-the-deploy-",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "HOSTSYNC-1: repo and host state reconcile through the deploy gateway",
+   "body": "The deploy gateway serves read-only GET /state (names and hashes only). core/hostsync reconciles declared scripts in deploy/hosting.json with the host, writes ops/hosting/state.json back to the repo and redeploys on drift; the host-sync workflow runs after deploy-gateway, on a host-changed callback and daily. Complements HOSTS-1 (webhooks and health). Open: wire tenant repos with their own hosting declaration; D1 migration state and zone routes.",
+   "probe": "grep:workers/core/hostsync/index.js::export async function reconcile",
+   "session": "session_0156nqDrtJzL18qgzyo9Tcgz"
+  },
+  {
    "id": "decision-2026-11-18-pace-2-the-tick-paces-its-own-loops-ranks-ready-work-by-reac",
    "kind": "decision",
    "date": "2026-11-18",

@@ -56,6 +56,7 @@ async function appendEvidence(f, token, repo, row, budget = null) {
 // LANE-RED-1: with ZERO_ACTIONS the lane used to merge any 'unstable' PR that passed the diff gate, including PRs whose checks ran and failed
 // (#433 merged 20 s after `checks` failed on an orphan document). A failed Actions job with a failed step really ran: it holds the PR. A failed job
 // with no steps never started (minutes exhausted), and only then does the Worker's diff gate decide. An unreadable answer holds: unknown is not green.
+import { notGreen } from './greenguard.js';  // GREEN-GUARD-1
 export async function realRed(f, token, repo, sha, budget = null) {
   const runs = await gh(f, token, 'GET', `/repos/${repo}/actions/runs?head_sha=${sha}&per_page=30`, undefined, budget);
   if (!runs.ok) return `runs ${runs.status}`;
@@ -92,6 +93,7 @@ export async function runLane({ token, repos = [], fetch: f = fetch, issueWorkfl
           const st = await gh(f, token, 'GET', `/repos/${repo}/commits/${d.head.sha}/status`, undefined, budget);
           ready = Boolean(st.ok && (st.json.statuses || []).some(s => s.context === 'worker-gate' && s.state === 'success'));          if (ready) { const red = await realRed(f, token, repo, d.head.sha, budget); if (red) { out.held.push(`${repo}#${pr.number} red: ${red}`); continue; } }
         }
+        if (ready && d.mergeable_state === 'clean') { const hold = await notGreen(f, token, repo, d.head.sha, (ff, t, m, path) => gh(ff, t, m, path, undefined, budget)); if (hold) { out.held.push(`${repo}#${pr.number} ${hold}`); continue; } }  // GREEN-GUARD-1
         if (!ready) { out.held.push(`${repo}#${pr.number} ${d && d.mergeable_state}`); continue; }
         const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${pr.number}/merge`, { merge_method: 'squash' }, budget);
         (m.ok ? out.merged : out.errors).push(m.ok ? `${repo}#${pr.number}` : `${repo}#${pr.number} merge ${m.status}`);

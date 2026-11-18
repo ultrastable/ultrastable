@@ -1374,6 +1374,30 @@
    ],
    "feedback": "a push with no deploy event after 30 minutes is redispatched through the GitHub Actions host; a host that fails health or a deploy is skipped for the next host and its failure is a red commit status the lane reads; host events return through /hook/host as statuses",
    "bindings": []
+  },
+  "host-sync": {
+   "inflows": [
+    {
+     "signal": "main.merged",
+     "via": "github:main"
+    },
+    {
+     "signal": "host.state",
+     "via": "file:ops/hosting/state.json"
+    }
+   ],
+   "outflows": [
+    {
+     "signal": "host.state",
+     "via": "file:ops/hosting/state.json"
+    },
+    {
+     "signal": "main.merged",
+     "via": "github:main"
+    }
+   ],
+   "feedback": "each run compares the host with the expected hashes its earlier runs and deploys recorded; drift that survives a redeploy is read again and counted by the next run",
+   "bindings": []
   }
  },
  "implicit_producers": {

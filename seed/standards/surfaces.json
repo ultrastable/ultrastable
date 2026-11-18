@@ -286,6 +286,19 @@
       "reason": "machine-to-machine callback authenticated by HMAC; nothing for an agent to discover"
     },
     {
+      "id": "host-webhook",
+      "path": "/hook/host",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "machine",
+      "standards": [],
+      "discoverable": false,
+      "description": "HOSTS-1: a hosting system reports a deploy or runtime event, HMAC-signed with HOST_WEBHOOK_SECRET; 401 on a bad signature.",
+      "reason": "machine-to-machine callback authenticated by HMAC; nothing for an agent to discover"
+    },
+    {
       "id": "agents-probe",
       "path": "/agents/probe",
       "methods": [

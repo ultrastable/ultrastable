@@ -37,7 +37,15 @@ jobs:
       - name: Commit the regenerated data
         run: |
           git config user.name regen-generated; git config user.email regen-generated@users.noreply.github.com
-          git add -A
-          git diff --cached --quiet && echo "generated data already current" && exit 0
-          git commit -qm "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)"
-          git push origin HEAD:main
+          # REGEN-PUSH-1: main moves while this runs (merges, the lane, the watchdog), so a plain push was rejected as non-fast-forward (runs 12 and 13).
+          # On rejection: restart from the new main, regenerate on it and push again. Never force.
+          for try in 1 2 3 4; do
+            git add -A
+            git diff --cached --quiet && { echo "generated data already current"; exit 0; }
+            git commit -qm "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)"
+            if git push origin HEAD:main; then exit 0; fi
+            echo "push rejected (try $try): main moved; regenerating on the new main"
+            git fetch -q origin main && git reset -q --hard origin/main && python3 scripts/regen_generated.py
+            sleep $((try * 3))
+          done
+          echo "::error::REGEN-PUSH-1: could not push regenerated data after 4 tries"; exit 1

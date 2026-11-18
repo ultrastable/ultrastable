@@ -10,7 +10,7 @@ on:
   push: { branches: [main], paths: ['workers/core/deploygate/**', '.github/workflows/deploy-gateway.yml'] }
   workflow_dispatch: {}
 concurrency: { group: deploy-gateway, cancel-in-progress: false }
-permissions: { contents: read, id-token: write }
+permissions: { contents: write, id-token: write }  # HOSTSYNC-1: the record step commits ops/hosting/expected.json
 env:
   GATEWAY: https://ultrastable-deploy-gateway.ultrastable.workers.dev
 jobs:
@@ -33,3 +33,9 @@ jobs:
       - name: live check
         run: |
           for try in 1 2 3 4 5 6; do curl -fsS "$GATEWAY/health" | grep -q '"ok":true' && exit 0; sleep 5; done; exit 1
+      - name: record the deployed module as expected (HOSTSYNC-1)
+        run: |
+          node workers/tools/hostsync.mjs expect --script ultrastable-deploy-gateway --sha256 "$(jq -r .sha256 out.json)"
+          git config user.name "ultrastable-bot"; git config user.email "bot@users.noreply.github.com"
+          git add ops/hosting
+          git diff --cached --quiet || { git commit -m "host-sync: record deployed gateway module" && for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done; }
