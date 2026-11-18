@@ -2180,6 +2180,15 @@
    "body": "Root cause of #596 breaking main: the sweeper merged on mergeable_state clean, which is true when main has no required checks, and lane.sh treated skipped or missing checks as green. Both now require a check run named checks with conclusion success on the exact head sha. Also LANE-RETRY-1 (lane adoption retried pull --rebase inside a conflicted rebase; now resets to origin/main and reruns) and REGEN-NONFATAL-1 (REGEN-1 step no longer exits 1 before the authoritative checks). Guards: seed/worker/test/sweeper.test.js, tests/foundation/test_lane_merger.py. Workers repo is archived, its ci and self-hosting failures predate retirement.",
    "probe": "file:seed/worker/src/sweeper.js",
    "session": "session_0156nqDt1FUj9Xw7a54KPPUk"
+  },
+  {
+   "id": "lesson-2026-11-18-main-broke-again-through-the-old-sweeper-while-merge-gate-1-",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Main broke again through the old sweeper while MERGE-GATE-1 was in flight",
+   "body": "Change 603 merged while the plan-limits test failed, because the running sweeper still merged on clean. Repaired in this change and verified: host_events has a retention rule and is pruned by hosts.js, the catch in hosts.js states its reason, hosts.test.js carries the SPDX header. Ran node --test test/plan-limits.test.mjs (7 tests pass), seed worker tests (297 tests pass), claims 28 of 28.",
+   "probe": "file:seed/autonomy/retention.json",
+   "session": "session_0156nqDPUk"
   }
  ]
 }
