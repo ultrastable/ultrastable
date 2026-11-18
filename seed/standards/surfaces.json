@@ -295,7 +295,7 @@
       "audience": "machine",
       "standards": [],
       "discoverable": false,
-      "description": "Inbound host event (HOSTS-1): HMAC-signed callback from a hosting system reporting a deploy result; 401 on a bad signature.",
+      "description": "HOSTS-1: a hosting system reports a deploy or runtime event, HMAC-signed with HOST_WEBHOOK_SECRET; 401 on a bad signature.",
       "reason": "machine-to-machine callback authenticated by HMAC; nothing for an agent to discover"
     },
     {

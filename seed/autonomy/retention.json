@@ -3,7 +3,7 @@
   "max_rows_per_run": 5000,
   "tables": {
   "free_tier_samples": { "column": "at", "keep_days": 7, "reason": "FREE-TIER-1: hourly account-wide usage samples; the tick reads the latest two hours" },
-  "host_events": { "column": "at", "keep_days": 30, "reason": "HOSTS-1: one row per host deploy event; the host probe reads the last hours, the audit chain keeps the history" },
+  "host_events": { "keep": "managed", "reason": "HOSTS-1: one row per hosting action or event, pruned by hosts.js record() after 30 days; integer-millisecond time column, so retention.js cannot prune it" },
   "airouter_cache": { "keep": "managed", "reason": "AI-ROUTER-1: cached model replies, pruned by core/airouter (7 days)" },
   "airouter_calls": { "keep": "managed", "reason": "AI-ROUTER-1: one row per model call, pruned by core/airouter (30 days); integer-millisecond time column, so retention.js cannot prune it" },
   "airouter_stats": { "keep": "state", "reason": "AI-ROUTER-1: one row per kind and model, the routing memory" },
@@ -13,7 +13,13 @@
       "reason": "REACH-1: one row per post and channel; the publisher reads this week, the reach loop reads a year",
       "archive": true
     },
-    "_migrations": {
+    "host_events": {
+   "column": "at",
+   "unit": "ms",
+   "keep_days": 30,
+   "reason": "HOSTS-1: one row per hosting action or inbound hosting event; deploy status and stall detection read the last day, so 30 days is ample"
+  },
+  "_migrations": {
       "keep": "state",
       "reason": "which migrations have been applied; a record of schema state, never history to prune"
     },

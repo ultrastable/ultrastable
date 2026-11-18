@@ -217,6 +217,54 @@
    "status": "controlled",
    "cadence_ticks": 144,
    "probe": "grep:foundation/pins.py::def unprobed"
+  },
+  {
+   "id": "fm-merge-without-checks",
+   "trigger": "a server-side merge sees mergeable_state clean while the full checks run is pending, absent or red (main has no required checks)",
+   "symptom": "a change that fails checks lands on main (#595, #596)",
+   "blast_radius": "main or a deploy goes red, then the executor and ciwatch file repair items for it",
+   "detection": "node --test seed/worker/test/greenguard.test.js",
+   "root_cause": "clean only means no required check is red",
+   "remediation": "greenguard.notGreen gates the tick lane and sweeper; scripts/lane.sh requires a green `checks` run",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:seed/worker/src/greenguard.js::export async function notGreen"
+  },
+  {
+   "id": "fm-lane-rebase-wedge",
+   "trigger": "main moves under the lane adoption commit and a generated file conflicts in the rebase",
+   "symptom": "every later pull fails with unmerged files and the lane run is red (run 1061)",
+   "blast_radius": "main or a deploy goes red, then the executor and ciwatch file repair items for it",
+   "detection": "grep scripts/lane.sh for LANE-REBASE-1",
+   "root_cause": "a half-finished rebase was left in the work tree",
+   "remediation": "abort the rebase, reset to origin/main, redo the idempotent adoption",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:scripts/lane.sh::LANE-REBASE-1"
+  },
+  {
+   "id": "fm-regen-push-race",
+   "trigger": "a merge lands on main while regen-generated is running",
+   "symptom": "the non-fast-forward push fails the job (runs 12 and 13)",
+   "blast_radius": "main or a deploy goes red, then the executor and ciwatch file repair items for it",
+   "detection": "grep the workflow for REGEN-PUSH-1",
+   "root_cause": "a single unretried push to a moving branch",
+   "remediation": "fetch, reset to main, regenerate, push again, up to 4 tries; never force",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:.github/workflows/regen-generated.yml::REGEN-PUSH-1"
+  },
+  {
+   "id": "fm-foreign-ci-item",
+   "trigger": "a Q-CIFAIL item names a workflow in another repository",
+   "symptom": "the executor edits unrelated files in this repository and merges them",
+   "blast_radius": "main or a deploy goes red, then the executor and ciwatch file repair items for it",
+   "detection": "python3 -m unittest tests.foundation.test_executor",
+   "root_cause": "the item was takeable in any repository",
+   "remediation": "executor.foreign_cifail removes it from the takeable set; ciwatch closes it by probe",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:foundation/executor.py::def foreign_cifail"
   }
  ],
  "controls": [
