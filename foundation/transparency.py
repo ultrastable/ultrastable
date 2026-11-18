@@ -272,6 +272,7 @@ def sql(snap):
 
 
 
+UA = "ultrastable-transparency/1"  # Cloudflare answers 403 (error 1010) to the default python-urllib agent
 SITE = "https://ultrastable-site.ultrastable.workers.dev"
 
 
@@ -283,12 +284,12 @@ def publish_oidc(snap, env=None) -> dict:
     if not u or not t:
         return {"published": False, "why": "no GitHub OIDC request URL (job needs permissions id-token: write)"}
     try:
-        with urllib.request.urlopen(urllib.request.Request(u + "&audience=ultrastable-deploy", headers={"authorization": "bearer " + t}), timeout=30) as r:
+        with urllib.request.urlopen(urllib.request.Request(u + "&audience=ultrastable-deploy", headers={"authorization": "bearer " + t, "user-agent": UA}), timeout=30) as r:
             jwt = json.loads(r.read())["value"]
         txt = json.dumps(snap, separators=(",", ":"))
         parts = [txt[i:i + PART] for i in range(0, len(txt), PART)] or [""]
         req = urllib.request.Request(env.get("TARGET_SITE", SITE) + "/__internal/transparency", method="POST", data=json.dumps({"generated": snap["generated"], "parts": parts}).encode(),
-                                     headers={"authorization": "Bearer " + jwt, "content-type": "application/json"})
+                                     headers={"authorization": "Bearer " + jwt, "content-type": "application/json", "user-agent": UA})
         with urllib.request.urlopen(req, timeout=60) as r:
             res = json.loads(r.read())
         return {"published": bool(res.get("ok")), "generated": snap["generated"], "route": "oidc"} if res.get("ok") else {"published": False, "why": str(res)[:200]}
