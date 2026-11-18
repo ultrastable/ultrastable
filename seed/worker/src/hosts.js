@@ -168,7 +168,7 @@ export async function hookSecret(env, purpose) {
 export async function githubHookSecrets(env, appMaterial = null) {
   const out = [];
   if (env.GITHUB_WEBHOOK_SECRET) out.push(env.GITHUB_WEBHOOK_SECRET);
-  try { const m = appMaterial ? await appMaterial() : null; if (m && m.secret && m.secret.webhook_secret) out.push(m.secret.webhook_secret); } catch (e) { console.error('app webhook secret', e && e.message); }  // allow-silent: an unreadable App secret leaves the bound and derived secrets, so verification still runs and a bad signature still answers 401
+  try { const m = appMaterial ? await appMaterial() : null; if (m && m.secret && m.secret.webhook_secret) out.push(m.secret.webhook_secret); } catch (e) { /* allow-silent: an unreadable App secret leaves the bound and derived secrets; verification still runs and a bad signature still answers 401 */ console.error('app webhook secret', e && e.message); }
   const d = await hookSecret({ CREDENTIAL_KEY: env.CREDENTIAL_KEY }, 'github'); if (d) out.push(d);
   return [...new Set(out)];
 }
