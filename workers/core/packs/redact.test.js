@@ -12,7 +12,7 @@ import { KERNEL_DIR } from '../kernel/testkit.js';
 import { createPacks, loadManifest, MIGRATIONS_DIR, createRedactor, secretValuesFor, redactingSink, REDACTED } from './index.js';
 
 const EXAMPLE_DIR = fileURLToPath(new URL('./example/', import.meta.url));
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now', '-N days'), so a fixed date fails once it ages out
 const SECRET = 'Zq7-very-private-value-42';
 const SETTING_SECRET = 'hunter2-setting-value';
 
@@ -60,7 +60,7 @@ async function enable(packs, dir, mutate = m => m) {
 }
 const runStep = async (db, packs, env) => {
   const [step] = await packs.packSteps();
-  const ctx = { tickId: 1, notes: [], errors: [], env, now: T0, nowIso: '2026-11-11 10:00:00' };
+  const ctx = { tickId: 1, notes: [], errors: [], env, now: T0, nowIso: new Date(T0).toISOString().slice(0, 19).replace('T', ' ') };
   await step.run(db, ctx);
   return ctx;
 };

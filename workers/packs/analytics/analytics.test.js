@@ -13,7 +13,7 @@ import { recordPageview, report } from './index.js';
 const DIR = fileURLToPath(new URL('./', import.meta.url));
 const MIG = fileURLToPath(new URL('./migrations/', import.meta.url));
 const D = 86400e3;
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now', '-N days'), so a fixed date fails once it ages out
 const rows = (db, sql, ...a) => db.raw.prepare(sql).all(...a).map(r => ({ ...r }));
 const one = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
 const UA = 'Mozilla/5.0 (X11; Linux) Firefox/130';

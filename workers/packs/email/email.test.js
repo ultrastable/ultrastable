@@ -18,7 +18,7 @@ import { smtpRelayHttp } from './channels/smtp-relay-http.js';
 
 const DIR = fileURLToPath(new URL('./', import.meta.url));
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now', '-N days'), so a fixed date fails once it ages out
 const policy = JSON.parse(readFileSync(new URL('../../autonomy/policy.json', import.meta.url), 'utf8'));
 const tickConfig = { org_slug: 't', claim_ttl_minutes: 120, max_wip_per_role: 3, plus_share: 0.2, policy };
 const SETTINGS = { baseUrl: 'https://lists.example.org', senderLine: 'Sent by Example Org, a test sender', linkSecret: 'unit-test-link-key', hashSalt: 's' };

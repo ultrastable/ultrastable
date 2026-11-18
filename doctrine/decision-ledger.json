@@ -2479,6 +2479,22 @@
    "body": "DECISIONS-1 CI failed twice: /api/decisions was not registered in seed/standards/surfaces.json (standards --apply fails regen) and the page used a hard-coded accent hex. Both are now checked locally with standards --check and design --lint before pushing.",
    "probe": "grep:seed/standards/surfaces.json::/api/decisions",
    "session": "session_0156nqDtg2N1X7K61HZReweE"
+  },
+  {
+   "id": "decision-2026-11-18-decisions-1-coverage-drained-21-to-8",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "DECISIONS-1 coverage drained 21 to 8",
+   "body": "Added a not_decisions registry (deterministic lookups with a stated reason) and the self-code-finding point; 8 genuine decisions remain in uninstrumented.",
+   "probe": "grep:doctrine/decisions.json::not_decisions"
+  },
+  {
+   "id": "lesson-2026-11-18-timebomb-baseline-drained",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Timebomb baseline drained",
+   "body": "Eleven pinned-date pack tests now use a relative clock; the timebomb baseline is empty.",
+   "probe": "grep:workers/tools/timebomb-baseline.json::\"tests\": \\[\\]"
   }
  ]
 }

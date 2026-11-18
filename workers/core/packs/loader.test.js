@@ -13,7 +13,7 @@ import { createPacks, MIGRATIONS_DIR, splitStatements, checkMigrationStatement, 
 
 const PACKS_ROOT = fileURLToPath(new URL('../../packs/', import.meta.url));
 const EXAMPLE_DIR = fileURLToPath(new URL('./example/', import.meta.url));
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+const T0 = Date.now() - 3600e3;  // relative: pack read probes use datetime('now', '-N days'), so a fixed date fails once it ages out
 const tables = (db, like) => db.raw.prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name LIKE ?`).all(like).map(r => r.name).sort();
 
 function host() {
