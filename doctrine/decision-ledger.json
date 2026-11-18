@@ -2421,6 +2421,15 @@
    "body": "The first live call of tools/push_main.py to the tick Worker got HTTP 403 error code 1010 on the default urllib user agent; the direct-push fallback landed the commit. push_main now sends its own user-agent.",
    "probe": "grep:tools/push_main.py::ultrastable-push-main",
    "session": "session_0156nqDtxpefT1d2NKQyUFFV"
+  },
+  {
+   "id": "lesson-2026-11-18-main-writer-1-app-commits-trigger-push-workflows-data-commit",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "MAIN-WRITER-1: App commits trigger push workflows; data commits carry skip-ci",
+   "body": "Commits written by the org GitHub App start push workflows, unlike workflow-token pushes. A deploy record started regen-generated, whose commit touched site/ and started the deploy again, in a loop from 12:17 UTC on 2026-11-18. tools/push_main.py now appends the skip-ci marker to every data commit message.",
+   "probe": "grep:tools/push_main.py::skip ci",
+   "session": "session_0156nqDtxpefT1d2NKQyUFFV"
   }
  ]
 }
