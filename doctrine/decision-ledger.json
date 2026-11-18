@@ -2414,6 +2414,15 @@
    "session": "session_0156nqDuXUgEsPtAbbPEiehc"
   },
   {
+   "id": "lesson-2026-11-18-main-writer-1-cloudflare-refuses-the-default-python-urllib-a",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "MAIN-WRITER-1: Cloudflare refuses the default Python-urllib agent (403, error 1010)",
+   "body": "The first live call of tools/push_main.py to the tick Worker got HTTP 403 error code 1010 on the default urllib user agent; the direct-push fallback landed the commit. push_main now sends its own user-agent.",
+   "probe": "grep:tools/push_main.py::ultrastable-push-main",
+   "session": "session_0156nqDtxpefT1d2NKQyUFFV"
+  },
+  {
    "id": "lesson-2026-11-18-live-pages-read-live-data",
    "kind": "lesson",
    "date": "2026-11-18",
