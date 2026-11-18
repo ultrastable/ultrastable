@@ -7,6 +7,7 @@
 // Every state change is a row in D1 `handoff_events` and one comment on the PR, so the record lives server-side, not in a chat.
 const API = 'https://api.github.com';
 const MAX_ATTEMPTS = 3;
+const CAPACITY = /Too many subrequests/i;
 const VERIFY_TRIES = 3;  // VERIFY-RETRY-1: a fresh deploy takes a moment to reach the edge; one early 404 must not roll production back
 
 // One GitHub wrapper for the tick (lane.js), counted against the tick's shared budget (GITHUB-BUDGET-1). `ghb` is bound per run with that budget.
@@ -93,10 +94,10 @@ export async function registerHandoff(db, h) {
 // versionOf(workerId) -> { ok, version } reads the live version (DEPLOY-VERSION-1); without it the version check is recorded as skipped.
 // budget: the tick's shared GitHub budget (GITHUB-BUDGET-1); the run stops advancing once it is spent or rate limited.
 export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, deployer = null, rollback = null, versionOf = null, probe = runProbe, maxPerTick = 5, now = Date.now(), budget = githubBudget() }) {
-  const out = { status: 'ok', registered: [], merged: [], deployed: [], verified: [], failed: [], rolled_back: [], retried: [], recovered: [], errors: [] };
+  const out = { status: 'ok', registered: [], merged: [], deployed: [], verified: [], failed: [], rolled_back: [], retried: [], recovered: [], deferred: [], errors: [] };
   if (!token) return { ...out, status: 'no-token' };
   if (!db) return { ...out, status: 'no-db' };
-  ghb = budget;
+  ghb = budget; let worked = 0; const seen = new Set();  // a handoff is advanced once per run
   try { return await advance(); } finally { ghb = null; out.github = budget.report(); if (budget.stopped && out.status === 'ok') out.status = 'stopped'; }
   async function advance() {
   // the existing rollback path: roll every target back, record it, return the item to ready
@@ -108,8 +109,13 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
     await setItem(db, h.item, 'ready', null);
     await say(f, token, h.repo, h.pr, 'the ' + what + ' failed (' + why + '). ' + (rb.length ? 'Rolled back: ' + rb.join('; ') + '. ' : '') + (h.item ? 'Item `' + h.item + '` is back to ready for the executor.' : ''));
   };
-  // 1. discover: open PRs that declare a handoff, and ones merged in the last day before a tick saw them open (a fast merge must not escape the loop)
+  // 0. HANDOFF-SUBREQ-2: merged work waiting for its deploy goes before discovery, which costs two GitHub calls a repository and left a deploy with no subrequests (01:01 UTC 2026-11-18).
+  // A handoff blocked only by that limit is returned to the deploy queue, or closed on its live probe when a later handoff already deployed every worker it names.
+  await unblockCapacity();
   const heads = {};
+  await advanceRows("'merged','deployed','deploy_failed'");
+  if (out.deferred.length) return out;
+  // 1. discover: open PRs that declare a handoff, and ones merged in the last day before a tick saw them open (a fast merge must not escape the loop)
   for (const repo of repos) {
     if (budget.stopped) break;
     const prs = await gh(f, token, 'GET', `/repos/${repo}/pulls?state=open&per_page=50`);
@@ -126,10 +132,12 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
     }
   }
   // 2. advance every handoff the server owns
-  const rows = (await db.prepare("SELECT * FROM handoffs WHERE state IN ('open','conflict','merged','deployed','deploy_failed') ORDER BY updated_at LIMIT ?").bind(maxPerTick * 4).all()).results || [];
-  let worked = 0;
+  await advanceRows("'open','conflict','merged','deployed','deploy_failed'");
+  async function advanceRows(states) {
+  const rows = (await db.prepare(`SELECT * FROM handoffs WHERE state IN (${states}) ORDER BY updated_at LIMIT ?`).bind(maxPerTick * 4).all()).results || [];
   for (const h of rows) {
     if (worked >= maxPerTick || budget.stopped) break;
+    if (seen.has(h.id)) continue; seen.add(h.id);
     try {
       if (h.state === 'open' || h.state === 'conflict') {
         const d = await gh(f, token, 'GET', `/repos/${h.repo}/pulls/${h.pr}`);
@@ -151,6 +159,9 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
           const at = heads[h.repo], res = [], before = {};
           for (const w of targets) { if (versionOf) before[w] = ((await versionOf(w)) || {}).version || null; res.push({ w, ...(await deployer(w, at, h.repo)) }); }
           const bad = res.filter(r => !r.ok);
+          if (bad.some(b => CAPACITY.test(String(b.detail)))) {  // HANDOFF-SUBREQ-2: the invocation ran out of subrequests. That is this tick's limit, not a bad change: no attempt is counted and the deploy goes first next run
+            await event(db, h.id, 'deploy_failed', 'deferred, not an attempt: ' + bad.map(b => `${b.w}: ${b.detail}`).join('; ').slice(0, 300)); out.deferred.push(h.id); break;
+          }
           if (bad.length) {
             const n = h.attempts + 1; await db.prepare('UPDATE handoffs SET attempts = ? WHERE id = ?').bind(n, h.id).run();
             const msg = bad.map(b => `${b.w}: ${b.detail}`).join('; ');
@@ -186,6 +197,22 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
       }
     } catch (e) { out.errors.push(`${h.id} ${e && e.message}`); }
   }
+  }
+  async function unblockCapacity() {
+    const stuck = (await db.prepare("SELECT * FROM handoffs WHERE state = 'blocked' AND detail LIKE '%Too many subrequests%' ORDER BY updated_at DESC LIMIT 3").all()).results || [];
+    for (const h of stuck) {
+      try {
+        const targets = String(h.deploy || '').split(',').map(s => s.trim()).filter(Boolean); let carried = targets.length > 0, by = null;
+        for (const w of targets) { const l = await db.prepare("SELECT id FROM handoffs WHERE state = 'verified' AND updated_at > ? AND (',' || replace(deploy, ' ', '') || ',') LIKE ? ORDER BY updated_at DESC LIMIT 1").bind(h.updated_at, '%,' + w + ',%').first(); if (l) by = l.id; else carried = false; }
+        if (carried) {
+          const pr = h.verify ? await probe(h.verify, f) : { ok: true, detail: 'no verify line' };
+          if (pr.ok) { await event(db, h.id, 'verified', 'recovered: ' + pr.detail + ' (the deploy of ' + by + ' carried this change; the earlier block was the subrequest limit)'); await setItem(db, h.item, 'done'); out.verified.push(h.id); out.recovered.push(h.id); continue; }
+        }
+        await db.prepare('UPDATE handoffs SET attempts = 0 WHERE id = ?').bind(h.id).run();
+        await event(db, h.id, 'deploy_failed', 'requeued: the block was the subrequest limit of the tick, not the change'); await setItem(db, h.item, 'ready', null); out.retried.push(h.id);
+      } catch (e) { out.errors.push(`${h.id} ${e && e.message}`); }
+    }
+  }
   // 3. VERIFY-RETRY-1 self-heal: a handoff recorded as rolled_back whose probe passes now was a propagation race, not a bad change. Record the truth and close the item.
   // A rollback for a failed version check is not a propagation race (the old code is what the probe would see), so it never self-heals here.
   const rb = (await db.prepare("SELECT * FROM handoffs h WHERE state = 'rolled_back' AND merge_sha IS NOT NULL AND verify IS NOT NULL AND NOT EXISTS (SELECT 1 FROM handoff_events e WHERE e.handoff_id = h.id AND e.state = 'verify_failed' AND e.detail LIKE 'version check:%') ORDER BY updated_at DESC LIMIT 2").all()).results || [];
@@ -212,8 +239,10 @@ const norm = (p) => { const out = []; for (const s of p.split('/')) { if (s === 
 // subrequests per invocation ("Too many subrequests", ultrastable-tick and ultrastable-tenants handoffs blocked from 20:21 UTC on 2026-11-17).
 // GitHub GraphQL returns many files in one request, so a deploy reads each import level in one call. A file GraphQL cannot return whole (binary, truncated)
 // is still read singly, and the reason a batch fell back is kept in `fallbacks`, never dropped.
-export async function rawMany(f, token, repo, sha, paths) {
-  const [owner, name] = String(repo).split('/');
+export const RAW_CHUNK = 12;  // HANDOFF-SUBREQ-2: one GraphQL answer carrying 30 files (about 500 KB for the site Worker) can be refused; a refused batch fell back to 30 single reads
+export async function rawMany(f, token, repo, sha, all) {
+  if (all.length > RAW_CHUNK) { const out = new Map(), errs = []; for (let i = 0; i < all.length; i += RAW_CHUNK) { try { for (const [k, v] of await rawMany(f, token, repo, sha, all.slice(i, i + RAW_CHUNK))) out.set(k, v); } catch (e) { errs.push(String(e && e.message || e)); } } if (errs.length && !out.size) throw new Error(errs[0]); return out; }
+  const paths = all, [owner, name] = String(repo).split('/');
   const fields = paths.map((p, i) => `f${i}: object(expression: ${JSON.stringify(sha + ':' + p)}) { ... on Blob { text isTruncated } }`).join(' ');
   const r = await f(`${API}/graphql`, { method: 'POST', headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json', 'user-agent': 'ultrastable-handoff' }, body: JSON.stringify({ query: `query { repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(name)}) { ${fields} } }` }) });
   if (!r.ok) throw new Error('graphql ' + r.status);

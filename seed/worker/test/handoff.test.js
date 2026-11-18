@@ -228,3 +228,18 @@ test('HANDOFF-SUBREQ-1: a deploy reads each import level in one request, not one
   const bad = batchedReader(async p => files[p], async () => { throw new Error('graphql 502'); });
   await collectModules(bad.read, 'w/a.js', bad.prefetch); assert.match(bad.fallbacks[0], /graphql 502/, 'a failed batch falls back to single reads and says so');
 });
+
+test('HANDOFF-SUBREQ-2: a deploy refused by the subrequest limit is deferred without an attempt, and a handoff it blocked is requeued or closed on its probe', async () => {
+  const db = makeDb(); seedItem(db);
+  const st = { prs: [{ number: 7, title: 'Fix', body: BODY, head: { sha: 'aaa' }, labels: [] }], detail: { merged: true, merge_commit_sha: 'mmm', state: 'closed' } };
+  const lim = 'Too many subrequests by single Worker invocation.';
+  for (let i = 0; i < 4; i++) { const r = await runHandoffs({ db, token: 't', repos: ['o/r'], fetch: gh(st).f, deployer: async () => ({ ok: false, detail: lim }), probe: async () => ({ ok: true, detail: 'live' }) }); if (i) assert.deepEqual(r.deferred, ['o/r#7']); }
+  let h = await db.prepare('SELECT * FROM handoffs').first();
+  assert.equal(h.attempts, 0, 'the tick limit is never counted against the change'); assert.equal(h.state, 'deploy_failed'); assert.match(h.detail, /deferred, not an attempt/);
+  // a handoff an older build blocked for the same reason goes back to the deploy queue and deploys
+  await db.prepare("UPDATE handoffs SET state = 'blocked', attempts = 3, detail = ?").bind('deploy failed 3 times: ultrastable-tick: ' + lim).run();
+  const r = await runHandoffs({ db, token: 't', repos: ['o/r'], fetch: gh(st).f, deployer: async () => ({ ok: true }), probe: async () => ({ ok: true, detail: 'live' }) });
+  assert.deepEqual(r.retried, ['o/r#7']); assert.deepEqual(r.verified, ['o/r#7']);
+  h = await db.prepare('SELECT * FROM handoffs').first(); assert.equal(h.state, 'verified');
+  assert.equal((await db.prepare("SELECT status FROM items WHERE id='SG-2'").first()).status, 'done');
+});

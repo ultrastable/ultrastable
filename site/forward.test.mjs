@@ -18,3 +18,15 @@ console.log("forward ok");
   const env = { OWNER: { fetch: async () => { hit.push("owner"); return new Response("ok"); } }, TICK: { fetch: async () => { hit.push("tick"); return new Response("ultrastable seed worker"); } } };
   for (const p of ["/connect/github-signin", "/owner", "/auth/github-signin/callback"]) await mod2.default.fetch(new Request("https://ultrastable.io" + p), env, {});
   if (hit.join() !== "owner,owner,owner") throw new Error("owner paths misrouted: " + hit.join()); console.log("owner routing ok"); }
+
+// FREE-TIER-1: a GitHub delivery the tick does not act on is answered at the first hop and never forwarded
+{
+  const { hookEventFilter } = await import("./worker.js");
+  const hook = (ev, path = "/hook/github") => new Request("https://ultrastable.io" + path, { method: "POST", headers: ev ? { "x-github-event": ev } : {}, body: "{}" });
+  for (const ev of ["workflow_run", "check_run", "workflow_job", "status", ""]) { const r = hookEventFilter(hook(ev)); assert.equal(r && r.status, 202, ev + " is answered here"); }
+  for (const ev of ["push", "pull_request", "issues", "issue_comment", "release", "ping"]) assert.equal(hookEventFilter(hook(ev)), null, ev + " is forwarded");
+  assert.equal(hookEventFilter(hook("workflow_run", "/hook/host")), null, "only the GitHub hook is filtered");
+  let forwarded = 0; const orig = globalThis.fetch; globalThis.fetch = async () => { forwarded++; return new Response("x"); };
+  try { const r = await mod.fetch(hook("workflow_run"), { UPSTREAM_ORIGIN: "https://up.example" }, { waitUntil() {} }); assert.equal(r.status, 202); assert.equal(forwarded, 0, "no forward, no second Worker request"); } finally { globalThis.fetch = orig; }
+  console.log("hook filter ok");
+}
