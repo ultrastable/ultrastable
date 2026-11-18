@@ -25,8 +25,23 @@ const first = async (db, sql, ...b) => (await db.prepare(sql).bind(...b).first()
 async function sha256(text) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
 
 // ---- readers (exported so the MCP endpoint and tests use the same code) ----
+// READ-BUDGET-4: the public readers below were the top readers of the org database (each /ops load scanned dispatches and items several times).
+// One read per isolate per key every 30 s serves every visitor; the key is per env object so tests and tenants never share an entry.
+const MEMO_MS = 30e3, memos = new WeakMap();
+async function memo(env, key, fn) {
+  let m = memos.get(env); if (!m) { m = new Map(); memos.set(env, m); }
+  const ttl = env.READ_MEMO_MS !== undefined ? Number(env.READ_MEMO_MS) : MEMO_MS;
+  const hit = m.get(key); if (hit && Date.now() - hit.at < ttl) return hit.v;
+  const v = await fn(); m.set(key, { at: Date.now(), v }); return v;
+}
+export const status = (env, now = Date.now()) => memo(env, "status", () => statusRaw(env, now));
+export const agents = (env, now = Date.now()) => memo(env, "agents", () => agentsRaw(env, now));
+export const work = (env, view = "on_deck", limit = 50) => memo(env, "work:" + view + ":" + limit, () => workRaw(env, view, limit));
+export const activity = (env, limit = 30) => memo(env, "activity:" + limit, () => activityRaw(env, limit));
+export const handoffs = (env, state, limit = 50) => memo(env, "handoffs:" + state + ":" + limit, () => handoffsRaw(env, state, limit));
 
-export async function status(env, now = Date.now()) {
+
+async function statusRaw(env, now = Date.now()) {
   const db = env.ORG;
   const tick = await first(db, "SELECT id, started_at, finished_at, steps_completed, steps_total, report, errors FROM tick_runs ORDER BY id DESC LIMIT 1");
   const items = await all(db, "SELECT status, count(*) AS n FROM items GROUP BY status");
@@ -68,7 +83,7 @@ export const CODE_AGENT = { id: "code-executor", role: "code-executor", ticks_ev
 const isoAfter = (s, sec) => { const t = ts(s); return t == null ? null : new Date(t + sec * 1000).toISOString().replace("T", " ").slice(0, 19); };
 const prOf = b => { const m = /^in-pr:\s*(\S+)(?:.*?model:\s*(\S+))?/.exec(b || ""); return m ? { url: m[1], model: m[2] || null } : null; };
 
-export async function agents(env, now = Date.now()) {
+async function agentsRaw(env, now = Date.now()) {
   const db = env.ORG, since = Math.floor(now / 1000) - 86400;
   const roles = await all(db, "SELECT id, role, project, tick_every, last_tick_at FROM roles ORDER BY role, id");
   const claims = await all(db, "SELECT c.agent, c.item_id, c.claimed_at, c.heartbeat_at, i.title, i.status FROM claims c LEFT JOIN items i ON i.id = c.item_id");
@@ -120,7 +135,7 @@ export function tenantOf(r) {
   return "Ultrastable";
 }
 
-export async function work(env, view = "on_deck", limit = 50) {
+async function workRaw(env, view = "on_deck", limit = 50) {
   const db = env.ORG, lim = Math.max(1, Math.min(200, Number(limit) || 50));
   const where = { on_deck: "i.status IN ('ready','open') AND c.item_id IS NULL", in_progress: "((i.status = 'claimed' OR c.item_id IS NOT NULL) AND i.status NOT IN ('done') OR (i.status = 'blocked' AND i.blocker LIKE 'in-pr:%'))", blocked: "i.status = 'blocked' AND coalesce(i.blocker, '') NOT LIKE 'in-pr:%'", done: "i.status = 'done'", all: "1=1" }[view];
   if (!where) return null;
@@ -141,7 +156,7 @@ export async function workItem(env, id) {
   return { api_version: API_VERSION, item, claim, dispatches: history };
 }
 
-export async function activity(env, limit = 30) {
+async function activityRaw(env, limit = 30) {
   const db = env.ORG, lim = Math.max(1, Math.min(100, Number(limit) || 30));
   const dispatches = await all(db, "SELECT d.id, d.role_id AS agent, d.item_id AS item, i.title, d.status, d.model, d.at FROM dispatches d LEFT JOIN items i ON i.id = d.item_id ORDER BY d.id DESC LIMIT ?", lim);
   const ticks = await all(db, "SELECT id, started_at, steps_completed, steps_total, report, errors FROM tick_runs ORDER BY id DESC LIMIT 10");
@@ -218,7 +233,7 @@ export async function intake(request, env, now = Date.now()) {
 }
 
 // ---- HANDOFF-1 / CODE-AGENT-SOP-1: the server's record of handed-off work, and the two writes a code agent may make ----
-export async function handoffs(env, state, limit = 50) {
+async function handoffsRaw(env, state, limit = 50) {
   const db = env.ORG, lim = Math.max(1, Math.min(200, Number(limit) || 50));
   const rows = state ? await all(db, "SELECT * FROM handoffs WHERE state = ? ORDER BY updated_at DESC LIMIT ?", state, lim) : await all(db, "SELECT * FROM handoffs ORDER BY updated_at DESC LIMIT ?", lim);
   const ev = rows.length ? await all(db, `SELECT handoff_id, at, state, detail FROM handoff_events WHERE handoff_id IN (${rows.map(() => "?").join(",")}) ORDER BY id DESC`, ...rows.map(r => r.id)) : [];
