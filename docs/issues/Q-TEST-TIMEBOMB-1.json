@@ -1,0 +1,10 @@
+{
+  "id": "Q-TEST-TIMEBOMB-1",
+  "title": "Q-TEST-TIMEBOMB-1: tests with a fixed date clock that exercise SQL using the real clock fail when the date ages out",
+  "body": "**Owner:** executor\n**Trigger:** issueloop and queue --run, daily\n**Done check:** grep:workers/tools/timebomb.test.mjs::datetime\\('now'\n**Status:** open\n\nFound 2026-11-18: `workers/packs/cloud/cloud.test.js` used T0 = 2026-11-11 while the manifest read probes use `datetime('now', '-7 days')`; main went red exactly 7 days later with no code change (fixed in the same PR by starting the clock an hour ago). Twenty-plus other test files pin `Date.parse('2026-11-1x')`.\n\nRemedy: a test in `workers/tools/` that fails when a test file pins a calendar date and the module or manifest it loads contains `datetime('now'` or `Date.now()` windows, so the class is caught at authoring time.\n\n**Closing probe:** `grep:workers/tools/timebomb.test.mjs::datetime\\('now'`\n",
+  "labels": [
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Workers"
+}

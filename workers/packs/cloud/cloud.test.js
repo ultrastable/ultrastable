@@ -14,7 +14,8 @@ import { requestDeploy, guardPort } from './index.js';
 const DIR = fileURLToPath(new URL('./', import.meta.url));
 const MIG = fileURLToPath(new URL('./migrations/', import.meta.url));
 const DEPLOY_MIG = fileURLToPath(new URL('../../core/deploy/migrations/', import.meta.url));
-const T0 = Date.parse('2026-11-11T10:00:00Z');
+// the manifest's read probes use SQLite's real clock (a 7-day window), so the test clock starts an hour ago, never on a fixed date that ages out
+const T0 = Date.now() - 3600e3;
 const rows = (db, sql, ...a) => db.raw.prepare(sql).all(...a).map(r => ({ ...r }));
 const one = (db, sql, ...a) => db.raw.prepare(sql).get(...a);
 
