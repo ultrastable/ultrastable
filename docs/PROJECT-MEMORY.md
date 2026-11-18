@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-18
 
+- 2026-11-18: PACE-2: gauge keys are not work; deferred runs do not count (#621)
+- 2026-11-18: Repair main after #619 and make GitHub refuse a red direct merge (DIRECT-MERGE-GATE-1) (#623)
+- 2026-11-18: SUBREQUEST-METER-1: per-loop share so no loop starves the rest (#620)
+- 2026-11-18: Point Live proof at /live; deprecate QNFO-backed /proof (#619)
 - 2026-11-18: Fix deploy-site: restore webbotauth.js syntax broken by #614 (#616)
 - 2026-11-18: Fix webbotauth.js syntax error that turns deploy-site red (#617)
 - 2026-11-18: ciwatch: failing-workflow items (#615)
