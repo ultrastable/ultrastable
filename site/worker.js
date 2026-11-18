@@ -23,6 +23,7 @@ import { indexNow, keyFile, SITEMAP_PATHS } from "./promote.js";
 import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
 import { negotiate, robots, WEBMCP_JS } from "./readiness.js";  // AGENT-READY-2
 import ROAD from "./roadmap-data.js";
+import SPIN from "./spinoff-roadmap-data.js";  // SPINOFF-IDEAS-1: generated from the idea queue and the free-tier headroom
 import ORGMAP from "./orgmap.js"; // ORGMAP-1: generated from brand/brand.json
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
@@ -779,12 +780,21 @@ function engineers() {
     + "<p class=\"meta\">Every pin is a tracked item with an owner, a trigger and a closing probe: see the <a href=\"/roadmap\">roadmap</a> or <a href=\"/roadmap.json\">roadmap.json</a>. A build fails if a pin points at nothing.</p>"
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/pilot\">Join the pilot</a><a class=\"btn\" href=\"/how\">How it works</a><a class=\"btn\" href=\"/start\">Prefer the interview?</a></div>");
 }
+function spinRoadmap() {
+  const h = Object.keys(SPIN.headroom).map(function (k) { const r = SPIN.headroom[k]; return "<tr><td>" + esc(k.replace(/_/g, " ")) + "</td><td>" + (r.used == null ? "unmeasured" : r.used.toLocaleString("en-US")) + " of " + r.limit.toLocaleString("en-US") + " <small>(" + esc(r.basis || "") + ")</small></td></tr>"; }).join("");
+  const live = SPIN.live.map(function (a) { return "<li><a href=\"" + esc(a.url) + "\">" + esc(a.name) + "</a>: " + esc(a.tagline) + "</li>"; }).join("");
+  const q = SPIN.queue.map(function (i) { return "<tr><td><strong>" + esc(i.name) + "</strong><br><small>" + esc(i.showcases) + "</small></td><td>" + esc(i.archetype || i.kind) + "</td><td>" + i.score + "</td><td>" + (i.fits ? "queued, fits the headroom" : i.implemented ? "waits for headroom" : "waits for its archetype") + "</td></tr>"; }).join("");
+  const sc = SPIN.scope.map(function (x) { return "<li><a href=\"/roadmap#" + esc(x.id) + "\">" + esc(x.id) + "</a>: " + esc(x.title) + " (" + esc(x.status) + ")</li>"; }).join("");
+  return "<h2 id=\"spinoffs\">Spinoff roadmap</h2><p>Ultrastable proposes, scores and queues its own spinoff apps and loop increases against the free Cloudflare plan it runs inside. Governor level now: <strong>" + esc(SPIN.level) + "</strong>, so up to <strong>" + SPIN.cadence_per_day + "</strong> launches a day. Generated from <code>ops/free-tier.json</code> as of " + esc(SPIN.as_of) + ".</p>"
+    + "<h3>Live apps</h3><ul>" + live + "</ul><h3>Next, ranked by value over cost</h3><div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Idea</th><th>Kind</th><th>Score</th><th>State</th></tr></thead><tbody>" + q + "</tbody></table></div>"
+    + "<h3>Free-plan headroom, today</h3><div class=\"us-wrap\"><table class=\"us-table\"><tbody>" + h + "</tbody></table></div><h3>Loop scope increases</h3><ul>" + sc + "</ul>";
+}
 function roadmap() {
   const done = (i) => /^done/i.test(i.status), ids = Object.keys(ROAD.issues).sort();
   const rows = ids.map(function (k) { const i = ROAD.issues[k]; return "<tr id=\"" + esc(k) + "\"><td><strong>" + esc(k) + "</strong><br><small>" + esc(i.milestone) + "</small></td><td>" + esc(i.title) + "<br><small>Owner: " + esc(i.owner) + ". Trigger: " + esc(i.trigger) + "</small></td><td class=\"" + (done(i) ? "us-pass" : "us-fail") + "\">" + (done(i) ? "Done" : "Open") + "</td><td><small><code>" + esc(i.done) + "</code></small></td></tr>"; }).join("");
   return shell({ path: "/roadmap", title: "Roadmap - Ultrastable", description: "Every status pin and known gap on this site, tied to a tracked item with an owner, a trigger and a closing probe." },
     "<div class=\"head\"><h1>Roadmap</h1><p>Each item here backs a claim on this site. It has an owner, a trigger and a closing probe the system runs; an item closes only when its probe passes. Machine-readable: <a href=\"/roadmap.json\">roadmap.json</a>.</p></div>"
-    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Item</th><th>What</th><th>State</th><th>Closing probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>");
+    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Item</th><th>What</th><th>State</th><th>Closing probe</th></tr></thead><tbody>" + rows + "</tbody></table></div>" + spinRoadmap());
 }
 async function dashboard(tenantId) {
   const T = DASH.tenants[tenantId];
@@ -899,7 +909,7 @@ const handler = {
       case "/roadmap": return new Response(roadmap(), { headers: HTML });
       case "/ops": return new Response(opsPage(shell), { headers: { ...HTML, "Cache-Control": "no-store" } });
       case "/dashboard": { const t = u.searchParams.get("tenant") || "ultrastable"; const h = await dashboard(t); return h ? new Response(h, { headers: HTML }) : new Response("No such tenant", { status: 404, headers: HTML }); }
-      case "/roadmap.json": return new Response(JSON.stringify(ROAD), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
+      case "/roadmap.json": return new Response(JSON.stringify({ ...ROAD, spinoffs: SPIN }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
       case "/faq": return new Response(faq(), { headers: HTML });
       case "/privacy": return new Response(shell({ path: "/privacy", title: "Privacy - Ultrastable", description: "What this site records and what it does not." }, PRIVACY), { headers: HTML });
       case "/accessibility": return new Response(shell({ path: "/accessibility", title: "Accessibility - Ultrastable", description: "What we build to and how to report a barrier." }, ACCESSIBILITY), { headers: HTML });
