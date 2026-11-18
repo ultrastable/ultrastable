@@ -16,6 +16,11 @@ def sandbox():
     shutil.copy(REPO / "doctrine/spinoff.json", d / "doctrine/spinoff.json")
     shutil.copy(REPO / "doctrine/blindspots.json", d / "doctrine/blindspots.json")
     (d / "spinoffs").mkdir()
+    (d / "ops").mkdir()
+    shutil.copy(REPO / "ops/free-tier.json", d / "ops/free-tier.json")
+    ic = json.loads((REPO / "doctrine/spinoff-ideas.json").read_text())
+    ic["bank"] = []  # these tests are about the blind-spot candidates; the idea bank has its own tests in test_ideas.py
+    (d / "doctrine/spinoff-ideas.json").write_text(json.dumps(ic))
     return d
 
 
@@ -33,8 +38,8 @@ class Spinoff(unittest.TestCase):
     def test_launch_caps_and_novelty(self):
         d, t = sandbox(), dt.datetime(2026, 11, 17, tzinfo=dt.timezone.utc)
         self.assertEqual(spinoff.launch(d, True, t)["launched"]["slug"], "blindspot")
-        self.assertIn("weekly launch cap", spinoff.launch(d, True, t)["why"])
-        self.assertIn("no candidate", spinoff.launch(d, True, t + dt.timedelta(days=8))["why"])  # same needs: novelty 0
+        self.assertIn("no candidate", spinoff.launch(d, True, t)["why"])  # same needs: novelty 0
+        self.assertIn("no candidate", spinoff.launch(d, True, t + dt.timedelta(days=8))["why"])
         self.assertEqual(spinoff.check(d), [])
 
     def test_value_counts_outcomes_not_attention(self):

@@ -107,6 +107,16 @@ form{display:flex;flex-direction:column;gap:12px}input,button{font:inherit;min-h
 <script>const f=document.getElementById("f"),o=document.getElementById("o");f.onsubmit=async e=>{e.preventDefault();o.textContent="Checking…";const r=await fetch("/api/check",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({domain:document.getElementById("d").value})}),j=await r.json();
 if(!j.ok){o.textContent=j.error;return}o.innerHTML="<h2>"+j.missing+" to look at, "+j.passed+" in place"+(j.fixed_since_last_check?" ("+j.fixed_since_last_check+" fixed since last time)":"")+"</h2><ul>"+j.results.map(x=>"<li><b class='"+(x.pass===true?"p":x.pass===false?"f":"")+"'>"+(x.pass===true?"✓ ":x.pass===false?"✗ ":"? ")+x.title+"</b><br><small>"+x.detail+"</small>"+(x.pass===false?"<br>"+x.fix:"")+"</li>").join("")+"</ul><p class='m'>Fix something, then check again.</p>"};</script></body></html>`;
 
+// Archetype "status-board" (SPINOFF-IDEAS-1): a read-only board of facts the loop bundled from committed files. No database, no input, no cookies,
+// so it costs one Workers request per view and nothing else. Freshness is its metric: board_age_hours since the bundle was built.
+const fmt = v => v === null || v === undefined ? "unmeasured" : typeof v === "number" ? v.toLocaleString("en-US") : String(v).replace(/[<>&"]/g, "");
+const esc = x => String(x).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+export const boardAge = () => +((Date.now() - Date.parse(bundle.built_at)) / 36e5).toFixed(1);
+const BOARD = (app, b) => PAGE(app).replace(/<form id="f">[\s\S]*<\/script>/, "</main>")
+  .replace("</main>", `<table><caption class="m">As of ${esc(b.as_of || bundle.built_at)}, from <code>${esc(b.source)}</code> in the open repository</caption><tbody>${(b.rows || []).map(r => `<tr><th scope="row">${esc(r.label)}</th><td>${esc(fmt(r.value))}${r.of != null ? " of " + esc(fmt(r.of)) : ""}</td></tr>`).join("")}</tbody></table>
+<p class="m">Counts only, read from committed files; nothing about any person. Rebuilt by the loop that runs this system. <a href="/api/board">JSON</a> · <a href="/api/metrics">Metrics</a> · <a href="/llms.txt">For agents</a></p></main>`)
+  .replace("</style>", "table{width:100%;border-collapse:collapse;margin:16px 0}th,td{text-align:left;padding:10px 0;border-top:1px solid var(--line)}td{text-align:right;font-variant-numeric:tabular-nums}</style>");
+
 export async function handle(request, env, f = fetch) {
   const u = new URL(request.url), host = u.hostname.toLowerCase(), sub = host.endsWith("." + bundle.domain) ? host.slice(0, -bundle.domain.length - 1) : "";
   if (!sub || sub.includes(".")) return new Response("Not found", { status: 404 });
@@ -114,6 +124,14 @@ export async function handle(request, env, f = fetch) {
   const app = bundle.apps[sub];
   if (!app) return new Response("Not found", { status: 404 });
   if (u.pathname === "/" + INDEXNOW_KEY + ".txt") return new Response(INDEXNOW_KEY, { headers: { "content-type": "text/plain; charset=utf-8" } });
+  if (app.archetype === "status-board") {
+    const b = (bundle.boards || {})[sub] || { source: "", rows: [] };
+    if (u.pathname === "/api/metrics") return J({ app: sub, kind: "board", board_age_hours: boardAge(), error_share: 0 }, 200, { "cache-control": "public, max-age=300" });
+    if (u.pathname === "/api/board") return J({ app: sub, built_at: bundle.built_at, ...b }, 200, { "cache-control": "public, max-age=300" });
+    if (u.pathname === "/llms.txt") return new Response(`# ${app.name}\n${app.tagline}\nGET /api/board returns the facts as JSON. Counts only, read from committed files.\n`, { headers: { "content-type": "text/plain; charset=utf-8" } });
+    if (u.pathname === "/") return new Response(BOARD(app, b), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
+    return new Response("Not found", { status: 404 });
+  }
   if (u.pathname === "/api/metrics") return J(await metrics(env, sub), 200, { "cache-control": "public, max-age=300" });
   if (u.pathname === "/api/check") {
     if (request.method === "GET") return check(env, app, u.searchParams.get("domain"), request, f);

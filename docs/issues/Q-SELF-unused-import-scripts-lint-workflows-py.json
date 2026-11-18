@@ -1,0 +1,14 @@
+{
+  "id": "Q-SELF-unused-import-scripts-lint-workflows-py",
+  "title": "Q-SELF-unused-import-scripts-lint-workflows-py: unused import in scripts/lint_workflows.py",
+  "body": "**Owner:** code-agent\n**Trigger:** signal unused_import fires for scripts/lint_workflows.py\n**Done check:** cmd:python3 -m foundation selfcode --probe unused_import scripts/lint_workflows.py\n**Status:** open\n\nSELFCODE-1 signal `unused_import` on `scripts/lint_workflows.py` (1 finding(s)).\n\nRemove the unused imports in the file; change nothing else.\n\nFindings:\n- line 5: unused import re\n\nScope: only foundation/, scripts/, tests/, products/, site/, seed/ and docs/issues/. A change that does not make the done check pass is reverted.",
+  "labels": [
+    "role:code-agent",
+    "ws:self",
+    "p6",
+    "raises-deploys",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Self"
+}

@@ -189,6 +189,10 @@
       "class": "core",
       "role": "the Models port and the Role runtime port"
     },
+    "core/airouter": {
+      "class": "core",
+      "role": "AI cost router: cache and dedupe, free models first, reply gate, paid escalation only inside a hard monthly cap, every call recorded and learned from; tenant-agnostic (AI-ROUTER-1)"
+    },
     "core/modelservice": {
       "class": "core",
       "role": "Keyless model route: OIDC-verified CI runs call Workers AI with allow-listed models; tenants pass configuration only (MODELSERVICE-1)"

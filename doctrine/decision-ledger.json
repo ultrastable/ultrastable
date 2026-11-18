@@ -2068,6 +2068,48 @@
    "body": "Only the primary key is indexed on audit_events so an append writes one row; days roll to one batch. A ledger probe must name an existing file.",
    "probe": "file:workers/core/audit/audit.test.js",
    "session": "session_0156nqDvx8HgX8Ubut9xXoKx"
+  },
+  {
+   "id": "lesson-2026-11-17-ops-queue-1-analytics-breach-froze-the-work-queue",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "OPS-QUEUE-1 analytics breach froze the work queue",
+   "body": "A cost breach on the analytics DB ultrastable-ops (52.5k vs 50k rows/h) held dispatch lean for the hour, claims were released unworked and issues stayed open. Breaches on DBs the tick does not read are advisory (gates_tick:false); /ops items carry an app label and filter; probe selfaudit:work-queue-stalled.",
+   "probe": "grep:seed/worker/src/costsample.js::gates_tick"
+  },
+  {
+   "id": "lesson-2026-11-17-free-tier-1-and-ai-router-1-free-plan-governor-and-shared-ai",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "FREE-TIER-1 and AI-ROUTER-1: free-plan governor and shared AI cost router",
+   "body": "ultrastable-ops was never the volume problem (one analytics refresh spike per 6 h, about 0.3M of 5M rows a day); the per-hour cap misread a spike as overage. Fixed with an account-wide daily free-plan level (seed/worker/src/freetier.js) and a shared AI router (workers/core/airouter, vendored to seed/worker/src/airouter.js) with a default monthly paid cap of 0. The product-manager decision-ledger probe named a report file that is never written; it now names ops/growth/experiments.json. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
+   "probe": "file:seed/worker/src/freetier.js"
+  },
+  {
+   "id": "decision-2026-11-17-spinoff-ideas-1-idea-loop-fills-free-plan-headroom",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "SPINOFF-IDEAS-1: idea loop fills free-plan headroom",
+   "body": "Spinoff loop proposes, scores (value over cost share) and queues spinoffs and loop-scope items against ops/free-tier.json; launches per day follow the governor level (ok 3, degrade 1, shed 0, stale snapshot degrade); status-board archetype launched with no storage; roadmap at /roadmap and /roadmap.json from generated site/spinoff-roadmap-data.js.",
+   "probe": "grep:foundation/ideas.py::def daily_cap",
+   "session": "session_0156nqDsaJJFaaGybW6PCbfG"
+  },
+  {
+   "id": "decision-2026-11-17-ops-queue-1-advisory-budgets-no-longer-hold-the-tick",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "OPS-QUEUE-1: advisory budgets no longer hold the tick",
+   "body": "Budgets with gates_tick false are advisory (ultrastable-ops); new failure mode work-queue-stalled; /ops labels items by app. Superseded PR 583 carried this; recorded again so the range cites its session.",
+   "probe": "grep:seed/worker/src/freetier.js::export function evaluate",
+   "session": "session_0156nqDuqSRhg3XdymKRy7AC"
+  },
+  {
+   "id": "decision-2026-11-17-executor-closed-q-cifail-practical-solutions-deploy-tenant-a",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Executor closed Q-CIFAIL-practical-solutions-deploy-tenant: Add a CSS consumer in style.css and update a JS file to consume it",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: ultrastable/practical-solutions/css/style.css, ultrastable/practical-solutions/js/main.js, ultrastable/practical-solutions/js/main.test.js.",
+   "probe": "file:ultrastable/practical-solutions/css/style.css"
   }
  ]
 }

@@ -5,7 +5,8 @@
 // recorded in the tick's errors and as a backlog item; the remaining steps still run.
 
 import { ensureLedger } from './budget.js';
-import { over_budget } from './costsample.js';  // Q-LESSON-COST-SAMPLE-ACT: a D1 rows-read breach holds the tick lean  // ORIGINATE-CAP-1: the daily cap is counted in the budget ledger
+import { over_budget } from './costsample.js';
+import { freeTierLevel } from './freetier.js';  // FREE-TIER-1: the daily account-wide free-plan level gates the tick  // Q-LESSON-COST-SAMPLE-ACT: a D1 rows-read breach holds the tick lean  // ORIGINATE-CAP-1: the daily cap is counted in the budget ledger
 import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
@@ -367,23 +368,27 @@ export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates',
 // other step either reads wide (probe_gates, score_predictions, accrue_trust, selfaudit, pulse, ignition, check_plus_share) or starts new work
 // that reads more (reap_claims feeds dispatch, dispatch, execute), so it waits for the hour to pass. A skipped step counts as completed: it is
 // a decision, not a failure, so the health probe and the ignition streak stay green.
+export const FREE_TIER_WIDE_STEPS = ['probe_gates', 'score_predictions', 'accrue_trust', 'selfaudit', 'pulse', 'ignition', 'check_plus_share'];  // FREE-TIER-1
 export const COST_ESSENTIAL_STEPS = ['migrate', 'reconcile', 'measure', 'criticality'];
 
 export async function runTick(db, { config, env = {}, now = Date.now(), wake = null, ai = null, budget = null } = {}) {
   const startedIso = iso(new Date(now));
   const ins = await run(db, `INSERT INTO tick_runs (started_at, steps_total) VALUES (?, ?)`, startedIso, STEP_ORDER.length);
   const tickId = ins.meta.last_row_id;
-  const ctx = { wake, ai, budget, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
+  const ctx = { db, wake, ai, budget, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
   let completed = 0;
   try { ctx.costBreach = await over_budget(db, config && config.cost_budgets, now); } catch (e) { ctx.costBreach = null; ctx.notes.push(`cost check failed: ${String(e && e.message).slice(0, 120)}`); }
-  const lean = Boolean(ctx.costBreach && ctx.costBreach.over);
-  if (lean) {
+  try { ctx.freeTier = await freeTierLevel(db, now); } catch (e) { ctx.freeTier = null; ctx.notes.push(`free-tier check failed: ${String(e && e.message).slice(0, 120)}`); }
+  const lean = Boolean((ctx.costBreach && ctx.costBreach.over) || (ctx.freeTier && ctx.freeTier.level === 'shed'));
+  const degrade = !lean && Boolean(ctx.freeTier && ctx.freeTier.level === 'degrade');  // degrade: only the wide readers wait; dispatch and execute keep the queue moving
+  if (ctx.freeTier && ctx.freeTier.level !== 'ok') ctx.notes.push(`free tier ${ctx.freeTier.level}: ${Object.entries(ctx.freeTier.resources).filter(([, r]) => r.level === 'degrade' || r.level === 'shed').map(([k, r]) => `${k} ${Math.round(r.frac * 100)}% used, ${Math.round(r.projected_frac * 100)}% projected`).join(', ')}; skipped non-essential steps`);
+  if (ctx.costBreach && ctx.costBreach.over) {
     const b = ctx.costBreach.breaches;
     ctx.notes.push(`cost breach: ${b.map(x => `${x.target} read ${x.rows_read_1h} rows/h > ${x.max_rows_read_per_hour}`).join(', ')}; skipped non-essential steps (${STEP_ORDER.filter(n => !COST_ESSENTIAL_STEPS.includes(n)).join(', ')})`);
     try { await run(db, `INSERT INTO org (key, value) VALUES ('cost_breach', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, JSON.stringify({ at: startedIso, until: iso(new Date(now + 3600e3)), breaches: b })); } catch (e) { ctx.errors.push(`cost_breach record: ${String(e && e.message).slice(0, 120)}`); }
   }
   for (const name of STEP_ORDER) {
-    if (lean && !COST_ESSENTIAL_STEPS.includes(name)) { completed++; continue; }
+    if ((lean && !COST_ESSENTIAL_STEPS.includes(name)) || (degrade && FREE_TIER_WIDE_STEPS.includes(name))) { completed++; continue; }
     try {
       await STEPS[name](db, ctx);
       completed++;

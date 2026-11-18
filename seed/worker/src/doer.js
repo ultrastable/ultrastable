@@ -8,6 +8,7 @@
 // Rules run first and need no model. Workers AI (env.AI, the binding the tick Worker already has) is used only to file successor items and to
 // triage items no rule covers, at most `max_ai` calls per tick. Never touches GitHub and never handles a secret.
 import { ADAPTERS, parseJson } from './codeagent.js';
+import { createRouter } from './airouter.js';  // AI-ROUTER-1
 
 const run = (db, sql, ...a) => db.prepare(sql).bind(...a).run();
 const first = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).first()) || null;
@@ -43,20 +44,17 @@ const PLAN_BLOCKED = new Set();
 async function ask(ctx, prompt, maxTokens = 900) {
   if (!ctx.ai || ctx.aiCalls >= ctx.maxAi) return null;
   ctx.aiCalls++;
-  const tried = [];
-  for (const a of [...ADAPTERS].sort((x, y) => x.price - y.price)) {
-    if (PLAN_BLOCKED.has(a.id)) continue;
-    try {
-      const res = await ctx.ai.run(a.model, { messages: [{ role: 'user', content: prompt }], ...a.extra, max_tokens: maxTokens });
-      const t = textOf(res);
-      const bad = replyProblem(res, t);
-      if (bad) throw new Error('reply rejected: ' + bad);
-      ctx.itemModel = a.model;  // MODEL-TRUTH-1: the dispatch row records the model that answered, never a config label
-      return { json: parseJson(t), adapter: a.id, model: a.model };
-    } catch (e) { if (/not available on the Workers Free plan/i.test(String(e && e.message))) PLAN_BLOCKED.add(a.id); tried.push(a.id + ': ' + String(e && e.message).slice(0, 80)); if (e && e.name === 'BudgetExhausted') break; }
-  }
-  ctx.notes.push('doer: no model answered (' + tried.join('; ').slice(0, 200) + ')');
-  return null;
+  // AI-ROUTER-1: cache, dedupe, free models cheapest first, reply gate, per-kind learning; every call is recorded in airouter_calls. The tick's own
+  // governor (ctx.ai, budget.js) still meters neurons and stops the loop with BudgetExhausted.
+  const models = ADAPTERS.filter(a => !PLAN_BLOCKED.has(a.id)).sort((x, y) => x.price - y.price).map(a => ({ id: a.id, model: a.model, tier: 'free', extra: a.extra }));
+  const router = createRouter({ db: ctx.db, ai: ctx.ai, models, now: () => ctx.now, config: { neurons_day_cap: 1e12 },
+    onFail: (m, why) => { if (/not available on the Workers Free plan/i.test(why)) PLAN_BLOCKED.add(m.id); } });  // PLAN-SKIP-1
+  try {
+    const r = await router.call({ kind: 'doer', prompt, maxTokens, verify: t => { try { parseJson(t); return true; } catch (e) { return String(e && e.message); } } });
+    const m = models.find(x => x.model === r.model);
+    ctx.itemModel = r.model;  // MODEL-TRUTH-1: the dispatch row records the model that answered, never a config label
+    return { json: parseJson(r.text), adapter: m ? m.id : r.model, model: r.model };
+  } catch (e) { ctx.notes.push('doer: no model answered (' + String(e && e.message).slice(0, 200) + ')'); return null; }
 }
 
 async function outcome(db, ctx, item, result, evidence) {

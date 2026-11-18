@@ -1,1 +1,5 @@
 {"at": "2026-11-17T15:45:58Z", "event": "launch", "impact": 4, "needs": ["security-contact", "email-authentication", "privacy-notice", "terms-of-use", "accessibility-statement", "footer-links"], "prediction": "verified_fixes_7d >= 20 within 336 h", "reach": 5, "score": 10.0, "slug": "blindspot", "url": "https://blindspot.ultrastable.app"}
+{"age_days": 0, "archetype": "domain-check", "at": "2026-11-17T16:10:23Z", "budget_share": 1.0, "decision": "keep", "event": "decision", "slug": "blindspot", "value": 0.026, "why": "age 0d under the 14d trial"}
+{"at": "2026-11-17T16:10:24Z", "channel": "indexnow", "event": "promote", "slug": "blindspot", "status": 202}
+{"at": "2026-11-17T21:21:28Z", "event": "launch", "impact": 3, "needs": [], "prediction": "board_age_hours <= 30 within 48 h", "reach": 4, "score": 15.0, "slug": "numbers-board", "url": "https://numbers-board.ultrastable.app"}
+{"at": "2026-11-17T21:21:28Z", "event": "launch", "impact": 3, "needs": [], "prediction": "board_age_hours <= 30 within 48 h", "reach": 4, "score": 15.0, "slug": "portfolio-board", "url": "https://portfolio-board.ultrastable.app"}

@@ -2,6 +2,7 @@
 // Copyright (c) Ultrastable
 import test from "node:test";
 import assert from "node:assert/strict";
+import bundle from "../registry.js";
 import { handle, cleanDomain, runChecks } from "../worker.js";
 
 const fakeFetch = async (url, o = {}) => {
@@ -43,4 +44,19 @@ test("a check works end to end without a DB and stores nothing readable", async 
 test("serves the IndexNow key file on an app host", async () => {
   const r = await handle(new Request("https://blindspot.ultrastable.app/ultrastable-indexnow-7f3a9c2e4b1d.txt"), {});
   assert.equal(await r.text(), "ultrastable-indexnow-7f3a9c2e4b1d");
+});
+
+test("a status board serves its facts with no database, no input and a freshness metric", async () => {
+  const slug = Object.keys(bundle.apps).find(k => bundle.apps[k].archetype === "status-board");
+  assert.ok(slug, "the loop has launched at least one board");
+  const h = `https://${slug}.ultrastable.app`;
+  const r = await handle(new Request(h + "/"), {});
+  assert.equal(r.status, 200);
+  const html = await r.text();
+  assert.ok(html.includes(bundle.apps[slug].name)); assert.match(html, /<table/); assert.doesNotMatch(html, /<form/);
+  const b = await (await handle(new Request(h + "/api/board"), {})).json();
+  assert.ok(b.rows.length >= 1 && typeof b.source === "string");
+  const m = await (await handle(new Request(h + "/api/metrics"), {})).json();
+  assert.equal(typeof m.board_age_hours, "number");
+  assert.equal((await handle(new Request(h + "/api/check?domain=example.org"), {})).status, 404);  // a board takes no input
 });

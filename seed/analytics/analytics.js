@@ -7,7 +7,7 @@ const DAY = 864e5, RAW_KEEP_DAYS = 35, SELFCHECK_KEEP_DAYS = 2;
 // READ-BUDGET-1 (2026-11-16): on the Cloudflare free plan D1 allows 5 million rows read a day, and these queries had used it up by 08:00 UTC
 // (nine full scans of hits per dashboard load and per 10-minute tick, ~7k rows each). Reads are now bounded: one aggregate pass for the
 // windowed counts, an index for the self-check lookup, pruning once a day, and an optional cache that dashboard callers use.
-export const REPORT_CACHE_MINUTES = 360;
+export const REPORT_CACHE_MINUTES = 1440;  // FREE-TIER-1: one ~50k-row refresh a day (was every 6 h; 2026-11-17 hourly samples showed 46-69k-row spikes at 00, 06, 13 and 20 UTC)
 const BOT_RE = /bot|crawl|spider|slurp|preview|monitor|uptime|curl|wget|python-requests|httpclient|headless|lighthouse|facebookexternalhit|node-fetch|undici|go-http|java\//i;
 const enc = new TextEncoder();
 async function sha(s) { const b = await crypto.subtle.digest("SHA-256", enc.encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }

@@ -111,16 +111,25 @@ export async function agents(env, now = Date.now()) {
   return { api_version: API_VERSION, generated: new Date(now).toISOString(), agents: list };
 }
 
+// OPS-QUEUE-1: one owner view, every item says which org/app it belongs to. Ultrastable is the platform; a tenant (Practical Solutions, QNFO) is an app on it,
+// so its items live in the same queue and carry a tenant label derived from the id and surface, never a second dashboard.
+export function tenantOf(r) {
+  const t = String((r && r.id) || "") + " " + String((r && r.surface) || "") + " " + String((r && r.title) || "");
+  if (/\bQNFO\b/i.test(t)) return "QNFO";
+  if (/practical[- ]solutions|\bPS-/i.test(t)) return "Practical Solutions";
+  return "Ultrastable";
+}
+
 export async function work(env, view = "on_deck", limit = 50) {
   const db = env.ORG, lim = Math.max(1, Math.min(200, Number(limit) || 50));
   const where = { on_deck: "i.status IN ('ready','open') AND c.item_id IS NULL", in_progress: "((i.status = 'claimed' OR c.item_id IS NOT NULL) AND i.status NOT IN ('done') OR (i.status = 'blocked' AND i.blocker LIKE 'in-pr:%'))", blocked: "i.status = 'blocked' AND coalesce(i.blocker, '') NOT LIKE 'in-pr:%'", done: "i.status = 'done'", all: "1=1" }[view];
   if (!where) return null;
   const order = view === "done" ? "i.updated_at DESC" : "i.priority DESC, CASE i.status WHEN 'ready' THEN 0 ELSE 1 END, i.created_at ASC";
-  const rows = await all(db, `SELECT i.id, i.title, i.kind, i.owner_role, i.priority, i.status, i.blocker, i.disposition, i.action_class, i.done_check, i.created_at, i.updated_at, c.agent, c.claimed_at,
+  const rows = await all(db, `SELECT i.id, i.title, i.kind, i.owner_role, i.priority, i.status, i.blocker, i.disposition, i.action_class, i.done_check, i.surface, i.created_at, i.updated_at, c.agent, c.claimed_at,
       (SELECT count(*) FROM dispatches d WHERE d.item_id = i.id) AS dispatch_count
     FROM items i LEFT JOIN claims c ON c.item_id = i.id WHERE ${where} ORDER BY ${order} LIMIT ?`, lim);
   const count = await first(db, `SELECT count(*) AS n FROM items i LEFT JOIN claims c ON c.item_id = i.id WHERE ${where}`);
-  return { api_version: API_VERSION, view, label: WORK_VIEWS[view], count: count ? count.n : rows.length, items: rows.map((r, i) => ({ rank: i + 1, ...r })) };
+  return { api_version: API_VERSION, view, label: WORK_VIEWS[view], count: count ? count.n : rows.length, items: rows.map((r, i) => ({ rank: i + 1, tenant: tenantOf(r), ...r })) };
 }
 
 export async function workItem(env, id) {
@@ -310,6 +319,7 @@ function table(head,rows){const w=el('div','us-wrap'),t=el('table','us-table'),h
  if(!rows.length){const tr=el('tr'),td=el('td',null,'none');td.colSpan=head.length;tr.appendChild(td);t.appendChild(tr)}
  rows.forEach(r=>{const tr=el('tr');r.forEach(c=>{const td=el('td');if(c&&c.href){const a=el('a',null,c.t);a.href=c.href;td.appendChild(a)}else if(c&&c.pill){td.appendChild(el('span','pill '+c.pill,c.t))}else td.textContent=c==null?'':String(c);tr.appendChild(td)});t.appendChild(tr)});w.appendChild(t);return w}
 function card(id,title,sub){let s=document.getElementById(id);if(!s){s=el('section','card');s.id=id;$('#ops').appendChild(s)}s.textContent='';s.appendChild(el('h2',null,title));if(sub)s.appendChild(el('p','meta',sub));return s}
+let TEN=(function(){try{return localStorage.getItem('ten')||'all'}catch(e){return'all'}})();const tf=l=>TEN==='all'?l:l.filter(i=>i.tenant===TEN);
 const it=i=>({t:i,href:'/api/v1/work/'+encodeURIComponent(i)});
 async function draw(){try{
  const [s,a,prog,deck,blk,act,done,ho]=await Promise.all([api('status'),api('agents'),api('work?view=in_progress'),api('work?view=on_deck&limit=25'),api('work?view=blocked&limit=25'),api('activity?limit=20'),api('work?view=done&limit=10'),api('handoffs?limit=20')]);
@@ -321,18 +331,19 @@ async function draw(){try{
  if(s.reasons.length){const ul=el('ul','reasons');s.reasons.forEach(r=>ul.appendChild(el('li',null,r)));k.appendChild(ul)}
  if(s.heartbeat)k.appendChild(el('p','meta',s.heartbeat.report));
  card('c-agents','Agents','Each role picks the top item for its role on its tick. One in-tick doer settles every pick: rules first, then Workers AI when a rule cannot. Items that need a code change go to the code executor, which opens a pull request. Model is what actually ran in the last 24 hours, read from the dispatch records.').appendChild(table(['Agent','Model (actually ran, 24 h)','State','Working on','Lined up next','Last result','Dispatches (executed / total, 24 h)','Last tick','Next tick'],a.agents.map(x=>[x.id,x.model,{t:x.state,pill:x.state==='working'?'good':x.state==='waiting'?'warn':'bad'},x.working_on.map(i=>i.item+(i.pr?' ('+i.pr.split('github.com/').pop()+')':'')).join(', ')||'-',(x.lined_up||[]).map(i=>i.item).join(', ')||'-',x.last_dispatch?x.last_dispatch.item+' ('+x.last_dispatch.status+(x.last_dispatch.model?', '+x.last_dispatch.model:'')+')':'-',x.dispatches.settled+' / '+x.dispatches.total+' ('+x.dispatches.last_24h+')',x.last_tick_at?ago(x.last_tick_age_s):'never',x.next_tick_at||'-'])));
- card('c-prog','In progress','Claimed items and the agent that holds each.').appendChild(table(['Item','Title','Agent','Since','Dispatches'],prog.items.map(i=>[it(i.id),i.title,i.agent||'-',i.claimed_at||'-',i.dispatch_count])));
- card('c-deck','On deck','Ranked: priority, then ready before open, then oldest first. '+deck.count+' items.').appendChild(table(['#','Item','Title','Owner','Priority','Status'],deck.items.map(i=>[i.rank,it(i.id),i.title,i.owner_role,i.priority,i.status])));
- card('c-blk','Blocked',blk.count+' items waiting on something.').appendChild(table(['Item','Title','Owner','Blocker'],blk.items.map(i=>[it(i.id),i.title,i.owner_role,i.blocker||i.disposition||'-'])));
+ card('c-prog','In progress','Claimed items and the agent that holds each.').appendChild(table(['Item','App','Title','Agent','Since','Dispatches'],tf(prog.items).map(i=>[it(i.id),i.tenant,i.title,i.agent||'-',i.claimed_at||'-',i.dispatch_count])));
+ card('c-deck','On deck','Ranked: priority, then ready before open, then oldest first. '+deck.count+' items.').appendChild(table(['#','Item','App','Title','Owner','Priority','Status'],tf(deck.items).map(i=>[i.rank,it(i.id),i.tenant,i.title,i.owner_role,i.priority,i.status])));
+ card('c-blk','Blocked',blk.count+' items waiting on something.').appendChild(table(['Item','App','Title','Owner','Blocker'],tf(blk.items).map(i=>[it(i.id),i.tenant,i.title,i.owner_role,i.blocker||i.disposition||'-'])));
  card('c-act','Activity','Newest dispatches and heartbeat reports.').appendChild(table(['When','Agent','Item','Status'],act.dispatches.map(x=>[x.at,x.agent,x.item||'-',{t:x.status,pill:x.status==='done'?'good':x.status==='queued'?'warn':x.status==='failed'?'bad':''}])));
  document.getElementById('c-act').appendChild(table(['Tick','When','Steps','Summary'],act.ticks.map(t=>[t.id,t.at,t.steps,t.summary])));
  card('c-ho','Handoffs','Work code agents handed to the server. The server merges, deploys, probes and closes; no agent comes back.').appendChild(table(['PR','Agent','Item','State','Last step','Updated'],(ho.handoffs||[]).map(h=>[{t:h.repo.split('/')[1]+'#'+h.pr,href:h.url},h.agent||'-',h.item||'-',{t:h.state,pill:h.state==='verified'?'good':/fail|rolled|conflict/.test(h.state)?'bad':'warn'},h.detail||'-',h.updated_at])));
- card('c-done','Recently done').appendChild(table(['Item','Title','Updated'],done.items.map(i=>[it(i.id),i.title,i.updated_at])));
+ card('c-done','Recently done').appendChild(table(['Item','App','Title','Updated'],tf(done.items).map(i=>[it(i.id),i.tenant,i.title,i.updated_at])));
 }catch(e){$('#asof').textContent='Live data is unavailable right now. It refreshes by itself.'}}
+const sel=document.getElementById('tenant');if(sel){sel.value=TEN;sel.onchange=()=>{TEN=sel.value;try{localStorage.setItem('ten',TEN)}catch(e){}draw()}}
 draw();setInterval(draw,30000);`;
 const OPS_CSS = "<style>.pill{display:inline-block;padding:2px 8px;border-radius:99px;font:600 13px system-ui;border:1px solid var(--line)}.pill.good{color:var(--good);border-color:var(--good)}.pill.warn{color:var(--ac);border-color:var(--ac)}.pill.bad{color:var(--bad);border-color:var(--bad)}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:8px 0}.kpi{background:var(--sf2);border-radius:6px;padding:10px}.kpi .n{font:700 24px system-ui}.kpi .l{color:var(--ink2);font-size:13px}.reasons{margin:8px 0;padding-left:20px;color:var(--bad)}.us-wrap{overflow-x:auto}</style>";
 
 export function opsPage(shell) {
-  const body = OPS_CSS + "<div class=\"head\"><h1>Operations <span id=\"verdict\" class=\"pill\">...</span></h1><p>What Ultrastable is doing on itself: the agents, what each holds, what is on deck, what is blocked. Read-only; the same data is at <a href=\"/api/v1\">/api/v1</a>.</p><p class=\"meta\" id=\"asof\">Loading...</p></div><div id=\"ops\"></div><script>" + OPS_JS + "</script>";
+  const body = OPS_CSS + "<div class=\"head\"><h1>Operations <span id=\"verdict\" class=\"pill\">...</span></h1><p>What Ultrastable is doing on itself: the agents, what each holds, what is on deck, what is blocked. One queue for the platform and every app on it: each item names its app (Ultrastable, Practical Solutions, QNFO) and the filter narrows to one. Owner-only audit log and sign-in: <a href=\"https://dashboard.ultrastable.io/\">owner view</a>. Read-only; the same data is at <a href=\"/api/v1\">/api/v1</a>.</p><p><label>App <select id=\"tenant\"><option value=\"all\">All</option><option>Ultrastable</option><option>Practical Solutions</option><option>QNFO</option></select></label></p><p class=\"meta\" id=\"asof\">Loading...</p></div><div id=\"ops\"></div><script>" + OPS_JS + "</script>";
   return shell({ path: "/ops", title: "Operations: Ultrastable running on Ultrastable", description: "Live operations dashboard: virtual agents, work in progress, the ranked backlog and blockers." }, body);
 }
