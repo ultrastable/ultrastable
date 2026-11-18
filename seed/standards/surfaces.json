@@ -435,6 +435,19 @@
       "discoverable": false,
       "description": "AUDIT-CHAIN-1: trace a ref or kind through hot rows and archived segments (bearer).",
       "reason": "Owner-only bearer route for operators; the audit trail is not an agent-facing surface."
+    },
+    {
+      "id": "live-changes",
+      "path": "/api/live/changes",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "Merged pull requests cached by the tick on every pass; the site overlays them on the daily snapshot (LIVE-FRESH-1).",
+      "reason": "internal feed read by the site worker over a service binding, not a capability for callers"
     }
   ]
 }

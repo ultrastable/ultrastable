@@ -2412,6 +2412,14 @@
    "body": "#628 failed checks on a decision row whose probe named a document (agents/AGENTS.md). Rebound it to tools/push_main.py, merged main (which already had #627 and its own push fallback), kept main's fallback and added the no-OIDC fallback from #628; #628 closed as superseded.",
    "probe": "grep:tools/push_main.py::worker route unavailable",
    "session": "session_0156nqDuXUgEsPtAbbPEiehc"
+  },
+  {
+   "id": "lesson-2026-11-18-live-pages-read-live-data",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Live pages read live data",
+   "body": "The /live changelog read a daily GitHub-scheduled snapshot that failed or skipped for days. Merged changes now come from a per-tick cache; /api/freshness fails when a source is older than its cadence (FRONT-BACKED-1).",
+   "probe": "file:seed/worker/src/livechanges.js"
   }
  ]
 }
