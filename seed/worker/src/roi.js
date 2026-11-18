@@ -24,7 +24,7 @@ export const PRICES = {
 export const TARGET_USE = 0.8;
 export function detectPlan(env = {}) { return env.CF_PLAN === 'paid' ? 'paid' : 'free'; }
 // Per-day equivalents of the paid monthly allowances (30-day month), so one pace formula serves both plans.
-export function planLimits(plan) {
+export function limitsForPlan(plan) {
   if (plan !== 'paid') return FREE_LIMITS;
   const P = PRICES;
   return { d1_rows_read: { per_day: P.d1.reads_included_month / 30, label: 'D1 rows read (paid allowance)' }, d1_rows_written: { per_day: P.d1.writes_included_month / 30, label: 'D1 rows written (paid allowance)' },
@@ -43,7 +43,7 @@ export const NEED_DAYS = 3, PAY_IF_SHED_DAYS = 2;
 const r2 = (n) => Math.round(n * 100) / 100;
 // Pure. days = [{day, resources:{key:{peak, over80, over95, n}}}] (newest first), refused = AI calls refused in the window, storage_gb = D1 bytes/1e9.
 export function analyze({ days, refused = 0, storage_gb = 0, mode = 'free-only', plan = 'free', prices = PRICES, now = new Date() }) {
-  const LIM = planLimits(plan);
+  const LIM = limitsForPlan(plan);
   const keys = Object.keys(LIM);
   const res = {};
   for (const k of keys) {
