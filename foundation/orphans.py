@@ -112,11 +112,9 @@ def check(root=REPO) -> list[str]:
 def ledger_failures(root=REPO) -> list[str]:
     """Every lesson and decision row carries a probe; a row whose probe fails is a decision the code no longer carries."""
     from . import selfhost
-    p = Path(root) / "doctrine/decision-ledger.json"
-    if not p.exists():
-        return []
+    from . import writeback
     bad = []
-    for r in json.loads(p.read_text(encoding="utf-8")).get("rows", []):
+    for r in writeback.ledger_rows(root):
         try:
             if not selfhost.probe(root, r.get("probe", "")):
                 bad.append(f"ledger {r['id']}: probe fails ({r.get('probe')}); the code no longer carries this {r.get('kind')}")
