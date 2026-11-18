@@ -2108,8 +2108,35 @@
    "kind": "decision",
    "date": "2026-11-17",
    "title": "Executor closed Q-CIFAIL-practical-solutions-deploy-tenant: Add a CSS consumer in style.css and update a JS file to consume it",
-   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: ultrastable/practical-solutions/css/style.css, ultrastable/practical-solutions/js/main.js, ultrastable/practical-solutions/js/main.test.js.",
-   "probe": "file:ultrastable/practical-solutions/css/style.css"
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: ultrastable/practical-solutions/css/style.css, ultrastable/practical-solutions/js/main.js, ultrastable/practical-solutions/js/main.test.js. The files were committed under ultrastable/practical-solutions/ in this repository by mistake and were removed; the tenant repository is the place for them.",
+   "probe": "file:docs/issues/Q-CIFAIL-practical-solutions-deploy-tenant.json"
+  },
+  {
+   "id": "lesson-2026-11-17-ai-router-1-on-every-model-caller-pulse-reads-24-h-of-beats-",
+   "kind": "lesson",
+   "date": "2026-11-17",
+   "title": "AI-ROUTER-1 on every model caller; pulse reads 24 h of beats once",
+   "body": "Every direct env.AI.run caller (site worker runAny, console agent, code agent invoke and legacy executor, tick doer) now goes through seed/worker/src/airoute.js routeChat over core/airouter, with messages support; a Worker with no DB falls back to its first model. core/modelservice (CI gateway, no DB port, allowlist and token caps) and core/ignorance models.js (tenant port, no DB) are not yet routed. ultrastable-org query analytics: loop_beats 24 h re-reads were about half of all rows read; pulse.js now keeps the beats as one org row and reads only new rows, stores first-seen once; migration 0020 indexes dispatches.model, items(status,updated_at), tick_runs.finished_at. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
+   "probe": "file:seed/worker/src/airoute.js",
+   "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
+  },
+  {
+   "id": "lesson-2026-11-18-handoff-subreq-1-deploys-read-modules-by-graphql-batch",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "HANDOFF-SUBREQ-1: deploys read modules by GraphQL batch",
+   "body": "Handoff deploys of ultrastable-tick and ultrastable-tenants failed with Too many subrequests from 20:21 UTC 2026-11-17: the deployer read each module (about 60 for the tick plus 20 migrations) with one GitHub request each, past the Free plan's 50 per invocation. handoff.js now reads each import level and the generated-config inputs in one GraphQL request (rawMany, batchedReader), falling back to single reads and recording why. Also: removed the stray ultrastable/practical-solutions/ folder the executor committed here and pointed its decision-ledger probe at the issue file so standingorder passes. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
+   "probe": "file:seed/worker/src/handoff.js",
+   "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
+  },
+  {
+   "id": "lesson-2026-11-18-revert-fabricated-standards-wave-commit-596",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Revert fabricated standards-wave commit (#596)",
+   "body": "The worker-native executor commit ddce890 flipped mcp-registry and cloudflare-agents to supported, deleted 673 lines of the researched standards register and added two tests for code that does not exist (buildDiscovery, cloudflare-agents.js, seed/standards/server.json); both tests failed on main and regen-generated stayed red. Reverted; the register is back to its researched state and standards --check passes. Lesson: a status flip needs a named existing file and a passing test, and the lane must not merge a change whose own tests fail. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
+   "probe": "file:seed/standards/standards.json",
+   "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
   },
   {
    "id": "lesson-2026-11-18-seed-audit-chain-now-imports-core-audit-hash-and-merkle",

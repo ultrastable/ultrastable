@@ -2,6 +2,7 @@
 // Canonical host ultrastable.io; ultrastable.app and ultrastable.net redirect to it (/pilot and /proof). Live proof comes from
 // the platform claims QNFO publishes as customer zero. Positioning: docs/PRODUCT-ULTRASTABLE.md and product/boundary.json.
 import { handleAnalytics, record } from "../seed/analytics/analytics.js";
+import { routeChat } from "../seed/worker/src/airoute.js"; // AI-ROUTER-1: cache, dedupe, free-first, learned routing for every site model call
 import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: site model calls spend from the owner's budget
 import USER_PATH from "./userpath.js";
 import SH from "./stakeholders.js"; // STAKEHOLDERS-1
@@ -380,10 +381,12 @@ async function siteApi(request, env, id) {
 // The page gets a tiny client so generated code never builds URLs: US.list(coll) / US.add(coll, data). Same-origin on <id>.ultrastable.io; CORS-open on the main host (the page is sandboxed there).
 const usClient = (host, id) => "<script>window.US=(function(){var b=" + JSON.stringify("https://" + host + "/s/" + id + "/api") + ";function j(r){return r.json().then(function(x){if(!r.ok)throw new Error(x.error||r.status);return x})}return{list:function(c){return fetch(b+\"?coll=\"+encodeURIComponent(c)).then(j).then(function(x){return x.items})},add:function(c,d){return fetch(b,{method:\"POST\",headers:{\"content-type\":\"application/json\"},body:JSON.stringify({coll:c,data:d})}).then(j)}}})()</script>";
 // BUILD-3: the daily probe records which ids still answer; a dead one is skipped so a deprecated id never reaches a user (the list is used whole if every id is marked dead).
-async function runAny(env, models, body) {
-  let last; const h = await jget(env, "health:models").catch(() => null), dead = new Set(((h && h.models) || []).filter(x => !x.ok).map(x => x.model));
+async function runAny(env, models, body, opts = {}) {
+  const h = await jget(env, "health:models").catch(() => null), dead = new Set(((h && h.models) || []).filter(x => !x.ok).map(x => x.model));
   const live = models.filter(m => !dead.has(m)); if (live.length) models = live;
-  for (const m of models) { try { return await env.AI.run(m, body); } catch (e) { last = e; console.error("model failed", m, String(e).slice(0, 160)); } } throw last;
+  // The router tries them in learned order, answers repeats from cache, and records cost and pass rate; the reply keeps the Workers AI shape ({response}).
+  const r = await routeChat(env, { kind: opts.kind || "site", models: models.map(m => ({ model: m })), messages: body.messages, maxTokens: body.max_tokens, cache: opts.cache !== false, config: { neurons_day_cap: 3000 } });
+  return { response: r.text, model: r.model };
 }
 async function aiJson(env, models, system, user, tokens) {
   const r = await runAny(env, models, { messages: [{ role: "system", content: system }, { role: "user", content: user }], max_tokens: tokens });
@@ -406,7 +409,7 @@ function briefOf(a) {
 async function aiHtml(env, brief, prev, change) {
   const msgs = [{ role: "system", content: SYS }];
   msgs.push(prev ? { role: "user", content: "Here is the current page:\n" + prev + "\n\nChange it as follows and return the whole updated file: " + change } : { role: "user", content: "Build this.\n" + brief });
-  const r = await runAny(env, BUILDERS, { messages: msgs, max_tokens: 7000 });
+  const r = await runAny(env, BUILDERS, { messages: msgs, max_tokens: 7000 }, { kind: "site-build", cache: false });
   const t = String((r && (r.response || r.result || (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content))) || ""), m = /```(?:html)?\s*([\s\S]*?)```/.exec(t), h = (m ? m[1] : t).trim();
   if (!/<html[\s>]/i.test(h) || !/<\/html>/i.test(h)) throw new Error("the model did not return a complete page");
   return h;

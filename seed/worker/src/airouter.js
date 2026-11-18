@@ -76,9 +76,10 @@ export function createRouter({ db, ai, models, now = () => Date.now(), config = 
     return [...free.map(x => x.m), ...paid.map(x => x.m)];
   }
 
-  async function call({ kind = 'general', prompt, maxTokens = 600, verify = null, cache = true, system = null }) {
+  async function call({ kind = 'general', prompt: promptIn, messages = null, maxTokens = 600, verify = null, cache = true, system = null }) {
     await ensure(db); await prune();
-    const key = await cacheKey(kind, (system || '') + '\n' + prompt);
+    const prompt = messages ? messages.map(x => String(x.content)).join('\n') : promptIn;  // messages: a ready chat (several turns); the key then covers every turn
+    const key = await cacheKey(kind, messages ? JSON.stringify(messages) : (system || '') + '\n' + prompt);
     if (cache) {
       const c = await db.prepare('SELECT text, model, at FROM airouter_cache WHERE key=?1').bind(key).first();
       if (c && now() - c.at < cfg.cache_ttl_ms) { await db.prepare('UPDATE airouter_cache SET hits=hits+1 WHERE key=?1').bind(key).run(); return { text: c.text, model: c.model, cached: true, usd: 0, neurons: 0 }; }
@@ -87,7 +88,7 @@ export function createRouter({ db, ai, models, now = () => Date.now(), config = 
     const p = (async () => {
       const tried = [], used = await neuronsToday(); let neuronsUsed = used, capSpent = null, stop = false;
       for (const m of await plan(kind)) {
-        let input = { messages: [...(system ? [{ role: 'system', content: system }] : []), { role: 'user', content: prompt }], ...(m.extra || {}), max_tokens: maxTokens };
+        let input = { messages: messages || [...(system ? [{ role: 'system', content: system }] : []), { role: 'user', content: prompt }], ...(m.extra || {}), max_tokens: maxTokens };
         if (m.tier !== 'paid' && neuronsUsed >= cfg.neurons_day_cap) { tried.push(m.id + ': daily free neurons used'); continue; }
         if (m.tier === 'paid') {
           const worst = ((estTokens(prompt) * (m.usd_in_per_m || 0)) + (maxTokens * (m.usd_out_per_m || 0))) / 1e6;
