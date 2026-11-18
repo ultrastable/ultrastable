@@ -1355,6 +1355,26 @@
       "feedback": "the bot's commit changes main, and the next merge's run finds the data current (no commit) or refreshes it again; a generator that fails fails the run and is seen by the workflow watch",
       "bindings": []
     },
+    "hosts": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "feedback": "a push with no deploy event after 30 minutes is redispatched through the GitHub Actions host; a host that fails health or a deploy is skipped for the next host and its failure is a red commit status the lane reads; host events return through /hook/host as statuses",
+      "bindings": []
+    },
     "host-sync": {
       "inflows": [
         {
