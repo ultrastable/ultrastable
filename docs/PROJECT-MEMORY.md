@@ -10,6 +10,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-18
 
+- 2026-11-18: ciwatch: watch ultrastable/.github (#606)
+- 2026-11-18: host-sync: runtime state of the host (HOSTSYNC-1)
+- 2026-11-18: host-sync: runtime state of the host (HOSTSYNC-1)
+- 2026-11-18: HOSTSYNC-1: sync deploys and runtime state between repo and hosts (#604)
+- 2026-11-18: ROADMAP-AGENT-PORTABILITY-RESTORE: QNFO.REACH #PORTABILITY-RESTORE: follow-up filed with a closing probe (#605)
 - 2026-11-18: GREEN-GUARD-1: no merge without a green full checks run; fix lane, regen and executor failure classes (#600)
 - 2026-11-18: FREE-TIER-1: usage sample first in the tick; fix HOSTS-1 red checks (surface, retention, silent catch) (#599)
 - 2026-11-18: HOSTS-1: wire the repo to every hosting system, both ways (#603)

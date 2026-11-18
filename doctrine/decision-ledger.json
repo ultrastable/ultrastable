@@ -2215,6 +2215,14 @@
    "probe": "grep:doctrine/ciwatch.json::ultrastable/.github"
   },
   {
+   "id": "lesson-2026-11-18-hosts-1-hook-rights-and-subrequests",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "HOSTS-1 hook rights and subrequests",
+   "body": "Live 2026-11-18: the GitHub App token gets 403 on repo hooks (needs Repository webhooks: write), so the polling path carries repo->host; the hosts loop ran every tick and hit the 50-subrequest cap, now rotated into phase 0.",
+   "probe": "grep:seed/worker/src/index.js::'host-hooks': 0"
+  },
+  {
    "id": "decision-2026-11-18-pace-2-the-tick-paces-its-own-loops-ranks-ready-work-by-reac",
    "kind": "decision",
    "date": "2026-11-18",
