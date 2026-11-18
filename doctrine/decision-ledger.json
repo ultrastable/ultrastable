@@ -2102,6 +2102,14 @@
    "body": "Budgets with gates_tick false are advisory (ultrastable-ops); new failure mode work-queue-stalled; /ops labels items by app. Superseded PR 583 carried this; recorded again so the range cites its session.",
    "probe": "grep:seed/worker/src/freetier.js::export function evaluate",
    "session": "session_0156nqDuqSRhg3XdymKRy7AC"
+  },
+  {
+   "id": "decision-2026-11-17-executor-closed-q-cifail-practical-solutions-deploy-tenant-a",
+   "kind": "decision",
+   "date": "2026-11-17",
+   "title": "Executor closed Q-CIFAIL-practical-solutions-deploy-tenant: Add a CSS consumer in style.css and update a JS file to consume it",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: ultrastable/practical-solutions/css/style.css, ultrastable/practical-solutions/js/main.js, ultrastable/practical-solutions/js/main.test.js.",
+   "probe": "file:ultrastable/practical-solutions/css/style.css"
   }
  ]
 }
