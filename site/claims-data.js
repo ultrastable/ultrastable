@@ -148,11 +148,7 @@ export default {
    "surface": "site/authzen.js"
   },
   {
-<<<<<<< HEAD
-   "claim": "seed-tests: 35 Python and 307 Worker tests",
-=======
-   "claim": "seed-tests: 35 Python and 306 Worker tests",
->>>>>>> origin/main
+   "claim": "seed-tests: 35 Python and 308 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -161,11 +157,7 @@ export default {
    "surface": "README.md"
   },
   {
-<<<<<<< HEAD
-   "claim": "seed-worker-tests: 307 Worker tests",
-=======
-   "claim": "seed-worker-tests: 306 Worker tests",
->>>>>>> origin/main
+   "claim": "seed-worker-tests: 308 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
