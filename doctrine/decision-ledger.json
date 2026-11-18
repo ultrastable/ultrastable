@@ -2110,6 +2110,15 @@
    "title": "Executor closed Q-CIFAIL-practical-solutions-deploy-tenant: Add a CSS consumer in style.css and update a JS file to consume it",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: ultrastable/practical-solutions/css/style.css, ultrastable/practical-solutions/js/main.js, ultrastable/practical-solutions/js/main.test.js.",
    "probe": "file:ultrastable/practical-solutions/css/style.css"
+  },
+  {
+   "id": "lesson-2026-11-18-seed-audit-chain-now-imports-core-audit-hash-and-merkle",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Seed audit chain now imports core/audit hash and Merkle",
+   "body": "One sha256 and Merkle implementation; seed auditchain.js imports workers/core/audit.",
+   "probe": "file:seed/worker/src/auditchain.js",
+   "session": "session_0156nqDvx8HgX8Ubut9xXoKx"
   }
  ]
 }

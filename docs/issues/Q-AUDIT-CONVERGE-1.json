@@ -1,5 +1,6 @@
 {
  "id": "Q-AUDIT-CONVERGE-1",
  "title": "Q-AUDIT-CONVERGE-1: one shared audit implementation for seed audit_log (AUDIT-CHAIN-1) and core/audit (AUDIT-1)",
- "body": "**Owner:** executor\n**Trigger:** issueloop and queue --run, daily\n**Done check:** file:workers/core/audit/audit.test.js\n**Status:** open\n\nTwo audit logs landed the same day: the seed worker's audit chain (#588, Ultrastable's own runtime, sealed segments to R2 or the ops repo) and workers/core/audit (#586, tenant-agnostic, used by tenants such as Practical Solutions). Converge so one hash-chain, Merkle and roll-up implementation remains and the other imports it. Closing probe: grep finds a single event-hash and Merkle implementation; both test suites pass."
+ "body": "**Owner:** executor\n**Trigger:** issueloop and queue --run, daily\n**Done check:** file:workers/core/audit/audit.test.js\n**Status:** done\n\nTwo audit logs landed the same day: the seed worker's audit chain (#588, Ultrastable's own runtime, sealed segments to R2 or the ops repo) and workers/core/audit (#586, tenant-agnostic, used by tenants such as Practical Solutions). Converge so one hash-chain, Merkle and roll-up implementation remains and the other imports it. Done: seed/worker/src/auditchain.js imports sha256 and Merkle from workers/core/audit; one implementation remains. Closing probe: grep finds a single event-hash and Merkle implementation; both test suites pass.",
+ "status": "done"
 }
