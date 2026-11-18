@@ -2513,6 +2513,82 @@
    "body": "Goal hierarchy in seed/autonomy/goals.json; tick step goals measures, moves one knob per cooldown, reviews after review_h and reverts if the goal did not move; every step is an audit-chain row. Tenants publish /goals.json and read knob values from /api/goals/knobs; no credential for core. Live at /goals.",
    "probe": "grep:seed/worker/src/goals.js::GOALS-1",
    "session": "https://claude.ai/code/session_0156nqDvJuuZ8Nf9hzFAcUxM"
+  },
+  {
+   "id": "decision-2026-11-18-budget-governor-tuned-to-use-the-free-allowance",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "Budget governor tuned to use the free allowance",
+   "body": "Free plan now plans to 95 percent with a 70 percent tick share and lean at 90 percent; paid plan keeps 80 percent, so paid spend stays zero.",
+   "probe": "grep:seed/worker/src/budget.js::SAFETY_FREE",
+   "session": "session_0156nqDtmBfktCuwqNU1X9oJ"
+  },
+  {
+   "id": "decision-2026-11-18-decisions-1-coverage-drained-21-to-8",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "DECISIONS-1 coverage drained 21 to 8",
+   "body": "Added a not_decisions registry (deterministic lookups with a stated reason) and the self-code-finding point; 8 genuine decisions remain in uninstrumented.",
+   "probe": "grep:doctrine/decisions.json::not_decisions"
+  },
+  {
+   "id": "decision-2026-11-18-decisions-page-is-regenerated-on-main-only",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "Decisions page is regenerated on main only",
+   "body": "The page data holds a timestamp and settled outcomes so it changed on every merge and conflicted every PR; the check now needs only the file, and regen-generated rebuilds it.",
+   "probe": "grep:foundation/decisions.py::PAGE-REGEN-1",
+   "session": "session_0156nqDtmBfktCuwqNU1X9oJ"
+  },
+  {
+   "id": "decision-2026-11-18-write-back-rows-are-shards",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "Write-back rows are shards",
+   "body": "Every PR conflicted on the shared ledger and provenance files; a record is now its own file under doctrine/writeback and regen-generated folds it on main.",
+   "probe": "grep:foundation/writeback.py::def fold",
+   "session": "session_0156nqDtmBfktCuwqNU1X9oJ"
+  },
+  {
+   "id": "lesson-2026-11-18-budget-surfaces-already-governed",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Budget surfaces already governed",
+   "body": "Dashboard and site wrap env in budgetEnv with declared shares; closing probes pointed at a stale literal.",
+   "probe": "grep:dashboard/worker.js::budgetEnv"
+  },
+  {
+   "id": "lesson-2026-11-18-pages-live-probes-every-bundle-host",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "pages-live probes every bundle host",
+   "body": "pages_live_urls lists each /api/freshness route; Practical Solutions now serves one reporting ensemble ledger age.",
+   "probe": "grep:doctrine/rules.json::pages_live_urls"
+  },
+  {
+   "id": "lesson-2026-11-18-qnfo-live-rendered-page-probe",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "qnfo-live rendered-page probe",
+   "body": "Builtin runtime probe fetches deployed pages and compares rendered QNFO mentions with a baseline; unreachable pages are unmeasured.",
+   "probe": "grep:foundation/rules.py::def p_qnfo_live"
+  },
+  {
+   "id": "lesson-2026-11-18-session-write-back-for-roadmap-batch",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Session write-back for roadmap batch",
+   "body": "Roadmap batch 1 and 2 decisions: decision coverage drained, timebomb baseline emptied, qnfo-live and pages-live probes, budget surfaces closed.",
+   "probe": "grep:foundation/rules.py::def p_qnfo_live",
+   "session": "session_0156nqDtmBfktCuwqNU1X9oJ"
+  },
+  {
+   "id": "lesson-2026-11-18-timebomb-baseline-drained",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Timebomb baseline drained",
+   "body": "Eleven pinned-date pack tests now use a relative clock; the timebomb baseline is empty.",
+   "probe": "grep:workers/tools/timebomb-baseline.json::\"tests\": \\[\\]"
   }
  ]
 }
