@@ -80,8 +80,19 @@ test('a token without hook rights is recorded plainly and the db gates reruns ho
   assert.equal(r.status, 'no-rights'); assert.match(r.repos['o/r'], /polling path stays/);
   assert.equal((await reconcileHooks({ db, token: 't', repos: ['o/r'], secret: 's', fetch: HJ([], 403), now: () => 1e6 + 60e3 })).status, 'fresh');
 });
+<<<<<<< HEAD
 test('HOSTS-SUBREQ-1: a probe refused by the invocation subrequest limit is unmeasured, never a host down', async () => {
   const db = makeDb(), starved = { id: 'a', kind: 'x', health: async () => { throw new Error('Too many subrequests by single Worker invocation.'); }, deploy: async () => ({ ok: true }) };
   const r = await watchHosts({ db, registry: createHosts([starved, host('b', true)], { db }), now: () => Date.now() });
   assert.equal(r.status, 'ok'); assert.deepEqual(r.unmeasured, ['a']); assert.equal(r.down, undefined);
+=======
+import { githubHookSecrets, verifyAny } from '../src/hosts.js';
+import { verifySignature } from '../src/events.js';
+test('deliveries signed with the GitHub App webhook secret are accepted', async () => {
+  const body = '{"a":1}', key = await crypto.subtle.importKey('raw', new TextEncoder().encode('app-sec'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = 'sha256=' + Array.from(new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(body))), b => b.toString(16).padStart(2, '0')).join('');
+  const secrets = await githubHookSecrets({ CREDENTIAL_KEY: 'k' }, async () => ({ secret: { webhook_secret: 'app-sec' } }));
+  assert.equal(secrets.length, 2); assert.ok(await verifyAny(verifySignature, secrets, body, sig));
+  assert.ok(!(await verifyAny(verifySignature, await githubHookSecrets({ CREDENTIAL_KEY: 'k' }), body, sig)));
+>>>>>>> origin/main
 });

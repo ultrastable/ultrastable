@@ -27,7 +27,8 @@ import { getToken, refreshDue, pathGuard } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
 import { readCriticality, addSample } from './criticality.js';
 import { watchGithub } from './watchdog.js';
-import { createHosts, cloudflareHost, githubActionsHost, gcpHost, reporting, onPush, onWorkflowRun, onHostEvent, watchHosts, recordHostEvent, hookSecret, reconcileHooks } from './hosts.js';  // HOSTS-1
+import { material as credMaterial } from './auth/store.js';  // HOSTS-1: the App's own webhook secret verifies its deliveries
+import { createHosts, cloudflareHost, githubActionsHost, gcpHost, reporting, onPush, onWorkflowRun, onHostEvent, watchHosts, recordHostEvent, hookSecret, reconcileHooks, githubHookSecrets, verifyAny } from './hosts.js';  // HOSTS-1
 import { beat, watch, readPulse, HEAVY_CADENCE_MIN } from './pulse.js';
 import { decide, healthView, readState } from './cutover.js';
 import { readIgnition } from './ignition.js';
@@ -124,7 +125,7 @@ export default {
     if (halted(config, env) && (url.pathname === '/hook/github' || url.pathname === '/hook/host' || url.pathname === '/pulse/watch')) return Response.json({ halted: true }, { status: 202 });  // HALT-1
     if (url.pathname === '/hook/github' && request.method === 'POST') {  // event-driven trigger: signed GitHub webhook wakes a role now
       const body = await request.text();
-      if (!(await verifySignature(await hookSecret(env, 'github'), body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
+      if (!(await verifyAny(verifySignature, await githubHookSecrets(env, () => credMaterial(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app')), body, request.headers.get('x-hub-signature-256')))) return Response.json({ error: 'bad signature' }, { status: 401 });
       const ev = request.headers.get('x-github-event'), payload = JSON.parse(body || '{}');
       if (ev === 'push' || ev === 'workflow_run') {  // HOSTS-1: repo -> host without polling; host status flows back onto the commit
         const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null), tok = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';

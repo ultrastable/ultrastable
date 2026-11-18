@@ -2241,6 +2241,14 @@
    "session": "session_0156nqDrtJzL18qgzyo9Tcgz"
   },
   {
+   "id": "lesson-2026-11-18-app-webhook-secret-verifies-hook-deliveries",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "App webhook secret verifies hook deliveries",
+   "body": "Every delivery to /hook/github was answered 401 since 00:30 on 2026-11-18: the delivering hook is the GitHub App's own webhook, signed with the App's manifest webhook_secret, while the tick verified only a derived secret. /hook/github now accepts the bound, App and derived secrets.",
+   "probe": "grep:seed/worker/test/hosts.test.js::deliveries signed with the GitHub App webhook secret are accepted"
+  },
+  {
    "id": "lesson-2026-11-18-webhook-deliveries-count-against-the-free-request-allowance-",
    "kind": "lesson",
    "date": "2026-11-18",
