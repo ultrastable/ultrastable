@@ -65,11 +65,14 @@ export function createRouter({ db, ai, models, now = () => Date.now(), config = 
   // Order for this kind: free models by learned pass rate (unknown = optimistic 0.5) then cheapest; a free model proven below free_give_up is dropped;
   // paid models follow, cheapest first. Paid ones are only reached after the free ones fail this call.
   async function plan(kind) {
-    const st = await stats(kind), free = [], paid = [];
+    const st = await stats(kind), free = [], paid = [], dropped = [];
     for (const m of models) {
       const r = rate(st[m.model]);
-      if (m.tier === 'paid') paid.push({ m, r }); else if (r === null || r >= cfg.free_give_up) free.push({ m, r: r ?? 0.5 });
+      if (m.tier === 'paid') paid.push({ m, r }); else if (r === null || r >= cfg.free_give_up) free.push({ m, r: r ?? 0.5 }); else dropped.push({ m, r });
     }
+    // AIROUTER-REPROBE-1: lifetime pass rates never recover, so when every free model was dropped (and no paid one is allowed) the plan was empty
+    // and every call ended "no model passed ()" for good. Re-probe the dropped free models, best rate first, so a recovered model is learned again.
+    if (!free.length && !paid.length) free.push(...dropped.map(x => ({ m: x.m, r: x.r })));
     free.sort((a, b) => b.r - a.r || (a.m.neurons_out ?? 0.2) - (b.m.neurons_out ?? 0.2));
     paid.sort((a, b) => (a.m.usd_out_per_m || 0) - (b.m.usd_out_per_m || 0));
     return [...free.map(x => x.m), ...paid.map(x => x.m)];

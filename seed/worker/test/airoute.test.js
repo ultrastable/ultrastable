@@ -15,3 +15,13 @@ test('a chat is routed, cached on repeat, and a Worker with no DB still answers'
   const r3 = await routeChat(env, { ...a, cache: false }); assert.equal(r3.cached, false); assert.equal(n, 2);
   const r4 = await routeChat({ AI }, a); assert.equal(r4.routed, false); assert.equal(r4.text, 'hello there');
 });
+
+// AIROUTER-REPROBE-1: a free model whose lifetime pass rate fell under free_give_up is retried when nothing else is left, so the router recovers.
+test('router re-probes a dropped free model instead of failing for good', async () => {
+  const { createRouter, ensure } = await import('../src/airouter.js');
+  const db = d1(); await ensure(db);
+  await db.prepare(`INSERT INTO airouter_stats (kind,model,calls,passes,usd) VALUES ('k','m1',20,0,0)`).run();
+  const r = createRouter({ db, ai: { run: async () => ({ response: 'fine again' }) }, models: [{ id: 'm1', model: 'm1', tier: 'free' }] });
+  const out = await r.call({ kind: 'k', prompt: 'hi', cache: false });
+  assert.equal(out.text, 'fine again');
+});
