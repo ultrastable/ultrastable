@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs');

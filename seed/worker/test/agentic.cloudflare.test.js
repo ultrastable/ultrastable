@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 const test = require('node:test');
 const assert = require('node:assert');
 const { wrapWithMcpAgent, aiGatewayFetch } = require('../src/agentic/adapters/cloudflare-agents.js');
