@@ -2148,6 +2148,23 @@
    "session": "session_0156nqDvx8HgX8Ubut9xXoKx"
   },
   {
+   "id": "decision-2026-11-18-pace-1-loop-pace-is-a-live-metric",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "PACE-1: loop pace is a live metric",
+   "body": "The tick Worker computes beats_24h and beats_productive_share_24h from loop_beats and seeds liveness metric M-pace; idle runs are not progress. core/pace plans cadence from the same quantities. Tenant agent backlog check moved from 6 hours to 2 hours (public repo).",
+   "probe": "grep:seed/worker/src/tick.js::beats_productive_share_24h",
+   "session": "session_0156nqDu3CafCLkNfgmXspHr"
+  },
+  {
+   "id": "lesson-2026-11-18-effect-tier-bypassed-self-code-share",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "EFFECT tier bypassed self-code share",
+   "body": "EFFECT-1 tier skipped selfcode.prefer, so Q-CIFAIL items took every run; the share now applies inside the effect tier",
+   "probe": "grep:foundation/executor.py::selfcode.prefer\\(eff"
+  },
+  {
    "id": "decision-2026-11-18-hosts-1-host-adapter-wiring",
    "kind": "decision",
    "date": "2026-11-18",
