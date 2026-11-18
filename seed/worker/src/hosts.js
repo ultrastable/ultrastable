@@ -55,7 +55,7 @@ export function createHosts(list, { db = null, now = Date.now } = {}) {
 }
 async function record(db, now, e) {
   if (!db) return;
-  try { await db.prepare('INSERT INTO host_events (at, host, kind, worker, repo, sha, ok, detail) VALUES (?,?,?,?,?,?,?,?)').bind(now(), e.host, e.kind, e.worker || null, e.repo || null, e.sha || null, e.ok === false ? 0 : 1, String(e.detail || '').slice(0, 300)).run(); } catch (err) { console.error('host_events', err && err.message); }
+  try { await db.prepare('INSERT INTO host_events (at, host, kind, worker, repo, sha, ok, detail) VALUES (?,?,?,?,?,?,?,?)').bind(now(), e.host, e.kind, e.worker || null, e.repo || null, e.sha || null, e.ok === false ? 0 : 1, String(e.detail || '').slice(0, 300)).run(); } catch (err) { /* allow-silent: the event row is best effort; the failure is logged and the host probe reads the live host, not this table */ console.error('host_events', err && err.message); }
 }
 export const recordHostEvent = record;
 
