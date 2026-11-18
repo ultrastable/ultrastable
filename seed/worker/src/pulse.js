@@ -43,7 +43,7 @@ export const LANE_LOOPS = ['credentials', 'executor', 'gate', 'lane', 'handoffs'
 // ("Too many subrequests by single Worker invocation" failed gate, lane, handoffs, issuesync, repo-access, sweeper and deploy-evidence in every slot).
 // They now rotate over four ticks (index.js LOOP_PHASE), so each runs every 40 minutes, inside the 120 minute SLA, and each tick stays under the limit.
 export const HEAVY_CADENCE_MIN = 40;
-export const HEAVY_LOOPS = ['executor', 'gate', 'lane', 'handoffs', 'issuesync', 'repo-access', 'sweeper', 'deploy-evidence', 'watchdog-gh'];
+export const HEAVY_LOOPS = ['executor', 'gate', 'lane', 'handoffs', 'issuesync', 'repo-access', 'sweeper', 'deploy-evidence', 'watchdog-gh', 'hosts', 'host-hooks'];
 export const DEFAULT_CADENCE = { watchdog: 60, ...Object.fromEntries(HEAVY_LOOPS.map(l => [l, HEAVY_CADENCE_MIN])) };
 export const HUNG_MS = 300e3;
 const BAD = ['late', 'stopped', 'failing', 'hung', 'never'];
