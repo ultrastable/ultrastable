@@ -31,7 +31,7 @@ import { controlPlane, opsPage, tenantDiscovery, authIntegration } from "./contr
 import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
 import { connectionsRoute } from "./connections.js"; // CONNECTIONS-1
 import { internalDeploy } from "./deployer.js";
-var VERSION = "0.15.0";
+var VERSION = "0.15.1";
 const CANON = "ultrastable.io";
 const PILOT_MAIL = "pilot@ultrastable.io";
 
@@ -52,7 +52,7 @@ const CSS = [
   ".us-status{display:inline-flex;gap:8px;align-items:center;font-size:14px;color:var(--ink2);margin-top:8px}",
   ".us-grid{display:grid;gap:12px}@media(min-width:720px){.us-grid.c3{grid-template-columns:repeat(3,1fr)}.us-grid.c2{grid-template-columns:repeat(2,1fr)}}",
   ".us-table{width:100%;border-collapse:collapse;font-size:15px}.us-table th,.us-table td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}",
-  ".us-table th{font-size:14px;color:var(--ink2)}.us-wrap{overflow-x:auto}.us-us td{background:var(--soft);font-weight:600}",
+  ".us-table th{font-size:14px;color:var(--ink2)}.us-wrap{overflow-x:auto;max-width:100%}.us-table td,.us-table th{overflow-wrap:anywhere;word-break:break-word;min-width:56px}@media(max-width:640px){.us-table td,.us-table th{padding:8px 6px;font-size:14px}}.us-us td{background:var(--soft);font-weight:600}",
   ".us-foot{border-top:1px solid var(--line);margin-top:32px;padding-top:16px;color:var(--ink2);font-size:14px}",
   ".us-case{display:block;text-decoration:none;color:inherit}.us-case:hover,.us-case:focus-visible{border-color:var(--accent,currentColor)}.us-tag{display:inline-block;font-size:14px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:6px}.us-more{display:inline-block;margin-top:8px;font-weight:600;min-height:44px;line-height:44px}.us-note{border-left:4px solid var(--ac);background:var(--sf);padding:10px 14px;border-radius:6px}.crumbs{font-size:14px;color:var(--ink2);margin:8px 0}.us-stories li,.us-path li{margin:8px 0}.us-path a{display:inline-block;min-height:44px;line-height:44px}",
   ".us-pass{color:var(--good);font-weight:700}.us-fail{color:var(--bad);font-weight:700}"
@@ -854,7 +854,7 @@ const handler = {
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
     if (u.pathname.replace(/\/$/, "") === "/proof") return Response.redirect("https://" + CANON + "/live", 301); // PROOF-OWN-1: /proof served the earlier testbed's records; deprecated
-    if (u.pathname === "/live" || u.pathname === "/api/live") return liveResponse(u, request, env, shell, HTML);
+    if (u.pathname === "/live" || u.pathname === "/api/live" || u.pathname === "/api/freshness") return liveResponse(u, request, env, shell, HTML);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/pilot") return pilotApplication(request, env);
     if (request.method === "POST" && u.pathname === "/api/answer") return takeAnswer(request, env, ctx);
