@@ -2481,6 +2481,14 @@
    "session": "session_0156nqDtg2N1X7K61HZReweE"
   },
   {
+   "id": "lesson-2026-11-18-live-fresh-2-root-cause-of-frozen-live",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "LIVE-FRESH-2 root cause of frozen /live",
+   "body": "/live froze 3 days: foundation/transparency.py published to the retired quniverse account's D1 (green run) while the site reads the ultrastable account's ultrastable-ops; the tick's live-changes refresh ran inside the sweeper after the subrequest budget was spent. Fix: OIDC publish to the site worker, live-changes and a self-repairing freshness probe as early tick steps.",
+   "probe": "file:seed/worker/src/freshness.js"
+  },
+  {
    "id": "decision-2026-11-18-roi-1-and-boundaries-1-plan-aware-optimizer-applied-by-the-t",
    "kind": "decision",
    "date": "2026-11-18",
