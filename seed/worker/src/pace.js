@@ -38,8 +38,17 @@ export async function strideFor(db, loop, config) {
 }
 
 // True when this cycle is one the loop skips. cycle is the count of the loop's own slots since the epoch.
-export async function paced(db, loop, cycle, config) {
-  const stride = await strideFor(db, loop, config);
+// BOUNDARIES-1: the optimizer's tuning (roi.js tune) changes the stride. slow: stretch to at least ceil(pace_factor), up to 2x max_stride, so a tenant near its plan's limit
+// spends fewer runs; use-headroom: halve the earned stride so more of the backlog runs while the day has room. Loops in never_pace are untouched.
+export function applyTuning(stride, tuning, config, loop) {
+  const c = cfgOf(config);
+  if (!tuning || c.never_pace.includes(loop)) return stride;
+  if (tuning.action === 'slow') return Math.min(Math.max(stride, Math.ceil(tuning.pace_factor)), c.max_stride * 2);
+  if (tuning.action === 'use-headroom') return Math.max(1, Math.floor(stride / 2));
+  return stride;
+}
+export async function paced(db, loop, cycle, config, tuning = null) {
+  const stride = applyTuning(await strideFor(db, loop, config), tuning, config, loop);
   return stride > 1 && cycle % stride !== 0 ? { paced: true, stride } : null;
 }
 
