@@ -1,8 +1,11 @@
 {
   "id": "Q-COST-PROOF-2",
   "title": "Q-COST-PROOF-2: run deploy/cost-probe.mjs on a daily server-side clock",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/tick.js::cost-probe\n**Status:** open\n\nQ-COST-PROOF-1 built the probe and ran it once by hand. Add a daily server-side run (a tick step in seed/worker/src/tick.js or a workflow with the budget headers) that executes the probe, commits ops/cost.jsonl and files the items, with a clock entry in doctrine/clocks.json so a stopped probe is a defect.\n\ncode-task: repo=ultrastable/ultrastable path=seed/worker/src/tick.js\n\nsize: M\n\n**Closing probe:** grep:seed/worker/src/tick.js::cost-probe\n",
-  "labels": ["p1", "agent-ready"],
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/tick.js::cost-probe\n**Status:** done (seed/worker/src/tick.js steps age_sla over_120m and cost_probe)\n\nQ-COST-PROOF-1 built the probe and ran it once by hand. Add a daily server-side run (a tick step in seed/worker/src/tick.js or a workflow with the budget headers) that executes the probe, commits ops/cost.jsonl and files the items, with a clock entry in doctrine/clocks.json so a stopped probe is a defect.\n\ncode-task: repo=ultrastable/ultrastable path=seed/worker/src/tick.js\n\nsize: M\n\n**Closing probe:** grep:seed/worker/src/tick.js::cost-probe\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
   "milestone": "Now",
   "workstream": "Quniverse parity"
 }

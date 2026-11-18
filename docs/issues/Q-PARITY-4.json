@@ -1,7 +1,7 @@
 {
   "id": "Q-PARITY-4",
   "title": "Q-PARITY-4: Issue-age SLA ladder: nothing older than 120 minutes without action (QNFO SLA-120M)",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/tick.js::over_120m\n**Status:** open\n\nQuniverse parity (owner directive 2026-11-13: Ultrastable audits and remediates all failure modes and ships improvements with zero user intervention; every Quniverse automation feature is incorporated).\n\nItems age in 10-minute resolution; past 120 minutes the tick raises priority, re-plans and files a cause. Add v_item_age equivalent, a metric items_open_over_120m (target 0) and its breach path.\n\nsize: M\n\n**Closing probe:** grep:seed/worker/src/tick.js::over_120m\n",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/tick.js::over_120m\n**Status:** done (seed/worker/src/tick.js steps age_sla over_120m and cost_probe)\n\nQuniverse parity (owner directive 2026-11-13: Ultrastable audits and remediates all failure modes and ships improvements with zero user intervention; every Quniverse automation feature is incorporated).\n\nItems age in 10-minute resolution; past 120 minutes the tick raises priority, re-plans and files a cause. Add v_item_age equivalent, a metric items_open_over_120m (target 0) and its breach path.\n\nsize: M\n\n**Closing probe:** grep:seed/worker/src/tick.js::over_120m\n",
   "labels": [
     "p1",
     "agent-ready"
