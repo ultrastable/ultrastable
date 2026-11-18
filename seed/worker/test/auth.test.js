@@ -203,3 +203,25 @@ test('REPOS-1: the tick resolver archives once and then stops', async () => {
   const r = await archiveDue(db, e, { fetch: f });
   assert.equal(r[0].action, 'done'); assert.equal(n, before, 'no second pass');
 });
+
+test('DIRECT-MERGE-GATE-1: the admin install upserts the main ruleset, and the list mirrors github/org-settings.json', async () => {
+  const { RULESETS, applyRulesets, rulesetsDue } = await import('../src/auth/rulesets.js');
+  const { readFileSync } = await import('node:fs');
+  const cfg = JSON.parse(readFileSync(new URL('../../../github/org-settings.json', import.meta.url), 'utf8'));
+  for (const [repo, list] of Object.entries(RULESETS)) assert.deepEqual(JSON.parse(JSON.stringify(list)), cfg.repos[repo].rulesets.map(({ _doc, ...r }) => r));
+  const rs = RULESETS['ultrastable/ultrastable'][0];
+  assert.ok(rs.rules.some(r => r.type === 'required_status_checks' && r.parameters.required_status_checks.some(c => c.context === 'checks')));
+  const db = makeDb(), e = { ...env(), DB: db };
+  await store.put(db, e, 't', 'github-admin', { secret: { pem: 'x' }, meta: { app_id: 1, installation_id: 2 }, status: 'pending' });
+  let existing = [];
+  const calls = [];
+  const f = async (url, o = {}) => { calls.push([o.method || 'GET', url.replace('https://api.github.com', '')]); if (!o.method) return { status: 200, json: async () => existing }; return { status: o.method === 'POST' ? 201 : 200 }; };
+  const a = await applyRulesets(db, e, 't', { fetch: f, token: 'tok' });
+  assert.ok(a.ok); assert.deepEqual(calls[1], ['POST', '/repos/ultrastable/ultrastable/rulesets']);
+  existing = [{ id: 7, name: 'main-requires-checks' }]; calls.length = 0;
+  await applyRulesets(db, e, 't', { fetch: f, token: 'tok' });
+  assert.deepEqual(calls[1], ['PUT', '/repos/ultrastable/ultrastable/rulesets/7']);
+  assert.deepEqual((await rulesetsDue(db, e, { fetch: f })).map(x => x.action), ['done']);
+  const denied = await applyRulesets(makeDb(), e, 't', { fetch: async () => ({ status: 403, json: async () => ({}) }), token: 'tok' });
+  assert.equal(denied.ok, false);
+});

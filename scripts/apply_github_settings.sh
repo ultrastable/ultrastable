@@ -48,6 +48,14 @@ for R in $(jq -r '.repos|keys[]' "$CFG"); do
   br=$(jq -r ".repos[\"$R\"].branch_protection.branch" "$CFG")
   prot=$(jq -c '.repos["'"$R"'"].branch_protection | {required_status_checks:null,enforce_admins:false,required_pull_request_reviews:null,restrictions:null,allow_force_pushes,allow_deletions,required_linear_history}' "$CFG")
   step "repo $R protect $br" gh api -X PUT "repos/$R/branches/$br/protection" --input - <<<"$prot"
+  # DIRECT-MERGE-GATE-1: rulesets are upserted by name, so a re-run changes nothing
+  n=$(jq -r ".repos[\"$R\"].rulesets // [] | length" "$CFG")
+  for i in $(seq 0 $((n-1))); do
+    rs=$(jq -c ".repos[\"$R\"].rulesets[$i] | del(._doc)" "$CFG"); name=$(jq -r .name <<<"$rs")
+    id=$(gh api "repos/$R/rulesets" --jq ".[]|select(.name==\"$name\")|.id" 2>&1) || { echo "FAIL repo $R ruleset $name: $id"; fail=$((fail+1)); continue; }
+    if [ -n "$id" ]; then step "repo $R ruleset $name (update)" gh api -X PUT "repos/$R/rulesets/$id" --input - <<<"$rs"
+    else step "repo $R ruleset $name (create)" gh api -X POST "repos/$R/rulesets" --input - <<<"$rs"; fi
+  done
 done
 echo "failures: $fail gated: $gated"
 [ "$fail" -eq 0 ]
