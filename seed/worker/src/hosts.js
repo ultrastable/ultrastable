@@ -163,6 +163,16 @@ export async function hookSecret(env, purpose) {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.CREDENTIAL_KEY), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   return Array.from(new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('ultrastable-hook:' + purpose))), b => b.toString(16).padStart(2, '0')).join('');
 }
+// Every secret a delivery to /hook/github may be signed with: a bound one, the GitHub App's own webhook secret (registered by the manifest flow and
+// sealed in the credential store; the App's webhook is the hook that delivers today), and the derived one the reconciler writes on repo hooks.
+export async function githubHookSecrets(env, appMaterial = null) {
+  const out = [];
+  if (env.GITHUB_WEBHOOK_SECRET) out.push(env.GITHUB_WEBHOOK_SECRET);
+  try { const m = appMaterial ? await appMaterial() : null; if (m && m.secret && m.secret.webhook_secret) out.push(m.secret.webhook_secret); } catch (e) { console.error('app webhook secret', e && e.message); }  // allow-silent: an unreadable App secret leaves the bound and derived secrets, so verification still runs and a bad signature still answers 401
+  const d = await hookSecret({ CREDENTIAL_KEY: env.CREDENTIAL_KEY }, 'github'); if (d) out.push(d);
+  return [...new Set(out)];
+}
+export async function verifyAny(verify, secrets, body, header) { for (const s of secrets) if (await verify(s, body, header)) return true; return false; }
 export const HOOK_EVENTS = ['push', 'workflow_run', 'pull_request', 'issues', 'issue_comment', 'release'];
 // create the repository webhook when missing, repair it when GitHub says its last delivery failed or its url/events drifted; a token without hook rights is recorded plainly
 export async function reconcileHooks({ db = null, token, repos, origin = 'https://ultrastable.io', secret, fetch: f = fetch, now = Date.now, everyMs = 3600e3 }) {
