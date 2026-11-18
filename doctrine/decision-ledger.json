@@ -2394,6 +2394,24 @@
    "title": "Carry stuck PR 627 onto main; close loops automatically (Rowan 2026-11-18)",
    "body": "A PR stuck on a generated-file conflict is carried onto current main by the next session or lane that sees it; #627 landed by its own session first, and tools/push_main.py keeps git push as the second route.",
    "probe": "grep:tools/push_main.py::def fallback"
+  },
+  {
+   "id": "lesson-2026-11-18-a-test-clock-pinned-to-a-calendar-date-over-real-clock-sql-w",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "A test clock pinned to a calendar date over real-clock SQL windows is a timebomb; scan for it at authoring time",
+   "body": "packs/cloud/cloud.test.js went red 7 days after its pinned T0 with no code change. workers/tools/timebomb.mjs now finds every workers test that pins Date.parse('20xx-..') while its direct imports or pack.json hold datetime('now', '-N ...'); tools/timebomb.test.mjs (npm test) fails on a new one; 11 existing ones are a shrink-only baseline drained by Q-TEST-TIMEBOMB-2.",
+   "probe": "grep:workers/tools/timebomb.test.mjs::datetime\\('now'",
+   "session": "session_0156nqDuXUgEsPtAbbPEiehc"
+  },
+  {
+   "id": "decision-2026-11-18-carry-628-onto-main-on-the-session-branch-after-627-merged-u",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "Carry #628 onto main on the session branch after #627 merged under it",
+   "body": "#628 failed checks on a decision row whose probe named a document (agents/AGENTS.md). Rebound it to tools/push_main.py, merged main (which already had #627 and its own push fallback), kept main's fallback and added the no-OIDC fallback from #628; #628 closed as superseded.",
+   "probe": "grep:tools/push_main.py::worker route unavailable",
+   "session": "session_0156nqDuXUgEsPtAbbPEiehc"
   }
  ]
 }
