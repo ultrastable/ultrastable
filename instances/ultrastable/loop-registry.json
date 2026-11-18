@@ -3639,6 +3639,40 @@
    ],
    "area": "managers",
    "server_owner": "github-actions"
+  },
+  {
+   "id": "hosts",
+   "kind": "probe",
+   "summary": "HOSTS-1: one adapter interface (seed/worker/src/hosts.js) for Cloudflare, GitHub Actions and Google Cloud. Signed push and workflow_run webhooks deploy the touched workers through the first healthy host with failover; every deploy, failure and inbound host event (POST /hook/host) lands as a commit status or check run; the hosts loop probes each host's health and redispatches through the credential-free GitHub Actions host when a push has no deploy after 30 minutes.",
+   "trigger": "push and workflow_run webhooks on /hook/github, POST /hook/host, and every tick (loop 'hosts')",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1 tick",
+   "done": "every push to main has a deploy event or a recorded stall within 30 minutes; every host has a health row in the last tick",
+   "paths": [
+    {
+     "id": "primary",
+     "how": "seed/worker/src/hosts.js via /hook/github push and workflow_run webhooks and the tick loop hosts",
+     "class": "free"
+    },
+    {
+     "id": "fallback",
+     "how": ".github/workflows/deploy-workers.yml dispatched by the hosts loop (GitHub built-in token, no person-minted credential)",
+     "class": "free"
+    }
+   ],
+   "closing_probe": "grep:seed/worker/test/hosts.test.js::a push with no deploy after the stall window is redispatched through github-actions",
+   "writeback": [
+    "docs/PROJECT-MEMORY.md"
+   ],
+   "system_path": [
+    "seed/worker/src/hosts.js",
+    "seed/worker/src/index.js",
+    "seed/worker/migrations/0021_host_events.sql",
+    "platform/adapters/gcp/server.js"
+   ],
+   "area": "managers",
+   "server_owner": "ultrastable-tick"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
