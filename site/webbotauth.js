@@ -58,7 +58,7 @@ export async function verifyRequest(request, getDirectory, now = Date.now()) {
   if (meta.tag !== "web-bot-auth" || meta.alg !== "ed25519") return { ok: false, reason: "not a web-bot-auth ed25519 signature" };
   if (!comps.includes("@authority") || !comps.includes("signature-agent")) return { ok: false, reason: "components must cover @authority and signature-agent" };
   const t = Math.floor(now / 1000); if (!(Number(meta.created) <= t + 30) || !(Number(meta.expires) > t)) return { ok: false, reason: "signature outside its validity window" };
-  const sm = /^sig1=:(.*):$/.exec(sigH.trim()); if (!sm) return { ok: false, reason: "bad signature" };
+  const sm = /^sig1=:([A-Za-z0-9+/=]+):$/.exec(sigH.trim()); if (!sm) return { ok: false, reason: "bad signature" };
   const agentOrigin = agent.replace(/^"|"$/g, ""); if (!/^https:\/\/[a-z0-9.-]+(:\d+)?$/i.test(agentOrigin)) return { ok: false, reason: "signature-agent must be an https origin" };
   const dir = await getDirectory(agentOrigin); const jwk = dir && (dir.keys || []).find(x => x.kid === meta.keyid);
   if (!jwk || await thumbprint(jwk) !== meta.keyid) return { ok: false, reason: "key not in the agent's directory" };
@@ -108,18 +108,4 @@ export function directoryCache({ ttlMs = 3600e3, missTtlMs = 300e3, max = 256, c
   get.size = () => hits.size;
   get.clear = () => { hits.clear(); inflight.clear(); };
   return get;
-}
-
-// Initialize directoryCache with default parameters
-const cache = directoryCache();
-
-// Modified fetchDirectory to use directoryCache
-export async function fetchDirectoryCached(origin, f = fetch, env = null) {
-  return cache(origin, async () => {
-    const init = { headers: { accept: DIRECTORY_TYPE }, signal: AbortSignal.timeout(4000) };
-    const r = env ? await signedFetch(env, origin + DIRECTORY_PATH, init, f) : await f(origin + DIRECTORY_PATH, init);
-    if (!r.ok) return null;
-    const d = await r.json().catch(() => null);
-    return d && Array.isArray(d.keys) ? d : null;
-  });
 }
