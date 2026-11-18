@@ -22,5 +22,6 @@
  "0020_read_indexes_2.sql",
  "0021_host_events.sql",
  "0022_live_changes.sql",
- "0023_decision_log.sql"
+ "0023_decision_log.sql",
+ "0024_read_indexes_3.sql"
 ]
