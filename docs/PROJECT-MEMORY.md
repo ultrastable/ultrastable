@@ -10,6 +10,13 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-18
 
+- 2026-11-18: Fix deploy-site: restore webbotauth.js syntax broken by #614 (#616)
+- 2026-11-18: Fix webbotauth.js syntax error that turns deploy-site red (#617)
+- 2026-11-18: ciwatch: failing-workflow items (#615)
+- 2026-11-18: SUBREQUEST-METER-1: loops defer instead of failing at the 50-subrequest cap (#613)
+- 2026-11-18: ROADMAP-AGENT-WBA-OUTBOUND: QNFO.INFRA #8: sign outbound agent fetches and cache peer directories (#614)
+- 2026-11-18: FREE-TIER-1, HANDOFF-SUBREQ-2, HOSTS-SUBREQ-1: stop the delivery storm; deploys never blocked by the tick's subrequest limit (#610)
+- 2026-11-18: HOSTSYNC-1: merge expected-hash keys across parallel deploys (#612)
 - 2026-11-18: HOSTS-1: accept GitHub App webhook deliveries (all were 401) (#611)
 - 2026-11-18: host-sync - runtime state of the host (HOSTSYNC-1)
 - 2026-11-18: host-sync - record deployed gateway module
