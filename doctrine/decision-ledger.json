@@ -2157,7 +2157,14 @@
    "session": "session_0156nqDu3CafCLkNfgmXspHr"
   },
   {
-<<<<<<< HEAD
+   "id": "lesson-2026-11-18-effect-tier-bypassed-self-code-share",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "EFFECT tier bypassed self-code share",
+   "body": "EFFECT-1 tier skipped selfcode.prefer, so Q-CIFAIL items took every run; the share now applies inside the effect tier",
+   "probe": "grep:foundation/executor.py::selfcode.prefer\\(eff"
+  },
+  {
    "id": "lesson-2026-11-18-free-tier-1-usage-sample-runs-first-in-the-tick",
    "kind": "lesson",
    "date": "2026-11-18",
@@ -2165,14 +2172,6 @@
    "body": "The free-tier usage sample ran in the last beat of the invocation and failed with Too many subrequests when earlier loops used the 50 allowed (00:10 UTC 2026-11-18), leaving d1 and request usage null. seed/worker/src/index.js now reads it before every other loop. Session: session_0156nqDvfZdRF7Tx7XyyYLyk",
    "probe": "grep:seed/worker/src/index.js::const freeTier = await sampleFreeTier",
    "session": "session_0156nqDvfZdRF7Tx7XyyYLyk"
-=======
-   "id": "lesson-2026-11-18-effect-tier-bypassed-self-code-share",
-   "kind": "lesson",
-   "date": "2026-11-18",
-   "title": "EFFECT tier bypassed self-code share",
-   "body": "EFFECT-1 tier skipped selfcode.prefer, so Q-CIFAIL items took every run; the share now applies inside the effect tier",
-   "probe": "grep:foundation/executor.py::selfcode.prefer\\(eff"
->>>>>>> origin/main
   }
  ]
 }
