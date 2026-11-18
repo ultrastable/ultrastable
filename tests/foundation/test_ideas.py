@@ -57,10 +57,10 @@ class Ideas(unittest.TestCase):
     def test_launches_boards_up_to_the_daily_cap_with_facts(self):
         d = sandbox()
         got = [spinoff.launch(d, True, T)["launched"] for _ in range(3)]
-        self.assertTrue(all(g and g["archetype"] == "status-board" for g in got))
+        self.assertTrue(all(g and g["archetype"] in ("status-board", "live-feed", "live-lookup") for g in got))  # SPINOFF-GOOD-1: live apps rank among boards
         self.assertIn("daily launch cap 3", spinoff.launch(d, True, T)["why"])
         b = json.loads((d / "spinoffs/registry.json").read_text())
-        self.assertEqual(len(b["boards"]), 3)
+        self.assertEqual(len(b["boards"]), sum(1 for g in got if g["archetype"] == "status-board"))  # a live app has no bundled board: it reads its source at request time
         self.assertTrue(all(v["rows"] for v in b["boards"].values()))
         self.assertEqual(spinoff.check(d), [])
 
