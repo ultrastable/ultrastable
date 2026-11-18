@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-18T13:07:58Z",
- "commit": "a8ec8c39",
+ "generated": "2026-11-18T13:16:07Z",
+ "commit": "4370d980",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 101,
@@ -18,8 +18,8 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 361,
-  "backlog_items": 428
+  "backlog_open": 359,
+  "backlog_items": 426
  },
  "unknowns": {
   "units": 117,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 428,
+   "items": 426,
    "by_status": {
     "closed": 62,
-    "open": 361,
+    "open": 359,
     "done": 5
    },
-   "takeable_now": 332
+   "takeable_now": 330
   },
   "merged": {
    "total": 0,
@@ -96,17 +96,17 @@
    "site_runs": 50,
    "by_conclusion": {
     "running": 1,
-    "success": 45,
-    "cancelled": 4
+    "success": 46,
+    "cancelled": 3
    },
    "latest": {
     "conclusion": "",
-    "createdAt": "2026-11-18T13:06:06Z",
+    "createdAt": "2026-11-18T13:14:26Z",
     "event": "push",
-    "headSha": "71b1c10355abac8b1f410fcdc9c79a6521a9b912"
+    "headSha": "5d380a8dda4a7bad98f2c3356ca632e7358730a6"
    },
    "per_day_success": {
-    "2026-11-18": 45
+    "2026-11-18": 46
    }
   },
   "executor": {
@@ -161,7 +161,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": -12.6,
+   "age_s": -8.1,
    "status": "fresh",
    "missed": 0
   },
@@ -185,16 +185,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": -10.6,
+   "age_s": -5.1,
    "status": "fresh",
    "missed": 0,
-   "lag_s": 443.0
+   "lag_s": 375.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 78208.4,
+   "age_s": 78697.9,
    "status": "fresh",
    "missed": 0
   }
@@ -318,13 +318,13 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-18T13:06:57Z",
+  "generated": "2026-11-18T13:15:05Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1354.4,
+    "expected_today": 1354.5,
     "value": null,
     "behind": null,
     "progress": null
@@ -377,7 +377,7 @@
    "last": {
     "reviewed": null,
     "changed": {
-     "at": "2026-11-18T13:06:57Z",
+     "at": "2026-11-18T13:15:05Z",
      "knob": "chain_max_runs_per_day",
      "old": 4,
      "new": 5,
@@ -456,7 +456,7 @@
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 26,
-  "items_takeable": 332,
+  "items_takeable": 330,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -501,7 +501,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 6.7,
+   "last_beat_age_s": 50.0,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -512,7 +512,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 78288.7,
+   "last_beat_age_s": 78778.0,
    "expected_interval_s": 86400,
    "beats_24h": 2,
    "expected_24h": 1.0,
@@ -523,7 +523,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": -1.3,
+   "last_beat_age_s": 85.0,
    "expected_interval_s": 86400,
    "beats_24h": 60,
    "expected_24h": 1.0,
@@ -534,7 +534,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 75143.7,
+   "last_beat_age_s": 75633.0,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -545,7 +545,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 67136.7,
+   "last_beat_age_s": 67626.0,
    "expected_interval_s": 604800,
    "beats_24h": 1,
    "expected_24h": 0.1,
@@ -563,7 +563,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 72165.7,
+   "last_beat_age_s": 72655.0,
    "expected_interval_s": 86400,
    "beats_24h": 3,
    "expected_24h": 1.0,
@@ -574,7 +574,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": -14.3,
+   "last_beat_age_s": 27.0,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2517,6 +2517,159 @@
  "changes": {
   "commits": [
    {
+    "sha": "4370d980",
+    "at": "2026-11-18T13:08:21+00:00",
+    "author": "Claude",
+    "subject": "merge branch; drop false-positive Q-RULE items",
+    "pr": null,
+    "item": "Q-RULE",
+    "url": "https://github.com/ultrastable/ultrastable/commit/4370d980f734f951d58dfdf846b5f02b6345b08b"
+   },
+   {
+    "sha": "4203a7ba",
+    "at": "2026-11-18T13:08:00+00:00",
+    "author": "Claude",
+    "subject": "RULES-1: pages-live reads the deployed /api/freshness; audit gap filed",
+    "pr": null,
+    "item": "RULES-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/4203a7bafbbd10744b8f98d8768dae89110b6a22"
+   },
+   {
+    "sha": "42e4c5ce",
+    "at": "2026-11-18T14:04:46+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Merge main into RULES-1 branch",
+    "pr": null,
+    "item": "RULES-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/42e4c5ced52e7cda78ae38e85390d46558288598"
+   },
+   {
+    "sha": "f08d52a3",
+    "at": "2026-11-18T13:04:18+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/f08d52a3ef4e2e7d196bf5254f43a603c26e2a5a"
+   },
+   {
+    "sha": "9ae344a2",
+    "at": "2026-11-18T13:04:07+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/9ae344a2c8cd8afc0dbe43dce313810f928815ee"
+   },
+   {
+    "sha": "0c3ebfd7",
+    "at": "2026-11-18T13:03:39+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/0c3ebfd798985cac76fd6956010b46a0e3e0683b"
+   },
+   {
+    "sha": "8d5bc704",
+    "at": "2026-11-18T13:03:28+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/8d5bc70414a19b7ec720203c6429ee5e8a7e6489"
+   },
+   {
+    "sha": "8e3475a5",
+    "at": "2026-11-18T13:02:14+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/8e3475a5528f1802f99bd0782fa2aa6ef8cf3cbd"
+   },
+   {
+    "sha": "dd9863a2",
+    "at": "2026-11-18T13:01:55+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/dd9863a2b3793579c90ae484fa1b578c1f7e6648"
+   },
+   {
+    "sha": "4027d268",
+    "at": "2026-11-18T13:01:31+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/4027d268cb403cab1d3e4b1733b185afbb28ce19"
+   },
+   {
+    "sha": "0f360f07",
+    "at": "2026-11-18T13:01:12+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/0f360f07ee339405beea6f08ec79a0b1426f8e78"
+   },
+   {
+    "sha": "245c88c9",
+    "at": "2026-11-18T13:00:56+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/245c88c9042cd11efcfa35025728e0cc4b392046"
+   },
+   {
+    "sha": "1333bdbc",
+    "at": "2026-11-18T13:00:33+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/1333bdbc1a7049b5a74eaedb4301a5468a9a5934"
+   },
+   {
+    "sha": "57db837d",
+    "at": "2026-11-18T13:00:10+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/57db837d3e2a9f6b98ba1a43c848159d60ee770a"
+   },
+   {
+    "sha": "62a9c0c7",
+    "at": "2026-11-18T12:59:56+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/62a9c0c7f5a5e26380bfc2ebf01ce24d922b1c12"
+   },
+   {
+    "sha": "760625cb",
+    "at": "2026-11-18T12:59:30+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/760625cb9d8e40c4a6a326f47857871f3cf2ffc8"
+   },
+   {
+    "sha": "85aab4da",
+    "at": "2026-11-18T12:59:18+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/85aab4da7c173fc6e36af0be60d577521a24c50a"
+   },
+   {
     "sha": "a8ec8c39",
     "at": "2026-11-18T12:59:09+00:00",
     "author": "Claude",
@@ -2526,355 +2679,202 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/a8ec8c3920f1e16a55215c20a2d70a5b93564bc6"
    },
    {
-    "sha": "8e69b29a",
-    "at": "2026-11-18T12:44:41+00:00",
-    "author": "Claude",
-    "subject": "merge main",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/8e69b29a859241e7580c1452f4d48e5d5ca9838a"
-   },
-   {
-    "sha": "f1d891ce",
-    "at": "2026-11-18T12:44:38+00:00",
-    "author": "Claude",
-    "subject": "RULES-1: one registry maps every standing rule to a CI check and a runtime probe; the lane runs, files and fixes; status on the owner ops view",
-    "pr": null,
-    "item": "RULES-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/f1d891cea5771ff4b063966e25918b1ffa7121f6"
-   },
-   {
-    "sha": "72d4d29e",
-    "at": "2026-11-18T12:43:57+00:00",
+    "sha": "364b2fba",
+    "at": "2026-11-18T12:59:01+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/72d4d29ec171f42acd05c8ee2ed7cae857943bfb"
+    "url": "https://github.com/ultrastable/ultrastable/commit/364b2fba80c8c9ce2b013146191d4fa3b0425411"
    },
    {
-    "sha": "85ca7740",
-    "at": "2026-11-18T12:43:44+00:00",
+    "sha": "5a52f32b",
+    "at": "2026-11-18T12:58:46+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/85ca7740e2c92850aa5fed8c621c69aa5d5f1d6c"
+    "url": "https://github.com/ultrastable/ultrastable/commit/5a52f32b3971949e201bcb8abf078e7de094cb27"
    },
    {
-    "sha": "96e5e8c5",
-    "at": "2026-11-18T12:43:24+00:00",
+    "sha": "bcdd9681",
+    "at": "2026-11-18T12:58:31+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/96e5e8c5639728a2b53d6d7deec5a88e93f9a4d8"
+    "url": "https://github.com/ultrastable/ultrastable/commit/bcdd968125fbd977bdd5039d029f3577f654b831"
    },
    {
-    "sha": "26b9eae4",
-    "at": "2026-11-18T12:43:06+00:00",
+    "sha": "235850be",
+    "at": "2026-11-18T12:58:14+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/26b9eae4cdc7c7ac717e5fc59e257202e7332d87"
+    "url": "https://github.com/ultrastable/ultrastable/commit/235850bede3cc0e8b27d758caf6f3d112db966cc"
    },
    {
-    "sha": "4ed2e6cf",
-    "at": "2026-11-18T12:42:39+00:00",
+    "sha": "c07da5ac",
+    "at": "2026-11-18T12:57:56+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/4ed2e6cfe5b74cb36518da8a93cb0388b1806512"
+    "url": "https://github.com/ultrastable/ultrastable/commit/c07da5ac66160ce9251a35cc69f8f6bb54ae6e81"
    },
    {
-    "sha": "5bebf104",
-    "at": "2026-11-18T12:42:20+00:00",
+    "sha": "2fedbf04",
+    "at": "2026-11-18T12:57:37+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/5bebf104b308736d6dfed7d03818a37fbe9e8bd2"
+    "url": "https://github.com/ultrastable/ultrastable/commit/2fedbf049afebf86f65d5033b2e0df4f96c60436"
    },
    {
-    "sha": "fc4148e4",
-    "at": "2026-11-18T12:41:59+00:00",
+    "sha": "1f427556",
+    "at": "2026-11-18T12:57:22+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/fc4148e4d5327b7f694db82aab656f4e8990ce39"
+    "url": "https://github.com/ultrastable/ultrastable/commit/1f42755630d111c45856396c230acd131146591d"
    },
    {
-    "sha": "6a71a9dc",
-    "at": "2026-11-18T12:41:45+00:00",
+    "sha": "c5b68757",
+    "at": "2026-11-18T12:57:01+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/6a71a9dc1e2848e39a7cba9a0bfa04ea65cb5d8a"
+    "url": "https://github.com/ultrastable/ultrastable/commit/c5b68757b6240a70adc3b39ca8262778c957fe0d"
    },
    {
-    "sha": "dbea1f35",
-    "at": "2026-11-18T12:40:35+00:00",
+    "sha": "e3b9a0f6",
+    "at": "2026-11-18T12:56:40+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/dbea1f352025ab5ae1d791a6fd1ee501a66f5886"
+    "url": "https://github.com/ultrastable/ultrastable/commit/e3b9a0f60dc286063c06d0b733c8f82c5ebb2158"
    },
    {
-    "sha": "96cf2ea7",
-    "at": "2026-11-18T12:40:15+00:00",
+    "sha": "580b2837",
+    "at": "2026-11-18T12:56:27+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/96cf2ea769eeaaee597831fc062872fd850b98d9"
+    "url": "https://github.com/ultrastable/ultrastable/commit/580b2837a6c975f59635b02fd96ff565bba7c5b7"
    },
    {
-    "sha": "95ff5a91",
-    "at": "2026-11-18T12:39:51+00:00",
+    "sha": "ceace475",
+    "at": "2026-11-18T12:56:08+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/95ff5a915386ce7fbbfc38fccabe5e1ceedf23d5"
+    "url": "https://github.com/ultrastable/ultrastable/commit/ceace4750f836339c9d6f8122fc72a5b0dd952fa"
    },
    {
-    "sha": "f2277695",
-    "at": "2026-11-18T12:39:36+00:00",
+    "sha": "f173e9d3",
+    "at": "2026-11-18T12:55:52+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/f22776959ed7f1deaa559df608e05e44b065e778"
+    "url": "https://github.com/ultrastable/ultrastable/commit/f173e9d3e4099c54016d496c019e5f378d4f4222"
    },
    {
-    "sha": "9b109af5",
-    "at": "2026-11-18T12:39:03+00:00",
+    "sha": "e0b08bbe",
+    "at": "2026-11-18T12:55:27+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/9b109af5b66b61cccd247e713687e89551bf18c7"
+    "url": "https://github.com/ultrastable/ultrastable/commit/e0b08bbeb72cf00e87f1887df54e15185efdc8b1"
    },
    {
-    "sha": "2faadfd9",
-    "at": "2026-11-18T12:38:50+00:00",
+    "sha": "1acf786f",
+    "at": "2026-11-18T12:55:12+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/2faadfd931f14ea940855f3949d9521a39aa965b"
+    "url": "https://github.com/ultrastable/ultrastable/commit/1acf786ff2579df3b16cc5f747ef6fb8c06c6eec"
    },
    {
-    "sha": "332fd40c",
-    "at": "2026-11-18T12:38:18+00:00",
+    "sha": "f8a61bd9",
+    "at": "2026-11-18T12:54:39+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/332fd40cf50a8dcea6c2d6d6e079a2a0fc40b1ad"
+    "url": "https://github.com/ultrastable/ultrastable/commit/f8a61bd9c50833647f8b84410aef23f212e0e573"
    },
    {
-    "sha": "a29d1458",
-    "at": "2026-11-18T12:38:00+00:00",
+    "sha": "14a1aafe",
+    "at": "2026-11-18T12:54:19+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/a29d145886265423066e60d7aeb8a203f9a1c215"
+    "url": "https://github.com/ultrastable/ultrastable/commit/14a1aafe3509cd35909ce6494433feda2c04f7ef"
    },
    {
-    "sha": "c152febe",
-    "at": "2026-11-18T12:37:30+00:00",
+    "sha": "49fed562",
+    "at": "2026-11-18T12:53:45+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/c152febe0a5e81738db9b40e2d2d1cdabf332b77"
+    "url": "https://github.com/ultrastable/ultrastable/commit/49fed56293e65314b09af7e29ea72726e881877e"
    },
    {
-    "sha": "ac4dab90",
-    "at": "2026-11-18T12:37:18+00:00",
+    "sha": "9c63eb93",
+    "at": "2026-11-18T12:53:34+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/ac4dab900e54056006f5140c2eca63114bcc5689"
+    "url": "https://github.com/ultrastable/ultrastable/commit/9c63eb933ec1971b75caa78ea422fae133adf2db"
    },
    {
-    "sha": "de7e0061",
-    "at": "2026-11-18T12:36:39+00:00",
+    "sha": "3e1d9baa",
+    "at": "2026-11-18T12:52:26+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/de7e0061064e27093d154723c339d427e3427034"
+    "url": "https://github.com/ultrastable/ultrastable/commit/3e1d9baa366e1c0cd539256668c162d73fd51b34"
    },
    {
-    "sha": "afea2067",
-    "at": "2026-11-18T12:36:26+00:00",
+    "sha": "cef20905",
+    "at": "2026-11-18T12:52:10+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/afea2067a4ca54f228bf54c111f4f1df47cee160"
+    "url": "https://github.com/ultrastable/ultrastable/commit/cef209052d2a9f9c8fd3a9119991747cc4394c32"
    },
    {
-    "sha": "3ba853d5",
-    "at": "2026-11-18T12:35:14+00:00",
+    "sha": "21f9ec73",
+    "at": "2026-11-18T12:51:43+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/3ba853d5ad32adf7ebda07b8273a649a61e392cd"
+    "url": "https://github.com/ultrastable/ultrastable/commit/21f9ec73aace4d40f1f713795eff7edf62919eac"
    },
    {
-    "sha": "e33ed90b",
-    "at": "2026-11-18T12:34:54+00:00",
+    "sha": "ffa2c687",
+    "at": "2026-11-18T12:51:31+00:00",
     "author": "ultrastable-2833a0[bot]",
     "subject": "deploy-ultrastable: record live-verified deploy",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/e33ed90bf830fbfea6a0a72bf4ed658758c1fd70"
-   },
-   {
-    "sha": "357f1bc7",
-    "at": "2026-11-18T12:34:33+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/357f1bc767ef22a5378c03e2d19fcfe8c1fa95dc"
-   },
-   {
-    "sha": "8dfd732b",
-    "at": "2026-11-18T13:34:14+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "LIVE-FRESH-1: live changelog, freshness probe, mobile table fix (#631)",
-    "pr": 631,
-    "item": "LIVE-FRESH-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/8dfd732b036bbb54a9519b4a9f4f2bf0f5130f41"
-   },
-   {
-    "sha": "3bcb7665",
-    "at": "2026-11-18T12:26:28+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/3bcb7665236fa0bf87535ffb9a1c5bfe67afa37d"
-   },
-   {
-    "sha": "90306375",
-    "at": "2026-11-18T12:26:15+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "deploy-ultrastable: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/90306375b86cc259ba5a238b65385a26b3973938"
-   },
-   {
-    "sha": "465e0fc1",
-    "at": "2026-11-18T12:25:53+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/465e0fc1f20c41ea251963d10d9a9138d0f053c2"
-   },
-   {
-    "sha": "94c711b7",
-    "at": "2026-11-18T12:25:40+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "deploy-ultrastable: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/94c711b722782acac68eaeeb78fe272478a79cc8"
-   },
-   {
-    "sha": "401a09a7",
-    "at": "2026-11-18T12:24:27+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/401a09a7d71f8898874afda073efef1b697e19a6"
-   },
-   {
-    "sha": "b0f25c62",
-    "at": "2026-11-18T12:24:16+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "deploy-ultrastable: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/b0f25c6255aca75921d021cc8cd93be2938106fd"
-   },
-   {
-    "sha": "4cc3675f",
-    "at": "2026-11-18T12:23:53+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/4cc3675f79be271a5204c65876a8c4c6614c4a0d"
-   },
-   {
-    "sha": "55866e6a",
-    "at": "2026-11-18T12:23:42+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "deploy-ultrastable: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/55866e6a71ca02db0c2fd9e8a3651946fb84fdfe"
-   },
-   {
-    "sha": "235423bf",
-    "at": "2026-11-18T12:23:20+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/235423bff23ac60b38ec8e0c3b265a6f5c7de2a6"
-   },
-   {
-    "sha": "21dc9384",
-    "at": "2026-11-18T12:23:07+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "deploy-ultrastable: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/21dc9384f93b81f4f99eaf38a90ab790d1b69729"
-   },
-   {
-    "sha": "177cc62b",
-    "at": "2026-11-18T12:22:56+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/177cc62bcd7edfc28047187bc9705f12eed5f295"
-   },
-   {
-    "sha": "caa93eac",
-    "at": "2026-11-18T12:22:34+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "deploy-ultrastable: record live-verified deploy",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/caa93eac302cb05e53f9b16550f382118b03bf95"
-   },
-   {
-    "sha": "b8cc9d81",
-    "at": "2026-11-18T12:21:21+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1)",
-    "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/b8cc9d810311a1d4ddda5285c6e70d69872fb62f"
+    "url": "https://github.com/ultrastable/ultrastable/commit/ffa2c6875f26468eb7f62e8de1b1cb2957bffce3"
    }
   ],
   "pull_requests": []
