@@ -2315,6 +2315,15 @@
    "body": "The worker-native executor merged a change with a stray character that made site/webbotauth.js a syntax error, turning deploy-site red. Restored in #616. Executor output must pass node --check on every touched JS file before the lane merges.",
    "probe": "file:site/webbotauth.js",
    "session": "session_0156nqDsv1wrVeZRDrJu8sFu"
+  },
+  {
+   "id": "lesson-2026-11-18-pace-2-gauge-keys-do-not-make-a-loop-run-non-idle",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "PACE-2: gauge keys do not make a loop run non-idle",
+   "body": "Measured on the live D1 at 2026-11-18 01:55 UTC: the sweeper returns open_loop_age_hours (a reading) on every run, and counting it as work kept the sweeper at stride 1 after PACE-2 went live. isIdle now ignores config.pace.gauges and strideFor skips deferred beats; 315 worker tests pass, including the sweeper's real result.",
+   "probe": "grep:seed/worker/src/pace.js::gauges",
+   "session": "session_0156nqDu3CafCLkNfgmXspHr"
   }
  ]
 }
