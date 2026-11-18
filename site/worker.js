@@ -854,7 +854,7 @@ const handler = {
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
     if (u.pathname.replace(/\/$/, "") === "/proof") return Response.redirect("https://" + CANON + "/live", 301); // PROOF-OWN-1: /proof served the earlier testbed's records; deprecated
-    if (u.pathname === "/live" || u.pathname === "/api/live" || u.pathname === "/api/freshness") return liveResponse(u, request, env, shell, HTML);
+    if (u.pathname === "/live" || u.pathname === "/api/live" || u.pathname === "/api/freshness") return liveResponse(u, request, env, shell, HTML, DASH.asof_at);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/pilot") return pilotApplication(request, env);
     if (request.method === "POST" && u.pathname === "/api/answer") return takeAnswer(request, env, ctx);

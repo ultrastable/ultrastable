@@ -88,7 +88,7 @@
    ],
    "gaps": [
     {
-     "what": "only /live reports its freshness; other generated pages are not yet registered in /api/freshness",
+     "what": "Practical Solutions *.gen.js bundles do not yet report freshness",
      "item": "Q-RULE-gap-pages-audit"
     }
    ]
