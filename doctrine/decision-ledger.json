@@ -2179,6 +2179,14 @@
    "title": "GREEN-GUARD-1: clean is not green; lane rebase and regen push races; foreign CI items",
    "body": "Main has no required checks, so mergeable_state clean let #595 and #596 merge with a failed or absent full checks run. The tick lane and sweeper now ask greenguard.notGreen, scripts/lane.sh requires a green checks run, the lane aborts a wedged rebase and redoes adoption on fresh main, regen-generated retries its push on the moving main, and the executor no longer takes Q-CIFAIL items about other repositories. Archived repos spec, workers and license had their scheduled workflows disabled.",
    "probe": "file:seed/worker/src/greenguard.js"
+  },
+  {
+   "id": "lesson-2026-11-18-main-was-red-after-hosts-1-603-surface-retention-and-silent-",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "Main was red after HOSTS-1 (#603): surface, retention and silent-catch checks",
+   "body": "Measured: node --test test/plan-limits.test.mjs seed/worker/test/retention.test.js seed/worker/test/hosts.test.js, 22 pass after the fix; before it, plan-limits failed 2 and the standards generator exited 1. The cause was a merge path that accepted clean without a green full checks run; GREEN-GUARD-1 closes it.",
+   "probe": "file:seed/standards/surfaces.json"
   }
  ]
 }
