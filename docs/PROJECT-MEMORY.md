@@ -437,4 +437,8 @@ Session: session_0156nqDuHvMTexrWLrHHsEaw
 The tick Worker is deployed by `tickConfigSource` in `seed/worker/src/handoff.js`, a second generator beside `deploy/deploy-workers.mjs`. It omitted `goals` and `pace`, so the deployed tick had no goal tree to seed. Both generators now carry them; a test asserts the generated config has `goals` and `pace`. Any new config key goes in both generators in the same change.
 Session: session_0156nqDuHvMTexrWLrHHsEaw
 
+## 2026-11-18: Goals control pass runs hourly even in lean mode
+The goal tree seeded once the server-side config carried it, but a cost breach made every tick lean and the control step never ran, so no knob could move. The control pass now runs on the first tick of each hour in lean and degraded mode.
+Session: session_0156nqDuHvMTexrWLrHHsEaw
+
 Commit trailers in this branch cite Session: session_0156nqJbrGYaSnypwjTPL2bes and Session: session_0156nqDJbrGYaSnypwjTPL2bes (two spellings of one session; both cited so the write-back check resolves).
