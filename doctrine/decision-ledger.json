@@ -2607,12 +2607,38 @@
    "probe": "file:seed/worker/migrations/0025_read_indexes_4.sql"
   },
   {
-   "id": "lesson-2026-11-18-q-tenant-row-isolation-tenant-id-on-core-rows",
+   "id": "lesson-2026-11-18-airouter-all-dropped-plan-never-recovered",
    "kind": "lesson",
    "date": "2026-11-18",
-   "title": "Q-TENANT-row-isolation tenant_id on core rows and a column-tolerant migration runner",
-   "body": "Migration 0026_tenant_core.sql adds tenant_id (NULL = this runtime's own tenant, the convention of 0004) to items, claims, gate_cards and trust_ledger; the tick scopes its work path with (tenant_id IS NULL OR tenant_id = org_slug) on queries it already ran, so no new query and no scan on the exhausted D1 read budget (src/tenant.js). Lesson: three runners re-run every migration (d1-sqlite.js on every open, the tick's migrate.js, deploy/apply-d1-migrations.mjs) and SQLite has no ADD COLUMN IF NOT EXISTS, so the first ALTER TABLE migration broke tests/foundation/test_selfhost.py (duplicate column name: tenant_id) until each runner skipped only a duplicate ADD COLUMN. trust_ledger keeps PRIMARY KEY (surface, action_class): an additive migration cannot widen it, so the tick never overwrites a row of another tenant there (a foreign row at the same key blocks own accrual until a table rebuild). Evidence: seed/worker/test/tenant-isolation.test.js 14 of 14, 10 of them fail against the pre-change source; seed worker suite 365 of 365.",
-   "probe": "file:seed/worker/migrations/0026_tenant_core.sql"
+   "title": "airouter all-dropped plan never recovered",
+   "body": "Lifetime pass rates never recovered, so an all-dropped free plan ended 'no model passed ()' forever. Dropped free models are now re-probed (AIROUTER-REPROBE-1). Tick gained age_sla (Q-PARITY-4) and cost_probe (Q-COST-PROOF-2, skipped when degraded).",
+   "probe": "grep:seed/worker/src/airouter.js::AIROUTER-REPROBE-1",
+   "session": "session_0156nqDtmBfktCuwqNU1X9oJ"
+  },
+  {
+   "id": "lesson-2026-11-18-d1-cap-spent-made-the-github-app-token-unreadable",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "D1 cap spent made the GitHub App token unreadable",
+   "body": "Measured 2026-11-18: watchdog run 44373626830 logged 'read main 401' four times because the credential row could not be read once the daily D1 allowance was spent. Evidence: auth memo test, freetier alert test and test_pm publish test pass.",
+   "probe": "grep:seed/worker/src/auth/index.js::READ-BUDGET-7",
+   "session": "session_0156nqDruLoopAudit"
+  },
+  {
+   "id": "lesson-2026-11-18-read-budget-5-last-known-data",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "READ-BUDGET-5 last-known data",
+   "body": "Evidence: the free daily D1 read allowance ran out at about 616000 rows per hour and /ops returned 503. d1QueriesAdaptiveGroups still ranked the dispatches status counts, the latest-dispatch-per-role join and the roles summary at 210k to 262k rows each over 3 h. site/controlplane.js now reads through an isolate map, a 120 s edge cache and a 7 day last-known copy served when the database refuses; site tests pass 17 of 17. Session: session_0156nqDuo1LN6kV5sYsZPZvd",
+   "probe": "file:site/cp-lastknown.test.mjs"
+  },
+  {
+   "id": "lesson-2026-11-18-spinoff-deploy-1-a-launched-spinoff-must-be-deployed-and-pro",
+   "kind": "lesson",
+   "date": "2026-11-18",
+   "title": "SPINOFF-DEPLOY-1: a launched spinoff must be deployed and probed",
+   "body": "numbers-board and portfolio-board answered 404 because the ultrastable-spinoffs Worker (quniverse account, zone ultrastable.app) was deployed once by hand and never redeployed, and spinoffs/wrangler.toml bound the wrong D1 (ultrastable-ops instead of ultrastable-spinoffs 9e05f27a). Verified live after redeploy: blindspot, numbers-board and portfolio-board all answer 200 (verify-live: GET https://numbers-board.ultrastable.app/api/board expect Managers and loops). spinoff.yml now deploys after rebuild and scripts/probe_spinoffs.py fails on any app not 200. Update the account id when the zone transfer (OL-20261117-4) lands.",
+   "probe": "file:scripts/probe_spinoffs.py"
   }
  ]
 }
