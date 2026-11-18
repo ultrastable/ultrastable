@@ -2453,6 +2453,15 @@
    "title": "CIWATCH-3: one open ciwatch items PR at a time",
    "body": "ciwatch opened a new agent/ciwatch-<run> PR on every run because the Q-CIFAIL file stays absent from main until the first PR merges; 7 identical PRs piled up. The step now skips when an agent/ciwatch-* PR is open. Root cause of the red item was an unregistered tenant file (practical-solutions#117).",
    "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-3"
+  },
+  {
+   "id": "decision-2026-11-18-public-benefit-is-scored-in-code-benefit-1",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "Public benefit is scored in code (BENEFIT-1)",
+   "body": "region x need x use over cost; US-only apps dropped for global sources",
+   "probe": "grep:doctrine/spinoff-ideas.json::\"benefit\"",
+   "session": "session_0156nqJbrGYaSnypwjTPL2bes"
   }
  ]
 }

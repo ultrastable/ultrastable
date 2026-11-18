@@ -6,18 +6,13 @@
 // from a first look). No address, name, IP or readable domain is kept. Metrics are public at /api/metrics.
 import bundle from "./registry.js";
 import { userError } from "../seed/worker/src/errors.js";  // USER-BACKEND-1
+import { handleLive, cleanDomain } from "./live.js";  // SPINOFF-GOOD-1: one cleanDomain for every archetype
+export { cleanDomain };
 
 const J = (o, s = 200, h = {}) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json; charset=utf-8", "access-control-allow-origin": "*", ...h } });
 const sha = async s => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)))].map(b => b.toString(16).padStart(2, "0")).join("");
 const INDEXNOW_KEY = "ultrastable-indexnow-7f3a9c2e4b1d";  // public by design (IndexNow proves ownership by serving it); same key as site/promote.js
 const UA = "ultrastable-blindspot (+https://blindspot.ultrastable.app; reads public pages only)";
-
-export function cleanDomain(raw) {
-  let d = String(raw || "").trim().toLowerCase().replace(/^https?:\/\//, "").split(/[\/?#]/)[0];
-  if (!/^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}$/.test(d)) return null;
-  if (/^(localhost|.*\.(local|internal|localdomain|lan|home|corp|test|invalid|example))$/.test(d)) return null;
-  return d;
-}
 
 async function get(f, url, opt = {}) {
   const c = new AbortController(), t = setTimeout(() => c.abort(), 6000);
@@ -124,6 +119,7 @@ export async function handle(request, env, f = fetch) {
   const app = bundle.apps[sub];
   if (!app) return new Response("Not found", { status: 404 });
   if (u.pathname === "/" + INDEXNOW_KEY + ".txt") return new Response(INDEXNOW_KEY, { headers: { "content-type": "text/plain; charset=utf-8" } });
+  if (app.archetype === "live-feed" || app.archetype === "live-lookup") return handleLive(sub, app, u, f, env);
   if (app.archetype === "status-board") {
     const b = (bundle.boards || {})[sub] || { source: "", rows: [] };
     if (u.pathname === "/api/metrics") return J({ app: sub, kind: "board", board_age_hours: boardAge(), error_share: 0 }, 200, { "cache-control": "public, max-age=300" });

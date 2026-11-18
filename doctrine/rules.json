@@ -84,6 +84,10 @@
     {
      "id": "pages-live",
      "cmd": "python3 -m foundation rules --probe pages-live"
+    },
+    {
+     "id": "spinoff-live",
+     "cmd": "python3 -m foundation rules --probe spinoff-live"
     }
    ],
    "gaps": [
