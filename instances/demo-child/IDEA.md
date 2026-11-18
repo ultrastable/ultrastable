@@ -5,7 +5,7 @@ slug: demo-child
 owner: Rowan
 owner_contact: set-in-secret-store
 parent: ultrastable
-parent_health_url: https://ultrastable-ultrastable.q08.workers.dev/health
+parent_health_url: https://ultrastable-tick.ultrastable.workers.dev/health
 workers_dev: true
 public_health_only: 1
 ---

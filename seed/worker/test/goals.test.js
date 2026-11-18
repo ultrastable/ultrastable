@@ -86,3 +86,13 @@ test('a tenant feed is pulled, registered under its namespace and its readings r
   const filed = []; await goalsStep(db, { now: t0 + 2 * H, fetch: ok }, { goals: [], knobs: [], tenant_feeds: [{ tenant: 'ps', url: 'u' }] }, { builtins, ensureItem: async (_d, it) => { filed.push(it); return true; } });
   assert.equal(filed.length, 0);
 });
+
+import { runTick } from '../src/tick.js';
+test('a degraded free tier never leaves the goal tree unseeded (the step is skipped, the seed is not)', async () => {
+  const db = makeDb();
+  const noon = Date.parse('2026-11-18T12:30:00Z');  // minute 30: the hourly control pass does not run
+  await db.prepare("INSERT INTO free_tier_samples (at, resource, used_today) VALUES (?,?,?)").bind(new Date(noon - 600e3).toISOString().replace('T', ' ').slice(0, 19), 'd1_rows_read', 2_600_000).run();
+  await runTick(db, { config: { org_slug: 't', policy: {}, goals: cfg }, now: noon });
+  assert.equal((await db.prepare('SELECT COUNT(*) n FROM goals').first()).n, 1);
+  assert.equal((await db.prepare('SELECT COUNT(*) n FROM goal_knobs').first()).n, 1);
+});

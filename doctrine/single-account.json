@@ -1,0 +1,33 @@
+{
+  "_doc": "SINGLE-ACCOUNT-1 (Rowan, 2026-11-18): Ultrastable runs only in the Cloudflare account `ultrastable`. No file in this repository may name the retired quniverse account or one of its Ultrastable assets, except the listed records of the move itself. Checked by `python3 -m foundation singleaccount --check` (checks.yml) and the rule `single-account` in doctrine/rules.json. Never weaken a pattern or widen `allow` to pass; move the reference instead.",
+  "version": "1.0.0",
+  "required_account": {"name": "ultrastable", "id": "81e3a4efb4eb66e613529b87682911bb"},
+  "forbidden": [
+    {"id": "quniverse-account-id", "pattern": "edb167b78c9fb901ea5bca3ce58ccc4b"},
+    {"id": "quniverse-workers-subdomain", "pattern": "q08\\.workers\\.dev"},
+    {"id": "quniverse-d1-org", "pattern": "7468898a-b515-495f-9910-e91cb80f5810"},
+    {"id": "quniverse-d1-ops", "pattern": "1d5ff0a9-04b6-40e4-b9c1-bc9820b789cd"},
+    {"id": "quniverse-d1-tenant0", "pattern": "a0227f92-04a7-4640-ae39-bb6a47fc9488"},
+    {"id": "quniverse-d1-demo-child", "pattern": "22acdb27-a988-4c1e-b4a1-5ede7cee6fc1"},
+    {"id": "quniverse-kv-assets", "pattern": "c6ca64dddec5489cbcee896113949eba"},
+    {"id": "quniverse-kv-private", "pattern": "f41303a09abc473faf41f9685ebb1a72"}
+  ],
+  "skip_dirs": [".git", "node_modules"],
+  "allow": [
+    {"path": "doctrine/single-account.json", "reason": "this rule names the patterns"},
+    {"path": "foundation/singleaccount.py", "reason": "this rule's code"},
+    {"path": "tests/foundation/test_singleaccount.py", "reason": "this rule's test fixtures"},
+    {"path": "deploy/cloudflare-accounts.json", "reason": "the retired-account list the deploy scripts refuse"},
+    {"path": "deploy/transfer/*", "reason": "the move's own plan and inventory (source ids)"},
+    {"path": "scripts/cf_account.py", "reason": "the move tool"},
+    {"path": "tests/foundation/test_cf_account.py", "reason": "move tool fixtures"},
+    {"path": "workers/*", "reason": "vendored core tests carry the id as a separation-guard fixture"},
+    {"path": "platform/cloudflare-reference/*", "reason": "QNFO reference code kept as a historical copy; QNFO-only"},
+    {"path": "instances/ultrastable/system/ultrastable-ultrastable.wrangler.jsonc", "reason": "retired tenant-0 worker config, kept as the backup record"},
+    {"path": "ip/*", "reason": "implementation-history record"},
+    {"path": "docs/bootstrapping/*", "reason": "dated bootstrap log"},
+    {"path": "docs/issues/*", "reason": "closed-item history"},
+    {"path": "ops/cost.jsonl", "reason": "append-only cost ledger"},
+    {"path": "site/dashboard-data.js", "reason": "generated from the above by regen_generated.py"}
+  ]
+}

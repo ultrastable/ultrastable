@@ -12,7 +12,7 @@ An application is a statement made in your name; each kit is answered field by f
 
 ## Move the four ultrastable domains to the Ultrastable account
 ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is off on all four (expiry 2027-11-10). If you do nothing: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.
-**[Open the registrar domains (available from 2026-11-20)](https://dash.cloudflare.com/?to=/edb167b78c9fb901ea5bca3ce58ccc4b/registrar/domains)**
+**[Open the registrar domains (available from 2026-11-20)](https://dash.cloudflare.com/?to=/:account/registrar/domains)**
 
 ## Upload the org avatar and pin repos
 GitHub has no API for these. If you do nothing: Generated identicon, no pins.

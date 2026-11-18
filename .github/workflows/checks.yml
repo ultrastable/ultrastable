@@ -99,6 +99,7 @@ jobs:
           python3 -m foundation mergeaudit --check
           python3 -m foundation ciwatch --check
           python3 -m foundation serverside --check
+          python3 -m foundation singleaccount --check
           python3 -m foundation resilience --check
           python3 -m foundation clock --check
           python3 -m foundation userbackend --check

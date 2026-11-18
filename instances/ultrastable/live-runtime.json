@@ -1,33 +1,18 @@
 {
- "_doc": "LIVE-1: the deployed runtimes of tenant 0 (Ultrastable on itself) and its first child. Deployed with scripts/deploy_tenant.py from the seed. Read by scripts/build_dashboard.py, the /dashboard live feed and the failure audit. Public exposure is /health only (PUBLIC_HEALTH_ONLY=1); the backlog and agent surfaces stay private. D1 ids are identifiers, not secrets.",
- "deployed": "2026-11-12",
+ "_doc": "LIVE-1: the deployed runtimes of tenant 0 (Ultrastable on itself) and its first child. Deployed with scripts/deploy_tenant.py from the seed. Read by scripts/build_dashboard.py, the /dashboard live feed and the failure audit. Public exposure is /health only (PUBLIC_HEALTH_ONLY=1); the backlog and agent surfaces stay private. D1 ids are identifiers, not secrets. ACCOUNT-SPLIT-3 (2026-11-18): tenant 0 is the tick worker in the ultrastable account; the retired demo child is no longer listed.",
+ "deployed": "2026-11-18",
  "runtimes": [
   {
    "tenant": "ultrastable",
    "level": 0,
-   "worker": "ultrastable-ultrastable",
-   "health": "https://ultrastable-ultrastable.q08.workers.dev/health",
-   "d1": "ultrastable-ultrastable",
-   "d1_id": "a0227f92-04a7-4640-ae39-bb6a47fc9488",
+   "worker": "ultrastable-tick",
+   "health": "https://ultrastable-tick.ultrastable.workers.dev/health",
+   "d1": "ultrastable-org",
+   "d1_id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
    "cron": "*/10 * * * *",
    "idea": "instances/ultrastable/IDEA.md",
    "reads": [
-    "https://ultrastable.io/health",
-    "https://demo-child-ultrastable.q08.workers.dev/health"
-   ]
-  },
-  {
-   "tenant": "demo-child",
-   "level": 1,
-   "parent": "ultrastable",
-   "worker": "demo-child-ultrastable",
-   "health": "https://demo-child-ultrastable.q08.workers.dev/health",
-   "d1": "demo-child-ultrastable",
-   "d1_id": "22acdb27-a988-4c1e-b4a1-5ede7cee6fc1",
-   "cron": "*/10 * * * *",
-   "idea": "instances/demo-child/IDEA.md",
-   "reads": [
-    "https://ultrastable-ultrastable.q08.workers.dev/health"
+    "https://ultrastable.io/health"
    ]
   }
  ]

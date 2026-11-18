@@ -1,0 +1,11 @@
+{
+ "id": "OL-20261118-1",
+ "title": "OL-20261118-1: Remaining quniverse assets: zones, 39 KV keys, spinoffs, mail-relay, tenant-ps-edge/mail, R2 ultrastable-git",
+ "body": "**Owner:** operations\n**Trigger:** after 00:00 UTC daily and when the registrar lock ends 2026-11-20\n**Done check:** cmd:python3 -m foundation singleaccount --check\n**Status:** open\n\nSINGLE-ACCOUNT-1. Zones ultrastable.io/.app/.net/.org are registered with Cloudflare Registrar in quniverse (locked); ultrastable.net zone is staged pending in the ultrastable account (id 8e9333ac...) with DNS copied; the nameserver switch needs go-ahead. 39 KV keys wait on the free-plan write limit. R2 needs enabling in the ultrastable account dashboard. Workers ultrastable-spinoffs, ultrastable-mail-relay, tenant-ps-edge, tenant-ps-mail move after the zones. Nothing was deleted in quniverse.\n\nSession: session_0156nqDrx6Bz1Mk7tJdgfQxk\n",
+ "labels": [
+  "role:operations",
+  "open-loop"
+ ],
+ "milestone": "Now",
+ "workstream": "Open loops"
+}

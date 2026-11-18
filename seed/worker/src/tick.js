@@ -11,7 +11,7 @@ import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
 import { selfAuditStep, loopBreak } from './selfaudit.js';
 import { unknownsStep } from './unknowns.js';
-import { goalsStep } from './goals.js';  // GOALS-1
+import { goalsStep, seedGoals } from './goals.js';  // GOALS-1
 import { migrateStep } from './migrate.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
@@ -412,6 +412,13 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
     try { await run(db, `INSERT INTO org (key, value) VALUES ('cost_breach', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`, JSON.stringify({ at: startedIso, until: iso(new Date(now + 3600e3)), breaches: b })); } catch (e) { ctx.errors.push(`cost_breach record: ${String(e && e.message).slice(0, 120)}`); }
   }
   for (const name of STEP_ORDER) {
+    if (name === 'goals' && (lean || degrade) && ctx.config && ctx.config.goals) {  // GOALS-1: a skipped step must never leave the goal tree empty (it was never seeded under degrade), and control still runs once an hour
+      try {
+        const have = await first(db, `SELECT COUNT(*) AS n FROM goals`).then(r => r.n).catch(() => 0);
+        if (!have) { const n = await seedGoals(db, ctx.config.goals, { now }); ctx.notes.push(`goals: seeded ${n} rows while the free tier is ${lean ? 'lean' : 'degraded'}`); }
+      } catch (e) { ctx.errors.push(`goals seed: ${String(e && e.message).slice(0, 120)}`); }
+      if (!lean && new Date(now).getUTCMinutes() < 10) { try { await STEPS[name](db, ctx); } catch (e) { ctx.errors.push(`goals: ${String(e && e.message).slice(0, 160)}`); } completed++; continue; }  // one tick in six: the control step at a sixth of the reads
+    }
     if ((lean && !COST_ESSENTIAL_STEPS.includes(name)) || (degrade && FREE_TIER_WIDE_STEPS.includes(name))) { completed++; continue; }
     try {
       await STEPS[name](db, ctx);
