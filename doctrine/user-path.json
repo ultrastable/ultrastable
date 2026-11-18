@@ -128,7 +128,7 @@
           "why": "It shows what is running and what it did today.",
           "yes": {
             "label": "Open my live page",
-            "url": "https://ultrastable.io/proof",
+            "url": "https://ultrastable.io/live",
             "then": "Come back here if you want to change something."
           },
           "confirm": "Did it look right?"

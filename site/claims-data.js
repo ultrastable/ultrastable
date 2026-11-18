@@ -249,7 +249,7 @@ export default {
   {
    "claim": "Every public page the worker serves is in the sitemap and the daily IndexNow submission.",
    "detail": "",
-   "how": "20 items in site/worker.js each on the surface or exempt",
+   "how": "19 items in site/worker.js each on the surface or exempt",
    "id": "inv-pages-in-sitemap",
    "kind": "inventory",
    "pass": true,

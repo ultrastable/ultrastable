@@ -121,7 +121,7 @@
     },
     {
      "label": "Live proof",
-     "href": "/proof"
+     "href": "/live"
     },
     {
      "label": "Engineers lane",
@@ -164,7 +164,7 @@
     },
     {
      "label": "Live proof",
-     "href": "/proof"
+     "href": "/live"
     },
     {
      "label": "Honest gaps",
@@ -240,7 +240,7 @@
    "links": [
     {
      "label": "Live proof",
-     "href": "/proof"
+     "href": "/live"
     }
    ],
    "domain": "io"
