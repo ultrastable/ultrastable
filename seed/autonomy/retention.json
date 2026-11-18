@@ -12,7 +12,13 @@
       "reason": "REACH-1: one row per post and channel; the publisher reads this week, the reach loop reads a year",
       "archive": true
     },
-    "_migrations": {
+    "host_events": {
+   "column": "at",
+   "unit": "ms",
+   "keep_days": 30,
+   "reason": "HOSTS-1: one row per hosting action or inbound hosting event; deploy status and stall detection read the last day, so 30 days is ample"
+  },
+  "_migrations": {
       "keep": "state",
       "reason": "which migrations have been applied; a record of schema state, never history to prune"
     },

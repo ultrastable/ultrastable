@@ -55,7 +55,7 @@ export function createHosts(list, { db = null, now = Date.now } = {}) {
 }
 async function record(db, now, e) {
   if (!db) return;
-  try { await db.prepare('INSERT INTO host_events (at, host, kind, worker, repo, sha, ok, detail) VALUES (?,?,?,?,?,?,?,?)').bind(now(), e.host, e.kind, e.worker || null, e.repo || null, e.sha || null, e.ok === false ? 0 : 1, String(e.detail || '').slice(0, 300)).run(); } catch (err) { console.error('host_events', err && err.message); }
+  try { await db.prepare('INSERT INTO host_events (at, host, kind, worker, repo, sha, ok, detail) VALUES (?,?,?,?,?,?,?,?)').bind(now(), e.host, e.kind, e.worker || null, e.repo || null, e.sha || null, e.ok === false ? 0 : 1, String(e.detail || '').slice(0, 300)).run(); } catch (err) { console.error('host_events', err && err.message); /* allow-silent: recording a host event must never fail the deploy or webhook it describes; the console line is the trace */ }
 }
 export const recordHostEvent = record;
 

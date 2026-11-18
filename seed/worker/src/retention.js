@@ -27,7 +27,7 @@ export async function pruneAll(db, { rules, now = Date.now(), archive = null } =
   for (const [table, r] of Object.entries(rules.tables)) {
     if (!r || !r.keep_days || !r.column) continue;
     if (!SAFE.test(table) || !SAFE.test(r.column)) { out.push({ table, error: 'unsafe name' }); continue; }
-    const limit = cutoff(Number(r.keep_days), now);
+    const limit = r.unit === 'ms' ? now - Number(r.keep_days) * 864e5 : cutoff(Number(r.keep_days), now);  // unit 'ms': integer-millisecond time column (host_events)
     let deleted = 0, error = null;
     try {
       if (r.archive && archive) {
