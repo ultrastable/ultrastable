@@ -198,3 +198,16 @@ test('an hourly watchdog is judged against its own cadence: ticking, no MISSED-w
   assert.equal(await db.prepare(`SELECT 1 AS x FROM items WHERE id='MISSED-watchdog'`).first(), null);
   assert.equal(last.completed, STEP_ORDER.length);
 });
+
+test('PACE-1: beats_24h and beats_productive_share_24h read the loop clock; idle runs do not count as progress', async () => {
+  const { METRICS } = await import('../src/tick.js');
+  const db = makeDb(); let t = T0;
+  await beat(db, 'a', async () => ({ status: 'ok', n: 2 }), { now: () => t });
+  await beat(db, 'b', async () => ({}), { now: () => t });
+  await beat(db, 'c', async () => { throw new Error('x'); }, { now: () => t });
+  await beat(db, 'd', async () => ({ done: ['x'] }), { now: () => t });
+  assert.equal(await METRICS.beats_24h(db, T0 + 60e3), 4);
+  assert.equal(await METRICS.beats_productive_share_24h(db, T0 + 60e3), 0.5);
+  const empty = makeDb(); empty.raw.exec('DROP TABLE loop_beats');
+  assert.equal(await METRICS.beats_24h(empty, T0), 0);
+});

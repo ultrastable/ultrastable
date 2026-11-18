@@ -190,6 +190,8 @@ class Boot:
          "reviewer", "Nothing was verified by a second path. Check that the reviewer role is dispatched and records outcomes."),
         ("M-no-drops", "silent drops in the last 7 days", "silent_drops_7d", "<=", 0, 0,
          "portfolio-manager", "An item left the active set with no disposition. Find it and give it one."),
+        ("M-pace", "share of loop runs in 24 hours that returned work (idle runs are not progress)", "beats_productive_share_24h", ">=", 0.05, 24,
+         "operations", "Most loop runs return nothing. Lengthen the cadence of idle loops and shorten productive ones (core/pace plan)."),
         ("M-instrumented", "objectives without a probe-backed target metric", "objectives_without_probe", "<=", 0, 1,
          "product-manager", "Ask what the owner would check to know this objective is being met, then insert a target metric with a builtin, sql or http probe."),
     )
