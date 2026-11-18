@@ -2479,6 +2479,15 @@
    "body": "DECISIONS-1 CI failed twice: /api/decisions was not registered in seed/standards/surfaces.json (standards --apply fails regen) and the page used a hard-coded accent hex. Both are now checked locally with standards --check and design --lint before pushing.",
    "probe": "grep:seed/standards/surfaces.json::/api/decisions",
    "session": "session_0156nqDtg2N1X7K61HZReweE"
+  },
+  {
+   "id": "decision-2026-11-18-goals-1-the-system-sets-goals-and-turns-knobs",
+   "kind": "decision",
+   "date": "2026-11-18",
+   "title": "GOALS-1: the system sets goals and turns knobs",
+   "body": "Goal hierarchy in seed/autonomy/goals.json; tick step goals measures, moves one knob per cooldown, reviews after review_h and reverts if the goal did not move; every step is an audit-chain row. Tenants publish /goals.json and read knob values from /api/goals/knobs; no credential for core. Live at /goals.",
+   "probe": "grep:seed/worker/src/goals.js::GOALS-1",
+   "session": "https://claude.ai/code/session_0156nqDvJuuZ8Nf9hzFAcUxM"
   }
  ]
 }

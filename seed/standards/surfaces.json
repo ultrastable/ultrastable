@@ -461,6 +461,58 @@
       "discoverable": false,
       "description": "Worker-side decision points (AI router, free-tier governor): decisions in the last 7 days, scored, hit rate, trend (DECISIONS-1).",
       "reason": "internal feed read by the site worker over a service binding; the public page and API are /decisions and /api/decisions on the site"
+    },
+    {
+      "id": "goals",
+      "path": "/api/goals",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "GOALS-1: every goal (mission, objective, target) with value, target, trend, the knobs, recent knob changes and every loop with whether it closed.",
+      "reason": "internal feed read by the site worker over a service binding; the public page and API are /goals and /api/goals on the site"
+    },
+    {
+      "id": "goals-knobs",
+      "path": "/api/goals/knobs",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "GOALS-1: current knob values for one tenant (?tenant=); the tenant applies them in its own code.",
+      "reason": "tenant interface: read by tenant Workers, not an agent-facing surface"
+    },
+    {
+      "id": "goals-register",
+      "path": "/api/goals/register",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "owner",
+      "standards": [],
+      "discoverable": false,
+      "description": "GOALS-1: a tenant registers its goals and knobs (bearer).",
+      "reason": "tenant interface with bearer auth; not an agent-facing surface"
+    },
+    {
+      "id": "goals-report",
+      "path": "/api/goals/report",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "owner",
+      "standards": [],
+      "discoverable": false,
+      "description": "GOALS-1: a tenant reports readings for its goals (bearer).",
+      "reason": "tenant interface with bearer auth; not an agent-facing surface"
     }
   ]
 }
