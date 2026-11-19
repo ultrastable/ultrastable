@@ -143,6 +143,16 @@ class Sweep(unittest.TestCase):
         sh(self.w, "fetch", "-q", "origin", "refs/archive/codeconf"); sh(self.w, "push", "-q", "origin", "FETCH_HEAD:refs/heads/codeconf")  # the deletion is reversible
         self.assertIn(sha + "\trefs/heads/codeconf", ls())
 
+    def test_a_port_item_closes_once_main_holds_the_lines_its_branch_added(self):
+        body = "".join(f"def function_number_{i}(): return {i}\n" for i in range(30))
+        self.branch("landed", {"code.py": "x = 2\n", "feature.py": body}); self.branch("unique", {"code.py": "x = 5\n", "only_here.py": body})
+        self.advance({"code.py": "x = 3\n", "feature.py": body + "extra = 1\n"}); sh(self.w, "fetch", "-q", "origin")
+        self.assertEqual({p["name"]: p["action"] for p in B.scan(self.w)}, {"landed": "port", "unique": "port"})
+        ok, why = B.carried(self.w, "landed")
+        self.assertTrue(ok, why); self.assertIn("30 of the 31", why)
+        ok, why = B.carried(self.w, "unique")
+        self.assertFalse(ok, why); self.assertIn("main lacks 31", why); self.assertIn("only_here.py", why)
+
     def test_repo_policy_is_valid(self):
         self.assertEqual(B.check(ROOT), [])
 

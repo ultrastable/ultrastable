@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-agent-uiux-2026111814",
   "title": "PORT-BRANCH-agent-uiux-2026111814: carry agent/uiux-2026111814 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `agent/uiux-2026111814` at 1304dfbf09 holds work main lacks and cannot merge as is (conflicts in code: ops/uiux/status.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried agent/uiux-2026111814\n**Status:** open\n\nPort the change by hand onto current main (it is 20 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried agent/uiux-2026111814",
+  "body": "**Owner:** operations\n**Trigger:** branch `agent/uiux-2026111814` at 1304dfbf09 holds work main lacks and cannot merge as is (conflicts in code: ops/uiux/status.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried agent/uiux-2026111814\n**Status:** closed\n\nPort the change by hand onto current main (it is 20 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried agent/uiux-2026111814\n\n**Evidence:** python3 -m foundation branchsweep --carried -> agent/uiux-2026111814: archived at 1304dfbf09 (refs/archive/agent/uiux-2026111814): superseded: main holds 0 of the 0 code lines it added (BRANCH-SWEEP-4)\n",
   "labels": [
     "role:operations",
     "agent-ready",
