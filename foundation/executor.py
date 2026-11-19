@@ -25,6 +25,58 @@ MAX_FILES, MAX_BYTES = 8, 200_000
 REPAIRS = 2
 GENERATORS = [["python3", "-m", "foundation", "publication", "--fix"], ["python3", "-m", "foundation", "claims", "--fix", "--apply"], ["python3", "scripts/build_dashboard.py"], ["python3", "scripts/build_site_roadmap.py"], ["python3", "-m", "foundation", "doctrine", "--apply"], ["python3", "-m", "foundation", "glossary", "--apply"], ["python3", "-m", "foundation", "standards", "--apply"]]
 CHECKS = [["python3", "scripts/lint_workflows.py"], ["python3", "-m", "unittest", "discover", "-s", "tests/foundation"]]
+TEST_DIR = "tests/foundation"
+MAX_TARGETED = 12
+
+
+class Stall(BaseException):
+    """EXEC-WATCHDOG-2: the watchdog's signal. A BaseException, so run()'s `except Exception` (which records provider and check failures) cannot swallow
+    it: measured 2026-11-19, 12 of 12 runs recorded `failed: _Stall:` with exit 1 instead of the watchdog's own stalled row."""
+
+
+LAST_ROW: dict = {}  # the row of the item in progress, so a stall row still says which item, which models and which attempts
+
+
+def related_tests(files: list[str], root=REPO) -> list[str]:
+    """CHECKS-TARGETED-1: the test modules of tests/foundation that exercise the changed files: a changed test module itself, test_<stem>.py, and any
+    module that imports or names the changed file. Measured 2026-11-19: the whole suite run serially takes longer than the executor's 10 minute watchdog
+    (CI runs it four-way parallel in about 4 minutes), so no run ever reached a pull request. The full suite still gates the merge: the `checks` workflow
+    on the pull request is the required status."""
+    root, out = Path(root), []
+    tests = sorted((root / TEST_DIR).glob("test_*.py"))
+    texts = {t.name: t.read_text(encoding="utf-8", errors="replace") for t in tests}
+    for f in files:
+        name, stem = Path(f).name, Path(f).stem
+        if f.startswith(TEST_DIR + "/") and name.startswith("test_") and name in texts:
+            out.append(name); continue
+        if not f.endswith(CODE_EXT):
+            continue
+        mod = re.escape(stem)
+        pat = re.compile(rf"(?:\bfoundation\.{mod}\b|\bfrom\s+foundation\s+import\s[^\n]*\b{mod}\b|\bimport\s+{mod}\b|{re.escape(f)})")
+        out += [n for n, t in texts.items() if n == f"test_{stem}.py" or pat.search(t)]
+    return list(dict.fromkeys(out))[:MAX_TARGETED]
+
+
+def checks_for(files: list[str], root=REPO) -> list[list[str]]:
+    """CHECKS-TARGETED-1: the executor's pre-PR checks for one change: the workflow lint, every changed Python file compiles, and the related test
+    modules (each one its own process). EXECUTOR_CHECKS=full restores the whole suite."""
+    if os.environ.get("EXECUTOR_CHECKS") == "full":
+        return CHECKS
+    out = [CHECKS[0]]
+    py = [f for f in files if f.endswith(".py")]
+    if py:
+        out.append(["python3", "-m", "py_compile", *py])
+    out += [["python3", "-m", "unittest", "discover", "-s", TEST_DIR, "-p", t] for t in related_tests(files, root)]
+    return out
+
+
+DEADLINE: list[float] = []  # monotonic time by which the run must stop starting new work (set by main from the watchdog)
+REPAIR_MIN_S = 150  # an attempt (model call, generators, targeted checks) needs about this long; with less left the run ends with its real reasons
+
+
+def time_left() -> float:
+    import time
+    return DEADLINE[0] - time.monotonic() if DEADLINE else float("inf")
 
 
 def now() -> str:
@@ -344,6 +396,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         log(lroot, row); return row
     n = issue["number"]
     row = {"issue": n, "title": issue["title"], "prediction": f"issue_{n}_closed = 1 within 24 h"}
+    LAST_ROW.clear(); LAST_ROW.update(row)
     if apply and not remote:  # DECISIONS-1: the pick is scored by whether the item closes inside its window
         from . import decisions
         decisions.record(root, "work-queue-priority", f"issue {n}", str(n), 1.0, f"driver order pick of {len(issues)} takeable items: {str(issue['title'])[:120]}", alternatives=max(0, len(issues) - 1))
@@ -367,7 +420,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             model_call = port_call(issue, root)
         prompt, failed, files, out = build_prompt(issue, tree), [], [], {}
         for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
+            if attempt and time_left() < REPAIR_MIN_S:  # EXEC-WATCHDOG-2: end with the real reasons rather than be cut off by the watchdog mid-attempt
+                row["out_of_time"] = f"{int(time_left())} s left before attempt {attempt + 1}"
+                break
             failed = []
+            LAST_ROW.update(row)
             try:
                 if model_call:
                     out, meta = model_call(prompt), {}
@@ -392,8 +449,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             if checks is None and not gap:
                 for g in GENERATORS:
                     sh(g, root)
-            for c in ([] if gap else checks if checks is not None else CHECKS):
-                code, o = sh(c, root)
+            run_checks = [] if gap else checks if checks is not None else checks_for(files, root)
+            if checks is None and not gap:
+                row["checks"] = [" ".join(c[-1:] if "-p" in c else c[:3]) for c in run_checks]
+            for c in run_checks:
+                code, o = sh(c, root, timeout=max(30, min(600, int(time_left()) - 20)))
                 if code:
                     tests = failing_tests(o)
                     if tests and checks is None and set(i for _, i in tests) <= preexisting_failures(tests, root):
@@ -412,7 +472,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd", *KEEP_ON_CLEAN], root)
             prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS; fix exactly these problems and reply with the full JSON again:" + chr(10) + chr(10).join(failed)[:5000]
         if failed:
-            raise RuntimeError("checks failed after " + str(REPAIRS + 1) + " attempts: " + " | ".join(failed))
+            raise RuntimeError("checks failed after " + str(len(row.get("attempts", [])) or REPAIRS + 1) + " attempts: " + " | ".join(failed))
         row.update(files=files, summary=out.get("summary", ""))
         # WRITEBACK-1: the `checks` write-back gate fails any change that has code and no write-back (the first live executor PR failed on it), so
         # the executor records its own decision in the same commit: what it did, the evidence (checks that passed) and a file probe.
@@ -491,24 +551,25 @@ def main(argv=None) -> int:
         log(REPO, row); print(json.dumps(row, indent=2)); return 0
     # EXEC-WATCHDOG-1: a hung step (measured 2026-11-19: the job ran its full 12 minutes and was cancelled with no row written, so the
     # executor clock read stale for 160 h) ends itself at 10 minutes, records the stall as a row and exits clean.
-    import signal
-    class _Stall(Exception):
-        pass
+    import signal, time
     def _stall(*_):
-        raise _Stall()
+        raise Stall()
+    limit = int(os.environ.get("EXECUTOR_WATCHDOG_S", "600"))
+    DEADLINE[:] = [time.monotonic() + limit]
     if hasattr(signal, "SIGALRM"):
-        signal.signal(signal.SIGALRM, _stall); signal.alarm(int(os.environ.get("EXECUTOR_WATCHDOG_S", "600")))
+        signal.signal(signal.SIGALRM, _stall); signal.alarm(limit)
+    LAST_ROW.clear()
     try:
         row = run(a.repo, a.apply, a.issue)
-    except _Stall:
-        row = {"result": "stalled", "detail": "executor watchdog: no result within the time limit; the item is retried next run", "prediction": "executor_rows_24h >= 1 within 24 h"}
+    except Stall:
+        row = {**LAST_ROW, "result": "stalled", "detail": "executor watchdog: no result within the time limit; the item is retried next run", "prediction": "executor_rows_24h >= 1 within 24 h"}
         log(REPO, row); print(json.dumps(row, indent=2)); return 0
     if row["result"] in ("idle", "failed", "no-model-credential") and not a.issue:  # EXEC-X: own queue empty or its top item failed (e.g. needs a protected path), so work the target repositories' issues (EXECUTOR_TARGET_REPOS)
         for target in crossrepo.targets():
             try:
                 root = crossrepo.clone(target) if a.apply else REPO
                 row = run(target, a.apply, None, root=root, remote=True)
-            except _Stall:
+            except Stall:
                 row = {"result": "stalled", "detail": f"executor watchdog while working {target}", "prediction": "executor_rows_24h >= 1 within 24 h"}
                 log(REPO, row); break
             except Exception as e:  # a target that cannot be reached must not hide the next one

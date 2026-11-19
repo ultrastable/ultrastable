@@ -59,7 +59,28 @@ def call(prompt: str, attempt: int = 0, role: str = "author", root=REPO, env=Non
     rs = rungs(root, env)
     if not adapter and not rs:
         raise RuntimeError("no code agent adapter is available on this host (bind CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID, or ANTHROPIC_API_KEY)")
-    a = adapter or rs[min(attempt, len(rs) - 1)]
+    if adapter:
+        return _call_one(prompt, adapter, role, root, env, send, forced=True)
+    # LADDER-FALLTHROUGH-1: a dead rung does not spend the attempt. Measured 2026-11-19: models.github.ai answered every request with 200 text/plain "OK",
+    # so attempt 0 of every run was lost before a model was asked and the cheapest live rung (glm) was skipped by the shifted index. The next live rung
+    # answers in the same attempt; the attempt only fails when every rung's transport failed.
+    tried, errs = set(), []
+    while True:
+        live = [x for x in rungs(root, env) if x["id"] not in tried]
+        if not live:
+            raise RuntimeError("every code agent rung failed: " + " | ".join(errs))
+        a = live[min(attempt, len(live) - 1)] if not tried else live[0]
+        tried.add(a["id"])
+        try:
+            return _call_one(prompt, a, role, root, env, send)
+        except ValueError:
+            raise
+        except Exception as e:  # transport failure: recorded by _call_one, the rung is DOWN; ask the next one
+            errs.append(f"{a['id']}: {type(e).__name__}: {str(e)[:120]}")
+
+
+def _call_one(prompt: str, a: dict, role: str, root, env, send, forced: bool = False) -> tuple[dict, dict]:
+    adapter = a if forced else None
     text, usage = "", {}
     try:
         text, usage = send(a, prompt, env)
@@ -97,11 +118,20 @@ def review(issue: dict, out: dict, author_family: str, root=REPO, env=None, send
     rv = agents.ensemble(author_family, env, root)
     if not rv:
         return {"approve": True, "reasons": [], "skipped": "no reviewer of another family on this host"}
-    try:
-        r, meta = call(review_prompt(issue, out), role="reviewer", root=root, env=env, send=send, adapter=rv[0])
-    except (ValueError, RuntimeError, OSError, KeyError) as e:
-        return {"approve": True, "reasons": [], "skipped": type(e).__name__ + ": " + str(e)[:120]}
-    return {"approve": bool(r.get("approve", True)), "reasons": [str(x)[:300] for x in (r.get("reasons") or [])][:5], "model": meta["model"], "family": meta["family"]}
+    # LADDER-FALLTHROUGH-1: a reviewer whose route is down is passed over for the next family, so a dead free tier does not turn every review into a skip
+    rv = [a for a in rv if a["id"] not in DOWN and a.get("route") not in DOWN] or rv
+    skipped = []
+    for a in rv:
+        try:
+            r, meta = call(review_prompt(issue, out), role="reviewer", root=root, env=env, send=send, adapter=a)
+        except ValueError as e:  # an unusable verdict: the reviewer answered, so do not ask another
+            return {"approve": True, "reasons": [], "skipped": type(e).__name__ + ": " + str(e)[:120]}
+        except (RuntimeError, OSError, KeyError) as e:
+            DOWN.update({a["id"], a.get("route")})
+            skipped.append(f"{a['id']}: {type(e).__name__}: {str(e)[:100]}")
+            continue
+        return {"approve": bool(r.get("approve", True)), "reasons": [str(x)[:300] for x in (r.get("reasons") or [])][:5], "model": meta["model"], "family": meta["family"]}
+    return {"approve": True, "reasons": [], "skipped": " | ".join(skipped)[:400]}
 
 
 def summary(root=REPO) -> dict:

@@ -247,3 +247,68 @@ class WatchdogTests(unittest.TestCase):
             rc = executor.main(["--apply"])
         self.assertEqual(rc, 0)
         self.assertEqual(rows[0]["result"], "stalled")
+
+
+class StallIsNotSwallowed(unittest.TestCase):
+    """EXEC-WATCHDOG-2: measured 2026-11-19, every run recorded `failed: _Stall:` because run()'s `except Exception` caught the watchdog's signal."""
+
+    def test_stall_inside_run_records_the_item_as_stalled(self):
+        import io, contextlib, time
+        from unittest import mock
+        rows = []
+        def fake_run(*a, **k):
+            executor.LAST_ROW.update(issue="Q-9", title="t", models=["m"])
+            try:
+                time.sleep(5)
+            except Exception as e:  # the swallow path run() has; a BaseException passes through it
+                return {"result": "failed", "detail": f"{type(e).__name__}: {e}"}
+            return {"result": "failed", "detail": "slept"}
+        self.assertTrue(issubclass(executor.Stall, BaseException) and not issubclass(executor.Stall, Exception))
+        if not hasattr(__import__("signal"), "SIGALRM"):
+            self.skipTest("no SIGALRM on this platform")
+        with mock.patch.dict(os.environ, {"EXECUTOR_WATCHDOG_S": "1"}), mock.patch.object(executor, "run", side_effect=fake_run), \
+             mock.patch.object(executor, "log", side_effect=lambda root, row: rows.append(row)), contextlib.redirect_stdout(io.StringIO()):
+            rc = executor.main(["--apply"])
+        self.assertEqual(rc, 0)
+        self.assertEqual((rows[0]["result"], rows[0]["issue"], rows[0]["models"]), ("stalled", "Q-9", ["m"]))
+
+    def test_no_new_attempt_starts_without_time_for_it(self):
+        import subprocess, time
+        from unittest import mock
+        d = scratch()
+        (d / "docs/issues").mkdir(parents=True)
+        body = "\n".join(["**Owner:** executor", "**Trigger:** tick", "**Done check:** file:x", "**Status:** open", "", "work"])
+        (d / "docs/issues/Q-1.json").write_text(json.dumps({"id": "Q-1", "title": "one", "body": body, "labels": ["p1"]}))
+        for c in (["init", "-q"], ["add", "-A"], ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "i"]):
+            subprocess.run(["git", *c], cwd=d, check=True, capture_output=True)
+        calls = []
+        def model(prompt):
+            calls.append(prompt); return {"files": [{"path": ".github/workflows/x.yml", "content": "x"}]}  # deny list: an unusable reply
+        with mock.patch.object(executor, "DEADLINE", [time.monotonic() + 5]), mock.patch.dict(os.environ, {"EXECUTOR_SOURCE": "queue"}):
+            row = executor.run("o/r", apply=True, issue_no="Q-1", root=d, model_call=model, checks=[])
+        self.assertEqual(len(calls), 1)
+        self.assertIn("out_of_time", row)
+        self.assertEqual(row["result"], "failed")
+        self.assertIn("checks failed after 1 attempts", row["detail"])
+
+
+class TargetedChecks(unittest.TestCase):
+    """CHECKS-TARGETED-1: the pre-PR checks are the tests related to the change, not the whole suite that cannot finish inside the watchdog."""
+
+    def test_related_tests_follow_imports_and_names(self):
+        rel = executor.related_tests(["foundation/agent_ladder.py", "docs/notes.md"])
+        self.assertIn("test_agent_ladder.py", rel)
+        self.assertIn("test_executor.py", rel)  # imports foundation.agent_ladder by name
+        self.assertEqual(executor.related_tests(["docs/notes.md"]), [])
+        self.assertEqual(executor.related_tests(["tests/foundation/test_clock.py"]), ["test_clock.py"])
+
+    def test_checks_compile_changed_python_and_run_related_modules_only(self):
+        from unittest import mock
+        with mock.patch.dict(os.environ, {"EXECUTOR_CHECKS": ""}):
+            cs = executor.checks_for(["foundation/clock.py"])
+        self.assertEqual(cs[0], executor.CHECKS[0])
+        self.assertIn(["python3", "-m", "py_compile", "foundation/clock.py"], cs)
+        self.assertIn(["python3", "-m", "unittest", "discover", "-s", "tests/foundation", "-p", "test_clock.py"], cs)
+        self.assertNotIn(executor.CHECKS[1], cs)
+        with mock.patch.dict(os.environ, {"EXECUTOR_CHECKS": "full"}):
+            self.assertEqual(executor.checks_for(["foundation/clock.py"]), executor.CHECKS)

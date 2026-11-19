@@ -42,6 +42,39 @@ class Ladder(unittest.TestCase):
         self.assertIn(agents.route_authors(CF)[0]["route"], L.DOWN)  # the whole provider route is down; with every route down the full list comes back rather than nothing
         L.DOWN.clear()
 
+    def test_a_dead_rung_does_not_spend_the_attempt(self):  # LADDER-FALLTHROUGH-1
+        GH = {**CF, "GITHUB_TOKEN": "g"}
+        rs = L.rungs(self.d, GH)
+        self.assertEqual(rs[0]["route"], "github-models")  # free rung first
+        seen = []
+        def send(a, p, e):
+            seen.append(a["id"])
+            if a["route"] == "github-models":
+                raise RuntimeError("non-JSON response (HTTP 200, text/plain) from https://models.github.ai/inference/chat/completions: OK")
+            return '{"files": []}', {}
+        out, meta = L.call("p", 0, root=self.d, env=GH, send=send)
+        live = [a["id"] for a in rs if a["route"] != "github-models"]
+        self.assertEqual(seen, [rs[0]["id"], live[0]])  # same attempt, next live rung; the second GitHub Models rung is not tried (route down)
+        self.assertEqual(meta["adapter"], live[0])
+        seen.clear()
+        L.call("p", 1, root=self.d, env=GH, send=send)
+        self.assertEqual(seen, [live[1]])  # attempt 1 escalates among the live rungs; the cheapest live rung was not skipped
+        L.DOWN.clear()
+
+    def test_reviewer_on_a_dead_route_passes_to_the_next_family(self):
+        GH = {**CF, "GITHUB_TOKEN": "g"}
+        used = []
+        def send(a, p, e):
+            used.append(a["id"])
+            if a["route"] == "github-models":
+                raise RuntimeError("non-JSON response")
+            return json.dumps({"approve": False, "reasons": ["breaks x"]}), {}
+        rv = L.review({"title": "t"}, {"files": []}, "qwen", root=self.d, env=GH, send=send)
+        self.assertFalse(rv["approve"]); self.assertNotIn("skipped", rv)
+        self.assertEqual(agents.load(self.d)["adapters"][0]["route"], "github-models")
+        self.assertNotEqual(rv["family"], "openai")
+        L.DOWN.clear()
+
     def test_unusable_reply_is_logged_and_raised(self):
         with self.assertRaises(ValueError):
             L.call("p", 0, root=self.d, env=CF, send=lambda a, p, e: ("not json at all", {}))
