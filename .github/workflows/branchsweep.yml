@@ -1,6 +1,6 @@
 name: branchsweep
 # BRANCH-SWEEP-1: no remote branch carries work main lacks. Merges every branch that merges (generated-file conflicts resolved by rule, gate after each
-# merge), files PORT-BRANCH items for the rest, and opens one pull request the lane merges. Evidence stays on the PR and in ops/branchsweep-ledger.jsonl.
+# merge), files PORT-BRANCH items for the rest and moves those branches to refs/archive/ (BRANCH-SWEEP-3), and opens one pull request the lane merges. Evidence stays on the PR and in ops/branchsweep-ledger.jsonl.
 # budget: ~4 min per run, once a day (~120 min per month)
 # trigger: daily schedule; manual dispatch for a drain; SWEEP-BUDGET-1: a pass that ran out of time re-dispatches itself (at most 8 runs a day) until no branch is skipped
 # free-alternative: run `python3 -m foundation branchsweep --apply` from a cloud-hosted agent session, or from the lane run on the Cloudflare tick Worker
@@ -31,6 +31,8 @@ jobs:
       - uses: actions/setup-node@v7
         with: {node-version: 22}
       - name: Sweep into one branch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "ultrastable-branchsweep"; git config user.email "actions@users.noreply.github.com"
           b=agent/branchsweep-$(date -u +%Y%m%d)
@@ -40,6 +42,9 @@ jobs:
           # (run 44497010885 ran the pre-SWEEP-PRUNE-1 prune and deleted nothing). The sweep commit then carries main's versions of these paths.
           git checkout origin/main -- foundation scripts tools doctrine/branchsweep.json
           python3 -m foundation branchsweep --apply
+          # BRANCH-SWEEP-3: a port branch does not stay on the branch list; its tip moves to refs/archive/<name>, read back before the head is deleted.
+          # A failed row is in the ledger and the output; it does not stop the sweep pull request, and the next pass retries it.
+          python3 -m foundation branchsweep --archive || echo "::warning::branchsweep --archive left rows unarchived (see ops/branchsweep-ledger.jsonl)"
           python3 scripts/build_dashboard.py
           git add -A; git diff --cached --quiet || git commit -m "branchsweep: ledger, PORT items and dashboard"
       - name: Open the pull request the lane merges, then prune what main holds
