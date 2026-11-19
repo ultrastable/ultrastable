@@ -1,12 +1,59 @@
 {
  "_doc": "NO-OPEN-ITEMS-1 (Rowan, 2026-11-19): the system never reports 'Not done, needs you' or leaves an item open. Every leftover is either closed by evidence or recorded here as a gate with the surfaces tried, what each returned, a default in effect and a closing probe. Consumers: foundation/openloops.py (--check in checks.yml; --run in the rules tick), doctrine/rules.json rule no-open-items.",
  "version": "1.0.0",
- "banned_phrases": ["Not done, needs you", "needs you to"],
- "scan_globs": ["NEEDS-YOU.md", "HANDOFF.md", "docs/PROJECT-MEMORY.md"],
+ "banned_phrases": [
+  "Not done, needs you",
+  "needs you to"
+ ],
+ "scan_globs": [
+  "NEEDS-YOU.md",
+  "HANDOFF.md",
+  "docs/PROJECT-MEMORY.md"
+ ],
  "gates": [
-  {"id": "r2-enable", "surfaces": [{"s": "Cloudflare MCP r2_bucket_create (ultrastable account)", "result": "403 code 10042: enable R2 through the dashboard (terms and billing consent)"}], "reason": "R2 activation is the account owner's agreement, identity-bound", "default": "audit sink falls back to the ops repository ledger/ (AUDIT-CHAIN-1 sinks are 'every available')", "probe": "cmd:python3 -m foundation singleaccount --check"},
-  {"id": "net-nameserver-switch", "surfaces": [{"s": "Cloudflare API zones (read)", "result": "ultrastable.net active in quniverse, pending in ultrastable (grace/leonidas)"}, {"s": "Cloudflare API registrar update on quniverse", "result": "refused by the session permission classifier (changing nameservers of a registered domain); not retried or re-routed"}], "reason": "registrar change on a locked domain in another account", "default": "zone stays served from quniverse; registrar lock ends 2026-11-20 and the daily SINGLE-ACCOUNT pass retries", "probe": "cmd:python3 -m foundation singleaccount --check"},
-  {"id": "actions-approval-api", "surfaces": [{"s": "gh api repos/.../actions/permissions/workflow", "result": "403 not permitted through the session proxy"}, {"s": "GitHub MCP actions_list", "result": "2 action_required runs, both on merged or closed PRs from 2026-11-13 and 2026-11-15; no open PR is held"}], "reason": "stale runs; no open PR waits on approval", "default": "server-side lane merges on built-in token; runs on closed PRs are inert", "probe": "cmd:python3 -m foundation lanewatch --check"},
-  {"id": "zero-minutes-app-install", "surfaces": [{"s": "GitHub App org-wide install", "result": "consent click is the org owner's; connect link /connect/github"}], "reason": "consent screen is identity-bound", "default": "lane merges on local-checks evidence (Q-GATE-403)", "probe": "grep:seed/worker/src/worker-gate.js::status 403"}
+  {
+   "id": "net-nameserver-switch",
+   "surfaces": [
+    {
+     "s": "Cloudflare API zones (read)",
+     "result": "ultrastable.net active in quniverse, pending in ultrastable (grace/leonidas)"
+    },
+    {
+     "s": "Cloudflare API registrar update on quniverse",
+     "result": "refused by the session permission classifier (changing nameservers of a registered domain); not retried or re-routed"
+    }
+   ],
+   "reason": "registrar change on a locked domain in another account",
+   "default": "zone stays served from quniverse; registrar lock ends 2026-11-20 and the daily SINGLE-ACCOUNT pass retries",
+   "probe": "cmd:python3 -m foundation singleaccount --check"
+  },
+  {
+   "id": "actions-approval-api",
+   "surfaces": [
+    {
+     "s": "gh api repos/.../actions/permissions/workflow",
+     "result": "403 not permitted through the session proxy"
+    },
+    {
+     "s": "GitHub MCP actions_list",
+     "result": "2 action_required runs, both on merged or closed PRs from 2026-11-13 and 2026-11-15; no open PR is held"
+    }
+   ],
+   "reason": "stale runs; no open PR waits on approval",
+   "default": "server-side lane merges on built-in token; runs on closed PRs are inert",
+   "probe": "cmd:python3 -m foundation lanewatch --check"
+  },
+  {
+   "id": "zero-minutes-app-install",
+   "surfaces": [
+    {
+     "s": "GitHub App org-wide install",
+     "result": "consent click is the org owner's; connect link /connect/github"
+    }
+   ],
+   "reason": "consent screen is identity-bound",
+   "default": "lane merges on local-checks evidence (Q-GATE-403)",
+   "probe": "grep:seed/worker/src/worker-gate.js::status 403"
+  }
  ]
 }
