@@ -18,6 +18,7 @@ reached main. This loop reads every remote branch (git only, so it runs on the b
   python3 -m foundation branchsweep --apply             merge into the current branch, run the gate after each merge, write the ledger and PORT items
   python3 -m foundation branchsweep --carried NAME      closing probe of a PORT-BRANCH item: exit 0 once main holds the branch's work
   python3 -m foundation branchsweep --prune             delete remote branches whose tip is now an ancestor of origin/main
+  python3 -m foundation branchsweep --archive           BRANCH-SWEEP-3: move every idle `port` branch to refs/archive/<name> and delete its head
   python3 -m foundation branchsweep --check             policy and loop are declared
 
 Accounting invariant: entered = merged + superseded + ported + rejected + live + state + skipped (every branch has one recorded disposition, never a silent drop).
@@ -161,7 +162,7 @@ def port_item(p: dict, pol: dict) -> dict:
     return {"id": iid, "title": f"{iid}: carry {p['name']} onto main",
             "body": f"**Owner:** {pol['port_owner']}\n**Trigger:** branch `{p['name']}` at {p['sha'][:10]} holds work main lacks and cannot merge as is ({p['why']})\n"
                     f"**Done check:** cmd:python3 -m foundation branchsweep --carried {p['name']}\n**Status:** open\n\n"
-                    f"Port the change by hand onto current main (it is {p.get('ahead', '?')} commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\n"
+                    f"Port the change by hand onto current main (it is {p.get('ahead', '?')} commit(s) ahead), keeping tests green; then the sweep deletes the branch. Once idle the branch moves to `refs/archive/{p['name']}` (`git fetch origin refs/archive/{p['name']}`).\n\n"
                     f"size: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried {p['name']}",
             "labels": ["role:" + pol["port_owner"], "agent-ready", "ws:branches"], "milestone": "Now", "workstream": "Operations"}
 
@@ -249,6 +250,66 @@ def prune(root=REPO, base="origin/main", dry=False) -> list[dict]:
     return out
 
 
+ARCHIVE = "refs/archive/"
+
+
+def open_pr_heads(repo, token, fetch=None):
+    """Head branch names of every open pull request, or None when they cannot be read (unmeasured is never empty)."""
+    heads, page = set(), 1
+    while True:
+        st, prs = _api(token, "GET", f"/repos/{repo}/pulls?state=open&per_page=100&page={page}", fetch)
+        if st != 200 or not isinstance(prs, list):
+            return None
+        heads |= {(p.get("head") or {}).get("ref", "") for p in prs}
+        if len(prs) < 100:
+            return heads
+        page += 1
+
+
+def archive(root=REPO, base="origin/main", open_heads=None, dry=False) -> list[dict]:
+    """BRANCH-SWEEP-3: `port` was a state with no exit. The sweep filed a PORT-BRANCH item and kept the branch until someone ported it, so 61 of 69
+    remote branches sat there for up to 9 days (2026-11-19). An idle port branch is now moved off the branch list: its tip is pushed to
+    refs/archive/<name> (every commit stays reachable on the server), the push is read back, and only then is the head deleted. Restore with
+    `git fetch origin refs/archive/<name> && git push origin FETCH_HEAD:refs/heads/<name>`. The PORT-BRANCH item stays open and its probe reads the archive ref. A branch with
+    an open pull request, a live, held or state branch, and everything when open pull requests cannot be read, is left alone."""
+    root, out = Path(root), []
+    if open_heads is None:
+        return out
+    pol = policy(root)
+    ported: set = set()
+    lp = root / LEDGER
+    if lp.is_file():  # a merge the gate refused shows as `merge` in a fresh scan; the latest pass's verdict counts, at the same sha only
+        for line in reversed(lp.read_text(encoding="utf-8").splitlines()):
+            try:
+                rec = json.loads(line)
+            except ValueError:
+                continue
+            if "dispositions" in rec and not rec.get("dry"):
+                ported = {(d["name"], d["sha"]) for d in rec["dispositions"] if d.get("action") == "port" and d.get("sha")}
+                break
+    for p in scan(root, base):
+        if not (p["action"] == "port" or (p["action"] == "merge" and (p["name"], p["sha"]) in ported)):
+            continue
+        if p["name"] in pol.get("held", {}) or p["name"] in open_heads or not p.get("sha"):
+            continue
+        ref = ARCHIVE + p["name"]
+        row = {"name": p["name"], "sha": p["sha"], "ref": ref, "action": "would_archive", "why": p["why"]}
+        if not dry:
+            rc, _, err = git(root, "push", "-q", "origin", f"+{p['sha']}:{ref}")
+            back = git(root, "ls-remote", "origin", ref)[1].split()
+            if rc != 0 or not back or back[0] != p["sha"]:  # never delete a head whose archive was not read back
+                row.update(action="archive_failed", why=(err.strip() or "archive ref did not read back")[:200])
+            else:
+                rc, _, err = git(root, "push", "-q", "origin", "--delete", "refs/heads/" + p["name"])
+                row.update(action="archived" if rc == 0 else "delete_failed", **({} if rc == 0 else {"why": err.strip()[:200]}))
+        out.append(row)
+    if out and not dry:
+        lp.parent.mkdir(parents=True, exist_ok=True)
+        with lp.open("a", encoding="utf-8", newline="\n") as f:
+            f.write(json.dumps({"at": int(time.time()), "archived": out}) + "\n")
+    return out
+
+
 def _api(token, method, path, fetch=None):
     """GitHub REST call. fetch is injectable for tests: fetch(method, url, headers) -> (status, json)."""
     url = "https://api.github.com" + path
@@ -315,7 +376,14 @@ def carried(root, name: str, base="origin/main") -> tuple[bool, str]:
     """The closing probe of a PORT-BRANCH item: true when the branch is gone, or main already holds everything it has (merged or superseded)."""
     rc, _, _ = git(root, "rev-parse", "--verify", "-q", "origin/" + name)
     if rc != 0:
-        return True, f"{name}: no such remote branch"
+        # BRANCH-SWEEP-3: an archived branch is not carried by being gone; main must hold what the archive ref holds
+        if git(root, "fetch", "-q", "origin", f"+{ARCHIVE}{name}:refs/remotes/origin/{name}")[0] != 0:
+            return True, f"{name}: no such remote branch and no archive ref"
+        try:
+            p = plan_one(root, "origin/" + name, base)
+        finally:
+            git(root, "update-ref", "-d", "refs/remotes/origin/" + name)
+        return p["action"] in ("merged", "superseded"), f"{name}: archived at {p['sha'][:10]} ({ARCHIVE}{name}): {p['action']}: {p['why']}"
     p = plan_one(root, "origin/" + name, base)
     return p["action"] in ("merged", "superseded"), f"{name}: {p['action']}: {p['why']}"
 
@@ -352,6 +420,15 @@ def main(argv=None) -> int:
         if not tok:
             print("branchsweep --remote: no token in GH_TOKEN or GITHUB_TOKEN"); return 1
         r = remote_prune(policy().get("fleet_repos", []), tok, dry="--dry" in a); print(json.dumps(r, indent=1)); return 0
+    if "--archive" in a:
+        import os
+        tok = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
+        repo = os.environ.get("GITHUB_REPOSITORY") or re.sub(r"^.*github\.com[:/]|\.git$", "", _g(REPO, "remote", "get-url", "origin").strip())
+        heads = open_pr_heads(repo, tok) if tok else None
+        if heads is None:
+            print("branchsweep --archive: open pull requests are unreadable, so nothing is archived"); return 1
+        r = archive(open_heads=heads, dry="--dry" in a); print(json.dumps(r, indent=1))
+        return 1 if any(x["action"].endswith("_failed") for x in r) else 0
     if "--prune" in a:
         print(json.dumps(prune(), indent=1)); return 0
     print(__doc__); return 2

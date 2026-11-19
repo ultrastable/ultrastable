@@ -1,5 +1,5 @@
 {
-  "_doc": "BRANCH-SWEEP-1 policy. state_branches and state_prefixes are (parked/* is NOT state: parked work is merged or ported like any branch) written by the system itself (evidence ledgers) and are never merged or deleted by the sweep; the gate runs after every merge and a failure undoes that merge and files a PORT-BRANCH item.",
+  "_doc": "BRANCH-SWEEP-1 policy. BRANCH-SWEEP-3: an idle port branch with no open pull request is moved to refs/archive/<name> and its head deleted, so only state, live, held and open-pull-request branches stay on the branch list. state_branches and state_prefixes are (parked/* is NOT state: parked work is merged or ported like any branch) written by the system itself (evidence ledgers) and are never merged or deleted by the sweep; the gate runs after every merge and a failure undoes that merge and files a PORT-BRANCH item.",
   "state_branches": [
     "session-evidence",
     "loop-evidence",
