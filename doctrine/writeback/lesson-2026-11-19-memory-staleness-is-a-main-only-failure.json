@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-19-memory-staleness-is-a-main-only-failure",
+  "kind": "lesson",
+  "date": "2026-11-19",
+  "title": "Memory staleness is a main-only failure",
+  "body": "check_memory.py treated staleness as advisory only for the pull_request event; the lane runs checks on bot PRs with workflow_dispatch on the PR branch, so the branch sweep PR (38 merged commits) failed on staleness alone. MEMORY-REF-1: hard failure only when GITHUB_REF is refs/heads/main; tests/test_check_memory_ref.py covers both refs.",
+  "probe": "grep:scripts/check_memory.py::MEMORY-REF-1"
+ },
+ "kind": "lesson",
+ "title": "Memory staleness is a main-only failure",
+ "session": ""
+}
