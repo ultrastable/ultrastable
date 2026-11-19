@@ -14,7 +14,10 @@ REPO = Path(__file__).resolve().parent.parent
 LEDGER = "doctrine/decision-ledger.json"
 SHARDS = "doctrine/writeback"  # WRITEBACK-SHARD-1: one file per row, so two PRs never edit the same file (the ledger and provenance are folded on main by regen)
 LEDGER_DOC = "CLOSED-LOOP-1 write-back: every lesson and decision as a row with a closing probe (file:<path> or grep:<path>::<regex>) that `python3 -m foundation orphans --check` executes on every PR and loop pass. Written by `python3 -m foundation writeback record --kind lesson|decision --probe SPEC`."
-WB_PREFIXES = (LEDGER, SHARDS + "/", "doctrine/closed-loop", "doctrine/orphans", "docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loop-registry.json", "docs/issues/OL-", "ops/spinoff/")
+WB_PREFIXES = (LEDGER, SHARDS + "/", "doctrine/closed-loop", "doctrine/orphans", "docs/lessons/", "docs/decisions/", "docs/handoff/", "docs/PROJECT-MEMORY.md", "doctrine/glossary.json", "instances/ultrastable/loop-registry.json", "docs/issues/OL-", "ops/spinoff/",
+               # WB-SWEEP-1: the branch sweep's own records are its write-back (each PORT item has owner, trigger and probe; the ledger holds every
+               # disposition with its reason); without them every sweep PR failed this check (#702, 2026-11-19)
+               "docs/issues/PORT-BRANCH-", "ops/branchsweep-ledger.jsonl")
 DOC_ONLY = re.compile(r"^(docs/|doctrine/|GLOSSARY\.md$|.*\.md$)")
 
 
