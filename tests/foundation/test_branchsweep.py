@@ -63,6 +63,32 @@ class Sweep(unittest.TestCase):
         self.assertIn("Closing probe", item["body"]); self.assertIn("**Owner:** operations", item["body"])
         self.assertEqual((self.w / "code.py").read_text(), "x = 3\n", "a code conflict leaves main's file untouched")
 
+    def test_spent_budget_skips_the_rest_and_keeps_the_invariant(self):
+        """SWEEP-BUDGET-1: a pass that outran the job was cancelled with nothing pushed; now it stops merging and records `skipped`."""
+        self.branch("one", {"one.py": "a = 1\n"}); self.branch("two", {"two.py": "b = 1\n"})
+        sh(self.w, "fetch", "-q", "origin")
+        pol = json.loads((self.w / "doctrine/branchsweep.json").read_text()); pol["budget_seconds"] = -1
+        write(self.w, "doctrine/branchsweep.json", json.dumps(pol)); sh(self.w, "commit", "-qam", "budget")
+        sh(self.w, "checkout", "-q", "-B", "sweep", "HEAD")
+        rec = B.apply(self.w)
+        self.assertTrue(rec["invariant"], rec)
+        self.assertEqual({d["name"]: d["action"] for d in rec["dispositions"]}, {"one": "skipped", "two": "skipped"})
+        self.assertFalse((self.w / "one.py").exists(), "nothing merged after the budget")
+
+    def test_a_branch_already_filed_as_port_at_this_sha_is_not_regated(self):
+        self.branch("stuck", {"stuck.py": "s = 1\n"})
+        sh(self.w, "fetch", "-q", "origin")
+        p = next(x for x in B.scan(self.w) if x["name"] == "stuck")
+        pol = json.loads((self.w / "doctrine/branchsweep.json").read_text())
+        item = B.port_item({**p, "why": "gate"}, pol)
+        write(self.w, f"docs/issues/{item['id']}.json", json.dumps(item))
+        pol["gate"] = [[sys.executable, "-c", "import sys; sys.exit('gate must not run')"]]
+        write(self.w, "doctrine/branchsweep.json", json.dumps(pol)); sh(self.w, "add", "-A"); sh(self.w, "commit", "-qm", "filed")
+        sh(self.w, "checkout", "-q", "-B", "sweep", "HEAD")
+        rec = B.apply(self.w)
+        d = next(x for x in rec["dispositions"] if x["name"] == "stuck")
+        self.assertEqual(d["action"], "port"); self.assertIn("already holds", d["why"])
+
     def test_failing_gate_undoes_the_merge_and_files_a_port_item(self):
         self.branch("breaks", {"new.py": "y = 2\n"}); sh(self.w, "fetch", "-q", "origin")
         pol = json.loads((self.w / "doctrine/branchsweep.json").read_text()); pol["gate"] = [[sys.executable, "-c", "import sys; sys.exit(3)"]]

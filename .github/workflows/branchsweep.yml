@@ -2,7 +2,7 @@ name: branchsweep
 # BRANCH-SWEEP-1: no remote branch carries work main lacks. Merges every branch that merges (generated-file conflicts resolved by rule, gate after each
 # merge), files PORT-BRANCH items for the rest, and opens one pull request the lane merges. Evidence stays on the PR and in ops/branchsweep-ledger.jsonl.
 # budget: ~4 min per run, once a day (~120 min per month)
-# trigger: daily schedule; branches go stale over hours, so a faster event buys nothing; manual dispatch for a drain
+# trigger: daily schedule; manual dispatch for a drain; SWEEP-BUDGET-1: a pass that ran out of time re-dispatches itself (at most 8 runs a day) until no branch is skipped
 # free-alternative: run `python3 -m foundation branchsweep --apply` from a cloud-hosted agent session, or from the lane run on the Cloudflare tick Worker
 on:
   schedule:
@@ -11,6 +11,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write  # SWEEP-BUDGET-1: re-dispatch while branches remain
 concurrency:
   group: branchsweep
   cancel-in-progress: false
@@ -32,7 +33,9 @@ jobs:
       - name: Sweep into one branch
         run: |
           git config user.name "ultrastable-branchsweep"; git config user.email "actions@users.noreply.github.com"
-          git checkout -B agent/branchsweep-$(date -u +%Y%m%d) origin/main
+          b=agent/branchsweep-$(date -u +%Y%m%d)
+          # SWEEP-BUDGET-1: a later pass the same day continues the open sweep branch instead of force-pushing over its merges
+          if git ls-remote --exit-code --heads origin "$b" >/dev/null; then git checkout -B "$b" "origin/$b"; else git checkout -B "$b" origin/main; fi
           python3 -m foundation branchsweep --apply
           python3 scripts/build_dashboard.py
           git add -A; git diff --cached --quiet || git commit -m "branchsweep: ledger, PORT items and dashboard"
@@ -42,7 +45,7 @@ jobs:
         run: |
           b=$(git rev-parse --abbrev-ref HEAD)
           if [ "$(git rev-list --count origin/main..HEAD)" -gt 0 ]; then
-            git push -f origin "$b"
+            git push origin "$b" || git push -f origin "$b"
             gh pr create --base main --head "$b" --title "branchsweep: merge the branches main lacks" --body "BRANCH-SWEEP-1. Disposition per branch: ops/branchsweep-ledger.jsonl. Handoff: item: BRANCH-SWEEP-1" --label server-owned || echo "pull request already open"
           fi
           python3 -m foundation branchsweep --prune
@@ -50,3 +53,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || github.token }}
         run: python3 -m foundation branchsweep --remote
+      - name: Wake the next pass while branches were skipped (SWEEP-BUDGET-1)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          skipped=$(tail -n 50 ops/branchsweep-ledger.jsonl | python3 -c "import json,sys; r=[json.loads(l) for l in sys.stdin if '\"entered\"' in l]; print(r[-1]['skipped'] if r else 0)")
+          today=$(gh run list -w branchsweep.yml --limit 30 --json createdAt --jq "[.[]|select(.createdAt|startswith(\"$(date -u +%Y-%m-%d)\"))]|length")
+          echo "skipped=$skipped runs_today=$today"
+          if [ "$skipped" -gt 0 ] && [ "$today" -lt 8 ]; then gh workflow run branchsweep.yml --ref main; fi

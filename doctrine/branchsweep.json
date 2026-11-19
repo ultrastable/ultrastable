@@ -79,5 +79,11 @@
     "agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare": "merging it replaces scripts/outreach.py (343 lines deleted, 49 added): a stale rewrite; carry only outreach/agent-directories.json and its tests onto the current engine"
   },
   "min_idle_hours": 4,
-  "fleet_repos": ["ultrastable/ultrastable", "ultrastable/workers", "ultrastable/ops", "ultrastable/practical-solutions"]
+  "fleet_repos": [
+    "ultrastable/ultrastable",
+    "ultrastable/workers",
+    "ultrastable/ops",
+    "ultrastable/practical-solutions"
+  ],
+  "budget_seconds": 600
 }
