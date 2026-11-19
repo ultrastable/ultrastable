@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-agent-q-cifail-practical-solutions-deploy",
+  "title": "PORT-BRANCH-parked-agent-q-cifail-practical-solutions-deploy: carry parked/agent/Q-CIFAIL-practical-solutions-deploy-tenant-q-cifail-practical-solutions-deploy-tena onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/Q-CIFAIL-practical-solutions-deploy-tenant-q-cifail-practical-solutions-deploy-tena` at 5cc5dc5edc holds work main lacks and cannot merge as is (conflicts in code: ultrastable/practical-solutions/js/main.js, ultrastable/practical-solutions/js/main.test.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/Q-CIFAIL-practical-solutions-deploy-tenant-q-cifail-practical-solutions-deploy-tena\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/Q-CIFAIL-practical-solutions-deploy-tenant-q-cifail-practical-solutions-deploy-tena",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
