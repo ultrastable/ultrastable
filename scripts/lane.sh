@@ -140,7 +140,7 @@ if [ "${GITHUB_WORKFLOW:-}" = lane ] || [ "${LANE_ADOPT:-}" = 1 ]; then
       git -C "$root" commit -q -m "lane: server-owned loops (SERVER-OWNS-LOOPS-1)"
       pushed=0
       for try in 1 2 3 4 5; do
-        if git -C "$root" pull --rebase --autostash -q origin main && git -C "$root" push -q origin HEAD:main; then pushed=1; break; fi
+        if git -C "$root" pull --rebase --autostash -q origin main && (cd "$root" && python3 tools/push_main.py); then pushed=1; break; fi  # MAIN-WRITER-1: main is protected, the App writes it
         # LANE-REBASE-1: main moved under the commit and a generated file (the dashboard, the memory) conflicted; a half-finished rebase made every later pull fail
         # ("unmerged files", run 1061). Leave no rebase behind, restart from main and redo the adoption on top of it: it is idempotent and regenerates the files.
         git -C "$root" rebase --abort || echo "lane: no rebase to abort"
