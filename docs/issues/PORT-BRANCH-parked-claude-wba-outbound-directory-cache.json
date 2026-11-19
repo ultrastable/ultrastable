@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-wba-outbound-directory-cache",
+  "title": "PORT-BRANCH-parked-claude-wba-outbound-directory-cache: carry parked/claude/wba-outbound-directory-cache onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/wba-outbound-directory-cache` at e7c4e66020 holds work main lacks and cannot merge as is (conflicts in code: site/webbotauth.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/wba-outbound-directory-cache\n**Status:** open\n\nPort the change by hand onto current main (it is 10 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/wba-outbound-directory-cache",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

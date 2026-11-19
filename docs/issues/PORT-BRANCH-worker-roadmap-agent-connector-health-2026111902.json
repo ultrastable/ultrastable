@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-worker-roadmap-agent-connector-health-2026111902",
+  "title": "PORT-BRANCH-worker-roadmap-agent-connector-health-2026111902: carry worker/roadmap-agent-connector-health-202611190240 onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `worker/roadmap-agent-connector-health-202611190240` at 8092be3c26 holds work main lacks and cannot merge as is (conflicts in code: src/connector/probe.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried worker/roadmap-agent-connector-health-202611190240\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried worker/roadmap-agent-connector-health-202611190240",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
