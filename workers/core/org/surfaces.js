@@ -124,5 +124,9 @@ export function createSurfaces({ db, config = {}, env = {}, fetch, now = () => D
     return runOncePerSlot(db, tick, { now: clock(), slotMs });
   }
 
-  return { mounts, steps, walkthrough, dashboard, models, roleRuntime, tracker: trackerFor, proxyGuide, scheduledTick };
+  /** Added to GET /api/console for a signed-in owner: the three screens with their profile applied and Ask cards folded in.
+   *  Additive (`screens`), so the console's own data and page are unchanged. */
+  const decorate = walkthrough ? async (body, { actor }) => ({ screens: await walkthrough.screens(actor || 'owner', body) }) : null;
+
+  return { mounts, decorate, steps, walkthrough, dashboard, models, roleRuntime, tracker: trackerFor, proxyGuide, scheduledTick };
 }

@@ -42,6 +42,9 @@ test('walkthrough: the signed-in owner gets step 1 (the one question) and the pr
   const j = await w.json();
   assert.ok(j.step === 1 || j.step?.n === 1 || JSON.stringify(j).includes('What do you want to exist'), 'step 1 asks the one question: ' + JSON.stringify(j).slice(0, 200));
   assert.equal((await org.handle(req('/api/console/profile', { authed: true }))).status, 200);
+  // GET /api/console keeps its own data and gains `screens` (profile applied, Ask cards folded in)
+  const c = await (await org.handle(req('/api/console', { authed: true }))).json();
+  assert.ok(c.now && c.needs_you && c.screens?.now?.numbers && c.screens.profile, 'console data intact plus screens');
   // a write must come from the same origin (the walkthrough's own check still applies behind the console's)
   const bad = await org.handle(req('/api/console/walkthrough/idea', { method: 'POST', authed: true, origin: 'https://evil.example.test', body: { text: 'x' } }));
   assert.equal(bad.status, 403);
@@ -138,4 +141,30 @@ test('the declared routes and steps match what is mounted', () => {
   const { org } = boot({ cfg: config({ modelport: { aliases: { medium: { endpoint: 'a', model: 'm', family: 'f' }, large: { endpoint: 'a', model: 'm', family: 'f' } } } }), extra: { endpoints: { a: async () => ({}) }, roleHandlers: { default: async () => ({ ok: true }) } } });
   const names = org.extraSteps().map(s => s.name);
   for (const n of SURFACE_STEPS) assert.ok(names.includes(n), `${n} is in org.extraSteps()`);
+});
+
+test('Google IAP: a request through the configured proxy with a valid signed header signs in; no header, wrong audience or a bad signature do not', async () => {
+  const { IAP_KEYS_URL, IAP_ISSUER, _clearIapKeys } = await import('../doors/proxy.js');
+  _clearIapKeys();
+  const AUD = '/projects/1/global/backendServices/9';
+  const b64u = o => Buffer.from(typeof o === 'string' ? o : JSON.stringify(o)).toString('base64url');
+  const keyPair = async () => crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify']);
+  const kp = await keyPair(), other = await keyPair();
+  const jwk = { ...(await crypto.subtle.exportKey('jwk', kp.publicKey)), kid: 'k1' };
+  const sign = async (claims, key = kp.privateKey) => {
+    const head = `${b64u({ alg: 'ES256', kid: 'k1' })}.${b64u(claims)}`;
+    return `${head}.${Buffer.from(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(head))).toString('base64url')}`;
+  };
+  const sec = Math.floor(T0 / 1000);
+  const claims = (o = {}) => ({ iss: IAP_ISSUER, aud: AUD, iat: sec - 10, exp: sec + 600, email: 'ana@org.example', sub: 'accounts:1', ...o });
+  const db = makeDb([OUT_DIR]);
+  const org = createOrg({ db, env: {}, config: config({ doors: { iap: { audience: AUD } } }), fetch: async u => { assert.equal(String(u), IAP_KEYS_URL); return Response.json({ keys: [jwk] }); }, now: () => T0 });
+  const get = async token => org.handle(new Request(ORIGIN + '/api/console', { headers: token ? { 'x-goog-iap-jwt-assertion': token } : {} }));
+  assert.equal((await get(null)).status, 401);
+  assert.equal((await get(await sign(claims({ aud: '/projects/1/global/backendServices/2' })))).status, 401);
+  assert.equal((await get(await sign(claims(), other.privateKey))).status, 401);
+  assert.equal((await get(await sign(claims({ exp: sec - 600 })))).status, 401);
+  const ok = await get(await sign(claims()));
+  assert.equal(ok.status, 200);
+  assert.ok((await ok.json()).now, 'the console data is served to the proxied owner');
 });

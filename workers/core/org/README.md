@@ -102,4 +102,4 @@ Merge under the trust ladder (issue #183, opt-in): `config.codeloop = { enabled,
 | Slots | `org.scheduledTick()`: one tick per slot (default 10 minutes, `config.slots.slot_minutes`, must not exceed the scheduler interval); the Cloudflare cron and the Cloud Run `/tick` call it | `config.slots.enabled === false` |
 
 Mounts run inside `handleConsole`'s signed-in surface (`mounts` option), so a viewer or anonymous caller never reaches them.
-Not covered: accepting Google IAP as a console sign-in (the proxy guide reports status only).
+`GET /api/console` gains an additive `screens` key from the walkthrough. Google IAP is accepted as a console sign-in when `config.doors.iap.audience` is set (`core/src/console.js`, tested in `core/org/surfaces.test.js`). The Cloudflare heartbeat alarm calls `tick()` directly on purpose: it is a single instance that cannot fire twice, and its own 10-minute cadence would collide with a 10-minute slot.

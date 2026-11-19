@@ -14,7 +14,7 @@ US-SPEC-18 sections 4 to 6. Tests: `walkthrough.test.js`, `console-rules.test.js
 | Read-back screen (US-16-R12, R13, R14) | BUILT (`renderReadBack`, `correct`, `confirmReadBack`) |
 | Per-person profile set from answers, with the limits of section 6 | BUILT (`profile`, `setProfile`, `validateProfile`, `compose`) |
 | US-18-R01, R02, R03, R04, R08 cited against `core/src/console.js` | BUILT as tests |
-| Mounted in the served console | BUILT: `core/org/surfaces.js` mounts `handle(request, { person })` inside the signed-in console (owner-only), tested in `core/org/surfaces.test.js`. NOT COVERED: `screens(person, data)` is not yet folded into `GET /api/console` |
+| Mounted in the served console | BUILT: `core/org/surfaces.js` mounts `handle(request, { person })` inside the signed-in console (owner-only), tested in `core/org/surfaces.test.js`. `screens(person, data)` is added to `GET /api/console` as `screens` (additive) |
 | The page script of the console drawing Ask cards and the walkthrough | NOT COVERED: `core/src/console-ui.js` is shared; the data and the read-back page are served |
 | Languages other than English | NOT COVERED: the profile stores the language; no text is translated |
 

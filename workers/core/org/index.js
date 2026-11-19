@@ -288,7 +288,7 @@ export function createOrg({
     try { appReady = secrets ? await hasAppCredentials(secrets) : false; } catch { appReady = false; }
     const e = await mergedEnv();
     // Let an unclaimed first-run window expire (and file its card) even if nobody visits; not a tick step, so the step list is unchanged.
-    if (config.doors) await sweepFirstRun(db, { now: clock(), config: config.doors, hasKey: Boolean(e.CONSOLE_TOKEN) || Boolean(config.doors?.access?.team_domain) }).catch(() => {});
+    if (config.doors) await sweepFirstRun(db, { now: clock(), config: config.doors, hasKey: Boolean(e.CONSOLE_TOKEN) || Boolean(config.doors?.access?.team_domain) || Boolean(config.doors?.iap?.audience) }).catch(() => {});
     return runTick(db, { config: { ...config, executor_takes_targeted: runnerOn() }, env: presence(e), now: clock(), extraSteps: extraSteps(e), metrics });
   }
 
@@ -309,7 +309,7 @@ export function createOrg({
     if (githubApp && p.startsWith('/console/github/')) return githubApp(request, url.origin);
     if (p === '/console' || p.startsWith('/console/') || p.startsWith('/api/console')) {
       const e = await mergedEnv();
-      return handleConsole(request, { DB: db, CONSOLE_TOKEN: e.CONSOLE_TOKEN }, { org: config.org_slug, vault: vaultStore, doors: config.doors, config, l3, mounts: surfaces.mounts, fetch: doFetch, now: clock, envNames: presence(e) });
+      return handleConsole(request, { DB: db, CONSOLE_TOKEN: e.CONSOLE_TOKEN }, { org: config.org_slug, vault: vaultStore, doors: config.doors, config, l3, mounts: surfaces.mounts, decorate: surfaces.decorate, fetch: doFetch, now: clock, envNames: presence(e) });
     }
     if (on('infra') && (p === '/health/deep' || p.startsWith('/api/agents') || p.startsWith('/api/elicit') || routes.some(r => p.startsWith(r.prefix)))) {
       const e = await mergedEnv();
