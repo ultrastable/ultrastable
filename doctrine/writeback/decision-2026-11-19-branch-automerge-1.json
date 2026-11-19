@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-19-branch-automerge-1",
+  "kind": "decision",
+  "date": "2026-11-19",
+  "title": "BRANCH-AUTOMERGE-1",
+  "body": "Completion sweep deletes PR-less branches whose content is already in main and opens PRs (cap 15/pass) for the rest so the lane merges them; delete_branch_on_merge removes them after merge.",
+  "probe": "grep:scripts/completion_sweep.sh::BRANCH-AUTOMERGE-1"
+ },
+ "kind": "decision",
+ "title": "BRANCH-AUTOMERGE-1",
+ "session": ""
+}
