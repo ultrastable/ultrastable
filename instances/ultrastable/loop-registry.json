@@ -3117,7 +3117,7 @@
   {
    "id": "branch-sweep",
    "kind": "governance",
-   "summary": "No remote branch carries work main lacks. Every branch gets one recorded disposition (merged, superseded, ported as a PORT-BRANCH item, rejected on purpose, or state): generated-file conflicts resolve by rule, a merge that breaks the gate is undone, merged branches are pruned. Closes the blind spot of the session reaper, which only watched agent/ and claude/ branches.",
+   "summary": "No remote branch carries work main lacks. Every branch gets one recorded disposition (merged, superseded, ported as a PORT-BRANCH item, rejected on purpose, or state): generated-file conflicts resolve by rule, a merge that breaks the gate is undone, merged branches are pruned, and a ported branch is moved to refs/archive/ so it leaves the branch list while its PORT-BRANCH item stays open (BRANCH-SWEEP-3). Closes the blind spot of the session reaper, which only watched agent/ and claude/ branches.",
    "trigger": "daily workflow and every lane run",
    "owner": "operations",
    "closes_by": "system",

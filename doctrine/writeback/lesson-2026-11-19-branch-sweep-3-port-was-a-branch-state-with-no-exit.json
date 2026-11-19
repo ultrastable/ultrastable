@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-19-branch-sweep-3-port-was-a-branch-state-with-no-exit",
+  "kind": "lesson",
+  "date": "2026-11-19",
+  "title": "BRANCH-SWEEP-3: port was a branch state with no exit",
+  "body": "61 of 69 remote branches sat in the sweep's port disposition for up to 9 days: a PORT-BRANCH item was filed and the branch kept until ported, which nothing did (53 of them already had a merged or closed pull request). An idle port branch with no open pull request now moves to refs/archive/<name> (read back before the head is deleted; restore with git fetch origin refs/archive/<name> then push FETCH_HEAD to refs/heads/<name>), and branchsweep --carried reads the archive ref so a PORT item is not closed by the branch being gone. 62 branches archived 2026-11-19; branch list 69 -> 8.",
+  "probe": "grep:foundation/branchsweep.py::def archive"
+ },
+ "kind": "lesson",
+ "title": "BRANCH-SWEEP-3: port was a branch state with no exit",
+ "session": ""
+}
