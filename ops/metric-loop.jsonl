@@ -8,3 +8,10 @@
 {"at": "2026-11-15T05:20:52Z", "baseline": 2, "event": "remedy-start", "lever": "build-doers", "metric": "families_without_doer"}
 {"at": "2026-11-15T05:20:52Z", "event": "reading", "hit": true, "metric": "executor_success_share_7d", "value": 0.2}
 {"at": "2026-11-15T05:20:52Z", "baseline": 0.2, "event": "remedy-start", "lever": "park-failing", "metric": "executor_success_share_7d"}
+{"at": "2026-11-19T03:36:58Z", "event": "reading", "hit": false, "metric": "k", "value": 36.036}
+{"at": "2026-11-19T03:36:58Z", "baseline": 0.0, "event": "remedy-verdict", "lever": "ship-verified-deploy", "metric": "k", "value": 36.036, "verdict": "recovered"}
+{"at": "2026-11-19T03:36:58Z", "event": "reading", "hit": false, "metric": "normalized_cost", "value": 0.0}
+{"at": "2026-11-19T03:36:58Z", "event": "reading", "hit": true, "metric": "open_items", "value": 321}
+{"at": "2026-11-19T03:36:58Z", "event": "reading", "hit": false, "metric": "relapse_rate_7d", "value": 0.0}
+{"at": "2026-11-19T03:36:58Z", "event": "reading", "hit": true, "metric": "families_without_doer", "value": 1}
+{"at": "2026-11-19T03:36:58Z", "event": "reading", "hit": false, "metric": "executor_success_share_7d", "value": 1.0}

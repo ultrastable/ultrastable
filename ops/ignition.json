@@ -1,17 +1,11 @@
 {
- "at": "2026-11-15T05:20:52Z",
- "open_ignition_gaps": 2,
+ "at": "2026-11-19T03:36:58Z",
+ "open_ignition_gaps": 1,
  "gaps": [
   {
    "link": "family Q-CLOCK grows and nothing closes it",
    "owner": "operations",
    "closing_probe": "cmd:python3 -m foundation throughput --doer Q-CLOCK",
-   "source": "throughput"
-  },
-  {
-   "link": "family Q-TICK grows and nothing closes it",
-   "owner": "operations",
-   "closing_probe": "cmd:python3 -m foundation throughput --doer Q-TICK",
    "source": "throughput"
   }
  ]
