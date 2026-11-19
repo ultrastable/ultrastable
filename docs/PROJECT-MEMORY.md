@@ -10,6 +10,12 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-19
 
+- 2026-11-19: MEMORY-REF-1: memory staleness fails main only (unblocks lane-checked bot PRs) (#701)
+- 2026-11-19: OL-20261118-1: closing probe fails while the account move is unfinished (#700)
+- 2026-11-19: queue: closing-probe verdicts for 18 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-19: ciwatch: failing-workflow items (#697)
+- 2026-11-19: R2 on: ultrastable-git bucket created and verified; close the r2 gate (#696)
+- 2026-11-19: LEDGER-FETCH-1: ledger replay fetches the evidence branch (queue closes again, part 3) (#699)
 - 2026-11-19: queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 7/7) [skip ci]
 - 2026-11-19: queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 6/7) [skip ci]
 - 2026-11-19: queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 5/7) [skip ci]
