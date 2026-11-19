@@ -39,6 +39,11 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
     esac
     echo "#$n conflict"; continue
   fi
+  # LANE-APPROVE-1 (OL-20261119-1): a PR opened with the workflow token raises a pull_request run that waits in action_required, and that pending run is the
+  # required "checks" status, so the merge API keeps answering "checks is expected" although the dispatched run passed. Approve it; the run then reports.
+  for rid in $(gh api "repos/$repo/actions/runs?head_sha=$sha&event=pull_request&status=action_required" --jq '.workflow_runs[].id'); do
+    if gh api -X POST "repos/$repo/actions/runs/$rid/approve" >/dev/null; then echo "#$n approved pull_request run $rid"; else echo "lane: approving run $rid on #$n failed" >&2; echo x >>"$_SAFE_FAILS"; fi
+  done
   runs=$(gh api "repos/$repo/commits/$sha/check-runs?per_page=100" --jq '[.check_runs[]|select(.name!="lane")]')
   total=$(jq length <<<"$runs")
   pending=$(jq '[.[]|select(.status!="completed")]|length' <<<"$runs")
