@@ -2724,6 +2724,14 @@
    "title": "Q-WORKERS-201: routes and ports of the build-out modules wired into core/org",
    "body": "Mounts (walkthrough, dashboard, proxy guide) run inside handleConsole's signed-in surface so they are owner-only by construction; model port, stage2 tracker and slots are supplied by createOrg (workers/core/org/surfaces.js). scheduledTick() is what schedulers call; tick() stays unconditional so tests and manual runs are never throttled. The retired ultrastable/workers repo was unarchived only to close its issues; all code changes go in ultrastable/ultrastable workers/.",
    "probe": "grep:workers/core/org/surfaces.js::scheduledTick"
+  },
+  {
+   "id": "lesson-2026-11-19-evidence-branch-must-be-appended-never-force-pushed",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "Evidence branch must be appended, never force-pushed",
+   "body": "launch force-pushed main+1 pass to loop-evidence, deleting earlier passes' ledger rows, so closing-probe streaks never reached 2 and the queue closed nothing; fleet's queue verdicts were never committed. ledger.publish appends onto the branch tip without force; fleet lands docs/issues verdicts via push_main.",
+   "probe": "grep:foundation/ledger.py::EVIDENCE-APPEND-1"
   }
  ]
 }
