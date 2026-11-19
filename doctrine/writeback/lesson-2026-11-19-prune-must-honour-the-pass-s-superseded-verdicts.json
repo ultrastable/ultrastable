@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-19-prune-must-honour-the-pass-s-superseded-verdicts",
+  "kind": "lesson",
+  "date": "2026-11-19",
+  "title": "Prune must honour the pass's superseded verdicts",
+  "body": "branchsweep apply() decides superseded after resolving generated files by rule, but prune() re-scanned and saw those branches as merge, so 92 superseded branches were never deleted (run 44495425705: superseded 92, branches 157). SWEEP-PRUNE-1: prune also deletes branches the latest non-dry pass recorded as superseded at the same sha; tests/foundation/test_branchsweep.py covers same and different sha.",
+  "probe": "grep:foundation/branchsweep.py::SWEEP-PRUNE-1"
+ },
+ "kind": "lesson",
+ "title": "Prune must honour the pass's superseded verdicts",
+ "session": ""
+}
