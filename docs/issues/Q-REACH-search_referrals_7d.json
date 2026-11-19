@@ -1,7 +1,7 @@
 {
   "id": "Q-REACH-search_referrals_7d",
   "title": "Q-REACH-search_referrals_7d: reach target missed (views referred from search engines in 7 days: 10 < 40)",
-  "body": "**Owner:** marketing-manager\n**Trigger:** reach --run\n**Done check:** grep:ops/reach/metrics.jsonl::\"search_referrals_7d\"\n**Prediction:** search_referrals_7d >= 40 within 168 h\n**Status:** open\n\nRead ops/reach/weights.json and the arm outcomes, post more of the arm that works or add a surface (feed, listing, page). Owned channels only; no cold outreach to individuals.",
+  "body": "**Owner:** marketing-manager\n**Trigger:** reach --run\n**Done check:** grep:ops/reach/metrics.jsonl::\"search_referrals_7d\"\n**Prediction:** search_referrals_7d >= 40 within 168 h\n**Status:** open\n\nRead ops/reach/weights.json and the arm outcomes, post more of the arm that works or add a surface (feed, listing, page). Owned channels only; no cold outreach to individuals.\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "role:marketing-manager",
     "growth",
