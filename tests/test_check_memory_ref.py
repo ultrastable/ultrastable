@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """MEMORY-REF-1: memory staleness fails main only; a PR branch checked by the lane's workflow_dispatch gets a warning, like a pull_request run."""
 import os, subprocess, sys, unittest
 from pathlib import Path
