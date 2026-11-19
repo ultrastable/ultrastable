@@ -54,12 +54,12 @@ export async function verifyRequest(request, getDirectory, now = Date.now()) {
   if (!input || !sigH || !agent) return { ok: false, reason: "unsigned" };
   const m = /^sig1=(\(([^)]*)\)((?:;[^;]+)*))$/.exec(input.trim()); if (!m) return { ok: false, reason: "bad signature-input" };
   const params = m[1], comps = m[2].split(" ").filter(Boolean).map(s => s.replace(/"/g, ""));
-  const meta = Object.fromEntries(m[3].split(";").filter(Boolean).map(p => { const i = p.indexOf("="); return [p.slice(0, i), p.slice(i + 1).replace(/^"|"$/g, "")]; }));
+  const meta = Object.fromEntries(m[3].split(";").filter(Boolean).map(p => { const i = p.indexOf(""); return [p.slice(0, i), p.slice(i + 1).replace(/^"|"$/g, "")]; }));
   if (meta.tag !== "web-bot-auth" || meta.alg !== "ed25519") return { ok: false, reason: "not a web-bot-auth ed25519 signature" };
   if (!comps.includes("@authority") || !comps.includes("signature-agent")) return { ok: false, reason: "components must cover @authority and signature-agent" };
   const t = Math.floor(now / 1000); if (!(Number(meta.created) <= t + 30) || !(Number(meta.expires) > t)) return { ok: false, reason: "signature outside its validity window" };
-  const sm = /^sig1=:([A-Za-z0-9+/=]+):$/.exec(sigH.trim()); if (!sm) return { ok: false, reason: "bad signature" };
-  const agentOrigin = agent.replace(/^"|"$/g, ""); if (!/^https:\/\/[a-z0-9.-]+(:\d+)?$/i.test(agentOrigin)) return { ok: false, reason: "signature-agent must be an https origin" };
+  const sm = /^sig1=:(.+):$/.exec(sigH.trim()); if (!sm) return { ok: false, reason: "bad signature" };
+  const agentOrigin = agent.replace(/^"|"$/g, ""); if (!/^https:\/\/(?:[a-z0-9.-]+)(?::\d+)?$/i.test(agentOrigin)) return { ok: false, reason: "signature-agent must be an https origin" };
   const dir = await getDirectory(agentOrigin); const jwk = dir && (dir.keys || []).find(x => x.kid === meta.keyid);
   if (!jwk || await thumbprint(jwk) !== meta.keyid) return { ok: false, reason: "key not in the agent's directory" };
   const lines = comps.map(c => [c, c === "@authority" ? new URL(request.url).host : h(c)]); if (lines.some(([, v]) => v == null)) return { ok: false, reason: "covered header missing" };
@@ -80,10 +80,13 @@ export async function signedFetch(env, url, init = {}, f = fetch, now = Date.now
 
 export async function fetchDirectory(origin, f = fetch, env = null) {
   const init = { headers: { accept: DIRECTORY_TYPE }, signal: AbortSignal.timeout(4000) };
-  const r = env ? await signedFetch(env, origin + DIRECTORY_PATH, init, f) : await f(origin + DIRECTORY_PATH, init);
-  if (!r.ok) return null;
-  const d = await r.json().catch(() => null);
-  return d && Array.isArray(d.keys) ? d : null;
+  const cache = directoryCache();
+  return cache(origin, async (o) => {
+    const r = env ? await signedFetch(env, o + DIRECTORY_PATH, init, f) : await f(o + DIRECTORY_PATH, init);
+    if (!r.ok) return null;
+    const d = await r.json().catch(() => null);
+    return d && Array.isArray(d.keys) ? d : null;
+  });
 }
 
 // WBA-OUTBOUND-1: peer key directories, cached per origin so a burst of signed requests from one agent costs one directory fetch.
