@@ -11,3 +11,5 @@
 {"at":"2026-11-19T04:07:09Z","role":"author","ok":true,"adapter":"workers-ai-llama","model":"@cf/meta/llama-3.3-70b-instruct-fp8-fast","family":"llama","usd":0.001288,"priced":true}
 {"at":"2026-11-19T04:18:27Z","role":"author","adapter":"github-models-gpt","model":"openai/gpt-4.1","family":"openai","ok":false,"why":"RuntimeError: non-JSON response (HTTP 200, text/plain) from https://models.github.ai/inference/chat/completions: OK","usd":0}
 {"at":"2026-11-19T04:18:32Z","role":"author","ok":true,"adapter":"workers-ai-llama","model":"@cf/meta/llama-3.3-70b-instruct-fp8-fast","family":"llama","usd":0.002028,"priced":true}
+{"at":"2026-11-19T04:29:46Z","role":"author","adapter":"github-models-gpt","model":"openai/gpt-4.1","family":"openai","ok":false,"why":"RuntimeError: non-JSON response (HTTP 200, text/plain) from https://models.github.ai/inference/chat/completions: OK","usd":0}
+{"at":"2026-11-19T04:29:49Z","role":"author","ok":true,"adapter":"workers-ai-llama","model":"@cf/meta/llama-3.3-70b-instruct-fp8-fast","family":"llama","usd":0.001295,"priced":true}
