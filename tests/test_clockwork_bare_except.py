@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """Regression test: a raising probe is logged and recorded, never swallowed."""
 
 import logging
