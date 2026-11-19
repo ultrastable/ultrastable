@@ -10,6 +10,12 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-19
 
+- 2026-11-19: Product manager pass: 1 growth and repair item(s) filed (#677)
+- 2026-11-19: LANE-APPROVE-1: wait a pass after approving a run (#686)
+- 2026-11-19: ciwatch: failing-workflow items (#685)
+- 2026-11-19: LANE-APPROVE-1: approve pending pull_request runs on bot PRs (#684)
+- 2026-11-19: ciwatch: failing-workflow items (#680)
+- 2026-11-19: Record open loop: bot PRs blocked on required checks (#683)
 - 2026-11-19: cost-guard: daily reading [skip ci]
 - 2026-11-19: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]
 - 2026-11-19: deploy-ultrastable: record live-verified deploy [skip ci]
