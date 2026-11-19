@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-696",
+  "title": "OL-PR-696: land or supersede pull request #696 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #696 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 696\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #696 (`claude/project-thread-ypifg1` at 1ab1cfaf6f, opened by rwnq8): R2 on: ultrastable-git bucket created and verified; close the r2 gate. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (3): docs/issues/OL-20261118-1.json, doctrine/open-loops.json, doctrine/writeback/lesson-2026-11-19-r2-enabled-ultrastable-git-bucket-created-and-verified.json. Closing probe: pull request #696 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
