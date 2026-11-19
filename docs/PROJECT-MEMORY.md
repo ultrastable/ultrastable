@@ -10,6 +10,15 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-19
 
+- 2026-11-19: queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 7/7) [skip ci]
+- 2026-11-19: queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 6/7) [skip ci]
+- 2026-11-19: queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 5/7) [skip ci]
+- 2026-11-19: queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 4/7) [skip ci]
+- 2026-11-19: queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 3/7) [skip ci]
+- 2026-11-19: queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 2/7) [skip ci]
+- 2026-11-19: queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 1/7) [skip ci]
+- 2026-11-19: PUSH-MAIN-BATCH-1: push_main lands large changes in 20-file commits (#695)
+- 2026-11-19: SWEEP-BUDGET-1: branch sweep finishes inside its job and re-wakes until every branch is dispositioned (#694)
 - 2026-11-19: Product manager pass: 1 growth and repair item(s) filed (#677)
 - 2026-11-19: LANE-APPROVE-1: wait a pass after approving a run (#686)
 - 2026-11-19: ciwatch: failing-workflow items (#685)
