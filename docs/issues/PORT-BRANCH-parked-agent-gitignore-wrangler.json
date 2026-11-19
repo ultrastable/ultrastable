@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-agent-gitignore-wrangler",
   "title": "PORT-BRANCH-parked-agent-gitignore-wrangler: carry parked/agent/gitignore-wrangler onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/gitignore-wrangler` at 65aaeceecb holds work main lacks and cannot merge as is (conflicts in code: .gitignore, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/gitignore-wrangler\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/gitignore-wrangler",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/gitignore-wrangler` at 65aaeceecb holds work main lacks and cannot merge as is (conflicts in code: .gitignore, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/gitignore-wrangler\n**Status:** closed\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/gitignore-wrangler\n\n**Evidence:** Superseded: main's .gitignore already lists .wrangler/ and no .wrangler cache file is tracked; the branch's site/worker.js copy adds an unverifiable claim about QNFO that CLAIMS-1 would flag.",
   "labels": [
     "role:operations",
     "agent-ready",

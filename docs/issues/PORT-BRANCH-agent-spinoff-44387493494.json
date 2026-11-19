@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-agent-spinoff-44387493494",
   "title": "PORT-BRANCH-agent-spinoff-44387493494: carry agent/spinoff-44387493494 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `agent/spinoff-44387493494` at 5f26c87b78 holds work main lacks and cannot merge as is (conflicts in code: instances/spinoffs/air-quality/app.json, site/spinoff-roadmap-data.js, spinoffs/registry.js, spinoffs/registry.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried agent/spinoff-44387493494\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried agent/spinoff-44387493494",
+  "body": "**Owner:** operations\n**Trigger:** branch `agent/spinoff-44387493494` at 5f26c87b78 holds work main lacks and cannot merge as is (conflicts in code: instances/spinoffs/air-quality/app.json, site/spinoff-roadmap-data.js, spinoffs/registry.js, spinoffs/registry.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried agent/spinoff-44387493494\n**Status:** closed\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried agent/spinoff-44387493494\n\n**Evidence:** Superseded: main already holds the air-quality spinoff (spinoffs/registry.json, instances/spinoffs/air-quality) and docs/issues/Q-SPIN-SCOPE-COLLECT-CADENCE.json; the rest of the branch is stale regenerated ledgers and dashboard data that main rewrites on every merge.",
   "labels": [
     "role:operations",
     "agent-ready",

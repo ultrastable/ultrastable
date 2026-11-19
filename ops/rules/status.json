@@ -1,5 +1,5 @@
 {
- "at": "2026-11-19T08:11:39Z",
+ "at": "2026-11-19T14:24:09Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -51,7 +51,7 @@
   },
   "front-end-matches-back-end/spinoff-live": {
    "status": "unmeasured",
-   "detail": "no live public-benefit app is launched yet",
+   "detail": "unreachable: air-quality",
    "fixed": false,
    "item": null
   },
@@ -147,7 +147,7 @@
   },
   "every-decision-measured/decisions-scored": {
    "status": "unmeasured",
-   "detail": "unmeasured: idea-loop: no decision logged yet; ai-router: https://ultrastable.io/api/decisions unreachable; plussing: no decision logged yet; free-tier-governor",
+   "detail": "unmeasured: ai-router: https://ultrastable.io/api/decisions unreachable; plussing: no decision logged yet; free-tier-governor: https://ultrastable.io/api/decisi",
    "fixed": false,
    "item": null
   },
@@ -160,6 +160,12 @@
   "every-goal-has-knob/goalscheck": {
    "status": "ok",
    "detail": "goalscheck ok",
+   "fixed": false,
+   "item": null
+  },
+  "no-open-items/openloops": {
+   "status": "ok",
+   "detail": "openloops ok",
    "fixed": false,
    "item": null
   }
@@ -265,6 +271,13 @@
    "probes": 1,
    "gaps": [],
    "statement": "Every goal Ultrastable works toward has a measured variable, a target, a deadline and at least one knob the controller may turn; a goal with no knob is listed in a shrink-only baseline and filed as a backlog item (GOALS-1)."
+  },
+  "no-open-items": {
+   "status": "enforced",
+   "ci": 1,
+   "probes": 1,
+   "gaps": [],
+   "statement": "The system never reports 'needs you' or leaves an item open: every leftover is closed by evidence or recorded as a gate with surfaces tried, a default in effect and a closing probe (NO-OPEN-ITEMS-1)."
   }
  }
 }
