@@ -254,6 +254,42 @@
    "arm": "shipped",
    "kind": "event",
    "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-7c20853b6120",
+   "date": "2026-11-19",
+   "text": "Shipped by the system itself: Showcase: measured D1 read figures. https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-17dea0266b40",
+   "date": "2026-11-19",
+   "text": "Shipped by the system itself: lane: server-owned loops (SERVER-OWNS-LOOPS-1). https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-76062770a418",
+   "date": "2026-11-19",
+   "text": "Shipped by the system itself: lane: server-owned loops (SERVER-OWNS-LOOPS-1). https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
+  },
+  {
+   "id": "ev:pv-04fd8bd4b357",
+   "date": "2026-11-19",
+   "text": "Shipped by the system itself: lane: server-owned loops (SERVER-OWNS-LOOPS-1). https://ultrastable.io/live",
+   "source": "ops/changelog.json",
+   "arm": "shipped",
+   "kind": "event",
+   "tag": "EVENT"
   }
  ]
 }
