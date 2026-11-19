@@ -61,6 +61,15 @@
         "file": ".github/workflows/transparency.yml",
         "contains": "api/freshness"
       }
+    },
+    {
+      "id": "no-open-items",
+      "source": "agents/AGENTS.md",
+      "quote": "The Ultrastable system shall never allow 'Not done, needs you'",
+      "probe": {
+        "file": "foundation/openloops.py",
+        "contains": "banned_phrases"
+      }
     }
   ],
   "baseline": [
