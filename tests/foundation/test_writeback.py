@@ -72,6 +72,11 @@ class Check(unittest.TestCase):
         d = self.branch({"tool.py": "print(1)\n", "docs/lessons/x.md": "Session: session_0abc\n"})
         self.assertEqual(writeback.check(d, "main", "HEAD"), [])
 
+    def test_branch_sweep_records_are_its_writeback(self):
+        """WB-SWEEP-1: a sweep pass writes its disposition ledger and PORT items; those are the write-back, so its PR is not refused."""
+        d = self.branch({"site/dashboard-data.js": "x\n", "ops/branchsweep-ledger.jsonl": "{}\nSession: session_0abc\n"})
+        self.assertFalse(any("no write-back" in p for p in writeback.check(d, "main", "HEAD")))
+
     def test_docs_only_change_needs_no_writeback(self):
         d = self.branch({"notes.md": "x\n"})
         self.assertTrue(all("session" in p for p in writeback.check(d, "main", "HEAD")))
