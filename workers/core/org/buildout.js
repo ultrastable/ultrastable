@@ -43,7 +43,7 @@ export function buildoutSteps({ db, config = {}, now = () => Date.now(), fetch, 
     else if (out !== undefined) tick.notes?.push(`${name}: ${JSON.stringify(out).slice(0, 200)}`);
   } });
   const ctxOf = ({ cfg, t }, extra = {}) => ({ db, now: () => t, config: cfg, fetch, claims, ...extra });
-  const sla = createSla({ db, now: clock, config: config.sla || {} });
+  const sla = ports.sla || createSla({ db, now: clock, config: config.sla || {} });
   return [
     staffStep({ readFile: ports.readFile, research: ports.research }),
     plusStep({ reader: ports.reader, propose: ports.propose }),

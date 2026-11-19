@@ -41,7 +41,8 @@ export function createServer({ db, config, env = process.env, now = () => Date.n
     try {
       if (req.url === '/tick' && req.method === 'POST') {
         if (!authorized(req, env.TICK_TOKEN)) return send(401, { error: 'unauthorized' });
-        return send(200, await org.tick());
+        const out = await org.scheduledTick(); // Cloud Scheduler can deliver twice: one tick per slot
+        return send(200, out.ran === false ? out : (out.result ?? out));
       }
       const chunks = []; for await (const c of req) chunks.push(c);
       const base = `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`;
