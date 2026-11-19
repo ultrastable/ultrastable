@@ -1,8 +1,12 @@
 {
   "id": "Q-REACH-bridge",
   "title": "Q-REACH-bridge: let qnfo-social publish reach-queue posts on the already-credentialed accounts",
-  "body": "**Owner:** marketing-manager\n**Trigger:** reach --run, awaiting-account on bluesky or mastodon\n**Done check:** grep:ops/reach/metrics.jsonl::\"social_referrals_7d\"\n**Prediction:** social_referrals_7d >= 10 within 336 h\n**Status:** open\n\nQNFO/qnfo-workers qnfo-social already posts a weekly Ultrastable thread (ULTRASTABLE-POSTS-1) on credentialed accounts. Add a pull of social/calendar.json event posts (kind: event) under its caps and owner-voice guard, in that repository, by PR.",
-  "labels": ["role:marketing-manager", "growth", "reach"],
+  "body": "**Owner:** marketing-manager\n**Trigger:** reach --run, awaiting-account on bluesky or mastodon\n**Done check:** grep:ops/reach/metrics.jsonl::\"social_referrals_7d\"\n**Prediction:** social_referrals_7d >= 10 within 336 h\n**Status:** open\n\nQNFO/qnfo-workers qnfo-social already posts a weekly Ultrastable thread (ULTRASTABLE-POSTS-1) on credentialed accounts. Add a pull of social/calendar.json event posts (kind: event) under its caps and owner-voice guard, in that repository, by PR.\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "role:marketing-manager",
+    "growth",
+    "reach"
+  ],
   "milestone": "Next",
   "workstream": "Growth"
 }

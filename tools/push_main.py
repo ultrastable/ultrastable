@@ -5,6 +5,7 @@ GitHub Actions OIDC token and writes one commit to main with the org's GitHub Ap
 Appended ledger lines go as appends, so concurrent writers never overwrite each other. Exit 0 only when the commit landed."""
 import base64, json, os, subprocess, sys, time, urllib.request, urllib.error
 
+MAX_FILES = 20  # seed/worker/src/maincommit.js MAX_FILES
 URL = os.environ.get("MAIN_WRITER_URL", "https://ultrastable-tick.ultrastable.workers.dev/api/main/commit")
 
 def git(*a):
@@ -40,7 +41,18 @@ def main():
     # touches site/ and starts the deploy again, without end (seen live 2026-11-18 12:17 UTC). Data commits therefore carry [skip ci].
     if "[skip ci]" not in msg:
         msg += " [skip ci]"
-    body = json.dumps({"message": msg, "files": changes()}).encode()
+    files = changes()
+    # PUSH-MAIN-BATCH-1: the Worker writes at most MAX_FILES (seed/worker/src/maincommit.js) per commit, so a fleet pass that changed 100+ queue
+    # items got HTTP 400 and fell back to a direct push the ruleset refuses (2026-11-19). Larger changes land as consecutive commits of MAX_FILES.
+    parts = [files[i:i + MAX_FILES] for i in range(0, len(files), MAX_FILES)] or [[]]
+    for n, part in enumerate(parts, 1):
+        m = msg if len(parts) == 1 else msg.replace(" [skip ci]", f" (part {n}/{len(parts)}) [skip ci]")
+        if post(m, part) != 0:
+            return fallback() if n == 1 else 1  # after a part has landed, a direct push would duplicate it: fail loudly instead
+    return 0
+
+def post(msg, files):
+    body = json.dumps({"message": msg, "files": files}).encode()
     for attempt in range(1, 5):
         req = urllib.request.Request(URL, data=body, method="POST", headers={"authorization": "Bearer " + oidc(), "content-type": "application/json", "user-agent": "ultrastable-push-main/1"})  # Cloudflare answers 403 (error 1010) to the default Python-urllib agent
         try:
@@ -49,11 +61,11 @@ def main():
         except urllib.error.HTTPError as e:
             detail = e.read().decode()[:300]
             print(f"push_main: HTTP {e.code} (try {attempt}): {detail}", file=sys.stderr)
-            if e.code not in (409, 502, 503): return fallback()
+            if e.code not in (409, 502, 503): return 1
         except (urllib.error.URLError, TimeoutError) as e:
             print(f"push_main: {e} (try {attempt})", file=sys.stderr)
         time.sleep(attempt * 3)
-    return fallback()
+    return 1
 
 def fallback():
     # Rollout safety: until the ruleset on main is active a plain push still lands. Once it is active GitHub refuses this and the step fails loudly.
