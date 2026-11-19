@@ -4,6 +4,7 @@
 
   python3 -m foundation singleaccount --check    no file names the quniverse account or one of its Ultrastable assets
   python3 -m foundation singleaccount --scan     one line per match
+  python3 -m foundation singleaccount --moved    exit 1 while an item in ops/account-move.json is not moved (ops/account-move.json)
 
 Rule and patterns: doctrine/single-account.json. Consumers: .github/workflows/checks.yml, doctrine/rules.json (single-account),
 tests/foundation/test_singleaccount.py. The move records (deploy/transfer, the retired-account list) are the only allowed mentions.
@@ -50,7 +51,17 @@ def check(root=REPO) -> list[str]:
     return problems
 
 
+def moved(root=REPO) -> list[str]:
+    """Items of ops/account-move.json not yet 'moved'. Closing probe of OL-20261118-1: fails while the move is unfinished."""
+    d = json.loads((Path(root) / "ops/account-move.json").read_text(encoding="utf-8"))
+    return [k for k, v in d["items"].items() if v != "moved"]
+
+
 def main(argv) -> int:
+    if argv[:1] == ["--moved"]:
+        left = moved()
+        print("\n".join("pending: " + k for k in left) or "account move complete")
+        return 1 if left else 0
     if argv[:1] == ["--scan"]:
         print("\n".join(scan()) or "no matches"); return 0
     problems = check()

@@ -1,0 +1,14 @@
+{
+ "_doc": "SINGLE-ACCOUNT-1 move state, read by `python3 -m foundation singleaccount --moved` (closing probe of OL-20261118-1: exit 1 while any item is not moved). The nameserver retry (Rowan approved 2026-11-19) and each worker move set an item to 'moved' only after a live check.",
+ "items": {
+  "zone:ultrastable.net": "pending",
+  "zone:ultrastable.io": "pending",
+  "zone:ultrastable.app": "pending",
+  "zone:ultrastable.org": "pending",
+  "kv:39-keys": "pending",
+  "worker:ultrastable-spinoffs": "pending",
+  "worker:ultrastable-mail-relay": "pending",
+  "worker:tenant-ps-edge": "pending",
+  "worker:tenant-ps-mail": "pending"
+ }
+}

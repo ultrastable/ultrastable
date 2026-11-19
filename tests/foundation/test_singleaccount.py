@@ -27,3 +27,13 @@ class SingleAccount(unittest.TestCase):
 PATHS = "doctrine/single-account.json"
 if __name__ == "__main__":
     unittest.main()
+
+
+class Moved(unittest.TestCase):
+    def test_moved_fails_while_pending(self):
+        with tempfile.TemporaryDirectory() as t:
+            (Path(t) / "ops").mkdir()
+            (Path(t) / "ops/account-move.json").write_text(json.dumps({"items": {"a": "pending", "b": "moved"}}))
+            self.assertEqual(sa.moved(t), ["a"])
+            (Path(t) / "ops/account-move.json").write_text(json.dumps({"items": {"a": "moved"}}))
+            self.assertEqual(sa.moved(t), [])
