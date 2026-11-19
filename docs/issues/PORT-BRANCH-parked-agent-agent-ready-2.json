@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-agent-agent-ready-2",
   "title": "PORT-BRANCH-parked-agent-agent-ready-2: carry parked/agent/agent-ready-2 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/agent-ready-2` at a611791bca holds work main lacks and cannot merge as is (conflicts in code: site/site.test.mjs, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/agent-ready-2\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/agent-ready-2",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/agent-ready-2` at a611791bca holds work main lacks and cannot merge as is (conflicts in code: site/site.test.mjs, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/agent-ready-2\n**Status:** closed\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/agent-ready-2\n\n**Evidence:** python3 -m foundation branchsweep --carried -> parked/agent/agent-ready-2: archived at a611791bca (refs/archive/parked/agent/agent-ready-2): superseded: main holds 129 of the 130 code lines it added (BRANCH-SWEEP-4)\n",
   "labels": [
     "role:operations",
     "agent-ready",

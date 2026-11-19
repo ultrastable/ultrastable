@@ -19,7 +19,7 @@ FIELD = lambda body, name: (re.search(rf"^\*\*{name}:\*\*\s*(.+)$", body, re.M) 
 
 def items(root=REPO) -> list[dict]:
     out = []
-    for p in sorted(f for pat in ("OL-*.json", "Q-*.json") for f in (Path(root) / "docs/issues").glob(pat)):
+    for p in sorted(f for pat in ("OL-*.json", "Q-*.json", "PORT-BRANCH-*.json") for f in (Path(root) / "docs/issues").glob(pat)):
         j = json.loads(p.read_text(encoding="utf-8")); b = j.get("body", "")
         out.append({"id": j["id"], "path": p, "json": j, "owner": FIELD(b, "Owner"), "trigger": FIELD(b, "Trigger"), "probe": FIELD(b, "Done check"),
                     "status": FIELD(b, "Status"), "residual": FIELD(b, "Residual")})

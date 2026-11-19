@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-claude-public-release-split",
   "title": "PORT-BRANCH-parked-claude-public-release-split: carry parked/claude/public-release-split onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/public-release-split` at 7e9844e0a3 holds work main lacks and cannot merge as is (conflicts in code: agents/PROJECT-INSTRUCTIONS.md, docs/CONFIDENTIALITY.md)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/public-release-split\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/public-release-split",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/public-release-split` at 7e9844e0a3 holds work main lacks and cannot merge as is (conflicts in code: agents/PROJECT-INSTRUCTIONS.md, docs/CONFIDENTIALITY.md)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/public-release-split\n**Status:** closed\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/public-release-split\n\n**Evidence:** Obsolete: the branch records the 2026-11-11 plan (repos private, no patent, ultrastable repo not released); main supersedes it (all repos public since 2026-11-15, LICENSE USL-1.0, docs/CONFIDENTIALITY.md status line citing NO-PATENT-1), so porting would regress it.",
   "labels": [
     "role:operations",
     "agent-ready",

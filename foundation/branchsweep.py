@@ -16,7 +16,8 @@ reached main. This loop reads every remote branch (git only, so it runs on the b
 
   python3 -m foundation branchsweep --scan [--json]     plan every branch, read-only
   python3 -m foundation branchsweep --apply             merge into the current branch, run the gate after each merge, write the ledger and PORT items
-  python3 -m foundation branchsweep --carried NAME      closing probe of a PORT-BRANCH item: exit 0 once main holds the branch's work
+  python3 -m foundation branchsweep --carried NAME      closing probe of a PORT-BRANCH item: exit 0 once main holds the branch's work (merged, superseded,
+                                                        or BRANCH-SWEEP-4: main holds the code lines it added, within doctrine/branchsweep.json `carried`)
   python3 -m foundation branchsweep --prune             delete remote branches whose tip is now an ancestor of origin/main
   python3 -m foundation branchsweep --archive           BRANCH-SWEEP-3: move every idle `port` branch to refs/archive/<name> and delete its head
   python3 -m foundation branchsweep --check             policy and loop are declared
@@ -372,20 +373,61 @@ def remote_prune(repos, token, prefixes=("claude/", "agent/"), dry=False, fetch=
     return out
 
 
+RESIDUE = {"prefixes": ["ops/", "docs/issues/", "doctrine/writeback/"], "suffixes": ["-data.js"]}
+
+
+def coverage(root, ref: str, base="origin/main") -> dict:
+    """BRANCH-SWEEP-4: how much of what a branch added is on main already. For every file the branch changed since its merge base (generated files,
+    ledgers and loop residue aside), each line it added (4 characters or more, brackets-only lines aside) is looked up in main's copy of that file. A stale branch whose
+    work landed through another pull request conflicts with main forever, yet main holds its lines; this measures that instead of assuming it."""
+    pol = policy(root).get("carried", {})
+    pre, suf = tuple(pol.get("residue_prefixes", RESIDUE["prefixes"])), tuple(pol.get("residue_suffixes", RESIDUE["suffixes"]))
+    mb = _g(root, "merge-base", base, ref).strip()
+    added = on_main = 0
+    missing: dict = {}
+    for path in _g(root, "diff", "--name-only", mb, ref).splitlines():
+        if not path or generated(path) or path.startswith(pre) or path.endswith(suf):
+            continue
+        rc, txt, _ = git(root, "show", f"{base}:{path}")
+        have = {l.strip() for l in txt.splitlines()} if rc == 0 else set()
+        for l in _g(root, "diff", "-U0", mb, ref, "--", path).splitlines():
+            if l.startswith("+") and not l.startswith("+++") and len(l[1:].strip()) >= 4 and re.search(r"[A-Za-z0-9]", l):
+                added += 1
+                if l[1:].strip() in have:
+                    on_main += 1
+                else:
+                    missing[path] = missing.get(path, 0) + 1
+    ok = added - on_main <= int(pol.get("max_missing_lines", 10)) and (added == 0 or on_main / added >= float(pol.get("min_share", 0.95)))
+    return {"added": added, "on_main": on_main, "missing": missing, "carried": ok}
+
+
+def _verdict(root, p: dict, ref: str, base: str) -> tuple[bool, str]:
+    if p["action"] in ("merged", "superseded"):
+        return True, f"{p['action']}: {p['why']}"
+    c = coverage(root, ref, base)
+    top = ", ".join(f"{k}: {v}" for k, v in sorted(c["missing"].items(), key=lambda kv: -kv[1])[:3])
+    if c["carried"]:
+        return True, f"superseded: main holds {c['on_main']} of the {c['added']} code lines it added (BRANCH-SWEEP-4)"
+    return False, f"{p['action']}: main lacks {c['added'] - c['on_main']} of the {c['added']} code lines it added ({top})"
+
+
 def carried(root, name: str, base="origin/main") -> tuple[bool, str]:
     """The closing probe of a PORT-BRANCH item: true when the branch is gone, or main already holds everything it has (merged or superseded)."""
     rc, _, _ = git(root, "rev-parse", "--verify", "-q", "origin/" + name)
+    if git(root, "rev-parse", "--is-shallow-repository")[1].strip() == "true":
+        return False, f"{name}: unmeasured: a shallow checkout has no merge base to compare against (fetch-depth: 0)"
     if rc != 0:
         # BRANCH-SWEEP-3: an archived branch is not carried by being gone; main must hold what the archive ref holds
         if git(root, "fetch", "-q", "origin", f"+{ARCHIVE}{name}:refs/remotes/origin/{name}")[0] != 0:
             return True, f"{name}: no such remote branch and no archive ref"
         try:
             p = plan_one(root, "origin/" + name, base)
+            ok, why = _verdict(root, p, "origin/" + name, base)
         finally:
             git(root, "update-ref", "-d", "refs/remotes/origin/" + name)
-        return p["action"] in ("merged", "superseded"), f"{name}: archived at {p['sha'][:10]} ({ARCHIVE}{name}): {p['action']}: {p['why']}"
-    p = plan_one(root, "origin/" + name, base)
-    return p["action"] in ("merged", "superseded"), f"{name}: {p['action']}: {p['why']}"
+        return ok, f"{name}: archived at {p['sha'][:10]} ({ARCHIVE}{name}): {why}"
+    ok, why = _verdict(root, plan_one(root, "origin/" + name, base), "origin/" + name, base)
+    return ok, f"{name}: {why}"
 
 
 def check(root=REPO) -> list[str]:
