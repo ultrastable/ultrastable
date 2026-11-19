@@ -54,7 +54,11 @@ def fresh_cost(root, value, now=None, max_age_days=3):
     rows = [json.loads(x) for x in p.read_text(encoding="utf-8").splitlines() if x.strip()] if p.is_file() else []
     if not rows:
         return None
-    at = datetime.fromisoformat(rows[-1]["at"].replace("Z", "+00:00"))
+    last = rows[-1]
+    stamp = last.get("at") or last.get("ts")  # cost-probe.mjs writes `ts`, the session-read rows write `at`
+    if not stamp or last.get("unmeasured"):
+        return None  # an unmeasured row (no Cloudflare credential on the runner) is unmeasured, never a breach and never a crash
+    at = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
     return value if ((now or datetime.now(timezone.utc)) - at).total_seconds() <= max_age_days * 86400 else None
 
 
