@@ -13,8 +13,16 @@ BRANCH = "origin/loop-evidence"
 
 
 def _branch_text(root: Path, rel: str) -> str:
+    """The ledger as the evidence branch holds it. LEDGER-FETCH-1: a runner checks out main only, so `origin/loop-evidence` is absent and a bare
+    `git show` returned "" without a word: every fleet pass replayed main's rows alone, saw a streak of 1 and closed nothing (2026-11-19, items
+    with three recorded passes held at "1 of 2"). The branch is fetched once when the ref is missing; a missing file on it is still ""."""
+    show = ["git", "-C", str(root), "show", f"{BRANCH}:{rel}"]
     try:
-        r = subprocess.run(["git", "-C", str(root), "show", f"{BRANCH}:{rel}"], capture_output=True, text=True, encoding="utf-8", timeout=30)
+        r = subprocess.run(show, capture_output=True, text=True, encoding="utf-8", timeout=30)
+        if r.returncode and subprocess.run(["git", "-C", str(root), "rev-parse", "--verify", "-q", BRANCH], capture_output=True).returncode:
+            remote, _, name = BRANCH.partition("/")
+            subprocess.run(["git", "-C", str(root), "fetch", "-q", remote, f"+refs/heads/{name}:refs/remotes/{BRANCH}"], capture_output=True, timeout=120)
+            r = subprocess.run(show, capture_output=True, text=True, encoding="utf-8", timeout=30)
     except (OSError, subprocess.SubprocessError):
         return ""
     return r.stdout if r.returncode == 0 else ""
