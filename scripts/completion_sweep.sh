@@ -30,7 +30,19 @@ for b in $(gh api "repos/$repo/branches" --paginate --jq '.[].name'); do
     # squash merges are not ancestors: delete when the branch has a merged PR and no commits after it
     m=$(gh pr list -R "$repo" --head "$b" --state merged --json mergedAt,headRefOid --jq '.[0].headRefOid // empty')
     tip=$(git rev-parse "origin/$b" 2>/dev/null)
-    if [ -n "$m" ] && [ "$m" = "$tip" ]; then gh api -X DELETE "repos/$repo/git/refs/heads/$b" >/dev/null && echo "deleted squash-merged branch $b"; fi
+    if [ -n "$m" ] && [ "$m" = "$tip" ]; then gh api -X DELETE "repos/$repo/git/refs/heads/$b" >/dev/null && echo "deleted squash-merged branch $b"; continue; fi
+    # BRANCH-AUTOMERGE-1 (Rowan, 2026-11-19): "The Ultrastable system shall always merge all feature branches to main automatically and shall
+    # always clean up and delete branches automatically once merged." A branch with unmerged commits and no PR is never left lying: if merging
+    # it into main changes nothing (its content already landed, e.g. by squash or a later PR) it is deleted; otherwise a PR is opened and the
+    # lane merges it (green), reconciles it (conflict) or supersedes it, and delete_branch_on_merge removes the branch. Capped per pass.
+    t=$(git merge-tree --write-tree origin/main "origin/$b" 2>/dev/null | head -1); rc=${PIPESTATUS[0]}
+    if [ "$rc" = 0 ] && [ "$t" = "$(git rev-parse 'origin/main^{tree}')" ]; then
+      gh api -X DELETE "repos/$repo/git/refs/heads/$b" >/dev/null && echo "deleted branch $b (content already in main)"
+    elif [ "${opened:=0}" -lt "${AUTOMERGE_CAP:-15}" ]; then
+      gh pr create -R "$repo" --base main --head "$b" --title "automerge: $b" \
+        --body "BRANCH-AUTOMERGE-1: completion-sweep found unmerged commits on \`$b\` with no PR. The lane merges this when green, reconciles a conflict with main, or supersedes it; the branch is deleted on merge." \
+        >/dev/null && opened=$((opened+1)) && echo "opened PR for unmerged branch $b (clean_merge=$([ "$rc" = 0 ] && echo yes || echo no))"
+    fi
   fi
 done
 if [ "$issues_on" != false ]; then
