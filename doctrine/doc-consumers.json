@@ -163,6 +163,15 @@
    "consumer": "deploy/transfer/plan.json",
    "needle": "demo-child-ultrastable",
    "how": "the retired demo tenant's idea file; the move plan records it as redeployed by its own bootstrap (ACCOUNT-SPLIT-3)"
+  },
+  {
+   "id": "agent-setup-prompt",
+   "paths": [
+    "workers/agent-setup/PROMPT.txt"
+   ],
+   "consumer": "workers/core/test/agent-setup.test.js",
+   "needle": "agent-setup/PROMPT.txt",
+   "how": "the paste-in prompt is read and asserted by the agent-setup test (path relative to the folded workers tree, so the exact-path tier missed it after REPOS-1)"
   }
  ],
  "verified": {

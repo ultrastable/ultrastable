@@ -177,9 +177,9 @@ def commit(paths, root=REPO, push=False) -> dict:
     code, out = _run(["git", "-c", "user.name=ultrastable-loop", "-c", "user.email=loop@ultrastable.invalid", "commit", "-m", "Loop evidence: tick pass", "--", *paths], root)
     if code:
         return {"ok": False, "step": "commit", "detail": out}
-    if push:
-        code, out = _run(["git", "push", "origin", "HEAD:refs/heads/loop-evidence", "--force-with-lease"], root, timeout=120)
-        return {"ok": code == 0, "step": "push", "detail": out[-300:]}
+    if push:  # EVIDENCE-APPEND-1: append onto the branch tip, never force-push main plus one pass over it
+        from . import ledger
+        return ledger.publish(root, list(paths), "Loop evidence: tick pass")
     return {"ok": True, "detail": "committed"}
 
 

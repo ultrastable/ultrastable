@@ -1,0 +1,8 @@
+{
+  "id": "Q-EVIDENCE-UNIFY",
+  "title": "Q-EVIDENCE-UNIFY: executor evidence goes through ledger.publish (one append route to loop-evidence)",
+  "body": "**Owner:** executor\n**Trigger:** EVIDENCE-APPEND-1 merged\n**Done check:** grep:scripts/executor_evidence.sh::ledger.publish\n**Status:** open\n\nscripts/executor_evidence.sh checks out loop-evidence and appends with grep -vxFf, a second route beside foundation/ledger.publish (EVIDENCE-APPEND-1). Replace its checkout, append and push with a call to ledger.publish for ops/executor-log.jsonl, ops/selfcode/ledger.jsonl and ops/agent-cost.jsonl, so one tested route writes every ledger and a rejected push rebuilds on the new tip. Test: tests/foundation/test_ledger_publish.py.",
+  "labels": ["role:executor", "raises-self"],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

@@ -14,6 +14,7 @@ permissions:
   pull-requests: write
   issues: write
   actions: write
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
 concurrency:
   group: fleet
   cancel-in-progress: false
@@ -30,9 +31,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Queue probes (close residual items whose probe passes)
-        run: python3 -m foundation queue --run --apply
+        run: python3 -m foundation queue --run --apply --publish
         env:
           GH_TOKEN: ${{ secrets.FLEET_TOKEN || secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+      - name: Land item verdicts on main (QUEUE-PERSIST-1)
+        # The closes, reopens and vacuous marks above were written only into this runner's checkout and lost when it ended
+        # (17 items decided close on 2026-11-19 stayed open on main). They go to main through the App writer like every data commit.
+        run: |
+          git config user.name ultrastable-queue; git config user.email queue@users.noreply.github.com
+          git checkout -- ops/contracts.jsonl 2>/dev/null || true
+          git add docs/issues
+          if git diff --cached --quiet; then echo "no item changed state"; exit 0; fi
+          git commit -qm "queue: closing-probe verdicts for $(git diff --cached --name-only | wc -l) item(s) (QUEUE-PERSIST-1)"
+          python3 tools/push_main.py
       - name: Cross-repo merge lane and drift loop
         run: python3 -m foundation fleet --apply
         env:
