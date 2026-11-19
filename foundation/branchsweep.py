@@ -222,7 +222,22 @@ def apply(root=REPO, base="origin/main", dry=False, now=None) -> dict:
 def prune(root=REPO, base="origin/main", dry=False) -> list[dict]:
     """Delete remote branches that carry nothing main lacks. The sha goes to the ledger first, so the deletion is reversible."""
     root, out = Path(root), []
+    # SWEEP-PRUNE-1: `superseded` is often decided inside apply(), after generated files are resolved by rule; a fresh scan sees those branches as
+    # `merge` again, so 92 superseded branches were never deleted (2026-11-19). The latest pass's dispositions count, at the same sha only.
+    seen: set = set()
+    lp = root / LEDGER
+    if lp.is_file():
+        for line in reversed(lp.read_text(encoding="utf-8").splitlines()):
+            try:
+                rec = json.loads(line)
+            except ValueError:
+                continue
+            if "dispositions" in rec and not rec.get("dry"):
+                seen = {(d["name"], d["sha"]) for d in rec["dispositions"] if d.get("action") == "superseded" and d.get("sha")}
+                break
     for p in scan(root, base):
+        if (p["name"], p["sha"]) in seen and p["action"] == "merge":
+            p = {**p, "action": "superseded", "why": "the latest pass merged it and main gained nothing (SWEEP-PRUNE-1)"}
         if p["action"] in ("merged", "superseded", "rejected") and p["name"] not in policy(root).get("held", {}):
             if not dry:
                 git(root, "push", "origin", "--delete", p["name"])
