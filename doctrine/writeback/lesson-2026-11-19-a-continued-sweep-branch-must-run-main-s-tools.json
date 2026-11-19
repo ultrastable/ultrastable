@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-19-a-continued-sweep-branch-must-run-main-s-tools",
+  "kind": "lesson",
+  "date": "2026-11-19",
+  "title": "A continued sweep branch must run main's tools",
+  "body": "SWEEP-BUDGET-1 lets a later pass continue the open sweep branch, which switched the working tree to that branch's stale copy of foundation/branchsweep.py; run 44497010885 therefore ran the pre-SWEEP-PRUNE-1 prune and deleted nothing although 88 branches were superseded. SWEEP-TOOLS-MAIN-1: after checking out the sweep branch the workflow restores foundation, scripts, tools and doctrine/branchsweep.json from origin/main.",
+  "probe": "grep:.github/workflows/branchsweep.yml::SWEEP-TOOLS-MAIN-1"
+ },
+ "kind": "lesson",
+ "title": "A continued sweep branch must run main's tools",
+ "session": ""
+}
