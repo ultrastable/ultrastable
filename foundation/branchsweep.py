@@ -170,9 +170,15 @@ def apply(root=REPO, base="origin/main", dry=False, now=None) -> dict:
     root, pol = Path(root), policy(root)
     plans = scan(root, base)
     done = []
+    # A run has a wall-clock budget (policy max_seconds, default 540 s, under the workflow's 15 minute timeout). The gate runs after every merge, so a
+    # backlog of mergeable branches cannot finish in one run; a run killed by the timeout loses every merge it made (the sweep branch is never pushed)
+    # and the backlog never shrinks. Past the budget a branch is deferred, with its reason in the ledger, and the next run takes it first.
+    budget, t0 = float(pol.get("max_seconds", 540)), time.monotonic()
     for p in plans:
         a = p["action"]
-        if a == "merge" and not dry:
+        if a == "merge" and not dry and time.monotonic() - t0 > budget:
+            p.update(action="skipped", why=f"deferred to the next run: the {int(budget)} s time budget of this run is spent")
+        elif a == "merge" and not dry:
             ref = "origin/" + p["name"]
             head = _g(root, "rev-parse", "HEAD").strip()
             rc, _, _ = git(root, "merge", "--no-ff", "--no-commit", ref)

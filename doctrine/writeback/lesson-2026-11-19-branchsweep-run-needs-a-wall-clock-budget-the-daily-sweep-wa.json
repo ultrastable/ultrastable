@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-19-branchsweep-run-needs-a-wall-clock-budget-the-daily-sweep-wa",
+  "kind": "lesson",
+  "date": "2026-11-19",
+  "title": "branchsweep run needs a wall-clock budget: the daily sweep was cancelled at its 15 minute timeout",
+  "body": "The gate runs after every merge, so a backlog of ~170 branches cannot finish in one 15 minute job; the timeout cancelled the run before the sweep branch was pushed, so every merge was lost and the backlog never shrank (runs of 2026-11-18 and 2026-11-19 cancelled, 2026-11-17 failed). apply() now stops merging after policy max_seconds (default 540) and records the rest as skipped with the reason, so a run always ends and its progress is kept.",
+  "probe": "grep:foundation/branchsweep.py::max_seconds"
+ },
+ "kind": "lesson",
+ "title": "branchsweep run needs a wall-clock budget: the daily sweep was cancelled at its 15 minute timeout",
+ "session": ""
+}

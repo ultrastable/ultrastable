@@ -63,6 +63,16 @@ class Sweep(unittest.TestCase):
         self.assertIn("Closing probe", item["body"]); self.assertIn("**Owner:** operations", item["body"])
         self.assertEqual((self.w / "code.py").read_text(), "x = 3\n", "a code conflict leaves main's file untouched")
 
+    def test_time_budget_defers_merges_instead_of_losing_the_run(self):
+        self.branch("one", {"one.py": "1"}); self.branch("two", {"two.py": "2"}); sh(self.w, "fetch", "-q", "origin")
+        pol = json.loads((self.w / "doctrine/branchsweep.json").read_text()); pol["max_seconds"] = -1
+        write(self.w, "doctrine/branchsweep.json", json.dumps(pol)); sh(self.w, "add", "-A"); sh(self.w, "commit", "-qm", "budget")
+        rec = B.apply(self.w)
+        acts = {d["name"]: d for d in rec["dispositions"]}
+        self.assertEqual({acts["one"]["action"], acts["two"]["action"]}, {"skipped"})
+        self.assertIn("time budget", acts["one"]["why"]); self.assertTrue(rec["invariant"], rec)
+        self.assertFalse((self.w / "one.py").exists(), "a deferred branch is not merged and not dropped")
+
     def test_failing_gate_undoes_the_merge_and_files_a_port_item(self):
         self.branch("breaks", {"new.py": "y = 2\n"}); sh(self.w, "fetch", "-q", "origin")
         pol = json.loads((self.w / "doctrine/branchsweep.json").read_text()); pol["gate"] = [[sys.executable, "-c", "import sys; sys.exit(3)"]]
