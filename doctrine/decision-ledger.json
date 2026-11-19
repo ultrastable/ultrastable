@@ -2782,6 +2782,14 @@
    "title": "Memory staleness is a main-only failure",
    "body": "check_memory.py treated staleness as advisory only for the pull_request event; the lane runs checks on bot PRs with workflow_dispatch on the PR branch, so the branch sweep PR (38 merged commits) failed on staleness alone. MEMORY-REF-1: hard failure only when GITHUB_REF is refs/heads/main; tests/test_check_memory_ref.py covers both refs.",
    "probe": "grep:scripts/check_memory.py::MEMORY-REF-1"
+  },
+  {
+   "id": "lesson-2026-11-19-prune-must-honour-the-pass-s-superseded-verdicts",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "Prune must honour the pass's superseded verdicts",
+   "body": "branchsweep apply() decides superseded after resolving generated files by rule, but prune() re-scanned and saw those branches as merge, so 92 superseded branches were never deleted (run 44495425705: superseded 92, branches 157). SWEEP-PRUNE-1: prune also deletes branches the latest non-dry pass recorded as superseded at the same sha; tests/foundation/test_branchsweep.py covers same and different sha.",
+   "probe": "grep:foundation/branchsweep.py::SWEEP-PRUNE-1"
   }
  ]
 }

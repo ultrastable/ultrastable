@@ -89,6 +89,19 @@ class Sweep(unittest.TestCase):
         d = next(x for x in rec["dispositions"] if x["name"] == "stuck")
         self.assertEqual(d["action"], "port"); self.assertIn("already holds", d["why"])
 
+    def test_prune_deletes_what_the_latest_pass_found_superseded_at_that_sha(self):
+        """SWEEP-PRUNE-1: apply() decides `superseded` after resolving generated files; a fresh scan says `merge`, so prune never deleted them."""
+        self.branch("residue", {"docs/PROJECT-MEMORY.md": "old\n"})
+        self.advance({"docs/PROJECT-MEMORY.md": "new\n"})
+        sh(self.w, "fetch", "-q", "origin")
+        p = next(x for x in B.scan(self.w) if x["name"] == "residue")
+        self.assertEqual(p["action"], "merge", "the scan alone cannot tell")
+        rec = lambda sha: json.dumps({"entered": 1, "dry": False, "dispositions": [{"name": "residue", "sha": sha, "action": "superseded", "why": "x"}]}) + "\n"
+        write(self.w, B.LEDGER, rec("0" * 40))
+        self.assertNotIn("residue", [d["name"] for d in B.prune(self.w, dry=True)], "a different sha is never pruned")
+        write(self.w, B.LEDGER, rec(p["sha"]))
+        self.assertIn("residue", [d["name"] for d in B.prune(self.w, dry=True)])
+
     def test_failing_gate_undoes_the_merge_and_files_a_port_item(self):
         self.branch("breaks", {"new.py": "y = 2\n"}); sh(self.w, "fetch", "-q", "origin")
         pol = json.loads((self.w / "doctrine/branchsweep.json").read_text()); pol["gate"] = [[sys.executable, "-c", "import sys; sys.exit(3)"]]
