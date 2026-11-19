@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-19-executor-step-hung-to-the-job-timeout-and-wrote-no-row",
+  "kind": "lesson",
+  "date": "2026-11-19",
+  "title": "Executor step hung to the job timeout and wrote no row",
+  "body": "The executor step ran 12 minutes and was cancelled with no provenance row, so liveness read the executor clock stale for 160 h. EXEC-WATCHDOG-1 in foundation/executor.py ends the run at 10 minutes, records a stalled row and exits clean; test WatchdogTests.",
+  "probe": "grep:foundation/executor.py::EXEC-WATCHDOG-1"
+ },
+ "kind": "lesson",
+ "title": "Executor step hung to the job timeout and wrote no row",
+ "session": ""
+}
