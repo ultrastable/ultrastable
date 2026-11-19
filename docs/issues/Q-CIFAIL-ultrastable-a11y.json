@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-ultrastable-a11y",
+  "title": "Q-CIFAIL-ultrastable-a11y: a11y is failing in ultrastable/ultrastable",
+  "body": "**Owner:** staff\n**Trigger:** every executor run and every ciwatch run\n**Done check:** cmd:python3 -m foundation ciwatch --probe ultrastable/ultrastable a11y\n**Status:** open\n\nCIWATCH-1: workflow `a11y` in ultrastable/ultrastable is red on its default branch (failure, 2026-11-19T01:19:49Z): https://github.com/ultrastable/ultrastable/actions/runs/44436067724\n\nFix the root cause in the repository where the defect lives; do not skip or weaken the check. Failed log tail:\n\n```\na11y\tAudit every public page at phone and desktop width, light and dark (A11Y-LOOP-1)\t\ufeff2026-11-19T01:20:13.9441064Z ##[group]Run node scripts/a11y_audit.mjs\na11y\tAudit every public page at phone and desktop width, light and dark (A11Y-LOOP-1)\t2026-11-19T01:20:13.9441351Z ^[[36;1mnode scripts/a11y_audit.mjs^[[0m\na11y\tAudit every public page at phone and desktop width, light and dark (A11Y-LOOP-1)\t2026-11-19T01:20:13.9487493Z shell: /usr/bin/bash -e {0}\na11y\tAudit every public page at phone and desktop width, light and dark (A11Y-LOOP-1)\t2026-11-19T01:20:13.9487716Z ##[endgroup]\na11y\tAudit every public page at phone and desktop width, light and dark (A11Y-LOOP-1)\t2026-11-19T01:20:48.2007701Z /how phone light horizontal-scroll 8px\na11y\tAudit every public page at phone and desktop width, light and dark (A11Y-LOOP-1)\t2026-11-19T01:20:48.2008466Z /how phone dark horizontal-scroll 8px\na11y\tAudit every public page at phone and desktop width, light and dark (A11Y-LOOP-1)\t2026-11-19T01:20:48.2009010Z a11y-audit FAIL 2\na11y\tAudit every public page at phone and desktop width, light and dark (A11Y-LOOP-1)\t2026-11-19T01:20:48.2152958Z ##[error]Process completed with exit code 1.\n```",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
