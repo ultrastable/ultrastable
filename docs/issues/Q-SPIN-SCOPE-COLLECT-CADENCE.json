@@ -1,0 +1,12 @@
+{
+ "id": "Q-SPIN-SCOPE-COLLECT-CADENCE",
+ "title": "Q-SPIN-SCOPE-COLLECT-CADENCE: Collect every live app's metrics twice a day instead of once",
+ "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-SPIN-SCOPE-COLLECT-CADENCE.json::Status:\\*\\* closed\n**Status:** open\n\nCollect every live app's metrics twice a day instead of once. more measurement points per app for the portfolio manager at a few requests. Planned cost per day: {\"workers_requests\": 40} against headroom {\"workers_requests\": 45000} (SPINOFF-IDEAS-1).\n\nsize: S\n\n**Prediction:** ops/free-tier.json level != shed within 48 h\n\n**Closing probe:** grep:docs/issues/Q-SPIN-SCOPE-COLLECT-CADENCE.json::Status:\\*\\* closed",
+ "labels": [
+  "role:product-manager",
+  "ws:growth",
+  "raises-self"
+ ],
+ "milestone": "Now",
+ "workstream": "Growth"
+}
