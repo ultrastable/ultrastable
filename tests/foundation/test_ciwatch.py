@@ -49,6 +49,10 @@ class CiWatch(unittest.TestCase):
         self.assertEqual(ciwatch.probe("o/r", "ci", REPO, fake([r(1, "ci", "failure")], "")), 1)
         self.assertEqual(ciwatch.probe("o/r", "ci", REPO, fake([r(1, "ci", "success")], "")), 0)
 
+    def test_a_cancelled_run_does_not_hide_a_failure(self):  # PROBE-CONCLUSIVE-1
+        self.assertEqual(ciwatch.probe("o/r", "ci", REPO, fake([r(3, "ci", "cancelled"), r(2, "ci", "skipped"), r(1, "ci", "failure")], "")), 1)
+        self.assertEqual(ciwatch.probe("o/r", "ci", REPO, fake([r(3, "ci", "cancelled"), r(1, "ci", "success")], "")), 0)
+
 
 if __name__ == "__main__":
     unittest.main()
