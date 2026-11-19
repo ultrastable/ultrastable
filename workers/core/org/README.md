@@ -87,3 +87,19 @@ Opt-in, offline-tested in `core/test/self-doer.test.js`. `config.selfdoer = { en
 Downstream loop (issue #183, opt-in): `config.downstream = { enabled, repo, kind = "brief", labels, max_per_tick = 5 }` adds a `downstream_issues` step that opens one GitHub issue per ready or claimed item of that kind through the GitHub App installation token (`core/githubapp/downstream.js`), recording a `github / open_issue` outcome as both evidence and idempotency key. Without the App connected it skips and says why. Tested in `core/org/org.test.js`.
 
 Merge under the trust ladder (issue #183, opt-in): `config.codeloop = { enabled, merge_min_rung = "autonomous", protected_paths, max_files, trust_surface = "repo", max_per_tick = 3, killed }` adds a `codeloop_merge` step after the runner. A runner pull request (checks passed, reviewer approved) is merged by `core/codeloop` only when the trust ledger rung of `<trust_surface>/merge` is at or above `merge_min_rung`, no changed file is protected and the kill switch is off; the route is the GitHub App installation token (`mergeHost()`), a merge is recorded as a `<trust_surface> / merge` outcome, a refusal is one `codeloop_merges` row. Without the App connected it skips and says why. Tested in `core/org/org.test.js`.
+
+## Routes and ports of the build-out modules (issue #201)
+
+`core/org/surfaces.js` mounts and supplies what the tick steps in `buildout.js` do not. Tests: `core/org/surfaces.test.js`.
+
+| Surface | Where | Switch |
+|---|---|---|
+| Walkthrough, read-back, profile | `/api/console/walkthrough*`, `/api/console/readback`, `/console/readback`, `/api/console/profile`, owner-only | `config.walkthrough.enabled === false` |
+| Product dashboard | `/console/dashboard`, `/console/dashboard/api/{state,integration,loop,refresh}`, `/console/dashboard/health`, owner-only, same-origin writes | `config.dashboard.enabled === false` |
+| Identity-aware proxy guide | `GET /api/console/proxy`, owner-only; tick step `proxy_guide` files one card per step a person must do | `config.proxy_guide.enabled === false` |
+| Model port and role runtime | `org.models`, `org.roleRuntime`; steps `modelport` (needs `config.modelport.aliases`) and `role_runtime` (needs injected `roleHandlers`) | `config.modelport.enabled === false` |
+| Stage 2 tracker | step `stage2`: adopt, probe "items match open issues", mirror claims and decisions (`config.stage2.mirror === false` for read-only) | `config.stage2.enabled === false` |
+| Slots | `org.scheduledTick()`: one tick per slot (default 10 minutes, `config.slots.slot_minutes`, must not exceed the scheduler interval); the Cloudflare cron and the Cloud Run `/tick` call it | `config.slots.enabled === false` |
+
+Mounts run inside `handleConsole`'s signed-in surface (`mounts` option), so a viewer or anonymous caller never reaches them.
+`GET /api/console` gains an additive `screens` key from the walkthrough. Google IAP is accepted as a console sign-in when `config.doors.iap.audience` is set (`core/src/console.js`, tested in `core/org/surfaces.test.js`). The Cloudflare heartbeat alarm calls `tick()` directly on purpose: it is a single instance that cannot fire twice, and its own 10-minute cadence would collide with a 10-minute slot.

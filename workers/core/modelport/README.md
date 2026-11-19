@@ -11,6 +11,7 @@ US-SPEC-14 section 3 names two ports the seed did not have. `index.js` defines b
 | US-14-R10: deploy-time failure when reviewer and doer resolve to one family while two are available | BUILT (`deployCheck()`); a host calls it at deploy and refuses to ship on `ok: false` |
 | US-14-R04: presence map only | BUILT: the port reads `env[name] === true` and never a value |
 | Role runtime: one instance per manager or staff role | BUILT in process (`createRoleRuntime`): a store lease per role row, one run at a time, dispatch rows worked to done or failed |
+| Models port and in-process role runtime supplied by the composition root: endpoints from the Workers AI binding or a GitHub token (or injected), step `modelport` runs `deployCheck` and throws on failure so the tick files it, step `role_runtime` works queued dispatches when `roleHandlers` are injected | BUILT (`core/org/surfaces.js`, `core/org/surfaces.test.js`); aliases come from `config.modelport.aliases` |
 | Role runtime on Durable Objects, container jobs or an agent engine | NOT COVERED: adapters, each needs a live account. They implement `instances`, `runRole`, `runDispatches` |
 | Endpoints (edge inference binding, hosted model) | NOT COVERED here: passed in as functions; `core/router` holds the provider calls |
 
