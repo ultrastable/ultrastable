@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-19-main-writer-caps-20-files-per-commit",
+  "kind": "lesson",
+  "date": "2026-11-19",
+  "title": "Main writer caps 20 files per commit",
+  "body": "The first live QUEUE-PERSIST-1 pass changed more than 20 queue item files; the main-writer Worker accepts at most 20 files per commit (HTTP 400) and the ruleset only admits commits through that Worker. Surfaces tested: Worker route (400), direct push (GH013). tools/push_main.py now sends consecutive commits of 20 and does not fall back once a part has landed; verified by tests/test_push_main_batches.py.",
+  "probe": "grep:tools/push_main.py::PUSH-MAIN-BATCH-1"
+ },
+ "kind": "lesson",
+ "title": "Main writer caps 20 files per commit",
+ "session": ""
+}
