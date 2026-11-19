@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-agent-uiux-2026111901",
+  "title": "PORT-BRANCH-agent-uiux-2026111901: carry agent/uiux-2026111901 onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `agent/uiux-2026111901` at 17dbd2e7a3 holds work main lacks and cannot merge as is (conflicts in code: ops/uiux/status.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried agent/uiux-2026111901\n**Status:** open\n\nPort the change by hand onto current main (it is 8 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried agent/uiux-2026111901",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

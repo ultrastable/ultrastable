@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-unknowns-uia-surfaces",
+  "title": "PORT-BRANCH-parked-claude-unknowns-uia-surfaces: carry parked/claude/unknowns-uia-surfaces onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/unknowns-uia-surfaces` at a54a0d5092 holds work main lacks and cannot merge as is (conflicts in code: dashboard/test/dashboard.test.mjs, doctrine/unknowns.json, scripts/dashboard_snapshot.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/unknowns-uia-surfaces\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/unknowns-uia-surfaces",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

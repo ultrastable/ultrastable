@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-agent-green-core",
+  "title": "PORT-BRANCH-parked-agent-green-core: carry parked/agent/green-core onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/green-core` at 2d85ede20c holds work main lacks and cannot merge as is (conflicts in code: README.md, agents/AGENTS.md, dashboard/test/dashboard.test.mjs, doctrine/claims.json, foundation/tenantsync.py, seed/agents/AGENTS.md)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/green-core\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/green-core",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

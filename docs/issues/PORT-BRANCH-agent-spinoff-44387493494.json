@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-agent-spinoff-44387493494",
+  "title": "PORT-BRANCH-agent-spinoff-44387493494: carry agent/spinoff-44387493494 onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `agent/spinoff-44387493494` at 5f26c87b78 holds work main lacks and cannot merge as is (conflicts in code: instances/spinoffs/air-quality/app.json, site/spinoff-roadmap-data.js, spinoffs/registry.js, spinoffs/registry.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried agent/spinoff-44387493494\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried agent/spinoff-44387493494",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
