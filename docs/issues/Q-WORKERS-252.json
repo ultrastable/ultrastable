@@ -1,8 +1,9 @@
 {
- "id": "Q-WORKERS-252",
- "title": "Q-WORKERS-252: cross-repo stale branch sweep (migrated from workers#252)",
- "body": "**Owner:** operations\n**Trigger:** daily lane pass\n**Done check:** grep:ops/branchsweep-ledger.jsonl::ultrastable/workers\n**Status:** open\n\nMigrated from ultrastable/workers#252 (closed with this disposition). foundation/branchsweep.py works on the local checkout, so stale claude/* and agent/* branches in workers, ops and practical-solutions are never pruned. Add a cross-repo pass over a fleet list in doctrine/branchsweep.json that deletes branches whose PR is merged/closed or whose head is an ancestor of the default branch, one ledger row each; unmerged work becomes a PORT-BRANCH item.\n\nsize: M\n\n**Closing probe:** grep:ops/branchsweep-ledger.jsonl::ultrastable/workers",
- "labels": [
-  "role:operations"
- ]
+  "id": "Q-WORKERS-252",
+  "title": "Q-WORKERS-252: cross-repo stale branch sweep (migrated from workers#252)",
+  "body": "**Owner:** operations\n**Trigger:** daily lane pass\n**Done check:** grep:ops/branchsweep-ledger.jsonl::ultrastable/workers\n**Status:** open\n\nMigrated from ultrastable/workers#252 (closed with this disposition). foundation/branchsweep.py works on the local checkout, so stale claude/* and agent/* branches in workers, ops and practical-solutions are never pruned. Add a cross-repo pass over a fleet list in doctrine/branchsweep.json that deletes branches whose PR is merged/closed or whose head is an ancestor of the default branch, one ledger row each; unmerged work becomes a PORT-BRANCH item.\n\nsize: M\n\n**Closing probe:** grep:ops/branchsweep-ledger.jsonl::ultrastable/workers",
+  "labels": [
+    "role:operations"
+  ],
+  "milestone": "Now"
 }
