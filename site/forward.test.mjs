@@ -16,8 +16,8 @@ console.log("forward ok");
 // OWNER-ROUTE-1: /connect/github-signin must reach OWNER, not TICK.
 { const mod2 = await import("./worker.js"); const hit = [];
   const env = { OWNER: { fetch: async () => { hit.push("owner"); return new Response("ok"); } }, TICK: { fetch: async () => { hit.push("tick"); return new Response("ultrastable seed worker"); } } };
-  for (const p of ["/connect/github-signin", "/owner", "/auth/github-signin/callback"]) await mod2.default.fetch(new Request("https://ultrastable.io" + p), env, {});
-  if (hit.join() !== "owner,owner,owner") throw new Error("owner paths misrouted: " + hit.join()); console.log("owner routing ok"); }
+  for (const p of ["/connect/github-signin", "/owner", "/auth/github-signin/callback", "/changelog"]) await mod2.default.fetch(new Request("https://ultrastable.io" + p), env, {});
+  if (hit.join() !== "owner,owner,owner,owner") throw new Error("owner paths misrouted: " + hit.join()); console.log("owner routing ok"); }
 
 // FREE-TIER-1: a GitHub delivery the tick does not act on is answered at the first hop and never forwarded
 {

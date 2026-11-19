@@ -2639,6 +2639,23 @@
    "title": "SPINOFF-DEPLOY-1: a launched spinoff must be deployed and probed",
    "body": "numbers-board and portfolio-board answered 404 because the ultrastable-spinoffs Worker (quniverse account, zone ultrastable.app) was deployed once by hand and never redeployed, and spinoffs/wrangler.toml bound the wrong D1 (ultrastable-ops instead of ultrastable-spinoffs 9e05f27a). Verified live after redeploy: blindspot, numbers-board and portfolio-board all answer 200 (verify-live: GET https://numbers-board.ultrastable.app/api/board expect Managers and loops). spinoff.yml now deploys after rebuild and scripts/probe_spinoffs.py fails on any app not 200. Update the account id when the zone transfer (OL-20261117-4) lands.",
    "probe": "file:scripts/probe_spinoffs.py"
+  },
+  {
+   "id": "lesson-2026-11-19-port-exec-1-closed",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "PORT-EXEC-1 closed",
+   "body": "port_call runs a PORT item's verify command; gcp adapter evidence recorded, 13 tests pass.",
+   "probe": "file:ops/port-evidence/gcp-verify.json"
+  },
+  {
+   "id": "lesson-2026-11-19-three-red-scheduled-workflows-had-code-root-causes-not-flake",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "Three red scheduled workflows had code root causes, not flakes",
+   "body": "cost-guard crashed in ultrastability.fresh_cost because cost-probe.mjs writes ts while the reader wanted at; claims flagged /changelog as an infinite redirect because dashboard.ultrastable.io is served by the site worker, which redirected to itself; /how had an un-wrapped table that scrolled sideways at phone width. All three fixed with tests; /api/goals is now cached at the edge for 10 minutes.",
+   "probe": "grep:foundation/ultrastability.py::last.get\\(\"at\"\\) or last.get\\(\"ts\"\\)",
+   "session": "session_0156nqDtyvxuXyPkZtHLoyzi"
   }
  ]
 }

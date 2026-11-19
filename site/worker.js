@@ -153,7 +153,7 @@ function ultrastability() {
     + "<p>A system is ultrastable, in W. Ross Ashby's sense, when two loops keep its essential variables inside bounds: a fast loop that corrects disturbance, and a slow loop that changes the system itself when the fast loop cannot.</p>"
     + "<p>The fast loop is the probes, the cost check, the claims check and the executor. The slow loop reads the same variables every tick, and when one has been out of bounds for two ticks in a row it takes one discrete step on that variable's ladder, keeps the step only if the variable comes back, and otherwise undoes it and takes the next.</p>"
     + "<p>The essential variables of " + esc(P.what) + " (" + esc(P.status) + "):</p>"
-    + "<table><thead><tr><th>Variable</th><th>Bounds</th><th>Second-order steps, in order</th></tr></thead><tbody>" + P.variables.map(row).join("") + "</tbody></table>"
+    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Variable</th><th>Bounds</th><th>Second-order steps, in order</th></tr></thead><tbody>" + P.variables.map(row).join("") + "</tbody></table></div>"
     + "<p>" + esc(T.what) + " (" + esc(T.status) + "): " + T.variables.map(function (v) { return esc(v.name.toLowerCase()); }).join(", ") + ".</p>"
     + "<p>The system describes itself in code: what it is, its regulators, its variables and bounds, its clocks and its boundary are served as JSON at <a href=\"/self\">/self</a>.</p>"
     + "<p class=\"meta\">After " + esc(ULTRA.credit) + ". Every reading, step and verdict is a row in the ultrastability ledger and a provenance row.</p>";
@@ -972,7 +972,7 @@ const handler = {
       case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/live"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/for": return new Response(forIndex(), { headers: HTML });
       case "/claims": return new Response(claimsPage(), { headers: HTML });
-      case "/changelog": case "/api/changelog": return Response.redirect("https://dashboard.ultrastable.io" + pth + u.search, 302); // PROVENANCE-1: the public changelog is served by the dashboard worker
+      case "/changelog": case "/api/changelog": if (u.hostname === "dashboard.ultrastable.io") return new Response("changelog unavailable", { status: 503, headers: { "retry-after": "60" } }); /* CHANGELOG-LOOP-1: this host is served by this worker, so a redirect to itself looped; OWNER_PATH forwards to the dashboard worker first */ return Response.redirect("https://dashboard.ultrastable.io" + pth + u.search, 302); // PROVENANCE-1: the public changelog is served by the dashboard worker
       case "/self": case "/.well-known/ultrastable": return new Response(JSON.stringify(SELF, null, 1), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300", "Link": "</self>; rel=\"describedby\"" } });
       case "/api/claims": return new Response(JSON.stringify(VERIFIED), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/product": return new Response(product(), { headers: HTML });
@@ -1009,7 +1009,7 @@ const handler = {
 };
 // AGENTIC-1: machine-readable discovery and a read-only MCP endpoint in front of every page.
 // TOPOLOGY-1: the owner dashboard is a separate worker reached through the OWNER service binding (doctrine/topology.json); only its own paths are forwarded.
-const OWNER_PATH = /^\/(owner|api\/owner\/[a-z-]+(\/callback)?|connect\/github-signin|auth\/github-signin\/callback)$/;  // OWNER-IDENTITY-1: GitHub sign-in and its one-click app registration live on the dashboard
+const OWNER_PATH = /^\/(owner|changelog|api\/changelog|api\/owner\/[a-z-]+(\/callback)?|connect\/github-signin|auth\/github-signin\/callback)$/;  // OWNER-IDENTITY-1: GitHub sign-in and its one-click app registration live on the dashboard
 const AUTH_PATH = /^\/(connect(\/[a-z-]+)?|auth\/(github(-admin)?\/(callback|installed)|health)|hook\/(github|host))$/;  // HOSTS-1: the signed repo and host webhooks reach the tick Worker through the same forward
 //  // AUTH-1: the consent screen and provider callbacks live on the tick Worker; the public host forwards them so the person stays on one address
 // ACCOUNT-SPLIT-2: once the ultrastable account is primary, the old account's site forwards every request there (secret UPSTREAM_ORIGIN, set by
