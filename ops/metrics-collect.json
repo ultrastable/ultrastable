@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "purpose": "collect every live app's metrics and expose measurement points to the portfolio manager",
+  "schedule": {
+    "runsPerDay": 2,
+    "intervalHours": 12,
+    "trigger": "executor tick"
+  },
+  "scope": "every live app",
+  "costPerDay": {
+    "workers_requests": 40
+  },
+  "headroom": {
+    "workers_requests": 45000
+  },
+  "prediction": {
+    "signal": "ops/free-tier.json level",
+    "expected": "!= shed",
+    "windowHours": 48
+  },
+  "consumers": [
+    "portfolio-manager",
+    "improver"
+  ],
+  "issue": "Q-SPIN-SCOPE-COLLECT-CADENCE"
+}

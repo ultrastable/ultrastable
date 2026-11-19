@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-19-executor-closed-q-spin-scope-collect-cadence-double-the-live",
+  "kind": "decision",
+  "date": "2026-11-19",
+  "title": "Executor closed Q-SPIN-SCOPE-COLLECT-CADENCE: Double the live-app metrics collection cadence from once to twice daily via ops/metrics-collec",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: ops/metrics-collect.json, tests/metrics-collect.test.js.",
+  "probe": "file:ops/metrics-collect.json"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-SPIN-SCOPE-COLLECT-CADENCE: Double the live-app metrics collection cadence from once to twice daily via ops/metrics-collec",
+ "session": ""
+}

@@ -1,0 +1,11 @@
+{
+  "id": "NC-ROADMAP-AGENT-WBA-OUTBOUND",
+  "title": "NC-ROADMAP-AGENT-WBA-OUTBOUND: ROADMAP-1: QNFO.INFRA #8: sign outbound agent fetches and cache peer directories",
+  "body": "**Owner:** product-manager\n**Trigger:** the backlog item ROADMAP-AGENT-WBA-OUTBOUND was parked needs-code by the in-tick doer\n**Done check:** grep:site/webbotauth.js::directoryCache\n**Status:** open\n\nROADMAP-1: QNFO.INFRA #8: sign outbound agent fetches and cache peer directories\n\nTriage: worker-native attempt failed (no code agent produced a change: [{\"adapter\":\"workers-ai-glm\",\"error\":\"airouter: no model passed (workers-ai-glm: error: 5035: Model @cf/zai-org/glm-5.3-flash is not available on the Workers \"},{\"adap); retried after the other candidates\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:product-manager",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

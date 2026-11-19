@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-TICKFAIL-criticality-2026-11-13T14",
+  "title": "NC-PLUS-TICKFAIL-criticality-2026-11-13T14: Auto-apply D1 schema migration so criticality_samples exists before tick runs",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-TICKFAIL-criticality-2026-11-13T14 was parked needs-code by the in-tick doer\n**Done check:** A fresh environment with no criticality_samples table runs one tick and the criticality step completes after migrations auto-apply\n**Status:** open\n\nAuto-apply D1 schema migration so criticality_samples exists before tick runs\n\nTriage: Auto-applying a D1 schema migration requires changes to the Worker's tick code or migration scripts; the in-Worker doer can only edit the backlog database, not code. | first step: Add a migration step to the tick handler that checks for criticality_samples and runs the CREATE TABLE migration before the criticality step.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

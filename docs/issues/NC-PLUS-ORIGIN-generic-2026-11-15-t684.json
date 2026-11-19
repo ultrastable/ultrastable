@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-ORIGIN-generic-2026-11-15-t684",
+  "title": "NC-PLUS-ORIGIN-generic-2026-11-15-t684: Automate k_eff gate: run the existing probe on every deploy and block regressions below k_eff=1",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-ORIGIN-generic-2026-11-15-t684 was parked needs-code by the in-tick doer\n**Done check:** Deploy pipeline runs the k_eff probe post-deploy and fails/blocks if k_eff < 1; last 3 deploys show probe results logged\n**Status:** open\n\nAutomate k_eff gate: run the existing probe on every deploy and block regressions below k_eff=1\n\nTriage: Requires editing CI/deploy pipeline to invoke the k_eff probe and gate deploys; in-Worker doer is DB-only and cannot modify code or workflows. | first step: Human/agent with repo access: locate the probe script and current deploy workflow, then add a post-deploy probe step that fails the run if k_eff < 1.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

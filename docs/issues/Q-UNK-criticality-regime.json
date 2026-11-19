@@ -1,0 +1,11 @@
+{
+  "id": "Q-UNK-criticality-regime",
+  "title": "Q-UNK-criticality-regime: the system is driven: k 36.486, k_self 0.0, 0 of 405 verified deploys originated on itself",
+  "body": "**Owner:** staff\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation agentwork --unk-resolved criticality-regime\n**Status:** open\n\nAGENT-WORK-1: the system holds a fact nobody has been told (ignorance audit): the system is driven: k 36.486, k_self 0.0, 0 of 405 verified deploys originated on itself\n\nChange the code or data so that the fact is resolved by a measured change (or add the missing consumer/probe), and record it with `python3 -m foundation ignorance --told criticality-regime` in the same change.",
+  "labels": [
+    "role:staff",
+    "ignorance"
+  ],
+  "milestone": "Next",
+  "workstream": "Ignorance"
+}

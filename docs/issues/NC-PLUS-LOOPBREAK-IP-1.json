@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-LOOPBREAK-IP-1",
+  "title": "NC-PLUS-LOOPBREAK-IP-1: Record a dispatch outcome (success/failure) per attempt in D1 so LOOPBREAK-IP-1's rule can evaluate",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-LOOPBREAK-IP-1 was parked needs-code by the in-tick doer\n**Done check:** Every dispatched item write in D1 includes an outcome field (success/failure) updated on each attempt\n**Status:** open\n\nRecord a dispatch outcome (success/failure) per attempt in D1 so LOOPBREAK-IP-1's rule can evaluate\n\nTriage: Outcome must be written by the dispatch code on each attempt; the doer can only touch backlog rows, not modify dispatch logic. Closing probe also needs a live dispatch. | first step: Locate the dispatch write path in the Worker code and add an outcome column default null, updated to success/failure per attempt.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

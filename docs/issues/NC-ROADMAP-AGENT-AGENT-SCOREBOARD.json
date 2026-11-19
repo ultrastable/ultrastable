@@ -1,0 +1,11 @@
+{
+  "id": "NC-ROADMAP-AGENT-AGENT-SCOREBOARD",
+  "title": "NC-ROADMAP-AGENT-AGENT-SCOREBOARD: ROADMAP-1: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attribution",
+  "body": "**Owner:** product-manager\n**Trigger:** the backlog item ROADMAP-AGENT-AGENT-SCOREBOARD was parked needs-code by the in-tick doer\n**Done check:** merged and verified live (VERIFY-LIVE-1) with a probe the author did not write\n**Status:** open\n\nROADMAP-1: QNFO.OPS #AGENT-SCOREBOARD: Per-agent and per-harness quality scoreboard from intake attribution\n\nTriage: previous PR closed without merge; retried by worker-native\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:product-manager",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

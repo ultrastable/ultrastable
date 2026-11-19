@@ -1,0 +1,11 @@
+{
+  "id": "NC-ROADMAP-AGENT-MCP-STATELESS",
+  "title": "NC-ROADMAP-AGENT-MCP-STATELESS: ROADMAP-1: QNFO.INFRA #MCP-STATELESS: MCP 2026-07-28 stateless revision on the site worker, plus agent-readiness as a tracked metric",
+  "body": "**Owner:** product-manager\n**Trigger:** the backlog item ROADMAP-AGENT-MCP-STATELESS was parked needs-code by the in-tick doer\n**Done check:** grep:site/agentic.js::2026-07-28 ; merged and verified live (VERIFY-LIVE-1) with a probe the author did not write\n**Status:** open\n\nROADMAP-1: QNFO.INFRA #MCP-STATELESS: MCP 2026-07-28 stateless revision on the site worker, plus agent-readiness as a tracked metric\n\nTriage: worker-native attempt failed (no code agent produced a change: [{\"adapter\":\"workers-ai-glm\",\"error\":\"airouter: no model passed (workers-ai-glm: error: 5035: Model @cf/zai-org/glm-5.3-flash is not available on the Workers \"},{\"adap); retried after the other candidates\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:product-manager",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

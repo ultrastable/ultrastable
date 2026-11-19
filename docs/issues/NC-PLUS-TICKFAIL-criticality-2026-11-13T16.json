@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-TICKFAIL-criticality-2026-11-13T16",
+  "title": "NC-PLUS-TICKFAIL-criticality-2026-11-13T16: Add freshness probe for criticality_samples (alert if no new rows in last 2 ticks)",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-TICKFAIL-criticality-2026-11-13T16 was parked needs-code by the in-tick doer\n**Done check:** Probe query returns count of rows inserted into criticality_samples in the last 10 minutes > 0, and a zero-count run raises an alert event in ops log\n**Status:** open\n\nAdd freshness probe for criticality_samples (alert if no new rows in last 2 ticks)\n\nTriage: Probe queries criticality_samples (not the backlog DB) and writes alert events to an ops log; the doer can only touch the backlog database, so a Worker code change is required. | first step: Add a scheduled Worker handler that runs the 10-minute COUNT query on D1 criticality_samples and inserts an alert row into the ops log when the count \n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}
