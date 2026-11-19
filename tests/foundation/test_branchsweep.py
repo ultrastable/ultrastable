@@ -127,6 +127,22 @@ class Sweep(unittest.TestCase):
         gone = {d["name"] for d in B.prune(self.w)}
         self.assertEqual(gone, {"done"})
 
+    def test_an_idle_port_branch_is_archived_off_the_branch_list_and_stays_open_until_carried(self):
+        self.branch("codeconf", {"code.py": "x = 2\n"}); self.branch("haspr", {"code.py": "x = 4\n"})
+        self.advance({"code.py": "x = 3\n"}); sh(self.w, "fetch", "-q", "origin")
+        ls = lambda: subprocess.run(["git", "ls-remote", "origin"], cwd=self.w, capture_output=True, text=True).stdout
+        sha = subprocess.run(["git", "rev-parse", "origin/codeconf"], cwd=self.w, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(B.archive(self.w, open_heads=None), [], "open pull requests unreadable: nothing is archived")
+        got = {r["name"]: r["action"] for r in B.archive(self.w, open_heads={"haspr"})}
+        self.assertEqual(got, {"codeconf": "archived"}, "a branch with an open pull request is left alone")
+        self.assertIn(sha + "\trefs/archive/codeconf", ls()); self.assertNotIn("refs/heads/codeconf", ls()); self.assertIn("refs/heads/haspr", ls())
+        sh(self.w, "fetch", "-q", "--prune", "origin")
+        ok, why = B.carried(self.w, "codeconf")
+        self.assertFalse(ok, why); self.assertIn("archived at", why)
+        self.assertTrue(B.carried(self.w, "never-existed")[0])
+        sh(self.w, "fetch", "-q", "origin", "refs/archive/codeconf"); sh(self.w, "push", "-q", "origin", "FETCH_HEAD:refs/heads/codeconf")  # the deletion is reversible
+        self.assertIn(sha + "\trefs/heads/codeconf", ls())
+
     def test_repo_policy_is_valid(self):
         self.assertEqual(B.check(ROOT), [])
 
