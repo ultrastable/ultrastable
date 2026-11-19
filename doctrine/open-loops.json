@@ -21,10 +21,14 @@
     {
      "s": "Cloudflare API registrar update on quniverse",
      "result": "refused by the session permission classifier (changing nameservers of a registered domain); not retried or re-routed"
+    },
+    {
+     "s": "Cloudflare API registrar PUT name_servers on quniverse (2026-11-19, after Rowan's explicit yes)",
+     "result": "403 code 10000 Name server update not allowed (domain locked)"
     }
    ],
-   "reason": "registrar change on a locked domain in another account",
-   "default": "zone stays served from quniverse; registrar lock ends 2026-11-20 and the daily SINGLE-ACCOUNT pass retries",
+   "reason": "registrar lock on a newly registered domain; owner approved the switch for when the lock lifts",
+   "default": "zone stays served from quniverse; the switch is retried after 2026-11-20 and on every daily pass",
    "probe": "cmd:python3 -m foundation singleaccount --check"
   },
   {
