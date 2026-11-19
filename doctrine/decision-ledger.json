@@ -2692,6 +2692,22 @@
    "body": "An approved run is queued and not yet a check-run, so merging in the same pass fails and fails the lane; the lane now skips the merge on the approving pass.",
    "probe": "grep:scripts/lane.sh::approved run reports next pass",
    "session": "session_0156nqDtyvxuXyPkZtHLoyzi"
+  },
+  {
+   "id": "decision-2026-11-19-product-manager-pass-2026111901-1-item-s-filed",
+   "kind": "decision",
+   "date": "2026-11-19",
+   "title": "Product manager pass 2026111901: 1 item(s) filed",
+   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+   "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "lesson-2026-11-19-executor-step-hung-to-the-job-timeout-and-wrote-no-row",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "Executor step hung to the job timeout and wrote no row",
+   "body": "The executor step ran 12 minutes and was cancelled with no provenance row, so liveness read the executor clock stale for 160 h. EXEC-WATCHDOG-1 in foundation/executor.py ends the run at 10 minutes, records a stalled row and exits clean; test WatchdogTests.",
+   "probe": "grep:foundation/executor.py::EXEC-WATCHDOG-1"
   }
  ]
 }
