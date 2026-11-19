@@ -155,6 +155,12 @@ def run(root=REPO, apply=False) -> list[dict]:
 def main(argv: list[str]) -> int:
     if argv[:1] == ["--run"]:
         rows = run(apply="--apply" in argv)
-        print(json.dumps(rows, indent=1)); return 0
+        print(json.dumps(rows, indent=1))
+        if "--publish" in argv and "--apply" in argv:  # QUEUE-PERSIST-1: this pass's verdicts survive the runner, so streaks can reach a close
+            from . import contracts, ledger
+            res = ledger.publish(REPO, [contracts.LEDGER], "queue: closing-probe verdicts (QUEUE-PERSIST-1)")
+            print(json.dumps({"publish": res}))
+            return 0 if res.get("ok") else 1
+        return 0
     bad = check()
     print("\n".join(bad) or "queue ok"); return 1 if bad else 0
