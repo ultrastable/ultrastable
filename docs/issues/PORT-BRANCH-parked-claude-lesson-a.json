@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-claude-lesson-a",
   "title": "PORT-BRANCH-parked-claude-lesson-a: carry parked/claude/lesson-a onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/lesson-a` at 507354c13c holds work main lacks and cannot merge as is (conflicts in code: foundation/contracts.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/lesson-a\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/lesson-a",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/lesson-a` at 507354c13c holds work main lacks and cannot merge as is (conflicts in code: foundation/contracts.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/lesson-a\n**Status:** closed\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/lesson-a\n\n**Evidence:** python3 -m foundation branchsweep --carried -> parked/claude/lesson-a: archived at 507354c13c (refs/archive/parked/claude/lesson-a): superseded: main holds 128 of the 128 code lines it added (BRANCH-SWEEP-4)\n",
   "labels": [
     "role:operations",
     "agent-ready",

@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-claude-live-feed-runtimes",
   "title": "PORT-BRANCH-parked-claude-live-feed-runtimes: carry parked/claude/live-feed-runtimes onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/live-feed-runtimes` at 41fbaa6e89 holds work main lacks and cannot merge as is (conflicts in code: scripts/deploy_tenant.py, seed/worker/test/measure.test.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/live-feed-runtimes\n**Status:** open\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/live-feed-runtimes",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/live-feed-runtimes` at 41fbaa6e89 holds work main lacks and cannot merge as is (conflicts in code: scripts/deploy_tenant.py, seed/worker/test/measure.test.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/live-feed-runtimes\n**Status:** closed\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/live-feed-runtimes\n\n**Evidence:** Superseded: instances/ultrastable/live-runtime.json, scripts/deploy_tenant.py and the LIVE-1 PUBLIC_HEALTH_ONLY decision (doctrine/decision-ledger.json) are on main.",
   "labels": [
     "role:operations",
     "agent-ready",

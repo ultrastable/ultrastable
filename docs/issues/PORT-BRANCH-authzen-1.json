@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-authzen-1",
   "title": "PORT-BRANCH-authzen-1: carry authzen-1 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `authzen-1` at 371776563c holds work main lacks and cannot merge as is (conflicts in code: site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried authzen-1\n**Status:** open\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried authzen-1",
+  "body": "**Owner:** operations\n**Trigger:** branch `authzen-1` at 371776563c holds work main lacks and cannot merge as is (conflicts in code: site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried authzen-1\n**Status:** closed\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried authzen-1\n\n**Evidence:** python3 -m foundation branchsweep --carried -> authzen-1: archived at 371776563c (refs/archive/authzen-1): superseded: main holds 80 of the 81 code lines it added (BRANCH-SWEEP-4)\n",
   "labels": [
     "role:operations",
     "agent-ready",

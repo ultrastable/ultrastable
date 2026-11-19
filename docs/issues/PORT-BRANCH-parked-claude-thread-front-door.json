@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-claude-thread-front-door",
   "title": "PORT-BRANCH-parked-claude-thread-front-door: carry parked/claude/thread-front-door onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/thread-front-door` at 261774b33d holds work main lacks and cannot merge as is (conflicts in code: agents/AGENTS.md, agents/PROJECT-INSTRUCTIONS.md, seed/agents/AGENTS.md, site/site.test.mjs, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/thread-front-door\n**Status:** open\n\nPort the change by hand onto current main (it is 3 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/thread-front-door",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/thread-front-door` at 261774b33d holds work main lacks and cannot merge as is (conflicts in code: agents/AGENTS.md, agents/PROJECT-INSTRUCTIONS.md, seed/agents/AGENTS.md, site/site.test.mjs, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/thread-front-door\n**Status:** closed\n\nPort the change by hand onto current main (it is 3 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/thread-front-door\n\n**Evidence:** Superseded: the chat-thread front door (THREAD-1, SUGGEST-1, INTERVIEW-2) is in site/worker.js and site/suggest.js with tests in site/site.test.mjs on main, and the one-off-page copy is replaced by the systemTest refusal in the vision doctrine.",
   "labels": [
     "role:operations",
     "agent-ready",
