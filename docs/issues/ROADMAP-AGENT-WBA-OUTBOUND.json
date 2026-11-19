@@ -1,7 +1,7 @@
 {
   "id": "ROADMAP-AGENT-WBA-OUTBOUND",
   "title": "ROADMAP-1: QNFO.INFRA #8: sign outbound agent fetches and cache peer directories",
-  "body": "code-task: repo=ultrastable path=site/webbotauth.js\ncode-anchor: export async function fetchDirectory\n\n**Owner:** product-manager\n**Program:** QNFO.INFRA\n**Metric it should move:** reliability\n**Cost rule:** adds no worker, cron or paid model call.\n**Done check:** grep:site/webbotauth.js::directoryCache\n**Status:** open\n\nSign connector and A2A client fetches with signRequest and cache peer key directories (honor cache-control) so inbound verification does not fetch per request.",
+  "body": "code-task: repo=ultrastable path=site/webbotauth.js\ncode-anchor: export async function fetchDirectory\n\n**Owner:** product-manager\n**Trigger:** weekly product-manager pass; the roadmap item is taken by the executor when it is next in driver order\n**Program:** QNFO.INFRA\n**Metric it should move:** reliability\n**Cost rule:** adds no worker, cron or paid model call.\n**Done check:** grep:site/webbotauth.js::directoryCache\n**Status:** open\n\nSign connector and A2A client fetches with signRequest and cache peer key directories (honor cache-control) so inbound verification does not fetch per request.",
   "labels": [
     "role:product-manager",
     "roadmap",
