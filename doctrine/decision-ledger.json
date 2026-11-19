@@ -2740,6 +2740,22 @@
    "title": "Branch sweep must finish inside its job",
    "body": "branchsweep ran the full gate after every merge; with ~100 branches the pass outran its 15-minute job and was cancelled with nothing pushed (2026-11-18), and branches already filed as PORT items were re-gated every pass. SWEEP-BUDGET-1: a 600 s budget per pass records the rest as skipped, filed ports are not re-gated, a later pass continues the open sweep branch, and the workflow re-dispatches itself while branches remain (at most 8 runs a day).",
    "probe": "grep:foundation/branchsweep.py::SWEEP-BUDGET-1"
+  },
+  {
+   "id": "lesson-2026-11-19-ledger-replay-must-fetch-the-evidence-branch",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "Ledger replay must fetch the evidence branch",
+   "body": "A runner checks out main only, so ledger.rows read origin/loop-evidence from a ref that did not exist and replayed main's rows alone; items with three recorded passes held at '1 of 2' and the fleet pass closed nothing. LEDGER-FETCH-1: _branch_text fetches the branch once when the ref is missing; tests/foundation/test_ledger_publish.py clones main single-branch and asserts the earlier pass is replayed.",
+   "probe": "grep:foundation/ledger.py::LEDGER-FETCH-1"
+  },
+  {
+   "id": "lesson-2026-11-19-main-writer-caps-20-files-per-commit",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "Main writer caps 20 files per commit",
+   "body": "The first live QUEUE-PERSIST-1 pass changed more than 20 queue item files; the main-writer Worker accepts at most 20 files per commit (HTTP 400) and the ruleset only admits commits through that Worker. Surfaces tested: Worker route (400), direct push (GH013). tools/push_main.py now sends consecutive commits of 20 and does not fall back once a part has landed; verified by tests/test_push_main_batches.py.",
+   "probe": "grep:tools/push_main.py::PUSH-MAIN-BATCH-1"
   }
  ]
 }

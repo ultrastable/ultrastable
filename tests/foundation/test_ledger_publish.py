@@ -73,9 +73,10 @@ class Publish(unittest.TestCase):
             with (a / "ops/c.jsonl").open("a") as f:
                 f.write('{"at": "1", "id": "from-a"}\n')
             self.assertTrue(ledger.publish(a, ["ops/c.jsonl"], "a")["ok"])
-            b = runner(tmp, remote, "b")
-            git(b, "fetch", "-q", "origin", "loop-evidence:refs/remotes/origin/loop-evidence")
-            self.assertIn("from-a", [r["id"] for r in ledger.rows(b, "ops/c.jsonl")], "a later runner replays the earlier pass")
+            b = tmp / "b"  # a runner's checkout: main only, no remote-tracking ref for the evidence branch (actions/checkout)
+            subprocess.run(["git", "clone", "-q", "--single-branch", "-b", "main", str(remote), str(b)], check=True)
+            self.assertNotEqual(subprocess.run(["git", "-C", str(b), "rev-parse", "--verify", "-q", "origin/loop-evidence"], capture_output=True).returncode, 0)
+            self.assertIn("from-a", [r["id"] for r in ledger.rows(b, "ops/c.jsonl")], "LEDGER-FETCH-1: a later runner fetches and replays the earlier pass")
 
 
 if __name__ == "__main__":
