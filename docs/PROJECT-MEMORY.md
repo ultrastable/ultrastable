@@ -8,8 +8,19 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-18
+Last updated: 2026-11-19
 
+- 2026-11-19: cost-guard: daily reading [skip ci]
+- 2026-11-19: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]
+- 2026-11-19: deploy-ultrastable: record live-verified deploy [skip ci]
+- 2026-11-19: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]
+- 2026-11-19: Fix cost-guard crash, changelog redirect loop and /how phone overflow (#679)
+- 2026-11-19: PORT-EXEC-1: record gcp adapter verify evidence and close the item (#678)
+- 2026-11-18: social: record post state [skip ci]
+- 2026-11-18: deploy-ultrastable: record live-verified deploy [skip ci]
+- 2026-11-18: Record first verified child link; regenerate claim counts (#675)
+- 2026-11-18: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]
+- 2026-11-18: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]
 - 2026-11-18: LIVE-FRESH-1: live changelog, freshness probe, mobile table fix (#631)
 - 2026-11-18: MAIN-WRITER-1: send a user-agent so Cloudflare accepts push_main (#630)
 - 2026-11-18: Carry #628 onto main (decision probe bound to code, no-OIDC push fallback); TIMEBOMB guard for pinned-date tests over real-clock SQL windows (Q-TEST-TIMEBOMB-1 closed, Q-TEST-TIMEBOMB-2 drains 11 baselined); practical-solutions bright-spot issues close with their prediction disposition (ISSUE-LOOP-1)
