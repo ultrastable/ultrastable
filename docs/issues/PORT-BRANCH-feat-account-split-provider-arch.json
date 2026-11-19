@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-feat-account-split-provider-arch",
   "title": "PORT-BRANCH-feat-account-split-provider-arch: carry feat/account-split-provider-arch onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `feat/account-split-provider-arch` at fafdb9db35 holds work main lacks and cannot merge as is (conflicts in code: deploy/cloudflare-accounts.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried feat/account-split-provider-arch\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried feat/account-split-provider-arch",
+  "body": "**Owner:** operations\n**Trigger:** branch `feat/account-split-provider-arch` at fafdb9db35 holds work main lacks and cannot merge as is (conflicts in code: deploy/cloudflare-accounts.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried feat/account-split-provider-arch\n**Status:** closed\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried feat/account-split-provider-arch\n\n**Evidence:** Superseded: main already holds doctrine/providers.json, scripts/cf_account.py, tests/foundation/test_cf_account.py and deploy/transfer/inventory-2026-11-14.json identical to the branch; only deploy/transfer/plan.json differs and main's plan is the newer one.",
   "labels": [
     "role:operations",
     "agent-ready",
