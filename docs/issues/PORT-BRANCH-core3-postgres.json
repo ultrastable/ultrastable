@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-core3-postgres",
   "title": "PORT-BRANCH-core3-postgres: carry core3-postgres onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `core3-postgres` at 8a1c1f6569 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/platform-core.yml, platform/core/pyproject.toml, platform/core/ultrastable/store.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried core3-postgres\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried core3-postgres",
+  "body": "**Owner:** operations\n**Trigger:** branch `core3-postgres` at 8a1c1f6569 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/platform-core.yml, platform/core/pyproject.toml, platform/core/ultrastable/store.py)\n**Done check:** cmd:python3 -m foundation branchsweep --carried core3-postgres\n**Status:** closed\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried core3-postgres\n\n**Evidence:** Ported: main already has the Postgres store (platform/core/ultrastable/pg_store.py PostgresStore) and a postgres CI job in .github/workflows/platform-core.yml; the one missing piece, Postgres-portable engine SQL (SUM(CASE WHEN ...) and ORDER BY created_at, id instead of SQLite rowid) in platform/core/ultrastable/engine.py, is carried by this change.",
   "labels": [
     "role:operations",
     "agent-ready",
