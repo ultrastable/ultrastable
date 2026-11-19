@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-SG-4",
+  "title": "NC-PLUS-SG-4: Decommission mail-sender bindings: remove residual config and verify plugins own all email",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-SG-4 was parked needs-code by the in-tick doer\n**Done check:** email and mailing_list plugins pass live send/list checks with mail-sender bindings, KV entries, and cron triggers removed\n**Status:** open\n\nDecommission mail-sender bindings: remove residual config and verify plugins own all email\n\nTriage: Removing mail-sender worker bindings and cron triggers requires editing wrangler.toml/worker config, which the D1-only doer cannot do. | first step: Edit worker config to drop mail-sender bindings and cron triggers, then run plugins' live send/list checks to confirm they own all email.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

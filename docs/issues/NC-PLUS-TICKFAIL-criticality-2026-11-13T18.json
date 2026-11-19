@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-TICKFAIL-criticality-2026-11-13T18",
+  "title": "NC-PLUS-TICKFAIL-criticality-2026-11-13T18: Add criticality_samples table migration + insert-on-tick so step criticality completes",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-TICKFAIL-criticality-2026-11-13T18 was parked needs-code by the in-tick doer\n**Done check:** Next tick completes step criticality without D1_ERROR and writes at least one row\n**Status:** open\n\nAdd criticality_samples table migration + insert-on-tick so step criticality completes\n\nTriage: Creating a table migration and modifying tick logic requires code/repo changes; the in-Worker doer can only read/write the backlog DB, not edit code. | first step: Create a repo issue/branch to add the criticality_samples migration and insert-on-tick code change\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-19-executor-closed-q-self-unused-import-foundation-preflight-py",
+  "kind": "decision",
+  "date": "2026-11-19",
+  "title": "Executor closed Q-SELF-unused-import-foundation-preflight-py: Remove unused Path import from foundation/preflight.py",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/preflight.py.",
+  "probe": "file:foundation/preflight.py"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-SELF-unused-import-foundation-preflight-py: Remove unused Path import from foundation/preflight.py",
+ "session": ""
+}

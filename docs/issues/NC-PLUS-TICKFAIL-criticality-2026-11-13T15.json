@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-TICKFAIL-criticality-2026-11-13T15",
+  "title": "NC-PLUS-TICKFAIL-criticality-2026-11-13T15: Add startup preflight that verifies required D1 tables exist before any tick runs",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-TICKFAIL-criticality-2026-11-13T15 was parked needs-code by the in-tick doer\n**Done check:** On platform boot, a preflight step runs 'SELECT 1 FROM criticality_samples LIMIT 1' (and the rest of the expected-table list); boot fails fast with a named missing-table error instead of a mid-tick D1_ERROR\n**Status:** open\n\nAdd startup preflight that verifies required D1 tables exist before any tick runs\n\nTriage: Requires editing Worker boot logic to add a D1 preflight check; the doer is read/write on backlog DB only and cannot modify code. | first step: Add a boot-time preflight module listing expected tables and running SELECT 1 per table, raising 'missing table: <name>' on failure.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}
