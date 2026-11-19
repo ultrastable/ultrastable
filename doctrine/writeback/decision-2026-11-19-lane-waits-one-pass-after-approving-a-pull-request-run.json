@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-19-lane-waits-one-pass-after-approving-a-pull-request-run",
+  "kind": "decision",
+  "date": "2026-11-19",
+  "title": "Lane waits one pass after approving a pull_request run",
+  "body": "An approved run is queued and not yet a check-run, so merging in the same pass fails and fails the lane; the lane now skips the merge on the approving pass.",
+  "probe": "grep:scripts/lane.sh::approved run reports next pass",
+  "session": "session_0156nqDtyvxuXyPkZtHLoyzi"
+ },
+ "kind": "decision",
+ "title": "Lane waits one pass after approving a pull_request run",
+ "session": "session_0156nqDtyvxuXyPkZtHLoyzi"
+}
