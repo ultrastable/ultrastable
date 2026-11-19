@@ -2798,6 +2798,14 @@
    "title": "A continued sweep branch must run main's tools",
    "body": "SWEEP-BUDGET-1 lets a later pass continue the open sweep branch, which switched the working tree to that branch's stale copy of foundation/branchsweep.py; run 44497010885 therefore ran the pre-SWEEP-PRUNE-1 prune and deleted nothing although 88 branches were superseded. SWEEP-TOOLS-MAIN-1: after checking out the sweep branch the workflow restores foundation, scripts, tools and doctrine/branchsweep.json from origin/main.",
    "probe": "grep:.github/workflows/branchsweep.yml::SWEEP-TOOLS-MAIN-1"
+  },
+  {
+   "id": "lesson-2026-11-19-the-branch-sweep-s-records-are-its-write-back",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "The branch sweep's records are its write-back",
+   "body": "Every branch sweep PR changes ops/branchsweep-ledger.jsonl and generated dashboard data and files PORT-BRANCH items; writeback check accepted docs/issues/OL- items but not these, so sweep PR 702 failed with no write-back. WB-SWEEP-1: docs/issues/PORT-BRANCH- and ops/branchsweep-ledger.jsonl count as write-back; tests/foundation/test_writeback.py covers it.",
+   "probe": "grep:foundation/writeback.py::WB-SWEEP-1"
   }
  ]
 }
