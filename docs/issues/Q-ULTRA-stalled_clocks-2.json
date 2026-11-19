@@ -1,7 +1,7 @@
 {
   "id": "Q-ULTRA-stalled_clocks-2",
   "title": "Q-ULTRA-stalled_clocks-2: Clocks that stopped out of bounds: restructure: add an independent trigger to the clock that keeps stopping",
-  "body": "**Owner:** executor\n**Trigger:** essential variable `stalled_clocks` out of bounds (reading 2; limits 0 to 0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: restructure: add an independent trigger to the clock that keeps stopping. A clock that stops halts the loop it drives; the system is viable only while every clock keeps ticking, and a watchdog that goes silent reads as unmeasured.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `stalled_clocks` inside its bounds.\n",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `stalled_clocks` out of bounds (reading 2; limits 0 to 0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: restructure: add an independent trigger to the clock that keeps stopping. A clock that stops halts the loop it drives; the system is viable only while every clock keeps ticking, and a watchdog that goes silent reads as unmeasured.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `stalled_clocks` inside its bounds.\n\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "p0",
     "agent-ready",
