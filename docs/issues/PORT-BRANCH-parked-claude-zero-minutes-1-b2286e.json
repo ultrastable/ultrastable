@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-claude-zero-minutes-1-b2286e",
   "title": "PORT-BRANCH-parked-claude-zero-minutes-1-b2286e: carry parked/claude/zero-minutes-1-b2286e onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/zero-minutes-1-b2286e` at e276ebbb70 holds work main lacks and cannot merge as is (conflicts in code: seed/worker/src/index.js, seed/worker/src/lane.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/zero-minutes-1-b2286e\n**Status:** open\n\nPort the change by hand onto current main (it is 8 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/zero-minutes-1-b2286e",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/zero-minutes-1-b2286e` at e276ebbb70 holds work main lacks and cannot merge as is (conflicts in code: seed/worker/src/index.js, seed/worker/src/lane.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/zero-minutes-1-b2286e\n**Status:** closed\n\nPort the change by hand onto current main (it is 8 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/zero-minutes-1-b2286e\n\n**Evidence:** Superseded: seed/worker/src/lane.js on main already has EVIDENCE_PATH, appendEvidence and the evidenceRepo option, and ops/worker-merge-evidence.jsonl exists.",
   "labels": [
     "role:operations",
     "agent-ready",

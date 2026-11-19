@@ -1443,6 +1443,99 @@
      "source": "foundation/criticality.py"
     }
    ]
+  },
+  {
+   "id": "ultrastability",
+   "term": "Ultrastability",
+   "aliases": [
+    "ultrastable system"
+   ],
+   "version": "1.0.0",
+   "definition": "A system is ultrastable when it keeps its essential variables inside limits by changing its own structure: when a variable leaves its limits the system destroys and rebuilds parts of itself until the variable returns (Ashby, 1952). The name is a claim the system has to meet about itself, not a brand.",
+   "not": "Not uptime, not rigidity and not 'never changes': an ultrastable system is stable because it keeps changing itself.",
+   "tested_by": [
+    "grep:tests/foundation/test_boundary.py::def test_rebuild_drill"
+   ],
+   "implemented_by": [
+    "doctrine/boundary.json",
+    "foundation/boundary.py"
+   ],
+   "related": [
+    "creation-and-destruction",
+    "containment-boundary",
+    "autonomy"
+   ],
+   "lineage": [
+    {
+     "version": "1.0.0",
+     "date": "2026-11-12",
+     "change": "Ported from the archived creation-destruction-doctrine branch onto main's boundary mechanism (PORT-BRANCH-TRIAGE-G1).",
+     "source": "doctrine/boundary.json"
+    }
+   ]
+  },
+  {
+   "id": "creation-and-destruction",
+   "term": "Creation and destruction",
+   "aliases": [
+    "create and destroy"
+   ],
+   "version": "1.0.0",
+   "definition": "Ultrastable creates and destroys its own parts to stay stable. Inside its boundary the system has complete control to build, replace, delete and rebuild code, config, workers, loops and doctrine without asking, because everything inside is its own and can be rebuilt from the repository.",
+   "not": "Not licence to destroy what is not the system's own: credentials, money, the owner's accounts and other people's systems are egress, which keeps its gate.",
+   "tested_by": [
+    "grep:tests/foundation/test_boundary.py::def test_rebuild_drill",
+    "grep:tests/foundation/test_boundary.py::def test_egress_and_reserved_never_allowed_even_at_top_trust"
+   ],
+   "implemented_by": [
+    "doctrine/boundary.json",
+    "foundation/boundary.py"
+   ],
+   "related": [
+    "ultrastability",
+    "containment-boundary",
+    "closing-privilege"
+   ],
+   "lineage": [
+    {
+     "version": "1.0.0",
+     "date": "2026-11-12",
+     "change": "Ported from the archived creation-destruction-doctrine branch; BOUNDARY-AXIOM carries the rule.",
+     "source": "doctrine/boundary.json"
+    }
+   ]
+  },
+  {
+   "id": "containment-boundary",
+   "term": "Containment boundary",
+   "aliases": [
+    "boundary",
+    "the container"
+   ],
+   "version": "1.0.0",
+   "definition": "The line between what is the system's own (inside: working trees, sandbox instances, derived data, sessions) and everything else (egress: credentials, money, owner accounts, public publishing, third-party systems). Complete control is granted inside it and the boundary keeps a failure inside from reaching outside; the rebuild drill proves the inside can be recreated from the repository.",
+   "not": "Not the same as a closed system: closed system is about where knowledge lives, the containment boundary is about what a failure can reach.",
+   "tested_by": [
+    "grep:tests/foundation/test_boundary.py::def test_repo_is_clean",
+    "grep:tests/foundation/test_boundary.py::def test_rebuild_drill"
+   ],
+   "implemented_by": [
+    "doctrine/boundary.json",
+    "foundation/boundary.py"
+   ],
+   "related": [
+    "creation-and-destruction",
+    "ultrastability",
+    "interrupt-gate"
+   ],
+   "lineage": [
+    {
+     "version": "1.0.0",
+     "date": "2026-11-12",
+     "change": "Ported from the archived creation-destruction-doctrine branch; the status is enforced by the drill, not asserted.",
+     "source": "doctrine/boundary.json"
+    }
+   ]
   }
  ]
 }
