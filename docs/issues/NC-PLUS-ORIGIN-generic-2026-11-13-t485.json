@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-ORIGIN-generic-2026-11-13-t485",
+  "title": "NC-PLUS-ORIGIN-generic-2026-11-13-t485: Cut D1 read costs: replace per-request status polling with single batched query in verify-deploy worker",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-ORIGIN-generic-2026-11-13-t485 was parked needs-code by the in-tick doer\n**Done check:** k_eff >= 1 or measured D1 queries per deploy cycle reduced by >=50% vs baseline t485 (currently ~18 queries/deploy)\n**Status:** open\n\nCut D1 read costs: replace per-request status polling with single batched query in verify-deploy worker\n\nTriage: Replacing per-request polling with a batched query requires editing the verify-deploy worker source; the in-Worker doer can only touch the backlog DB. | first step: File a code-change ticket to refactor verify-deploy into a single batched status query, then run the wrangler-tail instrumented harness.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

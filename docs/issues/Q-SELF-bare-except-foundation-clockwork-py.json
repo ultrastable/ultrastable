@@ -1,0 +1,14 @@
+{
+  "id": "Q-SELF-bare-except-foundation-clockwork-py",
+  "title": "Q-SELF-bare-except-foundation-clockwork-py: bare except in foundation/clockwork.py",
+  "body": "**Owner:** code-agent\n**Trigger:** signal bare_except fires for foundation/clockwork.py\n**Done check:** cmd:python3 -m foundation selfcode --probe bare_except foundation/clockwork.py\n**Status:** closed\n\nSELFCODE-1 signal `bare_except` on `foundation/clockwork.py` (1 finding(s)).\n\nMake each swallowed error visible: catch the narrowest exception and log or re-raise it. Keep behaviour for the expected case and add a test.\n\nFindings:\n- line 118: except Exception: pass hides the failure (log it, narrow it, or let it raise)\n\nScope: only foundation/, scripts/, tests/, products/, site/, seed/ and docs/issues/. A change that does not make the done check pass is reverted.\n\n**Evidence:** closed by the pull request that carries this change\n",
+  "labels": [
+    "role:code-agent",
+    "ws:self",
+    "p6",
+    "raises-deploys",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Self"
+}

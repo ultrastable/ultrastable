@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-TICKFAIL-measure-2026-11-13T08",
+  "title": "NC-PLUS-TICKFAIL-measure-2026-11-13T08: Record tick-step durations in metrics table after each successful tick",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-TICKFAIL-measure-2026-11-13T08 was parked needs-code by the in-tick doer\n**Done check:** Table metrics exists with schema (tick_id, step, duration_ms, ts); measure step writes one row per tick\n**Status:** open\n\nRecord tick-step durations in metrics table after each successful tick\n\nTriage: Capturing tick-step durations requires instrumenting the tick execution path in Worker code; the doer can only touch the backlog DB, not run or modify ticks. | first step: Create metrics table with (tick_id, step, duration_ms, ts) schema via migration in the codebase.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-LOOPBREAK-TICKFAIL-measure-2026-11-13T09",
+  "title": "NC-PLUS-LOOPBREAK-TICKFAIL-measure-2026-11-13T09: Capture TICKFAIL-measure-2026-11-13T09 tick error detail in D1 and re-run it once",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-LOOPBREAK-TICKFAIL-measure-2026-11-13T09 was parked needs-code by the in-tick doer\n**Done check:** D1 row for TICKFAIL-measure-2026-11-13T09 contains a non-empty error_message field from the latest dispatch attempt, and item TICKFAIL-measure-2026-11-13T09 has an outcome (done or a new smaller follow-up item)\n**Status:** open\n\nCapture TICKFAIL-measure-2026-11-13T09 tick error detail in D1 and re-run it once\n\nTriage: Re-running the tick and writing to dispatch_log requires dispatch capability the D1-only doer lacks; only the D1 query part is in scope. | first step: Query dispatch_log for the latest attempt's error_message and outcome_status to see if the re-run already happened.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

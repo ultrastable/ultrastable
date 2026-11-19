@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-19-executor-closed-q-self-bare-except-foundation-clockwork-py-r",
+  "kind": "decision",
+  "date": "2026-11-19",
+  "title": "Executor closed Q-SELF-bare-except-foundation-clockwork-py: Replaced the bare `except Exception: pass` in foundation/clockwork.py with a nar",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: tests/test_clockwork_bare_except.py.",
+  "probe": "file:tests/test_clockwork_bare_except.py"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-SELF-bare-except-foundation-clockwork-py: Replaced the bare `except Exception: pass` in foundation/clockwork.py with a nar",
+ "session": ""
+}
