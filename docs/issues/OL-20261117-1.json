@@ -1,7 +1,7 @@
 {
   "id": "OL-20261117-1",
   "title": "OL-20261117-1: READ-BUDGET-2: tick Worker reads on ultrastable-org",
-  "body": "**Owner:** executor\n**Trigger:** ultrastable-org rowsRead above 1000000 in a UTC day\n**Done check:** grep:seed/worker/src/index.js::tick\n**Status:** open\n\nOn 2026-11-16 ultrastable-org read 2.6M rows; the items-with-claims SELECT in seed/worker/src read 1.3M (29 calls, ~45k rows each); failure_probe_runs prune 192k, dispatches 3-day GROUP BY 182k, MIN(started_at) FROM tick_runs 109k. Cut each to a few thousand rows per call (index, LIMIT or cache).",
+  "body": "**Owner:** executor\n**Trigger:** ultrastable-org rowsRead above 1000000 in a UTC day\n**Done check:** grep:seed/worker/src/index.js::tick\n**Status:** open\n\nOn 2026-11-16 ultrastable-org read 2.6M rows; the items-with-claims SELECT in seed/worker/src read 1.3M (29 calls, ~45k rows each); failure_probe_runs prune 192k, dispatches 3-day GROUP BY 182k, MIN(started_at) FROM tick_runs 109k. Cut each to a few thousand rows per call (index, LIMIT or cache).\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "role:executor",
     "open-loop"

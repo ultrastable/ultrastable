@@ -2732,6 +2732,14 @@
    "title": "Evidence branch must be appended, never force-pushed",
    "body": "launch force-pushed main+1 pass to loop-evidence, deleting earlier passes' ledger rows, so closing-probe streaks never reached 2 and the queue closed nothing; fleet's queue verdicts were never committed. ledger.publish appends onto the branch tip without force; fleet lands docs/issues verdicts via push_main.",
    "probe": "grep:foundation/ledger.py::EVIDENCE-APPEND-1"
+  },
+  {
+   "id": "lesson-2026-11-19-branch-sweep-must-finish-inside-its-job",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "Branch sweep must finish inside its job",
+   "body": "branchsweep ran the full gate after every merge; with ~100 branches the pass outran its 15-minute job and was cancelled with nothing pushed (2026-11-18), and branches already filed as PORT items were re-gated every pass. SWEEP-BUDGET-1: a 600 s budget per pass records the rest as skipped, filed ports are not re-gated, a later pass continues the open sweep branch, and the workflow re-dispatches itself while branches remain (at most 8 runs a day).",
+   "probe": "grep:foundation/branchsweep.py::SWEEP-BUDGET-1"
   }
  ]
 }

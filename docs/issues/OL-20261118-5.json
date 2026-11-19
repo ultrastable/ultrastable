@@ -1,7 +1,7 @@
 {
   "id": "OL-20261118-5",
   "title": "OL-20261118-5: REGEN-PUSH-401: regen-generated push_main returns read main 401",
-  "body": "**Owner:** operations\n**Trigger:** next merge to main\n**Done check:** grep:.github/workflows/regen-generated.yml::push_main\n**Status:** open\n\nAfter PR 673 merged, regen-generated failed 4 tries: push_main HTTP 502, read main 401 from the tick Worker route. Generated counts stayed stale on main. Probe the route credential server-side and re-run regen.",
+  "body": "**Owner:** operations\n**Trigger:** next merge to main\n**Done check:** grep:.github/workflows/regen-generated.yml::push_main\n**Status:** open\n\nAfter PR 673 merged, regen-generated failed 4 tries: push_main HTTP 502, read main 401 from the tick Worker route. Generated counts stayed stale on main. Probe the route credential server-side and re-run regen.\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "role:operations",
     "open-loop"

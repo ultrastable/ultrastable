@@ -1,7 +1,7 @@
 {
   "id": "Q-REACH-posts_published_7d",
   "title": "Q-REACH-posts_published_7d: reach target missed (posts actually published to owned channels in 7 days: 0 < 3)",
-  "body": "**Owner:** marketing-manager\n**Trigger:** reach --run\n**Done check:** grep:ops/reach/metrics.jsonl::\"posts_published_7d\"\n**Prediction:** posts_published_7d >= 3 within 168 h\n**Status:** open\n\nRead ops/reach/weights.json and the arm outcomes, post more of the arm that works or add a surface (feed, listing, page). Owned channels only; no cold outreach to individuals.",
+  "body": "**Owner:** marketing-manager\n**Trigger:** reach --run\n**Done check:** grep:ops/reach/metrics.jsonl::\"posts_published_7d\"\n**Prediction:** posts_published_7d >= 3 within 168 h\n**Status:** open\n\nRead ops/reach/weights.json and the arm outcomes, post more of the arm that works or add a surface (feed, listing, page). Owned channels only; no cold outreach to individuals.\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "role:marketing-manager",
     "growth",
