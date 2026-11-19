@@ -489,12 +489,28 @@ def main(argv=None) -> int:
             row["pr"] = a.pr
         os.environ["ULTRASTABLE_HOST"] = a.host
         log(REPO, row); print(json.dumps(row, indent=2)); return 0
-    row = run(a.repo, a.apply, a.issue)
+    # EXEC-WATCHDOG-1: a hung step (measured 2026-11-19: the job ran its full 12 minutes and was cancelled with no row written, so the
+    # executor clock read stale for 160 h) ends itself at 10 minutes, records the stall as a row and exits clean.
+    import signal
+    class _Stall(Exception):
+        pass
+    def _stall(*_):
+        raise _Stall()
+    if hasattr(signal, "SIGALRM"):
+        signal.signal(signal.SIGALRM, _stall); signal.alarm(int(os.environ.get("EXECUTOR_WATCHDOG_S", "600")))
+    try:
+        row = run(a.repo, a.apply, a.issue)
+    except _Stall:
+        row = {"result": "stalled", "detail": "executor watchdog: no result within the time limit; the item is retried next run", "prediction": "executor_rows_24h >= 1 within 24 h"}
+        log(REPO, row); print(json.dumps(row, indent=2)); return 0
     if row["result"] in ("idle", "failed", "no-model-credential") and not a.issue:  # EXEC-X: own queue empty or its top item failed (e.g. needs a protected path), so work the target repositories' issues (EXECUTOR_TARGET_REPOS)
         for target in crossrepo.targets():
             try:
                 root = crossrepo.clone(target) if a.apply else REPO
                 row = run(target, a.apply, None, root=root, remote=True)
+            except _Stall:
+                row = {"result": "stalled", "detail": f"executor watchdog while working {target}", "prediction": "executor_rows_24h >= 1 within 24 h"}
+                log(REPO, row); break
             except Exception as e:  # a target that cannot be reached must not hide the next one
                 row = {"result": "failed", "detail": f"{target}: {type(e).__name__}: {str(e)[:300]}"}
                 log(REPO, row)

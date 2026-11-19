@@ -1,5 +1,5 @@
 """Executor: driver-order pick, path guard, edits, no-credential recording."""
-import json, sys, tempfile, unittest
+import json, os, sys, tempfile, unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -232,3 +232,18 @@ class ForeignCifail(unittest.TestCase):
         self.assertTrue(executor.foreign_cifail(other, "ultrastable/ultrastable"))
         self.assertFalse(executor.foreign_cifail(own, "ultrastable/ultrastable"))
         self.assertFalse(executor.foreign_cifail({"number": 5, "title": "something is failing in a/b"}, "ultrastable/ultrastable"))
+
+
+class WatchdogTests(unittest.TestCase):
+    def test_hung_run_records_a_stall_row_and_exits_clean(self):
+        import io, contextlib, time
+        from unittest import mock
+        from foundation import executor
+        rows = []
+        with mock.patch.dict(os.environ, {"EXECUTOR_WATCHDOG_S": "1"}), \
+             mock.patch.object(executor, "run", side_effect=lambda *a, **k: time.sleep(5)), \
+             mock.patch.object(executor, "log", side_effect=lambda root, row: rows.append(row)), \
+             contextlib.redirect_stdout(io.StringIO()):
+            rc = executor.main(["--apply"])
+        self.assertEqual(rc, 0)
+        self.assertEqual(rows[0]["result"], "stalled")
