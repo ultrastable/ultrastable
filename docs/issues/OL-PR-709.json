@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-709",
+  "title": "OL-PR-709: land or supersede pull request #709 (needs-pat)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #709 is needs-pat\n**Done check:** cmd:python3 -m foundation loopowner --closed 709\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #709 (`claude/ultrastable-branch-cleanup-ce6302` at d0ab7cbd2b, opened by rwnq8): branchsweep: archive idle port branches off the branch list (BRANCH-SWEEP-3). The session that opened it is not its closer and is never asked to act. The pull request changes .github/workflows/** and no workflow-capable credential is bound (foundation/data/needs-you.json, lane-credential). Land every file outside .github/workflows/ in a separate pull request now, so only the workflow change is left behind the credential. Files (7): .github/workflows/branchsweep.yml, doctrine/branchsweep.json, doctrine/writeback/lesson-2026-11-19-branch-sweep-3-port-was-a-branch-state-with-no-exit.json, foundation/branchsweep.py, instances/ultrastable/loop-registry.json, ops/branchsweep-ledger.jsonl, tests/foundation/test_branchsweep.py. Closing probe: pull request #709 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
