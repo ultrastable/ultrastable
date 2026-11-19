@@ -46,7 +46,9 @@ def main():
         # it stays a hard failure on pushes to main, and the structural checks above still fail everywhere.
         msg = (f"{MEM} is stale (limit {MAX_COMMITS} commits / {MAX_HOURS}h). "
                "Review status, rules, owner items and workstreams, edit it, bump 'Last updated'.")
-        if os.environ.get("GITHUB_EVENT_NAME") == "pull_request":
+        # MEMORY-REF-1: the lane runs checks on bot pull requests with workflow_dispatch on the PR branch, where the event is not pull_request,
+        # so the branch sweep's 38-commit PR failed here (2026-11-19). Staleness is a hard failure only for main itself.
+        if os.environ.get("GITHUB_EVENT_NAME") == "pull_request" or os.environ.get("GITHUB_REF", "refs/heads/main") != "refs/heads/main":
             print(f"::warning::{msg}")
             return 0
         print("FAIL: " + msg)
