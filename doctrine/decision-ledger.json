@@ -2683,6 +2683,15 @@
    "body": "A PR opened with the workflow token raises a pull_request run that sits in action_required; that pending run is the required checks status, so the merge API said checks is expected although the dispatched run passed. The lane now approves such runs on every pass (LANE-APPROVE-1).",
    "probe": "grep:scripts/lane.sh::LANE-APPROVE-1",
    "session": "session_0156nqDtyvxuXyPkZtHLoyzi"
+  },
+  {
+   "id": "decision-2026-11-19-lane-waits-one-pass-after-approving-a-pull-request-run",
+   "kind": "decision",
+   "date": "2026-11-19",
+   "title": "Lane waits one pass after approving a pull_request run",
+   "body": "An approved run is queued and not yet a check-run, so merging in the same pass fails and fails the lane; the lane now skips the merge on the approving pass.",
+   "probe": "grep:scripts/lane.sh::approved run reports next pass",
+   "session": "session_0156nqDtyvxuXyPkZtHLoyzi"
   }
  ]
 }
