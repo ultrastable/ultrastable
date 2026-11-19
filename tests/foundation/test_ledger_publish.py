@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """EVIDENCE-APPEND-1 and QUEUE-PERSIST-1: evidence is appended onto the evidence branch tip, never force-pushed over it, so every pass's
 ledger rows survive and a closing probe can reach the passes it needs to close an item."""
 import subprocess, sys, tempfile, unittest
