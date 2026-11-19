@@ -13,7 +13,7 @@ export const Heartbeat = createHeartbeat(env => orgFor(env).tick());
 
 export default {
   async scheduled(_event, env, ctx) {
-    ctx.waitUntil(orgFor(env).tick());
+    ctx.waitUntil(orgFor(env).scheduledTick()); // one tick per slot: a cron firing twice runs once
   },
 
   async fetch(request, env) {

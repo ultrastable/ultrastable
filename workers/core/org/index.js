@@ -38,6 +38,8 @@ import { createDownstreamGithub } from '../githubapp/downstream.js';
 import { sweep as codeloopSweep } from '../codeloop/index.js';
 import { handlePublicMetrics } from './public-metrics.js';
 import { buildoutSteps } from './buildout.js';
+import { createSurfaces } from './surfaces.js';
+import { createSla } from '../sla/index.js';
 import { askOwner } from '../access/index.js';
 import { createOwnerlink } from '../ownerlink/index.js';
 
@@ -71,6 +73,7 @@ export function createOrg({
   db, env = {}, config = {}, fetch, now = () => Date.now(), readFile,
   vcs, downstream, mergeHosts, router, store, vault, channels = {}, importer, specStatus = null, voiceRules, scope, compose, outputs,
   sinks = [], gauges = {}, executors = [], agentDefs = {}, hooks = {}, routes = [], checks = {}, stepRuns, metrics = {},
+  endpoints = {}, roleHandlers = {}, tracker,
 } = {}) {
   const vaultStore = vault || createVault({ db });
   // The env the modules see: real env values win, a vault secret fills a missing name. Never logged or stored.
@@ -84,6 +87,9 @@ export function createOrg({
   const tokenProvider = secrets ? createInstallationTokenProvider({ vault: secrets, fetch: doFetch, now: clock }) : null;
   const githubApp = secrets ? (request, origin) => createGithubApp({ vault: secrets, fetch: doFetch, now: clock, consoleToken: env.CONSOLE_TOKEN, config: { org: config.vcs?.repo?.split('/')[0], ...(config.githubapp || {}), baseUrl: config.githubapp?.baseUrl || origin } })(request) : null;
   const l3 = createConsoleL3({ db, now: clock, config: { version: config.version } });
+  // Issue #201: the routes and ports of the build-out modules (walkthrough, dashboard, proxy guide, model port, stage 2, slots).
+  const sla = createSla({ db, now: clock, config: config.sla || {} });
+  const surfaces = createSurfaces({ db, config, env, fetch: doFetch, now: clock, l3, sla, elicit: null, endpoints, roleHandlers, tracker });
   const describeScope = scope || dcfg.scope || {};
   const describeVoice = voiceRules || dcfg.voice_rules || {};
   const describeSpec = specStatus || dcfg.spec_status || null;
@@ -272,7 +278,8 @@ export function createOrg({
     if (on('console_l3') && typeof stepRuns === 'function') steps.push({ name: 'console_l3', run: async (_db, ctx) => { const f = await l3.sweepStepBudgets(await stepRuns()); ctx.notes.push(`console_l3: ${f.length} step-budget findings`); } });
     if (on('infra')) steps.push({ name: 'infra', run: async (_db, ctx) => { await heartbeat({ db, now: clock }, 'tick', config.infra.tick_every_minutes ?? null); ctx.notes.push('infra: tick heartbeat recorded'); } });
     // Spec build-out modules (issue #201): on by default, each off only by config.<name>.enabled === false.
-    steps.push(...buildoutSteps({ db, config, now: clock, fetch: doFetch, claims, ports: { readFile, metrics, env: env_ } }));
+    steps.push(...buildoutSteps({ db, config, now: clock, fetch: doFetch, claims, ports: { readFile, metrics, env: env_, sla, models: surfaces.models, tracker: surfaces.tracker(env_) } }));
+    steps.push(...surfaces.steps(env_));
     steps.push(...crit.after);
     return steps;
   }
@@ -302,7 +309,7 @@ export function createOrg({
     if (githubApp && p.startsWith('/console/github/')) return githubApp(request, url.origin);
     if (p === '/console' || p.startsWith('/console/') || p.startsWith('/api/console')) {
       const e = await mergedEnv();
-      return handleConsole(request, { DB: db, CONSOLE_TOKEN: e.CONSOLE_TOKEN }, { org: config.org_slug, vault: vaultStore, doors: config.doors, config, l3, fetch: doFetch, now: clock, envNames: presence(e) });
+      return handleConsole(request, { DB: db, CONSOLE_TOKEN: e.CONSOLE_TOKEN }, { org: config.org_slug, vault: vaultStore, doors: config.doors, config, l3, mounts: surfaces.mounts, fetch: doFetch, now: clock, envNames: presence(e) });
     }
     if (on('infra') && (p === '/health/deep' || p.startsWith('/api/agents') || p.startsWith('/api/elicit') || routes.some(r => p.startsWith(r.prefix)))) {
       const e = await mergedEnv();
@@ -317,5 +324,8 @@ export function createOrg({
     return null;
   }
 
-  return { extraSteps, tick, handle, packs, agents, elicit, audit, stewardRollup: () => stewardRollup({ db }) };
+  // What a scheduler calls: one tick per slot, so a cron that fires twice runs once (adapters/shared/slot.js). tick() stays unconditional.
+  const scheduledTick = () => surfaces.scheduledTick(tick);
+
+  return { extraSteps, tick, scheduledTick, handle, packs, agents, elicit, audit, surfaces, models: surfaces.models, roleRuntime: surfaces.roleRuntime, stewardRollup: () => stewardRollup({ db }) };
 }
