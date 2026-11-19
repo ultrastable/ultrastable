@@ -2838,6 +2838,14 @@
    "title": "models.github.ai answers every request with 200 text/plain OK (2026-11-19)",
    "body": "Measured from GitHub Actions and from a workstation: /inference/chat/completions, /orgs/<org>/inference/chat/completions and /catalog/models all return HTTP 200 text/plain 'OK'. The GitHub Models rungs are dead; LADDER-FALLTHROUGH-1 makes a dead rung pass to the next live rung within the same attempt and passes reviewers on a dead route to the next family.",
    "probe": "grep:foundation/agent_ladder.py::LADDER-FALLTHROUGH-1"
+  },
+  {
+   "id": "lesson-2026-11-19-queue-port-1-and-branch-sweep-4-port-branch-items-were-invis",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "QUEUE-PORT-1 and BRANCH-SWEEP-4: PORT-BRANCH items were invisible to the queue",
+   "body": "foundation/queue.py read only OL-*.json and Q-*.json, so the 76 PORT-BRANCH items the branch sweep filed were never offered to the executor, never probed and never closed. The queue now reads PORT-BRANCH-*.json. The closing probe (branchsweep --carried) now measures how many of the code lines a branch added are on main (doctrine/branchsweep.json carried: min_share 0.95, max_missing_lines 10), reports the files main lacks otherwise, and answers unmeasured in a shallow checkout; fleet.yml checks out full history so the server can run it. 2026-11-19: 38 items closed with probe evidence (14 branch gone, 24 carried), 38 stay open with the missing files named.",
+   "probe": "grep:foundation/queue.py::PORT-BRANCH-\\*\\.json"
   }
  ]
 }

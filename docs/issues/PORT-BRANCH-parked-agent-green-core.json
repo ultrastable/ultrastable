@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-agent-green-core",
   "title": "PORT-BRANCH-parked-agent-green-core: carry parked/agent/green-core onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/green-core` at 2d85ede20c holds work main lacks and cannot merge as is (conflicts in code: README.md, agents/AGENTS.md, dashboard/test/dashboard.test.mjs, doctrine/claims.json, foundation/tenantsync.py, seed/agents/AGENTS.md)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/green-core\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/green-core",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/green-core` at 2d85ede20c holds work main lacks and cannot merge as is (conflicts in code: README.md, agents/AGENTS.md, dashboard/test/dashboard.test.mjs, doctrine/claims.json, foundation/tenantsync.py, seed/agents/AGENTS.md)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/green-core\n**Status:** closed\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/green-core\n\n**Evidence:** Obsolete: the branch is a one-time regeneration of drifted data, SPDX headers and fixtures (744 insertions, 678 deletions) against an old main; REGEN-GENERATED-1 regenerates that data on every merge, so applying it would regress newer content.",
   "labels": [
     "role:operations",
     "agent-ready",
