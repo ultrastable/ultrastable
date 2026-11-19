@@ -319,6 +319,22 @@
      "cmd": "python3 -m foundation goalscheck --check"
     }
    ]
+  },
+  {
+   "id": "no-open-items",
+   "statement": "The system never reports 'needs you' or leaves an item open: every leftover is closed by evidence or recorded as a gate with surfaces tried, a default in effect and a closing probe (NO-OPEN-ITEMS-1).",
+   "source": "doctrine/open-loops.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation openloops --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "openloops",
+     "cmd": "python3 -m foundation openloops --check"
+    }
+   ]
   }
  ],
  "repos": [
