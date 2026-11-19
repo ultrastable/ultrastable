@@ -74,6 +74,14 @@ class Tenants(T):
         self.assertIsNone(u.fresh_cost(self.d, 127.0, now=datetime(2026, 11, 17, tzinfo=timezone.utc)))
         self.assertEqual(u.fresh_cost(self.d, 0.5, now=datetime(2026, 11, 14, tzinfo=timezone.utc)), 0.5)
 
+    def test_probe_rows_with_ts_or_unmeasured_never_crash(self):
+        from datetime import datetime, timezone
+        now = datetime(2026, 11, 14, tzinfo=timezone.utc)
+        (self.d / "ops/cost.jsonl").write_text(json.dumps({"ts": "2026-11-13T10:51:42Z"}) + "\n")
+        self.assertEqual(u.fresh_cost(self.d, 0.5, now=now), 0.5)
+        (self.d / "ops/cost.jsonl").write_text(json.dumps({"ts": "2026-11-13T10:51:42Z", "unmeasured": "no token"}) + "\n")
+        self.assertIsNone(u.fresh_cost(self.d, 0.5, now=now))
+
     def test_unmeasured_never_acts_and_files_one_item(self):
         r = u.tick(self.d, True, read={**GOOD, "criticality.cost": None})
         r = u.tick(self.d, True, read={**GOOD, "criticality.cost": None})
