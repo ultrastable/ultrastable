@@ -9,12 +9,52 @@
   "external": "a signal from outside (scout finding, funder reply, competitor change)"
  },
  "counts_by_origin": {
-  "loop": 8,
+  "loop": 11,
   "owner": 26,
   "agent": 14,
   "system": 3
  },
  "entries": [
+  {
+   "id": "pv-831df3c89486",
+   "at": "2026-11-17T21:21:28Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "launched portfolio-board.ultrastable.app: score 15.0 (reach 4, impact 3) from needs ; prediction board_age_hours <= 30 within 48 h",
+   "affected": [
+    "instances/spinoffs/portfolio-board"
+   ],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-fe609d4fdcfc",
+   "at": "2026-11-17T21:21:28Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "launched numbers-board.ultrastable.app: score 15.0 (reach 4, impact 3) from needs ; prediction board_age_hours <= 30 within 48 h",
+   "affected": [
+    "instances/spinoffs/numbers-board"
+   ],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-dc647756aa63",
+   "at": "2026-11-17T16:10:23Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "blindspot: keep (age 0d under the 14d trial)",
+   "affected": [],
+   "effect": "pending"
+  },
   {
    "id": "pv-9d0ec8116fbe",
    "at": "2026-11-17T15:45:58Z",
