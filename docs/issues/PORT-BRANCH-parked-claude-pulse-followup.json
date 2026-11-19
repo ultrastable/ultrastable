@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-claude-pulse-followup",
   "title": "PORT-BRANCH-parked-claude-pulse-followup: carry parked/claude/pulse-followup onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/pulse-followup` at 901e472e0c holds work main lacks and cannot merge as is (conflicts in code: seed/worker/src/tick.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/pulse-followup\n**Status:** open\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/pulse-followup",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/pulse-followup` at 901e472e0c holds work main lacks and cannot merge as is (conflicts in code: seed/worker/src/tick.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/pulse-followup\n**Status:** closed\n\nPort the change by hand onto current main (it is 1 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/pulse-followup\n\n**Evidence:** python3 -m foundation branchsweep --carried -> parked/claude/pulse-followup: archived at 901e472e0c (refs/archive/parked/claude/pulse-followup): superseded: main holds 22 of the 22 code lines it added (BRANCH-SWEEP-4)\n",
   "labels": [
     "role:operations",
     "agent-ready",
