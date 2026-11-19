@@ -10,6 +10,14 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-19
 
+- 2026-11-19: PORT-BRANCH-TRIAGE-G3: close 9 port-branch items as superseded (#711)
+- 2026-11-19: PORT-BRANCH-TRIAGE-G0: close 10 port items as superseded (#712)
+- 2026-11-19: PORT-BRANCH-TRIAGE-G2: close 9 port-branch items with evidence (#713)
+- 2026-11-19: queue: PORT-BRANCH items join the queue; closing probe measures carried lines (#710)
+- 2026-11-19: queue: closing-probe verdicts for 1 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-19: queue: closing-probe verdicts for 2 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-19: branchsweep: archive idle port branches off the branch list (BRANCH-SWEEP-3) (#709)
+- 2026-11-19: queue: closing-probe verdicts for 1 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-19: WB-SWEEP-1: the branch sweep's records count as write-back (unblocks sweep PRs) (#705)
 - 2026-11-19: SWEEP-TOOLS-MAIN-1: a continued sweep branch runs main's tools (#704)
 - 2026-11-19: SWEEP-PRUNE-1: prune deletes branches the sweep found superseded (#703)
