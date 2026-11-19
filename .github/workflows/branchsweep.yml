@@ -36,6 +36,9 @@ jobs:
           b=agent/branchsweep-$(date -u +%Y%m%d)
           # SWEEP-BUDGET-1: a later pass the same day continues the open sweep branch instead of force-pushing over its merges
           if git ls-remote --exit-code --heads origin "$b" >/dev/null; then git checkout -B "$b" "origin/$b"; else git checkout -B "$b" origin/main; fi
+          # SWEEP-TOOLS-MAIN-1: a continued sweep branch holds the code of the morning it was cut; the pass runs main's tools, never that stale copy
+          # (run 44497010885 ran the pre-SWEEP-PRUNE-1 prune and deleted nothing). The sweep commit then carries main's versions of these paths.
+          git checkout origin/main -- foundation scripts tools doctrine/branchsweep.json
           python3 -m foundation branchsweep --apply
           python3 scripts/build_dashboard.py
           git add -A; git diff --cached --quiet || git commit -m "branchsweep: ledger, PORT items and dashboard"

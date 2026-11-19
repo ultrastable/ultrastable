@@ -2790,6 +2790,14 @@
    "title": "Prune must honour the pass's superseded verdicts",
    "body": "branchsweep apply() decides superseded after resolving generated files by rule, but prune() re-scanned and saw those branches as merge, so 92 superseded branches were never deleted (run 44495425705: superseded 92, branches 157). SWEEP-PRUNE-1: prune also deletes branches the latest non-dry pass recorded as superseded at the same sha; tests/foundation/test_branchsweep.py covers same and different sha.",
    "probe": "grep:foundation/branchsweep.py::SWEEP-PRUNE-1"
+  },
+  {
+   "id": "lesson-2026-11-19-a-continued-sweep-branch-must-run-main-s-tools",
+   "kind": "lesson",
+   "date": "2026-11-19",
+   "title": "A continued sweep branch must run main's tools",
+   "body": "SWEEP-BUDGET-1 lets a later pass continue the open sweep branch, which switched the working tree to that branch's stale copy of foundation/branchsweep.py; run 44497010885 therefore ran the pre-SWEEP-PRUNE-1 prune and deleted nothing although 88 branches were superseded. SWEEP-TOOLS-MAIN-1: after checking out the sweep branch the workflow restores foundation, scripts, tools and doctrine/branchsweep.json from origin/main.",
+   "probe": "grep:.github/workflows/branchsweep.yml::SWEEP-TOOLS-MAIN-1"
   }
  ]
 }
