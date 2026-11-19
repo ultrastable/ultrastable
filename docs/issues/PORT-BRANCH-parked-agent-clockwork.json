@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-agent-clockwork",
   "title": "PORT-BRANCH-parked-agent-clockwork: carry parked/agent/CLOCKWORK onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/CLOCKWORK` at 965a566192 holds work main lacks and cannot merge as is (conflicts in code: doctrine/growth.json, foundation/__main__.py, foundation/clockwork.py, instances/ultrastable/loop-registry.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/CLOCKWORK\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/CLOCKWORK",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/CLOCKWORK` at 965a566192 holds work main lacks and cannot merge as is (conflicts in code: doctrine/growth.json, foundation/__main__.py, foundation/clockwork.py, instances/ultrastable/loop-registry.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/CLOCKWORK\n**Status:** closed\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/CLOCKWORK\n\n**Evidence:** Superseded: main has foundation/clockwork.py (CLOCKWORK-2, stages, catch-up, settlement, escalation) over doctrine/clocks.json, a later design than the branch's CLOCKWORK-1 doctrine/clockwork.json; the four Q-GROW items exist on main (docs/issues/Q-GROW-*.json) and growth experiments live in doctrine/growth.json and foundation/growth.py.",
   "labels": [
     "role:operations",
     "agent-ready",
