@@ -1,0 +1,83 @@
+{
+ "at": "2026-11-19T01:23:20.104Z",
+ "mode": "live",
+ "pages": 6,
+ "hosts": [
+  "https://ultrastable.io",
+  "https://ultrastable.org",
+  "https://ultrastable.app",
+  "https://blindspot.ultrastable.app",
+  "https://numbers-board.ultrastable.app",
+  "https://portfolio-board.ultrastable.app"
+ ],
+ "axe": false,
+ "findings": [
+  {
+   "kind": "boundary",
+   "path": "numbers-board.ultrastable.app/",
+   "viewport": "phone",
+   "rule": "backend-detail",
+   "detail": "\"ops/transparency.json\" is visible to users"
+  },
+  {
+   "kind": "boundary",
+   "path": "numbers-board.ultrastable.app/",
+   "viewport": "desktop",
+   "rule": "backend-detail",
+   "detail": "\"ops/transparency.json\" is visible to users"
+  }
+ ],
+ "paths": [],
+ "perf": {
+  "ultrastable.io/@phone": {
+   "ttfb": 229,
+   "lcp": 262,
+   "cls": 0.047
+  },
+  "ultrastable.io/@desktop": {
+   "ttfb": 60,
+   "lcp": 86,
+   "cls": 0.026
+  },
+  "ultrastable.org/@phone": {
+   "ttfb": 521,
+   "lcp": 558,
+   "cls": 0
+  },
+  "ultrastable.org/@desktop": {
+   "ttfb": 1,
+   "lcp": 31,
+   "cls": 0
+  },
+  "blindspot.ultrastable.app/@phone": {
+   "ttfb": 147,
+   "lcp": 171,
+   "cls": 0
+  },
+  "blindspot.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 15,
+   "cls": 0
+  },
+  "numbers-board.ultrastable.app/@phone": {
+   "ttfb": 159,
+   "lcp": 177,
+   "cls": 0
+  },
+  "numbers-board.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 33,
+   "cls": 0
+  },
+  "portfolio-board.ultrastable.app/@phone": {
+   "ttfb": 170,
+   "lcp": 197,
+   "cls": 0
+  },
+  "portfolio-board.ultrastable.app/@desktop": {
+   "ttfb": 1,
+   "lcp": 14,
+   "cls": 0
+  }
+ }
+}

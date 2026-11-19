@@ -1,0 +1,11 @@
+{
+  "id": "Q-UIUX-boundary-backend-detail",
+  "title": "Q-UIUX-boundary-backend-detail: front-end boundary: backend-detail",
+  "body": "**Owner:** uiux-manager\n**Trigger:** the UI/UX audit found `backend-detail` (boundary) on 2 page view(s)\n**Done check:** cmd:python3 -m foundation uiux --probe boundary-backend-detail\n**Status:** open\n\nUIUX-1 finding. \"ops/transparency.json\" is visible to users\n\nPages: numbers-board.ultrastable.app/ (desktop), numbers-board.ultrastable.app/ (phone)\n\nFix the page or the shared component that renders it (site/ and the design tokens), keep the single-primary-action, 44px tap, AA contrast and plain-language rules, and never relax doctrine/uiux.json to clear the finding. Re-run `node scripts/uiux_audit.mjs --only <path>` to confirm.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation uiux --probe boundary-backend-detail` exits 0 (the finding no longer reproduces).\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Design"
+}

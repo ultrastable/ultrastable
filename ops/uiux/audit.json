@@ -1,12 +1,314 @@
 {
- "at": "2026-11-17T18:46:57.420Z",
+ "at": "2026-11-19T01:22:50.207Z",
  "mode": "offline",
- "pages": 22,
+ "pages": 21,
  "hosts": [
   "https://ultrastable.io"
  ],
  "axe": true,
- "findings": [],
+ "findings": [
+  {
+   "kind": "structure",
+   "path": "/how",
+   "viewport": "phone",
+   "rule": "horizontal-scroll",
+   "detail": "8px"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.22 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.27 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.28 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.32 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/showcase",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.22 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/showcase",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.28 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/how",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.17 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/how",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.18 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/product",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.17 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/product",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.21 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/team",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.22 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/team",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.25 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/faq",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.19 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/faq",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.21 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/contact",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.19 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/contact",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.20 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/pilot",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.19 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/pilot",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.20 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/engineers",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.11 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/engineers",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.13 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/start",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.19 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/start",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.21 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/setup",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.19 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/setup",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.27 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/privacy",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.17 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/privacy",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.18 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/accessibility",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.17 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/accessibility",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.18 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for/founders",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.15 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for/founders",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.18 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for/communities",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.15 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for/communities",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.16 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for/developers",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.17 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for/developers",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.18 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for/funders",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.20 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for/funders",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.20 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for/partners",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.18 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/for/partners",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.16 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/showcase/qnfo",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.19 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/showcase/qnfo",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.22 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/showcase/practical-solutions",
+   "viewport": "phone",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.18 < 0.82"
+  },
+  {
+   "kind": "visual-drift",
+   "path": "/showcase/practical-solutions",
+   "viewport": "desktop",
+   "rule": "layout-or-style-changed",
+   "detail": "similarity 0.21 < 0.82"
+  }
+ ],
  "paths": [
   {
    "id": "audience-founders",
@@ -74,222 +376,212 @@
  ],
  "perf": {
   "/@phone": {
-   "html_bytes": 36158,
+   "html_bytes": 36347,
    "dom_nodes": 181,
    "inline_script_bytes": 17209
   },
   "/@desktop": {
-   "html_bytes": 36152,
+   "html_bytes": 36370,
    "dom_nodes": 181,
    "inline_script_bytes": 17209
   },
   "/for@phone": {
-   "html_bytes": 12789,
+   "html_bytes": 12970,
    "dom_nodes": 94,
    "inline_script_bytes": 364
   },
   "/for@desktop": {
-   "html_bytes": 12789,
+   "html_bytes": 12970,
    "dom_nodes": 94,
    "inline_script_bytes": 364
   },
   "/showcase@phone": {
-   "html_bytes": 13146,
+   "html_bytes": 13327,
    "dom_nodes": 90,
    "inline_script_bytes": 364
   },
   "/showcase@desktop": {
-   "html_bytes": 13146,
+   "html_bytes": 13327,
    "dom_nodes": 90,
    "inline_script_bytes": 364
   },
   "/how@phone": {
-   "html_bytes": 16545,
+   "html_bytes": 16720,
    "dom_nodes": 165,
    "inline_script_bytes": 364
   },
   "/how@desktop": {
-   "html_bytes": 16545,
+   "html_bytes": 16720,
    "dom_nodes": 165,
    "inline_script_bytes": 364
   },
   "/product@phone": {
-   "html_bytes": 12240,
+   "html_bytes": 12421,
    "dom_nodes": 86,
    "inline_script_bytes": 364
   },
   "/product@desktop": {
-   "html_bytes": 12240,
+   "html_bytes": 12421,
    "dom_nodes": 86,
    "inline_script_bytes": 364
   },
-  "/proof@phone": {
-   "html_bytes": 11962,
-   "dom_nodes": 74,
-   "inline_script_bytes": 1080
-  },
-  "/proof@desktop": {
-   "html_bytes": 11962,
-   "dom_nodes": 74,
-   "inline_script_bytes": 1080
-  },
   "/team@phone": {
-   "html_bytes": 12078,
+   "html_bytes": 12259,
    "dom_nodes": 83,
    "inline_script_bytes": 364
   },
   "/team@desktop": {
-   "html_bytes": 12078,
+   "html_bytes": 12259,
    "dom_nodes": 83,
    "inline_script_bytes": 364
   },
   "/faq@phone": {
-   "html_bytes": 12520,
+   "html_bytes": 12701,
    "dom_nodes": 87,
    "inline_script_bytes": 364
   },
   "/faq@desktop": {
-   "html_bytes": 12520,
+   "html_bytes": 12701,
    "dom_nodes": 87,
    "inline_script_bytes": 364
   },
   "/contact@phone": {
-   "html_bytes": 10946,
+   "html_bytes": 11127,
    "dom_nodes": 70,
    "inline_script_bytes": 364
   },
   "/contact@desktop": {
-   "html_bytes": 10946,
+   "html_bytes": 11127,
    "dom_nodes": 70,
    "inline_script_bytes": 364
   },
   "/pilot@phone": {
-   "html_bytes": 15264,
+   "html_bytes": 15445,
    "dom_nodes": 117,
    "inline_script_bytes": 799
   },
   "/pilot@desktop": {
-   "html_bytes": 15264,
+   "html_bytes": 15445,
    "dom_nodes": 117,
    "inline_script_bytes": 799
   },
   "/engineers@phone": {
-   "html_bytes": 18763,
-   "dom_nodes": 277,
+   "html_bytes": 19645,
+   "dom_nodes": 288,
    "inline_script_bytes": 364
   },
   "/engineers@desktop": {
-   "html_bytes": 18763,
-   "dom_nodes": 277,
+   "html_bytes": 19645,
+   "dom_nodes": 288,
    "inline_script_bytes": 364
   },
   "/start@phone": {
-   "html_bytes": 29154,
+   "html_bytes": 29336,
    "dom_nodes": 79,
    "inline_script_bytes": 17209
   },
   "/start@desktop": {
-   "html_bytes": 29164,
+   "html_bytes": 29332,
    "dom_nodes": 79,
    "inline_script_bytes": 17209
   },
   "/setup@phone": {
-   "html_bytes": 19851,
+   "html_bytes": 20031,
    "dom_nodes": 76,
-   "inline_script_bytes": 8782
+   "inline_script_bytes": 8781
   },
   "/setup@desktop": {
-   "html_bytes": 19851,
+   "html_bytes": 20031,
    "dom_nodes": 76,
-   "inline_script_bytes": 8782
+   "inline_script_bytes": 8781
   },
   "/privacy@phone": {
-   "html_bytes": 11996,
+   "html_bytes": 12177,
    "dom_nodes": 74,
    "inline_script_bytes": 364
   },
   "/privacy@desktop": {
-   "html_bytes": 11996,
+   "html_bytes": 12177,
    "dom_nodes": 74,
    "inline_script_bytes": 364
   },
   "/accessibility@phone": {
-   "html_bytes": 11151,
+   "html_bytes": 11332,
    "dom_nodes": 68,
    "inline_script_bytes": 364
   },
   "/accessibility@desktop": {
-   "html_bytes": 11151,
+   "html_bytes": 11332,
    "dom_nodes": 68,
    "inline_script_bytes": 364
   },
   "/for/founders@phone": {
-   "html_bytes": 11981,
+   "html_bytes": 12162,
    "dom_nodes": 89,
    "inline_script_bytes": 364
   },
   "/for/founders@desktop": {
-   "html_bytes": 11981,
+   "html_bytes": 12162,
    "dom_nodes": 89,
    "inline_script_bytes": 364
   },
   "/for/communities@phone": {
-   "html_bytes": 12315,
+   "html_bytes": 12496,
    "dom_nodes": 91,
    "inline_script_bytes": 364
   },
   "/for/communities@desktop": {
-   "html_bytes": 12315,
+   "html_bytes": 12496,
    "dom_nodes": 91,
    "inline_script_bytes": 364
   },
   "/for/developers@phone": {
-   "html_bytes": 12123,
+   "html_bytes": 12303,
    "dom_nodes": 89,
    "inline_script_bytes": 364
   },
   "/for/developers@desktop": {
-   "html_bytes": 12123,
+   "html_bytes": 12303,
    "dom_nodes": 89,
    "inline_script_bytes": 364
   },
   "/for/funders@phone": {
-   "html_bytes": 11890,
+   "html_bytes": 12070,
    "dom_nodes": 89,
    "inline_script_bytes": 364
   },
   "/for/funders@desktop": {
-   "html_bytes": 11890,
+   "html_bytes": 12070,
    "dom_nodes": 89,
    "inline_script_bytes": 364
   },
   "/for/partners@phone": {
-   "html_bytes": 11944,
+   "html_bytes": 12125,
    "dom_nodes": 89,
    "inline_script_bytes": 364
   },
   "/for/partners@desktop": {
-   "html_bytes": 11944,
+   "html_bytes": 12125,
    "dom_nodes": 89,
    "inline_script_bytes": 364
   },
   "/showcase/qnfo@phone": {
-   "html_bytes": 12448,
+   "html_bytes": 12628,
    "dom_nodes": 82,
    "inline_script_bytes": 364
   },
   "/showcase/qnfo@desktop": {
-   "html_bytes": 12448,
+   "html_bytes": 12628,
    "dom_nodes": 82,
    "inline_script_bytes": 364
   },
   "/showcase/practical-solutions@phone": {
-   "html_bytes": 12919,
+   "html_bytes": 13100,
    "dom_nodes": 83,
    "inline_script_bytes": 364
   },
   "/showcase/practical-solutions@desktop": {
-   "html_bytes": 12919,
+   "html_bytes": 13100,
    "dom_nodes": 83,
    "inline_script_bytes": 364
   }

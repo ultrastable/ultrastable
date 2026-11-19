@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-19-ui-ux-manager-pass-2026111901-2-fix-item-s-filed",
+  "kind": "decision",
+  "date": "2026-11-19",
+  "title": "UI/UX manager pass 2026111901: 2 fix item(s) filed",
+  "body": "Audit status, funnels, experiment verdicts and fix items recorded in ops/uiux/ by foundation/uiux.py; tests pass.",
+  "probe": "file:ops/uiux/status.json"
+ },
+ "kind": "decision",
+ "title": "UI/UX manager pass 2026111901: 2 fix item(s) filed",
+ "session": ""
+}
