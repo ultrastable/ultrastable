@@ -35,6 +35,16 @@ class Clock(unittest.TestCase):
         self.assertTrue(C.should_chain(1, 4, 5, ["failure", "failure", "success"], 3)[0])
         self.assertFalse(C.should_chain(0, 4, 5, [], 3, budget_ok=False)[0])
 
+    def test_an_older_unfinished_run_holds_the_spark(self):  # SPARK-BUSY-1
+        rows = [{"databaseId": 3, "status": "in_progress", "createdAt": "2026-11-19T10:10:00Z"},
+                {"databaseId": 2, "status": "queued", "createdAt": "2026-11-19T10:05:00Z"},
+                {"databaseId": 1, "status": "completed", "createdAt": "2026-11-19T10:00:00Z"},
+                {"databaseId": 0, "status": "queued", "createdAt": "2026-11-19T08:00:00Z"}]  # wedged two hours: not busy
+        self.assertEqual([r["databaseId"] for r in C.older_unfinished(rows, "3")], [2])
+        self.assertEqual(C.older_unfinished(rows, "2"), [])  # the oldest live run goes ahead, so two sparks never both stand down
+        now = C._ts("2026-11-19T10:20:00Z")
+        self.assertEqual([r["databaseId"] for r in C.older_unfinished(rows, None, now)], [3, 2])
+
     def test_cap_counts_attempts_not_wakeups(self):
         now = C._ts("2026-11-13T12:00:00Z")
         rows = [{"at": "2026-11-13T08:40:59Z", "host": "github-actions:workflow_run", "issue": "Q-1", "result": "pr-opened"},

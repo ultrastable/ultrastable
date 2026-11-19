@@ -134,6 +134,22 @@ def should_chain(runs_last_24h: int, max_per_day: int, takeable: int, last_concl
     return True, f"{takeable} takeable item(s), {runs_last_24h} of {max_per_day} runs used today"
 
 
+BUSY_MAX_AGE_S = 45 * 60
+
+
+def older_unfinished(rows: list[dict], run_id: str | None, now: float | None = None) -> list[dict]:
+    """SPARK-BUSY-1: runs of the executor workflow that are not finished and were created before this one. The executor job holds one concurrency group,
+    and GitHub keeps one pending job per group, cancelling the older pending one when a newer one queues: measured 2026-11-19, 9 of 15 runs ended
+    `cancelled` that way, never having started. A spark or a chain dispatch while an older run is still queued or running adds nothing but a cancel.
+    Only older runs count, so two sparks that start together do not both stand down."""
+    me = next((r for r in rows if str(r.get("databaseId")) == str(run_id)), None) if run_id else None
+    mine = _ts(me["createdAt"]) if me and me.get("createdAt") else (now if now is not None else datetime.now(timezone.utc).timestamp())
+    def at(r):
+        return _ts(r["createdAt"]) if r.get("createdAt") else mine
+    # a run unfinished for longer than any executor run can take (spark 3 + job 12 minutes, plus queueing) is wedged, not busy, and does not hold the chain
+    return [r for r in rows if r.get("status") != "completed" and str(r.get("databaseId")) != str(run_id) and mine - BUSY_MAX_AGE_S <= at(r) < mine]
+
+
 NO_ATTEMPT = {"idle", "dry-run", "no-model-credential"}
 
 
@@ -170,7 +186,7 @@ def daily_cap(cfg: dict, private: bool | None = None) -> tuple[int, str]:
 def chain(root=REPO, apply=False, now: float | None = None) -> dict:
     cfg, now = load(root)["chain"], now or datetime.now(timezone.utc).timestamp()
     try:
-        r = subprocess.run(["gh", "run", "list", "--repo", GH, "--workflow", cfg["workflow"], "--limit", "20", "--json", "createdAt,conclusion,status"], capture_output=True, text=True, timeout=60, encoding="utf-8")
+        r = subprocess.run(["gh", "run", "list", "--repo", GH, "--workflow", cfg["workflow"], "--limit", "20", "--json", "createdAt,conclusion,status,databaseId"], capture_output=True, text=True, timeout=60, encoding="utf-8")
         rows = json.loads(r.stdout or "[]")
     except (OSError, subprocess.SubprocessError, ValueError) as e:
         return {"chain": False, "why": "could not read the run history: " + str(e)[:100]}
@@ -182,6 +198,9 @@ def chain(root=REPO, apply=False, now: float | None = None) -> dict:
         used = len([x for x in rows if _ts(x["createdAt"]) >= now - 86400])
     cap, vis = daily_cap(cfg)
     ok, why = should_chain(used, cap, takeable_count(root), done, cfg["backoff_after_failures"])
+    busy = older_unfinished(rows, os.environ.get("GITHUB_RUN_ID"), now)
+    if ok and busy:
+        ok, why = False, f"an older executor run ({busy[0].get('databaseId')}, {busy[0].get('status')}) is still queued or running; it takes the next item (SPARK-BUSY-1)"
     res = {"chain": ok, "why": why, "attempts_24h": used, "cap": cap, "visibility": vis}
     if ok and apply:
         d = subprocess.run(["gh", "workflow", "run", cfg["workflow"] + ".yml", "--repo", GH], capture_output=True, text=True, timeout=60, encoding="utf-8")

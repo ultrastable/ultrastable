@@ -28,8 +28,13 @@ def gh(*args) -> tuple[int, str]:
     return r.returncode, (r.stdout if r.returncode == 0 else r.stdout + r.stderr)
 
 
+INCONCLUSIVE = {"cancelled", "skipped", "stale"}  # PROBE-CONCLUSIVE-1: says nothing about the workflow's health
+
+
 def latest(repo: str, run=gh) -> list[dict]:
-    """Newest completed run per workflow on the default branch (error text if unreadable: unmeasured, never green)."""
+    """Newest conclusive run per workflow on the default branch (error text if unreadable: unmeasured, never green). PROBE-CONCLUSIVE-1: a cancelled
+    or skipped run is passed over. Measured 2026-11-19: pending executor jobs cancelled by a newer one in their concurrency group made the newest
+    completed run `cancelled`, so the probe of Q-CIFAIL-ultrastable-executor passed while every run that worked an item failed."""
     code, o = run("api", f"repos/{repo}", "--jq", ".default_branch")
     if code:
         raise RuntimeError(f"{repo}: unreadable ({o.strip()[:120]})")
@@ -38,7 +43,7 @@ def latest(repo: str, run=gh) -> list[dict]:
         raise RuntimeError(f"{repo}: runs unreadable ({o.strip()[:120]})")
     seen, out = set(), []
     for r in json.loads(o or "[]"):
-        if r["name"] not in seen:
+        if r["name"] not in seen and r.get("conclusion") not in INCONCLUSIVE:
             seen.add(r["name"]); out.append(r)
     return out
 
