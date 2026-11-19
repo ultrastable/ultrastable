@@ -29,6 +29,14 @@ export default {
  "level": "ok",
  "live": [
   {
+   "archetype": "live-lookup",
+   "launched": "2026-11-18T15:56:55Z",
+   "name": "Air Quality Check",
+   "slug": "air-quality",
+   "tagline": "Type a city anywhere, see its air quality right now and the current particle levels, from open forecast data.",
+   "url": "https://air-quality.ultrastable.app"
+  },
+  {
    "archetype": "domain-check",
    "launched": "2026-11-17T15:45:58Z",
    "name": "Blindspot Check",
@@ -54,16 +62,6 @@ export default {
   }
  ],
  "queue": [
-  {
-   "archetype": "live-lookup",
-   "cost_share": 0.025,
-   "fits": true,
-   "id": "air-quality",
-   "implemented": true,
-   "kind": "spinoff",
-   "name": "Air Quality Check",
-   "score": 20.0
-  },
   {
    "archetype": "live-lookup",
    "cost_share": 0.025,
@@ -165,6 +163,46 @@ export default {
    "score": 8.33
   },
   {
+   "archetype": "status-board",
+   "cost_share": 0.008,
+   "fits": true,
+   "id": "board-issue-lifecycle",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Issue Lifecycle Board",
+   "score": 8.33
+  },
+  {
+   "archetype": "status-board",
+   "cost_share": 0.008,
+   "fits": true,
+   "id": "board-metric-loop",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Metric Loop Board",
+   "score": 8.33
+  },
+  {
+   "archetype": "status-board",
+   "cost_share": 0.008,
+   "fits": true,
+   "id": "board-resilience",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Resilience Board",
+   "score": 8.33
+  },
+  {
+   "archetype": "status-board",
+   "cost_share": 0.008,
+   "fits": true,
+   "id": "board-ultrastability",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Ultrastability Board",
+   "score": 8.33
+  },
+  {
    "archetype": "template-generator",
    "cost_share": 0.02,
    "fits": false,
@@ -173,29 +211,14 @@ export default {
    "kind": "spinoff",
    "name": "SPF and DMARC Writer",
    "score": 4.0
-  },
-  {
-   "archetype": "template-generator",
-   "cost_share": 0.02,
-   "fits": false,
-   "id": "security-txt-writer",
-   "implemented": false,
-   "kind": "spinoff",
-   "name": "security.txt Writer",
-   "score": 4.0
-  },
-  {
-   "archetype": "template-generator",
-   "cost_share": 0.025,
-   "fits": false,
-   "id": "privacy-notice-draft",
-   "implemented": false,
-   "kind": "spinoff",
-   "name": "Plain Privacy Page Draft",
-   "score": 3.6
   }
  ],
  "scope": [
+  {
+   "id": "Q-SPIN-SCOPE-COLLECT-CADENCE",
+   "status": "open",
+   "title": "Collect every live app's metrics twice a day instead of once"
+  },
   {
    "id": "Q-SPIN-SCOPE-IMPLEMENT-TEMPLATE-GENERATOR",
    "status": "open",

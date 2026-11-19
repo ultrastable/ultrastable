@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-parked-claude-repos-spec",
+  "title": "PORT-BRANCH-parked-claude-repos-spec: carry parked/claude/repos-spec onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/claude/repos-spec` at 3b6caafd5a holds work main lacks and cannot merge as is (conflicts in code: README.md, brand/brand.json, brand/generated/repo-map.svg, brand/repos/.github/README.block.md, brand/repos/license/README.block.md, brand/repos/ops/README.block.md)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/claude/repos-spec\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/claude/repos-spec",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

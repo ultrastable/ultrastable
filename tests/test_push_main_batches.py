@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """PUSH-MAIN-BATCH-1: a change larger than the Worker's per-commit file cap lands as consecutive commits instead of an HTTP 400 and a refused
 direct push (fleet run 44486923943, 2026-11-19)."""
 import importlib.util, sys, unittest
