@@ -170,9 +170,17 @@ def apply(root=REPO, base="origin/main", dry=False, now=None) -> dict:
     root, pol = Path(root), policy(root)
     plans = scan(root, base)
     done = []
+    # SWEEP-BUDGET-1: the gate runs after every merge, so a pass over ~100 branches outran the job's 15 minutes and was cancelled with nothing
+    # pushed (2026-11-18). A pass stops merging at budget_seconds; the rest are `skipped` and the next pass takes them.
+    deadline = time.monotonic() + int(pol.get("budget_seconds", 600))
     for p in plans:
         a = p["action"]
-        if a == "merge" and not dry:
+        filed = root / "docs/issues" / (port_item(p, pol)["id"] + ".json") if a == "merge" else None
+        if a == "merge" and not dry and filed.is_file() and p["sha"][:10] in filed.read_text(encoding="utf-8"):
+            p.update(action="port", why="a PORT-BRANCH item already holds this branch at this sha; not re-gated every pass")
+        elif a == "merge" and not dry and time.monotonic() > deadline:
+            p.update(action="skipped", why="pass time budget spent (SWEEP-BUDGET-1); the next pass takes it")
+        elif a == "merge" and not dry:
             ref = "origin/" + p["name"]
             head = _g(root, "rev-parse", "HEAD").strip()
             rc, _, _ = git(root, "merge", "--no-ff", "--no-commit", ref)
