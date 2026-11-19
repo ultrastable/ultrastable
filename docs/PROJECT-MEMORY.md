@@ -10,6 +10,11 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-19
 
+- 2026-11-19: WB-SWEEP-1: the branch sweep's records count as write-back (unblocks sweep PRs) (#705)
+- 2026-11-19: SWEEP-TOOLS-MAIN-1: a continued sweep branch runs main's tools (#704)
+- 2026-11-19: SWEEP-PRUNE-1: prune deletes branches the sweep found superseded (#703)
+- 2026-11-19: queue: closing-probe verdicts for 9 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-19: branchsweep: merge the branches main lacks (#698)
 - 2026-11-19: MEMORY-REF-1: memory staleness fails main only (unblocks lane-checked bot PRs) (#701)
 - 2026-11-19: OL-20261118-1: closing probe fails while the account move is unfinished (#700)
 - 2026-11-19: queue: closing-probe verdicts for 18 item(s) (QUEUE-PERSIST-1) [skip ci]
