@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-LOOPBREAK-SG-8",
+  "title": "NC-PLUS-LOOPBREAK-SG-8: Add failure-reason capture to dispatch loop so SG-8's 22 failures produce a diagnosable outcome",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-LOOPBREAK-SG-8 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe PLUS-LOOPBREAK-SG-8\n**Status:** open\n\nAdd failure-reason capture to dispatch loop so SG-8's 22 failures produce a diagnosable outcome\n\nBacklog done check: Each failed SG-8 dispatch records a structured failure reason (missing capability / no doer / error class), and SG-8 is reassigned or split based on that reason\n\nTriage: Capturing failure reasons requires modifying the dispatch loop in Worker code (structured records, reassignment logic), which the in-Worker doer cannot do. | first step: Write a backlog note specifying the failure-reason schema (capability_missing/no_doer/error_class) and hand off to a human/coder to patch the dispatch\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

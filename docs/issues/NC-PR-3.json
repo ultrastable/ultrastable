@@ -1,0 +1,11 @@
+{
+  "id": "NC-PR-3",
+  "title": "NC-PR-3: PR-3: QNFO case study with real numbers",
+  "body": "**Owner:** staff\n**Trigger:** the backlog item PR-3 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe PR-3\n**Status:** open\n\nPR-3: QNFO case study with real numbers\n\nBacklog done check: Page on the site\n\nTriage: Publishing a page on the site requires repo/file changes; the in-Worker doer can only edit the backlog DB, not code or site content. | first step: Open a follow-up issue assigning staff to draft the QNFO case-study page with real numbers and submit it to the site repo.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}
