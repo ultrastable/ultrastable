@@ -3378,6 +3378,40 @@
    "body": "After CF-POSTURE-1 the live reading showed tenant-ps-core, tenant-ps-web and ultrastable-deploy-gateway with logs off: workers/core/deploygate/index.js, two Cloudflare adapters, the launcher's provisioner and scripts/cf_account.py build upload metadata outside deploy/ and site/, which was all the first static scan read. All send observability now and cfposture --check scans every tracked code file for upload metadata.",
    "probe": "file:foundation/cfposture.py",
    "session": "serene-payne-a9c57f"
+  },
+  {
+   "id": "decision-2026-11-20-pin-core-db-separation-closed-from-live-d1-reading",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "PIN-core-db-separation closed from live D1 reading",
+   "body": "5 DBs in the ultrastable account, none from the originating fleet; the other 4 open roadmap items stay gated per doctrine/open-loops.json (identity-bound: empty account, second installation, other-cloud billing, outside auditor).",
+   "probe": "file:docs/migrations/core-db-split.json"
+  },
+  {
+   "id": "decision-2026-11-20-account-move-kv-done-spinoffs-and-edge-staged-zones-blocked-",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Account move: KV done, spinoffs and edge staged; zones blocked at the registrar",
+   "body": "KV complete by name in the ultrastable account; D1 ultrastable-spinoffs and Workers ultrastable-spinoffs and tenant-ps-edge staged with no routes. Zones blocked. Surfaces tested: registrar API PUT name_servers on ultrastable.net returned 403 code 10000 (2026-11-19, 2026-11-20); zone listing shows each zone pending in the ultrastable account with DNS copied; the registrar spec has no cross-account move endpoint. Acquisition paths attempted: API update (refused, not re-routed); the documented dashboard route needs the owner's signed-in session and an email approval, recorded as gate net-nameserver-switch with a default in effect (zones stay served from the old account) and closing probe singleaccount --moved. MAIL_RELAY_TOKEN must not be rotated (it seals owner OAuth); re-copy the spinoffs D1 at cutover.",
+   "probe": "file:ops/account-move.json"
+  },
+  {
+   "id": "lesson-2026-11-20-cf-posture-3-the-posture-reading-runs-on-the-run-s-oidc-iden",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "CF-POSTURE-3: the posture reading runs on the run's OIDC identity through the deploy gateway",
+   "body": "The repository's Cloudflare token predates the account move and is refused by the Ultrastable account, so the daily reading was unmeasured and the cost probe crashed. The deploy gateway now serves a read-only GET /posture (ids, modified time, logging setting; same OIDC check as deploys) and foundation/cfposture.py reads Workers through it when the token is refused. The cost probe records a refused token as unmeasured (COST-PROBE-3). An empty zone list from a token of another account is unmeasured, not a failure.",
+   "probe": "file:workers/core/deploygate/index.js",
+   "session": "serene-payne-a9c57f"
+  },
+  {
+   "id": "lesson-2026-11-20-cost-probe-4-resource-discovery-reads-rest-lists-the-analyti",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "COST-PROBE-4: resource discovery reads REST lists; the analytics GraphQL API has none",
+   "body": "deploy/cost-probe.mjs asked the GraphQL analytics API for workers, D1, KV and R2 lists, a field that does not exist, so the daily cost guard failed and its later steps (criticality tick, record) were skipped. Discovery now lists each kind over REST; a kind the token cannot list is null (unmeasured) and files no drift item.",
+   "probe": "file:deploy/cost-probe.mjs",
+   "session": "serene-payne-a9c57f"
   }
  ]
 }

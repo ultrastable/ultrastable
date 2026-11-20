@@ -3,7 +3,7 @@
  "assets": {
   "workers": [
    "ultrastable-agents",
-    "ultrastable-spinoffs",
+   "ultrastable-spinoffs",
    "ultrastable-tick",
    "ultrastable-dashboard",
    "ultrastable-site",
@@ -12,7 +12,7 @@
   "d1": [
    "ultrastable-org",
    "ultrastable-ops",
-    "ultrastable-spinoffs"
+   "ultrastable-spinoffs"
   ],
   "kv": [
    "ultrastable-site-assets",
@@ -91,7 +91,7 @@
   }
  },
  "progress": {
-  "at": "2026-11-16T08:40Z",
+  "at": "2026-11-20T20:30Z",
   "stage": "4-cutover done for crons (tick */10, dashboard */10 and 13:00, site :17 run on the target; the source copies have none); public domains still served by the source (zones); ops D1 copy pending",
   "evidence": {
    "crons": "GET /workers/scripts/{name}/schedules on both accounts, 2026-11-16 08:20Z",
@@ -109,7 +109,8 @@
     }
    },
    "interim_cadence": "2026-11-16 08:5xZ: ultrastable-dashboard cron on the target changed from */10 to hourly at :07 (the 13:00 digest trigger kept; the site's hourly cron still produces the heartbeat) until READ-BUDGET-1 is deployed there; revert: PUT /workers/scripts/ultrastable-dashboard/schedules [\"0 13 * * *\", \"*/10 * * * *\"]"
-  }
+  },
+  "stage_2026_11_20": "KV complete; spinoffs D1 (new id 7daf8b68-8516-42a8-b7c4-68fd00d10e24) and Workers ultrastable-spinoffs and tenant-ps-edge staged in the target without routes; zones blocked: registrar API refuses name-server update (403 code 10000); mail-relay and tenant-ps-mail retire after the zones move"
  },
  "blockers": [
   {

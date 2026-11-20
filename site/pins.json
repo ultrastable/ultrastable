@@ -115,13 +115,13 @@
    ]
   },
   {
-   "status": "pinned",
+   "status": "live",
    "name": "Core separated from QNFO's database",
-   "what": "The core still shares a database with QNFO's other applications.",
+   "what": "The core's databases are its own, in its own account; no database of QNFO's research applications is bound.",
    "where": "docs/migrations/core-db-split.json",
    "issue": "PIN-core-db-separation",
    "code": [
-    "platform/core/ultrastable/config.py"
+    "foundation/owndb.py"
    ]
   },
   {
@@ -201,10 +201,6 @@
   [
    "One installation and one customer. There is no installer and no second tenant yet.",
    "Q-GAP-second-installation"
-  ],
-  [
-   "The core still shares a database with QNFO's other applications; separating it is the first pilot milestone.",
-   "PIN-core-db-separation"
   ],
   [
    "The prediction match rate is scored by the system itself. An outside audit is a pilot goal.",

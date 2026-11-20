@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createGate } from './index.js';
+import { createGate, readPosture } from './index.js';
 
 const enc = o => Buffer.from(JSON.stringify(o)).toString('base64url');
 const kp = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign', 'verify']);
@@ -111,4 +111,29 @@ test('GET /state returns names and hashes for an allowed script, refuses others,
   assert.equal((await get(null)).status, 401);
   assert.equal((await get(await token(), 'other')).status, 403);
   assert.equal((await get(await token({ repository: 'org/evil' }))).status, 403);
+});
+
+test('CF-POSTURE-3: /posture returns ids and the logging setting to a repo with a rule, and nothing to anyone else', async () => {
+  const fetch = async (u) => {
+    u = String(u);
+    if (u.endsWith('/.well-known/jwks')) return new Response(JSON.stringify({ keys: [jwk] }));
+    if (u.endsWith('/workers/scripts')) return new Response(JSON.stringify({ result: [{ id: 'a', modified_on: '2026-11-20T00:00:00Z' }, { id: 'b' }, { id: 'c' }] }));
+    if (u.endsWith('/a/settings')) return new Response(JSON.stringify({ result: { observability: { enabled: true }, bindings: [{ type: 'secret_text', name: 'S' }] } }));
+    if (u.endsWith('/b/settings')) return new Response(JSON.stringify({ result: {} }));
+    return new Response('no', { status: 403 });
+  };
+  const gate = createGate({ fetch, now: () => NOW, config: { rules: [{ repo: 'org/app', refs: ['refs/heads/main'], script: 'app-web' }], accountId: 'acct', token: 't' } });
+  const get = tok => gate.handle(new Request(ORIGIN + '/posture', { headers: tok ? { authorization: 'Bearer ' + tok } : {} }));
+  assert.equal((await get(null)).status, 401);
+  assert.equal((await get(await token({ repository: 'other/repo' }))).status, 403);
+  assert.equal((await get(await token({ ref: 'refs/heads/feature' }))).status, 403);
+  const r = await get(await token()); assert.equal(r.status, 200);
+  const b = await r.json();
+  assert.deepEqual(b.workers, [{ id: 'a', modified_on: '2026-11-20T00:00:00Z', observability: { enabled: true } }, { id: 'b', modified_on: null, observability: { enabled: false } }, { id: 'c', modified_on: null, observability: null }]);
+  assert.ok(!JSON.stringify(b).includes('secret_text'), 'no binding leaves the host');
+  assert.ok(b.read_errors.some(e => e.includes('/c/settings 403')));
+});
+test('CF-POSTURE-3: a script list the token cannot read is null, never empty', async () => {
+  const p = await readPosture(async () => new Response('no', { status: 403 }), { accountId: 'acct', token: 't' });
+  assert.equal(p.workers, null); assert.equal(p.read_errors.length, 1);
 });

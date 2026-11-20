@@ -1,0 +1,55 @@
+{
+ "at": "2026-11-20T20:12:49Z",
+ "account_id": "81e3a4efb4eb66e613529b87682911bb",
+ "rules": [
+  {
+   "id": "worker-logs-on",
+   "kind": "auto",
+   "status": "fail",
+   "detail": [
+    "tenant-ps-core",
+    "tenant-ps-edge",
+    "tenant-ps-web",
+    "ultrastable-spinoffs"
+   ]
+  },
+  {
+   "id": "no-idle-preview-workers",
+   "kind": "auto",
+   "status": "pass",
+   "detail": []
+  },
+  {
+   "id": "alerts-reach-code",
+   "kind": "auto",
+   "status": "unmeasured",
+   "detail": [
+    "GET /accounts/81e3a4efb4eb66e613529b87682911bb/alerting/v3/policies: HTTP 403"
+   ]
+  },
+  {
+   "id": "tokens-outlive-horizon",
+   "kind": "auto",
+   "status": "unmeasured",
+   "detail": [
+    "GET /accounts/81e3a4efb4eb66e613529b87682911bb/tokens: HTTP 403"
+   ]
+  },
+  {
+   "id": "zones-active",
+   "kind": "auto",
+   "status": "unmeasured",
+   "detail": [
+    "the token lists no zone for this account"
+   ]
+  },
+  {
+   "id": "second-member",
+   "kind": "gate",
+   "status": "unmeasured",
+   "detail": [
+    "GET /accounts/81e3a4efb4eb66e613529b87682911bb/members: HTTP 403"
+   ]
+  }
+ ]
+}
