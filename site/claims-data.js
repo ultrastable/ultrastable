@@ -1966,6 +1966,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Nothing sits in the queue; every item gets a coded disposition (DISPOSE-1, Rowan 2026-11-20).** \"I don't want stuff sitting in the",
+   "detail": "",
+   "how": "file:doctrine/dispose.json + file:foundation/queue.py + file:foundation/agents.py + file:foundation/dispose.py + file:tests/foundation/test_dispose.py",
+   "id": "cited-8816153851",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
@@ -2533,6 +2542,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Nothing sits in the queue; every item gets a coded disposition (DISPOSE-1, Rowan 2026-11-20).** \"I don't want stuff sitting in the",
+   "detail": "",
+   "how": "file:doctrine/dispose.json + file:foundation/queue.py + file:foundation/agents.py + file:foundation/dispose.py + file:tests/foundation/test_dispose.py",
+   "id": "mirror-b80b41fca5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
@@ -3037,7 +3055,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 392 Worker tests",
+   "claim": "seed-tests: 45 Python and 393 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3046,7 +3064,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 392 Worker tests",
+   "claim": "seed-worker-tests: 393 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3082,7 +3100,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 700",
+   "claim": "live-deploys: 705",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3278,7 +3296,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 361,
-  "total": 361
+  "pass": 363,
+  "total": 363
  }
 };

@@ -86,6 +86,12 @@ def takeable(root=REPO, gated=True) -> list[dict]:
             continue
         out.append({"number": it["id"], "title": j.get("title", it["id"]), "body": j.get("body", ""), "labels": [{"name": n} for n in j.get("labels", [])],
                     "updated_at": "1970-01-01T00:00:00Z", **({"score": scores[str(it["id"])]} if str(it["id"]) in scores else {})})
+    if not out:  # DISPOSE-1: an empty open queue is when shelved items are retried, least recently attempted first
+        from . import dispose
+        for d in dispose.revive(root):
+            j = d["json"]
+            out.append({"number": d["id"], "title": j.get("title", d["id"]), "body": j.get("body", ""), "labels": [{"name": n} for n in j.get("labels", [])],
+                        "updated_at": "1970-01-01T00:00:00Z", "revived": True})
     if not gated:  # the executor's reach before the criticality gate: foundation/throughput.py asks whether any doer can take an item at all
         return out
     from . import criticality
@@ -98,7 +104,7 @@ def close(root, item_id: str, why: str) -> None:
     for it in items(root):
         if str(it["id"]) == str(item_id):
             j = it["json"]
-            j["body"] = j["body"].replace("**Status:** open", "**Status:** closed") + f"\n\n**Evidence:** {why}\n"
+            j["body"] = re.sub(r"^(\*\*Disposition:\*\*\s*)shelved\b", r"\1fixed", j["body"].replace("**Status:** open", "**Status:** closed"), flags=re.M) + f"\n\n**Evidence:** {why}\n"
             it["path"].write_text(json.dumps(j, indent=2) + "\n", encoding="utf-8")
             return
     raise KeyError(f"queue item {item_id} not found")
@@ -149,7 +155,17 @@ def run(root=REPO, apply=False) -> list[dict]:
     after a reopen, only once the passes span the hold; a closed item whose probe fails again is reopened. Rows keep the old shape."""
     from . import contracts
     rows = contracts.tick(root, apply=apply)["rows"]
-    return [{"id": r["id"], "probe": r["probe"], "passed": r["verdict"] == "pass", "evidence": r["evidence"], "action": r["action"]} for r in rows if r["status_before"] == "open" or r["action"] == "reopen"]
+    out = [{"id": r["id"], "probe": r["probe"], "passed": r["verdict"] == "pass", "evidence": r["evidence"], "action": r["action"]} for r in rows if r["status_before"] == "open" or r["action"] in ("reopen", "fulfilled")]
+    # DISPOSE-1: after the probes, every item still open gets its rule applied (gate, shelved), so nothing stays open past the limit. A failure here is printed and
+    # never stops the verdicts above from landing.
+    try:
+        from . import dispose
+        closed_now = {r["id"] for r in rows if r["action"] == "close"}
+        out += [{"id": d["id"], "probe": "", "passed": False, "evidence": d["evidence"], "action": d["disposition"]} for d in dispose.run(root, apply=apply) if d["id"] not in closed_now]
+    except Exception as e:  # noqa: BLE001
+        import sys
+        print(f"dispose failed: {type(e).__name__}: {e}", file=sys.stderr)
+    return out
 
 
 def main(argv: list[str]) -> int:
@@ -158,7 +174,8 @@ def main(argv: list[str]) -> int:
         print(json.dumps(rows, indent=1))
         if "--publish" in argv and "--apply" in argv:  # QUEUE-PERSIST-1: this pass's verdicts survive the runner, so streaks can reach a close
             from . import contracts, ledger
-            res = ledger.publish(REPO, [contracts.LEDGER], "queue: closing-probe verdicts (QUEUE-PERSIST-1)")
+            from . import dispose
+            res = ledger.publish(REPO, [contracts.LEDGER, dispose.LEDGER], "queue: closing-probe verdicts (QUEUE-PERSIST-1)")
             print(json.dumps({"publish": res}))
             return 0 if res.get("ok") else 1
         return 0

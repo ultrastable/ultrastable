@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-20T19:10:37Z",
- "commit": "45c03b0",
+ "generated": "2026-11-20T20:27:09Z",
+ "commit": "c070ee8d",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 103,
@@ -18,8 +18,8 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 272,
-  "backlog_items": 617
+  "backlog_open": 169,
+  "backlog_items": 622
  },
  "unknowns": {
   "units": 125,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 617,
+   "items": 622,
    "by_status": {
-    "closed": 337,
-    "open": 272,
+    "closed": 445,
+    "open": 169,
     "done": 8
    },
-   "takeable_now": 256
+   "takeable_now": 154
   },
   "merged": {
    "total": 0,
@@ -95,26 +95,27 @@
   "deploys": {
    "site_runs": 50,
    "by_conclusion": {
-    "success": 37,
-    "cancelled": 6,
+    "success": 38,
+    "cancelled": 5,
     "failure": 7
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-20T18:42:08Z",
+    "createdAt": "2026-11-20T20:18:44Z",
     "event": "workflow_dispatch",
-    "headSha": "27db7d6ac2d1d156163540cd3467dcd7ded71125"
+    "headSha": "1953fcbf78055ac03f300ae688d319de610aef5f"
    },
    "per_day_success": {
-    "2026-11-18": 9,
+    "2026-11-18": 5,
     "2026-11-19": 1,
-    "2026-11-20": 27
+    "2026-11-20": 32
    }
   },
   "executor": {
    "runs": 30,
    "by_conclusion": {
-    "success": 30
+    "failure": 1,
+    "success": 29
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -162,7 +163,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 161.0,
+   "age_s": 125.3,
    "status": "fresh",
    "missed": 0
   },
@@ -186,7 +187,7 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 388.0,
+   "age_s": 180.3,
    "status": "fresh",
    "missed": 0
   },
@@ -194,7 +195,7 @@
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 18100.0,
+   "age_s": 22698.3,
    "status": "fresh",
    "missed": 0
   }
@@ -203,8 +204,8 @@
   "counts": {
    "merged": 0,
    "closed": 0,
-   "parked": 13,
-   "failed": 2,
+   "parked": 14,
+   "failed": 1,
    "expired": 0,
    "open": 0
   },
@@ -281,14 +282,14 @@
    },
    {
     "name": "Q-CLAIM-reply-promise",
-    "state": "failed",
-    "failures": 2
+    "state": "parked",
+    "failures": 3
    }
   ],
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-20T19:10:00Z",
+  "generated": "2026-11-20T20:26:36Z",
   "blindspots": {
    "backup": {
     "skipped": "last drill is fresh"
@@ -315,7 +316,7 @@
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1369.7,
+    "expected_today": 1370.1,
     "value": null,
     "behind": null,
     "progress": null
@@ -324,7 +325,7 @@
     "id": "visitors_7d",
     "baseline": 564,
     "target": 650,
-    "expected_today": 591.0,
+    "expected_today": 591.2,
     "value": null,
     "behind": null,
     "progress": null
@@ -333,7 +334,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 874.5,
+    "expected_today": 874.9,
     "value": null,
     "behind": null,
     "progress": null
@@ -342,7 +343,7 @@
     "id": "pilot_page_views_7d",
     "baseline": 326,
     "target": 400,
-    "expected_today": 349.3,
+    "expected_today": 349.4,
     "value": null,
     "behind": null,
     "progress": null
@@ -355,6 +356,51 @@
     "baseline": 1408,
     "predicted_pct": 15,
     "started": "2026-11-17T16:52:10Z",
+    "check_after_days": 7,
+    "verdict": null
+   },
+   {
+    "item": "Q-GROW-AGENT-DIRECTORIES",
+    "metric": "agent_hits_7d",
+    "baseline": null,
+    "predicted_pct": 10,
+    "started": "2026-11-20T20:26:36Z",
+    "check_after_days": 7,
+    "verdict": null
+   },
+   {
+    "item": "Q-GROW-CASE-STUDY",
+    "metric": "pilot_page_views_7d",
+    "baseline": null,
+    "predicted_pct": 10,
+    "started": "2026-11-20T20:26:36Z",
+    "check_after_days": 7,
+    "verdict": null
+   },
+   {
+    "item": "Q-GROW-CHANGELOG-FEED",
+    "metric": "agent_hits_7d",
+    "baseline": null,
+    "predicted_pct": 15,
+    "started": "2026-11-20T20:26:36Z",
+    "check_after_days": 7,
+    "verdict": null
+   },
+   {
+    "item": "Q-GROW-DEMO-DASHBOARD",
+    "metric": "pilot_page_views_7d",
+    "baseline": null,
+    "predicted_pct": 10,
+    "started": "2026-11-20T20:26:36Z",
+    "check_after_days": 7,
+    "verdict": null
+   },
+   {
+    "item": "Q-GROW-front-door-example-systems",
+    "metric": "pilot_page_views_7d",
+    "baseline": null,
+    "predicted_pct": 15,
+    "started": "2026-11-20T20:26:36Z",
     "check_after_days": 7,
     "verdict": null
    }
@@ -445,15 +491,15 @@
  "growth": {
   "mix": {
    "growth": 0,
-   "fix": 3,
-   "maintenance": 17,
+   "fix": 0,
+   "maintenance": 20,
    "total": 20,
    "growth_share": 0.0,
    "target": 0.4
   },
   "target_growth_share": 0.4,
-  "growth_items_takeable": 26,
-  "items_takeable": 256,
+  "growth_items_takeable": 18,
+  "items_takeable": 154,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -498,7 +544,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 208.5,
+   "last_beat_age_s": 167.1,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -509,7 +555,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 18147.5,
+   "last_beat_age_s": 22740.1,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -520,9 +566,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 1698.5,
+   "last_beat_age_s": 495.1,
    "expected_interval_s": 86400,
-   "beats_24h": 35,
+   "beats_24h": 40,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -531,7 +577,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 269708.5,
+   "last_beat_age_s": 274301.1,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -542,7 +588,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 149365.5,
+   "last_beat_age_s": 153958.1,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -560,7 +606,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 12290.5,
+   "last_beat_age_s": 16883.1,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -571,7 +617,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 177.5,
+   "last_beat_age_s": 142.1,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2538,364 +2584,364 @@
  "changes": {
   "commits": [
    {
-    "sha": "45c03b0",
-    "at": "2026-11-20T19:03:11+00:00",
+    "sha": "c070ee8d",
+    "at": "2026-11-20T20:23:17+00:00",
     "author": "Claude",
-    "subject": "Write-back: session id on the record; superseded lesson points at the code that carries it",
+    "subject": "DISPOSE-1, PATCH-EDIT-1: coded dispositions on the fleet pass; patch-style edits and file context for the executor",
     "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/45c03b0d9bf18ab5a97162db8900296eda431839"
+    "item": "DISPOSE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/c070ee8ded19bc65607ce836276d6b7666fdba85"
    },
    {
-    "sha": "00fa257",
-    "at": "2026-11-20T19:02:15+00:00",
+    "sha": "9558de6d",
+    "at": "2026-11-20T20:19:06+00:00",
     "author": "Claude",
-    "subject": "Register the outreach-segment prediction sentence as a claim bound to its code",
+    "subject": "wip DISPOSE-1, PATCH-EDIT-1",
     "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/00fa257a202ac7a8f38a178d6cb3921570164574"
+    "item": "DISPOSE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/9558de6dd1a812dc39a977fa0d7712f6c4061fbd"
    },
    {
-    "sha": "30629e5",
-    "at": "2026-11-20T18:58:35+00:00",
-    "author": "Claude",
-    "subject": "Q-GAP-executor-merged-pr: evidence of the merged pull requests",
-    "pr": null,
-    "item": "Q-GAP-",
-    "url": "https://github.com/ultrastable/ultrastable/commit/30629e5f40dc264f16f3df64545a0361af0e2731"
-   },
-   {
-    "sha": "60b7322",
-    "at": "2026-11-20T18:57:09+00:00",
-    "author": "Claude",
-    "subject": "Promote the executor pin: its own pull requests 749 and 762 merged",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/60b73225cd442fd798b47ef24fec760f3825c913"
-   },
-   {
-    "sha": "ce27353",
-    "at": "2026-11-20T18:55:48+00:00",
-    "author": "Claude",
-    "subject": "smoke-live: runway check reads the keys the runway record has; land_data starts no checks run",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/ce273534b13e25148222cef3771a868c8849a4a7"
-   },
-   {
-    "sha": "805b898",
-    "at": "2026-11-20T18:55:11+00:00",
+    "sha": "1295010e",
+    "at": "2026-11-20T20:03:06+00:00",
     "author": "ultrastable-209646[bot]",
-    "subject": "backup drill record (BLINDSPOT-1) [skip ci]",
+    "subject": "host-sync - runtime state of the host (HOSTSYNC-1) [skip ci]",
     "pr": null,
-    "item": "BLINDSPOT-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/805b89818e01f79ba71f8feab71b650ff139d812"
+    "item": "HOSTSYNC-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1295010e4cbdda4f3503b3e9219ec99b4a3fcc6e"
    },
    {
-    "sha": "9cb1edc",
-    "at": "2026-11-20T18:53:42+00:00",
+    "sha": "030bb74a",
+    "at": "2026-11-20T20:02:54+00:00",
     "author": "ultrastable-209646[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 3/3) [skip ci]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/9cb1edc05cd179dee0c9d870e44cb65789d266c9"
+    "url": "https://github.com/ultrastable/ultrastable/commit/030bb74ad990f2c877d53a4785fc931dc191d69f"
    },
    {
-    "sha": "ce2c30b",
-    "at": "2026-11-20T18:53:35+00:00",
+    "sha": "21516dba",
+    "at": "2026-11-20T20:02:48+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "host-sync - record deployed gateway module [skip ci]",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/21516dbad5862729373ac33a6177abf48ced155f"
+   },
+   {
+    "sha": "bb19813d",
+    "at": "2026-11-20T20:02:41+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "tenant-sync: ledger [skip ci]",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/bb19813db8d7dcb2dfbce29268ea73c739a2cd86"
+   },
+   {
+    "sha": "0a779494",
+    "at": "2026-11-20T21:02:26+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "CF-POSTURE-3, COST-PROBE-3: daily posture reading through the deploy gateway, no stored Cloudflare token (#816)",
+    "pr": 816,
+    "item": "CF-POSTURE-3",
+    "url": "https://github.com/ultrastable/ultrastable/commit/0a779494b1b47f77596966bf7b2985e52b2152dd"
+   },
+   {
+    "sha": "2a414823",
+    "at": "2026-11-20T20:01:27+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 4 item(s) (QUEUE-PERSIST-1) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/2a41482354c2e7b2c56229298ae47ab78420f4d4"
+   },
+   {
+    "sha": "a8e0b2cf",
+    "at": "2026-11-20T21:01:19+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "SINGLE-ACCOUNT-1: stage KV, spinoffs and edge in the ultrastable account (#815)",
+    "pr": 815,
+    "item": "SINGLE-ACCOUNT-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/a8e0b2cfb34f7efaf92cacd51dccda54100ef50d"
+   },
+   {
+    "sha": "c1c39dad",
+    "at": "2026-11-20T19:58:29+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy [skip ci]",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/c1c39dad1f2a63787cbccea94bef1b76a92c3ac0"
+   },
+   {
+    "sha": "d2bd0bc2",
+    "at": "2026-11-20T19:58:02+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/d2bd0bc28e901e726639d0353196c9b7f2f2b821"
+   },
+   {
+    "sha": "3de3a8f2",
+    "at": "2026-11-20T20:57:46+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "PIN-core-db-separation: core DB split recorded, pin promoted (#813)",
+    "pr": 813,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/3de3a8f294c06127f45502a356b013cb1cb08485"
+   },
+   {
+    "sha": "010f4e4c",
+    "at": "2026-11-20T19:53:11+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]",
+    "pr": null,
+    "item": "SERVER-OWNS-LOOPS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/010f4e4c7e3c15adef66f76bba3cb23269dfbb8b"
+   },
+   {
+    "sha": "96b57c46",
+    "at": "2026-11-20T20:52:40+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "Q-CFP-token-scope: file the cost guard's refused token as a queue item with a credential-free remedy (#814)",
+    "pr": 814,
+    "item": "Q-CFP-",
+    "url": "https://github.com/ultrastable/ultrastable/commit/96b57c46a8acec5375bcafb18c93738141668d91"
+   },
+   {
+    "sha": "3f9c83c2",
+    "at": "2026-11-20T19:47:30+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "host-sync - runtime state of the host (HOSTSYNC-1) [skip ci]",
+    "pr": null,
+    "item": "HOSTSYNC-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/3f9c83c20dd445376ae2b31fa7859b08b0d0acb2"
+   },
+   {
+    "sha": "55ad7254",
+    "at": "2026-11-20T19:47:20+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/55ad7254e3d1b69408b067ed243d18a8da6d3699"
+   },
+   {
+    "sha": "bed6b408",
+    "at": "2026-11-20T19:47:12+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "host-sync - record deployed gateway module [skip ci]",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/bed6b4087eb69acef0a96d30d4608b44332df01d"
+   },
+   {
+    "sha": "0aa99f86",
+    "at": "2026-11-20T19:47:09+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "tenant-sync: ledger [skip ci]",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/0aa99f86cda2c383cd00319e7bdc96fee5554a57"
+   },
+   {
+    "sha": "32b45ff4",
+    "at": "2026-11-20T19:47:01+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]",
+    "pr": null,
+    "item": "SERVER-OWNS-LOOPS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/32b45ff4ff3f95eb3473dada99804972948fc7d2"
+   },
+   {
+    "sha": "74c059b7",
+    "at": "2026-11-20T20:46:54+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "CF-POSTURE-2, COST-PROBE-FIELD-1: every upload path keeps logs on; daily cost guard runs again (#812)",
+    "pr": 812,
+    "item": "CF-POSTURE-2",
+    "url": "https://github.com/ultrastable/ultrastable/commit/74c059b76f9b78a23bc501987737d9db1a0099d4"
+   },
+   {
+    "sha": "bdf52a48",
+    "at": "2026-11-20T19:38:29+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/bdf52a4891c6941221c9812f551880ac297bd35b"
+   },
+   {
+    "sha": "12f6ac6d",
+    "at": "2026-11-20T20:38:07+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "STRAYS-1: stray code files and decoy workflows fail checks and the branch sweep gate (#741)",
+    "pr": 741,
+    "item": "STRAYS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/12f6ac6d44792959228c3ef35ede967b6d239ffd"
+   },
+   {
+    "sha": "31d6db26",
+    "at": "2026-11-20T19:36:39+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]",
+    "pr": null,
+    "item": "SERVER-OWNS-LOOPS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/31d6db26cff95f25ac9a765c2a2ffa88c4594f38"
+   },
+   {
+    "sha": "b2b59a1b",
+    "at": "2026-11-20T19:32:06+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
     "pr": null,
     "item": "RESILIENCE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/ce2c30b6f8c7647079112a43e23cca5e4a7f9651"
+    "url": "https://github.com/ultrastable/ultrastable/commit/b2b59a1b112d94a1e83771814ec88d8788983483"
    },
    {
-    "sha": "ebf2e64",
-    "at": "2026-11-20T18:53:28+00:00",
+    "sha": "184b5d25",
+    "at": "2026-11-20T19:31:33+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "ciwatch: file failing-workflow items (CIWATCH-1) [skip ci]",
+    "pr": null,
+    "item": "CIWATCH-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/184b5d25d275fdc9d526d2938fb256b87157410f"
+   },
+   {
+    "sha": "8e6a0bb8",
+    "at": "2026-11-20T19:30:44+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "deploy-ultrastable: record live-verified deploy [skip ci]",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/8e6a0bb8fbd25b2c4cdab18c0051febe502909cb"
+   },
+   {
+    "sha": "3da109a2",
+    "at": "2026-11-20T19:30:18+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
+    "pr": null,
+    "item": "REGEN-GENERATED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/3da109a22962ccb3093617db1772e9802f18d541"
+   },
+   {
+    "sha": "aa4634ff",
+    "at": "2026-11-20T20:29:56+01:00",
+    "author": "Rowan Brad Quni-Gudzinas",
+    "subject": "CIWATCH-4: ciwatch items land through the main writer (#810)",
+    "pr": 810,
+    "item": "CIWATCH-4",
+    "url": "https://github.com/ultrastable/ultrastable/commit/aa4634ff4abd551825218f75c536f73c5c712883"
+   },
+   {
+    "sha": "03f86264",
+    "at": "2026-11-20T19:22:19+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 4 item(s) (QUEUE-PERSIST-1) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/03f86264c8bc5897a7942d0af245ce4e356dbf59"
+   },
+   {
+    "sha": "58eb2dac",
+    "at": "2026-11-20T19:20:35+00:00",
     "author": "ultrastable-209646[bot]",
     "subject": "smoke-live: repair items from the production smoke test [skip ci]",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/ebf2e649941f641f0ab7c24098e58d0fbdad95a9"
+    "url": "https://github.com/ultrastable/ultrastable/commit/58eb2dacf6773bf8c8e190ba2f27acf7b79083b5"
    },
    {
-    "sha": "e4dc2e8",
-    "at": "2026-11-20T18:53:24+00:00",
+    "sha": "871c004a",
+    "at": "2026-11-20T19:17:31+00:00",
     "author": "ultrastable-209646[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 2/3) [skip ci]",
+    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) [skip ci]",
     "pr": null,
     "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/e4dc2e8ec481e15a8a69b8d95285dca18b9f0982"
+    "url": "https://github.com/ultrastable/ultrastable/commit/871c004a833b44950b18c0d9b76fdf8cf6362a7f"
    },
    {
-    "sha": "cb41719",
-    "at": "2026-11-20T18:53:21+00:00",
+    "sha": "541d81b0",
+    "at": "2026-11-20T19:17:12+00:00",
     "author": "ultrastable-209646[bot]",
-    "subject": "regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 1/3) [skip ci]",
+    "subject": "deploy-ultrastable: record live-verified deploy [skip ci]",
     "pr": null,
-    "item": "REGEN-GENERATED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/cb41719a4bd57a2d328769a6717b081750d83fa0"
-   },
-   {
-    "sha": "27db7d6",
-    "at": "2026-11-20T19:41:15+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "APP-DRIFT-1: main rule exempts the app in use; cap data pull requests (#799)",
-    "pr": 799,
-    "item": "APP-DRIFT-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/27db7d6ac2d1d156163540cd3467dcd7ded71125"
-   },
-   {
-    "sha": "4461297",
-    "at": "2026-11-20T19:34:23+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "BACKUP-SINK-1: store backup dumps in the private ops repository when R2 is unreachable (#795)",
-    "pr": 795,
-    "item": "BACKUP-SINK-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/446129779ca113fc7ef881636b6f89148f327a8b"
-   },
-   {
-    "sha": "2e58307",
-    "at": "2026-11-20T19:29:09+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "UNATTENDED-365: one-year horizon register, model retirement watch, dead sign-in backoff (#740)",
-    "pr": 740,
-    "item": "UNATTENDED-365",
-    "url": "https://github.com/ultrastable/ultrastable/commit/2e5830736c11b3a81eb8d96dc0aed38f02341c6a"
-   },
-   {
-    "sha": "43bf1d7",
-    "at": "2026-11-20T19:19:59+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Print the failure at two except Exception: pass sites (clockwork, resilience) (#779)",
-    "pr": 779,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/43bf1d7876067b7fbdbc86ece045470292d1ecff"
+    "url": "https://github.com/ultrastable/ultrastable/commit/541d81b02604dd9841a52fd9a8910c5bc30857e4"
    },
    {
-    "sha": "aaa4f87",
-    "at": "2026-11-20T19:19:01+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "SOCIAL-TENANTS-1: give the social loop enough subrequests to post (#776)",
-    "pr": 776,
-    "item": "SOCIAL-TENANTS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/aaa4f87dc4d091ea549107e0724e7629d60bdc70"
+    "sha": "1932062c",
+    "at": "2026-11-20T19:17:01+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]",
+    "pr": null,
+    "item": "SERVER-OWNS-LOOPS-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/1932062c18602b55ed4ad246c2685ce18d7f02a6"
    },
    {
-    "sha": "c15a66b",
-    "at": "2026-11-20T19:18:41+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "deploygate: retry a stale read-back before reporting a mismatch (#778)",
-    "pr": 778,
+    "sha": "52895f78",
+    "at": "2026-11-20T19:16:55+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "tenant-sync: ledger [skip ci]",
+    "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/c15a66b2fe96e5637a3d3bb070feeea01258591c"
+    "url": "https://github.com/ultrastable/ultrastable/commit/52895f78afeaf8fa0d9b2c26c0023f3ce976078d"
    },
    {
-    "sha": "e250bd3",
-    "at": "2026-11-20T19:15:50+01:00",
+    "sha": "99ad7a6a",
+    "at": "2026-11-20T20:16:32+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "CF-ROUTE-1 and MAIN-WRITER-PR-1: no Cloudflare or PAT secret needed for backups, credential check and data PRs (#775)",
-    "pr": 775,
-    "item": "CF-ROUTE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/e250bd3b6fca1c115fae431d0bbc394e75e5a867"
-   },
-   {
-    "sha": "5704c89",
-    "at": "2026-11-20T19:04:45+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "smoke-live: repair items from the production smoke test (#771)",
-    "pr": 771,
+    "subject": "smoke-live: runway check reads the keys the runway record has (#808)",
+    "pr": 808,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/5704c89caa03410079e3f28dafec3b8d3f56bf96"
+    "url": "https://github.com/ultrastable/ultrastable/commit/99ad7a6aa1246ae8ecb36c2b60bbaa43b0d68df7"
    },
    {
-    "sha": "ee55f15",
-    "at": "2026-11-20T19:02:24+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "watchdog: runway, credwatch and clock readings (#770)",
-    "pr": 770,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/ee55f1597ef493406274347772639ba01c54f6ee"
+    "sha": "aa488acb",
+    "at": "2026-11-20T18:58:27+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 7/7) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/aa488acb963144988c39660a67ae8ac9d7128c54"
    },
    {
-    "sha": "cd2e26a",
-    "at": "2026-11-20T18:00:11+00:00",
-    "author": "github-actions[bot]",
-    "subject": "Q-SELF-unused-import-foundation-clockwork-py: remove unused import Path from foundation/clockwork.py (MECH-FIX-1, computed from the syntax tree, no model call) (#Q-SELF-unused-import-foundation-clockwork-py) (#762)",
-    "pr": 762,
-    "item": "Q-SELF-",
-    "url": "https://github.com/ultrastable/ultrastable/commit/cd2e26a9658ad6d255c3968c3f946a55321c701c"
+    "sha": "9d29f1c1",
+    "at": "2026-11-20T18:58:24+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 6/7) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/9d29f1c15a041c3fb64a62e9cd096979c6fc53d4"
    },
    {
-    "sha": "52165b9",
-    "at": "2026-11-20T18:57:12+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "land_data: dispatch checks on data branches (bot PRs stayed blocked) (#769)",
-    "pr": 769,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/52165b91358fa412575ba155c5981e13c1b618e9"
+    "sha": "96a59222",
+    "at": "2026-11-20T18:58:13+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 5/7) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/96a59222f4843c234efd36169743369c4ceacb66"
    },
    {
-    "sha": "66daff7",
-    "at": "2026-11-20T18:52:11+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "foundation CLI: accept executor --fold (regen-generated red on main) (#765)",
-    "pr": 765,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/66daff79a0c171139c5f658d528b643dd1a641ae"
+    "sha": "d320c47c",
+    "at": "2026-11-20T18:58:03+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 4/7) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/d320c47c7c50bd4aa2750325d338be5137f4bb07"
    },
    {
-    "sha": "318f259",
-    "at": "2026-11-20T18:43:09+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "SMOKE-LIVE-1: production smoke test of every public claim, with repair items (#763)",
-    "pr": 763,
-    "item": "SMOKE-LIVE-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/318f2597a10f8963d63669c36802764c9856e9de"
-   },
-   {
-    "sha": "2126f1b",
-    "at": "2026-11-20T18:25:13+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "SOCIAL-TENANTS-1: publisher drains tenant queues; fix hourly refresh clobbering Bluesky/Mastodon (#748)",
-    "pr": 748,
-    "item": "SOCIAL-TENANTS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/2126f1b1c5c3891e5f50cb552f13ba1233b8739e"
-   },
-   {
-    "sha": "3aa8c29",
-    "at": "2026-11-20T17:35:45+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "A red main repairs itself; token and domain expiry are watched (REDMAIN-1, TOKEN-EXPIRY-1) (#737)",
-    "pr": 737,
-    "item": "REDMAIN-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/3aa8c29f2e5944c843889571e06e304cf4222b6b"
-   },
-   {
-    "sha": "c637d9f",
-    "at": "2026-11-20T17:20:07+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Pilot offer as data, rendered on /pilot (PILOT-OFFER-1) (#755)",
-    "pr": 755,
-    "item": "PILOT-OFFER-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/c637d9fb7c6d610bcf95345d9ad02c679c92bcf9"
-   },
-   {
-    "sha": "c5ab5ca",
-    "at": "2026-11-20T17:19:55+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "SITE-FEED-1: Atom feed and embeddable badge for every built site (#761)",
-    "pr": 761,
-    "item": "SITE-FEED-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/c5ab5ca796333f1fa64905dc4df24a91f203343b"
-   },
-   {
-    "sha": "44cc823",
-    "at": "2026-11-20T16:18:34+00:00",
-    "author": "github-actions[bot]",
-    "subject": "ciwatch: failing-workflow items (#760)",
-    "pr": 760,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/44cc82342d870e0a93969eca6d9a8928f665d10d"
-   },
-   {
-    "sha": "8bc41d2",
-    "at": "2026-11-20T16:15:39+00:00",
-    "author": "github-actions[bot]",
-    "subject": "Product manager pass: 0 growth and repair item(s) filed (#757)",
-    "pr": 757,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/8bc41d2035a998d8197dc4721bfe3f398f8e7c7a"
-   },
-   {
-    "sha": "22dd63e",
-    "at": "2026-11-20T17:15:23+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "core/format: believable number formatting (NUMFMT-1) and a false-precision lint (#758)",
-    "pr": 758,
-    "item": "NUMFMT-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/22dd63ec40dc8ad13d4e49dc65f1046151030ec4"
-   },
-   {
-    "sha": "059423d",
-    "at": "2026-11-20T17:14:21+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "SITE-INSIGHTS-1: visitor insights for built sites; upkeep spend follows real visits (#759)",
-    "pr": 759,
-    "item": "SITE-INSIGHTS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/059423d816b8737c0a4c5c5b170a4a5ee26c3538"
-   },
-   {
-    "sha": "9c64cdf",
-    "at": "2026-11-20T17:13:56+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "core/ask and core/i18n: grounded Ask and multilingual serving (ASK-1, I18N-1) (#756)",
-    "pr": 756,
-    "item": "ASK-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/9c64cdffebdbfc8e67cbfb4d633cde4de84578bf"
-   },
-   {
-    "sha": "0793c1f",
-    "at": "2026-11-20T17:12:47+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "PROGRESS-1: visible progress at every visit, release cadence monitor across systems (#752)",
-    "pr": 752,
-    "item": "PROGRESS-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/0793c1fbd3354efbb77d3f47db78ef15bb84c817"
-   },
-   {
-    "sha": "ee83218",
-    "at": "2026-11-20T17:07:53+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "SITE-UPKEEP-1: built sites keep improving, keep history, and can go back (#754)",
-    "pr": 754,
-    "item": "SITE-UPKEEP-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/ee83218856b4bb8dc69b1bb0cf5b210acdaa9a72"
-   },
-   {
-    "sha": "970134c",
-    "at": "2026-11-20T16:06:25+00:00",
-    "author": "github-actions[bot]",
-    "subject": "Q-SELF-unused-import-foundation-doctrine-py: remove unused import fnmatch from foundation/doctrine.py (MECH-FIX-1, computed from the syntax tree, no model call) (#Q-SELF-unused-import-foundation-doctrine-py) (#749)",
-    "pr": 749,
-    "item": "Q-SELF-",
-    "url": "https://github.com/ultrastable/ultrastable/commit/970134c47d882742281bd7522626f7577b5535f0"
-   },
-   {
-    "sha": "20e66b1",
-    "at": "2026-11-20T15:58:18+00:00",
-    "author": "github-actions[bot]",
-    "subject": "spinoff: portfolio tick (#751)",
-    "pr": 751,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/20e66b14a1f0f06ea01440fa45f679baed1fdb25"
-   },
-   {
-    "sha": "76bfe8e",
-    "at": "2026-11-20T16:57:05+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Backup drill: pin to the Ultrastable account, chunk the D1 count query (#753)",
-    "pr": 753,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/76bfe8e9e23f6dec540d7f9e70cc18bfd3951d3f"
-   },
-   {
-    "sha": "50146dc",
-    "at": "2026-11-20T16:56:39+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Agent interop roadmap and growth batch: signed agent card, connector health, scoreboard, changelog feed, demo, case study (#735)",
-    "pr": 735,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/50146dcd4083980be7be9790d2def8ddb3d87b0b"
-   },
-   {
-    "sha": "fbedb53",
-    "at": "2026-11-20T16:50:30+01:00",
-    "author": "Rowan Brad Quni-Gudzinas",
-    "subject": "Open-loop records: fifteen closed with code, the rest gated with a default in effect (#746)",
-    "pr": 746,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/fbedb536157e0add5cb15cefb8590c6080b5ee94"
+    "sha": "3e1c04d4",
+    "at": "2026-11-20T18:57:52+00:00",
+    "author": "ultrastable-209646[bot]",
+    "subject": "queue: closing-probe verdicts for 123 item(s) (QUEUE-PERSIST-1) (part 3/7) [skip ci]",
+    "pr": null,
+    "item": "QUEUE-PERSIST-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/3e1c04d44e6caae5013a9c36d47028e5b780448a"
    }
   ],
   "pull_requests": []
