@@ -1,7 +1,7 @@
 {
   "id": "Q-ISSUE-practical-solutions-2",
   "title": "Q-ISSUE-practical-solutions-2: Bright spot: child-survival-SYR",
-  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/practical-solutions#2\n**Status:** open\n\nISSUE-LOOP-1: ultrastable/practical-solutions#2 (Bright spot: child-survival-SYR) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/practical-solutions#2\n**Status:** closed\n\nISSUE-LOOP-1: ultrastable/practical-solutions#2 (Bright spot: child-survival-SYR) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n\n**Evidence:** closing probe passed (already built: the probe passed from filing and held for 35 passes over 1507 minutes (VACUOUS-CLOSE-1)): closed\n",
   "labels": [
     "p2",
     "agent-ready"
