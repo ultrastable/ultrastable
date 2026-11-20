@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) 2026 Rowan Brad Quni-Gudzinas. Non-commercial use free; commercial use requires a license. See LICENSE.
+// Usage and contract: core/progress/README.md.
 // PROGRESS-1: visible progress from shipped changes only. Tenant-agnostic and pure: the caller supplies events that already happened
 // (a merged change, a release, a launch); nothing here invents, pads or re-dates one.
 // event: { id, at (ISO), system, title, url, kind ('change' | 'release' | 'launch'), by }
