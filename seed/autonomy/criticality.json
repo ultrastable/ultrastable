@@ -5,6 +5,13 @@
   "k_min": 1,
   "denominator_floor": 1,
   "dispatch_spend_units": 1,
+  "self": {
+    "origins": [
+      "executor",
+      "self-agent"
+    ],
+    "doc": "SELF-REFERENCE-1: k_self counts only verified deploys whose ops/deploys.jsonl row carries one of these origins (the system shipped on itself). Same list as self_reference.self_origins in doctrine/criticality.json."
+  },
   "deploy": {
     "action_classes": [
       "deploy",
