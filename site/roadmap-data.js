@@ -115,7 +115,7 @@ export default {
    "trigger": "every executor run"
   },
   "Q-GAP-executor-merged-pr": {
-   "done": "grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"",
+   "done": "grep:ops/executor-log.jsonl::\"result\": \"pr-merged\"",
    "id": "Q-GAP-executor-merged-pr",
    "milestone": "Next",
    "owner": "operations",

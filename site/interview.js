@@ -193,7 +193,28 @@ export const JS = String.raw`(function () {
     var vague = /basic html|css styling|structure is provided|javascript functions are defined/i; if (a && a.met && a.met.filter(function (x) { return !vague.test(x); }).length) m.appendChild(el('p', null, 'Working now: ' + a.met.filter(function (x) { return !vague.test(x); }).slice(0, 3).join('; ') + '.'));
     if (a && a.gaps && a.gaps.length) m.appendChild(el('p', null, (a.fixed && a.fixed.length ? 'I tried to fix these and could not confirm it: ' : 'Not yet: ') + a.gaps.slice(0, 2).map(function (g) { return g.what; }).join('; ') + '.'));
     say('bot', m); S.busy = false; S.phase = 'live'; inp.placeholder = 'Tell me what to change…';
-    chipRow([{ label: 'Open my site', cls: 'pick', href: '/s/' + id, blank: true }, { label: 'What I checked', href: '/s/' + id + '/review', blank: true }, { label: 'Start another', cls: 'quiet', fn: function () { location.reload(); } }]);
+    chipRow([{ label: 'Open my site', cls: 'pick', href: '/s/' + id, blank: true }, { label: 'What I checked', href: '/s/' + id + '/review', blank: true }, { label: 'Set up the organization', fn: function () { setupOrg(id); } }, { label: 'Start another', cls: 'quiet', fn: function () { location.reload(); } }]);
+  }
+  // ---- setup-org (ORG-THREAD-1): the organization around the site is set up here in the thread; each answer is saved on the server (/api/org) ----
+  function orgPost(id, stepId, ans) { var fd = new FormData(); fd.set('id', id); if (stepId) { fd.set('step', stepId); fd.set('answer', ans); } return post('/api/org', fd); }
+  function setupOrg(id) {
+    if (S.busy) return; S.busy = true; say('me', 'Set up the organization');
+    var wrap = el('div'); wrap.setAttribute('data-flow', 'setup-org'); wrap.appendChild(el('p', null, 'Setting up the organization that keeps this running.')); steps = el('ul', 'us-steps'); wrap.appendChild(steps); say('bot', wrap);
+    var s1 = step('Reading your idea');
+    orgPost(id).then(function (d) {
+      mark(s1, true, 'Objective: ' + d.plan.objective);
+      mark(step('Choosing what to measure'), true, 'Measures: ' + d.plan.measures.length + ' set from the first minute');
+      mark(step('Choosing who works on it'), true, 'Roles: ' + d.plan.roles.map(function (r) { return r.id.replace('-', ' '); }).join(', '));
+      S.busy = false; orgStep(id, d);
+    }).catch(function (e) { mark(s1, false, 'That did not work: ' + (e.message || 'please try again')); S.busy = false; });
+  }
+  function orgStep(id, d) {
+    if (!d.next) { say('bot', d.state === 'set_up' ? 'The organization is set up. It now runs and improves by itself.' : 'Saved. The steps you skipped are kept here; tap Set up the organization to pick them up.'); return; }
+    var n = d.next, m = el('div'); m.appendChild(el('p', null, 'Step ' + (d.done + 1) + ' of ' + d.total + (n.optional ? ' (optional)' : '') + ': ' + n.ask)); m.appendChild(el('p', null, n.why)); say('bot', m);
+    var go = function (ans, shown) { say('me', shown); orgPost(id, n.id, ans).then(function (x) { orgStep(id, x); }).catch(function () { say('bot', 'I could not save that. Tap Set up the organization to carry on.'); }); };
+    var items = []; if (n.url) items.push({ label: n.label || 'Open it', href: n.url, blank: true });
+    var yes = n.url && !n.have ? 'Done' : 'Yes'; items.push({ label: yes, cls: 'pick', fn: function () { go('done', yes); } }); items.push({ label: 'Not now', cls: 'quiet', fn: function () { go('skipped', 'Not now'); } });
+    chipRow(items);
   }
   function fail() { S.busy = false; S.phase = 'planned'; chipRow([{ label: 'Try again', cls: 'pick', fn: run }]); }
   function change(t) {
