@@ -21,7 +21,7 @@ import argparse, datetime, json, os, pathlib, re, sys, urllib.parse, urllib.requ
 import outreach as base
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
-from foundation.outreach import order as _segment_order  # noqa: E402  (the segment learner; this lane is its consumer)
+from foundation.outreach import order as _segment_order, record_pick as _record_pick  # noqa: E402  (the segment learner; this lane is its consumer)
 
 
 def segment_order(targets, segments):
@@ -250,6 +250,8 @@ class Intro:
         n = 0
         for k in cand[: self.cfg["max_new_per_run"]]:
             self.state["targets"][k]["state"] = "queued"; self.event(k, "queued", "guard clean, role mailbox verified at source"); n += 1
+        if n and self.gate["mode"] == "live":  # DECISIONS-1: a live pick is a decision; a dry run approaches nobody, so there is no outcome to score
+            _record_pick(ROOT, self.state["targets"], list(self.prof["segments"]), self.today.isoformat())
         return n
 
     def send(self):

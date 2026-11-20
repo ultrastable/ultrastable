@@ -244,6 +244,14 @@
     "goal_knobs": {
       "keep": "state",
       "reason": "GOALS-1: one row per knob with its current value; bounded by the tenant limit of 80"
+    },
+    "trust_ledger_backup_0027": {
+      "keep": "state",
+      "reason": "OL-20261118-4: one-time copy of trust_ledger taken by migration 0027 before the key rebuild; one row per surface and action class, never written again"
+    },
+    "trust_ledger_v2": {
+      "keep": "state",
+      "reason": "OL-20261118-4: exists only inside migration 0027's batch and is renamed to trust_ledger before the batch ends"
     }
   }
 }

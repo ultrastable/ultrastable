@@ -47,6 +47,7 @@ def stats(targets: dict, segments) -> dict:
     return out
 
 
+# DECISION-METRIC: outreach-segment (the segment the per-run cap goes to; logged by record_pick and scored by that segment's mean reply reward)
 def rank(targets: dict, segments) -> list[dict]:
     """Segments, best first. An untried segment scores infinity (explored first, in name order); ties keep name order so the result is deterministic."""
     st = stats(targets, segments)
@@ -71,6 +72,27 @@ def order(root=REPO, targets: dict | None = None, segments=None) -> dict:
     if targets is None:
         targets = _load(root, STATE, {"targets": {}})["targets"]
     return {x["segment"]: x["rank"] for x in rank(targets, segments)}
+
+
+def segment_reward(root, segment: str):
+    """Mean reply reward of one segment from the live state, or None before its first send (the measure of decision point outreach-segment)."""
+    prof = _load(root, PROFILE, {"segments": {}}); st = stats(_load(root, STATE, {"targets": {}})["targets"], list(prof["segments"]))
+    s = st.get(segment)
+    return s["reward"] / s["pulls"] if s and s["pulls"] else None
+
+
+def record_pick(root, targets: dict, segments, day: str):
+    """Log the segment this run's cap went to as one decision (DECISIONS-1). A system with no decision registry keeps no decision ledger."""
+    root = Path(root)
+    if not (root / "doctrine/decisions.json").is_file():
+        return None
+    rows = rank(targets, segments)
+    if not rows:
+        return None
+    from . import decisions
+    top = rows[0]
+    return decisions.record(root, "outreach-segment", top["segment"], f"{top['segment']}@{day}", top["mean_reward"] if top["mean_reward"] is not None else 0.0,
+                            f"UCB1 over {sum(x['pulls'] for x in rows)} contacted prospects; pulls {top['pulls']}, replies {top['replies']}", alternatives=len(rows) - 1)
 
 
 def selftest(root=REPO) -> list[str]:
