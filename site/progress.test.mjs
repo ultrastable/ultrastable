@@ -59,3 +59,13 @@ test("without the live record the page and the feeds answer 503 and invent nothi
   assert.equal((await j.json()).code, "progress_unavailable");
   assert.equal((await get("/progress.atom", {})).status, 503);
 });
+
+test("ATTENTION-1: /left-alone reads its ledger from the progress record and states its limits", async () => {
+  const r = await get("/left-alone"), t = await r.text();
+  assert.equal(r.status, 200);
+  assert.match(t, /What this does not show/);
+  assert.match(t, /Ultrastable<\/a>/);
+  const j = await (await get("/left-alone.json")).json();
+  assert.ok(j.shipped_7d >= 1);
+  assert.equal((await get("/left-alone", { TICK: { fetch: async () => new Response("x", { status: 500 }) } })).status, 503);
+});
