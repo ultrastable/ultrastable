@@ -223,8 +223,8 @@ class Effect(unittest.TestCase):
         self.assertIsNone(executor.consumer_gap(["foundation/executor.py"], ROOT))
 
     def test_elision_marker_or_a_gutted_file_is_refused(self):
-        import subprocess, tempfile
-        r = Path(tempfile.mkdtemp())
+        import subprocess
+        r = scratch()
         subprocess.run(["git", "init", "-q"], cwd=r, check=True)
         (r / "a.js").write_text("\n".join(f"export const v{i} = {i};" for i in range(60)) + "\n")
         (r / "b.py").write_text("x = 1\n")
