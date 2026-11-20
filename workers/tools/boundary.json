@@ -297,6 +297,10 @@
       "class": "core",
       "role": "Sandboxed per-tenant store with hard read and write budgets, vector search and a spend probe (US-SPEC-25)"
     },
+    "core/format": {
+      "class": "core",
+      "role": "Tenant-agnostic number formatting: significant-digit rounding, units and the false-precision lint"
+    },
     "core/test": {
       "class": "core",
       "role": "tests of the seed and the separation guard"

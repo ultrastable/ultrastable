@@ -217,7 +217,7 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
 // TRANSPARENCY-1: /live is read-only for everyone: GET works, every write verb is refused, an absent snapshot says so.
 {
   const snap = JSON.stringify({ generated: "2026-11-12T00:00:00Z", scoreboard: {} });
-  const db = { prepare: (q) => ({ bind: () => ({ all: async () => ({ results: [{ body: snap.slice(0, 20) }, { body: snap.slice(20) }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 2 }) }) };
+  const db = { prepare: (q) => ({ bind: () => ({ run: async () => ({}), all: async () => ({ results: [{ body: snap.slice(0, 20) }, { body: snap.slice(20) }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 2 }) }) };
   let rr = await mod.fetch(new Request("https://ultrastable.io/api/live"), { ...ENV, DB: db });
   assert.equal(rr.status, 200); { const j = JSON.parse(await rr.text()); assert.equal(j.generated, "2026-11-12T00:00:00Z"); assert.equal(j.freshness.ok, false); /* LIVE-FRESH-1: a week-old snapshot is stale */ }
   rr = await mod.fetch(new Request("https://ultrastable.io/api/freshness"), { ...ENV, DB: db });
@@ -231,7 +231,7 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
 // AGENTIC-1: discovery documents and the read-only MCP endpoint
 {
   const snap = JSON.stringify({ generated: "g", scoreboard: { a: 1 }, throughput: { changelog: [] }, managers: [], claims: {}, gaps: [] });
-  const db = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: snap }] }) }), first: async () => ({ generated: "g", total: 1 }) }) };
+  const db = { prepare: () => ({ bind: () => ({ run: async () => ({}), all: async () => ({ results: [{ body: snap }] }) }), first: async () => ({ generated: "g", total: 1 }) }) };
   const E3 = { ...ENV, DB: db };
   const g3 = async (p, init) => mod.fetch(new Request("https://ultrastable.io" + p, init), E3);
   let rr = await g3("/.well-known/api-catalog"); assert.match(rr.headers.get("content-type"), /linkset\+json/); assert.ok((await rr.json()).linkset.length >= 1);
