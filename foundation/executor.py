@@ -509,17 +509,13 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
             sh(["git", "checkout", "-B", branch], root)
         if port:
             model_call = port_call(issue, root)
-<<<<<<< HEAD
-        base_prompt = lambda: build_prompt(issue, tree) + (repair["context"] if repair else "")
-        prompt, failed, files, out = base_prompt(), [], [], {}
-=======
         if qm and model_call is None:  # MECH-FIX-1: a finding the syntax tree fully determines is fixed by code; no model call, and the same scope check, checks and PR follow
             from . import mechfix
             model_call = mechfix.call_for(issue, root)
             if model_call:
                 row["models"] = ["mechfix"]
-        prompt, failed, files, out = build_prompt(issue, tree), [], [], {}
->>>>>>> origin/main
+        base_prompt = lambda: build_prompt(issue, tree) + (repair["context"] if repair else "")
+        prompt, failed, files, out = base_prompt(), [], [], {}
         for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
             if attempt and time_left() < REPAIR_MIN_S:  # EXEC-WATCHDOG-2: end with the real reasons rather than be cut off by the watchdog mid-attempt
                 row["out_of_time"] = f"{int(time_left())} s left before attempt {attempt + 1}"
