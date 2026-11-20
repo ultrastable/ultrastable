@@ -3,7 +3,7 @@
 // REACH-1: the server-side publisher. Reads the public calendar and gate (social/calendar.json, social/gate.json in the repository), posts the due item to every channel linked
 // through /connect/bluesky and /connect/mastodon, and records each post in D1. Caps, kill switch, paused channels and mode come from the gate file. Modules take db, env, fetch, now.
 import * as store from './auth/store.js';
-import { dpopFetch, refreshForm } from './auth/atproto.js';
+import { dpopFetch, refreshForm, assertionFields } from './auth/atproto.js';
 
 const RAW = repo => `https://raw.githubusercontent.com/${repo}/main/social/`;
 const DDL = "CREATE TABLE IF NOT EXISTS social_posted (id TEXT NOT NULL, channel TEXT NOT NULL, at TEXT NOT NULL, ref TEXT, arm TEXT, PRIMARY KEY (id, channel))";
@@ -19,7 +19,7 @@ export async function postMastodon(m, text, id, f) {
 export async function blueskyAccess(db, env, tenant, m, f, now) {
   if (m.access && m.expiresAt && Date.parse(m.expiresAt) - now > 60e3) return m;
   if (!m.secret.refresh_token) throw new Error('bluesky: no refresh token');
-  const t = await dpopFetch(f, m.meta.token_url, { headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, jwk: m.secret.dpop_jwk, nonce: m.secret.nonce, body: refreshForm(m.secret.refresh_token, m.meta.client_id) });
+  const t = await dpopFetch(f, m.meta.token_url, { headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, jwk: m.secret.dpop_jwk, nonce: m.secret.nonce, body: refreshForm(m.secret.refresh_token, m.meta.client_id) + (m.secret.client_jwk ? '&' + new URLSearchParams(await assertionFields(m.secret.client_jwk, m.meta.client_id, m.meta.issuer)).toString() : '') });  // CONFIDENTIAL-CLIENT-1: a confidential client signs its refresh
   const j = t.res.ok ? await t.res.json() : null;
   if (!j || !j.access_token) { await store.put(db, env, tenant, 'oauth:bluesky', { status: 'error', error: 'refresh HTTP ' + t.res.status }); throw new Error('bluesky refresh HTTP ' + t.res.status); }
   const secret = { ...m.secret, nonce: t.nonce || m.secret.nonce, refresh_token: j.refresh_token || m.secret.refresh_token };
