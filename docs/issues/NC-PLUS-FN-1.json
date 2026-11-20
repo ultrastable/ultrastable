@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-FN-1",
+  "title": "NC-PLUS-FN-1: Seed funding options into D1 and expose GET /api/programs for readback",
+  "body": "**Owner:** funding-manager\n**Trigger:** the backlog item PLUS-FN-1 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe PLUS-FN-1\n**Status:** open\n\nSeed funding options into D1 and expose GET /api/programs for readback\n\nBacklog done check: Options saved in git (seed script committed) and GET /api/programs returns the seeded rows from D1\n\nTriage: Requires committing a seed script and implementing a GET /api/programs endpoint; the in-Worker doer can write D1 but cannot edit code or commit to git. | first step: Dispatch a coding agent to add a committed seed script writing funding options to D1 and implement GET /api/programs to read rows back.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:funding-manager",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

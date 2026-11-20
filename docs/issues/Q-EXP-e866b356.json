@@ -1,7 +1,7 @@
 {
   "id": "Q-EXP-e866b356",
   "title": "Q-EXP-e866b356: close the cross-model-review gap with a measured change",
-  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** file:foundation/rescore.py\n**Prediction:** pageviews_7d >= baseline within 336 h\n**Status:** open\n\nExperiment from R&D finding `gap:cross-model-review`.\nHypothesis: 2 competitors evidence 'a second model reviews or re-scores the first'; building it should move the metric\nMetric: pageviews_7d. Ship the smallest change the done check proves, then compare the metric against its baseline in doctrine/growth.json; a miss reverts the change and lowers the finding's priority.",
+  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** file:foundation/rescore.py\n**Prediction:** pageviews_7d >= baseline within 336 h\n**Status:** closed\n\nExperiment from R&D finding `gap:cross-model-review`.\nHypothesis: 2 competitors evidence 'a second model reviews or re-scores the first'; building it should move the metric\nMetric: pageviews_7d. Ship the smallest change the done check proves, then compare the metric against its baseline in doctrine/growth.json; a miss reverts the change and lowers the finding's priority.\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): file:foundation/rescore.py\n",
   "labels": [
     "role:product-manager",
     "growth",

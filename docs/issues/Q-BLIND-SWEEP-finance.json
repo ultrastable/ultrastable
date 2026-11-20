@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-SWEEP-finance",
   "title": "Q-BLIND-SWEEP-finance: answer the finance sweep",
-  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** grep:ops/blindspots/answers.jsonl::\"domain\": \"finance\" ; recorded with `python3 -m foundation blindspots --answer finance --text <answer with evidence>`\n**Status:** open\n\nQuestion: What recurring costs, renewals and filing dates exist that the owner has not been shown?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** cmd:python3 -m foundation blindspots --swept finance\n**Status:** closed\n\nQuestion: What recurring costs, renewals and filing dates exist that the owner has not been shown?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): finance: answered\n",
   "labels": [
     "role:product-manager",
     "blindspot"

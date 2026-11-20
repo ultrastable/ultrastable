@@ -25,4 +25,11 @@ const req = (headers) => new Request("https://site/__internal/deploy", { method:
 assert.equal((await internalDeploy(req({ authorization: "Bearer " + await jwt({}) }), env, fetcher)).status, 200, "a valid OIDC token deploys");
 assert.equal((await internalDeploy(req({ authorization: "Bearer " + await jwt({ ref: "refs/heads/x" }) }), env, fetcher)).status, 404, "a token for another branch is refused");
 assert.equal((await internalDeploy(req({}), env, fetcher)).status, 404, "no credential is refused");
+// CF-ROUTE-1: the read-and-backup route forwards only allow-listed requests and never a write outside the backup prefix
+const cf = async (method, path, b, h = {}) => { const seen = []; const f = async (url, init) => { seen.push([String(url), init && init.method]); return String(url).endsWith("/.well-known/jwks") ? new Response(JSON.stringify({ keys: [jwk] })) : new Response(JSON.stringify({ success: true }), { status: 200 }); }; const r = await internalDeploy(new Request("https://site/__internal/cf", { method: "POST", headers: { authorization: "Bearer " + await jwt({}), "x-cf-method": method, "x-cf-path": path, ...h }, body: b }), env, f); return { r, seen }; };
+let x = await cf("GET", "d1/database?per_page=100"); assert.equal(x.r.status, 200); assert.ok(x.seen.some(c => c[0] === "https://api.cloudflare.com/client/v4/accounts/acct/d1/database?per_page=100" && c[1] === "GET"), "a read is forwarded to the pinned account");
+_resetJwks();
+for (const [m, p2] of [["DELETE", "d1/database"], ["PUT", "r2/buckets/ultrastable-git/objects/other/x"], ["GET", "../user/tokens"], ["PUT", "workers/scripts/x"], ["POST", "d1/database"]]) { _resetJwks(); assert.equal((await cf(m, p2)).r.status, 403, m + " " + p2 + " is refused"); }
+_resetJwks(); assert.equal((await cf("POST", "d1/database/" + "a".repeat(8) + "-aaaa-aaaa-aaaa-" + "a".repeat(12) + "/query", JSON.stringify({ sql: "DELETE FROM t" }), { "content-type": "application/json" })).r.status, 403, "a write query is refused");
+_resetJwks(); assert.equal((await cf("POST", "d1/database/" + "a".repeat(8) + "-aaaa-aaaa-aaaa-" + "a".repeat(12) + "/query", JSON.stringify({ sql: "SELECT 1" }), { "content-type": "application/json" })).r.status, 200, "a read query is forwarded");
 console.log("oidc ok");

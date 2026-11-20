@@ -22,6 +22,7 @@ from . import growth as G
 
 REPO = G.REPO
 KNOBS, EXPERIMENTS, KNOBLOG, REPORT = "doctrine/knobs.json", "ops/growth/experiments.json", "ops/growth/knob-log.jsonl", "ops/growth/pm-report.json"
+WEEKLY = "ops/growth/weekly.json"   # WEEKLY-REPORT-1: one report per ISO week, read by the transparency snapshot and shown on /live
 
 
 def _now(now=None) -> float:
@@ -253,6 +254,59 @@ def file_repairs(root, stage_rows: list[dict], ladder: list[dict], write=True) -
 
 # ---- the pass ----
 
+def week_id(now: float) -> str:
+    y, w, _ = datetime.fromtimestamp(now, timezone.utc).isocalendar()
+    return f"{y}-W{w:02d}"
+
+
+def weekly(root, vals: dict, experiments: list[dict], now: float, write=True) -> dict:
+    """WEEKLY-REPORT-1: once per ISO week, week-over-week change of every growth metric, the breaches, the verdict of each experiment
+    reviewed since the last report, and the next three experiments (metric, prediction, closing probe). An idea whose experiment was
+    replaced or is already running is never proposed again; an unmeasured week writes nothing, so the next measured pass still reports."""
+    cfg, prev = G.load(root), _read(root, WEEKLY, {})
+    wk = week_id(now)
+    if prev.get("week") == wk:
+        return prev
+    ids = [m["id"] for m in cfg["metrics"]]
+    if all(vals.get(i) is None for i in ids):
+        return {"week": wk, "unmeasured": True, "previous_week": prev.get("week")}
+    last = {m["id"]: m.get("value") for m in prev.get("metrics", [])}
+    metrics = []
+    for m in cfg["metrics"]:
+        v, b = vals.get(m["id"]), last.get(m["id"])
+        breach = None if v is None else (v < m["target"] if m["direction"] == ">=" else v > m["target"])
+        metrics.append({"id": m["id"], "value": v, "previous": b, "delta_pct": None if v is None or not b else round((v - b) / b * 100, 1), "target": m["target"], "breach": breach})
+    reported = {(v["item"], v["verdict"]) for v in prev.get("verdict_history", [])}
+    verdicts = [{"item": e["item"], "metric": e["metric"], "verdict": e["verdict"], "moved_pct": e.get("moved_pct")} for e in experiments if e.get("verdict") and (e["item"], e["verdict"]) not in reported]
+    tried = {e["item"] for e in experiments}
+    order = [m["id"] for m in metrics if m["breach"]] + [m["id"] for m in metrics if not m["breach"]]
+    nxt = []
+    for mid in order:
+        for idea in cfg["bank"].get(mid, []):
+            iid = "Q-GROW-" + idea["id"]
+            if iid in tried or any(n["item"] == iid for n in nxt):
+                continue
+            base, pct = vals.get(mid), idea.get("pct", 15)
+            nxt.append({"item": iid, "title": idea["title"], "metric": mid,
+                        "prediction": f"{mid} >= {int(base * (1 + pct / 100))} within 168 h" if base is not None else f"{mid} rises {pct} percent within 168 h of its first measured value",
+                        "closing_probe": idea["probe"]})
+            break
+    for mid in order:   # second sweep fills the three slots when fewer than three metrics have an untried idea
+        for idea in cfg["bank"].get(mid, []):
+            iid = "Q-GROW-" + idea["id"]
+            if len(nxt) < 3 and iid not in tried and not any(n["item"] == iid for n in nxt):
+                base, pct = vals.get(mid), idea.get("pct", 15)
+                nxt.append({"item": iid, "title": idea["title"], "metric": mid,
+                            "prediction": f"{mid} >= {int(base * (1 + pct / 100))} within 168 h" if base is not None else f"{mid} rises {pct} percent within 168 h of its first measured value",
+                            "closing_probe": idea["probe"]})
+    rep = {"week": wk, "generated": _iso(now), "previous_week": prev.get("week"), "metrics": metrics, "breaches": [m["id"] for m in metrics if m["breach"]],
+           "verdicts": verdicts, "next_experiments": nxt[:3],
+           "verdict_history": (prev.get("verdict_history", []) + [{"item": v["item"], "verdict": v["verdict"]} for v in verdicts])[-200:]}
+    if write:
+        _write(root, WEEKLY, rep)
+    return rep
+
+
 def measure(root, use_live=True, env=None) -> dict:
     from . import clockwork
     snap = G.snapshot(root, use_live=use_live, env=env)
@@ -297,8 +351,15 @@ def run(root=REPO, apply=False, now=None, use_live=True, env=None, vals=None, st
         order_filed = standingorder.file_items(root) if apply else []
     except Exception as e:  # never crash the pass; the CI check still fails the change
         order_filed = [f"error: {type(e).__name__}"]
-    rep = {"generated": _iso(now), "targets": tgt, "experiments": ex, "knobs": {"values": {k["id"]: knob_value(root, k) for k in _read(root, KNOBS, {"knobs": []})["knobs"]}, "last": tuned},
+    # BLINDSPOT-1: the blind-spot clocks (domain expiry, backup and restore drill, closed ledger, overdue sweeps) run in the same daily pass.
+    from . import blindspots
+    try:
+        bs = blindspots.tick(root, apply=apply, live=use_live, env=env)
+    except Exception as e:  # an unmeasured loop is a finding, never a crash of the pass
+        bs = {"error": type(e).__name__ + ": " + str(e)[:160], "filed": []}
+    rep = {"generated": _iso(now), "blindspots": bs, "targets": tgt, "experiments": ex, "knobs": {"values": {k["id"]: knob_value(root, k) for k in _read(root, KNOBS, {"knobs": []})["knobs"]}, "last": tuned},
            "filed": {"growth": growth_filed, "repair": repair_filed, "insight": ins.get("filed", []), "uiux": ui.get("filed", []), "order": order_filed}, "insight": ins, "uiux": {"filed": ui.get("filed", []), "blocking": ui["status"].get("findings_blocking"), "happy_path_pass_share": ui["status"].get("happy_path_pass_share"), "unmeasured": ui["status"].get("unmeasured", [])}, "stages": [{"id": s["id"], "status": s["status"], "missed": s["missed"]} for s in stage_rows]}
+    rep["weekly"] = weekly(root, vals, ex, now, write=apply)
     if apply and ex != _read(root, EXPERIMENTS, {"experiments": []}).get("experiments"):
         _write(root, EXPERIMENTS, {"experiments": ex})   # state that persists; the report itself is recomputed from live measurements, so a quiet day changes no file
     return rep

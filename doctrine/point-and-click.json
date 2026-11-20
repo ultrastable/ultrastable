@@ -24,7 +24,6 @@
   "connect_link": {
     "rule": "CONNECT-LINK-1 (Rowan, 2026-11-17): every owner action is one link to a web UI that runs OAuth/OIDC and its callbacks behind the scenes (like /connect/github). A card without `connect` and `connect_kind` fails the check. connect_kind is `connect-flow` (a page on ultrastable.io under /connect) or `provider-deep-link` (a deep link to a provider's own page, allowed only for the ids in `deep_link_baseline`, which only shrinks as flows replace them).",
     "deep_link_baseline": [
-      "actions-billing",
       "funding",
       "domains-move",
       "org-brand",

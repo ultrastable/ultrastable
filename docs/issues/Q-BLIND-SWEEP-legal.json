@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-SWEEP-legal",
   "title": "Q-BLIND-SWEEP-legal: answer the legal sweep",
-  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 90 days\n**Done check:** grep:ops/blindspots/answers.jsonl::\"domain\": \"legal\" ; recorded with `python3 -m foundation blindspots --answer legal --text <answer with evidence>`\n**Status:** open\n\nQuestion: Which laws and platform rules apply to what this system now does that it did not do last quarter?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 90 days\n**Done check:** cmd:python3 -m foundation blindspots --swept legal\n**Status:** closed\n\nQuestion: Which laws and platform rules apply to what this system now does that it did not do last quarter?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): legal: answered\n",
   "labels": [
     "role:product-manager",
     "blindspot"

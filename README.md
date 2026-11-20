@@ -61,7 +61,7 @@ Code is the only memory. All project state lives in this repository (docs/PROJEC
 ## What this is, in five lines
 1. Ultrastable is a system that runs, fixes and improves other software on its own; this repo is its code, rules and live Workers (`ultrastable-tick`, `-dashboard`, `-site`, `-agents`).
 2. Merging to `main` deploys every live Worker (`deploy-workers`, `deploy-system`, `deploy-site`) and the run fails unless the code running on Cloudflare is byte-identical to the commit.
-3. Quniverse (`QNFO/qnfo-workers`, 47 Workers on the same Cloudflare account) is the first customer and the test bed: it must bootstrap, discover its own resources and stay cheap without hand-holding.
+3. Quniverse (`QNFO/qnfo-workers`, a fleet of Workers in its own Cloudflare account) is the first customer and the test bed: it must bootstrap, discover its own resources and stay cheap without hand-holding.
 4. Proof is measured, not claimed: Workers AI neurons and D1 rows read per day for Quniverse, drift between live and `main`, and manual steps per deploy (target 0), all in `ops/deploys.jsonl` and the cost items in `ROADMAP.md`.
 5. If Quniverse cannot run cheaply and unattended on Ultrastable, Ultrastable does not work; cost and self-bootstrapping come before new Quniverse features.
 
@@ -89,7 +89,11 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 | Piece | Status |
 |---|---|
 | QNFO fleet (customer zero, owner's own) | **Running**; numbers self-scored, unaudited ([customer story](docs/customer-story.md)) |
-| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->40 Python and 374 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->680<!-- /claim --> recorded live deploys of its Worker and siblings |
+<<<<<<< HEAD
+| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->45 Python and 392 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->695<!-- /claim --> recorded live deploys of its Worker and siblings |
+=======
+| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->45 Python and 392 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->695<!-- /claim --> recorded live deploys of its Worker and siblings |
+>>>>>>> origin/main
 | Google Cloud adapter (Cloud Run, Scheduler) | **Skeleton built**, <!-- claim:gcp-tests -->2 tests<!-- /claim --> in CI, deploy script unrun |
 | Dashboard | **In `dashboard/`**; status per its README, not verified here |
 | Reference runtime in Python: 11-step loop, CLI, dashboard, Docker, Cloud Run deploy ([platform/core](platform/core/README.md)) | **Built**, <!-- claim:core-tests -->44 tests<!-- /claim --> in CI, default agents simulated, one real-model proof (Workers AI); deploy unrun |

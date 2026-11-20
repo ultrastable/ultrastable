@@ -1,0 +1,11 @@
+{
+  "id": "Q-MTC-breach-path",
+  "title": "Q-MTC-breach-path: breach detection and notification path",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** grep:seed/autonomy/failure-modes.json::\"id\": \"tenant-data-breach\"\n**Status:** open\n\nMulti-tenant control `breach-path` is unproven: breach detection and notification path. Needed: a failure mode `tenant-data-breach` with a detector and a notification step that reaches the affected tenant's contact. The hosted tier stays closed until this is proven. Source: doctrine/tenant-controls.json (TENANT-CONTROLS-1).",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

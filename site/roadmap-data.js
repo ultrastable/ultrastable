@@ -115,11 +115,11 @@ export default {
    "trigger": "every executor run"
   },
   "Q-GAP-executor-merged-pr": {
-   "done": "grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"",
+   "done": "grep:ops/executor-log.jsonl::\"result\": \"pr-merged\"",
    "id": "Q-GAP-executor-merged-pr",
    "milestone": "Next",
    "owner": "operations",
-   "status": "open",
+   "status": "closed",
    "title": "Executor opens and merges its own pull request",
    "trigger": "every executor run"
   },
@@ -268,9 +268,9 @@ export default {
    ],
    "issue": "Q-GAP-executor-merged-pr",
    "name": "Executor opens its own merged pull request",
-   "status": "pinned",
-   "what": "Built and tested with a fake model; blocked on a bound model credential. Each run records no-model-credential until a host has a key.",
-   "where": "probe: a pr-opened row in ops/executor-log.jsonl"
+   "status": "live",
+   "what": "The executor opened pull requests 749 and 762 itself and both merged on 2026-11-20. Both were mechanical fixes (an unused import removed); a change written by a model has not merged yet.",
+   "where": "probe: a pr-merged row in ops/executor-log.jsonl"
   },
   {
    "code": [

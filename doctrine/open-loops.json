@@ -29,10 +29,22 @@
     {
      "s": "Cloudflare API registrar PUT name_servers on quniverse (2026-11-20 09:00Z scheduled retry)",
      "result": "403 code 10000 Name server update not allowed; domain still locked=true"
+    },
+    {
+     "s": "Cloudflare API, 2026-11-20 15:30Z, after Rowan's 'move all the domains, just do it'",
+     "result": "zones ultrastable.io, .app and .org created as pending in the ultrastable account (ultrastable.net already was); every editable DNS record copied; DNSSEC disabled and no zone hold on all four source zones, so each precondition of the registrar move is met"
+    },
+    {
+     "s": "Cloudflare API spec, registrar endpoints",
+     "result": "no endpoint moves a Cloudflare Registrar registration between accounts; Cloudflare's documentation gives the Configuration tab of Manage Domain in the losing account plus an email approval by the gaining account"
+    },
+    {
+     "s": "registrar read 2026-11-20",
+     "result": "all four locked=true, clienttransferprohibited, expire 2027-11-10 with auto_renew true"
     }
    ],
-   "reason": "registrar lock; the 2026-11-20 end date is unconfirmed (registered 2026-11-10, a 60-day new-registration lock would end 2027-01-09). Moving the zone by deleting it in quniverse is a different, riskier act than the approved nameserver switch and is not taken without a new yes",
-   "default": "zone stays served from quniverse; the daily single-account pass retries the approved switch",
+   "reason": "the registrar move between two Cloudflare accounts exists only as a dashboard action with an email approval; everything the API can do is done",
+   "default": "the four sites keep being served from the old account, registrations auto-renew until 2027-11-10, and the pending zones in the ultrastable account activate by themselves once the registrar move is approved",
    "probe": "cmd:python3 -m foundation singleaccount --check"
   },
   {
@@ -62,6 +74,245 @@
    "reason": "consent screen is identity-bound",
    "default": "lane merges on local-checks evidence (Q-GATE-403)",
    "probe": "grep:seed/worker/src/worker-gate.js::status 403"
+  },
+  {
+   "id": "mtc-processor-terms",
+   "surfaces": [
+    {
+     "s": "repository search for a data-processing agreement and a subprocessor list",
+     "result": "neither exists; seed/autonomy/retention.json covers retention only"
+    },
+    {
+     "s": "drafting the agreement by the system",
+     "result": "not taken: a legal text in the owner's name is out of scope (SCOPE.md) and identity-bound"
+    }
+   ],
+   "reason": "a data-processing agreement is signed in the owner's name",
+   "default": "the hosted, multi-tenant tier stays closed (doctrine/pilot-model.json hosted: deferred); pilots run in the customer's own account",
+   "probe": "cmd:python3 -m foundation tenantcontrols --check"
+  },
+  {
+   "id": "gap-external-audit",
+   "surfaces": [
+    {
+     "s": "held-out graders inside the system (foundation/rescore.py: strict rule and a second model family)",
+     "result": "built and run after every merge; narrows self-scoring but both graders are the system's own"
+    },
+    {
+     "s": "a party outside the system re-scoring a sample",
+     "result": "none is engaged; engaging one commits the owner's name or money"
+    }
+   ],
+   "reason": "an audit is independent only if the auditor is not the system; choosing and engaging one is the owner's act",
+   "default": "every settled prediction is re-scored by the held-out graders and a disagreement files Q-RESCORE-<id>; docs/audit/external-scoring-audit.json is written only from an outside party's result",
+   "probe": "file:docs/audit/external-scoring-audit.json"
+  },
+  {
+   "id": "gap-fresh-account-bootstrap",
+   "surfaces": [
+    {
+     "s": "Cloudflare accounts this system can reach (2026-11-20)",
+     "result": "two: ultrastable (17 Workers, 5 databases) and the retired quniverse account; neither is empty"
+    },
+    {
+     "s": "creating a new Cloudflare account",
+     "result": "not taken: an account is opened under a person's identity and terms"
+    },
+    {
+     "s": "bootstrap --apply into the non-empty ultrastable account",
+     "result": "not taken as proof: the item asks for an empty account"
+    }
+   ],
+   "reason": "an empty account exists only when a person or a pilot customer opens one",
+   "default": "the bootstrapper is exercised against fixtures on every change (seed/tests) and by the packaged installer's dry run (seed/install.py); the first pilot's install writes docs/bootstrapping/fresh-account-proof.json",
+   "probe": "file:docs/bootstrapping/fresh-account-proof.json"
+  },
+  {
+   "id": "gap-second-installation",
+   "surfaces": [
+    {
+     "s": "installing the package into a repository of its own",
+     "result": "the package and one-command install exist and are tested (seed/install.py); creating a repository outside this session's scope is not permitted here"
+    },
+    {
+     "s": "counting practical-solutions as the second installation",
+     "result": "not taken: it is a tenant on the core's account that vendors the core, not an independent install of the seed"
+    }
+   ],
+   "reason": "an independent installation needs a repository and an account that are not this system's own",
+   "default": "instances/second-tenant and the practical-solutions tenant exercise the second-system path inside the account; instances/pilot-1/instance.json is written by the first pilot's install",
+   "probe": "file:instances/pilot-1/instance.json"
+  },
+  {
+   "id": "gap-other-cloud-proof",
+   "surfaces": [
+    {
+     "s": "the SQLite runtime off Cloudflare (python3 -m foundation selfhost, 2026-11-20)",
+     "result": "boots tenant 0 from the repository and runs the 18-step tick on Node and SQLite; this is a host with Python and Node, not a deployment on another cloud"
+    },
+    {
+     "s": "Google Cloud from this session (gcloud auth list)",
+     "result": "no credentialed account"
+    },
+    {
+     "s": "platform/adapters/gcp/deploy.sh",
+     "result": "never run: it needs a project with billing"
+    }
+   ],
+   "reason": "a deployment on another cloud needs a project with billing in a person's name",
+   "default": "portability is proven for the SQLite path in checks on every change; docs/bootstrapping/other-cloud-proof.json is written only by a real deploy",
+   "probe": "file:docs/bootstrapping/other-cloud-proof.json"
+  },
+  {
+   "id": "own-domain-edge",
+   "surfaces": [
+    {
+     "s": "Cloudflare API, zone ultrastable.io custom hostnames (read, 2026-11-20)",
+     "result": "HTTP 403 code 1404: no custom hostname quota is allocated; the zone is on the free plan and sits in a different account from the Workers"
+    },
+    {
+     "s": "site Worker bindings (read, 2026-11-20)",
+     "result": "CF_DEPLOY_TOKEN is bound; CF_ZONE_ID is not, so attachDomain stops at pending_platform after the DNS proof"
+    },
+    {
+     "s": "Worker custom domains API",
+     "result": "serves only hostnames in zones of the Worker's own account; a visitor's domain is in neither"
+    }
+   ],
+   "reason": "switching on the custom hostname service changes the zone's subscription and the deploy token's scope: a billing and credential-scope act in the owner's account",
+   "default": "POST /api/domain proves ownership by DNS TXT, stores the proven address and answers pending_platform in plain words; the site keeps answering at its ultrastable.io address",
+   "probe": "grep:site/wrangler.toml::CF_ZONE_ID"
+  },
+  {
+   "id": "ol-phase2-roles",
+   "items": [
+    "OL-ROLE-business-manager",
+    "OL-ROLE-community-manager",
+    "OL-ROLE-data-analyst",
+    "OL-ROLE-finance-controller",
+    "OL-ROLE-sales-partnerships",
+    "OL-ROLE-security-compliance"
+   ],
+   "surfaces": [
+    {
+     "s": "python3 -m foundation team --gate (2026-11-20)",
+     "result": "phase 2 closed: none of the seven phase 1 handoff files docs/handoff/<role>.md exists"
+    },
+    {
+     "s": "python3 -m foundation liveness --probe role-<id> for the seven phase 1 roles",
+     "result": "no recorded run for any of them"
+    },
+    {
+     "s": "search for a writer of docs/handoff/<role>.md",
+     "result": "only foundation/genesis.py names the path; no loop writes it"
+    }
+   ],
+   "reason": "the phase gate is the proof that phase 1 roles ran; writing the handoff files by hand would open the gate with no run behind it",
+   "default": "the phase 1 team stays the active team; the six role items stay in the queue with their gate as trigger",
+   "probe": "cmd:python3 -m foundation team --gate"
+  },
+  {
+   "id": "ol-market-evidence",
+   "items": [
+    "OL-GAP-verify-claude-code-has-the-money",
+    "OL-GAP-verify-does-it-run-itself",
+    "OL-GAP-verify-just-a-code-agent",
+    "OL-GAP-verify-safe-to-let-run",
+    "OL-GAP-verify-workflow-tools-exist"
+   ],
+   "surfaces": [
+    {
+     "s": "python3 -m foundation components --probe objection-verified:<id> (2026-11-20)",
+     "result": "not healthy for all five"
+    }
+   ],
+   "reason": "each cell needs a dated read of the vendor's own page; marking a cell verified without that read would be a false claim (CLAIMS-1)",
+   "default": "the five objections are shown as resting on unverified cells; the weekly rnd pass refreshes the profiles the cells cite",
+   "probe": "cmd:python3 -m foundation components --probe objection-verified:does-it-run-itself"
+  },
+  {
+   "id": "ol-workers-repo-records",
+   "items": [
+    "OL-20261115-13",
+    "OL-20261115-14",
+    "OL-20261115-15",
+    "OL-20261115-16",
+    "OL-20261115-17",
+    "OL-20261115-18",
+    "OL-20261115-19",
+    "OL-20261115-20"
+   ],
+   "surfaces": [
+    {
+     "s": "ops/deploys.jsonl",
+     "result": "tick, dashboard, site, agents and tenants deploy to the ultrastable account by the OIDC route with live_matches_commit true"
+    },
+    {
+     "s": "done checks of the eight records",
+     "result": "they name files of the ultrastable/workers layout (org/started.json, org/bootstrap-live-trial.json, org/second-installation.json) and steps in the owner's accounts: a GitHub App install, a second Cloudflare account, launcher hosting with a Turnstile secret"
+    }
+   ],
+   "reason": "the remaining steps create credentials or installations in the owner's accounts (identity-bound); the platform itself already runs on its own account from this repository",
+   "default": "Ultrastable runs from this repository on its own Cloudflare account through OIDC; the workers-repo start path stays a dry run",
+   "probe": "file:org/started.json"
+  },
+  {
+   "id": "ol-legal-and-visibility",
+   "items": [
+    "OL-20261115-5",
+    "OL-20261115-6",
+    "OL-20261115-7",
+    "OL-20261115-8"
+   ],
+   "surfaces": [
+    {
+     "s": "GitHub connector of the cloud session",
+     "result": "repository settings and visibility writes are not permitted (docs/BOOTSTRAP-GAPS.md BG-22)"
+    },
+    {
+     "s": "filing and attorney review",
+     "result": "a filing is the owner's signature; deleting archived repositories cannot be undone"
+    }
+   ],
+   "reason": "irreversible and identity-bound: publishing private repositories, a patent filing, permanent deletion",
+   "default": "repositories keep their current visibility, nothing is filed, archived duplicates stay archived",
+   "probe": "grep:ip/evidence-log.md::filing receipt"
+  },
+  {
+   "id": "ol-out-of-reach-repos-and-credentials",
+   "items": [
+    "OL-20261112-92",
+    "OL-20261112-14",
+    "OL-20261112-15",
+    "OL-20261115-9",
+    "OL-TRIGGERS-INSTALL",
+    "OL-20261118-1"
+   ],
+   "surfaces": [
+    {
+     "s": "git push and GitHub API to site, platform, seed, docs, ip, business",
+     "result": "403 Resource not accessible by integration (recorded in OL-20261112-92); those repositories are outside this session's scope"
+    },
+    {
+     "s": "python3 scripts/fleet_probe.py codeowners-removed (2026-11-20)",
+     "result": "open: .github/CODEOWNERS still present in ultrastable/workers, which is archived"
+    },
+    {
+     "s": "python3 -m foundation singleaccount --moved (2026-11-20)",
+     "result": "pending: four zones, 39 KV keys, four workers"
+    },
+    {
+     "s": "python3 -m foundation triggers --install",
+     "result": "not run: it mints and stores a new webhook secret, which widens credentials and needs a specific owner yes under the platform security check"
+    },
+    {
+     "s": "tick Worker credentials table, 2026-11-20 15:30Z",
+     "result": "github-app ultrastable-209646 status ok and github-admin ultrastable-admin-02087e installed: GitHub is connected, the app's own webhook posts to /hook/github, and no further connect click is needed (ops/connections/github-apps.json)"
+    }
+   ],
+   "reason": "each needs write access or a credential this session does not hold and may not mint; the registrar lock is recorded in gate net-nameserver-switch",
+   "default": "events fall back to the cron heartbeat; the monorepo is canonical for the six sibling repositories; zones stay served from the old account while the daily single-account pass retries",
+   "probe": "cmd:python3 -m foundation singleaccount --moved"
   }
  ]
 }

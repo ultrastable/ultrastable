@@ -2451,8 +2451,8 @@
    "kind": "lesson",
    "date": "2026-11-18",
    "title": "CIWATCH-3: one open ciwatch items PR at a time",
-   "body": "ciwatch opened a new agent/ciwatch-<run> PR on every run because the Q-CIFAIL file stays absent from main until the first PR merges; 7 identical PRs piled up. The step now skips when an agent/ciwatch-* PR is open. Root cause of the red item was an unregistered tenant file (practical-solutions#117).",
-   "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-3"
+   "body": "ciwatch opened a new agent/ciwatch-<run> PR on every run because the Q-CIFAIL file stays absent from main until the first PR merges; 7 identical PRs piled up. The step now skips when an agent/ciwatch-* PR is open. Root cause of the red item was an unregistered tenant file (practical-solutions#117). Superseded 2026-11-20 by CIWATCH-4: ciwatch opens no items pull request; items land through the main writer.",
+   "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-4"
   },
   {
    "id": "decision-2026-11-18-public-benefit-is-scored-in-code-benefit-1",
@@ -2943,6 +2943,423 @@
    "body": "lane.yml runs python3 -m foundation clock --heal --apply as its last step (4 minute cap, Cloudflare token as in product-manager.yml), so a stale stage is caught within one merge cycle and not a day later. test_pm checks the step, its token and its cap.",
    "probe": "grep:.github/workflows/lane.yml::clock --heal",
    "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "decision-2026-11-20-codeagent-model-1-the-code-agent-s-first-model-is-glm-4-7-fl",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "CODEAGENT-MODEL-1: the code agent's first model is glm-4.7-flash",
+   "body": "The platform deprecated @cf/zai-org/glm-5.3-flash on 2026-11-20 (error 5028); 35 of 95 code agent calls that day went to it and produced nothing. The first adapter in seed/worker/src/codeagent.js, dashboard/agent.js, doctrine/code-agents.json and the review gate reference is now @cf/zai-org/glm-4.7-flash, probed live the same day with reasoning_effort low (it returned the requested JSON). The adapter id workers-ai-glm is unchanged so history joins.",
+   "probe": "grep:seed/worker/src/codeagent.js::glm-4.7-flash",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "decision-2026-11-20-ol-20261112-93-a-cli-sign-in-counts-as-a-credential-only-on-",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "OL-20261112-93: a CLI sign-in counts as a credential only on a server-side host",
+   "body": "foundation/ladder.py cli_scope and Boot._gh_admin_org (seed and workers copies) accept an existing gh sign-in only when CLAUDE_CODE_REMOTE or GITHUB_ACTIONS is set. doctrine/server-side.json bans the old wording (id signed-in-cli) and no longer excludes demos/public/cases.json, whose two lines now cite the rule.",
+   "probe": "grep:doctrine/server-side.json::signed-in-cli",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "lesson-2026-11-20-airouter-no-run-1-calls-that-never-ran-a-model-are-free-a-de",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "AIROUTER-NO-RUN-1: calls that never ran a model are free; a deprecated model is retired",
+   "body": "Measured 2026-11-20 in airouter_calls: the code agent made 95 calls and 8 passed. 35 went to a model the platform deprecated that day (error 5028) and 14 were stopped by the spend governor before any model ran; those 49 were charged 1,561 estimated neurons, so the 8,000 neuron day cap was reached by 14:00 UTC and the executor produced no change for the rest of the day (k_self 0). Fixed in seed/worker/src/airouter.js: such a call is charged nothing, and a deprecated model is retired for 7 days (table airouter_retired) and then probed again. Tests in seed/worker/test/airoute.test.js.",
+   "probe": "grep:seed/worker/src/airouter.js::airouter_retired",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "lesson-2026-11-20-ol-20261114-6-test-metasignal-uses-the-shared-scratch-helper",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "OL-20261114-6: test_metasignal uses the shared scratch helper by its package path; regime told",
+   "body": "tests/foundation/test_metasignal.py imports scratch from tests.foundation._repo, the form the item's closing probe names; its temp directories are removed when each test ends. The criticality regime (driven: k_self 0, 0 of 25 verified deploys originated by the system itself) was reported to the owner on 2026-11-20 and recorded in ops/told.jsonl.",
+   "probe": "grep:tests/foundation/test_metasignal.py::from tests\\.foundation\\._repo import scratch",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "decision-2026-11-20-backup-dumps-go-to-the-private-ops-repository-when-r2-is-unr",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Backup dumps go to the private ops repository when R2 is unreachable (BACKUP-SINK-1)",
+   "body": "The site Worker's token reads D1 and KV but every R2 object call answers 401, so the first drill through the Worker route restored correctly and stored nothing. The drill now falls back to the private ops repository under backups/, written through the tick Worker's /api/ops/backup route with the org App (OIDC verified, contents under backups/ only), and reads each copy back. The record names the sink used.",
+   "probe": "file:seed/worker/src/opsbackup.js",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "decision-2026-11-20-blind-spot-register-runs-on-clocks-backup-drill-domain-expir",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Blind-spot register runs on clocks: backup drill, domain expiry, licences, computed sweeps",
+   "body": "BLINDSPOT-1: fresh: probes make backup-restore, domain-renewal and name-clearance go stale by themselves; foundation/backup.py restores each D1 export into scratch SQLite and stores it in R2; foundation/licences.py inventories dependencies; blindspots --tick runs daily inside the product manager pass; item done checks are commands that re-measure. 11 sweeps answered with evidence in ops/blindspots/answers.jsonl.",
+   "probe": "file:foundation/backup.py",
+   "session": "session_0156nqDsxX1zCZBnq8L21fjV"
+  },
+  {
+   "id": "decision-2026-11-20-cloudflare-and-main-writes-go-through-the-workers-not-github",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Cloudflare and main writes go through the Workers, not GitHub secrets (CF-ROUTE-1, MAIN-WRITER-PR-1)",
+   "body": "The Cloudflare secret in GitHub Actions is not the credential the platform deploys with: deploys use the site Worker's own token through an OIDC route. The credential check, the backup drill and the runway therefore read the account through the site Worker's allow-listed /__internal/cf route (GET d1/kv, SELECT-only queries, backup-prefix R2 writes). The GitHub secret and LANE_PAT are optional and no longer limit the runway. When the ruleset refuses the org App a direct write to main, the tick Worker opens a pull request with the App, which starts checks, instead of answering 409.",
+   "probe": "grep:site/deployer.js::cfProxy",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "decision-2026-11-20-coverage-modules-1-coverage-mirror-1-every-claim-like-statem",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "COVERAGE-MODULES-1, COVERAGE-MIRROR-1: every claim-like statement on a source surface and every rendered page is bound",
+   "body": "2026-11-20: Q-CLAIM-COVER family (71 items, 56 open). Coverage 42.8 percent to 100 percent of source statements. foundation/claims.py: prose() reads only visible words (markup attributes and trailing code comments are not statements); nine generated modules (site/*-data.js and the like) are bound as a whole through registry key modules (header names the generator, generator exists, stale check passes), and a page sentence is bound when it is a registered sentence, a piece of one, or stitched from a bound module's strings. scripts/bind_cited_claims.py now also writes mirror entries so a sentence repeated on a seed copy is checked there. 162 sentences bound by hand to enforcing code (bound_by curated). Words that did not match code were changed: README (Quniverse runs in its own Cloudflare account), dashboard README (status refresh is hourly, not every 10 minutes), gaplint and platform core test counts (now generated blocks), site pages (two agents never work the same item; the claim ledger is per item, not per file). New checks where a rule had no code: scripts/lint_swallow.py (Never swallow an error; shrink-only baseline) and scripts/spec_ids.py (requirement IDs are never renumbered or reused). Ratchet floor 0.4 to 0.9; unbound source lines are capped by coverage.src_unbound_budget. Found and filed, not fixed: Q-CLAIM-reply-promise (a person replies within two working days has no code path).",
+   "probe": "file:scripts/spec_ids.py",
+   "session": "session_0156nqDrduoEo1kSbp9Ruy7N"
+  },
+  {
+   "id": "decision-2026-11-20-executor-closed-q-self-unused-import-foundation-clockwork-py",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Executor closed Q-SELF-unused-import-foundation-clockwork-py: Q-SELF-unused-import-foundation-clockwork-py: remove unused import Path from f",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/clockwork.py.",
+   "probe": "file:foundation/clockwork.py"
+  },
+  {
+   "id": "decision-2026-11-20-executor-closed-q-self-unused-import-foundation-doctrine-py-",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Executor closed Q-SELF-unused-import-foundation-doctrine-py: Q-SELF-unused-import-foundation-doctrine-py: remove unused import fnmatch from",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/doctrine.py.",
+   "probe": "file:foundation/doctrine.py"
+  },
+  {
+   "id": "decision-2026-11-20-mech-fix-1-mechanical-findings-are-fixed-by-code-with-no-mod",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "MECH-FIX-1: mechanical findings are fixed by code, with no model call",
+   "body": "Measured 2026-11-20 in ops/executor-log.jsonl on loop-evidence: 12 of 12 model attempts on Q-SELF-unused-import items failed because the model re-emits the whole file and breaks it, and none of the 14 current findings is a false positive. foundation/mechfix.py computes the edit from the syntax tree (names another file reaches through the module are left alone) and foundation/executor.py asks it before the model ladder, so these items need no model credential and no AI budget. The change still passes the scope check, targeted checks, write-back, pull request and merge lane.",
+   "probe": "grep:foundation/executor.py::mechfix.call_for",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "decision-2026-11-20-number-formatting-lives-in-core-format",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Number formatting lives in core/format",
+   "body": "Believable rounding (NUMFMT-1) is one tenant-agnostic module; pages must not show raw floats; the false-precision lint runs on every rendered site page.",
+   "probe": "file:workers/core/format/index.js",
+   "session": "session_0156nqDtUBinC279GK2RLKX7"
+  },
+  {
+   "id": "decision-2026-11-20-open-loop-records-fifteen-closed-by-code-the-rest-gated-with",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Open-loop records: fifteen closed by code, the rest gated with a default",
+   "body": "OL records are closed only when their done check passes on real code. Records that need the owner's accounts, a credential, or a run that has not happened are gates in doctrine/open-loops.json with surfaces, reason, default and probe; a done check that could never match (a directory path, a stale symbol) is corrected to the code that does the work.",
+   "probe": "file:doctrine/open-loops.json",
+   "session": "session_0156nqDvQD9uwY4HBSxwUiAQ"
+  },
+  {
+   "id": "decision-2026-11-20-product-manager-pass-2026112016-0-item-s-filed",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Product manager pass 2026112016: 0 item(s) filed",
+   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+   "probe": "file:foundation/pm.py"
+  },
+  {
+   "id": "decision-2026-11-20-progress-1-visible-progress-at-every-visit-cadence-monitor-a",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "PROGRESS-1: visible progress at every visit, cadence monitor across systems",
+   "body": "Rowan, 2026-11-20: six months with no input, noticeable progress at every visit on every system. Decision: one fleet page (/progress, digests, Atom, JSON) built only from merged changes, tenant releases and launched apps; the tick step progress judges each system in instances/ultrastable/progress.json against its declared cadence, dispatches its producer workflows when slow and files STALL-<system> when stalled; record-keeping merges never count; a reader's last visit stays in the reader's browser.",
+   "probe": "file:seed/worker/src/progress.js",
+   "session": "session_0156nqDtGrKt1vgENzstz6ju"
+  },
+  {
+   "id": "decision-2026-11-20-q-gap-a-done-check-that-a-file-s-existence-can-satisfy-is-ti",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Q-GAP: a done check that a file's existence can satisfy is tightened when the file alone does not prove the item",
+   "body": "Q-GAP-executor-merged-pr now closes on a pr-merged row (opened is not merged) and Q-GAP-multi-tenant-controls on tenantcontrols --ready (every control proven, 2 of 5 on 2026-11-20). Five gap items that need an outside party, a new account, another cloud or a pilot are gates in doctrine/open-loops.json with their surfaces and defaults; their proof files are written only by the real event.",
+   "probe": "file:foundation/rescore.py",
+   "session": "session_0156nqDub9wYHrj8bkBGP9bS"
+  },
+  {
+   "id": "decision-2026-11-20-site-feed-1-per-site-change-feed-and-badge",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "SITE-FEED-1 per-site change feed and badge",
+   "body": "/s/<id>/feed.xml (Atom of upkeep and requested changes) and /s/<id>/badge.svg are built from the version index, so owners and visitors can subscribe to a site being looked after. No new storage.",
+   "probe": "grep:site/upkeep.js::export function siteFeed",
+   "session": "session_0156nqDuaQJLAK9GWhireekE"
+  },
+  {
+   "id": "decision-2026-11-20-site-insights-1-built-site-visitors-drive-upkeep-spend",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "SITE-INSIGHTS-1 built-site visitors drive upkeep spend",
+   "body": "Serving a built site records a cookieless first-party view (seed/analytics, path /s/<id>, DNT honoured, bots excluded); /s/<id>/insights shows 7/30 day views, referrers, countries, devices; the weekly model pass runs only for sites with a view in 30 days, so AI spend follows traffic.",
+   "probe": "grep:site/upkeep.js::export async function insights",
+   "session": "session_0156nqDuaQJLAK9GWhireekE"
+  },
+  {
+   "id": "decision-2026-11-20-site-upkeep-1-built-sites-keep-improving-and-keep-history",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "SITE-UPKEEP-1 built sites keep improving and keep history",
+   "body": "Built sites get a weekly free deterministic pass plus at most two model passes per site tick, keep the last ten versions, and /s/<id>/history restores one (a restore is itself undoable). Rides the existing site tick; no new cron; model spend is the budget-wrapped env's.",
+   "probe": "grep:site/upkeep.js::export async function upkeepRound"
+  },
+  {
+   "id": "decision-2026-11-20-the-one-year-unattended-target-is-a-measured-runway",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "The one-year unattended target is a measured runway",
+   "body": "RUNWAY-1: target_days in doctrine/runway.json is measured every watchdog run from credentials, cost and unrepaired failures; an unmeasured component is below target. The cost probe reads the account id from doctrine/cost.json so the runner measures instead of recording unmeasured. Workers Logs are enabled in every deploy's metadata.",
+   "probe": "file:foundation/runway.py",
+   "session": "session_0156nqDrFvUVn55Vaqm9Uyt2"
+  },
+  {
+   "id": "decision-2026-11-20-unattended-365-one-year-with-zero-external-input-is-the-targ",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "UNATTENDED-365: one year with zero external input is the target, measured by a register of every remaining input",
+   "body": "Rowan, 2026-11-20. doctrine/unattended.json lists each credential, renewal, quota, hosted model, dependency, outside session and identity act as closed (self-renewing, with probe), gate (identity-bound, default and one link) or open (queue item Q-YEAR-*). Horizon measured 2026-11-20: 161 days. NEEDS-YOU.md hides an act whose dependency measured closed.",
+   "probe": "file:foundation/unattended.py"
+  },
+  {
+   "id": "lesson-2026-11-20-a-backup-job-names-its-account-it-never-inherits-the-workflo",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "A backup job names its account; it never inherits the workflow's",
+   "body": "The first backup drill (2026-11-20) used the workflow secret CLOUDFLARE_ACCOUNT_ID, which points at the Quniverse account, and backed up its personal and other-project databases into its ultrastable-git bucket. The 13 copies were deleted. doctrine/backup.json now pins account_id to the topology account, a test asserts it, and the count query is chunked to D1's compound-select limit (chunks of 40 failed with HTTP 400 on every database of more than 5 tables).",
+   "probe": "grep:doctrine/backup.json::account_id",
+   "session": "session_0156nqDsxX1zCZBnq8L21fjV"
+  },
+  {
+   "id": "lesson-2026-11-20-a-connect-link-must-read-the-stored-app-before-it-registers-",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "A connect link must read the stored app before it registers another",
+   "body": "Six GitHub Apps were registered for two roles because the connect routes posted a fresh manifest on every visit, and a report sent the owner to a connect link while the credential row was already ok. reuseApp reads the credentials table first; reports read it before naming any connect link.",
+   "probe": "file:ops/connections/github-apps.json",
+   "session": "session_0156nqDvQD9uwY4HBSxwUiAQ"
+  },
+  {
+   "id": "lesson-2026-11-20-a-done-check-that-greps-an-append-only-ledger-passes-forever",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "A done check that greps an append-only ledger passes forever",
+   "body": "The sweep items' done check included trailing prose after the regex, so it could never match; and a grep on answers.jsonl or closed.jsonl would keep passing after a relapse. Done checks for clocks must be commands that re-measure (blindspots --closed, --swept, --renewed).",
+   "probe": "file:ops/blindspots/domain-expiry.json",
+   "session": "session_0156nqDsxX1zCZBnq8L21fjV"
+  },
+  {
+   "id": "lesson-2026-11-20-a-red-deploy-gate-is-repaired-by-bisection-not-by-a-model-re",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "A red deploy gate is repaired by bisection, not by a model (REDMAIN-1, GATE-PARITY-1)",
+   "body": "2026-11-19: a swept branch changed one character in site/webbotauth.js. checks did not run the site tests, so the merge was green and deploy-site was red for 29 hours; the code agent did not fix it. Now checks and deploy-site run scripts/site_tests.sh, and ciwatch runs foundation redmain, which bisects main to the first bad commit and opens the smallest revert that turns the gate green. TOKEN-EXPIRY-1 (foundation credwatch) probes token and domain expiry daily; GATE-SETTLE-1 closes an owner gate on its own evidence.",
+   "probe": "file:foundation/redmain.py",
+   "session": "session_0156nqDrFvUVn55Vaqm9Uyt2"
+  },
+  {
+   "id": "lesson-2026-11-20-ask-and-multilingual-are-generic-core-modules",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Ask and multilingual are generic core modules",
+   "body": "core/ask (BM25, verified grounding, budget) and core/i18n (segment dictionary, hreflang, sitemaps, checked translation) are tenant-agnostic; practical-solutions wires them. A new core module must be classified in workers/tools/boundary.json.",
+   "probe": "file:workers/core/ask/index.js",
+   "session": "session_0156nqDug47brhofrqK4BExj"
+  },
+  {
+   "id": "lesson-2026-11-20-case-study-page-and-agent-directory-packets",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Case study page and agent directory packets",
+   "body": "site/casestudy.js builds /customer-zero from facts() only, each value carrying the snapshot path it was read from; a test fails on any number outside a fact cell. scripts/agent_directories.py writes one packet per directory from outreach/agent-directories.json and holds every submission while outreach/gate.json is dry-run; form and pull-request routes are never submitted by an agent. seed/scripts/outreach.py must stay byte-identical to scripts/outreach.py.",
+   "probe": "file:scripts/agent_directories.py",
+   "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+  },
+  {
+   "id": "lesson-2026-11-20-cf-posture-1-an-api-upload-without-observability-turns-a-wor",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "CF-POSTURE-1: an API upload without observability turns a Worker's logs off",
+   "body": "Measured on the live account 2026-11-20: ultrastable-site had logs off although its config turns them on, because five direct-upload paths (deploy-site, deploy-system, deploy-demos, site/deployer.js, the idea preview in site/worker.js) sent metadata with no observability key and each upload replaces the setting. All five now send it; foundation/cfposture.py fails checks on an upload without it and probes the live account daily in cost-guard (logs, idle previews, alert destinations, token expiry, zones, members), filing Q-CFP-<rule> items that close on a passing reading.",
+   "probe": "file:foundation/cfposture.py",
+   "session": "serene-payne-a9c57f"
+  },
+  {
+   "id": "lesson-2026-11-20-changelog-feed-reads-the-live-overlay-not-a-second-snapshot",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Changelog feed reads the live overlay, not a second snapshot",
+   "body": "/changelog.xml and /changelog.json are built in site/live.js from load() plus overlay(), so they are as fresh as /live and need no publisher of their own. /changelog (no extension) stays the owner provenance page.",
+   "probe": "file:site/live.js",
+   "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+  },
+  {
+   "id": "lesson-2026-11-20-connect-once-1-sign-ins-now-last-with-the-causes-read-from-t",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "CONNECT-ONCE-1: sign-ins now last, with the causes read from the credential log",
+   "body": "Read from credential_events on 2026-11-20: Bluesky renewals carried no DPoP proof (HTTP 401 on 339 ticks) and the public client has a 2 week session cap in the atproto spec; Mastodon tokens with no expiry were marked failed on 369 ticks; the GitHub connect link registered a new App on each visit. seed/worker/src/auth now signs renewals, uses a confidential client with a sealed key, leaves a token with no expiry alone and answers a working connection as connected. Verified by seed/worker/test/social-connect.test.js. Residual risk: Bluesky's real server has not yet accepted the new client, which is known only after the next sign-in; posting stays dry-run until then.",
+   "probe": "grep:seed/worker/src/auth/atproto.js::CONFIDENTIAL-CLIENT-1",
+   "session": "session_0156nqDtUiiWZcd1f5Ruaq68"
+  },
+  {
+   "id": "lesson-2026-11-20-data-pull-requests-opened-by-workflows-need-checks-dispatche",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Data pull requests opened by workflows need checks dispatched",
+   "body": "A PR opened with the workflow token starts no workflows, so the required checks status never appears and the PR stays blocked. scripts/land_data.py now dispatches checks.yml on its agent/data-* branch (workflow_dispatch reports the same job name on the head commit). Superseded 2026-11-20: a dispatched checks run does not satisfy the branch rule, so land_data starts none; the ruleset now exempts the app in use (APP-DRIFT-1) and data commits land on main directly.",
+   "probe": "grep:scripts/land_data.py::does not satisfy the branch rule",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "lesson-2026-11-20-demo-dashboard-is-server-rendered-from-the-live-snapshot",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Demo dashboard is server-rendered from the live snapshot",
+   "body": "site/demo.js renders /demo from live.js load() and overlay() with no client script; unmeasured clocks are excluded from the on-time count and missing values read not measured. Origin labels in the changelog are unattended executor, bot, agent session and other.",
+   "probe": "file:site/demo.js",
+   "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+  },
+  {
+   "id": "lesson-2026-11-20-deploy-gateway-retries-a-stale-read-back",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Deploy gateway retries a stale read-back",
+   "body": "Tenant deploys failed with 502 read-back mismatch right after a successful upload; the stored module can lag the PUT, so the gate re-reads with waits before calling it a mismatch.",
+   "probe": "file:workers/core/deploygate/index.js",
+   "session": "session_0156nqDtUBinC279GK2RLKX7"
+  },
+  {
+   "id": "lesson-2026-11-20-five-agent-interop-roadmap-items-built-by-hand-after-model-p",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Five agent-interop roadmap items built by hand after model PRs stubbed them",
+   "body": "MCP 2026-07-28 negotiation and server/discover, A2A v1 method aliases, a signed agent card with a Worker-held key and /.well-known/jwks.json, the connector_health tick step with a reconnect gate card (closing probe kind connector:<provider>), and /api/v1/agents/scoreboard. The tick skip-list text is asserted in seed/worker/test/tick.test.js, so a new step must be added there too.",
+   "probe": "file:seed/worker/src/tick.js",
+   "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+  },
+  {
+   "id": "lesson-2026-11-20-model-watch-1-hosted-model-ids-retire-without-notice-measure",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "MODEL-WATCH-1: hosted model ids retire without notice; measure the catalog and rewrite to successors",
+   "body": "Measured 2026-11-20: two Workers AI model ids named in the reviewer ladder and the site answered HTTP 410. doctrine/models.json is the measured catalog on the free plan; modelwatch --check fails a retired id and --refresh --apply rewrites it to its successor. DEAD-CONSENT-1: a dead OAuth refresh is retried every 6 h and served at /api/v1/owner-acts. Evidence: tests/foundation/test_unattended.py, seed/worker/test/auth.test.js.",
+   "probe": "file:foundation/modelwatch.py"
+  },
+  {
+   "id": "lesson-2026-11-20-pilot-offer-is-data-no-price-is-published-without-a-measured",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Pilot offer is data; no price is published without a measured cost",
+   "body": "doctrine/pilot-offer.json holds the four system-test questions, what the pilot includes and a price block whose monthly_usd and range_usd stay null until a measured cost supports a figure. The offer reaches /pilot through site/dashboard-data.js (pilot_offer) so the dashboard freshness check covers it, and site/site.test.mjs fails when the page and the file differ. claimcode flags words such as always, never and every on public surfaces, including generated data.",
+   "probe": "file:doctrine/pilot-offer.json",
+   "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+  },
+  {
+   "id": "lesson-2026-11-20-production-smoke-test-claims-are-probed-daily-not-trusted",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Production smoke test: claims are probed daily, not trusted",
+   "body": "smoke-live.yml probes the public claims on ultrastable.io and .org daily and files Q-SMOKE items; watchdog and backup-drill land data through scripts/land_data.py (main writer, then PR) because the main writer was refused (Q-MAINWRITER-REFUSED); /api/ask falls back to a cited answer without the model; meta-ingest answers 503 in plain words when storage fails.",
+   "probe": "file:scripts/smoke_live.py",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "lesson-2026-11-20-read-the-live-account-before-building-a-separation-the-core-",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Read the live account before building a separation: the core's databases were already its own",
+   "body": "The 2026-11-20 reading of the ultrastable account shows five D1 databases: two core (org, ops), three not core. The work for Q-GAP-core-separation was the record and the check (owndb), not a migration. spinoffs/wrangler.toml names a Worker and a database the account does not contain.",
+   "probe": "file:foundation/owndb.py",
+   "session": "session_0156nqDub9wYHrj8bkBGP9bS"
+  },
+  {
+   "id": "lesson-2026-11-20-regen-generated-needs-the-executor-fold-flag-on-the-top-leve",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "regen-generated needs the executor --fold flag on the top-level CLI",
+   "body": "scripts/regen_generated.py calls 'foundation executor --fold --apply'; foundation/__main__.py declared its own executor sub-parser that did not know --fold, so regen-generated failed on every main push. A flag added to executor.main must also be added to the sub-parser in __main__.py.",
+   "probe": "grep:foundation/__main__.py::--fold",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "lesson-2026-11-20-runway-and-credential-readings-now-land-on-main",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Runway and credential readings now land on main",
+   "body": "The watchdog lands ops/runway.json, ops/credwatch.json and resilience rows through the pull request route in scripts/land_data.py; the main writer answers 409 and the ruleset requires checks.",
+   "probe": "file:scripts/land_data.py",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "lesson-2026-11-20-smoke-repair-items-land-through-a-session-opened-pull-reques",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Smoke repair items land through a session-opened pull request",
+   "body": "Q-SMOKE items written by smoke-live reach main as a pull request; one opened with the workflow token starts no checks, so a session reopens it under its own token until a PAT route exists.",
+   "probe": "file:scripts/smoke_issues.py",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "lesson-2026-11-20-social-loop-needs-6-8-subrequests-per-run",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Social loop needs 6-8 subrequests per run",
+   "body": "The social loop's 5-call share (LOOP_MAX_COST.social) starved every post after 2026-11-20 01:10 UTC: gate, calendar, tenant queue, a DPoP token refresh and a post need 6 to 8 calls. Share is now 9 (minimum 6). A channel with no token is not a channel. Tenants publish a queue (social/gate.json tenant_queues) and core only drains it.",
+   "probe": "grep:seed/worker/src/subreq.js::social: 9 }",
+   "session": "session_0156nqDrWfEXVqwJrA8J9X8Y"
+  },
+  {
+   "id": "lesson-2026-11-20-the-main-rule-exempted-an-app-that-no-longer-writes-to-main-",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "The main rule exempted an app that no longer writes to main (APP-DRIFT-1)",
+   "body": "The ruleset on main named app 5806148 as its only bypass actor; the tick Worker writes with a newer app, so GitHub answered 422 to every workflow data commit and runway, credential and backup readings never reached main. The resolver in seed/worker/src/auth/rulesets.js now re-applies the rule whenever the applied row does not name the app in use. Data pull requests are capped at three open (DATA-PR-CAP-1) after the refusal produced 14 in ten minutes.",
+   "probe": "grep:seed/worker/src/auth/rulesets.js::APP-DRIFT-1",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "lesson-2026-11-20-two-swallowed-exceptions-now-print-their-failure",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Two swallowed exceptions now print their failure",
+   "body": "foundation/clockwork.py and foundation/resilience.py each ended a try block with except Exception: pass. Both still fall back as before (ledger only, health URLs only) and now print the exception type and message to stderr, so the failure is visible in the run log. The self-code sensor reports no bare_except finding after the change.",
+   "probe": "grep:foundation/resilience.py::d1 beats unreadable",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "lesson-2026-11-20-weekly-growth-report-lives-inside-the-product-manager-pass",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Weekly growth report lives inside the product manager pass",
+   "body": "foundation/pm.py weekly() writes ops/growth/weekly.json once per ISO week and only when a metric was measured; the transparency snapshot carries it as product_manager.weekly and /live renders it. Previous-week values come from the last report, so no extra database query is made.",
+   "probe": "file:foundation/pm.py",
+   "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+  },
+  {
+   "id": "lesson-2026-11-20-smoke-runway-check-reads-runway-days-and-meets-target",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Smoke runway check reads runway_days and meets_target",
+   "body": "The production smoke test read a key the runway record never had, so the runway check failed on every run. It now reads runway_days, meets_target, below and unmeasured. land_data starts no checks run on a data branch: a dispatched run does not satisfy the branch rule.",
+   "probe": "grep:scripts/smoke_live.py::meets_target",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "lesson-2026-11-20-ciwatch-items-land-through-the-main-writer",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "ciwatch items land through the main writer",
+   "body": "A pull request opened with the built-in workflow token starts no checks, so each ciwatch items pull request stayed open. ciwatch now lands its items with scripts/land_data.py like the other data loops.",
+   "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-4",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
   }
  ]
 }

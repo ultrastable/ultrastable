@@ -1,7 +1,7 @@
 {
   "id": "OL-20261114-2",
   "title": "OL-20261114-2: CONNECT-2: dashboard panel for /auth/connectors and a per-tenant connect button",
-  "body": "**Owner:** product-manager\n**Trigger:** next executor pass\n**Done check:** grep:dashboard::auth/connectors\n**Status:** open\n\nThe status JSON exists; the owner dashboard does not render it yet, and connector tokens are not yet exposed to tenant tools through a getToken-backed API.",
+  "body": "**Owner:** product-manager\n**Trigger:** next executor pass\n**Done check:** grep:dashboard/worker.js::auth/connectors\n**Status:** closed\n\nThe status JSON exists; the owner dashboard does not render it yet, and connector tokens are not yet exposed to tenant tools through a getToken-backed API.\n\n**Evidence:** dashboard/worker.js connectorsPanel reads the tick Worker /auth/connectors and serves GET /api/owner/connectors plus the Connections section. Per-tenant connect buttons and the token interface for tenant tools continue as Q-CONNECT-3. Done check corrected to name the file (a directory path can never match).\n",
   "labels": [
     "role:product-manager",
     "open-loop"

@@ -9,12 +9,186 @@
   "external": "a signal from outside (scout finding, funder reply, competitor change)"
  },
  "counts_by_origin": {
-  "loop": 15,
+  "loop": 29,
   "owner": 26,
   "agent": 14,
   "system": 3
  },
  "entries": [
+  {
+   "id": "pv-d35ffc6f37ae",
+   "at": "2026-11-20T15:43:17Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "portfolio-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-11be791df8de",
+   "at": "2026-11-20T15:43:17Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "numbers-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-6aeb20ece2ba",
+   "at": "2026-11-20T15:43:17Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "free-tier-meter: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-5bf31ebc4ed7",
+   "at": "2026-11-20T15:43:17Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "country-snapshot: keep (age 0d under the 14d trial)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-f059cae48ea9",
+   "at": "2026-11-20T15:43:17Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "blindspot: keep (age 2d under the 14d trial)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-6f58e5488394",
+   "at": "2026-11-20T15:43:17Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "air-quality: keep (age 1d under the 14d trial)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-478068655778",
+   "at": "2026-11-20T15:43:17Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "access-check: keep (age 0d under the 14d trial)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-411536229dc1",
+   "at": "2026-11-19T16:00:14Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "launched free-tier-meter.ultrastable.app: score 13.85 (reach 4, impact 3) from needs ; prediction board_age_hours <= 30 within 48 h",
+   "affected": [
+    "instances/spinoffs/free-tier-meter"
+   ],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-f1d50096ef59",
+   "at": "2026-11-19T16:00:14Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "launched country-snapshot.ultrastable.app: score 15.38 (reach 4, impact 4) from needs ; prediction board_age_hours <= 30 within 48 h",
+   "affected": [
+    "instances/spinoffs/country-snapshot"
+   ],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-c554c08cd7a3",
+   "at": "2026-11-19T16:00:14Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "launched access-check.ultrastable.app: score 16.0 (reach 4, impact 4) from needs ; prediction board_age_hours <= 30 within 48 h",
+   "affected": [
+    "instances/spinoffs/access-check"
+   ],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-d1c9bf12679c",
+   "at": "2026-11-19T16:00:14Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "portfolio-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-2d61bd7669c0",
+   "at": "2026-11-19T16:00:14Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "numbers-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-d3c809a03fdf",
+   "at": "2026-11-19T16:00:14Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "blindspot: keep (age 2d under the 14d trial)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-ea1eb36ba899",
+   "at": "2026-11-19T16:00:14Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "air-quality: keep (age 1d under the 14d trial)",
+   "affected": [],
+   "effect": "pending"
+  },
   {
    "id": "pv-843fb9282e33",
    "at": "2026-11-18T15:56:55Z",

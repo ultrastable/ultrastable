@@ -65,19 +65,37 @@ export async function getToken(db, env, tenant, provider, opts = {}) {
     return r;
   }
   if (r.token && r.expiresAt) memo.set(key, { token: r.token, expiresAt: typeof r.expiresAt === 'number' ? r.expiresAt : Date.parse(r.expiresAt) });
-  await store.put(db, env, tenant, provider, { access: r.token || null, expiresAt: r.expiresAt || null, status: 'ok', error: null, ...(r.rotatedRefresh ? { secret: { ...m.secret, refresh_token: r.rotatedRefresh } } : {}) });
+  await store.put(db, env, tenant, provider, { access: r.token || null, expiresAt: r.expiresAt || null, status: 'ok', error: null, ...(r.rotatedRefresh || r.secretPatch ? { secret: { ...m.secret, ...(r.secretPatch || {}), ...(r.rotatedRefresh ? { refresh_token: r.rotatedRefresh } : {}) } } : {}) });
   await store.event(db, tenant, provider, m && m.access ? 'refreshed' : 'minted', r.expiresAt ? 'expires ' + new Date(r.expiresAt).toISOString() : 'no expiry');
   return { ok: true, token: r.token, cached: false };
+}
+
+export const DEAD_RETRY_MS = 6 * 3600 * 1000;
+export const isDead = r => r.status === 'failed' && /refresh HTTP 40[01]|consent has not completed/.test(r.last_error || '');
+
+// OWNER-ACTS-1: the acts that need a person's sign-in, read from live credential rows instead of a typed list. No secret leaves: provider, reason, link.
+export async function ownerActs(db) {
+  await store.ensureSchema(db);
+  const rows = (await db.prepare('SELECT tenant, provider, status, last_error, updated_at FROM credentials').all()).results || [];
+  return rows.filter(isDead).map(r => ({ id: 'signin:' + r.provider, tenant: r.tenant, provider: r.provider, reason: r.last_error, since: r.updated_at, connect: '/connect/' + r.provider.replace(/^oauth:/, '').replace(/^github-.*/, 'github') }));
 }
 
 export async function refreshDue(db, env, opts = {}) {
   await store.ensureSchema(db);
   const now = opts.now || Date.now();
-  const rows = (await db.prepare('SELECT tenant, provider, expires_at, status FROM credentials').all()).results || [];
+  const rows = (await db.prepare('SELECT tenant, provider, expires_at, status, last_error, updated_at FROM credentials').all()).results || [];
   const out = [];
   for (const r of rows) {
+    if (r.provider === 'oauth:bluesky' || r.provider === 'oauth:mastodon') { out.push({ ...r, action: 'at-use' }); continue; }  // SOCIAL-TENANTS-1: the publisher refreshes these when it posts (Bluesky needs DPoP, which the generic grant lacks; Mastodon tokens do not expire). The generic grant failed every hour and overwrote the row's status.
+    // NO-EXPIRY-1 (2026-11-20): a connected token with no expiry (Mastodon) is not due. It was treated as due on every tick, the refresh found no refresh
+    // token, and the row was marked failed minutes after a good sign-in. A sign-in still under way (pending, oauth) is waiting on its callback, not on a refresh.
+    if (r.status === 'ok' && !r.expires_at && r.provider.startsWith('oauth:')) { out.push({ tenant: r.tenant, provider: r.provider, status: r.status, action: 'fresh' }); continue; }
+    if (r.status === 'pending' && r.provider.startsWith('oauth:')) { out.push({ tenant: r.tenant, provider: r.provider, status: r.status, action: 'awaiting-consent' }); continue; }
     const due = r.status !== 'ok' || !r.expires_at || Date.parse(r.expires_at) - now <= MARGIN_MS;
-    if (!due) { out.push({ ...r, action: 'fresh' }); continue; }
+    if (!due) { out.push({ tenant: r.tenant, provider: r.provider, expires_at: r.expires_at, status: r.status, action: 'fresh' }); continue; }
+    // DEAD-CONSENT-1 (2026-11-20): a refresh the provider refused (401/400) or a consent that never finished cannot heal by retrying; only a new sign-in does.
+    // Live rows showed 337 Bluesky and 374 Mastodon retries, one every tick. Such a row is retried every DEAD_RETRY_MS, and a new consent rewrites it at once.
+    if (isDead(r) && r.updated_at && now - Date.parse(r.updated_at) < DEAD_RETRY_MS) { out.push({ tenant: r.tenant, provider: r.provider, action: 'backoff', error: r.last_error }); continue; }
     const res = await getToken(db, env, r.tenant, r.provider, { ...opts, now });
     out.push({ tenant: r.tenant, provider: r.provider, action: res.ok ? 'renewed' : 'failed', error: res.error });
   }

@@ -50,10 +50,10 @@ assert.ok(!JSON.stringify(r.body).includes("claude-haiku-5-5"), "config tier lab
 assert.equal(byId["staff-1"].model, "m"); assert.equal(byId["ops-1"].model, "none in 24 h");
 assert.deepEqual(byId["staff-1"].lined_up.map(i => i.item), ["A", "B"]); assert.ok(byId["staff-1"].next_tick_at);
 // CODE-QUEUE-1: the code executor is an agent; its work is the in-pr items and its queue the needs-code items.
-db.exec(`INSERT INTO items (id,title,owner_role,done_check,priority,status,blocker) VALUES ('P','P: in pr','operations','x',40,'blocked','in-pr: https://github.com/o/r/pull/9 | agent: worker-native | model: @cf/zai-org/glm-5.3-flash'),('Q','Q: needs code','operations','x',30,'blocked','needs-code: edit x')`);
+db.exec(`INSERT INTO items (id,title,owner_role,done_check,priority,status,blocker) VALUES ('P','P: in pr','operations','x',40,'blocked','in-pr: https://github.com/o/r/pull/9 | agent: worker-native | model: @cf/zai-org/glm-4.7-flash'),('Q','Q: needs code','operations','x',30,'blocked','needs-code: edit x')`);
 r = await J("https://ultrastable.io/api/v1/agents");
 const ce = r.body.agents.find(a => a.id === "code-executor");
-assert.equal(ce.state, "working"); assert.equal(ce.working_on[0].pr, "https://github.com/o/r/pull/9"); assert.equal(ce.model, "@cf/zai-org/glm-5.3-flash"); assert.deepEqual(ce.lined_up.map(i => i.item), ["Q"]);
+assert.equal(ce.state, "working"); assert.equal(ce.working_on[0].pr, "https://github.com/o/r/pull/9"); assert.equal(ce.model, "@cf/zai-org/glm-4.7-flash"); assert.deepEqual(ce.lined_up.map(i => i.item), ["Q"]);
 assert.deepEqual((await J("https://ultrastable.io/api/v1/work?view=in_progress")).body.items.map(i => i.id).sort(), ["C", "P"]);
 assert.ok(!(await J("https://ultrastable.io/api/v1/work?view=blocked")).body.items.some(i => i.id === "P"), "an item in a PR is in progress, not blocked");
 db.exec(`DELETE FROM items WHERE id IN ('P','Q')`);
@@ -175,3 +175,17 @@ assert.match((await get("https://ultrastable.io/")).headers.get("link") || "", /
   for (const sc of scripts) new Function(sc);
 }
 console.log("controlplane ok");
+
+// AGENT-SCOREBOARD-1
+db.exec(`INSERT INTO items (id,title,kind,owner_role,done_check,status,surface,created_at,updated_at) VALUES
+ ('S1','s1','intake-idea','product-manager','x','done','integration:companion agent:sb-one harness:vscode',datetime('now','-5 hours'),datetime('now','-3 hours')),
+ ('S2','s2','intake-bug','product-manager','x','ready','integration:companion agent:sb-one harness:vscode',datetime('now','-4 hours'),datetime('now','-3 hours')),
+ ('S3','s3','intake-idea','product-manager','x','cancelled','integration:companion agent:sb-two harness:cli',datetime('now','-4 hours'),datetime('now','-1 hours')),
+ ('S4','s4','intake-idea','product-manager','x','open','integration:companion agent:sb-two harness:cli',datetime('now','-1 hours'),datetime('now','-1 hours'))`);
+r = await J("https://ultrastable.io/api/v1/agents/scoreboard");
+assert.equal(r.status, 200);
+{ const sb = r.body.agent_scoreboard, c = sb.find(x => x.agent === "sb-one"), x = sb.find(x => x.agent === "sb-two");
+  assert.deepEqual({ s: c.submitted, a: c.accepted, d: c.declined, h: c.harness, t: c.median_triage_h, w: c.routing_weight }, { s: 2, a: 2, d: 0, h: "vscode", t: 1, w: 0.75 });
+  assert.deepEqual({ s: x.submitted, a: x.accepted, d: x.declined, o: x.open, w: x.routing_weight }, { s: 2, a: 0, d: 1, o: 1, w: 0.33 });
+  assert.ok(sb.findIndex(y => y.agent === "sb-one") < sb.findIndex(y => y.agent === "sb-two"), "ordered by routing weight"); }
+console.log("agent scoreboard ok");

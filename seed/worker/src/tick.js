@@ -16,6 +16,7 @@ import { migrateStep } from './migrate.js';
 import { executeStep, claimsReleasedUnworked24h } from './doer.js';
 import { pulseStep, tickCadenceMin } from './pulse.js';
 import { ignitionStep } from './ignition.js';
+import { ensureSchema as ensureCredentialSchema } from './auth/store.js';  // CONNECTOR-HEALTH-1
 import { OWN_SQL, tenantOf } from './tenant.js';  // Q-TENANT-row-isolation: a runtime acts only on rows with tenant_id NULL (own) or its own slug
 
 const TERMINAL = ['done', 'superseded', 'cancelled'];
@@ -38,6 +39,7 @@ function iso(d) { return d.toISOString().replace('T', ' ').slice(0, 19); }
 
 // Built-in metrics a prediction can name. Each returns a number.
 export const METRICS = {
+  stalled_systems: db => first(db, `SELECT COUNT(*) AS n FROM progress_cadence WHERE state = 'stalled'`).then(r => r.n, () => 0),  // PROGRESS-1: systems that shipped nothing visible for two of their declared intervals; no table yet reads 0
   tick_runs_completed_1h: (db, now) => first(db,
     `SELECT COUNT(*) AS n FROM tick_runs WHERE finished_at >= ? AND steps_completed = steps_total`,
     iso(new Date(now - 3600e3))).then(r => r.n),
@@ -141,6 +143,12 @@ export const LIVENESS = [
   ['M-instrumented', 'objectives without a probe-backed target metric', 'objectives_without_probe', '<=', 0, 1, 'product-manager', 'Insert a target metric with a builtin, sql or http probe for the objective.'],
 ];
 
+// CONNECTOR-HEALTH-1: the consent page a reconnect card links to. Both GitHub credentials share one screen.
+export function reconnectLink(ctx, provider) {
+  const origin = String((ctx.env && ctx.env.PUBLIC_ORIGIN) || '').replace(/\/$/, '');
+  return `${origin}/connect/${String(provider).startsWith('github') ? 'github' : encodeURIComponent(provider)}`;
+}
+
 export const STEPS = {
   // Every item that left the active set has a disposition; items whose trigger is done become ready.
   async reconcile(db, ctx) {
@@ -168,6 +176,33 @@ export const STEPS = {
     if (stale.length) ctx.notes.push(`released ${stale.length} stale claim(s)`);
   },
 
+  // CONNECTOR-HEALTH-1: every linked connector is read each tick (no new cron): last_ok, expires_at and the result of the refresh attempt
+  // refreshDue made just before this tick. A connector whose last two refresh attempts both failed raises one reconnect card whose button is
+  // its consent link; probe_gates closes the card when the connector is ok again. Default in effect: every other loop keeps running.
+  async connector_health(db, ctx) {
+    await ensureCredentialSchema(db);
+    const T = tenantOf(ctx), nowMs = Date.parse(ctx.nowIso), report = [];
+    for (const c of await all(db, `SELECT tenant, provider, status, expires_at, last_error FROM credentials ORDER BY provider LIMIT 50`)) {
+      const ev = await all(db, `SELECT event, at FROM credential_events WHERE tenant = ? AND provider = ? ORDER BY id DESC LIMIT 5`, c.tenant, c.provider);
+      const okEv = ev.find(e => e.event === 'refreshed' || e.event === 'minted');
+      let failures = 0; for (const e of ev) { if (e.event === 'failed') failures++; else break; }
+      const connector = { provider: c.provider, status: c.status, last_ok: okEv ? okEv.at : null, expires_at: c.expires_at || null, expires_in_h: c.expires_at ? Math.round((Date.parse(c.expires_at) - nowMs) / 36e5) : null, failures };
+      report.push(connector);
+      if (failures < 2) continue;
+      const id = `GATE-RECONNECT-${c.provider}`, link = reconnectLink(ctx, c.provider);
+      const g = await first(db, `SELECT status FROM gate_cards WHERE id = ? AND ${OWN_SQL()}`, id, T);
+      if (g && g.status === 'open') continue;
+      if (g) await run(db, `UPDATE gate_cards SET status='open', closed_at=NULL, prepared_by_fleet=? WHERE id = ? AND ${OWN_SQL()}`, link, id, T);
+      else await run(db, `INSERT INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?)`, id,
+        `Reconnect ${c.provider}: one click on the consent link`,
+        `Identity-bound: the last ${failures} silent refresh attempts failed (${String(c.last_error || 'no detail').slice(0, 120)}), and only the account holder can approve access again`,
+        'Loops that need this connector skip their step and say so; every other loop keeps running, and the refresh is tried again every tick',
+        link, `connector:${c.provider}`, null);
+      ctx.notes.push(`connector ${c.provider} failed ${failures} refreshes: reconnect card ${id} opened`);
+    }
+    ctx.connectors = report;
+  },
+
   // Gate cards close themselves when their probe shows the owner's step is done.
   async probe_gates(db, ctx) {
     const T = tenantOf(ctx);
@@ -178,6 +213,7 @@ export const STEPS = {
       let ok = false;
       if (kind === 'env') ok = Boolean(ctx.env && ctx.env[arg]);
       if (kind === 'owner_items') ok = !(await first(db, `SELECT 1 AS x FROM items WHERE status='blocked' AND blocker LIKE 'owner-only:%' AND ${OWN_SQL()} LIMIT 1`, T));
+      if (kind === 'connector') ok = Boolean(await first(db, `SELECT 1 AS x FROM credentials WHERE provider = ? AND status = 'ok'`, arg)) && !(await first(db, `SELECT 1 AS x FROM credentials WHERE provider = ? AND status <> 'ok'`, arg));  // CONNECTOR-HEALTH-1
       if (kind === 'item_done') ok = Boolean(await first(db, `SELECT 1 AS x FROM items WHERE id=? AND status='done' AND ${OWN_SQL()}`, arg, T));
       if (ok) {
         await run(db, `UPDATE gate_cards SET status='closed', closed_at=? WHERE id=? AND ${OWN_SQL()}`, ctx.nowIso, c.id, T);
@@ -286,9 +322,9 @@ export const STEPS = {
       const rung = cur ? cur.rung : ctx.config.policy.surfaces[r.surface]?.start_rung || 'observed';
       await run(db, `INSERT INTO trust_ledger (surface, action_class, rung, reliability, outcomes, updated_at)
           VALUES (?, ?, ?, ?, ?, ?)
-          ON CONFLICT(surface, action_class) DO UPDATE SET reliability=excluded.reliability, outcomes=excluded.outcomes, updated_at=excluded.updated_at
-          WHERE trust_ledger.tenant_id IS NULL OR trust_ledger.tenant_id = ?`,  // the primary key cannot carry the tenant (additive migration): a row of another tenant at this key is never overwritten
-        r.surface, r.action_class, rung, rel, r.n, ctx.nowIso, tenantOf(ctx));
+          ON CONFLICT(COALESCE(tenant_id, ''), surface, action_class) DO UPDATE SET reliability=excluded.reliability, outcomes=excluded.outcomes, updated_at=excluded.updated_at`,
+        // migration 0027: the key carries the tenant, so this own row (tenant_id NULL) never meets a row of another tenant at the same surface and action class; both accrue
+        r.surface, r.action_class, rung, rel, r.n, ctx.nowIso);
       const idx = ladder.rungs.indexOf(rung);
       const maxPerm = ctx.config.policy.surfaces[r.surface]?.max_permission || 'none';
       const ceilingIdx = ladder.rungs.indexOf(ladder.ceiling_by_max_permission[maxPerm] || 'observed');
@@ -421,7 +457,7 @@ export const STEPS = {
   async ignition(db, ctx) { await ignitionStep(db, ctx, ensureItem); },
 };
 
-export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
+export const STEP_ORDER = ['migrate', 'reconcile', 'reap_claims', 'connector_health', 'probe_gates', 'score_predictions', 'measure', 'accrue_trust', 'selfaudit', 'unknowns', 'goals', 'dispatch', 'execute', 'check_plus_share', 'age_sla', 'cost_probe', 'pulse', 'criticality', 'ignition'];
 
 // Q-LESSON-COST-SAMPLE-ACT: while the latest hourly cost sample of any budgeted D1 database is over its max_rows_read_per_hour, the tick runs
 // only these steps. reconcile keeps every item's disposition honest (no silent drops), measure keeps the liveness metrics and the breach visible,

@@ -45,6 +45,36 @@ export async function ingestTransparency(request, env) {
   return J({ ok: true, generated: b.generated, parts: parts.length });
 }
 
+// CF-ROUTE-1: the credential-free way for a workflow to read the account (the credential check) and run the weekly backup drill. The workflow presents its OIDC token; this
+// Worker forwards ONE allow-listed request with the credential only it holds and streams the answer back. Nothing it cannot read from the account's own stores is exposed:
+// D1 reads (SELECT only), KV reads, and read, write or delete of objects under the backup prefix of the backup bucket. The method and path travel in headers, the body is passed through untouched.
+export const CF_BUCKET = "ultrastable-git", CF_PREFIX = "backups/";
+const Q = "(\\?[\\w=&.%:/-]*)?";
+const CF_RULES = [
+  ["GET", new RegExp("^d1/database" + Q + "$")],
+  ["POST", /^d1\/database\/[0-9a-f-]{36}\/(export|query)$/],
+  ["GET", new RegExp("^storage/kv/namespaces" + Q + "$")],
+  ["GET", new RegExp("^storage/kv/namespaces/[0-9a-f]{32}/(keys|values/[^?/]+)" + Q + "$")],
+  ["GET", new RegExp("^r2/buckets/" + CF_BUCKET + "/objects" + Q + "$")],
+  ["GET", new RegExp("^r2/buckets/" + CF_BUCKET + "/objects/backups/[\\w./%-]+$")],
+  ["PUT", new RegExp("^r2/buckets/" + CF_BUCKET + "/objects/backups/[\\w./%-]+$")],
+  ["DELETE", new RegExp("^r2/buckets/" + CF_BUCKET + "/objects/backups/[\\w./%-]+$")],
+];
+export const cfAllowed = (method, path) => !String(path).includes("..") && CF_RULES.some(([m, r]) => m === method && r.test(path));
+export const selectOnly = (sql) => /^\s*(select|pragma\s+table_info)\b/i.test(sql) && !/;\s*\S/.test(sql);
+export async function cfProxy(request, env, f) {
+  const method = String(request.headers.get("x-cf-method") || "GET").toUpperCase(), path = String(request.headers.get("x-cf-path") || "");
+  if (!cfAllowed(method, path)) return J({ ok: false, error: "not an allowed Cloudflare request: " + method + " " + path.split("?")[0] }, 403);
+  let body = ["GET", "DELETE"].includes(method) ? undefined : request.body;
+  if (method === "POST" && /\/query$/.test(path.split("?")[0])) {
+    const text = await request.text(); let j; try { j = JSON.parse(text); } catch (e) { return J({ ok: false, error: "bad json" }, 400); }
+    if (!selectOnly(String(j.sql || ""))) return J({ ok: false, error: "only read queries are allowed" }, 403);
+    body = text;
+  }
+  const up = await f(`https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT_ID}/${path}`, { method, headers: { authorization: "Bearer " + env.CF_DEPLOY_TOKEN, "content-type": request.headers.get("content-type") || "application/json" }, body, duplex: body && typeof body !== "string" ? "half" : undefined });
+  return new Response(up.body, { status: up.status, headers: { "content-type": up.headers.get("content-type") || "application/json" } });
+}
+
 export async function internalDeploy(request, env, fetcher) {
   const u = new URL(request.url);
   if (!u.pathname.startsWith("/__internal/")) return null;
@@ -55,13 +85,14 @@ export async function internalDeploy(request, env, fetcher) {
   if (u.pathname === "/__internal/transparency") return ingestTransparency(request, env);
   const f = fetcher || fetch, T = env.CF_DEPLOY_TOKEN, A = env.CF_ACCOUNT_ID;
   if (!T || !A) return J({ ok: false, error: "site has no CF_DEPLOY_TOKEN / CF_ACCOUNT_ID" }, 503);
+  if (u.pathname === "/__internal/cf") return cfProxy(request, env, f);
   const api = (m, p, body, h) => f("https://api.cloudflare.com/client/v4" + p, { method: m, headers: { authorization: "Bearer " + T, ...(h || {}) }, body }).then(r => r.json());
   let b; try { b = await request.json(); } catch (e) { return J({ ok: false, error: "bad json" }, 400); }
   if (!ALLOWED.test(String(b.name || ""))) return J({ ok: false, error: "worker name not allowed: " + b.name }, 400);
   if (u.pathname === "/__internal/deploy") {
     if (!Array.isArray(b.modules) || !b.modules.length || !b.main) return J({ ok: false, error: "modules and main are required" }, 400);
     const form = new FormData();
-    form.append("metadata", new Blob([JSON.stringify({ main_module: b.main, compatibility_date: b.compatibility_date || "2026-11-12", bindings: b.bindings || [], keep_bindings: ["secret_text", "secret_key"], annotations: b.tag ? { "workers/tag": b.tag, "workers/message": "HANDOFF-1 deploy of " + b.tag } : undefined })], { type: "application/json" }));
+    form.append("metadata", new Blob([JSON.stringify({ main_module: b.main, compatibility_date: b.compatibility_date || "2026-11-12", bindings: b.bindings || [], keep_bindings: ["secret_text", "secret_key"], observability: { enabled: true, head_sampling_rate: 1 }, annotations: b.tag ? { "workers/tag": b.tag, "workers/message": "HANDOFF-1 deploy of " + b.tag } : undefined })], { type: "application/json" }));
     for (const m of b.modules) form.append(m.name, new Blob([m.src], { type: m.type || "application/javascript+module" }), m.name);
     const up = await api("PUT", `/accounts/${A}/workers/scripts/${b.name}`, form);
     if (!up.success) return J({ ok: false, error: "upload: " + JSON.stringify(up.errors || []).slice(0, 400) }, 502);

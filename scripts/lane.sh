@@ -30,6 +30,9 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
   if [ "$mg" = CONFLICTING ]; then
     # CONFLICT-CLOSE-1: the lane closes the conflict itself: merge main, resolve the generated files, push, dispatch checks. An executor PR that
     # still cannot merge is closed so its queue item is redone from main. Only a session PR with a real conflict falls through to the label.
+    # SERVER-OWNS-LOOPS (OL-PR-NEEDS-PAT): a push by the workflow token onto a PR that needs the workflow credential raises no checks run and moves
+    # the head under the sweeper, so the lane leaves refreshing and merging those PRs to the tick Worker sweeper (app installation token).
+    if [ "$wf" = true ]; then echo "#$n needs-pat conflict: left to the sweeper"; continue; fi
     cr=$(python3 -m foundation conflicts --pr "$n" --apply 2>&1 | tail -1); echo "#$n conflict pass: $cr"
     case "$cr" in *'"result": "resolved"'*|*'"result": "requeued"'*) continue;; esac
     case "$labels" in

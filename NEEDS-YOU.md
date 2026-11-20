@@ -2,33 +2,21 @@
 
 Everything else is done by the system. These are the only acts that need your identity, each with the one click that does it and what already happens if you never click.
 
-## Fix the GitHub Actions payment
-Every Actions job on ultrastable is refused with 'recent account payments have failed or your spending limit needs to be increased' (executor, checks and lane runs of 2026-11-14 ended in 2-3 s). IDENTITY-BOUND: payment method and spending limit are the owner's. If you do nothing: No Actions job runs; the Worker loops (ZERO-MINUTES-1) are being built to carry the work without Actions minutes, and the cloud routine keeps picking issues.
-**[Open the org billing page and fix the payment method or spending limit](https://github.com/organizations/ultrastable/settings/billing)**
-
 ## Submit funding applications
 An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact. If you do nothing: Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you.
 **[Open the ready-to-paste application kits (Y Combinator Winter 2027 late applications are open)](https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md)**
 
 ## Move the four ultrastable domains to the Ultrastable account
-ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is off on all four (expiry 2027-11-10). If you do nothing: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.
-**[Open the registrar domains (available from 2026-11-20)](https://dash.cloudflare.com/?to=/:account/registrar/domains)**
+ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is on for all four since 2026-11-20 (next renewal 2027-11-10). If you do nothing: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.
+**[Open the registrar domains](https://dash.cloudflare.com/?to=/:account/registrar/domains)**
 
 ## Upload the org avatar and pin repos
 GitHub has no API for these. If you do nothing: Generated identicon, no pins.
 **[Open the org profile settings](https://github.com/organizations/ultrastable/settings/profile)**
 
-## Create the Bluesky account
-Account creation accepts terms in your name. If you do nothing: Posting stays dry-run; the repo, registry pull requests and feeds carry the work.
+## Sign in to Bluesky again
+Bluesky was connected on 2026-11-17 and has refused the stored access since 2026-11-20; Mastodon's sign-in was started and never finished. Only a new sign-in on the service's own page restores it. If you do nothing: Posting stays dry-run; the repo, registry pull requests and feeds carry the work.
 **[Sign in to Bluesky (or Mastodon at /connect/mastodon); the system stores and renews the access](https://ultrastable.io/connect/bluesky)**
-
-## Connect GitHub
-One approval on GitHub's own page lets the system open, check, merge and deploy changes by itself, including changes to its own workflows. The system then handles every callback, token exchange and renewal. If you do nothing: Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.
-**[Authorize on GitHub](https://ultrastable.io/connect/github)**
-
-## Allow repository settings (archiving and the main-branch check rule)
-One approval on GitHub's own page registers a second app that can change repository settings only, so the server can archive the retired repositories (seed, license, spec, workers) and apply the rule that main only takes a change whose checks passed. The system handles every callback, token and renewal. If you do nothing: The retired repositories stay unarchived, each with a README pointing to the main repository; the merge lane and sweeper keep refusing red changes, and a direct merge is not blocked by GitHub itself.
-**[Authorize on GitHub](https://ultrastable.io/connect/github-admin)**
 
 ## Register the Google and Buffer sign-in apps
 Connecting Google and Buffer by their consent screens (tokens stored in each person's own Cloudflare, never typed) needs one OAuth app registered in each service under your identity, with redirect https://ultrastable.io/connect/<service>/callback. IDENTITY-BOUND: registering an app accepts the provider's terms in your name. If you do nothing: the wizard keeps its account-creation links for Google and Buffer; nothing is typed or stored.
@@ -36,8 +24,9 @@ Connecting Google and Buffer by their consent screens (tokens stored in each per
 
 ## Already done for you
 
-- Work: a routine in Claude's cloud starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green. No API key is needed and no computer of yours has to be on.
 - Old Cloudflare account: the tick, site and dashboard keep running there.
 - Entity and the org admin token are not needed now; entity-only programmes stay deferred until you choose one.
+- Connect GitHub: done (D1 credentials github-app status ok; 78 hourly refreshes; the app key has no expiry).
+- Allow repository settings (archiving and the main-branch check rule): done (D1 credentials github-admin status ok; events 'all retired repositories archived' 2026-11-17 and 'all rulesets applied' 2026-11-18).
 
 _Generated by `python3 -m foundation needsyou` from `foundation/data/needs-you.json`. Index of everything else: [INDEX.md](INDEX.md)._

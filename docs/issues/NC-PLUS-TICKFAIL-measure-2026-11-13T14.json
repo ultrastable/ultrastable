@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-TICKFAIL-measure-2026-11-13T14",
+  "title": "NC-PLUS-TICKFAIL-measure-2026-11-13T14: Add metrics table migration so D1 tick measure step succeeds persistently",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-TICKFAIL-measure-2026-11-13T14 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe PLUS-TICKFAIL-measure-2026-11-13T14\n**Status:** open\n\nAdd metrics table migration so D1 tick measure step succeeds persistently\n\nBacklog done check: Next scheduled tick completes step measure without D1_ERROR and rows appear in metrics table\n\nTriage: Creating a metrics table migration requires editing code/migration files; the doer can only read/write the backlog DB, so it cannot author or apply schema changes. | first step: Open a code-change ticket for an engineer to add a metrics-table migration, then schedule a tick to verify measure completes with rows inserted.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

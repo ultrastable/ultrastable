@@ -4,11 +4,12 @@
 import { paced } from './pace.js';
 import { withKnobs, readGoals, registerTenant, reportReadings, knobValues } from './goals.js';  // GOALS-1
 import { tune } from './roi.js';  // BOUNDARIES-1
-import { runTick, lastTickForHealth, METRICS } from './tick.js';
+import { runTick, lastTickForHealth, METRICS, ensureItem } from './tick.js';
 import { claimsReleasedUnworked24h } from './doer.js';
 import { runExecutor, noteExecutor } from './executor.js';
 import { runLane, githubBudget } from './lane.js';
 import { verifyOidc, commitToMain } from './maincommit.js';  // MAIN-WRITER-1
+import { opsBackup } from './opsbackup.js';  // BACKUP-SINK-1
 import { createMeter, guarded, readDeferred, writeDeferred } from './subreq.js';  // SUBREQUEST-METER-1
 import { ingestDeploys } from './selfaudit.js';
 import { sampleCosts } from './costsample.js';
@@ -18,7 +19,8 @@ import { runGate, gateCard } from './worker-gate.js';
 import { runHandoffs, makeDeployer, makeRollback, makeVersionReader } from './handoff.js';
 import { syncIssues } from './issuesync.js';
 import { sweepOpenLoops, recordSweep, lastSweep } from './sweeper.js';
-import { refreshLiveChanges, readLiveChanges } from './livechanges.js'; // LIVE-FRESH-1
+import { refreshLiveChanges, readLiveChanges, refreshFleetChanges } from './livechanges.js'; // LIVE-FRESH-1
+import { progressStep, readProgress } from './progress.js'; // PROGRESS-1
 import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
 import { recordGovernor, readDecisions, safely as decisionSafely } from './decisions.js'; // DECISIONS-1
 import { runSocial } from './social.js';  // REACH-1
@@ -31,7 +33,7 @@ import { pruneAll } from './retention.js';
 import { seal, verify, trace, head, r2Sink, githubSink, archiveRows } from './auditchain.js';  // AUDIT-CHAIN-1
 import { bearerOk } from './auditauth.js';  // RETENTION-1  // SPEND-GOVERNOR-1: every model call goes through the owner's monthly budget
 import { handleAuth } from './auth/routes.js';
-import { getToken, refreshDue, pathGuard } from './auth/index.js';
+import { getToken, refreshDue, pathGuard, ownerActs } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
 import { readCriticality, addSample } from './criticality.js';
 import { watchGithub } from './watchdog.js';
@@ -114,6 +116,8 @@ export default {
       const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));  // one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback)
       const token = (t && t.ok && t.token) || env.GITHUB_TOKEN || '';
       await b('live-changes', () => refreshLiveChanges({ db: env.DB, token, repo: main }));  // LIVE-FRESH-2: own early step; inside the sweeper it ran after 32 of 46 subrequests were spent and never wrote, so /live froze
+      await b('fleet-changes', () => refreshFleetChanges({ db: env.DB, token, repos: ((config.progress || {}).systems || []).map(x => x.repo).filter(r => r && r !== main) }));  // PROGRESS-1: the other repositories, at most hourly each
+      await b('progress', () => progressStep({ db: env.DB, config, token, ensureItem }));  // PROGRESS-1: release cadence monitor; a slow system has its producers dispatched, a stalled one files STALL-<system>
       await b('freshness', () => watchFreshness({ token, repo: main, siteUrl: env.PUBLIC_ORIGIN || 'https://ultrastable.io' }));  // LIVE-FRESH-2: a stale published snapshot re-dispatches its own publisher
       step('executor', async () => { const r = await runExecutor({ ...env, TENANT: env.TENANT || config.org_slug, AI: gov.ai || undefined, GITHUB_DISPATCH_TOKEN: token || env.GITHUB_DISPATCH_TOKEN, GITHUB_REPO: env.GITHUB_REPO || repos[0] }); await noteExecutor(env.DB, r); return r; });
       step('gate', async () => { const g = await runGate({ token, repos }); await gateCard(env.DB, g, { origin: env.PUBLIC_ORIGIN || '' }); return g; });  // ZERO-MINUTES-1, Q-GATE-403
@@ -172,6 +176,14 @@ export default {
       let event; try { event = JSON.parse(body || '{}'); } catch { return Response.json({ error: 'bad json' }, { status: 400 }); }
       return Response.json(await onHostEvent({ db: env.DB, token: (t && t.ok && t.token) || env.GITHUB_TOKEN || '', event }), { status: 202 });
     }
+    if (url.pathname === '/api/ops/backup' && request.method === 'POST') {  // BACKUP-SINK-1: the backup drill's dumps go to the private ops repository, written with the org's own GitHub App
+      if (halted(config, env)) return Response.json({ halted: true }, { status: 202 });  // HALT-1
+      const bearer = /^Bearer (.+)$/.exec(request.headers.get('authorization') || '');
+      const who = bearer ? await verifyOidc(bearer[1], { repo: env.MAIN_REPO || env.OIDC_REPO || 'ultrastable/ultrastable' }).catch(e => ({ ok: false, why: String(e && e.message) })) : { ok: false, why: 'no bearer' };
+      if (!who.ok) return new Response('Not found', { status: 404 });
+      const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
+      return opsBackup(request, { token: (t && t.ok && t.token) || '', repo: env.OPS_REPO || 'ultrastable/ops' });
+    }
     if (url.pathname === '/api/main/commit' && request.method === 'POST') {  // MAIN-WRITER-1: workflow data commits to main, written with the org's own GitHub App (exempt from the main ruleset)
       if (halted(config, env)) return Response.json({ halted: true }, { status: 202 });  // HALT-1
       const repo = env.MAIN_REPO || env.OIDC_REPO || 'ultrastable/ultrastable';
@@ -201,7 +213,8 @@ export default {
         return Response.json(r, { headers: { 'cache-control': 'no-store' } });
       } catch (e) { return d1Unavailable(e); }
     }
-    if (url.pathname === '/api/live/changes') { try { return Response.json(await readLiveChanges(env.DB), { headers: { 'cache-control': 'public, max-age=60' } }); } catch (e) { return d1Unavailable(e); } }  // LIVE-FRESH-1
+    if (url.pathname === '/api/progress') { try { return Response.json(await readProgress(env.DB, config), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // PROGRESS-1
+    if (url.pathname === '/api/live/changes') { try { const rs = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []); return Response.json(await readLiveChanges(env.DB, rs.find(r => r.endsWith('/ultrastable')) || rs[0] || null), { headers: { 'cache-control': 'public, max-age=60' } }); } catch (e) { return d1Unavailable(e); } }  // LIVE-FRESH-1
     if (url.pathname === '/api/roi') { try { return Response.json(await readRoi(env.DB, { env }), { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // ROI-1
     if (url.pathname === '/api/decisions') { try { return Response.json(await readDecisions(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // DECISIONS-1
     if (url.pathname === '/api/goals' && request.method === 'GET') {  // GOALS-READS-1: readGoals scans 14 days of samples and the loop beats (tens of thousands of D1 rows read), so the answer is cached at the edge for 10 minutes and a failed refresh serves the last good copy
@@ -256,6 +269,10 @@ export default {
     if (url.pathname === '/next') {
       const { results } = await db.prepare(`SELECT title, owner_role FROM items WHERE status IN ('open','ready') ORDER BY priority, created_at LIMIT 5`).all();
       return nextScreen({ items: results });
+    }
+    if (url.pathname === '/api/v1/owner-acts') {  // OWNER-ACTS-1: live, from credential rows and open gate cards; consumer foundation/unattended.py --live
+      const { results } = await db.prepare(`SELECT id, what, default_in_effect, closing_probe FROM gate_cards WHERE status='open' ORDER BY id LIMIT 50`).all();
+      return Response.json({ at: new Date().toISOString(), signins: await ownerActs(db), cards: results || [] }, { headers: { 'cache-control': 'no-store' } });
     }
     if (url.pathname === '/needs-you') {
       const { results } = await db.prepare(`SELECT what, why_gated, default_in_effect FROM gate_cards WHERE status='open' ORDER BY id LIMIT 10`).all();

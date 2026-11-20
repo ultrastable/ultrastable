@@ -10,6 +10,10 @@ import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
 import { liveResponse, ignitionResponse } from "./live.js";
 import { feedResponse } from "./feed.js"; // REACH-1
+import { demoResponse } from "./demo.js"; // DEMO-DASHBOARD-1
+import { caseResponse } from "./casestudy.js"; // CASE-STUDY-1
+import { examplesSection } from "./examples.js"; // EXAMPLE-SYSTEMS-1
+import { pilotOffer } from "./pilotoffer.js"; // PILOT-OFFER-1
 import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
 import VERIFIED from "./claims-data.js";
@@ -24,12 +28,14 @@ import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
 import { negotiate, robots, WEBMCP_JS } from "./readiness.js";  // AGENT-READY-2
 import ROAD from "./roadmap-data.js";
 import DEC from "./decisions-data.js";  // DECISIONS-1: generated from ops/decisions/*.jsonl
+import { progressRoutes } from "./progress.js";  // PROGRESS-1: what every system shipped, daily, weekly and monthly
 import SPIN from "./spinoff-roadmap-data.js";  // SPINOFF-IDEAS-1: generated from the idea queue and the free-tier headroom
 import ORGMAP from "./orgmap.js"; // ORGMAP-1: generated from brand/brand.json
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
 import { controlPlane, opsPage, tenantDiscovery, authIntegration } from "./controlplane.js";
 import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
+import { siteFeed, siteBadge, insights as siteInsights, insightsBody, viewedRecently, upkeepRound, recordVersion, restore as restoreVersion, versions as siteVersions, historyBody } from "./upkeep.js"; // SITE-UPKEEP-1
 import { connectionsRoute } from "./connections.js"; // CONNECTIONS-1
 import { internalDeploy } from "./deployer.js";
 var VERSION = "0.15.1";
@@ -66,9 +72,9 @@ function shell(opts, body) {
   return "<!doctype html><html lang=\"en\"><head>" + dsHead(opts.title, opts.description, CSS)
     + "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><meta property=\"og:image\" content=\"https://" + CANON + "/social-card.png\"><meta property=\"og:image:width\" content=\"640\"><meta property=\"og:image:height\" content=\"320\"><meta property=\"og:image:alt\" content=\"Coding agents write code. Ultrastable runs the system.\"><meta property=\"og:site_name\" content=\"Ultrastable\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"" + esc(opts.title) + "\"><meta name=\"twitter:description\" content=\"" + esc(opts.description) + "\"><meta name=\"twitter:image\" content=\"https://" + CANON + "/social-card.png\"><meta name=\"theme-color\" content=\"#12342A\"><link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\"><link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
     + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
-    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/live\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
+    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/live\">Live proof</a><a class=\"btn btn-quiet\" href=\"/progress\">What's new</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
-    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/live\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
+    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/live\">See the checks</a> · <a href=\"/progress\">What shipped</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
     + "<div class=\"us-foot\" id=\"family\">The Ultrastable family: <a href=\"https://" + CANON + "/\">" + esc(SH.domains.io.host) + "</a> (platform and product) · <a href=\"/showcase/practical-solutions\">" + esc(SH.domains.org.host) + "</a> (public-benefit demos) · <a href=\"/family.json\">family.json</a></div>"
     + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
     + "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"Ultrastable\",\"url\":\"https://ultrastable.io\",\"creator\":{\"@type\":\"Person\",\"name\":\"Rowan Brad Quni-Gudzinas\",\"jobTitle\":\"Founder and Director, Ultrastable\",\"url\":\"https://rwnq8.github.io\",\"sameAs\":[\"https://orcid.org/0009-0002-4317-5604\",\"https://github.com/rwnq8\",\"https://www.linkedin.com/in/rowan-quni\"]}}</script></main><script src=\"/webmcp.js\" defer></script></body></html>";
@@ -87,6 +93,7 @@ function home(ux) {
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/setup\">" + esc(slotText("home.setup_label", "primary_label", "Set up my own", ux)) + "</a><a class=\"btn\" href=\"/live\">See the live proof</a></div>"
     + "<div class=\"us-status\" role=\"status\">" + statusLine() + "</div></section>"
     + "<div class=\"us-lane\"><h2>Already comfortable with code?</h2><p class=\"us-tagline\">A system is autonomous if it has self-referential loops and the ability to close them. Coding agents write code. Ultrastable runs the system. Ultrastable runs on itself.</p><p class=\"us-lede\">It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.</p><p>You do not have to answer questions. The loops, virtual managers, agents and plussing budget are all there to use, with an honest list of what is live, in testing, and not built yet.</p><div class=\"us-actions\"><a class=\"btn\" href=\"/engineers\">Go straight to the engine</a></div></div>"
+    + examplesSection()
     + "<h2>Who are you?</h2><div class=\"us-grid c3\">" + SH.audiences.map(audienceCard).join("") + "</div>"
     + "<h2>Test cases</h2><div class=\"us-grid c2\">" + SH.showcases.filter(function (c) { return c.status !== "sunsetting"; }).map(caseCard).join("") + "</div><p><a href=\"/showcase\">All test cases, including the earlier testbed</a></p>"
     + "<h2>What it is not for</h2><div class=\"us-grid c2\">"
@@ -99,7 +106,7 @@ function home(ux) {
     + card("It keeps score", "Every decision logs a prediction first. The outcome is scored later, so you can see how often the system was right.")
     + "</div>"
     + "<h2>It questions what it does not know</h2><p>Improving only what is known makes the solution space smaller each time. So the managers also audit their own ignorance: every loop is asked inverted questions (what if the opposite were true, what would a world look like where this was false, what are we pretending not to know) drawn from the Universal Ignorance Audit, pre-mortems and red teaming. Each answer, including 'we cannot know', is recorded, and a gap found becomes a new objective. Coverage and findings are on the <a href=\"/live\">live page</a>.</p>"
-    + "<h2>Works with the agents you already use</h2><p>Ultrastable is the layer around coding agents, not another one. Open models on its own code loop, GitHub Copilot and Claude Code sessions all take work through one claim ledger, so two agents never edit the same file.</p>"
+    + "<h2>Works with the agents you already use</h2><p>Ultrastable is the layer around coding agents, not another one. Open models on its own code loop, GitHub Copilot and Claude Code sessions all take work through one claim ledger, so two agents never work the same item.</p>"
     + "<h2>Where it fits</h2>" + marketTable()
     + "<h2>Proven in production</h2><p>It has run a live system since August 2026, with merged pull requests, failure detectors and a scored prediction history that you can check on the <a href=\"/live\">live proof page</a>. It is one installation, and the <a href=\"/how#gaps\">honest gaps</a> are listed on this site.</p>"
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/pilot\">Join the pilot</a></div>");
@@ -172,7 +179,8 @@ function pilot() {
   const href = "mailto:" + PILOT_MAIL + "?subject=" + encodeURIComponent("Ultrastable pilot application") + "&body=" + encodeURIComponent(g.apply_fields.map(function (f) { return f + ":\n"; }).join(""));
   const list = function (a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; };
   return shell({ path: "/pilot", title: "Apply for an Ultrastable pilot", description: g.pitch },
-    "<div class=\"head\"><h1>" + esc(g.title) + "</h1><p>" + esc(g.pitch) + "</p></div>"
+    "<div class=\"head\"><h1>" + esc(g.title) + "</h1><p>" + esc(g.pitch) + "</p><p class=\"meta\">New here? <a href=\"/demo\">See the system running right now</a>.</p></div>"
+    + (DASH.pilot_offer ? pilotOffer(DASH.pilot_offer) : "")
     + "<div class=\"card\"><h3 class=\"card-title\">What we look for</h3>" + list(g.selection) + "</div>"
     + "<div class=\"card\"><h3 class=\"card-title\">What you get</h3><p class=\"meta\">" + esc(g.you_get) + " In return: " + esc(g.we_get) + ".</p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">What to tell us</h3>" + list(g.apply_fields) + "<p class=\"meta\">Price: " + esc(g.price) + ".</p></div>"
@@ -241,7 +249,7 @@ function product() {
     "<div class=\"head\"><h1>The product</h1><p>A control loop that sits around the coding agents a team already uses.</p></div>"
     + "<h2>What it does</h2><div class=\"us-grid c3\">"
     + card("Chooses the work", "Reads your metrics and failures, files the issues, and orders them so the most valuable work goes first.")
-    + card("Hands it to an agent", "Gives each task to one coding agent at a time, so two agents never edit the same thing.")
+    + card("Hands it to an agent", "Gives each task to one coding agent at a time, so two agents never work the same item.")
     + card("Checks the result", "Every change is checked after it ships and rolled back automatically if something that worked before now fails.")
     + "</div>"
     + "<h2>Who it is for</h2><p>Small engineering teams that run many services and want problems found and fixed without a person choosing every task. Teams that need an audit trail of what their agents changed and why.</p>"
@@ -304,7 +312,7 @@ function start(note) {
 // questions (Yes / No / Not sure); every answer changes the brief at once. AUDIT-1: after building, a second model checks the page against the brief,
 // revises once if it finds a real gap, and publishes an honest "what I checked / what I could not do" list at /s/<id>/review.
 // Model ids are deprecated without notice (a hard-coded one silently broke the audit), so every call walks a list until one answers.
-const BUILDERS = ["@cf/qwen/qwen2.5-coder-32b-instruct", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"], ASKERS = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/mistralai/mistral-small-3.1-24b-instruct"], SYS = [
+const BUILDERS = ["@cf/qwen/qwen2.5-coder-32b-instruct", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"], ASKERS = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/openai/gpt-oss-20b", "@cf/mistralai/mistral-small-3.1-24b-instruct"], SYS = [
   "You are a senior product designer and front-end engineer. Build ONE complete self-contained HTML file (inline CSS and JS, no external libraries or fonts) that is a small but genuinely working product for the brief, not a mockup.",
   "SCOPE: a single page cannot run server jobs or act on its own. Build the real, useful part that works in the browser today (the person operates it), make every control do something real, and never fake the rest. Put one calm line near the bottom saying what needs the full Ultrastable build (for example, running on its own on a schedule).",
   "WORKING: every button, form and link must have a handler that visibly changes the screen (a list grows, a status updates, a draft is saved and shown). No dead buttons, no empty grey bars or boxes: if an area has no data yet, show a friendly empty state with an example. Pre-fill realistic sample content for the person's topic so the first screen already looks alive. Persist data in localStorage inside try/catch with an in-memory fallback. SHARED DATA: when visitors add things other visitors should see (sign-ups, messages, votes, a guest list), use the preloaded global `US` (do not define it): `await US.list('signups')` resolves to an array of {id, at, data} newest first, `await US.add('signups', {name, email})` stores one record (data is a small JSON object) and resolves to the saved record; render the list from US.list on load and after each add, and fall back to localStorage only if a call throws.",
@@ -357,6 +365,82 @@ async function siteApi(request, env, id) {
 }
 // The page gets a tiny client so generated code never builds URLs: US.list(coll) / US.add(coll, data). Same-origin on <id>.ultrastable.io; CORS-open on the main host (the page is sandboxed there).
 const usClient = (host, id) => "<script>window.US=(function(){var b=" + JSON.stringify("https://" + host + "/s/" + id + "/api") + ";function j(r){return r.json().then(function(x){if(!r.ok)throw new Error(x.error||r.status);return x})}return{list:function(c){return fetch(b+\"?coll=\"+encodeURIComponent(c)).then(j).then(function(x){return x.items})},add:function(c,d){return fetch(b,{method:\"POST\",headers:{\"content-type\":\"application/json\"},body:JSON.stringify({coll:c,data:d})}).then(j)}}})()</script>";
+// DATA-API-1 (Q-GAP-shared-backend): the same shared back end as a plain path, /api/data/<site>/<collection>. GET lists the collection; POST takes the
+// record itself as the JSON body. It is siteApi underneath, so the limits, the rate cap and the answers are the same (site/site.test.mjs).
+const DATA_PATH = "/api/data/";
+async function siteData(request, env, id, coll) {
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+  const u = new URL(request.url), h = { "content-type": "application/json", "cf-connecting-ip": request.headers.get("cf-connecting-ip") || "x" }; u.pathname = "/s/" + id + "/api"; u.search = "";
+  if (request.method === "GET") { u.searchParams.set("coll", coll); return siteApi(new Request(u, { headers: h }), env, id); }
+  if (request.method !== "POST") return apiJson({ error: "method not allowed", code: "method" }, 405);
+  return siteApi(new Request(u, { method: "POST", headers: h, body: JSON.stringify({ coll, data: await request.json().catch(() => null) }) }), env, id);
+}
+// OWN-DOMAIN-1 (Q-GAP-own-domain): a built site can answer at the person's own web address. Control of the address is proven by a DNS TXT record that
+// names this site (read over DNS-over-HTTPS, so nobody can claim an address they do not control), then the address is added at the edge as a custom
+// hostname of the zone (needs CF_DEPLOY_TOKEN and CF_ZONE_ID on this Worker). Every state is reported as it is: waiting_for_dns, dns_unreadable,
+// pending_platform (proven, the edge step could not run here), edge_refused, issuing, attached. Only a proven address is stored (KV domain:<host>).
+const DOMAIN_RX = /^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}$/, OUR_HOSTS = /(^|\.)ultrastable\.(io|org|app|net)$|\.workers\.dev$|\.pages\.dev$/;
+export const domainToken = (id) => "ultrastable-site=" + id;
+export async function attachDomain(env, id, domain, fetcher) {
+  const f = fetcher || fetch, host = String(domain || "").trim().toLowerCase().replace(/^https?:\/\//, "").replace(/[\/?#].*$/, "").replace(/\.$/, "");
+  if (!okId(id) || !env || !env.ASSETS || !(await env.ASSETS.get("state:" + id))) return { ok: false, status: 404, code: "no_site", message: "That site was not found." };
+  if (!DOMAIN_RX.test(host) || OUR_HOSTS.test(host)) return { ok: false, status: 400, code: "bad_domain", message: "That is not a web address of your own. Use one like www.example.org." };
+  const records = [{ type: "TXT", name: "_ultrastable." + host, value: domainToken(id), why: "shows the address is yours" }, { type: "CNAME", name: host, value: id + "." + CANON, why: "sends visitors to your site" }];
+  let proven = false, unreadable = null;
+  try {
+    const r = await f("https://cloudflare-dns.com/dns-query?name=" + encodeURIComponent("_ultrastable." + host) + "&type=TXT", { headers: { accept: "application/dns-json" } }), j = await r.json();
+    proven = (j.Answer || []).some(a => String(a.data || "").replace(/"/g, "").trim() === domainToken(id));
+  } catch (e) { unreadable = String(e && e.message || e).slice(0, 120); }
+  if (!proven) return { ok: true, status: 202, state: unreadable ? "dns_unreadable" : "waiting_for_dns", host, records, message: unreadable ? "The address could not be looked up just now. It is checked again each time this is asked." : "The address is not connected yet. It becomes yours here as soon as its two records are in place." };
+  let edge = { state: "pending_platform", detail: "the edge step is not available on this deployment" };
+  if (env.CF_DEPLOY_TOKEN && env.CF_ZONE_ID) {
+    const api = "https://api.cloudflare.com/client/v4/zones/" + env.CF_ZONE_ID + "/custom_hostnames", h = { Authorization: "Bearer " + env.CF_DEPLOY_TOKEN, "Content-Type": "application/json" };
+    try {
+      let j = await (await f(api + "?hostname=" + encodeURIComponent(host), { headers: h })).json(), cur = j && j.success && j.result && j.result[0];
+      if (!cur) { j = await (await f(api, { method: "POST", headers: h, body: JSON.stringify({ hostname: host, ssl: { method: "http", type: "dv" } }) })).json(); cur = j && j.success && j.result; }
+      edge = cur ? { state: cur.status === "active" && cur.ssl && cur.ssl.status === "active" ? "attached" : "issuing", cf_id: cur.id, hostname_status: cur.status, certificate_status: cur.ssl && cur.ssl.status }
+        : { state: "edge_refused", detail: JSON.stringify(j && j.errors || j).slice(0, 200) };
+    } catch (e) { edge = { state: "edge_refused", detail: String(e && e.message || e).slice(0, 200) }; }
+  }
+  await jput(env, "domain:" + host, { id, at: new Date().toISOString(), edge });
+  const say = { attached: "Your site now answers at your own address.", issuing: "Your address is proven. Its secure certificate is being issued; this finishes by itself.", pending_platform: "Your address is proven and saved. It will start answering when the platform's custom-address service is switched on.", edge_refused: "Your address is proven and saved, but the platform could not add it yet. It is retried each time this is asked." };
+  return { ok: true, status: 200, state: edge.state, host, records, edge, message: say[edge.state] };
+}
+async function domainRoute(request, env) {
+  const ct = request.headers.get("content-type") || "", b = ct.includes("json") ? await request.json().catch(() => null) : Object.fromEntries((await request.formData().catch(() => new FormData())).entries());
+  if (!env || !env.ASSETS) return apiJson({ error: "the site store is not connected", code: "no_store" }, 503);
+  const ip = request.headers.get("cf-connecting-ip") || "x", key = "rld:" + ip + ":" + new Date().toISOString().slice(0, 13), n = Number(await env.ASSETS.get(key) || 0);
+  if (n >= 30) return apiJson({ error: "too many tries from your connection this hour", code: "rate_limited" }, 429);
+  await env.ASSETS.put(key, String(n + 1), { expirationTtl: 7200 });
+  const r = await attachDomain(env, String(b && b.id || ""), b && b.domain);
+  return apiJson(r.ok ? { state: r.state, host: r.host, records: r.records, message: r.message, edge: r.edge || null } : { error: r.message, code: r.code }, r.status);
+}
+// ORG-THREAD-1 (Q-GAP-org-setup-in-thread): the organization around a built site is set up in the same thread, not on a separate page. The plan comes from
+// the idea itself (objective, the measures every system starts with, the roles that work it) and the connection steps are the same data /setup walks
+// (USER_PATH). Each answer is stored (KV org:<id>), so the thread resumes where it stopped and the managers see how far every organization is (ideaWork).
+const ORG_MEASURES = ["the clock is ticking", "work is being handed out", "items are being finished", "results are checked independently", "nothing is dropped silently", "every objective has a probe"];
+const ORG_ROLES = [["product-manager", "decides what to improve next from the measures"], ["staff", "builds each change"], ["reviewer", "checks the change independently"], ["operations", "ships it and proves it live"]];
+export function orgPlan(idea) {
+  const text = String(idea || "").replace(/\s+/g, " ").trim(), first = text.split(/[.!?]/)[0].slice(0, 140);
+  return { objective: first || "Keep this running and improving", measures: ORG_MEASURES, roles: ORG_ROLES.map(r => ({ id: r[0], does: r[1] })),
+    steps: USER_PATH.steps.filter(s => !s.input).map(s => ({ id: s.id, service: s.service, ask: s.ask, why: s.why, optional: !!s.optional, label: (s.yes && s.yes.label) || (s.no && s.no.label) || null, have: !(s.yes && s.yes.url), url: ((s.yes && s.yes.url) || (s.no && s.no.url) || "").replace("{template}", USER_PATH.template) || null })) };
+}
+async function orgSetup(request, env) {
+  const f = await request.formData().catch(() => null), id = f && String(f.get("id") || "");
+  if (!env || !env.ASSETS) return json({ error: "the site store is not connected", code: "no_store" }, 503);
+  if (!okId(id) || !(await env.ASSETS.get("state:" + id))) return json({ error: "That site was not found.", code: "no_site" }, 404);
+  const a = await jget(env, "ask:" + id), idea = a ? a.idea : ((await jget(env, "brief:" + id)) || {}).brief || "";
+  const st = (await jget(env, "org:" + id)) || { id, started: new Date().toISOString(), plan: orgPlan(idea), steps: {} };
+  const step = String(f.get("step") || ""), ans = String(f.get("answer") || "");
+  if (step) {
+    if (!st.plan.steps.some(s => s.id === step) || !["done", "skipped"].includes(ans)) return json({ error: "unknown step or answer", code: "bad_step" }, 400);
+    st.steps[step] = { answer: ans, at: new Date().toISOString() };
+  }
+  const next = st.plan.steps.find(s => !st.steps[s.id]) || null;
+  st.state = next ? "in_progress" : st.plan.steps.some(s => !s.optional && st.steps[s.id].answer !== "done") ? "incomplete" : "set_up";
+  await jput(env, "org:" + id, st);
+  return json({ id, state: st.state, plan: { objective: st.plan.objective, measures: st.plan.measures, roles: st.plan.roles }, done: Object.keys(st.steps).length, total: st.plan.steps.length, next });
+}
 // BUILD-3: the daily probe records which ids still answer; a dead one is skipped so a deprecated id never reaches a user (the list is used whole if every id is marked dead).
 async function runAny(env, models, body, opts = {}) {
   const h = await jget(env, "health:models").catch(() => null), dead = new Set(((h && h.models) || []).filter(x => !x.ok).map(x => x.model));
@@ -446,7 +530,7 @@ async function audit(env, id, brief, html) {
 async function build(env, id, brief, prev, change) {
   try {
     await env.ASSETS.put("brief:" + id, JSON.stringify({ brief, change: change || null }));
-    await env.ASSETS.put("site:" + id, await aiHtml(env, brief, prev, change)); await env.ASSETS.put("state:" + id, "ready");
+    { const before = await env.ASSETS.get("site:" + id); const html = await aiHtml(env, brief, prev, change); if (before) await recordVersion(env, id, before, change ? "you asked: " + String(change).slice(0, 100) : "rebuilt"); await env.ASSETS.put("site:" + id, html); } await env.ASSETS.put("state:" + id, "ready"); // SITE-UPKEEP-1: the page before each change is kept
     await env.ASSETS.delete("audit:" + id);
   } catch (e) { console.error("build failed", id, String(e)); await env.ASSETS.put("state:" + id, "failed"); }
 }
@@ -578,14 +662,21 @@ async function takeChange(request, env, ctx) {
   return launch(env, ctx, id, brief, prev, change);
 }
 const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
-async function siteRoutes(u, env, ctx, request) {
-  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/api)?$/.exec(u.pathname);
+async function siteRoutes(u, env, ctx, request, own) {
+  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/history|\/insights|\/feed\.xml|\/badge\.svg|\/api)?$/.exec(u.pathname);
   if (!m || !env || !env.ASSETS) return null;
   if (m[2] === "/api") return siteApi(request, env, m[1]);
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
   if (st === "ready" && (!m[2] || m[2] === "/review")) await ensureAudit(env, ctx, id);
+  if (m[2] === "/feed.xml") return new Response(siteFeed(id, await siteVersions(env, id), "https://" + CANON, (/<title>([^<]*)<\/title>/i.exec(await env.ASSETS.get("site:" + id) || "") || [])[1]), { headers: { "content-type": "application/atom+xml; charset=utf-8", "cache-control": "public, max-age=900" } }); // SITE-FEED-1
+  if (m[2] === "/badge.svg") return new Response(siteBadge(await siteVersions(env, id)), { headers: { "content-type": "image/svg+xml", "cache-control": "public, max-age=900" } });
+  if (m[2] === "/insights") return page("Who visits your site", insightsBody(id, env.DB ? await siteInsights(env.DB, id).catch((e) => { console.error("insights failed", String(e).slice(0, 100)); return { views7: 0, views30: 0, visitors7: 0, refs: [], countries: [], devices: [] }; }) : { views7: 0, views30: 0, visitors7: 0, refs: [], countries: [], devices: [] })); // SITE-INSIGHTS-1
+  if (m[2] === "/history") { // SITE-UPKEEP-1
+    if (request.method === "POST") { const f = await request.formData().catch(() => null), r = f ? await restoreVersion(env, id, f.get("v")) : { ok: false }; if (r.ok) return Response.redirect("https://" + CANON + "/s/" + id + "/history", 303); return page("Not restored", "<div class=\"head\"><h1>That version is gone</h1><p>Only the last ten are kept.</p></div>"); }
+    return page("How your site has changed", historyBody(id, await siteVersions(env, id), await jget(env, "upkeep:" + id)));
+  }
   if (m[2] === "/ask") {
     const a = await jget(env, "ask:" + id);
     if (!a || a.ans.length >= a.qs.length) return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
@@ -615,11 +706,14 @@ async function siteRoutes(u, env, ctx, request) {
   }
   if (st === "asking") return Response.redirect("https://" + CANON + "/s/" + id + "/ask", 302);
   if (st !== "ready") return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
-  const host = u.hostname === id + "." + CANON ? u.hostname : CANON, sub = host !== CANON;
+  const host = own || (u.hostname === id + "." + CANON ? u.hostname : CANON), sub = host !== CANON;  // OWN-DOMAIN-1: a proven own address is served like the site's subdomain
   const lk = (h, t) => "<a href=\"https://" + CANON + "/s/" + id + h + "\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none;margin-left:6px\" target=\"_top\">" + t + "</a>";
-  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\">" + lk("/review", "What I checked") + lk("/change", "Change something") + "</div>";
+  // BLINDSPOT-1 legal sweep 2026-11-20 (EU AI Act Article 50, in force 2026-08-02): a page the system wrote says so, to a person (the bar) and to a machine (the generator meta tag).
+  const aiMark = "<meta name=\"generator\" content=\"Ultrastable (AI-generated page)\">";
+  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><span style=\"background:#fff;color:#111;padding:10px 14px;border-radius:999px;border:1px solid #111\">Written by AI</span>" + lk("/review", "What I checked") + lk("/change", "Change something") + lk("/history", "History") + lk("/insights", "Visitors") + "</div>";
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
-  const us = usClient(host, id), html1 = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + us) : /<html[^>]*>/i.test(html) ? html.replace(/<html[^>]*>/i, (m) => m + us) : us + html;
+  if (env.DB && request && request.method === "GET" && ctx && ctx.waitUntil) ctx.waitUntil(record(env, request, { host: CANON, path: "/s/" + id, ref: request.headers.get("referer"), name: "site-view" }).catch((e) => console.error("site view not counted", String(e).slice(0, 100)))); // SITE-INSIGHTS-1
+  const us = aiMark + usClient(host, id), html1 = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + us) : /<html[^>]*>/i.test(html) ? html.replace(/<html[^>]*>/i, (m) => m + us) : us + html;
   return new Response(html1, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation" + (sub ? " allow-same-origin" : "") + "; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'self'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
 }
 // BUILD-3: close the loop. A cron tick (hourly) does four things from the system's own records: model health probe (daily), automatic change rounds for
@@ -665,7 +759,8 @@ export async function ideaWork(env) {
   const items = [];
   for (const k of (await kvList(env, "idea:", 500)).slice(-100)) {
     const id = k.slice(-10), text = String(await env.ASSETS.get(k) || "").slice(0, 200), st = await env.ASSETS.get("state:" + id);
-    items.push({ id, idea: text, state: st || "not built", owner: "product manager", trigger: "idea stored " + k.slice(5, 24), probe: "state:" + id + " is ready and /s/" + id + "/review lists no open gap", open: st !== "ready" });
+    const og = await jget(env, "org:" + id);  // ORG-THREAD-1: how far the organization around this idea is
+    items.push({ id, idea: text, state: st || "not built", org: og ? og.state : "not started", owner: "product manager", trigger: "idea stored " + k.slice(5, 24), probe: "state:" + id + " is ready and /s/" + id + "/review lists no open gap", open: st !== "ready" });
   }
   await jput(env, "work:ideas", { items, at: new Date().toISOString() }); return items;
 }
@@ -683,7 +778,7 @@ export async function deployIdeaWorker(env, id, fetcher) {
   const html = await env.ASSETS.get("site:" + id); if (!html) return { ok: false, reason: "no-page" };
   const name = workerName(id), api = "https://api.cloudflare.com/client/v4/accounts/" + acct, h = { Authorization: "Bearer " + tok };
   const fd = new FormData();
-  fd.set("metadata", JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04" }));
+  fd.set("metadata", JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", observability: { enabled: true, head_sampling_rate: 1 } }));
   fd.set("worker.js", new Blob([scaffoldWorker(id, html)], { type: "application/javascript+module" }), "worker.js");
   const up = await f(api + "/workers/scripts/" + name, { method: "PUT", headers: h, body: fd });
   if (!up.ok) return { ok: false, reason: "upload " + up.status + " " + (await up.text()).slice(0, 200) };
@@ -723,6 +818,7 @@ export async function tick(env, ctx, now) {
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
   { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
+  out.upkeep = (await upkeepRound(env, (await kvList(env, "state:", 300)).slice(-300), { now: t, lint, improve: (b, html, ins) => aiHtml(env, b, html, ins), visited: (id) => (env.DB ? viewedRecently(env.DB, id, t).catch(() => true) : true) }, 2).catch(e => { console.error("upkeep failed", String(e).slice(0, 120)); return []; })).length; // SITE-UPKEEP-1: at most two model passes a tick, each site once a week
   out.webhooks = await tickWebhooks(env, t).catch(e => String(e).slice(0, 120)); // WEBHOOKS-1: outbound callbacks ride this tick, no new cron
   out.watchdog = await watchTick(env); // LOOPPROOF-1: this Worker is the second producer of the org heartbeat
   await jput(env, "tick:last", out); return out;
@@ -900,7 +996,7 @@ function contact() {
 }
 
 const ROBOTS = robots(CONTENT_SIGNAL, "https://" + CANON + "/sitemap.xml");  // AGENT-READY-2: explicit AI-bot groups, same policy as Content-Signal
-const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. Ultrastable runs on itself. Its earlier testbed and a second system, Practical Solutions, are described under test cases.\n\n- [Connect your agent](https://ultrastable.io/connect-agent): one click for VS Code, Cursor, Claude, Codex\n- [Live proof](https://" + CANON + "/live): changes the system shipped, from its own records\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n\n\n## Control-plane API (live)\n\n- [API index](https://ultrastable.io/api/v1): status, agents, work (on_deck, in_progress, blocked, done), activity, products, companion brief; OpenAPI at /openapi.json\n- [Operations dashboard](https://dashboard.ultrastable.io/): the same data as a page, refreshed every 30 seconds\n- [A2A agent card](https://ultrastable.io/.well-known/agent-card.json), [API catalog](https://ultrastable.io/.well-known/api-catalog), MCP at /connect-agent (one-click add to VS Code, Cursor, Claude, Codex; no tokens), /mcp (" + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].length + " tools, generated from the code that serves them: " + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].map(function (t) { return t.name; }).join(", ") + ")\n- [Verified claims](https://" + CANON + "/claims): every statement on this site bound to a probe, checked on every change and daily against live\n- POST /api/v1/intake submits a backlog item with an integration bearer token\n";
+const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. Ultrastable runs on itself. Its earlier testbed and a second system, Practical Solutions, are described under test cases.\n\n- [Connect your agent](https://ultrastable.io/connect-agent): one click for VS Code, Cursor, Claude, Codex\n- [Live proof](https://" + CANON + "/live): changes the system shipped, from its own records\n- [Changelog feed](https://" + CANON + "/changelog.xml): merged changes by day, size and origin, as RSS; the same data as JSON at /changelog.json\n- [Progress](https://" + CANON + "/progress): what every system shipped today, this week and this month; Atom at /progress.atom, JSON at /progress.json\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n\n\n## Control-plane API (live)\n\n- [API index](https://ultrastable.io/api/v1): status, agents, work (on_deck, in_progress, blocked, done), activity, products, companion brief; OpenAPI at /openapi.json\n- [Operations dashboard](https://dashboard.ultrastable.io/): the same data as a page, refreshed every 30 seconds\n- [A2A agent card](https://ultrastable.io/.well-known/agent-card.json), [API catalog](https://ultrastable.io/.well-known/api-catalog), MCP at /connect-agent (one-click add to VS Code, Cursor, Claude, Codex; no tokens), /mcp (" + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].length + " tools, generated from the code that serves them: " + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].map(function (t) { return t.name; }).join(", ") + ")\n- [Verified claims](https://" + CANON + "/claims): every statement on this site bound to a probe, checked on every change and daily against live\n- POST /api/v1/intake submits a backlog item with an integration bearer token\n";
 
 const FAVICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"ultrastable\"><title>ultrastable</title><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></svg>";
 const SOCIAL = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1280 640\" width=\"1280\" height=\"640\"><title>ultrastable</title><defs><linearGradient id=\"g\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#12342A\"/><stop offset=\"1\" stop-color=\"#0B1A15\"/></linearGradient></defs><rect width=\"1280\" height=\"640\" fill=\"url(#g)\"/><g transform=\"translate(96 96) scale(2)\"><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></g><text x=\"96\" y=\"340\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#F6F1E7\">Coding agents write code.</text><text x=\"96\" y=\"430\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#FF5B1F\">Ultrastable runs the system.</text><text x=\"96\" y=\"530\" font-family=\"Georgia,serif\" font-size=\"32\" fill=\"#C9D4CC\">From one idea to a business that improves itself.</text><text x=\"1184\" y=\"590\" text-anchor=\"end\" font-family=\"Georgia,serif\" font-size=\"28\" fill=\"#FFC857\">ultrastable.io</text></svg>";
@@ -910,6 +1006,7 @@ const SVG = { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age
 const HTML = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" };
 
 // META-SIGNAL-1: record a microphone event code or transcript text for the meta loop (doctrine/meta-loop.json); the tick drains it through foundation/metasignal.py detectors.
+const META_PER_IP_HOUR = 20, META_PER_DAY = 200; // caps on public meta-signal writes
 const META_CODES = ["not-allowed", "service-not-allowed", "no-speech", "network", "audio-capture", "unsupported", "busy", "edited-after-dictation", "abandoned"];
 async function metaIngest(request, env) {
   let b; try { b = JSON.parse((await request.text()).slice(0, 4000)); } catch (e) { return Response.json({ ok: false, code: "bad_json" }, { status: 400 }); }
@@ -917,7 +1014,15 @@ async function metaIngest(request, env) {
   if (b.source === "mic-event") { if (!META_CODES.includes(b.code)) return Response.json({ ok: false, code: "unknown_code" }, { status: 422 }); rec.code = b.code; rec.surface = String(b.surface || "site").slice(0, 24); }
   else if (typeof b.text === "string" && b.text.trim()) rec.text = b.text.slice(0, 2000);
   else return Response.json({ ok: false, code: "empty" }, { status: 422 });
-  await env.ASSETS.put("meta:" + rec.at + ":" + newId(), JSON.stringify(rec), { expirationTtl: 31536000 });
+  { // BLINDSPOT-1 security sweep 2026-11-20: this endpoint is public and writes to KV, so one client or a flood cannot use up the day's writes. No write happens once a cap is reached.
+    const ip = request.headers.get("cf-connecting-ip") || "x", k1 = "rlm:" + ip + ":" + rec.at.slice(0, 13), k2 = "rlm:day:" + rec.at.slice(0, 10);
+    try { // SMOKE-LIVE-1: production returned a bare 500 for every valid event; a storage failure is now a plain 503 the smoke test can tell from a bug
+      const [a, d] = await Promise.all([env.ASSETS.get(k1), env.ASSETS.get(k2)]);
+      if (Number(a || 0) >= META_PER_IP_HOUR || Number(d || 0) >= META_PER_DAY) return Response.json({ ok: false, code: "rate_limited" }, { status: 429, headers: { "Retry-After": "3600" } });
+      await Promise.all([env.ASSETS.put(k1, String(Number(a || 0) + 1), { expirationTtl: 7200 }), env.ASSETS.put(k2, String(Number(d || 0) + 1), { expirationTtl: 172800 })]);
+    } catch (e) { console.error("meta-ingest storage", String(e && e.message || e).slice(0, 120)); return Response.json({ ok: false, code: "storage_unavailable", message: "Saved nothing this time; the system retries on its own." }, { status: 503, headers: { "Retry-After": "600" } }); }
+  }
+  try { await env.ASSETS.put("meta:" + rec.at + ":" + newId(), JSON.stringify(rec), { expirationTtl: 31536000 }); } catch (e) { console.error("meta-ingest storage", String(e && e.message || e).slice(0, 120)); return Response.json({ ok: false, code: "storage_unavailable", message: "Saved nothing this time; the system retries on its own." }, { status: 503, headers: { "Retry-After": "600" } }); }
   return Response.json({ ok: true });
 }
 
@@ -939,6 +1044,12 @@ const handler = {
       if (u.pathname === "/") { const q = new URL(request.url); q.pathname = "/s/" + sm[1]; return (await siteRoutes(q, env, ctx, request)) || new Response("Not found", { status: 404 }); }
       if (u.pathname.startsWith("/s/" + sm[1] + "/api")) return siteRoutes(u, env, ctx, request);
       return Response.redirect("https://" + CANON + u.pathname, 302); } }
+    if (!OUR_HOSTS.test(u.hostname) && env && env.ASSETS) { // OWN-DOMAIN-1: a host that is not ours is served only when attachDomain stored it as proven
+      const dm = await jget(env, "domain:" + u.hostname.toLowerCase()).catch(() => null);
+      if (dm && okId(dm.id)) {
+        if (u.pathname === "/") { const q = new URL(request.url); q.pathname = "/s/" + dm.id; return (await siteRoutes(q, env, ctx, request, u.hostname)) || new Response("Not found", { status: 404 }); }
+        if (u.pathname === "/s/" + dm.id + "/api") return siteRoutes(u, env, ctx, request);
+        return Response.redirect("https://" + u.hostname + "/", 302); } }
     if (host === "ultrastable.app") return Response.redirect("https://" + CANON + "/pilot", 301);
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/live", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
@@ -948,14 +1059,21 @@ const handler = {
     { const cn = await connectionsRoute(request, env); if (cn) return cn; } // CONNECTIONS-1: /connections and the owner-only /connect/* consent flow
     { const md = await mydata(request, env); if (md) return md; } // PORTABILITY-2: /my-data, one click, passkey session
     { const wh = await webhooksRoute(request, env, ctx, authIntegration); if (wh) return wh; } // WEBHOOKS-1: /hooks/<provider>, /api/v1/webhooks, /api/v1/hooks
+    if (u.pathname === "/agents/scoreboard") return Response.redirect("https://" + CANON + "/api/v1/agents/scoreboard", 302);  // AGENT-SCOREBOARD-1: agent_scoreboard per agent and harness (site/controlplane.js agentScoreboard)
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
+    { const pr = await progressRoutes(u, env, shell, HTML, CANON); if (pr) return pr; } // PROGRESS-1
     if (u.pathname.replace(/\/$/, "") === "/proof") return Response.redirect("https://" + CANON + "/live", 301); // PROOF-OWN-1: /proof served the earlier testbed's records; deprecated
-    if (u.pathname === "/live" || u.pathname === "/api/live" || u.pathname === "/api/freshness") return liveResponse(u, request, env, shell, HTML, DASH.asof_at);
+    if (u.pathname === "/customer-zero") return caseResponse(u, request, env, shell, HTML, DASH.asof_at); // CASE-STUDY-1: generated from the snapshot, every value linked to its record
+    if (u.pathname === "/demo") return demoResponse(u, request, env, shell, HTML, DASH.asof_at); // DEMO-DASHBOARD-1: the live record as a dashboard
+    if (u.pathname === "/live" || u.pathname === "/api/live" || u.pathname === "/api/freshness" || u.pathname === "/changelog.xml" || u.pathname === "/changelog.json") return liveResponse(u, request, env, shell, HTML, DASH.asof_at);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/pilot") return pilotApplication(request, env);
     if (request.method === "POST" && u.pathname === "/api/answer") return takeAnswer(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
+    if (u.pathname.startsWith(DATA_PATH)) { const dm = /^([a-f0-9]{10})\/([A-Za-z0-9_-]{1,40})$/.exec(u.pathname.slice(DATA_PATH.length)); return dm ? siteData(request, env, dm[1], dm[2].toLowerCase()) : apiJson({ error: "use /api/data/<site>/<collection>", code: "bad_path" }, 404); } // DATA-API-1
+    if (request.method === "POST" && u.pathname === "/api/domain") return domainRoute(request, env); // OWN-DOMAIN-1
+    if (request.method === "POST" && u.pathname === "/api/org") return orgSetup(request, env); // ORG-THREAD-1
     { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });

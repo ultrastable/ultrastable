@@ -13,7 +13,13 @@
   python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
+  python3 -m foundation unattended [--check|--horizon|--probe ID]           UNATTENDED-365: one year with zero external input; every remaining input is closed, a gate or an item
+  python3 -m foundation modelwatch [--check|--status|--refresh [--apply]]  MODEL-WATCH-1: no retired hosted model id in source
+  python3 -m foundation redmain [--run [--apply]|--check]                  REDMAIN-1: a red deploy gate on main is repaired by reverting the smallest change that broke it
+  python3 -m foundation runway [--run [--apply]|--probe C|--check]         RUNWAY-1: projected days of unattended running against the one-year target
+  python3 -m foundation credwatch [--run [--apply]|--check]                TOKEN-EXPIRY-1: every credential the loops use is probed for expiry before it lapses
   python3 -m foundation openloops [--check]                                NO-OPEN-ITEMS-1: no "needs you"; every leftover is closed or a recorded gate
+  python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation issueloop [--apply|--json]                       ISSUE-LOOP-1: every open issue's probe is run; a passing probe closes it
   python3 -m foundation claims [--check|--fix|--apply|--file|--live]     CLAIMS-1: every claim on a surface is probed against code, both directions; /claims
@@ -34,6 +40,7 @@
   python3 -m foundation branchsweep [--scan|--apply|--prune|--check]  BRANCH-SWEEP-1: no remote branch carries work main lacks
   python3 -m foundation sessions [--scan|--apply|--meta|--check]       SESSION-CLOSE-1: no zombie branches or PRs; the loop tunes itself
   python3 -m foundation strays [--check|--list [--json]]                  STRAYS-1: no code file where nothing runs it; no workflow outside .github/workflows
+  python3 -m foundation cfposture [--check|--probe [--apply]|--rule ID]       CF-POSTURE-1: the Cloudflare account's settings, declared and measured live
   python3 -m foundation orphans [--check|--metrics|--baseline|--issue-body|--sync-issue OWNER/REPO]   ORPHANS-1: no orphan artifact, no human-wait
   python3 -m foundation components [--check|--report|--file-gaps|--evidence|--probe KIND:ID]   the system as a computed graph: gaps, stories, objections
   python3 -m foundation lifecycle [--open|--beat|--close|--reap|--check|--improve|--score|--report|--hooks]   no zombie sessions; loops that score and mutate themselves
@@ -48,6 +55,7 @@
   python3 -m foundation ciwatch [--run [--apply]|--probe REPO WORKFLOW|--check]  CIWATCH-1: red X's on any watched repo are rerun or filed as queue items
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
+  python3 -m foundation outreach [--rank|--selftest|--check]              OUTREACH-1: replies reward a segment; UCB1 orders the next intro queue
   python3 -m foundation metasignal [--check|--scan F|--ingest F [--apply]]  META-SIGNAL-1: sentiment, frustration, mic events and ideas feed the roadmap
   python3 -m foundation unknowns [--check|--run [--apply]|--answer KEY --verdict V --text T|--status]   UNKNOWNS-1: audit what the system does not know; inverted questions feed the objective space
   python3 -m foundation blindspots [--check|--scan [--apply] [--live]|--answer D --text T|--learn ID ...]   BLINDSPOT-1: the system knows what the owner cannot know to ask for
@@ -60,6 +68,10 @@
   python3 -m foundation contracts [--tick [--apply]|--report]             CONTRACTS-1: close on the item's own probe, reopen on relapse, hold after a reopen
   python3 -m foundation metricloop [--tick [--apply]|--probe ID|--check]  METRIC-LOOP-1: breach -> remedy item -> efficacy -> replace a remedy that did not move
   python3 -m foundation throughput [--tick [--apply]|--report|--doer FAM] THROUGHPUT-1: net inflow per family; a family with no doer gets a build-the-doer item
+  python3 -m foundation adopt --repo DIR [--apply|--check]                 ADOPT-1: wrap loops around an existing repository (scan, kernel, gaps as items)
+  python3 -m foundation rescore [--run [--apply]|--check|--status]        RESCORE-1: a held-out grader re-scores settled predictions; disagreement files an item
+  python3 -m foundation owndb [--check|--write]                           OWN-DB-1: core databases are the core's own; no tenant or originating-fleet database is bound
+  python3 -m foundation tenantcontrols [--check|--write]                  TENANT-CONTROLS-1: the hosted tier stays closed until every multi-tenant control is proven
   python3 -m foundation metafold [--tick [--apply]]                       META-FOLD-1: tickets about another record close when that record resolves
 """
 import argparse, datetime as dt, json, os, sys
@@ -70,6 +82,24 @@ from . import boundary, closedloop, standards, doctrine, directive, filing, glos
 def main(argv=None) -> int:
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
+    if _av[:1] == ["unattended"]:
+        from . import unattended
+        return unattended.main(_av[1:])
+    if _av[:1] == ["modelwatch"]:
+        from . import modelwatch
+        return modelwatch.main(_av[1:])
+    if _av[:1] == ["adopt"]:
+        from . import adopt
+        return adopt.main(_av[1:])
+    if _av[:1] == ["rescore"]:
+        from . import rescore
+        return rescore.main(_av[1:])
+    if _av[:1] == ["owndb"]:
+        from . import owndb
+        return owndb.main(_av[1:])
+    if _av[:1] == ["tenantcontrols"]:
+        from . import tenantcontrols
+        return tenantcontrols.main(_av[1:])
     if _av[:1] == ["userbackend"]:
         from . import userbackend
         return userbackend.main(_av[1:])
@@ -79,6 +109,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["blindspots"]:
         from . import blindspots
         return blindspots.main(_av[1:])
+    if _av[:1] == ["licences"]:
+        from . import licences
+        return licences.main(_av[1:])
+    if _av[:1] == ["backup"]:
+        from . import backup
+        return backup.main(_av[1:])
     if _av[:1] == ["ideas"]:
         from . import ideas
         return ideas.main(_av[1:])
@@ -97,6 +133,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["metasignal"]:
         from . import metasignal
         return metasignal.main(_av[1:])
+    if _av[:1] == ["outreach"]:
+        from . import outreach
+        return outreach.main(_av[1:])
     if _av[:1] == ["publication"]:
         from . import publication
         return publication.main(_av[1:])
@@ -184,9 +223,24 @@ def main(argv=None) -> int:
     if _av[:1] == ["pointclick"]:
         from . import pointclick
         return pointclick.main(_av[1:])
+    if _av[:1] == ["needsyou"] and "--settle" in _av:
+        from . import needsyou
+        return needsyou.main(_av[1:])
+    if _av[:1] == ["redmain"]:
+        from . import redmain
+        return redmain.main(_av[1:])
+    if _av[:1] == ["runway"]:
+        from . import runway
+        return runway.main(_av[1:])
+    if _av[:1] == ["credwatch"]:
+        from . import credwatch
+        return credwatch.main(_av[1:])
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
+    if _av[:1] == ["progress"]:
+        from . import progress
+        return progress.main(_av[1:])
     if _av[:1] == ["loopowner"]:
         from . import loopowner
         return loopowner.main(_av[1:])
@@ -211,6 +265,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["topology"]:
         from . import topology
         return topology.main(_av[1:])
+    if _av[:1] == ["mechfix"]:
+        from . import mechfix
+        return mechfix.main(_av[1:])
     if _av[:1] == ["selfcode"]:
         from . import selfcode
         return selfcode.main(_av[1:])
@@ -288,6 +345,9 @@ def main(argv=None) -> int:
     if args0[:1] == ["strays"]:
         from . import strays
         return strays.main(args0[1:])
+    if args0[:1] == ["cfposture"]:
+        from . import cfposture
+        return cfposture.main(args0[1:])
     if args0[:1] == ["orphans"]:
         from . import orphans
         return orphans.main(args0[1:])
@@ -309,7 +369,7 @@ def main(argv=None) -> int:
     tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true")
     da = sub.add_parser("docs_audit"); da.add_argument("--check", action="store_true"); da.add_argument("--report", action="store_true"); da.add_argument("--orphans", action="store_true"); da.add_argument("--humans", action="store_true")
     ny = sub.add_parser("needsyou"); ny.add_argument("--check", action="store_true")
-    ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo"); ex.add_argument("--pick", action="store_true"); ex.add_argument("--record", action="store_true"); ex.add_argument("--result"); ex.add_argument("--pr"); ex.add_argument("--detail"); ex.add_argument("--host")
+    ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--fold", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo"); ex.add_argument("--pick", action="store_true"); ex.add_argument("--record", action="store_true"); ex.add_argument("--result"); ex.add_argument("--pr"); ex.add_argument("--detail"); ex.add_argument("--host")
     sub.add_parser("upstream", add_help=False)
     wb = sub.add_parser("writeback"); ws = wb.add_subparsers(dest="wcmd", required=True)
     rc = ws.add_parser("record"); rc.add_argument("--kind", required=True); rc.add_argument("--title", required=True); rc.add_argument("--body", required=True)

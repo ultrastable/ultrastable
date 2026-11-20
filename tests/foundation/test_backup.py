@@ -1,0 +1,164 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
+# BLINDSPOT-1 need backup-restore: export, restore into a scratch database, compare, store, read back.
+import datetime as dt, gzip, json, shutil, sqlite3, unittest
+from pathlib import Path
+import _repo  # noqa: E402
+from foundation import backup
+
+REPO = Path(__file__).resolve().parents[2]
+DAY = dt.date(2026, 11, 20)
+
+
+class FakeAccount:
+    """A Cloudflare account small enough to hold in memory: one D1 database (a real SQLite database), one KV namespace and an R2 bucket."""
+    def __init__(self, corrupt=False, r2=True):
+        self.db = sqlite3.connect(":memory:")
+        self.db.executescript("CREATE TABLE items(id INTEGER PRIMARY KEY, t TEXT); INSERT INTO items(t) VALUES ('a'),('b'),('c');"
+                              "CREATE TABLE credentials(id INTEGER PRIMARY KEY, sealed TEXT); INSERT INTO credentials(sealed) VALUES ('x');")
+        self.kv, self.r2, self.corrupt, self.has_r2, self.exported = {"k1": b"v1", "k2": b"\x00\x01"}, {}, corrupt, r2, None
+
+    def api(self, method, path, body=None, raw=False):
+        if path.startswith("d1/database?"):
+            return {"result": [{"name": "org", "uuid": "db1"}]}
+        if path == "d1/database/db1/query":
+            cur = self.db.execute(body["sql"]); cols = [c[0] for c in cur.description]
+            return {"result": [{"results": [dict(zip(cols, r)) for r in cur.fetchall()]}]}
+        if path == "d1/database/db1/export":
+            self.exported = body.get("dump_options", {}).get("tables", self.exported)
+            return {"result": {"status": "complete", "result": {"signed_url": "https://signed.example/dump.sql"}}} if "current_bookmark" in body else {"result": {"status": "active", "at_bookmark": "b1"}}
+        if path.startswith("storage/kv/namespaces?"):
+            return {"result": [{"id": "ns1", "title": "private"}]}
+        if path.startswith("storage/kv/namespaces/ns1/keys"):
+            return {"result": [{"name": k} for k in self.kv], "result_info": {"cursor": ""}}
+        if path.startswith("storage/kv/namespaces/ns1/values/"):
+            return self.kv[path.rsplit("/", 1)[1]]
+        if path.startswith("r2/buckets/"):
+            if not self.has_r2:
+                raise OSError(f"{method} r2: HTTP 403")
+            key = path.split("/objects", 1)[1].lstrip("/")
+            if method == "PUT":
+                self.r2[key] = body; return b""
+            if method == "DELETE":
+                self.r2.pop(key, None); return b""
+            if key.startswith("?"):
+                import urllib.parse
+                pre = urllib.parse.parse_qs(key[1:])["prefix"][0]
+                return {"result": [{"key": k} for k in self.r2 if k.startswith(pre)]}
+            return self.r2[key]
+        raise AssertionError(path)
+
+    def download(self, url):
+        sql = "\n".join(l for l in self.db.iterdump() if "credentials" not in l)
+        return (sql[: len(sql) // 2] if self.corrupt else sql).encode()
+
+
+class Backup(unittest.TestCase):
+    def setUp(self):
+        self.tmp = _repo.scratch()
+        (self.tmp / "doctrine").mkdir(parents=True, exist_ok=True)
+        shutil.copy(REPO / "doctrine/backup.json", self.tmp / "doctrine/backup.json")
+
+    def run_with(self, acct, **kw):
+        return backup.run(self.tmp, apply=True, api=acct.api, download=acct.download, sleep=lambda s: None, today=DAY, **kw)
+
+    def test_repo_config_is_valid(self):
+        self.assertEqual(backup.check(REPO), [])
+
+    def test_drill_restores_counts_and_reads_the_copy_back(self):
+        a = FakeAccount(); out = self.run_with(a)
+        d = out["databases"][0]
+        self.assertTrue(out["ok"], out)
+        self.assertEqual((d["rows"], d["integrity"], d["mismatches"], d["excluded_tables"]), (3, "ok", [], ["credentials"]))
+        self.assertEqual(a.exported, ["items"])                                    # the sealed table never leaves the database
+        dump = gzip.decompress(a.r2["backups/d1/org/2026-11-20.sql.gz"]).decode()
+        self.assertIn("items", dump); self.assertNotIn("credentials", dump)
+        self.assertTrue(d["stored"]["readback"]); self.assertEqual(out["kv"][0]["saved"], 2)
+        rec = (self.tmp / backup.OUT).read_text()
+        self.assertNotIn("'a'", rec); self.assertNotIn("sealed", rec)             # the record holds counts and hashes, never a row
+        self.assertEqual(backup.run(self.tmp, api=a.api, today=DAY + dt.timedelta(days=3)), {"skipped": "last drill is fresh"})
+        self.assertTrue(backup.due(self.tmp, DAY + dt.timedelta(days=7)))
+
+    def test_a_dump_that_does_not_restore_fails_the_drill(self):
+        out = self.run_with(FakeAccount(corrupt=True))
+        self.assertFalse(out["ok"]); self.assertFalse(out["databases"][0]["restored"])
+        self.assertTrue(backup.due(self.tmp, DAY))                                 # a failed drill is due again at once
+
+    def test_a_copy_that_cannot_be_stored_is_not_a_backup(self):
+        out = self.run_with(FakeAccount(r2=False))
+        self.assertTrue(out["restore_ok"]); self.assertFalse(out["stored_ok"]); self.assertFalse(out["ok"])
+        self.assertIn("HTTP 403", out["databases"][0]["stored"]["error"])
+
+    def test_an_unreachable_bucket_falls_back_to_the_ops_repository_and_is_read_back(self):
+        a, other = FakeAccount(r2=False), FakeAccount()                            # `other` plays the ops repository: a second store with the same object calls
+        out = self.run_with(a, sink=other.api)
+        self.assertTrue(out["ok"], out); self.assertEqual(out["sink"], "ops-repository:backups/"); self.assertIn("HTTP 403", out["sink_reason"])
+        self.assertTrue(out["databases"][0]["stored"]["readback"]); self.assertIn("backups/d1/org/2026-11-20.sql.gz", other.r2)
+        self.assertEqual(self.run_with(FakeAccount(), sink=other.api, force=True)["sink"], "r2:ultrastable-git", "a reachable bucket stays the sink")
+
+    def test_ops_sink_speaks_github_contents_through_the_worker(self):
+        import io, urllib.error
+        from foundation import workerroute
+        files, calls = {}, []
+        class R(io.BytesIO):
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+        def opener(req, timeout=0):
+            if "audience=" in req.full_url:
+                return R(b'{"value":"oidc"}')
+            m, p = req.get_header("X-gh-method"), req.get_header("X-gh-path"); calls.append((m, p)); key = p[len("contents/"):]
+            if m == "PUT":
+                files[key] = __import__("base64").b64decode(json.loads(req.data)["content"]); return R(b"{}")
+            if m == "DELETE":
+                files.pop(key); return R(b"{}")
+            if key in files:
+                return R(files[key] if "raw" in req.get_header("Accept") else b'{"sha":"s1"}')
+            kids = [k for k in files if k.startswith(key + "/")]
+            if kids:
+                return R(json.dumps([{"type": "file", "path": k} for k in kids]).encode())
+            raise urllib.error.HTTPError(req.full_url, 404, "nf", {}, None)
+        api = workerroute.make_ops_sink({"ACTIONS_ID_TOKEN_REQUEST_URL": "https://gh/token?x=1", "ACTIONS_ID_TOKEN_REQUEST_TOKEN": "t"}, opener=opener)
+        api("PUT", "r2/buckets/b/objects/backups/d1/org/2026-11-20.sql.gz", b"dump", raw=True)
+        self.assertEqual(api("GET", "r2/buckets/b/objects/backups/d1/org/2026-11-20.sql.gz", raw=True), b"dump")
+        self.assertEqual(api("GET", "r2/buckets/b/objects?prefix=backups/d1/org/&per_page=1000")["result"], [{"key": "backups/d1/org/2026-11-20.sql.gz"}])
+        api("DELETE", "r2/buckets/b/objects/backups/d1/org/2026-11-20.sql.gz", raw=True); self.assertEqual(files, {})
+        self.assertEqual(api("GET", "r2/buckets/b/objects?prefix=backups/kv/none/")["result"], [])
+        self.assertTrue(all(p.startswith("contents/backups/") for _, p in calls))
+
+    def test_retention_keeps_the_newest_copies(self):
+        a = FakeAccount()
+        for i in range(10):
+            a.r2[f"backups/d1/org/2026-10-{i + 1:02d}.sql.gz"] = b"x"
+        self.run_with(a)
+        keys = sorted(k for k in a.r2 if k.startswith("backups/d1/org/"))
+        self.assertEqual(len(keys), 8); self.assertEqual(keys[-1], "backups/d1/org/2026-11-20.sql.gz")
+
+    def test_drill_is_pinned_to_the_ultrastable_account(self):
+        seen = []
+        real = backup.make_api
+        backup.make_api = lambda tok, acct: (seen.append(acct), FakeAccount().api)[1]
+        try:
+            backup.run(self.tmp, env={"CLOUDFLARE_API_TOKEN": "t", "CLOUDFLARE_ACCOUNT_ID": "some-other-account"}, today=DAY)
+        finally:
+            backup.make_api = real
+        self.assertEqual(seen, ["81e3a4efb4eb66e613529b87682911bb"])
+        top = json.loads((REPO / "doctrine/topology.json").read_text())["account_id"]
+        self.assertEqual(backup.load(REPO)["account_id"], top)
+
+    def test_count_query_stays_inside_the_d1_compound_select_limit(self):
+        sqls = []
+        class Spy(FakeAccount):
+            def api(self, method, path, body=None, raw=False):
+                if path.endswith("/query") and "UNION ALL" in body["sql"]:
+                    sqls.append(body["sql"])
+                return super().api(method, path, body, raw)
+        a = Spy(); a.db.executescript("".join(f"CREATE TABLE t{i}(x);" for i in range(11)))
+        backup._counts(a.api, "db1", [f"t{i}" for i in range(11)])
+        self.assertTrue(sqls and all(s.count("UNION ALL") + 1 <= 4 for s in sqls), sqls)
+
+    def test_no_credential_is_unmeasured_not_ok(self):
+        self.assertIn("unmeasured", backup.run(self.tmp, env={})["skipped"])
+
+
+if __name__ == "__main__":
+    unittest.main()

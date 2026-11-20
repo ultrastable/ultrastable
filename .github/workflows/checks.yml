@@ -51,7 +51,7 @@ jobs:
           node --test test/cost-probe.test.mjs
           node --test test/plan-limits.test.mjs
           node --test --no-warnings dashboard/test/*.test.mjs
-          for t in site/*.test.mjs; do node --no-warnings "$t" || exit 1; done
+          bash scripts/site_tests.sh  # GATE-PARITY-1: runs site/*.test.mjs, the gate deploy-site runs before it deploys
       - name: Secret and key scan
         run: |
           if grep -rEIl --exclude-dir=.git -e '-----BEGIN [A-Z ]*PRIVATE KEY-----' -e 'gh[pousr]_[A-Za-z0-9]{36,}' -e 'AKIA[0-9A-Z]{16}' -e 'sk-ant-[A-Za-z0-9_-]{20,}' .; then echo "secret-like content found"; exit 1; fi
@@ -94,6 +94,8 @@ jobs:
           python3 -m foundation closedloop --check
           python3 -m foundation openloops --check
           python3 -m foundation strays --check
+          python3 -m foundation progress --check
+          python3 -m foundation cfposture --check
           python3 -m foundation standingorder --check
           python3 -m foundation rules --check
           python3 -m foundation decisions --check
@@ -104,6 +106,9 @@ jobs:
           python3 -m foundation ciwatch --check
           python3 -m foundation serverside --check
           python3 -m foundation singleaccount --check
+          python3 -m foundation owndb --check
+          python3 -m foundation tenantcontrols --check
+          python3 -m foundation rescore --check
           python3 -m foundation resilience --check
           python3 -m foundation clock --check
           python3 -m foundation userbackend --check

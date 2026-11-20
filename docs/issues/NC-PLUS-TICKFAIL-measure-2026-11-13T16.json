@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-TICKFAIL-measure-2026-11-13T16",
+  "title": "NC-PLUS-TICKFAIL-measure-2026-11-13T16: Add D1 bootstrap migration so all required tables (incl. metrics) are created at deploy time",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-TICKFAIL-measure-2026-11-13T16 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe PLUS-TICKFAIL-measure-2026-11-13T16\n**Status:** open\n\nAdd D1 bootstrap migration so all required tables (incl. metrics) are created at deploy time\n\nBacklog done check: Fresh D1 database gets migrations applied automatically on deploy; probe tick completes step measure without 'no such table' errors\n\nTriage: Creating D1 bootstrap migrations requires editing code/config files and running wrangler deploys, which the in-Worker doer cannot do. | first step: Draft migration SQL for all required tables incl. metrics and a deploy-time apply step (wrangler d1 migrations apply in CI).\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

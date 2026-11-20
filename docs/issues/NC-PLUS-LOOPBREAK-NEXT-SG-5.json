@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-LOOPBREAK-NEXT-SG-5",
+  "title": "NC-PLUS-LOOPBREAK-NEXT-SG-5: Add automatic retry-failure escalation: after 3 failed dispatches, reassign to alternate doer or split item, then re-dispatch NEXT-SG-5",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-LOOPBREAK-NEXT-SG-5 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe PLUS-LOOPBREAK-NEXT-SG-5\n**Status:** open\n\nAdd automatic retry-failure escalation: after 3 failed dispatches, reassign to alternate doer or split item, then re-dispatch NEXT-SG-5\n\nBacklog done check: item NEXT-SG-5 has an outcome\n\nTriage: Escalation requires modifying the dispatch loop and doer-assignment logic in Workers code; the doer cannot edit code, only the backlog DB. | first step: Write a backlog note defining escalation rules (fail-count threshold, alternate-doer mapping, split procedure) for the code change.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

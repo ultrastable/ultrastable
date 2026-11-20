@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-name-clearance",
   "title": "Q-BLIND-name-clearance: close the ip blind spot name-clearance",
-  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** grep:ops/blindspots/closed.jsonl::\"id\": \"name-clearance\"\n**Prediction:** blindspots_open <= 7 within 168 h\n**Status:** open\n\nWhy the owner would not know to ask: Another party may hold a trademark on the name; discovering that after launch forces a costly rename.\nAction: search public trademark registers and record the result with sources. The probe in doctrine/blindspots.json passes when it is done.",
+  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** cmd:python3 -m foundation blindspots --closed name-clearance\n**Prediction:** blindspots_open <= 7 within 168 h\n**Status:** closed\n\nWhy the owner would not know to ask: Another party may hold a trademark on the name; discovering that after launch forces a costly rename.\nAction: search public trademark registers and record the result with sources. The probe in doctrine/blindspots.json passes when it is done.\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): name-clearance: ok\n",
   "labels": [
     "role:product-manager",
     "blindspot"

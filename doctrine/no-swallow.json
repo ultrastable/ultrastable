@@ -1,0 +1,32 @@
+{
+  "_doc": "NO-SWALLOW-1: 'Never swallow an error' (agents/AGENTS.md) as a check. A bare `except:` in Python is banned outright. `2>/dev/null` is counted per file against a shrink-only baseline: a file may lose occurrences, never gain one, and a new file starts at 0. Checked by scripts/lint_swallow.py (tests/foundation/test_noswallow.py, run by the foundation tests step of checks). Never raise a baseline number to pass; log the error instead.",
+  "python_globs": [
+    "foundation/**/*.py",
+    "scripts/**/*.py",
+    "seed/**/*.py",
+    "products/**/*.py",
+    "platform/**/*.py",
+    "tests/**/*.py"
+  ],
+  "shell_globs": [
+    ".github/workflows/*.yml",
+    "scripts/**/*.sh",
+    "seed/**/*.sh",
+    "deploy/**/*.sh",
+    "deploy/**/*.mjs",
+    "seed/bootstrap/*.py"
+  ],
+  "exclude": [
+    "scripts/lint_swallow.py",
+    "tests/foundation/test_noswallow.py"
+  ],
+  "baseline": {
+    ".github/workflows/fleet.yml": 1,
+    "scripts/apply_github_settings.sh": 1,
+    "scripts/completion_sweep.sh": 6,
+    "scripts/executor_evidence.sh": 1,
+    "scripts/lane.sh": 4,
+    "scripts/lib-safe.sh": 1,
+    "scripts/mirror_then_delete.sh": 2
+  }
+}

@@ -44,9 +44,9 @@ class Market(unittest.TestCase):
         (t / market.PATH).write_text(json.dumps(d)); self.assertTrue(any("claim without code" in b for b in market.check(t)))
 
     def test_gap_without_queue_item_fails(self):
-        t = _copy(); (t / "docs/issues/Q-GAP-own-domain.json").unlink()
-        self.assertTrue(any("own-domain" in b for b in market.check(t)))
-        self.assertEqual(market.sync(t), ["Q-GAP-own-domain"]); self.assertEqual(market.check(t), [])
+        t = _copy(); (t / "docs/issues/Q-GAP-second-installation.json").unlink()
+        self.assertTrue(any("second-installation" in b for b in market.check(t)))
+        self.assertEqual(market.sync(t), ["Q-GAP-second-installation"]); self.assertEqual(market.check(t), [])
 
     def test_a_gap_that_closes_needs_no_manual_edit(self):
         t = _copy(); (t / "foundation/adopt.py").write_text("# adopt\n")
@@ -60,6 +60,8 @@ class Market(unittest.TestCase):
         t = _copy(); d = market.load(t)
         for o in d["objections"]:
             if o["id"] == "just-a-code-agent": o["concede"] = "Coding agents are strong."
+        for f in d["features"]:  # the cited feature is built today; the rule is tested on the same objection citing it while unbuilt
+            if f["id"] == "executor-pr": f["status"] = "pinned"
         (t / market.PATH).write_text(json.dumps(d)); self.assertTrue(any("without conceding" in b for b in market.check(t)))
 
 

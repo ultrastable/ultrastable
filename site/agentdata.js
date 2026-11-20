@@ -216,8 +216,8 @@ export default {
     "name": "A2A v1.0 with signed Agent Cards and task lifecycle",
     "body": "Agentic AI Foundation",
     "status": "stable",
-    "support": "planned",
-    "tracked_by": "ROADMAP-AGENT-A2A-V1: serve a v1.0 signed card, message/send and tasks/get"
+    "support": "supported",
+    "tracked_by": null
    },
    {
     "id": "mcp-apps-agui",
@@ -381,6 +381,84 @@ export default {
    "domain": "finance",
    "why": "Revenue, credits and grants create filing duties on dates the owner does not know.",
    "class": "owner-identity"
+  },
+  {
+   "id": "credential-expiry-watch",
+   "domain": "continuity",
+   "why": "Tokens and registrations lapse, and a lapsed one stops deploys with nobody present to renew it.",
+   "class": "system"
+  },
+  {
+   "id": "unattended-runway",
+   "domain": "continuity",
+   "why": "The owner's target is a year with no person. Without a measured projection nobody knows which limit ends the run first.",
+   "class": "system"
+  },
+  {
+   "id": "red-main-self-repair",
+   "domain": "continuity",
+   "why": "A deploy gate that goes red on main stops every release until something reverts the cause; a model may not manage it.",
+   "class": "system"
+  },
+  {
+   "id": "owner-gates-settle",
+   "domain": "continuity",
+   "why": "A gate that stays listed after its evidence is in tells every loop to route around something that is no longer missing.",
+   "class": "system"
+  },
+  {
+   "id": "worker-logs-kept",
+   "domain": "platform-risk",
+   "why": "With Workers Logs off, a failing cron or route leaves no record a loop can read after the fact.",
+   "class": "system"
+  },
+  {
+   "id": "action-version-rot",
+   "domain": "platform-risk",
+   "why": "GitHub retires action runtimes on its own clock; a pinned action that stops running stops every loop that uses it.",
+   "class": "system"
+  },
+  {
+   "id": "privacy-covers-processing",
+   "domain": "privacy",
+   "why": "The privacy page described visits, ideas and email but not AI processing, microphone failure codes kept 12 months, or the sign-in cookie and connected accounts (found by the 2026-11-20 privacy sweep).",
+   "class": "system"
+  },
+  {
+   "id": "domain-auto-renew",
+   "domain": "continuity",
+   "why": "All four domains expire together on 2027-11-10. The 2026-11-20 continuity sweep found auto-renew off on every one; the owner turned it on the same day (Cloudflare Registrar API read back: auto_renew true on all four). If it is ever switched off again the domains lapse unless someone pays on time.",
+   "class": "owner-identity"
+  },
+  {
+   "id": "name-clearance-eu-wipo",
+   "domain": "ip",
+   "why": "The name search covered the US register only; EUIPO, WIPO Madrid and UKIPO were not reachable from the session that ran it (found by the 2026-11-20 ip sweep).",
+   "class": "system"
+  },
+  {
+   "id": "d1-free-tier-hard-stop",
+   "domain": "platform-risk",
+   "why": "Since 2026-09-01 Cloudflare fails every D1 query on the free plan once the daily row limit is passed, until midnight UTC; before that date overage was tolerated (found by the 2026-11-20 platform-risk sweep, developers.cloudflare.com/changelog/post/2026-09-01-d1-free-tier-limit-enforcement).",
+   "class": "system"
+  },
+  {
+   "id": "ai-output-marking",
+   "domain": "legal",
+   "why": "EU AI Act Article 50 has applied since 2026-08-02: a person must be told when content is AI-made and the output must carry a machine-readable mark. Pages the system builds at /s/<id> carried neither (found by the 2026-11-20 legal sweep).",
+   "class": "system"
+  },
+  {
+   "id": "meta-signal-write-cap",
+   "domain": "security",
+   "why": "POST /api/meta/ingest is public and wrote to KV for 12 months with no limit, so anyone could use up the daily KV writes and stop the site's own state from saving (found by the 2026-11-20 security sweep).",
+   "class": "system"
+  },
+  {
+   "id": "one-click-unsubscribe",
+   "domain": "outreach",
+   "why": "Gmail, Yahoo and Microsoft expect a List-Unsubscribe header with one-click unsubscribe (RFC 8058) on automated mail; the intro lane has an opt-out line and domain suppression but sends no such header (found by the 2026-11-20 outreach sweep; the lane is in dry-run, so nothing has been sent without it).",
+   "class": "system"
   }
  ]
 };

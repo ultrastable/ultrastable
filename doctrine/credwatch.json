@@ -1,0 +1,46 @@
+{
+ "_doc": "TOKEN-EXPIRY-1 (2026-11-20): a year unattended outlives tokens and registrations. Every credential and registration the loops depend on is probed daily for its expiry, and one that is invalid or inside its warning window files a Q-CRED item before the loops stop. Consumers: foundation/credwatch.py (--run in .github/workflows/watchdog.yml, --check in tests/foundation/test_credwatch.py). CF-ROUTE-1 (2026-11-20): a credential marked optional is recorded but never files a Q-CRED item and never counts toward the runway; the Worker's own credential is the one that does.",
+ "version": "1.0.0",
+ "warn_days": 45,
+ "credentials": [
+  {
+   "name": "CF_DEPLOY_TOKEN",
+   "kind": "cloudflare-worker-token",
+   "used_by": "every deploy and the weekly backup drill; held by the site Worker and read through its OIDC route (CF-ROUTE-1), so no Cloudflare secret lives in GitHub"
+  },
+  {
+   "name": "CLOUDFLARE_API_TOKEN",
+   "kind": "cloudflare-token",
+   "optional": true,
+   "used_by": "optional second route: the Cloudflare secret in GitHub Actions, used by older workflows; its state is recorded but does not limit the runway while the Worker route reads the account"
+  },
+  {
+   "name": "LANE_PAT",
+   "kind": "github-token",
+   "optional": true,
+   "used_by": "optional: the merge lane for pull requests that change workflows; data pull requests are opened by the org App (MAIN-WRITER-PR-1)"
+  }
+ ],
+ "registrations": [
+  {
+   "name": "domain-ultrastable.io",
+   "expires": "2027-11-10",
+   "auto_renew": true
+  },
+  {
+   "name": "domain-ultrastable.org",
+   "expires": "2027-11-10",
+   "auto_renew": true
+  },
+  {
+   "name": "domain-ultrastable.app",
+   "expires": "2027-11-10",
+   "auto_renew": true
+  },
+  {
+   "name": "domain-ultrastable.net",
+   "expires": "2027-11-10",
+   "auto_renew": true
+  }
+ ]
+}

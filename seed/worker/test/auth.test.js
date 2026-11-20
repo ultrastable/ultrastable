@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { makeDb } from './d1shim.js';
 import { newKey } from '../src/auth/seal.js';
 import { pkcs1ToPkcs8, appJwt } from '../src/auth/github-app.js';
-import { getToken, refreshDue, probe } from '../src/auth/index.js';
+import { getToken, refreshDue, probe, ownerActs, DEAD_RETRY_MS } from '../src/auth/index.js';
 import * as store from '../src/auth/store.js';
 import { handleAuth, makeState, checkState } from '../src/auth/routes.js';
 import { oauth } from '../src/auth/oauth.js';
@@ -222,6 +222,13 @@ test('DIRECT-MERGE-GATE-1: the admin install upserts the main ruleset, and the l
   await applyRulesets(db, e, 't', { fetch: f, token: 'tok' });
   assert.deepEqual(calls[1], ['PUT', '/repos/ultrastable/ultrastable/rulesets/7']);
   assert.deepEqual((await rulesetsDue(db, e, { fetch: f })).map(x => x.action), ['done']);
+  // APP-DRIFT-1: when the app that writes to main changes, the rule is applied again and its exemption names the new app
+  await store.put(db, e, 't', 'github-app', { secret: { pem: 'x' }, meta: { app_id: 42, installation_id: 3 }, status: 'pending' });
+  const bodies = [];
+  const g = async (url, o = {}) => { if (o.body) bodies.push(JSON.parse(o.body)); return f(url, o); };
+  assert.deepEqual((await rulesetsDue(db, e, { fetch: g, token: 'tok' })).map(x => x.action), ['rulesets-applied']);
+  assert.deepEqual(bodies.pop().bypass_actors, [{ actor_id: 42, actor_type: 'Integration', bypass_mode: 'always' }]);
+  assert.deepEqual((await rulesetsDue(db, e, { fetch: g, token: 'tok' })).map(x => x.action), ['done'], 'the same app is not applied twice');
   const denied = await applyRulesets(makeDb(), e, 't', { fetch: async () => ({ status: 403, json: async () => ({}) }), token: 'tok' });
   assert.equal(denied.ok, false);
 });
@@ -251,4 +258,34 @@ test('READ-BUDGET-7: a warm isolate keeps serving its token when the credential 
   assert.equal((await getToken(db, e, 'm', 'github-app', { fetch: f, now })).token, 'memo-tok');
   const r = await getToken(db, e, 'm', 'github-app', { fetch: async () => { throw new Error('no network'); }, now: now + 60e3 });
   assert.equal(r.token, 'memo-tok'); assert.equal(r.memo, true);
+});
+
+test('a refused refresh is not retried every tick, and shows up as a live owner act (DEAD-CONSENT-1, OWNER-ACTS-1)', async () => {
+  const db = makeDb(), e = env();
+  await store.put(db, e, 't', 'oauth:google', { secret: { refresh_token: 'r' }, meta: { kind: 'oauth', provider: 'google', token_url: 'https://x.example/token', client_id: 'c' }, status: 'failed', error: 'refresh HTTP 401' });
+  const at = Date.parse(db.raw.prepare('SELECT updated_at FROM credentials').get().updated_at);
+  let calls = 0; const f = async () => { calls++; return { ok: false, status: 401, json: async () => ({}) }; };
+  const soon = await refreshDue(db, e, { fetch: f, now: at + 10 * 60e3 });
+  assert.equal(soon[0].action, 'backoff'); assert.equal(calls, 0);
+  const later = await refreshDue(db, e, { fetch: f, now: at + DEAD_RETRY_MS + 1 });
+  assert.notEqual(later[0].action, 'backoff');
+  const acts = await ownerActs(db);
+  assert.deepEqual(acts.map(a => [a.id, a.connect]), [['signin:oauth:google', '/connect/google']]);
+  assert.ok(!JSON.stringify(acts).includes('"r"'));
+});
+
+test('APP-REUSE-1: a connect link never registers a second GitHub app', async () => {
+  const db = makeDb(), e = { ...env(), DB: db };
+  for (const [path, provider] of [['/connect/github', 'github-app'], ['/connect/github-admin', 'github-admin']]) {
+    const first = await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text();
+    assert.match(first, /settings\/apps\/new/, 'no stored app: the manifest form is offered once');
+    await store.put(db, e, 't', provider, { secret: { pem: 'k' }, meta: { app_id: 7, slug: 'org-abc123' }, status: 'pending' });
+    const half = await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' });
+    assert.equal(half.status, 302); assert.match(half.headers.get('location'), /^https:\/\/github\.com\/apps\/org-abc123\/installations\/new\?state=/, 'registered, not installed: the stored app is installed');
+    await store.put(db, e, 't', provider, { meta: { installation_id: 9 }, status: 'ok' });
+    const done = await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text();
+    assert.match(done, /Already connected/); assert.ok(!/settings\/apps\/new/.test(done), 'connected: no manifest form');
+    await store.put(db, e, 't', provider, { status: 'failed', error: 'mint HTTP 404' });
+    assert.match(await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text(), /settings\/apps\/new/, 'a stored app that can no longer mint is replaced');
+  }
 });

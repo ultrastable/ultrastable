@@ -47,7 +47,7 @@ Research date: 2026-11-11. Every entry in the register carries its sources with 
 | DPoP (RFC 9449), Resource Indicators (RFC 8707) and Rich Authorization Requests (RFC 9396) | IETF OAuth WG | stable | planned | STD-7: bind issued tokens with DPoP, require resource indicators, express scopes as RAR |
 | Workload identity for agents (WIMSE, SPIFFE) and transaction tokens | IETF WIMSE; CNCF | draft | planned | STD-8: give each virtual agent a durable ID and short-lived credentials per task; carry the chain in transaction tokens |
 | OpenID AuthZEN (policy decision point API) | OpenID Foundation | stable | supported | `authzen: ledger decides and fails closed`; `worker routes /access/v1/evaluation` |
-| A2A v1.0 with signed Agent Cards and task lifecycle | Agentic AI Foundation | stable | planned | ROADMAP-AGENT-A2A-V1: serve a v1.0 signed card, message/send and tasks/get |
+| A2A v1.0 with signed Agent Cards and task lifecycle | Agentic AI Foundation | stable | supported | `agent card signature verifies against /.well-known/jwks.json` |
 | MCP Apps (SEP-1865), AG-UI and A2UI for rich agent surfaces | MCP project; AG-UI; Google (A2UI) | draft | planned | STD-10: ship the connect and approve screens as MCP Apps; AG-UI event stream for the dashboard |
 | Agent Client Protocol (editor to coding agent) | Zed and community | draft | planned | STD-11: watch; adopt if VS Code or JetBrains ship it for third-party harnesses |
 | AP2 mandates and UCP commerce | Google, Shopify, Linux Foundation | draft | planned | STD-12: n/a until funding; any payment is identity-bound and stays behind a gate card |

@@ -338,7 +338,11 @@ def run(today, contact=True):
     cards = e.cards()
     e.write_status(cards)
     e.save()
-    return {"new": new, "queued": queued, "send": res, "followups_due": due, "cards": [c["id"] for c in cards], "mode": e.gate["mode"], "kill": e.gate["kill"]}
+    directories = None
+    if (OUT / "agent-directories.json").exists():  # AGENT-DIRECTORIES-1: packets for agent registries ride the same run and the same gate
+        import agent_directories
+        directories = agent_directories.build(ROOT)
+    return {"agent_directories": directories, "new": new, "queued": queued, "send": res, "followups_due": due, "cards": [c["id"] for c in cards], "mode": e.gate["mode"], "kill": e.gate["kill"]}
 
 
 def main(argv=None):

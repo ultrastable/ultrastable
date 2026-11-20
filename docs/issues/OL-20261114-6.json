@@ -1,7 +1,7 @@
 {
   "id": "OL-20261114-6",
   "title": "OL-20261114-6: test_repo_cleanup: test_metasignal makes temp directories nothing removes",
-  "body": "**Owner:** operations\n**Trigger:** foundation tests red on main at 1202e5d (found 2026-11-14 while landing SELF-REFERENCE-1)\n**Done check:** grep:tests/foundation/test_metasignal.py::from tests\\.foundation\\._repo import scratch\n**Status:** open\n\ntests/foundation/test_metasignal.py:17 and :29 call tempfile directly. Use the shared scratch() helper (tests/foundation/_repo.py), which removes its directories, so test_repo_cleanup passes.\n\nsize: S\n\n**Closing probe:** grep:tests/foundation/test_metasignal.py::from tests\\.foundation\\._repo import scratch",
+  "body": "**Owner:** operations\n**Trigger:** foundation tests red on main at 1202e5d (found 2026-11-14 while landing SELF-REFERENCE-1)\n**Done check:** grep:tests/foundation/test_metasignal.py::from tests\\.foundation\\._repo import scratch\n**Status:** closed\n\ntests/foundation/test_metasignal.py:17 and :29 call tempfile directly. Use the shared scratch() helper (tests/foundation/_repo.py), which removes its directories, so test_repo_cleanup passes.\n\nsize: S\n\n**Closing probe:** grep:tests/foundation/test_metasignal.py::from tests\\.foundation\\._repo import scratch\n\n**Evidence:** closing probe passed (7 consecutive passes after a recorded failure): grep:tests/foundation/test_metasignal.py::from tests\\.foundation\\._repo import scratch\n",
   "labels": [
     "role:operations",
     "open-loop"

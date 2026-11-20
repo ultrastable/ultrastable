@@ -430,10 +430,10 @@
     {
       "id": "executor-pr",
       "name": "Executor opens its own merged pull request",
-      "status": "pinned",
-      "proof": "grep:foundation/executor.py::pr-opened",
+      "status": "live",
+      "proof": "grep:ops/executor-log.jsonl::\"result\": \"pr-merged\"",
       "test": "tests/foundation/test_executor.py",
-      "note": "Built and tested with a fake model; blocked on a bound model credential."
+      "note": "Pull requests 749 and 762 were opened by the executor and merged on 2026-11-20; both were mechanical fixes, none written by a model yet."
     },
     {
       "id": "adaptive-interview",
@@ -480,8 +480,8 @@
     {
       "id": "executor-merged-pr",
       "title": "Executor opens and merges its own pull request",
-      "why": "Built and tested with a fake model only.",
-      "closing_probe": "grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"",
+      "why": "The executor opens pull requests with real models (five by 2026-11-20); none has merged yet. The log on main records each outcome (PR-OUTCOME-1).",
+      "closing_probe": "grep:ops/executor-log.jsonl::\"result\": \"pr-merged\"",
       "component": "code-repo",
       "owner": "operations"
     },
@@ -682,7 +682,7 @@
       "id": "just-a-code-agent",
       "objection": "Isn't this just a code agent?",
       "answer": "No. Coding agents write the change. Ultrastable decides what to work on, hands each task to the agent that fits, proves the result live, reverts it on a failed probe, and records whether its own prediction was right. It sits around coding agents rather than competing with them.",
-      "concede": "The coding agents named in this file are strong at writing the change, and Ultrastable's own executor opening a merged PR is still pinned.",
+      "concede": "The coding agents named in this file are strong at writing the change, and the only pull requests Ultrastable's own executor has opened and merged so far are mechanical fixes, not changes written by a model.",
       "components": [
         "code-repo",
         "loops-autonomy",

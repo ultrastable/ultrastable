@@ -41,9 +41,12 @@ export async function ignitionResponse(env, now = Date.now()) {
   return new Response(JSON.stringify(b), { status: b.ok ? 200 : 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
 }
 
+async function liveChanges(env) {
+  try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/live/changes")); if (r.ok) return await r.json(); } } catch (e) { console.error("live changes", e && e.message); }
+  return null;
+}
 export async function overlay(d, env, generated, now = Date.now(), bundleAt = null) {
-  let live = null;
-  try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/live/changes")); if (r.ok) live = await r.json(); } } catch (e) { live = null; }
+  const live = await liveChanges(env);
   const f = { snapshot: { at: generated, age_s: ageS(generated, now), cadence_s: CADENCE_S.snapshot }, changes: { at: live && live.refreshed_at || null, age_s: live ? ageS(live.refreshed_at, now) : null, cadence_s: CADENCE_S.changes } };
   if (live && live.changes && live.changes.length) {
     const th = d.throughput = d.throughput || {}, by = new Map();
@@ -104,6 +107,10 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
  table(pg,['Knob','Value'],Object.entries(((pmr.knobs||{}).values)||{}));
  table(pg,['Knob change','Old','New','Why','Reviewed'],(pmr.knob_log||[]).map(k=>[k.knob+' ('+k.at.slice(0,10)+')',k.old,k.new,k.why,k.reviewed||'pending']));
  table(pg,['Filed by the loop'],[].concat(((pmr.filed||{}).growth||[]).map(x=>['growth: '+x]),((pmr.filed||{}).repair||[]).map(x=>['repair: '+x])).concat([['(none this pass)']].slice(0,((pmr.filed||{}).growth||[]).length+((pmr.filed||{}).repair||[]).length?0:1)));
+ const wkr=pmr.weekly||{};if(wkr.metrics){const ws=sec('Growth this week ('+wkr.week+')','Written once a week by the product manager loop: each growth metric against the week before, and the next three experiments with the prediction each must meet to be kept.');
+ table(ws,['Metric','This week','Last week','Change','Target'],wkr.metrics.map(m=>[m.id,m.value==null?'not measured':m.value,m.previous==null?'':m.previous,m.delta_pct==null?'':m.delta_pct+'%',m.target]));
+ table(ws,['Reviewed experiment','Metric','Verdict'],(wkr.verdicts||[]).map(v=>[v.item,v.metric,v.verdict]));
+ table(ws,['Next experiment','Prediction','Closing probe'],(wkr.next_experiments||[]).map(n=>[n.item,n.prediction,n.closing_probe]));}
  const ck=sec('Clocks','Every loop is a clock. Status is measured from its recorded beats, never declared: ticking, late, stopped, or idle when there is no work. A stopped or inaccurate clock is a defect.');
  table(ck,['Clock','Status','Last beat (s ago)','Beats in 24 h (expected)','Median jitter (s)','What it does'],(d.clocks||[]).map(c=>[c.id,c.status+(c.why?' ('+c.why+')':''),c.last_beat_age_s,c.beats_24h==null?'':c.beats_24h+' ('+c.expected_24h+')',c.median_jitter_s,c.what]));
  const tp2=d.topology||{},pt=tp2.parts||{};
@@ -129,6 +136,19 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
  sec('The feedback loop').appendChild(el('p',null,d.feedback_loop));
 }).catch(()=>{$('#live').textContent='The snapshot could not be loaded.'});`;
 
+// CHANGELOG-FEED-1: /changelog.xml (RSS 2.0) and /changelog.json, built from the same snapshot and live overlay as /live: merged changes by
+// day with size and origin. Titles, numbers and links only; no repository contents.
+const xesc = t => String(t == null ? "" : t).replace(/[<>&"']/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c]));
+export function changelogFeed(d, origin) {
+  const days = ((d.throughput || {}).changelog || []).map(g => ({ date: g.date, merged: g.changes.length, lines_added: g.changes.reduce((a, c) => a + (c.plus || 0), 0), lines_removed: g.changes.reduce((a, c) => a + (c.minus || 0), 0),
+    by_origin: g.changes.reduce((a, c) => { const k = c.by || "unknown"; a[k] = (a[k] || 0) + 1; return a; }, {}),
+    changes: g.changes.map(c => ({ number: c.n, title: c.title, origin: c.by || null, url: c.url || null, lines_added: c.plus == null ? null : c.plus, lines_removed: c.minus == null ? null : c.minus })) }));
+  const json = { title: "Ultrastable changelog", home: origin + "/live", feed: origin + "/changelog.xml", freshness: d.freshness || null, days };
+  const items = days.flatMap(g => g.changes.map(c => "<item><title>" + xesc(c.title) + "</title><link>" + xesc(c.url || origin + "/live") + "</link><guid isPermaLink=\"false\">ultrastable-change-" + xesc(c.number) + "</guid><pubDate>" + new Date(g.date + "T12:00:00Z").toUTCString() + "</pubDate><category>" + xesc(c.origin || "unknown") + "</category><description>" + xesc("Merged change " + c.number + (c.lines_added == null ? "" : ": " + c.lines_added + " lines added, " + c.lines_removed + " removed") + ". Origin: " + (c.origin || "unknown") + ".") + "</description></item>"));
+  const xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\"><channel><title>Ultrastable changelog</title><link>" + origin + "/live</link><description>Merged code changes to Ultrastable, by day, size and origin.</description>" + (days[0] ? "<lastBuildDate>" + new Date(days[0].date + "T12:00:00Z").toUTCString() + "</lastBuildDate>" : "") + items.slice(0, 100).join("") + "</channel></rss>";
+  return { json, xml };
+}
+
 export async function liveResponse(u, request, env, shell, HTML, bundleAt = null) {
   if (request.method !== "GET" && request.method !== "HEAD") return new Response(JSON.stringify({ error: "read-only" }), { status: 405, headers: { ...JSON_H, allow: "GET, HEAD" } });
   if (u.pathname === "/api/freshness") {
@@ -136,11 +156,17 @@ export async function liveResponse(u, request, env, shell, HTML, bundleAt = null
     const d = r ? await overlay({}, env, r.generated, Date.now(), bundleAt) : { freshness: { ok: false, snapshot: { stale: true, at: null }, changes: { stale: true } } };
     return new Response(JSON.stringify(d.freshness), { status: d.freshness.ok ? 200 : 503, headers: { ...JSON_H, "cache-control": "no-store" } });
   }
+  if (u.pathname === "/changelog.xml" || u.pathname === "/changelog.json") {
+    const r = await load(env);
+    if (!r) return new Response(JSON.stringify({ error: "No snapshot published yet." }), { status: 503, headers: JSON_H });
+    const f = changelogFeed(await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt), u.origin);
+    return u.pathname.endsWith(".xml") ? new Response(f.xml, { headers: { ...JSON_H, "content-type": "application/rss+xml; charset=utf-8" } }) : new Response(JSON.stringify(f.json), { headers: JSON_H });
+  }
   if (u.pathname === "/api/live") {
     const r = await load(env);
     if (!r) return new Response(JSON.stringify({ error: "No snapshot published yet." }), { status: 503, headers: JSON_H });
     return new Response(JSON.stringify(await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt)), { headers: JSON_H });
   }
-  const body = "<div class=\"head\"><h1>Ultrastable running on Ultrastable</h1><p>Everything here is read-only and open to everyone. It is the same record the managers and agents work from.</p><p class=\"meta\" id=\"asof\">Loading...</p></div><div id=\"live\"></div><script>" + JS + "</script>";
+  const body = "<div class=\"head\"><h1>Ultrastable running on Ultrastable</h1><p>Everything here is read-only and open to everyone. It is the same record the managers and agents work from.</p><p class=\"meta\" id=\"asof\">Loading...</p><p class=\"meta\">Subscribe to merged changes: <a href=\"/changelog.xml\">RSS</a> or <a href=\"/changelog.json\">JSON</a>.</p></div><div id=\"live\"></div><script>" + JS + "</script>";
   return new Response(shell({ path: "/live", title: "Live: Ultrastable running on Ultrastable", description: "Read-only view of the managers, loops, claim checks and code changes behind Ultrastable." }, body), { headers: HTML });
 }

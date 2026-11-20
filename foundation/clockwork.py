@@ -11,9 +11,8 @@ expired); an open change past the window is closed as expired and its item retur
 stateless ladder keyed on how many SLAs were missed: catch-up, then mutate the approach (run the next takeable item), then file a p0 repair item (foundation/pm.py).
 """
 from __future__ import annotations
-import json, re, subprocess
+import json, re, subprocess, sys
 from datetime import datetime, timezone
-from pathlib import Path
 
 from . import clock as C
 
@@ -115,8 +114,8 @@ def settlement(root=REPO, now: float | None = None, prs=None) -> dict:
         for n, f in fails.items():
             if f and n not in by:
                 by[n] = {"name": n, "state": "failed" if n in takeable else "parked", "failures": f}
-    except Exception:  # a broken queue must not hide the ledger
-        pass
+    except Exception as e:  # a broken queue must not hide the ledger; the failure is printed, never swallowed
+        print(f"clockwork: queue unreadable, ledger only: {type(e).__name__}: {str(e)[:160]}", file=sys.stderr)
     unsettled = [v for v in by.values() if v["state"] in ("open", "expired")]
     return {"names": by, "counts": {k: sum(1 for v in by.values() if v["state"] == k) for k in cfg["names"] + ["open"]}, "unsettled": unsettled}
 

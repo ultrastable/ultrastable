@@ -148,6 +148,1464 @@ export default {
    "surface": "site/authzen.js"
   },
   {
+   "claim": "Code is the only memory. All project state lives in this repository (docs/PROJECT-MEMORY.md and data files). No agent relies on chat, tool",
+   "detail": "",
+   "how": "file:doctrine/standing-order.json + grep:.github/workflows/checks.yml::foundation standingorder --check + grep:.github/workflows/checks.yml::foundation writeback check + grep:products/gaplint/gaplint/rules.py::GL009",
+   "id": "curated-d69ac04f28",
+   "kind": "claim",
+   "pass": true,
+   "surface": "README.md"
+  },
+  {
+   "claim": "- **If it is not in code, it does not exist.** Every decision, plan and result lands as a commit, an issue, a PR or a database row in the",
+   "detail": "",
+   "how": "file:doctrine/standing-order.json + grep:.github/workflows/checks.yml::foundation standingorder --check + grep:.github/workflows/checks.yml::foundation writeback check + grep:products/gaplint/gaplint/rules.py::GL009",
+   "id": "curated-238797d409",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Never handle secret values.** Reference secrets by binding name. Never print, commit or paste a token, password or key.",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006",
+   "id": "curated-dea69ae3dd",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Never swallow an error.** No `2>/dev/null`, bare `except`, or ignored exit code on a step that matters. A failure is logged and becomes",
+   "detail": "",
+   "how": "file:scripts/lint_swallow.py + grep:tests/foundation/test_noswallow.py::test_a_bare_except_and_a_new_dev_null_fail + file:doctrine/no-swallow.json",
+   "id": "curated-b7bf631caa",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Code is all that matters. Never rely on user impact.** The only measure of work is code that is merged, tested, deployed and recorded",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-a1a9a3895b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Merge immediately; resolve everything (Rowan, 2026-11-12).** Merge every PR the moment it is opened and its checks have been run in the",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:scripts/lane.sh + file:.github/workflows/lane.yml + file:tests/foundation/test_lanewatch.py",
+   "id": "curated-cb3bad08f3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "The Ultrastable system shall always audit and remediate all failure modes automatically",
+   "detail": "",
+   "how": "file:foundation/failure_audit.py + file:.github/workflows/failure-audit.yml + grep:doctrine/registers.json::failure_modes + file:doctrine/detectors.json",
+   "id": "curated-f4a78fec3d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Never stop.** There is always a next item. When your item is done, pull the next one in driver order. When the backlog looks empty,",
+   "detail": "",
+   "how": "grep:foundation/queue.py::def takeable + file:.github/workflows/executor.yml + grep:doctrine/clocks.json::max_wakes_per_hour",
+   "id": "curated-1b0b9f818e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **All information is useful somehow; ingest it, keep the record in files, audit the surfaces (INFO-USEFUL-1, DURABLE-STORAGE-1,",
+   "detail": "",
+   "how": "file:doctrine/durable-facts.json + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-a80e874dd5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- Owner, verbatim in substance: \"I'm not seeing enough fleet autonomy and system-wide cross-repo autonomy. Never assume anything is needed",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL010 + file:doctrine/closed-loop.json + grep:.github/workflows/checks.yml::foundation closedloop --check",
+   "id": "curated-3bee3ac6dc",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- Assume no person ever reads, reviews, approves or decides anything. A document, PR description, issue, report, card, memory or chat",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL010 + file:doctrine/closed-loop.json + grep:.github/workflows/checks.yml::foundation closedloop --check + file:doctrine/consumers.json",
+   "id": "curated-f0351b7612",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- Every loop closes inside the fleet: trigger, actor, action, verification and write-back all run without a person. A reviewer is a",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL010 + file:doctrine/closed-loop.json + grep:.github/workflows/checks.yml::foundation closedloop --check + grep:.github/workflows/checks.yml::foundation loopowner --check",
+   "id": "curated-8c69c9fe48",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- Documents, memories and owner cards are not state. State is code and data that code reads. Delete or wire any document, card or issue",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL010 + file:doctrine/closed-loop.json + grep:.github/workflows/checks.yml::foundation closedloop --check + grep:.github/workflows/checks.yml::foundation docs_audit --check",
+   "id": "curated-e4239894d7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The fleet is the actor.** No report assigns a next step to a person. A step only the owner can take is a gate card, never an",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL002 + file:foundation/needsyou.py + file:foundation/data/needs-you.json + grep:products/gaplint/gaplint/rules.py::GL004",
+   "id": "curated-b62a1ec6bd",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A refusal is an input.** If a permission check, policy or classifier refuses an action, state it plainly with its reason, record it,",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::foundation kernel --check + file:doctrine/kernel-8.2.1.md + grep:.github/workflows/checks.yml::foundation openloops --check",
+   "id": "curated-3c601bd5f7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- Never review your own work. A different agent, and where possible a different model, verifies each claimed result.",
+   "detail": "",
+   "how": "grep:seed/worker/src/tick.js::M-verified + file:foundation/agent_ladder.py + file:tests/foundation/test_agent_ladder.py + grep:seed/autonomy/policy.json::a reviewer agent merges",
+   "id": "curated-2750dd9224",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- A share of capacity (`capacity.plus_share` in `ultrastable.json`, default 20%) goes to accepted pluses.",
+   "detail": "",
+   "how": "json:seed/ultrastable.json::capacity.plus_share==0.2 + grep:seed/worker/src/tick.js::check_plus_share",
+   "id": "curated-a678a8d226",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "Your role file and `autonomy/policy.json` change only by a reviewed PR. Repeated failure patterns and friction from people become proposed",
+   "detail": "",
+   "how": "grep:scripts/protected_paths.py::autonomy/ + grep:seed/worker/src/tick.js::PR to autonomy/policy.json merged after review by a different agent + file:foundation/trust.py",
+   "id": "curated-1ebcff5440",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "Applicant identity (entity, email, signature, attestations, sign-in) is never invented; it comes from `applicant.json`, which the owner card fills.",
+   "detail": "",
+   "how": "grep:scripts/funding_packet.py::applicant.json + file:scripts/test_funding_packet.py",
+   "id": "curated-21ec008fbc",
+   "kind": "claim",
+   "pass": true,
+   "surface": "business/funding/applications/README.md"
+  },
+  {
+   "claim": "every claim must still trace to a source in the repository, and no number is invented.",
+   "detail": "",
+   "how": "file:outreach/facts.json + file:foundation/promote.py + file:scripts/check_business_index.py + file:scripts/check_license.py",
+   "id": "curated-6e8a8e6518",
+   "kind": "claim",
+   "pass": true,
+   "surface": "business/investor/README.md"
+  },
+  {
+   "claim": "provided every claim traces to a source in the repository and no number is invented.",
+   "detail": "",
+   "how": "file:outreach/facts.json + file:foundation/promote.py + file:scripts/check_business_index.py + file:scripts/check_license.py",
+   "id": "curated-43a588e27d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "business/plan/README.md"
+  },
+  {
+   "claim": "- **Plain-English console agent (CONSOLE-AGENT-1)**: a line that is not a registered command goes to `agent.js`, a short tool loop on the",
+   "detail": "",
+   "how": "grep:dashboard/agent.js::ASK_PER_HOUR = 60 + grep:dashboard/agent.js::LIMIT 100 + grep:dashboard/worker.js::STEPUP_MS = 15 \\* 60e3 + file:dashboard/test/agent.test.mjs",
+   "id": "curated-ec0873de33",
+   "kind": "claim",
+   "pass": true,
+   "surface": "dashboard/README.md"
+  },
+  {
+   "claim": "3. **Upkeep and improvement that never end.** Work keeps arriving (failures, drift, new sources, new rules) and there is always a next",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::qualify + grep:tests/test_vision.py::test_seed_idea_is_a_system + grep:site/worker.js::function systemTest",
+   "id": "curated-c3cd389b11",
+   "kind": "claim",
+   "pass": true,
+   "surface": "docs/doctrine/VISION.md"
+  },
+  {
+   "claim": "to use instead\", never a smaller staffing of the same machinery.",
+   "detail": "",
+   "how": "grep:tests/test_vision.py::test_camping_app_is_not_staffed + grep:site/worker.js::not_a_fit",
+   "id": "curated-e1083562b7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "docs/doctrine/VISION.md"
+  },
+  {
+   "claim": "- Code is the only memory. The result of any path is a commit, a file or a database row; a chat is never the only record.",
+   "detail": "",
+   "how": "file:doctrine/standing-order.json + grep:.github/workflows/checks.yml::foundation standingorder --check + grep:.github/workflows/checks.yml::foundation writeback check + grep:products/gaplint/gaplint/rules.py::GL009",
+   "id": "curated-2c10567fd1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "docs/runbooks/any-tools/README.md"
+  },
+  {
+   "claim": "- Identity-bound steps (money, signing, minting the owner's credentials) are gate cards with a default in effect, never an instruction in",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL002 + file:foundation/needsyou.py + file:foundation/data/needs-you.json + grep:products/gaplint/gaplint/rules.py::GL004",
+   "id": "curated-b3e07567fb",
+   "kind": "claim",
+   "pass": true,
+   "surface": "docs/runbooks/any-tools/README.md"
+  },
+  {
+   "claim": "Historical working files for a patent application that was never filed.",
+   "detail": "",
+   "how": "grep:scripts/test_social.py::patent pending + file:scripts/social_lib.py + grep:.github/workflows/checks.yml::patent track dropped",
+   "id": "curated-292e0dbf60",
+   "kind": "claim",
+   "pass": true,
+   "surface": "ip/README.md"
+  },
+  {
+   "claim": "Target: four repos. `ultrastable` (system of record), `workers` (all code), `spec` (specifications, docs, license), `.github` (org",
+   "detail": "",
+   "how": "file:org/repos.json + grep:org/repos.json::visibility_rule + file:scripts/check_org_repos.py",
+   "id": "curated-66c78c5a1a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "org/README.md"
+  },
+  {
+   "claim": "| `suppression.json` | opt-outs and do-not-contact; always wins |",
+   "detail": "",
+   "how": "grep:scripts/outreach.py::def suppressed + file:scripts/test_outreach.py",
+   "id": "curated-589c656e72",
+   "kind": "claim",
+   "pass": true,
+   "surface": "outreach/README.md"
+  },
+  {
+   "claim": "Live versus dry-run: see the top of `STATUS.md`. Live needs the owner's sender identity (`cards/OUT-SENDER.md`); forms are always the",
+   "detail": "",
+   "how": "grep:scripts/outreach_intro.py::form-only + file:scripts/test_outreach_intro.py",
+   "id": "curated-0eac54292b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "outreach/README.md"
+  },
+  {
+   "claim": "| **Dispatch** | The portfolio manager allocates execution slots across projects by weight and reserves a share (default 20%) for *plus*",
+   "detail": "",
+   "how": "grep:platform/core/ultrastable/config.py::\"plus_share\": 0.2 + grep:platform/core/ultrastable/engine.py::plus_share",
+   "id": "curated-dc1be08cc4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "platform/core/README.md"
+  },
+  {
+   "claim": "| GL003 | Agent files carry the standing rules, including **code is all that matters, never rely on user impact**. |",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-4730c2df72",
+   "kind": "claim",
+   "pass": true,
+   "surface": "products/gaplint/README.md"
+  },
+  {
+   "claim": "owner_contact: set-in-secret-store   # never put an email or token in this file",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006",
+   "id": "curated-35b69b3c85",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/IDEA.md"
+  },
+  {
+   "claim": "- Controls and evidence are never more than a week out of date",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::qualify + grep:tests/test_vision.py::test_seed_idea_is_a_system",
+   "id": "curated-990a6e17c4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/IDEA.md"
+  },
+  {
+   "claim": "A missing credential never stops the boot. The step is recorded as a backlog item with its blocker and a closing probe, and the rest of the",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::def guard + grep:seed/bootstrap/bootstrap.py::closing_probe + grep:seed/tests/test_seed.py::test_missing_idea_degrades_not_dies",
+   "id": "curated-e11ba7a3fe",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/README.md"
+  },
+  {
+   "claim": "- **If it is not in code, it does not exist.** Every output of every role is a commit, an issue or a database row. Chat is never the record.",
+   "detail": "",
+   "how": "file:doctrine/standing-order.json + grep:.github/workflows/checks.yml::foundation standingorder --check + grep:.github/workflows/checks.yml::foundation writeback check + grep:products/gaplint/gaplint/rules.py::GL009",
+   "id": "curated-6c1a85c13f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/README.md"
+  },
+  {
+   "claim": "- **The fleet is the actor.** People set direction and take only identity-bound steps (money, signing, credentials only they hold, their",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL002 + file:foundation/needsyou.py + file:foundation/data/needs-you.json + grep:products/gaplint/gaplint/rules.py::GL004",
+   "id": "curated-b8d6a53237",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/README.md"
+  },
+  {
+   "claim": "- **Never self-review.** A different agent or model verifies each claimed result.",
+   "detail": "",
+   "how": "grep:seed/worker/src/tick.js::M-verified + file:foundation/agent_ladder.py + file:tests/foundation/test_agent_ladder.py + grep:seed/autonomy/policy.json::a reviewer agent merges",
+   "id": "curated-2ec1fc6644",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/README.md"
+  },
+  {
+   "claim": "- **Plussing.** 20% of capacity goes to improvements, and every closed item proposes one.",
+   "detail": "",
+   "how": "json:seed/ultrastable.json::capacity.plus_share==0.2 + grep:seed/worker/src/tick.js::check_plus_share",
+   "id": "curated-9ec895e006",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/README.md"
+  },
+  {
+   "claim": "- **If it is not in code, it does not exist.** Every decision, plan and result lands as a commit, an issue, a PR or a database row in the",
+   "detail": "",
+   "how": "file:doctrine/standing-order.json + grep:.github/workflows/checks.yml::foundation standingorder --check + grep:.github/workflows/checks.yml::foundation writeback check + grep:products/gaplint/gaplint/rules.py::GL009",
+   "id": "curated-a9c0f5ebda",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Never handle secret values.** Reference secrets by binding name. Never print, commit or paste a token, password or key.",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006",
+   "id": "curated-54f6cece53",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Never swallow an error.** No `2>/dev/null`, bare `except`, or ignored exit code on a step that matters. A failure is logged and becomes",
+   "detail": "",
+   "how": "file:scripts/lint_swallow.py + grep:tests/foundation/test_noswallow.py::test_a_bare_except_and_a_new_dev_null_fail + file:doctrine/no-swallow.json",
+   "id": "curated-5d66326233",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Code is all that matters. Never rely on user impact.** The only measure of work is code that is merged, tested, deployed and recorded",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-c912d2609a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Merge immediately; resolve everything (Rowan, 2026-11-12).** Merge every PR the moment it is opened and its checks have been run in the",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:scripts/lane.sh + file:.github/workflows/lane.yml + file:tests/foundation/test_lanewatch.py",
+   "id": "curated-1b73a19f9c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "The Ultrastable system shall always audit and remediate all failure modes automatically",
+   "detail": "",
+   "how": "file:foundation/failure_audit.py + file:.github/workflows/failure-audit.yml + grep:doctrine/registers.json::failure_modes + file:doctrine/detectors.json",
+   "id": "curated-b3b1d9aeda",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Never stop.** There is always a next item. When your item is done, pull the next one in driver order. When the backlog looks empty,",
+   "detail": "",
+   "how": "grep:foundation/queue.py::def takeable + file:.github/workflows/executor.yml + grep:doctrine/clocks.json::max_wakes_per_hour",
+   "id": "curated-ec3666a8c1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Measure everything.** Every site and service an org ships carries the standard first-party analytics (`analytics/analytics.js`:",
+   "detail": "",
+   "how": "file:seed/analytics/analytics.js + file:seed/worker/test/analytics.test.js + grep:seed/worker/src/tick.js::BREACH-",
+   "id": "curated-cf5d53d442",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **All information is useful somehow; ingest it, keep the record in files, audit the surfaces (INFO-USEFUL-1, DURABLE-STORAGE-1,",
+   "detail": "",
+   "how": "file:doctrine/durable-facts.json + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-881430eb50",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The fleet is the actor.** No report assigns a next step to a person. A step only the owner can take is a gate card, never an",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL002 + file:foundation/needsyou.py + file:foundation/data/needs-you.json + grep:products/gaplint/gaplint/rules.py::GL004",
+   "id": "curated-fa82b51928",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A refusal is an input.** If a permission check, policy or classifier refuses an action, state it plainly with its reason, record it,",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::foundation kernel --check + file:doctrine/kernel-8.2.1.md + grep:.github/workflows/checks.yml::foundation openloops --check",
+   "id": "curated-d5d8a3e543",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- Never review your own work. A different agent, and where possible a different model, verifies each claimed result.",
+   "detail": "",
+   "how": "grep:seed/worker/src/tick.js::M-verified + file:foundation/agent_ladder.py + file:tests/foundation/test_agent_ladder.py + grep:seed/autonomy/policy.json::a reviewer agent merges",
+   "id": "curated-3425a83f11",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- A share of capacity (`capacity.plus_share` in `ultrastable.json`, default 20%) goes to accepted pluses.",
+   "detail": "",
+   "how": "json:seed/ultrastable.json::capacity.plus_share==0.2 + grep:seed/worker/src/tick.js::check_plus_share",
+   "id": "curated-8c33ec72cc",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "Your role file and `autonomy/policy.json` change only by a reviewed PR. Repeated failure patterns and friction from people become proposed",
+   "detail": "",
+   "how": "grep:scripts/protected_paths.py::autonomy/ + grep:seed/worker/src/tick.js::PR to autonomy/policy.json merged after review by a different agent + file:foundation/trust.py",
+   "id": "curated-8e7acc38fe",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- Owner, verbatim in substance: \"I'm not seeing enough fleet autonomy and system-wide cross-repo autonomy. Never assume anything is needed",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL010 + file:doctrine/closed-loop.json + grep:.github/workflows/checks.yml::foundation closedloop --check",
+   "id": "curated-cde879dd3b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- Assume no person ever reads, reviews, approves or decides anything. A document, PR description, issue, report, card, memory or chat",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL010 + file:doctrine/closed-loop.json + grep:.github/workflows/checks.yml::foundation closedloop --check + file:doctrine/consumers.json",
+   "id": "curated-424de84f14",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- Every loop closes inside the fleet: trigger, actor, action, verification and write-back all run without a person. A reviewer is a",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL010 + file:doctrine/closed-loop.json + grep:.github/workflows/checks.yml::foundation closedloop --check + grep:.github/workflows/checks.yml::foundation loopowner --check",
+   "id": "curated-f804f7572e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- Documents, memories and owner cards are not state. State is code and data that code reads. Delete or wire any document, card or issue",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL010 + file:doctrine/closed-loop.json + grep:.github/workflows/checks.yml::foundation closedloop --check + grep:.github/workflows/checks.yml::foundation docs_audit --check",
+   "id": "curated-1faa89f5e7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- none for routine work This is one card with a default in effect and a closing probe, never prose.",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL002 + file:foundation/needsyou.py + file:foundation/data/needs-you.json",
+   "id": "curated-a237bf38be",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/customer-success.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-8540e7a089",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/customer-success.md"
+  },
+  {
+   "claim": "3. Promote the best blue-sky idea whose promote_when holds into an experiment with a metric, a guard and a prediction; wild ideas run only",
+   "detail": "",
+   "how": "grep:doctrine/design-experiments.json::blast_box + grep:foundation/design.py::blast_box + file:tests/foundation/test_design.py",
+   "id": "curated-21e73d043f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/design-manager.md"
+  },
+  {
+   "claim": "4. For each new tenant system, select its personality from the library with design --select (taking siblings' looks into account) and",
+   "detail": "",
+   "how": "grep:foundation/design.py::def select + file:doctrine/design.json + file:tests/foundation/test_design.py",
+   "id": "curated-b80474ab11",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/design-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-8ad2570eba",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/design-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-8925d709f9",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/funding-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-91b34b3765",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/infrastructure-manager.md"
+  },
+  {
+   "claim": "- Sign, file and pay in the owner's name (one card per act, packet prepared, default in effect). This is one card with a default in effect",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL002 + file:foundation/needsyou.py + file:foundation/data/needs-you.json",
+   "id": "curated-351d379424",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/legal-ip-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-b970af225f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/legal-ip-manager.md"
+  },
+  {
+   "claim": "5. Open site changes as pull requests; never edit the live site directly.",
+   "detail": "",
+   "how": "file:.github/workflows/deploy-site.yml + grep:scripts/protected_paths.py::Protected-change + file:site/site.test.mjs",
+   "id": "curated-3288b80bfb",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/marketing-manager.md"
+  },
+  {
+   "claim": "- Approve public words under the owner's name until trust on that action class reaches the delegated rung. This is one card with a default",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL002 + file:foundation/needsyou.py + file:foundation/data/needs-you.json",
+   "id": "curated-e8bd0be833",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/marketing-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-adb5774d64",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/marketing-manager.md"
+  },
+  {
+   "claim": "5. Analytics: read `GET /api/analytics`; a breach (`hit = 1`) becomes an item with an owner, a prediction and a closing probe. Never close",
+   "detail": "",
+   "how": "file:seed/analytics/analytics.js + grep:seed/worker/src/tick.js::BREACH- + file:seed/worker/test/measure.test.js",
+   "id": "curated-ac9e61a042",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/operations.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-1bb3dcab53",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/operations.md"
+  },
+  {
+   "claim": "2. File one item per missing role with its phase gate as the trigger; never activate a role ahead of its gate.",
+   "detail": "",
+   "how": "grep:foundation/team.py::each phase opens only when its gate probes pass + grep:tests/foundation/test_team.py::test_phases_open_in_order_and_stop_at_first_failed_gate + file:doctrine/team.json",
+   "id": "curated-ce46bee474",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/org-designer.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-b94f1252f1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/org-designer.md"
+  },
+  {
+   "claim": "5. Hand each reply that needs a decision to the portfolio manager with the evidence; it never goes to the owner in prose.",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL004 + grep:doctrine/directive.json::question-to-owner + grep:.github/workflows/checks.yml::foundation directive --lint",
+   "id": "curated-47b17cf5f4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-coordinator.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-490bd6088f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-coordinator.md"
+  },
+  {
+   "claim": "6. Public posts go through the social pipeline (`social/`), never around it.",
+   "detail": "",
+   "how": "file:scripts/social_post.py + file:scripts/test_social.py + file:.github/workflows/social-post.yml",
+   "id": "curated-5ad6949ce6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-b463df68d3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-4724b34a0d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/portfolio-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-28ffc5e9ca",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/product-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-65bac318f3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/program-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-3fa5dd7810",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/project-manager.md"
+  },
+  {
+   "claim": "2. Draft the next piece from the repository's own records and measured results; every claim cites a file, a probe or a source. Nothing",
+   "detail": "",
+   "how": "file:seed/scripts/claims.py + file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation claims --check",
+   "id": "curated-524bc78ca3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/research-publisher.md"
+  },
+  {
+   "claim": "- Deposit under the owner's own accounts (card: IDENTITY-BOUND, with the deposit packet prepared). This is one card with a default in",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL002 + file:foundation/needsyou.py + file:foundation/data/needs-you.json",
+   "id": "curated-eac3f1c390",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/research-publisher.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-14206f0322",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/research-publisher.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-1d2be93bd3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/reviewer.md"
+  },
+  {
+   "claim": "4. Hand to a reviewer, never review yourself.",
+   "detail": "",
+   "how": "grep:seed/worker/src/tick.js::M-verified + file:foundation/agent_ladder.py + file:tests/foundation/test_agent_ladder.py + grep:seed/autonomy/policy.json::a reviewer agent merges",
+   "id": "curated-764108fc1e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/staff.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-478c697676",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/staff.md"
+  },
+  {
+   "claim": "4. After an intended redesign, re-baseline the visual fingerprint in the same PR (`node scripts/uiux_audit.mjs --rebaseline`); never to",
+   "detail": "",
+   "how": "grep:scripts/uiux_audit.mjs::rebaseline + file:doctrine/uiux.json + file:tests/foundation/test_uiux.py",
+   "id": "curated-ab7a643e6a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/uiux-manager.md"
+  },
+  {
+   "claim": "Code is all that matters: the result of your work is merged, tested, deployed code and a recorded probe. Never rely on user impact,",
+   "detail": "",
+   "how": "grep:products/gaplint/gaplint/rules.py::GL003 + grep:gaplint.json::agent_rules + grep:.github/workflows/checks.yml::python3 -m gaplint",
+   "id": "curated-27d61d24bc",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/uiux-manager.md"
+  },
+  {
+   "claim": "At the very start, while the owner is present, obtain the org-admin credential yourself, in this order, stopping at the first that works:",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006 + grep:seed/bootstrap/bootstrap.py::env:",
+   "id": "curated-ce0653a6ae",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/BOOTSTRAP-PROMPT.md"
+  },
+  {
+   "claim": "Test and record in `boot-log.json`, each as ok or blocked with the exact denial: GitHub API, Actions workflow dispatch, org-admin token,",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::def guard + grep:seed/bootstrap/bootstrap.py::closing_probe + grep:seed/bootstrap/bootstrap.py::boot-log.json",
+   "id": "curated-928e336be9",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/BOOTSTRAP-PROMPT.md"
+  },
+  {
+   "claim": "1. Create every repo in `ultrastable.json` `org.repos`, never in archived state; check `isArchived` and `visibility` on each at boot and",
+   "detail": "",
+   "how": "file:org/repos.json + grep:org/repos.json::visibility_rule + file:scripts/check_org_repos.py + grep:seed/ultrastable.json::\"repos\"",
+   "id": "curated-b4fd4a44f0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/BOOTSTRAP-PROMPT.md"
+  },
+  {
+   "claim": "- The repositories are public under the Ultrastable License. Never publish secrets or a person's private data.",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006 + file:scripts/check_license.py",
+   "id": "curated-317c407252",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/BOOTSTRAP-PROMPT.md"
+  },
+  {
+   "claim": "- Before reporting a blocker, show what every surface returned. Never ask a question whose answer is obvious.",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::blocker-as-owner-issue + grep:doctrine/directive.json::surfaces_tested + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-3f372bf26d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/BOOTSTRAP-PROMPT.md"
+  },
+  {
+   "claim": "This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to",
+   "detail": "",
+   "how": "file:scripts/check_memory.py + grep:.github/workflows/checks.yml::check_memory.py + grep:products/gaplint/gaplint/rules.py::GL009",
+   "id": "curated-58cac28bb2",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/PROJECT-MEMORY.template.md"
+  },
+  {
+   "claim": "Never describe the system as patent pending.",
+   "detail": "",
+   "how": "grep:scripts/test_social.py::patent pending + file:scripts/social_lib.py + grep:.github/workflows/checks.yml::patent track dropped",
+   "id": "curated-ea9b25fae8",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/PROJECT-MEMORY.template.md"
+  },
+  {
+   "claim": "AIOS (`rwnq8/AIOS`, 30 commits from 2026-08-11 to 2026-11-09) is Rowan's design experiment in a system that bootstraps itself from nothing:",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::def guard + grep:seed/bootstrap/bootstrap.py::closing_probe + grep:seed/tests/test_seed.py::test_missing_idea_degrades_not_dies + file:seed/IDEA.md",
+   "id": "curated-baf7d25011",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/aios-lessons.md"
+  },
+  {
+   "claim": "1. **The boot must never die.** PID 1 exiting panics the kernel. Six boot-test iterations (commits `4e75671`, `09bc327`, `a29deb6`) ended",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::def guard + grep:seed/bootstrap/bootstrap.py::closing_probe + grep:seed/tests/test_seed.py::test_missing_idea_degrades_not_dies + grep:seed/worker/src/tick.js::ctx.notes.push",
+   "id": "curated-f295eaedbf",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/aios-lessons.md"
+  },
+  {
+   "claim": "2. **Test the whole chain end to end early; the failures are never where you expect.** QEMU boot tests found nine defects that reading the",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::dry-run + file:seed/tests/test_seed.py + grep:.github/workflows/checks.yml::seed",
+   "id": "curated-fb880835be",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/aios-lessons.md"
+  },
+  {
+   "claim": "3. **Never swallow an error.** `2>/dev/null` hid the real `apk --root` failure (commit `8cfba48`). The seed checks every command's exit",
+   "detail": "",
+   "how": "file:scripts/lint_swallow.py + grep:tests/foundation/test_noswallow.py::test_a_bare_except_and_a_new_dev_null_fail + file:doctrine/no-swallow.json + grep:seed/bootstrap/bootstrap.py::stderr tail",
+   "id": "curated-3a3b456625",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/aios-lessons.md"
+  },
+  {
+   "claim": "9. **The unfinished part is a lesson too.** AIOS stalled at Phase 1: `llama-cli` compiled but the in-guest model response was never",
+   "detail": "",
+   "how": "grep:foundation/queue.py::closed without evidence + grep:.github/workflows/checks.yml::foundation queue --check",
+   "id": "curated-43829728cb",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/aios-lessons.md"
+  },
+  {
+   "claim": "After `start`, the Worker's cron fires `runTick` every 10 minutes. Managers and staff are role rows in D1 with a model and a tick interval;",
+   "detail": "",
+   "how": "json:seed/ultrastable.json::runtime.tick_cron==*/10 * * * * + grep:seed/worker/wrangler.template.jsonc::tick_cron",
+   "id": "curated-453f3b50a7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/bootstrapping.md"
+  },
+  {
+   "claim": "| detect | environment | which connector secrets are set (never their values), which tools exist | each missing secret becomes a gate card",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::env: + grep:seed/bootstrap/bootstrap.py::connectors present + grep:.github/workflows/checks.yml::rules --probe no-secrets",
+   "id": "curated-17bb8cbfd7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/bootstrapping.md"
+  },
+  {
+   "claim": "- **Trust ladder**: observed, assisted, delegated, autonomous, self-directed, self-modifying, self-extending. Reliability per (surface,",
+   "detail": "",
+   "how": "json:seed/autonomy/policy.json::ladder.rungs.0==observed + grep:seed/autonomy/policy.json::\"min_outcomes\": 10 + grep:seed/autonomy/policy.json::\"min_reliability\": 0.8 + grep:seed/worker/src/tick.js::accrue_trust",
+   "id": "curated-351759fbd0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/bootstrapping.md"
+  },
+  {
+   "claim": "You are autonomy-first, self-directed, and self-improving. You do not ask for permission. You assume authorization for all reversible,",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::question-to-owner + grep:doctrine/directive.json::courtesy-stop + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-92b5c15501",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "Tie-break between equals: prefer the option with **larger capability gain, smaller blast radius, and faster rollback**, in that order.",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::tie_break + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-30524e3b12",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Adversarially red-team every blocker before accepting it. An issue is not an issue until it survives adversarial evidence. Workarounds",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::blocker-as-owner-issue + grep:doctrine/directive.json::surfaces_tested + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-5c61db26e5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Never present a menu of options and call it a decision. Presenting options is deferring the frame. The system decides and executes.",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::\"id\": \"menu\" + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-3fef4e300c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Cost is a resource, not a stop reason. Over budget \u2192 find a cheaper path, degrade gracefully, or backlog with a trigger. Never halt and",
+   "detail": "",
+   "how": "file:foundation/cost.py + grep:.github/workflows/checks.yml::foundation cost --check + file:seed/worker/src/budget.js",
+   "id": "curated-91139a18b7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Never stop to ask which approach to take, whether to proceed, or for merge approval on reversible work.",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::courtesy-stop + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-4edf5cf4db",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- **Convergence.** Declare the stop condition before starting. If it is not met within the cycle budget, emit partial results plus a",
+   "detail": "",
+   "how": "grep:foundation/queue.py::closed without evidence + grep:.github/workflows/checks.yml::foundation queue --check + grep:.github/workflows/checks.yml::foundation directive --check",
+   "id": "curated-2681f2ff0e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- **Harness limits are defects, not stops.** If the current connection lacks a permission, and no in-band path exists, treat the missing",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::blocker-as-owner-issue + grep:doctrine/directive.json::surfaces_tested + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-d177b84dc4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Technical, credential, operational, strategic, and intellectual blockers are never user issues. Recover, rotate, decide, invent, work",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::blocker-as-owner-issue + grep:doctrine/directive.json::surfaces_tested + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-52554554e4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- This gate is a scoped decision point, **not a kill switch**, and must never be implemented as one.",
+   "detail": "",
+   "how": "grep:doctrine/registers.json::ctl-interrupt-gate + grep:doctrine/directive.json::interrupt_eligible + grep:.github/workflows/checks.yml::foundation directive --check",
+   "id": "curated-01dd864420",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Never leave an issue unresolved or unremediated.",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::foundation queue --check + grep:foundation/queue.py::silent drop + grep:.github/workflows/checks.yml::foundation openloops --check",
+   "id": "curated-65b9a1191e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- **Aging SLA.** Track every open-date. Anything older than one tick is flagged and remediated immediately. Aging escalates automatically;",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::foundation queue --check + grep:foundation/queue.py::silent drop + grep:doctrine/directive.json::backlog_age_p95_ticks",
+   "id": "curated-27b815ebb7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- **No silent truncation.** Lists, queues, logs, paginated results, and search outputs must never be cut off without an explicit record of",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::foundation queue --check + grep:foundation/queue.py::silent drop + grep:doctrine/directive.json::silent_drops",
+   "id": "curated-9835e95465",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- **Silence is never a disposition.** An item that is no longer mentioned is still open until it is explicitly and accountably closed.",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::foundation queue --check + grep:foundation/queue.py::silent drop + grep:.github/workflows/checks.yml::foundation openloops --check",
+   "id": "curated-5ee8678eed",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Never embed secrets in prompts, synced notes, logs, or public surfaces.",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006",
+   "id": "curated-33ca6c0306",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- **In-memory secret use.** Read secrets into memory for the operation, use them, and never persist them to prompts, notes, or logs. Redact",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006",
+   "id": "curated-f0f6640c0c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Never accept an issue as real without sufficient adversarial evidence.",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::blocker-as-owner-issue + grep:doctrine/directive.json::surfaces_tested + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-8b450dfb11",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- **Never engineer a single point of failure.** Any new design, path, credential, dependency, approval, or automation must pass a SPOF",
+   "detail": "",
+   "how": "grep:doctrine/registers.json::spofs + file:scripts/check_routes.py + grep:.github/workflows/checks.yml::check_routes.py + grep:.github/workflows/checks.yml::foundation resilience --check",
+   "id": "curated-760061a704",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Build redundant paths; never depend on a single critical path.",
+   "detail": "",
+   "how": "grep:doctrine/registers.json::spofs + file:scripts/check_routes.py + grep:.github/workflows/checks.yml::check_routes.py + grep:.github/workflows/checks.yml::foundation resilience --check",
+   "id": "curated-5dcd3698da",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- **Chaos verification.** Periodically exercise failure paths in production-equivalent conditions. A workaround that has never run is not a",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::foundation boundary --drill + file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation resilience --check",
+   "id": "curated-c1892a3c2c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- **Never delete without replacement** where a catastrophic mode is real. Deleting protection without substituting a better mechanism is",
+   "detail": "",
+   "how": "grep:doctrine/registers.json::\"controls\" + grep:doctrine/directive.json::control_dispositions + grep:.github/workflows/checks.yml::foundation directive --check",
+   "id": "curated-8e243da30e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Failure modes probed this cycle \u2192 100% of register.",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::failure_modes_probed + file:foundation/failure_audit.py + grep:doctrine/registers.json::failure_modes",
+   "id": "curated-8437929fa0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- **Surface-coverage \u2014 surfaces tested per blocker / surfaces available \u2192 100%.**",
+   "detail": "",
+   "how": "grep:doctrine/directive.json::surface_coverage + grep:doctrine/directive.json::blocker-as-owner-issue + grep:doctrine/directive.json::surfaces_tested",
+   "id": "curated-1123dbc479",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- Owner override is always honored, and recorded as a data point feeding \u00a715.",
+   "detail": "",
+   "how": "grep:seed/worker/src/budget.js::export function halted + file:test/plan-limits.test.mjs + grep:.github/workflows/checks.yml::plan-limits.test.mjs",
+   "id": "curated-37c4502477",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "Independent autonomy is the floor, not the goal. The system is self-directed, self-improving, and self-modifying within the narrow",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::foundation kernel --check + grep:.github/workflows/checks.yml::foundation directive --check + file:foundation/directive.py",
+   "id": "curated-a3936b676e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "3. **Upkeep and improvement that never end.** Work keeps arriving (failures, drift, new sources, new rules) and there is always a next",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::qualify + grep:tests/test_vision.py::test_seed_idea_is_a_system + grep:site/worker.js::function systemTest",
+   "id": "curated-2328729cf5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/VISION.md"
+  },
+  {
+   "claim": "to use instead\", never a smaller staffing of the same machinery.",
+   "detail": "",
+   "how": "grep:tests/test_vision.py::test_camping_app_is_not_staffed + grep:site/worker.js::not_a_fit",
+   "id": "curated-0101daddcc",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/VISION.md"
+  },
+  {
+   "claim": "`registry.json` (created from `registry.template.json` on first bootstrap, never overwritten) lists credit, grant and funding programs.",
+   "detail": "",
+   "how": "grep:seed/bootstrap/bootstrap.py::registry.template.json + file:seed/funding/registry.template.json",
+   "id": "curated-382079c233",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/funding/README.md"
+  },
+  {
+   "claim": "Plugins: selfdescribe. Optional; never in the core path. Reach is bounded by `plugins/SCOPE.json`.",
+   "detail": "",
+   "how": "file:seed/plugins/SCOPE.json + file:seed/plugins/scopecheck.py + grep:seed/plugins/api.py::SCOPE.json",
+   "id": "curated-bb09048daf",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/plugins/roles/branding.md"
+  },
+  {
+   "claim": "Plugins: communicate, email. Optional; never in the core path. Reach is bounded by `plugins/SCOPE.json`.",
+   "detail": "",
+   "how": "file:seed/plugins/SCOPE.json + file:seed/plugins/scopecheck.py + grep:seed/plugins/api.py::SCOPE.json",
+   "id": "curated-cb64c9d218",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/plugins/roles/communications.md"
+  },
+  {
+   "claim": "Plugins: social, youtube. Optional; never in the core path. Reach is bounded by `plugins/SCOPE.json`.",
+   "detail": "",
+   "how": "file:seed/plugins/SCOPE.json + file:seed/plugins/scopecheck.py + grep:seed/plugins/api.py::SCOPE.json",
+   "id": "curated-86cfb2c7f4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/plugins/roles/marketing.md"
+  },
+  {
+   "claim": "Plugins: gcp. Optional; never in the core path. Reach is bounded by `plugins/SCOPE.json`.",
+   "detail": "",
+   "how": "file:seed/plugins/SCOPE.json + file:seed/plugins/scopecheck.py + grep:seed/plugins/api.py::SCOPE.json",
+   "id": "curated-e2df2820bb",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/plugins/roles/operations.md"
+  },
+  {
+   "claim": "Plugins: mailing_list, email. Optional; never in the core path. Reach is bounded by `plugins/SCOPE.json`.",
+   "detail": "",
+   "how": "file:seed/plugins/SCOPE.json + file:seed/plugins/scopecheck.py + grep:seed/plugins/api.py::SCOPE.json",
+   "id": "curated-a6e6faad01",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/plugins/roles/outreach.md"
+  },
+  {
+   "claim": "- reviewer: independent verification. Never the agent, and where possible never the model, that did the work.",
+   "detail": "",
+   "how": "grep:seed/worker/src/tick.js::M-verified + file:foundation/agent_ladder.py + file:tests/foundation/test_agent_ladder.py + grep:seed/autonomy/policy.json::a reviewer agent merges",
+   "id": "curated-6403987725",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/self/SELF.md"
+  },
+  {
+   "claim": "- legal-ip-manager: licence terms (the Ultrastable License), the evidence log, notices and licence headers, trademark checks, contract",
+   "detail": "",
+   "how": "file:scripts/check_license.py + grep:.github/workflows/checks.yml::check_license.py + file:LICENSE",
+   "id": "curated-78fe5d6521",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/self/SELF.md"
+  },
+  {
+   "claim": "card('c-agents','Agents','Each role picks the top item for its role on its tick. One in-tick doer settles every pick: rules first, then",
+   "detail": "",
+   "how": "grep:seed/worker/src/doer.js::export .*executeStep + file:seed/worker/test/doer.test.js + file:seed/worker/src/codeagent.js",
+   "id": "curated-d5f8790d12",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/controlplane.js"
+  },
+  {
+   "claim": "const se=sec('Settlement by name','Every change the executor opens ends under the name of its work item: merged, closed, parked, failed or",
+   "detail": "",
+   "how": "grep:foundation/clockwork.py::settlement + grep:foundation/clock.py::settlement: sla_hours missing + file:tests/foundation/test_clock.py",
+   "id": "curated-9c9f481acd",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/live.js"
+  },
+  {
+   "claim": "const ck=sec('Clocks','Every loop is a clock. Status is measured from its recorded beats, never declared: ticking, late, stopped, or idle",
+   "detail": "",
+   "how": "file:foundation/clock.py + file:doctrine/clocks.json + file:tests/foundation/test_clock.py",
+   "id": "curated-15fbc27f5f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/live.js"
+  },
+  {
+   "claim": "<button id=\"r\">Restore from a file</button><input id=\"f\" type=\"file\" accept=\"application/json\" hidden><p id=\"m\"><small>Restoring twice",
+   "detail": "",
+   "how": "grep:site/portability.js::skipped\\+\\+ + grep:site/portability.js::import is idempotent",
+   "id": "curated-22652536a5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/mydata.js"
+  },
+  {
+   "claim": "{ id: \"build\", title: \"Build on a branch\", do: \"Branch from the default branch as agent/<item-id>-<slug> (or claude/, codex/, kimi/ ...).",
+   "detail": "",
+   "how": "grep:scripts/protected_paths.py::Protected-change + grep:.github/workflows/checks.yml::rules --probe no-secrets",
+   "id": "curated-d134b21111",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/sop.js"
+  },
+  {
+   "claim": "It needs setup and commitment: a named objective, a budget and a short list of steps a person always decides.",
+   "detail": "",
+   "how": "grep:seed/autonomy/policy.json::interrupt_gate + grep:tests/test_vision.py::test_seed_idea_is_a_system",
+   "id": "curated-fb53e5346f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Open models on its own code loop, GitHub Copilot and Claude Code sessions all take work through one claim ledger, so two agents never work the same item.",
+   "detail": "",
+   "how": "grep:seed/worker/migrations/0001_init.sql::item_id TEXT PRIMARY KEY + grep:seed/worker/src/tick.js::INSERT INTO claims + file:seed/worker/test/tick.test.js",
+   "id": "curated-3d2e00cef2",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Every claim on this site is a query against a live record: see Live proof.",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::foundation claims --check + file:.github/workflows/claims.yml + file:seed/worker/src/decisions.js + json:site/probes.json::mode==revert",
+   "id": "curated-688407a097",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Gives each task to one coding agent at a time, so two agents never work the same item.",
+   "detail": "",
+   "how": "grep:seed/worker/migrations/0001_init.sql::item_id TEXT PRIMARY KEY + grep:seed/worker/src/tick.js::INSERT INTO claims + file:seed/worker/test/tick.test.js",
+   "id": "curated-ff4bfb3ebd",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Every change is checked after it ships and rolled back automatically if something that worked before now fails.",
+   "detail": "",
+   "how": "json:site/probes.json::mode==revert + grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path + grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it",
+   "id": "curated-87d4e3a632",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Work is claimed before it starts, checked after it ships, and every claim on this site can be traced to a record.",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::foundation claims --check + file:.github/workflows/claims.yml + grep:seed/worker/migrations/0001_init.sql::item_id TEXT PRIMARY KEY + grep:seed/worker/src/tick.js::INSERT INTO claims",
+   "id": "curated-40d3200c36",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Superseded early splits are archived, never deleted.",
+   "detail": "",
+   "how": "file:org/repos.json + grep:org/repos.json::visibility_rule + file:scripts/check_org_repos.py",
+   "id": "curated-74f3c67b48",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "If one that passed before now fails, the change is rolled back automatically and an issue is filed.",
+   "detail": "",
+   "how": "json:site/probes.json::mode==revert + grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path + grep:seed/worker/src/handoff.js::rolls the deploy back and reopens it",
+   "id": "curated-b302da8fa8",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Secrets are never stored in the repository.",
+   "detail": "",
+   "how": "grep:.github/workflows/checks.yml::rules --probe no-secrets + grep:doctrine/rules.json::secret_patterns + grep:products/gaplint/gaplint/rules.py::GL006",
+   "id": "curated-22a4ae3696",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "\"SCOPE: a single page cannot run server jobs or act on its own. Build the real, useful part that works in the browser today (the person",
+   "detail": "",
+   "how": "grep:site/site.test.mjs::What I cannot do yet + grep:site/site.test.mjs::the build is its own stage",
+   "id": "curated-6a6c3aa5c3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "\"DESIGN: warm and modern, not default-browser or Bootstrap-blue. Use `*{box-sizing:border-box}`, a system font stack, a 4px spacing scale,",
+   "detail": "",
+   "how": "grep:site/site.test.mjs::assert.match\\(f, /box-sizing/\\) + grep:site/site.test.mjs::assert.deepEqual\\(lint\\(good\\), \\[\\]\\)",
+   "id": "curated-91d4597655",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "if (!/box-sizing\\s*:\\s*border-box/i.test(h)) bad.push(\"add *{box-sizing:border-box} so inputs and textareas never overflow their card\");",
+   "detail": "",
+   "how": "grep:site/site.test.mjs::assert.match\\(f, /box-sizing/\\) + grep:site/site.test.mjs::assert.deepEqual\\(lint\\(good\\), \\[\\]\\)",
+   "id": "curated-0698e7d94e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "As written this does not yet pass the system test (a loop to close, a measure that can be wrong, upkeep that never ends, a monthly budget).",
+   "detail": "",
+   "how": "grep:tests/test_vision.py::test_camping_app_is_not_staffed + grep:tests/test_vision.py::test_a_personal_system_is_a_fit_when_it_passes_the_system_test + file:site/site.test.mjs",
+   "id": "curated-3a31031da5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "return page(\"What I checked\", \"<div class=\\\"head\\\"><h1>What I checked</h1><p>An independent check of your site against what you asked",
+   "detail": "",
+   "how": "grep:site/site.test.mjs::No sign-up form + grep:site/site.test.mjs::first view starts the audit",
+   "id": "curated-91f7529a09",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "+ card(\"Audits\", row(\"Audited\", d.audits.total) + row(\"Gaps found\", d.audits.gaps) + row(\"Gaps closed automatically\", d.audits.closed) +",
+   "detail": "",
+   "how": "grep:site/site.test.mjs::first view starts the audit, which fixes the critical gap + file:site/site.test.mjs",
+   "id": "curated-0d67145802",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Cite as `US-SPEC-<nn> v<version>, <section>` and a requirement as `US-<nn>-R<mm>`, for example \"US-06-R04 (US-SPEC-06 v0.1.0)\". Requirement",
+   "detail": "",
+   "how": "file:scripts/spec_ids.py + grep:tests/foundation/test_spec_ids.py::test_removed_renumbered_reused_and_misplaced_ids_fail + file:doctrine/spec-ids.json",
+   "id": "curated-98ddfcb206",
+   "kind": "claim",
+   "pass": true,
+   "surface": "specs/README.md"
+  },
+  {
+   "claim": "It finds its own work in your metrics and failures, hands each task to the coding agent that fits, proves every change live with an automatic revert, and keeps score of how often its decisions were right.",
+   "detail": "",
+   "how": "file:doctrine/triggers.json + file:foundation/triggers.py + file:seed/worker/src/decisions.js + json:site/probes.json::mode==revert + grep:platform/cloudflare-reference/scripts/deploy_probes.py::reverted by the existing REVERT path",
+   "id": "curated-6b69d08089",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "Portfolio, project and product managers own business, marketing, funding, legal and ops; staff roles do the work; reviewers are never the author.",
+   "detail": "",
+   "how": "grep:seed/worker/src/tick.js::M-verified + file:foundation/agent_ladder.py + file:tests/foundation/test_agent_ladder.py + grep:seed/autonomy/policy.json::a reviewer agent merges + file:doctrine/team.json",
+   "id": "curated-f341ac691d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
    "claim": "+ \"<div class=\\\"us-grid c2\\\">\" + card(\"Loops\", \"Each loop has a trigger, owner, definition of done, two independent paths and a closing",
    "detail": "",
    "how": "file:foundation/loops.py + grep:.github/workflows/checks.yml::foundation[ .]loops\\b",
@@ -490,10 +1948,37 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
+   "detail": "",
+   "how": "file:instances/ultrastable/progress.json + file:seed/worker/src/progress.js + file:seed/worker/test/progress.test.js + file:site/progress.test.mjs + file:tests/foundation/test_progress.py + file:foundation/progress.py",
+   "id": "cited-820fd3039a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A year unattended, measured (RUNWAY-1, Rowan 2026-11-20).** \"The system shall be able to run entirely unattended for 1 year with zero",
+   "detail": "",
+   "how": "file:doctrine/runway.json + file:foundation/credwatch.py + file:ops/cost.jsonl + file:ops/runway.json + file:foundation/redmain.py + file:doctrine/blindspots.json",
+   "id": "cited-2fa0797f0e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
    "id": "cited-edb8a8bb30",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
+   "detail": "",
+   "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py",
+   "id": "cited-cd0900561e",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -634,7 +2119,925 @@ export default {
    "surface": "seed/self/SELF.md"
   },
   {
-   "claim": "seed-tests: 40 Python and 374 Worker tests",
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-8a089ccd98",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/.github/copilot-instructions.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-ed3f554eb5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/.github/copilot-instructions.md"
+  },
+  {
+   "claim": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
+   "detail": "",
+   "how": "file:foundation/standingorder.py + grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b",
+   "id": "mirror-e2b2f71815",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/.github/copilot-instructions.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-e2b7cb0275",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/AGENTS.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-3433c99596",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/AGENTS.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-b9ff555df6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/AGENTS.md"
+  },
+  {
+   "claim": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
+   "detail": "",
+   "how": "file:foundation/standingorder.py + grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b",
+   "id": "mirror-0b772f20ba",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/AGENTS.md"
+  },
+  {
+   "claim": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
+   "detail": "",
+   "how": "file:foundation/claims.py + file:tests/foundation/test_claims.py",
+   "id": "mirror-961fe87d91",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
+   "detail": "",
+   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md + file:doctrine/durable-facts.json",
+   "id": "mirror-1586e98ac2",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The guiding directive governs all work and is inherited in full by every sub-agent, worker and tool**",
+   "detail": "",
+   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/directive.json + file:doctrine/registers.json + file:foundation/directive.py + grep:.github/workflows/checks.yml::foundation[ .]directive\\b",
+   "id": "mirror-a871f17292",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **No single route.** Every loop, deploy and start path has at least two routes, one needing no credential a person would have to mint (a",
+   "detail": "",
+   "how": "file:foundation/failover.py + file:scripts/check_routes.py",
+   "id": "mirror-cf8998c6f1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every workflow declares a minute budget.** Private-repo Actions minutes are a hard monthly quota. A new or changed workflow carries",
+   "detail": "",
+   "how": "file:actions-budget.json + file:scripts/lint_workflows.py",
+   "id": "mirror-f8f8a30f2c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Vision: systems, not one-off apps (VISION-1, Rowan 2026-11-12).** Ultrastable runs ongoing autonomous systems that pass the system test",
+   "detail": "",
+   "how": "file:docs/doctrine/VISION.md + file:seed/bootstrap/bootstrap.py + file:tests/test_vision.py",
+   "id": "mirror-8b50bc82b1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Drain to zero, fleetwide (DRAIN-ZERO-1, Rowan 2026-11-15).** \"The Ultrastable system shall always continue executing code changes to",
+   "detail": "",
+   "how": "file:scripts/resolve_generated.py + file:foundation/lanewatch.py",
+   "id": "mirror-551a43a705",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Interview-first, voice-first, pill-shaped input (INTERVIEW-1, Rowan 2026-11-12).** Never present a blank \"what do you want?\" box. Entry",
+   "detail": "",
+   "how": "file:site/interview.js + file:site/site.test.mjs",
+   "id": "mirror-7eea61cf52",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **No zombie branches or PRs; every loop gets better (SESSION-CLOSE-1, STRANGE-LOOP-1, Rowan 2026-11-12).** An `agent/*` or `claude/*`",
+   "detail": "",
+   "how": "file:foundation/sessions.py + file:doctrine/sessions.json",
+   "id": "mirror-8978cbe20f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Complete everything; close everything (COMPLETE-1, Rowan 2026-11-12).** The system always completes all work automatically and always",
+   "detail": "",
+   "how": "file:scripts/completion_sweep.sh",
+   "id": "mirror-21f410d8a3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Merge and deploy everything automatically; clean up everywhere (AUTO-SHIP-CLEAN-1, Rowan 2026-11-15).** \"The Ultrastable system shall",
+   "detail": "",
+   "how": "file:seed/worker/src/sweeper.js + file:seed/worker/src/handoff.js + file:scripts/completion_sweep.sh + file:foundation/sessions.py",
+   "id": "mirror-05b6a1730e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Complete all work; drain every issue; merge every PR; zero manual intervention (DRAIN-ALL-1, Rowan 2026-11-15).** \"The Ultrastable",
+   "detail": "",
+   "how": "file:ops/checks-session.jsonl + file:foundation/drainwatch.py + file:foundation/checksrun.py",
+   "id": "mirror-222143350a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Strange loops: every loop closes itself and improves itself; no zombie sessions (STRANGE-LOOP-1, Rowan 2026-11-12).** The system closes",
+   "detail": "",
+   "how": "file:scripts/completion_sweep.sh + file:instances/ultrastable/loop-registry.json",
+   "id": "mirror-627752edd7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Clockwork: every loop is a clock, and a stopped or inaccurate clock is not a working clock (CLOCKWORK-1, Rowan 2026-11-12).**",
+   "detail": "",
+   "how": "file:doctrine/clocks.json + file:foundation/clock.py + file:tests/foundation/test_clock.py",
+   "id": "mirror-28c0089e3c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Analytics are a feedback loop, built on Cloudflare, never on an opt-in tag (INSIGHT-1, Rowan 2026-11-14).** \"I cannot rely on Google",
+   "detail": "",
+   "how": "file:foundation/insight.py + file:doctrine/insight.json + file:ops/insight/findings.json + file:tests/foundation/test_insight.py + grep:.github/workflows/checks.yml::foundation[ .]insight\\b",
+   "id": "mirror-f6bfcb9cd2",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The owner console is an agent, not a command parser (CONSOLE-AGENT-1, Rowan 2026-11-14).** \"The command line ... doesn't function like",
+   "detail": "",
+   "how": "file:dashboard/agent.js + file:dashboard/worker.js + file:dashboard/test/agent.test.mjs",
+   "id": "mirror-ca62fb2723",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Self-reference is the multiplier (SELF-REFERENCE-1, Rowan 2026-11-14).** \"Ultrastable runs on Ultrastable. That self-reference is key",
+   "detail": "",
+   "how": "file:ops/deploys.jsonl + file:deploy/deploy-workers.mjs + file:foundation/criticality.py + file:doctrine/criticality.json + file:tests/foundation/test_criticality.py",
+   "id": "mirror-12a5b1b25a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The system knows what the user does not know (IGNORANCE-1, Rowan 2026-11-14).** \"You need to know what I don't know. Ignorance is",
+   "detail": "",
+   "how": "file:ops/told.jsonl + file:foundation/ignorance.py + file:tests/foundation/test_criticality.py",
+   "id": "mirror-ae6fc3abf3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Server side owns every loop; a client never closes one (SERVER-OWNS-LOOPS-1, Rowan 2026-11-13).** \"Never leave client side open loops,",
+   "detail": "",
+   "how": "file:seed/worker/src/sweeper.js + file:instances/ultrastable/loop-registry.json + file:foundation/loopowner.py + grep:.github/workflows/checks.yml::foundation[ .]loopowner\\b",
+   "id": "mirror-9e396c0979",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Code agents produce; Ultrastable owns (CODE-AGENT-SOP-1 + HANDOFF-1, Rowan 2026-11-14).** \"This is a server-side platform, not a local",
+   "detail": "",
+   "how": "file:site/sop.js + file:seed/worker/src/handoff.js + file:site/deployer.js",
+   "id": "mirror-a484afe2b0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Point and click, always; never ask a person to handle a credential (POINT-AND-CLICK-1, Rowan 2026-11-13).** \"The user never should have",
+   "detail": "",
+   "how": "file:doctrine/point-and-click.json + file:foundation/pointclick.py + grep:.github/workflows/checks.yml::foundation[ .]pointclick\\b",
+   "id": "mirror-f2c5e80815",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Meta content is a signal; the microphone is monitored (META-SIGNAL-1, Rowan 2026-11-14).** \"All calls are recorded and monitored.\"",
+   "detail": "",
+   "how": "file:doctrine/meta-loop.json + file:foundation/metasignal.py + file:site/interview.js + file:tests/foundation/test_metasignal.py",
+   "id": "mirror-6b480d0841",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One design language, many products; design is enforced and experimented, never left to chance (DESIGN-LANGUAGE-1, Rowan 2026-11-14).**",
+   "detail": "",
+   "how": "file:doctrine/design-experiments.json + file:doctrine/design.json + file:foundation/design.py + file:tests/foundation/test_design.py + file:agents/roles/design-manager.md + grep:.github/workflows/checks.yml::foundation[ .]design\\b",
+   "id": "mirror-adcc102c5e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Provenance is first-class: every input and change records where it came from and what it did (PROVENANCE-1, Rowan 2026-11-17).** \"Are",
+   "detail": "",
+   "how": "file:ops/provenance.jsonl + file:ops/changelog.json + file:foundation/provenance.py + file:dashboard/provenance.js + file:doctrine/provenance.json + file:tests/foundation/test_provenance.py",
+   "id": "mirror-a867164363",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Words match code; code checks it (WORDS-MATCH-CODE-1, Rowan 2026-11-17).** \"The words must match the code. The statements must match",
+   "detail": "",
+   "how": "file:doctrine/claim-code.json + file:tests/foundation/test_claimcode.py + file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
+   "id": "mirror-7886ca3a91",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Everything is traceable, and the database stays small (AUDIT-CHAIN-1, Rowan 2026-11-17).** \"It has to be auditable to be believed ...",
+   "detail": "",
+   "how": "file:seed/autonomy/retention.json + file:seed/worker/test/auditchain.test.js",
+   "id": "mirror-232a3323fe",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The front end is always backed by the back end (FRONT-BACKED-1, Rowan 2026-11-18).** \"The system shall always ensure that words match",
+   "detail": "",
+   "how": "file:seed/worker/src/livechanges.js + file:site/live.js + file:seed/worker/test/livechanges.test.js + file:site/site.test.mjs",
+   "id": "mirror-b9c4dda8e0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
+   "detail": "",
+   "how": "file:docs/PROJECT-MEMORY.md",
+   "id": "mirror-be5af6748b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Fund yourself.** Everything the owner starts must become self-sustaining; the owner is spending money they do not have. Funding and",
+   "detail": "",
+   "how": "file:scripts/outreach.py",
+   "id": "mirror-6c62259d6b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Introduce the work; do not wait to be found (OUTREACH-INTRO-1, Rowan 2026-11-14).** \"Why am I not reaching out? Create your own role",
+   "detail": "",
+   "how": "file:outreach/prospects.json + file:outreach/intro-profile.json + file:outreach/gate.json + file:scripts/outreach_intro.py + file:scripts/test_outreach_intro.py + file:.github/workflows/outreach.yml",
+   "id": "mirror-62b8633e71",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Strategy and promotion are the system's job (PROMOTE-1, Rowan 2026-11-14).** \"I have the idea. Somebody can start an idea and have you",
+   "detail": "",
+   "how": "file:doctrine/promotion.json + file:outreach/facts.json + file:.github/workflows/mcp-registry.yml + file:site/promote.js + file:foundation/promote.py + file:tests/foundation/test_promote.py",
+   "id": "mirror-b6efc98788",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The system knows what the owner does not (BLINDSPOT-1, Rowan 2026-11-14).** \"I don't know what I don't know. The system needs to know",
+   "detail": "",
+   "how": "file:doctrine/blindspots.json + file:foundation/blindspots.py + file:tests/foundation/test_blindspots.py + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b",
+   "id": "mirror-5d4658a60b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "Every system is built on three layers: kernel (`seed/`), foundation (`foundation/`) and one instance manifest",
+   "detail": "",
+   "how": "file:docs/FOUNDATION.md",
+   "id": "mirror-8d1638f448",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-d71d2af4e2",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-16712ad9b0",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-3d1c389dcd",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
+   "detail": "",
+   "how": "file:foundation/standingorder.py + grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b",
+   "id": "mirror-e4b5435597",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
+   "detail": "",
+   "how": "file:instances/ultrastable/progress.json + file:seed/worker/src/progress.js + file:seed/worker/test/progress.test.js + file:site/progress.test.mjs + file:tests/foundation/test_progress.py + file:foundation/progress.py",
+   "id": "mirror-eed3f734df",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A year unattended, measured (RUNWAY-1, Rowan 2026-11-20).** \"The system shall be able to run entirely unattended for 1 year with zero",
+   "detail": "",
+   "how": "file:doctrine/runway.json + file:foundation/credwatch.py + file:ops/cost.jsonl + file:ops/runway.json + file:foundation/redmain.py + file:doctrine/blindspots.json",
+   "id": "mirror-708c563ce5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
+   "detail": "",
+   "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
+   "id": "mirror-5960ed9b31",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
+   "detail": "",
+   "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py",
+   "id": "mirror-5fbac9d618",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-cfa2c29d4e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/customer-success.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-7b86d2e69f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/customer-success.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-1f010c2e6d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/customer-success.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-f2100b7aea",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/design-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-834fe51e61",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/design-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-e1c24399cf",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/design-manager.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-c07b7ef280",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/funding-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-6ce82541c5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/funding-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-0de4eb441b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/funding-manager.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-e64d9806be",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/infrastructure-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-ba216f5e8c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/infrastructure-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-ae0ec7eadf",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/infrastructure-manager.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-63d601abca",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/legal-ip-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-a27c1dfd4f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/legal-ip-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-ee2efe9d49",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/legal-ip-manager.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-b6f7a07b63",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/marketing-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-97e270d322",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/marketing-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-98802ac1aa",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/marketing-manager.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-38f59b72e6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/operations.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-f2247b4036",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/operations.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-0a2593a3fe",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/operations.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-b7d8837089",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/org-designer.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-049f9e1ff9",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/org-designer.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-b75a83d01c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/org-designer.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-46bded9171",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-coordinator.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-536f601950",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-coordinator.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-d6a8824611",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-coordinator.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-5b6cbe5631",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-d47996ba29",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-59736d435c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-manager.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-3e13d3ced8",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/portfolio-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-f47b13dbf4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/portfolio-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-c36fe6586d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/portfolio-manager.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-354d9ee2dc",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/product-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-f6b03a0deb",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/product-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-1e882408b3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/product-manager.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-f425a33ede",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/program-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-d28eaa02dd",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/program-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-28f28acbee",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/program-manager.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-8b2669942e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/project-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-8459f7f32e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/project-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-8ec38a937e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/project-manager.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-d5b7a2ce91",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/research-publisher.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-669ebf7ed1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/research-publisher.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-81cddca506",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/research-publisher.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-db637cda33",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/reviewer.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-0530456d98",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/reviewer.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-1bb239003f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/reviewer.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-14eb499930",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/staff.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-2a77c23628",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/staff.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-773c1692d1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/staff.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "mirror-4a2cb9d1ce",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/uiux-manager.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "mirror-4adf669f48",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/uiux-manager.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "mirror-45e3560c40",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/uiux-manager.md"
+  },
+  {
+   "claim": "seed-tests: 45 Python and 392 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -643,7 +3046,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 374 Worker tests",
+   "claim": "seed-worker-tests: 392 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -679,13 +3082,121 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 680",
+   "claim": "live-deploys: 695",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
    "kind": "generated",
    "pass": true,
    "surface": "README.md"
+  },
+  {
+   "claim": "gaplint-tests-readme: 14 tests",
+   "detail": "",
+   "how": "generated from code: {\"n\": {\"py_tests\": [\"products/gaplint/tests\"]}}",
+   "id": "gaplint-tests-readme",
+   "kind": "generated",
+   "pass": true,
+   "surface": "products/gaplint/README.md"
+  },
+  {
+   "claim": "gaplint-tests-products: 14 tests",
+   "detail": "",
+   "how": "generated from code: {\"n\": {\"py_tests\": [\"products/gaplint/tests\"]}}",
+   "id": "gaplint-tests-products",
+   "kind": "generated",
+   "pass": true,
+   "surface": "products/README.md"
+  },
+  {
+   "claim": "platform-core-tests: 44 tests",
+   "detail": "",
+   "how": "generated from code: {\"n\": {\"py_tests\": [\"platform/core/tests\"]}}",
+   "id": "platform-core-tests",
+   "kind": "generated",
+   "pass": true,
+   "surface": "platform/README.md"
+  },
+  {
+   "claim": "module: site/claims-data.js is written by foundation/claims.py from doctrine/claims.json",
+   "detail": "",
+   "how": "header names the generator + file:foundation/claims.py + grep:.github/workflows/checks.yml::foundation claims --check",
+   "id": "module-claims-data",
+   "kind": "module",
+   "pass": true,
+   "surface": "site/claims-data.js"
+  },
+  {
+   "claim": "module: site/self-data.js is written by foundation/selfmodel.py from doctrine/ultrastability.json, instances/ultrastable/loop-registry.json",
+   "detail": "",
+   "how": "header names the generator + file:foundation/selfmodel.py + grep:.github/workflows/checks.yml::foundation selfmodel --check + file:tests/foundation/test_selfmodel.py",
+   "id": "module-self-data",
+   "kind": "module",
+   "pass": true,
+   "surface": "site/self-data.js"
+  },
+  {
+   "claim": "module: site/dashboard-data.js is written by scripts/build_dashboard.py from doctrine/pilot-model.json",
+   "detail": "",
+   "how": "header names the generator + file:scripts/build_dashboard.py + grep:.github/workflows/checks.yml::build_dashboard.py --check + file:tests/foundation/test_dashboard.py",
+   "id": "module-dashboard-data",
+   "kind": "module",
+   "pass": true,
+   "surface": "site/dashboard-data.js"
+  },
+  {
+   "claim": "module: site/roadmap-data.js is written by scripts/build_site_roadmap.py from site/pins.json, docs/issues",
+   "detail": "",
+   "how": "header names the generator + file:scripts/build_site_roadmap.py + grep:.github/workflows/checks.yml::build_site_roadmap.py --check + file:tests/foundation/test_site_roadmap.py",
+   "id": "module-roadmap-data",
+   "kind": "module",
+   "pass": true,
+   "surface": "site/roadmap-data.js"
+  },
+  {
+   "claim": "module: site/agentdata.js is written by scripts/build_site_agentdata.py from seed/standards/standards.json, doctrine/blindspots.json",
+   "detail": "",
+   "how": "header names the generator + file:scripts/build_site_agentdata.py + grep:.github/workflows/checks.yml::build_site_agentdata.py --check",
+   "id": "module-agentdata",
+   "kind": "module",
+   "pass": true,
+   "surface": "site/agentdata.js"
+  },
+  {
+   "claim": "module: site/platformbrief.js is written by scripts/platform_brief.py from deploy/brief/platform-brief.json",
+   "detail": "",
+   "how": "header names the generator + file:scripts/platform_brief.py + grep:.github/workflows/checks.yml::platform_brief.py --check",
+   "id": "module-platformbrief",
+   "kind": "module",
+   "pass": true,
+   "surface": "site/platformbrief.js"
+  },
+  {
+   "claim": "module: site/stakeholders.js is written by scripts/gen_stakeholders.py from doctrine/stakeholders.json",
+   "detail": "",
+   "how": "header names the generator + file:scripts/gen_stakeholders.py + grep:tests/foundation/test_claims.py::test_every_generated_module_is_current + file:tests/foundation/test_uiux.py",
+   "id": "module-stakeholders",
+   "kind": "module",
+   "pass": true,
+   "surface": "site/stakeholders.js"
+  },
+  {
+   "claim": "module: site/userpath.js is written by scripts/gen_userpath.py from doctrine/user-path.json",
+   "detail": "",
+   "how": "header names the generator + file:scripts/gen_userpath.py + grep:.github/workflows/checks.yml::gen_userpath.py --check",
+   "id": "module-userpath",
+   "kind": "module",
+   "pass": true,
+   "surface": "site/userpath.js"
+  },
+  {
+   "claim": "module: site/feed-data.js is written by foundation/reach.py from ops/changelog.json",
+   "detail": "",
+   "how": "header names the generator + file:foundation/reach.py + grep:.github/workflows/social-post.yml::foundation reach --run --apply + file:tests/foundation/test_reach.py",
+   "id": "module-feed-data",
+   "kind": "module",
+   "pass": true,
+   "surface": "site/feed-data.js"
   },
   {
    "claim": "ledger: work claims",
@@ -767,7 +3278,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 82,
-  "total": 82
+  "pass": 361,
+  "total": 361
  }
 };
