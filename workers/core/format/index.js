@@ -42,5 +42,12 @@ export function rate(logChange) { if (!Number.isFinite(logChange)) return ''; co
 // Raw numbers in JSON feeds are rounded to six significant figures so float noise (82.0999908447266) is never published.
 export const machine = v => Number.isFinite(v) ? Number(Number(v).toPrecision(6)) : v;
 // Lint: text a reader sees must not carry false precision. Used by the page test.
-export const FALSE_PRECISION = /(?<![\w.])\d+\.\d{4,}(?![\d/])|(?<![\w,.])\d{7,}(?![\w,])/;  // DOIs (10.5281/...) and source codes (HIV_0000000023) are identifiers, not measurements
-export function falsePrecision(html) { const text = String(html).replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' '); const m = FALSE_PRECISION.exec(text); return m ? { match: m[0], context: text.slice(Math.max(0, m.index - 40), m.index + 50).replace(/\s+/g, ' ') } : null; }
+// A decimal with more than five significant digits is false precision for anything measured or calculated (82.0999908447266, 45.800000000000004);
+// an integer of seven or more digits without separators is a raw count. DOIs (10.5281/...), URLs and source codes (HIV_0000000023) are identifiers and pass.
+export const FALSE_PRECISION = /(?<![\w.\/-])\d+\.\d{3,}(?![\d\/])|(?<![\w,.\/-])\d{7,}(?![\w,\/])/g;
+const sigDigits = t => t.replace('.', '').replace(/^0+/, '').length;
+export function falsePrecision(html) {
+  const text = String(html).replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ');
+  for (const m of text.matchAll(FALSE_PRECISION)) if (m[0].includes('.') ? sigDigits(m[0]) > 5 : true) return { match: m[0], context: text.slice(Math.max(0, m.index - 40), m.index + 50).replace(/\s+/g, ' ') };
+  return null;
+}
