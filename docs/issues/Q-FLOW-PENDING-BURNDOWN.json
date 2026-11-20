@@ -1,7 +1,7 @@
 {
   "id": "Q-FLOW-PENDING-BURNDOWN",
   "title": "Q-FLOW-PENDING-BURNDOWN: every remaining loop declares its flows",
-  "body": "**Owner:** operations\n**Trigger:** every PR (checks.yml)\n**Done check:** grep:doctrine/flows.json::\"pending\": \\[\\]\n**Status:** open\n\nBurn down doctrine/flows.json pending (38 loops left: the role loops, doctrine checks, hygiene loops). Each declares inflows, outflows with bindings and a feedback path; the shrink-only list reaches empty.",
+  "body": "**Owner:** operations\n**Trigger:** every PR (checks.yml)\n**Done check:** grep:doctrine/flows.json::\"pending\": \\[\\]\n**Status:** closed\n\nBurn down doctrine/flows.json pending (38 loops left: the role loops, doctrine checks, hygiene loops). Each declares inflows, outflows with bindings and a feedback path; the shrink-only list reaches empty.\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): grep:doctrine/flows.json::\"pending\": \\[\\]\n",
   "labels": [
     "role:operations",
     "repair"

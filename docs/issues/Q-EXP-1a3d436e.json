@@ -1,7 +1,7 @@
 {
   "id": "Q-EXP-1a3d436e",
   "title": "Q-EXP-1a3d436e: close the existing-repo-adoption gap with a measured change",
-  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** file:foundation/adopt.py\n**Prediction:** pageviews_7d >= baseline within 336 h\n**Status:** open\n\nExperiment from R&D finding `gap:existing-repo-adoption`.\nHypothesis: 3 competitors evidence 'works on an existing repository or codebase'; building it should move the metric\nMetric: pageviews_7d. Ship the smallest change the done check proves, then compare the metric against its baseline in doctrine/growth.json; a miss reverts the change and lowers the finding's priority.",
+  "body": "**Owner:** product-manager\n**Trigger:** every rnd pass\n**Done check:** file:foundation/adopt.py\n**Prediction:** pageviews_7d >= baseline within 336 h\n**Status:** closed\n\nExperiment from R&D finding `gap:existing-repo-adoption`.\nHypothesis: 3 competitors evidence 'works on an existing repository or codebase'; building it should move the metric\nMetric: pageviews_7d. Ship the smallest change the done check proves, then compare the metric against its baseline in doctrine/growth.json; a miss reverts the change and lowers the finding's priority.\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): file:foundation/adopt.py\n",
   "labels": [
     "role:product-manager",
     "growth",
