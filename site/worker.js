@@ -1020,9 +1020,9 @@ async function metaIngest(request, env) {
       const [a, d] = await Promise.all([env.ASSETS.get(k1), env.ASSETS.get(k2)]);
       if (Number(a || 0) >= META_PER_IP_HOUR || Number(d || 0) >= META_PER_DAY) return Response.json({ ok: false, code: "rate_limited" }, { status: 429, headers: { "Retry-After": "3600" } });
       await Promise.all([env.ASSETS.put(k1, String(Number(a || 0) + 1), { expirationTtl: 7200 }), env.ASSETS.put(k2, String(Number(d || 0) + 1), { expirationTtl: 172800 })]);
-    } catch (e) { return Response.json({ ok: false, code: "storage_unavailable", detail: String(e && e.message || e).slice(0, 120) }, { status: 503, headers: { "Retry-After": "600" } }); }
+    } catch (e) { console.error("meta-ingest storage", String(e && e.message || e).slice(0, 120)); return Response.json({ ok: false, code: "storage_unavailable", message: "Saved nothing this time; the system retries on its own." }, { status: 503, headers: { "Retry-After": "600" } }); }
   }
-  try { await env.ASSETS.put("meta:" + rec.at + ":" + newId(), JSON.stringify(rec), { expirationTtl: 31536000 }); } catch (e) { return Response.json({ ok: false, code: "storage_unavailable", detail: String(e && e.message || e).slice(0, 120) }, { status: 503, headers: { "Retry-After": "600" } }); }
+  try { await env.ASSETS.put("meta:" + rec.at + ":" + newId(), JSON.stringify(rec), { expirationTtl: 31536000 }); } catch (e) { console.error("meta-ingest storage", String(e && e.message || e).slice(0, 120)); return Response.json({ ok: false, code: "storage_unavailable", message: "Saved nothing this time; the system retries on its own." }, { status: 503, headers: { "Retry-After": "600" } }); }
   return Response.json({ ok: true });
 }
 
