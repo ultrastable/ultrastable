@@ -9,6 +9,7 @@
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
 Last updated: 2026-11-20
+- 2026-11-20: SITE-TESTS-IN-CHECKS-1: `checks` runs `site/*.test.mjs` on every pull request (OL-20261115-24); `site/webbotauth.js` `verifyRequest` parsed no signature parameters (`indexOf("")`), so every inbound Web Bot Auth signature was rejected: fixed. Two unused imports removed (Q-SELF-unused-import).
 
 - 2026-11-20: COVERAGE-CITED-1: claim coverage 5.5 to 42.8 percent; 54 statements bound to the code they cite (scripts/bind_cited_claims.py), floor raised to 40 percent; 235 statements that cite no code stay unbound
 - 2026-11-20: Q-GATE-403, GATE-STUB-1: the App asks for statuses:write, an all-403 gate is one card GATE-APP-PERMISSION that closes on the first judged pull request; the Worker gate judges worker/* as a model branch and fails added placeholder lines (the Actions-route refusal is ELISION-1, #729)
