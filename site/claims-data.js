@@ -490,6 +490,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
+   "detail": "",
+   "how": "file:instances/ultrastable/progress.json + file:seed/worker/src/progress.js + file:seed/worker/test/progress.test.js + file:site/progress.test.mjs + file:tests/foundation/test_progress.py + file:foundation/progress.py",
+   "id": "cited-820fd3039a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
@@ -767,7 +776,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 82,
-  "total": 82
+  "pass": 83,
+  "total": 83
  }
 };

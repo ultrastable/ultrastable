@@ -4,6 +4,7 @@
 Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation progress --check   the systems list, the tick's cadence step, the public routes and the rule text agree
+  python3 -m foundation progress --apps    the newest app launch in instances/spinoffs is younger than apps.expect_days (the launch loop has not run dry)
   python3 -m foundation progress --live    read the deployed /progress.json: fails when it cannot be read, a system is stalled or unmeasured,
                                            or nothing substantive shipped fleetwide in 7 days (the second, independent reading of the cadence)
 Data: instances/ultrastable/progress.json. Consumers: seed/worker/src/progress.js (tick step progress), site/progress.js (/progress, digests,
@@ -93,12 +94,28 @@ def live(url="https://ultrastable.io/progress.json", fetch=None) -> list[str]:
     return bad
 
 
+def apps(root=REPO, now=None) -> list[str]:
+    """New apps are part of visible progress: the newest launch in the registry must be younger than apps.expect_days, or the launch loop has run dry."""
+    import datetime as dt
+    root, cfg = Path(root), load(root).get("apps") or {}
+    days, t = cfg.get("expect_days", 21), now or dt.datetime.now(dt.timezone.utc)
+    launched = []
+    for f in sorted((root / (cfg.get("registry") or "instances/spinoffs")).glob("*/app.json")):
+        a = json.loads(f.read_text(encoding="utf-8"))
+        if a.get("launched"):
+            launched.append(dt.datetime.strptime(a["launched"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc))
+    if not launched:
+        return ["no app has ever been launched"]
+    age = (t - max(launched)).total_seconds() / 86400
+    return [f"no app launched for {age:.0f} days (the loop declares one at least every {days}); the idea queue or the app types have run dry"] if age > days else []
+
+
 def main(argv=None) -> int:
     av = list(argv or [])
-    bad = live() if "--live" in av else check()
+    bad = live() if "--live" in av else apps() if "--apps" in av else check()
     for b in bad:
         print("PROGRESS", b)
-    print(f"progress: {'live reading' if '--live' in av else 'check'} {'ok' if not bad else str(len(bad)) + ' finding(s)'}")
+    print(f"progress: {'live reading' if '--live' in av else 'apps' if '--apps' in av else 'check'} {'ok' if not bad else str(len(bad)) + ' finding(s)'}")
     return 1 if bad else 0
 
 

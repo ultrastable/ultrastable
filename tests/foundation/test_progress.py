@@ -29,6 +29,15 @@ class Progress(unittest.TestCase):
             (t / "site/progress.js").write_text("// gone")
             self.assertTrue(any("site/progress.js: no longer carries" in b for b in progress.check(t)))
 
+    def test_apps_launch_cadence(self):
+        import datetime as dt
+        newest = max(dt.datetime.strptime(json.loads(f.read_text())["launched"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc)
+                     for f in (ROOT / "instances/spinoffs").glob("*/app.json"))  # relative to the registry, so the test never expires
+        self.assertEqual(progress.apps(ROOT, now=newest + dt.timedelta(days=1)), [])
+        late = progress.apps(ROOT, now=newest + dt.timedelta(days=40))
+        self.assertEqual(len(late), 1)
+        self.assertIn("run dry", late[0])
+
     def test_live_reading(self):
         ok = {"systems": [{"id": "a", "state": "moving"}, {"id": "b", "state": "slow"}], "digests": {"weekly": {"substantive": 3}}}
         self.assertEqual(progress.live(fetch=lambda u: ok), [])

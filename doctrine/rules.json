@@ -351,8 +351,14 @@
      "cmd": "python3 -m foundation progress --check"
     },
     {
+     "id": "progress-apps",
+     "cmd": "python3 -m foundation progress --apps",
+     "fix": "python3 -m foundation ideas --brainstorm --apply"
+    },
+    {
      "id": "progress-live",
-     "cmd": "python3 -m foundation progress --live"
+     "cmd": "python3 -m foundation progress --live",
+     "needs_network": true
     }
    ]
   }

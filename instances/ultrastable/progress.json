@@ -30,5 +30,10 @@
     "discover.yml"
    ]
   }
- ]
+ ],
+ "apps": {
+  "registry": "instances/spinoffs",
+  "expect_days": 21,
+  "what": "the spinoff loop launches new apps on ultrastable.app; when the newest launch is older than expect_days the rule probe progress-apps fails, runs the idea brainstorm once and files Q-RULE-visible-progress-progress-apps for the executor"
+ }
 }

@@ -244,6 +244,10 @@
     "goal_knobs": {
       "keep": "state",
       "reason": "GOALS-1: one row per knob with its current value; bounded by the tenant limit of 80"
+    },
+    "progress_cadence": {
+      "keep": "state",
+      "reason": "PROGRESS-1: one row per system, rewritten every pass by the tick step progress"
     }
   }
 }
