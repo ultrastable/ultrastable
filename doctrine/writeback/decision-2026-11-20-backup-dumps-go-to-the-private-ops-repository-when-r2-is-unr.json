@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-backup-dumps-go-to-the-private-ops-repository-when-r2-is-unr",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "Backup dumps go to the private ops repository when R2 is unreachable (BACKUP-SINK-1)",
+  "body": "The site Worker's token reads D1 and KV but every R2 object call answers 401, so the first drill through the Worker route restored correctly and stored nothing. The drill now falls back to the private ops repository under backups/, written through the tick Worker's /api/ops/backup route with the org App (OIDC verified, contents under backups/ only), and reads each copy back. The record names the sink used.",
+  "probe": "file:seed/worker/src/opsbackup.js",
+  "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+ },
+ "kind": "decision",
+ "title": "Backup dumps go to the private ops repository when R2 is unreachable (BACKUP-SINK-1)",
+ "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+}
