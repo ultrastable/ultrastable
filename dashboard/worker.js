@@ -6,6 +6,7 @@
 // has to supply those three. Cloudflare adapter = this file + wrangler.toml.
 import { handleAnalytics, record, selfcheck, report, summary, REPORT_CACHE_MINUTES } from "../seed/analytics/analytics.js";
 import { ask, ASK_PER_HOUR } from "./agent.js";
+import * as ASKBAR from "./askbar.js";  // ASK-1: the dashboard asks before it acts, at most three tap-to-answer questions, only where the answer changes the plan
 import * as PV from "./provenance.js";
 import { userJson } from "../seed/worker/src/errors.js";  // USER-BACKEND-1: raw backend text stays in the owner-only audit, never in a response
 const auditBackend = env => r => PV.add(env, { class: "system", actor: "backend", channel: "loop-run", kind: "change", summary: (r.where + ": " + r.code + " " + r.detail).slice(0, 200), affected: [r.where], public: false });
@@ -288,6 +289,39 @@ async function askCommand(env, session, line) {
   return { status: 200, body: { ...r, agent: true, scope: session.fresh ? "write" : "read" } };
 }
 
+// ---------- ASK-1: ask before acting ----------
+const askReady = new WeakSet();
+async function ensureAskLog(env) { if (askReady.has(env.DB)) return; await env.DB.prepare("CREATE TABLE IF NOT EXISTS ask_log(id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER NOT NULL, qid TEXT NOT NULL, question TEXT NOT NULL, answer TEXT NOT NULL, changed INTEGER NOT NULL DEFAULT 0, direction TEXT)").run(); askReady.add(env.DB); }
+// One bounded read (the newest 200 rows by primary key): per question, how often it was asked, how often the answer changed the plan, and its latest answers.
+export async function askStats(env) {
+  await ensureAskLog(env);
+  const rows = (await env.DB.prepare("SELECT qid, answer, changed FROM ask_log ORDER BY id DESC LIMIT 200").all()).results || [], st = {};
+  for (const r of rows) { const x = st[r.qid] || (st[r.qid] = { asked: 0, changed: 0, recent: [] }); x.asked++; x.changed += r.changed ? 1 : 0; if (x.recent.length < ASKBAR.SETTLED) x.recent.push(r.answer); }
+  return st;
+}
+// The owner's direction: questions first when an answer would change the plan, then the audited command path with the refined line. Every asked question is recorded.
+export async function askFirst(env, session, direction, answers) {
+  const d = String(direction || "").trim().slice(0, 2000); if (!d) return { status: 400, body: { error: "empty direction" } };
+  const ctx = { commands: Object.keys(COMMANDS), tenants: TENANTS.tenants.flatMap(t => [t.id, t.name]), stats: await askStats(env) };
+  const r = ASKBAR.resolve(d, answers && typeof answers === "object" ? answers : {}, ctx);
+  if (r.pending) return { status: 200, body: { ok: true, ask: true, understood: r.understood, questions: r.pending } };
+  for (const l of r.log) await env.DB.prepare("INSERT INTO ask_log(at,qid,question,answer,changed,direction) VALUES(?1,?2,?3,?4,?5,?6)").bind(Date.now(), l.qid, l.question, l.answer, l.changed, d.slice(0, 200)).run();
+  const res = await runCommand(env, session, r.line);
+  return { status: res.status, body: { ...res.body, understood: r.log.length || r.assumed.length ? r.understood : undefined, line: r.line !== d ? r.line : undefined } };
+}
+
+// ---------- CONNECT-2: connections panel ----------
+// What the tick Worker reports at /auth/connectors (no secrets: provider, status, expiry) for the runtime it serves, with the one link that connects each service.
+// The tick Worker answers for its own tenant only, so this panel shows that one; a panel per tenant app needs the tenant in the consent state (Q-CONNECT-3).
+export async function connectorsPanel(env, origin) {
+  let j = null, error = null;
+  try { if (!env.TICK) throw new Error("no TICK binding"); const r = await env.TICK.fetch(new Request("https://ultrastable.io/auth/connectors")); if (!r.ok) throw new Error("HTTP " + r.status); j = await r.json(); }
+  catch (e) { error = "Connection status is not reachable right now. The system retries by itself."; console.error("connectors", e && e.message); }
+  return { error,
+    linked: (j && j.linked || []).map(l => ({ provider: l.provider, status: l.status, expires_at: l.expires_at || null, reconnect: !!l.last_error || l.status !== "active" })),
+    available: (j && j.available || []).map(a => ({ id: a.id, title: a.title, linked: !!a.linked, ready: !!a.ready, connect: origin + (a.connect || "/connect/" + a.id) })) };
+}
+
 // ---------- state for the dashboard ----------
 // OWNER-DASH-2: the static panels (what needs the owner, tenants, paid options) come from files in the bundle, so the page still answers when D1 is at its free daily read cap.
 export function staticPanels() {
@@ -384,6 +418,7 @@ const OWNER_CSS = "main{max-width:980px;margin:0 auto;padding:16px 16px 80px}h1{
   + ".crow{display:flex;align-items:center;gap:10px;margin-top:10px}.crow .meta{flex:1;min-width:0}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.chips button{font-weight:500;font-size:14px}"
   + ".co .q{font-weight:600;margin:0 0 4px}.ans{margin:6px 0 0}.ans p{margin:6px 0}.ans .h{font-weight:600;margin:10px 0 2px}.ans ul,.ans ol{margin:4px 0 4px 1.2em;padding:0}.ans code{font:14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);padding:1px 5px;border-radius:5px}"
   + ".ans .codeblock{font:13.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-x:auto;white-space:pre;margin:6px 0}.ans .tw{overflow-x:auto;margin:6px 0}.ans table{border-collapse:collapse;font-size:14px;min-width:100%}.ans th,.ans td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}.ans th{font-weight:600}"
+  + ".us-ask{display:flex;align-items:flex-end;gap:6px;background:var(--sf);border:1.5px solid var(--line);border-radius:28px;padding:6px 6px 6px 18px}.us-ask:focus-within{border-color:var(--ac)}.us-ask textarea{flex:1;min-width:0;border:0;background:transparent;min-height:48px;padding:12px 0;resize:none;outline:0}.us-ask button{border-radius:999px}.us-q{margin:10px 0 0}.us-q .row{margin-top:6px}.us-q button[aria-pressed=true]{background:var(--ac);border-color:var(--ac);color:var(--on)}"
   + "details.steps{margin:6px 0;font-size:14px;color:var(--ink2)}details.steps summary{cursor:pointer;min-height:32px;line-height:32px}details.steps div{padding-left:10px}";
 const OWNER_JS = `
 const $=s=>document.querySelector(s);const E=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -439,13 +474,21 @@ $('#audit').textContent=s.audit.map(a=>a.id+' '+new Date(a.at).toISOString().sli
 $('#notes').textContent=s.notes.map(n=>new Date(n.at).toISOString().slice(0,16)+' '+(n.sent?'sent':'FAILED '+(n.error||''))+' '+n.subject).join('\\n')||'None yet.';
 $('#gate').dataset.gate=s.gate;$('#gatetxt').textContent=s.gate;
 document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>run(b.dataset.c))}
-$('#cmd').onsubmit=e=>{e.preventDefault();const v=$('#line').value.trim();if(v){run(v);$('#line').value=''}};
+async function askFirst(dir,answers,c){c=c||card(dir);const old=c.querySelector('.wait');if(old)c.removeChild(old);c.appendChild(mk('p','meta wait','Working...'));const r=await api('/api/owner/ask',{direction:dir,answers:answers||{}});
+if(r.j.needs_code){pending=dir;fill(c,Object.assign({},r.j,{out:r.j.out||'This needs a fresh code.'}));codeBox('Confirm it is you: email yourself a code to make this change.',async()=>{pending=null;await askFirst(dir,answers)});return}
+if(r.j.ask){const w=c.querySelector('.wait');if(w)c.removeChild(w);const got=Object.assign({},answers||{});c.querySelectorAll('.us-q,.us-u').forEach(n=>c.removeChild(n));c.appendChild(mk('p','meta us-u',r.j.understood||''));
+(r.j.questions||[]).forEach(q=>{const b=mk('div','us-q');b.appendChild(mk('p','q',q.q));const row=mk('div','row');q.options.forEach(o=>{const bt=mk('button',null,o);bt.type='button';bt.setAttribute('aria-pressed','false');bt.onclick=()=>{got[q.id]=o;row.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===bt?'true':'false'));if((r.j.questions||[]).every(x=>got[x.id]))askFirst(dir,got,c)};row.appendChild(bt)});b.appendChild(row);c.appendChild(b)});return}
+c.querySelectorAll('.us-q').forEach(n=>c.removeChild(n));if(r.j.understood){const u=c.querySelector('.us-u')||c.appendChild(mk('p','meta us-u'));u.textContent=r.j.understood}fill(c,r.j);await load()}
+function paintConn(j){$('#conn').innerHTML='<div class="card">'+(j.error?'<div class="meta">'+E(j.error)+'</div>':'')+(j.linked||[]).map(l=>'<div class="meta"><span class="'+(l.reconnect?'bad':'ok')+'">'+(l.reconnect?'NEEDS RECONNECTING':'CONNECTED')+'</span> <b>'+E(l.provider)+'</b></div>').join('')+((j.linked||[]).length||j.error?'':'<div class="meta">Nothing connected yet.</div>')+'<div class="row">'+(j.available||[]).filter(a=>!a.linked).map(a=>a.ready?'<a class="btn" href="'+E(a.connect)+'" rel="noopener">Connect '+E(a.title)+'</a>':'<span class="meta">'+E(a.title)+': not available yet</span>').join('')+'</div></div>'}
+api('/api/owner/connectors').then(r=>{if(r.s==200)paintConn(r.j);else $('#conn').innerHTML='<p class="meta">Sign in to see connections.</p>'});
+(function(){const R=window.SpeechRecognition||window.webkitSpeechRecognition,m=$('#mic');if(!R||!m)return;m.hidden=false;m.onclick=()=>{const r=new R();r.lang='en';r.onresult=e=>{$('#line').value=e.results[0][0].transcript;$('#line').focus()};r.onerror=()=>{$('#scope').textContent='The microphone did not pick anything up. Type it instead.'};r.start()}})();
+$('#cmd').onsubmit=e=>{e.preventDefault();const v=$('#line').value.trim();if(v){askFirst(v);$('#line').value=''}};
 $('#line').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('#cmd').requestSubmit?$('#cmd').requestSubmit():$('#go').click()}};
-document.querySelectorAll('#chips button').forEach(b=>b.onclick=()=>run(b.dataset.q));
+document.querySelectorAll('#chips button').forEach(b=>b.onclick=()=>askFirst(b.dataset.q));
 $('#logout').onclick=async()=>{await api('/api/owner/logout',{});location.reload()};
 load();`;
 function ownerPage() {
-  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><a class=\"sp\" href=\"/auth/passkey/add\">Add a passkey</a><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><p class=\"meta bad\" id=\"degraded\" role=\"alert\" hidden></p><h2>Needs you</h2><div id=\"needs\"></div><div id=\"owner\"></div><h2>Tenant apps</h2><div id=\"tenants\" class=\"grid\"></div><h2>Paid options (you decide; default is stay free)</h2><p class=\"meta\" id=\"plan\"></p><div id=\"options\"></div><h2>Pay or stay free (ROI)</h2><div id=\"roi\" class=\"card\"><p class=\"meta\">Loading.</p></div><h2>Ask or tell Ultrastable</h2><form id=\"cmd\"><textarea id=\"line\" rows=\"3\" maxlength=\"2000\" placeholder=\"Ask a question, or tell Ultrastable what to do\" aria-label=\"Ask or tell Ultrastable\" autocomplete=\"off\"></textarea><div class=\"crow\"><span class=\"meta\" id=\"scope\" aria-live=\"polite\">Signed in. Changes ask for a fresh emailed code.</span><button class=\"p\" id=\"go\">Run</button></div></form><div class=\"chips\" id=\"chips\"><button type=\"button\" data-q=\"Which pages got the most views in the last 7 days?\">Top pages this week</button><button type=\"button\" data-q=\"tasks owner\">What needs me</button><button type=\"button\" data-q=\"status\">Status</button><button type=\"button\" data-q=\"analytics\">Analytics</button><button type=\"button\" data-q=\"probe\">Run checks</button><button type=\"button\" data-q=\"help\">Help</button></div><div id=\"thread\" aria-live=\"polite\"></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Provenance: where changes came from</h2><p class=\"meta\">Origin, what it touched and its effect. <a href=\"/changelog\">Public changelog</a></p><pre id=\"prov\">Loading.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
+  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><a class=\"sp\" href=\"/auth/passkey/add\">Add a passkey</a><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><p class=\"meta bad\" id=\"degraded\" role=\"alert\" hidden></p><h2>Needs you</h2><div id=\"needs\"></div><div id=\"owner\"></div><h2>Tenant apps</h2><div id=\"tenants\" class=\"grid\"></div><h2>Paid options (you decide; default is stay free)</h2><p class=\"meta\" id=\"plan\"></p><div id=\"options\"></div><h2>Pay or stay free (ROI)</h2><div id=\"roi\" class=\"card\"><p class=\"meta\">Loading.</p></div><h2>Ask or tell Ultrastable</h2><form id=\"cmd\" class=\"us-ask\" role=\"search\"><textarea id=\"line\" rows=\"1\" maxlength=\"2000\" placeholder=\"Ask a question, or tell Ultrastable what to do\" aria-label=\"Ask or tell Ultrastable\" autocomplete=\"off\"></textarea><button type=\"button\" id=\"mic\" aria-label=\"Speak\" hidden>Speak</button><button class=\"p\" id=\"go\">Go</button></form><div class=\"crow\"><span class=\"meta\" id=\"scope\" aria-live=\"polite\">Signed in. Changes ask for a fresh emailed code.</span></div><div class=\"chips\" id=\"chips\"><button type=\"button\" data-q=\"Which pages got the most views in the last 7 days?\">Top pages this week</button><button type=\"button\" data-q=\"tasks owner\">What needs me</button><button type=\"button\" data-q=\"status\">Status</button><button type=\"button\" data-q=\"analytics\">Analytics</button><button type=\"button\" data-q=\"probe\">Run checks</button><button type=\"button\" data-q=\"help\">Help</button></div><div id=\"thread\" aria-live=\"polite\"></div><h2>Connections</h2><p class=\"meta\">Services Ultrastable is connected to. Connecting is one sign-in on the service's own page; the system keeps access renewed.</p><div id=\"conn\"><p class=\"meta\">Loading.</p></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Provenance: where changes came from</h2><p class=\"meta\">Origin, what it touched and its effect. <a href=\"/changelog\">Public changelog</a></p><pre id=\"prov\">Loading.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
 }
 
 // ---------- router ----------
@@ -482,6 +525,9 @@ export async function route(req, env) {
     if (p === "/api/owner/logout" && req.method === "POST") { await env.DB.prepare("UPDATE sessions SET revoked=1 WHERE hash=?1").bind(s.hash).run(); return json({ ok: true }, 200, { "Set-Cookie": COOKIE + "=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict" }); }
     if (p === "/api/owner/state") return json(await stateOf(env));
     if (p === "/api/owner/provenance") return json({ entries: await PV.timeline(env, { tenant: u.searchParams.get("tenant") || "", cls: u.searchParams.get("origin") || "" }) });
+    if (p === "/api/owner/ask" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const r = await askFirst(env, s, b.direction, b.answers); return json(r.body, r.status); }
+    if (p === "/api/owner/ask/score") return json({ questions: ASKBAR.score(await askStats(env)) });
+    if (p === "/api/owner/connectors") return json(await connectorsPanel(env, publicOrigin(req, u)));
     if (p === "/api/owner/run" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const r = await runCommand(env, s, b.cmd); return json(r.body, r.status); }
     return json({ error: "not found" }, 404);
   }

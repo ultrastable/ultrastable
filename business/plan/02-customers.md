@@ -41,7 +41,7 @@ Talking about step 6 in public: "it gets more independent as it proves itself"; 
 
 - "How many projects are you running, and how many people?"
 - "How do you use AI coding agents today? Who manages them?"
-- "What did you have to decide yourself last week that you wish you hadn't?"
+- "Which decisions landed on you last week that you wish a system had made?"
 - "What would you never let an agent do without asking?"
 - "If something ran your backlog and only asked about the things on that list, what would that be worth per month?"
 

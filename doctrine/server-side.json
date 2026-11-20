@@ -66,6 +66,11 @@
    "id": "loopback",
    "pattern": "\\blocalhost\\b",
    "why": "an address that only means something on the computer it is typed on"
+  },
+  {
+   "id": "signed-in-cli",
+   "pattern": "signed-in (cli|gh)[^.\\n]{0,40}(owner|person|device|machine|laptop)|local gh login",
+   "why": "a command-line sign-in on a person's computer is not a credential route; the bootstrap counts a signed-in gh only when the host is a cloud session or a CI job (seed/bootstrap/bootstrap.py _server_side_host)"
   }
  ],
  "excused_by": "server-side[- ]only",
@@ -128,10 +133,6 @@
   {
    "path": "seed/worker/src/agentic/adapters/memory.js",
    "reason": "an in-memory adapter that exists as a test fixture; its comment describes in-process test runs, not a host"
-  },
-  {
-   "path": "demos/public/cases.json",
-   "reason": "published case studies of what was tried on 2026-11-10; they narrate dated history and define no host or route"
   },
   {
    "path": "docs/bootstrapping/bootstrap-log.md",

@@ -20,6 +20,13 @@ import argparse, datetime, json, os, pathlib, re, sys, urllib.parse, urllib.requ
 
 import outreach as base
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from foundation.outreach import order as _segment_order  # noqa: E402  (the segment learner; this lane is its consumer)
+
+
+def segment_order(targets, segments):
+    return _segment_order(targets=targets, segments=segments)
+
 ROOT = pathlib.Path(os.environ.get("OUTREACH_ROOT") or pathlib.Path(__file__).resolve().parent.parent)
 OUT = ROOT / "outreach"
 STATES = ["unresolved", "no-public-route", "form-only", "verified", "packet-ready", "guard-failed", "queued", "sent", "replied", "accepted", "rejected", "suppressed", "stale", "closed"]
@@ -236,7 +243,10 @@ class Intro:
     def queue(self):
         if self.gate["kill"] or not self.cfg["enabled"]:
             return 0
-        cand = sorted(k for k, t in self.state["targets"].items() if t["state"] == "packet-ready")
+        # OUTREACH-1: replies decide who is approached next. Segments are ranked by UCB1 over the replies recorded so far (foundation/outreach.py), so the
+        # per-run cap goes to the segment most worth trying; within a segment the order stays by key.
+        rank = segment_order(self.state["targets"], list(self.prof["segments"]))
+        cand = sorted((k for k, t in self.state["targets"].items() if t["state"] == "packet-ready"), key=lambda k: (rank.get(self.state["targets"][k]["segment"], len(rank)), k))
         n = 0
         for k in cand[: self.cfg["max_new_per_run"]]:
             self.state["targets"][k]["state"] = "queued"; self.event(k, "queued", "guard clean, role mailbox verified at source"); n += 1

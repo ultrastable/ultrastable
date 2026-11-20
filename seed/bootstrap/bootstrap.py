@@ -425,9 +425,16 @@ class Boot:
         return "\n".join(lines) + "\n"
 
     @staticmethod
-    def _gh_admin_org() -> bool:
-        """BG-13: a logged-in `gh` with admin:org scope is an org-admin credential."""
-        if not shutil.which("gh"):
+    def _server_side_host(env=None) -> bool:
+        """Server-side only: the host this bootstrap runs on is a cloud agent session or a CI job (the platform sets the variable), never a person's computer."""
+        env = os.environ if env is None else env
+        return any(str(env.get(k, "")).lower() in ("1", "true") for k in ("CLAUDE_CODE_REMOTE", "GITHUB_ACTIONS"))
+
+    @classmethod
+    def _gh_admin_org(cls, env=None) -> bool:
+        """BG-13: a logged-in `gh` with admin:org scope is an org-admin credential, counted only on a server-side host (OL-20261112-93).
+        On any other host the sign-in belongs to a person's computer, so it is not a route: the ladder moves to the next one."""
+        if not cls._server_side_host(env) or not shutil.which("gh"):
             return False
         try:
             r = subprocess.run(["gh", "auth", "status"], capture_output=True, text=True, timeout=20)

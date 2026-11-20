@@ -398,6 +398,65 @@ def ladder_call(prompt: str, attempt: int, root):
 
 
 # DECISION-METRIC: work-queue-priority
+PR_ITEM = re.compile(r"^OL-PR-(\d+)$")
+PR_REPAIR_TRIES = 2  # a pull request is repaired in place at most twice; after that the change is redone from main and the pull request is closed as superseded
+
+
+def pr_repair_failures(item, root=REPO) -> int:
+    """How many earlier in-place repairs of this adoption item failed (rows with mode pr-repair), read from the executor log."""
+    return sum(1 for r in qmod.executor_rows(root) if str(r.get("issue")) == str(item) and r.get("mode") == "pr-repair" and r.get("result") == "failed")
+
+
+def pr_repair(issue: dict, repo: str, root=REPO) -> dict | None:
+    """PR-REPAIR-1 (OL-20261113-2): an OL-PR-<n> item is a pull request the lane could not merge. The executor repairs that pull request in place
+    instead of redoing it from main: it checks out the head branch, merges main in (generated and append-only files are reconciled by
+    scripts/resolve_generated.py) and reads the failed check log, which goes into the prompt. Returns {pr, branch, context} with the working tree on
+    the head branch, or None (with the tree back where it was) when the pull request is not open, comes from a fork, has already failed
+    PR_REPAIR_TRIES repairs, or cannot be reconciled with main; then the caller redoes the change from main and supersedes the pull request."""
+    m = PR_ITEM.match(str(issue.get("number")))
+    if not m:
+        return None
+    n = int(m.group(1))
+    if pr_repair_failures(issue["number"], root) >= PR_REPAIR_TRIES:
+        return None
+    try:
+        pr = gh_json(["pr", "view", str(n), "-R", repo, "--json", "state,headRefName,isCrossRepository,title,files"], root)
+    except (RuntimeError, ValueError):
+        return None
+    head = (pr or {}).get("headRefName") or ""
+    if (pr or {}).get("state") != "OPEN" or pr.get("isCrossRepository") or not head or head in ("main", "master"):
+        return None
+    _, start = sh(["git", "rev-parse", "HEAD"], root)
+    back = lambda: (sh(["git", "merge", "--abort"], root), sh(["git", "checkout", "-f", "--detach", start.strip()], root))
+    if sh(["git", "fetch", "origin", f"+refs/heads/{head}:refs/remotes/origin/{head}", "+refs/heads/main:refs/remotes/origin/main"], root)[0] \
+            or sh(["git", "checkout", "-B", head, f"origin/{head}"], root)[0]:
+        back(); return None
+    code, _ = sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "merge", "--no-edit", "origin/main"], root)
+    if code:  # a conflict: generated and append-only files have a mechanical resolution; anything else is not repairable in place
+        sh(["python3", "scripts/resolve_generated.py"], root)
+        if sh(["git", "diff", "--name-only", "--diff-filter=U"], root)[1].strip() or \
+                sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "--no-edit", "-a"], root)[0]:
+            back(); return None
+    log_tail = ""
+    try:
+        runs = gh_json(["run", "list", "-R", repo, "--branch", head, "--status", "failure", "--limit", "1", "--json", "databaseId,name"], root) or []
+        if runs:
+            log_tail = sh(["gh", "run", "view", str(runs[0]["databaseId"]), "-R", repo, "--log-failed"], root, 90)[1][-4000:]
+    except (RuntimeError, ValueError, KeyError):
+        log_tail = ""  # no failed run to read (a conflict-only pull request): the merge of main above is the repair
+    files = [f.get("path", "") for f in (pr.get("files") or [])][:40]
+    ctx = (f"\n\nYOU ARE REPAIRING PULL REQUEST #{n} IN PLACE ({pr.get('title', '')[:160]}). Its branch `{head}` is checked out with main merged in. "
+           "Keep its change; fix only what stops it from merging. Files it changes: " + ", ".join(files) + "."
+           + (f"\nFAILED CHECK OUTPUT (last lines):\n{log_tail}" if log_tail else "\nNo failed check log is available; make the existing change pass the checks."))
+    return {"pr": n, "branch": head, "context": ctx}
+
+
+def supersede_pr(repo: str, old: int, new: str, root=REPO) -> str | None:
+    """Close a pull request whose change now travels in another one, saying which (a superseded pull request never closes silently)."""
+    code, o = sh(["gh", "pr", "close", str(old), "-R", repo, "--comment", f"Superseded by {new}: the executor could not repair this branch in place (PR-REPAIR-1), so the change was redone from main."], root)
+    return o[-160:] if code else None
+
+
 def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=None, checks=None, remote: bool = False) -> dict:
     """Returns the provenance row. Never raises for a failed step; the failure is the row (and an `executor-failed` label)."""
     root = Path(root)
@@ -440,10 +499,16 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     try:
         _, tree = sh(["git", "ls-files"], root)
         branch = f"agent/{n}-{re.sub(r'[^a-z0-9]+', '-', issue['title'].lower())[:40].strip('-')}"
-        sh(["git", "checkout", "-B", branch], root)
+        repair = pr_repair(issue, repo, root) if qm and PR_ITEM.match(str(n)) else None  # PR-REPAIR-1: an adopted pull request is repaired on its own branch
+        if repair:
+            branch = repair["branch"]; row.update(mode="pr-repair", repairs_pr=repair["pr"])
+            _, tree = sh(["git", "ls-files"], root)
+        else:
+            sh(["git", "checkout", "-B", branch], root)
         if port:
             model_call = port_call(issue, root)
-        prompt, failed, files, out = build_prompt(issue, tree), [], [], {}
+        base_prompt = lambda: build_prompt(issue, tree) + (repair["context"] if repair else "")
+        prompt, failed, files, out = base_prompt(), [], [], {}
         for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
             if attempt and time_left() < REPAIR_MIN_S:  # EXEC-WATCHDOG-2: end with the real reasons rather than be cut off by the watchdog mid-attempt
                 row["out_of_time"] = f"{int(time_left())} s left before attempt {attempt + 1}"
@@ -466,7 +531,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 failed.append("the reply was not valid JSON with a files list: " + type(e).__name__ + ": " + str(e)[:300])
                 row.setdefault("attempts", []).append([failed[-1][:400]])
                 if attempt < REPAIRS:
-                    prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED (" + failed[0] + "). Do NOT reply with JSON this time. Reply in exactly this format instead:" + chr(10) + agents_block_format()
+                    prompt = base_prompt() + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED (" + failed[0] + "). Do NOT reply with JSON this time. Reply in exactly this format instead:" + chr(10) + agents_block_format()
                 continue
             gap = (consumer_gap(files, root) if checks is None and not port else None) or elision_gap(files, root)
             if gap:
@@ -495,7 +560,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 break
             row.setdefault("attempts", []).append([f[:400] for f in failed][:3])  # FREE-LLM-1: every failed attempt's reasons, not only the last
             sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd", *KEEP_ON_CLEAN], root)
-            prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS; fix exactly these problems and reply with the full JSON again:" + chr(10) + chr(10).join(failed)[:5000]
+            prompt = base_prompt() + chr(10) * 2 + "YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS; fix exactly these problems and reply with the full JSON again:" + chr(10) + chr(10).join(failed)[:5000]
         if failed:
             raise RuntimeError("checks failed after " + str(len(row.get("attempts", [])) or REPAIRS + 1) + " attempts: " + " | ".join(failed))
         row.update(files=files, summary=out.get("summary", ""))
@@ -517,6 +582,16 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         sh(["git", "add", "-A", "--", ".", f":!{LOG}"], root)
         sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "-m", f"{out.get('summary', issue['title'])} (#{n})"], root)
         code, o = sh(["git", "push", "-u", "origin", branch], root)
+        if repair:  # the pull request already exists: the push is the repair. Never force a branch another actor opened; a rejected push is this run's failure.
+            if code:
+                raise RuntimeError("push to the pull request branch failed: " + o[-300:])
+            row.update(result="pr-repaired", pr=f"https://github.com/{repo}/pull/{repair['pr']}")
+            for kick in (["gh", "pr", "ready", str(repair["pr"]), "-R", repo], ["gh", "workflow", "run", "checks.yml", "-R", repo, "--ref", branch]):
+                kc, ko = sh(kick, root)
+                if kc:
+                    row["kick_failed"] = (row.get("kick_failed", "") + f" {' '.join(kick[:3])}: {ko[-120:]}").strip()
+            log(lroot, row)
+            return row
         if code and "rejected" in o and branch.startswith("agent/"):
             # STALE-BRANCH-1: the branch name is derived from the item, so a branch left by an earlier attempt whose PR was closed rejects every new
             # attempt (Q-GATE-403 failed three runs in a row on 2026-11-20). The branch is the executor's own: this attempt, built from main, replaces it.
@@ -529,6 +604,9 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         if code:
             raise RuntimeError("pr create failed: " + o[-300:])
         row.update(result="pr-opened", pr=o.splitlines()[-1])
+        if qm and PR_ITEM.match(str(n)):  # redone from main (not repairable in place, or two repairs failed): the old pull request is superseded by this one
+            err = supersede_pr(repo, int(PR_ITEM.match(str(n)).group(1)), row["pr"], root)
+            row.update(superseded_pr=int(PR_ITEM.match(str(n)).group(1)), **({"supersede_failed": err} if err else {}))
         # A PR opened with GITHUB_TOKEN raises no pull_request event, and a draft runs no CI, so the executor starts the loop itself: mark ready,
         # dispatch checks on the branch (workflow_dispatch is allowed for the token); the lane merges when that run completes green.
         for kick in (["gh", "pr", "ready", row["pr"], "-R", repo], ["gh", "workflow", "run", "ci.yml" if remote else "checks.yml", "-R", repo, "--ref", branch]):

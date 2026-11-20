@@ -179,13 +179,18 @@ class FundingTests(BootTests):
 
 
 class GhAdminOrgTests(unittest.TestCase):
-    """BG-13: a local gh login with admin:org counts as the org-admin credential."""
+    """BG-13: a gh login with admin:org counts as the org-admin credential, and only when the host is server-side (a cloud session or a CI job)."""
 
-    def _run(self, rc, out):
+    def _run(self, rc, out, env=None):
         from unittest import mock
         r = mock.Mock(returncode=rc, stdout=out, stderr="")
         with mock.patch.object(bs.shutil, "which", return_value="gh"),              mock.patch.object(bs.subprocess, "run", return_value=r):
-            return bs.Boot._gh_admin_org()
+            return bs.Boot._gh_admin_org({"GITHUB_ACTIONS": "true"} if env is None else env)
+
+    def test_same_login_on_a_host_that_is_not_server_side_is_not_a_route(self):
+        self.assertFalse(self._run(0, "Token scopes: 'admin:org', 'repo'", env={}))
+        self.assertFalse(self._run(0, "Token scopes: 'admin:org', 'repo'", env={"GITHUB_ACTIONS": "false"}))
+        self.assertTrue(self._run(0, "Token scopes: 'admin:org', 'repo'", env={"CLAUDE_CODE_REMOTE": "true"}))
 
     def test_admin_org_scope(self):
         self.assertTrue(self._run(0, "Token scopes: 'admin:org', 'repo'"))
