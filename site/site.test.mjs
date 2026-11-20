@@ -390,6 +390,24 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.equal(bad.ok, false); assert.match(bad.error, /net down/);
 }
 console.log("PROMOTE-1 indexnow ok");
+{ /* ATTENTION-1: WebSub ping for both feeds, daily archive snapshot rotating by day, grouped reach rows */
+  const P = await import("./promote.js");
+  const hits = [];
+  const ws = await P.webSub({ host: "ultrastable.io", now: new Date("2026-11-20T06:00:00Z"), fetchFn: async (u, o) => { hits.push(new URLSearchParams(o.body).get("hub.url")); return { status: 204 }; } });
+  assert.equal(ws.ok, true); assert.deepEqual(hits, ["https://ultrastable.io/feed.xml", "https://ultrastable.io/progress.atom"]);
+  assert.equal(await P.webSub({ host: "ultrastable.io", now: new Date("2026-11-20T09:00:00Z"), last: ws, fetchFn: async () => { throw new Error("must not send"); } }), null);
+  let asked = null;
+  const ar = await P.archiveEvidence({ host: "ultrastable.io", now: new Date("2026-11-20T06:00:00Z"), fetchFn: async (u) => { asked = u; return { status: 302 }; } });
+  assert.equal(ar.ok, true); assert.ok(asked.startsWith("https://web.archive.org/save/https://ultrastable.io/")); assert.ok(P.ARCHIVE_PATHS.includes(ar.path));
+  const fail = await P.archiveEvidence({ host: "ultrastable.io", now: new Date("2026-11-22T06:00:00Z"), last: ar, fetchFn: async () => { throw new Error("down"); } });
+  assert.equal(fail.ok, false);
+  const db = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ ref: null, path: "/", name: "pageview", bot: 0, n: 3 }] }) }) }) };
+  const rr = await P.reachRows(db, new Date("2026-11-20T06:00:00Z"));
+  assert.deepEqual(rr.rows, [{ ref: "", path: "/", name: "pageview", bot: 0, n: 3 }]);
+  const F = await import("./feed.js");
+  assert.match(F.atom([], "ultrastable.io"), /rel="hub"/);
+}
+console.log("ATTENTION-1 websub, archive, reach ok");
 
 { /* BLINDSPOT-1: privacy, accessibility and security contact exist and match the code */
   const pv = await get("https://ultrastable.io/privacy"), ac = await get("https://ultrastable.io/accessibility"), st = await get("https://ultrastable.io/.well-known/security.txt");
