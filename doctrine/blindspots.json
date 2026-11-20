@@ -1,5 +1,5 @@
 {
- "_doc": "BLINDSPOT-1 (owner, 2026-11-14): 'The system needs to know what the user can't know or doesn't know. Ignorance is something you can know that I don't know.' The owner supplies the idea and cannot be expected to know what every system needs. This register lists those needs as data, each with a probe the repository can run. `python3 -m foundation blindspots --scan --apply` files an executor item Q-BLIND-<id> for every failed probe the system can fix (class system), and leaves identity-bound ones (class owner-identity, a gate from gates_allowed) as machine-readable gates on the existing NEEDS-YOU surface, never as prose. `sweeps` are recurring questions per domain: if no answer is recorded within cadence_days, a Q-BLIND-SWEEP-<domain> item is filed, so what nobody thought to ask still gets asked. `--learn` adds a newly discovered blind spot (from an incident, a scout or competitor finding, a rejected application, a reply) so the register only grows. A probe that cannot run offline (dns, http) reports unmeasured, never pass.",
+ "_doc": "BLINDSPOT-1 (owner, 2026-11-14): 'The system needs to know what the user can't know or doesn't know. Ignorance is something you can know that I don't know.' The owner supplies the idea and cannot be expected to know what every system needs. This register lists those needs as data, each with a probe the repository can run. `python3 -m foundation blindspots --scan --apply` files an executor item Q-BLIND-<id> for every failed probe the system can fix (class system), and leaves identity-bound ones (class owner-identity, a gate from gates_allowed) as machine-readable gates on the existing NEEDS-YOU surface, never as prose. `sweeps` are recurring questions per domain: if no answer is recorded within cadence_days, a Q-BLIND-SWEEP-<domain> item is filed, so what nobody thought to ask still gets asked. `--learn` adds a newly discovered blind spot (from an incident, a scout or competitor finding, a rejected application, a reply) so the register only grows. A probe that cannot run offline (dns, http) reports unmeasured, never pass. Clocks (2026-11-20): a `fresh:<json>::<date field>::<days>[::<true field>]` probe turns a stale or failed record back into a gap, so backup-restore, domain-renewal and name-clearance are measured on every scan and not only once. `python3 -m foundation blindspots --tick --apply` (run by foundation/pm.py in the daily product manager pass) refreshes domain expiry every refresh_days, runs the backup drill when due, writes ops/blindspots/closed.jsonl, files items, and records a computed answer for any sweep still unanswered grace_days after it fell due. Item done checks are commands (`--closed ID`, `--swept DOMAIN`, `--renewed DOMAIN`) that re-measure, so an old closure cannot close a relapsed item.",
  "gates_allowed": [
   "statement-in-owners-name",
   "owner-account",
@@ -80,25 +80,25 @@
    "id": "name-clearance",
    "domain": "ip",
    "why": "Another party may hold a trademark on the name; discovering that after launch forces a costly rename.",
-   "probe": "file:ip/name-clearance.md",
+   "probe": "fresh:ip/name-clearance.json::at::120::clear",
    "class": "system",
-   "action": "search public trademark registers and record the result with sources"
+   "action": "ip/name-clearance.json: register and web searches with sources and a verdict, re-run every 120 days"
   },
   {
    "id": "dependency-licences",
    "domain": "ip",
    "why": "A dependency licence can forbid the commercial terms the product sells under.",
-   "probe": "file:doctrine/dependency-licences.json",
+   "probe": "grep:doctrine/dependency-licences.json::\"verdict\": \"ok\"",
    "class": "system",
-   "action": "inventory dependencies and their licences and check against USL-1.0 commercial use"
+   "action": "foundation/licences.py inventories every dependency and checks its licence against how it is used (tests fail on a new unrecorded or conflicting licence)"
   },
   {
    "id": "backup-restore",
    "domain": "continuity",
    "why": "A backup never restored is a hope; the founder is one person.",
-   "probe": "file:ops/backup/last-restore.json",
+   "probe": "fresh:ops/backup/last-restore.json::at::10::ok",
    "class": "system",
-   "action": "export D1 and KV to R2 on a clock and restore into a scratch database, recording the result"
+   "action": "foundation/backup.py: weekly export of every D1 database and KV namespace, restore into a scratch SQLite database, row counts compared, dumps stored in R2 and read back"
   },
   {
    "id": "succession",
@@ -113,9 +113,9 @@
    "id": "domain-renewal",
    "domain": "continuity",
    "why": "A lapsed domain takes the site, email and every registry listing with it.",
-   "probe": "file:ops/blindspots/domain-expiry.json",
+   "probe": "fresh:ops/blindspots/domain-expiry.json::at::10::ok",
    "class": "system",
-   "action": "read RDAP expiry on a clock and file a money gate 60 days out"
+   "action": "foundation/blindspots.py domains(): expiry read weekly over RDAP and the registrar API; a money gate item is filed 60 days out"
   },
   {
    "id": "ai-disclosure",
@@ -147,57 +147,154 @@
   {
    "domain": "legal",
    "question": "Which laws and platform rules apply to what this system now does that it did not do last quarter?",
-   "cadence_days": 90
+   "cadence_days": 90,
+   "paths": [
+    "site/legalpages.js",
+    "scripts/outreach_intro.py",
+    "outreach",
+    "site/worker.js",
+    "LICENSE",
+    "seed/worker/src/social.js"
+   ]
   },
   {
    "domain": "security",
    "question": "What new way could this system be attacked, given what it added since the last sweep?",
-   "cadence_days": 30
+   "cadence_days": 30,
+   "paths": [
+    "seed/worker/src",
+    "site",
+    "dashboard",
+    ".github/workflows",
+    "autonomy"
+   ]
   },
   {
    "domain": "privacy",
    "question": "What personal data does the system now touch, where does it go, and does the privacy page still say so?",
-   "cadence_days": 30
+   "cadence_days": 30,
+   "paths": [
+    "site",
+    "seed/analytics",
+    "dashboard",
+    "seed/worker/src"
+   ]
   },
   {
    "domain": "finance",
    "question": "What recurring costs, renewals and filing dates exist that the owner has not been shown?",
-   "cadence_days": 30
+   "cadence_days": 30,
+   "paths": [
+    "doctrine/cost.json",
+    "ops/cost-thresholds.json",
+    "actions-budget.json",
+    "doctrine/topology.json"
+   ],
+   "data": [
+    "ops/blindspots/domain-expiry.json",
+    "ops/free-tier.json"
+   ]
   },
   {
    "domain": "continuity",
    "question": "What breaks if the owner is unreachable for 30 days?",
-   "cadence_days": 60
+   "cadence_days": 60,
+   "paths": [
+    "doctrine/topology.json",
+    "doctrine/backup.json",
+    "foundation/failover.py",
+    "doctrine/clocks.json"
+   ],
+   "data": [
+    "ops/backup/last-restore.json",
+    "ops/blindspots/domain-expiry.json"
+   ]
   },
   {
    "domain": "platform-risk",
    "question": "Which platform, API or policy the system depends on changed terms or pricing?",
-   "cadence_days": 30
+   "cadence_days": 30,
+   "paths": [
+    "doctrine/topology.json",
+    "doctrine/dependency-licences.json",
+    ".github/workflows",
+    "doctrine/scout.json"
+   ],
+   "data": [
+    "ops/free-tier.json"
+   ]
   },
   {
    "domain": "reputation",
    "question": "What is publicly said or shown about the system that the system did not put there?",
-   "cadence_days": 30
+   "cadence_days": 30,
+   "paths": [
+    "site",
+    "outreach",
+    "doctrine/claims.json",
+    "doctrine/promotion.json"
+   ]
   },
   {
    "domain": "users",
    "question": "What would a user in their first minute not know to ask, and does the interview supply it?",
-   "cadence_days": 30
+   "cadence_days": 30,
+   "paths": [
+    "site/interview.js",
+    "site/suggest.js",
+    "site/worker.js",
+    "doctrine/stakeholders.json"
+   ]
   },
   {
    "domain": "outreach",
    "question": "Which rule, provider policy or deliverability signal changed for the automated email and social channels, and is every send still disclosed, authenticated and suppressible?",
-   "cadence_days": 30
+   "cadence_days": 30,
+   "paths": [
+    "scripts/outreach_intro.py",
+    "outreach",
+    "seed/worker/src/social.js",
+    ".github/workflows/outreach.yml"
+   ]
   },
   {
    "domain": "accessibility",
    "question": "Which pages or flows were added since the last sweep, and do they meet the design contract with keyboard, screen reader and zoom?",
-   "cadence_days": 60
+   "cadence_days": 60,
+   "paths": [
+    "site",
+    "dashboard",
+    "doctrine/design.json",
+    "doctrine/uiux.json"
+   ],
+   "data": [
+    "ops/uiux/status.json"
+   ]
   },
   {
    "domain": "ip",
    "question": "Does the name, the licence or any dependency conflict with another party's rights, and what changed in the licences we depend on?",
-   "cadence_days": 90
+   "cadence_days": 90,
+   "paths": [
+    "LICENSE",
+    "doctrine/dependency-licences.json",
+    "ip"
+   ],
+   "data": [
+    "ip/name-clearance.json",
+    "doctrine/dependency-licences.json"
+   ]
   }
- ]
+ ],
+ "closed_file": "ops/blindspots/closed.jsonl",
+ "domain_expiry_file": "ops/blindspots/domain-expiry.json",
+ "domains": [
+  "ultrastable.io",
+  "ultrastable.org",
+  "ultrastable.app",
+  "ultrastable.net"
+ ],
+ "renewal_gate_days": 60,
+ "refresh_days": 7,
+ "grace_days": 7
 }

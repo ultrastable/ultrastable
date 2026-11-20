@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-blind-spot-register-runs-on-clocks-backup-drill-domain-expir",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "Blind-spot register runs on clocks: backup drill, domain expiry, licences, computed sweeps",
+  "body": "BLINDSPOT-1: fresh: probes make backup-restore, domain-renewal and name-clearance go stale by themselves; foundation/backup.py restores each D1 export into scratch SQLite and stores it in R2; foundation/licences.py inventories dependencies; blindspots --tick runs daily inside the product manager pass; item done checks are commands that re-measure. 11 sweeps answered with evidence in ops/blindspots/answers.jsonl.",
+  "probe": "file:foundation/backup.py",
+  "session": "session_0156nqDsxX1zCZBnq8L21fjV"
+ },
+ "kind": "decision",
+ "title": "Blind-spot register runs on clocks: backup drill, domain expiry, licences, computed sweeps",
+ "session": "session_0156nqDsxX1zCZBnq8L21fjV"
+}
