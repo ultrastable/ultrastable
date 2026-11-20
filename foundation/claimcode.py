@@ -48,7 +48,9 @@ def _claims1_bound(root) -> list[str]:
         reg = json.loads(p.read_text("utf-8")) if p.is_file() else {"claims": []}
     except ValueError:
         return []
-    return [c["text"] for c in reg["claims"]] + ["<!-- claim:"]
+    texts = [c["text"] for c in reg["claims"]]
+    # the served registry (site/claims-data.js) repeats each claim as a JSON string, where a quotation mark inside the sentence is escaped
+    return texts + [e for e in (json.dumps(t)[1:-1] for t in texts) if e not in texts] + ["<!-- claim:"]
 
 
 def check(root=REPO) -> list[str]:

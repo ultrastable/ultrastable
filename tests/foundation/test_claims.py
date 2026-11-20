@@ -18,6 +18,12 @@ def copy():
         shutil.copy(ROOT / f, td / f)
     for d in ("seed", "platform", "ops", "foundation", "instances", "doctrine", "site"):
         shutil.copytree(ROOT / d, td / d, dirs_exist_ok=True, ignore=shutil.ignore_patterns("node_modules", "__pycache__", "assets"))
+    # a claim's probe may name any file in the repository (COVERAGE-CITED-1 binds a statement to the code it cites): the copy carries each one
+    for c in json.loads((ROOT / "doctrine/claims.json").read_text(encoding="utf-8"))["claims"]:
+        for pr in ["file:" + c["surface"]] + ([c["probe"]] if isinstance(c["probe"], str) else c["probe"]):
+            f = pr.partition(":")[2].partition("::")[0]
+            if pr.startswith(("file:", "grep:")) and (ROOT / f).is_file() and not (td / f).exists():
+                (td / f).parent.mkdir(parents=True, exist_ok=True); shutil.copy(ROOT / f, td / f)
     return td
 
 
@@ -83,6 +89,35 @@ class Claims(unittest.TestCase):
         ok_rows, ok_drift = claims.live(ROOT, fetch=lambda u: " ".join(c for l in claims.load(ROOT)["live"] if l["url"] == u for c in l["contains"]))
         self.assertEqual(ok_drift, [])
 
+
+
+class CitedBinder(unittest.TestCase):
+    """COVERAGE-CITED-1: a statement is bound only to code it names, and every such binding is a probe that can fail."""
+    def setUp(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("bind_cited_claims", claims.REPO / "scripts/bind_cited_claims.py")
+        self.b = importlib.util.module_from_spec(spec); spec.loader.exec_module(self.b)
+
+    def test_probes_come_from_the_line_and_only_for_code_that_exists(self):
+        checks = "run: python3 -m foundation flows --check\n"
+        line = "Every loop declares its flows. Check: `python3 -m foundation flows --check`, tests `tests/foundation/test_flows.py`, and `no/such/file.py`."
+        self.assertEqual(self.b.probes_for(line, claims.REPO, checks), ["file:tests/foundation/test_flows.py", "file:foundation/flows.py", "grep:.github/workflows/checks.yml::foundation[ .]flows\\b"])
+        self.assertEqual(self.b.probes_for("The system always merges every change automatically.", claims.REPO, checks), [])   # cites no code: never bound to itself
+
+    def test_registered_cited_claims_are_current_and_pass(self):
+        new, _ = self.b.build()
+        have = [c for c in claims.load()["claims"] if c.get("bound_by") == "cited"]
+        self.assertEqual(sorted(c["id"] for c in new), sorted(c["id"] for c in have), "run python3 scripts/bind_cited_claims.py --apply")
+        self.assertGreaterEqual(len(have), 50)
+        for c in have:
+            self.assertTrue(c["probe"])
+            for pr in c["probe"]:
+                self.assertTrue(claims.probe(claims.REPO, pr)[0], f"{c['id']}: {pr}")
+            self.assertFalse(any(pr.startswith("grep:" + c["surface"]) for pr in c["probe"]), "a claim is never proved by its own sentence")
+
+    def test_quote_is_a_prefix_of_the_line(self):
+        line = "  " + "word " * 60
+        self.assertTrue(line.strip().startswith(self.b.quote(line))); self.assertLessEqual(len(self.b.quote(line)), 140)
 
 if __name__ == "__main__":
     unittest.main()
