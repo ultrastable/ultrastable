@@ -5,7 +5,7 @@
   "date": "2026-11-20",
   "title": "Social loop needs 6-8 subrequests per run",
   "body": "The social loop's 5-call share (LOOP_MAX_COST.social) starved every post after 2026-11-20 01:10 UTC: gate, calendar, tenant queue, a DPoP token refresh and a post need 6 to 8 calls. Share is now 9 (minimum 6). A channel with no token is not a channel. Tenants publish a queue (social/gate.json tenant_queues) and core only drains it.",
-  "probe": "grep:social: 9:seed/worker/src/subreq.js",
+  "probe": "grep:seed/worker/src/subreq.js::social: 9 }",
   "session": "session_0156nqDrWfEXVqwJrA8J9X8Y"
  },
  "kind": "lesson",
