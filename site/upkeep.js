@@ -91,7 +91,7 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 export function historyBody(id, idx, last) {
   const rows = idx.list.slice().reverse().map((v) => "<tr><td>" + v.n + "</td><td>" + esc(v.at.slice(0, 16).replace("T", " ")) + "</td><td>" + esc(v.why) + '</td><td><form method="post" action="/s/' + id + '/history"><input type="hidden" name="v" value="' + v.n + '"><button class="btn" type="submit">Go back to this</button></form></td></tr>').join("");
   const next = last && last.at ? "<p class=\"meta\">Last upkeep " + esc(last.at.slice(0, 10)) + (last.what && last.what.length ? ": " + esc(last.what.join(", ")) : ": nothing needed") + ". The next one runs within a week.</p>" : "<p class=\"meta\">The first upkeep runs within a week.</p>";
-  return '<div class="head"><h1>How your site has changed</h1><p>The system looks after your site by itself and keeps what each page looked like before. Pick one to go back to it.</p></div>' + next
+  return '<div class="head"><h1>How your site has changed</h1><p>The system looks after your site by itself and keeps what each page looked like before. Pick one to go back to it.</p></div>' + next + '<p class="meta"><a href="/s/' + id + '/feed.xml">Subscribe to these changes</a></p>'
     + (rows ? '<div class="card"><div class="us-wrap"><table class="us-table"><thead><tr><th>#</th><th>When</th><th>What changed after it</th><th></th></tr></thead><tbody>' + rows + "</tbody></table></div></div>" : '<div class="card"><p>Nothing has changed yet. Earlier versions appear here the first time the site is improved.</p></div>');
 }
 
@@ -106,4 +106,17 @@ export const viewedRecently = async (db, id, now) => (await insights(db, id, now
 export function insightsBody(id, d) {
   const list = (t, xs) => '<div class="card"><h3 class="card-title">' + t + "</h3>" + (xs.length ? "<ul>" + xs.map((x) => "<li>" + esc(x.k) + ": " + x.n + "</li>").join("") + "</ul>" : '<p class="meta">Nothing yet.</p>') + "</div>";
   return '<div class="head"><h1>Who visits your site</h1><p>Counted without cookies or names. Browsers that ask not to be tracked are not counted.</p></div><div class="card"><h3 class="card-title">Visits</h3><p>' + d.views7 + " in the last 7 days from " + d.visitors7 + " visitors; " + d.views30 + " in the last 30 days.</p><p class=\"meta\">The system spends its improvement effort on sites that are visited.</p></div>" + list("Where they came from", d.refs) + list("Countries", d.countries) + list("Devices", d.devices);
+}
+
+// SITE-FEED-1: every built site has an Atom feed of what the system changed (/s/<id>/feed.xml) and an embeddable badge (/s/<id>/badge.svg),
+// built from the version index above, so an owner or visitor can subscribe and see the site being looked after.
+const x = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+export function siteFeed(id, idx, origin, title) {
+  const base = origin + "/s/" + id, list = idx.list.slice().reverse();
+  const entries = list.map((v) => "<entry><id>" + x(base + "#v" + v.n) + "</id><title>" + x("After version " + v.n + ": " + v.why) + "</title><updated>" + x(v.at) + '</updated><link href="' + x(base + "/history") + '"/></entry>').join("");
+  return '<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><id>' + x(base + "/feed.xml") + "</id><title>" + x((title || "Your site") + ": changes made by the system") + "</title><updated>" + x(list.length ? list[0].at : "1970-01-01T00:00:00Z") + '</updated><link rel="self" href="' + x(base + "/feed.xml") + '"/><link href="' + x(base) + '"/>' + entries + "</feed>";
+}
+export function siteBadge(idx, last) {
+  const n = idx.list.length, right = n ? "kept up: " + n + " change" + (n === 1 ? "" : "s") : "newly built", w = 70 + right.length * 6.2;
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.round(w) + '" height="20" role="img" aria-label="Ultrastable: ' + x(right) + '"><rect width="64" height="20" fill="#14120f"/><rect x="64" width="' + Math.round(w - 64) + '" height="20" fill="#0a7a3d"/><g fill="#fff" font-family="Verdana,sans-serif" font-size="11"><text x="6" y="14">Ultrastable</text><text x="70" y="14">' + x(right) + "</text></g></svg>";
 }
