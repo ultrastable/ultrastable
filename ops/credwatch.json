@@ -1,14 +1,21 @@
 {
  "rows": [
   {
+   "name": "CF_DEPLOY_TOKEN",
+   "state": "ok",
+   "expires": null
+  },
+  {
    "name": "CLOUDFLARE_API_TOKEN",
    "state": "invalid",
-   "expires": null
+   "expires": null,
+   "optional": true
   },
   {
    "name": "LANE_PAT",
    "state": "unbound",
-   "expires": null
+   "expires": null,
+   "optional": true
   },
   {
    "name": "domain-ultrastable.io",
