@@ -9,6 +9,7 @@
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
 Last updated: 2026-11-20
+- 2026-11-20: OL-20261112-93: an existing `gh` sign-in is a credential route only on a server-side host (`CLAUDE_CODE_REMOTE` or `GITHUB_ACTIONS`): `foundation/ladder.py` `server_side`, `Boot._gh_admin_org`; banned pattern `signed-in-cli` in `doctrine/server-side.json`; `demos/public/cases.json` is scanned again.
 - 2026-11-20: Q-CLOCK-LANE-HOOK: `lane.yml` ends with `python3 -m foundation clock --heal --apply` (4 minute cap), so stale stages are healed after every lane pass.
 - 2026-11-20: Q-CRIT-PUBLIC-STAGE: `GET /api/v1/ignition` (site Worker, `site/live.js` `ignitionReading`) serves the stage the tick Worker reads for itself with the time of the reading, and answers 503 `stale_reading` past two tick intervals; `/live` has a Stage section. OL-20261114-7: META-SIGNAL-2 has a grep closing probe.
 - 2026-11-20: Q-SELF-WORKER: the tick Worker computes `k_self`, `self_deploys` and `self_regime` (subcritical, driven, self-sustaining) from the origin on each `ops/deploys.jsonl` row and serves them on `/live` next to `k_eff`; origins are `self.origins` in `seed/autonomy/criticality.json`.

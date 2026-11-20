@@ -426,7 +426,10 @@ class Boot:
 
     @staticmethod
     def _gh_admin_org() -> bool:
-        """BG-13: a logged-in `gh` with admin:org scope is an org-admin credential."""
+        """BG-13: a logged-in `gh` with admin:org scope is an org-admin credential, but only on a server-side host (a cloud agent
+        session or an Actions job). A sign-in on any other host is not a route: server-side only (OL-20261112-93)."""
+        if not any(str(os.environ.get(k) or "").lower() not in ("", "0", "false") for k in ("CLAUDE_CODE_REMOTE", "GITHUB_ACTIONS")):
+            return False
         if not shutil.which("gh"):
             return False
         try:
