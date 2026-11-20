@@ -3342,6 +3342,15 @@
    "body": "foundation/pm.py weekly() writes ops/growth/weekly.json once per ISO week and only when a metric was measured; the transparency snapshot carries it as product_manager.weekly and /live renders it. Previous-week values come from the last report, so no extra database query is made.",
    "probe": "file:foundation/pm.py",
    "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+  },
+  {
+   "id": "lesson-2026-11-20-smoke-runway-check-reads-runway-days-and-meets-target",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Smoke runway check reads runway_days and meets_target",
+   "body": "The production smoke test read a key the runway record never had, so the runway check failed on every run. It now reads runway_days, meets_target, below and unmeasured. land_data starts no checks run on a data branch: a dispatched run does not satisfy the branch rule.",
+   "probe": "grep:scripts/smoke_live.py::meets_target",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
   }
  ]
 }
