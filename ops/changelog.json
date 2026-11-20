@@ -9,12 +9,62 @@
   "external": "a signal from outside (scout finding, funder reply, competitor change)"
  },
  "counts_by_origin": {
-  "loop": 11,
+  "loop": 15,
   "owner": 26,
   "agent": 14,
   "system": 3
  },
  "entries": [
+  {
+   "id": "pv-843fb9282e33",
+   "at": "2026-11-18T15:56:55Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "launched air-quality.ultrastable.app: score 20.0 (reach 4, impact 5) from needs ; prediction board_age_hours <= 30 within 48 h",
+   "affected": [
+    "instances/spinoffs/air-quality"
+   ],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-56648945b251",
+   "at": "2026-11-18T15:56:55Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "portfolio-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-b4899512d1d5",
+   "at": "2026-11-18T15:56:55Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "numbers-board: keep (showcase board kept while its facts are fresh and its cost is inside the headroom)",
+   "affected": [],
+   "effect": "pending"
+  },
+  {
+   "id": "pv-801b9cc8c09c",
+   "at": "2026-11-18T15:56:55Z",
+   "tenant": "ultrastable",
+   "origin": "loop",
+   "channel": "loop-run",
+   "actor": "spinoff",
+   "kind": "decision",
+   "summary": "blindspot: keep (age 1d under the 14d trial)",
+   "affected": [],
+   "effect": "pending"
+  },
   {
    "id": "pv-831df3c89486",
    "at": "2026-11-17T21:21:28Z",
