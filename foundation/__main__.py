@@ -357,7 +357,7 @@ def main(argv=None) -> int:
     tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true")
     da = sub.add_parser("docs_audit"); da.add_argument("--check", action="store_true"); da.add_argument("--report", action="store_true"); da.add_argument("--orphans", action="store_true"); da.add_argument("--humans", action="store_true")
     ny = sub.add_parser("needsyou"); ny.add_argument("--check", action="store_true")
-    ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo"); ex.add_argument("--pick", action="store_true"); ex.add_argument("--record", action="store_true"); ex.add_argument("--result"); ex.add_argument("--pr"); ex.add_argument("--detail"); ex.add_argument("--host")
+    ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--fold", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo"); ex.add_argument("--pick", action="store_true"); ex.add_argument("--record", action="store_true"); ex.add_argument("--result"); ex.add_argument("--pr"); ex.add_argument("--detail"); ex.add_argument("--host")
     sub.add_parser("upstream", add_help=False)
     wb = sub.add_parser("writeback"); ws = wb.add_subparsers(dest="wcmd", required=True)
     rc = ws.add_parser("record"); rc.add_argument("--kind", required=True); rc.add_argument("--title", required=True); rc.add_argument("--body", required=True)
