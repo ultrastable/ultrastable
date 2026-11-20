@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-connect-1-connection-engine",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "CONNECT-1 connection engine",
+  "body": "Evidence: core/connect tests pass 14 of 14 and a real catalogue run ranked 1282 leads over 814 items. Cutoffs come from each run's own background because fixed thresholds fail across embedding models; a restated indicator is not a novel link; the lexical route does not seed discovery. Verified live in the next connect workflow run.",
+  "probe": "file:workers/core/connect/index.js"
+ },
+ "kind": "lesson",
+ "title": "CONNECT-1 connection engine",
+ "session": ""
+}
