@@ -56,8 +56,21 @@ export async function pdsIssuer(pds, f) {
   return j && j.authorization_servers ? j.authorization_servers : [];
 }
 
-export const clientMetadata = origin => ({ client_id: origin + '/.well-known/oauth-client/bluesky.json', client_name: 'Ultrastable', client_uri: origin, application_type: 'web',
+// CONFIDENTIAL-CLIENT-1 (2026-11-20, atproto OAuth spec, "Tokens and Session Lifetime"): a public client's session and refresh tokens are limited to 2 weeks; a
+// confidential client (private_key_jwt) may keep a session without limit and its refresh tokens last up to 180 days. A one-year connection therefore needs a
+// client key. The key is generated once, kept sealed, and its public half is served at /.well-known/oauth-client/bluesky-jwks.json.
+export async function newClientKey() { const k = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign']); const jwk = await crypto.subtle.exportKey('jwk', k.privateKey); return { ...jwk, kid: 'us-' + rand(6), alg: 'ES256', use: 'sig', key_ops: ['sign'] }; }
+export const publicJwk = j => ({ kty: j.kty, crv: j.crv, x: j.x, y: j.y, kid: j.kid, alg: 'ES256', use: 'sig' });
+export async function clientAssertion(jwk, { clientId, aud }) {
+  const head = { typ: 'JWT', alg: 'ES256', kid: jwk.kid }, t = Math.floor(Date.now() / 1000);
+  const input = b64u(enc(JSON.stringify(head))) + '.' + b64u(enc(JSON.stringify({ iss: clientId, sub: clientId, aud, jti: rand(12), iat: t, exp: t + 60 })));
+  const key = await crypto.subtle.importKey('jwk', { kty: jwk.kty, crv: jwk.crv, x: jwk.x, y: jwk.y, d: jwk.d }, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
+  return input + '.' + b64u(new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, enc(input))));
+}
+export const assertionFields = async (jwk, clientId, aud) => jwk ? { client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer', client_assertion: await clientAssertion(jwk, { clientId, aud }) } : {};
+
+export const clientMetadata = (origin, jwk) => ({ client_id: origin + '/.well-known/oauth-client/bluesky.json', client_name: 'Ultrastable', client_uri: origin, application_type: 'web',
   redirect_uris: [origin + '/connect/bluesky/callback'], grant_types: ['authorization_code', 'refresh_token'], response_types: ['code'], scope: 'atproto transition:generic',
-  token_endpoint_auth_method: 'none', dpop_bound_access_tokens: true });
+  ...(jwk ? { token_endpoint_auth_method: 'private_key_jwt', token_endpoint_auth_signing_alg: 'ES256', jwks_uri: origin + '/.well-known/oauth-client/bluesky-jwks.json' } : { token_endpoint_auth_method: 'none' }), dpop_bound_access_tokens: true });
 
 export const refreshForm = (refresh, clientId) => new URLSearchParams({ grant_type: 'refresh_token', refresh_token: refresh, client_id: clientId }).toString();
