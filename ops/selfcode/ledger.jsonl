@@ -24,3 +24,5 @@
 {"at": "2026-11-20T14:11:16Z", "before": 0, "id": "Q-SELF-unused-import-foundation-fleet-py", "key": "Q-SELF-unused-import-foundation-fleet-py", "kind": "parked", "schema": "ultrastable-selfcode/1", "status": "failed"}
 {"at": "2026-11-20T14:11:18Z", "before": 1, "id": "Q-SELF-unused-import-foundation-doctrine-py", "key": "foundation/doctrine.py", "kind": "unused_import", "schema": "ultrastable-selfcode/1", "status": "filed"}
 {"at": "2026-11-20T15:21:42Z", "before": 1, "id": "Q-SELF-unused-import-foundation-doctrine-py", "key": "foundation/doctrine.py", "kind": "unused_import", "schema": "ultrastable-selfcode/1", "status": "filed"}
+{"at": "2026-11-20T16:41:36Z", "before": 1, "id": "Q-SELF-unused-import-foundation-clockwork-py", "key": "foundation/clockwork.py", "kind": "unused_import", "schema": "ultrastable-selfcode/1", "status": "filed"}
+{"after": 0, "at": "2026-11-20T16:41:59Z", "id": "Q-SELF-unused-import-foundation-doctrine-py", "key": "foundation/doctrine.py", "kind": "unused_import", "pr": "https://github.com/ultrastable/ultrastable/pull/749", "schema": "ultrastable-selfcode/1", "status": "kept"}
