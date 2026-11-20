@@ -35,6 +35,9 @@ export async function postBluesky(db, env, tenant, m0, text, f, now) {
   return (await r.res.json()).uri || 'ok';
 }
 
+// Order of what posts next: the weekly meta-story, then a tenant's changed items, then a tenant's backlog in hierarchy order, then platform events, then evergreen.
+export const priority = p => (p.arm === 'meta-story' ? 0 : String(p.arm || '').startsWith('ps-') ? (p.kind === 'event' ? 1 : 2) : p.kind === 'event' ? 3 : 4);
+
 export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), tenant = 'default', repo = 'ultrastable/ultrastable' }) {
   await store.ensureSchema(db); await db.prepare(DDL).run();
   const channels = {};
@@ -44,6 +47,9 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   if (!Object.keys(channels).length) return { skipped: 'no channel connected' };  // no network call until an account is linked
   const base = RAW(env.SOCIAL_REPO || repo), get = async n => { const r = await f(base + n); if (!r.ok) throw new Error(n + ' HTTP ' + r.status); return r.json(); };
   const [gate, cal] = await Promise.all([get('gate.json'), get('calendar.json')]);
+  // SOCIAL-TENANTS-1: a tenant publishes its own queue ({ posts: [{ id, date, text, kind, arm }] }) in its own voice; core only drains it within the gate's caps.
+  // The gate lists the queue URLs (data, not code). A queue that cannot be read is skipped this run and never blocks the others.
+  for (const url of gate.tenant_queues || []) { try { const r = await f(url); if (r.ok) cal.posts = [...(cal.posts || []), ...((await r.json()).posts || [])]; } catch { /* next run */ } }
   if (gate.kill) return { skipped: 'kill switch' };
   if (gate.mode !== 'live') return { skipped: 'gate mode ' + gate.mode };
   if (gate.kill) return { skipped: 'kill switch' };
@@ -54,7 +60,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   const days = new Set(rows.filter(r => r.at.slice(0, 10) === today).map(r => r.id)), wk = new Set(rows.filter(r => weekKey(new Date(r.at)) === weekKey(d)).map(r => r.id));
   if (days.size >= gate.max_posts_per_day || wk.size >= gate.max_posts_per_week) return { skipped: 'rate limit' };
   const posted = new Set(rows.map(r => r.id));
-  const due = (cal.posts || []).filter(p => !posted.has(p.id) && p.date <= today).sort((a, b) => (a.kind !== 'event') - (b.kind !== 'event'));
+  const due = (cal.posts || []).filter(p => !posted.has(p.id) && p.date <= today).sort((a, b) => priority(a) - priority(b));
   if (!due.length) return { skipped: 'nothing due' };
   const p = due[0], out = {};
   for (const [ch, m] of Object.entries(channels)) {
