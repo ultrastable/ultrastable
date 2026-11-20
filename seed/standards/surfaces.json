@@ -450,6 +450,19 @@
       "reason": "internal feed read by the site worker over a service binding, not a capability for callers"
     },
     {
+      "id": "progress",
+      "path": "/api/progress",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "The judged release cadence of every system and the merged changes behind it; the site serves it as /progress, digests and an Atom feed (PROGRESS-1).",
+      "reason": "internal feed read by the site worker over a service binding, not a capability for callers"
+    },
+    {
       "id": "decisions",
       "path": "/api/decisions",
       "methods": [

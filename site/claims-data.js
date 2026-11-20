@@ -1948,6 +1948,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
+   "detail": "",
+   "how": "file:instances/ultrastable/progress.json + file:seed/worker/src/progress.js + file:seed/worker/test/progress.test.js + file:site/progress.test.mjs + file:tests/foundation/test_progress.py + file:foundation/progress.py",
+   "id": "cited-820fd3039a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
@@ -2488,6 +2497,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
+   "detail": "",
+   "how": "file:instances/ultrastable/progress.json + file:seed/worker/src/progress.js + file:seed/worker/test/progress.test.js + file:site/progress.test.mjs + file:tests/foundation/test_progress.py + file:foundation/progress.py",
+   "id": "mirror-eed3f734df",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
@@ -2983,7 +3001,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 380 Worker tests",
+   "claim": "seed-tests: 45 Python and 385 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -2992,7 +3010,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 380 Worker tests",
+   "claim": "seed-worker-tests: 385 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3224,7 +3242,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 355,
-  "total": 355
+  "pass": 357,
+  "total": 357
  }
 };

@@ -26,5 +26,6 @@
  "0024_read_indexes_3.sql",
  "0025_read_indexes_4.sql",
  "0026_tenant_core.sql",
- "0027_trust_ledger_tenant_pk.sql"
+ "0027_trust_ledger_tenant_pk.sql",
+ "0028_progress.sql"
 ]
