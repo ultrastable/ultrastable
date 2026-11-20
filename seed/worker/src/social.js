@@ -42,7 +42,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   await store.ensureSchema(db); await db.prepare(DDL).run();
   const channels = {};
   for (const [ch, key] of [['bluesky', 'oauth:bluesky'], ['mastodon', 'oauth:mastodon']]) {
-    const m = await store.material(db, env, tenant, key); if (m && m.status !== 'pending') channels[ch] = m;
+    const m = await store.material(db, env, tenant, key); if (m && m.status !== 'pending' && (ch === 'bluesky' ? m.secret && m.secret.refresh_token : m.access)) channels[ch] = m;  // an unfinished sign-in (no token) is not a channel: it would only spend calls
   }
   if (!Object.keys(channels).length) return { skipped: 'no channel connected' };  // no network call until an account is linked
   const base = RAW(env.SOCIAL_REPO || repo), get = async n => { const r = await f(base + n); if (!r.ok) throw new Error(n + ' HTTP ' + r.status); return r.json(); };
