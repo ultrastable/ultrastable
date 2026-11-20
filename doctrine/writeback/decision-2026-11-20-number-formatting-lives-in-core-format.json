@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-number-formatting-lives-in-core-format",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "Number formatting lives in core/format",
+  "body": "Believable rounding (NUMFMT-1) is one tenant-agnostic module; pages must not show raw floats; the false-precision lint runs on every rendered site page.",
+  "probe": "file:workers/core/format/index.js",
+  "session": "session_0156nqDtUBinC279GK2RLKX7"
+ },
+ "kind": "decision",
+ "title": "Number formatting lives in core/format",
+ "session": "session_0156nqDtUBinC279GK2RLKX7"
+}

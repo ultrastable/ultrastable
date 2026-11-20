@@ -21,7 +21,7 @@ jobs:
   ciwatch:
     if: ${{ vars.HALT != '1' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure') }}  # HALT-1: the owner's halt stops every job
     runs-on: ubuntu-24.04
-    timeout-minutes: 6
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v7
         with:
@@ -54,6 +54,23 @@ jobs:
             pr=$(gh api "repos/${{ github.repository }}/pulls" -f base=main -f head="$b" -f title="ciwatch: failing-workflow items" -f body="Closes nothing; files Q-CIFAIL items so the executor fixes red workflows. Provenance: ops/ciwatch.jsonl on branch ciwatch-evidence." --jq .html_url)
             gh workflow run checks.yml --ref "$b" || echo "::warning::checks dispatch failed; the lane picks the PR up on its next run"
             echo "$pr"
+          fi
+      - name: Repair a red deploy gate with the smallest revert (REDMAIN-1, no model involved)
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          git checkout -q -f main && git reset -q --hard origin/main
+          open=$(gh api "repos/${{ github.repository }}/pulls?state=open&per_page=100" --jq '[.[]|select(.head.ref|startswith("agent/redmain-"))]|length')
+          if [ "${open:-0}" != "0" ]; then echo "a redmain repair PR is already open"; exit 0; fi
+          python3 -m foundation redmain --run --apply | tee "$RUNNER_TEMP/redmain.json"
+          if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            b="agent/redmain-${GITHUB_RUN_ID}"
+            git config user.name "ultrastable-ciwatch"; git config user.email "actions@users.noreply.github.com"
+            git checkout -q -b "$b"; git commit -q -am "redmain: revert the change that turned a deploy gate red (REDMAIN-1)"
+            git push -q origin "$b"
+            gh api "repos/${{ github.repository }}/pulls" -f base=main -f head="$b" -f title="redmain: repair a red deploy gate" -f body="REDMAIN-1: the gate was red on main; this is the smallest revert that turns it green, found by foundation/redmain.py. The lane merges it on green checks." --jq .html_url
+            gh workflow run checks.yml --ref "$b" || echo "::warning::checks dispatch failed; the lane picks the PR up on its next run"
+            git checkout -q -f main
           fi
       - name: Reconcile PRs stuck in conflict with main (UNSTICK-1)
         env:

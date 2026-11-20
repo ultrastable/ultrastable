@@ -8,11 +8,12 @@ import USER_PATH from "./userpath.js";
 import SH from "./stakeholders.js"; // STAKEHOLDERS-1
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
-import { liveResponse, ignitionResponse, progressResponse } from "./live.js";
+import { liveResponse, ignitionResponse } from "./live.js";
 import { feedResponse } from "./feed.js"; // REACH-1
 import { demoResponse } from "./demo.js"; // DEMO-DASHBOARD-1
 import { caseResponse } from "./casestudy.js"; // CASE-STUDY-1
 import { examplesSection } from "./examples.js"; // EXAMPLE-SYSTEMS-1
+import { pilotOffer } from "./pilotoffer.js"; // PILOT-OFFER-1
 import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
 import VERIFIED from "./claims-data.js";
@@ -27,12 +28,14 @@ import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
 import { negotiate, robots, WEBMCP_JS } from "./readiness.js";  // AGENT-READY-2
 import ROAD from "./roadmap-data.js";
 import DEC from "./decisions-data.js";  // DECISIONS-1: generated from ops/decisions/*.jsonl
+import { progressRoutes } from "./progress.js";  // PROGRESS-1: what every system shipped, daily, weekly and monthly
 import SPIN from "./spinoff-roadmap-data.js";  // SPINOFF-IDEAS-1: generated from the idea queue and the free-tier headroom
 import ORGMAP from "./orgmap.js"; // ORGMAP-1: generated from brand/brand.json
 import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
 import { controlPlane, opsPage, tenantDiscovery, authIntegration } from "./controlplane.js";
 import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
+import { siteFeed, siteBadge, insights as siteInsights, insightsBody, viewedRecently, upkeepRound, recordVersion, restore as restoreVersion, versions as siteVersions, historyBody } from "./upkeep.js"; // SITE-UPKEEP-1
 import { connectionsRoute } from "./connections.js"; // CONNECTIONS-1
 import { internalDeploy } from "./deployer.js";
 var VERSION = "0.15.1";
@@ -69,9 +72,9 @@ function shell(opts, body) {
   return "<!doctype html><html lang=\"en\"><head>" + dsHead(opts.title, opts.description, CSS)
     + "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"><meta property=\"og:image\" content=\"https://" + CANON + "/social-card.png\"><meta property=\"og:image:width\" content=\"640\"><meta property=\"og:image:height\" content=\"320\"><meta property=\"og:image:alt\" content=\"Coding agents write code. Ultrastable runs the system.\"><meta property=\"og:site_name\" content=\"Ultrastable\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"" + esc(opts.title) + "\"><meta name=\"twitter:description\" content=\"" + esc(opts.description) + "\"><meta name=\"twitter:image\" content=\"https://" + CANON + "/social-card.png\"><meta name=\"theme-color\" content=\"#12342A\"><link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\"><link rel=\"canonical\" href=\"" + url + "\"><meta property=\"og:title\" content=\"" + esc(opts.title) + "\"><meta property=\"og:description\" content=\"" + esc(opts.description) + "\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:url\" content=\"" + url + "\">"
     + "</head><body><a class=\"skip\" href=\"#main\">Skip to content</a>"
-    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/live\">Live proof</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
+    + "<header class=\"top\"><div class=\"top-in\"><a class=\"brand\" href=\"/\"><img src=\"/favicon.svg\" alt=\"\" width=\"28\" height=\"28\" style=\"vertical-align:middle;margin-right:8px\">ultrastable</a><a class=\"btn btn-quiet hide-sm\" href=\"/for\">Find your path</a><a class=\"btn btn-quiet\" href=\"/showcase\">Test cases</a><a class=\"btn btn-quiet hide-sm\" href=\"/product\">Product</a><a class=\"btn btn-quiet hide-sm\" href=\"/how\">How it works</a><a class=\"btn btn-quiet\" href=\"/live\">Live proof</a><a class=\"btn btn-quiet\" href=\"/progress\">What's new</a><a class=\"btn btn-quiet hide-sm\" href=\"/engineers\">Engineers</a><a class=\"btn btn-quiet hide-sm\" href=\"/contact\">Contact</a></div></header>"
     + "<main class=\"main\" id=\"main\">" + body
-    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/live\">See the checks</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
+    + "<div class=\"us-foot\">Ultrastable is an early-stage product. Figures on this site come from a live system's own records. <a href=\"/live\">See the checks</a> · <a href=\"/progress\">What shipped</a> · <a href=\"/product\">Product</a> · <a href=\"/team\">Team</a> · <a href=\"/faq\">FAQ</a> · <a href=\"/privacy\">Privacy</a> · <a href=\"/accessibility\">Accessibility</a> · <a href=\"/contact\">Contact</a> · <a href=\"/llms.txt\">llms.txt</a></div>"
     + "<div class=\"us-foot\" id=\"family\">The Ultrastable family: <a href=\"https://" + CANON + "/\">" + esc(SH.domains.io.host) + "</a> (platform and product) · <a href=\"/showcase/practical-solutions\">" + esc(SH.domains.org.host) + "</a> (public-benefit demos) · <a href=\"/family.json\">family.json</a></div>"
     + "<div class=\"us-foot\" id=\"credit\">Directed by <a href=\"https://rwnq8.github.io/ultrastable/\">Rowan Brad Quni-Gudzinas</a>, founder and director of Ultrastable. <a href=\"https://rwnq8.github.io\">Website</a> · <a href=\"https://github.com/rwnq8\">GitHub</a> · <a href=\"https://www.linkedin.com/in/rowan-quni\">LinkedIn</a></div>"
     + "<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"Ultrastable\",\"url\":\"https://ultrastable.io\",\"creator\":{\"@type\":\"Person\",\"name\":\"Rowan Brad Quni-Gudzinas\",\"jobTitle\":\"Founder and Director, Ultrastable\",\"url\":\"https://rwnq8.github.io\",\"sameAs\":[\"https://orcid.org/0009-0002-4317-5604\",\"https://github.com/rwnq8\",\"https://www.linkedin.com/in/rowan-quni\"]}}</script></main><script src=\"/webmcp.js\" defer></script></body></html>";
@@ -177,6 +180,7 @@ function pilot() {
   const list = function (a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; };
   return shell({ path: "/pilot", title: "Apply for an Ultrastable pilot", description: g.pitch },
     "<div class=\"head\"><h1>" + esc(g.title) + "</h1><p>" + esc(g.pitch) + "</p><p class=\"meta\">New here? <a href=\"/demo\">See the system running right now</a>.</p></div>"
+    + (DASH.pilot_offer ? pilotOffer(DASH.pilot_offer) : "")
     + "<div class=\"card\"><h3 class=\"card-title\">What we look for</h3>" + list(g.selection) + "</div>"
     + "<div class=\"card\"><h3 class=\"card-title\">What you get</h3><p class=\"meta\">" + esc(g.you_get) + " In return: " + esc(g.we_get) + ".</p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">What to tell us</h3>" + list(g.apply_fields) + "<p class=\"meta\">Price: " + esc(g.price) + ".</p></div>"
@@ -526,7 +530,7 @@ async function audit(env, id, brief, html) {
 async function build(env, id, brief, prev, change) {
   try {
     await env.ASSETS.put("brief:" + id, JSON.stringify({ brief, change: change || null }));
-    await env.ASSETS.put("site:" + id, await aiHtml(env, brief, prev, change)); await env.ASSETS.put("state:" + id, "ready");
+    { const before = await env.ASSETS.get("site:" + id); const html = await aiHtml(env, brief, prev, change); if (before) await recordVersion(env, id, before, change ? "you asked: " + String(change).slice(0, 100) : "rebuilt"); await env.ASSETS.put("site:" + id, html); } await env.ASSETS.put("state:" + id, "ready"); // SITE-UPKEEP-1: the page before each change is kept
     await env.ASSETS.delete("audit:" + id);
   } catch (e) { console.error("build failed", id, String(e)); await env.ASSETS.put("state:" + id, "failed"); }
 }
@@ -659,13 +663,20 @@ async function takeChange(request, env, ctx) {
 }
 const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
 async function siteRoutes(u, env, ctx, request, own) {
-  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/api)?$/.exec(u.pathname);
+  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/history|\/insights|\/feed\.xml|\/badge\.svg|\/api)?$/.exec(u.pathname);
   if (!m || !env || !env.ASSETS) return null;
   if (m[2] === "/api") return siteApi(request, env, m[1]);
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
   if (st === "ready" && (!m[2] || m[2] === "/review")) await ensureAudit(env, ctx, id);
+  if (m[2] === "/feed.xml") return new Response(siteFeed(id, await siteVersions(env, id), "https://" + CANON, (/<title>([^<]*)<\/title>/i.exec(await env.ASSETS.get("site:" + id) || "") || [])[1]), { headers: { "content-type": "application/atom+xml; charset=utf-8", "cache-control": "public, max-age=900" } }); // SITE-FEED-1
+  if (m[2] === "/badge.svg") return new Response(siteBadge(await siteVersions(env, id)), { headers: { "content-type": "image/svg+xml", "cache-control": "public, max-age=900" } });
+  if (m[2] === "/insights") return page("Who visits your site", insightsBody(id, env.DB ? await siteInsights(env.DB, id).catch((e) => { console.error("insights failed", String(e).slice(0, 100)); return { views7: 0, views30: 0, visitors7: 0, refs: [], countries: [], devices: [] }; }) : { views7: 0, views30: 0, visitors7: 0, refs: [], countries: [], devices: [] })); // SITE-INSIGHTS-1
+  if (m[2] === "/history") { // SITE-UPKEEP-1
+    if (request.method === "POST") { const f = await request.formData().catch(() => null), r = f ? await restoreVersion(env, id, f.get("v")) : { ok: false }; if (r.ok) return Response.redirect("https://" + CANON + "/s/" + id + "/history", 303); return page("Not restored", "<div class=\"head\"><h1>That version is gone</h1><p>Only the last ten are kept.</p></div>"); }
+    return page("How your site has changed", historyBody(id, await siteVersions(env, id), await jget(env, "upkeep:" + id)));
+  }
   if (m[2] === "/ask") {
     const a = await jget(env, "ask:" + id);
     if (!a || a.ans.length >= a.qs.length) return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
@@ -699,8 +710,9 @@ async function siteRoutes(u, env, ctx, request, own) {
   const lk = (h, t) => "<a href=\"https://" + CANON + "/s/" + id + h + "\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none;margin-left:6px\" target=\"_top\">" + t + "</a>";
   // BLINDSPOT-1 legal sweep 2026-11-20 (EU AI Act Article 50, in force 2026-08-02): a page the system wrote says so, to a person (the bar) and to a machine (the generator meta tag).
   const aiMark = "<meta name=\"generator\" content=\"Ultrastable (AI-generated page)\">";
-  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><span style=\"background:#fff;color:#111;padding:10px 14px;border-radius:999px;border:1px solid #111\">Written by AI</span>" + lk("/review", "What I checked") + lk("/change", "Change something") + "</div>";
+  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><span style=\"background:#fff;color:#111;padding:10px 14px;border-radius:999px;border:1px solid #111\">Written by AI</span>" + lk("/review", "What I checked") + lk("/change", "Change something") + lk("/history", "History") + lk("/insights", "Visitors") + "</div>";
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
+  if (env.DB && request && request.method === "GET" && ctx && ctx.waitUntil) ctx.waitUntil(record(env, request, { host: CANON, path: "/s/" + id, ref: request.headers.get("referer"), name: "site-view" }).catch((e) => console.error("site view not counted", String(e).slice(0, 100)))); // SITE-INSIGHTS-1
   const us = aiMark + usClient(host, id), html1 = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + us) : /<html[^>]*>/i.test(html) ? html.replace(/<html[^>]*>/i, (m) => m + us) : us + html;
   return new Response(html1, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation" + (sub ? " allow-same-origin" : "") + "; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'self'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
 }
@@ -806,6 +818,7 @@ export async function tick(env, ctx, now) {
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
   { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
+  out.upkeep = (await upkeepRound(env, (await kvList(env, "state:", 300)).slice(-300), { now: t, lint, improve: (b, html, ins) => aiHtml(env, b, html, ins), visited: (id) => (env.DB ? viewedRecently(env.DB, id, t).catch(() => true) : true) }, 2).catch(e => { console.error("upkeep failed", String(e).slice(0, 120)); return []; })).length; // SITE-UPKEEP-1: at most two model passes a tick, each site once a week
   out.webhooks = await tickWebhooks(env, t).catch(e => String(e).slice(0, 120)); // WEBHOOKS-1: outbound callbacks ride this tick, no new cron
   out.watchdog = await watchTick(env); // LOOPPROOF-1: this Worker is the second producer of the org heartbeat
   await jput(env, "tick:last", out); return out;
@@ -983,7 +996,7 @@ function contact() {
 }
 
 const ROBOTS = robots(CONTENT_SIGNAL, "https://" + CANON + "/sitemap.xml");  // AGENT-READY-2: explicit AI-bot groups, same policy as Content-Signal
-const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. Ultrastable runs on itself. Its earlier testbed and a second system, Practical Solutions, are described under test cases.\n\n- [Connect your agent](https://ultrastable.io/connect-agent): one click for VS Code, Cursor, Claude, Codex\n- [Live proof](https://" + CANON + "/live): changes the system shipped, from its own records\n- [Changelog feed](https://" + CANON + "/changelog.xml): merged changes by day, size and origin, as RSS; the same data as JSON at /changelog.json\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n\n\n## Control-plane API (live)\n\n- [API index](https://ultrastable.io/api/v1): status, agents, work (on_deck, in_progress, blocked, done), activity, products, companion brief; OpenAPI at /openapi.json\n- [Operations dashboard](https://dashboard.ultrastable.io/): the same data as a page, refreshed every 30 seconds\n- [A2A agent card](https://ultrastable.io/.well-known/agent-card.json), [API catalog](https://ultrastable.io/.well-known/api-catalog), MCP at /connect-agent (one-click add to VS Code, Cursor, Claude, Codex; no tokens), /mcp (" + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].length + " tools, generated from the code that serves them: " + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].map(function (t) { return t.name; }).join(", ") + ")\n- [Verified claims](https://" + CANON + "/claims): every statement on this site bound to a probe, checked on every change and daily against live\n- POST /api/v1/intake submits a backlog item with an integration bearer token\n";
+const LLMS = "# Ultrastable\n\n> Ultrastable is the foundation for any autonomous system. It is a self-governing development platform: a control loop around coding agents that finds its own work in metrics and failures, hands tasks to the agent that fits, proves each change live with automatic revert, and scores its decisions against logged predictions. Ultrastable runs on itself. Its earlier testbed and a second system, Practical Solutions, are described under test cases.\n\n- [Connect your agent](https://ultrastable.io/connect-agent): one click for VS Code, Cursor, Claude, Codex\n- [Live proof](https://" + CANON + "/live): changes the system shipped, from its own records\n- [Changelog feed](https://" + CANON + "/changelog.xml): merged changes by day, size and origin, as RSS; the same data as JSON at /changelog.json\n- [Progress](https://" + CANON + "/progress): what every system shipped today, this week and this month; Atom at /progress.atom, JSON at /progress.json\n- [How it works](https://" + CANON + "/how)\n- [Pilot](https://" + CANON + "/pilot)\n\n\n## Control-plane API (live)\n\n- [API index](https://ultrastable.io/api/v1): status, agents, work (on_deck, in_progress, blocked, done), activity, products, companion brief; OpenAPI at /openapi.json\n- [Operations dashboard](https://dashboard.ultrastable.io/): the same data as a page, refreshed every 30 seconds\n- [A2A agent card](https://ultrastable.io/.well-known/agent-card.json), [API catalog](https://ultrastable.io/.well-known/api-catalog), MCP at /connect-agent (one-click add to VS Code, Cursor, Claude, Codex; no tokens), /mcp (" + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].length + " tools, generated from the code that serves them: " + [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].map(function (t) { return t.name; }).join(", ") + ")\n- [Verified claims](https://" + CANON + "/claims): every statement on this site bound to a probe, checked on every change and daily against live\n- POST /api/v1/intake submits a backlog item with an integration bearer token\n";
 
 const FAVICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"ultrastable\"><title>ultrastable</title><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></svg>";
 const SOCIAL = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1280 640\" width=\"1280\" height=\"640\"><title>ultrastable</title><defs><linearGradient id=\"g\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop offset=\"0\" stop-color=\"#12342A\"/><stop offset=\"1\" stop-color=\"#0B1A15\"/></linearGradient></defs><rect width=\"1280\" height=\"640\" fill=\"url(#g)\"/><g transform=\"translate(96 96) scale(2)\"><path d=\"M30 12 L54 56 H6 Z\" fill=\"#FF5B1F\" stroke=\"#FF5B1F\" stroke-width=\"4\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"14\" r=\"6\" fill=\"#FFC857\"/></g><text x=\"96\" y=\"340\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#F6F1E7\">Coding agents write code.</text><text x=\"96\" y=\"430\" font-family=\"Fraunces,Georgia,'Times New Roman',serif\" font-size=\"76\" font-weight=\"700\" letter-spacing=\"-2\" fill=\"#FF5B1F\">Ultrastable runs the system.</text><text x=\"96\" y=\"530\" font-family=\"Georgia,serif\" font-size=\"32\" fill=\"#C9D4CC\">From one idea to a business that improves itself.</text><text x=\"1184\" y=\"590\" text-anchor=\"end\" font-family=\"Georgia,serif\" font-size=\"28\" fill=\"#FFC857\">ultrastable.io</text></svg>";
@@ -1003,11 +1016,13 @@ async function metaIngest(request, env) {
   else return Response.json({ ok: false, code: "empty" }, { status: 422 });
   { // BLINDSPOT-1 security sweep 2026-11-20: this endpoint is public and writes to KV, so one client or a flood cannot use up the day's writes. No write happens once a cap is reached.
     const ip = request.headers.get("cf-connecting-ip") || "x", k1 = "rlm:" + ip + ":" + rec.at.slice(0, 13), k2 = "rlm:day:" + rec.at.slice(0, 10);
-    const [a, d] = await Promise.all([env.ASSETS.get(k1), env.ASSETS.get(k2)]);
-    if (Number(a || 0) >= META_PER_IP_HOUR || Number(d || 0) >= META_PER_DAY) return Response.json({ ok: false, code: "rate_limited" }, { status: 429, headers: { "Retry-After": "3600" } });
-    await Promise.all([env.ASSETS.put(k1, String(Number(a || 0) + 1), { expirationTtl: 7200 }), env.ASSETS.put(k2, String(Number(d || 0) + 1), { expirationTtl: 172800 })]);
+    try { // SMOKE-LIVE-1: production returned a bare 500 for every valid event; a storage failure is now a plain 503 the smoke test can tell from a bug
+      const [a, d] = await Promise.all([env.ASSETS.get(k1), env.ASSETS.get(k2)]);
+      if (Number(a || 0) >= META_PER_IP_HOUR || Number(d || 0) >= META_PER_DAY) return Response.json({ ok: false, code: "rate_limited" }, { status: 429, headers: { "Retry-After": "3600" } });
+      await Promise.all([env.ASSETS.put(k1, String(Number(a || 0) + 1), { expirationTtl: 7200 }), env.ASSETS.put(k2, String(Number(d || 0) + 1), { expirationTtl: 172800 })]);
+    } catch (e) { console.error("meta-ingest storage", String(e && e.message || e).slice(0, 120)); return Response.json({ ok: false, code: "storage_unavailable", message: "Saved nothing this time; the system retries on its own." }, { status: 503, headers: { "Retry-After": "600" } }); }
   }
-  await env.ASSETS.put("meta:" + rec.at + ":" + newId(), JSON.stringify(rec), { expirationTtl: 31536000 });
+  try { await env.ASSETS.put("meta:" + rec.at + ":" + newId(), JSON.stringify(rec), { expirationTtl: 31536000 }); } catch (e) { console.error("meta-ingest storage", String(e && e.message || e).slice(0, 120)); return Response.json({ ok: false, code: "storage_unavailable", message: "Saved nothing this time; the system retries on its own." }, { status: 503, headers: { "Retry-After": "600" } }); }
   return Response.json({ ok: true });
 }
 
@@ -1047,6 +1062,7 @@ const handler = {
     if (u.pathname === "/agents/scoreboard") return Response.redirect("https://" + CANON + "/api/v1/agents/scoreboard", 302);  // AGENT-SCOREBOARD-1: agent_scoreboard per agent and harness (site/controlplane.js agentScoreboard)
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
+    { const pr = await progressRoutes(u, env, shell, HTML, CANON); if (pr) return pr; } // PROGRESS-1
     if (u.pathname.replace(/\/$/, "") === "/proof") return Response.redirect("https://" + CANON + "/live", 301); // PROOF-OWN-1: /proof served the earlier testbed's records; deprecated
     if (u.pathname === "/customer-zero") return caseResponse(u, request, env, shell, HTML, DASH.asof_at); // CASE-STUDY-1: generated from the snapshot, every value linked to its record
     if (u.pathname === "/demo") return demoResponse(u, request, env, shell, HTML, DASH.asof_at); // DEMO-DASHBOARD-1: the live record as a dashboard
@@ -1086,7 +1102,6 @@ const handler = {
       case "/api/goals": { const g = await goalsData(env); return new Response(JSON.stringify(g || { error: "goals unavailable" }), { status: g ? 200 : 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } }); }
       case "/decisions": return new Response(decisionsPage(await decisionsData(env)), { headers: { ...HTML, "Cache-Control": "public, max-age=60" } });
       case "/api/v1/ignition": return ignitionResponse(env);  // Q-CRIT-PUBLIC-STAGE
-      case "/api/v1/progress": return progressResponse(env);  // PROGRESS-1
       case "/api/roi": { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/roi")); j = await r.json(); st = r.status; } } catch (e) { /* reported as 503 */ } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); }  // ROI-1
       case "/api/decisions": return new Response(JSON.stringify(await decisionsData(env)), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } });
       case "/ops": return new Response(opsPage(shell), { headers: { ...HTML, "Cache-Control": "no-store" } });

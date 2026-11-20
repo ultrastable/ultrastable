@@ -86,6 +86,7 @@ export async function refreshDue(db, env, opts = {}) {
   const rows = (await db.prepare('SELECT tenant, provider, expires_at, status, last_error, updated_at FROM credentials').all()).results || [];
   const out = [];
   for (const r of rows) {
+    if (r.provider === 'oauth:bluesky' || r.provider === 'oauth:mastodon') { out.push({ ...r, action: 'at-use' }); continue; }  // SOCIAL-TENANTS-1: the publisher refreshes these when it posts (Bluesky needs DPoP, which the generic grant lacks; Mastodon tokens do not expire). The generic grant failed every hour and overwrote the row's status.
     // NO-EXPIRY-1 (2026-11-20): a connected token with no expiry (Mastodon) is not due. It was treated as due on every tick, the refresh found no refresh
     // token, and the row was marked failed minutes after a good sign-in. A sign-in still under way (pending, oauth) is waiting on its callback, not on a refresh.
     if (r.status === 'ok' && !r.expires_at && r.provider.startsWith('oauth:')) { out.push({ tenant: r.tenant, provider: r.provider, status: r.status, action: 'fresh' }); continue; }

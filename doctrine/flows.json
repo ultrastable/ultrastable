@@ -1256,8 +1256,11 @@
       ],
       "feedback": "a restart is graded by the next beat: the clock is ticking again or the restart counts toward escalation (Q-STALL item after two failures); the stalled count is the essential variable stalled_clocks, so a stall that persists becomes an Ashby second-order step",
       "bindings": [
+        "BLUESKY_APP_PASSWORD",
         "CLOUDFLARE_API_TOKEN",
-        "LANE_PAT"
+        "LANE_APP_ID",
+        "LANE_PAT",
+        "MASTODON_TOKEN"
       ]
     },
     "tenant-sync": {
@@ -2241,6 +2244,51 @@
       ],
       "feedback": "a resource that differs from the topology or a budget breach files an item; the next discovery pass confirms the resource matches",
       "bindings": []
+    },
+    "smoke-live": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "backup.restored",
+          "via": "file:ops/backup/last-restore.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a failing public claim files a Q-SMOKE item that the executor works; the next daily run passes and removes the item, or keeps it open with the same evidence",
+      "bindings": [
+        "LANE_PAT"
+      ]
+    },
+    "backup-drill": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "backup.restored",
+          "via": "file:ops/backup/last-restore.json"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a failed restore files an item and the smoke test reads the restore record the next day; a restore that stays unproven stays a failing claim",
+      "bindings": [
+        "CLOUDFLARE_API_TOKEN",
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {

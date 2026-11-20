@@ -1948,6 +1948,24 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
+   "detail": "",
+   "how": "file:instances/ultrastable/progress.json + file:seed/worker/src/progress.js + file:seed/worker/test/progress.test.js + file:site/progress.test.mjs + file:tests/foundation/test_progress.py + file:foundation/progress.py",
+   "id": "cited-820fd3039a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A year unattended, measured (RUNWAY-1, Rowan 2026-11-20).** \"The system shall be able to run entirely unattended for 1 year with zero",
+   "detail": "",
+   "how": "file:doctrine/runway.json + file:foundation/credwatch.py + file:ops/cost.jsonl + file:ops/runway.json + file:foundation/redmain.py + file:doctrine/blindspots.json",
+   "id": "cited-2fa0797f0e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
@@ -1959,7 +1977,7 @@ export default {
   {
    "claim": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
    "detail": "",
-   "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py + file:site/live.js + file:site/progress.test.mjs",
+   "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py",
    "id": "cited-cd0900561e",
    "kind": "claim",
    "pass": true,
@@ -2497,6 +2515,24 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
+   "detail": "",
+   "how": "file:instances/ultrastable/progress.json + file:seed/worker/src/progress.js + file:seed/worker/test/progress.test.js + file:site/progress.test.mjs + file:tests/foundation/test_progress.py + file:foundation/progress.py",
+   "id": "mirror-eed3f734df",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A year unattended, measured (RUNWAY-1, Rowan 2026-11-20).** \"The system shall be able to run entirely unattended for 1 year with zero",
+   "detail": "",
+   "how": "file:doctrine/runway.json + file:foundation/credwatch.py + file:ops/cost.jsonl + file:ops/runway.json + file:foundation/redmain.py + file:doctrine/blindspots.json",
+   "id": "mirror-708c563ce5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
@@ -2508,7 +2544,7 @@ export default {
   {
    "claim": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
    "detail": "",
-   "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py + file:site/live.js + file:site/progress.test.mjs",
+   "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py",
    "id": "mirror-5fbac9d618",
    "kind": "claim",
    "pass": true,
@@ -3001,7 +3037,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 384 Worker tests",
+   "claim": "seed-tests: 45 Python and 390 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3010,7 +3046,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 384 Worker tests",
+   "claim": "seed-worker-tests: 390 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3242,7 +3278,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 357,
-  "total": 357
+  "pass": 361,
+  "total": 361
  }
 };

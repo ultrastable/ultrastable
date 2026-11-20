@@ -1,6 +1,7 @@
 """Needs-you page: the one place that lists what a person must do. Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation needsyou [--check]
+  python3 -m foundation needsyou --settle     GATE-SETTLE-1: remove every item whose `resolved_when` evidence is in (watchdog.yml runs it daily)
 
 Renders NEEDS-YOU.md from foundation/data/needs-you.json. Each item is two lines and one link. --check fails when the file is
 stale or an item lacks an https link, so a card, a file path or a menu cannot come back.
@@ -40,9 +41,48 @@ def check(root=ROOT) -> list[str]:
     return bad
 
 
+def resolved(item: dict, env) -> bool:
+    """GATE-SETTLE-1: an owner gate states the evidence that closes it. `actions-running`: this code is running in a GitHub Actions job (so Actions
+    is not refused); `env:A|B`: one of the named credentials is bound. An item without `resolved_when` is closed only by a change to the data."""
+    w = item.get("resolved_when", "")
+    if w == "actions-running":
+        return env.get("GITHUB_ACTIONS") == "true"
+    if w.startswith("env:"):
+        return any(env.get(n) for n in w[4:].split("|"))
+    return False
+
+
+def settle(root=ROOT, env=None, data=None) -> list[str]:
+    """Remove every owner gate whose evidence is in; the page and the deep-link baseline follow. Returns the ids removed."""
+    import os
+    env = os.environ if env is None else env
+    data = Path(data) if data else DATA
+    d = json.loads(data.read_text(encoding="utf-8"))
+    gone = [i["id"] for i in d["items"] if resolved(i, env)]
+    if gone:
+        d["items"] = [i for i in d["items"] if i["id"] not in gone]
+        data.write_text(json.dumps(d, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+        pc = Path(root) / "doctrine/point-and-click.json"
+        if pc.exists():
+            t = pc.read_text(encoding="utf-8"); j = json.loads(t)
+            for v in j.values():
+                if isinstance(v, dict) and "deep_link_baseline" in v:
+                    v["deep_link_baseline"] = [x for x in v["deep_link_baseline"] if x not in gone]
+            pc.write_text(json.dumps(j, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return gone
+
+
 def main(argv=None) -> int:
     import sys
     argv = sys.argv[1:] if argv is None else argv
+    if "--settle" in argv:
+        gone = settle()
+        if gone:
+            OUT.write_text(render(), encoding="utf-8")
+            if "--changed-file" in argv:
+                Path(argv[argv.index("--changed-file") + 1]).write_text("1", encoding="utf-8")
+        print("settled: " + (", ".join(gone) or "none"))
+        return 0
     if "--check" in argv:
         bad = check()
         print("\n".join(bad) or "needs-you ok")

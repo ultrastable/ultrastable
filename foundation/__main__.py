@@ -15,7 +15,11 @@
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
   python3 -m foundation unattended [--check|--horizon|--probe ID]           UNATTENDED-365: one year with zero external input; every remaining input is closed, a gate or an item
   python3 -m foundation modelwatch [--check|--status|--refresh [--apply]]  MODEL-WATCH-1: no retired hosted model id in source
+  python3 -m foundation redmain [--run [--apply]|--check]                  REDMAIN-1: a red deploy gate on main is repaired by reverting the smallest change that broke it
+  python3 -m foundation runway [--run [--apply]|--probe C|--check]         RUNWAY-1: projected days of unattended running against the one-year target
+  python3 -m foundation credwatch [--run [--apply]|--check]                TOKEN-EXPIRY-1: every credential the loops use is probed for expiry before it lapses
   python3 -m foundation openloops [--check]                                NO-OPEN-ITEMS-1: no "needs you"; every leftover is closed or a recorded gate
+  python3 -m foundation progress [--check|--live]                          PROGRESS-1: every system shows substantive progress at every visit; the cadence monitor is wired
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation issueloop [--apply|--json]                       ISSUE-LOOP-1: every open issue's probe is run; a passing probe closes it
   python3 -m foundation claims [--check|--fix|--apply|--file|--live]     CLAIMS-1: every claim on a surface is probed against code, both directions; /claims
@@ -218,9 +222,24 @@ def main(argv=None) -> int:
     if _av[:1] == ["pointclick"]:
         from . import pointclick
         return pointclick.main(_av[1:])
+    if _av[:1] == ["needsyou"] and "--settle" in _av:
+        from . import needsyou
+        return needsyou.main(_av[1:])
+    if _av[:1] == ["redmain"]:
+        from . import redmain
+        return redmain.main(_av[1:])
+    if _av[:1] == ["runway"]:
+        from . import runway
+        return runway.main(_av[1:])
+    if _av[:1] == ["credwatch"]:
+        from . import credwatch
+        return credwatch.main(_av[1:])
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
+    if _av[:1] == ["progress"]:
+        from . import progress
+        return progress.main(_av[1:])
     if _av[:1] == ["loopowner"]:
         from . import loopowner
         return loopowner.main(_av[1:])
@@ -346,7 +365,7 @@ def main(argv=None) -> int:
     tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true")
     da = sub.add_parser("docs_audit"); da.add_argument("--check", action="store_true"); da.add_argument("--report", action="store_true"); da.add_argument("--orphans", action="store_true"); da.add_argument("--humans", action="store_true")
     ny = sub.add_parser("needsyou"); ny.add_argument("--check", action="store_true")
-    ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo"); ex.add_argument("--pick", action="store_true"); ex.add_argument("--record", action="store_true"); ex.add_argument("--result"); ex.add_argument("--pr"); ex.add_argument("--detail"); ex.add_argument("--host")
+    ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--fold", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo"); ex.add_argument("--pick", action="store_true"); ex.add_argument("--record", action="store_true"); ex.add_argument("--result"); ex.add_argument("--pr"); ex.add_argument("--detail"); ex.add_argument("--host")
     sub.add_parser("upstream", add_help=False)
     wb = sub.add_parser("writeback"); ws = wb.add_subparsers(dest="wcmd", required=True)
     rc = ws.add_parser("record"); rc.add_argument("--kind", required=True); rc.add_argument("--title", required=True); rc.add_argument("--body", required=True)

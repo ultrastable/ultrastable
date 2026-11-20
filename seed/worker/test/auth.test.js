@@ -255,7 +255,7 @@ test('READ-BUDGET-7: a warm isolate keeps serving its token when the credential 
 
 test('a refused refresh is not retried every tick, and shows up as a live owner act (DEAD-CONSENT-1, OWNER-ACTS-1)', async () => {
   const db = makeDb(), e = env();
-  await store.put(db, e, 't', 'oauth:bluesky', { secret: { refresh_token: 'r' }, meta: { kind: 'oauth', provider: 'bluesky', token_url: 'https://x.example/token', client_id: 'c' }, status: 'failed', error: 'refresh HTTP 401' });
+  await store.put(db, e, 't', 'oauth:google', { secret: { refresh_token: 'r' }, meta: { kind: 'oauth', provider: 'google', token_url: 'https://x.example/token', client_id: 'c' }, status: 'failed', error: 'refresh HTTP 401' });
   const at = Date.parse(db.raw.prepare('SELECT updated_at FROM credentials').get().updated_at);
   let calls = 0; const f = async () => { calls++; return { ok: false, status: 401, json: async () => ({}) }; };
   const soon = await refreshDue(db, e, { fetch: f, now: at + 10 * 60e3 });
@@ -263,7 +263,7 @@ test('a refused refresh is not retried every tick, and shows up as a live owner 
   const later = await refreshDue(db, e, { fetch: f, now: at + DEAD_RETRY_MS + 1 });
   assert.notEqual(later[0].action, 'backoff');
   const acts = await ownerActs(db);
-  assert.deepEqual(acts.map(a => [a.id, a.connect]), [['signin:oauth:bluesky', '/connect/bluesky']]);
+  assert.deepEqual(acts.map(a => [a.id, a.connect]), [['signin:oauth:google', '/connect/google']]);
   assert.ok(!JSON.stringify(acts).includes('"r"'));
 });
 

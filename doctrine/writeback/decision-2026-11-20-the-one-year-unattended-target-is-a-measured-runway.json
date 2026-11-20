@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-the-one-year-unattended-target-is-a-measured-runway",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "The one-year unattended target is a measured runway",
+  "body": "RUNWAY-1: target_days in doctrine/runway.json is measured every watchdog run from credentials, cost and unrepaired failures; an unmeasured component is below target. The cost probe reads the account id from doctrine/cost.json so the runner measures instead of recording unmeasured. Workers Logs are enabled in every deploy's metadata.",
+  "probe": "file:foundation/runway.py",
+  "session": "session_0156nqDrFvUVn55Vaqm9Uyt2"
+ },
+ "kind": "decision",
+ "title": "The one-year unattended target is a measured runway",
+ "session": "session_0156nqDrFvUVn55Vaqm9Uyt2"
+}

@@ -462,6 +462,7 @@ export default {
   "actions-budget",
   "agent-executor",
   "agent-interop",
+  "backup-drill",
   "blindspots",
   "branch-reaper",
   "branch-sweep",
@@ -549,6 +550,7 @@ export default {
   "server-side-only",
   "session-reaper",
   "site-deploy",
+  "smoke-live",
   "social-post",
   "spinoff",
   "strange-loop-hygiene",
@@ -1788,6 +1790,32 @@ export default {
     "workflows": [
      "host-sync"
     ]
+   },
+   {
+    "closing_probe": "file:scripts/smoke_live.py",
+    "id": "smoke-live",
+    "kind": "probe",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "7d",
+    "summary": "Check every public claim against the deployed sites and file a repair item per failure.",
+    "trigger": "automatic: daily schedule",
+    "workflows": [
+     "smoke-live"
+    ]
+   },
+   {
+    "closing_probe": "file:foundation/backup.py",
+    "id": "backup-drill",
+    "kind": "probe",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "7d",
+    "summary": "Export every D1 database and KV namespace of the Ultrastable account weekly and prove a restore.",
+    "trigger": "automatic: weekly schedule",
+    "workflows": [
+     "backup-drill"
+    ]
    }
   ],
   "workers": [
@@ -1823,6 +1851,12 @@ export default {
     "id": "actions-budget",
     "loops": [
      "actions-budget"
+    ]
+   },
+   {
+    "id": "backup-drill",
+    "loops": [
+     "backup-drill"
     ]
    },
    {
@@ -2037,6 +2071,12 @@ export default {
     ]
    },
    {
+    "id": "smoke-live",
+    "loops": [
+     "smoke-live"
+    ]
+   },
+   {
     "id": "social-post",
     "loops": [
      "social-post"
@@ -2087,143 +2127,215 @@ export default {
   ]
  },
  "readings": {
+  "access-check:claims_drift": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
+  "access-check:spend": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
+  "access-check:uptime": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.0
+  },
+  "access-check:value": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
   "air-quality:claims_drift": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:uptime": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:value": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:claims_drift": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:uptime": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "claims_drift": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
+  "country-snapshot:claims_drift": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
+  "country-snapshot:spend": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
+  "country-snapshot:uptime": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.0
+  },
+  "country-snapshot:value": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
   "deploy_health": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
+  "free-tier-meter:claims_drift": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
+  "free-tier-meter:spend": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
+  "free-tier-meter:uptime": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.0
+  },
+  "free-tier-meter:value": {
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
   "happy_paths": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "numbers-board:claims_drift": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:uptime": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "numbers-board:value": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:uptime": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "spend": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "stalled_clocks": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "ui_findings": {
-   "at": "2026-11-20T09:08:00Z",
+   "at": "2026-11-20T17:45:38Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "value": {
-   "at": "2026-11-20T09:08:00Z",
-   "in_bounds": false,
+   "at": "2026-11-20T17:45:38Z",
+   "in_bounds": true,
    "unmeasured": false,
-   "value": 0.99
+   "value": 2.97
   }
  },
  "self": {

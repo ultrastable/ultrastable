@@ -395,6 +395,32 @@
      "fix": "python3 -m foundation tenantcontrols --write"
     }
    ]
+  },
+  {
+   "id": "visible-progress",
+   "statement": "Every system shows noticeable, substantive progress at every visit for at least six months with no input: what shipped is published from merged changes, releases and launches only, and a system that falls behind its declared cadence has its producers started and a repair item filed (PROGRESS-1).",
+   "source": "instances/ultrastable/progress.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation progress --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "progress",
+     "cmd": "python3 -m foundation progress --check"
+    },
+    {
+     "id": "progress-apps",
+     "cmd": "python3 -m foundation progress --apps",
+     "fix": "python3 -m foundation ideas --brainstorm --apply"
+    },
+    {
+     "id": "progress-live",
+     "cmd": "python3 -m foundation progress --live",
+     "needs_network": true
+    }
+   ]
   }
  ],
  "repos": [

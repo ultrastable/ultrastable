@@ -48,12 +48,7 @@
     "value": 0
    }
   ],
-  "principle": "A code agent session, scheduled or hand-started, is an outside input and never counts. Only deploys the system originated and executed itself count (self_deploys).",
-  "progress": {
-   "statement": "The owner gives no input for six months and reads only the front end; progress must be visible there every day, week and month, in every system (Rowan, 2026-11-20).",
-   "reading": "GET https://ultrastable.io/api/v1/progress",
-   "code": "site/live.js"
-  }
+  "principle": "A code agent session, scheduled or hand-started, is an outside input and never counts. Only deploys the system originated and executed itself count (self_deploys)."
  },
  "warn_days": 60,
  "dependencies": [
@@ -375,25 +370,13 @@
   {
    "id": "visible-progress",
    "class": "dependency",
-   "what": "A public reading of progress: merged changes over the last day, week and month and how many the system started by itself",
+   "what": "Visible progress for the owner: what every system shipped, by day, week and month, with a stall filed when a system's cadence slows",
    "status": "closed",
    "renewal": "none",
    "expires": null,
-   "evidence": "site/live.js progressReading, route /api/v1/progress and the Progress section of /live; site/progress.test.mjs passes",
+   "evidence": "site/progress.js serves /progress, /digest/{daily,weekly,monthly}, /progress.atom and /progress.json from merged changes, tenant releases and launched apps; the tick step progress files STALL-<system> (PROGRESS-1, merged in #752)",
    "measured": "2026-11-20",
-   "probe": "file:site/progress.test.mjs"
-  },
-  {
-   "id": "progress-loop",
-   "class": "dependency",
-   "what": "No loop acts on a `no_progress` reading yet, and the merged-change cache holds the main repository only, so tenant and client systems are not counted",
-   "status": "open",
-   "renewal": "none",
-   "expires": null,
-   "evidence": "seed/worker/src/livechanges.js is refreshed for one repository (seed/worker/src/index.js step live-changes); nothing reads /api/v1/progress",
-   "measured": "2026-11-20",
-   "probe": "cmd:python3 -m foundation unattended --probe progress-loop",
-   "item": "Q-YEAR-progress-loop"
+   "probe": "file:site/progress.js"
   }
  ]
 }

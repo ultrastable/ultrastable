@@ -141,6 +141,54 @@
    "class": "owner-identity",
    "gate": "money",
    "action": "system builds the calendar from entity and jurisdiction; filing is the owner's act"
+  },
+  {
+   "id": "credential-expiry-watch",
+   "domain": "continuity",
+   "why": "Tokens and registrations lapse, and a lapsed one stops deploys with nobody present to renew it.",
+   "probe": "grep:.github/workflows/watchdog.yml::foundation credwatch --run --apply",
+   "class": "system",
+   "action": "foundation/credwatch.py probes token and registration expiry daily and files Q-CRED 45 days ahead (TOKEN-EXPIRY-1)"
+  },
+  {
+   "id": "unattended-runway",
+   "domain": "continuity",
+   "why": "The owner's target is a year with no person. Without a measured projection nobody knows which limit ends the run first.",
+   "probe": "grep:.github/workflows/watchdog.yml::foundation runway --run --apply",
+   "class": "system",
+   "action": "foundation/runway.py projects days of unattended running from credentials, cost and unrepaired failures and files Q-RUNWAY items (RUNWAY-1)"
+  },
+  {
+   "id": "red-main-self-repair",
+   "domain": "continuity",
+   "why": "A deploy gate that goes red on main stops every release until something reverts the cause; a model may not manage it.",
+   "probe": "grep:.github/workflows/ciwatch.yml::foundation redmain --run --apply",
+   "class": "system",
+   "action": "foundation/redmain.py bisects to the first bad commit and opens the smallest revert (REDMAIN-1)"
+  },
+  {
+   "id": "owner-gates-settle",
+   "domain": "continuity",
+   "why": "A gate that stays listed after its evidence is in tells every loop to route around something that is no longer missing.",
+   "probe": "grep:.github/workflows/watchdog.yml::foundation needsyou --settle",
+   "class": "system",
+   "action": "foundation/needsyou.py --settle removes a gate on its own evidence (GATE-SETTLE-1)"
+  },
+  {
+   "id": "worker-logs-kept",
+   "domain": "platform-risk",
+   "why": "With Workers Logs off, a failing cron or route leaves no record a loop can read after the fact.",
+   "probe": "grep:deploy/deploy-site.mjs::observability",
+   "class": "system",
+   "action": "every deploy uploads its Worker with observability enabled, so a redeploy cannot switch logs off"
+  },
+  {
+   "id": "action-version-rot",
+   "domain": "platform-risk",
+   "why": "GitHub retires action runtimes on its own clock; a pinned action that stops running stops every loop that uses it.",
+   "probe": "file:.github/dependabot.yml",
+   "class": "system",
+   "action": "weekly dependency updates for workflow actions, merged by the lane on green checks"
   }
  ],
  "sweeps": [

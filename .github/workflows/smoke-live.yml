@@ -1,0 +1,48 @@
+name: smoke-live
+# budget: ~1 min x 1 per day = ~30 min per month
+# trigger: daily schedule (the live sites can break between merges, which no per-PR check sees) and manual dispatch
+# free-alternative: `python3 scripts/smoke_live.py` from any cloud launch host, or the Cloudflare tick worker
+# SMOKE-LIVE-1: every public claim checked against PRODUCTION (scripts/smoke_live.py); each failure opens or refreshes one repair item docs/issues/Q-SMOKE-<check>.json (GitHub Issues are disabled here), landed by the main writer or, failing that, a pull request; a passing check removes its item. Read-only on the sites except the optional --cap probe (dispatch only).
+# The claims registry (doctrine/claims.json) binds words to code; this binds the deployed behaviour: /api/claims must serve the registry and the existing claims workflow checks the words.
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+    inputs:
+      cap:
+        description: "also run the 24-write /api/meta/ingest cap probe"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write  # land_data.py dispatches checks on its data branch
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
+concurrency:
+  group: smoke-live
+  cancel-in-progress: true
+jobs:
+  smoke:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Smoke test production
+        id: smoke
+        env:
+          SMOKE_OUT: ${{ runner.temp }}/smoke.json
+        run: |
+          set +e
+          python3 scripts/smoke_live.py ${{ (github.event_name == 'workflow_dispatch' && inputs.cap) && '--cap' || '' }} | tee "$RUNNER_TEMP/smoke.txt"
+          echo "code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          { echo '```'; cat "$RUNNER_TEMP/smoke.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Open, refresh and close repair items
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || github.token }}
+        run: python3 scripts/smoke_issues.py "$RUNNER_TEMP/smoke.json"
+      - name: Fail the run when a claim failed
+        if: ${{ steps.smoke.outputs.code != '0' }}
+        run: exit 1

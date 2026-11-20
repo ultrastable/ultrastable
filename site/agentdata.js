@@ -383,6 +383,42 @@ export default {
    "class": "owner-identity"
   },
   {
+   "id": "credential-expiry-watch",
+   "domain": "continuity",
+   "why": "Tokens and registrations lapse, and a lapsed one stops deploys with nobody present to renew it.",
+   "class": "system"
+  },
+  {
+   "id": "unattended-runway",
+   "domain": "continuity",
+   "why": "The owner's target is a year with no person. Without a measured projection nobody knows which limit ends the run first.",
+   "class": "system"
+  },
+  {
+   "id": "red-main-self-repair",
+   "domain": "continuity",
+   "why": "A deploy gate that goes red on main stops every release until something reverts the cause; a model may not manage it.",
+   "class": "system"
+  },
+  {
+   "id": "owner-gates-settle",
+   "domain": "continuity",
+   "why": "A gate that stays listed after its evidence is in tells every loop to route around something that is no longer missing.",
+   "class": "system"
+  },
+  {
+   "id": "worker-logs-kept",
+   "domain": "platform-risk",
+   "why": "With Workers Logs off, a failing cron or route leaves no record a loop can read after the fact.",
+   "class": "system"
+  },
+  {
+   "id": "action-version-rot",
+   "domain": "platform-risk",
+   "why": "GitHub retires action runtimes on its own clock; a pinned action that stops running stops every loop that uses it.",
+   "class": "system"
+  },
+  {
    "id": "privacy-covers-processing",
    "domain": "privacy",
    "why": "The privacy page described visits, ideas and email but not AI processing, microphone failure codes kept 12 months, or the sign-in cookie and connected accounts (found by the 2026-11-20 privacy sweep).",

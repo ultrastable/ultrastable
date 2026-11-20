@@ -6,8 +6,8 @@ Everything else is done by the system. These are the only acts that need your id
 An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact. If you do nothing: Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you.
 **[Open the ready-to-paste application kits (Y Combinator Winter 2027 late applications are open)](https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md)**
 
-## Keep a working card on file, and move the four domains to the Ultrastable account
-ultrastable.io, .app, .net and .org renew by themselves on 2027-11-10 and that charge needs a card that still works; a card's expiry cannot be read by the system. The same account page moves the domains from the quniverse account, where ultrastable.io is still served, to the Ultrastable account once the registrar lock on a new registration lifts. IDENTITY-BOUND: payment and both confirmations are in the owner's Cloudflare login. If you do nothing: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.
+## Move the four ultrastable domains to the Ultrastable account
+ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is on for all four since 2026-11-20 (next renewal 2027-11-10). If you do nothing: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.
 **[Open the registrar domains](https://dash.cloudflare.com/?to=/:account/registrar/domains)**
 
 ## Upload the org avatar and pin repos
@@ -26,7 +26,6 @@ Connecting Google and Buffer by their consent screens (tokens stored in each per
 
 - Old Cloudflare account: the tick, site and dashboard keep running there.
 - Entity and the org admin token are not needed now; entity-only programmes stay deferred until you choose one.
-- Fix the GitHub Actions payment: done (runs succeed on 2026-11-20 (executor run 44756043673, loop run 44752694209)).
 - Connect GitHub: done (D1 credentials github-app status ok; 78 hourly refreshes; the app key has no expiry).
 - Allow repository settings (archiving and the main-branch check rule): done (D1 credentials github-admin status ok; events 'all retired repositories archived' 2026-11-17 and 'all rulesets applied' 2026-11-18).
 

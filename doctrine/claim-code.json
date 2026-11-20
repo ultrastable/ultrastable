@@ -79,6 +79,51 @@
         "file": "doctrine/unattended.json",
         "contains": "never counts"
       }
+    },
+    {
+      "id": "progress-last-visit-local",
+      "source": "site/progress.js",
+      "quote": "Your last visit is kept only in this browser and is never sent anywhere.",
+      "probe": {
+        "file": "workers/core/progress/progress.test.js",
+        "contains": "assert.doesNotMatch(s, /cookie|fetch\\(|XMLHttpRequest/)"
+      }
+    },
+    {
+      "id": "visible-progress",
+      "source": "agents/AGENTS.md",
+      "quote": "Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).",
+      "probe": {
+        "file": "seed/worker/src/progress.js",
+        "contains": "export async function progressStep("
+      }
+    },
+    {
+      "id": "runway-agents",
+      "source": "agents/AGENTS.md",
+      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+      "probe": {
+        "file": "foundation/runway.py",
+        "contains": "target_days is below the owner's minimum of 365"
+      }
+    },
+    {
+      "id": "runway-seed",
+      "source": "seed/agents/AGENTS.md",
+      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+      "probe": {
+        "file": "foundation/runway.py",
+        "contains": "target_days is below the owner's minimum of 365"
+      }
+    },
+    {
+      "id": "runway-agents-pi",
+      "source": "agents/PROJECT-INSTRUCTIONS.md",
+      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+      "probe": {
+        "file": "foundation/runway.py",
+        "contains": "target_days is below the owner's minimum of 365"
+      }
     }
   ],
   "baseline": [
