@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-server-side-only-gates-settle-in-the-worker-desktop-session-",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "Server-side only: gates settle in the Worker; desktop session-sweeper paused",
+  "body": "Rowan 2026-11-20 restated server-side only: no path may assume a client-side code agent. Measured: serverside --check ok, loopowner --check ok, executor runs in GitHub Actions (6 of 6 recent runs success). The desktop-app task session-sweeper (every 20 min on a personal computer) is paused; session-reaper keeps its server route (boundary --reap in CI). Gate settling gains a Worker route (dashboard settledLive, http evidence, 1 h Cache API) beside watchdog.yml.",
+  "probe": "grep:dashboard/worker.js::export async function settledLive",
+  "session": "owner-tasks-autonomous-b09f90"
+ },
+ "kind": "decision",
+ "title": "Server-side only: gates settle in the Worker; desktop session-sweeper paused",
+ "session": "owner-tasks-autonomous-b09f90"
+}

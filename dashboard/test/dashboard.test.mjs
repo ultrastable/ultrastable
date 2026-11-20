@@ -131,7 +131,7 @@ test("MAIL-PATHS-1: one address is a failing probe, two are a passing one", asyn
 test("OWNER-DASH-2: state carries needs, tenants and paid options with costs; free default stated", async () => {
   const e = env(); const ck = await login(e);
   const s = await (await call(e, "/api/owner/state", null, ck)).json();
-  assert.ok(s.needs.length > 0 && s.needs.every(n => n.url.startsWith("https://")));
+  assert.ok(Array.isArray(s.needs) && s.needs.every(n => n.url.startsWith("https://")));  // NO-OPEN-ITEMS-1: an empty list is the target
   assert.ok(s.tenants.some(t => t.id === "jobs" && t.status === "pending"));
   assert.ok(s.options.length > 0 && s.options.every(o => o.cost && o.default));
   assert.match(s.plan_note, /free tiers/);
@@ -141,16 +141,16 @@ test("OWNER-DASH-2: at the D1 free read cap the page still answers from the bund
   const real = e.DB.prepare;
   e.DB.prepare = sql => /FROM tasks|FROM checks/.test(sql) ? { bind: () => ({ all: async () => { throw new Error("D1 free tier daily row read limit exceeded (7500)"); }, first: async () => { throw new Error("7500"); }, run: async () => { throw new Error("7500"); } }) } : real(sql);
   const r = await call(e, "/api/owner/state", null, ck); assert.equal(r.status, 200);
-  const s = await r.json(); assert.match(s.degraded, /free allowance/); assert.ok(s.needs.length && s.options.length);
+  const s = await r.json(); assert.match(s.degraded, /free allowance/); assert.ok(Array.isArray(s.needs) && s.options.length);
 });
 
 test("OWNER-DASH-3: overview needs no database or session; a dead database gives plain words, never a 500", async () => {
   const e = env(); const real = e.DB.prepare;
   e.DB.prepare = () => { throw new Error("D1 free tier daily row read limit exceeded (7500)"); };
   const o = await call(e, "/api/owner/overview"); assert.equal(o.status, 200);
-  const oj = await o.json(); assert.ok(oj.needs.length && oj.tenants.length && oj.options.length);
+  const oj = await o.json(); assert.ok(Array.isArray(oj.needs) && oj.tenants.length && oj.options.length);
   const r = await call(e, "/api/owner/state", null, "us_owner=x"); assert.equal(r.status, 200);
-  const j = await r.json(); assert.match(j.degraded, /resets at 00:00 UTC|resets by itself|allowance/); assert.ok(j.needs.length);
+  const j = await r.json(); assert.match(j.degraded, /resets at 00:00 UTC|resets by itself|allowance/); assert.ok(Array.isArray(j.needs));
   assert.ok(!/7500|Error|SQL/.test(j.degraded));
   e.DB.prepare = real;
 });
@@ -228,4 +228,20 @@ test("SELF-FIX-1: a failing check is queued as a fleet task and logged, never ma
   assert.equal(sent.length, before);
   assert.equal((await e.DB.prepare("SELECT COUNT(*) c FROM fleet_queue WHERE task_id='fix-owner_links' AND status='queued'").first()).c, 1);
   assert.equal((await e.DB.prepare("SELECT COUNT(*) c FROM provenance WHERE kind='incident'").first()).c, 1);
+});
+
+test("GATE-SETTLE-2: the owner page drops a gate whose measured dependencies are all closed, and keeps one that is still open", async () => {
+  const { openNeeds } = await import("../worker.js");
+  const needs = { items: [{ id: "a" }, { id: "b" }, { id: "c" }] };
+  const deps = [{ needs_you: "a", status: "closed" }, { needs_you: "b", status: "closed" }, { needs_you: "b", status: "open" }];
+  assert.deepEqual(openNeeds(needs, deps).map(i => i.id), ["b", "c"]);
+  assert.ok(!openNeeds().some(i => i.id === "lane-credential" || i.id === "repo-archive"), "connected credentials are never asked for again");
+});
+
+test("GATE-SETTLE-3: the Worker settles a gate on its live page, with no Actions run; an unreadable page keeps it open", async () => {
+  const { settledLive } = await import("../worker.js");
+  const items = [{ id: "gh", resolved_when: ["env:X", "http:https://x.test/connect/github ~ GitHub is connected"] }, { id: "b", resolved_when: "http:https://x.test/b ~ Bluesky is connected" }, { id: "c" }];
+  const pages = { "https://x.test/connect/github": "<h1>GitHub is connected</h1>" };
+  const f = async u => { if (u === "https://x.test/b") throw new Error("down"); return new Response(pages[u] || "", { status: pages[u] ? 200 : 404 }); };
+  assert.deepEqual([...(await settledLive({}, items, f))], ["gh"]);
 });

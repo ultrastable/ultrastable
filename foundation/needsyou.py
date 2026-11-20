@@ -41,25 +41,49 @@ def check(root=ROOT) -> list[str]:
     return bad
 
 
-def resolved(item: dict, env) -> bool:
+def _http_says(url: str, text: str, fetch=None) -> bool:
+    """GET url; True only on HTTP 200 whose body contains text. A network or HTTP error is not evidence (the gate stays open)."""
+    if fetch is not None:
+        return fetch(url, text)
+    import urllib.request, urllib.error
+    try:
+        req = urllib.request.Request(url, headers={"user-agent": "ultrastable-needsyou-settle"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            return r.status == 200 and text in r.read(400_000).decode("utf-8", "replace")
+    except (urllib.error.URLError, OSError, ValueError) as e:
+        print(f"needsyou: {url} unreadable ({e.__class__.__name__}); gate stays open")
+        return False
+
+
+def resolved(item: dict, env, fetch=None) -> bool:
     """GATE-SETTLE-1: an owner gate states the evidence that closes it. `actions-running`: this code is running in a GitHub Actions job (so Actions
-    is not refused); `env:A|B`: one of the named credentials is bound. An item without `resolved_when` is closed only by a change to the data."""
-    w = item.get("resolved_when", "")
-    if w == "actions-running":
-        return env.get("GITHUB_ACTIONS") == "true"
-    if w.startswith("env:"):
-        return any(env.get(n) for n in w[4:].split("|"))
+    is not refused); `env:A|B`: one of the named credentials is bound; `http:URL ~ TEXT` (GATE-SETTLE-2): the live page at URL answers 200 and says
+    TEXT, which is how a credential the Worker sealed itself (connect flow) is seen. `resolved_when` may be a list: any one piece of evidence settles.
+    An item without `resolved_when` is closed only by a change to the data."""
+    ws = item.get("resolved_when", "")
+    for w in ([ws] if isinstance(ws, str) else list(ws)):
+        if w == "actions-running" and env.get("GITHUB_ACTIONS") == "true":
+            return True
+        if w.startswith("env:") and any(env.get(n) for n in w[4:].split("|")):
+            return True
+        if w.startswith("http:") and "~" in w:
+            url, text = (s.strip() for s in w[5:].split("~", 1))
+            if url.startswith("https://") and text and _http_says(url, text, fetch):
+                return True
     return False
 
 
-def settle(root=ROOT, env=None, data=None) -> list[str]:
-    """Remove every owner gate whose evidence is in; the page and the deep-link baseline follow. Returns the ids removed."""
-    import os
+def settle(root=ROOT, env=None, data=None, fetch=None) -> list[str]:
+    """Remove every owner gate whose evidence is in; the page, the done list and the deep-link baseline follow. Returns the ids removed."""
+    import os, datetime
     env = os.environ if env is None else env
     data = Path(data) if data else DATA
     d = json.loads(data.read_text(encoding="utf-8"))
-    gone = [i["id"] for i in d["items"] if resolved(i, env)]
+    gone = [i["id"] for i in d["items"] if resolved(i, env, fetch)]
     if gone:
+        day = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+        d.setdefault("done_for_you", []).extend(f"{i.get('title', i['id'])}: settled {day} on its own evidence ({i['resolved_when'] if isinstance(i['resolved_when'], str) else ' or '.join(i['resolved_when'])})."
+                                                for i in d["items"] if i["id"] in gone)
         d["items"] = [i for i in d["items"] if i["id"] not in gone]
         data.write_text(json.dumps(d, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
         pc = Path(root) / "doctrine/point-and-click.json"

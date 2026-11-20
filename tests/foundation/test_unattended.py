@@ -50,8 +50,9 @@ class Unattended(unittest.TestCase):
     def test_a_closed_dependency_removes_its_act_from_the_owner_page(self):
         page = needsyou.render()
         self.assertNotIn("## Connect GitHub", page)
-        self.assertIn("Connect GitHub: done", page)
-        self.assertIn("## Sign in to Bluesky again", page)
+        self.assertIn("Connect GitHub: settled", page)
+        self.assertNotIn("## Sign in to Bluesky again", page)
+        self.assertIn("Sign in to Bluesky again: closed", page)
         self.assertNotIn("every three hours", page)
 
 

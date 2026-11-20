@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-gate-settle-2-owner-gates-settle-on-live-evidence-the-owner-",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "GATE-SETTLE-2: owner gates settle on live evidence; the owner page filters closed gates",
+  "body": "The /owner page asked the owner to connect GitHub and allow repository settings after both were done. Causes: needsyou --settle only knew env: secrets in Actions, which cannot see credentials the Worker seals itself; the dashboard read needs-you.json raw instead of the unattended.json closed-dependency rule; the OWNER-LINKS-1 probe called NEEDS.map on an object and threw. Fix: resolved_when accepts a list and http:URL ~ TEXT live evidence; dashboard openNeeds() applies the unattended rule.",
+  "probe": "grep:dashboard/worker.js::export const openNeeds",
+  "session": "owner-tasks-autonomous-b09f90"
+ },
+ "kind": "lesson",
+ "title": "GATE-SETTLE-2: owner gates settle on live evidence; the owner page filters closed gates",
+ "session": "owner-tasks-autonomous-b09f90"
+}
