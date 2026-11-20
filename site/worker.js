@@ -23,7 +23,7 @@ import SELF from "./self-data.js";
 import { passkeys } from "./passkeys.js";
 import { mydata } from "./mydata.js";
 import { authzen } from "./authzen.js";
-import { indexNow, keyFile, SITEMAP_PATHS } from "./promote.js";
+import { indexNow, keyFile, SITEMAP_PATHS, webSub, archiveEvidence, reachRows } from "./promote.js";
 import { PRIVACY, ACCESSIBILITY, SECURITY_TXT } from "./legalpages.js";
 import { negotiate, robots, WEBMCP_JS } from "./readiness.js";  // AGENT-READY-2
 import ROAD from "./roadmap-data.js";
@@ -322,6 +322,7 @@ const BUILDERS = ["@cf/qwen/qwen2.5-coder-32b-instruct", "@cf/meta/llama-3.3-70b
 ].join(" ");
 const newId = () => crypto.randomUUID().replace(/-/g, "").slice(0, 10);
 const okId = (x) => /^[a-f0-9]{10}$/.test(x || "");
+const DAY_MS_REACH = 20 * 3600e3; // ATTENTION-1
 const jget = async (env, k) => { const v = await env.ASSETS.get(k); try { return v ? JSON.parse(v) : null; } catch (e) { return null; } };
 const jput = (env, k, v) => env.ASSETS.put(k, JSON.stringify(v));
 const FALLBACK_QS = [
@@ -819,6 +820,9 @@ export async function tick(env, ctx, now) {
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
   { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
+  { const ws = await webSub({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:websub") }); if (ws) { await jput(env, "promote:websub", ws); out.websub = ws.ok; } } /* ATTENTION-1: feed readers get pushed updates */
+  { const ar = await archiveEvidence({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:archive") }); if (ar) { await jput(env, "promote:archive", ar); out.archive = ar.status; } } /* ATTENTION-1: third-party timestamped copies of the record */
+  if (env.DB) { const lr = await jget(env, "promote:reach"); if (!lr || t - new Date(lr.at) > DAY_MS_REACH) { try { await jput(env, "promote:reach", await reachRows(env.DB, t)); out.reach = "measured"; } catch (e) { out.reach = "error: " + String(e).slice(0, 80); } } } /* ATTENTION-1: reach measured server-side, once a day */
   out.upkeep = (await upkeepRound(env, (await kvList(env, "state:", 300)).slice(-300), { now: t, lint, improve: (b, html, ins) => aiHtml(env, b, html, ins), visited: (id) => (env.DB ? viewedRecently(env.DB, id, t).catch(() => true) : true) }, 2).catch(e => { console.error("upkeep failed", String(e).slice(0, 120)); return []; })).length; // SITE-UPKEEP-1: at most two model passes a tick, each site once a week
   out.webhooks = await tickWebhooks(env, t).catch(e => String(e).slice(0, 120)); // WEBHOOKS-1: outbound callbacks ride this tick, no new cron
   out.watchdog = await watchTick(env); // LOOPPROOF-1: this Worker is the second producer of the org heartbeat
@@ -1064,6 +1068,7 @@ const handler = {
     if (u.pathname === "/agents/scoreboard") return Response.redirect("https://" + CANON + "/api/v1/agents/scoreboard", 302);  // AGENT-SCOREBOARD-1: agent_scoreboard per agent and harness (site/controlplane.js agentScoreboard)
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
+    if (u.pathname === "/api/reach") { const v = await jget(env, "promote:reach"); return Response.json(v || { rows: null, error: "not measured yet" }, { status: v ? 200 : 503, headers: { "cache-control": "public, max-age=600", "access-control-allow-origin": "*" } }); } // ATTENTION-1: aggregate counts only
     { const pr = await progressRoutes(u, env, shell, HTML, CANON); if (pr) return pr; } // PROGRESS-1
     if (u.pathname.replace(/\/$/, "") === "/proof") return Response.redirect("https://" + CANON + "/live", 301); // PROOF-OWN-1: /proof served the earlier testbed's records; deprecated
     if (u.pathname === "/customer-zero") return caseResponse(u, request, env, shell, HTML, DASH.asof_at); // CASE-STUDY-1: generated from the snapshot, every value linked to its record

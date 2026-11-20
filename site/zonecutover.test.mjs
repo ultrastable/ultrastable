@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // ZONE-CUTOVER-1 tests: run with `node --test site/zonecutover.test.mjs`.
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -44,11 +44,11 @@ class Reach(unittest.TestCase):
         self.assertEqual((m["external_referrals_7d"], m["social_referrals_7d"], m["search_referrals_7d"], m["feed_hits_7d"], m["ps_page_views_7d"]), (3, 2, 1, 1, 1))
 
     def test_unmeasured_is_never_zero(self):
-        self.assertEqual(reach.run(self.tmp, env={}, now=NOW)["metrics"], "unmeasured")
+        self.assertEqual(reach.run(self.tmp, env={"REACH_OFFLINE": "1"}, now=NOW)["metrics"], "unmeasured")
 
     def test_breach_files_item_and_weights_revert(self):
         rows = [{"ref": "bsky.app", "path": "/live", "name": "pageview"}] * 5
-        rep = reach.run(self.tmp, apply=True, env={}, now=NOW, rows=rows)
+        rep = reach.run(self.tmp, apply=True, env={"REACH_OFFLINE": "1"}, now=NOW, rows=rows)
         self.assertIn("external_referrals_7d", rep["breaches"])
         self.assertTrue((self.tmp / "docs/issues/Q-REACH-external_referrals_7d.json").is_file())
         # a recorded weight change that was followed by a reach collapse is undone
@@ -57,6 +57,31 @@ class Reach(unittest.TestCase):
         cfg = reach.load(self.tmp)
         w = reach.learn(self.tmp, cfg, {"external_referrals_7d": 10, "by_path": {}}, NOW.isoformat())
         self.assertEqual(w["weights"]["shipped"], 1.0)
+
+    def test_grouped_rows_and_site_route(self):
+        """ATTENTION-1: /api/reach rows carry counts; an unreadable site route stays unmeasured, never zero."""
+        cfg = reach.load(self.tmp)
+        m = reach.measure_rows([{"ref": "bsky.app", "path": "/progress", "name": "pageview", "bot": 0, "n": 7},
+                                {"ref": "", "path": "/progress.atom", "name": "x", "bot": 1, "n": 4}], cfg)
+        self.assertEqual((m["external_referrals_7d"], m["social_referrals_7d"], m["feed_hits_7d"]), (7, 7, 4))
+        self.assertEqual(len(reach.site_rows(cfg, fetch=lambda u: {"rows": [{"ref": "", "path": "/", "name": "pageview", "n": 1}]})), 1)
+        with self.assertRaises(ValueError):
+            reach.site_rows(cfg, fetch=lambda u: {"rows": None})
+
+    def test_evidence_post_counts_only_what_the_record_shows(self):
+        """ATTENTION-1: the weekly evidence post is built from ops/deploys.jsonl; self-origin is claimed only for rows marked so."""
+        (self.tmp / "ops").mkdir(exist_ok=True)
+        rows = [{"at": "2026-11-16T10:00:00Z", "worker": "a", "sha": "s1", "live_matches_commit": True},
+                {"at": "2026-11-16T10:00:00Z", "worker": "b", "sha": "s1", "live_matches_commit": True, "origin": "executor"},
+                {"at": "2026-11-16T11:00:00Z", "worker": "a", "sha": "s2", "live_matches_commit": False},
+                {"at": "2026-10-01T10:00:00Z", "worker": "a", "sha": "old", "live_matches_commit": True}]
+        (self.tmp / "ops/deploys.jsonl").write_text("\n".join(json.dumps(r) for r in rows) + "\n")
+        c = reach.evidence_candidates(self.tmp, NOW)
+        self.assertEqual(len(c), 1)
+        self.assertIn("1 new versions live (2 deploys across 2 services)", c[0]["text"])
+        self.assertIn("1 of them it started itself", c[0]["text"])
+        self.assertEqual(reach.guard(c[0]["text"], c[0]["event"], self.tmp), [])
+        self.assertTrue(reach.guard("Hey @someone, look", "Hey @someone, look", self.tmp))
 
     def test_exploration_prefers_untried_arms(self):
         c = [{"arm": "a"}, {"arm": "b"}]
