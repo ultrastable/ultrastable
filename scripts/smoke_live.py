@@ -48,21 +48,28 @@ def _():
     cited = bool(re.search(r"/(solutions|problems|catalogue)/", b))
     return s == 200 and cited, f"HTTP {s}; cited={cited}; {' '.join(b[:160].split())}"
 
-@check("org-languages", "/es/ /fr/ /pt/ /ar/ are real translations with hreflang")
-def _():
-    base = get(ORG + "/")["body"]; out = []; ok = True
+def lang_state():
+    base = get(ORG + "/")["body"]; rows = []
     for l in ("es", "fr", "pt", "ar"):
-        r = get(f"{ORG}/{l}/"); b = r["body"]
+        r = get(f"{ORG}/{l}/", follow=False); b = r["body"]
         m = re.search(r"<html[^>]*lang=\"([^\"]+)\"", b); got = m.group(1) if m else "?"
-        same = b == base
-        out.append(f"{l}:{r['status']} lang={got} identical_to_en={same}")
-        ok = ok and r["status"] == 200 and got.startswith(l) and not same
-    hl = len(re.findall(r'hreflang="', base))
+        rows.append({"l": l, "status": r["status"], "lang": got, "clone": r["status"] == 200 and b == base, "redirect": r["status"] in (301, 302, 307, 308)})
+    return base, rows
+
+@check("org-languages-honest", "no English clone is served under a language path before its translation is live")
+def _():
+    base, rows = lang_state()
+    return not any(r["clone"] for r in rows), "; ".join(f"{r['l']}:{r['status']} lang={r['lang']} clone={r['clone']}" for r in rows)
+
+@check("org-languages-live", "/es/ /fr/ /pt/ /ar/ are real translations with hreflang")
+def _():
+    base, rows = lang_state(); hl = len(re.findall(r'hreflang="', base))
+    ok = all(r["status"] == 200 and r["lang"].startswith(r["l"]) and not r["clone"] for r in rows) and hl >= 4
     try:
         m = json.loads(get("https://raw.githubusercontent.com/ultrastable/practical-solutions/main/ledger/i18n/manifest.json")["body"])
         cov = {k: (v.get("coverage"), v.get("live")) for k, v in m["langs"].items()}
     except Exception as e: cov = repr(e)
-    return ok and hl >= 4, "; ".join(out) + f"; hreflang tags on / = {hl}; translated coverage (live needs 0.5) = {cov}"
+    return ok, "; ".join(f"{r['l']}:{r['status']} lang={r['lang']}" for r in rows) + f"; hreflang on / = {hl}; coverage (live needs 0.5) = {cov}"
 
 @check("io-progress", "/progress, digests and Atom feed work and are fresh")
 def _():
