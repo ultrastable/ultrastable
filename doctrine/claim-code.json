@@ -124,6 +124,15 @@
         "file": "foundation/runway.py",
         "contains": "target_days is below the owner's minimum of 365"
       }
+    },
+    {
+      "id": "decisions-outreach-segment-predict",
+      "source": "site/decisions-data.js",
+      "quote": "the segment's mean reward so far, or 0 for a segment never tried",
+      "probe": {
+        "file": "foundation/outreach.py",
+        "contains": "top[\"mean_reward\"] if top[\"mean_reward\"] is not None else 0.0"
+      }
     }
   ],
   "baseline": [
