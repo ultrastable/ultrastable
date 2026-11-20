@@ -18,6 +18,7 @@ Last updated: 2026-11-20
 - 2026-11-20: host-sync - runtime state of the host (HOSTSYNC-1) [skip ci]
 - 2026-11-20: host-sync - record deployed gateway module [skip ci]
 - 2026-11-20: CF-POSTURE-2, COST-PROBE-FIELD-1: every upload path keeps logs on; daily cost guard runs again (#812)
+- 2026-11-20: ATTENTION-1 (Rowan: get attention for the claim that a system left alone can help solve problems; all server-side): evidence only, never targeting. Posts never name, @mention, reply to or mock a person (guard `mentions`, `doctrine/reach.json` `attention`). New `evidence` arm: a weekly post counted from `ops/deploys.jsonl` (versions live, deploys, services; self-origin claimed only for rows marked executor/self-agent, 0 that week). Site tick (`site/promote.js`): WebSub hub pings for `/feed.xml` and `/progress.atom` (hub link in both feeds), one Internet Archive snapshot a day of a record page, reach counts computed from its own D1 and served at `/api/reach`, which `foundation/reach.py` reads when the CI token gets 403 on D1 (measured cause of `metrics: unmeasured`). Bluesky/Mastodon posting stays waiting on the connect link (CONNECT-ONCE-1). Found: account hit the D1 free daily row-read limit on 2026-11-20.
 - 2026-11-20: STRAYS-1: stray code files and decoy workflows fail checks and the branch sweep gate (#741)
 - 2026-11-20: ciwatch: file failing-workflow items (CIWATCH-1) [skip ci]
 - 2026-11-20: CIWATCH-4: ciwatch items land through the main writer (#810)

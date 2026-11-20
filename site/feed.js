@@ -7,7 +7,7 @@ const esc = s => String(s).replace(/[<>&"']/g, c => ({ "<": "&lt;", ">": "&gt;",
 export function atom(entries, host) {
   const upd = entries.length ? entries[0].at : "1970-01-01T00:00:00Z";
   const rows = entries.map(e => "<entry><id>tag:" + host + ",2026:" + esc(e.id) + "</id><title>" + esc(e.title) + "</title><updated>" + esc(e.at) + "</updated><link href=\"https://" + host + "/live\"/><summary>" + esc(e.title) + "</summary></entry>").join("");
-  return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><feed xmlns=\"http://www.w3.org/2005/Atom\"><id>https://" + host + "/feed.xml</id><title>Ultrastable: what the system shipped</title><updated>" + esc(upd) + "</updated><link rel=\"self\" href=\"https://" + host + "/feed.xml\"/><link href=\"https://" + host + "/live\"/>" + rows + "</feed>";
+  return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><feed xmlns=\"http://www.w3.org/2005/Atom\"><id>https://" + host + "/feed.xml</id><title>Ultrastable: what the system shipped</title><updated>" + esc(upd) + "</updated><link rel=\"self\" href=\"https://" + host + "/feed.xml\"/><link rel=\"hub\" href=\"https://pubsubhubbub.appspot.com/\"/><link href=\"https://" + host + "/live\"/>" + rows + "</feed>";
 }
 export function feedResponse(host, entries = FEED_ENTRIES) {
   return new Response(atom(entries, host), { headers: { "content-type": "application/atom+xml; charset=utf-8", "cache-control": "public, max-age=900", "access-control-allow-origin": "*" } });
