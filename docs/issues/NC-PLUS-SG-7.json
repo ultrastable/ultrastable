@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-SG-7",
+  "title": "NC-PLUS-SG-7: Repo snapshot probe: version every running system state in D1, verifiable without git",
+  "body": "**Owner:** staff\n**Trigger:** the backlog item PLUS-SG-7 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe PLUS-SG-7\n**Status:** open\n\nRepo snapshot probe: version every running system state in D1, verifiable without git\n\nBacklog done check: Every running system has an immutable, timestamped snapshot of its config+code hash stored in D1, and the probe restores a prior snapshot and redeploys it successfully without touching git.\n\nTriage: Deploy/redeploy of a Worker and config hashing cannot be done by a doer limited to D1 reads/writes; it needs code-level API/wrangler capability. | first step: Add a probe module that snapshots config+hash rows into D1 and calls the deploy API (via Workers API/GitHub action) to restore a chosen snapshot.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

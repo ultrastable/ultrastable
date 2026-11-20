@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-LOOPBREAK-FM-no-deploy-evidence",
+  "title": "NC-PLUS-LOOPBREAK-FM-no-deploy-evidence: Record dispatch outcomes (success/failure + error) for FM items in D1 so no dispatch ends without evidence",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-LOOPBREAK-FM-no-deploy-evidence was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe PLUS-LOOPBREAK-FM-no-deploy-evidence\n**Status:** open\n\nRecord dispatch outcomes (success/failure + error) for FM items in D1 so no dispatch ends without evidence\n\nBacklog done check: Every dispatch of FM-no-deploy-evidence has a row in the dispatch_outcomes table with an outcome field (success/failure and error reason); re-dispatch of the item produces an outcome instead of silent failure\n\nTriage: Recording dispatch outcomes requires writing to dispatch_outcomes at dispatch time, but the in-Worker doer only writes backlog D1; outcome logging must be added to the dispatch code path. | first step: Inspect the Worker dispatch handler for FM-no-deploy-evidence to find where dispatch executes, then add a D1 insert of outcome/error after every attem\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}
