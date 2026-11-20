@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-site-tests-in-checks-1-site-tests-gate-every-change-web-bot-",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "SITE-TESTS-IN-CHECKS-1: site tests gate every change; Web Bot Auth verify parsed no parameters",
+  "body": "site/*.test.mjs ran only in deploy-site.yml, so site/webbotauth.js verifyRequest shipped with p.indexOf(\"\") where p.indexOf(\"=\") was meant: every inbound Web Bot Auth signature was rejected as 'not a web-bot-auth ed25519 signature'. Fixed the parser and added the site tests to checks.yml (OL-20261115-24). Removed two unused imports (Q-SELF-unused-import).",
+  "probe": "grep:.github/workflows/checks.yml::site/.*test.mjs",
+  "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+ },
+ "kind": "lesson",
+ "title": "SITE-TESTS-IN-CHECKS-1: site tests gate every change; Web Bot Auth verify parsed no parameters",
+ "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+}
