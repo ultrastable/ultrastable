@@ -61,7 +61,7 @@ Code is the only memory. All project state lives in this repository (docs/PROJEC
 ## What this is, in five lines
 1. Ultrastable is a system that runs, fixes and improves other software on its own; this repo is its code, rules and live Workers (`ultrastable-tick`, `-dashboard`, `-site`, `-agents`).
 2. Merging to `main` deploys every live Worker (`deploy-workers`, `deploy-system`, `deploy-site`) and the run fails unless the code running on Cloudflare is byte-identical to the commit.
-3. Quniverse (`QNFO/qnfo-workers`, 47 Workers on the same Cloudflare account) is the first customer and the test bed: it must bootstrap, discover its own resources and stay cheap without hand-holding.
+3. Quniverse (`QNFO/qnfo-workers`, a fleet of Workers in its own Cloudflare account) is the first customer and the test bed: it must bootstrap, discover its own resources and stay cheap without hand-holding.
 4. Proof is measured, not claimed: Workers AI neurons and D1 rows read per day for Quniverse, drift between live and `main`, and manual steps per deploy (target 0), all in `ops/deploys.jsonl` and the cost items in `ROADMAP.md`.
 5. If Quniverse cannot run cheaply and unattended on Ultrastable, Ultrastable does not work; cost and self-bootstrapping come before new Quniverse features.
 

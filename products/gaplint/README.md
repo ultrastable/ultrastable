@@ -28,7 +28,7 @@ Put `gaplint.json` at the repository root. Keys merge over the defaults in `gapl
 
 ## Status
 
-BUILT: 11 tests (`python3 -m unittest discover -s tests`), run in CI as a step of the existing `checks` workflow (pull requests only, about 10 seconds, no separate workflow). NOT MEASURED: any use outside this repository. Impact is a hypothesis until another repository runs it.
+BUILT: <!-- claim:gaplint-tests-readme -->14 tests<!-- /claim --> (`python3 -m unittest discover -s tests`), run in CI as a step of the existing `checks` workflow (pull requests only, about 10 seconds, no separate workflow). NOT MEASURED: any use outside this repository. Impact is a hypothesis until another repository runs it.
 
 ## Why it exists
 
