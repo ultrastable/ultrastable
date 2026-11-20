@@ -229,3 +229,11 @@ test("SELF-FIX-1: a failing check is queued as a fleet task and logged, never ma
   assert.equal((await e.DB.prepare("SELECT COUNT(*) c FROM fleet_queue WHERE task_id='fix-owner_links' AND status='queued'").first()).c, 1);
   assert.equal((await e.DB.prepare("SELECT COUNT(*) c FROM provenance WHERE kind='incident'").first()).c, 1);
 });
+
+test("GATE-SETTLE-2: the owner page drops a gate whose measured dependencies are all closed, and keeps one that is still open", async () => {
+  const { openNeeds } = await import("../worker.js");
+  const needs = { items: [{ id: "a" }, { id: "b" }, { id: "c" }] };
+  const deps = [{ needs_you: "a", status: "closed" }, { needs_you: "b", status: "closed" }, { needs_you: "b", status: "open" }];
+  assert.deepEqual(openNeeds(needs, deps).map(i => i.id), ["b", "c"]);
+  assert.ok(!openNeeds().some(i => i.id === "lane-credential" || i.id === "repo-archive"), "connected credentials are never asked for again");
+});

@@ -13,6 +13,14 @@ const auditBackend = env => r => PV.add(env, { class: "system", actor: "backend"
 import * as OID from "./ownerid.js";  // PROVENANCE-1: origin, effect and history of every input and change
 import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: the console agent spends from the owner's budget
 import NEEDS from "../foundation/data/needs-you.json" with { type: "json" };
+import UNATTENDED from "../doctrine/unattended.json" with { type: "json" };
+// GATE-SETTLE-2: the owner page asks only what is still open. A gate whose every measured dependency in doctrine/unattended.json is closed is done,
+// the same rule NEEDS-YOU.md renders by (foundation/needsyou.py), so the page cannot ask the owner for something the system already has.
+export const openNeeds = (needs = NEEDS, deps = UNATTENDED.dependencies || []) => {
+  const by = {};
+  for (const x of deps) if (x.needs_you) (by[x.needs_you] = by[x.needs_you] || []).push(x);
+  return (needs.items || []).filter(i => !(by[i.id] && by[i.id].every(x => x.status === "closed")));
+};
 import TENANTS from "../foundation/data/tenants.json" with { type: "json" };
 import PAID from "../foundation/data/paid-options.json" with { type: "json" };
 const VERSION = "0.4.0";
@@ -150,7 +158,7 @@ export async function runProbes(env) {
   } catch (e) { /* the checks table may not exist yet */ }
   // OWNER-LINKS-1: every link the system hands the owner answers (2xx or 3xx); a dead one fails this probe and is mailed like any other failing check.
   if (!env.NO_NET) {
-    const links = [...OWNER_LINKS, ...NEEDS.map(n => n.url || n.connect).filter(x => /^https:\/\//.test(String(x || "")))].filter((x, i, a) => a.indexOf(x) === i).slice(0, 20);
+    const links = [...OWNER_LINKS, ...openNeeds().map(n => n.url || n.connect).filter(x => /^https:\/\//.test(String(x || "")))].filter((x, i, a) => a.indexOf(x) === i).slice(0, 20);
     const dead = [];
     // OWNER-LINKS-2: status alone passed a blank placeholder page. Each link must answer with the content it promises, never a worker placeholder.
     const EXPECT = { "https://ultrastable.io/connect/github-signin": /sign-in|signin|github/i, "https://ultrastable.io/owner": /owner|sign in|code/i };
@@ -326,7 +334,7 @@ export async function connectorsPanel(env, origin) {
 // OWNER-DASH-2: the static panels (what needs the owner, tenants, paid options) come from files in the bundle, so the page still answers when D1 is at its free daily read cap.
 export function staticPanels() {
   return {
-    needs: NEEDS.items.map(i => ({ id: i.id, title: i.title, why: i.why, default: i.default, url: i.url, button: i.button })),
+    needs: openNeeds().map(i => ({ id: i.id, title: i.title, why: i.why, default: i.default, url: i.url, button: i.button })),
     tenants: TENANTS.tenants,
     options: PAID.options, options_checked: PAID.checked,
     plan_note: "Everything runs on free tiers. Nothing here upgrades a plan; paid options below are your decision, with the cost.",

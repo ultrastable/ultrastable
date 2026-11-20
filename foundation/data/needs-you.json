@@ -44,30 +44,11 @@
    "class": "legal_signature",
    "connect": "https://ultrastable.io/connect/bluesky",
    "connect_kind": "connect-flow",
-   "resolved_when": "env:BLUESKY_APP_PASSWORD|MASTODON_TOKEN"
-  },
-  {
-   "id": "lane-credential",
-   "title": "Connect GitHub",
-   "why": "One approval on GitHub's own page lets the system open, check, merge and deploy changes by itself, including changes to its own workflows. The system then handles every callback, token exchange and renewal.",
-   "default": "Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.",
-   "url": "https://ultrastable.io/connect/github",
-   "button": "Authorize on GitHub",
-   "class": "owner_account",
-   "connect": "https://ultrastable.io/connect/github",
-   "connect_kind": "connect-flow",
-   "resolved_when": "env:LANE_PAT|LANE_APP_ID"
-  },
-  {
-   "id": "repo-archive",
-   "title": "Allow repository settings (archiving and the main-branch check rule)",
-   "why": "One approval on GitHub's own page registers a second app that can change repository settings only, so the server can archive the retired repositories (seed, license, spec, workers) and apply the rule that main only takes a change whose checks passed. The system handles every callback, token and renewal.",
-   "default": "The retired repositories stay unarchived, each with a README pointing to the main repository; the merge lane and sweeper keep refusing red changes, and a direct merge is not blocked by GitHub itself.",
-   "url": "https://ultrastable.io/connect/github-admin",
-   "button": "Authorize on GitHub",
-   "class": "owner_account",
-   "connect": "https://ultrastable.io/connect/github-admin",
-   "connect_kind": "connect-flow"
+   "resolved_when": [
+    "env:BLUESKY_APP_PASSWORD|MASTODON_TOKEN",
+    "http:https://ultrastable.io/connect/bluesky ~ Bluesky is connected",
+    "http:https://ultrastable.io/connect/mastodon ~ Mastodon is connected"
+   ]
   },
   {
    "id": "oauth-apps",
@@ -83,6 +64,8 @@
  ],
  "done_for_you": [
   "Old Cloudflare account: the tick, site and dashboard keep running there.",
-  "Entity and the org admin token are not needed now; entity-only programmes stay deferred until you choose one."
+  "Entity and the org admin token are not needed now; entity-only programmes stay deferred until you choose one.",
+  "Connect GitHub: settled 2026-11-20 on its own evidence (env:LANE_PAT|LANE_APP_ID or http:https://ultrastable.io/connect/github ~ GitHub is connected).",
+  "Allow repository settings (archiving and the main-branch check rule): settled 2026-11-20 on its own evidence (http:https://ultrastable.io/connect/github-admin ~ Repository settings are allowed)."
  ]
 }
