@@ -1,12 +1,12 @@
 name: smoke-live
-# budget: ~1 min x 1 per 6 hours = ~120 min per month
-# trigger: schedule every 6 hours (the live sites can break between merges, which no per-PR check sees) and manual dispatch
+# budget: ~1 min x 1 per day = ~30 min per month
+# trigger: daily schedule (the live sites can break between merges, which no per-PR check sees) and manual dispatch
 # free-alternative: `python3 scripts/smoke_live.py` from any cloud launch host, or the Cloudflare tick worker
 # SMOKE-LIVE-1: every public claim checked against PRODUCTION (scripts/smoke_live.py); each failure opens or refreshes one repair item docs/issues/Q-SMOKE-<check>.json (GitHub Issues are disabled here), landed by the main writer or, failing that, a pull request; a passing check removes its item. Read-only on the sites except the optional --cap probe (dispatch only).
 # The claims registry (doctrine/claims.json) binds words to code; this binds the deployed behaviour: /api/claims must serve the registry and the existing claims workflow checks the words.
 on:
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 6 * * *"
   workflow_dispatch:
     inputs:
       cap:

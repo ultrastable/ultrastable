@@ -3714,6 +3714,85 @@
    ],
    "area": "managers",
    "server_owner": "github-actions"
+  },
+  {
+   "id": "smoke-live",
+   "kind": "probe",
+   "summary": "Check every public claim against the deployed sites and file a repair item per failure.",
+   "trigger": "automatic: daily schedule",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "7d",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "github-actions",
+     "how": "the scheduled workflow on GitHub Actions",
+     "class": "external"
+    },
+    {
+     "id": "launch-host",
+     "how": "the same script from any cloud launch host",
+     "class": "degraded"
+    }
+   ],
+   "closing_probe": "file:scripts/smoke_live.py",
+   "writeback": [
+    "docs/issues",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "scripts/smoke_live.py",
+    "scripts/smoke_issues.py",
+    "scripts/land_data.py"
+   ],
+   "workflows": [
+    "smoke-live.yml"
+   ],
+   "staged_default": "a failing check writes docs/issues/Q-SMOKE-<check>.json and the run goes red until production matches the claim",
+   "identity_bound": "none",
+   "default_in_effect": "a failing check writes docs/issues/Q-SMOKE-<check>.json and the run goes red until production matches the claim",
+   "server_owner": "github-actions",
+   "area": "managers"
+  },
+  {
+   "id": "backup-drill",
+   "kind": "probe",
+   "summary": "Export every D1 database and KV namespace of the Ultrastable account weekly and prove a restore.",
+   "trigger": "automatic: weekly schedule",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "7d",
+   "done": "the closing probe passes and the result is recorded at the write-back target",
+   "paths": [
+    {
+     "id": "github-actions",
+     "how": "the scheduled workflow on GitHub Actions",
+     "class": "external"
+    },
+    {
+     "id": "launch-host",
+     "how": "the same script from any cloud launch host",
+     "class": "degraded"
+    }
+   ],
+   "closing_probe": "file:foundation/backup.py",
+   "writeback": [
+    "ops/backup/last-restore.json",
+    "docs/handoff"
+   ],
+   "system_path": [
+    "foundation/backup.py",
+    "scripts/land_data.py"
+   ],
+   "workflows": [
+    "backup-drill.yml"
+   ],
+   "staged_default": "a failed drill is recorded with its errors in ops/backup/last-restore.json and the smoke test fails backup-drill",
+   "identity_bound": "none",
+   "default_in_effect": "a failed drill is recorded with its errors in ops/backup/last-restore.json and the smoke test fails backup-drill",
+   "server_owner": "github-actions",
+   "area": "managers"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"
