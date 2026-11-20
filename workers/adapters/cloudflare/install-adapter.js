@@ -61,7 +61,7 @@ export function cloudflareInstallAdapter({ fetch, config, env }) {
         ...[...(pending.get(slug) || [])].map(n => ({ type: 'secret_text', name: n, text: env[n] })),
       ];
       const first = !(await settings(slug));
-      const metadata = { main_module: 'worker.mjs', compatibility_date: config.compatibilityDate || '2026-01-01', bindings, keep_bindings: ['secret_text'],
+      const metadata = { main_module: 'worker.mjs', compatibility_date: config.compatibilityDate || '2026-01-01', bindings, keep_bindings: ['secret_text'], observability: { enabled: true, head_sampling_rate: 1 },
         ...(first ? { migrations: { new_tag: 'v1', new_sqlite_classes: ['Heartbeat'] } } : {}) };
       const form = new FormData();
       form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }), 'metadata.json');

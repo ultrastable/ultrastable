@@ -27,7 +27,7 @@ const AI_QUERY = `query($account: String!, $dt: Date) {
         limit: 10000
         filter: { date_geq: $dt, date_leq: $dt }
       ) {
-        sum { neurons }
+        sum { totalNeurons }
       }
     }
   }
@@ -73,10 +73,18 @@ export async function measureDay({ fetchFn = fetch, token, account, date, databa
     const limit = (thresholds?.d1RowsRead?.[id]) ?? thresholds?.d1RowsReadDefault ?? 10_000_000;
     if (rowsRead > limit) out.breaches.push({ kind: 'd1-rows-read', databaseId: id, rowsRead, limit });
   }
-  const ai = await gql(fetchFn, token, account, AI_QUERY, { dt: date });
-  const aiGroups = ai.viewer.accounts[0]?.aiInferenceAdaptiveGroups || [];
-  out.neurons = aiGroups.reduce((a, g) => a + (g.sum?.neurons || 0), 0);
-  if (thresholds?.neurons && out.neurons > thresholds.neurons)
+  // COST-PROBE-FIELD-1: Cloudflare renamed the sum field to totalNeurons (2026-11-20: "unknown field neurons" failed the whole daily guard, so the
+  // criticality tick and the account posture reading after it never ran). A schema change in this one dataset is recorded as unmeasured and the
+  // D1 reading, which is the cost that takes the site down, is still kept; neurons is null then, never 0.
+  try {
+    const ai = await gql(fetchFn, token, account, AI_QUERY, { dt: date });
+    const aiGroups = ai.viewer.accounts[0]?.aiInferenceAdaptiveGroups || [];
+    out.neurons = aiGroups.reduce((a, g) => a + (g.sum?.totalNeurons || 0), 0);
+  } catch (e) {
+    out.neurons = null; out.unmeasured = [{ kind: 'ai-neurons', error: String(e.message || e).slice(0, 200) }];
+    console.error('cost-probe: ai-neurons unmeasured: ' + out.unmeasured[0].error);
+  }
+  if (thresholds?.neurons && out.neurons !== null && out.neurons > thresholds.neurons)
     out.breaches.push({ kind: 'ai-neurons', neurons: out.neurons, limit: thresholds.neurons });
   return out;
 }

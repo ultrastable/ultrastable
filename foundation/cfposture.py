@@ -14,13 +14,24 @@ Policy: doctrine/cf-posture.json. A rule the token cannot read is reported as un
 account member) is recorded with its default in effect and files no item.
 """
 from __future__ import annotations
-import json, os, re, sys, urllib.error, urllib.request
+import json, os, re, subprocess, sys, urllib.error, urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 POLICY, READING = "doctrine/cf-posture.json", "ops/cf-posture.json"
 API = "https://api.cloudflare.com/client/v4"
+META_RE = re.compile(r"""["']?main_module["']?\s*:""")  # the metadata object of a Worker upload, in JavaScript or Python
+
+
+def _tracked(root) -> list[str]:
+    try:
+        p = subprocess.run(["git", "ls-files", "-z"], cwd=root, capture_output=True, timeout=60)
+        if p.returncode == 0 and p.stdout:
+            return [x for x in p.stdout.decode("utf-8", "replace").split("\0") if x]
+    except (OSError, subprocess.SubprocessError):
+        pass  # not a git checkout (a test's temporary tree): walk the files instead
+    return sorted(q.relative_to(root).as_posix() for q in Path(root).rglob("*") if q.is_file() and ".git" not in q.parts and "node_modules" not in q.parts)
 
 
 def policy(root=REPO) -> dict:
@@ -64,16 +75,21 @@ def static_check(root=REPO) -> list[str]:
         if not p.is_file():
             fails.append(f"upload path missing: {rel}")
             continue
-        for m in re.finditer(r"main_module[^\n]*", p.read_text(encoding="utf-8")):
-            if "observability" not in m.group(0):
-                fails.append(f"{rel}: a Worker upload without `observability` turns logs off on every deploy")
-    # every file that uploads a Worker is declared, so a new deploy path cannot skip the rule
+        text = p.read_text(encoding="utf-8")
+        if len(META_RE.findall(text)) > text.count("observability"):
+            fails.append(f"{rel}: a Worker upload without `observability` turns logs off on every deploy")
+    # every tracked file that builds upload metadata is declared, so a new deploy path anywhere in the repository cannot skip the rule
+    # (2026-11-20: the deploy gateway and four more paths under workers/ and scripts/ were outside the first scan and turned logs off again)
     declared = set(pol.get("upload_paths", []))
-    for d in ("deploy", "site"):
-        for p in sorted((root / d).glob("*.*js")):
-            rel = p.relative_to(root).as_posix()
-            if rel not in declared and not rel.endswith((".test.mjs", ".test.js")) and re.search(r"JSON\.stringify\(\{\s*main_module", p.read_text(encoding="utf-8")):
-                fails.append(f"{rel}: uploads a Worker but is not in upload_paths of {POLICY}")
+    for rel in _tracked(root):
+        if rel in declared or not rel.endswith((".js", ".mjs", ".py")) or ".test." in rel or "/test/" in rel or rel.startswith(tuple(pol.get("scan_exclude", []))):
+            continue
+        try:
+            text = (root / rel).read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if META_RE.search(text):
+            fails.append(f"{rel}: uploads a Worker but is not in upload_paths of {POLICY}")
     return fails
 
 
