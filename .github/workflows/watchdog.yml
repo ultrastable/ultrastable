@@ -15,6 +15,7 @@ permissions:
   id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
   contents: write
   actions: write
+  pull-requests: write  # MAINWRITER-FALLBACK-1
 concurrency:
   group: watchdog
   cancel-in-progress: false
@@ -50,9 +51,11 @@ jobs:
       - name: Ultrastability tick (a stall is a second-order event)
         run: python3 -m foundation ultrastability --tick --apply
       - name: Record
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         # only when a restart, an escalation or the set of stalled clocks changed (or once a day); [skip ci] keeps this commit from waking deploy-site, whose completion would wake this workflow again
         run: |
           [ "$(cat "$RUNNER_TEMP/changed")" = "1" ] || { echo "nothing changed; ledger not committed"; exit 0; }
           git config user.name "ultrastable-watchdog"; git config user.email "actions@users.noreply.github.com"
           git add ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json
-          git diff --cached --quiet || { git commit -q -m "watchdog: clock probe (RESILIENCE-1) [skip ci]"; python3 tools/push_main.py; }
+          python3 scripts/land_data.py "watchdog: clock probe (RESILIENCE-1)" ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json  # MAINWRITER-FALLBACK-1: main writer first, then a pull request

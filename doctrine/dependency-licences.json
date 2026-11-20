@@ -81,7 +81,7 @@
    "where": [
     ".github/workflows/a11y.yml",
     ".github/workflows/actions-budget.yml",
-    ".github/workflows/branchsweep.yml"
+    ".github/workflows/backup-drill.yml"
    ]
   },
   {

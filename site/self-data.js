@@ -462,6 +462,7 @@ export default {
   "actions-budget",
   "agent-executor",
   "agent-interop",
+  "backup-drill",
   "blindspots",
   "branch-reaper",
   "branch-sweep",
@@ -549,6 +550,7 @@ export default {
   "server-side-only",
   "session-reaper",
   "site-deploy",
+  "smoke-live",
   "social-post",
   "spinoff",
   "strange-loop-hygiene",
@@ -1788,6 +1790,32 @@ export default {
     "workflows": [
      "host-sync"
     ]
+   },
+   {
+    "closing_probe": "file:scripts/smoke_live.py",
+    "id": "smoke-live",
+    "kind": "probe",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "7d",
+    "summary": "Check every public claim against the deployed sites and file a repair item per failure.",
+    "trigger": "automatic: daily schedule",
+    "workflows": [
+     "smoke-live"
+    ]
+   },
+   {
+    "closing_probe": "file:foundation/backup.py",
+    "id": "backup-drill",
+    "kind": "probe",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "7d",
+    "summary": "Export every D1 database and KV namespace of the Ultrastable account weekly and prove a restore.",
+    "trigger": "automatic: weekly schedule",
+    "workflows": [
+     "backup-drill"
+    ]
    }
   ],
   "workers": [
@@ -1823,6 +1851,12 @@ export default {
     "id": "actions-budget",
     "loops": [
      "actions-budget"
+    ]
+   },
+   {
+    "id": "backup-drill",
+    "loops": [
+     "backup-drill"
     ]
    },
    {
@@ -2034,6 +2068,12 @@ export default {
     "id": "sessions",
     "loops": [
      "branch-reaper"
+    ]
+   },
+   {
+    "id": "smoke-live",
+    "loops": [
+     "smoke-live"
     ]
    },
    {
