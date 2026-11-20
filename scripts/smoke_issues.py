@@ -24,11 +24,6 @@ for r in rows:
 if not changed:
     print("smoke_issues: no item changed"); sys.exit(0)
 print("smoke_issues: items changed:", changed)
-def sh(*a, check=True): return subprocess.run(a, cwd=ROOT, check=check, capture_output=True, text=True)
-sh("git", "config", "user.name", "ultrastable-smoke"); sh("git", "config", "user.email", "actions@users.noreply.github.com")
-sh("git", "add", "-A", "docs/issues"); sh("git", "commit", "-q", "-m", "smoke-live: repair items from the production smoke test [skip ci]")
-if subprocess.run(["python3", "tools/push_main.py"], cwd=ROOT).returncode == 0: sys.exit(0)
-br = "agent/smoke-live-" + os.environ.get("GITHUB_RUN_ID", "local")
-sh("git", "push", "-q", "origin", f"HEAD:refs/heads/{br}", check=False)
-pr = sh("gh", "pr", "create", "--base", "main", "--head", br, "--title", "smoke-live: repair items from the production smoke test", "--body", "SMOKE-LIVE-1: items written by scripts/smoke_issues.py.\n\nItem: SMOKE-LIVE-1", check=False)
-print("pull request:", (pr.stdout or pr.stderr).strip()[:200]); sys.exit(0 if pr.returncode == 0 else 1)
+sys.path.insert(0, str(ROOT / "scripts"))
+import land_data
+sys.exit(land_data.main("smoke-live: repair items from the production smoke test", ["docs/issues"]))
