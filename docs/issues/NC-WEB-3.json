@@ -1,0 +1,11 @@
+{
+  "id": "NC-WEB-3",
+  "title": "NC-WEB-3: WEB-3: Search Console, sitemap",
+  "body": "**Owner:** staff\n**Trigger:** the backlog item WEB-3 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe WEB-3\n**Status:** open\n\nWEB-3: Search Console, sitemap\n\nBacklog done check: Sitemap status Success\n\nTriage: Sitemap generation/verification touches site code or deployment, not just backlog data; the in-Worker doer can only read/write the backlog DB. | first step: Open a code issue/PR to generate and serve sitemap.xml, then wire its status into the Done check.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}
