@@ -59,7 +59,7 @@ test('a failed upload or a read-back mismatch is an error, never reported as dep
 test('read-back: a stale first read is retried and a later matching read verifies (DEPLOYGATE-READBACK-2)', async () => {
   let n = 0;
   const seq = ['old', 'old', 'BUNDLE'];
-  const f2 = async (u, init = {}) => { calls.push(String(u)); if (String(u).endsWith('/content/v2')) return new Response(seq[Math.min(n++, 2)]); if (String(u).endsWith('/.well-known/jwks')) return new Response(JSON.stringify({ keys: [jwk] })); return new Response(JSON.stringify({ success: true, errors: [] })); };
+  const f2 = async u => { if (String(u).endsWith('/content/v2')) return new Response(seq[Math.min(n++, 2)]); if (String(u).endsWith('/.well-known/jwks')) return new Response(JSON.stringify({ keys: [jwk] })); return new Response(JSON.stringify({ success: true, errors: [] })); };
   const g2 = createGate({ fetch: f2, now: () => NOW, config: { rules: [{ repo: 'org/app', refs: ['refs/heads/main'], script: 'app-web' }], accountId: 'acct', token: 't', readbackWaitMs: 0 } });
   const r = await post(g2, await token()); assert.equal(r.status, 200); assert.equal((await r.json()).verified, true); assert.equal(n, 3);
 });
