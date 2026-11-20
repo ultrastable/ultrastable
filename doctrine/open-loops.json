@@ -25,10 +25,14 @@
     {
      "s": "Cloudflare API registrar PUT name_servers on quniverse (2026-11-19, after Rowan's explicit yes)",
      "result": "403 code 10000 Name server update not allowed (domain locked)"
+    },
+    {
+     "s": "Cloudflare API registrar PUT name_servers on quniverse (2026-11-20 09:00Z scheduled retry)",
+     "result": "403 code 10000 Name server update not allowed; domain still locked=true"
     }
    ],
-   "reason": "registrar lock on a newly registered domain; owner approved the switch for when the lock lifts",
-   "default": "zone stays served from quniverse; the switch is retried after 2026-11-20 and on every daily pass",
+   "reason": "registrar lock; the 2026-11-20 end date is unconfirmed (registered 2026-11-10, a 60-day new-registration lock would end 2027-01-09). Moving the zone by deleting it in quniverse is a different, riskier act than the approved nameserver switch and is not taken without a new yes",
+   "default": "zone stays served from quniverse; the daily single-account pass retries the approved switch",
    "probe": "cmd:python3 -m foundation singleaccount --check"
   },
   {
