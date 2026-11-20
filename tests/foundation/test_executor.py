@@ -221,6 +221,20 @@ class Effect(unittest.TestCase):
         self.assertIn("no code consumer", executor.consumer_gap(["doctrine/never-read-anywhere-xyz.json"], ROOT))
         self.assertIn("no code consumer", executor.consumer_gap(["docs/issues/Q-X.json", "ops/x.jsonl"], ROOT))
         self.assertIsNone(executor.consumer_gap(["foundation/executor.py"], ROOT))
+
+    def test_elision_marker_or_a_gutted_file_is_refused(self):
+        import subprocess, tempfile
+        r = Path(tempfile.mkdtemp())
+        subprocess.run(["git", "init", "-q"], cwd=r, check=True)
+        (r / "a.js").write_text("\n".join(f"export const v{i} = {i};" for i in range(60)) + "\n")
+        (r / "b.py").write_text("x = 1\n")
+        subprocess.run(["git", "add", "-A"], cwd=r, check=True)
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.org", "commit", "-qm", "x"], cwd=r, check=True)
+        self.assertIsNone(executor.elision_gap(["a.js", "b.py"], r))
+        (r / "b.py").write_text("# ... existing code ...\nx = 2\n")
+        self.assertIn("elision marker", executor.elision_gap(["b.py"], r))
+        (r / "a.js").write_text("export const v0 = 0;\n")
+        self.assertIn("shrink", executor.elision_gap(["a.js"], r))
         self.assertIsNone(executor.consumer_gap(["doctrine/code-agents.json"], ROOT))  # read by foundation/agents.py
 
 

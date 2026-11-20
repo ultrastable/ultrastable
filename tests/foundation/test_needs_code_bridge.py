@@ -27,3 +27,14 @@ class Bridge(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Probe(unittest.TestCase):
+    def test_the_record_carries_a_probe_the_system_can_run(self):
+        rec = B.record(Bridge.ITEMS[0])
+        self.assertIn("**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe RM-1", rec["body"])   # BRIDGE-PROBE-1: passes the pins check
+
+    def test_parked_means_open_and_an_unreadable_api_is_unmeasured(self):
+        self.assertTrue(B.still_parked(Bridge.ITEMS, "RM-1"))
+        self.assertFalse(B.still_parked(Bridge.ITEMS, "IP-1"))
+        self.assertEqual(B.main(["--api", "http://127.0.0.1:9/none", "--probe", "RM-1"]), 1)
