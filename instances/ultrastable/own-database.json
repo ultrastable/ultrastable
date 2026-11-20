@@ -49,7 +49,7 @@
    "name": "ultrastable-spinoffs",
    "id": "9e05f27a-4445-45c3-998a-0d4d4595a33d",
    "config": "spinoffs/wrangler.toml",
-   "finding": "the config names a database and a Worker (ultrastable-spinoffs) that the 2026-11-20 reading of the account does not contain; nothing live binds it"
+   "finding": "the config names a database and a Worker (ultrastable-spinoffs) that the 2026-11-20 reading of the account does not contain; nothing in this account binds it (docs/PROJECT-MEMORY.md, 2026-11-18, places that Worker in the retired account)"
   }
  ],
  "retired_configs": [

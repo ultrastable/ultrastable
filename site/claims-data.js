@@ -634,7 +634,7 @@ export default {
    "surface": "seed/self/SELF.md"
   },
   {
-   "claim": "seed-tests: 39 Python and 374 Worker tests",
+   "claim": "seed-tests: 44 Python and 374 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
