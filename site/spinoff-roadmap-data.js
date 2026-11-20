@@ -30,6 +30,14 @@ export default {
  "live": [
   {
    "archetype": "live-lookup",
+   "launched": "2026-11-19T16:00:14Z",
+   "name": "Access Check",
+   "slug": "access-check",
+   "tagline": "Name any website, get a plain read of basic accessibility signals on its home page: language, alt text, labels, zoom.",
+   "url": "https://access-check.ultrastable.app"
+  },
+  {
+   "archetype": "live-lookup",
    "launched": "2026-11-18T15:56:55Z",
    "name": "Air Quality Check",
    "slug": "air-quality",
@@ -43,6 +51,22 @@ export default {
    "slug": "blindspot",
    "tagline": "What does your website not tell people? Type a domain, see the gaps in a minute.",
    "url": "https://blindspot.ultrastable.app"
+  },
+  {
+   "archetype": "live-lookup",
+   "launched": "2026-11-19T16:00:14Z",
+   "name": "Country Snapshot",
+   "slug": "country-snapshot",
+   "tagline": "Type a country code, see its latest World Bank figures for electricity, drinking water, internet use and literacy.",
+   "url": "https://country-snapshot.ultrastable.app"
+  },
+  {
+   "archetype": "status-board",
+   "launched": "2026-11-19T16:00:14Z",
+   "name": "Free-Tier Meter",
+   "slug": "free-tier-meter",
+   "tagline": "How much of Cloudflare's free plan does a whole autonomous system use today? Live, from the loop that spends it.",
+   "url": "https://free-tier-meter.ultrastable.app"
   },
   {
    "archetype": "status-board",
@@ -62,36 +86,6 @@ export default {
   }
  ],
  "queue": [
-  {
-   "archetype": "live-lookup",
-   "cost_share": 0.025,
-   "fits": true,
-   "id": "access-check",
-   "implemented": true,
-   "kind": "spinoff",
-   "name": "Access Check",
-   "score": 16.0
-  },
-  {
-   "archetype": "live-lookup",
-   "cost_share": 0.03,
-   "fits": true,
-   "id": "country-snapshot",
-   "implemented": true,
-   "kind": "spinoff",
-   "name": "Country Snapshot",
-   "score": 15.38
-  },
-  {
-   "archetype": "status-board",
-   "cost_share": 0.03,
-   "fits": true,
-   "id": "free-tier-meter",
-   "implemented": true,
-   "kind": "spinoff",
-   "name": "Free-Tier Meter",
-   "score": 13.85
-  },
   {
    "archetype": "status-board",
    "cost_share": 0.015,
@@ -121,6 +115,16 @@ export default {
    "kind": "spinoff",
    "name": "Quake Watch",
    "score": 11.54
+  },
+  {
+   "archetype": "status-board",
+   "cost_share": 0.008,
+   "fits": true,
+   "id": "board-branchsweep-ledger",
+   "implemented": true,
+   "kind": "spinoff",
+   "name": "Branchsweep Ledger Board",
+   "score": 8.33
   },
   {
    "archetype": "status-board",
@@ -211,6 +215,26 @@ export default {
    "kind": "spinoff",
    "name": "SPF and DMARC Writer",
    "score": 4.0
+  },
+  {
+   "archetype": "template-generator",
+   "cost_share": 0.02,
+   "fits": false,
+   "id": "security-txt-writer",
+   "implemented": false,
+   "kind": "spinoff",
+   "name": "security.txt Writer",
+   "score": 4.0
+  },
+  {
+   "archetype": "template-generator",
+   "cost_share": 0.025,
+   "fits": false,
+   "id": "privacy-notice-draft",
+   "implemented": false,
+   "kind": "spinoff",
+   "name": "Plain Privacy Page Draft",
+   "score": 3.6
   }
  ],
  "scope": [
@@ -223,6 +247,11 @@ export default {
    "id": "Q-SPIN-SCOPE-IMPLEMENT-TEMPLATE-GENERATOR",
    "status": "open",
    "title": "Implement the template-generator archetype in the spinoff Worker so the queued writers (security.txt, SPF/DMARC, privacy page) can launch"
+  },
+  {
+   "id": "Q-SPIN-SCOPE-RECHECK-BOARDS",
+   "status": "open",
+   "title": "Refresh every status board's facts on each loop run, not only on launch"
   }
  ]
 };
