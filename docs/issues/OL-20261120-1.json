@@ -1,0 +1,11 @@
+{
+  "id": "OL-20261120-1",
+  "title": "OL-20261120-1: Seed core/discover into every tenant and verify the first live run",
+  "body": "**Owner:** executor\n**Trigger:** connections workflow daily 05:17 UTC and on catalogue change\n**Done check:** file:ledger/connections.json\n**Status:** open\n\npractical-solutions is wired; the seed kit and other tenants inherit core/discover by revendoring and adding the connections workflow. Overlaps CONNECT-1 (core PR 825, practical-solutions PR 171) filed by another session; unique parts there (Swanson closure, restatement detection, lexical no-credential embedding route) are to be re-filed against core/discover.",
+  "labels": [
+    "role:executor",
+    "open-loop"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

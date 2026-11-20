@@ -26,6 +26,7 @@ export const DEFAULTS = Object.freeze({
   comboHigh: 0.82,
   crossBoost: 1.25,     // a connection across domains or communities is worth more: it is the kind nobody drew
   perType: 25,          // candidates kept per type per run
+  perMember: 3,         // and no item in more than this many of one type, so one rich item cannot fill the list
   dropAfter: 3,         // runs a candidate may go unranked before it is dropped (with that reason)
   keep: 600,            // ledger entries kept; the rest are counted by status in `retired`, never silently lost
   tune: { min: 0.8, max: 0.97, step: 0.01, lowNew: 5, highNew: 40 },
@@ -189,7 +190,7 @@ export function discover({ nodes, edges = [], M, roles = ROLES, params = {}, kno
   // transfer: S addresses P1; P2 resembles P1 and S has never been linked to P2
   const pn = knn(M, problems, { k: P.k, targets: problems });
   for (const [s, ps] of addr) for (const p1 of ps) for (const { id: p2, s: sp } of pn.get(p1) || []) {
-    if (ps.has(p2) || sp < tau) continue;
+    if (ps.has(p2) || sp < P.minSim) continue; // ranked, not thresholded: the per-type cap keeps the best few
     const ss = sim(M, s, p2), score = (0.6 * sp + 0.4 * ss) * (cross(p1, p2) ? P.crossBoost : 1);
     out.transfer.push({ id: pairId('transfer', [s, p2]), type: 'transfer', members: [s, p2], via: p1, score, sims: { problems: sp, solution_to_target: ss }, cross: cross(p1, p2) });
   }
@@ -199,7 +200,7 @@ export function discover({ nodes, edges = [], M, roles = ROLES, params = {}, kno
     if (sab < P.comboLow || sab > P.comboHigh) continue;
     let best = 0, pa = null, pb = null;
     for (const x of addr.get(a)) for (const y of addr.get(b)) { const s = x === y ? 1 : sim(M, x, y); if (s > best) { best = s; pa = x; pb = y; } }
-    if (!pa || best < tau) continue;
+    if (!pa || best < P.minSim) continue;
     const score = best * (1 - sab) * 2 * (cross(a, b) ? P.crossBoost : 1);
     out.combination.push({ id: pairId('combination', [a, b]), type: 'combination', members: [a, b], via: pa === pb ? pa : pa + ' ~ ' + pb, score, sims: { solutions: sab, problems: best }, cross: cross(a, b) });
   }
@@ -226,8 +227,10 @@ export function discover({ nodes, edges = [], M, roles = ROLES, params = {}, kno
   for (const t of Object.keys(out)) {
     const best = new Map(); for (const c of out[t]) if (!best.has(c.id) || best.get(c.id).score < c.score) best.set(c.id, c);
     const ranked = [...best.values()].map(c => ({ ...c, novelty: t === 'frontier' ? 'none' : novelty(c.members), score: Number(c.score.toFixed(4)) }))
-      .filter(c => c.novelty !== 'duplicate').sort((a, b) => b.score - a.score || a.id.localeCompare(b.id)).slice(0, P.perType);
-    candidates.push(...ranked);
+      .filter(c => c.novelty !== 'duplicate').sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
+    const uses = new Map(), kept = []; // diversity: no item appears in more than perMember candidates of one type
+    for (const c of ranked) { if (kept.length >= P.perType) break; if (c.members.some(m => (uses.get(m) || 0) >= P.perMember)) continue; c.members.forEach(m => uses.set(m, (uses.get(m) || 0) + 1)); kept.push(c); }
+    candidates.push(...kept);
   }
   const sizes = {}; for (const l of comm.values()) sizes[l] = (sizes[l] || 0) + 1;
   const bridges = ids.map(id => ({ id, reach: new Set((nn.get(id) || []).filter(x => x.s >= tau).map(x => comm.get(x.id)).concat([...adj.get(id)].map(x => comm.get(x)))).size }))
