@@ -74,3 +74,7 @@ console.log("connections ok");
   assert.equal(seen, "https://ultrastable.io/connect/bluesky/callback?code=a&state=b");
   console.log("canonical origin for the consent flow ok");
 }
+
+// SIGNIN-NEXT-1: an anonymous visit to a connect page signs in and comes back to that page, not to /connections or the dashboard
+r = await connectionsRoute(R("/connect/bluesky"), env, { subject: anon, now: NOW });
+assert.equal(r.status, 302); assert.equal(new URL(r.headers.get("location")).searchParams.get("next"), "/connect/bluesky");
