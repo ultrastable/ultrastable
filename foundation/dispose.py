@@ -77,6 +77,7 @@ def created(root=REPO) -> dict[str, str]:
     return out
 
 
+# DECISION-METRIC: work-queue-priority (which items leave the open queue and why; each disposition is a row in ops/dispose.jsonl, scored by whether the open count and the oldest open age fall)
 def decide(it: dict, age_days: float | None, fails: int, c: dict, last_detail: str = "") -> tuple[str, str, str] | None:
     """(disposition, rule, evidence) for one open item, or None while it stays open. Pure."""
     if re.search(c["owner_bound"], it["owner"] + " " + " ".join(it["labels"]), re.I):

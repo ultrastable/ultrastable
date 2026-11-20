@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """DISPOSE-1: every open item gets a recorded disposition inside the limit (gate, shelved), a disposed item is never reopened by its failing probe,
 a later pass turns it into fixed, and shelved items come back to the executor only when its open queue is empty.
 PATCH-EDIT-1: a reply may change part of a file with find-and-replace edits, applied only to an exact or unambiguous place."""

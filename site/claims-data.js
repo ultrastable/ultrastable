@@ -1966,6 +1966,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Nothing sits in the queue; every item gets a coded disposition (DISPOSE-1, Rowan 2026-11-20).** \"I don't want stuff sitting in the",
+   "detail": "",
+   "how": "file:doctrine/dispose.json + file:foundation/queue.py + file:foundation/agents.py + file:foundation/dispose.py + file:tests/foundation/test_dispose.py",
+   "id": "cited-8816153851",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
@@ -2528,6 +2537,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/runway.json + file:foundation/credwatch.py + file:ops/cost.jsonl + file:ops/runway.json + file:foundation/redmain.py + file:doctrine/blindspots.json",
    "id": "mirror-708c563ce5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Nothing sits in the queue; every item gets a coded disposition (DISPOSE-1, Rowan 2026-11-20).** \"I don't want stuff sitting in the",
+   "detail": "",
+   "how": "file:doctrine/dispose.json + file:foundation/queue.py + file:foundation/agents.py + file:foundation/dispose.py + file:tests/foundation/test_dispose.py",
+   "id": "mirror-b80b41fca5",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3278,7 +3296,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 361,
-  "total": 361
+  "pass": 363,
+  "total": 363
  }
 };
