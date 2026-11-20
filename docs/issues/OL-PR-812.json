@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-812",
+  "title": "OL-PR-812: land or supersede pull request #812 (needs-pat)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #812 is needs-pat\n**Done check:** cmd:python3 -m foundation loopowner --closed 812\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #812 (`claude/cf-posture-uploads-a9c57f` at 6d94a6e855, opened by rwnq8): CF-POSTURE-2, COST-PROBE-FIELD-1: every upload path keeps logs on; daily cost guard runs again. The session that opened it is not its closer and is never asked to act. The pull request changes .github/workflows/** and no workflow-capable credential is bound (foundation/data/needs-you.json, lane-credential). Land every file outside .github/workflows/ in a separate pull request now, so only the workflow change is left behind the credential. Files (11): .github/workflows/cost-guard.yml, deploy/cost-probe.mjs, doctrine/cf-posture.json, doctrine/writeback/lesson-2026-11-20-cf-posture-2-the-deploy-gateway-and-four-more-upload-paths-a.json, foundation/cfposture.py, scripts/cf_account.py, test/cost-probe.test.mjs, workers/adapters/cloudflare/deployer.js, workers/adapters/cloudflare/install-adapter.js, workers/apps/launcher/src/provision.js, workers/core/deploygate/index.js. Closing probe: pull request #812 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
