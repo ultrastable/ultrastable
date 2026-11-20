@@ -30,6 +30,18 @@ export const NARRATION_RE = /\.(?:md|txt)$|^backlog\/subtasks\/|^specs\//;
 export function substanceGuard(files, isNew) {
   if (files.every(f => isNew(f.path) && NARRATION_RE.test(String(f.path)))) throw new Error('narration: the change only adds documents or subtask records (' + files.map(f => f.path).join(', ').slice(0, 120) + ')');
 }
+// NATIVE-STUB-1: a small model answers a roadmap item with a new file of empty methods in a directory nothing loads (#720, #723 and #726 each added
+// a root connector_health.py whose methods were `pass`, #721 src/agents/a2a_v1.py, #722 src/agent_scoreboard.py; all failed checks and held the agent
+// PR cap, so the executor idled). A new file must sit under a directory the repository already runs code from, and no file may carry placeholder bodies.
+export const CODE_ROOTS = ['seed/', 'site/', 'dashboard/', 'foundation/', 'scripts/', 'tests/', 'test/', 'workers/', 'products/', 'doctrine/', 'docs/', 'ops/', 'instances/', 'outreach/', 'deploy/', 'agents/', 'backlog/', 'specs/', 'tools/'];
+export const STUB_RE = /(?:implement|add|your)\b[^\n]{0,60}\b(?:logic|code|here)\b|^\s*pass\s*(?:#.*)?$|NotImplementedError|\bTODO\b|not implemented|\/\/\s*\.\.\.\s*$|#\s*\.\.\.\s*$/im;
+export function stubGuard(files, isNew) {
+  for (const f of files) {
+    const p = String(f.path);
+    if (isNew(p) && !CODE_ROOTS.some(r => p.startsWith(r))) throw new Error('stub: new file outside the directories the repository runs (' + p + ')');
+    if (isNew(p) && /\.(m?js|py)$/.test(p) && STUB_RE.test(f.content)) throw new Error('stub: ' + p + ' carries placeholder bodies, not an implementation');
+  }
+}
 const exportsOf = t => new Set([...t.matchAll(/export\s+(?:async\s+)?(?:function\*?|const|let|class)\s+([A-Za-z_$][\w$]*)/g)].map(m => m[1]));
 export function shrinkGuard(path, before, after) {
   if (before == null) return;
@@ -77,6 +89,8 @@ export const DB_CANDIDATES = 6;
 const PATH_RE = /\b(?:[\w.-]+\/)+[\w.-]+\.(?:m?js|py|json|sql|toml|md)\b/g;
 export const pathsIn = text => [...new Set(String(text || '').match(PATH_RE) || [])].slice(0, 4);
 export const deployFor = paths => [...new Set(paths.map(p => p.startsWith('seed/worker/') ? 'ultrastable-tick' : p.startsWith('site/') ? 'ultrastable-site' : p.startsWith('dashboard/') ? 'ultrastable-dashboard' : null).filter(Boolean))].join(', ');
+
+export const slugOf = id => String(id).toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 60);
 
 export async function reopenClosedUnmerged(db, tenant = '') {
   if (!db) return 0;
@@ -128,7 +142,11 @@ export async function runDbQueue(env, { fetchImpl = fetch, agent = runCodeAgent,
     ORDER BY priority DESC, updated_at ASC LIMIT ?`).bind(own, DB_CANDIDATES).all()).results || [];
   if (!rows.length) return { idle: true, ok: true, note: reopened ? `${reopened} reopened` : '' };
   const gh = github(env, fetchImpl);
-  const it = rows[0];
+  // NATIVE-ONE-PR-1: an item whose worker PR is still open is not worked again (CONNECTOR-HEALTH got #720, #723 and #726 in 12 hours).
+  const open = await gh.call('GET', `/repos/${gh.repo}/pulls?state=open&per_page=100`);
+  const heads = open.ok && Array.isArray(open.json) ? open.json.map(p => String(p.head && p.head.ref)) : [];
+  const it = rows.find(r => !heads.some(h => h.startsWith(`worker/${slugOf(r.id)}-`)));
+  if (!it) return { idle: true, ok: true, note: 'every needs-code candidate has an open worker PR' };
   const text = `${it.title}\n${it.done_check || ''}\n${it.closing_probe || ''}\n${it.blocker || ''}`;
   let cur = null;
   for (const p of pathsIn(text)) { cur = await gh.file(p); if (cur) break; }
@@ -138,14 +156,14 @@ export async function runDbQueue(env, { fetchImpl = fetch, agent = runCodeAgent,
     change = await agent(env, buildPrompt({ id: it.id, title: it.title, body }, cur)); guard(change.files);
     const fresh = new Set();
     for (const f of change.files) { const old = await gh.file(f.path); if (!old) fresh.add(f.path); shrinkGuard(f.path, old && old.content, f.content); }
-    substanceGuard(change.files, p => fresh.has(p));
+    substanceGuard(change.files, p => fresh.has(p)); stubGuard(change.files, p => fresh.has(p));
   } catch (e) {
     const why = String(e && e.message).slice(0, 200);
     await db.prepare(`UPDATE items SET blocker = ?, updated_at = datetime('now') WHERE id = ?`).bind(`needs-code: worker-native attempt failed (${why}); retried after the other candidates`, it.id).run();
     return { ok: false, detail: `${it.id}: ${why}` };
   }
   const stamp = new Date(now).toISOString().replace(/[-:T]/g, '').slice(0, 12);
-  const branch = `worker/${String(it.id).toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 60)}-${stamp}`;
+  const branch = `worker/${slugOf(it.id)}-${stamp}`;
   const deploy = deployFor(change.files.map(f => f.path));
   const handoff = `\n## Handoff\nitem: ${it.id}\nagent: worker-native (${change.adapter})\n${deploy ? `deploy: ${deploy}\n` : ''}`;
   const pr = await openPr(gh, { id: it.id, branch, change, title: it.title, extraBody: handoff });
@@ -180,7 +198,7 @@ async function runRepoQueue(env, { fetchImpl = fetch, agent = runCodeAgent } = {
       change = await agent(env, buildPrompt({ id: row.id, title: item.title, body: item.body }, cur)); guard(change.files);
       const fresh = new Set();
       for (const f of change.files) { const old = await file(f.path); if (!old) fresh.add(f.path); shrinkGuard(f.path, old && old.content, f.content); }
-      substanceGuard(change.files, p => fresh.has(p));
+      substanceGuard(change.files, p => fresh.has(p)); stubGuard(change.files, p => fresh.has(p));
     }
     catch (e) { return { ok: false, detail: `${row.id}: ${String(e && e.message).slice(0, 200)}` }; }
     const main = await call('GET', `/repos/${repo}/git/ref/heads/main`);
