@@ -96,7 +96,7 @@ async function statusRaw(env, now = Date.now()) {
 // the model shown is what the dispatch rows record as having run in the last 24 h. The code executor (worker-native) is listed as an
 // agent too: it is the only one that changes code, and its work is the items marked in-pr (CODE-QUEUE-1).
 const TICK_S = 600, LINED_UP = 3;
-export const CODE_AGENT = { id: "code-executor", role: "code-executor", ticks_every: 1, fallback_model: "Workers AI: @cf/zai-org/glm-5.3-flash, then @cf/meta/llama-3.3-70b-instruct-fp8-fast, then @cf/qwen/qwen2.5-coder-32b-instruct" };
+export const CODE_AGENT = { id: "code-executor", role: "code-executor", ticks_every: 1, fallback_model: "Workers AI: @cf/zai-org/glm-4.7-flash, then @cf/meta/llama-3.3-70b-instruct-fp8-fast, then @cf/qwen/qwen2.5-coder-32b-instruct" };
 const isoAfter = (s, sec) => { const t = ts(s); return t == null ? null : new Date(t + sec * 1000).toISOString().replace("T", " ").slice(0, 19); };
 const prOf = b => { const m = /^in-pr:\s*(\S+)(?:.*?model:\s*(\S+))?/.exec(b || ""); return m ? { url: m[1], model: m[2] || null } : null; };
 
