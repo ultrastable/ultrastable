@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-ultrastable-smoke-live",
+  "title": "Q-CIFAIL-ultrastable-smoke-live: smoke-live is failing in ultrastable/ultrastable",
+  "body": "**Owner:** staff\n**Trigger:** every executor run and every ciwatch run\n**Done check:** cmd:python3 -m foundation ciwatch --probe ultrastable/ultrastable smoke-live\n**Status:** open\n\nCIWATCH-1: workflow `smoke-live` in ultrastable/ultrastable is red on its default branch (failure, 2026-11-20T17:45:00Z): https://github.com/ultrastable/ultrastable/actions/runs/44786250464\n\nFix the root cause in the repository where the defect lives; do not skip or weaken the check. Failed log tail:\n\n```\nsmoke\tFail the run when a claim failed\t\ufeff2026-11-20T17:46:57.6728692Z ##[group]Run exit 1\nsmoke\tFail the run when a claim failed\t2026-11-20T17:46:57.6728968Z ^[[36;1mexit 1^[[0m\nsmoke\tFail the run when a claim failed\t2026-11-20T17:46:57.6756561Z shell: /usr/bin/bash -e {0}\nsmoke\tFail the run when a claim failed\t2026-11-20T17:46:57.6756856Z ##[endgroup]\nsmoke\tFail the run when a claim failed\t2026-11-20T17:46:57.6807254Z ##[error]Process completed with exit code 1.\n```",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
