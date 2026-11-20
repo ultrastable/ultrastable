@@ -55,6 +55,17 @@ test('deploy evidence from ops/deploys.jsonl becomes verified deploy outcomes on
   await runTick(db, { config, now: NOW });
   const c = JSON.parse(db.raw.prepare(`SELECT value FROM org WHERE key='criticality'`).get().value);
   assert.equal(c.raw_deploys, 1); assert.ok(c.fail_rate > 0);
+  assert.equal(c.self_deploys, 0, 'a deploy row with no origin is not the system shipping on itself');
+});
+
+test('SELF-REFERENCE-1: only a deploy the system originated counts toward k_self', async () => {
+  const db = makeDb();
+  const row = (worker, origin) => JSON.stringify({ at: '2026-11-13T18:33:33Z', worker, uploaded: true, live_matches_commit: true, sha: 'b'.repeat(40), origin });
+  const body = [row('ultrastable-tick', 'executor'), row('ultrastable-site', 'outside'), row('ultrastable-dashboard', 'self-agent')].join('\n');
+  assert.equal((await ingestDeploys(db, { token: 't', repo: 'o/ultrastable', fetch: async () => ({ ok: true, status: 200, text: async () => body }) })).ingested, 3);
+  await runTick(db, { config, now: Date.parse('2026-11-13T21:00:00Z') });
+  const c = JSON.parse(db.raw.prepare(`SELECT value FROM org WHERE key='criticality'`).get().value);
+  assert.equal(c.raw_deploys, 3); assert.equal(c.self_deploys, 2); assert.ok(c.k_self <= c.k_eff);
 });
 
 test('the tick runs the selfaudit step and files FM items for red probes', async () => {

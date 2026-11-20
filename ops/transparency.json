@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-20T14:51:22Z",
- "commit": "608d055",
+ "generated": "2026-11-20T14:58:07Z",
+ "commit": "97d4512",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 101,
@@ -18,8 +18,8 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 246,
-  "backlog_items": 560
+  "backlog_open": 234,
+  "backlog_items": 561
  },
  "unknowns": {
   "units": 117,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 560,
+   "items": 561,
    "by_status": {
-    "closed": 306,
-    "open": 246,
+    "closed": 319,
+    "open": 234,
     "done": 8
    },
-   "takeable_now": 228
+   "takeable_now": 216
   },
   "merged": {
    "total": 0,
@@ -101,22 +101,22 @@
    },
    "latest": {
     "conclusion": "success",
-    "createdAt": "2026-11-20T14:46:30Z",
+    "createdAt": "2026-11-20T14:54:27Z",
     "event": "push",
-    "headSha": "789d1254e072c453a461fb3740e006c6b4329814"
+    "headSha": "191806774d8a7bed5003011886e5e3519646c353"
    },
    "per_day_success": {
-    "2026-11-18": 35,
+    "2026-11-18": 34,
     "2026-11-19": 1,
-    "2026-11-20": 1
+    "2026-11-20": 2
    }
   },
   "executor": {
    "runs": 30,
    "by_conclusion": {
+    "failure": 10,
     "cancelled": 1,
-    "success": 18,
-    "failure": 11
+    "success": 19
    },
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
@@ -164,7 +164,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 223.7,
+   "age_s": 131.1,
    "status": "fresh",
    "missed": 0
   },
@@ -188,16 +188,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 230.7,
+   "age_s": 163.1,
    "status": "fresh",
    "missed": 0,
-   "lag_s": 1523.0
+   "lag_s": 66.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 2553.7,
+   "age_s": 2961.1,
    "status": "fresh",
    "missed": 0
   }
@@ -276,7 +276,7 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-20T14:50:51Z",
+  "generated": "2026-11-20T14:57:37Z",
   "targets": [
    {
     "id": "pageviews_7d",
@@ -300,7 +300,7 @@
     "id": "agent_hits_7d",
     "baseline": 817,
     "target": 1000,
-    "expected_today": 873.3,
+    "expected_today": 873.4,
     "value": null,
     "behind": null,
     "progress": null
@@ -406,16 +406,16 @@
  },
  "growth": {
   "mix": {
-   "growth": 0,
-   "fix": 1,
-   "maintenance": 19,
+   "growth": 2,
+   "fix": 0,
+   "maintenance": 18,
    "total": 20,
-   "growth_share": 0.0,
+   "growth_share": 0.1,
    "target": 0.4
   },
   "target_growth_share": 0.4,
   "growth_items_takeable": 26,
-  "items_takeable": 228,
+  "items_takeable": 216,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -460,7 +460,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 262.9,
+   "last_beat_age_s": 168.6,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -471,7 +471,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 2592.9,
+   "last_beat_age_s": 2998.6,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -482,9 +482,9 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 281.9,
+   "last_beat_age_s": 210.6,
    "expected_interval_s": 86400,
-   "beats_24h": 8,
+   "beats_24h": 9,
    "expected_24h": 1.0,
    "median_jitter_s": null,
    "status": "ticking"
@@ -493,7 +493,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 254153.9,
+   "last_beat_age_s": 254559.6,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -504,7 +504,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 133810.9,
+   "last_beat_age_s": 134216.6,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -522,7 +522,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 82070.9,
+   "last_beat_age_s": 82476.6,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -533,7 +533,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 238.9,
+   "last_beat_age_s": 148.6,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2476,6 +2476,24 @@
  "changes": {
   "commits": [
    {
+    "sha": "97d4512",
+    "at": "2026-11-20T14:53:31+00:00",
+    "author": "Claude",
+    "subject": "Changelog feed: /changelog.xml and /changelog.json from the live snapshot (CHANGELOG-FEED-1)",
+    "pr": null,
+    "item": "CHANGELOG-FEED-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/97d451202b238523a3c7bf9a872991f6eeacaa2b"
+   },
+   {
+    "sha": "74ee1be",
+    "at": "2026-11-20T14:51:31+00:00",
+    "author": "Claude",
+    "subject": "Agent interop roadmap: MCP 2026-07-28, A2A v1 names, signed agent card, connector health, agent scoreboard",
+    "pr": null,
+    "item": null,
+    "url": "https://github.com/ultrastable/ultrastable/commit/74ee1be02c6db8fe75a3da49eda7c11926c8eb83"
+   },
+   {
     "sha": "608d055",
     "at": "2026-11-20T14:21:31+00:00",
     "author": "ultrastable-2833a0[bot]",
@@ -2816,24 +2834,6 @@
     "pr": null,
     "item": "Q-ISSUE",
     "url": "https://github.com/ultrastable/ultrastable/commit/3c07f94805aea848aea56d71b971ccd8e47ef13e"
-   },
-   {
-    "sha": "79398f6",
-    "at": "2026-11-19T16:03:22+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "queue: closing-probe verdicts for 8 item(s) (QUEUE-PERSIST-1) [skip ci]",
-    "pr": null,
-    "item": "QUEUE-PERSIST-1",
-    "url": "https://github.com/ultrastable/ultrastable/commit/79398f6502cd1a245dc1bb3241647691c89f5cd5"
-   },
-   {
-    "sha": "5eba6b9",
-    "at": "2026-11-19T15:55:43+00:00",
-    "author": "ultrastable-2833a0[bot]",
-    "subject": "tenant-sync: ledger [skip ci]",
-    "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/5eba6b9739f590b21e027f0b8984cfcfed664989"
    }
   ],
   "pull_requests": []
