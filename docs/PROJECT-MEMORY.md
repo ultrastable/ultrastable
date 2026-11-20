@@ -9,6 +9,15 @@
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
 Last updated: 2026-11-20
+
+- 2026-11-20: smoke-live: runway check reads the keys the runway record has (#808)
+- 2026-11-20: backup drill record (BLINDSPOT-1) [skip ci]
+- 2026-11-20: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 3/3) [skip ci]
+- 2026-11-20: smoke-live: repair items from the production smoke test [skip ci]
+- 2026-11-20: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 2/3) [skip ci]
+- 2026-11-20: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 1/3) [skip ci]
+- 2026-11-20: APP-DRIFT-1: main rule exempts the app in use; cap data pull requests (#799)
+- 2026-11-20: BACKUP-SINK-1: store backup dumps in the private ops repository when R2 is unreachable (#795)
 - 2026-11-20: CONNECT-ONCE-1 (Rowan: stop asking for the same sign-ins): measured causes, in code. Bluesky: refresh sent no DPoP proof (DPOP-REFRESH-1) and the client was public, whose session the atproto spec limits to 2 weeks (CONFIDENTIAL-CLIENT-1: private_key_jwt, 180 day rotating refresh tokens, key sealed in `oauth:bluesky-client`, jwks at `/.well-known/oauth-client/bluesky-jwks.json`). Mastodon: a token with no expiry was marked failed every tick (NO-EXPIRY-1). GitHub: the connect link registered a new App on every visit (3 in 4 days); a working connection now answers connected. A second start continues the first, and a refused callback leaves a record. Posting stays dry-run until the next sign-in.
 - 2026-11-20: UNATTENDED-365 reconciled with the sibling threads' work on main: PROGRESS-1 (`/progress`, `site/progress.js`) is the visible progress surface and RUNWAY-1 (`foundation/runway.py`) projects the unattended runway; this thread's register (`doctrine/unattended.json`) keeps the external inputs and the pillars. The pillar `hands-off` is now `untouched`.
 - 2026-11-20: UNATTENDED-365 principle (Rowan): code agent sessions are only a convenience for injecting thoughts and never count; the system runs server-side in deployed main code. Rule in `agents/AGENTS.md`, the seed copy and `agents/PROJECT-INSTRUCTIONS.md`; register row `outside-sessions` is open until `self_deploys` > 0. Target pillars cost, repair, improve, hands-off are read from `ops/criticality.jsonl` and `ops/resilience.jsonl`. Cloudflare account audit added rows payment-method (gate), cloudflare-alerts, second-clock, offsite-backup (open); the four domains measured auto-renewing.
