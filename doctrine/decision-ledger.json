@@ -2846,6 +2846,15 @@
    "title": "QUEUE-PORT-1 and BRANCH-SWEEP-4: PORT-BRANCH items were invisible to the queue",
    "body": "foundation/queue.py read only OL-*.json and Q-*.json, so the 76 PORT-BRANCH items the branch sweep filed were never offered to the executor, never probed and never closed. The queue now reads PORT-BRANCH-*.json. The closing probe (branchsweep --carried) now measures how many of the code lines a branch added are on main (doctrine/branchsweep.json carried: min_share 0.95, max_missing_lines 10), reports the files main lacks otherwise, and answers unmeasured in a shallow checkout; fleet.yml checks out full history so the server can run it. 2026-11-19: 38 items closed with probe evidence (14 branch gone, 24 carried), 38 stay open with the missing files named.",
    "probe": "grep:foundation/queue.py::PORT-BRANCH-\\*\\.json"
+  },
+  {
+   "id": "lesson-2026-11-20-ultrastable-net-nameserver-switch-still-refused-on-2026-11-2",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "ultrastable.net nameserver switch still refused on 2026-11-20",
+   "body": "Approved switch retried 2026-11-20 09:00Z: 403 Name server update not allowed, locked=true. Lock end date unconfirmed. Session: session_0156nqDs7C8hyFKdqCVXT477",
+   "probe": "file:doctrine/open-loops.json",
+   "session": "session_0156nqDs7C8hyFKdqCVXT477"
   }
  ]
 }
