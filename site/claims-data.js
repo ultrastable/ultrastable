@@ -1957,6 +1957,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
+   "detail": "",
+   "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py + file:site/live.js + file:site/progress.test.mjs",
+   "id": "cited-cd0900561e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "Engine: `demos/public/engine.js`, deterministic, shared by browser and tests. Tests: `node --test demos/test/*.test.mjs` (16 tests:",
    "detail": "",
    "how": "file:demos/public/engine.js + file:demos/publish.json",
@@ -2497,6 +2506,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
+   "detail": "",
+   "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py + file:site/live.js + file:site/progress.test.mjs",
+   "id": "mirror-5fbac9d618",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
    "detail": "",
    "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
@@ -2983,7 +3001,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 381 Worker tests",
+   "claim": "seed-tests: 45 Python and 383 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -2992,7 +3010,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 381 Worker tests",
+   "claim": "seed-worker-tests: 383 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3224,7 +3242,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 355,
-  "total": 355
+  "pass": 357,
+  "total": 357
  }
 };

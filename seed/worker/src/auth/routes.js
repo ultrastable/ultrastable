@@ -23,19 +23,26 @@ export async function checkState(env, state, now = Date.now()) {
   return tenant;
 }
 
+// APP-REUSE-1 (owner, 2026-11-20: "I'm sick of creating new GitHub apps ... keep track of what you've already done"): a connect link never registers a second app.
+// Before 2026-11-20 every visit to /connect/github or /connect/github-admin posted a fresh manifest, so six apps were registered for two roles. Now the stored
+// app is the registry: connected -> a done screen and nothing else; registered but not installed -> the stored app's own install page; a new app only when no
+// app is stored or the stored one can no longer mint (status failed).
+export async function reuseApp(env, tenant, provider, title, now) {
+  const row = await store.get(env.DB, tenant, provider);
+  if (!row) return null;
+  const meta = JSON.parse(row.meta || '{}');
+  if (!meta.app_id || !meta.slug || row.status === 'failed') return null;
+  if (meta.installation_id) {  // installed: the admin app rests at 'pending' between uses, which is still connected
+    await store.event(env.DB, tenant, provider, 'reused', 'already connected as ' + meta.slug + '; no new app');
+    return doneScreen(title, 'Already connected. Nothing more is needed.');
+  }
+  await store.event(env.DB, tenant, provider, 'reused', 'install page of ' + meta.slug + '; no new app');
+  return Response.redirect(`https://github.com/apps/${meta.slug}/installations/new?state=${encodeURIComponent(await makeState(env, tenant, now))}`, 302);
+}
+
 // GitHub App names are global, so every visit gets its own prefilled name (never a form field for the person): <name>-<6 random hex>, capped at GitHub's 34 characters.
 export const uniqueName = (name, rnd = () => crypto.randomUUID().replace(/-/g, '').slice(0, 6)) => `${String(name || 'ultrastable').slice(0, 27)}-${rnd()}`;
 
-// CONNECT-ONCE-1 (2026-11-20): the connect link registered a new GitHub App on every visit. Three working apps were replaced that way in four days, and each
-// replacement dropped the installation the loops were using. A link that is opened while the stored app still mints a token now answers "already connected";
-// only a missing or refused app reaches the registration screen.
-async function working(env, tenant, provider, f, now) {
-  try {
-    const m = await store.material(env.DB, env, tenant, provider);
-    if (!m || !m.secret || !m.meta || !m.meta.installation_id) return false;
-    return Boolean((await getToken(env.DB, env, tenant, provider, { fetch: f, now })).ok);
-  } catch (e) { console.error('connect-once', provider, e && e.message); return false; }
-}
 export function manifest(origin, name, kind = 'github-app') {
   const admin = kind === 'github-admin', seg = admin ? 'github-admin' : 'github';  // REPOS-1: the admin app has its own callbacks, no webhook and no events
   return {
@@ -57,7 +64,8 @@ async function route(request, env, opts = {}) {
     return Response.redirect(a.settings_url || new URL('/connect/github', url).toString(), 302);
   }
   if (url.pathname === '/connect/github') {
-    if (await working(env, tenant, 'github-app', f, now)) return doneScreen('GitHub is connected', 'Nothing to do. The connection is working and the system keeps it renewed.');
+    const reused = await reuseApp(env, tenant, 'github-app', 'GitHub is connected', now);
+    if (reused) return reused;
     const state = await makeState(env, tenant, now);
     return consentScreen({
       provider: 'GitHub', title: 'Connect GitHub', button: 'Authorize on GitHub',
@@ -67,7 +75,8 @@ async function route(request, env, opts = {}) {
     });
   }
   if (url.pathname === '/connect/github-admin') {  // REPOS-1 + CONNECT-LINK-1: one click registers a second, administration-only app so retired repositories can be archived server-side
-    if (await working(env, tenant, 'github-admin', f, now)) return doneScreen('Repository settings are allowed', 'Nothing to do. The connection is working and the system keeps it renewed.');
+    const reusedAdmin = await reuseApp(env, tenant, 'github-admin', 'Repository settings are allowed', now);
+    if (reusedAdmin) return reusedAdmin;
     const state = await makeState(env, tenant, now), org = opts.repos && opts.repos[0] ? opts.repos[0].split('/')[0] : '';
     return consentScreen({
       provider: 'GitHub', title: 'Allow repository archiving', button: 'Authorize on GitHub',

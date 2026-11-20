@@ -1,0 +1,51 @@
+{
+ "_doc": "APP-REUSE-1 (owner, 2026-11-20): every GitHub App registered through the connect links, read from the tick Worker's credential_events ledger (D1 ultrastable-org, account 81e3). App ids and slugs are not secrets. Exactly one app per role is active; the rest are superseded and hold no stored key. The live registry is the credentials table; seed/worker/src/auth/routes.js reuseApp reads it before any connect link registers an app. Consumers: tests/foundation/test_connections.py, seed/worker/test/auth.test.js.",
+ "read_at": "2026-11-20T15:35:00Z",
+ "apps": [
+  {
+   "role": "github-app",
+   "slug": "ultrastable-fe2093",
+   "registered": "2026-11-17T13:10:38Z",
+   "installation_id": 182937962,
+   "state": "superseded"
+  },
+  {
+   "role": "github-app",
+   "slug": "ultrastable-2833a0",
+   "registered": "2026-11-17T20:02:51Z",
+   "installation_id": 183067926,
+   "state": "superseded"
+  },
+  {
+   "role": "github-app",
+   "slug": "ultrastable-209646",
+   "app_id": 5850281,
+   "registered": "2026-11-20T15:22:18Z",
+   "installation_id": 184068862,
+   "state": "active"
+  },
+  {
+   "role": "github-admin",
+   "slug": "ultrastable-admin-e76848",
+   "registered": "2026-11-17T18:22:29Z",
+   "installation_id": 183038473,
+   "state": "superseded"
+  },
+  {
+   "role": "github-admin",
+   "slug": "ultrastable-admin-8a630d",
+   "registered": "2026-11-17T20:08:19Z",
+   "installation_id": 183069430,
+   "state": "superseded"
+  },
+  {
+   "role": "github-admin",
+   "slug": "ultrastable-admin-02087e",
+   "app_id": 5850292,
+   "registered": "2026-11-20T15:23:16Z",
+   "installation_id": 184069134,
+   "state": "active"
+  }
+ ],
+ "superseded_default": "the four superseded apps stay installed and unused: their keys were overwritten in the credentials table, so nothing can act as them. Deleting an app is an owner-account settings action with no API for an app that has lost its key."
+}

@@ -267,16 +267,18 @@ test('a refused refresh is not retried every tick, and shows up as a live owner 
   assert.ok(!JSON.stringify(acts).includes('"r"'));
 });
 
-test('CONNECT-ONCE-1: a working GitHub connection answers "connected" and registers no new app; a broken one reaches the consent screen', async () => {
-  const { handleAuth } = await import('../src/auth/routes.js');
-  const { newKey } = await import('../src/auth/seal.js');
-  const { makeDb } = await import('./d1shim.js');
-  const st = await import('../src/auth/store.js');
-  const env = { DB: makeDb(), CREDENTIAL_KEY: newKey() }, now = Date.parse('2026-11-20T12:00:00Z');
-  await st.put(env.DB, env, 't', 'github-app', { secret: { pem: 'unused' }, meta: { app_id: 1, installation_id: 2 }, access: 'tok', expiresAt: now + 3000e3, status: 'ok' });
-  const go = () => handleAuth(new Request('https://seed.example.com/connect/github'), env, { tenant: 't', now, fetch: async () => { throw new Error('no call'); } });
-  const page = await (await go()).text();
-  assert.match(page, /GitHub is connected/); assert.doesNotMatch(page, /settings\/apps\/new/);
-  await st.put(env.DB, env, 't', 'github-app', { meta: { installation_id: null }, access: null, status: 'failed' });
-  assert.match(await (await go()).text(), /settings\/apps\/new/);
+test('APP-REUSE-1: a connect link never registers a second GitHub app', async () => {
+  const db = makeDb(), e = { ...env(), DB: db };
+  for (const [path, provider] of [['/connect/github', 'github-app'], ['/connect/github-admin', 'github-admin']]) {
+    const first = await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text();
+    assert.match(first, /settings\/apps\/new/, 'no stored app: the manifest form is offered once');
+    await store.put(db, e, 't', provider, { secret: { pem: 'k' }, meta: { app_id: 7, slug: 'org-abc123' }, status: 'pending' });
+    const half = await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' });
+    assert.equal(half.status, 302); assert.match(half.headers.get('location'), /^https:\/\/github\.com\/apps\/org-abc123\/installations\/new\?state=/, 'registered, not installed: the stored app is installed');
+    await store.put(db, e, 't', provider, { meta: { installation_id: 9 }, status: 'ok' });
+    const done = await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text();
+    assert.match(done, /Already connected/); assert.ok(!/settings\/apps\/new/.test(done), 'connected: no manifest form');
+    await store.put(db, e, 't', provider, { status: 'failed', error: 'mint HTTP 404' });
+    assert.match(await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text(), /settings\/apps\/new/, 'a stored app that can no longer mint is replaced');
+  }
 });

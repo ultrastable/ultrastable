@@ -15,7 +15,7 @@ The key combination in this specification has **not** been publicly disclosed. T
 
 ## 2. Inventorship
 
-- Only natural persons can be inventors (Thaler v. Vidal, Fed. Cir. 2022; USPTO inventorship guidance for AI-assisted inventions, Feb. 2024). Rowan should be listed as inventor for the concepts Rowan conceived (the virtual staff hierarchy, plussing as a fleet philosophy, autonomy that never routes ordinary decisions to the owner, and the directives recorded verbatim in the migrations).
+- Only natural persons can be inventors (Thaler v. Vidal, Fed. Cir. 2022; USPTO inventorship guidance for AI-assisted inventions, Feb. 2024). The inventor of record is Rowan for the concepts Rowan conceived (the virtual staff hierarchy, plussing as a fleet philosophy, autonomy that never routes ordinary decisions to the owner, and the directives recorded verbatim in the migrations).
 - AI assistance in drafting and implementing does not prevent patenting, but each claim needs a significant human contribution. The attorney may ask for a short note on what Rowan conceived versus what agents implemented. The owner directives quoted in the migrations (dated, verbatim) are good evidence.
 - If anyone else contributed to conception, they may need to be named.
 

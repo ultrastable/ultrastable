@@ -116,6 +116,9 @@ def measure(root, cfg: dict, row: dict, due: bool):
         return float(rows[-1][m["field"]]) if rows else None
     if k == "item_closed":
         return _closed_item(root, row["ref"])
+    if k == "outreach_segment_reward":
+        from . import outreach
+        return outreach.segment_reward(root, row["ref"].split("@")[0])
     if k == "improvement_kept":
         for r in _lines(root / "ops/improvements.jsonl"):
             if r.get("ev") == "verdict" and r.get("loop") == row["ref"] and r.get("at", "") >= row["at"]:

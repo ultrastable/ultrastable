@@ -326,3 +326,75 @@ class TargetedChecks(unittest.TestCase):
         self.assertNotIn(executor.CHECKS[1], cs)
         with mock.patch.dict(os.environ, {"EXECUTOR_CHECKS": "full"}):
             self.assertEqual(executor.checks_for(["foundation/clock.py"]), executor.CHECKS)
+
+
+class PrRepair(unittest.TestCase):
+    """PR-REPAIR-1 (OL-20261113-2): an OL-PR-<n> item is repaired on the pull request's own branch; only after two failed repairs is the change redone from main and the pull request superseded."""
+
+    def _world(self):
+        import subprocess
+        from _repo import git
+        origin, d = scratch(), scratch()
+        subprocess.run(["git", "init", "-q", "--bare", "-b", "main", str(origin)], check=True, capture_output=True)
+        git(d, "init", "-q", "-b", "main"); git(d, "remote", "add", "origin", str(origin))
+        (d / "docs/issues").mkdir(parents=True)
+        body = "\n".join(["**Owner:** operations", "**Trigger:** lane pass", "**Done check:** cmd:python3 -m foundation loopowner --closed 9", "**Status:** open", "", "land or supersede pull request #9"])
+        (d / "docs/issues/OL-PR-9.json").write_text(json.dumps({"id": "OL-PR-9", "title": "OL-PR-9: land or supersede pull request #9 (ci-failed)", "body": body, "labels": ["p1"]}))
+        (d / "a.txt").write_text("a\n"); git(d, "add", "-A"); git(d, "commit", "-qm", "base"); git(d, "push", "-q", "origin", "main")
+        git(d, "checkout", "-q", "-b", "agent/feature"); (d / "b.txt").write_text("broken\n"); git(d, "add", "-A"); git(d, "commit", "-qm", "feature"); git(d, "push", "-q", "origin", "agent/feature")
+        git(d, "checkout", "-q", "main"); (d / "c.txt").write_text("newer main\n"); git(d, "add", "-A"); git(d, "commit", "-qm", "main moves"); git(d, "push", "-q", "origin", "main")
+        return origin, d
+
+    def _run(self, d, model):
+        from unittest import mock
+        real, gh = executor.sh, []
+        def sh(argv, root=executor.REPO, timeout=600):
+            if argv[0] == "gh":
+                gh.append(argv[1:4])
+                return 0, "https://github.com/o/r/pull/77" if argv[1:3] == ["pr", "create"] else "tests/foundation/test_b.py FAILING test_b: AssertionError: broken"
+            if argv[0] == "python3":
+                return 0, ""  # write-back and the generated-file resolver are not under test here
+            return real(argv, root, timeout)
+        def gh_json(args, root=None):
+            return {"state": "OPEN", "headRefName": "agent/feature", "isCrossRepository": False, "title": "feature", "files": [{"path": "b.txt"}]} if args[:2] == ["pr", "view"] else [{"databaseId": 5, "name": "checks"}]
+        with mock.patch.object(executor, "sh", sh), mock.patch.object(executor, "gh_json", gh_json), mock.patch.dict(os.environ, {"EXECUTOR_SOURCE": "queue"}):
+            return executor.run("o/r", apply=True, issue_no="OL-PR-9", root=d, model_call=model, checks=[]), gh
+
+    def test_the_pull_request_branch_is_repaired_in_place_with_the_failed_log_in_the_prompt(self):
+        from _repo import git
+        origin, d = self._world()
+        prompts = []
+        def model(prompt):
+            prompts.append(prompt); return {"summary": "fix b", "files": [{"path": "b.txt", "content": "fixed\n"}]}
+        row, gh = self._run(d, model)
+        self.assertEqual((row["result"], row["mode"], row["repairs_pr"]), ("pr-repaired", "pr-repair", 9), row)
+        self.assertIn("REPAIRING PULL REQUEST #9", prompts[0]); self.assertIn("FAILING test_b", prompts[0]); self.assertIn("b.txt", prompts[0])
+        self.assertEqual(git(origin, "show", "agent/feature:b.txt"), "fixed\n", "the fix is pushed to the pull request's own branch")
+        self.assertEqual(git(origin, "show", "agent/feature:c.txt"), "newer main\n", "main was merged into the branch")
+        self.assertIn("feature", git(origin, "log", "--format=%s", "agent/feature"), "the pull request's own commits are kept, not replaced")
+        self.assertNotIn(["pr", "create", "-R"], gh, "no second pull request is opened")
+        self.assertIn(["workflow", "run", "checks.yml"], gh, "checks are started on the repaired branch so the lane can merge it")
+        self.assertIn("**Status:** closed", json.loads(git(origin, "show", "agent/feature:docs/issues/OL-PR-9.json"))["body"])
+
+    def test_after_two_failed_repairs_the_change_is_redone_from_main_and_the_pull_request_superseded(self):
+        from _repo import git
+        origin, d = self._world()
+        for _ in range(2):
+            executor.log(d, {"issue": "OL-PR-9", "result": "failed", "mode": "pr-repair"})
+        self.assertEqual(executor.pr_repair_failures("OL-PR-9", d), 2)
+        prompts = []
+        def model(prompt):
+            prompts.append(prompt); return {"summary": "redo", "files": [{"path": "b.txt", "content": "redone\n"}]}
+        row, gh = self._run(d, model)
+        self.assertEqual((row["result"], row.get("superseded_pr")), ("pr-opened", 9), row)
+        self.assertNotIn("REPAIRING PULL REQUEST", prompts[0])
+        self.assertEqual(git(origin, "show", "agent/feature:b.txt"), "broken\n", "the old branch is left as it was")
+        self.assertIn(["pr", "close", "9"], gh, "the old pull request is closed as superseded, naming its replacement")
+
+    def test_a_closed_or_forked_pull_request_is_not_repaired(self):
+        from unittest import mock
+        _, d = self._world()
+        for pr in ({"state": "MERGED", "headRefName": "agent/feature"}, {"state": "OPEN", "headRefName": "agent/feature", "isCrossRepository": True}, {"state": "OPEN", "headRefName": "main"}):
+            with mock.patch.object(executor, "gh_json", return_value=pr):
+                self.assertIsNone(executor.pr_repair({"number": "OL-PR-9"}, "o/r", d))
+        self.assertIsNone(executor.pr_repair({"number": "Q-1"}, "o/r", d))

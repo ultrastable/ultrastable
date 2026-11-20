@@ -146,6 +146,24 @@
     "kind": "item_closed"
    },
    "why": "Findings are ranked by score and filed within caps; the outcome that proves the pick was worth filing is that its item reached a closed state."
+  },
+  {
+   "id": "outreach-segment",
+   "name": "Outreach segment: which kind of organization the next introductions go to",
+   "store": "repo",
+   "files": [
+    "foundation/outreach.py"
+   ],
+   "metric": "segment_mean_reward",
+   "metric_says": "mean reply reward per contacted prospect in the chosen segment (accepted or meeting 1, question 0.6, acknowledgement 0.3, anything else 0)",
+   "op": ">",
+   "target": 0,
+   "window_h": 336,
+   "predict": "the segment's mean reward so far, or 0 for a segment never tried",
+   "measure": {
+    "kind": "outreach_segment_reward"
+   },
+   "why": "The per-run cap is spent on one segment first; the pick was right when prospects in that segment answer, which is what the learner maximizes."
   }
  ],
  "discover": {
