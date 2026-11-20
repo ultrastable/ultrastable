@@ -220,6 +220,15 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.equal(rr.status, 200); { const j = JSON.parse(await rr.text()); assert.equal(j.generated, "2026-11-12T00:00:00Z"); assert.equal(j.freshness.ok, false); /* LIVE-FRESH-1: a week-old snapshot is stale */ }
   rr = await mod.fetch(new Request("https://ultrastable.io/api/freshness"), { ...ENV, DB: db });
   assert.equal(rr.status, 503);
+  // CHANGELOG-FEED-1: the feed reads the same snapshot; titles are escaped; sizes and origins are summed per day
+  { const snap2 = JSON.stringify({ generated: "2026-11-12T00:00:00Z", throughput: { changelog: [{ date: "2026-11-11", changes: [{ n: 7, title: "Fix <b> & more", by: "executor", url: "https://github.com/o/r/pull/7", plus: 10, minus: 2 }, { n: 6, title: "Second", by: "session", plus: 5, minus: 1 }] }] } });
+    const db2 = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: snap2 }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 1 }) }) };
+    const cj = await (await mod.fetch(new Request("https://ultrastable.io/changelog.json"), { ...ENV, DB: db2 })).json();
+    assert.deepEqual({ m: cj.days[0].merged, a: cj.days[0].lines_added, r: cj.days[0].lines_removed, o: cj.days[0].by_origin }, { m: 2, a: 15, r: 3, o: { executor: 1, session: 1 } });
+    const cx = await mod.fetch(new Request("https://ultrastable.io/changelog.xml"), { ...ENV, DB: db2 }); const xml = await cx.text();
+    assert.match(cx.headers.get("content-type"), /application\/rss\+xml/); assert.ok(xml.includes("Fix &lt;b&gt; &amp; more") && xml.includes("<guid isPermaLink=\"false\">ultrastable-change-7</guid>") && !xml.includes("<b>"));
+    assert.equal((await mod.fetch(new Request("https://ultrastable.io/changelog.xml"), ENV)).status, 503, "no snapshot says so");
+    assert.equal((await mod.fetch(new Request("https://ultrastable.io/changelog.json", { method: "POST" }), { ...ENV, DB: db2 })).status, 405); }
   rr = await mod.fetch(new Request("https://ultrastable.io/api/live"), ENV);
   assert.equal(rr.status, 503);
   for (const m of ["POST", "PUT", "DELETE", "PATCH"]) { rr = await mod.fetch(new Request("https://ultrastable.io/api/live", { method: m, body: "x" }), { ...ENV, DB: db }); assert.equal(rr.status, 405); }
