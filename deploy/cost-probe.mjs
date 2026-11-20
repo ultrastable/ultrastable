@@ -133,7 +133,17 @@ export async function run({ fetchFn = fetch, token, account, date, cwd = process
   const measurement = await measureDay({ fetchFn, token, account, date, databaseIds: dbIds, thresholds });
   const record = { ts: new Date().toISOString(), ...measurement };
   appendRecord(record, `${cwd}/ops/cost.jsonl`);
-  const discovery = await discoverResources({ fetchFn, token, account, topologyPath: `${cwd}/doctrine/topology.json` });
+  // COST-PROBE-3: a token the account refuses (run 44805356832: "not authorized for that account" after the account move) is the same state as
+  // no token (COST-PROBE-2): recorded as unmeasured, never as an empty account, and the tick Worker's sampler stays the source of record. Any other
+  // error still fails the run. Q-CFP-token-scope tracks the refused token.
+  let discovery = { items: [] };
+  try { discovery = await discoverResources({ fetchFn, token, account, topologyPath: `${cwd}/doctrine/topology.json` }); }
+  catch (e) {
+    const msg = String(e.message || e);
+    if (!/not authorized|authz/i.test(msg)) throw e;
+    console.error('cost-probe: resource discovery unmeasured: ' + msg.slice(0, 200));
+    appendRecord({ ts: new Date().toISOString(), date, unmeasured: 'token refused for this account (resource discovery)', d1: [], neurons: null, breaches: [] }, `${cwd}/ops/cost.jsonl`);
+  }
   return { record, queueItems: [...measurement.breaches.map((b) => ({ queue: 'cost', ...b })), ...discovery.items] };
 }
 

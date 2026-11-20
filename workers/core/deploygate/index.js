@@ -61,17 +61,38 @@ export async function readState(fetch, config, script, rule = {}) {
   };
 }
 
+// A script whose settings cannot be read has observability null (unmeasured), never false.
+export async function readPosture(fetch, config, max = 40) {
+  const acct = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}`, auth = { authorization: `Bearer ${config.token}` }, errors = [];
+  const get = async path => { try { const r = await fetch(acct + path, { headers: auth }); if (!r.ok) { errors.push(`${path} ${r.status}`); return null; } return (await r.json()).result; } catch (e) { errors.push(`${path} ${String(e.message || e)}`); return null; } };
+  const list = await get('/workers/scripts');
+  if (!list) return { workers: null, read_errors: errors };
+  if (list.length > max) errors.push(`${list.length} scripts, settings read for the first ${max}`);  // Free plan: 50 subrequests per invocation
+  const workers = await Promise.all(list.map(async (w, i) => {
+    const s = i < max ? await get(`/workers/scripts/${w.id}/settings`) : null;
+    return { id: w.id, modified_on: w.modified_on || null, observability: s ? { enabled: !!(s.observability && s.observability.enabled) } : null };
+  }));
+  return { workers, read_errors: errors };
+}
+
 export function createGate({ fetch = globalThis.fetch, now = Date.now, config }) {
   const issuer = config.issuer || ISSUER;
   async function handle(req) {
     const url = new URL(req.url);
     if (url.pathname === '/health') return json({ ok: true });
     const isState = req.method === 'GET' && url.pathname === '/state';
-    if (!isState && (req.method !== 'POST' || url.pathname !== '/deploy')) return json({ error: 'not found' }, 404);
+    const isPosture = req.method === 'GET' && url.pathname === '/posture';
+    if (!isState && !isPosture && (req.method !== 'POST' || url.pathname !== '/deploy')) return json({ error: 'not found' }, 404);
     const m = /^Bearer (.+)$/.exec(req.headers.get('authorization') || '');
     if (!m) return json({ error: 'missing token' }, 401);
     let claims;
     try { claims = await verifyToken(m[1], { audience: url.origin, fetch, now, issuer }); } catch (e) { return json({ error: String(e.message) }, 401); }
+    // CF-POSTURE-3: read-only account posture for a repo that holds any rule on its ref. Ids, modified time and the logging setting only: no
+    // binding, secret or module leaves the host. It lets the daily posture reading run on the run's OIDC identity with no stored Cloudflare token.
+    if (isPosture) {
+      if (!(config.rules || []).find(r => r.repo === claims.repository && (r.refs || []).includes(claims.ref))) return json({ error: 'not allowed', repository: claims.repository, ref: claims.ref }, 403);
+      return json(await readPosture(fetch, config));
+    }
     // HOSTSYNC-1: read-only runtime state of a script the caller's repo may deploy (same rule match, same OIDC proof, no stored secret).
     if (isState) {
       const script = url.searchParams.get('script') || '';

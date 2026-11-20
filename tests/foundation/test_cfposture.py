@@ -57,6 +57,34 @@ class Evaluate(unittest.TestCase):
         self.assertIsNone(live["workers"]); self.assertIn("HTTP 403", live["_why"]["workers"])
 
 
+class Gateway(unittest.TestCase):
+    ENV = {"ACTIONS_ID_TOKEN_REQUEST_URL": "https://oidc.example/t?x=1", "ACTIONS_ID_TOKEN_REQUEST_TOKEN": "rt"}
+
+    def opener(self, posture, seen):
+        import io
+        def op(req, timeout=0):
+            seen.append(req.full_url)
+            return io.BytesIO(json.dumps({"value": "idt"} if "oidc.example" in req.full_url else posture).encode())
+        return op
+
+    def test_reads_workers_through_the_gateway_with_the_runs_identity(self):
+        seen = []
+        ws, err = C.via_gateway("https://gate.example", self.opener({"workers": [{"id": "a", "modified_on": None, "observability": {"enabled": True}}], "read_errors": []}, seen), self.ENV)
+        self.assertIsNone(err); self.assertEqual(ws[0]["id"], "a")
+        self.assertEqual(seen, ["https://oidc.example/t?x=1&audience=https://gate.example", "https://gate.example/posture"])
+
+    def test_unread_settings_or_no_identity_is_unmeasured(self):
+        ws, err = C.via_gateway("https://gate.example", self.opener({"workers": [{"id": "a", "observability": None}], "read_errors": []}, []), self.ENV)
+        self.assertIsNone(ws); self.assertIn("settings not read for a", err)
+        self.assertEqual(C.via_gateway("https://gate.example", None, {}), (None, "no OIDC identity on this host"))
+        ws, err = C.via_gateway("https://gate.example", self.opener({"workers": None, "read_errors": ["/workers/scripts 403"]}, []), self.ENV)
+        self.assertIsNone(ws); self.assertIn("403", err)
+
+    def test_policy_names_the_gateway_and_the_workflow_grants_identity(self):
+        self.assertTrue(POL["gateway"].startswith("https://"))
+        self.assertIn("id-token: write", (ROOT / ".github/workflows/cost-guard.yml").read_text(encoding="utf-8"))
+
+
 class Apply(unittest.TestCase):
     def test_failure_files_an_item_and_a_pass_closes_it(self):
         tmp = Path(tempfile.mkdtemp(prefix="ultrastable-test-cfp-")); self.addCleanup(shutil.rmtree, tmp, True)
