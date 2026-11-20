@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-account-move-kv-done-spinoffs-and-edge-staged-zones-blocked-",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "Account move: KV done, spinoffs and edge staged; zones blocked at the registrar",
+  "body": "KV complete by name in the ultrastable account; D1 ultrastable-spinoffs and Workers ultrastable-spinoffs and tenant-ps-edge staged with no routes. Zones blocked. Surfaces tested: registrar API PUT name_servers on ultrastable.net returned 403 code 10000 (2026-11-19, 2026-11-20); zone listing shows each zone pending in the ultrastable account with DNS copied; the registrar spec has no cross-account move endpoint. Acquisition paths attempted: API update (refused, not re-routed); the documented dashboard route needs the owner's signed-in session and an email approval, recorded as gate net-nameserver-switch with a default in effect (zones stay served from the old account) and closing probe singleaccount --moved. MAIL_RELAY_TOKEN must not be rotated (it seals owner OAuth); re-copy the spinoffs D1 at cutover.",
+  "probe": "file:ops/account-move.json"
+ },
+ "kind": "decision",
+ "title": "Account move: KV done, spinoffs and edge staged; zones blocked at the registrar",
+ "session": ""
+}
