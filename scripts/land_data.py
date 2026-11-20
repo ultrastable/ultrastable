@@ -30,9 +30,7 @@ def main(msg, paths):
     print("land_data: pull request:", (pr.stdout or pr.stderr).strip()[:200])
     if pr.returncode: return 1
     sh("gh", "pr", "merge", br, "--auto", "--squash", check=False)
-    # A pull request opened with the workflow token starts no workflows, so the required `checks` never ran and the PR stayed blocked: run it on the branch.
-    d = sh("gh", "workflow", "run", "checks.yml", "--ref", br, check=False)
-    print("land_data: checks dispatched" if d.returncode == 0 else "land_data: checks dispatch failed: " + (d.stderr or "").strip()[:200])
+    # The tick Worker lane merges the pull request; a dispatched checks run does not satisfy the branch rule, so none is started here.
     return 0
 
 if __name__ == "__main__":
