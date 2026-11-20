@@ -1,0 +1,11 @@
+{
+  "id": "Q-ULTRA-portfolio-board-uptime-REDESIGN",
+  "title": "Q-ULTRA-portfolio-board-uptime-REDESIGN: every second-order step failed to bring Uptime back in bounds; redesign",
+  "body": "**Owner:** executor\n**Trigger:** ladder exhausted for `portfolio-board:uptime`\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nThe same failure three times is a design defect (GUIDING-DIRECTIVE section 2): change the structure, not the parameter.\n\nsize: L\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `portfolio-board:uptime` inside its bounds.\n",
+  "labels": [
+    "p0",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}
