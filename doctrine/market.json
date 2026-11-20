@@ -430,10 +430,10 @@
     {
       "id": "executor-pr",
       "name": "Executor opens its own merged pull request",
-      "status": "pinned",
-      "proof": "grep:foundation/executor.py::pr-opened",
+      "status": "live",
+      "proof": "grep:ops/executor-log.jsonl::\"result\": \"pr-merged\"",
       "test": "tests/foundation/test_executor.py",
-      "note": "Built and tested with a fake model; blocked on a bound model credential."
+      "note": "Pull requests 749 and 762 were opened by the executor and merged on 2026-11-20; both were mechanical fixes, none written by a model yet."
     },
     {
       "id": "adaptive-interview",
