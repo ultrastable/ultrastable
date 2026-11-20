@@ -6,7 +6,7 @@ Modeled on the QNFO fleet dashboard (qnfo-fleet-dashboard), cut down to the part
 ## What it does
 - **Email-me-a-code login** (`/owner`): a 6-digit code goes to the owner address only (no address input, so nothing to abuse). Codes are stored hashed, last 10 minutes, five wrong tries burn them, five requests per 10 minutes. Session cookie is HttpOnly, Secure, SameSite=Strict, 30 days.
 - **Step-up for changes**: reading is free once signed in; anything that changes state needs a code from the last 15 minutes. The page asks for it in place and repeats the tap after Verify.
-- **At-a-glance status**: checks for the database, owner mail, each of the three domains, the disclosure guard and GitHub, refreshed every 10 minutes by cron and on demand (`probe`).
+- **At-a-glance status**: checks for the database, owner mail, each of the three domains, the disclosure guard and GitHub, refreshed hourly by cron and on demand (`probe`).
 - **Owner task queue**: items only the owner can do (marked identity-bound) come first, each with why and what happens if you wait. One tap each: Done, Snooze 3 or 7 days, Not doing, Hand to fleet / Fix it.
 - **Fleet queue**: Hand to fleet writes a queue row (and labels the GitHub issue `fleet` when a token is set). Agents read and acknowledge it at `/api/fleet/queue` and `/api/fleet/ack` with a `FLEET_TOKEN` bearer (endpoint stays off until that secret exists).
 - **Commands from the dashboard**: a registered-command line (`help`, `status`, `tasks`, `task`, `probe`, `done`, `snooze`, `dismiss`, `delegate`, `fix`, `sync`, `dispatch`, `note`, `notify-test`, `audit`, `undo`). The buttons run the same commands, so every action is audited and undoable. No arbitrary shell.
