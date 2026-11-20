@@ -2925,6 +2925,15 @@
    "body": "site/*.test.mjs ran only in deploy-site.yml, so site/webbotauth.js verifyRequest shipped with p.indexOf(\"\") where p.indexOf(\"=\") was meant: every inbound Web Bot Auth signature was rejected as 'not a web-bot-auth ed25519 signature'. Fixed the parser and added the site tests to checks.yml (OL-20261115-24). Removed two unused imports (Q-SELF-unused-import).",
    "probe": "grep:.github/workflows/checks.yml::site/.*test.mjs",
    "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "decision-2026-11-20-q-crit-public-stage-the-public-stage-reading-is-live-and-ref",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Q-CRIT-PUBLIC-STAGE: the public stage reading is live and refuses to show a stale stage",
+   "body": "GET /api/v1/ignition on the site Worker reads the tick Worker's /live through the TICK service binding at request time and returns stage, block, k_eff, k_self and the time of the reading; a reading older than two tick intervals (1200 s) answers 503 stale_reading with no stage. /live shows the same reading in a Stage section. OL-20261114-7: META-SIGNAL-2 carries a grep closing probe on the drain it asks for.",
+   "probe": "grep:site/worker.js::/api/v1/ignition",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
   }
  ]
 }
