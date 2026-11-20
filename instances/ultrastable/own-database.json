@@ -1,0 +1,87 @@
+{
+ "_doc": "OWN-DB-1 (Q-GAP-core-separation): the core's databases, the tenant databases the core never binds, and the live reading this rests on. Checked by `python3 -m foundation owndb --check` (checks.yml) and `--live` (rule own-database in doctrine/rules.json); `bound_by` is written by `owndb --write`. The originating fleet's database ids are the forbidden patterns of doctrine/single-account.json.",
+ "version": "1.0.0",
+ "account": {
+  "name": "ultrastable",
+  "id": "81e3a4efb4eb66e613529b87682911bb"
+ },
+ "core": [
+  {
+   "name": "ultrastable-org",
+   "id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
+   "binding": "ORG on the site Worker, DB on the tick Worker",
+   "holds": "the organization: items, claims, predictions, outcomes, goals, trust ledger, audit log, handoffs",
+   "bound_by": [
+    "instances/ultrastable/system/ultrastable-site.wrangler.jsonc",
+    "instances/ultrastable/system/ultrastable-tick.wrangler.jsonc"
+   ]
+  },
+  {
+   "name": "ultrastable-ops",
+   "id": "5cd83b52-864a-4510-b062-fc0d9402d06c",
+   "binding": "DB on the site, dashboard and agents Workers",
+   "holds": "operations: first-party analytics, owner sign-in, provenance, transparency, and the shared data of built sites (site_data)",
+   "bound_by": [
+    "instances/ultrastable/system/ultrastable-agents.wrangler.jsonc",
+    "instances/ultrastable/system/ultrastable-dashboard.wrangler.jsonc",
+    "instances/ultrastable/system/ultrastable-site.wrangler.jsonc",
+    "site/wrangler.toml"
+   ]
+  }
+ ],
+ "tenant": [
+  {
+   "name": "tenant-ps-db",
+   "id": "4d392409-1162-4104-a019-e1e84b024ec9",
+   "tenant": "practical-solutions"
+  },
+  {
+   "name": "tenant-jobs-db",
+   "id": "47b839be-eb64-445b-9b3b-dff6d6caab3d"
+  },
+  {
+   "name": "example-co-ultrastable",
+   "id": "7d442530-44c7-4cfc-a58d-98a17f0f6c81"
+  }
+ ],
+ "declared_not_present": [
+  {
+   "name": "ultrastable-spinoffs",
+   "id": "9e05f27a-4445-45c3-998a-0d4d4595a33d",
+   "config": "spinoffs/wrangler.toml",
+   "finding": "the config names a database and a Worker (ultrastable-spinoffs) that the 2026-11-20 reading of the account does not contain; nothing live binds it"
+  }
+ ],
+ "retired_configs": [
+  "instances/ultrastable/system/ultrastable-ultrastable.wrangler.jsonc"
+ ],
+ "live": {
+  "read_at": "2026-11-20T15:20:00Z",
+  "method": "Cloudflare API, D1 database list and sqlite_master of both core databases, read from the cloud session that wrote this record",
+  "databases": [
+   {
+    "name": "ultrastable-org",
+    "id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
+    "tables": 59
+   },
+   {
+    "name": "ultrastable-ops",
+    "id": "5cd83b52-864a-4510-b062-fc0d9402d06c",
+    "tables": 26
+   },
+   {
+    "name": "tenant-ps-db",
+    "id": "4d392409-1162-4104-a019-e1e84b024ec9"
+   },
+   {
+    "name": "tenant-jobs-db",
+    "id": "47b839be-eb64-445b-9b3b-dff6d6caab3d"
+   },
+   {
+    "name": "example-co-ultrastable",
+    "id": "7d442530-44c7-4cfc-a58d-98a17f0f6c81"
+   }
+  ],
+  "finding": "the account holds five databases; the two core databases are bound only by core Workers, each tenant has its own database, and no database of the originating fleet is in the account"
+ }
+}
