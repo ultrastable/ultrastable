@@ -3360,6 +3360,15 @@
    "body": "A pull request opened with the built-in workflow token starts no checks, so each ciwatch items pull request stayed open. ciwatch now lands its items with scripts/land_data.py like the other data loops.",
    "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-4",
    "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "lesson-2026-11-20-strays-1-stub-files-reached-main-by-routes-native-stub-1-doe",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "STRAYS-1: stub files reached main by routes NATIVE-STUB-1 does not cover",
+   "body": "The tick Worker's executor refuses a new file outside its code roots, but the branch sweep merged model branches (#698: scoreboard.py, src/connector/probe.js) and the Actions executor wrote github/workflows/checks.yml, a workflow GitHub never runs (#732). foundation/strays.py is the shared rule: it runs in checks and in the branch sweep gate (doctrine/branchsweep.json), so a merge that adds a stray is undone and ported. Six unreferenced stub files were removed from main; baseline is empty.",
+   "probe": "file:foundation/strays.py",
+   "session": "serene-payne-a9c57f"
   }
  ]
 }
