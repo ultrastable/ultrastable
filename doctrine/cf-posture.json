@@ -1,0 +1,66 @@
+{
+  "_doc": "CF-POSTURE-1 policy (foundation/cfposture.py). The Cloudflare account's settings as rules measured against the live account every day (cost-guard workflow). kind auto: a failure files Q-CFP-<id> and the passing probe closes it. kind gate: identity-bound, recorded with its default in effect, files no item. upload_paths: every file that uploads a Worker by the API; each upload must send `observability` or the deploy turns logs off.",
+  "account_id": "81e3a4efb4eb66e613529b87682911bb",
+  "horizon_days": 365,
+  "upload_paths": [
+    "deploy/deploy-site.mjs",
+    "deploy/deploy-system.mjs",
+    "deploy/deploy-demos.mjs",
+    "site/deployer.js",
+    "site/worker.js"
+  ],
+  "preview_prefixes": [
+    "us-idea-"
+  ],
+  "preview_idle_days": 7,
+  "required_alerts": [
+    "incident_alert",
+    "workers_observability_alert",
+    "billing_usage_alert",
+    "universal_ssl_event_type"
+  ],
+  "rules": [
+    {
+      "id": "worker-logs-on",
+      "kind": "auto",
+      "title": "every Worker keeps its logs on",
+      "why": "With logs off a failing Worker leaves no evidence, so no loop can find the cause. Measured 2026-11-20: ultrastable-site and tenant-ps-web had logs off although their configs turn them on.",
+      "remedy": "deploy the Worker through a path listed in upload_paths (each sends observability), or add observability to its config"
+    },
+    {
+      "id": "no-idle-preview-workers",
+      "kind": "auto",
+      "title": "preview Workers idle past the limit are removed",
+      "why": "Each idea preview is a Worker that counts against the account's script limit and is never cleaned up. Measured 2026-11-20: eight us-idea-* Workers idle since 2026-11-15.",
+      "remedy": "have the spinoff sweep delete a preview Worker once its idea is launched or declined"
+    },
+    {
+      "id": "alerts-reach-code",
+      "kind": "auto",
+      "title": "Cloudflare alerts go to a webhook the system reads",
+      "why": "The account's only notification policy mails a person. An incident, a usage spike or a certificate event must reach a loop, not an inbox.",
+      "remedy": "Q-YEAR-cloudflare-alerts: a signed webhook route on the tick Worker registered as the destination of a policy per required alert"
+    },
+    {
+      "id": "tokens-outlive-horizon",
+      "kind": "auto",
+      "title": "no API token expires inside the horizon",
+      "why": "A token that expires within the year stops deploys or cost samples with nobody to mint another.",
+      "remedy": "roll the token (POST /accounts/{id}/tokens/{token_id}/value) before it expires and store it through the deploy gateway"
+    },
+    {
+      "id": "zones-active",
+      "kind": "auto",
+      "title": "every zone in the account is active",
+      "why": "A pending zone serves nothing from this account. Measured 2026-11-20: ultrastable.net pending behind a registrar lock.",
+      "remedy": "the daily single-account pass retries the nameserver switch"
+    },
+    {
+      "id": "second-member",
+      "kind": "gate",
+      "title": "the account has a second administrator",
+      "why": "One member means one sign-in is the only way into billing and the registrar.",
+      "default": "the system runs on API tokens that do not expire; nothing waits on the sign-in until a bill or a renewal fails"
+    }
+  ]
+}
