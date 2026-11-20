@@ -1,0 +1,17 @@
+{
+ "_doc": "DISPOSE-1 (Rowan, 2026-11-20: 'I don't want stuff sitting in the queue for months. Resolve it, close it. Everything has to run 100% server-side.'). The rules by which the fleet pass gives every open item a final recorded disposition within a bounded time, with no person and no code agent session. Consumer: foundation/dispose.py, called by foundation/queue.py run() on every fleet pass (.github/workflows/fleet.yml). A disposed item is closed with its rule and evidence in the item file; its closing probe keeps running (foundation/contracts.py) and marks it fixed when it passes; the executor retries shelved items when its open queue is empty (foundation/queue.py takeable).",
+ "version": "1.0.0",
+ "ttl_days": 14,
+ "fail_limit": 3,
+ "revive_days": 30,
+ "revive_per_pass": 1,
+ "max_per_pass": 400,
+ "owner_bound": "ROWAN|identity-bound",
+ "final_statuses": ["closed", "done", "live"],
+ "gate_default": "the system runs without this step; nothing waits on it",
+ "dispositions": {
+  "gate": "only the owner's own account, money or signature can do it; closed with the default in effect",
+  "shelved": "no server-side loop closed it inside the limit; closed with the attempts as evidence and retried when the executor is idle",
+  "fixed": "the closing probe passed after the item was disposed"
+ }
+}

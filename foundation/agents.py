@@ -104,26 +104,77 @@ def invoke(a: dict, prompt: str, env=None, transport=http) -> str:
     return parse_text(a, transport(url, headers, body))
 
 
-BLOCK_FORMAT = ("SUMMARY: one line\n<<<FILE relative/path>>>\nfull new file content, written plainly with no escaping\n<<<END>>>\n"
-                "(one FILE block per file; nothing else in the reply)")
+BLOCK_FORMAT = ("SUMMARY: one line\n"
+                "<<<EDIT relative/path>>>\n<<<FIND>>>\na few lines copied exactly from the existing file\n<<<REPLACE>>>\nthe lines that replace them\n<<<END>>>\n"
+                "<<<FILE relative/path>>>\nfull content of a NEW file, written plainly with no escaping\n<<<END>>>\n"
+                "(EDIT blocks for a file that exists, one per place changed, each FIND unique in the file; a FILE block only for a new file; nothing else in the reply)")
 _BLOCK = re.compile(r"<<<FILE ([^>\n]+)>>>\r?\n(.*?)\r?\n?<<<END>>>", re.S)
+_EDIT = re.compile(r"<<<EDIT ([^>\n]+)>>>\r?\n<<<FIND>>>\r?\n(.*?)\r?\n?<<<REPLACE>>>\r?\n?(.*?)\r?\n?<<<END>>>", re.S)
 
 
 def parse_json(text: str) -> dict:
     """The reply as {summary, files}. JSON first. REPLY-BLOCKS-1: whole files inside JSON strings need every quote, backslash and newline escaped, and
-    small models break that (3 of the first 11 executor failures were JSONDecodeError), so a reply in BLOCK_FORMAT is accepted too: no escaping to get wrong."""
+    small models break that (3 of the first 11 executor failures were JSONDecodeError), so a reply in BLOCK_FORMAT is accepted too: no escaping to get wrong.
+    PATCH-EDIT-1: an EDIT block changes part of an existing file ({path, edits: [{find, replace}]}), so a small model never has to reproduce a file it
+    cannot hold (every roadmap attempt on 2026-11-20 rewrote site/worker.js from about 1,150 lines to under 60 and was refused)."""
     s, e = text.find("{"), text.rfind("}")
     try:
         out = json.loads(text[s:e + 1])
     except ValueError:
         out = None
-    if isinstance(out, dict) and ("files" in out or not _BLOCK.search(text)):
+    if isinstance(out, dict) and ("files" in out or not (_BLOCK.search(text) or _EDIT.search(text))):
         return out
-    files = [{"path": p.strip(), "content": c + "\n"} for p, c in _BLOCK.findall(text)]
+    files, by_path = [{"path": p.strip(), "content": c + "\n"} for p, c in _BLOCK.findall(text)], {}
+    for p, find, rep in _EDIT.findall(text):
+        p = p.strip()
+        if p not in by_path:
+            by_path[p] = {"path": p, "edits": []}
+            files.append(by_path[p])
+        by_path[p]["edits"].append({"find": find, "replace": rep})
     if not files:
-        raise ValueError("reply is neither JSON nor FILE blocks")
+        raise ValueError("reply is neither JSON nor FILE or EDIT blocks")
     m = re.search(r"^SUMMARY:\s*(.+)$", text, re.M)
     return {"summary": m.group(1).strip() if m else "", "files": files}
+
+
+def _loose_span(text: str, find: str):
+    """Where `find` sits in `text` when its lines match ignoring leading and trailing whitespace: (start, end, indent the file has and the reply lacks),
+    or None when there is no match or more than one."""
+    want = [l.strip() for l in find.strip("\n").splitlines()]
+    lines = text.splitlines(keepends=True)
+    if not want or not any(want):
+        return None
+    hits = [i for i in range(len(lines) - len(want) + 1) if all(lines[i + k].strip() == want[k] for k in range(len(want)))]
+    if len(hits) != 1:
+        return None
+    i = hits[0]
+    start = sum(len(l) for l in lines[:i])
+    end = start + sum(len(l) for l in lines[i:i + len(want)])
+    first_file, first_find = lines[i], find.strip("\n").splitlines()[0]
+    lead = lambda l: l[:len(l) - len(l.lstrip())]
+    pad = lead(first_file)[len(lead(first_find)):] if lead(first_file).startswith(lead(first_find)) else ""
+    return start, end, pad
+
+
+def apply_edit(text: str, find: str, replace: str, path: str = "file") -> str:
+    """PATCH-EDIT-1: `text` with the one place `find` names replaced. Exact match first; then a match that ignores indentation and trailing spaces
+    (small models drop both), re-indenting the replacement by what the reply lacked. Raises ValueError, worded for the model, when the place is
+    missing or ambiguous: a patch is never applied to a guessed location."""
+    if not find.strip():
+        if text.strip():
+            raise ValueError(f"{path}: FIND is empty but the file exists; copy the lines to change into FIND")
+        return replace if replace.endswith("\n") else replace + "\n"
+    n = text.count(find)
+    if n == 1:
+        return text.replace(find, replace)
+    if n > 1:
+        raise ValueError(f"{path}: the FIND text occurs {n} times; add neighbouring lines so it is unique")
+    span = _loose_span(text, find)
+    if not span:
+        raise ValueError(f"{path}: the FIND text is not in the file (or matches more than one place); copy the lines exactly as the file shows them")
+    start, end, pad = span
+    body = "".join((pad + l if l.strip() else l) for l in replace.strip("\n").splitlines(keepends=True))
+    return text[:start] + body + ("\n" if body and not body.endswith("\n") else "") + text[end:]
 
 
 def complete(prompt: str, env=None, transport=http, root=REPO) -> tuple[dict, str]:
