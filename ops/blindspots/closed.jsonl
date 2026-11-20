@@ -1,0 +1,14 @@
+{"id": "privacy-notice", "at": "2026-11-20", "probe": "grep:site/legalpages.js::export const PRIVACY"}
+{"id": "security-contact", "at": "2026-11-20", "probe": "grep:site/legalpages.js::export const SECURITY_TXT"}
+{"id": "accessibility-statement", "at": "2026-11-20", "probe": "grep:site/legalpages.js::export const ACCESSIBILITY"}
+{"id": "footer-links", "at": "2026-11-20", "probe": "grep:site/worker.js::href=\\\\\"/privacy\\\\\""}
+{"id": "outreach-disclosure", "at": "2026-11-20", "probe": "grep:scripts/outreach_intro.py::opt-out"}
+{"id": "name-clearance", "at": "2026-11-20", "probe": "fresh:ip/name-clearance.json::at::120::clear"}
+{"id": "dependency-licences", "at": "2026-11-20", "probe": "grep:doctrine/dependency-licences.json::\"verdict\": \"ok\""}
+{"id": "domain-renewal", "at": "2026-11-20", "probe": "fresh:ops/blindspots/domain-expiry.json::at::10::ok"}
+{"id": "ai-disclosure", "at": "2026-11-20", "probe": "grep:outreach/intro-profile.json::automated"}
+{"id": "cost-ceiling", "at": "2026-11-20", "probe": "file:doctrine/cost.json"}
+{"id": "privacy-covers-processing", "at": "2026-11-20", "probe": "grep:site/legalpages.js::(?s)Automated processing.*Voice.*Signing in and connected accounts"}
+{"id": "d1-free-tier-hard-stop", "at": "2026-11-20", "probe": "grep:seed/worker/src/freetier.js::d1_rows_read"}
+{"id": "ai-output-marking", "at": "2026-11-20", "probe": "grep:site/worker.js::const us = aiMark \\+ usClient"}
+{"id": "meta-signal-write-cap", "at": "2026-11-20", "probe": "grep:site/worker.js::META_PER_IP_HOUR \\|\\| Number\\(d \\|\\| 0\\) >= META_PER_DAY"}
