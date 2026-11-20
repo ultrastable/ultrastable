@@ -36,6 +36,7 @@
   python3 -m foundation upstream contract|adopt|sync|check|drift|leaks   core/instance link: pin, flow down, send up, drift, bring your own repo
   python3 -m foundation branchsweep [--scan|--apply|--prune|--check]  BRANCH-SWEEP-1: no remote branch carries work main lacks
   python3 -m foundation sessions [--scan|--apply|--meta|--check]       SESSION-CLOSE-1: no zombie branches or PRs; the loop tunes itself
+  python3 -m foundation cfposture [--check|--probe [--apply]|--rule ID]       CF-POSTURE-1: the Cloudflare account's settings, declared and measured live
   python3 -m foundation orphans [--check|--metrics|--baseline|--issue-body|--sync-issue OWNER/REPO]   ORPHANS-1: no orphan artifact, no human-wait
   python3 -m foundation components [--check|--report|--file-gaps|--evidence|--probe KIND:ID]   the system as a computed graph: gaps, stories, objections
   python3 -m foundation lifecycle [--open|--beat|--close|--reap|--check|--improve|--score|--report|--hooks]   no zombie sessions; loops that score and mutate themselves
@@ -62,6 +63,10 @@
   python3 -m foundation contracts [--tick [--apply]|--report]             CONTRACTS-1: close on the item's own probe, reopen on relapse, hold after a reopen
   python3 -m foundation metricloop [--tick [--apply]|--probe ID|--check]  METRIC-LOOP-1: breach -> remedy item -> efficacy -> replace a remedy that did not move
   python3 -m foundation throughput [--tick [--apply]|--report|--doer FAM] THROUGHPUT-1: net inflow per family; a family with no doer gets a build-the-doer item
+  python3 -m foundation adopt --repo DIR [--apply|--check]                 ADOPT-1: wrap loops around an existing repository (scan, kernel, gaps as items)
+  python3 -m foundation rescore [--run [--apply]|--check|--status]        RESCORE-1: a held-out grader re-scores settled predictions; disagreement files an item
+  python3 -m foundation owndb [--check|--write]                           OWN-DB-1: core databases are the core's own; no tenant or originating-fleet database is bound
+  python3 -m foundation tenantcontrols [--check|--write]                  TENANT-CONTROLS-1: the hosted tier stays closed until every multi-tenant control is proven
   python3 -m foundation metafold [--tick [--apply]]                       META-FOLD-1: tickets about another record close when that record resolves
 """
 import argparse, datetime as dt, json, os, sys
@@ -72,6 +77,18 @@ from . import boundary, closedloop, standards, doctrine, directive, filing, glos
 def main(argv=None) -> int:
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
+    if _av[:1] == ["adopt"]:
+        from . import adopt
+        return adopt.main(_av[1:])
+    if _av[:1] == ["rescore"]:
+        from . import rescore
+        return rescore.main(_av[1:])
+    if _av[:1] == ["owndb"]:
+        from . import owndb
+        return owndb.main(_av[1:])
+    if _av[:1] == ["tenantcontrols"]:
+        from . import tenantcontrols
+        return tenantcontrols.main(_av[1:])
     if _av[:1] == ["userbackend"]:
         from . import userbackend
         return userbackend.main(_av[1:])
@@ -225,6 +242,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["topology"]:
         from . import topology
         return topology.main(_av[1:])
+    if _av[:1] == ["mechfix"]:
+        from . import mechfix
+        return mechfix.main(_av[1:])
     if _av[:1] == ["selfcode"]:
         from . import selfcode
         return selfcode.main(_av[1:])
@@ -299,6 +319,9 @@ def main(argv=None) -> int:
     if args0[:1] == ["sessions"]:
         from . import sessions
         return sessions.main(args0[1:])
+    if args0[:1] == ["cfposture"]:
+        from . import cfposture
+        return cfposture.main(args0[1:])
     if args0[:1] == ["orphans"]:
         from . import orphans
         return orphans.main(args0[1:])

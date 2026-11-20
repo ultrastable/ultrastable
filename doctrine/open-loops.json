@@ -62,6 +62,114 @@
    "reason": "consent screen is identity-bound",
    "default": "lane merges on local-checks evidence (Q-GATE-403)",
    "probe": "grep:seed/worker/src/worker-gate.js::status 403"
+  },
+  {
+   "id": "mtc-processor-terms",
+   "surfaces": [
+    {
+     "s": "repository search for a data-processing agreement and a subprocessor list",
+     "result": "neither exists; seed/autonomy/retention.json covers retention only"
+    },
+    {
+     "s": "drafting the agreement by the system",
+     "result": "not taken: a legal text in the owner's name is out of scope (SCOPE.md) and identity-bound"
+    }
+   ],
+   "reason": "a data-processing agreement is signed in the owner's name",
+   "default": "the hosted, multi-tenant tier stays closed (doctrine/pilot-model.json hosted: deferred); pilots run in the customer's own account",
+   "probe": "cmd:python3 -m foundation tenantcontrols --check"
+  },
+  {
+   "id": "gap-external-audit",
+   "surfaces": [
+    {
+     "s": "held-out graders inside the system (foundation/rescore.py: strict rule and a second model family)",
+     "result": "built and run after every merge; narrows self-scoring but both graders are the system's own"
+    },
+    {
+     "s": "a party outside the system re-scoring a sample",
+     "result": "none is engaged; engaging one commits the owner's name or money"
+    }
+   ],
+   "reason": "an audit is independent only if the auditor is not the system; choosing and engaging one is the owner's act",
+   "default": "every settled prediction is re-scored by the held-out graders and a disagreement files Q-RESCORE-<id>; docs/audit/external-scoring-audit.json is written only from an outside party's result",
+   "probe": "file:docs/audit/external-scoring-audit.json"
+  },
+  {
+   "id": "gap-fresh-account-bootstrap",
+   "surfaces": [
+    {
+     "s": "Cloudflare accounts this system can reach (2026-11-20)",
+     "result": "two: ultrastable (17 Workers, 5 databases) and the retired quniverse account; neither is empty"
+    },
+    {
+     "s": "creating a new Cloudflare account",
+     "result": "not taken: an account is opened under a person's identity and terms"
+    },
+    {
+     "s": "bootstrap --apply into the non-empty ultrastable account",
+     "result": "not taken as proof: the item asks for an empty account"
+    }
+   ],
+   "reason": "an empty account exists only when a person or a pilot customer opens one",
+   "default": "the bootstrapper is exercised against fixtures on every change (seed/tests) and by the packaged installer's dry run (seed/install.py); the first pilot's install writes docs/bootstrapping/fresh-account-proof.json",
+   "probe": "file:docs/bootstrapping/fresh-account-proof.json"
+  },
+  {
+   "id": "gap-second-installation",
+   "surfaces": [
+    {
+     "s": "installing the package into a repository of its own",
+     "result": "the package and one-command install exist and are tested (seed/install.py); creating a repository outside this session's scope is not permitted here"
+    },
+    {
+     "s": "counting practical-solutions as the second installation",
+     "result": "not taken: it is a tenant on the core's account that vendors the core, not an independent install of the seed"
+    }
+   ],
+   "reason": "an independent installation needs a repository and an account that are not this system's own",
+   "default": "instances/second-tenant and the practical-solutions tenant exercise the second-system path inside the account; instances/pilot-1/instance.json is written by the first pilot's install",
+   "probe": "file:instances/pilot-1/instance.json"
+  },
+  {
+   "id": "gap-other-cloud-proof",
+   "surfaces": [
+    {
+     "s": "the SQLite runtime off Cloudflare (python3 -m foundation selfhost, 2026-11-20)",
+     "result": "boots tenant 0 from the repository and runs the 18-step tick on Node and SQLite; this is a host with Python and Node, not a deployment on another cloud"
+    },
+    {
+     "s": "Google Cloud from this session (gcloud auth list)",
+     "result": "no credentialed account"
+    },
+    {
+     "s": "platform/adapters/gcp/deploy.sh",
+     "result": "never run: it needs a project with billing"
+    }
+   ],
+   "reason": "a deployment on another cloud needs a project with billing in a person's name",
+   "default": "portability is proven for the SQLite path in checks on every change; docs/bootstrapping/other-cloud-proof.json is written only by a real deploy",
+   "probe": "file:docs/bootstrapping/other-cloud-proof.json"
+  },
+  {
+   "id": "own-domain-edge",
+   "surfaces": [
+    {
+     "s": "Cloudflare API, zone ultrastable.io custom hostnames (read, 2026-11-20)",
+     "result": "HTTP 403 code 1404: no custom hostname quota is allocated; the zone is on the free plan and sits in a different account from the Workers"
+    },
+    {
+     "s": "site Worker bindings (read, 2026-11-20)",
+     "result": "CF_DEPLOY_TOKEN is bound; CF_ZONE_ID is not, so attachDomain stops at pending_platform after the DNS proof"
+    },
+    {
+     "s": "Worker custom domains API",
+     "result": "serves only hostnames in zones of the Worker's own account; a visitor's domain is in neither"
+    }
+   ],
+   "reason": "switching on the custom hostname service changes the zone's subscription and the deploy token's scope: a billing and credential-scope act in the owner's account",
+   "default": "POST /api/domain proves ownership by DNS TXT, stores the proven address and answers pending_platform in plain words; the site keeps answering at its ultrastable.io address",
+   "probe": "grep:site/wrangler.toml::CF_ZONE_ID"
   }
  ]
 }

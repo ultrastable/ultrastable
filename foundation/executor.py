@@ -428,7 +428,9 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     key = os.environ.get("ANTHROPIC_API_KEY")
     port = bool(qm and model_call is None and PORT_ITEM.match(str(n)) and verify_command(issue))  # PORT-EXEC-1: queue items only; a remote issue body is never run as a command
     from . import agent_ladder  # SYS-2: which model writes the change, who reviews it and what it cost
-    if model_call is None and not port and not key and not cf_ready() and not agent_ladder.rungs(root):
+    from . import mechfix  # MECH-FIX-1: a mechanical item needs no model credential
+    mech = bool(qm and model_call is None and mechfix.call_for(issue, root))
+    if model_call is None and not port and not mech and not key and not cf_ready() and not agent_ladder.rungs(root):
         row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (a cloud-hosted routine that starts a Claude session, which runs --pick and --record) takes the item without any key")
         log(lroot, row); return row
     if not apply:
@@ -443,6 +445,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         sh(["git", "checkout", "-B", branch], root)
         if port:
             model_call = port_call(issue, root)
+        if qm and model_call is None:  # MECH-FIX-1: a finding the syntax tree fully determines is fixed by code; no model call, and the same scope check, checks and PR follow
+            from . import mechfix
+            model_call = mechfix.call_for(issue, root)
+            if model_call:
+                row["models"] = ["mechfix"]
         prompt, failed, files, out = build_prompt(issue, tree), [], [], {}
         for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
             if attempt and time_left() < REPAIR_MIN_S:  # EXEC-WATCHDOG-2: end with the real reasons rather than be cut off by the watchdog mid-attempt
@@ -559,15 +566,57 @@ def pick_row(repo: str, root=REPO) -> dict:
     return {"result": "picked", "issue": issue["number"], "title": issue["title"], "body": (issue.get("body") or "")[:6000]}
 
 
+def fold_outcomes(root=REPO, apply=False, pr_state=None) -> dict:
+    """PR-OUTCOME-1 (Q-GAP-executor-merged-pr): what became of every pull request the executor opened, written to the log on main. The executor's rows
+    live on the evidence branch and say only `pr-opened`; whether the change merged was never recorded, so "the executor merges its own work" could not be
+    read from the repository. One row per pull request and outcome: `pr-merged` or `pr-closed` (closed without merging). An open or unreadable pull request
+    writes nothing: an outcome is never guessed. Runs after every merge (scripts/regen_generated.py)."""
+    from . import queue as qmod, selfcode
+    root, state = Path(root), pr_state or selfcode.pr_state
+    logp = root / "ops/executor-log.jsonl"
+    have = set()
+    for line in (logp.read_text(encoding="utf-8").splitlines() if logp.is_file() else []):
+        try:
+            r = json.loads(line)
+        except ValueError:
+            continue
+        if r.get("result") in ("pr-merged", "pr-closed"):
+            have.add(r.get("pr"))
+    out = {"merged": [], "closed": [], "open": [], "unreadable": [], "applied": apply}
+    for r in qmod.executor_rows(root):
+        url = r.get("pr")
+        if r.get("result") != "pr-opened" or not url or url in have:
+            continue
+        s = state(url, root)
+        if not s or not s.get("state"):
+            out["unreadable"].append(url); continue
+        if s["state"] == "OPEN":
+            out["open"].append(url); continue
+        merged = s["state"] == "MERGED"
+        out["merged" if merged else "closed"].append(url); have.add(url)
+        if apply:
+            row = {"schema": "ultrastable-executor/1", "at": s.get("mergedAt") or now(), "host": "pr-outcome", "issue": r.get("issue"), "result": "pr-merged" if merged else "pr-closed",
+                   "pr": url, "opened_at": r.get("at"), "models": r.get("models") or []}
+            if merged and s.get("mergeCommit"):
+                row["merge_commit"] = s["mergeCommit"].get("oid")
+            logp.parent.mkdir(parents=True, exist_ok=True)
+            with logp.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(row) + "\n")
+    return out
+
+
 def main(argv=None) -> int:
     import argparse
     ap = argparse.ArgumentParser(prog="foundation executor")
+    ap.add_argument("--fold", action="store_true", help="record what became of every pull request the executor opened (PR-OUTCOME-1)")
     ap.add_argument("--apply", action="store_true"); ap.add_argument("--issue")
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable"))
     ap.add_argument("--pick", action="store_true", help="print the top takeable issue and exit; needs no model credential (Claude-session route)")
     ap.add_argument("--record", action="store_true", help="append one provenance row for work done by a model session (with --issue --result [--pr --detail --host])")
     ap.add_argument("--result"); ap.add_argument("--pr"); ap.add_argument("--detail", default=""); ap.add_argument("--host", default="claude-session")
     a = ap.parse_args(argv)
+    if a.fold:
+        print(json.dumps(fold_outcomes(apply=a.apply), indent=1)); return 0
     if a.pick:
         row = pick_row(a.repo)
         print(json.dumps(row, indent=2)); return 0
