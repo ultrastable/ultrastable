@@ -14,6 +14,7 @@ permissions:
   contents: write
   pull-requests: write  # CIWATCH-2: the item PR is opened with the built-in token when LANE_PAT is not bound (was: GraphQL 'Resource not accessible by integration')
   actions: write
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
 concurrency:
   group: ciwatch
   cancel-in-progress: false
@@ -44,17 +45,7 @@ jobs:
           git reset -q --hard origin/main
           python3 -m foundation ciwatch --run --apply > /dev/null
           git checkout -q -- ops/ciwatch.jsonl
-          open=$(gh api "repos/${{ github.repository }}/pulls?state=open&per_page=100" --jq '[.[]|select(.head.ref|startswith("agent/ciwatch-"))]|length')  # CIWATCH-3: one open items PR at a time; every run used to open another with the same file
-          if [ "${open:-0}" != "0" ]; then echo "ciwatch items PR already open; not opening another"
-          elif [ -n "$(git status --porcelain docs/issues)" ]; then
-            b="agent/ciwatch-${GITHUB_RUN_ID}"
-            git checkout -q -b "$b"; git add docs/issues
-            git commit -q -m "ciwatch: file failing-workflow items (CIWATCH-1)"
-            git push -q origin "$b"
-            pr=$(gh api "repos/${{ github.repository }}/pulls" -f base=main -f head="$b" -f title="ciwatch: failing-workflow items" -f body="Closes nothing; files Q-CIFAIL items so the executor fixes red workflows. Provenance: ops/ciwatch.jsonl on branch ciwatch-evidence." --jq .html_url)
-            gh workflow run checks.yml --ref "$b" || echo "::warning::checks dispatch failed; the lane picks the PR up on its next run"
-            echo "$pr"
-          fi
+          python3 scripts/land_data.py "ciwatch: file failing-workflow items (CIWATCH-1)" docs/issues  # CIWATCH-4: items land through the main writer; a pull request opened with the built-in token never got its checks and stayed open
       - name: Repair a red deploy gate with the smallest revert (REDMAIN-1, no model involved)
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
