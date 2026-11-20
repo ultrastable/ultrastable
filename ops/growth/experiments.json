@@ -1,13 +1,3 @@
 {
- "experiments": [
-  {
-   "item": "Q-GROW-second-tenant-deploying",
-   "metric": "pilot_page_views_7d",
-   "baseline": 1408,
-   "predicted_pct": 15,
-   "started": "2026-11-17T16:52:10Z",
-   "check_after_days": 7,
-   "verdict": null
-  }
- ]
+ "experiments": []
 }

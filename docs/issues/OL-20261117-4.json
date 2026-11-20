@@ -1,7 +1,7 @@
 {
   "id": "OL-20261117-4",
   "title": "OL-20261117-4: SPINOFF zone transfer link on 2026-11-20",
-  "body": "**Owner:** operations\n**Trigger:** date >= 2026-11-20\n**Done check:** grep:deploy/transfer/plan.json::ultrastable-spinoffs\n**Status:** closed\n\nWhen the Registrar confirmations open on 2026-11-20, the ultrastable.app zone, the spinoffs Worker and its D1 move to the ultrastable account. A scheduled loop must publish the single confirm link (CONNECT-LINK-1) in needs-you.json with the default (stay in quniverse) in effect.\n\nSession: session_0156nqDuxJS2RpGCL7Ak6MSA\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n\n**Evidence:** closing probe passed (already built: the probe passed from filing and held for 35 passes over 1507 minutes (VACUOUS-CLOSE-1)): grep:deploy/transfer/plan.json::ultrastable-spinoffs\n",
+  "body": "**Owner:** operations\n**Trigger:** date >= 2026-11-20\n**Done check:** grep:deploy/transfer/plan.json::ultrastable-spinoffs\n**Status:** open\n\nWhen the Registrar confirmations open on 2026-11-20, the ultrastable.app zone, the spinoffs Worker and its D1 move to the ultrastable account. A scheduled loop must publish the single confirm link (CONNECT-LINK-1) in needs-you.json with the default (stay in quniverse) in effect.\n\nSession: session_0156nqDuxJS2RpGCL7Ak6MSA",
   "labels": [
     "role:operations",
     "open-loop"

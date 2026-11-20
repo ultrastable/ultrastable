@@ -2,6 +2,3 @@
 {"at": "2026-11-18T12:19:46Z", "changed": {"closed-loops/closedloop": "ok", "closed-loops/item-fields": "ok"}}
 {"at": "2026-11-18T13:00:09Z", "changed": {"closed-loops/closedloop": "violated", "closed-loops/item-fields": "violated"}}
 {"at": "2026-11-18T13:00:29Z", "changed": {"closed-loops/closedloop": "ok", "closed-loops/item-fields": "ok"}}
-{"at": "2026-11-19T02:08:39Z", "changed": {"front-end-matches-back-end/spinoff-live": "unmeasured", "no-qnfo-on-pages/qnfo-live": "unmeasured", "license-notice/license-fleet": "unmeasured", "every-decision-measured/decisions-scored": "unmeasured", "single-account/singleaccount": "ok", "every-goal-has-knob/goalscheck": "ok"}}
-{"at": "2026-11-19T14:24:09Z", "changed": {"no-open-items/openloops": "ok"}}
-{"at": "2026-11-20T13:51:00Z", "changed": {"no-merge-over-red/mergeaudit": "violated"}}

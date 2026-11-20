@@ -1,7 +1,7 @@
 {
   "id": "Q-ULTRA-claims_drift-1",
   "title": "Q-ULTRA-claims_drift-1: Words that no longer match code out of bounds: restructure: bind or regenerate the drifting statements",
-  "body": "**Owner:** executor\n**Trigger:** essential variable `claims_drift` out of bounds (reading 1; limits 0 to 0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** closed\n\nULTRASTABILITY-1 second-order step: restructure: bind or regenerate the drifting statements. A public statement the code no longer makes true breaks the system's own record of itself.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `claims_drift` inside its bounds.\n\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n\n**Evidence:** closing probe passed (already built: the probe passed from filing and held for 35 passes over 1507 minutes (VACUOUS-CLOSE-1)): ultrastability ok: two loops, every variable has a bound and a second-order step\n",
+  "body": "**Owner:** executor\n**Trigger:** essential variable `claims_drift` out of bounds (reading 1; limits 0 to 0)\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nULTRASTABILITY-1 second-order step: restructure: bind or regenerate the drifting statements. A public statement the code no longer makes true breaks the system's own record of itself.\n\nsize: M\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `claims_drift` inside its bounds.\n",
   "labels": [
     "p1",
     "agent-ready"

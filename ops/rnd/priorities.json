@@ -3,12 +3,9 @@
  "Q-GAP-cross-model-rescoring": 2.0,
  "Q-GAP-executor-merged-pr": 2.0,
  "Q-GAP-other-cloud-proof": 2.5,
- "Q-SCOUT-claude-code-03df320b": 1.25,
- "Q-SCOUT-claude-code-865f57db": 1.25,
- "Q-SCOUT-claude-code-c35a8e45": 1.25,
- "Q-SCOUT-claude-code-d1bbd9e0": 1.25,
- "Q-SCOUT-claude-code-f8d9f498": 1.25,
- "Q-SCOUT-cloudflare-agents-cb441d6b": 1.0,
- "Q-SCOUT-google-adk-7a45defe": 0.64,
- "Q-SCOUT-langgraph-fdca3915": 0.64
+ "Q-SCOUT-claude-code-865f57db": 1.95,
+ "Q-SCOUT-claude-code-c35a8e45": 1.95,
+ "Q-SCOUT-claude-code-d1bbd9e0": 1.95,
+ "Q-SCOUT-cloudflare-agents-cb441d6b": 1.25,
+ "Q-SCOUT-google-adk-7a45defe": 0.8
 }

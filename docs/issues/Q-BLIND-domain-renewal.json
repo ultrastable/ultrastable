@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-domain-renewal",
   "title": "Q-BLIND-domain-renewal: close the continuity blind spot domain-renewal",
-  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** cmd:python3 -m foundation blindspots --closed domain-renewal\n**Prediction:** blindspots_open <= 7 within 168 h\n**Status:** open\n\nWhy the owner would not know to ask: A lapsed domain takes the site, email and every registry listing with it.\nAction: read RDAP expiry on a clock and file a money gate 60 days out. The probe in doctrine/blindspots.json passes when it is done.",
+  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** grep:ops/blindspots/closed.jsonl::\"id\": \"domain-renewal\"\n**Prediction:** blindspots_open <= 7 within 168 h\n**Status:** open\n\nWhy the owner would not know to ask: A lapsed domain takes the site, email and every registry listing with it.\nAction: read RDAP expiry on a clock and file a money gate 60 days out. The probe in doctrine/blindspots.json passes when it is done.",
   "labels": [
     "role:product-manager",
     "blindspot"

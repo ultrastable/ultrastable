@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-q-grow-agent-directories-q-grow-agent-dire",
+  "title": "ZOMBIE-agent-q-grow-agent-directories-q-grow-agent-dire: finish or retire agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare",
+  "body": "**Owner:** operations\n**Trigger:** session idle 74.3 h (ttl 2.0 h)\n**Status:** open\n\nBranch `agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare` at 7071fc58f1 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare` is 0 or the work is merged. The reaper parked the branch as parked/agent/Q-GROW-AGENT-DIRECTORIES-q-grow-agent-directories-grow-5-prepare; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

@@ -3,6 +3,17 @@
  "idle_ttl_hours": 4,
  "ttl_floor_hours": 1,
  "backlog_owner": "operations",
- "history": [],
- "blocked_values": []
+ "history": [
+  {
+   "at": 1794581016,
+   "from": 4,
+   "to": 2.0,
+   "prediction": "zombies == 0 on the next scan",
+   "scans_at_change": 2,
+   "grade": "reverted"
+  }
+ ],
+ "blocked_values": [
+  2.0
+ ]
 }

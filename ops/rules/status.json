@@ -1,5 +1,5 @@
 {
- "at": "2026-11-20T13:51:00Z",
+ "at": "2026-11-18T13:00:29Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -45,21 +45,15 @@
   },
   "front-end-matches-back-end/pages-live": {
    "status": "unmeasured",
-   "detail": "not measured: https://ultrastable.io/api/freshness (403), https://tenant-ps-web.ultrastable.workers.dev/api/freshness (403)",
-   "fixed": false,
-   "item": null
-  },
-  "front-end-matches-back-end/spinoff-live": {
-   "status": "unmeasured",
-   "detail": "unreachable: air-quality",
+   "detail": "/api/freshness unreachable: URLError",
    "fixed": false,
    "item": null
   },
   "no-merge-over-red/mergeaudit": {
-   "status": "violated",
-   "detail": "merged without green checks: #719",
+   "status": "ok",
+   "detail": "every recent merge had a green checks run",
    "fixed": false,
-   "item": "Q-RULE-no-merge-over-red-mergeaudit"
+   "item": null
   },
   "no-merge-over-red/ciwatch": {
    "status": "ok",
@@ -91,12 +85,6 @@
    "fixed": false,
    "item": null
   },
-  "no-qnfo-on-pages/qnfo-live": {
-   "status": "unmeasured",
-   "detail": "pages not fetched: / (HTTPError), /live (HTTPError), /how (HTTPError), /roadmap (HTTPError), /claims (HTTPError)",
-   "fixed": false,
-   "item": null
-  },
   "license-notice/license-local": {
    "status": "ok",
    "detail": "OK: license files consistent",
@@ -104,10 +92,10 @@
    "item": null
   },
   "license-notice/license-fleet": {
-   "status": "unmeasured",
-   "detail": "seed: GitHub unreadable",
+   "status": "violated",
+   "detail": "practical-solutions: README lacks the license notice; .github: README lacks the license notice",
    "fixed": false,
-   "item": null
+   "item": "Q-RULE-license-notice-license-fleet"
   },
   "no-secrets-in-logs/no-secrets": {
    "status": "ok",
@@ -144,35 +132,9 @@
    "detail": "pointclick ok",
    "fixed": false,
    "item": null
-  },
-  "every-decision-measured/decisions-scored": {
-   "status": "unmeasured",
-   "detail": "unmeasured: ai-router: https://ultrastable.io/api/decisions unreachable; plussing: no decision logged yet; free-tier-governor: https://ultrastable.io/api/decisi",
-   "fixed": false,
-   "item": null
-  },
-  "single-account/singleaccount": {
-   "status": "ok",
-   "detail": "single-account: ok",
-   "fixed": false,
-   "item": null
-  },
-  "every-goal-has-knob/goalscheck": {
-   "status": "ok",
-   "detail": "goalscheck ok",
-   "fixed": false,
-   "item": null
-  },
-  "no-open-items/openloops": {
-   "status": "ok",
-   "detail": "openloops ok",
-   "fixed": false,
-   "item": null
   }
  },
- "filed": [
-  "Q-RULE-no-merge-over-red-mergeaudit"
- ],
+ "filed": [],
  "rules": {
   "closed-loops": {
    "status": "enforced",
@@ -191,14 +153,14 @@
   "front-end-matches-back-end": {
    "status": "unmeasured",
    "ci": 2,
-   "probes": 4,
+   "probes": 3,
    "gaps": [
-    "Practical Solutions *.gen.js bundles do not yet report freshness"
+    "only /live reports its freshness; other generated pages are not yet registered in /api/freshness"
    ],
    "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1)."
   },
   "no-merge-over-red": {
-   "status": "violated",
+   "status": "enforced",
    "ci": 2,
    "probes": 2,
    "gaps": [],
@@ -212,14 +174,16 @@
    "statement": "Ultrastable stays inside the free plans; every workflow declares a minute budget; spend is measured (FREE-TIER-1, cost, actions budget)."
   },
   "no-qnfo-on-pages": {
-   "status": "unmeasured",
+   "status": "partial",
    "ci": 1,
-   "probes": 2,
-   "gaps": [],
+   "probes": 1,
+   "gaps": [
+    "rendered live pages are not yet scanned, only their source"
+   ],
    "statement": "No QNFO data on Ultrastable pages: the brand and its data stay separate (shrink-only baseline per page source)."
   },
   "license-notice": {
-   "status": "unmeasured",
+   "status": "violated",
    "ci": 2,
    "probes": 2,
    "gaps": [],
@@ -252,34 +216,6 @@
    "probes": 2,
    "gaps": [],
    "statement": "Users see their idea and front end; backend work stays invisible, audited and in shared code (USER-BACKEND-1, POINT-AND-CLICK-1)."
-  },
-  "every-decision-measured": {
-   "status": "unmeasured",
-   "ci": 1,
-   "probes": 1,
-   "gaps": [],
-   "statement": "Every autonomous decision records the metric it optimizes, its predicted effect and the measured outcome, and the outcomes are scored (DECISIONS-1: measure what we improve, improve what we measure)."
-  },
-  "single-account": {
-   "status": "enforced",
-   "ci": 1,
-   "probes": 1,
-   "gaps": [],
-   "statement": "Ultrastable runs only in the Cloudflare account `ultrastable`; nothing in the repositories references the retired quniverse account or its Ultrastable assets (SINGLE-ACCOUNT-1)."
-  },
-  "every-goal-has-knob": {
-   "status": "enforced",
-   "ci": 1,
-   "probes": 1,
-   "gaps": [],
-   "statement": "Every goal Ultrastable works toward has a measured variable, a target, a deadline and at least one knob the controller may turn; a goal with no knob is listed in a shrink-only baseline and filed as a backlog item (GOALS-1)."
-  },
-  "no-open-items": {
-   "status": "enforced",
-   "ci": 1,
-   "probes": 1,
-   "gaps": [],
-   "statement": "The system never reports 'needs you' or leaves an item open: every leftover is closed by evidence or recorded as a gate with surfaces tried, a default in effect and a closing probe (NO-OPEN-ITEMS-1)."
   }
  }
 }

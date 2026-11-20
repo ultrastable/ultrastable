@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-great-johnson-qyzjm3",
+  "title": "ZOMBIE-claude-great-johnson-qyzjm3: finish or retire claude/great-johnson-qyzjm3",
+  "body": "**Owner:** operations\n**Trigger:** session idle 19.8 h (ttl 2.0 h)\n**Status:** open\n\nBranch `claude/great-johnson-qyzjm3` at 420322857f has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/great-johnson-qyzjm3` is 0 or the work is merged. The reaper parked the branch as parked/claude/great-johnson-qyzjm3; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

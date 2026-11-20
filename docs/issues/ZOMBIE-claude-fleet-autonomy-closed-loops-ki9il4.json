@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-fleet-autonomy-closed-loops-ki9il4",
+  "title": "ZOMBIE-claude-fleet-autonomy-closed-loops-ki9il4: finish or retire claude/fleet-autonomy-closed-loops-ki9il4",
+  "body": "**Owner:** operations\n**Trigger:** session idle 28.9 h (ttl 4 h)\n**Status:** open\n\nBranch `claude/fleet-autonomy-closed-loops-ki9il4` at 306dbbbe49 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/fleet-autonomy-closed-loops-ki9il4` is 0 or the work is merged. The reaper parked the branch as parked/claude/fleet-autonomy-closed-loops-ki9il4; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

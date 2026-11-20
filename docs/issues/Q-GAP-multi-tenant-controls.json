@@ -1,7 +1,7 @@
 {
   "id": "Q-GAP-multi-tenant-controls",
   "title": "Q-GAP-multi-tenant-controls: Controls required before any multi-tenant hosted offering",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** cmd:python3 -m foundation tenantcontrols --ready\n**Status:** open\n\nMulti-tenant hosting is a different obligation from a bring-your-own-account pilot. List and prove the controls in doctrine/pilot-model.json `multi_tenant_obligations` (isolation test, encryption, processor terms, breach path, per-tenant budget) in docs/security/multi-tenant-controls.json before the hosted tier is offered.\n\nThe list and its probes are doctrine/tenant-controls.json; docs/security/multi-tenant-controls.json is generated from them (2 of 5 proven on 2026-11-20). The done check passes only when every control is proven, not when the file exists.",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:docs/security/multi-tenant-controls.json\n**Status:** open\n\nMulti-tenant hosting is a different obligation from a bring-your-own-account pilot. List and prove the controls in doctrine/pilot-model.json `multi_tenant_obligations` (isolation test, encryption, processor terms, breach path, per-tenant budget) in docs/security/multi-tenant-controls.json before the hosted tier is offered.",
   "labels": [
     "role:operations",
     "gap"

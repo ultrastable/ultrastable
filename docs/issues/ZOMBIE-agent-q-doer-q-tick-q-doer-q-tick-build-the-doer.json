@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-q-doer-q-tick-q-doer-q-tick-build-the-doer",
+  "title": "ZOMBIE-agent-q-doer-q-tick-q-doer-q-tick-build-the-doer: finish or retire agent/Q-DOER-Q-TICK-q-doer-q-tick-build-the-doer-for-family",
+  "body": "**Owner:** operations\n**Trigger:** session idle 21.0 h (ttl 2.0 h)\n**Status:** open\n\nBranch `agent/Q-DOER-Q-TICK-q-doer-q-tick-build-the-doer-for-family` at 2966bc6bb4 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/Q-DOER-Q-TICK-q-doer-q-tick-build-the-doer-for-family` is 0 or the work is merged. The reaper parked the branch as parked/agent/Q-DOER-Q-TICK-q-doer-q-tick-build-the-doer-for-family; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

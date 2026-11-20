@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-sync-dot-dirs",
+  "title": "ZOMBIE-claude-sync-dot-dirs: finish or retire claude/sync-dot-dirs",
+  "body": "**Owner:** operations\n**Trigger:** session idle 51.5 h (ttl 4 h)\n**Status:** open\n\nBranch `claude/sync-dot-dirs` at f730980e9b has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/sync-dot-dirs` is 0 or the work is merged. The reaper parked the branch as parked/claude/sync-dot-dirs; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

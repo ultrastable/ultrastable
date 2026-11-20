@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-clockwork",
+  "title": "ZOMBIE-agent-clockwork: finish or retire agent/CLOCKWORK",
+  "body": "**Owner:** operations\n**Trigger:** session idle 23.6 h (ttl 4 h)\n**Status:** open\n\nBranch `agent/CLOCKWORK` at 965a566192 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/CLOCKWORK` is 0 or the work is merged. The reaper parked the branch as parked/agent/CLOCKWORK; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-quirky-johnson-cg5800",
+  "title": "ZOMBIE-claude-quirky-johnson-cg5800: finish or retire claude/quirky-johnson-cg5800",
+  "body": "**Owner:** operations\n**Trigger:** session idle 21.1 h (ttl 2.0 h)\n**Status:** open\n\nBranch `claude/quirky-johnson-cg5800` at 30261a9f61 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/quirky-johnson-cg5800` is 0 or the work is merged. The reaper parked the branch as parked/claude/quirky-johnson-cg5800; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-live-feed-runtimes",
+  "title": "ZOMBIE-claude-live-feed-runtimes: finish or retire claude/live-feed-runtimes",
+  "body": "**Owner:** operations\n**Trigger:** session idle 20.5 h (ttl 2.0 h)\n**Status:** open\n\nBranch `claude/live-feed-runtimes` at 41fbaa6e89 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/live-feed-runtimes` is 0 or the work is merged. The reaper parked the branch as parked/claude/live-feed-runtimes; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

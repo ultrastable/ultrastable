@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-front-door-interview",
+  "title": "ZOMBIE-agent-front-door-interview: finish or retire agent/front-door-interview",
+  "body": "**Owner:** operations\n**Trigger:** session idle 26.0 h (ttl 4 h)\n**Status:** open\n\nBranch `agent/front-door-interview` at 1ed11d0a0b has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/front-door-interview` is 0 or the work is merged. The reaper parked the branch as parked/agent/front-door-interview; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

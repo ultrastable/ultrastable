@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-ultra-stable-cloudflare-bootstrap-jyvn8i",
+  "title": "ZOMBIE-claude-ultra-stable-cloudflare-bootstrap-jyvn8i: finish or retire claude/ultra-stable-cloudflare-bootstrap-jyvn8i",
+  "body": "**Owner:** operations\n**Trigger:** session idle 30.1 h (ttl 4 h)\n**Status:** open\n\nBranch `claude/ultra-stable-cloudflare-bootstrap-jyvn8i` at 3b4bb5b02e has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/ultra-stable-cloudflare-bootstrap-jyvn8i` is 0 or the work is merged. The reaper parked the branch as parked/claude/ultra-stable-cloudflare-bootstrap-jyvn8i; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

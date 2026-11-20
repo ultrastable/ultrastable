@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-worker-q-grow-second-tenant-deploying",
   "title": "PORT-BRANCH-worker-q-grow-second-tenant-deploying: carry worker/q-grow-second-tenant-deploying onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `worker/q-grow-second-tenant-deploying` at bbfecc78ef holds work main lacks and cannot merge as is (conflicts in code: doctrine/market.json, ops/second-tenant/deploy.sh)\n**Done check:** cmd:python3 -m foundation branchsweep --carried worker/q-grow-second-tenant-deploying\n**Status:** closed\n\nPort the change by hand onto current main (it is 3 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried worker/q-grow-second-tenant-deploying\n\n**Evidence:** Superseded: main holds the second-tenant loop (ops/second-tenant/deploy-loop.sh, latest.json, prediction.json); the branch would shrink latest.json and replace it with a fabricated 2025 timestamp.",
+  "body": "**Owner:** operations\n**Trigger:** branch `worker/q-grow-second-tenant-deploying` at bbfecc78ef holds work main lacks and cannot merge as is (conflicts in code: doctrine/market.json, ops/second-tenant/deploy.sh)\n**Done check:** cmd:python3 -m foundation branchsweep --carried worker/q-grow-second-tenant-deploying\n**Status:** open\n\nPort the change by hand onto current main (it is 3 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried worker/q-grow-second-tenant-deploying",
   "labels": [
     "role:operations",
     "agent-ready",

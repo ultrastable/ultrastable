@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-publication-org-audit",
+  "title": "ZOMBIE-claude-publication-org-audit: finish or retire claude/publication-org-audit",
+  "body": "**Owner:** operations\n**Trigger:** session idle 20.4 h (ttl 2.0 h)\n**Status:** open\n\nBranch `claude/publication-org-audit` at f1c4bfa0f2 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/publication-org-audit` is 0 or the work is merged. The reaper parked the branch as parked/claude/publication-org-audit; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

@@ -1,7 +1,7 @@
 {
   "id": "OL-20261113-5",
   "title": "OL-20261113-5: PROMO-1 promotion manager owns video and social reach",
-  "body": "**Owner:** marketing-manager\n**Trigger:** weekly tick\n**Done check:** file:agents/roles/marketing-manager.md\n**Status:** closed\n\nmarketing-manager measures per-asset referrals against pageviews_30d with a logged prediction per post.\n\n**Evidence:** closing probe passed (first pass): file:agents/roles/marketing-manager.md\n",
+  "body": "**Owner:** marketing-manager\n**Trigger:** weekly tick\n**Done check:** file:agents/roles/marketing-manager.md\n**Status:** open\n\nmarketing-manager measures per-asset referrals against pageviews_30d with a logged prediction per post.",
   "labels": [
     "role:marketing-manager",
     "open-loop"

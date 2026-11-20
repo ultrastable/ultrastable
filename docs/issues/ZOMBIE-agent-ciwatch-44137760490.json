@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-ciwatch-44137760490",
+  "title": "ZOMBIE-agent-ciwatch-44137760490: finish or retire agent/ciwatch-44137760490",
+  "body": "**Owner:** operations\n**Trigger:** session idle 22.3 h (ttl 4 h)\n**Status:** open\n\nBranch `agent/ciwatch-44137760490` at 088c9856a8 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/ciwatch-44137760490` is 0 or the work is merged. The reaper parked the branch as parked/agent/ciwatch-44137760490; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

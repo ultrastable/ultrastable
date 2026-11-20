@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-agent-analytics-1-site",
+  "title": "ZOMBIE-agent-analytics-1-site: finish or retire agent/analytics-1-site",
+  "body": "**Owner:** operations\n**Trigger:** session idle 45.0 h (ttl 4 h)\n**Status:** open\n\nBranch `agent/analytics-1-site` at 3ccf39ecd5 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/agent/analytics-1-site` is 0 or the work is merged. The reaper parked the branch as parked/agent/analytics-1-site; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

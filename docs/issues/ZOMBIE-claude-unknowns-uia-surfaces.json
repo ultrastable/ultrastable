@@ -1,0 +1,11 @@
+{
+  "id": "ZOMBIE-claude-unknowns-uia-surfaces",
+  "title": "ZOMBIE-claude-unknowns-uia-surfaces: finish or retire claude/unknowns-uia-surfaces",
+  "body": "**Owner:** operations\n**Trigger:** session idle 24.6 h (ttl 4 h)\n**Status:** open\n\nBranch `claude/unknowns-uia-surfaces` at a54a0d5092 has work main lacks and no live session. Finish it, or supersede it with evidence. Closing probe: `git rev-list --count origin/main..parked/claude/unknowns-uia-surfaces` is 0 or the work is merged. The reaper parked the branch as parked/claude/unknowns-uia-surfaces; the sha above holds the work.",
+  "labels": [
+    "role:operations",
+    "ws:sessions"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}

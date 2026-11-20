@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-webhooks-1",
   "title": "PORT-BRANCH-webhooks-1: carry webhooks-1 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `webhooks-1` at 76702f4baa holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/deploy-site.yml, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried webhooks-1\n**Status:** closed\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried webhooks-1\n\n**Evidence:** python3 -m foundation branchsweep --carried -> webhooks-1: archived at 76702f4baa (refs/archive/webhooks-1): superseded: main holds 349 of the 350 code lines it added (BRANCH-SWEEP-4)\n",
+  "body": "**Owner:** operations\n**Trigger:** branch `webhooks-1` at 76702f4baa holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/deploy-site.yml, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried webhooks-1\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried webhooks-1",
   "labels": [
     "role:operations",
     "agent-ready",

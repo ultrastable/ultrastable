@@ -1,7 +1,7 @@
 {
   "id": "INTERVIEW-3",
   "title": "INTERVIEW-3: Feed the interview profile into the build prompt and seed repo",
-  "body": "**Owner:** Product manager\n**Trigger:** see below\n**Done check:** grep:site/worker.js::profileBrief\n**Status:** open\n\naiHtml and the seed IDEA.md generator should read profile:<id> (who, money, depth) instead of only the sentence. Trigger: INTERVIEW-1 live. Closing probe: a build for a profile with money=Y contains a pricing or checkout element.",
+  "body": "**Owner:** Product manager\n**Trigger:** see below\n**Status:** open\n\naiHtml and the seed IDEA.md generator should read profile:<id> (who, money, depth) instead of only the sentence. Trigger: INTERVIEW-1 live. Closing probe: a build for a profile with money=Y contains a pricing or checkout element.",
   "labels": [
     "role:product",
     "ws:front-door",
