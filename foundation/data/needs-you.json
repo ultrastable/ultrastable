@@ -18,7 +18,7 @@
    "why": "ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is on for all four since 2026-11-20 (next renewal 2027-11-10).",
    "default": "The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.",
    "url": "https://dash.cloudflare.com/?to=/:account/registrar/domains",
-   "button": "Open the registrar domains (available from 2026-11-20)",
+   "button": "Open the registrar domains",
    "class": "owner_account",
    "connect": "https://dash.cloudflare.com/?to=/:account/registrar/domains",
    "connect_kind": "provider-deep-link"
@@ -36,8 +36,8 @@
   },
   {
    "id": "social",
-   "title": "Create the Bluesky account",
-   "why": "Account creation accepts terms in your name.",
+   "title": "Sign in to Bluesky again",
+   "why": "Bluesky was connected on 2026-11-17 and has refused the stored access since 2026-11-20; Mastodon's sign-in was started and never finished. Only a new sign-in on the service's own page restores it.",
    "default": "Posting stays dry-run; the repo, registry pull requests and feeds carry the work.",
    "url": "https://ultrastable.io/connect/bluesky",
    "button": "Sign in to Bluesky (or Mastodon at /connect/mastodon); the system stores and renews the access",
@@ -82,7 +82,6 @@
   }
  ],
  "done_for_you": [
-  "Work: a routine in Claude's cloud starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green. No API key is needed and no computer of yours has to be on.",
   "Old Cloudflare account: the tick, site and dashboard keep running there.",
   "Entity and the org admin token are not needed now; entity-only programmes stay deferred until you choose one."
  ]

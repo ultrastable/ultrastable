@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-two-swallowed-exceptions-now-print-their-failure",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "Two swallowed exceptions now print their failure",
+  "body": "foundation/clockwork.py and foundation/resilience.py each ended a try block with except Exception: pass. Both still fall back as before (ledger only, health URLs only) and now print the exception type and message to stderr, so the failure is visible in the run log. The self-code sensor reports no bare_except finding after the change.",
+  "probe": "grep:foundation/resilience.py::d1 beats unreadable",
+  "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+ },
+ "kind": "lesson",
+ "title": "Two swallowed exceptions now print their failure",
+ "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+}

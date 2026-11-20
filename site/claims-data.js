@@ -1959,7 +1959,7 @@ export default {
   {
    "claim": "- **A year unattended, measured (RUNWAY-1, Rowan 2026-11-20).** \"The system shall be able to run entirely unattended for 1 year with zero",
    "detail": "",
-   "how": "file:doctrine/runway.json + file:foundation/credwatch.py + file:ops/cost.jsonl + file:foundation/redmain.py + file:doctrine/blindspots.json + file:tests/foundation/test_runway.py",
+   "how": "file:doctrine/runway.json + file:foundation/credwatch.py + file:ops/cost.jsonl + file:ops/runway.json + file:foundation/redmain.py + file:doctrine/blindspots.json",
    "id": "cited-2fa0797f0e",
    "kind": "claim",
    "pass": true,
@@ -1970,6 +1970,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
    "id": "cited-edb8a8bb30",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
+   "detail": "",
+   "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py",
+   "id": "cited-cd0900561e",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2517,7 +2526,7 @@ export default {
   {
    "claim": "- **A year unattended, measured (RUNWAY-1, Rowan 2026-11-20).** \"The system shall be able to run entirely unattended for 1 year with zero",
    "detail": "",
-   "how": "file:doctrine/runway.json + file:foundation/credwatch.py + file:ops/cost.jsonl + file:foundation/redmain.py + file:doctrine/blindspots.json + file:tests/foundation/test_runway.py",
+   "how": "file:doctrine/runway.json + file:foundation/credwatch.py + file:ops/cost.jsonl + file:ops/runway.json + file:foundation/redmain.py + file:doctrine/blindspots.json",
    "id": "mirror-708c563ce5",
    "kind": "claim",
    "pass": true,
@@ -2528,6 +2537,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
    "id": "mirror-5960ed9b31",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
+   "detail": "",
+   "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py",
+   "id": "mirror-5fbac9d618",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3019,7 +3037,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 387 Worker tests",
+   "claim": "seed-tests: 45 Python and 391 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3028,7 +3046,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 387 Worker tests",
+   "claim": "seed-worker-tests: 391 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3260,7 +3278,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 359,
-  "total": 359
+  "pass": 361,
+  "total": 361
  }
 };

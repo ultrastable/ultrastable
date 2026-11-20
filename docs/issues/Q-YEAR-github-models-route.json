@@ -1,0 +1,11 @@
+{
+  "id": "Q-YEAR-github-models-route",
+  "title": "Q-YEAR-github-models-route: repair or retire the GitHub Models route",
+  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `github-models-route` is open\n**Done check:** cmd:python3 -m foundation unattended --probe github-models-route\n**Status:** open\n\nThe route answers HTTP 200 text/plain. Read the current endpoint contract, fix foundation/agents.py or mark the adapter retired in doctrine/code-agents.json so the ladder stops spending a call on it.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that proves it.",
+  "labels": [
+    "role:staff",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
