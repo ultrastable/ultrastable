@@ -1,0 +1,12 @@
+name: checks
+on: [push]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run checks
+        run: |
+          python3 -m foundation mergeaudit --probe 719
+          python3 -m foundation checks

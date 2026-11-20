@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-executor-closed-q-cifail-mergeaudit-719-fix-checks-yml-to-re",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "Executor closed Q-CIFAIL-mergeaudit-719: fix checks.yml to require green checks run before merge",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: github/workflows/checks.yml.",
+  "probe": "file:github/workflows/checks.yml"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-CIFAIL-mergeaudit-719: fix checks.yml to require green checks run before merge",
+ "session": ""
+}

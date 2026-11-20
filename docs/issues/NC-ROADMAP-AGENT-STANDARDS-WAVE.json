@@ -1,0 +1,11 @@
+{
+  "id": "NC-ROADMAP-AGENT-STANDARDS-WAVE",
+  "title": "NC-ROADMAP-AGENT-STANDARDS-WAVE: ROADMAP-1: QNFO.REACH #7: standards wave STD-4 to STD-14, click-first",
+  "body": "**Owner:** product-manager\n**Trigger:** the backlog item ROADMAP-AGENT-STANDARDS-WAVE was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe ROADMAP-AGENT-STANDARDS-WAVE\n**Status:** open\n\nROADMAP-1: QNFO.REACH #7: standards wave STD-4 to STD-14, click-first\n\nBacklog done check: grep:seed/standards/standards.json::STD-14 ; each STD item in seed/standards/standards.json moves from planned to supported with a passing test; python3 -m foundation standards --check\n\nTriage: worker-native attempt failed (no code agent produced a change: [{\"adapter\":\"workers-ai-glm\",\"error\":\"airouter: no model passed (workers-ai-glm: daily free neurons used)\"},{\"adapter\":\"workers-ai-llama\",\"error\":\"airouter: no model p); retried after the other candidates\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:product-manager",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}
