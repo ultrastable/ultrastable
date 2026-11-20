@@ -197,6 +197,14 @@
       "class": "core",
       "role": "AI cost router: cache and dedupe, free models first, reply gate, paid escalation only inside a hard monthly cap, every call recorded and learned from; tenant-agnostic (AI-ROUTER-1)"
     },
+    "core/ask": {
+      "class": "core",
+      "role": "Grounded natural-language questions over a tenant's pages: retrieval, verified answers, rate limit and budget; tenant-agnostic (ASK-1)"
+    },
+    "core/i18n": {
+      "class": "core",
+      "role": "Serve a server-rendered site in many languages: segments, localized pages, hreflang, sitemaps, checked machine translation; tenant-agnostic (I18N-1)"
+    },
     "core/modelservice": {
       "class": "core",
       "role": "Keyless model route: OIDC-verified CI runs call Workers AI with allow-listed models; tenants pass configuration only (MODELSERVICE-1)"
@@ -300,6 +308,10 @@
     "core/tenantstore": {
       "class": "core",
       "role": "Sandboxed per-tenant store with hard read and write budgets, vector search and a spend probe (US-SPEC-25)"
+    },
+    "core/format": {
+      "class": "core",
+      "role": "Tenant-agnostic number formatting: significant-digit rounding, units and the false-precision lint"
     },
     "core/test": {
       "class": "core",

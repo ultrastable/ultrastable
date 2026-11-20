@@ -53,3 +53,20 @@ test("only ten versions are kept and restore is itself undoable", async () => {
   assert.equal((await U.restore(e, ID, 999, T0)).ok, false);
   assert.match(U.historyBody(ID, await U.versions(e, ID), null), /Go back to this/);
 });
+test("insights count only human hits on the site's own path and the model pass follows visits", async () => {
+  const { DatabaseSync } = await import("node:sqlite"); const db = new DatabaseSync(":memory:");
+  db.exec("CREATE TABLE hits(id INTEGER PRIMARY KEY AUTOINCREMENT, at INTEGER, host TEXT, path TEXT, ref TEXT DEFAULT '', country TEXT DEFAULT '', device TEXT DEFAULT '', bot INTEGER DEFAULT 0, vid TEXT, name TEXT)");
+  const ins = db.prepare("INSERT INTO hits(at,host,path,ref,country,device,bot,vid,name) VALUES(?,?,?,?,?,?,?,?,?)"), p = "/s/" + ID;
+  ins.run(T0.getTime() - DAY, "h", p, "news.example", "NL", "mobile", 0, "a", "v"); ins.run(T0.getTime() - DAY, "h", p, "", "NL", "mobile", 1, "b", "v"); ins.run(T0.getTime() - DAY, "h", "/s/ffffffffff", "", "", "", 0, "c", "v");
+  const d1 = { prepare(sql) { let a = []; const st = { bind(...x) { a = x; return st; }, all: async () => ({ results: db.prepare(sql).all(...a) }) }; return st; } };
+  const r = await U.insights(d1, ID, T0); assert.equal(r.views7, 1); assert.equal(r.refs[0].k, "news.example");
+  assert.equal(await U.viewedRecently(d1, "ffffffffff", new Date(T0.getTime() + 40 * DAY)), false);
+  const e = env(full); const out = await U.upkeepSite(e, ID, { now: T0, lint: () => [], improve: async (b, h) => h + "x", visited: async () => false }); assert.equal(out.kind, "none");
+  assert.match(U.insightsBody(ID, r), /Where they came from/);
+});
+test("feed and badge describe what the system changed", async () => {
+  const e = env("v0"); await U.recordVersion(e, ID, "a", "upkeep: added page description", T0);
+  const idx = await U.versions(e, ID), f = U.siteFeed(ID, idx, "https://ultrastable.io", "Club <1>");
+  assert.match(f, /<feed xmlns="http:\/\/www.w3.org\/2005\/Atom">/); assert.match(f, /After version 1: upkeep: added page description/); assert.match(f, /Club &lt;1&gt;/);
+  assert.match(U.siteBadge(idx), /kept up: 1 change"/); assert.match(U.siteBadge({ list: [] }), /newly built/);
+});
