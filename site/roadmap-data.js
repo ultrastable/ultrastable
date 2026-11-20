@@ -119,7 +119,7 @@ export default {
    "id": "Q-GAP-executor-merged-pr",
    "milestone": "Next",
    "owner": "operations",
-   "status": "done",
+   "status": "closed",
    "title": "Executor opens and merges its own pull request",
    "trigger": "every executor run"
   },

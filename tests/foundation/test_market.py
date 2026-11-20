@@ -60,6 +60,8 @@ class Market(unittest.TestCase):
         t = _copy(); d = market.load(t)
         for o in d["objections"]:
             if o["id"] == "just-a-code-agent": o["concede"] = "Coding agents are strong."
+        for f in d["features"]:  # the cited feature is built today; the rule is tested on the same objection citing it while unbuilt
+            if f["id"] == "executor-pr": f["status"] = "pinned"
         (t / market.PATH).write_text(json.dumps(d)); self.assertTrue(any("without conceding" in b for b in market.check(t)))
 
 

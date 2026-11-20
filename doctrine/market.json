@@ -682,7 +682,7 @@
       "id": "just-a-code-agent",
       "objection": "Isn't this just a code agent?",
       "answer": "No. Coding agents write the change. Ultrastable decides what to work on, hands each task to the agent that fits, proves the result live, reverts it on a failed probe, and records whether its own prediction was right. It sits around coding agents rather than competing with them.",
-      "concede": "The coding agents named in this file are strong at writing the change, and Ultrastable's own executor opening a merged PR is still pinned.",
+      "concede": "The coding agents named in this file are strong at writing the change, and the only pull requests Ultrastable's own executor has opened and merged so far are mechanical fixes, not changes written by a model.",
       "components": [
         "code-repo",
         "loops-autonomy",
