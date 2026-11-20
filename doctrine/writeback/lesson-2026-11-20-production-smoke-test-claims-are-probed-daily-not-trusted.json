@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-production-smoke-test-claims-are-probed-daily-not-trusted",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "Production smoke test: claims are probed daily, not trusted",
+  "body": "smoke-live.yml probes the public claims on ultrastable.io and .org daily and files Q-SMOKE items; watchdog and backup-drill land data through scripts/land_data.py (main writer, then PR) because the main writer was refused (Q-MAINWRITER-REFUSED); /api/ask falls back to a cited answer without the model; meta-ingest answers 503 in plain words when storage fails.",
+  "probe": "file:scripts/smoke_live.py",
+  "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+ },
+ "kind": "lesson",
+ "title": "Production smoke test: claims are probed daily, not trusted",
+ "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+}
