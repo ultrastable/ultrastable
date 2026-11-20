@@ -2426,6 +2426,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-cd0900561e",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
+      "probe": [
+        "file:doctrine/unattended.json",
+        "file:foundation/unattended.py",
+        "file:foundation/modelwatch.py",
+        "file:tests/foundation/test_unattended.py",
+        "file:site/live.js",
+        "file:site/progress.test.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-0c620161e8",
       "surface": "demos/README.md",
       "text": "Engine: `demos/public/engine.js`, deterministic, shared by browser and tests. Tests: `node --test demos/test/*.test.mjs` (16 tests:",
@@ -3121,6 +3135,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-edb8a8bb30"
+    },
+    {
+      "id": "mirror-5fbac9d618",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
+      "probe": [
+        "file:doctrine/unattended.json",
+        "file:foundation/unattended.py",
+        "file:foundation/modelwatch.py",
+        "file:tests/foundation/test_unattended.py",
+        "file:site/live.js",
+        "file:site/progress.test.mjs"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-cd0900561e"
     },
     {
       "id": "mirror-cfa2c29d4e",
