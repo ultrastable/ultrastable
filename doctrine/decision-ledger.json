@@ -2880,6 +2880,33 @@
    "body": "The GitHub App manifest never requested the statuses permission, so the Worker gate was answered 403 on every pull request. SCOPE_ALLOWLIST now includes statuses: write, checkRepoAccess reports permissions the installation lacks, and runGate returns status forbidden with needs statuses:write, which the tick keeps as the single gate card GATE-APP-PERMISSION (default in effect: the lane merges on local-checks evidence). An App registered before this change needs the owner's one approval of the new permission at /connect/github.",
    "probe": "grep:seed/worker/src/worker-gate.js::status 403",
    "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "decision-2026-11-20-coverage-cited-1-a-statement-is-bound-to-the-code-it-names-n",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "COVERAGE-CITED-1: a statement is bound to the code it names, never to itself",
+   "body": "2026-11-20: 380 claim-like statements on source surfaces had no probe (coverage 5.5 percent, 67 Q-CLAIM-COVER items). scripts/bind_cited_claims.py registers each statement that cites a file that exists or a foundation module (and its step in checks.yml) with those as probes: 54 claims, coverage 42.8 percent, ratchet floor raised from 3.5 to 40 percent. 235 statements cite no code and stay unbound: generated data modules, code lines the patterns catch, and prose that needs a real probe or different words.",
+   "probe": "grep:scripts/bind_cited_claims.py::COVERAGE-CITED-1",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "lesson-2026-11-20-elision-1-bridge-probe-1-an-agent-pr-gutted-worker-gate-js-a",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "ELISION-1, BRIDGE-PROBE-1: an agent PR gutted worker-gate.js and bridged records failed the pins check",
+   "body": "PR 725 replaced seed/worker/src/worker-gate.js with '// ... existing code ...' and carried 50 bridged NC records whose done checks were prose, so the pins check failed and the PR held the agent cap. foundation/executor.py elision_gap refuses an elision marker or a file that loses more than half its lines; scripts/needs_code_bridge.py writes a cmd: done check that asks the deployment whether the item is still parked.",
+   "probe": "file:tests/foundation/test_needs_code_bridge.py",
+   "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+  },
+  {
+   "id": "lesson-2026-11-20-evidence-return-1-the-executor-ran-later-steps-from-the-loop",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "EVIDENCE-RETURN-1: the executor ran later steps from the loop-evidence branch",
+   "body": "scripts/executor_evidence.sh left the checkout on loop-evidence, so clock --chain and clock --heal ran that branch's old code and data and the wake cap from PR 727 never took effect. The script now returns to the commit it started on.",
+   "probe": "file:scripts/executor_evidence.sh",
+   "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
   }
  ]
 }

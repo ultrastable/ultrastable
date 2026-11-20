@@ -26,8 +26,8 @@ def fetch(api, limit):
 def record(item):
     triage = re.sub(r"^needs-code:\s*", "", item.get("blocker") or "")
     body = (f"**Owner:** {item.get('owner_role') or 'operations'}\n**Trigger:** the backlog item {item['id']} was parked needs-code by the in-tick doer\n"
-            f"**Done check:** {item.get('done_check') or 'the change is merged and its closing probe passes'}\n**Status:** open\n\n"
-            f"{item.get('title')}\n\nTriage: {triage}\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). "
+            f"**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe {item['id']}\n**Status:** open\n\n"
+            f"{item.get('title')}\n\nBacklog done check: {item.get('done_check') or 'the change is merged and its closing probe passes'}\n\nTriage: {triage}\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). "
             f"The change is code, data or a test that a loop consumes; a document alone does not close it.")
     return {"id": f"NC-{item['id']}", "title": f"NC-{item['id']}: {item.get('title') or item['id']}"[:200], "body": body, "labels": ["role:" + (item.get("owner_role") or "operations"), "ws:platform", "needs-code"], "workstream": "platform"}
 
@@ -46,9 +46,21 @@ def bridge(items, root=ROOT, dry=False):
     return made
 
 
+def still_parked(items, item_id):
+    """BRIDGE-PROBE-1: the bridged record's done check. The item is done when the deployment no longer lists it as blocked needs-code."""
+    return any(it.get("id") == item_id and (it.get("blocker") or "").startswith("needs-code:") for it in items)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("--api", default=DEFAULT_API); ap.add_argument("--limit", type=int, default=100); ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--probe", help="exit 0 when this backlog item is no longer parked needs-code; an unreadable API is unmeasured and exits 1")
     a = ap.parse_args(argv)
+    if a.probe:
+        try:
+            parked = still_parked(fetch(a.api, 500), a.probe)
+        except Exception as e:
+            print(f"unmeasured: could not read {a.api}: {e}", file=sys.stderr); return 1
+        print(f"{a.probe}: " + ("still parked needs-code" if parked else "no longer parked needs-code")); return 1 if parked else 0
     try:
         items = fetch(a.api, a.limit)
     except Exception as e:  # a failed read is recorded by the caller's step log and retried on the next run; the executor still works the rest of the queue

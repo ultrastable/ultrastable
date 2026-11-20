@@ -1,7 +1,7 @@
 {
   "id": "Q-ISSUE-workers-200",
   "title": "Q-ISSUE-workers-200: GATE: start Ultrastable on Ultrastable (6 owner steps)",
-  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/workers#200\n**Status:** open\n\nISSUE-LOOP-1: ultrastable/workers#200 (GATE: start Ultrastable on Ultrastable (6 owner steps)) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n",
+  "body": "**Owner:** executor\n**Trigger:** issueloop, daily\n**Done check:** cmd:python3 -m foundation issueloop --closed ultrastable/workers#200\n**Status:** closed\n\nISSUE-LOOP-1: ultrastable/workers#200 (GATE: start Ultrastable on Ultrastable (6 owner steps)) is unprobed: no probe line in the body. Fix it in code and close it, or add a `Closing probe:` line the loop can run (file, grep, allow-listed cmd, or GET url expect \"text\").\n\nsize: S\n\n\n**Evidence:** closing probe passed (2 consecutive passes after a recorded failure): closed\n",
   "labels": [
     "p2",
     "agent-ready"
