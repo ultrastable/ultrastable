@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """BLINDSPOT-1 need dependency-licences: every third-party package, tool and action this repository names, with its licence, checked against how it is used.
 Ultrastable is the foundation for any autonomous system.
 

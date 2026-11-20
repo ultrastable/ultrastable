@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """BLINDSPOT-1 need backup-restore: a backup counts only after it has been restored. Ultrastable is the foundation for any autonomous system.
 
   python3 -m foundation backup --run [--apply] [--force]   export every D1 database and KV namespace in the account, restore each SQL dump into a scratch SQLite

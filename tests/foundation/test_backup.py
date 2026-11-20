@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # BLINDSPOT-1 need backup-restore: export, restore into a scratch database, compare, store, read back.
 import datetime as dt, gzip, json, shutil, sqlite3, unittest
 from pathlib import Path

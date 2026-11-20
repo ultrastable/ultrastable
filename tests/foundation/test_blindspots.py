@@ -14,6 +14,8 @@ class Blindspots(unittest.TestCase):
             s, d = REPO / p, self.tmp / p
             d.parent.mkdir(parents=True, exist_ok=True)
             shutil.copytree(s, d) if s.is_dir() else shutil.copy(s, d)
+        for f in ("answers.jsonl", "closed.jsonl"):     # each test starts with no sweep answered and no need closed, whatever the repository has recorded
+            (self.tmp / "ops/blindspots" / f).write_text("")
 
     def test_repo_register_is_valid(self):
         self.assertEqual(blindspots.check(REPO), [])
