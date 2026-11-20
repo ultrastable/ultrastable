@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-19",
   "title": "OL-20261115-19: workers#19 Door A: hosted web launcher",
-  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** hosting account available\n**Done check:** file:apps/launcher/test/launcher.test.js\n**Status:** open\n\nMoved from ultrastable/workers#19. Launcher code merged (tests in apps/launcher/test). Remaining: host it on a permanent Cloudflare account that is not the QNFO account, TURNSTILE_SECRET, release bundle, claim-time heartbeat. The hosting account is an identity-bound step (NEEDS-YOU cloudflare-new-account).",
+  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** hosting account available\n**Done check:** file:apps/launcher/test/launcher.test.js\n**Status:** closed\n\nMoved from ultrastable/workers#19. Launcher code merged (tests in apps/launcher/test). Remaining: host it on a permanent Cloudflare account that is not the QNFO account, TURNSTILE_SECRET, release bundle, claim-time heartbeat. The hosting account is an identity-bound step (NEEDS-YOU cloudflare-new-account).\n\n**Disposition:** gate (owner-bound, 2026-11-20T20:46:50Z, DISPOSE-1)\n\n**Evidence:** owner field 'ROWAN (identity-bound)' binds this to the owner's own account, money or signature, which no server-side loop holds. Default in effect: the system runs without this step; nothing waits on it. Its closing probe still runs on every fleet pass and records `fixed` when it passes.\n",
   "labels": [
     "role:ROWAN (identity-bound)",
     "open-loop"

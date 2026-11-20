@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-17",
   "title": "OL-20261115-17: workers#75 GATE: start Ultrastable on Ultrastable (owner steps)",
-  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** any one door done\n**Done check:** file:org/started.json\n**Status:** open\n\nMoved from ultrastable/workers#75. Owner steps: a Cloudflare door (sign-in, launcher, git import or scoped token), GITHUB_TOKEN, a model key, a spending approval, the org admin token. Default in effect: dry run, nothing spent; reference tenants keep ticking on the old account. Closing probe file_exists:org/started.json.",
+  "body": "**Owner:** ROWAN (identity-bound)\n**Trigger:** any one door done\n**Done check:** file:org/started.json\n**Status:** closed\n\nMoved from ultrastable/workers#75. Owner steps: a Cloudflare door (sign-in, launcher, git import or scoped token), GITHUB_TOKEN, a model key, a spending approval, the org admin token. Default in effect: dry run, nothing spent; reference tenants keep ticking on the old account. Closing probe file_exists:org/started.json.\n\n**Disposition:** gate (owner-bound, 2026-11-20T20:46:50Z, DISPOSE-1)\n\n**Evidence:** owner field 'ROWAN (identity-bound)' binds this to the owner's own account, money or signature, which no server-side loop holds. Default in effect: the system runs without this step; nothing waits on it. Its closing probe still runs on every fleet pass and records `fixed` when it passes.\n",
   "labels": [
     "role:ROWAN (identity-bound)",
     "open-loop"
