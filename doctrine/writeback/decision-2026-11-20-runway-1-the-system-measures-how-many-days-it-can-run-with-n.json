@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-runway-1-the-system-measures-how-many-days-it-can-run-with-n",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "RUNWAY-1: the system measures how many days it can run with nobody there",
+  "body": "Owner target 2026-11-20: run unattended for at least one year. doctrine/runway.json declares every calendar deadline (domains, the lane token, the Cloudflare deploy token, runtimes, the runner image, D1 size) with a live probe, a consequence and a remedy; foundation/runway.py measures them and the daily watchdog pass (foundation/resilience.py main) records the reading and files Q-RUNWAY items. First reading: 354 days, bounded by the four domains expiring 2027-11-10 with auto-renew off; Node 22 loses security fixes on 2027-04-30. The two Cloudflare deadlines were unmeasured from a session and are measured by the watchdog, which holds the token.",
+  "probe": "grep:doctrine/runway.json::RUNWAY-1",
+  "session": "claude-code-local-2026-11-20"
+ },
+ "kind": "decision",
+ "title": "RUNWAY-1: the system measures how many days it can run with nobody there",
+ "session": "claude-code-local-2026-11-20"
+}

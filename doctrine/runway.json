@@ -1,0 +1,113 @@
+{
+  "_doc": "RUNWAY-1 (Rowan, 2026-11-20): the system is designed to run unattended for at least one year. A clock that is ticking today (RESILIENCE-1) can still stop on a calendar date: a domain lapses, a token expires, a runtime is retired, a database fills. Every such date is a deadline declared here with a live probe; `runway_days` is the nearest hard deadline, and the target is `target_days`. Read by foundation/runway.py; run daily inside the watchdog (foundation/resilience.py main, so no extra workflow or Actions minute); a deadline nearer than the target files Q-RUNWAY-<id>. A deadline that cannot be measured is `unmeasured`, never passed. `hard: false` marks a date after which the system keeps running but loses something (security patches); it is filed but does not bound the runway. Never delete a deadline to raise the number: a retired dependency is removed together with the code that used it.",
+  "version": "1.0.0",
+  "marker": "RUNWAY-1",
+  "target_days": 365,
+  "ledger": "ops/resilience.jsonl",
+  "item_prefix": "Q-RUNWAY",
+  "file_unmeasured_after_runs": 3,
+  "sources": {
+    "rdap": "https://rdap.org/domain/{name}",
+    "endoflife": "https://endoflife.date/api/{product}/{cycle}.json",
+    "github": "https://api.github.com/rate_limit",
+    "cloudflare_user": "https://api.cloudflare.com/client/v4/user/tokens/verify",
+    "cloudflare_account": "https://api.cloudflare.com/client/v4/accounts/{account_id}/tokens/verify",
+    "d1": "https://api.cloudflare.com/client/v4/accounts/{account_id}/d1/database/{d1_id}"
+  },
+  "deadlines": [
+    {
+      "id": "domain-ultrastable-io",
+      "kind": "domain",
+      "name": "ultrastable.io",
+      "declared_expires": "2027-11-10",
+      "declared_source": "deploy/transfer/plan.json (registered 2026-11-10 for one year; the .io registry's RDAP answer carries no expiration event)",
+      "hard": true,
+      "if_lapsed": "ultrastable.io stops resolving: the public site, /live, /connect callbacks and every link already published go dark. The loops keep running on the workers.dev hosts.",
+      "remedy": "IDENTITY-BOUND: turn on auto-renew for the domain in Cloudflare Registrar (a payment in the owner's name). Code-side mitigation: every public surface must also answer on its workers.dev host, and published links should have a workers.dev twin.",
+      "identity_bound": true
+    },
+    {
+      "id": "domain-ultrastable-app",
+      "kind": "domain",
+      "name": "ultrastable.app",
+      "hard": true,
+      "if_lapsed": "ultrastable.app and every spinoff on *.ultrastable.app stop resolving.",
+      "remedy": "IDENTITY-BOUND: turn on auto-renew in Cloudflare Registrar. Code-side mitigation: spinoffs keep a workers.dev route.",
+      "identity_bound": true
+    },
+    {
+      "id": "domain-ultrastable-net",
+      "kind": "domain",
+      "name": "ultrastable.net",
+      "hard": true,
+      "if_lapsed": "ultrastable.net stops resolving (an alias of the main site).",
+      "remedy": "IDENTITY-BOUND: turn on auto-renew in Cloudflare Registrar, or drop the alias from the routes so nothing depends on it.",
+      "identity_bound": true
+    },
+    {
+      "id": "domain-ultrastable-org",
+      "kind": "domain",
+      "name": "ultrastable.org",
+      "hard": true,
+      "if_lapsed": "ultrastable.org stops resolving: the Practical Solutions tenant loses its public address and its outreach reply address. The tenant keeps running on tenant-ps-web.ultrastable.workers.dev.",
+      "remedy": "IDENTITY-BOUND: turn on auto-renew in Cloudflare Registrar. Code-side mitigation: the tenant's canonical links fall back to its workers.dev host.",
+      "identity_bound": true
+    },
+    {
+      "id": "token-lane-pat",
+      "kind": "github_token",
+      "env": "GH_TOKEN",
+      "hard": true,
+      "if_lapsed": "Every workflow that pushes to main, opens or merges a pull request, or dispatches another workflow with the lane token fails: the executor, branch sweep, watchdog restarts and the regenerate step stop. The Cloudflare tick keeps running.",
+      "remedy": "Replace the personal access token with the lane GitHub App's installation token (LANE_APP_ID and LANE_APP_PRIVATE_KEY are already repository secrets; an App key has no expiry and each installation token is minted per run), workflow by workflow, then delete the secret."
+    },
+    {
+      "id": "token-cloudflare-deploy",
+      "kind": "cloudflare_token",
+      "env": "CLOUDFLARE_API_TOKEN",
+      "account_id": "81e3a4efb4eb66e613529b87682911bb",
+      "hard": true,
+      "if_lapsed": "No Worker can be deployed and no probe can read D1 from GitHub Actions: merged code stops reaching production and the cost and clock probes go unmeasured. Workers already deployed keep running on their own crons.",
+      "remedy": "Mint the deploy token with no expiry (or roll it from the deploy gateway Worker, which holds its own scoped token), and prefer the gateway's OIDC route so Actions holds no long-lived Cloudflare token at all."
+    },
+    {
+      "id": "d1-ultrastable-core",
+      "kind": "d1_size",
+      "account_id": "81e3a4efb4eb66e613529b87682911bb",
+      "d1_id": "216e97ea-da5e-41e5-af52-af6c0484a7be",
+      "env": "CLOUDFLARE_API_TOKEN",
+      "limit_bytes": 500000000,
+      "limit_source": "Cloudflare D1 free plan: 500 MB per database",
+      "hard": true,
+      "if_lapsed": "The core database refuses writes: ticks, claims, predictions and the criticality history stop being recorded, so every clock that beats in D1 reads as stopped.",
+      "remedy": "Add retention to the tables that grow every tick (tick_runs, criticality_history, probe logs): keep 90 days at full resolution, roll older rows up to one per day, and export the rolled-up rows to the repository before deleting them."
+    },
+    {
+      "id": "runtime-node-22",
+      "kind": "eol",
+      "product": "nodejs",
+      "cycle": "22",
+      "hard": false,
+      "if_lapsed": "Node 22 stops receiving security fixes. Workflows keep running because actions/setup-node still installs it.",
+      "remedy": "Move every `node-version: 22` in .github/workflows to the current LTS in one change, run the full checks on it, and keep float comparisons tolerant so the upgrade cannot fail a test by its last digit."
+    },
+    {
+      "id": "runtime-python-3-12",
+      "kind": "eol",
+      "product": "python",
+      "cycle": "3.12",
+      "hard": false,
+      "if_lapsed": "Python 3.12 (the ubuntu-24.04 runner's python3, which runs `python3 -m foundation`) stops receiving security fixes.",
+      "remedy": "Pin the next supported Python with actions/setup-python in the workflows that run foundation, after the test suite passes on it."
+    },
+    {
+      "id": "runner-ubuntu-24-04",
+      "kind": "eol",
+      "product": "ubuntu",
+      "cycle": "24.04",
+      "hard": true,
+      "if_lapsed": "GitHub retires the ubuntu-24.04 runner image: every job pinned to it is refused, which stops checks, deploys and the watchdog.",
+      "remedy": "Move `runs-on: ubuntu-24.04` to the next LTS image in one change well before the date; GitHub announces image retirement months ahead and brownouts come first."
+    }
+  ]
+}

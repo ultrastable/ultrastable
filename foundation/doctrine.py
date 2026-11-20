@@ -121,6 +121,7 @@ def check(root=REPO) -> list[str]:
     bad += framing_scan(root, d)
     from . import liveness; bad += [f"liveness: {x}" for x in liveness.check(root)] if (root / "instances/ultrastable/liveness.json").exists() else []
     from . import serverside; bad += [f"serverside: {x}" for x in serverside.check(root)] if (root / serverside.PATH).exists() else []
+    from . import runway; bad += [f"runway: {x}" for x in runway.check(root)] if (root / runway.PATH).exists() else []  # RUNWAY-1: the deadline declaration is checked on every pull request
     from . import kernel, loops, glossary, directive
     if (root / kernel.PATH).exists():
         bad += [f"kernel: {x}" for x in kernel.check(root)]

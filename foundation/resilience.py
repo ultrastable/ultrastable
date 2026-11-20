@@ -391,6 +391,14 @@ def main(argv=None) -> int:
         return 0 if row and row["status"] in ("ticking", "late", "idle") else 1
     if "--report" in a or "--run" in a:
         r = run(apply="--apply" in a and "--run" in a)
+        if "--run" in a:  # RUNWAY-1: the daily watchdog pass also measures every calendar deadline (same host, same credentials, no extra workflow)
+            from . import runway
+            try:
+                rw = runway.run(apply="--apply" in a)
+                r["runway"] = {k: rw[k] for k in ("runway_days", "nearest", "short", "unmeasured", "filed")}
+                r["changed"] = r["changed"] or rw["changed"]
+            except Exception as e:  # noqa: BLE001 - a broken runway probe must not stop the clock watchdog; the error is in the run's output
+                r["runway"] = {"error": f"{type(e).__name__}: {e}"[:300]}
         print(json.dumps(r, indent=1))
         if "--changed-file" in a:  # the workflow commits the ledger only when something changed, so its own commit never feeds back into a run
             Path(a[a.index("--changed-file") + 1]).write_text("1" if r["changed"] else "0", encoding="utf-8")
