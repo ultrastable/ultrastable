@@ -2414,6 +2414,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-820fd3039a",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
+      "probe": [
+        "file:instances/ultrastable/progress.json",
+        "file:seed/worker/src/progress.js",
+        "file:seed/worker/test/progress.test.js",
+        "file:site/progress.test.mjs",
+        "file:tests/foundation/test_progress.py",
+        "file:foundation/progress.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-edb8a8bb30",
       "surface": "agents/AGENTS.md",
       "text": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
@@ -3108,6 +3122,21 @@
       ],
       "bound_by": "mirror",
       "of": "cited-e7cebff4c4"
+    },
+    {
+      "id": "mirror-eed3f734df",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
+      "probe": [
+        "file:instances/ultrastable/progress.json",
+        "file:seed/worker/src/progress.js",
+        "file:seed/worker/test/progress.test.js",
+        "file:site/progress.test.mjs",
+        "file:tests/foundation/test_progress.py",
+        "file:foundation/progress.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-820fd3039a"
     },
     {
       "id": "mirror-5960ed9b31",

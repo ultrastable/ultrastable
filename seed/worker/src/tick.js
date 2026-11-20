@@ -39,6 +39,7 @@ function iso(d) { return d.toISOString().replace('T', ' ').slice(0, 19); }
 
 // Built-in metrics a prediction can name. Each returns a number.
 export const METRICS = {
+  stalled_systems: db => first(db, `SELECT COUNT(*) AS n FROM progress_cadence WHERE state = 'stalled'`).then(r => r.n, () => 0),  // PROGRESS-1: systems that shipped nothing visible for two of their declared intervals; no table yet reads 0
   tick_runs_completed_1h: (db, now) => first(db,
     `SELECT COUNT(*) AS n FROM tick_runs WHERE finished_at >= ? AND steps_completed = steps_total`,
     iso(new Date(now - 3600e3))).then(r => r.n),
