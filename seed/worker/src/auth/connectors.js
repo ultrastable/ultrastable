@@ -8,7 +8,10 @@
 //   GET  /connect/mcp?server=<url>      remote MCP server as client: RFC 9728 discovery, RFC 8414 metadata, PKCE, CIMD or DCR registration
 //   GET  /auth/connectors               JSON status listing for the dashboard (no secrets)
 //   GET  /.well-known/oauth-client/ultrastable.json   our Client ID Metadata Document
-// Registered providers need an OAuth app only when the provider has no open registration; that is the single owner card 'oauth-apps' (IDENTITY-BOUND). MCP servers need none.
+//   GET  /connect/<provider>/broker     CONNECT-BROKER-1: the platform's one app serves every system built on it (allow-listed return origin, the system's own PKCE challenge passed through)
+//   POST /connect/<provider>/token      CONNECT-BROKER-1: code and refresh exchange for a brokered system; the app secret never leaves the platform Worker, PKCE binds the code to the system that started
+// CONNECT-BROKER-1 (Rowan, 2026-11-20): nobody registers an app, pastes a redirect address or opens a provider console. A system with no app of its own (env CONNECT_BROKER = the platform origin) sends the
+// person through the platform's callback and receives the code back on its own callback. MCP servers register themselves (CIMD or DCR). The platform's own app per provider is gate provider-app-registration in doctrine/open-loops.json.
 import * as store from './store.js';
 import { consentScreen, doneScreen, failScreen, connectionsScreen } from './consent.js';
 import { makeConnectorState, checkConnectorState } from './state.js';
@@ -43,6 +46,17 @@ export function safeUrl(u, allowInsecure = false) {
 }
 
 const appCreds = (env, def) => ({ id: env[def.env + '_CLIENT_ID'] || null, secret: env[def.env + '_CLIENT_SECRET'] || null });
+const csv = v => String(v || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean);
+// The platform origin a system borrows its app from; null on the platform itself and when unset.
+export const brokerOf = (env, origin, allowInsecure = false) => { const b = safeUrl(env.CONNECT_BROKER || '', allowInsecure); return b && b.origin !== origin ? b.origin : null; };
+// Default deny: the platform only hands a consent result to its own origin, hosts under CONNECT_BROKER_SUFFIXES (default: its own host) and origins in CONNECT_BROKER_ORIGINS. Anything else could collect approvals under the platform's name.
+export function brokerAllows(env, origin, ret, allowInsecure = false) {
+  const r = safeUrl(ret || '', allowInsecure); if (!r || r.origin !== String(ret).replace(/\/$/, '')) return false;
+  const host = r.hostname.toLowerCase(), suffixes = csv(env.CONNECT_BROKER_SUFFIXES || new URL(origin).hostname);
+  return r.origin === origin || suffixes.some(x => host === x || host.endsWith('.' + x)) || csv(env.CONNECT_BROKER_ORIGINS).includes(r.origin.toLowerCase());
+}
+const NOT_YET = 'This connection is not available yet. Nothing is needed from you here.';
+const UNKNOWN_START = 'This connection was started from a place this system does not recognize, so it was stopped.';
 const cimdUrl = origin => origin + '/.well-known/oauth-client/ultrastable.json';
 export const cimdDocument = origin => ({ client_id: cimdUrl(origin), client_name: 'Ultrastable', client_uri: origin, redirect_uris: [origin + '/connect/mcp/callback'], grant_types: ['authorization_code', 'refresh_token'], response_types: ['code'], token_endpoint_auth_method: 'none' });
 
@@ -81,7 +95,7 @@ export async function connectorStatus(db, env, tenant) {
   const rows = (await db.prepare("SELECT provider, status, expires_at, last_error, updated_at, meta FROM credentials WHERE tenant = ?").bind(tenant).all()).results || [];
   const linked = rows.filter(r => r.provider.startsWith('oauth:') || r.provider === 'github-app').map(r => { const m = JSON.parse(r.meta || '{}'); return { provider: r.provider, kind: m.kind || (r.provider === 'github-app' ? 'github-app' : 'oauth'), server: m.server || null, status: r.status, expires_at: r.expires_at, last_error: r.last_error, updated_at: r.updated_at }; });
   const available = Object.entries(REGISTRY).map(([id, d]) => ({ id, title: d.title, type: d.type, connect: d.connect || '/connect/' + id,
-    ready: d.type === 'oauth' ? !!appCreds(env, d).id : true, needs: d.type === 'oauth' && !appCreds(env, d).id ? 'oauth-apps (owner registers the app once; the Worker does the rest)' : null,
+    ready: d.type === 'oauth' ? !!(appCreds(env, d).id || env.CONNECT_BROKER) : true, needs: d.type === 'oauth' && !(appCreds(env, d).id || env.CONNECT_BROKER) ? 'platform app (gate provider-app-registration)' : null,
     linked: linked.some(l => l.provider === providerKey(id) || (id === 'github' && l.provider === 'github-app')) }));
   return { linked, available };
 }
@@ -102,17 +116,37 @@ export async function handleConnector(request, env, { tenant = 'default', fetch:
   if (path === '/.well-known/oauth-client/ultrastable.json') return Response.json(cimdDocument(origin), { headers: { 'cache-control': 'public, max-age=3600', 'access-control-allow-origin': '*' } });
   if (path === '/connections') return connectionsScreen(await connectorStatus(env.DB, env, tenant));
   if (path === '/auth/connectors') return Response.json(await connectorStatus(env.DB, env, tenant));
-  const m = /^\/connect\/([a-z0-9-]+)(?:\/(start|callback|disconnect))?$/.exec(path); if (!m) return null;
+  const m = /^\/connect\/([a-z0-9-]+)(?:\/(start|callback|disconnect|broker|token))?$/.exec(path); if (!m) return null;
   const id = m[1], step = m[2] || 'consent', def = REGISTRY[id]; if (!def || def.type === 'github-app') return null;
   const retry = '/connect/' + id;
   try {
+    if (step === 'broker' || step === 'token') {  // CONNECT-BROKER-1, platform side
+      if (def.type !== 'oauth') return null;
+      const c = appCreds(env, def), cb = `${origin}/connect/${id}/callback`;
+      if (step === 'token') {
+        if (request.method !== 'POST') return Response.json({ error: 'invalid_request', code: 'use_post' }, { status: 405, headers: { allow: 'POST' } });
+        if (!c.id) return Response.json({ error: 'temporarily_unavailable', code: 'not_configured' }, { status: 503 });
+        const p = new URLSearchParams(await request.text()), g = p.get('grant_type');
+        const body = g === 'authorization_code' ? { grant_type: g, code: p.get('code') || '', code_verifier: p.get('code_verifier') || '', redirect_uri: cb } : g === 'refresh_token' ? { grant_type: g, refresh_token: p.get('refresh_token') || '' } : null;
+        if (!body) return Response.json({ error: 'unsupported_grant_type', code: 'unsupported_grant_type' }, { status: 400 });
+        const r = await f(def.token, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, body: form({ ...body, client_id: c.id, ...(c.secret ? { client_secret: c.secret } : {}) }) });
+        let j; try { j = await r.json(); } catch (e) { console.error('broker token', id, r.status, e && e.message); j = { error: 'server_error', code: 'provider_http_' + r.status }; }
+        return Response.json(j, { status: r.ok ? 200 : (r.status || 502), headers: { 'cache-control': 'no-store' } });
+      }
+      const ret = url.searchParams.get('return'), ch = url.searchParams.get('code_challenge'), ts = url.searchParams.get('state');
+      if (!c.id) return failScreen('Connect ' + def.title, NOT_YET, '/');
+      if (!ch || !ts || !brokerAllows(env, origin, ret, allowInsecure)) return failScreen('Connect ' + def.title, UNKNOWN_START, '/');
+      const q = { response_type: 'code', client_id: c.id, redirect_uri: cb, state: await makeConnectorState(env, '~broker', new URL(ret).origin, ts, now), code_challenge: ch, code_challenge_method: 'S256', ...def.extra };
+      if (def.scopes.length) q.scope = def.scopes.join(' ');
+      return Response.redirect(def.authorize + '?' + form(q), 302);
+    }
     if (step === 'disconnect') {
       if (request.method !== 'POST') return new Response('Use POST', { status: 405, headers: { allow: 'POST' } });
       const key = id === 'mcp' ? url.searchParams.get('provider') : providerKey(id);
       const r = await disconnect(env.DB, env, tenant, key, f); return r.ok ? doneScreen('Disconnected', def.title + ' is disconnected' + (r.revoked ? ' and its access was revoked.' : '.')) : failScreen('Disconnect', r.error, '/');
     }
     if (step === 'consent') {
-      if (def.type === 'oauth' && !appCreds(env, def).id) return failScreen('Connect ' + def.title, 'This connection is waiting for its one-time app registration, which the owner card "oauth-apps" tracks. Nothing is needed from you here.', '/');
+      if (def.type === 'oauth' && !appCreds(env, def).id && !brokerOf(env, origin, allowInsecure)) return failScreen('Connect ' + def.title, NOT_YET, '/');
       if (id === 'mcp') { const s = url.searchParams.get('server'); if (!safeUrl(s || '', allowInsecure)) return failScreen('Connect an MCP server', 'Give the address of a public https MCP server.', '/'); }
       const q = id === 'mcp' ? '?server=' + encodeURIComponent(url.searchParams.get('server')) : '';
       const host = id === 'mcp' ? new URL(url.searchParams.get('server')).host : def.title;
@@ -127,13 +161,19 @@ export async function handleConnector(request, env, { tenant = 'default', fetch:
         meta = { kind: 'mcp', server, resource: d.resource, token_url: d.as.token_endpoint, revoke: d.as.revocation_endpoint || null, client_id: reg.client_id, scopes, registration: reg.method };
         if (reg.client_secret) secret.client_secret = reg.client_secret;
       } else {
-        const c = appCreds(env, def); if (!c.id) return failScreen('Connect ' + def.title, 'Waiting for the one-time app registration (owner card oauth-apps).', '/');
+        const c = appCreds(env, def), via = c.id ? null : brokerOf(env, origin, allowInsecure); if (!c.id && !via) return failScreen('Connect ' + def.title, NOT_YET, '/');
         key = providerKey(id); authz = def.authorize; scopes = def.scopes; extra = def.extra;
-        meta = { kind: 'oauth', provider: id, token_url: def.token, revoke: def.revoke || null, client_id: c.id, scopes }; if (c.secret) secret.client_secret = c.secret;
+        meta = via ? { kind: 'oauth', provider: id, token_url: `${via}/connect/${id}/token`, revoke: null, client_id: 'brokered', scopes, broker: via }
+          : { kind: 'oauth', provider: id, token_url: def.token, revoke: def.revoke || null, client_id: c.id, scopes };
+        if (c.secret) secret.client_secret = c.secret;
       }
       const { verifier, challenge } = await pkce(), nonce = rand(8);
       await store.put(env.DB, env, tenant, key, { secret: { ...secret, pending: { nonce, verifier } }, meta, status: 'pending' });
       const state = await makeConnectorState(env, tenant, key, nonce, now);
+      if (meta.broker) {  // CONNECT-BROKER-1: the platform's app and callback do the provider leg; the code comes back to this system's own callback
+        await store.event(env.DB, tenant, key, 'consent', 'redirected through ' + new URL(meta.broker).host);
+        return Response.redirect(`${meta.broker}/connect/${id}/broker?` + form({ return: origin, state, code_challenge: challenge }), 302);
+      }
       const q = { response_type: 'code', client_id: meta.client_id, redirect_uri: `${origin}/connect/${id}/callback`, state, code_challenge: challenge, code_challenge_method: 'S256', ...extra };
       if (scopes && scopes.length) q.scope = scopes.join(' ');
       await store.event(env.DB, tenant, key, 'consent', 'redirected to ' + new URL(authz).host);
@@ -141,6 +181,11 @@ export async function handleConnector(request, env, { tenant = 'default', fetch:
     }
     // callback
     const st = await checkConnectorState(env, url.searchParams.get('state'), now);
+    if (st && st.t === '~broker') {  // CONNECT-BROKER-1: hand the provider's answer to the system that started; only the holder of the PKCE verifier can redeem the code
+      if (!brokerAllows(env, origin, st.p, allowInsecure)) return failScreen('Connect ' + def.title, UNKNOWN_START, '/');
+      const e = url.searchParams.get('error');
+      return Response.redirect(`${st.p}/connect/${id}/callback?` + form({ state: st.n, ...(e ? { error: e } : { code: url.searchParams.get('code') || '' }) }), 302);
+    }
     if (!st || st.t !== tenant) return failScreen('Connect ' + def.title, 'That approval link expired.', retry);
     if (url.searchParams.get('error')) { await store.event(env.DB, tenant, st.p, 'failed', 'provider said ' + url.searchParams.get('error')); return failScreen('Connect ' + def.title, 'The approval was not completed.', retry); }
     const cur = await store.material(env.DB, env, tenant, st.p);

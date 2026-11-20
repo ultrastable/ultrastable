@@ -2,17 +2,6 @@
  "_doc": "The only list of things a person must do. Each item is an act only the owner can perform (identity-bound) and carries exactly one link that does it. Everything else self-resolves. Rendered into NEEDS-YOU.md by `python3 -m foundation needsyou`; tests require https links and no file paths.",
  "items": [
   {
-   "id": "actions-billing",
-   "title": "Fix the GitHub Actions payment",
-   "why": "Every Actions job on ultrastable is refused with 'recent account payments have failed or your spending limit needs to be increased' (executor, checks and lane runs of 2026-11-14 ended in 2-3 s). IDENTITY-BOUND: payment method and spending limit are the owner's.",
-   "default": "No Actions job runs; the Worker loops (ZERO-MINUTES-1) are being built to carry the work without Actions minutes, and the cloud routine keeps picking issues.",
-   "url": "https://github.com/organizations/ultrastable/settings/billing",
-   "button": "Open the org billing page and fix the payment method or spending limit",
-   "class": "owner_account",
-   "connect": "https://github.com/organizations/ultrastable/settings/billing",
-   "connect_kind": "provider-deep-link"
-  },
-  {
    "id": "funding",
    "title": "Submit funding applications",
    "why": "An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact.",
@@ -57,17 +46,6 @@
    "connect_kind": "connect-flow"
   },
   {
-   "id": "lane-credential",
-   "title": "Connect GitHub",
-   "why": "One approval on GitHub's own page lets the system open, check, merge and deploy changes by itself, including changes to its own workflows. The system then handles every callback, token exchange and renewal.",
-   "default": "Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.",
-   "url": "https://ultrastable.io/connect/github",
-   "button": "Authorize on GitHub",
-   "class": "owner_account",
-   "connect": "https://ultrastable.io/connect/github",
-   "connect_kind": "connect-flow"
-  },
-  {
    "id": "repo-archive",
    "title": "Allow repository settings (archiving and the main-branch check rule)",
    "why": "One approval on GitHub's own page registers a second app that can change repository settings only, so the server can archive the retired repositories (seed, license, spec, workers) and apply the rule that main only takes a change whose checks passed. The system handles every callback, token and renewal.",
@@ -77,22 +55,13 @@
    "class": "owner_account",
    "connect": "https://ultrastable.io/connect/github-admin",
    "connect_kind": "connect-flow"
-  },
-  {
-   "id": "oauth-apps",
-   "title": "Register the Google and Buffer sign-in apps",
-   "why": "Connecting Google and Buffer by their consent screens (tokens stored in each person's own Cloudflare, never typed) needs one OAuth app registered in each service under your identity, with redirect https://ultrastable.io/connect/<service>/callback. IDENTITY-BOUND: registering an app accepts the provider's terms in your name.",
-   "default": "the wizard keeps its account-creation links for Google and Buffer; nothing is typed or stored.",
-   "url": "https://console.cloud.google.com/apis/credentials",
-   "button": "Open Google Cloud credentials",
-   "class": "owner_account",
-   "connect": "https://console.cloud.google.com/apis/credentials",
-   "connect_kind": "provider-deep-link"
   }
  ],
  "done_for_you": [
   "Work: a routine in Claude's cloud starts a session every three hours that picks the top issue, changes it, opens a PR and merges on green. No API key is needed and no computer of yours has to be on.",
   "Old Cloudflare account: the tick, site and dashboard keep running there.",
-  "Entity and the org admin token are not needed now; entity-only programmes stay deferred until you choose one."
+  "Entity and the org admin token are not needed now; entity-only programmes stay deferred until you choose one.",
+  "GitHub is connected and Actions jobs run again (checked 2026-11-20); those two cards are closed.",
+  "Connecting Google, Microsoft or any other service is one sign-in for every person on every system: the platform holds the one app and the callback (CONNECT-BROKER-1). Nobody opens a provider console."
  ]
 }

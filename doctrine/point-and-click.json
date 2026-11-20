@@ -24,11 +24,27 @@
   "connect_link": {
     "rule": "CONNECT-LINK-1 (Rowan, 2026-11-17): every owner action is one link to a web UI that runs OAuth/OIDC and its callbacks behind the scenes (like /connect/github). A card without `connect` and `connect_kind` fails the check. connect_kind is `connect-flow` (a page on ultrastable.io under /connect) or `provider-deep-link` (a deep link to a provider's own page, allowed only for the ids in `deep_link_baseline`, which only shrinks as flows replace them).",
     "deep_link_baseline": [
-      "actions-billing",
       "funding",
       "domains-move",
-      "org-brand",
-      "oauth-apps"
-    ]
+      "org-brand"
+    ],
+    "closed": [
+      {
+        "id": "actions-billing",
+        "at": "2026-11-20",
+        "evidence": "Actions jobs run again: executor runs of 2026-11-20T15:25Z ended success (gh run list), so the payment card is closed by evidence."
+      },
+      {
+        "id": "lane-credential",
+        "at": "2026-11-20",
+        "evidence": "GET https://ultrastable.io/auth/health on 2026-11-20 returned github_connected true, so the GitHub consent is done."
+      },
+      {
+        "id": "oauth-apps",
+        "at": "2026-11-20",
+        "evidence": "A provider console is never an owner step (CONNECT-BROKER-1); the platform app is gate provider-app-registration in doctrine/open-loops.json."
+      }
+    ],
+    "broker": "CONNECT-BROKER-1 (Rowan, 2026-11-20): a card never links to a provider console to register an app, and no system built on Ultrastable registers one. The platform Worker holds one app per provider and serves /connect/<provider>/broker and /connect/<provider>/token; a system sets CONNECT_BROKER and its people only sign in. Code: seed/worker/src/auth/connectors.js; tests seed/worker/test/connectors.test.js."
   }
 }

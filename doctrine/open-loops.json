@@ -62,6 +62,34 @@
    "reason": "consent screen is identity-bound",
    "default": "lane merges on local-checks evidence (Q-GATE-403)",
    "probe": "grep:seed/worker/src/worker-gate.js::status 403"
+  },
+  {
+   "id": "provider-app-registration",
+   "surfaces": [
+    {
+     "s": "Google: API to create an OAuth client for user consent",
+     "result": "none known to this session (the IAM oauthClients API covers workforce federation only, the IAP brand API is retired); not re-read against Google documentation on 2026-11-20, so unverified"
+    },
+    {
+     "s": "Microsoft: Graph POST /applications",
+     "result": "needs a token from an app that already exists and was consented; circular for the first app"
+    },
+    {
+     "s": "Dynamic registration (RFC 7591) or client metadata documents",
+     "result": "used wherever offered (MCP servers, Mastodon, Bluesky); Google, Microsoft and Buffer offer neither"
+    },
+    {
+     "s": "Session browser on the Google console",
+     "result": "not taken: it would create a credential in the owner account and put a secret value through an agent session (secret lock)"
+    },
+    {
+     "s": "CONNECT-BROKER-1",
+     "result": "built: one platform app per provider serves every system, so the registration is needed once for the platform and never per person or per system"
+    }
+   ],
+   "reason": "registering the platform app accepts the provider terms in the owner name and yields a secret; no callback-based route exists at these providers",
+   "default": "Google, Microsoft and Buffer connections answer \"not available yet\" with nothing asked of anyone; GitHub, Bluesky, Mastodon and MCP servers connect by one sign-in",
+   "probe": "cmd:node --test seed/worker/test/connectors.test.js"
   }
  ]
 }
