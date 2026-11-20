@@ -605,6 +605,20 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-2fa0797f0e",
+      "surface": "agents/AGENTS.md",
+      "text": "- **A year unattended, measured (RUNWAY-1, Rowan 2026-11-20).** \"The system shall be able to run entirely unattended for 1 year with zero",
+      "probe": [
+        "file:doctrine/runway.json",
+        "file:foundation/credwatch.py",
+        "file:ops/cost.jsonl",
+        "file:foundation/redmain.py",
+        "file:doctrine/blindspots.json",
+        "file:tests/foundation/test_runway.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-edb8a8bb30",
       "surface": "agents/AGENTS.md",
       "text": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
