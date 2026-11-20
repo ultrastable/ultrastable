@@ -156,8 +156,8 @@ def _gh_beats(clock, root=REPO, fetch=None):
             try:
                 beats += C.d1_beats_any(clock, tok, C.load(root).get("account_id"))
                 read = True
-            except Exception:  # unreadable database: the health URLs may still have answered
-                pass
+            except Exception as e:  # unreadable database: the health URLs may still have answered; the failure is printed, never swallowed
+                print(f"resilience: d1 beats unreadable: {type(e).__name__}: {str(e)[:160]}", file=sys.stderr)
         return beats if read else None
     if clock["source"] == "workflow":
         try:
