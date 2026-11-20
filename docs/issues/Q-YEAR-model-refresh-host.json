@@ -1,0 +1,11 @@
+{
+  "id": "Q-YEAR-model-refresh-host",
+  "title": "Q-YEAR-model-refresh-host: refresh the model catalog from the tick Worker",
+  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `model-refresh-host` is open\n**Done check:** cmd:python3 -m foundation unattended --probe model-refresh-host\n**Status:** open\n\nPort modelwatch refresh to a tick step that runs each named model once a day on the AI binding, writes the result to D1 and opens a handoff PR that rewrites retired ids.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that proves it.",
+  "labels": [
+    "role:staff",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

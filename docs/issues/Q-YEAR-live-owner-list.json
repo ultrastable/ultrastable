@@ -1,0 +1,11 @@
+{
+  "id": "Q-YEAR-live-owner-list",
+  "title": "Q-YEAR-live-owner-list: generate the owner list from live state",
+  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `live-owner-list` is open\n**Done check:** cmd:python3 -m foundation unattended --probe live-owner-list\n**Status:** open\n\nRender NEEDS-YOU.md and /needs-you from GET /api/v1/owner-acts plus doctrine/unattended.json gates, close D1 gate card GATE-SECRET-ANTHROPIC_API_KEY (agents run on Workers AI), and drop the typed items.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that proves it.",
+  "labels": [
+    "role:staff",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

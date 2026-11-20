@@ -2435,9 +2435,9 @@
         "file:doctrine/runway.json",
         "file:foundation/credwatch.py",
         "file:ops/cost.jsonl",
+        "file:ops/runway.json",
         "file:foundation/redmain.py",
-        "file:doctrine/blindspots.json",
-        "file:tests/foundation/test_runway.py"
+        "file:doctrine/blindspots.json"
       ],
       "bound_by": "cited"
     },
@@ -2450,6 +2450,18 @@
         "file:foundation/openloops.py",
         "file:doctrine/rules.json",
         "grep:.github/workflows/checks.yml::foundation[ .]openloops\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-cd0900561e",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
+      "probe": [
+        "file:doctrine/unattended.json",
+        "file:foundation/unattended.py",
+        "file:foundation/modelwatch.py",
+        "file:tests/foundation/test_unattended.py"
       ],
       "bound_by": "cited"
     },
@@ -3160,9 +3172,9 @@
         "file:doctrine/runway.json",
         "file:foundation/credwatch.py",
         "file:ops/cost.jsonl",
+        "file:ops/runway.json",
         "file:foundation/redmain.py",
-        "file:doctrine/blindspots.json",
-        "file:tests/foundation/test_runway.py"
+        "file:doctrine/blindspots.json"
       ],
       "bound_by": "mirror",
       "of": "cited-2fa0797f0e"
@@ -3179,6 +3191,19 @@
       ],
       "bound_by": "mirror",
       "of": "cited-edb8a8bb30"
+    },
+    {
+      "id": "mirror-5fbac9d618",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **One year unattended, server-side only (UNATTENDED-365, Rowan 2026-11-20).** \"The system is designed to run unattended for a minimum of",
+      "probe": [
+        "file:doctrine/unattended.json",
+        "file:foundation/unattended.py",
+        "file:foundation/modelwatch.py",
+        "file:tests/foundation/test_unattended.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-cd0900561e"
     },
     {
       "id": "mirror-cfa2c29d4e",

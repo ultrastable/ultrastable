@@ -1,0 +1,11 @@
+{
+  "id": "Q-YEAR-node-runtime",
+  "title": "Q-YEAR-node-runtime: move workflows to the current Node LTS",
+  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `node-runtime` is open\n**Done check:** cmd:python3 -m foundation unattended --probe node-runtime\n**Status:** open\n\nReplace node-version 22 with 24 in every workflow and run the suites.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that proves it.",
+  "labels": [
+    "role:staff",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

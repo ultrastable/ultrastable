@@ -27,6 +27,9 @@ def check(root=REPO) -> list[str]:
         for k in ("surfaces", "default", "probe", "reason"):
             if not g.get(k):
                 bad.append(f"gate {g.get('id')}: missing {k}")
+    from . import modelwatch, unattended  # UNATTENDED-365, MODEL-WATCH-1: an external input that lapses is an open loop
+    bad += [f"unattended: {b}" for b in unattended.check(root)] if (root / unattended.DATA).is_file() else []
+    bad += [f"modelwatch: {b}" for b in modelwatch.check(root)] if (root / modelwatch.DATA).is_file() else []
     return bad
 
 
