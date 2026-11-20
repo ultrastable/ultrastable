@@ -40,7 +40,7 @@ def credentials(root: Path, today: dt.date) -> dict:
     renews = {r["name"] for r in _load(root / "doctrine/credwatch.json", {}).get("registrations", []) if r.get("auto_renew")}
     days, why = None, "nothing that lapses"
     for r in rec["rows"]:
-        if r["state"] == "unbound" or r["name"] in renews:
+        if r["state"] == "unbound" or r["name"] in renews or r.get("optional"):
             continue  # not in use, or renews itself
         if r["state"] == "unmeasured":
             return {"days": "unmeasured", "why": f"{r['name']} could not be probed"}
