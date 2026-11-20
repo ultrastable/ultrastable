@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-dispose-1-every-open-item-gets-a-coded-disposition-inside-14",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "DISPOSE-1: every open item gets a coded disposition inside 14 days on the fleet pass",
+  "body": "Rowan, 2026-11-20: nothing sits in the queue for months and no client-side code agent is assumed. Measured that day: 304 open item files (168 in the executor queue), 58 of 74 executor runs failed. foundation/dispose.py closes an open item as gate (owner-bound) or shelved (three failed executor runs, or open ttl_days) from foundation/queue.py run(); foundation/contracts.py records fixed when a disposed item's probe passes and does not reopen it; queue.takeable retries shelved items when the open queue is empty.",
+  "probe": "grep:foundation/queue.py::dispose.run"
+ },
+ "kind": "decision",
+ "title": "DISPOSE-1: every open item gets a coded disposition inside 14 days on the fleet pass",
+ "session": ""
+}

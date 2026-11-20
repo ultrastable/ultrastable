@@ -141,12 +141,12 @@ def elision_gap(files: list[str], root=REPO) -> str | None:
         except (OSError, UnicodeDecodeError):
             continue
         if ELISION_RE.search(text):
-            return f"{f} contains an elision marker in place of code (ELISION-1); reply with the complete file or with exact edits"
+            return f"{f} contains an elision marker in place of code (ELISION-1); change this file with EDIT blocks (FIND lines copied from the file, then REPLACE), not a FILE block"
         r = subprocess.run(["git", "show", f"HEAD:{f}"], cwd=root, capture_output=True, text=True)
         if r.returncode == 0:
             before, after = r.stdout.count(chr(10)), text.count(chr(10))
             if before >= 40 and after < before * 0.5:
-                return f"{f} would shrink from {before} to {after} lines (ELISION-1); keep the code the item does not ask to remove"
+                return f"{f} would shrink from {before} to {after} lines (ELISION-1); keep the code the item does not ask to remove: change this file with EDIT blocks (FIND lines copied from the file, then REPLACE), not a FILE block"
     return None
 
 
@@ -193,10 +193,17 @@ def apply_edits(edits: list[dict], root=REPO) -> list[str]:
     if not edits or len(edits) > MAX_FILES:
         raise ValueError(f"need 1..{MAX_FILES} files, got {len(edits or [])}")
     total = 0
+    from . import agents
     for e in edits:
         why = safe_path(e.get("path", ""))
         if why:
             raise ValueError(f"{e.get('path')!r}: {why}")
+        if e.get("edits") and "content" not in e:  # PATCH-EDIT-1: find-and-replace edits are resolved against the file as it stands; nothing is written until every edit of every file resolved
+            f = Path(root) / e["path"]
+            text = f.read_text(encoding="utf-8") if f.is_file() else ""
+            for ed in e["edits"]:
+                text = agents.apply_edit(text, str(ed.get("find", "")), str(ed.get("replace", "")), e["path"])
+            e["content"] = text
         total += len(e.get("content", ""))
     if total > MAX_BYTES:
         raise ValueError("change is larger than the executor limit")
@@ -230,11 +237,77 @@ def build_prompt(issue: dict, tree: str) -> str:
     from . import kb  # reference documents are consumed here: the best matches for this issue are read by the agent
     ref = kb.retrieve(f"{issue['title']} {issue.get('body') or ''}")
     return (axiom() + "\n\n" + json.loads((REPO / "doctrine/standing-order.json").read_text(encoding="utf-8"))["order"] + "\n\n" + json.loads((REPO / "doctrine/self-improvement.json").read_text(encoding="utf-8"))["axiom"] + "\n\nYou are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. "
-            'Reply with ONLY JSON: {"summary":"one line","files":[{"path":"relative/path","content":"full new file content"}]}. '
+            "Reply in exactly this format and nothing else:\n" + agents_block_format() + "\n"
+            "Never rewrite a whole existing file: change it with EDIT blocks whose FIND lines are copied exactly from CURRENT FILES below. "
             "Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code. "
             "Every new Markdown file must contain the exact line: Ultrastable is the foundation for any autonomous system. Do not write about memory or chat as storage. Server-side only: never reference localhost, 127.0.0.1 or a listening port; code runs as a Cloudflare Worker or a plain function with injected fetch.\n\n"
             f"ISSUE #{issue['number']}: {issue['title']}\n{(issue.get('body') or '')[:6000]}\n\nREPOSITORY FILES (partial):\n{tree[:6000]}\n"
-            + (lambda c: f"\n{c[:6000]}\n" if c else "")(_public_context(issue)) + ref)
+            + file_context(issue) + (lambda c: f"\n{c[:6000]}\n" if c else "")(_public_context(issue)) + ref)
+
+
+PATH_RE = re.compile(r"(?<![\w/.-])((?:[\w.-]+/)+[\w.-]+\.(?:py|js|mjs|json|md|sh|sql|html|css|toml|yml))(?![\w/-])")
+CONTEXT_FILES, CONTEXT_WHOLE, CONTEXT_EXCERPT = 4, 9000, 7000
+
+
+def named_files(issue: dict, root=REPO) -> list[str]:
+    """Repository files the item names in its title or body, in order of first mention; the item's own file and other queue items are not context."""
+    out = []
+    for p in PATH_RE.findall(f"{issue.get('title', '')}\n{issue.get('body') or ''}"):
+        p = p.lstrip("./")
+        if p not in out and not p.startswith(("docs/issues/", "ops/")) and safe_path(p) is None and (Path(root) / p).is_file():
+            out.append(p)
+    return out[:CONTEXT_FILES]
+
+
+def excerpt(text: str, terms: list[str], budget: int = CONTEXT_EXCERPT) -> str:
+    """The parts of a long file a change is likely to touch: its first lines, every definition line, and a window around each line that carries one
+    of `terms`. Gaps are marked with the number of lines left out, so the model sees that the file continues."""
+    lines = text.splitlines()
+    keep = set(range(min(25, len(lines))))
+    for i, l in enumerate(lines):
+        if re.match(r"\s*(?:def |class |function |export |async function |const \w+ = (?:async )?\()", l):
+            keep.add(i)
+    hot = [i for i, l in enumerate(lines) if any(t in l for t in terms)]
+    for i in hot[:12]:
+        keep.update(range(max(0, i - 12), min(len(lines), i + 13)))
+    out, used, prev = [], 0, -1
+    for i in sorted(keep):
+        if used > budget:
+            break
+        if i != prev + 1:
+            out.append(f"[... {i - prev - 1} lines not shown ...]")
+        out.append(lines[i][:400]); used += len(out[-1]) + 1; prev = i
+    if prev < len(lines) - 1:
+        out.append(f"[... {len(lines) - 1 - prev} lines not shown ...]")
+    return "\n".join(out)
+
+
+def file_context(issue: dict, root=REPO) -> str:
+    """PATCH-EDIT-1: the current text of the files the item names, whole when small and as an excerpt when long. Before this the prompt held only file
+    names, so a model asked to change site/worker.js had never seen it and replied with a stub."""
+    files = named_files(issue, root)
+    if not files:
+        return ""
+    ticked = [t for t in re.findall(r"`([^`\n]{4,60})`", issue.get("body") or "") if "/" not in t and " " not in t]
+    words = re.findall(r"[A-Za-z_][\w-]{5,}", f"{issue.get('title', '')} {FIELD_PROBE(issue)}")
+    terms = list(dict.fromkeys(ticked + [w for w in words if not w.islower() or "_" in w or "-" in w]))[:12]
+    out = ["\nCURRENT FILES (copy FIND lines from here exactly; lines not shown still exist and stay unchanged):"]
+    for p in files:
+        try:
+            text = (Path(root) / p).read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        n = text.count(chr(10))
+        if len(text) <= CONTEXT_WHOLE:
+            out.append(f"--- {p} ({n} lines, complete) ---\n{text}")
+        else:
+            out.append(f"--- {p} ({n} lines, EXCERPT: use EDIT blocks, never a FILE block) ---\n{excerpt(text, terms)}")
+    return "\n".join(out) + "\n"
+
+
+def FIELD_PROBE(issue: dict) -> str:
+    m = re.search(r"^\*\*Done check:\*\*\s*(.+)$", issue.get("body") or "", re.M)
+    return m.group(1) if m else ""
 
 
 def agents_block_format() -> str:
@@ -567,7 +640,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 break
             row.setdefault("attempts", []).append([f[:400] for f in failed][:3])  # FREE-LLM-1: every failed attempt's reasons, not only the last
             sh(["git", "checkout", "--", "."], root); sh(["git", "clean", "-fd", *KEEP_ON_CLEAN], root)
-            prompt = base_prompt() + chr(10) * 2 + "YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS; fix exactly these problems and reply with the full JSON again:" + chr(10) + chr(10).join(failed)[:5000]
+            prompt = base_prompt() + chr(10) * 2 + "YOUR PREVIOUS ATTEMPT FAILED THESE CHECKS; fix exactly these problems and reply in the same EDIT and FILE block format again:" + chr(10) + chr(10).join(failed)[:5000]
         if failed:
             raise RuntimeError("checks failed after " + str(len(row.get("attempts", [])) or REPAIRS + 1) + " attempts: " + " | ".join(failed))
         row.update(files=files, summary=out.get("summary", ""))
