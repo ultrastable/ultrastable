@@ -11,6 +11,7 @@ import IV from "./interview.js";
 import { liveResponse, ignitionResponse } from "./live.js";
 import { feedResponse } from "./feed.js"; // REACH-1
 import { demoResponse } from "./demo.js"; // DEMO-DASHBOARD-1
+import { caseResponse } from "./casestudy.js"; // CASE-STUDY-1
 import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
 import VERIFIED from "./claims-data.js";
@@ -953,6 +954,7 @@ const handler = {
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
     if (u.pathname.replace(/\/$/, "") === "/proof") return Response.redirect("https://" + CANON + "/live", 301); // PROOF-OWN-1: /proof served the earlier testbed's records; deprecated
+    if (u.pathname === "/proof/customer-zero") return caseResponse(u, request, env, shell, HTML, DASH.asof_at); // CASE-STUDY-1: generated from the snapshot, every value linked to its record
     if (u.pathname === "/demo") return demoResponse(u, request, env, shell, HTML, DASH.asof_at); // DEMO-DASHBOARD-1: the live record as a dashboard
     if (u.pathname === "/live" || u.pathname === "/api/live" || u.pathname === "/api/freshness" || u.pathname === "/changelog.xml" || u.pathname === "/changelog.json") return liveResponse(u, request, env, shell, HTML, DASH.asof_at);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);

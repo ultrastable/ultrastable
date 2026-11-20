@@ -1,0 +1,9 @@
+{
+ "directory": "mcp-so",
+ "submit_to": "https://mcp.so",
+ "route": "form",
+ "name": "Ultrastable",
+ "endpoint": "https://ultrastable.io/mcp",
+ "description": "Read-only view of a self-governing development platform: what it is working on, what is next, what is blocked and what it shipped, plus one authenticated tool to submit work.",
+ "repository": "https://github.com/ultrastable/ultrastable"
+}

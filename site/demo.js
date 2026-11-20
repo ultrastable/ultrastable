@@ -54,7 +54,7 @@ export function demoBody(d) {
     + "<h2>System parts and drift</h2><p class=\"dm-cap\">What is deployed against what the repository says should be. A planned part that is not live yet is drift the system still has to close.</p>"
     + table(["Part", "Live", "Planned, not live yet"], Object.keys(parts).map(k => [k, parts[k].live, parts[k].planned]))
     + ((top.pending_bindings || []).length ? "<p class=\"meta\">Still to wire: " + top.pending_bindings.map(esc).join("; ") + ".</p>" : "")
-    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Apply for a pilot</a><a class=\"btn\" href=\"/live\">See the full record</a></div>";
+    + "<div class=\"us-actions\"><a class=\"btn btn-primary\" href=\"/pilot\">Apply for a pilot</a><a class=\"btn\" href=\"/proof/customer-zero\">Read the case study</a><a class=\"btn\" href=\"/live\">See the full record</a></div>";
 }
 
 export async function demoResponse(u, request, env, shell, HTML, bundleAt = null) {

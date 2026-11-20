@@ -233,6 +233,21 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
     assert.ok(demoMod.demoBody({}).includes("not measured") && !/>0 of 0</.test(demoMod.demoBody({})));
     assert.equal((await mod.fetch(new Request("https://ultrastable.io/demo"), ENV)).status, 503);
     assert.match(await (await mod.fetch(new Request("https://ultrastable.io/pilot"), ENV)).text(), /href="\/demo"/); }
+  // CASE-STUDY-1: the page is built from facts only; a number in the page that is not a fact value with a source fails
+  { const cs = await import("./casestudy.js"); const d = { generated: "2026-11-12T00:00:00Z", clocks: [{ id: "a", status: "ticking" }, { id: "b", status: "stopped" }, { id: "c", status: "unmeasured" }],
+      throughput: { changelog: [{ date: "2026-11-11", changes: [{ n: 7, by: "unattended executor", plus: 40, minus: 3 }, { n: 6, by: "agent session", plus: 11, minus: 1 }] }], queue: { by_status: { closed: 30, open: 8 } }, model_cost: { calls: 6, usd: 0.0043, by_model: { m: { failed: 2 } } } },
+      loop_improvements: [{ loop: "lane", improvement: "skips <archived> repos" }] };
+    const f = cs.facts(d), body = cs.caseBody(d);
+    assert.ok(f.length >= 10 && f.every(x => x.source && x.record && x.value != null), "every fact has a source and a record");
+    assert.deepEqual(f.filter(x => x.group === "loops").map(x => x.value), [2, 1, 30, 8]);
+    assert.ok(!f.some(x => /deploy|parked/.test(x.label)), "a measure the record does not hold is left out");
+    const cells = [...body.matchAll(/<td data-fact="([^"]+)">([^<]*)<\/td>/g)]; assert.equal(cells.length, f.length);
+    const stripped = body.replace(/<td data-fact="[^"]+">[^<]*<\/td>/g, "").replace(/<td>[^<]*<\/td>/g, "").replace(/<a href="[^"]*">[^<]*<\/a>/g, "").replace(/Record as of [^<]*/, "").replace(/<h[12]>|<\/h[12]>/g, "").replace(/&#\d+;/g, "");
+    assert.ok(!/\d/.test(stripped.replace(/<[^>]+>/g, " ")), "no number outside a fact cell: " + (stripped.replace(/<[^>]+>/g, " ").match(/.{0,30}\d.{0,30}/) || [""])[0]);
+    assert.ok(body.includes("skips &lt;archived&gt; repos") && cs.caseBody({}).includes("no measured values yet"));
+    const db4 = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: JSON.stringify(d) }] }) }), first: async () => ({ generated: d.generated, total: 1 }) }) };
+    assert.equal((await mod.fetch(new Request("https://ultrastable.io/proof/customer-zero"), { ...ENV, DB: db4 })).status, 200);
+    assert.equal((await mod.fetch(new Request("https://ultrastable.io/proof"), ENV)).status, 301, "PROOF-OWN-1 redirect is unchanged"); }
   // CHANGELOG-FEED-1: the feed reads the same snapshot; titles are escaped; sizes and origins are summed per day
   { const snap2 = JSON.stringify({ generated: "2026-11-12T00:00:00Z", throughput: { changelog: [{ date: "2026-11-11", changes: [{ n: 7, title: "Fix <b> & more", by: "executor", url: "https://github.com/o/r/pull/7", plus: 10, minus: 2 }, { n: 6, title: "Second", by: "session", plus: 5, minus: 1 }] }] } });
     const db2 = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: snap2 }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 1 }) }) };
