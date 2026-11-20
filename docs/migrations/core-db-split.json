@@ -3,7 +3,7 @@
  "version": "1.0.0",
  "issue": "PIN-core-db-separation",
  "migration": {
-  "from": "core tables inside the originating fleet's shared database, in the retired quniverse account (edb167b78c9fb901ea5bca3ce58ccc4b)",
+  "from": "core tables inside the originating fleet's shared database, in the retired quniverse account",
   "to": "ultrastable-org (216e97ea-da5e-41e5-af52-af6c0484a7be) and ultrastable-ops (5cd83b52-864a-4510-b062-fc0d9402d06c) in the ultrastable account (81e3a4efb4eb66e613529b87682911bb)",
   "tracked_by": ["Q-GAP-core-separation", "deploy/transfer/plan.json", "doctrine/single-account.json"]
  },
