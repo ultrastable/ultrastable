@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """COVERAGE-CITED-1: bind every claim-like statement that itself names the code enforcing it.
 A rule line such as "... `python3 -m foundation flows --check` (in `checks`), tests `tests/foundation/test_flows.py`" already says what makes it true.
 This reads `claims --coverage`'s unbound source lines and, for each line that cites a file that exists or a `python3 -m foundation <module>` whose module

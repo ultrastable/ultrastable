@@ -634,7 +634,7 @@ export default {
    "surface": "seed/self/SELF.md"
   },
   {
-   "claim": "seed-tests: 39 Python and 374 Worker tests",
+   "claim": "seed-tests: 40 Python and 374 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -679,7 +679,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 675",
+   "claim": "live-deploys: 680",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
