@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-20
 
+- 2026-11-20: Unblock main checks, bound executor wake-ups, refuse stub worker PRs (SPARK-IDLE-1, NATIVE-STUB-1) (#727)
+- 2026-11-20: Product manager pass: 0 growth and repair item(s) filed (#719)
 - 2026-11-20: open-loops: nameserver retry refused again, lock end unconfirmed (#724)
 - 2026-11-20: queue: closing-probe verdicts for 4 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-20: queue: closing-probe verdicts for 111 item(s) (QUEUE-PERSIST-1) (part 6/6) [skip ci]
