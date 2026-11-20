@@ -4,7 +4,7 @@
 
 > Source-available under the Ultrastable License (USL-1.0). See the repository `LICENSE`.
 
-![status](https://img.shields.io/badge/tests-12%20passing-brightgreen) ![runtime](https://img.shields.io/badge/runtime-python%203.11%2B%20stdlib-blue) ![cloud](https://img.shields.io/badge/cloud-agnostic-lightgrey)
+![status](https://img.shields.io/badge/tests-unittest-brightgreen) ![runtime](https://img.shields.io/badge/runtime-python%203.11%2B%20stdlib-blue) ![cloud](https://img.shields.io/badge/cloud-agnostic-lightgrey)
 
 ## What it does
 
@@ -24,7 +24,7 @@ Virtual staff: portfolio manager, project managers, product managers, staff (doe
 ## Run it in 30 seconds
 
 ```bash
-python -m unittest discover -s tests          # 12 tests
+python -m unittest discover -s tests          # the whole suite
 python -m ultrastable demo --ticks 40         # simulated organization, no API keys needed
 python -m ultrastable serve --seed-demo --auto-tick 5   # control-room dashboard on :8080
 ```
@@ -49,6 +49,6 @@ Details: [architecture](docs/architecture.md), [deploy on Google Cloud](docs/dep
 
 ```
 ultrastable/   engine.py (the loops) agents.py (adapters) store.py policy+config demo.py server.py cli.py data/
-tests/         12 tests: gates, denial, review/revert, hidden-failure audit, amendments, trust math, HTTP
+tests/         gates, denial, review/revert, hidden-failure audit, amendments, trust math, HTTP
 deploy/        gcp/ (Cloud Run + Scheduler)   Dockerfile at the root
 ```

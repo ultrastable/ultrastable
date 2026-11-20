@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """LANE-WATCH-1: resolve the merge conflicts that every PR hits because they sit in generated or append-only files, after `git merge origin/main`.
 Rules: doctrine/decision-ledger.json = union of rows by id (main first); ops/*.jsonl and docs/PROJECT-MEMORY.md = both sides, conflict markers dropped; ops/transparency.json and
-site/dashboard-data.js = main's side, then `python3 scripts/build_dashboard.py` regenerates the dashboard. Prints what it did; exits 1 when other files still conflict."""
+site/dashboard-data.js = main's side, then `python3 scripts/build_dashboard.py` regenerates the dashboard; site/claims-data.js = main's side, then `claims --fix --apply` rewrites it from the merged registry. Prints what it did; exits 1 when other files still conflict."""
 import json, re, subprocess, sys
 
 def sh(*a): return subprocess.run(a, capture_output=True, text=True).stdout
@@ -13,11 +13,14 @@ for f in list(conf):
         open(f, "w").write(json.dumps(b, indent=1, ensure_ascii=False) + "\n")
     elif f.endswith(".jsonl") or f == "docs/PROJECT-MEMORY.md":  # append-only: keep both sides
         t = open(f).read(); open(f, "w").write("\n".join(l for l in t.splitlines() if not re.match(r"^(<<<<<<<|=======|>>>>>>>)", l)) + "\n")
-    elif f in ("ops/transparency.json", "site/dashboard-data.js"):
+    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js"):   # claims-data.js is rewritten below from the merged doctrine/claims.json
         subprocess.run(["git", "checkout", "--theirs", f])
     else:
         continue
     subprocess.run(["git", "add", f]); conf.remove(f); print("resolved", f)
+if "doctrine/claims.json" not in conf:   # the registry merged cleanly: its served copy is regenerated, never merged by hand
+    subprocess.run([sys.executable, "-m", "foundation", "claims", "--fix", "--apply"], capture_output=True)
+    subprocess.run(["git", "add", "site/claims-data.js"])
 subprocess.run([sys.executable, "scripts/build_dashboard.py"], capture_output=True)
 subprocess.run(["git", "add", "site/dashboard-data.js"])
 print("still conflicting:", conf)
