@@ -332,6 +332,32 @@ export async function connectorsPanel(env, origin) {
 
 // ---------- state for the dashboard ----------
 // OWNER-DASH-2: the static panels (what needs the owner, tenants, paid options) come from files in the bundle, so the page still answers when D1 is at its free daily read cap.
+// GATE-SETTLE-3: the Worker settles a gate on its own live evidence (`http:URL ~ TEXT` in resolved_when), so the owner page stays right while
+// GitHub Actions (watchdog.yml, needsyou --settle) is down. Server-side only; one fetch per gate per hour through the Cache API. An unreadable page is not evidence.
+export async function settledLive(env, items = openNeeds(), fetchFn = fetch) {
+  const out = new Set();
+  if (env.NO_NET && fetchFn === fetch) return out;
+  const cache = typeof caches !== "undefined" && caches.default ? caches.default : null;
+  for (const i of items) {
+    for (const w of [].concat(i.resolved_when || [])) {
+      const m = /^http:(https:\/\/\S+)\s*~\s*(.+)$/.exec(String(w)); if (!m) continue;
+      const url = m[1], text = m[2].trim(), key = "https://gate-settle.invalid/" + encodeURIComponent(url + "~" + text);
+      let ok = null;
+      if (cache) { try { const hit = await cache.match(key); if (hit) ok = (await hit.text()) === "1"; } catch (e) { console.error("gate-settle cache read", e && e.message); } }
+      if (ok === null) {
+        try { const r = await fetchFn(url, { headers: { "user-agent": "ultrastable-gate-settle" } }); ok = r.status === 200 && (await r.text()).includes(text); }
+        catch (e) { console.error("gate-settle " + url, e && e.message); ok = false; }
+        if (cache) { try { await cache.put(key, new Response(ok ? "1" : "0", { headers: { "cache-control": "max-age=3600" } })); } catch (e) { console.error("gate-settle cache write", e && e.message); } }
+      }
+      if (ok) { out.add(i.id); break; }
+    }
+  }
+  return out;
+}
+export async function livePanels(env, fetchFn = fetch) {
+  const base = staticPanels(), done = await settledLive(env, openNeeds(), fetchFn);
+  return done.size ? { ...base, needs: base.needs.filter(n => !done.has(n.id)), settled_live: [...done] } : base;
+}
 export function staticPanels() {
   return {
     needs: openNeeds().map(i => ({ id: i.id, title: i.title, why: i.why, default: i.default, url: i.url, button: i.button })),
@@ -344,7 +370,7 @@ const RESET_NOTE = () => { const n = new Date(), h = 24 - n.getUTCHours() - (n.g
 export const DB_LIMIT_NOTE = () => "Ultrastable's database has used its free allowance for today, so live checks and tasks are paused. Nothing is lost. The allowance resets at 00:00 UTC (" + RESET_NOTE() + "), and the system resumes by itself then. Meanwhile it keeps its reads low and no plan is upgraded. What needs you, tenant status and paid options below come from the saved copy.";
 export const isLimitError = m => /free tier|row read limit|7500|exceeded/i.test(String(m || ""));
 export async function stateOf(env) {
-  const base = staticPanels();
+  const base = await livePanels(env);
   try { return await stateFromDb(env, base); }
   catch (e) {
     const m = String(e && e.message || e);
@@ -527,7 +553,7 @@ export async function route(req, env) {
     if (p === "/api/owner/code" && req.method === "POST") { const r = await requestCode(env); return json(r.body, r.status); }
     if (p === "/api/owner/verify" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const r = await verifyCode(env, req, b.code); return json(r.body, r.status, r.cookie ? { "Set-Cookie": r.cookie } : undefined); }
     if (p === "/api/owner/identity-audit") { const sx = await getSession(env, req).catch(() => null); if (!sx) return json({ error: "sign in" }, 401); return json({ links: await OID.linkCount(env), events: await OID.auditTail(env) }); }
-    if (p === "/api/owner/overview") return json({ ...staticPanels(), version: VERSION });
+    if (p === "/api/owner/overview") return json({ ...(await livePanels(env)), version: VERSION });
     let s; try { s = await getSession(env, req); } catch (e) { return json({ ...staticPanels(), version: VERSION, degraded: isLimitError(e && e.message) ? DB_LIMIT_NOTE() : "The database did not answer, so sign-in cannot be checked. The saved panels are shown." }, 200); }
     if (!s) return json({ error: "sign in" }, 401);
     if (p === "/api/owner/logout" && req.method === "POST") { await env.DB.prepare("UPDATE sessions SET revoked=1 WHERE hash=?1").bind(s.hash).run(); return json({ ok: true }, 200, { "Set-Cookie": COOKIE + "=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict" }); }

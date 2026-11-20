@@ -237,3 +237,11 @@ test("GATE-SETTLE-2: the owner page drops a gate whose measured dependencies are
   assert.deepEqual(openNeeds(needs, deps).map(i => i.id), ["b", "c"]);
   assert.ok(!openNeeds().some(i => i.id === "lane-credential" || i.id === "repo-archive"), "connected credentials are never asked for again");
 });
+
+test("GATE-SETTLE-3: the Worker settles a gate on its live page, with no Actions run; an unreadable page keeps it open", async () => {
+  const { settledLive } = await import("../worker.js");
+  const items = [{ id: "gh", resolved_when: ["env:X", "http:https://x.test/connect/github ~ GitHub is connected"] }, { id: "b", resolved_when: "http:https://x.test/b ~ Bluesky is connected" }, { id: "c" }];
+  const pages = { "https://x.test/connect/github": "<h1>GitHub is connected</h1>" };
+  const f = async u => { if (u === "https://x.test/b") throw new Error("down"); return new Response(pages[u] || "", { status: pages[u] ? 200 : 404 }); };
+  assert.deepEqual([...(await settledLive({}, items, f))], ["gh"]);
+});
