@@ -55,7 +55,7 @@ const worthy = s => s.length >= 2 && /\p{L}{2}/u.test(s) && !/^(https?:\/\/|\/)\
 // Calls fn(kind, text, set) for each translatable piece in document order; fn returns the replacement text (or undefined to keep it).
 function walk(html, fn) {
   let out = '', i = 0, skip = 0, stack = [];
-  const re = /<!--[\s\S]*?-->|<(\/?)([a-zA-Z][\w:-]*)((?:"[^"]*"|'[^']*'|[^'">])*)>|([^<]+)/g; let m;
+  const re = /<!--[\s\S]*?-->|<![^>]*>|<(\/?)([a-zA-Z][\w:-]*)((?:"[^"]*"|'[^']*'|[^'">])*)>|([^<]+)|(<)/g; let m;
   while ((m = re.exec(html))) {
     if (m[4] !== undefined) { const t = m[4]; const lead = t.match(/^\s*/)[0], trail = t.match(/\s*$/)[0], core = unesc(t.trim()); const r = !skip && worthy(core) ? fn('text', core) : undefined; out += r === undefined ? t : lead + esc(r) + trail; continue; }
     if (m[2] === undefined) { out += m[0]; continue; }

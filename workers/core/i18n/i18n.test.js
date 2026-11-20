@@ -6,6 +6,12 @@ import { segKey, segmentsOf, localizeHtml, parsePath, negotiate, localizePath, s
 
 const page = '<!doctype html><html lang="en"><head><title>Clean water</title><link rel="canonical" href="https://s.org/problems/x"><meta name="description" content="Safe drinking water"><meta property="og:url" content="https://s.org/problems/x"></head><body><nav><a href="/problems">Problems</a><a href="/feed.xml">Feed</a></nav><main><h1>Clean water</h1><p>Chlorine cuts diarrhoea by 23 percent.</p><code>keep me</code><form action="/search"><input placeholder="Search, for example water"></form></main></body></html>';
 
+test('a stray < and a doctype survive and are not segments', () => {
+  const h = '<!doctype html><html lang="en"><head></head><body><p>a < b and more words</p></body></html>';
+  assert.ok(!segmentsOf(h).some(s => /doctype/.test(s.text)));
+  assert.ok(localizeHtml(h, { lang: 'es', dict: {}, origin: 'https://s.org', path: '/' }).html.includes('a < b'));
+});
+
 test('segments cover text and attributes, not code, numbers or paths', () => {
   const t = segmentsOf(page).map(s => s.text);
   assert.ok(t.includes('Clean water') && t.includes('Problems') && t.includes('Safe drinking water') && t.includes('Search, for example water'));
@@ -16,7 +22,7 @@ test('segments cover text and attributes, not code, numbers or paths', () => {
 test('localizeHtml swaps known text, rewrites links, sets lang, canonical, hreflang and the machine-translation notice', () => {
   const dict = { [segKey('Clean water')]: 'Agua limpia', [segKey('Problems')]: 'Problemas', [segKey('Chlorine cuts diarrhoea by 23 percent.')]: 'El cloro reduce la diarrea en 23 por ciento.', [segKey(MT_KEY)]: 'Traducción automática.' };
   const r = localizeHtml(page, { lang: 'es', dict, origin: 'https://s.org', path: '/problems/x', live: ['es', 'fr'], minCoverage: 0.3 });
-  assert.ok(r.indexable);
+  assert.ok(r.indexable); assert.ok(r.html.startsWith('<!doctype html><html'));
   assert.match(r.html, /<html lang="es" dir="ltr"/);
   assert.match(r.html, /<h1>Agua limpia<\/h1>/);
   assert.match(r.html, /href="\/es\/problems"/); assert.match(r.html, /href="\/feed.xml"/); assert.match(r.html, /action="\/es\/search"/);
