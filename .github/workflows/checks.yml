@@ -93,11 +93,8 @@ jobs:
           python3 -m foundation directive --check
           python3 -m foundation closedloop --check
           python3 -m foundation openloops --check
-<<<<<<< HEAD
           python3 -m foundation progress --check
-=======
           python3 -m foundation cfposture --check
->>>>>>> origin/main
           python3 -m foundation standingorder --check
           python3 -m foundation rules --check
           python3 -m foundation decisions --check
