@@ -70,6 +70,15 @@
         "file": "foundation/openloops.py",
         "contains": "banned_phrases"
       }
+    },
+    {
+      "id": "unattended-sessions-never-count",
+      "source": "agents/AGENTS.md",
+      "quote": "it never counts toward the target and no loop may depend on one",
+      "probe": {
+        "file": "doctrine/unattended.json",
+        "contains": "never counts"
+      }
     }
   ],
   "baseline": [

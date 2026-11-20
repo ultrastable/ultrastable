@@ -41,9 +41,32 @@ export async function ignitionResponse(env, now = Date.now()) {
   return new Response(JSON.stringify(b), { status: b.ok ? 200 : 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
 }
 
+// PROGRESS-1 (Rowan, 2026-11-20): the owner reads only the front end, so progress is a public reading. Merged changes in the last day, week and month,
+// counted from the tick Worker's cache when the request arrives, with the share the system started by itself. A week with none is a 503.
+export const PROGRESS_S = { day: 86400, week: 7 * 86400, month: 30 * 86400 };
+const BY_SYSTEM = new Set(["unattended executor", "bot"]);
+export function progressReading(live, now = Date.now()) {
+  if (!live || !Array.isArray(live.changes)) return { ok: false, code: "no_reading", why: "the merged-change cache could not be read" };
+  const rows = live.changes.map(c => ({ ...c, t: Date.parse(c.merged_at) })).filter(c => !isNaN(c.t)), windows = {};
+  for (const [k, s] of Object.entries(PROGRESS_S)) {
+    const w = rows.filter(c => now - c.t <= s * 1000), sys = w.filter(c => BY_SYSTEM.has(c.by)).length;
+    windows[k] = { changes: w.length, by_system: sys, by_sessions: w.length - sys, status: w.length ? "moving" : "still" };
+  }
+  const newest = rows.length ? rows.reduce((a, b) => (b.t > a.t ? b : a)) : null, ok = windows.week.changes > 0;
+  return { ok, ...(ok ? {} : { code: "no_progress", why: "no change was merged in the last week" }), reading_at: live.refreshed_at || null, self_driven: windows.week.by_system > 0,
+    newest: newest && { n: newest.n, title: newest.title, by: newest.by, merged_at: newest.merged_at, url: newest.url }, windows };
+}
+async function liveChanges(env) {
+  try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/live/changes")); if (r.ok) return await r.json(); } } catch (e) { console.error("live changes", e && e.message); }
+  return null;
+}
+export async function progressResponse(env, now = Date.now()) {
+  const b = progressReading(await liveChanges(env), now);
+  return new Response(JSON.stringify(b), { status: b.ok ? 200 : 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
+}
+
 export async function overlay(d, env, generated, now = Date.now(), bundleAt = null) {
-  let live = null;
-  try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/live/changes")); if (r.ok) live = await r.json(); } } catch (e) { live = null; }
+  const live = await liveChanges(env);
   const f = { snapshot: { at: generated, age_s: ageS(generated, now), cadence_s: CADENCE_S.snapshot }, changes: { at: live && live.refreshed_at || null, age_s: live ? ageS(live.refreshed_at, now) : null, cadence_s: CADENCE_S.changes } };
   if (live && live.changes && live.changes.length) {
     const th = d.throughput = d.throughput || {}, by = new Map();
@@ -61,6 +84,7 @@ export async function overlay(d, env, generated, now = Date.now(), bundleAt = nu
   for (const k of ["snapshot", "changes"]) f[k].stale = f[k].age_s == null || f[k].age_s > f[k].cadence_s;
   f.pages.stale = isNaN(bt) || (f.pages.behind_s != null && f.pages.behind_s > f.pages.cadence_s);
   d.ignition = await ignitionReading(env, now);
+  d.progress = progressReading(live, now);
   d.freshness = { ...f, ok: !f.snapshot.stale && !f.changes.stale && !f.pages.stale, checked_at: new Date(now).toISOString() };
   return d;
 }
@@ -79,6 +103,8 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
  table(sb,['Measure','Value'],[['Loops and managers in the registry',s.managers_and_loops],['...of which have a recorded run',s.loops_with_evidence+' (the rest are a gap and are listed below)'],['Components live',JSON.stringify(s.components)],['Wired connections',s.edges_wired+' of '+s.edges_total],['User stories passing',s.stories_passing+' of '+s.stories_total],['Open gaps',s.open_gaps],['Open pull requests',s.open_prs]]);
  const ig=d.ignition||{},is=sec('Stage','The stage the system reads for itself, from bootstrap to self-sustaining, fetched from the tick Worker when this page loads. A reading older than two tick intervals is not shown.');
  table(is,['Measure','Value'],ig.ok?[['Stage',ig.stage],['Since',ig.since],['Reading taken',ig.reading_at+' ('+ig.age_s+' s ago)'],['Blocked at',ig.blocking?(ig.blocking.stage||'')+': '+(ig.blocking.why||''):'nothing'],['k_eff',ig.k_eff],['k_self',ig.k_self==null?'not measured':ig.k_self],['Regime',ig.self_regime==null?'not measured':ig.self_regime],['Open ignition gaps',ig.open_ignition_gaps]]:[['Stage','not shown: '+(ig.message||'no reading')],['Last reading',ig.reading_at||'none']]);
+ const pg=d.progress||{},pw=pg.windows||{},ps=sec('Progress','What was merged in the last day, week and month, counted when this page loads, and how much of it the system started by itself with no session driving it.');
+ if(pg.windows){table(ps,['Window','Changes merged','Started by the system','Started by a session','Status'],['day','week','month'].map(k=>[k,(pw[k]||{}).changes,(pw[k]||{}).by_system,(pw[k]||{}).by_sessions,(pw[k]||{}).status]));if(pg.newest)table(ps,['Newest change','Merged','By'],[[pg.newest.url?{t:pg.newest.title,href:pg.newest.url}:pg.newest.title,pg.newest.merged_at,pg.newest.by]])}else ps.appendChild(el('p',null,'No reading: '+(pg.why||'the merged-change cache could not be read')+'.'));
  const th=d.throughput||{},mg0=th.merged||{},oo=mg0.by_origin||{};
  const tp=sec('How much code ships','Merged pull requests, by who opened them. Unattended means the server-side executor picked the work from the backlog without a session driving it.');
  table(tp,['Origin','Merged PRs','Lines added','Lines removed'],Object.keys(oo).map(k=>[k,oo[k].prs,oo[k].lines_added,oo[k].lines_removed]));

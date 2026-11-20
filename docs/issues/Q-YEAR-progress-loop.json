@@ -1,0 +1,12 @@
+{
+  "id": "Q-YEAR-progress-loop",
+  "title": "Q-YEAR-progress-loop: the tick acts on a still week and counts every tenant",
+  "body": "**Owner:** product-manager\n**Trigger:** UNATTENDED-365 register, dependency `progress-loop` is open\n**Done check:** cmd:python3 -m foundation unattended --probe progress-loop\n**Status:** open\n\nIn the tick Worker, read the progress windows (site/live.js `progressReading` logic over `live_changes`) each pass: when the day window holds no change started by the system, raise the executor's next item to the front and file one `PROGRESS-STILL` item that closes itself when a system-started change merges. Refresh `live_changes` for every repository of the org and every tenant system and return the windows per system from `/api/v1/progress`, so a tenant that stops moving is a 503 for that tenant.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that resolves.",
+  "labels": [
+    "role:product-manager",
+    "raises-self",
+    "growth"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
+}

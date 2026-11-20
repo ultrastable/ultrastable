@@ -22,7 +22,7 @@ class Unattended(unittest.TestCase):
 
     def test_cost_repair_and_improvement_are_read_from_the_ledgers(self):
         ps = {p["id"]: p for p in unattended.pillars()}
-        self.assertEqual(set(ps), {"cost", "repair", "improve", "hands-off"})
+        self.assertEqual(set(ps), {"cost", "repair", "improve", "untouched"})
         self.assertTrue(all(p["status"] in ("met", "unmet") for p in ps.values()), ps)
         with tempfile.TemporaryDirectory() as t:
             t = Path(t); (t / "doctrine").mkdir(); (t / "ops").mkdir()
@@ -30,7 +30,7 @@ class Unattended(unittest.TestCase):
             self.assertTrue(all(p["status"] == "unmeasured" for p in unattended.pillars(t)))
             (t / "ops/criticality.jsonl").write_text(json.dumps({"at": "x", "cost": 0.0, "self_deploys": 3, "human_touches": 2}) + "\n")
             got = {p["id"]: p["status"] for p in unattended.pillars(t)}
-            self.assertEqual(got, {"cost": "met", "repair": "unmeasured", "improve": "met", "hands-off": "unmet"})
+            self.assertEqual(got, {"cost": "met", "repair": "unmeasured", "improve": "met", "untouched": "unmet"})
 
     def test_an_open_input_about_to_lapse_fails(self):
         bad = unattended.check(today=date(2027, 3, 15))

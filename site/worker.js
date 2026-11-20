@@ -8,7 +8,7 @@ import USER_PATH from "./userpath.js";
 import SH from "./stakeholders.js"; // STAKEHOLDERS-1
 import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
-import { liveResponse, ignitionResponse } from "./live.js";
+import { liveResponse, ignitionResponse, progressResponse } from "./live.js";
 import { feedResponse } from "./feed.js"; // REACH-1
 import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
@@ -984,6 +984,7 @@ const handler = {
       case "/api/goals": { const g = await goalsData(env); return new Response(JSON.stringify(g || { error: "goals unavailable" }), { status: g ? 200 : 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } }); }
       case "/decisions": return new Response(decisionsPage(await decisionsData(env)), { headers: { ...HTML, "Cache-Control": "public, max-age=60" } });
       case "/api/v1/ignition": return ignitionResponse(env);  // Q-CRIT-PUBLIC-STAGE
+      case "/api/v1/progress": return progressResponse(env);  // PROGRESS-1
       case "/api/roi": { let j = { error: "tick worker not reachable" }, st = 503; try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/roi")); j = await r.json(); st = r.status; } } catch (e) { /* reported as 503 */ } return new Response(JSON.stringify(j), { status: st, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } }); }  // ROI-1
       case "/api/decisions": return new Response(JSON.stringify(await decisionsData(env)), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=60" } });
       case "/ops": return new Response(opsPage(shell), { headers: { ...HTML, "Cache-Control": "no-store" } });
