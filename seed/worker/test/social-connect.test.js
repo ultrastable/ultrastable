@@ -116,3 +116,9 @@ test('publisher: nothing linked means no network call; linked Mastodon posts the
   assert.equal(seen[0], 'Shipped by the system itself: a thing.', 'events go first'); assert.equal(r2.id, 'old', 'the next due item goes out, the posted one never repeats');
   const r3 = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 7200e3, tenant: 't' }); assert.equal(r3.skipped, 'rate limit', JSON.stringify(r3));
 });
+
+import { priority } from '../src/social.js';
+test('SOCIAL-TENANTS-1: meta-story first, tenant changes, tenant backlog, then platform events', () => {
+  const o = [{ arm: 'shipped', kind: 'event' }, { arm: 'ps-solution', kind: 'backlog' }, { arm: 'ps-problem', kind: 'event' }, { arm: 'meta-story' }, { arm: 'proof' }].sort((a, b) => priority(a) - priority(b)).map(p => p.arm);
+  assert.deepEqual(o, ['meta-story', 'ps-problem', 'ps-solution', 'shipped', 'proof']);
+});

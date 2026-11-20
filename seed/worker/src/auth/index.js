@@ -76,6 +76,7 @@ export async function refreshDue(db, env, opts = {}) {
   const rows = (await db.prepare('SELECT tenant, provider, expires_at, status FROM credentials').all()).results || [];
   const out = [];
   for (const r of rows) {
+    if (r.provider === 'oauth:bluesky' || r.provider === 'oauth:mastodon') { out.push({ ...r, action: 'at-use' }); continue; }  // SOCIAL-TENANTS-1: the publisher refreshes these when it posts (Bluesky needs DPoP, which the generic grant lacks; Mastodon tokens do not expire). The generic grant failed every hour and overwrote the row's status.
     const due = r.status !== 'ok' || !r.expires_at || Date.parse(r.expires_at) - now <= MARGIN_MS;
     if (!due) { out.push({ ...r, action: 'fresh' }); continue; }
     const res = await getToken(db, env, r.tenant, r.provider, { ...opts, now });
