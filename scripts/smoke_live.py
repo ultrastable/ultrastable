@@ -167,14 +167,22 @@ def _():
 def _():
     r, b = page(IO + "/api/claims"); n = b.count('"claim"'); return r["status"] == 200 and n > 100, f"HTTP {r['status']} {n} claims"
 
+BSKY_DID = "did:plc:vad2yeqflg5uznmp557zge5c"  # the account the publisher posts to (SOCIAL-TENANTS-1); resolved by DID so a renamed handle cannot hide it
+
 @check("bluesky-feed", "Bluesky posts about problems/solutions are on the public feed within 14 days")
 def _():
-    r = get("https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=ultrastable.bsky.social&limit=10")
-    if r["status"] != 200: return False, f"HTTP {r['status']} {r['body'][:120]}"
-    d = json.loads(r["body"]); n = len(d.get("feed", [])); last = d["feed"][0]["post"]["record"].get("createdAt") if n else None
     import datetime
-    fresh = bool(last) and (datetime.datetime.now(datetime.timezone.utc) - datetime.datetime.fromisoformat(last.replace("Z", "+00:00"))).days <= 14
-    return fresh, f"{n} posts on the handle, latest {last}"
+    pr = get("https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=" + BSKY_DID)
+    if pr["status"] != 200: return False, f"profile HTTP {pr['status']} {pr['body'][:120]}"
+    prof = json.loads(pr["body"])
+    r = get("https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=" + BSKY_DID + "&limit=20")
+    if r["status"] != 200: return False, f"@{prof.get('handle')} feed HTTP {r['status']}"
+    posts = [p["post"]["record"] for p in json.loads(r["body"]).get("feed", []) if "reason" not in p]
+    now = datetime.datetime.now(datetime.timezone.utc)
+    recent = [p for p in posts if (now - datetime.datetime.fromisoformat(p["createdAt"].replace("Z", "+00:00"))).days <= 14]
+    ours = [p for p in recent if "ultrastable.org" in json.dumps(p) or "Practical Solutions" in p.get("text", "")]
+    ex = " | ".join(" ".join(p.get("text", "").split())[:70] for p in recent[:3])
+    return bool(ours), f"@{prof.get('handle')} ({prof.get('displayName')}): {len(recent)} posts in 14 days, {len(ours)} about Practical Solutions; recent: {ex}"
 
 def repo_json(p):
     with open(os.path.join(REPO, p), encoding="utf-8") as f: return json.load(f)
