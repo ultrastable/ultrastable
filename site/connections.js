@@ -41,7 +41,7 @@ export async function connectionsRoute(request, env, { subject = currentSubject,
   const isCallback = wk || /^\/connect\/[a-z0-9-]+\/callback$/.test(p);
   if (!isCallback) {
     const s = await subject(request, env);
-    if (!s) return Response.redirect(new URL("/auth/signin?next=" + encodeURIComponent("/connections"), u).toString(), 302);
+    if (!s) return Response.redirect(/* SIGNIN-NEXT-1 */ new URL("/auth/signin?next=" + encodeURIComponent(p === "/connections" ? "/connections" : u.pathname + u.search), u).toString(), 302);
   }
   if (p === "/connections" && request.method === "GET") return page(renderConnections(await tickJson(env, "/auth/connectors"), await listAgents(env, now).catch(() => [])));
   if (request.method === "POST" && p.startsWith("/connections/")) {
