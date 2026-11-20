@@ -480,8 +480,8 @@
     {
       "id": "executor-merged-pr",
       "title": "Executor opens and merges its own pull request",
-      "why": "Built and tested with a fake model only.",
-      "closing_probe": "grep:ops/executor-log.jsonl::\"result\": \"pr-opened\"",
+      "why": "The executor opens pull requests with real models (five by 2026-11-20); none has merged yet. The log on main records each outcome (PR-OUTCOME-1).",
+      "closing_probe": "grep:ops/executor-log.jsonl::\"result\": \"pr-merged\"",
       "component": "code-repo",
       "owner": "operations"
     },

@@ -58,6 +58,5 @@
 {"at": "2026-11-18T11:37:02+00:00", "sha": "ab5e239d5857ccfa25af4e0ad405f639f81e87c1", "steps": 33, "failed": []}
 {"at": "2026-11-18T11:23:32+00:00", "sha": "5e13c659b4f84ca9b41b039f027e9bc597e58e57", "steps": 33, "failed": []}
 {"at": "2026-11-20T13:56:34+00:00", "sha": "46d6a29d411ae6b2baa557aaa628b2dc9fe59fb4", "steps": 33, "failed": []}
-{"at": "2026-11-20T14:51:24+00:00", "sha": "608d05562f7b02c2a957feee68ceda61ec0445a4", "steps": 33, "failed": []}
-{"at": "2026-11-20T14:58:09+00:00", "sha": "97d451202b238523a3c7bf9a872991f6eeacaa2b", "steps": 33, "failed": []}
-{"at": "2026-11-20T15:07:02+00:00", "sha": "4f5e8f46e8ab6f18dc350b0d1d09e71f3e60e52f", "steps": 33, "failed": []}
+{"at": "2026-11-20T15:09:16+00:00", "sha": "004b584c83908b487927c5bc20b7e92fd05b251e", "steps": 33, "failed": ["Regenerate generated files and push them to the PR (REGEN-1)", "Doctrine check (positioning and code-is-the-only-memory, from doctrine/positioning.json)", "Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)", "Foundation tests, new-system end-to-end (one job, no matrix)"]}
+{"at": "2026-11-20T15:14:45+00:00", "sha": "59e25437c5c15879aa6a3df6b532a6a8fc8b5039", "steps": 33, "failed": ["Seed tests", "Plugin tier (boundary lint, self-description drift, plugin and sender tests)", "Foundation tests, new-system end-to-end (one job, no matrix)"]}

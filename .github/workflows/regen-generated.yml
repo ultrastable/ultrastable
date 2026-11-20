@@ -18,6 +18,10 @@ on:
       - "site/ultrastability-data.js"
       - "site/decisions-data.js"
       - "ops/decisions/outcomes.jsonl"
+      - "ops/decisions/rescore.jsonl"
+      - "ops/executor-log.jsonl"
+      - "instances/ultrastable/own-database.json"
+      - "docs/security/multi-tenant-controls.json"
       - "core-contract.json"
       - "doctrine/triggers.json"
       - "seed/self/SELF.md"
@@ -26,6 +30,8 @@ on:
 permissions:
   id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
   contents: write
+  pull-requests: read  # PR-OUTCOME-1
+  models: read  # RESCORE-1: the held-out second model
 concurrency:
   group: regen-generated
   cancel-in-progress: false
@@ -39,6 +45,9 @@ jobs:
       - run: python3 scripts/actions_guard.py regen-generated
         env: { GH_TOKEN: "${{ github.token }}" }
       - name: Regenerate every generated file
+        env:  # RESCORE-1 grades with a second model through the run's own token; PR-OUTCOME-1 reads pull request states with it
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: python3 scripts/regen_generated.py
       - name: Commit the regenerated data
         run: |
