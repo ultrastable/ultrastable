@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-SWEEP-security",
   "title": "Q-BLIND-SWEEP-security: answer the security sweep",
-  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** grep:ops/blindspots/answers.jsonl::\"domain\": \"security\" ; recorded with `python3 -m foundation blindspots --answer security --text <answer with evidence>`\n**Status:** open\n\nQuestion: What new way could this system be attacked, given what it added since the last sweep?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** cmd:python3 -m foundation blindspots --swept security\n**Status:** open\n\nQuestion: What new way could this system be attacked, given what it added since the last sweep?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
   "labels": [
     "role:product-manager",
     "blindspot"
