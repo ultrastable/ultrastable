@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-coverage-modules-1-coverage-mirror-1-every-claim-like-statem",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "COVERAGE-MODULES-1, COVERAGE-MIRROR-1: every claim-like statement on a source surface and every rendered page is bound",
+  "body": "2026-11-20: Q-CLAIM-COVER family (71 items, 56 open). Coverage 42.8 percent to 100 percent of source statements. foundation/claims.py: prose() reads only visible words (markup attributes and trailing code comments are not statements); nine generated modules (site/*-data.js and the like) are bound as a whole through registry key modules (header names the generator, generator exists, stale check passes), and a page sentence is bound when it is a registered sentence, a piece of one, or stitched from a bound module's strings. scripts/bind_cited_claims.py now also writes mirror entries so a sentence repeated on a seed copy is checked there. 162 sentences bound by hand to enforcing code (bound_by curated). Words that did not match code were changed: README (Quniverse runs in its own Cloudflare account), dashboard README (status refresh is hourly, not every 10 minutes), gaplint and platform core test counts (now generated blocks), site pages (two agents never work the same item; the claim ledger is per item, not per file). New checks where a rule had no code: scripts/lint_swallow.py (Never swallow an error; shrink-only baseline) and scripts/spec_ids.py (requirement IDs are never renumbered or reused). Ratchet floor 0.4 to 0.9; unbound source lines are capped by coverage.src_unbound_budget. Found and filed, not fixed: Q-CLAIM-reply-promise (a person replies within two working days has no code path).",
+  "probe": "file:scripts/spec_ids.py",
+  "session": "session_0156nqDrduoEo1kSbp9Ruy7N"
+ },
+ "kind": "decision",
+ "title": "COVERAGE-MODULES-1, COVERAGE-MIRROR-1: every claim-like statement on a source surface and every rendered page is bound",
+ "session": "session_0156nqDrduoEo1kSbp9Ruy7N"
+}
