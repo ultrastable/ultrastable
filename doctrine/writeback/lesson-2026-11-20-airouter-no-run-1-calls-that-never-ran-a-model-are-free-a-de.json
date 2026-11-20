@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-airouter-no-run-1-calls-that-never-ran-a-model-are-free-a-de",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "AIROUTER-NO-RUN-1: calls that never ran a model are free; a deprecated model is retired",
+  "body": "Measured 2026-11-20 in airouter_calls: the code agent made 95 calls and 8 passed. 35 went to a model the platform deprecated that day (error 5028) and 14 were stopped by the spend governor before any model ran; those 49 were charged 1,561 estimated neurons, so the 8,000 neuron day cap was reached by 14:00 UTC and the executor produced no change for the rest of the day (k_self 0). Fixed in seed/worker/src/airouter.js: such a call is charged nothing, and a deprecated model is retired for 7 days (table airouter_retired) and then probed again. Tests in seed/worker/test/airoute.test.js.",
+  "probe": "grep:seed/worker/src/airouter.js::airouter_retired",
+  "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+ },
+ "kind": "lesson",
+ "title": "AIROUTER-NO-RUN-1: calls that never ran a model are free; a deprecated model is retired",
+ "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+}
