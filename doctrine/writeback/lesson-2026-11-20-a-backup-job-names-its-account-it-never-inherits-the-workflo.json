@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-a-backup-job-names-its-account-it-never-inherits-the-workflo",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "A backup job names its account; it never inherits the workflow's",
+  "body": "The first backup drill (2026-11-20) used the workflow secret CLOUDFLARE_ACCOUNT_ID, which points at the Quniverse account, and backed up its personal and other-project databases into its ultrastable-git bucket. The 13 copies were deleted. doctrine/backup.json now pins account_id to the topology account, a test asserts it, and the count query is chunked to D1's compound-select limit (chunks of 40 failed with HTTP 400 on every database of more than 5 tables).",
+  "probe": "grep:doctrine/backup.json::account_id",
+  "session": "session_0156nqDsxX1zCZBnq8L21fjV"
+ },
+ "kind": "lesson",
+ "title": "A backup job names its account; it never inherits the workflow's",
+ "session": "session_0156nqDsxX1zCZBnq8L21fjV"
+}
