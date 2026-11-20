@@ -17,8 +17,20 @@ class Unattended(unittest.TestCase):
         h = unattended.horizon(today=date(2026, 11, 20))
         self.assertEqual(h["target"], 365)
         self.assertEqual(h["horizon_days"], 161)          # node-runtime 2027-04-30 is the first dated input
-        self.assertIn("domain-renewal", h["bounded_by"])  # 355 days, auto-renew off
+        self.assertEqual(h["bounded_by"], ["node-runtime"])  # the domains renew by themselves (measured)
         self.assertFalse(h["met"])
+
+    def test_cost_repair_and_improvement_are_read_from_the_ledgers(self):
+        ps = {p["id"]: p for p in unattended.pillars()}
+        self.assertEqual(set(ps), {"cost", "repair", "improve", "hands-off"})
+        self.assertTrue(all(p["status"] in ("met", "unmet") for p in ps.values()), ps)
+        with tempfile.TemporaryDirectory() as t:
+            t = Path(t); (t / "doctrine").mkdir(); (t / "ops").mkdir()
+            shutil.copy(ROOT / "doctrine/unattended.json", t / "doctrine/unattended.json")
+            self.assertTrue(all(p["status"] == "unmeasured" for p in unattended.pillars(t)))
+            (t / "ops/criticality.jsonl").write_text(json.dumps({"at": "x", "cost": 0.0, "self_deploys": 3, "human_touches": 2}) + "\n")
+            got = {p["id"]: p["status"] for p in unattended.pillars(t)}
+            self.assertEqual(got, {"cost": "met", "repair": "unmeasured", "improve": "met", "hands-off": "unmet"})
 
     def test_an_open_input_about_to_lapse_fails(self):
         bad = unattended.check(today=date(2027, 3, 15))
@@ -28,7 +40,7 @@ class Unattended(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             t = Path(t); (t / "doctrine").mkdir(); (t / "foundation").mkdir(); (t / "docs/issues").mkdir(parents=True)
             shutil.copy(ROOT / "foundation/unattended.py", t / "foundation/unattended.py")
-            d = {"target": {"statement": "s", "metric": "m", "value": 365, "probe": "cmd:python3 -m foundation unattended --horizon"}, "warn_days": 60,
+            d = {"target": {"statement": "s", "metric": "m", "value": 365, "probe": "cmd:python3 -m foundation unattended --horizon", "pillars": []}, "warn_days": 60,
                  "dependencies": [{"id": "g", "class": "account", "what": "w", "status": "gate", "evidence": "e", "renewal": "identity", "probe": "file:foundation/unattended.py"},
                                   {"id": "o", "class": "model", "what": "w", "status": "open", "evidence": "e", "probe": "file:foundation/unattended.py"}]}
             (t / "doctrine/unattended.json").write_text(json.dumps(d))

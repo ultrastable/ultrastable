@@ -2,7 +2,7 @@
  "_doc": "UNATTENDED-365 (Rowan, 2026-11-20): \"The Ultrastable system shall be able to run entirely unattended for 1 year with zero external input and continue to deploy new releases regularly completely on its own code loops.\" This is the register of every external input the system still has: credentials, renewals, quotas, hosted models, dependencies, outside sessions and the acts only a person's identity can do. status closed = renews or repairs itself, with the probe that proves it; gate = identity-bound (money, sign-in, legal), with the default in effect and one link; open = closable in code, with a queue item. horizon_days is the days until the first non-renewing input lapses. Consumers: foundation/unattended.py (--check inside `openloops --check`; --horizon), foundation/needsyou.py (a closed dependency removes its act from NEEDS-YOU.md), doctrine/rules.json rule no-open-items, tests/foundation/test_unattended.py.",
  "version": "1.0.0",
  "target": {
-  "statement": "Run entirely unattended for 1 year with zero external input and keep deploying new releases on its own code loops.",
+  "statement": "Designed to run unattended for a minimum of one year, completely on its own: it keeps its cost down, finds what fails and fixes it, and keeps getting better (Rowan, 2026-11-20).",
   "metric": "unattended_horizon_days",
   "op": ">=",
   "value": 365,
@@ -10,7 +10,44 @@
   "release_metric": "k_self",
   "release_op": ">",
   "release_value": 0,
-  "probe": "cmd:python3 -m foundation unattended --horizon"
+  "probe": "cmd:python3 -m foundation unattended --horizon",
+  "pillars": [
+   {
+    "id": "cost",
+    "statement": "It spends nothing a person has to pay for",
+    "source": "ops/criticality.jsonl",
+    "field": "cost",
+    "op": "<=",
+    "value": 0
+   },
+   {
+    "id": "repair",
+    "statement": "It finds what fails and fixes it: no clock stays stopped",
+    "source": "ops/resilience.jsonl",
+    "where": {
+     "kind": "beat"
+    },
+    "field": "stalled",
+    "op": "<=",
+    "value": 0
+   },
+   {
+    "id": "improve",
+    "statement": "It gets better by itself: it originates and ships its own deploys",
+    "source": "ops/criticality.jsonl",
+    "field": "self_deploys",
+    "op": ">",
+    "value": 0
+   },
+   {
+    "id": "hands-off",
+    "statement": "No person touches it",
+    "source": "ops/criticality.jsonl",
+    "field": "human_touches",
+    "op": "<=",
+    "value": 0
+   }
+  ]
  },
  "warn_days": 60,
  "dependencies": [
@@ -108,15 +145,13 @@
   {
    "id": "domain-renewal",
    "class": "renewal",
-   "what": "ultrastable.io, .app, .net and .org expire 2027-11-10 with auto-renew off",
-   "status": "gate",
-   "renewal": "identity",
+   "what": "ultrastable.io, .app, .net and .org renew by themselves; they expire 2027-11-10",
+   "status": "closed",
+   "renewal": "auto",
    "expires": "2027-11-10",
-   "evidence": "355 days from 2026-11-20, under the 365-day target; renewal charges the owner's payment method (money, identity-bound)",
+   "evidence": "Cloudflare Registrar API 2026-11-20: auto_renew true on all four (the repository text said off and was wrong)",
    "measured": "2026-11-20",
-   "probe": "cmd:python3 -m foundation unattended --probe domain-renewal",
-   "default": "domains keep resolving until 2027-11-10; the horizon reports the shortfall every pass",
-   "connect": "https://dash.cloudflare.com/?to=/:account/registrar/domains",
+   "probe": "file:foundation/singleaccount.py",
    "needs_you": "domains-move"
   },
   {
@@ -270,6 +305,67 @@
    "measured": "2026-11-20",
    "probe": "cmd:python3 -m foundation unattended --probe mail-relay-token",
    "item": "Q-YEAR-mail-relay-token"
+  },
+  {
+   "id": "payment-method",
+   "class": "account",
+   "what": "Domain renewal (2027-11-10) and any usage above the free plans charge the card on file; a card's expiry is not readable by API",
+   "status": "gate",
+   "renewal": "identity",
+   "expires": null,
+   "evidence": "Cloudflare API: subscriptions endpoint answers 403 to the session; one default budget alert exists and mails a person",
+   "measured": "2026-11-20",
+   "probe": "file:seed/worker/src/freetier.js",
+   "default": "every loop stays on the free plans (free-tier governor), so only the yearly domain renewal needs the card",
+   "connect": "https://dash.cloudflare.com/?to=/:account/billing/payment-info",
+   "needs_you": "domains-move"
+  },
+  {
+   "id": "worker-logs",
+   "class": "quota",
+   "what": "Workers Logs on every Worker, so the system can read its own failures",
+   "status": "closed",
+   "renewal": "none",
+   "expires": null,
+   "evidence": "Cloudflare API script-settings 2026-11-20: observability enabled on ultrastable-tick, -site, -dashboard, -tenants, -agents and -deploy-gateway; the rendered config sets it on every Worker",
+   "measured": "2026-11-20",
+   "probe": "file:foundation/topology.py"
+  },
+  {
+   "id": "cloudflare-alerts",
+   "class": "account",
+   "what": "Cloudflare's own alerts (incidents, Worker error rate, usage, certificates) reach no loop: one budget alert exists and it mails a person",
+   "status": "open",
+   "renewal": "none",
+   "expires": null,
+   "evidence": "Cloudflare API alerting/v3/policies: 1 policy, mechanism email; destinations/webhooks: none",
+   "measured": "2026-11-20",
+   "probe": "cmd:python3 -m foundation unattended --probe cloudflare-alerts",
+   "item": "Q-YEAR-cloudflare-alerts"
+  },
+  {
+   "id": "second-clock",
+   "class": "quota",
+   "what": "Every loop starts from Cron Triggers (tick every 10 min, site and dashboard hourly) or GitHub's scheduler; no clock is independent of both",
+   "status": "open",
+   "renewal": "none",
+   "expires": null,
+   "evidence": "Cloudflare API: one Durable Object namespace (tenants) and no alarm-driven heartbeat; queues 0, workflows 0",
+   "measured": "2026-11-20",
+   "probe": "cmd:python3 -m foundation unattended --probe second-clock",
+   "item": "Q-YEAR-second-clock"
+  },
+  {
+   "id": "offsite-backup",
+   "class": "dependency",
+   "what": "D1 holds the org state with only Cloudflare's own point-in-time restore; the audit chain's R2 sink is not bound on the tick Worker",
+   "status": "open",
+   "renewal": "none",
+   "expires": null,
+   "evidence": "Cloudflare API: R2 buckets = [ultrastable-git]; ultrastable-tick has no r2_bucket binding; 5 D1 databases, 15.6 MB",
+   "measured": "2026-11-20",
+   "probe": "cmd:python3 -m foundation unattended --probe offsite-backup",
+   "item": "Q-YEAR-offsite-backup"
   }
  ]
 }

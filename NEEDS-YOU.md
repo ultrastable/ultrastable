@@ -6,8 +6,8 @@ Everything else is done by the system. These are the only acts that need your id
 An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact. If you do nothing: Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you.
 **[Open the ready-to-paste application kits (Y Combinator Winter 2027 late applications are open)](https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md)**
 
-## Turn on auto-renew for the four domains, and move them to the Ultrastable account
-Auto-renew is off on ultrastable.io, .app, .net and .org and they expire on 2027-11-10, which is inside the one-year unattended target; renewal charges your payment method. The same page moves the domains from the quniverse account, where ultrastable.io is still served, to the Ultrastable account once the registrar lock on a new registration lifts. IDENTITY-BOUND: payment and both confirmations are in the owner's Cloudflare login. If you do nothing: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.
+## Keep a working card on file, and move the four domains to the Ultrastable account
+ultrastable.io, .app, .net and .org renew by themselves on 2027-11-10 and that charge needs a card that still works; a card's expiry cannot be read by the system. The same account page moves the domains from the quniverse account, where ultrastable.io is still served, to the Ultrastable account once the registrar lock on a new registration lifts. IDENTITY-BOUND: payment and both confirmations are in the owner's Cloudflare login. If you do nothing: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.
 **[Open the registrar domains](https://dash.cloudflare.com/?to=/:account/registrar/domains)**
 
 ## Upload the org avatar and pin repos

@@ -41,11 +41,35 @@ def horizon(root=REPO, today=None) -> dict:
     target = d["target"]["value"]
     dated = [(days_left(x, today), x["id"]) for x in d["dependencies"] if x["status"] != "closed" and x.get("expires")]
     h = min([n for n, _ in dated] + [10 ** 6])
-    return {"horizon_days": None if h == 10 ** 6 else h, "target": target, "met": h >= target and not any(x["status"] == "open" for x in d["dependencies"]),
+    ps = pillars(root)
+    return {"horizon_days": None if h == 10 ** 6 else h, "target": target, "pillars": ps,
+            "met": h >= target and not any(x["status"] == "open" for x in d["dependencies"]) and all(p["status"] == "met" for p in ps),
             "bounded_by": sorted(i for n, i in dated if n < target),
             "open": sorted(x["id"] for x in d["dependencies"] if x["status"] == "open"),
             "gates": sorted(x["id"] for x in d["dependencies"] if x["status"] == "gate"),
             "closed": sum(x["status"] == "closed" for x in d["dependencies"]), "total": len(d["dependencies"])}
+
+
+OPS = {"<=": lambda a, b: a <= b, ">=": lambda a, b: a >= b, ">": lambda a, b: a > b, "<": lambda a, b: a < b, "==": lambda a, b: a == b}
+
+
+def pillars(root=REPO) -> list[dict]:
+    """Cost, repair and improvement, each read from the newest row of a ledger the loops already write. A row or field that is absent is unmeasured, never met."""
+    out = []
+    for p in load(root)["target"].get("pillars", []):
+        f, row = Path(root) / p["source"], None
+        if f.is_file():
+            for line in reversed(f.read_text(encoding="utf-8").splitlines()):
+                try:
+                    r = json.loads(line)
+                except ValueError:
+                    continue
+                if all(r.get(k) == v for k, v in p.get("where", {}).items()) and p["field"] in r:
+                    row = r; break
+        v = row[p["field"]] if row else None
+        out.append({"id": p["id"], "reading": v, "at": row.get("at") if row else None, "want": f"{p['op']} {p['value']}",
+                    "status": "unmeasured" if not isinstance(v, (int, float)) else "met" if OPS[p["op"]](v, p["value"]) else "unmet"})
+    return out
 
 
 def check(root=REPO, today=None) -> list[str]:
@@ -54,6 +78,10 @@ def check(root=REPO, today=None) -> list[str]:
     t = d.get("target", {})
     if not (t.get("statement") and t.get("metric") and isinstance(t.get("value"), int) and _resolves(root, t.get("probe"))):
         bad.append(f"{DATA}: target needs a statement, a metric, a value and a probe that resolves")
+    got = {p.get("id") for p in t.get("pillars", [])}
+    bad += [f"{DATA}: target lacks the pillar {i}" for i in ("cost", "repair", "improve") if i not in got]
+    bad += [f"{DATA}: pillar {p.get('id')} needs a source, a field, an op and a value" for p in t.get("pillars", [])
+            if not (p.get("source") and p.get("field") and p.get("op") in OPS and isinstance(p.get("value"), (int, float)))]
     ids = [x.get("id") for x in d["dependencies"]]
     bad += [f"{i}: listed twice" for i in sorted(set(ids)) if ids.count(i) > 1]
     for x in d["dependencies"]:
