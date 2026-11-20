@@ -1,0 +1,11 @@
+{
+  "id": "NC-ROADMAP-AGENT-A2A-V1",
+  "title": "NC-ROADMAP-AGENT-A2A-V1: ROADMAP-1: QNFO.REACH #A2A-V1: A2A v1.0 agent card and task endpoint",
+  "body": "**Owner:** product-manager\n**Trigger:** the backlog item ROADMAP-AGENT-A2A-V1 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe ROADMAP-AGENT-A2A-V1\n**Status:** open\n\nROADMAP-1: QNFO.REACH #A2A-V1: A2A v1.0 agent card and task endpoint\n\nBacklog done check: merged and verified live (VERIFY-LIVE-1) with a probe the author did not write\n\nTriage: previous PR closed without merge; retried by worker-native\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:product-manager",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

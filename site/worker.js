@@ -34,6 +34,7 @@ import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
 import { controlPlane, opsPage, tenantDiscovery, authIntegration } from "./controlplane.js";
 import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
+import { upkeepRound, recordVersion, restore as restoreVersion, versions as siteVersions, historyBody } from "./upkeep.js"; // SITE-UPKEEP-1
 import { connectionsRoute } from "./connections.js"; // CONNECTIONS-1
 import { internalDeploy } from "./deployer.js";
 var VERSION = "0.15.1";
@@ -528,7 +529,7 @@ async function audit(env, id, brief, html) {
 async function build(env, id, brief, prev, change) {
   try {
     await env.ASSETS.put("brief:" + id, JSON.stringify({ brief, change: change || null }));
-    await env.ASSETS.put("site:" + id, await aiHtml(env, brief, prev, change)); await env.ASSETS.put("state:" + id, "ready");
+    { const before = await env.ASSETS.get("site:" + id); const html = await aiHtml(env, brief, prev, change); if (before) await recordVersion(env, id, before, change ? "you asked: " + String(change).slice(0, 100) : "rebuilt"); await env.ASSETS.put("site:" + id, html); } await env.ASSETS.put("state:" + id, "ready"); // SITE-UPKEEP-1: the page before each change is kept
     await env.ASSETS.delete("audit:" + id);
   } catch (e) { console.error("build failed", id, String(e)); await env.ASSETS.put("state:" + id, "failed"); }
 }
@@ -661,13 +662,17 @@ async function takeChange(request, env, ctx) {
 }
 const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
 async function siteRoutes(u, env, ctx, request, own) {
-  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/api)?$/.exec(u.pathname);
+  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/history|\/api)?$/.exec(u.pathname);
   if (!m || !env || !env.ASSETS) return null;
   if (m[2] === "/api") return siteApi(request, env, m[1]);
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
   if (st === "ready" && (!m[2] || m[2] === "/review")) await ensureAudit(env, ctx, id);
+  if (m[2] === "/history") { // SITE-UPKEEP-1
+    if (request.method === "POST") { const f = await request.formData().catch(() => null), r = f ? await restoreVersion(env, id, f.get("v")) : { ok: false }; if (r.ok) return Response.redirect("https://" + CANON + "/s/" + id + "/history", 303); return page("Not restored", "<div class=\"head\"><h1>That version is gone</h1><p>Only the last ten are kept.</p></div>"); }
+    return page("How your site has changed", historyBody(id, await siteVersions(env, id), await jget(env, "upkeep:" + id)));
+  }
   if (m[2] === "/ask") {
     const a = await jget(env, "ask:" + id);
     if (!a || a.ans.length >= a.qs.length) return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
@@ -701,7 +706,7 @@ async function siteRoutes(u, env, ctx, request, own) {
   const lk = (h, t) => "<a href=\"https://" + CANON + "/s/" + id + h + "\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none;margin-left:6px\" target=\"_top\">" + t + "</a>";
   // BLINDSPOT-1 legal sweep 2026-11-20 (EU AI Act Article 50, in force 2026-08-02): a page the system wrote says so, to a person (the bar) and to a machine (the generator meta tag).
   const aiMark = "<meta name=\"generator\" content=\"Ultrastable (AI-generated page)\">";
-  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><span style=\"background:#fff;color:#111;padding:10px 14px;border-radius:999px;border:1px solid #111\">Written by AI</span>" + lk("/review", "What I checked") + lk("/change", "Change something") + "</div>";
+  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><span style=\"background:#fff;color:#111;padding:10px 14px;border-radius:999px;border:1px solid #111\">Written by AI</span>" + lk("/review", "What I checked") + lk("/change", "Change something") + lk("/history", "History") + "</div>";
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
   const us = aiMark + usClient(host, id), html1 = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + us) : /<html[^>]*>/i.test(html) ? html.replace(/<html[^>]*>/i, (m) => m + us) : us + html;
   return new Response(html1, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation" + (sub ? " allow-same-origin" : "") + "; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'self'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
@@ -808,6 +813,7 @@ export async function tick(env, ctx, now) {
   if (!h || t - new Date(h.at) > 23 * 3600e3) out.health = await probeModels(env);
   out.rounds = await changeRounds(env, ctx); out.ideas = (await ideaWork(env)).length; out.deployed = await consumeIdeas(env).catch(e => String(e).slice(0, 120));
   { const rec = await indexNow({ host: CANON, fetchFn: fetch, now: t, last: await jget(env, "promote:indexnow") }); if (rec) { await jput(env, "promote:indexnow", rec); out.indexnow = rec.status; } } /* PROMOTE-1 */
+  out.upkeep = (await upkeepRound(env, (await kvList(env, "state:", 300)).slice(-300), { now: t, lint, improve: (b, html, ins) => aiHtml(env, b, html, ins), visited: true }, 2).catch(e => { console.error("upkeep failed", String(e).slice(0, 120)); return []; })).length; // SITE-UPKEEP-1: at most two model passes a tick, each site once a week
   out.webhooks = await tickWebhooks(env, t).catch(e => String(e).slice(0, 120)); // WEBHOOKS-1: outbound callbacks ride this tick, no new cron
   out.watchdog = await watchTick(env); // LOOPPROOF-1: this Worker is the second producer of the org heartbeat
   await jput(env, "tick:last", out); return out;
