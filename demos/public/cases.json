@@ -7,8 +7,8 @@
        {"name": "Proxy token", "result": "403: scope too narrow"},
        {"name": "Actions token", "result": "refused: cannot change org settings"},
        {"name": "Remote session", "result": "refused by the permission check"},
-       {"name": "Signed-in CLI already on the owner's machine", "result": "scopes include org admin; the change applied", "worked": true}],
-     "lesson": "The first route nobody tried worked. The bootstrap now probes the machine's existing sign-in before it opens any owner card."},
+       {"name": "Signed-in CLI, tried on 2026-11-10 from a person's computer (no longer a route: server-side only)", "result": "scopes include org admin; the change applied", "worked": true}],
+     "lesson": "The first route nobody tried worked. The bootstrap now probes an existing sign-in before it opens any owner card, and accepts it only in a cloud session or an Actions job."},
     {"id": "deploy-needs-secrets", "title": "Deploy needs two repository secrets", "situation": "A worker is ready, but the deploy workflow has no cloud token.",
      "surfaces": [
        {"name": "Cloud connector, script inline", "result": "upload works only with the script inline; a 66 KB script with base64 image failed transcription"},
@@ -36,7 +36,7 @@
     {"id": "scope-excludes-repo", "title": "The session may not read the repository it needs", "situation": "An inventory needs facts from a repository outside the session's scope.",
      "surfaces": [
        {"name": "Code host tools", "result": "scope list refused"},
-       {"name": "Owner's machine folders", "result": "not mounted in this session"},
+       {"name": "Folders outside the session", "result": "not mounted in this session, and not a route since the server-side only rule"},
        {"name": "The repo's own boundary manifest", "result": "covers names only, not the facts needed"}],
      "reversible": "The manifest is recorded as the inventory of record; no entries are invented.",
      "gate": {"what": "Attach the repository to the session scope", "why": "grants access to private code", "default": "the manifest stays the inventory of record", "prepared": "the exact list of missing entries", "probe": "each inventory file exists with a commit id per row"}},
