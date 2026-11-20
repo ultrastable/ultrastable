@@ -2,7 +2,6 @@
 Ultrastable is the foundation for any autonomous system; a system that cannot see its own surfaces cannot boot."""
 from __future__ import annotations
 import shutil
-from pathlib import Path
 
 from . import ladder
 

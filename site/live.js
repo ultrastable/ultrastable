@@ -21,6 +21,26 @@ export async function load(env) {
 // `freshness` states the age of each source against its cadence so a stale page says so and the probe (/api/freshness) can fail.
 export const CADENCE_S = { snapshot: 26 * 3600, changes: 30 * 60 };
 const ageS = (iso, now) => { const t = Date.parse(String(iso || "").replace(" ", "T") + (/[zZ]|[+-]\d\d:?\d\d$/.test(String(iso || "")) ? "" : "Z")); return isNaN(t) ? null : Math.max(0, Math.round((now - t) / 1000)); };
+// Q-CRIT-PUBLIC-STAGE: the stage the tick Worker reads for itself (ignition) and its heartbeat (pulse), fetched through the TICK service binding at
+// request time and stamped with the time of the reading. A reading older than two tick intervals is stale: a stopped tick cannot show its last stage.
+export const TICK_INTERVAL_S = 600;
+export async function ignitionReading(env, now = Date.now()) {
+  if (!env || !env.TICK) return { ok: false, code: "no_binding", message: "The stage reading is not available on this deployment." };
+  let j = null;
+  try { const r = await env.TICK.fetch(new Request("https://tick.internal/live")); if (r.ok) j = await r.json(); } catch (e) { console.error("ignition", e && e.message); }
+  if (!j) return { ok: false, code: "tick_unreachable", message: "The tick Worker did not answer." };
+  const ig = j.ignition || null, at = ig && ig.at || null, age = ageS(at, now);
+  const body = { read_at: new Date(now).toISOString(), reading_at: at, age_s: age, max_age_s: 2 * TICK_INTERVAL_S, stage: ig ? ig.stage : null, since: ig ? ig.since : null,
+    bootstrapped: ig ? Boolean(ig.bootstrapped) : null, blocking: ig && ig.blocking || null, k_eff: j.k_eff ?? null, k_self: j.k_self ?? null, self_regime: j.self_regime ?? null,
+    open_ignition_gaps: j.open_ignition_gaps ?? null, self_sustaining: Boolean(j.self_sustaining), pulse_at: j.pulse && j.pulse.at || null, log: ig && ig.log || [] };
+  if (age == null || age > body.max_age_s) return { ...body, ok: false, code: "stale_reading", message: "The newest tick is older than two intervals, so no stage is shown." , stage: null };
+  return { ...body, ok: true };
+}
+export async function ignitionResponse(env, now = Date.now()) {
+  const b = await ignitionReading(env, now);
+  return new Response(JSON.stringify(b), { status: b.ok ? 200 : 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
+}
+
 export async function overlay(d, env, generated, now = Date.now(), bundleAt = null) {
   let live = null;
   try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/live/changes")); if (r.ok) live = await r.json(); } } catch (e) { live = null; }
@@ -40,6 +60,7 @@ export async function overlay(d, env, generated, now = Date.now(), bundleAt = nu
   f.pages = { at: bundleAt || null, behind_s: newest != null && !isNaN(bt) ? Math.max(0, Math.round((newest - bt) / 1000)) : null, cadence_s: 3600 };
   for (const k of ["snapshot", "changes"]) f[k].stale = f[k].age_s == null || f[k].age_s > f[k].cadence_s;
   f.pages.stale = isNaN(bt) || (f.pages.behind_s != null && f.pages.behind_s > f.pages.cadence_s);
+  d.ignition = await ignitionReading(env, now);
   d.freshness = { ...f, ok: !f.snapshot.stale && !f.changes.stale && !f.pages.stale, checked_at: new Date(now).toISOString() };
   return d;
 }
@@ -56,6 +77,8 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
  const fr=d.freshness||{};$('#asof').textContent='Snapshot '+d.generated+' from commit '+d.commit+'. Merged changes refreshed '+((fr.changes||{}).at||'never')+'. '+d.access+'.'+(fr.ok===false?' STALE: '+['snapshot','changes'].filter(k=>(fr[k]||{}).stale).join(', ')+' older than its cadence; the freshness probe in the transparency workflow fails and files the repair.':'');
  const sb=sec('Scoreboard','Every number is computed from the repository and the live checks, not typed in.');
  table(sb,['Measure','Value'],[['Loops and managers in the registry',s.managers_and_loops],['...of which have a recorded run',s.loops_with_evidence+' (the rest are a gap and are listed below)'],['Components live',JSON.stringify(s.components)],['Wired connections',s.edges_wired+' of '+s.edges_total],['User stories passing',s.stories_passing+' of '+s.stories_total],['Open gaps',s.open_gaps],['Open pull requests',s.open_prs]]);
+ const ig=d.ignition||{},is=sec('Stage','The stage the system reads for itself, from bootstrap to self-sustaining, fetched from the tick Worker when this page loads. A reading older than two tick intervals is not shown.');
+ table(is,['Measure','Value'],ig.ok?[['Stage',ig.stage],['Since',ig.since],['Reading taken',ig.reading_at+' ('+ig.age_s+' s ago)'],['Blocked at',ig.blocking?(ig.blocking.stage||'')+': '+(ig.blocking.why||''):'nothing'],['k_eff',ig.k_eff],['k_self',ig.k_self==null?'not measured':ig.k_self],['Regime',ig.self_regime==null?'not measured':ig.self_regime],['Open ignition gaps',ig.open_ignition_gaps]]:[['Stage','not shown: '+(ig.message||'no reading')],['Last reading',ig.reading_at||'none']]);
  const th=d.throughput||{},mg0=th.merged||{},oo=mg0.by_origin||{};
  const tp=sec('How much code ships','Merged pull requests, by who opened them. Unattended means the server-side executor picked the work from the backlog without a session driving it.');
  table(tp,['Origin','Merged PRs','Lines added','Lines removed'],Object.keys(oo).map(k=>[k,oo[k].prs,oo[k].lines_added,oo[k].lines_removed]));

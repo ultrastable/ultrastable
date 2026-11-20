@@ -2907,6 +2907,24 @@
    "body": "scripts/executor_evidence.sh left the checkout on loop-evidence, so clock --chain and clock --heal ran that branch's old code and data and the wake cap from PR 727 never took effect. The script now returns to the commit it started on.",
    "probe": "file:scripts/executor_evidence.sh",
    "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+  },
+  {
+   "id": "decision-2026-11-20-q-self-worker-the-tick-worker-measures-k-self-and-the-self-r",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Q-SELF-WORKER: the tick Worker measures k_self and the self regime",
+   "body": "ingestDeploys keeps each deploy row's origin in the outcome evidence; windowFigures counts verified deploys whose origin is in seed/autonomy/criticality.json self.origins; computeKEff returns k_self, self_deploys and self_regime (subcritical, driven, self-sustaining); /live shows k_self and self_regime next to k_eff. Named self_regime because critloop.js already uses regime for subcritical, critical, supercritical.",
+   "probe": "grep:seed/worker/src/criticality.js::k_self",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "lesson-2026-11-20-site-tests-in-checks-1-site-tests-gate-every-change-web-bot-",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "SITE-TESTS-IN-CHECKS-1: site tests gate every change; Web Bot Auth verify parsed no parameters",
+   "body": "site/*.test.mjs ran only in deploy-site.yml, so site/webbotauth.js verifyRequest shipped with p.indexOf(\"\") where p.indexOf(\"=\") was meant: every inbound Web Bot Auth signature was rejected as 'not a web-bot-auth ed25519 signature'. Fixed the parser and added the site tests to checks.yml (OL-20261115-24). Removed two unused imports (Q-SELF-unused-import).",
+   "probe": "grep:.github/workflows/checks.yml::site/.*test.mjs",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
   }
  ]
 }
