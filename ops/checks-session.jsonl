@@ -58,3 +58,5 @@
 {"at": "2026-11-18T11:37:02+00:00", "sha": "ab5e239d5857ccfa25af4e0ad405f639f81e87c1", "steps": 33, "failed": []}
 {"at": "2026-11-18T11:23:32+00:00", "sha": "5e13c659b4f84ca9b41b039f027e9bc597e58e57", "steps": 33, "failed": []}
 {"at": "2026-11-20T13:56:34+00:00", "sha": "46d6a29d411ae6b2baa557aaa628b2dc9fe59fb4", "steps": 33, "failed": []}
+{"at": "2026-11-20T15:18:23+00:00", "sha": "78f23d03ae6fdab7cfacf4574747ba034070174a", "steps": 33, "failed": ["Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)", "Foundation tests, new-system end-to-end (one job, no matrix)", "Agent data is current"]}
+{"at": "2026-11-20T15:19:51+00:00", "sha": "78f23d03ae6fdab7cfacf4574747ba034070174a", "steps": 33, "failed": ["Loops, glossary, kernel and write-back (the system reads its own loops; code with no write-back fails)", "Foundation tests, new-system end-to-end (one job, no matrix)"]}

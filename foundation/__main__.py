@@ -14,6 +14,7 @@
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
   python3 -m foundation redmain [--run [--apply]|--check]                  REDMAIN-1: a red deploy gate on main is repaired by reverting the smallest change that broke it
+  python3 -m foundation runway [--run [--apply]|--probe C|--check]         RUNWAY-1: projected days of unattended running against the one-year target
   python3 -m foundation credwatch [--run [--apply]|--check]                TOKEN-EXPIRY-1: every credential the loops use is probed for expiry before it lapses
   python3 -m foundation openloops [--check]                                NO-OPEN-ITEMS-1: no "needs you"; every leftover is closed or a recorded gate
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
@@ -191,6 +192,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["redmain"]:
         from . import redmain
         return redmain.main(_av[1:])
+    if _av[:1] == ["runway"]:
+        from . import runway
+        return runway.main(_av[1:])
     if _av[:1] == ["credwatch"]:
         from . import credwatch
         return credwatch.main(_av[1:])

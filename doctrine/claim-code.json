@@ -70,6 +70,33 @@
         "file": "foundation/openloops.py",
         "contains": "banned_phrases"
       }
+    },
+    {
+      "id": "runway-agents",
+      "source": "agents/AGENTS.md",
+      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+      "probe": {
+        "file": "foundation/runway.py",
+        "contains": "target_days is below the owner's minimum of 365"
+      }
+    },
+    {
+      "id": "runway-seed",
+      "source": "seed/agents/AGENTS.md",
+      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+      "probe": {
+        "file": "foundation/runway.py",
+        "contains": "target_days is below the owner's minimum of 365"
+      }
+    },
+    {
+      "id": "runway-agents-pi",
+      "source": "agents/PROJECT-INSTRUCTIONS.md",
+      "quote": "The system shall be able to run entirely unattended for 1 year with zero external input",
+      "probe": {
+        "file": "foundation/runway.py",
+        "contains": "target_days is below the owner's minimum of 365"
+      }
     }
   ],
   "baseline": [
