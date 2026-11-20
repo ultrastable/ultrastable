@@ -72,6 +72,15 @@
       }
     },
     {
+      "id": "unattended-sessions-never-count",
+      "source": "agents/AGENTS.md",
+      "quote": "it never counts toward the target and no loop may depend on one",
+      "probe": {
+        "file": "doctrine/unattended.json",
+        "contains": "never counts"
+      }
+    },
+    {
       "id": "progress-last-visit-local",
       "source": "site/progress.js",
       "quote": "Your last visit is kept only in this browser and is never sent anywhere.",
@@ -114,6 +123,15 @@
       "probe": {
         "file": "foundation/runway.py",
         "contains": "target_days is below the owner's minimum of 365"
+      }
+    },
+    {
+      "id": "decisions-outreach-segment-predict",
+      "source": "site/decisions-data.js",
+      "quote": "the segment's mean reward so far, or 0 for a segment never tried",
+      "probe": {
+        "file": "foundation/outreach.py",
+        "contains": "top[\"mean_reward\"] if top[\"mean_reward\"] is not None else 0.0"
       }
     }
   ],

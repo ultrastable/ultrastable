@@ -65,6 +65,13 @@
       "foundation",
       "queue",
       "--check"
+    ],
+    [
+      "python3",
+      "-m",
+      "foundation",
+      "strays",
+      "--check"
     ]
   ],
   "port_owner": "operations",

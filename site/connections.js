@@ -35,13 +35,13 @@ const sameOrigin = (request, u) => { const o = request.headers.get("origin"); re
 
 export async function connectionsRoute(request, env, { subject = currentSubject, now = Date.now() } = {}) {
   const u = new URL(request.url), p = u.pathname.replace(/\/$/, "");
-  const wk = p === "/.well-known/oauth-client/bluesky.json"; /* REACH-1: atproto client metadata, public */
+  const wk = p === "/.well-known/oauth-client/bluesky.json" || p === "/.well-known/oauth-client/bluesky-jwks.json"; /* REACH-1: atproto client metadata, public */
   const mine = wk || p === "/connections" || p.startsWith("/connections/") || p === "/connect" || p.startsWith("/connect/");
   if (!mine || !HOSTS(u.hostname)) return null;
   const isCallback = wk || /^\/connect\/[a-z0-9-]+\/callback$/.test(p);
   if (!isCallback) {
     const s = await subject(request, env);
-    if (!s) return Response.redirect(new URL("/auth/signin?next=" + encodeURIComponent("/connections"), u).toString(), 302);
+    if (!s) return Response.redirect(/* SIGNIN-NEXT-1 */ new URL("/auth/signin?next=" + encodeURIComponent(p === "/connections" ? "/connections" : u.pathname + u.search), u).toString(), 302);
   }
   if (p === "/connections" && request.method === "GET") return page(renderConnections(await tickJson(env, "/auth/connectors"), await listAgents(env, now).catch(() => [])));
   if (request.method === "POST" && p.startsWith("/connections/")) {

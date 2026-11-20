@@ -24,7 +24,7 @@ export function cloudflareDeployer({ fetch, config, env }) {
     liveVersion,
     async publish(unit, artifact) {
       const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify({ main_module: 'worker.js', compatibility_date: artifact.compatibilityDate || '2026-01-01' })], { type: 'application/json' }));
+      form.append('metadata', new Blob([JSON.stringify({ main_module: 'worker.js', compatibility_date: artifact.compatibilityDate || '2026-01-01', observability: { enabled: true, head_sampling_rate: 1 } })], { type: 'application/json' }));
       form.append('worker.js', new Blob([artifact.body], { type: 'application/javascript+module' }), 'worker.js');
       await call(url(unit), { method: 'PUT', body: form });
       return { version: await liveVersion(unit) };

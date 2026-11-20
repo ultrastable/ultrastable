@@ -1,7 +1,7 @@
 {
   "id": "Q-GAP-cross-model-rescoring",
   "title": "Q-GAP-cross-model-rescoring: Re-score predictions with a second model",
-  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** file:foundation/rescore.py\n**Status:** open\n\nGap in component `operations`: Re-score predictions with a second model. Prediction scoring is self-run; a held-out grader narrows that before any outside audit. Source: doctrine/market.json (MARKET-1).",
+  "body": "**Owner:** reviewer\n**Trigger:** every executor run\n**Done check:** file:foundation/rescore.py\n**Status:** closed\n\nGap in component `operations`: Re-score predictions with a second model. Prediction scoring is self-run; a held-out grader narrows that before any outside audit. Source: doctrine/market.json (MARKET-1).\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): file:foundation/rescore.py\n",
   "labels": [
     "role:reviewer",
     "gap"

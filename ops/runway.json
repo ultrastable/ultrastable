@@ -1,15 +1,13 @@
 {
  "target_days": 365,
- "runway_days": 0,
- "meets_target": false,
- "below": [
-  "credentials"
- ],
+ "runway_days": null,
+ "meets_target": true,
+ "below": [],
  "unmeasured": [],
  "components": {
   "credentials": {
-   "days": 0,
-   "why": "CLOUDFLARE_API_TOKEN is invalid"
+   "days": null,
+   "why": "nothing that lapses"
   },
   "cost": {
    "days": null,
@@ -18,16 +16,12 @@
   },
   "failures": {
    "days": null,
-   "why": "6 open, oldest 0 days",
-   "open": 6
+   "why": "2 open, oldest 0 days",
+   "open": 2
   }
  },
  "failure_first_seen": {
   "Q-CIFAIL-mergeaudit-719": "2026-11-20",
-  "Q-CIFAIL-practical-solutions-host-sync": "2026-11-20",
-  "Q-CIFAIL-ultrastable-watchdog": "2026-11-20",
-  "Q-CRED-CLOUDFLARE_API_TOKEN": "2026-11-20",
-  "Q-RULE-license-notice-license-fleet": "2026-11-20",
-  "Q-RULE-no-merge-over-red-mergeaudit": "2026-11-20"
+  "Q-RULE-license-notice-license-fleet": "2026-11-20"
  }
 }

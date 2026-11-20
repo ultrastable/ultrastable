@@ -195,7 +195,9 @@ def _():
 def _():
     p = os.path.join(REPO, "ops/runway.json")
     if not os.path.exists(p): return False, "ops/runway.json does not exist: runway was never measured"
-    d = repo_json("ops/runway.json"); return d.get("days", 0) >= 365, f"days={d.get('days')} unmeasured={d.get('unmeasured')}"
+    d = repo_json("ops/runway.json"); days = d.get("runway_days")
+    ok = bool(d.get("meets_target")) and not d.get("below") and not d.get("unmeasured") and (days is None or days >= d.get("target_days", 365))
+    return ok, f"runway_days={days} (none means nothing measured is limiting) meets_target={d.get('meets_target')} below={d.get('below')} unmeasured={d.get('unmeasured')}"
 
 @check("credwatch", "credential watch has current readings")
 def _():

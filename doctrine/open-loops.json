@@ -41,10 +41,26 @@
     {
      "s": "registrar read 2026-11-20",
      "result": "all four locked=true, clienttransferprohibited, expire 2027-11-10 with auto_renew true"
+    },
+    {
+     "s": "Cloudflare API registrar PUT name_servers on ultrastable.net, 2026-11-20, after Rowan's 'migrate all ultrastable assets'",
+     "result": "403 code 10000 Name server update not allowed, the same refusal as 2026-11-19; not retried or re-routed. The documented route is the Configuration tab of Manage Domain in the losing account plus an email approval in the gaining account"
+    },
+    {
+     "s": "everything that does not need the zones, 2026-11-20",
+     "result": "done: both KV namespaces hold every source key; D1 ultrastable-spinoffs created in the ultrastable account with its 3 and 7 rows; Workers ultrastable-spinoffs and tenant-ps-edge uploaded there with no route and workers.dev off (ops/account-move.json 'staged'); the mail relay and tenant-ps-mail are not copied: they exist because the sending domains sit in the old account, and once the zones move the dashboard sends directly (its secret MAIL_RELAY_TOKEN also seals owner OAuth, so it is never rotated)"
+    },
+    {
+     "s": "Cloudflare OpenAPI spec, registrar endpoints, 2026-11-20",
+     "result": "newer endpoints read: domain-transfer-check, registrations/{domain}/transfer-in, PATCH registrations (auto_renew only). transfer-in moves a domain in from another registrar: it needs an auth code, is billable and non-refundable, and the domains are locked at Cloudflare (clienttransferprohibited); no endpoint moves a registration between two Cloudflare accounts, so no server-side route exists and spending is not taken"
+    },
+    {
+     "s": "live service of the four domains, 2026-11-20",
+     "result": "ultrastable.io/health, ultrastable.org, ultrastable.net and access-check.ultrastable.app/health answer 200: the old account's site Worker forwards to the ultrastable account (UPSTREAM_ORIGIN) and tenant-ps-edge to tenant-ps-web; registrations are active, auto_renew true, expire 2027-11-10"
     }
    ],
    "reason": "the registrar move between two Cloudflare accounts exists only as a dashboard action with an email approval; everything the API can do is done",
-   "default": "the four sites keep being served from the old account, registrations auto-renew until 2027-11-10, and the pending zones in the ultrastable account activate by themselves once the registrar move is approved",
+   "default": "the four domains are served from the ultrastable account through the old account's thin edge (DNS, registration, forwarders); all logic and data are in the ultrastable account; registrations auto-renew (domain-renewal blind spot is measured); when a person moves the registrations, ZONE-CUTOVER-1 (site/zonecutover.js, hourly) attaches the domains and routes with no further step",
    "probe": "cmd:python3 -m foundation singleaccount --check"
   },
   {

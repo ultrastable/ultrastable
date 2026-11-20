@@ -6,6 +6,7 @@
 // exempts. No credential is minted by a person, and protected paths (rules, workflows, policy) are refused, so this route cannot change a guard.
 const API = 'https://api.github.com';
 export const OIDC_ISSUER = 'https://token.actions.githubusercontent.com', OIDC_AUDIENCE = 'ultrastable-main';
+export const MAX_DATA_PRS = 3;
 export const MAX_FILES = 20;  // one commit costs files + 4 subrequests; the Free plan allows 50 per invocation
 const PROTECTED = [/^\.github\//, /^autonomy\//, /^agents\//, /^github\/org-settings\.json$/, /(^|\/)(AGENTS|CLAUDE|CONTRIBUTING)\.md$/, /^(LICENSE|SCOPE\.md)/, /^doctrine\/(directive|standing-order|closed-loop|server-side)\.json$/];
 export const isProtected = (p) => PROTECTED.some(r => r.test(p));
@@ -71,6 +72,28 @@ export async function commitToMain({ token, repo, body, fetch: f = fetch }) {
   const t = await call('POST', '/git/trees', { base_tree: base.json.tree.sha, tree }); if (!t.ok) return { ok: false, status: 502, error: 'tree ' + t.status };
   const c = await call('POST', '/git/commits', { message: body.message.slice(0, 200), tree: t.json.sha, parents: [parent] }); if (!c.ok) return { ok: false, status: 502, error: 'commit ' + c.status };
   const u = await call('PATCH', '/git/refs/heads/main', { sha: c.json.sha, force: false });
-  if (!u.ok) return { ok: false, status: u.status === 422 ? 409 : 502, error: 'main moved or refused ' + u.status };  // 409: the client retries; appends reapply on the new main
+  if (!u.ok) {
+    // 422 is either a main that moved (not a fast forward: the client retries and appends reapply) or a ruleset that refuses the App (seen live 2026-11-20:
+    // every watchdog and smoke-live commit answered 422 and nothing landed). In the second case the same commit goes up as a pull request opened by the App:
+    // unlike a PR opened with a workflow token, it starts `checks`, so the merge lane can land it. The refusal text is returned, never swallowed.
+    const why = String((u.json && u.json.message) || '').slice(0, 200);
+    if (u.status === 422 && !/fast.?forward/i.test(why)) return viaPullRequest({ call, sha: c.json.sha, body, why });
+    return { ok: false, status: u.status === 422 ? 409 : 502, error: 'main moved or refused ' + u.status + (why ? ': ' + why : '') };  // 409: the client retries; appends reapply on the new main
+  }
   return { ok: true, status: 200, sha: c.json.sha };
+}
+
+// MAIN-WRITER-PR-1: a data commit the ruleset refuses lands as a branch plus a pull request opened by the App, which starts `checks` on it.
+async function viaPullRequest({ call, sha, body, why }) {
+  // DATA-PR-CAP-1 (seen live 2026-11-20): with main refusing the app, every workflow's data commit became its own pull request, 14 in ten minutes. A refusal
+  // that lasts is one defect, not a pull request per commit: at most MAX_DATA_PRS are open at a time, and past that the route fails loudly so the cause is fixed.
+  const open = await call('GET', '/pulls?state=open&per_page=100');
+  const n = open.ok && Array.isArray(open.json) ? open.json.filter(p => String((p.head || {}).ref || '').startsWith('agent/data-')).length : 0;
+  if (n >= MAX_DATA_PRS) return { ok: false, status: 503, error: 'main refused (' + why + ') and ' + n + ' data pull requests are already open' };
+  const branch = 'agent/data-' + sha.slice(0, 10);
+  const ref = await call('POST', '/git/refs', { ref: 'refs/heads/' + branch, sha });
+  if (!ref.ok && ref.status !== 422) return { ok: false, status: 502, error: 'main refused (' + why + '); branch ' + ref.status };
+  const pr = await call('POST', '/pulls', { title: body.message.slice(0, 200), head: branch, base: 'main', body: 'MAIN-WRITER-PR-1: a data commit written by a workflow; the main ruleset refused a direct write (' + why + ').\n\nItem: MAIN-WRITER-PR-1\nPrediction: n/a, data-only change' });
+  if (!pr.ok && pr.status !== 422) return { ok: false, status: 502, error: 'main refused (' + why + '); pull request ' + pr.status + ' ' + String((pr.json && pr.json.message) || '').slice(0, 120) };
+  return { ok: true, status: 200, sha, mode: 'pull_request', branch, pr: (pr.json && pr.json.number) || null };
 }

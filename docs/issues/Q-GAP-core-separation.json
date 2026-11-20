@@ -1,7 +1,7 @@
 {
   "id": "Q-GAP-core-separation",
   "title": "Q-GAP-core-separation: Separate the core's database from the originating fleet's application database",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:instances/ultrastable/own-database.json\n**Status:** open\n\nGap in component `self-hosting`: the core still shares a database with the originating fleet's research applications. Move core tables to their own database and record the binding in instances/ultrastable/own-database.json.",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:instances/ultrastable/own-database.json\n**Status:** closed\n\nGap in component `self-hosting`: the core still shares a database with the originating fleet's research applications. Move core tables to their own database and record the binding in instances/ultrastable/own-database.json.\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): file:instances/ultrastable/own-database.json\n",
   "labels": [
     "role:operations",
     "gap"

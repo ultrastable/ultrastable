@@ -1,7 +1,7 @@
 {
   "id": "Q-GAP-adopt-existing-repo",
   "title": "Q-GAP-adopt-existing-repo: Wrap loops around an existing repository",
-  "body": "**Owner:** staff\n**Trigger:** every executor run\n**Done check:** file:foundation/adopt.py\n**Status:** open\n\nGap in component `code-repo`: Wrap loops around an existing repository. Engineers and vibe-coders arrive with a repo, not an idea. Source: doctrine/market.json (MARKET-1).",
+  "body": "**Owner:** staff\n**Trigger:** every executor run\n**Done check:** file:foundation/adopt.py\n**Status:** closed\n\nGap in component `code-repo`: Wrap loops around an existing repository. Engineers and vibe-coders arrive with a repo, not an idea. Source: doctrine/market.json (MARKET-1).\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): file:foundation/adopt.py\n",
   "labels": [
     "role:staff",
     "gap"

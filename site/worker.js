@@ -38,6 +38,7 @@ import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
 import { siteFeed, siteBadge, insights as siteInsights, insightsBody, viewedRecently, upkeepRound, recordVersion, restore as restoreVersion, versions as siteVersions, historyBody } from "./upkeep.js"; // SITE-UPKEEP-1
 import { connectionsRoute } from "./connections.js"; // CONNECTIONS-1
 import { internalDeploy } from "./deployer.js";
+import { zoneCutover } from "./zonecutover.js"; // ZONE-CUTOVER-1: attaches domains the tick a moved zone turns active
 var VERSION = "0.15.1";
 const CANON = "ultrastable.io";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -312,7 +313,7 @@ function start(note) {
 // questions (Yes / No / Not sure); every answer changes the brief at once. AUDIT-1: after building, a second model checks the page against the brief,
 // revises once if it finds a real gap, and publishes an honest "what I checked / what I could not do" list at /s/<id>/review.
 // Model ids are deprecated without notice (a hard-coded one silently broke the audit), so every call walks a list until one answers.
-const BUILDERS = ["@cf/qwen/qwen2.5-coder-32b-instruct", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"], ASKERS = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct-fp8", "@cf/mistralai/mistral-small-3.1-24b-instruct"], SYS = [
+const BUILDERS = ["@cf/qwen/qwen2.5-coder-32b-instruct", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"], ASKERS = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/openai/gpt-oss-20b", "@cf/mistralai/mistral-small-3.1-24b-instruct"], SYS = [
   "You are a senior product designer and front-end engineer. Build ONE complete self-contained HTML file (inline CSS and JS, no external libraries or fonts) that is a small but genuinely working product for the brief, not a mockup.",
   "SCOPE: a single page cannot run server jobs or act on its own. Build the real, useful part that works in the browser today (the person operates it), make every control do something real, and never fake the rest. Put one calm line near the bottom saying what needs the full Ultrastable build (for example, running on its own on a schedule).",
   "WORKING: every button, form and link must have a handler that visibly changes the screen (a list grows, a status updates, a draft is saved and shown). No dead buttons, no empty grey bars or boxes: if an area has no data yet, show a friendly empty state with an example. Pre-fill realistic sample content for the person's topic so the first screen already looks alive. Persist data in localStorage inside try/catch with an in-memory fallback. SHARED DATA: when visitors add things other visitors should see (sign-ups, messages, votes, a guest list), use the preloaded global `US` (do not define it): `await US.list('signups')` resolves to an array of {id, at, data} newest first, `await US.add('signups', {name, email})` stores one record (data is a small JSON object) and resolves to the saved record; render the list from US.list on load and after each add, and fall back to localStorage only if a call throws.",
@@ -821,6 +822,7 @@ export async function tick(env, ctx, now) {
   out.upkeep = (await upkeepRound(env, (await kvList(env, "state:", 300)).slice(-300), { now: t, lint, improve: (b, html, ins) => aiHtml(env, b, html, ins), visited: (id) => (env.DB ? viewedRecently(env.DB, id, t).catch(() => true) : true) }, 2).catch(e => { console.error("upkeep failed", String(e).slice(0, 120)); return []; })).length; // SITE-UPKEEP-1: at most two model passes a tick, each site once a week
   out.webhooks = await tickWebhooks(env, t).catch(e => String(e).slice(0, 120)); // WEBHOOKS-1: outbound callbacks ride this tick, no new cron
   out.watchdog = await watchTick(env); // LOOPPROOF-1: this Worker is the second producer of the org heartbeat
+  out.zones = await zoneCutover(env).catch(e => ({ status: "error", error: String(e).slice(0, 120) })); // ZONE-CUTOVER-1
   await jput(env, "tick:last", out); return out;
 }
 async function statusData(env) {

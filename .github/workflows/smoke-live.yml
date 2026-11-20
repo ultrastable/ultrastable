@@ -16,7 +16,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  actions: write  # land_data.py dispatches checks on its data branch
   id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
 concurrency:
   group: smoke-live

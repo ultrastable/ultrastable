@@ -13,6 +13,8 @@
   python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
+  python3 -m foundation unattended [--check|--horizon|--probe ID]           UNATTENDED-365: one year with zero external input; every remaining input is closed, a gate or an item
+  python3 -m foundation modelwatch [--check|--status|--refresh [--apply]]  MODEL-WATCH-1: no retired hosted model id in source
   python3 -m foundation redmain [--run [--apply]|--check]                  REDMAIN-1: a red deploy gate on main is repaired by reverting the smallest change that broke it
   python3 -m foundation runway [--run [--apply]|--probe C|--check]         RUNWAY-1: projected days of unattended running against the one-year target
   python3 -m foundation credwatch [--run [--apply]|--check]                TOKEN-EXPIRY-1: every credential the loops use is probed for expiry before it lapses
@@ -37,6 +39,7 @@
   python3 -m foundation upstream contract|adopt|sync|check|drift|leaks   core/instance link: pin, flow down, send up, drift, bring your own repo
   python3 -m foundation branchsweep [--scan|--apply|--prune|--check]  BRANCH-SWEEP-1: no remote branch carries work main lacks
   python3 -m foundation sessions [--scan|--apply|--meta|--check]       SESSION-CLOSE-1: no zombie branches or PRs; the loop tunes itself
+  python3 -m foundation strays [--check|--list [--json]]                  STRAYS-1: no code file where nothing runs it; no workflow outside .github/workflows
   python3 -m foundation cfposture [--check|--probe [--apply]|--rule ID]       CF-POSTURE-1: the Cloudflare account's settings, declared and measured live
   python3 -m foundation orphans [--check|--metrics|--baseline|--issue-body|--sync-issue OWNER/REPO]   ORPHANS-1: no orphan artifact, no human-wait
   python3 -m foundation components [--check|--report|--file-gaps|--evidence|--probe KIND:ID]   the system as a computed graph: gaps, stories, objections
@@ -79,6 +82,12 @@ from . import boundary, closedloop, standards, doctrine, directive, filing, glos
 def main(argv=None) -> int:
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
+    if _av[:1] == ["unattended"]:
+        from . import unattended
+        return unattended.main(_av[1:])
+    if _av[:1] == ["modelwatch"]:
+        from . import modelwatch
+        return modelwatch.main(_av[1:])
     if _av[:1] == ["adopt"]:
         from . import adopt
         return adopt.main(_av[1:])
@@ -333,6 +342,9 @@ def main(argv=None) -> int:
     if args0[:1] == ["sessions"]:
         from . import sessions
         return sessions.main(args0[1:])
+    if args0[:1] == ["strays"]:
+        from . import strays
+        return strays.main(args0[1:])
     if args0[:1] == ["cfposture"]:
         from . import cfposture
         return cfposture.main(args0[1:])

@@ -156,7 +156,7 @@ def copy(api, src, dst, apply, plan) -> dict:
                     if b.get("type") == "kv_namespace":
                         b["namespace_id"] = st["kv_map"].get(b["namespace_id"], plan.get("id_map", {}).get("kv", {}).get(b["namespace_id"], b["namespace_id"]))
                     binds.append(b)
-                meta = {"main_module": main_module(mods), "bindings": binds, "compatibility_date": w["compat"] or "2026-10-01"}
+                meta = {"main_module": main_module(mods), "bindings": binds, "compatibility_date": w["compat"] or "2026-10-01", "observability": {"enabled": True, "head_sampling_rate": 1}}
                 boundary = "----us" + str(int(time.time()))
                 nl = chr(13) + chr(10)
                 body = (f"--{boundary}{nl}Content-Disposition: form-data; name=" + chr(34) + "metadata" + chr(34) + f"{nl}Content-Type: application/json{nl}{nl}{json.dumps(meta)}{nl}").encode()

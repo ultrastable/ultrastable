@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-SWEEP-reputation",
   "title": "Q-BLIND-SWEEP-reputation: answer the reputation sweep",
-  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** cmd:python3 -m foundation blindspots --swept reputation\n**Status:** open\n\nQuestion: What is publicly said or shown about the system that the system did not put there?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** cmd:python3 -m foundation blindspots --swept reputation\n**Status:** closed\n\nQuestion: What is publicly said or shown about the system that the system did not put there?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.\n\n**Evidence:** closing probe passed (6 consecutive passes after a recorded failure): reputation: answered\n",
   "labels": [
     "role:product-manager",
     "blindspot"

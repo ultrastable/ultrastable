@@ -379,6 +379,19 @@
       "reason": "called only by tools/push_main.py inside this repository's workflows with a per-run token; nothing for an agent to discover"
     },
     {
+      "id": "ops-backup",
+      "path": "/api/ops/backup",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "machine",
+      "standards": [],
+      "discoverable": false,
+      "description": "BACKUP-SINK-1: the backup drill's dumps, written to the private ops repository under backups/ with the org's GitHub App after the run's OIDC token is verified",
+      "reason": "called only by foundation/workerroute.py inside the backup-drill workflow with a per-run token; nothing for an agent to discover"
+    },
+    {
       "id": "budget",
       "path": "/api/budget",
       "methods": [
@@ -539,6 +552,19 @@
       "discoverable": false,
       "description": "GOALS-1: a tenant reports readings for its goals (bearer).",
       "reason": "tenant interface with bearer auth; not an agent-facing surface"
+    },
+    {
+      "id": "owner-acts",
+      "path": "/api/v1/owner-acts",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "owner",
+      "standards": [],
+      "discoverable": false,
+      "reason": "Read by foundation code and the owner page; to be exposed as an MCP tool in a later contract version.",
+      "description": "OWNER-ACTS-1: sign-ins a provider refused and open gate cards, read live from the credential rows; JSON, no secret values."
     }
   ]
 }

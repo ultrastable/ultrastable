@@ -19,6 +19,10 @@ def main(msg, paths):
     sh("git", "commit", "-q", "-m", msg + " [skip ci]")
     if subprocess.run(["python3", "tools/push_main.py"], cwd=ROOT).returncode == 0:
         return 0
+    # DATA-PR-CAP-1: a refusal that lasts is one defect, not a pull request per run. With three data pull requests already open this step fails loudly instead.
+    n = sh("gh", "pr", "list", "--state", "open", "--limit", "100", "--json", "headRefName", "--jq", '[.[]|select(.headRefName|startswith("agent/data-"))]|length', check=False)
+    if n.returncode == 0 and n.stdout.strip().isdigit() and int(n.stdout.strip()) >= 3:
+        print("land_data: main refused the data commit and", n.stdout.strip(), "data pull requests are already open; not opening another"); return 1
     br = "agent/data-" + os.environ.get("GITHUB_RUN_ID", "local")
     p = sh("git", "push", "-q", "origin", f"HEAD:refs/heads/{br}", check=False)
     if p.returncode: print("land_data: branch push failed:", p.stderr.strip()[:200]); return 1
@@ -26,9 +30,7 @@ def main(msg, paths):
     print("land_data: pull request:", (pr.stdout or pr.stderr).strip()[:200])
     if pr.returncode: return 1
     sh("gh", "pr", "merge", br, "--auto", "--squash", check=False)
-    # A pull request opened with the workflow token starts no workflows, so the required `checks` never ran and the PR stayed blocked: run it on the branch.
-    d = sh("gh", "workflow", "run", "checks.yml", "--ref", br, check=False)
-    print("land_data: checks dispatched" if d.returncode == 0 else "land_data: checks dispatch failed: " + (d.stderr or "").strip()[:200])
+    # The tick Worker lane merges the pull request; a dispatched checks run does not satisfy the branch rule, so none is started here.
     return 0
 
 if __name__ == "__main__":

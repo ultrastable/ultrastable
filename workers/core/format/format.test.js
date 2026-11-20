@@ -21,3 +21,8 @@ test('machine values drop float noise; the lint finds false precision and spares
   assert.ok(falsePrecision('<p>World figure 82.0999908447266 (2024)</p>')); assert.ok(falsePrecision('<p>1000000 people</p>'));
   assert.equal(falsePrecision('<p>doi 10.5281/zenodo.21901984 and code HIV_0000000023</p><script>x=1.23456789</script>'), null);
 });
+
+test('an all-digit commit id after the word commit is an identifier, a bare seven-digit count is still flagged', () => {
+  assert.equal(falsePrecision('<p>level 0, commit <code>56915653</code>).</p>'), null);
+  assert.equal(falsePrecision('<p>visitors 56915653</p>').match, '56915653');
+});

@@ -10,11 +10,11 @@
 export const SUBREQUEST_CAP = 50;
 export const SUBREQUEST_RESERVE = 4;  // kept for the beat, the deferral record and any call the runtime makes for itself
 // Minimum calls a loop needs to make progress; below it the loop is deferred before it starts. Measured from the loops' own call patterns.
-export const LOOP_MIN_COST = { gate: 10, lane: 10, handoffs: 12, issuesync: 4, 'repo-access': 5, sweeper: 8, 'deploy-evidence': 5, 'watchdog-gh': 3, 'host-hooks': 4, hosts: 4, social: 4, executor: 6 };
+export const LOOP_MIN_COST = { gate: 10, lane: 10, handoffs: 12, issuesync: 4, 'repo-access': 5, sweeper: 8, 'deploy-evidence': 5, 'watchdog-gh': 3, 'host-hooks': 4, hosts: 4, social: 6, executor: 6 };
 
 // Most calls one loop may spend in one invocation. Without it the first loop to run (handoffs, ~40 calls) took the whole budget every tick and the loops behind it
 // were deferred forever (seen live 2026-11-18 01:41 and 01:51 UTC: used 43-44 of 46 by handoffs). A loop that hits its share stops with the work it did and resumes next tick.
-export const LOOP_MAX_COST = { handoffs: 16, lane: 12, gate: 12, issuesync: 8, 'repo-access': 8, sweeper: 10, 'deploy-evidence': 8, executor: 12, 'watchdog-gh': 4, 'host-hooks': 5, hosts: 5, social: 5 };
+export const LOOP_MAX_COST = { handoffs: 16, lane: 12, gate: 12, issuesync: 8, 'repo-access': 8, sweeper: 10, 'deploy-evidence': 8, executor: 12, 'watchdog-gh': 4, 'host-hooks': 5, hosts: 5, social: 9 };  // SOCIAL-TENANTS-1: gate, calendar, tenant queue, token refresh and one post per linked channel is 6 to 8 calls; 5 starved every post after 2026-11-20 01:10 UTC
 
 export class SubrequestBudgetError extends Error { constructor(msg) { super(msg); this.name = 'SubrequestBudgetError'; } }
 const BUDGET_RE = /too many subrequests|subrequest budget/i;

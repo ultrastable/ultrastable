@@ -4,7 +4,7 @@
   "ultrastable-deploy-gateway": {
    "script": "ultrastable-deploy-gateway",
    "found": true,
-   "sha256": "0ad139deaba59e326470304b1f46e86b0774367ab06e909a1523b41aa369a410",
+   "sha256": "03f3500a6dc39fa40fd6935ad726cd0049360fc9d453ee136dacc1fc62002d96",
    "bindings": [
     {
      "type": "plain_text",
@@ -27,8 +27,8 @@
    "compat_date": "2026-10-01",
    "compat_flags": [],
    "deployment": {
-    "id": "44cdf83c-68fd-428b-bf56-67904410af01",
-    "created_on": "2026-11-18T01:06:00.041533Z"
+    "id": "967f8a32-dfed-4f28-b30d-0a4aeef5bed7",
+    "created_on": "2026-11-20T20:02:38.090732Z"
    },
    "read_errors": []
   }

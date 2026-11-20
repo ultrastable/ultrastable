@@ -14,13 +14,24 @@ Policy: doctrine/cf-posture.json. A rule the token cannot read is reported as un
 account member) is recorded with its default in effect and files no item.
 """
 from __future__ import annotations
-import json, os, re, sys, urllib.error, urllib.request
+import json, os, re, subprocess, sys, urllib.error, urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 POLICY, READING = "doctrine/cf-posture.json", "ops/cf-posture.json"
 API = "https://api.cloudflare.com/client/v4"
+META_RE = re.compile(r"""["']?main_module["']?\s*:""")  # the metadata object of a Worker upload, in JavaScript or Python
+
+
+def _tracked(root) -> list[str]:
+    try:
+        p = subprocess.run(["git", "ls-files", "-z"], cwd=root, capture_output=True, timeout=60)
+        if p.returncode == 0 and p.stdout:
+            return [x for x in p.stdout.decode("utf-8", "replace").split("\0") if x]
+    except (OSError, subprocess.SubprocessError):
+        pass  # not a git checkout (a test's temporary tree): walk the files instead
+    return sorted(q.relative_to(root).as_posix() for q in Path(root).rglob("*") if q.is_file() and ".git" not in q.parts and "node_modules" not in q.parts)
 
 
 def policy(root=REPO) -> dict:
@@ -64,16 +75,21 @@ def static_check(root=REPO) -> list[str]:
         if not p.is_file():
             fails.append(f"upload path missing: {rel}")
             continue
-        for m in re.finditer(r"main_module[^\n]*", p.read_text(encoding="utf-8")):
-            if "observability" not in m.group(0):
-                fails.append(f"{rel}: a Worker upload without `observability` turns logs off on every deploy")
-    # every file that uploads a Worker is declared, so a new deploy path cannot skip the rule
+        text = p.read_text(encoding="utf-8")
+        if len(META_RE.findall(text)) > text.count("observability"):
+            fails.append(f"{rel}: a Worker upload without `observability` turns logs off on every deploy")
+    # every tracked file that builds upload metadata is declared, so a new deploy path anywhere in the repository cannot skip the rule
+    # (2026-11-20: the deploy gateway and four more paths under workers/ and scripts/ were outside the first scan and turned logs off again)
     declared = set(pol.get("upload_paths", []))
-    for d in ("deploy", "site"):
-        for p in sorted((root / d).glob("*.*js")):
-            rel = p.relative_to(root).as_posix()
-            if rel not in declared and not rel.endswith((".test.mjs", ".test.js")) and re.search(r"JSON\.stringify\(\{\s*main_module", p.read_text(encoding="utf-8")):
-                fails.append(f"{rel}: uploads a Worker but is not in upload_paths of {POLICY}")
+    for rel in _tracked(root):
+        if rel in declared or not rel.endswith((".js", ".mjs", ".py")) or ".test." in rel or "/test/" in rel or rel.startswith(tuple(pol.get("scan_exclude", []))):
+            continue
+        try:
+            text = (root / rel).read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if META_RE.search(text):
+            fails.append(f"{rel}: uploads a Worker but is not in upload_paths of {POLICY}")
     return fails
 
 
@@ -111,18 +127,50 @@ def evaluate(pol: dict, live: dict, now: datetime) -> list[dict]:
 
 def read_live(pol: dict, token: str, opener=urllib.request.urlopen) -> dict:
     a, live, why = "/accounts/" + pol["account_id"], {}, {}
-    for key, path in (("workers", a + "/workers/scripts"), ("alerts", a + "/alerting/v3/policies"), ("tokens", a + "/tokens"), ("members", a + "/members"), ("zones", "/zones?account.id=" + pol["account_id"])):
+    for key, path in () if not token else (("workers", a + "/workers/scripts"), ("alerts", a + "/alerting/v3/policies"), ("tokens", a + "/tokens"), ("members", a + "/members"), ("zones", "/zones?account.id=" + pol["account_id"])):
         live[key], err = api(token, path, opener)
         if err:
             why[key] = f"GET {path.split('?')[0]}: {err}"
+    if live.get("zones") == []:  # a token scoped to another account lists no zone: that is not a reading of this account
+        live["zones"], why["zones"] = None, "the token lists no zone for this account"
     for w in live.get("workers") or []:
         s, err = api(token, f"{a}/workers/scripts/{w['id']}/settings", opener)
         w["observability"] = (s or {}).get("observability")
         if err:  # a Worker whose settings cannot be read makes the whole rule unmeasured
             live["workers"], why["workers"] = None, f"settings of {w['id']}: {err}"
             break
+    if live.get("workers") is None and pol.get("gateway"):  # CF-POSTURE-3: the credential-free route, on the run's OIDC identity
+        got, err = via_gateway(pol["gateway"], opener)
+        if got is not None:
+            live["workers"] = got; why.pop("workers", None)
+        else:
+            why["workers"] = why.get("workers", "no token bound") + "; gateway: " + err
     live["_why"] = why
     return live
+
+
+def via_gateway(gateway: str, opener=urllib.request.urlopen, env=None):
+    """(workers, None) or (None, reason): the script list and logging settings read through the deploy gateway's /posture route."""
+    env = os.environ if env is None else env
+    url, rt = env.get("ACTIONS_ID_TOKEN_REQUEST_URL", ""), env.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN", "")
+    if not url or not rt:
+        return None, "no OIDC identity on this host"
+    try:
+        with opener(urllib.request.Request(f"{url}&audience={gateway}", headers={"Authorization": "Bearer " + rt, "User-Agent": "ultrastable-cfposture"}), timeout=30) as r:
+            idt = json.loads(r.read().decode("utf-8"))["value"]
+        with opener(urllib.request.Request(gateway + "/posture", headers={"Authorization": "Bearer " + idt, "Accept": "application/json", "User-Agent": "ultrastable-cfposture"}), timeout=60) as r:
+            j = json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        return None, f"HTTP {e.code}"
+    except (urllib.error.URLError, TimeoutError, ValueError, KeyError) as e:
+        return None, type(e).__name__
+    ws = j.get("workers")
+    if ws is None:
+        return None, "; ".join(j.get("read_errors") or ["gateway could not read the account"])[:200]
+    unread = [w["id"] for w in ws if w.get("observability") is None]
+    if unread:  # a Worker whose settings were not read makes the rule unmeasured, never failed
+        return None, "settings not read for " + ", ".join(unread[:5])
+    return ws, None
 
 
 def item(rule: dict, row: dict) -> dict:
@@ -163,8 +211,8 @@ def main(argv=None) -> int:
         return 0 if ok else 1
     if "--probe" in argv:
         pol, token, now = policy(REPO), os.environ.get("CLOUDFLARE_API_TOKEN", ""), datetime.now(timezone.utc)
-        if not token:
-            print("cfposture: unmeasured (no CLOUDFLARE_API_TOKEN bound); nothing is reported as passed")
+        if not token and not (pol.get("gateway") and os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")):
+            print("cfposture: unmeasured (no CLOUDFLARE_API_TOKEN bound and no OIDC identity for the gateway); nothing is reported as passed")
             return 0
         rows = evaluate(pol, read_live(pol, token), now)
         done = apply(REPO, pol, rows, now) if "--apply" in argv else []

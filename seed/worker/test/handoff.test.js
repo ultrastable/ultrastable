@@ -244,3 +244,15 @@ test('HANDOFF-SUBREQ-2: a deploy refused by the subrequest limit is deferred wit
   h = await db.prepare('SELECT * FROM handoffs').first(); assert.equal(h.state, 'verified');
   assert.equal((await db.prepare("SELECT status FROM items WHERE id='SG-2'").first()).status, 'done');
 });
+
+test('HANDOFF-SUBREQ-3: a deploy stopped by the own subrequest meter of the worker is capacity too: deferred, and an old block is requeued', async () => {
+  const db = makeDb(); seedItem(db);
+  const st = { prs: [{ number: 7, title: 'Fix', body: BODY, head: { sha: 'aaa' }, labels: [] }], detail: { merged: true, merge_commit_sha: 'mmm', state: 'closed' } };
+  const lim = 'subrequest budget 22/46 used in this invocation';
+  for (let i = 0; i < 4; i++) await runHandoffs({ db, token: 't', repos: ['o/r'], fetch: gh(st).f, deployer: async () => ({ ok: false, detail: lim }), probe: async () => ({ ok: true, detail: 'live' }) });
+  let h = await db.prepare('SELECT * FROM handoffs').first();
+  assert.equal(h.attempts, 0, 'the meter is never counted against the change'); assert.match(h.detail, /deferred, not an attempt/);
+  await db.prepare("UPDATE handoffs SET state = 'blocked', attempts = 3, detail = ?").bind('deploy failed 3 times: ultrastable-tick: ' + lim + '; ultrastable-site: ' + lim).run();
+  const r = await runHandoffs({ db, token: 't', repos: ['o/r'], fetch: gh(st).f, deployer: async () => ({ ok: true }), probe: async () => ({ ok: true, detail: 'live' }) });
+  assert.deepEqual(r.retried, ['o/r#7']); assert.deepEqual(r.verified, ['o/r#7']);
+});
