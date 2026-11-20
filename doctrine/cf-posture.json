@@ -1,5 +1,5 @@
 {
-  "_doc": "CF-POSTURE-1 policy (foundation/cfposture.py). The Cloudflare account's settings as rules measured against the live account every day (cost-guard workflow). kind auto: a failure files Q-CFP-<id> and the passing probe closes it. kind gate: identity-bound, recorded with its default in effect, files no item. upload_paths: every file that uploads a Worker by the API; each upload must send `observability` or the deploy turns logs off. scan_exclude: path prefixes the upload scan skips (tests, and the reference copy of another fleet's code that this repository never deploys).",
+  "_doc": "CF-POSTURE-1 policy (foundation/cfposture.py). The Cloudflare account's settings as rules measured against the live account every day (cost-guard workflow). kind auto: a failure files Q-CFP-<id> and the passing probe closes it. kind gate: identity-bound, recorded with its default in effect, files no item. upload_paths: every file that uploads a Worker by the API; each upload must send `observability` or the deploy turns logs off. scan_exclude: path prefixes the upload scan skips (tests, and the reference copy of another fleet's code that this repository never deploys). gateway: the deploy gateway's origin; when the bound token cannot read the Workers of the account, the probe reads them through the gateway's /posture route on the run's OIDC identity (CF-POSTURE-3), so the reading needs no stored Cloudflare token.",
   "account_id": "81e3a4efb4eb66e613529b87682911bb",
   "horizon_days": 365,
   "upload_paths": [
@@ -71,5 +71,6 @@
   "scan_exclude": [
     "tests/",
     "platform/cloudflare-reference/"
-  ]
+  ],
+  "gateway": "https://ultrastable-deploy-gateway.ultrastable.workers.dev"
 }

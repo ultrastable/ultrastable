@@ -3386,6 +3386,23 @@
    "title": "PIN-core-db-separation closed from live D1 reading",
    "body": "5 DBs in the ultrastable account, none from the originating fleet; the other 4 open roadmap items stay gated per doctrine/open-loops.json (identity-bound: empty account, second installation, other-cloud billing, outside auditor).",
    "probe": "file:docs/migrations/core-db-split.json"
+  },
+  {
+   "id": "decision-2026-11-20-account-move-kv-done-spinoffs-and-edge-staged-zones-blocked-",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Account move: KV done, spinoffs and edge staged; zones blocked at the registrar",
+   "body": "KV complete by name in the ultrastable account; D1 ultrastable-spinoffs and Workers ultrastable-spinoffs and tenant-ps-edge staged with no routes. Zones blocked. Surfaces tested: registrar API PUT name_servers on ultrastable.net returned 403 code 10000 (2026-11-19, 2026-11-20); zone listing shows each zone pending in the ultrastable account with DNS copied; the registrar spec has no cross-account move endpoint. Acquisition paths attempted: API update (refused, not re-routed); the documented dashboard route needs the owner's signed-in session and an email approval, recorded as gate net-nameserver-switch with a default in effect (zones stay served from the old account) and closing probe singleaccount --moved. MAIL_RELAY_TOKEN must not be rotated (it seals owner OAuth); re-copy the spinoffs D1 at cutover.",
+   "probe": "file:ops/account-move.json"
+  },
+  {
+   "id": "lesson-2026-11-20-cf-posture-3-the-posture-reading-runs-on-the-run-s-oidc-iden",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "CF-POSTURE-3: the posture reading runs on the run's OIDC identity through the deploy gateway",
+   "body": "The repository's Cloudflare token predates the account move and is refused by the Ultrastable account, so the daily reading was unmeasured and the cost probe crashed. The deploy gateway now serves a read-only GET /posture (ids, modified time, logging setting; same OIDC check as deploys) and foundation/cfposture.py reads Workers through it when the token is refused. The cost probe records a refused token as unmeasured (COST-PROBE-3). An empty zone list from a token of another account is unmeasured, not a failure.",
+   "probe": "file:workers/core/deploygate/index.js",
+   "session": "serene-payne-a9c57f"
   }
  ]
 }
