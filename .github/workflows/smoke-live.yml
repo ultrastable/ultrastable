@@ -2,7 +2,7 @@ name: smoke-live
 # budget: ~1 min x 1 per 6 hours = ~120 min per month
 # trigger: schedule every 6 hours (the live sites can break between merges, which no per-PR check sees) and manual dispatch; a push to the audit branch for the first runs
 # free-alternative: `python3 scripts/smoke_live.py` from any cloud launch host, or the Cloudflare tick worker
-# SMOKE-LIVE-1: every public claim checked against PRODUCTION (scripts/smoke_live.py); each failure opens or refreshes one GitHub issue "SMOKE: <check id>" labelled agent-ready, and a passing check closes its issue. Read-only on the sites except the optional --cap probe (dispatch only).
+# SMOKE-LIVE-1: every public claim checked against PRODUCTION (scripts/smoke_live.py); each failure opens or refreshes one repair item docs/issues/Q-SMOKE-<check>.json (GitHub Issues are disabled here), landed by the main writer or, failing that, a pull request; a passing check removes its item. Read-only on the sites except the optional --cap probe (dispatch only).
 # The claims registry (doctrine/claims.json) binds words to code; this binds the deployed behaviour: /api/claims must serve the registry and the existing claims workflow checks the words.
 on:
   schedule:
@@ -17,8 +17,9 @@ on:
     branches: [claude/project-thread-sgqjgx]
     paths: [scripts/smoke_live.py, .github/workflows/smoke-live.yml]
 permissions:
-  contents: read
-  issues: write
+  contents: write
+  pull-requests: write
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
 concurrency:
   group: smoke-live
   cancel-in-progress: true
@@ -43,7 +44,7 @@ jobs:
       - name: Open, refresh and close repair items
         if: ${{ github.event_name != 'push' }}
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.LANE_PAT || github.token }}
         run: python3 scripts/smoke_issues.py "$RUNNER_TEMP/smoke.json"
       - name: Fail the run when a claim failed
         if: ${{ steps.smoke.outputs.code != '0' }}
