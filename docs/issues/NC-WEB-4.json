@@ -1,0 +1,11 @@
+{
+  "id": "NC-WEB-4",
+  "title": "NC-WEB-4: WEB-4: robots, sitemap, OG tags, analytics",
+  "body": "**Owner:** staff\n**Trigger:** the backlog item WEB-4 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe WEB-4\n**Status:** open\n\nWEB-4: robots, sitemap, OG tags, analytics\n\nBacklog done check: Lighthouse SEO >= 95\n\nTriage: robots.txt, sitemap, OG meta tags and analytics require editing site code/assets; the in-Worker doer can only write the backlog DB. | first step: Open a GitHub issue/branch via the platform's GitHub integration describing required robots.txt, sitemap.xml, OG tags and analytics snippet.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}
