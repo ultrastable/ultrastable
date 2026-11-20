@@ -67,6 +67,10 @@
   "systems": {
    "path": "/for/founders",
    "what": "what kind of system it runs and what it is not for"
+  },
+  "thesis": {
+   "path": "/live",
+   "what": "the standing claim that an autonomous system left alone can do useful work, backed by its public record"
   }
  },
  "evergreen": [
@@ -89,6 +93,26 @@
    "id": "ev-proof-1",
    "arm": "proof",
    "text": "Every claim on ultrastable.io is re-checked against the system's own records, and the checks are public."
+  },
+  {
+   "id": "ev-thesis-1",
+   "arm": "thesis",
+   "text": "An autonomous system left running on its own does not have to be a threat. This one ships, checks and repairs its own work in public, and the record is open: https://ultrastable.io/live"
+  },
+  {
+   "id": "ev-thesis-2",
+   "arm": "thesis",
+   "text": "Claim: autonomy works when every loop has a measure that can be wrong and a way to roll back. Check it yourself against the live record: https://ultrastable.io/live"
+  },
+  {
+   "id": "ev-thesis-3",
+   "arm": "thesis",
+   "text": "Worried about AI running without supervision? Fair. So the system keeps its own audit trail, its own halt switch and its own probes, all public: https://ultrastable.io/live"
+  },
+  {
+   "id": "ev-thesis-4",
+   "arm": "thesis",
+   "text": "An argument is cheap. A running system that keeps improving itself, with every change logged, is evidence. Read the log: https://ultrastable.io/live"
   }
  ],
  "targets": [

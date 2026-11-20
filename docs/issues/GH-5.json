@@ -1,7 +1,7 @@
 {
   "id": "GH-5",
   "title": "GH-5: Make `.github` public so the org profile shows; `docs` public if chosen",
-  "body": "**Owner:** Portfolio mgr proposes, **ROWAN** confirms\n**Trigger:** IP-5\n**Done check:** Org page shows the profile\n**Status:** open\n\nSource of truth: `docs/roadmap.md` (item GH-5). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
+  "body": "**Owner:** Portfolio mgr proposes, **ROWAN** confirms\n**Trigger:** IP-5\n**Done check:** Org page shows the profile\n**Status:** closed\n\nSource of truth: `docs/roadmap.md` (item GH-5). Every closed item proposes a plus: file it as a new issue labeled `plus`.\n\n**Disposition:** gate (owner-bound, 2026-11-20T20:46:50Z, DISPOSE-1)\n\n**Evidence:** owner field 'Portfolio mgr proposes, **ROWAN** confirms' binds this to the owner's own account, money or signature, which no server-side loop holds. Default in effect: the system runs without this step; nothing waits on it. Its closing probe still runs on every fleet pass and records `fixed` when it passes.\n",
   "labels": [
     "role:portfolio-mgr",
     "ws:github-org",

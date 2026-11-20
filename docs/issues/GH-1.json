@@ -1,7 +1,7 @@
 {
   "id": "GH-1",
   "title": "GH-1: Create repos (now seven: add `seed`), install Claude app",
-  "body": "**Owner:** **ROWAN**\n**Trigger:** none\n**Done check:** Repos visible to the fleet\n**Status:** waiting on Rowan\n\nSource of truth: `docs/roadmap.md` (item GH-1). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
+  "body": "**Owner:** **ROWAN**\n**Trigger:** none\n**Done check:** Repos visible to the fleet\n**Status:** closed on Rowan\n\nSource of truth: `docs/roadmap.md` (item GH-1). Every closed item proposes a plus: file it as a new issue labeled `plus`.\n\n**Disposition:** gate (owner-bound, 2026-11-20T20:46:50Z, DISPOSE-1)\n\n**Evidence:** owner field '**ROWAN**' binds this to the owner's own account, money or signature, which no server-side loop holds. Default in effect: the system runs without this step; nothing waits on it. Its closing probe still runs on every fleet pass and records `fixed` when it passes.\n",
   "labels": [
     "role:staff",
     "ws:github-org"

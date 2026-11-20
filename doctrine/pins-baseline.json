@@ -1,18 +1,12 @@
 {
   "_doc": "PINS-1 shrink-only baseline: open roadmap issues whose done check is prose, not a probe the system can run. The list may only shrink; a new issue must ship with a file: or grep: probe. Each entry is drained by writing its probe (or closing the issue).",
   "unprobed": [
-    "BIZ-1",
     "BIZ-2",
     "FN-1",
-    "FN-2",
-    "FN-3",
     "FN-4",
     "FN-5",
     "FUND-10",
     "FUND-11",
-    "FUND-3",
-    "FUND-4",
-    "FUND-5",
     "FUND-6",
     "FUND-7",
     "FUND-8",
@@ -20,9 +14,6 @@
     "GH-1",
     "GH-2",
     "GH-3",
-    "GH-4",
-    "GH-5",
-    "IP-8",
     "PF-1",
     "PL-1",
     "PL-2",
@@ -38,9 +29,7 @@
     "STD-3",
     "WEB-1",
     "WEB-2",
-    "WEB-3",
     "WEB-4",
-    "WEB-5",
     "WEB-6"
   ]
 }
