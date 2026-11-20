@@ -443,7 +443,7 @@
           "returns": "outreach.replies"
         }
       ],
-      "feedback": "each recorded reply returns to funding-outreach and funding-verify"
+      "feedback": "each recorded reply returns to funding-outreach and funding-verify, and rewards its segment in the UCB1 order the next intro run queues by (foundation/outreach.py)"
     },
     "fleet-lane": {
       "inflows": [
@@ -816,7 +816,7 @@
           "returns": "post.engagement"
         }
       ],
-      "feedback": "views and engagement return through the dashboard snapshot and steer the marketing-manager storyboard edits",
+      "feedback": "each release update is attached to one social post (scripts/social_post.py video_post); views and engagement return through the dashboard snapshot and steer the marketing-manager storyboard edits",
       "bindings": []
     },
     "first-run": {
@@ -1404,6 +1404,846 @@
       ],
       "feedback": "each run compares the host with the expected hashes its earlier runs and deploys recorded; drift that survives a redeploy is read again and counted by the next run",
       "bindings": []
+    },
+    "role-portfolio-manager": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
+        },
+        {
+          "signal": "owner.goals",
+          "via": "file:IDEA.md"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "portfolio.decision",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "the constraint it sets is scored by the next criticality reading: an allocation that did not raise k or lower cost in its window is rebalanced and the cause is filed",
+      "bindings": []
+    },
+    "role-project-manager": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "an item past its SLA or a pull request that failed its checks comes back as the next tick's first item; delivery time per outcome is read before the next claim is planned",
+      "bindings": []
+    },
+    "role-product-manager": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "scout.log",
+          "via": "file:ops/scout/log.jsonl"
+        },
+        {
+          "signal": "insight.ledger",
+          "via": "file:ops/insight/findings.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "backlog.ranked",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "each plus it ranks carries a prediction; the settled outcome (metric moved or not) changes the next ranking and the roadmap order",
+      "bindings": []
+    },
+    "role-staff": {
+      "inflows": [
+        {
+          "signal": "dispatch.items",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "feedback": "a claimed item ends as a pull request; a failed check or a reviewer veto returns the same item with the reasons, and three failures park it for a different doer",
+      "bindings": []
+    },
+    "role-reviewer": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a review verdict is scored against what happened after merge (a reverted or reopened change counts against the reviewer's surface in the trust ledger), and every review files one plus",
+      "bindings": []
+    },
+    "role-operations": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "budget.state",
+          "via": "file:actions-budget.json"
+        },
+        {
+          "signal": "cost.readings",
+          "via": "file:ops/cost.jsonl"
+        },
+        {
+          "signal": "deploys.record",
+          "via": "file:ops/deploys.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a workflow over its minute budget, a failed deploy or a cost breach files an item; the next reading of the same budget shows whether the remedy held",
+      "bindings": []
+    },
+    "role-funding-manager": {
+      "inflows": [
+        {
+          "signal": "outreach.replies",
+          "via": "file:outreach/state.json"
+        },
+        {
+          "signal": "funding.registry",
+          "via": "file:business/funding/registry.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "funding.registry",
+          "via": "file:business/funding/registry.json"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a reply or a closed programme changes the registry entry it came from; a programme that keeps rejecting drops in fit and one that answers rises",
+      "bindings": []
+    },
+    "role-outreach-manager": {
+      "inflows": [
+        {
+          "signal": "outreach.replies",
+          "via": "file:outreach/state.json"
+        },
+        {
+          "signal": "funding.registry",
+          "via": "file:business/funding/registry.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "outreach.queued",
+          "via": "file:outreach/state.json"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "replies re-weight which programmes and segments get the next packet (foundation/outreach.py for intro segments); a guard failure on a packet files an item instead of a send",
+      "bindings": []
+    },
+    "role-outreach-coordinator": {
+      "inflows": [
+        {
+          "signal": "outreach.queued",
+          "via": "file:outreach/state.json"
+        },
+        {
+          "signal": "outreach.replies",
+          "via": "file:outreach/state.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "outreach.queued",
+          "via": "file:outreach/state.json"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "an opt-out or bounce suppresses the target for good, a reply stops its follow-ups, and a cap that was reached defers the rest to the next run",
+      "bindings": []
+    },
+    "memory-fresh": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "a change that leaves the project memory stale fails its check and comes back to its author with the stale section named",
+      "bindings": []
+    },
+    "write-back": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "a change with code and no write-back record fails its check; the record it then writes is read by the next session and the executor's knowledge tier",
+      "bindings": []
+    },
+    "loop-registry": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        },
+        {
+          "signal": "loop.registry",
+          "via": "file:instances/ultrastable/loop-registry.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "a loop with no trigger, owner, probe or second path fails the check on the change that introduced it; the verifier's result is the registry's own next input",
+      "bindings": []
+    },
+    "glossary": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "a term changed without a version bump and lineage fails the check; the regenerated glossary is what agents and the dashboard read next",
+      "bindings": []
+    },
+    "doctrine-check": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "a listed file that drops a required line fails the check on that change; doctrine --apply writes the line back and the next run confirms it",
+      "bindings": []
+    },
+    "recognition-lint": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a report or lesson that hands work back is flagged before it lands; a signature that keeps recurring becomes a doctrine amendment proposal",
+      "bindings": []
+    },
+    "doctrine-amendment": {
+      "inflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        },
+        {
+          "signal": "prediction.verdicts",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "feedback": "an amendment is adopted only after it is tested against recent ticks; if the friction it answers recurs after adoption the amendment is reopened",
+      "bindings": []
+    },
+    "gap-register": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        },
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a gap closes only when its probe passes; a closed gap whose probe fails again reopens and is filed",
+      "bindings": []
+    },
+    "guiding-directive": {
+      "inflows": [
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "each probe of the registers and the accounting invariant is logged; an imbalance or an unprobed entry files an item, and the next probe confirms it is gone",
+      "bindings": []
+    },
+    "durable-facts": {
+      "inflows": [
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a required fact missing from the repository fails the check and files an item; the fact written back is probed on the next tick",
+      "bindings": []
+    },
+    "doc-consumption": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "an orphan document fails the build; a document that tells a person to act becomes a backlog item, and the baseline only shrinks",
+      "bindings": []
+    },
+    "liveness": {
+      "inflows": [
+        {
+          "signal": "loop.clock",
+          "via": "file:ops/clocks.json"
+        },
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a loop with no fresh evidence files an item against that loop; the next pass reads the same evidence and closes the item when the loop has run",
+      "bindings": []
+    },
+    "server-side-only": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "a change that names a host, scheduler or route on a person's computer fails the check on that change; a new banned pattern is added when a miss is found",
+      "bindings": []
+    },
+    "orphan-artifacts": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "orphans and waits are counted each pass against a shrink-only baseline; a count that rises fails the change that raised it",
+      "bindings": []
+    },
+    "containment-boundary": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        },
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "the daily drill rebuilds the inside from the repository; a drill that fails files an item and the next drill is the proof",
+      "bindings": []
+    },
+    "session-reaper": {
+      "inflows": [
+        {
+          "signal": "session.ledger",
+          "via": "file:ops/session-ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "each sweep records how many sessions it left; a count that does not fall files a plus against the reaper's own weakest step",
+      "bindings": []
+    },
+    "market-gaps": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        },
+        {
+          "signal": "scout.log",
+          "via": "file:ops/scout/log.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a claimed feature with no passing proof fails the check; every gap is a queue item, and a shipped gap is re-scored on the next pass",
+      "bindings": []
+    },
+    "strange-loop-hygiene": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "session.ledger",
+          "via": "file:ops/session-ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "each sweep records its own leftover count as its cycle metric and files a plus when the count did not beat the last sweep",
+      "bindings": []
+    },
+    "role-research-publisher": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "unknowns.answers",
+          "via": "file:ops/unknowns/ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a published finding carries its sources; a source that changes or a claim that fails its probe reopens the finding",
+      "bindings": []
+    },
+    "role-marketing-manager": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "site.visits",
+          "via": "d1:ultrastable-ops"
+        },
+        {
+          "signal": "post.engagement",
+          "via": "file:dashboard/snapshot.json"
+        },
+        {
+          "signal": "promotion.outcomes",
+          "via": "file:ops/promotion/outcomes.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "copy, posts and channels are kept only when the metric they target moved; a channel with no outcome decays",
+      "bindings": []
+    },
+    "role-legal-ip-manager": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "blindspot.answers",
+          "via": "file:doctrine/blindspots.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a failed notice, licence or name check files an item; the same check on the next tick shows whether it was fixed",
+      "bindings": []
+    },
+    "role-customer-success": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "app.metrics",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "tenant.drift",
+          "via": "file:ops/tenant-sync/ledger.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "an instance whose health metric breaches gets an item; feedback routed to the product manager is scored by whether the fix moved that instance's metric",
+      "bindings": []
+    },
+    "role-org-designer": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "portfolio.decision",
+          "via": "file:docs/issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a role is activated only when its phase gate passes (foundation/team.py) and is retired when its metric stays idle",
+      "bindings": []
+    },
+    "triggers": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        },
+        {
+          "signal": "loop.clock",
+          "via": "file:ops/clocks.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        },
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a workflow whose schedule drifts from doctrine/triggers.json fails the check; a missed heartbeat is read from the clocks and files an item",
+      "bindings": []
+    },
+    "lifecycle": {
+      "inflows": [
+        {
+          "signal": "session.ledger",
+          "via": "file:ops/session-ledger.jsonl"
+        },
+        {
+          "signal": "tick.evidence",
+          "via": "d1:ultrastable-org"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "the improver scores each loop's last change and its own; a change whose score fell is reverted on the next pass",
+      "bindings": []
+    },
+    "components": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        },
+        {
+          "signal": "scout.log",
+          "via": "file:ops/scout/log.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "components, stories and objections are recomputed from probes each pass; a gap that closes drops out and one that reappears is refiled",
+      "bindings": []
+    },
+    "agent-interop": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "a standard whose surface or conformance check fails blocks the change; its status in the register is recomputed, never typed",
+      "bindings": []
+    },
+    "terms-crosswalk": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "an avoided synonym in an instruction file fails the check on that change; the map grows when a new overlap is found",
+      "bindings": []
+    },
+    "code-agents": {
+      "inflows": [
+        {
+          "signal": "pr.opened",
+          "via": "github:pulls"
+        },
+        {
+          "signal": "adoption.outcomes",
+          "via": "file:ops/scout/adopted.jsonl"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "pr.checked",
+          "via": "github:checks"
+        }
+      ],
+      "feedback": "an adapter without an invocation, a cost or a disjoint reviewer family fails the check; recorded outcomes re-route authorship to the cheaper adapter that passes",
+      "bindings": []
+    },
+    "role-program-manager": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "criticality.k",
+          "via": "file:ops/criticality.jsonl"
+        },
+        {
+          "signal": "portfolio.decision",
+          "via": "file:docs/issues"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "the sequence it sets is read against the next k: when k is below its floor, deploy-raising and cost-cutting work moves first and the reordering is scored on the following reading",
+      "bindings": []
+    },
+    "role-infrastructure-manager": {
+      "inflows": [
+        {
+          "signal": "metric.readings",
+          "via": "d1:ultrastable-org"
+        },
+        {
+          "signal": "cost.readings",
+          "via": "file:ops/cost.jsonl"
+        },
+        {
+          "signal": "host.state",
+          "via": "file:ops/hosting/state.json"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a resource that differs from the topology or a budget breach files an item; the next discovery pass confirms the resource matches",
+      "bindings": []
     }
   },
   "implicit_producers": {
@@ -1415,46 +2255,5 @@
     "site.hits": "ext.site_visits",
     "loop.registry": "ext.loop_registry"
   },
-  "pending": [
-    "role-portfolio-manager",
-    "role-project-manager",
-    "role-product-manager",
-    "role-staff",
-    "role-reviewer",
-    "role-operations",
-    "role-funding-manager",
-    "role-outreach-manager",
-    "role-outreach-coordinator",
-    "memory-fresh",
-    "write-back",
-    "loop-registry",
-    "glossary",
-    "doctrine-check",
-    "recognition-lint",
-    "doctrine-amendment",
-    "gap-register",
-    "guiding-directive",
-    "durable-facts",
-    "doc-consumption",
-    "liveness",
-    "server-side-only",
-    "orphan-artifacts",
-    "containment-boundary",
-    "session-reaper",
-    "market-gaps",
-    "strange-loop-hygiene",
-    "role-research-publisher",
-    "role-marketing-manager",
-    "role-legal-ip-manager",
-    "role-customer-success",
-    "role-org-designer",
-    "triggers",
-    "lifecycle",
-    "components",
-    "agent-interop",
-    "terms-crosswalk",
-    "code-agents",
-    "role-program-manager",
-    "role-infrastructure-manager"
-  ]
+  "pending": []
 }

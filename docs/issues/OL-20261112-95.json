@@ -1,7 +1,7 @@
 {
   "id": "OL-20261112-95",
   "title": "OL-20261112-95: Declare flows for the 53 pending loops",
-  "body": "**Owner:** portfolio-manager\n**Trigger:** every tick while pending is non-empty\n**Done check:** grep:doctrine/flows.json::\"pending\": \\[\\]\n**Status:** open\n\nEach pending loop in doctrine/flows.json gets inflows, outflows (with via) and feedback, then leaves pending; the check fails a declared loop left on the list.",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** every tick while pending is non-empty\n**Done check:** grep:doctrine/flows.json::\"pending\": \\[\\]\n**Status:** closed\n\nEach pending loop in doctrine/flows.json gets inflows, outflows (with via) and feedback, then leaves pending; the check fails a declared loop left on the list.\n\n**Evidence:** python3 -m foundation flows --check: 101 declared, 101 on a feedback cycle, 0 pending; tests/foundation/test_flows.py NoPending.\n",
   "labels": [
     "role:portfolio-manager",
     "open-loop"

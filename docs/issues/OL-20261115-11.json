@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-11",
   "title": "OL-20261115-11: OUTREACH-1 (ops#34): foundation outreach module with selftest and segment learner",
-  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** file:foundation/outreach.py\n**Status:** open\n\nMoved from ultrastable/ops#34. scripts/outreach_intro.py (OUTREACH-INTRO-1) already covers eligibility, disclosure, opt-out, caps and dry-run. Remaining: python3 -m foundation outreach --selftest, UCB1 segment learner rewarded by replies, flow with returning signal in flows.json.",
+  "body": "**Owner:** executor\n**Trigger:** driver order\n**Done check:** file:foundation/outreach.py\n**Status:** closed\n\nMoved from ultrastable/ops#34. scripts/outreach_intro.py (OUTREACH-INTRO-1) already covers eligibility, disclosure, opt-out, caps and dry-run. Remaining: python3 -m foundation outreach --selftest, UCB1 segment learner rewarded by replies, flow with returning signal in flows.json.\n\n**Evidence:** foundation/outreach.py: UCB1 segment learner read by scripts/outreach_intro.py queue(); tests/foundation/test_outreach.py, 4 tests pass.\n",
   "labels": [
     "role:executor",
     "open-loop"

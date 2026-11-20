@@ -221,13 +221,7 @@
   "workers/agent-setup/SKILL.md",
   "workers/docs/GLOSSARY.md"
  ],
- "human_action_baseline": {
-  "business/investor/README.md": 1,
-  "business/plan/02-customers.md": 1,
-  "external/google-startups-answers.md": 1,
-  "ip/europe/DECISION-MEMO.md": 1,
-  "ip/provisional/FILING-CHECKLIST.md": 1
- },
+ "human_action_baseline": {},
  "converted": [],
  "removed": [
   {

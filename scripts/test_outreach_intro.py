@@ -117,6 +117,25 @@ class Contact(Base):
         finally:
             del os.environ["OUTREACH_SEND_URL"], os.environ["OUTREACH_SEND_TOKEN"]
 
+    def test_replies_decide_which_segment_is_queued_next(self):
+        """OUTREACH-1: the per-run cap goes to the segment the learner ranks first; a recorded reply changes that rank with no second write."""
+        reg = {"items": [{"id": f"P-{seg[:1].upper()}{i}", "segment": seg, "name": f"{seg} {i}", "url": f"https://{seg}{i}.example.org", "status": "unresolved"}
+                         for seg in ("ai-lab", "funder") for i in (1, 2)]}
+        (oi.OUT / "prospects.json").write_text(json.dumps(reg))
+        fetch = lambda url: (404, "") if url.endswith("/robots.txt") else (200, f"<a href='mailto:partnerships@{url.split('/')[2]}'>x</a>")
+        e = oi.Intro(self.today, fetch); e.cfg["max_new_per_run"] = 1
+        e.discover(); e.resolve(); e.packets()
+        ready = lambda: sorted(k for k, t in e.state["targets"].items() if t["state"] == "packet-ready")
+        self.assertEqual(len(ready()), 4)
+        # both segments untried: name order, so ai-lab goes first
+        e.queue(); self.assertEqual([k for k, t in e.state["targets"].items() if t["state"] == "queued"], ["intro:P-A1"])
+        # it was sent and nobody answered; funder is still untried, so funder is explored next (not the second ai-lab prospect that sorts first by key)
+        e.state["targets"]["intro:P-A1"]["state"] = "sent"; e.event("intro:P-A1", "sent", "t")
+        e.queue(); self.assertEqual(e.state["targets"]["intro:P-F1"]["state"], "queued")
+        # the funder answers with a meeting: funder now outranks ai-lab, so the last cap slot goes to the other funder prospect
+        e.state["targets"]["intro:P-F1"]["state"] = "sent"; e.event("intro:P-F1", "sent", "t"); e.event("intro:P-F1", "reply:meeting", "t")
+        e.queue(); self.assertEqual(e.state["targets"]["intro:P-F2"]["state"], "queued"); self.assertEqual(e.state["targets"]["intro:P-A2"]["state"], "packet-ready")
+
     def test_kill_switch_stops_everything(self):
         self.gate(kill=True)
         r = self.run_intro()

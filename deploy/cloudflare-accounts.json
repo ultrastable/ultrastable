@@ -3,16 +3,18 @@
   "target": {
     "id": "81e3a4efb4eb66e613529b87682911bb",
     "named_by": "Rowan 2026-11-11",
-    "state": "partly running (observed 2026-11-15 via platform connector): ultrastable-site, -tick, -dashboard, -agents and 8 us-idea-* workers and D1 ultrastable-org/-ops exist in this account with ids that differ from doctrine/topology.json; the topology still names the old account, so the cutover is incomplete. platformaudit flags this each run until topology.json and the D1 ids are moved together",
+    "state": "running",
     "gate": "IC-GATE-001 identity-bound, narrowed 2026-11-14: the connector reaches the account, but no API token for it exists, so GitHub (secrets CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID) and the site worker (CF_DEPLOY_TOKEN) still deploy to the old account. Minting a token is creating a credential in the owner's account. Default in effect: the old account keeps running everything. Closing probe: `python3 scripts/cf_account.py probe` with DST_CLOUDFLARE_API_TOKEN bound reports target_reachable true.",
     "move": "see deploy/transfer/plan.json assets",
     "name": "ultrastable",
-    "workers_dev": "ultrastable.workers.dev"
+    "workers_dev": "ultrastable.workers.dev",
+    "state_detail_2026_11_15": "partly running (observed 2026-11-15 via platform connector): ultrastable-site, -tick, -dashboard, -agents and 8 us-idea-* workers and D1 ultrastable-org/-ops exist in this account with ids that differ from doctrine/topology.json; the topology still names the old account, so the cutover is incomplete. platformaudit flags this each run until topology.json and the D1 ids are moved together",
+    "state_evidence": "ops/deploys.jsonl: ultrastable-tick, -dashboard, -site, -agents and -tenants are uploaded to this account by the OIDC route (deploy-ultrastable.yml) with live_matches_commit true on every merge. Zones, 39 KV keys and four workers still in the old account are tracked by OL-20261118-1 (python3 -m foundation singleaccount --moved)."
   },
   "current": {
     "id": "edb167b78c9fb901ea5bca3ce58ccc4b",
     "name": "quniverse",
-    "state": "running everything: ultrastable-tick, -dashboard, -site, -agents crons and routes; D1 ultrastable-org, -ops; KV; R2 ultrastable-git; zones ultrastable.io/.app/.net/.org"
+    "state": "retired for deploys (retired_account_ids); still holds the zones and the assets listed by python3 -m foundation singleaccount --moved"
   },
   "retired_account_ids": [
     "edb167b78c9fb901ea5bca3ce58ccc4b"
