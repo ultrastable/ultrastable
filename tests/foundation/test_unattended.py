@@ -51,7 +51,8 @@ class Unattended(unittest.TestCase):
         page = needsyou.render()
         self.assertNotIn("## Connect GitHub", page)
         self.assertIn("Connect GitHub: settled", page)
-        self.assertIn("## Sign in to Bluesky again", page)
+        self.assertNotIn("## Sign in to Bluesky again", page)
+        self.assertIn("Sign in to Bluesky again: closed", page)
         self.assertNotIn("every three hours", page)
 
 
