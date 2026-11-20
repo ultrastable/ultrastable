@@ -93,6 +93,7 @@ jobs:
           python3 -m foundation directive --check
           python3 -m foundation closedloop --check
           python3 -m foundation openloops --check
+          python3 -m foundation cfposture --check
           python3 -m foundation standingorder --check
           python3 -m foundation rules --check
           python3 -m foundation decisions --check
@@ -103,6 +104,9 @@ jobs:
           python3 -m foundation ciwatch --check
           python3 -m foundation serverside --check
           python3 -m foundation singleaccount --check
+          python3 -m foundation owndb --check
+          python3 -m foundation tenantcontrols --check
+          python3 -m foundation rescore --check
           python3 -m foundation resilience --check
           python3 -m foundation clock --check
           python3 -m foundation userbackend --check

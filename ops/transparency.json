@@ -1,7 +1,7 @@
 {
  "schema": "ultrastable-transparency/v1",
- "generated": "2026-11-20T15:27:51Z",
- "commit": "bec17a6",
+ "generated": "2026-11-20T15:22:28Z",
+ "commit": "59e2543",
  "access": "read-only for everyone; changes require the owner's e-mailed code",
  "scoreboard": {
   "managers_and_loops": 101,
@@ -18,8 +18,8 @@
   "merged_prs_listed": 0,
   "prs_merged_total": 0,
   "prs_merged_unattended": 0,
-  "backlog_open": 255,
-  "backlog_items": 582
+  "backlog_open": 243,
+  "backlog_items": 570
  },
  "unknowns": {
   "units": 117,
@@ -56,13 +56,13 @@
  },
  "throughput": {
   "queue": {
-   "items": 582,
+   "items": 570,
    "by_status": {
     "closed": 319,
-    "open": 255,
+    "open": 243,
     "done": 8
    },
-   "takeable_now": 237
+   "takeable_now": 227
   },
   "merged": {
    "total": 0,
@@ -120,7 +120,7 @@
    "prs_opened_unattended": 0,
    "prs_merged_unattended": 0,
    "attempts": {},
-   "log_rows": 1
+   "log_rows": 5
   },
   "model_cost": {
    "calls": 6,
@@ -163,7 +163,7 @@
    "id": "author",
    "what": "an executor run started (it reaches the model route)",
    "sla_s": 43200,
-   "age_s": 65.6,
+   "age_s": 39.0,
    "status": "fresh",
    "missed": 0
   },
@@ -187,15 +187,16 @@
    "id": "deploy",
    "what": "the site deployed after the last change to it (merge to live lag)",
    "sla_s": 900,
-   "age_s": 265.6,
+   "age_s": 59.0,
    "status": "fresh",
-   "missed": 0
+   "missed": 0,
+   "lag_s": 608.0
   },
   {
    "id": "publish",
    "what": "the public record was republished",
    "sla_s": 93600,
-   "age_s": 4730.6,
+   "age_s": 4421.0,
    "status": "fresh",
    "missed": 0
   }
@@ -204,7 +205,7 @@
   "counts": {
    "merged": 0,
    "closed": 0,
-   "parked": 17,
+   "parked": 14,
    "failed": 0,
    "expired": 0,
    "open": 0
@@ -246,17 +247,7 @@
     "failures": 3
    },
    {
-    "name": "Q-SELF-unused-import-foundation-preflight-py",
-    "state": "parked",
-    "failures": 3
-   },
-   {
     "name": "Q-CIFAIL-ultrastable-cost-guard",
-    "state": "parked",
-    "failures": 3
-   },
-   {
-    "name": "Q-SPIN-SCOPE-COLLECT-CADENCE",
     "state": "parked",
     "failures": 3
    },
@@ -267,11 +258,6 @@
    },
    {
     "name": "Q-CIFAIL-ultrastable-issueloop",
-    "state": "parked",
-    "failures": 3
-   },
-   {
-    "name": "Q-GATE-403",
     "state": "parked",
     "failures": 3
    },
@@ -299,13 +285,13 @@
   "unsettled": []
  },
  "product_manager": {
-  "generated": "2026-11-20T15:27:11Z",
+  "generated": "2026-11-20T15:21:58Z",
   "targets": [
    {
     "id": "pageviews_7d",
     "baseline": 1310,
     "target": 1500,
-    "expected_today": 1368.7,
+    "expected_today": 1368.6,
     "value": null,
     "behind": null,
     "progress": null
@@ -437,8 +423,8 @@
    "target": 0.4
   },
   "target_growth_share": 0.4,
-  "growth_items_takeable": 27,
-  "items_takeable": 237,
+  "growth_items_takeable": 26,
+  "items_takeable": 227,
   "metrics": [
    {
     "id": "pageviews_7d",
@@ -483,7 +469,7 @@
    "id": "executor",
    "what": "the unattended executor: takes the top backlog item through the code agents to a pull request",
    "source": "workflow",
-   "last_beat_age_s": 114.3,
+   "last_beat_age_s": 10.3,
    "expected_interval_s": 21600,
    "beats_24h": 60,
    "expected_24h": 4.0,
@@ -494,7 +480,7 @@
    "id": "transparency",
    "what": "the public live record on ultrastable.io/live",
    "source": "workflow",
-   "last_beat_age_s": 4779.3,
+   "last_beat_age_s": 4459.3,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -505,7 +491,7 @@
    "id": "deploy-site",
    "what": "merge to live site deploy",
    "source": "workflow",
-   "last_beat_age_s": 428.3,
+   "last_beat_age_s": 108.3,
    "expected_interval_s": 86400,
    "beats_24h": 12,
    "expected_24h": 1.0,
@@ -516,7 +502,7 @@
    "id": "scout",
    "what": "the weekly scout of the state of the art: sources read, findings filed, sources re-weighted",
    "source": "workflow",
-   "last_beat_age_s": 256340.3,
+   "last_beat_age_s": 256020.3,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -527,7 +513,7 @@
    "id": "a11y",
    "what": "A11Y-LOOP-1: the weekly accessibility and layout audit of every public page",
    "source": "workflow",
-   "last_beat_age_s": 135997.3,
+   "last_beat_age_s": 135677.3,
    "expected_interval_s": 604800,
    "beats_24h": 0,
    "expected_24h": 0.1,
@@ -545,7 +531,7 @@
    "id": "claims",
    "what": "words checked against code and the deployed site",
    "source": "workflow",
-   "last_beat_age_s": 84257.3,
+   "last_beat_age_s": 83937.3,
    "expected_interval_s": 86400,
    "beats_24h": 1,
    "expected_24h": 1.0,
@@ -556,7 +542,7 @@
    "id": "watchdog",
    "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours",
    "source": "workflow",
-   "last_beat_age_s": 90.3,
+   "last_beat_age_s": -6.7,
    "expected_interval_s": 43200,
    "beats_24h": 60,
    "expected_24h": 2.0,
@@ -2499,49 +2485,22 @@
  "changes": {
   "commits": [
    {
-    "sha": "bec17a6",
-    "at": "2026-11-20T15:22:24+00:00",
+    "sha": "59e2543",
+    "at": "2026-11-20T15:10:33+00:00",
     "author": "Claude",
-    "subject": "UNATTENDED-365: server-side only rule, six months with no input, public progress reading (PROGRESS-1)",
-    "pr": null,
-    "item": "UNATTENDED-365",
-    "url": "https://github.com/ultrastable/ultrastable/commit/bec17a618ad190d42ccece45fca7c3fcdebd0fe8"
-   },
-   {
-    "sha": "152fb24",
-    "at": "2026-11-20T15:15:33+00:00",
-    "author": "Claude",
-    "subject": "UNATTENDED-365: cost, repair and improvement pillars; Cloudflare account findings; domains measured as auto-renewing",
-    "pr": null,
-    "item": "UNATTENDED-365",
-    "url": "https://github.com/ultrastable/ultrastable/commit/152fb24c8661ee37feb1cab815debc8695743585"
-   },
-   {
-    "sha": "942e7a1",
-    "at": "2026-11-20T15:10:11+00:00",
-    "author": "Claude",
-    "subject": "Write-back cites the session",
+    "subject": "Merge main into claude/project-thread-tp2jka; regenerate generated files",
     "pr": null,
     "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/942e7a1b83b4fff4224c159d454f45a18c793043"
+    "url": "https://github.com/ultrastable/ultrastable/commit/59e25437c5c15879aa6a3df6b532a6a8fc8b5039"
    },
    {
-    "sha": "071178c",
-    "at": "2026-11-20T15:09:56+00:00",
+    "sha": "66c72b5",
+    "at": "2026-11-20T15:10:22+00:00",
     "author": "Claude",
-    "subject": "Merge remote-tracking branch 'origin/main' into claude/project-thread-ujyhnm",
+    "subject": "Q-GAP: fix serverside and claim-code findings, record the own-domain edge gate, checks evidence",
     "pr": null,
-    "item": null,
-    "url": "https://github.com/ultrastable/ultrastable/commit/071178c72bb9f96c022088de7b5289e18494c7ac"
-   },
-   {
-    "sha": "d7337d6",
-    "at": "2026-11-20T15:09:40+00:00",
-    "author": "Claude",
-    "subject": "UNATTENDED-365: one-year horizon register, model retirement watch, dead sign-in backoff, live owner acts",
-    "pr": null,
-    "item": "UNATTENDED-365",
-    "url": "https://github.com/ultrastable/ultrastable/commit/d7337d639b492c96c7c33e0a20afa19b516f3a43"
+    "item": "Q-GAP",
+    "url": "https://github.com/ultrastable/ultrastable/commit/66c72b5acc2d3dc513f9fb9911a6925e4da4f51d"
    },
    {
     "sha": "c1d66d8",
@@ -2553,6 +2512,15 @@
     "url": "https://github.com/ultrastable/ultrastable/commit/c1d66d871486a3b3c8a4096c19399b8c76866774"
    },
    {
+    "sha": "004b584",
+    "at": "2026-11-20T15:08:31+00:00",
+    "author": "Claude",
+    "subject": "Q-GAP: tenant controls as probes, executor PR outcomes on main, gates for the items an outside party must close, post-merge wiring",
+    "pr": null,
+    "item": "Q-GAP",
+    "url": "https://github.com/ultrastable/ultrastable/commit/004b584c83908b487927c5bc20b7e92fd05b251e"
+   },
+   {
     "sha": "c67ec41",
     "at": "2026-11-20T16:08:23+01:00",
     "author": "Rowan Brad Quni-Gudzinas",
@@ -2560,6 +2528,15 @@
     "pr": 738,
     "item": "OL-20261112-93",
     "url": "https://github.com/ultrastable/ultrastable/commit/c67ec4190896a79a7e3fa542bea2245840a5a749"
+   },
+   {
+    "sha": "4c6c8c8",
+    "at": "2026-11-20T15:04:50+00:00",
+    "author": "Claude",
+    "subject": "Q-GAP: adopt an existing repository, held-out rescoring, own-database record, data path, own domain, organization in the thread, packaged installer",
+    "pr": null,
+    "item": "Q-GAP",
+    "url": "https://github.com/ultrastable/ultrastable/commit/4c6c8c8673b5a4d71ea9c9fb1afbf5f707a7bb3d"
    },
    {
     "sha": "f5bca5b",
@@ -2857,6 +2834,15 @@
     "pr": null,
     "item": "QUEUE-PERSIST-1",
     "url": "https://github.com/ultrastable/ultrastable/commit/fa61fdbbb81781b55ba71ade847b22b4cae9f395"
+   },
+   {
+    "sha": "3bcbc78",
+    "at": "2026-11-20T09:08:05+00:00",
+    "author": "ultrastable-2833a0[bot]",
+    "subject": "watchdog: clock probe (RESILIENCE-1) [skip ci]",
+    "pr": null,
+    "item": "RESILIENCE-1",
+    "url": "https://github.com/ultrastable/ultrastable/commit/3bcbc783ff4964cdcd6b39a59947d1281cf9f2a2"
    }
   ],
   "pull_requests": []

@@ -39,7 +39,7 @@ function topologyBindings(id) {
 const TOPOLOGY_BINDINGS = topologyBindings("ultrastable-site");
 if (!TOPOLOGY_BINDINGS.some(b => b.name === "ASSETS" && b.namespace_id === ns.id)) { console.error("topology ASSETS namespace differs from the account's " + NS_TITLE); process.exit(1); }
 const form = new FormData();
-form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", bindings: TOPOLOGY_BINDINGS, keep_bindings: ["secret_text", "secret_key"] })], { type: "application/json" }));
+form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", bindings: TOPOLOGY_BINDINGS, keep_bindings: ["secret_text", "secret_key"], observability: { enabled: true, head_sampling_rate: 1 } })], { type: "application/json" }));
 for (const m of MODS) form.append(m.name, new Blob([m.src], { type: m.type }), m.name);
 const up = await api("PUT", `/accounts/${A}/workers/scripts/ultrastable-site`, form);
 console.log("upload", up.success);

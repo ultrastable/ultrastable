@@ -382,3 +382,56 @@ console.log("PROMOTE-1 indexnow ok");
   assert.match(await (await get("https://ultrastable.io/sitemap.xml")).text(), /\/claims</);
   console.log("CLAIMS-1 ok");
 }
+// DATA-API-1, OWN-DOMAIN-1, ORG-THREAD-1 (Q-GAP-shared-backend, Q-GAP-own-domain, Q-GAP-org-setup-in-thread)
+{
+  const W = await import(pathToFileURL(fileURLToPath(new URL("./worker.js", import.meta.url))).href);
+  const rows = []; let seq = 0;
+  const stmt = (sql) => ({ b: [], bind(...a) { this.b = a; return this; },
+    async run() { if (/INSERT/.test(sql)) { rows.push({ id: ++seq, site: this.b[0], coll: this.b[1], at: this.b[2], data: this.b[3] }); return { meta: { last_row_id: seq } }; } return {}; },
+    async all() { return { results: rows.filter(x => x.site === this.b[0] && x.coll === this.b[1]).reverse().map(x => ({ id: x.id, at: x.at, data: x.data })) }; },
+    async first() { return { n: rows.filter(x => x.site === this.b[0]).length }; } });
+  const E4 = { ASSETS: mem, AI, DB: { prepare: stmt, batch: async () => [] } };
+  const call = (host, path, init) => mod.fetch(new Request("https://" + host + path, init), E4);
+  const jpost = (path, o, ip) => call("ultrastable.io", path, { method: "POST", headers: { "content-type": "application/json", "cf-connecting-ip": ip || "198.51.100.7" }, body: JSON.stringify(o) });
+  // the record is the body; the list is the same one /s/<id>/api serves
+  let x = await jpost("/api/data/" + id + "/Guests", { name: "Lin" }); assert.equal(x.status, 201); assert.equal((await x.json()).data.name, "Lin");
+  x = await call("ultrastable.io", "/api/data/" + id + "/guests"); assert.deepEqual((await x.json()).items.map(i => i.data.name), ["Lin"]); assert.equal(x.headers.get("access-control-allow-origin"), "*");
+  assert.deepEqual((await (await call("ultrastable.io", "/s/" + id + "/api?coll=guests")).json()).items.map(i => i.data.name), ["Lin"], "one store, two paths");
+  assert.equal((await jpost("/api/data/" + id + "/guests", [1])).status, 400); assert.equal((await jpost("/api/data/0000000000/guests", { a: 1 })).status, 404);
+  assert.equal((await call("ultrastable.io", "/api/data/" + id)).status, 404); assert.equal((await call("ultrastable.io", "/api/data/" + id + "/guests", { method: "DELETE" })).status, 405);
+  // own domain: nothing is stored until the TXT record names this site
+  const dns = (txt) => async (url, init) => { const u = String(url);
+    if (u.startsWith("https://cloudflare-dns.com/")) { assert.match(u, /name=_ultrastable\.www\.example\.org/); return new Response(JSON.stringify({ Answer: txt ? [{ data: "\"" + txt + "\"" }] : [] })); }
+    if (u.includes("/custom_hostnames?hostname=")) return new Response(JSON.stringify({ success: true, result: [] }));
+    if (u.endsWith("/custom_hostnames") && init.method === "POST") return new Response(JSON.stringify({ success: true, result: { id: "ch1", status: "pending", ssl: { status: "initializing" } } }));
+    throw new Error("unexpected fetch " + u); };
+  let d = await W.attachDomain(E4, id, "https://WWW.Example.org/path", dns(null));
+  assert.equal(d.state, "waiting_for_dns"); assert.equal(d.status, 202); assert.equal(d.records[0].value, "ultrastable-site=" + id); assert.equal(d.records[1].value, id + ".ultrastable.io"); assert.equal(kv.has("domain:www.example.org"), false);
+  d = await W.attachDomain(E4, id, "www.example.org", dns("ultrastable-site=ffffffffff")); assert.equal(d.state, "waiting_for_dns", "a record naming another site proves nothing");
+  d = await W.attachDomain(E4, id, "www.example.org", async () => { throw new Error("offline"); }); assert.equal(d.state, "dns_unreadable"); assert.equal(kv.has("domain:www.example.org"), false);
+  for (const badHost of ["ultrastable.io", "x.ultrastable.org", "foo.workers.dev", "nodots", "no spaces.com"]) assert.equal((await W.attachDomain(E4, id, badHost, dns(null))).code, "bad_domain", badHost);
+  assert.equal((await W.attachDomain(E4, "0000000000", "www.example.org", dns(null))).code, "no_site");
+  d = await W.attachDomain(E4, id, "www.example.org", dns("ultrastable-site=" + id)); assert.equal(d.state, "pending_platform", "proven, and honest that the edge step did not run"); assert.equal(JSON.parse(kv.get("domain:www.example.org")).id, id);
+  d = await W.attachDomain({ ...E4, CF_DEPLOY_TOKEN: "t", CF_ZONE_ID: "z" }, id, "www.example.org", dns("ultrastable-site=" + id)); assert.equal(d.state, "issuing"); assert.equal(d.edge.cf_id, "ch1");
+  d = await W.attachDomain({ ...E4, CF_DEPLOY_TOKEN: "t", CF_ZONE_ID: "z" }, id, "www.example.org", async (url) => String(url).startsWith("https://cloudflare-dns.com/") ? new Response(JSON.stringify({ Answer: [{ data: "ultrastable-site=" + id }] })) : new Response(JSON.stringify({ success: false, errors: [{ code: 1414, message: "not entitled" }] })));
+  assert.equal(d.state, "edge_refused"); assert.match(d.edge.detail, /1414/);
+  // the proven address serves the site and its data path; an unknown foreign host is not served a site
+  x = await call("www.example.org", "/"); assert.equal(x.status, 200); const own = await x.text(); assert.match(own, /https:\/\/www\.example\.org\/s\/[a-f0-9]{10}\/api/); assert.match(x.headers.get("content-security-policy"), /allow-same-origin/);
+  x = await call("www.example.org", "/s/" + id + "/api?coll=guests"); assert.deepEqual((await x.json()).items.map(i => i.data.name), ["Lin"]);
+  x = await call("www.example.org", "/pilot"); assert.equal(x.status, 302); assert.equal(x.headers.get("location"), "https://www.example.org/");
+  x = await call("stranger.example.net", "/"); assert.doesNotMatch(await x.text(), /window\.US=/);
+  x = await jpost("/api/domain", { id, domain: "ultrastable.io" }); assert.equal(x.status, 400); assert.equal((await x.json()).code, "bad_domain");
+  // organization setup in the thread: plan from the idea, steps from the same data /setup walks, progress saved and resumable
+  const org = (o) => { const f = new FormData(); for (const k in o) f.set(k, o[k]); return call("ultrastable.io", "/api/org", { method: "POST", body: f }); };
+  let o = await (await org({ id })).json(); assert.equal(o.state, "in_progress"); assert.match(o.plan.objective, /bin day/); assert.equal(o.plan.measures.length, 6); assert.deepEqual(o.plan.roles.map(r => r.id), ["product-manager", "staff", "reviewer", "operations"]);
+  assert.equal(o.next.id, "github"); assert.equal(o.done, 0); const total = o.total; assert.ok(total >= 4);
+  assert.equal((await org({ id, step: "nope", answer: "done" })).status, 400); assert.equal((await org({ id, step: "github", answer: "maybe" })).status, 400); assert.equal((await org({ id: "0000000000" })).status, 404);
+  o = await (await org({ id, step: "github", answer: "done" })).json(); assert.equal(o.done, 1); assert.equal(o.next.id, "copy"); assert.match(o.next.url, /github\.com\/ultrastable\/ultrastable\/generate/);
+  o = await (await org({ id })).json(); assert.equal(o.next.id, "copy", "the thread resumes where it stopped");
+  let guard = 0; while (o.next && guard++ < 20) o = await (await org({ id, step: o.next.id, answer: o.next.optional ? "skipped" : "done" })).json();
+  assert.equal(o.state, "set_up"); assert.equal(o.done, total);
+  const work = await W.ideaWork({ ...E4, ASSETS: { ...mem, list: async ({ prefix }) => ({ keys: [...kv.keys()].filter(k => k.startsWith(prefix)).sort().map(name => ({ name })), list_complete: true }) } }); assert.equal(work.find(i => i.id === id).org, "set_up", "the managers see the organization's progress");
+  const IVm = (await import(pathToFileURL(fileURLToPath(new URL("./interview.js", import.meta.url))).href)).JS;
+  assert.match(IVm, /setup-org/); assert.match(IVm, /'\/api\/org'/); assert.match(IVm, /Set up the organization/);
+  console.log("ultrastable-site data path, own domain, organization in thread ok");
+}

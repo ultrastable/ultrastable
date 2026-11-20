@@ -344,6 +344,57 @@
      "cmd": "python3 -m foundation unattended --check"
     }
    ]
+  },
+  {
+   "id": "held-out-rescoring",
+   "statement": "Every settled prediction is re-scored by graders that share no code with the scorer (a strict rule and a second model family); a disagreement files its own item (RESCORE-1).",
+   "source": "foundation/rescore.py; doctrine/decisions.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation rescore --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "rescored",
+     "cmd": "python3 -m foundation rescore --check",
+     "fix": "python3 -m foundation rescore --run --apply"
+    }
+   ]
+  },
+  {
+   "id": "own-database",
+   "statement": "The core's databases are its own: no core Worker binds a tenant's database or a database of the originating fleet, and the declared core databases exist in the core's account (OWN-DB-1).",
+   "source": "instances/ultrastable/own-database.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation owndb --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "owndb-live",
+     "cmd": "python3 -m foundation owndb --live",
+     "needs_network": true
+    }
+   ]
+  },
+  {
+   "id": "hosted-tier-closed-until-proven",
+   "statement": "The multi-tenant hosted tier is not offered while any of its controls is unproven; each control's status is the result of its probes (TENANT-CONTROLS-1).",
+   "source": "doctrine/tenant-controls.json; doctrine/pilot-model.json",
+   "ci": [
+    {
+     "cmd": "python3 -m foundation tenantcontrols --check"
+    }
+   ],
+   "runtime": [
+    {
+     "id": "tenantcontrols",
+     "cmd": "python3 -m foundation tenantcontrols --check",
+     "fix": "python3 -m foundation tenantcontrols --write"
+    }
+   ]
   }
  ],
  "repos": [

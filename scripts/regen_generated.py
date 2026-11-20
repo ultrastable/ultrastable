@@ -22,13 +22,17 @@ GENERATORS = [
     (["python3", "-m", "foundation", "ultrastability", "--data", "--apply"], "."),
     (["python3", "-m", "foundation", "decisions", "--settle", "--apply"], "."),
     (["python3", "-m", "foundation", "decisions", "--page", "--apply"], "."),
+    (["python3", "-m", "foundation", "rescore", "--run", "--apply"], "."),  # RESCORE-1: held-out graders re-score what settle just scored
+    (["python3", "-m", "foundation", "executor", "--fold", "--apply"], "."),  # PR-OUTCOME-1: what became of each pull request the executor opened
+    (["python3", "-m", "foundation", "owndb", "--write"], "."),  # OWN-DB-1
+    (["python3", "-m", "foundation", "tenantcontrols", "--write"], "."),  # TENANT-CONTROLS-1
     (["python3", "-m", "foundation", "upstream", "contract", "--apply"], "."),
     (["python3", "-m", "foundation", "triggers", "--sync"], "."),
     (["python3", "-m", "plugins", "self", "--write"], "seed"),
 ]
 # Files the generators write; the workflow ignores pushes that touch only these, so the bot's own commit cannot retrigger it.
 OUTPUTS = ["doctrine/decision-ledger.json", "ops/provenance.jsonl", "README.md", "platform/adapters/README.md", "site/claims-data.js", "site/dashboard-data.js", "site/self-data.js",
-           "site/ultrastability-data.js", "site/decisions-data.js", "ops/decisions/outcomes.jsonl", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
+           "site/ultrastability-data.js", "site/decisions-data.js", "ops/decisions/outcomes.jsonl", "ops/decisions/rescore.jsonl", "ops/executor-log.jsonl", "instances/ultrastable/own-database.json", "docs/security/multi-tenant-controls.json", "core-contract.json", "doctrine/triggers.json", "seed/self/SELF.md", "seed/self/self.json"]
 
 
 def run_all(root: Path = ROOT) -> list[str]:
