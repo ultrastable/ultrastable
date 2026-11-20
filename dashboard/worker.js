@@ -13,6 +13,14 @@ const auditBackend = env => r => PV.add(env, { class: "system", actor: "backend"
 import * as OID from "./ownerid.js";  // PROVENANCE-1: origin, effect and history of every input and change
 import { budgetEnv, SHARES, halted } from "../seed/worker/src/budget.js";  // SPEND-GOVERNOR-1: the console agent spends from the owner's budget
 import NEEDS from "../foundation/data/needs-you.json" with { type: "json" };
+import UNATTENDED from "../doctrine/unattended.json" with { type: "json" };
+// GATE-SETTLE-2: the owner page asks only what is still open. A gate whose every measured dependency in doctrine/unattended.json is closed is done,
+// the same rule NEEDS-YOU.md renders by (foundation/needsyou.py), so the page cannot ask the owner for something the system already has.
+export const openNeeds = (needs = NEEDS, deps = UNATTENDED.dependencies || []) => {
+  const by = {};
+  for (const x of deps) if (x.needs_you) (by[x.needs_you] = by[x.needs_you] || []).push(x);
+  return (needs.items || []).filter(i => !(by[i.id] && by[i.id].every(x => x.status === "closed")));
+};
 import TENANTS from "../foundation/data/tenants.json" with { type: "json" };
 import PAID from "../foundation/data/paid-options.json" with { type: "json" };
 const VERSION = "0.4.0";
@@ -151,7 +159,7 @@ export async function runProbes(env) {
   } catch (e) { /* the checks table may not exist yet */ }
   // OWNER-LINKS-1: every link the system hands the owner answers (2xx or 3xx); a dead one fails this probe and is mailed like any other failing check.
   if (!env.NO_NET) {
-    const links = [...OWNER_LINKS, ...NEEDS.map(n => n.url || n.connect).filter(x => /^https:\/\//.test(String(x || "")))].filter((x, i, a) => a.indexOf(x) === i).slice(0, 20);
+    const links = [...OWNER_LINKS, ...openNeeds().map(n => n.url || n.connect).filter(x => /^https:\/\//.test(String(x || "")))].filter((x, i, a) => a.indexOf(x) === i).slice(0, 20);
     const dead = [];
     // OWNER-LINKS-2: status alone passed a blank placeholder page. Each link must answer with the content it promises, never a worker placeholder.
     const EXPECT = { "https://ultrastable.io/connect/github-signin": /sign-in|signin|github/i, "https://ultrastable.io/owner": /owner|sign in|code/i };
@@ -325,9 +333,35 @@ export async function connectorsPanel(env, origin) {
 
 // ---------- state for the dashboard ----------
 // OWNER-DASH-2: the static panels (what needs the owner, tenants, paid options) come from files in the bundle, so the page still answers when D1 is at its free daily read cap.
+// GATE-SETTLE-3: the Worker settles a gate on its own live evidence (`http:URL ~ TEXT` in resolved_when), so the owner page stays right while
+// GitHub Actions (watchdog.yml, needsyou --settle) is down. Server-side only; one fetch per gate per hour through the Cache API. An unreadable page is not evidence.
+export async function settledLive(env, items = openNeeds(), fetchFn = fetch) {
+  const out = new Set();
+  if (env.NO_NET && fetchFn === fetch) return out;
+  const cache = typeof caches !== "undefined" && caches.default ? caches.default : null;
+  for (const i of items) {
+    for (const w of [].concat(i.resolved_when || [])) {
+      const m = /^http:(https:\/\/\S+)\s*~\s*(.+)$/.exec(String(w)); if (!m) continue;
+      const url = m[1], text = m[2].trim(), key = "https://gate-settle.invalid/" + encodeURIComponent(url + "~" + text);
+      let ok = null;
+      if (cache) { try { const hit = await cache.match(key); if (hit) ok = (await hit.text()) === "1"; } catch (e) { console.error("gate-settle cache read", e && e.message); } }
+      if (ok === null) {
+        try { const r = await fetchFn(url, { headers: { "user-agent": "ultrastable-gate-settle" } }); ok = r.status === 200 && (await r.text()).includes(text); }
+        catch (e) { console.error("gate-settle " + url, e && e.message); ok = false; }
+        if (cache) { try { await cache.put(key, new Response(ok ? "1" : "0", { headers: { "cache-control": "max-age=3600" } })); } catch (e) { console.error("gate-settle cache write", e && e.message); } }
+      }
+      if (ok) { out.add(i.id); break; }
+    }
+  }
+  return out;
+}
+export async function livePanels(env, fetchFn = fetch) {
+  const base = staticPanels(), done = await settledLive(env, openNeeds(), fetchFn);
+  return done.size ? { ...base, needs: base.needs.filter(n => !done.has(n.id)), settled_live: [...done] } : base;
+}
 export function staticPanels() {
   return {
-    needs: NEEDS.items.map(i => ({ id: i.id, title: i.title, why: i.why, default: i.default, url: i.url, button: i.button })),
+    needs: openNeeds().map(i => ({ id: i.id, title: i.title, why: i.why, default: i.default, url: i.url, button: i.button })),
     tenants: TENANTS.tenants,
     options: PAID.options, options_checked: PAID.checked,
     plan_note: "Everything runs on free tiers. Nothing here upgrades a plan; paid options below are your decision, with the cost.",
@@ -337,7 +371,7 @@ const RESET_NOTE = () => { const n = new Date(), h = 24 - n.getUTCHours() - (n.g
 export const DB_LIMIT_NOTE = () => "Ultrastable's database has used its free allowance for today, so live checks and tasks are paused. Nothing is lost. The allowance resets at 00:00 UTC (" + RESET_NOTE() + "), and the system resumes by itself then. Meanwhile it keeps its reads low and no plan is upgraded. What needs you, tenant status and paid options below come from the saved copy.";
 export const isLimitError = m => /free tier|row read limit|7500|exceeded/i.test(String(m || ""));
 export async function stateOf(env) {
-  const base = staticPanels();
+  const base = await livePanels(env);
   try { return await stateFromDb(env, base); }
   catch (e) {
     const m = String(e && e.message || e);
@@ -520,7 +554,7 @@ export async function route(req, env) {
     if (p === "/api/owner/code" && req.method === "POST") { const r = await requestCode(env); return json(r.body, r.status); }
     if (p === "/api/owner/verify" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const r = await verifyCode(env, req, b.code); return json(r.body, r.status, r.cookie ? { "Set-Cookie": r.cookie } : undefined); }
     if (p === "/api/owner/identity-audit") { const sx = await getSession(env, req).catch(() => null); if (!sx) return json({ error: "sign in" }, 401); return json({ links: await OID.linkCount(env), events: await OID.auditTail(env) }); }
-    if (p === "/api/owner/overview") return json({ ...staticPanels(), version: VERSION });
+    if (p === "/api/owner/overview") return json({ ...(await livePanels(env)), version: VERSION });
     let s; try { s = await getSession(env, req); } catch (e) { return json({ ...staticPanels(), version: VERSION, degraded: isLimitError(e && e.message) ? DB_LIMIT_NOTE() : "The database did not answer, so sign-in cannot be checked. The saved panels are shown." }, 200); }
     if (!s) return json({ error: "sign in" }, 401);
     if (p === "/api/owner/logout" && req.method === "POST") { await env.DB.prepare("UPDATE sessions SET revoked=1 WHERE hash=?1").bind(s.hash).run(); return json({ ok: true }, 200, { "Set-Cookie": COOKIE + "=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict" }); }

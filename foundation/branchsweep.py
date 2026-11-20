@@ -311,25 +311,26 @@ def archive(root=REPO, base="origin/main", open_heads=None, dry=False) -> list[d
     return out
 
 
-def _api(token, method, path, fetch=None):
+def _api(token, method, path, fetch=None, body=None):
     """GitHub REST call. fetch is injectable for tests: fetch(method, url, headers) -> (status, json)."""
     url = "https://api.github.com" + path
     headers = {"authorization": "Bearer " + token, "accept": "application/vnd.github+json", "user-agent": "ultrastable-branchsweep"}
     if fetch:
         return fetch(method, url, headers)
     import urllib.request, urllib.error
-    req = urllib.request.Request(url, method=method, headers=headers)
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, method=method, headers=headers, data=data)
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
-            body = r.read()
-            return r.status, (json.loads(body) if body else None)
+            raw = r.read()
+            return r.status, (json.loads(raw) if raw else None)
     except urllib.error.HTTPError as e:
         return e.code, None
     except (urllib.error.URLError, TimeoutError) as e:
         return 0, {"error": str(e)[:120]}
 
 
-def remote_prune(repos, token, prefixes=("claude/", "agent/"), dry=False, fetch=None, root=REPO, now=None) -> dict:
+def remote_prune(repos, token, prefixes=("claude/", "agent/", "worker/"), dry=False, fetch=None, root=REPO, now=None) -> dict:
     """BRANCH-SWEEP-2: the stale session branches of every fleet repository, by API (no checkout). A branch is deleted only when the
     default branch already holds it (ahead_by 0) or its pull request merged with this exact head sha (squash merges). Any other branch
     is kept and counted, never deleted. The sha goes to the ledger before the delete, so every deletion can be restored."""
@@ -358,6 +359,13 @@ def remote_prune(repos, token, prefixes=("claude/", "agent/"), dry=False, fetch=
                 merged = [p for p in (prs or []) if p.get("merged_at") and (p.get("head") or {}).get("sha") == sha]
                 if merged and not open_pr:
                     why = f"pull request #{merged[0]['number']} merged with this head"
+                else:
+                    closed = [p for p in (prs or []) if p.get("state") == "closed" and not p.get("merged_at") and (p.get("head") or {}).get("sha") == sha]
+                    if closed and not open_pr:
+                        # CLEAN-BRANCHES-1: a pull request closed on purpose leaves no live work; the sha is archived under refs/archive/ first, so the delete is reversible
+                        if not dry:
+                            _api(token, "POST", f"/repos/{repo}/git/refs", fetch, {"ref": f"refs/archive/{name}", "sha": sha})
+                        why = f"pull request #{closed[0]['number']} closed unmerged with this head (sha archived at refs/archive/{name})"
             if not why:
                 rows.append({"name": name, "sha": sha, "action": "kept", "why": "holds work the default branch lacks"}); continue
             if not dry:
