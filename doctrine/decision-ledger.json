@@ -3378,6 +3378,14 @@
    "body": "After CF-POSTURE-1 the live reading showed tenant-ps-core, tenant-ps-web and ultrastable-deploy-gateway with logs off: workers/core/deploygate/index.js, two Cloudflare adapters, the launcher's provisioner and scripts/cf_account.py build upload metadata outside deploy/ and site/, which was all the first static scan read. All send observability now and cfposture --check scans every tracked code file for upload metadata.",
    "probe": "file:foundation/cfposture.py",
    "session": "serene-payne-a9c57f"
+  },
+  {
+   "id": "decision-2026-11-20-pin-core-db-separation-closed-from-live-d1-reading",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "PIN-core-db-separation closed from live D1 reading",
+   "body": "5 DBs in the ultrastable account, none from the originating fleet; the other 4 open roadmap items stay gated per doctrine/open-loops.json (identity-bound: empty account, second installation, other-cloud billing, outside auditor).",
+   "probe": "file:docs/migrations/core-db-split.json"
   }
  ]
 }
