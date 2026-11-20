@@ -1,13 +1,13 @@
 {
- "row": {
-  "id": "decision-2026-11-20-site-upkeep-1-built-sites-keep-improving-and-keep-history",
+  "row": {
+    "id": "decision-2026-11-20-site-upkeep-1-built-sites-keep-improving-and-keep-history",
+    "kind": "decision",
+    "date": "2026-11-20",
+    "title": "SITE-UPKEEP-1 built sites keep improving and keep history",
+    "body": "Built sites get a weekly free deterministic pass plus at most two model passes per site tick, keep the last ten versions, and /s/<id>/history restores one (a restore is itself undoable). Rides the existing site tick; no new cron; model spend is the budget-wrapped env's.",
+    "probe": "grep:site/upkeep.js::export async function upkeepRound"
+  },
   "kind": "decision",
-  "date": "2026-11-20",
   "title": "SITE-UPKEEP-1 built sites keep improving and keep history",
-  "body": "Built sites get a weekly free deterministic pass plus at most two model passes per site tick, keep the last ten versions, and /s/<id>/history restores one (a restore is itself undoable). Rides the existing site tick; no new cron; model spend is the budget-wrapped env's.",
-  "probe": "grep:site/upkeep.js::export async function upkeepRound"
- },
- "kind": "decision",
- "title": "SITE-UPKEEP-1 built sites keep improving and keep history",
- "session": ""
+  "session": "session_0156nqDuaQJLAK9GWhireekE"
 }
