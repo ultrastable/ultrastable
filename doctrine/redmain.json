@@ -1,0 +1,15 @@
+{
+ "_doc": "REDMAIN-1 (2026-11-20): a deploy gate that is red on main is repaired by code, not by a model and not by a person. On 2026-11-19 a swept branch changed one character in site/webbotauth.js; checks did not run the site tests, the merge went green, and the site did not deploy for 29 hours while the code agent failed to fix it. Consumers: foundation/redmain.py (--run in .github/workflows/ciwatch.yml, --check in tests/foundation/test_redmain.py).",
+ "version": "1.0.0",
+ "max_commits_back": 400,
+ "max_candidates": 80,
+ "gate_timeout_s": 240,
+ "never_revert": ["*.test.mjs", "*.test.js", "tests/*", "test/*"],
+ "gates": {
+  "deploy-site": {
+   "cmd": "bash scripts/site_tests.sh",
+   "paths": ["site", "seed/analytics", "seed/worker/src", "spinoffs"],
+   "workflows": [".github/workflows/deploy-site.yml", ".github/workflows/checks.yml"]
+  }
+ }
+}

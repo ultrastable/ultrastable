@@ -1,0 +1,10 @@
+{
+ "_doc": "RUNWAY-1 (Rowan, 2026-11-20): \"The system is designed to run unattended for a minimum of 1 year, completely on its own. So that means cost optimization, that means figuring out what fails and fixing it, and it should get better.\" The target is data here and is measured every watchdog run: projected days of unattended running = the smallest of (days until a credential or registration that does not renew itself lapses, days until a free-plan limit is reached at the measured growth, 0 when a failure item has stayed open past max_failure_open_days). A component that cannot be measured is unmeasured, never ok. Below target files one Q-RUNWAY-<component> item whose closing probe is the same measurement. Consumers: foundation/runway.py (--run in .github/workflows/watchdog.yml, --check in tests/foundation/test_runway.py), doctrine/blindspots.json need unattended-runway.",
+ "version": "1.0.0",
+ "target_days": 365,
+ "cost_max_age_days": 3,
+ "cost_trend_days": 30,
+ "max_failure_open_days": 7,
+ "failure_labels": ["ci-failure", "credential"],
+ "failure_prefixes": ["Q-OPENLOOP-", "Q-CIFAIL-", "Q-CRED-", "EXEC-SPARK-"]
+}

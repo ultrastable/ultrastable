@@ -132,7 +132,8 @@ export async function run({ fetchFn = fetch, token, account, date, cwd = process
 if (import.meta.url === `file://${process.argv[1]}`) {
   const date = process.argv[2] || new Date().toISOString().slice(0, 10);
   const token = process.env.CLOUDFLARE_API_TOKEN;
-  const account = process.env.CLOUDFLARE_ACCOUNT_ID;
+  // RUNWAY-1: the account id is data (doctrine/cost.json), not a secret; a runner without the variable still measures instead of recording unmeasured.
+  const account = process.env.CLOUDFLARE_ACCOUNT_ID || JSON.parse(readFileSync(new URL('../doctrine/cost.json', import.meta.url), 'utf8')).account_id;
   if (!token || !account) {
     // COST-PROBE-2: the runner has no Cloudflare credential bound (run 44337645276 died here with 'missing credentials' and turned cost-guard red every
     // hour). The reading is recorded as unmeasured, never as zero, and the tick Worker's own free-tier sampler (CF_ANALYTICS_TOKEN) stays the source of record.

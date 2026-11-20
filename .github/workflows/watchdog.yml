@@ -33,6 +33,20 @@ jobs:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: python3 -m foundation resilience --run --apply --changed-file "$RUNNER_TEMP/changed"
+      - name: Credential and registration expiry (TOKEN-EXPIRY-1)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          LANE_PAT: ${{ secrets.LANE_PAT }}
+        run: python3 -m foundation credwatch --run --apply --changed-file "$RUNNER_TEMP/changed"
+      - name: Close owner gates whose evidence is in (GATE-SETTLE-1)
+        env:
+          LANE_PAT: ${{ secrets.LANE_PAT }}
+          LANE_APP_ID: ${{ secrets.LANE_APP_ID }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
+        run: python3 -m foundation needsyou --settle --changed-file "$RUNNER_TEMP/changed"
+      - name: Projected unattended runway against the one-year target (RUNWAY-1)
+        run: python3 -m foundation runway --run --apply --changed-file "$RUNNER_TEMP/changed"
       - name: Ultrastability tick (a stall is a second-order event)
         run: python3 -m foundation ultrastability --tick --apply
       - name: Record
@@ -40,5 +54,5 @@ jobs:
         run: |
           [ "$(cat "$RUNNER_TEMP/changed")" = "1" ] || { echo "nothing changed; ledger not committed"; exit 0; }
           git config user.name "ultrastable-watchdog"; git config user.email "actions@users.noreply.github.com"
-          git add ops/resilience.jsonl ops/ultrastability.jsonl docs/issues
+          git add ops/resilience.jsonl ops/ultrastability.jsonl ops/credwatch.json ops/runway.json docs/issues NEEDS-YOU.md foundation/data/needs-you.json doctrine/point-and-click.json
           git diff --cached --quiet || { git commit -q -m "watchdog: clock probe (RESILIENCE-1) [skip ci]"; python3 tools/push_main.py; }

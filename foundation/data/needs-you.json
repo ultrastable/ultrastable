@@ -2,17 +2,6 @@
  "_doc": "The only list of things a person must do. Each item is an act only the owner can perform (identity-bound) and carries exactly one link that does it. Everything else self-resolves. Rendered into NEEDS-YOU.md by `python3 -m foundation needsyou`; tests require https links and no file paths.",
  "items": [
   {
-   "id": "actions-billing",
-   "title": "Fix the GitHub Actions payment",
-   "why": "Every Actions job on ultrastable is refused with 'recent account payments have failed or your spending limit needs to be increased' (executor, checks and lane runs of 2026-11-14 ended in 2-3 s). IDENTITY-BOUND: payment method and spending limit are the owner's.",
-   "default": "No Actions job runs; the Worker loops (ZERO-MINUTES-1) are being built to carry the work without Actions minutes, and the cloud routine keeps picking issues.",
-   "url": "https://github.com/organizations/ultrastable/settings/billing",
-   "button": "Open the org billing page and fix the payment method or spending limit",
-   "class": "owner_account",
-   "connect": "https://github.com/organizations/ultrastable/settings/billing",
-   "connect_kind": "provider-deep-link"
-  },
-  {
    "id": "funding",
    "title": "Submit funding applications",
    "why": "An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact.",
@@ -26,7 +15,7 @@
   {
    "id": "domains-move",
    "title": "Move the four ultrastable domains to the Ultrastable account",
-   "why": "ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is off on all four (expiry 2027-11-10).",
+   "why": "ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is on for all four since 2026-11-20 (next renewal 2027-11-10).",
    "default": "The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.",
    "url": "https://dash.cloudflare.com/?to=/:account/registrar/domains",
    "button": "Open the registrar domains (available from 2026-11-20)",
@@ -54,7 +43,8 @@
    "button": "Sign in to Bluesky (or Mastodon at /connect/mastodon); the system stores and renews the access",
    "class": "legal_signature",
    "connect": "https://ultrastable.io/connect/bluesky",
-   "connect_kind": "connect-flow"
+   "connect_kind": "connect-flow",
+   "resolved_when": "env:BLUESKY_APP_PASSWORD|MASTODON_TOKEN"
   },
   {
    "id": "lane-credential",
@@ -65,7 +55,8 @@
    "button": "Authorize on GitHub",
    "class": "owner_account",
    "connect": "https://ultrastable.io/connect/github",
-   "connect_kind": "connect-flow"
+   "connect_kind": "connect-flow",
+   "resolved_when": "env:LANE_PAT|LANE_APP_ID"
   },
   {
    "id": "repo-archive",

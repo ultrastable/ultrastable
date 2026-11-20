@@ -2,16 +2,12 @@
 
 Everything else is done by the system. These are the only acts that need your identity, each with the one click that does it and what already happens if you never click.
 
-## Fix the GitHub Actions payment
-Every Actions job on ultrastable is refused with 'recent account payments have failed or your spending limit needs to be increased' (executor, checks and lane runs of 2026-11-14 ended in 2-3 s). IDENTITY-BOUND: payment method and spending limit are the owner's. If you do nothing: No Actions job runs; the Worker loops (ZERO-MINUTES-1) are being built to carry the work without Actions minutes, and the cloud routine keeps picking issues.
-**[Open the org billing page and fix the payment method or spending limit](https://github.com/organizations/ultrastable/settings/billing)**
-
 ## Submit funding applications
 An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact. If you do nothing: Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you.
 **[Open the ready-to-paste application kits (Y Combinator Winter 2027 late applications are open)](https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md)**
 
 ## Move the four ultrastable domains to the Ultrastable account
-ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is off on all four (expiry 2027-11-10). If you do nothing: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.
+ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is on for all four since 2026-11-20 (next renewal 2027-11-10). If you do nothing: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.
 **[Open the registrar domains (available from 2026-11-20)](https://dash.cloudflare.com/?to=/:account/registrar/domains)**
 
 ## Upload the org avatar and pin repos
