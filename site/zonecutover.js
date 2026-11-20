@@ -5,8 +5,8 @@
 // and turns on Email Routing where the old zone had it. Every step is idempotent (an existing domain or route is left as it is) and
 // every state is reported as it is: pending, active, attached, error. No step deletes anything. Needs CF_DEPLOY_TOKEN and
 // CF_ACCOUNT_ID on the site Worker; without them the result is "unmeasured", never ok.
-// Plan source: the old account's live custom domains, routes and Email Routing state, read 2026-11-20. Routes that pointed at a QNFO
-// fleet Worker (qnfo-gateway on ultrastable.app and .net) are not carried: the custom domains below serve those hostnames.
+// Plan source: the old account's live custom domains, routes and Email Routing state, read 2026-11-20. Routes that pointed at a Worker of
+// the originating fleet (on ultrastable.app and .net) are not carried: the custom domains below serve those hostnames.
 // Consumers: site/worker.js tick (out.zones), test site/zonecutover.test.mjs, ops/account-move.json (items move to 'moved' on evidence).
 export const PLAN = [
   { zone: "ultrastable.io", domains: [["ultrastable.io", "ultrastable-site"], ["www.ultrastable.io", "ultrastable-site"]], routes: [["*.ultrastable.io/*", "ultrastable-site"]], email: true },

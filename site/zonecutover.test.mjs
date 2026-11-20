@@ -51,6 +51,6 @@ test("a refused step is reported as error and stays error", async () => {
   assert.match(r.zones["ultrastable.io"].error, /403 denied/);
 });
 
-test("the plan never routes an ultrastable hostname to a QNFO worker", () => {
+test("the plan never routes an ultrastable hostname to an originating-fleet worker", () => {
   for (const p of PLAN) for (const [, svc] of [...p.domains, ...p.routes]) assert.ok(!/^qnfo-/.test(svc), svc);
 });
