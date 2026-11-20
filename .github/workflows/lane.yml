@@ -1,5 +1,5 @@
 name: lane
-# budget: ~1 min per checks completion
+# budget: ~1.5 min per checks completion (lane pass about 1 min, heal pass about 20 s, capped at 4 min)
 # trigger: merge lane after checks succeed; no cron
 # free-alternative: Cloudflare cron worker or enable-auto-merge on each PR
 # One job: review and merge every PR with no human. Events: checks completing, plus one daily fallback sweep.
@@ -60,3 +60,11 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: bash scripts/drift_probe.sh
+      - name: Heal the clocks after every lane pass (Q-CLOCK-LANE-HOOK; catch-up, settlement, escalation)
+        if: ${{ !cancelled() }}
+        timeout-minutes: 4
+        run: python3 -m foundation clock --heal --apply
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
