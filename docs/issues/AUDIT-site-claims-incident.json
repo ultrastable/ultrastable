@@ -1,0 +1,12 @@
+{
+  "id": "AUDIT-site-claims-incident",
+  "title": "AUDIT-site-claims-incident: fm-site-claims-unlinked failing (fail): Write the missing probe or code link; run python3 -m foundation pins --apply.",
+  "body": "**Owner:** product-manager\n**Trigger:** every executor run and the daily failure audit\n**Done check:** detector:site-claims passes\n**Status:** open\n\nFailure mode `fm-site-claims-unlinked` detected by `site-claims`.\nEvidence: s-baseline.json\nissue IP-7 is on the roadmap with no probe the system can run (file: or grep:); write the probe, do not add it to doctrine/pins-baseline.json\nissue QA-1 is on the roadmap with no probe the system can run (file: or grep:); write the probe, do not add it to doctrine/pins-baseline.json\n\nSignature: 1aadb91b8bae (failed 4 run(s) in a row; disposition: incident).\nSuspected root cause: a public claim is not linked to code, proof or a probe-backed issue, or site/pins.js is stale\nRemedy: Write the missing probe or code link; run python3 -m foundation pins --apply.\nThree identical failures: open an incident and redesign; a fourth attempt of the same fix is not allowed.\n",
+  "labels": [
+    "role:product-manager",
+    "audit",
+    "incident"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}

@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-mcp-oauth-1",
   "title": "PORT-BRANCH-mcp-oauth-1: carry mcp-oauth-1 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `mcp-oauth-1` at 8cf2aed3ad holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/deploy-site.yml, dashboard/worker.js, site/oauth.js, site/oauth.test.mjs)\n**Done check:** cmd:python3 -m foundation branchsweep --carried mcp-oauth-1\n**Status:** closed\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried mcp-oauth-1\n\n**Evidence:** python3 -m foundation branchsweep --carried -> mcp-oauth-1: archived at 8cf2aed3ad (refs/archive/mcp-oauth-1): superseded: main holds 260 of the 264 code lines it added (BRANCH-SWEEP-4)\n",
+  "body": "**Owner:** operations\n**Trigger:** branch `mcp-oauth-1` at 8cf2aed3ad holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/deploy-site.yml, dashboard/worker.js, site/oauth.js, site/oauth.test.mjs)\n**Done check:** cmd:python3 -m foundation branchsweep --carried mcp-oauth-1\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried mcp-oauth-1",
   "labels": [
     "role:operations",
     "agent-ready",

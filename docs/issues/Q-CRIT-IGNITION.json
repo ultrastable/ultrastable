@@ -1,11 +1,8 @@
 {
   "id": "Q-CRIT-IGNITION",
   "title": "Q-CRIT-IGNITION: ignition check: every open chain link as a data row, open_ignition_gaps next to k_eff",
-  "body": "**Owner:** operations\n**Trigger:** CRITICALITY-1 merged\n**Done check:** grep:seed/worker/src/criticality.js::open_ignition_gaps\n**Status:** closed\n\ncode-task: repo=ultrastable/ultrastable path=seed/worker/src/criticality.js\ncode-anchor: export async function readCriticality\n\nFrom the owner framing: the controller is a fixed point. Add an `ignition_gaps` table (link, owner, closing_probe, status) listing each link that does not close on itself (missing Cloudflare credential for the ultrastable account, workers#173 doer, steps that needed a human or external input), surface `open_ignition_gaps` in /live next to k_eff, and claim self-sustaining only at 0. Also verify live code equals the commit per tick (build on DEPLOY-ALL-1 / PR #298).\n\n**Evidence:** closing probe passed (first pass): grep:seed/worker/src/criticality.js::open_ignition_gaps\n",
-  "labels": [
-    "role:operations",
-    "agent-ready"
-  ],
+  "body": "**Owner:** operations\n**Trigger:** CRITICALITY-1 merged\n**Done check:** grep:seed/worker/src/criticality.js::open_ignition_gaps\n**Status:** open\n\ncode-task: repo=ultrastable/ultrastable path=seed/worker/src/criticality.js\ncode-anchor: export async function readCriticality\n\nFrom the owner framing: the controller is a fixed point. Add an `ignition_gaps` table (link, owner, closing_probe, status) listing each link that does not close on itself (missing Cloudflare credential for the ultrastable account, workers#173 doer, steps that needed a human or external input), surface `open_ignition_gaps` in /live next to k_eff, and claim self-sustaining only at 0. Also verify live code equals the commit per tick (build on DEPLOY-ALL-1 / PR #298).",
+  "labels": ["role:operations", "agent-ready"],
   "milestone": "Now",
   "workstream": "Autonomy"
 }

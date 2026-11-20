@@ -1,7 +1,7 @@
 {
   "id": "Q-COST-ROWS-QNFO-AUDIT",
   "title": "Q-COST-ROWS-QNFO-AUDIT: D1 qnfo-audit read 9594224751 rows in 7 days (limit 500000000)",
-  "body": "**Owner:** executor\n**Trigger:** daily clock, driver order\n**Done check:** grep:ops/cost.jsonl::qnfo-audit\n**Status:** closed\n\nMeasured by deploy/cost-probe.mjs via d1AnalyticsAdaptiveGroups at 2026-11-13T10:51:42.795Z: 4583694 read queries, 10771415 rows written. Find the queries and missing indexes behind the reads and fix them; the next probe run shows the database back under the limit.\n\nsize: S\n\n**Closing probe:** grep:ops/cost.jsonl::qnfo-audit\n\n\n**Evidence:** closing probe passed (first pass): grep:ops/cost.jsonl::qnfo-audit\n",
+  "body": "**Owner:** executor\n**Trigger:** daily clock, driver order\n**Done check:** grep:ops/cost.jsonl::qnfo-audit\n**Status:** open\n\nMeasured by deploy/cost-probe.mjs via d1AnalyticsAdaptiveGroups at 2026-11-13T10:51:42.795Z: 4583694 read queries, 10771415 rows written. Find the queries and missing indexes behind the reads and fix them; the next probe run shows the database back under the limit.\n\nsize: S\n\n**Closing probe:** grep:ops/cost.jsonl::qnfo-audit\n",
   "labels": [
     "p1",
     "agent-ready"

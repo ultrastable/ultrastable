@@ -1,11 +1,8 @@
 {
   "id": "Q-CRIT-COLLECTORS",
   "title": "Q-CRIT-COLLECTORS: push GitHub-run, ops/cost.jsonl and workflow_dispatch samples to /api/criticality/sample and mirror /metrics/criticality.json into ultrastable/seed",
-  "body": "**Owner:** operations\n**Trigger:** CRITICALITY-1 merged\n**Done check:** grep:deploy/criticality-collect.mjs::criticality/sample\n**Status:** closed\n\ncode-task: repo=ultrastable/ultrastable path=deploy/criticality-collect.mjs\ncode-anchor: Q-CRIT-COLLECTORS\n\nThe tick computes k_eff from D1 outcomes and criticality_samples. Add a collector that, each deploy-workers run, counts verified deploys/failures (GitHub runs, live_matches_commit rows in ops/deploys.jsonl), reads spend units from ops/cost.jsonl (PR #300), counts workflow_dispatch runs as human_touches, POSTs one sample with the CRITICALITY_TOKEN bearer, and commits the live /metrics/criticality.json to ultrastable/seed metrics/criticality.json. Closing probe: /live shows k_eff non-null and the seed file's `at` is under one tick old.\n\n**Evidence:** closing probe passed (first pass): grep:deploy/criticality-collect.mjs::criticality/sample\n",
-  "labels": [
-    "role:operations",
-    "agent-ready"
-  ],
+  "body": "**Owner:** operations\n**Trigger:** CRITICALITY-1 merged\n**Done check:** grep:deploy/criticality-collect.mjs::criticality/sample\n**Status:** open\n\ncode-task: repo=ultrastable/ultrastable path=deploy/criticality-collect.mjs\ncode-anchor: Q-CRIT-COLLECTORS\n\nThe tick computes k_eff from D1 outcomes and criticality_samples. Add a collector that, each deploy-workers run, counts verified deploys/failures (GitHub runs, live_matches_commit rows in ops/deploys.jsonl), reads spend units from ops/cost.jsonl (PR #300), counts workflow_dispatch runs as human_touches, POSTs one sample with the CRITICALITY_TOKEN bearer, and commits the live /metrics/criticality.json to ultrastable/seed metrics/criticality.json. Closing probe: /live shows k_eff non-null and the seed file's `at` is under one tick old.",
+  "labels": ["role:operations", "agent-ready"],
   "milestone": "Now",
   "workstream": "Autonomy"
 }

@@ -1,7 +1,7 @@
 {
   "id": "Q-TENANT-row-isolation",
   "title": "Q-TENANT-row-isolation: tenant_id on core rows and scoped tick queries",
-  "body": "**Owner:** platform\n**Trigger:** every PR (checks.yml)\n**Done check:** file:seed/worker/migrations/0026_tenant_core.sql\n**Status:** closed\n**Evidence:** migration 0026_tenant_core.sql adds tenant_id (NULL = own) to items, claims, gate_cards and trust_ledger; reconcile, reap_claims, probe_gates, accrue_trust, dispatch (pickForRole, WIP), execute (doer), the item and gate metrics, handoff setItem and the native executor are scoped to tenant_id IS NULL OR the org slug; seed/worker/test/tenant-isolation.test.js passes 14 of 14 (10 fail without the scoping); seed worker suite 365 of 365\n\nMigration adding tenant_id to items, claims, gate cards and trust rows; tick queries scoped by tenant; isolation tests. Filed at thread close; the executor works it in driver order.",
+  "body": "**Owner:** platform\n**Trigger:** every PR (checks.yml)\n**Done check:** file:seed/worker/migrations/0005_tenant_core.sql\n**Status:** open\n\nMigration adding tenant_id to items, claims, gate cards and trust rows; tick queries scoped by tenant; isolation tests. Filed at thread close; the executor works it in driver order.",
   "labels": [
     "role:platform",
     "repair"

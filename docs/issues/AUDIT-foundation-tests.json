@@ -1,0 +1,12 @@
+{
+  "id": "AUDIT-foundation-tests",
+  "title": "AUDIT-foundation-tests: fm-tests-red failing (fail): Fix the root cause in code or make the test host-independent; never delete the failing test.",
+  "body": "**Owner:** operations\n**Trigger:** every executor run and the daily failure audit\n**Done check:** detector:foundation-tests passes\n**Status:** open\n\nFailure mode `fm-tests-red` detected by `foundation-tests`.\nEvidence:  'Tenant isolation': marked live but issue Q-TENANT-row-isolation is not done\nFAIL site/roadmap-data.js is stale; run python3 scripts/build_site_roadmap.py\nsite pins: 6 problem(s)\n\n\n----------------------------------------------------------------------\nRan 834 tests in 482.201s\n\nFAILED (failures=7)\n\nSignature: 26cbb60da010 (failed 1 run(s) in a row; disposition: fix).\nSuspected root cause: a foundation check regressed or a test depends on the host\nRemedy: Fix the root cause in code or make the test host-independent; never delete the failing test.\n",
+  "labels": [
+    "role:operations",
+    "audit",
+    "fix"
+  ],
+  "milestone": "Now",
+  "workstream": "Failure modes"
+}

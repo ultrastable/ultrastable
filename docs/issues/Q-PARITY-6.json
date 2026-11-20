@@ -1,7 +1,7 @@
 {
   "id": "Q-PARITY-6",
   "title": "Q-PARITY-6: Second-family review gate on risky diffs (QNFO REVIEW-GATE-1)",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:scripts/lane.sh::review\n**Status:** closed\n\nQuniverse parity (owner directive 2026-11-13: Ultrastable audits and remediates all failure modes and ships improvements with zero user intervention; every Quniverse automation feature is incorporated).\n\nA PR touching auth, routes, cache, triggers, migrations or workflows is read by two models of disjoint families; a High finding with a concrete trigger reported by both posts a HOLD comment. Implement as a step in the lane workflow with an observe mode first.\n\nsize: M\n\n**Closing probe:** grep:scripts/lane.sh::review\n\n\n**Evidence:** closing probe passed (first pass): grep:scripts/lane.sh::review\n",
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:scripts/lane.sh::review\n**Status:** open\n\nQuniverse parity (owner directive 2026-11-13: Ultrastable audits and remediates all failure modes and ships improvements with zero user intervention; every Quniverse automation feature is incorporated).\n\nA PR touching auth, routes, cache, triggers, migrations or workflows is read by two models of disjoint families; a High finding with a concrete trigger reported by both posts a HOLD comment. Implement as a step in the lane workflow with an observe mode first.\n\nsize: M\n\n**Closing probe:** grep:scripts/lane.sh::review\n",
   "labels": [
     "p1",
     "agent-ready"

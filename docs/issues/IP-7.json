@@ -1,7 +1,7 @@
 {
   "id": "IP-7",
   "title": "IP-7: Non-provisional and/or PCT filing",
-  "body": "**Owner:** **ROWAN** with counsel, trigger IP-6 reminders\n**Trigger:** see roadmap\n**Done check:** see roadmap\n**Status:** closed\n**Evidence:** superseded by owner decision 2026-11-17 (Rowan): no patent filing; the Ultrastable License is the only IP protection (doctrine/decision-ledger.json decision-2026-11-17-license-only-ip-stance-no-patent-filing; ip/ARCHIVED.md).\n\nSource of truth: `docs/roadmap.md` (item IP-7). Every closed item proposes a plus: file it as a new issue labeled `plus`.\n\n**Evidence:** superseded by owner decision 2026-11-15: no patent filing; the licence protects the IP and the repositories go public (decision-ledger).",
+  "body": "**Owner:** **ROWAN** with counsel, trigger IP-6 reminders\n**Trigger:** see roadmap\n**Done check:** see roadmap\n**Status:** open\n\nSource of truth: `docs/roadmap.md` (item IP-7). Every closed item proposes a plus: file it as a new issue labeled `plus`.",
   "labels": [
     "role:staff",
     "ws:patent"

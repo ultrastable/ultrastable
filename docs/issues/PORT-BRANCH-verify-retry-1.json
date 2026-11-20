@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-verify-retry-1",
   "title": "PORT-BRANCH-verify-retry-1: carry verify-retry-1 onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `verify-retry-1` at 9a18b0583d holds work main lacks and cannot merge as is (conflicts in code: seed/worker/src/handoff.js, seed/worker/test/handoff.test.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried verify-retry-1\n**Status:** closed\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried verify-retry-1\n\n**Evidence:** Superseded: VERIFY-RETRY-1 (VERIFY_TRIES retry and rolled_back self-heal) is on main in seed/worker/src/handoff.js.",
+  "body": "**Owner:** operations\n**Trigger:** branch `verify-retry-1` at 9a18b0583d holds work main lacks and cannot merge as is (conflicts in code: seed/worker/src/handoff.js, seed/worker/test/handoff.test.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried verify-retry-1\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried verify-retry-1",
   "labels": [
     "role:operations",
     "agent-ready",

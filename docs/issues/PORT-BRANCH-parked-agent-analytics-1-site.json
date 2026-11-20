@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-parked-agent-analytics-1-site",
   "title": "PORT-BRANCH-parked-agent-analytics-1-site: carry parked/agent/analytics-1-site onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/analytics-1-site` at 3ccf39ecd5 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/analytics-1-site\n**Status:** closed\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/analytics-1-site\n\n**Evidence:** Superseded: site/worker.js on main already imports seed/analytics/analytics.js with handleAnalytics/record and the DB D1 binding in site/wrangler.toml; the registry trigger rule is enforced by seed/analytics tests. The branch's blanket every-Worker CI gate would fail 6 of 10 current worker configs (spinoffs, cockpit, launcher, adapter templates) and is obsolete against main's worker layout.",
+  "body": "**Owner:** operations\n**Trigger:** branch `parked/agent/analytics-1-site` at 3ccf39ecd5 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/checks.yml, site/worker.js)\n**Done check:** cmd:python3 -m foundation branchsweep --carried parked/agent/analytics-1-site\n**Status:** open\n\nPort the change by hand onto current main (it is 2 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried parked/agent/analytics-1-site",
   "labels": [
     "role:operations",
     "agent-ready",

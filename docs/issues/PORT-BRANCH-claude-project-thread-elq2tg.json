@@ -1,7 +1,7 @@
 {
   "id": "PORT-BRANCH-claude-project-thread-elq2tg",
   "title": "PORT-BRANCH-claude-project-thread-elq2tg: carry claude/project-thread-elq2tg onto main",
-  "body": "**Owner:** operations\n**Trigger:** branch `claude/project-thread-elq2tg` at 4621b50b16 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/deploy-workers.yml, agents/AGENTS.md, dashboard/worker.js, doctrine/criticality.json, doctrine/flows.json, doctrine/pins-baseline.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried claude/project-thread-elq2tg\n**Status:** closed\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried claude/project-thread-elq2tg\n\n**Evidence:** python3 -m foundation branchsweep --carried -> claude/project-thread-elq2tg: no such remote branch and no archive ref\n",
+  "body": "**Owner:** operations\n**Trigger:** branch `claude/project-thread-elq2tg` at 4621b50b16 holds work main lacks and cannot merge as is (conflicts in code: .github/workflows/deploy-workers.yml, agents/AGENTS.md, dashboard/worker.js, doctrine/criticality.json, doctrine/flows.json, doctrine/pins-baseline.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried claude/project-thread-elq2tg\n**Status:** open\n\nPort the change by hand onto current main (it is 5 commit(s) ahead), keeping tests green; then the sweep deletes the branch.\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried claude/project-thread-elq2tg",
   "labels": [
     "role:operations",
     "agent-ready",

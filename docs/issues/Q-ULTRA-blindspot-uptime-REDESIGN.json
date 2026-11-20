@@ -1,7 +1,7 @@
 {
   "id": "Q-ULTRA-blindspot-uptime-REDESIGN",
   "title": "Q-ULTRA-blindspot-uptime-REDESIGN: every second-order step failed to bring Uptime back in bounds; redesign",
-  "body": "**Owner:** executor\n**Trigger:** ladder exhausted for `blindspot:uptime`\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** closed\n\nThe same failure three times is a design defect (GUIDING-DIRECTIVE section 2): change the structure, not the parameter.\n\nsize: L\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `blindspot:uptime` inside its bounds.\n\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n\n**Evidence:** closing probe passed (already built: the probe passed from filing and held for 35 passes over 1507 minutes (VACUOUS-CLOSE-1)): ultrastability ok: two loops, every variable has a bound and a second-order step\n",
+  "body": "**Owner:** executor\n**Trigger:** ladder exhausted for `blindspot:uptime`\n**Done check:** cmd:python3 -m foundation ultrastability --check\n**Status:** open\n\nThe same failure three times is a design defect (GUIDING-DIRECTIVE section 2): change the structure, not the parameter.\n\nsize: L\n\n**Closing probe:** `python3 -m foundation ultrastability --tick` reads `blindspot:uptime` inside its bounds.\n",
   "labels": [
     "p0",
     "agent-ready"

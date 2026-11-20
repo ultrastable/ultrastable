@@ -3,13 +3,3 @@
 {"at": "2026-11-17T16:10:24Z", "channel": "indexnow", "event": "promote", "slug": "blindspot", "status": 202}
 {"at": "2026-11-17T21:21:28Z", "event": "launch", "impact": 3, "needs": [], "prediction": "board_age_hours <= 30 within 48 h", "reach": 4, "score": 15.0, "slug": "numbers-board", "url": "https://numbers-board.ultrastable.app"}
 {"at": "2026-11-17T21:21:28Z", "event": "launch", "impact": 3, "needs": [], "prediction": "board_age_hours <= 30 within 48 h", "reach": 4, "score": 15.0, "slug": "portfolio-board", "url": "https://portfolio-board.ultrastable.app"}
-{"at": "2026-11-18T15:56:53Z", "error": "ValueError: [{\"message\": \"not authorized for that account\", \"path\": [\"viewer\", \"accounts\", \"0\", \"d1\"], \"extensions\": {\"code\": \"authz\", \"timestamp\": \"2026-11-18T15", "event": "headroom-failed"}
-{"at": "2026-11-18T15:56:53Z", "error": "HTTP Error 401: Unauthorized", "event": "tick-samples-failed"}
-{"age_days": 1, "archetype": "domain-check", "at": "2026-11-18T15:56:55Z", "budget_share": 1.0, "decision": "keep", "event": "decision", "slug": "blindspot", "value": 0.292, "why": "age 1d under the 14d trial"}
-{"age_days": 0, "archetype": "status-board", "at": "2026-11-18T15:56:55Z", "budget_share": 0.05, "decision": "keep", "event": "decision", "slug": "numbers-board", "value": null, "why": "showcase board kept while its facts are fresh and its cost is inside the headroom"}
-{"age_days": 0, "archetype": "status-board", "at": "2026-11-18T15:56:55Z", "budget_share": 0.05, "decision": "keep", "event": "decision", "slug": "portfolio-board", "value": null, "why": "showcase board kept while its facts are fresh and its cost is inside the headroom"}
-{"at": "2026-11-18T15:56:55Z", "event": "launch", "impact": 5, "needs": [], "prediction": "board_age_hours <= 30 within 48 h", "reach": 4, "score": 20.0, "slug": "air-quality", "url": "https://air-quality.ultrastable.app"}
-{"at": "2026-11-18T15:56:55Z", "channel": "indexnow", "event": "promote", "slug": "air-quality", "status": 202}
-{"at": "2026-11-18T15:56:55Z", "channel": "indexnow", "event": "promote", "slug": "blindspot", "status": 200}
-{"at": "2026-11-18T15:56:55Z", "channel": "indexnow", "event": "promote", "slug": "numbers-board", "status": 202}
-{"at": "2026-11-18T15:56:55Z", "channel": "indexnow", "event": "promote", "slug": "portfolio-board", "status": 202}
