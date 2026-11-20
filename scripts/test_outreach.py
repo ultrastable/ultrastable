@@ -173,5 +173,46 @@ class Shipped(unittest.TestCase):
             self.assertEqual(seed.read_text(), (REPO / "scripts/outreach.py").read_text())
 
 
+class AgentDirectories(unittest.TestCase):
+    """AGENT-DIRECTORIES-1: every directory has a complete packet; nothing is ready to publish while the gate is dry-run."""
+
+    def setUp(self):
+        import agent_directories as ad
+        self.ad = ad
+        self.tmp = pathlib.Path(tempfile.mkdtemp())
+        (self.tmp / "outreach").mkdir()
+        for f in ("gate.json", "agent-directories.json"):
+            shutil.copy(REPO / "outreach" / f, self.tmp / "outreach" / f)
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_repository_register_is_complete_and_held(self):
+        self.assertEqual(self.ad.check(REPO), [])
+
+    def test_dry_run_holds_every_submission_and_writes_packets(self):
+        rep = self.ad.build(self.tmp)
+        self.assertEqual(rep["published"], 0)
+        self.assertTrue(all(r["status"] in ("held-dry-run", "self-hosted") for r in rep["directories"]), rep)
+        pk = json.loads((self.tmp / "outreach/packets/agent-directories/mcp-registry.json").read_text())
+        self.assertEqual(pk["endpoint"], "https://ultrastable.io/mcp")
+        self.assertEqual(len(list((self.tmp / "outreach/packets/agent-directories").iterdir())), len(rep["directories"]))
+
+    def test_live_gate_never_lets_an_agent_submit_a_form_and_kill_wins(self):
+        g = json.loads((self.tmp / "outreach/gate.json").read_text()); g["mode"] = "live"
+        (self.tmp / "outreach/gate.json").write_text(json.dumps(g))
+        st = {r["id"]: r["status"] for r in self.ad.build(self.tmp)["directories"]}
+        self.assertEqual(st["mcp-registry"], "ready-workflow"); self.assertEqual(st["smithery"], "awaiting-owner"); self.assertEqual(st["awesome-mcp-servers"], "awaiting-owner")
+        g["kill"] = True; (self.tmp / "outreach/gate.json").write_text(json.dumps(g))
+        self.assertNotIn("ready-workflow", [r["status"] for r in self.ad.build(self.tmp)["directories"]])
+
+    def test_a_missing_field_is_named_and_no_packet_is_written(self):
+        reg = json.loads((self.tmp / "outreach/agent-directories.json").read_text()); reg["packet"]["repository"] = ""
+        (self.tmp / "outreach/agent-directories.json").write_text(json.dumps(reg))
+        rows = {r["id"]: r for r in self.ad.build(self.tmp)["directories"]}
+        self.assertEqual(rows["glama"]["status"], "packet-incomplete"); self.assertEqual(rows["glama"]["missing"], ["repository"])
+        self.assertFalse((self.tmp / "outreach/packets/agent-directories/glama.json").exists())
+
+
 if __name__ == "__main__":
     unittest.main()
