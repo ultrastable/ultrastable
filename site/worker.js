@@ -683,7 +683,7 @@ export async function deployIdeaWorker(env, id, fetcher) {
   const html = await env.ASSETS.get("site:" + id); if (!html) return { ok: false, reason: "no-page" };
   const name = workerName(id), api = "https://api.cloudflare.com/client/v4/accounts/" + acct, h = { Authorization: "Bearer " + tok };
   const fd = new FormData();
-  fd.set("metadata", JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04" }));
+  fd.set("metadata", JSON.stringify({ main_module: "worker.js", compatibility_date: "2026-11-04", observability: { enabled: true, head_sampling_rate: 1 } }));
   fd.set("worker.js", new Blob([scaffoldWorker(id, html)], { type: "application/javascript+module" }), "worker.js");
   const up = await f(api + "/workers/scripts/" + name, { method: "PUT", headers: h, body: fd });
   if (!up.ok) return { ok: false, reason: "upload " + up.status + " " + (await up.text()).slice(0, 200) };
