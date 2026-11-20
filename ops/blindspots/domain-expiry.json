@@ -3,19 +3,14 @@
  "at": "2026-11-20",
  "ok": true,
  "soonest": "2027-11-10",
- "auto_renew_off": [
-  "ultrastable.io",
-  "ultrastable.org",
-  "ultrastable.app",
-  "ultrastable.net"
- ],
+ "auto_renew_off": [],
  "domains": [
   {
    "name": "ultrastable.io",
    "expires": "2027-11-10",
    "source": "cloudflare-registrar-api",
    "measured": "2026-11-20",
-   "auto_renew": false,
+   "auto_renew": true,
    "days_left": 355,
    "gate": false
   },
@@ -24,7 +19,7 @@
    "expires": "2027-11-10",
    "source": "cloudflare-registrar-api",
    "measured": "2026-11-20",
-   "auto_renew": false,
+   "auto_renew": true,
    "days_left": 355,
    "gate": false
   },
@@ -33,7 +28,7 @@
    "expires": "2027-11-10",
    "source": "cloudflare-registrar-api",
    "measured": "2026-11-20",
-   "auto_renew": false,
+   "auto_renew": true,
    "days_left": 355,
    "gate": false
   },
@@ -42,7 +37,7 @@
    "expires": "2027-11-10",
    "source": "cloudflare-registrar-api",
    "measured": "2026-11-20",
-   "auto_renew": false,
+   "auto_renew": true,
    "days_left": 355,
    "gate": false
   }

@@ -391,7 +391,7 @@ export default {
   {
    "id": "domain-auto-renew",
    "domain": "continuity",
-   "why": "All four domains are registered until 2027-11-10 with auto-renew off, so they lapse together unless someone pays on time (found by the 2026-11-20 continuity sweep, Cloudflare Registrar API).",
+   "why": "All four domains expire together on 2027-11-10. The 2026-11-20 continuity sweep found auto-renew off on every one; the owner turned it on the same day (Cloudflare Registrar API read back: auto_renew true on all four). If it is ever switched off again the domains lapse unless someone pays on time.",
    "class": "owner-identity"
   },
   {
