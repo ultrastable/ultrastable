@@ -168,6 +168,11 @@ def attempts_last_24h(rows: list[dict], now: float) -> int:
     return n
 
 
+def wakes_last_hour(rows: list[dict], now: float) -> int:
+    """SPARK-IDLE-1: executor workflow runs created in the last hour, whatever they did."""
+    return len([x for x in rows if x.get("createdAt") and _ts(x["createdAt"]) >= now - 3600])
+
+
 def daily_cap(cfg: dict, private: bool | None = None) -> tuple[int, str]:
     """PUBLIC-MINUTES-1: the cap of 4 builder runs a day exists to protect a private repository's Actions quota. Standard runners are free on a
     public repository, so there the cap is max_runs_per_day_public: a repository that went public kept starving its own builder at 4 items a day
@@ -201,7 +206,12 @@ def chain(root=REPO, apply=False, now: float | None = None) -> dict:
     busy = older_unfinished(rows, os.environ.get("GITHUB_RUN_ID"), now)
     if ok and busy:
         ok, why = False, f"an older executor run ({busy[0].get('databaseId')}, {busy[0].get('status')}) is still queued or running; it takes the next item (SPARK-BUSY-1)"
-    res = {"chain": ok, "why": why, "attempts_24h": used, "cap": cap, "visibility": vis}
+    # SPARK-IDLE-1: the cap counts attempts, so a run whose gate refuses (agent PR cap, spend cap) made none and the chain re-woke itself about once a
+    # minute with nothing to do (measured 2026-11-20: 1,149 executor runs in 14 h, "1 of 48 runs used"). Wake-ups are bounded per hour as well.
+    wakes = wakes_last_hour(rows, now)
+    if ok and wakes >= int(cfg.get("max_wakes_per_hour", 6)):
+        ok, why = False, f"{wakes} executor wake-ups in the last hour reached the cap of {int(cfg.get('max_wakes_per_hour', 6))}; the next lane, deploy or cron restarts the clock (SPARK-IDLE-1)"
+    res = {"chain": ok, "why": why, "attempts_24h": used, "cap": cap, "visibility": vis, "wakes_1h": wakes}
     if ok and apply:
         d = subprocess.run(["gh", "workflow", "run", cfg["workflow"] + ".yml", "--repo", GH], capture_output=True, text=True, timeout=60, encoding="utf-8")
         res["dispatched"] = d.returncode == 0

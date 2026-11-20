@@ -117,3 +117,22 @@ test('NATIVE-SUBSTANCE-1: a change that only adds documents or subtask records i
   assert.doesNotThrow(() => substanceGuard([{ path: 'docs/x.md' }], old));                                   // editing a consumed document is a change
   assert.doesNotThrow(() => substanceGuard([{ path: 'docs/x.md' }, { path: 'site/worker.js' }], fresh));     // a document beside code is fine
 });
+
+test('NATIVE-STUB-1: a new file of placeholder bodies, or outside the directories the repository runs, is refused', async () => {
+  const { stubGuard } = await import('../src/nativeexec.js');
+  const fresh = () => true, old = () => false;
+  const stub = 'class ConnectorHealth:\n    def silent_refresh(self):\n        # Implement silent refresh logic here\n        pass\n';
+  assert.throws(() => stubGuard([{ path: 'connector_health.py', content: 'x = 1\n' }], fresh), /outside the directories/);
+  assert.throws(() => stubGuard([{ path: 'foundation/connector_health.py', content: stub }], fresh), /placeholder/);
+  assert.doesNotThrow(() => stubGuard([{ path: 'foundation/connector_health.py', content: 'def expired(now, at):\n    return now > at\n' }], fresh));
+  assert.doesNotThrow(() => stubGuard([{ path: 'connector_health.py', content: stub }], old));   // an existing file is judged by the shrink guard and the checks
+});
+
+test('NATIVE-ONE-PR-1: an item with an open worker PR is not worked again', async () => {
+  const { runDbQueue: run, slugOf } = await import('../src/nativeexec.js');
+  const db = { prepare: () => ({ bind: () => ({ run: async () => ({ meta: { changes: 0 } }), all: async () => ({ results: [{ id: 'ROADMAP-X', title: 't', blocker: 'needs-code: x' }] }) }) }) };
+  let asked = 0;
+  const f = async url => ({ status: 200, ok: true, text: async () => JSON.stringify(url.includes('/pulls?state=open') ? [{ head: { ref: `worker/${slugOf('ROADMAP-X')}-202611200040` } }] : {}) });
+  const r = await run({ ...env, DB: db }, { fetchImpl: f, agent: async () => { asked++; return {}; }, now: 0 });
+  assert.equal(r.idle, true); assert.equal(asked, 0);
+});
