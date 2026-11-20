@@ -67,3 +67,13 @@ test('chatPort reads every Workers AI answer shape', async () => {
   assert.equal(await chatPort({ run: async () => ({ response: 'a' }) }, 'm')({ system: 's', user: 'u' }), 'a');
   assert.equal(await chatPort({ run: async () => ({ choices: [{ message: { content: 'b' } }] }) }, 'm')({ system: 's', user: 'u' }), 'b');
 });
+
+test('DISCOVER-1: a semantic hook finds a page the question shares no words with, and a failing hook changes nothing', async () => {
+  const q = 'How do people stop getting the runs from bad wells?';
+  const none = await answer(q, { index });
+  assert.ok(!none.sources.some(s => s.id === 'wash'));
+  const sem = await answer(q, { index, semantic: async () => [{ id: 'wash', score: 0.81 }, { id: 'bp', score: 0.2 }] });
+  assert.deepEqual(sem.sources.map(s => s.id), ['wash']);
+  const broken = await answer('chlorinating water', { index, semantic: async () => { throw new Error('down'); } });
+  assert.equal(broken.sources[0].id, 'wash');
+});

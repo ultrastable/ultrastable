@@ -16,18 +16,33 @@ export function textOf(out) {
 // A reasoning model can spend its whole budget thinking and return no answer; such a reply is retried once with a larger budget.
 const truncated = out => (out?.choices?.[0]?.finish_reason === 'length') || (out?.usage && !textOf(out));
 
-export function createModelService({ audience, repository, allow = [], defaultModel, path = '/llm', maxPrompt = 40000, maxTokens = 4000, verify = verifyOidc }) {
+// DISCOVER-1: `${path}/embed` turns up to `maxTexts` texts into vectors with an allow-listed embedding model (default the first of `embedAllow`),
+// behind the same OIDC check, so a CI run can keep a system's vector index current without holding a key.
+export const EMBED_ALLOW = ['@cf/baai/bge-small-en-v1.5', '@cf/baai/bge-base-en-v1.5', '@cf/baai/bge-m3'];
+export function createModelService({ audience, repository, allow = [], defaultModel, path = '/llm', maxPrompt = 40000, maxTokens = 4000, verify = verifyOidc, embedAllow = EMBED_ALLOW, maxTexts = 100 }) {
   if (!audience || !repository || !defaultModel) throw new Error('modelservice needs audience, repository and defaultModel');
   return {
     async fetch(request, env) {
       const { pathname } = new URL(request.url);
       if (pathname === '/health') return Response.json({ ok: true, ai: Boolean(env.AI), models: allow.length });
-      if (pathname !== path) return new Response('not found\n', { status: 404 });
+      const embedPath = pathname === path + '/embed';
+      if (pathname !== path && !embedPath) return new Response('not found\n', { status: 404 });
       if (request.method !== 'POST') return new Response('POST only\n', { status: 405 });
       if (!env.AI || !env.AI.run) return Response.json({ error: 'no_ai_binding' }, { status: 503 });
       const v = await verify((request.headers.get('authorization') || '').replace(/^Bearer /, ''), { audience, repository });
       if (!v.ok) return Response.json({ error: 'forbidden', reason: v.reason }, { status: 403 });
       const b = await request.json().catch(() => null);
+      if (embedPath) {
+        const texts = b && Array.isArray(b.texts) ? b.texts : null;
+        if (!texts || !texts.length || texts.length > maxTexts || texts.some(t => typeof t !== 'string' || t.length > 8000)) return Response.json({ error: 'bad_request' }, { status: 400 });
+        const model = embedAllow.includes(b.model) ? b.model : embedAllow[0];
+        try {
+          const out = await env.AI.run(model, { text: texts });
+          const data = out && (out.data || (out.response && out.response.data));
+          if (!Array.isArray(data) || data.length !== texts.length) return Response.json({ error: 'model_error', model, detail: 'no vectors in the reply' }, { status: 502 });
+          return Response.json({ model, dim: data[0].length, vectors: data });
+        } catch (e) { return Response.json({ error: 'model_error', model, detail: String(e?.message || e).slice(0, 300) }, { status: 502 }); }
+      }
       if (!b || typeof b.prompt !== 'string' || b.prompt.length > maxPrompt) return Response.json({ error: 'bad_request' }, { status: 400 });
       const model = allow.includes(b.model) ? b.model : defaultModel;
       const want = Math.min(Number(b.max_tokens) || 600, maxTokens);
