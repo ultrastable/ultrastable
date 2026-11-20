@@ -2871,6 +2871,15 @@
    "title": "SPARK-IDLE-1, NATIVE-STUB-1: a tuned knob broke main, stub PRs held the agent cap, the executor woke itself every minute",
    "body": "test_pm read the live chain.max_runs_per_day, so the product manager's own tune (4 to 5) failed checks on every branch; the fixture now pins its start value. The executor chain counted attempts only, so gated runs re-woke it about once a minute (1,149 runs in 14 h); doctrine/clocks.json chain.max_wakes_per_hour bounds wake-ups. The Worker-native executor opened three stub PRs for one item; stubGuard refuses placeholder files and files outside code roots, and an item with an open worker PR is skipped.",
    "probe": "file:seed/worker/test/nativeexec.test.js"
+  },
+  {
+   "id": "decision-2026-11-20-q-gate-403-the-app-asks-for-statuses-write-an-all-403-gate-i",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Q-GATE-403: the App asks for statuses:write; an all-403 gate is one card",
+   "body": "The GitHub App manifest never requested the statuses permission, so the Worker gate was answered 403 on every pull request. SCOPE_ALLOWLIST now includes statuses: write, checkRepoAccess reports permissions the installation lacks, and runGate returns status forbidden with needs statuses:write, which the tick keeps as the single gate card GATE-APP-PERMISSION (default in effect: the lane merges on local-checks evidence). An App registered before this change needs the owner's one approval of the new permission at /connect/github.",
+   "probe": "grep:seed/worker/src/worker-gate.js::status 403",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
   }
  ]
 }
