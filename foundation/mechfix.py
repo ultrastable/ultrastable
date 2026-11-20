@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """MECH-FIX-1: mechanical findings are fixed by code, not by a model.
 
   python3 -m foundation mechfix [--check] [--fix PATH]
