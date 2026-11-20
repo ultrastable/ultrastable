@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-784",
+  "title": "OL-PR-784: land or supersede pull request #784 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #784 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 784\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #784 (`agent/data-4363880179` at 4363880179, opened by app/ultrastable-209646): deploy-ultrastable: record live-verified deploy [skip ci]. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (3): README.md, ops/deploys.jsonl, site/claims-data.js. Closing probe: pull request #784 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
