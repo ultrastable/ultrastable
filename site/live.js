@@ -81,6 +81,10 @@ fetch('/api/live').then(r=>r.json()).then(d=>{
  table(pg,['Knob','Value'],Object.entries(((pmr.knobs||{}).values)||{}));
  table(pg,['Knob change','Old','New','Why','Reviewed'],(pmr.knob_log||[]).map(k=>[k.knob+' ('+k.at.slice(0,10)+')',k.old,k.new,k.why,k.reviewed||'pending']));
  table(pg,['Filed by the loop'],[].concat(((pmr.filed||{}).growth||[]).map(x=>['growth: '+x]),((pmr.filed||{}).repair||[]).map(x=>['repair: '+x])).concat([['(none this pass)']].slice(0,((pmr.filed||{}).growth||[]).length+((pmr.filed||{}).repair||[]).length?0:1)));
+ const wkr=pmr.weekly||{};if(wkr.metrics){const ws=sec('Growth this week ('+wkr.week+')','Written once a week by the product manager loop: each growth metric against the week before, and the next three experiments with the prediction each must meet to be kept.');
+ table(ws,['Metric','This week','Last week','Change','Target'],wkr.metrics.map(m=>[m.id,m.value==null?'not measured':m.value,m.previous==null?'':m.previous,m.delta_pct==null?'':m.delta_pct+'%',m.target]));
+ table(ws,['Reviewed experiment','Metric','Verdict'],(wkr.verdicts||[]).map(v=>[v.item,v.metric,v.verdict]));
+ table(ws,['Next experiment','Prediction','Closing probe'],(wkr.next_experiments||[]).map(n=>[n.item,n.prediction,n.closing_probe]));}
  const ck=sec('Clocks','Every loop is a clock. Status is measured from its recorded beats, never declared: ticking, late, stopped, or idle when there is no work. A stopped or inaccurate clock is a defect.');
  table(ck,['Clock','Status','Last beat (s ago)','Beats in 24 h (expected)','Median jitter (s)','What it does'],(d.clocks||[]).map(c=>[c.id,c.status+(c.why?' ('+c.why+')':''),c.last_beat_age_s,c.beats_24h==null?'':c.beats_24h+' ('+c.expected_24h+')',c.median_jitter_s,c.what]));
  const tp2=d.topology||{},pt=tp2.parts||{};

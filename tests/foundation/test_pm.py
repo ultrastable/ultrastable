@@ -65,6 +65,26 @@ class Filing(unittest.TestCase):
         self.assertEqual(rep["experiments"][0]["verdict"], "replace")
         self.assertEqual(rep["filed"]["growth"], ["Q-GROW-AGENT-DOCS"])
 
+    def test_weekly_report_once_a_week_with_deltas_and_three_untried_experiments(self):
+        r = temp_root()
+        item(r, "Q-GROW-MARKDOWN-PAGES", status="closed")
+        pm.run(r, apply=True, now=START + 1 * DAY, use_live=False, vals={**OK, "agent_hits_7d": 817}, stage_rows=[])
+        w1 = json.loads((r / "ops/growth/weekly.json").read_text())
+        self.assertEqual(len(w1["next_experiments"]), 3)
+        self.assertNotIn("Q-GROW-MARKDOWN-PAGES", [n["item"] for n in w1["next_experiments"]], "a running experiment is not proposed again")
+        self.assertRegex(w1["next_experiments"][0]["prediction"], r"^\w+ >= \d+ within 168 h$")
+        again = pm.run(r, apply=True, now=START + 1 * DAY + 3600, use_live=False, vals={**OK, "agent_hits_7d": 900}, stage_rows=[])
+        self.assertEqual(again["weekly"]["generated"], w1["generated"], "one report per week")
+        rep = pm.run(r, apply=True, now=START + 9 * DAY, use_live=False, vals={**OK, "agent_hits_7d": 820, "pageviews_7d": 1760}, stage_rows=[])
+        w2 = rep["weekly"]
+        self.assertEqual(w2["previous_week"], w1["week"])
+        self.assertEqual(next(m for m in w2["metrics"] if m["id"] == "pageviews_7d")["delta_pct"], 10.0)
+        self.assertEqual([(v["item"], v["verdict"]) for v in w2["verdicts"]], [("Q-GROW-MARKDOWN-PAGES", "replace")])
+        self.assertNotIn("Q-GROW-MARKDOWN-PAGES", [n["item"] for n in w2["next_experiments"]], "a replaced experiment is replaced, not repeated")
+        r2 = temp_root()
+        un = pm.run(r2, apply=True, now=START + DAY, use_live=False, vals={"growth_share": 0.45, "takeable": 0}, stage_rows=[])
+        self.assertTrue(un["weekly"]["unmeasured"]); self.assertFalse((r2 / "ops/growth/weekly.json").exists())
+
     def test_kept_experiment(self):
         ex = [{"item": "X", "metric": "agent_hits_7d", "baseline": 800, "predicted_pct": 15, "started": "2026-11-12T00:00:00Z", "check_after_days": 7, "verdict": None}]
         self.assertEqual(pm.review_experiments(ex, {"agent_hits_7d": 1000}, START + 8 * DAY)[0]["verdict"], "kept")
