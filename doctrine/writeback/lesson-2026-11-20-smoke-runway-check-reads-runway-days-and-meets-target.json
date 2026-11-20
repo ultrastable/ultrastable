@@ -6,9 +6,9 @@
   "title": "Smoke runway check reads runway_days and meets_target",
   "body": "The production smoke test read a key the runway record never had, so the runway check failed on every run. It now reads runway_days, meets_target, below and unmeasured. land_data starts no checks run on a data branch: a dispatched run does not satisfy the branch rule.",
   "probe": "grep:scripts/smoke_live.py::meets_target",
-  "session": "audit-live-claims"
+  "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
  },
  "kind": "lesson",
  "title": "Smoke runway check reads runway_days and meets_target",
- "session": "audit-live-claims"
+ "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
 }

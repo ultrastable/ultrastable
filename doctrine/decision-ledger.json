@@ -3214,8 +3214,8 @@
    "kind": "lesson",
    "date": "2026-11-20",
    "title": "Data pull requests opened by workflows need checks dispatched",
-   "body": "A PR opened with the workflow token starts no workflows, so the required checks status never appears and the PR stays blocked. scripts/land_data.py now dispatches checks.yml on its agent/data-* branch (workflow_dispatch reports the same job name on the head commit).",
-   "probe": "grep:scripts/land_data.py::checks.yml",
+   "body": "A PR opened with the workflow token starts no workflows, so the required checks status never appears and the PR stays blocked. scripts/land_data.py now dispatches checks.yml on its agent/data-* branch (workflow_dispatch reports the same job name on the head commit). Superseded 2026-11-20: a dispatched checks run does not satisfy the branch rule, so land_data starts none; the ruleset now exempts the app in use (APP-DRIFT-1) and data commits land on main directly.",
+   "probe": "grep:scripts/land_data.py::does not satisfy the branch rule",
    "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
   },
   {
