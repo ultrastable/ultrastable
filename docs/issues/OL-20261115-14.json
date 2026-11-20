@@ -1,7 +1,7 @@
 {
   "id": "OL-20261115-14",
   "title": "OL-20261115-14: workers#181 GAP-BOOTSTRAP-QACCT: bootstrap deploy into the target account",
-  "body": "**Owner:** ROWAN (identity-bound: Cloudflare account access)\n**Trigger:** access granted\n**Done check:** file:org/bootstrap-live-trial.json\n**Status:** open\n\nMoved from ultrastable/workers#181. Code merged in workers#189: the ladder detects account mismatch, sets aside a token for another account, refuses before provisioning, records code account_mismatch. Remaining: a real bootstrap from an empty repo deploying to the target account, which needs access to that account (NEEDS-YOU cloudflare-new-account).",
+  "body": "**Owner:** ROWAN (identity-bound: Cloudflare account access)\n**Trigger:** access granted\n**Done check:** file:org/bootstrap-live-trial.json\n**Status:** closed\n\nMoved from ultrastable/workers#181. Code merged in workers#189: the ladder detects account mismatch, sets aside a token for another account, refuses before provisioning, records code account_mismatch. Remaining: a real bootstrap from an empty repo deploying to the target account, which needs access to that account (NEEDS-YOU cloudflare-new-account).\n\n**Disposition:** gate (owner-bound, 2026-11-20T20:46:50Z, DISPOSE-1)\n\n**Evidence:** owner field 'ROWAN (identity-bound: Cloudflare account access)' binds this to the owner's own account, money or signature, which no server-side loop holds. Default in effect: the system runs without this step; nothing waits on it. Its closing probe still runs on every fleet pass and records `fixed` when it passes.\n",
   "labels": [
     "role:ROWAN (identity-bound: Cloudflare account access)",
     "open-loop"

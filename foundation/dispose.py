@@ -129,7 +129,26 @@ def run(root=REPO, apply=False, now=None, fails=None, born=None, details=None) -
             _write(it, *d, at, c)
     if apply:
         ledger.append(root, LEDGER, out)
+        _prune_pins(root, {r["id"] for r in out})
     return out
+
+
+PINS = "doctrine/pins-baseline.json"
+
+
+def _prune_pins(root, ids: set) -> None:
+    """The pins check keeps a shrink-only list of open items whose done check is prose and fails when a listed item closes (the first live pass broke main on 11 gated
+    roadmap rows). A disposed item leaves that list in the same pass."""
+    p = Path(root) / PINS
+    if not ids or not p.is_file():
+        return
+    j = json.loads(p.read_text(encoding="utf-8"))
+    from . import pins
+    still = {r["id"] for r in pins.unprobed(root)}  # the pins check's own reading of "still open without a probe"
+    keep = [i for i in j.get("unprobed", []) if i not in ids or i in still]
+    if len(keep) != len(j.get("unprobed", [])):
+        j["unprobed"] = keep
+        p.write_text(json.dumps(j, indent=2) + "\n", encoding="utf-8")
 
 
 def revive(root=REPO, now=None, rows=None, born=None) -> list[dict]:
