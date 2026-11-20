@@ -149,7 +149,7 @@ def _reopen(it: dict, why: str) -> None:
 
 def tick(root=REPO, apply=False, now=None, probe=None) -> dict:
     """One pass: every open item is verified; closed items are re-probed for relapse within the per-pass command budget."""
-    from . import queue
+    from . import queue, dispose
     root, now, c = Path(root), _now(now), cfg(root)
     probe = probe or (lambda spec: run_probe(root, spec))
     st, at = state(ledger.rows(root, LEDGER)), _iso(now)
@@ -160,6 +160,7 @@ def tick(root=REPO, apply=False, now=None, probe=None) -> dict:
         iid = str(it["id"])
         s = dict(st.get(iid) or FRESH)
         is_closed = it["status"] in CLOSED
+        disposed = bool(re.search(r"^\*\*Disposition:\*\*\s*(gate|shelved)\b", it["json"].get("body", ""), re.M))
         if is_closed and it["probe"].startswith("cmd:"):
             if cmd_budget <= 0:
                 continue
@@ -177,6 +178,14 @@ def tick(root=REPO, apply=False, now=None, probe=None) -> dict:
                 _mark_vacuous(it, f"{at} {why}; rewrite the probe so it fails while the defect exists")
             elif ok is True and apply:
                 _close(it, f"closing probe passed ({why}): {ev}")
+        elif is_closed and disposed and verdict in ("pass", "fail"):
+            # DISPOSE-1: an item closed by rule (gate, shelved) was never fixed, so a failing probe is its recorded state, not a relapse; a pass is the fix arriving.
+            if verdict == "pass":
+                row["action"], row["why"] = "fulfilled", "disposed item's closing probe passes: disposition becomes fixed"
+                if apply:
+                    dispose.mark_fixed(it, f"{at} closing probe passed after the item was disposed: {ev}")
+            else:
+                row["action"], row["why"] = "disposed", "closed by rule (DISPOSE-1); the probe still fails and is checked again next pass"
         elif is_closed and verdict == "fail":
             if s["seen_pass"]:
                 row["action"], row["why"] = "reopen", f"relapse: probe failed after it had passed (reopen {s['reopens'] + 1})"

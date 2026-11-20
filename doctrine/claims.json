@@ -2442,6 +2442,19 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-8816153851",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Nothing sits in the queue; every item gets a coded disposition (DISPOSE-1, Rowan 2026-11-20).** \"I don't want stuff sitting in the",
+      "probe": [
+        "file:doctrine/dispose.json",
+        "file:foundation/queue.py",
+        "file:foundation/agents.py",
+        "file:foundation/dispose.py",
+        "file:tests/foundation/test_dispose.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-edb8a8bb30",
       "surface": "agents/AGENTS.md",
       "text": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
@@ -3178,6 +3191,20 @@
       ],
       "bound_by": "mirror",
       "of": "cited-2fa0797f0e"
+    },
+    {
+      "id": "mirror-b80b41fca5",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Nothing sits in the queue; every item gets a coded disposition (DISPOSE-1, Rowan 2026-11-20).** \"I don't want stuff sitting in the",
+      "probe": [
+        "file:doctrine/dispose.json",
+        "file:foundation/queue.py",
+        "file:foundation/agents.py",
+        "file:foundation/dispose.py",
+        "file:tests/foundation/test_dispose.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-8816153851"
     },
     {
       "id": "mirror-5960ed9b31",
