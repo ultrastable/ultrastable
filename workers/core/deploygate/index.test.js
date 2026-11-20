@@ -14,15 +14,15 @@ async function token(over = {}, key = kp.privateKey) {
   const sig = Buffer.from(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(h + '.' + p))).toString('base64url');
   return h + '.' + p + '.' + sig;
 }
-function setup({ cfOk = true, readBack = true, readStatus = 200, multipart = false, rule = {} } = {}) {
+function setup({ cfOk = true, readBack = true, readBackLag = 0, readStatus = 200, multipart = false, rule = {} } = {}) {
   const calls = [];
   const fetch = async (u, init = {}) => {
     calls.push({ u: String(u), method: init.method || 'GET', body: init.body });
     if (String(u).endsWith('/.well-known/jwks')) return new Response(JSON.stringify({ keys: [jwk] }));
-    if (String(u).endsWith('/content/v2')) return new Response(!readBack ? 'other' : multipart ? '--b\r\nContent-Disposition: form-data; name="worker.js"\r\n\r\nBUNDLE\r\n--b--\r\n' : 'BUNDLE', { status: readStatus });
+    if (String(u).endsWith('/content/v2')) return new Response(!readBack || (readBackLag && readBackLag-- > 0) ? 'other' : multipart ? '--b\r\nContent-Disposition: form-data; name="worker.js"\r\n\r\nBUNDLE\r\n--b--\r\n' : 'BUNDLE', { status: readStatus });
     return new Response(JSON.stringify({ success: cfOk, errors: [] }), { status: cfOk ? 200 : 400 });
   };
-  const gate = createGate({ fetch, now: () => NOW, config: { rules: [{ repo: 'org/app', refs: ['refs/heads/main'], script: 'app-web', ...rule }], accountId: 'acct', token: 't' } });
+  const gate = createGate({ fetch, now: () => NOW, config: { rules: [{ repo: 'org/app', refs: ['refs/heads/main'], script: 'app-web', ...rule }], accountId: 'acct', token: 't', readback_waits_ms: [0, 1, 1] } });
   return { gate, calls };
 }
 async function post(gate, tok, script = 'app-web') {
@@ -55,6 +55,8 @@ test('another repo, another ref or another script is forbidden', async () => {
 test('a failed upload or a read-back mismatch is an error, never reported as deployed', async () => {
   assert.equal((await post(setup({ cfOk: false }).gate, await token())).status, 502);
   assert.equal((await post(setup({ readBack: false }).gate, await token())).status, 502);
+  // a stale read that catches up is retried, not called a mismatch
+  assert.equal((await post(setup({ readBackLag: 1 }).gate, await token())).status, 200);
 });
 test('read-back: a multipart copy verifies; a read the token cannot make is deployed but unverified, never a mismatch', async () => {
   const ok = await post(setup({ multipart: true }).gate, await token());

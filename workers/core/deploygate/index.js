@@ -101,10 +101,16 @@ export function createGate({ fetch = globalThis.fetch, now = Date.now, config })
     const sha256 = await hex(text);
     // Read-back (DEPLOYGATE-READBACK-1): compare the stored module by hash. A read the token cannot make is reported, not called a mismatch:
     // the upload already succeeded, and the caller's own live check is the independent verification.
-    const rb = await fetch(base + '/content/v2', { headers: auth });
-    if (!rb.ok) return json({ deployed: true, verified: false, readback_status: rb.status, script, sha256, sha: claims.sha, run: claims.run_id });
-    const back = await rb.text();
-    if (!back.includes(text) && await hex(modulePart(back)) !== sha256) return json({ error: 'read-back mismatch', sha256 }, 502);
+    // DEPLOYGATE-READBACK-RETRY-1: the stored module can lag the upload for a moment, so a mismatch is read again after a short wait before it is called one.
+    const waits = config.readback_waits_ms || [0, 1500, 3000, 6000];
+    for (let i = 0; i < waits.length; i++) {
+      if (waits[i]) await new Promise(r => setTimeout(r, waits[i]));
+      const rb = await fetch(base + '/content/v2', { headers: auth });
+      if (!rb.ok) return json({ deployed: true, verified: false, readback_status: rb.status, script, sha256, sha: claims.sha, run: claims.run_id });
+      const back = await rb.text();
+      if (back.includes(text) || await hex(modulePart(back)) === sha256) break;
+      if (i === waits.length - 1) return json({ error: 'read-back mismatch', sha256 }, 502);
+    }
     return json({ deployed: true, verified: true, script, sha256, sha: claims.sha, run: claims.run_id });
   }
   return { handle };
