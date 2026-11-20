@@ -29,10 +29,22 @@
     {
      "s": "Cloudflare API registrar PUT name_servers on quniverse (2026-11-20 09:00Z scheduled retry)",
      "result": "403 code 10000 Name server update not allowed; domain still locked=true"
+    },
+    {
+     "s": "Cloudflare API, 2026-11-20 15:30Z, after Rowan's 'move all the domains, just do it'",
+     "result": "zones ultrastable.io, .app and .org created as pending in the ultrastable account (ultrastable.net already was); every editable DNS record copied; DNSSEC disabled and no zone hold on all four source zones, so each precondition of the registrar move is met"
+    },
+    {
+     "s": "Cloudflare API spec, registrar endpoints",
+     "result": "no endpoint moves a Cloudflare Registrar registration between accounts; Cloudflare's documentation gives the Configuration tab of Manage Domain in the losing account plus an email approval by the gaining account"
+    },
+    {
+     "s": "registrar read 2026-11-20",
+     "result": "all four locked=true, clienttransferprohibited, expire 2027-11-10 with auto_renew true"
     }
    ],
-   "reason": "registrar lock; the 2026-11-20 end date is unconfirmed (registered 2026-11-10, a 60-day new-registration lock would end 2027-01-09). Moving the zone by deleting it in quniverse is a different, riskier act than the approved nameserver switch and is not taken without a new yes",
-   "default": "zone stays served from quniverse; the daily single-account pass retries the approved switch",
+   "reason": "the registrar move between two Cloudflare accounts exists only as a dashboard action with an email approval; everything the API can do is done",
+   "default": "the four sites keep being served from the old account, registrations auto-renew until 2027-11-10, and the pending zones in the ultrastable account activate by themselves once the registrar move is approved",
    "probe": "cmd:python3 -m foundation singleaccount --check"
   },
   {
@@ -184,6 +196,10 @@
     {
      "s": "python3 -m foundation triggers --install",
      "result": "not run: it mints and stores a new webhook secret, which widens credentials and needs a specific owner yes under the platform security check"
+    },
+    {
+     "s": "tick Worker credentials table, 2026-11-20 15:30Z",
+     "result": "github-app ultrastable-209646 status ok and github-admin ultrastable-admin-02087e installed: GitHub is connected, the app's own webhook posts to /hook/github, and no further connect click is needed (ops/connections/github-apps.json)"
     }
    ],
    "reason": "each needs write access or a credential this session does not hold and may not mint; the registrar lock is recorded in gate net-nameserver-switch",
