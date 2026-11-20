@@ -1,5 +1,6 @@
 // ULTRASTABLE-SITE-1: host routing, pages, design lint and fail-soft proof.
 import { readFileSync } from "node:fs";
+import { falsePrecision } from "../workers/core/format/index.js";
 import assert from "node:assert/strict";
 import { pathToFileURL, fileURLToPath } from "node:url";
 const mod = (await import(pathToFileURL(fileURLToPath(new URL("./worker.js", import.meta.url))).href)).default;
@@ -87,6 +88,7 @@ r = await get("https://www.ultrastable.io/how"); assert.equal(r.headers.get("loc
 for (const p of ["/", "/engineers", "/dashboard", "/roadmap", "/how", "/showcase", "/pilot", "/product", "/team", "/org", "/faq", "/contact"]) {
   r = await get("https://ultrastable.io" + p); assert.equal(r.status, 200, p);
   const h = await r.text(); assert.match(h, /<body/); assert.match(h, /rel="canonical"/);
+  assert.equal(falsePrecision(h), null, p + " shows false precision (NUMFMT-1): " + JSON.stringify(falsePrecision(h)));
   assert.ok(((h.replace(/<style>[\s\S]*?<\/style>/, "")).match(/class="btn btn-primary"/g) || []).length <= 1, p + " has at most one primary action");
 }
 r = await get("https://ultrastable.io/proof"); assert.equal(r.status, 301); assert.equal(r.headers.get("location"), "https://ultrastable.io/live", "PROOF-OWN-1");
