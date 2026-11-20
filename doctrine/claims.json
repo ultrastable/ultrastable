@@ -2414,16 +2414,16 @@
       "bound_by": "cited"
     },
     {
-      "id": "cited-2fa0797f0e",
+      "id": "cited-820fd3039a",
       "surface": "agents/AGENTS.md",
-      "text": "- **A year unattended, measured (RUNWAY-1, Rowan 2026-11-20).** \"The system shall be able to run entirely unattended for 1 year with zero",
+      "text": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
       "probe": [
-        "file:doctrine/runway.json",
-        "file:foundation/credwatch.py",
-        "file:ops/cost.jsonl",
-        "file:foundation/redmain.py",
-        "file:doctrine/blindspots.json",
-        "file:tests/foundation/test_runway.py"
+        "file:instances/ultrastable/progress.json",
+        "file:seed/worker/src/progress.js",
+        "file:seed/worker/test/progress.test.js",
+        "file:site/progress.test.mjs",
+        "file:tests/foundation/test_progress.py",
+        "file:foundation/progress.py"
       ],
       "bound_by": "cited"
     },
@@ -3124,19 +3124,19 @@
       "of": "cited-e7cebff4c4"
     },
     {
-      "id": "mirror-708c563ce5",
+      "id": "mirror-eed3f734df",
       "surface": "seed/agents/AGENTS.md",
-      "text": "- **A year unattended, measured (RUNWAY-1, Rowan 2026-11-20).** \"The system shall be able to run entirely unattended for 1 year with zero",
+      "text": "- **Visible progress at every visit, for six months with no input (PROGRESS-1, Rowan 2026-11-20).** \"I'm going away for 6 months. I'm not",
       "probe": [
-        "file:doctrine/runway.json",
-        "file:foundation/credwatch.py",
-        "file:ops/cost.jsonl",
-        "file:foundation/redmain.py",
-        "file:doctrine/blindspots.json",
-        "file:tests/foundation/test_runway.py"
+        "file:instances/ultrastable/progress.json",
+        "file:seed/worker/src/progress.js",
+        "file:seed/worker/test/progress.test.js",
+        "file:site/progress.test.mjs",
+        "file:tests/foundation/test_progress.py",
+        "file:foundation/progress.py"
       ],
       "bound_by": "mirror",
-      "of": "cited-2fa0797f0e"
+      "of": "cited-820fd3039a"
     },
     {
       "id": "mirror-5960ed9b31",

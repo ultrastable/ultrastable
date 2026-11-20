@@ -225,6 +225,10 @@
       "class": "core",
       "role": "capability packs and the outbound guard"
     },
+    "core/progress": {
+      "class": "core",
+      "role": "Visible progress from shipped changes only: digests, release cadence judgement, Atom feed and a last-visit marker kept in the reader's browser (PROGRESS-1)"
+    },
     "core/plus": {
       "class": "core",
       "role": "the plus loop"

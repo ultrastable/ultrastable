@@ -1,0 +1,2 @@
+-- PROGRESS-1: the judged release cadence of every system, one row per system, rewritten by the tick step `progress`.
+CREATE TABLE IF NOT EXISTS progress_cadence (system TEXT PRIMARY KEY, name TEXT NOT NULL, repo TEXT NOT NULL, url TEXT, state TEXT NOT NULL, last_at TEXT, hours_since REAL, expect_hours REAL NOT NULL, shipped_24h INTEGER NOT NULL DEFAULT 0, shipped_7d INTEGER NOT NULL DEFAULT 0, refreshed_at TEXT, heal TEXT, healed_at TEXT, checked_at TEXT NOT NULL);
