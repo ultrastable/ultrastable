@@ -1,0 +1,68 @@
+{
+ "slug": "free-tier-meter",
+ "name": "Free-Tier Meter",
+ "tagline": "How much of Cloudflare's free plan does a whole autonomous system use today? Live, from the loop that spends it.",
+ "archetype": "status-board",
+ "status": "live",
+ "launched": "2026-11-19T16:00:14Z",
+ "need_ids": [],
+ "reach": 4,
+ "impact": 3,
+ "score": 13.85,
+ "checks": [],
+ "idea": "free-tier-meter",
+ "fact": {
+  "path": "ops/free-tier.json",
+  "kind": "json",
+  "rows": [
+   {
+    "label": "Governor level",
+    "ptr": "level"
+   },
+   {
+    "label": "D1 rows read today",
+    "ptr": "resources.d1_rows_read.used",
+    "of": "resources.d1_rows_read.limit"
+   },
+   {
+    "label": "D1 rows written today",
+    "ptr": "resources.d1_rows_written.used",
+    "of": "resources.d1_rows_written.limit"
+   },
+   {
+    "label": "Workers requests today",
+    "ptr": "resources.workers_requests.used",
+    "of": "resources.workers_requests.limit"
+   },
+   {
+    "label": "AI neurons today",
+    "ptr": "resources.ai_neurons.used",
+    "of": "resources.ai_neurons.limit"
+   }
+  ]
+ },
+ "live": null,
+ "showcase": true,
+ "cost": {
+  "d1_rows_read": 0,
+  "d1_rows_written": 0,
+  "workers_requests": 3000,
+  "ai_neurons": 0
+ },
+ "metrics": {
+  "reach": [
+   "board_age_hours"
+  ],
+  "impact": [],
+  "guard": [
+   "error_share"
+  ],
+  "targets": {
+   "board_age_hours": 30
+  },
+  "showcase": true,
+  "value": "a showcase board is kept while its facts stay fresh and its cost inside the headroom",
+  "prediction": "board_age_hours <= 30 within 48 h",
+  "input": "none"
+ }
+}
