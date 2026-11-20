@@ -5,7 +5,7 @@ any listed file that lacks it or states a contradiction, and on a missing memory
 and the new-system generator, so prose never drifts from code.
 """
 from __future__ import annotations
-import fnmatch, json, re, subprocess
+import json, re, subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent

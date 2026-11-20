@@ -144,7 +144,7 @@ test('a breached D1 budget skips the non-essential steps, records the breach and
   assert.deepEqual(r.errors, []);
   assert.equal(db.raw.prepare('SELECT COUNT(*) n FROM claims').get().n, 0, 'dispatch was skipped');
   assert.equal(db.raw.prepare('SELECT COUNT(*) n FROM dispatches').get().n, 0);
-  assert.match(r.report, /cost breach: org read 500000 rows\/h > 120000; skipped non-essential steps \(reap_claims, probe_gates/);
+  assert.match(r.report, /cost breach: org read 500000 rows\/h > 120000; skipped non-essential steps \(reap_claims, connector_health, probe_gates/);
   assert.equal(db.raw.prepare("SELECT status FROM items WHERE id='A'").get().status, 'ready', 'reconcile still ran');
   const breach = JSON.parse(db.raw.prepare("SELECT value FROM org WHERE key='cost_breach'").get().value);
   assert.equal(breach.breaches[0].target, 'org');
@@ -157,4 +157,30 @@ test('a breached D1 budget skips the non-essential steps, records the breach and
   const r2 = await runTick(db, { config: cfg, now: T1 });
   assert.doesNotMatch(r2.report, /cost breach/);
   assert.ok(db.raw.prepare('SELECT COUNT(*) n FROM dispatches').get().n >= 1, 'dispatch resumed');
+});
+
+// CONNECTOR-HEALTH-1
+test('connector health: last_ok and expires_at each tick; two failed refreshes raise one reconnect card that closes when the connector is ok', async () => {
+  const { ensureSchema } = await import('../src/auth/store.js');
+  const db = makeDb(); seed(db); await ensureSchema(db);
+  const now = Date.parse('2026-11-20T12:00:00Z'), env = { PUBLIC_ORIGIN: 'https://example.test/' };
+  await db.prepare("INSERT INTO credentials (tenant, provider, status, expires_at) VALUES ('t', 'google', 'ok', '2026-11-20T18:00:00Z'), ('t', 'github-app', 'failed', NULL)").run();
+  await db.prepare("INSERT INTO credential_events (at, tenant, provider, event) VALUES ('2026-11-20T11:00:00Z', 't', 'google', 'refreshed'), ('2026-11-20T10:00:00Z', 't', 'github-app', 'minted'), ('2026-11-20T11:40:00Z', 't', 'github-app', 'failed')").run();
+  const { STEPS } = await import('../src/tick.js');
+  const ctx = () => ({ nowIso: new Date(now).toISOString(), env, config: { org_slug: 't' }, notes: [] });
+  let c = ctx(); await STEPS.connector_health(db, c);
+  assert.deepEqual(c.connectors.find(x => x.provider === 'google'), { provider: 'google', status: 'ok', last_ok: '2026-11-20T11:00:00Z', expires_at: '2026-11-20T18:00:00Z', expires_in_h: 6, failures: 0 });
+  const cards = async () => (await db.prepare("SELECT id, status, prepared_by_fleet, closing_probe FROM gate_cards WHERE id LIKE 'GATE-RECONNECT-%'").all()).results;
+  assert.equal((await cards()).length, 0, 'one failure is not a card');
+  await db.prepare("INSERT INTO credential_events (at, tenant, provider, event) VALUES ('2026-11-20T11:50:00Z', 't', 'github-app', 'failed')").run();
+  c = ctx(); await STEPS.connector_health(db, c); await STEPS.connector_health(db, ctx());
+  const open = await cards();
+  assert.equal(open.length, 1, 'one card, however many ticks see the failure');
+  assert.equal(open[0].prepared_by_fleet, 'https://example.test/connect/github');
+  assert.equal(c.connectors.find(x => x.provider === 'github-app').last_ok, '2026-11-20T10:00:00Z');
+  c = ctx(); await STEPS.probe_gates(db, c);
+  assert.equal((await cards())[0].status, 'open');
+  await db.prepare("UPDATE credentials SET status = 'ok' WHERE provider = 'github-app'").run();
+  await STEPS.probe_gates(db, ctx());
+  assert.equal((await cards())[0].status, 'closed');
 });

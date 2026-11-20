@@ -1,0 +1,11 @@
+{
+  "id": "NC-FILED-ORIGIN-generic-2026-11-14-t518",
+  "title": "NC-FILED-ORIGIN-generic-2026-11-14-t518: Add pre-deploy D1 schema migration dry-run check to CI to prevent failed verified deploys",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item FILED-ORIGIN-generic-2026-11-14-t518 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe FILED-ORIGIN-generic-2026-11-14-t518\n**Status:** open\n\nAdd pre-deploy D1 schema migration dry-run check to CI to prevent failed verified deploys\n\nBacklog done check: CI job 'd1-migrate-dry-run' runs `wrangler d1 migrations apply DB --local` against a copy of prod schema on every PR; a PR with a breaking/failed migration is blocked from merge, demonstrated by a seeded failing test PR.\n\nTriage: Requires adding a CI workflow/job (code/config change) and a seeded test PR; the in-Worker doer cannot edit code or trigger CI. | first step: Queue an engineering task to add the 'd1-migrate-dry-run' job to CI workflow running wrangler d1 migrations apply DB --local on PRs, plus a seeded fai\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}
