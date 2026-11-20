@@ -668,8 +668,6 @@
 {"at":"2026-11-20T14:21:12.595Z","worker":"ultrastable-tick","uploaded":true,"live_matches_commit":true,"version":"6e37a2bcd2904f3c9fce5c0a04e88b15","route":"oidc","account":"81e3a4efb4eb66e613529b87682911bb","sha":"69a16ad70039f3cd9b2181705457027e7549dffd"}
 {"at":"2026-11-20T14:21:12.595Z","worker":"ultrastable-site","uploaded":true,"live_matches_commit":true,"version":"898b33c108f84d39ba89f0cb62327239","route":"oidc","account":"81e3a4efb4eb66e613529b87682911bb","sha":"69a16ad70039f3cd9b2181705457027e7549dffd"}
 {"at":"2026-11-20T14:21:12.595Z","worker":"ultrastable-tenants","uploaded":true,"live_matches_commit":true,"version":"b8c7394edd7b4ad49a2e32dc104f1c93","route":"oidc","account":"81e3a4efb4eb66e613529b87682911bb","sha":"69a16ad70039f3cd9b2181705457027e7549dffd"}
-<<<<<<< HEAD
-=======
 {"at":"2026-11-20T14:47:04.423Z","worker":"ultrastable-agents","uploaded":true,"live_matches_commit":true,"version":"03736c892bb3462f92dd8d92cde575cd","route":"oidc","account":"81e3a4efb4eb66e613529b87682911bb","sha":"789d1254e072c453a461fb3740e006c6b4329814"}
 {"at":"2026-11-20T14:47:04.423Z","worker":"ultrastable-dashboard","uploaded":true,"live_matches_commit":true,"version":"5f6e59bc0db7459582cd3110ec5fc1cb","route":"oidc","account":"81e3a4efb4eb66e613529b87682911bb","sha":"789d1254e072c453a461fb3740e006c6b4329814"}
 {"at":"2026-11-20T14:47:04.423Z","worker":"ultrastable-tick","uploaded":true,"live_matches_commit":true,"version":"429fbe63a9fa419f8ae394f6efa17bf6","route":"oidc","account":"81e3a4efb4eb66e613529b87682911bb","sha":"789d1254e072c453a461fb3740e006c6b4329814"}
@@ -680,4 +678,3 @@
 {"at":"2026-11-20T14:54:53.255Z","worker":"ultrastable-tick","uploaded":true,"live_matches_commit":true,"version":"e19730430e3441459b08ab9911e37f99","route":"oidc","account":"81e3a4efb4eb66e613529b87682911bb","sha":"191806774d8a7bed5003011886e5e3519646c353"}
 {"at":"2026-11-20T14:54:53.255Z","worker":"ultrastable-site","uploaded":true,"live_matches_commit":true,"version":"978e07deb3b24d7db18bdb0a50a26ccc","route":"oidc","account":"81e3a4efb4eb66e613529b87682911bb","sha":"191806774d8a7bed5003011886e5e3519646c353"}
 {"at":"2026-11-20T14:54:53.255Z","worker":"ultrastable-tenants","uploaded":true,"live_matches_commit":true,"version":"41f463d5dcf94ef19a62760c74f9e0bc","route":"oidc","account":"81e3a4efb4eb66e613529b87682911bb","sha":"191806774d8a7bed5003011886e5e3519646c353"}
->>>>>>> origin/main
