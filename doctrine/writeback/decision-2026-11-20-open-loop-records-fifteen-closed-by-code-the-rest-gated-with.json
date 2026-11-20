@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-open-loop-records-fifteen-closed-by-code-the-rest-gated-with",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "Open-loop records: fifteen closed by code, the rest gated with a default",
+  "body": "OL records are closed only when their done check passes on real code. Records that need the owner's accounts, a credential, or a run that has not happened are gates in doctrine/open-loops.json with surfaces, reason, default and probe; a done check that could never match (a directory path, a stale symbol) is corrected to the code that does the work.",
+  "probe": "file:doctrine/open-loops.json",
+  "session": "session_0156nqDvQD9uwY4HBSxwUiAQ"
+ },
+ "kind": "decision",
+ "title": "Open-loop records: fifteen closed by code, the rest gated with a default",
+ "session": "session_0156nqDvQD9uwY4HBSxwUiAQ"
+}

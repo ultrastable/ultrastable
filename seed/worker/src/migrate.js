@@ -14,6 +14,7 @@ async function sha256(text) {
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
 const ADD_COLUMN = /^ALTER\s+TABLE\s+\S+\s+ADD\s+COLUMN\b/i;
+const ATOMIC = /^\s*--\s*atomic:/i;
 // Statements end at a line ending in ';' (a trigger body's inner ';' lines do not end it: it ends at its END;).
 function statements(sql) {
   const out = []; let cur = [], trig = false;
@@ -35,7 +36,10 @@ export async function migrateStep(db, ctx, migrations, ensureItem) {
     const h = await sha256(m.sql);
     if (ledger.has(m.file)) { if (ledger.get(m.file) !== h) drift.push(m.file); continue; }
     try {
-      for (const s of statements(m.sql)) {
+      // MIGRATE-ATOMIC-1 (0027): a file whose first line starts with `-- atomic:` is a table rebuild (copy, drop, rename). Run statement by statement, a failure between
+      // the drop and the rename would leave no table; D1's batch is one transaction, so the file applies whole or not at all and a retry starts from the old state.
+      if (ATOMIC.test(m.sql)) await db.batch(statements(m.sql).map(s => db.prepare(s)));
+      else for (const s of statements(m.sql)) {
         // Q-TENANT-row-isolation: SQLite has no ADD COLUMN IF NOT EXISTS. A column that is already there (a partly applied file, or the other runner got there first) is the state the
         // statement asks for, so it is skipped; any other error still fails the file. Every other statement kind is already idempotent (IF NOT EXISTS).
         try { await run(db, s); }

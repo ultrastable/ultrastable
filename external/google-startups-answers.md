@@ -1,6 +1,6 @@
 # Google for Startups Cloud Program: answers (SAFE NOW)
 
-Tier to apply for now: **Start** (up to $2,000). The **Scale AI** tier needs an institutional round and is for later. Verify current terms on cloud.google.com/startup before submitting. Prerequisites the owner must have first: company entity and domain email, live public site, Google Cloud billing account owned by a company-domain user, and no paid Google Workspace on the domain in the previous 31 days.
+Tier to apply for now: **Start** (up to $2,000). The **Scale AI** tier needs an institutional round and is for later. Verify current terms on cloud.google.com/startup before submitting. Prerequisites the programme sets: company entity and domain email, live public site, Google Cloud billing account owned by a company-domain user, and no paid Google Workspace on the domain in the previous 31 days.
 
 | Question | Answer |
 |---|---|

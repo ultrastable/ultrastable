@@ -286,9 +286,9 @@ export const STEPS = {
       const rung = cur ? cur.rung : ctx.config.policy.surfaces[r.surface]?.start_rung || 'observed';
       await run(db, `INSERT INTO trust_ledger (surface, action_class, rung, reliability, outcomes, updated_at)
           VALUES (?, ?, ?, ?, ?, ?)
-          ON CONFLICT(surface, action_class) DO UPDATE SET reliability=excluded.reliability, outcomes=excluded.outcomes, updated_at=excluded.updated_at
-          WHERE trust_ledger.tenant_id IS NULL OR trust_ledger.tenant_id = ?`,  // the primary key cannot carry the tenant (additive migration): a row of another tenant at this key is never overwritten
-        r.surface, r.action_class, rung, rel, r.n, ctx.nowIso, tenantOf(ctx));
+          ON CONFLICT(COALESCE(tenant_id, ''), surface, action_class) DO UPDATE SET reliability=excluded.reliability, outcomes=excluded.outcomes, updated_at=excluded.updated_at`,
+        // migration 0027: the key carries the tenant, so this own row (tenant_id NULL) never meets a row of another tenant at the same surface and action class; both accrue
+        r.surface, r.action_class, rung, rel, r.n, ctx.nowIso);
       const idx = ladder.rungs.indexOf(rung);
       const maxPerm = ctx.config.policy.surfaces[r.surface]?.max_permission || 'none';
       const ceilingIdx = ladder.rungs.indexOf(ladder.ceiling_by_max_permission[maxPerm] || 'observed');
