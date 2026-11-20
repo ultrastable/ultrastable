@@ -210,6 +210,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["topology"]:
         from . import topology
         return topology.main(_av[1:])
+    if _av[:1] == ["mechfix"]:
+        from . import mechfix
+        return mechfix.main(_av[1:])
     if _av[:1] == ["selfcode"]:
         from . import selfcode
         return selfcode.main(_av[1:])
