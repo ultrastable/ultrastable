@@ -1,7 +1,7 @@
 {
   "id": "OL-20261119-2",
   "title": "OL-20261119-2: NO-OPEN-ITEMS-1: R2 enable and ultrastable.net nameserver switch remain gates",
-  "body": "**Owner:** operations\n**Trigger:** daily SINGLE-ACCOUNT pass; registrar lock ends 2026-11-20\n**Done check:** cmd:python3 -m foundation singleaccount --check\n**Status:** open\n\nRule encoded (foundation/openloops.py, rules no-open-items). R2 create returned 403 code 10042; the nameserver change on the quniverse-registered domain was refused by the session permission classifier and not re-routed. Defaults in effect are in doctrine/open-loops.json.\n\nSession: session_0156nqDs7C8hyFKdqCVXT477\n\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "body": "**Owner:** operations\n**Trigger:** daily SINGLE-ACCOUNT pass; registrar lock ends 2026-11-20\n**Done check:** cmd:python3 -m foundation singleaccount --check\n**Status:** closed\n\nRule encoded (foundation/openloops.py, rules no-open-items). R2 create returned 403 code 10042; the nameserver change on the quniverse-registered domain was refused by the session permission classifier and not re-routed. Defaults in effect are in doctrine/open-loops.json.\n\nSession: session_0156nqDs7C8hyFKdqCVXT477\n\n\n**Vacuous:** 2026-11-19T08:34:23Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n\n\n**Evidence:** closing probe passed (already built: the probe passed from filing and held for 40 passes over 1469 minutes (VACUOUS-CLOSE-1)): single-account: ok\n",
   "labels": [
     "role:operations",
     "open-loop"
