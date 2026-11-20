@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-the-main-rule-exempted-an-app-that-no-longer-writes-to-main-",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "The main rule exempted an app that no longer writes to main (APP-DRIFT-1)",
+  "body": "The ruleset on main named app 5806148 as its only bypass actor; the tick Worker writes with a newer app, so GitHub answered 422 to every workflow data commit and runway, credential and backup readings never reached main. The resolver in seed/worker/src/auth/rulesets.js now re-applies the rule whenever the applied row does not name the app in use. Data pull requests are capped at three open (DATA-PR-CAP-1) after the refusal produced 14 in ten minutes.",
+  "probe": "grep:seed/worker/src/auth/rulesets.js::APP-DRIFT-1",
+  "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+ },
+ "kind": "lesson",
+ "title": "The main rule exempted an app that no longer writes to main (APP-DRIFT-1)",
+ "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+}
