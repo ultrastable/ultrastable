@@ -57,12 +57,17 @@ test('MAIN-WRITER-PR-1: a ruleset refusal (422 that is not a moved main) lands t
     if (u.endsWith('/git/trees')) return J({ sha: 'T1' });
     if (u.endsWith('/git/commits')) return J({ sha: 'C1234567890' });
     if (m === 'PATCH') return J({ message: 'Changes must be made through a pull request.' }, 422);
+    if (u.includes('/pulls?state=open')) return J(f.open || []);
     if (u.endsWith('/git/refs')) return J({}, 201);
     if (u.endsWith('/pulls')) return J({ number: 7 }, 201);
     return J({}, 500);
   };
   const r = await commitToMain({ token: 't', repo: 'r/r', body: { message: 'ledger', files: [{ path: 'ops/a.json', content: b64('x') }] }, fetch: f });
   assert.deepEqual([r.ok, r.mode, r.pr, r.branch], [true, 'pull_request', 7, 'agent/data-C123456789']);
+  f.open = [1, 2, 3].map(i => ({ head: { ref: 'agent/data-' + i } }));
+  const capped = await commitToMain({ token: 't', repo: 'r/r', body: { message: 'ledger', files: [{ path: 'ops/a.json', content: b64('x') }] }, fetch: f });
+  assert.deepEqual([capped.ok, capped.status], [false, 503]); assert.match(capped.error, /3 data pull requests are already open/);
+  f.open = [];
   const g = async (url, o = {}) => (String(url).endsWith('/git/refs') || String(url).endsWith('/pulls')) ? { ok: false, status: 500, json: async () => ({}) } : f(url, o);
   assert.equal((await commitToMain({ token: 't', repo: 'r/r', body: { message: 'x', files: [{ path: 'ops/a.json', content: b64('x') }] }, fetch: g })).ok, false);
 });
