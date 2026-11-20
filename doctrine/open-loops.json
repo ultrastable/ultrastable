@@ -41,6 +41,14 @@
     {
      "s": "registrar read 2026-11-20",
      "result": "all four locked=true, clienttransferprohibited, expire 2027-11-10 with auto_renew true"
+    },
+    {
+     "s": "Cloudflare API registrar PUT name_servers on ultrastable.net, 2026-11-20, after Rowan's 'migrate all ultrastable assets'",
+     "result": "403 code 10000 Name server update not allowed, the same refusal as 2026-11-19; not retried or re-routed. The documented route is the Configuration tab of Manage Domain in the losing account plus an email approval in the gaining account"
+    },
+    {
+     "s": "everything that does not need the zones, 2026-11-20",
+     "result": "done: both KV namespaces hold every source key; D1 ultrastable-spinoffs created in the ultrastable account with its 3 and 7 rows; Workers ultrastable-spinoffs and tenant-ps-edge uploaded there with no route and workers.dev off (ops/account-move.json 'staged'); the mail relay and tenant-ps-mail are not copied: they exist because the sending domains sit in the old account, and once the zones move the dashboard sends directly (its secret MAIL_RELAY_TOKEN also seals owner OAuth, so it is never rotated)"
     }
    ],
    "reason": "the registrar move between two Cloudflare accounts exists only as a dashboard action with an email approval; everything the API can do is done",
