@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-pin-core-db-separation-closed-from-live-d1-reading",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "PIN-core-db-separation closed from live D1 reading",
+  "body": "5 DBs in the ultrastable account, none from the originating fleet; the other 4 open roadmap items stay gated per doctrine/open-loops.json (identity-bound: empty account, second installation, other-cloud billing, outside auditor).",
+  "probe": "file:docs/migrations/core-db-split.json"
+ },
+ "kind": "decision",
+ "title": "PIN-core-db-separation closed from live D1 reading",
+ "session": ""
+}
