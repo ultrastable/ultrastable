@@ -1,0 +1,11 @@
+{
+  "id": "Q-SMOKE-org-privacy",
+  "title": "Q-SMOKE-org-privacy: production does not match the claim (org-privacy)",
+  "body": "**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::org-privacy\n**Status:** open\n\nSMOKE-LIVE-1: /privacy page on ultrastable.org\n\nLive evidence: `https://ultrastable.org/privacy HTTP 404 0B`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\nsize: S\n\n**Closing probe:** workflow smoke-live, check `org-privacy` = PASS.\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Claims"
+}
