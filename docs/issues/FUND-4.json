@@ -1,7 +1,7 @@
 {
   "id": "FUND-4",
   "title": "FUND-4: OC-4 owner card: submit credit and Project Pitch applications",
-  "body": "**Owner:** ROWAN\n**Trigger:** FUND-1 done and site live\n**Done check:** Confirmation emails logged\n**Status:** open\n**Default in effect:** Default: drafts in external/ and business/google-startups/ ready; not submitted.\n\nSource: business/funding/decision-memo.md. Closing probe is the done check.",
+  "body": "**Owner:** ROWAN\n**Trigger:** FUND-1 done and site live\n**Done check:** Confirmation emails logged\n**Status:** closed\n**Default in effect:** Default: drafts in external/ and business/google-startups/ ready; not submitted.\n\nSource: business/funding/decision-memo.md. Closing probe is the done check.\n\n**Disposition:** gate (owner-bound, 2026-11-20T20:46:50Z, DISPOSE-1)\n\n**Evidence:** owner field 'ROWAN' binds this to the owner's own account, money or signature, which no server-side loop holds. Default in effect: the system runs without this step; nothing waits on it. Its closing probe still runs on every fleet pass and records `fixed` when it passes.\n",
   "labels": [
     "owner:rowan",
     "ws:business"

@@ -1,88 +1,15 @@
 {
  "_doc": "The only list of things a person must do. Each item is an act only the owner can perform (identity-bound) and carries exactly one link that does it. Everything else self-resolves. Rendered into NEEDS-YOU.md by `python3 -m foundation needsyou`; tests require https links and no file paths.",
- "items": [
-  {
-   "id": "funding",
-   "title": "Submit funding applications",
-   "why": "An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact.",
-   "default": "Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you.",
-   "url": "https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md",
-   "button": "Open the ready-to-paste application kits (Y Combinator Winter 2027 late applications are open)",
-   "class": "legal_signature",
-   "connect": "https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md",
-   "connect_kind": "provider-deep-link"
-  },
-  {
-   "id": "domains-move",
-   "title": "Move the four ultrastable domains to the Ultrastable account",
-   "why": "ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is on for all four since 2026-11-20 (next renewal 2027-11-10).",
-   "default": "The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.",
-   "url": "https://dash.cloudflare.com/?to=/:account/registrar/domains",
-   "button": "Open the registrar domains",
-   "class": "owner_account",
-   "connect": "https://dash.cloudflare.com/?to=/:account/registrar/domains",
-   "connect_kind": "provider-deep-link"
-  },
-  {
-   "id": "org-brand",
-   "title": "Upload the org avatar and pin repos",
-   "why": "GitHub has no API for these.",
-   "default": "Generated identicon, no pins.",
-   "url": "https://github.com/organizations/ultrastable/settings/profile",
-   "button": "Open the org profile settings",
-   "class": "owner_account",
-   "connect": "https://github.com/organizations/ultrastable/settings/profile",
-   "connect_kind": "provider-deep-link"
-  },
-  {
-   "id": "social",
-   "title": "Sign in to Bluesky again",
-   "why": "Bluesky was connected on 2026-11-17 and has refused the stored access since 2026-11-20; Mastodon's sign-in was started and never finished. Only a new sign-in on the service's own page restores it.",
-   "default": "Posting stays dry-run; the repo, registry pull requests and feeds carry the work.",
-   "url": "https://ultrastable.io/connect/bluesky",
-   "button": "Sign in to Bluesky (or Mastodon at /connect/mastodon); the system stores and renews the access",
-   "class": "legal_signature",
-   "connect": "https://ultrastable.io/connect/bluesky",
-   "connect_kind": "connect-flow",
-   "resolved_when": "env:BLUESKY_APP_PASSWORD|MASTODON_TOKEN"
-  },
-  {
-   "id": "lane-credential",
-   "title": "Connect GitHub",
-   "why": "One approval on GitHub's own page lets the system open, check, merge and deploy changes by itself, including changes to its own workflows. The system then handles every callback, token exchange and renewal.",
-   "default": "Pull requests that change workflow files stay open, checked and labeled needs-pat; every other pull request merges by itself.",
-   "url": "https://ultrastable.io/connect/github",
-   "button": "Authorize on GitHub",
-   "class": "owner_account",
-   "connect": "https://ultrastable.io/connect/github",
-   "connect_kind": "connect-flow",
-   "resolved_when": "env:LANE_PAT|LANE_APP_ID"
-  },
-  {
-   "id": "repo-archive",
-   "title": "Allow repository settings (archiving and the main-branch check rule)",
-   "why": "One approval on GitHub's own page registers a second app that can change repository settings only, so the server can archive the retired repositories (seed, license, spec, workers) and apply the rule that main only takes a change whose checks passed. The system handles every callback, token and renewal.",
-   "default": "The retired repositories stay unarchived, each with a README pointing to the main repository; the merge lane and sweeper keep refusing red changes, and a direct merge is not blocked by GitHub itself.",
-   "url": "https://ultrastable.io/connect/github-admin",
-   "button": "Authorize on GitHub",
-   "class": "owner_account",
-   "connect": "https://ultrastable.io/connect/github-admin",
-   "connect_kind": "connect-flow"
-  },
-  {
-   "id": "oauth-apps",
-   "title": "Register the Google and Buffer sign-in apps",
-   "why": "Connecting Google and Buffer by their consent screens (tokens stored in each person's own Cloudflare, never typed) needs one OAuth app registered in each service under your identity, with redirect https://ultrastable.io/connect/<service>/callback. IDENTITY-BOUND: registering an app accepts the provider's terms in your name.",
-   "default": "the wizard keeps its account-creation links for Google and Buffer; nothing is typed or stored.",
-   "url": "https://console.cloud.google.com/apis/credentials",
-   "button": "Open Google Cloud credentials",
-   "class": "owner_account",
-   "connect": "https://console.cloud.google.com/apis/credentials",
-   "connect_kind": "provider-deep-link"
-  }
- ],
+ "items": [],
  "done_for_you": [
   "Old Cloudflare account: the tick, site and dashboard keep running there.",
-  "Entity and the org admin token are not needed now; entity-only programmes stay deferred until you choose one."
+  "Entity and the org admin token are not needed now; entity-only programmes stay deferred until you choose one.",
+  "Connect GitHub: settled 2026-11-20 on its own evidence (env:LANE_PAT|LANE_APP_ID or http:https://ultrastable.io/connect/github ~ GitHub is connected).",
+  "Allow repository settings (archiving and the main-branch check rule): settled 2026-11-20 on its own evidence (http:https://ultrastable.io/connect/github-admin ~ Repository settings are allowed).",
+  "Submit funding applications: closed 2026-11-20 under Rowan's standing order ('I will do nothing'); default in effect permanently: Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you. Record: doctrine/open-loops.json gate owner-funding.",
+  "Move the four ultrastable domains to the Ultrastable account: closed 2026-11-20 under Rowan's standing order ('I will do nothing'); default in effect permanently: The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account. Record: doctrine/open-loops.json gate owner-domains-move.",
+  "Upload the org avatar and pin repos: closed 2026-11-20 under Rowan's standing order ('I will do nothing'); default in effect permanently: Generated identicon, no pins. Record: doctrine/open-loops.json gate owner-org-brand.",
+  "Sign in to Bluesky again: closed 2026-11-20 under Rowan's standing order ('I will do nothing'); default in effect permanently: Posting stays dry-run; the repo, registry pull requests and feeds carry the work. Record: doctrine/open-loops.json gate owner-social.",
+  "Register the Google and Buffer sign-in apps: closed 2026-11-20 under Rowan's standing order ('I will do nothing'); default in effect permanently: the wizard keeps its account-creation links for Google and Buffer; nothing is typed or stored. Record: doctrine/open-loops.json gate owner-oauth-apps."
  ]
 }
