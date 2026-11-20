@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-clean-branches-1-closed-unmerged-branches",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "CLEAN-BRANCHES-1 closed-unmerged branches",
+  "body": "A PR closed unmerged left its branch forever because remote_prune only deleted merged heads; the sweep now archives the sha at refs/archive/<name> and deletes it, and covers worker/.",
+  "probe": "grep:foundation/branchsweep.py::CLEAN-BRANCHES-1"
+ },
+ "kind": "lesson",
+ "title": "CLEAN-BRANCHES-1 closed-unmerged branches",
+ "session": ""
+}
