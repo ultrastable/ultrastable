@@ -6,6 +6,7 @@
 // exempts. No credential is minted by a person, and protected paths (rules, workflows, policy) are refused, so this route cannot change a guard.
 const API = 'https://api.github.com';
 export const OIDC_ISSUER = 'https://token.actions.githubusercontent.com', OIDC_AUDIENCE = 'ultrastable-main';
+export const MAX_DATA_PRS = 3;
 export const MAX_FILES = 20;  // one commit costs files + 4 subrequests; the Free plan allows 50 per invocation
 const PROTECTED = [/^\.github\//, /^autonomy\//, /^agents\//, /^github\/org-settings\.json$/, /(^|\/)(AGENTS|CLAUDE|CONTRIBUTING)\.md$/, /^(LICENSE|SCOPE\.md)/, /^doctrine\/(directive|standing-order|closed-loop|server-side)\.json$/];
 export const isProtected = (p) => PROTECTED.some(r => r.test(p));
@@ -84,6 +85,11 @@ export async function commitToMain({ token, repo, body, fetch: f = fetch }) {
 
 // MAIN-WRITER-PR-1: a data commit the ruleset refuses lands as a branch plus a pull request opened by the App, which starts `checks` on it.
 async function viaPullRequest({ call, sha, body, why }) {
+  // DATA-PR-CAP-1 (seen live 2026-11-20): with main refusing the app, every workflow's data commit became its own pull request, 14 in ten minutes. A refusal
+  // that lasts is one defect, not a pull request per commit: at most MAX_DATA_PRS are open at a time, and past that the route fails loudly so the cause is fixed.
+  const open = await call('GET', '/pulls?state=open&per_page=100');
+  const n = open.ok && Array.isArray(open.json) ? open.json.filter(p => String((p.head || {}).ref || '').startsWith('agent/data-')).length : 0;
+  if (n >= MAX_DATA_PRS) return { ok: false, status: 503, error: 'main refused (' + why + ') and ' + n + ' data pull requests are already open' };
   const branch = 'agent/data-' + sha.slice(0, 10);
   const ref = await call('POST', '/git/refs', { ref: 'refs/heads/' + branch, sha });
   if (!ref.ok && ref.status !== 422) return { ok: false, status: 502, error: 'main refused (' + why + '); branch ' + ref.status };
