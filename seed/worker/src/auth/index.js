@@ -65,7 +65,7 @@ export async function getToken(db, env, tenant, provider, opts = {}) {
     return r;
   }
   if (r.token && r.expiresAt) memo.set(key, { token: r.token, expiresAt: typeof r.expiresAt === 'number' ? r.expiresAt : Date.parse(r.expiresAt) });
-  await store.put(db, env, tenant, provider, { access: r.token || null, expiresAt: r.expiresAt || null, status: 'ok', error: null, ...(r.rotatedRefresh ? { secret: { ...m.secret, refresh_token: r.rotatedRefresh } } : {}) });
+  await store.put(db, env, tenant, provider, { access: r.token || null, expiresAt: r.expiresAt || null, status: 'ok', error: null, ...(r.rotatedRefresh || r.secretPatch ? { secret: { ...m.secret, ...(r.secretPatch || {}), ...(r.rotatedRefresh ? { refresh_token: r.rotatedRefresh } : {}) } } : {}) });
   await store.event(db, tenant, provider, m && m.access ? 'refreshed' : 'minted', r.expiresAt ? 'expires ' + new Date(r.expiresAt).toISOString() : 'no expiry');
   return { ok: true, token: r.token, cached: false };
 }
@@ -86,6 +86,10 @@ export async function refreshDue(db, env, opts = {}) {
   const rows = (await db.prepare('SELECT tenant, provider, expires_at, status, last_error, updated_at FROM credentials').all()).results || [];
   const out = [];
   for (const r of rows) {
+    // NO-EXPIRY-1 (2026-11-20): a connected token with no expiry (Mastodon) is not due. It was treated as due on every tick, the refresh found no refresh
+    // token, and the row was marked failed minutes after a good sign-in. A sign-in still under way (pending, oauth) is waiting on its callback, not on a refresh.
+    if (r.status === 'ok' && !r.expires_at && r.provider.startsWith('oauth:')) { out.push({ tenant: r.tenant, provider: r.provider, status: r.status, action: 'fresh' }); continue; }
+    if (r.status === 'pending' && r.provider.startsWith('oauth:')) { out.push({ tenant: r.tenant, provider: r.provider, status: r.status, action: 'awaiting-consent' }); continue; }
     const due = r.status !== 'ok' || !r.expires_at || Date.parse(r.expires_at) - now <= MARGIN_MS;
     if (!due) { out.push({ tenant: r.tenant, provider: r.provider, expires_at: r.expires_at, status: r.status, action: 'fresh' }); continue; }
     // DEAD-CONSENT-1 (2026-11-20): a refresh the provider refused (401/400) or a consent that never finished cannot heal by retrying; only a new sign-in does.

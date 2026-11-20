@@ -266,3 +266,17 @@ test('a refused refresh is not retried every tick, and shows up as a live owner 
   assert.deepEqual(acts.map(a => [a.id, a.connect]), [['signin:oauth:bluesky', '/connect/bluesky']]);
   assert.ok(!JSON.stringify(acts).includes('"r"'));
 });
+
+test('CONNECT-ONCE-1: a working GitHub connection answers "connected" and registers no new app; a broken one reaches the consent screen', async () => {
+  const { handleAuth } = await import('../src/auth/routes.js');
+  const { newKey } = await import('../src/auth/seal.js');
+  const { makeDb } = await import('./d1shim.js');
+  const st = await import('../src/auth/store.js');
+  const env = { DB: makeDb(), CREDENTIAL_KEY: newKey() }, now = Date.parse('2026-11-20T12:00:00Z');
+  await st.put(env.DB, env, 't', 'github-app', { secret: { pem: 'unused' }, meta: { app_id: 1, installation_id: 2 }, access: 'tok', expiresAt: now + 3000e3, status: 'ok' });
+  const go = () => handleAuth(new Request('https://seed.example.com/connect/github'), env, { tenant: 't', now, fetch: async () => { throw new Error('no call'); } });
+  const page = await (await go()).text();
+  assert.match(page, /GitHub is connected/); assert.doesNotMatch(page, /settings\/apps\/new/);
+  await st.put(env.DB, env, 't', 'github-app', { meta: { installation_id: null }, access: null, status: 'failed' });
+  assert.match(await (await go()).text(), /settings\/apps\/new/);
+});

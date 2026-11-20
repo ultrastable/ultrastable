@@ -26,6 +26,16 @@ export async function checkState(env, state, now = Date.now()) {
 // GitHub App names are global, so every visit gets its own prefilled name (never a form field for the person): <name>-<6 random hex>, capped at GitHub's 34 characters.
 export const uniqueName = (name, rnd = () => crypto.randomUUID().replace(/-/g, '').slice(0, 6)) => `${String(name || 'ultrastable').slice(0, 27)}-${rnd()}`;
 
+// CONNECT-ONCE-1 (2026-11-20): the connect link registered a new GitHub App on every visit. Three working apps were replaced that way in four days, and each
+// replacement dropped the installation the loops were using. A link that is opened while the stored app still mints a token now answers "already connected";
+// only a missing or refused app reaches the registration screen.
+async function working(env, tenant, provider, f, now) {
+  try {
+    const m = await store.material(env.DB, env, tenant, provider);
+    if (!m || !m.secret || !m.meta || !m.meta.installation_id) return false;
+    return Boolean((await getToken(env.DB, env, tenant, provider, { fetch: f, now })).ok);
+  } catch (e) { console.error('connect-once', provider, e && e.message); return false; }
+}
 export function manifest(origin, name, kind = 'github-app') {
   const admin = kind === 'github-admin', seg = admin ? 'github-admin' : 'github';  // REPOS-1: the admin app has its own callbacks, no webhook and no events
   return {
@@ -47,6 +57,7 @@ async function route(request, env, opts = {}) {
     return Response.redirect(a.settings_url || new URL('/connect/github', url).toString(), 302);
   }
   if (url.pathname === '/connect/github') {
+    if (await working(env, tenant, 'github-app', f, now)) return doneScreen('GitHub is connected', 'Nothing to do. The connection is working and the system keeps it renewed.');
     const state = await makeState(env, tenant, now);
     return consentScreen({
       provider: 'GitHub', title: 'Connect GitHub', button: 'Authorize on GitHub',
@@ -56,6 +67,7 @@ async function route(request, env, opts = {}) {
     });
   }
   if (url.pathname === '/connect/github-admin') {  // REPOS-1 + CONNECT-LINK-1: one click registers a second, administration-only app so retired repositories can be archived server-side
+    if (await working(env, tenant, 'github-admin', f, now)) return doneScreen('Repository settings are allowed', 'Nothing to do. The connection is working and the system keeps it renewed.');
     const state = await makeState(env, tenant, now), org = opts.repos && opts.repos[0] ? opts.repos[0].split('/')[0] : '';
     return consentScreen({
       provider: 'GitHub', title: 'Allow repository archiving', button: 'Authorize on GitHub',
