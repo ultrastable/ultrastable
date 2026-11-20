@@ -89,6 +89,42 @@ class Backup(unittest.TestCase):
         self.assertTrue(out["restore_ok"]); self.assertFalse(out["stored_ok"]); self.assertFalse(out["ok"])
         self.assertIn("HTTP 403", out["databases"][0]["stored"]["error"])
 
+    def test_an_unreachable_bucket_falls_back_to_the_ops_repository_and_is_read_back(self):
+        a, other = FakeAccount(r2=False), FakeAccount()                            # `other` plays the ops repository: a second store with the same object calls
+        out = self.run_with(a, sink=other.api)
+        self.assertTrue(out["ok"], out); self.assertEqual(out["sink"], "ops-repository:backups/"); self.assertIn("HTTP 403", out["sink_reason"])
+        self.assertTrue(out["databases"][0]["stored"]["readback"]); self.assertIn("backups/d1/org/2026-11-20.sql.gz", other.r2)
+        self.assertEqual(self.run_with(FakeAccount(), sink=other.api, force=True)["sink"], "r2:ultrastable-git", "a reachable bucket stays the sink")
+
+    def test_ops_sink_speaks_github_contents_through_the_worker(self):
+        import io, urllib.error
+        from foundation import workerroute
+        files, calls = {}, []
+        class R(io.BytesIO):
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+        def opener(req, timeout=0):
+            if "audience=" in req.full_url:
+                return R(b'{"value":"oidc"}')
+            m, p = req.get_header("X-gh-method"), req.get_header("X-gh-path"); calls.append((m, p)); key = p[len("contents/"):]
+            if m == "PUT":
+                files[key] = __import__("base64").b64decode(json.loads(req.data)["content"]); return R(b"{}")
+            if m == "DELETE":
+                files.pop(key); return R(b"{}")
+            if key in files:
+                return R(files[key] if "raw" in req.get_header("Accept") else b'{"sha":"s1"}')
+            kids = [k for k in files if k.startswith(key + "/")]
+            if kids:
+                return R(json.dumps([{"type": "file", "path": k} for k in kids]).encode())
+            raise urllib.error.HTTPError(req.full_url, 404, "nf", {}, None)
+        api = workerroute.make_ops_sink({"ACTIONS_ID_TOKEN_REQUEST_URL": "https://gh/token?x=1", "ACTIONS_ID_TOKEN_REQUEST_TOKEN": "t"}, opener=opener)
+        api("PUT", "r2/buckets/b/objects/backups/d1/org/2026-11-20.sql.gz", b"dump", raw=True)
+        self.assertEqual(api("GET", "r2/buckets/b/objects/backups/d1/org/2026-11-20.sql.gz", raw=True), b"dump")
+        self.assertEqual(api("GET", "r2/buckets/b/objects?prefix=backups/d1/org/&per_page=1000")["result"], [{"key": "backups/d1/org/2026-11-20.sql.gz"}])
+        api("DELETE", "r2/buckets/b/objects/backups/d1/org/2026-11-20.sql.gz", raw=True); self.assertEqual(files, {})
+        self.assertEqual(api("GET", "r2/buckets/b/objects?prefix=backups/kv/none/")["result"], [])
+        self.assertTrue(all(p.startswith("contents/backups/") for _, p in calls))
+
     def test_retention_keeps_the_newest_copies(self):
         a = FakeAccount()
         for i in range(10):
