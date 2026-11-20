@@ -103,6 +103,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["blindspots"]:
         from . import blindspots
         return blindspots.main(_av[1:])
+    if _av[:1] == ["licences"]:
+        from . import licences
+        return licences.main(_av[1:])
+    if _av[:1] == ["backup"]:
+        from . import backup
+        return backup.main(_av[1:])
     if _av[:1] == ["ideas"]:
         from . import ideas
         return ideas.main(_av[1:])

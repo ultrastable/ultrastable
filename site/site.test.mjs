@@ -320,6 +320,24 @@ console.log("PROMOTE-1 indexnow ok");
   const t = await st.text(); assert.equal(st.status, 200); assert.match(t, /^Contact: mailto:/); assert.match(t, /Expires: /);
   console.log("BLINDSPOT-1 pages ok");
 }
+{ /* BLINDSPOT-1 sweeps 2026-11-20: the privacy page names AI processing, voice and sign-in as the code does them; public meta-signal writes are capped */
+  const src = readFileSync(new URL("./worker.js", import.meta.url), "utf8"), pk = readFileSync(new URL("./passkeys.js", import.meta.url), "utf8");
+  const pv = await (await get("https://ultrastable.io/privacy")).text();
+  assert.match(pv, /Automated processing/); assert.match(pv, /receives the text and not the audio/); assert.match(pv, /up to 12 months/); assert.match(pv, /lasts 30 days/);
+  assert.match(src, /"meta:" \+ rec\.at[^\n]*expirationTtl: 31536000/); assert.match(pk, /SESSION_MS = 30 \* 864e5/);   // the page's numbers are the code's numbers
+  const kv2 = new Map(), E3 = { ASSETS: { get: async (k) => kv2.has(k) ? kv2.get(k) : null, put: async (k, v) => { kv2.set(k, v); } } };
+  const ev = () => mod.fetch(new Request("https://ultrastable.io/api/meta/ingest", { method: "POST", headers: { "cf-connecting-ip": "203.0.113.9" }, body: JSON.stringify({ source: "mic-event", code: "no-speech" }) }), E3);
+  for (let i = 0; i < 20; i++) assert.equal((await ev()).status, 200);
+  const writes = kv2.size; const over = await ev();
+  assert.equal(over.status, 429); assert.equal((await over.json()).code, "rate_limited"); assert.equal(kv2.size, writes, "a refused event writes nothing");
+  { // a page the system built is marked as AI-written for people and for machines
+    const k3 = new Map([["site:abc1234567", "<html><head><title>t</title></head><body><h1>bins</h1></body></html>"], ["job:abc1234567", JSON.stringify({ status: "ready" })]]);
+    const pg = await mod.fetch(new Request("https://ultrastable.io/s/abc1234567"), { ASSETS: { get: async (k) => k3.has(k) ? k3.get(k) : null, put: async () => {} } });
+    if (pg.status === 200) { const t = await pg.text(); assert.match(t, /<meta name="generator" content="Ultrastable \(AI-generated page\)">/); assert.match(t, /Written by AI/); }
+    assert.match(src, /const us = aiMark \+ usClient/);
+  }
+  console.log("BLINDSPOT-1 privacy coverage and meta-signal cap ok");
+}
 
 // AGENT-READY-2: Markdown for Agents, AI-bot rules in robots.txt, WebMCP tools (blog.cloudflare.com/agent-readiness).
 {
