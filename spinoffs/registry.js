@@ -106,7 +106,7 @@ export default {
  },
  "boards": {
   "free-tier-meter": {
-   "as_of": "2026-11-19T16:00:10Z",
+   "as_of": "2026-11-20T15:43:14Z",
    "rows": [
     {
      "label": "Governor level",
@@ -137,7 +137,7 @@ export default {
    "source": "ops/free-tier.json"
   },
   "numbers-board": {
-   "as_of": "2026-11-19T16:00:10Z",
+   "as_of": "2026-11-20T15:43:14Z",
    "rows": [
     {
      "label": "Managers and loops",
@@ -173,7 +173,7 @@ export default {
    "source": "ops/transparency.json"
   },
   "portfolio-board": {
-   "as_of": "2026-11-19T16:00:14Z",
+   "as_of": "2026-11-20T15:43:14Z",
    "rows": [
     {
      "label": "Live apps",
@@ -199,7 +199,7 @@ export default {
    "source": "spinoffs/registry.json"
   }
  },
- "built_at": "2026-11-19T16:00:14Z",
+ "built_at": "2026-11-20T15:43:17Z",
  "caps": {
   "max_launches_per_day": 3,
   "max_launches_per_week": 21,

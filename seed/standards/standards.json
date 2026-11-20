@@ -758,9 +758,8 @@
       "body": "Agentic AI Foundation",
       "status": "stable",
       "tracked": "researched 2026-11-14",
-      "why": "Verifiable agent identity and long-running tasks; our card still declares 0.3.0.",
-      "support": "planned",
-      "tracked_by": "ROADMAP-AGENT-A2A-V1: serve a v1.0 signed card, message/send and tasks/get",
+      "why": "Verifiable agent identity and long-running tasks: the v1.0 card carries a JWS signature whose key set the Worker publishes, and the endpoint answers the v1.0 method names.",
+      "support": "supported",
       "acl": "seed/worker/src/agentic/acl/discovery.js",
       "sources": [
         {
@@ -768,6 +767,15 @@
           "url": "https://www.linuxfoundation.org/press/a2a-protocol-surpasses-150-organizations-lands-in-major-cloud-platforms-and-sees-enterprise-production-use-in-first-year",
           "published": null,
           "accessed": "2026-11-14"
+        }
+      ],
+      "how": [
+        "site/agentic.js"
+      ],
+      "tests": [
+        {
+          "file": "site/site.test.mjs",
+          "name": "agent card signature verifies against /.well-known/jwks.json"
         }
       ]
     },

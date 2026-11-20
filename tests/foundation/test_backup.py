@@ -97,6 +97,29 @@ class Backup(unittest.TestCase):
         keys = sorted(k for k in a.r2 if k.startswith("backups/d1/org/"))
         self.assertEqual(len(keys), 8); self.assertEqual(keys[-1], "backups/d1/org/2026-11-20.sql.gz")
 
+    def test_drill_is_pinned_to_the_ultrastable_account(self):
+        seen = []
+        real = backup.make_api
+        backup.make_api = lambda tok, acct: (seen.append(acct), FakeAccount().api)[1]
+        try:
+            backup.run(self.tmp, env={"CLOUDFLARE_API_TOKEN": "t", "CLOUDFLARE_ACCOUNT_ID": "some-other-account"}, today=DAY)
+        finally:
+            backup.make_api = real
+        self.assertEqual(seen, ["81e3a4efb4eb66e613529b87682911bb"])
+        top = json.loads((REPO / "doctrine/topology.json").read_text())["account_id"]
+        self.assertEqual(backup.load(REPO)["account_id"], top)
+
+    def test_count_query_stays_inside_the_d1_compound_select_limit(self):
+        sqls = []
+        class Spy(FakeAccount):
+            def api(self, method, path, body=None, raw=False):
+                if path.endswith("/query") and "UNION ALL" in body["sql"]:
+                    sqls.append(body["sql"])
+                return super().api(method, path, body, raw)
+        a = Spy(); a.db.executescript("".join(f"CREATE TABLE t{i}(x);" for i in range(11)))
+        backup._counts(a.api, "db1", [f"t{i}" for i in range(11)])
+        self.assertTrue(sqls and all(s.count("UNION ALL") + 1 <= 4 for s in sqls), sqls)
+
     def test_no_credential_is_unmeasured_not_ok(self):
         self.assertIn("unmeasured", backup.run(self.tmp, env={})["skipped"])
 
