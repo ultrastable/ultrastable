@@ -17,3 +17,5 @@
 {"at": "2026-11-19T19:18:54Z", "id": "Q-SELF-bare-except-foundation-clockwork-py", "key": "foundation/clockwork.py", "kind": "bare_except", "pr": "https://github.com/ultrastable/ultrastable/pull/716", "schema": "ultrastable-selfcode/1", "status": "failed", "why": "closed without merging"}
 {"at": "2026-11-20T09:23:08Z", "before": 1, "id": "Q-SELF-unused-import-foundation-glossary-py", "key": "foundation/glossary.py", "kind": "unused_import", "schema": "ultrastable-selfcode/1", "status": "filed"}
 {"at": "2026-11-20T13:53:07Z", "before": 1, "id": "Q-SELF-unused-import-foundation-glossary-py", "key": "foundation/glossary.py", "kind": "unused_import", "schema": "ultrastable-selfcode/1", "status": "filed"}
+{"at": "2026-11-20T14:00:59Z", "before": 0, "id": "Q-SELF-unused-import-foundation-glossary-py", "key": "Q-SELF-unused-import-foundation-glossary-py", "kind": "parked", "schema": "ultrastable-selfcode/1", "status": "failed"}
+{"at": "2026-11-20T14:01:00Z", "before": 2, "id": "Q-SELF-unused-import-foundation-scaffold-py", "key": "foundation/scaffold.py", "kind": "unused_import", "schema": "ultrastable-selfcode/1", "status": "filed"}
