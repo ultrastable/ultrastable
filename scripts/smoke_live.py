@@ -33,7 +33,7 @@ def _():
 @check("org-numbers-rounded", "numbers are rounded for reading (no float noise)")
 def _():
     r, b = page(ORG + "/catalogue"); bad = re.findall(r"\d+\.\d{5,}", b)
-    r2, b2 = page(ORG + "/catalogue.csv"); bad2 = re.findall(r"\d+\.\d{7,}", b2)
+    r2, b2 = page(ORG + "/catalogue.csv"); bad2 = [x for x in re.findall(r"\d+\.\d{6,}", b2) if len(x.replace(".", "").lstrip("0")) > 6]
     return r["status"] == 200 and not bad and not bad2, f"page noise {bad[:3]}, csv noise {bad2[:3]}"
 
 @check("org-direction-labels", "catalogue entries carry a direction label")
@@ -44,11 +44,8 @@ def _():
 
 @check("org-ask", "/ask returns a cited answer")
 def _():
-    req = urllib.request.Request(ORG + "/api/ask", data=json.dumps({"q": "What works to reduce child mortality?", "question": "What works to reduce child mortality?"}).encode(), headers={"content-type": "application/json", "user-agent": "ultrastable-smoke/1"})
-    try:
-        with urllib.request.urlopen(req, timeout=40) as x: s, b = x.status, x.read(20000).decode("utf-8", "replace")
-    except urllib.error.HTTPError as e: s, b = e.code, e.read(2000).decode("utf-8", "replace")
-    cited = bool(re.search(r"/(solutions|problems|catalogue)/", b)) or "http" in b
+    r = get(ORG + "/api/ask?q=" + urllib.parse.quote("what works against malaria") + "&lang=en"); s, b = r["status"], r["body"]
+    cited = bool(re.search(r"/(solutions|problems|catalogue)/", b))
     return s == 200 and cited, f"HTTP {s}; cited={cited}; {' '.join(b[:160].split())}"
 
 @check("org-languages", "/es/ /fr/ /pt/ /ar/ are real translations with hreflang")
@@ -61,7 +58,11 @@ def _():
         out.append(f"{l}:{r['status']} lang={got} identical_to_en={same}")
         ok = ok and r["status"] == 200 and got.startswith(l) and not same
     hl = len(re.findall(r'hreflang="', base))
-    return ok and hl >= 4, "; ".join(out) + f"; hreflang tags on / = {hl}"
+    try:
+        m = json.loads(get("https://raw.githubusercontent.com/ultrastable/practical-solutions/main/ledger/i18n/manifest.json")["body"])
+        cov = {k: (v.get("coverage"), v.get("live")) for k, v in m["langs"].items()}
+    except Exception as e: cov = repr(e)
+    return ok and hl >= 4, "; ".join(out) + f"; hreflang tags on / = {hl}; translated coverage (live needs 0.5) = {cov}"
 
 @check("io-progress", "/progress, digests and Atom feed work and are fresh")
 def _():
@@ -157,12 +158,14 @@ def _():
 def _():
     r, b = page(IO + "/api/claims"); n = b.count('"claim"'); return r["status"] == 200 and n > 100, f"HTTP {r['status']} {n} claims"
 
-@check("bluesky-feed", "Bluesky posts about problems/solutions are on the public feed")
+@check("bluesky-feed", "Bluesky posts about problems/solutions are on the public feed within 14 days")
 def _():
     r = get("https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=ultrastable.bsky.social&limit=10")
     if r["status"] != 200: return False, f"HTTP {r['status']} {r['body'][:120]}"
     d = json.loads(r["body"]); n = len(d.get("feed", [])); last = d["feed"][0]["post"]["record"].get("createdAt") if n else None
-    return n > 0, f"{n} posts, latest {last}"
+    import datetime
+    fresh = bool(last) and (datetime.datetime.now(datetime.timezone.utc) - datetime.datetime.fromisoformat(last.replace("Z", "+00:00"))).days <= 14
+    return fresh, f"{n} posts on the handle, latest {last}"
 
 def repo_json(p):
     with open(os.path.join(REPO, p), encoding="utf-8") as f: return json.load(f)

@@ -1,0 +1,50 @@
+name: smoke-live
+# budget: ~1 min x 1 per 6 hours = ~120 min per month
+# trigger: schedule every 6 hours (the live sites can break between merges, which no per-PR check sees) and manual dispatch; a push to the audit branch for the first runs
+# free-alternative: `python3 scripts/smoke_live.py` from any cloud launch host, or the Cloudflare tick worker
+# SMOKE-LIVE-1: every public claim checked against PRODUCTION (scripts/smoke_live.py); each failure opens or refreshes one GitHub issue "SMOKE: <check id>" labelled agent-ready, and a passing check closes its issue. Read-only on the sites except the optional --cap probe (dispatch only).
+# The claims registry (doctrine/claims.json) binds words to code; this binds the deployed behaviour: /api/claims must serve the registry and the existing claims workflow checks the words.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      cap:
+        description: "also run the 24-write /api/meta/ingest cap probe"
+        type: boolean
+        default: false
+  push:
+    branches: [claude/project-thread-sgqjgx]
+    paths: [scripts/smoke_live.py, .github/workflows/smoke-live.yml]
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: smoke-live
+  cancel-in-progress: true
+jobs:
+  smoke:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'push' && github.ref || 'main' }}
+      - name: Smoke test production
+        id: smoke
+        env:
+          SMOKE_OUT: ${{ runner.temp }}/smoke.json
+        run: |
+          set +e
+          python3 scripts/smoke_live.py ${{ (github.event_name == 'workflow_dispatch' && inputs.cap) && '--cap' || '' }} | tee "$RUNNER_TEMP/smoke.txt"
+          echo "code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          { echo '```'; cat "$RUNNER_TEMP/smoke.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Open, refresh and close repair items
+        if: ${{ github.event_name != 'push' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/smoke_issues.py "$RUNNER_TEMP/smoke.json"
+      - name: Fail the run when a claim failed
+        if: ${{ steps.smoke.outputs.code != '0' }}
+        run: exit 1

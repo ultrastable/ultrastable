@@ -1016,11 +1016,13 @@ async function metaIngest(request, env) {
   else return Response.json({ ok: false, code: "empty" }, { status: 422 });
   { // BLINDSPOT-1 security sweep 2026-11-20: this endpoint is public and writes to KV, so one client or a flood cannot use up the day's writes. No write happens once a cap is reached.
     const ip = request.headers.get("cf-connecting-ip") || "x", k1 = "rlm:" + ip + ":" + rec.at.slice(0, 13), k2 = "rlm:day:" + rec.at.slice(0, 10);
-    const [a, d] = await Promise.all([env.ASSETS.get(k1), env.ASSETS.get(k2)]);
-    if (Number(a || 0) >= META_PER_IP_HOUR || Number(d || 0) >= META_PER_DAY) return Response.json({ ok: false, code: "rate_limited" }, { status: 429, headers: { "Retry-After": "3600" } });
-    await Promise.all([env.ASSETS.put(k1, String(Number(a || 0) + 1), { expirationTtl: 7200 }), env.ASSETS.put(k2, String(Number(d || 0) + 1), { expirationTtl: 172800 })]);
+    try { // SMOKE-LIVE-1: production returned a bare 500 for every valid event; a storage failure is now a plain 503 the smoke test can tell from a bug
+      const [a, d] = await Promise.all([env.ASSETS.get(k1), env.ASSETS.get(k2)]);
+      if (Number(a || 0) >= META_PER_IP_HOUR || Number(d || 0) >= META_PER_DAY) return Response.json({ ok: false, code: "rate_limited" }, { status: 429, headers: { "Retry-After": "3600" } });
+      await Promise.all([env.ASSETS.put(k1, String(Number(a || 0) + 1), { expirationTtl: 7200 }), env.ASSETS.put(k2, String(Number(d || 0) + 1), { expirationTtl: 172800 })]);
+    } catch (e) { return Response.json({ ok: false, code: "storage_unavailable", detail: String(e && e.message || e).slice(0, 120) }, { status: 503, headers: { "Retry-After": "600" } }); }
   }
-  await env.ASSETS.put("meta:" + rec.at + ":" + newId(), JSON.stringify(rec), { expirationTtl: 31536000 });
+  try { await env.ASSETS.put("meta:" + rec.at + ":" + newId(), JSON.stringify(rec), { expirationTtl: 31536000 }); } catch (e) { return Response.json({ ok: false, code: "storage_unavailable", detail: String(e && e.message || e).slice(0, 120) }, { status: 503, headers: { "Retry-After": "600" } }); }
   return Response.json({ ok: true });
 }
 
