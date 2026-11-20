@@ -33,6 +33,7 @@
   python3 -m foundation upstream contract|adopt|sync|check|drift|leaks   core/instance link: pin, flow down, send up, drift, bring your own repo
   python3 -m foundation branchsweep [--scan|--apply|--prune|--check]  BRANCH-SWEEP-1: no remote branch carries work main lacks
   python3 -m foundation sessions [--scan|--apply|--meta|--check]       SESSION-CLOSE-1: no zombie branches or PRs; the loop tunes itself
+  python3 -m foundation cfposture [--check|--probe [--apply]|--rule ID]       CF-POSTURE-1: the Cloudflare account's settings, declared and measured live
   python3 -m foundation orphans [--check|--metrics|--baseline|--issue-body|--sync-issue OWNER/REPO]   ORPHANS-1: no orphan artifact, no human-wait
   python3 -m foundation components [--check|--report|--file-gaps|--evidence|--probe KIND:ID]   the system as a computed graph: gaps, stories, objections
   python3 -m foundation lifecycle [--open|--beat|--close|--reap|--check|--improve|--score|--report|--hooks]   no zombie sessions; loops that score and mutate themselves
@@ -226,6 +227,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["topology"]:
         from . import topology
         return topology.main(_av[1:])
+    if _av[:1] == ["mechfix"]:
+        from . import mechfix
+        return mechfix.main(_av[1:])
     if _av[:1] == ["selfcode"]:
         from . import selfcode
         return selfcode.main(_av[1:])
@@ -300,6 +304,9 @@ def main(argv=None) -> int:
     if args0[:1] == ["sessions"]:
         from . import sessions
         return sessions.main(args0[1:])
+    if args0[:1] == ["cfposture"]:
+        from . import cfposture
+        return cfposture.main(args0[1:])
     if args0[:1] == ["orphans"]:
         from . import orphans
         return orphans.main(args0[1:])
