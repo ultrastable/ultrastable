@@ -1,0 +1,20 @@
+name: smoke-run-once
+# budget: one run per push to the throwaway branch agent/smoke-run-*; deleted with the branch
+# trigger: push to agent/smoke-run-* (a one-off live run before the smoke-live workflow is on main)
+# free-alternative: the same script from any launch host
+on:
+  push:
+    branches: ['agent/smoke-run-*']
+permissions:
+  contents: read
+concurrency:
+  group: smoke-run-once
+  cancel-in-progress: true
+jobs:
+  run:
+    if: ${{ vars.HALT != '1' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - run: python3 scripts/smoke_live.py
