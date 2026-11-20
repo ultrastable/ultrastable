@@ -1256,8 +1256,11 @@
       ],
       "feedback": "a restart is graded by the next beat: the clock is ticking again or the restart counts toward escalation (Q-STALL item after two failures); the stalled count is the essential variable stalled_clocks, so a stall that persists becomes an Ashby second-order step",
       "bindings": [
+        "BLUESKY_APP_PASSWORD",
         "CLOUDFLARE_API_TOKEN",
-        "LANE_PAT"
+        "LANE_APP_ID",
+        "LANE_PAT",
+        "MASTODON_TOKEN"
       ]
     },
     "tenant-sync": {

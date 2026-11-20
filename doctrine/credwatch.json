@@ -1,0 +1,15 @@
+{
+ "_doc": "TOKEN-EXPIRY-1 (2026-11-20): a year unattended outlives tokens and registrations. Every credential and registration the loops depend on is probed daily for its expiry, and one that is invalid or inside its warning window files a Q-CRED item before the loops stop. Consumers: foundation/credwatch.py (--run in .github/workflows/watchdog.yml, --check in tests/foundation/test_credwatch.py).",
+ "version": "1.0.0",
+ "warn_days": 45,
+ "credentials": [
+  {"name": "CLOUDFLARE_API_TOKEN", "kind": "cloudflare-token", "used_by": "every deploy workflow and the watchdog"},
+  {"name": "LANE_PAT", "kind": "github-token", "used_by": "the merge lane, for pull requests that change workflows"}
+ ],
+ "registrations": [
+  {"name": "domain-ultrastable.io", "expires": "2027-11-10", "auto_renew": false},
+  {"name": "domain-ultrastable.org", "expires": "2027-11-10", "auto_renew": false},
+  {"name": "domain-ultrastable.app", "expires": "2027-11-10", "auto_renew": false},
+  {"name": "domain-ultrastable.net", "expires": "2027-11-10", "auto_renew": false}
+ ]
+}

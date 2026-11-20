@@ -96,7 +96,6 @@ export async function loopBreak(db, ctx, max, ensureItem) {
 }
 
 // Independent deploy evidence: rows of ops/deploys.jsonl are written by the post-deploy verifier (live code equals the commit), not by the loop that deployed.
-// SELF-REFERENCE-1: the row's origin (executor, self-agent, or an outside session) is kept at the end of the evidence, so criticality.js can count k_self.
 export async function ingestDeploys(db, { token, repo, fetch: f = fetch }) {
   if (!token || !repo) return { status: 'no-token', ingested: 0 };
   const r = await f(`https://api.github.com/repos/${repo}/contents/ops/deploys.jsonl`, { headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github.raw', 'user-agent': 'ultrastable-selfaudit' } });
@@ -109,7 +108,7 @@ export async function ingestDeploys(db, { token, repo, fetch: f = fetch }) {
     if (await first(db, `SELECT 1 AS x FROM outcomes WHERE item_id=?`, id)) continue;
     const ok = d.uploaded && d.live_matches_commit;
     await run(db, `INSERT INTO outcomes (item_id, surface, action_class, result, evidence, at) VALUES (?, 'deploy', 'deploy', ?, ?, ?)`,
-      id, ok ? 'verified' : 'failed', `probe:live_matches_commit=${Boolean(d.live_matches_commit)} sha=${d.sha.slice(0, 12)} origin=${String(d.origin || 'unknown').replace(/[^a-z0-9-]/gi, '').slice(0, 24) || 'unknown'}`, String(d.at).replace('T', ' ').slice(0, 19));
+      id, ok ? 'verified' : 'failed', `probe:live_matches_commit=${Boolean(d.live_matches_commit)} sha=${d.sha.slice(0, 12)}`, String(d.at).replace('T', ' ').slice(0, 19));
     n++;
   }
   return { status: 'ok', ingested: n };

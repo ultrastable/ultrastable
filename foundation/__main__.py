@@ -13,6 +13,8 @@
   python3 -m foundation claimcode [--check|--baseline|--list]                words match code: every number, cadence or guarantee on a public surface is bound to a probe (WORDS-MATCH-CODE-1)
   python3 -m foundation pointclick [--check|--baseline]                    no surface asks a person to handle a token, secret or setting (POINT-AND-CLICK-1)
   python3 -m foundation loopowner [--check|--sync]                        every loop has a server-side owner and path (SERVER-OWNS-LOOPS-1)
+  python3 -m foundation redmain [--run [--apply]|--check]                  REDMAIN-1: a red deploy gate on main is repaired by reverting the smallest change that broke it
+  python3 -m foundation credwatch [--run [--apply]|--check]                TOKEN-EXPIRY-1: every credential the loops use is probed for expiry before it lapses
   python3 -m foundation openloops [--check]                                NO-OPEN-ITEMS-1: no "needs you"; every leftover is closed or a recorded gate
   python3 -m foundation cost [--check|--probe|--guard [--apply]]          D1 rows read and AI neurons against budgets (COST-GUARD-1)
   python3 -m foundation issueloop [--apply|--json]                       ISSUE-LOOP-1: every open issue's probe is run; a passing probe closes it
@@ -183,6 +185,15 @@ def main(argv=None) -> int:
     if _av[:1] == ["pointclick"]:
         from . import pointclick
         return pointclick.main(_av[1:])
+    if _av[:1] == ["needsyou"] and "--settle" in _av:
+        from . import needsyou
+        return needsyou.main(_av[1:])
+    if _av[:1] == ["redmain"]:
+        from . import redmain
+        return redmain.main(_av[1:])
+    if _av[:1] == ["credwatch"]:
+        from . import credwatch
+        return credwatch.main(_av[1:])
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])

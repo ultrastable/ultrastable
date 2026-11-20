@@ -10,10 +10,7 @@ async function first(db, sql, ...args) { return (await db.prepare(sql).bind(...a
 const iso = ms => new Date(ms).toISOString().replace('T', ' ').slice(0, 19);
 const marks = a => a.map(() => '?').join(',');
 
-// Pure: windowed figures -> k_eff with guards applied. cur/prev are { deploys, fail, spend, human, originated, self }.
-// SELF-REFERENCE-1: k_self counts only the verified deploys the system originated and executed on itself (cur.self: deploy rows whose origin is
-// in thresholds.self.origins). A deploy an outside session drove raises k_eff, never k_self. self_regime: subcritical (k_eff under k_min),
-// self-sustaining (k_self at or over k_min), driven (critical only on an outside source).
+// Pure: windowed figures -> k_eff with guards applied. cur/prev are { deploys, fail, spend, human, originated }.
 export function computeKEff(cur, prev, t) {
   const total = cur.deploys + cur.fail;
   const failRate = total ? cur.fail / total : 0;
@@ -26,12 +23,8 @@ export function computeKEff(cur, prev, t) {
   const credited = guardTripped ? prev.deploys : cur.deploys;
   const originated = Math.min(cur.originated, t.originated.credit_cap);
   const denom = Math.max(cur.spend + cur.human, t.denominator_floor);
-  const kEff = Number(((credited + originated) / denom).toFixed(4));
-  const selfDeploys = Math.min(cur.self || 0, credited);  // never more than the deploys that were credited at all
-  const kSelf = Number((selfDeploys / denom).toFixed(4));
   return {
-    k_eff: kEff, k_self: kSelf, self_deploys: selfDeploys,
-    self_regime: kEff < t.k_min ? 'subcritical' : kSelf >= t.k_min ? 'self-sustaining' : 'driven',
+    k_eff: Number(((credited + originated) / denom).toFixed(4)),
     credited_deploys: credited, raw_deploys: cur.deploys, originated_credited: originated,
     spend_units: cur.spend, human_touches: cur.human, fail_rate: Number(failRate.toFixed(4)),
     guard: { tripped: guardTripped, spend_worse: spendWorse, fail_worse: failWorse },
@@ -47,16 +40,13 @@ async function windowFigures(db, t, from, to) {
     iso(from), iso(to), ...cls, ...sur, t.deploy.verifier_evidence_prefix + '%');
   const f = await first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result IN ('failed','hidden_failure') AND at >= ? AND at < ? AND ${scope}`,
     iso(from), iso(to), ...cls, ...sur);
-  const origins = (t.self && t.self.origins) || [];
-  const sv = origins.length ? await first(db, `SELECT COUNT(*) AS n FROM outcomes WHERE result='verified' AND at >= ? AND at < ? AND ${scope} AND (${origins.map(() => 'evidence LIKE ?').join(' OR ')})`,
-    iso(from), iso(to), ...cls, ...sur, ...origins.map(o => `${t.deploy.verifier_evidence_prefix}% origin=${o}`)) : { n: 0 };
   const pre = t.originated.id_prefixes.map(() => 'id LIKE ?').join(' OR ');
   const o = await first(db, `SELECT COUNT(*) AS n FROM items WHERE created_at >= ? AND created_at < ? AND (${pre})`,
     iso(from), iso(to), ...t.originated.id_prefixes.map(p => p + '%'));
   const d = await first(db, `SELECT COUNT(*) AS n FROM dispatches WHERE at >= ? AND at < ?`, iso(from), iso(to));
   const g = await first(db, `SELECT COUNT(*) AS n FROM gate_cards WHERE closed_at IS NULL OR closed_at >= ?`, iso(from)); // an open or recently closed card is owner attention
   return {
-    n: s.n, cap: Boolean(s.cap), deploys: s.ok + v.n, self: sv.n, fail: s.fail + f.n, originated: o.n,
+    n: s.n, cap: Boolean(s.cap), deploys: s.ok + v.n, fail: s.fail + f.n, originated: o.n,
     spend: s.spend + d.n * t.dispatch_spend_units, human: s.human + g.n,
   };
 }

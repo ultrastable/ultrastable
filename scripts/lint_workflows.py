@@ -2,7 +2,7 @@
 """Cheap lint for the minute-budget rule (docs/ops/ACTIONS-BUDGET.md). Every workflow must carry
 header comments `# budget:`, `# trigger:` and `# free-alternative:`; every job needs timeout-minutes;
 no matrix; no schedule more often than daily; scheduled and pull_request workflows need concurrency."""
-import glob, sys, yaml
+import glob, re, sys, yaml
 
 def main():
     bad = []

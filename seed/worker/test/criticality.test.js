@@ -146,14 +146,3 @@ test('Q-CRIT-IGNITION: open chain links are rows, open_ignition_gaps sits next t
   assert.equal(r.open_ignition_gaps, 0);
   assert.equal(db.raw.prepare("SELECT COUNT(*) AS n FROM ignition_gaps WHERE status='closed' AND closed_at IS NOT NULL").get().n, 3, 'a closed link is kept with its time, never deleted');
 });
-
-test('SELF-REFERENCE-1: an outside-origin deploy raises k_eff but not k_self; the regime says which source keeps it critical', () => {
-  const outside = computeKEff(cur({ deploys: 4, self: 0, spend: 2 }), null, crit);
-  assert.equal(outside.k_eff, 2); assert.equal(outside.k_self, 0); assert.equal(outside.self_regime, 'driven');
-  const own = computeKEff(cur({ deploys: 4, self: 3, spend: 2 }), null, crit);
-  assert.equal(own.k_eff, 2); assert.equal(own.k_self, 1.5); assert.equal(own.self_regime, 'self-sustaining');
-  assert.equal(computeKEff(cur({ deploys: 1, self: 1, spend: 4 }), null, crit).self_regime, 'subcritical');
-  // a guard that withholds credit for a deploy rise also caps the self count: k_self never exceeds k_eff
-  const guarded = computeKEff(cur({ deploys: 40, self: 40, spend: 200 }), cur({ deploys: 10, spend: 10 }), crit);
-  assert.ok(guarded.guard.tripped); assert.ok(guarded.k_self <= guarded.k_eff);
-});
