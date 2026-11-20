@@ -42,10 +42,15 @@ class Ladder(unittest.TestCase):
         self.assertEqual((r["status"], r["via"], len(r["attempts"])), ("acquired", "env-token", 1))
 
     def test_device_login_scope_found_after_denials(self):  # BG-13: the credential was already on the device
-        c = ctx(tools={"gh": "/bin/gh"}, runs={"gh": (0, "Token scopes: repo, admin:org")})
+        c = ctx(env={"GITHUB_ACTIONS": "true"}, tools={"gh": "/bin/gh"}, runs={"gh": (0, "Token scopes: repo, admin:org")})
         r = ladder.acquire("org_admin", c)
         self.assertEqual(r["via"], "gh-login-admin-org")
         self.assertEqual([a["ok"] for a in r["attempts"]], [False, True])
+
+    def test_a_sign_in_on_a_host_that_is_not_server_side_is_not_a_route(self):  # OL-20261112-93
+        r = ladder.acquire("org_admin", ctx(tools={"gh": "/bin/gh"}, runs={"gh": (0, "Token scopes: repo, admin:org")}))
+        self.assertNotEqual(r.get("via"), "gh-login-admin-org")
+        self.assertIn("not server-side", " ".join(a["evidence"] if "evidence" in a else str(a) for a in r["attempts"]))
 
     def test_all_routes_fail_opens_exactly_one_card_with_every_denial_recorded(self):
         r = ladder.acquire("org_admin", ctx())

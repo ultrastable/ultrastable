@@ -158,12 +158,12 @@ class SurfaceTests(BootTests):
 
 
 class GhAdminOrgTests(unittest.TestCase):
-    """BG-13: a local gh login with admin:org counts as the org-admin credential."""
+    """BG-13: a gh sign-in with admin:org counts as the org-admin credential on a server-side host only (OL-20261112-93)."""
 
-    def _run(self, rc, out):
+    def _run(self, rc, out, env=None):
         from unittest import mock
         r = mock.Mock(returncode=rc, stdout=out, stderr="")
-        with mock.patch.object(bs.shutil, "which", return_value="gh"),              mock.patch.object(bs.subprocess, "run", return_value=r):
+        with mock.patch.dict(bs.os.environ, {"GITHUB_ACTIONS": "true"} if env is None else env, clear=True), mock.patch.object(bs.shutil, "which", return_value="gh"),              mock.patch.object(bs.subprocess, "run", return_value=r):
             return bs.Boot._gh_admin_org()
 
     def test_admin_org_scope(self):
@@ -174,3 +174,7 @@ class GhAdminOrgTests(unittest.TestCase):
 
     def test_not_logged_in(self):
         self.assertFalse(self._run(1, "not logged in"))
+
+    def test_a_sign_in_on_a_host_that_is_not_server_side_is_not_a_route(self):
+        self.assertFalse(self._run(0, "Token scopes: 'admin:org', 'repo'", env={}))
+        self.assertTrue(self._run(0, "Token scopes: 'admin:org', 'repo'", env={"CLAUDE_CODE_REMOTE": "true"}))
