@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # SMOKE-LIVE-1: turn smoke_live.py results into repair items in this repository's own format (docs/issues/Q-SMOKE-*.json; GitHub Issues are disabled here).
 # A failing check writes or refreshes its item; a passing check marks its item done. Landing: the main-writer route first (tools/push_main.py), then a branch + pull request.
-import json, os, re, subprocess, sys
+import json, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
