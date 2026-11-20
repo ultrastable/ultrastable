@@ -13,6 +13,7 @@ import { feedResponse } from "./feed.js"; // REACH-1
 import { demoResponse } from "./demo.js"; // DEMO-DASHBOARD-1
 import { caseResponse } from "./casestudy.js"; // CASE-STUDY-1
 import { examplesSection } from "./examples.js"; // EXAMPLE-SYSTEMS-1
+import { pilotOffer } from "./pilotoffer.js"; // PILOT-OFFER-1
 import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
 import VERIFIED from "./claims-data.js";
@@ -179,6 +180,7 @@ function pilot() {
   const list = function (a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; };
   return shell({ path: "/pilot", title: "Apply for an Ultrastable pilot", description: g.pitch },
     "<div class=\"head\"><h1>" + esc(g.title) + "</h1><p>" + esc(g.pitch) + "</p><p class=\"meta\">New here? <a href=\"/demo\">See the system running right now</a>.</p></div>"
+    + (DASH.pilot_offer ? pilotOffer(DASH.pilot_offer) : "")
     + "<div class=\"card\"><h3 class=\"card-title\">What we look for</h3>" + list(g.selection) + "</div>"
     + "<div class=\"card\"><h3 class=\"card-title\">What you get</h3><p class=\"meta\">" + esc(g.you_get) + " In return: " + esc(g.we_get) + ".</p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">What to tell us</h3>" + list(g.apply_fields) + "<p class=\"meta\">Price: " + esc(g.price) + ".</p></div>"

@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-pilot-offer-is-data-no-price-is-published-without-a-measured",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "Pilot offer is data; no price is published without a measured cost",
+  "body": "doctrine/pilot-offer.json holds the four system-test questions, what the pilot includes and a price block whose monthly_usd and range_usd stay null until a measured cost supports a figure. The offer reaches /pilot through site/dashboard-data.js (pilot_offer) so the dashboard freshness check covers it, and site/site.test.mjs fails when the page and the file differ. claimcode flags words such as always, never and every on public surfaces, including generated data.",
+  "probe": "file:doctrine/pilot-offer.json",
+  "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+ },
+ "kind": "lesson",
+ "title": "Pilot offer is data; no price is published without a measured cost",
+ "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+}
