@@ -17,6 +17,9 @@ def temp_root():
     (r / "doctrine").mkdir()
     for f in ("growth.json", "knobs.json", "clocks.json"):
         shutil.copy2(REPO / "doctrine" / f, r / "doctrine" / f)
+    # The product manager tunes this knob on main; the tests pin their own starting value so a live change cannot fail them.
+    c = json.loads((r / "doctrine/clocks.json").read_text()); c["chain"]["max_runs_per_day"] = 4
+    (r / "doctrine/clocks.json").write_text(json.dumps(c))
     (r / "docs/issues").mkdir(parents=True)
     return r
 
