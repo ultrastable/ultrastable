@@ -1,7 +1,7 @@
 {
   "id": "OL-20261112-10",
   "title": "OL-20261112-10: CF-ACTIONS-TOKEN: move deploy, tick and dashboard to the ultrastable account",
-  "body": "**Owner:** ops\n**Trigger:** daily\n**Done check:** grep:deploy/cloudflare-accounts.json::\"state\": \"running\"\n**Status:** open\n\nAcquire a scoped ultrastable-account token or OAuth-free route, then run cf_account cutover.",
+  "body": "**Owner:** ops\n**Trigger:** daily\n**Done check:** grep:deploy/cloudflare-accounts.json::\"state\": \"running\"\n**Status:** closed\n\nAcquire a scoped ultrastable-account token or OAuth-free route, then run cf_account cutover.\n\n**Evidence:** ops/deploys.jsonl holds 643 rows for account 81e3 by the oidc route; tick, dashboard, site, agents and tenants each show live_matches_commit true. deploy/cloudflare-accounts.json target.state updated; remaining zone and KV moves are OL-20261118-1.\n",
   "labels": [
     "role:ops",
     "open-loop"

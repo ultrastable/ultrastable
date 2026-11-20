@@ -17,7 +17,7 @@ const add = (db, repo, n, title, at) => db.prepare('INSERT OR REPLACE INTO live_
 const withBatch = db => Object.assign(db, { batch: async ss => { for (const s of ss) await s.run(); } });
 
 test('the Worker DDL equals the migration', () => {
-  const sql = readFileSync(new URL('../migrations/0027_progress.sql', import.meta.url), 'utf8');
+  const sql = readFileSync(new URL('../migrations/0028_progress.sql', import.meta.url), 'utf8');
   for (const d of PROGRESS_DDL) assert.ok(sql.includes(d), 'migration carries: ' + d.slice(0, 60));
 });
 

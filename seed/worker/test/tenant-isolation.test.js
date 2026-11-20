@@ -133,6 +133,43 @@ test('accrue_trust: a trust row of another tenant is neither read nor overwritte
   assert.equal(own.outcomes, 1); assert.equal(own.tenant_id, null);
 });
 
+test('migration 0027: the trust key carries the tenant, so an own row accrues at a key another tenant already holds (Q-TENANT-trust-pk-rebuild)', async () => {
+  const db = makeDb();
+  db.raw.exec(`INSERT INTO trust_ledger (surface,action_class,rung,reliability,outcomes,tenant_id) VALUES ('work_tracker','create_update_close','observed',0.123,7,'${FOREIGN}');
+    INSERT INTO outcomes (item_id,surface,action_class,result,evidence) VALUES ('I1','work_tracker','create_update_close','verified','e'), ('I2','work_tracker','create_update_close','verified','e');`);
+  await runTick(db, { config, now: T0 });
+  const at = rows(db, "SELECT outcomes, tenant_id FROM trust_ledger WHERE surface='work_tracker' AND action_class='create_update_close' ORDER BY tenant_id IS NOT NULL");
+  assert.equal(at.length, 2, 'own and foreign rows live side by side');
+  assert.deepEqual({ ...at[0] }, { outcomes: 2, tenant_id: null }, 'own trust accrued (before 0027 the foreign row blocked it)');
+  assert.deepEqual({ ...at[1] }, { outcomes: 7, tenant_id: FOREIGN }, 'the foreign row is untouched');
+  await runTick(db, { config, now: T0 + 600000 });
+  assert.equal(rows(db, "SELECT 1 FROM trust_ledger WHERE surface='work_tracker' AND action_class='create_update_close' AND tenant_id IS NULL").length, 1, 'the upsert updates the own row; it never duplicates it');
+  assert.throws(() => db.raw.exec("INSERT INTO trust_ledger (surface,action_class,rung,reliability) VALUES ('work_tracker','create_update_close','observed',0.5)"), /UNIQUE/, 'two own rows at one key are refused');
+});
+
+test('migration 0027 rebuilds an old-shape ledger atomically: rows and tenants survive, a backup is kept, a failed rebuild leaves the old table', async () => {
+  const sql = readFileSync(new URL('../migrations/0027_trust_ledger_tenant_pk.sql', import.meta.url), 'utf8');
+  const old = () => { const db = makeDb(); db.raw.exec(`DROP TABLE trust_ledger; DROP TABLE trust_ledger_backup_0027;
+    CREATE TABLE trust_ledger (surface TEXT NOT NULL, action_class TEXT NOT NULL, rung TEXT NOT NULL, reliability REAL NOT NULL, outcomes INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL DEFAULT (datetime('now')), tenant_id TEXT, PRIMARY KEY (surface, action_class));
+    INSERT INTO trust_ledger (surface,action_class,rung,reliability,outcomes,tenant_id) VALUES ('repo','merge_pr_green','delegated',0.91,12,NULL), ('site','deploy','observed',0.5,3,'${FOREIGN}');
+    CREATE TABLE IF NOT EXISTS _migrations (file TEXT PRIMARY KEY, sha256 TEXT NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')));`); return db; };
+  const db = old(); const ctx = { nowIso: '2026-11-20 00:00:00', notes: [] };
+  const r = await migrateStep(db, ctx, [{ file: '0027_trust_ledger_tenant_pk.sql', sql }], ensureItem);
+  assert.deepEqual(r.applied, ['0027_trust_ledger_tenant_pk.sql'], ctx.notes.join('; '));
+  assert.deepEqual(rows(db, "SELECT surface, rung, outcomes, tenant_id FROM trust_ledger ORDER BY surface").map(x => ({ ...x })),
+    [{ surface: 'repo', rung: 'delegated', outcomes: 12, tenant_id: null }, { surface: 'site', rung: 'observed', outcomes: 3, tenant_id: FOREIGN }]);
+  assert.equal(get(db, "SELECT COUNT(*) AS n FROM trust_ledger_backup_0027").n, 2, 'the pre-rebuild rows are kept as the rollback copy');
+  assert.ok(get(db, "SELECT name FROM sqlite_master WHERE type='index' AND name='trust_ledger_tenant_key'"));
+  assert.equal(get(db, "SELECT name FROM sqlite_master WHERE name='trust_ledger_v2'"), undefined);
+  // all or nothing: a rebuild that fails part-way (after the drop) rolls back to the old table with its rows
+  const db2 = old(); const ctx2 = { nowIso: '2026-11-20 00:00:00', notes: [] };
+  const broken = sql.replace('ALTER TABLE trust_ledger_v2 RENAME TO trust_ledger;', 'ALTER TABLE no_such_table RENAME TO trust_ledger;');
+  const r2 = await migrateStep(db2, ctx2, [{ file: '0027_trust_ledger_tenant_pk.sql', sql: broken }], ensureItem);
+  assert.deepEqual(r2.failed, ['0027_trust_ledger_tenant_pk.sql']);
+  assert.equal(get(db2, "SELECT COUNT(*) AS n FROM trust_ledger").n, 2, 'the old ledger is intact after the failed rebuild');
+  assert.equal(get(db2, "SELECT COUNT(*) AS n FROM _migrations WHERE file LIKE '0027%'").n, 0, 'a failed file is not ledgered, so the next tick retries it');
+});
+
 test('counts: done items, the open-item total and the plus-share window ignore another tenant\'s rows', async () => {
   const db = makeDb();
   db.raw.exec(`INSERT INTO items (id,title,owner_role,done_check,status,disposition,tenant_id,updated_at) VALUES

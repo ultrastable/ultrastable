@@ -1,6 +1,6 @@
 # Ultrastable business documents (working drafts, 2026-11-10)
 
-Funding- and investor-facing drafts for Ultrastable. Prepared by the virtual business, marketing and finance managers for Rowan (founder). All drafts: no metric, customer, revenue or quote has been invented; every estimate is labeled ESTIMATE; every field Rowan must confirm is marked `[FOUNDER CONFIRM]`; tax items are marked `[ACCOUNTANT]`.
+Funding- and investor-facing drafts for Ultrastable. Prepared by the virtual business, marketing and finance managers for Rowan (founder). All drafts: no metric, customer, revenue or quote has been invented; every estimate is labeled ESTIMATE; every field that only the founder can state is marked `[FOUNDER CONFIRM]`; tax items are marked `[ACCOUNTANT]`.
 
 | File | Purpose |
 |---|---|

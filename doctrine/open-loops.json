@@ -29,10 +29,22 @@
     {
      "s": "Cloudflare API registrar PUT name_servers on quniverse (2026-11-20 09:00Z scheduled retry)",
      "result": "403 code 10000 Name server update not allowed; domain still locked=true"
+    },
+    {
+     "s": "Cloudflare API, 2026-11-20 15:30Z, after Rowan's 'move all the domains, just do it'",
+     "result": "zones ultrastable.io, .app and .org created as pending in the ultrastable account (ultrastable.net already was); every editable DNS record copied; DNSSEC disabled and no zone hold on all four source zones, so each precondition of the registrar move is met"
+    },
+    {
+     "s": "Cloudflare API spec, registrar endpoints",
+     "result": "no endpoint moves a Cloudflare Registrar registration between accounts; Cloudflare's documentation gives the Configuration tab of Manage Domain in the losing account plus an email approval by the gaining account"
+    },
+    {
+     "s": "registrar read 2026-11-20",
+     "result": "all four locked=true, clienttransferprohibited, expire 2027-11-10 with auto_renew true"
     }
    ],
-   "reason": "registrar lock; the 2026-11-20 end date is unconfirmed (registered 2026-11-10, a 60-day new-registration lock would end 2027-01-09). Moving the zone by deleting it in quniverse is a different, riskier act than the approved nameserver switch and is not taken without a new yes",
-   "default": "zone stays served from quniverse; the daily single-account pass retries the approved switch",
+   "reason": "the registrar move between two Cloudflare accounts exists only as a dashboard action with an email approval; everything the API can do is done",
+   "default": "the four sites keep being served from the old account, registrations auto-renew until 2027-11-10, and the pending zones in the ultrastable account activate by themselves once the registrar move is approved",
    "probe": "cmd:python3 -m foundation singleaccount --check"
   },
   {
@@ -170,6 +182,137 @@
    "reason": "switching on the custom hostname service changes the zone's subscription and the deploy token's scope: a billing and credential-scope act in the owner's account",
    "default": "POST /api/domain proves ownership by DNS TXT, stores the proven address and answers pending_platform in plain words; the site keeps answering at its ultrastable.io address",
    "probe": "grep:site/wrangler.toml::CF_ZONE_ID"
+  },
+  {
+   "id": "ol-phase2-roles",
+   "items": [
+    "OL-ROLE-business-manager",
+    "OL-ROLE-community-manager",
+    "OL-ROLE-data-analyst",
+    "OL-ROLE-finance-controller",
+    "OL-ROLE-sales-partnerships",
+    "OL-ROLE-security-compliance"
+   ],
+   "surfaces": [
+    {
+     "s": "python3 -m foundation team --gate (2026-11-20)",
+     "result": "phase 2 closed: none of the seven phase 1 handoff files docs/handoff/<role>.md exists"
+    },
+    {
+     "s": "python3 -m foundation liveness --probe role-<id> for the seven phase 1 roles",
+     "result": "no recorded run for any of them"
+    },
+    {
+     "s": "search for a writer of docs/handoff/<role>.md",
+     "result": "only foundation/genesis.py names the path; no loop writes it"
+    }
+   ],
+   "reason": "the phase gate is the proof that phase 1 roles ran; writing the handoff files by hand would open the gate with no run behind it",
+   "default": "the phase 1 team stays the active team; the six role items stay in the queue with their gate as trigger",
+   "probe": "cmd:python3 -m foundation team --gate"
+  },
+  {
+   "id": "ol-market-evidence",
+   "items": [
+    "OL-GAP-verify-claude-code-has-the-money",
+    "OL-GAP-verify-does-it-run-itself",
+    "OL-GAP-verify-just-a-code-agent",
+    "OL-GAP-verify-safe-to-let-run",
+    "OL-GAP-verify-workflow-tools-exist"
+   ],
+   "surfaces": [
+    {
+     "s": "python3 -m foundation components --probe objection-verified:<id> (2026-11-20)",
+     "result": "not healthy for all five"
+    }
+   ],
+   "reason": "each cell needs a dated read of the vendor's own page; marking a cell verified without that read would be a false claim (CLAIMS-1)",
+   "default": "the five objections are shown as resting on unverified cells; the weekly rnd pass refreshes the profiles the cells cite",
+   "probe": "cmd:python3 -m foundation components --probe objection-verified:does-it-run-itself"
+  },
+  {
+   "id": "ol-workers-repo-records",
+   "items": [
+    "OL-20261115-13",
+    "OL-20261115-14",
+    "OL-20261115-15",
+    "OL-20261115-16",
+    "OL-20261115-17",
+    "OL-20261115-18",
+    "OL-20261115-19",
+    "OL-20261115-20"
+   ],
+   "surfaces": [
+    {
+     "s": "ops/deploys.jsonl",
+     "result": "tick, dashboard, site, agents and tenants deploy to the ultrastable account by the OIDC route with live_matches_commit true"
+    },
+    {
+     "s": "done checks of the eight records",
+     "result": "they name files of the ultrastable/workers layout (org/started.json, org/bootstrap-live-trial.json, org/second-installation.json) and steps in the owner's accounts: a GitHub App install, a second Cloudflare account, launcher hosting with a Turnstile secret"
+    }
+   ],
+   "reason": "the remaining steps create credentials or installations in the owner's accounts (identity-bound); the platform itself already runs on its own account from this repository",
+   "default": "Ultrastable runs from this repository on its own Cloudflare account through OIDC; the workers-repo start path stays a dry run",
+   "probe": "file:org/started.json"
+  },
+  {
+   "id": "ol-legal-and-visibility",
+   "items": [
+    "OL-20261115-5",
+    "OL-20261115-6",
+    "OL-20261115-7",
+    "OL-20261115-8"
+   ],
+   "surfaces": [
+    {
+     "s": "GitHub connector of the cloud session",
+     "result": "repository settings and visibility writes are not permitted (docs/BOOTSTRAP-GAPS.md BG-22)"
+    },
+    {
+     "s": "filing and attorney review",
+     "result": "a filing is the owner's signature; deleting archived repositories cannot be undone"
+    }
+   ],
+   "reason": "irreversible and identity-bound: publishing private repositories, a patent filing, permanent deletion",
+   "default": "repositories keep their current visibility, nothing is filed, archived duplicates stay archived",
+   "probe": "grep:ip/evidence-log.md::filing receipt"
+  },
+  {
+   "id": "ol-out-of-reach-repos-and-credentials",
+   "items": [
+    "OL-20261112-92",
+    "OL-20261112-14",
+    "OL-20261112-15",
+    "OL-20261115-9",
+    "OL-TRIGGERS-INSTALL",
+    "OL-20261118-1"
+   ],
+   "surfaces": [
+    {
+     "s": "git push and GitHub API to site, platform, seed, docs, ip, business",
+     "result": "403 Resource not accessible by integration (recorded in OL-20261112-92); those repositories are outside this session's scope"
+    },
+    {
+     "s": "python3 scripts/fleet_probe.py codeowners-removed (2026-11-20)",
+     "result": "open: .github/CODEOWNERS still present in ultrastable/workers, which is archived"
+    },
+    {
+     "s": "python3 -m foundation singleaccount --moved (2026-11-20)",
+     "result": "pending: four zones, 39 KV keys, four workers"
+    },
+    {
+     "s": "python3 -m foundation triggers --install",
+     "result": "not run: it mints and stores a new webhook secret, which widens credentials and needs a specific owner yes under the platform security check"
+    },
+    {
+     "s": "tick Worker credentials table, 2026-11-20 15:30Z",
+     "result": "github-app ultrastable-209646 status ok and github-admin ultrastable-admin-02087e installed: GitHub is connected, the app's own webhook posts to /hook/github, and no further connect click is needed (ops/connections/github-apps.json)"
+    }
+   ],
+   "reason": "each needs write access or a credential this session does not hold and may not mint; the registrar lock is recorded in gate net-nameserver-switch",
+   "default": "events fall back to the cron heartbeat; the monorepo is canonical for the six sibling repositories; zones stay served from the old account while the daily single-account pass retries",
+   "probe": "cmd:python3 -m foundation singleaccount --moved"
   }
  ]
 }
