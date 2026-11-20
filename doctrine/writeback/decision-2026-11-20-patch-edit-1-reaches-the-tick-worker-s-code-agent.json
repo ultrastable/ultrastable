@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-patch-edit-1-reaches-the-tick-worker-s-code-agent",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "PATCH-EDIT-1 reaches the tick Worker's code agent",
+  "body": "seed/worker/src/codeagent.js parses EDIT and FILE blocks and applyEdit places them exactly or by indentation-loose match; seed/worker/src/pr-executor.js shows the named files and resolves edits against the branch file. seed/worker/test/patch-edit.test.js passes 4 tests.",
+  "probe": "grep:seed/worker/src/codeagent.js::export function applyEdit",
+  "session": "session_0156nqDu4yypYCxGuFsjcqA3"
+ },
+ "kind": "decision",
+ "title": "PATCH-EDIT-1 reaches the tick Worker's code agent",
+ "session": "session_0156nqDu4yypYCxGuFsjcqA3"
+}
