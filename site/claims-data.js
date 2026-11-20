@@ -2497,6 +2497,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **A year unattended, measured (RUNWAY-1, Rowan 2026-11-20).** \"The system shall be able to run entirely unattended for 1 year with zero",
+   "detail": "",
+   "how": "file:doctrine/runway.json + file:foundation/credwatch.py + file:ops/cost.jsonl + file:foundation/redmain.py + file:doctrine/blindspots.json + file:tests/foundation/test_runway.py",
+   "id": "mirror-708c563ce5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
    "detail": "",
    "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
@@ -3233,7 +3242,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 356,
-  "total": 356
+  "pass": 357,
+  "total": 357
  }
 };
