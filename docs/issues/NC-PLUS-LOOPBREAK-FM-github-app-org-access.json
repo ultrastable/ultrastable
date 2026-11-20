@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-LOOPBREAK-FM-github-app-org-access",
+  "title": "NC-PLUS-LOOPBREAK-FM-github-app-org-access: Add failure-escalation rule: after 3 dispatch failures, block item and flag missing capability to portfolio-manager",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** the backlog item PLUS-LOOPBREAK-FM-github-app-org-access was parked needs-code by the in-tick doer\n**Done check:** A backlog rule exists that on the 3rd consecutive dispatch failure of an item sets it to blocked, records the failure reasons, and creates a capability-gap note naming either a different doer, a smaller split, or the missing capability.\n**Status:** open\n\nAdd failure-escalation rule: after 3 dispatch failures, block item and flag missing capability to portfolio-manager\n\nTriage: Requires coding to implement failure-escalation rule | first step: Write a Cloudflare Worker script to detect 3rd dispatch failure\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:portfolio-manager",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

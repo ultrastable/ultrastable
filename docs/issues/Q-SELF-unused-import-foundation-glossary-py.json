@@ -1,0 +1,14 @@
+{
+  "id": "Q-SELF-unused-import-foundation-glossary-py",
+  "title": "Q-SELF-unused-import-foundation-glossary-py: unused import in foundation/glossary.py",
+  "body": "**Owner:** code-agent\n**Trigger:** signal unused_import fires for foundation/glossary.py\n**Done check:** cmd:python3 -m foundation selfcode --probe unused_import foundation/glossary.py\n**Status:** open\n\nSELFCODE-1 signal `unused_import` on `foundation/glossary.py` (1 finding(s)).\n\nRemove the unused imports in the file; change nothing else.\n\nFindings:\n- line 10: unused import re\n\nScope: only foundation/, scripts/, tests/, products/, site/, seed/ and docs/issues/. A change that does not make the done check pass is reverted.",
+  "labels": [
+    "role:code-agent",
+    "ws:self",
+    "p6",
+    "raises-deploys",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Self"
+}

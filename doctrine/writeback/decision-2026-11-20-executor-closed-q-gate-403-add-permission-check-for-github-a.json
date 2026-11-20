@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-executor-closed-q-gate-403-add-permission-check-for-github-a",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "Executor closed Q-GATE-403: Add permission check for GitHub App token and create GATE-APP-PERMISSION card",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: seed/worker/src/worker-gate.js.",
+  "probe": "file:seed/worker/src/worker-gate.js"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-GATE-403: Add permission check for GitHub App token and create GATE-APP-PERMISSION card",
+ "session": ""
+}

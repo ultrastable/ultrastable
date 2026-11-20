@@ -1,0 +1,11 @@
+{
+  "id": "NC-ROADMAP-AGENT-MCP-OWNER-READS",
+  "title": "NC-ROADMAP-AGENT-MCP-OWNER-READS: ROADMAP-1: QNFO.OPS #MCP-OWNER-READS: MCP tools get_blind_spots and get_standards so every agent sees what the owner cannot",
+  "body": "**Owner:** product-manager\n**Trigger:** the backlog item ROADMAP-AGENT-MCP-OWNER-READS was parked needs-code by the in-tick doer\n**Done check:** grep:site/agentic.js::get_blind_spots ; merged and verified live (VERIFY-LIVE-1) with a probe the author did not write\n**Status:** open\n\nROADMAP-1: QNFO.OPS #MCP-OWNER-READS: MCP tools get_blind_spots and get_standards so every agent sees what the owner cannot\n\nTriage: worker-native attempt failed (no code agent produced a change: [{\"adapter\":\"workers-ai-glm\",\"error\":\"airouter: no model passed (workers-ai-glm: error: 5028: @cf/zai-org/glm-5.3-flash was deprecated on 2026-11-20. See the \"},{\"adap); retried after the other candidates\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:product-manager",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

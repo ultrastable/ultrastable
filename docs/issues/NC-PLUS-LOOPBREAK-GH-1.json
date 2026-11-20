@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-LOOPBREAK-GH-1",
+  "title": "NC-PLUS-LOOPBREAK-GH-1: Classify dispatch failure cause (doer-skill gap, scope too big, missing capability) when LOOPBREAK fires",
+  "body": "**Owner:** portfolio-manager\n**Trigger:** the backlog item PLUS-LOOPBREAK-GH-1 was parked needs-code by the in-tick doer\n**Done check:** Every item with >=3 failed dispatches has exactly one failure cause recorded and a concrete unblock action chosen (reassign doer, split item, or new capability item); probe confirms no LOOPBREAK item lacks a cause+action pair.\n**Status:** open\n\nClassify dispatch failure cause (doer-skill gap, scope too big, missing capability) when LOOPBREAK fires\n\nTriage: requires updating database schema to store failure causes and unblock actions | first step: design database schema changes to accommodate failure cause and unblock action storage\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:portfolio-manager",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-LOOPBREAK-FM-sweeper-red",
+  "title": "NC-PLUS-LOOPBREAK-FM-sweeper-red: Add loop-breaker escalation tag: record when a sweep rewrites a loopbreaker item so repeat failures are visible",
+  "body": "**Owner:** project-manager\n**Trigger:** the backlog item PLUS-LOOPBREAK-FM-sweeper-red was parked needs-code by the in-tick doer\n**Done check:** When FM-sweeper-red dispatch fails a 3rd time, the item gets tagged 'approach-changed' and the next dispatch uses a different doer or a smaller sub-item; a D1 query lists all items with >=3 failed dispatches and their new approach\n**Status:** open\n\nAdd loop-breaker escalation tag: record when a sweep rewrites a loopbreaker item so repeat failures are visible\n\nTriage: Tagging in D1 is doable, but forcing the next dispatch to use a different doer/smaller sub-item changes dispatch/orchestration logic the doer can't touch. | first step: Schema work in D1: add dispatch-failure count and 'approach-changed' tag columns, then have the PM doer record them; file the dispatch-rotation change\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:project-manager",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-ORIGIN-generic-2026-11-15-t672",
+  "title": "NC-PLUS-ORIGIN-generic-2026-11-15-t672: Cut verified-deploy cost: batch D1 verification reads into one cache query (k_eff 0.0887 -> 1)",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-ORIGIN-generic-2026-11-15-t672 was parked needs-code by the in-tick doer\n**Done check:** k_eff >= 1 or the named consumer (verified-deploy D1 read cost) measurably smaller: >=50% fewer verification read queries per deploy in D1 metrics\n**Status:** open\n\nCut verified-deploy cost: batch D1 verification reads into one cache query (k_eff 0.0887 -> 1)\n\nTriage: Cutting D1 verification read cost requires batching reads in Worker code; the doer cannot edit code, only the backlog DB. | first step: Assign an engineering ticket to a code-capable agent: implement the cached single-query batching for verification reads, then schedule the closing D1-\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

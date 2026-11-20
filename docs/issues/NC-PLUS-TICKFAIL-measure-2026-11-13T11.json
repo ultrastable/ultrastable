@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-TICKFAIL-measure-2026-11-13T11",
+  "title": "NC-PLUS-TICKFAIL-measure-2026-11-13T11: Add metrics retention: prune metrics rows older than 30 days via scheduled tick step",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-TICKFAIL-measure-2026-11-13T11 was parked needs-code by the in-tick doer\n**Done check:** After a scheduled tick, metrics table contains rows for the latest tick and no rows older than 30 days; next tick's measure step succeeds\n**Status:** open\n\nAdd metrics retention: prune metrics rows older than 30 days via scheduled tick step\n\nTriage: Pruning metrics in a scheduled tick requires editing Worker code (D1 queries in the tick handler); the doer can only write the backlog DB, not code. | first step: Open a code task for a developer to add a DELETE FROM metrics WHERE created_at < date('now','-30 days') step in the scheduled tick handler.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}
