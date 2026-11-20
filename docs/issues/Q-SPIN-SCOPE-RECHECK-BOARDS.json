@@ -1,0 +1,12 @@
+{
+ "id": "Q-SPIN-SCOPE-RECHECK-BOARDS",
+ "title": "Q-SPIN-SCOPE-RECHECK-BOARDS: Refresh every status board's facts on each loop run, not only on launch",
+ "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-SPIN-SCOPE-RECHECK-BOARDS.json::Status:\\*\\* closed\n**Status:** open\n\nRefresh every status board's facts on each loop run, not only on launch. boards stay current for free; the bundle is rebuilt from committed files. Planned cost per day: {\"workers_requests\": 0} against headroom {\"workers_requests\": 45000} (SPINOFF-IDEAS-1).\n\nsize: S\n\n**Prediction:** ops/free-tier.json level != shed within 48 h\n\n**Closing probe:** grep:docs/issues/Q-SPIN-SCOPE-RECHECK-BOARDS.json::Status:\\*\\* closed",
+ "labels": [
+  "role:product-manager",
+  "ws:growth",
+  "raises-self"
+ ],
+ "milestone": "Now",
+ "workstream": "Growth"
+}

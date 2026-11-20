@@ -1,0 +1,39 @@
+{
+ "slug": "country-snapshot",
+ "name": "Country Snapshot",
+ "tagline": "Type a country code, see its latest World Bank figures for electricity, drinking water, internet use and literacy.",
+ "archetype": "live-lookup",
+ "status": "live",
+ "launched": "2026-11-19T16:00:14Z",
+ "need_ids": [],
+ "reach": 4,
+ "impact": 4,
+ "score": 15.38,
+ "checks": [],
+ "idea": "country-snapshot",
+ "fact": null,
+ "live": "country-snapshot",
+ "showcase": false,
+ "cost": {
+  "d1_rows_read": 0,
+  "d1_rows_written": 0,
+  "workers_requests": 3000,
+  "ai_neurons": 0
+ },
+ "metrics": {
+  "reach": [
+   "board_age_hours"
+  ],
+  "impact": [],
+  "guard": [
+   "error_share"
+  ],
+  "targets": {
+   "board_age_hours": 30
+  },
+  "showcase": true,
+  "value": "a showcase board is kept while its facts stay fresh and its cost inside the headroom",
+  "prediction": "board_age_hours <= 30 within 48 h",
+  "input": "a public domain name or a public country code or place name"
+ }
+}
