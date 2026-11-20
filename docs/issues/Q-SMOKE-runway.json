@@ -1,7 +1,7 @@
 {
   "id": "Q-SMOKE-runway",
   "title": "Q-SMOKE-runway: production does not match the claim (runway)",
-  "body": "**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::runway\n**Status:** open\n\nSMOKE-LIVE-1: runway is measured and meets the 365-day target\n\nLive evidence: `ops/runway.json does not exist: runway was never measured`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\nsize: S\n\n**Closing probe:** workflow smoke-live, check `runway` = PASS.\n",
+  "body": "**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::runway\n**Status:** open\n\nSMOKE-LIVE-1: runway is measured and meets the 365-day target\n\nLive evidence: `days=None unmeasured=[]`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\nsize: S\n\n**Closing probe:** workflow smoke-live, check `runway` = PASS.\n",
   "labels": [
     "p1",
     "agent-ready"
