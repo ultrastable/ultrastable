@@ -17,7 +17,7 @@ for (const name of names) {
   for (const n of b.ai || []) bindings.push({ type: "ai", name: n });
   for (const [n, k] of Object.entries(b.d1 || {})) bindings.push({ type: "d1", name: n, id: sys.resources.d1[k].id });
   const form = new FormData();
-  form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: sys.compatibility_date, bindings })], { type: "application/json" }));
+  form.append("metadata", new Blob([JSON.stringify({ main_module: "worker.js", compatibility_date: sys.compatibility_date, bindings, observability: { enabled: true, head_sampling_rate: 1 } })], { type: "application/json" }));
   form.append("worker.js", new Blob([src], { type: "application/javascript+module" }), "worker.js");
   for (const [n, body] of extra) form.append(n, new Blob([body], { type: "application/javascript+module" }), n);
   const up = await api("PUT", `/accounts/${A}/workers/scripts/${name}`, form);

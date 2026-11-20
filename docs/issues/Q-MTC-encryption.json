@@ -1,0 +1,11 @@
+{
+  "id": "Q-MTC-encryption",
+  "title": "Q-MTC-encryption: encryption of tenant data at rest and in transit, key handling documented",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** file:docs/security/tenant-data-encryption.json\n**Status:** open\n\nMulti-tenant control `encryption` is unproven: encryption of tenant data at rest and in transit, key handling documented. Needed: a record, checked by a test, of which tenant tables are encrypted by the application and which rely on the host's encryption at rest; today only credential material is sealed by the application (seed/worker/src/auth/seal.js). The hosted tier stays closed until this is proven. Source: doctrine/tenant-controls.json (TENANT-CONTROLS-1).",
+  "labels": [
+    "role:operations",
+    "gap"
+  ],
+  "milestone": "Next",
+  "workstream": "Gaps"
+}

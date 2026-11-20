@@ -643,7 +643,7 @@ export default {
    "surface": "seed/self/SELF.md"
   },
   {
-   "claim": "seed-tests: 40 Python and 379 Worker tests",
+   "claim": "seed-tests: 45 Python and 381 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -652,7 +652,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 379 Worker tests",
+   "claim": "seed-worker-tests: 381 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -688,7 +688,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 680",
+   "claim": "live-deploys: 685",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",

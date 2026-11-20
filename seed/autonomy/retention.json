@@ -25,6 +25,10 @@
       "keep": "state",
       "reason": "AI-ROUTER-1: one row per kind and model, the routing memory"
     },
+    "airouter_retired": {
+      "keep": "state",
+      "reason": "AIROUTER-NO-RUN-1: one row per model the platform reported as deprecated; read with a 7 day window, at most one row per model"
+    },
     "social_posted": {
       "column": "at",
       "keep_days": 400,
