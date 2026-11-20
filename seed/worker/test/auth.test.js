@@ -252,3 +252,19 @@ test('READ-BUDGET-7: a warm isolate keeps serving its token when the credential 
   const r = await getToken(db, e, 'm', 'github-app', { fetch: async () => { throw new Error('no network'); }, now: now + 60e3 });
   assert.equal(r.token, 'memo-tok'); assert.equal(r.memo, true);
 });
+
+test('APP-REUSE-1: a connect link never registers a second GitHub app', async () => {
+  const db = makeDb(), e = { ...env(), DB: db };
+  for (const [path, provider] of [['/connect/github', 'github-app'], ['/connect/github-admin', 'github-admin']]) {
+    const first = await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text();
+    assert.match(first, /settings\/apps\/new/, 'no stored app: the manifest form is offered once');
+    await store.put(db, e, 't', provider, { secret: { pem: 'k' }, meta: { app_id: 7, slug: 'org-abc123' }, status: 'pending' });
+    const half = await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' });
+    assert.equal(half.status, 302); assert.match(half.headers.get('location'), /^https:\/\/github\.com\/apps\/org-abc123\/installations\/new\?state=/, 'registered, not installed: the stored app is installed');
+    await store.put(db, e, 't', provider, { meta: { installation_id: 9 }, status: 'ok' });
+    const done = await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text();
+    assert.match(done, /Already connected/); assert.ok(!/settings\/apps\/new/.test(done), 'connected: no manifest form');
+    await store.put(db, e, 't', provider, { status: 'failed', error: 'mint HTTP 404' });
+    assert.match(await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text(), /settings\/apps\/new/, 'a stored app that can no longer mint is replaced');
+  }
+});
