@@ -10,7 +10,7 @@ Ultrastable ships its own products from what already exists in this repo. Decide
 
 | Product | What it is | Built from | Status |
 |---|---|---|---|
-| **gaplint** (`products/gaplint/`) | Lints any repo for open loops: gap entries without a closing probe, owner cards without a default, agent files missing standing rules, reports that hand steps to a person. | the gap register and agent agreement formats | BUILT: 11 tests, runs in the `checks` workflow |
+| **gaplint** (`products/gaplint/`) | Lints any repo for open loops: gap entries without a closing probe, owner cards without a default, agent files missing standing rules, reports that hand steps to a person. | the gap register and agent agreement formats | BUILT: <!-- claim:gaplint-tests-products -->14 tests<!-- /claim -->, runs in the `checks` workflow |
 | Funding packet generator (standalone) | Validates and tracks funding application packets for any org from a registry file. | `scripts/funding_packet.py` and `business/funding/` | PLANNED: extract with its tests, no repo-specific paths |
 | Self-filing guide generator | Turns a form-filing route (portal, fees, signature, payment) into a click-by-click walkthrough plus an owner card with default and probe. | the walkthrough and owner-card format in `ip/europe/` | PLANNED: generic template and generator, no domain-specific content |
 
