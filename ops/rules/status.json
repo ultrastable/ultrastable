@@ -1,5 +1,5 @@
 {
- "at": "2026-11-20T13:51:00Z",
+ "at": "2026-11-20T19:52:53Z",
  "probes": {
   "closed-loops/closedloop": {
    "status": "ok",
@@ -33,7 +33,7 @@
   },
   "front-end-matches-back-end/claims": {
    "status": "ok",
-   "detail": "claims: 28 verified of 28; 0 drift",
+   "detail": "claims: 361 verified of 361; 0 drift",
    "fixed": false,
    "item": null
   },
@@ -51,15 +51,15 @@
   },
   "front-end-matches-back-end/spinoff-live": {
    "status": "unmeasured",
-   "detail": "unreachable: air-quality",
+   "detail": "unreachable: access-check, air-quality, country-snapshot",
    "fixed": false,
    "item": null
   },
   "no-merge-over-red/mergeaudit": {
-   "status": "violated",
-   "detail": "merged without green checks: #719",
+   "status": "ok",
+   "detail": "every recent merge had a green checks run",
    "fixed": false,
-   "item": "Q-RULE-no-merge-over-red-mergeaudit"
+   "item": null
   },
   "no-merge-over-red/ciwatch": {
    "status": "ok",
@@ -168,11 +168,57 @@
    "detail": "openloops ok",
    "fixed": false,
    "item": null
+  },
+  "no-open-items/modelwatch": {
+   "status": "ok",
+   "detail": "modelwatch ok",
+   "fixed": false,
+   "item": null
+  },
+  "no-open-items/unattended": {
+   "status": "ok",
+   "detail": "unattended ok",
+   "fixed": false,
+   "item": null
+  },
+  "held-out-rescoring/rescored": {
+   "status": "ok",
+   "detail": "rescore ok",
+   "fixed": false,
+   "item": null
+  },
+  "own-database/owndb-live": {
+   "status": "unmeasured",
+   "detail": "unmeasured: no CLOUDFLARE_API_TOKEN on this host",
+   "fixed": false,
+   "item": null
+  },
+  "hosted-tier-closed-until-proven/tenantcontrols": {
+   "status": "ok",
+   "detail": "tenantcontrols ok",
+   "fixed": false,
+   "item": null
+  },
+  "visible-progress/progress": {
+   "status": "ok",
+   "detail": "progress: check ok",
+   "fixed": false,
+   "item": null
+  },
+  "visible-progress/progress-apps": {
+   "status": "ok",
+   "detail": "progress: apps ok",
+   "fixed": false,
+   "item": null
+  },
+  "visible-progress/progress-live": {
+   "status": "ok",
+   "detail": "progress: live reading ok",
+   "fixed": false,
+   "item": null
   }
  },
- "filed": [
-  "Q-RULE-no-merge-over-red-mergeaudit"
- ],
+ "filed": [],
  "rules": {
   "closed-loops": {
    "status": "enforced",
@@ -198,7 +244,7 @@
    "statement": "Words match code: every public statement is bound to a probe of the running code (CLAIMS-1, WORDS-MATCH-CODE-1)."
   },
   "no-merge-over-red": {
-   "status": "violated",
+   "status": "enforced",
    "ci": 2,
    "probes": 2,
    "gaps": [],
@@ -277,9 +323,37 @@
   "no-open-items": {
    "status": "enforced",
    "ci": 1,
-   "probes": 1,
+   "probes": 3,
    "gaps": [],
    "statement": "The system never reports 'needs you' or leaves an item open: every leftover is closed by evidence or recorded as a gate with surfaces tried, a default in effect and a closing probe (NO-OPEN-ITEMS-1)."
+  },
+  "held-out-rescoring": {
+   "status": "enforced",
+   "ci": 1,
+   "probes": 1,
+   "gaps": [],
+   "statement": "Every settled prediction is re-scored by graders that share no code with the scorer (a strict rule and a second model family); a disagreement files its own item (RESCORE-1)."
+  },
+  "own-database": {
+   "status": "unmeasured",
+   "ci": 1,
+   "probes": 1,
+   "gaps": [],
+   "statement": "The core's databases are its own: no core Worker binds a tenant's database or a database of the originating fleet, and the declared core databases exist in the core's account (OWN-DB-1)."
+  },
+  "hosted-tier-closed-until-proven": {
+   "status": "enforced",
+   "ci": 1,
+   "probes": 1,
+   "gaps": [],
+   "statement": "The multi-tenant hosted tier is not offered while any of its controls is unproven; each control's status is the result of its probes (TENANT-CONTROLS-1)."
+  },
+  "visible-progress": {
+   "status": "enforced",
+   "ci": 1,
+   "probes": 3,
+   "gaps": [],
+   "statement": "Every system shows noticeable, substantive progress at every visit for at least six months with no input: what shipped is published from merged changes, releases and launches only, and a system that falls behind its declared cadence has its producers started and a repair item filed (PROGRESS-1)."
   }
  }
 }
