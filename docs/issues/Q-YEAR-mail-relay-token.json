@@ -1,0 +1,11 @@
+{
+  "id": "Q-YEAR-mail-relay-token",
+  "title": "Q-YEAR-mail-relay-token: measure the mail relay token lifetime",
+  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `mail-relay-token` is open\n**Done check:** cmd:python3 -m foundation unattended --probe mail-relay-token\n**Status:** open\n\nProbe the relay daily with a no-send health call, record the answer, and add a second sign-in path that needs no relay token.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that proves it.",
+  "labels": [
+    "role:staff",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

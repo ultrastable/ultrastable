@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-connect-once-1-sign-ins-now-last-with-the-causes-read-from-t",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "CONNECT-ONCE-1: sign-ins now last, with the causes read from the credential log",
+  "body": "Read from credential_events on 2026-11-20: Bluesky renewals carried no DPoP proof (HTTP 401 on 339 ticks) and the public client has a 2 week session cap in the atproto spec; Mastodon tokens with no expiry were marked failed on 369 ticks; the GitHub connect link registered a new App on each visit. seed/worker/src/auth now signs renewals, uses a confidential client with a sealed key, leaves a token with no expiry alone and answers a working connection as connected. Verified by seed/worker/test/social-connect.test.js. Residual risk: Bluesky's real server has not yet accepted the new client, which is known only after the next sign-in; posting stays dry-run until then.",
+  "probe": "grep:seed/worker/src/auth/atproto.js::CONFIDENTIAL-CLIENT-1",
+  "session": "session_0156nqDtUiiWZcd1f5Ruaq68"
+ },
+ "kind": "lesson",
+ "title": "CONNECT-ONCE-1: sign-ins now last, with the causes read from the credential log",
+ "session": "session_0156nqDtUiiWZcd1f5Ruaq68"
+}

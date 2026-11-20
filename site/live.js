@@ -41,9 +41,12 @@ export async function ignitionResponse(env, now = Date.now()) {
   return new Response(JSON.stringify(b), { status: b.ok ? 200 : 503, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
 }
 
+async function liveChanges(env) {
+  try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/live/changes")); if (r.ok) return await r.json(); } } catch (e) { console.error("live changes", e && e.message); }
+  return null;
+}
 export async function overlay(d, env, generated, now = Date.now(), bundleAt = null) {
-  let live = null;
-  try { if (env && env.TICK) { const r = await env.TICK.fetch(new Request("https://tick.internal/api/live/changes")); if (r.ok) live = await r.json(); } } catch (e) { live = null; }
+  const live = await liveChanges(env);
   const f = { snapshot: { at: generated, age_s: ageS(generated, now), cadence_s: CADENCE_S.snapshot }, changes: { at: live && live.refreshed_at || null, age_s: live ? ageS(live.refreshed_at, now) : null, cadence_s: CADENCE_S.changes } };
   if (live && live.changes && live.changes.length) {
     const th = d.throughput = d.throughput || {}, by = new Map();
