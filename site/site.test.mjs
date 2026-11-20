@@ -243,6 +243,31 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.equal((await rpc("tools/list")).result.tools.length, 20); // 11 snapshot tools + 6 live control-plane tools (CONTROL-PLANE-1) + submit_work (AGENT-HARNESS-1)
   assert.equal(JSON.parse((await rpc("tools/call", { name: "get_scoreboard" })).result.content[0].text).a, 1);
   assert.equal((await rpc("nope")).error.code, -32601);
+  // MCP-STATELESS-1: the version a client asks for is the version it gets; server/discover answers without a session; an unknown version header is refused
+  assert.equal((await rpc("initialize", { protocolVersion: "2026-07-28" })).result.protocolVersion, "2026-07-28");
+  assert.equal((await rpc("initialize")).result.protocolVersion, "2025-06-18");
+  { const d = (await rpc("server/discover")).result; assert.equal(d.supportedVersions[0], "2026-07-28"); assert.equal(d.serverInfo.name, "ultrastable-live"); }
+  { const r = await g3("/mcp", { method: "POST", headers: { "mcp-protocol-version": "1999-01-01" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "ping" }) }); assert.equal(r.status, 400); assert.ok(!r.headers.get("mcp-session-id")); }
+  // A2A-V1-1: the 0.3 method names are aliases of the 1.0 ones
+  { const a = async m => (await (await g3("/a2a", { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: m, params: {} }) })).json());
+    assert.deepEqual((await a("tasks/get")).error, (await a("GetTask")).error); assert.equal((await a("tasks/nope")).error.code, -32601); }
+  // CARD-SIGNED-1: agent card signature verifies against /.well-known/jwks.json; an aged key rotates lazily and the previous key stays published
+  { const ag = await import("./agentic.js"); const store = new Map(), envK = { ASSETS: { get: async k => store.get(k) || null, put: async (k, v) => { store.set(k, v); } } };
+    const dec = x => Uint8Array.from(atob(x.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
+    const verify = async (card, jwks) => { const { signatures, ...body } = card, sg = signatures[0], head = JSON.parse(new TextDecoder().decode(dec(sg.protected))); const jwk = jwks.keys.find(k => k.kid === head.kid);
+      const key = await crypto.subtle.importKey("jwk", { kty: jwk.kty, crv: jwk.crv, x: jwk.x, y: jwk.y }, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+      const payload = btoa(String.fromCharCode(...new TextEncoder().encode(ag.jcs(body)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+      return head.alg === "ES256" && /\/\.well-known\/jwks\.json$/.test(head.jku) && await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, key, dec(sg.signature), new TextEncoder().encode(sg.protected + "." + payload)); };
+    ag._resetCardKey(); const t0 = Date.parse("2026-11-20T00:00:00Z");
+    const card = await ag.signedCard(envK, t0), jwks = await ag.cardJwks(envK, t0);
+    assert.equal(card.protocolVersion, "1.0"); assert.equal(await verify(card, jwks), true); assert.ok(!("d" in jwks.keys[0]), "the key set never carries the private half");
+    assert.equal(await verify({ ...card, name: "Someone else" }, jwks), false, "a changed card fails");
+    ag._resetCardKey(); assert.equal((await ag.cardJwks(envK, t0 + 864e5)).keys[0].kid, jwks.keys[0].kid, "a new isolate reads the stored key");
+    const later = t0 + ag.CARD_KEY_TTL_MS + 1, jw2 = await ag.cardJwks(envK, later);
+    assert.notEqual(jw2.keys[0].kid, jwks.keys[0].kid); assert.equal(jw2.keys[1].kid, jwks.keys[0].kid); assert.equal(await verify(card, jw2), true, "a card cached before rotation still verifies");
+    assert.equal(await verify(await ag.signedCard(envK, later), jw2), true); ag._resetCardKey();
+    const live = await (await g3("/.well-known/agent-card.json")).json(), set = await g3("/.well-known/jwks.json");
+    assert.equal(set.headers.get("content-type"), "application/jwk-set+json"); assert.equal(await verify(live, await set.json()), true); }
   assert.equal((await g3("/.well-known/mcp")).status, 200);
   { const pg = await (await g3("/connect-agent")).text(); assert.match(pg, /vscode:mcp\/install\?/); assert.match(pg, /codex mcp add ultrastable --url https:\/\/ultrastable.io\/mcp/); assert.ok(!/token/i.test(pg.replace(/Nothing to copy or paste/, "")), "no token step"); } // CONNECT-PAGE-1
   assert.match(await (await g3("/connect-agent")).text(), /vscode:mcp\/install/); // one-click connect page

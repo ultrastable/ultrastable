@@ -216,8 +216,8 @@ export default {
     "name": "A2A v1.0 with signed Agent Cards and task lifecycle",
     "body": "Agentic AI Foundation",
     "status": "stable",
-    "support": "planned",
-    "tracked_by": "ROADMAP-AGENT-A2A-V1: serve a v1.0 signed card, message/send and tasks/get"
+    "support": "supported",
+    "tracked_by": null
    },
    {
     "id": "mcp-apps-agui",

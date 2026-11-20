@@ -84,13 +84,18 @@ export const AGENT_CARD = { protocolVersion: "1.0", supportedInterfaces: [{ url:
 export const LINKS = "</.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/agent-card.json>; rel=\"agent-card\", </openapi.json>; rel=\"service-desc\"; type=\"application/vnd.oai.openapi+json\", </.well-known/mcp/server-card.json>; rel=\"mcp-server-card\", </llms.txt>; rel=\"describedby\"";
 export const CONTENT_SIGNAL = "Content-Signal: search=yes, ai-input=yes, ai-train=no\n";
 
+// MCP-STATELESS-1: the versions /mcp speaks, newest first. 2026-07-28 is the stateless revision: no session id is issued or required, every request stands
+// alone, and a client asks server/discover instead of opening a session. Older clients keep initialize; a client that names no version gets 2025-06-18.
+export const MCP_VERSIONS = ["2026-07-28", "2025-11-25", "2025-06-18"];
 async function mcp(request, env) {
+  { const pv = request.headers.get("mcp-protocol-version"); if (pv && !MCP_VERSIONS.includes(pv)) return j({ jsonrpc: "2.0", id: null, error: { code: -32600, message: `unsupported protocol version ${pv}; supported: ${MCP_VERSIONS.join(", ")}` } }, null, 400); }
   if (request.method === "GET") return new Response("Use POST with JSON-RPC 2.0", { status: 405, headers: { allow: "POST", ...CORS } });
   if (request.method !== "POST") return new Response("Method not allowed", { status: 405, headers: { allow: "POST", ...CORS } });
   let m; try { m = await request.json(); } catch (e) { return j({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }, null, 400); }
   const id = m && m.id !== undefined ? m.id : null, ok = result => j({ jsonrpc: "2.0", id, result }), err = (code, message) => j({ jsonrpc: "2.0", id, error: { code, message } });
   switch (m && m.method) {
-    case "initialize": return ok({ protocolVersion: "2025-06-18", capabilities: { tools: { listChanged: false } }, serverInfo: CARD.serverInfo, instructions: "Ultrastable running on itself. Read tools are open; submit_work asks you to sign in once in the browser (OAuth 2.1, no token to paste)." });
+    case "server/discover": return ok({ supportedVersions: MCP_VERSIONS, capabilities: { tools: { listChanged: false } }, serverInfo: CARD.serverInfo });
+    case "initialize": return ok({ protocolVersion: MCP_VERSIONS.includes((m.params || {}).protocolVersion) ? m.params.protocolVersion : "2025-06-18", capabilities: { tools: { listChanged: false } }, serverInfo: CARD.serverInfo, instructions: "Ultrastable running on itself. Read tools are open; submit_work asks you to sign in once in the browser (OAuth 2.1, no token to paste)." });
     case "notifications/initialized": return new Response(null, { status: 202, headers: CORS });
     case "ping": return ok({});
     case "tools/list": return ok({ tools: [...LIVE_TOOLS, ...TOOLS, ...WRITE_TOOLS].map(({ name, description, inputSchema, annotations }) => ({ name, description, inputSchema, annotations })) });
@@ -125,7 +130,9 @@ async function a2a(request, env) {
   let m; try { m = await request.json(); } catch (e) { return j({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }, null, 400); }
   const id = m && m.id !== undefined ? m.id : null, ok = result => j({ jsonrpc: "2.0", id, result }), err = (code, message) => j({ jsonrpc: "2.0", id, error: { code, message } });
   const task = (tid, state, text) => ({ id: tid, contextId: tid, status: { state: A2A_STATE[state] || "TASK_STATE_SUBMITTED" }, artifacts: text ? [{ artifactId: "status", parts: [{ text }] }] : [] });
-  if (m && m.method === "SendMessage") {
+  // A2A-V1-1: clients written against A2A 0.3 call message/send and tasks/get; both are served as aliases of the 1.0 methods so either generation can hand over a task and poll it.
+  const method = { "message/send": "SendMessage", "tasks/get": "GetTask" }[m && m.method] || (m && m.method);
+  if (method === "SendMessage") {
     const auth = await authIntegration(request, env);
     if (!auth.ok) return new Response(JSON.stringify({ jsonrpc: "2.0", id, error: { code: -32001, message: auth.error } }), { status: auth.status, headers: { ...CORS, "content-type": "application/json; charset=utf-8", ...(auth.status === 401 ? { "www-authenticate": "Bearer" } : {}) } });
     if (!env.ORG) return err(-32603, "Org database not bound");
@@ -135,13 +142,47 @@ async function a2a(request, env) {
     const r = await submitIntake(env, auth.name, { title: text.split("\n")[0], detail: text, kind: meta.kind, agent: meta.agent || auth.name, harness: meta.harness || "a2a" });
     return r.status >= 400 ? err(-32602, JSON.stringify(r.body)) : ok({ task: task(r.body.id, "open") });
   }
-  if (m && m.method === "GetTask") {
+  if (method === "GetTask") {
     const tid = String(((m.params || {}).id) || ""); if (!tid || !env.ORG) return err(-32602, "id required");
     const w = await workItem(env, tid); if (!w || w.error || w.status === 404) return err(-32001, "TaskNotFoundError");
     const it = w.item || w; return ok({ task: task(tid, it.status, it.title) });
   }
   return err(-32601, "Method not found");
 }
+
+// CARD-SIGNED-1: the agent card is served with a JWS signature (RFC 7515, ES256) over its RFC 8785 canonical JSON. The Worker generates the
+// P-256 key itself, keeps it in its own KV namespace, publishes the public half at /.well-known/jwks.json and replaces it lazily after
+// CARD_KEY_TTL_MS on the first request that sees it aged (no cron). The previous public key stays in the key set for one more period, so a
+// card cached before the rotation still verifies. No person creates, copies or stores a key.
+export const CARD_KEY_TTL_MS = 90 * 864e5, JWKS_PATH = "/.well-known/jwks.json";
+const CARD_KEY_KV = "agent-card-key:v1", b64u = b => btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const b64uText = t => b64u(new TextEncoder().encode(t));
+export const jcs = v => Array.isArray(v) ? "[" + v.map(jcs).join(",") + "]" : v && typeof v === "object" ? "{" + Object.keys(v).sort().map(k => JSON.stringify(k) + ":" + jcs(v[k])).join(",") + "}" : JSON.stringify(v);
+let cardKeyMemo = null;
+export const _resetCardKey = () => { cardKeyMemo = null; };
+export async function cardKeys(env, now = Date.now()) {
+  if (cardKeyMemo && now - cardKeyMemo.created < CARD_KEY_TTL_MS && now - cardKeyMemo.read < 3600e3) return cardKeyMemo;
+  const kv = env && env.ASSETS && typeof env.ASSETS.put === "function" ? env.ASSETS : null;
+  let rec = kv ? JSON.parse((await kv.get(CARD_KEY_KV)) || "null") : (cardKeyMemo || null);
+  if (!rec || now - rec.created >= CARD_KEY_TTL_MS) {
+    const pair = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+    const pub = await crypto.subtle.exportKey("jwk", pair.publicKey), priv = await crypto.subtle.exportKey("jwk", pair.privateKey);
+    const kid = "card-" + new Date(now).toISOString().slice(0, 10) + "-" + b64u(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pub.x + pub.y))).slice(0, 8);
+    const next = { kid, created: now, priv, pub: { kty: pub.kty, crv: pub.crv, x: pub.x, y: pub.y, kid, use: "sig", alg: "ES256" }, previous: rec ? rec.pub : null };
+    if (kv) { await kv.put(CARD_KEY_KV, JSON.stringify(next)); rec = JSON.parse((await kv.get(CARD_KEY_KV)) || "null") || next; }  // read back: when two isolates rotate at once, both sign with the stored key
+    else rec = next;
+  }
+  cardKeyMemo = { ...rec, read: now };
+  return cardKeyMemo;
+}
+export async function signedCard(env, now = Date.now()) {
+  const k = await cardKeys(env, now);
+  const key = await crypto.subtle.importKey("jwk", k.priv, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+  const prot = b64uText(JSON.stringify({ alg: "ES256", typ: "JOSE", kid: k.kid, jku: ORIGIN + JWKS_PATH }));
+  const sig = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, key, new TextEncoder().encode(prot + "." + b64uText(jcs(AGENT_CARD))));
+  return { ...AGENT_CARD, signatures: [{ protected: prot, signature: b64u(sig) }] };
+}
+export async function cardJwks(env, now = Date.now()) { const k = await cardKeys(env, now); return { keys: [k.pub, ...(k.previous ? [k.previous] : [])] }; }
 
 export async function agentic(request, env) {
   const u = new URL(request.url), p = u.pathname.replace(/\/$/, "");
@@ -153,7 +194,8 @@ export async function agentic(request, env) {
     case "/a2a": return a2a(request, env);
     case "/connect-agent": return new Response(CONNECT_HTML(), { headers: { ...CORS, "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
     case "/openapi.json": return j(OPENAPI, "application/vnd.oai.openapi+json; charset=utf-8");
-    case "/.well-known/agent-card.json": case "/.well-known/agent.json": return j(AGENT_CARD);
+    case "/.well-known/agent-card.json": case "/.well-known/agent.json": return j(await signedCard(env));
+    case JWKS_PATH: return j(await cardJwks(env), "application/jwk-set+json");  // /.well-known/jwks.json
     case "/.well-known/api-catalog": return j({ linkset: [{ anchor: ORIGIN + "/api/v1", "service-desc": [{ href: ORIGIN + "/openapi.json", type: "application/vnd.oai.openapi+json" }], "service-doc": [{ href: ORIGIN + "/llms.txt", type: "text/plain" }], status: [{ href: ORIGIN + "/api/v1/status", type: "application/json" }] }, { anchor: ORIGIN + "/api/live", "service-desc": [{ href: ORIGIN + "/openapi.json", type: "application/vnd.oai.openapi+json" }], "service-doc": [{ href: ORIGIN + "/llms.txt", type: "text/plain" }] }, { anchor: ORIGIN + "/mcp", "service-desc": [{ href: ORIGIN + "/.well-known/mcp/server-card.json", type: "application/json" }] }] }, "application/linkset+json; profile=\"https://www.rfc-editor.org/info/rfc9727\"");
     case "/.well-known/mcp": case "/.well-known/mcp/server-card.json": case "/.well-known/mcp/server-cards.json": case "/.well-known/mcp.json": return j(p.endsWith("cards.json") ? { servers: [CARD] } : CARD);
     case "/.well-known/agent-skills/index.json": case "/.well-known/skills/index.json":

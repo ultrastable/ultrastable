@@ -241,6 +241,33 @@ export async function submitIntake(env, authName, b, now = Date.now()) {
   return { status: 201, body: { ok: true, id, status: "open", owner_role: "product-manager", url: ORIGIN + "/api/v1/work/" + id, attributed_to: { agent: agent || null, harness: harness || null } } };
 }
 
+// AGENT-SCOREBOARD-1: what each agent and harness sent through intake and what became of it. Attribution is the surface submitIntake wrote
+// (AGENT-HARNESS-1). accepted = the item moved on to ready, claimed, blocked or done; declined = cancelled or superseded; triage time is the
+// span from filing to the first move out of open. merged_prs counts handoffs by that agent that reached a merge. routing_weight is the
+// accepted share with a prior of one accepted in two, so a harness with two submissions cannot outrank one with fifty.
+const SURFACE_RE = /(?:^| )agent:(\S+)(?: harness:(\S+))?/;
+export async function agentScoreboard(env) {
+  const db = env.ORG;
+  const rows = await all(db, "SELECT surface, status, created_at, updated_at FROM items WHERE kind LIKE 'intake-%' AND surface LIKE '%agent:%' ORDER BY created_at DESC LIMIT 2000");
+  const hasHandoffs = (await all(db, "SELECT 1 AS x FROM sqlite_master WHERE type = 'table' AND name = 'handoffs'")).length > 0;
+  const merged = hasHandoffs ? await all(db, "SELECT agent, count(*) AS n FROM handoffs WHERE merge_sha IS NOT NULL AND agent IS NOT NULL GROUP BY agent") : [];
+  const by = new Map();
+  for (const r of rows) {
+    const m = SURFACE_RE.exec(r.surface || ""); if (!m) continue;
+    const key = m[1] + "|" + (m[2] || "");
+    const e = by.get(key) || { agent: m[1], harness: m[2] || null, submitted: 0, accepted: 0, declined: 0, open: 0, triage_h: [] };
+    e.submitted++;
+    if (r.status === "open") e.open++;
+    else { if (r.status === "cancelled" || r.status === "superseded") e.declined++; else e.accepted++;
+      const h = (Date.parse(String(r.updated_at).replace(" ", "T") + "Z") - Date.parse(String(r.created_at).replace(" ", "T") + "Z")) / 36e5; if (Number.isFinite(h) && h >= 0) e.triage_h.push(h); }
+    by.set(key, e);
+  }
+  const agent_scoreboard = [...by.values()].map(e => { const t = e.triage_h.sort((a, b) => a - b); const { triage_h, ...rest } = e;
+    return { ...rest, median_triage_h: t.length ? Math.round(t[Math.floor((t.length - 1) / 2)] * 10) / 10 : null, merged_prs: (merged.find(x => x.agent === e.agent) || { n: 0 }).n, routing_weight: Math.round(((e.accepted + 1) / (e.accepted + e.declined + 2)) * 100) / 100 }; })
+    .sort((a, b) => b.routing_weight - a.routing_weight || b.submitted - a.submitted);
+  return { api_version: API_VERSION, window: "latest " + rows.length + " attributed intake items (cap 2000)", count: agent_scoreboard.length, agent_scoreboard };
+}
+
 export async function intake(request, env, now = Date.now()) {
   const auth = await authIntegration(request, env);
   if (!auth.ok) return json({ error: auth.error }, auth.status, auth.status === 401 ? { "www-authenticate": "Bearer" } : undefined);
@@ -291,6 +318,7 @@ export const OPENAPI_PATHS = {
   "/api/v1/activity": { get: { operationId: "getActivity", summary: "Recent dispatches and tick reports", responses: { "200": { description: "Activity" } } } },
   "/api/v1/products": { get: { operationId: "listProducts", summary: "Hosted products and services with their discovery documents", responses: { "200": { description: "Products" } } } },
   "/api/v1/companion/brief": { get: { operationId: "getCompanionBrief", summary: "Plain-language digest for a personal assistant: state, next up, what needs the owner", responses: { "200": { description: "Brief" } } } },
+  "/api/v1/agents/scoreboard": { get: { operationId: "getAgentScoreboard", summary: "Per agent and harness: intake items submitted, accepted, declined, median time to triage, merged pull requests and the routing weight that follows", responses: { "200": { description: "Scoreboard" } } } },
   "/api/v1/sop": { get: { operationId: "getSop", summary: "The code-agent standard operating procedure: take, build, verify, hand off, stop", responses: { "200": { description: "SOP" } } } },
   "/api/v1/handoffs": { get: { operationId: "listHandoffs", summary: "Work handed to the server and each state it moved through (open, merged, deployed, verified, rolled_back ...)", parameters: [{ name: "state", in: "query", schema: { type: "string" } }], responses: { "200": { description: "Handoffs" } } } },
   "/api/v1/handoff": { post: { operationId: "submitHandoff", summary: "Hand a PR to the server (bearer token); the server merges, deploys, probes and closes", security: [{ bearer: [] }], requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["repo", "pr"], properties: { repo: { type: "string" }, pr: { type: "integer" }, item: { type: "string" }, agent: { type: "string" }, verify: { type: "string" }, deploy: { type: "string" } } } } } }, responses: { "201": { description: "Registered" }, "401": { description: "No token" }, "422": { description: "Invalid" } } } },
@@ -332,6 +360,7 @@ export async function controlPlane(request, env, ctx) {
   try {
     if (p === "/api/v1/status") return json(await status(env));
     if (p === "/api/v1/agents") return json(await agents(env));
+    if (p === "/api/v1/agents/scoreboard") return json(await agentScoreboard(env));
     if (p === "/api/v1/handoffs") return json(await handoffs(env, u.searchParams.get("state"), u.searchParams.get("limit")));
     if (p === "/api/v1/activity") return json(await activity(env, u.searchParams.get("limit")));
     if (p === "/api/v1/companion/brief") return json(await companionBrief(env));
