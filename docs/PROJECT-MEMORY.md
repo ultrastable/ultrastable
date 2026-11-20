@@ -9,6 +9,23 @@
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
 Last updated: 2026-11-20
+
+- 2026-11-20: CF-ROUTE-1 and MAIN-WRITER-PR-1: no Cloudflare or PAT secret needed for backups, credential check and data PRs (#775)
+- 2026-11-20: smoke-live: repair items from the production smoke test (#771)
+- 2026-11-20: watchdog: runway, credwatch and clock readings (#770)
+- 2026-11-20: Q-SELF-unused-import-foundation-clockwork-py: remove unused import Path from foundation/clockwork.py (MECH-FIX-1, computed from the syntax tree, no model call) (#Q-SELF-unused-import-foundation-clockwork-py) (#762)
+- 2026-11-20: land_data: dispatch checks on data branches (bot PRs stayed blocked) (#769)
+- 2026-11-20: foundation CLI: accept executor --fold (regen-generated red on main) (#765)
+- 2026-11-20: SMOKE-LIVE-1: production smoke test of every public claim, with repair items (#763)
+- 2026-11-20: SOCIAL-TENANTS-1: publisher drains tenant queues; fix hourly refresh clobbering Bluesky/Mastodon (#748)
+- 2026-11-20: A red main repairs itself; token and domain expiry are watched (REDMAIN-1, TOKEN-EXPIRY-1) (#737)
+- 2026-11-20: Pilot offer as data, rendered on /pilot (PILOT-OFFER-1) (#755)
+- 2026-11-20: SITE-FEED-1: Atom feed and embeddable badge for every built site (#761)
+- 2026-11-20: ciwatch: failing-workflow items (#760)
+- 2026-11-20: Product manager pass: 0 growth and repair item(s) filed (#757)
+- 2026-11-20: core/format: believable number formatting (NUMFMT-1) and a false-precision lint (#758)
+- 2026-11-20: SITE-INSIGHTS-1: visitor insights for built sites; upkeep spend follows real visits (#759)
+- 2026-11-20: core/ask and core/i18n: grounded Ask and multilingual serving (ASK-1, I18N-1) (#756)
 - 2026-11-20: PROGRESS-1 (visible progress for six months unattended): `instances/ultrastable/progress.json` lists every system with its cadence; the tick step `progress` (`seed/worker/src/progress.js`, shared rule `workers/core/progress`) judges each pass, dispatches producer workflows when a system is slow and files `STALL-<system>` when stalled; pages `/progress`, `/digest/{daily,weekly,monthly}`, `/progress.atom`, `/progress.json` read only merged changes; the last visit lives in the reader's browser. Check: `python3 -m foundation progress --check`.
 - 2026-11-20: COVERAGE-MODULES-1, COVERAGE-MIRROR-1 (Q-CLAIM-COVER family): every claim-like statement on a source surface and on every rendered page is bound. `doctrine/claims.json` gained `modules` (nine generated site modules bound as a whole: header names the generator, generator exists, stale check passes), 162 sentences bound by hand to enforcing code (`bound_by: curated`) and mirror entries written by `scripts/bind_cited_claims.py --apply` for sentences repeated on seed copies. `foundation/claims.py` `prose()` reads only visible words. Words changed to match code: Quniverse runs in its own Cloudflare account (README), dashboard status refresh is hourly, gaplint and platform core test counts are generated blocks, the claim ledger is per item. New checks: `scripts/lint_swallow.py` (Never swallow an error, shrink-only baseline `doctrine/no-swallow.json`) and `scripts/spec_ids.py` (requirement IDs never renumbered, ledger `doctrine/spec-ids.json`). Coverage floor 0.9; `coverage.src_unbound_budget` caps unbound source lines. Open: `Q-CLAIM-reply-promise` (the two-working-days reply promise on /pilot and /contact has no code path).
 - 2026-11-20: MECH-FIX-1: `foundation/mechfix.py` fixes unused module-level imports from the syntax tree and `foundation/executor.py` asks it before the model ladder (no model call, no AI budget). Reason: 12 of 12 model attempts on these items failed on 2026-11-20. GitHub Models still answers every path with text `OK`, and the free Workers AI models produce stubs for roadmap items, so the next lever for self-originated deploys is more deterministic fixers plus patch-style edits. Tests: `tests/foundation/test_mechfix.py`.
