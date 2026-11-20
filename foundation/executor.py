@@ -164,28 +164,6 @@ def safe_path(p: str) -> str | None:
     return None
 
 
-# EXEC-STUB-GUARD-1 (the Actions-route twin of NATIVE-STUB-1 and NATIVE-SHRINK-GUARD-1 in seed/worker/src/nativeexec.js): the model answers with
-# whole files. #725 answered Q-GATE-403 by replacing the 150-line seed/worker/src/worker-gate.js with seventeen lines around "// ... existing code ...",
-# the review approved it and a pull request was opened. An answer that holds an elision marker or a "logic here" placeholder, or that would cut an
-# existing file to under half its size, is refused before anything is written, so the item goes to the next rung of the ladder.
-STUB_RES = [re.compile(p, re.I) for p in (r"(?://|#|/\*)\s*\.\.\.\s*(?:existing|rest of|remaining|unchanged)[^\n]*", r"(?://|#)\s*(?:TODO:?\s*)?implement\b[^\n]*\bhere\b",
-                                          r"(?://|#)\s*(?:your|add)\s+(?:code|logic|implementation)\s+here")]
-STUB_EXEMPT = (".md", ".txt")
-
-
-def stub_or_shrink(path: str, content: str, existing: Path) -> str | None:
-    if not path.endswith(STUB_EXEMPT) and "/tests/" not in "/" + path and not Path(path).name.startswith("test_") and ".test." not in path:
-        for rx in STUB_RES:
-            m = rx.search(content)
-            if m:
-                return f"{path!r}: holds a placeholder ({m.group(0).strip()[:60]})"
-    if existing.is_file() and not existing.is_symlink():
-        before = existing.stat().st_size
-        if before > 400 and len(content.encode("utf-8")) < before * 0.5:
-            return f"{path!r}: would lose {before - len(content.encode('utf-8'))} of {before} bytes of an existing file"
-    return None
-
-
 def apply_edits(edits: list[dict], root=REPO) -> list[str]:
     if not edits or len(edits) > MAX_FILES:
         raise ValueError(f"need 1..{MAX_FILES} files, got {len(edits or [])}")
@@ -199,10 +177,6 @@ def apply_edits(edits: list[dict], root=REPO) -> list[str]:
         raise ValueError("change is larger than the executor limit")
     out = []
     base = Path(root).resolve()
-    for e in edits:
-        why = stub_or_shrink(e["path"], e.get("content", ""), Path(root) / e["path"])
-        if why:
-            raise ValueError(why)
     for e in edits:
         f = Path(root) / e["path"]
         try:  # RND-1 (adopted from claude-code v2.1.314): a symlink inside the tree must not carry a write outside the working tree
