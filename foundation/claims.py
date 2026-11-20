@@ -203,7 +203,7 @@ def evaluate(root=REPO):
             "" if have == want else (f"marker missing" if m is None else f"surface says {have!r}, code says {want!r}; run claims --fix --apply"), "generated")
     for m in reg.get("modules", []):
         ok, d = module_ok(root, m)
-        add("module-" + m["id"], m["surface"], f"module: every statement in {m['surface']} is written by {m['generator']} from {', '.join(m['source'])}",
+        add("module-" + m["id"], m["surface"], f"module: {m['surface']} is written by {m['generator']} from {', '.join(m['source'])}",
             "header names the generator + " + " + ".join(["file:" + m["generator"]] + m["probe"]), ok, d, "module")
     for lg in reg["ledgers"]:
         ok, d = probe(root, lg["probe"])

@@ -202,10 +202,10 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "- **Autonomous audit, remediation and improvement; Quniverse parity (AUTO-IMPROVE-1, Rowan 2026-11-13).** \"The Ultrastable system shall",
+   "claim": "The Ultrastable system shall always audit and remediate all failure modes automatically",
    "detail": "",
-   "how": "file:foundation/failure_audit.py + file:.github/workflows/failure-audit.yml + file:doctrine/qnfo-port.json + file:doctrine/detectors.json",
-   "id": "curated-a5733a11bd",
+   "how": "file:foundation/failure_audit.py + file:.github/workflows/failure-audit.yml + grep:doctrine/registers.json::failure_modes + file:doctrine/detectors.json",
+   "id": "curated-f4a78fec3d",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -310,28 +310,28 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
-   "claim": "Rules: truthful, generic, no financial claims, no QNFO or research framing, no claim the repository cannot prove, no prior-publication",
+   "claim": "Applicant identity (entity, email, signature, attestations, sign-in) is never invented; it comes from `applicant.json`, which the owner card fills.",
    "detail": "",
    "how": "grep:scripts/funding_packet.py::applicant.json + file:scripts/test_funding_packet.py",
-   "id": "curated-14598cba8a",
+   "id": "curated-21ec008fbc",
    "kind": "claim",
    "pass": true,
    "surface": "business/funding/applications/README.md"
   },
   {
-   "claim": "The project is open and the Ultrastable License governs use. Public material (site, repos, posts, application text) may name mechanisms,",
+   "claim": "every claim must still trace to a source in the repository, and no number is invented.",
    "detail": "",
    "how": "file:outreach/facts.json + file:foundation/promote.py + file:scripts/check_business_index.py + file:scripts/check_license.py",
-   "id": "curated-39aedf86e1",
+   "id": "curated-6e8a8e6518",
    "kind": "claim",
    "pass": true,
    "surface": "business/investor/README.md"
   },
   {
-   "claim": "The project is open and the Ultrastable License governs use. Everything in these files may be said in public, provided every claim traces",
+   "claim": "provided every claim traces to a source in the repository and no number is invented.",
    "detail": "",
    "how": "file:outreach/facts.json + file:foundation/promote.py + file:scripts/check_business_index.py + file:scripts/check_license.py",
-   "id": "curated-6a85762884",
+   "id": "curated-43a588e27d",
    "kind": "claim",
    "pass": true,
    "surface": "business/plan/README.md"
@@ -544,10 +544,10 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
-   "claim": "- **Autonomous audit, remediation and improvement; Quniverse parity (AUTO-IMPROVE-1, Rowan 2026-11-13).** \"The Ultrastable system shall",
+   "claim": "The Ultrastable system shall always audit and remediate all failure modes automatically",
    "detail": "",
-   "how": "file:foundation/failure_audit.py + file:.github/workflows/failure-audit.yml + file:doctrine/qnfo-port.json + file:doctrine/detectors.json",
-   "id": "curated-03f95613f9",
+   "how": "file:foundation/failure_audit.py + file:.github/workflows/failure-audit.yml + grep:doctrine/registers.json::failure_modes + file:doctrine/detectors.json",
+   "id": "curated-b3b1d9aeda",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -1003,10 +1003,10 @@ export default {
    "surface": "seed/docs/PROJECT-MEMORY.template.md"
   },
   {
-   "claim": "- Never state that QNFO has no licence. Never describe the system as patent pending.",
+   "claim": "Never describe the system as patent pending.",
    "detail": "",
    "how": "grep:scripts/test_social.py::patent pending + file:scripts/social_lib.py + grep:.github/workflows/checks.yml::patent track dropped",
-   "id": "curated-add4fa5737",
+   "id": "curated-ea9b25fae8",
    "kind": "claim",
    "pass": true,
    "surface": "seed/docs/PROJECT-MEMORY.template.md"
@@ -3064,7 +3064,7 @@ export default {
    "surface": "platform/README.md"
   },
   {
-   "claim": "module: every statement in site/claims-data.js is written by foundation/claims.py from doctrine/claims.json",
+   "claim": "module: site/claims-data.js is written by foundation/claims.py from doctrine/claims.json",
    "detail": "",
    "how": "header names the generator + file:foundation/claims.py + grep:.github/workflows/checks.yml::foundation claims --check",
    "id": "module-claims-data",
@@ -3073,7 +3073,7 @@ export default {
    "surface": "site/claims-data.js"
   },
   {
-   "claim": "module: every statement in site/self-data.js is written by foundation/selfmodel.py from doctrine/ultrastability.json, instances/ultrastable/loop-registry.json",
+   "claim": "module: site/self-data.js is written by foundation/selfmodel.py from doctrine/ultrastability.json, instances/ultrastable/loop-registry.json",
    "detail": "",
    "how": "header names the generator + file:foundation/selfmodel.py + grep:.github/workflows/checks.yml::foundation selfmodel --check + file:tests/foundation/test_selfmodel.py",
    "id": "module-self-data",
@@ -3082,7 +3082,7 @@ export default {
    "surface": "site/self-data.js"
   },
   {
-   "claim": "module: every statement in site/dashboard-data.js is written by scripts/build_dashboard.py from doctrine/pilot-model.json",
+   "claim": "module: site/dashboard-data.js is written by scripts/build_dashboard.py from doctrine/pilot-model.json",
    "detail": "",
    "how": "header names the generator + file:scripts/build_dashboard.py + grep:.github/workflows/checks.yml::build_dashboard.py --check + file:tests/foundation/test_dashboard.py",
    "id": "module-dashboard-data",
@@ -3091,7 +3091,7 @@ export default {
    "surface": "site/dashboard-data.js"
   },
   {
-   "claim": "module: every statement in site/roadmap-data.js is written by scripts/build_site_roadmap.py from site/pins.json, docs/issues",
+   "claim": "module: site/roadmap-data.js is written by scripts/build_site_roadmap.py from site/pins.json, docs/issues",
    "detail": "",
    "how": "header names the generator + file:scripts/build_site_roadmap.py + grep:.github/workflows/checks.yml::build_site_roadmap.py --check + file:tests/foundation/test_site_roadmap.py",
    "id": "module-roadmap-data",
@@ -3100,7 +3100,7 @@ export default {
    "surface": "site/roadmap-data.js"
   },
   {
-   "claim": "module: every statement in site/agentdata.js is written by scripts/build_site_agentdata.py from seed/standards/standards.json, doctrine/blindspots.json",
+   "claim": "module: site/agentdata.js is written by scripts/build_site_agentdata.py from seed/standards/standards.json, doctrine/blindspots.json",
    "detail": "",
    "how": "header names the generator + file:scripts/build_site_agentdata.py + grep:.github/workflows/checks.yml::build_site_agentdata.py --check",
    "id": "module-agentdata",
@@ -3109,7 +3109,7 @@ export default {
    "surface": "site/agentdata.js"
   },
   {
-   "claim": "module: every statement in site/platformbrief.js is written by scripts/platform_brief.py from deploy/brief/platform-brief.json",
+   "claim": "module: site/platformbrief.js is written by scripts/platform_brief.py from deploy/brief/platform-brief.json",
    "detail": "",
    "how": "header names the generator + file:scripts/platform_brief.py + grep:.github/workflows/checks.yml::platform_brief.py --check",
    "id": "module-platformbrief",
@@ -3118,7 +3118,7 @@ export default {
    "surface": "site/platformbrief.js"
   },
   {
-   "claim": "module: every statement in site/stakeholders.js is written by scripts/gen_stakeholders.py from doctrine/stakeholders.json",
+   "claim": "module: site/stakeholders.js is written by scripts/gen_stakeholders.py from doctrine/stakeholders.json",
    "detail": "",
    "how": "header names the generator + file:scripts/gen_stakeholders.py + grep:tests/foundation/test_claims.py::test_every_generated_module_is_current + file:tests/foundation/test_uiux.py",
    "id": "module-stakeholders",
@@ -3127,7 +3127,7 @@ export default {
    "surface": "site/stakeholders.js"
   },
   {
-   "claim": "module: every statement in site/userpath.js is written by scripts/gen_userpath.py from doctrine/user-path.json",
+   "claim": "module: site/userpath.js is written by scripts/gen_userpath.py from doctrine/user-path.json",
    "detail": "",
    "how": "header names the generator + file:scripts/gen_userpath.py + grep:.github/workflows/checks.yml::gen_userpath.py --check",
    "id": "module-userpath",
@@ -3136,7 +3136,7 @@ export default {
    "surface": "site/userpath.js"
   },
   {
-   "claim": "module: every statement in site/feed-data.js is written by foundation/reach.py from ops/changelog.json",
+   "claim": "module: site/feed-data.js is written by foundation/reach.py from ops/changelog.json",
    "detail": "",
    "how": "header names the generator + file:foundation/reach.py + grep:.github/workflows/social-post.yml::foundation reach --run --apply + file:tests/foundation/test_reach.py",
    "id": "module-feed-data",

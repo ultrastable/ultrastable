@@ -248,13 +248,13 @@
       "bound_by": "curated"
     },
     {
-      "id": "curated-a5733a11bd",
+      "id": "curated-f4a78fec3d",
       "surface": "agents/AGENTS.md",
-      "text": "- **Autonomous audit, remediation and improvement; Quniverse parity (AUTO-IMPROVE-1, Rowan 2026-11-13).** \"The Ultrastable system shall",
+      "text": "The Ultrastable system shall always audit and remediate all failure modes automatically",
       "probe": [
         "file:foundation/failure_audit.py",
         "file:.github/workflows/failure-audit.yml",
-        "file:doctrine/qnfo-port.json",
+        "grep:doctrine/registers.json::failure_modes",
         "file:doctrine/detectors.json"
       ],
       "bound_by": "curated"
@@ -385,9 +385,9 @@
       "bound_by": "curated"
     },
     {
-      "id": "curated-14598cba8a",
+      "id": "curated-21ec008fbc",
       "surface": "business/funding/applications/README.md",
-      "text": "Rules: truthful, generic, no financial claims, no QNFO or research framing, no claim the repository cannot prove, no prior-publication",
+      "text": "Applicant identity (entity, email, signature, attestations, sign-in) is never invented; it comes from `applicant.json`, which the owner card fills.",
       "probe": [
         "grep:scripts/funding_packet.py::applicant.json",
         "file:scripts/test_funding_packet.py"
@@ -395,9 +395,9 @@
       "bound_by": "curated"
     },
     {
-      "id": "curated-39aedf86e1",
+      "id": "curated-6e8a8e6518",
       "surface": "business/investor/README.md",
-      "text": "The project is open and the Ultrastable License governs use. Public material (site, repos, posts, application text) may name mechanisms,",
+      "text": "every claim must still trace to a source in the repository, and no number is invented.",
       "probe": [
         "file:outreach/facts.json",
         "file:foundation/promote.py",
@@ -407,9 +407,9 @@
       "bound_by": "curated"
     },
     {
-      "id": "curated-6a85762884",
+      "id": "curated-43a588e27d",
       "surface": "business/plan/README.md",
-      "text": "The project is open and the Ultrastable License governs use. Everything in these files may be said in public, provided every claim traces",
+      "text": "provided every claim traces to a source in the repository and no number is invented.",
       "probe": [
         "file:outreach/facts.json",
         "file:foundation/promote.py",
@@ -674,13 +674,13 @@
       "bound_by": "curated"
     },
     {
-      "id": "curated-03f95613f9",
+      "id": "curated-b3b1d9aeda",
       "surface": "seed/agents/AGENTS.md",
-      "text": "- **Autonomous audit, remediation and improvement; Quniverse parity (AUTO-IMPROVE-1, Rowan 2026-11-13).** \"The Ultrastable system shall",
+      "text": "The Ultrastable system shall always audit and remediate all failure modes automatically",
       "probe": [
         "file:foundation/failure_audit.py",
         "file:.github/workflows/failure-audit.yml",
-        "file:doctrine/qnfo-port.json",
+        "grep:doctrine/registers.json::failure_modes",
         "file:doctrine/detectors.json"
       ],
       "bound_by": "curated"
@@ -1245,9 +1245,9 @@
       "bound_by": "curated"
     },
     {
-      "id": "curated-add4fa5737",
+      "id": "curated-ea9b25fae8",
       "surface": "seed/docs/PROJECT-MEMORY.template.md",
-      "text": "- Never state that QNFO has no licence. Never describe the system as patent pending.",
+      "text": "Never describe the system as patent pending.",
       "probe": [
         "grep:scripts/test_social.py::patent pending",
         "file:scripts/social_lib.py",

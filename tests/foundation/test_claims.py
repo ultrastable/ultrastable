@@ -156,7 +156,7 @@ class Modules(unittest.TestCase):
     def test_markup_and_code_comments_are_not_statements(self):
         self.assertNotIn("100%", claims.prose("README.md", '<p align="center"><img src="a.png" alt="The loop every manager runs" width="100%"></p>'))
         self.assertIn("The loop every manager runs", claims.prose("README.md", '<p><img src="a.png" alt="The loop every manager runs" width="100%"></p>'))
-        self.assertNotIn("never", claims.prose("site/x.js", 'const ok = h === "localhost"; // loopback is rejected, never a host'))
+        self.assertNotIn("never", claims.prose("site/x.js", 'const ok = h === "example.org"; // an internal name is rejected, never a host'))
         self.assertIn("never fails", claims.prose("site/x.js", 'card("It never fails", "see https://example.org/a")'))
         self.assertIn("never", claims.prose("docs/x.md", "owner: x   // never put a token here"))
 
