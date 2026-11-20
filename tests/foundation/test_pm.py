@@ -183,7 +183,7 @@ class Clockwork(unittest.TestCase):
         self.assertEqual(st["heartbeat"]["missed"], 0)
 
     def test_heal_steps_carry_the_cloudflare_token(self):
-        for f in ("product-manager.yml", "executor.yml"):
+        for f in ("product-manager.yml", "executor.yml", "lane.yml"):
             t = (REPO / ".github/workflows" / f).read_text(encoding="utf-8")
             i = t.index("run: python3 -m foundation clock --heal --apply")
             self.assertIn("CLOUDFLARE_API_TOKEN", t[i:i + 400], f)
@@ -215,6 +215,9 @@ class Clockwork(unittest.TestCase):
         pmw = (REPO / ".github/workflows/product-manager.yml").read_text(encoding="utf-8")
         self.assertIn("foundation pm --run --apply --pr", pmw)
         self.assertIn("foundation clock --heal --apply", pmw)
+        lane = (REPO / ".github/workflows/lane.yml").read_text(encoding="utf-8")  # Q-CLOCK-LANE-HOOK: a stale stage is caught within one merge cycle
+        i = lane.index("foundation clock --heal --apply")
+        self.assertIn("timeout-minutes", lane[lane.rindex("- name:", 0, i):i])
 
 
 if __name__ == "__main__":
