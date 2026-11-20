@@ -89,6 +89,10 @@
       "class": "core",
       "role": "container executor (US-SPEC-11)"
     },
+    "core/connect": {
+      "class": "core",
+      "role": "Connection engine: knowledge graph plus vectors find novel links (close in meaning, far in the graph), ranked and calibrated by downstream outcomes; tenant-agnostic"
+    },
     "core/criticality": {
       "class": "core",
       "role": "core/criticality: a deployment must reach the point where it builds itself with nobody prompting it. Two tick steps"
