@@ -517,6 +517,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         sh(["git", "add", "-A", "--", ".", f":!{LOG}"], root)
         sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "-m", f"{out.get('summary', issue['title'])} (#{n})"], root)
         code, o = sh(["git", "push", "-u", "origin", branch], root)
+        if code and "rejected" in o and branch.startswith("agent/"):
+            # STALE-BRANCH-1: the branch name is derived from the item, so a branch left by an earlier attempt whose PR was closed rejects every new
+            # attempt (Q-GATE-403 failed three runs in a row on 2026-11-20). The branch is the executor's own: this attempt, built from main, replaces it.
+            sh(["git", "fetch", "origin", f"+refs/heads/{branch}:refs/remotes/origin/{branch}"], root)
+            code, o = sh(["git", "push", "--force-with-lease", "-u", "origin", branch], root)
         if code:
             raise RuntimeError("push failed: " + o[-300:])
         body = f"Closes #{n}\n\nExecutor run {now()}. Checks passed before the PR: {', '.join(' '.join(c) for c in (checks if checks is not None else CHECKS))}.\nProvenance: {LOG} on branch loop-evidence. The lane merges on green CI."
