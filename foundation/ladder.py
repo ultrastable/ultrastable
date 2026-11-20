@@ -46,6 +46,8 @@ def probe(route: dict, ctx: Ctx) -> tuple[bool, str]:
         ok = ctx.exists(route["path"])
         return ok, f"{route['path']} {'present' if ok else 'absent'}"
     if k == "cli_scope":  # a logged-in CLI whose status text names the required scope
+        if not server_side(ctx.env):  # OL-20261112-93: a sign-in found on a host that is not server-side is not a route (server-side only)
+            return False, f"{route['tool']} sign-in ignored: this host is not server-side"
         if not ctx.which(route["tool"]):
             return False, f"{route['tool']} not installed"
         rc, out = ctx.run(route["argv"])
@@ -58,6 +60,14 @@ def probe(route: dict, ctx: Ctx) -> tuple[bool, str]:
         rc, _ = ctx.run(route["argv"])
         return rc == 0, f"exit {rc}"
     return False, f"unknown route kind {k}"
+
+
+SERVER_SIDE_ENV = ("CLAUDE_CODE_REMOTE", "GITHUB_ACTIONS")
+
+
+def server_side(env) -> bool:
+    """True in a cloud agent session or an Actions job: the only hosts whose existing CLI sign-in counts as a credential route (server-side only)."""
+    return any(str(env.get(k) or "").lower() not in ("", "0", "false") for k in SERVER_SIDE_ENV)
 
 
 def load_routes(path=None) -> dict:
