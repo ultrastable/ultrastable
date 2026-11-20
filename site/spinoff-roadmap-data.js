@@ -239,6 +239,11 @@ export default {
  ],
  "scope": [
   {
+   "id": "Q-SPIN-SCOPE-CLAIMS-LIVE-DAILY",
+   "status": "open",
+   "title": "Check every live app against its own claims once a day"
+  },
+  {
    "id": "Q-SPIN-SCOPE-COLLECT-CADENCE",
    "status": "open",
    "title": "Collect every live app's metrics twice a day instead of once"
