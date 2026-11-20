@@ -54,10 +54,10 @@ export function sinceVisit(events, since) {
   return isNaN(t) ? [] : normalize(events).filter(e => Date.parse(e.at) > t);
 }
 
-export function toAtom({ title, link, feedUrl, items }) {
+export function toAtom({ title, link, feedUrl, items, hub }) {
   const list = normalize(items), upd = list.length ? list[0].at : '1970-01-01T00:00:00.000Z';
   const rows = list.map(e => `<entry><id>${esc(feedUrl)}#${esc(e.id)}</id><title>${esc((e.system_name || e.system) + ': ' + e.title)}</title><updated>${esc(e.at)}</updated><link href="${esc(e.url || link)}"/><category term="${esc(e.kind)}"/><summary>${esc(e.title)}</summary></entry>`).join('');
-  return `<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><id>${esc(feedUrl)}</id><title>${esc(title)}</title><updated>${esc(upd)}</updated><link rel="self" href="${esc(feedUrl)}"/><link href="${esc(link)}"/>${rows}</feed>`;
+  return `<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><id>${esc(feedUrl)}</id><title>${esc(title)}</title><updated>${esc(upd)}</updated><link rel="self" href="${esc(feedUrl)}"/>${hub ? `<link rel="hub" href="${esc(hub)}"/>` : ''}<link href="${esc(link)}"/>${rows}</feed>`;
 }
 
 // The reader's last visit lives in the reader's own browser (localStorage), never on a server and never in a cookie. The script marks every

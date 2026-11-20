@@ -53,6 +53,8 @@ def guard(text: str, event_text: str, root=REPO, limit=300) -> list[str]:
     for p in _blocked(root):
         if re.search(p, low):
             bad.append("blocked pattern: " + p)
+    if mentions(text):
+        bad.append("mentions a person")
     for n in re.findall(r"\d+", re.sub(r"https?://\S+", "", text)):
         if n not in event_text:
             bad.append("number not in the event: " + n)
@@ -83,9 +85,42 @@ def candidates(root=REPO, now=None) -> list[dict]:
         if f.get("verdict") == "held" and f.get("kind") == "rising" and f.get("path"):
             ev = f"{f['path']} held its readers"
             out.append({"id": "in-" + str(f.get("id", _hid(f["path"]))), "arm": "proof", "event": ev, "text": f"A page readers kept coming back to, and the prediction about it held: {site}{f['path']}"})
+    out += evidence_candidates(root, now)
     for g in cfg["evergreen"]:
         out.append({"id": g["id"], "arm": g["arm"], "event": g["text"], "text": f"{g['text']} {site}{cfg['arms'][g['arm']]['path']}"})
     return out
+
+
+def evidence_candidates(root=REPO, now=None) -> list[dict]:
+    """ATTENTION-1: one post a week from the deploy record. Counts deploys whose live code matched their commit; claims self-origin only for rows marked so."""
+    cfg, now = load(root), now or dt.datetime.now(dt.timezone.utc)
+    att = cfg.get("attention") or {}
+    win = int(att.get("evidence_window_days", 7))
+    p = Path(root) / "ops/deploys.jsonl"
+    if not p.is_file() or "evidence" not in cfg["arms"]:
+        return []
+    n = selfn = 0; workers = set(); shas = set()
+    for line in p.read_text(encoding="utf-8").splitlines():
+        try:
+            r = json.loads(line); t = dt.datetime.fromisoformat(r["at"].replace("Z", "+00:00"))
+        except (ValueError, KeyError):
+            continue
+        if (now - t).days < win and r.get("live_matches_commit") is True:
+            n += 1; workers.add(r.get("worker")); shas.add(r.get("sha"))
+            selfn += r.get("origin") in att.get("self_origins", [])
+    if n == 0:
+        return []
+    wk = now.isocalendar()
+    site, path = cfg["site"], cfg["arms"]["evidence"]["path"]
+    own = f" {selfn} of them it started itself." if selfn else ""
+    ev = f"{len(shas)} versions {n} deploys {len(workers)} services {win} days {selfn}"
+    text = f"In the last {win} days Ultrastable put {len(shas)} new versions live ({n} deploys across {len(workers)} services) and checked each deploy against its code.{own} {site}{path}"
+    return [{"id": f"evd-{wk[0]}-w{wk[1]:02d}", "arm": "evidence", "event": ev, "text": text}]
+
+
+def mentions(text: str) -> bool:
+    """ATTENTION-1: a post never addresses or names a person (no @handles)."""
+    return bool(re.search(r"(^|\s)@[A-Za-z0-9_.-]+", text))
 
 
 def weights(root=REPO) -> dict:
@@ -143,20 +178,21 @@ def measure_rows(rows: list[dict], cfg: dict, posts_7d: int = 0, suggestions=Non
          "suggestions_7d": suggestions}
     by_path: dict = {}
     for r in rows:
-        if r.get("path") == "/feed.xml":
-            m["feed_hits_7d"] += 1
+        c = int(r.get("n", 1) or 1)  # ATTENTION-1: /api/reach rows are grouped counts
+        if r.get("path") in ("/feed.xml", "/progress.atom"):
+            m["feed_hits_7d"] += c
         if r.get("bot") or r.get("name") != "pageview":
             continue
         k = classify_ref(r.get("ref", ""), cfg)
         if k != "none":
-            m["external_referrals_7d"] += 1
-            by_path[r["path"]] = by_path.get(r["path"], 0) + 1
+            m["external_referrals_7d"] += c
+            by_path[r["path"]] = by_path.get(r["path"], 0) + c
         if k == "social":
-            m["social_referrals_7d"] += 1
+            m["social_referrals_7d"] += c
         if k == "search":
-            m["search_referrals_7d"] += 1
+            m["search_referrals_7d"] += c
         if any(r["path"].startswith(p) for p in cfg["ps_path_prefixes"]):
-            m["ps_page_views_7d"] += 1
+            m["ps_page_views_7d"] += c
     m["by_path"] = by_path
     return m
 
@@ -166,6 +202,22 @@ def live_rows(env, now=None):
     now = int(now or time.time()); w = now - 7 * 86400
     q = lambda sql: clock._cf("d1/database/5cd83b52-864a-4510-b062-fc0d9402d06c/query", {"sql": sql}, env["CLOUDFLARE_API_TOKEN"], "81e3a4efb4eb66e613529b87682911bb")["result"][0]["results"]
     return q(f"SELECT ref, path, name, bot FROM hits WHERE at>={w} AND (bot=0 OR path='/feed.xml') LIMIT 20000")
+
+
+def site_rows(cfg, fetch=None):
+    """Grouped 7-day counts the site Worker computes from its own D1 binding (GET /api/reach). Raises when unmeasured."""
+    import urllib.request
+    url = (cfg.get("attention") or {}).get("reach_url") or cfg["site"] + "/api/reach"
+    if fetch is None:
+        req = urllib.request.Request(url, headers={"user-agent": "ultrastable-reach"})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            body = json.loads(r.read())
+    else:
+        body = fetch(url)
+    rows = body.get("rows")
+    if not isinstance(rows, list):
+        raise ValueError("reach not measured yet")
+    return rows
 
 
 def posts_7d(root, now=None) -> int:
@@ -237,6 +289,12 @@ def run(root=REPO, apply=False, env=None, now=None, rows=None) -> dict:
             rows = live_rows(env)
         except Exception as e:  # an unmeasured metric is a finding, never a zero
             rep["metrics_error"] = type(e).__name__ + ": " + str(e)[:120]
+    if rows is None and env.get("REACH_OFFLINE") != "1":  # ATTENTION-1: second route, measured by the site Worker itself (no credential)
+        try:
+            rows = site_rows(cfg)
+            rep["metrics_route"] = "site"
+        except Exception as e:
+            rep["metrics_error_site"] = type(e).__name__ + ": " + str(e)[:120]
     st = _rj(root, "status.json", {"targets": {}, "met_runs": {}})
     if rows is None:
         rep["metrics"] = "unmeasured"
@@ -286,6 +344,9 @@ def check(root=REPO) -> list[str]:
             bad.append("evergreen " + g["id"] + ": unknown arm")
         if guard(g["text"], g["text"], root):
             bad.append("evergreen " + g["id"] + " fails the guard: " + "; ".join(guard(g["text"], g["text"], root)))
+    for g in cfg["evergreen"]:
+        if mentions(g["text"]):
+            bad.append("evergreen " + g["id"] + " mentions a person")
     for t in cfg["targets"]:
         if t.get("floor") is None:
             bad.append("target " + t["id"] + " has no floor")
