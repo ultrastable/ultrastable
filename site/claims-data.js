@@ -634,7 +634,7 @@ export default {
    "surface": "seed/self/SELF.md"
   },
   {
-   "claim": "seed-tests: 39 Python and 372 Worker tests",
+   "claim": "seed-tests: 39 Python and 374 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -643,7 +643,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 372 Worker tests",
+   "claim": "seed-worker-tests: 374 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
