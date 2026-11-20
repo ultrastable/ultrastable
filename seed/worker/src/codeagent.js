@@ -126,10 +126,45 @@ export async function invoke(env, adapter, prompt) {
   return r.text;
 }
 
+// PATCH-EDIT-1 (worker side, mirrors foundation/agents.py): a reply may be JSON, or blocks: <<<FILE path>>> whole new file, <<<EDIT path>>> with <<<FIND>>> and <<<REPLACE>>>.
+export const BLOCK_FORMAT = 'SUMMARY: one line\n<<<EDIT relative/path>>>\n<<<FIND>>>\na few lines copied exactly from the existing file\n<<<REPLACE>>>\nthe lines that replace them\n<<<END>>>\n'
+  + '<<<FILE relative/path>>>\nfull content of a NEW file, written plainly with no escaping\n<<<END>>>\n(EDIT blocks for a file that exists, each FIND unique in the file; a FILE block only for a new file; nothing else in the reply)';
+const FILE_RE = /<<<FILE ([^>\n]+)>>>\r?\n([\s\S]*?)\r?\n?<<<END>>>/g;
+const EDIT_RE = /<<<EDIT ([^>\n]+)>>>\r?\n<<<FIND>>>\r?\n([\s\S]*?)\r?\n?<<<REPLACE>>>\r?\n?([\s\S]*?)\r?\n?<<<END>>>/g;
+
 export function parseJson(t) {
   const s = t.indexOf('{'), e = t.lastIndexOf('}');
-  if (s < 0 || e < s) throw new Error('no JSON in model answer');
-  return JSON.parse(t.slice(s, e + 1));
+  let out = null;
+  if (s >= 0 && e > s) { try { out = JSON.parse(t.slice(s, e + 1)); } catch (_) { out = null; } }
+  if (out && typeof out === 'object' && (out.files || !/<<<(FILE|EDIT) /.test(t))) return out;
+  const files = [], by = {};
+  for (const m of t.matchAll(FILE_RE)) files.push({ path: m[1].trim(), content: m[2] + '\n' });
+  for (const m of t.matchAll(EDIT_RE)) {
+    const path = m[1].trim();
+    if (!by[path]) { by[path] = { path, edits: [] }; files.push(by[path]); }
+    by[path].edits.push({ find: m[2], replace: m[3] });
+  }
+  if (!files.length) throw new Error('no JSON or FILE/EDIT blocks in model answer');
+  const sm = /^SUMMARY:\s*(.+)$/m.exec(t);
+  return { summary: sm ? sm[1].trim() : '', files };
+}
+
+// The one place `find` names in `text`, replaced. Exact match first, then a match that ignores indentation (small models drop it), re-indenting the replacement.
+export function applyEdit(text, find, replace, path = 'file') {
+  if (!find.trim()) { if (text.trim()) throw new Error(`${path}: FIND is empty but the file exists`); return replace.endsWith('\n') ? replace : replace + '\n'; }
+  const n = text.split(find).length - 1;
+  if (n === 1) return text.replace(find, () => replace);
+  if (n > 1) throw new Error(`${path}: the FIND text occurs ${n} times; add neighbouring lines so it is unique`);
+  const want = find.replace(/^\n+|\n+$/g, '').split('\n').map(l => l.trim());
+  const lines = text.split('\n');
+  const hits = [];
+  for (let i = 0; i + want.length <= lines.length; i++) if (want.every((w, k) => lines[i + k].trim() === w)) hits.push(i);
+  if (hits.length !== 1) throw new Error(`${path}: the FIND text is not in the file (or matches more than one place); copy the lines exactly`);
+  const i = hits[0], lead = l => l.slice(0, l.length - l.trimStart().length), f0 = find.replace(/^\n+/, '').split('\n')[0];
+  const pad = lead(lines[i]).startsWith(lead(f0)) ? lead(lines[i]).slice(lead(f0).length) : '';
+  const body = replace.replace(/^\n+|\n+$/g, '').split('\n').map(l => (l.trim() ? pad + l : l));
+  lines.splice(i, want.length, ...(replace.trim() ? body : []));
+  return lines.join('\n');
 }
 
 // Authors in routed order; a failure moves to the next adapter and is recorded in `tried`.
