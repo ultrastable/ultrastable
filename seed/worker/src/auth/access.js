@@ -5,7 +5,7 @@
 // Surfaces tried in order: installation repositories with the app's token (what the tick sees), the installation record with the app JWT (selection, settings url).
 import { appJwt } from './github-app.js';
 import * as store from './store.js';
-import { getToken } from './index.js';
+import { getToken, SCOPE_ALLOWLIST } from './index.js';
 const API = 'https://api.github.com';
 const H = t => ({ authorization: 'Bearer ' + t, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-access' });
 
@@ -28,6 +28,10 @@ export async function checkRepoAccess(db, env, tenant, repos, { token: tok, fetc
     }
     const inst = want || list.find(i => Number(i.id) === Number(m.meta.installation_id));
     if (inst) { out.selection = inst.repository_selection; out.settings_url = inst.html_url || null; }
+    if (inst && inst.permissions) {  // Q-GATE-403: a permission the allowlist asks for that this installation was never granted (an App changed after it was installed)
+      const rank = { read: 1, write: 2, admin: 3 };
+      out.permissions_missing = Object.entries(SCOPE_ALLOWLIST['github-app']).filter(([k, v]) => (rank[inst.permissions[k]] || 0) < rank[v]).map(([k, v]) => `${k}:${v}`);
+    }
     const ap = await f(`${API}/app`, { headers: H(jwt) });
     const app = ap.ok ? await ap.json() : null;
     out.app_owner = app && app.owner && app.owner.login;
@@ -44,6 +48,7 @@ export async function checkRepoAccess(db, env, tenant, repos, { token: tok, fetc
   }
   out.missing = repos.filter(x => !out.covered.map(c => c.toLowerCase()).includes(x.toLowerCase()));
   out.ok = out.missing.length === 0 && out.covered.length > 0;
+  if (out.permissions_missing && out.permissions_missing.length && !out.reason) out.reason = `the installation lacks ${out.permissions_missing.join(', ')} (accept the updated permissions at ${origin}/connect/github)`;
   return finish(db, out);
 }
 

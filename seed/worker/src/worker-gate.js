@@ -3,6 +3,26 @@
 // The full repository checks stay in Actions as a second route; the lane merges on green worker-gate when ZERO_ACTIONS=1 (Actions minutes exhausted).
 import { safePath } from './pr-executor.js';
 
+// Q-GATE-403: writing a commit status needs the App permission "Commit statuses: Read and write" (API name `statuses`). An installation without it
+// answers 403 on every pull request, so the gate judges nothing. That is one condition, not one error per pull request: the result names the
+// permission, and the tick keeps one gate card GATE-APP-PERMISSION with the consent link while the lane merges on local-checks evidence.
+export const STATUS_PERMISSION = 'statuses';
+export const forbiddenDetail = (repo, n) => `${repo}#${n} status 403: the GitHub App lacks ${STATUS_PERMISSION}:write`;
+// Model-written branches: the Actions executor and code agents push agent/* and claude/*, the Worker-native executor pushes worker/*.
+export const MODEL_BRANCH_RE = /^(agent|claude|worker)\//;
+// NATIVE-STUB-1 at the gate (GATE-STUB-1): an added line of a model branch that is an elision marker or a "logic here" placeholder fails the gate,
+// whichever executor wrote it (#725 replaced this file with "// ... existing code ..." through the Actions executor, which has no shrink guard).
+export const STUB_RES = [/(?:\/\/|#|\/\*)\s*\.\.\.\s*(?:existing|rest of|remaining|unchanged)[^\n]*/i, /(?:\/\/|#)\s*(?:TODO:?\s*)?implement\b[^\n]*\bhere\b/i, /(?:\/\/|#)\s*(?:your|add)\s+(?:code|logic|implementation)\s+here/i];
+export function stubLines(files) {
+  const bad = [];
+  for (const f of files) {
+    const added = String(f.patch || '').split('\n').filter(l => l.startsWith('+') && !l.startsWith('+++')).map(l => l.slice(1)).join('\n');
+    const hit = STUB_RES.map(r => r.exec(added)).find(Boolean);
+    if (hit && !/\.(?:md|txt)$|(?:^|\/)tests?\/|\.test\.m?js$/.test(f.filename || '')) bad.push(`${f.filename}: placeholder (${hit[0].trim().slice(0, 50)})`);
+  }
+  return bad;
+}
+
 export const SECRET_RES = [/-----BEGIN [A-Z ]*PRIVATE KEY-----/, /gh[pousr]_[A-Za-z0-9]{36,}/, /AKIA[0-9A-Z]{16}/, /sk-ant-[A-Za-z0-9_-]{20,}/];
 export const MAX_PR_FILES = 60, MAX_ADDED_BYTES = 400000;
 // Q-LESSON-PATCH-GATE (LESSONS-1): 93 fleet failure modes came from a model editing very large files that were checked for syntax only.
@@ -132,19 +152,40 @@ async function runGateWith(gh, room, { repos, context, maxPrs, out }) {
       if (st.ok && st.json.some(s => s.context === context)) continue; // already judged this commit
       const files = await gh('GET', `/repos/${repo}/pulls/${pr.number}/files?per_page=100`);
       if (!files.ok) { out.errors.push(`${repo}#${pr.number} files ${files.status}`); continue; }
-      const agentBranch = /^(agent|claude)\//.test(pr.head.ref);
+      const agentBranch = MODEL_BRANCH_RE.test(pr.head.ref);
       const v = evaluate(files.json, { agentBranch, body: pr.body || '' });
       if (agentBranch) {
+        const stubs = stubLines(files.json);
+        if (stubs.length) { v.ok = false; v.bad.push(...stubs); }
         const contents = await readContents(gh, repo, files.json, sha, pr.base && pr.base.sha);
         const m = checkModelEdits(files.json, contents);
         if (!m.ok) { v.ok = false; v.bad.push(...m.bad); }
       }
       const post = await gh('POST', `/repos/${repo}/statuses/${sha}`, { state: v.ok ? 'success' : 'failure', context, description: (v.ok ? 'diff gate passed' : v.bad.join('; ')).slice(0, 140) });
-      if (post.status === 403) { out.forbidden.push(`${repo}#${pr.number}`); continue; }  // a 403 on one PR (the App cannot write statuses there) is that PR's recorded disposition, not a failed loop
+      if (post.status === 403) { out.forbidden.push(`${repo}#${pr.number}`); out.forbidden_detail = forbiddenDetail(repo, pr.number); continue; }  // a 403 on one PR (the App cannot write statuses there) is that PR's recorded disposition, not a failed loop
       if (!post.ok) { out.errors.push(`${repo}#${pr.number} status ${post.status}`); continue; }
       out.checked.push(`${repo}#${pr.number} ${v.ok ? 'success' : 'failure'}`);
     }
   }
   if (out.errors.length) out.status = 'errors';
+  // every pull request the gate reached was refused and none was judged: the gate checks nothing, and the cause is the App permission
+  else if (out.forbidden.length && !out.checked.length && (out.forbidden.length > 1 || !out.deferred.length)) { out.status = 'forbidden'; out.needs = `${STATUS_PERMISSION}:write`; }
   return out;
+}
+
+// One machine-readable gate card in step with the gate result: open while the App cannot write statuses, closed by the first judged pull request.
+export async function gateCard(db, out, { origin = '' } = {}) {
+  if (!db || !out) return null;
+  const id = 'GATE-APP-PERMISSION';
+  if (out.status === 'forbidden') {
+    await db.prepare(`INSERT INTO gate_cards (id, what, why_gated, default_in_effect, prepared_by_fleet, closing_probe) VALUES (?,?,?,?,?,'gate_status_writable')
+      ON CONFLICT(id) DO UPDATE SET what=excluded.what, status='open', closed_at=NULL`).bind(id,
+        `Allow the GitHub App to write commit statuses (permission ${out.needs}) with one approval at ${origin}/connect/github.`,
+        'Only the account owner can accept a new App permission; the App cannot grant it to itself (GitHub API).',
+        'The lane merges on local-checks evidence; the Worker gate records each pull request it could not judge.',
+        `The gate asked GitHub for ${out.forbidden.length} pull request(s) and was answered 403 on each (${out.forbidden_detail || ''}).`.slice(0, 400)).run();
+    return 'open';
+  }
+  if (out.checked && out.checked.length) { await db.prepare(`UPDATE gate_cards SET status='closed', closed_at=datetime('now') WHERE id=? AND status='open'`).bind(id).run(); return 'closed'; }
+  return null;
 }
