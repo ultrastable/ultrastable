@@ -8,8 +8,21 @@
 
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
-Last updated: 2026-11-19
+Last updated: 2026-11-20
 
+- 2026-11-20: open-loops: nameserver retry refused again, lock end unconfirmed (#724)
+- 2026-11-20: queue: closing-probe verdicts for 4 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-20: queue: closing-probe verdicts for 111 item(s) (QUEUE-PERSIST-1) (part 6/6) [skip ci]
+- 2026-11-20: queue: closing-probe verdicts for 111 item(s) (QUEUE-PERSIST-1) (part 5/6) [skip ci]
+- 2026-11-20: queue: closing-probe verdicts for 111 item(s) (QUEUE-PERSIST-1) (part 4/6) [skip ci]
+- 2026-11-20: queue: closing-probe verdicts for 111 item(s) (QUEUE-PERSIST-1) (part 3/6) [skip ci]
+- 2026-11-20: queue: closing-probe verdicts for 111 item(s) (QUEUE-PERSIST-1) (part 2/6) [skip ci]
+- 2026-11-20: queue: closing-probe verdicts for 111 item(s) (QUEUE-PERSIST-1) (part 1/6) [skip ci]
+- 2026-11-19: issueloop: file Q-ISSUE items for unprobed or failing issues [skip ci]
+- 2026-11-19: queue: closing-probe verdicts for 8 item(s) (QUEUE-PERSIST-1) [skip ci]
+- 2026-11-19: tenant-sync: ledger [skip ci]
+- 2026-11-19: PORT-BRANCH-TRIAGE-G1: triage 10 archived branches (#714)
+- 2026-11-19: issues: orgchart fixture fields for 16 queue items (#715)
 - 2026-11-19: PORT-BRANCH-TRIAGE-G3: close 9 port-branch items as superseded (#711)
 - 2026-11-19: PORT-BRANCH-TRIAGE-G0: close 10 port items as superseded (#712)
 - 2026-11-19: PORT-BRANCH-TRIAGE-G2: close 9 port-branch items with evidence (#713)
