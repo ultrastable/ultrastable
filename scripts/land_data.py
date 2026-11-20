@@ -19,6 +19,10 @@ def main(msg, paths):
     sh("git", "commit", "-q", "-m", msg + " [skip ci]")
     if subprocess.run(["python3", "tools/push_main.py"], cwd=ROOT).returncode == 0:
         return 0
+    # DATA-PR-CAP-1: a refusal that lasts is one defect, not a pull request per run. With three data pull requests already open this step fails loudly instead.
+    n = sh("gh", "pr", "list", "--state", "open", "--limit", "100", "--json", "headRefName", "--jq", '[.[]|select(.headRefName|startswith("agent/data-"))]|length', check=False)
+    if n.returncode == 0 and n.stdout.strip().isdigit() and int(n.stdout.strip()) >= 3:
+        print("land_data: main refused the data commit and", n.stdout.strip(), "data pull requests are already open; not opening another"); return 1
     br = "agent/data-" + os.environ.get("GITHUB_RUN_ID", "local")
     p = sh("git", "push", "-q", "origin", f"HEAD:refs/heads/{br}", check=False)
     if p.returncode: print("land_data: branch push failed:", p.stderr.strip()[:200]); return 1
