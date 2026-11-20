@@ -428,7 +428,9 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
     key = os.environ.get("ANTHROPIC_API_KEY")
     port = bool(qm and model_call is None and PORT_ITEM.match(str(n)) and verify_command(issue))  # PORT-EXEC-1: queue items only; a remote issue body is never run as a command
     from . import agent_ladder  # SYS-2: which model writes the change, who reviews it and what it cost
-    if model_call is None and not port and not key and not cf_ready() and not agent_ladder.rungs(root):
+    from . import mechfix  # MECH-FIX-1: a mechanical item needs no model credential
+    mech = bool(qm and model_call is None and mechfix.call_for(issue, root))
+    if model_call is None and not port and not mech and not key and not cf_ready() and not agent_ladder.rungs(root):
         row.update(result="no-model-credential", detail="ANTHROPIC_API_KEY is not bound on this host; recorded as a failure (docs/failures/). The Claude-session route (a cloud-hosted routine that starts a Claude session, which runs --pick and --record) takes the item without any key")
         log(lroot, row); return row
     if not apply:
@@ -443,6 +445,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         sh(["git", "checkout", "-B", branch], root)
         if port:
             model_call = port_call(issue, root)
+        if qm and model_call is None:  # MECH-FIX-1: a finding the syntax tree fully determines is fixed by code; no model call, and the same scope check, checks and PR follow
+            from . import mechfix
+            model_call = mechfix.call_for(issue, root)
+            if model_call:
+                row["models"] = ["mechfix"]
         prompt, failed, files, out = build_prompt(issue, tree), [], [], {}
         for attempt in range(REPAIRS + 1):  # REPAIR-1: a failed check is fed back to the model; the change is only abandoned after the last try
             if attempt and time_left() < REPAIR_MIN_S:  # EXEC-WATCHDOG-2: end with the real reasons rather than be cut off by the watchdog mid-attempt

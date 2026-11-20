@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-SWEEP-privacy",
   "title": "Q-BLIND-SWEEP-privacy: answer the privacy sweep",
-  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** grep:ops/blindspots/answers.jsonl::\"domain\": \"privacy\" ; recorded with `python3 -m foundation blindspots --answer privacy --text <answer with evidence>`\n**Status:** open\n\nQuestion: What personal data does the system now touch, where does it go, and does the privacy page still say so?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** cmd:python3 -m foundation blindspots --swept privacy\n**Status:** open\n\nQuestion: What personal data does the system now touch, where does it go, and does the privacy page still say so?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
   "labels": [
     "role:product-manager",
     "blindspot"

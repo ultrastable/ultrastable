@@ -96,6 +96,12 @@ def main(argv=None) -> int:
     if _av[:1] == ["blindspots"]:
         from . import blindspots
         return blindspots.main(_av[1:])
+    if _av[:1] == ["licences"]:
+        from . import licences
+        return licences.main(_av[1:])
+    if _av[:1] == ["backup"]:
+        from . import backup
+        return backup.main(_av[1:])
     if _av[:1] == ["ideas"]:
         from . import ideas
         return ideas.main(_av[1:])
@@ -231,6 +237,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["topology"]:
         from . import topology
         return topology.main(_av[1:])
+    if _av[:1] == ["mechfix"]:
+        from . import mechfix
+        return mechfix.main(_av[1:])
     if _av[:1] == ["selfcode"]:
         from . import selfcode
         return selfcode.main(_av[1:])
