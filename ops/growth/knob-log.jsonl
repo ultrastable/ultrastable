@@ -1,0 +1,1 @@
+{"at":"2026-11-19T16:31:14Z","knob":"chain_max_runs_per_day","old":4,"new":5,"why":"work is waiting and nothing merged unattended in 7 days: more attempts per day","prediction":"executor_merged_7d rises above 0 within 7 days","metric":"executor_merged_7d","baseline":0,"reviewed":null}
