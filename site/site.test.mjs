@@ -409,7 +409,7 @@ console.log("PROMOTE-1 indexnow ok");
   assert.equal(d.state, "waiting_for_dns"); assert.equal(d.status, 202); assert.equal(d.records[0].value, "ultrastable-site=" + id); assert.equal(d.records[1].value, id + ".ultrastable.io"); assert.equal(kv.has("domain:www.example.org"), false);
   d = await W.attachDomain(E4, id, "www.example.org", dns("ultrastable-site=ffffffffff")); assert.equal(d.state, "waiting_for_dns", "a record naming another site proves nothing");
   d = await W.attachDomain(E4, id, "www.example.org", async () => { throw new Error("offline"); }); assert.equal(d.state, "dns_unreadable"); assert.equal(kv.has("domain:www.example.org"), false);
-  for (const badHost of ["ultrastable.io", "x.ultrastable.org", "foo.workers.dev", "localhost", "no spaces.com"]) assert.equal((await W.attachDomain(E4, id, badHost, dns(null))).code, "bad_domain", badHost);
+  for (const badHost of ["ultrastable.io", "x.ultrastable.org", "foo.workers.dev", "nodots", "no spaces.com"]) assert.equal((await W.attachDomain(E4, id, badHost, dns(null))).code, "bad_domain", badHost);
   assert.equal((await W.attachDomain(E4, "0000000000", "www.example.org", dns(null))).code, "no_site");
   d = await W.attachDomain(E4, id, "www.example.org", dns("ultrastable-site=" + id)); assert.equal(d.state, "pending_platform", "proven, and honest that the edge step did not run"); assert.equal(JSON.parse(kv.get("domain:www.example.org")).id, id);
   d = await W.attachDomain({ ...E4, CF_DEPLOY_TOKEN: "t", CF_ZONE_ID: "z" }, id, "www.example.org", dns("ultrastable-site=" + id)); assert.equal(d.state, "issuing"); assert.equal(d.edge.cf_id, "ch1");

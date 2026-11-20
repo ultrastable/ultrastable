@@ -411,7 +411,7 @@ async function domainRoute(request, env) {
 // the idea itself (objective, the measures every system starts with, the roles that work it) and the connection steps are the same data /setup walks
 // (USER_PATH). Each answer is stored (KV org:<id>), so the thread resumes where it stopped and the managers see how far every organization is (ideaWork).
 const ORG_MEASURES = ["the clock is ticking", "work is being handed out", "items are being finished", "results are checked independently", "nothing is dropped silently", "every objective has a probe"];
-const ORG_ROLES = [["product-manager", "decides what to improve next from the measures"], ["staff", "builds each change"], ["reviewer", "checks every change independently"], ["operations", "ships it and proves it live"]];
+const ORG_ROLES = [["product-manager", "decides what to improve next from the measures"], ["staff", "builds each change"], ["reviewer", "checks the change independently"], ["operations", "ships it and proves it live"]];
 export function orgPlan(idea) {
   const text = String(idea || "").replace(/\s+/g, " ").trim(), first = text.split(/[.!?]/)[0].slice(0, 140);
   return { objective: first || "Keep this running and improving", measures: ORG_MEASURES, roles: ORG_ROLES.map(r => ({ id: r[0], does: r[1] })),

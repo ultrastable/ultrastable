@@ -150,6 +150,26 @@
    "reason": "a deployment on another cloud needs a project with billing in a person's name",
    "default": "portability is proven for the SQLite path in checks on every change; docs/bootstrapping/other-cloud-proof.json is written only by a real deploy",
    "probe": "file:docs/bootstrapping/other-cloud-proof.json"
+  },
+  {
+   "id": "own-domain-edge",
+   "surfaces": [
+    {
+     "s": "Cloudflare API, zone ultrastable.io custom hostnames (read, 2026-11-20)",
+     "result": "HTTP 403 code 1404: no custom hostname quota is allocated; the zone is on the free plan and sits in a different account from the Workers"
+    },
+    {
+     "s": "site Worker bindings (read, 2026-11-20)",
+     "result": "CF_DEPLOY_TOKEN is bound; CF_ZONE_ID is not, so attachDomain stops at pending_platform after the DNS proof"
+    },
+    {
+     "s": "Worker custom domains API",
+     "result": "serves only hostnames in zones of the Worker's own account; a visitor's domain is in neither"
+    }
+   ],
+   "reason": "switching on the custom hostname service changes the zone's subscription and the deploy token's scope: a billing and credential-scope act in the owner's account",
+   "default": "POST /api/domain proves ownership by DNS TXT, stores the proven address and answers pending_platform in plain words; the site keeps answering at its ultrastable.io address",
+   "probe": "grep:site/wrangler.toml::CF_ZONE_ID"
   }
  ]
 }
