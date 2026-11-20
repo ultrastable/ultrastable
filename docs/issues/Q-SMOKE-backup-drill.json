@@ -1,7 +1,7 @@
 {
   "id": "Q-SMOKE-backup-drill",
   "title": "Q-SMOKE-backup-drill: production does not match the claim (backup-drill)",
-  "body": "**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::backup-drill\n**Status:** open\n\nSMOKE-LIVE-1: backup drill record shows a successful restore\n\nLive evidence: `at=2026-11-20 restore_ok=False errors=['list d1: GET d1/database: HTTP 401', 'list kv: GET storage/kv/namespaces: HTTP 401']`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\nsize: S\n\n**Closing probe:** workflow smoke-live, check `backup-drill` = PASS.\n",
+  "body": "**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::backup-drill\n**Status:** open\n\nSMOKE-LIVE-1: backup drill record shows a successful restore\n\nLive evidence: `at=2026-11-20 restore_ok=False errors=['list d1: GET d1/database: HTTP 401', 'list kv: GET storage/kv/namespaces: HTTP 401']`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\nsize: S\n\n**Closing probe:** workflow smoke-live, check `backup-drill` = PASS.\n\n\n**Vacuous:** 2026-11-20T18:56:44Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
   "labels": [
     "p1",
     "agent-ready"
