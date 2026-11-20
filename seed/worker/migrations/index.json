@@ -25,5 +25,6 @@
  "0023_decision_log.sql",
  "0024_read_indexes_3.sql",
  "0025_read_indexes_4.sql",
- "0026_tenant_core.sql"
+ "0026_tenant_core.sql",
+ "0027_progress.sql"
 ]
