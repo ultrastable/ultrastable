@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-SWEEP-accessibility",
   "title": "Q-BLIND-SWEEP-accessibility: answer the accessibility sweep",
-  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 60 days\n**Done check:** grep:ops/blindspots/answers.jsonl::\"domain\": \"accessibility\" ; recorded with `python3 -m foundation blindspots --answer accessibility --text <answer with evidence>`\n**Status:** open\n\nQuestion: Which pages or flows were added since the last sweep, and do they meet the design contract with keyboard, screen reader and zoom?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 60 days\n**Done check:** cmd:python3 -m foundation blindspots --swept accessibility\n**Status:** open\n\nQuestion: Which pages or flows were added since the last sweep, and do they meet the design contract with keyboard, screen reader and zoom?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
   "labels": [
     "role:product-manager",
     "blindspot"

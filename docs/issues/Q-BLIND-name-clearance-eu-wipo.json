@@ -1,0 +1,11 @@
+{
+  "id": "Q-BLIND-name-clearance-eu-wipo",
+  "title": "Q-BLIND-name-clearance-eu-wipo: close the ip blind spot name-clearance-eu-wipo",
+  "body": "**Owner:** product-manager\n**Trigger:** every blindspots scan\n**Done check:** cmd:python3 -m foundation blindspots --closed name-clearance-eu-wipo\n**Prediction:** blindspots_open <= 6 within 168 h\n**Status:** open\n\nWhy the owner would not know to ask: The name search covered the US register only; EUIPO, WIPO Madrid and UKIPO were not reachable from the session that ran it (found by the 2026-11-20 ip sweep).\nAction: search EUIPO eSearch, WIPO Global Brand Database and UKIPO for ULTRASTABLE in classes 9 and 42, add rows to searched and empty unsearched. The probe in doctrine/blindspots.json passes when it is done.",
+  "labels": [
+    "role:product-manager",
+    "blindspot"
+  ],
+  "milestone": "Next",
+  "workstream": "Growth"
+}
