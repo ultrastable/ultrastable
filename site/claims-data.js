@@ -148,6 +148,492 @@ export default {
    "surface": "site/authzen.js"
   },
   {
+   "claim": "+ \"<div class=\\\"us-grid c2\\\">\" + card(\"Loops\", \"Each loop has a trigger, owner, definition of done, two independent paths and a closing",
+   "detail": "",
+   "how": "file:foundation/loops.py + grep:.github/workflows/checks.yml::foundation[ .]loops\\b",
+   "id": "cited-06c8ef7187",
+   "kind": "claim",
+   "pass": true,
+   "surface": "site/worker.js"
+  },
+  {
+   "claim": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
+   "detail": "",
+   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/kernel-8.2.1.md + file:docs/PROJECT-MEMORY.md + file:agents/PROJECT-INSTRUCTIONS.md + file:docs/BOOTSTRAP-NO-MEMORY.md + file:doctrine/durable-facts.json",
+   "id": "cited-32424bab79",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The guiding directive governs all work and is inherited in full by every sub-agent, worker and tool**",
+   "detail": "",
+   "how": "file:docs/doctrine/GUIDING-DIRECTIVE.md + file:doctrine/directive.json + file:doctrine/registers.json + file:foundation/directive.py + grep:.github/workflows/checks.yml::foundation[ .]directive\\b",
+   "id": "cited-26ca52ae7a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **No single route.** Every loop, deploy and start path has at least two routes, one needing no credential a person would have to mint (a",
+   "detail": "",
+   "how": "file:foundation/failover.py + file:scripts/check_routes.py",
+   "id": "cited-b5a689086d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Every workflow declares a minute budget.** Private-repo Actions minutes are a hard monthly quota. A new or changed workflow carries",
+   "detail": "",
+   "how": "file:actions-budget.json + file:scripts/lint_workflows.py",
+   "id": "cited-31297281ad",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Vision: systems, not one-off apps (VISION-1, Rowan 2026-11-12).** Ultrastable runs ongoing autonomous systems that pass the system test",
+   "detail": "",
+   "how": "file:docs/doctrine/VISION.md + file:seed/bootstrap/bootstrap.py + file:tests/test_vision.py",
+   "id": "cited-eabc81182a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Drain to zero, fleetwide (DRAIN-ZERO-1, Rowan 2026-11-15).** \"The Ultrastable system shall always continue executing code changes to",
+   "detail": "",
+   "how": "file:scripts/resolve_generated.py + file:foundation/lanewatch.py",
+   "id": "cited-c8d046f56d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Interview-first, voice-first, pill-shaped input (INTERVIEW-1, Rowan 2026-11-12).** Never present a blank \"what do you want?\" box. Entry",
+   "detail": "",
+   "how": "file:site/interview.js + file:site/site.test.mjs",
+   "id": "cited-4620af8e65",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **No zombie branches or PRs; every loop gets better (SESSION-CLOSE-1, STRANGE-LOOP-1, Rowan 2026-11-12).** An `agent/*` or `claude/*`",
+   "detail": "",
+   "how": "file:foundation/sessions.py + file:doctrine/sessions.json",
+   "id": "cited-bc2ec7c8ca",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Complete everything; close everything (COMPLETE-1, Rowan 2026-11-12).** The system always completes all work automatically and always",
+   "detail": "",
+   "how": "file:scripts/completion_sweep.sh",
+   "id": "cited-827b3bfb96",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Merge and deploy everything automatically; clean up everywhere (AUTO-SHIP-CLEAN-1, Rowan 2026-11-15).** \"The Ultrastable system shall",
+   "detail": "",
+   "how": "file:seed/worker/src/sweeper.js + file:seed/worker/src/handoff.js + file:scripts/completion_sweep.sh + file:foundation/sessions.py",
+   "id": "cited-0900ebd12f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Complete all work; drain every issue; merge every PR; zero manual intervention (DRAIN-ALL-1, Rowan 2026-11-15).** \"The Ultrastable",
+   "detail": "",
+   "how": "file:ops/checks-session.jsonl + file:foundation/drainwatch.py + file:foundation/checksrun.py",
+   "id": "cited-8dd9873b6c",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Strange loops: every loop closes itself and improves itself; no zombie sessions (STRANGE-LOOP-1, Rowan 2026-11-12).** The system closes",
+   "detail": "",
+   "how": "file:scripts/completion_sweep.sh + file:instances/ultrastable/loop-registry.json",
+   "id": "cited-15cbf5a8c9",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Clockwork: every loop is a clock, and a stopped or inaccurate clock is not a working clock (CLOCKWORK-1, Rowan 2026-11-12).**",
+   "detail": "",
+   "how": "file:doctrine/clocks.json + file:foundation/clock.py + file:tests/foundation/test_clock.py",
+   "id": "cited-242b0ce6a1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Analytics are a feedback loop, built on Cloudflare, never on an opt-in tag (INSIGHT-1, Rowan 2026-11-14).** \"I cannot rely on Google",
+   "detail": "",
+   "how": "file:foundation/insight.py + file:doctrine/insight.json + file:ops/insight/findings.json + file:tests/foundation/test_insight.py + grep:.github/workflows/checks.yml::foundation[ .]insight\\b",
+   "id": "cited-0f829941ca",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The owner console is an agent, not a command parser (CONSOLE-AGENT-1, Rowan 2026-11-14).** \"The command line ... doesn't function like",
+   "detail": "",
+   "how": "file:dashboard/agent.js + file:dashboard/worker.js + file:dashboard/test/agent.test.mjs",
+   "id": "cited-62afd0c67f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Self-reference is the multiplier (SELF-REFERENCE-1, Rowan 2026-11-14).** \"Ultrastable runs on Ultrastable. That self-reference is key",
+   "detail": "",
+   "how": "file:ops/deploys.jsonl + file:deploy/deploy-workers.mjs + file:foundation/criticality.py + file:doctrine/criticality.json + file:tests/foundation/test_criticality.py",
+   "id": "cited-0e093a19f3",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The system knows what the user does not know (IGNORANCE-1, Rowan 2026-11-14).** \"You need to know what I don't know. Ignorance is",
+   "detail": "",
+   "how": "file:ops/told.jsonl + file:foundation/ignorance.py + file:tests/foundation/test_criticality.py",
+   "id": "cited-6348828fed",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Server side owns every loop; a client never closes one (SERVER-OWNS-LOOPS-1, Rowan 2026-11-13).** \"Never leave client side open loops,",
+   "detail": "",
+   "how": "file:seed/worker/src/sweeper.js + file:instances/ultrastable/loop-registry.json + file:foundation/loopowner.py + grep:.github/workflows/checks.yml::foundation[ .]loopowner\\b",
+   "id": "cited-eb63c051f8",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Code agents produce; Ultrastable owns (CODE-AGENT-SOP-1 + HANDOFF-1, Rowan 2026-11-14).** \"This is a server-side platform, not a local",
+   "detail": "",
+   "how": "file:site/sop.js + file:seed/worker/src/handoff.js + file:site/deployer.js",
+   "id": "cited-7d539474d6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Point and click, always; never ask a person to handle a credential (POINT-AND-CLICK-1, Rowan 2026-11-13).** \"The user never should have",
+   "detail": "",
+   "how": "file:doctrine/point-and-click.json + file:foundation/pointclick.py + grep:.github/workflows/checks.yml::foundation[ .]pointclick\\b",
+   "id": "cited-92c7dc6f07",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Meta content is a signal; the microphone is monitored (META-SIGNAL-1, Rowan 2026-11-14).** \"All calls are recorded and monitored.\"",
+   "detail": "",
+   "how": "file:doctrine/meta-loop.json + file:foundation/metasignal.py + file:site/interview.js + file:tests/foundation/test_metasignal.py",
+   "id": "cited-b5a9b7dba9",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **One design language, many products; design is enforced and experimented, never left to chance (DESIGN-LANGUAGE-1, Rowan 2026-11-14).**",
+   "detail": "",
+   "how": "file:doctrine/design-experiments.json + file:doctrine/design.json + file:foundation/design.py + file:tests/foundation/test_design.py + file:agents/roles/design-manager.md + grep:.github/workflows/checks.yml::foundation[ .]design\\b",
+   "id": "cited-927066c10b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Provenance is first-class: every input and change records where it came from and what it did (PROVENANCE-1, Rowan 2026-11-17).** \"Are",
+   "detail": "",
+   "how": "file:ops/provenance.jsonl + file:ops/changelog.json + file:foundation/provenance.py + file:dashboard/provenance.js + file:doctrine/provenance.json + file:tests/foundation/test_provenance.py",
+   "id": "cited-785fa9e953",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Words match code; code checks it (WORDS-MATCH-CODE-1, Rowan 2026-11-17).** \"The words must match the code. The statements must match",
+   "detail": "",
+   "how": "file:doctrine/claim-code.json + file:tests/foundation/test_claimcode.py + file:foundation/claimcode.py + grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b",
+   "id": "cited-46fa451291",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Everything is traceable, and the database stays small (AUDIT-CHAIN-1, Rowan 2026-11-17).** \"It has to be auditable to be believed ...",
+   "detail": "",
+   "how": "file:seed/autonomy/retention.json + file:seed/worker/test/auditchain.test.js",
+   "id": "cited-b765c5605f",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The front end is always backed by the back end (FRONT-BACKED-1, Rowan 2026-11-18).** \"The system shall always ensure that words match",
+   "detail": "",
+   "how": "file:seed/worker/src/livechanges.js + file:site/live.js + file:seed/worker/test/livechanges.test.js + file:site/site.test.mjs",
+   "id": "cited-d3be926b7b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
+   "detail": "",
+   "how": "file:docs/PROJECT-MEMORY.md",
+   "id": "cited-95432168bf",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Measure everything.** Every site and service an org ships carries the standard first-party analytics (`seed/analytics/analytics.js`:",
+   "detail": "",
+   "how": "file:seed/analytics/analytics.js",
+   "id": "cited-4a7cfcfa97",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Fund yourself.** Everything the owner starts must become self-sustaining; the owner is spending money they do not have. Funding and",
+   "detail": "",
+   "how": "file:scripts/outreach.py",
+   "id": "cited-27198056c7",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Introduce the work; do not wait to be found (OUTREACH-INTRO-1, Rowan 2026-11-14).** \"Why am I not reaching out? Create your own role",
+   "detail": "",
+   "how": "file:outreach/prospects.json + file:outreach/intro-profile.json + file:outreach/gate.json + file:scripts/outreach_intro.py + file:scripts/test_outreach_intro.py + file:.github/workflows/outreach.yml",
+   "id": "cited-5c41300d09",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Strategy and promotion are the system's job (PROMOTE-1, Rowan 2026-11-14).** \"I have the idea. Somebody can start an idea and have you",
+   "detail": "",
+   "how": "file:doctrine/promotion.json + file:outreach/facts.json + file:.github/workflows/mcp-registry.yml + file:site/promote.js + file:foundation/promote.py + file:tests/foundation/test_promote.py",
+   "id": "cited-23253f39ac",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **The system knows what the owner does not (BLINDSPOT-1, Rowan 2026-11-14).** \"I don't know what I don't know. The system needs to know",
+   "detail": "",
+   "how": "file:doctrine/blindspots.json + file:foundation/blindspots.py + file:tests/foundation/test_blindspots.py + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b",
+   "id": "cited-181b9ac692",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "Every system is built on three layers: kernel (`seed/`), foundation (`foundation/`) and one instance manifest",
+   "detail": "",
+   "how": "file:docs/FOUNDATION.md",
+   "id": "cited-10e79eb496",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+   "detail": "",
+   "how": "file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "cited-09973d0254",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+   "detail": "",
+   "how": "file:foundation/boundary.py + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b + grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+   "id": "cited-f46e34e2a9",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+   "detail": "",
+   "how": "file:foundation/lanewatch.py + file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "cited-5d0567ad32",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
+   "detail": "",
+   "how": "file:foundation/standingorder.py + grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b",
+   "id": "cited-e7cebff4c4",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
+   "detail": "",
+   "how": "file:doctrine/open-loops.json + file:foundation/openloops.py + file:doctrine/rules.json + grep:.github/workflows/checks.yml::foundation[ .]openloops\\b",
+   "id": "cited-edb8a8bb30",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "Engine: `demos/public/engine.js`, deterministic, shared by browser and tests. Tests: `node --test demos/test/*.test.mjs` (16 tests:",
+   "detail": "",
+   "how": "file:demos/public/engine.js + file:demos/publish.json",
+   "id": "cited-0c620161e8",
+   "kind": "claim",
+   "pass": true,
+   "surface": "demos/README.md"
+  },
+  {
+   "claim": "| [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided",
+   "detail": "",
+   "how": "file:docs/architecture/plugins.md",
+   "id": "cited-1936df88a5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/README.md"
+  },
+  {
+   "claim": "- **Words match code (CLAIMS-1).** Every public statement is a probed sentence, a block generated from code, or an inventory checked in",
+   "detail": "",
+   "how": "file:doctrine/claims.json",
+   "id": "cited-5470ac8f4b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/README.md"
+  },
+  {
+   "claim": "Follow `agents/AGENTS.md` (the org's shared agent protocol) and the role file in `agents/roles/` named on your assigned item. Your limits",
+   "detail": "",
+   "how": "file:agents/AGENTS.md",
+   "id": "cited-d61ec62b6d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/.github/copilot-instructions.md"
+  },
+  {
+   "claim": "> TERMS-CROSSWALK: say autonomous for a system with self-referential loops and the ability to close them (glossary `autonomy`); closed loop",
+   "detail": "",
+   "how": "file:foundation/crosswalk.py + grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b",
+   "id": "cited-0c8c9188d5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/.github/copilot-instructions.md"
+  },
+  {
+   "claim": "1. Read `business/funding/registry.json`. Every row has a status (verified, secondary, unverified). Read unverified and stale rows at their",
+   "detail": "",
+   "how": "file:business/funding/registry.json",
+   "id": "cited-7bbdfa5fa2",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/funding-manager.md"
+  },
+  {
+   "claim": "Each tick run `python3 -m foundation blindspots --scan --apply`; answer due sweeps with sources via `blindspots --answer DOMAIN --text",
+   "detail": "",
+   "how": "file:foundation/blindspots.py + grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b",
+   "id": "cited-02bb535f7a",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/legal-ip-manager.md"
+  },
+  {
+   "claim": "1. Health: the last tick ran all its steps; every role ticked on schedule; error rates and costs are inside budget. Every host you run or",
+   "detail": "",
+   "how": "file:foundation/serverside.py + grep:.github/workflows/checks.yml::foundation[ .]serverside\\b",
+   "id": "cited-a2b742d8ec",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/operations.md"
+  },
+  {
+   "claim": "Run `python3 scripts/outreach_intro.py run` after the programme lane. It resolves a published role mailbox from each prospect",
+   "detail": "",
+   "how": "file:outreach/prospects.json + file:outreach/intro-profile.json",
+   "id": "cited-7f5578612b",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/outreach-manager.md"
+  },
+  {
+   "claim": "Your job is growth, not only bug fixes. Each tick, read `doctrine/growth.json` and `python3 -m foundation growth --report`: the growth",
+   "detail": "",
+   "how": "file:doctrine/growth.json + file:foundation/growth.py + grep:.github/workflows/checks.yml::foundation[ .]growth\\b + grep:.github/workflows/checks.yml::foundation[ .]growth\\b",
+   "id": "cited-ab3b26b9f6",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/roles/product-manager.md"
+  },
+  {
+   "claim": "- Main repo `ultrastable/ultrastable` (private) holds the unified layout, archived patent drafts (`ip/`, superseded, never filed), business",
+   "detail": "",
+   "how": "file:agents/SELF-AWARENESS.md + file:docs/BOOTSTRAP-GAPS.md",
+   "id": "cited-3e0accfbbd",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/PROJECT-MEMORY.template.md"
+  },
+  {
+   "claim": "- Funding: unfunded; dual track (open source vs commercial) in `docs/funding/` and `business/plan/05-funding.md`. Big credit tiers need an",
+   "detail": "",
+   "how": "file:business/plan/05-funding.md",
+   "id": "cited-a76490ac1d",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/docs/PROJECT-MEMORY.template.md"
+  },
+  {
+   "claim": "CLOSED-LOOP-AXIOM (owner, 2026-11-12): every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing",
+   "detail": "",
+   "how": "file:doctrine/closed-loop.json + file:foundation/closedloop.py + grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b",
+   "id": "cited-b7c30dc4d5",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
+   "detail": "",
+   "how": "file:doctrine/standing-order.json + file:foundation/standingorder.py + grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b",
+   "id": "cited-a517a5528e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/doctrine/GUIDING-DIRECTIVE.md"
+  },
+  {
+   "claim": "- uiux-manager: the front end as a measured, continuously audited surface (UIUX-1): how every page across ultrastable.io, .org and .app,",
+   "detail": "",
+   "how": "file:doctrine/stakeholders.json + file:doctrine/design.json + file:foundation/insight.py",
+   "id": "cited-0cea4449d8",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/self/SELF.md"
+  },
+  {
    "claim": "seed-tests: 39 Python and 372 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
@@ -281,7 +767,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 28,
-  "total": 28
+  "pass": 82,
+  "total": 82
  }
 };

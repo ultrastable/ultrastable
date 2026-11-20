@@ -177,6 +177,594 @@
         "grep:site/authzen.js::outside every trust rung",
         "grep:site/authzen.test.mjs::secrets are outside every rung"
       ]
+    },
+    {
+      "id": "cited-06c8ef7187",
+      "surface": "site/worker.js",
+      "text": "+ \"<div class=\\\"us-grid c2\\\">\" + card(\"Loops\", \"Each loop has a trigger, owner, definition of done, two independent paths and a closing",
+      "probe": [
+        "file:foundation/loops.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]loops\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-32424bab79",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Load from the repository, never from tool memory.** Project memory, tool memory and chat are not storage (Rowan, 2026-11-12): they may",
+      "probe": [
+        "file:docs/doctrine/GUIDING-DIRECTIVE.md",
+        "file:doctrine/kernel-8.2.1.md",
+        "file:docs/PROJECT-MEMORY.md",
+        "file:agents/PROJECT-INSTRUCTIONS.md",
+        "file:docs/BOOTSTRAP-NO-MEMORY.md",
+        "file:doctrine/durable-facts.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-26ca52ae7a",
+      "surface": "agents/AGENTS.md",
+      "text": "- **The guiding directive governs all work and is inherited in full by every sub-agent, worker and tool**",
+      "probe": [
+        "file:docs/doctrine/GUIDING-DIRECTIVE.md",
+        "file:doctrine/directive.json",
+        "file:doctrine/registers.json",
+        "file:foundation/directive.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]directive\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-b5a689086d",
+      "surface": "agents/AGENTS.md",
+      "text": "- **No single route.** Every loop, deploy and start path has at least two routes, one needing no credential a person would have to mint (a",
+      "probe": [
+        "file:foundation/failover.py",
+        "file:scripts/check_routes.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-31297281ad",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every workflow declares a minute budget.** Private-repo Actions minutes are a hard monthly quota. A new or changed workflow carries",
+      "probe": [
+        "file:actions-budget.json",
+        "file:scripts/lint_workflows.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-eabc81182a",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Vision: systems, not one-off apps (VISION-1, Rowan 2026-11-12).** Ultrastable runs ongoing autonomous systems that pass the system test",
+      "probe": [
+        "file:docs/doctrine/VISION.md",
+        "file:seed/bootstrap/bootstrap.py",
+        "file:tests/test_vision.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-c8d046f56d",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Drain to zero, fleetwide (DRAIN-ZERO-1, Rowan 2026-11-15).** \"The Ultrastable system shall always continue executing code changes to",
+      "probe": [
+        "file:scripts/resolve_generated.py",
+        "file:foundation/lanewatch.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-4620af8e65",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Interview-first, voice-first, pill-shaped input (INTERVIEW-1, Rowan 2026-11-12).** Never present a blank \"what do you want?\" box. Entry",
+      "probe": [
+        "file:site/interview.js",
+        "file:site/site.test.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-bc2ec7c8ca",
+      "surface": "agents/AGENTS.md",
+      "text": "- **No zombie branches or PRs; every loop gets better (SESSION-CLOSE-1, STRANGE-LOOP-1, Rowan 2026-11-12).** An `agent/*` or `claude/*`",
+      "probe": [
+        "file:foundation/sessions.py",
+        "file:doctrine/sessions.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-827b3bfb96",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Complete everything; close everything (COMPLETE-1, Rowan 2026-11-12).** The system always completes all work automatically and always",
+      "probe": [
+        "file:scripts/completion_sweep.sh"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-0900ebd12f",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Merge and deploy everything automatically; clean up everywhere (AUTO-SHIP-CLEAN-1, Rowan 2026-11-15).** \"The Ultrastable system shall",
+      "probe": [
+        "file:seed/worker/src/sweeper.js",
+        "file:seed/worker/src/handoff.js",
+        "file:scripts/completion_sweep.sh",
+        "file:foundation/sessions.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-8dd9873b6c",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Complete all work; drain every issue; merge every PR; zero manual intervention (DRAIN-ALL-1, Rowan 2026-11-15).** \"The Ultrastable",
+      "probe": [
+        "file:ops/checks-session.jsonl",
+        "file:foundation/drainwatch.py",
+        "file:foundation/checksrun.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-15cbf5a8c9",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Strange loops: every loop closes itself and improves itself; no zombie sessions (STRANGE-LOOP-1, Rowan 2026-11-12).** The system closes",
+      "probe": [
+        "file:scripts/completion_sweep.sh",
+        "file:instances/ultrastable/loop-registry.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-242b0ce6a1",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Clockwork: every loop is a clock, and a stopped or inaccurate clock is not a working clock (CLOCKWORK-1, Rowan 2026-11-12).**",
+      "probe": [
+        "file:doctrine/clocks.json",
+        "file:foundation/clock.py",
+        "file:tests/foundation/test_clock.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-0f829941ca",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Analytics are a feedback loop, built on Cloudflare, never on an opt-in tag (INSIGHT-1, Rowan 2026-11-14).** \"I cannot rely on Google",
+      "probe": [
+        "file:foundation/insight.py",
+        "file:doctrine/insight.json",
+        "file:ops/insight/findings.json",
+        "file:tests/foundation/test_insight.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]insight\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-62afd0c67f",
+      "surface": "agents/AGENTS.md",
+      "text": "- **The owner console is an agent, not a command parser (CONSOLE-AGENT-1, Rowan 2026-11-14).** \"The command line ... doesn't function like",
+      "probe": [
+        "file:dashboard/agent.js",
+        "file:dashboard/worker.js",
+        "file:dashboard/test/agent.test.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-0e093a19f3",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Self-reference is the multiplier (SELF-REFERENCE-1, Rowan 2026-11-14).** \"Ultrastable runs on Ultrastable. That self-reference is key",
+      "probe": [
+        "file:ops/deploys.jsonl",
+        "file:deploy/deploy-workers.mjs",
+        "file:foundation/criticality.py",
+        "file:doctrine/criticality.json",
+        "file:tests/foundation/test_criticality.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-6348828fed",
+      "surface": "agents/AGENTS.md",
+      "text": "- **The system knows what the user does not know (IGNORANCE-1, Rowan 2026-11-14).** \"You need to know what I don't know. Ignorance is",
+      "probe": [
+        "file:ops/told.jsonl",
+        "file:foundation/ignorance.py",
+        "file:tests/foundation/test_criticality.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-eb63c051f8",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Server side owns every loop; a client never closes one (SERVER-OWNS-LOOPS-1, Rowan 2026-11-13).** \"Never leave client side open loops,",
+      "probe": [
+        "file:seed/worker/src/sweeper.js",
+        "file:instances/ultrastable/loop-registry.json",
+        "file:foundation/loopowner.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]loopowner\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-7d539474d6",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Code agents produce; Ultrastable owns (CODE-AGENT-SOP-1 + HANDOFF-1, Rowan 2026-11-14).** \"This is a server-side platform, not a local",
+      "probe": [
+        "file:site/sop.js",
+        "file:seed/worker/src/handoff.js",
+        "file:site/deployer.js"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-92c7dc6f07",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Point and click, always; never ask a person to handle a credential (POINT-AND-CLICK-1, Rowan 2026-11-13).** \"The user never should have",
+      "probe": [
+        "file:doctrine/point-and-click.json",
+        "file:foundation/pointclick.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]pointclick\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-b5a9b7dba9",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Meta content is a signal; the microphone is monitored (META-SIGNAL-1, Rowan 2026-11-14).** \"All calls are recorded and monitored.\"",
+      "probe": [
+        "file:doctrine/meta-loop.json",
+        "file:foundation/metasignal.py",
+        "file:site/interview.js",
+        "file:tests/foundation/test_metasignal.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-927066c10b",
+      "surface": "agents/AGENTS.md",
+      "text": "- **One design language, many products; design is enforced and experimented, never left to chance (DESIGN-LANGUAGE-1, Rowan 2026-11-14).**",
+      "probe": [
+        "file:doctrine/design-experiments.json",
+        "file:doctrine/design.json",
+        "file:foundation/design.py",
+        "file:tests/foundation/test_design.py",
+        "file:agents/roles/design-manager.md",
+        "grep:.github/workflows/checks.yml::foundation[ .]design\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-785fa9e953",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Provenance is first-class: every input and change records where it came from and what it did (PROVENANCE-1, Rowan 2026-11-17).** \"Are",
+      "probe": [
+        "file:ops/provenance.jsonl",
+        "file:ops/changelog.json",
+        "file:foundation/provenance.py",
+        "file:dashboard/provenance.js",
+        "file:doctrine/provenance.json",
+        "file:tests/foundation/test_provenance.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-46fa451291",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Words match code; code checks it (WORDS-MATCH-CODE-1, Rowan 2026-11-17).** \"The words must match the code. The statements must match",
+      "probe": [
+        "file:doctrine/claim-code.json",
+        "file:tests/foundation/test_claimcode.py",
+        "file:foundation/claimcode.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]claimcode\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-b765c5605f",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Everything is traceable, and the database stays small (AUDIT-CHAIN-1, Rowan 2026-11-17).** \"It has to be auditable to be believed ...",
+      "probe": [
+        "file:seed/autonomy/retention.json",
+        "file:seed/worker/test/auditchain.test.js"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-d3be926b7b",
+      "surface": "agents/AGENTS.md",
+      "text": "- **The front end is always backed by the back end (FRONT-BACKED-1, Rowan 2026-11-18).** \"The system shall always ensure that words match",
+      "probe": [
+        "file:seed/worker/src/livechanges.js",
+        "file:site/live.js",
+        "file:seed/worker/test/livechanges.test.js",
+        "file:site/site.test.mjs"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-95432168bf",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
+      "probe": [
+        "file:docs/PROJECT-MEMORY.md"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-4a7cfcfa97",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Measure everything.** Every site and service an org ships carries the standard first-party analytics (`seed/analytics/analytics.js`:",
+      "probe": [
+        "file:seed/analytics/analytics.js"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-27198056c7",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Fund yourself.** Everything the owner starts must become self-sustaining; the owner is spending money they do not have. Funding and",
+      "probe": [
+        "file:scripts/outreach.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-5c41300d09",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Introduce the work; do not wait to be found (OUTREACH-INTRO-1, Rowan 2026-11-14).** \"Why am I not reaching out? Create your own role",
+      "probe": [
+        "file:outreach/prospects.json",
+        "file:outreach/intro-profile.json",
+        "file:outreach/gate.json",
+        "file:scripts/outreach_intro.py",
+        "file:scripts/test_outreach_intro.py",
+        "file:.github/workflows/outreach.yml"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-23253f39ac",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Strategy and promotion are the system's job (PROMOTE-1, Rowan 2026-11-14).** \"I have the idea. Somebody can start an idea and have you",
+      "probe": [
+        "file:doctrine/promotion.json",
+        "file:outreach/facts.json",
+        "file:.github/workflows/mcp-registry.yml",
+        "file:site/promote.js",
+        "file:foundation/promote.py",
+        "file:tests/foundation/test_promote.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-181b9ac692",
+      "surface": "agents/AGENTS.md",
+      "text": "- **The system knows what the owner does not (BLINDSPOT-1, Rowan 2026-11-14).** \"I don't know what I don't know. The system needs to know",
+      "probe": [
+        "file:doctrine/blindspots.json",
+        "file:foundation/blindspots.py",
+        "file:tests/foundation/test_blindspots.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b",
+        "grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-10e79eb496",
+      "surface": "agents/AGENTS.md",
+      "text": "Every system is built on three layers: kernel (`seed/`), foundation (`foundation/`) and one instance manifest",
+      "probe": [
+        "file:docs/FOUNDATION.md"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-09973d0254",
+      "surface": "agents/AGENTS.md",
+      "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+      "probe": [
+        "file:foundation/closedloop.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-f46e34e2a9",
+      "surface": "agents/AGENTS.md",
+      "text": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+      "probe": [
+        "file:foundation/boundary.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-5d0567ad32",
+      "surface": "agents/AGENTS.md",
+      "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+      "probe": [
+        "file:foundation/lanewatch.py",
+        "file:foundation/crosswalk.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-e7cebff4c4",
+      "surface": "agents/AGENTS.md",
+      "text": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
+      "probe": [
+        "file:foundation/standingorder.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-edb8a8bb30",
+      "surface": "agents/AGENTS.md",
+      "text": "- **No open items, ever (NO-OPEN-ITEMS-1, Rowan 2026-11-19).** \"The Ultrastable system shall never allow 'Not done, needs you' or open",
+      "probe": [
+        "file:doctrine/open-loops.json",
+        "file:foundation/openloops.py",
+        "file:doctrine/rules.json",
+        "grep:.github/workflows/checks.yml::foundation[ .]openloops\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-0c620161e8",
+      "surface": "demos/README.md",
+      "text": "Engine: `demos/public/engine.js`, deterministic, shared by browser and tests. Tests: `node --test demos/test/*.test.mjs` (16 tests:",
+      "probe": [
+        "file:demos/public/engine.js",
+        "file:demos/publish.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-1936df88a5",
+      "surface": "seed/README.md",
+      "text": "| [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided",
+      "probe": [
+        "file:docs/architecture/plugins.md"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-5470ac8f4b",
+      "surface": "seed/README.md",
+      "text": "- **Words match code (CLAIMS-1).** Every public statement is a probed sentence, a block generated from code, or an inventory checked in",
+      "probe": [
+        "file:doctrine/claims.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-d61ec62b6d",
+      "surface": "seed/.github/copilot-instructions.md",
+      "text": "Follow `agents/AGENTS.md` (the org's shared agent protocol) and the role file in `agents/roles/` named on your assigned item. Your limits",
+      "probe": [
+        "file:agents/AGENTS.md"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-0c8c9188d5",
+      "surface": "seed/.github/copilot-instructions.md",
+      "text": "> TERMS-CROSSWALK: say autonomous for a system with self-referential loops and the ability to close them (glossary `autonomy`); closed loop",
+      "probe": [
+        "file:foundation/crosswalk.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-7bbdfa5fa2",
+      "surface": "seed/agents/roles/funding-manager.md",
+      "text": "1. Read `business/funding/registry.json`. Every row has a status (verified, secondary, unverified). Read unverified and stale rows at their",
+      "probe": [
+        "file:business/funding/registry.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-02bb535f7a",
+      "surface": "seed/agents/roles/legal-ip-manager.md",
+      "text": "Each tick run `python3 -m foundation blindspots --scan --apply`; answer due sweeps with sources via `blindspots --answer DOMAIN --text",
+      "probe": [
+        "file:foundation/blindspots.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]blindspots\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-a2b742d8ec",
+      "surface": "seed/agents/roles/operations.md",
+      "text": "1. Health: the last tick ran all its steps; every role ticked on schedule; error rates and costs are inside budget. Every host you run or",
+      "probe": [
+        "file:foundation/serverside.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]serverside\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-7f5578612b",
+      "surface": "seed/agents/roles/outreach-manager.md",
+      "text": "Run `python3 scripts/outreach_intro.py run` after the programme lane. It resolves a published role mailbox from each prospect",
+      "probe": [
+        "file:outreach/prospects.json",
+        "file:outreach/intro-profile.json"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-ab3b26b9f6",
+      "surface": "seed/agents/roles/product-manager.md",
+      "text": "Your job is growth, not only bug fixes. Each tick, read `doctrine/growth.json` and `python3 -m foundation growth --report`: the growth",
+      "probe": [
+        "file:doctrine/growth.json",
+        "file:foundation/growth.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]growth\\b",
+        "grep:.github/workflows/checks.yml::foundation[ .]growth\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-3e0accfbbd",
+      "surface": "seed/docs/PROJECT-MEMORY.template.md",
+      "text": "- Main repo `ultrastable/ultrastable` (private) holds the unified layout, archived patent drafts (`ip/`, superseded, never filed), business",
+      "probe": [
+        "file:agents/SELF-AWARENESS.md",
+        "file:docs/BOOTSTRAP-GAPS.md"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-a76490ac1d",
+      "surface": "seed/docs/PROJECT-MEMORY.template.md",
+      "text": "- Funding: unfunded; dual track (open source vs commercial) in `docs/funding/` and `business/plan/05-funding.md`. Big credit tiers need an",
+      "probe": [
+        "file:business/plan/05-funding.md"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-b7c30dc4d5",
+      "surface": "seed/doctrine/GUIDING-DIRECTIVE.md",
+      "text": "CLOSED-LOOP-AXIOM (owner, 2026-11-12): every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing",
+      "probe": [
+        "file:doctrine/closed-loop.json",
+        "file:foundation/closedloop.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-a517a5528e",
+      "surface": "seed/doctrine/GUIDING-DIRECTIVE.md",
+      "text": "CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
+      "probe": [
+        "file:doctrine/standing-order.json",
+        "file:foundation/standingorder.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b"
+      ],
+      "bound_by": "cited"
+    },
+    {
+      "id": "cited-0cea4449d8",
+      "surface": "seed/self/SELF.md",
+      "text": "- uiux-manager: the front end as a measured, continuously audited surface (UIUX-1): how every page across ultrastable.io, .org and .app,",
+      "probe": [
+        "file:doctrine/stakeholders.json",
+        "file:doctrine/design.json",
+        "file:foundation/insight.py"
+      ],
+      "bound_by": "cited"
     }
   ],
   "generated": [
@@ -308,7 +896,7 @@
   ],
   "coverage": {
     "target": 1.0,
-    "floor": 0.035,
+    "floor": 0.4,
     "live_pages": [
       "https://blindspot.ultrastable.app/",
       "https://ultrastable.io/",
