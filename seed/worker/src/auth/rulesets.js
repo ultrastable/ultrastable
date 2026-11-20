@@ -43,7 +43,7 @@ export async function applyRulesets(db, env, tenant, { fetch: f = fetch, now = D
     }
   }
   const ok = results.length > 0 && results.every(x => x.ok);
-  if (ok) await store.event(db, tenant, 'github-admin', 'rulesets', 'all rulesets applied');  // the resolver below stops once this row exists
+  if (ok) await store.event(db, tenant, 'github-admin', 'rulesets', 'all rulesets applied; own app ' + ownId);  // the resolver below stops once this row names the app that writes to main
   return { ok, results };
 }
 
@@ -58,8 +58,13 @@ export async function rulesetsDue(db, env, opts = {}) {
   const rows = (await db.prepare("SELECT tenant FROM credentials WHERE provider = 'github-admin'").all()).results || [];
   const out = [];
   for (const { tenant } of rows) {
-    const done = await db.prepare("SELECT 1 AS x FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'rulesets' LIMIT 1").bind(tenant).first();
-    if (done) { out.push({ tenant, action: 'done' }); continue; }
+    // APP-DRIFT-1 (seen live 2026-11-20): the rule on main exempted the app that existed when it was applied; the tick later ran under a newer app, GitHub answered 422 to
+    // every data commit and nothing a workflow measured reached main. The rule is therefore re-applied whenever the last applied row does not name the app in use now.
+    const done = await db.prepare("SELECT detail FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'rulesets' ORDER BY at DESC, rowid DESC LIMIT 1").bind(tenant).first();
+    const own = await db.prepare("SELECT meta FROM credentials WHERE tenant = ? AND provider = 'github-app'").bind(tenant).first();
+    let ownId = 0;
+    try { ownId = Number(JSON.parse((own && own.meta) || '{}').app_id) || 0; } catch (e) { ownId = 0; /* unreadable meta: treated as no app; the applied row then stands */ }
+    if (done && (!ownId || String(done.detail || '').endsWith('own app ' + ownId))) { out.push({ tenant, action: 'done' }); continue; }
     // MAIN-WRITER-1 rollout guard: with the rule active only the org's own app may write to main, so wait until a workflow commit has landed through it.
     if (!opts.token && !(await db.prepare("SELECT 1 AS x FROM credential_events WHERE provider = 'github-app' AND event = 'main-writer' LIMIT 1").first())) { out.push({ tenant, action: 'await-main-writer' }); continue; }
     const recent = await db.prepare("SELECT 1 AS x FROM credential_events WHERE tenant = ? AND provider = 'github-admin' AND event = 'failed' AND detail LIKE 'ruleset %' AND at > ? LIMIT 1").bind(tenant, new Date((opts.now || Date.now()) - 3600e3).toISOString().slice(0, 19) + 'Z').first();
