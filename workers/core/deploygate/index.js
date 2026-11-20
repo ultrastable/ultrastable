@@ -84,7 +84,7 @@ export function createGate({ fetch = globalThis.fetch, now = Date.now, config })
     const rule = (config.rules || []).find(r => r.repo === claims.repository && r.script === script && (r.refs || []).includes(claims.ref));
     if (!rule) return json({ error: 'not allowed', repository: claims.repository, ref: claims.ref, script }, 403);
     const text = await form.get('worker.js').text();
-    const meta = { main_module: 'worker.js', compatibility_date: rule.compat || '2026-10-01', compatibility_flags: rule.compat_flags || [], keep_bindings: KEEP, ...(rule.ai === true ? { bindings: [{ type: 'ai', name: 'AI' }] } : {}) };
+    const meta = { main_module: 'worker.js', compatibility_date: rule.compat || '2026-10-01', compatibility_flags: rule.compat_flags || [], keep_bindings: KEEP, observability: { enabled: true, head_sampling_rate: 1 }, ...(rule.ai === true ? { bindings: [{ type: 'ai', name: 'AI' }] } : {}) };
     const out = new FormData();
     out.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
     out.append('worker.js', new Blob([text], { type: 'application/javascript+module' }), 'worker.js');

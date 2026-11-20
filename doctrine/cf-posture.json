@@ -1,5 +1,5 @@
 {
-  "_doc": "CF-POSTURE-1 policy (foundation/cfposture.py). The Cloudflare account's settings as rules measured against the live account every day (cost-guard workflow). kind auto: a failure files Q-CFP-<id> and the passing probe closes it. kind gate: identity-bound, recorded with its default in effect, files no item. upload_paths: every file that uploads a Worker by the API; each upload must send `observability` or the deploy turns logs off.",
+  "_doc": "CF-POSTURE-1 policy (foundation/cfposture.py). The Cloudflare account's settings as rules measured against the live account every day (cost-guard workflow). kind auto: a failure files Q-CFP-<id> and the passing probe closes it. kind gate: identity-bound, recorded with its default in effect, files no item. upload_paths: every file that uploads a Worker by the API; each upload must send `observability` or the deploy turns logs off. scan_exclude: path prefixes the upload scan skips (tests, and the reference copy of another fleet's code that this repository never deploys).",
   "account_id": "81e3a4efb4eb66e613529b87682911bb",
   "horizon_days": 365,
   "upload_paths": [
@@ -7,7 +7,12 @@
     "deploy/deploy-system.mjs",
     "deploy/deploy-demos.mjs",
     "site/deployer.js",
-    "site/worker.js"
+    "site/worker.js",
+    "scripts/cf_account.py",
+    "workers/adapters/cloudflare/deployer.js",
+    "workers/adapters/cloudflare/install-adapter.js",
+    "workers/apps/launcher/src/provision.js",
+    "workers/core/deploygate/index.js"
   ],
   "preview_prefixes": [
     "us-idea-"
@@ -62,5 +67,9 @@
       "why": "One member means one sign-in is the only way into billing and the registrar.",
       "default": "the system runs on API tokens that do not expire; nothing waits on the sign-in until a bill or a renewal fails"
     }
+  ],
+  "scan_exclude": [
+    "tests/",
+    "platform/cloudflare-reference/"
   ]
 }

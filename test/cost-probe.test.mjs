@@ -10,6 +10,19 @@ function gqlFetchFactory(data) {
 }
 
 describe('cost probe', () => {
+  it('keeps the D1 reading and marks neurons unmeasured when the AI dataset schema changes (COST-PROBE-FIELD-1)', async () => {
+    const fetchFn = async (url, init) => {
+      const isD1 = JSON.parse(init.body).query.includes('d1AnalyticsAdaptiveGroups');
+      return { ok: true, status: 200, json: async () => (isD1
+        ? { data: { viewer: { accounts: [{ d1AnalyticsAdaptiveGroups: [{ sum: { rowsRead: 5 }, dimensions: { databaseId: 'x' } }] }] } }, errors: null }
+        : { data: null, errors: [{ message: 'unknown field "totalNeurons"' }] }) };
+    };
+    const out = await measureDay({ fetchFn, token: 't', account: 'a', date: '2026-11-20', databaseIds: [{ id: 'x' }], thresholds: { neurons: 1 } });
+    assert.equal(out.d1[0].rowsRead, 5);
+    assert.equal(out.neurons, null, 'unmeasured is never 0');
+    assert.equal(out.unmeasured[0].kind, 'ai-neurons');
+    assert.equal(out.breaches.length, 0);
+  });
   it('measures d1 rows read and neurons via d1AnalyticsAdaptiveGroups', async () => {
     let call = 0;
     const fetchFn = async (url, init) => {
@@ -18,7 +31,7 @@ describe('cost probe', () => {
       const isD1 = body.query.includes('d1AnalyticsAdaptiveGroups');
       const data = isD1
         ? { viewer: { accounts: [{ d1AnalyticsAdaptiveGroups: [{ sum: { rowsRead: 9460000000 }, dimensions: { databaseId: 'qnfo-audit' } }] }] } }
-        : { viewer: { accounts: [{ aiInferenceAdaptiveGroups: [{ sum: { neurons: 12345 } }] }] } };
+        : { viewer: { accounts: [{ aiInferenceAdaptiveGroups: [{ sum: { totalNeurons: 12345 } }] }] } };
       assert.equal(url, 'https://api.cloudflare.com/client/v4/graphql');
       return { ok: true, status: 200, json: async () => ({ data, errors: null }) };
     };

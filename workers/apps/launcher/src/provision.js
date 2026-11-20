@@ -74,7 +74,7 @@ export async function provision({ fetch: f = fetch, proof, answers, acceptedClou
 
   // 4. the Worker, with its bindings (the console key is a secret binding, never a plain value)
   const metadata = {
-    main_module: 'worker.mjs', compatibility_date: release.compatibilityDate,
+    main_module: 'worker.mjs', compatibility_date: release.compatibilityDate, observability: { enabled: true, head_sampling_rate: 1 },
     bindings: [
       { type: 'd1', name: 'DB', id: dbId },
       { type: 'plain_text', name: 'ORG_NAME', text: orgName },
