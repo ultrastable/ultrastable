@@ -637,15 +637,57 @@ def pick_row(repo: str, root=REPO) -> dict:
     return {"result": "picked", "issue": issue["number"], "title": issue["title"], "body": (issue.get("body") or "")[:6000]}
 
 
+def fold_outcomes(root=REPO, apply=False, pr_state=None) -> dict:
+    """PR-OUTCOME-1 (Q-GAP-executor-merged-pr): what became of every pull request the executor opened, written to the log on main. The executor's rows
+    live on the evidence branch and say only `pr-opened`; whether the change merged was never recorded, so "the executor merges its own work" could not be
+    read from the repository. One row per pull request and outcome: `pr-merged` or `pr-closed` (closed without merging). An open or unreadable pull request
+    writes nothing: an outcome is never guessed. Runs after every merge (scripts/regen_generated.py)."""
+    from . import queue as qmod, selfcode
+    root, state = Path(root), pr_state or selfcode.pr_state
+    logp = root / "ops/executor-log.jsonl"
+    have = set()
+    for line in (logp.read_text(encoding="utf-8").splitlines() if logp.is_file() else []):
+        try:
+            r = json.loads(line)
+        except ValueError:
+            continue
+        if r.get("result") in ("pr-merged", "pr-closed"):
+            have.add(r.get("pr"))
+    out = {"merged": [], "closed": [], "open": [], "unreadable": [], "applied": apply}
+    for r in qmod.executor_rows(root):
+        url = r.get("pr")
+        if r.get("result") != "pr-opened" or not url or url in have:
+            continue
+        s = state(url, root)
+        if not s or not s.get("state"):
+            out["unreadable"].append(url); continue
+        if s["state"] == "OPEN":
+            out["open"].append(url); continue
+        merged = s["state"] == "MERGED"
+        out["merged" if merged else "closed"].append(url); have.add(url)
+        if apply:
+            row = {"schema": "ultrastable-executor/1", "at": s.get("mergedAt") or now(), "host": "pr-outcome", "issue": r.get("issue"), "result": "pr-merged" if merged else "pr-closed",
+                   "pr": url, "opened_at": r.get("at"), "models": r.get("models") or []}
+            if merged and s.get("mergeCommit"):
+                row["merge_commit"] = s["mergeCommit"].get("oid")
+            logp.parent.mkdir(parents=True, exist_ok=True)
+            with logp.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(row) + "\n")
+    return out
+
+
 def main(argv=None) -> int:
     import argparse
     ap = argparse.ArgumentParser(prog="foundation executor")
+    ap.add_argument("--fold", action="store_true", help="record what became of every pull request the executor opened (PR-OUTCOME-1)")
     ap.add_argument("--apply", action="store_true"); ap.add_argument("--issue")
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable"))
     ap.add_argument("--pick", action="store_true", help="print the top takeable issue and exit; needs no model credential (Claude-session route)")
     ap.add_argument("--record", action="store_true", help="append one provenance row for work done by a model session (with --issue --result [--pr --detail --host])")
     ap.add_argument("--result"); ap.add_argument("--pr"); ap.add_argument("--detail", default=""); ap.add_argument("--host", default="claude-session")
     a = ap.parse_args(argv)
+    if a.fold:
+        print(json.dumps(fold_outcomes(apply=a.apply), indent=1)); return 0
     if a.pick:
         row = pick_row(a.repo)
         print(json.dumps(row, indent=2)); return 0

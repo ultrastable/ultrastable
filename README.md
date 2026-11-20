@@ -90,9 +90,13 @@ Full story: [docs/overview.md](docs/overview.md). Architecture: [platform/docs/a
 |---|---|
 | QNFO fleet (customer zero, owner's own) | **Running**; numbers self-scored, unaudited ([customer story](docs/customer-story.md)) |
 <<<<<<< HEAD
-| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->40 Python and 379 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->685<!-- /claim --> recorded live deploys of its Worker and siblings |
+<<<<<<< HEAD
+| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->45 Python and 379 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->685<!-- /claim --> recorded live deploys of its Worker and siblings |
 =======
-| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->40 Python and 379 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->685<!-- /claim --> recorded live deploys of its Worker and siblings |
+| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->45 Python and 379 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->685<!-- /claim --> recorded live deploys of its Worker and siblings |
+>>>>>>> origin/main
+=======
+| Seed bootstrapper, 7-step tick, schema, policy | **Built**, <!-- claim:seed-tests -->45 Python and 379 Worker tests<!-- /claim --> in CI; <!-- claim:live-deploys -->685<!-- /claim --> recorded live deploys of its Worker and siblings |
 >>>>>>> origin/main
 | Google Cloud adapter (Cloud Run, Scheduler) | **Skeleton built**, <!-- claim:gcp-tests -->2 tests<!-- /claim --> in CI, deploy script unrun |
 | Dashboard | **In `dashboard/`**; status per its README, not verified here |
