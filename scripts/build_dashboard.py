@@ -85,7 +85,7 @@ def build(root=ROOT) -> dict:
                       "says": "Read from the deployed runtimes' own /health when this page loads: the last tick each reports, and whether the child reports to its parent."},
     }
     # TENANT-1: one view that takes a tenant id; tenant 0 is Ultrastable on itself. Only registered tenants render; others are 404.
-    return {"asof": sha, "asof_at": asof_at, "pilot": j(root, "doctrine/pilot-model.json"), "tenants": {"ultrastable": tenant0}}
+    return {"asof": sha, "asof_at": asof_at, "pilot": j(root, "doctrine/pilot-model.json"), "pilot_offer": j(root, "doctrine/pilot-offer.json"), "tenants": {"ultrastable": tenant0}}
 
 
 def render(d) -> str:

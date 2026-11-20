@@ -1,0 +1,35 @@
+{
+ "_doc": "PILOT-OFFER-1 (Q-GROW-PILOT-OFFER): the pilot offer as data. Rendered on /pilot by site/worker.js (pilotOffer in site/pilotoffer.js); site/site.test.mjs fails when the page and this file disagree. The price is a hypothesis with a rule for revising it from measured cost; no figure is published until a measured cost exists to support it, so price.monthly_usd and price.range_usd stay null and the page says so. Changing a value is a reviewed pull request with a revert.",
+ "version": 1,
+ "who_for": {
+  "heading": "Who the pilot is for",
+  "intro": "A system you already run, or want to run, that passes all four questions:",
+  "questions": [
+   { "id": "loop", "ask": "Is there a loop it must close?", "means": "Something is observed, acted on and observed again, with no person in the middle." },
+   { "id": "measure", "ask": "Is there a measure that can be wrong?", "means": "A named metric or probe that can breach, with a prediction logged before each change and scored after." },
+   { "id": "upkeep", "ask": "Does the upkeep keep arriving?", "means": "Failures, drift, new sources or new rules keep creating work, so a next improvement is available." },
+   { "id": "cost", "ask": "Is there a running cost you accept?", "means": "Compute, model calls and storage cost money each month, and you state the monthly budget." }
+  ]
+ },
+ "includes": {
+  "heading": "What the pilot includes",
+  "items": [
+   "A tenant of the same shape Ultrastable runs on itself, in your own account.",
+   "Your objectives and metrics, written with you and probed from the first day.",
+   "The loops that close them, each with a stated interval and an owner.",
+   "A monthly budget you set, which the system keeps inside.",
+   "A dashboard of your own system and the audit trail of its changes."
+  ]
+ },
+ "price": {
+  "heading": "What it costs",
+  "status": "hypothesis",
+  "monthly_usd": null,
+  "range_usd": null,
+  "rule": "Your monthly fee is the measured running cost of your system plus a management fee set after the first improvement cycle. The cost is shown to you as a measured number, not an estimate.",
+  "revision": "After each month the fee is compared with the measured cost of that month (model calls, compute and storage from the cost log). A fee that sat above or below the rule by more than the stated tolerance is revised in the next month's offer.",
+  "tolerance_pct": null,
+  "revised_from": "throughput.model_cost in the live record, and each pilot's own cost log",
+  "default_in_effect": "No list price. Each pilot is quoted after its first measured cycle."
+ }
+}

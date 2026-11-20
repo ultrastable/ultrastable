@@ -253,6 +253,15 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
     assert.ok(ex.EXAMPLES.length >= 5 && ex.EXAMPLES.every(e => e.id && e.name && e.loop && e.measure && e.upkeep));
     assert.equal((homeHtml.match(/data-example="/g) || []).length, ex.EXAMPLES.length);
     for (const e of ex.EXAMPLES) assert.ok(homeHtml.includes(e.name), e.id + " is on the front door"); }
+  // PILOT-OFFER-1: /pilot shows the offer and price from doctrine/pilot-offer.json; the page and the file must agree
+  { const { readFileSync } = await import("node:fs"), off = JSON.parse(readFileSync(new URL("../doctrine/pilot-offer.json", import.meta.url), "utf8")), po = await import("./pilotoffer.js"),
+      pg = await (await mod.fetch(new Request("https://ultrastable.io/pilot"), ENV)).text();
+    for (const q of off.who_for.questions) assert.ok(pg.includes(q.ask), q.id + " is on /pilot");
+    for (const i of off.includes.items) assert.ok(pg.includes(i));
+    assert.ok(pg.includes(off.price.rule) && pg.includes(po.priceLine(off.price)), "the price text on /pilot is the file's");
+    assert.equal(off.price.monthly_usd == null, !/\$\d/.test(pg.slice(pg.indexOf('data-offer="price"'), pg.indexOf('data-offer="price"') + 400)), "a dollar figure appears on the page only when the file holds one");
+    assert.equal(po.priceLine({ monthly_usd: 1200, range_usd: [900, 1500], default_in_effect: "x" }), "About $1,200 a month (range $900 to $1,500).");
+    assert.equal(off.who_for.questions.length, 4, "the four system-test questions"); }
   // CHANGELOG-FEED-1: the feed reads the same snapshot; titles are escaped; sizes and origins are summed per day
   { const snap2 = JSON.stringify({ generated: "2026-11-12T00:00:00Z", throughput: { changelog: [{ date: "2026-11-11", changes: [{ n: 7, title: "Fix <b> & more", by: "executor", url: "https://github.com/o/r/pull/7", plus: 10, minus: 2 }, { n: 6, title: "Second", by: "session", plus: 5, minus: 1 }] }] } });
     const db2 = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: snap2 }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 1 }) }) };
