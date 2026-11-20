@@ -697,9 +697,11 @@ async function siteRoutes(u, env, ctx, request, own) {
   if (st !== "ready") return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
   const host = own || (u.hostname === id + "." + CANON ? u.hostname : CANON), sub = host !== CANON;  // OWN-DOMAIN-1: a proven own address is served like the site's subdomain
   const lk = (h, t) => "<a href=\"https://" + CANON + "/s/" + id + h + "\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none;margin-left:6px\" target=\"_top\">" + t + "</a>";
-  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\">" + lk("/review", "What I checked") + lk("/change", "Change something") + "</div>";
+  // BLINDSPOT-1 legal sweep 2026-11-20 (EU AI Act Article 50, in force 2026-08-02): a page the system wrote says so, to a person (the bar) and to a machine (the generator meta tag).
+  const aiMark = "<meta name=\"generator\" content=\"Ultrastable (AI-generated page)\">";
+  const bar = "<div style=\"position:fixed;right:12px;bottom:12px;z-index:99999;font:14px system-ui\"><span style=\"background:#fff;color:#111;padding:10px 14px;border-radius:999px;border:1px solid #111\">Written by AI</span>" + lk("/review", "What I checked") + lk("/change", "Change something") + "</div>";
   const html = (await env.ASSETS.get("site:" + id) || "").replace(/<\/body>/i, bar + "</body>");
-  const us = usClient(host, id), html1 = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + us) : /<html[^>]*>/i.test(html) ? html.replace(/<html[^>]*>/i, (m) => m + us) : us + html;
+  const us = aiMark + usClient(host, id), html1 = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (m) => m + us) : /<html[^>]*>/i.test(html) ? html.replace(/<html[^>]*>/i, (m) => m + us) : us + html;
   return new Response(html1, { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Security-Policy": "sandbox allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation" + (sub ? " allow-same-origin" : "") + "; default-src 'self' 'unsafe-inline' data: blob:; connect-src 'self'", "X-Robots-Tag": "noindex", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" } });
 }
 // BUILD-3: close the loop. A cron tick (hourly) does four things from the system's own records: model health probe (daily), automatic change rounds for
@@ -991,6 +993,7 @@ const SVG = { "Content-Type": "image/svg+xml", "Cache-Control": "public, max-age
 const HTML = { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300", "X-Content-Type-Options": "nosniff" };
 
 // META-SIGNAL-1: record a microphone event code or transcript text for the meta loop (doctrine/meta-loop.json); the tick drains it through foundation/metasignal.py detectors.
+const META_PER_IP_HOUR = 20, META_PER_DAY = 200; // caps on public meta-signal writes
 const META_CODES = ["not-allowed", "service-not-allowed", "no-speech", "network", "audio-capture", "unsupported", "busy", "edited-after-dictation", "abandoned"];
 async function metaIngest(request, env) {
   let b; try { b = JSON.parse((await request.text()).slice(0, 4000)); } catch (e) { return Response.json({ ok: false, code: "bad_json" }, { status: 400 }); }
@@ -998,6 +1001,12 @@ async function metaIngest(request, env) {
   if (b.source === "mic-event") { if (!META_CODES.includes(b.code)) return Response.json({ ok: false, code: "unknown_code" }, { status: 422 }); rec.code = b.code; rec.surface = String(b.surface || "site").slice(0, 24); }
   else if (typeof b.text === "string" && b.text.trim()) rec.text = b.text.slice(0, 2000);
   else return Response.json({ ok: false, code: "empty" }, { status: 422 });
+  { // BLINDSPOT-1 security sweep 2026-11-20: this endpoint is public and writes to KV, so one client or a flood cannot use up the day's writes. No write happens once a cap is reached.
+    const ip = request.headers.get("cf-connecting-ip") || "x", k1 = "rlm:" + ip + ":" + rec.at.slice(0, 13), k2 = "rlm:day:" + rec.at.slice(0, 10);
+    const [a, d] = await Promise.all([env.ASSETS.get(k1), env.ASSETS.get(k2)]);
+    if (Number(a || 0) >= META_PER_IP_HOUR || Number(d || 0) >= META_PER_DAY) return Response.json({ ok: false, code: "rate_limited" }, { status: 429, headers: { "Retry-After": "3600" } });
+    await Promise.all([env.ASSETS.put(k1, String(Number(a || 0) + 1), { expirationTtl: 7200 }), env.ASSETS.put(k2, String(Number(d || 0) + 1), { expirationTtl: 172800 })]);
+  }
   await env.ASSETS.put("meta:" + rec.at + ":" + newId(), JSON.stringify(rec), { expirationTtl: 31536000 });
   return Response.json({ ok: true });
 }

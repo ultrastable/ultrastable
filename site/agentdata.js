@@ -381,6 +381,48 @@ export default {
    "domain": "finance",
    "why": "Revenue, credits and grants create filing duties on dates the owner does not know.",
    "class": "owner-identity"
+  },
+  {
+   "id": "privacy-covers-processing",
+   "domain": "privacy",
+   "why": "The privacy page described visits, ideas and email but not AI processing, microphone failure codes kept 12 months, or the sign-in cookie and connected accounts (found by the 2026-11-20 privacy sweep).",
+   "class": "system"
+  },
+  {
+   "id": "domain-auto-renew",
+   "domain": "continuity",
+   "why": "All four domains expire together on 2027-11-10. The 2026-11-20 continuity sweep found auto-renew off on every one; the owner turned it on the same day (Cloudflare Registrar API read back: auto_renew true on all four). If it is ever switched off again the domains lapse unless someone pays on time.",
+   "class": "owner-identity"
+  },
+  {
+   "id": "name-clearance-eu-wipo",
+   "domain": "ip",
+   "why": "The name search covered the US register only; EUIPO, WIPO Madrid and UKIPO were not reachable from the session that ran it (found by the 2026-11-20 ip sweep).",
+   "class": "system"
+  },
+  {
+   "id": "d1-free-tier-hard-stop",
+   "domain": "platform-risk",
+   "why": "Since 2026-09-01 Cloudflare fails every D1 query on the free plan once the daily row limit is passed, until midnight UTC; before that date overage was tolerated (found by the 2026-11-20 platform-risk sweep, developers.cloudflare.com/changelog/post/2026-09-01-d1-free-tier-limit-enforcement).",
+   "class": "system"
+  },
+  {
+   "id": "ai-output-marking",
+   "domain": "legal",
+   "why": "EU AI Act Article 50 has applied since 2026-08-02: a person must be told when content is AI-made and the output must carry a machine-readable mark. Pages the system builds at /s/<id> carried neither (found by the 2026-11-20 legal sweep).",
+   "class": "system"
+  },
+  {
+   "id": "meta-signal-write-cap",
+   "domain": "security",
+   "why": "POST /api/meta/ingest is public and wrote to KV for 12 months with no limit, so anyone could use up the daily KV writes and stop the site's own state from saving (found by the 2026-11-20 security sweep).",
+   "class": "system"
+  },
+  {
+   "id": "one-click-unsubscribe",
+   "domain": "outreach",
+   "why": "Gmail, Yahoo and Microsoft expect a List-Unsubscribe header with one-click unsubscribe (RFC 8058) on automated mail; the intro lane has an opt-out line and domain suppression but sends no such header (found by the 2026-11-20 outreach sweep; the lane is in dry-run, so nothing has been sent without it).",
+   "class": "system"
   }
  ]
 };

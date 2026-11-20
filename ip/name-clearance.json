@@ -1,0 +1,45 @@
+{
+ "_doc": "BLINDSPOT-1 need name-clearance, read by the probe fresh:ip/name-clearance.json::at::120::clear in doctrine/blindspots.json and by the ip sweep. A search record, not legal advice: clear means no live identical mark was found in the registers listed under searched; registers under unsearched are a named gap (learned need name-clearance-eu-wipo).",
+ "at": "2026-11-20",
+ "name": "Ultrastable",
+ "clear": true,
+ "searched": [
+  {
+   "register": "uspto",
+   "via": "https://trademark.justia.com/742/37/ultrastable-74237462.html",
+   "mark": "ULTRASTABLE",
+   "serial": "74237462",
+   "registration": "1775661",
+   "class": "1",
+   "goods": "photo sensitive film and paper",
+   "status": "710 Cancelled - Section 8",
+   "status_date": "2004-03-13",
+   "live": false
+  },
+  {
+   "register": "uspto",
+   "via": "https://trademark.justia.com/757/44/ultrastable-75744220.html",
+   "mark": "ULTRASTABLE",
+   "serial": "75744220",
+   "registration": null,
+   "class": "17",
+   "goods": "polymer and metal high density laminate substrates for use in the manufacture of micro-chips",
+   "status": "606 Abandoned - No Statement Of Use Filed",
+   "status_date": "2001-04-12",
+   "live": false
+  },
+  {
+   "register": "web",
+   "via": "web search 2026-11-20: \"Ultrastable\" software OR platform OR startup; ULTRASTABLE trademark class 9 OR class 42",
+   "finding": "no live ULTRASTABLE mark in class 9 or 42 and no software company trading under the name surfaced; results were photonics and laser products that use ultra-stable as a description",
+   "live": false
+  }
+ ],
+ "unsearched": [
+  "euipo",
+  "wipo-madrid",
+  "ukipo"
+ ],
+ "context": "Ultrastable is also a descriptive term from cybernetics (Ashby's ultrastability, 1952), which makes the word weak as an exclusive mark for anyone, this project included.",
+ "next": "re-run within 120 days; the probe goes stale by itself"
+}

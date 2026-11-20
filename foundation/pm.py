@@ -351,7 +351,13 @@ def run(root=REPO, apply=False, now=None, use_live=True, env=None, vals=None, st
         order_filed = standingorder.file_items(root) if apply else []
     except Exception as e:  # never crash the pass; the CI check still fails the change
         order_filed = [f"error: {type(e).__name__}"]
-    rep = {"generated": _iso(now), "targets": tgt, "experiments": ex, "knobs": {"values": {k["id"]: knob_value(root, k) for k in _read(root, KNOBS, {"knobs": []})["knobs"]}, "last": tuned},
+    # BLINDSPOT-1: the blind-spot clocks (domain expiry, backup and restore drill, closed ledger, overdue sweeps) run in the same daily pass.
+    from . import blindspots
+    try:
+        bs = blindspots.tick(root, apply=apply, live=use_live, env=env)
+    except Exception as e:  # an unmeasured loop is a finding, never a crash of the pass
+        bs = {"error": type(e).__name__ + ": " + str(e)[:160], "filed": []}
+    rep = {"generated": _iso(now), "blindspots": bs, "targets": tgt, "experiments": ex, "knobs": {"values": {k["id"]: knob_value(root, k) for k in _read(root, KNOBS, {"knobs": []})["knobs"]}, "last": tuned},
            "filed": {"growth": growth_filed, "repair": repair_filed, "insight": ins.get("filed", []), "uiux": ui.get("filed", []), "order": order_filed}, "insight": ins, "uiux": {"filed": ui.get("filed", []), "blocking": ui["status"].get("findings_blocking"), "happy_path_pass_share": ui["status"].get("happy_path_pass_share"), "unmeasured": ui["status"].get("unmeasured", [])}, "stages": [{"id": s["id"], "status": s["status"], "missed": s["missed"]} for s in stage_rows]}
     rep["weekly"] = weekly(root, vals, ex, now, write=apply)
     if apply and ex != _read(root, EXPERIMENTS, {"experiments": []}).get("experiments"):

@@ -1,7 +1,7 @@
 {
   "id": "Q-BLIND-SWEEP-outreach",
   "title": "Q-BLIND-SWEEP-outreach: answer the outreach sweep",
-  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** grep:ops/blindspots/answers.jsonl::\"domain\": \"outreach\" ; recorded with `python3 -m foundation blindspots --answer outreach --text <answer with evidence>`\n**Status:** open\n\nQuestion: Which rule, provider policy or deliverability signal changed for the automated email and social channels, and is every send still disclosed, authenticated and suppressible?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
+  "body": "**Owner:** product-manager\n**Trigger:** sweep older than 30 days\n**Done check:** cmd:python3 -m foundation blindspots --swept outreach\n**Status:** open\n\nQuestion: Which rule, provider policy or deliverability signal changed for the automated email and social channels, and is every send still disclosed, authenticated and suppressible?\nResearch it with sources, record the answer, and for each new gap run `blindspots --learn`.",
   "labels": [
     "role:product-manager",
     "blindspot"
