@@ -26,7 +26,7 @@ test('MAIN-WRITER-1: one commit on the newest main, appends reapply to it, and a
     if (u.endsWith('/git/blobs')) return J({ sha: 'B' + calls.length });
     if (u.endsWith('/git/trees')) { assert.deepEqual(JSON.parse(o.body).tree.map(x => x.path), ['ops/a.jsonl']); return J({ sha: 'T1' }); }
     if (u.endsWith('/git/commits')) return J({ sha: 'C1' });
-    if (m === 'PATCH') return J({}, calls.moved ? 422 : 200);
+    if (m === 'PATCH') return J(calls.moved ? { message: 'Update is not a fast forward' } : {}, calls.moved ? 422 : 200);
     return J({}, 500);
   };
   const body = { message: 'ledger', files: [{ path: 'ops/a.jsonl', append: b64('new\n') }] };
@@ -44,4 +44,25 @@ test('MAIN-WRITER-1: a token for another audience or repository is refused befor
   assert.equal((await verifyOidc(jwt({ ...base, aud: 'ultrastable-deploy' }), { repo: 'o/r', fetch: f })).ok, false);
   assert.equal((await verifyOidc(jwt({ ...base, repository: 'o/x' }), { repo: 'o/r', fetch: f })).ok, false);
   assert.equal((await verifyOidc(jwt({ ...base, ref: 'refs/heads/x' }), { repo: 'o/r', fetch: f })).ok, false);
+});
+
+test('MAIN-WRITER-PR-1: a ruleset refusal (422 that is not a moved main) lands the commit as an App pull request', async () => {
+  const seen = [];
+  const f = async (url, o = {}) => {
+    const u = String(url), m = o.method || 'GET'; seen.push(m + ' ' + u.replace(/^.*repos\/r\/r/, ''));
+    const J = (j, status = 200) => ({ ok: status < 300, status, json: async () => j, arrayBuffer: async () => new ArrayBuffer(0) });
+    if (u.endsWith('/git/ref/heads/main')) return J({ object: { sha: 'P' } });
+    if (u.endsWith('/git/commits/P')) return J({ tree: { sha: 'T0' } });
+    if (u.endsWith('/git/blobs')) return J({ sha: 'B' });
+    if (u.endsWith('/git/trees')) return J({ sha: 'T1' });
+    if (u.endsWith('/git/commits')) return J({ sha: 'C1234567890' });
+    if (m === 'PATCH') return J({ message: 'Changes must be made through a pull request.' }, 422);
+    if (u.endsWith('/git/refs')) return J({}, 201);
+    if (u.endsWith('/pulls')) return J({ number: 7 }, 201);
+    return J({}, 500);
+  };
+  const r = await commitToMain({ token: 't', repo: 'r/r', body: { message: 'ledger', files: [{ path: 'ops/a.json', content: b64('x') }] }, fetch: f });
+  assert.deepEqual([r.ok, r.mode, r.pr, r.branch], [true, 'pull_request', 7, 'agent/data-C123456789']);
+  const g = async (url, o = {}) => (String(url).endsWith('/git/refs') || String(url).endsWith('/pulls')) ? { ok: false, status: 500, json: async () => ({}) } : f(url, o);
+  assert.equal((await commitToMain({ token: 't', repo: 'r/r', body: { message: 'x', files: [{ path: 'ops/a.json', content: b64('x') }] }, fetch: g })).ok, false);
 });
