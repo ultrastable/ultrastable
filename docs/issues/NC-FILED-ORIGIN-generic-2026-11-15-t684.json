@@ -1,0 +1,11 @@
+{
+  "id": "NC-FILED-ORIGIN-generic-2026-11-15-t684",
+  "title": "NC-FILED-ORIGIN-generic-2026-11-15-t684: Add D1 statement batching for hot-path writes to cut request fees and raise verified-deploy success rate",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item FILED-ORIGIN-generic-2026-11-15-t684 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe FILED-ORIGIN-generic-2026-11-15-t684\n**Status:** open\n\nAdd D1 statement batching for hot-path writes to cut request fees and raise verified-deploy success rate\n\nBacklog done check: D1 write path batches multi-row inserts/updates into single statements; deploy verified on staging and production with zero schema changes\n\nTriage: Requires modifying the D1 write path code and running verified deploys to staging/production; the in-Worker doer can only touch the backlog DB, not code or deploys. | first step: File a code-change ticket for a human/engineering agent: batch multi-row inserts/updates in the hot path, then run staging/production verified deploys\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "NC-PLUS-TICKFAIL-measure-2026-11-13T09",
+  "title": "NC-PLUS-TICKFAIL-measure-2026-11-13T09: D1 migration bootstraps metrics table so measure step never fails on missing schema",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item PLUS-TICKFAIL-measure-2026-11-13T09 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe PLUS-TICKFAIL-measure-2026-11-13T09\n**Status:** open\n\nD1 migration bootstraps metrics table so measure step never fails on missing schema\n\nBacklog done check: fresh environment: tick step measure completes without D1 'no such table' error\n\nTriage: Fix requires adding a D1 migration/schema bootstrap in the codebase and build pipeline; the doer can only write the backlog DB, not alter schema or code. | first step: Add a metrics-table migration to the repo's D1 migrations directory and wire it into fresh-environment setup.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "NC-FILED-ORIGIN-generic-2026-11-13-t485",
+  "title": "NC-FILED-ORIGIN-generic-2026-11-13-t485: Cache D1 responses in Workers KV for read-heavy endpoints to cut D1 row reads",
+  "body": "**Owner:** operations\n**Trigger:** the backlog item FILED-ORIGIN-generic-2026-11-13-t485 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe FILED-ORIGIN-generic-2026-11-13-t485\n**Status:** open\n\nCache D1 responses in Workers KV for read-heavy endpoints to cut D1 row reads\n\nBacklog done check: KV cache deployed on top-3 read endpoints; D1 read-billing drops \u226530% over 7 days per dashboard\n\nTriage: Implementing KV caching requires editing Worker code (cache reads/writes, invalidation); the doer can only modify the backlog D1 database. | first step: File an engineering ticket identifying the top-3 read endpoints by D1 read volume and attach baseline read-rows/day from the dashboard for the 7-day c\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:operations",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}

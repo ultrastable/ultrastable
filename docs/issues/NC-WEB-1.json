@@ -1,0 +1,11 @@
+{
+  "id": "NC-WEB-1",
+  "title": "NC-WEB-1: WEB-1: Deploy site Worker, noindex preview",
+  "body": "**Owner:** staff\n**Trigger:** the backlog item WEB-1 was parked needs-code by the in-tick doer\n**Done check:** cmd:python3 scripts/needs_code_bridge.py --probe WEB-1\n**Status:** open\n\nWEB-1: Deploy site Worker, noindex preview\n\nBacklog done check: Preview returns 200 for owner\n\nTriage: Deploying a site Worker requires editing and publishing code; the in-Worker doer can only read/write the backlog DB and cannot modify or deploy code. | first step: Open repo branch with site Worker code and draft the noindex preview deployment config for staff review.\n\nBridged from the backlog by scripts/needs_code_bridge.py (NEEDS-CODE-BRIDGE-1). The change is code, data or a test that a loop consumes; a document alone does not close it.",
+  "labels": [
+    "role:staff",
+    "ws:platform",
+    "needs-code"
+  ],
+  "workstream": "platform"
+}
