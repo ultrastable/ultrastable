@@ -1,0 +1,11 @@
+{
+  "id": "Q-CFP-worker-logs-on",
+  "title": "Q-CFP-worker-logs-on: every Worker keeps its logs on",
+  "body": "**Owner:** staff\n**Trigger:** CF-POSTURE-1 daily probe, rule `worker-logs-on` failed on the live account\n**Done check:** cmd:python3 -m foundation cfposture --rule worker-logs-on\n**Status:** open\n\nWith logs off a failing Worker leaves no evidence, so no loop can find the cause. Measured 2026-11-20: ultrastable-site and tenant-ps-web had logs off although their configs turn them on.\n\nRemedy: deploy the Worker through a path listed in upload_paths (each sends observability), or add observability to its config\n\nMeasured:\n- tenant-ps-core\n- tenant-ps-edge\n- tenant-ps-web\n- ultrastable-spinoffs",
+  "labels": [
+    "role:staff",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

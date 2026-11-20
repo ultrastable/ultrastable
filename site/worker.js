@@ -38,6 +38,7 @@ import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
 import { siteFeed, siteBadge, insights as siteInsights, insightsBody, viewedRecently, upkeepRound, recordVersion, restore as restoreVersion, versions as siteVersions, historyBody } from "./upkeep.js"; // SITE-UPKEEP-1
 import { connectionsRoute } from "./connections.js"; // CONNECTIONS-1
 import { internalDeploy } from "./deployer.js";
+import { zoneCutover } from "./zonecutover.js"; // ZONE-CUTOVER-1: attaches domains the tick a moved zone turns active
 var VERSION = "0.15.1";
 const CANON = "ultrastable.io";
 const PILOT_MAIL = "pilot@ultrastable.io";
@@ -821,6 +822,7 @@ export async function tick(env, ctx, now) {
   out.upkeep = (await upkeepRound(env, (await kvList(env, "state:", 300)).slice(-300), { now: t, lint, improve: (b, html, ins) => aiHtml(env, b, html, ins), visited: (id) => (env.DB ? viewedRecently(env.DB, id, t).catch(() => true) : true) }, 2).catch(e => { console.error("upkeep failed", String(e).slice(0, 120)); return []; })).length; // SITE-UPKEEP-1: at most two model passes a tick, each site once a week
   out.webhooks = await tickWebhooks(env, t).catch(e => String(e).slice(0, 120)); // WEBHOOKS-1: outbound callbacks ride this tick, no new cron
   out.watchdog = await watchTick(env); // LOOPPROOF-1: this Worker is the second producer of the org heartbeat
+  out.zones = await zoneCutover(env).catch(e => ({ status: "error", error: String(e).slice(0, 120) })); // ZONE-CUTOVER-1
   await jput(env, "tick:last", out); return out;
 }
 async function statusData(env) {

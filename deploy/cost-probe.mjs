@@ -33,14 +33,6 @@ const AI_QUERY = `query($account: String!, $dt: Date) {
   }
 }`;
 
-const WORKERS_LIST = `query($account: String!) {
-  viewer { accounts(filter: { accountTag: $account }) { workers {
-    workers(limit: 1000) { id }
-    d1Databases(limit: 1000) { databaseId name }
-    kvNamespaces(limit: 1000) { id title }
-    r2Buckets(limit: 1000) { name }
-  } } } }`;
-
 async function gql(fetchFn, token, account, query, vars) {
   const res = await fetchFn('https://api.cloudflare.com/client/v4/graphql', {
     method: 'POST',
@@ -91,14 +83,24 @@ export async function measureDay({ fetchFn = fetch, token, account, date, databa
 
 // Discover Workers, D1, KV, R2 and diff against doctrine/topology.json.
 export async function discoverResources({ fetchFn = fetch, token, account, topologyPath = 'doctrine/topology.json' }) {
-  const data = await gql(fetchFn, token, account, WORKERS_LIST, {});
-  const acct = data.viewer.accounts[0];
-  const found = {
-    workers: (Array.isArray(acct.workers) ? acct.workers : (acct.workers && acct.workers.workers) || []).map((w) => w.id),
-    d1: (acct.d1Databases || []).map((d) => d.databaseId),
-    kv: (acct.kvNamespaces || []).map((k) => k.id),
-    r2: (acct.r2Buckets || []).map((b) => b.name)
+  // COST-PROBE-4: the GraphQL analytics API has no resource lists ("unknown field workers", run 44807806946), so discovery never worked there.
+  // Each kind is listed over REST; a kind the token cannot list is null (unmeasured) and yields no drift item, never an empty account.
+  const base = `https://api.cloudflare.com/client/v4/accounts/${account}`, unmeasured = [];
+  const list = async (kind, path, pick) => {
+    try {
+      const res = await fetchFn(base + path, { headers: { authorization: `Bearer ${token}` } });
+      if (!res.ok) { unmeasured.push({ kind, error: `HTTP ${res.status}` }); return null; }
+      const j = await res.json(); const r = j.result && j.result.buckets ? j.result.buckets : j.result;
+      return (r || []).map(pick);
+    } catch (e) { unmeasured.push({ kind, error: String(e.message || e).slice(0, 120) }); return null; }
   };
+  const found = {
+    workers: await list('workers', '/workers/scripts', (w) => w.id),
+    d1: await list('d1', '/d1/database?per_page=1000', (d) => d.uuid),
+    kv: await list('kv', '/storage/kv/namespaces?per_page=1000', (k) => k.id),
+    r2: await list('r2', '/r2/buckets', (b) => b.name)
+  };
+  for (const u of unmeasured) console.error(`cost-probe: ${u.kind} discovery unmeasured: ${u.error}`);
   const topo = loadJson(topologyPath, { workers: [], d1: [], kv: [], r2: [] });
   // Accept the real doctrine/topology.json shape (workers[].id, stores.{d1,kv}[].id, stores.r2[].name) and a flat {kind: [ids]} shape.
   const ids = (xs, k) => (xs || []).map((x) => (typeof x === 'string' ? x : x[k] || x.id || x.name));
@@ -112,13 +114,13 @@ export async function discoverResources({ fetchFn = fetch, token, account, topol
   const drift = {};
   for (const kind of Object.keys(found)) {
     const declared = new Set(declaredBy[kind] || []);
-    drift[kind] = found[kind].filter((id) => !declared.has(id));
+    drift[kind] = (found[kind] || []).filter((id) => !declared.has(id));
   }
   const items = [];
   for (const [kind, ids] of Object.entries(drift))
     for (const id of ids)
       items.push({ queue: 'topology-drift', kind, id, title: `Undeclared ${kind} resource ${id}` });
-  return { found, items };
+  return { found, items, unmeasured };
 }
 
 // Append a measurement record to ops/cost.jsonl.
