@@ -3412,6 +3412,40 @@
    "body": "deploy/cost-probe.mjs asked the GraphQL analytics API for workers, D1, KV and R2 lists, a field that does not exist, so the daily cost guard failed and its later steps (criticality tick, record) were skipped. Discovery now lists each kind over REST; a kind the token cannot list is null (unmeasured) and files no drift item.",
    "probe": "file:deploy/cost-probe.mjs",
    "session": "serene-payne-a9c57f"
+  },
+  {
+   "id": "decision-2026-11-20-executor-closed-q-self-unused-import-scripts-smoke-issues-py",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "Executor closed Q-SELF-unused-import-scripts-smoke-issues-py: Q-SELF-unused-import-scripts-smoke-issues-py: remove unused import os, subproc",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: scripts/smoke_issues.py.",
+   "probe": "file:scripts/smoke_issues.py"
+  },
+  {
+   "id": "decision-2026-11-20-zone-cutover-1-the-site-tick-finishes-the-domain-move-when-a",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "ZONE-CUTOVER-1: the site tick finishes the domain move when a zone turns active",
+   "body": "site/zonecutover.js runs in the hourly site tick: it reads the four zones in the ultrastable account and, the tick one is active, attaches the Worker custom domains and routes the old account served and enables Email Routing on ultrastable.io and .org. Idempotent, deletes nothing, reports unmeasured without a credential. The registrar move stays gate net-nameserver-switch; Email Routing destination addresses in the new account still need verification by their owner.",
+   "probe": "file:site/zonecutover.js"
+  },
+  {
+   "id": "lesson-2026-11-20-connect-links-must-survive-sign-in",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "Connect links must survive sign-in",
+   "body": "A signed-out visit to /connect/bluesky was sent to /auth/signin?next=/connections, and the emailed-code and GitHub sign-ins dropped next, so the owner always landed on the dashboard and never reached the Bluesky consent. next is now the page that asked, carried through passkey, emailed-code and GitHub sign-in, limited to /connect/<provider> and /connections.",
+   "probe": "grep:site/connections.js::SIGNIN-NEXT-1",
+   "session": "session_0156nqDrWfEXVqwJrA8J9X8Y"
+  },
+  {
+   "id": "lesson-2026-11-20-handoff-subreq-3-own-subrequest-meter-is-capacity",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "HANDOFF-SUBREQ-3: own subrequest meter is capacity",
+   "body": "Deploys refused by subreq.js ('subrequest budget N/46 used') were counted as attempts and blocked forever, because CAPACITY and unblockCapacity matched only 'Too many subrequests'. Both texts are now capacity: deferred without an attempt, and old blocks requeued or closed on their probe.",
+   "probe": "grep:seed/worker/src/handoff.js::subrequest budget",
+   "session": "owner-tasks-autonomous-b09f90"
   }
  ]
 }
