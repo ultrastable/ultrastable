@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-zone-cutover-1-the-site-tick-finishes-the-domain-move-when-a",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "ZONE-CUTOVER-1: the site tick finishes the domain move when a zone turns active",
+  "body": "site/zonecutover.js runs in the hourly site tick: it reads the four zones in the ultrastable account and, the tick one is active, attaches the Worker custom domains and routes the old account served and enables Email Routing on ultrastable.io and .org. Idempotent, deletes nothing, reports unmeasured without a credential. The registrar move stays gate net-nameserver-switch; Email Routing destination addresses in the new account still need verification by their owner.",
+  "probe": "file:site/zonecutover.js"
+ },
+ "kind": "decision",
+ "title": "ZONE-CUTOVER-1: the site tick finishes the domain move when a zone turns active",
+ "session": ""
+}

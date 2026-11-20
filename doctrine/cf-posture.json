@@ -58,7 +58,7 @@
       "kind": "auto",
       "title": "every zone in the account is active",
       "why": "A pending zone serves nothing from this account. Measured 2026-11-20: ultrastable.net pending behind a registrar lock.",
-      "remedy": "the daily single-account pass retries the nameserver switch"
+      "remedy": "the hourly site tick (site/zonecutover.js, ZONE-CUTOVER-1) attaches the domains, routes and Email Routing the tick a zone turns active; the registrar move itself is gate net-nameserver-switch"
     },
     {
       "id": "second-member",
