@@ -85,10 +85,10 @@
    ]
   },
   {
-   "status": "pinned",
+   "status": "live",
    "name": "Executor opens its own merged pull request",
-   "what": "Built and tested with a fake model; blocked on a bound model credential. Each run records no-model-credential until a host has a key.",
-   "where": "probe: a pr-opened row in ops/executor-log.jsonl",
+   "what": "The executor opened pull requests 749 and 762 itself and both merged on 2026-11-20. Both were mechanical fixes (an unused import removed); a change written by a model has not merged yet.",
+   "where": "probe: a pr-merged row in ops/executor-log.jsonl",
    "issue": "Q-GAP-executor-merged-pr",
    "code": [
     "foundation/executor.py"

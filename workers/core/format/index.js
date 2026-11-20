@@ -48,6 +48,7 @@ export const FALSE_PRECISION = /(?<![\w.\/-])\d+\.\d{3,}(?![\d\/])|(?<![\w,.\/-]
 const sigDigits = t => t.replace('.', '').replace(/^0+/, '').length;
 export function falsePrecision(html) {
   const text = String(html).replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ');
-  for (const m of text.matchAll(FALSE_PRECISION)) if (m[0].includes('.') ? sigDigits(m[0]) > 5 : true) return { match: m[0], context: text.slice(Math.max(0, m.index - 40), m.index + 50).replace(/\s+/g, ' ') };
+  // A short commit id can be all digits (56915653); after the word commit it is an identifier, not a count.
+  for (const m of text.matchAll(FALSE_PRECISION)) if (m[0].includes('.') ? sigDigits(m[0]) > 5 : !/\bcommit\s*$/i.test(text.slice(Math.max(0, m.index - 12), m.index))) return { match: m[0], context: text.slice(Math.max(0, m.index - 40), m.index + 50).replace(/\s+/g, ' ') };
   return null;
 }
