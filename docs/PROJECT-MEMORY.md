@@ -9,6 +9,7 @@
 This file is the single source of truth for project memory. Chat memory, tool memory and platform memory stores are read-only pointers to this file and are never edited as a record. Every session starts by reading this file and ends by updating it. Nothing is done until it is deployed end to end; every open item is an issue or an owner card with a default in effect and a closing probe.
 
 Last updated: 2026-11-20
+- 2026-11-20: Q-SELF-WORKER: the tick Worker computes `k_self`, `self_deploys` and `self_regime` (subcritical, driven, self-sustaining) from the origin on each `ops/deploys.jsonl` row and serves them on `/live` next to `k_eff`; origins are `self.origins` in `seed/autonomy/criticality.json`.
 - 2026-11-20: SITE-TESTS-IN-CHECKS-1: `checks` runs `site/*.test.mjs` on every pull request (OL-20261115-24); `site/webbotauth.js` `verifyRequest` parsed no signature parameters (`indexOf("")`), so every inbound Web Bot Auth signature was rejected: fixed. Two unused imports removed (Q-SELF-unused-import).
 
 - 2026-11-20: COVERAGE-CITED-1: claim coverage 5.5 to 42.8 percent; 54 statements bound to the code they cite (scripts/bind_cited_claims.py), floor raised to 40 percent; 235 statements that cite no code stay unbound
