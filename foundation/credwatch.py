@@ -50,7 +50,11 @@ def probe(cred: dict, env=os.environ, http=_http) -> dict:
         if cred["kind"] == "cloudflare-token":
             code, _, body = http("https://api.cloudflare.com/client/v4/user/tokens/verify", tok)
             if code in (401, 403):
-                return {"state": "invalid", "expires": None}
+                # An account-owned token is rejected by the user endpoint; its own verify route is the second reading before it counts as invalid.
+                acct = json.load(open(os.path.join(os.path.dirname(__file__), "..", "doctrine", "cost.json"))).get("account_id", "")
+                code, _, body = http(f"https://api.cloudflare.com/client/v4/accounts/{acct}/tokens/verify", tok) if acct else (code, None, "")
+                if code in (401, 403):
+                    return {"state": "invalid", "expires": None}
             res = (json.loads(body or "{}").get("result") or {}) if code == 200 else None
             if res is None:
                 return {"state": "unmeasured", "expires": None}
