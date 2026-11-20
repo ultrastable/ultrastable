@@ -9,7 +9,7 @@ import SPIN from "./spinoff-roadmap-data.js";
 import { digest, normalize, toAtom, sinceVisitScript, substantive, PERIODS } from "../workers/core/progress/index.js";
 
 const esc = s => String(s ?? "").replace(/[<>&"']/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c]));
-const KINDS = ["problems", "solutions", "syntheses", "combinations", "findings", "redteam"];
+const KINDS = ["problems", "solutions", "syntheses", "combinations", "insights", "findings"], KIND_LABEL = { syntheses: "combinations", insights: "red-team findings" };
 
 // A tenant's own release feed, read live (cached at the edge for ten minutes). An unreadable feed adds no rows and is named in `sources`.
 async function releasesOf(sys, fetchImpl) {
@@ -18,7 +18,7 @@ async function releasesOf(sys, fetchImpl) {
     if (!r.ok) return { ok: false, why: "HTTP " + r.status, events: [] };
     const j = await r.json();
     return { ok: true, events: (j.releases || []).filter(x => x && x.version && /^\d{4}-\d{2}-\d{2}/.test(String(x.date))).map(x => {
-      const c = x.counts || {}, parts = Object.keys(c).filter(k => c[k]).sort((a, b) => KINDS.indexOf(a) - KINDS.indexOf(b)).map(k => c[k] + " new " + k);
+      const c = x.counts || {}, parts = Object.keys(c).filter(k => c[k]).sort((a, b) => KINDS.indexOf(a) - KINDS.indexOf(b)).map(k => c[k] + " new " + (KIND_LABEL[k] || k));
       return { id: sys.id + "#release-" + x.version, at: String(x.date).length > 10 ? x.date : x.date + "T00:00:00Z", system: sys.id, system_name: sys.name, kind: "release",
         title: "Release " + x.version + (parts.length ? ": " + parts.join(", ") : ""), url: (sys.url || "") + "/releases#r-" + x.version };
     }) };
