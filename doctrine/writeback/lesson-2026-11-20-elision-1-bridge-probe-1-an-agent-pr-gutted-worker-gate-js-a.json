@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-elision-1-bridge-probe-1-an-agent-pr-gutted-worker-gate-js-a",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "ELISION-1, BRIDGE-PROBE-1: an agent PR gutted worker-gate.js and bridged records failed the pins check",
+  "body": "PR 725 replaced seed/worker/src/worker-gate.js with '// ... existing code ...' and carried 50 bridged NC records whose done checks were prose, so the pins check failed and the PR held the agent cap. foundation/executor.py elision_gap refuses an elision marker or a file that loses more than half its lines; scripts/needs_code_bridge.py writes a cmd: done check that asks the deployment whether the item is still parked.",
+  "probe": "file:tests/foundation/test_needs_code_bridge.py",
+  "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+ },
+ "kind": "lesson",
+ "title": "ELISION-1, BRIDGE-PROBE-1: an agent PR gutted worker-gate.js and bridged records failed the pins check",
+ "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+}

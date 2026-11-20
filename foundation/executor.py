@@ -125,6 +125,31 @@ def consumer_gap(files: list[str], root=REPO) -> str | None:
     return None
 
 
+ELISION_RE = re.compile(r"(?:\.\.\.|\u2026)\s*(?:existing|rest of|remaining|unchanged|previous)\b[^\n]{0,40}\b(?:code|file|implementation|logic|functions?)", re.I)
+
+
+def elision_gap(files: list[str], root=REPO) -> str | None:
+    """ELISION-1: a model that answers with a whole file sometimes writes "// ... existing code ..." where the file was, and the change deletes the
+    module (#725 cut seed/worker/src/worker-gate.js from 150 lines to 17 that way and stayed open as a PR). A changed file that carries an elision
+    marker, or loses more than half of an existing file of 40 lines or more, is refused and the reason is fed back to the model."""
+    for f in files:
+        path = Path(root) / f
+        if not path.is_file() or not f.endswith(CODE_EXT):
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if ELISION_RE.search(text):
+            return f"{f} contains an elision marker in place of code (ELISION-1); reply with the complete file or with exact edits"
+        r = subprocess.run(["git", "show", f"HEAD:{f}"], cwd=root, capture_output=True, text=True)
+        if r.returncode == 0:
+            before, after = r.stdout.count(chr(10)), text.count(chr(10))
+            if before >= 40 and after < before * 0.5:
+                return f"{f} would shrink from {before} to {after} lines (ELISION-1); keep the code the item does not ask to remove"
+    return None
+
+
 def priority(issue: dict) -> tuple:
     """Driver order: items with executable effect first (EFFECT-1), then p0..p9 label (lower first), then oldest number."""
     if "score" in issue:  # PRIORITIZE-1: the ranker's score (goal weight, dependency centrality, size, age) replaces label-then-age order
@@ -443,7 +468,7 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
                 if attempt < REPAIRS:
                     prompt = build_prompt(issue, tree) + chr(10) * 2 + "YOUR PREVIOUS REPLY COULD NOT BE USED (" + failed[0] + "). Do NOT reply with JSON this time. Reply in exactly this format instead:" + chr(10) + agents_block_format()
                 continue
-            gap = consumer_gap(files, root) if checks is None and not port else None
+            gap = (consumer_gap(files, root) if checks is None and not port else None) or elision_gap(files, root)
             if gap:
                 failed.append(gap)
             if checks is None and not gap:
@@ -492,6 +517,11 @@ def run(repo: str, apply: bool = False, issue_no=None, root=REPO, model_call=Non
         sh(["git", "add", "-A", "--", ".", f":!{LOG}"], root)
         sh(["git", "-c", "user.name=ultrastable-executor", "-c", "user.email=executor@users.noreply.github.com", "commit", "-m", f"{out.get('summary', issue['title'])} (#{n})"], root)
         code, o = sh(["git", "push", "-u", "origin", branch], root)
+        if code and "rejected" in o and branch.startswith("agent/"):
+            # STALE-BRANCH-1: the branch name is derived from the item, so a branch left by an earlier attempt whose PR was closed rejects every new
+            # attempt (Q-GATE-403 failed three runs in a row on 2026-11-20). The branch is the executor's own: this attempt, built from main, replaces it.
+            sh(["git", "fetch", "origin", f"+refs/heads/{branch}:refs/remotes/origin/{branch}"], root)
+            code, o = sh(["git", "push", "--force-with-lease", "-u", "origin", branch], root)
         if code:
             raise RuntimeError("push failed: " + o[-300:])
         body = f"Closes #{n}\n\nExecutor run {now()}. Checks passed before the PR: {', '.join(' '.join(c) for c in (checks if checks is not None else CHECKS))}.\nProvenance: {LOG} on branch loop-evidence. The lane merges on green CI."

@@ -8,6 +8,10 @@ cp ops/executor-log.jsonl "${RUNNER_TEMP:-/tmp}/rows.jsonl"
 [ -f ops/selfcode/ledger.jsonl ] && cp ops/selfcode/ledger.jsonl "${RUNNER_TEMP:-/tmp}/selfcode.jsonl" || : > "${RUNNER_TEMP:-/tmp}/selfcode.jsonl"
 # FREE-LLM-1: per-call model outcomes (which rung answered, why one failed) travel on the same branch
 [ -f ops/agent-cost.jsonl ] && cp ops/agent-cost.jsonl "${RUNNER_TEMP:-/tmp}/cost.jsonl" || : > "${RUNNER_TEMP:-/tmp}/cost.jsonl"
+# EVIDENCE-RETURN-1: this script used to leave the checkout on loop-evidence, so every later step of the job (clock --chain, clock --heal) ran that
+# branch's old copy of the code and data: the wake cap merged in #727 never took effect (2026-11-20). The job returns to the commit it started on.
+START=$(git rev-parse HEAD)
+trap 'git checkout -q --detach "$START" 2>/dev/null || echo "::warning::could not return to $START"' EXIT
 git config user.name ultrastable-executor; git config user.email executor@users.noreply.github.com
 git checkout -- . ; git clean -fdq
 if git ls-remote --exit-code --heads origin loop-evidence >/dev/null; then
