@@ -3369,6 +3369,15 @@
    "body": "The tick Worker's executor refuses a new file outside its code roots, but the branch sweep merged model branches (#698: scoreboard.py, src/connector/probe.js) and the Actions executor wrote github/workflows/checks.yml, a workflow GitHub never runs (#732). foundation/strays.py is the shared rule: it runs in checks and in the branch sweep gate (doctrine/branchsweep.json), so a merge that adds a stray is undone and ported. Six unreferenced stub files were removed from main; baseline is empty.",
    "probe": "file:foundation/strays.py",
    "session": "serene-payne-a9c57f"
+  },
+  {
+   "id": "lesson-2026-11-20-cf-posture-2-the-deploy-gateway-and-four-more-upload-paths-a",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "CF-POSTURE-2: the deploy gateway and four more upload paths also turned Worker logs off",
+   "body": "After CF-POSTURE-1 the live reading showed tenant-ps-core, tenant-ps-web and ultrastable-deploy-gateway with logs off: workers/core/deploygate/index.js, two Cloudflare adapters, the launcher's provisioner and scripts/cf_account.py build upload metadata outside deploy/ and site/, which was all the first static scan read. All send observability now and cfposture --check scans every tracked code file for upload metadata.",
+   "probe": "file:foundation/cfposture.py",
+   "session": "serene-payne-a9c57f"
   }
  ]
 }
