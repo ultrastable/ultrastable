@@ -304,7 +304,7 @@ def main(argv=None) -> int:
     dv = sub.add_parser("directive"); dv.add_argument("--check", action="store_true"); dv.add_argument("--lint", nargs="+"); dv.add_argument("--ledger", action="store_true"); dv.add_argument("--probe", action="store_true"); dv.add_argument("--bootstrap", action="store_true")
     tr = sub.add_parser("trust"); tr.add_argument("--show", action="store_true"); tr.add_argument("--event", nargs=3, metavar=("SURFACE", "ACTION", "EVENT")); tr.add_argument("--tick", action="store_true")
     da = sub.add_parser("docs_audit"); da.add_argument("--check", action="store_true"); da.add_argument("--report", action="store_true"); da.add_argument("--orphans", action="store_true"); da.add_argument("--humans", action="store_true")
-    ny = sub.add_parser("needsyou"); ny.add_argument("--check", action="store_true")
+    ny = sub.add_parser("needsyou"); ny.add_argument("--check", action="store_true"); ny.add_argument("--reconcile", action="store_true")
     ex = sub.add_parser("executor"); ex.add_argument("--apply", action="store_true"); ex.add_argument("--issue", type=int); ex.add_argument("--repo"); ex.add_argument("--pick", action="store_true"); ex.add_argument("--record", action="store_true"); ex.add_argument("--result"); ex.add_argument("--pr"); ex.add_argument("--detail"); ex.add_argument("--host")
     sub.add_parser("upstream", add_help=False)
     wb = sub.add_parser("writeback"); ws = wb.add_subparsers(dest="wcmd", required=True)
@@ -324,7 +324,7 @@ def main(argv=None) -> int:
         return docs_audit.main([x for x in ("--check", "--report", "--orphans", "--humans") if getattr(a, x[2:])])
     if a.cmd == "needsyou":
         from . import needsyou
-        return needsyou.main(["--check"] if a.check else [])
+        return needsyou.main(["--check"] if a.check else ["--reconcile"] if a.reconcile else [])
     if a.cmd == "executor":
         from . import executor
         return executor.main(sys.argv[2:] if argv is None else argv[1:])

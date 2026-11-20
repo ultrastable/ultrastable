@@ -92,5 +92,6 @@ export async function probe(db, now = Date.now()) {
   const rows = (await db.prepare('SELECT tenant, provider, expires_at, status FROM credentials').all()).results || [];
   const bad = rows.filter(r => r.status === 'failed' || (r.expires_at && Date.parse(r.expires_at) <= now));
   const gh = rows.some(r => r.provider === 'github-app' && r.status === 'ok');  // no GitHub credential: the Worker points at its own consent screen, never at a person's to-do list
-  return { ok: bad.length === 0 && gh, credentials: rows.length, bad: bad.map(r => `${r.tenant}/${r.provider}`), github_connected: gh, ...(gh ? {} : { connect: '/connect/github' }) };
+  const connected = [...new Set(rows.filter(r => r.status === 'ok').map(r => r.provider))].sort();  // OWNER-PROBE-1: the public read that closes an owner card (provider names only)
+  return { ok: bad.length === 0 && gh, credentials: rows.length, bad: bad.map(r => `${r.tenant}/${r.provider}`), github_connected: gh, connected, ...(gh ? {} : { connect: '/connect/github' }) };
 }

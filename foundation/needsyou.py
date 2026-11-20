@@ -1,12 +1,16 @@
 """Needs-you page: the one place that lists what a person must do. Ultrastable is the foundation for any autonomous system.
 
-  python3 -m foundation needsyou [--check]
+  python3 -m foundation needsyou [--check | --reconcile]
 
 Renders NEEDS-YOU.md from foundation/data/needs-you.json. Each item is two lines and one link. --check fails when the file is
 stale or an item lacks an https link, so a card, a file path or a menu cannot come back.
+
+OWNER-PROBE-1: an owner act is never confirmed by the owner. Each item carries `probe` ({url, json?, equals?, contains?}: a public https
+read that is true once the act is done) or `no_probe` (the reason no such read exists). --reconcile runs every probe, removes the items
+that are done, and re-renders; a probe that cannot be read leaves its item as it was. Run weekly by .github/workflows/index.yml.
 """
 from __future__ import annotations
-import json, re
+import json, re, urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,8 +18,8 @@ DATA = Path(__file__).parent / "data" / "needs-you.json"
 OUT = ROOT / "NEEDS-YOU.md"
 
 
-def render(root=ROOT) -> str:
-    d = json.loads(DATA.read_text(encoding="utf-8"))
+def render(root=ROOT, data=None) -> str:
+    d = json.loads(Path(data or DATA).read_text(encoding="utf-8"))
     lines = ["# Needs you", "",
              "Everything else is done by the system. These are the only acts that need your identity, each with the one click that does it and what already happens if you never click.", ""]
     for i in d["items"]:
@@ -27,9 +31,52 @@ def render(root=ROOT) -> str:
 def check(root=ROOT) -> list[str]:
     d = json.loads(DATA.read_text(encoding="utf-8"))
     bad = [f"{i['id']}: needs one https link" for i in d["items"] if not re.fullmatch(r"https://\S+", i.get("url", ""))]
+    for i in d["items"]:  # OWNER-PROBE-1
+        pr, why = i.get("probe"), i.get("no_probe")
+        if bool(pr) == bool(why):
+            bad.append(f"{i['id']}: needs exactly one of probe or no_probe (OWNER-PROBE-1)")
+        elif pr and (not re.fullmatch(r"https://\S+", str(pr.get("url", ""))) or not ("equals" in pr or "contains" in pr)):
+            bad.append(f"{i['id']}: probe needs an https url and equals or contains (OWNER-PROBE-1)")
     if not OUT.exists() or OUT.read_text(encoding="utf-8") != render(root):
         bad.append("NEEDS-YOU.md is stale: run python3 -m foundation needsyou")
     return bad
+
+
+def _get(url: str):
+    req = urllib.request.Request(url, headers={"user-agent": "ultrastable-needsyou", "accept": "application/json, text/html;q=0.8"})
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return r.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:  # a 4xx/5xx answer with a body (the health route answers 503 with JSON) is still a reading
+        return e.read().decode("utf-8", "replace")
+
+
+def probe_done(probe: dict, get=_get):
+    """True when the act is done, False when it is not, None when the probe could not be read (the item is then left alone)."""
+    try:
+        body = get(probe["url"])
+        val = body
+        if "json" in probe:
+            val = json.loads(body)
+            for k in str(probe["json"]).split("."):
+                val = val[k]
+    except Exception:
+        return None
+    if "equals" in probe:
+        return val == probe["equals"]
+    want = probe["contains"]
+    return want in val if isinstance(val, (list, str)) else None
+
+
+def reconcile(data=DATA, out=OUT, get=_get) -> list[str]:
+    """Remove every item whose probe says done; returns the removed ids. Writes only when something closed."""
+    d = json.loads(Path(data).read_text(encoding="utf-8"))
+    closed = [i["id"] for i in d["items"] if i.get("probe") and probe_done(i["probe"], get) is True]
+    if closed:
+        d["items"] = [i for i in d["items"] if i["id"] not in closed]
+        Path(data).write_text(json.dumps(d, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        Path(out).write_text(render(data=data), encoding="utf-8", newline="\n")
+    return closed
 
 
 def main(argv=None) -> int:
@@ -39,6 +86,10 @@ def main(argv=None) -> int:
         bad = check()
         print("\n".join(bad) or "needs-you ok")
         return 1 if bad else 0
-    OUT.write_text(render(), encoding="utf-8")
+    if "--reconcile" in argv:
+        closed = reconcile()
+        print("closed: " + ", ".join(closed) if closed else "needs-you: nothing closed")
+        return 0
+    OUT.write_text(render(), encoding="utf-8", newline="\n")
     print(f"wrote {OUT.name}")
     return 0
