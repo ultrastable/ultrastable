@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { makeDb } from './d1shim.js';
 import { newKey } from '../src/auth/seal.js';
 import { pkcs1ToPkcs8, appJwt } from '../src/auth/github-app.js';
-import { getToken, refreshDue, probe } from '../src/auth/index.js';
+import { getToken, refreshDue, probe, ownerActs, DEAD_RETRY_MS } from '../src/auth/index.js';
 import * as store from '../src/auth/store.js';
 import { handleAuth, makeState, checkState } from '../src/auth/routes.js';
 import { oauth } from '../src/auth/oauth.js';
@@ -258,6 +258,20 @@ test('READ-BUDGET-7: a warm isolate keeps serving its token when the credential 
   assert.equal((await getToken(db, e, 'm', 'github-app', { fetch: f, now })).token, 'memo-tok');
   const r = await getToken(db, e, 'm', 'github-app', { fetch: async () => { throw new Error('no network'); }, now: now + 60e3 });
   assert.equal(r.token, 'memo-tok'); assert.equal(r.memo, true);
+});
+
+test('a refused refresh is not retried every tick, and shows up as a live owner act (DEAD-CONSENT-1, OWNER-ACTS-1)', async () => {
+  const db = makeDb(), e = env();
+  await store.put(db, e, 't', 'oauth:google', { secret: { refresh_token: 'r' }, meta: { kind: 'oauth', provider: 'google', token_url: 'https://x.example/token', client_id: 'c' }, status: 'failed', error: 'refresh HTTP 401' });
+  const at = Date.parse(db.raw.prepare('SELECT updated_at FROM credentials').get().updated_at);
+  let calls = 0; const f = async () => { calls++; return { ok: false, status: 401, json: async () => ({}) }; };
+  const soon = await refreshDue(db, e, { fetch: f, now: at + 10 * 60e3 });
+  assert.equal(soon[0].action, 'backoff'); assert.equal(calls, 0);
+  const later = await refreshDue(db, e, { fetch: f, now: at + DEAD_RETRY_MS + 1 });
+  assert.notEqual(later[0].action, 'backoff');
+  const acts = await ownerActs(db);
+  assert.deepEqual(acts.map(a => [a.id, a.connect]), [['signin:oauth:google', '/connect/google']]);
+  assert.ok(!JSON.stringify(acts).includes('"r"'));
 });
 
 test('APP-REUSE-1: a connect link never registers a second GitHub app', async () => {

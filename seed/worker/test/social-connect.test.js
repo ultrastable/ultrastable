@@ -59,7 +59,8 @@ test('Bluesky: atproto OAuth with PAR, PKCE and DPoP; account bound to its issue
     return NF;
   };
   const meta = await handleAuth(new Request(ORIGIN + '/.well-known/oauth-client/bluesky.json'), env, { tenant: 't', fetch: f });
-  const md = await meta.json(); assert.equal(md.dpop_bound_access_tokens, true); assert.equal(md.redirect_uris[0], ORIGIN + '/connect/bluesky/callback'); assert.equal(md.client_id, ORIGIN + '/.well-known/oauth-client/bluesky.json');
+  const md = await meta.json(); assert.equal(md.dpop_bound_access_tokens, true); assert.equal(md.redirect_uris[0], ORIGIN + '/connect/bluesky/callback'); assert.equal(md.client_id, ORIGIN + '/.well-known/oauth-client/bluesky.json'); assert.equal(md.token_endpoint_auth_method, 'private_key_jwt', 'a confidential client: its refresh tokens last 180 days, a public one 2 weeks'); assert.equal(md.jwks_uri, ORIGIN + '/.well-known/oauth-client/bluesky-jwks.json');
+  const ks = await (await handleAuth(new Request(md.jwks_uri), env, { tenant: 't', fetch: f })).json(); assert.equal(ks.keys.length, 1); assert.equal(ks.keys[0].d, undefined, 'only the public half is served');
   const r = await get(env, '/connect/bluesky/start', f); assert.equal(r.status, 302);
   const loc = new URL(r.headers.get('location')); assert.equal(loc.searchParams.get('request_uri'), 'urn:par:1');
   assert.ok(seen.parBody.code_challenge && seen.parBody.state && seen.parBody.scope.includes('atproto'));
@@ -115,6 +116,58 @@ test('publisher: nothing linked means no network call; linked Mastodon posts the
   const r2 = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 3600e3, tenant: 't' });
   assert.equal(seen[0], 'Shipped by the system itself: a thing.', 'events go first'); assert.equal(r2.id, 'old', 'the next due item goes out, the posted one never repeats');
   const r3 = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 7200e3, tenant: 't' }); assert.equal(r3.skipped, 'rate limit', JSON.stringify(r3));
+});
+
+// CONNECT-ONCE-1, DPOP-REFRESH-1, NO-EXPIRY-1 (2026-11-20): one sign-in lasts. Each test is a failure read from the live credential rows.
+test('a Bluesky refresh carries a DPoP proof from the stored key, follows the nonce, and keeps the rotated refresh token', async () => {
+  const { refreshDue } = await import('../src/auth/index.js');
+  const env = mk(), jwk = await newDpopKey(), calls = [], { newClientKey } = await import('../src/auth/atproto.js'), ck = await newClientKey();
+  await store.put(env.DB, env, 't', 'oauth:atproto-test', { secret: { dpop_jwk: jwk, client_jwk: ck, nonce: 'old', refresh_token: 'r1' }, meta: { kind: 'oauth', provider: 'atproto-test', issuer: 'https://bsky.social', token_url: 'https://bsky.social/oauth/token', client_id: 'cid' }, access: 'a1', expiresAt: NOW - 1000, status: 'ok' });
+  const f = async (u, init = {}) => {
+    calls.push(init.headers.DPoP ? JSON.parse(Buffer.from(init.headers.DPoP.split('.')[1], 'base64url').toString()) : null);
+    if (calls.length === 1) return J({ error: 'use_dpop_nonce' }, 401, { 'dpop-nonce': 'fresh' });
+    assert.equal(new URLSearchParams(init.body).get('refresh_token'), 'r1');
+    assert.ok(new URLSearchParams(init.body).get('client_assertion'), 'a confidential client signs its refresh');
+    return J({ access_token: 'a2', refresh_token: 'r2', expires_in: 1800 }, 200, { 'dpop-nonce': 'fresh' });
+  };
+  const out = await refreshDue(env.DB, env, { fetch: f, now: NOW });
+  assert.equal(out[0].action, 'renewed');
+  assert.ok(calls[0] && calls[0].htm === 'POST', 'the refresh is signed'); assert.equal(calls[1].nonce, 'fresh');
+  const m = await store.material(env.DB, env, 't', 'oauth:atproto-test');
+  assert.equal(m.access, 'a2'); assert.equal(m.secret.refresh_token, 'r2'); assert.equal(m.secret.nonce, 'fresh'); assert.ok(m.secret.dpop_jwk);
+});
+
+test('a connected token with no expiry stays connected across ticks, and a sign-in under way is left alone', async () => {
+  const { refreshDue } = await import('../src/auth/index.js');
+  const env = mk(), f = async () => { throw new Error('no network call is expected'); };
+  await store.put(env.DB, env, 't', 'oauth:noexp-test', { secret: { client_secret: 's' }, meta: { kind: 'oauth', provider: 'noexp-test', instance: 'mastodon.social', token_url: 'https://mastodon.social/oauth/token', client_id: 'cid' }, access: 'mast-at', status: 'ok' });
+  await store.put(env.DB, env, 't', 'oauth:atproto-test', { secret: { pending: { nonce: 'n', verifier: 'v', at: NOW } }, meta: { kind: 'oauth', provider: 'atproto-test' }, status: 'pending' });
+  const out = await refreshDue(env.DB, env, { fetch: f, now: NOW + 3600e3 });
+  assert.deepEqual(out.map(o => o.action).sort(), ['awaiting-consent', 'fresh']);
+  assert.equal((await store.material(env.DB, env, 't', 'oauth:noexp-test')).status, 'ok');
+  assert.equal((await store.material(env.DB, env, 't', 'oauth:atproto-test')).status, 'pending');
+});
+
+test('a start that arrives twice continues the same sign-in, and a working connection is never started again', async () => {
+  const env = mk(); let apps = 0;
+  const f = async (u, init = {}) => {
+    u = String(u);
+    if (u === 'https://mastodon.social/api/v1/apps') { apps++; return J({ client_id: 'cid' + apps, client_secret: 'csec' + apps }); }
+    if (u === 'https://mastodon.social/oauth/token') return J({ access_token: 'mast-at' });
+    return NF;
+  };
+  const a = new URL((await get(env, '/connect/mastodon/start', f)).headers.get('location'));
+  const b = new URL((await get(env, '/connect/mastodon/start', f)).headers.get('location'));
+  assert.equal(apps, 1, 'the second start registers nothing'); assert.equal(b.searchParams.get('client_id'), 'cid1');
+  assert.equal(b.searchParams.get('code_challenge'), a.searchParams.get('code_challenge'));
+  const cb = await get(env, '/connect/mastodon/callback?code=abc&state=' + encodeURIComponent(a.searchParams.get('state')), f);
+  assert.equal(cb.status, 200, 'the approval from the first start still completes');
+  const again = await get(env, '/connect/mastodon/start', f);
+  assert.equal(again.status, 200); assert.match(await again.text(), /is connected/); assert.equal(apps, 1);
+  const bad = await get(env, '/connect/bluesky/callback?code=x&state=nope', f);
+  assert.equal(bad.status, 502);
+  const ev = (await env.DB.prepare("SELECT detail FROM credential_events WHERE provider='oauth:bluesky' AND event='failed'").all()).results;
+  assert.match(ev[0].detail, /^callback: /, 'a refused callback leaves a record');
 });
 
 import { priority } from '../src/social.js';
