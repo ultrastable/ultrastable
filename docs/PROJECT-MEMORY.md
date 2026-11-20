@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-20
 
+- 2026-11-20: ciwatch: file failing-workflow items (CIWATCH-1) [skip ci]
+- 2026-11-20: CIWATCH-4: ciwatch items land through the main writer (#810)
 - 2026-11-20: smoke-live: runway check reads the keys the runway record has (#808)
 - 2026-11-20: backup drill record (BLINDSPOT-1) [skip ci]
 - 2026-11-20: regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 3/3) [skip ci]
