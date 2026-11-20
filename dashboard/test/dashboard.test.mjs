@@ -131,7 +131,7 @@ test("MAIL-PATHS-1: one address is a failing probe, two are a passing one", asyn
 test("OWNER-DASH-2: state carries needs, tenants and paid options with costs; free default stated", async () => {
   const e = env(); const ck = await login(e);
   const s = await (await call(e, "/api/owner/state", null, ck)).json();
-  assert.ok(s.needs.length > 0 && s.needs.every(n => n.url.startsWith("https://")));
+  assert.ok(Array.isArray(s.needs) && s.needs.every(n => n.url.startsWith("https://")));  // NO-OPEN-ITEMS-1: an empty list is the target
   assert.ok(s.tenants.some(t => t.id === "jobs" && t.status === "pending"));
   assert.ok(s.options.length > 0 && s.options.every(o => o.cost && o.default));
   assert.match(s.plan_note, /free tiers/);
@@ -141,16 +141,16 @@ test("OWNER-DASH-2: at the D1 free read cap the page still answers from the bund
   const real = e.DB.prepare;
   e.DB.prepare = sql => /FROM tasks|FROM checks/.test(sql) ? { bind: () => ({ all: async () => { throw new Error("D1 free tier daily row read limit exceeded (7500)"); }, first: async () => { throw new Error("7500"); }, run: async () => { throw new Error("7500"); } }) } : real(sql);
   const r = await call(e, "/api/owner/state", null, ck); assert.equal(r.status, 200);
-  const s = await r.json(); assert.match(s.degraded, /free allowance/); assert.ok(s.needs.length && s.options.length);
+  const s = await r.json(); assert.match(s.degraded, /free allowance/); assert.ok(Array.isArray(s.needs) && s.options.length);
 });
 
 test("OWNER-DASH-3: overview needs no database or session; a dead database gives plain words, never a 500", async () => {
   const e = env(); const real = e.DB.prepare;
   e.DB.prepare = () => { throw new Error("D1 free tier daily row read limit exceeded (7500)"); };
   const o = await call(e, "/api/owner/overview"); assert.equal(o.status, 200);
-  const oj = await o.json(); assert.ok(oj.needs.length && oj.tenants.length && oj.options.length);
+  const oj = await o.json(); assert.ok(Array.isArray(oj.needs) && oj.tenants.length && oj.options.length);
   const r = await call(e, "/api/owner/state", null, "us_owner=x"); assert.equal(r.status, 200);
-  const j = await r.json(); assert.match(j.degraded, /resets at 00:00 UTC|resets by itself|allowance/); assert.ok(j.needs.length);
+  const j = await r.json(); assert.match(j.degraded, /resets at 00:00 UTC|resets by itself|allowance/); assert.ok(Array.isArray(j.needs));
   assert.ok(!/7500|Error|SQL/.test(j.degraded));
   e.DB.prepare = real;
 });

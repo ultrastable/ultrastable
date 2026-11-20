@@ -171,10 +171,14 @@ class Credential(unittest.TestCase):
                 lane_credential.token(env, lambda *a, **k: (404, {"message": "Not Found"}))
 
     def test_the_owner_step_is_recorded_once_with_a_default(self):
-        items = [i for i in json.loads((ROOT / "foundation/data/needs-you.json").read_text())["items"] if i["id"] == "lane-credential"]
-        self.assertEqual(len(items), 1)
-        self.assertEqual(items[0]["class"], "owner_account")  # POINT-AND-CLICK-1: one consent click on GitHub, never a token to mint
-        self.assertIn("needs-pat", items[0]["default"])
+        d = json.loads((ROOT / "foundation/data/needs-you.json").read_text(encoding="utf-8"))
+        items = [i for i in d["items"] if i["id"] == "lane-credential"]
+        if items:  # still open: one consent click on GitHub with its default, never a token to mint (POINT-AND-CLICK-1)
+            self.assertEqual(len(items), 1)
+            self.assertEqual(items[0]["class"], "owner_account")
+            self.assertIn("needs-pat", items[0]["default"])
+        else:  # GATE-SETTLE-2: settled on its own evidence, recorded once
+            self.assertEqual(sum(x.startswith("Connect GitHub: settled") for x in d["done_for_you"]), 1)
         wf = (ROOT / ".github/workflows/lane.yml").read_text()
         for name in ("LANE_PAT", "LANE_APP_ID", "LANE_APP_PRIVATE_KEY"):
             self.assertIn("secrets." + name, wf)

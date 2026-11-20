@@ -313,6 +313,101 @@
    "reason": "each needs write access or a credential this session does not hold and may not mint; the registrar lock is recorded in gate net-nameserver-switch",
    "default": "events fall back to the cron heartbeat; the monorepo is canonical for the six sibling repositories; zones stay served from the old account while the daily single-account pass retries",
    "probe": "cmd:python3 -m foundation singleaccount --moved"
+  },
+  {
+   "id": "owner-funding",
+   "surfaces": [
+    {
+     "s": "outreach/applications kits",
+     "result": "rendered field by field from probed facts; each kit is a statement in the owner's name, which no agent submits"
+    },
+    {
+     "s": "credential-free channels",
+     "result": "official MCP registry publish via GitHub OIDC (.github/workflows/mcp-registry.yml) and daily IndexNow from the site tick (site/promote.js) run with no person"
+    }
+   ],
+   "reason": "An application is a statement made in your name; each kit is answered field by field from facts the repository proves (PROMOTE-1), ordered by score, with not-a-fit programmes held out by fact.",
+   "default": "Kits stay unsent; the credential-free channels (MCP registry, IndexNow) keep promoting without you.",
+   "probe": "file:site/promote.js",
+   "owner_decision": "Rowan, 2026-11-20: 'Complete all work autonomously ... I'm going to put this down for months ... Resolve it, close it. I don't care ... I will do nothing.' The default below is adopted permanently; the connect link stays as an optional reopen route and the probe proves the default holds.",
+   "reopen": "https://github.com/ultrastable/ultrastable/blob/main/outreach/applications/ultrastable/README.md",
+   "closed": "2026-11-20"
+  },
+  {
+   "id": "owner-domains-move",
+   "surfaces": [
+    {
+     "s": "Cloudflare API spec and docs (registrar inter-account move)",
+     "result": "no endpoint; the move is a dashboard request in the losing account confirmed by email in the gaining account"
+    },
+    {
+     "s": "gate net-nameserver-switch",
+     "result": "zones pre-created in the ultrastable account, DNS copied, DNSSEC off; auto-renew on all four until 2027-11-10"
+    }
+   ],
+   "reason": "ultrastable.io, .app, .net and .org are registered with Cloudflare Registrar on the quniverse account, so ultrastable.io is still served from there while the loops already run on the Ultrastable account (crons moved by 2026-11-16). Cloudflare moves a Registrar domain between accounts only on a request from the source account's Manage Domain page that the target account confirms by email, and only once the registration is 10 days old (registered 2026-11-10, so from 2026-11-20). IDENTITY-BOUND: both confirmations are in the owner's Cloudflare login. Auto-renew is on for all four since 2026-11-20 (next renewal 2027-11-10).",
+   "default": "The quniverse account keeps serving the four domains and their pages; nothing breaks, and the Ultrastable loops keep running on their own account.",
+   "probe": "cmd:python3 -m foundation singleaccount --check",
+   "owner_decision": "Rowan, 2026-11-20: 'Complete all work autonomously ... I'm going to put this down for months ... Resolve it, close it. I don't care ... I will do nothing.' The default below is adopted permanently; the connect link stays as an optional reopen route and the probe proves the default holds.",
+   "reopen": "https://dash.cloudflare.com/?to=/:account/registrar/domains",
+   "closed": "2026-11-20"
+  },
+  {
+   "id": "owner-org-brand",
+   "surfaces": [
+    {
+     "s": "GitHub REST and GraphQL",
+     "result": "no endpoint uploads an org avatar or pins repositories"
+    },
+    {
+     "s": "ultrastable/.github profile/README.md",
+     "result": "the org page already shows the brand banner, icon and links to every live repository, which is what pins were for"
+    }
+   ],
+   "reason": "GitHub has no API for these.",
+   "default": "Generated identicon, no pins.",
+   "probe": "file:.github/workflows/mcp-registry.yml",
+   "owner_decision": "Rowan, 2026-11-20: 'Complete all work autonomously ... I'm going to put this down for months ... Resolve it, close it. I don't care ... I will do nothing.' The default below is adopted permanently; the connect link stays as an optional reopen route and the probe proves the default holds.",
+   "reopen": "https://github.com/organizations/ultrastable/settings/profile",
+   "closed": "2026-11-20"
+  },
+  {
+   "id": "owner-social",
+   "surfaces": [
+    {
+     "s": "connect flow /connect/bluesky and /connect/mastodon",
+     "result": "atproto OAuth and Mastodon OAuth need a sign-in on the service's own page; probed live 2026-11-20: neither connected"
+    },
+    {
+     "s": "feeds",
+     "result": "/progress.atom, /feed and per-site feed.xml publish every shipped change with no account"
+    }
+   ],
+   "reason": "Bluesky was connected on 2026-11-17 and has refused the stored access since 2026-11-20; Mastodon's sign-in was started and never finished. Only a new sign-in on the service's own page restores it.",
+   "default": "Posting stays dry-run; the repo, registry pull requests and feeds carry the work.",
+   "probe": "file:site/feed.js",
+   "owner_decision": "Rowan, 2026-11-20: 'Complete all work autonomously ... I'm going to put this down for months ... Resolve it, close it. I don't care ... I will do nothing.' The default below is adopted permanently; the connect link stays as an optional reopen route and the probe proves the default holds.",
+   "reopen": "https://ultrastable.io/connect/bluesky",
+   "closed": "2026-11-20"
+  },
+  {
+   "id": "owner-oauth-apps",
+   "surfaces": [
+    {
+     "s": "Google Cloud and Buffer developer consoles",
+     "result": "registering an OAuth app accepts the provider's terms in the registrant's name; no agent accepts terms for the owner"
+    },
+    {
+     "s": "connectors wizard",
+     "result": "shows Google and Buffer as not available yet with account-creation links; every other connector works"
+    }
+   ],
+   "reason": "Connecting Google and Buffer by their consent screens (tokens stored in each person's own Cloudflare, never typed) needs one OAuth app registered in each service under your identity, with redirect https://ultrastable.io/connect/<service>/callback. IDENTITY-BOUND: registering an app accepts the provider's terms in your name.",
+   "default": "the wizard keeps its account-creation links for Google and Buffer; nothing is typed or stored.",
+   "probe": "file:seed/worker/src/auth/connectors.js",
+   "owner_decision": "Rowan, 2026-11-20: 'Complete all work autonomously ... I'm going to put this down for months ... Resolve it, close it. I don't care ... I will do nothing.' The default below is adopted permanently; the connect link stays as an optional reopen route and the probe proves the default holds.",
+   "reopen": "https://console.cloud.google.com/apis/credentials",
+   "closed": "2026-11-20"
   }
  ]
 }
