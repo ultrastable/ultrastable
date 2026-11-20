@@ -1,0 +1,10 @@
+{
+ "_doc": "BLINDSPOT-1 need backup-restore, read by foundation/backup.py. Every D1 database and KV namespace in the account is exported weekly, each SQL dump is restored into a scratch SQLite database and compared with the live row counts, and the dumps are stored in the R2 bucket and read back. exclude_tables hold sealed credentials: they are left out of the dump and named in the record, and are re-minted through /connect after a restore. keep is the number of copies kept per store.",
+ "bucket": "ultrastable-git",
+ "prefix": "backups/",
+ "max_age_days": 7,
+ "keep": 8,
+ "exclude_tables": ["credentials", "credential_events", "agent_keys", "webhook_subscriptions"],
+ "exclude_kv": [],
+ "kv_max_bytes": 20000000
+}
