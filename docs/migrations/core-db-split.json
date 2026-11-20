@@ -1,0 +1,22 @@
+{
+ "_doc": "PIN-core-db-separation: the record that the core's databases are separate from QNFO's research database. It cites evidence rather than restating it: instances/ultrastable/own-database.json (declaration, checked on every change by `python3 -m foundation owndb --check`) and the live reading below. Closing probe: `python3 -m foundation owndb --check` and `owndb --live`.",
+ "version": "1.0.0",
+ "issue": "PIN-core-db-separation",
+ "migration": {
+  "from": "core tables inside the originating fleet's shared database, in the retired quniverse account (edb167b78c9fb901ea5bca3ce58ccc4b)",
+  "to": "ultrastable-org (216e97ea-da5e-41e5-af52-af6c0484a7be) and ultrastable-ops (5cd83b52-864a-4510-b062-fc0d9402d06c) in the ultrastable account (81e3a4efb4eb66e613529b87682911bb)",
+  "tracked_by": ["Q-GAP-core-separation", "deploy/transfer/plan.json", "doctrine/single-account.json"]
+ },
+ "verification": {
+  "declaration": "instances/ultrastable/own-database.json",
+  "static_check": "python3 -m foundation owndb --check (no core Worker config binds a tenant database or a database of the originating fleet; the fleet's ids are the forbidden patterns of doctrine/single-account.json)",
+  "live_reading": {
+   "read_at": "2026-11-20",
+   "method": "Cloudflare D1 list for account 81e3a4efb4eb66e613529b87682911bb and a sqlite_master count on ultrastable-org, from a cloud session",
+   "databases_in_account": ["ultrastable-org", "ultrastable-ops", "tenant-ps-db", "tenant-jobs-db", "example-co-ultrastable"],
+   "ultrastable_org_tables": 63,
+   "originating_fleet_databases_in_account": 0
+  }
+ },
+ "limits": "This shows the core's databases are the core's own and live in the core's account. It does not claim the retired quniverse account holds nothing: zones and some assets remain there (OL-20261118-1, `python3 -m foundation singleaccount --moved`)."
+}

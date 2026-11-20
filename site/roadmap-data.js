@@ -6,10 +6,6 @@ export default {
    "text": "One installation and one customer. There is no installer and no second tenant yet."
   },
   {
-   "issue": "PIN-core-db-separation",
-   "text": "The core still shares a database with QNFO's other applications; separating it is the first pilot milestone."
-  },
-  {
    "issue": "PIN-outside-audit",
    "text": "The prediction match rate is scored by the system itself. An outside audit is a pilot goal."
   }
@@ -18,10 +14,10 @@ export default {
   "PIN-core-db-separation": {
    "done": "file:docs/migrations/core-db-split.json",
    "id": "PIN-core-db-separation",
-   "milestone": "Next",
+   "milestone": "Done",
    "owner": "staff",
-   "status": "open",
-   "title": "Separate the core from QNFO's research database",
+   "status": "done: live; verified by the done check on every build",
+   "title": "Core is separated from QNFO's research database",
    "trigger": "trigger: pilot milestone 1"
   },
   "PIN-default-policy-pack": {
@@ -294,12 +290,12 @@ export default {
   },
   {
    "code": [
-    "platform/core/ultrastable/config.py"
+    "foundation/owndb.py"
    ],
    "issue": "PIN-core-db-separation",
    "name": "Core separated from QNFO's database",
-   "status": "pinned",
-   "what": "The core still shares a database with QNFO's other applications.",
+   "status": "live",
+   "what": "The core's databases are its own, in its own account; no database of QNFO's research applications is bound.",
    "where": "docs/migrations/core-db-split.json"
   },
   {
