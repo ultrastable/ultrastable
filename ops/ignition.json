@@ -1,12 +1,30 @@
 {
- "at": "2026-11-19T03:36:58Z",
- "open_ignition_gaps": 1,
+ "at": "2026-11-20T14:22:20Z",
+ "open_ignition_gaps": 4,
  "gaps": [
   {
-   "link": "family Q-CLOCK grows and nothing closes it",
+   "link": "item PORT-BRANCH-worker-roadmap-agent-connector-health-2026111903 relapsed after it closed",
+   "owner": "executor",
+   "closing_probe": "contracts: PORT-BRANCH-worker-roadmap-agent-connector-health-2026111903 passes over the hold",
+   "source": "contracts"
+  },
+  {
+   "link": "family Q-CRIT grows and nothing closes it",
    "owner": "operations",
-   "closing_probe": "cmd:python3 -m foundation throughput --doer Q-CLOCK",
+   "closing_probe": "cmd:python3 -m foundation throughput --doer Q-CRIT",
    "source": "throughput"
+  },
+  {
+   "link": "1 open item(s) vanished without a disposition",
+   "owner": "operations",
+   "closing_probe": "throughput: silent_drops 0 in the window",
+   "source": "throughput"
+  },
+  {
+   "link": "guard relapse_rate_7d worsened while open_items improved",
+   "owner": "operations",
+   "closing_probe": "metricloop: no guard regression on the next pass",
+   "source": "metricloop"
   }
  ]
 }
