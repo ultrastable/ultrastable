@@ -33,7 +33,7 @@ import { pruneAll } from './retention.js';
 import { seal, verify, trace, head, r2Sink, githubSink, archiveRows } from './auditchain.js';  // AUDIT-CHAIN-1
 import { bearerOk } from './auditauth.js';  // RETENTION-1  // SPEND-GOVERNOR-1: every model call goes through the owner's monthly budget
 import { handleAuth } from './auth/routes.js';
-import { getToken, refreshDue, pathGuard } from './auth/index.js';
+import { getToken, refreshDue, pathGuard, ownerActs } from './auth/index.js';
 import { checkRepoAccess, readRepoAccess } from './auth/access.js';
 import { readCriticality, addSample } from './criticality.js';
 import { watchGithub } from './watchdog.js';
@@ -269,6 +269,10 @@ export default {
     if (url.pathname === '/next') {
       const { results } = await db.prepare(`SELECT title, owner_role FROM items WHERE status IN ('open','ready') ORDER BY priority, created_at LIMIT 5`).all();
       return nextScreen({ items: results });
+    }
+    if (url.pathname === '/api/v1/owner-acts') {  // OWNER-ACTS-1: live, from credential rows and open gate cards; consumer foundation/unattended.py --live
+      const { results } = await db.prepare(`SELECT id, what, default_in_effect, closing_probe FROM gate_cards WHERE status='open' ORDER BY id LIMIT 50`).all();
+      return Response.json({ at: new Date().toISOString(), signins: await ownerActs(db), cards: results || [] }, { headers: { 'cache-control': 'no-store' } });
     }
     if (url.pathname === '/needs-you') {
       const { results } = await db.prepare(`SELECT what, why_gated, default_in_effect FROM gate_cards WHERE status='open' ORDER BY id LIMIT 10`).all();

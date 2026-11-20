@@ -79,13 +79,13 @@ test('the D1 lane opens a PR for a needs-code item and marks it in-pr with the m
   const db = codeDb(), { f, log } = fakeGh();
   const bodies = [];
   const f2 = async (url, o = {}) => { if (o.method === 'POST' && url.endsWith('/pulls')) bodies.push(JSON.parse(o.body).body); return f(url, o); };
-  const ag = async () => ({ summary: 'card', adapter: 'workers-ai-glm', model: '@cf/zai-org/glm-5.3-flash', files: [{ path: 'site/agentic.js', content: 'new' }] });
+  const ag = async () => ({ summary: 'card', adapter: 'workers-ai-glm', model: '@cf/zai-org/glm-4.7-flash', files: [{ path: 'site/agentic.js', content: 'new' }] });
   const r = await runDbQueue({ ...env, DB: db }, { fetchImpl: f2, agent: ag, now: T });
   assert.equal(r.ok, true, r.detail);
   assert.ok(log.some(l => l.startsWith('POST /repos/o/r/git/refs')));
   assert.match(bodies[0], /## Handoff\nitem: RM-1\nagent: worker-native \(workers-ai-glm\)\ndeploy: ultrastable-site/);
   const it = db.raw.prepare("SELECT status, blocker FROM items WHERE id='RM-1'").get();
-  assert.equal(it.status, 'blocked'); assert.match(it.blocker, /^in-pr: https:\/\/github.com\/o\/r\/pull\/7 \| agent: worker-native \| model: @cf\/zai-org\/glm-5.3-flash/);
+  assert.equal(it.status, 'blocked'); assert.match(it.blocker, /^in-pr: https:\/\/github.com\/o\/r\/pull\/7 \| agent: worker-native \| model: @cf\/zai-org\/glm-4.7-flash/);
   assert.match(db.raw.prepare("SELECT blocker FROM items WHERE id='OW-1'").get().blocker, /^owner-only/, 'owner-only items are never taken');
   const again = await runDbQueue({ ...env, DB: db }, { fetchImpl: f, agent: ag, now: T });
   assert.equal(again.idle, true, 'an in-pr item is not taken twice');
