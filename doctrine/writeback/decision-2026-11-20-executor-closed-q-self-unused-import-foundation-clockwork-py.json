@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-executor-closed-q-self-unused-import-foundation-clockwork-py",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "Executor closed Q-SELF-unused-import-foundation-clockwork-py: Q-SELF-unused-import-foundation-clockwork-py: remove unused import Path from f",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/clockwork.py.",
+  "probe": "file:foundation/clockwork.py"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-SELF-unused-import-foundation-clockwork-py: Q-SELF-unused-import-foundation-clockwork-py: remove unused import Path from f",
+ "session": ""
+}
