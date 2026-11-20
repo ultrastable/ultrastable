@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # SPDX-License-Identifier: Apache-2.0
 # SMOKE-LIVE-1: turn smoke_live.py results into repair items in this repository's own format (docs/issues/Q-SMOKE-*.json; GitHub Issues are disabled here).
 # A failing check writes or refreshes its item; a passing check marks its item done. Landing: the main-writer route first (tools/push_main.py), then a branch + pull request.

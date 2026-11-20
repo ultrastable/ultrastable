@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # SPDX-License-Identifier: Apache-2.0
 # SMOKE-LIVE-1: fetch public URLs from production and print status, type, size, an excerpt. Read-only.
 import json, sys, time, urllib.request, urllib.error

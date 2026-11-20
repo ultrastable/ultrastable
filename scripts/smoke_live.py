@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # SPDX-License-Identifier: Apache-2.0
 # SMOKE-LIVE-1: every public claim, checked against PRODUCTION. Read-only except the optional --cap probe. Exit 1 on any failure.
 # Each check is (id, claim, function returning (ok, evidence)). A check that cannot run is UNTESTED, never PASS.

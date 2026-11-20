@@ -1826,6 +1826,10 @@ export default {
     ]
    },
    {
+    "id": "backup-drill",
+    "loops": []
+   },
+   {
     "id": "branchsweep",
     "loops": [
      "branch-sweep"
@@ -2035,6 +2039,10 @@ export default {
     "loops": [
      "branch-reaper"
     ]
+   },
+   {
+    "id": "smoke-live",
+    "loops": []
    },
    {
     "id": "social-post",

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 # SPDX-License-Identifier: Apache-2.0
 # MAINWRITER-FALLBACK-1: land a data commit made in a workflow. Order: the main-writer route (tools/push_main.py), then a branch plus a pull request with
 # auto-merge so the lane merges it after `checks`. Exit 0 only when the data reached main or a pull request carries it.

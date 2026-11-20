@@ -141,6 +141,14 @@
     "37 6 * * 1"
    ]
   },
+  "backup-drill.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "37 5 * * 1"
+   ]
+  },
   "branchsweep.yml": {
    "events": [
     "workflow_dispatch"
@@ -406,6 +414,14 @@
    ],
    "crons": [
     "23 6 * * *"
+   ]
+  },
+  "smoke-live.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "17 */6 * * *"
    ]
   },
   "social-post.yml": {
