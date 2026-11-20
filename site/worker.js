@@ -34,7 +34,7 @@ import SG from "./suggest.js";
 import DASH from "./dashboard-data.js";
 import { controlPlane, opsPage, tenantDiscovery, authIntegration } from "./controlplane.js";
 import { webhooksRoute, tickWebhooks } from "./webhooks.js"; // WEBHOOKS-1
-import { insights as siteInsights, insightsBody, viewedRecently, upkeepRound, recordVersion, restore as restoreVersion, versions as siteVersions, historyBody } from "./upkeep.js"; // SITE-UPKEEP-1
+import { siteFeed, siteBadge, insights as siteInsights, insightsBody, viewedRecently, upkeepRound, recordVersion, restore as restoreVersion, versions as siteVersions, historyBody } from "./upkeep.js"; // SITE-UPKEEP-1
 import { connectionsRoute } from "./connections.js"; // CONNECTIONS-1
 import { internalDeploy } from "./deployer.js";
 var VERSION = "0.15.1";
@@ -661,13 +661,15 @@ async function takeChange(request, env, ctx) {
 }
 const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
 async function siteRoutes(u, env, ctx, request, own) {
-  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/history|\/insights|\/api)?$/.exec(u.pathname);
+  const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/history|\/insights|\/feed\.xml|\/badge\.svg|\/api)?$/.exec(u.pathname);
   if (!m || !env || !env.ASSETS) return null;
   if (m[2] === "/api") return siteApi(request, env, m[1]);
   const id = m[1]; let st = await env.ASSETS.get("state:" + id); const page = (t, b) => new Response(shell({ path: u.pathname, title: t + " - Ultrastable", description: t }, b), { headers: HTML });
   if (!st) return new Response(start("That site was not found."), { status: 404, headers: HTML });
   if (st === "building" && Date.now() - Number(await env.ASSETS.get("since:" + id) || 0) > 150000) { st = "failed"; await env.ASSETS.put("state:" + id, "failed"); }
   if (st === "ready" && (!m[2] || m[2] === "/review")) await ensureAudit(env, ctx, id);
+  if (m[2] === "/feed.xml") return new Response(siteFeed(id, await siteVersions(env, id), "https://" + CANON, (/<title>([^<]*)<\/title>/i.exec(await env.ASSETS.get("site:" + id) || "") || [])[1]), { headers: { "content-type": "application/atom+xml; charset=utf-8", "cache-control": "public, max-age=900" } }); // SITE-FEED-1
+  if (m[2] === "/badge.svg") return new Response(siteBadge(await siteVersions(env, id)), { headers: { "content-type": "image/svg+xml", "cache-control": "public, max-age=900" } });
   if (m[2] === "/insights") return page("Who visits your site", insightsBody(id, env.DB ? await siteInsights(env.DB, id).catch((e) => { console.error("insights failed", String(e).slice(0, 100)); return { views7: 0, views30: 0, visitors7: 0, refs: [], countries: [], devices: [] }; }) : { views7: 0, views30: 0, visitors7: 0, refs: [], countries: [], devices: [] })); // SITE-INSIGHTS-1
   if (m[2] === "/history") { // SITE-UPKEEP-1
     if (request.method === "POST") { const f = await request.formData().catch(() => null), r = f ? await restoreVersion(env, id, f.get("v")) : { ok: false }; if (r.ok) return Response.redirect("https://" + CANON + "/s/" + id + "/history", 303); return page("Not restored", "<div class=\"head\"><h1>That version is gone</h1><p>Only the last ten are kept.</p></div>"); }

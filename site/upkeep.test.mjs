@@ -64,3 +64,9 @@ test("insights count only human hits on the site's own path and the model pass f
   const e = env(full); const out = await U.upkeepSite(e, ID, { now: T0, lint: () => [], improve: async (b, h) => h + "x", visited: async () => false }); assert.equal(out.kind, "none");
   assert.match(U.insightsBody(ID, r), /Where they came from/);
 });
+test("feed and badge describe what the system changed", async () => {
+  const e = env("v0"); await U.recordVersion(e, ID, "a", "upkeep: added page description", T0);
+  const idx = await U.versions(e, ID), f = U.siteFeed(ID, idx, "https://ultrastable.io", "Club <1>");
+  assert.match(f, /<feed xmlns="http:\/\/www.w3.org\/2005\/Atom">/); assert.match(f, /After version 1: upkeep: added page description/); assert.match(f, /Club &lt;1&gt;/);
+  assert.match(U.siteBadge(idx), /kept up: 1 change"/); assert.match(U.siteBadge({ list: [] }), /newly built/);
+});
