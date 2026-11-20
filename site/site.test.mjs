@@ -248,6 +248,11 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
     const db4 = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: JSON.stringify(d) }] }) }), first: async () => ({ generated: d.generated, total: 1 }) }) };
     assert.equal((await mod.fetch(new Request("https://ultrastable.io/proof/customer-zero"), { ...ENV, DB: db4 })).status, 200);
     assert.equal((await mod.fetch(new Request("https://ultrastable.io/proof"), ENV)).status, 301, "PROOF-OWN-1 redirect is unchanged"); }
+  // EXAMPLE-SYSTEMS-1: the front door shows every example system, and each states its loop, its measure and its upkeep
+  { const ex = await import("./examples.js"), homeHtml = await (await mod.fetch(new Request("https://ultrastable.io/"), ENV)).text();
+    assert.ok(ex.EXAMPLES.length >= 5 && ex.EXAMPLES.every(e => e.id && e.name && e.loop && e.measure && e.upkeep));
+    assert.equal((homeHtml.match(/data-example="/g) || []).length, ex.EXAMPLES.length);
+    for (const e of ex.EXAMPLES) assert.ok(homeHtml.includes(e.name), e.id + " is on the front door"); }
   // CHANGELOG-FEED-1: the feed reads the same snapshot; titles are escaped; sizes and origins are summed per day
   { const snap2 = JSON.stringify({ generated: "2026-11-12T00:00:00Z", throughput: { changelog: [{ date: "2026-11-11", changes: [{ n: 7, title: "Fix <b> & more", by: "executor", url: "https://github.com/o/r/pull/7", plus: 10, minus: 2 }, { n: 6, title: "Second", by: "session", plus: 5, minus: 1 }] }] } });
     const db2 = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: snap2 }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 1 }) }) };
