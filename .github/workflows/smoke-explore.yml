@@ -5,7 +5,7 @@ name: smoke-explore
 on:
   push:
     branches: [claude/project-thread-sgqjgx]
-    paths: [scripts/smoke_probe.py, .github/workflows/smoke-explore.yml]
+    paths: [scripts/smoke_live.py, scripts/smoke_probe.py, .github/workflows/smoke-explore.yml]
 permissions:
   contents: read
 concurrency:
@@ -18,8 +18,5 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v7
-      - name: Probe
-        run: |
-          for h in ultrastable.io ultrastable.org; do
-            python3 scripts/smoke_probe.py https://$h/ https://$h/catalogue https://$h/ask https://$h/es/ https://$h/fr/ https://$h/pt/ https://$h/ar/ https://$h/progress https://$h/digest/daily https://$h/digest/weekly https://$h/digest/monthly https://$h/progress.atom https://$h/progress.json https://$h/changes https://$h/evidence-map https://$h/ranking https://$h/pilot https://$h/customer-zero https://$h/demo https://$h/privacy https://$h/openapi.json https://$h/claims https://$h/api/claims https://$h/live https://$h/api/freshness https://$h/llms.txt https://$h/sitemap.xml https://$h/robots.txt https://$h/oembed https://$h/api/v1/sop
-          done
+      - name: Smoke
+        run: python3 scripts/smoke_live.py --cap
