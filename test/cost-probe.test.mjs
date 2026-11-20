@@ -49,13 +49,24 @@ describe('cost probe', () => {
   it('discovers resources and reports drift', async () => {
     const dir = mkdtempSync(join(tmpdir(), 'cp-'));
     writeFileSync(join(dir, 'topology.json'), JSON.stringify({ workers: ['known-worker'], d1: [], kv: [], r2: [] }));
-    const data = { viewer: { accounts: [{ workers: [{ id: 'known-worker' }, { id: 'stray-worker' }], d1Databases: [{ databaseId: 'db1', name: 'd' }], kvNamespaces: [{ id: 'kv1', title: 'k' }], r2Buckets: [{ name: 'b1' }] }] } };
-    const { found, items } = await discoverResources({ fetchFn: gqlFetchFactory(data), token: 't', account: 'a', topologyPath: join(dir, 'topology.json') });
+    const rest = { '/workers/scripts': [{ id: 'known-worker' }, { id: 'stray-worker' }], '/d1/database': [{ uuid: 'db1', name: 'd' }], '/storage/kv/namespaces': [{ id: 'kv1', title: 'k' }], '/r2/buckets': { buckets: [{ name: 'b1' }] } };
+    const fetchFn = async (url) => { const k = Object.keys(rest).find((p) => new URL(url).pathname.endsWith(p)); return { ok: true, status: 200, json: async () => ({ success: true, result: rest[k] }) }; };
+    const { found, items } = await discoverResources({ fetchFn, token: 't', account: 'a', topologyPath: join(dir, 'topology.json') });
     assert.deepEqual(found.workers, ['known-worker', 'stray-worker']);
     assert.ok(items.some((i) => i.kind === 'workers' && i.id === 'stray-worker'));
     assert.ok(items.some((i) => i.kind === 'd1' && i.id === 'db1'));
     assert.ok(items.some((i) => i.kind === 'kv' && i.id === 'kv1'));
     assert.ok(items.some((i) => i.kind === 'r2' && i.id === 'b1'));
+  });
+
+  it('a kind the token cannot list is unmeasured and files no drift (COST-PROBE-4)', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'cp-'));
+    writeFileSync(join(dir, 'topology.json'), JSON.stringify({ workers: [], d1: [], kv: [], r2: [] }));
+    const fetchFn = async (url) => (String(url).includes('/workers/scripts') ? { ok: true, status: 200, json: async () => ({ result: [{ id: 'w' }] }) } : { ok: false, status: 403, json: async () => ({}) });
+    const { found, items, unmeasured } = await discoverResources({ fetchFn, token: 't', account: 'a', topologyPath: join(dir, 'topology.json') });
+    assert.deepEqual(found, { workers: ['w'], d1: null, kv: null, r2: null });
+    assert.deepEqual(items.map((i) => i.id), ['w']);
+    assert.deepEqual(unmeasured.map((u) => u.kind), ['d1', 'kv', 'r2']);
   });
 
   it('appends jsonl records', () => {
