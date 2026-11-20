@@ -9,6 +9,7 @@ import { claimsReleasedUnworked24h } from './doer.js';
 import { runExecutor, noteExecutor } from './executor.js';
 import { runLane, githubBudget } from './lane.js';
 import { verifyOidc, commitToMain } from './maincommit.js';  // MAIN-WRITER-1
+import { opsBackup } from './opsbackup.js';  // BACKUP-SINK-1
 import { createMeter, guarded, readDeferred, writeDeferred } from './subreq.js';  // SUBREQUEST-METER-1
 import { ingestDeploys } from './selfaudit.js';
 import { sampleCosts } from './costsample.js';
@@ -174,6 +175,14 @@ export default {
       const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
       let event; try { event = JSON.parse(body || '{}'); } catch { return Response.json({ error: 'bad json' }, { status: 400 }); }
       return Response.json(await onHostEvent({ db: env.DB, token: (t && t.ok && t.token) || env.GITHUB_TOKEN || '', event }), { status: 202 });
+    }
+    if (url.pathname === '/api/ops/backup' && request.method === 'POST') {  // BACKUP-SINK-1: the backup drill's dumps go to the private ops repository, written with the org's own GitHub App
+      if (halted(config, env)) return Response.json({ halted: true }, { status: 202 });  // HALT-1
+      const bearer = /^Bearer (.+)$/.exec(request.headers.get('authorization') || '');
+      const who = bearer ? await verifyOidc(bearer[1], { repo: env.MAIN_REPO || env.OIDC_REPO || 'ultrastable/ultrastable' }).catch(e => ({ ok: false, why: String(e && e.message) })) : { ok: false, why: 'no bearer' };
+      if (!who.ok) return new Response('Not found', { status: 404 });
+      const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
+      return opsBackup(request, { token: (t && t.ok && t.token) || '', repo: env.OPS_REPO || 'ultrastable/ops' });
     }
     if (url.pathname === '/api/main/commit' && request.method === 'POST') {  // MAIN-WRITER-1: workflow data commits to main, written with the org's own GitHub App (exempt from the main ruleset)
       if (halted(config, env)) return Response.json({ halted: true }, { status: 202 });  // HALT-1
