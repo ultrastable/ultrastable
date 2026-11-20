@@ -72,6 +72,15 @@
       }
     },
     {
+      "id": "unattended-sessions-never-count",
+      "source": "agents/AGENTS.md",
+      "quote": "it never counts toward the target and no loop may depend on one",
+      "probe": {
+        "file": "doctrine/unattended.json",
+        "contains": "never counts"
+      }
+    },
+    {
       "id": "progress-last-visit-local",
       "source": "site/progress.js",
       "quote": "Your last visit is kept only in this browser and is never sent anywhere.",
