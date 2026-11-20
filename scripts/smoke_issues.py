@@ -14,7 +14,7 @@ for r in rows:
     i = "Q-SMOKE-" + re.sub(r"[^A-Za-z0-9]+", "-", r["id"]).strip("-")
     p = ROOT / "docs/issues" / f"{i}.json"
     if r["result"] == "FAIL":
-        body = (f"**Owner:** executor\n**Trigger:** smoke-live (every 6 hours)\n**Done check:** `python3 scripts/smoke_live.py` shows PASS for `{r['id']}`\n**Status:** open\n\n"
+        body = (f"**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::{r['id']}\n**Status:** open\n\n"
                 f"SMOKE-LIVE-1: {r['claim']}\n\nLive evidence: `{r['evidence']}`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\n"
                 f"size: S\n\n**Closing probe:** workflow smoke-live, check `{r['id']}` = PASS.\n")
         item = {"id": i, "title": f"{i}: production does not match the claim ({r['id']})", "body": body, "labels": ["p1", "agent-ready"], "milestone": "Now", "workstream": "Claims"}
