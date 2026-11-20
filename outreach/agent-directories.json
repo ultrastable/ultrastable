@@ -1,0 +1,157 @@
+{
+ "_doc": "AGENT-DIRECTORIES-1: registries and directories where agents find tools, each with its submission route, what it needs and the packet for Ultrastable's /mcp endpoint. Consumed by scripts/agent_directories.py (called from scripts/outreach.py run), which writes one packet per directory under outreach/packets/agent-directories/ and sets status. Publishing is outreach egress: nothing is sent while outreach/gate.json is dry-run or kill is set, and form or pull-request routes are never submitted by an agent. route_verified stays null until the script's probe has fetched the directory's page.",
+ "version": 1,
+ "metric": "agent_hits_7d",
+ "packet": {
+  "name": "Ultrastable",
+  "endpoint": "https://ultrastable.io/mcp",
+  "transport": "streamable-http",
+  "server_card_url": "https://ultrastable.io/.well-known/mcp/server-card.json",
+  "skills_index_url": "https://ultrastable.io/.well-known/agent-skills/index.json",
+  "agent_card_url": "https://ultrastable.io/.well-known/agent-card.json",
+  "connect_page": "https://ultrastable.io/connect-agent",
+  "repository": "https://github.com/ultrastable/ultrastable",
+  "description": "Read-only view of a self-governing development platform: what it is working on, what is next, what is blocked and what it shipped, plus one authenticated tool to submit work.",
+  "auth": "none for reads; OAuth 2.1 with PKCE for the one write tool"
+ },
+ "directories": [
+  {
+   "id": "mcp-registry",
+   "name": "Official MCP Registry",
+   "kind": "mcp-registry",
+   "url": "https://registry.modelcontextprotocol.io",
+   "route": "workflow",
+   "needs": [
+    "name",
+    "endpoint",
+    "transport",
+    "description",
+    "repository"
+   ],
+   "automatable": true,
+   "route_verified": null,
+   "status": "held-dry-run",
+   "note": "Published by .github/workflows/mcp-registry.yml on GitHub OIDC; this row tracks the packet, the workflow does the publishing.",
+   "missing": []
+  },
+  {
+   "id": "smithery",
+   "name": "Smithery",
+   "kind": "mcp-registry",
+   "url": "https://smithery.ai",
+   "route": "form",
+   "needs": [
+    "name",
+    "endpoint",
+    "description",
+    "repository"
+   ],
+   "automatable": false,
+   "route_verified": null,
+   "status": "held-dry-run",
+   "note": "Listing is added through the directory's own signed-in flow.",
+   "missing": []
+  },
+  {
+   "id": "glama",
+   "name": "Glama MCP directory",
+   "kind": "mcp-registry",
+   "url": "https://glama.ai/mcp/servers",
+   "route": "form",
+   "needs": [
+    "name",
+    "description",
+    "repository"
+   ],
+   "automatable": false,
+   "route_verified": null,
+   "status": "held-dry-run",
+   "note": "Listing is added through the directory's own submission flow.",
+   "missing": []
+  },
+  {
+   "id": "pulsemcp",
+   "name": "PulseMCP",
+   "kind": "mcp-registry",
+   "url": "https://www.pulsemcp.com",
+   "route": "form",
+   "needs": [
+    "name",
+    "endpoint",
+    "description"
+   ],
+   "automatable": false,
+   "route_verified": null,
+   "status": "held-dry-run",
+   "note": "Listing is added through the directory's own submission form.",
+   "missing": []
+  },
+  {
+   "id": "mcp-so",
+   "name": "mcp.so",
+   "kind": "mcp-registry",
+   "url": "https://mcp.so",
+   "route": "form",
+   "needs": [
+    "name",
+    "endpoint",
+    "description",
+    "repository"
+   ],
+   "automatable": false,
+   "route_verified": null,
+   "status": "held-dry-run",
+   "note": "Listing is added through the directory's own submission form.",
+   "missing": []
+  },
+  {
+   "id": "awesome-mcp-servers",
+   "name": "awesome-mcp-servers list",
+   "kind": "curated-list",
+   "url": "https://github.com/punkpeye/awesome-mcp-servers",
+   "route": "pull-request",
+   "needs": [
+    "name",
+    "description",
+    "repository"
+   ],
+   "automatable": false,
+   "route_verified": null,
+   "status": "held-dry-run",
+   "note": "A pull request to another project's repository is egress to someone else's system.",
+   "missing": []
+  },
+  {
+   "id": "agent-skills-index",
+   "name": "Agent Skills discovery (self-hosted index)",
+   "kind": "skill-index",
+   "url": "https://ultrastable.io/.well-known/agent-skills/index.json",
+   "route": "self-hosted",
+   "needs": [
+    "skills_index_url",
+    "description"
+   ],
+   "automatable": true,
+   "route_verified": null,
+   "status": "self-hosted",
+   "note": "No submission: agents that follow the well-known path find the index on the site itself.",
+   "missing": []
+  },
+  {
+   "id": "a2a-card",
+   "name": "A2A agent card (self-hosted discovery)",
+   "kind": "a2a",
+   "url": "https://ultrastable.io/.well-known/agent-card.json",
+   "route": "self-hosted",
+   "needs": [
+    "agent_card_url",
+    "description"
+   ],
+   "automatable": true,
+   "route_verified": null,
+   "status": "self-hosted",
+   "note": "No submission: the signed card is the discovery document.",
+   "missing": []
+  }
+ ]
+}

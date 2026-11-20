@@ -1,0 +1,12 @@
+{
+ "id": "Q-SPIN-SCOPE-CLAIMS-LIVE-DAILY",
+ "title": "Q-SPIN-SCOPE-CLAIMS-LIVE-DAILY: Check every live app against its own claims once a day",
+ "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-SPIN-SCOPE-CLAIMS-LIVE-DAILY.json::Status:\\*\\* closed\n**Status:** open\n\nCheck every live app against its own claims once a day. words match code at the cost of a request per claim. Planned cost per day: {\"workers_requests\": 60} against headroom {\"workers_requests\": 45000} (SPINOFF-IDEAS-1).\n\nsize: S\n\n**Prediction:** ops/free-tier.json level != shed within 48 h\n\n**Closing probe:** grep:docs/issues/Q-SPIN-SCOPE-CLAIMS-LIVE-DAILY.json::Status:\\*\\* closed",
+ "labels": [
+  "role:product-manager",
+  "ws:growth",
+  "raises-self"
+ ],
+ "milestone": "Now",
+ "workstream": "Growth"
+}

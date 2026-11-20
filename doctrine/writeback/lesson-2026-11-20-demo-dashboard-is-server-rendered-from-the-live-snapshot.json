@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-demo-dashboard-is-server-rendered-from-the-live-snapshot",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "Demo dashboard is server-rendered from the live snapshot",
+  "body": "site/demo.js renders /demo from live.js load() and overlay() with no client script; unmeasured clocks are excluded from the on-time count and missing values read not measured. Origin labels in the changelog are unattended executor, bot, agent session and other.",
+  "probe": "file:site/demo.js",
+  "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+ },
+ "kind": "lesson",
+ "title": "Demo dashboard is server-rendered from the live snapshot",
+ "session": "session_0156nqDvDRmGqwg1U5ee5gpb"
+}
