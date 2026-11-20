@@ -56,6 +56,13 @@ class Clock(unittest.TestCase):
         self.assertEqual(C.attempts_last_24h(rows, now), 2)
         self.assertTrue(C.should_chain(C.attempts_last_24h(rows, now), 4, 5, ["success"] * 20, 3)[0])  # 20 gated wake-ups no longer fill the cap
 
+    def test_wake_ups_are_counted_per_hour_whatever_they_did(self):
+        from datetime import datetime, timezone
+        now = datetime(2026, 11, 20, 13, 0, tzinfo=timezone.utc).timestamp()
+        rows = [{"createdAt": f"2026-11-20T12:{m:02d}:00Z", "status": "completed"} for m in range(10, 30)] + [{"createdAt": "2026-11-20T09:00:00Z"}]
+        self.assertEqual(C.wakes_last_hour(rows, now), 20)   # SPARK-IDLE-1: gated wake-ups make no attempt, so they are bounded here
+        self.assertEqual(C.load()["chain"]["max_wakes_per_hour"], 6)
+
     def test_d1_window_covers_a_full_day_of_beats(self):
         import unittest.mock as m
         seen = {}
