@@ -20,7 +20,11 @@
    "surface": "README.md"
   },
   {
+<<<<<<< HEAD
    "claim": "seed-py-tests: 44",
+=======
+   "claim": "seed-py-tests: 40",
+>>>>>>> c1d66d871486a3b3c8a4096c19399b8c76866774
    "detail": "",
    "how": "generated from code: {\"n\": {\"py_tests\": [\"tests\"]}}",
    "id": "seed-py-tests",
