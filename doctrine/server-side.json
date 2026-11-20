@@ -69,8 +69,8 @@
   },
   {
    "id": "signed-in-cli",
-   "pattern": "signed-in (cli|gh)[^.\\n]{0,40}(owner|person|device|machine|laptop)|local gh login",
-   "why": "a command-line sign-in on a person's computer is not a credential route; the bootstrap counts a signed-in gh only when the host is a cloud session or a CI job (seed/bootstrap/bootstrap.py _server_side_host)"
+   "pattern": "signed-in cli[^.\\n]{0,40}(owner|person)'s (machine|computer)|machine's existing sign-in|local gh login",
+   "why": "a CLI sign-in found on a person's computer is not a credential route; the ladder accepts it only on a server-side host"
   }
  ],
  "excused_by": "server-side[- ]only",

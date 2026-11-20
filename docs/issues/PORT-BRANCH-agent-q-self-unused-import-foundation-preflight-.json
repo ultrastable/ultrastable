@@ -1,0 +1,12 @@
+{
+  "id": "PORT-BRANCH-agent-q-self-unused-import-foundation-preflight-",
+  "title": "PORT-BRANCH-agent-q-self-unused-import-foundation-preflight-: carry agent/Q-SELF-unused-import-foundation-preflight-py-q-self-unused-import-foundation-prefligh onto main",
+  "body": "**Owner:** operations\n**Trigger:** branch `agent/Q-SELF-unused-import-foundation-preflight-py-q-self-unused-import-foundation-prefligh` at 9e9a3df150 holds work main lacks and cannot merge as is (merge breaks the gate: python3 -m foundation pins --check -> exit 1: ine.json\nissue NC-WEB-3 is on the roadmap with no probe the system can run (file: or grep:); write the probe, do not add it to doctrine/pins-baseline.json\nissue NC-WEB-4 is on the roadmap with no probe the system can run (file: or grep:); write the probe, do not add it to doctrine/pins-baseline.json)\n**Done check:** cmd:python3 -m foundation branchsweep --carried agent/Q-SELF-unused-import-foundation-preflight-py-q-self-unused-import-foundation-prefligh\n**Status:** open\n\nPort the change by hand onto current main (it is 7 commit(s) ahead), keeping tests green; then the sweep deletes the branch. Once idle the branch moves to `refs/archive/agent/Q-SELF-unused-import-foundation-preflight-py-q-self-unused-import-foundation-prefligh` (`git fetch origin refs/archive/agent/Q-SELF-unused-import-foundation-preflight-py-q-self-unused-import-foundation-prefligh`).\n\nsize: M\n\n**Closing probe:** python3 -m foundation branchsweep --carried agent/Q-SELF-unused-import-foundation-preflight-py-q-self-unused-import-foundation-prefligh",
+  "labels": [
+    "role:operations",
+    "agent-ready",
+    "ws:branches"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
