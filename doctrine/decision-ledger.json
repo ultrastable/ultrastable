@@ -3351,6 +3351,15 @@
    "body": "The production smoke test read a key the runway record never had, so the runway check failed on every run. It now reads runway_days, meets_target, below and unmeasured. land_data starts no checks run on a data branch: a dispatched run does not satisfy the branch rule.",
    "probe": "grep:scripts/smoke_live.py::meets_target",
    "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+  },
+  {
+   "id": "lesson-2026-11-20-ciwatch-items-land-through-the-main-writer",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "ciwatch items land through the main writer",
+   "body": "A pull request opened with the built-in workflow token starts no checks, so each ciwatch items pull request stayed open. ciwatch now lands its items with scripts/land_data.py like the other data loops.",
+   "probe": "grep:.github/workflows/ciwatch.yml::CIWATCH-4",
+   "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
   }
  ]
 }
