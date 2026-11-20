@@ -220,6 +220,19 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
   assert.equal(rr.status, 200); { const j = JSON.parse(await rr.text()); assert.equal(j.generated, "2026-11-12T00:00:00Z"); assert.equal(j.freshness.ok, false); /* LIVE-FRESH-1: a week-old snapshot is stale */ }
   rr = await mod.fetch(new Request("https://ultrastable.io/api/freshness"), { ...ENV, DB: db });
   assert.equal(rr.status, 503);
+  // DEMO-DASHBOARD-1: /demo is rendered on the server from the snapshot, with no script and no external call; an unmeasured value is never shown as zero
+  { const snap3 = JSON.stringify({ generated: "2026-11-12T00:00:00Z", clocks: [{ id: "executor", what: "takes <work>", status: "ticking", last_beat_age_s: 120 }, { id: "lane", what: "merges", status: "stopped", last_beat_age_s: 90000 }, { id: "tick", what: "beats", status: "unmeasured" }],
+      throughput: { queue: { by_status: { closed: 30, done: 2, open: 8 }, takeable_now: 5 }, changelog: [{ date: "2026-11-11", changes: [{ n: 7, title: "a", by: "unattended executor" }, { n: 6, title: "b", by: "agent session" }, { n: 5, title: "c", by: "bot" }] }] },
+      topology: { parts: { workers: { live: 5, planned: 0 }, r2: { live: 0, planned: 2 } }, pending_bindings: ["tick: r2 AUDIT"] } });
+    const db3 = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: snap3 }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 1 }) }) };
+    const dr = await mod.fetch(new Request("https://ultrastable.io/demo"), { ...ENV, DB: db3 }), dh = await dr.text(), main = dh.slice(dh.indexOf("Ultrastable, running right now"));
+    assert.equal(dr.status, 200); assert.ok(main.includes("1 of 2") && main.includes("loops on time"), "unmeasured clocks are left out of the count");
+    assert.ok(main.includes("32 of 40") && main.includes("5 of 7") && main.includes("takes &lt;work&gt;") && main.includes("Still to wire: tick: r2 AUDIT"));
+    assert.match(main, /<td>2026-11-11<\/td><td>2<\/td><td>1<\/td>/); assert.ok(main.includes("<svg") && main.includes("role=\"img\""));
+    const demoMod = await import("./demo.js"); assert.ok(!/<script|https?:\/\//.test(demoMod.demoBody(JSON.parse(snap3))), "no script and no external call in the dashboard body");
+    assert.ok(demoMod.demoBody({}).includes("not measured") && !/>0 of 0</.test(demoMod.demoBody({})));
+    assert.equal((await mod.fetch(new Request("https://ultrastable.io/demo"), ENV)).status, 503);
+    assert.match(await (await mod.fetch(new Request("https://ultrastable.io/pilot"), ENV)).text(), /href="\/demo"/); }
   // CHANGELOG-FEED-1: the feed reads the same snapshot; titles are escaped; sizes and origins are summed per day
   { const snap2 = JSON.stringify({ generated: "2026-11-12T00:00:00Z", throughput: { changelog: [{ date: "2026-11-11", changes: [{ n: 7, title: "Fix <b> & more", by: "executor", url: "https://github.com/o/r/pull/7", plus: 10, minus: 2 }, { n: 6, title: "Second", by: "session", plus: 5, minus: 1 }] }] } });
     const db2 = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: snap2 }] }) }), first: async () => ({ generated: "2026-11-12T00:00:00Z", total: 1 }) }) };

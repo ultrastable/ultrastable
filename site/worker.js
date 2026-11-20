@@ -10,6 +10,7 @@ import BRIEF from "./platformbrief.js";
 import IV from "./interview.js";
 import { liveResponse, ignitionResponse } from "./live.js";
 import { feedResponse } from "./feed.js"; // REACH-1
+import { demoResponse } from "./demo.js"; // DEMO-DASHBOARD-1
 import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
 import VERIFIED from "./claims-data.js";
@@ -172,7 +173,7 @@ function pilot() {
   const href = "mailto:" + PILOT_MAIL + "?subject=" + encodeURIComponent("Ultrastable pilot application") + "&body=" + encodeURIComponent(g.apply_fields.map(function (f) { return f + ":\n"; }).join(""));
   const list = function (a) { return "<ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"; };
   return shell({ path: "/pilot", title: "Apply for an Ultrastable pilot", description: g.pitch },
-    "<div class=\"head\"><h1>" + esc(g.title) + "</h1><p>" + esc(g.pitch) + "</p></div>"
+    "<div class=\"head\"><h1>" + esc(g.title) + "</h1><p>" + esc(g.pitch) + "</p><p class=\"meta\">New here? <a href=\"/demo\">See the system running right now</a>.</p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">What we look for</h3>" + list(g.selection) + "</div>"
     + "<div class=\"card\"><h3 class=\"card-title\">What you get</h3><p class=\"meta\">" + esc(g.you_get) + " In return: " + esc(g.we_get) + ".</p></div>"
     + "<div class=\"card\"><h3 class=\"card-title\">What to tell us</h3>" + list(g.apply_fields) + "<p class=\"meta\">Price: " + esc(g.price) + ".</p></div>"
@@ -952,6 +953,7 @@ const handler = {
     { const cp = await controlPlane(request, env, ctx); if (cp) return cp; } // CONTROL-PLANE-1: /api/v1
     if (u.pathname === "/feed.xml") return feedResponse(CANON); // REACH-1
     if (u.pathname.replace(/\/$/, "") === "/proof") return Response.redirect("https://" + CANON + "/live", 301); // PROOF-OWN-1: /proof served the earlier testbed's records; deprecated
+    if (u.pathname === "/demo") return demoResponse(u, request, env, shell, HTML, DASH.asof_at); // DEMO-DASHBOARD-1: the live record as a dashboard
     if (u.pathname === "/live" || u.pathname === "/api/live" || u.pathname === "/api/freshness" || u.pathname === "/changelog.xml" || u.pathname === "/changelog.json") return liveResponse(u, request, env, shell, HTML, DASH.asof_at);
     if (request.method === "POST" && u.pathname === "/api/idea") return takeIdea(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/pilot") return pilotApplication(request, env);
