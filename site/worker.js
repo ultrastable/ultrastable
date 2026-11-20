@@ -99,7 +99,7 @@ function home(ux) {
     + card("It keeps score", "Every decision logs a prediction first. The outcome is scored later, so you can see how often the system was right.")
     + "</div>"
     + "<h2>It questions what it does not know</h2><p>Improving only what is known makes the solution space smaller each time. So the managers also audit their own ignorance: every loop is asked inverted questions (what if the opposite were true, what would a world look like where this was false, what are we pretending not to know) drawn from the Universal Ignorance Audit, pre-mortems and red teaming. Each answer, including 'we cannot know', is recorded, and a gap found becomes a new objective. Coverage and findings are on the <a href=\"/live\">live page</a>.</p>"
-    + "<h2>Works with the agents you already use</h2><p>Ultrastable is the layer around coding agents, not another one. Open models on its own code loop, GitHub Copilot and Claude Code sessions all take work through one claim ledger, so two agents never edit the same file.</p>"
+    + "<h2>Works with the agents you already use</h2><p>Ultrastable is the layer around coding agents, not another one. Open models on its own code loop, GitHub Copilot and Claude Code sessions all take work through one claim ledger, so two agents never work the same item.</p>"
     + "<h2>Where it fits</h2>" + marketTable()
     + "<h2>Proven in production</h2><p>It has run a live system since August 2026, with merged pull requests, failure detectors and a scored prediction history that you can check on the <a href=\"/live\">live proof page</a>. It is one installation, and the <a href=\"/how#gaps\">honest gaps</a> are listed on this site.</p>"
     + "<div class=\"us-actions\"><a class=\"btn\" href=\"/pilot\">Join the pilot</a></div>");
@@ -241,7 +241,7 @@ function product() {
     "<div class=\"head\"><h1>The product</h1><p>A control loop that sits around the coding agents a team already uses.</p></div>"
     + "<h2>What it does</h2><div class=\"us-grid c3\">"
     + card("Chooses the work", "Reads your metrics and failures, files the issues, and orders them so the most valuable work goes first.")
-    + card("Hands it to an agent", "Gives each task to one coding agent at a time, so two agents never edit the same thing.")
+    + card("Hands it to an agent", "Gives each task to one coding agent at a time, so two agents never work the same item.")
     + card("Checks the result", "Every change is checked after it ships and rolled back automatically if something that worked before now fails.")
     + "</div>"
     + "<h2>Who it is for</h2><p>Small engineering teams that run many services and want problems found and fixed without a person choosing every task. Teams that need an audit trail of what their agents changed and why.</p>"
