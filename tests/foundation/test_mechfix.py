@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """MECH-FIX-1: mechanical findings are fixed by code, with no model call."""
 import unittest
 from pathlib import Path

@@ -1,7 +1,7 @@
 {
   "id": "OL-20261114-3",
   "title": "OL-20261114-3: ROLE-WORK-2: waiting dispatches need the Worker-native executor",
-  "body": "**Owner:** staff\n**Trigger:** finding needs-executor on /api/v1/status\n**Done check:** grep:seed/worker/src/nativeexec.js::waiting\n**Status:** open\n\nItems whose probe needs a code change wait with dispatch status waiting until nativeexec takes them (docs/issues/ROLE-WORK-2.json).",
+  "body": "**Owner:** staff\n**Trigger:** finding needs-executor on /api/v1/status\n**Done check:** grep:seed/worker/src/nativeexec.js::export async function runDbQueue\n**Status:** closed\n\nItems whose probe needs a code change wait with dispatch status waiting until nativeexec takes them (docs/issues/ROLE-WORK-2.json).\n\n**Evidence:** Already built as CODE-QUEUE-1: runDbQueue in seed/worker/src/nativeexec.js takes needs-code items from the Worker database with no session. Done check corrected to the function that does it.\n",
   "labels": [
     "role:staff",
     "open-loop"

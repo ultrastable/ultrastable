@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-20-a-connect-link-must-read-the-stored-app-before-it-registers-",
+  "kind": "lesson",
+  "date": "2026-11-20",
+  "title": "A connect link must read the stored app before it registers another",
+  "body": "Six GitHub Apps were registered for two roles because the connect routes posted a fresh manifest on every visit, and a report sent the owner to a connect link while the credential row was already ok. reuseApp reads the credentials table first; reports read it before naming any connect link.",
+  "probe": "file:ops/connections/github-apps.json",
+  "session": "session_0156nqDvQD9uwY4HBSxwUiAQ"
+ },
+ "kind": "lesson",
+ "title": "A connect link must read the stored app before it registers another",
+ "session": "session_0156nqDvQD9uwY4HBSxwUiAQ"
+}

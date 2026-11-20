@@ -47,8 +47,7 @@ class Autorun(unittest.TestCase):
         import sqlite3
         con = sqlite3.connect(self.res["db"])
         cards = con.execute("SELECT default_in_effect, closing_probe FROM gate_cards").fetchall()
-        self.assertTrue(cards)
-        for d, p in cards:
+        for d, p in cards:  # the live backlog may hold no owner-only item; the gate-card path itself is proven by OwnerOnlyFixture below
             # per-item cards (item_done:<id>) or the consolidated DOER-1 card (owner_items:0, evaluated in seed/worker/src/tick.js)
             self.assertTrue(d and (p.startswith("item_done:") or p == "owner_items:0"))
 
@@ -84,6 +83,30 @@ class PublishedDemo(unittest.TestCase):
             self.assertIsNone(re.search(b, text, re.I), b)
         self.assertLess(len(text), 100_000)
         self.assertEqual(json.loads(files[1].read_text())["labels"]["staff work"], "SIMULATED")
+
+
+class OwnerOnlyFixture(unittest.TestCase):
+    """OL-20261114-4: the gate-card path is tested with its own owner-only item (label owner:rowan), not with whatever the live backlog holds."""
+
+    def test_fixture_owner_item_opens_a_gate_card_and_the_loop_moves_on(self):
+        import sqlite3
+        from _repo import copy_repo
+        root = copy_repo()
+        fid = "0-FIXTURE-OWNER-ONLY"
+        (root / "docs/issues" / f"{fid}.json").write_text(json.dumps({
+            "id": fid, "title": f"{fid}: a step only the owner can take", "labels": ["owner:rowan", "role:operations"], "milestone": "Now", "workstream": "Fixture",
+            "body": "**Owner:** operations\n**Trigger:** fixture\n**Done check:** file:does/not/exist\n**Status:** open\n"}), encoding="utf-8")
+        res = autorun.run(root, ticks=4, db_path=Path(scratch()) / "f.db")
+        self.assertEqual(res["status"], "ok")
+        con = sqlite3.connect(res["db"])
+        card = con.execute("SELECT default_in_effect, closing_probe FROM gate_cards WHERE id=?", (f"GATE-{fid}",)).fetchone()
+        self.assertIsNotNone(card, "an owner:rowan item must open a gate card")
+        self.assertTrue(card[0])
+        self.assertEqual(card[1], f"item_done:{fid}")
+        status, blocker = con.execute("SELECT status, blocker FROM items WHERE id=?", (fid,)).fetchone()
+        self.assertEqual((status, blocker), ("blocked", f"gate card GATE-{fid}"))
+        self.assertIsNone(con.execute("SELECT 1 FROM claims WHERE item_id=?", (fid,)).fetchone(), "the claim is released so the loop takes its next item")
+        self.assertTrue(any(w["result"] != "gate" for t in res["log"]["ticks"] for w in t["worked"]), "other work continued")
 
 
 class Cockpit(unittest.TestCase):

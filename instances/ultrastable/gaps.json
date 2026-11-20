@@ -132,7 +132,7 @@
    "plan": "Failover chain across server-side hosts (foundation/failover.py), a credential-free route on GitHub Actions' built-in token, server-side first-run routes (deploy/first-run/README.md: Deploy to Workers button, cloud session with the connector, the cf-account workflow), and a lint (scripts/check_routes.py). Closed when the live move to the new account runs through one of those routes.",
    "closing_probe": "grep:deploy/cloudflare-accounts.json::\"state\": \"running\"[^}]*\"move\"",
    "owner_role": "operations",
-   "status": "open"
+   "status": "closed"
   }
  ]
 }

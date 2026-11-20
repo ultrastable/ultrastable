@@ -30,7 +30,7 @@ class FlowTests(unittest.TestCase):
 
     def test_undeclared_loop_fails(self):
         d = copy.deepcopy(self.d)
-        d["pending"].remove("lifecycle")
+        del d["flows"]["lifecycle"]  # the pending list is empty since OL-20261112-95, so an undeclared loop is one with no flow and no pending entry
         self.assertTrue(any("loop lifecycle declares no flow" in b for b in flows.check(d=d, loops=self.loops)))
 
     def test_declared_loop_must_leave_pending(self):
@@ -66,3 +66,12 @@ class FlowTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class NoPending(unittest.TestCase):
+    """OL-20261112-95: every loop in the registry declares its flows; the pending list is empty and stays empty."""
+
+    def test_pending_is_empty_and_every_loop_is_declared_on_a_cycle(self):
+        d, loops = flows.load()
+        self.assertEqual(d["pending"], [])
+        self.assertEqual({l["id"] for l in loops} - set(d["flows"]), set())
+        self.assertEqual(flows.graph(d)["closed"], set(d["flows"]))
