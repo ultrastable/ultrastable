@@ -246,7 +246,7 @@ const { lint } = await import(pathToFileURL(fileURLToPath(new URL("./worker.js",
     assert.ok(!/\d/.test(stripped.replace(/<[^>]+>/g, " ")), "no number outside a fact cell: " + (stripped.replace(/<[^>]+>/g, " ").match(/.{0,30}\d.{0,30}/) || [""])[0]);
     assert.ok(body.includes("skips &lt;archived&gt; repos") && cs.caseBody({}).includes("no measured values yet"));
     const db4 = { prepare: () => ({ bind: () => ({ all: async () => ({ results: [{ body: JSON.stringify(d) }] }) }), first: async () => ({ generated: d.generated, total: 1 }) }) };
-    assert.equal((await mod.fetch(new Request("https://ultrastable.io/proof/customer-zero"), { ...ENV, DB: db4 })).status, 200);
+    assert.equal((await mod.fetch(new Request("https://ultrastable.io/customer-zero"), { ...ENV, DB: db4 })).status, 200);
     assert.equal((await mod.fetch(new Request("https://ultrastable.io/proof"), ENV)).status, 301, "PROOF-OWN-1 redirect is unchanged"); }
   // EXAMPLE-SYSTEMS-1: the front door shows every example system, and each states its loop, its measure and its upkeep
   { const ex = await import("./examples.js"), homeHtml = await (await mod.fetch(new Request("https://ultrastable.io/"), ENV)).text();

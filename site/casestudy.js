@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
-// CASE-STUDY-1: /proof/customer-zero, the case study of Ultrastable running on itself, generated from the same snapshot and live overlay as
+// CASE-STUDY-1: /customer-zero, the case study of Ultrastable running on itself, generated from the same snapshot and live overlay as
 // /live. The page is built from facts() only: every figure is a fact with the record it was read from, and a value the snapshot does not
 // hold is left out, never written as zero. No sentence here states a number by hand.
 import { load, overlay } from "./live.js";
@@ -44,5 +44,5 @@ export async function caseResponse(u, request, env, shell, HTML, bundleAt = null
   if (request.method !== "GET" && request.method !== "HEAD") return new Response(JSON.stringify({ error: "read-only" }), { status: 405, headers: { "content-type": "application/json; charset=utf-8", allow: "GET, HEAD" } });
   const r = await load(env);
   const body = r ? caseBody(await overlay(JSON.parse(r.body), env, r.generated, Date.now(), bundleAt)) : "<div class=\"head\"><h1>Customer zero: Ultrastable running on itself</h1><p>The record has not been published yet. The <a href=\"/live\">live page</a> shows it as soon as it is.</p></div>";
-  return new Response(shell({ path: "/proof/customer-zero", title: "Customer zero: Ultrastable running on itself", description: "What the system shipped, which loops ran, what broke and what it cost, each value linked to its record." }, body), { status: r ? 200 : 503, headers: HTML });
+  return new Response(shell({ path: "/customer-zero", title: "Customer zero: Ultrastable running on itself", description: "What the system shipped, which loops ran, what broke and what it cost, each value linked to its record." }, body), { status: r ? 200 : 503, headers: HTML });
 }
