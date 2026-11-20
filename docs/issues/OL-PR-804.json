@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-804",
+  "title": "OL-PR-804: land or supersede pull request #804 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #804 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 804\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #804 (`agent/data-d849d80e0f` at d849d80e0f, opened by app/ultrastable-209646): lane: server-owned loops (SERVER-OWNS-LOOPS-1) [skip ci]. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (4): docs/issues/OL-PR-764.json, docs/issues/OL-PR-777.json, docs/issues/OL-PR-784.json, site/dashboard-data.js. Closing probe: pull request #804 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}

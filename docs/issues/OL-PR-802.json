@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-802",
+  "title": "OL-PR-802: land or supersede pull request #802 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #802 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 802\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #802 (`agent/data-311775fac1` at 311775fac1, opened by app/ultrastable-209646): regen-generated: refresh generated data after merge (REGEN-GENERATED-1) (part 3/3) [skip ci]. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (6): ops/decisions/outcomes.jsonl, ops/decisions/rescore.jsonl, ops/executor-log.jsonl, ops/provenance.jsonl, site/dashboard-data.js, site/decisions-data.js. Closing probe: pull request #802 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
