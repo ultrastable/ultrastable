@@ -1,0 +1,11 @@
+{
+  "id": "Q-CRED-CLOUDFLARE_API_TOKEN",
+  "title": "Q-CRED-CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN is invalid",
+  "body": "**Owner:** staff\n**Trigger:** every watchdog run\n**Done check:** cmd:python3 -m foundation credwatch --probe CLOUDFLARE_API_TOKEN\n**Status:** open\n\nTOKEN-EXPIRY-1: `CLOUDFLARE_API_TOKEN` (every deploy workflow and the watchdog) is invalid; expiry not reported. Move every loop that uses it to a route that does not (GitHub's per-run token, the deploy gateway's OIDC route) and renew it through the connect flow.\n",
+  "labels": [
+    "role:staff",
+    "credential"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}
