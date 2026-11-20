@@ -43,6 +43,9 @@ def _date(s: str | None) -> dt.date | None:
 
 def probe(cred: dict, env=os.environ, http=_http) -> dict:
     """{'state': ok|invalid|unbound|unmeasured, 'expires': ISO date or None}; never raises and never returns the value."""
+    if cred["kind"] == "cloudflare-worker-token":  # CF-ROUTE-1: the credential is the site Worker's; the check is whether it can read the account, through the OIDC route
+        from . import workerroute
+        return workerroute.reaches_account(env) if workerroute.available(env) else {"state": "unmeasured", "expires": None}
     tok = env.get(cred["name"], "")
     if not tok:
         return {"state": "unbound", "expires": None}
@@ -70,7 +73,7 @@ def probe(cred: dict, env=os.environ, http=_http) -> dict:
 def assess(c: dict, today: dt.date, env=os.environ, http=_http) -> list[dict]:
     rows = []
     for cred in c["credentials"]:
-        rows.append({"name": cred["name"], "what": cred["used_by"], **probe(cred, env, http)})
+        rows.append({"name": cred["name"], "what": cred["used_by"], **probe(cred, env, http), **({"optional": True} if cred.get("optional") else {})})
     for r in c["registrations"]:
         rows.append({"name": r["name"], "what": "registration" + ("" if r.get("auto_renew") else ", auto-renew off"), "state": "ok", "expires": r["expires"]})
     for r in rows:
@@ -93,8 +96,8 @@ def item(r: dict) -> dict:
 def run(root=REPO, apply=False, today=None, env=os.environ, http=_http) -> dict:
     root = Path(root); c = cfg(root); today = today or dt.datetime.now(dt.timezone.utc).date()
     rows = assess(c, today, env, http)
-    bad = [r for r in rows if r["state"] in ("invalid", "expiring", "expired")]
-    state = {"rows": [{k: r[k] for k in ("name", "state", "expires")} for r in rows]}  # no dates of the run: the file changes only when a state does
+    bad = [r for r in rows if r["state"] in ("invalid", "expiring", "expired") and not r.get("optional")]
+    state = {"rows": [{k: r[k] for k in ("name", "state", "expires") + (("optional",) if r.get("optional") else ())} for r in rows]}  # no dates of the run: the file changes only when a state does
     out, changed = root / "ops/credwatch.json", False
     if apply:
         new = json.dumps(state, indent=1) + "\n"
@@ -119,7 +122,7 @@ def probe_recorded(name: str, root=REPO) -> int:
 def check(root=REPO) -> list[str]:
     c, bad = cfg(root), []
     for cred in c["credentials"]:
-        if cred.get("kind") not in ("cloudflare-token", "github-token") or not cred.get("name") or not cred.get("used_by"):
+        if cred.get("kind") not in ("cloudflare-token", "github-token", "cloudflare-worker-token") or not cred.get("name") or not cred.get("used_by"):
             bad.append(f"credential {cred.get('name')}: needs name, kind and used_by")
     for r in c["registrations"]:
         if not _date(r.get("expires")):

@@ -2,7 +2,7 @@
 # Copyright (c) Ultrastable
 """MAIN-WRITER-1: replaces `git push origin HEAD:main` in workflows. Sends the files of the last local commit to the tick Worker, which verifies this run's
 GitHub Actions OIDC token and writes one commit to main with the org's GitHub App (exempt from the main ruleset). Needs `permissions: id-token: write`.
-Appended ledger lines go as appends, so concurrent writers never overwrite each other. Exit 0 only when the commit landed."""
+Appended ledger lines go as appends, so concurrent writers never overwrite each other. Exit 0 only when the commit landed on main or the Worker opened a pull request that carries it (MAIN-WRITER-PR-1)."""
 import base64, json, os, subprocess, sys, time, urllib.request, urllib.error
 
 MAX_FILES = 20  # seed/worker/src/maincommit.js MAX_FILES

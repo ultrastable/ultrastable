@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-cloudflare-and-main-writes-go-through-the-workers-not-github",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "Cloudflare and main writes go through the Workers, not GitHub secrets (CF-ROUTE-1, MAIN-WRITER-PR-1)",
+  "body": "The Cloudflare secret in GitHub Actions is not the credential the platform deploys with: deploys use the site Worker's own token through an OIDC route. The credential check, the backup drill and the runway therefore read the account through the site Worker's allow-listed /__internal/cf route (GET d1/kv, SELECT-only queries, backup-prefix R2 writes). The GitHub secret and LANE_PAT are optional and no longer limit the runway. When the ruleset refuses the org App a direct write to main, the tick Worker opens a pull request with the App, which starts checks, instead of answering 409.",
+  "probe": "grep:site/deployer.js::cfProxy",
+  "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+ },
+ "kind": "decision",
+ "title": "Cloudflare and main writes go through the Workers, not GitHub secrets (CF-ROUTE-1, MAIN-WRITER-PR-1)",
+ "session": "session_0156nqDsM3aBom8uaNaYPR8Z"
+}
