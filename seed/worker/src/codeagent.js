@@ -111,7 +111,7 @@ export async function runExecutor(env) {
 // doctrine/code-agents.json (checked by tests/foundation/test_agents.py and test/codeagent.test.js). Cheapest known price first, unknown after.
 // Returns {summary, files:[{path, content}]} for the executor to apply under its path guard. Nothing here touches GitHub: the PR step is the executor's.
 export const ADAPTERS = [
-  { id: 'workers-ai-glm', model: '@cf/zai-org/glm-5.3-flash', family: 'glm', price: 0.65, extra: { reasoning_effort: 'low', max_tokens: 8000 } },
+  { id: 'workers-ai-glm', model: '@cf/zai-org/glm-4.7-flash', family: 'glm', price: 0.65, extra: { reasoning_effort: 'low', max_tokens: 8000 } },
   { id: 'workers-ai-llama', model: '@cf/meta/llama-3.3-70b-instruct-fp8-fast', family: 'llama', price: 2.546, extra: { max_tokens: 3000 } },
   { id: 'workers-ai-qwen-coder', model: '@cf/qwen/qwen2.5-coder-32b-instruct', family: 'qwen', price: 1e6, extra: { max_tokens: 7000 } },
 ];

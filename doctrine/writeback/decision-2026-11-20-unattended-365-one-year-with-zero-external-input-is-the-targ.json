@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-20-unattended-365-one-year-with-zero-external-input-is-the-targ",
+  "kind": "decision",
+  "date": "2026-11-20",
+  "title": "UNATTENDED-365: one year with zero external input is the target, measured by a register of every remaining input",
+  "body": "Rowan, 2026-11-20. doctrine/unattended.json lists each credential, renewal, quota, hosted model, dependency, outside session and identity act as closed (self-renewing, with probe), gate (identity-bound, default and one link) or open (queue item Q-YEAR-*). Horizon measured 2026-11-20: 161 days. NEEDS-YOU.md hides an act whose dependency measured closed.",
+  "probe": "file:foundation/unattended.py"
+ },
+ "kind": "decision",
+ "title": "UNATTENDED-365: one year with zero external input is the target, measured by a register of every remaining input",
+ "session": ""
+}

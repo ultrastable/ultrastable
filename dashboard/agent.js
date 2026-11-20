@@ -9,7 +9,7 @@
 // Model list mirrors doctrine/code-agents.json (cheapest first). Inlined: seed/worker/src/codeagent.js no longer exports ADAPTERS on main (ZERO-MINUTES-1 rewrite).
 import { routeChat } from "../seed/worker/src/airoute.js";
 const ADAPTERS = [
-  { id: "workers-ai-glm", model: "@cf/zai-org/glm-5.3-flash", family: "glm", price: 0.65, extra: { reasoning_effort: "low", max_tokens: 8000 } },
+  { id: "workers-ai-glm", model: "@cf/zai-org/glm-4.7-flash", family: "glm", price: 0.65, extra: { reasoning_effort: "low", max_tokens: 8000 } },
   { id: "workers-ai-llama", model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", family: "llama", price: 2.546, extra: { max_tokens: 3000 } },
   { id: "workers-ai-qwen-coder", model: "@cf/qwen/qwen2.5-coder-32b-instruct", family: "qwen", price: 1e6, extra: { max_tokens: 7000 } },
 ];

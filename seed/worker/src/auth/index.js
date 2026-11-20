@@ -70,14 +70,27 @@ export async function getToken(db, env, tenant, provider, opts = {}) {
   return { ok: true, token: r.token, cached: false };
 }
 
+export const DEAD_RETRY_MS = 6 * 3600 * 1000;
+export const isDead = r => r.status === 'failed' && /refresh HTTP 40[01]|consent has not completed/.test(r.last_error || '');
+
+// OWNER-ACTS-1: the acts that need a person's sign-in, read from live credential rows instead of a typed list. No secret leaves: provider, reason, link.
+export async function ownerActs(db) {
+  await store.ensureSchema(db);
+  const rows = (await db.prepare('SELECT tenant, provider, status, last_error, updated_at FROM credentials').all()).results || [];
+  return rows.filter(isDead).map(r => ({ id: 'signin:' + r.provider, tenant: r.tenant, provider: r.provider, reason: r.last_error, since: r.updated_at, connect: '/connect/' + r.provider.replace(/^oauth:/, '').replace(/^github-.*/, 'github') }));
+}
+
 export async function refreshDue(db, env, opts = {}) {
   await store.ensureSchema(db);
   const now = opts.now || Date.now();
-  const rows = (await db.prepare('SELECT tenant, provider, expires_at, status FROM credentials').all()).results || [];
+  const rows = (await db.prepare('SELECT tenant, provider, expires_at, status, last_error, updated_at FROM credentials').all()).results || [];
   const out = [];
   for (const r of rows) {
     const due = r.status !== 'ok' || !r.expires_at || Date.parse(r.expires_at) - now <= MARGIN_MS;
-    if (!due) { out.push({ ...r, action: 'fresh' }); continue; }
+    if (!due) { out.push({ tenant: r.tenant, provider: r.provider, expires_at: r.expires_at, status: r.status, action: 'fresh' }); continue; }
+    // DEAD-CONSENT-1 (2026-11-20): a refresh the provider refused (401/400) or a consent that never finished cannot heal by retrying; only a new sign-in does.
+    // Live rows showed 337 Bluesky and 374 Mastodon retries, one every tick. Such a row is retried every DEAD_RETRY_MS, and a new consent rewrites it at once.
+    if (isDead(r) && r.updated_at && now - Date.parse(r.updated_at) < DEAD_RETRY_MS) { out.push({ tenant: r.tenant, provider: r.provider, action: 'backoff', error: r.last_error }); continue; }
     const res = await getToken(db, env, r.tenant, r.provider, { ...opts, now });
     out.push({ tenant: r.tenant, provider: r.provider, action: res.ok ? 'renewed' : 'failed', error: res.error });
   }

@@ -10,6 +10,8 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-20
 
+- 2026-11-20: UNATTENDED-365 (Rowan: run one year unattended with zero external input and keep shipping). Register `doctrine/unattended.json`, checker `python3 -m foundation unattended --check|--horizon` (inside `openloops --check`). Measured: 21 inputs, 8 closed, 6 identity gates (domain auto-renew off with expiry 2027-11-10, .net registrar lock, Bluesky refresh refused since 2026-11-20, Mastodon consent unfinished, single owner sign-in, agent subscription), 7 open as `Q-YEAR-*` items (self-coder, GitHub Models route, model refresh on the Worker, live owner list, Node 22 pin, dependency drift, mail relay token). Horizon 161 days. MODEL-WATCH-1: `doctrine/models.json`, `python3 -m foundation modelwatch`; retired ids replaced (glm-5.3-flash to glm-4.7-flash, llama-3.1-8b to gpt-oss-20b). DEAD-CONSENT-1 and OWNER-ACTS-1 in `seed/worker/src/auth/index.js` (`GET /api/v1/owner-acts`). GitHub App, admin app and Actions payment measured done and no longer asked in NEEDS-YOU.md.
+
 - 2026-11-20: COVERAGE-CITED-1: claim coverage 5.5 to 42.8 percent; 54 statements bound to the code they cite (scripts/bind_cited_claims.py), floor raised to 40 percent; 235 statements that cite no code stay unbound
 - 2026-11-20: Q-GATE-403, GATE-STUB-1: the App asks for statuses:write, an all-403 gate is one card GATE-APP-PERMISSION that closes on the first judged pull request; the Worker gate judges worker/* as a model branch and fails added placeholder lines (the Actions-route refusal is ELISION-1, #729)
 - 2026-11-20: Unblock main checks, bound executor wake-ups, refuse stub worker PRs (SPARK-IDLE-1, NATIVE-STUB-1) (#727)

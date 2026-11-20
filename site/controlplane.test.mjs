@@ -50,10 +50,10 @@ assert.ok(!JSON.stringify(r.body).includes("claude-haiku-5-5"), "config tier lab
 assert.equal(byId["staff-1"].model, "m"); assert.equal(byId["ops-1"].model, "none in 24 h");
 assert.deepEqual(byId["staff-1"].lined_up.map(i => i.item), ["A", "B"]); assert.ok(byId["staff-1"].next_tick_at);
 // CODE-QUEUE-1: the code executor is an agent; its work is the in-pr items and its queue the needs-code items.
-db.exec(`INSERT INTO items (id,title,owner_role,done_check,priority,status,blocker) VALUES ('P','P: in pr','operations','x',40,'blocked','in-pr: https://github.com/o/r/pull/9 | agent: worker-native | model: @cf/zai-org/glm-5.3-flash'),('Q','Q: needs code','operations','x',30,'blocked','needs-code: edit x')`);
+db.exec(`INSERT INTO items (id,title,owner_role,done_check,priority,status,blocker) VALUES ('P','P: in pr','operations','x',40,'blocked','in-pr: https://github.com/o/r/pull/9 | agent: worker-native | model: @cf/zai-org/glm-4.7-flash'),('Q','Q: needs code','operations','x',30,'blocked','needs-code: edit x')`);
 r = await J("https://ultrastable.io/api/v1/agents");
 const ce = r.body.agents.find(a => a.id === "code-executor");
-assert.equal(ce.state, "working"); assert.equal(ce.working_on[0].pr, "https://github.com/o/r/pull/9"); assert.equal(ce.model, "@cf/zai-org/glm-5.3-flash"); assert.deepEqual(ce.lined_up.map(i => i.item), ["Q"]);
+assert.equal(ce.state, "working"); assert.equal(ce.working_on[0].pr, "https://github.com/o/r/pull/9"); assert.equal(ce.model, "@cf/zai-org/glm-4.7-flash"); assert.deepEqual(ce.lined_up.map(i => i.item), ["Q"]);
 assert.deepEqual((await J("https://ultrastable.io/api/v1/work?view=in_progress")).body.items.map(i => i.id).sort(), ["C", "P"]);
 assert.ok(!(await J("https://ultrastable.io/api/v1/work?view=blocked")).body.items.some(i => i.id === "P"), "an item in a PR is in progress, not blocked");
 db.exec(`DELETE FROM items WHERE id IN ('P','Q')`);
