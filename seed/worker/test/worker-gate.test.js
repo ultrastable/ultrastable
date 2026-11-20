@@ -83,3 +83,31 @@ test('runGate: model branch with a broken or oversized file gets a failure statu
   assert.deepEqual((await runGate({ token: 't', repos: ['o/r'], fetch: g.f })).checked, ['o/r#1 success']);
   assert.ok(!g.calls.some((c) => c.k.includes('/contents/')));
 });
+
+test('Q-GATE-403: a 403 on every pull request is one named condition and one gate card', async () => {
+  const { gateCard, stubLines, MODEL_BRANCH_RE } = await import('../src/worker-gate.js');
+  const pr = (n, ref) => ({ number: n, head: { sha: 's' + n, ref }, base: { sha: 'b' }, body: '' });
+  const { f } = fake({ 'GET /repos/o/r/pulls?state=open': [200, [pr(1, 'feature/a'), pr(2, 'feature/b')]], 'GET /repos/o/r/commits/': [200, []], 'GET /repos/o/r/pulls/': [200, [{ filename: 'a.txt', status: 'added', patch: '+x' }]], 'POST /repos/o/r/statuses/': [403, {}] });
+  const out = await runGate({ token: 't', repos: ['o/r'], fetch: f });
+  assert.equal(out.status, 'forbidden'); assert.equal(out.needs, 'statuses:write'); assert.deepEqual(out.forbidden, ['o/r#1', 'o/r#2']);
+  assert.match(out.forbidden_detail, /o\/r#2 status 403: the GitHub App lacks statuses:write/);
+  const ran = [];
+  const db = { prepare: sql => ({ bind: (...a) => ({ run: async () => { ran.push([sql, a]); } }) }) };
+  assert.equal(await gateCard(db, out, { origin: 'https://x.test' }), 'open');
+  assert.match(ran[0][0], /INSERT INTO gate_cards/); assert.equal(ran[0][1][0], 'GATE-APP-PERMISSION'); assert.match(ran[0][1][1], /https:\/\/x\.test\/connect\/github/);
+  assert.equal(await gateCard(db, { status: 'ok', checked: ['o/r#1 success'], forbidden: [] }), 'closed');
+  assert.match(ran[1][0], /UPDATE gate_cards SET status='closed'/);
+  assert.equal(await gateCard(db, { status: 'ok', checked: [], forbidden: [] }), null, 'an idle pass neither opens nor closes the card');
+  assert.ok(MODEL_BRANCH_RE.test('worker/rm-1-2026') && MODEL_BRANCH_RE.test('agent/x') && !MODEL_BRANCH_RE.test('feature/x'));
+  assert.equal(stubLines([{ filename: 'seed/worker/src/worker-gate.js', patch: '@@\n+// ... existing code ...\n+const a = 1;' }]).length, 1);
+  assert.equal(stubLines([{ filename: 'a.js', patch: '@@\n-// ... existing code ...\n+const a = 1;' }]).length, 0, 'a removed placeholder is not a finding');
+});
+test('GATE-STUB-1: the gate fails a model branch that adds a placeholder', async () => {
+  const pr = { number: 9, head: { sha: 's9', ref: 'worker/rm-1-202611200040' }, base: { sha: 'b' }, body: '' };
+  const src = 'class C:\n    def go(self):\n        # implement go logic here\n        pass\n';
+  const { f, calls } = fake({ 'GET /repos/o/r/pulls?state=open': [200, [pr]], 'GET /repos/o/r/commits/': [200, []], 'GET /repos/o/r/pulls/9/files': [200, [{ filename: 'c.py', status: 'added', patch: '@@\n+' + src.split('\n').join('\n+') }]],
+    'GET /repos/o/r/contents/c.py': [200, { size: src.length, encoding: 'base64', content: b64(src) }], 'POST /repos/o/r/statuses/': [201, {}] });
+  const out = await runGate({ token: 't', repos: ['o/r'], fetch: f });
+  assert.deepEqual(out.checked, ['o/r#9 failure']);
+  assert.match(JSON.parse(calls.find(c => c.k.startsWith('POST /repos/o/r/statuses/')).body).description, /c\.py: placeholder/);
+});

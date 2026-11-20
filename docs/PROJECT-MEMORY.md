@@ -10,6 +10,7 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-20
 
+- 2026-11-20: Q-GATE-403, EXEC-STUB-GUARD-1, GATE-STUB-1: the App asks for statuses:write, an all-403 gate is one card GATE-APP-PERMISSION that closes on the first judged pull request; the Actions executor refuses elision placeholders and gutted files; the Worker gate fails model branches (agent, claude, worker) that add a placeholder
 - 2026-11-20: open-loops: nameserver retry refused again, lock end unconfirmed (#724)
 - 2026-11-20: queue: closing-probe verdicts for 4 item(s) (QUEUE-PERSIST-1) [skip ci]
 - 2026-11-20: queue: closing-probe verdicts for 111 item(s) (QUEUE-PERSIST-1) (part 6/6) [skip ci]

@@ -29,6 +29,18 @@ class Executor(unittest.TestCase):
             self.assertIsNotNone(executor.safe_path(bad), bad)
         self.assertIsNone(executor.safe_path("docs/a.md"))
 
+    def test_apply_edits_refuses_placeholders_and_gutted_files(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "seed/worker/src/worker-gate.js"; f.parent.mkdir(parents=True); f.write_text("export const a = 1;\n" * 60)
+            with self.assertRaisesRegex(ValueError, "placeholder"):
+                executor.apply_edits([{"path": "seed/worker/src/worker-gate.js", "content": "// ... existing code ...\nif (!token) return 1;\n" * 30}], d)
+            with self.assertRaisesRegex(ValueError, "would lose"):
+                executor.apply_edits([{"path": "seed/worker/src/worker-gate.js", "content": "export const a = 1;\n"}], d)
+            with self.assertRaisesRegex(ValueError, "placeholder"):
+                executor.apply_edits([{"path": "connector_health.py", "content": "def f():\n    # implement silent refresh logic here\n    pass\n"}], d)
+            self.assertEqual(f.read_text(), "export const a = 1;\n" * 60)          # nothing was written
+            self.assertEqual(executor.apply_edits([{"path": "seed/worker/src/worker-gate.js", "content": "export const a = 2;\n" * 60}], d), ["seed/worker/src/worker-gate.js"])
+
     def test_apply_edits_writes_and_rejects(self):
         with tempfile.TemporaryDirectory() as d:
             self.assertEqual(executor.apply_edits([{"path": "docs/a.md", "content": "x"}], d), ["docs/a.md"])

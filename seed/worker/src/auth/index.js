@@ -14,7 +14,7 @@ export const adapterFor = provider => ADAPTERS[provider.split(':')[0]];
 // (routes.js manifest) requests exactly these permissions and nothing else, and auth.test.js fails when the request and this list differ.
 // Widening it is a reviewed change to this constant, never a field added at the call site.
 export const SCOPE_ALLOWLIST = Object.freeze({
-  'github-app': Object.freeze({ contents: 'write', pull_requests: 'write', issues: 'write', actions: 'write', checks: 'read', workflows: 'write', metadata: 'read' }),
+  'github-app': Object.freeze({ contents: 'write', pull_requests: 'write', issues: 'write', actions: 'write', checks: 'read', statuses: 'write', workflows: 'write', metadata: 'read' }),  // statuses: the Worker gate posts the `worker-gate` commit status (Q-GATE-403)
   'github-admin': Object.freeze({ administration: 'write', metadata: 'read' }),  // REPOS-1: repository settings only (archive a retired repository); no code, no workflows
 });
 
