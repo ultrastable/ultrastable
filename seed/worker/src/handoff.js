@@ -7,7 +7,7 @@
 // Every state change is a row in D1 `handoff_events` and one comment on the PR, so the record lives server-side, not in a chat.
 const API = 'https://api.github.com';
 const MAX_ATTEMPTS = 3;
-const CAPACITY = /Too many subrequests/i;
+const CAPACITY = /Too many subrequests|subrequest budget/i;  // HANDOFF-SUBREQ-3: the platform's limit and the worker's own meter (subreq.js) are both this tick's capacity, never the change
 const VERIFY_TRIES = 3;  // VERIFY-RETRY-1: a fresh deploy takes a moment to reach the edge; one early 404 must not roll production back
 
 // One GitHub wrapper for the tick (lane.js), counted against the tick's shared budget (GITHUB-BUDGET-1). `ghb` is bound per run with that budget.
@@ -201,7 +201,7 @@ export async function runHandoffs({ db, token, repos = [], fetch: f = fetch, dep
   }
   }
   async function unblockCapacity() {
-    const stuck = (await db.prepare("SELECT * FROM handoffs WHERE state = 'blocked' AND detail LIKE '%Too many subrequests%' ORDER BY updated_at DESC LIMIT 3").all()).results || [];
+    const stuck = (await db.prepare("SELECT * FROM handoffs WHERE state = 'blocked' AND (detail LIKE '%Too many subrequests%' OR detail LIKE '%subrequest budget%') ORDER BY updated_at DESC LIMIT 3").all()).results || [];
     for (const h of stuck) {
       try {
         const targets = String(h.deploy || '').split(',').map(s => s.trim()).filter(Boolean); let carried = targets.length > 0, by = null;
