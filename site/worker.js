@@ -357,6 +357,82 @@ async function siteApi(request, env, id) {
 }
 // The page gets a tiny client so generated code never builds URLs: US.list(coll) / US.add(coll, data). Same-origin on <id>.ultrastable.io; CORS-open on the main host (the page is sandboxed there).
 const usClient = (host, id) => "<script>window.US=(function(){var b=" + JSON.stringify("https://" + host + "/s/" + id + "/api") + ";function j(r){return r.json().then(function(x){if(!r.ok)throw new Error(x.error||r.status);return x})}return{list:function(c){return fetch(b+\"?coll=\"+encodeURIComponent(c)).then(j).then(function(x){return x.items})},add:function(c,d){return fetch(b,{method:\"POST\",headers:{\"content-type\":\"application/json\"},body:JSON.stringify({coll:c,data:d})}).then(j)}}})()</script>";
+// DATA-API-1 (Q-GAP-shared-backend): the same shared back end as a plain path, /api/data/<site>/<collection>. GET lists the collection; POST takes the
+// record itself as the JSON body. It is siteApi underneath, so the limits, the rate cap and the answers are the same (site/site.test.mjs).
+const DATA_PATH = "/api/data/";
+async function siteData(request, env, id, coll) {
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+  const u = new URL(request.url), h = { "content-type": "application/json", "cf-connecting-ip": request.headers.get("cf-connecting-ip") || "x" }; u.pathname = "/s/" + id + "/api"; u.search = "";
+  if (request.method === "GET") { u.searchParams.set("coll", coll); return siteApi(new Request(u, { headers: h }), env, id); }
+  if (request.method !== "POST") return apiJson({ error: "method not allowed", code: "method" }, 405);
+  return siteApi(new Request(u, { method: "POST", headers: h, body: JSON.stringify({ coll, data: await request.json().catch(() => null) }) }), env, id);
+}
+// OWN-DOMAIN-1 (Q-GAP-own-domain): a built site can answer at the person's own web address. Control of the address is proven by a DNS TXT record that
+// names this site (read over DNS-over-HTTPS, so nobody can claim an address they do not control), then the address is added at the edge as a custom
+// hostname of the zone (needs CF_DEPLOY_TOKEN and CF_ZONE_ID on this Worker). Every state is reported as it is: waiting_for_dns, dns_unreadable,
+// pending_platform (proven, the edge step could not run here), edge_refused, issuing, attached. Only a proven address is stored (KV domain:<host>).
+const DOMAIN_RX = /^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}$/, OUR_HOSTS = /(^|\.)ultrastable\.(io|org|app|net)$|\.workers\.dev$|\.pages\.dev$/;
+export const domainToken = (id) => "ultrastable-site=" + id;
+export async function attachDomain(env, id, domain, fetcher) {
+  const f = fetcher || fetch, host = String(domain || "").trim().toLowerCase().replace(/^https?:\/\//, "").replace(/[\/?#].*$/, "").replace(/\.$/, "");
+  if (!okId(id) || !env || !env.ASSETS || !(await env.ASSETS.get("state:" + id))) return { ok: false, status: 404, code: "no_site", message: "That site was not found." };
+  if (!DOMAIN_RX.test(host) || OUR_HOSTS.test(host)) return { ok: false, status: 400, code: "bad_domain", message: "That is not a web address of your own. Use one like www.example.org." };
+  const records = [{ type: "TXT", name: "_ultrastable." + host, value: domainToken(id), why: "shows the address is yours" }, { type: "CNAME", name: host, value: id + "." + CANON, why: "sends visitors to your site" }];
+  let proven = false, unreadable = null;
+  try {
+    const r = await f("https://cloudflare-dns.com/dns-query?name=" + encodeURIComponent("_ultrastable." + host) + "&type=TXT", { headers: { accept: "application/dns-json" } }), j = await r.json();
+    proven = (j.Answer || []).some(a => String(a.data || "").replace(/"/g, "").trim() === domainToken(id));
+  } catch (e) { unreadable = String(e && e.message || e).slice(0, 120); }
+  if (!proven) return { ok: true, status: 202, state: unreadable ? "dns_unreadable" : "waiting_for_dns", host, records, message: unreadable ? "The address could not be looked up just now. It is checked again each time this is asked." : "The address is not connected yet. It becomes yours here as soon as its two records are in place." };
+  let edge = { state: "pending_platform", detail: "the edge step is not available on this deployment" };
+  if (env.CF_DEPLOY_TOKEN && env.CF_ZONE_ID) {
+    const api = "https://api.cloudflare.com/client/v4/zones/" + env.CF_ZONE_ID + "/custom_hostnames", h = { Authorization: "Bearer " + env.CF_DEPLOY_TOKEN, "Content-Type": "application/json" };
+    try {
+      let j = await (await f(api + "?hostname=" + encodeURIComponent(host), { headers: h })).json(), cur = j && j.success && j.result && j.result[0];
+      if (!cur) { j = await (await f(api, { method: "POST", headers: h, body: JSON.stringify({ hostname: host, ssl: { method: "http", type: "dv" } }) })).json(); cur = j && j.success && j.result; }
+      edge = cur ? { state: cur.status === "active" && cur.ssl && cur.ssl.status === "active" ? "attached" : "issuing", cf_id: cur.id, hostname_status: cur.status, certificate_status: cur.ssl && cur.ssl.status }
+        : { state: "edge_refused", detail: JSON.stringify(j && j.errors || j).slice(0, 200) };
+    } catch (e) { edge = { state: "edge_refused", detail: String(e && e.message || e).slice(0, 200) }; }
+  }
+  await jput(env, "domain:" + host, { id, at: new Date().toISOString(), edge });
+  const say = { attached: "Your site now answers at your own address.", issuing: "Your address is proven. Its secure certificate is being issued; this finishes by itself.", pending_platform: "Your address is proven and saved. It will start answering when the platform's custom-address service is switched on.", edge_refused: "Your address is proven and saved, but the platform could not add it yet. It is retried each time this is asked." };
+  return { ok: true, status: 200, state: edge.state, host, records, edge, message: say[edge.state] };
+}
+async function domainRoute(request, env) {
+  const ct = request.headers.get("content-type") || "", b = ct.includes("json") ? await request.json().catch(() => null) : Object.fromEntries((await request.formData().catch(() => new FormData())).entries());
+  if (!env || !env.ASSETS) return apiJson({ error: "the site store is not connected", code: "no_store" }, 503);
+  const ip = request.headers.get("cf-connecting-ip") || "x", key = "rld:" + ip + ":" + new Date().toISOString().slice(0, 13), n = Number(await env.ASSETS.get(key) || 0);
+  if (n >= 30) return apiJson({ error: "too many tries from your connection this hour", code: "rate_limited" }, 429);
+  await env.ASSETS.put(key, String(n + 1), { expirationTtl: 7200 });
+  const r = await attachDomain(env, String(b && b.id || ""), b && b.domain);
+  return apiJson(r.ok ? { state: r.state, host: r.host, records: r.records, message: r.message, edge: r.edge || null } : { error: r.message, code: r.code }, r.status);
+}
+// ORG-THREAD-1 (Q-GAP-org-setup-in-thread): the organization around a built site is set up in the same thread, not on a separate page. The plan comes from
+// the idea itself (objective, the measures every system starts with, the roles that work it) and the connection steps are the same data /setup walks
+// (USER_PATH). Each answer is stored (KV org:<id>), so the thread resumes where it stopped and the managers see how far every organization is (ideaWork).
+const ORG_MEASURES = ["the clock is ticking", "work is being handed out", "items are being finished", "results are checked independently", "nothing is dropped silently", "every objective has a probe"];
+const ORG_ROLES = [["product-manager", "decides what to improve next from the measures"], ["staff", "builds each change"], ["reviewer", "checks the change independently"], ["operations", "ships it and proves it live"]];
+export function orgPlan(idea) {
+  const text = String(idea || "").replace(/\s+/g, " ").trim(), first = text.split(/[.!?]/)[0].slice(0, 140);
+  return { objective: first || "Keep this running and improving", measures: ORG_MEASURES, roles: ORG_ROLES.map(r => ({ id: r[0], does: r[1] })),
+    steps: USER_PATH.steps.filter(s => !s.input).map(s => ({ id: s.id, service: s.service, ask: s.ask, why: s.why, optional: !!s.optional, label: (s.yes && s.yes.label) || (s.no && s.no.label) || null, have: !(s.yes && s.yes.url), url: ((s.yes && s.yes.url) || (s.no && s.no.url) || "").replace("{template}", USER_PATH.template) || null })) };
+}
+async function orgSetup(request, env) {
+  const f = await request.formData().catch(() => null), id = f && String(f.get("id") || "");
+  if (!env || !env.ASSETS) return json({ error: "the site store is not connected", code: "no_store" }, 503);
+  if (!okId(id) || !(await env.ASSETS.get("state:" + id))) return json({ error: "That site was not found.", code: "no_site" }, 404);
+  const a = await jget(env, "ask:" + id), idea = a ? a.idea : ((await jget(env, "brief:" + id)) || {}).brief || "";
+  const st = (await jget(env, "org:" + id)) || { id, started: new Date().toISOString(), plan: orgPlan(idea), steps: {} };
+  const step = String(f.get("step") || ""), ans = String(f.get("answer") || "");
+  if (step) {
+    if (!st.plan.steps.some(s => s.id === step) || !["done", "skipped"].includes(ans)) return json({ error: "unknown step or answer", code: "bad_step" }, 400);
+    st.steps[step] = { answer: ans, at: new Date().toISOString() };
+  }
+  const next = st.plan.steps.find(s => !st.steps[s.id]) || null;
+  st.state = next ? "in_progress" : st.plan.steps.some(s => !s.optional && st.steps[s.id].answer !== "done") ? "incomplete" : "set_up";
+  await jput(env, "org:" + id, st);
+  return json({ id, state: st.state, plan: { objective: st.plan.objective, measures: st.plan.measures, roles: st.plan.roles }, done: Object.keys(st.steps).length, total: st.plan.steps.length, next });
+}
 // BUILD-3: the daily probe records which ids still answer; a dead one is skipped so a deprecated id never reaches a user (the list is used whole if every id is marked dead).
 async function runAny(env, models, body, opts = {}) {
   const h = await jget(env, "health:models").catch(() => null), dead = new Set(((h && h.models) || []).filter(x => !x.ok).map(x => x.model));
@@ -578,7 +654,7 @@ async function takeChange(request, env, ctx) {
   return launch(env, ctx, id, brief, prev, change);
 }
 const li = (xs) => xs.length ? "<ul>" + xs.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "<p class=\"meta\">Nothing to list.</p>";
-async function siteRoutes(u, env, ctx, request) {
+async function siteRoutes(u, env, ctx, request, own) {
   const m = /^\/s\/([a-f0-9]{10})(\/make|\/change|\/ask|\/review|\/status|\/api)?$/.exec(u.pathname);
   if (!m || !env || !env.ASSETS) return null;
   if (m[2] === "/api") return siteApi(request, env, m[1]);
@@ -615,7 +691,7 @@ async function siteRoutes(u, env, ctx, request) {
   }
   if (st === "asking") return Response.redirect("https://" + CANON + "/s/" + id + "/ask", 302);
   if (st !== "ready") return Response.redirect("https://" + CANON + "/s/" + id + "/make", 302);
-  const host = u.hostname === id + "." + CANON ? u.hostname : CANON, sub = host !== CANON;
+  const host = own || (u.hostname === id + "." + CANON ? u.hostname : CANON), sub = host !== CANON;  // OWN-DOMAIN-1: a proven own address is served like the site's subdomain
   const lk = (h, t) => "<a href=\"https://" + CANON + "/s/" + id + h + "\" style=\"background:#111;color:#fff;padding:10px 14px;border-radius:999px;text-decoration:none;margin-left:6px\" target=\"_top\">" + t + "</a>";
   // BLINDSPOT-1 legal sweep 2026-11-20 (EU AI Act Article 50, in force 2026-08-02): a page the system wrote says so, to a person (the bar) and to a machine (the generator meta tag).
   const aiMark = "<meta name=\"generator\" content=\"Ultrastable (AI-generated page)\">";
@@ -667,7 +743,8 @@ export async function ideaWork(env) {
   const items = [];
   for (const k of (await kvList(env, "idea:", 500)).slice(-100)) {
     const id = k.slice(-10), text = String(await env.ASSETS.get(k) || "").slice(0, 200), st = await env.ASSETS.get("state:" + id);
-    items.push({ id, idea: text, state: st || "not built", owner: "product manager", trigger: "idea stored " + k.slice(5, 24), probe: "state:" + id + " is ready and /s/" + id + "/review lists no open gap", open: st !== "ready" });
+    const og = await jget(env, "org:" + id);  // ORG-THREAD-1: how far the organization around this idea is
+    items.push({ id, idea: text, state: st || "not built", org: og ? og.state : "not started", owner: "product manager", trigger: "idea stored " + k.slice(5, 24), probe: "state:" + id + " is ready and /s/" + id + "/review lists no open gap", open: st !== "ready" });
   }
   await jput(env, "work:ideas", { items, at: new Date().toISOString() }); return items;
 }
@@ -948,6 +1025,12 @@ const handler = {
       if (u.pathname === "/") { const q = new URL(request.url); q.pathname = "/s/" + sm[1]; return (await siteRoutes(q, env, ctx, request)) || new Response("Not found", { status: 404 }); }
       if (u.pathname.startsWith("/s/" + sm[1] + "/api")) return siteRoutes(u, env, ctx, request);
       return Response.redirect("https://" + CANON + u.pathname, 302); } }
+    if (!OUR_HOSTS.test(u.hostname) && env && env.ASSETS) { // OWN-DOMAIN-1: a host that is not ours is served only when attachDomain stored it as proven
+      const dm = await jget(env, "domain:" + u.hostname.toLowerCase()).catch(() => null);
+      if (dm && okId(dm.id)) {
+        if (u.pathname === "/") { const q = new URL(request.url); q.pathname = "/s/" + dm.id; return (await siteRoutes(q, env, ctx, request, u.hostname)) || new Response("Not found", { status: 404 }); }
+        if (u.pathname === "/s/" + dm.id + "/api") return siteRoutes(u, env, ctx, request);
+        return Response.redirect("https://" + u.hostname + "/", 302); } }
     if (host === "ultrastable.app") return Response.redirect("https://" + CANON + "/pilot", 301);
     if (host === "ultrastable.net") return Response.redirect("https://" + CANON + "/live", 301);
     if (u.hostname === "www." + CANON) return Response.redirect("https://" + CANON + u.pathname, 301);
@@ -965,6 +1048,9 @@ const handler = {
     if (request.method === "POST" && u.pathname === "/api/pilot") return pilotApplication(request, env);
     if (request.method === "POST" && u.pathname === "/api/answer") return takeAnswer(request, env, ctx);
     if (request.method === "POST" && u.pathname === "/api/change") return takeChange(request, env, ctx);
+    if (u.pathname.startsWith(DATA_PATH)) { const dm = /^([a-f0-9]{10})\/([A-Za-z0-9_-]{1,40})$/.exec(u.pathname.slice(DATA_PATH.length)); return dm ? siteData(request, env, dm[1], dm[2].toLowerCase()) : apiJson({ error: "use /api/data/<site>/<collection>", code: "bad_path" }, 404); } // DATA-API-1
+    if (request.method === "POST" && u.pathname === "/api/domain") return domainRoute(request, env); // OWN-DOMAIN-1
+    if (request.method === "POST" && u.pathname === "/api/org") return orgSetup(request, env); // ORG-THREAD-1
     { const sr = await siteRoutes(u, env, ctx, request); if (sr) return sr; }
     if (request.method === "GET" && u.pathname.replace(/\/$/, "") === "/status") return new Response(await statusPage(env), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
