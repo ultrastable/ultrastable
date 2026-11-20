@@ -108,6 +108,6 @@
    "breach detection and notification path",
    "per-tenant budget and kill switch so one tenant cannot spend another's allowance"
   ],
-  "closing_probe": "file:docs/security/multi-tenant-controls.json"
+  "closing_probe": "cmd:python3 -m foundation tenantcontrols --ready"
  }
 }

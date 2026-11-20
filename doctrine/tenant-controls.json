@@ -1,0 +1,58 @@
+{
+ "_doc": "TENANT-CONTROLS-1 (Q-GAP-multi-tenant-controls): the controls doctrine/pilot-model.json `multi_tenant_obligations` requires before a multi-tenant hosted tier is offered, each with the probes that prove it from this repository. A control is proven only when every probe passes; a control with `needs` is unproven until the named thing exists, whatever its other probes say. Consumer: foundation/tenantcontrols.py, which writes docs/security/multi-tenant-controls.json, files Q-MTC-<id> for each unproven control and fails the build if the hosted option stops being deferred while one is unproven. A control with `gate` is the owner's to complete (a legal text in the owner's name): it is recorded as that gate in doctrine/open-loops.json and never filed as work for a model.",
+ "version": "1.0.0",
+ "controls": [
+  {
+   "id": "isolation",
+   "obligation": "tenant isolation proven by test (no query or binding crosses tenants)",
+   "owner": "operations",
+   "probes": [
+    "grep:seed/worker/test/tenant-isolation.test.js::a foreign ready item is never picked or claimed",
+    "grep:workers/core/tenantstore/tenantstore.test.js::tenant ids are validated",
+    "cmd:python3 -m foundation owndb --check"
+   ]
+  },
+  {
+   "id": "encryption",
+   "obligation": "encryption of tenant data at rest and in transit, key handling documented",
+   "owner": "operations",
+   "probes": [
+    "grep:seed/worker/src/auth/seal.js::AES-GCM",
+    "file:docs/security/tenant-data-encryption.json"
+   ],
+   "needs": "a record, checked by a test, of which tenant tables are encrypted by the application and which rely on the host's encryption at rest; today only credential material is sealed by the application (seed/worker/src/auth/seal.js)"
+  },
+  {
+   "id": "processor-terms",
+   "obligation": "data-processing agreement, subprocessor list, retention and deletion on request",
+   "owner": "product-manager",
+   "probes": [
+    "file:seed/autonomy/retention.json",
+    "file:licensing/data-processing-agreement.md",
+    "file:docs/security/subprocessors.json"
+   ],
+   "needs": "a data-processing agreement and a subprocessor list; the agreement is a legal text in the owner's name, so it is an owner gate and is not drafted by the system (SCOPE.md)",
+   "gate": "mtc-processor-terms"
+  },
+  {
+   "id": "breach-path",
+   "obligation": "breach detection and notification path",
+   "owner": "operations",
+   "probes": [
+    "grep:seed/worker/src/auditchain.js::verify",
+    "grep:seed/autonomy/failure-modes.json::\"id\": \"tenant-data-breach\""
+   ],
+   "needs": "a failure mode `tenant-data-breach` with a detector and a notification step that reaches the affected tenant's contact"
+  },
+  {
+   "id": "tenant-budget",
+   "obligation": "per-tenant budget and kill switch so one tenant cannot spend another's allowance",
+   "owner": "operations",
+   "probes": [
+    "grep:workers/core/tenantstore/tenantstore.test.js::write budget is a hard cap",
+    "grep:workers/core/tenantstore/tenantstore.test.js::five tenants fit inside the free plan",
+    "cmd:python3 -m foundation tenantstorage --check"
+   ]
+  }
+ ]
+}
