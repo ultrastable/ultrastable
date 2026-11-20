@@ -17,6 +17,7 @@ import TENANTS from "../foundation/data/tenants.json" with { type: "json" };
 import PAID from "../foundation/data/paid-options.json" with { type: "json" };
 const VERSION = "0.4.0";
 const COOKIE = "us_owner";
+export const safeOwnerNext = n => (typeof n === "string" && (/^\/connect\/[a-z-]+$/.test(n) || n === "/connections")) ? n : null;  // SIGNIN-NEXT-1: only the connect pages, never an open redirect
 const OTP_MS = 10 * 60e3, SESSION_MS = 30 * 864e5, STEPUP_MS = 15 * 60e3;
 const HOSTS = ["ultrastable.io", "ultrastable.app", "ultrastable.net"];
 // OWNER-LINKS-1: links the owner is handed use the public domain the request came in on (x-forwarded-host from the site's forwarder, trusted only for HOSTS), never a workers.dev name.
@@ -424,9 +425,9 @@ const OWNER_JS = `
 const $=s=>document.querySelector(s);const E=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function api(p,b){const r=await fetch(p,{method:b?'POST':'GET',headers:b?{'content-type':'application/json','x-us-ui':'1'}:{},body:b?JSON.stringify(b):undefined,credentials:'same-origin'});let j={};try{j=await r.json()}catch(e){}return{s:r.status,j}}
 let pending=null;
-function codeBox(msg,after){$('#gate').innerHTML='<div class="card"><h3>'+E(msg)+'</h3><div class="row"><a class="btn p" href="/api/owner/github">Sign in with GitHub</a><button id="send">Email me a code</button></div><div id="cbox" class="row" hidden><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" aria-label="6-digit code"><button class="p" id="ver">Verify</button></div><p class="meta" id="gm" role="status"></p></div>';
+function codeBox(msg,after){$('#gate').innerHTML='<div class="card"><h3>'+E(msg)+'</h3><div class="row"><a class="btn p" href="/api/owner/github'+(function(n){return /^\\/connect\\/[a-z-]+$/.test(n||'')||n==='/connections'?'?next='+encodeURIComponent(n):''})(new URLSearchParams(location.search).get('next'))+'">Sign in with GitHub</a><button id="send">Email me a code</button></div><div id="cbox" class="row" hidden><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" aria-label="6-digit code"><button class="p" id="ver">Verify</button></div><p class="meta" id="gm" role="status"></p></div>';
 $('#send').onclick=async()=>{$('#gm').textContent='Sending...';const r=await api('/api/owner/code',{});$('#gm').textContent=r.s==200?'Code sent. Check your inbox.':(r.j.error||'Could not send.');if(r.s==200){$('#cbox').hidden=false;$('#code').focus()}};
-$('#ver').onclick=async()=>{const r=await api('/api/owner/verify',{code:$('#code').value});if(r.s==200){const nx=new URLSearchParams(location.search).get('next');if(nx&&nx.indexOf('/oauth/authorize?')===0){location.href=nx;return}$('#gate').innerHTML='';after()}else $('#gm').textContent=r.j.error||'Wrong code.'}}
+$('#ver').onclick=async()=>{const r=await api('/api/owner/verify',{code:$('#code').value});if(r.s==200){const nx=new URLSearchParams(location.search).get('next');if(nx&&(nx.indexOf('/oauth/authorize?')===0||/^\\/connect\\/[a-z-]+$/.test(nx)||nx==='/connections')){location.href=nx;return}$('#gate').innerHTML='';after()}else $('#gm').textContent=r.j.error||'Wrong code.'}}
 const NL=String.fromCharCode(10),BT=String.fromCharCode(96);
 function mk(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function md(t){const d=mk('div','ans'),ls=String(t||'').split(NL);let list=null,code=null,tb=null;
@@ -509,8 +510,8 @@ export async function route(req, env) {
     try { await sendOne(env, b.to, String(b.subject || "").slice(0, 200), String(b.text || "").slice(0, 4000)); return json({ ok: true }); }
     catch (e) { return userJson(e, "mail-relay", { audit: auditBackend(env) }); }
   }
-  if (p === "/api/owner/github" && req.method === "GET") { const r = await OID.start(env, publicOrigin(req, u)); return r.location ? new Response(null, { status: 302, headers: { location: r.location, ...SEC } }) : json(r.body, r.status); }
-  if (p === "/api/owner/github/callback" && req.method === "GET") { const r = await OID.callback(env, u, mintSession); return r.location ? new Response(null, { status: 302, headers: { location: r.location, "Set-Cookie": r.cookie, ...SEC } }) : json(r.body, r.status); }
+  if (p === "/api/owner/github" && req.method === "GET") { const r = await OID.start(env, publicOrigin(req, u)); const nx = safeOwnerNext(u.searchParams.get("next")); return r.location ? new Response(null, { status: 302, headers: { location: r.location, ...(nx ? { "Set-Cookie": "us_next=" + encodeURIComponent(nx) + "; Path=/; Max-Age=900; HttpOnly; Secure; SameSite=Lax" } : {}), ...SEC } }) : json(r.body, r.status); }  // SIGNIN-NEXT-1: the page that asked for the sign-in is where the owner lands
+  if (p === "/api/owner/github/callback" && req.method === "GET") { const r = await OID.callback(env, u, mintSession); const nx = r.location ? safeOwnerNext(decodeURIComponent(((req.headers.get("cookie") || "").match(/(?:^|; )us_next=([^;]+)/) || [])[1] || "")) : null; const h = new Headers({ location: nx || r.location, ...SEC }); if (r.location) { h.append("Set-Cookie", r.cookie); h.append("Set-Cookie", "us_next=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax"); } return r.location ? new Response(null, { status: 302, headers: h }) : json(r.body, r.status); }
   if (p === "/connect/github-signin") return OID.connectPage(env, publicOrigin(req, u));
   if (p === "/auth/github-signin/callback") return OID.appCallback(env, u, publicOrigin(req, u));
   if (p === "/owner") return ownerPage();

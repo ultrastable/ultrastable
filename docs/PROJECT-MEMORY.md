@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-20
 
+- 2026-11-20: COST-PROBE-4: the daily cost guard completes; resource discovery over REST (#819)
+- 2026-11-20: CF-POSTURE-3, COST-PROBE-3: daily posture reading through the deploy gateway, no stored Cloudflare token (#816)
+- 2026-11-20: SINGLE-ACCOUNT-1: stage KV, spinoffs and edge in the ultrastable account (#815)
 - 2026-11-20: host-sync - runtime state of the host (HOSTSYNC-1) [skip ci]
 - 2026-11-20: host-sync - record deployed gateway module [skip ci]
 - 2026-11-20: CF-POSTURE-2, COST-PROBE-FIELD-1: every upload path keeps logs on; daily cost guard runs again (#812)

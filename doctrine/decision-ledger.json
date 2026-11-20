@@ -3403,6 +3403,15 @@
    "body": "The repository's Cloudflare token predates the account move and is refused by the Ultrastable account, so the daily reading was unmeasured and the cost probe crashed. The deploy gateway now serves a read-only GET /posture (ids, modified time, logging setting; same OIDC check as deploys) and foundation/cfposture.py reads Workers through it when the token is refused. The cost probe records a refused token as unmeasured (COST-PROBE-3). An empty zone list from a token of another account is unmeasured, not a failure.",
    "probe": "file:workers/core/deploygate/index.js",
    "session": "serene-payne-a9c57f"
+  },
+  {
+   "id": "lesson-2026-11-20-cost-probe-4-resource-discovery-reads-rest-lists-the-analyti",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "COST-PROBE-4: resource discovery reads REST lists; the analytics GraphQL API has none",
+   "body": "deploy/cost-probe.mjs asked the GraphQL analytics API for workers, D1, KV and R2 lists, a field that does not exist, so the daily cost guard failed and its later steps (criticality tick, record) were skipped. Discovery now lists each kind over REST; a kind the token cannot list is null (unmeasured) and files no drift item.",
+   "probe": "file:deploy/cost-probe.mjs",
+   "session": "serene-payne-a9c57f"
   }
  ]
 }
