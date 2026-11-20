@@ -222,6 +222,13 @@ test('DIRECT-MERGE-GATE-1: the admin install upserts the main ruleset, and the l
   await applyRulesets(db, e, 't', { fetch: f, token: 'tok' });
   assert.deepEqual(calls[1], ['PUT', '/repos/ultrastable/ultrastable/rulesets/7']);
   assert.deepEqual((await rulesetsDue(db, e, { fetch: f })).map(x => x.action), ['done']);
+  // APP-DRIFT-1: when the app that writes to main changes, the rule is applied again and its exemption names the new app
+  await store.put(db, e, 't', 'github-app', { secret: { pem: 'x' }, meta: { app_id: 42, installation_id: 3 }, status: 'pending' });
+  const bodies = [];
+  const g = async (url, o = {}) => { if (o.body) bodies.push(JSON.parse(o.body)); return f(url, o); };
+  assert.deepEqual((await rulesetsDue(db, e, { fetch: g, token: 'tok' })).map(x => x.action), ['rulesets-applied']);
+  assert.deepEqual(bodies.pop().bypass_actors, [{ actor_id: 42, actor_type: 'Integration', bypass_mode: 'always' }]);
+  assert.deepEqual((await rulesetsDue(db, e, { fetch: g, token: 'tok' })).map(x => x.action), ['done'], 'the same app is not applied twice');
   const denied = await applyRulesets(makeDb(), e, 't', { fetch: async () => ({ status: 403, json: async () => ({}) }), token: 'tok' });
   assert.equal(denied.ok, false);
 });
