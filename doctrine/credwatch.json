@@ -7,9 +7,9 @@
   {"name": "LANE_PAT", "kind": "github-token", "used_by": "the merge lane, for pull requests that change workflows"}
  ],
  "registrations": [
-  {"name": "domain-ultrastable.io", "expires": "2027-11-10", "auto_renew": false},
-  {"name": "domain-ultrastable.org", "expires": "2027-11-10", "auto_renew": false},
-  {"name": "domain-ultrastable.app", "expires": "2027-11-10", "auto_renew": false},
-  {"name": "domain-ultrastable.net", "expires": "2027-11-10", "auto_renew": false}
+  {"name": "domain-ultrastable.io", "expires": "2027-11-10", "auto_renew": true},
+  {"name": "domain-ultrastable.org", "expires": "2027-11-10", "auto_renew": true},
+  {"name": "domain-ultrastable.app", "expires": "2027-11-10", "auto_renew": true},
+  {"name": "domain-ultrastable.net", "expires": "2027-11-10", "auto_renew": true}
  ]
 }
