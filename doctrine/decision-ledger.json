@@ -2943,6 +2943,42 @@
    "body": "lane.yml runs python3 -m foundation clock --heal --apply as its last step (4 minute cap, Cloudflare token as in product-manager.yml), so a stale stage is caught within one merge cycle and not a day later. test_pm checks the step, its token and its cap.",
    "probe": "grep:.github/workflows/lane.yml::clock --heal",
    "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "decision-2026-11-20-codeagent-model-1-the-code-agent-s-first-model-is-glm-4-7-fl",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "CODEAGENT-MODEL-1: the code agent's first model is glm-4.7-flash",
+   "body": "The platform deprecated @cf/zai-org/glm-5.3-flash on 2026-11-20 (error 5028); 35 of 95 code agent calls that day went to it and produced nothing. The first adapter in seed/worker/src/codeagent.js, dashboard/agent.js, doctrine/code-agents.json and the review gate reference is now @cf/zai-org/glm-4.7-flash, probed live the same day with reasoning_effort low (it returned the requested JSON). The adapter id workers-ai-glm is unchanged so history joins.",
+   "probe": "grep:seed/worker/src/codeagent.js::glm-4.7-flash",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "decision-2026-11-20-ol-20261112-93-a-cli-sign-in-counts-as-a-credential-only-on-",
+   "kind": "decision",
+   "date": "2026-11-20",
+   "title": "OL-20261112-93: a CLI sign-in counts as a credential only on a server-side host",
+   "body": "foundation/ladder.py cli_scope and Boot._gh_admin_org (seed and workers copies) accept an existing gh sign-in only when CLAUDE_CODE_REMOTE or GITHUB_ACTIONS is set. doctrine/server-side.json bans the old wording (id signed-in-cli) and no longer excludes demos/public/cases.json, whose two lines now cite the rule.",
+   "probe": "grep:doctrine/server-side.json::signed-in-cli",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "lesson-2026-11-20-airouter-no-run-1-calls-that-never-ran-a-model-are-free-a-de",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "AIROUTER-NO-RUN-1: calls that never ran a model are free; a deprecated model is retired",
+   "body": "Measured 2026-11-20 in airouter_calls: the code agent made 95 calls and 8 passed. 35 went to a model the platform deprecated that day (error 5028) and 14 were stopped by the spend governor before any model ran; those 49 were charged 1,561 estimated neurons, so the 8,000 neuron day cap was reached by 14:00 UTC and the executor produced no change for the rest of the day (k_self 0). Fixed in seed/worker/src/airouter.js: such a call is charged nothing, and a deprecated model is retired for 7 days (table airouter_retired) and then probed again. Tests in seed/worker/test/airoute.test.js.",
+   "probe": "grep:seed/worker/src/airouter.js::airouter_retired",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
+  },
+  {
+   "id": "lesson-2026-11-20-ol-20261114-6-test-metasignal-uses-the-shared-scratch-helper",
+   "kind": "lesson",
+   "date": "2026-11-20",
+   "title": "OL-20261114-6: test_metasignal uses the shared scratch helper by its package path; regime told",
+   "body": "tests/foundation/test_metasignal.py imports scratch from tests.foundation._repo, the form the item's closing probe names; its temp directories are removed when each test ends. The criticality regime (driven: k_self 0, 0 of 25 verified deploys originated by the system itself) was reported to the owner on 2026-11-20 and recorded in ops/told.jsonl.",
+   "probe": "grep:tests/foundation/test_metasignal.py::from tests\\.foundation\\._repo import scratch",
+   "session": "session_0156nqDvHWaPhFQcXNGBBNCn"
   }
  ]
 }
