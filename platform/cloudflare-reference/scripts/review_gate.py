@@ -49,7 +49,7 @@ VERSION = "1.0.0"
 # effort); llama-3.3-70b needs no switch (9 s, 5 findings); gemma-4-26b-a4b with thinking off found one dubious item, and with thinking on, qwen3-30b-a3b,
 # and kimi-k2.7-code returned no content in 3000-4000 tokens.
 MODELS = [
-    ("glm", "@cf/zai-org/glm-4.7-flash", 0.15, 0.50, {"reasoning_effort": "low", "max_tokens": 8000}),
+    ("glm", "@cf/zai-org/glm-4.7-flash", 0.0605, 0.40, {"reasoning_effort": "low", "max_tokens": 8000}),
     ("llama", "@cf/meta/llama-3.3-70b-instruct-fp8-fast", 0.293, 2.253, {"max_tokens": 3000}),
 ]
 CHUNK_CHARS = 14000  # one call reads at most this much diff: a model reads 14 KB closely and 47 KB loosely (first replay: recall 1 of 9 on the whole block)
