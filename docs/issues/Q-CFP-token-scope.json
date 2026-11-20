@@ -1,0 +1,11 @@
+{
+  "id": "Q-CFP-token-scope",
+  "title": "Q-CFP-token-scope: the daily cost guard and posture reading cannot read the Ultrastable Cloudflare account",
+  "body": "**Owner:** staff\n**Trigger:** cost-guard run 44805356832 (2026-11-20): `not authorized for that account` on the GraphQL cost queries and HTTP 403 on every cfposture read\n**Done check:** cmd:python3 -m foundation cfposture --rule worker-logs-on\n**Status:** open\n\nThe repository secret CLOUDFLARE_API_TOKEN predates the account move and has no access to account 81e3a4efb4eb66e613529b87682911bb, so `deploy/cost-probe.mjs` fails and every CF-POSTURE-1 rule reads unmeasured. Deploys are unaffected: they go through the deploy gateway on GitHub OIDC.\n\nRemedy, no new credential: give `workers/core/deploygate` a read-only `GET /posture` route behind the same OIDC check that returns, with the gateway's own CF_DEPLOY_TOKEN, the script list and each script's observability setting, and have `foundation/cfposture.py` and `deploy/cost-probe.mjs` read through it when CLOUDFLARE_API_TOKEN is refused. Cost samples already reach the tick Worker through CF_ANALYTICS_TOKEN; point the cost guard at `/api/budget` for D1 rows and neurons. Alert policies, API tokens and members stay unmeasured until a token with those read scopes exists; that is an identity-bound gate and is recorded by the rules as unmeasured, never as passed.",
+  "labels": [
+    "role:staff",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

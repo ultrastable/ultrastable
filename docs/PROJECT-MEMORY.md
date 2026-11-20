@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-20
 
+- 2026-11-20: host-sync - runtime state of the host (HOSTSYNC-1) [skip ci]
+- 2026-11-20: host-sync - record deployed gateway module [skip ci]
+- 2026-11-20: CF-POSTURE-2, COST-PROBE-FIELD-1: every upload path keeps logs on; daily cost guard runs again (#812)
+- 2026-11-20: STRAYS-1: stray code files and decoy workflows fail checks and the branch sweep gate (#741)
 - 2026-11-20: ciwatch: file failing-workflow items (CIWATCH-1) [skip ci]
 - 2026-11-20: CIWATCH-4: ciwatch items land through the main writer (#810)
 - 2026-11-20: smoke-live: runway check reads the keys the runway record has (#808)
