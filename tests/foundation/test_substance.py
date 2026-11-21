@@ -56,8 +56,8 @@ def _git(d, *a):
 
 class Repo(unittest.TestCase):
     def setUp(self):
-        self.d = Path(tempfile.mkdtemp(prefix="ultrastable-test-substance-"))
-        self.addCleanup(lambda: subprocess.run(["rm", "-rf", str(self.d)]))
+        td = tempfile.TemporaryDirectory(prefix="ultrastable-test-substance-"); self.addCleanup(td.cleanup)
+        self.d = Path(td.name)
         (self.d / "doctrine").mkdir()
         for f in (substance.CONFIG, substance.VECTORS):
             (self.d / f).write_text((ROOT / f).read_text(encoding="utf-8"), encoding="utf-8")
