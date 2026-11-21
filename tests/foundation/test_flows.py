@@ -40,8 +40,9 @@ class FlowTests(unittest.TestCase):
 
     def test_workflow_with_only_pending_loops_fails(self):
         d = copy.deepcopy(self.d)
-        del d["flows"]["social-post"]
-        d["pending"].append("social-post")
+        for lid in ("social-post", "thought"):  # THOUGHT-1 runs in the same workflow
+            del d["flows"][lid]
+            d["pending"].append(lid)
         self.assertTrue(any("workflow social-post.yml: its loops" in b for b in flows.check(d=d, loops=self.loops)))
 
     def test_undeclared_binding_fails(self):

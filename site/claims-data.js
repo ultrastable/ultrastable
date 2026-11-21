@@ -1867,6 +1867,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **Thought leadership is a loop: every paper becomes posts that carry the hook (THOUGHT-1, Rowan 2026-11-21).** \"I want white papers that",
+   "detail": "",
+   "how": "file:seed/worker/src/social.js + file:doctrine/thought.json + file:foundation/thought.py + file:site/research.js + file:tests/foundation/test_thought.py + file:site/research.test.mjs",
+   "id": "cited-282274856e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2474,6 +2483,15 @@ export default {
    "detail": "",
    "how": "file:foundation/ultrastability.py + file:foundation/research.py + file:doctrine/research.json + file:site/research.js + file:tests/foundation/test_research.py + file:tests/foundation/test_ultrastability.py",
    "id": "mirror-289b3b8589",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
+   "claim": "- **Thought leadership is a loop: every paper becomes posts that carry the hook (THOUGHT-1, Rowan 2026-11-21).** \"I want white papers that",
+   "detail": "",
+   "how": "file:seed/worker/src/social.js + file:doctrine/thought.json + file:foundation/thought.py + file:site/research.js + file:tests/foundation/test_thought.py + file:site/research.test.mjs",
+   "id": "mirror-49f57fdb9b",
    "kind": "claim",
    "pass": true,
    "surface": "seed/agents/AGENTS.md"
@@ -3100,7 +3118,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 429 Worker tests",
+   "claim": "seed-tests: 45 Python and 432 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3109,7 +3127,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 429 Worker tests",
+   "claim": "seed-worker-tests: 432 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
@@ -3145,7 +3163,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 735",
+   "claim": "live-deploys: 740",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
@@ -3350,7 +3368,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 369,
-  "total": 369
+  "pass": 371,
+  "total": 371
  }
 };

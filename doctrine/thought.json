@@ -1,0 +1,32 @@
+{
+  "_doc": "THOUGHT-1 (Rowan, 2026-11-21): thought leadership as a closed loop. Every white paper the research loop writes (research/studies, research/papers, site/research-data.js) is turned into posts that state a common belief about AI limits, what this system's own records show, and the hook: Ultrastable runs on Ultrastable, and Practical Solutions is one system it runs. Read by foundation/thought.py (python3 -m foundation thought --check|--run [--apply]|--preview). Posts go into social/calendar.json, which the tick Worker's publisher (seed/worker/src/social.js) and the social-post workflow drain within social/gate.json. Reach comes back through first-party referrals (foundation/reach.py arm 'paper') and re-weights nothing by hand.",
+  "version": 1,
+  "consent": {
+    "at": "2026-11-21",
+    "by": "Rowan",
+    "source": "project thread 'Build thought leadership and social reach'",
+    "scope": "white papers and their posts on the owner's own and the project's own social accounts, LinkedIn included; Practical Solutions may use the QNFO social accounts (granted separately); no cold messages to individuals"
+  },
+  "site": "https://ultrastable.io",
+  "ps": {"name": "Practical Solutions", "url": "https://ultrastable.org", "what": "a free, evidence-based catalogue of fixes for global problems that keeps its own evidence current"},
+  "hook": {
+    "required": "Ultrastable runs on Ultrastable",
+    "short": "Ultrastable runs on Ultrastable and writes these papers itself.",
+    "medium": "Ultrastable runs on Ultrastable: it writes, measures and republishes these papers from its own records. Practical Solutions is one system it runs.",
+    "long": "Why this is on my feed: Ultrastable runs on Ultrastable. Its fixes, deploys and these white papers are produced and checked by the system itself, from its own records. Practical Solutions is one example of a system it runs: {ps_what}. The subject is the example; the point is what a self-running system can do for your own work."
+  },
+  "channels": {
+    "bluesky": {"limit": 300},
+    "mastodon": {"limit": 500},
+    "linkedin": {"limit": 3000}
+  },
+  "cadence_days": 3,
+  "repost_days": 21,
+  "max_findings_long": 4,
+  "arm": "paper",
+  "guard": {
+    "blocked_patterns": ["\\bstupid\\b", "\\bidiot", "\\bfool", "\\bclueless\\b", "\\bdebunk", "\\bliar\\b", "\\bscam\\b", "\\bgrift", "\\bwrong about\\b", "@[a-z0-9_]"],
+    "required_any_link": ["https://ultrastable.io/research/"]
+  },
+  "log": "ops/thought/log.jsonl"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "Q-SMOKE-runway",
+  "title": "Q-SMOKE-runway: production does not match the claim (runway)",
+  "body": "**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::runway\n**Status:** open\n\nSMOKE-LIVE-1: runway is measured and meets the 365-day target\n\nLive evidence: `runway_days=None (none means nothing measured is limiting) meets_target=False below=['cost'] unmeasured=['cost']`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\nsize: S\n\n**Closing probe:** workflow smoke-live, check `runway` = PASS.\n\n\n**Vacuous:** 2026-11-21T11:31:03Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Claims"
+}
