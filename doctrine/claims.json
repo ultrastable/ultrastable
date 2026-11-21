@@ -2331,7 +2331,7 @@
         "file:doctrine/ultrastability.json",
         "file:foundation/saydo.py",
         "file:doctrine/detectors.json",
-        "file:tests/foundation/test_yearsim.py"
+        "file:seed/scripts/yearsim.py"
       ],
       "bound_by": "cited"
     },
@@ -3134,7 +3134,7 @@
         "file:doctrine/ultrastability.json",
         "file:foundation/saydo.py",
         "file:doctrine/detectors.json",
-        "file:tests/foundation/test_yearsim.py"
+        "file:seed/scripts/yearsim.py"
       ],
       "bound_by": "mirror",
       "of": "cited-158bd3c207"

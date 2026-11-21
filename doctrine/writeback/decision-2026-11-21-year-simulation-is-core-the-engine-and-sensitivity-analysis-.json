@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-year-simulation-is-core-the-engine-and-sensitivity-analysis-",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Year simulation is core: the engine and sensitivity analysis ship in the seed for every system",
+  "body": "seed/scripts/yearsim.py is the single engine (foundation/yearsim.py imports it); seed/autonomy/yearsim.json carries seven generic faults with drills that run seed tests; goal core.year.unattended (p10 >= 365) is standing for every system. Sensitivity doubles and halves each fault rate and ranks by swing in survival share.",
+  "probe": "file:seed/scripts/yearsim.py",
+  "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
+ },
+ "kind": "decision",
+ "title": "Year simulation is core: the engine and sensitivity analysis ship in the seed for every system",
+ "session": "https://claude.ai/code/session_0156nqDrPUtodrmF2tkLT6LP"
+}

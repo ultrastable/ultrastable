@@ -618,3 +618,5 @@ Six GitHub Apps had been registered for two roles because every visit to /connec
 - `foundation/yearsim.py` replays a year of faults into the real recovery code (200 seeded runs, 730 days). Measured 2026-11-21: p10 730 days, 99.5% of years pass 365; strict (identity gates fail) p10 50, killers token-revoked and domain-renewal. Self rate 0.214 substantive server-originated changes a day against 1: the biggest open gap.
 - `foundation/saydo.py` ties AGENTS.md rules, claims, server changes, the second loop and the year target to probes (match 0.993). Both run on the watchdog, file and close their own items, and publish at /year.
 - Six new failure modes with detectors (`yearsim-*`, `saydo-wellformed`) run by failure-audit. MODEL-HEAL-1 and DEP-LOOP-1 were the fixes the simulation found.
+
+- 2026-11-21 (later): the year simulation is core. The engine and sensitivity analysis live once in `seed/scripts/yearsim.py` (platform imports it); every seed carries `seed/autonomy/yearsim.json` (generic faults with drills) and the standing goal `core.year.unattended` (p10 >= 365, knob `core.year.headroom`).

@@ -1,5 +1,5 @@
 {
- "at": "2026-11-21T11:16:53Z",
+ "at": "2026-11-21T11:59:18Z",
  "gaps": 3,
  "match_share": 0.993,
  "sources": {
@@ -90,7 +90,7 @@
     "drift": 0,
     "id": "claims-total",
     "ok": true,
-    "total": 370
+    "total": 371
    }
   ],
   "loops": [
@@ -461,7 +461,16 @@
     "unmeasured": []
    },
    {
-    "checks": 2,
+    "checks": 0,
+    "external": [],
+    "failing": [],
+    "id": "SOCIAL-MODULE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 3,
     "external": [],
     "failing": [],
     "id": "YEAR-SIM-1",
@@ -589,6 +598,15 @@
     "checks": 1,
     "external": [],
     "failing": [],
+    "id": "SUBSTANCE-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
     "id": "PROGRESS-1",
     "missing": [],
     "ok": true,
@@ -629,6 +647,15 @@
     "missing": [],
     "ok": true,
     "unmeasured": []
+   },
+   {
+    "checks": 1,
+    "external": [],
+    "failing": [],
+    "id": "PATHFINDER-1",
+    "missing": [],
+    "ok": true,
+    "unmeasured": []
    }
   ],
   "year": [
@@ -651,7 +678,7 @@
   },
   "claims": {
    "gaps": 0,
-   "total": 370
+   "total": 371
   },
   "loops": {
    "gaps": 1,
@@ -659,12 +686,12 @@
   },
   "rules": {
    "gaps": 0,
-   "total": 57
+   "total": 60
   },
   "year": {
    "gaps": 1,
    "total": 2
   }
  },
- "total": 439
+ "total": 443
 }

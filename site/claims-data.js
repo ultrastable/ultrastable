@@ -1869,7 +1869,7 @@ export default {
   {
    "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
    "detail": "",
-   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:tests/foundation/test_yearsim.py",
+   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
    "id": "cited-158bd3c207",
    "kind": "claim",
    "pass": true,
@@ -2490,7 +2490,7 @@ export default {
   {
    "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
    "detail": "",
-   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:tests/foundation/test_yearsim.py",
+   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
    "id": "mirror-c8f6471ad1",
    "kind": "claim",
    "pass": true,
@@ -3118,7 +3118,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 431 Worker tests",
+   "claim": "seed-tests: 59 Python and 431 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",

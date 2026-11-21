@@ -342,92 +342,28 @@ def self_rate(root=REPO, days=14, now=None, substantive=True) -> float | None:
     return round(sum(1 for x in cs if not substantive or x["lines"] >= SUBSTANTIVE_LINES) / days, 3)
 
 
-def events(c, results, rng, today, strict=False):
-    """(day, class, duration, drill result) for one simulated span."""
-    ev = []
-    for f in c["faults"]:
-        lam = f["rate_per_year"] / 365.0
-        t = 0.0
-        while True:
-            t += rng.expovariate(lam) if lam > 0 else c["days"] + 1
-            if t >= c["days"]:
-                break
-            lo, hi = f["duration_days"]
-            ev.append((int(t), f["id"], rng.uniform(lo, hi), results[f["id"]]))
-    for f in c["scheduled"]:
-        r = results.get(f["id"])
-        if r and r.get("date"):
-            day = (dt.date.fromisoformat(r["date"][:10]) - today).days
-            if 0 <= day < c["days"]:
-                ev.append((day, f["id"], 30.0, r))
-    out = []
-    for day, fid, dur, r in sorted(ev):
-        if strict and r.get("gate"):
-            r = {**r, "recover": False, "capacity": 0.0, "mode": "fatal"}
-        out.append((day, fid, dur, r))
-    return out
-
-
-def one_year(c, results, seed, today, strict=False) -> dict:
-    rng = random.Random(seed)
-    evs = events(c, results, rng, today, strict)
-    permanent, active, low_run, died, killer = 1.0, [], 0, None, None
-    cap_sum = 0.0
-    by = {}
-    i = 0
-    for day in range(c["days"]):
-        while i < len(evs) and evs[i][0] == day:
-            _, fid, dur, r = evs[i]
-            by[fid] = by.get(fid, 0) + 1
-            if r["recover"]:
-                active.append((day + max(dur, 0.01), r["capacity"], fid))
-            else:
-                permanent *= r["capacity"]
-                if r["capacity"] < 1:
-                    killer = fid
-            i += 1
-        active = [a for a in active if a[0] > day]
-        cap = permanent
-        for _, k, fid in active:
-            cap *= k
-        if day < c["target_days"]:
-            cap_sum += cap
-        if cap < c["fatal_floor"]:
-            low_run += 1
-            if low_run >= c["fatal_after_days"] and died is None:
-                died = day - low_run + 1
-                killer = killer or (min(active, key=lambda a: a[1])[2] if active else None)
-                break
-        else:
-            low_run = 0
-    return {"horizon": died if died is not None else c["days"], "died": died is not None, "killer": killer if died is not None else None,
-            "capacity_year": round(cap_sum / c["target_days"], 3), "events": by}
-
-
-def pct(xs, p):
-    xs = sorted(xs)
-    return xs[min(len(xs) - 1, max(0, int(math.floor(p * (len(xs) - 1)))))] if xs else None
+# The engine (events, one_year, pct, horizon, sensitivity) is shared with every system: seed/scripts/yearsim.py is the one copy, so an improvement
+# to the simulator reaches the platform and every tenant (USER-BACKEND-1: a local copy is a defect).
+import importlib.util as _ilu
+_spec = _ilu.spec_from_file_location("yearsim_core", REPO / "seed/scripts/yearsim.py")
+_core = _ilu.module_from_spec(_spec)
+sys.modules["yearsim_core"] = _core
+_spec.loader.exec_module(_core)
+events, one_year, pct, horizon, sensitivity, apply_observed = _core.events, _core.one_year, _core.pct, _core.horizon, _core.sensitivity, _core.apply_observed
 
 
 def simulate(root=REPO, results=None, today=None, runs=None, now=None) -> dict:
     c = cfg(root)
+    tp = Path(root) / "ops/trajectory.json"  # TRAJECTORY-1: observed rates and trends replace the assumed ones where the history holds enough events
+    c, observed_from = apply_observed(c, json.loads(tp.read_text(encoding="utf-8")).get("observed") if tp.is_file() else None)
     today = today or dt.date.today()
     results = results if results is not None else drills(root, today)
     runs = runs or c["runs"]
-    out = {}
-    for mode in ("normal", "strict"):
-        years = [one_year(c, results, f"{c['seed']}|{mode}|{k}", today, strict=(mode == "strict")) for k in range(runs)]
-        hs = [y["horizon"] for y in years]
-        kills = {}
-        for y in years:
-            if y["killer"]:
-                kills[y["killer"]] = kills.get(y["killer"], 0) + 1
-        out[mode] = {"p10": pct(hs, 0.10), "p50": pct(hs, 0.50), "p90": pct(hs, 0.90), "survive_year": round(sum(h >= c["target_days"] for h in hs) / runs, 3),
-                     "capacity_year_p50": pct([y["capacity_year"] for y in years], 0.5), "killers": dict(sorted(kills.items(), key=lambda kv: -kv[1]))}
+    out = {"normal": horizon(c, results, runs, today, seed=c["seed"]), "strict": horizon(c, results, runs, today, strict=True, seed=c["seed"])}
     cs = self_commits(root, c["self_rate_window_days"], now)
     rate = None if cs is None else round(sum(1 for x in cs if x["lines"] >= SUBSTANTIVE_LINES) / c["self_rate_window_days"], 3)
     rel = None if rate is None else (out["normal"]["p10"] if rate > 0 else 0)
-    return {"horizon": out["normal"], "strict": out["strict"], "self_rate_per_day": rate,
+    return {"rates_observed": observed_from, "horizon": out["normal"], "strict": out["strict"], "sensitivity": sensitivity(c, results, today, runs=min(runs, 60), seed=c["seed"]), "self_rate_per_day": rate,
             "self_commits": None if cs is None else {"all": len(cs), "substantive": sum(1 for x in cs if x["lines"] >= SUBSTANTIVE_LINES), "window_days": c["self_rate_window_days"], "latest": cs[:5]}, "release_horizon_p10": rel,
             "self_releases_year_p50": None if rate is None else round(rate * c["target_days"] * (out["normal"]["capacity_year_p50"] or 0), 1)}
 
@@ -530,6 +466,7 @@ def page_data(root=REPO) -> dict:
             "self_rate_per_day": j["self_rate_per_day"], "self_commits": j.get("self_commits"), "release_horizon_p10": j["release_horizon_p10"], "meets_target": j["meets_target"],
             "classes": [{"id": k, "what": meta.get(k, {}).get("what", k), "rate": meta.get(k, {}).get("rate_per_year"), "basis": meta.get(k, {}).get("basis", "scheduled"),
                          "mode": v["mode"], "capacity": v["capacity"], "recover": v["recover"], "exercised": v["exercised"], "evidence": v["evidence"]} for k, v in j["drills"].items()],
+            "sensitivity": [{"id": r["id"], "what": meta.get(r["id"], {}).get("what", r["id"]), "swing": r["swing"]} for r in (j.get("sensitivity") or {}).get("ranked", [])[:5]],
             "findings": j["findings"]}
 
 

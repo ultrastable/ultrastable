@@ -5,10 +5,29 @@
 // foundation/saydo.py); nothing on the page is typed by hand. JSON at /year.json.
 import YEAR from "./yearsim-data.js";
 import SAYDO from "./saydo-data.js";
+import TRAJ from "./trajectory-data.js";
 
 const esc = s => String(s === null || s === undefined ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const days = d => (d === null || d === undefined ? "unmeasured" : d + " days");
 const MODE = { recovers: "Recovers by itself", degrades: "Keeps running, slower", fatal: "Stops until a person acts" };
+
+const BARS = "\u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588";
+const spark = v => { const m = Math.max(1, ...v); return v.map(x => (x ? BARS[Math.min(7, Math.floor(x / m * 7.999))] : "\u00b7")).join(""); };
+
+export function trajectoryBody(t = TRAJ) {
+  if (!t || !t.measured) return "";
+  const row = (name, v, note) => "<tr><td>" + esc(name) + "</td><td><span class=\"mono\" aria-label=\"per-day series\">" + esc(spark(v)) + "</span></td><td><small>" + esc(note) + "</small></td></tr>";
+  let h = "<h2 id=\"over-time\">How it evolves over time</h2><p>A year is a process, not a snapshot. These are the last " + esc(t.days) + " days (" + esc(t.history_days) + " with history) of change per area, rows per loop ledger and the issue backlog, one mark per day. Hotspots, neglected areas and drift are read from the shape and filed as work.</p>"
+    + "<div class=\"us-wrap\"><table class=\"us-table\"><thead><tr><th>Area</th><th>Per day, oldest to today</th><th>Reading</th></tr></thead><tbody>"
+    + t.areas.map(a => row(a.area, a.series, Math.round(a.share_recent * 100) + "% of last week" + (a.quiet_days ? ", quiet " + a.quiet_days + " days" : ""))).join("")
+    + t.loops.map(l => row("loop: " + l.loop, l.series, l.rows + " rows" + (l.quiet_days ? ", quiet " + l.quiet_days + " days" : ""))).join("")
+    + row("issue backlog", t.issues.backlog_series.map(x => Math.max(0, x)), t.issues.opened + " opened, " + t.issues.closed + " closed")
+    + "</tbody></table></div>";
+  if (t.findings.length) h += "<h3>What the shape shows</h3><ul>" + t.findings.map(f => "<li>" + esc(f.kind) + ": " + esc(f.why) + "</li>").join("") + "</ul>";
+  const ob = Object.entries(t.observed).filter(([, v]) => v.rate_year !== null && v.rate_year !== undefined && v.events);
+  if (ob.length) h += "<p class=\"meta\">Observed in this system's own history and fed into the simulation: " + ob.map(([k, v]) => esc(k) + " " + esc(v.rate_year) + " a year (trend " + esc(v.trend) + ")").join("; ") + ".</p>";
+  return h;
+}
 
 export function yearBody(y = YEAR, s = SAYDO) {
   let h = "<div class=\"head\"><h1>A year unattended, measured</h1>";
@@ -28,6 +47,8 @@ export function yearBody(y = YEAR, s = SAYDO) {
     + y.classes.map(c => "<tr><td>" + esc(c.what) + "</td><td>" + esc(c.rate === null || c.rate === undefined ? "dated" : c.rate + "x") + "<br><small>" + esc(c.basis) + "</small></td><td class=\""
       + (c.recover && c.exercised ? "us-pass" : "us-fail") + "\">" + esc(MODE[c.mode] || c.mode) + " (" + esc(Math.round(c.capacity * 100)) + "% capacity)" + (c.exercised ? "" : ", declared") + "</td><td><small>" + esc(c.evidence) + "</small></td></tr>").join("")
     + "</tbody></table></div>";
+  if (y.sensitivity && y.sensitivity.length) h += "<h2>What moves the horizon most</h2><p>Each fault's yearly rate is doubled and halved with the rest held, and the share of years that reach the target is re-measured. The biggest swings are where proactive hardening pays first.</p><ul>"
+    + y.sensitivity.map(r => "<li>" + esc(r.what) + ": swing " + esc(Math.round(r.swing * 1000) / 10) + " points</li>").join("") + "</ul>";
   if (y.findings && y.findings.length) h += "<h2>What it is fixing</h2><ul>" + y.findings.map(f => "<li>" + esc(f.id) + ": " + esc(f.why) + "</li>").join("") + "</ul>";
   if (s.measured) {
     h += "<h2 id=\"say-do\">Says and does</h2><p>Every rule in the agent instructions, every claim on this site, every change the server made itself, the second loop and the year target are checked against the code on every watchdog pass.</p>"
@@ -36,12 +57,13 @@ export function yearBody(y = YEAR, s = SAYDO) {
       + s.gap_list.map(g => "<tr><td>" + esc(g.source) + "</td><td>" + esc(g.id) + "</td><td><small>" + esc(g.detail) + "</small></td></tr>").join("") + "</tbody></table></div>"
       + (s.omitted ? "<p class=\"meta\">" + esc(s.omitted) + " more in /year.json.</p>" : "");
   }
+  h += trajectoryBody();
   return h + "<p class=\"meta\">After W. Ross Ashby's ultrastable system: the essential variables, their bounds and the second loop that changes the system when one stays out are on <a href=\"/how#why-ultrastable\">How it works</a>.</p>";
 }
 
 export function yearRoutes(u, shell, HTML) {
   const p = u.pathname.replace(/\/$/, "");
-  if (p === "/year.json") return new Response(JSON.stringify({ year: YEAR, saydo: SAYDO }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
+  if (p === "/year.json") return new Response(JSON.stringify({ year: YEAR, saydo: SAYDO, trajectory: TRAJ }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
   if (p === "/year") return new Response(shell({ path: "/year", title: "A year unattended, measured - Ultrastable", description: "The measured unattended horizon: a year of faults injected into the system's own recovery code, and every place its words differ from its code." }, yearBody()), { headers: { ...HTML, "Cache-Control": "public, max-age=300" } });
   return null;
 }
