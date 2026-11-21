@@ -150,3 +150,27 @@ class Consult(T):
             r = u.tick(self.d, True, read=BAD)
         self.assertIn("spend", r["unregistered"]); self.assertEqual(r["steps"], [])
         self.assertTrue((self.d / "docs/issues/Q-ULTRA-spend-UNREGISTERED.json").is_file())
+
+
+class UptimeUserAgent(unittest.TestCase):
+    """UPTIME-UA-1: the uptime probe sends a named user agent (Cloudflare blocks Python-urllib with 403)."""
+    def test_named_agent(self):
+        from unittest import mock
+        from foundation import ultrastability as U
+        seen = {}
+        class R:
+            status = 200
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+        def fake(req, timeout=0):
+            seen["ua"] = req.get_header("User-agent"); return R()
+        with mock.patch.object(U.urllib.request, "urlopen", fake):
+            self.assertEqual(U._get("https://x.example/health"), 1.0)
+        self.assertTrue(seen["ua"] and "urllib" not in seen["ua"].lower())
+
+
+class PackageUserAgent(unittest.TestCase):
+    def test_default_opener_names_the_agent(self):
+        import urllib.request, foundation  # noqa: F401  (importing the package installs the opener)
+        op = urllib.request._opener
+        self.assertTrue(op and any(k == "User-Agent" and "urllib" not in v.lower() for k, v in op.addheaders))
