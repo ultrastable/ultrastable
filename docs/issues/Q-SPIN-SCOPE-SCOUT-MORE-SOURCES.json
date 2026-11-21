@@ -1,0 +1,12 @@
+{
+ "id": "Q-SPIN-SCOPE-SCOUT-MORE-SOURCES",
+ "title": "Q-SPIN-SCOPE-SCOUT-MORE-SOURCES: Add scout sources while neurons sit under the reserve",
+ "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-SPIN-SCOPE-SCOUT-MORE-SOURCES.json::Status:\\*\\* closed\n**Status:** open\n\nAdd scout sources while neurons sit under the reserve. neuron headroom is the least used free resource. Planned cost per day: {\"ai_neurons\": 300} against headroom {\"ai_neurons\": 4850} (SPINOFF-IDEAS-1).\n\nsize: S\n\n**Prediction:** ops/free-tier.json level != shed within 48 h\n\n**Closing probe:** grep:docs/issues/Q-SPIN-SCOPE-SCOUT-MORE-SOURCES.json::Status:\\*\\* closed",
+ "labels": [
+  "role:product-manager",
+  "ws:growth",
+  "raises-self"
+ ],
+ "milestone": "Now",
+ "workstream": "Growth"
+}

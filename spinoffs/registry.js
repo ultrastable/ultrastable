@@ -87,6 +87,15 @@ export default {
    "slug": "free-tier-meter",
    "tagline": "How much of Cloudflare's free plan does a whole autonomous system use today? Live, from the loop that spends it."
   },
+  "loop-ledger": {
+   "archetype": "status-board",
+   "checks": [],
+   "live": null,
+   "name": "Loop Ledger",
+   "showcase": true,
+   "slug": "loop-ledger",
+   "tagline": "How many closed loops keep this system running, and which ones are on a clock."
+  },
   "numbers-board": {
    "archetype": "status-board",
    "checks": [],
@@ -106,7 +115,7 @@ export default {
  },
  "boards": {
   "free-tier-meter": {
-   "as_of": "2026-11-20T15:43:14Z",
+   "as_of": "2026-11-21T14:54:58Z",
    "rows": [
     {
      "label": "Governor level",
@@ -136,13 +145,29 @@ export default {
    ],
    "source": "ops/free-tier.json"
   },
+  "loop-ledger": {
+   "as_of": "2026-11-21T14:54:58Z",
+   "rows": [
+    {
+     "label": "Registered loops",
+     "of": null,
+     "value": 107
+    },
+    {
+     "label": "Credentials with a probe",
+     "of": null,
+     "value": 6
+    }
+   ],
+   "source": "instances/ultrastable/loop-registry.json"
+  },
   "numbers-board": {
-   "as_of": "2026-11-20T15:43:14Z",
+   "as_of": "2026-11-21T14:54:58Z",
    "rows": [
     {
      "label": "Managers and loops",
      "of": null,
-     "value": 101
+     "value": 104
     },
     {
      "label": "Loops with evidence",
@@ -162,23 +187,23 @@ export default {
     {
      "label": "Open gaps",
      "of": null,
-     "value": 3
+     "value": 2
     },
     {
      "label": "Unknowns questioned",
-     "of": 117,
+     "of": 126,
      "value": 3
     }
    ],
    "source": "ops/transparency.json"
   },
   "portfolio-board": {
-   "as_of": "2026-11-20T15:43:14Z",
+   "as_of": "2026-11-21T14:55:00Z",
    "rows": [
     {
      "label": "Live apps",
      "of": null,
-     "value": 7
+     "value": 8
     },
     {
      "label": "Retired apps",
@@ -199,7 +224,7 @@ export default {
    "source": "spinoffs/registry.json"
   }
  },
- "built_at": "2026-11-20T15:43:17Z",
+ "built_at": "2026-11-21T14:55:01Z",
  "caps": {
   "max_launches_per_day": 3,
   "max_launches_per_week": 21,
