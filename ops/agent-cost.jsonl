@@ -282,3 +282,7 @@
 {"at":"2026-11-21T14:03:44Z","role":"author","ok":true,"adapter":"workers-ai-glm","model":"@cf/zai-org/glm-4.7-flash","family":"glm","usd":0.003385,"priced":true}
 {"at":"2026-11-21T14:03:50Z","role":"reviewer","adapter":"github-models-gpt","model":"openai/gpt-4.1","family":"openai","ok":false,"why":"RuntimeError: non-JSON response (HTTP 200, text/plain) from https://models.github.ai/inference/chat/completions: OK","usd":0}
 {"at":"2026-11-21T14:03:50Z","role":"reviewer","adapter":"github-models-llama","model":"meta/llama-3.3-70b-instruct","family":"llama","ok":false,"why":"RuntimeError: non-JSON response (HTTP 200, text/plain) from https://models.github.ai/inference/chat/completions: OK","usd":0}
+{"at":"2026-11-21T14:11:52Z","role":"author","adapter":"github-models-gpt","model":"openai/gpt-4.1","family":"openai","ok":false,"why":"RuntimeError: non-JSON response (HTTP 200, text/plain) from https://models.github.ai/inference/chat/completions: OK","usd":0}
+{"at":"2026-11-21T14:13:27Z","role":"author","adapter":"workers-ai-glm","model":"@cf/zai-org/glm-4.7-flash","family":"glm","ok":false,"why":"unusable reply","usd":0.003661}
+{"at":"2026-11-21T14:14:36Z","role":"author","ok":true,"adapter":"workers-ai-llama","model":"@cf/meta/llama-3.3-70b-instruct-fp8-fast","family":"llama","usd":0.009041,"priced":true}
+{"at":"2026-11-21T14:15:06Z","role":"author","ok":true,"adapter":"workers-ai-qwen-coder","model":"@cf/qwen/qwen2.5-coder-32b-instruct","family":"qwen","usd":0.0,"priced":false}
