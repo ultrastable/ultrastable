@@ -18,6 +18,7 @@ import { connectAgentPage } from "./connectagent.js";
 import { agentic, withLinks, CONTENT_SIGNAL, TOOLS, LIVE_TOOLS, WRITE_TOOLS } from "./agentic.js";
 import VERIFIED from "./claims-data.js";
 import ULTRA from "./ultrastability-data.js";
+import { verificationBody, verificationJson } from "./verification.js";
 import { experimentFor, slotText, exposureName } from "./uiux.js"; // UIUX-1: A/B experiments on path steps
 import SELF from "./self-data.js";
 import { passkeys } from "./passkeys.js";
@@ -953,7 +954,7 @@ function goalsPage(d) {
     const tone = g.value == null ? "warn" : g.met ? "ok" : "warn";
     return "<tr><td style=\"padding-left:" + (depth * 16) + "px\">" + esc(g.statement) + "<br><small><code>" + esc(g.id) + "</code>" + (g.tenant !== "core" ? " (tenant " + esc(g.tenant) + ")" : "") + (g.origin === "system" ? ", set by the system" : "") + (g.deadline ? ", by " + esc(g.deadline) : "") + "</small></td>"
       + "<td class=\"" + tone + "\"><strong>" + esc(f(g.value)) + "</strong> " + esc(g.unit || "") + "<br><small>" + (g.value == null ? "not reported yet" : g.met ? "target met" : "off target") + "</small></td>"
-      + "<td><code>" + esc(g.op) + " " + esc(g.target) + "</code></td><td>" + spark(g.spark) + "<br><small>" + esc(g.trend) + "</small></td>"
+      + "<td><code>" + esc(g.op) + " " + esc(g.target) + "</code></td><td>" + spark(g.spark) + "<br><small>" + esc(g.trend) + (g.error_budget ? "; error budget " + esc(g.error_budget.state) + (g.error_budget.budget_remaining != null ? " (" + Math.round(g.error_budget.budget_remaining * 100) + "% left)" : "") : "") + "</small></td>"
       + "<td>" + ((byGoal[g.id] || []).length ? "<ul>" + byGoal[g.id].map(kview).join("") + "</ul>" : "<small>no knob; an unmet goal files a backlog item</small>") + "</td></tr>";
   };
   const tree = function (parent, depth) { return goals.filter(function (g) { return (g.parent_id || null) === parent; }).map(function (g) { return row(g, depth) + tree(g.id, depth + 1); }).join(""); };
@@ -1101,6 +1102,8 @@ const handler = {
         if (ux && ux.record && env && env.DB) { const w = record(env, request, { host: CANON, path: "/", ref: request.headers.get("referer"), name: exposureName(ux) }).catch(e => console.error("analytics", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(w); }
         return new Response(home(ux), { headers: ux ? { ...HTML, "Cache-Control": "private, no-cache", "X-Experiment": ux.id + ":" + ux.arm } : HTML }); }
       case "/how": return new Response(how(), { headers: HTML });
+      case "/verification": return new Response(shell({ path: "/verification", title: "Verified invariants - Ultrastable", description: "Guarantees model-checked and tied to the deployed code" }, verificationBody()), { headers: HTML });
+      case "/api/verification": return new Response(JSON.stringify(verificationJson()), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/showcase": return new Response(showcase(), { headers: HTML });
       case "/family.json": return new Response(JSON.stringify({ family: SH.domains, nav: [["Find your path", "/for"], ["Test cases", "/showcase"], ["Product", "/product"], ["How it works", "/how"], ["Live proof", "/live"], ["Contact", "/contact"]], tokens: { accent_light: "#b83800", accent_dark: "#ff7f4d", base: "https://" + CANON + "/" } }), { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } });
       case "/for": return new Response(forIndex(), { headers: HTML });
