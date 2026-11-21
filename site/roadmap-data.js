@@ -16,7 +16,7 @@ export default {
    "id": "PIN-core-db-separation",
    "milestone": "Done",
    "owner": "staff",
-   "status": "done: live; verified by the done check on every build",
+   "status": "closed live; verified by the done check on every build",
    "title": "Core is separated from QNFO's research database",
    "trigger": "trigger: pilot milestone 1"
   },
@@ -25,7 +25,7 @@ export default {
    "id": "PIN-default-policy-pack",
    "milestone": "Done",
    "owner": "product-manager",
-   "status": "done: live; verified by the done check on every build",
+   "status": "closed live; verified by the done check on every build",
    "title": "Short default policy pack for a buyer",
    "trigger": "pilot milestone 1"
   },
@@ -34,7 +34,7 @@ export default {
    "id": "PIN-earned-trust",
    "milestone": "Done",
    "owner": "operations",
-   "status": "done: live; verified by the done check on every build",
+   "status": "closed live; verified by the done check on every build",
    "title": "Earned-trust ledger is live",
    "trigger": "every site deploy (pins check)"
   },
@@ -43,7 +43,7 @@ export default {
    "id": "PIN-fresh-account-bootstrap",
    "milestone": "Next",
    "owner": "operations",
-   "status": "open",
+   "status": "shelved",
    "title": "First real --apply on an empty Cloudflare account",
    "trigger": "trigger: an empty Cloudflare account bound to the fleet"
   },
@@ -52,7 +52,7 @@ export default {
    "id": "PIN-heartbeat-loop",
    "milestone": "Done",
    "owner": "operations",
-   "status": "done: live; verified by the done check on every build",
+   "status": "closed live; verified by the done check on every build",
    "title": "Heartbeat loop is live",
    "trigger": "every site deploy (pins check)"
   },
@@ -61,7 +61,7 @@ export default {
    "id": "PIN-outside-audit",
    "milestone": "Later",
    "owner": "reviewer",
-   "status": "open",
+   "status": "shelved",
    "title": "Outside audit of prediction scoring",
    "trigger": "trigger: pilot milestone 2; first step is Q-GAP-cross-model-rescoring"
   },
@@ -70,7 +70,7 @@ export default {
    "id": "PIN-plussing",
    "milestone": "Done",
    "owner": "portfolio-manager",
-   "status": "done: live; verified by the done check on every build",
+   "status": "closed live; verified by the done check on every build",
    "title": "Plussing budget is live",
    "trigger": "every site deploy (pins check)"
   },
@@ -79,7 +79,7 @@ export default {
    "id": "PIN-probe-revert",
    "milestone": "Done",
    "owner": "operations",
-   "status": "done: live; verified by the done check on every build",
+   "status": "closed live; verified by the done check on every build",
    "title": "Probes with automatic revert are live",
    "trigger": "every site deploy (pins check)"
   },
@@ -88,7 +88,7 @@ export default {
    "id": "PIN-runs-on-itself",
    "milestone": "Done",
    "owner": "operations",
-   "status": "done: live; verified by the done check on every build",
+   "status": "closed live; verified by the done check on every build",
    "title": "Ultrastable runs on itself is live",
    "trigger": "every site deploy (pins check)"
   },
@@ -97,7 +97,7 @@ export default {
    "id": "PIN-virtual-managers",
    "milestone": "Done",
    "owner": "operations",
-   "status": "done: live; verified by the done check on every build",
+   "status": "closed live; verified by the done check on every build",
    "title": "Virtual managers and staff are live",
    "trigger": "every site deploy (pins check)"
   },
@@ -133,7 +133,7 @@ export default {
    "id": "Q-GAP-other-cloud-proof",
    "milestone": "Next",
    "owner": "operations",
-   "status": "open",
+   "status": "shelved",
    "title": "Prove one non-Cloudflare cloud end to end",
    "trigger": "every executor run"
   },
@@ -142,7 +142,7 @@ export default {
    "id": "Q-GAP-second-installation",
    "milestone": "Next",
    "owner": "operations",
-   "status": "open",
+   "status": "shelved",
    "title": "A second independent installation",
    "trigger": "every executor run"
   },
