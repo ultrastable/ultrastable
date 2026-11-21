@@ -3817,6 +3817,15 @@
    "body": "Each worker planned against a static share of the day in its own ledger while the console and site shares sat idle. The tick now sizes its allowance from Cloudflare's account-wide neuron count (aiInferenceAdaptiveGroups, sampled every tick) minus its own use; the static share is only the fallback. Measured 2026-11-21 over 24 h: 9,645 neurons account-wide, KV reads 116k (free 100k a day), D1 reads 5.7M (free 5M a day), requests 98.6k (free 100k a day): the free plan binds on four meters at once.",
    "probe": "grep:seed/worker/src/budget.js::AI-GOV-ACCOUNT-1",
    "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "lesson-2026-11-21-marker-root-1-conflict-markers-committed-on-main-kept-every-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "MARKER-ROOT-1: conflict markers committed on main kept every PR in conflict until a session stepped in",
+   "body": "PR 935 sat open with label conflict and Rowan had to call it out. Root cause: README.md and platform/adapters/README.md on main carried committed merge-conflict markers, so every PR conflicted there on each merge and scripts/resolve_generated.py could not match the nested hunks; with a conflict no hosted check ran on the new head either. Remedy in code: scripts/no_markers.py is a step in checks (a change that carries markers does not pass), scripts/regen_generated.py runs it with --fix after every merge to main (claim-only hunks are flattened with no person), and resolve_generated.py flatten() handles nested hunks. Tests ran: 425 Worker tests pass, flatten exercised on a nested sample.",
+   "probe": "file:scripts/no_markers.py",
+   "session": "session_0156nqDu9w9828E3wYy42EBd"
   }
  ]
 }
