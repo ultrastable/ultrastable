@@ -3109,7 +3109,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 62 Python and 452 Worker tests",
+   "claim": "seed-tests: 59 Python and 452 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3154,7 +3154,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "live-deploys: 816",
+   "claim": "live-deploys: 822",
    "detail": "",
    "how": "generated from code: {\"n\": {\"jsonl_count\": {\"file\": \"ops/deploys.jsonl\", \"where\": {\"live_matches_commit\": true, \"uploaded\": true}}}}",
    "id": "live-deploys",
