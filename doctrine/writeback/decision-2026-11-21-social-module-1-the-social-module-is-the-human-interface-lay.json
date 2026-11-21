@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-social-module-1-the-social-module-is-the-human-interface-lay",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "SOCIAL-MODULE-1: the social module is the human interface layer, native in core",
+  "body": "Rowan 2026-11-21: interfacing with humans (social, outreach, replies, newsletters) is a core module every system has; tenants supply config and content only; no channel runs through another account. Buffer channels verified per service; replies and mentions land in human_inbox.",
+  "probe": "grep:seed/worker/src/humans.js::SOCIAL-MODULE-1"
+ },
+ "kind": "decision",
+ "title": "SOCIAL-MODULE-1: the social module is the human interface layer, native in core",
+ "session": ""
+}
