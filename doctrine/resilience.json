@@ -33,7 +33,7 @@
       "why": "POST /pulse/watch runs the Unlearn beat only when the last one is over two hours old; safe to call by anyone; the custom domain and workers.dev are separate routes to the same Worker",
       "urls": [
         "https://ultrastable-unlearn.ultrastable.workers.dev/pulse/watch",
-        "https://unlearn.ultrastable.app/pulse/watch"
+        "https://unlearn.ultrastable.org/pulse/watch"
       ],
       "idempotent": true
     }
