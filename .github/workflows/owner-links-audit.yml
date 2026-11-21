@@ -1,0 +1,28 @@
+name: owner-links-audit
+# budget: ~2 min x 1 per day = ~60 min per month
+# trigger: daily schedule (the live links can break between merges, which no per-PR check sees) and manual dispatch
+# free-alternative: run scripts/owner_links_audit.mjs from a cloud-hosted agent session with Playwright installed
+# OWNER-LINKS-3: headless Chromium walks every owner link on production, signed out (scripts/owner_links_audit.mjs). A failure fails the run, which the ciwatch loop turns into a repair item.
+on:
+  schedule:
+    - cron: "41 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: owner-links-audit
+  cancel-in-progress: true
+jobs:
+  audit:
+    if: ${{ vars.HALT != '1' }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+      - name: Install Chromium
+        run: |
+          mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw" && npm init -y >/dev/null && npm i playwright@1.49.1 && npx playwright install --with-deps chromium
+      - name: Walk the owner links
+        run: NODE_PATH="$RUNNER_TEMP/pw/node_modules" node scripts/owner_links_audit.mjs | tee "$RUNNER_TEMP/audit.txt"; test "${PIPESTATUS[0]}" = 0
