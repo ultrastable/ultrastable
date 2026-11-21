@@ -10,6 +10,10 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: POST-READBACK-1: count a post as published only when read back (#934)
+- 2026-11-21: LANE-LATENCY-1: split foundation tests, 3 min latency probe, 10 min session TTL (#932)
+- 2026-11-21: LANE-FAST-1: parallel checks jobs and in-run merge (#929)
+- 2026-11-21: Triage: an optional Copilot assign no longer fails the issues run (#930)
 - 2026-11-21: fm-waiting-on-person: a wait on a person is a failure mode (#850)
 - 2026-11-21: SOCIAL-BUFFER-1: Buffer adapter for LinkedIn, X, Substack; LINEAGE-1 graph (#848)
 - 2026-11-21: GH-MIRROR-1 (Rowan: the managers' collateral is invisible on GitHub; no issues board, no project board, no visible roadmap). The queue stays canonical in `docs/issues/*.json`; `foundation/ghmirror.py` mirrors it one way onto GitHub Issues on every `fleet` run and the daily `issues` run (built-in token, at most 150 writes a run, open items first): one issue per item found by the body marker `<!-- us-item:ID -->`, the item's labels plus sync label `queue`, milestones Now/Next/Later/After filing/Done, closed when the file is closed, a hand edit put back. Issues were turned on for ultrastable/ultrastable (were off since QUEUE-1; `github/org-settings.json` now says has_issues true). Org project #1 "Ultrastable roadmap" gets every `label:queue` issue through GitHub's built-in Auto-add workflow (filter `is:issue label:queue`, repo ultrastable) and has a Board view; Item reopened is on. Loops that act on GitHub issues skip `queue` issues so they never fight the file: `scripts/triage.sh`, `scripts/sla.sh`, `foundation/issueloop.py`; the sweeper never files Q-OPENLOOP issues in ultrastable/ultrastable (`laneOwned`, the lane files OL-PR items). ROADMAP.md points at the live views instead of dead issue numbers. Check `python3 -m foundation ghmirror --check`; reading `--plan`.
