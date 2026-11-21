@@ -1,7 +1,25 @@
 {
- "at": "2026-11-20T14:22:20Z",
- "open_ignition_gaps": 4,
+ "at": "2026-11-21T13:42:50Z",
+ "open_ignition_gaps": 10,
  "gaps": [
+  {
+   "link": "item PORT-BRANCH-passkeys-1 relapsed after it closed",
+   "owner": "executor",
+   "closing_probe": "contracts: PORT-BRANCH-passkeys-1 passes over the hold",
+   "source": "contracts"
+  },
+  {
+   "link": "item PORT-BRANCH-worker-roadmap-agent-agent-scoreboard-2026111903 relapsed after it closed",
+   "owner": "executor",
+   "closing_probe": "contracts: PORT-BRANCH-worker-roadmap-agent-agent-scoreboard-2026111903 passes over the hold",
+   "source": "contracts"
+  },
+  {
+   "link": "item PORT-BRANCH-worker-roadmap-agent-connector-health-2026111902 relapsed after it closed",
+   "owner": "executor",
+   "closing_probe": "contracts: PORT-BRANCH-worker-roadmap-agent-connector-health-2026111902 passes over the hold",
+   "source": "contracts"
+  },
   {
    "link": "item PORT-BRANCH-worker-roadmap-agent-connector-health-2026111903 relapsed after it closed",
    "owner": "executor",
@@ -9,10 +27,10 @@
    "source": "contracts"
   },
   {
-   "link": "family Q-CRIT grows and nothing closes it",
-   "owner": "operations",
-   "closing_probe": "cmd:python3 -m foundation throughput --doer Q-CRIT",
-   "source": "throughput"
+   "link": "item Q-CIFAIL-practical-solutions-deploy-tenant relapsed after it closed",
+   "owner": "executor",
+   "closing_probe": "contracts: Q-CIFAIL-practical-solutions-deploy-tenant passes over the hold",
+   "source": "contracts"
   },
   {
    "link": "1 open item(s) vanished without a disposition",
@@ -21,7 +39,25 @@
    "source": "throughput"
   },
   {
+   "link": "guard relapse_rate_7d worsened while k improved",
+   "owner": "operations",
+   "closing_probe": "metricloop: no guard regression on the next pass",
+   "source": "metricloop"
+  },
+  {
    "link": "guard relapse_rate_7d worsened while open_items improved",
+   "owner": "operations",
+   "closing_probe": "metricloop: no guard regression on the next pass",
+   "source": "metricloop"
+  },
+  {
+   "link": "guard relapse_rate_7d worsened while families_without_doer improved",
+   "owner": "operations",
+   "closing_probe": "metricloop: no guard regression on the next pass",
+   "source": "metricloop"
+  },
+  {
+   "link": "guard relapse_rate_7d worsened while executor_success_share_7d improved",
    "owner": "operations",
    "closing_probe": "metricloop: no guard regression on the next pass",
    "source": "metricloop"
