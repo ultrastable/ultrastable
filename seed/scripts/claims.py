@@ -377,6 +377,9 @@ def file_items(root, drift):
         p = Path(root) / "docs/issues" / f"{i}.json"
         if p.exists():
             continue
+        from . import balance
+        if not balance.admit(root, i):  # FLOW-BALANCE-1: while inflow exceeds closures and today's quota is spent, the drift waits for the next pass
+            continue
         body = (f"**Owner:** executor\n**Trigger:** claims check, every PR and daily\n**Done check:** grep:{REG}::\"id\": \"{d['id']}\"\n**Status:** open\n\n"
                 f"Drift (CLAIMS-1): {d.get('claim', d.get('url', ''))}\n\nSurface: {d.get('surface', d.get('url', ''))}\n\n{d['detail']}\n\n"
                 "Fix the words or the code in the same change (prefer generating the words from code), then `python3 -m foundation claims --fix --apply`.\n\n"

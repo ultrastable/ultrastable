@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-claims-seed-copy",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "seed/scripts/claims.py must equal foundation/claims.py",
+  "body": "Editing the claims checker without copying it to the seed fails test_checker_is_the_platform_copy; copy in the same change.",
+  "probe": "file:seed/scripts/claims.py"
+ },
+ "kind": "lesson",
+ "title": "seed/scripts/claims.py must equal foundation/claims.py",
+ "session": "session_0156nqDtycGejegSYjhFJ1MF"
+}
