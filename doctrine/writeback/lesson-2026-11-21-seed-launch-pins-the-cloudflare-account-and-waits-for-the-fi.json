@@ -1,0 +1,13 @@
+{
+  "row": {
+    "id": "lesson-2026-11-21-seed-launch-pins-the-cloudflare-account-and-waits-for-the-fi",
+    "kind": "lesson",
+    "date": "2026-11-21",
+    "title": "Seed launch pins the Cloudflare account and waits for the first tick",
+    "body": "Evidence: actions run 44955545446 deployed the seed into the retired account because CLOUDFLARE_ACCOUNT_ID came from the repo secret, and its health probe saw 503 before the first cron tick. Fixed in code: the account id is pinned in seed-launch.yml, the _account_guard in foundation/seedlaunch.py refuses other accounts (test AccountGuard), and the probe waits through one 10-minute cron interval. Session: session_0156nqDsRjMQDqTmVCf3TxQg",
+    "probe": "grep:foundation/seedlaunch.py::_account_guard"
+  },
+  "kind": "lesson",
+  "title": "Seed launch pins the Cloudflare account and waits for the first tick",
+  "session": "session_0156nqDsRjMQDqTmVCf3TxQg"
+}

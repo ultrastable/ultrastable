@@ -31,7 +31,7 @@ jobs:
       - name: A fresh seed and every seeded repository, launched on Ultrastable's own account and verified live
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_ACCOUNT_ID: 81e3a4efb4eb66e613529b87682911bb  # SINGLE-ACCOUNT-1: pinned, never the repo secret (the first run landed in the retired account)
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
         run: python3 -m foundation seedlaunch --e2e --fleet
       - name: Land the launch records on main

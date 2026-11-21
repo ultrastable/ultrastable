@@ -71,8 +71,18 @@ def _run(argv, cwd, timeout=900):
     return p.returncode, (p.stdout + p.stderr).strip()
 
 
+def _account_guard() -> str | None:
+    """SINGLE-ACCOUNT-1: a seed is launched only into the ultrastable account (doctrine/single-account.json), never a retired one."""
+    want = json.loads((ROOT / "doctrine" / "single-account.json").read_text())["required_account"]["id"]
+    got = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "")
+    return None if got == want else f"CLOUDFLARE_ACCOUNT_ID is not the required account {want}; refusing to deploy"
+
+
 def launch(seed_root: Path, label: str) -> dict:
     """Boot one seed checkout with --apply and judge it."""
+    bad = _account_guard()
+    if bad:
+        return {"at": _now(), "kind": label, "exit": 2, "passed": False, "failed_stages": {"account": bad}}
     code, out = _run([sys.executable, "bootstrap/bootstrap.py", "--apply"], seed_root)
     log_p = seed_root / "org" / "boot-log.json"
     log = json.loads(log_p.read_text()) if log_p.exists() else {"stages": []}
@@ -100,6 +110,8 @@ def e2e(keep=False, root=ROOT) -> dict:
     idea.write_text(set_front(idea.read_text(), org_name=f"Seed E2E {stamp}", slug=f"seed-e2e-{stamp}", workers_dev="true", public_health_only="1"))
     rec = launch(seed, "e2e")
     rec["slug"] = f"seed-e2e-{stamp}"
+    if "account" in (rec.get("failed_stages") or {}):
+        return rec
     if not keep and (seed / "worker" / "wrangler.jsonc").exists():
         rec["teardown"] = teardown(seed)
     return rec

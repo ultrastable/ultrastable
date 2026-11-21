@@ -56,3 +56,20 @@ class SeedLaunch(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AccountGuard(unittest.TestCase):
+    def test_refuses_other_account(self):
+        import os
+        from foundation import seedlaunch
+        old = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+        os.environ["CLOUDFLARE_ACCOUNT_ID"] = "0" * 32
+        try:
+            r = seedlaunch.launch(Path("/nonexistent"), "e2e")
+        finally:
+            if old is None:
+                os.environ.pop("CLOUDFLARE_ACCOUNT_ID")
+            else:
+                os.environ["CLOUDFLARE_ACCOUNT_ID"] = old
+        self.assertFalse(r["passed"])
+        self.assertIn("account", r["failed_stages"])
