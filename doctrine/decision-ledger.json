@@ -757,7 +757,7 @@
    "date": "2026-11-13",
    "title": "COSTGUARD-1 budgets as failure modes (Session: session_0156nqDuRz3AxosG8EDZT7Zi; Session: session_0156nqDsZ)",
    "body": "External D1 budgets (qnfo-audit under 15M rows/hr) are sampled hourly by the tick Worker into cost_samples and probed by selfaudit; red files the next FIX- item, green closes it. GitHub App org access and k_eff below 1 are probed modes with fixes.",
-   "probe": "grep:instances/ultrastable/failure-modes.json::qnfo-audit-d1-budget"
+   "probe": "grep:instances/ultrastable/cost-budgets.json::ultrastable-org"
   },
   {
    "id": "lesson-2026-11-13-free-org-plan-blocks-branch-protection-bundles-restore",
@@ -3826,6 +3826,32 @@
    "body": "PR 935 sat open with label conflict and Rowan had to call it out. Root cause: README.md and platform/adapters/README.md on main carried committed merge-conflict markers, so every PR conflicted there on each merge and scripts/resolve_generated.py could not match the nested hunks; with a conflict no hosted check ran on the new head either. Remedy in code: scripts/no_markers.py is a step in checks (a change that carries markers does not pass), scripts/regen_generated.py runs it with --fix after every merge to main (claim-only hunks are flattened with no person), and resolve_generated.py flatten() handles nested hunks. Tests ran: 425 Worker tests pass, flatten exercised on a nested sample.",
    "probe": "file:scripts/no_markers.py",
    "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "decision-2026-11-21-pathfinder-1-find-another-path-before-any-owner-ask",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "PATHFINDER-1: find another path before any owner ask",
+   "body": "Owner 2026-11-21: multiple paths always exist and the information is already held. foundation/pathfinder.py resolves routes per surface class, records attempts, diffs regressed integrations, and fails openloops --check on an owner ask without exhaustion proof.",
+   "probe": "file:foundation/pathfinder.py",
+   "session": "session_0156nqDsmZTfHS1uunx9hyu7"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-standards-surface-registered",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: standards surface registered",
+   "body": "The token-gated import route is registered as an owner-audience surface, not discoverable.",
+   "probe": "grep:seed/standards/surfaces.json::social-import",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-the-social-module-is-the-human-interface-lay",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: the social module is the human interface layer, native in core",
+   "body": "Rowan 2026-11-21: interfacing with humans (social, outreach, replies, newsletters) is a core module every system has; tenants supply config and content only; no channel runs through another account. Buffer channels verified per service; replies and mentions land in human_inbox.",
+   "probe": "grep:seed/worker/src/humans.js::SOCIAL-MODULE-1"
   }
  ]
 }

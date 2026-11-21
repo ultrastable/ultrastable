@@ -13,7 +13,7 @@ for f in list(conf):
         open(f, "w").write(json.dumps(b, indent=1, ensure_ascii=False) + "\n")
     elif f.endswith(".jsonl") or f == "docs/PROJECT-MEMORY.md":  # append-only: keep both sides
         t = open(f).read(); open(f, "w").write("\n".join(l for l in t.splitlines() if not re.match(r"^(<<<<<<<|=======|>>>>>>>)", l)) + "\n")
-    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js"):   # claims-data.js is rewritten below from the merged doctrine/claims.json
+    elif f in ("ops/transparency.json", "site/dashboard-data.js", "site/claims-data.js", "site/research-data.js") or f.startswith("research/papers/"):  # papers are rebuilt by `research --page --apply` below   # claims-data.js is rewritten below from the merged doctrine/claims.json
         subprocess.run(["git", "checkout", "--theirs", f])
     else:
         continue
@@ -86,6 +86,8 @@ for f in sh("git", "grep", "-l", "-E", "^(<<<<<<< |>>>>>>> )", "--", "*.md").spl
 if "doctrine/claims.json" not in conf:   # the registry merged cleanly: its served copy is regenerated, never merged by hand
     subprocess.run([sys.executable, "-m", "foundation", "claims", "--fix", "--apply"], capture_output=True)
     subprocess.run(["git", "add", "site/claims-data.js"])
+subprocess.run([sys.executable, "-m", "foundation", "research", "--page", "--apply"], capture_output=True)  # REGEN-RESEARCH-1: papers follow the merged studies
+subprocess.run(["git", "add", "research", "site/research-data.js"])
 subprocess.run([sys.executable, "scripts/build_dashboard.py"], capture_output=True)
 subprocess.run(["git", "add", "site/dashboard-data.js"])
 print("still conflicting:", conf)
