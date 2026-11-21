@@ -1,0 +1,14 @@
+{
+  "id": "Q-SELF-unused-import-scripts-smoke-probe-py",
+  "title": "Q-SELF-unused-import-scripts-smoke-probe-py: unused import in scripts/smoke_probe.py",
+  "body": "**Owner:** code-agent\n**Trigger:** signal unused_import fires for scripts/smoke_probe.py\n**Done check:** cmd:python3 -m foundation selfcode --probe unused_import scripts/smoke_probe.py\n**Status:** open\n\nSELFCODE-1 signal `unused_import` on `scripts/smoke_probe.py` (1 finding(s)).\n\nRemove the unused imports in the file; change nothing else.\n\nFindings:\n- line 6: unused import json\n\nScope: only foundation/, scripts/, tests/, products/, site/, seed/ and docs/issues/. A change that does not make the done check pass is reverted.",
+  "labels": [
+    "role:code-agent",
+    "ws:self",
+    "p6",
+    "raises-deploys",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Self"
+}

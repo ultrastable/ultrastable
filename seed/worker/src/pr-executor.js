@@ -50,7 +50,20 @@ export const namedFiles = (issue, listing) => {
 };
 
 // PATCH-EDIT-1: the model is shown the files the item names (whole when small, head and tail when long) and replies in EDIT blocks.
-export function buildPrompt(issue, tree, files = {}) {
+export function buildPrompt(issue, tree) {
+  const listing = (await gh('GET', `/repos/${repo}/git/trees/${sha}?recursive=1`)).json.tree.filter(t => t.type === 'blob').map(t => t.path).join('\n');
+  const files = {};
+  for (const p of namedFiles(issue, listing)) {
+    const c = await gh('GET', `/repos/${repo}/contents/${encodeURI(p)}?ref=${encodeURIComponent(base)}`);
+    if (c.ok && c.json.content) files[p] = new TextDecoder().decode(Uint8Array.from(atob(c.json.content.replace(/\n/g, '')), ch => ch.charCodeAt(0)));
+  }
+  const ctx = Object.entries(files).map(([p, t]) => `--- ${p} (${t.split('\n').length} lines) ---\n` + t).join('\n');
+  return 'You are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. '
+    + 'Reply in exactly this format and nothing else:\n' + BLOCK_FORMAT + '\n'
+    + 'Never rewrite a whole existing file: change it with EDIT blocks whose FIND lines are copied exactly from CURRENT FILES. '
+    + 'Never touch .github/, autonomy/, secrets or git files. Write tests where the change is code. Server-side only: never reference localhost or a listening port.\n\n'
+    + `ISSUE #${issue.number}: ${issue.title}\n${(issue.body || '').slice(0, 6000)}\n\nREPOSITORY FILES (partial):\n${tree.slice(0, 6000)}\n`
+    + (ctx ? `\nCURRENT FILES (lines not shown still exist and stay unchanged):\n${ctx}\n` : '');
   const ctx = Object.entries(files).map(([p, t]) => `--- ${p} (${t.split('\n').length} lines${t.length > 9000 ? ', head and tail only: use EDIT blocks, never a FILE block' : ', complete'}) ---\n` + (t.length > 9000 ? t.slice(0, 4500) + '\n[... middle not shown ...]\n' + t.slice(-2500) : t)).join('\n');
   return 'You are the work step of an autonomous software organization. Resolve this issue with the smallest correct change to the repository. '
     + 'Reply in exactly this format and nothing else:\n' + BLOCK_FORMAT + '\n'

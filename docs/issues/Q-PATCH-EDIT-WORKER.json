@@ -1,8 +1,12 @@
 {
   "id": "Q-PATCH-EDIT-WORKER",
   "title": "Q-PATCH-EDIT-WORKER: the tick Worker's code agent takes EDIT blocks and sees the files an item names",
-  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/pr-executor.js::<<<EDIT\n**Status:** open\n\nPATCH-EDIT-1 gave the Actions executor find-and-replace edits (`foundation/agents.py` `apply_edit`, `parse_json`) and the text of the files an item names (`foundation/executor.py` `file_context`). The Worker route still asks for whole files and shows the model only file names: `buildPrompt` in `seed/worker/src/pr-executor.js` and the system message in `seed/worker/src/codeagent.js`. Port the same reply format (`<<<EDIT path>>>`, `<<<FIND>>>`, `<<<REPLACE>>>`, `<<<END>>>`) and the same exact-or-unambiguous placement rule to `seed/worker/src/pr-executor.js`, read each named file through the GitHub contents API before the model call, and add a test in `seed/worker/test/` that applies an edit to a fixture file.\n\nsize: M",
-  "labels": ["agent-ready", "p1", "raises-self"],
+  "body": "**Owner:** executor\n**Trigger:** executor tick, driver order\n**Done check:** grep:seed/worker/src/pr-executor.js::<<<EDIT\n**Status:** closed\n\nPATCH-EDIT-1 gave the Actions executor find-and-replace edits (`foundation/agents.py` `apply_edit`, `parse_json`) and the text of the files an item names (`foundation/executor.py` `file_context`). The Worker route still asks for whole files and shows the model only file names: `buildPrompt` in `seed/worker/src/pr-executor.js` and the system message in `seed/worker/src/codeagent.js`. Port the same reply format (`<<<EDIT path>>>`, `<<<FIND>>>`, `<<<REPLACE>>>`, `<<<END>>>`) and the same exact-or-unambiguous placement rule to `seed/worker/src/pr-executor.js`, read each named file through the GitHub contents API before the model call, and add a test in `seed/worker/test/` that applies an edit to a fixture file.\n\nsize: M\n\n**Evidence:** closed by the pull request that carries this change\n",
+  "labels": [
+    "agent-ready",
+    "p1",
+    "raises-self"
+  ],
   "workstream": "Executor queue",
   "milestone": "Now"
 }
