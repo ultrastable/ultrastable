@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-template-carry-shim",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "A carry that cannot edit workflows keeps every script they call",
+  "body": "Removing business/ also removed scripts/check_business_index.py that the rest job still calls; it is now a shim that passes without business/ and fails if it returns.",
+  "probe": "file:scripts/check_business_index.py"
+ },
+ "kind": "lesson",
+ "title": "A carry that cannot edit workflows keeps every script they call",
+ "session": "session_0156nqDtycGejegSYjhFJ1MF"
+}
