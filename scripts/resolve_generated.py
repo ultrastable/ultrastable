@@ -37,8 +37,37 @@ def soft(path):
     if hard:
         return False
     open(path, "w", encoding="utf-8").write(new); return True
+# MARKER-ROOT-1 (2026-11-21): main itself once carried committed conflict markers in README.md, so every later merge nested a new hunk around the old
+# markers and soft() could not match it; every PR then sat in conflict until a session cleaned it by hand. flatten() handles that shape: drop every
+# marker line, collapse consecutive lines that are equal once claim values are blanked (keeping the last, main's), and accept only if nothing else differed.
+MARK = re.compile(r"^(<<<<<<< |=======$|>>>>>>> |\|\|\|\|\|\|\| )")
+def flatten(path):
+    try:
+        lines = open(path, encoding="utf-8").read().split("\n")
+    except (UnicodeDecodeError, FileNotFoundError):
+        return False
+    if not any(MARK.match(l) for l in lines):
+        return False
+    out, inside, block = [], 0, []
+    for l in lines:
+        if l.startswith("<<<<<<< "):
+            inside += 1; continue
+        if l.startswith(">>>>>>> "):
+            inside -= 1
+            if inside == 0:
+                norm = {CLAIM.sub(r"\1\3", b) for b in block}
+                if len(norm) != 1:
+                    return False          # written text differs: a real conflict, left for the caller
+                out.append(block[-1]); block = []
+            continue
+        if MARK.match(l):
+            continue
+        (block if inside else out).append(l)
+    if inside or block:
+        return False
+    open(path, "w", encoding="utf-8").write("\n".join(out)); return True
 for f in list(conf):
-    if soft(f):
+    if soft(f) or flatten(f):
         subprocess.run(["git", "add", f]); conf.remove(f); print("resolved (identical or claim-only)", f)
 if "doctrine/claims.json" not in conf:   # the registry merged cleanly: its served copy is regenerated, never merged by hand
     subprocess.run([sys.executable, "-m", "foundation", "claims", "--fix", "--apply"], capture_output=True)

@@ -147,12 +147,16 @@ test("the owner page: a stacked form, named chips, an answer thread, and an answ
   assert.ok(!/innerHTML\s*=\s*[^;]*\bmd\(/.test(js), "answers are never written through innerHTML");
 });
 
-test("Q-BUDGET-SURFACES: a frozen budget makes the console answer without a model call", async () => {
+test("Q-BUDGET-SURFACES: past the budget the console crawls (at most one model call an hour) and still answers", async () => {
   const e = mkenv(["{\"answer\":\"model answer\"}"]);
   await ensureLedger(e.DB);
   await e.DB.prepare("INSERT INTO budget_ledger (day, kind, units, calls, refused) VALUES (?1,'ai_neurons',1000000000,1,0)").bind(new Date().toISOString().slice(0, 10)).run();
   const calls = []; const raw = e.AI.run; e.AI = { run: async (...a) => { calls.push(a[0]); return raw(...a); } };
   const r = await askAgent(budgetEnv(e, SHARES.dashboard), "how many tasks are there", { commands: {}, exec: async () => ({ ok: true, out: "" }) });
-  assert.equal(calls.length, 0, "no Workers AI call past the budget");
+  assert.ok(calls.length <= 1, "SPEND-SOFT-1: crawl allows one call an hour, never a hard stop");
   assert.ok(String(r.out).length > 0, "the answer is never empty");
+  const before = calls.length;
+  const r2 = await askAgent(budgetEnv(e, SHARES.dashboard), "how many tasks are there", { commands: {}, exec: async () => ({ ok: true, out: "" }) });
+  assert.equal(calls.length, before, "a second ask in the same hour makes no model call");
+  assert.ok(String(r2.out).length > 0, "the throttled answer is never empty");
 });

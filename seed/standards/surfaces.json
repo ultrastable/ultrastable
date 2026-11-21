@@ -515,6 +515,19 @@
       "reason": "internal feed read by the owner dashboard and the site worker proxy; it recommends only and enables nothing"
     },
     {
+      "id": "spend",
+      "path": "/api/spend",
+      "methods": [
+        "GET"
+      ],
+      "kind": "rest",
+      "audience": "public",
+      "standards": [],
+      "discoverable": false,
+      "description": "Today's estimated Cloudflare bill, the soft daily spend target, the throttle level (full, ease, throttle, crawl) and its knobs; ?tenant= gives one tenant's share (SPEND-SOFT-1).",
+      "reason": "read by tenant workers and the site worker proxy; it reports state and enables nothing"
+    },
+    {
       "id": "goals",
       "path": "/api/goals",
       "methods": [

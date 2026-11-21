@@ -8,7 +8,14 @@
 // that would pass the cap, and the scheduler turns a refusal into a DEFERRAL: the loop is recorded `deferred` (not failed), is carried to the front of the next
 // invocation, and a loop is not started when its minimum cost no longer fits. No loop can fail for this reason again; it can only wait one tick, in order.
 export const SUBREQUEST_CAP = 50;
-export const SUBREQUEST_RESERVE = 4;  // kept for the beat, the deferral record and any call the runtime makes for itself
+export const SUBREQUEST_RESERVE = 4;
+// PLAN-1: Workers Paid allows 10,000 subrequests per invocation. 1,000 is planned (GitHub's per-installation rate limit binds long before that), and each
+// loop's share grows fivefold, so the loops that waited for rotation now run every tick.
+export const PAID_SUBREQUEST_CAP = 1000;
+export function capsFor(plan) {
+  if (plan !== 'paid') return { cap: SUBREQUEST_CAP, shares: LOOP_MAX_COST, rotate: true };
+  return { cap: PAID_SUBREQUEST_CAP, shares: Object.fromEntries(Object.entries(LOOP_MAX_COST).map(([k, v]) => [k, v * 5])), rotate: false };
+}  // kept for the beat, the deferral record and any call the runtime makes for itself
 // Minimum calls a loop needs to make progress; below it the loop is deferred before it starts. Measured from the loops' own call patterns.
 export const LOOP_MIN_COST = { gate: 10, lane: 10, handoffs: 12, issuesync: 4, 'repo-access': 5, sweeper: 8, 'deploy-evidence': 5, 'watchdog-gh': 3, 'host-hooks': 4, hosts: 4, social: 6, executor: 6 };
 
