@@ -85,9 +85,15 @@ def decide(it: dict, age_days: float | None, fails: int, c: dict, last_detail: s
                                        f"Default in effect: {c['gate_default']}.")
     if fails >= c["fail_limit"]:
         return "shelved", "executor-failed", f"the executor failed {fails} consecutive runs on this item" + (f"; last reason: {last_detail[:240]}" if last_detail else "") + "."
-    if age_days is not None and age_days >= c["ttl_days"]:
-        return "shelved", "ttl", f"open {int(age_days)} days (limit {c['ttl_days']}) and no loop closed it."
+    lim = ttl_days(c)
+    if age_days is not None and age_days >= lim:
+        return "shelved", "ttl", f"open {age_days * 24:.1f} hours (limit {lim * 24:g} hours) and no loop closed it (SLA-8H-1)."
     return None
+
+
+def ttl_days(c: dict) -> float:
+    """The age limit in days: ttl_hours (SLA-8H-1) when set, else ttl_days."""
+    return c["ttl_hours"] / 24 if isinstance(c.get("ttl_hours"), (int, float)) and c["ttl_hours"] > 0 else c["ttl_days"]
 
 
 def _write(it: dict, disposition: str, rule: str, evidence: str, at: str, c: dict) -> None:
@@ -184,7 +190,7 @@ def report(root=REPO, now=None) -> dict:
         b = born.get(it["path"].name)
         if not final and b:
             oldest = max(oldest, (now - _ts(b)).total_seconds() / 86400)
-    return {"counts": dict(sorted(counts.items())), "open": counts.get("open", 0), "oldest_open_days": round(oldest, 1), "ttl_days": c["ttl_days"]}
+    return {"counts": dict(sorted(counts.items())), "open": counts.get("open", 0), "oldest_open_days": round(oldest, 1), "oldest_open_hours": round(oldest * 24, 1), "ttl_days": c["ttl_days"], "ttl_hours": round(ttl_days(c) * 24, 1)}
 
 
 def check(root=REPO, now=None) -> list[str]:
@@ -198,8 +204,8 @@ def check(root=REPO, now=None) -> list[str]:
         bad.append(f"{DATA}: owner_bound is not a usable pattern ({e})")
     if not bad:
         r = report(root, now)
-        if r["oldest_open_days"] > c["ttl_days"] + 2:
-            bad.append(f"an open item is {r['oldest_open_days']} days old, past ttl_days {c['ttl_days']} plus two: the fleet pass is not disposing (DISPOSE-1)")
+        if r["oldest_open_hours"] > ttl_days(c) * 24 + 2:
+            bad.append(f"an open item is {r['oldest_open_hours']} hours old, past the {ttl_days(c) * 24:g} hour limit plus two: the fleet pass is not disposing (DISPOSE-1, SLA-8H-1)")
     return bad
 
 

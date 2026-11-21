@@ -7,11 +7,17 @@
  "revive_per_pass": 1,
  "max_per_pass": 400,
  "owner_bound": "ROWAN|identity-bound",
- "final_statuses": ["closed", "done", "live"],
+ "final_statuses": [
+  "closed",
+  "done",
+  "live"
+ ],
  "gate_default": "the system runs without this step; nothing waits on it",
  "dispositions": {
   "gate": "only the owner's own account, money or signature can do it; closed with the default in effect",
   "shelved": "no server-side loop closed it inside the limit; closed with the attempts as evidence and retried when the executor is idle",
   "fixed": "the closing probe passed after the item was disposed"
- }
+ },
+ "ttl_hours": 6,
+ "_ttl_hours": "SLA-8H-1 (Rowan 2026-11-21: nothing open past 8 hours, ever). An open item older than ttl_hours is shelved (closed with evidence, retried when the executor is idle); the fleet pass runs every 10 minutes, so no item stays open past 8 hours. ttl_days is kept as the legacy bound only."
 }

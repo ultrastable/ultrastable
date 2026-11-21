@@ -33,8 +33,8 @@ def body(d, iid):
     return json.loads((d / "docs/issues" / f"{iid}.json").read_text(encoding="utf-8"))["body"]
 
 
-def born(days, *ids):
-    return {f"{i}.json": (T0 - timedelta(days=days)).isoformat() for i in ids}
+def born(days, *ids, hours=None):
+    return {f"{i}.json": (T0 - (timedelta(hours=hours) if hours is not None else timedelta(days=days))).isoformat() for i in ids}
 
 
 class Dispose(unittest.TestCase):
@@ -51,13 +51,13 @@ class Dispose(unittest.TestCase):
 
     def test_three_failed_runs_shelve_and_young_items_stay_open(self):
         d = repo(); item(d, "Q-1"); item(d, "Q-2")
-        rows = self.run_pass(d, fails={"Q-1": 3, "Q-2": 2}, born_=born(1, "Q-1", "Q-2"))
+        rows = self.run_pass(d, fails={"Q-1": 3, "Q-2": 2}, born_=born(0, "Q-1", "Q-2", hours=1))
         self.assertEqual([(r["id"], r["rule"]) for r in rows], [("Q-1", "executor-failed")])
         self.assertIn("**Status:** open", body(d, "Q-2"))
 
     def test_ttl_shelves_every_kind_of_item_file_and_dry_run_writes_nothing(self):
         d = repo(); item(d, "Q-1"); item(d, "WEB-9", owner="Ops", probe="Preview returns 200"); item(d, "Q-NEW")
-        b = {**born(15, "Q-1", "WEB-9"), **born(13, "Q-NEW")}
+        b = {**born(0, "Q-1", "WEB-9", hours=7), **born(0, "Q-NEW", hours=5)}  # SLA-8H-1: ttl_hours 6
         self.assertEqual(len(self.run_pass(d, born_=b, apply=False)), 2)
         self.assertIn("**Status:** open", body(d, "Q-1"))
         rows = self.run_pass(d, born_=b)
@@ -102,13 +102,14 @@ class Dispose(unittest.TestCase):
         d = repo(); item(d, "Q-1"); item(d, "Q-2", status="closed")
         self.assertEqual(D.report(d, now=T0)["counts"], {"closed": 1, "open": 1})
         self.assertEqual(D.check(d, now=T0), [])
-        cfg = json.loads((d / "doctrine/dispose.json").read_text(encoding="utf-8")); cfg["ttl_days"] = 0
+        cfg = json.loads((d / "doctrine/dispose.json").read_text(encoding="utf-8")); cfg["ttl_days"] = 0; cfg.pop("ttl_hours", None)
         (d / "doctrine/dispose.json").write_text(json.dumps(cfg), encoding="utf-8")
         self.assertTrue(D.check(d, now=T0))
 
     def test_the_live_rules_are_well_formed_and_the_fleet_pass_calls_them(self):
         c = D.cfg(ROOT)
         self.assertLessEqual(c["ttl_days"], 31)  # "not for months"
+        self.assertLessEqual(D.ttl_days(c) * 24, 6)  # SLA-8H-1: shelved before 8 hours with a 10-minute fleet pass to spare
         self.assertIn("dispose.run(root, apply=apply)", (ROOT / "foundation/queue.py").read_text(encoding="utf-8"))
         self.assertIn("queue --run --apply --publish", (ROOT / ".github/workflows/fleet.yml").read_text(encoding="utf-8"))
 

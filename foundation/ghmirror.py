@@ -41,7 +41,7 @@ FOOTER = ("\n\n---\nMirrored one way from [`docs/issues/{id}.json`](https://gith
 
 
 def status_of(item: dict) -> str:
-    s = FIELD(item.get("body", ""), "Status").lower().rstrip(":").split(" ")[0] if item.get("body") else ""
+    s = FIELD(item.get("body", ""), "Status").lower().split(" ")[0].rstrip(":") if item.get("body") else ""
     return s or str(item.get("status") or item.get("state") or "open").lower()
 
 
