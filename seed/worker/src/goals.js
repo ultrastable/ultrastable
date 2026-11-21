@@ -12,6 +12,7 @@
 // their knob values from GET /api/goals/knobs?tenant=<id> and apply them in their own code. Tenant-specific configuration stays in the tenant; core stores only
 // ids, bounds and values. Config: seed/autonomy/goals.json (config.goals). Page: /goals on the site, data at /api/goals.
 import { record } from './auditchain.js';
+import { dampedCooldown, errorBudget } from './control.js';  // CONTROL-1: knob damping, goal error budgets
 export const DDL = [
   `CREATE TABLE IF NOT EXISTS goals (id TEXT PRIMARY KEY, tenant TEXT NOT NULL DEFAULT 'core', parent_id TEXT, level TEXT NOT NULL, statement TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'none', spec TEXT, unit TEXT, op TEXT, target REAL, deadline TEXT, status TEXT NOT NULL DEFAULT 'active', origin TEXT NOT NULL DEFAULT 'seed', last_value REAL, last_at INTEGER, met INTEGER NOT NULL DEFAULT 0, streak INTEGER NOT NULL DEFAULT 0, achieved_at INTEGER, stretch_id TEXT, missed_at INTEGER, retired_reason TEXT, created_at INTEGER NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS goals_tenant ON goals (tenant, status)`,
@@ -188,10 +189,12 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
       const pending = await first(db, `SELECT COUNT(*) AS n FROM goal_adjustments WHERE goal_id=? AND reviewed_at IS NULL`, g.id);
       if (!(pending && pending.n) && adjusts < c.max_adjust_per_run) {
         const cand = [];
+        const recent = await all(db, `SELECT knob_id, at, old, new FROM goal_adjustments WHERE goal_id=? AND at >= ?`, g.id, now - 30 * 86400e3);
         for (const k of knobs) {
+          const damp = dampedCooldown(k.cooldown_h, recent.filter(m => m.knob_id === k.id));  // CONTROL-1: a chattering knob slows down
           const dir = need * (k.effect < 0 ? -1 : 1), nv = Math.min(k.max, Math.max(k.min, k.value + dir * k.step));
           if (nv === k.value) continue;
-          if (k.last_changed_at && now - k.last_changed_at < k.cooldown_h * 3600e3) continue;
+          if (k.last_changed_at && now - k.last_changed_at < damp.cooldown_h * 3600e3) { if (damp.damped) (out.damped ||= []).push({ knob: k.id, reversals: damp.reversals, cooldown_h: damp.cooldown_h }); continue; }
           if (k.hold_dir === dir && k.hold_until && now < k.hold_until) continue;
           cand.push({ k, dir, nv, room: Math.abs(nv - k.value) / Math.max(k.max - k.min, 1e-9) + Math.abs(k.max - k.min) * 1e-6 });
         }
@@ -235,7 +238,7 @@ export async function goalsStep(db, ctx, cfg, { builtins = {}, ensureItem = null
 }
 
 // ---- the public view ----
-export async function readGoals(db, { builtins = {}, loops = true, now = Date.now() } = {}) {
+export async function readGoals(db, { builtins = {}, loops = true, now = Date.now(), slo = 0.9 } = {}) {
   await ensure(db);
   const gs = await all(db, `SELECT * FROM goals WHERE status != 'retired' OR retired_reason IS NOT NULL ORDER BY tenant, level, id`);
   const samples = await all(db, `SELECT goal_id, at, value FROM goal_samples WHERE at >= ? ORDER BY at`, now - 14 * 86400e3);
@@ -246,9 +249,10 @@ export async function readGoals(db, { builtins = {}, loops = true, now = Date.no
   if (loops) beats = await all(db, `SELECT loop, COUNT(*) AS runs, SUM(CASE WHEN ok=1 THEN 1 ELSE 0 END) AS ok_runs, SUM(CASE WHEN ok=1 AND detail IS NOT NULL AND detail NOT IN ('null','{}','[]') AND detail NOT LIKE '{"paced"%' THEN 1 ELSE 0 END) AS acted, MAX(CASE WHEN ok=1 THEN finished_at END) AS last_ok, MAX(started_at) AS last_start FROM loop_beats WHERE started_at >= ? GROUP BY loop ORDER BY loop`, new Date(now - 86400e3).toISOString().slice(0, 19).replace('T', ' ')).catch(() => []);
   return {
     as_of: new Date(now).toISOString(),
+    slo: { objective: slo, period_d: 14, method: 'multiwindow burn rate, Site Reliability Workbook ch. 5 (CONTROL-1)' },
     goals: gs.map(g => { const tr = trend((by[g.id] || []).map(s => ({ at: s.at, value: s.value }))); const need = needOf(g.op);
       return { id: g.id, tenant: g.tenant, parent_id: g.parent_id, level: g.level, statement: g.statement, op: g.op, target: g.target, unit: g.unit, deadline: g.deadline, status: g.status, origin: g.origin, value: g.last_value, read_at: g.last_at ? new Date(g.last_at).toISOString() : null, met: Boolean(g.met),
-        trend: tr.slope_per_day == null ? 'not enough readings' : (need * tr.slope_per_day > 0 ? 'toward target' : need * tr.slope_per_day < 0 ? 'away from target' : 'flat'), slope_per_day: tr.slope_per_day, readings: tr.n, spark: (by[g.id] || []).slice(-24).map(s => s.value), stretch_id: g.stretch_id, retired_reason: g.retired_reason }; }),
+        trend: tr.slope_per_day == null ? 'not enough readings' : (need * tr.slope_per_day > 0 ? 'toward target' : need * tr.slope_per_day < 0 ? 'away from target' : 'flat'), slope_per_day: tr.slope_per_day, readings: tr.n, spark: (by[g.id] || []).slice(-24).map(s => s.value), error_budget: OPS[g.op] ? errorBudget((by[g.id] || []).map(s => ({ at: s.at, ok: OPS[g.op](s.value, g.target) })), slo, { now, period_d: 14 }) : null, stretch_id: g.stretch_id, retired_reason: g.retired_reason }; }),
     knobs: knobs.map(k => ({ id: k.id, tenant: k.tenant, goal_id: k.goal_id, what: k.what, value: k.value, default: k.default_value, min: k.min, max: k.max, step: k.step, effect: k.effect, cooldown_h: k.cooldown_h, config_path: k.config_path, last_changed_at: k.last_changed_at ? new Date(k.last_changed_at).toISOString() : null, resting_until: k.hold_until && k.hold_until > now ? new Date(k.hold_until).toISOString() : null })),
     adjustments: adj.map(a => ({ at: new Date(a.at).toISOString(), knob: a.knob_id, goal: a.goal_id, old: a.old, new: a.new, why: a.why, prediction: a.prediction, baseline: a.baseline, measured: a.measured, verdict: a.reviewed_at == null ? 'pending' : (a.kept ? 'kept' : 'reverted') })),
     loops: beats.map(b => ({ loop: b.loop, runs_24h: b.runs, ok_runs_24h: b.ok_runs, acted_24h: b.acted, last_ok: b.last_ok, closed: b.runs > 0 && b.ok_runs > 0 && (b.ok_runs / b.runs) >= 0.9 ? 'closing' : (b.ok_runs > 0 ? 'degraded' : 'not closing') })),
