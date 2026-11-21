@@ -1599,7 +1599,7 @@ export default {
   {
    "claim": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
    "detail": "",
-   "how": "file:doctrine/template-boundary.json + file:foundation/template.py + grep:foundation/template.py::def check",
+   "how": "file:doctrine/template-boundary.json + file:foundation/template.py",
    "id": "cited-bbe53ab169",
    "kind": "claim",
    "pass": true,
@@ -1858,6 +1858,15 @@ export default {
    "surface": "agents/AGENTS.md"
   },
   {
+   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "detail": "",
+   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
+   "id": "cited-158bd3c207",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -1997,6 +2006,15 @@ export default {
    "detail": "",
    "how": "file:doctrine/unattended.json + file:foundation/unattended.py + file:foundation/modelwatch.py + file:tests/foundation/test_unattended.py",
    "id": "cited-cd0900561e",
+   "kind": "claim",
+   "pass": true,
+   "surface": "agents/AGENTS.md"
+  },
+  {
+   "claim": "- **A seed is not done until it runs a year unattended (SEED-LIFECYCLE-1, Rowan 2026-11-21).** \"Update the core of ultrastable that for any",
+   "detail": "",
+   "how": "file:doctrine/unattended.json + file:seed/scripts/seedlife.py + file:seed/autonomy/seed-lifecycle.json + file:doctrine/seed-lifecycle.json + file:foundation/seedlife.py + file:tests/foundation/test_seedlife.py",
+   "id": "cited-5e7af4a8d7",
    "kind": "claim",
    "pass": true,
    "surface": "agents/AGENTS.md"
@@ -2452,6 +2470,15 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "detail": "",
+   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
+   "id": "mirror-c8f6471ad1",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
    "detail": "",
    "how": "file:docs/PROJECT-MEMORY.md",
@@ -2587,9 +2614,18 @@ export default {
    "surface": "seed/agents/AGENTS.md"
   },
   {
+   "claim": "- **A seed is not done until it runs a year unattended (SEED-LIFECYCLE-1, Rowan 2026-11-21).** \"Update the core of ultrastable that for any",
+   "detail": "",
+   "how": "file:doctrine/unattended.json + file:seed/scripts/seedlife.py + file:seed/autonomy/seed-lifecycle.json + file:doctrine/seed-lifecycle.json + file:foundation/seedlife.py + file:tests/foundation/test_seedlife.py",
+   "id": "mirror-b41d221301",
+   "kind": "claim",
+   "pass": true,
+   "surface": "seed/agents/AGENTS.md"
+  },
+  {
    "claim": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
    "detail": "",
-   "how": "file:doctrine/template-boundary.json + file:foundation/template.py + grep:foundation/template.py::def check",
+   "how": "file:doctrine/template-boundary.json + file:foundation/template.py",
    "id": "mirror-83545b0084",
    "kind": "claim",
    "pass": true,
@@ -3082,24 +3118,6 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
-   "detail": "",
-   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
-   "id": "cited-158bd3c207",
-   "kind": "claim",
-   "pass": true,
-   "surface": "agents/AGENTS.md"
-  },
-  {
-   "claim": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
-   "detail": "",
-   "how": "file:doctrine/yearsim.json + file:foundation/yearsim.py + file:doctrine/ultrastability.json + file:foundation/saydo.py + file:doctrine/detectors.json + file:seed/scripts/yearsim.py",
-   "id": "mirror-c8f6471ad1",
-   "kind": "claim",
-   "pass": true,
-   "surface": "seed/agents/AGENTS.md"
-  },
-  {
    "claim": "seed-tests: 59 Python and 452 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
@@ -3350,7 +3368,7 @@ export default {
  ],
  "summary": {
   "drift": 0,
-  "pass": 369,
-  "total": 369
+  "pass": 371,
+  "total": 371
  }
 };

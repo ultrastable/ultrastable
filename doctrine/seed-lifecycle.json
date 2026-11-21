@@ -1,0 +1,85 @@
+{
+ "_doc": "SEED-LIFECYCLE-1 (Rowan, 2026-11-21): every seed (instances/<slug>/ with IDEA.md and instance.json) is built, deployed, verified live and wired into autonomous operation, with a design goal of one year unattended. Read by foundation/seedlife.py and seed/scripts/seedlife.py (the engine every system carries). A seed's answers live in instances/<slug>/lifecycle.json; survival classes are answered closed (probe), n/a (reason), gate (identity-bound, default in effect, one https link: the honest record of what cannot be unattended) or open (queue item), or inherit a core input from doctrine/unattended.json. Tests tests/foundation/test_seedlife.py.",
+ "marker": "SEED-LIFECYCLE-1",
+ "target_days": 365,
+ "verify_max_age_hours": 48,
+ "verify_ledger": "ops/seeds/{slug}.jsonl",
+ "topology": "doctrine/topology.json",
+ "clocks": "doctrine/clocks.json",
+ "progress": "instances/ultrastable/progress.json",
+ "core_inputs": "doctrine/unattended.json",
+ "survival": [
+  {
+   "id": "credentials",
+   "what": "every credential the seed's loops use renews itself or is probed for expiry before it lapses",
+   "default_inherit": "cloudflare-api-tokens"
+  },
+  {
+   "id": "source-control",
+   "what": "the code host token the lane merges and deploys with renews itself",
+   "default_inherit": "github-app-token"
+  },
+  {
+   "id": "budget",
+   "what": "a monthly budget is declared and the free-plan governor caps spend inside it",
+   "default_inherit": "workers-free-tier"
+  },
+  {
+   "id": "cost-alerts",
+   "what": "a cost or usage spike is seen and acted on by a loop, not by a person reading a bill",
+   "default_inherit": "cloudflare-alerts"
+  },
+  {
+   "id": "payment",
+   "what": "the account the seed runs on stays paid or on a free plan with no card that can lapse",
+   "default_inherit": "payment-method"
+  },
+  {
+   "id": "dependencies",
+   "what": "package and action dependencies are updated by Dependabot and merged by the sweeper",
+   "default_inherit": "dependency-drift"
+  },
+  {
+   "id": "runtime",
+   "what": "the runtime (Node, compatibility date) is moved ahead of end of life",
+   "default_inherit": "node-runtime"
+  },
+  {
+   "id": "models",
+   "what": "no retired hosted model id; a retired model heals on the same rung",
+   "default_inherit": "workers-ai-models"
+  },
+  {
+   "id": "health",
+   "what": "a live probe of the seed with self-remediation (redeploy, rollback, restart)",
+   "default_inherit": null
+  },
+  {
+   "id": "backups",
+   "what": "data the seed stores is backed up off the platform and restored in a drill",
+   "default_inherit": "offsite-backup"
+  },
+  {
+   "id": "renewal",
+   "what": "the domain or hostname the seed is served on renews by itself",
+   "default_inherit": "domain-renewal"
+  },
+  {
+   "id": "improvement",
+   "what": "the seed keeps improving with no outside session (the self-coder takes its items)",
+   "default_inherit": "self-coder"
+  },
+  {
+   "id": "privacy",
+   "what": "personal data is minimal, retention is declared and deletion works",
+   "default_inherit": null
+  }
+ ],
+ "not_seeds": {
+  "spinoffs": "the app registry of the spinoff loop; each app is launched, measured and retired by foundation/spinoff.py, not a seed",
+  "qnfo": "the adoption case of an external fleet run from QNFO repositories outside this org; judged there (instances/qnfo/README.md)"
+ },
+ "fixtures": {
+  "demo-child": "a bootstrap input that tests/test_vision.py (LayerTests) reads to prove a child reports to its parent; its IDEA.md says it exists to prove that, not to run"
+ }
+}

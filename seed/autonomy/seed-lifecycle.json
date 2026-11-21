@@ -1,0 +1,64 @@
+{
+ "_doc": "SEED-LIFECYCLE-1: this system is not done until it is built, deployed, verified live and runs a year unattended. Rules for scripts/seedlife.py; this system's answers are in autonomy/lifecycle.json. Paths are relative to this repository.",
+ "marker": "SEED-LIFECYCLE-1",
+ "target_days": 365,
+ "verify_max_age_hours": 48,
+ "verify_ledger": "ops/seeds/{slug}.jsonl",
+ "topology": "autonomy/topology.json",
+ "clocks": "autonomy/clocks.json",
+ "progress": "autonomy/progress.json",
+ "survival": [
+  {
+   "id": "credentials",
+   "what": "every credential the seed's loops use renews itself or is probed for expiry before it lapses"
+  },
+  {
+   "id": "source-control",
+   "what": "the code host token the lane merges and deploys with renews itself"
+  },
+  {
+   "id": "budget",
+   "what": "a monthly budget is declared and the free-plan governor caps spend inside it"
+  },
+  {
+   "id": "cost-alerts",
+   "what": "a cost or usage spike is seen and acted on by a loop, not by a person reading a bill"
+  },
+  {
+   "id": "payment",
+   "what": "the account the seed runs on stays paid or on a free plan with no card that can lapse"
+  },
+  {
+   "id": "dependencies",
+   "what": "package and action dependencies are updated by Dependabot and merged by the sweeper"
+  },
+  {
+   "id": "runtime",
+   "what": "the runtime (Node, compatibility date) is moved ahead of end of life"
+  },
+  {
+   "id": "models",
+   "what": "no retired hosted model id; a retired model heals on the same rung"
+  },
+  {
+   "id": "health",
+   "what": "a live probe of the seed with self-remediation (redeploy, rollback, restart)"
+  },
+  {
+   "id": "backups",
+   "what": "data the seed stores is backed up off the platform and restored in a drill"
+  },
+  {
+   "id": "renewal",
+   "what": "the domain or hostname the seed is served on renews by itself"
+  },
+  {
+   "id": "improvement",
+   "what": "the seed keeps improving with no outside session (the self-coder takes its items)"
+  },
+  {
+   "id": "privacy",
+   "what": "personal data is minimal, retention is declared and deletion works"
+  }
+ ]
+}
