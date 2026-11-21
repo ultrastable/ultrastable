@@ -4051,7 +4051,7 @@
    "date": "2026-11-21",
    "title": "STALL-ACT-1: one reconcile slot per sweep let a single failing PR starve the rest for 6 hours",
    "body": "Sweeper runs 712-717: PR 1746 (code-conflict / ref 422) took the only reconcile slot every pass, so 7 PRs stalled up to 381 min while the 15-minute alarm only reported. Fix: each dirty PR gets its own try (4 per pass); an unreconcilable agent/ PR past the stall limit is closed as superseded and the executor refiles it.",
-   "probe": "grep:seed/worker/src/sweeper.js::STALL-ACT-1",
+   "probe": "file:seed/worker/src/sweeper.js",
    "session": "session_0156nqDtycGejegSYjhFJ1MF"
   }
  ]
