@@ -104,3 +104,20 @@ class Check(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ProbeFormat(unittest.TestCase):
+    """PROBE-FORMAT-1: a malformed closing probe never reaches main."""
+    def test_formats(self):
+        from foundation import writeback as w
+        from pathlib import Path
+        root = Path(__file__).resolve().parent.parent.parent
+        self.assertEqual(w.validate_probe(root, "file:foundation/writeback.py"), "")
+        self.assertEqual(w.validate_probe(root, "grep:foundation/writeback.py::def record"), "")
+        for bad in ("grep:foundation/writeback.py:def record", "file:no/such/file.py", "grep:foundation/writeback.py::(", "prose", ""):
+            self.assertNotEqual(w.validate_probe(root, bad), "", bad)
+
+    def test_repo_probes_are_well_formed(self):
+        from foundation import writeback as w
+        from pathlib import Path
+        self.assertEqual(w.probe_problems(Path(__file__).resolve().parent.parent.parent), [])
