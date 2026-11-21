@@ -3747,6 +3747,15 @@
    "body": "A failed send is now retried once a day (a failed status row waits 864e5 ms before its retry, POST-READBACK-1 rows) and Bluesky posts carry link facets.",
    "probe": "grep:seed/worker/src/social.js::const recent",
    "session": "session_0156nqDrGjLASvqbuu6oXJk5"
+  },
+  {
+   "id": "lesson-2026-11-21-lane-worker-merge-1-probe-pr-workflow-file-comment-to-prove-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "LANE-WORKER-MERGE-1 probe PR: workflow-file comment to prove the Worker-app merge route",
+   "body": "Trivial comment in lane.yml. If this PR merges with no hand merge, the route works end to end.",
+   "probe": "file:scripts/lane.sh",
+   "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
   }
  ]
 }
