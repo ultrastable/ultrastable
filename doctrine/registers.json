@@ -327,6 +327,18 @@
       "probe": "grep:foundation/deprot.py::def check"
     },
     {
+      "id": "fm-recurring-root-cause",
+      "trigger": "a finding is fixed at its symptom and the same root cause produces it again",
+      "symptom": "the same class of failure returns on a later day under a new name",
+      "blast_radius": "every loop the root cause reaches; repeated effort with no capability gain",
+      "detection": "python3 -m foundation rootcause --check",
+      "root_cause": "no root-cause class owns the finding, or its guard is absent or ineffective",
+      "remediation": "rootcause escalates a class seen on two days to Q-ROOT-<class>: build the guard, or redesign the one that failed",
+      "status": "controlled",
+      "cadence_ticks": 1,
+      "probe": "grep:foundation/rootcause.py::def run"
+    },
+    {
       "id": "fm-model-retired",
       "trigger": "the hosted provider retires the models a rung names",
       "symptom": "the executor's author ladder answers 410 and loses rungs",

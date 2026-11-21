@@ -1,0 +1,10 @@
+{"class": "unverified-claim", "symptom": "A social post was reported posted without a live read-back", "date": "2026-11-21", "key": "a-social-post-was-reported-posted-withou"}
+{"class": "dns-after-move", "symptom": "DNS outage after the domain move: names stopped resolving", "date": "2026-11-21", "key": "dns-outage-after-the-domain-move-names-s"}
+{"class": "pr-left-open", "symptom": "PRs left open after their sessions ended", "date": "2026-11-21", "key": "prs-left-open-after-their-sessions-ended"}
+{"class": "waiting-on-person", "symptom": "Threads idle or waiting on Rowan", "date": "2026-11-21", "key": "threads-idle-or-waiting-on-rowan"}
+{"class": "signin-bypass", "symptom": "/connect links bypassed sign-in", "date": "2026-11-21", "key": "connect-links-bypassed-sign-in"}
+{"class": "unregistered-code-root", "symptom": "main went red from an unregistered code root", "date": "2026-11-21", "key": "main-went-red-from-an-unregistered-code"}
+{"class": "edit-hotspot", "symptom": "README rewritten 147 times in 3 days; decision-ledger churn", "date": "2026-11-21", "key": "readme-rewritten-147-times-in-3-days-dec"}
+{"class": "area-decay", "symptom": "business and docs areas decayed after their first burst", "date": "2026-11-21", "key": "business-and-docs-areas-decayed-after-th"}
+{"class": "estimate-miscalibrated", "symptom": "Yearfail Brier score worse than a coin (practical-solutions#192)", "date": "2026-11-21", "key": "yearfail-brier-score-worse-than-a-coin-p"}
+{"class": "test-module-collision", "symptom": "foundation-tests ImportError: test_outreach incorrectly imported from scripts", "date": "2026-11-21", "key": "foundation-tests-importerror-test_outrea"}

@@ -349,6 +349,22 @@
       "remedy": "Add the ecosystem and directory to .github/dependabot.yml."
     },
     {
+      "id": "root-cause",
+      "failure_mode": "fm-recurring-root-cause",
+      "kind": "command",
+      "run": [
+        "python3",
+        "-m",
+        "foundation",
+        "rootcause",
+        "--check"
+      ],
+      "timeout": 60,
+      "root_cause": "a root-cause class is malformed, or one escalated with no open Q-ROOT item",
+      "owner": "operations",
+      "remedy": "Fix doctrine/rootcauses.json or let python3 -m foundation rootcause --run file the item."
+    },
+    {
       "id": "yearsim-model-retirement",
       "failure_mode": "fm-model-retired",
       "kind": "command",
