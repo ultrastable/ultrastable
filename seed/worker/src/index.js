@@ -10,11 +10,21 @@ import { runExecutor, noteExecutor } from './executor.js';
 import { runLane, githubBudget } from './lane.js';
 import { verifyOidc, commitToMain } from './maincommit.js';  // MAIN-WRITER-1
 import { opsBackup } from './opsbackup.js';  // BACKUP-SINK-1
-import { createMeter, guarded, readDeferred, writeDeferred } from './subreq.js';  // SUBREQUEST-METER-1
+import { createMeter, guarded, readDeferred, writeDeferred, capsFor, LOOP_MIN_COST } from './subreq.js';  // SUBREQUEST-METER-1
 import { ingestDeploys } from './selfaudit.js';
 import { auditApps } from './appaudit.js';  // APP-INVENTORY-1
 import { sampleCosts } from './costsample.js';
 import { readRoi } from './roi.js';  // ROI-1
+// ROI-SELF-1: when the system's own ROI verdict is pay and the account is on the free plan, one owner gate per month (buying is money, identity-bound);
+// the default in effect is the free plan with soft throttling, so nothing waits on it. The gate closes by itself once CF_PLAN=paid is set.
+export async function roiGate(db, env, config = {}) {
+  const r = await readRoi(db, { env, config });
+  const d = r.system_decision || {};
+  if (d.verdict !== 'pay' || r.plan === 'paid') return { filed: false, verdict: d.verdict };
+  const id = `ROI-PAY-${new Date().toISOString().slice(0, 7)}`;
+  const filed = await ensureItem(db, { id, title: `Gate (owner billing): Workers Paid pays for itself. ${d.reason}. Default in effect: ${d.default_in_effect}.`.slice(0, 300), kind: 'gate', owner_role: 'owner', done_check: 'the tick runs with CF_PLAN=paid', closing_probe: 'GET /api/roi plan == paid', priority: 2 });
+  return { filed, id, verdict: d.verdict };
+}
 import { sampleFreeTier, freeTierLevel, alertFreeTier } from './freetier.js';  // FREE-TIER-1
 import { runGate, gateCard } from './worker-gate.js';
 import { runHandoffs, makeDeployer, makeRollback, makeVersionReader } from './handoff.js';
@@ -31,7 +41,8 @@ import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
 import { backendRecord } from './errors.js';  // USER-BACKEND-1
-import { governedAI, budgetView, SHARES, halted } from './budget.js';
+import { governedAI, budgetView, SHARES, halted, planOf } from './budget.js';
+import { recordSpend, readSpend, spendView } from './spend.js';  // SPEND-SOFT-1
 import { pruneAll } from './retention.js';
 import { seal, verify, trace, head, r2Sink, githubSink, archiveRows } from './auditchain.js';  // AUDIT-CHAIN-1
 import { bearerOk } from './auditauth.js';  // RETENTION-1  // SPEND-GOVERNOR-1: every model call goes through the owner's monthly budget
@@ -65,7 +76,7 @@ export const d1Unavailable = (e) => {
   backendRecord(e, 'd1-unavailable');  // USER-BACKEND-1: the detail goes to the log, not to the caller
   return Response.json(limit ? { error: 'the daily database read allowance is used up; live data returns at 00:00 UTC', code: 'd1_read_limit' } : { error: 'database unavailable', code: 'd1_unavailable' }, { status: 503, headers: { 'cache-control': 'no-store', 'retry-after': '600' } });
 };
-const aiFor = (env) => halted(config, env) ? Promise.resolve({ ai: null, state: { mode: 'halted', why: 'HALT-1' } }) : governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick }).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
+const aiFor = (env) => halted(config, env) ? Promise.resolve({ ai: null, state: { mode: 'halted', why: 'HALT-1' } }) : readSpend(env.DB).then(spend => governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick, spend })).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
 const LOOP_PHASE = { executor: 0, gate: 1, lane: 1, handoffs: 2, issuesync: 2, 'repo-access': 2, sweeper: 3, 'deploy-evidence': 3, social: 3, 'watchdog-gh': 3, hosts: 0, 'host-hooks': 0 };  // SUBREQUEST-ROTATION-2: four phases; HOSTS-1 probes (2-3 calls) ride with the executor, they hit the 50-subrequest cap when run every tick after the heavy groups
@@ -93,7 +104,8 @@ export default {
     if (!cut.run) { if (env.SLOT === 'standby' || cut.slot !== 'primary') ctx.waitUntil(refreshDue(env.DB, env).catch(() => null)); return; }
     const gov = await aiFor(env);
     if (gov.state) console.log('budget', JSON.stringify({ mode: gov.state.mode, why: gov.state.why, neurons_today: Math.round(gov.state.usage.ai_neurons_today), cap: gov.state.allowance.ai_neurons_day }));
-    const meter = createMeter(), restoreFetch = meter.install();  // SUBREQUEST-METER-1: every fetch of this invocation is counted; one cap for the tick steps and the loops
+    const caps = capsFor(planOf(config, env));  // PLAN-1: paid plan, 1,000 planned subrequests and no rotation
+    const meter = createMeter({ cap: caps.cap }), restoreFetch = meter.install();  // SUBREQUEST-METER-1: every fetch of this invocation is counted; one cap for the tick steps and the loops
     const tickDone = runTick(env.DB, { config, env: presence(env), ai: gov.ai, budget: gov.state }).catch(e => console.error('tick', e && e.message));  // DOER-1: the AI binding reaches the in-tick doer
     ctx.waitUntil(tickDone);
     // LOOPPROOF-1: every loop below runs inside beat(): a row before it starts, its result or error after. One loop failing never stops the next,
@@ -104,16 +116,20 @@ export default {
       const cycle = Math.floor((Number(_event && _event.scheduledTime) || Date.now()) / (HEAVY_CADENCE_MIN * 60e3));
       // PACE-2: a heavy loop whose recent runs returned nothing skips cycles (pace.js); the skipped slot is still a beat, so the clock sees a decision.
       const knobConfig = await withKnobs(env.DB, config);  // GOALS-1: knob values the control loop set (pace.idle_runs, pace.max_stride) are what paced() reads
-      const carried = new Set(await readDeferred(env.DB)), deferred = new Set(), guard = guarded(meter, deferred, failed);  // SUBREQUEST-METER-1: a loop that was deferred runs first next time, in any phase
-      const tuningNow = await freeTierLevel(env.DB).then(l => (l && l.resources) ? tune(Object.fromEntries(Object.entries(l.resources).map(([k, r]) => [k, r.frac]))) : null).catch(e => { console.error('tuning unread:', e && e.message); return null; });  // BOUNDARIES-1: applied to every paceable loop below
-      const b = (loop, fn) => (loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase && !carried.has(loop)) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, knobConfig, tuningNow)) || guard(loop, fn), { everyMin: loop in LOOP_PHASE ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
+      const carried = new Set(await readDeferred(env.DB)), deferred = new Set(), guard = guarded(meter, deferred, failed, LOOP_MIN_COST, caps.shares);  // SUBREQUEST-METER-1: a loop that was deferred runs first next time, in any phase
+      const tuningFree = await freeTierLevel(env.DB, Date.now(), planOf(config, env)).then(l => (l && l.resources) ? tune(Object.fromEntries(Object.entries(l.resources).map(([k, r]) => [k, r.frac]))) : null).catch(e => { console.error('tuning unread:', e && e.message); return null; });  // BOUNDARIES-1: applied to every paceable loop below
+      const spendNow = await readSpend(env.DB);  // SPEND-SOFT-1: the spend throttle's pace knob stretches idle loops too; the larger stretch wins
+      const tuningNow = spendNow.knobs && spendNow.knobs.pace > 1 && (!tuningFree || tuningFree.action !== 'slow' || tuningFree.pace_factor < spendNow.knobs.pace) ? { action: 'slow', pace_factor: spendNow.knobs.pace, text: `spend ${spendNow.level}` } : tuningFree;
+      const b = (loop, fn) => (caps.rotate && loop in LOOP_PHASE && LOOP_PHASE[loop] !== phase && !carried.has(loop)) ? Promise.resolve(undefined) : beat(env.DB, loop, async () => (loop in LOOP_PHASE && await paced(env.DB, loop, cycle, knobConfig, tuningNow)) || guard(loop, fn), { everyMin: loop in LOOP_PHASE && caps.rotate ? HEAVY_CADENCE_MIN : 10 }).then(r => { console.log(loop, JSON.stringify(r === undefined ? null : r)); return r; });
       const steps = [], step = (loop, fn) => { steps.push([loop, fn]); };
       const tenant = env.TENANT || config.org_slug || 'default';
       const repos = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []);
       const main = repos.find(r => r.endsWith('/ultrastable')) || repos[0];
       // FREE-TIER-1: the usage sample is read first. It ran last and was starved by the 50-subrequest limit ("Too many subrequests" at 00:10 UTC 2026-11-18), which left the governor without a reading.
-      const freeTier = await sampleFreeTier(env.DB, { token: env.CF_ANALYTICS_TOKEN, account_id: (config.cost_budgets && config.cost_budgets[0] && config.cost_budgets[0].account_id) || env.CF_ACCOUNT_ID }).catch(e => ({ error: String(e && e.message).slice(0, 120) }));
-      { const al = await alertFreeTier(env.DB, freeTier); if (al.error) console.error('free-tier alert unfiled:', al.error); }  // READ-BUDGET-8: an item is filed once a day per resource when a free limit is projected to pass 70%
+      const freeTier = await sampleFreeTier(env.DB, { plan: planOf(config, env), token: env.CF_ANALYTICS_TOKEN, account_id: (config.cost_budgets && config.cost_budgets[0] && config.cost_budgets[0].account_id) || env.CF_ACCOUNT_ID }).catch(e => ({ error: String(e && e.message).slice(0, 120) }));
+      { const al = await alertFreeTier(env.DB, freeTier); if (al.error) console.error('free-tier alert unfiled:', al.error); }
+      await recordSpend(env.DB, { meters: freeTier.meters, error: freeTier.error || null, config, env, now: new Date() });  // SPEND-SOFT-1: today's estimated bill and the throttle level every later step reads
+      if (new Date().getUTCMinutes() < 10) { const g = await roiGate(env.DB, env, config).catch(e => ({ error: String(e && e.message).slice(0, 120) })); if (g && g.error) console.error('roi gate:', g.error); }  // ROI-SELF-1: hourly, the system's own verdict on paying  // READ-BUDGET-8: an item is filed once a day per resource when a free limit is projected to pass 70%
       await decisionSafely(() => recordGovernor(env.DB, freeTier));  // DECISIONS-1: the level just set is a decision, scored at a later sample
       await b('credentials', () => refreshDue(env.DB, env));  // AUTH-1: refresh runs first so nothing lapses
       const t = await getToken(env.DB, env, tenant, 'github-app').catch(e => ({ ok: false, error: e && e.message }));  // one token for the lane and the executor, minted from the GitHub App (a bound GITHUB_TOKEN is only a fallback)
@@ -175,7 +191,7 @@ export default {
       }
       const hit = routeEvent(ev, payload, EVENT_TABLE);
       if (!hit) return Response.json({ routed: false, merge_now: Boolean(mn) }, { status: 202 });
-      const ft = await freeTierLevel(env.DB).catch(() => null);  // FREE-TIER-1: an event never wakes an extra tick (model calls, D1 reads) once the day's free allowance is at risk; the 10-minute tick still takes the item
+      const ft = await freeTierLevel(env.DB, Date.now(), planOf(config, env)).catch(() => null);  // FREE-TIER-1: an event never wakes an extra tick (model calls, D1 reads) once the day's free allowance is at risk; the 10-minute tick still takes the item
       if (ft && ft.level !== 'ok') return Response.json({ routed: false, throttled: ft.level, ...hit }, { status: 202 });
       const work = aiFor(env).then(g => runTick(env.DB, { config, env: presence(env), wake: hit.role, ai: g.ai, budget: g.state }));
       if (ctx && ctx.waitUntil) ctx.waitUntil(work); else await work;
@@ -238,7 +254,7 @@ export default {
     }
     if (url.pathname === '/api/progress') { try { return Response.json(await readProgress(env.DB, config), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // PROGRESS-1
     if (url.pathname === '/api/live/changes') { try { const rs = config.github_repos || (env.GITHUB_REPOS ? String(env.GITHUB_REPOS).split(',') : []); return Response.json(await readLiveChanges(env.DB, rs.find(r => r.endsWith('/ultrastable')) || rs[0] || null), { headers: { 'cache-control': 'public, max-age=60' } }); } catch (e) { return d1Unavailable(e); } }  // LIVE-FRESH-1
-    if (url.pathname === '/api/roi') { try { return Response.json(await readRoi(env.DB, { env }), { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // ROI-1
+    if (url.pathname === '/api/roi') { try { return Response.json(await readRoi(env.DB, { env, config }), { headers: { 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // ROI-1
     if (url.pathname === '/api/decisions') { try { return Response.json(await readDecisions(env.DB), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // DECISIONS-1
     if (url.pathname === '/api/goals' && request.method === 'GET') {  // GOALS-READS-1: readGoals scans 14 days of samples and the loop beats (tens of thousands of D1 rows read), so the answer is cached at the edge for 10 minutes and a failed refresh serves the last good copy
       const cache = typeof caches !== 'undefined' ? caches.default : null, key = new Request(url.origin + '/api/goals', { method: 'GET' });
@@ -255,7 +271,8 @@ export default {
         return Response.json({ ok: true, readings: await reportReadings(env.DB, String(body.tenant || ''), body.readings) });
       } catch (e) { return d1Unavailable(e); }
     }
-    if (url.pathname === '/api/budget') { try { return Response.json(await budgetView(env.DB, { config, env }), { headers: { 'cache-control': 'no-store' } }); } catch (e) { return d1Unavailable(e); } }  // SPEND-GOVERNOR-1: the knob, what it buys, what was used, the mode
+    if (url.pathname === '/api/spend') { try { return Response.json(spendView(await readSpend(env.DB), url.searchParams.get('tenant')), { headers: { 'cache-control': 'public, max-age=60', 'access-control-allow-origin': '*' } }); } catch (e) { return d1Unavailable(e); } }  // SPEND-SOFT-1: today's estimate, level, knobs and per-tenant shares
+    if (url.pathname === '/api/budget') { try { return Response.json(await budgetView(env.DB, { config, env, spend: await readSpend(env.DB) }), { headers: { 'cache-control': 'no-store' } }); } catch (e) { return d1Unavailable(e); } }  // SPEND-GOVERNOR-1: the knob, what it buys, what was used, the mode
     const ag = await agentic(request, env);
     if (ag) return ag;
     const an = await handleAnalytics(request, env, { hosts: hosts(env) });
