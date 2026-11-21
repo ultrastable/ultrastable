@@ -2,22 +2,21 @@
 // SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 export const INTENT_YIELD = {
  "marker": "INTENT-YIELD-1",
- "at": "2026-11-21T20:57:25Z",
+ "at": "2026-11-21T21:41:13Z",
  "settle_days": 30,
  "target_kept_share": 0.8,
  "summary": {
   "intents": 62,
-  "measured": 36,
+  "measured": 37,
   "settled": 0,
   "kept_share": null,
-  "holding_share": 0.944,
+  "holding_share": 0.946,
   "restated_share": 0.048,
-  "attention_s_per_kept": 11.6,
+  "attention_s_per_kept": 11.2,
   "verdicts": {
-   "broken": 1,
-   "holding": 34,
-   "restated": 1,
-   "unmeasured": 26
+   "holding": 35,
+   "restated": 2,
+   "unmeasured": 25
   }
  },
  "probes_run": 38,
@@ -431,7 +430,7 @@ export const INTENT_YIELD = {
    "title": "Drain to zero, fleetwide",
    "date": "2026-11-15",
    "source": "agents/AGENTS.md:36",
-   "verdict": "unmeasured",
+   "verdict": "restated",
    "attention_s": 19.2,
    "probes": [
     "python3 -m foundation lanewatch --check"
@@ -685,7 +684,7 @@ export const INTENT_YIELD = {
    "title": "Every failure mode is audited and every finding is taken by the queue",
    "date": "2026-11-21",
    "source": "agents/AGENTS.md:53",
-   "verdict": "broken",
+   "verdict": "holding",
    "attention_s": 8.0,
    "probes": [
     "python3 -m foundation failure_audit --check"
@@ -854,6 +853,11 @@ export const INTENT_YIELD = {
   {
    "at": "2026-11-21T20:57:25Z",
    "holding_share": 0.944,
+   "kept_share": null
+  },
+  {
+   "at": "2026-11-21T21:41:13Z",
+   "holding_share": 0.946,
    "kept_share": null
   }
  ],

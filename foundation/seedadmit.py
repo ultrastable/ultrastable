@@ -79,6 +79,36 @@ def probe(root=REPO) -> tuple[bool, str]:
     return r["admission"] == "admitted", "; ".join(r["reasons"])[:300] or f"admitted, year p10 {r['year'].get('p10')} days"
 
 
+def live(root=REPO, fetch=None) -> list[str]:
+    """SEED-DEPLOY-1: every seed in doctrine/seed-deploys.json has a recorded deploy and its /health answers JSON now."""
+    import urllib.request
+    root = Path(root)
+    seeds = json.loads((root / "doctrine" / "seed-deploys.json").read_text(encoding="utf-8"))["seeds"]
+    last = {}
+    for ln in (root / "ops" / "deploys.jsonl").read_text(encoding="utf-8").splitlines():
+        try:
+            r = json.loads(ln)
+        except ValueError:
+            continue
+        if r.get("kind") == "seed":
+            last[r["slug"]] = r
+    errs = []
+
+    def get(url):
+        with urllib.request.urlopen(url + "/health", timeout=20) as f:
+            return json.loads(f.read().decode("utf-8"))
+    for slug in seeds:
+        r = last.get(slug)
+        if not r or not r.get("live_ok"):
+            errs.append(f"{slug}: no live-verified seed deploy recorded in ops/deploys.jsonl")
+            continue
+        try:
+            (fetch or get)(r["url"])
+        except Exception as e:  # recorded as a failure, never swallowed
+            errs.append(f"{slug}: {r['url']}/health did not answer: {e}")
+    return errs
+
+
 def main(argv=None) -> int:
     a = list(sys.argv[1:] if argv is None else argv)
     if "--check" in a:
@@ -89,6 +119,10 @@ def main(argv=None) -> int:
         ok, why = probe()
         print(("ok: " if ok else "FAIL: ") + why)
         return 0 if ok else 1
+    if "--live" in a:
+        e = live()
+        print("seedadmit live ok" if not e else "\n".join(e))
+        return 1 if e else 0
     if "--onboard" in a:
         from . import manifest as mf
         raw = mf.load(a[a.index("--onboard") + 1])
