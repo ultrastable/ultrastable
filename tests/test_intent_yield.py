@@ -32,7 +32,7 @@ class IntentYieldTests(unittest.TestCase):
         self.assertIn("the person is never scored", design)
         for banned in ("points", "streaks", "badges", "rankings"):
             self.assertIn(banned, idea, "the idea must keep the explicit ban on " + banned)
-        for guard in ("substance-1", "sealed until the window settles", "restatement", "unit is the intent"):
+        for guard in ("substance-1", "settle window", "restatement", "unit is the intent", "running unattended for a year"):
             self.assertIn(guard, design)
 
 

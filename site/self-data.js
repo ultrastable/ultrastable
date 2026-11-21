@@ -118,6 +118,12 @@ export default {
     "id": "temporal",
     "source": "workflow",
     "what": "the daily trend read: series per component, loop and entry, and what they show"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "intent-yield",
+    "source": "workflow",
+    "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield"
    }
   ],
   "watchdog_escalation": [
@@ -656,6 +662,7 @@ export default {
   "ignition-ladder",
   "index-refresh",
   "insight-loop",
+  "intent-yield",
   "issue-loop",
   "issue-triage",
   "launch",
@@ -2028,6 +2035,19 @@ export default {
     "summary": "YEARFAIL-1: twelve simulated months of zero input run against a scratch copy weekly; each injected failure must be detected by the system's own detectors and the fix verified; a failing month files Q-YEARFAIL-<area>.",
     "trigger": "on demand (python3 -m foundation yearfail --apply) until the weekly workflow lands (Q-YEARFAIL-workflow)",
     "workflows": []
+   },
+   {
+    "closing_probe": "grep:foundation/intentyield.py::def probe",
+    "id": "intent-yield",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "1d",
+    "summary": "INTENT-YIELD-1: for a given unit of human input, what is the best unit of output. Each owner directive is one intent; its own probe passing, unrestated, after 30 days is one kept outcome. Restatements are charged to the original, a directive that is not holding becomes a Q-YIELD item closed by its own probe, and /yield publishes the verdicts. No counts, no person scored.",
+    "trigger": "daily workflow and on demand",
+    "workflows": [
+     "intent-yield"
+    ]
    }
   ],
   "workers": [
@@ -2187,6 +2207,12 @@ export default {
     "id": "index",
     "loops": [
      "index-refresh"
+    ]
+   },
+   {
+    "id": "intent-yield",
+    "loops": [
+     "intent-yield"
     ]
    },
    {

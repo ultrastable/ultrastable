@@ -1,5 +1,5 @@
 ---
-# Level 1 tenant on Ultrastable. Design proposal: instances/intent-yield/README.md. Consumer: tests/test_intent_yield.py.
+# Level 1 tenant on Ultrastable. Design and v1: instances/intent-yield/README.md, foundation/intentyield.py. Consumer: tests/test_intent_yield.py.
 org_name: Intent Yield
 slug: intent-yield
 owner: Rowan
@@ -32,5 +32,5 @@ For a given unit of human input, what is the best unit of output? Intent Yield t
 # Constraints
 
 - Budget per month: 5 USD
-- Read-only in v1: it measures and files items, it changes no other loop's code
+- v1 measures and files items; it changes no other loop's code
 - No points, streaks, badges, rankings or per-person scores anywhere

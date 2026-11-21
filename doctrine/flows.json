@@ -2376,6 +2376,24 @@
       ],
       "feedback": "a failing or uncovered month becomes a Q-YEARFAIL item the executor fixes and merges, and the next weekly run must turn that month green; the result is published at /year",
       "bindings": []
+    },
+    "intent-yield": {
+      "inflows": [
+        {
+          "signal": "main.merged",
+          "via": "github:main"
+        }
+      ],
+      "outflows": [
+        {
+          "signal": "issue.filed",
+          "via": "file:docs/issues"
+        }
+      ],
+      "feedback": "a directive that is not holding becomes a Q-YIELD item closed by its own probe; a restatement is charged to the directive it repeats, so the next run reads whether the system made it true without being told twice; each run's prediction of the kept share is scored after the settle window",
+      "bindings": [
+        "LANE_PAT"
+      ]
     }
   },
   "implicit_producers": {
