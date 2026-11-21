@@ -33,6 +33,15 @@
  ],
  "claims": [
   {
+   "id": "readme-plus-share",
+   "source": "README.md",
+   "quote": "A protected share of capacity (20% by default)",
+   "probe": {
+    "file": "seed/ultrastable.json",
+    "contains": "\"plus_share\": 0.2"
+   }
+  },
+  {
    "id": "audit-chain-seal",
    "source": "agents/AGENTS.md",
    "quote": "after 7 days the chain is sealed into gzip NDJSON segments",

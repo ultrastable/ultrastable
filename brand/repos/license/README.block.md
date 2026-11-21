@@ -11,7 +11,7 @@ Retired: the Ultrastable License and commercial terms live in ultrastable/ultras
 
 ![visibility](https://img.shields.io/badge/repo-public-12342A) ![license](https://img.shields.io/badge/license-USL--1.0%20source--available-FFC857) [![site](https://img.shields.io/badge/site-ultrastable.io-FF5B1F)](https://ultrastable.io)
 
-**The organization:** [ultrastable](https://github.com/ultrastable/ultrastable) · [workers](https://github.com/ultrastable/workers) · [spec](https://github.com/ultrastable/spec) · **license** · [ops](https://github.com/ultrastable/ops) · [seed](https://github.com/ultrastable/seed) · [.github](https://github.com/ultrastable/.github) · [ultrastable.io](https://ultrastable.io)
+**The organization:** [ultrastable](https://github.com/ultrastable/ultrastable) · [ops](https://github.com/ultrastable/ops) · [seed](https://github.com/ultrastable/seed) · [.github](https://github.com/ultrastable/.github) · [ultrastable.io](https://ultrastable.io)
 
 ## What it is
 Retired: the Ultrastable License and commercial terms live in ultrastable/ultrastable (LICENSE, licensing/). Kept public so existing links resolve. Ultrastable is an autonomous development platform: an organization of virtual managers and staff that runs projects, scores its own decisions, earns wider autonomy from its track record, and interrupts a person only for steps that cannot be undone.

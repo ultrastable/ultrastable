@@ -15,7 +15,7 @@ IMAGES = {"banner.png": "banner.png", "loop.png": "loop.png", "architecture.png"
 
 
 def nav(cfg, current):
-    parts = [f"**{r['name']}**" if r["name"] == current else f"[{r['name']}](https://github.com/{cfg['org']}/{r['name']})" for r in cfg["repos"]]
+    parts = [f"**{r['name']}**" if r["name"] == current else f"[{r['name']}](https://github.com/{cfg['org']}/{r['name']})" for r in cfg["repos"] if r.get("status") != "retired"]  # DOCS-SYNC-1: retired repos are not navigation
     return " · ".join(parts)
 
 
