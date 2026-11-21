@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: Deploy: print deploy warnings; an unreadable zone route list is a warning (#1875)
+- 2026-11-21: SEED-ADMIT-1: admit every seed through the year simulation before it counts as launched (#1856)
+- 2026-11-21: Deployer: tenant host route wins over a wildcard zone route (TENANT-ROUTE-1) (#1859)
 - 2026-11-21: intent yield, directives probed (INTENT-YIELD-1) [skip ci]
 - 2026-11-21: Intent Yield: owner directives kept per unit of attention, daily and unattended (#1853)
 - 2026-11-21: UNLEARN-1 (Rowan: "Most of what kids want to learn, you can't teach them"; build it and run it unattended for a year). Tenant `instances/unlearn/` (IDEA.md, instance.json, phases.json, runway.json) and Worker `ultrastable-unlearn` (instances/unlearn/worker, D1 `ultrastable-unlearn` ef788db7, cron 41 * * * *, no secrets, no npm deps). Phase 1 coaches and parents (no child data); phase 2 schools opens by itself when its gates hold; phase 3 kids directly needs consent, DPIA, retention, security and the controller-entity owner gate. Moves come from a 23-move library picked by Beta sampling on 14-day outcomes; a model may re-word inside AI_DAILY_CAP behind the answer guard (models from doctrine/models.json). Clock `unlearn-beat`, loop `unlearn-beat` (server_owner ultrastable-unlearn), flows declared. Deployed by deploy-ultrastable.yml (paths include instances/unlearn/worker). Tests `node --test instances/unlearn/worker/*.test.mjs`, `python3 -m unittest tests.foundation.test_unlearn`.

@@ -122,6 +122,7 @@ export async function internalDeploy(request, env, fetcher) {
       // TENANT-ROUTE-1: a zone route such as *.ultrastable.app/* (the spinoffs worker) catches the hostname ahead of the custom domain,
       // so the live host answered "Not found" from another worker. A route for exactly this host is more specific than the wildcard and wins.
       const rl = await api("GET", `/zones/${zone.id}/workers/routes`);
+      if (!rl || !rl.success) warnings.push("routes " + zone.name + " unreadable: " + JSON.stringify((rl && rl.errors) || []).slice(0, 200));  // an unknown route list is reported as a warning, not read as "no wildcard"
       const routes = rl && Array.isArray(rl.result) ? rl.result : [];
       const covered = routes.some(r => r.script !== b.name && r.pattern.startsWith("*.") && host.endsWith(r.pattern.slice(1).replace(/\/\*$/, "")));
       const own = routes.find(r => r.pattern === host + "/*");
