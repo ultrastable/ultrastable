@@ -448,14 +448,6 @@
     "41 6 * * *"
    ]
   },
-  "temporal.yml": {
-   "events": [
-    "workflow_dispatch"
-   ],
-   "crons": [
-    "17 6 * * *"
-   ]
-  },
   "tenant-sync.yml": {
    "events": [
     "push",
