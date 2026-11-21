@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-legacy-client-1-a-bluesky-session-is-bound-to-its-client-met",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "LEGACY-CLIENT-1: a Bluesky session is bound to its client metadata",
+  "body": "Switching bluesky.json to private_key_jwt broke refresh of the live public-client session (HTTP 400 every tick from 2026-11-20 19:11). bluesky.json stays public; new sign-ins use bluesky-c.json. Never change a live atproto client's auth method; add a new client id.",
+  "probe": "grep:seed/worker/src/auth/atproto.js::LEGACY-CLIENT-1",
+  "session": "session_0156nqDsNi2d4FXDawgCY8Sh"
+ },
+ "kind": "lesson",
+ "title": "LEGACY-CLIENT-1: a Bluesky session is bound to its client metadata",
+ "session": "session_0156nqDsNi2d4FXDawgCY8Sh"
+}

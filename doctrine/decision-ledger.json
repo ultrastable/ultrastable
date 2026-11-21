@@ -3641,6 +3641,22 @@
    "title": "Executor closed Q-SELF-unused-import-scripts-smoke-probe-py: Q-SELF-unused-import-scripts-smoke-probe-py: remove unused import json from scr",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: scripts/smoke_probe.py.",
    "probe": "file:scripts/smoke_probe.py"
+  },
+  {
+   "id": "decision-2026-11-21-research-1-own-r-d-loop-and-white-papers-at-research",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "RESEARCH-1: own R&D loop and white papers at /research",
+   "body": "Outside studies are data in research/studies/<id>.json (finding, mechanisms with paths, metric, target, prediction). foundation/research.py measures each metric from the ledgers, files Q-RES items with the measurement as closing probe, settles experiments, proposes rule links via core/connect, writes research/papers and site/research-data.js (/research). Seeds: Chen and Stratton 2026 (review bottleneck; 5 of 7 met, not met: system-authored share 0.20, self deploys 0) and Ashby 1952 (3 of 5 met, not met: step-function share 0.27, second-loop kept share 0 of 14 verdicts). Weekly in scout.yml; papers regenerate after every merge.",
+   "probe": "grep:foundation/research.py::def file_items"
+  },
+  {
+   "id": "lesson-2026-11-21-ashby-1-ashby-search-1-code-did-not-match-ashby-s-ultrastabl",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "ASHBY-1, ASHBY-SEARCH-1: code did not match Ashby's ultrastable system",
+   "body": "Two mismatches in foundation/ultrastability.py, changed in this PR: tenant.value had no limits so it could never trigger the second loop (now the declared metric over the declared target, min 1.0; the check refuses an unbounded essential variable), and the second loop stopped searching after a 1-2 step ladder (now it draws untried parameter values, seeded, until one holds or the range is spent; tests/foundation/test_ultrastability.py 34 pass). Measured before the change: 14 second-order verdicts, 0 kept. Next measurement: second_loop_kept_share in research paper ashby-1952.",
+   "probe": "grep:foundation/ultrastability.py::def _search"
   }
  ]
 }

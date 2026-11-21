@@ -1,5 +1,5 @@
 name: scout
-# budget: ~1 min x 4/month
+# budget: ~2 min x 4/month
 # trigger: weekly; releases and posts of the leading agent platforms move over days, so a faster event buys nothing; dispatch on demand
 # free-alternative: a cloud-hosted agent session runs `python3 -m foundation scout --run --apply`
 on:
@@ -21,8 +21,14 @@ jobs:
         run: python3 -m foundation scout --run --apply
       - name: Product-manager R&D pass (RND-1, competitor profiles, gaps, experiments, adoption)
         run: python3 -m foundation rnd --run --apply
+      - name: Research pass (RESEARCH-1, intake, measurements, experiments, white papers)
+        env: {GITHUB_TOKEN: "${{ github.token }}"}
+        run: |
+          python3 -m foundation research --refresh-prs
+          python3 -m foundation research --intake --apply
+          python3 -m foundation research --run --apply
       - name: Commit findings, state and the pass log
         run: |
           git config user.name "ultrastable-scout"; git config user.email "actions@users.noreply.github.com"
-          git add docs/issues ops/scout ops/rnd
+          git add docs/issues ops/scout ops/rnd ops/research research/papers site/research-data.js
           git diff --cached --quiet || { git commit -m "scout and rnd: weekly pass, findings filed, profiles refreshed, sources re-weighted"; python3 tools/push_main.py; }
