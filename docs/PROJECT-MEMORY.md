@@ -10,6 +10,9 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: Remove leftover conflict markers from two READMEs (#1092)
+- 2026-11-21: MERGE-NOW-1: PRs merge on the webhook in seconds; server reconciles generated-file conflicts; time-to-merge metric (#931)
+- 2026-11-21: LANE-WORKER-MERGE-1: call the Worker merge only from the lane workflow (#1091)
 - 2026-11-21: LANE-WORKER-MERGE-1: probe PR (workflow comment) (#1090)
 - 2026-11-21: LANE-WORKER-MERGE-1: merge workflow-changing PRs through the Worker's GitHub App (#984)
 - 2026-11-21: POST-READBACK-1: count a post as published only when read back (#934)
