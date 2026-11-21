@@ -395,7 +395,7 @@ export async function stateOf(env) {
   try { return await stateFromDb(env, base); }
   catch (e) {
     const m = String(e && e.message || e);
-    return { version: VERSION, degraded: isLimitError(m) ? DB_LIMIT_NOTE() : "The database did not answer, so live checks are paused. The system retries by itself every hour.", ...base, tenants: base.tenants.map(t => ({ ...t, live: null })), checks: [], owner: [], fleet: [], counts: { owner: 0, fleet: 0, queued: 0, done: 0 }, audit: [], notes: [], snapshot: null, analytics: null, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
+    return { version: VERSION, degraded: isLimitError(m) ? DB_LIMIT_NOTE() : "The database did not answer, so live checks are paused. The system retries by itself every hour.", ...base, tenants: base.tenants.map(t => ({ ...t, live: null })), checks: [], owner: [], fleet: [], counts: { owner: 0, fleet: 0, queued: 0, done: 0 }, audit: [], notes: [], snapshot: null, analytics: null, gate: "This address serves only the owner console and a generic holding page; the product site is served separately." };
   }
 }
 async function stateFromDb(env, base) {
@@ -415,7 +415,7 @@ async function stateFromDb(env, base) {
   let snapshot = null; if (sn) { try { snapshot = { ...JSON.parse(sn.body), received: sn.at }; } catch (e) { snapshot = { error: "stored snapshot is not valid JSON" }; } }
   let analytics = null; try { analytics = await report(env, undefined, { cacheMinutes: REPORT_CACHE_MINUTES }); } catch (e) { analytics = { error: String(e.message || e) }; }
   const tenants = base.tenants.map(t => { const ck = checks.find(c => c.name === "tenant:" + t.id); return { ...t, live: ck ? { ok: !!ck.ok, detail: ck.detail, at: ck.at } : null }; });
-  return { version: VERSION, ...base, tenants, snapshot, analytics, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "Public pages: generic holding page only, noindex, until the provisional is filed." };
+  return { version: VERSION, ...base, tenants, snapshot, analytics, checks, owner, fleet, counts: { owner: await c("owner"), fleet: await c("fleet"), queued, done }, audit, notes, gate: "This address serves only the owner console and a generic holding page; the product site is served separately." };
 }
 
 // ---------- scheduled tick: probes, notifications, daily digest ----------
