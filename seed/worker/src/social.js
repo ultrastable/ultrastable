@@ -36,7 +36,7 @@ export async function postBluesky(db, env, tenant, m0, text, f, now) {
 }
 
 // SOCIAL-BUFFER-1: LinkedIn, X and Substack have no open posting API; Buffer's GraphQL API (api.buffer.com) fronts them. One linked Buffer account carries every channel
-// it holds. LinkedIn and Substack go to the queue, X shares now (the cadence QNFO's own Buffer layer used). Text is plain; the 280-character fit applies to X only.
+// it holds. LinkedIn and Substack go to the queue, X shares now (the cadence the earlier Buffer layer used). Text is plain; the 280-character fit applies to X only.
 const bgql = async (f, token, query) => { const r = await f('https://api.buffer.com', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token }, body: JSON.stringify({ query }) }); if (!r.ok) throw new Error('buffer HTTP ' + r.status); return r.json(); };
 export async function bufferChannels(token, f) {
   const o = await bgql(f, token, '{ account { organizations { id } } }'); const org = (((o.data || {}).account || {}).organizations || [])[0];
