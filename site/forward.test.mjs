@@ -19,6 +19,14 @@ console.log("forward ok");
   for (const p of ["/connect/github-signin", "/owner", "/auth/github-signin/callback", "/changelog"]) await mod2.default.fetch(new Request("https://ultrastable.io" + p), env, {});
   if (hit.join() !== "owner,owner,owner,owner") throw new Error("owner paths misrouted: " + hit.join()); console.log("owner routing ok"); }
 
+// OWNER-LINKS-4: a signed-out /connect/<provider> (buffer, mastodon, ...) never reaches the tick directly; it goes through the sign-in gate. Only the GitHub consent pages do.
+{ const mod3 = await import("./worker.js"); const hit = [];
+  const env = { DB: { prepare: () => ({ bind: () => ({ first: async () => null, all: async () => ({ results: [] }), run: async () => ({}) }), first: async () => null, run: async () => ({}), all: async () => ({ results: [] }) }) }, TICK: { fetch: async () => { hit.push("tick"); return new Response("tick"); } } };
+  const r = await mod3.default.fetch(new Request("https://ultrastable.io/connect/buffer", { redirect: "manual" }), env, {});
+  if (hit.length || r.status !== 302 || !/\/auth\/signin\?next=%2Fconnect%2Fbuffer/.test(r.headers.get("location") || "")) throw new Error("signed-out /connect/buffer was not gated: " + r.status + " " + r.headers.get("location") + " " + hit.join());
+  hit.length = 0; await mod3.default.fetch(new Request("https://ultrastable.io/connect/github"), env, {});
+  if (hit.join() !== "tick") throw new Error("/connect/github must still reach the tick"); console.log("connect gate ok"); }
+
 // FREE-TIER-1: a GitHub delivery the tick does not act on is answered at the first hop and never forwarded
 {
   const { hookEventFilter } = await import("./worker.js");

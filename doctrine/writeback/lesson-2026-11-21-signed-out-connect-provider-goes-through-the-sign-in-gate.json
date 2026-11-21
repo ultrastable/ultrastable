@@ -1,0 +1,14 @@
+{
+  "row": {
+    "id": "lesson-2026-11-21-signed-out-connect-provider-goes-through-the-sign-in-gate",
+    "kind": "lesson",
+    "date": "2026-11-21",
+    "title": "Signed-out /connect/<provider> goes through the sign-in gate",
+    "body": "OWNER-LINKS-4: AUTH_PATH in site/worker.js forwarded /connect/<provider> straight to the tick, skipping the owner sign-in; found by owner-links-audit run 1; session session_0156nqDu7Qq4YrmkKMFxfB9D",
+    "probe": "grep:site/forward.test.mjs::OWNER-LINKS-4"
+  },
+  "kind": "lesson",
+  "title": "Signed-out /connect/<provider> goes through the sign-in gate",
+  "session": "",
+  "source": "Session: session_0156nqDu7Qq4YrmkKMFxfB9D"
+}
