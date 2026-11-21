@@ -1,7 +1,7 @@
 {
   "id": "Q-YEAR-dependency-drift",
   "title": "Q-YEAR-dependency-drift: add a loop that advances pinned versions",
-  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `dependency-drift` is open\n**Done check:** cmd:python3 -m foundation unattended --probe dependency-drift\n**Status:** open\n\nA weekly pass bumps action versions, npm and pip pins and Worker compatibility dates on a branch, runs the checks and hands off a PR; a failed bump is recorded and skipped.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that proves it.",
+  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `dependency-drift` is open\n**Done check:** cmd:python3 -m foundation unattended --probe dependency-drift\n**Status:** closed\n\nA weekly pass bumps action versions, npm and pip pins and Worker compatibility dates on a branch, runs the checks and hands off a PR; a failed bump is recorded and skipped.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that proves it.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 23.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:staff",
     "raises-self"

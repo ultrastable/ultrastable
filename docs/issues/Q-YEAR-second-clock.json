@@ -1,7 +1,7 @@
 {
   "id": "Q-YEAR-second-clock",
   "title": "Q-YEAR-second-clock: add a clock that needs neither Cron Triggers nor GitHub's scheduler",
-  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `second-clock` is open\n**Done check:** cmd:python3 -m foundation unattended --probe second-clock\n**Status:** open\n\nGive the tenants Durable Object (or a new one) an alarm that re-arms itself every 10 minutes and calls the tick through its service binding when the newest tick beat is late; record the beats in loop_beats and add the clock to doctrine/clocks.json.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that resolves.",
+  "body": "**Owner:** staff\n**Trigger:** UNATTENDED-365 register, dependency `second-clock` is open\n**Done check:** cmd:python3 -m foundation unattended --probe second-clock\n**Status:** closed\n\nGive the tenants Durable Object (or a new one) an alarm that re-arms itself every 10 minutes and calls the tick through its service binding when the newest tick beat is late; record the beats in loop_beats and add the clock to doctrine/clocks.json.\nWhen it holds, set the dependency's status to closed in doctrine/unattended.json with the evidence and a probe that resolves.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 23.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:staff",
     "raises-self"

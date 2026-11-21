@@ -1,7 +1,7 @@
 {
   "id": "Q-RULE-license-notice-license-fleet",
   "title": "Q-RULE-license-notice-license-fleet: standing rule license-notice violated (license-fleet)",
-  "body": "**Owner:** staff\n**Trigger:** every lane pass (rules --run --due)\n**Done check:** cmd:python3 -m foundation rules --probe license-notice\n**Status:** open\n\nRULES-1: the standing rule `license-notice` is violated: Every repository carries the LICENSE and the README license notice (IP protection is the license only).\nProbe `license-fleet` says: practical-solutions: README lacks the license notice; .github: README lacks the license notice\n\nFix the cause in code so the probe passes; the tick re-runs it every pass. Never weaken the probe or the registry.",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass (rules --run --due)\n**Done check:** cmd:python3 -m foundation rules --probe license-notice\n**Status:** closed\n\nRULES-1: the standing rule `license-notice` is violated: Every repository carries the LICENSE and the README license notice (IP protection is the license only).\nProbe `license-fleet` says: practical-solutions: README lacks the license notice; .github: README lacks the license notice\n\nFix the cause in code so the probe passes; the tick re-runs it every pass. Never weaken the probe or the registry.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 76.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:staff",
     "ci-failure"

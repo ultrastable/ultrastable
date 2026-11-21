@@ -1,7 +1,7 @@
 {
   "id": "STD-2",
   "title": "STD-2: Cloudflare McpAgent / Durable Object adapter and AI Gateway",
-  "body": "**Owner:** **staff**\n**Trigger:** none\n**Done check:** register entry `cloudflare-agents` moves from planned to supported with a passing test\n**Status:** open\n\nAdd an adapter behind the existing ports; route BS-4 executor model calls through AI Gateway.",
+  "body": "**Owner:** **staff**\n**Trigger:** none\n**Done check:** register entry `cloudflare-agents` moves from planned to supported with a passing test\n**Status:** closed\n\nAdd an adapter behind the existing ports; route BS-4 executor model calls through AI Gateway.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 248.3 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:staff",
     "ws:platform"

@@ -1,0 +1,12 @@
+{
+  "id": "OL-PR-1786",
+  "title": "OL-PR-1786: land or supersede pull request #1786 (conflict)",
+  "body": "**Owner:** operations\n**Trigger:** lane pass: pull request #1786 is conflict\n**Done check:** cmd:python3 -m foundation loopowner --closed 1786\n**Status:** open\n\nSERVER-OWNS-LOOPS-1: the server owns pull request #1786 (`claude/project-thread-iqa36g` at 5be2bb6aeb, opened by rwnq8): Full flagship README; DOCS-SYNC-1 keeps docs and site links true to the code. The session that opened it is not its closer and is never asked to act. The branch conflicts with main. Merge main into the branch and resolve it, or redo the change from main in a new pull request and close this one as superseded. Files (8): .github/workflows/checks.yml, README.md, doctrine/claim-code.json, doctrine/readmes.json, scripts/check_readmes.py, seed/doctrine/readmes.json, seed/scripts/check_readmes.py, site/yearfail.js. Closing probe: pull request #1786 is merged or closed.",
+  "labels": [
+    "role:operations",
+    "open-loop",
+    "server-owned"
+  ],
+  "milestone": "Now",
+  "workstream": "Open loops"
+}
