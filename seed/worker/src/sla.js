@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
 // Copyright (c) Ultrastable
 // SLA-1: one written service level for every PR, enforced by the tick Worker sweeper every tick (data: doctrine/sla.json, mirrored here as defaults).

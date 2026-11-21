@@ -1,0 +1,12 @@
+{
+  "id": "Q-LIFT-flowbalance",
+  "title": "Q-LIFT-flowbalance: lift the FLOW-BALANCE-1 JS twin into workers core",
+  "body": "**Owner:** executor\n**Trigger:** FLOW-BALANCE-1; the session's GitHub App could not write to ultrastable/workers (git push over the session proxy: 403; GitHub App create ref: 403 Resource not accessible by integration, 2026-11-21)\n**Done check:** cmd:gh api repos/ultrastable/workers/contents/core/flowbalance/index.js --jq .name\n**Status:** open\n\nLift `seed/worker/src/flowbalance.js` into ultrastable/workers as `core/flowbalance/index.js`, with `seed/worker/test/flowbalance.test.js` as `core/flowbalance/flowbalance.test.js` (import path `./index.js`), through the cross-repo lane (EXEC-X, FLEET_TOKEN). Then the workers copy is the one tenants vendor.\n\nsize: S\n\n**Closing probe:** the file exists on workers main.\n",
+  "labels": [
+    "p1",
+    "agent-ready",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Operations"
+}
