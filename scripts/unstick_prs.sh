@@ -22,7 +22,7 @@ for n in $(gh api "repos/$repo/pulls?state=open&per_page=50" --jq '.[]|select(.h
   # MERGE-NOW-1: generated files follow main and are regenerated on main after the merge (REGEN-GENERATED-1). Regenerating them into the PR here made the
   # PR diverge from main on those files again, so it conflicted on the next bot commit to main (seen on #935, 2026-11-21).
   for g in $(node -e "import('./seed/worker/src/generated.js').then(m=>console.log(m.GENERATED.join('\n')))"); do
-    if git cat-file -e "origin/main:$g" 2>/dev/null; then git checkout -q origin/main -- "$g"; fi
+    if [ -n "$(git ls-tree origin/main -- "$g")" ]; then git checkout -q origin/main -- "$g"; fi  # a file main does not have is left as the PR has it
   done
   git add -A; git diff --cached --quiet || git commit -q -m "UNSTICK-1: generated files follow main"
   if git push -q origin "HEAD:refs/heads/$ref"; then
