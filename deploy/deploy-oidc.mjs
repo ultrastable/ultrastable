@@ -30,7 +30,7 @@ for (const id of ids) {
     if (r.ok || !/fetch failed|ECONNRESET|ETIMEDOUT|HTTP 5\d\d|timeout/i.test(String(r.detail))) break;
     console.log("RETRY ", id, a, r.detail); await new Promise(z => setTimeout(z, 5000 * a));
   }
-  console.log(r.ok ? "OK    " : "FAIL  ", id, r.ok ? (r.version || "uploaded") : r.detail);
+  console.log(r.ok ? "OK    " : "FAIL  ", id, r.ok ? (r.version || "uploaded") + (r.detail && r.detail !== "uploaded" ? " (" + r.detail + ")" : "") : r.detail);
   results.push({ worker: id, ...r });
 }
 // DEPLOY-RECORD-1: live_matches_commit is true only when Cloudflare returned the deployment id of this upload (built from this commit) and the deployed tick then answered /health; the workflow commits the rows.
