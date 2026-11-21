@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """ROOTCAUSE-1 (owner, 2026-11-21): every finding is traced to its root cause, fixed there, and a returning failure escalates to the root.
 
 failure_audit finds symptoms (a detector fails) and temporal finds trends (a hotspot, a decayed area). This module is the layer that asks why:
@@ -193,7 +195,7 @@ def run(root=REPO, issues=True, now=None) -> dict:
     return {"new_occurrences": len(new), "actions": actions, "state": state}
 
 
-KEY = "backups/rootcause/ledger.json"  # inside the prefix the site Worker's /__internal/cf route already allows for R2 reads and writes (no Worker or workflow change)
+KEY = "backups/rootcause/ledger.json"  # the private ops repository, through the tick Worker's /api/ops/backup route (BACKUP-SINK-1; the R2 route answered 403 on the first live run, so the account has no usable R2 store)
 
 
 def _union(rows, extra, keyf):
@@ -202,8 +204,8 @@ def _union(rows, extra, keyf):
 
 
 def sync(root=REPO, api=None, env=None) -> str:
-    """Persist recurrence across runs with nothing under .github/ changed: pull the ledger the last run stored in R2 (through the site Worker, which holds the
-    credential; the run presents only its own OIDC token), merge it with this checkout's rows, and return the merged text for push(). An unreachable store is
+    """Persist recurrence across runs with nothing under .github/ changed: pull the ledger the last run stored in the ops repository (through the tick Worker's ops route, which holds the
+    org App credential; the run presents only its own OIDC token), merge it with this checkout's rows, and return the merged text for push(). An unreachable store is
     reported, never fatal: the committed ledger still holds."""
     import os, urllib.parse
     from . import workerroute
@@ -212,7 +214,7 @@ def sync(root=REPO, api=None, env=None) -> str:
     if api is None:
         if not workerroute.available(env):
             return "no route (not running in Actions): local ledger only"
-        api = workerroute.make_api(env)
+        api = workerroute.make_ops_sink(env)
     try:
         bucket = "ultrastable-git"
         try:
@@ -239,7 +241,7 @@ def push(root=REPO, api=None, env=None) -> str:
     if api is None:
         if not workerroute.available(env):
             return "no route"
-        api = workerroute.make_api(env)
+        api = workerroute.make_ops_sink(env)
     body = json.dumps({"occurrences": _rows(root, OCC), "inbox": _rows(root, INBOX)}).encode()
     try:
         api("PUT", f"r2/buckets/ultrastable-git/objects/{urllib.parse.quote(KEY, safe='/')}", body, raw=True)

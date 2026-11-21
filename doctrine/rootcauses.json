@@ -30,7 +30,7 @@
    "guard": "grep:foundation/strays.py::def check", "owner": "operations",
    "remedy": "Register the root in the same change that adds what runs it (doctrine/strays.json code_roots), or move the code."},
   {"id": "edit-hotspot", "match": {"kinds": ["hotspot"], "text": ["(?i)edits in \\d+ days", "(?i)rewritten", "(?i)hotspot"]},
-   "root": "a hand-edited or ledger-style file is rewritten by every change instead of being computed or appended",
+   "root": "a file is rewritten by every change: either hand-kept state that should be computed or appended, or generated output the hotspot score counted as work (temporal now reads scripts/regen_generated.py OUTPUTS, one list, so a generator cannot be flagged)",
    "guard": "grep:foundation/temporal.py::hotspot", "owner": "operations",
    "remedy": "Make the value computed or the file append-only, so one change no longer rewrites it; the hotspot closes when its edits fall to baseline."},
   {"id": "area-decay", "match": {"kinds": ["neglect"], "text": ["(?i)decay"]},

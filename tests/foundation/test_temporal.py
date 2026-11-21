@@ -151,3 +151,17 @@ class Repo(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GeneratedOutputs(unittest.TestCase):
+    def test_generator_outputs_are_read_from_the_generators_own_list(self):
+        r = _repo.scratch()
+        (r / "scripts").mkdir()
+        (r / "scripts/regen_generated.py").write_text('OUTPUTS = ["site/x-data.js", "README.md"]\n')
+        self.assertEqual(T.generated_outputs(r), ("site/x-data.js", "README.md"))
+        self.assertEqual(T.generated_outputs(_repo.scratch()), ())  # a tenant with no generators contributes nothing
+
+    def test_the_real_list_covers_the_files_that_were_flagged(self):
+        out = T.generated_outputs(Path(__file__).resolve().parents[2])
+        for f in ("site/decisions-data.js", "README.md", "doctrine/decision-ledger.json"):
+            self.assertIn(f, out)

@@ -67,12 +67,28 @@ def _git(root, *a, timeout=120) -> str:
 
 
 # ---------------------------------------------------------------- sense
+def generated_outputs(root) -> tuple:
+    """Files a generator rewrites on every merge (scripts/regen_generated.py OUTPUTS). They churn by design, so counting them as hotspots flagged the
+    generators, not the work (ROOTCAUSE-1, class edit-hotspot: the hand-kept noise list had drifted from the generators' own list). One list, read here."""
+    p = Path(root) / "scripts/regen_generated.py"
+    if not p.is_file():
+        return ()
+    import ast
+    try:
+        for n in ast.parse(p.read_text(encoding="utf-8")).body:
+            if isinstance(n, ast.Assign) and any(getattr(t, "id", "") == "OUTPUTS" for t in n.targets):
+                return tuple(str(x) for x in ast.literal_eval(n.value))
+    except (SyntaxError, ValueError):
+        return ()
+    return ()
+
+
 def git_events(root, cfg, now) -> dict:
     """Commits by area, edits by file and the last touch of every file, from one pass over the history inside history_days."""
     since = int(now - cfg["history_days"] * DAY)
     out = _git(root, "log", f"--since=@{since}", "--no-merges", "--name-only", "--format=@%ct")
     areas, files, last, first, commits = {}, {}, {}, None, []
-    noise = tuple(cfg["noise"])
+    noise = tuple(cfg["noise"]) + generated_outputs(root)
     cur = None
     for line in out.splitlines():
         if line.startswith("@"):
