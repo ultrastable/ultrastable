@@ -10,6 +10,19 @@ This file is the single source of truth for project memory. Chat memory, tool me
 
 Last updated: 2026-11-21
 
+- 2026-11-21: ZERO-MINUTES-1: worker merged #1813
+- 2026-11-21: Queue: close 5 items whose probes pass (#1813)
+- 2026-11-21: Fix red main: shelved items are not done (#1811)
+- 2026-11-21: queue: closing-probe verdicts for 29 item(s) (QUEUE-PERSIST-1) (part 2/2) [skip ci]
+- 2026-11-21: queue: closing-probe verdicts for 29 item(s) (QUEUE-PERSIST-1) (part 1/2) [skip ci]
+- 2026-11-21: queue: closing-probe verdicts for 309 item(s) (QUEUE-PERSIST-1) (part 16/16) [skip ci]
+- 2026-11-21: queue: closing-probe verdicts for 309 item(s) (QUEUE-PERSIST-1) (part 15/16) [skip ci]
+- 2026-11-21: queue: closing-probe verdicts for 309 item(s) (QUEUE-PERSIST-1) (part 14/16) [skip ci]
+- 2026-11-21: queue: closing-probe verdicts for 309 item(s) (QUEUE-PERSIST-1) (part 13/16) [skip ci]
+- 2026-11-21: queue: closing-probe verdicts for 309 item(s) (QUEUE-PERSIST-1) (part 12/16) [skip ci]
+- 2026-11-21: queue: closing-probe verdicts for 309 item(s) (QUEUE-PERSIST-1) (part 11/16) [skip ci]
+- 2026-11-21: queue: closing-probe verdicts for 309 item(s) (QUEUE-PERSIST-1) (part 10/16) [skip ci]
+- 2026-11-21: queue: closing-probe verdicts for 309 item(s) (QUEUE-PERSIST-1) (part 9/16) [skip ci]
 - 2026-11-21: SLA-1: written SLA for every PR and issue; sweeper supersedes stuck PRs; slawatch detector (#1785)
 - 2026-11-21: ZERO-MINUTES-1: worker merged #1783
 - 2026-11-21: Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent merge gates. (#Q-CIFAIL-mergeaudit-1750) (#1783)
