@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 // MERGE-NOW-1 (Rowan, 2026-11-21): "PR should not be sitting in GitHub for more than a second. If there are merge conflicts, then fix them immediately."
 // The tick Worker acts on a pull request the moment GitHub tells it something changed (webhook: pull_request, check_suite, push to main), not on the

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 // MERGE-NOW-1: files only a generator writes (scripts/regen_generated.py OUTPUTS, minus the hand-written READMEs whose claim blocks are handled
 // separately). A PR's copy of these never matters: main regenerates them after every merge, so a conflict on them is resolved to main's side.
