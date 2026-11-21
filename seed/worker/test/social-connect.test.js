@@ -110,11 +110,12 @@ test('publisher: nothing linked means no network call; linked Mastodon posts the
   const f = async (u, init = {}) => { calls++; u = String(u);
     if (u.endsWith('/gate.json')) return J(gate); if (u.endsWith('/calendar.json')) return J(cal);
     if (u === 'https://mastodon.social/api/v1/statuses') { seen.push(JSON.parse(init.body).status); return J({ url: 'https://mastodon.social/@u/1' }); }
+    if (u === 'https://mastodon.social/api/v1/statuses/1') return J({ id: '1' });
     return NF; };
   assert.deepEqual(await runSocial({ db: env.DB, env, fetch: f, now: NOW, tenant: 't' }), { skipped: 'no channel connected' }); assert.equal(calls, 0);
   await store.put(env.DB, env, 't', 'oauth:mastodon', { secret: {}, meta: { instance: 'mastodon.social' }, access: 'tok', status: 'ok' });
   const r = await runSocial({ db: env.DB, env, fetch: f, now: NOW, tenant: 't' });
-  assert.equal(r.id, 'ev:1'); assert.equal(r.results.mastodon, 'posted');
+  assert.equal(r.id, 'ev:1'); assert.equal(r.results.mastodon, 'verified', 'posted only once the public URL reads back');
   const r2 = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 3600e3, tenant: 't' });
   assert.equal(seen[0], 'Shipped by the system itself: a thing.', 'events go first'); assert.equal(r2.id, 'old', 'the next due item goes out, the posted one never repeats');
   const r3 = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 7200e3, tenant: 't' }); assert.equal(r3.skipped, 'rate limit', JSON.stringify(r3));
@@ -201,7 +202,7 @@ test('THOUGHT-1: a paper post reaches LinkedIn with its own long text; an event 
   await store.put(env.DB, env, 't', 'oauth:linkedin', { secret: {}, meta: {}, access: 'li', expiresAt: NOW + 864e5 * 30, status: 'ok' });
   const r1 = await runSocial({ db: env.DB, env, fetch: f, now: NOW, tenant: 't' });
   assert.equal(r1.id, 'paper:x:1of2:2026-11-17', 'a paper goes before events');
-  assert.deepEqual(r1.results, { mastodon: 'posted', linkedin: 'posted' });
+  assert.deepEqual(r1.results, { mastodon: 'unverified', linkedin: 'unverified' }, 'POST-READBACK-1: sent but not read back');
   assert.deepEqual(sent[0], ['mastodon', 'medium text']);
   assert.deepEqual(sent[1], ['linkedin', 'long \\(text\\) for LinkedIn', 'urn:li:person:abc', 'https://ultrastable.io/research/x']);
   assert.deepEqual(versions, ['202610', '202609'], 'a month LinkedIn does not serve falls back to the previous one');
@@ -214,7 +215,7 @@ test('THOUGHT-1: a paper post reaches LinkedIn with its own long text; an event 
   assert.match(a.results.linkedin, /failed: linkedin HTTP 500/);
   assert.equal((await runSocial({ db: env2.DB, env: env2, fetch: f, now: NOW + 3600e3, tenant: 't' })).skipped, 'nothing due');
   liFail = false;
-  const c = await runSocial({ db: env2.DB, env: env2, fetch: f, now: NOW + 25 * 3600e3, tenant: 't' }); assert.equal(c.results && c.results.linkedin, 'posted', JSON.stringify(c));
+  const c = await runSocial({ db: env2.DB, env: env2, fetch: f, now: NOW + 25 * 3600e3, tenant: 't' }); assert.equal(c.results && c.results.linkedin, 'unverified', JSON.stringify(c));
   // an expired LinkedIn token is not a channel
   const env3 = mk(); await store.put(env3.DB, env3, 't', 'oauth:linkedin', { secret: {}, meta: {}, access: 'li', expiresAt: NOW - 1, status: 'ok' });
   assert.deepEqual(await runSocial({ db: env3.DB, env: env3, fetch: f, now: NOW, tenant: 't' }), { skipped: 'no channel connected' });
@@ -228,4 +229,13 @@ test('SOCIAL-BUFFER-1: every connected Buffer channel gets the post; X is cut to
     sent.push(q); return J({ data: { createPost: { post: { id: 'p' + sent.length, status: 'x' } } } }); };
   const r = await postBuffer('tok', 'L'.repeat(900), f, 'S'.repeat(400));
   assert.deepEqual(Object.keys(r), ['linkedin', 'twitter']); assert.match(sent[0], /addToQueue/); assert.match(sent[1], /shareNow/); assert.ok(!sent[1].includes('S'.repeat(281)));
+});
+
+// POST-READBACK-1 (2026-11-21): the relay said scheduled/sent/no-channel and the old code stored "posted" for all of it; the owner saw X only.
+test('relay results are recorded as read back, queued, unverified or failed, never as posted', async () => {
+  const { classifyRelay } = await import('../src/social.js');
+  const f = async u => String(u).endsWith('/api/v1/statuses/9') ? J({ id: '9' }) : NF;
+  const r = await classifyRelay({ mastodon: { status: 'ok', url: 'https://mstdn.science/@Q/9' }, linkedin: { status: 'scheduled', id: 'a' }, substack: { status: 'scheduled', id: 'b' }, twitter: { status: 'sent', id: 'c' }, facebook: { status: 'no-channel' }, instagram: { status: 'error', error: 'x' } }, f);
+  assert.deepEqual(Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v.status])), { mastodon: 'verified', linkedin: 'queued', substack: 'queued', twitter: 'unverified', facebook: 'failed', instagram: 'failed' });
+  const g = async () => NF; assert.equal((await classifyRelay({ mastodon: { status: 'ok', url: 'https://mstdn.science/@Q/9' } }, g)).mastodon.status, 'unverified');
 });

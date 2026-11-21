@@ -3686,6 +3686,15 @@
    "session": "session_0156nqDv6NMcEmv9wqYJK3XS"
   },
   {
+   "id": "decision-2026-11-21-lane-fast-1-parallel-checks-and-in-run-merge",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "LANE-FAST-1: parallel checks and in-run merge",
+   "body": "checks runs as three parallel jobs plus an aggregate job named checks, and a lane job merges the PR in the same run, so a PR waits for the slowest job instead of the sum plus a workflow_run hop.",
+   "probe": "file:scripts/lane.sh",
+   "session": "session_0156nqDbJMBWbgRLkSeaAxF"
+  },
+  {
    "id": "decision-2026-11-21-social-relay-1-post-to-owner-s-accounts-via-token-gated-rela",
    "kind": "decision",
    "date": "2026-11-21",
@@ -3693,6 +3702,24 @@
    "body": "Buffer (LinkedIn, X, Substack) and Mastodon posting reuse the saved logins through a relay route added to the qnfo-social Worker (owner approved 2026-11-21); the publisher reads SOCIAL_RELAY_URL and SOCIAL_RELAY_TOKEN from the tick Worker. No QNFO paper posts: the Worker has no schedule.",
    "probe": "grep:seed/worker/src/social.js::postRelay",
    "session": "session_0156nqDunV4z85Mh7KvGu2gW"
+  },
+  {
+   "id": "lesson-2026-11-21-triage-counted-an-optional-copilot-assign-as-a-failed-run",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Triage counted an optional Copilot assign as a failed run",
+   "body": "With Issues on, scripts/triage.sh failed every run because the best-effort copilot-swe-agent assign went through the counting gh wrapper; safe_exit turned it red and skipped SLA, Scoreboard and orphan sync. Optional calls bypass the counter and log a note.",
+   "probe": "grep:scripts/triage.sh::copilot agent not assignable here",
+   "session": "session_0156nqDshJE91voaBzhvqTUL"
+  },
+  {
+   "id": "decision-2026-11-21-lane-latency-1-3-minute-pr-latency-probe-that-merges-the-stu",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "LANE-LATENCY-1: 3 minute PR latency probe that merges the stuck PR",
+   "body": "lanewatch default threshold 30 to 3 minutes and --remediate merges a green stuck PR on its exact head; checks tests split in two halves; session reaper idle TTL 0.17 hours.",
+   "probe": "file:foundation/lanewatch.py",
+   "session": "session_0156nqDbJMBWbgRLkSeaAxF"
   },
   {
    "id": "decision-2026-11-21-thought-1-every-white-paper-becomes-per-channel-posts-that-c",
@@ -3711,15 +3738,6 @@
    "body": "A failed send is now retried once a day (social_failed table) and Bluesky posts carry link facets.",
    "probe": "grep:seed/worker/src/social.js::social_failed",
    "session": "session_0156nqDrGjLASvqbuu6oXJk5"
-  },
-  {
-   "id": "lesson-2026-11-21-triage-counted-an-optional-copilot-assign-as-a-failed-run",
-   "kind": "lesson",
-   "date": "2026-11-21",
-   "title": "Triage counted an optional Copilot assign as a failed run",
-   "body": "With Issues on, scripts/triage.sh failed every run because the best-effort copilot-swe-agent assign went through the counting gh wrapper; safe_exit turned it red and skipped SLA, Scoreboard and orphan sync. Optional calls bypass the counter and log a note.",
-   "probe": "grep:scripts/triage.sh::copilot agent not assignable here",
-   "session": "session_0156nqDshJE91voaBzhvqTUL"
   }
  ]
 }

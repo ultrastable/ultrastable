@@ -29,11 +29,6 @@
       "keep": "state",
       "reason": "AIROUTER-NO-RUN-1: one row per model the platform reported as deprecated; read with a 7 day window, at most one row per model"
     },
-    "social_failed": {
-      "column": "at",
-      "keep_days": 7,
-      "reason": "THOUGHT-1: one row per failed send and channel; the publisher reads only the last day to space retries"
-    },
     "social_posted": {
       "column": "at",
       "keep_days": 400,

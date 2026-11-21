@@ -7,7 +7,8 @@ import { dpopFetch, refreshForm, assertionFields } from './auth/atproto.js';
 
 const RAW = repo => `https://raw.githubusercontent.com/${repo}/main/social/`;
 const DDL = "CREATE TABLE IF NOT EXISTS social_posted (id TEXT NOT NULL, channel TEXT NOT NULL, at TEXT NOT NULL, ref TEXT, arm TEXT, PRIMARY KEY (id, channel))";
-const DDL_FAILED = "CREATE TABLE IF NOT EXISTS social_failed (id TEXT NOT NULL, channel TEXT NOT NULL, at TEXT NOT NULL, error TEXT, PRIMARY KEY (id, channel))";  // THOUGHT-1: a failed send is retried once a day, not every tick
+const MIGRATE = ['ALTER TABLE social_posted ADD COLUMN status TEXT', 'ALTER TABLE social_posted ADD COLUMN attempts INTEGER DEFAULT 1'];  // POST-READBACK-1: a row says what was observed, not what was sent
+
 const weekKey = d => { const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); return t.getUTCFullYear() + '-' + Math.ceil(((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7); };
 
 export async function postMastodon(m, text, id, f) {
@@ -87,10 +88,31 @@ export async function postBuffer(token, text, f, short) {
   return out;
 }
 
-export async function postRelay(env, p, f) {
-  const r = await f(env.SOCIAL_RELAY_URL + '/relay/post', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ text: p.long || p.text, short: p.text, channels: ['mastodon', 'linkedin', 'twitter', 'substack', 'facebook', 'instagram'] }) });
+export async function postRelay(env, p, f, only) {
+  const r = await f(env.SOCIAL_RELAY_URL + '/relay/post', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ text: p.long || p.text, short: p.text, channels: only && only.length ? only : ['mastodon', 'linkedin', 'twitter', 'substack', 'facebook', 'instagram'] }) });
   if (!r.ok) throw new Error('relay HTTP ' + r.status);
-  return JSON.stringify((await r.json()).results || {});
+  return (await r.json()).results || {};
+}
+
+// POST-READBACK-1: a post is published only when its public URL is fetched and confirmed. Everything else is recorded for what it is:
+// verified (read back), queued (accepted by Buffer, not yet published), unverified (sent, no public URL to read), failed (error, no channel, refused).
+export async function readBack(kind, ref, f) {
+  try {
+    if (kind === 'bluesky') { const r = await f('https://public.api.bsky.app/xrpc/app.bsky.feed.getPosts?uris=' + encodeURIComponent(ref)); return r.ok && ((await r.json()).posts || []).length === 1; }
+    if (kind === 'mastodon') { const m = /^https:\/\/([^/]+)\/@[^/]+\/(\d+)/.exec(String(ref)); if (!m) return false; const r = await f('https://' + m[1] + '/api/v1/statuses/' + m[2]); return r.ok && String((await r.json()).id) === m[2]; }
+  } catch (e) { /* allow-silent: a read-back that cannot reach the network is "unverified", recorded as such, never as published */ }
+  return false;
+}
+export async function classifyRelay(results, f) {
+  const out = {};
+  for (const [svc, v] of Object.entries(results || {})) {
+    const st = String((v && v.status) || '');
+    if (svc === 'mastodon' && v && v.url) out[svc] = { status: (await readBack('mastodon', v.url, f)) ? 'verified' : 'unverified', ref: v.url };
+    else if (/^(scheduled|queued|draft|buffer)$/.test(st)) out[svc] = { status: 'queued', ref: v.id || '' };
+    else if (/^(sent|ok)$/.test(st)) out[svc] = { status: 'unverified', ref: v.id || '' };
+    else out[svc] = { status: 'failed', ref: String(v && (v.error || st) || 'no result').slice(0, 120) };
+  }
+  return out;
 }
 
 // Order of what posts next: the weekly meta-story, then a tenant's changed items, then a tenant's backlog in hierarchy order, then platform events, then evergreen.
@@ -98,7 +120,8 @@ export async function postRelay(env, p, f) {
 export const priority = p => (p.arm === 'meta-story' ? 0 : p.kind === 'paper' ? 0.5 : String(p.arm || '').startsWith('ps-') ? (p.kind === 'event' ? 1 : 2) : p.kind === 'event' ? 3 : 4);
 
 export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), tenant = 'default', repo = 'ultrastable/ultrastable' }) {
-  await store.ensureSchema(db); await db.prepare(DDL).run(); await db.prepare(DDL_FAILED).run();
+  await store.ensureSchema(db); await db.prepare(DDL).run();
+  for (const q of MIGRATE) { try { await db.prepare(q).run(); } catch (e) { /* allow-silent: the column already exists */ } }
   const channels = {};
   for (const [ch, key] of [['bluesky', 'oauth:bluesky'], ['mastodon', 'oauth:mastodon'], ['linkedin', 'oauth:linkedin'], ['buffer', 'oauth:buffer']]) {
     const m = await store.material(db, env, tenant, key);
@@ -118,30 +141,42 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   if (gate.mode !== 'live') return { skipped: 'gate mode ' + gate.mode };
   for (const ch of gate.paused_channels || []) delete channels[ch];
   if (!Object.keys(channels).length) return { skipped: 'all channels paused' };
-  const d = new Date(now), today = d.toISOString().slice(0, 10), rows = (await db.prepare('SELECT id, channel, at FROM social_posted').all()).results || [];
+  const d = new Date(now), today = d.toISOString().slice(0, 10), rows = (await db.prepare('SELECT id, channel, at, status, attempts FROM social_posted').all()).results || [];
   const days = new Set(rows.filter(r => r.at.slice(0, 10) === today).map(r => r.id)), wk = new Set(rows.filter(r => weekKey(new Date(r.at)) === weekKey(d)).map(r => r.id));
   if (days.size >= gate.max_posts_per_day || wk.size >= gate.max_posts_per_week) return { skipped: 'rate limit' };
-  // THOUGHT-1: a post may name its channels and carry a text per channel. A post with no list goes to Bluesky and Mastodon only, so LinkedIn gets the
-  // white papers and nothing else. A paper is due on a channel it has not reached yet, so a channel linked later still gets the current pieces.
-  const by = new Map(); for (const r of rows) { if (!by.has(r.id)) by.set(r.id, new Set()); if (r.channel) by.get(r.id).add(r.channel); }
-  // Buffer and the relay fan out to the owner's own accounts (LinkedIn included), so they carry what every post carries and a paper's long text.
+  // POST-READBACK-1: a failed channel is retried up to 3 times; queued, unverified and verified rows are not re-sent.
+  // THOUGHT-1: a failed send waits a day before its retry, so a refused account is not hit every tick.
+  const recent = r => now - Date.parse(r.at) < 864e5;
+  const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3 || recent(r)));
+  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return done(id, 'relay') || (rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3 || recent(r))); };
+  // THOUGHT-1: a post may name its channels and carry a text per channel. A post with no list goes to Bluesky and Mastodon (and the Buffer and relay
+  // fan-outs), so LinkedIn direct gets the white papers and nothing else. A paper is due on a channel it has not reached yet, so a channel linked later
+  // still gets the current pieces; any other post is not re-sent to a channel linked after it went out.
   const targets = p => { const l = p.channels || ['bluesky', 'mastodon']; return [...l, 'buffer', 'relay'].filter((ch, i, a) => a.indexOf(ch) === i && channels[ch]); };
-  const failed = new Set(((await db.prepare('SELECT id, channel, at FROM social_failed').all()).results || []).filter(r => now - Date.parse(r.at) < 864e5).map(r => r.id + '|' + r.channel));
-  const missing = p => targets(p).filter(ch => !(by.get(p.id) || new Set()).has(ch) && !failed.has(p.id + '|' + ch));
-  const due = (cal.posts || []).filter(p => p.date <= today && missing(p).length && (!by.has(p.id) || p.kind === 'paper')).sort((a, b) => priority(a) - priority(b));
+  const missing = p => targets(p).filter(ch => ch === 'relay' ? !relayDone(p.id) : !done(p.id, ch));
+  const seen = id => rows.filter(r => r.id === id), retry = id => seen(id).some(r => r.status === 'failed');
+  const due = (cal.posts || []).filter(p => p.date <= today && missing(p).length && (!seen(p.id).length || p.kind === 'paper' || retry(p.id))).sort((a, b) => priority(a) - priority(b));
   if (!due.length) return { skipped: 'nothing due' };
   const p = due[0], out = {};
+  const rec = async (ch, ref, status, ex) => {
+    const n = ((rows.find(r => r.id === p.id && r.channel === ch) || {}).attempts || 0) + 1;
+    await db.prepare('INSERT INTO social_posted (id, channel, at, ref, arm, status, attempts) VALUES (?,?,?,?,?,?,?) ON CONFLICT(id, channel) DO UPDATE SET at=excluded.at, ref=excluded.ref, status=excluded.status, attempts=excluded.attempts').bind(p.id, ch, new Date(now).toISOString(), String(ref || '').slice(0, 400), p.arm || null, status, n).run();
+    out[ch] = status + (status === 'failed' ? ': ' + String(ref).slice(0, 100) : '');
+    if (status !== 'verified') await store.event(db, tenant, 'oauth:' + ch, status, String(ref).slice(0, 120));
+  };
+  const long = (p.texts && p.texts.linkedin) || p.long || p.text, short = (p.texts && p.texts.bluesky) || p.text;
   for (const ch of missing(p)) {
     const m = channels[ch], text = (p.texts && p.texts[ch]) || p.text;
     try {
-      const long = (p.texts && p.texts.linkedin) || p.long || p.text, short = (p.texts && p.texts.bluesky) || p.text;
-      const ref = ch === 'relay' ? await postRelay(env, { ...p, long, text: short }, f) : ch === 'mastodon' ? await postMastodon(m, text, p.id, f) : ch === 'linkedin' ? await postLinkedIn(m, text, p.url || null, f, now, env.LINKEDIN_VERSION || null) : ch === 'buffer' ? JSON.stringify(await postBuffer(m.access, long, f, short)) : await postBluesky(db, env, tenant, m, text, f, now);
-      await db.prepare('INSERT OR IGNORE INTO social_posted (id, channel, at, ref, arm) VALUES (?,?,?,?,?)').bind(p.id, ch, new Date(now).toISOString(), ref, p.arm || null).run();
-      out[ch] = 'posted';
-    } catch (e) {
-      out[ch] = 'failed: ' + String(e && e.message || e).slice(0, 120); await store.event(db, tenant, 'oauth:' + ch, 'failed', out[ch]);
-      await db.prepare('INSERT OR REPLACE INTO social_failed (id, channel, at, error) VALUES (?,?,?,?)').bind(p.id, ch, new Date(now).toISOString(), out[ch]).run();
-    }
+      if (ch === 'relay') {
+        const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => r.channel.slice(6));
+        const res = await classifyRelay(await postRelay(env, { ...p, long, text: short }, f, failed), f);  // a retry re-sends only the services that failed
+        for (const [svc, v] of Object.entries(res)) await rec('relay:' + svc, v.ref, v.status);
+        continue;
+      }
+      const ref = ch === 'mastodon' ? await postMastodon(m, text, p.id, f) : ch === 'linkedin' ? await postLinkedIn(m, text, p.url || null, f, now, env.LINKEDIN_VERSION || null) : ch === 'buffer' ? JSON.stringify(await postBuffer(m.access, long, f, short)) : await postBluesky(db, env, tenant, m, text, f, now);
+      await rec(ch, ref, ch === 'buffer' ? 'queued' : (await readBack(ch, ref, f)) ? 'verified' : 'unverified');
+    } catch (e) { await rec(ch, String(e && e.message || e), 'failed'); }
   }
   return { id: p.id, results: out };
 }
