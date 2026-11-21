@@ -46,15 +46,16 @@ test('neurons are estimated from reported usage, or from the text when none is r
   assert.ok(estimateNeurons('m', null, 'x'.repeat(4000)) > 0);
 });
 
-test('modes: normal, lean above 90% of the day, frozen at the cap and when the month is spent', () => {
+test('modes: normal, lean above 90% of the day, crawl (never frozen) at the cap and when the month is spent', () => {
   const a = { ai_neurons_day: 1000, variable_usd_month: 10 };
   assert.equal(decide(a, { ai_neurons_today: 100, ai_usd_month_to_date: 0 }).mode, 'normal');
   assert.equal(decide(a, { ai_neurons_today: 950, ai_usd_month_to_date: 0 }).mode, 'lean');
-  assert.equal(decide(a, { ai_neurons_today: 1000, ai_usd_month_to_date: 0 }).mode, 'frozen');
-  assert.equal(decide(a, { ai_neurons_today: 0, ai_usd_month_to_date: 10 }).mode, 'frozen');
+  assert.equal(decide(a, { ai_neurons_today: 1000, ai_usd_month_to_date: 0 }).mode, 'crawl');
+  assert.equal(decide(a, { ai_neurons_today: 0, ai_usd_month_to_date: 10 }).mode, 'crawl');
+  assert.equal(decide(a, { ai_neurons_today: 1000, ai_usd_month_to_date: 0 }).hourly, true);
 });
 
-test('every call is metered in the ledger, and the day cap is a hard stop (BudgetExhausted), not a downgrade', async () => {
+test('every call is metered in the ledger; past the day cap calls are refused within the tick and then trickle one an hour (SPEND-SOFT-1)', async () => {
   const { raw, db } = mkdb(); const ai = fakeAI();
   const g = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: NOW });
   assert.equal(g.state.mode, 'normal');
@@ -64,10 +65,15 @@ test('every call is metered in the ledger, and the day cap is a hard stop (Budge
   for (let i = 0; i < fit + 5; i++) { try { await g.ai.run('m', {}); } catch (e) { refused = e; break; } }
   assert.ok(refused instanceof BudgetExhausted, 'refused once the allowance is used');
   assert.ok(ai.calls.length <= fit, 'never more calls than the allowance holds');
-  const row = raw.prepare("SELECT units, calls, refused FROM budget_ledger WHERE day='2026-11-16'").get();
+  const row = raw.prepare("SELECT units, calls, refused FROM budget_ledger WHERE day='2026-11-16' AND kind='ai_neurons'").get();
   assert.equal(row.calls, ai.calls.length); assert.ok(row.units >= g.state.allowance.ai_neurons_day); assert.equal(row.refused, 1);
   const next = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: NOW });
-  assert.equal(next.ai, null, 'the next tick gets no model at all'); assert.equal(next.state.mode, 'frozen');
+  assert.equal(next.state.mode, 'crawl', 'never frozen: the system keeps one model call an hour');
+  await next.ai.run('m', {}); await assert.rejects(() => next.ai.run('m', {}), BudgetExhausted);
+  const sameHour = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: NOW + 1000 });
+  await assert.rejects(() => sameHour.ai.run('m', {}), BudgetExhausted, 'CRAWL-SHARED-1: the hour\'s one call is shared by every surface');
+  const nextHour = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: (Math.floor(NOW / 36e5) + 1) * 36e5 + 6e5 * 3 });
+  if (nextHour.state.mode === 'crawl') { await nextHour.ai.run('m', {}); await assert.rejects(() => nextHour.ai.run('m', {}), BudgetExhausted); }
   const tomorrow = await governedAI(db, ai, { config: { budget: { usd_per_month: 0 } }, now: NOW + 864e5 });
   assert.equal(tomorrow.state.mode, 'normal', 'a new day starts a new allowance');
 });
@@ -128,7 +134,7 @@ test('ORIGINATE-CAP-1: the system files at most ORIGINATE_MAX_PER_DAY items of i
   assert.equal(await ensureItem(db, mk(9), { cap: 3, now: NOW + 864e5 }), true, 'a new day has a new allowance');
 });
 
-test('lazy governed env: a request with no model call reads nothing; a frozen budget refuses the call', async () => {
+test('lazy governed env: a request with no model call reads nothing; a spent budget crawls (at most one call an hour)', async () => {
   const { budgetEnv } = await import('../src/budget.js');
   const { raw, db } = mkdb(); const ai = fakeAI();
   const env = budgetEnv({ DB: db, AI: ai }, 0.2);
@@ -137,7 +143,7 @@ test('lazy governed env: a request with no model call reads nothing; a frozen bu
   assert.equal(ai.calls.length, 1);
   raw.prepare("UPDATE budget_ledger SET units = 1e9 WHERE kind='ai_neurons'").run();
   const env2 = budgetEnv({ DB: db, AI: ai }, 0.2);
-  await assert.rejects(() => env2.AI.run('m', {}), BudgetExhausted);
+  await assert.rejects(async () => { await env2.AI.run('m', {}).catch(e => { throw e; }); await env2.AI.run('m', {}); }, BudgetExhausted, 'crawl: at most the hour\'s one call, then refused');
 });
 
 test('every Workers AI call site in the workers goes through the governor', () => {
@@ -197,4 +203,21 @@ test('BUDGET-TUNE-1: a day that used 52% of the free neurons refuses nothing, an
   assert.ok(tick > PRICES.ai_free_neurons_day * 0.6, 'the tick share covers 60% of the free neurons');
   assert.equal(decide(a, { ai_neurons_today: PRICES.ai_free_neurons_day * 0.52, ai_usd_month_to_date: 0 }).mode, 'normal');
   assert.equal(allowance(budgetConfig({ budget: { plan: 'paid' } }, {}), NOW).ai_neurons_day, Math.floor(PRICES.ai_free_neurons_day * 0.8));
+});
+
+import { accountAllowance, applySpend } from '../src/budget.js';
+test('AI-GOV-ACCOUNT-1: with an account-wide reading the tick may use what the rest of the account left, not a fixed 70% share', () => {
+  const full = { ai_neurons_day: 9500, variable_usd_month: 0 }, shared = { ...full, share: 0.7, ai_neurons_day: 6650 };
+  assert.equal(accountAllowance(full, shared, 5000, NaN).ai_neurons_day, 6650, 'no reading: the fixed share');
+  assert.equal(accountAllowance(full, shared, 5000, 5200).ai_neurons_day, 9300, 'others used 200: the tick gets 9300, past the old 6650 freeze at 52%');
+  assert.equal(accountAllowance(full, shared, 0, 9600).ai_neurons_day, 0);
+});
+test('SPEND-SOFT-1: throttle and crawl hold model calls to the free allocation; crawl is lean', async () => {
+  const a = { ai_neurons_day: 50000, variable_usd_month: 20 };
+  assert.equal(applySpend(a, { level: 'ease', knobs: { ai: 'cheap-first' } }).a.ai_neurons_day, 50000);
+  assert.equal(applySpend(a, { level: 'throttle', knobs: { ai: 'free-allocation' } }).a.ai_neurons_day, 9500);
+  assert.equal(applySpend(a, { level: 'crawl', knobs: { ai: 'free-allocation-lean' } }).lean, true);
+  const { db } = mkdb(); const ai = fakeAI();
+  const g = await governedAI(db, ai, { config: { budget: { usd_per_month: 30, plan: 'paid' } }, now: NOW, spend: { level: 'crawl', measured: true, used: {}, knobs: { ai: 'free-allocation-lean' } } });
+  assert.equal(g.state.mode, 'lean'); await g.ai.run('m', {}); await assert.rejects(() => g.ai.run('m', {}), BudgetExhausted);
 });

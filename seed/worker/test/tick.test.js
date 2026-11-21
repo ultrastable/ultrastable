@@ -138,7 +138,7 @@ test('a breached D1 budget skips the non-essential steps, records the breach and
   const at = new Date(T0 - 600e3).toISOString().replace('T', ' ').slice(0, 19);
   db.raw.prepare('INSERT INTO cost_samples (at, target, rows_read_1h) VALUES (?,?,?)').run(at, 'org', 500000);
   const cfg = { ...config, criticality: crit, cost_budgets: [{ id: 'org', max_rows_read_per_hour: 120000 }] };
-  const r = await runTick(db, { config: cfg, now: T0 });
+  const r = await runTick(db, { config: cfg, now: T0 + 15 * 60e3 });  // SPEND-SOFT-1: off the three-hour boundary, so the deferred steps wait
   assert.deepEqual(COST_ESSENTIAL_STEPS, ['migrate', 'reconcile', 'measure', 'criticality']);
   assert.equal(r.completed, STEP_ORDER.length, 'a skip is a decision, not a failure: health stays green');
   assert.deepEqual(r.errors, []);
@@ -183,4 +183,18 @@ test('connector health: last_ok and expires_at each tick; two failed refreshes r
   await db.prepare("UPDATE credentials SET status = 'ok' WHERE provider = 'github-app'").run();
   await STEPS.probe_gates(db, ctx());
   assert.equal((await cards())[0].status, 'closed');
+});
+
+test('SPEND-SOFT-1: no step is skipped for good; lean defers to every 3 h, spend crawl keeps the queue moving', async () => {
+  const { stepPlan } = await import('../src/tick.js');
+  const off = Date.parse('2026-11-10T01:15:00Z'), on = Date.parse('2026-11-10T03:05:00Z');
+  assert.equal(stepPlan('pulse', { lean: true, now: off }), 'defer');
+  assert.equal(stepPlan('pulse', { lean: true, now: on }), 'run');
+  const crawl = { level: 'crawl', knobs: { wide_every_h: 6, extra_every_h: 3 } };
+  for (const s of ['dispatch', 'execute', 'reap_claims', 'measure']) assert.equal(stepPlan(s, { spend: crawl, now: off }), 'run', s);
+  assert.equal(stepPlan('unknowns', { spend: crawl, now: off }), 'defer');
+  assert.equal(stepPlan('unknowns', { spend: crawl, now: on }), 'run');
+  assert.equal(stepPlan('pulse', { spend: { level: 'throttle', knobs: { wide_every_h: 1 } }, now: off }), 'defer');
+  assert.equal(stepPlan('pulse', { spend: { level: 'throttle', knobs: { wide_every_h: 1 } }, now: on }), 'run');
+  assert.equal(stepPlan('pulse', { spend: { level: 'ease', knobs: {} }, now: off }), 'run');
 });
