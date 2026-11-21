@@ -57,6 +57,33 @@ def _slug(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:60] or "note"
 
 
+PROBE_FILE = re.compile(r"^file:[^\s:][^:]*$")
+PROBE_GREP = re.compile(r"^grep:([^\s:][^:]*)::(.+)$")
+
+
+def validate_probe(root, probe: str, allow_cmd: bool = False) -> str:
+    """PROBE-FORMAT-1 (main went red twice on 2026-11-21 from `grep:path:text` and a one-colon probe): a closing probe is exactly file:<path> or
+    grep:<path>::<regex>, the path exists and the regex compiles. Returns the problem, or an empty string. Run by `record` and by `check` on every PR."""
+    root = Path(root)
+    probe = str(probe or "")
+    if allow_cmd and probe.startswith("cmd:"):
+        return ""
+    m = PROBE_GREP.match(probe)
+    if m:
+        path, rx = m.group(1), m.group(2)
+        try:
+            re.compile(rx)
+        except re.error as e:
+            return f"probe {probe!r}: regex does not compile ({e})"
+    elif PROBE_FILE.match(probe):
+        path = probe[5:]
+    else:
+        return f"probe {probe!r}: malformed; use file:<path> or grep:<path>::<regex> (two colons before the regex)"
+    if not (root / path).exists():
+        return f"probe {probe!r}: {path} does not exist"
+    return ""
+
+
 def _prov(root, kind: str, title: str, session: str, ref: str) -> str:
     """PROVENANCE-1: a write-back is a decision/lesson row; origin is the agent session that wrote it."""
     from . import provenance
@@ -77,6 +104,9 @@ def record(root, kind: str, title: str, body: str, *, session: str = "", owner: 
         # never a Markdown page written for a reader.
         if probe.split(":", 1)[0] not in ("file", "grep"):
             raise ValueError("a lesson or decision needs --probe file:<path> or grep:<path>::<regex>: the code or policy that carries it (CLOSED-LOOP-1)")
+        bad_probe = validate_probe(root, probe)
+        if bad_probe:
+            raise ValueError(bad_probe + " (PROBE-FORMAT-1)")
         rid = f"{kind}-{day}-{_slug(title)}"
         row = {"id": rid, "kind": kind, "date": day, "title": title.strip(), "body": body.strip(), "probe": probe, **({"session": session} if session else {})}
         # WRITEBACK-SHARD-1 (root cause of every PR conflicting): the ledger and provenance are single shared files that each PR appended to, so any two PRs
@@ -113,9 +143,31 @@ def _git(root, *a) -> str:
     return r.stdout
 
 
+def probe_problems(root) -> list[str]:
+    """PROBE-FORMAT-1: every write-back file and ledger row carries a well-formed probe that points at something that exists."""
+    root, out = Path(root), []
+    rows = []
+    for f in sorted((root / "doctrine/writeback").glob("*.json")):
+        try:
+            rows.append((f.name, json.loads(f.read_text(encoding="utf-8")).get("row") or {}))
+        except ValueError as e:
+            out.append(f"{f.name}: not valid JSON ({e})")
+    led = root / "doctrine/decision-ledger.json"
+    if led.is_file():
+        d = json.loads(led.read_text(encoding="utf-8"))
+        rows += [("decision-ledger:" + str(r.get("id")), r) for r in (d.get("rows") if isinstance(d, dict) else d) or [] if isinstance(r, dict)]
+    for name, r in rows:
+        if r.get("kind") in ("lesson", "decision") and r.get("probe") is not None:
+            e = validate_probe(root, r["probe"], allow_cmd=True)
+            if e:
+                out.append(f"{name}: {e}")
+    return out
+
+
 def check(root=REPO, base="origin/main", head="HEAD") -> list[str]:
     from . import doctrine
     root, bad = Path(root), []
+    bad.extend(probe_problems(root))
     try:
         mb = _git(root, "merge-base", base, head).strip()
     except RuntimeError as e:
