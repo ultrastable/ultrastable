@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """INTENT-YIELD-1: owner directives are intents, their own probes decide kept or broken, restatements are charged to the original,
 and the loop's own probe fails loudly when it goes stale, errors or loses the directives."""
 import json, sys, unittest

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """INTENT-YIELD-1: for a given unit of human input, what is the best unit of output.
 
 Ultrastable is the foundation for any autonomous system.

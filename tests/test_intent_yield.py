@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """Intent Yield tenant (instances/intent-yield): the idea passes the system test and the anti-gaming rules stay in the design."""
 import atexit, shutil, sys, tempfile, unittest
 from pathlib import Path

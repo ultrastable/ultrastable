@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 // INTENT-YIELD-1: /yield renders from the generated data and scores no person.
 import test from "node:test";
 import assert from "node:assert/strict";
