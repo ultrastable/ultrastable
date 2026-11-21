@@ -18,9 +18,13 @@ export const REGISTRY = {
     scopes: ['openid', 'email', 'https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/calendar.events'], extra: { access_type: 'offline', prompt: 'consent' }, env: 'OAUTH_GOOGLE' },
   microsoft: { title: 'Microsoft', type: 'oauth', authorize: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize', token: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
     scopes: ['offline_access', 'openid', 'email', 'User.Read', 'Files.ReadWrite', 'Calendars.ReadWrite'], extra: {}, env: 'OAUTH_MICROSOFT' },
+<<<<<<< HEAD
   buffer: { title: 'Buffer', type: 'oauth', authorize: 'https://buffer.com/oauth2/authorize', token: 'https://api.bufferapp.com/1/oauth2/token.json', scopes: [], extra: {}, env: 'OAUTH_BUFFER' },
   linkedin: { title: 'LinkedIn', type: 'oauth', authorize: 'https://www.linkedin.com/oauth/v2/authorization', token: 'https://www.linkedin.com/oauth/v2/accessToken',
     scopes: ['openid', 'profile', 'w_member_social'], extra: {}, env: 'OAUTH_LINKEDIN' },  // THOUGHT-1: posts white papers on the owner's own LinkedIn; tokens last 60 days with no refresh, so getToken reports expiry
+=======
+  buffer: { title: 'Buffer', type: 'oauth', authorize: 'https://auth.buffer.com/auth', token: 'https://auth.buffer.com/token', scopes: ['posts:read', 'posts:write', 'account:read', 'offline_access'], extra: { prompt: 'consent' }, env: 'OAUTH_BUFFER', dcr: 'https://auth.buffer.com/reg' },  // SOCIAL-MODULE-1: Buffer's own OAuth 2 (authorization code with PKCE, public client: no secret). The app registers itself at Buffer's registration endpoint (RFC 7591), so no owner step exists
+>>>>>>> 87304828d73b1922fa1e705a00e82fa266d6bd1f
   bluesky: { title: 'Bluesky', type: 'social', connect: '/connect/bluesky' },  // REACH-1: atproto OAuth in social.js
   mastodon: { title: 'Mastodon', type: 'social', connect: '/connect/mastodon' },  // REACH-1: app registration + OAuth in social.js
   github: { title: 'GitHub', type: 'github-app', connect: '/connect/github' },  // the GitHub App manifest flow in routes.js
@@ -83,7 +87,7 @@ export async function connectorStatus(db, env, tenant) {
   const rows = (await db.prepare("SELECT provider, status, expires_at, last_error, updated_at, meta FROM credentials WHERE tenant = ?").bind(tenant).all()).results || [];
   const linked = rows.filter(r => r.provider.startsWith('oauth:') || r.provider === 'github-app').map(r => { const m = JSON.parse(r.meta || '{}'); return { provider: r.provider, kind: m.kind || (r.provider === 'github-app' ? 'github-app' : 'oauth'), server: m.server || null, status: r.status, expires_at: r.expires_at, last_error: r.last_error, updated_at: r.updated_at }; });
   const available = Object.entries(REGISTRY).map(([id, d]) => ({ id, title: d.title, type: d.type, connect: d.connect || '/connect/' + id,
-    ready: d.type === 'oauth' ? !!appCreds(env, d).id : true, needs: d.type === 'oauth' && !appCreds(env, d).id ? 'oauth-apps (owner registers the app once; the Worker does the rest)' : null,
+    ready: d.type === 'oauth' ? !!(appCreds(env, d).id || d.dcr) : true, needs: d.type === 'oauth' && !d.dcr && !appCreds(env, d).id ? 'oauth-apps (owner registers the app once; the Worker does the rest)' : null,
     linked: linked.some(l => l.provider === providerKey(id) || (id === 'github' && l.provider === 'github-app')) }));
   return { linked, available };
 }
@@ -95,6 +99,18 @@ export async function disconnect(db, env, tenant, provider, f = fetch) {
   await db.prepare('DELETE FROM credentials WHERE tenant = ? AND provider = ?').bind(tenant, provider).run();
   await store.event(db, tenant, provider, 'disconnected', revoked ? 'revoked at provider' : 'removed locally');
   return { ok: true, revoked };
+}
+
+
+// SOCIAL-MODULE-1: a provider with a registration endpoint (RFC 7591) gets its app registered by the Worker itself, once per redirect address, and the client id is kept.
+async function dynamicClient(env, tenant, def, redirect, f) {
+  const key = 'oauth:' + def.title.toLowerCase() + '-client', m = await store.material(env.DB, env, tenant, key);
+  if (m && m.meta && m.meta.redirect === redirect && m.meta.client_id) return { ok: true, client_id: m.meta.client_id };
+  const r = await f(def.dcr, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ client_name: 'Ultrastable', redirect_uris: [redirect], grant_types: ['authorization_code', 'refresh_token'], response_types: ['code'], token_endpoint_auth_method: 'none' }) });
+  if (!r.ok) return { ok: false, error: 'registration HTTP ' + r.status };
+  const j = await r.json(); if (!j.client_id) return { ok: false, error: 'registration returned no client_id' };
+  await store.put(env.DB, env, tenant, key, { secret: { registered: true }, meta: { client_id: j.client_id, redirect }, status: 'ok' });
+  return { ok: true, client_id: j.client_id };
 }
 
 const screenFor = (def, title, will) => ({ provider: def.title, title: 'Connect ' + title, button: 'Authorize on ' + def.title, will, why: 'This is a one-time approval. The system keeps access renewed and you can disconnect at any time.' });
@@ -114,7 +130,7 @@ export async function handleConnector(request, env, { tenant = 'default', fetch:
       const r = await disconnect(env.DB, env, tenant, key, f); return r.ok ? doneScreen('Disconnected', def.title + ' is disconnected' + (r.revoked ? ' and its access was revoked.' : '.')) : failScreen('Disconnect', r.error, '/');
     }
     if (step === 'consent') {
-      if (def.type === 'oauth' && !appCreds(env, def).id) return failScreen('Connect ' + def.title, 'This connection is waiting for its one-time app registration, which the owner card "oauth-apps" tracks. Nothing is needed from you here.', '/');
+      if (def.type === 'oauth' && !def.dcr && !appCreds(env, def).id) return failScreen('Connect ' + def.title, 'This connection is waiting for its one-time app registration, which the owner card "oauth-apps" tracks. Nothing is needed from you here.', '/');
       if (id === 'mcp') { const s = url.searchParams.get('server'); if (!safeUrl(s || '', allowInsecure)) return failScreen('Connect an MCP server', 'Give the address of a public https MCP server.', '/'); }
       const q = id === 'mcp' ? '?server=' + encodeURIComponent(url.searchParams.get('server')) : '';
       const host = id === 'mcp' ? new URL(url.searchParams.get('server')).host : def.title;
@@ -129,7 +145,8 @@ export async function handleConnector(request, env, { tenant = 'default', fetch:
         meta = { kind: 'mcp', server, resource: d.resource, token_url: d.as.token_endpoint, revoke: d.as.revocation_endpoint || null, client_id: reg.client_id, scopes, registration: reg.method };
         if (reg.client_secret) secret.client_secret = reg.client_secret;
       } else {
-        const c = appCreds(env, def); if (!c.id) return failScreen('Connect ' + def.title, 'Waiting for the one-time app registration (owner card oauth-apps).', '/');
+        const c = appCreds(env, def); if (!c.id && def.dcr) { const d = await dynamicClient(env, tenant, def, `${origin}/connect/${id}/callback`, f); if (!d.ok) return failScreen('Connect ' + def.title, 'The system could not register with ' + def.title + ' and will retry on its own.', retry); c.id = d.client_id; }
+        if (!c.id) return failScreen('Connect ' + def.title, 'Waiting for the one-time app registration (owner card oauth-apps).', '/');
         key = providerKey(id); authz = def.authorize; scopes = def.scopes; extra = def.extra;
         meta = { kind: 'oauth', provider: id, token_url: def.token, revoke: def.revoke || null, client_id: c.id, scopes }; if (c.secret) secret.client_secret = c.secret;
       }

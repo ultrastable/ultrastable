@@ -3852,6 +3852,42 @@
    "title": "SOCIAL-MODULE-1: the social module is the human interface layer, native in core",
    "body": "Rowan 2026-11-21: interfacing with humans (social, outreach, replies, newsletters) is a core module every system has; tenants supply config and content only; no channel runs through another account. Buffer channels verified per service; replies and mentions land in human_inbox.",
    "probe": "grep:seed/worker/src/humans.js::SOCIAL-MODULE-1"
+  },
+  {
+   "id": "decision-2026-11-21-quniverse-cut-1-no-runtime-dependency-on-the-quniverse-accou",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "QUNIVERSE-CUT-1: no runtime dependency on the Quniverse account",
+   "body": "Quniverse account assumed gone (Rowan 2026-11-21). All four zones, mail relay and the PS backend URL now live in the ultrastable account. singleaccount --check scans runtime code for Quniverse/QNFO hosts, repos and resources. Social relay on qnfo-social is moved by the social-module thread.",
+   "probe": "grep:doctrine/single-account.json::QUNIVERSE-CUT-1",
+   "session": "session_0156nqDrrT7TjGvkih9nT217"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-a-native-credential-retires-the-relay",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: a native credential retires the relay",
+   "body": "The publisher drops the relay channel once a native buffer or mastodon credential is sealed. Buffer and Mastodon are linked through the connect flow, with the credential import route live as a second route.",
+   "probe": "grep:seed/worker/src/social.js::retires the relay",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-one-click-buffer-and-mastodon-links",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: one-click Buffer and Mastodon links",
+   "body": "Buffer registers its own OAuth app at its registration endpoint and uses authorization code with PKCE as a public client, so the connect link needs no key from a person. Mastodon uses one link with the instance in it. Never-linked channels appear in the owner-acts list.",
+   "probe": "grep:seed/worker/src/auth/connectors.js::dynamicClient",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "lesson-2026-11-21-relay-posts-are-read-back-from-buffer-every-tick",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Relay posts are read back from Buffer every tick",
+   "body": "verifyRelay in seed/worker/src/social.js calls the relay /relay/status for queued or unverified relay rows each tick; verified needs status sent plus the service link, an error becomes failed and is retried.",
+   "probe": "grep:seed/worker/src/social.js::verifyRelay",
+   "session": "session_0156nqDrz7VJCnauouR6AgUS"
   }
  ]
 }

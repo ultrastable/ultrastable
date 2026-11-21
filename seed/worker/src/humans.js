@@ -6,6 +6,7 @@
 //   reconcileBuffer    a post Buffer accepted is "verified" only when Buffer reports it sent and gives its public link, which is then fetched
 //   intakeInbox        replies and mentions on Bluesky and Mastodon become inbox rows (public text, author hashed), so replies are input, not noise
 import * as store from './auth/store.js';
+import { getToken } from './auth/index.js';
 
 const DDL = [
   "CREATE TABLE IF NOT EXISTS human_inbox (id TEXT PRIMARY KEY, channel TEXT NOT NULL, kind TEXT NOT NULL, at TEXT NOT NULL, author TEXT, text TEXT, url TEXT, status TEXT NOT NULL DEFAULT 'new')",
@@ -28,7 +29,8 @@ export async function importCredentials(db, env, tenant, request) {
 
 // Buffer says what happened to a queued post: sent (with the network's public link) or error. The link is fetched; only a reachable link is "verified".
 export async function reconcileBuffer({ db, env, tenant = 'default', fetch: f = fetch, now = Date.now() }) {
-  const m = await store.material(db, env, tenant, 'oauth:buffer'); if (!m || !m.access) return { skipped: 'no buffer credential' };
+  const m0 = await store.material(db, env, tenant, 'oauth:buffer'); if (!m0 || !m0.access) return { skipped: 'no buffer credential' };
+  const bt = await getToken(db, env, tenant, 'oauth:buffer', { fetch: f, now }); if (!bt.ok) return { skipped: 'buffer token: ' + bt.error }; const m = { access: bt.token };
   const rows = ((await db.prepare("SELECT id, channel, ref, at FROM social_posted WHERE channel LIKE 'buffer:%' AND status = 'queued' ORDER BY at LIMIT 8").all()).results || []);
   const out = {};
   for (const r of rows) {
@@ -68,4 +70,11 @@ export async function intakeInbox({ db, env, tenant = 'default', fetch: f = fetc
     } catch (e) { out.bluesky = 'error: ' + String(e && e.message || e).slice(0, 80); }
   }
   return out;
+}
+
+// A channel nobody has linked is one click on the owner page: a never-linked row reads as "consent has not completed", which the owner-acts list already shows with its link.
+export async function seedLinkRows(db, env, tenant) {
+  await store.ensureSchema(db); const made = [];
+  for (const p of ['oauth:buffer', 'oauth:mastodon']) if (!(await store.get(db, tenant, p))) { await store.put(db, env, tenant, p, { status: 'failed', error: 'consent has not completed (not linked yet)' }); made.push(p); }
+  return made;
 }

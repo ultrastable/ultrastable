@@ -37,7 +37,7 @@ import { progressStep, readProgress } from './progress.js'; // PROGRESS-1
 import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
 import { recordGovernor, readDecisions, safely as decisionSafely } from './decisions.js'; // DECISIONS-1
 import { runSocial, blueskyAccess } from './social.js';
-import { importCredentials, reconcileBuffer, intakeInbox } from './humans.js';  // SOCIAL-MODULE-1  // REACH-1
+import { importCredentials, reconcileBuffer, intakeInbox, seedLinkRows } from './humans.js';  // SOCIAL-MODULE-1  // REACH-1
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
@@ -149,7 +149,7 @@ export default {
       step('issuesync', () => syncIssues({ db: env.DB, token, repo: main }));  // ISSUESYNC-1: filed roadmap items reach the queue on the server, no Actions needed
       step('repo-access', () => checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }));  // REPO-ACCESS-1
       step('social', () => runSocial({ db: env.DB, env, tenant }));  // REACH-1: posts the due calendar item to the channels linked at /connect
-      step('humans', async () => ({ buffer: await reconcileBuffer({ db: env.DB, env, tenant }), inbox: new Date().getUTCMinutes() < 10 ? await intakeInbox({ db: env.DB, env, tenant, blueskyAccess }) : 'hourly' }));  // SOCIAL-MODULE-1: read-back of Buffer posts; replies and mentions become inbox rows, hourly
+      step('humans', async () => ({ seeded: await seedLinkRows(env.DB, env, tenant), buffer: await reconcileBuffer({ db: env.DB, env, tenant }), inbox: new Date().getUTCMinutes() < 10 ? await intakeInbox({ db: env.DB, env, tenant, blueskyAccess }) : 'hourly' }));  // SOCIAL-MODULE-1: read-back of Buffer posts; replies and mentions become inbox rows, hourly
       step('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); sw.stall_items = await alarmStalls(env.DB, sw, ensureItem); return sw; });  // PR-LATENCY-1  // SERVER-OWNS-LOOPS-1
       step('app-audit', () => auditApps(env.DB, env, tenant));  // APP-INVENTORY-1: live app inventory, extra installations of our own apps removed, daily
       step('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
