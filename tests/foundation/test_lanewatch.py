@@ -16,7 +16,7 @@ class LaneWatch(unittest.TestCase):
         self.assertEqual([s["number"] for s in lanewatch.classify([pr(1)], NOW)], [1])
 
     def test_young_red_draft_conflicting_are_not_stuck(self):
-        prs = [pr(2, updatedAt="2026-11-12T14:50:00Z"), pr(3, statusCheckRollup=[{"conclusion": "FAILURE"}]), pr(4, isDraft=True), pr(5, mergeable="CONFLICTING"), pr(6, statusCheckRollup=[])]
+        prs = [pr(2, updatedAt="2026-11-12T14:59:00Z"), pr(3, statusCheckRollup=[{"conclusion": "FAILURE"}]), pr(4, isDraft=True), pr(5, mergeable="CONFLICTING"), pr(6, statusCheckRollup=[])]
         self.assertEqual(lanewatch.classify(prs, NOW), [])
 
     def test_workflow_pr_cause_is_the_credential_gate(self):
