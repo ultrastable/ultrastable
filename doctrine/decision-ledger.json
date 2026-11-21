@@ -3888,6 +3888,24 @@
    "body": "verifyRelay in seed/worker/src/social.js calls the relay /relay/status for queued or unverified relay rows each tick; verified needs status sent plus the service link, an error becomes failed and is retried.",
    "probe": "grep:seed/worker/src/social.js::verifyRelay",
    "session": "session_0156nqDrz7VJCnauouR6AgUS"
+  },
+  {
+   "id": "lesson-2026-11-21-regen-research-1-the-lane-took-main-s-research-data-and-noth",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "REGEN-RESEARCH-1: the lane took main's research data and nothing rebuilt the PR's papers",
+   "body": "MERGE-NOW-1 resolves generated files to main's side; REGEN-1 in checks did not run research --page, so a PR adding a study went red after every server reconcile and waited on a session. regen_generated.sh now rebuilds the papers.",
+   "probe": "grep:scripts/regen_generated.sh::research --page --apply",
+   "session": "session_0156nqDrGjLASvqbuu6oXJk5"
+  },
+  {
+   "id": "lesson-2026-11-21-social-module-1-live-probes-for-the-two-connect-links",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: live probes for the two connect links",
+   "body": "The daily smoke run now follows both connect links to the provider's sign-in without completing it, so a broken link is a failing check.",
+   "probe": "grep:scripts/smoke_live.py::connect-buffer-link",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
   }
  ]
 }
