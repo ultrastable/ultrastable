@@ -57,3 +57,7 @@ A missing credential never stops the boot. The step is recorded as a backlog ite
 
 ## Interview and screens (no code needed)
 `python3 bootstrap/interview.py --org-name "My Project"` asks plain questions with hints and numbered choices, then writes `IDEA.md` and `specs/`. The Worker serves the same interview at `/start` and three screens at `/`, `/next`, `/needs-you`. See [SCOPE.md](SCOPE.md) and [LICENSING.md](LICENSING.md).
+
+## License
+
+Source-available under the [Ultrastable License v1.0 (USL-1.0)](LICENSE): free for non-commercial use; commercial use needs a Commercial License. This kit is code and agent instructions only (TEMPLATE-CODE-ONLY-1); it carries no facts about any one system.
