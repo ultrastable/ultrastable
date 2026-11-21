@@ -331,6 +331,22 @@
    "root_cause": "a hotspot, neglected area, stopped loop or repeated failure stood in the series for several runs and nothing corrected it",
    "owner": "operations",
    "remedy": "Take the open Q-TEMPORAL items for the finding; python3 -m foundation pathfinder --regress lists the commits since a loop last worked."
+  },
+  {
+   "id": "dependency-watch",
+   "failure_mode": "fm-dependency-rot",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "deprot",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "a dependency manifest has no Dependabot entry",
+   "owner": "operations",
+   "remedy": "Add the ecosystem and directory to .github/dependabot.yml."
   }
  ]
 }

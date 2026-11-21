@@ -149,9 +149,24 @@ export async function run({ fetchFn = fetch, token, account, date, cwd = process
   return { record, queueItems: [...measurement.breaches.map((b) => ({ queue: 'cost', ...b })), ...discovery.items] };
 }
 
+// COST-ROUTE-1: with no usable Cloudflare token in GitHub, the read goes through the site Worker (GitHub OIDC, audience ultrastable-deploy), which holds the credential.
+export function routedFetch({ site, account, env = process.env, fetchFn = fetch }) {
+  const oidc = async () => (await (await fetchFn(env.ACTIONS_ID_TOKEN_REQUEST_URL + '&audience=ultrastable-deploy', { headers: { authorization: 'Bearer ' + env.ACTIONS_ID_TOKEN_REQUEST_TOKEN } })).json()).value;
+  return async (url, init = {}) => {
+    const u = new URL(String(url)), h = { authorization: 'Bearer ' + await oidc(), 'user-agent': 'ultrastable-cost-route/1' };
+    if (u.pathname.endsWith('/client/v4/graphql')) return fetchFn(site + '/__internal/cf-graphql', { method: 'POST', headers: { ...h, 'content-type': 'application/json' }, body: init.body });
+    const path = (u.pathname + u.search).replace(`/client/v4/accounts/${account}/`, '');
+    return fetchFn(site + '/__internal/cf', { method: 'POST', headers: { ...h, 'x-cf-method': init.method || 'GET', 'x-cf-path': path.replace(/^\//, '') }, body: '' });
+  };
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const date = process.argv[2] || new Date().toISOString().slice(0, 10);
-  const token = process.env.CLOUDFLARE_API_TOKEN;
+  let token = process.env.CLOUDFLARE_API_TOKEN, fetchFn = fetch;
+  if (process.env.ACTIONS_ID_TOKEN_REQUEST_URL && process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN) {  // COST-ROUTE-1: the Worker route is the credential-free path and the primary one
+    const acct = process.env.CLOUDFLARE_ACCOUNT_ID || JSON.parse(readFileSync(new URL('../doctrine/cost.json', import.meta.url), 'utf8')).account_id;
+    fetchFn = routedFetch({ site: process.env.TARGET_SITE || 'https://ultrastable-site.ultrastable.workers.dev', account: acct }); token = 'via-worker-route';
+  }
   // RUNWAY-1: the account id is data (doctrine/cost.json), not a secret; a runner without the variable still measures instead of recording unmeasured.
   const account = process.env.CLOUDFLARE_ACCOUNT_ID || JSON.parse(readFileSync(new URL('../doctrine/cost.json', import.meta.url), 'utf8')).account_id;
   if (!token || !account) {
@@ -162,6 +177,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log(JSON.stringify({ record, queueItems: [] }));
     process.exit(0);
   }
-  const result = await run({ token, account, date });
+  const result = await run({ fetchFn, token, account, date });
   console.log(JSON.stringify(result));
 }

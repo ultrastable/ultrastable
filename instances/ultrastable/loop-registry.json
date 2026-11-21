@@ -3916,6 +3916,42 @@
    ],
    "area": "managers",
    "server_owner": "github-actions"
+  },
+  {
+   "id": "yearfail",
+   "kind": "governance",
+   "summary": "YEARFAIL-1: twelve simulated months of zero input run against a scratch copy weekly; each injected failure must be detected by the system's own detectors and the fix verified; a failing month files Q-YEARFAIL-<area>.",
+   "trigger": "on demand (python3 -m foundation yearfail --apply) until the weekly workflow lands (Q-YEARFAIL-workflow)",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "30d",
+   "done": "python3 -m foundation yearfail --check reports ok and ops/yearfail.json is under 8 days old",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation yearfail --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation yearfail --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/yearfail.py::def run",
+   "writeback": [
+    "ops/yearfail.json",
+    "site/yearfail-data.js",
+    "docs/issues"
+   ],
+   "system_path": [
+    "doctrine/yearfail.json",
+    "foundation/yearfail.py",
+    "site/yearfail.js"
+   ],
+   "area": "governance",
+   "workflows": [],
+   "server_owner": "github-actions"
   }
  ],
  "launch_registry": "instances/ultrastable/loops.json"

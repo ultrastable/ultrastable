@@ -1,0 +1,12 @@
+{
+ "id": "Q-YEARFAIL-tenant-loops",
+ "title": "Q-YEARFAIL-tenant-loops: year simulation month 10 failed (the Practical Solutions loops (scan, pipeline, advocates, deploys) run a year; its scheduled workflows fire and honour the halt)",
+ "body": "**Owner:** staff\n**Trigger:** every yearfail run\n**Done check:** cmd:python3 -m foundation yearfail --probe tenant-loops\n**Status:** open\n\nYEARFAIL-1: 10 loop checks, unexpected failures ['C5'], cadence defects []; C9 (real model) expected to fail offline\n",
+ "labels": [
+  "role:staff",
+  "raises-self",
+  "runway"
+ ],
+ "milestone": "Now",
+ "workstream": "Reliability"
+}

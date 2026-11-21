@@ -87,6 +87,12 @@ from . import boundary, closedloop, standards, doctrine, directive, filing, glos
 def main(argv=None) -> int:
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
+    if _av[:1] == ["deprot"]:
+        from . import deprot
+        return deprot.main(_av[1:])
+    if _av[:1] == ["yearfail"]:
+        from . import yearfail
+        return yearfail.main(_av[1:])
     if _av[:1] == ["unattended"]:
         from . import unattended
         return unattended.main(_av[1:])

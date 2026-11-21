@@ -313,6 +313,18 @@
    "status": "controlled",
    "cadence_ticks": 144,
    "probe": "grep:foundation/temporal.py::def diagnose"
+  },
+  {
+   "id": "fm-dependency-rot",
+   "trigger": "a dependency manifest is added or kept with no update bot watching it",
+   "symptom": "unpatched or deprecated dependencies accumulate over a year",
+   "blast_radius": "security and build breakage across a year unattended",
+   "detection": "python3 -m foundation deprot --check",
+   "root_cause": "no Dependabot entry for the manifest",
+   "remediation": "add the entry to .github/dependabot.yml; Dependabot PRs merge through the lane",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:foundation/deprot.py::def check"
   }
  ],
  "controls": [
