@@ -4107,6 +4107,41 @@
    "body": "Explicit-state checker over governor, merge lane, second loop and halt; constants read from real source; spend.js level() property-swept; 9/9 invariants; seed carries scripts/verify.py and the spend governor.",
    "probe": "file:foundation/verify.py",
    "session": "session_0156nqDujMohxC6TJjB4QLtx"
+  },
+  {
+   "id": "lesson-2026-11-21-pins-1-name-collision-action-pin-ratchet-lives-in-foundation",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "PINS-1 name collision: action-pin ratchet lives in foundation/actionpins.py",
+   "body": "The action-pin ratchet (CONTROL-1, EVAL-1, PINS-1 session) overwrote main's roadmap-pins module foundation/pins.py. Moved to actionpins.py; read origin/main for the module name before adding one.",
+   "probe": "file:foundation/actionpins.py",
+   "session": "session_0156nqDszfkEMcZXbKcMTEsM"
+  },
+  {
+   "id": "lesson-2026-11-21-pr-1459-carried-onto-main-checks-fixed-in-place",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "PR 1459 carried onto main: checks fixed in place",
+   "body": "Carried PR 1459 onto current main; fixes applied in place instead of reopening the work.",
+   "probe": "file:foundation/writeback.py",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "lesson-2026-11-21-pr-1760-carried-onto-main-checks-fixed-in-place",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "PR 1760 carried onto main: checks fixed in place",
+   "body": "Carried PR 1760 onto current main; fixes applied in place instead of reopening the work.",
+   "probe": "file:foundation/writeback.py",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "lesson-2026-11-21-provider-connect-pages-are-gated-in-the-tick-by-the-site-wor",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Provider connect pages are gated in the tick by the site Worker's internal key",
+   "body": "OWNER-LINKS-4: site/worker.js is over the model-edit limit (worker-gate), so the gate lives in site/connections.js gatedForward and seed/worker/src/auth/routes.js; session session_0156nqDu7Qq4YrmkKMFxfB9D",
+   "probe": "grep:seed/worker/src/auth/routes.js::OWNER-LINKS-4"
   }
  ]
 }
