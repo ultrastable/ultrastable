@@ -286,6 +286,7 @@ test('APP-REUSE-1: a connect link never registers a second GitHub app', async ()
     const done = await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text();
     assert.match(done, /Already connected/); assert.ok(!/settings\/apps\/new/.test(done), 'connected: no manifest form');
     await store.put(db, e, 't', provider, { status: 'failed', error: 'mint HTTP 404' });
-    assert.match(await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text(), /settings\/apps\/new/, 'a stored app that can no longer mint is replaced');
+    const failed = await (await handleAuth(new Request('https://x.test' + path), e, { tenant: 't', name: 'org' })).text();  // NO-NEW-APP-1: an installed app that fails is repaired, never replaced
+    assert.ok(!/settings\/apps\/new/.test(failed), 'a stored, installed app that fails to mint is never replaced by a new registration');
   }
 });
