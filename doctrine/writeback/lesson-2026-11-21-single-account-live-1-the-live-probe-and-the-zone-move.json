@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-single-account-live-1-the-live-probe-and-the-zone-move",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "SINGLE-ACCOUNT-LIVE-1: the live probe and the zone move",
+  "body": "A moved Cloudflare zone shell cannot be deleted right after the move; the live probe reports it until Cloudflare purges it.",
+  "probe": "file:foundation/singleaccount.py",
+  "session": "session_0156nqDrESfT9FFUm4Gdu4bx"
+ },
+ "kind": "lesson",
+ "title": "SINGLE-ACCOUNT-LIVE-1: the live probe and the zone move",
+ "session": "session_0156nqDrESfT9FFUm4Gdu4bx"
+}
