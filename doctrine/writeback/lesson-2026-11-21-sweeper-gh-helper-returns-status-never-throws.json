@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-sweeper-gh-helper-returns-status-never-throws",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Sweeper gh helper returns status, never throws",
+  "body": "Executor PR 1851 made the sweeper gh helper throw on any non-2xx answer. Every caller reads ok and status and records failures in out.errors, so the throw only aborted the sweep on expected answers (410 when issues are off, 405 on a merge GitHub declines) and broke seed/worker sweeper.test.js on main. The status return is restored; tests/test_sweeper.js is now a node test run in checks.",
+  "probe": "file:tests/test_sweeper.js"
+ },
+ "kind": "lesson",
+ "title": "Sweeper gh helper returns status, never throws",
+ "session": ""
+}
