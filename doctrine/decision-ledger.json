@@ -4356,6 +4356,14 @@
    "body": "scripts/check_readmes.py with doctrine/readmes.json runs in checks and in the seed. It fails on a missing required README section, a broken relative link, an ultrastable.io link the site code does not route, a site href to an unrouted path, an unregistered claim block, outdated wording, and (with --archived) a retired repository whose README does not point straight at ultrastable/ultrastable. The check found the dead /year link; it now redirects to /year/failures. Verified: check_readmes passes with 0 findings, claims and claimcode checks pass.",
    "probe": "grep:.github/workflows/checks.yml::check_readmes",
    "session": "session_0156nqDuTKewT2SaKm63XEuw"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-recur-0f61587b9e-modify-resolve-generated-",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-RECUR-0f61587b9e: Modify resolve_generated.py to handle concurrent writes to generated files by using a locking mechanism.",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: scripts/resolve_generated.py.",
+   "probe": "file:scripts/resolve_generated.py"
   }
  ]
 }
