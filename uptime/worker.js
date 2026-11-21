@@ -9,12 +9,12 @@ export async function run(env, fetchImpl = fetch, now = Date.now) {
   const results = await checkAll(SITES, { fetchImpl, expectNs: EXPECT_NS });
   const dead = results.filter(r => r.verdict !== 'ok');
   let repair = null;
-  if (dead.length && env.GITHUB_TOKEN) {  // repair: redeploy the site, which re-attaches every custom domain and its proxied DNS record (deploy/deploy-site.mjs)
+  if (dead.length && env.TICK) {  // repair: the tick Worker holds the org GitHub App; it redeploys the site, which re-attaches custom domains and DNS records
     try {
-      const r = await fetchImpl('https://api.github.com/repos/ultrastable/ultrastable/actions/workflows/deploy-site.yml/dispatches', { method: 'POST', headers: { authorization: 'Bearer ' + env.GITHUB_TOKEN, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-uptime', 'content-type': 'application/json' }, body: JSON.stringify({ ref: 'main' }) });
-      repair = { dispatched: r.status === 204, http: r.status };
+      const r = await env.TICK.fetch('https://tick/api/uptime/repair', { method: 'POST' });
+      repair = { http: r.status, body: (await r.text()).slice(0, 120) };
     } catch (e) { repair = { err: String(e && e.message || e).slice(0, 80) }; }
-  } else if (dead.length) repair = { dispatched: false, why: 'no GITHUB_TOKEN bound' };
+  } else if (dead.length) repair = { dispatched: false, why: 'no TICK binding' };
   const rec = { at: new Date(now()).toISOString(), ok: dead.length === 0, dead: dead.map(d => d.host), repair, results };
   if (env.STATE) { await env.STATE.put('last', JSON.stringify(rec)); await env.STATE.put('at:' + rec.at, JSON.stringify({ ok: rec.ok, dead: rec.dead, repair }), { expirationTtl: 7 * 86400 }); }
   return rec;
