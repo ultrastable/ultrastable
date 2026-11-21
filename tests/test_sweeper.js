@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+// Copyright (c) Ultrastable
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { gh } from '../seed/worker/src/sweeper.js';
 
