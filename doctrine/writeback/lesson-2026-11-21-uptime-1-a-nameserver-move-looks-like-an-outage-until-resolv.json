@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-uptime-1-a-nameserver-move-looks-like-an-outage-until-resolv",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "UPTIME-1: a nameserver move looks like an outage until resolver caches expire; probe every hostname",
+  "body": "2026-11-21: ultrastable.org gave DNS errors after the four zones moved to the ultrastable account (old zones in the quniverse account are moved; resolvers kept the old nameservers). Zones, records and custom domains were already correct. One real defect: www.ultrastable.app returned 404 because the wildcard route of ultrastable-spinoffs won; site/wrangler.toml now declares the specific route. Worker ultrastable-uptime probes 9 hostnames every 5 minutes over two DoH resolvers plus HTTPS, retries once, and repairs through the tick Worker /api/uptime/repair (org GitHub App dispatches deploy-site.yml).",
+  "probe": "file:uptime/probe.js",
+  "session": "session_0156nqDtUruC6pAn6o7mpii6"
+ },
+ "kind": "lesson",
+ "title": "UPTIME-1: a nameserver move looks like an outage until resolver caches expire; probe every hostname",
+ "session": "session_0156nqDtUruC6pAn6o7mpii6"
+}
