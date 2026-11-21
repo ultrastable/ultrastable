@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-triage-counted-an-optional-copilot-assign-as-a-failed-run",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Triage counted an optional Copilot assign as a failed run",
+  "body": "With Issues on, scripts/triage.sh failed every run because the best-effort copilot-swe-agent assign went through the counting gh wrapper; safe_exit turned it red and skipped SLA, Scoreboard and orphan sync. Optional calls bypass the counter and log a note.",
+  "probe": "grep:scripts/triage.sh::copilot agent not assignable here"
+ },
+ "kind": "lesson",
+ "title": "Triage counted an optional Copilot assign as a failed run",
+ "session": ""
+}
