@@ -1,0 +1,25 @@
+{"class": "regression-on-main", "key": "foundation-tests", "source": "failure-audit", "date": "2026-11-21", "text": "foundation-tests a foundation check regressed or a test depends on the host"}
+{"class": "edit-hotspot", "key": "temporal-drift", "source": "failure-audit", "date": "2026-11-21", "text": "temporal-drift a hotspot, neglected area, stopped loop or repeated failure stood in the series for several runs and nothing corrected it"}
+{"class": "area-decay", "key": "94167fdea6", "source": "temporal", "date": "2026-11-21", "text": "area:business decay: 2 commits in 3 days after 37 in the 8 days before (4.6 a day)"}
+{"class": "area-decay", "key": "69713c50e8", "source": "temporal", "date": "2026-11-21", "text": "area:docs decay: 5 commits in 3 days after 98 in the 8 days before (12.2 a day)"}
+{"class": "repeated-failure", "key": "e5ddf8e610", "source": "temporal", "date": "2026-11-21", "text": "ledger:executor:pr-outcome pr-outcome: 1 failures in a row, 5 in the last 3 days against 0 in the 8 before"}
+{"class": "edit-hotspot", "key": "e0c6ffc24a", "source": "temporal", "date": "2026-11-21", "text": "area:root 154 commits in 3 days against a baseline of 11.4 a day (4.5x)"}
+{"class": "edit-hotspot", "key": "c200e5281e", "source": "temporal", "date": "2026-11-21", "text": "file:README.md README.md edited 147 times in 3 days (outside generated and ledger paths)"}
+{"class": "edit-hotspot", "key": "1b91492bbf", "source": "temporal", "date": "2026-11-21", "text": "file:doctrine/decision-ledger.json doctrine/decision-ledger.json edited 81 times in 3 days (outside generated and ledger paths)"}
+{"class": "edit-hotspot", "key": "67dd9b9dee", "source": "temporal", "date": "2026-11-21", "text": "file:platform/adapters/README.md platform/adapters/README.md edited 37 times in 3 days (outside generated and ledger paths)"}
+{"class": "edit-hotspot", "key": "593c3b95f2", "source": "temporal", "date": "2026-11-21", "text": "file:seed/worker/src/index.js seed/worker/src/index.js edited 21 times in 3 days (outside generated and ledger paths)"}
+{"class": "edit-hotspot", "key": "6420af06fe", "source": "temporal", "date": "2026-11-21", "text": "file:site/decisions-data.js site/decisions-data.js edited 57 times in 3 days (outside generated and ledger paths)"}
+{"class": "edit-hotspot", "key": "54854bf10b", "source": "temporal", "date": "2026-11-21", "text": "file:site/worker.js site/worker.js edited 28 times in 3 days (outside generated and ledger paths)"}
+{"class": "runway-shortfall", "key": "10-tenant-loops", "source": "yearfail", "date": "2026-11-21", "text": "tenant-loops the Practical Solutions loops (scan, pipeline, advocates, deploys) run a year; its scheduled workflows fire and honour the halt 10 loop checks, unexpected failures ['C5'], cadence defects"}
+{"class": "runway-shortfall", "key": "11-github-apps", "source": "yearfail", "date": "2026-11-21", "text": "github-apps None"}
+{"class": "runway-shortfall", "key": "13-final-runway", "source": "yearfail", "date": "2026-11-21", "text": "final-runway after twelve months the runway still meets the target simulated runway None days (target 365, below []); live cost ledger last reading 2026-11-20: UNMEASURED ([{\"kind\": \"ai-neurons\", \"err"}
+{"class": "unverified-claim", "key": "a-social-post-was-reported-posted-withou", "source": "inbox", "date": "2026-11-21", "text": "A social post was reported posted without a live read-back"}
+{"class": "dns-after-move", "key": "dns-outage-after-the-domain-move-names-s", "source": "inbox", "date": "2026-11-21", "text": "DNS outage after the domain move: names stopped resolving"}
+{"class": "pr-left-open", "key": "prs-left-open-after-their-sessions-ended", "source": "inbox", "date": "2026-11-21", "text": "PRs left open after their sessions ended"}
+{"class": "waiting-on-person", "key": "threads-idle-or-waiting-on-rowan", "source": "inbox", "date": "2026-11-21", "text": "Threads idle or waiting on Rowan"}
+{"class": "signin-bypass", "key": "connect-links-bypassed-sign-in", "source": "inbox", "date": "2026-11-21", "text": "/connect links bypassed sign-in"}
+{"class": "unregistered-code-root", "key": "main-went-red-from-an-unregistered-code", "source": "inbox", "date": "2026-11-21", "text": "main went red from an unregistered code root"}
+{"class": "edit-hotspot", "key": "readme-rewritten-147-times-in-3-days-dec", "source": "inbox", "date": "2026-11-21", "text": "README rewritten 147 times in 3 days; decision-ledger churn"}
+{"class": "area-decay", "key": "business-and-docs-areas-decayed-after-th", "source": "inbox", "date": "2026-11-21", "text": "business and docs areas decayed after their first burst"}
+{"class": "estimate-miscalibrated", "key": "yearfail-brier-score-worse-than-a-coin-p", "source": "inbox", "date": "2026-11-21", "text": "Yearfail Brier score worse than a coin (practical-solutions#192)"}
+{"class": "test-module-collision", "key": "foundation-tests-importerror-test_outrea", "source": "inbox", "date": "2026-11-21", "text": "foundation-tests ImportError: test_outreach incorrectly imported from scripts"}
