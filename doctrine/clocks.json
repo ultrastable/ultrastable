@@ -116,7 +116,7 @@
     "max_runs_per_day": 5,
     "backoff_after_failures": 3,
     "max_runs_per_day_public": 48,
-    "max_wakes_per_hour": 6
+    "max_wakes_per_hour": 8
   },
   "stages": [
     {

@@ -216,8 +216,12 @@ def adopt(prs: list[dict], root=REPO, apply=False, d: dict | None = None, gh=_gh
 
 
 def closed(n: int, root=REPO, gh=_gh) -> tuple[bool, str]:
-    # REST, not GraphQL: `gh pr view` is GraphQL, which agent sessions are refused (HTTP 403), so the probe could never pass there (SESSION-REST-1).
-    rc, out = gh(root, "api", "repos/ultrastable/ultrastable/pulls/" + str(n), "--jq", 'if .merged_at then "MERGED" else (.state|ascii_upcase) end')
+    # PR-PROBE-REST-1 (2026-11-21): `gh pr view` needs GraphQL, which cloud agent sessions refuse (HTTP 403), so 108 OL-PR items whose pull
+    # request had long merged or closed stayed open. The REST route works on every host; GraphQL stays as the second route.
+    repo = os.environ.get("GITHUB_REPOSITORY", "ultrastable/ultrastable")
+    rc, out = gh(root, "api", f"repos/{repo}/pulls/{n}", "--jq", 'if .merged then "MERGED" else (.state | ascii_upcase) end')
+    if rc:
+        rc, out = gh(root, "pr", "view", str(n), "--json", "state", "--jq", ".state")
     st = out.strip()
     return (rc == 0 and st in ("MERGED", "CLOSED")), (st or "unknown")[:120]
 

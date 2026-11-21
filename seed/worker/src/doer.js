@@ -18,7 +18,9 @@ const all = async (db, sql, ...a) => (await db.prepare(sql).bind(...a).all()).re
 export const DOER = 'doer-v1';
 // MODEL-TRUTH-1: what a dispatch row says ran when a rule settled the item with no model call.
 export const RULES_MODEL = 'rules (no model)';
-export const MAX_ITEMS = 8, MAX_AI = 3;
+// THROUGHPUT-1 (2026-11-21): 16 items and 5 model calls per 10-minute tick fit Workers Paid (CPU and subrequest limits per invocation);
+// the neuron allowance in budget.js still freezes or leans the AI calls, and HALT still stops the tick.
+export const MAX_ITEMS = 16, MAX_AI = 5;
 
 // Identity-bound work (IC-GATE-001): filing, signing, applying, entity and IP decisions, anything only the owner can review or submit.
 export const OWNER_ONLY = /\bowner card\b|\bOC-\d|submission confirmation|confirmation emails?|submit(ted)? applications?|\bapplication\b.*\b(program|startups?)\b|form (an )?entity|\bassign ip\b|choose owning entity|attorney|filing receipt|\bfiling\b|reviewed by rowan|deck reviewed|approve operator outreach|first conversations logged|jurisdiction|install claude app|trademark registration/i;

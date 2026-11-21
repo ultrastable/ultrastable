@@ -16,12 +16,9 @@
   },
   "failures": {
    "days": null,
-   "why": "2 open, oldest 0 days",
-   "open": 2
+   "why": "no open failure item",
+   "open": 0
   }
  },
- "failure_first_seen": {
-  "Q-CIFAIL-mergeaudit-1763": "2026-11-21",
-  "Q-CIFAIL-ultrastable-deploy-workers": "2026-11-21"
- }
+ "failure_first_seen": {}
 }
