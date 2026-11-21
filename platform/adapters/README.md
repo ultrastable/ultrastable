@@ -4,11 +4,7 @@ The portable core is `seed/worker/src/tick.js`. Adapters supply a scheduler and 
 
 | Adapter | Where | Status |
 |---|---|---|
-<<<<<<< HEAD
-| Cloudflare (Worker, Cron, D1) | `seed/worker/` | running for QNFO; seed template tested by <!-- claim:seed-worker-tests -->401 Worker tests<!-- /claim -->; no `--apply` on a fresh account yet |
-=======
-| Cloudflare (Worker, Cron, D1) | `seed/worker/` | running for QNFO; seed template tested by <!-- claim:seed-worker-tests -->401 Worker tests<!-- /claim -->; no `--apply` on a fresh account yet |
->>>>>>> origin/main
+| Cloudflare (Worker, Cron, D1) | `seed/worker/` | running for QNFO; seed template tested by <!-- claim:seed-worker-tests -->414 Worker tests<!-- /claim -->; no `--apply` on a fresh account yet |
 | Google Cloud (Cloud Run, Cloud Scheduler, volume) | `gcp/` | skeleton with <!-- claim:gcp-tests-adapters -->2 tests<!-- /claim --> in CI; deploy script unrun |
 | SQLite handle (shared by GCP and the selfhost path) | `sqlite/` | tested via GCP tests |
 

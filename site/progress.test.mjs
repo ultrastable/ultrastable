@@ -69,3 +69,14 @@ test("ATTENTION-1: /left-alone reads its ledger from the progress record and sta
   assert.ok(j.shipped_7d >= 1);
   assert.equal((await get("/left-alone", { TICK: { fetch: async () => new Response("x", { status: 500 }) } })).status, 503);
 });
+
+// SUBSTANCE-1: the pulse card says plainly whether the system itself ships real code, and /pulse.json alarms with 503 when stalled.
+import { pulseCard } from "./progress.js";
+test("pulse card states trivial-only work and the stall rule", () => {
+  const h = pulseCard({ state: "trivial-only", max_hours: 48, window_days: 7, last_substantive: null, last_substantive_by_system: null, last_merge: { at: "2026-11-21T08:00:00Z" },
+    week: { merged: 9, substantive: 0, substantive_by_system: 0, trivial: 4, record: 5, unclassified: 0 } }, Date.parse("2026-11-21T10:00:00Z"));
+  assert.match(h, /Only trivial or record-keeping changes/);
+  assert.match(h, /4 trivial/);
+  assert.match(h, /none in the window/);
+  assert.match(pulseCard(null), /could not be read/);
+});

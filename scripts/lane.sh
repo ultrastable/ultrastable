@@ -80,6 +80,10 @@ for n in $(gh pr list -R "$repo" --state open --base main --json number --jq '.[
   esac
   merge_token="${GH_TOKEN:-}"
   if [ "$wf" = true ]; then
+    if [ "$wf_source" = none ] && [ "${GITHUB_EVENT_NAME:-}" != pull_request ] && python3 "$here/../tools/lane_worker_merge.py" "$n" "$sha"; then
+      # LANE-WORKER-MERGE-1: only from the lane workflow (its OIDC token names refs/heads/main; a pull_request run's token does not). No stored credential, but the tick Worker holds the org GitHub App (workflows: write) and merged it on the exact head.
+      wf_merged=$((wf_merged+1)); echo "#$n merged (needs-pat, by the tick Worker app, head ${sha:0:7})"; continue
+    fi
     if [ "$wf_source" = none ]; then
       case "$labels" in *,needs-pat,*) ;; *) gh pr edit "$n" -R "$repo" --add-label needs-pat >/dev/null 2>&1;; esac
       wf_waiting=$((wf_waiting+1))

@@ -384,12 +384,21 @@ class PrRepair(unittest.TestCase):
         self.assertEqual(executor.pr_repair_failures("OL-PR-9", d), 2)
         prompts = []
         def model(prompt):
-            prompts.append(prompt); return {"summary": "redo", "files": [{"path": "b.txt", "content": "redone\n"}]}
+            prompts.append(prompt); return {"summary": "redo", "files": [{"path": "b.py", "content": "def b():\n    return 2\n"}]}  # SUBSTANCE-1: a code change, not a record
         row, gh = self._run(d, model)
         self.assertEqual((row["result"], row.get("superseded_pr")), ("pr-opened", 9), row)
         self.assertNotIn("REPAIRING PULL REQUEST", prompts[0])
         self.assertEqual(git(origin, "show", "agent/feature:b.txt"), "broken\n", "the old branch is left as it was")
         self.assertIn(["pr", "close", "9"], gh, "the old pull request is closed as superseded, naming its replacement")
+
+    def test_a_change_with_no_executable_effect_opens_no_pull_request(self):  # SUBSTANCE-1
+        origin, d = self._world()
+        for _ in range(2):
+            executor.log(d, {"issue": "OL-PR-9", "result": "failed", "mode": "pr-repair"})
+        row, gh = self._run(d, lambda prompt: {"summary": "touch", "files": [{"path": "notes.txt", "content": "x\n"}]})
+        self.assertEqual(row["result"], "failed", row)
+        self.assertIn("rejected-trivial", row["detail"])
+        self.assertNotIn(["pr", "create", "-R"], gh)
 
     def test_a_closed_or_forked_pull_request_is_not_repaired(self):
         from unittest import mock

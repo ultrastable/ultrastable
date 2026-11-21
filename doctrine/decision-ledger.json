@@ -3720,6 +3720,41 @@
    "body": "lanewatch default threshold 30 to 3 minutes and --remediate merges a green stuck PR on its exact head; checks tests split in two halves; session reaper idle TTL 0.17 hours.",
    "probe": "file:foundation/lanewatch.py",
    "session": "session_0156nqDbJMBWbgRLkSeaAxF"
+  },
+  {
+   "id": "decision-2026-11-21-lane-worker-merge-1-workflow-changing-prs-merge-through-the-",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "LANE-WORKER-MERGE-1: workflow-changing PRs merge through the tick Worker's GitHub App",
+   "body": "No LANE_PAT or app secret is bound, so PRs changing .github/workflows waited for a hand merge. The lane now asks the tick Worker (/api/lane/merge, OIDC proof, exact head, green guard) to merge with the org app, which holds workflows: write.",
+   "probe": "file:seed/worker/src/lanemerge.js",
+   "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
+  },
+  {
+   "id": "lesson-2026-11-21-lane-worker-merge-1-probe-pr-workflow-file-comment-to-prove-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "LANE-WORKER-MERGE-1 probe PR: workflow-file comment to prove the Worker-app merge route",
+   "body": "Trivial comment in lane.yml. If this PR merges with no hand merge, the route works end to end.",
+   "probe": "file:scripts/lane.sh",
+   "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
+  },
+  {
+   "id": "lesson-2026-11-21-lane-worker-merge-1-proven-workflow-pr-merged-by-the-app-in-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "LANE-WORKER-MERGE-1 proven: workflow PR merged by the app in 2.9 min",
+   "body": "PR 1090, a workflow comment, was merged by the org app bot from the lane workflow_run in 2.9 minutes. The Worker route accepts an OIDC token for refs/heads/main, so the lane workflow calls it and the in-run pull_request job skips it.",
+   "probe": "file:tools/lane_worker_merge.py",
+   "session": "session_0156nqDsFRz5bTkgg5zkrs7g"
+  },
+  {
+   "id": "decision-2026-11-21-merge-now-1-prs-merge-on-the-webhook-not-on-a-clock",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "MERGE-NOW-1: PRs merge on the webhook, not on a clock",
+   "body": "Rowan 2026-11-21: no PR sits in GitHub. Root causes: the Actions lane wakes only when checks finish, so a conflicting PR waited for the 10-minute tick or the daily sweep; the tick sweeper refreshed only 'behind' PRs and left 'dirty' ones; workflow-touching conflicting PRs had no owner that could merge them; site/dashboard-data.js carried HEAD's sha so every merge changed it; README claim counts churned on every deploy; merges left conflict markers in README.md and platform/adapters/README.md. Change: seed/worker/src/mergenow.js runs inside the /hook/github request on pull_request, check_suite (now subscribed) and push to main with the org App token: ready, approve waiting runs, update-branch, reconcile conflicts on generated files (seed/worker/src/generated.js equals regen_generated OUTPUTS, tested) and claim values through the git data API then POST /merges, squash-merge on green at the exact head. The sweeper reconciles one dirty PR per tick and records merge_p50/p95, oldest open PR and stalled PRs (migration 0029, self-applied DDL); a PR open over 15 minutes files Q-PR-STALL-*. build_dashboard asof is the last commit of its sources; resolve_generated takes identical and claim-only hunks in any file. 410 Worker tests pass.",
+   "probe": "grep:seed/worker/src/mergenow.js::MERGE-NOW-1"
   }
  ]
 }
