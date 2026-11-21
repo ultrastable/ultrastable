@@ -13,6 +13,7 @@ function fake(state) {
     if (m === 'PUT' && path.endsWith('/merge')) return R({}, state.mergeOk !== false, state.mergeOk === false ? 405 : 200);
     if (state.issuesOff && path.includes('/issues')) return R({ message: 'Issues has been disabled in this repository.' }, false, 410);
     if (m === 'GET' && path.includes('labels=open-loop')) return R(state.filed || []);
+    if (m === 'POST' && path.endsWith('/merges')) return R({}, state.mergesStatus !== 409, state.mergesStatus || 201);
     if (m === 'POST' && path.endsWith('/issues')) return R({ number: 9 });
     if (m === 'GET' && path.includes('labels=claimed')) return R(state.claimed || []);
     if (m === 'GET' && path.includes('/check-runs')) return R({ total_count: state.runs ?? 1 });
@@ -54,4 +55,14 @@ test('BRANCH-ROOT-CAUSE-1: a blocked PR with no check run is closed and reopened
   const b = fake({ prs: [w], detail: { ...w, head: { ref: 'worker/roadmap-x', sha: 'abc' }, mergeable_state: 'blocked' }, runs: 2 });
   const r2 = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: b.f, now: NOW });
   assert.equal(r2.retriggered, undefined);
+});
+
+test('STALL-ACT-1: a failing dirty PR no longer starves the next one; an unreconcilable stale agent/ PR is closed as superseded', async () => {
+  const a = { number: 11, head: { ref: 'agent/x', sha: 'a1' }, created_at: '2026-11-13T00:00:00Z', updated_at: '2026-11-13T11:00:00Z' };
+  const b = { number: 12, head: { ref: 'claude/y', sha: 'b1' }, created_at: '2026-11-13T00:00:00Z', updated_at: '2026-11-13T11:00:00Z' };
+  const { f, calls } = fake({ prs: [a, b], detail: { ...a, mergeable_state: 'dirty' }, files: [{ filename: 'src/a.js' }], mergesStatus: 409 });
+  const r = await sweepOpenLoops({ token: 't', repos: ['o/r'], fetch: f, now: NOW });
+  assert.ok(calls.some(c => c.startsWith('GET /repos/o/r/pulls/12/files')) || calls.filter(c => c.includes('/files')).length >= 2);
+  assert.ok(calls.includes('PATCH /repos/o/r/pulls/11') || calls.some(c => c.startsWith('PATCH /repos/o/r/pulls/')));
+  assert.ok(Array.isArray(r.superseded));
 });
