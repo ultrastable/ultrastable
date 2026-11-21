@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """MARKER-ROOT-1 (Rowan, 2026-11-21: "This is an open loop ... find its root causes and remediate it system-wide").
 Root cause of PRs that sat in conflict until a person or session stepped in: main carried committed merge-conflict markers (README.md,
 platform/adapters/README.md), so every PR conflicted there on every merge and the server-side resolver could not match the nested hunks.
