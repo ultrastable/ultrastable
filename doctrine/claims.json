@@ -1984,8 +1984,7 @@
    "text": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
    "probe": [
     "file:doctrine/template-boundary.json",
-    "file:foundation/template.py",
-    "grep:foundation/template.py::def check"
+    "file:foundation/template.py"
    ],
    "bound_by": "cited"
   },
@@ -2313,6 +2312,20 @@
    "bound_by": "cited"
   },
   {
+   "id": "cited-158bd3c207",
+   "surface": "agents/AGENTS.md",
+   "text": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "probe": [
+    "file:doctrine/yearsim.json",
+    "file:foundation/yearsim.py",
+    "file:doctrine/ultrastability.json",
+    "file:foundation/saydo.py",
+    "file:doctrine/detectors.json",
+    "file:seed/scripts/yearsim.py"
+   ],
+   "bound_by": "cited"
+  },
+  {
    "id": "cited-95432168bf",
    "surface": "agents/AGENTS.md",
    "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -2515,6 +2528,15 @@
    "probe": [
     "file:demos/public/engine.js",
     "file:demos/publish.json"
+   ],
+   "bound_by": "cited"
+  },
+  {
+   "id": "cited-210d0b9de4",
+   "surface": "instances/unlearn/README.md",
+   "text": "The research behind this ([Homo Ludens, self-directed learning, and AI-facilitated",
+   "probe": [
+    "file:tests/foundation/test_unlearn.py"
    ],
    "bound_by": "cited"
   },
@@ -3089,6 +3111,21 @@
    "of": "cited-282274856e"
   },
   {
+   "id": "mirror-c8f6471ad1",
+   "surface": "seed/agents/AGENTS.md",
+   "text": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
+   "probe": [
+    "file:doctrine/yearsim.json",
+    "file:foundation/yearsim.py",
+    "file:doctrine/ultrastability.json",
+    "file:foundation/saydo.py",
+    "file:doctrine/detectors.json",
+    "file:seed/scripts/yearsim.py"
+   ],
+   "bound_by": "mirror",
+   "of": "cited-158bd3c207"
+  },
+  {
    "id": "mirror-be5af6748b",
    "surface": "seed/agents/AGENTS.md",
    "text": "- **Memory lives in the repo.** `docs/PROJECT-MEMORY.md` is the canonical project memory. Chat, tool and platform memory stores are",
@@ -3284,8 +3321,7 @@
    "text": "- **The template is code only (TEMPLATE-CODE-ONLY-1, Rowan 2026-11-21).** \"I thought the UltraStable template repo should be just code that",
    "probe": [
     "file:doctrine/template-boundary.json",
-    "file:foundation/template.py",
-    "grep:foundation/template.py::def check"
+    "file:foundation/template.py"
    ],
    "bound_by": "mirror",
    "of": "cited-bbe53ab169"
@@ -3919,35 +3955,6 @@
    ],
    "bound_by": "mirror",
    "of": "cited-5d0567ad32"
-  },
-  {
-   "id": "cited-158bd3c207",
-   "surface": "agents/AGENTS.md",
-   "text": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
-   "probe": [
-    "file:doctrine/yearsim.json",
-    "file:foundation/yearsim.py",
-    "file:doctrine/ultrastability.json",
-    "file:foundation/saydo.py",
-    "file:doctrine/detectors.json",
-    "file:seed/scripts/yearsim.py"
-   ],
-   "bound_by": "cited"
-  },
-  {
-   "id": "mirror-c8f6471ad1",
-   "surface": "seed/agents/AGENTS.md",
-   "text": "- **A year unattended is simulated, not asserted; the system does what it says (YEAR-SIM-1, SAY-DO-1, Rowan 2026-11-21).** \"Have you really",
-   "probe": [
-    "file:doctrine/yearsim.json",
-    "file:foundation/yearsim.py",
-    "file:doctrine/ultrastability.json",
-    "file:foundation/saydo.py",
-    "file:doctrine/detectors.json",
-    "file:seed/scripts/yearsim.py"
-   ],
-   "bound_by": "mirror",
-   "of": "cited-158bd3c207"
   }
  ],
  "generated": [
