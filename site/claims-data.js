@@ -3091,7 +3091,7 @@ export default {
    "surface": "seed/agents/roles/uiux-manager.md"
   },
   {
-   "claim": "seed-tests: 45 Python and 403 Worker tests",
+   "claim": "seed-tests: 45 Python and 413 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}, \"py\": {\"py_tests\": [\"seed/tests\"]}}",
    "id": "seed-tests",
@@ -3100,7 +3100,7 @@ export default {
    "surface": "README.md"
   },
   {
-   "claim": "seed-worker-tests: 403 Worker tests",
+   "claim": "seed-worker-tests: 413 Worker tests",
    "detail": "",
    "how": "generated from code: {\"js\": {\"js_tests\": [\"seed/worker/test\"]}}",
    "id": "seed-worker-tests",
