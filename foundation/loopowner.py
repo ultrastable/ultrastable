@@ -216,7 +216,8 @@ def adopt(prs: list[dict], root=REPO, apply=False, d: dict | None = None, gh=_gh
 
 
 def closed(n: int, root=REPO, gh=_gh) -> tuple[bool, str]:
-    rc, out = gh(root, "pr", "view", str(n), "--json", "state", "--jq", ".state")
+    # REST, not GraphQL: `gh pr view` is GraphQL, which agent sessions are refused (HTTP 403), so the probe could never pass there (SESSION-REST-1).
+    rc, out = gh(root, "api", "repos/ultrastable/ultrastable/pulls/" + str(n), "--jq", 'if .merged_at then "MERGED" else (.state|ascii_upcase) end')
     st = out.strip()
     return (rc == 0 and st in ("MERGED", "CLOSED")), (st or "unknown")[:120]
 
