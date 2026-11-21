@@ -97,7 +97,7 @@ class ServerSideOnly(unittest.TestCase):
 
     def test_skipped_directories_are_not_read(self):
         r = copy_repo()
-        (r / "ip").mkdir(exist_ok=True); (r / "ip/old-draft.md").write_text("install with " + CRON + "\n")
+        (r / "repo-backups").mkdir(exist_ok=True); (r / "repo-backups/old-draft.md").write_text("install with " + CRON + "\n")
         self.assertEqual(serverside.scan(r), [])
 
 
