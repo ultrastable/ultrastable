@@ -61,7 +61,7 @@ class Clock(unittest.TestCase):
         now = datetime(2026, 11, 20, 13, 0, tzinfo=timezone.utc).timestamp()
         rows = [{"createdAt": f"2026-11-20T12:{m:02d}:00Z", "status": "completed"} for m in range(10, 30)] + [{"createdAt": "2026-11-20T09:00:00Z"}]
         self.assertEqual(C.wakes_last_hour(rows, now), 20)   # SPARK-IDLE-1: gated wake-ups make no attempt, so they are bounded here
-        self.assertEqual(C.load()["chain"]["max_wakes_per_hour"], 6)
+        self.assertEqual(C.load()["chain"]["max_wakes_per_hour"], 8)
 
     def test_d1_window_covers_a_full_day_of_beats(self):
         import unittest.mock as m
