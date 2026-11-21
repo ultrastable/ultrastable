@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-plan-1-the-ultrastable-account-is-on-workers-paid-governors-",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "PLAN-1: the ultrastable account is on Workers Paid; governors read paid allowances",
+  "body": "Rowan bought Workers Paid on 2026-11-21 (5 USD a month base). instances/ultrastable/instance.json budget.plan is paid and budget.usd_per_month is 30 (AI beyond the free 10,000 neurons a day gets about 0.8 USD a day; the soft 5 USD a day target still throttles everything). budget.js planOf reads CF_PLAN, else the manifest. freetier.js limitsFor('paid') uses daily slices of the monthly inclusions, so the measured day that shed on the free plan now runs at full speed. subreq.js capsFor('paid') plans 1,000 subrequests per invocation and lifts the four-phase loop rotation. The plan is declared in the manifest. Surfaces tested for a live plan reading: accounts subscriptions API (HTTP 403, needs Billing Read), workers account-settings and account details (no plan field).",
+  "probe": "grep:seed/worker/src/subreq.js::PLAN-1",
+  "session": "session_0156nqDu9w9828E3wYy42EBd"
+ },
+ "kind": "decision",
+ "title": "PLAN-1: the ultrastable account is on Workers Paid; governors read paid allowances",
+ "session": "session_0156nqDu9w9828E3wYy42EBd"
+}
