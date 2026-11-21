@@ -177,3 +177,13 @@ test('SOCIAL-TENANTS-1: meta-story first, tenant changes, tenant backlog, then p
   const o = [{ arm: 'shipped', kind: 'event' }, { arm: 'ps-solution', kind: 'backlog' }, { arm: 'ps-problem', kind: 'event' }, { arm: 'meta-story' }, { arm: 'proof' }].sort((a, b) => priority(a) - priority(b)).map(p => p.arm);
   assert.deepEqual(o, ['meta-story', 'ps-problem', 'ps-solution', 'shipped', 'proof']);
 });
+
+test('SOCIAL-BUFFER-1: every connected Buffer channel gets the post; X is cut to 280, LinkedIn queued', async () => {
+  const { postBuffer } = await import('../src/social.js'); const sent = [];
+  const f = async (u, init) => { const q = JSON.parse(init.body).query;
+    if (q.includes('organizations')) return J({ data: { account: { organizations: [{ id: 'o1' }] } } });
+    if (q.includes('channels(')) return J({ data: { channels: [{ id: 'l', service: 'linkedin' }, { id: 'x', service: 'twitter' }, { id: 'd', service: 'facebook', isDisconnected: true }] } });
+    sent.push(q); return J({ data: { createPost: { post: { id: 'p' + sent.length, status: 'x' } } } }); };
+  const r = await postBuffer('tok', 'L'.repeat(900), f, 'S'.repeat(400));
+  assert.deepEqual(Object.keys(r), ['linkedin', 'twitter']); assert.match(sent[0], /addToQueue/); assert.match(sent[1], /shareNow/); assert.ok(!sent[1].includes('S'.repeat(281)));
+});
