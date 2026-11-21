@@ -5,7 +5,7 @@
 
 ## Abstract
 
-W. Ross Ashby (John Wiley & Sons, New York): An adaptive system keeps its essential variables within limits through two feedbacks: a first loop that reacts to the environment, and a second loop that changes the first loop's parameters (step-functions) only when an essential variable leaves its limits, and keeps changing them until a configuration holds the variables in bounds. Ultrastable takes its name from Ashby's ultrastable system. Most current AI systems answer and stop: nothing checks the result against limits and changes the system when it fails, so their loops stay open. We state Ashby's mechanism as a set of testable properties, check each against this system's code and records, and show where the code falls short. 3 of 5 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.
+W. Ross Ashby (John Wiley & Sons, New York): An adaptive system keeps its essential variables within limits through two feedbacks: a first loop that reacts to the environment, and a second loop that changes the first loop's parameters (step-functions) only when an essential variable leaves its limits, and keeps changing them until a configuration holds the variables in bounds. Ultrastable takes its name from Ashby's ultrastable system. Most current AI systems answer and stop: nothing checks the result against limits and changes the system when it fails, so their loops stay open. We state Ashby's mechanism as a set of testable properties, check each against this system's code and records, and show where the code falls short. 4 of 5 are met today; each one that is not is an open work item with a closing probe, and this paper is regenerated from the measurements after every merge.
 
 ## The study
 
@@ -22,7 +22,7 @@ Design for a Brain: The Origin of Adaptive Behaviour. W. Ross Ashby, John Wiley 
 - ULTRASTABILITY-1 (`doctrine/ultrastability.json`): every essential variable is declared with its limits, per scope (platform, tenant)
 - ASHBY-1 (`foundation/ultrastability.py`): the check fails when an essential variable has neither a lower nor an upper limit
 
-**Measured here:** share of declared essential variables that have limits (doctrine/ultrastability.json): 1.0 (n = 11). Target >= 1.0. Verdict: **met**.
+**Measured here:** share of declared essential variables that have limits (doctrine/ultrastability.json): 1.0 (n = 13). Target >= 1.0. Verdict: **met**.
 Source: doctrine/ultrastability.json.
 
 ### A2. A second loop that never acts (systems)
@@ -34,7 +34,7 @@ Source: doctrine/ultrastability.json.
 - ULTRASTABILITY-1 (`foundation/ultrastability.py`): after patience_ticks readings out of limits, one step is taken and logged with a prediction
 - CLOCKWORK-1 (`.github/workflows/watchdog.yml`): the second loop runs on the watchdog clock and on the cost guard, server-side
 
-**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 19 (n = 1213). Target >= 1. Verdict: **met**.
+**Measured here:** second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl): 19 (n = 1252). Target >= 1. Verdict: **met**.
 Source: ops/ultrastability.jsonl.
 
 ### A3. Nothing the second loop can change (systems)
@@ -45,7 +45,7 @@ Source: ops/ultrastability.jsonl.
 
 - ULTRASTABILITY-1 (`doctrine/ultrastability.json`): a ladder step of kind param changes a declared value the first loop reads, inside declared limits
 
-**Measured here:** share of essential variables whose second loop can change a parameter of the first loop: 0.273 (n = 11). Target >= 0.5. Verdict: **not-met**. Open item: `Q-RES-ashby-1952-A3`.
+**Measured here:** share of essential variables whose second loop can change a parameter of the first loop: 1.0 (n = 13). Target >= 0.5. Verdict: **met**.
 Source: doctrine/ultrastability.json.
 
 ### A4. A search that stops before anything holds (reliability)
@@ -81,13 +81,13 @@ Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-47l6ta route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-1nunok6 route; each is a proposal until a study file adopts it.
 
 - A1 may also relate to AUTO-IMPROVE-1 (similarity 0.12)
 - A1 may also relate to IGNORANCE-1 (similarity 0.106)
-- A2 may also relate to DESIGN-LANGUAGE-1 (similarity 0.123)
-- A2 may also relate to VISION-1 (similarity 0.111)
-- A5 may also relate to UIUX-1 (similarity 0.112)
+- A2 may also relate to DESIGN-LANGUAGE-1 (similarity 0.121)
+- A2 may also relate to VISION-1 (similarity 0.112)
+- A5 may also relate to UIUX-1 (similarity 0.111)
 - A5 may also relate to FLOW-DIRECTIVE-1 (similarity 0.106)
 
 ## Method

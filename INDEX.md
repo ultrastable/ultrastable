@@ -10,7 +10,7 @@ All of it lives in this open repository: https://github.com/ultrastable/ultrasta
 | Tasks and next steps | Issues: https://github.com/ultrastable/ultrastable/issues (every issue carries a milestone) |
 | Project board | **Not possible from the agent sessions used so far**: GitHub Projects boards need the GraphQL API, which those sessions block. Milestones are the roadmap view; create a board in the UI once and add the issues if a board is wanted (issue tracks it) |
 | Intellectual property | `docs/ip/IP-REGISTER.md` (register); the Ultrastable License governs use |
-| Business plan, customers, competition, funding | `business/` , `research/market-read.md` , `docs/positioning` files |
+| Business plan, customers, competition, funding | private `ultrastable/ops` `admin/business/`, live funding data in `instances/ultrastable/funding/` , `research/market-read.md` , `docs/positioning` files |
 | Product design and positioning | `docs/qnfo-origin/product-design-full.md` , `docs/product-and-positioning.md` |
 | Website code and deploy | `site/` , `deploy/deploy-site.mjs` |
 | Core extraction map | `core-manifest/boundary.json` |

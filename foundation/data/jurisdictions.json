@@ -1,5 +1,5 @@
 {
-  "_doc": "Filing-route knowledge keyed on the owner's domicile. Only rows that carry a `source` were read from a primary source (see ip/europe/DECISION-MEMO.md, read 2026-11-10); every row has verify_before_use true. Unknown countries get the generic research route, never a route chosen from memory. Working data for attorney review, not legal advice.",
+  "_doc": "Filing-route knowledge keyed on the owner's domicile. Only rows that carry a `source` were read from a primary source (see ultrastable/ops admin/ip/europe/DECISION-MEMO.md, read 2026-11-10); every row has verify_before_use true. Unknown countries get the generic research route, never a route chosen from memory. Working data for attorney review, not legal advice.",
   "defaults": {"ep_direct_self_filing": "Art. 133(1) EPC lets a resident of an EPC contracting state file without a representative"},
   "us_rule": {
     "text": "Final rule 91 FR 13510 (20 Mar 2026), effective 2026-07-20: an applicant whose domicile is outside the US must be represented by a registered practitioner; a provisional still receives a filing date without one, but a foreign-domiciled applicant's ADS is not accepted.",
@@ -7,10 +7,10 @@
     "verify_before_use": true
   },
   "countries": {
-    "US": {"office": "USPTO", "self_file": "US provisional by the owner (domiciled in the US)", "language": "English", "source": "docs: ip/provisional/FILING-CHECKLIST.md"},
-    "NL": {"office": "Octrooicentrum Nederland (OCNL)", "self_file": "online national application; English description, Dutch claims; search requested within 13 months or it lapses", "language": "Dutch claims", "source": "ip/europe/DECISION-MEMO.md", "alt": ["EPO direct (English, self-represented, about EUR 2,800 all-in)", "UK IPO (needs a UK address for service; unverified)"]},
+    "US": {"office": "USPTO", "self_file": "US provisional by the owner (domiciled in the US)", "language": "English", "source": "ultrastable/ops admin/ip/provisional/FILING-CHECKLIST.md"},
+    "NL": {"office": "Octrooicentrum Nederland (OCNL)", "self_file": "online national application; English description, Dutch claims; search requested within 13 months or it lapses", "language": "Dutch claims", "source": "ultrastable/ops admin/ip/europe/DECISION-MEMO.md", "alt": ["EPO direct (English, self-represented, about EUR 2,800 all-in)", "UK IPO (needs a UK address for service; unverified)"]},
     "DE": {"office": "unverified", "self_file": "unverified", "language": "unverified", "source": null},
-    "GB": {"office": "UK IPO", "self_file": "unverified here beyond the decision memo's GBP 120 schedule note", "language": "English", "source": "ip/europe/DECISION-MEMO.md (partial)"}
+    "GB": {"office": "UK IPO", "self_file": "unverified here beyond the decision memo's GBP 120 schedule note", "language": "English", "source": "ultrastable/ops admin/ip/europe/DECISION-MEMO.md (partial)"}
   },
   "epc_states_self_file_epo": ["NL", "DE", "FR", "GB", "ES", "IT", "SE", "AT", "BE", "CH", "IE", "PL", "DK", "FI", "NO", "PT", "CZ"]
 }

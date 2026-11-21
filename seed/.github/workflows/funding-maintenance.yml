@@ -16,6 +16,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   verify:
+    if: ${{ !github.event.repository.is_template && github.repository != 'ultrastable/seed' }}  # TEMPLATE-CODE-ONLY-1: the template itself never runs a system's loops
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:

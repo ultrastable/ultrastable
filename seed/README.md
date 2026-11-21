@@ -42,7 +42,7 @@ A missing credential never stops the boot. The step is recorded as a backlog ite
 | [`bootstrap/bootstrap.py`](bootstrap/bootstrap.py) | The bootstrapper: read, detect, select, plan, provision, start, report. Stdlib only, idempotent. |
 | [`worker/`](worker/) | The server-side runtime: Cloudflare Worker with the tick, D1 migrations, tests. |
 | [`plugins/`](plugins/SCOPE.json) | Optional plugin tier (email, mailing list, social, YouTube, GCP, self-description, guided communication flow). Dry-run by default, never in the core path. Spec: `docs/architecture/plugins.md`. |
-| [`tests/`](tests/) | Bootstrapper and policy tests, <!-- claim:seed-py-tests -->45<!-- /claim --> in all (`python3 -m unittest discover tests`). |
+| [`tests/`](tests/) | Bootstrapper and policy tests, <!-- claim:seed-py-tests -->59<!-- /claim --> in all (`python3 -m unittest discover tests`). |
 | [`docs/bootstrapping.md`](docs/bootstrapping.md) | The boot sequence, stage by stage, and what each stage learned from AIOS. |
 
 ## Rules the seed carries into every org it starts
@@ -57,3 +57,7 @@ A missing credential never stops the boot. The step is recorded as a backlog ite
 
 ## Interview and screens (no code needed)
 `python3 bootstrap/interview.py --org-name "My Project"` asks plain questions with hints and numbered choices, then writes `IDEA.md` and `specs/`. The Worker serves the same interview at `/start` and three screens at `/`, `/next`, `/needs-you`. See [SCOPE.md](SCOPE.md) and [LICENSING.md](LICENSING.md).
+
+## License
+
+Source-available under the [Ultrastable License v1.0 (USL-1.0)](LICENSE): free for non-commercial use; commercial use needs a Commercial License. This kit is code and agent instructions only (TEMPLATE-CODE-ONLY-1); it carries no facts about any one system.

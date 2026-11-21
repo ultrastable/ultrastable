@@ -2,7 +2,7 @@
 """Validate application packets against the funding registry and write a status tracker.
 
 Usage: funding_packet.py [--today YYYY-MM-DD] [--out STATUS.md]
-Each business/funding/applications/<name>/packet.json names a registry id. Findings: unknown registry id,
+Each instances/ultrastable/funding/applications/<name>/packet.json names a registry id. Findings: unknown registry id,
 banned term in an answer, missing field, stale verification, prerequisite not met. A packet with an
 applicant.json whose identity fields are all set and every prerequisite met is `ready`.
 Exit 0 when the check ran; findings are printed as JSON and never swallowed.

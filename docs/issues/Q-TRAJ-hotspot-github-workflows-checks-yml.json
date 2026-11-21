@@ -1,0 +1,12 @@
+{
+  "id": "Q-TRAJ-hotspot-github-workflows-checks-yml",
+  "title": "Q-TRAJ-hotspot-github-workflows-checks-yml: .github/workflows/checks.yml was rewritten on 12 of 30 days",
+  "body": "**Owner:** executor\n**Trigger:** trajectory pass (TRAJECTORY-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation trajectory --probe hotspot:.github/workflows/checks.yml\n**Status:** open\n\n.github/workflows/checks.yml was rewritten on 12 of 30 days. Evidence: days with changes: 12.\n\nFind why this keeps changing; make the part that churns computed, split it, or add the test that pins it, so it stops being rewritten.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation trajectory --probe hotspot:.github/workflows/checks.yml` exits 0.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "trajectory"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

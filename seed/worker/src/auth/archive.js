@@ -4,7 +4,7 @@
 // RETIRED mirrors brand/brand.json (status "retired"); seed/worker/test/auth.test.js fails when the two differ.
 import { getToken } from './index.js';
 import * as store from './store.js';
-export const RETIRED = Object.freeze(['ultrastable/license', 'ultrastable/seed', 'ultrastable/spec', 'ultrastable/workers']);
+export const RETIRED = Object.freeze(['ultrastable/license', 'ultrastable/spec', 'ultrastable/workers']);
 
 export async function archiveRetired(db, env, tenant, { fetch: f = fetch, now = Date.now(), repos = RETIRED, token } = {}) {
   const tk = token ? { ok: true, token } : await getToken(db, env, tenant, 'github-admin', { fetch: f, now });

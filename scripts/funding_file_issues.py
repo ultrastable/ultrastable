@@ -22,7 +22,7 @@ def to_queue(report):
     for f in report["findings"]:
         iid = "FUND-" + re.sub(r"[^A-Za-z0-9]+", "-", f"{f['id']}-{f['kind']}").strip("-")
         nl = chr(10)
-        body = nl.join(["**Owner:** executor", "**Trigger:** funding-maintenance finding, executor tick", f"**Done check:** grep:docs/issues/{iid}.json::Status:.{{0,4}}closed", "**Status:** open", "", f["detail"], "", "Registry: business/funding/registry.json", f"Checked: {report['checked']}"])
+        body = nl.join(["**Owner:** executor", "**Trigger:** funding-maintenance finding, executor tick", f"**Done check:** grep:docs/issues/{iid}.json::Status:.{{0,4}}closed", "**Status:** open", "", f["detail"], "", "Registry: instances/ultrastable/funding/registry.json", f"Checked: {report['checked']}"])
         (out / (iid + ".json")).write_text(json.dumps({"id": iid, "title": f"{iid}: {f['kind']}", "body": body, "labels": ["p2", "funding-maintenance"]}, indent=2) + nl, encoding="utf-8")
         print("queued", iid)
 
@@ -35,7 +35,7 @@ def main(path):
     for f in report["findings"]:
         title = f"[funding] {f['id']}: {f['kind']}"
         existing = json.loads(gh("issue", "list", "--label", LABEL, "--state", "open", "--search", f"\"{title}\" in:title", "--json", "number,title"))
-        body = (f"{f['detail']}\n\nRegistry: business/funding/registry.json\nProcedure: business/funding/MAINTENANCE.md\n"
+        body = (f"{f['detail']}\n\nRegistry: instances/ultrastable/funding/registry.json\nProcedure: instances/ultrastable/funding/MAINTENANCE.md\n"
                 f"Closing probe: scripts/funding_verify.py shows no `{f['kind']}` finding for {f['id']}.\nChecked: {report['checked']}")
         match = [i for i in existing if i["title"] == title]
         if match:

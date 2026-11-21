@@ -12,7 +12,7 @@ Launch plan: [Roadmap](roadmap.md), Ultrastable run as its own first managed pro
 
 Funding: [Funding options](funding/funding-options.md), covering credits, grants, investors and the GCP vs Cloudflare stance.
 
-Business plan and pitch kit: Business-in-a-box in the owner-only `business` repo (`business/plan/README.md`), written by the virtual managers: roster, customers, competition, pitch, funding, promotion, events.
+Business plan and pitch kit: Business-in-a-box in the private `ultrastable/ops` repo (`admin/business/plan/README.md`), written by the virtual managers: roster, customers, competition, pitch, funding, promotion, events.
 
 Bootstrapping: [AIOS lessons](bootstrapping/aios-lessons.md) and [idea-to-organization boot sequence](bootstrapping/bootstrapping.md). Code: the `seed` repo.
 

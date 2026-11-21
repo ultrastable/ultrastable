@@ -48,8 +48,32 @@ def readings(root=REPO) -> dict:
         drift = None
     cost = fresh_cost(root, c["cost"])
     from . import resilience, uiux
-    return {"criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"], "resilience.stalled": resilience.stalled_reading(root),
+    return {"yearsim.horizon_p10": yearsim_reading(root), "yearsim.self_rate": yearsim_field(root, "self_rate_per_day"),
+            "criticality.cost": cost, "criticality.verified_share": round(verified, 3), "claims.drift": drift, "criticality.k": c["k"], "resilience.stalled": resilience.stalled_reading(root),
             "uiux.findings": uiux.status_reading(root, "findings_blocking"), "uiux.happy_paths": uiux.status_reading(root, "happy_path_pass_share")}
+
+
+def yearsim_reading(root, now=None, max_age_days=3):
+    """The 10th-percentile simulated unattended horizon from ops/yearsim.json (foundation/yearsim.py); stale or missing is unmeasured."""
+    p = Path(root) / "ops/yearsim.json"
+    try:
+        j = json.loads(p.read_text(encoding="utf-8"))
+        at = datetime.fromisoformat(j["at"].replace("Z", "+00:00"))
+    except (OSError, ValueError, KeyError):
+        return None
+    if ((now or datetime.now(timezone.utc)) - at).total_seconds() > max_age_days * 86400:
+        return None
+    return j.get("horizon", {}).get("p10")
+
+
+def yearsim_field(root, key, now=None, max_age_days=3):
+    p = Path(root) / "ops/yearsim.json"
+    try:
+        j = json.loads(p.read_text(encoding="utf-8"))
+        at = datetime.fromisoformat(j["at"].replace("Z", "+00:00"))
+    except (OSError, ValueError, KeyError):
+        return None
+    return j.get(key) if ((now or datetime.now(timezone.utc)) - at).total_seconds() <= max_age_days * 86400 else None
 
 
 def fresh_cost(root, value, now=None, max_age_days=3):
@@ -136,17 +160,24 @@ def _append(root, c, row: dict) -> None:
         f.write(json.dumps({**row, "seq": n}, sort_keys=True) + "\n")  # seq keeps two same-second rows distinct for the de-duplicating reader
 
 
+def _key(d, k):
+    """A path segment: a dict key, or `#id` for the list element whose id is that (KNOB-PATH-1: knobs in a list of goals by id, not by position)."""
+    if k.startswith("#") and isinstance(d, list):
+        return next(i for i, x in enumerate(d) if isinstance(x, dict) and x.get("id") == k[1:])
+    return k
+
+
 def _jget(d, path):
     for k in path.split("."):
-        d = d[k]
+        d = d[_key(d, k)]
     return d
 
 
 def _jset(d, path, val):
     ks = path.split(".")
     for k in ks[:-1]:
-        d = d[k]
-    d[ks[-1]] = val
+        d = d[_key(d, k)]
+    d[_key(d, ks[-1])] = val
 
 
 def _param(root, step, revert_to=None, set_to=None):
@@ -226,12 +257,7 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
         entry = {"value": value, "ok": ok, "consecutive_out": consecutive}
         if pending:
             since = len(hist) - pending["n"] + 1
-            if ok:
-                verdict = "kept"
-            elif since >= c["settle_ticks"]:
-                verdict = "reverted"
-            else:
-                verdict = None
+            verdict = settle_verdict(root, c, pending, ok, since)
             if verdict:
                 vr = {"at": now, "ev": "verdict", "var": key, "step_id": pending["id"], "verdict": verdict, "value": value}
                 if verdict == "reverted" and pending["kind"] == "param" and apply:
@@ -277,6 +303,31 @@ def tick(root=REPO, apply=False, now=None, read=None, tenants=True, fetch=None) 
         if apply:
             _append(root, c, {"at": now, "ev": "reading", "var": key, "value": value, "ok": ok})
     return out
+
+
+def settle_verdict(root, c, pending, ok, since):
+    """SECOND-LOOP-SETTLE-1: kept the moment the variable is back in bounds. A param acts at once, so it is undone after settle_ticks readings.
+    An item or spinoff step is work that has to be done first: it is undone only when its item reached a final status and the variable is
+    still out, or after item_settle_ticks readings (judging it after 3 readings reverted 14 of 14 before any could act)."""
+    if ok:
+        return "kept"
+    if pending.get("kind") == "param":
+        return "reverted" if since >= c["settle_ticks"] else None
+    if since >= c.get("item_settle_ticks", c["settle_ticks"]):
+        return "reverted"
+    st = item_status(root, pending.get("item"))
+    return "reverted" if st in ("closed", "done", "live", "shelved", "gate") else None
+
+
+def item_status(root, iid):
+    if not iid:
+        return None
+    try:
+        b = json.loads((Path(root) / "docs/issues" / (iid + ".json")).read_text(encoding="utf-8")).get("body", "")
+    except (OSError, ValueError, AttributeError):
+        return None
+    m = re.search(r"\*\*Status:\*\*\s*([A-Za-z-]+)", b)
+    return m.group(1).lower() if m else None
 
 
 def _taken(episode, idx) -> bool:
@@ -389,7 +440,7 @@ def check(root=REPO) -> list[str]:
 
 
 def readings_keys():
-    return ("criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled", "uiux.findings", "uiux.happy_paths")
+    return ("yearsim.horizon_p10", "yearsim.self_rate", "criticality.cost", "criticality.verified_share", "claims.drift", "criticality.k", "resilience.stalled", "uiux.findings", "uiux.happy_paths")
 
 
 def data(root=REPO) -> dict:
@@ -407,6 +458,25 @@ def render(root=REPO) -> str:
             "export default " + json.dumps(data(root), indent=1, sort_keys=True) + ";\n")
 
 
+def _followers() -> dict:
+    """WATCHDOG-FOLLOW-1: the year simulation (YEAR-SIM-1), say-do (SAY-DO-1) and trajectory (TRAJECTORY-1) run inside every
+    watchdog tick, through the tick the watchdog already runs. A failure is returned, never swallowed."""
+    import importlib
+    res = {}
+    try:
+        from . import modelwatch
+        res["modelwatch"] = "changed %d" % len(modelwatch.observed(REPO, apply=True).get("changed", []))  # MODEL-HEAL-1
+    except Exception as e:  # reported in the tick output; the other followers still run
+        res["modelwatch"] = "failed: " + repr(e)
+    for name in ("yearsim", "saydo", "trajectory"):
+        try:
+            r = importlib.import_module("foundation." + name).run(REPO, apply=True)
+            res[name] = "ok" if r is not None else "no result"
+        except Exception as e:  # recorded in the tick output and the ledgers it writes; the next follower still runs
+            res[name] = "failed: " + repr(e)
+    return res
+
+
 def main(argv=None) -> int:
     a = argv if argv is not None else sys.argv[1:]
     if "--check" in a:
@@ -420,7 +490,10 @@ def main(argv=None) -> int:
     if "--tenants" in a:
         print(json.dumps(write_tenants(REPO) if "--apply" in a else tenant_readings(REPO), indent=1)); return 0
     if "--tick" in a or "--status" in a:
-        print(json.dumps(tick(apply="--apply" in a and "--tick" in a), indent=2)); return 0
+        out = tick(apply="--apply" in a and "--tick" in a)
+        if "--apply" in a and "--tick" in a:
+            out["followers"] = _followers()
+        print(json.dumps(out, indent=2)); return 0
     print(__doc__); return 2
 
 
