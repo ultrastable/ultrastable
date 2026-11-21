@@ -1,0 +1,11 @@
+{
+  "id": "Q-SMOKE-connect-mastodon-link",
+  "title": "Q-SMOKE-connect-mastodon-link: production does not match the claim (connect-mastodon-link)",
+  "body": "**Owner:** executor\n**Trigger:** smoke-live (daily)\n**Done check:** grep:scripts/smoke_live.py::connect-mastodon-link\n**Status:** open\n\nSMOKE-LIVE-1: the Mastodon link is one click to the owner's server sign-in (SOCIAL-MODULE-1)\n\nLive evidence: `HTTP 302 -> https://ultrastable.io/auth/signin?next=%2Fconnect%2Fmastodon%2Fstart%`\n\nFix the code or the words so production does what is claimed, deploy, and smoke-live closes this.\n\nsize: S\n\n**Closing probe:** workflow smoke-live, check `connect-mastodon-link` = PASS.\n",
+  "labels": [
+    "p1",
+    "agent-ready"
+  ],
+  "milestone": "Now",
+  "workstream": "Claims"
+}
