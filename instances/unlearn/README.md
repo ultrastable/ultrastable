@@ -31,16 +31,24 @@ What it refuses: curricula, grades, streaks, leaderboards, mastery levels. Anyth
 
 `seed/bootstrap/bootstrap.py --dry-run` on this `IDEA.md` passes stage `qualify` and seeds 3 objectives and 12 metrics (8 liveness, 4 declared awaiting probes).
 
-## Build plan (each step a queue item with a closing probe)
+## Phases: all three audiences, in order
 
-1. **Manifest and idea** (this change). Probe: `python3 -m unittest tests.foundation.test_unlearn`.
+The research behind this ([Homo Ludens, self-directed learning, and AI-facilitated play](https://claude.ai/artifact/9tSXs9RsEVf4xi3Hr4v9kW)) points one way: guided play beats both lecturing and leaving children alone, and unrestricted AI help can hurt. In Bastani et al. 2024 (about 1,000 students), plain GPT-4 raised practice scores 48% and cut unaided exam scores 17%; a hint-only tutor removed the harm. So Unlearn coaches before it builds, and it measures learning that holds without the AI. Data: `phases.json` (11 principles, 3 phases, exit gates), checked by `tests/foundation/test_unlearn.py`.
+
+| Phase | Who | Child data | Opens when |
+|---|---|---|---|
+| 1 | Coaches and parents | None | now |
+| 2 | Agora-style schools and learning centres | Pseudonymous ids held by the school (controller) | phase 1: continuation_14d >= 0.5 on 100+ explorations, telling_share <= 0.3, 20 active adults over 8 weeks |
+| 3 | Kids directly, invited by a school or parent | Adult-created account, parental consent (under 16 NL, under 13 US) | phase 2: 3 schools active 8 weeks, DPIA done; plus the controller-entity gate |
+
+**Privacy floor.** The UK Children's Code has 15 standards (best interests, DPIA, data minimisation, default settings, profiling, nudge techniques, parental controls among them). The amended COPPA Rule had a compliance date of 22 April 2026: a published retention policy, a written security program, named third parties, and voice recordings counted as personal information. The Dutch age of digital consent is 16. Phase 3 does not open until each is met, and the controller entity is the one owner-only step (default in effect: phase 3 closed, phases 1 and 2 run).
+
+## Phase 1 build steps (each a queue item with a closing probe)
+
+1. **Manifest, idea, phases** (this change). Probe: `python3 -m unittest tests.foundation.test_unlearn`.
 2. **Tenant runtime.** One Durable Object per tenant in `ultrastable-tenants` (TENANT-STORAGE-1); tables `curiosities`, `moves`, `followups`, `move_weights`. Probe: tenant `/health` self-test.
-3. **Pill ask bar** (INTERVIEW-1): "What is the child curious about?" with mic, then two either/or taps (age band, indoors or out). Probe: `site/site.test.mjs`-style render test.
-4. **Move generator.** Workers AI with a system prompt that forbids explanations; a guard rejects any move that states the answer (lexical check plus a second model pass). Probe: fixture set of 50 curiosities, 0 moves that explain.
-5. **Follow-up clock** at 7 and 14 days by email link (one tap yes/no), cron in the tick Worker. Probe: `continuation_14d` has a probe and leaves `declared`.
-6. **Telling detector** for coach notes (question share, imperative share). Probe: `telling_share` measured.
-7. **Public page** rendering only measured numbers (FRONT-BACKED-1, CLAIMS-1).
-
-## Open product decision
-
-Audience for v1: the adult (coach or parent) is the user, and the child never holds an account. Default in effect until changed: coaches and parents first.
+3. **Pill ask bar** (INTERVIEW-1): "What is the child curious about?" with mic, then two either/or taps. Probe: render test.
+4. **Move generator.** Workers AI, forbidden from explaining; a guard rejects any move that states the answer. Probe: 50 fixture curiosities, `move_answer_leaks == 0`.
+5. **Follow-up clock** at 7 and 14 days, one-tap yes/no. Probe: `continuation_14d` leaves `declared`.
+6. **Telling detector** for coach notes. Probe: `telling_share` measured.
+7. **Public page** of measured numbers only (FRONT-BACKED-1, CLAIMS-1).

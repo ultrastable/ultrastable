@@ -35,6 +35,21 @@ class Unlearn(unittest.TestCase):
             self.assertIn("system test passed", stages["qualify"]["detail"])
             self.assertIn("3 objective(s)", stages["instrument"]["detail"])
 
+    def test_phases_are_gated(self):
+        d = json.loads((INST / "phases.json").read_text())
+        self.assertEqual(len(d["principles"]), 11)
+        ph = d["phases"]
+        self.assertEqual([p["id"] for p in ph], [1, 2, 3])
+        for p in ph[:2]:
+            self.assertTrue(p["exit_gates"], p["name"])
+            for g in p["exit_gates"]:
+                self.assertIn(g["op"], (">=", "<=", "=="))
+        self.assertTrue(ph[0]["child_data"].startswith("none"))
+        kids = ph[2]
+        for need in ("dpia_complete", "parental_consent_flow", "retention_policy_published", "no_companion_persona"):
+            self.assertIn(need, kids["prerequisites"])
+        self.assertIn("default_in_effect", kids["identity_bound_gate"])
+
 
 if __name__ == "__main__":
     unittest.main()

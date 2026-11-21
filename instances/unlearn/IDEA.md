@@ -23,7 +23,9 @@ level: 1
 
 # Who it is for
 
-- Coaches, parents and mentors of children who learn by following their curiosity (the adult is the user; the child is never asked for an account or personal data)
+- Phase 1: coaches, parents and mentors of children who learn by following their curiosity (no child accounts or child data)
+- Phase 2: Agora-style schools and learning centres, which hold their children's pseudonymous ids as data controller
+- Phase 3: children directly, invited by a school or parent, once consent, DPIA and the controller entity are in place (instances/unlearn/phases.json)
 
 # First outcomes
 
@@ -34,5 +36,5 @@ level: 1
 # Constraints
 
 - Budget per month: 5
-- No child accounts and no child personal data: the adult writes about the exploration, not the child's identity
+- No child accounts or child personal data before phase 3; phase 3 opens only on the gates in phases.json
 - No curriculum, grades, streaks or leaderboards: nothing that turns play back into instruction
