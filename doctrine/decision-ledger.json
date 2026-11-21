@@ -4364,6 +4364,14 @@
    "title": "Executor closed Q-RECUR-0f61587b9e: Modify resolve_generated.py to handle concurrent writes to generated files by using a locking mechanism.",
    "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: scripts/resolve_generated.py.",
    "probe": "file:scripts/resolve_generated.py"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-recur-5f8b2445f4-raise-hard-error-in-gh-he",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-RECUR-5f8b2445f4: Raise hard error in GH helper on bad status to prevent silent failures and stuck loops",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: tests/test_sweeper.js, seed/worker/src/sweeper.js.",
+   "probe": "file:tests/test_sweeper.js"
   }
  ]
 }
