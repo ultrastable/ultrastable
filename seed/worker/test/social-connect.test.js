@@ -197,3 +197,17 @@ test('relay results are recorded as read back, queued, unverified or failed, nev
   assert.deepEqual(Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v.status])), { mastodon: 'verified', linkedin: 'queued', substack: 'queued', twitter: 'unverified', facebook: 'failed', instagram: 'failed' });
   const g = async () => NF; assert.equal((await classifyRelay({ mastodon: { status: 'ok', url: 'https://mstdn.science/@Q/9' } }, g)).mastodon.status, 'unverified');
 });
+
+test('per-service relay rows override a legacy relay row, so a failed service is retried', async () => {
+  const env = mk(); const gate = { kill: false, mode: 'live', max_posts_per_day: 3, max_posts_per_week: 14, paused_channels: [] };
+  const cal = { posts: [{ id: 'p1', date: '2026-11-17', text: 'hello', kind: 'event', arm: 'x' }] }; const sent = [];
+  const f = async (u, init = {}) => { u = String(u); if (u.endsWith('/gate.json')) return J(gate); if (u.endsWith('/calendar.json')) return J(cal);
+    if (u === 'https://relay.test/relay/post') { sent.push(JSON.parse(init.body).channels); return J({ results: { linkedin: { status: 'sent', id: 'z' } } }); } return NF; };
+  env.SOCIAL_RELAY_URL = 'https://relay.test'; env.SOCIAL_RELAY_TOKEN = 't';
+  await store.ensureSchema(env.DB); await runSocial({ db: env.DB, env, fetch: async () => NF, now: NOW, tenant: 't' }).catch(() => 0);
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS social_posted (id TEXT NOT NULL, channel TEXT NOT NULL, at TEXT NOT NULL, ref TEXT, arm TEXT, status TEXT, attempts INTEGER DEFAULT 1, PRIMARY KEY (id, channel))").run();
+  await env.DB.prepare("INSERT OR REPLACE INTO social_posted (id, channel, at, ref) VALUES ('p1','relay','2026-11-17T00:00:00Z','{}')").run();
+  await env.DB.prepare("INSERT OR REPLACE INTO social_posted (id, channel, at, ref, status, attempts) VALUES ('p1','relay:linkedin','2026-11-17T00:00:00Z','queued','failed',1)").run();
+  const r = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 864e5 * 5, tenant: 't' });
+  assert.deepEqual(sent, [['linkedin']], JSON.stringify(r));
+});

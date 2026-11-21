@@ -114,7 +114,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   const days = new Set(rows.filter(r => r.at.slice(0, 10) === today).map(r => r.id)), wk = new Set(rows.filter(r => weekKey(new Date(r.at)) === weekKey(d)).map(r => r.id));
   if (days.size >= gate.max_posts_per_day || wk.size >= gate.max_posts_per_week) return { skipped: 'rate limit' };
   const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3));  // a failed channel is retried up to 3 times; queued, unverified and verified rows are not re-sent
-  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return done(id, 'relay') || (rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3)); };
+  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3) : done(id, 'relay'); };  // per-service rows override a legacy channel='relay' row, which only said the relay was called
   const bufferDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('buffer:')); return rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3); };  // SOCIAL-MODULE-1: one row per Buffer service, so each is verified and retried on its own
   const posted = new Set((cal.posts || []).map(x => x.id).filter(id => Object.keys(channels).every(ch => ch === 'relay' ? relayDone(id) : ch === 'buffer' ? bufferDone(id) : done(id, ch))));
   const due = (cal.posts || []).filter(p => !posted.has(p.id) && p.date <= today).sort((a, b) => priority(a) - priority(b));
@@ -136,6 +136,8 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
       }
       if (ch === 'relay') {
         const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => r.channel.slice(6));
+        const stale = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => (/queued ([0-9a-f]{24})/.exec(String(r.ref)) || [])[1]).filter(Boolean);
+        if (stale.length) { try { await f(env.SOCIAL_RELAY_URL + '/relay/cancel', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ ids: stale }) }); } catch (e) { /* allow-silent: a failed cancel only risks a duplicate post; the retry below still goes out and the miss shows in the relay response */ } }  // POST-READBACK-2: a queued Buffer entry that never published is cancelled before its replacement shares now
         const res = await classifyRelay(await postRelay(env, p, f, failed), f);  // a retry re-sends only the services that failed
         for (const [svc, v] of Object.entries(res)) await rec('relay:' + svc, v.ref, v.status);
         continue;
