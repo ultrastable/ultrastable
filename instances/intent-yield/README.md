@@ -1,6 +1,6 @@
 # Instance: Intent Yield
 
-**Ultrastable is the foundation for any autonomous system.** Intent Yield is a Level 1 tenant that answers one question: for a given unit of human input, what is the best unit of output? Its idea file is `IDEA.md` beside this one; `tests/test_intent_yield.py` boots it through the seed's `qualify` stage and holds the rules below in place.
+**Ultrastable is the foundation for any autonomous system.** A system is autonomous if it has self-referential loops and the ability to close them. Ultrastable runs on itself. Intent Yield is a Level 1 tenant that answers one question: for a given unit of human input, what is the best unit of output? Its idea file is `IDEA.md` beside this one; `tests/test_intent_yield.py` boots it through the seed's `qualify` stage and holds the rules below in place.
 
 Status: v1 is built and runs daily on Ultrastable's own directives. Code: `foundation/intentyield.py`, config `doctrine/intent-yield.json`, page `site/intentyield.js` (`/yield`, `/yield.json`), workflow `.github/workflows/intent-yield.yml`, tests `tests/foundation/test_intentyield.py` and `site/intentyield.test.mjs`.
 
@@ -20,9 +20,9 @@ Ultrastable is already exposed to this. Its mantra metric `k` counts verified de
 2. It is past the settle window (30 days).
 3. The owner did not restate it.
 
-Verdicts: `kept`, `holding` (passing, not yet settled), `restated`, `broken` (its probe fails), `unmeasured` (no runnable probe, or the probe could not measure; such a probe is never read as broken).
+Verdicts: `kept`, `holding` (passing, not yet settled), `restated`, `broken` (its probe fails), `unmeasured` (no runnable probe, or the probe could not measure; such a probe is read as unmeasured, not broken).
 
-**Yield** is reported as a set and never as one number: kept share of settled directives, holding share, restated share, and median attention seconds per kept directive. Splitting one intent into ten outcomes, or ten PRs, changes nothing, because the unit is the intent.
+**Yield** is reported as a set, not as one number: kept share of settled directives, holding share, restated share, and median attention seconds per kept directive. Splitting one intent into ten outcomes, or ten PRs, changes nothing, because the unit is the intent.
 
 ## How it stays ungameable
 
@@ -33,7 +33,7 @@ Verdicts: `kept`, `holding` (passing, not yet settled), `restated`, `broken` (it
 | Tuning to the score | A directive counts as kept only after the 30-day window, and each run logs a prediction of the kept share that a later run scores against what happened. |
 | Raising one number by hurting another | The page shows kept, restated and unmeasured side by side; a rise in kept share bought with more restatements shows up in the same table. |
 | Trivial output | A Q-YIELD item closes only when the directive's own probe passes, so a cosmetic change cannot close it. |
-| Gaming the person instead of the work | The person is never scored. No points, streaks, badges, rankings or "inputs this week". More input is not better and fewer words are not a target; the passage is clear that rewarding the person erodes the reason they gave the input. |
+| Gaming the person instead of the work | No person is scored. No points, streaks, badges, rankings or "inputs this week". More input is not better and fewer words are not a target; the passage is clear that rewarding the person erodes the reason they gave the input. |
 
 The last row is the core design choice. The book's finding is about people; Intent Yield applies incentives only to the system, which has no intrinsic motivation to erode, and protects the person from becoming the thing that is measured.
 
@@ -53,7 +53,7 @@ The last row is the core design choice. The book's finding is about people; Inte
 | A run errors | The run still lands its state with the error recorded, the workflow then fails loudly, and the same detector files the error. |
 | The directive format changes and the parser silently finds nothing | A run that parses fewer than `min_intents`, or loses more than half of the previous run's directives, is an error, not a result. |
 | A probe hangs or grows slow | Per-probe timeout and a run time box; probes rotate, so a slow one delays the others by a day at most. The job has a 15-minute timeout. |
-| A probe is renamed or loses access | An exit code other than 0 or 1 is `unmeasured`, never `broken`, so it files no false item; the unmeasured count is on the page. |
+| A probe is renamed or loses access | An exit code other than 0 or 1 is `unmeasured`, not `broken`, so it files no false item; the unmeasured count is on the page. |
 | Credentials expire | None of its own. It runs on the workflow's built-in token, which GitHub mints for each run; landing uses `LANE_PAT` when present and falls back to the built-in token and then a pull request (`scripts/land_data.py`). `LANE_PAT` expiry is watched by credwatch. |
 | Cost | No model calls and no paid service: Python standard library only, about 2 to 3 Actions minutes a day, under the `actions-budget.json` kill switch. |
 | Dependency drift | No third-party packages. The checkout action is pinned by hash and updated by Dependabot. |

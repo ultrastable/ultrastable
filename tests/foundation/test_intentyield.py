@@ -1,9 +1,11 @@
 """INTENT-YIELD-1: owner directives are intents, their own probes decide kept or broken, restatements are charged to the original,
 and the loop's own probe fails loudly when it goes stale, errors or loses the directives."""
-import json, shutil, tempfile, unittest
+import json, sys, unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from foundation import intentyield as Y
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _repo import scratch  # noqa: E402
+from foundation import intentyield as Y  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 NOW = datetime(2026, 12, 30, 8, 0, tzinfo=timezone.utc)
@@ -18,7 +20,7 @@ DOC = """# rules
 
 
 def make(cfg_over=None):
-    d = Path(tempfile.mkdtemp())
+    d = scratch()
     (d / "doctrine").mkdir()
     cfg = json.loads((ROOT / Y.CONFIG).read_text(encoding="utf-8"))
     cfg.update({"sources": ["AGENTS.md"], "min_intents": 3}, **(cfg_over or {}))
@@ -35,7 +37,6 @@ def runner(results):
 class IntentYieldTests(unittest.TestCase):
     def setUp(self):
         self.d = make()
-        self.addCleanup(shutil.rmtree, self.d, True)
 
     def test_parse_takes_owner_directives_only(self):
         occ = Y.parse(DOC, Y.load(self.d), "AGENTS.md")
