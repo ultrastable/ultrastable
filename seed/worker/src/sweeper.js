@@ -12,8 +12,9 @@ const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/', 'dependabot/'];  // DEP-L
 async function gh(f, token, method, path, body) {
   const r = await f(API + path, { method, headers: { authorization: 'Bearer ' + token, accept: 'application/vnd.github+json', 'user-agent': 'ultrastable-sweeper', 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const t = await r.text();
-  if (!r.ok) throw new Error(`GH ${method} ${r.status} ${path}: ${t}`);
-  return { ok: true, json: t ? JSON.parse(t) : null };
+  // Callers read ok and status (410 means issues are off, 404 a deleted branch, 422 a refused merge) and record each refusal; throwing here
+  // aborted the whole sweep on the first refusal (#1851), which is the stuck loop it meant to prevent.
+  return { ok: r.ok, status: r.status, json: t ? JSON.parse(t) : null };
 }
 const hours = (iso, now) => Math.max(0, (now - Date.parse(iso)) / 36e5);
 
