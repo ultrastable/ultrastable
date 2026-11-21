@@ -6,7 +6,10 @@ routes = [
   { pattern = "ultrastable.io", custom_domain = true },
   { pattern = "www.ultrastable.io", custom_domain = true },
   { pattern = "ultrastable.app", custom_domain = true },
-  { pattern = "ultrastable.net", custom_domain = true }
+  { pattern = "ultrastable.net", custom_domain = true },
+  { pattern = "www.ultrastable.app", custom_domain = true },
+  { pattern = "www.ultrastable.net", custom_domain = true },
+  { pattern = "www.ultrastable.app/*", zone_name = "ultrastable.app" }  # UPTIME-1: beats the wildcard *.ultrastable.app/* route of the spinoffs worker, which answered 404
 ]
 
 [observability]
