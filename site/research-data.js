@@ -90,7 +90,7 @@ export default {
      "metric_label": "second-order steps the ultrastability loop took in the last 30 days (ops/ultrastability.jsonl)",
      "measured": 22,
      "status": "met",
-     "n": 1378,
+     "n": 1419,
      "source": "ops/ultrastability.jsonl",
      "item": null
     },
