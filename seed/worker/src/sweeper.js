@@ -5,6 +5,7 @@
 // For each issue still labelled claimed/dispatched past maxAgeH: release the claim so the executor re-takes it. Returns open_loop_age_hours, the probe value (target 0).
 import { notGreen } from './greenguard.js';
 import { reconcile, makeGh, latency } from './mergenow.js';
+import { prTier, portItemId } from './sla.js';  // SLA-1
 const API = 'https://api.github.com';
 // BRANCH-ROOT-CAUSE-1: `worker/` branches (the Worker executor's own PRs) were never swept, so they sat blocked; every automation prefix is swept.
 const CLIENT_PREFIX = ['claude/', 'agent/', 'worker/'];
@@ -59,6 +60,13 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
             const c2 = c1.ok ? await gh(f, token, 'PATCH', `/repos/${repo}/pulls/${p.number}`, { state: 'open' }) : c1;
             (c2.ok ? (out.retriggered ||= []) : out.errors).push(c2.ok ? tag : `${tag} retrigger ${c2.status}`);
           }
+        }
+        // SLA-1: the written ladder (doctrine/sla.json). Past hard_min and idle, a PR that is not merge-ready is superseded whatever its branch prefix (STALL-ACT-1 covered agent/ only,
+        // so claude/ PRs that conflicted or failed sat for hours). The branch is kept and one PORT-BRANCH item carries it onto main: nothing is lost.
+        if (!(out.retriggered || []).includes(tag) && !(out.superseded || []).includes(tag) && prTier({ ageMin: hours(p.created_at || p.updated_at, now) * 60, idleMin: hours(p.updated_at || p.created_at, now) * 60, state: d.mergeable_state, branch: d.head && d.head.ref }) === 'supersede') {
+          await gh(f, token, 'POST', `/repos/${repo}/issues/${p.number}/comments`, { body: 'SLA-1: open past the written limit (doctrine/sla.json) and not merge-ready. Superseded: the branch is kept and queue item ' + portItemId(d.head.ref) + ' carries it onto current main.' });
+          const c = await gh(f, token, 'PATCH', `/repos/${repo}/pulls/${p.number}`, { state: 'closed' });
+          if (c.ok) { (out.superseded ||= []).push(tag); (out.sla_ported ||= []).push({ repo, number: p.number, branch: d.head.ref }); continue; }
         }
         const hold = d.mergeable_state === 'clean' ? await notGreen(f, token, repo, d.head && d.head.sha, (ff, t, m, path) => gh(ff, t, m, path)) : null;  // GREEN-GUARD-1
         if (hold) out.held = [...(out.held || []), `${tag} ${hold}`];
@@ -118,6 +126,10 @@ export async function alarmStalls(db, out, ensureItem) {
   for (const s of (out.stalled || []).slice(0, 3)) {
     const id = `Q-PR-STALL-${s.repo.replace('/', '-')}-${s.number}`;
     if (await ensureItem(db, { id, title: `PR ${s.tag} open ${s.minutes} min (${s.state}): merge, reconcile or supersede it`, kind: 'fix', owner_role: 'operations', done_check: `${s.tag} is merged or closed with a superseding PR`, closing_probe: `GET /repos/${s.repo}/pulls/${s.number} state != open`, priority: 1 })) filed.push(id);
+  }
+  for (const s of (out.sla_ported || []).slice(0, 5)) {  // SLA-1: the superseded PR's branch is carried by one PORT-BRANCH item
+    const id = portItemId(s.branch);
+    if (await ensureItem(db, { id, title: `carry ${s.branch} onto main (PR #${s.number} superseded by the SLA)`, kind: 'fix', owner_role: 'operations', done_check: `main holds the work of ${s.branch}`, closing_probe: `python3 -m foundation branchsweep --carried ${s.branch}`, priority: 1 })) filed.push(id);
   }
   return filed;
 }
