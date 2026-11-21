@@ -75,6 +75,20 @@ class Ideas(unittest.TestCase):
         self.assertEqual(ideas.brainstorm(d, True, T)["new_ideas"], [])
         self.assertEqual(ideas.resolve_fact(d, {"path": "ops/widgets.jsonl", "kind": "jsonl", "rows": [{"label": "n", "ptr": "#lines"}]})["rows"][0]["value"], 12)
 
+    def test_scope_items_carry_a_probe_on_code_never_one_on_their_own_issue_file(self):
+        # PROBE-REAL-1: `grep:docs/issues/<id>.json::Status:** closed` passes the moment the item is marked closed and proves nothing
+        self.assertIsNone(ideas.scope_probe({"probe": "grep:docs/issues/Q-SPIN-X.json::Status:\\*\\* closed"}))
+        self.assertIsNone(ideas.scope_probe({}))
+        self.assertEqual(ideas.scope_probe({"probe": "file:spinoffs/worker.js"}), "file:spinoffs/worker.js")
+        self.assertTrue(all(ideas.scope_probe(s) for s in json.loads((REPO / "doctrine/spinoff-ideas.json").read_text())["scope_templates"]))
+        d = sandbox()
+        r = ideas.brainstorm(d, True, T)
+        for iid in r["scope_items"]:
+            body = json.loads((d / "docs/issues" / f"{iid}.json").read_text())["body"]
+            self.assertNotIn("docs/issues/", body)
+            want = next(s["probe"] for s in json.loads((d / "doctrine/spinoff-ideas.json").read_text())["scope_templates"] if "Q-SPIN-" + s["id"].upper() == iid)
+            self.assertIn("**Closing probe:** " + want, body)
+
     def test_a_board_of_a_missing_source_shows_unmeasured_not_zero(self):
         r = ideas.resolve_fact(sandbox(), {"path": "ops/none.json", "rows": []})
         self.assertEqual(r["rows"], [])

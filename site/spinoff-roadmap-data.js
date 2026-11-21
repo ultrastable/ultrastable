@@ -248,27 +248,27 @@ export default {
  "scope": [
   {
    "id": "Q-SPIN-SCOPE-CLAIMS-LIVE-DAILY",
-   "status": "closed",
+   "status": "open",
    "title": "Check every live app against its own claims once a day"
   },
   {
    "id": "Q-SPIN-SCOPE-COLLECT-CADENCE",
-   "status": "closed",
+   "status": "open",
    "title": "Collect every live app's metrics twice a day instead of once"
   },
   {
    "id": "Q-SPIN-SCOPE-IMPLEMENT-TEMPLATE-GENERATOR",
-   "status": "closed",
+   "status": "open",
    "title": "Implement the template-generator archetype in the spinoff Worker so the queued writers (security.txt, SPF/DMARC, privacy page) can launch"
   },
   {
    "id": "Q-SPIN-SCOPE-RECHECK-BOARDS",
-   "status": "closed",
+   "status": "open",
    "title": "Refresh every status board's facts on each loop run, not only on launch"
   },
   {
    "id": "Q-SPIN-SCOPE-SCOUT-MORE-SOURCES",
-   "status": "open",
+   "status": "closed",
    "title": "Add scout sources while neurons sit under the reserve"
   }
  ]

@@ -266,6 +266,17 @@ def candidates(root=REPO, now=None) -> list[dict]:
     return out
 
 
+def scope_probe(template: dict) -> str | None:
+    """The closing probe a scope item is filed with: the template's own probe on code or data. A probe that reads the queue's own
+    issue files (the old `grep:docs/issues/<id>.json::Status:** closed`) passes the moment the item is marked closed, so it proves
+    nothing; such a template, or one with no probe, is not filed (PROBE-REAL-1)."""
+    p = str(template.get("probe") or "").strip()
+    kind, _, rest = p.partition(":")
+    if kind not in ("file", "grep", "cmd") or not rest or rest.lstrip("./").startswith("docs/issues/"):
+        return None
+    return p
+
+
 # ---- brainstorm --------------------------------------------------------------------------------------------------------
 
 # DECISION-METRIC: idea-loop
@@ -298,11 +309,14 @@ def brainstorm(root=REPO, apply=False, now=None) -> dict:
         f = root / "docs/issues" / f"{iid}.json"
         if f.is_file() or any(s["cost"].get(k, 0) > head["left"].get(k, 0) for k in s["cost"]):
             continue
-        scope.append({"id": iid, "title": s["title"], "why": s["why"], "cost": s["cost"], "file": str(f.relative_to(root))})
+        probe = scope_probe(s)
+        if not probe:
+            continue  # a scope item with no probe on code, or one that only reads its own issue file, could only be closed by itself
+        scope.append({"id": iid, "title": s["title"], "why": s["why"], "cost": s["cost"], "file": str(f.relative_to(root)), "probe": probe})
         if apply:
-            body = (f"**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/{iid}.json::Status:\\*\\* closed\n**Status:** open\n\n"
+            body = (f"**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** {probe}\n**Status:** open\n\n"
                     f"{s['title']}. {s['why']}. Planned cost per day: {json.dumps(s['cost'])} against headroom {json.dumps({k: head['left'].get(k) for k in s['cost']})} (SPINOFF-IDEAS-1).\n\n"
-                    f"size: S\n\n**Prediction:** ops/free-tier.json level != shed within 48 h\n\n**Closing probe:** grep:docs/issues/{iid}.json::Status:\\*\\* closed")
+                    f"size: S\n\n**Prediction:** ops/free-tier.json level != shed within 48 h\n\n**Closing probe:** {probe}")
             f.write_text(json.dumps({"id": iid, "title": f"{iid}: {s['title']}", "body": body, "labels": ["role:product-manager", "ws:growth", "raises-self"], "milestone": "Now", "workstream": "Growth"}, indent=1) + "\n", encoding="utf-8")
             _append(root / cfg["queue"], {"event": "scope", "at": _iso(t), "id": iid, "cost": s["cost"]})
     if apply:

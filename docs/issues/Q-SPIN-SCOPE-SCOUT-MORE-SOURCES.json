@@ -1,12 +1,12 @@
 {
- "id": "Q-SPIN-SCOPE-SCOUT-MORE-SOURCES",
- "title": "Q-SPIN-SCOPE-SCOUT-MORE-SOURCES: Add scout sources while neurons sit under the reserve",
- "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-SPIN-SCOPE-SCOUT-MORE-SOURCES.json::Status:\\*\\* closed\n**Status:** open\n\nAdd scout sources while neurons sit under the reserve. neuron headroom is the least used free resource. Planned cost per day: {\"ai_neurons\": 300} against headroom {\"ai_neurons\": 4850} (SPINOFF-IDEAS-1).\n\nsize: S\n\n**Prediction:** ops/free-tier.json level != shed within 48 h\n\n**Closing probe:** grep:docs/issues/Q-SPIN-SCOPE-SCOUT-MORE-SOURCES.json::Status:\\*\\* closed",
- "labels": [
-  "role:product-manager",
-  "ws:growth",
-  "raises-self"
- ],
- "milestone": "Now",
- "workstream": "Growth"
+  "id": "Q-SPIN-SCOPE-SCOUT-MORE-SOURCES",
+  "title": "Q-SPIN-SCOPE-SCOUT-MORE-SOURCES: Add scout sources while neurons sit under the reserve",
+  "body": "**Owner:** product-manager\n**Trigger:** executor tick, driver order\n**Done check:** grep:doctrine/scout.json::\"id\": \"autogen\"\n**Status:** closed\n\nAdd scout sources while neurons sit under the reserve. neuron headroom is the least used free resource. Planned cost per day: {\"ai_neurons\": 300} against headroom {\"ai_neurons\": 4850} (SPINOFF-IDEAS-1).\n\nsize: S\n\n**Prediction:** ops/free-tier.json level != shed within 48 h\n\n**Closing probe:** grep:doctrine/scout.json::\"id\": \"autogen\"\n\n**Evidence:** 2026-11-21 probe on code replaced the self-satisfying probe on its own issue file (PROBE-REAL-1) and passes: grep:doctrine/scout.json::\"id\": \"autogen\". doctrine/scout.json gains five release feeds (gemini-cli, aider, cline, crewai, autogen); scout --check passes. (session_0156nqDte8FeqRLjvGRAAb6w)\n",
+  "labels": [
+    "role:product-manager",
+    "ws:growth",
+    "raises-self"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
 }
