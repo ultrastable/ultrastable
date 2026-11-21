@@ -28,6 +28,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@v7
+        with: {fetch-depth: 200}  # DEPLOY-ORIGIN-2: the origin of a deploy is read over the commits it carried
       - uses: actions/setup-node@v7
         with: {node-version: 22}
       - name: Worker tests

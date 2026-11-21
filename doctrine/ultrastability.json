@@ -62,6 +62,15 @@
      "why": "A deploy whose live code differs from its commit means the loop that ships is not closing.",
      "ladder": [
       {
+       "kind": "param",
+       "file": "doctrine/priorities.json",
+       "path": "goals.#repair-deploys.weight",
+       "delta": 20,
+       "min": 30,
+       "max": 150,
+       "what": "shift executor capacity to deploy repairs (raise the repair-deploys weight)"
+      },
+      {
        "kind": "item",
        "labels": [
         "p0",
@@ -85,6 +94,15 @@
      ],
      "why": "A public statement the code no longer makes true breaks the system's own record of itself.",
      "ladder": [
+      {
+       "kind": "param",
+       "file": "doctrine/priorities.json",
+       "path": "goals.#repair-claims.weight",
+       "delta": 20,
+       "min": 30,
+       "max": 150,
+       "what": "shift executor capacity to say-do fixes (raise the repair-claims weight)"
+      },
       {
        "kind": "item",
        "labels": [
@@ -178,6 +196,15 @@
      "why": "A page that fails accessibility, leaks backend detail, breaks its structure or its brand is a front end drifting into a mishmash; the UI/UX loop (UIUX-1) must keep this at zero, and a variable that cannot be read from a fresh audit is unmeasured and so not in bounds.",
      "ladder": [
       {
+       "kind": "param",
+       "file": "doctrine/priorities.json",
+       "path": "goals.#repair-ui.weight",
+       "delta": 20,
+       "min": 30,
+       "max": 150,
+       "what": "shift executor capacity to front-end fixes (raise the repair-ui weight)"
+      },
+      {
        "kind": "item",
        "labels": [
         "p1",
@@ -201,6 +228,15 @@
      "why": "A path in doctrine/stakeholders.json that no longer clicks through is a user who cannot get from entry to the next step; every audience path must walk, and the UI/UX loop runs each as a browser flow.",
      "ladder": [
       {
+       "kind": "param",
+       "file": "doctrine/priorities.json",
+       "path": "goals.#repair-ui.weight",
+       "delta": 20,
+       "min": 30,
+       "max": 150,
+       "what": "shift executor capacity to broken user paths (raise the repair-ui weight)"
+      },
+      {
        "kind": "item",
        "labels": [
         "p0",
@@ -208,6 +244,83 @@
        ],
        "workstream": "Design",
        "what": "restructure: repair the broken step or change the path in doctrine/stakeholders.json so it matches the page"
+      }
+     ]
+    },
+    {
+     "id": "unattended_horizon",
+     "name": "Unattended horizon",
+     "reading": "yearsim.horizon_p10",
+     "min": 365,
+     "max": null,
+     "unit": "days (10th percentile of simulated years)",
+     "first_order": [
+      "watchdog",
+      "executor"
+     ],
+     "why": "A year with no person is the design target (UNATTENDED-365). foundation/yearsim.py injects a year of faults into the real recovery code; when the 10th percentile of simulated years ends before 365 days, something the system needs is not repairing itself.",
+     "ladder": [
+      {
+       "kind": "param",
+       "file": "doctrine/priorities.json",
+       "path": "goals.#unattended-year.weight",
+       "delta": 20,
+       "min": 30,
+       "max": 150,
+       "what": "shift executor capacity to whatever ends the simulated year (raise the unattended-year weight)"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready"
+       ],
+       "workstream": "Ultrastability",
+       "what": "restructure: build the recovery mechanism for the fault class that ends the simulated year first"
+      }
+     ]
+    },
+    {
+     "id": "self_shipping",
+     "name": "Self-originated releases",
+     "reading": "criticality.self_share",
+     "min": 0.2,
+     "max": null,
+     "unit": "share of verified deploys the server originated",
+     "first_order": [
+      "executor",
+      "merge-lane",
+      "deploy-workers"
+     ],
+     "why": "The system is autonomous only if the server itself originates and ships substantive changes (SELF-REFERENCE-1). Deploys driven by an outside session raise k, never this.",
+     "ladder": [
+      {
+       "kind": "param",
+       "file": "doctrine/clocks.json",
+       "path": "chain.max_runs_per_day",
+       "delta": 1,
+       "min": 1,
+       "max": 8,
+       "what": "wake the executor more often"
+      },
+      {
+       "kind": "param",
+       "file": "doctrine/priorities.json",
+       "path": "goals.#self-shipping.weight",
+       "delta": 20,
+       "min": 30,
+       "max": 150,
+       "what": "shift executor capacity to its own repair (raise the self-shipping weight)"
+      },
+      {
+       "kind": "item",
+       "labels": [
+        "p0",
+        "agent-ready",
+        "raises-self"
+       ],
+       "workstream": "Ultrastability",
+       "what": "restructure: find why the executor's items fail and change its route (model rung, patch format, item size)"
       }
      ]
     }
@@ -230,6 +343,15 @@
      ],
      "why": "The system has to be reachable to be improved.",
      "ladder": [
+      {
+       "kind": "param",
+       "file": "doctrine/spinoff.json",
+       "path": "budget.max_live",
+       "delta": -2,
+       "min": 4,
+       "max": 12,
+       "what": "run fewer live apps, so each one gets more of the free-tier capacity"
+      },
       {
        "kind": "spinoff",
        "verb": "iterate",
@@ -255,6 +377,15 @@
      "why": "The owner accepted a running cost; past it the system is not viable.",
      "ladder": [
       {
+       "kind": "param",
+       "file": "doctrine/spinoff.json",
+       "path": "budget.max_requests_per_app_per_day",
+       "delta": -4000,
+       "min": 4000,
+       "max": 20000,
+       "what": "lower the per-app daily request cap (soft throttle, never a stop)"
+      },
+      {
        "kind": "spinoff",
        "verb": "iterate",
        "what": "iterate: cut the spend source"
@@ -279,6 +410,15 @@
      "why": "A tenant's public statements stay true.",
      "ladder": [
       {
+       "kind": "param",
+       "file": "doctrine/spinoff.json",
+       "path": "budget.max_launches_per_day",
+       "delta": -1,
+       "min": 1,
+       "max": 3,
+       "what": "launch fewer new apps a day, leaving capacity for upkeep"
+      },
+      {
        "kind": "spinoff",
        "verb": "iterate",
        "what": "iterate: regenerate the statements from code"
@@ -298,6 +438,15 @@
      ],
      "why": "A system with no measure that can be wrong cannot be improved. Read as the tenant's declared metric divided by its own declared target (ops/tenants/<slug>.json declared_metric, declared_target); 1.0 is on target.",
      "ladder": [
+      {
+       "kind": "param",
+       "file": "doctrine/spinoff.json",
+       "path": "score.min_score",
+       "delta": 1,
+       "min": 6,
+       "max": 12,
+       "what": "launch only higher-scoring ideas"
+      },
       {
        "kind": "spinoff",
        "verb": "iterate",
@@ -337,5 +486,7 @@
    ],
    "tenant_scope": "tenant"
   }
- }
+ },
+ "item_settle_ticks": 21,
+ "_doc_settle": "SECOND-LOOP-SETTLE-1 (2026-11-21): a param step is judged after settle_ticks readings, because a parameter acts at once. An item or spinoff step is work the executor must do first, so judging it after 3 readings reverted all 14 of them before any could act (0 of 14 kept, ops/ultrastability.jsonl to 2026-11-21). It is kept as soon as the variable is back in bounds, reverted when its item reaches a final status with the variable still out, or after item_settle_ticks readings."
 }
