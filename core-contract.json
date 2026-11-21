@@ -12,7 +12,6 @@
   "standards",
   ".claude",
   ".github/copilot-instructions.md",
-  ".github/dependabot.yml",
   "AGENTS.md",
   "CLAUDE.md",
   "scripts",
