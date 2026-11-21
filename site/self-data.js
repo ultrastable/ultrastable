@@ -705,6 +705,7 @@ export default {
   "role-uiux-manager",
   "running-system",
   "scout",
+  "seed-launch",
   "server-side-only",
   "session-reaper",
   "site-deploy",
@@ -2028,6 +2029,19 @@ export default {
     "summary": "YEARFAIL-1: twelve simulated months of zero input run against a scratch copy weekly; each injected failure must be detected by the system's own detectors and the fix verified; a failing month files Q-YEARFAIL-<area>.",
     "trigger": "on demand (python3 -m foundation yearfail --apply) until the weekly workflow lands (Q-YEARFAIL-workflow)",
     "workflows": []
+   },
+   {
+    "closing_probe": "grep:foundation/seedlaunch.py::def check",
+    "id": "seed-launch",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "8d",
+    "summary": "SEED-LAUNCH-1: every seed is built, deployed, year-gated and probed live by the system. A fresh seed from seed/ and every repository made from the seed template are launched on Ultrastable's own Cloudflare account; the year-unattended gate and a live /health probe are required.",
+    "trigger": "weekly workflow and on demand",
+    "workflows": [
+     "seed-launch"
+    ]
    }
   ],
   "workers": [
@@ -2285,7 +2299,9 @@ export default {
    },
    {
     "id": "seed-launch",
-    "loops": []
+    "loops": [
+     "seed-launch"
+    ]
    },
    {
     "id": "sessions",

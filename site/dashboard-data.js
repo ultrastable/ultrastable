@@ -174,7 +174,7 @@ export default {
      "id": "loops",
      "title": "Closed loops",
      "source": "instances/ultrastable/loop-registry.json",
-     "headline": "107 registered loops",
+     "headline": "108 registered loops",
      "rows": [
       [
        "funding-outreach",
@@ -190,7 +190,7 @@ export default {
       ],
       [
        "managers",
-       21
+       22
       ],
       [
        "memory",
