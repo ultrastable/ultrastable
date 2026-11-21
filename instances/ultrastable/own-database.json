@@ -27,6 +27,15 @@
     "instances/ultrastable/system/ultrastable-site.wrangler.jsonc",
     "site/wrangler.toml"
    ]
+  },
+  {
+   "name": "ultrastable-spinoffs",
+   "id": "7daf8b68-8516-42a8-b7c4-68fd00d10e24",
+   "binding": "DB on the spinoffs Worker",
+   "holds": "the spinoff idea queue and launch state of the core (moved into the ultrastable account 2026-11-21)",
+   "bound_by": [
+    "spinoffs/wrangler.toml"
+   ]
   }
  ],
  "tenant": [
