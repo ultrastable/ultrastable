@@ -3,6 +3,7 @@
 // REACH-1: the server-side publisher. Reads the public calendar and gate (social/calendar.json, social/gate.json in the repository), posts the due item to every channel linked
 // through /connect/bluesky and /connect/mastodon, and records each post in D1. Caps, kill switch, paused channels and mode come from the gate file. Modules take db, env, fetch, now.
 import * as store from './auth/store.js';
+import { getToken } from './auth/index.js';
 import { dpopFetch, refreshForm, assertionFields } from './auth/atproto.js';
 
 const RAW = repo => `https://raw.githubusercontent.com/${repo}/main/social/`;
@@ -46,10 +47,12 @@ export async function bufferChannels(token, f) {
   const c = await bgql(f, token, '{ channels(input: { organizationId: ' + JSON.stringify(org.id) + ' }) { id service isDisconnected } }');
   return ((c.data || {}).channels || []).filter(x => !x.isDisconnected);
 }
-export async function postBuffer(token, text, f, short) {
+export async function postBuffer(token, text, f, short, only) {
   const out = {};
   for (const ch of await bufferChannels(token, f)) {
-    const svc = /substack/i.test(ch.service) ? 'substack' : ch.service, t = svc === 'twitter' ? String(short || text).slice(0, 280) : text;
+    const svc = /substack/i.test(ch.service) ? 'substack' : ch.service;
+    if (only && only.length && !only.includes(svc)) continue;  // a retry re-sends only the services that failed
+    const t = svc === 'twitter' ? String(short || text).slice(0, 280) : text;
     const mode = svc === 'twitter' ? 'shareNow' : 'addToQueue';
     const r = await bgql(f, token, 'mutation { createPost(input: { text: ' + JSON.stringify(t) + ', channelId: ' + JSON.stringify(ch.id) + ', schedulingType: automatic, mode: ' + mode + ' }) { ... on PostActionSuccess { post { id status } } ... on MutationError { message } } }');
     const cp = (r.data || {}).createPost;
@@ -85,6 +88,26 @@ export async function classifyRelay(results, f) {
   return out;
 }
 
+// POST-READBACK-3: every tick, relay posts that are queued or unverified are read back from Buffer itself (the relay's /relay/status: sent state and the service's own link).
+// "verified" needs status sent AND a link; a post Buffer still holds stays queued; an error state becomes failed so the retry path re-sends it.
+export async function verifyRelay(db, env, f, now = Date.now()) {
+  const rows = ((await db.prepare("SELECT id, channel, ref, status, attempts FROM social_posted WHERE channel LIKE 'relay:%' AND status IN ('queued','unverified') LIMIT 12").all()).results || []).filter(r => /[0-9a-f]{24}/.test(String(r.ref)));
+  if (!rows.length) return { checked: 0 };
+  const ids = rows.map(r => /[0-9a-f]{24}/.exec(String(r.ref))[0]);
+  let posts = {};
+  try { const r = await f(env.SOCIAL_RELAY_URL + '/relay/status', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ ids }) }); if (!r.ok) return { checked: 0, error: 'relay status HTTP ' + r.status }; posts = (await r.json()).posts || {}; }
+  catch (e) { return { checked: 0, error: String(e && e.message || e).slice(0, 120) }; }
+  const out = {};
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i], v = posts[ids[i]] || {}, st = String(v.status || '').toLowerCase();
+    const status = st === 'sent' && v.externalLink ? 'verified' : /error|fail/.test(st) ? 'failed' : r.status;
+    if (status === r.status) { out[r.channel] = status; continue; }
+    await db.prepare('UPDATE social_posted SET status=?, ref=?, at=? WHERE id=? AND channel=?').bind(status, (ids[i] + ' ' + (v.externalLink || st)).slice(0, 400), new Date(now).toISOString(), r.id, r.channel).run();
+    out[r.channel] = status;
+  }
+  return { checked: rows.length, results: out };
+}
+
 // Order of what posts next: the weekly meta-story, then a tenant's changed items, then a tenant's backlog in hierarchy order, then platform events, then evergreen.
 export const priority = p => (p.arm === 'meta-story' ? 0 : String(p.arm || '').startsWith('ps-') ? (p.kind === 'event' ? 1 : 2) : p.kind === 'event' ? 3 : 4);
 
@@ -96,6 +119,8 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
     const m = await store.material(db, env, tenant, key); if (m && m.status !== 'pending' && (ch === 'bluesky' ? m.secret && m.secret.refresh_token : m.access)) channels[ch] = m;  // an unfinished sign-in (no token) is not a channel: it would only spend calls
   }
   if (env.SOCIAL_RELAY_TOKEN && env.SOCIAL_RELAY_URL) channels.relay = { relay: true };  // SOCIAL-RELAY-1: the owner's existing Buffer and Mastodon logins, reached through a token-gated relay that never exposes them
+  if (channels.relay) { try { await verifyRelay(db, env, f, now); } catch (e) { await store.event(db, tenant, 'oauth:relay', 'verify-error', String(e && e.message || e).slice(0, 120)); } }  // runs every tick, before any skip
+  if (channels.relay && (channels.buffer || channels.mastodon)) delete channels.relay;  // SOCIAL-MODULE-1: a native credential retires the relay; it only remains as the fallback until Buffer and Mastodon are linked here
   if (!Object.keys(channels).length) return { skipped: 'no channel connected' };  // no network call until an account is linked
   const base = RAW(env.SOCIAL_REPO || repo), get = async n => { const r = await f(base + n); if (!r.ok) throw new Error(n + ' HTTP ' + r.status); return r.json(); };
   const [gate, cal] = await Promise.all([get('gate.json'), get('calendar.json')]);
@@ -113,7 +138,8 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   if (days.size >= gate.max_posts_per_day || wk.size >= gate.max_posts_per_week) return { skipped: 'rate limit' };
   const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3));  // a failed channel is retried up to 3 times; queued, unverified and verified rows are not re-sent
   const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3) : done(id, 'relay'); };  // per-service rows override a legacy channel='relay' row, which only said the relay was called
-  const posted = new Set((cal.posts || []).map(x => x.id).filter(id => Object.keys(channels).every(ch => ch === 'relay' ? relayDone(id) : done(id, ch))));
+  const bufferDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('buffer:')); return rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3); };  // SOCIAL-MODULE-1: one row per Buffer service, so each is verified and retried on its own
+  const posted = new Set((cal.posts || []).map(x => x.id).filter(id => Object.keys(channels).every(ch => ch === 'relay' ? relayDone(id) : ch === 'buffer' ? bufferDone(id) : done(id, ch))));
   const due = (cal.posts || []).filter(p => !posted.has(p.id) && p.date <= today).sort((a, b) => priority(a) - priority(b));
   if (!due.length) return { skipped: 'nothing due' };
   const p = due[0], out = {};
@@ -124,8 +150,14 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
     if (status !== 'verified') await store.event(db, tenant, 'oauth:' + ch, status, String(ref).slice(0, 120));
   };
   for (const [ch, m] of Object.entries(channels)) {
-    if (ch !== 'relay' && done(p.id, ch)) continue;
+    if (ch === 'buffer' ? bufferDone(p.id) : ch !== 'relay' && done(p.id, ch)) continue;
     try {
+      if (ch === 'buffer') {
+        const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('buffer:') && r.status === 'failed').map(r => r.channel.slice(7));
+        const bt = await getToken(db, env, tenant, 'oauth:buffer', { fetch: f, now }); if (!bt.ok) throw new Error('buffer: ' + bt.error);  // the access token lives about an hour; it is renewed here
+        for (const [svc, id] of Object.entries(await postBuffer(bt.token, p.long || p.text, f, p.text, failed))) await rec('buffer:' + svc, id, /^failed/.test(id) ? 'failed' : 'queued');  // queued until reconcileBuffer reads the public post back
+        continue;
+      }
       if (ch === 'relay') {
         const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => r.channel.slice(6));
         const stale = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => (/queued ([0-9a-f]{24})/.exec(String(r.ref)) || [])[1]).filter(Boolean);
@@ -134,8 +166,8 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
         for (const [svc, v] of Object.entries(res)) await rec('relay:' + svc, v.ref, v.status);
         continue;
       }
-      const ref = ch === 'mastodon' ? await postMastodon(m, p.text, p.id, f) : ch === 'buffer' ? JSON.stringify(await postBuffer(m.access, p.long || p.text, f, p.text)) : await postBluesky(db, env, tenant, m, p.text, f, now);
-      await rec(ch, ref, ch === 'buffer' ? 'queued' : (await readBack(ch, ref, f)) ? 'verified' : 'unverified');
+      const ref = ch === 'mastodon' ? await postMastodon(m, p.text, p.id, f) : await postBluesky(db, env, tenant, m, p.text, f, now);
+      await rec(ch, ref, (await readBack(ch, ref, f)) ? 'verified' : 'unverified');
     } catch (e) { await rec(ch, String(e && e.message || e), 'failed'); }
   }
   return { id: p.id, results: out };

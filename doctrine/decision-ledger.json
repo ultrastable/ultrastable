@@ -757,7 +757,7 @@
    "date": "2026-11-13",
    "title": "COSTGUARD-1 budgets as failure modes (Session: session_0156nqDuRz3AxosG8EDZT7Zi; Session: session_0156nqDsZ)",
    "body": "External D1 budgets (qnfo-audit under 15M rows/hr) are sampled hourly by the tick Worker into cost_samples and probed by selfaudit; red files the next FIX- item, green closes it. GitHub App org access and k_eff below 1 are probed modes with fixes.",
-   "probe": "grep:instances/ultrastable/failure-modes.json::qnfo-audit-d1-budget"
+   "probe": "grep:instances/ultrastable/cost-budgets.json::ultrastable-org"
   },
   {
    "id": "lesson-2026-11-13-free-org-plan-blocks-branch-protection-bundles-restore",
@@ -3755,6 +3755,139 @@
    "title": "MERGE-NOW-1: PRs merge on the webhook, not on a clock",
    "body": "Rowan 2026-11-21: no PR sits in GitHub. Root causes: the Actions lane wakes only when checks finish, so a conflicting PR waited for the 10-minute tick or the daily sweep; the tick sweeper refreshed only 'behind' PRs and left 'dirty' ones; workflow-touching conflicting PRs had no owner that could merge them; site/dashboard-data.js carried HEAD's sha so every merge changed it; README claim counts churned on every deploy; merges left conflict markers in README.md and platform/adapters/README.md. Change: seed/worker/src/mergenow.js runs inside the /hook/github request on pull_request, check_suite (now subscribed) and push to main with the org App token: ready, approve waiting runs, update-branch, reconcile conflicts on generated files (seed/worker/src/generated.js equals regen_generated OUTPUTS, tested) and claim values through the git data API then POST /merges, squash-merge on green at the exact head. The sweeper reconciles one dirty PR per tick and records merge_p50/p95, oldest open PR and stalled PRs (migration 0029, self-applied DDL); a PR open over 15 minutes files Q-PR-STALL-*. build_dashboard asof is the last commit of its sources; resolve_generated takes identical and claim-only hunks in any file. 410 Worker tests pass.",
    "probe": "grep:seed/worker/src/mergenow.js::MERGE-NOW-1"
+  },
+  {
+   "id": "decision-2026-11-21-substance-1-only-changes-that-alter-executable-behaviour-cou",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SUBSTANCE-1: only changes that alter executable behaviour count, open a PR or redeploy",
+   "body": "Measured 2026-11-14..21 (substance --report): 21 of 192 system-made changes altered behaviour, 7 trivial, 164 records; 73 of 145 deploy rounds carried no behaviour change. Executor refuses non-substantive PRs, checks backstop for executor and bot PRs, deploy-ultrastable skips data-only pushes (max_age_hours 20), generators stop stamp-only rewrites, tick classifies merged PRs and /progress pulse plus /pulse.json count only behaviour changes; unused_import self-code kind switched off; lane comment dedupe (PR 826 got 5 identical comments).",
+   "probe": "grep:foundation/executor.py::rejected-trivial"
+  },
+  {
+   "id": "lesson-2026-11-21-a-relay-result-is-read-back-per-channel-never-stored-as-post",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "A relay result is read back per channel, never stored as posted",
+   "body": "Relay returned linkedin/substack scheduled and facebook/instagram no-channel; publisher stored posted. Rows are now per service with status verified, queued, unverified or failed; failed services retry up to 3 times; per-service rows override a legacy relay row. Live relay qnfo-social patched to share now; its source is not in QNFO/qnfo-workers (open loop: put it there, add a cancel route for stale Buffer queue entries).",
+   "probe": "grep:seed/worker/src/social.js::relayDone",
+   "session": "session_0156nqDrz7VJCnauouR6AgUS"
+  },
+  {
+   "id": "lesson-2026-11-21-conflict-markers-on-main-plus-per-deploy-claim-rewrites-keep",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Conflict markers on main plus per-deploy claim rewrites keep every README PR in conflict",
+   "body": "Markers merged by #834 sat inside the README status table; every deploy record rewrites the live-deploys claim on that line (several times an hour), so any PR touching README.md conflicted within minutes and the claim-only resolver could not help because the conflicting region also held marker lines. Removed the markers; tests pass on this branch. The tick sweeper also ran out of its subrequest share on most passes (sweeper_runs 682-684), so the webhook route in seed/worker/src/mergenow.js is the primary merge path and the sweeper is the fallback.",
+   "probe": "grep:seed/worker/src/mergenow.js::MERGE-NOW-1",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "decision-2026-11-21-plan-1-the-ultrastable-account-is-on-workers-paid-governors-",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "PLAN-1: the ultrastable account is on Workers Paid; governors read paid allowances",
+   "body": "Rowan bought Workers Paid on 2026-11-21 (5 USD a month base). instances/ultrastable/instance.json budget.plan is paid and budget.usd_per_month is 30 (AI beyond the free 10,000 neurons a day gets about 0.8 USD a day; the soft 5 USD a day target still throttles everything). budget.js planOf reads CF_PLAN, else the manifest. freetier.js limitsFor('paid') uses daily slices of the monthly inclusions, so the measured day that shed on the free plan now runs at full speed. subreq.js capsFor('paid') plans 1,000 subrequests per invocation and lifts the four-phase loop rotation. The plan is declared in the manifest. Surfaces tested for a live plan reading: accounts subscriptions API (HTTP 403, needs Billing Read), workers account-settings and account details (no plan field).",
+   "probe": "grep:seed/worker/src/subreq.js::PLAN-1",
+   "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "decision-2026-11-21-roi-self-1-api-roi-makes-the-pay-or-stay-call-itself-time-vs",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "ROI-SELF-1: /api/roi makes the pay-or-stay call itself (time vs cost, quality unchanged)",
+   "body": "roi.js analyze returns time_vs_cost (throttled hours, projected paid bill per day against the soft target) and system_decision. Paid is worth it when the free plan throttled for 2 shed days or 12 h in the window and the projected bill fits inside half the soft daily target. The tick files one gate item ROI-PAY-<month> (kind gate, owner billing) with the default in effect (free plan, soft throttling); it closes once CF_PLAN=paid.",
+   "probe": "grep:seed/worker/src/roi.js::ROI-SELF-1",
+   "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "decision-2026-11-21-spend-soft-1-5-usd-a-day-is-a-soft-target-with-graduated-thr",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SPEND-SOFT-1: 5 USD a day is a soft target with graduated throttling, never a hard stop",
+   "body": "Rowan 2026-11-21: Workers Paid only with cost controls, no more than 5 USD a day, and caps must be soft like a phone plan; a system never grinds to a halt. seed/worker/src/spend.js estimates today's bill from one Cloudflare GraphQL reading (requests, CPU, D1, KV, R2, Durable Objects, account-wide AI neurons) at list prices and sets a band by threshold share of the target: full under 0.5, ease under 0.7 (idle loops x1.5, cheapest model first), throttle under 0.9 (AI inside the free allocation, wide reads hourly, loops x3), crawl above (essential steps and dispatch/execute every tick, the rest every 3 h, AI one call per tick from the free allocation). The AI governor has no frozen mode: past its allowance it crawls at one call an hour. Lean and degrade no longer skip steps for good (tick.js stepPlan). Per-tenant shares in instances/ultrastable/instance.json spend.tenants. Cloudflare billing email alerts at 75 and 150 USD a month were added beside the auto-created 10 USD one; the native Workers spending limit is deliberately not set because it blocks every Worker.",
+   "probe": "grep:seed/worker/src/spend.js::SPEND-SOFT-1",
+   "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "lesson-2026-11-21-ai-gov-account-1-static-per-worker-ai-shares-refused-calls-w",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "AI-GOV-ACCOUNT-1: static per-worker AI shares refused calls with half the account's neurons unused",
+   "body": "Each worker planned against a static share of the day in its own ledger while the console and site shares sat idle. The tick now sizes its allowance from Cloudflare's account-wide neuron count (aiInferenceAdaptiveGroups, sampled every tick) minus its own use; the static share is only the fallback. Measured 2026-11-21 over 24 h: 9,645 neurons account-wide, KV reads 116k (free 100k a day), D1 reads 5.7M (free 5M a day), requests 98.6k (free 100k a day): the free plan binds on four meters at once.",
+   "probe": "grep:seed/worker/src/budget.js::AI-GOV-ACCOUNT-1",
+   "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "lesson-2026-11-21-marker-root-1-conflict-markers-committed-on-main-kept-every-",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "MARKER-ROOT-1: conflict markers committed on main kept every PR in conflict until a session stepped in",
+   "body": "PR 935 sat open with label conflict and Rowan had to call it out. Root cause: README.md and platform/adapters/README.md on main carried committed merge-conflict markers, so every PR conflicted there on each merge and scripts/resolve_generated.py could not match the nested hunks; with a conflict no hosted check ran on the new head either. Remedy in code: scripts/no_markers.py is a step in checks (a change that carries markers does not pass), scripts/regen_generated.py runs it with --fix after every merge to main (claim-only hunks are flattened with no person), and resolve_generated.py flatten() handles nested hunks. Tests ran: 425 Worker tests pass, flatten exercised on a nested sample.",
+   "probe": "file:scripts/no_markers.py",
+   "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "decision-2026-11-21-pathfinder-1-find-another-path-before-any-owner-ask",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "PATHFINDER-1: find another path before any owner ask",
+   "body": "Owner 2026-11-21: multiple paths always exist and the information is already held. foundation/pathfinder.py resolves routes per surface class, records attempts, diffs regressed integrations, and fails openloops --check on an owner ask without exhaustion proof.",
+   "probe": "file:foundation/pathfinder.py",
+   "session": "session_0156nqDsmZTfHS1uunx9hyu7"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-standards-surface-registered",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: standards surface registered",
+   "body": "The token-gated import route is registered as an owner-audience surface, not discoverable.",
+   "probe": "grep:seed/standards/surfaces.json::social-import",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-the-social-module-is-the-human-interface-lay",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: the social module is the human interface layer, native in core",
+   "body": "Rowan 2026-11-21: interfacing with humans (social, outreach, replies, newsletters) is a core module every system has; tenants supply config and content only; no channel runs through another account. Buffer channels verified per service; replies and mentions land in human_inbox.",
+   "probe": "grep:seed/worker/src/humans.js::SOCIAL-MODULE-1"
+  },
+  {
+   "id": "decision-2026-11-21-quniverse-cut-1-no-runtime-dependency-on-the-quniverse-accou",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "QUNIVERSE-CUT-1: no runtime dependency on the Quniverse account",
+   "body": "Quniverse account assumed gone (Rowan 2026-11-21). All four zones, mail relay and the PS backend URL now live in the ultrastable account. singleaccount --check scans runtime code for Quniverse/QNFO hosts, repos and resources. Social relay on qnfo-social is moved by the social-module thread.",
+   "probe": "grep:doctrine/single-account.json::QUNIVERSE-CUT-1",
+   "session": "session_0156nqDrrT7TjGvkih9nT217"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-a-native-credential-retires-the-relay",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: a native credential retires the relay",
+   "body": "The publisher drops the relay channel once a native buffer or mastodon credential is sealed. Buffer and Mastodon are linked through the connect flow, with the credential import route live as a second route.",
+   "probe": "grep:seed/worker/src/social.js::retires the relay",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-one-click-buffer-and-mastodon-links",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: one-click Buffer and Mastodon links",
+   "body": "Buffer registers its own OAuth app at its registration endpoint and uses authorization code with PKCE as a public client, so the connect link needs no key from a person. Mastodon uses one link with the instance in it. Never-linked channels appear in the owner-acts list.",
+   "probe": "grep:seed/worker/src/auth/connectors.js::dynamicClient",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "lesson-2026-11-21-relay-posts-are-read-back-from-buffer-every-tick",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Relay posts are read back from Buffer every tick",
+   "body": "verifyRelay in seed/worker/src/social.js calls the relay /relay/status for queued or unverified relay rows each tick; verified needs status sent plus the service link, an error becomes failed and is retried.",
+   "probe": "grep:seed/worker/src/social.js::verifyRelay",
+   "session": "session_0156nqDrz7VJCnauouR6AgUS"
   }
  ]
 }

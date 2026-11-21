@@ -1,15 +1,16 @@
 {
  "_doc": "SINGLE-ACCOUNT-1 move state, read by `python3 -m foundation singleaccount --moved` (closing probe of OL-20261118-1: exit 1 while any item is not moved). The nameserver retry (Rowan approved 2026-11-19) and each worker move set an item to 'moved' only after a live check.",
  "items": {
-  "zone:ultrastable.net": "pending",
-  "zone:ultrastable.io": "pending",
-  "zone:ultrastable.app": "pending",
-  "zone:ultrastable.org": "pending",
+  "zone:ultrastable.net": "moved",
+  "zone:ultrastable.io": "moved",
+  "zone:ultrastable.app": "moved",
+  "zone:ultrastable.org": "moved",
   "kv:39-keys": "moved",
-  "worker:ultrastable-spinoffs": "staged",
-  "worker:ultrastable-mail-relay": "pending",
-  "worker:tenant-ps-edge": "staged",
-  "worker:tenant-ps-mail": "pending"
+  "worker:ultrastable-spinoffs": "moved",
+  "worker:ultrastable-mail-relay": "moved",
+  "worker:tenant-ps-edge": "moved",
+  "worker:tenant-ps-mail": "moved"
  },
- "_staged_doc": "2026-11-20: 'staged' = the Worker (and for spinoffs its D1 ultrastable-spinoffs, id 7daf8b68-8516-42a8-b7c4-68fd00d10e24, 3 and 7 rows equal to the source) exists in the ultrastable account with no route and no workers.dev; it counts as moved only when its zone's routes or custom domains are served from the ultrastable account. kv:39-keys: every key of both source namespaces is present by name in the ultrastable namespaces (80 of 80 and 4 of 4; the target holds 28 newer keys)."
+ "_staged_doc": "2026-11-20: 'staged' = the Worker (and for spinoffs its D1 ultrastable-spinoffs, id 7daf8b68-8516-42a8-b7c4-68fd00d10e24, 3 and 7 rows equal to the source) exists in the ultrastable account with no route and no workers.dev; it counts as moved only when its zone's routes or custom domains are served from the ultrastable account. kv:39-keys: every key of both source namespaces is present by name in the ultrastable namespaces (80 of 80 and 4 of 4; the target holds 28 newer keys).",
+ "_moved_doc_2026_11_21": "All four zones active in the ultrastable account (ultrastable.io activated 2026-11-21 after MX/DKIM copied and email routing rebuilt); mail relay redeployed there with a fresh token; tenant-ps-edge serves ultrastable.org custom domains."
 }

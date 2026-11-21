@@ -1,0 +1,32 @@
+{
+  "_doc": "SUBSTANCE-1 shared test vectors: foundation/substance.py and workers/core/substance/index.js must both return `expect` for every case (tests/foundation/test_substance.py, workers/core/substance/substance.test.js), so the Python gate and the Worker's classifier cannot drift apart.",
+  "cases": [
+    {"name": "number bump in code", "path": "foundation/x.py", "status": "modified", "removed": ["LIMIT = 70"], "added": ["LIMIT = 71"], "expect": "literal"},
+    {"name": "hash churn in code", "path": "seed/worker/src/a.js", "status": "modified", "removed": ["const ASOF = \"5e4a1aab\";"], "added": ["const ASOF = \"d02d20a\";"], "expect": "literal"},
+    {"name": "timestamp churn", "path": "seed/worker/src/a.js", "status": "modified", "removed": ["  at: '2026-11-21T07:35:20Z',"], "added": ["  at: '2026-11-21T08:51:14Z',"], "expect": "literal"},
+    {"name": "version string bump", "path": "seed/worker/src/a.js", "status": "modified", "removed": ["var VERSION = \"1.7.1-codeagent\";"], "added": ["var VERSION = \"1.7.2-codeagent\";"], "expect": "literal"},
+    {"name": "comment only", "path": "foundation/x.py", "status": "modified", "removed": ["x = f(y)  # old note"], "added": ["x = f(y)  # new note"], "expect": "comment"},
+    {"name": "js comment only", "path": "site/a.js", "status": "modified", "removed": ["// Trivial change to trigger a build"], "added": ["// Another trivial change"], "expect": "comment"},
+    {"name": "whitespace only", "path": "site/a.js", "status": "modified", "removed": ["if(a){b()}"], "added": ["if (a) { b() }"], "expect": "format"},
+    {"name": "unused import removed", "path": "scripts/smoke_probe.py", "status": "modified", "removed": ["import json, os"], "added": ["import os"], "expect": "import"},
+    {"name": "js import reorder", "path": "site/a.js", "status": "modified", "removed": ["import { a, b } from './x.js';"], "added": ["import { b, a } from './x.js';"], "expect": "import"},
+    {"name": "real logic change", "path": "foundation/x.py", "status": "modified", "removed": ["    if n > 3:"], "added": ["    if n > 3 and not paused:"], "expect": "behaviour"},
+    {"name": "sql in a string changes", "path": "seed/worker/src/a.js", "status": "modified", "removed": ["db.prepare('SELECT n FROM t WHERE a = ?')"], "added": ["db.prepare('SELECT n FROM t WHERE a = ? AND b IS NULL')"], "expect": "behaviour"},
+    {"name": "hard-coding a computed value", "path": "foundation/x.py", "status": "modified", "removed": ["count = len(items)"], "added": ["count = 795"], "expect": "behaviour"},
+    {"name": "new code file", "path": "foundation/new.py", "status": "added", "removed": [], "added": ["def f(x):", "    return x + 1"], "expect": "behaviour"},
+    {"name": "deleted code file", "path": "foundation/old.py", "status": "removed", "removed": ["def f(x):", "    return x + 1"], "added": [], "expect": "behaviour"},
+    {"name": "generated data module", "path": "site/dashboard-data.js", "status": "modified", "removed": ["  \"headline\": \"794 issue files\""], "added": ["  \"headline\": \"795 issue files\""], "expect": "generated"},
+    {"name": "ledger append", "path": "ops/deploys.jsonl", "status": "modified", "removed": [], "added": ["{\"at\":\"2026-11-21\"}"], "expect": "record"},
+    {"name": "issue file", "path": "docs/issues/Q-X.json", "status": "modified", "removed": ["\"title\": \"a\""], "added": ["\"title\": \"b\""], "expect": "record"},
+    {"name": "config switch flipped", "path": "doctrine/selfcode.json", "status": "modified", "removed": ["      \"enabled\": true,"], "added": ["      \"enabled\": false,"], "expect": "behaviour"},
+    {"name": "config number tweak", "path": "doctrine/selfcode.json", "status": "modified", "removed": ["    \"max_open\": 3,"], "added": ["    \"max_open\": 4,"], "expect": "literal"},
+    {"name": "config prose only", "path": "doctrine/selfcode.json", "status": "modified", "removed": ["  \"_doc\": \"old words\","], "added": ["  \"_doc\": \"new words\","], "expect": "comment"},
+    {"name": "workflow step added", "path": ".github/workflows/x.yml", "status": "modified", "removed": [], "added": ["      - run: python3 -m foundation substance --check"], "expect": "behaviour"}
+  ],
+  "verdicts": [
+    {"name": "trivial executor change", "kinds": ["import", "record", "generated"], "expect": "trivial"},
+    {"name": "records only", "kinds": ["record", "generated"], "expect": "record"},
+    {"name": "any behaviour wins", "kinds": ["literal", "record", "behaviour"], "expect": "substantive"},
+    {"name": "nothing", "kinds": [], "expect": "record"}
+  ]
+}

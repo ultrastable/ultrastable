@@ -37,6 +37,7 @@
   python3 -m foundation directive [--check|--lint FILE...|--ledger|--probe|--bootstrap] the guiding directive as code
   python3 -m foundation docs_audit [--check|--report|--orphans|--humans]  every document must have a consumer (code, check, instruction import, generator)
   python3 -m foundation trust [--show|--event SURFACE ACTION EVENT|--tick] the trust ledger and ladder
+  python3 -m foundation substance [--range A..B|--gate|--deploy-gate|--report [--apply]|--check]   SUBSTANCE-1: only changes that alter executable behaviour count, open a PR or deploy
   python3 -m foundation executor [--apply] [--issue N]                    pick the top issue, change, check, open a PR (--pick, --record: the key-free session route)
   python3 -m foundation upstream contract|adopt|sync|check|drift|leaks   core/instance link: pin, flow down, send up, drift, bring your own repo
   python3 -m foundation branchsweep [--scan|--apply|--prune|--check]  BRANCH-SWEEP-1: no remote branch carries work main lacks
@@ -240,6 +241,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["credwatch"]:
         from . import credwatch
         return credwatch.main(_av[1:])
+    if _av[:1] == ["pathfinder"]:
+        from . import pathfinder
+        return pathfinder.main(_av[1:])
     if _av[:1] == ["openloops"]:
         from . import openloops
         return openloops.main(_av[1:])
@@ -270,6 +274,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["topology"]:
         from . import topology
         return topology.main(_av[1:])
+    if _av[:1] == ["substance"]:
+        from . import substance
+        return substance.main(_av[1:])
     if _av[:1] == ["mechfix"]:
         from . import mechfix
         return mechfix.main(_av[1:])

@@ -1,5 +1,5 @@
 {
-  "_doc": "FLOW-DIRECTIVE-1 (Rowan, 2026-11-12): every loop declares its typed inflows, outflows (with the binding each travels on) and its feedback path, so its outcomes return as signals that change its next output. Read by foundation/flows.py (python3 -m foundation flows --check). Fleet twin: QNFO/qnfo-workers _shared/flow-registry.js.",
+  "_doc": "FLOW-DIRECTIVE-1 (Rowan, 2026-11-12): every loop declares its typed inflows, outflows (with the binding each travels on) and its feedback path, so its outcomes return as signals that change its next output. Read by foundation/flows.py (python3 -m foundation flows --check).",
   "id": "FLOW-DIRECTIVE-1",
   "version": "1.0.0",
   "quote": "How is this information flowing in? And what are we doing with it flowing out? And that applies to any workflow, any.",
