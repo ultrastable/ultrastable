@@ -4232,6 +4232,22 @@
    "title": "Session note probes3",
    "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w (thread: resolve open issues at full speed).",
    "probe": "file:foundation/queue.py"
+  },
+  {
+   "id": "decision-2026-11-21-session-note-throughput",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Session note throughput",
+   "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w (thread: resolve open issues at full speed).",
+   "probe": "file:doctrine/agent-budget.json"
+  },
+  {
+   "id": "decision-2026-11-21-throughput-1-executor-and-doer-limits-raised",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "THROUGHPUT-1: executor and doer limits raised",
+   "body": "Executor gate doctrine/agent-budget.json max_runs_per_day 24->48 (matches chain max_runs_per_day_public on the public repo, where Actions minutes are free), max_open_agent_prs 3->6, doctrine/clocks.json max_wakes_per_hour 6->8, seed doer MAX_ITEMS 8->16 and MAX_AI 3->5 per tick. max_usd_per_day, private-repo chain cap 5, the Workers AI neuron allowance and HALT unchanged.",
+   "probe": "grep:doctrine/agent-budget.json::\"max_runs_per_day\": 48"
   }
  ]
 }
