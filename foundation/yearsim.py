@@ -208,13 +208,17 @@ def s_social(root, today):
     paper_posts = [p for p in cal if p.get("kind") == "paper"]
     if not paper_posts:
         return False, False, "no paper post was scheduled in a simulated year"
+    slugs = {p["slug"] for p in thought.research_data(root)["papers"]}
+    qnfo = [p["id"] for p in paper_posts if "qnfo" in json.dumps(p).lower() or p["paper"] not in slugs]
+    if qnfo:  # the owner closed QNFO research: only this system's own papers may be posted, and none may point at QNFO
+        return True, False, f"{len(qnfo)} scheduled posts name QNFO or a paper outside this system's own research: {qnfo[:2]}"
     st = thought.studies(root)[next(p for p in thought.research_data(root)["papers"] if p["slug"] == paper_posts[-1]["paper"])["study_id"]]
     paper = next(p for p in thought.research_data(root)["papers"] if p["slug"] == paper_posts[-1]["paper"])
     good = paper_posts[-1]["texts"]["bluesky"]
     bad = good.replace("runs on Ultrastable", "runs on a thing").replace("Ultrastable", "it") + " 99999 tests"
     refused = thought.guard(bad, "bluesky", paper, cfg, st)
     passes = not thought.guard(good, "bluesky", paper, cfg, st)
-    return bool(refused), passes and sched >= 1, f"{sched} paper posts scheduled in 365 simulated days; a post without the hook or with an invented number was refused: {refused[:2]}"
+    return bool(refused), passes and sched >= 1, f"{sched} paper posts scheduled in 365 simulated days; none named QNFO or a paper outside this system's own research; a post without the hook or with an invented number was refused: {refused[:2]}"
 
 
 def s_deprot(root, today):

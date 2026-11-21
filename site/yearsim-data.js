@@ -170,7 +170,7 @@ export const YEARSIM = {
    "detected": true,
    "repaired_and_verified": true,
    "result": "PASS",
-   "evidence": "71 paper posts scheduled in 365 simulated days; a post without the hook or with an invented number was refused: ['hook missing: Ultrastable runs on Ultrastable', \"number 99999 is not in the paper's data\"]",
+   "evidence": "71 paper posts scheduled in 365 simulated days; none named QNFO or a paper outside this system's own research; a post without the hook or with an invented number was refused: ['hook missing: Ultrastable runs on Ultrastable', \"number 99999 is not in the paper's data\"]",
    "labels": {
     "detect": "REAL",
     "repair": "SIMULATED",
