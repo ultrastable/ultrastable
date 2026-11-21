@@ -1,0 +1,12 @@
+{
+  "id": "Q-TRAJ-drift-issues",
+  "title": "Q-TRAJ-drift-issues: issues are opening faster than they close: backlog grew by -10 over 30 days",
+  "body": "**Owner:** executor\n**Trigger:** trajectory pass (TRAJECTORY-1) on the watchdog run\n**Done check:** cmd:python3 -m foundation trajectory --probe drift:issues\n**Status:** open\n\nissues are opening faster than they close: backlog grew by -10 over 30 days. Evidence: opened 929, closed 939.\n\nFind what moved attention (or the backlog) and whether that was intended; if not, restore the balance in code.\n\nsize: S\n\n**Closing probe:** `python3 -m foundation trajectory --probe drift:issues` exits 0.\n",
+  "labels": [
+    "p2",
+    "agent-ready",
+    "trajectory"
+  ],
+  "milestone": "Now",
+  "workstream": "Ultrastability"
+}

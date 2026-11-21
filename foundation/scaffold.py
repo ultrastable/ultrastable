@@ -8,11 +8,11 @@ from __future__ import annotations
 import json, re, shutil
 from pathlib import Path
 
-from . import TAGLINE, __version__, filing, genesis, manifest as mf, minutes, ownersteps, preflight, ladder
+from . import TAGLINE, __version__, filing, genesis, manifest as mf, minutes, ownersteps, preflight, ladder, seedadmit
 
 REPO = Path(__file__).resolve().parent.parent
 KERNEL = REPO / "seed"
-KERNEL_PATHS = ["agents", "autonomy", "bootstrap", "worker", ".claude", ".github/copilot-instructions.md", ".github/dependabot.yml", "AGENTS.md", "CLAUDE.md", "scripts", "funding", "outreach", "docs/aios-lessons.md", "docs/bootstrapping.md"]
+KERNEL_PATHS = ["agents", "autonomy", "bootstrap", "worker", "analytics", "standards", ".claude", ".github/copilot-instructions.md", ".github/dependabot.yml", "AGENTS.md", "CLAUDE.md", "scripts", "funding", "outreach", "docs/aios-lessons.md", "docs/bootstrapping.md"]
 SKIP = shutil.ignore_patterns("__pycache__", "node_modules", "*.pyc", ".wrangler")
 
 
@@ -128,8 +128,21 @@ def generate(raw: dict, out, date: str, ctx: ownersteps.StepCtx | None = None, a
         (out / "org" / "bootstrap-cases.json").write_text(json.dumps(plan, indent=2) + "\n")
         return plan
 
+    def autonomy():
+        """SEED-ADMIT-1: the system builds and deploys the seed and makes it autonomous. Wire the kit (deploy loop, year simulation, failure audit, SLA sweeper,
+        merge monitor, site liveness, temporal drift, weekly re-admission), then admit it: the year simulation runs on the new system's own recovery code."""
+        e = seedadmit._engine()
+        wired = e.wire(out, KERNEL)
+        rec = e.admit(out, slug=m["slug"], apply=True, src=KERNEL)
+        (out / "org").mkdir(exist_ok=True)
+        (out / "org" / "launch.json").write_text(json.dumps({"slug": m["slug"], "launched": rec["status"] == "admitted", "admission": rec["status"], "wired": wired["added"],
+                                                            "reasons": rec["reasons"], "expires": rec["expires"]}, indent=2) + "\n")
+        if rec["status"] != "admitted":
+            raise RuntimeError("seed held at admission: " + "; ".join(rec["reasons"])[:240])
+
     step("kernel", copy_kernel)
     step("instance", write_instance)
+    step("autonomy", autonomy)
     step("genesis", lambda: genesis.write(m, out))
     cases_plan = step("cases", cases_and_plans) or {"applicable": [], "cards": []}
     c = ctx or ownersteps.StepCtx()

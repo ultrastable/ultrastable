@@ -423,6 +423,18 @@
    "probe": "grep:foundation/intentyield.py::def probe"
   },
   {
+   "id": "fm-seed-unadmitted",
+   "trigger": "a seed or generated system is deployed that cannot run a year unattended, or the template rots so the next generated system cannot",
+   "symptom": "a new system's worker fails to start, a loop is missing, or a drill fails on its first week",
+   "blast_radius": "every system generated from the seed",
+   "detection": "python3 -m foundation seedadmit --probe",
+   "root_cause": "the seed's tests, imports or kernel paths depend on the platform's own layout, or a loop was left out of the generator",
+   "remediation": "SEED-ADMIT-1: the generator wires the kit and runs the year simulation on the new system; a held seed is not launched; the probe re-onboards the template on every audit",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_seedadmit.py::def test_onboard_admits"
+  },
+  {
    "id": "fm-seed-not-shipped",
    "trigger": "a seed (tenant app) is proposed or designed but never built, deployed or made autonomous",
    "symptom": "a seed sits as an IDEA.md, README or draft PR; nothing runs",
