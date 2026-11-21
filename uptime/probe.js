@@ -41,6 +41,6 @@ export async function checkHost(host, { fetchImpl = fetch, expectNs = [] } = {})
 
 export async function checkAll(hosts, opts = {}) {
   const out = [];
-  for (const h of hosts) out.push(await checkHost(h, opts));
+  for (const h of hosts) { let r = await checkHost(h, opts); if (r.verdict !== 'ok') r = await checkHost(h, opts); out.push(r); }  // retry once: a blip is not a dead site
   return out;
 }

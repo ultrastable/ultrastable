@@ -1,0 +1,11 @@
+{
+  "id": "Q-CIFAIL-mergeaudit-1461",
+  "title": "Q-CIFAIL-mergeaudit-1461: PR #1461 merged without a green checks run",
+  "body": "**Owner:** staff\n**Trigger:** every lane pass\n**Done check:** cmd:python3 -m foundation mergeaudit --probe 1461\n**Status:** open\n\nMERGE-AUDIT-1: PR #1461 (UPTIME-1: server-side DNS and HTTP probe for every ultrastable hostname) merged at 2026-11-21T12:02:26Z with its `checks` run at `skipped` on head b492f08. Some merge path skipped the green gate.\n\nFix what that run caught on main (run the failed step from .github/workflows/checks.yml locally), then confirm a later merged PR passed `checks`. Do not weaken a check.\n\n**Vacuous:** 2026-11-21T12:20:55Z vacuous: the probe was never recorded failing on this item, so its pass cannot show the defect is gone; rewrite the probe so it fails while the defect exists\n",
+  "labels": [
+    "role:staff",
+    "ci-failure"
+  ],
+  "milestone": "Now",
+  "workstream": "Reliability"
+}

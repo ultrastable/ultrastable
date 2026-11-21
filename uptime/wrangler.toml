@@ -6,3 +6,7 @@ crons = ["*/5 * * * *"]
 [[kv_namespaces]]
 binding = "STATE"
 id = "930f08da4ac8402883ee9e9bf044243f"
+
+[[services]]
+binding = "TICK"
+service = "ultrastable-tick"

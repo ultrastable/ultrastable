@@ -1,0 +1,54 @@
+name: temporal
+# TEMPORAL-1 (Rowan, 2026-11-21): time and iteration are part of the system. Reads the history of this repository and of each tenant into daily series, finds hotspots, neglect, stopped loops and repeated failures, and files them into the queues that fix things.
+# budget: ~2 min x 30 per month
+# trigger: daily and dispatch; a trend is read over days, so a faster event adds a point to the series without adding information
+# free-alternative: a cloud-hosted agent session runs `python3 -m foundation temporal --run --apply`
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
+  issues: write
+concurrency:
+  group: temporal
+  cancel-in-progress: false
+jobs:
+  temporal:
+    if: ${{ vars.HALT != '1' }}  # HALT-1: the owner's halt (repository variable HALT=1) stops every job
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0  # the series are the history: a shallow clone would read as a young repository
+      - run: python3 scripts/actions_guard.py temporal
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Each tenant, read from its own history, state kept here
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          python3 - <<'PY' > tenants.txt
+          import json
+          for t in json.load(open("doctrine/temporal.json")).get("tenants", []):
+              print(t["id"], t["repo"])
+          PY
+          while read -r id repo; do
+            [ -z "$id" ] && continue
+            if git clone -q "https://x-access-token:${GH_TOKEN}@github.com/${repo}.git" "tenant-clone-${id}"; then
+              python3 -m foundation temporal --run --apply --tenant "$id" --root "tenant-clone-${id}" --out .
+              python3 scripts/temporal_issues.py "$id" "$repo" || echo "::warning::tenant ${id}: issue filing refused, the findings stay in ops/temporal/tenants/${id}"
+            else
+              echo "::warning::tenant ${id}: clone refused; it is read again next run and the page says when it was last read"
+            fi
+          done < tenants.txt
+      - name: This repository, with the tenants' results embedded
+        run: python3 -m foundation temporal --run --apply
+      - name: Land the series, findings and page data on main, where the executor takes the items
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 scripts/land_data.py "temporal series, findings and queue items (TEMPORAL-1)" ops/temporal site/temporal-data.js dashboard/temporal-data.js docs/issues

@@ -317,6 +317,22 @@
    "remedy": "Take the input as given: build the consumer, let the lane merge and deploy, or reduce it to one identity-bound gate with a default in effect."
   },
   {
+   "id": "temporal-drift",
+   "failure_mode": "fm-temporal-drift",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "temporal",
+    "--probe"
+   ],
+   "timeout": 120,
+   "root_cause": "a hotspot, neglected area, stopped loop or repeated failure stood in the series for several runs and nothing corrected it",
+   "owner": "operations",
+   "remedy": "Take the open Q-TEMPORAL items for the finding; python3 -m foundation pathfinder --regress lists the commits since a loop last worked."
+  },
+  {
    "id": "dependency-watch",
    "failure_mode": "fm-dependency-rot",
    "kind": "command",

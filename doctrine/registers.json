@@ -303,6 +303,18 @@
    "probe": "grep:seed/worker/src/lane.js::a draft with finished work is marked ready by the lane"
   },
   {
+   "id": "fm-temporal-drift",
+   "trigger": "an area, loop or entry drifts over days: a hotspot of churn, a neglected or decaying area, a loop that stopped firing, a failure that keeps repeating",
+   "symptom": "a snapshot looks fine while the series shows one part being rewritten over and over and another not touched at all",
+   "blast_radius": "any component, loop or tenant entry; the failure surfaces late, after it has already become an outage or a stale record",
+   "detection": "python3 -m foundation temporal --probe (findings that stood for escalate_runs runs); series at /trends",
+   "root_cause": "the system was judged on snapshots, so trends were invisible until they broke",
+   "remediation": "temporal files Q-TEMPORAL items owned by the area's advocate, pathfinder --regress lists the suspect commits, queue attention weights rise for neglected areas and fall for hot ones",
+   "status": "controlled",
+   "cadence_ticks": 144,
+   "probe": "grep:foundation/temporal.py::def diagnose"
+  },
+  {
    "id": "fm-dependency-rot",
    "trigger": "a dependency manifest is added or kept with no update bot watching it",
    "symptom": "unpatched or deprecated dependencies accumulate over a year",
