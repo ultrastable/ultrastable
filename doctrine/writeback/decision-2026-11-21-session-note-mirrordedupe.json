@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-session-note-mirrordedupe",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Session note mirrordedupe",
+  "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w (thread: resolve open issues at full speed), change set mirrordedupe.",
+  "probe": "file:doctrine/writeback"
+ },
+ "kind": "decision",
+ "title": "Session note mirrordedupe",
+ "session": ""
+}
