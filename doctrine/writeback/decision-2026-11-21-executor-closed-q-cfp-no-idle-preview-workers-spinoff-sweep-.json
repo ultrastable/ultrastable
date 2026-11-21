@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-executor-closed-q-cfp-no-idle-preview-workers-spinoff-sweep-",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Executor closed Q-CFP-no-idle-preview-workers: Spinoff sweep script deletes idle us-idea-* Worker previews to prevent quota limit violations",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: agents/spinoff_sweep.py.",
+  "probe": "file:agents/spinoff_sweep.py"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-CFP-no-idle-preview-workers: Spinoff sweep script deletes idle us-idea-* Worker previews to prevent quota limit violations",
+ "session": ""
+}

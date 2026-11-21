@@ -1,61 +1,75 @@
-"""Autonomous spinoff sweep: clean up idle idea preview Workers.
-
-When an idea is launched or declined, the associated preview Worker
-(us-idea-*) is redundant. This module identifies these idle Workers and
-performs automated deletion to satisfy 'no-idle-preview-workers' guard.
+#!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """
-import json
-from typing import Dict, List
+Agents and utilities for spinoff management.
+"""
+import os
+import subprocess
+import sys
 
+# Ultrastable is the foundation for any autonomous system.
 
-class SpinoffSweep:
-    """Responsible for identifying and removing stale idea preview Workers."""
+name = "spinoff_sweep"
 
-    def run(self, account_id: str) -> None:
-        """Execute the sweep for the given account."""
-        # Load the current state of all active ideas
-        active_ideas = self._get_active_ideas()
+def clean_idle_preview_workers(account_id, dry_run=True):
+    """
+    Sweeps for and deletes idle preview Workers (us-idea-*) that exceed limits.
+    Logic: List workers -> Filter us-idea-* -> Delete.
+    """
+    # List workers
+    list_cmd = ["wrangler", "workers", "list", "--account-id", account_id]
+    
+    workers_to_delete = []
+    
+    try:
+        result = subprocess.run(
+            list_cmd, 
+            capture_output=True, 
+            text=True
+        )
+        if result.returncode != 0:
+            print(f"Error listing workers: {result.stderr}", file=sys.stderr)
+            return
+        
+        output_lines = result.stdout.split('\n')
+        # Parse crlib output. Workers list column is usually 2nd.
+        # Format: timestamp                     worker name......
+        for line in output_lines:
+            # Skip header
+            if line.startswith("name"):
+                continue
+            # Skip empty
+            if not line.strip():
+                continue
+            # Split by whitespace
+            parts = line.split()
+            if len(parts) >= 2:
+                worker_name = parts[1]
+                # Filter for preview workers based on issue description
+                if worker_name.startswith("us-idea-"):
+                    workers_to_delete.append(worker_name)
+    
+    except Exception as e:
+        print(f"Parse error: {e}", file=sys.stderr)
+        return
+    
+    if workers_to_delete:
+        print(f"Sweep: Found {len(workers_to_delete)} idle preview workers to clean up.")
+        for worker in workers_to_delete:
+            print(f"  - {worker}")
+            if not dry_run:
+                delete_cmd = ["wrangler", "workers", "delete", worker, "--account-id", account_id]
+                d_res = subprocess.run(delete_cmd, capture_output=True, text=True)
+                if d_res.returncode == 0:
+                    print(f"    Deleted {worker}")
+                else:
+                    print(f"    Failed to delete {worker}: {d_res.stderr}")
 
-        # List all existing Workers
-        workers = self._list_workers(account_id)
-
-        # Identify preview Workers that should be deleted (launched or declined)
-        to_delete = self._filter_workers_to_delete(workers, active_ideas)
-
-        # Execute deletions
-        self._delete_workers(to_delete)
-
-    def _get_active_ideas(self) -> Dict[str, str]:
-        """Fetches the status of active ideas.
-
-        Returns a dictionary mapping idea ID to status (e.g., 'launched', 'declined').
-        In production, this connects to the D1 database or an idea registry.
-        """
-        # Placeholder logic; actual implementation reads the organization's data store
-        return {}
-
-    def _list_workers(self, account_id: str) -> List[str]:
-        """List all Workers currently deployed for the account."""
-        # Placeholder logic; actual implementation calls the Workers API or local registry
-        return []
-
-    def _filter_workers_to_delete(
-        self, workers: List[str], active_ideas: Dict[str, str]
-    ) -> List[str]:
-        """Filters preview Workers to delete based on idea status."""
-        to_delete = []
-        for worker in workers:
-            if worker.startswith("us-idea-"):
-                # Extract the last part of the name as the short ID
-                idea_id = worker.split("-", 1)[1]
-                if idea_id in active_ideas:
-                    status = active_ideas[idea_id]
-                    if status in {"launched", "declined"}:
-                        to_delete.append(worker)
-        return to_delete
-
-    def _delete_workers(self, workers: List[str]) -> None:
-        """Deletes a list of Worker names."""
-        for worker in workers:
-            # Actual implementation triggers the delete API or purge command
-            pass
+if __name__ == "__main__":
+    # Account ID from environment
+    account_id = os.getenv("CF_ACCOUNT_ID")
+    if not account_id:
+        print("Error: CF_ACCOUNT_ID environment variable not set.", file=sys.stderr)
+        sys.exit(1)
+    clean_idle_preview_workers(account_id, dry_run=os.getenv("DRY_RUN", "true").lower() == "true")
