@@ -115,11 +115,15 @@ def plan(want: list[dict], have: list[dict], labels: set, milestones: dict) -> l
     need_labels = sorted({l for w in want for l in w["labels"]} - labels)
     acts += [("label", l) for l in need_labels]
     acts += [("milestone", m) for m in sorted({w["milestone"] for w in want} - set(milestones))]
-    by_id = {}
-    for h in have:
+    by_id, dupes = {}, []
+    # MIRROR-DEDUPE-1 (2026-11-21): overlapping runs created a second issue for the same item (Q-RECUR-*, Q-LIFT-*: 7 pairs). The lowest
+    # open number is the mirror; every other open issue carrying the same marker is closed as an orphan.
+    for h in sorted(have, key=lambda h: (h.get("state") != "open", h.get("number", 0))):
         m = MARK.search(h.get("body") or "")
         if m and m.group(1) not in by_id:
             by_id[m.group(1)] = h
+        elif m and h.get("state") == "open":
+            dupes.append(h["number"])
     # open items first (they are the board), then closed ones newest id last so the most recent history lands first after them
     for w in sorted(want, key=lambda w: (w["state"] != "open", w["id"])):
         h = by_id.get(w["id"])
@@ -132,7 +136,7 @@ def plan(want: list[dict], have: list[dict], labels: set, milestones: dict) -> l
                 or cur_ms != w["milestone"] or h.get("state") != w["state"]):
             acts.append(("update", w, h["number"]))
     gone = [h for k, h in by_id.items() if k not in {w["id"] for w in want} and h.get("state") == "open"]
-    acts += [("orphan", h["number"]) for h in gone]
+    acts += [("orphan", h["number"]) for h in gone] + [("orphan", n) for n in dupes]
     return acts
 
 
