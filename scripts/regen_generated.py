@@ -10,7 +10,7 @@ the result when anything changed. Every generator is a command whose failure fai
   python3 scripts/regen_generated.py --list     print the generators
 """
 from __future__ import annotations
-import subprocess, sys
+import os, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,6 +49,9 @@ def run_all(root: Path = ROOT) -> list[str]:
 def main(argv=None) -> int:
     if "--list" in (argv or sys.argv[1:]):
         print("\n".join(" ".join(c) for c, _ in GENERATORS)); return 0
+    # MARKER-ROOT-1: conflict markers that reached main are flattened before the generators run, so no PR inherits a conflict from main itself.
+    m = subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "no_markers.py"), "--fix"], capture_output=True, text=True)
+    if m.stdout.strip(): print(m.stdout.strip())
     bad = run_all()
     print("\n".join(bad) if bad else f"regenerated with {len(GENERATORS)} generators")
     return 1 if bad else 0
