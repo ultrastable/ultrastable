@@ -31,7 +31,7 @@
  },
  "foundation-tests": {
   "status": "fail",
-  "signature": "8fe5b5d78a2d",
+  "signature": "8a943034d516",
   "streak": 1,
   "since": "2026-11-21T13:41:13Z"
  },
@@ -122,7 +122,7 @@
  "temporal-drift": {
   "status": "fail",
   "signature": "7c559a9af5a4",
-  "streak": 2,
+  "streak": 3,
   "since": "2026-11-21T13:41:18Z"
  },
  "vision": {
