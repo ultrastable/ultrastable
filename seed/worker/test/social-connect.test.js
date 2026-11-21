@@ -6,7 +6,7 @@ import { makeDb } from './d1shim.js';
 import { newKey } from '../src/auth/seal.js';
 import { handleAuth } from '../src/auth/routes.js';
 import * as store from '../src/auth/store.js';
-import { runSocial } from '../src/social.js';
+import { runSocial, verifyRelay } from '../src/social.js';
 import { dpopProof, newDpopKey } from '../src/auth/atproto.js';
 
 const ORIGIN = 'https://seed.example.com', NOW = Date.parse('2026-11-17T12:00:00Z');
@@ -210,4 +210,18 @@ test('per-service relay rows override a legacy relay row, so a failed service is
   await env.DB.prepare("INSERT OR REPLACE INTO social_posted (id, channel, at, ref, status, attempts) VALUES ('p1','relay:linkedin','2026-11-17T00:00:00Z','queued','failed',1)").run();
   const r = await runSocial({ db: env.DB, env, fetch: f, now: NOW + 864e5 * 5, tenant: 't' });
   assert.deepEqual(sent, [['linkedin']], JSON.stringify(r));
+});
+
+test('verifyRelay reads Buffer back: sent with a link is verified, still-queued stays queued, an error is failed', async () => {
+  const env = mk(); env.SOCIAL_RELAY_URL = 'https://relay.test'; env.SOCIAL_RELAY_TOKEN = 't';
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS social_posted (id TEXT NOT NULL, channel TEXT NOT NULL, at TEXT NOT NULL, ref TEXT, arm TEXT, status TEXT, attempts INTEGER DEFAULT 1, PRIMARY KEY (id, channel))").run();
+  const ins = (c, ref, st) => env.DB.prepare("INSERT INTO social_posted (id, channel, at, ref, status, attempts) VALUES ('p1',?,'2026-11-17T00:00:00Z',?,?,1)").bind(c, ref, st).run();
+  const A = 'a'.repeat(24), B = 'b'.repeat(24), C = 'c'.repeat(24);
+  await ins('relay:linkedin', A, 'unverified'); await ins('relay:substack', B, 'unverified'); await ins('relay:twitter', C, 'unverified');
+  const f = async (u, init) => { assert.equal(String(u), 'https://relay.test/relay/status'); assert.deepEqual(JSON.parse(init.body).ids, [A, B, C]);
+    return J({ posts: { [A]: { status: 'sent', externalLink: 'https://linkedin.com/x' }, [B]: { status: 'scheduled' }, [C]: { status: 'error' } } }); };
+  await verifyRelay(env.DB, env, f, NOW);
+  const rows = (await env.DB.prepare("SELECT channel, status, ref FROM social_posted ORDER BY channel").all()).results;
+  assert.deepEqual(rows.map(r => r.status), ['verified', 'unverified', 'failed']);
+  assert.match(rows[0].ref, /linkedin\.com\/x/);
 });

@@ -1,0 +1,14 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-relay-posts-are-read-back-from-buffer-every-tick",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Relay posts are read back from Buffer every tick",
+  "body": "verifyRelay in seed/worker/src/social.js calls the relay /relay/status for queued or unverified relay rows each tick; verified needs status sent plus the service link, an error becomes failed and is retried.",
+  "probe": "grep:seed/worker/src/social.js::verifyRelay",
+  "session": "session_0156nqDrz7VJCnauouR6AgUS"
+ },
+ "kind": "lesson",
+ "title": "Relay posts are read back from Buffer every tick",
+ "session": "session_0156nqDrz7VJCnauouR6AgUS"
+}
