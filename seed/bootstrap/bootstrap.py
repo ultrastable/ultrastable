@@ -538,12 +538,14 @@ class Boot:
         return "ok", f"year gate: horizon p10 {rec['horizon']['p10']} >= {rec['target_days']} days ({rec['runs']} simulated years)"
 
     def verify_live(self):
-        """SEED-LAUNCH-1: a boot is done only when the deployed Worker answers /health live. The URL comes from the account's workers.dev
-        subdomain (Cloudflare API), so nothing is typed by hand; retried while the deploy propagates."""
+        """SEED-LAUNCH-1: a boot is done only when the deployed Worker answers /health live with 200. /health answers 503 until the first
+        complete tick, so the probe waits through one full cron interval (tick_cron, every 10 minutes) plus propagation: a 200 proves the
+        Worker serves and its own loop ran. The URL comes from the account's workers.dev subdomain (Cloudflare API), never typed by hand."""
         if not self.apply:
             return "degraded", "dry run: nothing deployed to probe"
         if self.runtime.get("workers_dev") != "true":
             return "degraded", "workers_dev off in IDEA.md: no public route to probe; the cron tick is the proof (KIT-3)"
+        import urllib.error
         import urllib.request
         acct, tok = os.environ.get("CLOUDFLARE_ACCOUNT_ID", ""), os.environ.get("CLOUDFLARE_API_TOKEN", "")
         req = urllib.request.Request(f"https://api.cloudflare.com/client/v4/accounts/{acct}/workers/subdomain", headers={"authorization": "Bearer " + tok})
@@ -551,13 +553,15 @@ class Boot:
         url = f"https://{self.runtime['worker_name']}.{sub}.workers.dev/health"
         self.state["live_url"] = url
         last = ""
-        for attempt in range(12):
+        for attempt in range(78):  # 13 minutes: one 10-minute cron interval, propagation and the tick's own run time
             try:
                 with urllib.request.urlopen(urllib.request.Request(url, headers={"user-agent": "ultrastable-seed-launch"}), timeout=30) as r:
                     body = r.read().decode("utf-8", "replace")
                     if r.status == 200:
                         return "ok", f"live: {url} answered 200 ({len(body)} bytes)"
                     last = f"HTTP {r.status}"
+            except urllib.error.HTTPError as e:  # 503 before the first complete tick: serving, loop not yet proven
+                last = f"HTTP {e.code} (serving; no complete tick yet)" if e.code == 503 else f"HTTP {e.code}"
             except Exception as e:  # recorded below if every attempt fails
                 last = f"{type(e).__name__}: {e}"[:200]
             import time
