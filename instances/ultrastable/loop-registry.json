@@ -3745,10 +3745,12 @@
    "system_path": [
     "scripts/smoke_live.py",
     "scripts/smoke_issues.py",
-    "scripts/land_data.py"
+    "scripts/land_data.py",
+    "scripts/owner_links_audit.mjs"
    ],
    "workflows": [
-    "smoke-live.yml"
+    "smoke-live.yml",
+    "owner-links-audit.yml"
    ],
    "staged_default": "a failing check writes docs/issues/Q-SMOKE-<check>.json and the run goes red until production matches the claim",
    "identity_bound": "none",
