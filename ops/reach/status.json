@@ -1,36 +1,57 @@
 {
  "targets": {},
  "met_runs": {
-  "external_referrals_7d": 0,
+  "external_referrals_7d": 1,
   "social_referrals_7d": 0,
   "search_referrals_7d": 0,
   "feed_hits_7d": 0,
-  "ps_page_views_7d": 0,
+  "ps_page_views_7d": 1,
   "posts_published_7d": 0
  },
  "last": {
   "feed_entries": 40,
-  "at": "2026-11-19T22:40:46.612356+00:00",
+  "at": "2026-11-21T20:54:29.209888+00:00",
   "added": [
    {
-    "id": "ev:pv-7c20853b6120",
-    "arm": "shipped"
+    "id": "ev:evd-2026-w47",
+    "arm": "evidence"
    },
    {
-    "id": "ev:pv-17dea0266b40",
-    "arm": "shipped"
+    "id": "ev:ev-thesis-1",
+    "arm": "thesis"
    },
    {
-    "id": "ev:pv-76062770a418",
-    "arm": "shipped"
+    "id": "ev:ev-thesis-2",
+    "arm": "thesis"
    },
    {
-    "id": "ev:pv-04fd8bd4b357",
-    "arm": "shipped"
+    "id": "ev:ev-thesis-3",
+    "arm": "thesis"
    }
   ],
   "metrics_error": "HTTPError: HTTP Error 403: Forbidden",
-  "metrics": "unmeasured",
+  "metrics_route": "site",
+  "metrics": {
+   "external_referrals_7d": 76,
+   "social_referrals_7d": 0,
+   "search_referrals_7d": 31,
+   "feed_hits_7d": 0,
+   "ps_page_views_7d": 117,
+   "posts_published_7d": 0,
+   "suggestions_7d": null
+  },
+  "breaches": [
+   "social_referrals_7d",
+   "search_referrals_7d",
+   "feed_hits_7d",
+   "posts_published_7d"
+  ],
+  "filed": [
+   "Q-REACH-social_referrals_7d",
+   "Q-REACH-search_referrals_7d",
+   "Q-REACH-feed_hits_7d",
+   "Q-REACH-posts_published_7d"
+  ],
   "channels": {
    "bluesky": "awaiting-account",
    "mastodon": "awaiting-account"
