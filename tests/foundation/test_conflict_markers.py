@@ -30,3 +30,28 @@ class ConflictMarkers(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ClaimBlindMerge(unittest.TestCase):
+    """CLAIM-BLIND-MERGE-1: a PR that rewrites prose next to a claim value main keeps bumping merges cleanly, with main's value; a prose clash still conflicts."""
+
+    def _repo(self, main_edit):
+        import tempfile
+        d = Path(tempfile.mkdtemp())
+        g = lambda *a: subprocess.run(["git", "-C", str(d), *a], capture_output=True, text=True)
+        g("init", "-q"); g("config", "user.email", "t@t"); g("config", "user.name", "t")
+        (d / "README.md").write_text("Intro\nStatus <!-- claim:d -->775<!-- /claim --> deploys.\nEnd\n"); g("add", "."); g("commit", "-qm", "b"); g("branch", "-M", "main")
+        g("checkout", "-qb", "pr"); (d / "README.md").write_text("Intro\nNew prose, <!-- claim:d -->775<!-- /claim --> recorded deploys.\nEnd\n"); g("commit", "-qam", "o")
+        g("checkout", "-q", "main"); (d / "README.md").write_text(main_edit); g("commit", "-qam", "t"); g("update-ref", "refs/remotes/origin/main", "main")
+        g("checkout", "-q", "pr"); g("merge", "-q", "origin/main")
+        r = subprocess.run(["python3", str(ROOT / "scripts/resolve_generated.py")], cwd=d, capture_output=True, text=True)
+        return r, (d / "README.md").read_text()
+
+    def test_claim_only_change_on_main_merges_with_mains_value(self):
+        r, text = self._repo("Intro\nStatus <!-- claim:d -->800<!-- /claim --> deploys.\nEnd\n")
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertIn("New prose, <!-- claim:d -->800<!-- /claim --> recorded deploys.", text)
+
+    def test_prose_clash_still_conflicts(self):
+        r, _ = self._repo("Intro\nStatus changed <!-- claim:d -->800<!-- /claim --> deploys.\nEnd\n")
+        self.assertEqual(r.returncode, 1, r.stdout)
