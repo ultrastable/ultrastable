@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-executor-closed-q-cifail-mergeaudit-1750-implement-mergeaudi",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Executor closed Q-CIFAIL-mergeaudit-1750: Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: foundation/probes/mergeaudit.py.",
+  "probe": "file:foundation/probes/mergeaudit.py"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-CIFAIL-mergeaudit-1750: Implement mergeaudit probe script to verify PR merging commits pass checks and enforce consistent",
+ "session": ""
+}
