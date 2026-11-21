@@ -19,7 +19,33 @@ LEDGER = "ops/paths/attempts.jsonl"
 
 
 def _cfg(root) -> dict:
-    return json.loads((Path(root) / CFG).read_text(encoding="utf-8"))
+    """The config with `asks` and `integrations` derived from code (credential routes, social channels) merged under any hand-written ones."""
+    root = Path(root)
+    cfg = json.loads((root / CFG).read_text(encoding="utf-8"))
+    d, asks, ints = cfg.get("derive", {}), dict(cfg.get("asks", {})), list(cfg.get("integrations", []))
+    cr = root / "foundation/data/credential-routes.json"
+    if d and cr.is_file():
+        for key, c in json.loads(cr.read_text(encoding="utf-8"))["credentials"].items():
+            env = []
+            for r in c["routes"]:
+                if r["kind"] == "env":
+                    env.append("env:" + "|".join(r["vars"]))
+                elif r["kind"] == "env_all":
+                    env.append("env_all:" + "&".join(r["vars"]))
+            a = {"existing-credentials": env}
+            a.update(d.get("surfaces", {}).get(key, {}))
+            for ident in {key, c["card"]["id"]}:
+                asks.setdefault(ident, a)
+        for gate, key in d.get("gate_asks", {}).items():
+            if key in asks:
+                asks.setdefault(gate, asks[key])
+    sa = root / "social/accounts.json"
+    if d and sa.is_file():
+        for ch, v in json.loads(sa.read_text(encoding="utf-8"))["channels"].items():
+            sib = [f[5:] for f in d.get("surfaces", {}).get("social_accounts", {}).get("sibling-workers", []) if ch in f]
+            ints.append({"id": ch, "files": sib or ["social/accounts.json"], "probe": "env_all:" + "&".join(v["secrets"]), "last_good": None})
+    cfg["asks"], cfg["integrations"] = asks, ints
+    return cfg
 
 
 def attempts(root=ROOT) -> list[dict]:
@@ -43,6 +69,9 @@ def try_route(route: str, root=ROOT, env=None, fetch=None, git=None) -> tuple[bo
     if kind == "env":
         hit = [n for n in arg.split("|") if env.get(n)]
         return bool(hit), f"bound: {','.join(hit)}" if hit else "no such binding in this run"
+    if kind == "env_all":
+        names = arg.split("&")
+        return all(env.get(n) for n in names), "all bound" if all(env.get(n) for n in names) else "missing: " + ",".join(n for n in names if not env.get(n))
     if kind == "file":
         return (Path(root) / arg).exists(), arg
     if kind == "http" and "~" in arg:
@@ -74,7 +103,7 @@ def resolve(ask: str, root=ROOT, env=None, fetch=None, git=None, now=None) -> di
             ok, detail = try_route(r, root, env, fetch, git)
             record(root, ask, cls, r, ok, detail, now)
             done.add(cls)
-            if ok and via is None:
+            if ok and via is None and r.split(":", 1)[0] in ("env", "env_all", "http"):  # git and file routes are leads (a prior config or sibling exists), not a working credential
                 via = {"class": cls, "route": r}
     missing = [c for c in cfg["surface_classes"] if c not in done]
     return {"resolved": via is not None, "via": via, "classes_attempted": sorted(done), "classes_missing": missing}
@@ -107,6 +136,7 @@ def check(root=ROOT) -> list[str]:
     root = Path(root)
     cfg, rows, bad = _cfg(root), attempts(root), []
     grand = set(cfg["grandfathered_gates"])
+    rows = rows + [dict(r, ask=g) for g, k in cfg.get("derive", {}).get("gate_asks", {}).items() for r in rows if r["ask"] == k]  # a gate waiting on a credential shares that credential's attempts
     gates = json.loads((root / "doctrine/open-loops.json").read_text(encoding="utf-8"))["gates"]
     ids = {g["id"] for g in gates}
     for g in gates:
@@ -131,6 +161,11 @@ def main(argv=None) -> int:
         r = resolve(a[1])
         print(json.dumps(r))
         return 0 if r["resolved"] or not r["classes_missing"] else 1
+    if a[:1] == ["--resolve-all"]:  # run by the watchdog with the real bindings; each ask is walked and recorded
+        out = {k: resolve(k) for k in _cfg(ROOT)["asks"]}
+        reg = regress()
+        print(json.dumps({"asks": {k: v["resolved"] for k, v in out.items()}, "regressed": [r["integration"] for r in reg]}))
+        return 0
     if a[:1] == ["--regress"]:
         r = regress()
         print(json.dumps(r, indent=1) if r else "pathfinder: no integration regressed")
