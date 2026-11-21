@@ -101,6 +101,28 @@ def teardown(seed_root: Path) -> list[str]:
     return notes
 
 
+def e2e_oidc(root=ROOT, wait_s=660, run=None, sleep=None) -> dict:
+    """SEED-DEPLOY-2: the credential-free route. deploy/deploy-seed.mjs generates and admits each seed in doctrine/seed-deploys.json from the kernel
+    (a fresh build every run), creates its D1 and deploys its Worker into the Ultrastable account through the site worker's OIDC endpoint; no stored
+    Cloudflare token is read. /health answers 503 until the first complete tick, so the verify pass runs after one cron interval."""
+    import time
+    run = run or (lambda argv: _run(argv, root, timeout=900))
+    sleep = sleep or time.sleep
+    code, out = run(["node", "deploy/deploy-seed.mjs"])
+    rows = [json.loads(x) for x in (Path(root) / "ops" / "deploys.jsonl").read_text().splitlines() if '"kind":"seed"' in x or '"kind": "seed"' in x]
+    up = rows[-1] if rows else {}
+    rec = {"at": _now(), "kind": "e2e", "route": "oidc", "slug": up.get("slug"), "year": {"p10": up.get("year_p10")}, "deploy_exit": code}
+    if not up.get("uploaded") and up.get("error"):
+        return {**rec, "passed": False, "failed_stages": {"provision": up["error"]}}
+    if not up.get("live_ok"):
+        sleep(wait_s)
+        code, out = run(["node", "deploy/deploy-seed.mjs", "--verify"])
+    ok = code == 0
+    url = (up.get("url") or "") + "/health"
+    return {**rec, "passed": ok and bool(up.get("year_p10")) and up["year_p10"] >= 365, "live_url": url,
+            "failed_stages": {} if ok else {"verify_live": out[-300:]}, "report": out.splitlines()[-3:]}
+
+
 def e2e(keep=False, root=ROOT) -> dict:
     stamp = dt.datetime.now(dt.timezone.utc).strftime("%m%d%H%M")
     work = Path(tempfile.mkdtemp(prefix="seed-e2e-"))
@@ -189,7 +211,9 @@ def main(argv=None) -> int:
         print("seedlaunch ok" if not e else "\n".join(e))
         return 1 if e else 0
     recs = []
-    if "--e2e" in a:
+    if "--e2e-oidc" in a:
+        recs.append(e2e_oidc())
+    elif "--e2e" in a:
         recs.append(e2e(keep="--keep" in a))
     if "--fleet" in a:
         recs += fleet()

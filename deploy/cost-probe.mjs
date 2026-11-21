@@ -3,6 +3,7 @@
 
 import { readFileSync, appendFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+{ const __acc = JSON.parse(readFileSync(new URL("./cloudflare-accounts.json", import.meta.url), "utf8")); if ((__acc.retired_account_ids || []).includes(process.env.CLOUDFLARE_ACCOUNT_ID)) { console.log("skip: account " + process.env.CLOUDFLARE_ACCOUNT_ID + " is retired (SINGLE-ACCOUNT-2)"); process.exit(0); } }
 
 const REQUIRED_LINES = ['d1AnalyticsAdaptiveGroups'];
 

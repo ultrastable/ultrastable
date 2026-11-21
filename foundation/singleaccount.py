@@ -64,8 +64,25 @@ def runtime_scan(root=REPO, d: dict | None = None) -> list[str]:
     return out
 
 
+ENV_ACCT = re.compile(r"os\.environ(?:\.get)?\s*[\[(]\s*[\"']CLOUDFLARE_ACCOUNT_ID|process\.env\.CLOUDFLARE_ACCOUNT_ID")
+
+
+def guard_scan(root=REPO) -> list[str]:
+    """SINGLE-ACCOUNT-2: a deploy script that reads the bound account id must refuse a retired one (python modules are covered by
+    foundation.cfaccount.scrub() in the CLI entry point)."""
+    out = []
+    for f in sorted((Path(root) / "deploy").glob("*.mjs")) if (Path(root) / "deploy").is_dir() else []:
+        s = f.read_text(encoding="utf-8")
+        if ENV_ACCT.search(s) and "retired_account_ids" not in s:
+            out.append(f"{f.relative_to(root)}: reads CLOUDFLARE_ACCOUNT_ID without the retired-account guard")
+    mp = Path(root) / "foundation" / "__main__.py"
+    if mp.exists() and "cfaccount.scrub()" not in mp.read_text(encoding="utf-8"):
+        out.append("foundation/__main__.py: cfaccount.scrub() is not called before commands run")
+    return out
+
+
 def check(root=REPO) -> list[str]:
-    d = load(root); problems = scan(root, d) + runtime_scan(root, d)
+    d = load(root); problems = scan(root, d) + runtime_scan(root, d) + guard_scan(root)
     acc = json.loads((Path(root) / "deploy/cloudflare-accounts.json").read_text(encoding="utf-8"))
     if acc["target"]["id"] != d["required_account"]["id"]:
         problems.append("deploy/cloudflare-accounts.json target is not the ultrastable account")

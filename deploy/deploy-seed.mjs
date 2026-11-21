@@ -5,7 +5,7 @@
 //   node deploy/deploy-seed.mjs            generate, create its database and migrate (site /__internal/seed-d1), upload, probe /health, record the row
 //   node deploy/deploy-seed.mjs --verify   probe only
 // Worker and database are named ultrastable-seed-<slug>; the database call can reach nothing else (site/deployer.js seedD1). Rows go to ops/deploys.jsonl; detector `seed-live` reads them.
-import { readFileSync, writeFileSync, appendFileSync, mkdirSync, rmSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, appendFileSync, mkdirSync, rmSync, readdirSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
@@ -54,11 +54,13 @@ for (const slug of cfg.seeds) {
       if (rep.admission !== "admitted") throw new Error(`not admitted: ${(rep.reasons || []).join("; ")}`);
       row.admission = rep.admission; row.year_p10 = rep.year && rep.year.p10;
       const dir = `${out}/worker/migrations`;
-      const migrations = readdirSync(dir).filter(f => f.endsWith(".sql")).sort().map(f => { const sql = readFileSync(`${dir}/${f}`, "utf8"); return { file: f, sha256: createHash("sha256").update(sql).digest("hex"), sql }; });
+      const sqlRow = (file, sql) => ({ file, sha256: createHash("sha256").update(sql).digest("hex"), sql });
+      const migrations = readdirSync(dir).filter(f => f.endsWith(".sql")).sort().map(f => sqlRow(f, readFileSync(`${dir}/${f}`, "utf8")));
       // The generated system writes its own worker/src/config.js when its bootstrap runs. Drop any copy the kernel copy carried in (a stale generated file in a checkout hid this gap once)
       // so the Worker is built only from what the system itself generates.
       rmSync(`${out}/worker/src/config.js`, { force: true });
       sh("python3", ["bootstrap/bootstrap.py", "--root", ".", "--dry-run"], { cwd: out });
+      if (existsSync(`${out}/org/seed.sql`)) migrations.push(sqlRow("zz-seed.sql", readFileSync(`${out}/org/seed.sql`, "utf8")));  // org, roles and metrics rows
       const mods = await collectModules(async p => readFileSync(`${out}/${p}`, "utf8"), "worker/src/index.js");
       if (dryRun) { console.log(`PREPARED ${slug}: ${mods.length} modules, ${migrations.length} migrations`); continue; }
       const db = await site("/__internal/seed-d1", { name, migrations });

@@ -93,6 +93,8 @@ from . import boundary, closedloop, standards, doctrine, directive, filing, glos
 
 
 def main(argv=None) -> int:
+    from . import cfaccount
+    cfaccount.scrub()  # SINGLE-ACCOUNT-2: never act on a retired Cloudflare account
     import sys as _s
     _av = _s.argv[1:] if argv is None else list(argv)
     if _av[:1] == ["deprot"]:

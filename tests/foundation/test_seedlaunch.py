@@ -73,3 +73,35 @@ class AccountGuard(unittest.TestCase):
                 os.environ["CLOUDFLARE_ACCOUNT_ID"] = old
         self.assertFalse(r["passed"])
         self.assertIn("account", r["failed_stages"])
+
+
+class E2EOidc(unittest.TestCase):
+    def _root(self, row):
+        d = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, d, True)
+        (d / "ops").mkdir(); (d / "ops" / "deploys.jsonl").write_text(json.dumps(row) + "\n")
+        return d
+
+    def test_waits_then_verifies(self):
+        d = self._root({"kind": "seed", "slug": "s", "url": "https://x", "year_p10": 730, "uploaded": True, "live_ok": False})
+        calls, slept = [], []
+        r = seedlaunch.e2e_oidc(root=d, run=lambda a: (calls.append(a) or (0, "OK")), sleep=slept.append)
+        self.assertTrue(r["passed"]); self.assertEqual(len(calls), 2); self.assertEqual(slept, [660])
+
+    def test_upload_error_fails(self):
+        d = self._root({"kind": "seed", "slug": "s", "year_p10": 730, "live_ok": False, "error": "ENOENT"})
+        r = seedlaunch.e2e_oidc(root=d, run=lambda a: (1, "FAIL"), sleep=lambda s: None)
+        self.assertFalse(r["passed"]); self.assertIn("provision", r["failed_stages"])
+
+
+class Scrub(unittest.TestCase):
+    def test_retired_account_is_scrubbed(self):
+        from foundation import cfaccount
+        env = {"CLOUDFLARE_ACCOUNT_ID": cfaccount.retired_ids()[0], "CLOUDFLARE_API_TOKEN": "x"}
+        self.assertTrue(cfaccount.scrub(env))
+        self.assertEqual(env, {})
+
+    def test_ultrastable_account_kept(self):
+        from foundation import cfaccount
+        env = {"CLOUDFLARE_ACCOUNT_ID": "81e3a4efb4eb66e613529b87682911bb", "CLOUDFLARE_API_TOKEN": "x"}
+        self.assertFalse(cfaccount.scrub(env))
+        self.assertEqual(len(env), 2)
