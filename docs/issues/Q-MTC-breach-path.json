@@ -1,7 +1,7 @@
 {
   "id": "Q-MTC-breach-path",
   "title": "Q-MTC-breach-path: breach detection and notification path",
-  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** grep:seed/autonomy/failure-modes.json::\"id\": \"tenant-data-breach\"\n**Status:** open\n\nMulti-tenant control `breach-path` is unproven: breach detection and notification path. Needed: a failure mode `tenant-data-breach` with a detector and a notification step that reaches the affected tenant's contact. The hosted tier stays closed until this is proven. Source: doctrine/tenant-controls.json (TENANT-CONTROLS-1).",
+  "body": "**Owner:** operations\n**Trigger:** every executor run\n**Done check:** grep:seed/autonomy/failure-modes.json::\"id\": \"tenant-data-breach\"\n**Status:** closed\n\nMulti-tenant control `breach-path` is unproven: breach detection and notification path. Needed: a failure mode `tenant-data-breach` with a detector and a notification step that reaches the affected tenant's contact. The hosted tier stays closed until this is proven. Source: doctrine/tenant-controls.json (TENANT-CONTROLS-1).\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 26.7 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:operations",
     "gap"

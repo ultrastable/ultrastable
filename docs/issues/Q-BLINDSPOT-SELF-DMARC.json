@@ -1,11 +1,11 @@
 {
- "id": "Q-BLINDSPOT-SELF-DMARC",
- "title": "Q-BLINDSPOT-SELF-DMARC: ultrastable.io has no DMARC record",
- "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-BLINDSPOT-SELF-DMARC.json::Status:\\*\\* closed\n**Status:** open\n\nFound by the first spun-off app run on its own platform (SPINOFF-1, 2026-11-17). Add a _dmarc TXT record with rua to the owner contact binding.\n\nsize: S\n\n**Closing probe:** grep:docs/issues/Q-BLINDSPOT-SELF-DMARC.json::Status:\\*\\* closed (closes when the live check passes)\n\n**Live check:** GET https://blindspot.ultrastable.app/api/check?domain=ultrastable.io expect \"pass\":true for id dmarc",
- "labels": [
-  "role:operations",
-  "ws:growth"
- ],
- "milestone": "Now",
- "workstream": "Growth"
+  "id": "Q-BLINDSPOT-SELF-DMARC",
+  "title": "Q-BLINDSPOT-SELF-DMARC: ultrastable.io has no DMARC record",
+  "body": "**Owner:** operations\n**Trigger:** executor tick, driver order\n**Done check:** grep:docs/issues/Q-BLINDSPOT-SELF-DMARC.json::Status:\\*\\* closed\n**Status:** closed\n\nFound by the first spun-off app run on its own platform (SPINOFF-1, 2026-11-17). Add a _dmarc TXT record with rua to the owner contact binding.\n\nsize: S\n\n**Closing probe:** grep:docs/issues/Q-BLINDSPOT-SELF-DMARC.json::Status:\\*\\* closed (closes when the live check passes)\n\n**Live check:** GET https://blindspot.ultrastable.app/api/check?domain=ultrastable.io expect \"pass\":true for id dmarc\n\n**Disposition:** fixed (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 98.0 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n\n**Evidence:** 2026-11-21T18:20:52Z closing probe passed after the item was disposed: grep:docs/issues/Q-BLINDSPOT-SELF-DMARC.json::Status:\\*\\* closed\n",
+  "labels": [
+    "role:operations",
+    "ws:growth"
+  ],
+  "milestone": "Now",
+  "workstream": "Growth"
 }
