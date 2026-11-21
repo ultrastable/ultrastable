@@ -757,7 +757,7 @@
    "date": "2026-11-13",
    "title": "COSTGUARD-1 budgets as failure modes (Session: session_0156nqDuRz3AxosG8EDZT7Zi; Session: session_0156nqDsZ)",
    "body": "External D1 budgets (qnfo-audit under 15M rows/hr) are sampled hourly by the tick Worker into cost_samples and probed by selfaudit; red files the next FIX- item, green closes it. GitHub App org access and k_eff below 1 are probed modes with fixes.",
-   "probe": "grep:instances/ultrastable/failure-modes.json::qnfo-audit-d1-budget"
+   "probe": "grep:instances/ultrastable/cost-budgets.json::ultrastable-org"
   },
   {
    "id": "lesson-2026-11-13-free-org-plan-blocks-branch-protection-bundles-restore",
