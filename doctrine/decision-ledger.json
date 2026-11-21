@@ -3736,7 +3736,7 @@
    "date": "2026-11-21",
    "title": "THOUGHT-1: the tick publisher retried a refused Bluesky send every tick and posted links as plain text",
    "body": "A failed send is now retried once a day (a failed status row waits 864e5 ms before its retry, POST-READBACK-1 rows) and Bluesky posts carry link facets.",
-   "probe": "grep:seed/worker/src/social.js::const recent = r => now - Date.parse(r.at) < 864e5",
+   "probe": "grep:seed/worker/src/social.js::const recent",
    "session": "session_0156nqDrGjLASvqbuu6oXJk5"
   }
  ]
