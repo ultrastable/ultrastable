@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-executor-closed-q-spin-scope-claims-live-daily-implement-dai",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Executor closed Q-SPIN-SCOPE-CLAIMS-LIVE-DAILY: Implement daily claim verification by creating a configuration registry and a closed-loop ve",
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: doctrines/spinoff-claims.json, workers/core/spinoff/spinoff-claim-check.ts.",
+  "probe": "file:doctrines/spinoff-claims.json"
+ },
+ "kind": "decision",
+ "title": "Executor closed Q-SPIN-SCOPE-CLAIMS-LIVE-DAILY: Implement daily claim verification by creating a configuration registry and a closed-loop ve",
+ "session": ""
+}

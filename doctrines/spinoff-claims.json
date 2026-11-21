@@ -1,0 +1,16 @@
+[
+  {
+    "id": "ultrastable-site",
+    "name": "Ultrastable Main Site",
+    "url": "https://ultrastable.workers.dev",
+    "claim": "Autonomous software organization providing autonomous software organization infrastructure.",
+    "trigger": "daily"
+  },
+  {
+    "id": "spinoff-ops",
+    "name": "Operator Spinoff",
+    "url": "https://ops.ultrastable.workers.dev",
+    "claim": "Operations automation framework for autonomous systems.",
+    "trigger": "daily"
+  }
+]
