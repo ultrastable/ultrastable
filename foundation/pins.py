@@ -23,7 +23,8 @@ def unprobed(root=REPO) -> list[dict]:
             continue
         d = json.loads(f.read_text(encoding="utf-8")); body = d.get("body", "")
         g = lambda k: (re.search(rf"\*\*{k}:\*\*\s*(.+)", body) or [None, ""])[1].strip()
-        if g("Status").lower() in ("done", "closed", "superseded"):
+        # SHELVED-NOT-DONE-1: a shelved item (DISPOSE-1 timeout) is closed without a fix; one with a prose check still has no probe.
+        if g("Status").lower() in ("done", "closed", "superseded") and not g("Disposition").lower().startswith("shelved"):
             continue
         done = g("Done check")
         # PINS-CMD-1: a cmd: probe on the queue allow-list is runnable by the system (queue.probe), so it counts; the lane's adoption items (OL-PR-*) use one.
