@@ -112,7 +112,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   const days = new Set(rows.filter(r => r.at.slice(0, 10) === today).map(r => r.id)), wk = new Set(rows.filter(r => weekKey(new Date(r.at)) === weekKey(d)).map(r => r.id));
   if (days.size >= gate.max_posts_per_day || wk.size >= gate.max_posts_per_week) return { skipped: 'rate limit' };
   const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3));  // a failed channel is retried up to 3 times; queued, unverified and verified rows are not re-sent
-  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return done(id, 'relay') || (rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3)); };
+  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3) : done(id, 'relay'); };  // per-service rows override a legacy channel='relay' row, which only said the relay was called
   const posted = new Set((cal.posts || []).map(x => x.id).filter(id => Object.keys(channels).every(ch => ch === 'relay' ? relayDone(id) : done(id, ch))));
   const due = (cal.posts || []).filter(p => !posted.has(p.id) && p.date <= today).sort((a, b) => priority(a) - priority(b));
   if (!due.length) return { skipped: 'nothing due' };
