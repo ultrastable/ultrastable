@@ -168,10 +168,34 @@ jobs:
         run: |
           python3 -m foundation standards --check
           (cd seed/worker && node --test --no-warnings test/*.test.js)
-      - name: Foundation tests, new-system end-to-end (one job, no matrix)
+  tests-a:
+    if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Regenerate generated files locally (REGEN-1; the push is done by the fast job only)
+        run: ./scripts/regen_generated.sh
+      - name: Foundation tests, half 1 of 2 (LANE-FAST-1)
         # COST-CHECKS-1: was ~70s serial and pushed runs past the 60s billing minute; 4 processes on the 4-vCPU runner
         run: |
-          ls tests/foundation/test_*.py | xargs -n1 basename | sed 's/\.py$//' |             xargs -P4 -I{} sh -c 'python3 -m unittest discover -s tests/foundation -p "{}.py" > "/tmp/{}.log" 2>&1 || { echo "::error::{} failed"; cat "/tmp/{}.log"; exit 255; }'
+          ls tests/foundation/test_*.py | awk 'NR%2==1' | xargs -n1 basename | sed 's/\.py$//' |             xargs -P4 -I{} sh -c 'python3 -m unittest discover -s tests/foundation -p "{}.py" > "/tmp/{}.log" 2>&1 || { echo "::error::{} failed"; cat "/tmp/{}.log"; exit 255; }'
+  tests-b:
+    if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Regenerate generated files locally (REGEN-1; the push is done by the fast job only)
+        run: ./scripts/regen_generated.sh
+      - name: Foundation tests, half 2 of 2 (LANE-FAST-1)
+        # COST-CHECKS-1: was ~70s serial and pushed runs past the 60s billing minute; 4 processes on the 4-vCPU runner
+        run: |
+          ls tests/foundation/test_*.py | awk 'NR%2==0' | xargs -n1 basename | sed 's/\.py$//' |             xargs -P4 -I{} sh -c 'python3 -m unittest discover -s tests/foundation -p "{}.py" > "/tmp/{}.log" 2>&1 || { echo "::error::{} failed"; cat "/tmp/{}.log"; exit 255; }'
   rest:
     if: ${{ vars.HALT != '1' && (github.event.pull_request.draft != true) }}  # HALT-1
     runs-on: ubuntu-24.04
@@ -213,13 +237,13 @@ jobs:
   checks:
     if: ${{ vars.HALT != '1' && always() && github.event.pull_request.draft != true }}  # HALT-1
     # LANE-FAST-1: the one required status. It stays named `checks`; the three jobs above run in parallel so wall time is the slowest one, not the sum.
-    needs: [fast, foundation, rest]
+    needs: [fast, foundation, tests-a, tests-b, rest]
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     steps:
       - name: Every parallel job passed
         run: |
-          [ "${{ needs.fast.result }}" = success ] && [ "${{ needs.foundation.result }}" = success ] && [ "${{ needs.rest.result }}" = success ] || { echo "::error::a parallel checks job did not pass"; exit 1; }
+          [ "${{ needs.fast.result }}" = success ] && [ "${{ needs.foundation.result }}" = success ] && [ "${{ needs.rest.result }}" = success ] && [ "${{ needs.tests-a.result }}" = success ] && [ "${{ needs.tests-b.result }}" = success ] || { echo "::error::a parallel checks job did not pass"; exit 1; }
   lane:
     needs: [checks]
     if: ${{ vars.HALT != '1' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}  # HALT-1
