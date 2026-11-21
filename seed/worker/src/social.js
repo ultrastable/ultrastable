@@ -98,6 +98,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
     const m = await store.material(db, env, tenant, key); if (m && m.status !== 'pending' && (ch === 'bluesky' ? m.secret && m.secret.refresh_token : m.access)) channels[ch] = m;  // an unfinished sign-in (no token) is not a channel: it would only spend calls
   }
   if (env.SOCIAL_RELAY_TOKEN && env.SOCIAL_RELAY_URL) channels.relay = { relay: true };  // SOCIAL-RELAY-1: the owner's existing Buffer and Mastodon logins, reached through a token-gated relay that never exposes them
+  if (channels.relay && (channels.buffer || channels.mastodon)) delete channels.relay;  // SOCIAL-MODULE-1: a native credential retires the relay; it only remains as the fallback until Buffer and Mastodon are linked here
   if (!Object.keys(channels).length) return { skipped: 'no channel connected' };  // no network call until an account is linked
   const base = RAW(env.SOCIAL_REPO || repo), get = async n => { const r = await f(base + n); if (!r.ok) throw new Error(n + ' HTTP ' + r.status); return r.json(); };
   const [gate, cal] = await Promise.all([get('gate.json'), get('calendar.json')]);
