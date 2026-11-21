@@ -19,8 +19,11 @@ const hours = (iso, now) => Math.max(0, (now - Date.parse(iso)) / 36e5);
 // the sweeper never files a second, unmirrored issue there.
 // PR-LATENCY-1: a PR open longer than stallMin minutes is a stall (alarm), whatever its state.
 export const PR_STALL_MIN = 15;
+// SLA-8H-1 (Rowan 2026-11-21: no PR open past 8 hours, ever): the last rung of the ladder. A client PR (agent/* or claude/*) still unmerged after
+// PR_LADDER_MIN is closed as superseded with evidence; its branch is kept, so branchsweep merges, ports (PORT-BRANCH item) or rejects it and the close is reversible.
+export const PR_LADDER_MIN = 360;
 export const PR_LATENCY_DDL = ['ALTER TABLE sweeper_runs ADD COLUMN merge_p50_min REAL', 'ALTER TABLE sweeper_runs ADD COLUMN merge_p95_min REAL', 'ALTER TABLE sweeper_runs ADD COLUMN oldest_open_pr_min REAL', 'ALTER TABLE sweeper_runs ADD COLUMN stalled_prs INTEGER NOT NULL DEFAULT 0'];
-export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now = Date.now(), maxAgeH = 24, laneOwned = ['ultrastable/ultrastable'], stallMin = PR_STALL_MIN }) {
+export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now = Date.now(), maxAgeH = 24, laneOwned = ['ultrastable/ultrastable'], stallMin = PR_STALL_MIN, ladderMin = PR_LADDER_MIN }) {
   const out = { status: 'ok', merged: [], refreshed: [], reconciled: [], filed: [], lane_owned: [], released: [], errors: [], open_loop_age_hours: 0, stalled: [], pr_latency: null };
   let reconciles = 0;
   if (!token) return { ...out, status: 'no-token' };
@@ -65,6 +68,13 @@ export async function sweepOpenLoops({ token, repos = [], fetch: f = fetch, now 
         if (d.mergeable_state === 'clean' && !hold) {
           const m = await gh(f, token, 'PUT', `/repos/${repo}/pulls/${p.number}/merge`, { merge_method: 'squash' });
           if (m.ok) { out.merged.push(tag); continue; }
+        }
+        if (hours(p.created_at || p.updated_at, now) * 60 > ladderMin) {
+          const why = `state ${d.mergeable_state}${hold ? ', ' + hold : ''}`;
+          await gh(f, token, 'POST', `/repos/${repo}/issues/${p.number}/comments`, { body: `SLA-8H-1: open ${Math.round(hours(p.created_at || p.updated_at, now) * 10) / 10} h (limit ${ladderMin / 60} h), ${why}; retries, branch refresh and reconcile did not land it. Closed as superseded; the branch is kept and the branch sweep merges, ports or rejects it with a recorded disposition. Reopen to retry.` });
+          const c = await gh(f, token, 'PATCH', `/repos/${repo}/pulls/${p.number}`, { state: 'closed' });
+          if (c.ok) { (out.superseded ||= []).push(tag); continue; }
+          out.errors.push(`${tag} ladder close ${c.status}`);
         }
         const age = hours(p.updated_at || p.created_at, now);
         out.open_loop_age_hours = Math.max(out.open_loop_age_hours, Math.round(age * 10) / 10);
