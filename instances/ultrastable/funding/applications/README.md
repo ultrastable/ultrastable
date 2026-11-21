@@ -1,5 +1,10 @@
 # Funding application packets
 
+> Ultrastable is the foundation for any autonomous system.
+
+> A system is autonomous if it has self-referential loops and the ability to close them.
+
+
 One folder per program, keyed by the `id` in `../registry.json`. Each folder holds `packet.json` (machine-readable: answers, prerequisites, submit steps, status) and `ANSWERS.md` (the same answers for reading and pasting). `scripts/funding_packet.py` validates every packet against the registry, checks that answers carry no banned claims, and writes `STATUS.md`. The weekly `funding-maintenance` workflow runs it and files an issue for every packet that is stale, blocked past its probe, or failing validation.
 
 Statuses: `drafted` (answers done, not submittable yet), `ready` (all prerequisites met, only the identity-bound submit remains), `submitted` (confirmation filed under `confirmations/`), `decided`, `rejected`.

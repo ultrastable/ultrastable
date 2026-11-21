@@ -1,5 +1,10 @@
 # Briefing set
 
+> Ultrastable is the foundation for any autonomous system.
+
+> A system is autonomous if it has self-referential loops and the ability to close them.
+
+
 Everything needed to talk about Ultrastable to investors, grant reviewers, partners and press. Positioning: **an autonomous system that bootstraps any organized effort** (a company, an open-source project, a community, a lab) from one idea and runs the work of building and operating it; for-profit and open source (ultrastable.org) both stay open. Separate from QNFO; QNFO is only the first test case. No financial claims. The project is open; the Ultrastable License governs use.
 
 | File | Audience | Use |
