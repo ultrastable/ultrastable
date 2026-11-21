@@ -8,7 +8,7 @@ Dependabot opens the update pull requests on its own schedule; the lane merges a
 without an entry is a failure (failure mode fm-dependency-rot, detector `dependency-watch`, yearfail month `dependency-rot`).
 Consumers: doctrine/detectors.json, foundation/yearfail.py, tests/foundation/test_deprot.py."""
 from __future__ import annotations
-import re, sys
+import json, re, sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -43,13 +43,24 @@ def covered(root: Path) -> set[tuple[str, str]]:
     return got
 
 
+def baseline(root: Path) -> set[tuple[str, str]]:
+    p = root / "doctrine/deprot.json"
+    return {(b["ecosystem"], b["directory"]) for b in json.loads(p.read_text(encoding="utf-8"))["baseline"]} if p.exists() else set()
+
+
 def check(root=REPO) -> list[str]:
     root = Path(root)
-    return [f"no Dependabot entry for {e} at {d}" for e, d in sorted(manifests(root) - covered(root))]
+    base, cov = baseline(root), covered(root)
+    bad = [f"no Dependabot entry for {e} at {d}" for e, d in sorted(manifests(root) - cov - base)]
+    bad += [f"baseline entry {e} at {d} is covered or gone: remove it from doctrine/deprot.json" for e, d in sorted(base & cov | base - manifests(root))]
+    return bad
 
 
 def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
     bad = check()
+    if "--strict" in argv:  # the closing probe of Q-DEPROT-dependabot: every manifest is covered, the baseline is empty
+        bad += [f"baseline still lists {e} at {d}" for e, d in sorted(baseline(REPO))]
     print("\n".join(bad) or "deprot ok")
     return 1 if bad else 0
 

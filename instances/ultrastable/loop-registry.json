@@ -3880,10 +3880,10 @@
    "id": "yearfail",
    "kind": "governance",
    "summary": "YEARFAIL-1: twelve simulated months of zero input run against a scratch copy weekly; each injected failure must be detected by the system's own detectors and the fix verified; a failing month files Q-YEARFAIL-<area>.",
-   "trigger": "weekly (yearfail.yml) and on demand",
+   "trigger": "on demand (python3 -m foundation yearfail --apply) until the weekly workflow lands (Q-YEARFAIL-workflow)",
    "owner": "operations",
    "closes_by": "system",
-   "sla": "7d",
+   "sla": "30d",
    "done": "python3 -m foundation yearfail --check reports ok and ops/yearfail.json is under 8 days old",
    "paths": [
     {
@@ -3909,9 +3909,7 @@
     "site/yearfail.js"
    ],
    "area": "governance",
-   "workflows": [
-    "yearfail.yml"
-   ],
+   "workflows": [],
    "server_owner": "github-actions"
   }
  ],
