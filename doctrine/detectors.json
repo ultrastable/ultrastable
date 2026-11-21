@@ -288,7 +288,13 @@
    "id": "pathfinder-exhaustion",
    "failure_mode": "fm-waiting-on-person",
    "kind": "command",
-   "run": ["python3", "-m", "foundation", "pathfinder", "--check"],
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "pathfinder",
+    "--check"
+   ],
    "timeout": 60,
    "root_cause": "an owner ask (gate, needs-you item, /owner link) was emitted without an attempt in every surface class",
    "owner": "operations",
@@ -309,6 +315,22 @@
    "root_cause": "a wait on a person entered the system as a document, card, report or unmerged PR",
    "owner": "operations",
    "remedy": "Take the input as given: build the consumer, let the lane merge and deploy, or reduce it to one identity-bound gate with a default in effect."
+  },
+  {
+   "id": "dependency-watch",
+   "failure_mode": "fm-dependency-rot",
+   "kind": "command",
+   "run": [
+    "python3",
+    "-m",
+    "foundation",
+    "deprot",
+    "--check"
+   ],
+   "timeout": 60,
+   "root_cause": "a dependency manifest has no Dependabot entry",
+   "owner": "operations",
+   "remedy": "Add the ecosystem and directory to .github/dependabot.yml."
   }
  ]
 }

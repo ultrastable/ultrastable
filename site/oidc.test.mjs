@@ -32,4 +32,10 @@ _resetJwks();
 for (const [m, p2] of [["DELETE", "d1/database"], ["PUT", "r2/buckets/ultrastable-git/objects/other/x"], ["GET", "../user/tokens"], ["PUT", "workers/scripts/x"], ["POST", "d1/database"]]) { _resetJwks(); assert.equal((await cf(m, p2)).r.status, 403, m + " " + p2 + " is refused"); }
 _resetJwks(); assert.equal((await cf("POST", "d1/database/" + "a".repeat(8) + "-aaaa-aaaa-aaaa-" + "a".repeat(12) + "/query", JSON.stringify({ sql: "DELETE FROM t" }), { "content-type": "application/json" })).r.status, 403, "a write query is refused");
 _resetJwks(); assert.equal((await cf("POST", "d1/database/" + "a".repeat(8) + "-aaaa-aaaa-aaaa-" + "a".repeat(12) + "/query", JSON.stringify({ sql: "SELECT 1" }), { "content-type": "application/json" })).r.status, 200, "a read query is forwarded");
+// COST-ROUTE-1: only the cost probe's analytics reads are forwarded, for the pinned account
+const gq = async (query, variables = { account: "evil" }) => { const seen = []; const f = async (url, init) => { seen.push([String(url), init && init.body]); return String(url).endsWith("/.well-known/jwks") ? new Response(JSON.stringify({ keys: [jwk] })) : new Response(JSON.stringify({ data: {} }), { status: 200 }); }; _resetJwks(); const r = await internalDeploy(new Request("https://site/__internal/cf-graphql", { method: "POST", headers: { authorization: "Bearer " + await jwt({}) }, body: JSON.stringify({ query, variables }) }), env, f); return { r, seen }; };
+let g = await gq("query($account: String!, $dt: Date) { viewer { accounts(filter: { accountTag: $account }) { aiInferenceAdaptiveGroups(limit: 1) { sum { totalNeurons } } } } }");
+assert.equal(g.r.status, 200); assert.ok(JSON.parse(g.seen.find(c => c[0].endsWith("/graphql"))[1]).variables.account === "acct", "the account is pinned");
+assert.equal((await gq("mutation { x }")).r.status, 403, "a mutation is refused");
+assert.equal((await gq("query($account: String!) { viewer { zones { x } } }")).r.status, 403, "another dataset is refused");
 console.log("oidc ok");

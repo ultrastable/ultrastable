@@ -87,10 +87,10 @@ export const YEARSIM = {
    "detected": true,
    "repaired_and_verified": true,
    "result": "PASS",
-   "evidence": "grep:scripts/lane.sh::LANE-REBASE-1 does not match",
+   "evidence": "grep:scripts/lane.sh::LANE-REBASE-1 does not match | redmain: {\"kind\": \"hunk\", \"path\": \"scripts/lane.sh\", \"at\": \"@@ -160 +160 @@ if [ \\\"${GITHUB_WORKFLOW:-}\\\" = lane ] || [ \\\"${LANE_",
    "labels": {
     "detect": "REAL",
-    "repair": "SIMULATED",
+    "repair": "REAL",
     "verify": "REAL"
    }
   },
@@ -128,16 +128,23 @@ export const YEARSIM = {
    "month": 9,
    "date": "2027-08-29",
    "area": "dependency-rot",
-   "result": "UNCOVERED",
-   "why": "no detector watches dependency age or advisories; none to inject against",
-   "item": "Q-YEARSIM-dependency-rot"
+   "failure": "a new dependency manifest has no update bot watching it",
+   "detected": true,
+   "repaired_and_verified": true,
+   "result": "PASS",
+   "evidence": "no Dependabot entry for npm at /newservice\n",
+   "labels": {
+    "detect": "REAL",
+    "repair": "SIMULATED",
+    "verify": "REAL"
+   }
   },
   {
    "month": 10,
    "date": "2027-09-28",
-   "area": "catalogue-and-social",
+   "area": "tenant-loops",
    "result": "UNCOVERED",
-   "why": "these loops live in ultrastable/practical-solutions and need its own year run",
+   "why": "tenant result not readable (HTTPError); the tenant's own yearsim workflow has not published ops/yearsim.json yet",
    "item": "Q-YEARSIM-tenant-loops"
   },
   {
@@ -164,9 +171,9 @@ export const YEARSIM = {
    }
   }
  ],
- "pass": 8,
+ "pass": 9,
  "fail": 1,
- "uncovered": 3,
+ "uncovered": 2,
  "ok": false,
  "honesty": "Detection and verification ran the repository's own code on a scratch copy. Repairs were applied by the harness, not by the live executor. UNCOVERED areas were not simulated and count against the claim."
 };

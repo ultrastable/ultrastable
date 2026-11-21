@@ -20,6 +20,12 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 SKIP = shutil.ignore_patterns(".git", "node_modules", "kit", "artifacts", ".selfhost", "__pycache__", "repo-backups")
 START = dt.date(2027, 1, 1)
+TENANT_URL = "https://raw.githubusercontent.com/ultrastable/practical-solutions/main/ops/yearsim.json"
+REAL_REPAIR = {"ci"}  # repair done by the repository's own code (foundation/redmain.py); every other repair is applied by the harness
+
+
+class Unmeasured(Exception):
+    """A scenario that cannot be observed from here: reported UNCOVERED, never PASS."""
 
 
 def cfg(root=REPO) -> dict:
@@ -117,15 +123,27 @@ def _break_probe(root, did):
     return f, f.read_text(encoding="utf-8")
 
 
+def _g(root, *a):
+    return subprocess.run(["git", "-c", "user.email=s@s", "-c", "user.name=sim", "-C", str(root), *a], capture_output=True, text=True)
+
+
 def s_ci(root, today):
-    """CI breakage: the lane script loses its rebase guard; the detector must notice, file Q-AUDIT, and close it after the fix."""
+    """CI breakage: a commit removes the lane's rebase guard; the detector must notice and file Q-AUDIT, then redmain (no model, no person) reverts the
+    smallest hunk that turns the gate green and the detector must recover. The repair is REAL code (foundation/redmain.py), run on the scratch history."""
+    from . import redmain
+    c = _r(root / "doctrine/redmain.json")
+    c["gates"]["yearsim"] = {"cmd": "python3 -c \"import sys; sys.exit(0 if 'LANE-REBASE-1' in open('scripts/lane.sh').read() else 1)\"", "paths": ["scripts"], "workflows": []}
+    _w(root / "doctrine/redmain.json", c)
+    _g(root, "add", "-A"); _g(root, "commit", "-qm", "good: lane guard present")
     f, good = _break_probe(root, "lane-rebase")
     f.write_text(good.replace("LANE-REBASE-1", "LANE-REBASE-GONE"), encoding="utf-8")
+    _g(root, "commit", "-qam", "bad: a change drops the rebase guard")
     first = _audit(root, ["lane-rebase"], today)[0]
     filed = first["status"] == "fail" and (root / "docs/issues/Q-AUDIT-lane-rebase.json").exists()
-    f.write_text(good, encoding="utf-8")  # SIMULATED fix
+    rep = redmain.run(root, "yearsim", apply=True)[0]
     second = _audit(root, ["lane-rebase"], today + dt.timedelta(days=1))[0]
-    return filed, second["status"] == "pass" and second.get("disposition") == "recovered", first["evidence"][:160]
+    ok = bool(rep.get("applied")) and second["status"] == "pass" and second.get("disposition") == "recovered"
+    return filed, ok, first["evidence"][:100] + " | redmain: " + json.dumps(rep.get("repair"))[:120]
 
 
 def s_stuck(root, today):
@@ -161,6 +179,31 @@ def s_final(root, today):
     return not r["below"] or True, (not r["below"]) and live_ok, why
 
 
+def s_tenant(root, today):
+    """The Practical Solutions loops: its own 365-day fake-clock run and workflow cadence check, published by that repository (ops/yearsim.json)."""
+    import urllib.request, urllib.error
+    try:
+        req = urllib.request.Request(TENANT_URL, headers={"User-Agent": "ultrastable-yearsim"})
+        with urllib.request.urlopen(req, timeout=20) as r:  # nosec: fixed https URL
+            t = json.loads(r.read().decode("utf-8"))
+    except (urllib.error.URLError, OSError, ValueError) as e:
+        raise Unmeasured(f"tenant result not readable ({type(e).__name__}); the tenant's own yearsim workflow has not published ops/yearsim.json yet") from None
+    bad = t["unexpected_fails"] + t["cadence_defects"]
+    return True, not bad, f"{len(t['checks'])} loop checks, unexpected failures {t['unexpected_fails']}, cadence defects {t['cadence_defects']}; C9 (real model) expected to fail offline"
+
+
+def s_deprot(root, today):
+    """Dependency rot: a new manifest with no update bot watching it must be caught by the detector, then covered."""
+    m = root / "newservice/package.json"
+    _w(m, {"name": "newservice", "version": "1.0.0", "dependencies": {"left-pad": "1.0.0"}})
+    first = _audit(root, ["dependency-watch"], today)[0]
+    filed = first["status"] == "fail" and (root / "docs/issues/Q-AUDIT-dependency-watch.json").exists()
+    dep = root / ".github/dependabot.yml"
+    dep.write_text(dep.read_text(encoding="utf-8") + "  - package-ecosystem: npm\n    directory: /newservice\n    schedule:\n      interval: weekly\n", encoding="utf-8")  # SIMULATED fix
+    second = _audit(root, ["dependency-watch"], today + dt.timedelta(days=1))[0]
+    return filed, second["status"] == "pass" and second.get("disposition") == "recovered", first["evidence"][:160]
+
+
 FUNCS = {k[2:]: v for k, v in list(globals().items()) if k.startswith("s_")}
 
 
@@ -187,11 +230,14 @@ def run(root=REPO, keep=False) -> dict:
             try:
                 det, fixed, ev = FUNCS[m["scenario"]](sc, today)
                 err = None
+            except Unmeasured as e:
+                rows.append({"month": i + 1, "date": today.isoformat(), "area": m["area"], "result": "UNCOVERED", "why": str(e), "item": m.get("item")})
+                continue
             except Exception as e:  # recorded, never swallowed: a crashed scenario is a FAIL
                 det, fixed, ev, err = False, False, f"{type(e).__name__}: {e}", True
             res = "PASS" if det and fixed else "FAIL"
             rows.append({"month": i + 1, "date": today.isoformat(), "area": m["area"], "failure": m["failure"], "detected": bool(det), "repaired_and_verified": bool(fixed),
-                         "result": res, "evidence": ev, "labels": {"detect": "REAL", "repair": "SIMULATED", "verify": "REAL"}, **({"crashed": True} if err else {})})
+                         "result": res, "evidence": ev, "labels": {"detect": "REAL", "repair": "REAL" if m["scenario"] in REAL_REPAIR else "SIMULATED", "verify": "REAL"}, **({"crashed": True} if err else {})})
     finally:
         if not keep:
             shutil.rmtree(sc, ignore_errors=True)

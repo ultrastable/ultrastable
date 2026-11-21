@@ -76,6 +76,17 @@ export async function cfProxy(request, env, f) {
   return new Response(up.body, { status: up.status, headers: { "content-type": up.headers.get("content-type") || "application/json" } });
 }
 
+// COST-ROUTE-1: usage analytics for the cost probe. GitHub holds no Cloudflare credential (the secret there is refused by the account), so the probe sends its
+// GraphQL read here with its OIDC token. Only the two analytics datasets the probe reads are forwarded, for the pinned account, never a mutation.
+export const GQL_OK = /^\s*query\s*\(\s*\$account:\s*String!(?:,\s*\$\w+:\s*\w+!?)*\s*\)\s*\{\s*viewer\s*\{\s*accounts\(filter:\s*\{\s*accountTag:\s*\$account\s*\}\)\s*\{\s*(?:aiInferenceAdaptiveGroups|d1AnalyticsAdaptiveGroups)\b/;
+export async function cfGraphql(request, env, f) {
+  let j; try { j = await request.json(); } catch (e) { return J({ ok: false, error: "bad json" }, 400); }
+  const q = String(j.query || "");
+  if (!GQL_OK.test(q) || /mutation|subscription/i.test(q)) return J({ ok: false, error: "only the cost probe's analytics reads are allowed" }, 403);
+  const up = await f("https://api.cloudflare.com/client/v4/graphql", { method: "POST", headers: { authorization: "Bearer " + (env.CF_ANALYTICS_TOKEN || env.CF_DEPLOY_TOKEN), "content-type": "application/json" }, body: JSON.stringify({ query: q, variables: { ...(j.variables || {}), account: env.CF_ACCOUNT_ID } }) });
+  return new Response(up.body, { status: up.status, headers: { "content-type": "application/json" } });
+}
+
 export async function internalDeploy(request, env, fetcher) {
   const u = new URL(request.url);
   if (!u.pathname.startsWith("/__internal/")) return null;
@@ -87,6 +98,7 @@ export async function internalDeploy(request, env, fetcher) {
   const f = fetcher || fetch, T = env.CF_DEPLOY_TOKEN, A = env.CF_ACCOUNT_ID;
   if (!T || !A) return J({ ok: false, error: "site has no CF_DEPLOY_TOKEN / CF_ACCOUNT_ID" }, 503);
   if (u.pathname === "/__internal/cf") return cfProxy(request, env, f);
+  if (u.pathname === "/__internal/cf-graphql") return cfGraphql(request, env, f);  // COST-ROUTE-1
   const api = (m, p, body, h) => f("https://api.cloudflare.com/client/v4" + p, { method: m, headers: { authorization: "Bearer " + T, ...(h || {}) }, body }).then(r => r.json());
   let b; try { b = await request.json(); } catch (e) { return J({ ok: false, error: "bad json" }, 400); }
   if (!ALLOWED.test(String(b.name || ""))) return J({ ok: false, error: "worker name not allowed: " + b.name }, 400);

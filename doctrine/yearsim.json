@@ -10,8 +10,8 @@
   {"area": "ci-breakage", "failure": "the lane loses its rebase guard", "scenario": "ci"},
   {"area": "stuck-failure", "failure": "a failure item nobody repairs for nine days", "scenario": "stuck"},
   {"area": "silent-drop", "failure": "a queue item closed with no evidence", "scenario": "silent"},
-  {"area": "dependency-rot", "failure": "a dependency goes unpatched or is deprecated", "scenario": null, "why": "no detector watches dependency age or advisories; none to inject against", "item": "Q-YEARSIM-dependency-rot"},
-  {"area": "catalogue-and-social", "failure": "catalogue scan, advocate pipeline and social posting run for a year", "scenario": null, "why": "these loops live in ultrastable/practical-solutions and need its own year run", "item": "Q-YEARSIM-tenant-loops"},
+  {"area": "dependency-rot", "failure": "a new dependency manifest has no update bot watching it", "scenario": "deprot"},
+  {"area": "tenant-loops", "failure": "the Practical Solutions loops (scan, pipeline, advocates, deploys) run a year; its scheduled workflows fire and honour the halt", "scenario": "tenant", "item": "Q-YEARSIM-tenant-loops"},
   {"area": "github-apps", "failure": "a fresh setup must register one app, never more", "scenario": null, "why": "GitHub offers no API to delete a keyless app or its installation; reuse is tested in seed/worker/test/auth.test.js, not in this run", "item": "OL-20261121-1"},
   {"area": "final-runway", "failure": "after twelve months the runway still meets the target", "scenario": "final"}
  ]

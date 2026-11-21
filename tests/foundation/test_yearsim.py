@@ -20,7 +20,7 @@ class YearSim(unittest.TestCase):
         for m in self.res["months"]:
             if m["result"] == "PASS":
                 self.assertTrue(m["detected"] and m["repaired_and_verified"])
-                self.assertEqual(m["labels"]["repair"], "SIMULATED")
+                self.assertEqual(m["labels"]["repair"], "REAL" if m["area"] == "ci-breakage" else "SIMULATED")
 
     def test_uncovered_is_never_pass(self):
         for m in self.res["months"]:
