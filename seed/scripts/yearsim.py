@@ -177,17 +177,6 @@ def check(root=ROOT):
     return errs
 
 
-if __name__ == "__main__":
-    a = sys.argv[1:]
-    if "--check" in a:
-        e = check(Path(a[a.index("--root") + 1]) if "--root" in a else Path.cwd())
-        print("yearsim ok" if not e else "\n".join(e))
-        sys.exit(1 if e else 0)
-    r = run(Path(a[a.index("--root") + 1]) if "--root" in a else Path.cwd(), apply="--apply" in a)
-    print(json.dumps({k: r[k] for k in ("horizon", "strict", "meets_target")}, indent=1))
-    print("most sensitive:", [(x["id"], x["swing"]) for x in r["sensitivity"]["ranked"][:3]])
-
-
 def apply_observed(c, observed, min_events=3):
     """Replace a fault's assumed rate with the observed one where the fault names `rate_from` (a key of ops/trajectory.json `observed`) and the history
     holds enough events: rate = the larger of the window mean and the recent third (the conservative reading), growth = the observed trend, damped to
@@ -201,3 +190,13 @@ def apply_observed(c, observed, min_events=3):
             used.append(f["id"])
         out.append(f)
     return {**c, "faults": out}, used
+
+if __name__ == "__main__":
+    a = sys.argv[1:]
+    if "--check" in a:
+        e = check(Path(a[a.index("--root") + 1]) if "--root" in a else Path.cwd())
+        print("yearsim ok" if not e else "\n".join(e))
+        sys.exit(1 if e else 0)
+    r = run(Path(a[a.index("--root") + 1]) if "--root" in a else Path.cwd(), apply="--apply" in a)
+    print(json.dumps({k: r[k] for k in ("horizon", "strict", "meets_target")}, indent=1))
+    print("most sensitive:", [(x["id"], x["swing"]) for x in r["sensitivity"]["ranked"][:3]])

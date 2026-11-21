@@ -409,6 +409,18 @@
    "status": "controlled",
    "cadence_ticks": 1,
    "probe": "grep:tests/foundation/test_saydo.py::def test_probe_closes_on_match"
+  },
+  {
+   "id": "fm-seed-not-launched",
+   "trigger": "a seed (repo from ultrastable/seed or seed/ here) cannot be built, deployed, year-gated and probed live with no person",
+   "symptom": "an idea sits in a repository with no running system, or a running system that cannot last a year unattended",
+   "blast_radius": "every tenant and new system built on Ultrastable",
+   "detection": "python3 -m foundation seedlaunch --check",
+   "root_cause": "the seed depends on files outside itself, a drill regressed, or a provision step changed",
+   "remediation": "seed-launch.yml launches a fresh seed and every seeded repository weekly on Ultrastable's own account; a failed stage files Q-AUDIT-seed-launch for the executor",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:tests/foundation/test_seedlaunch.py::def test_check_fails_on_failed_e2e"
   }
  ],
  "controls": [

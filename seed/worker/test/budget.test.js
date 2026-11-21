@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { budgetConfig, allowance, estimateNeurons, governedAI, budgetView, decide, BudgetExhausted, PRICES, _resetForTests } from '../src/budget.js';
 
 function mkdb() {
@@ -146,7 +146,7 @@ test('lazy governed env: a request with no model call reads nothing; a spent bud
   await assert.rejects(async () => { await env2.AI.run('m', {}).catch(e => { throw e; }); await env2.AI.run('m', {}); }, BudgetExhausted, 'crawl: at most the hour\'s one call, then refused');
 });
 
-test('every Workers AI call site in the workers goes through the governor', () => {
+test('every Workers AI call site in the workers goes through the governor', { skip: !existsSync(new URL('../../../site/worker.js', import.meta.url)) && 'standalone seed checkout: platform workers are not here (SEED-SELFCONTAINED-1)' }, () => {
   const read = (p) => readFileSync(new URL('../../../' + p, import.meta.url), 'utf8');
   assert.match(read('site/worker.js'), /env = budgetEnv\(env, SHARES\.site\)/);
   assert.match(read('dashboard/worker.js'), /async fetch\(req, env\) \{ env = budgetEnv\(env, SHARES\.dashboard\)/);
