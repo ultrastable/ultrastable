@@ -1,16 +1,20 @@
 name: failure-audit
-# FAILURE-AUDIT-1: the system audits its own failure modes. Daily only; the primary clock is the Cloudflare tick.
-# budget: ~8 min x 30 per month
+# FAILURE-AUDIT-1 + FAILURE-RESOLVE-1: the system audits its own failure modes and hands every finding to its own queue. Daily only; the primary clock is the Cloudflare tick.
+# budget: ~9 min x 30 per month
 # trigger: daily and dispatch; failure modes drift over days, so a faster event buys nothing
 # free-alternative: run `python3 -m foundation failure_audit --run` from a cloud-hosted agent session or the Cloudflare cron worker
-# Runs doctrine/detectors.json, appends ops/failure-audit.jsonl and files or clears docs/issues/AUDIT-*.json; the evidence is committed to
-# branch audit-evidence, which the next run starts from so streaks (same signature twice = change approach, three = incident) persist.
+# Runs doctrine/detectors.json on main's own files. The append-only ledger (ops/failure-audit.jsonl) lives on branch audit-evidence, which the next
+# run starts from so streaks (same signature twice = change approach, three = incident) and last passing commits persist. The findings
+# (docs/issues/Q-AUDIT-*.json, ops/failure-audit-state.json) land on main through the main writer, where the executor takes them and the
+# closing-probe contracts close them. FAILURE-RESOLVE-1, measured 2026-11-21: before this, the findings stayed on the evidence branch and nothing took them.
 on:
   schedule:
     - cron: "41 5 * * *"
   workflow_dispatch:
 permissions:
   contents: write
+  pull-requests: write  # scripts/land_data.py falls back to a pull request when the main writer is refused
+  id-token: write  # MAIN-WRITER-1: tools/push_main.py presents the run's OIDC token
 concurrency:
   group: failure-audit
   cancel-in-progress: false
@@ -30,17 +34,30 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      - name: Start from the loop's own evidence when it exists
+      - name: Start from the loop's own ledger; every other file is main's
+        # AUDIT-STALE-OVERLAY-1: this step used to check out all of ops/ and docs/issues/ from the evidence branch, so the detectors ran against
+        # day-old issue files and reported main as failing (stale roadmap data, unlinked pins) when main was clean.
         run: |
           if git ls-remote --exit-code --heads origin audit-evidence >/dev/null; then
             git fetch origin audit-evidence
-            git checkout origin/audit-evidence -- ops docs/issues
+            if git cat-file -e origin/audit-evidence:ops/failure-audit.jsonl; then
+              git show origin/audit-evidence:ops/failure-audit.jsonl > ops/failure-audit.jsonl
+            fi
           fi
       - run: python3 -m foundation failure_audit --run
         continue-on-error: true
-      - name: Commit the evidence
+      - name: Ledger to the evidence branch
         run: |
           git config user.name "ultrastable-audit"
           git config user.email "actions@users.noreply.github.com"
-          git add ops/failure-audit.jsonl docs/issues
-          if git diff --cached --quiet; then echo "no change"; else git commit -m "failure-audit: ledger and findings" && git push origin HEAD:refs/heads/audit-evidence --force; fi
+          git add ops/failure-audit.jsonl
+          if git diff --cached --quiet; then echo "no ledger change"; else
+            git commit -q -m "failure-audit: ledger"
+            git push -q origin HEAD:refs/heads/audit-evidence --force
+            git reset -q --mixed HEAD~1
+          fi
+      - name: Findings to main, where the executor takes them
+        env:
+          GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/land_data.py "failure-audit: file and close failure-mode items (FAILURE-RESOLVE-1)" docs/issues ops/failure-audit-state.json

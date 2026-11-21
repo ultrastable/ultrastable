@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-failure-resolve-1-an-audit-that-files-where-no-loop-reads-is",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "FAILURE-RESOLVE-1: an audit that files where no loop reads is detection without resolution",
+  "body": "The failure audit wrote AUDIT-<id>.json to branch audit-evidence with done check detector:<id>: outside foundation/queue.items, no probe kind, never on main. Two detectors failed five daily runs untaken. Findings now land on main as Q-AUDIT-<id> with a cmd: closing probe and root-cause suspects; failure_audit --check fails on an unwatched mode or an unfiled finding. Detectors must run on main's own files: overlaying docs/issues from an evidence branch produced false failures.",
+  "probe": "grep:foundation/failure_audit.py::def coverage"
+ },
+ "kind": "lesson",
+ "title": "FAILURE-RESOLVE-1: an audit that files where no loop reads is detection without resolution",
+ "session": ""
+}

@@ -2163,6 +2163,19 @@
       "bound_by": "cited"
     },
     {
+      "id": "cited-b2856649a8",
+      "surface": "agents/AGENTS.md",
+      "text": "- **Every failure mode is audited and every finding is taken by the queue (FAILURE-RESOLVE-1, Rowan 2026-11-21).** \"How will the",
+      "probe": [
+        "file:doctrine/registers.json",
+        "file:doctrine/detectors.json",
+        "file:foundation/failure_audit.py",
+        "file:.github/workflows/failure-audit.yml",
+        "file:tests/foundation/test_failure_audit.py"
+      ],
+      "bound_by": "cited"
+    },
+    {
       "id": "cited-0e093a19f3",
       "surface": "agents/AGENTS.md",
       "text": "- **Self-reference is the multiplier (SELF-REFERENCE-1, Rowan 2026-11-14).** \"Ultrastable runs on Ultrastable. That self-reference is key",
@@ -2663,52 +2676,6 @@
       "of": "cited-e7cebff4c4"
     },
     {
-      "id": "mirror-e2b7cb0275",
-      "surface": "seed/AGENTS.md",
-      "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
-      "probe": [
-        "file:foundation/closedloop.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-09973d0254"
-    },
-    {
-      "id": "mirror-3433c99596",
-      "surface": "seed/AGENTS.md",
-      "text": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
-      "probe": [
-        "file:foundation/boundary.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
-        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-f46e34e2a9"
-    },
-    {
-      "id": "mirror-b9ff555df6",
-      "surface": "seed/AGENTS.md",
-      "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
-      "probe": [
-        "file:foundation/lanewatch.py",
-        "file:foundation/crosswalk.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-5d0567ad32"
-    },
-    {
-      "id": "mirror-0b772f20ba",
-      "surface": "seed/AGENTS.md",
-      "text": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
-      "probe": [
-        "file:foundation/standingorder.py",
-        "grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b"
-      ],
-      "bound_by": "mirror",
-      "of": "cited-e7cebff4c4"
-    },
-    {
       "id": "mirror-961fe87d91",
       "surface": "seed/agents/AGENTS.md",
       "text": "Words match code (CLAIMS-1, Rowan 2026-11-17)",
@@ -2898,6 +2865,20 @@
       ],
       "bound_by": "mirror",
       "of": "cited-62afd0c67f"
+    },
+    {
+      "id": "mirror-753268c290",
+      "surface": "seed/agents/AGENTS.md",
+      "text": "- **Every failure mode is audited and every finding is taken by the queue (FAILURE-RESOLVE-1, Rowan 2026-11-21).** \"How will the",
+      "probe": [
+        "file:doctrine/registers.json",
+        "file:doctrine/detectors.json",
+        "file:foundation/failure_audit.py",
+        "file:.github/workflows/failure-audit.yml",
+        "file:tests/foundation/test_failure_audit.py"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-b2856649a8"
     },
     {
       "id": "mirror-12a5b1b25a",
@@ -3861,6 +3842,52 @@
       ],
       "bound_by": "mirror",
       "of": "cited-5d0567ad32"
+    },
+    {
+      "id": "mirror-e2b7cb0275",
+      "surface": "seed/AGENTS.md",
+      "text": "> CLOSED-LOOP-AXIOM: Every loop is closed by the system itself. No step depends on a person reading, deciding, reviewing or approving, and",
+      "probe": [
+        "file:foundation/closedloop.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]closedloop\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-09973d0254"
+    },
+    {
+      "id": "mirror-3433c99596",
+      "surface": "seed/AGENTS.md",
+      "text": "> BOUNDARY-AXIOM: Inside the boundary the system creates and destroys at will, because everything inside is rebuilt from the repository",
+      "probe": [
+        "file:foundation/boundary.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b",
+        "grep:.github/workflows/checks.yml::foundation[ .]boundary\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-f46e34e2a9"
+    },
+    {
+      "id": "mirror-b9ff555df6",
+      "surface": "seed/AGENTS.md",
+      "text": "> TERMS-CROSSWALK: autonomous, automatic and unattended name one property (glossary `unattended`, `autonomy`): the loop runs on a clock or",
+      "probe": [
+        "file:foundation/lanewatch.py",
+        "file:foundation/crosswalk.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]crosswalk\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-5d0567ad32"
+    },
+    {
+      "id": "mirror-0b772f20ba",
+      "surface": "seed/AGENTS.md",
+      "text": "> CODE-ONLY-ORDER (Rowan, 2026-11-16): chat threads, sessions and reports are temporary and are never storage. Every decision, instruction",
+      "probe": [
+        "file:foundation/standingorder.py",
+        "grep:.github/workflows/checks.yml::foundation[ .]standingorder\\b"
+      ],
+      "bound_by": "mirror",
+      "of": "cited-e7cebff4c4"
     }
   ],
   "generated": [

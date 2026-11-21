@@ -157,7 +157,7 @@ def claim_lines(root, reg=None):
     seen = set()
     for g in cov["src_globs"]:
         for f in sorted(root.glob(g)):
-            rel = str(f.relative_to(root))
+            rel = f.relative_to(root).as_posix()
             if rel in seen or not f.is_file() or any(re.search(x, rel) for x in cov["skip"]):
                 continue
             seen.add(rel)
