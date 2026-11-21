@@ -148,7 +148,7 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
   // THOUGHT-1: a failed send waits a day before its retry, so a refused account is not hit every tick.
   const recent = r => now - Date.parse(r.at) < 864e5;
   const done = (id, ch) => rows.some(r => r.id === id && r.channel === ch && (r.status == null || r.status !== 'failed' || r.attempts >= 3 || recent(r)));
-  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return done(id, 'relay') || (rr.length > 0 && rr.every(r => r.status !== 'failed' || r.attempts >= 3 || recent(r))); };
+  const relayDone = id => { const rr = rows.filter(r => r.id === id && r.channel.startsWith('relay:')); return rr.length > 0 ? rr.every(r => r.status !== 'failed' || r.attempts >= 3 || recent(r)) : done(id, 'relay'); };  // POST-READBACK-2: per-service rows override a legacy channel='relay' row
   // THOUGHT-1: a post may name its channels and carry a text per channel. A post with no list goes to Bluesky and Mastodon (and the Buffer and relay
   // fan-outs), so LinkedIn direct gets the white papers and nothing else. A paper is due on a channel it has not reached yet, so a channel linked later
   // still gets the current pieces; any other post is not re-sent to a channel linked after it went out.
@@ -170,6 +170,8 @@ export async function runSocial({ db, env, fetch: f = fetch, now = Date.now(), t
     try {
       if (ch === 'relay') {
         const failed = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => r.channel.slice(6));
+        const stale = rows.filter(r => r.id === p.id && r.channel.startsWith('relay:') && r.status === 'failed').map(r => (/queued ([0-9a-f]{24})/.exec(String(r.ref)) || [])[1]).filter(Boolean);
+        if (stale.length) { try { await f(env.SOCIAL_RELAY_URL + '/relay/cancel', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + env.SOCIAL_RELAY_TOKEN }, body: JSON.stringify({ ids: stale }) }); } catch (e) { /* allow-silent: a failed cancel only risks a duplicate post; the retry below still goes out and the miss shows in the relay response */ } }  // POST-READBACK-2: a queued Buffer entry that never published is cancelled before its replacement shares now
         const res = await classifyRelay(await postRelay(env, { ...p, long, text: short }, f, failed), f);  // a retry re-sends only the services that failed
         for (const [svc, v] of Object.entries(res)) await rec('relay:' + svc, v.ref, v.status);
         continue;
