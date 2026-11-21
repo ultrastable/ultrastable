@@ -4,8 +4,8 @@
   "kind": "decision",
   "date": "2026-11-21",
   "title": "Executor closed Q-PATCH-EDIT-WORKER: Port EDIT blocks and file context to the Worker executor",
-  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: seed/worker/test/edit-test.js, seed/worker/src/pr-executor.js.",
-  "probe": "file:seed/worker/test/edit-test.js"
+  "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: seed/worker/src/pr-executor.js.",
+  "probe": "file:seed/worker/src/pr-executor.js"
  },
  "kind": "decision",
  "title": "Executor closed Q-PATCH-EDIT-WORKER: Port EDIT blocks and file context to the Worker executor",
