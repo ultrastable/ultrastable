@@ -14,6 +14,14 @@ export const FREE_LIMITS = {
   ai_neurons: { per_day: 10_000, label: 'Workers AI neurons (account)' },
 };
 export const DEGRADE_AT = 0.8, SHED_AT = 0.95;
+// PLAN-1: on Workers Paid the same governor reads the paid allowances as daily slices of the monthly inclusions (a 30-day month), so it no longer slows the
+// tick at the free plan's daily caps. AI neurons are left out: beyond 10,000 a day they are billed, and that is the spend throttle's job (spend.js).
+export const PAID_LIMITS = {
+  d1_rows_read: { per_day: 25e9 / 30, label: 'D1 rows read (paid allowance)' },
+  d1_rows_written: { per_day: 50e6 / 30, label: 'D1 rows written (paid allowance)' },
+  workers_requests: { per_day: 10e6 / 30, label: 'Workers requests (paid allowance)' },
+};
+export const limitsFor = (plan) => plan === 'paid' ? PAID_LIMITS : FREE_LIMITS;
 const dayStart = (now) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
 // Pure: usage = { resource: usedToday }. Projection extrapolates today's pace to 24 h once at least 2 h of the day have passed.
@@ -32,7 +40,7 @@ export function evaluate(usage, now = new Date(), limits = FREE_LIMITS) {
   return { level, resources: rows };
 }
 
-export async function sampleFreeTier(db, { token, account_id, fetch: f = fetch, now = new Date() }) {
+export async function sampleFreeTier(db, { token, account_id, fetch: f = fetch, now = new Date(), plan = 'free' }) {
   const at = now.toISOString().replace('T', ' ').slice(0, 19), from = dayStart(now).toISOString(), to = now.toISOString();
   const used = {}; let error = null, meters = null;
   if (!token) error = 'no Cloudflare analytics token bound (CF_ANALYTICS_TOKEN)';
@@ -58,18 +66,18 @@ export async function sampleFreeTier(db, { token, account_id, fetch: f = fetch, 
   } catch (e) { /* ledger absent until the first model call */ used.ai_neurons = 0; }
   const keys = Object.keys(FREE_LIMITS);
   for (const k of keys) await db.prepare('INSERT INTO free_tier_samples (at, resource, used_today, error) VALUES (?,?,?,?)').bind(at, k, used[k] ?? null, used[k] == null ? error : null).run();
-  return { at, used, error, meters, ...evaluate(used, now) };
+  return { at, used, error, meters, plan, ...evaluate(used, now, limitsFor(plan)) };
 }
 
 // Latest sample per resource from the last 2 h (older is unmeasured). A failed or missing sample is never a breach.
-export async function freeTierLevel(db, now = Date.now()) {
+export async function freeTierLevel(db, now = Date.now(), plan = 'free') {
   const since = new Date(now - 7200e3).toISOString().replace('T', ' ').slice(0, 19);
   const used = {};
   for (const k of Object.keys(FREE_LIMITS)) {
     const s = await db.prepare('SELECT used_today u FROM free_tier_samples WHERE resource=? AND at>=? AND used_today IS NOT NULL ORDER BY at DESC, id DESC LIMIT 1').bind(k, since).first();
     if (s) used[k] = Number(s.u);
   }
-  return evaluate(used, new Date(now));
+  return evaluate(used, new Date(now), limitsFor(plan));
 }
 
 // READ-BUDGET-8: an alert before the allowance is spent. When any free daily limit is projected to pass EARLY_ALERT_AT of the day (at the current pace)

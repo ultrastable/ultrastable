@@ -8,7 +8,7 @@
 // steps run); no level stops the clock, the queue, the merge lane or the deploys. Every knob springs back by itself when the estimate falls.
 // DECISION-METRIC: free-tier-governor (the spend level is set on the same usage sample, which recordGovernor logs and scores)
 //
-// Lesson from QNFO (hundreds of dollars a month): a budget rule that only steers never limits, and a hard stop at the limit grinds the system
+// Lesson from an earlier fleet (hundreds of dollars a month): a budget rule that only steers never limits, and a hard stop at the limit grinds the system
 // to a halt. Graduated throttling sits between the two: the spend curve bends long before the target and never reaches zero work.
 
 // Cloudflare list prices for the Workers Paid plan. Sources: developers.cloudflare.com/workers/platform/pricing/, /kv/platform/pricing/,
@@ -123,7 +123,7 @@ export function metersFrom(a = {}) {
 // Records the reading: one free_tier_samples row per extra meter (resource spend_usd carries the estimate) and the current state in org.spend_state,
 // which every tick and the AI governor read with one primary-key lookup. Never throws; a failed write is returned as .error.
 export async function recordSpend(db, { meters, error = null, config = {}, env = {}, now = new Date() }) {
-  const spend = spendConfig(config, env), plan = env && env.CF_PLAN === 'paid' ? 'paid' : 'free';
+  const spend = spendConfig(config, env), plan = (env && (env.CF_PLAN === 'paid' || env.CF_PLAN === 'free')) ? env.CF_PLAN : (config && config.budget && config.budget.plan === 'paid' ? 'paid' : 'free');
   const used = (meters && meters.used) || {};
   const est = estimateDay(used, { plan, now: now.getTime() });
   // PLAN-SAFE-1: the throttle reads the paid-plan price of today's usage whatever CF_PLAN says, so buying Workers Paid without telling the worker can

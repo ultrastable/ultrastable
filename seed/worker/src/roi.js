@@ -22,7 +22,7 @@ export const PRICES = {
 // not an Ultrastable-only report. It detects the tenant's plan (CF_PLAN=paid once the owner has bought Workers Paid; free otherwise), uses free headroom up to
 // TARGET_USE of each limit, tells the tick to slow down when the pace would pass it, and recommends an upgrade only with measured ROI.
 export const TARGET_USE = 0.8;
-export function detectPlan(env = {}) { return env.CF_PLAN === 'paid' ? 'paid' : 'free'; }
+export function detectPlan(env = {}, config = {}) { return env.CF_PLAN === 'paid' || (env.CF_PLAN !== 'free' && config && config.budget && config.budget.plan === 'paid') ? 'paid' : 'free'; }
 // Per-day equivalents of the paid monthly allowances (30-day month), so one pace formula serves both plans.
 export function limitsForPlan(plan) {
   if (plan !== 'paid') return FREE_LIMITS;
@@ -98,7 +98,7 @@ export function analyze({ days, refused = 0, storage_gb = 0, mode = 'free-only',
     prices: { checked: P.checked, sources: P.sources } };
 }
 
-export async function readRoi(db, { env = {}, now = new Date() } = {}) {
+export async function readRoi(db, { env = {}, config = {}, now = new Date() } = {}) {
   const since = new Date(now - 7 * 864e5).toISOString().replace('T', ' ').slice(0, 10);
   const byDay = {};
   for (const [k, l] of Object.entries(FREE_LIMITS)) {
@@ -107,6 +107,6 @@ export async function readRoi(db, { env = {}, now = new Date() } = {}) {
   }
   const days = Object.values(byDay).sort((a, b) => b.day.localeCompare(a.day));
   let refused = 0, ledger_error = null; try { refused = Number(((await db.prepare("SELECT COALESCE(SUM(refused),0) r FROM budget_ledger WHERE day>=?1 AND kind='ai_neurons'").bind(since).first()) || {}).r || 0); } catch (e) { ledger_error = String(e && e.message).slice(0, 120); }  // ledger absent until the first model call: shown, never silent
-  const target = Number(env.SPEND_TARGET_USD_DAY) > 0 ? Number(env.SPEND_TARGET_USD_DAY) : 5;
-  return { ...analyze({ days, refused, plan: detectPlan(env), mode: env.FREE_ONLY === '0' ? 'paid-allowed' : 'free-only', now, target_usd_day: target }), ledger_error };
+  const target = Number(env.SPEND_TARGET_USD_DAY) > 0 ? Number(env.SPEND_TARGET_USD_DAY) : (Number(config && config.spend && config.spend.target_usd_day) || 5);
+  return { ...analyze({ days, refused, plan: detectPlan(env, config), mode: env.FREE_ONLY === '0' ? 'paid-allowed' : 'free-only', now, target_usd_day: target }), ledger_error };
 }

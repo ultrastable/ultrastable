@@ -42,6 +42,13 @@ export function budgetConfig(config = {}, env = {}) {
   return b;
 }
 
+// PLAN-1 (Rowan bought Workers Paid on the ultrastable account, 2026-11-21): the plan is read from the worker variable CF_PLAN when set, else from the
+// instance manifest (config.budget.plan). Every governor asks this one function, so the plan is declared once.
+export function planOf(config = {}, env = {}) {
+  if (env && (env.CF_PLAN === 'paid' || env.CF_PLAN === 'free')) return env.CF_PLAN;
+  return config && config.budget && config.budget.plan === 'paid' ? 'paid' : 'free';
+}
+
 // What the money buys per day. Variable money = budget minus the fixed costs (plan fee, domains and anything the owner declares as fixed).
 export function allowance(b, now = Date.now()) {
   const fixed = (b.plan === 'paid' ? PRICES.paid_plan_usd_month : 0) + (Number(b.fixed_usd_month) || 0);

@@ -7,6 +7,7 @@
 import { ensureLedger } from './budget.js';
 import { over_budget } from './costsample.js';
 import { readSpend, dueEvery } from './spend.js';  // SPEND-SOFT-1
+import { planOf } from './budget.js';  // PLAN-1
 import { freeTierLevel } from './freetier.js';  // FREE-TIER-1: the daily account-wide free-plan level gates the tick  // Q-LESSON-COST-SAMPLE-ACT: a D1 rows-read breach holds the tick lean  // ORIGINATE-CAP-1: the daily cap is counted in the budget ledger
 import { criticalityStep } from './criticality.js';
 import { pickForRole } from './critloop.js';
@@ -490,7 +491,7 @@ export async function runTick(db, { config, env = {}, now = Date.now(), wake = n
   const ctx = { db, wake, ai, budget, config, env, now, nowIso: startedIso, tickId, notes: [], errors: [], dispatched: 0, openGates: 0 };
   let completed = 0;
   try { ctx.costBreach = await over_budget(db, config && config.cost_budgets, now); } catch (e) { ctx.costBreach = null; ctx.notes.push(`cost check failed: ${String(e && e.message).slice(0, 120)}`); }
-  try { ctx.freeTier = await freeTierLevel(db, now); } catch (e) { ctx.freeTier = null; ctx.notes.push(`free-tier check failed: ${String(e && e.message).slice(0, 120)}`); }
+  try { ctx.freeTier = await freeTierLevel(db, now, planOf(config || {}, env || {})); } catch (e) { ctx.freeTier = null; ctx.notes.push(`free-tier check failed: ${String(e && e.message).slice(0, 120)}`); }
   try { ctx.spend = await readSpend(db, now); } catch (e) { ctx.spend = null; ctx.notes.push(`spend check failed: ${String(e && e.message).slice(0, 120)}`); }
   if (ctx.spend && ctx.spend.measured && ctx.spend.level !== 'full') ctx.notes.push(`spend ${ctx.spend.level}: about ${ctx.spend.usd_today} USD today, ${ctx.spend.projected_usd_day} projected of a ${ctx.spend.target_usd_day} USD soft target; ${ctx.spend.text}`);
   const lean = Boolean((ctx.costBreach && ctx.costBreach.over) || (ctx.freeTier && ctx.freeTier.level === 'shed'));

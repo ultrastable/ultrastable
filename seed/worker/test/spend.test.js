@@ -61,3 +61,17 @@ test('record and read: state in org.spend_state, extra meters as samples; stale 
   const none = await recordSpend(db, { meters: null, error: 'no token', now: noon });
   assert.equal(none.measured, false); assert.equal(none.level, 'full');
 });
+
+import { planOf } from '../src/budget.js';
+import { capsFor, SUBREQUEST_CAP } from '../src/subreq.js';
+import { evaluate, limitsFor } from '../src/freetier.js';
+test('PLAN-1: the plan comes from CF_PLAN, else the manifest; paid lifts the free-only throttles', () => {
+  assert.equal(planOf({ budget: { plan: 'paid' } }, {}), 'paid');
+  assert.equal(planOf({ budget: { plan: 'paid' } }, { CF_PLAN: 'free' }), 'free');
+  assert.equal(planOf({}, {}), 'free');
+  assert.equal(capsFor('free').cap, SUBREQUEST_CAP); assert.equal(capsFor('free').rotate, true);
+  assert.equal(capsFor('paid').rotate, false); assert.ok(capsFor('paid').cap >= 1000);
+  const day = { d1_rows_read: 5_742_098, d1_rows_written: 76_001, workers_requests: 98_636, ai_neurons: 9_645 };
+  assert.equal(evaluate(day, noon, limitsFor('free')).level, 'shed', 'measured usage sheds on the free plan');
+  assert.equal(evaluate(day, noon, limitsFor('paid')).level, 'ok', 'and runs at full speed on the paid plan');
+});
