@@ -145,10 +145,15 @@ class Repo(unittest.TestCase):
         self.assertEqual(seedlife.check(), [])
         self.assertGreaterEqual(seedlife.cfg()["target_days"], 365)
 
-    def test_every_seed_is_judged_and_tracked(self):
-        for r in seedlife.status():
+    def test_every_seed_is_judged_and_would_be_tracked(self):
+        # A seed merged to main gets its Q-SEED item on the next watchdog pass (seedlife --run --apply); requiring the file here made every
+        # open PR fail whenever another PR added a seed (Unlearn, intent-yield on 2026-11-21). Filing itself is proven in the fixture tests.
+        rs = seedlife.status()
+        self.assertEqual(sorted(r["slug"] for r in rs), seedlife.seeds())
+        for r in rs:
             if r.get("stage") != "autonomous":
-                self.assertTrue((REPO / "docs/issues" / f"Q-SEED-{r['slug']}.json").is_file(), r["slug"])
+                it = seedlife.item(r)
+                self.assertIn(f"seedlife --probe {r['slug']}", it["body"]); self.assertIn("**Status:** open", it["body"])
 
     def test_seed_template_carries_the_engine(self):
         self.assertTrue((REPO / "seed/scripts/seedlife.py").is_file())
