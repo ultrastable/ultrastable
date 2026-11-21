@@ -4499,6 +4499,15 @@
    "body": "Two runs of the unlearn upload created no host route and the run log said nothing, because it showed only the version and an unreadable route list read as no wildcard. The site deployer now warns when the zone route list cannot be read, and deploy-oidc prints the detail beside the version (test: site/oidc.test.mjs).",
    "probe": "file:site/oidc.test.mjs",
    "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
+  },
+  {
+   "id": "decision-2026-11-21-unlearn-s-address-moves-to-unlearn-ultrastable-org",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Unlearn's address moves to unlearn.ultrastable.org",
+   "body": "The deploy credential has no access to zone routes on ultrastable.app (deploy log: routes ultrastable.app unreadable, No access to the specified resource), so the spinoffs wildcard *.ultrastable.app/* keeps unlearn.ultrastable.app. ultrastable.org carries no worker routes, so its custom domain is served by the worker itself. Topology, clocks, resilience restart routes and the seed lifecycle probe now name unlearn.ultrastable.org.",
+   "probe": "file:doctrine/topology.json",
+   "session": "session_0156nqDtYB5VwjCzYcyHVqNp"
   }
  ]
 }
