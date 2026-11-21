@@ -168,7 +168,7 @@
    "remediation": "detector files AUDIT-<id> with evidence; the executor drains it",
    "status": "controlled",
    "cadence_ticks": 144,
-   "probe": "grep:tests/foundation/test_failure_audit.py::def test_failing_detector_files_one_issue"
+   "probe": "grep:tests/foundation/test_failure_audit.py::def test_failing_detector_files_one_queue_item_the_executor_can_take"
   },
   {
    "id": "fm-site-down",
@@ -277,6 +277,18 @@
    "status": "controlled",
    "cadence_ticks": 144,
    "probe": "grep:foundation/mergeaudit.py::def scan"
+  },
+  {
+   "id": "fm-audit-open-loop",
+   "trigger": "a failure mode has no live detector, or a failing detector has no open item in the executor's queue",
+   "symptom": "a failure is seen every day and nothing takes it",
+   "blast_radius": "every failure mode: detection without resolution",
+   "detection": "python3 -m foundation failure_audit --check",
+   "root_cause": "findings were written where no loop reads them (a branch, an id no queue pattern matches, a done check that is no probe kind)",
+   "remediation": "failure_audit files Q-AUDIT-<id> on main with a cmd: closing probe; --check fails on an unwatched mode or an unfiled finding",
+   "status": "controlled",
+   "cadence_ticks": 1,
+   "probe": "grep:foundation/failure_audit.py::def coverage"
   }
  ],
  "controls": [

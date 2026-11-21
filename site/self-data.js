@@ -1296,7 +1296,7 @@ export default {
     "workflows": []
    },
    {
-    "closing_probe": "grep:foundation/failure_audit.py::def run_detector",
+    "closing_probe": "grep:foundation/failure_audit.py::def coverage",
     "id": "failure-audit",
     "kind": "governance",
     "owner": "operations",
