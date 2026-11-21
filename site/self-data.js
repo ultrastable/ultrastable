@@ -124,12 +124,6 @@ export default {
     "id": "unlearn-beat",
     "source": "d1",
     "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): re-learn move weights, measure, open the next phase, prune"
-   },
-   {
-    "expected_interval_s": 86400,
-    "id": "intent-yield",
-    "source": "workflow",
-    "what": "the daily intent yield: every owner directive's own probe, restatements charged to the original, /yield"
    }
   ],
   "watchdog_escalation": [
@@ -668,7 +662,6 @@ export default {
   "ignition-ladder",
   "index-refresh",
   "insight-loop",
-  "intent-yield",
   "issue-loop",
   "issue-triage",
   "launch",
@@ -2056,19 +2049,6 @@ export default {
     "workflows": [
      "deploy-ultrastable"
     ]
-   },
-   {
-    "closing_probe": "grep:foundation/intentyield.py::def probe",
-    "id": "intent-yield",
-    "kind": "governance",
-    "owner": "operations",
-    "server_owner": "github-actions",
-    "sla": "1d",
-    "summary": "INTENT-YIELD-1: for a given unit of human input, what is the best unit of output. Each owner directive is one intent; its own probe passing, unrestated, after 30 days is one kept outcome. Restatements are charged to the original, a directive that is not holding becomes a Q-YIELD item closed by its own probe, and /yield publishes the verdicts. No counts, no person scored.",
-    "trigger": "daily workflow and on demand",
-    "workflows": [
-     "intent-yield"
-    ]
    }
   ],
   "workers": [
@@ -2233,12 +2213,6 @@ export default {
     "id": "index",
     "loops": [
      "index-refresh"
-    ]
-   },
-   {
-    "id": "intent-yield",
-    "loops": [
-     "intent-yield"
     ]
    },
    {
