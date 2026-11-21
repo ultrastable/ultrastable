@@ -118,6 +118,12 @@ export default {
     "id": "temporal",
     "source": "workflow",
     "what": "the daily trend read: series per component, loop and entry, and what they show"
+   },
+   {
+    "expected_interval_s": 3600,
+    "id": "unlearn-beat",
+    "source": "d1",
+    "what": "Unlearn tenant beat (cron 41 * * * * on ultrastable-unlearn; a visit catches up a silent cron): re-learn move weights, measure, open the next phase, prune"
    }
   ],
   "watchdog_escalation": [
@@ -705,7 +711,6 @@ export default {
   "role-uiux-manager",
   "running-system",
   "scout",
-  "seed-launch",
   "server-side-only",
   "session-reaper",
   "site-deploy",
@@ -728,7 +733,9 @@ export default {
   "ultrastable-site",
   "ultrastable-tenants",
   "ultrastable-tick",
+  "ultrastable-unlearn",
   "unknowns",
+  "unlearn-beat",
   "watchdog",
   "workers-tests",
   "write-back",
@@ -2031,16 +2038,16 @@ export default {
     "workflows": []
    },
    {
-    "closing_probe": "grep:foundation/seedlaunch.py::def check",
-    "id": "seed-launch",
-    "kind": "governance",
-    "owner": "operations",
-    "server_owner": "github-actions",
-    "sla": "8d",
-    "summary": "SEED-LAUNCH-1: every seed is built, deployed, year-gated and probed live by the system. A fresh seed from seed/ and every repository made from the seed template are launched on Ultrastable's own Cloudflare account; the year-unattended gate and a live /health probe are required.",
-    "trigger": "weekly workflow and on demand",
+    "closing_probe": "grep:instances/unlearn/worker/index.js::export async function beat",
+    "id": "unlearn-beat",
+    "kind": "tick",
+    "owner": "product-manager",
+    "server_owner": "ultrastable-unlearn",
+    "sla": "2h",
+    "summary": "Unlearn tenant loop: curiosity logged, coaching move chosen by learned weights, follow-up at 7 and 14 days, weights re-learned, metrics measured, next phase opened when its gates hold (instances/unlearn/phases.json).",
+    "trigger": "cron 41 * * * * on ultrastable-unlearn; a page visit runs the beat when the cron has been silent for 2 hours",
     "workflows": [
-     "seed-launch"
+     "deploy-ultrastable"
     ]
    }
   ],
@@ -2063,6 +2070,10 @@ export default {
    },
    {
     "id": "ultrastable-tenants",
+    "state": "live"
+   },
+   {
+    "id": "ultrastable-unlearn",
     "state": "live"
    }
   ],
@@ -2149,7 +2160,8 @@ export default {
    {
     "id": "deploy-ultrastable",
     "loops": [
-     "deploy-workers"
+     "deploy-workers",
+     "unlearn-beat"
     ]
    },
    {
@@ -2295,12 +2307,6 @@ export default {
     "loops": [
      "scout",
      "research"
-    ]
-   },
-   {
-    "id": "seed-launch",
-    "loops": [
-     "seed-launch"
     ]
    },
    {
