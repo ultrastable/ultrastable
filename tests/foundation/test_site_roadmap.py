@@ -44,3 +44,19 @@ class SiteRoadmap(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ShelvedNotDone(unittest.TestCase):
+    """SHELVED-NOT-DONE-1: a gap whose item was shelved by DISPOSE-1 (its done check still failing) is not done."""
+    def test_shelved_gap_stays(self):
+        import json, tempfile
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+        import build_site_roadmap as b
+        with tempfile.TemporaryDirectory() as t:
+            r = Path(t); (r / "site").mkdir(); (r / "docs/issues").mkdir(parents=True)
+            (r / "site/pins.json").write_text(json.dumps({"pins": [], "gaps": [["A gap", "G-1"]]}))
+            body = "**Owner:** x\n**Trigger:** y\n**Done check:** file:missing.txt\n**Status:** closed\n\n**Disposition:** shelved (ttl)\n"
+            (r / "docs/issues/G-1.json").write_text(json.dumps({"title": "G-1: g", "body": body}))
+            _, bad = b.load(r)
+            self.assertFalse([x for x in bad if "remove the gap" in x], bad)
