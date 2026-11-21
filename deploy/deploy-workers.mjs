@@ -60,7 +60,4 @@ for (const w of deploy) {
 }
 // Health: the tick must have finished a run after the deploy (the same signal /health judges).
 if (!verifyOnly && results.every(r => r.ok)) console.log("deployed and verified:", results.map(r => r.worker).join(", "));
-// SEED-DEPLOY-1: admitted seeds (doctrine/seed-deploys.json) deploy and are probed live after the platform workers.
-let seedOk = true;
-try { sh("node", ["deploy/deploy-seed.mjs", ...(verifyOnly ? ["--verify"] : [])], { cwd: ROOT, stdio: "inherit" }); } catch (e) { seedOk = false; console.error("DRIFT seeds: " + e.message); }
-process.exit(results.every(r => r.ok) && seedOk ? 0 : 1);
+process.exit(results.every(r => r.ok) ? 0 : 1);
