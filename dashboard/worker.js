@@ -25,7 +25,7 @@ import TENANTS from "../foundation/data/tenants.json" with { type: "json" };
 import PAID from "../foundation/data/paid-options.json" with { type: "json" };
 const VERSION = "0.4.0";
 const COOKIE = "us_owner";
-export const safeOwnerNext = n => (typeof n === "string" && (/^\/connect\/[a-z-]+$/.test(n) || n === "/connections")) ? n : null;  // SIGNIN-NEXT-1: only the connect pages, never an open redirect
+export const safeOwnerNext = n => (typeof n === "string" && n.length < 400 && /^\/(?![\/\\])[\x21-\x7e]*$/.test(n) && !/^\/(api\/|auth\/signin)/.test(n)) ? n : null;  // SIGNIN-NEXT-2: any same-site path (a leading "/", never "//" or a backslash) is where the owner lands after any sign-in method; never an open redirect, never an API path
 const OTP_MS = 10 * 60e3, SESSION_MS = 30 * 864e5, STEPUP_MS = 15 * 60e3;
 const HOSTS = ["ultrastable.io", "ultrastable.app", "ultrastable.net"];
 // OWNER-LINKS-1: links the owner is handed use the public domain the request came in on (x-forwarded-host from the site's forwarder, trusted only for HOSTS), never a workers.dev name.
@@ -90,7 +90,7 @@ async function notify(env, key, subject, text) {
 }
 
 // ---------- login by emailed code ----------
-export async function requestCode(env) {
+export async function requestCode(env, opts = {}) {
   const now = Date.now();
   const n = (await env.DB.prepare("SELECT COUNT(*) c FROM otp WHERE created_at>?1").bind(now - OTP_MS).first()).c;
   if (n >= 5) return { status: 429, body: { error: "too many codes requested; wait 10 minutes" } };
@@ -99,7 +99,8 @@ export async function requestCode(env) {
   await env.DB.prepare("UPDATE otp SET used=1 WHERE used=0").run();
   await env.DB.prepare("INSERT INTO otp(id,code_hash,created_at,expires_at,attempts,used) VALUES(?1,?2,?3,?4,0,0)").bind(id, await sha256(id + ":" + code), now, now + OTP_MS).run();
   let sent;
-  try { sent = await sendMail(env, "Your Ultrastable code: " + code, "Your Ultrastable owner code is " + code + ".\nIt works for 10 minutes. If you did not ask for it, ignore this message.\n"); }
+  try { const nx = safeOwnerNext(opts.next), link = opts.origin ? opts.origin + "/api/owner/magic?id=" + id + "&c=" + code + (nx ? "&next=" + encodeURIComponent(nx) : "") : "";  // MAGIC-LINK-1: one tap, works on any device, no passkey or GitHub app needed
+    sent = await sendMail(env, "Your Ultrastable sign-in link", (link ? "Tap to sign in:\n" + link + "\n\nOr type this code. " : "") + "Your Ultrastable owner code is " + code + ".\nIt works for 10 minutes. If you did not ask for it, ignore this message.\n"); }
   catch (e) {
     await env.DB.prepare("UPDATE otp SET used=1 WHERE id=?1").bind(id).run();
     // ERROR-LEDGER-1: backend detail goes to the provenance ledger (owner-only, /api/owner/provenance) as an incident keyed by error class; the person sees plain words.
@@ -126,6 +127,12 @@ export async function verifyCode(env, req, code) {
   const cur = await getSession(env, req);
   if (cur) { await env.DB.prepare("UPDATE sessions SET stepup_at=?2 WHERE hash=?1").bind(cur.hash, now).run(); return { status: 200, body: { ok: true, stepup: true } }; }
   return { status: 200, body: { ok: true }, cookie: await mintSession(env) };
+}
+export async function magicSignin(env, id, code) {  // MAGIC-LINK-1: the emailed link; GET only shows a button (mail scanners prefetch links), the POST signs in
+  const now = Date.now(), row = await env.DB.prepare("SELECT * FROM otp WHERE id=?1 AND used=0 AND expires_at>?2").bind(String(id || ""), now).first();
+  if (!row || row.attempts >= 5 || !/^\d{6}$/.test(String(code || "")) || !constEq(await sha256(row.id + ":" + code), row.code_hash)) return null;
+  await env.DB.prepare("UPDATE otp SET used=1 WHERE id=?1").bind(row.id).run();
+  return mintSession(env);
 }
 export async function mintSession(env) {
   const tok = hex(32), now = Date.now();
@@ -355,16 +362,33 @@ export async function settledLive(env, items = openNeeds(), fetchFn = fetch) {
   }
   return out;
 }
-export async function livePanels(env, fetchFn = fetch) {
-  const base = staticPanels(), done = await settledLive(env, openNeeds(), fetchFn);
-  return done.size ? { ...base, needs: base.needs.filter(n => !done.has(n.id)), settled_live: [...done] } : base;
+// LIVE-PLAN-1 (owner, 2026-11-21: the page said "stay free" after Workers Paid was switched on): the plan is read from Cloudflare, never typed. Source 1: the account's subscriptions
+// (token bound to this Worker); source 2: the site Worker's allow-listed /__internal/cf route. If neither answers the plan is "unknown" and says so; nothing is assumed.
+export async function planState(env, fetchFn = fetch, now = Date.now()) {
+  const out = { plan: "unknown", source: "none", measured_at: new Date(now).toISOString() };
+  const A = env.CF_ACCOUNT_ID, T = env.CF_API_TOKEN || env.CF_DEPLOY_TOKEN;
+  const read = j => { const subs = (j && j.result) || []; const paid = subs.some(x => /workers[_ -]?paid|workers_standard|workers.*bundled|workers.*unbound|standard/i.test(JSON.stringify([x.rate_plan && x.rate_plan.id, x.rate_plan && x.rate_plan.public_name, x.product && x.product.name, x.component_values && x.component_values.map(c => c.name)])) && !/free/i.test(String(x.rate_plan && x.rate_plan.id)) && x.state !== "Cancelled"); return j && j.success ? (paid ? "paid" : "free") : "unknown"; };
+  try {
+    if (A && T) { const r = await fetchFn("https://api.cloudflare.com/client/v4/accounts/" + A + "/subscriptions", { headers: { authorization: "Bearer " + T } }); const p = read(await r.json().catch(() => null)); if (p !== "unknown") return { ...out, plan: p, source: "cloudflare-subscriptions" }; }
+    if (env.INTERNAL_DEPLOY_KEY) { const r = await fetchFn("https://ultrastable.io/__internal/cf", { method: "POST", headers: { "x-internal-key": env.INTERNAL_DEPLOY_KEY, "x-cf-method": "GET", "x-cf-path": "subscriptions" } }); const p = read(await r.json().catch(() => null)); if (p !== "unknown") return { ...out, plan: p, source: "site-cf-route" }; }
+  } catch (e) { console.error("plan state", e && e.message); }
+  return out;
+}
+export function optionsFor(plan, options = PAID.options) {  // an option the account already has is not an option
+  return (options || []).filter(o => !(plan === "paid" && o.id === "cf-workers-paid"));
+}
+export async function livePanels(env, fetchFn = fetch, now = Date.now()) {
+  const base = staticPanels(), done = await settledLive(env, openNeeds(), fetchFn), pl = await planState(env, fetchFn, now);
+  const note = pl.plan === "paid" ? "Cloudflare Workers Paid is active on the Ultrastable account (read from Cloudflare " + pl.measured_at.slice(0, 16).replace("T", " ") + " UTC). Options below are the ones not yet taken." : pl.plan === "free" ? "The Ultrastable account is on the free Cloudflare plan (read from Cloudflare " + pl.measured_at.slice(0, 16).replace("T", " ") + " UTC). Nothing here upgrades a plan on its own." : "The plan could not be read from Cloudflare just now, so it is not stated here. The system re-reads it on every load.";
+  const o = { ...base, plan: pl, plan_note: note, options: optionsFor(pl.plan), generated_at: new Date(now).toISOString() };
+  return done.size ? { ...o, needs: base.needs.filter(n => !done.has(n.id)), settled_live: [...done] } : o;
 }
 export function staticPanels() {
   return {
     needs: openNeeds().map(i => ({ id: i.id, title: i.title, why: i.why, default: i.default, url: i.url, button: i.button })),
     tenants: TENANTS.tenants,
     options: PAID.options, options_checked: PAID.checked,
-    plan_note: "Everything runs on free tiers. Nothing here upgrades a plan; paid options below are your decision, with the cost.",
+    plan_note: "The Cloudflare plan is read live on every load; it is not stated from a saved copy.",
   };
 }
 const RESET_NOTE = () => { const n = new Date(), h = 24 - n.getUTCHours() - (n.getUTCMinutes() ? 1 : 0); return h <= 0 ? "within the hour" : "in about " + h + " hour" + (h > 1 ? "s" : ""); };
@@ -455,13 +479,17 @@ const OWNER_CSS = "main{max-width:980px;margin:0 auto;padding:16px 16px 80px}h1{
   + ".ans .codeblock{font:13.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-x:auto;white-space:pre;margin:6px 0}.ans .tw{overflow-x:auto;margin:6px 0}.ans table{border-collapse:collapse;font-size:14px;min-width:100%}.ans th,.ans td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}.ans th{font-weight:600}"
   + ".us-ask{display:flex;align-items:flex-end;gap:6px;background:var(--sf);border:1.5px solid var(--line);border-radius:28px;padding:6px 6px 6px 18px}.us-ask:focus-within{border-color:var(--ac)}.us-ask textarea{flex:1;min-width:0;border:0;background:transparent;min-height:48px;padding:12px 0;resize:none;outline:0}.us-ask button{border-radius:999px}.us-q{margin:10px 0 0}.us-q .row{margin-top:6px}.us-q button[aria-pressed=true]{background:var(--ac);border-color:var(--ac);color:var(--on)}"
   + "details.steps{margin:6px 0;font-size:14px;color:var(--ink2)}details.steps summary{cursor:pointer;min-height:32px;line-height:32px}details.steps div{padding-left:10px}";
+// hidden elements stay hidden even for .btn
+const HIDE_CSS = "[hidden]{display:none!important}";
 const OWNER_JS = `
 const $=s=>document.querySelector(s);const E=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function api(p,b){const r=await fetch(p,{method:b?'POST':'GET',headers:b?{'content-type':'application/json','x-us-ui':'1'}:{},body:b?JSON.stringify(b):undefined,credentials:'same-origin'});let j={};try{j=await r.json()}catch(e){}return{s:r.status,j}}
 let pending=null;
-function codeBox(msg,after){$('#gate').innerHTML='<div class="card"><h3>'+E(msg)+'</h3><div class="row"><a class="btn p" href="/api/owner/github'+(function(n){return /^\\/connect\\/[a-z-]+$/.test(n||'')||n==='/connections'?'?next='+encodeURIComponent(n):''})(new URLSearchParams(location.search).get('next'))+'">Sign in with GitHub</a><button id="send">Email me a code</button></div><div id="cbox" class="row" hidden><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" aria-label="6-digit code"><button class="p" id="ver">Verify</button></div><p class="meta" id="gm" role="status"></p></div>';
-$('#send').onclick=async()=>{$('#gm').textContent='Sending...';const r=await api('/api/owner/code',{});$('#gm').textContent=r.s==200?'Code sent. Check your inbox.':(r.j.error||'Could not send.');if(r.s==200){$('#cbox').hidden=false;$('#code').focus()}};
-$('#ver').onclick=async()=>{const r=await api('/api/owner/verify',{code:$('#code').value});if(r.s==200){const nx=new URLSearchParams(location.search).get('next');if(nx&&(nx.indexOf('/oauth/authorize?')===0||/^\\/connect\\/[a-z-]+$/.test(nx)||nx==='/connections')){location.href=nx;return}$('#gate').innerHTML='';after()}else $('#gm').textContent=r.j.error||'Wrong code.'}}
+function nextPath(){const n=new URLSearchParams(location.search).get('next');return n&&/^\\/(?![\\/\\\\])[\\x21-\\x7e]*$/.test(n)&&n.length<400&&!/^\\/(api\\/|auth\\/signin)/.test(n)?n:null}
+function codeBox(msg,after){const nx0=nextPath();$('#gate').innerHTML='<div class="card"><h3>'+E(msg)+'</h3><div class="row"><button class="p" id="send">Email me a sign-in link</button><a class="btn" id="gh" href="/api/owner/github'+(nx0?'?next='+encodeURIComponent(nx0):'')+'" hidden>Sign in with GitHub</a><a class="btn" href="/auth/signin'+(nx0?'?next='+encodeURIComponent(nx0):'')+'">Use a passkey</a></div><div id="cbox" class="row" hidden><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="or type the 6-digit code" aria-label="6-digit code"><button class="p" id="ver">Verify</button></div><p class="meta" id="gm" role="status"></p></div>';
+fetch('/api/owner/signin-options').then(r=>r.json()).then(o=>{if(o&&o.github)$('#gh').hidden=false}).catch(()=>{});
+$('#send').onclick=async()=>{$('#gm').textContent='Sending...';const r=await api('/api/owner/code',{next:nextPath()});$('#gm').textContent=r.s==200?'Sent. Open the email and tap the link, or type the code here.':(r.j.error||'Could not send.');if(r.s==200){$('#cbox').hidden=false;$('#code').focus()}};
+$('#ver').onclick=async()=>{const r=await api('/api/owner/verify',{code:$('#code').value});if(r.s==200){const nx=nextPath();if(nx){location.href=nx;return}$('#gate').innerHTML='';after()}else $('#gm').textContent=r.j.error||'Wrong code.'}}
 const NL=String.fromCharCode(10),BT=String.fromCharCode(96);
 function mk(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 function md(t){const d=mk('div','ans'),ls=String(t||'').split(NL);let list=null,code=null,tb=null;
@@ -487,11 +515,11 @@ function task(t,own){const id=E(t.id);return '<div class="card"><h3>'+E(t.title)
 function paintStatic(s){$('#degraded').hidden=!s.degraded;$('#degraded').textContent=s.degraded||'';
 $('#needs').innerHTML=(s.needs||[]).map(n=>'<div class="card"><div class="tag">ONLY YOU CAN DO THIS</div><h3>'+E(n.title)+'</h3><div class="meta">'+E(n.why)+'</div><div class="meta"><b>If you wait:</b> '+E(n.default)+'</div><div class="row"><a class="btn p" href="'+E(n.url)+'" rel="noopener">'+E(n.button||'Open')+'</a></div></div>').join('')||'<p class="meta">Nothing waiting on you.</p>';
 $('#tenants').innerHTML=(s.tenants||[]).map(t=>{const st=t.live?(t.live.ok?'ok':'bad'):(t.status=='live'?'meta':'tag');const lb=t.live?(t.live.ok?'LIVE':'DOWN'):(t.status=='live'?'LIVE (not probed yet)':'PENDING');return '<div class="card"><span class="'+st+'">'+lb+'</span> <b>'+E(t.name)+'</b><div class="meta">'+E(t.note)+'</div><div class="meta">Database: '+E(t.db)+(t.web?' · Web: '+E(t.web):'')+'</div><div class="meta">Next: '+E(t.next)+'</div>'+(t.live?'<div class="meta">Probe: '+E(t.live.detail)+'</div>':'')+'</div>'}).join('');
-$('#plan').textContent=(s.plan_note||'')+' Prices checked '+(s.options_checked||'')+'.';
+$('#plan').textContent=(s.plan_note||'')+(s.generated_at?' Page data read '+s.generated_at.slice(0,16).replace('T',' ')+' UTC.':'')+' List prices checked '+(s.options_checked||'')+'.';
 $('#options').innerHTML=(s.options||[]).map(o=>'<div class="card"><h3>'+E(o.title)+'</h3><div class="meta"><b>Cost:</b> '+E(o.cost)+'</div><div class="meta"><b>Unlocks:</b> '+E(o.unlocks)+'</div><div class="meta"><b>Default in effect:</b> '+E(o.default)+'</div></div>').join('');
 }
 async function load(){const ov=await api('/api/owner/overview');if(ov.s==200){$('#app').hidden=false;paintStatic(ov.j)}
-const r=await api('/api/owner/state');if(r.s==401){$('#app').hidden=true;codeBox('Owner sign-in. A code is emailed to the owner address.',load);return}
+const r=await api('/api/owner/state');if(r.s==200&&nextPath()){location.replace(nextPath());return}if(r.s==401){$('#app').hidden=true;codeBox('Owner sign-in. A code is emailed to the owner address.',load);return}
 if(r.s!=200||!r.j||!r.j.checks){$('#app').hidden=false;$('#pill').textContent='Resting';$('#pill').className='pill';const d=$('#degraded');d.hidden=false;d.textContent=(r.j&&r.j.degraded)||ov.j&&ov.j.degraded||'Live data is not available right now. The system retries by itself; this page checks again in a minute.';setTimeout(load,60000);return}
 $('#app').hidden=false;const s=r.j;const bad=s.checks.filter(c=>!c.ok).length;
 $('#pill').textContent=bad?bad+' check'+(bad>1?'s':'')+' failing':'All checks passing';$('#pill').className='pill '+(bad?'bad':'ok');
@@ -523,7 +551,7 @@ document.querySelectorAll('#chips button').forEach(b=>b.onclick=()=>askFirst(b.d
 $('#logout').onclick=async()=>{await api('/api/owner/logout',{});location.reload()};
 load();`;
 function ownerPage() {
-  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><a class=\"sp\" href=\"/auth/passkey/add\">Add a passkey</a><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><p class=\"meta bad\" id=\"degraded\" role=\"alert\" hidden></p><h2>Needs you</h2><div id=\"needs\"></div><div id=\"owner\"></div><h2>Tenant apps</h2><div id=\"tenants\" class=\"grid\"></div><h2>Paid options (you decide; default is stay free)</h2><p class=\"meta\" id=\"plan\"></p><div id=\"options\"></div><h2>Pay or stay free (ROI)</h2><div id=\"roi\" class=\"card\"><p class=\"meta\">Loading.</p></div><h2>Ask or tell Ultrastable</h2><form id=\"cmd\" class=\"us-ask\" role=\"search\"><textarea id=\"line\" rows=\"1\" maxlength=\"2000\" placeholder=\"Ask a question, or tell Ultrastable what to do\" aria-label=\"Ask or tell Ultrastable\" autocomplete=\"off\"></textarea><button type=\"button\" id=\"mic\" aria-label=\"Speak\" hidden>Speak</button><button class=\"p\" id=\"go\">Go</button></form><div class=\"crow\"><span class=\"meta\" id=\"scope\" aria-live=\"polite\">Signed in. Changes ask for a fresh emailed code.</span></div><div class=\"chips\" id=\"chips\"><button type=\"button\" data-q=\"Which pages got the most views in the last 7 days?\">Top pages this week</button><button type=\"button\" data-q=\"tasks owner\">What needs me</button><button type=\"button\" data-q=\"status\">Status</button><button type=\"button\" data-q=\"analytics\">Analytics</button><button type=\"button\" data-q=\"probe\">Run checks</button><button type=\"button\" data-q=\"help\">Help</button></div><div id=\"thread\" aria-live=\"polite\"></div><h2>Connections</h2><p class=\"meta\">Services Ultrastable is connected to. Connecting is one sign-in on the service's own page; the system keeps access renewed.</p><div id=\"conn\"><p class=\"meta\">Loading.</p></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Provenance: where changes came from</h2><p class=\"meta\">Origin, what it touched and its effect. <a href=\"/changelog\">Public changelog</a></p><pre id=\"prov\">Loading.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
+  return page("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Ultrastable owner</title>" + ICON + "<style>" + THEME + OWNER_CSS + HIDE_CSS + "</style></head><body><main><div class=\"top\"><h1>" + LOGO + "ultrastable</h1><span id=\"pill\" class=\"pill\" role=\"status\">Loading</span><a class=\"sp\" href=\"/auth/passkey/add\">Add a passkey</a><button class=\"sp\" id=\"logout\">Sign out</button></div><div id=\"gate\"></div><div id=\"app\" hidden><p class=\"meta\" id=\"gatetxt\"></p><p class=\"meta\" id=\"counts\"></p><p class=\"meta bad\" id=\"degraded\" role=\"alert\" hidden></p><h2>Needs you</h2><div id=\"needs\"></div><div id=\"owner\"></div><h2>Tenant apps</h2><div id=\"tenants\" class=\"grid\"></div><h2>Paid options (not yet taken)</h2><p class=\"meta\" id=\"plan\"></p><div id=\"options\"></div><h2>Pay or stay free (ROI)</h2><div id=\"roi\" class=\"card\"><p class=\"meta\">Loading.</p></div><h2>Ask or tell Ultrastable</h2><form id=\"cmd\" class=\"us-ask\" role=\"search\"><textarea id=\"line\" rows=\"1\" maxlength=\"2000\" placeholder=\"Ask a question, or tell Ultrastable what to do\" aria-label=\"Ask or tell Ultrastable\" autocomplete=\"off\"></textarea><button type=\"button\" id=\"mic\" aria-label=\"Speak\" hidden>Speak</button><button class=\"p\" id=\"go\">Go</button></form><div class=\"crow\"><span class=\"meta\" id=\"scope\" aria-live=\"polite\">Signed in. Changes ask for a fresh emailed code.</span></div><div class=\"chips\" id=\"chips\"><button type=\"button\" data-q=\"Which pages got the most views in the last 7 days?\">Top pages this week</button><button type=\"button\" data-q=\"tasks owner\">What needs me</button><button type=\"button\" data-q=\"status\">Status</button><button type=\"button\" data-q=\"analytics\">Analytics</button><button type=\"button\" data-q=\"probe\">Run checks</button><button type=\"button\" data-q=\"help\">Help</button></div><div id=\"thread\" aria-live=\"polite\"></div><h2>Connections</h2><p class=\"meta\">Services Ultrastable is connected to. Connecting is one sign-in on the service's own page; the system keeps access renewed.</p><div id=\"conn\"><p class=\"meta\">Loading.</p></div><h2>Funding, IP, trust and bootstrap</h2><p class=\"meta\" id=\"snapmeta\"></p><div id=\"snap\"></div><h2>Web analytics</h2><div id=\"an\"></div><h2>Status</h2><div id=\"checks\" class=\"grid\"></div><h2>Fleet tasks</h2><div id=\"fleet\"></div><h2>Provenance: where changes came from</h2><p class=\"meta\">Origin, what it touched and its effect. <a href=\"/changelog\">Public changelog</a></p><pre id=\"prov\">Loading.</pre><h2>Audit log</h2><pre id=\"audit\"></pre><h2>Owner emails sent</h2><pre id=\"notes\"></pre></div></main><script>" + OWNER_JS + "</script></body></html>");
 }
 
 // ---------- router ----------
@@ -546,12 +574,18 @@ export async function route(req, env) {
   }
   if (p === "/api/owner/github" && req.method === "GET") { const r = await OID.start(env, publicOrigin(req, u)); const nx = safeOwnerNext(u.searchParams.get("next")); return r.location ? new Response(null, { status: 302, headers: { location: r.location, ...(nx ? { "Set-Cookie": "us_next=" + encodeURIComponent(nx) + "; Path=/; Max-Age=900; HttpOnly; Secure; SameSite=Lax" } : {}), ...SEC } }) : json(r.body, r.status); }  // SIGNIN-NEXT-1: the page that asked for the sign-in is where the owner lands
   if (p === "/api/owner/github/callback" && req.method === "GET") { const r = await OID.callback(env, u, mintSession); const nx = r.location ? safeOwnerNext(decodeURIComponent(((req.headers.get("cookie") || "").match(/(?:^|; )us_next=([^;]+)/) || [])[1] || "")) : null; const h = new Headers({ location: nx || r.location, ...SEC }); if (r.location) { h.append("Set-Cookie", r.cookie); h.append("Set-Cookie", "us_next=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax"); } return r.location ? new Response(null, { status: 302, headers: h }) : json(r.body, r.status); }
-  if (p === "/connect/github-signin") return OID.connectPage(env, publicOrigin(req, u));
-  if (p === "/auth/github-signin/callback") return OID.appCallback(env, u, publicOrigin(req, u));
+  if (p === "/connect/github-signin") return OID.connectPage(env, publicOrigin(req, u));  // never registers an app (NO-NEW-APP-1)
+  if (p === "/auth/github-signin/callback") return Response.redirect(publicOrigin(req, u) + "/owner", 302);
+  if (p === "/api/owner/signin-options") return json({ github: await OID.configured(env), email: true, passkey: true });
+  if (p === "/api/owner/magic") {
+    const nx = safeOwnerNext(u.searchParams.get("next")) || "/owner", id = u.searchParams.get("id") || "", c = u.searchParams.get("c") || "";
+    if (req.method === "POST") { const ck = await magicSignin(env, id, c); if (!ck) return page("<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Link expired</title><body style='font:16px system-ui;max-width:30rem;margin:4rem auto;padding:0 1rem'><h1>That link expired</h1><p><a href='/owner" + (nx !== "/owner" ? "?next=" + encodeURIComponent(nx) : "") + "'>Email a new one</a></p>", 401); return new Response(null, { status: 303, headers: { location: nx, "Set-Cookie": ck, ...SEC } }); }
+    return page("<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Sign in</title><body style='font:16px system-ui;max-width:30rem;margin:4rem auto;padding:0 1rem'><h1>Sign in to Ultrastable</h1><form method=post action='/api/owner/magic?id=" + encodeURIComponent(id) + "&c=" + encodeURIComponent(c) + "&next=" + encodeURIComponent(nx) + "'><button style='font:600 16px system-ui;min-height:48px;padding:12px 18px;width:100%'>Sign in</button></form>");
+  }
   if (p === "/owner") return ownerPage();
   if (p.startsWith("/api/owner/")) {
     if (req.method === "POST" && req.headers.get("x-us-ui") !== "1") return json({ error: "missing x-us-ui header" }, 400);
-    if (p === "/api/owner/code" && req.method === "POST") { const r = await requestCode(env); return json(r.body, r.status); }
+    if (p === "/api/owner/code" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const r = await requestCode(env, { origin: publicOrigin(req, u), next: b.next }); return json(r.body, r.status); }
     if (p === "/api/owner/verify" && req.method === "POST") { let b = {}; try { b = await req.json(); } catch (e) { } const r = await verifyCode(env, req, b.code); return json(r.body, r.status, r.cookie ? { "Set-Cookie": r.cookie } : undefined); }
     if (p === "/api/owner/identity-audit") { const sx = await getSession(env, req).catch(() => null); if (!sx) return json({ error: "sign in" }, 401); return json({ links: await OID.linkCount(env), events: await OID.auditTail(env) }); }
     if (p === "/api/owner/overview") return json({ ...(await livePanels(env)), version: VERSION });
