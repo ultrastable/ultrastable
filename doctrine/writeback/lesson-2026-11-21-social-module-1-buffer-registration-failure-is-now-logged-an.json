@@ -6,9 +6,9 @@
   "title": "SOCIAL-MODULE-1: Buffer registration failure is now logged and probed",
   "body": "The Buffer connect error logged no reason; the failure status and body now go to credential_events and a smoke probe POSTs the registration from a runner.",
   "probe": "file:seed/worker/src/auth/social.js",
-  "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  "session": "session_0156nqDtycGejegSYjhFJ1MF"
  },
  "kind": "lesson",
  "title": "SOCIAL-MODULE-1: Buffer registration failure is now logged and probed",
- "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+ "session": "session_0156nqDtycGejegSYjhFJ1MF"
 }
