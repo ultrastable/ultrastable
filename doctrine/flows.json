@@ -133,6 +133,8 @@
       ],
       "feedback": "failing checks return to the executor as items",
       "bindings": [
+        "LANE_APP_ID",
+        "LANE_APP_PRIVATE_KEY",
         "LANE_PAT"
       ]
     },
@@ -1095,6 +1097,8 @@
       ],
       "feedback": "a violation fails checks and the fleet drift run files an issue in the repository that lost the file; the next run passes only when the file is restored, and the SPDX baseline only shrinks",
       "bindings": [
+        "LANE_APP_ID",
+        "LANE_APP_PRIVATE_KEY",
         "LANE_PAT"
       ]
     },
