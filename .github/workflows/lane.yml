@@ -45,7 +45,7 @@ jobs:
       - name: No green PR stays open (LANE-WATCH-1)
         env:
           GH_TOKEN: ${{ secrets.LANE_PAT || secrets.GITHUB_TOKEN }}
-        run: python3 -m foundation lanewatch --check
+        run: python3 -m foundation lanewatch --check --remediate
       - name: Completion sweep (daily sweep and manual only; COMPLETE-1)
         if: github.event_name != 'workflow_run'
         env:
