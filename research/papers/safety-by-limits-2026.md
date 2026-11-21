@@ -90,10 +90,10 @@ Source: instances/ultrastable/loop-registry.json (declared).
 
 ## Proposed further links (leads, not findings)
 
-Found by core/connect on the lexical-512-8x4kv1 route; each is a proposal until a study file adopts it.
+Found by core/connect on the lexical-512-168cjwe route; each is a proposal until a study file adopts it.
 
 - S1 may also relate to DISPOSE-1 (similarity 0.133)
-- S1 may also relate to THOUGHT-1 (similarity 0.117)
+- S1 may also relate to THOUGHT-1 (similarity 0.116)
 - S2 may also relate to TENANT-SYNC-1 (similarity 0.153)
 - S2 may also relate to DRAIN-ZERO-1 (similarity 0.131)
 - S3 may also relate to RUNWAY-1 (similarity 0.115)
