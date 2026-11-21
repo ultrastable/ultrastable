@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
+# Copyright (c) Ultrastable
 """FAILMINE-1 (Rowan, 2026-11-21): "The Ultrastable system shall always audit and remediate all failure modes and their root causes automatically."
 
 failure_audit.py runs the detectors of failure modes somebody registered. This module finds the failures nobody registered, from what the loops
