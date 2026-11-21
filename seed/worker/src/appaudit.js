@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Ultrastable-1.0
+// SPDX-License-Identifier: LicenseRef-Ultrastable-USL-1.0
 // Copyright (c) Ultrastable
 // APP-INVENTORY-1: the live truth about the org's GitHub Apps, read by the Worker with each app's own key. For every stored app (one per role) it asks GitHub
 // who the app is and where it is installed, removes any installation of that app other than the stored one, and records one credential_events row (event
