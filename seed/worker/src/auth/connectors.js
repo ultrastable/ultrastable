@@ -103,7 +103,7 @@ async function dynamicClient(env, tenant, def, redirect, f) {
   const key = 'oauth:' + def.title.toLowerCase() + '-client', m = await store.material(env.DB, env, tenant, key);
   if (m && m.meta && m.meta.redirect === redirect && m.meta.client_id) return { ok: true, client_id: m.meta.client_id };
   const r = await f(def.dcr, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ client_name: 'Ultrastable', redirect_uris: [redirect], grant_types: ['authorization_code', 'refresh_token'], response_types: ['code'], token_endpoint_auth_method: 'none' }) });
-  if (!r.ok) return { ok: false, error: 'registration HTTP ' + r.status };
+  if (!r.ok) { let b = ''; try { b = (await r.text()).replace(/\s+/g, ' ').slice(0, 160); } catch (_) { /* body unreadable, status still recorded */ } try { await store.event(env.DB, tenant, 'oauth:' + def.title.toLowerCase(), 'failed', 'registration HTTP ' + r.status + ' ' + b); } catch (_) { /* event log unavailable, error still returned */ } return { ok: false, error: 'registration HTTP ' + r.status }; }
   const j = await r.json(); if (!j.client_id) return { ok: false, error: 'registration returned no client_id' };
   await store.put(env.DB, env, tenant, key, { secret: { registered: true }, meta: { client_id: j.client_id, redirect }, status: 'ok' });
   return { ok: true, client_id: j.client_id };

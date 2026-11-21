@@ -222,6 +222,17 @@ def _():
     ok = r["status"] == 200 and (gated or direct)
     return ok, f"consent HTTP {r['status']}, start HTTP {s['status']} -> {loc[:60]}, client_id {'yes' if q.get('client_id') else 'no'}"
 
+@check("buffer-registration", "Buffer accepts the app registration the connect flow sends (SOCIAL-MODULE-1)")
+def _():
+    body = json.dumps({"client_name": "Ultrastable", "redirect_uris": [IO + "/connect/buffer/callback"], "grant_types": ["authorization_code", "refresh_token"], "response_types": ["code"], "token_endpoint_auth_method": "none"}).encode()
+    req = urllib.request.Request("https://auth.buffer.com/reg", data=body, headers={"content-type": "application/json", "accept": "application/json", "user-agent": "ultrastable-smoke/1"})
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r: s, b = r.status, r.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as e: s, b = e.code, e.read().decode("utf-8", "replace")
+    except Exception as e: s, b = 0, repr(e)
+    has_id = '"client_id"' in b
+    return s in (200, 201) and has_id, f"HTTP {s}; client_id {'yes' if has_id else 'no'}; body {re.sub(r'\\s+', ' ', b)[:300]}"
+
 @check("connect-mastodon-link", "the Mastodon link is one click to the owner's server sign-in (SOCIAL-MODULE-1)")
 def _():
     s = get(IO + "/connect/mastodon/start?instance=mstdn.science", follow=False); loc = s.get("location", "")
