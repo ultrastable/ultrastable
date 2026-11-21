@@ -32,7 +32,7 @@
  "foundation-tests": {
   "status": "fail",
   "signature": "8a943034d516",
-  "streak": 1,
+  "streak": 2,
   "since": "2026-11-21T13:41:13Z"
  },
  "green-guard": {
@@ -119,10 +119,16 @@
   "streak": 0,
   "since": ""
  },
+ "sla-breach": {
+  "status": "fail",
+  "signature": "05e04c30c8c9",
+  "streak": 1,
+  "since": "2026-11-21T18:56:59Z"
+ },
  "temporal-drift": {
   "status": "fail",
   "signature": "7c559a9af5a4",
-  "streak": 3,
+  "streak": 4,
   "since": "2026-11-21T13:41:18Z"
  },
  "vision": {
