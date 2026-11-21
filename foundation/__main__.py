@@ -58,6 +58,7 @@
   python3 -m foundation rules [--check|--run [--apply] [--due]|--probe NAME|--status|--panel]  RULES-1: every standing rule maps to a CI check and a runtime probe; violations file and fix themselves
   python3 -m foundation mergeaudit [--run [--apply]|--probe N|--check]  MERGE-AUDIT-1: a PR merged without a green `checks` run becomes a queue item
   python3 -m foundation ciwatch [--run [--apply]|--probe REPO WORKFLOW|--check]  CIWATCH-1: red X's on any watched repo are rerun or filed as queue items
+  python3 -m foundation rootcause [--run|--check|--report]               ROOTCAUSE-1: every finding traced to its root cause; recurrence escalates to the root
   python3 -m foundation failure_audit [--run|--check]                    FAILURE-AUDIT-1: live detectors for every failure mode; failures file their own issues
   python3 -m foundation flows [--check|--map]                             FLOW-DIRECTIVE-1: every loop declares inflows, outflows and its feedback path
   python3 -m foundation outreach [--rank|--selftest|--check]              OUTREACH-1: replies reward a segment; UCB1 orders the next intro queue
@@ -174,6 +175,9 @@ def main(argv=None) -> int:
     if _av[:1] == ["ciwatch"]:
         from . import ciwatch
         return ciwatch.main(_av[1:])
+    if _av[:1] == ["rootcause"]:
+        from . import rootcause
+        return rootcause.main(_av[1:])
     if _av[:1] == ["failure_audit"]:
         from . import failure_audit
         return failure_audit.main(_av[1:])

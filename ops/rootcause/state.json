@@ -1,0 +1,75 @@
+{
+ "area-decay": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "dns-after-move": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "edit-hotspot": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "estimate-miscalibrated": {
+  "days": [
+   "2026-11-21"
+  ],
+  "guard": false,
+  "mode": "build-guard",
+  "status": "escalated"
+ },
+ "pr-left-open": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "regression-on-main": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "repeated-failure": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "runway-shortfall": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "signin-bypass": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "test-module-collision": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "unclassified": {
+  "guard": null,
+  "last": "",
+  "status": "clean"
+ },
+ "unregistered-code-root": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "unverified-claim": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ },
+ "waiting-on-person": {
+  "guard": true,
+  "last": "2026-11-21",
+  "status": "watching"
+ }
+}

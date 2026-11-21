@@ -396,6 +396,8 @@ Maintained by: every agent, on every session end. Staleness is checked by `scrip
 
 ## 6. Update protocol
 
+- **Root causes (ROOTCAUSE-1, 2026-11-21).** `foundation/rootcause.py` + `doctrine/rootcauses.json` classify every finding (failure audit, temporal, yearfail, recorded incidents) to a root-cause class with a guard probe; a class seen on two days, or occurring with no guard, becomes `Q-ROOT-<class>`, closed only when the guard passes and the class is quiet two days. Runs inside the daily `failure_audit --run`. Landing `ops/rootcause` needs the staged workflow change in `protected/failure-audit.yml`.
+
 Update this file in the same PR as any change to status, rules, facts, owner items or workstreams, and at the end of every session. Bump "Last updated". `scripts/check_memory.py` fails the `memory-fresh` workflow when merged work has outrun this file.
 
 - 2026-11-10: Actions minutes are a hard quota. Every workflow declares budget, trigger and free alternative (`scripts/lint_workflows.py`); kill switch `actions-budget.json`; see docs/ops/ACTIONS-BUDGET.md and BG-35.
