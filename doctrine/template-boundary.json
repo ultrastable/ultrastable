@@ -51,5 +51,9 @@
   "agent_files": [
     "agents/AGENTS.md",
     "seed/agents/AGENTS.md"
-  ]
+  ],
+  "same_bytes": {
+    "_doc": "The kit a new system clones carries the canonical license, byte for byte.",
+    "seed/LICENSE": "LICENSE"
+  }
 }

@@ -49,6 +49,12 @@ def check(root=REPO, d: dict | None = None) -> list[str]:
         for t in sg["banned_tokens"]:
             if t in text:
                 bad.append(f"{f}: carries one instance's fact ({t!r}); the seed renders it for every new system")
+    for kit, canon in d.get("same_bytes", {}).items():
+        if kit.startswith("_"):
+            continue
+        a, b = root / kit, root / canon
+        if a.exists() and b.exists() and a.read_bytes() != b.read_bytes():
+            bad.append(f"{kit}: differs from {canon}; the kit must carry the canonical license")
     for f in d["agent_files"]:
         p = root / f
         if p.exists() and d["rule"] not in p.read_text(encoding="utf-8"):
