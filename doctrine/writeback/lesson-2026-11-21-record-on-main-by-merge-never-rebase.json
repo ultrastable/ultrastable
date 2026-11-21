@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "lesson-2026-11-21-record-on-main-by-merge-never-rebase",
+  "kind": "lesson",
+  "date": "2026-11-21",
+  "title": "Record on main by merge, never rebase",
+  "body": "Workflows that record data on main must not git pull --rebase (it stops on generated claim blocks in README.md, deploy-workers run 44927206546); use tools/record_main.sh: merge main, resolve_generated, claims --fix, push_main. Guarded by tests/foundation/test_record_main.py. New source files need the SPDX header (failmine.py and probes/mergeaudit.py lacked it and turned the foundation tests red).",
+  "probe": "file:tools/record_main.sh"
+ },
+ "kind": "lesson",
+ "title": "Record on main by merge, never rebase",
+ "session": ""
+}

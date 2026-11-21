@@ -1,0 +1,13 @@
+{
+ "row": {
+  "id": "decision-2026-11-21-session-note-recordfix",
+  "kind": "decision",
+  "date": "2026-11-21",
+  "title": "Session note recordfix",
+  "body": "Session: session_0156nqDte8FeqRLjvGRAAb6w (thread: resolve open issues at full speed), change set recordfix.",
+  "probe": "file:tools/record_main.sh"
+ },
+ "kind": "decision",
+ "title": "Session note recordfix",
+ "session": ""
+}
