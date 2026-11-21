@@ -1,7 +1,7 @@
 {
   "id": "PIN-outside-audit",
   "title": "PIN-outside-audit: Outside audit of prediction scoring",
-  "body": "**Owner:** reviewer\n**Trigger:** trigger: pilot milestone 2; first step is Q-GAP-cross-model-rescoring\n**Done check:** file:docs/audits/prediction-scoring-audit.json\n**Status:** open\n\nThe match rate is scored by the system itself; a held-out grader, then an independent audit, narrows that. Done when the audit record is committed.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.",
+  "body": "**Owner:** reviewer\n**Trigger:** trigger: pilot milestone 2; first step is Q-GAP-cross-model-rescoring\n**Done check:** file:docs/audits/prediction-scoring-audit.json\n**Status:** closed\n\nThe match rate is scored by the system itself; a held-out grader, then an independent audit, narrows that. Done when the audit record is committed.\n\nSource: site/pins.json (SITE-PINS-1); the public /engineers and /roadmap pages render this item, and scripts/build_site_roadmap.py --check fails when the claim and the item drift.\n\n**Disposition:** shelved (ttl, 2026-11-21T18:12:26Z, DISPOSE-1)\n\n**Evidence:** open 220.8 hours (limit 6 hours) and no loop closed it (SLA-8H-1). Its closing probe still runs on every fleet pass and records `fixed` when it passes; the executor retries it when its open queue is empty (every 30 days at most).\n",
   "labels": [
     "role:reviewer",
     "pin"
