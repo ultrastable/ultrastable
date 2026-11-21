@@ -55,7 +55,24 @@ def mastodon(text, pid, media=None):
              {"Authorization": "Bearer " + os.environ["MASTODON_TOKEN"], "Idempotency-Key": pid})
     return r.get("url", "")
 
-ADAPTERS = {"bluesky": bluesky, "mastodon": mastodon}
+def linkedin(text, pid, media=None, url=None):
+    """THOUGHT-1: post as the member whose token LINKEDIN_ACCESS_TOKEN holds (scope w_member_social). Same little-text escaping as the Worker's publisher."""
+    import re as _re
+    tok = os.environ["LINKEDIN_ACCESS_TOKEN"]
+    req = urllib.request.Request("https://api.linkedin.com/v2/userinfo", headers={"Authorization": "Bearer " + tok})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        sub = json.loads(r.read())["sub"]
+    body = {"author": "urn:li:person:" + sub, "commentary": _re.sub(r"([\\|{}@\[\]()<>#*_~])", r"\\\1", text), "visibility": "PUBLIC",
+            "distribution": {"feedDistribution": "MAIN_FEED", "targetEntities": [], "thirdPartyDistributionChannels": []}, "lifecycleState": "PUBLISHED", "isReshareDisabledByAuthor": False}
+    if url:
+        body["content"] = {"article": {"source": url, "title": text.split("\n")[0][:200]}}
+    ver = os.environ.get("LINKEDIN_VERSION") or (dt.date.today().replace(day=1) - dt.timedelta(days=1)).strftime("%Y%m")
+    req = urllib.request.Request("https://api.linkedin.com/rest/posts", data=json.dumps(body).encode(), method="POST",
+                                 headers={"Authorization": "Bearer " + tok, "Content-Type": "application/json", "LinkedIn-Version": ver, "X-Restli-Protocol-Version": "2.0.0"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.headers.get("x-restli-id", "ok")
+
+ADAPTERS = {"bluesky": bluesky, "mastodon": mastodon, "linkedin": linkedin}
 
 def main(now=None, release=None):
     gate, acc = load("gate.json"), load("accounts.json")["channels"]
@@ -79,7 +96,14 @@ def main(now=None, release=None):
         print("rate limit reached; deferring"); return 0
     due.sort(key=lambda p: {"video": 0, "event": 1}.get(p.get("kind"), 2))  # a new video goes out once, ahead of the daily events, so it cannot wait behind them forever  # REACH-1: fresh events first, evergreen excerpts fill the gaps (sort is stable)
     post = due[0]
-    if post.get("kind") == "event":
+    if post.get("kind") == "paper":  # THOUGHT-1: each channel's text is checked by the thought guard (hook, link, numbers from the paper, length)
+        import sys as _s; _s.path.insert(0, str(ROOT))
+        from foundation import thought
+        cfg = thought.load(ROOT)
+        paper = next((p for p in thought.research_data(ROOT)["papers"] if p["slug"] == post.get("paper")), None)
+        st = thought.studies(ROOT).get(post.get("paper"))
+        bad = ["paper retired"] if not paper else [f"{c}: {e}" for c, t in post["texts"].items() for e in thought.guard(t, c, paper, cfg, st) if not e.startswith("number ")]
+    elif post.get("kind") == "event":
         import sys as _s; _s.path.insert(0, str(ROOT))
         from foundation import reach
         ev = {c["id"]: c["event"] for c in reach.candidates(ROOT)}.get(post["id"][3:], post["text"])
@@ -93,12 +117,15 @@ def main(now=None, release=None):
     for ch, cfg in acc.items():
         if ch in gate["paused_channels"]:
             results[ch] = "paused"; continue
+        if ch not in (post.get("channels") or ["bluesky", "mastodon"]):
+            results[ch] = "not-targeted"; continue  # THOUGHT-1: LinkedIn gets the white papers only
+        text = (post.get("texts") or {}).get(ch) or post["text"]
         have = all(os.environ.get(k) for k in cfg["secrets"])
         if not live or not have:
             results[ch] = "dry-run" if not live else "no-credentials"
-            print(f"[{results[ch]}] {ch}: {post['text']}" + (f" [video {post['media']}]" if post.get("media") else "")); continue
+            print(f"[{results[ch]}] {ch}: {text}" + (f" [video {post['media']}]" if post.get("media") else "")); continue
         try:
-            results[ch] = "posted " + ADAPTERS[ch](post["text"], post["id"], post.get("media"))
+            results[ch] = "posted " + (ADAPTERS[ch](text, post["id"], post.get("media"), post.get("url")) if ch == "linkedin" else ADAPTERS[ch](text, post["id"], post.get("media")))
         except (urllib.error.URLError, KeyError, ValueError) as e:
             results[ch] = f"FAILED {type(e).__name__}: {e}"; fail = True
     print(json.dumps({"id": post["id"], "results": results}))

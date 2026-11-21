@@ -370,6 +370,14 @@
     "23 6 * * 1"
    ]
   },
+  "owner-links-audit.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 6 * * *"
+   ]
+  },
   "platform-core.yml": {
    "events": [
     "pull_request",
@@ -438,6 +446,14 @@
    ],
    "crons": [
     "41 6 * * *"
+   ]
+  },
+  "temporal.yml": {
+   "events": [
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "17 6 * * *"
    ]
   },
   "tenant-sync.yml": {

@@ -757,7 +757,7 @@
    "date": "2026-11-13",
    "title": "COSTGUARD-1 budgets as failure modes (Session: session_0156nqDuRz3AxosG8EDZT7Zi; Session: session_0156nqDsZ)",
    "body": "External D1 budgets (qnfo-audit under 15M rows/hr) are sampled hourly by the tick Worker into cost_samples and probed by selfaudit; red files the next FIX- item, green closes it. GitHub App org access and k_eff below 1 are probed modes with fixes.",
-   "probe": "grep:instances/ultrastable/failure-modes.json::qnfo-audit-d1-budget"
+   "probe": "grep:instances/ultrastable/cost-budgets.json::ultrastable-org"
   },
   {
    "id": "lesson-2026-11-13-free-org-plan-blocks-branch-protection-bundles-restore",
@@ -3826,6 +3826,224 @@
    "body": "PR 935 sat open with label conflict and Rowan had to call it out. Root cause: README.md and platform/adapters/README.md on main carried committed merge-conflict markers, so every PR conflicted there on each merge and scripts/resolve_generated.py could not match the nested hunks; with a conflict no hosted check ran on the new head either. Remedy in code: scripts/no_markers.py is a step in checks (a change that carries markers does not pass), scripts/regen_generated.py runs it with --fix after every merge to main (claim-only hunks are flattened with no person), and resolve_generated.py flatten() handles nested hunks. Tests ran: 425 Worker tests pass, flatten exercised on a nested sample.",
    "probe": "file:scripts/no_markers.py",
    "session": "session_0156nqDu9w9828E3wYy42EBd"
+  },
+  {
+   "id": "decision-2026-11-21-pathfinder-1-find-another-path-before-any-owner-ask",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "PATHFINDER-1: find another path before any owner ask",
+   "body": "Owner 2026-11-21: multiple paths always exist and the information is already held. foundation/pathfinder.py resolves routes per surface class, records attempts, diffs regressed integrations, and fails openloops --check on an owner ask without exhaustion proof.",
+   "probe": "file:foundation/pathfinder.py",
+   "session": "session_0156nqDsmZTfHS1uunx9hyu7"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-standards-surface-registered",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: standards surface registered",
+   "body": "The token-gated import route is registered as an owner-audience surface, not discoverable.",
+   "probe": "grep:seed/standards/surfaces.json::social-import",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-the-social-module-is-the-human-interface-lay",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: the social module is the human interface layer, native in core",
+   "body": "Rowan 2026-11-21: interfacing with humans (social, outreach, replies, newsletters) is a core module every system has; tenants supply config and content only; no channel runs through another account. Buffer channels verified per service; replies and mentions land in human_inbox.",
+   "probe": "grep:seed/worker/src/humans.js::SOCIAL-MODULE-1"
+  },
+  {
+   "id": "decision-2026-11-21-quniverse-cut-1-no-runtime-dependency-on-the-quniverse-accou",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "QUNIVERSE-CUT-1: no runtime dependency on the Quniverse account",
+   "body": "Quniverse account assumed gone (Rowan 2026-11-21). All four zones, mail relay and the PS backend URL now live in the ultrastable account. singleaccount --check scans runtime code for Quniverse/QNFO hosts, repos and resources. Social relay on qnfo-social is moved by the social-module thread.",
+   "probe": "grep:doctrine/single-account.json::QUNIVERSE-CUT-1",
+   "session": "session_0156nqDrrT7TjGvkih9nT217"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-a-native-credential-retires-the-relay",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: a native credential retires the relay",
+   "body": "The publisher drops the relay channel once a native buffer or mastodon credential is sealed. Buffer and Mastodon are linked through the connect flow, with the credential import route live as a second route.",
+   "probe": "grep:seed/worker/src/social.js::retires the relay",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "decision-2026-11-21-social-module-1-one-click-buffer-and-mastodon-links",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: one-click Buffer and Mastodon links",
+   "body": "Buffer registers its own OAuth app at its registration endpoint and uses authorization code with PKCE as a public client, so the connect link needs no key from a person. Mastodon uses one link with the instance in it. Never-linked channels appear in the owner-acts list.",
+   "probe": "grep:seed/worker/src/auth/connectors.js::dynamicClient",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "lesson-2026-11-21-relay-posts-are-read-back-from-buffer-every-tick",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Relay posts are read back from Buffer every tick",
+   "body": "verifyRelay in seed/worker/src/social.js calls the relay /relay/status for queued or unverified relay rows each tick; verified needs status sent plus the service link, an error becomes failed and is retried.",
+   "probe": "grep:seed/worker/src/social.js::verifyRelay",
+   "session": "session_0156nqDrz7VJCnauouR6AgUS"
+  },
+  {
+   "id": "lesson-2026-11-21-regen-research-1-the-lane-took-main-s-research-data-and-noth",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "REGEN-RESEARCH-1: the lane took main's research data and nothing rebuilt the PR's papers",
+   "body": "MERGE-NOW-1 resolves generated files to main's side; REGEN-1 in checks did not run research --page, so a PR adding a study went red after every server reconcile and waited on a session. regen_generated.sh now rebuilds the papers.",
+   "probe": "grep:scripts/regen_generated.sh::research --page --apply",
+   "session": "session_0156nqDrGjLASvqbuu6oXJk5"
+  },
+  {
+   "id": "lesson-2026-11-21-social-module-1-live-probes-for-the-two-connect-links",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "SOCIAL-MODULE-1: live probes for the two connect links",
+   "body": "The daily smoke run now follows both connect links to the provider's sign-in without completing it, so a broken link is a failing check.",
+   "probe": "grep:scripts/smoke_live.py::connect-buffer-link",
+   "session": "session_0156nqDvG8EF1bx4LXrvu9rj"
+  },
+  {
+   "id": "decision-2026-11-21-generated-files-follow-main-in-unstick-practical-solutions-s",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Generated files follow main in unstick; practical-solutions settings as code; auto-merge on",
+   "body": "UNSTICK-1 regenerated generated files into PR branches after merging main, which made them diverge from main again and conflict on the next bot commit (#935). scripts/unstick_prs.sh now sets every file in seed/worker/src/generated.js to main's copy; main regenerates after merge. Allow auto-merge was off on both repos although github/org-settings.json declared it; set on both through the owner's signed-in browser and verified through the API (allow_auto_merge true). practical-solutions added to github/org-settings.json so the applier and platformaudit keep it. Tests pass.",
+   "probe": "grep:scripts/unstick_prs.sh::MERGE-NOW-1",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "lesson-2026-11-21-owner-links-audited-daily-in-headless-chromium-on-production",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Owner links audited daily in headless Chromium on production",
+   "body": "OWNER-LINKS-3: scripts/owner_links_audit.mjs and owner-links-audit.yml walk every signed-out owner link; session session_0156nqDu7Qq4YrmkKMFxfB9D",
+   "probe": "file:scripts/owner_links_audit.mjs"
+  },
+  {
+   "id": "lesson-2026-11-21-owner-sign-in-never-creates-github-apps-next-honored-plan-re",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Owner sign-in never creates GitHub apps; next honored; plan read live",
+   "body": "NO-NEW-APP-1, SIGNIN-NEXT-2, MAGIC-LINK-1, LIVE-PLAN-1",
+   "probe": "grep:dashboard/worker.js::NO-NEW-APP-1|magicSignin"
+  },
+  {
+   "id": "decision-2026-11-21-disclosure-retired-1-the-disclosure-gate-pf-1-is-retired",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "DISCLOSURE-RETIRED-1: the disclosure gate (PF-1) is retired",
+   "body": "Rowan, 2026-11-21: no patent and no IP filing; the work is source-available under the Ultrastable License, non-commercial use free, commercial use needs a paid license. The disclosure rule, the dashboard disclosure_guard probe (which failed hourly) and its word list are removed; nothing is held back from public view.",
+   "probe": "grep:dashboard/worker.js::NO-PATENT-1",
+   "session": "session_0156nqDvcJffVKenzBcawrYF"
+  },
+  {
+   "id": "lesson-2026-11-21-removing-a-check-leaves-its-last-failing-row-the-probe-purge",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "Removing a check leaves its last failing row; the probe purges retired checks",
+   "body": "Deleting the disclosure_guard probe left its failing row in the checks table, so the failure stayed visible. runProbes now deletes retired check names each run.",
+   "probe": "grep:dashboard/worker.js::retired checks",
+   "session": "session_0156nqDvcJffVKenzBcawrYF"
+  },
+  {
+   "id": "lesson-2026-11-21-uptime-1-a-nameserver-move-looks-like-an-outage-until-resolv",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "UPTIME-1: a nameserver move looks like an outage until resolver caches expire; probe every hostname",
+   "body": "2026-11-21: ultrastable.org gave DNS errors after the four zones moved to the ultrastable account (old zones in the quniverse account are moved; resolvers kept the old nameservers). Zones, records and custom domains were already correct. One real defect: www.ultrastable.app returned 404 because the wildcard route of ultrastable-spinoffs won; site/wrangler.toml now declares the specific route. Worker ultrastable-uptime probes 9 hostnames every 5 minutes over two DoH resolvers plus HTTPS, retries once, and repairs through the tick Worker /api/uptime/repair (org GitHub App dispatches deploy-site.yml).",
+   "probe": "file:uptime/probe.js",
+   "session": "session_0156nqDtUruC6pAn6o7mpii6"
+  },
+  {
+   "id": "decision-2026-11-21-temporal-1-time-series-per-area-loop-entry-and-tenant-feed-f",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "TEMPORAL-1: time series per area, loop, entry and tenant feed failure modes, pathfinder and queue attention",
+   "body": "Snapshots hide churn and neglect; the loop reads history and ledgers daily, files findings with predictions, settles them by recomputing",
+   "probe": "grep:foundation/temporal.py::def diagnose",
+   "session": "session_0156nqDtnQ5gPHumEXvZkjYN"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-cfp-no-idle-preview-workers-add-agents-spi",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-CFP-no-idle-preview-workers: Add `agents/spinoff_sweep.py` to implement automated deletion of idle idea preview Workers us",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: agents/spinoff_sweep.py.",
+   "probe": "file:agents/spinoff_sweep.py"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-spin-scope-implement-template-generator-im",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-SPIN-SCOPE-IMPLEMENT-TEMPLATE-GENERATOR: Implement the TemplateGenerator archetype to unblock queued writers.",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: brand/repos/workers/templates.js.",
+   "probe": "file:brand/repos/workers/templates.js"
+  },
+  {
+   "id": "decision-2026-11-21-workers-builds-is-not-adopted-for-deploys-the-oidc-path-stay",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Workers Builds is not adopted for deploys; the OIDC path stays the one deploy route",
+   "body": "Reviewed 2026-11-21. Merges to main already deploy the touched Workers within minutes through deploy-ultrastable (OIDC into the site Worker's deploy endpoint, no stored Cloudflare credential), each deploy read back live (live_matches_commit true in ops/deploys.jsonl) with rollback in the handoff closer. Workers Builds would add a second deploy per merge from a separate build with no read-back or rollback record, race the first for the same Worker version, and needs a Cloudflare to GitHub consent in the dashboard before it can run. Its preview URLs for branches are the one gain; they are not worth a second production route. Default in effect: one deploy route; revisit when previews are wanted by a measured need.",
+   "probe": "file:.github/workflows/deploy-ultrastable.yml",
+   "session": "session_0156nqDtycGejegSYjhFJ1MF"
+  },
+  {
+   "id": "lesson-2026-11-21-cost-route-1-and-deprot-1",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "COST-ROUTE-1 and DEPROT-1",
+   "body": "Cost analytics are read through the site Worker route /__internal/cf-graphql (OIDC). Every package manifest needs a Dependabot entry (foundation/deprot.py, detector dependency-watch). The year simulation repairs CI breakage with the real redmain code.",
+   "probe": "file:deploy/cost-probe.mjs",
+   "session": "session_0156nqDvJdN4U5rU7HaEu3jd"
+  },
+  {
+   "id": "lesson-2026-11-21-yearfail-1-first-run-findings",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "YEARFAIL-1 first run findings",
+   "body": "The simulated year found the live cost ledger UNMEASURED (CLOUDFLARE_API_TOKEN lacks analytics authz; deploy/cost-probe.mjs does not use the Worker OIDC route). GitHub has no API to delete a keyless app (OL-20261121-1). Dependency rot and the practical-solutions loops are UNCOVERED.",
+   "probe": "file:foundation/yearfail.py",
+   "session": "session_0156nqDvJdN4U5rU7HaEu3jd"
+  },
+  {
+   "id": "lesson-2026-11-21-yearfail-1-protected-paths-cannot-ride-a-model-branch",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "YEARFAIL-1: protected paths cannot ride a model branch",
+   "body": "worker-gate refuses edits to .github/workflows and .github/dependabot.yml from claude/* branches, so the weekly yearfail workflow and the full Dependabot config are staged as data in doctrine/protected/ with items Q-YEARFAIL-workflow and Q-DEPROT-dependabot; the dependency detector holds a shrink-only baseline until they land. Never route around the gate by renaming the branch.",
+   "probe": "file:doctrine/protected/yearfail.workflow.yml",
+   "session": "session_0156nqDvDmbGTAVRujXE2ZjL"
+  },
+  {
+   "id": "lesson-2026-11-21-yearfail-1-renamed-to-avoid-the-year-sim-1-collision",
+   "kind": "lesson",
+   "date": "2026-11-21",
+   "title": "YEARFAIL-1 renamed to avoid the YEAR-SIM-1 collision",
+   "body": "PR 1188 (YEAR-SIM-1) owns foundation/yearsim.py, doctrine/yearsim.json, ops/yearsim.json and /year: a Monte Carlo of recovery code. The monthly failure-injection test is foundation/yearfail.py, doctrine/yearfail.json, ops/yearfail.json and /year/failures. The tenant's ops/yearsim.json is unchanged.",
+   "probe": "file:foundation/yearfail.py",
+   "session": "session_0156nqDvJdN4U5rU7HaEu3jd"
+  },
+  {
+   "id": "decision-2026-11-21-executor-closed-q-cfp-no-idle-preview-workers-add-functional",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Executor closed Q-CFP-no-idle-preview-workers: Add functionality to agents/spinoff_sweep.py to detect and delete idle us-idea-* Workers when",
+   "body": "Measured: checks passed before the PR (python3 scripts/lint_workflows.py, python3 -m unittest discover -s tests/foundation); files changed: agents/spinoff_sweep.py.",
+   "probe": "file:agents/spinoff_sweep.py"
+  },
+  {
+   "id": "decision-2026-11-21-product-manager-pass-2026112115-0-item-s-filed",
+   "kind": "decision",
+   "date": "2026-11-21",
+   "title": "Product manager pass 2026112115: 0 item(s) filed",
+   "body": "Growth and repair items, experiment verdicts and knob review recorded in ops/growth/pm-report.json by foundation/pm.py; tests pass.",
+   "probe": "file:foundation/pm.py"
   }
  ]
 }

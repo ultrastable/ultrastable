@@ -3745,10 +3745,12 @@
    "system_path": [
     "scripts/smoke_live.py",
     "scripts/smoke_issues.py",
-    "scripts/land_data.py"
+    "scripts/land_data.py",
+    "scripts/owner_links_audit.mjs"
    ],
    "workflows": [
-    "smoke-live.yml"
+    "smoke-live.yml",
+    "owner-links-audit.yml"
    ],
    "staged_default": "a failing check writes docs/issues/Q-SMOKE-<check>.json and the run goes red until production matches the claim",
    "identity_bound": "none",
@@ -3834,6 +3836,121 @@
    "workflows": [
     "scout.yml"
    ],
+   "server_owner": "github-actions"
+  },
+  {
+   "id": "thought",
+   "kind": "governance",
+   "summary": "THOUGHT-1: thought leadership as a closed loop. Every white paper the research loop writes becomes posts for Bluesky, Mastodon and LinkedIn that state a common belief about AI limits, what this system's own records show (numbers read from the paper) and the hook: Ultrastable runs on Ultrastable, and Practical Solutions is one system it runs. Posts land in social/calendar.json; the tick Worker's publisher and the social-post workflow drain them within social/gate.json; referrals to /research come back through the reach loop's 'paper' arm.",
+   "trigger": "daily (social-post.yml), one piece per cadence_days; a changed measured result goes first",
+   "owner": "marketing-manager",
+   "closes_by": "system",
+   "sla": "3d",
+   "done": "python3 -m foundation thought --check reports ok",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation thought --run --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation thought --run --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/thought.py::def guard",
+   "writeback": [
+    "social/calendar.json",
+    "ops/thought/log.jsonl"
+   ],
+   "system_path": [
+    "doctrine/thought.json",
+    "foundation/thought.py",
+    "seed/worker/src/social.js",
+    "site/research.js"
+   ],
+   "area": "governance",
+   "workflows": [
+    "social-post.yml"
+   ],
+   "server_owner": "github-actions"
+  },
+  {
+   "id": "temporal",
+   "kind": "governance",
+   "summary": "TEMPORAL-1: time and iteration are part of the system. The loop reads the history of this repository and of each tenant into daily series per component, loop and entry, finds hotspots, neglect, stale entries, stopped loops and repeated failures from the trends, and files each into the queue that fixes it, the failure-mode audit, the pathfinder and the executor's attention weights.",
+   "trigger": "daily workflow and on demand",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "1d",
+   "done": "ops/temporal/findings.json is under 2 days old, every open act finding has a Q-TEMPORAL item the executor takes, and /trends shows the same series",
+   "paths": [
+    {
+     "id": "github",
+     "how": ".github/workflows/temporal.yml runs python3 -m foundation temporal --run --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation temporal --run --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/temporal.py::def diagnose",
+   "writeback": [
+    "ops/temporal",
+    "site/temporal-data.js",
+    "dashboard/temporal-data.js",
+    "docs/issues"
+   ],
+   "system_path": [
+    "foundation/temporal.py",
+    "doctrine/temporal.json",
+    "site/temporal.js",
+    "tests/foundation/test_temporal.py",
+    ".github/workflows/temporal.yml"
+   ],
+   "workflows": [
+    "temporal.yml"
+   ],
+   "area": "managers",
+   "server_owner": "github-actions"
+  },
+  {
+   "id": "yearfail",
+   "kind": "governance",
+   "summary": "YEARFAIL-1: twelve simulated months of zero input run against a scratch copy weekly; each injected failure must be detected by the system's own detectors and the fix verified; a failing month files Q-YEARFAIL-<area>.",
+   "trigger": "on demand (python3 -m foundation yearfail --apply) until the weekly workflow lands (Q-YEARFAIL-workflow)",
+   "owner": "operations",
+   "closes_by": "system",
+   "sla": "30d",
+   "done": "python3 -m foundation yearfail --check reports ok and ops/yearfail.json is under 8 days old",
+   "paths": [
+    {
+     "id": "ci",
+     "how": "python3 -m foundation yearfail --apply",
+     "class": "free"
+    },
+    {
+     "id": "session",
+     "how": "python3 -m foundation yearfail --apply from a cloud-hosted agent session",
+     "class": "session"
+    }
+   ],
+   "closing_probe": "grep:foundation/yearfail.py::def run",
+   "writeback": [
+    "ops/yearfail.json",
+    "site/yearfail-data.js",
+    "docs/issues"
+   ],
+   "system_path": [
+    "doctrine/yearfail.json",
+    "foundation/yearfail.py",
+    "site/yearfail.js"
+   ],
+   "area": "governance",
+   "workflows": [],
    "server_owner": "github-actions"
   }
  ],

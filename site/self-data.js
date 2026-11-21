@@ -112,6 +112,12 @@ export default {
     "id": "watchdog",
     "source": "workflow",
     "what": "RESILIENCE-1: the GitHub watchdog that probes every clock and restarts the stopped ones; the tick Worker dispatches it again when it is older than 12 hours"
+   },
+   {
+    "expected_interval_s": 86400,
+    "id": "temporal",
+    "source": "workflow",
+    "what": "the daily trend read: series per component, loop and entry, and what they show"
    }
   ],
   "watchdog_escalation": [
@@ -555,8 +561,10 @@ export default {
   "social-post",
   "spinoff",
   "strange-loop-hygiene",
+  "temporal",
   "tenant-sync",
   "terms-crosswalk",
+  "thought",
   "tick-heartbeat",
   "transparency",
   "triggers",
@@ -571,7 +579,8 @@ export default {
   "unknowns",
   "watchdog",
   "workers-tests",
-  "write-back"
+  "write-back",
+  "yearfail"
  ],
  "inheritance": {
   "carriers": [
@@ -1802,7 +1811,8 @@ export default {
     "summary": "Check every public claim against the deployed sites and file a repair item per failure.",
     "trigger": "automatic: daily schedule",
     "workflows": [
-     "smoke-live"
+     "smoke-live",
+     "owner-links-audit"
     ]
    },
    {
@@ -1830,6 +1840,43 @@ export default {
     "workflows": [
      "scout"
     ]
+   },
+   {
+    "closing_probe": "grep:foundation/thought.py::def guard",
+    "id": "thought",
+    "kind": "governance",
+    "owner": "marketing-manager",
+    "server_owner": "github-actions",
+    "sla": "3d",
+    "summary": "THOUGHT-1: thought leadership as a closed loop. Every white paper the research loop writes becomes posts for Bluesky, Mastodon and LinkedIn that state a common belief about AI limits, what this system's own records show (numbers read from the paper) and the hook: Ultrastable runs on Ultrastable, and Practical Solutions is one system it runs. Posts land in social/calendar.json; the tick Worker's publisher and the social-post workflow drain them within social/gate.json; referrals to /research come back through the reach loop's 'paper' arm.",
+    "trigger": "daily (social-post.yml), one piece per cadence_days; a changed measured result goes first",
+    "workflows": [
+     "social-post"
+    ]
+   },
+   {
+    "closing_probe": "grep:foundation/temporal.py::def diagnose",
+    "id": "temporal",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "1d",
+    "summary": "TEMPORAL-1: time and iteration are part of the system. The loop reads the history of this repository and of each tenant into daily series per component, loop and entry, finds hotspots, neglect, stale entries, stopped loops and repeated failures from the trends, and files each into the queue that fixes it, the failure-mode audit, the pathfinder and the executor's attention weights.",
+    "trigger": "daily workflow and on demand",
+    "workflows": [
+     "temporal"
+    ]
+   },
+   {
+    "closing_probe": "grep:foundation/yearfail.py::def run",
+    "id": "yearfail",
+    "kind": "governance",
+    "owner": "operations",
+    "server_owner": "github-actions",
+    "sla": "30d",
+    "summary": "YEARFAIL-1: twelve simulated months of zero input run against a scratch copy weekly; each injected failure must be detected by the system's own detectors and the fix verified; a failing month files Q-YEARFAIL-<area>.",
+    "trigger": "on demand (python3 -m foundation yearfail --apply) until the weekly workflow lands (Q-YEARFAIL-workflow)",
+    "workflows": []
    }
   ],
   "workers": [
@@ -2046,6 +2093,12 @@ export default {
     ]
    },
    {
+    "id": "owner-links-audit",
+    "loops": [
+     "smoke-live"
+    ]
+   },
+   {
     "id": "platform-core",
     "loops": [
      "platform-core-tests"
@@ -2094,13 +2147,20 @@ export default {
    {
     "id": "social-post",
     "loops": [
-     "social-post"
+     "social-post",
+     "thought"
     ]
    },
    {
     "id": "spinoff",
     "loops": [
      "spinoff"
+    ]
+   },
+   {
+    "id": "temporal",
+    "loops": [
+     "temporal"
     ]
    },
    {
@@ -2143,214 +2203,238 @@ export default {
  },
  "readings": {
   "access-check:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "access-check:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "access-check:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "air-quality:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "air-quality:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "blindspot:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "blindspot:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "country-snapshot:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "country-snapshot:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "country-snapshot:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "deploy_health": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
   "free-tier-meter:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "free-tier-meter:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "free-tier-meter:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "happy_paths": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 1.0
   },
+  "loop-ledger:claims_drift": {
+   "at": "2026-11-21T15:21:26Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
+  "loop-ledger:spend": {
+   "at": "2026-11-21T15:21:26Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
+  "loop-ledger:uptime": {
+   "at": "2026-11-21T15:21:26Z",
+   "in_bounds": false,
+   "unmeasured": false,
+   "value": 0.0
+  },
+  "loop-ledger:value": {
+   "at": "2026-11-21T15:21:26Z",
+   "in_bounds": false,
+   "unmeasured": true,
+   "value": null
+  },
   "numbers-board:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "numbers-board:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "numbers-board:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:claims_drift": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:spend": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "portfolio-board:uptime": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": false,
    "value": 0.0
   },
   "portfolio-board:value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": false,
    "unmeasured": true,
    "value": null
   },
   "spend": {
-   "at": "2026-11-21T10:48:48Z",
-   "in_bounds": false,
-   "unmeasured": true,
-   "value": null
+   "at": "2026-11-21T15:21:26Z",
+   "in_bounds": true,
+   "unmeasured": false,
+   "value": 0.0
   },
   "stalled_clocks": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "ui_findings": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
    "value": 0
   },
   "value": {
-   "at": "2026-11-21T10:48:48Z",
+   "at": "2026-11-21T15:21:26Z",
    "in_bounds": true,
    "unmeasured": false,
-   "value": 750.0
+   "value": 800.0
   }
  },
  "self": {

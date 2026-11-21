@@ -4,6 +4,7 @@
 
   python3 -m foundation singleaccount --check    no file names the quniverse account or one of its Ultrastable assets
   python3 -m foundation singleaccount --scan     one line per match
+  python3 -m foundation singleaccount --runtime  no runtime code or config calls a Quniverse/QNFO host, repo, worker, database or bucket (QUNIVERSE-CUT-1)
   python3 -m foundation singleaccount --moved    exit 1 while an item in ops/account-move.json is not moved (ops/account-move.json)
   python3 -m foundation singleaccount --live     exit 1 when a live Ultrastable asset sits outside the ultrastable account (SINGLE-ACCOUNT-LIVE-1)
 
@@ -44,8 +45,28 @@ def scan(root=REPO, d: dict | None = None) -> list[str]:
     return out
 
 
+def runtime_scan(root=REPO, d: dict | None = None) -> list[str]:
+    """QUNIVERSE-CUT-1 (Rowan 2026-11-21): the Quniverse account is assumed gone. Runtime code and config may not call or bind a QNFO/Quniverse host,
+    repository, Worker, database or bucket. Only `runtime_allow` files (shrink-only, each with the reason and the sibling that closes it) may."""
+    root = Path(root); d = d or load(root); r = d["runtime"]
+    rx = re.compile(r["pattern"]); allow = r["allow"]; out = []
+    for g in r["globs"]:
+        for f in sorted(root.glob(g)):
+            rel = f.relative_to(root).as_posix()
+            if not f.is_file() or any(fnmatch.fnmatch(rel, x) for x in r["skip"]) or any(fnmatch.fnmatch(rel, a["path"]) for a in allow):
+                continue
+            try:
+                text = f.read_text(encoding="utf-8")
+            except (UnicodeDecodeError, OSError):
+                continue
+            for i, ln in enumerate(text.splitlines(), 1):
+                if rx.search(ln):
+                    out.append(f"{rel}:{i}: runtime reference to Quniverse/QNFO")
+    return out
+
+
 def check(root=REPO) -> list[str]:
-    d = load(root); problems = scan(root, d)
+    d = load(root); problems = scan(root, d) + runtime_scan(root, d)
     acc = json.loads((Path(root) / "deploy/cloudflare-accounts.json").read_text(encoding="utf-8"))
     if acc["target"]["id"] != d["required_account"]["id"]:
         problems.append("deploy/cloudflare-accounts.json target is not the ultrastable account")
@@ -194,6 +215,8 @@ def main(argv) -> int:
         left = moved()
         print("\n".join("pending: " + k for k in left) or "account move complete")
         return 1 if left else 0
+    if argv[:1] == ["--runtime"]:
+        out = runtime_scan(); print("\n".join(out) or "no runtime references to Quniverse/QNFO"); return 1 if out else 0
     if argv[:1] == ["--scan"]:
         print("\n".join(scan()) or "no matches"); return 0
     problems = check()

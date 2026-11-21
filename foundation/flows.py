@@ -10,7 +10,7 @@
 Workflow rule (FLOW-DIRECTIVE-1, owner 2026-11-12): every workflow belongs to a loop that declares its flows (none may be pending), and the flow's `bindings`
 equal the secrets the workflow files reference, so an input or output cannot travel on a binding nobody declared.
 
-Fleet twin: QNFO/qnfo-workers _shared/flow-registry.js (same rules, Cloudflare runtime).
+Cloudflare runtime twin: seed/worker (same rules).
 """
 from __future__ import annotations
 import json, re, sys

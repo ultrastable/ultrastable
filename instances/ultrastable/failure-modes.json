@@ -2,30 +2,6 @@
   "doc": "Instance failure modes, merged after seed/autonomy/failure-modes.json by deploy/deploy-workers.mjs (COSTGUARD-1).",
   "modes": [
     {
-      "id": "qnfo-audit-d1-budget",
-      "failure": "QNFO qnfo-audit D1 reads more than 15M rows per hour (or the sampler cannot measure it).",
-      "root_cause": "Full-table scans from qnfo-fleet-control, qnfo-ops and qnfo-fleet-dashboard (about 1750 rows read per query); the debounce trigger of QNFO/qnfo-workers PR 11618 must hold.",
-      "spof": false,
-      "owner_role": "operations",
-      "trigger": "every tick (hourly sample)",
-      "probe": "SELECT CASE WHEN (SELECT rows_read_1h FROM cost_samples WHERE target='qnfo-audit' AND rows_read_1h IS NOT NULL AND at >= datetime('now','-3 hours') ORDER BY id DESC LIMIT 1) < 15000000 THEN 1 ELSE 0 END",
-      "remedy": "file the next fix against QNFO/qnfo-workers (account quniverse): index or LIMIT the heaviest scans, then raise the debounce.",
-      "fixes": [
-        {
-          "id": "qnfo-audit-fix-top-scan",
-          "title": "QNFO/qnfo-workers: find the heaviest qnfo-audit queries (D1 insights by rows read per query) and add indexes or LIMITs to them."
-        },
-        {
-          "id": "qnfo-audit-fix-debounce",
-          "title": "QNFO/qnfo-workers: widen the debounce on qnfo-fleet-control, qnfo-ops and qnfo-fleet-dashboard readers of qnfo-audit (PR 11618 follow-up)."
-        },
-        {
-          "id": "qnfo-audit-fix-sampler",
-          "title": "Bind CF_ANALYTICS_TOKEN (read-only analytics on the quniverse account) to ultrastable-tick by code and set database_id in autonomy/cost-budgets.json, so the sampler can measure."
-        }
-      ]
-    },
-    {
       "id": "migrations-pending",
       "failure": "A D1 migration in seed/worker/migrations is unapplied, failing or drifted on the live org D1.",
       "root_cause": "deploy-workers.yml's migration step runs with a token for the retired account and skips; the tick applies its own migrations (MIGRATE-SELF-1) and records any it cannot.",

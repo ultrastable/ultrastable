@@ -101,6 +101,14 @@
       "workflow": "watchdog",
       "expected_interval_s": 43200,
       "periodic": false
+    },
+    {
+      "id": "temporal",
+      "what": "the daily trend read: series per component, loop and entry, and what they show",
+      "source": "workflow",
+      "workflow": "temporal",
+      "expected_interval_s": 86400,
+      "periodic": true
     }
   ],
   "chain": {

@@ -1,35 +1,33 @@
 {
  "target_days": 365,
  "runway_days": null,
- "meets_target": false,
- "below": [
-  "cost"
- ],
- "unmeasured": [
-  "cost"
- ],
+ "meets_target": true,
+ "below": [],
+ "unmeasured": [],
  "components": {
   "credentials": {
    "days": null,
    "why": "nothing that lapses"
   },
   "cost": {
-   "days": "unmeasured",
-   "why": "last measured cost reading is 2026-11-17"
+   "days": null,
+   "why": "largest share of a free-plan limit 15%, not growing",
+   "share": 0.145
   },
   "failures": {
    "days": null,
-   "why": "7 open, oldest 1 days",
-   "open": 7
+   "why": "8 open, oldest 1 days",
+   "open": 8
   }
  },
  "failure_first_seen": {
-  "Q-CIFAIL-mergeaudit-934": "2026-11-21",
+  "Q-CIFAIL-mergeaudit-1268": "2026-11-21",
+  "Q-CIFAIL-mergeaudit-1461": "2026-11-21",
   "Q-CIFAIL-practical-solutions-deploy-llm": "2026-11-21",
-  "Q-CIFAIL-practical-solutions-references": "2026-11-21",
-  "Q-CIFAIL-ultrastable-ciwatch": "2026-11-21",
   "Q-CIFAIL-ultrastable-issues": "2026-11-21",
-  "Q-CIFAIL-ultrastable-smoke-live": "2026-11-21",
-  "Q-RULE-license-notice-license-fleet": "2026-11-20"
+  "Q-CIFAIL-ultrastable-owner-links-audit": "2026-11-21",
+  "Q-CIFAIL-ultrastable-spinoff": "2026-11-21",
+  "Q-RULE-license-notice-license-fleet": "2026-11-20",
+  "Q-RULE-no-merge-over-red-mergeaudit": "2026-11-21"
  }
 }

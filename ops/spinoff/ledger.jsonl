@@ -45,3 +45,21 @@
 {"at": "2026-11-20T15:43:17Z", "channel": "indexnow", "event": "promote", "slug": "free-tier-meter", "status": 202}
 {"at": "2026-11-20T15:43:17Z", "channel": "indexnow", "event": "promote", "slug": "numbers-board", "status": 200}
 {"at": "2026-11-20T15:43:17Z", "channel": "indexnow", "event": "promote", "slug": "portfolio-board", "status": 200}
+{"at": "2026-11-21T14:54:58Z", "error": "ValueError: [{\"message\": \"not authorized for that account\", \"path\": [\"viewer\", \"accounts\", \"0\", \"d1\"], \"extensions\": {\"code\": \"authz\", \"timestamp\": \"2026-11-21T14", "event": "headroom-failed"}
+{"at": "2026-11-21T14:54:58Z", "error": "HTTP Error 401: Unauthorized", "event": "tick-samples-failed"}
+{"age_days": 1, "archetype": "live-lookup", "at": "2026-11-21T14:55:00Z", "budget_share": 0.05, "decision": "keep", "event": "decision", "slug": "access-check", "value": 0.0, "why": "age 1d under the 14d trial"}
+{"age_days": 2, "archetype": "live-lookup", "at": "2026-11-21T14:55:00Z", "budget_share": 0.05, "decision": "keep", "event": "decision", "slug": "air-quality", "value": 0.0, "why": "age 2d under the 14d trial"}
+{"age_days": 3, "archetype": "domain-check", "at": "2026-11-21T14:55:00Z", "budget_share": 1.0, "decision": "keep", "event": "decision", "slug": "blindspot", "value": 0.303, "why": "age 3d under the 14d trial"}
+{"age_days": 1, "archetype": "live-lookup", "at": "2026-11-21T14:55:00Z", "budget_share": 0.05, "decision": "keep", "event": "decision", "slug": "country-snapshot", "value": 0.0, "why": "age 1d under the 14d trial"}
+{"age_days": 1, "archetype": "status-board", "at": "2026-11-21T14:55:00Z", "budget_share": 0.05, "decision": "keep", "event": "decision", "slug": "free-tier-meter", "value": null, "why": "showcase board kept while its facts are fresh and its cost is inside the headroom"}
+{"age_days": 3, "archetype": "status-board", "at": "2026-11-21T14:55:00Z", "budget_share": 0.05, "decision": "keep", "event": "decision", "slug": "numbers-board", "value": null, "why": "showcase board kept while its facts are fresh and its cost is inside the headroom"}
+{"age_days": 3, "archetype": "status-board", "at": "2026-11-21T14:55:00Z", "budget_share": 0.05, "decision": "keep", "event": "decision", "slug": "portfolio-board", "value": null, "why": "showcase board kept while its facts are fresh and its cost is inside the headroom"}
+{"at": "2026-11-21T14:55:00Z", "event": "launch", "impact": 3, "needs": [], "prediction": "board_age_hours <= 30 within 48 h", "reach": 3, "score": 11.74, "slug": "loop-ledger", "url": "https://loop-ledger.ultrastable.app"}
+{"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "access-check", "status": 200}
+{"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "air-quality", "status": 200}
+{"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "blindspot", "status": 200}
+{"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "country-snapshot", "status": 200}
+{"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "free-tier-meter", "status": 200}
+{"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "loop-ledger", "status": 202}
+{"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "numbers-board", "status": 200}
+{"at": "2026-11-21T14:55:01Z", "channel": "indexnow", "event": "promote", "slug": "portfolio-board", "status": 200}

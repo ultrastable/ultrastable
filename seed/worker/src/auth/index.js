@@ -77,7 +77,9 @@ export const isDead = r => r.status === 'failed' && /refresh HTTP 40[01]|consent
 export async function ownerActs(db) {
   await store.ensureSchema(db);
   const rows = (await db.prepare('SELECT tenant, provider, status, last_error, updated_at FROM credentials').all()).results || [];
-  return rows.filter(isDead).map(r => ({ id: 'signin:' + r.provider, tenant: r.tenant, provider: r.provider, reason: r.last_error, since: r.updated_at, connect: '/connect/' + r.provider.replace(/^oauth:/, '').replace(/^github-.*/, 'github') }));
+  const link = p => p === 'oauth:mastodon' ? '/connect/mastodon/start?instance=mstdn.science' : '/connect/' + p.replace(/^oauth:/, '').replace(/^github-.*/, 'github');  // SOCIAL-MODULE-1: one link for Mastodon, the instance is part of it
+  const acts = rows.filter(isDead).map(r => ({ id: 'signin:' + r.provider, tenant: r.tenant, provider: r.provider, reason: r.last_error, since: r.updated_at, connect: link(r.provider) }));
+  return acts;
 }
 
 export async function refreshDue(db, env, opts = {}) {

@@ -1,0 +1,159 @@
+{
+  "schema": "research-study/1",
+  "authors": [
+    "Ultrastable R&D"
+  ],
+  "institution": "Ultrastable",
+  "kind": "own R&D question set, regenerated from this system's records",
+  "seeded_by": "owner, 2026-11-21 (THOUGHT-1)",
+  "data": "This system's own ledgers: closed pull requests read from GitHub, the deploy record, the criticality ticks, the ultrastability ledger and the loop registry",
+  "id": "open-loops-2026",
+  "order": 3,
+  "version": "2026-11-21",
+  "title": "Can an AI system close its own loops?",
+  "paper_title": "Closing its own loops: what an AI system that runs itself shows about the human in every step",
+  "paper_frame": "We state the common belief as properties that can fail, and test each against the records of a system that merges, deploys and checks its own work. Where it still depends on outside sessions, the paper says so with the number.",
+  "summary": "A common belief holds that AI agents can draft code but a person must still merge it, deploy it and check that it works. Ultrastable is built to close those loops itself: a server-side lane merges green changes, every deploy is proven live against its commit, and every loop names its closing probe.",
+  "misperception": {
+    "belief": "AI agents can draft code, but a person still has to merge it, deploy it and check that it works.",
+    "short": "A person must merge, deploy and check AI work.",
+    "counter": "Merging, deploying and checking are loops, and loops can be closed by code: checks that can fail, a lane that merges what passes, a probe that proves the deploy live, and a revert when it is not."
+  },
+  "perspectives": [
+    "oversight",
+    "systems",
+    "reliability"
+  ],
+  "findings": [
+    {
+      "id": "O1",
+      "concern": "Every loop says how it closes",
+      "claim": "Belief: an automated process needs a person to notice when it is done. Test: every registered loop declares a closing probe and a server-side owner.",
+      "where": "Loop registry",
+      "perspective": "systems",
+      "mechanisms": [
+        {
+          "rule": "SERVER-OWNS-LOOPS-1",
+          "path": "foundation/loopowner.py",
+          "how": "a loop with no server-side owner fails the build"
+        },
+        {
+          "rule": "CLOCKWORK-1",
+          "path": "instances/ultrastable/loop-registry.json",
+          "how": "each loop row carries its trigger, closing probe and owner"
+        }
+      ],
+      "metric": "loops_closing_probe_share",
+      "target": {
+        "op": ">=",
+        "value": 1.0
+      },
+      "prediction": "loops_closing_probe_share >= 1 within 168 h"
+    },
+    {
+      "id": "O2",
+      "concern": "Merging needs no person",
+      "claim": "Belief: a change waits for a person to merge it. Test: median hours from a pull request opening to its merge.",
+      "where": "Merge lane",
+      "perspective": "oversight",
+      "mechanisms": [
+        {
+          "rule": "AUTO-SHIP-CLEAN-1",
+          "path": "seed/worker/src/sweeper.js",
+          "how": "the server-side sweeper merges a green pull request"
+        },
+        {
+          "rule": "DRAIN-ALL-1",
+          "path": "seed/worker/src/lane.js",
+          "how": "the lane reconciles conflicts with main and retries"
+        }
+      ],
+      "metric": "pr_merge_hours_median",
+      "target": {
+        "op": "<=",
+        "value": 1.0
+      },
+      "prediction": "pr_merge_hours_median <= 1 within 168 h"
+    },
+    {
+      "id": "O3",
+      "concern": "Deploys are checked by the system",
+      "claim": "Belief: someone has to check that a deploy really worked. Test: share of uploaded deploys proven live against their own commit.",
+      "where": "Deploy record",
+      "perspective": "reliability",
+      "mechanisms": [
+        {
+          "rule": "HANDOFF-1",
+          "path": "deploy/deploy-workers.mjs",
+          "how": "every deploy is read back and compared with its commit before it counts"
+        }
+      ],
+      "metric": "deploy_verified_share",
+      "target": {
+        "op": ">=",
+        "value": 0.95
+      },
+      "prediction": "deploy_verified_share >= 0.95 within 168 h"
+    },
+    {
+      "id": "O4",
+      "concern": "No person in the path",
+      "claim": "Belief: automation still needs a hand on the wheel. Test: human touches counted by the latest criticality tick.",
+      "where": "Criticality ledger",
+      "perspective": "oversight",
+      "mechanisms": [
+        {
+          "rule": "CRITICALITY-1",
+          "path": "foundation/criticality.py",
+          "how": "human touches are counted in the denominator of the system's own score"
+        }
+      ],
+      "metric": "human_touches",
+      "target": {
+        "op": "<=",
+        "value": 0
+      },
+      "prediction": "human_touches <= 0 within 168 h"
+    },
+    {
+      "id": "O5",
+      "concern": "The system starts its own work",
+      "claim": "Belief: an AI system only does what a person asks. Test: share of merged pull requests the system's own loops opened.",
+      "where": "Pull request record",
+      "perspective": "systems",
+      "mechanisms": [
+        {
+          "rule": "SELF-REFERENCE-1",
+          "path": "foundation/executor.py",
+          "how": "the executor takes items from the queue in driver order and opens its own pull requests"
+        }
+      ],
+      "metric": "system_authored_share",
+      "target": {
+        "op": ">=",
+        "value": 0.5
+      },
+      "prediction": "system_authored_share >= 0.5 within 336 h"
+    },
+    {
+      "id": "O6",
+      "concern": "The system ships its own deploys",
+      "claim": "Belief: shipping to production needs a person. Test: verified deploys the system originated and executed itself.",
+      "where": "Criticality ledger",
+      "perspective": "systems",
+      "mechanisms": [
+        {
+          "rule": "SELF-REFERENCE-1",
+          "path": "seed/worker/src/executor.js",
+          "how": "the tick wakes the executor, whose merged change deploys from the merge commit"
+        }
+      ],
+      "metric": "self_deploys",
+      "target": {
+        "op": ">=",
+        "value": 1
+      },
+      "prediction": "self_deploys >= 1 within 336 h"
+    }
+  ]
+}

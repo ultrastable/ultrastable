@@ -379,6 +379,19 @@
       "reason": "called only by tools/push_main.py inside this repository's workflows with a per-run token; nothing for an agent to discover"
     },
     {
+      "id": "uptime-repair",
+      "path": "/api/uptime/repair",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "machine",
+      "standards": [],
+      "discoverable": false,
+      "description": "UPTIME-1: redeploys the site (the fixed workflow deploy-site.yml on main) with the org's GitHub App when the uptime worker finds a dead hostname; takes no input and is throttled",
+      "reason": "called only by the ultrastable-uptime worker over a service binding; nothing for an agent to discover"
+    },
+    {
       "id": "lane-merge",
       "path": "/api/lane/merge",
       "methods": [
@@ -591,6 +604,19 @@
       "discoverable": false,
       "reason": "Read by foundation code and the owner page; to be exposed as an MCP tool in a later contract version.",
       "description": "OWNER-ACTS-1: sign-ins a provider refused and open gate cards, read live from the credential rows; JSON, no secret values."
+    },
+    {
+      "id": "social-import",
+      "path": "/internal/social/import",
+      "methods": [
+        "POST"
+      ],
+      "kind": "rest",
+      "audience": "owner",
+      "standards": [],
+      "discoverable": false,
+      "description": "SOCIAL-MODULE-1: token-gated hand-over of a channel token into the sealed credential store; answers names only, never values.",
+      "reason": "Machine-to-machine bearer route for moving a channel login into the system; not a capability for callers."
     }
   ]
 }

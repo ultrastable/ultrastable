@@ -9,6 +9,7 @@ import { claimsReleasedUnworked24h } from './doer.js';
 import { runExecutor, noteExecutor } from './executor.js';
 import { runLane, githubBudget } from './lane.js';
 import { verifyOidc, commitToMain } from './maincommit.js';  // MAIN-WRITER-1
+import { repairSites } from './uptimerepair.js';  // UPTIME-1
 import { opsBackup } from './opsbackup.js';  // BACKUP-SINK-1
 import { createMeter, guarded, readDeferred, writeDeferred, capsFor, LOOP_MIN_COST } from './subreq.js';  // SUBREQUEST-METER-1
 import { ingestDeploys } from './selfaudit.js';
@@ -36,7 +37,8 @@ import { refreshLiveChanges, readLiveChanges, refreshFleetChanges, classifyPendi
 import { progressStep, readProgress } from './progress.js'; // PROGRESS-1
 import { watchFreshness } from './freshness.js'; // LIVE-FRESH-2
 import { recordGovernor, readDecisions, safely as decisionSafely } from './decisions.js'; // DECISIONS-1
-import { runSocial } from './social.js';  // REACH-1
+import { runSocial, blueskyAccess } from './social.js';
+import { importCredentials, reconcileBuffer, intakeInbox, seedLinkRows } from './humans.js';  // SOCIAL-MODULE-1  // REACH-1
 import { probe as probeAgents } from './codeagent.js';
 import { hiddenByHealthOnly } from './visibility.js';
 import config from './config.js';
@@ -79,7 +81,7 @@ export const d1Unavailable = (e) => {
 const aiFor = (env) => halted(config, env) ? Promise.resolve({ ai: null, state: { mode: 'halted', why: 'HALT-1' } }) : readSpend(env.DB).then(spend => governedAI(env.DB, env.AI || null, { config, env, share: SHARES.tick, spend })).catch(e => { console.error('budget governor', e && e.message); return { ai: null, state: null }; });
 const hosts = env => (env.ANALYTICS_HOSTS ? String(env.ANALYTICS_HOSTS).split(',') : [env.PUBLIC_HOST || config.org_slug + '.example']).map(h => h.trim());
 
-const LOOP_PHASE = { executor: 0, gate: 1, lane: 1, handoffs: 2, issuesync: 2, 'repo-access': 2, sweeper: 3, 'deploy-evidence': 3, social: 3, 'watchdog-gh': 3, hosts: 0, 'host-hooks': 0 };  // SUBREQUEST-ROTATION-2: four phases; HOSTS-1 probes (2-3 calls) ride with the executor, they hit the 50-subrequest cap when run every tick after the heavy groups
+const LOOP_PHASE = { executor: 0, gate: 1, lane: 1, handoffs: 2, issuesync: 2, 'repo-access': 2, sweeper: 3, 'deploy-evidence': 3, social: 3, humans: 3, 'watchdog-gh': 3, hosts: 0, 'host-hooks': 0 };  // SUBREQUEST-ROTATION-2: four phases; HOSTS-1 probes (2-3 calls) ride with the executor, they hit the 50-subrequest cap when run every tick after the heavy groups
 
 // AUDIT-CHAIN-1: archive sinks, every one that is available. R2 when the AUDIT bucket is bound; the repository as the independent second copy.
 const auditSinks = (env, token, repos) => [...(env.AUDIT ? [r2Sink(env.AUDIT)] : []), ...(token && (env.AUDIT_REPO || repos[0]) ? [githubSink({ token, repo: env.AUDIT_REPO || (repos.find(r => r.endsWith('/ops')) || repos[0]), prefix: 'ledger/' })] : [])];
@@ -148,6 +150,7 @@ export default {
       step('issuesync', () => syncIssues({ db: env.DB, token, repo: main }));  // ISSUESYNC-1: filed roadmap items reach the queue on the server, no Actions needed
       step('repo-access', () => checkRepoAccess(env.DB, env, tenant, repos, { token, origin: env.PUBLIC_ORIGIN || '' }));  // REPO-ACCESS-1
       step('social', () => runSocial({ db: env.DB, env, tenant }));  // REACH-1: posts the due calendar item to the channels linked at /connect
+      step('humans', async () => ({ seeded: await seedLinkRows(env.DB, env, tenant), buffer: await reconcileBuffer({ db: env.DB, env, tenant }), inbox: new Date().getUTCMinutes() < 10 ? await intakeInbox({ db: env.DB, env, tenant, blueskyAccess }) : 'hourly' }));  // SOCIAL-MODULE-1: read-back of Buffer posts; replies and mentions become inbox rows, hourly
       step('sweeper', async () => { const sw = await sweepOpenLoops({ token, repos }); await recordSweep(env.DB, sw); sw.stall_items = await alarmStalls(env.DB, sw, ensureItem); return sw; });  // PR-LATENCY-1  // SERVER-OWNS-LOOPS-1
       step('app-audit', () => auditApps(env.DB, env, tenant));  // APP-INVENTORY-1: live app inventory, extra installations of our own apps removed, daily
       step('deploy-evidence', () => ingestDeploys(env.DB, { token, repo: repos.find(r => r.endsWith('/ultrastable')) }));  // SELFAUDIT-1: independent deploy evidence feeds k_eff
@@ -212,6 +215,12 @@ export default {
       const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
       return opsBackup(request, { token: (t && t.ok && t.token) || '', repo: env.OPS_REPO || 'ultrastable/ops' });
     }
+    if (url.pathname === '/api/uptime/repair' && request.method === 'POST') {  // UPTIME-1: the uptime worker's repair hand (service binding): redeploys the site with the org's own GitHub App; one fixed workflow, throttled, no input used
+      if (halted(config, env)) return Response.json({ halted: true }, { status: 202 });  // HALT-1
+      const t = await getToken(env.DB, env, env.TENANT || config.org_slug || 'default', 'github-app').catch(() => null);
+      const r = await repairSites({ token: (t && t.ok && t.token) || '', repo: env.MAIN_REPO || env.OIDC_REPO || 'ultrastable/ultrastable' });
+      return Response.json(r, { status: r.ok ? 200 : 202 });
+    }
     if (url.pathname === '/api/lane/merge' && request.method === 'POST') {  // LANE-WORKER-MERGE-1: the lane's merge for a PR that changes workflows, done with the org's own GitHub App
       if (halted(config, env)) return Response.json({ halted: true }, { status: 202 });  // HALT-1
       const repo = env.MAIN_REPO || env.OIDC_REPO || 'ultrastable/ultrastable';
@@ -242,6 +251,7 @@ export default {
       store: d1Store(env.DB), registries: staticRegistries(config.registries || {}), auth: bearerAuth, telemetry: consoleTelemetry,
       identity: { ...DEFAULT_IDENTITY, slug: config.org_slug, name: config.org_slug },
     });
+    if (url.pathname === '/internal/social/import' && request.method === 'POST') { try { return await importCredentials(env.DB, env, env.TENANT || config.org_slug || 'default', request); } catch (e) { return d1Unavailable(e); } }  // SOCIAL-MODULE-1: token-gated; seals a channel token, answers names only
     if (url.pathname === '/api/audit/head') { try { return Response.json(await head(env.DB), { headers: { 'cache-control': 'no-store' } }); } catch (e) { return d1Unavailable(e); } }  // public: the hash anyone can write down to anchor the trail
     if (url.pathname === '/api/audit/verify' || url.pathname === '/api/audit/trace') {  // owner-only (bearer ANALYTICS_TOKEN or INTERNAL_DEPLOY_KEY)
       if (!bearerOk(request, env)) return Response.json({ error: 'unauthorized' }, { status: 401 });
